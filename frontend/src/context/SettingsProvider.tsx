@@ -28,7 +28,23 @@ import { SettingsContext } from './contexts';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { settings as service } from '@/services';
-import { DEFAULT_DAILY_GOAL, DEFAULTS, type Prefs } from '@/services/settings';
+import { DEFAULT_DAILY_GOAL, DEFAULTS, type Prefs, type ThemeSkin } from '@/services/settings';
+import type { Theme } from '@/types';
+
+/**
+ * Which of light and dark each skin is drawn against.
+ *
+ * The list the settings page shows is the same one, with names and swatches on
+ * it — see THEMES in pages/Settings. This is only the half the provider needs,
+ * kept here so applying a skin does not mean importing a page into a context.
+ */
+const SKIN_BASE: Record<ThemeSkin, Theme | null> = {
+  '': null,
+  midnight: 'dark',
+  sunset: 'dark',
+  meadow: 'light',
+  orchid: 'light',
+};
 
 /** Pull just the keyed preferences out of the wider settings object. */
 function prefsOf(all: Record<string, unknown>): Prefs {
@@ -103,6 +119,29 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     else root.removeAttribute('data-accent');
   }, [prefs.accent]);
 
+  /* The skin, and the base it is built against.
+ 
+     Two writes from one preference, and the second is the important one.
+     Every stylesheet in the app keys off `data-theme`, so a skin does not
+     replace the theme — it pins it: Midnight and Sunset are dark palettes and
+     Meadow and Orchid are light ones, and a skin drawn against the wrong base
+     is its accent pair over the other one's surfaces. So the base is applied
+     here rather than left to whatever the reader's theme_mode happened to say.
+
+     `setTheme` rather than a bare attribute write, because it is the one place
+     that keeps the three copies of the answer in step — the attribute, the
+     cookie and the account. See context/ThemeContext. */
+  useEffect(() => {
+    const root = document.documentElement;
+    if (prefs.theme_skin) root.setAttribute('data-skin', prefs.theme_skin);
+    else root.removeAttribute('data-skin');
+  }, [prefs.theme_skin]);
+
+  useEffect(() => {
+    const base = SKIN_BASE[prefs.theme_skin];
+    if (base) setTheme(base);
+  }, [prefs.theme_skin, setTheme]);
+
   useEffect(() => {
     const root = document.documentElement;
     if (prefs.reduce_motion) root.setAttribute('data-motion', 'reduced');
@@ -118,7 +157,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
      and the account's stored colour still goes through the one place that
      writes it. */
   useEffect(() => {
-    if (prefs.theme_mode !== 'system') return;
+    // A skin owns the base it is drawn against, so following the device over
+    // it would put a dark palette's accents on light surfaces the moment the
+    // sun came up.
+    if (prefs.theme_mode !== 'system' || prefs.theme_skin) return;
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const follow = () => setTheme(media.matches ? 'dark' : 'light');
     follow();

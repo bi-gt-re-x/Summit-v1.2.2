@@ -201,6 +201,32 @@ export function suggestMilestones(
   });
 }
 
+/** A whole goal, drafted from one sentence. Nothing is created. */
+export interface DraftedGoal {
+  title: string;
+  why: string;
+  category: GoalCategory;
+  /** An ISO day, computed on the server from the duration the model gave. */
+  deadline: string;
+  milestones: string[];
+}
+
+/**
+ * Turn one sentence into a filled-in goal. Writes nothing.
+ *
+ * The other two suggestion calls break down a goal that exists. This one comes
+ * first: the reader types roughly what they want and gets back a title, the
+ * reason, a field, a target date and the five checkpoints, all of it landing
+ * in the creation wizard's own fields for them to edit. Only the wizard's save
+ * creates anything.
+ *
+ * Needs a provider that will hold a fixed shape, which is not all of them —
+ * the failure message says so and names the ones that do.
+ */
+export function draftGoal(idea: string): Promise<ApiResult<DraftedGoal>> {
+  return post<DraftedGoal>('/api/draft_goal', { idea });
+}
+
 /**
  * Write a goal's whole checkpoint list at once, in order.
  *

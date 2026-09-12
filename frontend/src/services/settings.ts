@@ -16,6 +16,16 @@ import type { ApiResult } from '@/types';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type Accent = 'violet' | 'blue' | 'green' | 'amber' | 'rose' | 'slate';
+/**
+ * A whole built palette, or '' for plain light and dark.
+ *
+ * Light and dark are the two neutral grounds you pick your own `Accent` on.
+ * These four are the opposite trade: a ground and an accent pair chosen
+ * together, which is why the accent picker is switched off while one is on.
+ * See THEMES in pages/Settings and the `[data-skin]` blocks in
+ * styles/preferences.css, which are what actually paint them.
+ */
+export type ThemeSkin = '' | 'midnight' | 'sunset' | 'meadow' | 'orchid';
 export type Priority = 'low' | 'medium' | 'high';
 export type CalendarView = 'day' | 'week' | 'month';
 export type AnalyticsWindow = '7d' | '30d' | '90d' | '1y' | '2y' | 'all';
@@ -74,6 +84,7 @@ export type RatingDepth = 'none' | 'ratings' | 'reasons';
 /** The preferences kept as key/value. Mirrors FIELDS in the backend. */
 export interface Prefs {
   theme_mode: ThemeMode;
+  theme_skin: ThemeSkin;
   accent: Accent;
   reduce_motion: boolean;
   show_ambient: boolean;
@@ -219,6 +230,7 @@ export interface SettingsEdit {
 /** What the app assumes before the account's own answer has arrived. */
 export const DEFAULTS: Prefs = {
   theme_mode: 'system',
+  theme_skin: '',
   accent: 'violet',
   reduce_motion: false,
   show_ambient: true,

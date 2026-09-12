@@ -325,6 +325,18 @@ export default function Goals() {
   }, []);
 
   /**
+   * The wizard's "Draft it all", from one sentence and before any field is
+   * filled. Creates nothing — the answer lands in the wizard's own boxes.
+   */
+  const draftWholeGoal = useCallback(async (idea: string) => {
+    const result = await goalService.draftGoal(idea);
+    return result.success
+      ? { goal: { title: result.title, why: result.why, category: result.category,
+                  deadline: result.deadline, milestones: result.milestones ?? [] } }
+      : { problem: result.message ?? 'That could not be drafted.' };
+  }, []);
+
+  /**
    * A counter from SystemGoalWizard. An ordinary `write`, and no model: a
    * counter has nothing to plan — see components/Goals/SystemGoals.
    */
@@ -1053,6 +1065,19 @@ export default function Goals() {
           onDeleteMilestone={removeMilestone}
           onReorder={reorder}
           onValue={setValue}
+          /* The same two calls the card makes, at the other door. Drafting a
+             ladder from here saves it and re-reads, so the drawer redraws
+             around the reader with the checkpoints in it. */
+          onSuggestStones={(entry) => {
+            void suggestMilestones(entry).then((titles) =>
+              titles && titles.length ? saveMilestones(entry, titles) : null,
+            );
+          }}
+          onSuggestSteps={(stone) => void suggestSteps(stone)}
+          planning={
+            planning === open.id
+            || (open.milestones ?? []).some((stone) => stone.id === planning)
+          }
           nameOf={subjectName}
         />
       )}
@@ -1064,6 +1089,7 @@ export default function Goals() {
         onClose={() => setWizardOpen(false)}
         onSave={(draft) => void createGoal(draft)}
         onSuggest={suggestDraft}
+        onDraft={draftWholeGoal}
       />
 
       <SystemGoalWizard

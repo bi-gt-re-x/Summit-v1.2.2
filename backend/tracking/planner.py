@@ -516,6 +516,25 @@ def _strings(value) -> List[str]:
     return []
 
 
+def _json_span(text: str) -> str:
+    """The JSON object in a model's answer, however it was wrapped.
+
+    The same generosity `_titles` applies, for the same reason and against the
+    same three shapes actually seen: a bare object, an object inside a
+    markdown fence, and an object with a sentence in front of it. Returns the
+    span for the caller to parse, so the caller owns the error message — the
+    two callers word theirs differently.
+    """
+    body = (text or '').strip()
+    fence = re.search(r'```(?:json)?\s*(.+?)```', body, re.S)
+    if fence:
+        body = fence.group(1).strip()
+    if body.startswith('{'):
+        return body
+    match = re.search(r'\{.*\}', body, re.S)
+    return match.group(0) if match else body
+
+
 def _titles(text: str) -> List[str]:
     """Five titles from a model's answer, however it chose to format it.
 
@@ -1002,3 +1021,183 @@ def suggest_steps(milestone, goal='', why='', description='', category='',
             'The model returned {} steps instead of {}. Try again.'.format(
                 len(cleaned), STEP_COUNT))
     return cleaned[:STEP_COUNT]
+
+
+# ---------------------------------------------------------------------------
+# The third job: a whole goal from a sentence
+# ---------------------------------------------------------------------------
+# The two jobs above break down something the reader has already written. This
+# one starts a step earlier, from the sentence they would have typed into the
+# first box — "get good at competition maths", "finish the thesis by spring" —
+# and returns the whole thing: a title worth keeping, the reason, the field it
+# belongs to, a date, and the five checkpoints.
+#
+# ## Why this is one call and not five
+#
+# The wizard asks five questions in order and each answer constrains the next:
+# a deadline in six weeks makes different checkpoints than one in two years,
+# and a title of "Reach USACO Gold" implies a field without being asked. Five
+# separate calls would each see one field and contradict each other. One call
+# sees the whole shape and returns something internally consistent, which is
+# the only version of this worth having.
+#
+# ## Everything it returns is a draft in a box
+#
+# This does not create a goal. It fills the wizard's fields, the reader reads
+# them, edits what is wrong and presses the button that has always created the
+# goal — see components/Goals/NewGoalWizard. The subject is deliberately not
+# among the fields: it is the one thing the wizard requires, it is chosen from
+# the account's own list, and a model guessing at it would be guessing at
+# which of *your* subjects this belongs to.
+
+#: The fields the wizard will accept back. `category` is checked against the
+#: page's own list on the way out — see `_category` — because a model that
+#: invents "academics" writes a goal the category picker cannot show.
+DRAFT_SCHEMA = {
+    'type': 'object',
+    'properties': {
+        'title': {
+            'type': 'string',
+            'description': 'The goal, as a short outcome. Eight words or fewer.',
+        },
+        'why': {
+            'type': 'string',
+            'description': 'One sentence on why it matters, in the second person.',
+        },
+        'category': {
+            'type': 'string',
+            'description': ('One of: math, coding, ai, school, music, fitness, '
+                            'projects, personal, other.'),
+        },
+        'months': {
+            'type': 'integer',
+            'description': 'A realistic number of months to reach it, from 1 to 36.',
+        },
+        'milestones': {
+            'type': 'array',
+            'items': {'type': 'string'},
+            'description': 'The five checkpoints, in the order they are reached.',
+        },
+    },
+    'required': ['title', 'why', 'category', 'months', 'milestones'],
+    'additionalProperties': False,
+}
+
+#: What the page's category picker offers. Mirrors CATEGORIES in
+#: frontend/src/components/Goals/Outcome.tsx; anything else becomes 'other'.
+CATEGORIES = ('math', 'coding', 'ai', 'school', 'music', 'fitness',
+              'projects', 'personal', 'other')
+
+#: Bounds on the one number this asks for. A model that answers 0 or 900 is
+#: answering a question about a goal nobody set.
+MONTHS_MIN = 1
+MONTHS_MAX = 36
+MONTHS_FALLBACK = 6
+
+SYSTEM_GOAL = """\
+You turn one sentence into a fully-formed long-term goal for a study-planning \
+app.
+
+You are given roughly what somebody wants. You return the goal they meant: a \
+title, why it matters, the field, how long it should take, and the five \
+checkpoints between here and done.
+
+The title is an OUTCOME, not an activity. "Reach USACO Gold", not "Practise \
+competitive programming". If the sentence names an activity, name the result \
+of doing it well.
+
+The checkpoints are STATES THE GOAL REACHES, not actions taken toward it:
+
+  Goal: Reach USACO Gold
+  Checkpoint (right): "Solving Silver DP problems unassisted"
+  Checkpoint (wrong): "Do ten DP practice problems"
+
+Rules:
+- Exactly five checkpoints, in order, each a real advance on the one before, \
+none overlapping, the fifth being the goal itself reached.
+- Six words or fewer per checkpoint, written as a state, no leading verb.
+- The title is eight words or fewer.
+- "why" is one sentence, addressed to the person whose goal it is, and says \
+what reaching it gets them. Not a restatement of the title.
+- "months" is how long this realistically takes at a steady part-time pace. \
+Be honest rather than encouraging; the checkpoints are spread across it.
+- "category" is exactly one of: math, coding, ai, school, music, fitness, \
+projects, personal, other.
+- If the sentence is vague, commit to the most common concrete reading of it \
+rather than returning something equally vague.
+"""
+
+
+def _category(value) -> str:
+    """The page's own category, or 'other'. Never what the model made up."""
+    name = str(value or '').strip().lower()
+    return name if name in CATEGORIES else 'other'
+
+
+def _months(value) -> int:
+    """A whole number of months inside the bounds, or the fallback."""
+    try:
+        months = int(value)
+    except (TypeError, ValueError):
+        return MONTHS_FALLBACK
+    return max(MONTHS_MIN, min(MONTHS_MAX, months))
+
+
+def draft_goal(idea: str) -> dict:
+    """A whole goal from one sentence: title, why, category, months, five.
+
+    Raises `PlannerUnavailable` for everything the wizard should say out loud,
+    exactly as the two jobs above do. Every value is bounded or checked against
+    a list on the way out — see `_category` and `_months` — so the wizard is
+    never handed a category its picker cannot show or a date in the next
+    century.
+    """
+    idea = (idea or '').strip()
+    if not idea:
+        raise PlannerUnavailable('Say what you are trying to do and this will draft the rest.')
+
+    using = provider()
+    if not using:
+        raise PlannerUnavailable(NO_KEY)
+    # The whole point is a filled-in form, and a form is an object. A provider
+    # that will only be asked for a shape in prose cannot be relied on for one.
+    if using not in SCHEMA_PROVIDERS:
+        raise PlannerUnavailable(
+            'Drafting a whole goal needs a model that can answer in a fixed '
+            'shape, and the one configured cannot. A free Groq key in '
+            'GROQ_API_KEY is the shortest way there; XAI_API_KEY and '
+            'ANTHROPIC_API_KEY also work. Checkpoints on their own still work '
+            'with what is set.')
+
+    text = from_provider(
+        'What they said: {}'.format(idea),
+        system=SYSTEM_GOAL,
+        schema=DRAFT_SCHEMA,
+        instruction='Turn this into a goal.',
+    )
+
+    try:
+        found = json.loads(_json_span(text))
+    except (json.JSONDecodeError, ValueError, TypeError) as exc:
+        raise PlannerUnavailable(
+            'The model\u2019s answer could not be read. Try again.') from exc
+    if not isinstance(found, dict):
+        raise PlannerUnavailable('The model did not return a goal. Try again.')
+
+    title = str(found.get('title') or '').strip()
+    if not title:
+        raise PlannerUnavailable('The model did not name a goal. Try rewording it.')
+
+    stones = [str(entry).strip() for entry in _strings(found.get('milestones'))
+              if str(entry).strip()]
+    return {
+        'title': title[:120],
+        'why': str(found.get('why') or '').strip()[:400],
+        'category': _category(found.get('category')),
+        'months': _months(found.get('months')),
+        # Short is allowed here, unlike `suggest_milestones`. There the five
+        # fill five fixed rows and a short list would leave blanks; here they
+        # land in a list the reader adds to and removes from anyway, and three
+        # good checkpoints beat refusing the whole draft over the other two.
+        'milestones': stones[:COUNT],
+    }

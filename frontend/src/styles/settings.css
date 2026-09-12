@@ -236,6 +236,92 @@ html[data-theme="dark"] .st-page {
 .st-pick.is-on { background: var(--st-card); color: var(--st-text); box-shadow: var(--st-shadow); }
 .st-pick:disabled { cursor: default; }
 
+/* ---------- The six themes ------------------------------------------------
+   A card each, showing the theme's four colours rather than naming them. The
+   words "Midnight" and "Orchid" tell a reader nothing they can act on; the
+   ground, the surface and the two accents tell them everything, and they read
+   in a tenth of a second.
+
+   The bands take their colours from `--skin-*`, declared in
+   styles/preferences.css by the same blocks that apply the theme — see the
+   note there. Nothing about a palette is written twice, so a card cannot
+   advertise a colour the theme does not use. */
+.st-themes {
+    display: grid;
+    /* Two across at the width this row gets, six on a wide settings page.
+       `auto-fit` rather than a count, because this row shares its width with a
+       label column that is itself responsive. */
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 10px;
+    width: 100%;
+    /* The control column is right-aligned everywhere else on this page and a
+       grid of cards is not a control; it is the row's content. */
+    max-width: 520px;
+    margin-left: auto;
+}
+.st-theme {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 9px;
+    border: 1px solid var(--st-line);
+    border-radius: 12px;
+    background: var(--st-card);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.st-theme:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--st-faint); }
+.st-theme:disabled { cursor: default; opacity: .6; }
+.st-theme.is-on {
+    border-color: var(--st-violet);
+    /* Inside the border rather than outside it, so a card becoming active does
+       not nudge the five beside it. */
+    box-shadow: inset 0 0 0 1px var(--st-violet);
+}
+
+/* The four bands, as one strip with rounded ends. `overflow: hidden` on the
+   strip rather than a radius on each band, so the two in the middle stay
+   square and the strip reads as one object. */
+.st-theme-bands {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 44px;
+    border-radius: 8px;
+    overflow: hidden;
+    /* A hairline so a light theme's white surface band has an edge against the
+       white card behind it — without this, Light and Meadow both read as three
+       bands and a gap. */
+    box-shadow: inset 0 0 0 1px var(--st-line);
+}
+.st-band-ground { background: var(--skin-ground); }
+.st-band-surface { background: var(--skin-surface); }
+.st-band-accent { background: var(--skin-accent); }
+.st-band-accent-2 { background: var(--skin-accent-2); }
+
+.st-theme-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 22px;
+}
+.st-theme-name { font-size: 13px; font-weight: 650; color: var(--st-text); }
+.st-theme-live {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--st-violet) 14%, transparent);
+    color: var(--st-violet);
+    font-size: 10.5px;
+    font-weight: 700;
+}
+
+/* The accent row while a palette owns the accent. Switched off, not removed —
+   see the note on the row in pages/Settings. */
+.st-swatches.is-locked { opacity: .4; }
+.st-swatches.is-locked .st-swatch { cursor: not-allowed; }
+
 .st-swatches { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .st-swatch {
     width: 26px; height: 26px;

@@ -74,7 +74,9 @@ import type {
   ResetScope,
   Settings as Prefsheet,
   ThemeMode,
+  ThemeSkin,
 } from '@/services/settings';
+import type { Theme } from '@/types';
 import '@/styles/settings.css';
 
 const GOAL_MIN = 10;
@@ -199,6 +201,78 @@ const NOTIFY_CHANNELS: {
       + 'been here a year is not told about its first sixty levels.',
   },
 ];
+
+
+/**
+ * The six themes, in the order the grid draws them.
+ *
+ * Two bases and four palettes. Light and dark are the neutral grounds you then
+ * pick an `Accent` on — they are unchanged by any of this, and an account on
+ * one of them sees exactly what it saw before the other four existed. The
+ * four skins are the other trade: a ground and an accent pair chosen together,
+ * which is why picking one switches the accent row off rather than leaving a
+ * control on screen that no longer does anything.
+ *
+ * No colours here. The swatch is painted from `--skin-*` in
+ * styles/preferences.css, which is also where the rules that apply a skin read
+ * them from — so a card cannot advertise a colour the theme does not use. All
+ * this list carries is which base each one pins, and the words.
+ */
+const THEMES: { skin: ThemeSkin; base: Theme; label: string; hint: string }[] = [
+  { skin: '', base: 'light', label: 'Light', hint: 'The neutral ground. Pick your own accent below.' },
+  { skin: '', base: 'dark', label: 'Dark', hint: 'The neutral ground. Pick your own accent below.' },
+  { skin: 'midnight', base: 'dark', label: 'Midnight', hint: 'Deep navy, periwinkle and cyan.' },
+  { skin: 'sunset', base: 'dark', label: 'Sunset', hint: 'Warm near-black, orange and gold.' },
+  { skin: 'meadow', base: 'light', label: 'Meadow', hint: 'Soft green ground, green and amber.' },
+  { skin: 'orchid', base: 'light', label: 'Orchid', hint: 'Pale blush, magenta and teal.' },
+];
+
+/**
+ * One theme card: four bands of the theme's own colours, its name, and whether
+ * it is the one running.
+ *
+ * The bands are `data-skin-preview`, not inline styles — the stylesheet owns
+ * the palette and this reads it back. Light and dark have preview blocks of
+ * their own there for the same reason, holding the values their sheets already
+ * use.
+ */
+function ThemeCard({
+  label,
+  hint,
+  preview,
+  on,
+  busy,
+  onPick,
+}: {
+  label: string;
+  hint: string;
+  preview: string;
+  on: boolean;
+  busy: boolean;
+  onPick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`st-theme${on ? ' is-on' : ''}`}
+      aria-pressed={on}
+      title={hint}
+      disabled={busy}
+      onClick={onPick}
+    >
+      <span className="st-theme-bands" data-skin-preview={preview} aria-hidden="true">
+        <i className="st-band-ground" />
+        <i className="st-band-surface" />
+        <i className="st-band-accent" />
+        <i className="st-band-accent-2" />
+      </span>
+      <span className="st-theme-foot">
+        <span className="st-theme-name">{label}</span>
+        {on && <span className="st-theme-live">Active</span>}
+      </span>
+    </button>
+  );
+}
 
 const ACCENTS: { key: Accent; label: string; swatch: string }[] = [
   { key: 'violet', label: 'Violet', swatch: '#6d5ae0' },
@@ -485,7 +559,7 @@ export default function Settings() {
   const { section: routeSection } = useParams();
   const navigate = useNavigate();
   const { prefs, update, refresh } = useSettings();
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   // One `useAuth` for both. `username` came from `useUserData` and cost the
   // account's whole task list to read a string — see hooks/useUserData.
   const { username, signOut } = useAuth();
@@ -617,10 +691,36 @@ export default function Settings() {
           : mode;
       setTheme(resolved);
       void saveSheet({ theme: resolved }, 'Theme');
-      void savePref({ theme_mode: mode }, 'Theme');
+      // Matching the device is a statement about light and dark, so it clears
+      // any skin: a palette pins the base it was drawn against, and the two
+      // preferences would otherwise be giving the theme opposite instructions.
+      void savePref({ theme_mode: mode, theme_skin: '' }, 'Theme');
     },
     [savePref, saveSheet, setTheme],
   );
+
+  /**
+   * Pick one of the six.
+   *
+   * Three values move together and all three are written in one save: the
+   * skin, the base it pins, and `theme_mode`, which is set to that base so the
+   * device-matching toggle stops overriding it a moment later. Light and dark
+   * are the same call with an empty skin, which is what makes them the two
+   * cards that leave the accent row live.
+   */
+  const pickTheme = useCallback(
+    (skin: ThemeSkin, base: Theme) => {
+      setTheme(base);
+      void saveSheet({ theme: base }, 'Theme');
+      void savePref({ theme_skin: skin, theme_mode: base }, 'Theme');
+    },
+    [savePref, saveSheet, setTheme],
+  );
+
+  /** Whether a built palette is running, and which — the accent row's answer. */
+  const skinned = Boolean(prefs.theme_skin);
+  const skinLabel =
+    THEMES.find((entry) => entry.skin && entry.skin === prefs.theme_skin)?.label ?? '';
 
   const sections: Section[] = useMemo(() => {
     if (!sheet) return [];
@@ -690,36 +790,78 @@ export default function Settings() {
           {
             id: 'theme',
             label: 'Theme',
-            hint: 'System follows your device. Applies everywhere, immediately.',
+            hint: 'Applies everywhere, immediately.',
             control: (
-              <Seg
-                value={prefs.theme_mode}
+              <div className="st-themes" role="group" aria-label="Theme">
+                {THEMES.map((entry) => (
+                  <ThemeCard
+                    key={entry.skin || entry.base}
+                    label={entry.label}
+                    hint={entry.hint}
+                    /* Light and dark are previewed by their base, the four
+                       skins by their own name. */
+                    preview={entry.skin || entry.base}
+                    /* A skin is on when it is the stored one. Light and dark
+                       are on when there is no skin and the resolved colour
+                       matches — `theme_mode` is not enough on its own, because
+                       'system' resolves to one of them and the card that is
+                       actually painting the screen is the one to mark. */
+                    on={
+                      entry.skin
+                        ? prefs.theme_skin === entry.skin
+                        : !prefs.theme_skin && theme === entry.base
+                    }
+                    busy={busy}
+                    onPick={() => pickTheme(entry.skin, entry.base)}
+                  />
+                ))}
+              </div>
+            ),
+          },
+          {
+            id: 'theme-system',
+            label: 'Match my device',
+            hint: 'Follows your system between light and dark. Turning it on clears a palette.',
+            control: (
+              <Toggle
+                on={prefs.theme_mode === 'system' && !prefs.theme_skin}
                 busy={busy}
-                onPick={pickThemeMode}
-                options={[
-                  { key: 'system', label: 'System' },
-                  { key: 'light', label: 'Light' },
-                  { key: 'dark', label: 'Dark' },
-                ]}
+                label="Match my device"
+                onFlip={() =>
+                  pickThemeMode(
+                    prefs.theme_mode === 'system' && !prefs.theme_skin ? theme : 'system',
+                  )
+                }
               />
             ),
           },
           {
             id: 'accent',
             label: 'Accent colour',
-            hint: 'The colour Summit uses for progress, links and highlights.',
+            hint: skinned
+              ? `${skinLabel} brings its own colours. Switch to Light or Dark to choose one.`
+              : 'The colour Summit uses for progress, links and highlights.',
             control: (
-              <div className="st-swatches" role="group" aria-label="Accent colour">
+              /* Left on screen and switched off rather than removed. The row
+                 disappearing when a palette is picked would read as the app
+                 having lost the setting, and the reader would have no way to
+                 find out that the palette is what took it — which is the one
+                 thing the hint above now says. */
+              <div
+                className={`st-swatches${skinned ? ' is-locked' : ''}`}
+                role="group"
+                aria-label="Accent colour"
+              >
                 {ACCENTS.map((accent) => (
                   <button
                     key={accent.key}
                     type="button"
-                    className={`st-swatch${prefs.accent === accent.key ? ' is-on' : ''}`}
+                    className={`st-swatch${!skinned && prefs.accent === accent.key ? ' is-on' : ''}`}
                     style={{ '--swatch': accent.swatch } as React.CSSProperties}
-                    aria-pressed={prefs.accent === accent.key}
+                    aria-pressed={!skinned && prefs.accent === accent.key}
                     aria-label={accent.label}
-                    title={accent.label}
-                    disabled={busy}
+                    title={skinned ? `${skinLabel} sets its own accent` : accent.label}
+                    disabled={busy || skinned}
                     onClick={() => void savePref({ accent: accent.key }, 'Accent')}
                   />
                 ))}
@@ -1522,7 +1664,7 @@ export default function Settings() {
         })),
       },
     ];
-  }, [busy, name, pickThemeMode, prefs, savePref, saveSheet, sheet]);
+  }, [busy, name, pickTheme, pickThemeMode, prefs, savePref, saveSheet, sheet, skinLabel, skinned, theme]);
 
   const current = useMemo(
     () => sections.find((entry) => entry.id === routeSection) ?? sections[0] ?? null,

@@ -52,6 +52,115 @@ html[data-theme="dark"]:root[data-accent="amber"] { --pref-accent: #e0b23c; }
 html[data-theme="dark"]:root[data-accent="rose"]  { --pref-accent: #f2778f; }
 html[data-theme="dark"]:root[data-accent="slate"] { --pref-accent: #8b97ab; }
 
+/* ---------- Skins ---------------------------------------------------------
+   Four whole palettes, against light and dark's two neutral grounds.
+
+   ## What a skin is, and what it deliberately is not
+
+   Light and dark are *bases*: a neutral ground you then pick an accent on,
+   which is what the accent block above exists for. A skin is the other trade —
+   a ground and an accent pair chosen together, as one look. So a skin sets the
+   accent itself, the settings page switches the accent picker off while one is
+   on, and neither light nor dark is touched by anything in this section. An
+   account on light today is on exactly the light it was on before this block
+   existed.
+
+   ## Every skin still has a base
+
+   Twenty-six thousand lines of stylesheet key off `html[data-theme]`, and none
+   of it is going to be rewritten to key off a skin instead. So a skin does not
+   replace the theme — it pins it. Midnight and Sunset are dark; Meadow and
+   Orchid are light; SettingsProvider sets `data-theme` to the base when the
+   skin is chosen, and every existing rule in the app carries on working
+   without knowing a skin exists.
+
+   What a skin then changes is the two things that are centrally reachable:
+   the accent, through exactly the same token repointing the block above does,
+   and the page ground.
+
+   ## The four bands are declared here and read by the picker
+
+   `--skin-ground`, `--skin-surface`, `--skin-accent` and `--skin-accent-2` are
+   the swatch on the settings card, and they are also what the rules below are
+   written from. The picker paints its preview by putting
+   `data-skin-preview="<name>"` on a strip and reading these four — so the
+   swatch cannot drift from the theme it is advertising, which is the failure
+   this arrangement exists to make impossible. Light and dark get their own
+   preview blocks for the same reason, with the values their stylesheets
+   already use. */
+[data-skin-preview="light"] {
+    --skin-ground: #f4f6f8;
+    --skin-surface: #ffffff;
+    --skin-accent: #6d5ae0;
+    --skin-accent-2: #c0504a;
+}
+[data-skin-preview="dark"] {
+    --skin-ground: #0d1117;
+    --skin-surface: #161b22;
+    --skin-accent: #9b8bff;
+    --skin-accent-2: #f08a84;
+}
+
+:root[data-skin="midnight"],
+[data-skin-preview="midnight"] {
+    --skin-ground: #080d1a;
+    --skin-surface: #111a2e;
+    /* Periwinkle against a cyan-teal: the coolest pair here, and the only one
+       whose two colours are both to the blue side of neutral. */
+    --skin-accent: #7f8dff;
+    --skin-accent-2: #3fd0c9;
+}
+:root[data-skin="sunset"],
+[data-skin-preview="sunset"] {
+    --skin-ground: #17100e;
+    --skin-surface: #241a17;
+    --skin-accent: #f28545;
+    --skin-accent-2: #e8b53e;
+}
+:root[data-skin="meadow"],
+[data-skin-preview="meadow"] {
+    --skin-ground: #f1f6f0;
+    --skin-surface: #ffffff;
+    --skin-accent: #2b8a5a;
+    --skin-accent-2: #b8791f;
+}
+:root[data-skin="orchid"],
+[data-skin-preview="orchid"] {
+    --skin-ground: #fbf4f8;
+    --skin-surface: #ffffff;
+    --skin-accent: #b8397e;
+    --skin-accent-2: #47968c;
+}
+
+/* The accent, through the same names the block above repoints.
+ 
+   `--pref-accent` is set rather than the twenty page tokens being listed a
+   second time: the selector list below is extended to match a skin as well as
+   an accent, so the two features share one list and a page added to it is
+   added for both at once. */
+:root[data-skin] {
+    --pref-accent: var(--skin-accent);
+    --pref-accent-2: var(--skin-accent-2);
+}
+
+/* The ground. The one surface in the app that is set centrally — `body` in
+   dashboard.css, and its dark override — so it is the one a skin can tint
+   without touching the stylesheets it did not write.
+ 
+   Specificity: `html[data-theme="dark"] body` is (0,2,1), so a skin needs at
+   least that to win over it in the dark-based skins. `html:root[data-skin] body`
+   is (0,2,1) too and loses on order unless this sheet is emitted later, which
+   is not something to depend on — so the attribute is named twice. */
+html:root[data-skin][data-skin] body { background: var(--skin-ground); }
+
+/* Card surfaces are deliberately left alone. They are per-page tokens and
+   there are hundreds of them across forty-four stylesheets, most written as
+   literal hexes; a skin that tried to repaint every one would be a rewrite of
+   the whole app's CSS wearing a feature's clothes. The ground above and the
+   accent below are the two things that *are* centrally reachable, and between
+   them they are what the eye reads as "a different theme" — the cards go on
+   being the light or dark cards of the base the skin pins. */
+
 /* Every page's own name for "the accent", pointed at the chosen one.
    Listed rather than globbed because CSS cannot glob a custom property, and
    because the list being explicit is what makes it checkable: a page added
@@ -60,7 +169,13 @@ html[data-theme="dark"]:root[data-accent="slate"] { --pref-accent: #8b97ab; }
 
    Each selector is (0,3,0) or better against a page's own (0,1,0) and its dark
    block's (0,2,1), so it wins in both themes without !important and without
-   caring which stylesheet the bundler emits last. */
+   caring which stylesheet the bundler emits last.
+
+   Written out once for `[data-accent]` and once for `[data-skin]`, because a
+   chosen accent and a palette's built-in one are the same substitution made
+   for two different reasons. Side by side rather than in two blocks: a page
+   added to one list has to be added to the other, and that is much harder to
+   forget when the two are touching. */
 :root[data-accent] .ac-page,
 :root[data-accent] .ax-page,
 :root[data-accent] .gx-page,
@@ -73,7 +188,20 @@ html[data-theme="dark"]:root[data-accent="slate"] { --pref-accent: #8b97ab; }
 :root[data-accent] .subject-picker,
 :root[data-accent] .tk-rate-backdrop,
 :root[data-accent] .gr-scope,
-:root[data-accent] #monthView {
+:root[data-accent] #monthView,
+:root[data-skin] .ac-page,
+:root[data-skin] .ax-page,
+:root[data-skin] .gx-page,
+:root[data-skin] .nt-page,
+:root[data-skin] .rc-page,
+:root[data-skin] .st-page,
+:root[data-skin] .stx-page,
+:root[data-skin] .tk-page,
+:root[data-skin] .home-main,
+:root[data-skin] .subject-picker,
+:root[data-skin] .tk-rate-backdrop,
+:root[data-skin] .gr-scope,
+:root[data-skin] #monthView {
     --ac-violet: var(--pref-accent);
     --ax-violet: var(--pref-accent);
     --gx-violet: var(--pref-accent);

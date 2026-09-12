@@ -40,6 +40,7 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { GoalTile, HealthChip, categoryOf } from './Outcome';
+import { AskModel } from './AskModel';
 import { GoalVisual } from './GoalVisual';
 import { formatGoalDate, goalDate, goalNumbers, goalWeight, isOverdue } from './numbers';
 import { goalHealth } from '@/utils/goalHealth';
@@ -96,68 +97,6 @@ function hoursMinutes(seconds: number): string {
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 }
 
-
-// ---------------------------------------------------------------------------
-// The model's two offers
-// ---------------------------------------------------------------------------
-/**
- * The four-point star that marks anything on this card written by a model.
- *
- * One mark, used by both offers, and used by nothing that is not a model call.
- * A reader should be able to learn it once — this shape means a machine wrote
- * the words, and you are about to be shown a draft you can edit.
- */
-function Spark() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 2.6l1.9 5.3a4 4 0 002.2 2.2l5.3 1.9-5.3 1.9a4 4 0 00-2.2 2.2L12 21.4l-1.9-5.3a4 4 0 00-2.2-2.2L2.6 12l5.3-1.9a4 4 0 002.2-2.2z" />
-      <path d="M19 2.6l.7 1.9a1.6 1.6 0 00.9.9l1.9.7-1.9.7a1.6 1.6 0 00-.9.9L19 9.6l-.7-1.9a1.6 1.6 0 00-.9-.9L15.5 6l1.9-.7a1.6 1.6 0 00.9-.9z" opacity=".5" />
-    </svg>
-  );
-}
-
-/**
- * One "let the model draft this" button.
- *
- * Both offers on the card are the same control with different words, so they
- * are one component: the same star, the same tint of the goal's own colour,
- * the same busy label. Two buttons that call a model and look like two
- * different kinds of thing is the card teaching the reader something untrue.
- *
- * `busy` is the whole card's drafting flag rather than this button's, because
- * the checkpoints and the steps under them are one ladder — a second request
- * fired while the first is still writing to it would race the first.
- */
-function AskModel({
-  label,
-  busy,
-  onAsk,
-  primary = false,
-}: {
-  label: string;
-  busy: boolean;
-  onAsk: () => void;
-  primary?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      className={`ag-ai${primary ? ' is-primary' : ''}`}
-      disabled={busy}
-      onClick={onAsk}
-      /* Said on the control rather than in a line of body text beside it. The
-         one thing a reader needs to know before pressing this is that nothing
-         is final, and a sentence explaining that on every card would be the
-         same sentence three times on one screen. */
-      title={`${label} — a draft you can rename, retime or delete`}
-    >
-      <span className="ag-ai-mark" aria-hidden="true">
-        <Spark />
-      </span>
-      {busy ? 'Thinking…' : label}
-    </button>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // The ring
@@ -284,6 +223,27 @@ export function ActiveGoalCard({
   /** The card's own celebration, cleared by a timer. See `.ag-cheer`. */
   const [cheer, setCheer] = useState<'milestone' | 'goal' | null>(null);
   /**
+   * The step ticked a moment ago, or null. Drives the tick animation only.
+   *
+   * The animation cannot key off `.is-done`, and this is the whole reason
+   * this state exists: a CSS animation runs when its element mounts, so a
+   * checkpoint that was finished last week would draw all five of its ticks
+   * every time the page loaded — twenty little animations firing at once on a
+   * card nobody had touched. Marking the one row the reader just acted on is
+   * what makes the movement mean "that worked" rather than "the page
+   * rendered".
+   */
+  const [ticked, setTicked] = useState<string | null>(null);
+
+  /* Long enough for the draw and the row's wash to finish, and no longer: the
+     class only gates the animation, so dropping it early would cut the tick
+     off halfway. Cleared on unmount for the reason the cheer timer is. */
+  useEffect(() => {
+    if (!ticked) return undefined;
+    const timer = window.setTimeout(() => setTicked(null), 600);
+    return () => window.clearTimeout(timer);
+  }, [ticked]);
+  /**
    * The reader has pressed "Mark complete" and is being asked to mean it.
    *
    * In the card rather than the page's `ConfirmModal`, which is what deleting
@@ -299,6 +259,13 @@ export function ActiveGoalCard({
      card re-renders under the reader when the reply lands — a banner that
      needed dismissing would be a second thing to do at the moment they just
      finished doing something. Two seconds is long enough to read four words.
+
+     **This number is half of a pair.** `ag-cheer-life` in styles/goals.css
+     runs for the same two seconds and spends its last fifth fading out, so
+     the panel has finished leaving by the time this unmounts it. Change one
+     and the other has to move with it: shorten the CSS and the card sits
+     blank for the remainder; shorten this and the fade is cut off mid-way,
+     which is the abrupt disappearance the animation was written to fix.
 
      Cleared on unmount as well, because completing a goal moves it out of the
      Active tab: the card that was celebrating is gone before the timer ends,
@@ -679,7 +646,11 @@ export function ActiveGoalCard({
                     : null;
                   return (
                     <li
-                      className={`ag-step${step.done ? ' is-done' : ''}${step.placeholder ? ' is-empty' : ''}`}
+                      className={
+                        `ag-step${step.done ? ' is-done' : ''}`
+                        + `${step.placeholder ? ' is-empty' : ''}`
+                        + `${ticked === step.id ? ' is-just-done' : ''}`
+                      }
                       key={step.id}
                     >
                       <button
@@ -695,6 +666,10 @@ export function ActiveGoalCard({
                         }
                         onClick={() => {
                           onMilestoneSteps(focus, toggleStep(focus.steps, index));
+                          // Only on the way to done. Unticking is a
+                          // correction, and a correction should not be
+                          // congratulated.
+                          if (!step.done) setTicked(step.id);
                           // A step pointing at a task and being ticked here
                           // means that task is done — finishing it twice, once
                           // on each page, is the app asking the same question
@@ -703,7 +678,15 @@ export function ActiveGoalCard({
                           if (linked && !step.done && linked.status !== 'done') onComplete(linked);
                         }}
                       >
-                        <span aria-hidden="true" />
+                        {/* The tick is a drawn stroke rather than a filled
+                            box. It was a bare <span>, which is to say the
+                            checkbox had no mark in it at all: a finished step
+                            was a green square, and the one gesture this panel
+                            exists for had nothing to show for itself. The path
+                            is dashed out and drawn in by `ag-tick-draw`. */}
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                          <path d="M3.6 8.4l3 3 5.8-6.4" />
+                        </svg>
                       </button>
 
                       {step.placeholder ? (

@@ -50,9 +50,10 @@
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { CATEGORIES } from './Outcome';
+import { AskModel } from './AskModel';
 import { SubjectPicker } from '@/components/SubjectPicker';
 import type { Subject } from '@/services/subjects';
-import type { NewGoal } from '@/services/goals';
+import type { DraftedGoal, NewGoal } from '@/services/goals';
 import type { GoalCategory, GoalMeasure } from '@/types';
 
 const STEPS = [
@@ -120,6 +121,12 @@ export interface MilestoneDraft {
   problem?: string;
 }
 
+/** A whole goal from a sentence, or the reason there is not one. */
+export interface WholeGoalDraft {
+  goal?: DraftedGoal;
+  problem?: string;
+}
+
 export interface NewGoalWizardProps {
   open: boolean;
   busy: boolean;
@@ -129,6 +136,11 @@ export interface NewGoalWizardProps {
   onSave: (goal: NewGoal) => void;
   /** Draft the checkpoints. Absent, and the last step offers no button. */
   onSuggest?: (goal: MilestoneDraftRequest) => Promise<MilestoneDraft>;
+  /**
+   * Draft the whole goal from one sentence. Absent, and the first step offers
+   * no box — the wizard is then exactly the form it has always been.
+   */
+  onDraft?: (idea: string) => Promise<WholeGoalDraft>;
   /**
    * The subject to start on, for a wizard opened from a subject's own page.
    * Still changeable — it is where the picker starts, not a lock.
@@ -143,6 +155,7 @@ export function NewGoalWizard({
   onClose,
   onSave,
   onSuggest,
+  onDraft,
   subjectId: startSubject,
 }: NewGoalWizardProps) {
   const [step, setStep] = useState(0);
@@ -161,6 +174,9 @@ export function NewGoalWizard({
   const [draft, setDraft] = useState('');
   const [suggesting, setSuggesting] = useState(false);
   const [suggestProblem, setSuggestProblem] = useState<string | null>(null);
+  /** The sentence the whole-goal draft is written from. Never saved. */
+  const [idea, setIdea] = useState('');
+  const [drafting, setDrafting] = useState(false);
   /* Which request is current. A model call takes seconds, and closing the
      wizard in the middle of one must not let its answer land in the next
      goal's list — the component stays mounted while closed. */
@@ -184,6 +200,8 @@ export function NewGoalWizard({
     setTarget('');
     setMilestones([]);
     setDraft('');
+    setIdea('');
+    setDrafting(false);
   }, []);
 
   const close = useCallback(() => {
@@ -204,6 +222,52 @@ export function NewGoalWizard({
     if (step === 3 && measure === 'number') return !Number(target);
     return false;
   }, [measure, step, subjectId, target, title]);
+
+  /**
+   * One sentence in, most of the wizard out.
+   *
+   * The checkpoint drafting below starts from a goal the reader has already
+   * shaped. This starts before that: they type roughly what they want, and
+   * the title, the reason, the field, the target date and the five
+   * checkpoints all arrive filled in, on the step they are already looking
+   * at, with four more steps still ahead of them to change any of it.
+   *
+   * **The subject is deliberately not written.** It is the one field the
+   * wizard refuses to proceed without (see the note at the top of this file),
+   * it is chosen from the account's own followed subjects, and a model
+   * guessing which of *your* subjects a goal belongs to is a guess that would
+   * be silently wrong. So the draft fills everything else and the step stays
+   * blocked until the reader answers the one question that is theirs.
+   *
+   * `asking` guards this the same way it guards the checkpoints: the wizard
+   * stays mounted when closed, and an answer landing in the next goal's form
+   * is the bug that ref exists for.
+   */
+  const draftWhole = useCallback(async () => {
+    if (!onDraft || !idea.trim()) return;
+    const mine = ++asking.current;
+    setDrafting(true);
+    setSuggestProblem(null);
+    try {
+      const result = await onDraft(idea.trim());
+      if (mine !== asking.current) return;
+      if (!result.goal) {
+        setSuggestProblem(result.problem ?? 'That could not be drafted. Try again.');
+        return;
+      }
+      const goal = result.goal;
+      setTitle(goal.title);
+      if (goal.why) setWhy(goal.why);
+      if (goal.category) setCategory(goal.category);
+      if (goal.deadline) setDeadline(goal.deadline);
+      if (goal.milestones.length) setMilestones(goal.milestones);
+      // Checkpoints mean this is an outcome goal, whatever the measure was
+      // sitting at — and it is the wizard's own default anyway.
+      setMeasure('milestones');
+    } finally {
+      if (mine === asking.current) setDrafting(false);
+    }
+  }, [idea, onDraft]);
 
   /** Five checkpoints from the model, into the editable list. Replaces it. */
   const suggest = useCallback(async () => {
@@ -294,6 +358,59 @@ export function NewGoalWizard({
           )}
           {step === 0 && (
             <>
+              {/* The shortcut past the whole form, offered before the form.
+ 
+                  Above the title field rather than beside it, because it is
+                  the thing to try *first* — a reader who knows exactly what
+                  their goal is called scrolls past it in a second, and a
+                  reader who does not is looking at the one box they can
+                  actually answer. What comes back fills four of the five
+                  steps; the subject is still theirs to pick, and the step
+                  stays blocked until they do. */}
+              {onDraft && (
+                <div className="gx-idea">
+                  <label htmlFor="gx-idea">Not sure how to phrase it?</label>
+                  <div className="gx-idea-row">
+                    <input
+                      id="gx-idea"
+                      value={idea}
+                      maxLength={200}
+                      placeholder="get good at competition maths this year"
+                      disabled={drafting}
+                      onChange={(event) => setIdea(event.target.value)}
+                      onKeyDown={(event) => {
+                        // The wizard's footer has its own submit, and Enter in
+                        // a bare input inside a dialog would reach it.
+                        if (event.key !== 'Enter') return;
+                        event.preventDefault();
+                        void draftWhole();
+                      }}
+                    />
+                    <AskModel
+                      label="Draft it all"
+                      busy={drafting}
+                      disabled={!idea.trim()}
+                      onAsk={() => void draftWhole()}
+                      primary
+                      title="Fills in the title, the reason, the field, a target date and five checkpoints — all of it editable"
+                    />
+                  </div>
+                  {/* The two model calls share `suggestProblem`, and only
+                      one of them can be in flight, so the message is printed
+                      at whichever step raised it. */}
+                  {suggestProblem && (
+                    <p className="gx-ms-problem" role="alert">
+                      {suggestProblem}
+                    </p>
+                  )}
+                  <p className="gx-hint">
+                    Say roughly what you want and the rest of this wizard fills
+                    itself in. You still pick the subject, and you can change
+                    every word of it.
+                  </p>
+                </div>
+              )}
+
               <label htmlFor="gx-title">The outcome, not the activity</label>
               <input
                 id="gx-title"

@@ -17,8 +17,22 @@ import { fmtGoalNumber, formatGoalDate, goalNumbers } from './numbers';
 import { goalHealth, goalPace } from '@/utils/goalHealth';
 import { bottleneckOf, goalActions, goalReading } from '@/utils/goalAnalytics';
 import { MilestoneChecklist } from './MilestoneChecklist';
+import { AskModel } from './AskModel';
 import { GoalRead } from './GoalRead';
+import { stepProgress } from '@/utils/milestoneSteps';
 import type { Goal, Milestone, MilestoneStatus, MilestoneStep, Task } from '@/types';
+
+/**
+ * Whether a checkpoint has any step somebody actually wrote.
+ *
+ * The three greyed prompts a new checkpoint is seeded with are placeholders
+ * and `stepProgress` does not count them, which is the distinction the whole
+ * offer turns on: a rung of prompts is a rung with no plan under it, and is
+ * exactly where a draft helps.
+ */
+function written(row: Milestone): boolean {
+  return stepProgress(row.steps ?? []).total > 0;
+}
 
 export interface GoalDetailProps {
   goal: Goal;
@@ -36,6 +50,26 @@ export interface GoalDetailProps {
   /** When this checkpoint is meant to be reached. Empty string clears it. */
   onMilestoneDate: (milestone: Milestone, date: string) => void;
   onDeleteMilestone: (milestone: Milestone) => void;
+  /**
+   * Draft this goal's whole checkpoint ladder, and save it.
+   *
+   * The same call the card's panel makes. It is here as well because the
+   * drawer is where a plan is actually built — it is the only view with the
+   * dates, the ordering and the checklists on screen at once — and a reader
+   * who opened it to write the plan had to close it again to find the one
+   * button that would draft it.
+   */
+  onSuggestStones: (goal: Goal) => void;
+  /**
+   * Draft one checkpoint's checklist, and save it.
+   *
+   * Offered per row, and only on a row with no written step: the write
+   * replaces the whole `steps` column, so anywhere else it would be a
+   * suggestion deleting somebody's plan. Same guard, same reason, as the card.
+   */
+  onSuggestSteps: (milestone: Milestone) => void;
+  /** A draft is on its way to this goal or one of its checkpoints. */
+  planning?: boolean;
   onReorder: (goal: Goal, order: string[]) => void;
   /** Raise the figure on a number goal. */
   onValue: (goal: Goal, value: number) => void;
@@ -50,7 +84,7 @@ export interface GoalDetailProps {
 }
 
 export function GoalDetail(props: GoalDetailProps) {
-  const { goal, tasks, busy } = props;
+  const { goal, tasks, busy, planning = false } = props;
   const numbers = goalNumbers(goal);
   const health = goalHealth(goal, tasks);
   const reading = goalReading(goal, tasks);
@@ -281,9 +315,43 @@ export function GoalDetail(props: GoalDetailProps) {
                   taskDue={taskDue}
                   onChange={(steps) => props.onMilestoneSteps(row, steps)}
                 />
+                {/* Only on a rung with nothing written and nothing reached.
+                    Not on a finished checkpoint either: drafting the work
+                    that would have got somewhere the reader has already
+                    arrived is the app not reading its own screen. */}
+                {row.status !== 'done' && !written(row) && (
+                  <AskModel
+                    label="Suggest steps"
+                    busy={busy || planning}
+                    onAsk={() => props.onSuggestSteps(row)}
+                  />
+                )}
               </li>
             ))}
           </ol>
+
+          {/* The ladder, drafted whole, for a goal that has none.
+ 
+              Above the add form rather than below it, because on an empty
+              list the form is the only thing in the section and the reader is
+              looking at exactly this space wondering what to type. Once there
+              is a ladder it disappears: `setMilestones` writes the list
+              entire, so offering it over five written checkpoints would be
+              offering to rename all five. */}
+          {rows.length === 0 && (
+            <p className="gx-ms-empty">
+              <span>
+                No checkpoints yet. Five is usually the whole plan — draft them
+                and edit what does not fit.
+              </span>
+              <AskModel
+                label="Suggest checkpoints"
+                busy={busy || planning}
+                onAsk={() => props.onSuggestStones(goal)}
+                primary
+              />
+            </p>
+          )}
 
           <form
             className="gx-ms-add"

@@ -191,6 +191,17 @@ class SuggestMilestones(BaseModel):
     deadline: str = ''
 
 
+class DraftGoal(BaseModel):
+    """Ask the model to turn one sentence into a whole goal. Writes nothing.
+
+    The other two suggestion bodies break down something that already exists.
+    This one starts from the sentence the reader would have typed into the
+    wizard's first box, and its answer fills the rest of the wizard's fields
+    for them to edit.
+    """
+    idea: str = ''
+
+
 class SuggestSteps(BaseModel):
     """Ask the model for one checkpoint's checklist. Writes nothing.
 
@@ -1062,6 +1073,41 @@ def suggest_milestones(body: SuggestMilestones, username: str = Depends(current_
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
     return ok(milestones=titles)
+
+
+@router.post('/api/draft_goal')
+def draft_goal(body: DraftGoal, username: str = Depends(current_username)):
+    """A whole goal from one sentence: title, why, category, date, checkpoints.
+
+    Writes nothing, exactly as the two suggestion endpoints above write
+    nothing — the answer lands in the creation wizard's fields and only the
+    wizard's own save creates a goal. Every failure comes back as a readable
+    message rather than a status, for the same reason: a draft that could not
+    be made is not a broken request, it is a wizard the reader fills in
+    themselves.
+
+    The deadline is computed here rather than asked for. A model asked for a
+    date returns one relative to whenever it thinks today is, which is not
+    today; asked for a *duration* it answers a question it can actually
+    answer, and the calendar arithmetic belongs on this side.
+    """
+    idea = (body.idea or '').strip()
+    if not idea:
+        return fail('Say what you are trying to do and this will draft the rest.')
+    if len(idea) > 500:
+        return fail('That is longer than this needs — a sentence is enough.')
+
+    try:
+        drafted = planner.draft_goal(idea)
+    except planner.PlannerUnavailable as exc:
+        return fail(str(exc))
+
+    # `months` out, an ISO day back. `relativedelta` is not a dependency here
+    # and 30-day months are close enough for a date the reader is about to
+    # look at and change: this is a suggested target, not a contract.
+    months = int(drafted.pop('months', 6))
+    drafted['deadline'] = (date.today() + timedelta(days=months * 30)).isoformat()
+    return ok(**drafted)
 
 
 @router.post('/api/suggest_steps')

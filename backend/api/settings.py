@@ -258,6 +258,19 @@ def _iso_day(value):
 FIELDS: Dict[str, Any] = {
     # Appearance. 'system' follows the device rather than storing a colour.
     'theme_mode':        ('system', _one_of('system', 'light', 'dark')),
+    #: One of the four built palettes, or '' for plain light/dark.
+    #:
+    #: A skin is a *whole* look — its own ground and its own accent pair — so
+    #: it is stored beside `theme_mode` rather than inside it: the mode still
+    #: says which of light and dark the app is in, because every stylesheet in
+    #: the app keys off that and a skin does not change the answer. A skin
+    #: pins the mode to the one it was built against, which is what
+    #: SettingsProvider does with it.
+    #:
+    #: `accent` below is ignored while one of these is set, and the settings
+    #: page says so rather than leaving a dead control on screen. A palette
+    #: that let you swap its accent out would not be a palette.
+    'theme_skin':        ('', _one_of('', 'midnight', 'sunset', 'meadow', 'orchid')),
     'accent':            ('violet', _one_of('violet', 'blue', 'green', 'amber', 'rose', 'slate')),
     'reduce_motion':     (False, _boolean),
     'show_ambient':      (True, _boolean),
