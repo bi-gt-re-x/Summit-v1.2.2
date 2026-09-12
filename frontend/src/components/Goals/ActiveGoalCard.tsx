@@ -96,6 +96,69 @@ function hoursMinutes(seconds: number): string {
   return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 }
 
+
+// ---------------------------------------------------------------------------
+// The model's two offers
+// ---------------------------------------------------------------------------
+/**
+ * The four-point star that marks anything on this card written by a model.
+ *
+ * One mark, used by both offers, and used by nothing that is not a model call.
+ * A reader should be able to learn it once — this shape means a machine wrote
+ * the words, and you are about to be shown a draft you can edit.
+ */
+function Spark() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2.6l1.9 5.3a4 4 0 002.2 2.2l5.3 1.9-5.3 1.9a4 4 0 00-2.2 2.2L12 21.4l-1.9-5.3a4 4 0 00-2.2-2.2L2.6 12l5.3-1.9a4 4 0 002.2-2.2z" />
+      <path d="M19 2.6l.7 1.9a1.6 1.6 0 00.9.9l1.9.7-1.9.7a1.6 1.6 0 00-.9.9L19 9.6l-.7-1.9a1.6 1.6 0 00-.9-.9L15.5 6l1.9-.7a1.6 1.6 0 00.9-.9z" opacity=".5" />
+    </svg>
+  );
+}
+
+/**
+ * One "let the model draft this" button.
+ *
+ * Both offers on the card are the same control with different words, so they
+ * are one component: the same star, the same tint of the goal's own colour,
+ * the same busy label. Two buttons that call a model and look like two
+ * different kinds of thing is the card teaching the reader something untrue.
+ *
+ * `busy` is the whole card's drafting flag rather than this button's, because
+ * the checkpoints and the steps under them are one ladder — a second request
+ * fired while the first is still writing to it would race the first.
+ */
+function AskModel({
+  label,
+  busy,
+  onAsk,
+  primary = false,
+}: {
+  label: string;
+  busy: boolean;
+  onAsk: () => void;
+  primary?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      className={`ag-ai${primary ? ' is-primary' : ''}`}
+      disabled={busy}
+      onClick={onAsk}
+      /* Said on the control rather than in a line of body text beside it. The
+         one thing a reader needs to know before pressing this is that nothing
+         is final, and a sentence explaining that on every card would be the
+         same sentence three times on one screen. */
+      title={`${label} — a draft you can rename, retime or delete`}
+    >
+      <span className="ag-ai-mark" aria-hidden="true">
+        <Spark />
+      </span>
+      {busy ? 'Thinking…' : label}
+    </button>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // The ring
 // ---------------------------------------------------------------------------
@@ -137,6 +200,17 @@ export interface ActiveGoalCardProps {
   onLinkTask: (goal: Goal, task: Task, milestoneId?: string) => void;
   /** Ask for a checkpoint list. Resolves null when the model could not answer. */
   onSuggest: (goal: Goal) => Promise<string[] | null>;
+  /**
+   * Ask the model for this checkpoint's five steps, and save them.
+   *
+   * Offered only on a checkpoint whose checklist is *empty*, which is the
+   * `focusSteps.total === 0` guard on the button. The write behind it
+   * replaces the whole `steps` column — that is what `update_milestone`
+   * takes — so on a checkpoint somebody has already written into, this
+   * button would be a suggestion silently deleting their plan. The model
+   * proposes; it does not overwrite.
+   */
+  onSuggestSteps: (milestone: Milestone) => void;
   /**
    * The page is drafting a plan under this goal right now — it was just
    * created, or a checkpoint under it was, and the model is being asked.
@@ -180,6 +254,7 @@ export function ActiveGoalCard({
   onComplete,
   onLinkTask,
   onSuggest,
+  onSuggestSteps,
   planning = false,
   onSaveStones,
   onFocusMilestone,
@@ -245,6 +320,21 @@ export function ActiveGoalCard({
   const [thinking, setThinking] = useState(false);
   /** Either route to the same model call. See `planning` in the props. */
   const drafting = thinking || planning;
+
+  /**
+   * Ask for the ladder, and accept it.
+   *
+   * The two halves are one action from the reader's side — the button says
+   * "suggest checkpoints" and what they want is checkpoints on the card — so
+   * the draft-then-save pair lives here rather than being written out at each
+   * of the two places that offers it.
+   */
+  const askStones = () => {
+    setThinking(true);
+    void onSuggest(goal)
+      .then((titles) => (titles && titles.length ? onSaveStones(goal, titles) : null))
+      .finally(() => setThinking(false));
+  };
 
   /* The goal, its linked work, and the one chart that work can support. Both
      memoised on the same inputs, so a card only re-picks when something it is
@@ -482,19 +572,7 @@ export function ActiveGoalCard({
                 Break this into checkpoints and the percentage starts to mean something.
               </p>
               <div className="ag-empty-tools">
-                <button
-                  type="button"
-                  className="ag-more is-primary"
-                  disabled={drafting}
-                  onClick={() => {
-                    setThinking(true);
-                    void onSuggest(goal)
-                      .then((titles) => (titles && titles.length ? onSaveStones(goal, titles) : null))
-                      .finally(() => setThinking(false));
-                  }}
-                >
-                  {drafting ? 'Thinking…' : 'Suggest checkpoints'}
-                </button>
+                <AskModel label="Suggest checkpoints" busy={drafting} onAsk={askStones} primary />
                 <button type="button" className="ag-more" onClick={() => onOpen(goal)}>
                   Add them myself
                 </button>
@@ -760,19 +838,37 @@ export function ActiveGoalCard({
                   />
                 </form>
               ) : (
-                <button
-                  type="button"
-                  className="ag-add-btn"
-                  disabled={busy || focus.steps.length >= MAX_STEPS}
-                  title={
-                    focus.steps.length >= MAX_STEPS
-                      ? `A checkpoint needing more than ${MAX_STEPS} steps is two checkpoints`
-                      : undefined
-                  }
-                  onClick={() => setStepDraft({ index: -1, text: '' })}
-                >
-                  + Add another step
-                </button>
+                /* The two ways to fill a checklist, side by side, and in this
+                   order on purpose: on a checkpoint with nothing written the
+                   model is the faster of the two and goes first, and on one
+                   already being worked it is not offered at all and this row
+                   is the single button it has always been.
+
+                   `focusSteps.total` counts *named* steps, so the three grey
+                   prompts a new checkpoint is seeded with read as empty —
+                   which is what they are. See `stepProgress`. */
+                <div className="ag-step-tools">
+                  {focusSteps.total === 0 && (
+                    <AskModel
+                      label="Suggest steps"
+                      busy={drafting}
+                      onAsk={() => onSuggestSteps(focus)}
+                    />
+                  )}
+                  <button
+                    type="button"
+                    className="ag-add-btn"
+                    disabled={busy || focus.steps.length >= MAX_STEPS}
+                    title={
+                      focus.steps.length >= MAX_STEPS
+                        ? `A checkpoint needing more than ${MAX_STEPS} steps is two checkpoints`
+                        : undefined
+                    }
+                    onClick={() => setStepDraft({ index: -1, text: '' })}
+                  >
+                    + Add another step
+                  </button>
+                </div>
               )}
 
               {/* ---- linking a task to one step ------------------------------ */}
@@ -852,15 +948,40 @@ export function ActiveGoalCard({
                 </button>
               )}
             </>
+          ) : stones.length === 0 ? (
+            /* A goal with no checkpoints, and the offer to draft them.
+ 
+               It used to be one sentence pointing at the other panel — "the
+               panel on the left is where they start" — and on most goals that
+               was a pointer at nothing. The left panel only shows the button
+               when it has no chart to draw, so a number goal with a fortnight
+               of work behind it got a chart there and this instruction here,
+               and the thing it named did not exist on the card. */
+            <>
+              <p className="ag-empty">
+                No checkpoints yet, so the percentage above has nothing to
+                measure. Five of them is usually the whole plan.
+              </p>
+              {/* The offer, unless the panel opposite is already making it.
+ 
+                  A goal with no checkpoints *and* no chart is empty on both
+                  sides, and both empty states want to say the same thing — so
+                  without this the reader gets two identical buttons a hand's
+                  width apart, which reads as two different actions and is
+                  one. The left panel keeps it in that case: it is the emptier
+                  of the two and the one with room for the sentence. */}
+              {visual && (
+                <div className="ag-empty-tools">
+                  <AskModel label="Suggest checkpoints" busy={drafting} onAsk={askStones} primary />
+                  <button type="button" className="ag-more" onClick={() => onOpen(goal)}>
+                    Add them myself
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <p className="ag-empty">
-              {/* `focus` is null in two quite different situations and one
-                  sentence covered both: a goal that has finished every
-                  checkpoint, and a goal that never had any. The second was
-                  being congratulated for it. */}
-              {stones.length === 0
-                ? 'No checkpoints yet. The panel on the left is where they start.'
-                : 'Every checkpoint is behind you. What is left is the goal itself.'}
+              Every checkpoint is behind you. What is left is the goal itself.
             </p>
           )}
 

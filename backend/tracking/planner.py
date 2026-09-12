@@ -21,15 +21,23 @@ Five, and exactly five, because that is what the page draws. The count is
 asked for in the prompt and enforced here on the way back: `suggest` returns
 five titles or raises, and never a short list the caller has to pad.
 
-## Two providers, one job
+## Four providers, one job
 
-Hugging Face first, Anthropic second — see `PROVIDERS`. The reason for the
-choice is cost: this is one short answer per goal a person creates by hand, so
-a small open model behind a free-tier token is the right size of tool, and
-nobody should need a paid account to use a button. Anthropic stays because it
-is markedly better at the part that is actually hard — five checkpoints that
-are sequential, non-overlapping and real advances on each other is a reasoning
-problem — and an account that has a key should get that.
+Groq, Hugging Face, Grok and Anthropic — see `PROVIDERS`, which is also the
+order they are tried in. The reason for the order is cost: this is one short
+answer per goal a person creates by hand, so a small model behind a free-tier
+token is the right size of tool, and nobody should need a paid account to use
+a button. The two paid ones stay because they are markedly better at the part
+that is actually hard — five checkpoints that are sequential, non-overlapping
+and real advances on each other is a reasoning problem — and an account that
+has a key should get that.
+
+**Groq and Grok are not the same thing.** Groq is an inference host serving
+open models; Grok is xAI's own model. Their names differ by one letter, both
+speak the OpenAI chat shape, and both live in this file. Everything belonging
+to one is spelled consistently — `GROQ_`/`groq` against `GROK_`/`grok` — and
+`provider()` matches the two names exactly rather than fuzzily, so a
+`MILESTONE_PROVIDER` naming one never quietly resolves to the other.
 
 Which one runs is `MILESTONE_PROVIDER`, or whichever key is present when that
 is unset. Everything below the provider split is shared: same system prompt,
@@ -38,10 +46,10 @@ where the sentence comes from and nothing about what the page does with it.
 
 ## Small models do not return clean JSON
 
-The Anthropic path constrains the answer with a schema and gets an object
-back. The Hugging Face path asks for JSON and gets, variously: JSON, JSON in a
-markdown fence, JSON with a sentence in front of it, a bare array, or a
-numbered list in prose. `_titles` handles all of them, because the alternative
+The Anthropic, Groq and Grok paths constrain the answer with a schema and get
+an object back. The Hugging Face path asks for JSON and gets, variously: JSON,
+JSON in a markdown fence, JSON with a sentence in front of it, a bare array, or
+a numbered list in prose. `_titles` handles all of them, because the alternative
 is a feature that works on Tuesdays. It is deliberately generous on the way in
 and strict on the way out — anything it cannot read five titles from raises,
 and the page says so.
@@ -187,16 +195,69 @@ GROQ_TEMPERATURE = 0.3
 # on the free tier can sit for a while before it starts.
 GROQ_TIMEOUT = 90.0
 
+# ---------------------------------------------------------------------------
+# Grok (xAI)
+# ---------------------------------------------------------------------------
+# **Read the spelling twice.** This is Grok, xAI's model, and the section above
+# is Groq, the inference host — two different companies whose names differ by
+# one letter, both reachable from this file, both OpenAI-shaped. Everything
+# here is `GROK_`/`grok`; everything above is `GROQ_`/`groq`. `provider()`
+# matches the two names exactly and never falls from one to the other, because
+# the failure that would cause is the worst kind: the button still works, the
+# answers just come from somewhere the reader did not choose and a card is
+# quietly billed to the wrong account.
+GROK_URL = 'https://api.x.ai/v1/chat/completions'
+
+# Grok honours a strict JSON schema, which is what puts it in SCHEMA_PROVIDERS
+# alongside Groq and Anthropic — the subject reading and the two goal prompts
+# need a shape held rather than asked for.
+#
+#   grok-4-fast    the default: cheap, long-context, and strong enough here
+#   grok-4         better on the part that is actually hard, several times the
+#                  price, and slower on a button somebody is waiting at
+#   grok-3-mini    when the goals are simple and the bill matters more
+#
+# `GET https://api.x.ai/v1/models` on the key lists what is actually being
+# served today, which is the only list worth trusting.
+GROK_MODEL = os.environ.get('GROK_MODEL') or 'grok-4-fast'
+
+# No free-tier allowance to fit inside — this is a metered account, so unlike
+# `GROQ_MAX_TOKENS` this is a default rather than a cap and a caller asking for
+# more gets more. Generous because grok-4-fast reasons, and reasoning is billed
+# against the completion: an answer that runs out mid-object comes back as
+# unparseable JSON rather than as a short one.
+GROK_MAX_TOKENS = 8000
+
+# Deliberately empty, and this is the one setting here worth explaining.
+# `reasoning_effort` is accepted by some xAI models and *rejected outright* by
+# others — grok-4 is the one that refuses it — and `_from_openai_chat` only
+# knows how to retry a 400 that is about the schema. Sending nothing lets every
+# model run at its own default and cannot 400; set it for a model documented to
+# take it, and not otherwise.
+GROK_REASONING = os.environ.get('GROK_REASONING') or ''
+
+# The task wants the obvious decomposition of a goal, not an inventive one.
+GROK_TEMPERATURE = 0.3
+
+# Slower than Groq and quicker than a cold HF provider. The page holds a
+# spinner meanwhile.
+GROK_TIMEOUT = 90.0
+
 # Tried in this order when MILESTONE_PROVIDER is unset. Free first: an account
 # with several keys is not asking to be billed for a button it could have free.
 # Groq leads because it is the only free one that honours a JSON schema, which
 # is what the subject reading needs and the HF default cannot give it.
-PROVIDERS = ('groq', 'huggingface', 'anthropic')
+#
+# The two paid ones come after, and Grok before Anthropic only because an
+# account that has gone to the trouble of setting XAI_API_KEY has said which
+# one it wants. Nothing an existing install does changes by this line growing:
+# an account without an xAI key falls past it exactly as before.
+PROVIDERS = ('groq', 'huggingface', 'grok', 'anthropic')
 
 #: Providers that will hold a supplied JSON schema rather than being asked in
 #: prose for a shape. The subject reading, the write-up and the two goal
 #: prompts all need one; the goals page's checkpoint list does not.
-SCHEMA_PROVIDERS = ('groq', 'anthropic')
+SCHEMA_PROVIDERS = ('groq', 'grok', 'anthropic')
 
 SYSTEM = """\
 You break a long-term goal into its checkpoints for a study-planning app.
@@ -310,10 +371,31 @@ def _groq_token() -> str:
     return os.environ.get('GROQ_API_KEY') or ''
 
 
+def _grok_token() -> str:
+    """The xAI key, under either of the names people have it under.
+
+    `XAI_API_KEY` is what xAI's own console and SDK call it and is the name to
+    prefer. `GROK_API_KEY` is here because it is what people type — the model
+    is the thing they bought and the company is not — and a key that silently
+    does nothing under a reasonable name is a support question rather than a
+    configuration error.
+
+    Note what is *not* accepted: `GROQ_API_KEY`. One letter away and a
+    different company entirely, and reading it here would send an account's
+    Groq key to api.x.ai, where it would be rejected and reported as a bad xAI
+    key. See the section head over `GROK_URL`.
+    """
+    return (os.environ.get('XAI_API_KEY')
+            or os.environ.get('GROK_API_KEY')
+            or '')
+
+
 def _keyed(provider: str) -> bool:
     """Whether this provider has what it needs to be called."""
     if provider == 'groq':
         return bool(_groq_token())
+    if provider == 'grok':
+        return bool(_grok_token())
     if provider == 'huggingface':
         return bool(_hf_token())
     if provider == 'anthropic':
@@ -329,8 +411,17 @@ def provider() -> str:
     has always checked the environment late.
     """
     named = (os.environ.get('MILESTONE_PROVIDER') or '').strip().lower()
+    # Exact, and the two lookalikes are matched separately on purpose: a name
+    # that is one letter off is a name that meant the other provider, and
+    # answering it with "close enough" is how a reader ends up reading Groq's
+    # answers under the impression they are Grok's. Neither falls through to
+    # the other, and a misspelling that is neither reaches the search below
+    # and picks whatever is keyed — which is the pre-existing behaviour for an
+    # unrecognised name and is what `NO_KEY` is worded against.
     if named == 'groq':
         return 'groq' if _keyed('groq') else ''
+    if named in ('grok', 'xai'):
+        return 'grok' if _keyed('grok') else ''
     if named in ('huggingface', 'hf'):
         return 'huggingface' if _keyed('huggingface') else ''
     if named == 'anthropic':
@@ -346,8 +437,9 @@ def configured() -> bool:
 NO_KEY = (
     'Milestone suggestions need a model key in the environment. A free Groq '
     'key in GROQ_API_KEY is the shortest way there (console.groq.com → API '
-    'Keys); a free Hugging Face token in HF_TOKEN works too, as does a paid '
-    'ANTHROPIC_API_KEY. Add one to .env and restart the server.')
+    'Keys); a free Hugging Face token in HF_TOKEN works too, as do the paid '
+    'XAI_API_KEY (Grok) and ANTHROPIC_API_KEY. Add one to .env and restart '
+    'the server.')
 
 
 # ---------------------------------------------------------------------------
@@ -743,6 +835,22 @@ def _from_huggingface(brief: str, system: str = None,
         brief, system, instruction, schema, max_tokens or HF_MAX_TOKENS)
 
 
+def _from_grok(brief: str, system: str = None, instruction: str = '',
+               schema: dict = None, max_tokens: int = 0) -> str:
+    """Grok, through the same POST, with the schema sent.
+
+    Unlike `_from_groq` below this takes the caller's budget rather than
+    capping it. There is no free tier to fit inside — the account is metered —
+    so a caller that asked for a bigger answer has a reason to want one and
+    trimming it here would only truncate the JSON it is about to parse.
+    """
+    return _from_openai_chat(
+        GROK_URL, _grok_token(), GROK_MODEL, 'Grok',
+        brief, system, instruction, schema,
+        max_tokens or GROK_MAX_TOKENS,
+        GROK_TEMPERATURE, GROK_TIMEOUT, GROK_REASONING)
+
+
 def _from_groq(brief: str, system: str = None, instruction: str = '',
                schema: dict = None, max_tokens: int = 0) -> str:
     """Groq, through the same POST, with the schema actually sent.
@@ -794,6 +902,8 @@ def from_provider(brief: str, system: str = None, schema: dict = None,
         raise PlannerUnavailable(NO_KEY)
     if using == 'groq':
         return _from_groq(brief, system, instruction, schema, max_tokens)
+    if using == 'grok':
+        return _from_grok(brief, system, instruction, schema, max_tokens)
     if using == 'huggingface':
         return _from_huggingface(brief, system, instruction, schema, max_tokens)
     return from_anthropic(brief, system, schema, instruction, model_id, max_tokens)
@@ -821,6 +931,8 @@ def suggest_milestones(title, why='', description='', category='',
     brief = _brief(title, why, description, category, unit, target, deadline)
     if using == 'groq':
         text = _from_groq(brief, schema=SCHEMA)
+    elif using == 'grok':
+        text = _from_grok(brief, schema=SCHEMA)
     elif using == 'huggingface':
         text = _from_huggingface(brief)
     else:
@@ -877,6 +989,8 @@ def suggest_steps(milestone, goal='', why='', description='', category='',
 
     if using == 'groq':
         text = _from_groq(brief, SYSTEM_STEPS, instruction, STEPS_SCHEMA)
+    elif using == 'grok':
+        text = _from_grok(brief, SYSTEM_STEPS, instruction, STEPS_SCHEMA)
     elif using == 'huggingface':
         text = _from_huggingface(brief, SYSTEM_STEPS, instruction)
     else:

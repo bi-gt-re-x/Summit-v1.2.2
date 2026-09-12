@@ -3175,8 +3175,25 @@ button.gx-state-attn.is-on {
     gap: 34px;
 }
 
+/* The fallback tone, for a card that somehow arrives without one of the
+   `tone-*` classes near the top of this file.
+
+   `:where()` so it loses every cascade it is in. This was a plain `--tone`
+   declaration inside `.ag-card` below, which is the same specificity as
+   `.tone-blue` and three thousand lines further down the file — so it won,
+   always, and **every goal card on the page was violet**. The category palette
+   was fully built and correctly applied: components/Goals/ActiveGoalCard has
+   put `tone-${category.tone}` on this element the whole time. It simply never
+   reached a single property. A maths goal, a music goal and a fitness goal
+   were the same colour, and a page of eight goals read as one template
+   repeated rather than as eight different things.
+
+   Zero specificity rather than moving the rule further up, because "this
+   declaration must stay above line 150" is not a thing the next person editing
+   a 4,000-line stylesheet should have to know. */
+:where(.ag-card) { --tone: var(--gx-violet); }
+
 .ag-card {
-    --tone: var(--gx-violet);
     /* The containing block for `.ag-cheer`, which covers this card and no
        more — what was finished happened here. */
     position: relative;
@@ -3189,19 +3206,49 @@ button.gx-state-attn.is-on {
     overflow: hidden;
 }
 
+/* A 3px band of the goal's own colour along the top edge.
+ 
+   The one piece of colour on the card that is not attached to a number, and
+   the only one visible while scrolling past at speed. Everything else tinted
+   with `--tone` — the ring, the focus block, the roadmap bars — is small, sits
+   inside a panel, and is read only once you have stopped at the card. Down a
+   list of eight goals the band is what says these are eight different things
+   rather than one template printed eight times.
+
+   On the card, not on the header, so it survives the header's own gradient and
+   sits flush in the corners the card rounds. */
+.ag-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: var(--tone);
+    /* Behind nothing, but above the header's wash. `.ag-cheer` covers the card
+       at a higher layer and is meant to cover this too. */
+    z-index: 1;
+}
+
 /* ---------- Header -------------------------------------------------------- */
 .ag-top {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: start;
     gap: 14px;
-    padding: var(--gx-pad);
-    /* The faintest wash of the goal's colour, so the head reads as belonging to
-       this goal without the card becoming a coloured box. */
+    /* An extra 3px of top padding for the band the card draws over this
+       edge, so the tile and the title sit where they did before it existed. */
+    padding: calc(var(--gx-pad) + 3px) var(--gx-pad) var(--gx-pad);
+    /* A wash of the goal's colour, so the head reads as belonging to this goal
+       without the card becoming a coloured box.
+ 
+       `--gx-wash` rather than the `--gx-wash-soft` it was written with. That
+       was tuned while every card was violet — see `:where(.ag-card)` — and
+       "the faintest possible" is the right call for a colour that means
+       nothing and the wrong one for a colour that names the goal's field. It
+       is still a wash: 8% of the hue in light, mixed toward white. */
     background:
         linear-gradient(180deg,
-            color-mix(in srgb, var(--tone) var(--gx-wash-soft), transparent),
-            transparent);
+            color-mix(in srgb, var(--tone) var(--gx-wash), transparent),
+            transparent 88%);
 }
 .ag-top > .gx-tile { width: 44px; height: 44px; border-radius: 13px; }
 
@@ -3344,11 +3391,29 @@ button.gx-state-attn.is-on {
 .ag-panel {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     min-width: 0;
-    padding: 15px var(--gx-pad);
+    /* A little more below than above. The last thing in either column is a
+       control — "+ Add another step", "View details" — and a button sitting
+       the same distance from the panel's floor as a heading sits from its
+       ceiling reads as having been pushed against the edge. */
+    padding: 16px var(--gx-pad) 20px;
     background: var(--gx-card);
 }
+
+/* The left panel recedes; the right one stays the card's own white.
+ 
+   The two answer different questions — the left says *why the goal is going
+   the way it is*, the right says *what to do about it* — and until now they
+   were the same white surface separated by a one-pixel line, so the body read
+   as one wide field of white with a crease down it. Any reading of the card
+   that starts "look at the evidence, then act on it" was something the reader
+   had to construct rather than see.
+
+   A surface, not a hue: `--gx-card-2` is the same grey the footer already
+   uses, so this adds a region to the card without adding a colour to it. The
+   goal's own colour stays reserved for the things that carry meaning. */
+.ag-body > .ag-panel:first-child { background: var(--gx-card-2); }
 /* The two panels are independent columns of a grid, so they are already the same
    height; this stops the shorter one's content from stretching to fill it, and
    leaves whatever is left over at the foot of the column. */
@@ -3846,14 +3911,18 @@ button.gx-state-attn.is-on {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    /* 2px was close enough that three rows read as one block of text. Now that
+       a finished row is a tinted band rather than a tick, they have to be
+       separable — the gap is what makes the tint read as three rows in two
+       states instead of as one shape with a ragged edge. */
+    gap: 4px;
 }
 .ag-step {
     display: grid;
     grid-template-columns: 17px 17px minmax(0, 1fr) auto 22px;
     align-items: center;
     gap: 9px;
-    padding: 5px 6px;
+    padding: 6px 8px;
     border-radius: 9px;
     font-size: 12.5px;
     color: var(--gx-text);
@@ -3869,6 +3938,16 @@ button.gx-state-attn.is-on {
     font-variant-numeric: tabular-nums;
 }
 .ag-step:hover { background: var(--gx-card-2); }
+/* Ticked rows carry the same green the tick does, at a wash.
+ 
+   The checklist was a column of black text with a few small green boxes in it,
+   and "how much of this checkpoint is behind me" — the question the panel
+   exists to answer — had to be worked out by counting boxes. The row itself
+   answering it is the cheapest possible version of that, and it is the one
+   place on the card where green means finished rather than the goal's own
+   colour meaning the goal. */
+.ag-step.is-done { background: color-mix(in srgb, var(--gx-good) 7%, transparent); }
+.ag-step.is-done:hover { background: color-mix(in srgb, var(--gx-good) 12%, transparent); }
 .ag-step-check { border-radius: 5px; }
 .ag-step.is-done .ag-step-check {
     border-color: var(--gx-good);
@@ -3959,16 +4038,26 @@ button.gx-state-attn.is-on {
    `auto 1fr` rather than a flex row: the label is a fixed pill and the title
    takes what is left and ellipsises, so a long step name cannot push the word
    "Next" off its own line. */
+/* The one line on the card that can be acted on without reading the rest of
+   it, so it is the one block below the fold that carries a filled colour.
+
+   It was a dashed outline over a 3% wash, which is the vocabulary this
+   stylesheet uses everywhere else for *something not yet filled in* — the
+   empty step rows, the unwritten checkpoint. The card's single instruction was
+   drawn as a blank waiting for input. Solid edge, a real tint, and a bar of
+   the goal's colour down the left, which is the shape a reader already reads
+   as "this line matters" from `.ag-why-here` two panels up. */
 .ag-next {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: baseline;
     gap: 9px;
-    margin: 10px 0 0;
-    padding: 9px 11px;
+    margin: 12px 0 0;
+    padding: 10px 12px;
     border-radius: 10px;
-    border: 1px dashed color-mix(in srgb, var(--tone) 34%, transparent);
-    background: color-mix(in srgb, var(--tone) var(--gx-wash-soft), transparent);
+    border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
+    border-left: 3px solid var(--tone);
+    background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
 }
 .ag-next > span {
     font-size: 9.5px;
@@ -4217,6 +4306,63 @@ button.gx-state-attn.is-on {
 }
 .ag-check:hover:not(:disabled) { border-color: var(--gx-good); background: color-mix(in srgb, var(--gx-good) 14%, transparent); }
 .ag-check:disabled { opacity: .5; cursor: default; }
+
+/* ---------- What the model offers -----------------------------------------
+   The two "let the model draft this" buttons — checkpoints for a goal, steps
+   for a checkpoint. One appearance for both, because they are one kind of
+   thing: press it and a draft you can edit appears where there was nothing.
+
+   Tinted in the goal's own colour rather than in a fixed "AI purple". Every
+   other tinted surface on the card takes `--tone`, and a control that opted
+   out of that would be the one element on the page insisting it belongs to
+   the vendor rather than to the goal. */
+.ag-ai {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px 6px 10px;
+    border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--tone) var(--gx-wash-soft), transparent);
+    color: var(--tone);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background .14s ease, border-color .14s ease;
+}
+.ag-ai:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
+    border-color: color-mix(in srgb, var(--tone) 55%, transparent);
+}
+.ag-ai:disabled { opacity: .6; cursor: default; }
+/* The primary of the two is the one on an empty panel, where it is the only
+   thing to do. The difference is a fill, not a second colour. */
+.ag-ai.is-primary { background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent); }
+.ag-ai-mark { display: grid; place-items: center; width: 14px; height: 14px; flex: none; }
+.ag-ai-mark svg { width: 14px; height: 14px; }
+/* The star turns while the model is being waited on. It is the only moving
+   thing on the card, it moves slowly, and it stops the moment the answer
+   lands — a spinner would be a second vocabulary for the same fact. */
+.ag-ai:disabled .ag-ai-mark { animation: ag-ai-turn 1.6s linear infinite; }
+@keyframes ag-ai-turn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .ag-ai:disabled .ag-ai-mark { animation: none; }
+}
+
+/* The row under a checklist: the model's offer and the by-hand one together.
+   Baseline-aligned rather than centred, because "+ Add another step" is a bare
+   text button and the other is a bordered one — centring sets their words a
+   pixel or two apart, which on two controls doing the same job reads as a
+   mistake rather than as a hierarchy. */
+.ag-step-tools {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 2px;
+}
 
 .ag-add-btn {
     align-self: flex-start;

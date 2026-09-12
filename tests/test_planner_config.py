@@ -289,3 +289,148 @@ class TestTheBudgetSentToGroq:
         planner.from_provider('brief', schema={'type': 'object'})
         assert sent['label'] == 'Groq'
         assert sent['url'] == planner.GROQ_URL
+
+# ---------------------------------------------------------------------------
+# Grok (xAI)
+# ---------------------------------------------------------------------------
+# The thing worth testing here is not the HTTP call — it is the same POST the
+# Hugging Face and Groq paths have always made — but the collision. "Grok" and
+# "Groq" are one letter apart, they are different companies, and both are
+# reachable from this module. Every test below is a way the two could be
+# confused for each other, written down so that a later edit that blurs them
+# fails here rather than in somebody's billing.
+class TestGrokIsNotGroq:
+    @pytest.fixture(autouse=True)
+    def bare(self, monkeypatch):
+        """No provider configured, so each test says exactly what it means."""
+        for name in ('MILESTONE_PROVIDER', 'GROQ_API_KEY', 'XAI_API_KEY',
+                     'GROK_API_KEY', 'ANTHROPIC_API_KEY', 'HF_TOKEN',
+                     'HUGGINGFACE_API_KEY'):
+            monkeypatch.delenv(name, raising=False)
+
+    def test_an_xai_key_alone_is_enough(self, monkeypatch):
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        assert planner.provider() == 'grok'
+
+    def test_the_key_is_also_taken_under_the_name_people_type(self, monkeypatch):
+        monkeypatch.setenv('GROK_API_KEY', 'xai-test')
+        assert planner.provider() == 'grok'
+
+    def test_a_groq_key_does_not_configure_grok(self, monkeypatch):
+        """The expensive confusion: one letter, and a key sent to the wrong host."""
+        monkeypatch.setenv('GROQ_API_KEY', 'gsk_test')
+        assert planner._grok_token() == ''
+        assert planner.provider() == 'groq'
+
+    def test_an_xai_key_does_not_configure_groq(self, monkeypatch):
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        assert planner._groq_token() == ''
+        assert planner.provider() == 'grok'
+
+    def test_naming_grok_does_not_fall_through_to_groq(self, monkeypatch):
+        """A pinned name is a choice, not a preference. Off beats wrong."""
+        monkeypatch.setenv('MILESTONE_PROVIDER', 'grok')
+        monkeypatch.setenv('GROQ_API_KEY', 'gsk_test')
+        assert planner.provider() == ''
+
+    def test_naming_groq_does_not_fall_through_to_grok(self, monkeypatch):
+        monkeypatch.setenv('MILESTONE_PROVIDER', 'groq')
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        assert planner.provider() == ''
+
+    def test_xai_is_accepted_as_the_name_too(self, monkeypatch):
+        monkeypatch.setenv('MILESTONE_PROVIDER', 'xai')
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        assert planner.provider() == 'grok'
+
+    def test_the_free_ones_still_win_when_nothing_is_pinned(self, monkeypatch):
+        """Adding a paid provider must not start billing an existing install."""
+        monkeypatch.setenv('GROQ_API_KEY', 'gsk_test')
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        assert planner.provider() == 'groq'
+
+    def test_the_key_is_read_late_like_every_other(self, monkeypatch):
+        """The bug this whole file exists for, checked for the new name too."""
+        assert planner.provider() == ''
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        assert planner.provider() == 'grok'
+
+    def test_grok_can_hold_a_shape(self, monkeypatch):
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        assert planner.able() is True
+
+
+class TestWhatIsSentToGrok:
+    @pytest.fixture
+    def sent(self, monkeypatch):
+        """Capture the payload without letting it reach the network."""
+        seen = {}
+
+        def fake_chat(url, token, model_id, label, brief, system=None,
+                      instruction='', schema=None, max_tokens=0,
+                      temperature=None, timeout=None, reasoning='',
+                      *args, **kwargs):
+            seen.update(url=url, token=token, model=model_id, label=label,
+                        max_tokens=max_tokens, schema=schema,
+                        reasoning=reasoning)
+            return '{}'
+
+        monkeypatch.setattr(planner, '_from_openai_chat', fake_chat)
+        for name in ('MILESTONE_PROVIDER', 'GROQ_API_KEY', 'ANTHROPIC_API_KEY',
+                     'HF_TOKEN', 'HUGGINGFACE_API_KEY'):
+            monkeypatch.delenv(name, raising=False)
+        monkeypatch.setenv('XAI_API_KEY', 'xai-test')
+        return seen
+
+    def test_it_goes_to_xai_and_not_to_groq(self, sent):
+        planner._from_grok('brief')
+        assert sent['url'] == planner.GROK_URL == 'https://api.x.ai/v1/chat/completions'
+        assert sent['url'] != planner.GROQ_URL
+
+    def test_the_label_the_reader_sees_names_the_right_company(self, sent):
+        # This is the word every error message in `_from_openai_chat` is built
+        # from — "Grok rejected the key" has to mean the xAI key.
+        planner._from_grok('brief')
+        assert sent['label'] == 'Grok'
+
+    def test_the_xai_key_is_the_one_sent(self, sent):
+        planner._from_grok('brief')
+        assert sent['token'] == 'xai-test'
+
+    def test_a_caller_budget_is_taken_rather_than_capped(self, sent):
+        # Unlike Groq: there is no free-tier allowance to fit inside, so
+        # trimming here would only truncate JSON that is about to be parsed.
+        planner._from_grok('brief', max_tokens=16000)
+        assert sent['max_tokens'] == 16000
+
+    def test_no_request_gets_the_default(self, sent):
+        planner._from_grok('brief')
+        assert sent['max_tokens'] == planner.GROK_MAX_TOKENS
+
+    def test_no_reasoning_effort_is_sent_by_default(self, sent):
+        # grok-4 refuses the parameter outright, and `_from_openai_chat` only
+        # knows how to retry a 400 that is about the schema.
+        planner._from_grok('brief')
+        assert sent['reasoning'] == ''
+
+    def test_the_schema_is_actually_passed_on(self, sent):
+        planner._from_grok('brief', schema={'type': 'object'})
+        assert sent['schema'] == {'type': 'object'}
+
+    def test_from_provider_routes_to_grok(self, sent):
+        planner.from_provider('brief', schema={'type': 'object'})
+        assert sent['label'] == 'Grok'
+        assert sent['url'] == planner.GROK_URL
+
+    def test_the_checkpoint_prompt_routes_to_grok(self, monkeypatch, sent):
+        monkeypatch.setattr(planner, '_titles', lambda text: ['a', 'b', 'c', 'd', 'e'])
+        planner.suggest_milestones('Reach USACO Gold')
+        assert sent['url'] == planner.GROK_URL
+        assert sent['schema'] == planner.SCHEMA
+
+    def test_the_steps_prompt_routes_to_grok(self, monkeypatch, sent):
+        monkeypatch.setattr(planner, '_titles', lambda text: ['a', 'b', 'c', 'd', 'e'])
+        planner.suggest_steps('Silver DP unassisted', goal='Reach USACO Gold')
+        assert sent['url'] == planner.GROK_URL
+        assert sent['schema'] == planner.STEPS_SCHEMA
+

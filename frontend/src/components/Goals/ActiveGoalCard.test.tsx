@@ -82,6 +82,7 @@ function show(over: Partial<ActiveGoalCardProps> = {}) {
       onComplete={vi.fn()}
       onLinkTask={vi.fn()}
       onSuggest={vi.fn(async () => null)}
+      onSuggestSteps={vi.fn()}
       onSaveStones={vi.fn(async () => true)}
       onFocusMilestone={vi.fn()}
       onMilestoneSteps={vi.fn()}

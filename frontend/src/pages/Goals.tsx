@@ -90,7 +90,7 @@ import type { NewGoal } from '@/services/goals';
 import type { Goal, Milestone, MilestoneStatus, MilestoneStep, Task } from '@/types';
 import { goalHealth } from '@/utils/goalHealth';
 import type { TabId } from '@/components/Goals';
-import { fromTitles } from '@/utils/milestoneSteps';
+import { fromTitles, stepProgress } from '@/utils/milestoneSteps';
 import '@/styles/goals.css';
 
 /** How often to re-read while a focus goal is running. */
@@ -521,6 +521,50 @@ export default function Goals() {
   );
 
   /**
+   * Draft the checklist under one checkpoint, asked for on the card.
+   *
+   * The card offers this only on a checkpoint with no *named* steps, and the
+   * reason is the write: `updateMilestone` takes the whole `steps` column and
+   * replaces it, so run over a checklist somebody has written this would be a
+   * suggestion quietly deleting their plan. The guard is on the card because
+   * that is where the button is; it is restated here because a second caller
+   * would not be able to see it from this side.
+   *
+   * On `planning` rather than `busy`, and not routed through `write`, for the
+   * reason `suggestMilestones` gives: a model call holds for several seconds
+   * and the rest of the page stays usable while one checkpoint thinks.
+   */
+  const suggestSteps = useCallback(
+    async (milestone: Milestone) => {
+      if (!username || stepProgress(milestone.steps ?? []).total > 0) return;
+      setPlanning(milestone.id);
+      try {
+        const drafted = await goalService.suggestSteps({ milestoneId: milestone.id });
+        if (!drafted.success) {
+          setError(drafted.message ?? 'Those steps could not be drafted.');
+          return;
+        }
+        if (!drafted.steps?.length) {
+          setError('The model returned no steps. Try again.');
+          return;
+        }
+        const saved = await goalService.updateMilestone(milestone.id, {
+          steps: fromTitles(drafted.steps),
+        });
+        if (!saved.success) {
+          setError(saved.message ?? 'Those steps could not be saved.');
+          return;
+        }
+        setError(null);
+        await load(true);
+      } finally {
+        setPlanning(null);
+      }
+    },
+    [username, load],
+  );
+
+  /**
    * Draft steps for every checkpoint on a goal that has none written.
    *
    * Behind the save rather than inside it, and on the `planning` flag rather
@@ -762,6 +806,7 @@ export default function Goals() {
                       void linkTask(entry, task, milestoneId)
                     }
                     onSuggest={suggestMilestones}
+                    onSuggestSteps={(stone) => void suggestSteps(stone)}
                     /* Only while filtered. The health chip carries its reason
                        as a tooltip everywhere else, which is enough when the
                        reader chose the goal; it is not enough when the page
