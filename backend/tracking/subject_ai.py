@@ -278,6 +278,29 @@ Order them by what would change the reader's next fortnight, not by \
 strength. A `hurts` card the reader can act on beats a `helps` card that only \
 flatters.
 
+`bottleneck` — the one thing most in the way, and the most important field \
+you write. Everything else on the page is a measurement; this is a judgement, \
+and it is the judgement the reader came for. Four parts:
+  - `name`: the bottleneck as a short noun phrase, six words or fewer. \
+"Reliable execution under time pressure", not "you should work on execution".
+  - `evidence`: three or four counted lines that put it beyond argument. \
+Quote them from the brief.
+  - `reading`: two or three sentences saying what it means. This is where you \
+say which finding explains which — that the ceiling is ahead of the \
+reliability, that the curve holding until a rung and then falling is a \
+ceiling rather than a general weakness, that work finished fast and rated \
+badly is rushing and rushing has a different fix from not knowing.
+  - `ruled_out`: what this means is *not* the problem, and why. One sentence. \
+This is the single most useful thing on the page and the one a reader cannot \
+get anywhere else: "harder material is not the next move, because 83% of what \
+goes wrong is not about knowing it." Say it plainly. If the figures do not \
+support ruling anything out, leave it empty rather than inventing a \
+reassurance.
+  - `confidence`: 0 to 1, from how much is behind it. The brief says what each \
+proportion is out of.
+
+Name one bottleneck. Two is a page with no bottleneck on it.
+
 `diagnosis` — at most three. Each is one finding, stated as a claim, with \
 `confidence` between 0 and 1 and `evidence` quoting the figures it rests on. \
 Be honest with confidence: a reading off forty rated tasks is not the same as \
@@ -303,6 +326,12 @@ fall, not the one above it.
   - `duration_minutes`: a real sitting, 10 to 120.
   - `reason`: one sentence, citing a figure from the brief. This is what makes \
 the recommendation checkable rather than a horoscope.
+  - `signal`: what would tell the reader this is working, in one sentence. \
+Name the figure to watch and which way it should move — "if execution at Hard \
+rises while the difficulty you file stays the same, this is working." It is \
+a prediction rather than a measurement, and it is what turns a recommendation \
+into an experiment somebody can settle. Do not hedge it into uselessness; a \
+signal that cannot come out negative is not a signal.
   - `drills`: two to four specific things to do in the session, a few words \
 each, concrete to the subject.
 
@@ -361,6 +390,19 @@ SCHEMA = {
                 'additionalProperties': False,
             },
         },
+        'bottleneck': {
+            'type': 'object',
+            'properties': {
+                'name': {'type': 'string'},
+                'evidence': {'type': 'array', 'items': {'type': 'string'}},
+                'reading': {'type': 'string'},
+                'ruled_out': {'type': 'string'},
+                'confidence': {'type': 'number'},
+            },
+            'required': ['name', 'evidence', 'reading', 'ruled_out',
+                         'confidence'],
+            'additionalProperties': False,
+        },
         'diagnosis': {
             'type': 'array',
             'items': {
@@ -398,10 +440,11 @@ SCHEMA = {
                     'difficulty': {'type': 'integer'},
                     'duration_minutes': {'type': 'integer'},
                     'reason': {'type': 'string'},
+                    'signal': {'type': 'string'},
                     'drills': {'type': 'array', 'items': {'type': 'string'}},
                 },
                 'required': ['title', 'focus', 'type', 'difficulty',
-                             'duration_minutes', 'reason', 'drills'],
+                             'duration_minutes', 'reason', 'signal', 'drills'],
                 'additionalProperties': False,
             },
         },
@@ -419,8 +462,8 @@ SCHEMA = {
             },
         },
     },
-    'required': ['goal_read', 'goal_evidence', 'diagnosis', 'priorities',
-                 'next_steps', 'insights'],
+    'required': ['goal_read', 'goal_evidence', 'bottleneck', 'diagnosis',
+                 'priorities', 'next_steps', 'insights'],
     'additionalProperties': False,
 }
 
@@ -834,6 +877,28 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             'relevance': relevance,
         })
 
+    # ---- The one thing most in the way -----------------------------------
+    # Dropped whole when any part of it cites a figure nobody counted. This is
+    # the page's judgement rather than one of its measurements, and a
+    # judgement with its working quietly removed is exactly the thing a reader
+    # has no way to check.
+    found_neck = found.get('bottleneck')
+    bottleneck = {}
+    if isinstance(found_neck, dict):
+        name = str(found_neck.get('name') or '').strip()
+        reading = str(found_neck.get('reading') or '').strip()
+        ruled = str(found_neck.get('ruled_out') or '').strip()
+        evidence = [str(item).strip() for item in (found_neck.get('evidence') or [])
+                    if str(item).strip()][:4]
+        if name and counted(name, reading, ruled, *evidence):
+            bottleneck = {
+                'name': name,
+                'evidence': evidence,
+                'reading': reading,
+                'ruled_out': ruled,
+                'confidence': _unit(found_neck.get('confidence')),
+            }
+
     diagnosis = []
     for entry in (found.get('diagnosis') or [])[:DIAGNOSES]:
         if not isinstance(entry, dict):
@@ -876,6 +941,12 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             continue
         kind = str(entry.get('type') or '').strip()
         reason = str(entry.get('reason') or '').strip()
+        # A prediction about a figure, so it is held to the record the same way
+        # the reason is: a signal naming a number nobody counted is a test the
+        # reader cannot run.
+        signal = str(entry.get('signal') or '').strip()
+        if not counted(signal):
+            signal = ''
         # The reason cites the record, so it is held to the record. The title
         # and the drills are what to go and do, and a quantity in one of those
         # is the model's job rather than a claim about the reader.
@@ -890,6 +961,7 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             'difficulty': _clamp(entry.get('difficulty'), *DIFFICULTY, fallback=3),
             'minutes': _clamp(entry.get('duration_minutes'), *MINUTES, fallback=30),
             'reason': reason,
+            'signal': signal,
             'drills': [str(item).strip() for item in (entry.get('drills') or [])
                        if str(item).strip()][:4],
         })
@@ -917,8 +989,8 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
     # rather than for the key.
     said_something = bool(goal_read.get('objective') or goal_read.get('focus'))
 
-    if not (said_something or goal_evidence or diagnosis or priorities
-            or steps or insights):
+    if not (said_something or goal_evidence or bottleneck or diagnosis
+            or priorities or steps or insights):
         # Either the model answered in the wrong shape, or every single thing
         # it said cited a figure nobody counted. The second is the interesting
         # one and it reads the same from here, so the sentence covers both
@@ -928,6 +1000,7 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
     return {
         'goal_read': goal_read,
         'goal_evidence': goal_evidence,
+        'bottleneck': bottleneck,
         'diagnosis': diagnosis,
         'priorities': priorities,
         'next_steps': steps,

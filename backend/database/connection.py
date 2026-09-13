@@ -93,6 +93,10 @@ ADDED_COLUMNS = (
     # see backend/tracking/event.py. Existing rows get NULL, which reads as
     # "claimed before anyone was counting" and therefore as long expired.
     ('event_colors', 'claimed_week', 'TEXT'),
+    # What would tell the reader a recommendation worked, stored beside the
+    # recommendation. Rows written before it existed read as '' — advice given
+    # with no test attached, which is what it was.
+    ('subject_recommendations', 'signal', 'TEXT'),
 
     # The outcome layer on goals. Everything a goal needed to stop being a
     # counter and start being something worth aiming at — see data/sql/goals.sql
@@ -328,6 +332,11 @@ ADDED_TABLES = ('''
         difficulty   INTEGER,
         minutes      INTEGER,
         reason       TEXT NOT NULL DEFAULT '',
+        -- What would say this worked, written when the advice was given.
+        -- Held rather than re-derived for the same reason `execution_at` is:
+        -- a prediction judged against a test invented afterwards is not a
+        -- prediction. See backend/tracking/subject_ai.py.
+        signal       TEXT NOT NULL DEFAULT '',
         execution_at INTEGER,
         taken_at     TEXT,
         task_id      TEXT

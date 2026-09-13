@@ -271,6 +271,99 @@ def test_the_evidence_cards_are_cut_to_what_the_section_draws():
     assert len(cleaned['goal_evidence']) == subject_ai.GOAL_EVIDENCE
 
 
+# ---------------------------------------------------------------------------
+# The bottleneck, and the test attached to each step
+# ---------------------------------------------------------------------------
+def test_a_bottleneck_is_dropped_whole_when_any_part_of_it_is_invented():
+    """Unlike the band, which is blanked clause by clause.
+
+    This is the page's only outright judgement rather than one of its
+    measurements, and a judgement with its working quietly removed is the exact
+    thing a reader has no way to check by looking.
+    """
+    cleaned = subject_ai._clean({
+        'bottleneck': {
+            'name': 'Reliable execution',
+            'evidence': ['Consistency: 57', 'recursion sits at 68'],
+            'reading': 'The ceiling is ahead of the reliability.',
+            'ruled_out': '', 'confidence': 0.8,
+        },
+        'goal_evidence': [], 'diagnosis': [], 'priorities': [],
+        'next_steps': [], 'insights': [],
+        # Something has to survive, or the empty-answer guard fires and the
+        # assertion below is never reached. A goal with no figure in it is not
+        # something the record check has an opinion about.
+        'goal_read': {'objective': 'Qualify for AIME', 'kind': 'competition',
+                      'focus': '', 'why_kind': ''},
+    }, brief=BRIEF)
+
+    assert cleaned['bottleneck'] == {}
+
+
+def test_a_bottleneck_whose_figures_were_all_counted_survives():
+    cleaned = subject_ai._clean({
+        'bottleneck': {
+            'name': 'Reliable execution',
+            'evidence': ['Consistency: 57'],
+            'reading': 'The ceiling is ahead of the reliability.',
+            'ruled_out': 'Harder material is not the next move.',
+            'confidence': 4,
+        },
+        'goal_evidence': [], 'diagnosis': [], 'priorities': [],
+        'next_steps': [], 'insights': [],
+    }, brief=BRIEF)
+
+    assert cleaned['bottleneck']['name'] == 'Reliable execution'
+    assert cleaned['bottleneck']['ruled_out'] == 'Harder material is not the next move.'
+    # Out-of-range confidence is not confidence, here as everywhere else.
+    assert cleaned['bottleneck']['confidence'] == 1.0
+
+
+def test_a_signal_naming_a_figure_nobody_counted_is_dropped():
+    """The signal is a prediction about a figure, so it is held to the record
+    the same way the reason is: a test the reader cannot run is not a test.
+
+    The step survives it. The two figures on a step are the model's own and
+    the title is a prescription; losing the signal costs the loop its check,
+    not the reader their session.
+    """
+    cleaned = subject_ai._clean({
+        'next_steps': [{
+            'title': 'Timed set at Fair',
+            'focus': 'Algebra',
+            'type': 'timed_set',
+            'difficulty': 3,
+            'duration_minutes': 40,
+            'reason': 'Consistency: 57 is the measure holding it down.',
+            'signal': 'If recursion moves past 68 this is working.',
+            'drills': ['ten past-paper problems'],
+        }],
+        'goal_evidence': [], 'diagnosis': [], 'priorities': [], 'insights': [],
+    }, brief=BRIEF)
+
+    assert len(cleaned['next_steps']) == 1
+    assert cleaned['next_steps'][0]['signal'] == ''
+    assert cleaned['next_steps'][0]['reason'].startswith('Consistency')
+
+
+def test_a_signal_quoting_the_brief_is_kept():
+    cleaned = subject_ai._clean({
+        'next_steps': [{
+            'title': 'Timed set at Fair',
+            'focus': 'Algebra',
+            'type': 'timed_set',
+            'difficulty': 3,
+            'duration_minutes': 40,
+            'reason': 'Consistency: 57 is the measure holding it down.',
+            'signal': 'Consistency: 57 should rise while the level you file stays the same.',
+            'drills': [],
+        }],
+        'goal_evidence': [], 'diagnosis': [], 'priorities': [], 'insights': [],
+    }, brief=BRIEF)
+
+    assert cleaned['next_steps'][0]['signal'].startswith('Consistency: 57 should rise')
+
+
 def test_an_answer_that_is_only_goal_evidence_is_still_an_answer():
     """The section it fills is the page's second one, so a reading that
     produced nothing else is a reading worth drawing."""

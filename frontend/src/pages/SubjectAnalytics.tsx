@@ -73,8 +73,8 @@ import { subjectState } from '@/components/Subject/state';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { NextSteps } from '@/components/Subject/NextSteps';
-import { ObjectiveBand, WhatMatters } from '@/components/Subject/Opening';
-import { evidenceFrom, objectiveFrom } from '@/components/Subject/objective';
+import { BottleneckPanel, ObjectiveBand, WhatMatters } from '@/components/Subject/Opening';
+import { bottleneckFrom, evidenceFrom, objectiveFrom } from '@/components/Subject/objective';
 import { Reading } from '@/components/Subject/Reading';
 import { performance } from '@/components/Subject/performance';
 import { latticeFor } from '@/components/Subject/lattice';
@@ -714,6 +714,15 @@ export default function SubjectAnalytics() {
     [model.goals, perf, reading, state],
   );
 
+  /* ---- WHAT IS THE BOTTLENECK -----------------------------------------
+     Null is a real answer, and the section does not draw for it. A subject
+     whose figures do not agree on one has no bottleneck, and naming one at
+     0.3 confidence is how a reader spends a month on the wrong thing. */
+  const bottleneck = useMemo(
+    () => bottleneckFrom(state, perf, reading?.bottleneck ?? null),
+    [perf, reading, state],
+  );
+
   /* Asked once, so an install with no key draws no button at all — the same
      bargain the write-up keeps, for the same reason. */
   useEffect(() => {
@@ -1040,6 +1049,128 @@ export default function SubjectAnalytics() {
                 otherwise, which is always. */}
             <WhatMatters cards={evidenceCards} />
 
+            {/* ---- WHAT IS THE BOTTLENECK ----------------------------- */}
+            {/* The page's only outright judgement, and the section the two
+                above it exist to support. One, never two: a page with two
+                bottlenecks on it has none.
+
+                It sits above Do This Next rather than beside it because the
+                steps are an answer to it — a reader who disagrees with the
+                naming should disagree before reading the prescription, not
+                after acting on it. */}
+            <BottleneckPanel bottleneck={bottleneck} />
+
+            {/* ---- WHAT SHOULD I DO NEXT ------------------------------- */}
+            {/* The section the rest of the page exists to produce, and it is
+                now fourth on the page rather than below two screens of
+                figures.
+
+                That move is the point of the restructure. The old order asked
+                the reader to read a dashboard, infer a problem from it, and
+                then find the advice — which is three jobs, two of which the
+                page is better at than they are. Goal, then what bears on it,
+                then the one thing in the way, then what to do about it. The
+                figures did not go anywhere; they are the working, and the
+                working goes under the answer.
+
+                Two halves, and the order is the argument. The app's own ranked
+                advice is first and is pure arithmetic — it is always there,
+                costs nothing, and is what the page says when nobody presses
+                anything. The model's steps are second, and they are the ones
+                that can name what a task at this difficulty in this subject
+                should actually contain, which no table here knows.
+
+                Which half is which is stated rather than left to be inferred:
+                a reader has to know what is counted before deciding what to
+                act on. */}
+            <section className="ax-panel sb-panel" aria-label="What to do next">
+              <div className="ax-panel-head">
+                <div className="ax-panel-title">
+                  <h2>Do this next</h2>
+                </div>
+              </div>
+
+              {model.advice.length > 0 && (
+                <>
+                  <p className="ax-panel-note">
+                    Ranked by what it is worth, with the figure behind each one. All from
+                    your own tasks.
+                  </p>
+                  <ol className="sb-advice">
+                    {model.advice.map((item, at) => (
+                      <li key={item.id} className={`sb-advice-item is-${item.weight}`}>
+                        <span className="sb-advice-rank" aria-hidden="true">
+                          {at + 1}
+                        </span>
+                        <div>
+                          <strong>{item.title}</strong>
+                          <p>{item.detail}</p>
+                          <p className="sb-advice-why">
+                            <span>Why:</span> {item.why}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </>
+              )}
+
+              {canRead && (
+                <div className="sb-draft">
+                  <div className="sx-ask">
+                    <div>
+                      <strong>Plan the next sessions</strong>
+                      <p>Written by a model from the figures above. It adds no numbers of its own.</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="ax-btn"
+                      onClick={() => void askForReading()}
+                      disabled={thinking}
+                    >
+                      {thinking ? 'Reading…' : reading ? 'Read it again' : 'Plan my next sessions'}
+                    </button>
+                  </div>
+
+                  {readError && (
+                    <p className="sx-ask-err" role="alert">
+                      {readError}
+                    </p>
+                  )}
+
+                  {reading && (
+                    <div className="sb-draft-body">
+                      <NextSteps
+                        steps={reading.next_steps}
+                        outcomes={outcomes}
+                        taken={taken}
+                        busy={stepBusy}
+                        onMakeTask={(step) => void makeTask(step)}
+                        onDidIt={(step) => void record(step)}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
+
+            {/* ---- The reading behind those steps ---------------------- */}
+            {reading &&
+              (reading.diagnosis.length > 0 ||
+                reading.priorities.length > 0 ||
+                reading.insights.length > 0) && (
+                <Panel
+                  title="What the record says"
+                  note="Written by a model from the figures above. Each finding shows what it rests on."
+                >
+                  <Reading
+                    diagnosis={reading.diagnosis}
+                    priorities={reading.priorities}
+                    insights={reading.insights}
+                  />
+                </Panel>
+              )}
+
             {/* ---- WHERE AM I ----------------------------------------- */}
             {/* The page answers three questions in order — where am I, why am
                 I there, what should I do next — and this is the first, in one
@@ -1163,107 +1294,6 @@ export default function SubjectAnalytics() {
                 <Curve curve={state.curve} />
               </Panel>
             )}
-
-            {/* ---- WHAT SHOULD I DO NEXT ------------------------------- */}
-            {/* The section the rest of the page exists to produce.
-
-                Two halves, and the order is the argument. The app's own ranked
-                advice is first and is pure arithmetic — it is always there,
-                costs nothing, and is what the page says when nobody presses
-                anything. The model's steps are second, and they are the ones
-                that can name what a task at this difficulty in this subject
-                should actually contain, which no table here knows.
-
-                Which half is which is stated rather than left to be inferred:
-                a reader has to know what is counted before deciding what to
-                act on. */}
-            <section className="ax-panel sb-panel" aria-label="What to do next">
-              <div className="ax-panel-head">
-                <div className="ax-panel-title">
-                  <h2>Do this next</h2>
-                </div>
-              </div>
-
-              {model.advice.length > 0 && (
-                <>
-                  <p className="ax-panel-note">
-                    Ranked by what it is worth, with the figure behind each one. All from
-                    your own tasks.
-                  </p>
-                  <ol className="sb-advice">
-                    {model.advice.map((item, at) => (
-                      <li key={item.id} className={`sb-advice-item is-${item.weight}`}>
-                        <span className="sb-advice-rank" aria-hidden="true">
-                          {at + 1}
-                        </span>
-                        <div>
-                          <strong>{item.title}</strong>
-                          <p>{item.detail}</p>
-                          <p className="sb-advice-why">
-                            <span>Why:</span> {item.why}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </>
-              )}
-
-              {canRead && (
-                <div className="sb-draft">
-                  <div className="sx-ask">
-                    <div>
-                      <strong>Plan the next sessions</strong>
-                      <p>Written by a model from the figures above. It adds no numbers of its own.</p>
-                    </div>
-                    <button
-                      type="button"
-                      className="ax-btn"
-                      onClick={() => void askForReading()}
-                      disabled={thinking}
-                    >
-                      {thinking ? 'Reading…' : reading ? 'Read it again' : 'Plan my next sessions'}
-                    </button>
-                  </div>
-
-                  {readError && (
-                    <p className="sx-ask-err" role="alert">
-                      {readError}
-                    </p>
-                  )}
-
-                  {reading && (
-                    <div className="sb-draft-body">
-                      <NextSteps
-                        steps={reading.next_steps}
-                        outcomes={outcomes}
-                        taken={taken}
-                        busy={stepBusy}
-                        onMakeTask={(step) => void makeTask(step)}
-                        onDidIt={(step) => void record(step)}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
-
-            {/* ---- The reading behind those steps ---------------------- */}
-            {reading &&
-              (reading.diagnosis.length > 0 ||
-                reading.priorities.length > 0 ||
-                reading.insights.length > 0) && (
-                <Panel
-                  title="What the record says"
-                  note="Written by a model from the figures above. Each finding shows what it rests on."
-                >
-                  <Reading
-                    diagnosis={reading.diagnosis}
-                    priorities={reading.priorities}
-                    insights={reading.insights}
-                  />
-                </Panel>
-              )}
 
             {/* ---- The shape of it ---------------------------------- */}
             {/* Two charts, not two lines on one axis. Tasks finished runs 0 to

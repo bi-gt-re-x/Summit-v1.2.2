@@ -14,7 +14,7 @@
  * clause. Every test below about `read` is really a test about that.
  */
 import { describe, expect, it } from 'vitest';
-import { evidenceFrom, objectiveFrom } from './objective';
+import { bottleneckFrom, evidenceFrom, objectiveFrom } from './objective';
 import type { Performance } from './performance';
 import type { SubjectGoal } from './model';
 import type { SubjectState } from './state';
@@ -290,5 +290,93 @@ describe('evidenceFrom', () => {
 
   it('draws nothing rather than filler when there is no evidence either way', () => {
     expect(evidenceFrom(stateWith(), perfWith(), [])).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('bottleneckFrom', () => {
+  it('names nothing when the figures do not agree on anything', () => {
+    // A page that names a bottleneck at low confidence is how somebody spends
+    // a month on the wrong thing. No answer is a real answer.
+    expect(bottleneckFrom(stateWith(), perfWith())).toBeNull();
+  });
+
+  it('leads with capability ahead of what lands, because it rules the most out', () => {
+    const neck = bottleneckFrom(
+      stateWith({ curve: cliffCurve() }),
+      perfWith({
+        divergence: { known: true, capability: 14, outcome: 2, reading: 'capability-ahead' },
+        families: {
+          known: true, answered: 14, shares: [],
+          leading: { key: 'execution', label: 'The sitting', share: 58 },
+          notConceptual: 83,
+        },
+      }),
+    );
+
+    expect(neck?.name).toBe('Turning capability into work that lands');
+    // The half a reader cannot get anywhere else: the thing to stop doing.
+    expect(neck?.ruled_out).toContain('Harder material is not the next move');
+  });
+
+  it('will not rule anything out on figures that do not support it', () => {
+    // Same bottleneck, no reasons behind it. The naming survives; the
+    // instruction to stop does not.
+    const neck = bottleneckFrom(
+      stateWith(),
+      perfWith({
+        divergence: { known: true, capability: 14, outcome: 2, reading: 'capability-ahead' },
+      }),
+    );
+
+    expect(neck?.name).toBe('Turning capability into work that lands');
+    expect(neck?.ruled_out).toBe('');
+    expect(neck?.confidence).toBeLessThan(0.6);
+  });
+
+  it('names the rung when the curve holds and then falls', () => {
+    const neck = bottleneckFrom(stateWith({ curve: cliffCurve() }), perfWith());
+
+    expect(neck?.name).toBe('Work at Hard');
+    expect(neck?.reading).toContain('The level to work is Fair');
+    expect(neck?.ruled_out).toBe('Everything below Hard is not the problem.');
+    expect(neck?.evidence).toContain('a 24-point step between them');
+  });
+
+  it('is less sure of a cliff with less behind it', () => {
+    const thin = cliffCurve();
+    const sure = bottleneckFrom(stateWith({ curve: thin }), perfWith())?.confidence ?? 0;
+    thin.threshold = { ...thin.threshold!, done: 4 };
+    const unsure = bottleneckFrom(stateWith({ curve: thin }), perfWith())?.confidence ?? 0;
+
+    expect(unsure).toBeLessThan(sure);
+  });
+
+  it('takes the reading over its own naming', () => {
+    const neck = bottleneckFrom(
+      stateWith({ curve: cliffCurve() }), perfWith(),
+      {
+        name: 'Reliable execution under time pressure',
+        evidence: ['Sprint: 24 to 30'],
+        reading: 'Your ceiling is ahead of your contest reliability.',
+        ruled_out: 'Harder problems are not the highest-return move.',
+        confidence: 0.8,
+      },
+    );
+
+    expect(neck?.name).toBe('Reliable execution under time pressure');
+    expect(neck?.source).toBe('read');
+  });
+
+  it('falls back to its own naming when the reading had none', () => {
+    // `_clean` drops a bottleneck whole when any part of it cites a figure
+    // nobody counted, so an empty one reaching here is the normal case.
+    const neck = bottleneckFrom(
+      stateWith({ curve: cliffCurve() }), perfWith(),
+      { name: '', evidence: [], reading: '', ruled_out: '', confidence: 0 },
+    );
+
+    expect(neck?.name).toBe('Work at Hard');
+    expect(neck?.source).toBe('counted');
   });
 });

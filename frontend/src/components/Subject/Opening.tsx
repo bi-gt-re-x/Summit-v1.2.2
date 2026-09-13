@@ -32,8 +32,20 @@
  * trust a claim needs to know which kind it is, and no amount of care in the
  * wording substitutes for saying so.
  */
-import type { EvidenceCard, Objective as ObjectiveRead } from './objective';
+import type {
+  EvidenceCard,
+  NamedBottleneck,
+  Objective as ObjectiveRead,
+} from './objective';
 import { KIND_MEANS, KIND_WORDS } from './objective';
+
+/** Confidence in words. A bare 0.65 is a number nobody can act on. */
+function sureness(value: number): string {
+  if (value >= 0.85) return 'high confidence';
+  if (value >= 0.6) return 'fair confidence';
+  if (value >= 0.4) return 'low confidence';
+  return 'a guess';
+}
 
 /** The arrow each direction draws. Never colour alone — see subject-state.css. */
 const DIRECTION_MARK: Record<EvidenceCard['direction'], string> = {
@@ -153,6 +165,67 @@ export function WhatMatters({ cards }: { cards: EvidenceCard[] }) {
           </li>
         ))}
       </ul>
+    </section>
+  );
+}
+
+/**
+ * THE BOTTLENECK — the page's only outright judgement.
+ *
+ * Drawn as one block rather than as a card among cards, because a bottleneck
+ * beside three other things of equal weight is not a bottleneck. The order
+ * inside it is the argument: the name, then what says so, then what it means,
+ * then what it rules out.
+ *
+ * `ruled_out` is last and is the part a reader cannot get anywhere else.
+ * Everything above it narrows; that line is the only one that tells somebody
+ * to stop doing something, and stopping the wrong work is worth more than
+ * starting the right work. It is empty rather than reassuring when nothing in
+ * the record supports ruling anything out.
+ */
+export function BottleneckPanel({ bottleneck }: { bottleneck: NamedBottleneck | null }) {
+  if (!bottleneck) return null;
+
+  return (
+    <section className="so-neck" aria-label="Your current bottleneck">
+      <p className="so-neck-label">Your current bottleneck</p>
+      <h2 className="so-neck-name">{bottleneck.name}</h2>
+
+      <p className="so-neck-sure">
+        {sureness(bottleneck.confidence)}
+        <span>
+          {bottleneck.source === 'read'
+            ? ' · read against your goal'
+            : ' · named by rule from your record'}
+        </span>
+      </p>
+
+      <div className="so-neck-body">
+        {bottleneck.evidence.length > 0 && (
+          <div className="so-neck-part">
+            <h3>Why we think that</h3>
+            <ul className="so-neck-evidence">
+              {bottleneck.evidence.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {bottleneck.reading && (
+          <div className="so-neck-part">
+            <h3>What it means</h3>
+            <p className="so-neck-reading">{bottleneck.reading}</p>
+          </div>
+        )}
+      </div>
+
+      {bottleneck.ruled_out && (
+        <p className="so-neck-out">
+          <span>Ruled out</span>
+          {bottleneck.ruled_out}
+        </p>
+      )}
     </section>
   );
 }

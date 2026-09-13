@@ -70,7 +70,7 @@ export function NextSteps({
           return (
             <li key={step.id || step.title} className={`sx-step${done ? ' is-taken' : ''}`}>
               <span className="sx-step-rank" aria-hidden="true">
-                {at + 1}
+                {String(at + 1).padStart(2, '0')}
               </span>
 
               <div className="sx-step-body">
@@ -90,6 +90,23 @@ export function NextSteps({
                 </div>
 
                 <p className="sx-step-why">{step.reason}</p>
+
+                {/* What would say this worked.
+
+                    The field that turns a recommendation into an experiment
+                    somebody can settle, and the reason it is worth a line of
+                    its own rather than a clause in the reason: a reader who
+                    knows what to watch can tell in a fortnight whether to keep
+                    doing this, and the app records the same thing next to the
+                    row. Without it, "that did not help" and "I never tried it"
+                    look identical from here — the failure the whole loop
+                    exists to prevent. */}
+                {step.signal && (
+                  <p className="sx-step-signal">
+                    <span>Expected signal</span>
+                    {step.signal}
+                  </p>
+                )}
 
                 {step.drills.length > 0 && (
                   <ul className="sx-step-drills">

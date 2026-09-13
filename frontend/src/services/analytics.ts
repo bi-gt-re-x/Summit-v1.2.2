@@ -416,6 +416,19 @@ export interface NextStep {
   difficulty: number;
   minutes: number;
   reason: string;
+  /**
+   * What would say this worked, written when the advice was given.
+   *
+   * A prediction rather than a measurement, and the field that turns a
+   * recommendation into an experiment somebody can settle: "if execution at
+   * Hard rises while the difficulty you file stays the same, this is
+   * working." Stored beside the recommendation, because a prediction judged
+   * against a test invented afterwards is not a prediction.
+   *
+   * Empty on a step whose signal cited a figure nobody counted, and on every
+   * step advised before the field existed.
+   */
+  signal: string;
   drills: string[];
 }
 
@@ -484,10 +497,31 @@ export interface GoalEvidence {
   relevance: string;
 }
 
+/**
+ * The one thing most in the way.
+ *
+ * The page's only outright judgement, and the reason it is a section of its
+ * own rather than the first of three diagnoses: a page with two bottlenecks
+ * on it has none.
+ *
+ * `ruledOut` is the half a reader cannot get anywhere else — "harder material
+ * is not the next move, and here is the figure that says so". It is empty
+ * rather than reassuring when nothing supports ruling anything out.
+ */
+export interface Bottleneck {
+  name: string;
+  evidence: string[];
+  reading: string;
+  ruled_out: string;
+  /** 0-1. */
+  confidence: number;
+}
+
 export interface SubjectReading {
   /** Absent on a reading written before the objective band existed. */
   goal_read?: GoalRead;
   goal_evidence?: GoalEvidence[];
+  bottleneck?: Bottleneck;
   diagnosis: Diagnosis[];
   priorities: Priority[];
   next_steps: NextStep[];
@@ -591,6 +625,8 @@ export interface PastRecommendation {
   difficulty: number;
   minutes: number;
   reason: string;
+  /** Empty for advice given before the field existed. */
+  signal: string;
   on: string;
   taken: boolean;
   task_id: string;

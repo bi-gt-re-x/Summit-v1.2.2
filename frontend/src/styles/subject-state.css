@@ -632,3 +632,26 @@
     color: var(--ax-faint);
 }
 .sx-ask-err { margin: 10px 0 0; font-size: .78rem; color: var(--ax-bad); }
+
+/* What would say a step worked. Set apart from the reason above it because
+   the two are different kinds of statement: the reason cites something that
+   already happened, this predicts something that has not. */
+.sx-step-signal {
+    margin: 10px 0 0;
+    padding: 10px 12px;
+    border: 1px dashed var(--ax-line);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--ax-text);
+}
+
+.sx-step-signal span {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ax-violet);
+}

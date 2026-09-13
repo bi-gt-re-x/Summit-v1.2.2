@@ -43,6 +43,7 @@
  * call, and it is asked to justify it.
  */
 import type {
+  Bottleneck,
   EvidenceDirection,
   GoalEvidence,
   GoalKind,
@@ -297,7 +298,7 @@ function candidates(
         hold && hold.execution !== null
           ? `${hold.label}: execution ${hold.execution} over ${plural(hold.done, 'rated task')}`
           : '',
-        curve.drop !== null ? `a ${plural(curve.drop, 'point')} step between them` : '',
+        curve.drop !== null ? `a ${curve.drop}-point step between them` : '',
       ].filter(Boolean),
       relevance: `The level to work is ${hold?.label ?? 'the one below it'}, not the one above.`,
     },
@@ -420,4 +421,163 @@ export function evidenceFrom(
     relevance: one.relevance,
     source: 'counted' as const,
   }));
+}
+
+// ---------------------------------------------------------------------------
+// The bottleneck
+// ---------------------------------------------------------------------------
+/** The named bottleneck, and where the naming came from. */
+export interface NamedBottleneck extends Bottleneck {
+  source: 'read' | 'counted';
+}
+
+/**
+ * The one thing most in the way, named from the arithmetic.
+ *
+ * ## Why the order below is the order
+ *
+ * These are not ranked by which figure is worst. They are ranked by how much
+ * the naming *rules out*, because ruling something out is the half of this
+ * section a reader cannot get anywhere else and it is what stops the next
+ * fortnight being spent on the wrong thing.
+ *
+ * So "capability is ahead of what lands" comes first: it is the one that says
+ * plainly that harder material is not the move, and getting that call wrong
+ * costs a fortnight of work at the wrong level in either direction. The
+ * difficulty cliff comes before the composite gap for the same reason — it
+ * names a rung, and a rung is something to go and do on Tuesday.
+ *
+ * ## What it cannot do
+ *
+ * It cannot say what the bottleneck means *for this goal*. "Reliable
+ * execution under time pressure" is a statement about a competition, and
+ * whether this is a competition is the one thing the arithmetic does not
+ * know. The model's version is a reading; this one is a classification, and
+ * the page says which it is showing.
+ *
+ * Null is a real answer. A subject whose figures do not agree on a
+ * bottleneck has no bottleneck, and the section does not draw — which is
+ * better than the page naming one at 0.3 confidence and a reader spending a
+ * month on it.
+ */
+export function bottleneckFrom(
+  state: SubjectState,
+  perf: Performance,
+  read?: Bottleneck | null,
+): NamedBottleneck | null {
+  if (read && read.name) return { ...read, source: 'read' };
+
+  const { divergence, families, gap, calibration } = perf;
+  const cliff = state.curve.threshold;
+  const holds = state.curve.holds ?? state.curve.best;
+  const enough = families.known && families.answered >= 6;
+
+  /* Capability running ahead of what lands, with the reasons agreeing that it
+     is not about knowing the work. The strongest thing the arithmetic can
+     say, because it rules out the commonest wrong move. */
+  if (divergence.known && divergence.reading === 'capability-ahead') {
+    return {
+      name: 'Turning capability into work that lands',
+      evidence: [
+        `execution ${(divergence.capability ?? 0) > 0 ? '+' : ''}${divergence.capability} points across the window`,
+        `quality ${(divergence.outcome ?? 0) > 0 ? '+' : ''}${divergence.outcome} points over the same run`,
+        enough
+          ? `${families.notConceptual}% of ${families.answered} named struggles were not conceptual`
+          : `${state.ratedCount} rated tasks behind the comparison`,
+      ],
+      reading:
+        'What you can take on is moving faster than what you finish well. '
+        + 'The ceiling is not the material; it is reproducing what you can '
+        + 'already do often enough that it stops being a good day.',
+      ruled_out: enough && families.notConceptual >= 60
+        ? 'Harder material is not the next move — most of what goes wrong is '
+          + 'not about knowing it.'
+        : '',
+      confidence: enough ? 0.7 : 0.5,
+      source: 'counted',
+    };
+  }
+
+  /* The sitting rather than the subject. Second because it names a kind of
+     problem rather than a level to work at. */
+  if (enough && families.notConceptual >= 60) {
+    return {
+      name: 'How the sittings go, not what is in them',
+      evidence: [
+        `${families.notConceptual}% of named struggles were not conceptual`,
+        `out of ${families.answered} answered struggles`,
+        families.leading ? `most common: ${families.leading.label}, ${families.leading.share}%` : '',
+      ].filter(Boolean),
+      reading:
+        'The work is going wrong after it starts rather than because of what '
+        + 'is in it. That has a different fix from not knowing: the session '
+        + 'has to change shape before its contents do.',
+      ruled_out:
+        'Adding difficulty would put a second problem on top of the one you have.',
+      confidence: families.answered >= 12 ? 0.7 : 0.55,
+      source: 'counted',
+    };
+  }
+
+  /* A ceiling at a named rung. Third, and it is the most actionable of the
+     three — it says which level to work at. */
+  if (cliff && cliff.execution !== null && holds) {
+    return {
+      name: `Work at ${cliff.label}`,
+      evidence: [
+        `${cliff.label}: execution ${cliff.execution} over ${plural(cliff.done, 'rated task')}`,
+        `${holds.label}: execution ${holds.execution} over ${plural(holds.done, 'rated task')}`,
+        state.curve.drop !== null ? `a ${state.curve.drop}-point step between them` : '',
+      ].filter(Boolean),
+      reading:
+        `The curve holds and then falls, which is a ceiling rather than a `
+        + `general weakness. The level to work is ${holds.label} — the one `
+        + `that is landing — until it stops being the hard one.`,
+      ruled_out: `Everything below ${cliff.label} is not the problem.`,
+      confidence: cliff.done >= 8 ? 0.65 : 0.45,
+      source: 'counted',
+    };
+  }
+
+  /* Finished fast and rated badly. Narrow, but it is a specific behaviour
+     with a specific fix, which most composites are not. */
+  if (calibration.known && calibration.rushed >= 3) {
+    return {
+      name: 'Rushing rather than not knowing',
+      evidence: [
+        `${plural(calibration.rushed, 'task')} came in under your own median for the level and rated 3 or below`,
+      ],
+      reading:
+        'Work is being finished quicker than it usually takes you and rated '
+        + 'badly for it. That is a pace problem, and a pace problem does not '
+        + 'improve by being given more to do.',
+      ruled_out: 'More volume is not the move.',
+      confidence: calibration.rushed >= 6 ? 0.6 : 0.45,
+      source: 'counted',
+    };
+  }
+
+  /* The composite, last. It names a group of measures rather than a thing to
+     do, which is why nothing above it defers to it. */
+  if (gap.known && gap.largest && gap.total > 0) {
+    return {
+      name: gap.largest.label,
+      evidence: [
+        `${plural(gap.largest.points, 'point')} of the ${plural(gap.total, 'point')} you are short`,
+        ...gap.parts
+          .filter((part) => part.key !== gap.largest?.key && part.points > 0)
+          .slice(0, 2)
+          .map((part) => `${part.label}: ${plural(part.points, 'point')}`),
+      ],
+      reading:
+        `More of the shortfall sits here than anywhere else. It is `
+        + `${gap.largest.label.toLowerCase()} — `
+        + `${gap.parts.find((part) => part.key === gap.largest?.key)?.from ?? ''}.`,
+      ruled_out: '',
+      confidence: 0.45,
+      source: 'counted',
+    };
+  }
+
+  return null;
 }

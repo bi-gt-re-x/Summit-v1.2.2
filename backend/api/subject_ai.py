@@ -317,6 +317,7 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
             'difficulty': step['difficulty'],
             'minutes': step['minutes'],
             'reason': step['reason'],
+            'signal': step.get('signal', ''),
             'execution_at': execution_now,
         }
         db.insert_row('subject_recommendations', row)
@@ -417,7 +418,8 @@ def list_recommendations(subject: str = '', username: str = Depends(current_user
             {'id': row.get('id'), 'title': row.get('title'),
              'focus': row.get('focus'), 'type': row.get('kind'),
              'difficulty': row.get('difficulty'), 'minutes': row.get('minutes'),
-             'reason': row.get('reason'), 'on': (row.get('given_at') or '')[:10],
+             'reason': row.get('reason'), 'signal': row.get('signal') or '',
+             'on': (row.get('given_at') or '')[:10],
              'taken': bool(row.get('taken_at')), 'task_id': row.get('task_id')}
             for row in rows
         ],

@@ -16,8 +16,8 @@
  */
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { ObjectiveBand, WhatMatters } from './Opening';
-import type { EvidenceCard, Objective } from './objective';
+import { BottleneckPanel, ObjectiveBand, WhatMatters } from './Opening';
+import type { EvidenceCard, NamedBottleneck, Objective } from './objective';
 
 function bandWith(over: Partial<Objective> = {}): Objective {
   return {
@@ -144,5 +144,57 @@ describe('WhatMatters', () => {
   it('says they were read against the goal once one has', () => {
     render(<WhatMatters cards={[cardWith({ source: 'read' })]} />);
     expect(screen.getByText(/read against your goal/i)).toBeInTheDocument();
+  });
+});
+
+// ---------------------------------------------------------------------------
+describe('BottleneckPanel', () => {
+  function neckWith(over: Partial<NamedBottleneck> = {}): NamedBottleneck {
+    return {
+      name: 'Reliable execution under time pressure',
+      evidence: ['Hard: execution 64 over 9 rated tasks'],
+      reading: 'Your ceiling is ahead of your reliability.',
+      ruled_out: 'Harder material is not the next move.',
+      confidence: 0.8,
+      source: 'read',
+      ...over,
+    };
+  }
+
+  it('draws nothing when nothing was named', () => {
+    const { container } = render(<BottleneckPanel bottleneck={null} />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('names one thing and shows what it rests on', () => {
+    render(<BottleneckPanel bottleneck={neckWith()} />);
+
+    expect(screen.getByRole('heading', { name: /reliable execution/i })).toBeInTheDocument();
+    expect(screen.getByText('Hard: execution 64 over 9 rated tasks')).toBeInTheDocument();
+    expect(screen.getByText('Your ceiling is ahead of your reliability.')).toBeInTheDocument();
+  });
+
+  it('carries the line that tells somebody to stop doing something', () => {
+    render(<BottleneckPanel bottleneck={neckWith()} />);
+
+    expect(screen.getByText('Ruled out')).toBeInTheDocument();
+    expect(screen.getByText('Harder material is not the next move.')).toBeInTheDocument();
+  });
+
+  it('omits it rather than reassuring when nothing supports ruling out', () => {
+    render(<BottleneckPanel bottleneck={neckWith({ ruled_out: '' })} />);
+    expect(screen.queryByText('Ruled out')).not.toBeInTheDocument();
+  });
+
+  it('says how sure it is in words rather than as a decimal', () => {
+    render(<BottleneckPanel bottleneck={neckWith({ confidence: 0.45 })} />);
+
+    expect(screen.getByText(/low confidence/)).toBeInTheDocument();
+    expect(screen.queryByText(/0\.45/)).not.toBeInTheDocument();
+  });
+
+  it('says whether the naming was read or counted', () => {
+    render(<BottleneckPanel bottleneck={neckWith({ source: 'counted' })} />);
+    expect(screen.getByText(/named by rule from your record/)).toBeInTheDocument();
   });
 });
