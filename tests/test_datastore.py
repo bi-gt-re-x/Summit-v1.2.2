@@ -156,3 +156,59 @@ def test_a_real_constraint_still_raises(two_accounts):
         db.insert_row('tasks', {'id': db.new_id('tasks'),
                                 'user_id': 'nobody-by-that-name',
                                 'title': 'orphan', 'status': 'todo'})
+
+
+# --------------------------------------------------------------------------
+# JSON columns that hold a scalar
+# --------------------------------------------------------------------------
+def test_a_preference_written_without_its_encoding_still_reads_as_itself(two_accounts):
+    """`user_settings.value` is JSON, and a bare word is not.
+
+    Everything that writes through `_encode` dumps the value, so this only
+    arises when something writes the column itself — a seeding script, an
+    import, a hand-run UPDATE. It arose: scripts/seed_alpha.py wrote eighteen
+    preferences bare, `json.loads('dark')` raised, and the decode's `{}`
+    fallback handed the page an object where it wanted a word. The account
+    lost its palette on every page.
+
+    `{}` is still right for the JSON columns that hold an object. For the ones
+    holding a scalar the text as written is a better answer than an empty
+    thing of the wrong shape — see SCALAR_JSON_COLUMNS.
+    """
+    alice, _ = two_accounts
+    with db.connect() as con:
+        con.execute('INSERT INTO user_settings (user_id, key, value)'
+                    ' VALUES (?,?,?)', (alice, 'theme_mode', 'dark'))
+
+    assert db.user_setting(alice, 'theme_mode') == 'dark'
+
+
+def test_a_properly_encoded_preference_is_unaffected(two_accounts):
+    """The fallback is a fallback: anything that is JSON is still decoded.
+
+    The bool is the odd one and it is not this change's doing: `_encode` tests
+    `isinstance(value, bool)` before it reaches the JSON branch, so a flag is
+    stored as SQLite's 1 and read back as 1. `_keyed` in backend/api/settings.py
+    is what turns it into a bool again, and it accepts both spellings — the 1
+    this writes and the 'true' a `json.dumps` writes.
+    """
+    alice, _ = two_accounts
+    db.set_user_setting(alice, 'confirm_delete', True)
+    db.set_user_setting(alice, 'default_xp', 40)
+    db.set_user_setting(alice, 'analytics_subjects', ['music'])
+
+    assert db.user_setting(alice, 'confirm_delete') == 1
+    assert db.user_setting(alice, 'default_xp') == 40
+    assert db.user_setting(alice, 'analytics_subjects') == ['music']
+
+
+def test_an_object_column_still_falls_back_to_an_empty_object(two_accounts):
+    """The other JSON columns are read by callers that want a dict."""
+    alice, _ = two_accounts
+    with db.connect() as con:
+        con.execute('INSERT INTO metric_snapshots (user_id, date, metric,'
+                    ' score, grade, detail) VALUES (?,?,?,?,?,?)',
+                    (alice, '2026-09-13', 'overall', 80, 'A', 'not json'))
+
+    rows = [r for r in db.read_table('metric_snapshots') if r['user_id'] == alice]
+    assert rows[0]['detail'] == {}

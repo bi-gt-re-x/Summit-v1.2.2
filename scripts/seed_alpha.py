@@ -85,6 +85,7 @@ set — `NOT_STUDY` below is where that distinction is actually drawn.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import random
 import sqlite3
@@ -895,6 +896,13 @@ RECORD_COLUMNS = (
 #: dashboard, the catch-up prompt is on because an untracked day is a hole in
 #: six years of record, deleting asks first, and the clock is 24-hour because
 #: the timetable is written that way.
+#: Each value is the Python value the preference *is*, not a string spelling
+#: of it: `True` and not 'true', 40 and not '40'. `user_settings.value` is a
+#: JSON column (JSON_COLUMNS in backend/database/connection.py), so what goes
+#: into it is `json.dumps` of this and what comes back out is this — a bool
+#: reaches the page as a bool and a number as a number, the same as if the
+#: Settings page had written it. See the insert below for what happens when
+#: that encoding is skipped.
 SETTINGS = {
     'theme_mode': 'dark',
     'accent': 'violet',
@@ -904,9 +912,9 @@ SETTINGS = {
 
     # Strict. Every question the app can ask after a task, asked.
     'rating_depth': 'reasons',
-    'confirm_delete': 'true',
+    'confirm_delete': True,
     'default_priority': 'high',
-    'default_xp': '40',
+    'default_xp': 40,
 
     'task_status': 'open',
     'task_sort': 'due',
@@ -916,29 +924,29 @@ SETTINGS = {
 
     # Four hours of deliberate work is the floor on a day in the thesis year,
     # and the dim is on because the timer is used rather than glanced at.
-    'focus_goal_hours': '4',
-    'focus_dim': 'true',
-    'catchup_prompt': 'true',
+    'focus_goal_hours': 4.0,
+    'focus_dim': True,
+    'catchup_prompt': True,
 
     'records_sort': 'improvement',
-    'timer_setup_done': 'true',
+    'timer_setup_done': True,
 
     'analytics_window': 'all',
-    'analytics_setup_done': 'true',
+    'analytics_setup_done': True,
     'analytics_home_tab': 'growth',
     'analytics_log_style': 'both',
     'analytics_tone': 'harsh',
     'analytics_detail': 'everything',
-    'analytics_standing': 'true',
+    'analytics_standing': True,
 
-    'notifications_enabled': 'true',
-    'notify_popups': 'true',
-    'notify_tasks': 'true',
-    'notify_calendar': 'true',
-    'notify_analytics': 'true',
-    'notify_goals': 'true',
-    'notify_streak': 'true',
-    'notify_progress': 'true',
+    'notifications_enabled': True,
+    'notify_popups': True,
+    'notify_tasks': True,
+    'notify_calendar': True,
+    'notify_analytics': True,
+    'notify_goals': True,
+    'notify_streak': True,
+    'notify_progress': True,
 }
 
 
@@ -1461,10 +1469,25 @@ def main():
                 # seeding script and the endpoint would need a session. Every
                 # key is one FIELDS already declares, so a value that stops
                 # being valid fails the same read the app's own would.
+                #
+                # `json.dumps` is not decoration. `user_settings.value` is in
+                # JSON_COLUMNS, so every read of it is a `json.loads` — and on
+                # failure that read returns `{}` rather than raising. A bare
+                # 'dark' written here is not JSON, so it came back as `{}`: not
+                # the wrong theme, an *object* where the page expected a word.
+                # Eighteen of these were stored that way, which is every string
+                # preference on the account, so `data-accent` became
+                # '[object Object]' and the page lost its palette, the task
+                # board lost the filter that keeps it to this week, and the
+                # analytics tabs opened on a tab with no name. This is the same
+                # encoding `_encode` applies on the path through the app, and
+                # writing round it is the only way to get a value into this
+                # column that the app cannot read back.
                 con.executemany(
                     'INSERT OR REPLACE INTO user_settings (user_id, key, value,'
                     ' updated_at) VALUES (?,?,?,?)',
-                    [(args.user, key, value, datetime.now().isoformat(timespec='seconds'))
+                    [(args.user, key, json.dumps(value, sort_keys=True),
+                      datetime.now().isoformat(timespec='seconds'))
                      for key, value in SETTINGS.items()])
 
             cards = snapshots(args.user, behind, focus, behind_from, behind_days, eras)

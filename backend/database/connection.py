@@ -47,6 +47,27 @@ JSON_COLUMNS = {
     ('calendar_documents', 'data'),
 }
 
+# The JSON columns that hold a *scalar* — a word, a number, a flag — rather
+# than an object or a list.
+#
+# It matters only when the decode fails, and then it matters a great deal.
+# Every other column above is read by callers that go straight to `.get` or
+# iterate it, so `{}` is the right answer to unreadable text: an empty one of
+# the thing they expected. A preference is not that shape. Its readers expect
+# 'dark' or 40 or True, and handing them `{}` does not degrade the page, it
+# makes the page render an object — `data-accent="[object Object]"`, a task
+# filter that matches nothing, an analytics tab with no name.
+#
+# So for these the fallback is the text as stored. Anything that ends up here
+# was written by something that skipped the encode (scripts/seed_alpha.py did,
+# once, for eighteen keys), and the text it wrote is the value it meant. That
+# is a guess, but it is the *author's* guess, and it is a far better one than
+# an empty object.
+SCALAR_JSON_COLUMNS = {
+    ('user_settings', 'value'),
+    ('setting_defaults', 'value'),
+}
+
 _build_lock = threading.Lock()
 _built = False
 
@@ -533,6 +554,11 @@ def _decode(table, column, value, sql_type):
         try:
             return json.loads(value)
         except (ValueError, TypeError):
+            # See SCALAR_JSON_COLUMNS: `{}` is the right empty for a column
+            # whose readers want an object, and the wrong one for a column
+            # whose readers want a word.
+            if (table, column) in SCALAR_JSON_COLUMNS:
+                return value
             return {}
     # SQLite keeps booleans as 0 and 1; the app and its JSON responses want
     # real booleans.

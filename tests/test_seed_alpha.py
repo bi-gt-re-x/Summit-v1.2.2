@@ -360,3 +360,44 @@ def test_the_streak_agrees_with_the_record():
     assert seed_alpha.streaks(
         worked('2026-07-01', '2026-07-02', '2026-07-03', '2026-07-04',
                '2026-09-05', '2026-09-06'), last) == (2, 4)
+
+
+def test_every_seeded_preference_is_a_key_the_app_declares():
+    """A key FIELDS does not declare is a row nothing will ever read."""
+    from backend.api.settings import FIELDS
+
+    unknown = set(seed_alpha.SETTINGS) - set(FIELDS)
+    assert not unknown, unknown
+
+
+def test_every_seeded_preference_is_stored_as_the_type_it_is_declared_with():
+    """The bug this pins is the one that took the account's whole palette out.
+
+    `user_settings.value` is in JSON_COLUMNS, so the write is a `json.dumps`
+    and the read a `json.loads` — and this script writes the row itself rather
+    than going through the endpoint, so nothing else applies that encoding for
+    it. It once wrote the values bare: 'dark', 'violet', 'week'. None of those
+    is JSON, so all eighteen string preferences on the account read back as
+    `{}`, and the page set `data-accent="[object Object]"` and filtered the
+    task board on an object.
+
+    So this asserts the round trip, not the spelling — dumped and loaded, each
+    value comes back as itself and as the type FIELDS declares.
+    """
+    import json
+
+    from backend.api.settings import FIELDS
+
+    for key, value in seed_alpha.SETTINGS.items():
+        back = json.loads(json.dumps(value, sort_keys=True))
+        assert back == value, key
+        declared = type(FIELDS[key][0])
+        # int/float are one family here: `focus_goal_hours` is declared 2.0 and
+        # 4 is a fine value for it. bool is not — it is a subclass of int and
+        # a flag stored as 1 is the thing `_keyed` has to coerce back.
+        if declared is bool:
+            assert isinstance(back, bool), key
+        elif declared in (int, float):
+            assert isinstance(back, (int, float)) and not isinstance(back, bool), key
+        else:
+            assert isinstance(back, declared), key
