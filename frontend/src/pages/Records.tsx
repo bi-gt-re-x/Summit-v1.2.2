@@ -10,6 +10,30 @@
  * is the story, and "mean 21.4, σ 2.3" is the same numbers with the story
  * taken out.
  *
+ * ## The five layers, in the order they answer it
+ *
+ *     hero        the record that travelled furthest, stated outright
+ *     stories     four things that happened, not four counts of things
+ *     your best   every personal best, filtered by category chips
+ *     evolution   the whole series of one of them, with an axis
+ *     history     what happened when, and the milestones beside it
+ *     tracked     what Summit counted itself, and what is within reach
+ *
+ * That order is the argument. The first four are the page's claim and its
+ * evidence; the last two are reference. It used to run hero → counts → bests →
+ * category records → timeline → milestones → evolution → search → tracked,
+ * which is nine destinations for one question, with the evolution chart eighth
+ * and a second copy of the timeline under a search panel at seventh.
+ *
+ * ## Record and milestone, and the difference is a sentence
+ *
+ * A **record** is *I did better* — a figure with earlier figures behind it. A
+ * **milestone** is *I reached something* — no figure, and nothing to beat. The
+ * page says so under the Milestones heading rather than leaving it to be
+ * worked out from which section a thing landed in, because the two share a
+ * table, a dialog and a page and the only thing separating them is that
+ * sentence.
+ *
  * ## Two kinds of record, and both are real
  *
  * **Logged** — what the account writes down. AMC 8 25/25, RCM 9, a
@@ -30,17 +54,22 @@
  * utils/records. In short: beating your AMC 8 score writes a *new row* rather
  * than editing the old one, which is what makes the evolution drawable at all.
  *
- * ## Milestones fold, and the category is what they fold into
+ * ## Milestones fold into their categories, and a category is only a drawer
  *
- * Eleven milestones is a scroll, and a scroll is not a summary. So the section
- * draws *key* milestones — one per category with more than one thing in it —
- * and each opens onto the smaller ones it is made of. Nothing new is stored to
- * do it: the account already types a category, and a heading with several
- * things under it is what a key milestone is. The rule, and why a category of
- * one stays a plain row, is in utils/records — see `keyMilestones`.
+ * Eleven milestones is a scroll, and a scroll is not a summary. So they are
+ * grouped under the category the account already typed, and each heading opens
+ * onto the milestones filed under it. Nothing new is stored to do it.
+ *
+ * The headings used to be drawn as *key milestones*, with the same tick their
+ * children carry, filled once every one was reached. That was clever and it
+ * was not true: "Competitive Math" is a folder, not something anybody
+ * achieved, and a tick on it said otherwise. It is a heading now and the only
+ * thing it claims about itself is the count. The grouping rule, and why a
+ * category of one stays a plain row, is in utils/records — see
+ * `milestoneGroups`.
  *
  * The whole section folds too, from its own title. Both start shut: the counts
- * ride on the header and on every key row, so the closed state says how much
+ * ride on the header and on every heading, so the closed state says how much
  * is behind it rather than merely hiding it.
  *
  * The derived figures count up from zero on arrival. Not decoration here in the
@@ -80,7 +109,7 @@ import {
   formatValue,
   gainText,
   headline,
-  keyMilestones,
+  milestoneGroups,
   moments,
   personalBests,
   stepText,
@@ -88,7 +117,7 @@ import {
   tally,
   trail,
   type Best,
-  type KeyMilestone,
+  type MilestoneGroup,
   type Moment,
   type Sort,
 } from '@/utils/records';
@@ -143,20 +172,23 @@ function Caret() {
 }
 
 /**
- * A key milestone, and the smaller ones underneath it once it is opened.
+ * A heading, and the milestones under it once it is opened.
  *
- * The head is a row in its own right and not only a label: it carries the tick
- * the children carry, filled only when every one of them is reached, and the
- * "2 of 5" that makes the shut state worth reading. Which category becomes a
- * key milestone is decided in utils/records — see `keyMilestones`.
+ * The head is a label and is drawn as one. It used to carry the same tick its
+ * children carry, filled when every one of them was reached, which made a
+ * category look like a milestone that had been achieved — and "Competitive
+ * Math" is a folder the account typed, not something anybody did. The count
+ * stays, because "2 of 5" is what makes a shut heading worth reading; it is
+ * metadata about the group rather than a claim about it. Which categories
+ * become groups at all is decided in utils/records — see `milestoneGroups`.
  */
-function KeyRow({
+function GroupRow({
   entry,
   open,
   onToggle,
   onPick,
 }: {
-  entry: KeyMilestone;
+  entry: MilestoneGroup;
   open: boolean;
   onToggle: () => void;
   onPick: (row: RecordRow) => void;
@@ -168,8 +200,7 @@ function KeyRow({
     <li className={`rc-key${open ? ' is-open' : ''}${done ? ' is-done' : ''}`}>
       <button type="button" className="rc-key-head" aria-expanded={open} onClick={onToggle}>
         <Caret />
-        <span className="rc-mile-tick" aria-hidden="true">{done ? '✓' : ''}</span>
-        <span className="rc-mile-name">{entry.name}</span>
+        <span className="rc-key-name">{entry.name}</span>
         <span className="rc-key-n">
           {entry.reached} of {total}
         </span>
@@ -558,7 +589,7 @@ export default function Records() {
      up per row that survives the toolbar. See `moments` in utils/records. */
   const meant = useMemo(() => moments(rows), [rows]);
   const milestones = useMemo(() => rows.filter((row) => row.kind === 'milestone'), [rows]);
-  const { keys: keyMiles, loose: looseMiles } = useMemo(() => keyMilestones(rows), [rows]);
+  const { groups: mileGroups, loose: looseMiles } = useMemo(() => milestoneGroups(rows), [rows]);
 
   /** The record the evolution chart is drawing. Defaults to the richest one. */
   const evolving = useMemo(() => {
@@ -954,18 +985,25 @@ export default function Records() {
               + Add
             </button>
           </div>
-          {milesShut ? null : milestones.length === 0 ? (
-            <p className="rc-empty">
-              Something that happened once — no figure, just the fact.
-            </p>
-          ) : (
+          {milesShut ? null : (
+            <>
+              <p className="rc-define">
+                A record is <strong>I did better</strong>. A milestone is{' '}
+                <strong>I reached something</strong> — no figure to beat, just
+                the fact that it happened.
+              </p>
+              {milestones.length === 0 ? (
+                <p className="rc-empty">
+                  “First 25/25”, “Reached RCM 9”, “1,000 tasks done”.
+                </p>
+              ) : (
             <ul className="rc-miles">
-              {keyMiles.map((key) => (
-                <KeyRow
-                  key={key.key}
-                  entry={key}
-                  open={Boolean(openKeys[key.key])}
-                  onToggle={() => toggleKey(key.key)}
+              {mileGroups.map((group) => (
+                <GroupRow
+                  key={group.key}
+                  entry={group}
+                  open={Boolean(openKeys[group.key])}
+                  onToggle={() => toggleKey(group.key)}
                   onPick={(row) => open('milestone', row)}
                 />
               ))}
@@ -981,6 +1019,8 @@ export default function Records() {
                 </li>
               ))}
             </ul>
+              )}
+            </>
           )}
         </section>
       </div>
@@ -1005,10 +1045,16 @@ export default function Records() {
               ))}
             </ul>
 
+            {/* "Next records to go for" asked what to chase next, which is
+                the Goals page's question, on a page about where you have
+                been. It is useful and it is not the point, so it keeps its
+                figures and loses its weight: a smaller heading, thinner
+                bars, and a title that is a statement about the records
+                rather than an instruction about the week. */}
             {chase.length > 0 && (
               <>
-                <h3 className="rc-sub-title">Next records to go for</h3>
-                <ul className="rc-chases">
+                <h3 className="rc-sub-title is-quiet">Records within reach</h3>
+                <ul className="rc-chases is-quiet">
                   {chase.map((row) => (
                     <ChaseRow key={row.key} row={row} />
                   ))}

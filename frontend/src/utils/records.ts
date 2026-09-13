@@ -599,35 +599,44 @@ export function byDay(rows: RecordRow[]): Array<{ on: string; rows: RecordRow[] 
 }
 
 // ---------------------------------------------------------------------------
-// Milestones, in two levels
+// Milestones, under their headings
 // ---------------------------------------------------------------------------
 /**
- * A key milestone and the smaller ones it folds up.
+ * A heading, and the milestones filed under it.
  *
- * There is no parent column on the table and this does not want one. A
- * milestone already carries a `category` — the reader's own heading, "Full-stack
- * project", "Competitive Math" — and a heading with several things under it is
- * exactly what a key milestone is. So the grouping is read out of what the
- * account already typed rather than asked for a second time.
+ * ## What this is not, any more
+ *
+ * These were "key milestones": a category with several things under it was
+ * drawn as a milestone in its own right, with its own tick, filled once every
+ * child was reached. It read well and it was not true. "Competitive Math" is a
+ * heading the account typed to file things under; it is not something that was
+ * achieved, and giving it a tick said it was. The tick is gone and so is the
+ * name — this is a group, it is titled with the category, and the only thing
+ * it claims about itself is how many milestones are in it.
+ *
+ * The grouping itself stays, and stays derived. There is no parent column on
+ * the table and this does not want one: the account already types a category,
+ * and eleven milestones reading as three headings until you open one is worth
+ * having for free.
  */
-export interface KeyMilestone {
+export interface MilestoneGroup {
   /** The category, lowercased — the key the open/shut state is remembered by. */
   key: string;
-  /** The category as it was typed, which is what the row is titled. */
+  /** The category as it was typed, which is what the heading says. */
   name: string;
-  /** The smaller milestones, in the order the server sent them. */
+  /** The milestones under it, in the order the server sent them. */
   children: RecordRow[];
-  /** How many of them have a date. `reached === children.length` draws the tick. */
+  /** How many of them have a date — the "2 of 5". */
   reached: number;
   /** The newest date among them, or '' while none has happened. */
   on: string;
 }
 
 /**
- * Split milestones into the key ones and the loose ones.
+ * Split milestones into the grouped ones and the loose ones.
  *
- * **A category of one is not a key milestone.** It is a milestone, and it draws
- * as one, at the top level beside the keys. Folding a single row behind a
+ * **A category of one is not a group.** It is a milestone, and it draws as one,
+ * at the top level beside the headings. Folding a single row behind a
  * disclosure hides it and saves nothing; the point of the two levels is that
  * eleven milestones read as three lines until you ask for more.
  *
@@ -635,15 +644,16 @@ export interface KeyMilestone {
  * heading, so there is nothing to file them under but "Other", and a group
  * called "Other" is a list with a lid on it.
  *
- * Keys sort by their newest achievement, so the thing you are furthest through
- * is at the top; a key nobody has started yet has no date and sorts last, which
- * is the ordering `_mine` already applies to rows in backend/api/records.py.
+ * Groups sort by their newest achievement, so the heading you are furthest
+ * through is at the top; one nobody has started has no date and sorts last,
+ * which is the ordering `_mine` already applies to rows in
+ * backend/api/records.py.
  */
-export function keyMilestones(rows: RecordRow[]): {
-  keys: KeyMilestone[];
+export function milestoneGroups(rows: RecordRow[]): {
+  groups: MilestoneGroup[];
   loose: RecordRow[];
 } {
-  const groups = new Map<string, { name: string; children: RecordRow[] }>();
+  const filed = new Map<string, { name: string; children: RecordRow[] }>();
   const loose: RecordRow[] = [];
 
   for (const row of rows) {
@@ -654,18 +664,18 @@ export function keyMilestones(rows: RecordRow[]): {
       continue;
     }
     const key = heading.toLowerCase();
-    const group = groups.get(key) ?? { name: heading, children: [] };
+    const group = filed.get(key) ?? { name: heading, children: [] };
     group.children.push(row);
-    groups.set(key, group);
+    filed.set(key, group);
   }
 
-  const keys: KeyMilestone[] = [];
-  for (const [key, group] of groups) {
+  const out: MilestoneGroup[] = [];
+  for (const [key, group] of filed) {
     if (group.children.length < 2) {
       loose.push(...group.children);
       continue;
     }
-    keys.push({
+    out.push({
       key,
       name: group.name,
       children: group.children,
@@ -685,8 +695,8 @@ export function keyMilestones(rows: RecordRow[]): {
     if (Boolean(a) !== Boolean(b)) return a ? -1 : 1;
     return time(b) - time(a) || an.localeCompare(bn);
   };
-  keys.sort((a, b) => byRecency(a.on, b.on, a.name, b.name));
+  out.sort((a, b) => byRecency(a.on, b.on, a.name, b.name));
   loose.sort((a, b) => byRecency(a.achieved_on, b.achieved_on, a.name, b.name));
 
-  return { keys, loose };
+  return { groups: out, loose };
 }

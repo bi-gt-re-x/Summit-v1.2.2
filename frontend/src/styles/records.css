@@ -323,6 +323,18 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     text-transform: uppercase;
     color: var(--rc-faint);
 }
+.rc-sub-title.is-quiet { margin-top: 32px; font-size: 11px; letter-spacing: .07em; }
+
+/* The line that says what a milestone is. Records and milestones share a
+   table, a dialog and a page, and the difference between them is a sentence
+   nobody should have to reconstruct from which section a thing landed in. */
+.rc-define {
+    margin: -4px 0 14px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--rc-faint);
+}
+.rc-define strong { color: var(--rc-muted); font-weight: 700; }
 .rc-note { margin: 0 0 16px; font-size: 12.5px; line-height: 1.6; color: var(--rc-faint); max-width: 78ch; }
 .rc-empty {
     margin: 0;
@@ -637,12 +649,26 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    list — the head's four children then land in three columns and the count
    wraps onto a line of its own. */
 .rc-miles .rc-key-head {
-    /* Four columns rather than the three a plain milestone uses: the caret
-       takes the tick's place at the left and the tick moves in beside it. */
-    grid-template-columns: 14px 20px minmax(0, 1fr) auto;
+    /* Caret, heading, count. The tick that used to sit between the first two
+       is gone with the claim it was making — see `GroupRow` in Records.tsx. */
+    grid-template-columns: 14px minmax(0, 1fr) auto;
     gap: 9px;
 }
-.rc-key.is-open > .rc-key-head .rc-mile-name { color: var(--rc-text); }
+/* The heading of a group, drawn as a heading. It carried a tick in the
+   milestone column and read as an achievement of its own — see `GroupRow` in
+   Records.tsx. Uppercase and small: the things under it are the milestones,
+   and this is the drawer they are in. */
+.rc-key-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--rc-muted);
+}
+.rc-key.is-open > .rc-key-head .rc-key-name { color: var(--rc-text); }
 .rc-key-n { font-size: 11.5px; font-weight: 600; color: var(--rc-faint); white-space: nowrap; }
 .rc-key.is-done > .rc-key-head .rc-key-n { color: var(--rc-good); }
 
@@ -920,6 +946,25 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-when { margin-top: 3px; font-size: 11px; color: var(--rc-faint); }
 
 .rc-chases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+
+/* Records within reach — kept, and kept subordinate. It answers "what should
+   I chase next", which is the Goals page's question asked on a page about
+   where you have been, so it reads as a footnote to the section above it: no
+   card of its own, a hairline between rows, and a track two pixels thinner
+   than the ones that carry real progress elsewhere. See Records.tsx. */
+.rc-chases.is-quiet { gap: 0; }
+.rc-chases.is-quiet .rc-chase {
+    padding: 11px 2px;
+    border: 0;
+    border-bottom: 1px solid var(--rc-line-soft);
+    border-radius: 0;
+    background: transparent;
+}
+.rc-chases.is-quiet .rc-chase:last-child { border-bottom: 0; }
+.rc-chases.is-quiet .rc-chase.is-held { border-color: var(--rc-line-soft); }
+.rc-chases.is-quiet .rc-track { height: 5px; }
+.rc-chases.is-quiet .rc-chase-head { margin-bottom: 7px; }
+.rc-chases.is-quiet .rc-chase-foot { margin-top: 7px; font-size: 11.5px; }
 .rc-chase {
     padding: 14px 16px;
     border: 1px solid var(--rc-line);
