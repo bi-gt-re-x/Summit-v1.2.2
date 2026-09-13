@@ -467,29 +467,91 @@ export function categories(rows: RecordRow[]): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// The timeline, and the filter bar
+// The timeline, as a story rather than a log
 // ---------------------------------------------------------------------------
-/** Everything with a date, newest first — records and milestones together. */
-export function timeline(rows: RecordRow[], limit = 12): RecordRow[] {
-  return rows
-    .filter((row) => Boolean(row.achieved_on))
-    .sort((a, b) => time(b.achieved_on) - time(a.achieved_on))
-    .slice(0, limit);
+/**
+ * What one entry was, in the light of the ones before it.
+ *
+ * A flat list of entries is an audit log: correct, and the same to read
+ * whether you spent a year clawing your way from 18 to 25 or logged the same
+ * figure five times. The four facts here are what make one line different from
+ * the next — and all four are already in the rows, which is why this is a
+ * reading rather than a column.
+ */
+export interface Moment {
+  row: RecordRow;
+  /** Better than every earlier entry of the same record. The 🏆 line. */
+  broke: boolean;
+  /** The first entry of that record — where the story starts. */
+  first: boolean;
+  /** How much better than the entry before it, signed toward better. */
+  step: number;
+  /** Which way this record is measured, so `step` can be printed. */
+  direction: Direction;
 }
 
-export type Show = 'all' | 'records' | 'milestones';
-export type Sort = 'newest' | 'oldest' | 'improvement' | 'category';
+/**
+ * Every dated entry, read against its own history, keyed by row id.
+ *
+ * Keyed rather than returned as a list because the page filters and sorts the
+ * rows for its own reasons and then asks this what each surviving one meant.
+ * Doing it the other way round would mean a search for "AMC" decided which
+ * entries count as records, which is a fact about the account and not about
+ * what is typed in a box.
+ */
+export function moments(rows: RecordRow[]): Map<string, Moment> {
+  const out = new Map<string, Moment>();
+
+  for (const best of personalBests(rows)) {
+    const dated = best.history.filter((row) => row.achieved_on);
+    let peak: number | null = null;
+
+    dated.forEach((row, i) => {
+      const previous = i > 0 ? dated[i - 1]!.value : null;
+      out.set(row.id, {
+        row,
+        broke: peak === null ? false : isBetter(row.value, peak, best.direction),
+        first: i === 0,
+        step:
+          previous === null
+            ? 0
+            : best.direction === 'lower'
+              ? previous - row.value
+              : row.value - previous,
+        direction: best.direction,
+      });
+      if (peak === null || isBetter(row.value, peak, best.direction)) peak = row.value;
+    });
+  }
+
+  return out;
+}
+
+/** "+2" / "−15s" for a step between two entries, or '' when it was not one. */
+export function stepText(moment: Moment): string {
+  if (moment.step <= 0) return '';
+  const unit = moment.row.unit === 'minutes' ? 'minutes' : '';
+  return `${moment.direction === 'lower' ? '−' : '+'}${formatValue(moment.step, unit)}`;
+}
+
+export type Sort = 'newest' | 'oldest' | 'improvement';
 
 /**
- * The search-and-sort bar at the foot of the page.
+ * The rows the history column lists, filtered and ordered by its toolbar.
  *
  * `improvement` sorts by how far a record has come rather than how large it
  * is, which is the ordering the page is actually about — a score that went
  * 18 → 25 is a better story than one logged once at 400.
+ *
+ * There used to be a `show` filter here — all / records / milestones — and a
+ * `category` sort. Both went when the toolbar shrank: the milestones sit in
+ * their own column beside this list, so filtering to them is a section away
+ * rather than a control, and sorting by category is what the category filter
+ * does in one step instead of two.
  */
 export function filterRows(
   rows: RecordRow[],
-  { query = '', show = 'all' as Show, sort = 'newest' as Sort } = {},
+  { query = '', category = 'All', sort = 'newest' as Sort } = {},
 ): RecordRow[] {
   const needle = query.trim().toLowerCase();
   const gains = new Map<string, number>();
@@ -498,7 +560,7 @@ export function filterRows(
   }
 
   return rows
-    .filter((row) => (show === 'all' ? true : show === 'records' ? row.kind === 'record' : row.kind === 'milestone'))
+    .filter((row) => category === 'All' || row.category.trim() === category)
     .filter(
       (row) =>
         !needle ||
@@ -508,9 +570,6 @@ export function filterRows(
     )
     .sort((a, b) => {
       if (sort === 'oldest') return time(a.achieved_on) - time(b.achieved_on);
-      if (sort === 'category') {
-        return a.category.localeCompare(b.category) || a.name.localeCompare(b.name);
-      }
       if (sort === 'improvement') {
         const ga = gains.get(a.name.trim().toLowerCase()) ?? 0;
         const gb = gains.get(b.name.trim().toLowerCase()) ?? 0;
@@ -518,6 +577,25 @@ export function filterRows(
       }
       return time(b.achieved_on) - time(a.achieved_on);
     });
+}
+
+/**
+ * Dated rows collected under the day they happened, in the order given.
+ *
+ * The timeline prints one date and the things that happened on it, rather than
+ * repeating the date down the left of every line. Two records set on the same
+ * afternoon are one afternoon, and drawing them as two dated events says
+ * otherwise.
+ */
+export function byDay(rows: RecordRow[]): Array<{ on: string; rows: RecordRow[] }> {
+  const days: Array<{ on: string; rows: RecordRow[] }> = [];
+  for (const row of rows) {
+    if (!row.achieved_on) continue;
+    const last = days[days.length - 1];
+    if (last && last.on === row.achieved_on) last.rows.push(row);
+    else days.push({ on: row.achieved_on, rows: [row] });
+  }
+  return days;
 }
 
 // ---------------------------------------------------------------------------

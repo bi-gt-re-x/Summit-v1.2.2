@@ -73,6 +73,7 @@ import type { GrowthSeries } from '@/services/growth';
 import type { RecordDraft, RecordKind, RecordRow } from '@/services/records';
 import { longDate } from '@/utils/growthChapters';
 import {
+  byDay,
   categories as categoriesOf,
   filterRows,
   formatOn,
@@ -80,14 +81,15 @@ import {
   gainText,
   headline,
   keyMilestones,
+  moments,
   personalBests,
+  stepText,
   stories,
   tally,
-  timeline,
   trail,
   type Best,
   type KeyMilestone,
-  type Show,
+  type Moment,
   type Sort,
 } from '@/utils/records';
 import {
@@ -104,6 +106,9 @@ const NEED_DAYS = 3;
 
 /** How many best-cards the top row draws before the rest go to the list below. */
 const TOP_BESTS = 8;
+
+/** How many days of history the timeline draws before "show more". */
+const DAYS_SHOWN = 8;
 
 /**
  * One number, counted up, printed at the precision it was measured to.
@@ -278,6 +283,57 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
         )}
 
         <span className="rc-best-when">{formatOn(best.on)}</span>
+      </button>
+    </li>
+  );
+}
+
+/**
+ * One line of history, and what it was at the time.
+ *
+ * The difference between this and a table row is `moment`: whether the entry
+ * beat everything before it, and by how much. A record being broken is the
+ * only event on this page worth stopping at, so it is the only one drawn in
+ * gold and the only one carrying its own figure — everything else is context
+ * for it, which is what makes the column read as a story rather than as an
+ * audit of things that were typed in.
+ *
+ * A milestone has no `moment`: nothing was beaten, it happened.
+ */
+function Entry({
+  row,
+  moment,
+  onOpen,
+}: {
+  row: RecordRow;
+  moment?: Moment;
+  onOpen: () => void;
+}) {
+  const step = moment ? stepText(moment) : '';
+
+  return (
+    <li className={`${row.kind === 'milestone' ? 'is-milestone' : ''}${
+      moment?.broke ? ' is-record' : ''
+    }`}>
+      <span className="rc-tl-dot" aria-hidden="true" />
+      <button type="button" className="rc-tl-body" onClick={onOpen}>
+        <span className="rc-tl-name">
+          {row.name}
+          {row.kind === 'record' && <em> — {formatValue(row.value, row.unit, row.target)}</em>}
+        </span>
+        {moment?.broke ? (
+          <span className="rc-tl-note is-record">
+            New record{step && ` · ${step}`}
+          </span>
+        ) : moment?.first ? (
+          <span className="rc-tl-note">
+            First entry{row.category ? ` · ${row.category}` : ''}
+          </span>
+        ) : (
+          <span className="rc-tl-note">
+            {row.category || (row.kind === 'milestone' ? 'Milestone' : 'Record')}
+          </span>
+        )}
       </button>
     </li>
   );
@@ -470,8 +526,14 @@ export default function Records() {
   const [allBests, setAllBests] = useState(false);
   const [pick, setPick] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [show, setShow] = useState<Show>('all');
+  /* The history column's own category, separate from the chips above the
+     bests. One filter driving both would mean picking "Academic" to look at a
+     card silently rewrote the timeline beside it, which is a page that changes
+     under you. */
+  const [historyCat, setHistoryCat] = useState('All');
   const [sort, setSort] = useState<Sort>('newest');
+  /** How many days of history are drawn before "show more". */
+  const [days, setDays] = useState(DAYS_SHOWN);
 
   /* The milestones section, and which key milestones inside it are open.
      Both start shut. A key milestone that opened by default would put the page
@@ -492,7 +554,9 @@ export default function Records() {
   const cats = useMemo(() => categoriesOf(rows), [rows]);
   /** The four tiles. Named `tales` because `stories` is the function. */
   const tales = useMemo(() => stories(rows), [rows]);
-  const recent = useMemo(() => timeline(rows), [rows]);
+  /* What each entry meant when it happened — read from every row, then looked
+     up per row that survives the toolbar. See `moments` in utils/records. */
+  const meant = useMemo(() => moments(rows), [rows]);
   const milestones = useMemo(() => rows.filter((row) => row.kind === 'milestone'), [rows]);
   const { keys: keyMiles, loose: looseMiles } = useMemo(() => keyMilestones(rows), [rows]);
 
@@ -508,9 +572,16 @@ export default function Records() {
     [bests, category],
   );
 
-  const listed = useMemo(
-    () => filterRows(rows, { query, show, sort }),
-    [query, rows, show, sort],
+  /* Back to the first page of days whenever the question changes. "Show more"
+     was asked of a list that no longer exists. */
+  const narrow = useCallback(<T,>(set: (value: T) => void) => (value: T) => {
+    set(value);
+    setDays(DAYS_SHOWN);
+  }, []);
+
+  const history = useMemo(
+    () => byDay(filterRows(rows, { query, category: historyCat, sort })),
+    [historyCat, query, rows, sort],
   );
 
   // ---- writes -------------------------------------------------------------
@@ -785,32 +856,84 @@ export default function Records() {
         </section>
       )}
 
-      {/* ---- 4 & 5. Timeline and milestones ------------------------------- */}
+      {/* ---- 4 & 5. History and milestones ---------------------------------
+          The timeline drew the twelve newest entries and a separate section at
+          the foot of the page drew all of them again with a search box over
+          it. Same rows, twice, and the second copy was a section in its own
+          right — the ninth thing to scroll past on a page of nine.
+
+          One list now, with the search, the category and the sort as a strip
+          across the top of it. They are necessary once there are a hundred
+          entries and they are not part of what the page is for, so they get a
+          toolbar rather than a destination.
+
+          And the list reads as history rather than as a log: the date is
+          written once for everything that happened under it, and an entry that
+          beat everything before it says so and by how much. Those readings are
+          `moments` in utils/records. */}
       <div className="rc-two">
         <section className="rc-section">
-          <h2 className="rc-section-title">📜 Record timeline</h2>
-          {recent.length === 0 ? (
-            <p className="rc-empty">Nothing dated yet.</p>
+          <div className="rc-section-head">
+            <h2 className="rc-section-title">📜 Record timeline</h2>
+          </div>
+
+          {rows.length > 0 && (
+            <div className="rc-bar">
+              <label className="rc-bar-search">
+                <span className="rc-bar-ico" aria-hidden="true">🔍</span>
+                <input type="search" placeholder="Search records…" value={query}
+                       aria-label="Search records"
+                       onChange={(event) => narrow(setQuery)(event.target.value)} />
+              </label>
+
+              <select className="rc-select is-small" value={historyCat}
+                      aria-label="Filter the history by category"
+                      onChange={(event) => narrow(setHistoryCat)(event.target.value)}>
+                <option value="All">All categories</option>
+                {cats.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+
+              <select className="rc-select is-small" value={sort}
+                      aria-label="Order the history"
+                      onChange={(event) => narrow(setSort)(event.target.value as Sort)}>
+                <option value="newest">Newest ↓</option>
+                <option value="oldest">Oldest ↑</option>
+                <option value="improvement">Biggest improvement</option>
+              </select>
+            </div>
+          )}
+
+          {history.length === 0 ? (
+            <p className="rc-empty">
+              {rows.length === 0 ? 'Nothing dated yet.' : 'Nothing matches that.'}
+            </p>
           ) : (
-            <ol className="rc-timeline">
-              {recent.map((row) => (
-                <li key={row.id} className={row.kind === 'milestone' ? 'is-milestone' : ''}>
-                  <span className="rc-tl-when">
-                    {formatOn(row.achieved_on).replace(/, \d{4}$/, '').toUpperCase()}
-                  </span>
-                  <span className="rc-tl-dot" aria-hidden="true" />
-                  <button type="button" className="rc-tl-body" onClick={() => open(row.kind, row)}>
-                    <span className="rc-tl-name">
-                      {row.name}
-                      {row.kind === 'record' && (
-                        <em> — {formatValue(row.value, row.unit, row.target)}</em>
-                      )}
+            <>
+              <ol className="rc-timeline">
+                {history.slice(0, days).map((day) => (
+                  <li key={day.on}>
+                    <span className="rc-tl-when">
+                      {formatOn(day.on).replace(/, \d{4}$/, '').toUpperCase()}
                     </span>
-                    <span className="rc-tl-cat">{row.category || (row.kind === 'milestone' ? 'Milestone' : 'Record')}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
+                    <ul className="rc-tl-day">
+                      {day.rows.map((row) => (
+                        <Entry key={row.id} row={row} moment={meant.get(row.id)}
+                               onOpen={() => open(row.kind, row)} />
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ol>
+              {history.length > days && (
+                <button type="button" className="rc-link rc-more"
+                        onClick={() => setDays((shown) => shown + DAYS_SHOWN)}>
+                  Show {Math.min(DAYS_SHOWN, history.length - days)} more{' '}
+                  {history.length - days === 1 ? 'day' : 'days'}
+                </button>
+              )}
+            </>
           )}
         </section>
 
@@ -861,69 +984,6 @@ export default function Records() {
           )}
         </section>
       </div>
-
-      {/* ---- 6. Search and sort ------------------------------------------- */}
-      {rows.length > 0 && (
-        <section className="rc-section">
-          <div className="rc-bar">
-            <label className="rc-bar-field">
-              <span>Search</span>
-              <input type="search" placeholder="Search records…" value={query}
-                     onChange={(event) => setQuery(event.target.value)} />
-            </label>
-
-            <div className="rc-bar-field">
-              <span>Show</span>
-              <div className="rc-chips">
-                {([
-                  ['all', 'All'],
-                  ['records', 'Personal bests'],
-                  ['milestones', 'Milestones'],
-                ] as const).map(([value, label]) => (
-                  <button key={value} type="button"
-                          className={`rc-chip${show === value ? ' is-on' : ''}`}
-                          onClick={() => setShow(value)}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <label className="rc-bar-field">
-              <span>Sort by</span>
-              <select className="rc-select" value={sort}
-                      onChange={(event) => setSort(event.target.value as Sort)}>
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-                <option value="improvement">Biggest improvement</option>
-                <option value="category">Category</option>
-              </select>
-            </label>
-          </div>
-
-          {listed.length === 0 ? (
-            <p className="rc-empty">Nothing matches that.</p>
-          ) : (
-            <ul className="rc-rows">
-              {listed.map((row) => (
-                <li key={row.id}>
-                  <button type="button" onClick={() => open(row.kind, row)}>
-                    <span className="rc-row-kind" aria-hidden="true">
-                      {row.kind === 'milestone' ? '🏅' : '🏆'}
-                    </span>
-                    <span className="rc-row-name">{row.name}</span>
-                    <span className="rc-row-cat">{row.category}</span>
-                    <span className="rc-row-value">
-                      {row.kind === 'record' ? formatValue(row.value, row.unit, row.target) : ''}
-                    </span>
-                    <span className="rc-row-when">{formatOn(row.achieved_on)}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      )}
 
       {/* ---- What Summit counted itself ------------------------------------
           The page as it was, kept whole and kept separate. See the header. */}
