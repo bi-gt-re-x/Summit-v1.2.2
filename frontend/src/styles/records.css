@@ -937,14 +937,25 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 
 /* ==========================================================================
-   What Summit counted itself — the page as it was.
+   What Summit noticed — the page as it was.
+
    Kept in its own quieter register so a count is never mistaken for a claim.
+   Everything above this rule is the account's own argument about itself; this
+   is the app's footnote to it, and the rule and the space are what say so.
+
+   The heading is not stepped down to match, because every section title on the
+   page is already the same small uppercase label — there is nothing to step
+   down from. What separates this one is the rule above it and the recessed
+   cards below it: they sit on the page's second surface rather than the raised
+   one the logged records get, which is the same distinction drawn in material
+   instead of in size.
    ========================================================================== */
 .rc-derived {
-    margin-top: 46px;
-    padding-top: 28px;
+    margin-top: 54px;
+    padding-top: 30px;
     border-top: 1px solid var(--rc-line);
 }
+.rc-derived .rc-card { background: var(--rc-card-2); }
 
 .rc-cards {
     list-style: none;

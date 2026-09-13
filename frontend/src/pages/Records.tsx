@@ -17,7 +17,7 @@
  *     your best   every personal best, filtered by category chips
  *     evolution   the whole series of one of them, with an axis
  *     history     what happened when, and the milestones beside it
- *     tracked     what Summit counted itself, and what is within reach
+ *     noticed     what Summit counted itself, and what is within reach
  *
  * That order is the argument. The first four are the page's claim and its
  * evidence; the last two are reference. It used to run hero → counts → bests →
@@ -598,16 +598,18 @@ export default function Records() {
   );
 
   const rows = useMemo(() => logged.data?.records ?? [], [logged.data]);
+  /* The grouping, once. Everything below reads this rather than regrouping the
+     rows for itself — see the note at the top of utils/records. */
   const bests = useMemo(() => personalBests(rows), [rows]);
   /** The record the hero states. Null until something has actually moved. */
-  const lead = useMemo(() => headline(rows), [rows]);
+  const lead = useMemo(() => headline(bests), [bests]);
   const counts = useMemo(() => tally(rows), [rows]);
   const cats = useMemo(() => categoriesOf(rows), [rows]);
   /** The four tiles. Named `tales` because `stories` is the function. */
-  const tales = useMemo(() => stories(rows), [rows]);
+  const tales = useMemo(() => stories(bests), [bests]);
   /* What each entry meant when it happened — read from every row, then looked
      up per row that survives the toolbar. See `moments` in utils/records. */
-  const meant = useMemo(() => moments(rows), [rows]);
+  const meant = useMemo(() => moments(bests), [bests]);
   const milestones = useMemo(() => rows.filter((row) => row.kind === 'milestone'), [rows]);
   const { groups: mileGroups, loose: looseMiles } = useMemo(() => milestoneGroups(rows), [rows]);
 
@@ -640,8 +642,8 @@ export default function Records() {
   }, []);
 
   const history = useMemo(
-    () => byDay(filterRows(rows, { query, category, sort })),
-    [category, query, rows, sort],
+    () => byDay(filterRows(rows, bests, { query, category, sort })),
+    [bests, category, query, rows, sort],
   );
 
   // ---- writes -------------------------------------------------------------
@@ -1068,12 +1070,25 @@ export default function Records() {
         </section>
       </div>
 
-      {/* ---- What Summit counted itself ------------------------------------
-          The page as it was, kept whole and kept separate. See the header. */}
+      {/* ---- 6. What Summit noticed -----------------------------------------
+          The page as it was, kept whole and kept separate. See the header.
+
+          "Tracked automatically" described the mechanism, which is the one
+          thing about this section nobody needs told — every other section is
+          things you typed, and this is the one that isn't. What it is *for* is
+          that Summit watched and has something to report, so that is what the
+          heading says.
+
+          It is reference, not a fifth claim. Everything above it is the
+          account's own argument about itself; this is the app's footnote to
+          it, and it reads as one: it sits under a rule, its cards stay in the
+          quieter register they have always had, and the chase under it is
+          quieter still. */}
       <section className="rc-section rc-derived">
-        <h2 className="rc-section-title">⚙️ Tracked automatically</h2>
+        <h2 className="rc-section-title">⚙️ What Summit noticed</h2>
         <p className="rc-note">
-          Summit's own count. Nothing here is logged by hand.
+          Counted from your own work rather than logged by hand — so these are
+          Summit's observations about you, not your claims about yourself.
         </p>
 
         {all.length < NEED_DAYS ? (

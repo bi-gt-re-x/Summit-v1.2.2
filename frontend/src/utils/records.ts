@@ -15,6 +15,14 @@
  * Which is why nothing here is stored and nothing is written back. It is all a
  * view of rows the page already holds, recomputed when they change.
  *
+ * And the grouping is done **once**. `personalBests` is the only function that
+ * walks the rows and reduces them; everything after it — the headline, the
+ * four stories, what each entry meant, the ordering by improvement — takes the
+ * `Best[]` it produced. They each used to call it again, which meant five
+ * copies of one answer, one of them rebuilt on every keystroke in the search
+ * box. The cost was never the point: a module whose whole claim is *this is
+ * all one reading of the same rows* should not contain five readings.
+ *
  * ## Which way is better is one word, and everything else follows from it
  *
  * "Extremum" above, rather than "largest". This module used to treat the
@@ -246,10 +254,8 @@ export function gainText(best: Best): string {
  * invents a triumph out of one logged figure is worse than a hero that does
  * not have one yet.
  */
-export function headline(rows: RecordRow[], today: Date = new Date()): Best | null {
-  const moved = personalBests(rows, today).filter(
-    (best) => best.entries > 1 && best.gain > 0,
-  );
+export function headline(bests: Best[]): Best | null {
+  const moved = bests.filter((best) => best.entries > 1 && best.gain > 0);
   if (moved.length === 0) return null;
 
   return moved.reduce((top, best) => {
@@ -323,8 +329,7 @@ const monthsBetween = (from: string, to: Date): number => {
  * account wrote, which is the same line the page draws between what you logged
  * and what Summit counted — see the note in pages/Records.tsx.
  */
-export function stories(rows: RecordRow[], today: Date = new Date()): Story[] {
-  const bests = personalBests(rows, today);
+export function stories(bests: Best[], today: Date = new Date()): Story[] {
   const out: Story[] = [];
 
   // 1. The biggest single jump between two consecutive entries. Different from
@@ -499,10 +504,10 @@ export interface Moment {
  * entries count as records, which is a fact about the account and not about
  * what is typed in a box.
  */
-export function moments(rows: RecordRow[]): Map<string, Moment> {
+export function moments(bests: Best[]): Map<string, Moment> {
   const out = new Map<string, Moment>();
 
-  for (const best of personalBests(rows)) {
+  for (const best of bests) {
     const dated = best.history.filter((row) => row.achieved_on);
     let peak: number | null = null;
 
@@ -541,7 +546,10 @@ export type Sort = 'newest' | 'oldest' | 'improvement';
  *
  * `improvement` sorts by how far a record has come rather than how large it
  * is, which is the ordering the page is actually about — a score that went
- * 18 → 25 is a better story than one logged once at 400.
+ * 18 → 25 is a better story than one logged once at 400. `bests` is what
+ * supplies those distances, and it is a parameter rather than something worked
+ * out here so that typing in the search box does not regroup every row the
+ * account owns once per character.
  *
  * There used to be a `show` filter here — all / records / milestones — and a
  * `category` sort. Both went when the toolbar shrank: the milestones sit in
@@ -551,11 +559,12 @@ export type Sort = 'newest' | 'oldest' | 'improvement';
  */
 export function filterRows(
   rows: RecordRow[],
+  bests: Best[],
   { query = '', category = 'All', sort = 'newest' as Sort } = {},
 ): RecordRow[] {
   const needle = query.trim().toLowerCase();
   const gains = new Map<string, number>();
-  for (const best of personalBests(rows)) {
+  for (const best of bests) {
     gains.set(best.name.trim().toLowerCase(), best.gain);
   }
 

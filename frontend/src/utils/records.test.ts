@@ -202,21 +202,22 @@ describe('headline', () => {
       row({ name: 'Summit', category: 'Code', unit: 'lines', value: 86_000,
             achieved_on: '2026-09-12' }),
     ];
-    const lead = headline([...amc, ...project], TODAY);
+    const lead = headline(personalBests([...amc, ...project], TODAY));
     expect(lead!.name).toBe('AMC 8'); // 39% beats 7.5%, though +7 loses to +6,000.
   });
 
   it('is null when nothing has moved', () => {
-    expect(headline([row({ value: 25, achieved_on: '2026-09-12' })], TODAY)).toBeNull();
+    expect(headline(personalBests([row({ value: 25, achieved_on: '2026-09-12' })], TODAY)))
+      .toBeNull();
     const flat = [
       row({ name: 'Flat', value: 25, achieved_on: '2026-03-02' }),
       row({ name: 'Flat', value: 25, achieved_on: '2026-09-12' }),
     ];
-    expect(headline(flat, TODAY)).toBeNull();
+    expect(headline(personalBests(flat, TODAY))).toBeNull();
   });
 
   it('can be a record that got faster', () => {
-    expect(headline(mile, TODAY)!.name).toBe('Mile');
+    expect(headline(personalBests(mile, TODAY))!.name).toBe('Mile');
   });
 });
 
@@ -245,7 +246,7 @@ describe('trail', () => {
 
 describe('moments', () => {
   it('calls the first entry first and not a record', () => {
-    const read = moments(amc);
+    const read = moments(personalBests(amc));
     const first = read.get(amc[0]!.id)!;
     expect(first.first).toBe(true);
     expect(first.broke).toBe(false);
@@ -253,7 +254,7 @@ describe('moments', () => {
   });
 
   it('marks an entry that beat everything before it, with the step it took', () => {
-    const read = moments(amc);
+    const read = moments(personalBests(amc));
     const last = read.get(amc[4]!.id)!;
     expect(last.broke).toBe(true);
     expect(stepText(last)).toBe('+2');
@@ -261,26 +262,28 @@ describe('moments', () => {
 
   it('does not call an entry a record when an earlier one was better', () => {
     const slipped = row({ value: 19, achieved_on: '2026-09-19' });
-    const read = moments([...amc, slipped]);
+    const read = moments(personalBests([...amc, slipped]));
     expect(read.get(slipped.id)!.broke).toBe(false);
     expect(stepText(read.get(slipped.id)!)).toBe('');
   });
 
   it('reads a faster time as the record it is', () => {
-    const read = moments(mile);
+    const read = moments(personalBests(mile));
     const last = read.get(mile[2]!.id)!;
     expect(last.broke).toBe(true);
     expect(stepText(last)).toBe('−1m');
   });
 
   it('has nothing to say about an entry with no date', () => {
-    expect(moments([row({ value: 25, achieved_on: '' })]).size).toBe(0);
+    expect(moments(personalBests([row({ value: 25, achieved_on: '' })])).size).toBe(0);
   });
 });
 
 describe('stories', () => {
   const told = (rows: RecordRow[]) =>
-    Object.fromEntries(stories(rows, TODAY).map((story) => [story.key, story]));
+    Object.fromEntries(
+      stories(personalBests(rows, TODAY), TODAY).map((story) => [story.key, story]),
+    );
 
   it('finds the biggest single jump, which is not the whole journey', () => {
     // 18 → 20 → 21 → 23 → 25: the steps are +2, +1, +2, +2, so the biggest
@@ -301,7 +304,10 @@ describe('stories', () => {
   });
 
   it('draws nothing rather than a zero when there is no story to tell', () => {
-    const one = stories([row({ value: 25, achieved_on: '2026-09-12' })], TODAY);
+    const one = stories(
+      personalBests([row({ value: 25, achieved_on: '2026-09-12' })], TODAY),
+      TODAY,
+    );
     expect(one.map((story) => story.key)).not.toContain('leap');
     expect(one.map((story) => story.key)).not.toContain('run');
   });
@@ -327,6 +333,13 @@ describe('stories', () => {
 });
 
 describe('filterRows', () => {
+  /* The bests are a second argument now rather than worked out inside, so that
+     a keystroke in the search box does not regroup every row. Every call here
+     goes through this, which is also the assertion that the two arguments
+     describe the same account. */
+  const sift = (rows: RecordRow[], options: Parameters<typeof filterRows>[2]) =>
+    filterRows(rows, personalBests(rows), options);
+
   const mixed = [
     ...amc,
     row({ name: 'Mile', category: 'Running', value: 6, achieved_on: '2026-09-12' }),
@@ -335,20 +348,19 @@ describe('filterRows', () => {
   ];
 
   it('searches the name, the category and the note', () => {
-    expect(filterRows(mixed, { query: 'mile' })).toHaveLength(1);
-    expect(filterRows(mixed, { query: 'running' })).toHaveLength(1);
-    expect(filterRows([row({ note: 'slept properly for once' })], { query: 'slept' }))
-      .toHaveLength(1);
+    expect(sift(mixed, { query: 'mile' })).toHaveLength(1);
+    expect(sift(mixed, { query: 'running' })).toHaveLength(1);
+    expect(sift([row({ note: 'slept properly for once' })], { query: 'slept' })).toHaveLength(1);
   });
 
   it('filters to one category, milestones included', () => {
-    expect(filterRows(mixed, { category: 'Running' })).toHaveLength(1);
-    expect(filterRows(mixed, { category: 'Competitive Math' })).toHaveLength(6);
+    expect(sift(mixed, { category: 'Running' })).toHaveLength(1);
+    expect(sift(mixed, { category: 'Competitive Math' })).toHaveLength(6);
   });
 
   it('orders newest first by default and oldest first on request', () => {
-    expect(filterRows(amc, {})[0]!.value).toBe(25);
-    expect(filterRows(amc, { sort: 'oldest' })[0]!.value).toBe(18);
+    expect(sift(amc, {})[0]!.value).toBe(25);
+    expect(sift(amc, { sort: 'oldest' })[0]!.value).toBe(18);
   });
 
   it('orders by how far a record has come, not by how large it is', () => {
@@ -357,7 +369,7 @@ describe('filterRows', () => {
       ...amc,
     ];
     // "Big" was logged once at 400 and has gone nowhere; AMC 8 has gone +7.
-    expect(filterRows(rows, { sort: 'improvement' })[0]!.name).toBe('AMC 8');
+    expect(sift(rows, { sort: 'improvement' })[0]!.name).toBe('AMC 8');
   });
 });
 
