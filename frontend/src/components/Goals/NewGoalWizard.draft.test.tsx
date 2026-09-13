@@ -132,3 +132,32 @@ describe('when the model cannot', () => {
     expect(screen.getByLabelText(/the outcome/i)).toHaveValue('');
   });
 });
+
+/**
+ * Which box the caret lands in, which is the whole difference between the
+ * page's two doors into this wizard.
+ *
+ * "+ New Goal" and "Draft a goal" open the same wizard on the same step. The
+ * offer has been on that step since it was built and nobody found it, because
+ * a button promising a form is not somewhere a reader goes looking for a way
+ * to skip the form. Naming the second door only helps if pressing it does not
+ * then hand them the form anyway.
+ */
+describe('which field opens focused', () => {
+  it('is the title, when the wizard was opened to fill one in', () => {
+    show();
+    expect(screen.getByLabelText(/the outcome, not the activity/i)).toHaveFocus();
+  });
+
+  it('is the sentence box, when it was opened to draft', () => {
+    show({ focusIdea: true });
+    expect(ideaBox()).toHaveFocus();
+  });
+
+  it('and drafting still works from there', async () => {
+    const props = show({ focusIdea: true });
+    await userEvent.type(ideaBox(), 'usaco gold');
+    await userEvent.click(draftBtn());
+    expect(props.onDraft).toHaveBeenCalledWith('usaco gold');
+  });
+});

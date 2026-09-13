@@ -5,6 +5,8 @@
  * panel, the header and summary row, the dialogs, and the arithmetic all of
  * them read the same answers from.
  */
+export { AskModel, Spark } from './AskModel';
+export type { AskModelProps } from './AskModel';
 export { ConfirmModal, GoalModal } from './GoalModal';
 export type { ConfirmModalProps, GoalModalProps } from './GoalModal';
 export { MilestoneCalendar, milestoneDays } from './MilestoneCalendar';

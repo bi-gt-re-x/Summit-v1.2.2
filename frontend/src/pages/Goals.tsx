@@ -58,6 +58,7 @@ import {
   HealthBreakdown,
   GoalChain,
   GoalsCta,
+  Spark,
   HealthRing,
   MilestoneCalendar,
   NewGoalWizard,
@@ -133,12 +134,25 @@ export default function Goals() {
 
   const [openId, setOpenId] = useState<string | null>(null);
   const [wizardOpen, setWizardOpen] = useState(false);
+  /** The wizard was opened by "Draft a goal", so it opens on the idea box. */
+  const [draftFirst, setDraftFirst] = useState(false);
   /* The counters' own setup. See components/Goals/SystemGoalWizard for why it
      is not the wizard above. */
   const [systemOpen, setSystemOpen] = useState(false);
   const [editing, setEditing] = useState<Goal | undefined>(undefined);
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<Goal | null>(null);
+  /**
+   * A goal whose ladder the reader has asked to redraft, waiting on the ask.
+   *
+   * Only for a goal that already has checkpoints. `set_milestones` reuses rows
+   * by position — a rung that keeps its place keeps its id, its status and the
+   * tasks pointed at it — so this renames rather than deletes, and the wording
+   * below says exactly that rather than threatening worse. It is still the
+   * reader's own words being replaced, which is not something a menu item
+   * should do on one click.
+   */
+  const [pendingDraft, setPendingDraft] = useState<Goal | null>(null);
   const [showCompleted, setShowCompleted] = useState(false);
 
   /** Bumped when a deadline passes, so the cards that just went overdue redraw. */
@@ -616,6 +630,36 @@ export default function Goals() {
     [draftChecklists, username, write],
   );
 
+  /**
+   * Draft a ladder for a goal that already has one, from the card's menu.
+   *
+   * The panels' own offers appear only where there is nothing to lose, which
+   * is right — and meant that on an account whose goals all have checkpoints
+   * the feature was nowhere on screen. This is the way back to it. A goal with
+   * no ladder is drafted straight away; one with a ladder asks first.
+   */
+  const redraftStones = useCallback(
+    (goal: Goal) => {
+      if ((goal.milestones ?? []).length) {
+        setPendingDraft(goal);
+        return;
+      }
+      void suggestMilestones(goal).then((titles) =>
+        titles && titles.length ? saveMilestones(goal, titles) : null,
+      );
+    },
+    [saveMilestones, suggestMilestones],
+  );
+
+  const confirmRedraft = useCallback(async () => {
+    const goal = pendingDraft;
+    setPendingDraft(null);
+    if (!goal) return;
+    const titles = await suggestMilestones(goal);
+    if (titles && titles.length) await saveMilestones(goal, titles);
+  }, [pendingDraft, saveMilestones, suggestMilestones]);
+
+
   // ---- What goes where ----------------------------------------------------
   const active = useMemo(
     () =>
@@ -698,7 +742,10 @@ export default function Goals() {
   /* "New goal" makes the kind of goal the tab is about. On the System tab
      that is a counter, and the outcome wizard there would ask for a subject
      and a reason and then draft checkpoints under "earn 50,000 XP". */
-  const startGoal = () => (tab === 'system' ? setSystemOpen(true) : setWizardOpen(true));
+  const startGoal = () => {
+    setDraftFirst(false);
+    return tab === 'system' ? setSystemOpen(true) : setWizardOpen(true);
+  };
 
   const open = list.find((goal) => goal.id === openId) ?? null;
 
@@ -752,6 +799,29 @@ export default function Goals() {
               >
                 {showCompleted ? 'Hide completed' : 'View completed'}
               </button>
+              {/* The second door to the wizard, and the only one that says
+                  out loud that a model can write the whole goal.
+
+                  Not a second feature: it opens the same wizard on the same
+                  first step, with the cursor already in the box that takes a
+                  sentence. The offer has been in there since it was built and
+                  nobody found it, because "+ New Goal" promises a form and a
+                  reader who wants the shortcut has no reason to open a form
+                  looking for it. A door has to be labelled with what is behind
+                  it.
+
+                  Outcomes only. A counter has no title to write, no field and
+                  no checkpoints — see SystemGoalWizard. */}
+              {tab !== 'system' && (
+                <button
+                  type="button"
+                  className="gx-btn gx-btn-ai"
+                  onClick={() => { setDraftFirst(true); setWizardOpen(true); }}
+                >
+                  <Spark />
+                  Draft a goal
+                </button>
+              )}
               <button type="button" className="gx-btn is-primary" onClick={startGoal}>
                 {tab === 'system' ? '+ New System Goal' : '+ New Goal'}
               </button>
@@ -818,6 +888,7 @@ export default function Goals() {
                       void linkTask(entry, task, milestoneId)
                     }
                     onSuggest={suggestMilestones}
+                    onRedraftStones={redraftStones}
                     onSuggestSteps={(stone) => void suggestSteps(stone)}
                     /* Only while filtered. The health chip carries its reason
                        as a tooltip everywhere else, which is enough when the
@@ -1086,7 +1157,8 @@ export default function Goals() {
         open={wizardOpen}
         busy={busy}
         subjects={catalogue}
-        onClose={() => setWizardOpen(false)}
+        focusIdea={draftFirst}
+        onClose={() => { setDraftFirst(false); setWizardOpen(false); }}
         onSave={(draft) => void createGoal(draft)}
         onSuggest={suggestDraft}
         onDraft={draftWholeGoal}
@@ -1110,6 +1182,21 @@ export default function Goals() {
           setEditing(undefined);
         }}
         onSave={saveGoal}
+      />
+
+      <ConfirmModal
+        open={pendingDraft !== null}
+        title="Redraft this goal's checkpoints?"
+        body={
+          `The model writes five new ones over the ${(pendingDraft?.milestones ?? []).length} `
+          + 'already here. A rung keeps its place, so anything already reached stays '
+          + 'reached and any task pointed at one keeps its link — it is the wording '
+          + 'that changes. Checklists you have written are left alone.'
+        }
+        confirmLabel="Redraft"
+        busy={busy}
+        onCancel={() => setPendingDraft(null)}
+        onConfirm={() => void confirmRedraft()}
       />
 
       <ConfirmModal

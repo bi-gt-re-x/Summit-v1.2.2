@@ -40,7 +40,7 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { GoalTile, HealthChip, categoryOf } from './Outcome';
-import { AskModel } from './AskModel';
+import { AskModel, Spark } from './AskModel';
 import { GoalVisual } from './GoalVisual';
 import { formatGoalDate, goalDate, goalNumbers, goalWeight, isOverdue } from './numbers';
 import { goalHealth } from '@/utils/goalHealth';
@@ -140,6 +140,16 @@ export interface ActiveGoalCardProps {
   /** Ask for a checkpoint list. Resolves null when the model could not answer. */
   onSuggest: (goal: Goal) => Promise<string[] | null>;
   /**
+   * The kebab's "Redraft checkpoints" — the same draft, from a goal that may
+   * already have a ladder.
+   *
+   * Separate from `onSuggest` because the page has to ask first: replacing a
+   * ladder somebody wrote is not something a menu item should do on one click.
+   * The panels' own offers stay on `onSuggest`, which only ever runs where
+   * there is nothing to lose.
+   */
+  onRedraftStones: (goal: Goal) => void;
+  /**
    * Ask the model for this checkpoint's five steps, and save them.
    *
    * Offered only on a checkpoint whose checklist is *empty*, which is the
@@ -193,6 +203,7 @@ export function ActiveGoalCard({
   onComplete,
   onLinkTask,
   onSuggest,
+  onRedraftStones,
   onSuggestSteps,
   planning = false,
   onSaveStones,
@@ -504,6 +515,32 @@ export function ActiveGoalCard({
                   </button>
                   <button type="button" role="menuitem" onClick={() => { setMenuOpen(false); onEdit(goal); }}>
                     Edit
+                  </button>
+                  {/* The one place the ladder can be drafted on a goal that
+                      already has one.
+ 
+                      Everywhere else this is offered, it is offered because
+                      there is nothing there — the empty panel, the empty
+                      drawer list. That is the right default and it had one
+                      consequence nobody looked for: on an account where every
+                      goal already has its checkpoints, the feature does not
+                      appear anywhere at all, and a reader who wants to redo a
+                      ladder they no longer like has no way to ask. A menu is
+                      where a per-goal action belongs, it is on every card
+                      whatever state the goal is in, and it is behind a click
+                      rather than in the reader's face.
+
+                      `onSuggest` writes nothing on its own; the page confirms
+                      before replacing a ladder that exists. See
+                      `redraftStones` in pages/Goals. */}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    disabled={drafting}
+                    onClick={() => { setMenuOpen(false); onRedraftStones(goal); }}
+                  >
+                    <span className="ag-menu-mark" aria-hidden="true"><Spark /></span>
+                    {stones.length ? 'Redraft checkpoints' : 'Suggest checkpoints'}
                   </button>
                   <button type="button" role="menuitem" className="is-bad" onClick={() => { setMenuOpen(false); onDelete(goal); }}>
                     Delete

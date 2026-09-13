@@ -142,6 +142,16 @@ export interface NewGoalWizardProps {
    */
   onDraft?: (idea: string) => Promise<WholeGoalDraft>;
   /**
+   * Opened from "Draft a goal" rather than from "+ New Goal", so the cursor
+   * starts in the sentence box instead of in the title field.
+   *
+   * The two buttons open the same wizard on the same step; this is the whole
+   * difference between them, and it is the difference that matters — a reader
+   * who pressed "Draft a goal" and landed with the caret in "The outcome, not
+   * the activity" has been handed the form they were trying to skip.
+   */
+  focusIdea?: boolean;
+  /**
    * The subject to start on, for a wizard opened from a subject's own page.
    * Still changeable — it is where the picker starts, not a lock.
    */
@@ -156,6 +166,7 @@ export function NewGoalWizard({
   onSave,
   onSuggest,
   onDraft,
+  focusIdea = false,
   subjectId: startSubject,
 }: NewGoalWizardProps) {
   const [step, setStep] = useState(0);
@@ -374,6 +385,7 @@ export function NewGoalWizard({
                     <input
                       id="gx-idea"
                       value={idea}
+                      autoFocus={focusIdea}
                       maxLength={200}
                       placeholder="get good at competition maths this year"
                       disabled={drafting}
@@ -415,7 +427,7 @@ export function NewGoalWizard({
               <input
                 id="gx-title"
                 value={title}
-                autoFocus
+                autoFocus={!focusIdea}
                 placeholder="Reach USACO Gold"
                 onChange={(event) => setTitle(event.target.value)}
               />

@@ -4520,6 +4520,40 @@ button.gx-state-attn.is-on {
    and the same rule written plainly would out-order the card's and paint
    every button violet. That mistake is already written up once in this file,
    over `:where(.ag-card)`. */
+/* The header's "Draft a goal" — the same offer as the wizard's box, named on
+   the outside so it can be found from the page.
+ 
+   A secondary button, not a second primary: "+ New Goal" is still the way most
+   goals get made, and two filled buttons side by side is a page that cannot
+   say which it prefers. The star is what ties it to every other model offer
+   here. */
+.gx-btn-ai {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border-color: color-mix(in srgb, var(--gx-violet) var(--gx-edge), transparent);
+    background: color-mix(in srgb, var(--gx-violet) var(--gx-wash-soft), transparent);
+    color: var(--gx-violet);
+}
+.gx-btn-ai:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--gx-violet) var(--gx-wash), transparent);
+    border-color: color-mix(in srgb, var(--gx-violet) 55%, transparent);
+}
+.gx-btn-ai svg { width: 14px; height: 14px; flex: none; }
+
+/* The star on the card menu's draft item. The menu is a list of plain words
+   and this is the one row that reaches a model, so it is marked the same way
+   every other model offer on this page is. */
+.ag-menu-mark {
+    display: inline-grid;
+    place-items: center;
+    width: 13px; height: 13px;
+    margin-right: 7px;
+    vertical-align: -2px;
+    color: var(--tone);
+}
+.ag-menu-mark svg { width: 13px; height: 13px; }
+
 :where(.gx-ai) { --tone: var(--gx-violet); }
 .gx-ai {
     align-self: flex-start;

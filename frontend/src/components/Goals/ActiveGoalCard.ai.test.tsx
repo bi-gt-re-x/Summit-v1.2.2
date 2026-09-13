@@ -67,6 +67,7 @@ function show(over: Partial<ActiveGoalCardProps> = {}) {
     onLinkTask: vi.fn(),
     onSuggest: vi.fn(async () => ['One', 'Two', 'Three', 'Four', 'Five']),
     onSuggestSteps: vi.fn(),
+    onRedraftStones: vi.fn(),
     onSaveStones: vi.fn(async () => true),
     onFocusMilestone: vi.fn(),
     onMilestoneSteps: vi.fn(),
@@ -149,5 +150,46 @@ describe('the checkpoints offer', () => {
     show({ goal: bare(), planning: true });
     const button = screen.getByRole('button', { name: /thinking/i });
     expect(button).toBeDisabled();
+  });
+});
+
+/**
+ * The menu item, which is the answer to "I cannot see any of this".
+ *
+ * Every other offer on this card appears only where there is nothing to lose —
+ * the empty panel, the checkpoint with no steps written. That is the right
+ * default, and it had a consequence nobody looked for: on an account whose
+ * goals all already have their checkpoints, not one of these offers is on
+ * screen anywhere, and a reader who wants to redo a ladder has no way to ask
+ * for one. The menu is the way back, so what matters is that it is there in
+ * *both* states and that it does not draft on the spot.
+ */
+describe('the menu’s draft item', () => {
+  const withLadder = () => goal({ milestones: [stone('a', 'active', [blank(1)])] });
+
+  /** It lives behind the kebab, which is shut until it is asked for. */
+  const openMenu = () => userEvent.click(screen.getByRole('button', { name: /actions for/i }));
+
+  it('is offered on a goal that already has a ladder', async () => {
+    show({ goal: withLadder() });
+    await openMenu();
+    expect(screen.getByRole('menuitem', { name: /redraft checkpoints/i })).toBeInTheDocument();
+  });
+
+  it('is offered on a goal with no ladder too, worded for that', async () => {
+    show({ goal: goal({ milestones: [] }) });
+    await openMenu();
+    expect(screen.getByRole('menuitem', { name: /suggest checkpoints/i })).toBeInTheDocument();
+  });
+
+  it('asks the page rather than drafting on the spot', async () => {
+    // The page confirms before replacing a ladder somebody wrote, so a
+    // one-click menu item must not reach `onSuggest` itself.
+    const props = show({ goal: withLadder() });
+    await openMenu();
+    await userEvent.click(screen.getByRole('menuitem', { name: /redraft checkpoints/i }));
+    expect(props.onRedraftStones).toHaveBeenCalledWith(expect.objectContaining({ id: 'g-1' }));
+    expect(props.onSuggest).not.toHaveBeenCalled();
+    expect(props.onSaveStones).not.toHaveBeenCalled();
   });
 });
