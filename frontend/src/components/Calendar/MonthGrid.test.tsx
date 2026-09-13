@@ -30,6 +30,7 @@ function day(key: string, day_: number): MonthDay {
     key,
     iso: `2026-08-${String(day_).padStart(2, '0')}`,
     day: day_,
+    family: null,
     events: 2,
     xp: 120,
     earned: 60,

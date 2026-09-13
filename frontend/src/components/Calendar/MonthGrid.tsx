@@ -499,7 +499,19 @@ export function MonthGrid({
                   paragraph. The icon is guessed from the words, exactly as
                   the Day view's field guesses it as they are typed. */}
               {focus && (
-                <span className="mv-cell-focus" title={focus}>
+                /* `data-family` is the day's subject, and it is the only
+                   colour on this grid that is not the XP scale — see `family`
+                   on MonthDay. styles/calendar/palette.css turns it into the
+                   tint, the edge and the ink, so a Tuesday spent on machine
+                   learning is the same colour here as its blocks are in the
+                   Week and Day views. Absent on a day whose work says nothing
+                   about what it was, and the chip is then the neutral it has
+                   always been. */
+                <span
+                  className="mv-cell-focus"
+                  data-family={day?.family ?? undefined}
+                  title={focus}
+                >
                   <i
                     className="cal-ico"
                     style={{ ['--ico' as string]: `url(${iconUrlFor(focus)})` }}

@@ -937,22 +937,12 @@ html[data-theme="dark"] .event-suggest-bad .event-suggest-link { color: #ff9297;
     color: #555;
 }
 
-/* The body rule above is a centred flex column, so its child sizes to its
-   content rather than stretching — and the card inside then sizes to the card,
-   which is circular and settles far narrower than the room available. At a
-   1600px window that cost the week 400px: the grid came out 558px wide, the day
-   columns under 80px each, and the Focus chips ellipsised to "+ F…".
- *
- * The child is `#root`, not `<main>`. That distinction is the whole rule: this
- * said `.app-main` for a while and did nothing at all, because <main> is inside
- * the React mount point and `width: 100%` of a shrink-to-fit parent is the
- * shrink-to-fit width. Both are named, so the width passes down the pair rather
- * than stopping at the first one. */
-body:has(.calendar-container) > #root,
-body:has(.calendar-container) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* The rule that used to sit here — `body:has(.calendar-container) > #root`,
+   which stops the card sizing to its own contents — has moved to
+   styles/calendar/shell.css. It applies to all three views and only this one
+   imports this file, so living here made it a bug that depended on which view
+   you happened to open first. The full account is in that file. */
+
 /* Clear ALL old special styling for today/selected — these dates must look
    identical to every other date. (Selection is shown only by the dot below.) */
 .calendar-day.today,
@@ -1902,6 +1892,30 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
    words. One line, ellipsised, with the whole of it in the hover title. In
    the ink rather than a soft grey, because it is the one thing on the cell the
    reader wrote — the figures under it are the app's. */
+/* What the day was about, under its date.
+ 
+   ## The one colour on this grid that is not the XP scale
+ 
+   The bands are one hue and stay one hue: they are an *order*, a heavier day
+   is a deeper cell, and the note over `--mv-band-exceptional` records what
+   happened the last time they were four unrelated colours. Nothing here
+   touches them.
+ 
+   But a month is read for two things and the grid was only answering one. "How
+   heavy was the ninth" is the bands. "What have I actually been doing" is the
+   subject — the thing the Week and Day views paint every single block by, and
+   which this grid was throwing away entirely: a month of maths, music and
+   training came out as forty-two green squares.
+ 
+   So the focus line becomes the calendar's own event chip, in the day's own
+   family, from the same `[data-family]` block styles/calendar/palette.css
+   paints those views with. Nothing new is invented and nothing is hard-coded:
+   a Tuesday spent on machine learning is the same colour in all three views.
+ 
+   A chip and not a slab — the tint is `--ev-bg`, which is the palette's
+   quietest rung, with the accent held to the icon and the left edge. Forty-two
+   saturated blocks is the rainbow that file exists to prevent, and this grid
+   would be the worst place to start one. */
 .mv-cell-focus {
     display: flex;
     align-items: center;
@@ -1912,12 +1926,25 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     line-height: 1.3;
     color: var(--mv-ink);
 }
+.mv-cell-focus[data-family] {
+    /* The negative left inset lets the chip's accent sit where a cell's own
+       padding would otherwise hold it a few pixels short of the date above it,
+       so the edges of a column line up down the month. */
+    margin-left: -8px;
+    padding: 3px 7px 3px 6px;
+    border-left: 2px solid var(--ev-accent);
+    border-radius: 0 7px 7px 0;
+    background: var(--ev-bg);
+    color: var(--ev-ink);
+}
 .mv-cell-focus .cal-ico {
     width: 14px;
     height: 14px;
     flex: none;
+    /* Green only on a day with no subject to take a colour from. */
     color: var(--mv-band-great);
 }
+.mv-cell-focus[data-family] .cal-ico { color: var(--ev-accent); }
 .mv-cell-focus-text {
     min-width: 0;
     overflow: hidden;

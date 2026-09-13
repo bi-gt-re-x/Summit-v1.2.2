@@ -44,6 +44,53 @@
  * avoid. min-height, margin and padding are already on the body rule in
  * styles/dashboard.css, which is in the main bundle and always loaded. */
 
+/* ---- The card is as wide as the window, not as wide as its contents -------
+ *
+ * `body` is a centred flex column — `display: flex; align-items: center` in
+ * styles/dashboard.css — so `#root` is a flex item sized **shrink-to-fit**
+ * rather than stretched. Everything below it is then a percentage of a box
+ * that is only as wide as its own content: `.calendar-card` asks for
+ * `min(97%, 1920px)`, and 97% of shrink-to-fit is shrink-to-fit.
+ *
+ * The effect is a card whose width depends on which view is inside it, which
+ * is not something anybody chose. The Month view has a seven-column grid with
+ * real text in every cell, so its min-content is wide and the card fills the
+ * window; the Day view is one time column and a 340px rail, so its min-content
+ * is about half that — and the whole view sat in the middle of the page with a
+ * third of the window empty on either side. Measured at a 1512px viewport:
+ * #root came out 1172 with a near-empty pane, and narrower still with the Day
+ * view's real contents.
+ *
+ * It is not the Day view's bug and the fix is not in day.css. All three views
+ * sit in this card and all three were being sized by their own contents; the
+ * Week view was measured losing 400px at a 1600px window, with its day columns
+ * under 80px each and the Focus chips ellipsised to "+ F…".
+ *
+ * ## Why it looked like only the Day view had it
+ *
+ * This rule already existed. It was written in month.css — and Month.tsx is
+ * the only view that imports that file. So the fix arrived the moment you
+ * opened the Month view and then stayed for the rest of the session, because
+ * a stylesheet imported by a lazy route is never removed again. Open the
+ * calendar on Month and everything looked right; land on
+ * /calendar/day directly, or reload while you were there, and the card sized
+ * itself to a time column. Measured at 2160px with month.css absent: #root
+ * came out 493px and the grid pane 27px.
+ *
+ * That is why it lives here now. shell.css is the one sheet all three views
+ * import, so the fix no longer depends on where the reader came in.
+ *
+ * `#root` *and* `.app-main`, because <main> is inside the React mount point and
+ * `width: 100%` of a shrink-to-fit parent is the shrink-to-fit width — naming
+ * only the inner one is why an earlier version of this did nothing at all.
+ * Scoped with `:has` so no other route is touched. Same fix, same reason, as
+ * the block at the top of styles/goals.css. */
+body:has(.calendar-container) > #root,
+body:has(.calendar-container) .app-main {
+    width: 100%;
+    min-width: 0;
+}
+
 /* Theme selector in top right corner */
 
 /* Main calendar container - centers content on the page.

@@ -31,6 +31,9 @@
  * out. A month already past is scored in full.
  */
 import { taskCalendarDay } from './calendarIntensity';
+import { familyForSection } from './calendarColors';
+import { familyForSubject } from './eventPalette';
+import type { Family } from './eventPalette';
 import { isoDate } from './dates';
 import type { CalendarData } from './calendarStore';
 import type { FocusHistory, Task } from '@/types';
@@ -56,6 +59,26 @@ export const XP_BANDS: { key: XpBandKey; label: string; note: string }[] = [
   { key: 'low', label: 'Low', note: 'under 200 XP' },
   { key: 'none', label: 'Nothing on it', note: '' },
 ];
+
+/**
+ * The family a day's work mostly went on, or null.
+ *
+ * Ties go to the family that reached the total first, which is the order the
+ * day was counted in — tasks before events. Arbitrary, but stable: the same
+ * day must not change colour between two renders of the same data.
+ */
+function heaviest(tally: Map<Family, number> | undefined): Family | null {
+  if (!tally || tally.size === 0) return null;
+  let best: Family | null = null;
+  let most = -1;
+  tally.forEach((weight, family) => {
+    if (weight > most) {
+      most = weight;
+      best = family;
+    }
+  });
+  return best;
+}
 
 export function xpBand(xp: number): XpBandKey {
   if (xp >= 800) return 'exceptional';
@@ -92,6 +115,21 @@ export interface MonthDay {
    * grid and eleven segments is a texture rather than a count.
    */
   marks: XpBandKey[];
+  /**
+   * What the day was *about*, as one of the calendar's twelve colour families.
+   *
+   * The bands above say how much a day was worth, and they are one hue on
+   * purpose — they are a scale, and a scale drawn in four unrelated colours is
+   * not one. That left the grid with nothing to say about the other question a
+   * month gets read for: not "how heavy was the ninth" but "what have I been
+   * doing" — a rhythm that is obvious in the Week and Day views, where every
+   * block is painted by its subject, and was invisible here.
+   *
+   * The day's busiest family wins, measured in XP rather than in count,
+   * because what a day was about is what most of it went on. `null` for an
+   * empty day, or one whose work carries no subject.
+   */
+  family: Family | null;
 }
 
 /** How many segments a cell's foot will draw. Past this it is a texture. */
@@ -148,6 +186,21 @@ export function monthDays(
   const length = new Date(year, month + 1, 0).getDate();
   const byKey = new Map<string, MonthDay>();
 
+  /* XP per family per day, while the day is being counted. Kept beside the
+     entries rather than on them: it is scaffolding for one number the cell
+     actually draws, and a Map of Maps on every MonthDay would be a field every
+     consumer has to ignore. */
+  const weights = new Map<string, Map<Family, number>>();
+  const weigh = (key: string, family: Family, xp: number) => {
+    let tally = weights.get(key);
+    if (!tally) weights.set(key, (tally = new Map()));
+    // `+ 1` so a day of zero-XP work still has a subject. Without it a day
+    // whose only entries are unscored events would come back colourless, which
+    // is the majority of a calendar somebody uses for scheduling rather than
+    // for scoring.
+    tally.set(family, (tally.get(family) ?? 0) + xp + 1);
+  };
+
   const days = Array.from({ length }, (_, index) => {
     const day = index + 1;
     const key = keyOf(year, month, day);
@@ -162,6 +215,7 @@ export function monthDays(
       done: 0,
       settled: false,
       marks: [],
+      family: null,
     };
     byKey.set(key, entry);
     return entry;
@@ -177,6 +231,10 @@ export function monthDays(
     entry.tasks += 1;
     entry.xp += xp;
     if (entry.marks.length < MAX_MARKS) entry.marks.push(xpBand(xp));
+    // Only a task that says what it is about. `familyForSubject` answers
+    // 'gray' for an empty subject, and a grey chip on a third of the month is
+    // noise pretending to be information.
+    if (task.subject) weigh(key as string, familyForSubject(task.subject), xp);
     if (task.status === 'done') {
       entry.done += 1;
       entry.earned += xp;
@@ -195,11 +253,17 @@ export function monthDays(
       const xp = Number(section.xp) || 0;
       entry.xp += xp;
       if (entry.marks.length < MAX_MARKS) entry.marks.push(xpBand(xp));
+      // An event always resolves to a family — it was given one when it was
+      // made, and `familyForSection` reads a pre-palette one back off its
+      // colour. This is the same call the Week and Day views paint from, so a
+      // Tuesday is the same colour in all three views.
+      weigh(key, familyForSection(section), xp);
     });
   });
 
   days.forEach((entry) => {
     entry.settled = entry.tasks > 0 && entry.done === entry.tasks;
+    entry.family = heaviest(weights.get(entry.key));
   });
 
   return days;
