@@ -22,10 +22,20 @@
  * a record that cannot be compared to the one before it, and comparison is the
  * entire point — see utils/records. So the unit is chosen and the figure is a
  * number, and the page prints "4h 18m" back out.
+ *
+ * ## And why "which way is better" is asked here
+ *
+ * It is the one fact about a record that nothing can work out for you — a mile
+ * time wants the smallest number and minutes practised wants the largest, and
+ * they carry the same unit. So it is a control, sitting beside the figure it
+ * describes, and it is asked once: adding to a record you already have takes
+ * the answer from the last entry along with the category and the unit, because
+ * two entries of one record that disagree about which way is better are two
+ * halves of a chart pointing opposite ways.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { formatValue } from '@/utils/records';
-import type { RecordDraft, RecordKind, RecordRow } from '@/services/records';
+import { directionOf, formatValue } from '@/utils/records';
+import type { Direction, RecordDraft, RecordKind, RecordRow } from '@/services/records';
 
 /**
  * The units on offer.
@@ -92,6 +102,7 @@ export function RecordModal({
             value: entry.value,
             target: entry.target,
             unit: entry.unit,
+            comparison_direction: directionOf([entry]),
             note: entry.note,
             achieved_on: entry.achieved_on,
           }
@@ -102,6 +113,7 @@ export function RecordModal({
             value: undefined,
             target: 0,
             unit: 'points',
+            comparison_direction: 'higher',
             note: '',
             achieved_on: todayIso(),
           },
@@ -141,6 +153,10 @@ export function RecordModal({
             category: current.category || previous.category,
             unit: current.unit || previous.unit,
             target: current.target || previous.target,
+            // Not `||`-ed against what is already typed, unlike the three
+            // above: 'higher' is a real answer and also the default, so there
+            // is no "unset" value to test for. The record's own answer wins.
+            comparison_direction: directionOf([previous]),
           }
         : {}),
     }));
@@ -161,6 +177,7 @@ export function RecordModal({
       name: draft.name.trim(),
       value: isMilestone ? 0 : Number(draft.value),
       target: isMilestone ? 0 : Number(draft.target) || 0,
+      comparison_direction: isMilestone ? 'higher' : (draft.comparison_direction ?? 'higher'),
     });
   };
 
@@ -260,6 +277,29 @@ export function RecordModal({
                   ))}
                 </select>
               </label>
+            </div>
+          )}
+
+          {!isMilestone && (
+            <div className="rc-field" role="group" aria-label="Which way is better">
+              <span>Better is</span>
+              <div className="rc-dir">
+                {([
+                  ['higher', 'Higher', 'A score, a streak, a level'],
+                  ['lower', 'Lower', 'A mile time, a solve time'],
+                ] as Array<[Direction, string, string]>).map(([value, label, hint]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={(draft.comparison_direction ?? 'higher') === value ? 'is-on' : ''}
+                    aria-pressed={(draft.comparison_direction ?? 'higher') === value}
+                    onClick={() => setDraft({ ...draft, comparison_direction: value })}
+                  >
+                    {label}
+                    <em>{hint}</em>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 

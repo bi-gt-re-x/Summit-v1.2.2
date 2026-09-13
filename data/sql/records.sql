@@ -19,13 +19,35 @@
 -- 25" — is not a row: it is every row sharing a `name`, and the best of them
 -- is the maximum. That falls out of storing entries rather than bests:
 --
---     the personal best   the largest `value` among rows with that name
+--     the personal best   the extremum of `value` among rows with that name
 --     the evolution       those rows in date order: 18 → 20 → 21 → 23 → 25
---     "+7 from first"     the newest minus the oldest
---     "NEW RECORD"        the newest row is also the largest
+--     "+7 from first"     the best minus the oldest, signed toward better
+--     "NEW RECORD"        the newest row is also the best
 --
 -- Storing a single best per name would give the first of those and destroy the
 -- other three, and the other three are most of what the page is for.
+--
+-- ## Which way is better is stored, not guessed
+--
+-- "Extremum" above, rather than "largest", because a five-minute mile beats a
+-- six-minute one and a 25/25 beats a 23/25. The page used to assume bigger was
+-- better everywhere and said so in a comment, which was right for scores,
+-- streaks and levels and silently wrong for every record measured in time.
+-- Guessing from `unit` does not work either — the first person to log "minutes
+-- practised" has a bigger-is-better duration and would get the arrows the
+-- wrong way round.
+--
+-- So `comparison_direction` is asked for once, when the record is first
+-- logged, and every comparison on the page is that one word applied:
+--
+--     best          the extremum in that direction
+--     improvement   best - first, negated when the direction is 'lower'
+--     new record    the newest entry beats every earlier one
+--
+-- It is spelled as a direction rather than as a `lower_is_better` flag because
+-- a boolean has no room to grow: "closest to a target" is a third comparison
+-- this app may well want, and it is a third value here rather than a second
+-- flag that has to be read alongside the first.
 --
 -- ## Milestones share the table
 --
@@ -67,6 +89,17 @@ CREATE TABLE IF NOT EXISTS records (
     -- What `value` counts: 'points', 'minutes', 'days', 'lines', ''. The
     -- client formats from it — 258 minutes prints as "4h 18m".
     unit         TEXT NOT NULL DEFAULT '',
+
+    -- Which end of the range is the good end. 'higher' for a score, 'lower'
+    -- for a time. Rows sharing a name are the same record and the newest of
+    -- them settles it — see the header, and `directionOf` in
+    -- frontend/src/utils/records.ts.
+    --
+    -- Databases that predate this column get NULL through ALTER TABLE (see
+    -- ADDED_COLUMNS in backend/database/connection.py) and every reader treats
+    -- NULL as 'higher', which is what the whole page assumed before it existed.
+    comparison_direction TEXT NOT NULL DEFAULT 'higher'
+                 CHECK (comparison_direction IN ('higher', 'lower')),
 
     note         TEXT NOT NULL DEFAULT '',
 

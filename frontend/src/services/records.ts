@@ -17,6 +17,15 @@ import type { ApiResult } from '@/types';
 /** 'record' has a figure that can be beaten; 'milestone' either happened or has not. */
 export type RecordKind = 'record' | 'milestone';
 
+/**
+ * Which end of a record's range is the good end.
+ *
+ * A word rather than a `lower_is_better` boolean, because a boolean cannot
+ * grow a third case and "closest to a target" is one this app may want. What
+ * it means for every comparison on the page is in utils/records.
+ */
+export type Direction = 'higher' | 'lower';
+
 export interface RecordRow {
   id: string;
   user_id: string;
@@ -30,6 +39,12 @@ export interface RecordRow {
   target: number;
   /** What `value` counts: 'points', 'minutes', 'days', 'lines'. */
   unit: string;
+  /**
+   * Which way is better. Null on every row written before the column existed,
+   * and read as 'higher' there — see `directionOf` in utils/records, which is
+   * the only place allowed to do that reading.
+   */
+  comparison_direction: Direction | null;
   note: string;
   /** ISO day. Empty on a milestone not reached yet. */
   achieved_on: string;
@@ -46,6 +61,7 @@ export interface RecordDraft {
   value?: number;
   target?: number;
   unit?: string;
+  comparison_direction?: Direction;
   note?: string;
   achieved_on?: string;
 }

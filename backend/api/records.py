@@ -8,7 +8,9 @@ two clients functions whose only difference is a field left out.
 ## What this does not do
 
 It does not decide what the personal best is, group rows by name, or work out
-which entry was an improvement on the last. All of that is the *page's*,
+which entry was an improvement on the last — not even now that the row says
+which direction is better, because `comparison_direction` is a fact about the
+record and the comparison it feeds is still a view. All of that is the *page's*,
 because all of it is a view of the same rows and the client already holds them
 all — see `bestOf` and `evolutionOf` in frontend/src/utils/records.ts. The
 server's job here is the part that has to be true: that a row belongs to the
@@ -39,6 +41,12 @@ NAME_MAX = 120
 NOTE_MAX = 500
 
 KINDS = ('record', 'milestone')
+
+#: Which end of a record's range is the good end. A score wants 'higher', a
+#: mile time wants 'lower'. Stored rather than guessed from the unit, because
+#: "minutes practised" is a bigger-is-better duration and any rule built on the
+#: unit gets that one backwards — see data/sql/records.sql.
+DIRECTIONS = ('higher', 'lower')
 
 
 def _known(username):
@@ -89,6 +97,7 @@ class SaveRecord(BaseModel):
     value: float = 0
     target: float = 0
     unit: str = ''
+    comparison_direction: str = 'higher'
     note: str = ''
     achieved_on: str = ''
 
@@ -128,6 +137,15 @@ def _clean(entry: SaveRecord):
         'value': 0 if kind == 'milestone' else _number(entry.value),
         'target': 0 if kind == 'milestone' else _number(entry.target),
         'unit': '' if kind == 'milestone' else entry.unit.strip()[:24],
+        # A milestone has nothing to compare, so it is stored 'higher' rather
+        # than left to whatever a client sent: the column is one of two words
+        # everywhere, and a row that reads 'lower' but carries no figure is a
+        # question the page would have to answer every time it groups rows.
+        'comparison_direction': (
+            entry.comparison_direction
+            if kind == 'record' and entry.comparison_direction in DIRECTIONS
+            else 'higher'
+        ),
         'note': entry.note.strip()[:NOTE_MAX],
         'achieved_on': _date(entry.achieved_on),
     }

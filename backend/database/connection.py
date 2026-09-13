@@ -142,6 +142,15 @@ ADDED_COLUMNS = (
     # the page shows one of those rather than hiding it: a reading that cannot
     # say which window it came from is still the reading somebody paid for.
     ('subject_readings', 'span', 'TEXT'),
+
+    # Which end of a record's range is the good end — 'higher' for a score,
+    # 'lower' for a time. Existing rows get NULL, and every reader treats NULL
+    # as 'higher', which is the honest reading: bigger-is-better was the
+    # assumption the whole page ran on before the column existed. No CHECK and
+    # no DEFAULT for the reason the task ratings above give — ALTER TABLE
+    # cannot attach one to a table with rows in it, and the endpoint in
+    # backend/api/records.py narrows the value to the two words anyway.
+    ('records', 'comparison_direction', 'TEXT'),
 )
 
 # Tables added to the app after the database was first created.

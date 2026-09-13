@@ -71,6 +71,8 @@ import {
   filterRows,
   formatOn,
   formatValue,
+  gainText,
+  headline,
   keyMilestones,
   personalBests,
   tally,
@@ -180,7 +182,6 @@ function KeyRow({
 }
 
 function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
-  const gain = best.value - best.first;
   return (
     <li className={`rc-best${best.fresh ? ' is-fresh' : ''}`}>
       <button type="button" onClick={onOpen}>
@@ -191,9 +192,9 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
 
         {best.fresh ? (
           <span className="rc-best-new">NEW RECORD 🔥</span>
-        ) : gain > 0 ? (
+        ) : best.gain > 0 ? (
           <span className="rc-best-gain">
-            ↑ +{formatValue(gain, best.unit === 'minutes' ? 'minutes' : '')} from first record
+            ↑ {gainText(best)} from first record
           </span>
         ) : (
           <span className="rc-best-gain is-quiet">
@@ -405,6 +406,8 @@ export default function Records() {
 
   const rows = useMemo(() => logged.data?.records ?? [], [logged.data]);
   const bests = useMemo(() => personalBests(rows), [rows]);
+  /** The record the hero states. Null until something has actually moved. */
+  const lead = useMemo(() => headline(rows), [rows]);
   const counts = useMemo(() => tally(rows), [rows]);
   const cats = useMemo(() => categoriesOf(rows), [rows]);
   const recent = useMemo(() => timeline(rows), [rows]);
@@ -490,15 +493,43 @@ export default function Records() {
 
   return (
     <div className={`rc-page${entering ? ' pg-enter' : ''}`}>
-      {/* ---- 1. Hero ------------------------------------------------------ */}
-      {/* ---- 1. Hero ------------------------------------------------------ */}
-      {/* The trophy stays: it is this page's own mark and it sits in the
+      {/* ---- 1. Hero ------------------------------------------------------
+          The page's question, answered before anybody scrolls. "Your best, and
+          the day you hit it" was accurate and it was also a label; the thing
+          this page is actually for is the distance, so the distance is the
+          headline and the record that travelled furthest supplies it — see
+          `headline` in utils/records for which one that is and why it is
+          chosen on the share of the start rather than the raw gain.
+
+          The buttons drop to secondary underneath. They are how the page gets
+          filled and they are not what it is about.
+
+          The trophy stays: it is this page's own mark and it sits in the
           corner the range leaves empty. */}
       <PageHero variant="records" tone="violet" className="rc-top">
         <header className="rc-hero">
           <div className="rc-hero-text">
             <h1 className="rc-title">Your Records</h1>
-            <p className="rc-sub">Your best, and the day you hit it.</p>
+            {lead ? (
+              <>
+                <p className="rc-sub is-thesis">Look how far you’ve come.</p>
+                <p className="rc-lead">
+                  <span className="rc-lead-span">
+                    <span className="rc-lead-from">{formatValue(lead.first, lead.unit)}</span>
+                    <span className="rc-lead-arrow" aria-hidden="true">→</span>
+                    <span className="rc-lead-to">{formatValue(lead.value, lead.unit)}</span>
+                  </span>
+                  <span className="rc-lead-tail">
+                    on <strong>{lead.name}</strong>
+                    <span className="rc-lead-dot" aria-hidden="true">·</span>
+                    <span className="rc-lead-gain">{gainText(lead)}</span> since your first
+                    attempt
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p className="rc-sub">Your best, and the day you hit it.</p>
+            )}
             <div className="rc-hero-tools">
               <button type="button" className="rc-btn is-primary" onClick={() => open('record')}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
@@ -701,17 +732,16 @@ export default function Records() {
               </div>
               <div>
                 <dt>Improvement</dt>
-                <dd className={evolving.value > evolving.first ? 'is-up' : undefined}>
-                  {evolving.value > evolving.first ? '+' : ''}
-                  {formatValue(evolving.value - evolving.first, evolving.unit)}
+                <dd className={evolving.gain > 0 ? 'is-up' : undefined}>
+                  {evolving.gain > 0
+                    ? gainText(evolving)
+                    : formatValue(evolving.value - evolving.first, evolving.unit)}
                 </dd>
               </div>
-              {evolving.first > 0 && evolving.value > evolving.first && (
+              {evolving.gain > 0 && evolving.percent > 0 && (
                 <div>
                   <dt>Since the start</dt>
-                  <dd className="is-up">
-                    ↑ {Math.round(((evolving.value - evolving.first) / evolving.first) * 1000) / 10}%
-                  </dd>
+                  <dd className="is-up">↑ {Math.round(evolving.percent * 10) / 10}%</dd>
                 </div>
               )}
             </dl>

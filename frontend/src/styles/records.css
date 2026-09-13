@@ -127,6 +127,44 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
 }
 .rc-hero-text { min-width: 0; }
 .rc-sub { margin: 0; max-width: 46ch; font-size: 14px; line-height: 1.55; color: var(--rc-muted); }
+/* The thesis, when there is a record to hang it on: one size up and in the
+   page's own text colour, because the line under it is the evidence and a
+   claim in the muted colour reads as a caption for it rather than as the
+   point. */
+.rc-sub.is-thesis { font-size: 16px; font-weight: 600; color: var(--rc-text); }
+
+/* ---------- The headline record ------------------------------------------- */
+/* "18 → 25 on AMC 8 · +7 since your first attempt". The figures are the size
+   of a stat because they are the page's answer; the sentence around them stays
+   sentence-sized so the whole thing reads as prose with two numbers in it
+   rather than as another tile. */
+.rc-lead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 10px;
+    margin: 12px 0 0;
+    font-size: 13.5px;
+    color: var(--rc-muted);
+}
+.rc-lead-span {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 27px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+.rc-lead-from { color: var(--rc-faint); }
+.rc-lead-arrow { font-size: 19px; font-weight: 600; color: var(--rc-faint); }
+.rc-lead-to { color: var(--rc-text); }
+.rc-lead-tail { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
+.rc-lead-tail strong { color: var(--rc-text); font-weight: 700; }
+.rc-lead-dot { color: var(--rc-faint); }
+.rc-lead-gain { font-weight: 700; color: var(--rc-good); font-variant-numeric: tabular-nums; }
+
 .rc-hero-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 /* Big enough to read as the page's own trophy rather than as an emoji that
    wandered in. Hidden on narrow screens, where it is only taking the width. */
@@ -732,6 +770,35 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-field input:focus, .rc-field select:focus, .rc-field textarea:focus { border-color: var(--rc-accent-2); }
 .rc-field-hint { font-style: normal; font-size: 11px; line-height: 1.5; color: var(--rc-faint); }
 .rc-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+
+/* Which way is better. Two buttons rather than a select: there are exactly two
+   answers, both need a line of explanation to be picked correctly, and a
+   select shows neither until it is opened. Shaped like .rc-kind above because
+   it is the same kind of question — a fact about the entry that changes what
+   the rest of the form means. */
+.rc-dir { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.rc-dir button {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 9px 11px;
+    border: 1px solid var(--rc-line);
+    border-radius: 11px;
+    background: var(--rc-card);
+    color: var(--rc-muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+.rc-dir button em { font-style: normal; font-size: 11px; font-weight: 400; color: var(--rc-faint); }
+.rc-dir button:hover { border-color: var(--rc-accent-2); }
+.rc-dir button.is-on {
+    border-color: var(--rc-accent);
+    background: color-mix(in srgb, var(--rc-accent) 10%, transparent);
+    color: var(--rc-text);
+}
 
 .rc-modal-preview {
     margin: 0;
