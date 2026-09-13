@@ -52,17 +52,43 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@600;700&family=Caveat:wght@500;700&display=swap"
     />
     <script>
-      /* The theme, before the first paint.
+      /* The whole look, before the first paint.
        *
        * The server-rendered pages get data-theme in the HTML they are sent, so
        * they never flash. A single-page app has no such luxury: index.html is
        * one static file. Reading the same `theme` cookie the backend sets, here
        * in the head, gets the same result — the attribute is right before any
        * CSS is applied and before React has loaded. src/context/ThemeContext
-       * takes over from here. */
+       * takes over from here.
+       *
+       * The accent and the palette are the same problem and did not have the
+       * same answer. Both live in the account's preferences, which arrive over
+       * the network after the auth check — so every load painted the built-in
+       * violet on the built-in ground and then snapped to the reader's real
+       * theme a few hundred milliseconds later. On Midnight or Sunset that is
+       * the entire page changing colour after it has been read.
+       *
+       * They come from localStorage rather than a cookie because nothing on
+       * the server renders them, so there is nobody to tell — see
+       * src/utils/themeLook.ts, which writes this and explains the rest. The
+       * key is spelled here and there; themeLook.test.ts reads this file and
+       * fails if the two ever stop matching.
+       *
+       * Wrapped, because reading localStorage *throws* in Safari's private
+       * mode rather than returning null, and a look that cannot be restored
+       * has to be a flash rather than a blank page. */
       (function () {
+        var root = document.documentElement;
         var m = document.cookie.match(/(?:^|;\s*)theme=(light|dark)/);
-        if (m) document.documentElement.setAttribute('data-theme', m[1]);
+        if (m) root.setAttribute('data-theme', m[1]);
+        try {
+          var look = JSON.parse(window.localStorage.getItem('summit:look') || '{}');
+          /* Violet is the built-in and carries no attribute — the pages' own
+             defaults are already violet, and setting it would override them
+             with what they already say. Same rule as SettingsProvider. */
+          if (look.accent && look.accent !== 'violet') root.setAttribute('data-accent', look.accent);
+          if (look.skin) root.setAttribute('data-skin', look.skin);
+        } catch (err) { /* no memory; the page loads plain and corrects itself */ }
       })();
     </script>
   </head>

@@ -33,6 +33,7 @@ import { AuthContext } from './contexts';
 import type { AuthStatus } from './contexts';
 import { api, auth } from '@/services';
 import { FALLBACK_AVATAR, avatarPath } from '@/services/avatars';
+import { forgetLook } from '@/utils/themeLook';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>('loading');
@@ -111,6 +112,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     await auth.logout();
+    /* The remembered accent and palette go with the session. They are read by
+       the inline script in index.html, which runs before anything knows who
+       is here — so leaving them behind would tint the signed-out landing page
+       with the last account's theme. Deliberately only on this path and not on
+       a lapsed session; see `forgetLook`. */
+    forgetLook();
     setUsername(null);
     setProfileComplete(true);
     setEmailVerified(true);

@@ -29,6 +29,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/useTheme';
 import { settings as service } from '@/services';
 import { DEFAULT_DAILY_GOAL, DEFAULTS, type Prefs, type ThemeSkin } from '@/services/settings';
+import { rememberLook, rememberedLook } from '@/utils/themeLook';
 import type { Theme } from '@/types';
 
 /**
@@ -60,7 +61,19 @@ function prefsOf(all: Record<string, unknown>): Prefs {
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const { username, status } = useAuth();
   const { setTheme } = useTheme();
-  const [prefs, setPrefs] = useState<Prefs>(DEFAULTS);
+  /* Seeded from what this browser last saw, not from the built-in defaults.
+ 
+     The inline script in index.html has already put `data-accent` and
+     `data-skin` on <html> from the same memory, so the first paint is right.
+     Starting this state at DEFAULTS would then undo that within a frame: the
+     effects below would read violet and no skin, strip both attributes, and
+     the page would flash to plain and back again when the account's real
+     preferences landed — a worse flash than the one the inline script exists
+     to remove, because now it happens twice.
+ 
+     So the two agree on the way in. The server's answer overwrites both a
+     moment later, and that is the copy that decides. */
+  const [prefs, setPrefs] = useState<Prefs>(() => ({ ...DEFAULTS, ...rememberedLook() }));
   /* The same default the API applies to an account that has never set one. */
   const [dailyGoal, setDailyGoal] = useState(DEFAULT_DAILY_GOAL);
   const [displayName, setDisplayName] = useState('');
@@ -141,6 +154,27 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const base = SKIN_BASE[prefs.theme_skin];
     if (base) setTheme(base);
   }, [prefs.theme_skin, setTheme]);
+
+  /* Remember the look for the next load — see utils/themeLook.
+ 
+     **Only for a signed-in account whose settings have actually arrived**, and
+     both halves of that matter:
+ 
+     - Not while `ready` is false, or the seeded-then-corrected value would be
+       written back before the server had been heard from, which is a cache
+       writing its own guess down as fact.
+     - Not on the signed-out pass. `refresh` resets to DEFAULTS when there is
+       no account, and persisting that would wipe the memory every time
+       somebody signed out or their session lapsed — so they would sign back in
+       to the flash this exists to remove. The account keeps the durable copy
+       either way; this is only about what the next paint looks like.
+ 
+     Nothing clears the memory. It is overwritten by the next account to sign
+     in on this browser, and a stale one costs a single corrected frame. */
+  useEffect(() => {
+    if (!username || !ready) return;
+    rememberLook({ accent: prefs.accent, skin: prefs.theme_skin });
+  }, [prefs.accent, prefs.theme_skin, ready, username]);
 
   useEffect(() => {
     const root = document.documentElement;
