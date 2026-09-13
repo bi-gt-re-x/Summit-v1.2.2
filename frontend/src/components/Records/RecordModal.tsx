@@ -34,7 +34,7 @@
  * halves of a chart pointing opposite ways.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { directionOf, formatValue } from '@/utils/records';
+import { formatValue, isBetter, personalBests } from '@/utils/records';
 import type { Direction, RecordDraft, RecordKind, RecordRow } from '@/services/records';
 
 /**
@@ -102,7 +102,8 @@ export function RecordModal({
             value: entry.value,
             target: entry.target,
             unit: entry.unit,
-            comparison_direction: directionOf([entry]),
+            comparison_direction:
+              entry.comparison_direction === 'lower' ? 'lower' : 'higher',
             note: entry.note,
             achieved_on: entry.achieved_on,
           }
@@ -120,18 +121,40 @@ export function RecordModal({
     );
   }, [entry, kind, open]);
 
-  /** Names already logged, so a new entry can join an existing record. */
-  const names = useMemo(() => {
-    const seen = new Map<string, RecordRow>();
+  /**
+   * The records already logged, each reduced to its best.
+   *
+   * Through `personalBests` rather than by keeping one row per name here,
+   * which is what this did and why the hint below was wrong: it kept the
+   * *newest* entry and called it "best so far". Those are the same row only
+   * while you never have a bad day, and on a record measured downward they are
+   * routinely different. The best of a record is one function and this is not
+   * a second copy of it.
+   *
+   * The row being edited is left out. Its own figure is the one in the form,
+   * so counting it would make every edit look like it was competing with
+   * itself — and "a new personal best" would never appear on the entry that
+   * actually holds the record.
+   */
+  const knownRecords = useMemo(
+    () => personalBests(rows.filter((row) => row.id !== entry?.id)),
+    [entry?.id, rows],
+  );
+
+  /** Milestone names, so a second one is not typed slightly differently. */
+  const knownMilestones = useMemo(() => {
+    const seen = new Set<string>();
     for (const row of rows) {
-      if (row.kind !== draft.kind) continue;
-      const key = row.name.trim();
-      if (!key) continue;
-      const held = seen.get(key);
-      if (!held || row.achieved_on > held.achieved_on) seen.set(key, row);
+      if (row.kind !== 'milestone') continue;
+      const name = row.name.trim();
+      if (name) seen.add(name);
     }
-    return [...seen.values()];
-  }, [draft.kind, rows]);
+    return [...seen];
+  }, [rows]);
+
+  const names = draft.kind === 'milestone'
+    ? knownMilestones
+    : knownRecords.map((best) => best.name);
 
   const knownCategories = useMemo(
     () => [...new Set(rows.map((row) => row.category.trim()).filter(Boolean))],
@@ -144,19 +167,19 @@ export function RecordModal({
 
   /** Picking a name you already use carries its category and unit across. */
   const takeName = (name: string) => {
-    const previous = names.find((row) => row.name.trim() === name.trim());
+    const held = knownRecords.find((best) => best.name.trim() === name.trim());
     setDraft((current) => ({
       ...current,
       name,
-      ...(previous
+      ...(held
         ? {
-            category: current.category || previous.category,
-            unit: current.unit || previous.unit,
-            target: current.target || previous.target,
+            category: current.category || held.category,
+            unit: current.unit || held.unit,
+            target: current.target || held.target,
             // Not `||`-ed against what is already typed, unlike the three
             // above: 'higher' is a real answer and also the default, so there
             // is no "unset" value to test for. The record's own answer wins.
-            comparison_direction: directionOf([previous]),
+            comparison_direction: held.direction,
           }
         : {}),
     }));
@@ -181,7 +204,17 @@ export function RecordModal({
     });
   };
 
-  const previous = names.find((row) => row.name.trim() === draft.name.trim());
+  /** The record this entry is joining, if it is joining one. */
+  const joining = knownRecords.find((best) => best.name.trim() === draft.name.trim());
+
+  /** Whether what is typed would beat that record, in its own direction. */
+  const typed = Number(draft.value);
+  const beats =
+    !isMilestone &&
+    joining !== undefined &&
+    draft.value !== undefined &&
+    !Number.isNaN(typed) &&
+    isBetter(typed, joining.value, joining.direction);
 
   return (
     <div className="rc-modal-back" role="dialog" aria-modal="true" aria-label="Log a record">
@@ -223,14 +256,15 @@ export function RecordModal({
               onChange={(event) => takeName(event.target.value)}
             />
             <datalist id="rc-known-names">
-              {names.map((row) => (
-                <option key={row.id} value={row.name} />
+              {names.map((name) => (
+                <option key={name} value={name} />
               ))}
             </datalist>
-            {previous && !entry && (
+            {joining && !isMilestone && (
               <em className="rc-field-hint">
-                Adds to your existing “{previous.name}” — best so far{' '}
-                {formatValue(previous.value, previous.unit, previous.target)}.
+                {entry ? 'Part of' : 'Adds to'} your “{joining.name}” — best so far{' '}
+                {formatValue(joining.value, joining.unit, joining.target)}
+                {joining.direction === 'lower' ? ', and lower is better' : ''}.
               </em>
             )}
           </label>
@@ -344,12 +378,15 @@ export function RecordModal({
             />
           </label>
 
-          {!isMilestone && draft.value !== undefined && !Number.isNaN(Number(draft.value)) && (
-            <p className="rc-modal-preview">
+          {!isMilestone && draft.value !== undefined && !Number.isNaN(typed) && (
+            <p className={`rc-modal-preview${beats ? ' is-record' : ''}`}>
               Will read as{' '}
-              <strong>
-                {formatValue(Number(draft.value), draft.unit ?? '', Number(draft.target) || 0)}
-              </strong>
+              <strong>{formatValue(typed, draft.unit ?? '', Number(draft.target) || 0)}</strong>
+              {/* Said here rather than discovered on the page afterwards. It
+                  is also the one place the direction is visibly doing
+                  something at the moment it is chosen, which is what makes a
+                  wrong answer to it correctable before it is saved. */}
+              {beats && <span className="rc-modal-beats"> — a new personal best 🏆</span>}
             </p>
           )}
 

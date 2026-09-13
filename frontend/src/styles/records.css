@@ -898,6 +898,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     color: var(--rc-muted);
 }
 .rc-modal-preview strong { color: var(--rc-accent-2); font-size: 14px; }
+/* What you are about to save beats the record. Gold, because it is the same
+   event the timeline draws in gold, and said here so it is not a surprise
+   discovered on the page afterwards — see RecordModal.tsx. */
+.rc-modal-preview.is-record {
+    background: color-mix(in srgb, var(--rc-gold) 12%, var(--rc-card-2));
+}
+.rc-modal-preview.is-record strong { color: var(--rc-gold); }
+.rc-modal-beats { font-weight: 700; color: var(--rc-gold); }
 .rc-modal-error { margin: 0; font-size: 12.5px; color: var(--rc-bad); }
 
 .rc-modal-foot {
