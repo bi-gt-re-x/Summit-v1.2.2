@@ -389,6 +389,23 @@ function candidates(
 export const EVIDENCE_SHOWN = 3;
 
 /**
+ * Rated tasks before the composite gap may name a bottleneck.
+ *
+ * Every other naming below carries its own floor, inherited from whatever it
+ * reads: a rung needs three, a momentum half needs four, a leading reason
+ * needs six. The gap has none of its own — it is a mean over whichever
+ * dimensions happen to be known, so it produces a confident-looking answer
+ * off two rated tasks, and "turning up carries most of your shortfall" read
+ * off two afternoons is the kind of sentence that makes a reader stop
+ * believing the rest of the page.
+ *
+ * Six, matching the floor the reasons use, and for the same reason: below it,
+ * naming something stops being a finding and starts being noise with a
+ * number attached.
+ */
+export const GAP_FLOOR = 6;
+
+/**
  * The section's cards: the model's when there are any, the counted ones
  * otherwise.
  *
@@ -558,8 +575,15 @@ export function bottleneckFrom(
   }
 
   /* The composite, last. It names a group of measures rather than a thing to
-     do, which is why nothing above it defers to it. */
-  if (gap.known && gap.largest && gap.total > 0) {
+     do, which is why nothing above it defers to it.
+
+     Two parts with points in them, at least. "The largest of one" is not a
+     finding — an account with only productivity measured would be told that
+     turning up carries its whole shortfall, which is true, vacuous, and
+     indistinguishable on screen from a real naming. */
+  const carrying = gap.parts.filter((part) => part.points > 0).length;
+  if (gap.known && gap.largest && gap.total > 0 && carrying >= 2
+      && state.ratedCount >= GAP_FLOOR) {
     return {
       name: gap.largest.label,
       evidence: [

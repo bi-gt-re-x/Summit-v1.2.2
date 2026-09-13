@@ -629,6 +629,17 @@ export interface PastRecommendation {
   signal: string;
   on: string;
   taken: boolean;
+  /** The day it was acted on. Empty while it has not been. */
+  taken_on: string;
+  /**
+   * Execution in this subject on the day it was advised.
+   *
+   * The `before` half of "did this work". Held rather than recomputed, for
+   * the reason the column exists: a change measured against a window that has
+   * since moved is not a change. Null for advice given before the figure was
+   * being kept, and for a reading taken with nothing rated.
+   */
+  was: number | null;
   task_id: string;
 }
 

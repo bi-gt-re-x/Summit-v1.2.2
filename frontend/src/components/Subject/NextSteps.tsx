@@ -33,16 +33,16 @@
  * ## Effectiveness, once there is any
  *
  * The strip at the foot is what the loop is for: which kinds of session have
- * actually been followed by movement for this account. It draws only when
- * something has been acted on, because a table of "0 taken" for six kinds is
- * not a finding about the reader, it is a finding about the feature.
+ * actually been followed by movement for this account — and that half now
+ * lives in ./Verdicts with the rest of "did the advice work", because at the
+ * foot of this panel it was evidence filed underneath the prescription it was
+ * evidence for.
  */
-import { STEP_WORDS, type NextStep, type StepOutcome } from '@/services/analytics';
+import { STEP_WORDS, type NextStep } from '@/services/analytics';
 import { DIFFICULTY_WORDS } from '@/utils/ratings';
 
 export interface NextStepsProps {
   steps: NextStep[];
-  outcomes: StepOutcome[];
   /** Ids already acted on, so a step does not offer twice. */
   taken: Set<string>;
   busy: string;
@@ -52,15 +52,12 @@ export interface NextStepsProps {
 
 export function NextSteps({
   steps,
-  outcomes,
   taken,
   busy,
   onMakeTask,
   onDidIt,
 }: NextStepsProps) {
   if (!steps.length) return null;
-
-  const acted = outcomes.filter((entry) => entry.taken > 0);
 
   return (
     <div className="sx-steps">
@@ -146,37 +143,6 @@ export function NextSteps({
         })}
       </ol>
 
-      {acted.length > 0 && (
-        <div className="sx-effect">
-          <h4>What has actually worked here</h4>
-          <ul>
-            {acted.map((entry) => (
-              <li key={entry.type}>
-                <span className="sx-effect-name">
-                  {STEP_WORDS[entry.type] ?? entry.type}
-                </span>
-                <span className="sx-effect-count">
-                  {entry.taken} of {entry.given} acted on
-                </span>
-                <span
-                  className={`sx-effect-move${
-                    entry.change === null ? '' : entry.change > 0 ? ' is-up' : ' is-down'
-                  }`}
-                >
-                  {entry.change === null
-                    ? 'no reading yet'
-                    : `${entry.change > 0 ? '+' : ''}${entry.change} pts execution since`}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="sx-effect-note">
-            Counted from your own record rather than claimed by the model: execution when each
-            was given, against execution now. Over this few sessions it is a correlation, not
-            a proof.
-          </p>
-        </div>
-      )}
     </div>
   );
 }

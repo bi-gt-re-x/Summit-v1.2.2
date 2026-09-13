@@ -420,7 +420,13 @@ def list_recommendations(subject: str = '', username: str = Depends(current_user
              'difficulty': row.get('difficulty'), 'minutes': row.get('minutes'),
              'reason': row.get('reason'), 'signal': row.get('signal') or '',
              'on': (row.get('given_at') or '')[:10],
-             'taken': bool(row.get('taken_at')), 'task_id': row.get('task_id')}
+             'taken': bool(row.get('taken_at')),
+             'taken_on': (row.get('taken_at') or '')[:10],
+             # Execution on the day it was advised. The page holds the figure
+             # for now and reads the two against each other — which is the
+             # whole of "did this work", and it needs both ends or neither.
+             'was': row.get('execution_at'),
+             'task_id': row.get('task_id')}
             for row in rows
         ],
         outcomes=_outcomes(rows, None),

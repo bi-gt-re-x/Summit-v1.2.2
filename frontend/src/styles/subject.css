@@ -1315,3 +1315,49 @@
 }
 
 .sb-topline-aim em { font-style: normal; color: var(--ax-faint); }
+
+/* The line under the Evidence heading. Quiet: it is a signpost saying the
+   panels below are the working for the sections above, not a claim of its
+   own. */
+.sb-detail-note {
+    margin: 4px 0 0;
+    max-width: 60ch;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+
+/* The reading at the foot of the skill tree panel. Sentences, under the
+   counts they are about — the panel drew figures and never said what any of
+   them meant. */
+.sb-tree-read {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ax-line-soft);
+}
+
+.sb-tree-read h3 {
+    margin: 0 0 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ax-muted);
+}
+
+.sb-tree-read p {
+    margin: 0 0 6px;
+    max-width: 62ch;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ax-text);
+}
+
+/* Facts about the curriculum rather than about the reader. */
+.sb-tree-read-shape { color: var(--ax-muted); }
+
+.sb-tree-read-next {
+    margin-top: 10px;
+    padding-left: 12px;
+    border-left: 2px solid var(--ax-violet);
+}

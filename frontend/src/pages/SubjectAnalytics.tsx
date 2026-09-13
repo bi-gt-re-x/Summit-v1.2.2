@@ -74,10 +74,12 @@ import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { NextSteps } from '@/components/Subject/NextSteps';
 import { BottleneckPanel, ObjectiveBand, WhatMatters } from '@/components/Subject/Opening';
+import { Verdicts } from '@/components/Subject/Verdicts';
+import { summarise, verdictsFrom } from '@/components/Subject/verdict';
 import { bottleneckFrom, evidenceFrom, objectiveFrom } from '@/components/Subject/objective';
 import { Reading } from '@/components/Subject/Reading';
 import { performance } from '@/components/Subject/performance';
-import { latticeFor } from '@/components/Subject/lattice';
+import { latticeFor, treeReading } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
 import { treeStanding } from '@/skills/standing';
 import { useApi, useAuth, useDocumentTitle, useSettings, useSubjectIndex } from '@/hooks';
@@ -99,6 +101,7 @@ import {
   type NextStep,
   type StepOutcome,
   type SubjectBrief,
+  type PastRecommendation,
   type SubjectMilestone,
   type SubjectReading,
 } from '@/services/analytics';
@@ -693,6 +696,10 @@ export default function SubjectAnalytics() {
   const [readError, setReadError] = useState('');
   const [canRead, setCanRead] = useState(false);
   const [outcomes, setOutcomes] = useState<StepOutcome[]>([]);
+  /* The rows, not only the aggregate by kind. "Did your last advice work" is
+     about a particular recommendation and what it predicted, so it needs the
+     one that was given rather than the average of its kind. */
+  const [past, setPast] = useState<PastRecommendation[]>([]);
   const [taken, setTaken] = useState<Set<string>>(new Set());
   const [stepBusy, setStepBusy] = useState('');
 
@@ -721,6 +728,29 @@ export default function SubjectAnalytics() {
   const bottleneck = useMemo(
     () => bottleneckFrom(state, perf, reading?.bottleneck ?? null),
     [perf, reading, state],
+  );
+
+  /* ---- DID THE ADVICE WORK --------------------------------------------
+     Execution as this page has it is the `after` half of every verdict, and
+     it is read off the dimension rather than recomputed — one derivation, so
+     the section cannot disagree with the panel it is quoting. */
+  const executionNow = useMemo(
+    () => state.dimensions.find((one) => one.key === 'execution')?.value ?? null,
+    [state.dimensions],
+  );
+
+  const verdicts = useMemo(
+    () => verdictsFrom(past, executionNow),
+    [executionNow, past],
+  );
+
+  const loop = useMemo(() => summarise(verdicts, outcomes), [outcomes, verdicts]);
+
+  /* What the standing in the tree says, as sentences rather than as counts.
+     Null lattice means no tree for this subject and no panel to read. */
+  const treeRead = useMemo(
+    () => (lattice ? treeReading(lattice, standing) : null),
+    [lattice, standing],
   );
 
   /* Asked once, so an install with no key draws no button at all — the same
@@ -752,6 +782,7 @@ export default function SubjectAnalytics() {
     void subjectRecommendations(subjectName).then((result) => {
       if (!live || !result.success) return;
       setOutcomes(result.outcomes);
+      setPast(result.recommendations);
       setTaken(new Set(result.recommendations.filter((row) => row.taken).map((row) => row.id)));
     });
     return () => {
@@ -881,6 +912,13 @@ export default function SubjectAnalytics() {
             entry.type === step.type ? { ...entry, taken: entry.taken + 1 } : entry,
           )
         : [...was, { type: step.type, given: 1, taken: 1, change: null }],
+    );
+    setPast((was) =>
+      was.map((row) =>
+        row.id === step.id
+          ? { ...row, taken: true, taken_on: todayIso() }
+          : row,
+      ),
     );
   }, []);
 
@@ -1142,7 +1180,6 @@ export default function SubjectAnalytics() {
                     <div className="sb-draft-body">
                       <NextSteps
                         steps={reading.next_steps}
-                        outcomes={outcomes}
                         taken={taken}
                         busy={stepBusy}
                         onMakeTask={(step) => void makeTask(step)}
@@ -1170,6 +1207,18 @@ export default function SubjectAnalytics() {
                   />
                 </Panel>
               )}
+
+            {/* ---- DID YOUR LAST ADVICE WORK --------------------------- */}
+            {/* The small section that makes the rest of the page worth
+                anything. Every section above it is the app talking; this is
+                the app being held to what it said — each recommendation, what
+                it predicted, and what the figures did afterwards.
+
+                It sits directly under the steps because the two are one
+                thing: a reader deciding whether to act on the advice above
+                should be able to see how the last lot went without going
+                looking for it. */}
+            <Verdicts verdicts={verdicts} summary={loop} />
 
             {/* ---- WHERE AM I ----------------------------------------- */}
             {/* The page answers three questions in order — where am I, why am
@@ -1304,8 +1353,8 @@ export default function SubjectAnalytics() {
                 worse than no chart. */}
             {model.series.any && (
               <Panel
-                title="Over this window"
-                note="Tasks finished, and the quality you rated them at."
+                title="Your trajectory"
+                note="Tasks finished, and the quality you rated them at, period by period."
               >
                 {/* Side by side rather than stacked. They are the same
                     periods on the same dates, so the interesting reading is
@@ -1363,7 +1412,22 @@ export default function SubjectAnalytics() {
             )}
 
             {/* ---- Everything else: the working -------------------- */}
-            <h2 className="sb-detail-head">The detail</h2>
+            {/* Everything below this line is evidence for everything above
+                it.
+
+                The heading used to say "The detail", which is a description
+                of the size of these panels rather than of their job. They are
+                the working: the four rates the score is the mean of, the
+                bands, the reasons, the time, the standings. A reader who
+                accepts the bottleneck never has to open any of it, and a
+                reader who does not accept it can check every figure that
+                produced it. Naming them as evidence is what makes both of
+                those a reasonable thing to do. */}
+            <h2 className="sb-detail-head">Evidence</h2>
+            <p className="sb-detail-note">
+              Everything above is argued from these. Each panel is counted from your
+              own record — nothing here is a sample or an estimate.
+            </p>
 
             {/* The grade is not a tile. It was, and it was the third place on
                 one screen the same letter appeared — the verdict states it at
@@ -2098,7 +2162,7 @@ export default function SubjectAnalytics() {
             )}
 
             {/* ---- The lattice ------------------------------------- */}
-            {lattice && (
+            {lattice && treeRead && (
               <Panel
                 title="The skill tree"
                 note="Where you stand in it, and what it holds."
@@ -2159,6 +2223,24 @@ export default function SubjectAnalytics() {
                     ))}
                   </ul>
                 )}
+
+                {/* What all of the above actually says.
+
+                    The panel drew a percentage, an XP total and three counts
+                    and never said what any of them meant, so a reader saw
+                    "12% of this tree" and had nothing to do with it. This is
+                    the reading — and it reads only from the two figures that
+                    are the reader's own, the XP standing and their own
+                    practice marks. Nothing here touches a node's authored
+                    state, which is the line this panel exists not to cross.
+                    See `treeReading` in components/Subject/lattice. */}
+                <div className="sb-tree-read">
+                  <h3>What this says</h3>
+                  <p>{treeRead.standing}</p>
+                  {treeRead.touched && <p>{treeRead.touched}</p>}
+                  <p className="sb-tree-read-shape">{treeRead.shape}</p>
+                  {treeRead.next && <p className="sb-tree-read-next">{treeRead.next}</p>}
+                </div>
               </Panel>
             )}
           </>

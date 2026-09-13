@@ -104,3 +104,91 @@ export function latticeFor(
     chosen: Boolean(chosenTree),
   };
 }
+
+// ---------------------------------------------------------------------------
+// What the standing in the tree actually says
+// ---------------------------------------------------------------------------
+/**
+ * A short reading of where the reader stands in this subject's curriculum.
+ *
+ * ## Why this is three sentences and not a panel of figures
+ *
+ * The tree panel draws the numbers already — a percentage, an XP total, a
+ * count of skills and branches. What it never did was say what any of it
+ * meant, so a reader saw "12% of this tree" and had nothing to do with it.
+ *
+ * ## The line this must not cross
+ *
+ * The tree is **authored**. Every node and every seeded state was written by
+ * hand and is identical for every account, so nothing here may read a node's
+ * state back as the reader's ability — the rule this whole file exists to
+ * hold, stated at the top.
+ *
+ * Two figures are the reader's own and they are the only two this reads from:
+ * `practised`, which their own clicks wrote, and the XP standing, which is
+ * counted off their finished work. Everything else in a sentence below is a
+ * fact about the size or shape of the curriculum, and is phrased as one.
+ *
+ * So there is no "you are 12% masterful". There is "you have touched six of
+ * forty-two skills on this branch", which is a true sentence about a person,
+ * and "this branch forks into four others", which is a true sentence about a
+ * tree.
+ */
+export interface TreeReading {
+  /** Where they stand, as a sentence. Always present. */
+  standing: string;
+  /** What they have touched of it. Empty when the store has nothing. */
+  touched: string;
+  /** What the tree holds, and where this branch sits in it. */
+  shape: string;
+  /** What to do with all that, when the figures support saying anything. */
+  next: string;
+}
+
+/** Under this share of a tree's XP, the reader is at the start of it. */
+const EARLY = 15;
+/** Over this share, the tree is mostly behind them. */
+const LATE = 70;
+
+export function treeReading(
+  lattice: Lattice,
+  standing: { percent: number; xp: number; worth: number; title: string } | null,
+): TreeReading {
+  const untouched = Math.max(0, lattice.nodes - lattice.practised);
+
+  const standingLine = standing
+    ? standing.percent >= LATE
+      ? `You hold ${standing.percent}% of the XP that opens ${standing.title}. `
+        + 'Most of this tree is behind you.'
+      : standing.percent <= EARLY
+        ? `You hold ${standing.percent}% of the XP that opens ${standing.title}. `
+          + 'This is the start of it.'
+        : `You hold ${standing.percent}% of the XP that opens ${standing.title}.`
+    : `Nothing finished here has counted towards ${lattice.title} yet.`;
+
+  const touched = lattice.practised > 0
+    ? `You have practised ${lattice.practised} of its ${lattice.nodes} skills`
+      + `${untouched > 0 ? `, and not opened ${untouched}` : ''}.`
+    : '';
+
+  const shape = lattice.branches.length > 0
+    ? `${lattice.title} holds ${lattice.nodes} skills, ${lattice.core} of them core, `
+      + `and forks into ${lattice.branches.length} branches.`
+    : `${lattice.title} holds ${lattice.nodes} skills, ${lattice.core} of them core.`;
+
+  /* The only line here that tells anybody to do anything, and it is careful:
+     the tree cannot say what the reader is good at, so the most it can offer
+     is where there is unopened curriculum and which branch it is on. */
+  let next = '';
+  if (lattice.branches.length > 0 && untouched > 0) {
+    next = lattice.chosen
+      ? `This is the branch you chose, so the unopened skills on it are the `
+        + `nearest thing the curriculum has to a next page.`
+      : `No branch has been chosen for this subject, so this is its root — `
+        + `naming one in the analytics setup narrows what the tree offers.`;
+  } else if (untouched === 0 && lattice.practised > 0) {
+    next = 'Every skill on this branch has been opened at least once.';
+  }
+
+  return { standing: standingLine, touched, shape, next };
+}
