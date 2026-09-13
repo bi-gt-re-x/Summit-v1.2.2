@@ -22,6 +22,7 @@
  * a moment later, which is why `ready` exists for the one caller that needs to
  * wait (the calendar redirect, which cannot un-navigate).
  */
+import { setClockFormat } from '@/utils/clock';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { SettingsContext } from './contexts';
@@ -181,6 +182,21 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     if (prefs.reduce_motion) root.setAttribute('data-motion', 'reduced');
     else root.removeAttribute('data-motion');
   }, [prefs.reduce_motion]);
+
+  /* The clock the whole app writes times on, set for the render that is about
+     to happen rather than after it.
+
+     In a `useMemo` and not a `useEffect`, which is the unusual part and is the
+     whole point: an effect runs *after* children have rendered, so the render
+     that first carried a changed `clock_format` would still print the old
+     clock, and nothing would re-render to correct it — the preference would
+     appear to need a refresh. This provider renders before its children, so
+     doing it here means every label below reads the value it was just given.
+
+     Safe to do in render because it is idempotent and writes no React state:
+     utils/clock holds one word, `setClockFormat` returns whether it changed,
+     and nothing else in the app writes it. */
+  useMemo(() => setClockFormat(prefs.clock_format), [prefs.clock_format]);
 
   /* 'system' is a preference about how to choose the theme, not a colour, so
      it is kept here and resolved against the device — now and whenever the

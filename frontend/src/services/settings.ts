@@ -27,6 +27,16 @@ export type Accent = 'violet' | 'blue' | 'green' | 'amber' | 'rose' | 'slate';
  */
 export type ThemeSkin = '' | 'midnight' | 'sunset' | 'meadow' | 'orchid';
 export type Priority = 'low' | 'medium' | 'high';
+/**
+ * Which clock every time in the app is written on.
+ *
+ * What reads it is utils/clock, which is the only place in the app that knows
+ * the answer — see the note there on why it is read from one module rather
+ * than threaded through twenty formatters.
+ */
+export type ClockFormat = '12h' | '24h';
+/** What the Records history opens ordered by. Mirrors `Sort` in utils/records. */
+export type RecordsSort = 'newest' | 'oldest' | 'improvement';
 export type CalendarView = 'day' | 'week' | 'month';
 export type AnalyticsWindow = '7d' | '30d' | '90d' | '1y' | '2y' | 'all';
 
@@ -90,6 +100,7 @@ export interface Prefs {
   show_ambient: boolean;
   nav_collapsed: boolean;
   home_page: HomePage;
+  clock_format: ClockFormat;
   show_stats: boolean;
   show_insights: boolean;
   show_focus: boolean;
@@ -104,6 +115,16 @@ export interface Prefs {
   task_horizon: TaskHorizon;
   calendar_view: CalendarView;
   week_starts_on: WeekStart;
+  /** What the Records history column opens ordered by. */
+  records_sort: RecordsSort;
+  /**
+   * Whether the pomodoro page has been set up.
+   *
+   * The parallel of `analytics_setup_done`. It was a localStorage flag keyed by
+   * username, which made it a fact about the browser rather than the account —
+   * so the setup questions came back on every new device.
+   */
+  timer_setup_done: boolean;
   focus_goal_hours: number;
   focus_dim: boolean;
   /**
@@ -236,6 +257,9 @@ export const DEFAULTS: Prefs = {
   show_ambient: true,
   nav_collapsed: false,
   home_page: 'dashboard',
+  /* What the app did before the preference existed, so no account's calendar
+     changes shape until it is asked to. */
+  clock_format: '12h',
   show_stats: true,
   show_insights: true,
   show_focus: true,
@@ -250,6 +274,8 @@ export const DEFAULTS: Prefs = {
   task_horizon: 'week',
   calendar_view: 'week',
   week_starts_on: 'monday',
+  records_sort: 'newest',
+  timer_setup_done: false,
   focus_goal_hours: 2,
   focus_dim: true,
   catchup_prompt: true,

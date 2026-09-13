@@ -280,6 +280,19 @@ FIELDS: Dict[str, Any] = {
     'home_page':         ('dashboard', _one_of('dashboard', 'tasks', 'calendar',
                                                'goals', 'analytics', 'notes')),
 
+    #: Which clock every time in the app is written on.
+    #:
+    #: It was twelve-hour everywhere, in about a dozen formatters, and three of
+    #: them passed 'en-US' to toLocaleTimeString explicitly — so a device set to
+    #: a language that writes 18:40 was told 6:40 PM anyway. Most of the world
+    #: writes 18:40.
+    #:
+    #: '12h' is the default because it is what the app did before this existed,
+    #: so no account's calendar changes shape until it is asked to. What reads
+    #: it is frontend/src/utils/clock.ts, which is the only place the choice is
+    #: known — see the note there on why it is read rather than passed down.
+    'clock_format':      ('12h', _one_of('12h', '24h')),
+
     # Dashboard.
     'show_stats':        (True, _boolean),
     'show_insights':     (True, _boolean),
@@ -305,6 +318,21 @@ FIELDS: Dict[str, Any] = {
     # Calendar.
     'calendar_view':     ('week', _one_of('day', 'week', 'month')),
     'week_starts_on':    ('monday', _one_of('monday', 'sunday')),
+
+    #: Records. What the history column under the personal bests opens ordered
+    #: by — the same shape as the four `task_*` keys above, and for the same
+    #: reason: the toolbar still changes the order for a visit, and this is
+    #: where the visit starts. See `filterRows` in
+    #: frontend/src/utils/records.ts for what each one means.
+    'records_sort':      ('newest', _one_of('newest', 'oldest', 'improvement')),
+
+    #: Whether the pomodoro page has been set up. The exact parallel of
+    #: `analytics_setup_done` below, and it is here because it used to be a
+    #: localStorage flag keyed by username — which made "have I set this up"
+    #: a fact about the browser rather than about the account, so the wizard
+    #: greeted you again on every new device. False is a real state and not a
+    #: missing one: it is what puts the setup questions in front of the page.
+    'timer_setup_done':  (False, _boolean),
 
     # Focus. The goal is per day and kept in the browser; this is what a day
     # that has not been given one of its own starts from.

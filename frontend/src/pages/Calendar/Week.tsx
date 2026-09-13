@@ -19,6 +19,7 @@
  * what that week amounted to. The current week keeps its snapshot fresh, and
  * whatever it holds when the week ends is what stays.
  */
+import { hmText } from '@/utils/clock';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -100,13 +101,13 @@ function weekOf(date: Date, startsOn: 0 | 1): Date {
   return dates.startOfWeek(date, startsOn);
 }
 
-/** "16:30" as "4:30 PM". Empty in, "All Day" out — an entry with no time has none. */
+/** "16:30" on the account's clock. Empty in, "All Day" out — an entry with no
+    time has none. The twelve-hour arithmetic this did itself is utils/clock's
+    now, which is what lets it be twenty-four-hour too. */
 function clockLabel(hhmm: string): string {
   const [hours, minutes] = hhmm.split(':').map(Number);
   if (hours === undefined || Number.isNaN(hours) || minutes === undefined) return 'All Day';
-  const suffix = hours >= 12 ? 'PM' : 'AM';
-  const hour12 = hours % 12 === 0 ? 12 : hours % 12;
-  return `${hour12}:${String(minutes).padStart(2, '0')} ${suffix}`;
+  return hmText(hours, minutes);
 }
 
 /** "July 13 – July 19, 2026". */

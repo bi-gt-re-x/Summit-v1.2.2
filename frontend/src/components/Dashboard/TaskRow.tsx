@@ -26,6 +26,7 @@
  * A completed row is not clickable: re-opening a finished task is an edit, and
  * this list does not edit.
  */
+import { timeText } from '@/utils/clock';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { priorityMeta } from './summary';
 import { iconUrl, type Subject } from '@/services/subjects';
@@ -49,7 +50,7 @@ export interface TaskRowProps {
 /** "Jul 30, 2:30 PM" — the same shape the calendar prints a due time in. */
 function dueLabel(due: Date): string {
   const day = due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const time = due.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const time = timeText(due);
   return `${day}, ${time}`;
 }
 

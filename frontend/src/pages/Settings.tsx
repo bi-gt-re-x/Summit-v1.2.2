@@ -82,6 +82,17 @@ import '@/styles/settings.css';
 const GOAL_MIN = 10;
 const GOAL_MAX = 2000;
 
+/** The clock, shown rather than described — it is a format, so an example is
+    the whole explanation. */
+const CLOCK_EXAMPLE: Record<Prefs['clock_format'], string> = {
+  '12h': '6:40 PM',
+  '24h': '18:40',
+};
+const CLOCK_HINT: Record<Prefs['clock_format'], string> = {
+  '12h': 'Morning and afternoon, with AM and PM.',
+  '24h': 'Hours counted 00 to 23, so there is no AM or PM to read.',
+};
+
 /** The pages an account may open on, and what each one is for. */
 const HOME_PAGES: { key: Prefs['home_page']; label: string }[] = [
   { key: 'dashboard', label: 'Dashboard' },
@@ -1230,6 +1241,58 @@ export default function Settings() {
                 ]}
               />
             ),
+          },
+          {
+            id: 'clock',
+            label: 'Clock',
+            hint: 'Every time in the app — the calendar grid, due times, blocks and the dashboard.',
+            control: (
+              <Seg
+                value={prefs.clock_format}
+                busy={busy}
+                onPick={(next) => void savePref({ clock_format: next }, 'Clock')}
+                options={[
+                  { key: '12h', label: '12-hour' },
+                  { key: '24h', label: '24-hour' },
+                ]}
+              />
+            ),
+          },
+          {
+            id: 'clock-what',
+            label: 'How a time is written',
+            hint: CLOCK_HINT[prefs.clock_format],
+            control: <span className="st-fixed">{CLOCK_EXAMPLE[prefs.clock_format]}</span>,
+          },
+        ],
+      },
+      {
+        id: 'records',
+        label: 'Records',
+        group: 'Productivity',
+        items: [
+          {
+            id: 'records-sort',
+            label: 'History opens ordered by',
+            hint: 'The list under your personal bests. The toolbar there still changes it for a visit.',
+            control: (
+              <Seg
+                value={prefs.records_sort}
+                busy={busy}
+                onPick={(next) => void savePref({ records_sort: next }, 'Records order')}
+                options={[
+                  { key: 'newest', label: 'Newest' },
+                  { key: 'oldest', label: 'Oldest' },
+                  { key: 'improvement', label: 'Improvement' },
+                ]}
+              />
+            ),
+          },
+          {
+            id: 'records-sort-what',
+            label: 'What “improvement” orders by',
+            hint: 'How far a record has come rather than how large it is — a score that went 18 to 25 above one logged once at 400.',
+            control: <span className="st-fixed">Distance travelled</span>,
           },
         ],
       },

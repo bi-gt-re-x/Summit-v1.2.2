@@ -92,11 +92,18 @@
  * is about the high scores themselves. All three read the same history and ask
  * different things of it.
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ErrorState, Loading, PageHero } from '@/components';
 import { Glyph } from '@/components/Growth/GrowthPanels';
 import { RecordModal } from '@/components/Records/RecordModal';
-import { useApi, useCountUp, useDocumentTitle, usePageEntrance, useUserData } from '@/hooks';
+import {
+  useApi,
+  useCountUp,
+  useDocumentTitle,
+  usePageEntrance,
+  useSettings,
+  useUserData,
+} from '@/hooks';
 import { growth as growthService, records as recordService } from '@/services';
 import type { GrowthSeries } from '@/services/growth';
 import type { RecordDraft, RecordKind, RecordRow } from '@/services/records';
@@ -542,6 +549,7 @@ export default function Records() {
 
   const account = useUserData();
   const { username } = account;
+  const { prefs } = useSettings();
 
   const seriesCall = useCallback(
     () =>
@@ -582,7 +590,11 @@ export default function Records() {
   const [allBests, setAllBests] = useState(false);
   const [pick, setPick] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  const [sort, setSort] = useState<Sort>('newest');
+  /* The order the history opens in is the account's, the same way the four
+     task_* preferences work: this is where the visit starts, and the toolbar
+     still changes it for the visit. */
+  const [sort, setSort] = useState<Sort>(prefs.records_sort);
+  useEffect(() => setSort(prefs.records_sort), [prefs.records_sort]);
   /** How many days of history are drawn before "show more". */
   const [days, setDays] = useState(DAYS_SHOWN);
 

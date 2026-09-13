@@ -13,6 +13,7 @@
  *
  * Ported from the rendering half of calendar-week.js.
  */
+import { hmText, hourText, rangeText, timeText } from './clock';
 import { familyForSection } from './calendarColors';
 import { familyForSubject, type Family } from './eventPalette';
 import { eventFamilyKey, taskFamilyKey } from './calendarFamilies';
@@ -109,31 +110,23 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 // --------------------------------------------------------------------------
 // Labels
 // --------------------------------------------------------------------------
+/* Every label below writes whichever clock the account chose. The twelve-hour
+   arithmetic these used to do inline is in utils/clock now — one copy, and the
+   note there says why the preference is read rather than passed in. */
+
 /** "6 AM" for a grid hour, counting 24–29 back into the small hours. */
 export function hourLabel(hour: number): string {
-  const normalised = ((hour % 24) + 24) % 24;
-  const suffix = normalised < 12 ? 'AM' : 'PM';
-  const twelve = normalised % 12 || 12;
-  return `${twelve} ${suffix}`;
+  return hourText(hour);
 }
 
 /** "6:40 PM". */
 export function timeLabel(date: Date): string {
-  const hours = date.getHours();
-  const suffix = hours < 12 ? 'AM' : 'PM';
-  const twelve = hours % 12 || 12;
-  return `${twelve}:${String(date.getMinutes()).padStart(2, '0')} ${suffix}`;
+  return timeText(date);
 }
 
 /** "6 PM" on the hour, "6:40 PM" otherwise — the compact layout's form. */
 export function timeLabelShort(date: Date): string {
-  const minutes = date.getMinutes();
-  const hours = date.getHours();
-  const suffix = hours < 12 ? 'AM' : 'PM';
-  const twelve = hours % 12 || 12;
-  return minutes
-    ? `${twelve}:${String(minutes).padStart(2, '0')} ${suffix}`
-    : `${twelve} ${suffix}`;
+  return timeText(date, true);
 }
 
 /** "Jul 15, 6:40 PM" — a task block's due date. */
@@ -149,17 +142,13 @@ export function shortDateTime(date: Date): string {
 /** "6:40 PM" from a stored "18:40". */
 export function hmLabel(hm: string): string {
   const [hours = 0, minutes = 0] = String(hm).split(':').map(Number);
-  const suffix = hours < 12 ? 'AM' : 'PM';
-  const twelve = hours % 12 || 12;
-  return `${twelve}:${String(minutes).padStart(2, '0')} ${suffix}`;
+  return hmText(hours, minutes);
 }
 
 /** As above, dropping ":00" on the hour. */
 export function hmLabelShort(hm: string): string {
   const [hours = 0, minutes = 0] = String(hm).split(':').map(Number);
-  const suffix = hours < 12 ? 'AM' : 'PM';
-  const twelve = hours % 12 || 12;
-  return minutes ? `${twelve}:${String(minutes).padStart(2, '0')} ${suffix}` : `${twelve} ${suffix}`;
+  return hmText(hours, minutes, true);
 }
 
 /**
@@ -171,17 +160,7 @@ export function hmLabelShort(hm: string): string {
  * characters longer than the column can show.
  */
 export function rangeLabel(from: Date, to: Date): string {
-  const half = (date: Date) => (date.getHours() < 12 ? 'AM' : 'PM');
-  // ":00" is dropped on the hour for the same reason the meridiem is shared:
-  // every character costs, and nobody reads "11:00" differently from "11".
-  const clock = (date: Date) => {
-    const minutes = date.getMinutes();
-    const hour = date.getHours() % 12 || 12;
-    return minutes ? `${hour}:${String(minutes).padStart(2, '0')}` : `${hour}`;
-  };
-  return half(from) === half(to)
-    ? `${clock(from)} – ${clock(to)} ${half(to)}`
-    : `${clock(from)} ${half(from)} – ${clock(to)} ${half(to)}`;
+  return rangeText(from, to);
 }
 
 /** A stored "18:40" as a Date today, so a range can be written from two of them. */

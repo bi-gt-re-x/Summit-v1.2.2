@@ -99,13 +99,25 @@ function due(date: string | null | undefined, today: Date): string {
   return at.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-function setupDone(user: string): boolean {
+/**
+ * Whether this browser remembers the setup being done.
+ *
+ * The account's own answer is `timer_setup_done` in its preferences, and that
+ * is what this reads now. This flag is what it used to be — a localStorage key
+ * per username — which made "have I set the timer up" a fact about the browser
+ * rather than about the account, so the questions came back on every new
+ * device and on every cleared cache.
+ *
+ * Kept only to be read once. An account that set the timer up before the
+ * preference existed has this and not that, and asking it the questions again
+ * to collect an answer it already gave would be the migration doing harm. So
+ * the page treats either as done and writes the preference when it sees only
+ * the flag — see `setup` below. Nothing writes the flag any more.
+ */
+function legacySetupDone(user: string): boolean {
   try {
     return window.localStorage.getItem(`${SETUP_KEY}:${user}`) === '1';
   } catch { return false; }
-}
-function markSetupDone(user: string): void {
-  try { window.localStorage.setItem(`${SETUP_KEY}:${user}`, '1'); } catch { /* next visit */ }
 }
 
 function iso(date: Date): string {
@@ -354,7 +366,7 @@ export default function Timer() {
   const user = username || 'Default';
   const account = useUserData();
   const { stats } = useStats();
-  const { displayName } = useSettings();
+  const { displayName, prefs, ready, update: updatePrefs } = useSettings();
   const session = useFocusSession(username);
   const pomodoro = usePomodoro(username, session);
 
@@ -374,8 +386,28 @@ export default function Timer() {
       : 'Timer',
   );
 
-  const [setup, setSetup] = useState(() => !setupDone(user));
-  useEffect(() => setSetup(!setupDone(user)), [user]);
+  /* The questions, and whether they are still to be asked.
+     `ready` gates it: before the account's preferences have arrived every
+     preference reads as its default, and the default here is false — so
+     without this the setup screen would flash in front of everybody on every
+     load, including accounts that finished it a year ago. */
+  const [setup, setSetup] = useState(false);
+  useEffect(() => {
+    if (!ready || !user) return;
+    if (prefs.timer_setup_done) {
+      setSetup(false);
+      return;
+    }
+    // The preference says no and this browser says yes: an account from before
+    // the preference existed. Take its word and record it, rather than asking
+    // again for an answer it has already given.
+    if (legacySetupDone(user)) {
+      setSetup(false);
+      void updatePrefs({ timer_setup_done: true });
+      return;
+    }
+    setSetup(true);
+  }, [prefs.timer_setup_done, ready, updatePrefs, user]);
 
   const [range, setRange] = useState<RangeId>('7D');
   const [grain, setGrain] = useState<Grain>('Daily');
@@ -397,9 +429,9 @@ export default function Timer() {
 
   const finish = useCallback((styleId?: string) => {
     if (styleId) pomodoro.choose(styleId);
-    markSetupDone(user);
+    void updatePrefs({ timer_setup_done: true });
     setSetup(false);
-  }, [pomodoro, user]);
+  }, [pomodoro, updatePrefs]);
 
   const { style, phase, running, remaining, percent, level, doneToday } = pomodoro;
   const days = history.data?.days ?? {};

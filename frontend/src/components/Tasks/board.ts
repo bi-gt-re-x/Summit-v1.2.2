@@ -15,6 +15,7 @@
  * chooses, and selection so a dozen tasks can be dealt with at once. The two
  * read the same tasks through the same service; only the questions differ.
  */
+import { timeText } from '@/utils/clock';
 import type { Task, TaskPriority } from '@/types';
 import { isoDate } from '@/utils/dates';
 import { XP_BANDS, xpToBand, type XpBand } from '@/utils/priority';
@@ -777,7 +778,10 @@ export function timeLabel(value: string | undefined | null): string | null {
   const at = new Date(raw);
   if (Number.isNaN(at.getTime())) return null;
   if (at.getHours() === 0 && at.getMinutes() === 0) return null;
-  return at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  // Was toLocaleTimeString('en-US', …), which wrote AM and PM at a reader
+  // whose device had already said otherwise. utils/clock is the account's
+  // answer instead.
+  return timeText(at);
 }
 
 /** "Due Today, 6:00 PM" — the whole date line on a row, or null. */

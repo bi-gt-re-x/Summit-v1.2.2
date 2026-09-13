@@ -15,6 +15,7 @@
  * nowhere at all, whereas this one lands on pages/Unbuilt, which says what the
  * page will be and which files it will be built from.
  */
+import { timeText } from '@/utils/clock';
 import { Link } from 'react-router-dom';
 import { useCountUp } from '@/hooks';
 import { format } from '@/utils';
@@ -169,7 +170,7 @@ export function RecentActivity({ entries }: { entries: Activity[] }) {
               </span>
               <span className="dash-activity-xp">+{format.number(entry.xp)} XP</span>
               <span className="dash-activity-at">
-                {entry.at.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                {timeText(entry.at)}
               </span>
             </li>
           ))}

@@ -22,6 +22,7 @@
  * computed on render from the store and the database (see
  * components/Calendar/entries.ts), so there is nothing to leave behind.
  */
+import { timeText } from '@/utils/clock';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -276,7 +277,7 @@ export default function Month() {
         key: `t:${task.id}`,
         name: task.title,
         iso,
-        at: at.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }),
+        at: timeText(at),
         kind: 'task',
       });
     });
