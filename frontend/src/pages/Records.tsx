@@ -463,6 +463,11 @@ export default function Records() {
   });
 
   const [category, setCategory] = useState('All');
+  /* The bests row draws TOP_BESTS and this opens it to everything under the
+     chosen chip. Reset when the chip changes: "show all" meant all of the
+     category it was pressed in, and carrying it across reads as the filter
+     having failed. */
+  const [allBests, setAllBests] = useState(false);
   const [pick, setPick] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [show, setShow] = useState<Show>('all');
@@ -670,63 +675,113 @@ export default function Records() {
         </p>
       )}
 
-      {/* ---- 2. Personal bests -------------------------------------------- */}
+      {/* ---- 2. Personal bests ---------------------------------------------
+          There was a "Category records" section under this one, listing the
+          same bests a second time under their headings. Both sections asked
+          *what are my best things?* and answered it with the same rows in two
+          shapes, which is the page's biggest redundancy and cost it the room
+          the evolution chart now has.
+
+          So the categories became what they always were — a filter on this
+          section — and the chips moved into its header. Nothing is lost:
+          picking a heading gives every best under it rather than the six the
+          old list truncated to. */}
       <section className="rc-section">
         <div className="rc-section-head">
-          <h2 className="rc-section-title">🏆 Personal bests</h2>
+          <h2 className="rc-section-title">🏆 Your best</h2>
+          {cats.length > 0 && (
+            <div className="rc-chips" role="group" aria-label="Filter by category">
+              {['All', ...cats].map((name) => (
+                <button key={name} type="button"
+                        className={`rc-chip${category === name ? ' is-on' : ''}`}
+                        aria-pressed={category === name}
+                        onClick={() => { setCategory(name); setAllBests(false); }}>
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {bests.length === 0 ? (
           <p className="rc-empty">
             Nothing logged yet. “Add record” takes a name, a figure and a date.
           </p>
+        ) : shownBests.length === 0 ? (
+          <p className="rc-empty">No records under “{category}” yet.</p>
         ) : (
-          <ul className="rc-bests">
-            {shownBests.slice(0, TOP_BESTS).map((best) => (
-              <BestCard key={best.name} best={best}
-                        onOpen={() => open('record', best.history[best.history.length - 1])} />
-            ))}
-          </ul>
+          <>
+            <ul className="rc-bests">
+              {(allBests ? shownBests : shownBests.slice(0, TOP_BESTS)).map((best) => (
+                <BestCard key={best.name} best={best}
+                          onOpen={() => open('record', best.history[best.history.length - 1])} />
+              ))}
+            </ul>
+            {shownBests.length > TOP_BESTS && (
+              <button type="button" className="rc-link rc-more"
+                      onClick={() => setAllBests((shown) => !shown)}>
+                {allBests
+                  ? 'Show fewer'
+                  : `Show all ${shownBests.length}${category === 'All' ? '' : ` in ${category}`}`}
+              </button>
+            )}
+          </>
         )}
       </section>
 
-      {/* ---- 3. Category records ------------------------------------------ */}
-      {cats.length > 0 && (
+      {/* ---- 3. Record evolution -------------------------------------------
+          This was the eighth thing on the page and it is the reason the page
+          exists. Analytics asks *how am I doing*; this asks *I used to be
+          there?* — and that difference is the only thing that makes Records a
+          separate destination rather than a tab. Burying it under the
+          timeline, the milestones and a search bar made it a footnote to
+          sections that are inventory.
+
+          So it sits directly under the bests, which are what it explains: the
+          cards give the figure and the shape, and this gives the whole series
+          with an axis to read it against. */}
+      {bests.length > 0 && evolving && (
         <section className="rc-section">
           <div className="rc-section-head">
-            <h2 className="rc-section-title">📚 Category records</h2>
-            <div className="rc-chips">
-              {['All', ...cats].map((name) => (
-                <button key={name} type="button"
-                        className={`rc-chip${category === name ? ' is-on' : ''}`}
-                        onClick={() => setCategory(name)}>
-                  {name}
-                </button>
+            <h2 className="rc-section-title">📈 How your records changed</h2>
+            <select className="rc-select" value={evolving.name}
+                    aria-label="Which record to plot"
+                    onChange={(event) => setPick(event.target.value)}>
+              {bests.map((best) => (
+                <option key={best.name} value={best.name}>
+                  {best.name}
+                </option>
               ))}
-            </div>
+            </select>
           </div>
 
-          <ul className="rc-cats">
-            {(category === 'All' ? cats : [category]).map((name) => {
-              const inside = bests.filter((best) => best.category === name);
-              if (inside.length === 0) return null;
-              return (
-                <li className="rc-cat" key={name}>
-                  <h3>{name}</h3>
-                  <ul>
-                    {inside.slice(0, 6).map((best) => (
-                      <li key={best.name}>
-                        <button type="button" onClick={() => { setPick(best.name); }}>
-                          <span>{best.name}</span>
-                          <strong>{formatValue(best.value, best.unit, best.target)}</strong>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="rc-ev-wrap">
+            <dl className="rc-ev-figs">
+              <div>
+                <dt>First record</dt>
+                <dd>{formatValue(evolving.first, evolving.unit)}</dd>
+              </div>
+              <div>
+                <dt>Latest best</dt>
+                <dd>{formatValue(evolving.value, evolving.unit)}</dd>
+              </div>
+              <div>
+                <dt>Improvement</dt>
+                <dd className={evolving.gain > 0 ? 'is-up' : undefined}>
+                  {evolving.gain > 0
+                    ? gainText(evolving)
+                    : formatValue(evolving.value - evolving.first, evolving.unit)}
+                </dd>
+              </div>
+              {evolving.gain > 0 && evolving.percent > 0 && (
+                <div>
+                  <dt>Since the start</dt>
+                  <dd className="is-up">↑ {Math.round(evolving.percent * 10) / 10}%</dd>
+                </div>
+              )}
+            </dl>
+            <Evolution best={evolving} />
+          </div>
         </section>
       )}
 
@@ -807,53 +862,7 @@ export default function Records() {
         </section>
       </div>
 
-      {/* ---- 6. Record evolution ------------------------------------------ */}
-      {bests.length > 0 && evolving && (
-        <section className="rc-section">
-          <div className="rc-section-head">
-            <h2 className="rc-section-title">📈 Record evolution</h2>
-            <select className="rc-select" value={evolving.name}
-                    aria-label="Which record to plot"
-                    onChange={(event) => setPick(event.target.value)}>
-              {bests.map((best) => (
-                <option key={best.name} value={best.name}>
-                  {best.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="rc-ev-wrap">
-            <dl className="rc-ev-figs">
-              <div>
-                <dt>First record</dt>
-                <dd>{formatValue(evolving.first, evolving.unit)}</dd>
-              </div>
-              <div>
-                <dt>Latest best</dt>
-                <dd>{formatValue(evolving.value, evolving.unit)}</dd>
-              </div>
-              <div>
-                <dt>Improvement</dt>
-                <dd className={evolving.gain > 0 ? 'is-up' : undefined}>
-                  {evolving.gain > 0
-                    ? gainText(evolving)
-                    : formatValue(evolving.value - evolving.first, evolving.unit)}
-                </dd>
-              </div>
-              {evolving.gain > 0 && evolving.percent > 0 && (
-                <div>
-                  <dt>Since the start</dt>
-                  <dd className="is-up">↑ {Math.round(evolving.percent * 10) / 10}%</dd>
-                </div>
-              )}
-            </dl>
-            <Evolution best={evolving} />
-          </div>
-        </section>
-      )}
-
-      {/* ---- 7. Search and sort ------------------------------------------- */}
+      {/* ---- 6. Search and sort ------------------------------------------- */}
       {rows.length > 0 && (
         <section className="rc-section">
           <div className="rc-bar">

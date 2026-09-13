@@ -295,6 +295,9 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 
 /* ---------- Sections ------------------------------------------------------ */
 .rc-section { margin-bottom: 38px; }
+/* Title on the left, whatever the section is steered by on the right — chips
+   here, a select on the evolution. Wraps rather than squeezing: eleven
+   categories is a second line, not eleven unreadable chips. */
 .rc-section-head {
     display: flex;
     align-items: center;
@@ -429,7 +432,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     background: linear-gradient(180deg, color-mix(in srgb, var(--rc-gold) 9%, var(--rc-card)), var(--rc-card));
 }
 
-/* ---------- Category records ---------------------------------------------- */
+/* ---------- Category chips -------------------------------------------------
+   These filtered a "Category records" section that listed the same bests a
+   second time under their headings. The section is gone and the chips moved
+   into the personal-bests header, which is what they were always filtering —
+   see Records.tsx. The grid of category cards went with it. */
 .rc-chips { display: flex; flex-wrap: wrap; gap: 7px; }
 .rc-chip {
     padding: 6px 13px;
@@ -450,42 +457,10 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     color: #fff;
 }
 
-.rc-cats {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 14px;
-}
-.rc-cat {
-    padding: 16px 18px;
-    border: 1px solid var(--rc-line);
-    border-radius: var(--rc-radius);
-    background: var(--rc-card);
-    box-shadow: var(--rc-shadow);
-}
-.rc-cat h3 { margin: 0 0 10px; font-size: 14.5px; font-weight: 700; color: var(--rc-accent-2); }
-.rc-cat ul { list-style: none; margin: 0; padding: 0; }
-.rc-cat ul button {
-    width: 100%;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 14px;
-    padding: 8px 0;
-    border: 0;
-    border-bottom: 1px solid var(--rc-line-soft);
-    background: transparent;
-    color: var(--rc-muted);
-    font: inherit;
-    font-size: 12.5px;
-    text-align: left;
-    cursor: pointer;
-}
-.rc-cat ul li:last-child button { border-bottom: 0; }
-.rc-cat ul button:hover { color: var(--rc-text); }
-.rc-cat ul strong { flex: none; color: var(--rc-text); font-variant-numeric: tabular-nums; }
+
+/* Opening the bests row past the eight it draws. A link rather than a button,
+   because it changes how much of one section is showing and nothing else. */
+.rc-more { margin-top: 14px; }
 
 /* ---------- Timeline and milestones --------------------------------------- */
 .rc-two {
