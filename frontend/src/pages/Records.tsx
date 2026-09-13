@@ -549,6 +549,12 @@ export default function Records() {
     kind: 'record',
   });
 
+  /* The page's category, and there is one of it. The chips above the bests and
+     the select above the history are two views of the same filter rather than
+     two filters: a page that says "Academic" in one place and "All" in another
+     is a page you have to read twice to know what you are looking at. Both
+     controls stay, because each is where you want it when you are in that part
+     of the page, and both write here. */
   const [category, setCategory] = useState('All');
   /* The bests row draws TOP_BESTS and this opens it to everything under the
      chosen chip. Reset when the chip changes: "show all" meant all of the
@@ -557,11 +563,6 @@ export default function Records() {
   const [allBests, setAllBests] = useState(false);
   const [pick, setPick] = useState<string | null>(null);
   const [query, setQuery] = useState('');
-  /* The history column's own category, separate from the chips above the
-     bests. One filter driving both would mean picking "Academic" to look at a
-     card silently rewrote the timeline beside it, which is a page that changes
-     under you. */
-  const [historyCat, setHistoryCat] = useState('All');
   const [sort, setSort] = useState<Sort>('newest');
   /** How many days of history are drawn before "show more". */
   const [days, setDays] = useState(DAYS_SHOWN);
@@ -610,9 +611,18 @@ export default function Records() {
     setDays(DAYS_SHOWN);
   }, []);
 
+  /** The one category filter, from either of the two controls that write it. */
+  const pickCategory = useCallback((name: string) => {
+    setCategory(name);
+    // Both lists go back to their first page. "Show all 14" and "show more
+    // days" were both asked of a list that is now a different list.
+    setAllBests(false);
+    setDays(DAYS_SHOWN);
+  }, []);
+
   const history = useMemo(
-    () => byDay(filterRows(rows, { query, category: historyCat, sort })),
-    [historyCat, query, rows, sort],
+    () => byDay(filterRows(rows, { query, category, sort })),
+    [category, query, rows, sort],
   );
 
   // ---- writes -------------------------------------------------------------
@@ -797,7 +807,7 @@ export default function Records() {
                 <button key={name} type="button"
                         className={`rc-chip${category === name ? ' is-on' : ''}`}
                         aria-pressed={category === name}
-                        onClick={() => { setCategory(name); setAllBests(false); }}>
+                        onClick={() => pickCategory(name)}>
                   {name}
                 </button>
               ))}
@@ -917,9 +927,12 @@ export default function Records() {
                        onChange={(event) => narrow(setQuery)(event.target.value)} />
               </label>
 
-              <select className="rc-select is-small" value={historyCat}
-                      aria-label="Filter the history by category"
-                      onChange={(event) => narrow(setHistoryCat)(event.target.value)}>
+              {/* The same filter the chips above set, and it shows what they
+                  set — so the history column always says what it is showing
+                  without scrolling back up to look. */}
+              <select className="rc-select is-small" value={category}
+                      aria-label="Filter by category"
+                      onChange={(event) => pickCategory(event.target.value)}>
                 <option value="All">All categories</option>
                 {cats.map((name) => (
                   <option key={name} value={name}>{name}</option>
