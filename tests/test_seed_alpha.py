@@ -167,8 +167,14 @@ def test_a_lecture_is_not_a_focus_session():
     assert 'ML lab' not in seed_alpha.ATTENDANCE
     assert 'Violin lesson' not in seed_alpha.ATTENDANCE
     assert 'Thesis writing block' not in seed_alpha.ATTENDANCE
-    # And every attendance title really is a block on the week.
-    titles = {row[1] for row in seed_alpha.WEEK}
+    # The early eras have their own, and the biggest block in the record is one
+    # of them: six hours and forty minutes of school is attendance, and while
+    # this set was built from the thesis year alone it was not in it — so every
+    # school day in the first three years counted as one unbroken focus
+    # session.
+    assert 'School day' in seed_alpha.ATTENDANCE
+    # And every attendance title really is a block on some era's week.
+    titles = {row[1] for era in seed_alpha.ERAS for row in era.week}
     assert seed_alpha.ATTENDANCE <= titles
 
 
@@ -224,17 +230,117 @@ def test_the_bounded_windows_are_bounded():
     assert 'WRITTEN_SINCE' in body and 'behind_to' in body
 
 
-def test_the_year_of_record_ends_yesterday():
+def test_the_record_ends_yesterday_however_deep_it_goes():
     """It used to be a pair of literals, and a literal year of record is only
     right for the twelve months after it is typed. A year later the account's
     history stopped dead a year ago and every "this week" panel read empty."""
     for today in (date(2026, 9, 7), date(2027, 3, 1), date(2028, 2, 29)):
-        start, last = seed_alpha.behind_window(today)
-        assert last == today - timedelta(days=1)
-        assert (last - start).days == 364
-        # And never into the year ahead, which is what today belongs to.
-        assert last < today
-        assert seed_alpha.WRITTEN_SINCE < last.isoformat()
+        for years in (1, 2, 6):
+            start, last = seed_alpha.behind_window(today, years)
+            assert last == today - timedelta(days=1)
+            assert round((last - start).days / 365.25) == years
+            # And never into the year ahead, which is what today belongs to.
+            assert last < today
+            assert seed_alpha.WRITTEN_SINCE < last.isoformat()
+
+
+def test_every_day_of_the_record_belongs_to_exactly_one_era():
+    """The six eras are what make six years a progression rather than one year
+    repeated. A day that falls in none of them has no week to draw from, and a
+    day in two would be drawn twice — so the spans have to tile the window with
+    no gap and no overlap, and the boundary is the thing most likely to be off
+    by one."""
+    for days in (365, 1000, 2192):
+        start = date(2020, 9, 12)
+        spans = seed_alpha.era_calendar(start, days)
+        assert len(spans) == len(seed_alpha.ERAS)
+        assert spans[0][0] == start
+        assert spans[-1][1] == start + timedelta(days=days - 1)
+        # Each era picks up exactly where the last one left off.
+        for (_first, last, _era), (nxt, _l, _e) in zip(spans, spans[1:]):
+            assert nxt == last + timedelta(days=1)
+
+        by_day = seed_alpha.era_by_day(start, days)
+        assert len(by_day) == days
+
+
+def test_each_era_is_scored_against_its_own_day():
+    """A sixteen-year-old measured against a doctoral student's day is a
+    productivity score near zero for two straight years, and the Growth tab
+    would draw that as somebody who started badly and improved — when what
+    happened is that the day got longer. So the goal climbs with the eras, and
+    the report cards are scored against the goal that was true at the time."""
+    goals = [era.goal for era in seed_alpha.ERAS]
+    assert goals == sorted(goals)
+    assert goals[0] < goals[-1]
+    # The account's stored goal is the era it is in now, which is the last one.
+    assert seed_alpha.ERAS[-1].goal == seed_alpha.DAILY_GOAL
+    # The same has to be true of the evening load and of how often a day is
+    # missed, or the hours do not climb and the streak is whatever the dice say.
+    loads = [era.load[1] for era in seed_alpha.ERAS]
+    assert loads == sorted(loads)
+    aways = [era.away for era in seed_alpha.ERAS]
+    assert aways == sorted(aways, reverse=True)
+
+
+def test_the_seed_does_not_claim_records_the_rows_deny():
+    """The three Summit records are facts about the record rather than claims
+    about the world, so they are read back off it. A seed that types a figure
+    for these produces a hall of fame the Growth tab contradicts three sections
+    below — which makes the *app* look like it cannot count."""
+    listed = {name for name, *_rest in seed_alpha.RECORDS}
+    assert 'Longest streak' not in listed
+    assert 'Best XP day' not in listed
+    assert 'Longest focus session' not in listed
+    assert set(seed_alpha.DERIVED_META) == {
+        'Longest streak', 'Best XP day', 'Longest focus session'}
+
+    # And the year-long-streak milestone is only written when it happened.
+    assert not any(name == 'Every day for a full year'
+                   for name, _cat, _ago in seed_alpha.MILESTONES)
+    rows = seed_alpha.record_rows(
+        'Alpha', date(2026, 9, 12),
+        {'Longest streak': [('2024-01-01', 40), ('2025-01-01', 103)]})
+    assert not any(row[3] == 'Every day for a full year' for row in rows)
+    rows = seed_alpha.record_rows(
+        'Alpha', date(2026, 9, 12),
+        {'Longest streak': [('2024-01-01', 40), ('2025-01-01', 400)]})
+    assert any(row[3] == 'Every day for a full year' for row in rows)
+
+
+def test_a_record_says_which_way_is_better():
+    """Most of these climb; the mile, the 5k and the Kaggle placing come down.
+    They are in the seed for that reason — a hall of fame whose every record
+    goes up cannot show the comparison direction doing anything, and those are
+    exactly the ones that used to read upside down."""
+    directions = {name: direction
+                  for name, _cat, _unit, _target, direction, _entries
+                  in seed_alpha.RECORDS}
+    assert directions['Mile'] == 'lower'
+    assert directions['5k'] == 'lower'
+    assert directions['Kaggle placing'] == 'lower'
+    assert directions['AMC 8'] == 'higher'
+    assert set(directions.values()) == {'higher', 'lower'}
+
+    # Every entry of one record agrees with itself, and every row carries one
+    # of the two words — the column is NOT NULL on a fresh schema.
+    rows = seed_alpha.record_rows('Alpha', date(2026, 9, 12))
+    said = {}
+    for row in rows:
+        assert row[8] in ('higher', 'lower')
+        said.setdefault(row[3], set()).add(row[8])
+    assert all(len(words) == 1 for words in said.values())
+
+
+def test_a_seeded_record_climbs_the_way_it_says_it_does():
+    """Every series is an argument about six years, so none of them may wander:
+    a record that goes 18, 25, 21 is not progress, it is noise with a good
+    first impression."""
+    for name, _cat, _unit, _target, direction, entries in seed_alpha.RECORDS:
+        ago = [years for years, _value in entries]
+        assert ago == sorted(ago, reverse=True), name
+        values = [value for _years, value in entries]
+        assert values == sorted(values, reverse=direction == 'lower'), name
 
 
 def test_the_streak_agrees_with_the_record():

@@ -1,4 +1,4 @@
-"""Alpha's real timetable, a year of it ahead and a year of record behind.
+"""Alpha's real timetable, a year of it ahead and six years of record behind.
 
     python3 scripts/seed_alpha.py            # write it
     python3 scripts/seed_alpha.py --clear    # take it all back out
@@ -8,8 +8,8 @@
 seed_year writes *a* year — an invented week for an invented student, to see
 what the app's views do against a life rather than against ten rows. This
 writes *this* week: the actual timetable Alpha keeps, forward a year as a
-calendar, and a matching year behind as finished work with the analytics that
-come off it.
+calendar, and six years behind as finished work with the analytics that come
+off it.
 
 The two do not overlap. seed_year owns ids 1.00e12-1.099e12; this owns
 1.10e12-1.199e12, and both stay 13 digits and below the millisecond timestamps
@@ -25,24 +25,45 @@ the two mornings that start in cold water. They are `todo` and they earn
 nothing yet, which is the point of a calendar: they are what is going to
 happen, and the XP on them is what finishing one will be worth.
 
-**The year behind** is the same week already lived: every block finished, plus
-the study that fills an evening, each carrying a subject, a difficulty and an
-execution rating so the quality grid and the subject split have something real
-underneath them. The focus timer and the report card are written to match, day
-by day, so the Growth tab has two comparable years rather than one year and a
-blank.
+**The years behind** are not the same week six times. They are six eras — see
+`ERAS` — and a day takes its timetable from the one it fell in: school, the
+contest years, the last year of school, the freshman year, the year the
+research started, and the thesis year the account is in now. Every block is
+finished, plus the study that fills an evening, each carrying a subject, a
+difficulty and an execution rating so the quality grid and the subject split
+have something real underneath them. The focus timer and the report card are
+written to match, day by day.
 
-**The level.** Alpha is meant to read as an account five years deep, and its
-ledger said 92 XP a day against its own daily goal — the arithmetic of an
-account that was seeded thinly, not of a person. The shortfall to level 100 is
-spread back across the days it already worked, which leaves every individual
-day plausible. The ledger stays the authority: `users.xp` is recomputed from it
-at the end, never set beside it.
+One year repeated six times would have had no progress in it, only volume —
+and the Records page asks "look how far have I come", which that answers with
+"nowhere, very busily". So the day gets longer, the goal it is measured against
+rises with it, the ratings drift up about a point, lateness falls from 18% to
+8%, and a day missed goes from one in fourteen to one in two hundred and fifty.
+
+**The hall of fame.** Records and milestones across the six years — the AMC 8
+climbing, a mile coming down, a Kaggle placing coming down from four thousandth
+— and three that are read back off the rows rather than typed, because the
+longest streak, the best day and the longest sitting are facts about the record
+and a seed that invents them writes a page its own Growth tab contradicts.
+
+**The preferences.** Alpha plans its week in this app, so it is set up like
+somebody who does: the ratings as deep as they go, the analytics as hard as
+they go, and the window set to all of it. See `SETTINGS`.
+
+**The level.** `top_up` exists for when the record is thinner than the account
+is meant to read as: the shortfall is spread back across days that already have
+work on them, so no day appears that the account did not turn up for. Six years
+of this timetable clears level 100 on its own and it adds nothing — it is kept
+for the shallower runs `--years` allows. The ledger stays the authority:
+`users.xp` is recomputed from it at the end, never set beside it.
 
 ## Who Alpha is
 
 A machine-learning and mathematics double major on a PhD track at a college
-that is hard to get into, in the year the thesis starts. That is a specific
+that is hard to get into, in the year the thesis starts — and, six years back,
+a fifteen-year-old doing AMC 10 practice after school and learning Python on a
+Friday. The habits are the throughline: the same sitting before it is light,
+the same violin, the same evening review, at fifteen and at twenty-one. That is a specific
 person and it has to be, because a seed is an argument about what this app is
 for: every panel in it is drawn from somebody's record, and a record with only
 work in it produces a set of pages that can say nothing except that its owner
@@ -92,6 +113,7 @@ ID_LOW = 1_100_000_000_000
 ID_HIGH = 1_199_999_999_999
 TASK_BASE = 1_100_000_000_000     # tasks:     1.100e12 - 1.119e12
 EVENT_BASE = 1_120_000_000_000    # xp_events: 1.120e12 - 1.139e12
+RECORD_BASE = 1_140_000_000_000   # records:   1.140e12 - 1.159e12
 
 OWNED = 'user_id = ? AND id >= ? AND id <= ? AND length(id) = 13'
 
@@ -296,6 +318,630 @@ WEEKEND = (
 )
 
 
+# --------------------------------------------------------------------------
+# Six years, and the six different people who lived them
+# --------------------------------------------------------------------------
+# The record used to be one year: `WEEK` above, repeated 365 times. That is
+# enough to draw every panel in the app and it is not enough to be *about*
+# anything — an account whose Tuesday six years ago is identical to its Tuesday
+# last week has no progress in it, only volume. The Records page asks "look how
+# far have I come" and would have had one answer: nowhere, very busily.
+#
+# So the years behind are six eras, and a day picks the era it fell in. The
+# same person throughout — the meditation, the lifting, the violin and the
+# evening review run the whole length, because those are the habits the rest is
+# affordable *because* of, and somebody who drops them in year two does not get
+# to year six. What changes is what the work is:
+#
+#     school          AMC 10, school classes, learning to program at all
+#     contest         AIME, USACO, the first machine learning that is not a toy
+#     final-year      olympiad, a research internship, applications
+#     freshman        Math 55, the first Putnam, a degree that is now the job
+#     research        a lab, an advisor, papers, the second Putnam
+#     thesis          `WEEK` above — the year this account is in now
+#
+# Each era carries its own daily goal, because a goal is what productivity is
+# scored against and a sixteen-year-old measured against a doctoral student's
+# day is a flat zero for two years. The account's *stored* goal is the current
+# era's; the report cards behind are scored against the goal of the week they
+# describe, which is what makes the Growth tab a climb rather than a ramp
+# somebody drew.
+
+#: The half of the week that is not the degree, and does not change.
+#:
+#: Written once and given to every era. This is the argument the seed is making
+#: about what six years of this actually takes: the person who got to a thesis
+#: is the person who was already sitting still before it was light at fifteen,
+#: and the violin is the thing that was never negotiable in either year.
+LIFE = (
+    *[(d, 'Morning meditation', 'meditation', '06:45', '07:10', 12, False)
+      for d in range(5)],
+    *[(d, 'Evening review', 'planning', '22:00', '22:20', 10, False)
+      for d in range(5)],
+    *[(d, 'Lift', 'gym', '07:30', '08:30', 25, False) for d in (0, 2, 4)],
+    *[(d, 'Morning run', 'running', '07:30', '08:15', 20, False) for d in (1, 3)],
+    (2, 'Violin lesson', 'music', '18:00', '19:00', 40, True),
+    (5, 'Long run with friends', 'running', '08:30', '10:00', 30, False),
+    (5, 'Ice bath', 'health', '10:30', '10:50', 15, False),
+    (6, 'Long meditation sit', 'meditation', '08:30', '09:15', 20, False),
+    (6, 'Ice bath', 'health', '09:30', '09:50', 15, False),
+    (6, 'Sunday reset', 'planning', '18:00', '18:45', 20, False),
+)
+
+#: Year one: fifteen, at school, and only just serious.
+SCHOOL_WEEK = (
+    *LIFE,
+    *[(d, 'School day', 'lectures', '08:40', '15:20', 55, False) for d in range(5)],
+    (0, 'AMC 10 practice set', 'mathematics', '16:30', '17:45', 45, True),
+    (3, 'AMC 10 practice set', 'mathematics', '16:30', '17:45', 45, True),
+    (1, 'Maths club', 'mathematics', '16:00', '17:00', 30, True),
+    (4, 'Learning Python', 'programming', '16:30', '17:30', 35, True),
+    (2, 'Orchestra rehearsal', 'music', '19:30', '21:00', 40, True),
+    (5, 'Weekend problem set', 'mathematics', '10:30', '12:00', 50, True),
+)
+SCHOOL_EVENING = (
+    ('Homework', 'lectures', 90, 55),
+    ('AMC practice problems', 'mathematics', 60, 55),
+    ('Geometry practice', 'geometry', 45, 40),
+    ('Algebra drills', 'algebra', 45, 40),
+    ('Python exercises', 'programming', 45, 40),
+    ('Violin practice', 'music', 45, 40),
+    ('Reading', 'reading', 45, 25),
+    ('Flashcards', 'flashcards', 20, 20),
+    ('Cooking with family', 'cooking', 45, 15),
+    ('Football with friends', 'friends', 90, 25),
+    ('Journalling', 'journaling', 15, 12),
+)
+
+#: Year two: the AIME, the first real algorithms, the first model.
+CONTEST_WEEK = (
+    *LIFE,
+    *[(d, 'School day', 'lectures', '08:40', '15:20', 55, False) for d in range(5)],
+    (0, 'AIME problem set', 'mathematics', '16:30', '18:15', 60, True),
+    (3, 'AIME problem set', 'mathematics', '16:30', '18:15', 60, True),
+    (1, 'USACO training', 'computer_science', '16:30', '18:00', 55, True),
+    (4, 'USACO training', 'computer_science', '16:30', '18:00', 55, True),
+    (2, 'Orchestra rehearsal', 'music', '19:30', '21:00', 40, True),
+    (5, 'AIME mock', 'mathematics', '09:30', '12:30', 90, True),
+    (6, 'ML course lecture', 'machine_learning', '14:00', '15:30', 50, True),
+)
+CONTEST_EVENING = (
+    ('Homework', 'lectures', 75, 50),
+    ('AIME practice problems', 'mathematics', 90, 80),
+    ('Number theory practice', 'number_theory', 60, 60),
+    ('Combinatorics practice', 'mathematics', 60, 60),
+    ('Competitive programming', 'computer_science', 75, 70),
+    ('ML course exercises', 'machine_learning', 60, 55),
+    ('First Kaggle attempt', 'data_science', 75, 60),
+    ('Violin practice', 'music', 45, 40),
+    ('Climbing with friends', 'friends', 90, 30),
+    ('Reading', 'reading', 45, 25),
+    ('Journalling', 'journaling', 15, 12),
+    ('Flashcards', 'flashcards', 20, 20),
+)
+
+#: Year three: the last year of school, and the first year of the rest of it.
+FINAL_WEEK = (
+    *LIFE,
+    *[(d, 'School day', 'lectures', '08:40', '15:20', 55, False) for d in range(5)],
+    (0, 'Olympiad problem set', 'mathematics', '16:30', '18:30', 70, True),
+    (3, 'Olympiad problem set', 'mathematics', '16:30', '18:30', 70, True),
+    (1, 'USACO Gold training', 'computer_science', '16:30', '18:00', 60, True),
+    (2, 'Research internship', 'research', '16:00', '18:00', 65, True),
+    (4, 'Research internship', 'research', '16:00', '18:00', 65, True),
+    (2, 'Orchestra rehearsal', 'music', '19:30', '21:00', 40, True),
+    (4, 'Applications block', 'planning', '19:00', '20:00', 30, True),
+    (5, 'Olympiad mock', 'mathematics', '09:30', '13:00', 100, True),
+)
+FINAL_EVENING = (
+    ('Olympiad problems', 'mathematics', 120, 100),
+    ('Proof writing', 'mathematics', 75, 75),
+    ('Functional equations', 'algebra', 60, 60),
+    ('Competitive programming', 'computer_science', 75, 70),
+    ('Internship code', 'research', 90, 80),
+    ('Paper reading (slowly)', 'research', 60, 55),
+    ('ML side project', 'machine_learning', 90, 75),
+    ('Essay drafting', 'writing', 60, 45),
+    ('Violin practice', 'music', 45, 40),
+    ('Dinner with friends', 'friends', 90, 25),
+    ('Flashcards', 'flashcards', 20, 20),
+    ('Journalling', 'journaling', 15, 12),
+)
+
+#: Year four: the degree starts, and so does the Putnam.
+FRESHMAN_WEEK = (
+    *LIFE,
+    (0, 'Math 55 lecture', 'mathematics', '09:00', '10:30', 45, False),
+    (2, 'Math 55 lecture', 'mathematics', '09:00', '10:30', 45, False),
+    (4, 'Math 55 lecture', 'mathematics', '09:00', '10:30', 45, False),
+    (1, 'Linear algebra lecture', 'algebra', '09:00', '10:15', 45, False),
+    (3, 'Discrete maths lecture', 'mathematics', '09:00', '10:15', 45, False),
+    (1, 'Intro CS lecture', 'computer_science', '10:30', '12:00', 45, False),
+    (3, 'Intro CS lecture', 'computer_science', '10:30', '12:00', 45, False),
+    (0, 'Math 55 section', 'mathematics', '16:00', '17:00', 35, True),
+    (0, 'Putnam seminar', 'mathematics', '17:30', '19:00', 55, True),
+    (3, 'Putnam problem session', 'mathematics', '19:00', '20:30', 55, True),
+    (2, 'CS lab', 'computer_science', '15:00', '17:00', 55, True),
+    (0, 'Orchestra rehearsal', 'music', '19:30', '21:00', 40, True),
+    (1, 'Lunch with friends', 'friends', '12:15', '13:00', 12, False),
+    (4, 'Dinner out with friends', 'friends', '19:30', '21:30', 20, False),
+    (5, 'Brunch out', 'friends', '11:30', '13:00', 15, False),
+)
+FRESHMAN_EVENING = (
+    ('Math 55 problem set', 'mathematics', 120, 110),
+    ('Linear algebra problem set', 'algebra', 90, 85),
+    ('Putnam problems', 'mathematics', 90, 90),
+    ('CS assignment', 'computer_science', 90, 85),
+    ('Proof grinding', 'mathematics', 75, 75),
+    ('ML self-study', 'machine_learning', 75, 70),
+    ('LeetCode session', 'programming', 60, 55),
+    ('Violin practice', 'music', 45, 40),
+    ('Climbing with friends', 'friends', 90, 30),
+    ('Cooking with housemates', 'cooking', 60, 20),
+    ('Board game night', 'friends', 90, 25),
+    ('Journalling', 'journaling', 20, 15),
+    ('Flashcards', 'flashcards', 20, 20),
+    ('Evening walk', 'health', 30, 15),
+)
+
+#: Year five: a lab, an advisor, and the year it stopped being coursework.
+RESEARCH_WEEK = (
+    *LIFE,
+    (0, 'Real analysis lecture', 'mathematics', '09:00', '10:30', 45, False),
+    (2, 'Real analysis lecture', 'mathematics', '09:00', '10:30', 45, False),
+    (1, 'Abstract algebra lecture', 'algebra', '09:00', '10:15', 45, False),
+    (3, 'Abstract algebra lecture', 'algebra', '09:00', '10:15', 45, False),
+    (0, 'Machine Learning lecture', 'machine_learning', '11:00', '12:30', 45, False),
+    (2, 'Machine Learning lecture', 'machine_learning', '11:00', '12:30', 45, False),
+    (4, 'Statistical learning lecture', 'statistics', '11:00', '12:15', 45, False),
+    (1, 'Lab meeting', 'research', '14:00', '15:00', 30, False),
+    (2, 'Paper reading group', 'research', '15:00', '16:00', 45, True),
+    (3, 'ML lab', 'machine_learning', '15:00', '17:00', 60, True),
+    (4, 'Advisor meeting', 'research', '13:00', '13:45', 30, False),
+    (0, 'Putnam seminar', 'mathematics', '17:30', '19:00', 55, True),
+    (3, 'Putnam problem session', 'mathematics', '19:00', '20:30', 55, True),
+    (0, 'Orchestra rehearsal', 'music', '19:30', '21:00', 40, True),
+    (1, 'Lunch with the lab', 'friends', '12:15', '13:00', 12, False),
+    (4, 'Dinner out with friends', 'friends', '19:30', '21:30', 20, False),
+    (5, 'Brunch out', 'friends', '11:30', '13:00', 15, False),
+)
+RESEARCH_EVENING = (
+    ('Analysis problem set', 'mathematics', 90, 90),
+    ('Algebra problem set', 'algebra', 90, 90),
+    ('Putnam problems', 'mathematics', 90, 90),
+    ('Paper replication', 'research', 90, 85),
+    ('ML paper reading', 'machine_learning', 60, 60),
+    ('Model debugging', 'machine_learning', 75, 65),
+    ('Training run + writeup', 'machine_learning', 75, 70),
+    ('Kaggle notebook', 'data_science', 90, 80),
+    ('LeetCode session', 'programming', 60, 55),
+    ('Violin practice', 'music', 45, 40),
+    ('Climbing with friends', 'friends', 90, 30),
+    ('Cooking with housemates', 'cooking', 60, 20),
+    ('Journalling', 'journaling', 20, 15),
+    ('Evening walk', 'health', 30, 15),
+)
+
+
+class Era:
+    """One stretch of the six years, and what a week in it looked like.
+
+    `weight` is how much of the window the era gets, oldest first. They are
+    equal here — six years, six eras — and it is a weight rather than a count of
+    days so the same six read correctly whether the script is asked for six
+    years or for two.
+    """
+
+    __slots__ = ('name', 'weight', 'week', 'evening', 'weekend', 'goal',
+                 'focus_goal', 'rest', 'away', 'load')
+
+    def __init__(self, name, weight, week, evening, weekend, goal,
+                 focus_goal, rest=0.16, away=0.04, load=(3, 5)):
+        self.name = name
+        self.weight = weight
+        self.week = week
+        self.evening = evening
+        self.weekend = weekend
+        self.goal = goal
+        self.focus_goal = focus_goal
+        #: A day that keeps the habits and drops the work, and a day genuinely
+        #: away. Both loosen going back: a fifteen-year-old has school holidays
+        #: and a doctoral student in a thesis year does not.
+        self.rest = rest
+        self.away = away
+        #: How many things off the evening pool a day picks up, low to high.
+        #:
+        #: This was a flat three-to-five for every day of the record, which is
+        #: what made a fifteen-year-old's average focus day *longer* than a
+        #: doctoral student's: school until half three, then three hours of
+        #: chosen evening study on top, every night, at fifteen. The hours are
+        #: supposed to climb across the six years, and a pool that is sampled
+        #: the same way throughout is the one thing that guarantees they will
+        #: not.
+        self.load = load
+
+
+SCHOOL_WEEKEND = (
+    ('AMC practice set', 'mathematics', 120, 100),
+    ('Maths reading', 'mathematics', 90, 70),
+    ('Python project', 'programming', 120, 90),
+    ('Long violin practice', 'music', 90, 70),
+    ('Reading', 'reading', 90, 45),
+    ('Out with friends', 'friends', 180, 40),
+    ('Family lunch', 'friends', 90, 20),
+    ('Chores', 'chores', 45, 25),
+    ('Long meditation', 'meditation', 45, 25),
+    ('Laundry and reset', 'laundry', 45, 20),
+)
+
+CONTEST_WEEKEND = (
+    ('AIME mock', 'mathematics', 180, 150),
+    ('Olympiad problems', 'mathematics', 150, 120),
+    ('Competitive programming contest', 'computer_science', 180, 140),
+    ('ML course project', 'machine_learning', 150, 110),
+    ('Kaggle weekend', 'data_science', 180, 130),
+    ('Long violin practice', 'music', 90, 70),
+    ('Reading', 'reading', 60, 40),
+    ('Long lift session', 'gym', 75, 45),
+    ('Hike with friends', 'friends', 180, 45),
+    ('Cooking a proper meal', 'cooking', 75, 25),
+    ('Chores', 'chores', 45, 25),
+    ('Laundry and reset', 'laundry', 45, 20),
+)
+
+#: The six, oldest first.
+#:
+#: Read the `away` column down and it is the argument the whole seed is making.
+#: A day away is a day with nothing on it at all, and it is the only thing that
+#: breaks a streak — a rest day keeps the sitting, the lifting and the evening
+#: review, which is what a rest day actually looks like for somebody who has
+#: been doing this for six years.
+#:
+#: It falls from one day in fourteen to one in two hundred and fifty. That is
+#: the difference between a fifteen-year-old with school holidays and somebody
+#: whose week is planned in this app and who has not missed a day since the
+#: thesis started — and it is what makes the streak on the front page a number
+#: worth having rather than whatever the dice said.
+ERAS = (
+    Era('School', 1.0, SCHOOL_WEEK, SCHOOL_EVENING, SCHOOL_WEEKEND,
+        goal=230, focus_goal=2, rest=0.24, away=0.07, load=(1, 2)),
+    Era('Contest years', 1.0, CONTEST_WEEK, CONTEST_EVENING, CONTEST_WEEKEND,
+        goal=300, focus_goal=3, rest=0.20, away=0.045, load=(2, 3)),
+    Era('Final year', 1.0, FINAL_WEEK, FINAL_EVENING, CONTEST_WEEKEND,
+        goal=360, focus_goal=3, rest=0.18, away=0.028, load=(2, 3)),
+    Era('Freshman year', 1.0, FRESHMAN_WEEK, FRESHMAN_EVENING, WEEKEND,
+        goal=410, focus_goal=4, rest=0.16, away=0.016, load=(3, 4)),
+    Era('Research year', 1.0, RESEARCH_WEEK, RESEARCH_EVENING, WEEKEND,
+        goal=440, focus_goal=4, rest=0.15, away=0.008, load=(3, 5)),
+    Era('Thesis year', 1.0, WEEK, EVENING, WEEKEND,
+        goal=DAILY_GOAL, focus_goal=5, rest=0.14, away=0.004, load=(4, 5)),
+)
+
+
+def era_calendar(start: date, days: int):
+    """Which era each day of the window falls in, oldest first.
+
+    Returns a list of (first_day, last_day, Era), the spans being the eras'
+    weights over the window. Built once rather than asked per day: the boundary
+    between two eras is the thing most likely to be wrong by one, and one place
+    that decides it is one place to check.
+    """
+    total = sum(era.weight for era in ERAS)
+    spans = []
+    used = 0
+    for at, era in enumerate(ERAS):
+        length = days - used if at == len(ERAS) - 1 else round(days * era.weight / total)
+        spans.append((start + timedelta(days=used),
+                      start + timedelta(days=used + length - 1), era))
+        used += length
+    return spans
+
+
+def era_by_day(start: date, days: int):
+    """The same, flattened: {ISO day: Era}."""
+    out = {}
+    for first, last, era in era_calendar(start, days):
+        day = first
+        while day <= last:
+            out[day.isoformat()] = era
+            day += timedelta(days=1)
+    return out
+
+
+# --------------------------------------------------------------------------
+# The hall of fame
+# --------------------------------------------------------------------------
+#: What Alpha has logged on the Records page, as (name, category, unit, target,
+#: direction, [(years_ago, value), ...]).
+#:
+#: One row per *entry*, not per record — which is the shape the records table
+#: exists to have, and the reason the page can draw an evolution at all. A
+#: record here is every row sharing a name, and the chart is those rows in date
+#: order. See data/sql/records.sql.
+#:
+#: `direction` is which end of the range is the good end. Most of these climb;
+#: the mile, the 5k and the Kaggle placing come *down*, and they are in here
+#: deliberately — a seed whose every record goes up cannot show that the
+#: comparison direction is doing anything, and those three are exactly the case
+#: that used to read upside down.
+#:
+#: The values are an argument, not a list of numbers: 18 to 25 on the AMC 8 over
+#: six years, a mile from 6:48 to 5:12, a Kaggle placing from four thousandth to
+#: under two hundred. Nothing here is a straight line, because a record that
+#: improves by the same amount every time is not a record anybody set.
+RECORDS = (
+    # Alpha already has an AMC 8 series of its own, logged by hand and running
+    # 18 to 25 across the last two years. These are *earlier* and *lower* on
+    # purpose: this script may add to the record and may not argue with it, and
+    # four entries topping out at 25 six years ago would have said the account
+    # scored full marks in 2020 and then dropped to 18 in 2024. Together they
+    # are one climb — 11, 14, 16, then the eighteen the hand-logged run starts
+    # from.
+    ('AMC 8', 'Competitive Math', 'points', 25, 'higher',
+     ((6.3, 11), (5.8, 14), (5.2, 16))),
+    ('AMC 10', 'Competitive Math', 'points', 150, 'higher',
+     ((5.8, 96), (5.2, 112.5), (4.8, 121.5), (4.2, 133.5))),
+    ('AMC 12', 'Competitive Math', 'points', 150, 'higher',
+     ((4.1, 102), (3.8, 115.5), (3.2, 127.5))),
+    ('AIME', 'Competitive Math', 'points', 15, 'higher',
+     ((5.0, 5), (4.1, 8), (3.9, 9), (3.1, 11), (2.2, 13))),
+    ('Putnam', 'Competitive Math', 'points', 120, 'higher',
+     ((2.2, 21), (1.2, 43), (0.2, 58))),
+    ('USACO', 'Competitive Programming', 'points', 1000, 'higher',
+     ((4.9, 612), (4.2, 780), (3.4, 933))),
+    ('LeetCode solved', 'Competitive Programming', 'problems', 0, 'higher',
+     ((3.9, 120), (2.8, 342), (1.9, 604), (0.6, 918))),
+    ('Kaggle placing', 'Machine Learning', '', 0, 'lower',
+     ((4.4, 4102), (3.3, 1870), (2.1, 604), (0.8, 188))),
+    ('Model accuracy', 'Machine Learning', 'points', 100, 'higher',
+     ((3.2, 71.4), (2.4, 83.9), (1.5, 89.2), (0.4, 93.6))),
+    ('Papers read', 'Research', 'problems', 0, 'higher',
+     ((2.9, 24), (1.8, 96), (0.9, 188), (0.1, 271))),
+    ('Mile', 'Running', 'minutes', 0, 'lower',
+     ((6.1, 6.8), (5.0, 6.35), (3.6, 5.9), (2.0, 5.5), (0.5, 5.2))),
+    ('5k', 'Running', 'minutes', 0, 'lower',
+     ((5.5, 25.4), (4.0, 23.1), (2.4, 21.2), (0.7, 19.6))),
+    ('Bench press', 'Training', 'points', 0, 'higher',
+     ((5.7, 45), (4.3, 62.5), (2.9, 80), (1.4, 95), (0.3, 102.5))),
+    ('Deadlift', 'Training', 'points', 0, 'higher',
+     ((5.6, 90), (4.0, 130), (2.5, 165), (0.9, 190))),
+    # The three Summit records are not here. They are things this app counted,
+    # so inventing figures for them would put a hall of fame on the page that
+    # the account's own history contradicts — a "longest streak, 412 days" over
+    # a record whose best run is 103. They are read off the rows instead; see
+    # `summit_records`.
+    ('Violin RCM level', 'Music', 'level', 10, 'higher',
+     ((6.0, 6), (4.4, 8), (2.6, 9), (0.9, 10))),
+    ('GPA', 'School', 'points', 4, 'higher',
+     ((5.6, 3.72), (4.5, 3.85), (3.4, 3.91), (2.3, 3.94), (0.6, 3.97))),
+)
+
+#: The things that happened once. No figure to beat — a milestone is "I reached
+#: something" where a record is "I did better", which is the distinction the
+#: page states under its own heading.
+#:
+#: Categorised so the page has something to fold: a heading with more than one
+#: thing under it becomes a group, and a category of one stays a plain row. See
+#: `milestoneGroups` in frontend/src/utils/records.ts.
+MILESTONES = (
+    ('First AIME qualification', 'Competitive Math', 5.1),
+    ('AIME 11 — top 5% nationally', 'Competitive Math', 3.1),
+    ('USAMO qualified', 'Competitive Math', 3.0),
+    ('Putnam top 500', 'Competitive Math', 1.2),
+    ('Putnam Honorable Mention', 'Competitive Math', 0.2),
+    ('USACO Platinum', 'Competitive Programming', 3.4),
+    ('First open-source PR merged', 'Competitive Programming', 4.0),
+    ('First model that beat the baseline', 'Machine Learning', 3.2),
+    ('Kaggle top 200 finish', 'Machine Learning', 0.8),
+    ('First paper submitted', 'Research', 1.0),
+    ('First paper accepted', 'Research', 0.3),
+    ('Joined the lab', 'Research', 2.0),
+    ('RCM Level 10 certificate', 'Music', 0.9),
+    ('First orchestra solo', 'Music', 2.4),
+    ('First sub-6 mile', 'Running', 3.6),
+    ('First 100kg bench', 'Training', 0.6),
+    ('1,000 days on Summit', 'Summit', 2.8),
+    ('10,000 tasks completed', 'Summit', 1.1),
+    ('Accepted onto the PhD track', 'School', 1.6),
+)
+
+
+def summit_records(behind, focus):
+    """The records this app counted for itself, read back off what it wrote.
+
+    Three of them — the longest streak, the best day, the longest sitting — are
+    facts about the record rather than claims about the world, so they are
+    derived and not listed. A seed that types a figure for these produces a
+    Records page whose headline is contradicted by the Growth tab three
+    sections below it, which is the one kind of wrong a demo account must not
+    be: it makes the *app* look like it cannot count.
+
+    Each comes back as the running maximum, sampled at the days it actually
+    moved — which is what a record is. Only the improvements are entries, so
+    the evolution the page draws is the real one.
+    """
+    xp_by_day: dict[str, int] = {}
+    for row in behind:
+        day = row[11][:10]
+        xp_by_day[day] = xp_by_day.get(day, 0) + row[6]
+
+    def climbing(pairs):
+        """(day, value) for every point the running maximum moved."""
+        out, best = [], None
+        for day, value in sorted(pairs):
+            if best is None or value > best:
+                best = value
+                out.append((day, value))
+        return out
+
+    # A streak is the run of consecutive worked days ending on each day, and
+    # the record is the longest that had happened *by* then.
+    worked = sorted(xp_by_day)
+    runs, run, previous = [], 0, None
+    for day in worked:
+        at = date.fromisoformat(day)
+        run = run + 1 if previous is not None and (at - previous).days == 1 else 1
+        runs.append((day, run))
+        previous = at
+
+    # The longest single sitting, off the tasks themselves rather than off the
+    # day's focus total: `focus_days` is capped at eight hours a day, so a
+    # running maximum of it becomes "480 minutes" within a year and stays there
+    # — a record that is really the cap, reported as an achievement.
+    sittings = [(row[11][:10], round(int(row[12] or 0) / 60))
+                for row in behind
+                if row[2] not in ATTENDANCE and row[7] not in NOT_STUDY]
+
+    return {
+        # A streak of one day is not a record, it is the first day — and a
+        # streak of seven is a week. The first one somebody would actually
+        # write down is a month, which is also what stops this record's first
+        # entry being so small that it wins the hero on percentage alone:
+        # `headline` ranks on the share of where you started, and starting at 1
+        # makes any later figure an infinite improvement.
+        'Longest streak': [(day, run) for day, run in climbing(runs) if run >= 30],
+        'Best XP day': climbing(list(xp_by_day.items())),
+        'Longest focus session': climbing(sittings),
+    }
+
+
+#: How the three derived records are filed, since they are not in `RECORDS`.
+DERIVED_META = {
+    'Longest streak': ('Summit', 'days', 0),
+    'Best XP day': ('Summit', '', 0),
+    'Longest focus session': ('Summit', 'minutes', 0),
+}
+
+#: At most this many entries per derived record. The running maximum of a daily
+#: figure over six years moves dozens of times, and a hall of fame is not a
+#: changelog — the evolution chart wants the shape, not every step of it. The
+#: first and the last are always kept: where you started and where you are is
+#: the whole claim the page makes.
+DERIVED_MAX = 7
+
+
+def thin(entries, keep=DERIVED_MAX):
+    """Cut a long climb down to `keep` points, first and last among them."""
+    if len(entries) <= keep:
+        return entries
+    step = (len(entries) - 1) / (keep - 1)
+    picked = {round(at * step) for at in range(keep)}
+    picked.add(len(entries) - 1)
+    return [entries[at] for at in sorted(picked)]
+
+
+def record_rows(user: str, today: date, derived: dict | None = None):
+    """The hall of fame, as rows, dated backwards from today."""
+    rows = []
+    now = datetime.now().isoformat(timespec='seconds')
+
+    def add(kind, name, category, value, target, unit, direction, on):
+        rows.append((
+            str(RECORD_BASE + len(rows)), user, kind, name, category,
+            value, target, unit, direction, '', on, now, now,
+        ))
+
+    def ago(years_ago):
+        return (today - timedelta(days=round(years_ago * 365.25))).isoformat()
+
+    for name, category, unit, target, direction, entries in RECORDS:
+        for years_ago, value in entries:
+            add('record', name, category, value, target, unit, direction,
+                ago(years_ago))
+
+    for name, entries in (derived or {}).items():
+        category, unit, target = DERIVED_META[name]
+        for on, value in thin(entries):
+            add('record', name, category, value, target, unit, 'higher', on)
+
+    for name, category, years_ago in MILESTONES:
+        add('milestone', name, category, 0, 0, '', 'higher', ago(years_ago))
+
+    # Claimed only if the record bears it out. "Every day for a full year" is
+    # the kind of milestone a seed is tempted to write because it sounds like
+    # this account — and if the rows underneath say the best run was 103 days,
+    # it is the app calling its own owner a liar on the front page.
+    longest = max((value for _on, value in (derived or {}).get('Longest streak', ())),
+                  default=0)
+    if longest >= 365:
+        run = (derived or {})['Longest streak'][-1][0]
+        add('milestone', 'Every day for a full year', 'Summit', 0, 0, '', 'higher', run)
+    return rows
+
+
+RECORD_COLUMNS = (
+    'id, user_id, kind, name, category, value, target, unit,'
+    ' comparison_direction, note, achieved_on, created_at, updated_at'
+)
+
+
+# --------------------------------------------------------------------------
+# An account that plans around this app
+# --------------------------------------------------------------------------
+#: Alpha's preferences, and they are part of the argument.
+#:
+#: This is somebody whose week is timetabled to the quarter hour and who wants
+#: to be told the truth about it, so the ratings are set as deep as they go and
+#: the analytics are set as hard as they go:
+#:
+#:     rating_depth      'reasons' — the two star rows *and* what made the
+#:                       difference, which is the only setting that produces
+#:                       the reasons panel at all
+#:     analytics_tone    'harsh'  — the read-out does not soften anything
+#:     analytics_detail  'everything' — every panel the page can draw
+#:     analytics_window  'all'    — six years is the point; do not window it
+#:
+#: The rest is the shape of a life run out of this app: the day starts on the
+#: dashboard, the catch-up prompt is on because an untracked day is a hole in
+#: six years of record, deleting asks first, and the clock is 24-hour because
+#: the timetable is written that way.
+SETTINGS = {
+    'theme_mode': 'dark',
+    'accent': 'violet',
+    'home_page': 'dashboard',
+    'clock_format': '24h',
+    'week_starts_on': 'monday',
+
+    # Strict. Every question the app can ask after a task, asked.
+    'rating_depth': 'reasons',
+    'confirm_delete': 'true',
+    'default_priority': 'high',
+    'default_xp': '40',
+
+    'task_status': 'open',
+    'task_sort': 'due',
+    'task_group': 'due',
+    'task_horizon': 'week',
+    'calendar_view': 'week',
+
+    # Four hours of deliberate work is the floor on a day in the thesis year,
+    # and the dim is on because the timer is used rather than glanced at.
+    'focus_goal_hours': '4',
+    'focus_dim': 'true',
+    'catchup_prompt': 'true',
+
+    'records_sort': 'improvement',
+    'timer_setup_done': 'true',
+
+    'analytics_window': 'all',
+    'analytics_setup_done': 'true',
+    'analytics_home_tab': 'growth',
+    'analytics_log_style': 'both',
+    'analytics_tone': 'harsh',
+    'analytics_detail': 'everything',
+    'analytics_standing': 'true',
+
+    'notifications_enabled': 'true',
+    'notify_popups': 'true',
+    'notify_tasks': 'true',
+    'notify_calendar': 'true',
+    'notify_analytics': 'true',
+    'notify_goals': 'true',
+    'notify_streak': 'true',
+    'notify_progress': 'true',
+}
+
+
 def stamp(day: date, hhmm: str) -> str:
     return '{}T{}:00'.format(day.isoformat(), hhmm)
 
@@ -330,27 +976,42 @@ def forward_rows(user: str, start: date, days: int, first_id: int):
 
 
 def behind_rows(user: str, start: date, days: int, first_id: int, rng: random.Random):
-    """The same week already lived, plus the study around it.
+    """The years already lived, plus the study around them.
 
     Everything here is finished, rated and timed, because that is what the
     analytics pages read: the quality grid needs difficulty against execution,
     the efficiency metric needs a duration and a deadline it either met or did
     not, and the subject split needs a subject on every row.
+
+    Each day takes its week from the era it fell in — see `ERAS`. The ratings
+    carry the same arc: execution drifts up about a point across the six years,
+    because somebody who has been doing this since they were fifteen is better
+    at it at twenty-one, and a record where that is not visible is a record with
+    no progress in it.
     """
     rows = []
+    eras = era_by_day(start, days)
 
-    def finish(day, title, subject, begin, span, xp, on_cal):
-        """One finished task. `begin` is a clock time, `span` is minutes."""
+    def finish(day, title, subject, begin, span, xp, on_cal, through=0.0):
+        """One finished task. `begin` is a clock time, `span` is minutes.
+
+        `through` is how far into the six years this day is, 0 to 1, and it is
+        what makes the record improve: lateness falls and execution climbs.
+        """
         started = stamp(day, begin)
         due = add_minutes(day, begin, span)
         # Most things land on time; the ones that do not are what stops the
-        # efficiency score being a flat 100 and therefore meaningless.
-        late = rng.random() < 0.12
+        # efficiency score being a flat 100 and therefore meaningless. It
+        # tightens with the years — 18% at fifteen, 8% in the thesis year —
+        # because getting better at this is mostly getting better at finishing
+        # when you said you would.
+        late = rng.random() < (0.18 - 0.10 * through)
         done_at = add_minutes(day, begin, span + (rng.randint(10, 90) if late else 0))
         # Difficulty and execution: a real record is mostly competent work at a
         # sensible level, with enough spread to make the grid worth drawing.
         difficulty = rng.choices([2, 3, 4, 5], weights=[12, 34, 38, 16])[0]
-        execution = max(1, min(5, difficulty + rng.choices(
+        drift = 1 if rng.random() < through * 0.55 else 0
+        execution = max(1, min(5, difficulty + drift + rng.choices(
             [-2, -1, 0, 1], weights=[6, 22, 54, 18])[0]))
         rows.append((
             str(first_id + len(rows)), user, title, '', 'medium', 'done',
@@ -361,6 +1022,8 @@ def behind_rows(user: str, start: date, days: int, first_id: int, rng: random.Ra
 
     for offset in range(days):
         day = start + timedelta(days=offset)
+        era = eras[day.isoformat()]
+        through = offset / max(1, days - 1)
 
         # Two kinds of day that are not a working day, and they are not the
         # same thing.
@@ -384,28 +1047,29 @@ def behind_rows(user: str, start: date, days: int, first_id: int, rng: random.Ra
         # twenty-five, which is what leaves the streak worth looking at and the
         # consistency score something other than a flat hundred.
         roll = rng.random()
-        if roll < 0.04:
+        if roll < era.away:
             continue
-        resting = roll < 0.16
+        resting = roll < era.rest
 
-        for weekday, title, subject, begin, end, xp, _study in WEEK:
+        for weekday, title, subject, begin, end, xp, _study in era.week:
             if day.weekday() != weekday:
                 continue
             if resting and subject not in NOT_STUDY:
                 continue
             finish(day, title, subject, begin,
-                   minutes(end) - minutes(begin), xp, 1)
+                   minutes(end) - minutes(begin), xp, 1, through)
 
         if resting:
             continue
 
-        pool = WEEKEND if day.weekday() >= 5 else EVENING
+        pool = era.weekend if day.weekday() >= 5 else era.evening
         clock = 9 * 60 if day.weekday() >= 5 else 19 * 60 + 30
-        for title, subject, span, xp in rng.sample(pool, rng.randint(3, 5)):
+        low, high = era.load
+        for title, subject, span, xp in rng.sample(pool, rng.randint(low, high)):
             begin = '{:02d}:{:02d}'.format(clock // 60, clock % 60)
             if clock + span > 22 * 60 + 30:
                 break
-            finish(day, title, subject, begin, span, xp, 0)
+            finish(day, title, subject, begin, span, xp, 0, through)
             clock += span + 15
 
     return rows
@@ -426,8 +1090,26 @@ def focus_notes(user: str, start: date, days: int):
 #:
 #: Derived from `WEEK` rather than listed again, so a block whose flag is
 #: changed above cannot go on being counted down here.
+#: Titles that are attendance rather than work, across every era.
+#:
+#: Derived from all six weeks and not only the thesis year's, which is what it
+#: was and which stopped being enough the moment the early eras arrived: their
+#: biggest block is "School day", six hours and forty minutes of it, and a
+#: title the thesis year has never heard of was not in this set. So every
+#: school day in the first three years was counted as one unbroken focus
+#: session — which made the longest sitting on the Records page 408 minutes,
+#: and the focus figures for a fifteen-year-old better than a doctoral
+#: student's.
+#:
+#: A title that is work in one era and attendance in another would land here
+#: and be attendance everywhere. None currently is, and the alternative — a set
+#: keyed by (era, title) — would be a lot of machinery for a distinction
+#: nothing has yet needed to draw.
 ATTENDANCE = frozenset(
-    title for _d, title, _s, _b, _e, _x, study in WEEK if not study)
+    title
+    for era in ERAS
+    for _d, title, _s, _b, _e, _x, study in era.week
+    if not study)
 
 #: Subjects that are never deliberate study, whatever they are attached to.
 #:
@@ -448,13 +1130,18 @@ NOT_STUDY = frozenset((
 ))
 
 
-def focus_sessions(user: str, tasks, rng: random.Random):
+def focus_sessions(user: str, tasks, rng: random.Random, eras: dict):
     """Hours actually sat, per day, from the work that was done.
 
     Counted off the finished rows rather than invented beside them, so the
     focus figures and the task figures cannot disagree about a Tuesday. Only
     the deliberate study counts — sitting in a lecture is not a focus session,
     which is the same line the app draws.
+
+    The goal on each row is the era's rather than a flat three hours: a day in
+    the school years that reached two is a day that met its target, and scoring
+    it against a thesis year's would write two years of failure into a record
+    that was going perfectly well.
     """
     by_day: dict[str, int] = {}
     for row in tasks:
@@ -464,11 +1151,12 @@ def focus_sessions(user: str, tasks, rng: random.Random):
         day = completed[:10]
         by_day[day] = by_day.get(day, 0) + int(row[12] or 0)
 
-    return [(user, day, min(seconds, 8 * 3600), 3)
+    return [(user, day, min(seconds, 8 * 3600),
+             eras[day].focus_goal if day in eras else 3)
             for day, seconds in sorted(by_day.items())]
 
 
-def snapshots(user: str, tasks, focus, start: date, days: int):
+def snapshots(user: str, tasks, focus, start: date, days: int, eras: dict):
     """The report card as it would have been recorded, week by week.
 
     The card writes one row per metric each time it is read, so a year that was
@@ -477,8 +1165,14 @@ def snapshots(user: str, tasks, focus, start: date, days: int):
     drawn as a curve: the productivity score is the week's XP against the
     account's goal, consistency is the days it worked, quality is what it rated
     its own work, and so on. The same five, and the mean of them.
+
+    Each week is scored against the goal of the era it fell in, not against the
+    account's current one. A sixteen-year-old measured against a doctoral
+    student's day is a productivity score near zero for two straight years, and
+    the Growth tab would draw that as somebody who started badly and got better
+    — when what actually happened is that the day got longer. The stored goal
+    is the present era's; these are the goals that were true at the time.
     """
-    goal = float(DAILY_GOAL)
     xp_by_day: dict[str, int] = {}
     rated: dict[str, list[tuple[int, int]]] = {}
     ontime: dict[str, list[int]] = {}
@@ -502,6 +1196,11 @@ def snapshots(user: str, tasks, focus, start: date, days: int):
         pairs = [p for d in window for p in rated.get(d, [])]
         flags = [f for d in window for f in ontime.get(d, [])]
         hours = sum(focus_by_day.get(d, 0) for d in worked) / 3600.0
+        era = eras.get(day) or eras.get(window[0]) or ERAS[-1]
+        goal = float(era.goal)
+        # The focus target moves with the era for the same reason the XP goal
+        # does — see the note above.
+        focus_target = float(era.focus_goal)
 
         scores = {
             'productivity': min(100, round(xp / goal * 100)),
@@ -509,7 +1208,7 @@ def snapshots(user: str, tasks, focus, start: date, days: int):
             'quality': min(100, round(
                 sum(e for _d, e in pairs) / len(pairs) / 5 * 100)) if pairs else 0,
             'efficiency': round(sum(flags) / len(flags) * 100) if flags else 0,
-            'focus': min(100, round(hours / (len(window) * 2.0) * 100)),
+            'focus': min(100, round(hours / (len(window) * focus_target) * 100)),
         }
         scores['overall'] = round(sum(scores.values()) / len(scores))
 
@@ -536,7 +1235,7 @@ TASK_COLUMNS = (
 SEED_YEAR_LOW, SEED_YEAR_HIGH = '1000000000000', '1099999999999'
 
 
-def clear(con, user: str, ahead_from: date, behind_to: date,
+def clear(con, user: str, ahead_from: date, behind_from: date, behind_to: date,
           keep_seed_year: bool = False) -> int:
     """Everything this script has ever written for `user`, and nothing else."""
     gone = con.execute('DELETE FROM tasks WHERE ' + OWNED, owned_args(user)).rowcount
@@ -545,11 +1244,13 @@ def clear(con, user: str, ahead_from: date, behind_to: date,
             'DELETE FROM tasks WHERE user_id = ? AND id >= ? AND id <= ?'
             ' AND length(id) = 13', (user, SEED_YEAR_LOW, SEED_YEAR_HIGH)).rowcount
     gone += con.execute('DELETE FROM xp_events WHERE ' + OWNED, owned_args(user)).rowcount
+    gone += con.execute('DELETE FROM records WHERE ' + OWNED, owned_args(user)).rowcount
     # Bounded on both sides, and to the window each table is written in.
     for table in ('focus_days', 'metric_snapshots'):
         gone += con.execute(
             'DELETE FROM {} WHERE user_id = ? AND date BETWEEN ? AND ?'.format(table),
-            (user, WRITTEN_SINCE, behind_to.isoformat())).rowcount
+            (user, min(behind_from.isoformat(), WRITTEN_SINCE),
+             behind_to.isoformat())).rowcount
     # The notes are the year ahead rather than the year behind, so they are the
     # one range measured from today. A --clear run on a later day leaves the
     # few days it has since walked past; they are notes on a calendar, and the
@@ -573,11 +1274,18 @@ def clear(con, user: str, ahead_from: date, behind_to: date,
 #: itself had recorded since. A seeding script may overwrite what it wrote; it
 #: may not take the record with it on the way past. So the delete stays bounded
 #: on both sides: this floor below, and the run's own last written day above.
-WRITTEN_SINCE = '2024-09-07'
+#:
+#: It stopped being the only floor when the record went from one year to six:
+#: the run's own `behind_from` is now six years back and is the honest bound on
+#: what this run is about to overwrite, so `clear` takes the earlier of the two.
+#: This literal stays as the floor for a *shallower* run — `--years 2` against a
+#: database a six-year run wrote should still take the older rows out rather
+#: than leave four years of orphaned report cards behind it.
+WRITTEN_SINCE = '2018-01-01'
 
 
-def behind_window(today: date) -> tuple[date, date]:
-    """The year of record: the 365 days ending yesterday.
+def behind_window(today: date, years: int = 6) -> tuple[date, date]:
+    """The years of record: `years` of them, ending yesterday.
 
     Measured from today rather than frozen into the file. The window used to be
     a pair of literals, and a literal year of record is only correct for the
@@ -589,7 +1297,7 @@ def behind_window(today: date) -> tuple[date, date]:
     sensibly be both already lived and still coming.
     """
     last = today - timedelta(days=1)
-    return last - timedelta(days=364), last
+    return last - timedelta(days=round(years * 365.25) - 1), last
 
 
 def streaks(tasks, last_day: date):
@@ -675,19 +1383,24 @@ def main():
                     help="leave seed_year.py's rows on the calendar")
     ap.add_argument('--level', type=int, default=100,
                     help='level to bring the account to (default 100)')
+    ap.add_argument('--years', type=int, default=6,
+                    help='years of record to write behind today (default 6)')
+    ap.add_argument('--keep-settings', action='store_true',
+                    help="leave the account's preferences alone")
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
     today = date.today()
     ahead_from = today
-    behind_from, behind_to = behind_window(today)
+    behind_from, behind_to = behind_window(today, args.years)
     behind_days = (behind_to - behind_from).days + 1
+    eras = era_by_day(behind_from, behind_days)
 
     con = sqlite3.connect(DB)
     con.execute('PRAGMA foreign_keys = ON')
     try:
         with con:
-            gone = clear(con, args.user, ahead_from, behind_to,
+            gone = clear(con, args.user, ahead_from, behind_from, behind_to,
                          keep_seed_year=args.keep_seed_year)
             if args.clear:
                 # `users.xp` is the ledger's sum and nothing else, so taking
@@ -733,12 +1446,28 @@ def main():
                 'INSERT OR REPLACE INTO day_focus_notes (user_id, date, text)'
                 ' VALUES (?,?,?)', notes)
 
-            focus = focus_sessions(args.user, behind, rng)
+            focus = focus_sessions(args.user, behind, rng, eras)
             con.executemany(
                 'INSERT OR REPLACE INTO focus_days (user_id, date, seconds,'
                 ' goal_hours) VALUES (?,?,?,?)', focus)
 
-            cards = snapshots(args.user, behind, focus, behind_from, behind_days)
+            con.executemany(
+                'INSERT INTO records ({}) VALUES ({})'.format(
+                    RECORD_COLUMNS, ','.join('?' * 13)),
+                record_rows(args.user, today, summit_records(behind, focus)))
+
+            if not args.keep_settings:
+                # Written straight rather than through the API: this is a
+                # seeding script and the endpoint would need a session. Every
+                # key is one FIELDS already declares, so a value that stops
+                # being valid fails the same read the app's own would.
+                con.executemany(
+                    'INSERT OR REPLACE INTO user_settings (user_id, key, value,'
+                    ' updated_at) VALUES (?,?,?,?)',
+                    [(args.user, key, value, datetime.now().isoformat(timespec='seconds'))
+                     for key, value in SETTINGS.items()])
+
+            cards = snapshots(args.user, behind, focus, behind_from, behind_days, eras)
             con.executemany(
                 'INSERT OR REPLACE INTO metric_snapshots (user_id, date, metric,'
                 ' score, grade, detail) VALUES (?,?,?,?,?,?)', cards)
@@ -773,6 +1502,8 @@ def main():
             ledger[0], added, levels['level']))
         print('  record {} to {}, streak {} (best {})'.format(
             behind_from, behind_to, run, best))
+        for first, last, era in era_calendar(behind_from, behind_days):
+            print('    {:<16} {} to {}'.format(era.name, first, last))
     finally:
         con.close()
 
