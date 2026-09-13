@@ -326,13 +326,21 @@ body:has(.dash) .app-main {
    min-height would not do it: the row would simply grow to whatever the list
    needed, and 244 open tasks would run the page out to the length of them.
 
-   431px is the Focus panel's own height and always has been — 24 of padding,
+   It was 431px, which is the Focus panel's *natural* height — 24 of padding,
    the goal box, the Start button, the hint, 24 more, and the border, none of
-   which shrink. Matching the row to it means neither card is cropped and the
-   two line up.
+   which shrink. Sizing the row to that meant neither card was cropped, but it
+   also meant the row was as short as the shorter of the two things in it: the
+   task list, which is the thing on this page a reader actually works down, got
+   whatever height the Focus panel happened to need and showed about five rows
+   of a fourteen-row day.
+
+   603px is that times 1.4. The Focus panel is unchanged by it — see
+   `.dash-main .focus-goal` below, which takes the slack so the card fills
+   rather than growing a hole above its button — and the task list gets the
+   room, which is where it was wanted.
    ========================================================================== */
 .dash {
-    --dash-row-h: 431px;
+    --dash-row-h: 603px;
 }
 
 .dash-main {
@@ -347,6 +355,60 @@ body:has(.dash) .app-main {
 /* The focus panel turned off in Settings. The list takes the width back rather
    than keeping a 508px column of nothing beside it. */
 .dash-main.is-solo { grid-template-columns: minmax(0, 1fr); }
+
+/* The goal box takes the row's extra height, rather than the gap above the
+   button taking it.
+ 
+   `.focus-start-btn` is `margin-top: auto`, so it is pinned to the foot of the
+   card and every pixel the row grows by lands in the space above it. At the
+   old 431 that space was a few pixels and read as a margin; at 603 it would
+   have been a 170px hole between a small bordered box and a button, which is
+   the card looking broken rather than roomy.
+
+   So the box grows and centres what is in it. The stepper is the thing a
+   reader comes to this card to touch, and centring puts it in the middle of
+   the panel instead of tucked under the heading.
+
+   Scoped to the dashboard row: `html.focus-mode` re-lays this panel out for a
+   running session — see the focus-mode block in styles/dashboard.css — and it
+   sizes the box itself. */
+.dash-main .focus-goal {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+/* The two that carry their own bottom margins inside a box that is now a flex
+   column with a gap; without this they are spaced twice. */
+.dash-main .focus-goal .focus-goal-title { margin-bottom: 0; }
+.dash-main .focus-goal .focus-goal-q { margin-bottom: 14px; }
+
+/* ---- The finish-the-day button, under the list -------------------------- */
+/* On the Tasks page this button sits *above* the list and its own rule spends
+   its margin below itself, which is right there. Here it is the opposite way
+   round: it sits under a scroll region, so with no top margin the list ran
+   straight into a solid green bar with nothing between them — the last row and
+   the button that finishes every row looked like one control.
+ 
+   The hairline is the other half of it. The region above genuinely scrolls, so
+   its content passes *under* whatever follows; a rule across the panel is what
+   says the list ended rather than merely running out. */
+.dash-tasks .tk-day-all {
+    margin: 16px 0 0;
+    padding-block: 13px;
+}
+.dash-tasks .tk-day-all::before {
+    content: '';
+    position: absolute;
+    inset: -16px 0 auto;
+    height: 1px;
+    background: var(--dc-line);
+}
+.dash-tasks .tk-day-all { position: relative; }
+/* The foot link keeps its distance from the button rather than from the list. */
+.dash-tasks .tk-day-all + .dash-panel-link { margin-top: 14px; }
 
 /* ---- The card shell the three panels share ------------------------------ */
 .dash-panel {
@@ -802,7 +864,14 @@ html.focus-mode .dash-main {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 3fr) minmax(0, 7fr);
     height: calc(100vh - var(--topnav-h, 64px) - 110px);
-    min-height: var(--dash-row-h);
+    /* Its own floor, and deliberately not `--dash-row-h`. This is the point
+       below which a running session stops being usable — the smallest the two
+       stacked panels can be and still show a timer and something to work on —
+       which is a different question from how tall the browsing row should be.
+       It followed that variable until the row grew, and would have started
+       forcing the page to scroll on a short laptop for no reason connected to
+       focus mode. */
+    min-height: 431px;
 }
 html.focus-mode .dash-tasks { max-height: none; }
 html.focus-mode .dash-main .focus-panel { order: -1; min-height: 0; }
@@ -838,9 +907,9 @@ html.focus-mode .dash-main .dash-tasks { order: 1; min-height: 0; }
     .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .dash-insights { grid-template-columns: minmax(0, 1fr); }
 
-    /* Stacked, the row's two cards can no longer share one height — 431px
-       between them would halve both. Each takes its own, and the page scrolls
-       instead of the list. */
+    /* Stacked, the row's two cards can no longer share one height — splitting
+       `--dash-row-h` between them would halve both. Each takes its own, and
+       the page scrolls instead of the list. */
     .dash-main {
         grid-template-columns: minmax(0, 1fr);
         height: auto;
