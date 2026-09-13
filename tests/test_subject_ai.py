@@ -205,6 +205,86 @@ def test_an_empty_answer_is_a_failure_rather_than_an_empty_page():
 
 
 # ---------------------------------------------------------------------------
+# The goal, which the page now opens on
+# ---------------------------------------------------------------------------
+def test_an_unrecognised_goal_kind_becomes_the_honest_one():
+    """The kind decides what counts as progress, and the page draws a word per
+    kind. A twelfth spelling of "exam" steers nothing and draws nothing, so it
+    lands on `unstated` rather than becoming a category of one."""
+    cleaned = subject_ai._clean({
+        'goal_read': {'objective': 'Qualify for AIME', 'kind': 'contest',
+                      'focus': 'Reproduce it under a clock.', 'why_kind': ''},
+        'diagnosis': [], 'priorities': [], 'next_steps': [],
+        'insights': [], 'goal_evidence': [],
+    })
+
+    assert cleaned['goal_read']['kind'] == 'unstated'
+    assert cleaned['goal_read']['objective'] == 'Qualify for AIME'
+
+
+def test_a_band_sentence_citing_an_uncounted_figure_is_blanked_not_dropped():
+    """The band keeps its heading when one clause overreaches.
+
+    Unlike a card, which is dropped whole: a card *is* its figures and one with
+    the uncounted line removed still reads as counted, whereas a band that lost
+    its heading to a bad strapline would take the page's first section with it.
+    """
+    cleaned = subject_ai._clean({
+        'goal_read': {
+            'objective': 'Qualify for AIME',
+            'kind': 'competition',
+            'focus': 'Your recursion is at 68, so drill it.',
+            'why_kind': '',
+        },
+        'diagnosis': [], 'priorities': [], 'next_steps': [],
+        'insights': [], 'goal_evidence': [],
+    }, brief=BRIEF)
+
+    assert cleaned['goal_read']['objective'] == 'Qualify for AIME'
+    assert cleaned['goal_read']['kind'] == 'competition'
+    assert cleaned['goal_read']['focus'] == ''
+
+
+def test_an_evidence_card_citing_an_uncounted_figure_goes_whole():
+    cleaned = subject_ai._clean({
+        'goal_evidence': [
+            {'claim': 'Consistency is holding.', 'direction': 'helps',
+             'evidence': ['Consistency: 57'], 'relevance': 'It is the measure.'},
+            {'claim': 'Recursion is at 68.', 'direction': 'hurts',
+             'evidence': ['recursion 68'], 'relevance': 'Drill it.'},
+        ],
+        'diagnosis': [], 'priorities': [], 'next_steps': [], 'insights': [],
+    }, brief=BRIEF)
+
+    assert len(cleaned['goal_evidence']) == 1
+    assert cleaned['goal_evidence'][0]['claim'] == 'Consistency is holding.'
+
+
+def test_the_evidence_cards_are_cut_to_what_the_section_draws():
+    card = {'claim': 'A claim.', 'direction': 'helps', 'evidence': [],
+            'relevance': 'Because.'}
+    cleaned = subject_ai._clean({
+        'goal_evidence': [card] * 9,
+        'diagnosis': [], 'priorities': [], 'next_steps': [], 'insights': [],
+    })
+
+    assert len(cleaned['goal_evidence']) == subject_ai.GOAL_EVIDENCE
+
+
+def test_an_answer_that_is_only_goal_evidence_is_still_an_answer():
+    """The section it fills is the page's second one, so a reading that
+    produced nothing else is a reading worth drawing."""
+    cleaned = subject_ai._clean({
+        'goal_evidence': [{'claim': 'Consistency is holding.',
+                           'direction': 'helps', 'evidence': [],
+                           'relevance': 'It is the measure.'}],
+        'diagnosis': [], 'priorities': [], 'next_steps': [], 'insights': [],
+    })
+
+    assert len(cleaned['goal_evidence']) == 1
+
+
+# ---------------------------------------------------------------------------
 # Without a key
 # ---------------------------------------------------------------------------
 def test_without_a_key_it_says_so_instead_of_calling_anything(monkeypatch):

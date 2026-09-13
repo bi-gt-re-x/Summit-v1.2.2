@@ -86,6 +86,32 @@ PRIORITIES = 4
 NEXT_STEPS = 3
 INSIGHTS = 4
 
+#: Evidence cards under the objective. Three, and the number is the point: the
+#: section answers "what matters for *this* goal", and a list of eight is the
+#: dashboard it exists to replace.
+GOAL_EVIDENCE = 3
+
+#: What kind of thing the reader is chasing, which is the question that decides
+#: what counts as evidence for it.
+#:
+#: A closed list for the same reason STEP_TYPES is one — the page draws a word
+#: per kind and the kind steers what the model weighs, so twelve spellings of
+#: "exam" would be twelve unstyled labels and no steering at all.
+#:
+#:     exam         a dated test with a syllabus. Coverage and timing both.
+#:     competition  a placing, against other people, on a day. Execution
+#:                  under pressure is the whole of it.
+#:     mastery      get good at the thing. No date, no scoreboard.
+#:     habit        do it regularly. Consistency is the goal, not a means.
+#:     project      finish and ship one thing.
+#:     coverage     get through a body of material.
+#:     unstated     the reader has not said. The page asks rather than guesses.
+GOAL_KINDS = ('exam', 'competition', 'mastery', 'habit', 'project',
+              'coverage', 'unstated')
+
+#: Which way a piece of evidence cuts for the goal.
+EVIDENCE_DIRECTIONS = ('helps', 'hurts', 'watch')
+
 #: A recommended sitting, in minutes. The model supplies this and the
 #: difficulty; both are recommendations, both are labelled as such, and both
 #: are clamped here because a 400-minute session is not a suggestion the page
@@ -206,6 +232,52 @@ knowing. Name the pattern when the figures support it, and only then.
 
 WHAT TO WRITE
 
+START WITH THE GOAL. The page opens on what the reader is trying to \
+accomplish, and everything under it is arranged to serve that. Two fields \
+carry it.
+
+`goal_read` — what this subject is for, read from <goals> and from what they \
+said they are chasing in <subject_profile>. Four parts:
+  - `objective`: the goal as one sentence somebody would say out loud. Not the \
+stored title again. "Qualify for AIME" is a label; "Qualify for AIME by \
+turning strong problem-solving into consistent contest execution" is an \
+objective, because it names the thing that has to change. If the record says \
+nothing about a goal, say what the work looks like it is for and keep it \
+short.
+  - `kind`: one of exam, competition, mastery, habit, project, coverage, \
+unstated. This is the most consequential word you write, because it decides \
+what counts as progress. A competition is won under a clock, so execution \
+under pressure is the measure and raw difficulty is not. Coverage is throughput \
+against a syllabus. A habit is consistency, and for a habit consistency is the \
+goal rather than a means to one. Pick `unstated` when nothing says — do not \
+infer a competition from a subject that merely has competitions in it.
+  - `focus`: the one thing that has to change next, as a sentence. "Convert \
+strong solving ability into consistent contest performance." One clause of \
+what they have, one of what it has to become. This is the line under the \
+goal on the page and it is the sentence the whole reading has to support.
+  - `why_kind`: one short sentence saying what in the record made you call it \
+that kind. It is shown when the reader questions the call.
+
+`goal_evidence` — at most three, and this is the section that replaces a row \
+of metrics. Each is a piece of the record that *matters for this goal*, which \
+is a different question from which figure is highest or lowest. A 78 on \
+quality is not evidence; "your contest execution is improving, 24 to 30 across \
+recent timed work" is. Each has:
+  - `claim`: the finding as a sentence a person would say. Lead with the \
+direction of travel, not the number.
+  - `direction`: `helps` when it moves the reader towards the goal, `hurts` \
+when it is in the way, `watch` when it could go either way and is worth \
+knowing.
+  - `evidence`: the counted figures behind it, quoted from the brief. Two or \
+three short lines.
+  - `relevance`: why this matters *for the stated goal specifically*. If the \
+sentence would be equally true for any goal in any subject, it is not \
+relevant, it is filler — cut the card and write a better one.
+
+Order them by what would change the reader's next fortnight, not by \
+strength. A `hurts` card the reader can act on beats a `helps` card that only \
+flatters.
+
 `diagnosis` — at most three. Each is one finding, stated as a claim, with \
 `confidence` between 0 and 1 and `evidence` quoting the figures it rests on. \
 Be honest with confidence: a reading off forty rated tasks is not the same as \
@@ -263,6 +335,32 @@ with "Your record shows" or close by summarising what you just said.
 SCHEMA = {
     'type': 'object',
     'properties': {
+        'goal_read': {
+            'type': 'object',
+            'properties': {
+                'objective': {'type': 'string'},
+                'kind': {'type': 'string', 'enum': list(GOAL_KINDS)},
+                'focus': {'type': 'string'},
+                'why_kind': {'type': 'string'},
+            },
+            'required': ['objective', 'kind', 'focus', 'why_kind'],
+            'additionalProperties': False,
+        },
+        'goal_evidence': {
+            'type': 'array',
+            'items': {
+                'type': 'object',
+                'properties': {
+                    'claim': {'type': 'string'},
+                    'direction': {'type': 'string',
+                                  'enum': list(EVIDENCE_DIRECTIONS)},
+                    'evidence': {'type': 'array', 'items': {'type': 'string'}},
+                    'relevance': {'type': 'string'},
+                },
+                'required': ['claim', 'direction', 'evidence', 'relevance'],
+                'additionalProperties': False,
+            },
+        },
         'diagnosis': {
             'type': 'array',
             'items': {
@@ -321,7 +419,8 @@ SCHEMA = {
             },
         },
     },
-    'required': ['diagnosis', 'priorities', 'next_steps', 'insights'],
+    'required': ['goal_read', 'goal_evidence', 'diagnosis', 'priorities',
+                 'next_steps', 'insights'],
     'additionalProperties': False,
 }
 
@@ -690,6 +789,51 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
         """Whether this entry may claim to be reading the record."""
         return allowed is None or figures.all_clean(texts, allowed)
 
+    # ---- What it is all for ---------------------------------------------
+    # `objective` and `focus` are mostly the reader's own intention said back,
+    # so a figure in them is unusual — but it is allowed to cite one, and if it
+    # cites one nobody counted the sentence is blanked rather than the whole
+    # band dropped. The band still has the goal's own title to fall back on,
+    # and a page that loses its heading because one clause overreached is a
+    # worse failure than a heading with no strapline under it.
+    read = found.get('goal_read')
+    goal_read = {}
+    if isinstance(read, dict):
+        objective = str(read.get('objective') or '').strip()
+        focus = str(read.get('focus') or '').strip()
+        why = str(read.get('why_kind') or '').strip()
+        kind = str(read.get('kind') or '').strip()
+        goal_read = {
+            'objective': objective if counted(objective) else '',
+            # An unrecognised kind steers nothing and draws as nothing, so it
+            # becomes the honest answer rather than a new category of one.
+            'kind': kind if kind in GOAL_KINDS else 'unstated',
+            'focus': focus if counted(focus) else '',
+            'why_kind': why if counted(why) else '',
+        }
+
+    goal_evidence = []
+    for entry in (found.get('goal_evidence') or [])[:GOAL_EVIDENCE]:
+        if not isinstance(entry, dict):
+            continue
+        claim = str(entry.get('claim') or '').strip()
+        relevance = str(entry.get('relevance') or '').strip()
+        if not claim:
+            continue
+        evidence = [str(item).strip() for item in (entry.get('evidence') or [])
+                    if str(item).strip()][:3]
+        # Dropped whole, unlike the band above: a card *is* its figures, and
+        # one with the uncounted line removed still reads as counted.
+        if not counted(claim, relevance, *evidence):
+            continue
+        direction = str(entry.get('direction') or '').strip()
+        goal_evidence.append({
+            'claim': claim,
+            'direction': direction if direction in EVIDENCE_DIRECTIONS else 'watch',
+            'evidence': evidence,
+            'relevance': relevance,
+        })
+
     diagnosis = []
     for entry in (found.get('diagnosis') or [])[:DIAGNOSES]:
         if not isinstance(entry, dict):
@@ -767,7 +911,14 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             'implication': implication,
         })
 
-    if not (diagnosis or priorities or steps or insights):
+    # A band with a sentence in it is a section of the page, so a reading that
+    # produced only that is still a reading. `goal_read` is a dict even when
+    # both of its sentences were blanked above, so the test is for content
+    # rather than for the key.
+    said_something = bool(goal_read.get('objective') or goal_read.get('focus'))
+
+    if not (said_something or goal_evidence or diagnosis or priorities
+            or steps or insights):
         # Either the model answered in the wrong shape, or every single thing
         # it said cited a figure nobody counted. The second is the interesting
         # one and it reads the same from here, so the sentence covers both
@@ -775,6 +926,8 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
         raise BriefUnavailable('The model returned nothing usable. Try again.')
 
     return {
+        'goal_read': goal_read,
+        'goal_evidence': goal_evidence,
         'diagnosis': diagnosis,
         'priorities': priorities,
         'next_steps': steps,

@@ -426,7 +426,68 @@ export interface Insight {
   implication: string;
 }
 
+/**
+ * What kind of thing the reader is chasing.
+ *
+ * The most consequential word in the reading, because it decides what counts
+ * as progress: a competition is won under a clock, so execution under pressure
+ * is the measure and raw difficulty is not; coverage is throughput against a
+ * syllabus; for a habit, consistency *is* the goal rather than a means to one.
+ * Mirrors GOAL_KINDS in backend/tracking/subject_ai.py.
+ */
+export type GoalKind =
+  | 'exam'
+  | 'competition'
+  | 'mastery'
+  | 'habit'
+  | 'project'
+  | 'coverage'
+  | 'unstated';
+
+/** Which way a piece of evidence cuts for the goal. */
+export type EvidenceDirection = 'helps' | 'hurts' | 'watch';
+
+/**
+ * The goal, read rather than restated.
+ *
+ * `objective` is the difference between a label and an aim: "Qualify for
+ * AIME" is the first, "Qualify for AIME by turning strong problem-solving
+ * into consistent contest execution" is the second, because it names the
+ * thing that has to change. `focus` is that thing on its own, as the one
+ * sentence the rest of the page has to support.
+ *
+ * Every field may be empty. The server blanks a sentence that cites a figure
+ * nobody counted rather than dropping the band, so the page falls back to the
+ * goal's own title — see `_clean` in backend/tracking/subject_ai.py.
+ */
+export interface GoalRead {
+  objective: string;
+  kind: GoalKind;
+  focus: string;
+  /** What in the record made it that kind, for when the reader doubts it. */
+  why_kind: string;
+}
+
+/**
+ * One thing about the record that matters *for this goal*.
+ *
+ * Not the highest figure and not the lowest — the one that would change the
+ * reader's next fortnight. "Quality: 78" is not evidence; "your contest
+ * execution is improving, 24 to 30 across recent timed work" is. `relevance`
+ * is what keeps it honest: a sentence equally true of any goal in any subject
+ * is filler, and the server is told to cut the card rather than write it.
+ */
+export interface GoalEvidence {
+  claim: string;
+  direction: EvidenceDirection;
+  evidence: string[];
+  relevance: string;
+}
+
 export interface SubjectReading {
+  /** Absent on a reading written before the objective band existed. */
+  goal_read?: GoalRead;
+  goal_evidence?: GoalEvidence[];
   diagnosis: Diagnosis[];
   priorities: Priority[];
   next_steps: NextStep[];

@@ -73,6 +73,8 @@ import { subjectState } from '@/components/Subject/state';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { NextSteps } from '@/components/Subject/NextSteps';
+import { ObjectiveBand, WhatMatters } from '@/components/Subject/Opening';
+import { evidenceFrom, objectiveFrom } from '@/components/Subject/objective';
 import { Reading } from '@/components/Subject/Reading';
 import { performance } from '@/components/Subject/performance';
 import { latticeFor } from '@/components/Subject/lattice';
@@ -106,6 +108,7 @@ import { format } from '@/utils';
 import '@/styles/analytics.css';
 import '@/styles/subject.css';
 import '@/styles/subject-state.css';
+import '@/styles/subject-objective.css';
 
 /** Today, as the ISO day every window here is measured back from. */
 function todayIso(): string {
@@ -290,6 +293,20 @@ export default function SubjectAnalytics() {
         goals.data?.goals ?? [],
       ),
     [goals.data, span, subjectId, tasks.data, today],
+  );
+
+  /* The four relationships, hoisted out of the brief's request body.
+     They were computed there and only there, which was fine while the model
+     was their only reader — the objective band and the evidence cards read
+     them too now, and a second call would be a second answer to the same
+     question. */
+  const perf = useMemo(
+    () =>
+      performance(
+        state,
+        model.rates.find((rate) => rate.key === 'quality')?.delta ?? null,
+      ),
+    [model.rates, state],
   );
 
   /**
@@ -679,6 +696,24 @@ export default function SubjectAnalytics() {
   const [taken, setTaken] = useState<Set<string>>(new Set());
   const [stepBusy, setStepBusy] = useState('');
 
+  /* ---- WHAT ARE YOU TRYING TO ACCOMPLISH -------------------------------
+     The band the page opens on, and the facts that bear on it.
+
+     Both are counted first and overlaid with the reading when there is one,
+     which is what lets the first section of the page exist before anybody has
+     pressed anything — see components/Subject/objective for why that matters
+     more here than anywhere else on the page. */
+  const objective = useMemo(
+    () => objectiveFrom(state, perf, model.goals, ambition ?? null, today,
+                        reading?.goal_read ?? null),
+    [ambition, model.goals, perf, reading, state, today],
+  );
+
+  const evidenceCards = useMemo(
+    () => evidenceFrom(state, perf, model.goals, reading?.goal_evidence ?? null),
+    [model.goals, perf, reading, state],
+  );
+
   /* Asked once, so an install with no key draws no button at all — the same
      bargain the write-up keeps, for the same reason. */
   useEffect(() => {
@@ -792,10 +827,7 @@ export default function SubjectAnalytics() {
          disagree, and whether capability is running ahead of the score. A
          model handed only the raw table restates it; handed these it has to
          reason from them. See components/Subject/performance. */
-      performance: performance(
-        state,
-        model.rates.find((rate) => rate.key === 'quality')?.delta ?? null,
-      ) as unknown as Record<string, unknown>,
+      performance: perf as unknown as Record<string, unknown>,
       goals: model.goals.map((goal) => ({
         title: goal.title,
         progress: Math.round(goal.progress),
@@ -986,6 +1018,27 @@ export default function SubjectAnalytics() {
                 ))}
               </div>
             </div>
+
+            {/* ---- WHAT ARE YOU TRYING TO ACCOMPLISH ------------------- */}
+            {/* First, and at the size of a heading, because everything under
+                it is an answer to it. The page used to open on four figures of
+                equal weight — quality, execution, consistency, momentum — all
+                counted, all true, and none of them a statement about what the
+                reader came here to do. A dashboard leaves the interpreting to
+                the reader, and interpreting is the part they wanted.
+
+                The figures have not gone anywhere. They are the evidence under
+                the cards below and the panels further down. What changed is
+                that they stopped being the protagonist. */}
+            <ObjectiveBand subject={subject.name} objective={objective} />
+
+            {/* ---- WHAT EVIDENCE MATTERS FOR THAT --------------------- */}
+            {/* Three at most, each a claim with its counted figures beneath.
+                The model's when there is a reading, because choosing which of
+                thirty figures bears on qualifying for a particular competition
+                needs to know what that competition is; the app's own rules
+                otherwise, which is always. */}
+            <WhatMatters cards={evidenceCards} />
 
             {/* ---- WHERE AM I ----------------------------------------- */}
             {/* The page answers three questions in order — where am I, why am
