@@ -237,7 +237,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     font-size: 13px;
 }
 
-/* ---------- The four figures ---------------------------------------------- */
+/* ---------- The four stories ---------------------------------------------- */
+/* These were four counts and are now four things that happened — see the note
+   in Records.tsx. The shape changed with them: a count is one number and a
+   story is a number with a subject, so the tile is taller and the line under
+   the label names the record it came from. */
 .rc-tiles {
     list-style: none;
     margin: 0 0 34px;
@@ -260,9 +264,34 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     border-top: 2px solid var(--tone, var(--rc-accent-2));
 }
 .rc-tile-ico { font-size: 19px; line-height: 1; }
-.rc-tile .rc-figure { display: flex; align-items: baseline; gap: 5px; }
-.rc-tile .rc-num { font-size: 30px; font-weight: 800; letter-spacing: -.03em; }
-.rc-tile-label { font-size: 12px; color: var(--rc-muted); }
+.rc-tile-figure {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+    color: var(--tone, var(--rc-text));
+    font-variant-numeric: tabular-nums;
+}
+.rc-tile-label { font-size: 12.5px; font-weight: 600; color: var(--rc-text); }
+/* Two lines at most. A story whose subject runs to a paragraph is a story
+   nobody reads off a tile, and the record it names is one tap away. */
+.rc-tile-detail {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--rc-faint);
+}
+
+/* The counts, demoted. They answer "how much is in here", which is worth one
+   line and not four tiles. */
+.rc-meta {
+    margin: -8px 0 26px;
+    font-size: 11.5px;
+    color: var(--rc-faint);
+}
 
 /* ---------- Sections ------------------------------------------------------ */
 .rc-section { margin-bottom: 38px; }
@@ -340,6 +369,50 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-best-name { margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--rc-muted); }
 .rc-best-value { font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
 .rc-best-label { margin-bottom: 10px; font-size: 11.5px; color: var(--rc-faint); }
+/* ---------- The card's own evolution --------------------------------------
+   The sparkline plots goodness rather than magnitude, so a record measured
+   downward still climbs — the reason is in Records.tsx, above `Spark`. Drawn
+   with preserveAspectRatio="none" because the shape is the message and the
+   aspect is whatever the card is wide. */
+.rc-spark {
+    width: 100%;
+    height: 30px;
+    margin: 0 0 4px;
+    overflow: visible;
+    color: var(--rc-accent-2);
+}
+.rc-spark-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+.rc-spark-dot { fill: currentColor; }
+.rc-best.is-fresh .rc-spark { color: var(--rc-gold); }
+
+/* 18 → 20 → 21 → 23 → 25. The arrows are drawn rather than typed so the string
+   can wrap between figures instead of breaking mid-arrow, and so a screen
+   reader is not read a row of dingbats. */
+.rc-best-trail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px 4px;
+    margin: 6px 0 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rc-faint);
+    font-variant-numeric: tabular-nums;
+}
+.rc-best-trail > span + span::before {
+    content: '→';
+    margin-right: 4px;
+    color: var(--rc-line);
+}
+.rc-best-trail > span.is-now { color: var(--rc-accent-2); }
+
 .rc-best-gain { font-size: 12px; font-weight: 600; color: var(--rc-good); }
 .rc-best-gain.is-quiet { color: var(--rc-faint); font-weight: 500; }
 .rc-best-new { font-size: 12px; font-weight: 700; color: var(--rc-gold); }

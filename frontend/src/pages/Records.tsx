@@ -43,11 +43,17 @@
  * ride on the header and on every key row, so the closed state says how much
  * is behind it rather than merely hiding it.
  *
- * The figures count up from zero on arrival. Not decoration here in the way it
- * would be on a settings page: this is the one screen whose entire content is
- * numbers somebody is proud of, and a page of high scores that simply appears
- * reads as a table. Nothing moves under `prefers-reduced-motion` — see
- * hooks/useCountUp.
+ * The derived figures count up from zero on arrival. Not decoration here in the
+ * way it would be on a settings page: this is the one screen whose entire
+ * content is numbers somebody is proud of, and a page of high scores that
+ * simply appears reads as a table. Nothing moves under
+ * `prefers-reduced-motion` — see hooks/useCountUp.
+ *
+ * The four tiles at the top do not count up, and stopped being counts at the
+ * same time. A story's figure is "+7" or "3mo", which is not a quantity to
+ * climb toward — and the thing that made counting up worth doing, that the
+ * number is something to be proud of, is exactly what "47 records logged" was
+ * not. See `stories` in utils/records.
  *
  * **Why this is not the analytics page.** There was a Records tab under
  * Analytics, about *standing*: where the last thirty days rank against every
@@ -75,8 +81,10 @@ import {
   headline,
   keyMilestones,
   personalBests,
+  stories,
   tally,
   timeline,
+  trail,
   type Best,
   type KeyMilestone,
   type Show,
@@ -181,7 +189,64 @@ function KeyRow({
   );
 }
 
+/**
+ * The evolution of one record at card size.
+ *
+ * No axis, no labels, no numbers — the trail underneath carries those. This
+ * draws the *shape*, which is the one thing a column of figures does not give
+ * you at a glance.
+ *
+ * It plots how good each entry was rather than how large, so a record measured
+ * downward still climbs. That is a real decision and not a cosmetic one: a
+ * mile time improving from 6:10 to 5:40 draws as a falling line on a raw axis,
+ * and a falling line on a card headed "personal best" reads as decline to
+ * everyone who does not stop to check the units. The full chart lower down
+ * plots the raw values, because it has an axis to say what they are.
+ */
+function Spark({ best }: { best: Best }) {
+  const values = best.history.filter((row) => row.achieved_on).map((row) => row.value);
+  if (values.length < 2) return null;
+
+  const low = Math.min(...values);
+  const high = Math.max(...values);
+  const span = high - low || 1;
+  const W = 132;
+  const H = 30;
+
+  const points = values.map((value, i) => {
+    const good = best.direction === 'lower' ? (high - value) / span : (value - low) / span;
+    return [3 + (i * (W - 6)) / (values.length - 1), H - 4 - good * (H - 8)] as const;
+  });
+  const path = points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x},${y}`).join(' ');
+  const [lastX, lastY] = points[points.length - 1]!;
+
+  return (
+    <svg className="rc-spark" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+      <path className="rc-spark-line" d={path} />
+      <circle className="rc-spark-dot" cx={lastX} cy={lastY} r="3" />
+    </svg>
+  );
+}
+
+/**
+ * One record, at the size the page's argument deserves.
+ *
+ * The card grows with the history, because a card that looks the same after
+ * five entries as after one has nothing to say about the four in between:
+ *
+ *     1 entry     the figure and the day
+ *     2-3         and the shape of it
+ *     4+          and the figures themselves — 18 → 20 → 21 → 23 → 25
+ *
+ * That last line is the page's thesis written out, and it is the reason the
+ * table stores an entry per row rather than a best per record. Somebody who
+ * has come back to a record five times should be able to see all five without
+ * opening anything.
+ */
 function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
+  const dated = best.history.filter((row) => row.achieved_on).length;
+  const steps = trail(best);
+
   return (
     <li className={`rc-best${best.fresh ? ' is-fresh' : ''}`}>
       <button type="button" onClick={onOpen}>
@@ -190,12 +255,22 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
         <span className="rc-best-value">{formatValue(best.value, best.unit, best.target)}</span>
         <span className="rc-best-label">Personal best</span>
 
+        {dated >= 2 && <Spark best={best} />}
+
+        {dated >= 4 && (
+          <span className="rc-best-trail">
+            {steps.map((step, i) => (
+              <span key={`${step}-${i}`} className={i === steps.length - 1 ? 'is-now' : undefined}>
+                {step}
+              </span>
+            ))}
+          </span>
+        )}
+
         {best.fresh ? (
           <span className="rc-best-new">NEW RECORD 🔥</span>
         ) : best.gain > 0 ? (
-          <span className="rc-best-gain">
-            ↑ {gainText(best)} from first record
-          </span>
+          <span className="rc-best-gain">↑ {gainText(best)} since first</span>
         ) : (
           <span className="rc-best-gain is-quiet">
             {best.entries > 1 ? 'No gain yet' : 'First entry'}
@@ -410,6 +485,8 @@ export default function Records() {
   const lead = useMemo(() => headline(rows), [rows]);
   const counts = useMemo(() => tally(rows), [rows]);
   const cats = useMemo(() => categoriesOf(rows), [rows]);
+  /** The four tiles. Named `tales` because `stories` is the function. */
+  const tales = useMemo(() => stories(rows), [rows]);
   const recent = useMemo(() => timeline(rows), [rows]);
   const milestones = useMemo(() => rows.filter((row) => row.kind === 'milestone'), [rows]);
   const { keys: keyMiles, loose: looseMiles } = useMemo(() => keyMilestones(rows), [rows]);
@@ -551,21 +628,47 @@ export default function Records() {
 
       {error && <p className="rc-error">{error}</p>}
 
-      {/* ---- Four figures ------------------------------------------------- */}
-      <ul className="rc-tiles">
-        {[
-          { icon: '🏆', n: counts.records, label: 'Personal Records', tone: 'violet' },
-          { icon: '🥇', n: counts.milestones, label: 'Milestones', tone: 'amber' },
-          { icon: '🗂️', n: counts.categories, label: 'Categories', tone: 'blue' },
-          { icon: '📈', n: counts.thisMonth, label: 'All-Time Bests This Month', tone: 'green' },
-        ].map((tile) => (
-          <li className={`rc-tile tone-${tile.tone}`} key={tile.label}>
-            <span className="rc-tile-ico" aria-hidden="true">{tile.icon}</span>
-            <Counted amount={tile.n} decimals={0} unit="" />
-            <span className="rc-tile-label">{tile.label}</span>
-          </li>
-        ))}
-      </ul>
+      {/* ---- Four stories --------------------------------------------------
+          These were counts: personal records, milestones, categories, bests
+          this month. Every one was true and none of them was a record. "47
+          personal records" is a fact about how much you have written down, and
+          a page whose whole claim is *look how far you have come* answers it
+          with inventory.
+
+          So each tile is now something that happened — the biggest single
+          jump, the longest run of beating yourself, what was set this month,
+          what has stood unbeaten longest. How they are chosen is in
+          `stories` in utils/records; the short of it is that a tile with no
+          honest figure is not drawn at all, so this row is four wide on an
+          account with some history and one wide on a new one.
+
+          The counts did not want deleting, only demoting — they answer "how
+          much is in here", which is a real question and a small one. They are
+          the line underneath. */}
+      {tales.length > 0 && (
+        <ul className="rc-tiles">
+          {tales.map((story) => (
+            <li className={`rc-tile tone-${story.tone}`} key={story.key}>
+              <span className="rc-tile-ico" aria-hidden="true">{story.icon}</span>
+              <span className="rc-tile-figure">{story.figure}</span>
+              <span className="rc-tile-label">{story.label}</span>
+              <span className="rc-tile-detail">{story.detail}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {rows.length > 0 && (
+        <p className="rc-meta">
+          {counts.records} {counts.records === 1 ? 'entry' : 'entries'} logged
+          <span aria-hidden="true"> · </span>
+          {bests.length} {bests.length === 1 ? 'record' : 'records'}
+          <span aria-hidden="true"> · </span>
+          {counts.milestones} {counts.milestones === 1 ? 'milestone' : 'milestones'}
+          <span aria-hidden="true"> · </span>
+          {counts.categories} {counts.categories === 1 ? 'category' : 'categories'}
+        </p>
+      )}
 
       {/* ---- 2. Personal bests -------------------------------------------- */}
       <section className="rc-section">

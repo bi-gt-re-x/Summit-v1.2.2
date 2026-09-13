@@ -261,30 +261,196 @@ export function headline(rows: RecordRow[], today: Date = new Date()): Best | nu
   });
 }
 
+/**
+ * The evolution as text — 18 → 20 → 21 → 23 → 25.
+ *
+ * The page's thesis in one string, which is why it is here rather than
+ * assembled at each call site: it belongs on the best card, and it is the same
+ * sequence the chart draws.
+ *
+ * Long histories are elided from the middle rather than the end. The two
+ * figures that carry the story are the first and the last — where you started
+ * and where you are — and truncating the tail would throw away the second one
+ * to keep entries nobody is reading.
+ */
+export function trail(best: Best, max = 6): string[] {
+  const values = best.history
+    .filter((row) => row.achieved_on)
+    .map((row) => formatValue(row.value, best.unit === 'minutes' ? 'minutes' : ''));
+  if (values.length <= max) return values;
+  return [values[0]!, '…', ...values.slice(values.length - (max - 2))];
+}
+
+// ---------------------------------------------------------------------------
+// The four stories
+// ---------------------------------------------------------------------------
+/**
+ * One thing worth knowing, in a shape a tile can draw.
+ *
+ * `figure` is the number the eye lands on, `label` says what kind of thing it
+ * is, and `detail` names the record it came from. Every one of these is a
+ * *story* — something that happened — and that is the whole point of the
+ * type: the four tiles used to be counts, and "47 personal records" is
+ * inventory. It tells you how much you have logged, which is a fact about your
+ * logging rather than about you.
+ */
+export interface Story {
+  key: string;
+  icon: string;
+  figure: string;
+  label: string;
+  detail: string;
+  tone: 'violet' | 'amber' | 'blue' | 'green';
+}
+
+/** Whole months between two ISO days, floored. */
+const monthsBetween = (from: string, to: Date): number => {
+  const then = time(from);
+  if (!then) return 0;
+  return Math.max(0, Math.floor((to.getTime() - then) / (DAY * 30.44)));
+};
+
+/**
+ * The stories the top of the page tells, in the order they are drawn.
+ *
+ * Fewer than four is normal and is not padded out. A story that has not
+ * happened has no honest figure — "0 consecutive improvements" is not a
+ * quieter version of the tile, it is a different and worse claim — so the row
+ * draws what is true and no more. An account with one entry gets one tile, and
+ * the row fills in as the history does.
+ *
+ * None of these read the growth history. Everything here comes out of rows the
+ * account wrote, which is the same line the page draws between what you logged
+ * and what Summit counted — see the note in pages/Records.tsx.
+ */
+export function stories(rows: RecordRow[], today: Date = new Date()): Story[] {
+  const bests = personalBests(rows, today);
+  const out: Story[] = [];
+
+  // 1. The biggest single jump between two consecutive entries. Different from
+  //    the hero's "furthest travelled", and deliberately: one is the whole
+  //    journey and this is the best day of it.
+  let leap: { best: Best; size: number; from: number } | null = null;
+  for (const best of bests) {
+    const dated = best.history.filter((row) => row.achieved_on);
+    for (let i = 1; i < dated.length; i += 1) {
+      const before = dated[i - 1]!.value;
+      const after = dated[i]!.value;
+      const size = best.direction === 'lower' ? before - after : after - before;
+      if (size > 0 && (!leap || size > leap.size)) leap = { best, size, from: before };
+    }
+  }
+  if (leap) {
+    const unit = leap.best.unit === 'minutes' ? 'minutes' : '';
+    out.push({
+      key: 'leap',
+      icon: '⚡',
+      figure: `${leap.best.direction === 'lower' ? '−' : '+'}${formatValue(leap.size, unit)}`,
+      label: 'Biggest leap',
+      detail: `${leap.best.name} · ${formatValue(leap.from, unit)} → ${formatValue(
+        leap.best.direction === 'lower' ? leap.from - leap.size : leap.from + leap.size,
+        unit,
+      )}`,
+      tone: 'violet',
+    });
+  }
+
+  // 2. The longest unbroken run of improvements on one record. Not a streak of
+  //    days: a streak of *beating yourself*, which is the thing this page is
+  //    about and which nothing else in the app counts.
+  let run: { best: Best; length: number } | null = null;
+  for (const best of bests) {
+    const dated = best.history.filter((row) => row.achieved_on);
+    let current = 1;
+    let longest = 1;
+    for (let i = 1; i < dated.length; i += 1) {
+      current = isBetter(dated[i]!.value, dated[i - 1]!.value, best.direction) ? current + 1 : 1;
+      longest = Math.max(longest, current);
+    }
+    if (longest > 1 && (!run || longest > run.length)) run = { best, length: longest };
+  }
+  if (run) {
+    out.push({
+      key: 'run',
+      icon: '🔥',
+      figure: `${run.length}`,
+      label: 'Longest run',
+      detail: `${run.best.name} · ${run.length} entries, each better than the last`,
+      tone: 'amber',
+    });
+  }
+
+  // 3. Bests set this calendar month — the one count that is also a story,
+  //    because a personal best is an event and this says how many happened.
+  const month = `${today.getFullYear()}-${`${today.getMonth() + 1}`.padStart(2, '0')}`;
+  const fresh = bests.filter((best) => best.on.startsWith(month));
+  if (fresh.length > 0) {
+    out.push({
+      key: 'month',
+      icon: '📈',
+      figure: `${fresh.length}`,
+      label: fresh.length === 1 ? 'Record this month' : 'Records this month',
+      detail: fresh
+        .slice(0, 3)
+        .map((best) => best.name)
+        .join(', '),
+      tone: 'green',
+    });
+  }
+
+  // 4. The best that has stood longest without being beaten — the one to go
+  //    for. Only records you have come back to: a figure logged once and never
+  //    revisited has not withstood anything.
+  const standing = bests
+    .filter((best) => best.entries > 1 && best.on && monthsBetween(best.on, today) >= 1)
+    .reduce<Best | null>(
+      (oldest, best) => (!oldest || time(best.on) < time(oldest.on) ? best : oldest),
+      null,
+    );
+  if (standing) {
+    const months = monthsBetween(standing.on, today);
+    out.push({
+      key: 'standing',
+      icon: '🛡️',
+      figure: months >= 12 ? `${Math.floor(months / 12)}y` : `${months}mo`,
+      label: 'Standing longest',
+      detail: `${standing.name} · ${formatValue(standing.value, standing.unit, standing.target)} still unbeaten`,
+      tone: 'blue',
+    });
+  }
+
+  return out;
+}
+
 // ---------------------------------------------------------------------------
 // The page's headline figures
 // ---------------------------------------------------------------------------
+/**
+ * How much is in here.
+ *
+ * Four counts that used to be the four tiles at the top of the page and are
+ * now one line of small text under them — see `stories`, which is what the
+ * tiles draw instead. They were demoted rather than deleted because "how much
+ * have I logged" is a real question; it is just not the question the page is
+ * for. `thisMonth` went with the demotion: bests set this month is an event
+ * rather than an inventory, so it is a story now.
+ */
 export interface Tally {
   records: number;
   milestones: number;
   categories: number;
-  /** Bests set this calendar month — the "all-time bests this month" tile. */
-  thisMonth: number;
 }
 
-export function tally(rows: RecordRow[], today: Date = new Date()): Tally {
-  const bests = personalBests(rows, today);
+export function tally(rows: RecordRow[]): Tally {
   const categories = new Set(
     rows.map((row) => row.category.trim()).filter(Boolean),
   );
-  const month = `${today.getFullYear()}-${`${today.getMonth() + 1}`.padStart(2, '0')}`;
 
   return {
     // Every entry, not every name: 127 records means 127 things logged.
     records: rows.filter((row) => row.kind === 'record').length,
     milestones: rows.filter((row) => row.kind === 'milestone').length,
     categories: categories.size,
-    thisMonth: bests.filter((best) => best.on.startsWith(month)).length,
   };
 }
 
