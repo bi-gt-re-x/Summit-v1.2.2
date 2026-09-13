@@ -708,7 +708,27 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-ev-area { stroke: none; }
 .rc-ev-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .rc-ev-dot { fill: var(--rc-card); stroke: currentColor; stroke-width: 2.5; }
-.rc-ev-dot.is-last { fill: currentColor; }
+/* The best entry, which is not always the last one — see `Evolution` in
+   Records.tsx. Gold, because it is the same event the timeline and the dialog
+   draw in gold: this is where the record was set. */
+.rc-ev-dot.is-best {
+    fill: var(--rc-gold);
+    stroke: var(--rc-gold);
+}
+
+/* The record picker, and the one word that stops a descending line being read
+   as decline. */
+.rc-ev-pick { display: flex; align-items: center; gap: 9px; }
+.rc-ev-dir {
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--rc-blue) 14%, transparent);
+    color: var(--rc-blue);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
 .rc-ev-point { fill: var(--rc-text); font-size: 11px; font-weight: 700; }
 .rc-ev-when { fill: var(--rc-faint); font-size: 9.5px; }
 

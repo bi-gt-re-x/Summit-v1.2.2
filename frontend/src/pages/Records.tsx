@@ -109,6 +109,7 @@ import {
   formatValue,
   gainText,
   headline,
+  isBetter,
   milestoneGroups,
   moments,
   personalBests,
@@ -378,6 +379,17 @@ function Entry({
  * off the range rather than starting at zero — a score that went 18 to 25 on a
  * 0-30 axis is a flat line, and the flatness would be a lie about a 39%
  * improvement.
+ *
+ * Raw values, unlike the sparkline on the cards, which plots goodness so the
+ * line always climbs. This one has an axis to say what the numbers are, so
+ * inverting it would be inventing a scale nobody asked for — but an axis is
+ * only read by somebody already looking, so a record measured downward says so
+ * above the chart rather than leaving a descending line to be read as decline.
+ *
+ * The ringed point is the **best**, not the last one. Those are the same point
+ * most of the time and the difference is exactly the case worth drawing: a
+ * record with a bad day at the end had its record earlier, and ringing the
+ * final dot would point at the wrong entry on the one chart where it matters.
  */
 function Evolution({ best }: { best: Best }) {
   const points = best.history.filter((row) => row.achieved_on);
@@ -390,6 +402,10 @@ function Evolution({ best }: { best: Best }) {
   }
 
   const values = points.map((row) => row.value);
+  const peak = points.reduce(
+    (top, row) => (isBetter(row.value, top.value, best.direction) ? row : top),
+    points[0]!,
+  );
   const low = Math.min(...values);
   const high = Math.max(...values);
   const pad = (high - low || Math.abs(high) || 1) * 0.2;
@@ -410,7 +426,10 @@ function Evolution({ best }: { best: Best }) {
   return (
     <div className="rc-ev">
       <svg viewBox={`0 0 ${W} ${H}`} className="rc-ev-svg" role="img"
-           aria-label={`${best.name} over time, from ${values[0]} to ${values[values.length - 1]}`}>
+           aria-label={
+             `${best.name} over time, from ${values[0]} to ${values[values.length - 1]}` +
+             `, best ${peak.value}, where ${best.direction} is better`
+           }>
         <defs>
           <linearGradient id="rc-ev-fill" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="currentColor" stopOpacity=".26" />
@@ -436,8 +455,8 @@ function Evolution({ best }: { best: Best }) {
 
         {points.map((row, i) => (
           <g key={row.id}>
-            <circle className={`rc-ev-dot${i === points.length - 1 ? ' is-last' : ''}`}
-                    cx={x(i)} cy={y(row.value)} r={i === points.length - 1 ? 6 : 4} />
+            <circle className={`rc-ev-dot${row.id === peak.id ? ' is-best' : ''}`}
+                    cx={x(i)} cy={y(row.value)} r={row.id === peak.id ? 6 : 4} />
             <text className="rc-ev-point" x={x(i)} y={y(row.value) - 12} textAnchor="middle">
               {Math.round(row.value * 10) / 10}
             </text>
@@ -856,15 +875,23 @@ export default function Records() {
         <section className="rc-section">
           <div className="rc-section-head">
             <h2 className="rc-section-title">📈 How your records changed</h2>
-            <select className="rc-select" value={evolving.name}
-                    aria-label="Which record to plot"
-                    onChange={(event) => setPick(event.target.value)}>
-              {bests.map((best) => (
-                <option key={best.name} value={best.name}>
-                  {best.name}
-                </option>
-              ))}
-            </select>
+            <div className="rc-ev-pick">
+              {/* A descending line is the good news on a record measured in
+                  time, and nothing on the chart said so. Said here, beside the
+                  name of the record it is true of. */}
+              {evolving.direction === 'lower' && (
+                <span className="rc-ev-dir">Lower is better</span>
+              )}
+              <select className="rc-select" value={evolving.name}
+                      aria-label="Which record to plot"
+                      onChange={(event) => setPick(event.target.value)}>
+                {bests.map((best) => (
+                  <option key={best.name} value={best.name}>
+                    {best.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="rc-ev-wrap">
@@ -874,7 +901,10 @@ export default function Records() {
                 <dd>{formatValue(evolving.first, evolving.unit)}</dd>
               </div>
               <div>
-                <dt>Latest best</dt>
+                {/* "Latest best" — it is the best, and the best is not always
+                    the latest. The word that was wrong is the one the whole
+                    page turns on. */}
+                <dt>Personal best</dt>
                 <dd>{formatValue(evolving.value, evolving.unit)}</dd>
               </div>
               <div>
