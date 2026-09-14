@@ -626,7 +626,26 @@
     justify-content: space-between;
     gap: 10px;
 }
-.sb-goal-head strong { font-size: 14px; font-weight: 650; color: var(--ax-text); }
+.sb-goal-head strong { font-size: 14px; font-weight: 650; color: var(--ax-text); flex: 1; }
+
+/* Quiet until it is wanted. Unlinking is the rarest thing anybody does in this
+   panel, and a button as loud as the goal's own title would read as the
+   panel's main action. */
+.sb-goal-drop {
+    flex: none;
+    padding: 2px 8px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ax-faint);
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+}
+.sb-goal-drop:hover:not(:disabled) { color: var(--ax-bad); border-color: var(--ax-line); }
+.sb-goal-drop:disabled { opacity: .5; cursor: default; }
 
 /* Late, early, or no projection. Amber rather than red for late: a goal that
    lands after its date is a thing to act on, not a failure, and the page has
@@ -1617,6 +1636,21 @@
    and the legend. */
 .sb-web > .sb-sub { flex: 1 1 100%; margin: 0; }
 
+/* The web is a fixed 240px, and the reason is that `.ax-radar` is `width:100%`
+   — as a bare flex item it took every pixel the fold could give it, which on a
+   wide screen is a seven-sided polygon the height of the viewport with axis
+   labels set in 40px type. It is a glance, not a centrepiece; the legend
+   beside it is where the figures are read. */
+.sb-web > .ax-radar {
+    flex: none;
+    width: 240px;
+    max-width: 100%;
+}
+
+@media (max-width: 560px) {
+    .sb-web > .ax-radar { width: 200px; margin-inline: auto; }
+}
+
 .sb-web-legend {
     list-style: none;
     margin: 0;
@@ -1644,3 +1678,75 @@
     font-variant-numeric: tabular-nums;
     color: var(--ax-text);
 }
+
+
+/* --- Aiming a subject at a goal -----------------------------------------
+   Drawn under the band when nothing is aimed at, and again at the foot of the
+   Goals fold for the second one. See components/Subject/LinkGoal for the cap.
+
+   Dashed, because it is the one block on this page that is an invitation
+   rather than a reading: nothing in it is counted from anything. */
+.sb-link {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: var(--sb-gap);
+    padding: 16px 18px;
+    border: 1px dashed var(--ax-line);
+    border-radius: var(--ax-radius);
+    background: var(--ax-card-2);
+}
+
+.sb-fold .sb-link { margin-top: 0; }
+
+.sb-link-say strong {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ax-text);
+}
+
+.sb-link-say p {
+    margin: 3px 0 0;
+    max-width: 60ch;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--ax-muted);
+}
+
+.sb-link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sb-link-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--ax-line);
+    border-radius: 10px;
+    background: var(--ax-card);
+}
+
+.sb-link-list span {
+    min-width: 0;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--ax-text);
+}
+
+.sb-link-list .ax-btn { flex: none; }
+
+.sb-link-error {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--ax-bad);
+}
+
+.sb-link > .ax-link { align-self: flex-start; font-size: 0.82rem; }

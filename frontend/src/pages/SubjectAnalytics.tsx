@@ -86,6 +86,7 @@ import { subjectState } from '@/components/Subject/state';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
+import { LinkGoal, MAX_GOALS } from '@/components/Subject/LinkGoal';
 import {
   bandVolume,
   dimensionAxes,
@@ -120,13 +121,12 @@ import {
   type GoalDraft,
   type GoalPlan,
   type NextStep,
-  type StepOutcome,
   type SubjectBrief,
   type PastRecommendation,
   type SubjectMilestone,
   type SubjectReading,
 } from '@/services/analytics';
-import { getGoals } from '@/services/goals';
+import { getGoals, updateGoal } from '@/services/goals';
 import { createTask } from '@/services/tasks';
 import { format } from '@/utils';
 import '@/styles/analytics.css';
@@ -716,10 +716,9 @@ export default function SubjectAnalytics() {
   const [thinking, setThinking] = useState(false);
   const [readError, setReadError] = useState('');
   const [canRead, setCanRead] = useState(false);
-  const [outcomes, setOutcomes] = useState<StepOutcome[]>([]);
-  /* The rows, not only the aggregate by kind. "Did your last advice work" is
-     about a particular recommendation and what it predicted, so it needs the
-     one that was given rather than the average of its kind. */
+  /* The rows, and no longer the aggregate by kind that came down beside them.
+     "Did your last advice work" is about a particular recommendation, and the
+     section draws three of those — see components/Subject/Verdicts. */
   const [past, setPast] = useState<PastRecommendation[]>([]);
   const [taken, setTaken] = useState<Set<string>>(new Set());
   const [stepBusy, setStepBusy] = useState('');
@@ -765,7 +764,7 @@ export default function SubjectAnalytics() {
     [executionNow, past],
   );
 
-  const loop = useMemo(() => summarise(verdicts, outcomes), [outcomes, verdicts]);
+  const loop = useMemo(() => summarise(verdicts), [verdicts]);
 
   /* What the standing in the tree says, as sentences rather than as counts.
      Null lattice means no tree for this subject and no panel to read. */
@@ -802,7 +801,6 @@ export default function SubjectAnalytics() {
     let live = true;
     void subjectRecommendations(subjectName).then((result) => {
       if (!live || !result.success) return;
-      setOutcomes(result.outcomes);
       setPast(result.recommendations);
       setTaken(new Set(result.recommendations.filter((row) => row.taken).map((row) => row.id)));
     });
@@ -927,13 +925,6 @@ export default function SubjectAnalytics() {
        have moved — no execution has been recorded between the click and now —
        and a request that can only return what is already on screen is a
        request not worth making. */
-    setOutcomes((was) =>
-      was.some((entry) => entry.type === step.type)
-        ? was.map((entry) =>
-            entry.type === step.type ? { ...entry, taken: entry.taken + 1 } : entry,
-          )
-        : [...was, { type: step.type, given: 1, taken: 1, change: null }],
-    );
     setPast((was) =>
       was.map((row) =>
         row.id === step.id
@@ -1017,6 +1008,51 @@ export default function SubjectAnalytics() {
       null,
     ),
     [model.bands],
+  );
+
+  /* ---- Pointing this subject at a goal ---------------------------------
+     The page's first question is what the subject is for, and until this
+     control existed the answer on most subjects was "nobody has said" with no
+     way to answer it from here. The goal already exists; the only missing part
+     was the link, which is one comma-separated field on it. See
+     components/Subject/LinkGoal for the cap and why it is two. */
+  const [linking, setLinking] = useState('');
+  const [linkError, setLinkError] = useState('');
+
+  /* Active goals that do not already name this subject. Newest first, which is
+     the order the server returns them in. */
+  const linkable = useMemo(() => {
+    const already = new Set(model.goals.map((goal) => goal.id));
+    return (goals.data?.goals ?? [])
+      .filter((goal) => goal.status === 'active' && !already.has(goal.id))
+      .map((goal) => ({ id: goal.id, title: goal.title }));
+  }, [goals.data, model.goals]);
+
+  /* Both directions through one call, because linking and unlinking are the
+     same write: the goal's subject list with this id added or taken out. The
+     goals are re-read rather than patched — the server re-derives what a goal
+     covers, and a second opinion in the client is how the two drift. */
+  const setLinked = useCallback(
+    async (goalId: string, on: boolean) => {
+      const goal = goals.data?.goals.find((one) => one.id === goalId);
+      if (!goal) return;
+      setLinking(goalId);
+      setLinkError('');
+      const ids = String(goal.subject_ids ?? '')
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean)
+        .filter((id) => id !== subjectId);
+      if (on) ids.push(subjectId);
+      const result = await updateGoal(goalId, { subject_ids: ids.join(',') });
+      setLinking('');
+      if (!result.success) {
+        setLinkError(result.message || 'Could not change that goal.');
+        return;
+      }
+      goals.reload();
+    },
+    [goals, subjectId],
   );
 
   const checkedOff = milestones.filter((entry) => entry.done).length;
@@ -1147,6 +1183,20 @@ export default function SubjectAnalytics() {
                 the cards below and the panels further down. What changed is
                 that they stopped being the protagonist. */}
             <ObjectiveBand subject={subject.name} objective={objective} />
+
+            {/* Under the band rather than in the Goals fold, and only when
+                there is nothing to aim at: "No goal set for this subject" is a
+                heading the reader should be able to answer on the spot rather
+                than a dead end six folds above the control that fixes it. */}
+            {model.goals.length === 0 && (
+              <LinkGoal
+                linked={0}
+                options={linkable}
+                busy={linking}
+                error={linkError}
+                onLink={(goalId) => void setLinked(goalId, true)}
+              />
+            )}
 
             {/* ---- WHERE AM I ----------------------------------------- */}
             {/* The page answers three questions in order — where am I, why am
@@ -2093,6 +2143,16 @@ export default function SubjectAnalytics() {
                         <li key={goal.id} className="sb-goal">
                           <div className="sb-goal-head">
                             <strong>{goal.title}</strong>
+                            {/* The way back out. Two is a cap, and a cap with
+                                no way to undo it is a trap. */}
+                            <button
+                              type="button"
+                              className="sb-goal-drop"
+                              disabled={linking !== ''}
+                              onClick={() => void setLinked(goal.id, false)}
+                            >
+                              {linking === goal.id ? 'Removing…' : 'Not this subject'}
+                            </button>
                             <span
                               className={`sb-goal-state ${
                                 goal.drift === null ? 'is-flat' : goal.drift > 0 ? 'is-late' : 'is-early'
@@ -2253,6 +2313,16 @@ export default function SubjectAnalytics() {
                         </li>
                       ))}
                     </ul>
+                    {model.goals.length < MAX_GOALS && (
+                      <LinkGoal
+                        linked={model.goals.length}
+                        options={linkable}
+                        busy={linking}
+                        error={linkError}
+                        onLink={(goalId) => void setLinked(goalId, true)}
+                      />
+                    )}
+
                     <p className="ax-panel-note ax-panel-note-foot">
                       {/* The line said "every figure here is counted" before the
                           route was added, and stopped being true the moment it
@@ -2425,85 +2495,68 @@ export default function SubjectAnalytics() {
                   ]}
                   lead={treeRead.standing}
                 >
-                  <Panel
-                    title="The skill tree"
-                    note="Your standing, and what the tree holds."
-                  >
-                    {/* The reader's half, first and largest. Everything under it
-                        is the curriculum — authored, and the same on every
-                        account. Keeping the two apart is the whole design of this
-                        panel: "6 practised" printed beside "42 skills" reads as a
-                        claim about the reader that the authored states cannot
-                        support, which is what the old footnote was apologising
-                        for at length. A measured bar says it instead. */}
-                    {standing && (
-                      <div className="sb-standing">
-                        <span className="sb-standing-pct">{standing.percent}%</span>
-                        <div className="sb-standing-main">
-                          <span className="sb-standing-bar" aria-hidden="true">
-                            <span style={{ width: `${standing.percent}%` }} />
-                          </span>
-                          <span className="sb-standing-sub">
-                            {standing.xp.toLocaleString()} of {standing.worth.toLocaleString()} XP
-                            {' '}across everything that opens {standing.title}
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                  {/* The fold is the panel, and what is left inside it is the
+                      reader's own two figures plus the way into the tree.
 
-                    <div className="sb-tree">
-                      <div>
-                        <strong>{lattice.title}</strong>
-                        <p>{lattice.blurb}</p>
-                        <p className="sb-tree-choice">
-                          {lattice.nodes} skills, {lattice.core} core
-                          {lattice.practised > 0 && <> · {lattice.practised} marked practised</>}
-                          {lattice.chosen && <> · your chosen branch</>}
-                        </p>
-                      </div>
-                      <div className="sb-tree-actions">
-                        <Link className="ax-btn ax-btn-primary" to="/skill-trees">
-                          Open the tree
-                        </Link>
-                        <Link className="ax-btn ax-btn-quiet" to="/analytics?setup">
-                          Change the branch
-                        </Link>
+                      It used to carry a percentage, an XP line, a curriculum
+                      blurb, three counts, a branch list and four paragraphs
+                      headed "What this says" — the first of which is now the
+                      fold's lead, so it was being printed twice. What went is
+                      everything describing the curriculum rather than the
+                      reader: `touched` and `shape` from `treeReading` in
+                      components/Subject/lattice say how big the tree is and
+                      how much of it is authored, which is the same on every
+                      account and actionable on none. `next` is the only line
+                      that tells anybody to do anything, so it is the only one
+                      that stayed. */}
+                  {standing && (
+                    <div className="sb-standing">
+                      <span className="sb-standing-pct">{standing.percent}%</span>
+                      <div className="sb-standing-main">
+                        <span className="sb-standing-bar" aria-hidden="true">
+                          <span style={{ width: `${standing.percent}%` }} />
+                        </span>
+                        <span className="sb-standing-sub">
+                          {standing.xp.toLocaleString()} of {standing.worth.toLocaleString()} XP
+                        </span>
                       </div>
                     </div>
+                  )}
 
-                    {/* Where it forks. Named rather than counted, because the
-                        branch names are the useful part: they say what the subject
-                        turns into once its foundations are behind you, and one of
-                        them is the answer to the setup question. */}
-                    {lattice.branches.length > 0 && (
-                      <ul className="sb-branches">
-                        {lattice.branches.map((branch) => (
-                          <li key={branch.id}>
-                            <span>{branch.title}</span>
-                            <em>{branch.nodes} skills</em>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                  {treeRead.next && <p className="sb-tree-read-next">{treeRead.next}</p>}
 
-                    {/* What all of the above actually says.
-
-                        The panel drew a percentage, an XP total and three counts
-                        and never said what any of them meant, so a reader saw
-                        "12% of this tree" and had nothing to do with it. This is
-                        the reading — and it reads only from the two figures that
-                        are the reader's own, the XP standing and their own
-                        practice marks. Nothing here touches a node's authored
-                        state, which is the line this panel exists not to cross.
-                        See `treeReading` in components/Subject/lattice. */}
-                    <div className="sb-tree-read">
-                      <h3>What this says</h3>
-                      <p>{treeRead.standing}</p>
-                      {treeRead.touched && <p>{treeRead.touched}</p>}
-                      <p className="sb-tree-read-shape">{treeRead.shape}</p>
-                      {treeRead.next && <p className="sb-tree-read-next">{treeRead.next}</p>}
+                  <div className="sb-tree">
+                    <div>
+                      <strong>{lattice.title}</strong>
+                      <p className="sb-tree-choice">
+                        {lattice.nodes} skills, {lattice.core} core
+                        {lattice.practised > 0 && <> · {lattice.practised} practised</>}
+                        {lattice.chosen && <> · your branch</>}
+                      </p>
                     </div>
-                  </Panel>
+                    <div className="sb-tree-actions">
+                      <Link className="ax-btn ax-btn-primary" to="/skill-trees">
+                        Open the tree
+                      </Link>
+                      <Link className="ax-btn ax-btn-quiet" to="/analytics?setup">
+                        Change the branch
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Where it forks. Named rather than counted, because the
+                      branch names are the useful part: they say what the
+                      subject turns into once its foundations are behind you. */}
+                  {lattice.branches.length > 0 && (
+                    <ul className="sb-branches">
+                      {lattice.branches.map((branch) => (
+                        <li key={branch.id}>
+                          <span>{branch.title}</span>
+                          <em>{branch.nodes} skills</em>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </Fold>
               )}
 

@@ -282,12 +282,12 @@ describe('did your last advice work', () => {
     expect(screen.queryByLabelText('Did your last advice work')).not.toBeInTheDocument();
   });
 
-  it('shows what the advice predicted beside what happened', async () => {
+  it('states the outcome on the row, in one line', async () => {
     await show({ past: [advised()] });
 
     const loop = within(section('Did your last advice work'));
-    expect(loop.getByText(/Execution rises while the level you file/))
-      .toBeInTheDocument();
+    expect(loop.getByText('Timed set at Fair')).toBeInTheDocument();
+    expect(loop.getByText('acted on')).toBeInTheDocument();
     expect(loop.getByText('Execution rose after it')).toBeInTheDocument();
   });
 
@@ -296,33 +296,34 @@ describe('did your last advice work', () => {
 
     const loop = within(section('Did your last advice work'));
     expect(loop.getByText('Never acted on')).toBeInTheDocument();
-    expect(loop.getByText(/nothing to read from it/)).toBeInTheDocument();
+    expect(loop.getByText('not acted on')).toBeInTheDocument();
     expect(loop.getByText('0 of 1 acted on')).toBeInTheDocument();
   });
 
-  it('draws the by-kind strip only for kinds something was acted on', async () => {
+  it('draws the last three and counts the rest', async () => {
+    // Six recommendations was a screen and a half of prose, most of it the
+    // same paragraph repeated. See components/Subject/Verdicts.
     await show({
-      past: [advised()],
-      kinds: [
-        { type: 'timed_set', given: 2, taken: 1, change: 5 },
-        { type: 'review', given: 3, taken: 0, change: null },
-      ],
+      past: [1, 2, 3, 4, 5].map((n) => advised({ id: `r${n}`, title: `Advice ${n}` })),
     });
 
-    const strip = within(
-      document.querySelector('.so-loop-kinds') as HTMLElement,
-    );
-    expect(strip.getByText('Timed set')).toBeInTheDocument();
-    expect(strip.getByText('1 of 2 acted on')).toBeInTheDocument();
-    expect(strip.queryByText('Review')).not.toBeInTheDocument();
+    const loop = within(section('Did your last advice work'));
+    expect(loop.getByText('Advice 1')).toBeInTheDocument();
+    expect(loop.getByText('Advice 3')).toBeInTheDocument();
+    expect(loop.queryByText('Advice 4')).not.toBeInTheDocument();
+    expect(loop.getByText('2 older ones not shown.')).toBeInTheDocument();
   });
 });
 
 describe('the skill tree', () => {
-  it('reads the standing back rather than only counting it', async () => {
+  it('reads the standing back on the shut row rather than only counting it', async () => {
+    // The fold's lead is the reading. It used to be printed twice — once as
+    // the lead and once under a "What this says" heading with three more
+    // paragraphs of curriculum description beneath it.
     await show();
 
-    const panel = screen.getByText('The skill tree').closest('section')!;
-    expect(within(panel).getByText('What this says')).toBeInTheDocument();
+    const fold = screen.getByRole('button', { name: /Skill tree/ }).closest('section')!;
+    expect(within(fold).getByText(/of this tree/i)).toBeInTheDocument();
+    expect(within(fold).queryByText('What this says')).not.toBeInTheDocument();
   });
 });

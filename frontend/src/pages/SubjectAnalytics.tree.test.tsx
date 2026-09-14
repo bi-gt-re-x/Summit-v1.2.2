@@ -98,7 +98,7 @@ async function show(rows: unknown[]) {
 describe('the skill tree panel', () => {
   it('says how far into the lattice the record has got', async () => {
     await show(filed('algebra', worthOf('mathematics') / 4));
-    expect(await screen.findByText('The skill tree')).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /Skill tree/ })).toBeInTheDocument();
     expect(screen.getAllByText('25%').length).toBeGreaterThan(0);
   });
 

@@ -37,7 +37,7 @@
  * three points is well inside the noise of a handful of tasks, and anything
  * under it reads as flat.
  */
-import type { PastRecommendation, StepOutcome, StepType } from '@/services/analytics';
+import type { PastRecommendation } from '@/services/analytics';
 
 /** Points of execution that count as a direction rather than as noise. */
 export const DECISIVE = 3;
@@ -47,40 +47,18 @@ export type VerdictWord = 'moved' | 'flat' | 'slipped' | 'untaken' | 'unmeasured
 export interface Verdict {
   id: string;
   title: string;
-  type: StepType;
   /** The day it was advised, ISO. */
   on: string;
   /** The day it was acted on. Empty while it has not been. */
   takenOn: string;
-  /** What the advice predicted would happen. Empty when none was written. */
-  signal: string;
   word: VerdictWord;
   /** Execution then and now, when both are known. */
   was: number | null;
   now: number | null;
   change: number | null;
-  /** What the two figures say, in a sentence. */
-  reading: string;
 }
 
-const READINGS: Record<VerdictWord, string> = {
-  moved:
-    'Execution rose after this. One account and one fortnight is a '
-    + 'coincidence rather than a proof, but it is the kind worth repeating.',
-  flat:
-    'Execution has not moved either way since. Repeating the same session is '
-    + 'the least informative thing to do next.',
-  slipped:
-    'Execution fell after this. Something changed, and it is worth finding '
-    + 'out what before running it again.',
-  untaken:
-    'Never acted on, so there is nothing to read from it. A plan nobody '
-    + 'follows is usually too big rather than wrong.',
-  unmeasured:
-    'Acted on, but nothing was rated either side of it, so there is no '
-    + 'before and after to compare.',
-};
-
+/** Which of the five words two figures either side of the advice support. */
 function wordFor(row: PastRecommendation, now: number | null): VerdictWord {
   if (!row.taken) return 'untaken';
   if (row.was === null || now === null) return 'unmeasured';
@@ -109,17 +87,14 @@ export function verdictsFrom(
     return {
       id: row.id,
       title: row.title,
-      type: row.type,
       on: row.on,
       takenOn: row.taken_on,
-      signal: row.signal,
       word,
       was: row.was,
       now: word === 'moved' || word === 'flat' || word === 'slipped' ? now : null,
       change: word === 'moved' || word === 'flat' || word === 'slipped'
         ? (now ?? 0) - (row.was ?? 0)
         : null,
-      reading: READINGS[word],
     };
   });
 }
@@ -131,8 +106,6 @@ export interface LoopSummary {
   /** Settled either way — the ones with a before and an after. */
   settled: number;
   moved: number;
-  /** Kinds of session with at least one taken, for the strip. */
-  kinds: StepOutcome[];
   /**
    * What the record as a whole supports saying, or empty.
    *
@@ -152,7 +125,7 @@ export interface LoopSummary {
  * person — see the note at the top on what a verdict may claim. What it says
  * instead is what there is enough of to act on.
  */
-export function summarise(verdicts: Verdict[], kinds: StepOutcome[]): LoopSummary {
+export function summarise(verdicts: Verdict[]): LoopSummary {
   const taken = verdicts.filter((one) => one.word !== 'untaken');
   const settled = verdicts.filter(
     (one) => one.word === 'moved' || one.word === 'flat' || one.word === 'slipped',
@@ -163,19 +136,18 @@ export function summarise(verdicts: Verdict[], kinds: StepOutcome[]): LoopSummar
   if (verdicts.length === 0) {
     say = '';
   } else if (taken.length === 0) {
-    say = 'Nothing advised here has been acted on yet, so there is nothing to '
-      + 'settle. The loop starts at the first "I did this".';
+    say = 'None of it has been acted on yet.';
   } else if (settled.length === 0) {
-    say = 'Acted on, but nothing has been rated either side of it — a verdict '
-      + 'needs a figure before and a figure after.';
+    say = 'Acted on, but nothing rated either side of it yet.';
   } else if (moved.length === 0) {
-    say = 'Nothing on record here has been followed by a rise in execution. '
-      + 'The next session is worth making a different shape rather than the '
-      + 'same one again.';
+    say = 'Nothing here has been followed by a rise in execution. Try a '
+      + 'different shape of session.';
   } else {
-    say = 'What has been followed by movement is worth keeping in rotation. '
-      + 'It is one account over a few sessions, so it is a pattern rather '
-      + 'than a proof.';
+    /* Not "3 of 5 worked": that invites a percentage nobody should compute off
+       five paired observations on one person. See what a verdict may claim,
+       at the top of this file. */
+    say = 'What was followed by movement is worth keeping in rotation — a '
+      + 'pattern rather than a proof.';
   }
 
   return {
@@ -183,7 +155,6 @@ export function summarise(verdicts: Verdict[], kinds: StepOutcome[]): LoopSummar
     taken: taken.length,
     settled: settled.length,
     moved: moved.length,
-    kinds: kinds.filter((entry) => entry.taken > 0),
     say,
   };
 }

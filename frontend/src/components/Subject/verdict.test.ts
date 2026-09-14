@@ -16,7 +16,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { DECISIVE, summarise, verdictsFrom } from './verdict';
-import type { PastRecommendation, StepOutcome } from '@/services/analytics';
+import type { PastRecommendation } from '@/services/analytics';
 
 function advice(over: Partial<PastRecommendation> = {}): PastRecommendation {
   return {
@@ -66,7 +66,6 @@ describe('verdictsFrom', () => {
     // because nobody ran it.
     expect(one?.word).toBe('untaken');
     expect(one?.change).toBeNull();
-    expect(one?.reading).toContain('nothing to read from it');
   });
 
   it('says so when there is no before to compare against', () => {
@@ -81,19 +80,10 @@ describe('verdictsFrom', () => {
     expect(verdictsFrom([advice()], null)[0]?.word).toBe('unmeasured');
   });
 
-  it('carries what the advice predicted, so it can be caught being wrong', () => {
-    const [one] = verdictsFrom([advice()], 58);
-    expect(one?.signal).toContain('Execution at Hard rises');
-  });
 });
 
 // ---------------------------------------------------------------------------
 describe('summarise', () => {
-  const kinds: StepOutcome[] = [
-    { type: 'timed_set', given: 3, taken: 2, change: 6 },
-    { type: 'review', given: 2, taken: 0, change: null },
-  ];
-
   it('counts taken and settled separately, because they are different', () => {
     const summary = summarise(
       verdictsFrom(
@@ -101,7 +91,6 @@ describe('summarise', () => {
          advice({ id: 'c', taken: false, taken_on: '' })],
         71,
       ),
-      kinds,
     );
 
     expect(summary.given).toBe(3);
@@ -110,40 +99,33 @@ describe('summarise', () => {
     expect(summary.moved).toBe(1);
   });
 
-  it('drops the kinds nobody has acted on from the strip', () => {
-    // A kind recommended twice and never taken has no change to report, and
-    // reporting nought would read as "it did not work".
-    expect(summarise(verdictsFrom([advice()], 71), kinds).kinds).toHaveLength(1);
-  });
-
   it('says the loop has not started when nothing was acted on', () => {
-    const summary = summarise(
-      verdictsFrom([advice({ taken: false, taken_on: '' })], 71), [],
-    );
-
-    expect(summary.say).toContain('nothing to settle');
+    const summary = summarise(verdictsFrom([advice({ taken: false, taken_on: '' })], 71));
+    expect(summary.say).toContain('None of it has been acted on');
   });
 
   it('names what is missing when things were done and nothing was rated', () => {
-    const summary = summarise(verdictsFrom([advice({ was: null })], 71), []);
-    expect(summary.say).toContain('a figure before and a figure after');
+    const summary = summarise(verdictsFrom([advice({ was: null })], 71));
+    expect(summary.say).toContain('nothing rated either side');
   });
 
   it('tells the reader to change shape when nothing has moved', () => {
-    const summary = summarise(verdictsFrom([advice()], 64), []);
-    expect(summary.say).toContain('a different shape');
+    const summary = summarise(verdictsFrom([advice()], 64));
+    expect(summary.say).toContain('different shape');
   });
 
   it('will not turn a handful of paired observations into a score', () => {
     // "3 of 5 worked" invites a percentage nobody should compute off five
-    // paired observations on one person.
-    const summary = summarise(verdictsFrom([advice()], 71), kinds);
+    // paired observations on one person — and the shorter sentence this became
+    // is exactly where that would have crept back in.
+    const summary = summarise(verdictsFrom([advice()], 71));
 
     expect(summary.say).toContain('pattern rather than a proof');
+    expect(summary.say).not.toMatch(/\d+ of \d+/);
     expect(summary.say).not.toMatch(/\d+%/);
   });
 
   it('says nothing at all when nothing has ever been advised', () => {
-    expect(summarise([], []).say).toBe('');
+    expect(summarise([]).say).toBe('');
   });
 });
