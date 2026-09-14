@@ -68,22 +68,20 @@ export function Curve({ curve }: { curve: DifficultyCurve }) {
       <p className="sx-curve-read">
         {curve.threshold && curve.holds ? (
           <>
-            Execution holds at <b>{curve.holds.execution}%</b> through{' '}
-            <b>{curve.holds.label}</b> and falls <b>{curve.drop} points</b> to{' '}
-            <b>{curve.threshold.execution}%</b> at <b>{curve.threshold.label}</b>. Work at{' '}
-            <b>{curve.holds.label}</b> until it stops costing you — the level above is
-            where the marks are going.
+            Holds at <b>{curve.holds.execution}%</b> through <b>{curve.holds.label}</b>,
+            drops <b>{curve.drop} points</b> to <b>{curve.threshold.execution}%</b> at{' '}
+            <b>{curve.threshold.label}</b>. Work at <b>{curve.holds.label}</b> until it
+            stops costing you.
           </>
         ) : curve.any && curve.best ? (
           <>
-            No level where this falls away — execution is best at{' '}
-            <b>{curve.best.label}</b> at <b>{curve.best.execution}%</b> and holds across
-            the rest. Nothing here says to stay where you are.
+            Nothing falls away. Best at <b>{curve.best.label}</b> at{' '}
+            <b>{curve.best.execution}%</b>, and it holds across the rest — room to go up
+            a level.
           </>
         ) : (
           <>
-            One level with enough rated work behind it is not a curve yet. Rate a few
-            more tasks and this fills in.
+            One rated level is not a curve. Rate a few more tasks and this fills in.
           </>
         )}
       </p>

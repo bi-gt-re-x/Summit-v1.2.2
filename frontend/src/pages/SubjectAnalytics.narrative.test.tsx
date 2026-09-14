@@ -234,12 +234,28 @@ describe('the order of the page', () => {
     expect(at('What to do next')).toBeLessThan(at('Evidence'));
   });
 
-  it('names the panels underneath as the evidence they are', async () => {
+  it('names the folds underneath as the evidence they are', async () => {
     await show();
 
     expect(screen.getByRole('heading', { name: 'Evidence' })).toBeInTheDocument();
-    expect(screen.getByText(/Everything above is argued from these/))
+    expect(screen.getByText(/The working behind everything above/))
       .toBeInTheDocument();
+  });
+
+  it('shuts the evidence, and states each fold\'s answer on its shut row', async () => {
+    // The whole point of the folds: a reader who opens nothing still learns
+    // where the work falls off, so they open the one that surprised them
+    // rather than all nine. See components/Subject/Fold.
+    await show();
+
+    const difficulty = screen.getByRole('button', { name: /Difficulty/ });
+    expect(difficulty).toHaveAttribute('aria-expanded', 'false');
+    expect(within(difficulty).getByText('Falls off at')).toBeInTheDocument();
+
+    // One is open on arrival, and it is the one a reader who opens nothing
+    // else would have wanted.
+    expect(screen.getByRole('button', { name: /Where you stand/ }))
+      .toHaveAttribute('aria-expanded', 'true');
   });
 });
 

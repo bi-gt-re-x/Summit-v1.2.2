@@ -1361,3 +1361,286 @@
     padding-left: 12px;
     border-left: 2px solid var(--ax-violet);
 }
+
+/* --- The evidence folds -------------------------------------------------
+   Everything under the Evidence rule is one of these. See
+   components/Subject/Fold for what the shape is for; this is what it looks
+   like.
+
+   A card rather than a divided list, because a shut fold has to read as a
+   thing you can open. A list of rules with text between them reads as a table
+   of contents, and nobody clicks a table of contents. */
+.sb-folds {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sb-tight);
+    margin-top: var(--sb-gap);
+}
+
+.sb-fold {
+    border: 1px solid var(--ax-line);
+    border-radius: var(--ax-radius);
+    background: var(--ax-card);
+    box-shadow: var(--ax-shadow);
+    /* The open one lifts off the stack, so a reader who has three of these
+       open can see at a glance which three. */
+    transition: border-color .16s ease, background .16s ease;
+}
+
+.sb-fold.is-open {
+    border-color: color-mix(in srgb, var(--ax-violet) 32%, var(--ax-line));
+}
+
+/* The heading exists so the folds are in the document outline. It carries a
+   heading's margins and size and should not: the button inside it is what is
+   styled. */
+.sb-fold-heading { margin: 0; font: inherit; }
+
+.sb-fold-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: var(--ax-radius);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sb-fold-head:hover { background: var(--ax-card-2); }
+.sb-fold-head:hover .sb-fold-name strong { color: var(--ax-violet); }
+
+/* Keyboard only. A ring on every click would flash down the stack as a reader
+   opened one fold after another. */
+.sb-fold-head:focus-visible {
+    outline: 2px solid var(--ax-violet);
+    outline-offset: -2px;
+}
+
+.sb-fold-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    /* Takes the slack, so the figures sit against the chevron at the right
+       whatever the title's length. */
+    flex: 1;
+}
+
+.sb-fold-name strong {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: -.012em;
+    color: var(--ax-text);
+    transition: color .15s ease;
+}
+
+.sb-fold-note {
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: var(--ax-muted);
+}
+
+/* --- The figures on a shut fold -----------------------------------------
+   The whole reason this is not `PanelGroup`. A shut row states its answer, so
+   the reader opens the one that surprised them rather than all of them. */
+.sb-fold-figures {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    flex: none;
+}
+
+.sb-fold-figure {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+    min-width: 0;
+}
+
+.sb-fold-figure strong {
+    font-size: 0.98rem;
+    font-weight: 750;
+    letter-spacing: -.02em;
+    /* Tabular so a column of folds keeps its figures on one axis. */
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: var(--ax-text);
+}
+
+.sb-fold-figure em {
+    font-size: 0.64rem;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--ax-faint);
+}
+
+/* Colour says what the figure means, never on its own — every one of these is
+   a word as well. */
+.sb-fold-figure.is-good strong { color: var(--ax-good); }
+.sb-fold-figure.is-warn strong { color: var(--ax-amber); }
+.sb-fold-figure.is-bad strong { color: var(--ax-bad); }
+
+.sb-fold-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--ax-line);
+    background: var(--ax-card-2);
+    color: var(--ax-muted);
+    transition: transform .2s ease, border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.sb-fold-head:hover .sb-fold-toggle {
+    border-color: color-mix(in srgb, var(--ax-violet) 45%, transparent);
+    background: color-mix(in srgb, var(--ax-violet) 10%, transparent);
+    color: var(--ax-violet);
+}
+
+.sb-fold.is-open .sb-fold-toggle {
+    transform: rotate(180deg);
+    border-color: color-mix(in srgb, var(--ax-violet) 45%, transparent);
+    background: color-mix(in srgb, var(--ax-violet) 12%, transparent);
+    color: var(--ax-violet);
+}
+
+.sb-fold-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .24s ease;
+}
+
+.sb-fold.is-open .sb-fold-body { grid-template-rows: 1fr; }
+.sb-fold-body > div { overflow: hidden; min-height: 0; }
+
+.sb-fold.is-open .sb-fold-body > div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sb-gap);
+    padding: 2px 18px 20px;
+}
+
+/* A panel inside a fold is already inside a card, so it drops its own surface
+   and keeps only its spacing. Two nested cards with two borders and two
+   shadows is the shape that made the old page feel heavy. */
+.sb-fold .sb-panel {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.sb-fold .sb-grid { margin-top: 0; }
+.sb-fold .sb-tiles { margin-top: 0; }
+
+/* The divider before every panel but the first, so a fold holding three of
+   them does not read as one long panel now that none of them has a border of
+   its own. Written against the body's own child list rather than as
+   `.sb-panel + .sb-panel`, because the charts and the web sit between them and
+   an adjacency rule skips every pair they interrupt. */
+.sb-fold.is-open .sb-fold-body > div > * + .sb-panel {
+    padding-top: var(--sb-gap);
+    border-top: 1px solid var(--ax-line-soft);
+}
+
+/* --- The reading at the top of an open fold ----------------------------- */
+.sb-fold-lead {
+    margin: 0;
+    max-width: 68ch;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--ax-text);
+}
+
+.sb-fold-lead b { font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+    .sb-fold-body { transition: none; }
+    .sb-fold-toggle { transition: none; }
+}
+
+@media (max-width: 720px) {
+    .sb-fold-head { flex-wrap: wrap; padding: 13px 14px; }
+    .sb-fold-name { flex: 1 1 100%; order: 1; }
+    .sb-fold-figures { order: 3; flex: 1 1 100%; gap: 18px; }
+    .sb-fold-figure { align-items: flex-start; }
+    .sb-fold-toggle { order: 2; }
+    .sb-fold.is-open .sb-fold-body > div { padding: 2px 14px 16px; }
+}
+
+/* --- The charts the folds added ----------------------------------------
+   See components/Subject/graphs for what each one is counted from. */
+.sb-plot {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sb-gap);
+    align-items: start;
+}
+
+.sb-plot > figure {
+    margin: 0;
+    min-width: 0;
+}
+
+.sb-plot figcaption {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: var(--ax-muted);
+}
+
+/* The web and its legend. The legend is not decoration: a radar cannot be read
+   to a value, so the numbers are stated beside it in the document, where a
+   reader who cannot see the shape meets them in order. */
+.sb-web {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sb-gap);
+}
+
+/* The heading spans the row rather than becoming a third column beside the web
+   and the legend. */
+.sb-web > .sb-sub { flex: 1 1 100%; margin: 0; }
+
+.sb-web-legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    gap: 4px 18px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.sb-web-legend li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 3px 0;
+    font-size: 0.82rem;
+    color: var(--ax-muted);
+    border-bottom: 1px solid var(--ax-line-soft);
+}
+
+.sb-web-legend strong {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ax-text);
+}

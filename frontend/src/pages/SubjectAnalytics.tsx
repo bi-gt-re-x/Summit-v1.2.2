@@ -61,17 +61,38 @@
  * having loaded. A subject with no rated tasks has no quality figure, no
  * bands and no reasons, and the honest page for it is a short one that says
  * what it is waiting for — not eight panels of dashes.
+ *
+ * ## The answer is open, the working is shut
+ *
+ * The page is two halves, and the rule dividing them says so. Above it: the
+ * goal, where the subject stands, what bears on the goal, the bottleneck, what
+ * to do, and whether the last advice worked. That is the page, and all of it
+ * is open.
+ *
+ * Below it, every panel is folded (./components/Subject/Fold). Each shut row
+ * states its own answer — "falls off at Hard", "62h logged", "3/4 reached" —
+ * so a reader learns what is inside without opening it and opens the one whose
+ * figure surprised them. The evidence was never the problem; making somebody
+ * scroll eight screens of it to leave was.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Ambient, ErrorState, Loading, PageHero, type HeroTone } from '@/components';
-import { AreaChart } from '@/components/Analytics';
+import { AreaChart, Columns, Radar, Scatter } from '@/components/Analytics';
 import { WINDOWS, type WindowKey } from '@/components/Analytics/data';
 import { gradeFor } from '@/utils/analyticalScore';
 import { subjectModel, type SubjectGoal } from '@/components/Subject/model';
 import { subjectState } from '@/components/Subject/state';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
+import { Fold } from '@/components/Subject/Fold';
+import {
+  bandVolume,
+  dimensionAxes,
+  effortPoints,
+  weekLoad,
+  WEB_FLOOR,
+} from '@/components/Subject/graphs';
 import { NextSteps } from '@/components/Subject/NextSteps';
 import { BottleneckPanel, ObjectiveBand, WhatMatters } from '@/components/Subject/Opening';
 import { Verdicts } from '@/components/Subject/Verdicts';
@@ -959,6 +980,54 @@ export default function SubjectAnalytics() {
      quiet period from producing a "0" top tick over a line that is not flat. */
   const seriesPeak = Math.max(...model.series.done, 1);
 
+  /* The four charts the folds added, all of them pure functions of figures
+     this page already has. See components/Subject/graphs for what each one is
+     counted from and what it leaves out. */
+  const axes = useMemo(() => dimensionAxes(state.dimensions), [state.dimensions]);
+  const volume = useMemo(() => bandVolume(model.bands), [model.bands]);
+  const week = useMemo(() => weekLoad(model.done), [model.done]);
+  const cloud = useMemo(() => effortPoints(model.done), [model.done]);
+
+  /* The busiest day, stated rather than left to be read off the bars. */
+  const busiest = useMemo(
+    () => week.find((day) => day.peak && day.value > 0) ?? null,
+    [week],
+  );
+
+  /* The two ends of the web, so the fold can say which measure is carrying the
+     subject and which is holding it back without the reader reading seven
+     bars. Momentum is out for the reason components/Subject/graphs gives:
+     it is centred on 50 and means change, so it is not comparable with the
+     rest. */
+  const dimRange = useMemo(() => {
+    const known = state.dimensions.filter(
+      (entry) => entry.key !== 'momentum' && entry.known && entry.value !== null,
+    );
+    const sorted = [...known].sort((a, b) => a.value! - b.value!);
+    const low = sorted[0];
+    const high = sorted[sorted.length - 1];
+    return low && high && low !== high ? { low, high } : null;
+  }, [state.dimensions]);
+
+  /* Where the work actually sits, which is not the same question as where it
+     goes well — the curve answers that one. */
+  const peakBand = useMemo(
+    () => model.bands.reduce<typeof model.bands[number] | null>(
+      (best, band) => (band.done > (best?.done ?? 0) ? band : best),
+      null,
+    ),
+    [model.bands],
+  );
+
+  const checkedOff = milestones.filter((entry) => entry.done).length;
+  const nextCheck = milestones.find((entry) => !entry.done) ?? null;
+  const reached = state.standings.filter((entry) => entry.reached).length;
+  const topReason = model.struggles[0] ?? null;
+  const topStrength = model.wentWell[0] ?? null;
+  /* The goal the fold's shut row reads from. First rather than best: `goalsFor`
+     in components/Subject/model already orders them by what is most pressing. */
+  const leadGoal = model.goals[0] ?? null;
+
   useDocumentTitle(subject ? subject.name : 'Subject');
 
   /* The catalogue is cached module-wide and read by a dozen components, so on
@@ -1019,7 +1088,7 @@ export default function SubjectAnalytics() {
               <h1>{subject ? subject.name : 'Subject'}</h1>
               <p className="ax-muted ax-head-purpose">
                 {subject
-                  ? 'How this one is going, and what to do about it.'
+                  ? 'How it is going, and what to do about it.'
                   : 'This page is about one subject at a time.'}
               </p>
             </div>
@@ -1045,8 +1114,8 @@ export default function SubjectAnalytics() {
           <ErrorState message={tasks.error ?? 'Could not read your tasks.'} onRetry={tasks.reload} />
         ) : !model.any ? (
           <p className="ax-opening is-flat">
-            Nothing is filed under {subject.name} yet. File a few tasks here and this page
-            will have something to measure.
+            Nothing is filed under {subject.name} yet. File a few tasks and this page has
+            something to measure.
           </p>
         ) : (
           <>
@@ -1078,147 +1147,6 @@ export default function SubjectAnalytics() {
                 the cards below and the panels further down. What changed is
                 that they stopped being the protagonist. */}
             <ObjectiveBand subject={subject.name} objective={objective} />
-
-            {/* ---- WHAT EVIDENCE MATTERS FOR THAT --------------------- */}
-            {/* Three at most, each a claim with its counted figures beneath.
-                The model's when there is a reading, because choosing which of
-                thirty figures bears on qualifying for a particular competition
-                needs to know what that competition is; the app's own rules
-                otherwise, which is always. */}
-            <WhatMatters cards={evidenceCards} />
-
-            {/* ---- WHAT IS THE BOTTLENECK ----------------------------- */}
-            {/* The page's only outright judgement, and the section the two
-                above it exist to support. One, never two: a page with two
-                bottlenecks on it has none.
-
-                It sits above Do This Next rather than beside it because the
-                steps are an answer to it — a reader who disagrees with the
-                naming should disagree before reading the prescription, not
-                after acting on it. */}
-            <BottleneckPanel bottleneck={bottleneck} />
-
-            {/* ---- WHAT SHOULD I DO NEXT ------------------------------- */}
-            {/* The section the rest of the page exists to produce, and it is
-                now fourth on the page rather than below two screens of
-                figures.
-
-                That move is the point of the restructure. The old order asked
-                the reader to read a dashboard, infer a problem from it, and
-                then find the advice — which is three jobs, two of which the
-                page is better at than they are. Goal, then what bears on it,
-                then the one thing in the way, then what to do about it. The
-                figures did not go anywhere; they are the working, and the
-                working goes under the answer.
-
-                Two halves, and the order is the argument. The app's own ranked
-                advice is first and is pure arithmetic — it is always there,
-                costs nothing, and is what the page says when nobody presses
-                anything. The model's steps are second, and they are the ones
-                that can name what a task at this difficulty in this subject
-                should actually contain, which no table here knows.
-
-                Which half is which is stated rather than left to be inferred:
-                a reader has to know what is counted before deciding what to
-                act on. */}
-            <section className="ax-panel sb-panel" aria-label="What to do next">
-              <div className="ax-panel-head">
-                <div className="ax-panel-title">
-                  <h2>Do this next</h2>
-                </div>
-              </div>
-
-              {model.advice.length > 0 && (
-                <>
-                  <p className="ax-panel-note">
-                    Ranked by what it is worth, with the figure behind each one. All from
-                    your own tasks.
-                  </p>
-                  <ol className="sb-advice">
-                    {model.advice.map((item, at) => (
-                      <li key={item.id} className={`sb-advice-item is-${item.weight}`}>
-                        <span className="sb-advice-rank" aria-hidden="true">
-                          {at + 1}
-                        </span>
-                        <div>
-                          <strong>{item.title}</strong>
-                          <p>{item.detail}</p>
-                          <p className="sb-advice-why">
-                            <span>Why:</span> {item.why}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </>
-              )}
-
-              {canRead && (
-                <div className="sb-draft">
-                  <div className="sx-ask">
-                    <div>
-                      <strong>Plan the next sessions</strong>
-                      <p>Written by a model from the figures above. It adds no numbers of its own.</p>
-                    </div>
-                    <button
-                      type="button"
-                      className="ax-btn"
-                      onClick={() => void askForReading()}
-                      disabled={thinking}
-                    >
-                      {thinking ? 'Reading…' : reading ? 'Read it again' : 'Plan my next sessions'}
-                    </button>
-                  </div>
-
-                  {readError && (
-                    <p className="sx-ask-err" role="alert">
-                      {readError}
-                    </p>
-                  )}
-
-                  {reading && (
-                    <div className="sb-draft-body">
-                      <NextSteps
-                        steps={reading.next_steps}
-                        taken={taken}
-                        busy={stepBusy}
-                        onMakeTask={(step) => void makeTask(step)}
-                        onDidIt={(step) => void record(step)}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
-
-            {/* ---- The reading behind those steps ---------------------- */}
-            {reading &&
-              (reading.diagnosis.length > 0 ||
-                reading.priorities.length > 0 ||
-                reading.insights.length > 0) && (
-                <Panel
-                  title="What the record says"
-                  note="Written by a model from the figures above. Each finding shows what it rests on."
-                >
-                  <Reading
-                    diagnosis={reading.diagnosis}
-                    priorities={reading.priorities}
-                    insights={reading.insights}
-                  />
-                </Panel>
-              )}
-
-            {/* ---- DID YOUR LAST ADVICE WORK --------------------------- */}
-            {/* The small section that makes the rest of the page worth
-                anything. Every section above it is the app talking; this is
-                the app being held to what it said — each recommendation, what
-                it predicted, and what the figures did afterwards.
-
-                It sits directly under the steps because the two are one
-                thing: a reader deciding whether to act on the advice above
-                should be able to see how the last lot went without going
-                looking for it. */}
-            <Verdicts verdicts={verdicts} summary={loop} />
 
             {/* ---- WHERE AM I ----------------------------------------- */}
             {/* The page answers three questions in order — where am I, why am
@@ -1288,11 +1216,6 @@ export default function SubjectAnalytics() {
               </div>
             </section>
 
-            {/* The seven, kept separate on purpose. A single blended score
-                cannot tell "reaching past what you can land" from "coasting
-                below what you could" — see the note in Subject/Dimensions. */}
-            <Dimensions dimensions={state.dimensions} />
-
             {/* ---- The path, under the verdict --------------------- */}
             {/* On top, because "how am I doing" and "at what" are one question
                 and the page was answering only the first for two screens. It
@@ -1329,920 +1252,1330 @@ export default function SubjectAnalytics() {
               </div>
             )}
 
-            {/* ---- WHY AM I THERE: the curve --------------------------- */}
-            {/* Before the recommendations, because it is what most of them
-                are argued from. An average over five difficulty levels is the
-                same number for somebody uniformly middling and somebody who
-                is excellent until they are not — and those two want opposite
-                instructions. See components/Subject/Curve. */}
-            {state.curve.rungs.some((rung) => rung.done > 0) && (
-              <Panel
-                title="Where it starts to go"
-                note="Execution at each difficulty, and the level it falls off at."
-              >
-                <Curve curve={state.curve} />
-              </Panel>
-            )}
+            {/* ---- WHAT EVIDENCE MATTERS FOR THAT --------------------- */}
+            {/* Three at most, each a claim with its counted figures beneath.
+                The model's when there is a reading, because choosing which of
+                thirty figures bears on qualifying for a particular competition
+                needs to know what that competition is; the app's own rules
+                otherwise, which is always. */}
+            <WhatMatters cards={evidenceCards} />
 
-            {/* ---- The shape of it ---------------------------------- */}
-            {/* Two charts, not two lines on one axis. Tasks finished runs 0 to
-                about ten and quality runs 0 to 100 — sharing a scale squashed
-                the volume line flat along the floor and left the y-axis
-                labelled with the volume's peak while the axis was really the
-                quality's. A chart whose ticks do not describe its own line is
-                worse than no chart. */}
-            {model.series.any && (
-              <Panel
-                title="Your trajectory"
-                note="Tasks finished, and the quality you rated them at, period by period."
-              >
-                {/* Side by side rather than stacked. They are the same
-                    periods on the same dates, so the interesting reading is
-                    across them — did the month the volume climbed cost
-                    anything in quality — and that reading was two screens
-                    apart when one sat under the other. Stacking also spent
-                    three hundred vertical pixels on two charts that are mostly
-                    air. They wrap to one column under `sb-charts`. */}
-                <div className="sb-charts">
-                  <div>
-                    <h3 className="sb-sub">Tasks finished</h3>
-                    <AreaChart
-                      id={`sb-done-${subjectId}`}
-                      label={`Tasks finished in ${subject.name} over ${
-                        WINDOWS.find((option) => option.key === span)?.label ?? 'the window'
-                      }`}
-                      height={150}
-                      series={[{ values: model.series.done, tone: 'violet' }]}
-                      ticks={[String(seriesPeak), String(Math.round(seriesPeak / 2)), '0']}
-                      marks={model.series.marks}
-                      readout={{
-                        labels: model.series.labels,
-                        names: ['Finished'],
-                        format: (value) => `${Math.round(value)} tasks`,
-                      }}
-                    />
-                  </div>
+            {/* ---- WHAT IS THE BOTTLENECK ----------------------------- */}
+            {/* The page's only outright judgement, and the section the two
+                above it exist to support. One, never two: a page with two
+                bottlenecks on it has none.
 
-                  {model.series.quality.some((value) => value !== null) && (
-                    <div>
-                      <h3 className="sb-sub">Quality</h3>
-                      <AreaChart
-                        id={`sb-quality-${subjectId}`}
-                        label={`Quality rated in ${subject.name} over the same periods`}
-                        height={150}
-                        /* Nulls are real and stay null: a period with nothing
-                           rated has no quality, and the chart breaks its line
-                           there rather than drawing a zero nobody recorded. */
-                        series={[{ values: model.series.quality, tone: 'blue' }]}
-                        /* The real ceiling, so a run that never passes 60% is
-                           not stretched to fill the box and read as excellent. */
-                        max={100}
-                        ticks={['100', '50', '0']}
-                        marks={model.series.marks}
-                        readout={{
-                          labels: model.series.labels,
-                          names: ['Quality'],
-                          format: (value) => `${Math.round(value)}%`,
-                        }}
-                      />
-                    </div>
-                  )}
+                It sits above Do This Next rather than beside it because the
+                steps are an answer to it — a reader who disagrees with the
+                naming should disagree before reading the prescription, not
+                after acting on it. */}
+            <BottleneckPanel bottleneck={bottleneck} />
+
+            {/* ---- WHAT SHOULD I DO NEXT ------------------------------- */}
+            {/* The section the rest of the page exists to produce, and it is
+                now fourth on the page rather than below two screens of
+                figures.
+
+                That move is the point of the restructure. The old order asked
+                the reader to read a dashboard, infer a problem from it, and
+                then find the advice — which is three jobs, two of which the
+                page is better at than they are. Goal, then what bears on it,
+                then the one thing in the way, then what to do about it. The
+                figures did not go anywhere; they are the working, and the
+                working goes under the answer.
+
+                Two halves, and the order is the argument. The app's own ranked
+                advice is first and is pure arithmetic — it is always there,
+                costs nothing, and is what the page says when nobody presses
+                anything. The model's steps are second, and they are the ones
+                that can name what a task at this difficulty in this subject
+                should actually contain, which no table here knows.
+
+                Which half is which is stated rather than left to be inferred:
+                a reader has to know what is counted before deciding what to
+                act on. */}
+            <section className="ax-panel sb-panel" aria-label="What to do next">
+              <div className="ax-panel-head">
+                <div className="ax-panel-title">
+                  <h2>Do this next</h2>
                 </div>
-              </Panel>
-            )}
-
-            {/* ---- Everything else: the working -------------------- */}
-            {/* Everything below this line is evidence for everything above
-                it.
-
-                The heading used to say "The detail", which is a description
-                of the size of these panels rather than of their job. They are
-                the working: the four rates the score is the mean of, the
-                bands, the reasons, the time, the standings. A reader who
-                accepts the bottleneck never has to open any of it, and a
-                reader who does not accept it can check every figure that
-                produced it. Naming them as evidence is what makes both of
-                those a reasonable thing to do. */}
-            <h2 className="sb-detail-head">Evidence</h2>
-            <p className="sb-detail-note">
-              Everything above is argued from these. Each panel is counted from your
-              own record — nothing here is a sample or an estimate.
-            </p>
-
-            {/* The grade is not a tile. It was, and it was the third place on
-                one screen the same letter appeared — the verdict states it at
-                the top, and the panel below breaks it into the four rates the
-                tile was listing in prose. A tile that repeats what is already
-                on screen is a tile that costs a column and says nothing. */}
-            <div className="sb-tiles">
-              <div className="sb-tile">
-                <span className="sb-tile-label">Finished</span>
-                <strong className="sb-tile-value">{model.finished}</strong>
-                <span className="sb-tile-note">
-                  against {model.finishedBefore} the window before
-                </span>
               </div>
-              <div className="sb-tile">
-                <span className="sb-tile-label">Time on it</span>
-                <strong className="sb-tile-value">
-                  {model.invested > 0 ? format.duration(model.invested) : '—'}
-                </strong>
-                <span className="sb-tile-note">
-                  {model.invested > 0
-                    ? 'logged against the tasks you finished'
-                    : 'no time logged against these tasks'}
-                </span>
-              </div>
-              <div className="sb-tile">
-                <span className="sb-tile-label">Streak</span>
-                <strong className="sb-tile-value">{model.streak}</strong>
-                <span className="sb-tile-note">
-                  {model.streak === 1 ? 'day running' : 'days running'} in this subject
-                </span>
-              </div>
-            </div>
 
-            {model.insight && <p className="ax-opening is-down sb-insight">{model.insight}</p>}
-
-            {/* ---- Time, and whether it bought anything ---------------- */}
-            {/* The rule this panel exists for: fast is not good. Thirty
-                minutes of work finished in eighteen and rated poorly is a task
-                that was abandoned, not an efficient one — so the figure is a
-                composite of speed and how it was rated, and the two cases it
-                exists to separate are counted out beneath it.
-
-                "Usual" is the account's own median at that difficulty, because
-                Summit never asks for an estimate. See `timeAnalysis` in
-                components/Subject/state for why that is the better baseline
-                anyway. */}
-            {state.time.known && (
-              <Panel
-                title="What the time bought"
-                note="Against your own usual pace at each difficulty. Summit never asks you for an estimate."
-              >
-                <ul className="sb-rows">
-                  <li className="sb-row">
-                    <span className="sb-row-name">Usual task</span>
-                    <strong>{state.time.typical} min</strong>
-                    <span className="sb-row-note">median across this window</span>
-                  </li>
-                  <li className="sb-row">
-                    <span className="sb-row-name">Against that</span>
-                    <strong>
-                      {state.time.drift === null
-                        ? '—'
-                        : state.time.drift < 0
-                          ? `${Math.abs(state.time.drift)} min under`
-                          : `${state.time.drift} min over`}
-                    </strong>
-                    <span className="sb-row-note">
-                      {state.time.quicker}% of tasks came in quicker than usual
-                    </span>
-                  </li>
-                  <li className="sb-row">
-                    <span className="sb-row-name">Finished fast, rated poorly</span>
-                    <strong>{state.time.rushed}</strong>
-                    <span className="sb-row-note">
-                      {state.time.rushed === 0
-                        ? 'none, so speed here is not costing quality'
-                        : 'quick, but rated badly for it'}
-                    </span>
-                  </li>
-                  <li className="sb-row">
-                    <span className="sb-row-name">Took longer, landed it</span>
-                    <strong>{state.time.thorough}</strong>
-                    <span className="sb-row-note">the extra time paid off</span>
-                  </li>
-                </ul>
-              </Panel>
-            )}
-
-            {/* ---- Standings ------------------------------------------- */}
-            {/* Not awards. Every one is a threshold over the same counted
-                evidence the figures above are made of, recomputed each time
-                rather than stored — which is what stops a badge from
-                disagreeing with the record it claims to describe. An unreached
-                one shows its distance, because a target with a number on it is
-                worth more than a greyed-out box. */}
-            <Panel
-              title="Standings"
-              note="Counted from the same record as everything else, and worked out again every visit."
-            >
-              <ul className="sx-standings">
-                {state.standings.map((entry) => (
-                  <li
-                    key={entry.id}
-                    className={`sx-standing${entry.reached ? ' is-reached' : ''}`}
-                  >
-                    <div className="sx-standing-head">
-                      <strong>{entry.title}</strong>
-                      <span className="sx-standing-at">
-                        {entry.reached ? 'reached' : entry.at}
-                      </span>
-                    </div>
-                    <p>{entry.detail}</p>
-                    <span className="sx-standing-bar" aria-hidden="true">
-                      <span style={{ width: `${entry.progress}%` }} />
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Panel>
-
-
-            {/* ---- What this subject is for ------------------------- */}
-            {/* The goal, and the record read against it.
-                
-                This panel used to be a list of bars. A bar answers "how far
-                along", which is the one question about a goal that cannot be
-                acted on — 40% is fine with 60% of the time left and a disaster
-                with a week to go, and either way it does not say what to do on
-                Tuesday. So each goal now carries three things a bar cannot: the
-                calendar's own position on the same track, the figures this
-                subject has actually put into it, and the levers — what would
-                have to change, hardest constraint first, each with the count
-                behind it. The arithmetic is `goalsFor` and `leversFor` in
-                components/Subject/model. */}
-            {model.goals.length > 0 && (
-              <Panel
-                title="What this subject is for"
-                note="Each goal that names this subject, and what your record here says about reaching it."
-              >
-                <ul className="sb-goals">
-                  {model.goals.map((goal) => (
-                    <li key={goal.id} className="sb-goal">
-                      <div className="sb-goal-head">
-                        <strong>{goal.title}</strong>
-                        <span
-                          className={`sb-goal-state ${
-                            goal.drift === null ? 'is-flat' : goal.drift > 0 ? 'is-late' : 'is-early'
-                          }`}
-                        >
-                          {goal.drift === null
-                            ? 'no projection yet'
-                            : goal.drift > 0
-                              ? `${goal.drift} ${goal.drift === 1 ? 'day' : 'days'} late`
-                              : goal.drift < 0
-                                ? `${Math.abs(goal.drift)} ${Math.abs(goal.drift) === 1 ? 'day' : 'days'} early`
-                                : 'on the day'}
-                        </span>
-                      </div>
-
-                      {/* The bar, with where the calendar has got to marked on
-                          it. One track rather than two bars: the whole reading
-                          is the distance between the fill and the mark, and
-                          that reading does not survive being split across two
-                          rows the eye has to measure between. */}
-                      <span
-                        className="sb-goal-track"
-                        role="img"
-                        aria-label={
-                          goal.expected === null
-                            ? `${Math.round(goal.progress)}% done`
-                            : `${Math.round(goal.progress)}% done, ${Math.round(goal.expected)}% `
-                              + 'of its time gone'
-                        }
-                      >
-                        <span
-                          className="sb-goal-track-fill"
-                          style={{ width: `${clampPct(goal.progress)}%` }}
-                        />
-                        {goal.expected !== null && (
-                          <span
-                            className="sb-goal-track-mark"
-                            style={{ left: `${clampPct(goal.expected)}%` }}
-                          />
-                        )}
-                      </span>
-
-                      <p className="sb-goal-meta">
-                        {Math.round(goal.progress)}% done
-                        {goal.expected !== null && (
-                          <> · the calendar is at {Math.round(goal.expected)}%</>
-                        )}
-                        {goal.deadline && <> · due {goal.deadline}</>}
-                      </p>
-
-                      {/* The counted figures, and only the ones that exist.
-                          A row of dashes is how a reader learns to stop
-                          reading a panel. */}
-                      <dl className="sb-plan">
-                        {planFacts(goal).map((fact) => (
-                          <div key={fact.label} className="sb-plan-fact">
-                            <dt>{fact.label}</dt>
-                            <dd>{fact.value}</dd>
-                          </div>
-                        ))}
-                      </dl>
-
-                      <ul className="sb-levers">
-                        {goal.levers.map((lever) => (
-                          <li key={lever.id} className={`sb-lever is-${lever.weight}`}>
-                            <strong>{lever.title}</strong>
-                            <p>{lever.fact}</p>
-                          </li>
-                        ))}
-                      </ul>
-
-                      {/* ---- The route, written by a model --------------- */}
-                      {/* Everything above this line is counted. This is not,
-                          and the divider and the note say so before the
-                          button is pressed rather than after — a reader has
-                          to know which half of a panel is arithmetic and
-                          which half is prose before they decide what to act
-                          on. Same bargain as the write-up at the foot of the
-                          page. */}
-                      {canWrite && (
-                        <div className="sb-route">
-                          <div className="sb-route-head">
-                            <div>
-                              <strong>Plan the route to this</strong>
-                              <p>
-                                A model reads the figures above and lays out the stages between
-                                now and the date. It works from those numbers and no others.
-                              </p>
-                            </div>
-                            <button
-                              type="button"
-                              className="ax-btn"
-                              onClick={() => void planFor(goal)}
-                              disabled={planning === goal.id}
-                            >
-                              {planning === goal.id
-                                ? 'Planning…'
-                                : plans[goal.id]
-                                  ? 'Plan it again'
-                                  : 'Plan the route'}
-                            </button>
-                          </div>
-
-                          {planError[goal.id] && (
-                            <p className="sb-brief-error" role="alert">
-                              {planError[goal.id]}
-                            </p>
-                          )}
-
-                          {plans[goal.id] && (
-                            <div className="sb-route-body">
-                              {plans[goal.id]!.route && (
-                                <p className="sb-route-read">{plans[goal.id]!.route}</p>
-                              )}
-
-                              {plans[goal.id]!.phases.length > 0 && (
-                                <ol className="sb-phases">
-                                  {plans[goal.id]!.phases.map((phase) => (
-                                    <li key={phase.title} className="sb-phase">
-                                      <div className="sb-phase-head">
-                                        <strong>{phase.title}</strong>
-                                        {/* Labelled as the model's, because it
-                                            is the one number here it supplied
-                                            rather than one the app counted. */}
-                                        <span className="sb-phase-weeks">
-                                          ~{phase.weeks} {phase.weeks === 1 ? 'week' : 'weeks'}
-                                        </span>
-                                      </div>
-                                      {phase.outcome && (
-                                        <p className="sb-phase-out">{phase.outcome}</p>
-                                      )}
-                                      {phase.focus.length > 0 && (
-                                        <ul className="sb-phase-focus">
-                                          {phase.focus.map((item) => (
-                                            <li key={item}>{item}</li>
-                                          ))}
-                                        </ul>
-                                      )}
-                                    </li>
-                                  ))}
-                                </ol>
-                              )}
-
-                              {plans[goal.id]!.week.length > 0 && (
-                                <div className="sb-route-week">
-                                  <h4>This week</h4>
-                                  <ul>
-                                    {plans[goal.id]!.week.map((item) => (
-                                      <li key={item}>{item}</li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                <p className="ax-panel-note ax-panel-note-foot">
-                  {/* The line said "every figure here is counted" before the
-                      route was added, and stopped being true the moment it
-                      was. The join is what the reader needs, and it is the
-                      whole reason the route sits behind a dashed rule. */}
-                  The figures are counted from your own tasks in this subject. Anything under a
-                  "Plan the route" heading was written by a model from those same figures.{' '}
-                  <Link className="ax-link" to="/goals">Your goals</Link>
-                </p>
-              </Panel>
-            )}
-
-            <div className="sb-grid">
-              {/* ---- Progress ----------------------------------------- */}
-              <Panel
-                title="Your progress"
-                note="Against the window immediately before, same length."
-              >
-                <ul className="sb-rows">
-                  {model.growth.map((entry) => (
-                    <li key={entry.key} className="sb-row">
-                      <span className="sb-row-name">{entry.label}</span>
-                      <Delta value={entry.change} />
-                      <span className="sb-row-note">{entry.note}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Panel>
-
-              {/* ---- The four rates ----------------------------------- */}
-              <Panel
-                title="What the score is made of"
-                note="Four rates. The letter above is their mean."
-              >
-                <ul className="sb-rows">
-                  {model.rates.map((entry) => (
-                    <li key={entry.key} className="sb-row sb-row-rate">
-                      <span className="sb-row-name">{entry.label}</span>
-                      {entry.known ? (
-                        <>
-                          <strong className="sb-row-value">{Math.round(entry.now)}%</strong>
-                          <Bar percent={entry.now} />
-                          <Delta value={entry.delta} unit="pts" />
-                        </>
-                      ) : (
-                        <span className="sb-row-value is-none">not measurable yet</span>
-                      )}
-                      <span className="sb-row-note">{entry.note}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Panel>
-            </div>
-
-            {/* ---- The difficulty bands ------------------------------- */}
-            {model.bands.some((band) => band.done > 0) && (
-              <Panel
-                title="How you do at each difficulty"
-                note="Difficulty bands. A star is the finest thing your tasks record."
-              >
-                <div className="sb-table-wrap">
-                  <table className="sb-table">
-                    <thead>
-                      <tr>
-                        <th scope="col">Difficulty</th>
-                        <th scope="col">Finished</th>
-                        <th scope="col">How it went</th>
-                        <th scope="col">vs before</th>
-                        <th scope="col">Typical time</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {model.bands
-                        .filter((band) => band.done > 0)
-                        .map((band) => (
-                          <tr
-                            key={band.level}
-                            className={band.level === model.weakest?.level ? 'is-weak' : undefined}
-                          >
-                            <th scope="row">{band.label}</th>
-                            <td>{band.done}</td>
-                            <td>
-                              {band.holding === null ? (
-                                <span className="is-none">not rated</span>
-                              ) : (
-                                <span className="sb-cell-bar">
-                                  <strong>{Math.round(band.holding)}%</strong>
-                                  <Bar percent={band.holding} />
-                                </span>
-                              )}
-                            </td>
-                            <td>
-                              <Delta value={band.delta} unit="pts" />
-                            </td>
-                            <td>
-                              {band.seconds === null ? (
-                                <span className="is-none">—</span>
-                              ) : (
-                                <>
-                                  {format.duration(Math.round(band.seconds))}
-                                  {band.secondsDelta !== null && band.secondsDelta !== 0 && (
-                                    <em className="sb-cell-aside">
-                                      {band.secondsDelta < 0 ? '↓' : '↑'}{' '}
-                                      {format.duration(Math.abs(band.secondsDelta))}
-                                    </em>
-                                  )}
-                                </>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-                {model.weakest && model.strongest && model.weakest.level !== model.strongest.level && (
-                  <p className="ax-panel-note ax-panel-note-foot">
-                    <strong>Weakest:</strong> {model.weakest.label.toLowerCase()} at{' '}
-                    {Math.round(model.weakest.holding!)}%. <strong>Strongest:</strong>{' '}
-                    {model.strongest.label.toLowerCase()} at {Math.round(model.strongest.holding!)}%.
+              {model.advice.length > 0 && (
+                <>
+                  <p className="ax-panel-note">
+                    Ranked by what it is worth. Every figure is from your own tasks.
                   </p>
-                )}
-              </Panel>
-            )}
-
-            <div className="sb-grid">
-              {/* ---- What drives it --------------------------------- */}
-              {(model.struggles.length > 0 || model.wentWell.length > 0) && (
-                <Panel
-                  title="What makes it go badly, and well"
-                  note="From the reason you gave when you rated each task."
-                >
-                  {model.struggles.length > 0 && (
-                    <>
-                      <h3 className="sb-sub">When it went badly</h3>
-                      <ul className="sb-rows">
-                        {model.struggles.map((driver) => (
-                          <li key={driver.key} className="sb-row sb-row-rate">
-                            <span className="sb-row-name">{driver.label}</span>
-                            <strong className="sb-row-value">{driver.share}%</strong>
-                            <Bar percent={driver.share} />
-                            <span className="sb-row-note">
-                              {driver.count} {driver.count === 1 ? 'task' : 'tasks'}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                  {model.wentWell.length > 0 && (
-                    <>
-                      <h3 className="sb-sub">When it went well</h3>
-                      <ul className="sb-rows">
-                        {model.wentWell.map((driver) => (
-                          <li key={driver.key} className="sb-row sb-row-rate">
-                            <span className="sb-row-name">{driver.label}</span>
-                            <strong className="sb-row-value">{driver.share}%</strong>
-                            <Bar percent={driver.share} />
-                            <span className="sb-row-note">
-                              {driver.count} {driver.count === 1 ? 'task' : 'tasks'}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                </Panel>
-              )}
-
-              {/* ---- The run --------------------------------------- */}
-              {model.run.readings.length > 0 && (
-                <Panel
-                  title="Your last few sessions"
-                  note="Difficulty × execution on each rated task, oldest first."
-                >
-                  <ol className="sb-run">
-                    {model.run.readings.map((reading) => (
-                      <li key={reading.id}>
-                        <span
-                          className={`sb-run-dot ${
-                            reading.percent >= 80
-                              ? 'is-good'
-                              : reading.percent >= 60
-                                ? 'is-mid'
-                                : 'is-poor'
-                          }`}
-                          aria-hidden="true"
-                        />
-                        <span className="sb-run-value">{reading.percent}%</span>
-                        <span className="sb-run-day">{reading.on.slice(5)}</span>
+                  <ol className="sb-advice">
+                    {model.advice.map((item, at) => (
+                      <li key={item.id} className={`sb-advice-item is-${item.weight}`}>
+                        <span className="sb-advice-rank" aria-hidden="true">
+                          {at + 1}
+                        </span>
+                        <div>
+                          <strong>{item.title}</strong>
+                          <p>{item.detail}</p>
+                          <p className="sb-advice-why">
+                            <span>Why:</span> {item.why}
+                          </p>
+                        </div>
                       </li>
                     ))}
                   </ol>
-                  {model.run.trend !== null && (
-                    <p className="ax-panel-note ax-panel-note-foot">
-                      <strong>Trend:</strong>{' '}
-                      {model.run.trend > 0
-                        ? `improving. The later half of this run averages ${model.run.trend} points above the earlier half.`
-                        : model.run.trend < 0
-                          ? `slipping. The later half averages ${Math.abs(model.run.trend)} points below the earlier half.`
-                          : 'flat. Both halves of this run average the same.'}
-                    </p>
-                  )}
-                </Panel>
+                </>
               )}
-            </div>
 
-            {/* ---- Checkpoints, and the goal they become ----------- */}
-            <Panel
-              title="Checkpoints for this subject"
-              note="The stages, in the order you mean to reach them. No target or date needed."
-            >
-              <ul className="sb-miles">
-                {milestones.map((entry, at) => (
-                  <li key={entry.id} className={entry.done ? 'is-done' : undefined}>
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={entry.done}
-                        onChange={() =>
-                          putMilestones(
-                            milestones.map((row, index) =>
-                              index === at ? { ...row, done: !row.done } : row,
-                            ),
-                          )
-                        }
-                      />
-                      <span>{entry.title}</span>
-                    </label>
-                    <button
-                      type="button"
-                      className="sb-miles-drop"
-                      aria-label={`Remove ${entry.title}`}
-                      onClick={() => putMilestones(milestones.filter((_, i) => i !== at))}
-                    >
-                      ×
-                    </button>
-                  </li>
-                ))}
-              </ul>
-
-              <form
-                className="sb-miles-add"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  const title = adding.trim();
-                  if (!title) return;
-                  putMilestones([
-                    ...milestones,
-                    { id: `m${Date.now()}`, title, done: false },
-                  ]);
-                  setAdding('');
-                }}
-              >
-                <input
-                  value={adding}
-                  onChange={(event) => setAdding(event.target.value)}
-                  placeholder="A stage you mean to reach"
-                  aria-label="New checkpoint"
-                  maxLength={120}
-                />
-                <button type="submit" className="ax-btn" disabled={!adding.trim()}>
-                  Add
-                </button>
-              </form>
-
-              {canWrite && (
+              {canRead && (
                 <div className="sb-draft">
-                  <div className="sb-draft-head">
+                  <div className="sx-ask">
                     <div>
-                      <strong>Turn these into a goal</strong>
-                      <p>
-                        A model reads your checkpoints and your work here, and drafts a goal
-                        over them: a title, a target and a horizon. Nothing is saved until you
-                        say so.
-                      </p>
+                      <strong>Plan the next sessions</strong>
+                      <p>A model reads the figures above. It adds no numbers of its own.</p>
                     </div>
                     <button
                       type="button"
                       className="ax-btn"
-                      onClick={() => void askForGoal()}
-                      disabled={drafting}
+                      onClick={() => void askForReading()}
+                      disabled={thinking}
                     >
-                      {drafting ? 'Drafting…' : draft ? 'Draft another' : 'Draft a goal'}
+                      {thinking ? 'Reading…' : reading ? 'Read it again' : 'Plan my next sessions'}
                     </button>
                   </div>
 
-                  {draftError && (
-                    <p className="sb-brief-error" role="alert">
-                      {draftError}
+                  {readError && (
+                    <p className="sx-ask-err" role="alert">
+                      {readError}
                     </p>
                   )}
 
-                  {created && (
-                    <p className="sb-draft-made" role="status">
-                      Kept. This subject is aimed at it now, and its stages are in the list
-                      above. Nothing was added to your goals page.
-                    </p>
-                  )}
-
-                  {draft && (
+                  {reading && (
                     <div className="sb-draft-body">
-                      <strong className="sb-draft-title">{draft.title}</strong>
-                      <p className="sb-draft-why">{draft.why}</p>
-                      <p className="sb-draft-terms">
-                        <span>
-                          <b>{draft.target}</b> {draft.unit}
-                        </span>
-                        <span>
-                          over <b>{draft.weeks}</b> {draft.weeks === 1 ? 'week' : 'weeks'}
-                        </span>
-                      </p>
-                      {draft.milestones.length > 0 && (
-                        <ol className="sb-draft-miles">
-                          {draft.milestones.map((title) => (
-                            <li key={title}>{title}</li>
-                          ))}
-                        </ol>
-                      )}
-                      <div className="sb-tree-actions">
-                        <button type="button" className="ax-btn ax-btn-primary" onClick={() => void keepDraft()}>
-                          Keep this as what I am chasing
-                        </button>
-                        <button type="button" className="ax-btn ax-btn-quiet" onClick={() => setDraft(null)}>
-                          Discard
-                        </button>
-                      </div>
+                      <NextSteps
+                        steps={reading.next_steps}
+                        taken={taken}
+                        busy={stepBusy}
+                        onMakeTask={(step) => void makeTask(step)}
+                        onDidIt={(step) => void record(step)}
+                      />
                     </div>
                   )}
                 </div>
               )}
-            </Panel>
+            </section>
 
-            {/* ---- The write-up ------------------------------------ */}
-            {canWrite && (
-              <section className="ax-panel sb-panel sb-brief">
-                <div className="ax-panel-head">
-                  <div className="ax-panel-title">
-                    <h2>Read this back to me</h2>
-                  </div>
-                  <button
-                    type="button"
-                    className="ax-btn"
-                    onClick={() => void write()}
-                    disabled={writing}
-                  >
-                    {writing ? 'Writing…' : brief ? 'Write it again' : 'Write it up'}
-                  </button>
-                </div>
-                <p className="ax-panel-note">
-                  {/* Said before the button is pressed, not after. A reader
-                      has to know which half of this page is counted and which
-                      half is written before they decide what to trust. */}
-                  Everything above is counted from your own tasks. This panel is written by a
-                  model from those same figures, and it adds no numbers of its own, so it can
-                  say what they mean but nothing they do not. It costs an API call and is not
-                  saved.
-                </p>
+            {/* ---- The reading behind those steps ---------------------- */}
+            {reading &&
+              (reading.diagnosis.length > 0 ||
+                reading.priorities.length > 0 ||
+                reading.insights.length > 0) && (
+                <Panel
+                  title="What the record says"
+                  note="Model-written from the figures above. Each finding shows its evidence."
+                >
+                  <Reading
+                    diagnosis={reading.diagnosis}
+                    priorities={reading.priorities}
+                    insights={reading.insights}
+                  />
+                </Panel>
+              )}
 
-                {briefError && (
-                  <p className="sb-brief-error" role="alert">
-                    {briefError}
-                  </p>
-                )}
+            {/* ---- DID YOUR LAST ADVICE WORK --------------------------- */}
+            {/* The small section that makes the rest of the page worth
+                anything. Every section above it is the app talking; this is
+                the app being held to what it said — each recommendation, what
+                it predicted, and what the figures did afterwards.
 
-                {brief && (
-                  <div className="sb-brief-body">
-                    {brief.reading && <p className="sb-brief-reading">{brief.reading}</p>}
-                    {brief.practice.length > 0 && (
-                      <ol className="sb-brief-practice">
-                        {brief.practice.map((item) => (
-                          <li key={item.title}>
-                            <div className="sb-brief-practice-head">
-                              <strong>{item.title}</strong>
-                              <span className="sb-brief-minutes">{item.minutes} min</span>
-                            </div>
-                            {item.focus.length > 0 && (
-                              <ul className="sb-brief-focus">
-                                {item.focus.map((point) => (
-                                  <li key={point}>{point}</li>
-                                ))}
-                              </ul>
-                            )}
-                            {item.why && (
-                              <p className="sb-brief-why">
-                                <span>Why:</span> {item.why}
-                              </p>
-                            )}
-                          </li>
-                        ))}
-                      </ol>
-                    )}
-                  </div>
-                )}
-              </section>
-            )}
+                It sits directly under the steps because the two are one
+                thing: a reader deciding whether to act on the advice above
+                should be able to see how the last lot went without going
+                looking for it. */}
+            <Verdicts verdicts={verdicts} summary={loop} />
 
-            {/* ---- Recent work ------------------------------------- */}
-            {model.recent.length > 0 && (
-              <Panel
-                title="Recent work"
-                note="Newest first."
+            {/* ---- THE WORKING ---------------------------------------- */}
+            {/* Everything below this line is evidence for everything above it,
+                and all of it is shut.
+
+                It was not, and the page ran to fourteen panels and eight
+                screens — so a reader who came to find out how a subject was
+                going walked past twelve panels they had not asked for to reach
+                the two they had. The evidence is not the problem; making
+                somebody scroll through it to leave is. Each fold states its own
+                answer on the shut row, so a reader opens the one whose figure
+                surprised them rather than all of them. See
+                components/Subject/Fold. */}
+            <h2 className="sb-detail-head">Evidence</h2>
+            <p className="sb-detail-note">
+              The working behind everything above, counted from your own tasks.
+            </p>
+
+            {model.insight && <p className="ax-opening is-down sb-insight">{model.insight}</p>}
+
+            <div className="sb-folds">
+              {/* ---- Where you stand ------------------------------------
+                  Open on arrival, and the only one that is: it is the fold a
+                  reader who opens nothing else would have wanted. */}
+              <Fold
+                title="Where you stand"
+                note="The score, and the seven measures under it."
+                defaultOpen
+                figures={[
+                  {
+                    label: 'Overall',
+                    value: state.overall === null ? '—' : String(state.overall),
+                    tone: band === 'high' || band === 'good'
+                      ? 'good'
+                      : band === 'fair'
+                        ? 'warn'
+                        : band === 'low'
+                          ? 'bad'
+                          : 'plain',
+                  },
+                  { label: 'Finished', value: String(model.finished) },
+                  {
+                    label: 'Standings',
+                    value: `${reached}/${state.standings.length}`,
+                    tone: reached > 0 ? 'good' : 'plain',
+                  },
+                ]}
+                lead={
+                  dimRange ? (
+                    <>
+                      Strongest on <b>{dimRange.high.label.toLowerCase()}</b> at{' '}
+                      {dimRange.high.value}, weakest on <b>{dimRange.low.label.toLowerCase()}</b>{' '}
+                      at {dimRange.low.value}.
+                    </>
+                  ) : undefined
+                }
               >
-                <ul className="sb-recent">
-                  {model.recent.map((entry) => (
-                    <li key={entry.id}>
-                      <div className="sb-recent-head">
-                        <strong>{entry.title}</strong>
-                        <span className={`sb-verdict is-${entry.verdict.replace(/\s+/g, '-')}`}>
-                          {entry.verdict}
-                        </span>
-                      </div>
-                      <p className="sb-recent-meta">
-                        {entry.on}
-                        {entry.quality !== null && <> · scored {entry.quality}/25</>}
-                        {entry.seconds !== null && <> · {format.duration(entry.seconds)}</>}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
-                {model.goalAimed !== null && (
-                  <p className="ax-panel-note ax-panel-note-foot">
-                    <strong>{model.goalAimed}%</strong> of what you finished here in this window
-                    was aimed at a goal.
-                  </p>
-                )}
-              </Panel>
-            )}
-
-            {/* ---- The lattice ------------------------------------- */}
-            {lattice && treeRead && (
-              <Panel
-                title="The skill tree"
-                note="Where you stand in it, and what it holds."
-              >
-                {/* The reader's half, first and largest. Everything under it
-                    is the curriculum — authored, and the same on every
-                    account. Keeping the two apart is the whole design of this
-                    panel: "6 practised" printed beside "42 skills" reads as a
-                    claim about the reader that the authored states cannot
-                    support, which is what the old footnote was apologising
-                    for at length. A measured bar says it instead. */}
-                {standing && (
-                  <div className="sb-standing">
-                    <span className="sb-standing-pct">{standing.percent}%</span>
-                    <div className="sb-standing-main">
-                      <span className="sb-standing-bar" aria-hidden="true">
-                        <span style={{ width: `${standing.percent}%` }} />
-                      </span>
-                      <span className="sb-standing-sub">
-                        {standing.xp.toLocaleString()} of {standing.worth.toLocaleString()} XP
-                        {' '}across everything that opens {standing.title}
-                      </span>
-                    </div>
+                <div className="sb-tiles">
+                  <div className="sb-tile">
+                    <span className="sb-tile-label">Finished</span>
+                    <strong className="sb-tile-value">{model.finished}</strong>
+                    <span className="sb-tile-note">
+                      against {model.finishedBefore} the window before
+                    </span>
                   </div>
-                )}
-
-                <div className="sb-tree">
-                  <div>
-                    <strong>{lattice.title}</strong>
-                    <p>{lattice.blurb}</p>
-                    <p className="sb-tree-choice">
-                      {lattice.nodes} skills, {lattice.core} core
-                      {lattice.practised > 0 && <> · {lattice.practised} marked practised</>}
-                      {lattice.chosen && <> · your chosen branch</>}
-                    </p>
+                  <div className="sb-tile">
+                    <span className="sb-tile-label">Time on it</span>
+                    <strong className="sb-tile-value">
+                      {model.invested > 0 ? format.duration(model.invested) : '—'}
+                    </strong>
+                    <span className="sb-tile-note">
+                      {model.invested > 0
+                        ? 'logged against the tasks you finished'
+                        : 'no time logged against these tasks'}
+                    </span>
                   </div>
-                  <div className="sb-tree-actions">
-                    <Link className="ax-btn ax-btn-primary" to="/skill-trees">
-                      Open the tree
-                    </Link>
-                    <Link className="ax-btn ax-btn-quiet" to="/analytics?setup">
-                      Change the branch
-                    </Link>
+                  <div className="sb-tile">
+                    <span className="sb-tile-label">Streak</span>
+                    <strong className="sb-tile-value">{model.streak}</strong>
+                    <span className="sb-tile-note">
+                      {model.streak === 1 ? 'day running' : 'days running'} in this subject
+                    </span>
                   </div>
                 </div>
 
-                {/* Where it forks. Named rather than counted, because the
-                    branch names are the useful part: they say what the subject
-                    turns into once its foundations are behind you, and one of
-                    them is the answer to the setup question. */}
-                {lattice.branches.length > 0 && (
-                  <ul className="sb-branches">
-                    {lattice.branches.map((branch) => (
-                      <li key={branch.id}>
-                        <span>{branch.title}</span>
-                        <em>{branch.nodes} skills</em>
+                {/* The seven, kept separate on purpose. A single blended score
+                    cannot tell "reaching past what you can land" from "coasting
+                    below what you could" — see the note in Subject/Dimensions. */}
+                <Dimensions dimensions={state.dimensions} />
+
+                {/* The same measures as one shape. Seven bars say seven things;
+                    the web says which of them is the odd one out, and that is
+                    the reading the bars could not give. */}
+                {axes.length >= WEB_FLOOR && (
+                  <div className="sb-web">
+                    <h3 className="sb-sub">The shape of it</h3>
+                    <Radar
+                      axes={axes}
+                      tone="violet"
+                      label={`${subject.name} across ${axes.length} measures`}
+                    />
+                    <ul className="sb-web-legend">
+                      {axes.map((axis) => (
+                        <li key={axis.label}>
+                          <span>{axis.label}</span>
+                          <strong>{Math.round(axis.value * 100)}</strong>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <Panel
+                  title="What the score is made of"
+                  note="Four rates. The letter above is their mean."
+                >
+                  <ul className="sb-rows">
+                    {model.rates.map((entry) => (
+                      <li key={entry.key} className="sb-row sb-row-rate">
+                        <span className="sb-row-name">{entry.label}</span>
+                        {entry.known ? (
+                          <>
+                            <strong className="sb-row-value">{Math.round(entry.now)}%</strong>
+                            <Bar percent={entry.now} />
+                            <Delta value={entry.delta} unit="pts" />
+                          </>
+                        ) : (
+                          <span className="sb-row-value is-none">not measurable yet</span>
+                        )}
+                        <span className="sb-row-note">{entry.note}</span>
                       </li>
                     ))}
                   </ul>
+                </Panel>
+
+                <Panel
+                  title="Standings"
+                  note="Thresholds over the same record. Recounted every visit."
+                >
+                  <ul className="sx-standings">
+                    {state.standings.map((entry) => (
+                      <li
+                        key={entry.id}
+                        className={`sx-standing${entry.reached ? ' is-reached' : ''}`}
+                      >
+                        <div className="sx-standing-head">
+                          <strong>{entry.title}</strong>
+                          <span className="sx-standing-at">
+                            {entry.reached ? 'reached' : entry.at}
+                          </span>
+                        </div>
+                        <p>{entry.detail}</p>
+                        <span className="sx-standing-bar" aria-hidden="true">
+                          <span style={{ width: `${entry.progress}%` }} />
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </Panel>
+              </Fold>
+
+              {/* ---- Difficulty ---------------------------------------- */}
+              {(state.curve.rungs.some((rung) => rung.done > 0)
+                || model.bands.some((entry) => entry.done > 0)) && (
+                <Fold
+                  title="Difficulty"
+                  note="How each level goes, and how much work sits there."
+                  figures={[
+                    {
+                      label: 'Falls off at',
+                      value: state.curve.threshold?.label ?? 'nowhere',
+                      tone: state.curve.threshold ? 'warn' : 'good',
+                    },
+                    { label: 'Most work at', value: peakBand?.label ?? '—' },
+                  ]}
+                  lead={
+                    peakBand && peakBand.done > 0 ? (
+                      <>
+                        Most of this subject sits at <b>{peakBand.label.toLowerCase()}</b> —{' '}
+                        {peakBand.done} of {model.finished} finished tasks.
+                      </>
+                    ) : undefined
+                  }
+                >
+                  {state.curve.rungs.some((rung) => rung.done > 0) && (
+                    <Panel
+                      title="Where it starts to go"
+                      note="Execution per level, and where it falls off."
+                    >
+                      <Curve curve={state.curve} />
+                    </Panel>
+                  )}
+
+                  {/* How much, not how well. The curve above deliberately does
+                      not say: an 88% off three tasks and an 88% off ninety are
+                      the same bar on it. */}
+                  <div className="sb-plot">
+                    <figure>
+                      <h3 className="sb-sub">Where the work sits</h3>
+                      <Columns
+                        columns={volume}
+                        tone="blue"
+                        label="Tasks finished at each difficulty"
+                      />
+                      <figcaption>
+                        How much, at each level. The curve above is how well it goes.
+                      </figcaption>
+                    </figure>
+                  </div>
+
+                  {model.bands.some((band) => band.done > 0) && (
+                    <Panel
+                      title="How you do at each difficulty"
+                      note="A star is the finest thing your tasks record."
+                    >
+                      <div className="sb-table-wrap">
+                        <table className="sb-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Difficulty</th>
+                              <th scope="col">Finished</th>
+                              <th scope="col">How it went</th>
+                              <th scope="col">vs before</th>
+                              <th scope="col">Typical time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {model.bands
+                              .filter((band) => band.done > 0)
+                              .map((band) => (
+                                <tr
+                                  key={band.level}
+                                  className={band.level === model.weakest?.level ? 'is-weak' : undefined}
+                                >
+                                  <th scope="row">{band.label}</th>
+                                  <td>{band.done}</td>
+                                  <td>
+                                    {band.holding === null ? (
+                                      <span className="is-none">not rated</span>
+                                    ) : (
+                                      <span className="sb-cell-bar">
+                                        <strong>{Math.round(band.holding)}%</strong>
+                                        <Bar percent={band.holding} />
+                                      </span>
+                                    )}
+                                  </td>
+                                  <td>
+                                    <Delta value={band.delta} unit="pts" />
+                                  </td>
+                                  <td>
+                                    {band.seconds === null ? (
+                                      <span className="is-none">—</span>
+                                    ) : (
+                                      <>
+                                        {format.duration(Math.round(band.seconds))}
+                                        {band.secondsDelta !== null && band.secondsDelta !== 0 && (
+                                          <em className="sb-cell-aside">
+                                            {band.secondsDelta < 0 ? '↓' : '↑'}{' '}
+                                            {format.duration(Math.abs(band.secondsDelta))}
+                                          </em>
+                                        )}
+                                      </>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      {model.weakest && model.strongest && model.weakest.level !== model.strongest.level && (
+                        <p className="ax-panel-note ax-panel-note-foot">
+                          <strong>Weakest:</strong> {model.weakest.label.toLowerCase()} at{' '}
+                          {Math.round(model.weakest.holding!)}%. <strong>Strongest:</strong>{' '}
+                          {model.strongest.label.toLowerCase()} at {Math.round(model.strongest.holding!)}%.
+                        </p>
+                      )}
+                    </Panel>
+                  )}
+                </Fold>
+              )}
+
+              {/* ---- Over time ----------------------------------------- */}
+              {model.series.any && (
+                <Fold
+                  title="Over time"
+                  note="Volume and quality, period by period."
+                  figures={[
+                    {
+                      label: 'Momentum',
+                      value: state.momentum.known
+                        ? `${(state.momentum.change ?? 0) > 0 ? '+' : ''}${state.momentum.change} pts`
+                        : '—',
+                      tone: state.momentum.direction === 'climbing'
+                        ? 'good'
+                        : state.momentum.direction === 'slipping'
+                          ? 'bad'
+                          : 'plain',
+                    },
+                    { label: 'vs before', value: `${model.finished}/${model.finishedBefore}` },
+                    { label: 'Busiest', value: busiest?.label ?? '—' },
+                  ]}
+                  lead={
+                    state.momentum.known ? (
+                      <>
+                        Quality is{' '}
+                        <b>
+                          {state.momentum.direction === 'climbing'
+                            ? 'climbing'
+                            : state.momentum.direction === 'slipping'
+                              ? 'slipping'
+                              : 'flat'}
+                        </b>{' '}
+                        across this window — {state.momentum.earlier} early, {state.momentum.later}{' '}
+                        late.
+                      </>
+                    ) : undefined
+                  }
+                >
+                  <Panel
+                    title="Your trajectory"
+                    note="Volume, and the quality you rated it at."
+                  >
+                    {/* Side by side rather than stacked. They are the same
+                        periods on the same dates, so the interesting reading is
+                        across them — did the month the volume climbed cost
+                        anything in quality — and that reading was two screens
+                        apart when one sat under the other. Stacking also spent
+                        three hundred vertical pixels on two charts that are mostly
+                        air. They wrap to one column under `sb-charts`. */}
+                    <div className="sb-charts">
+                      <div>
+                        <h3 className="sb-sub">Tasks finished</h3>
+                        <AreaChart
+                          id={`sb-done-${subjectId}`}
+                          label={`Tasks finished in ${subject.name} over ${
+                            WINDOWS.find((option) => option.key === span)?.label ?? 'the window'
+                          }`}
+                          height={150}
+                          series={[{ values: model.series.done, tone: 'violet' }]}
+                          ticks={[String(seriesPeak), String(Math.round(seriesPeak / 2)), '0']}
+                          marks={model.series.marks}
+                          readout={{
+                            labels: model.series.labels,
+                            names: ['Finished'],
+                            format: (value) => `${Math.round(value)} tasks`,
+                          }}
+                        />
+                      </div>
+
+                      {model.series.quality.some((value) => value !== null) && (
+                        <div>
+                          <h3 className="sb-sub">Quality</h3>
+                          <AreaChart
+                            id={`sb-quality-${subjectId}`}
+                            label={`Quality rated in ${subject.name} over the same periods`}
+                            height={150}
+                            /* Nulls are real and stay null: a period with nothing
+                               rated has no quality, and the chart breaks its line
+                               there rather than drawing a zero nobody recorded. */
+                            series={[{ values: model.series.quality, tone: 'blue' }]}
+                            /* The real ceiling, so a run that never passes 60% is
+                               not stretched to fill the box and read as excellent. */
+                            max={100}
+                            ticks={['100', '50', '0']}
+                            marks={model.series.marks}
+                            readout={{
+                              labels: model.series.labels,
+                              names: ['Quality'],
+                              format: (value) => `${Math.round(value)}%`,
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </Panel>
+
+                  {/* Which days the work happens on. Nothing else on this page
+                      counts the calendar. */}
+                  <div className="sb-plot">
+                    <figure>
+                      <h3 className="sb-sub">Which days</h3>
+                      <Columns columns={week} tone="green" label="Tasks finished by weekday" />
+                      <figcaption>
+                        {busiest && busiest.value > 0
+                          ? `Most of it lands on ${busiest.label}.`
+                          : 'Nothing dated in this window.'}
+                      </figcaption>
+                    </figure>
+                  </div>
+
+                  <Panel
+                    title="Your progress"
+                    note="Against the window immediately before, same length."
+                  >
+                    <ul className="sb-rows">
+                      {model.growth.map((entry) => (
+                        <li key={entry.key} className="sb-row">
+                          <span className="sb-row-name">{entry.label}</span>
+                          <Delta value={entry.change} />
+                          <span className="sb-row-note">{entry.note}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Panel>
+                </Fold>
+              )}
+
+              {/* ---- Time spent ---------------------------------------- */}
+              {state.time.known && (
+                <Fold
+                  title="Time spent"
+                  note="Whether the minutes bought anything."
+                  figures={[
+                    { label: 'Logged', value: `${state.time.hours}h` },
+                    { label: 'Usual task', value: `${state.time.typical} min` },
+                    {
+                      label: 'Rushed',
+                      value: String(state.time.rushed),
+                      tone: state.time.rushed > 0 ? 'bad' : 'good',
+                    },
+                  ]}
+                  lead={
+                    cloud.correlation !== null ? (
+                      <>
+                        {cloud.correlation >= 0.3
+                          ? 'Longer sessions land better here'
+                          : cloud.correlation <= -0.3
+                            ? 'Longer sessions land worse here'
+                            : 'Length and how it goes barely move together here'}{' '}
+                        — <b>r = {cloud.correlation}</b> over {cloud.count} timed, rated tasks.
+                      </>
+                    ) : undefined
+                  }
+                >
+                  <Panel
+                    title="What the time bought"
+                    note="Against your own usual pace. Summit never asks for an estimate."
+                  >
+                    <ul className="sb-rows">
+                      <li className="sb-row">
+                        <span className="sb-row-name">Usual task</span>
+                        <strong>{state.time.typical} min</strong>
+                        <span className="sb-row-note">median across this window</span>
+                      </li>
+                      <li className="sb-row">
+                        <span className="sb-row-name">Against that</span>
+                        <strong>
+                          {state.time.drift === null
+                            ? '—'
+                            : state.time.drift < 0
+                              ? `${Math.abs(state.time.drift)} min under`
+                              : `${state.time.drift} min over`}
+                        </strong>
+                        <span className="sb-row-note">
+                          {state.time.quicker}% of tasks came in quicker than usual
+                        </span>
+                      </li>
+                      <li className="sb-row">
+                        <span className="sb-row-name">Finished fast, rated poorly</span>
+                        <strong>{state.time.rushed}</strong>
+                        <span className="sb-row-note">
+                          {state.time.rushed === 0
+                            ? 'none, so speed here is not costing quality'
+                            : 'quick, but rated badly for it'}
+                        </span>
+                      </li>
+                      <li className="sb-row">
+                        <span className="sb-row-name">Took longer, landed it</span>
+                        <strong>{state.time.thorough}</strong>
+                        <span className="sb-row-note">the extra time paid off</span>
+                      </li>
+                    </ul>
+                  </Panel>
+
+                  {/* The one relationship nothing else on the page states. The
+                      panel above has the two corners of this cloud — finished
+                      fast and rated poorly, took longer and landed it — and
+                      nothing in between them. */}
+                  {cloud.points.length > 0 && (
+                    <div className="sb-plot">
+                      <figure>
+                        <h3 className="sb-sub">Longer, or better?</h3>
+                        <Scatter
+                          points={cloud.points}
+                          tone="amber"
+                          xLabel={`minutes, to ${cloud.longest}+`}
+                          yLabel="how it went"
+                          trend={cloud.fit}
+                        />
+                        <figcaption>
+                          One dot per timed, rated task.{' '}
+                          {cloud.fit
+                            ? 'The line is the fit, drawn because the correlation carries it.'
+                            : 'No line: the correlation is too weak to carry one.'}
+                        </figcaption>
+                      </figure>
+                    </div>
+                  )}
+                </Fold>
+              )}
+
+              {/* ---- Why it goes well or badly ------------------------- */}
+              {(model.struggles.length > 0 || model.wentWell.length > 0) && (
+                <Fold
+                  title="Why it goes well or badly"
+                  note="From the reason you gave on each rated task."
+                  figures={[
+                    ...(topReason
+                      ? [{ label: 'Goes wrong', value: topReason.label, tone: 'bad' as const }]
+                      : []),
+                    ...(topStrength
+                      ? [{ label: 'Goes right', value: topStrength.label, tone: 'good' as const }]
+                      : []),
+                  ]}
+                  lead={
+                    topReason ? (
+                      <>
+                        <b>{topReason.label}</b> is behind {topReason.share}% of the work that went
+                        badly — {topReason.count} {topReason.count === 1 ? 'task' : 'tasks'}.
+                      </>
+                    ) : undefined
+                  }
+                >
+                    <Panel
+                      title="What makes it go badly, and well"
+                      note="From the reason on each rated task."
+                    >
+                      {model.struggles.length > 0 && (
+                        <>
+                          <h3 className="sb-sub">When it went badly</h3>
+                          <ul className="sb-rows">
+                            {model.struggles.map((driver) => (
+                              <li key={driver.key} className="sb-row sb-row-rate">
+                                <span className="sb-row-name">{driver.label}</span>
+                                <strong className="sb-row-value">{driver.share}%</strong>
+                                <Bar percent={driver.share} />
+                                <span className="sb-row-note">
+                                  {driver.count} {driver.count === 1 ? 'task' : 'tasks'}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                      {model.wentWell.length > 0 && (
+                        <>
+                          <h3 className="sb-sub">When it went well</h3>
+                          <ul className="sb-rows">
+                            {model.wentWell.map((driver) => (
+                              <li key={driver.key} className="sb-row sb-row-rate">
+                                <span className="sb-row-name">{driver.label}</span>
+                                <strong className="sb-row-value">{driver.share}%</strong>
+                                <Bar percent={driver.share} />
+                                <span className="sb-row-note">
+                                  {driver.count} {driver.count === 1 ? 'task' : 'tasks'}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                    </Panel>
+                </Fold>
+              )}
+
+              {/* ---- Recent sessions ----------------------------------- */}
+              {(model.run.readings.length > 0 || model.recent.length > 0) && (
+                <Fold
+                  title="Recent sessions"
+                  note="The last few, newest first."
+                  figures={[
+                    {
+                      label: 'Trend',
+                      value: model.run.trend === null
+                        ? '—'
+                        : model.run.trend === 0
+                          ? 'flat'
+                          : `${model.run.trend > 0 ? '+' : ''}${model.run.trend} pts`,
+                      tone: (model.run.trend ?? 0) > 0
+                        ? 'good'
+                        : (model.run.trend ?? 0) < 0
+                          ? 'bad'
+                          : 'plain',
+                    },
+                    { label: 'Last worked', value: model.recent[0]?.on ?? '—' },
+                  ]}
+                >
+                  {/* ---- The run --------------------------------------- */}
+                  {model.run.readings.length > 0 && (
+                    <Panel
+                      title="Your last few sessions"
+                      note="Difficulty × execution, oldest first."
+                    >
+                      <ol className="sb-run">
+                        {model.run.readings.map((reading) => (
+                          <li key={reading.id}>
+                            <span
+                              className={`sb-run-dot ${
+                                reading.percent >= 80
+                                  ? 'is-good'
+                                  : reading.percent >= 60
+                                    ? 'is-mid'
+                                    : 'is-poor'
+                              }`}
+                              aria-hidden="true"
+                            />
+                            <span className="sb-run-value">{reading.percent}%</span>
+                            <span className="sb-run-day">{reading.on.slice(5)}</span>
+                          </li>
+                        ))}
+                      </ol>
+                      {model.run.trend !== null && (
+                        <p className="ax-panel-note ax-panel-note-foot">
+                          <strong>Trend:</strong>{' '}
+                          {model.run.trend > 0
+                            ? `improving. The later half of this run averages ${model.run.trend} points above the earlier half.`
+                            : model.run.trend < 0
+                              ? `slipping. The later half averages ${Math.abs(model.run.trend)} points below the earlier half.`
+                              : 'flat. Both halves of this run average the same.'}
+                        </p>
+                      )}
+                    </Panel>
+                  )}
+
+                  {model.recent.length > 0 && (
+                    <Panel
+                      title="Recent work"
+                      note="Newest first."
+                    >
+                      <ul className="sb-recent">
+                        {model.recent.map((entry) => (
+                          <li key={entry.id}>
+                            <div className="sb-recent-head">
+                              <strong>{entry.title}</strong>
+                              <span className={`sb-verdict is-${entry.verdict.replace(/\s+/g, '-')}`}>
+                                {entry.verdict}
+                              </span>
+                            </div>
+                            <p className="sb-recent-meta">
+                              {entry.on}
+                              {entry.quality !== null && <> · scored {entry.quality}/25</>}
+                              {entry.seconds !== null && <> · {format.duration(entry.seconds)}</>}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                      {model.goalAimed !== null && (
+                        <p className="ax-panel-note ax-panel-note-foot">
+                          <strong>{model.goalAimed}%</strong> of what you finished here was aimed
+                          at a goal.
+                        </p>
+                      )}
+                    </Panel>
+                  )}
+                </Fold>
+              )}
+
+              {/* ---- Goals --------------------------------------------- */}
+              {leadGoal && (
+                <Fold
+                  title="Goals"
+                  note="Every goal that names this subject."
+                  figures={[
+                    {
+                      label: model.goals.length === 1 ? 'Goal' : 'Goals',
+                      value: String(model.goals.length),
+                    },
+                    {
+                      label: 'Pace',
+                      value: leadGoal.drift === null
+                        ? 'no date'
+                        : leadGoal.drift > 0
+                          ? `${leadGoal.drift}d late`
+                          : leadGoal.drift < 0
+                            ? `${Math.abs(leadGoal.drift)}d early`
+                            : 'on the day',
+                      tone: leadGoal.drift === null
+                        ? 'plain'
+                        : leadGoal.drift > 0
+                          ? 'bad'
+                          : 'good',
+                    },
+                  ]}
+                  lead={
+                    <>
+                      <b>{leadGoal.title}</b> is {Math.round(leadGoal.progress)}% done
+                      {leadGoal.expected !== null && (
+                        <> with {Math.round(leadGoal.expected)}% of its time gone</>
+                      )}
+                      .
+                    </>
+                  }
+                >
+                  <Panel
+                    title="What this subject is for"
+                    note="What your record here says about reaching each one."
+                  >
+                    <ul className="sb-goals">
+                      {model.goals.map((goal) => (
+                        <li key={goal.id} className="sb-goal">
+                          <div className="sb-goal-head">
+                            <strong>{goal.title}</strong>
+                            <span
+                              className={`sb-goal-state ${
+                                goal.drift === null ? 'is-flat' : goal.drift > 0 ? 'is-late' : 'is-early'
+                              }`}
+                            >
+                              {goal.drift === null
+                                ? 'no projection yet'
+                                : goal.drift > 0
+                                  ? `${goal.drift} ${goal.drift === 1 ? 'day' : 'days'} late`
+                                  : goal.drift < 0
+                                    ? `${Math.abs(goal.drift)} ${Math.abs(goal.drift) === 1 ? 'day' : 'days'} early`
+                                    : 'on the day'}
+                            </span>
+                          </div>
+
+                          {/* The bar, with where the calendar has got to marked on
+                              it. One track rather than two bars: the whole reading
+                              is the distance between the fill and the mark, and
+                              that reading does not survive being split across two
+                              rows the eye has to measure between. */}
+                          <span
+                            className="sb-goal-track"
+                            role="img"
+                            aria-label={
+                              goal.expected === null
+                                ? `${Math.round(goal.progress)}% done`
+                                : `${Math.round(goal.progress)}% done, ${Math.round(goal.expected)}% `
+                                  + 'of its time gone'
+                            }
+                          >
+                            <span
+                              className="sb-goal-track-fill"
+                              style={{ width: `${clampPct(goal.progress)}%` }}
+                            />
+                            {goal.expected !== null && (
+                              <span
+                                className="sb-goal-track-mark"
+                                style={{ left: `${clampPct(goal.expected)}%` }}
+                              />
+                            )}
+                          </span>
+
+                          <p className="sb-goal-meta">
+                            {Math.round(goal.progress)}% done
+                            {goal.expected !== null && (
+                              <> · the calendar is at {Math.round(goal.expected)}%</>
+                            )}
+                            {goal.deadline && <> · due {goal.deadline}</>}
+                          </p>
+
+                          {/* The counted figures, and only the ones that exist.
+                              A row of dashes is how a reader learns to stop
+                              reading a panel. */}
+                          <dl className="sb-plan">
+                            {planFacts(goal).map((fact) => (
+                              <div key={fact.label} className="sb-plan-fact">
+                                <dt>{fact.label}</dt>
+                                <dd>{fact.value}</dd>
+                              </div>
+                            ))}
+                          </dl>
+
+                          <ul className="sb-levers">
+                            {goal.levers.map((lever) => (
+                              <li key={lever.id} className={`sb-lever is-${lever.weight}`}>
+                                <strong>{lever.title}</strong>
+                                <p>{lever.fact}</p>
+                              </li>
+                            ))}
+                          </ul>
+
+                          {/* ---- The route, written by a model --------------- */}
+                          {/* Everything above this line is counted. This is not,
+                              and the divider and the note say so before the
+                              button is pressed rather than after — a reader has
+                              to know which half of a panel is arithmetic and
+                              which half is prose before they decide what to act
+                              on. Same bargain as the write-up at the foot of the
+                              page. */}
+                          {canWrite && (
+                            <div className="sb-route">
+                              <div className="sb-route-head">
+                                <div>
+                                  <strong>Plan the route to this</strong>
+                                  <p>
+                                    A model lays out the stages between now and the date, from the
+                                    figures above and no others.
+                                  </p>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="ax-btn"
+                                  onClick={() => void planFor(goal)}
+                                  disabled={planning === goal.id}
+                                >
+                                  {planning === goal.id
+                                    ? 'Planning…'
+                                    : plans[goal.id]
+                                      ? 'Plan it again'
+                                      : 'Plan the route'}
+                                </button>
+                              </div>
+
+                              {planError[goal.id] && (
+                                <p className="sb-brief-error" role="alert">
+                                  {planError[goal.id]}
+                                </p>
+                              )}
+
+                              {plans[goal.id] && (
+                                <div className="sb-route-body">
+                                  {plans[goal.id]!.route && (
+                                    <p className="sb-route-read">{plans[goal.id]!.route}</p>
+                                  )}
+
+                                  {plans[goal.id]!.phases.length > 0 && (
+                                    <ol className="sb-phases">
+                                      {plans[goal.id]!.phases.map((phase) => (
+                                        <li key={phase.title} className="sb-phase">
+                                          <div className="sb-phase-head">
+                                            <strong>{phase.title}</strong>
+                                            {/* Labelled as the model's, because it
+                                                is the one number here it supplied
+                                                rather than one the app counted. */}
+                                            <span className="sb-phase-weeks">
+                                              ~{phase.weeks} {phase.weeks === 1 ? 'week' : 'weeks'}
+                                            </span>
+                                          </div>
+                                          {phase.outcome && (
+                                            <p className="sb-phase-out">{phase.outcome}</p>
+                                          )}
+                                          {phase.focus.length > 0 && (
+                                            <ul className="sb-phase-focus">
+                                              {phase.focus.map((item) => (
+                                                <li key={item}>{item}</li>
+                                              ))}
+                                            </ul>
+                                          )}
+                                        </li>
+                                      ))}
+                                    </ol>
+                                  )}
+
+                                  {plans[goal.id]!.week.length > 0 && (
+                                    <div className="sb-route-week">
+                                      <h4>This week</h4>
+                                      <ul>
+                                        {plans[goal.id]!.week.map((item) => (
+                                          <li key={item}>{item}</li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="ax-panel-note ax-panel-note-foot">
+                      {/* The line said "every figure here is counted" before the
+                          route was added, and stopped being true the moment it
+                          was. The join is what the reader needs, and it is the
+                          whole reason the route sits behind a dashed rule. */}
+                      Figures counted from your tasks here. Anything under "Plan the route"
+                      was written by a model from those figures.{' '}
+                      <Link className="ax-link" to="/goals">Your goals</Link>
+                    </p>
+                  </Panel>
+                </Fold>
+              )}
+
+              {/* ---- Checkpoints ---------------------------------------
+                  The fold is the panel here: a `Panel` inside it would print
+                  "Checkpoints for this subject" under a row already saying
+                  Checkpoints. */}
+              <Fold
+                title="Checkpoints"
+                note="The stages you mean to reach, in order."
+                figures={[
+                  {
+                    label: 'Cleared',
+                    value: milestones.length ? `${checkedOff}/${milestones.length}` : 'none yet',
+                    tone: milestones.length > 0 && checkedOff === milestones.length
+                      ? 'good'
+                      : 'plain',
+                  },
+                ]}
+                lead={
+                  nextCheck ? (
+                    <>
+                      Next up: <b>{nextCheck.title}</b>.
+                    </>
+                  ) : milestones.length > 0 ? (
+                    'Every checkpoint here is done. Add the next one.'
+                  ) : undefined
+                }
+              >
+                <ul className="sb-miles">
+                  {milestones.map((entry, at) => (
+                    <li key={entry.id} className={entry.done ? 'is-done' : undefined}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={entry.done}
+                          onChange={() =>
+                            putMilestones(
+                              milestones.map((row, index) =>
+                                index === at ? { ...row, done: !row.done } : row,
+                              ),
+                            )
+                          }
+                        />
+                        <span>{entry.title}</span>
+                      </label>
+                      <button
+                        type="button"
+                        className="sb-miles-drop"
+                        aria-label={`Remove ${entry.title}`}
+                        onClick={() => putMilestones(milestones.filter((_, i) => i !== at))}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+
+                <form
+                  className="sb-miles-add"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    const title = adding.trim();
+                    if (!title) return;
+                    putMilestones([
+                      ...milestones,
+                      { id: `m${Date.now()}`, title, done: false },
+                    ]);
+                    setAdding('');
+                  }}
+                >
+                  <input
+                    value={adding}
+                    onChange={(event) => setAdding(event.target.value)}
+                    placeholder="A stage you mean to reach"
+                    aria-label="New checkpoint"
+                    maxLength={120}
+                  />
+                  <button type="submit" className="ax-btn" disabled={!adding.trim()}>
+                    Add
+                  </button>
+                </form>
+
+                {canWrite && (
+                  <div className="sb-draft">
+                    <div className="sb-draft-head">
+                      <div>
+                        <strong>Turn these into a goal</strong>
+                        <p>
+                          A model drafts a goal over your checkpoints — a title, a target, a
+                          horizon. Nothing is saved until you say so.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        className="ax-btn"
+                        onClick={() => void askForGoal()}
+                        disabled={drafting}
+                      >
+                        {drafting ? 'Drafting…' : draft ? 'Draft another' : 'Draft a goal'}
+                      </button>
+                    </div>
+
+                    {draftError && (
+                      <p className="sb-brief-error" role="alert">
+                        {draftError}
+                      </p>
+                    )}
+
+                    {created && (
+                      <p className="sb-draft-made" role="status">
+                        Kept. This subject aims at it now, and its stages are in the list
+                        above. Nothing was added to your goals page.
+                      </p>
+                    )}
+
+                    {draft && (
+                      <div className="sb-draft-body">
+                        <strong className="sb-draft-title">{draft.title}</strong>
+                        <p className="sb-draft-why">{draft.why}</p>
+                        <p className="sb-draft-terms">
+                          <span>
+                            <b>{draft.target}</b> {draft.unit}
+                          </span>
+                          <span>
+                            over <b>{draft.weeks}</b> {draft.weeks === 1 ? 'week' : 'weeks'}
+                          </span>
+                        </p>
+                        {draft.milestones.length > 0 && (
+                          <ol className="sb-draft-miles">
+                            {draft.milestones.map((title) => (
+                              <li key={title}>{title}</li>
+                            ))}
+                          </ol>
+                        )}
+                        <div className="sb-tree-actions">
+                          <button type="button" className="ax-btn ax-btn-primary" onClick={() => void keepDraft()}>
+                            Keep this as what I am chasing
+                          </button>
+                          <button type="button" className="ax-btn ax-btn-quiet" onClick={() => setDraft(null)}>
+                            Discard
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
+              </Fold>
 
-                {/* What all of the above actually says.
+              {/* ---- The lattice --------------------------------------- */}
+              {lattice && treeRead && (
+                <Fold
+                  title="Skill tree"
+                  note="Where this sits in the curriculum."
+                  figures={[
+                    ...(standing
+                      ? [{ label: 'Of this tree', value: `${standing.percent}%` }]
+                      : []),
+                    { label: 'Skills', value: String(lattice.nodes) },
+                  ]}
+                  lead={treeRead.standing}
+                >
+                  <Panel
+                    title="The skill tree"
+                    note="Your standing, and what the tree holds."
+                  >
+                    {/* The reader's half, first and largest. Everything under it
+                        is the curriculum — authored, and the same on every
+                        account. Keeping the two apart is the whole design of this
+                        panel: "6 practised" printed beside "42 skills" reads as a
+                        claim about the reader that the authored states cannot
+                        support, which is what the old footnote was apologising
+                        for at length. A measured bar says it instead. */}
+                    {standing && (
+                      <div className="sb-standing">
+                        <span className="sb-standing-pct">{standing.percent}%</span>
+                        <div className="sb-standing-main">
+                          <span className="sb-standing-bar" aria-hidden="true">
+                            <span style={{ width: `${standing.percent}%` }} />
+                          </span>
+                          <span className="sb-standing-sub">
+                            {standing.xp.toLocaleString()} of {standing.worth.toLocaleString()} XP
+                            {' '}across everything that opens {standing.title}
+                          </span>
+                        </div>
+                      </div>
+                    )}
 
-                    The panel drew a percentage, an XP total and three counts
-                    and never said what any of them meant, so a reader saw
-                    "12% of this tree" and had nothing to do with it. This is
-                    the reading — and it reads only from the two figures that
-                    are the reader's own, the XP standing and their own
-                    practice marks. Nothing here touches a node's authored
-                    state, which is the line this panel exists not to cross.
-                    See `treeReading` in components/Subject/lattice. */}
-                <div className="sb-tree-read">
-                  <h3>What this says</h3>
-                  <p>{treeRead.standing}</p>
-                  {treeRead.touched && <p>{treeRead.touched}</p>}
-                  <p className="sb-tree-read-shape">{treeRead.shape}</p>
-                  {treeRead.next && <p className="sb-tree-read-next">{treeRead.next}</p>}
-                </div>
-              </Panel>
-            )}
+                    <div className="sb-tree">
+                      <div>
+                        <strong>{lattice.title}</strong>
+                        <p>{lattice.blurb}</p>
+                        <p className="sb-tree-choice">
+                          {lattice.nodes} skills, {lattice.core} core
+                          {lattice.practised > 0 && <> · {lattice.practised} marked practised</>}
+                          {lattice.chosen && <> · your chosen branch</>}
+                        </p>
+                      </div>
+                      <div className="sb-tree-actions">
+                        <Link className="ax-btn ax-btn-primary" to="/skill-trees">
+                          Open the tree
+                        </Link>
+                        <Link className="ax-btn ax-btn-quiet" to="/analytics?setup">
+                          Change the branch
+                        </Link>
+                      </div>
+                    </div>
+
+                    {/* Where it forks. Named rather than counted, because the
+                        branch names are the useful part: they say what the subject
+                        turns into once its foundations are behind you, and one of
+                        them is the answer to the setup question. */}
+                    {lattice.branches.length > 0 && (
+                      <ul className="sb-branches">
+                        {lattice.branches.map((branch) => (
+                          <li key={branch.id}>
+                            <span>{branch.title}</span>
+                            <em>{branch.nodes} skills</em>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    {/* What all of the above actually says.
+
+                        The panel drew a percentage, an XP total and three counts
+                        and never said what any of them meant, so a reader saw
+                        "12% of this tree" and had nothing to do with it. This is
+                        the reading — and it reads only from the two figures that
+                        are the reader's own, the XP standing and their own
+                        practice marks. Nothing here touches a node's authored
+                        state, which is the line this panel exists not to cross.
+                        See `treeReading` in components/Subject/lattice. */}
+                    <div className="sb-tree-read">
+                      <h3>What this says</h3>
+                      <p>{treeRead.standing}</p>
+                      {treeRead.touched && <p>{treeRead.touched}</p>}
+                      <p className="sb-tree-read-shape">{treeRead.shape}</p>
+                      {treeRead.next && <p className="sb-tree-read-next">{treeRead.next}</p>}
+                    </div>
+                  </Panel>
+                </Fold>
+              )}
+
+              {/* ---- The write-up --------------------------------------
+                  Last, and the only fold that is not counted. The note says so
+                  before the button is pressed rather than after: a reader has
+                  to know which half of this page is arithmetic before they
+                  decide what to act on. */}
+              {canWrite && (
+                <Fold
+                  title="Read this back to me"
+                  note="A model turns the figures above into prose."
+                  figures={[{ label: 'Written by', value: 'a model', tone: 'warn' }]}
+                >
+                  <div className="sb-brief">
+                    <div className="sx-ask">
+                      <div>
+                        <strong>The figures, in sentences</strong>
+                        <p>
+                          Written from the numbers above and no others. Costs an API call, and
+                          is not saved.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        className="ax-btn"
+                        onClick={() => void write()}
+                        disabled={writing}
+                      >
+                        {writing ? 'Writing…' : brief ? 'Write it again' : 'Write it up'}
+                      </button>
+                    </div>
+
+                    {briefError && (
+                      <p className="sb-brief-error" role="alert">
+                        {briefError}
+                      </p>
+                    )}
+
+                    {brief && (
+                      <div className="sb-brief-body">
+                        {brief.reading && <p className="sb-brief-reading">{brief.reading}</p>}
+                        {brief.practice.length > 0 && (
+                          <ol className="sb-brief-practice">
+                            {brief.practice.map((item) => (
+                              <li key={item.title}>
+                                <div className="sb-brief-practice-head">
+                                  <strong>{item.title}</strong>
+                                  <span className="sb-brief-minutes">{item.minutes} min</span>
+                                </div>
+                                {item.focus.length > 0 && (
+                                  <ul className="sb-brief-focus">
+                                    {item.focus.map((point) => (
+                                      <li key={point}>{point}</li>
+                                    ))}
+                                  </ul>
+                                )}
+                                {item.why && (
+                                  <p className="sb-brief-why">
+                                    <span>Why:</span> {item.why}
+                                  </p>
+                                )}
+                              </li>
+                            ))}
+                          </ol>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </Fold>
+              )}
+            </div>
           </>
         )}
       </div>

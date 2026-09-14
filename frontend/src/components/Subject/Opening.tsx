@@ -138,8 +138,8 @@ export function WhatMatters({ cards }: { cards: EvidenceCard[] }) {
         <p className="so-matters-note">
           {read
             ? 'Read against your goal. Every figure under a claim was counted.'
-            : 'Chosen by rule from your record. Read it back for the version '
-              + 'that weighs these against your goal.'}
+            : 'Chosen by rule from your record. Read it back for the version weighed '
+              + 'against your goal.'}
         </p>
       </div>
 
@@ -203,7 +203,7 @@ export function BottleneckPanel({ bottleneck }: { bottleneck: NamedBottleneck | 
       <div className="so-neck-body">
         {bottleneck.evidence.length > 0 && (
           <div className="so-neck-part">
-            <h3>Why we think that</h3>
+            <h3>What says so</h3>
             <ul className="so-neck-evidence">
               {bottleneck.evidence.map((line) => (
                 <li key={line}>{line}</li>
