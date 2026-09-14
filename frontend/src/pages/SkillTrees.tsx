@@ -29,6 +29,20 @@
  * gate is "has this account ever chosen", which is `loadFocus` returning null,
  * and the answer being written is what closes it. See components/SkillTree/FocusSetup.
  *
+ * ## Where the reader is, and what that dims
+ *
+ * The canvas always marks one tile **You are here** — `currentSkill` in
+ * skills/route, the furthest-along thing in progress, falling back to the best
+ * thing open. That is drawn on an untouched canvas with nothing else changed,
+ * because a page that greys out thirty-six of its forty tiles before anybody
+ * has clicked is a page that opens broken.
+ *
+ * Selecting a tile turns the focus layer *on*: the selection takes the marker,
+ * everything one edge away is emphasised, and the rest of the lattice goes
+ * back. Double-clicking widens that from the neighbours to the whole
+ * prerequisite chain. Both are transient — nothing is stored, and clearing the
+ * selection puts the canvas back exactly as it was.
+ *
  * ## The figures are counted, not stored
  *
  * Every number in the band is `tallyGraph` on the tree that is open — there is
@@ -44,11 +58,13 @@ import {
   LatticeNode,
   LatticePanel,
   ProgressIndicator,
+  RouteStrip,
   SkillTree as SkillTreeCanvas,
   SubjectRail,
 } from '@/components/SkillTree';
 import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
 import { iconForName } from '@/skills/iconMatch';
+import { currentSkill, emphasise, focusOn } from '@/skills/route';
 import { latticeSubjects, treeForSubject } from '@/skills/subjectMap';
 import {
   DEFAULT_TREE,
@@ -311,11 +327,52 @@ export default function SkillTrees() {
     [graph.nodes, selectedId],
   );
 
+  /* Whether the whole prerequisite chain is lit rather than only the
+     neighbours. Held as a node id rather than a boolean so it cannot outlive
+     the node it was asked for. */
+  const [tracedId, setTracedId] = useState<string | null>(null);
+
   // Picking the same node again puts the panel and the lit run back.
   const select = useCallback(
     (node: GraphNode | null) =>
-      setSelectedId((current) => (node && current !== node.id ? node.id : null)),
+      setSelectedId((current) => {
+        const next = node && current !== node.id ? node.id : null;
+        setTracedId(null);
+        return next;
+      }),
     [],
+  );
+
+  /* Double-click. The two clicks underneath it have already run — the second
+     of them toggling the selection *off* again — so this sets both rather than
+     only the trace, or a double-click would light a chain nothing is selected
+     at the end of. */
+  const trace = useCallback((node: GraphNode) => {
+    setSelectedId(node.id);
+    setTracedId(node.id);
+  }, []);
+
+  /* ---- Where the reader is ---------------------------------------------
+     `here` is the marker and is always somewhere; the focus layer is only
+     built once a tile has been selected. Keeping those apart is what lets the
+     canvas answer "where am I" on arrival without also greying itself out.
+     Navigation diamonds are skipped: a doorway is never the thing somebody is
+     working on. See skills/route. */
+  const hereId = useMemo(() => {
+    if (selectedId) return selectedId;
+    return currentSkill(graph, new Set(nav.keys()))?.id ?? null;
+  }, [graph, nav, selectedId]);
+
+  /* Not `focus` — that name is already the five subjects across the top, and
+     this is the reader's position on one lattice. */
+  const position = useMemo(
+    () => (hereId ? focusOn(graph, hereId) : null),
+    [graph, hereId],
+  );
+
+  const weights = useMemo(
+    () => (selectedId && position ? emphasise(graph, position, tracedId === selectedId) : null),
+    [graph, position, selectedId, tracedId],
   );
 
   /* The "+250 XP" that appears for a moment after a click. Held with its node
@@ -544,6 +601,18 @@ export default function SkillTrees() {
           <Figure label="Skill Level" value={skillLevel(totals)} icon="gem" tone="level" />
         </section>
 
+        {/* ---- where the reader is, in one line ----
+            Above the canvas rather than inside it, because it is the sentence
+            the drawing is a picture of. See components/SkillTree/RouteStrip. */}
+        {position && (
+          <RouteStrip
+            focus={position}
+            traced={Boolean(selectedId) && tracedId === selectedId}
+            onSelect={(node) => setSelectedId(node.id)}
+            onClear={selectedId ? () => select(null) : undefined}
+          />
+        )}
+
         {/* ---- the lattice and what a node is ---- */}
         <div className="stx-layout">
           <SkillTreeCanvas
@@ -552,6 +621,7 @@ export default function SkillTrees() {
             onSelect={select}
             geom={LATTICE_GEOM}
             fit
+            focus={weights ?? undefined}
             renderNode={(placed, ctx) => {
               const to = nav.get(placed.node.id);
               return (
@@ -561,6 +631,9 @@ export default function SkillTrees() {
                   selected={ctx.selected}
                   onSelect={ctx.onSelect}
                   onNavigate={to ? () => goTo(to) : undefined}
+                  emphasis={weights?.get(placed.node.id)}
+                  here={placed.node.id === hereId}
+                  onTrace={() => trace(placed.node)}
                 />
               );
             }}

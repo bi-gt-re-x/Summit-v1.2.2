@@ -18,8 +18,21 @@
  *
  * Placement, size and state come from the layout and the graph exactly as they
  * do for the card node — this component owns none of it.
+ *
+ * ## The focus layer
+ *
+ * `emphasis` is the third thing a tile can be told, after its status and its
+ * tier, and it is about the *reader* rather than about the skill: here, near,
+ * or dimmed out of the way. It arrives as one of three words rather than as a
+ * set of booleans so a tile can never be both — see `emphasise` in
+ * skills/route for why three and not five.
+ *
+ * `here` also draws the label. It is a real element rather than a `::after` so
+ * a screen reader meets it: "you are here" is the single most useful thing on
+ * the canvas and is exactly the sort of thing that ends up sighted-only.
  */
 import type { CSSProperties } from 'react';
+import type { Emphasis } from '@/skills/route';
 import { iconUrl } from '@/skills/subjectTrees';
 import { DIFFICULTY_LABEL, type GraphNode, type PlacedNode } from '@/utils/skillGraph';
 
@@ -31,9 +44,24 @@ export interface LatticeNodeProps {
   onSelect: (node: GraphNode | null) => void;
   /** Present when the tile opens a child subject rather than a skill. */
   onNavigate?: () => void;
+  /** Where this tile sits in the focus layer, or absent while there is none. */
+  emphasis?: Emphasis;
+  /** Draw the "you are here" marker, whether or not a focus layer is on. */
+  here?: boolean;
+  /** Light the whole prerequisite chain up to this node. */
+  onTrace?: () => void;
 }
 
-export function LatticeNode({ placed, size, selected, onSelect, onNavigate }: LatticeNodeProps) {
+export function LatticeNode({
+  placed,
+  size,
+  selected,
+  onSelect,
+  onNavigate,
+  emphasis,
+  here = false,
+  onTrace,
+}: LatticeNodeProps) {
   const { node, x, y } = placed;
   const nav = Boolean(onNavigate);
 
@@ -50,13 +78,17 @@ export function LatticeNode({ placed, size, selected, onSelect, onNavigate }: La
   return (
     <button
       type="button"
-      className={`stx-tile is-${node.status} tier-${node.difficulty}${nav ? ' is-nav' : ''}${selected ? ' is-selected' : ''}`}
+      className={`stx-tile is-${node.status} tier-${node.difficulty}${nav ? ' is-nav' : ''}${
+        selected ? ' is-selected' : ''
+      }${emphasis ? ` em-${emphasis}` : ''}${here ? ' is-here' : ''}`}
       style={style}
       aria-pressed={nav ? undefined : selected}
-      aria-label={nav ? `Open ${node.name}` : node.name}
+      aria-label={`${nav ? `Open ${node.name}` : node.name}${here ? '. You are here' : ''}`}
       title={nav ? `${node.name} →` : node.name}
       onClick={() => (nav ? onNavigate?.() : onSelect(node))}
+      onDoubleClick={nav ? undefined : onTrace}
     >
+      {here && <span className="stx-tile-here">You are here</span>}
       <span className="stx-tile-face" aria-hidden="true">
         <i className="stx-ico" />
       </span>

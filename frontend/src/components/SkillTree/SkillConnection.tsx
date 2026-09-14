@@ -16,6 +16,11 @@
  * `is-lit` is the selection: every path touching the chosen node comes forward
  * so its prerequisites and what it opens read as one run rather than as two
  * lines that happen to meet it.
+ *
+ * `is-faded` is the other half of that, and only exists while a focus layer is
+ * on: a line with a dimmed node at either end goes back with it, because a
+ * bright wire running into a faded tile is the one thing that makes a dimmed
+ * canvas look broken rather than quiet.
  */
 import type { PlacedEdge } from '@/utils/skillGraph';
 
@@ -23,12 +28,16 @@ export interface SkillConnectionProps {
   edge: PlacedEdge;
   /** Touching the selected node — drawn forward. */
   lit?: boolean;
+  /** Running into something the focus layer has dimmed — drawn back. */
+  faded?: boolean;
 }
 
-export function SkillConnection({ edge, lit = false }: SkillConnectionProps) {
+export function SkillConnection({ edge, lit = false, faded = false }: SkillConnectionProps) {
   return (
     <path
-      className={`stx-wire is-${edge.state} is-${edge.kind}${lit ? ' is-lit' : ''}`}
+      className={`stx-wire is-${edge.state} is-${edge.kind}${lit ? ' is-lit' : ''}${
+        faded ? ' is-faded' : ''
+      }`}
       d={edge.d}
       fill="none"
     />

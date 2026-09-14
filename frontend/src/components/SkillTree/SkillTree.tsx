@@ -78,6 +78,16 @@ export interface SkillTreeProps {
   /** Open each graph at a scale that fits its width. Off by default, so the
    *  card feeds keep opening at 100% exactly as they did. */
   fit?: boolean;
+  /**
+   * The focus layer, node id → weight, or absent while there is none.
+   *
+   * The canvas uses it for the *wires* only; the tiles are drawn by the
+   * caller's own `renderNode`, which reads the same map. A line is lit when
+   * both ends are in the layer and neither is dimmed, and faded when either
+   * end is — so a run of prerequisites reads as one route rather than as four
+   * lines that happen to touch. See `emphasise` in skills/route.
+   */
+  focus?: ReadonlyMap<string, 'here' | 'near' | 'dim'>;
 }
 
 export function SkillTree({
@@ -88,6 +98,7 @@ export function SkillTree({
   geom = GEOM,
   renderNode,
   fit = false,
+  focus,
 }: SkillTreeProps) {
   const layout = useMemo(() => layoutGraph(graph, geom), [graph, geom]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -258,6 +269,17 @@ export function SkillTree({
     );
   }, [layout.edges, selectedId]);
 
+  /* Faded by the focus layer: either end dimmed. Kept apart from `lit`, which
+     is about the selection and stays true whether or not a layer is on. */
+  const faded = useMemo(() => {
+    if (!focus) return new Set<string>();
+    return new Set(
+      layout.edges
+        .filter((edge) => focus.get(edge.from) === 'dim' || focus.get(edge.to) === 'dim')
+        .map((edge) => edge.id),
+    );
+  }, [focus, layout.edges]);
+
   const bare = layout.nodes.length === 0;
 
   /**
@@ -317,7 +339,12 @@ export function SkillTree({
                 aria-hidden="true"
               >
                 {layout.edges.map((edge) => (
-                  <SkillConnection key={edge.id} edge={edge} lit={lit.has(edge.id)} />
+                  <SkillConnection
+                    key={edge.id}
+                    edge={edge}
+                    lit={lit.has(edge.id)}
+                    faded={faded.has(edge.id)}
+                  />
                 ))}
               </svg>
 

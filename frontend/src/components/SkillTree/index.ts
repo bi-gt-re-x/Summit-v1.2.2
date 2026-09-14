@@ -20,6 +20,8 @@ export { SubjectRail } from './SubjectRail';
 export type { RailHit, SubjectRailProps } from './SubjectRail';
 export { LatticeNode } from './LatticeNode';
 export type { LatticeNodeProps } from './LatticeNode';
+export { RouteStrip } from './RouteStrip';
+export type { RouteStripProps } from './RouteStrip';
 export { LatticePanel } from './LatticePanel';
 export type { LatticePanelProps } from './LatticePanel';
 export { SkillConnection } from './SkillConnection';

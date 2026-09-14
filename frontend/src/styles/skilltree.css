@@ -2315,3 +2315,242 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     background: var(--lat-violet);
     border-color: var(--lat-violet);
 }
+
+/* ==========================================================================
+   YOU ARE HERE — the focus layer
+   ==========================================================================
+   Three weights and no more, for the reason `emphasise` in skills/route gives:
+   a canvas with four visual languages on it is a canvas nobody can read. The
+   layer only exists while a tile is selected; the marker below it is drawn
+   whether or not anything is. */
+
+/* ---- the marker ----
+   A flag above the tile rather than a ring around it, because a ring is the
+   vocabulary `is-selected` and `is-progress` already use and a third ring
+   would be the fourth meaning of the same shape. */
+.stx-tile-here {
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--lat-violet);
+    color: #fff;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: var(--lat-shadow-lift);
+    pointer-events: none;
+}
+
+/* The little tail, so the flag reads as belonging to the tile under it rather
+   than as floating over the one above. */
+.stx-tile-here::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    margin-top: -3px;
+    background: inherit;
+    transform: rotate(45deg);
+    border-radius: 1px;
+}
+
+html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
+
+/* The halo. Soft and wide rather than a hard outline: the tile may already
+   carry a selection ring and a progress ring, and a third hard edge on the
+   same 64px square is noise. This sits outside all of them. */
+.stx-tile.is-here .stx-tile-face {
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--lat-violet) 26%, transparent),
+        0 0 0 11px color-mix(in srgb, var(--lat-violet) 9%, transparent),
+        var(--lat-shadow-lift);
+}
+
+.stx-tile.is-here .stx-tile-name { font-weight: 800; color: var(--lat-text); }
+
+/* ---- the three weights ---- */
+.stx-tile.em-here { z-index: 2; }
+
+/* A step away: kept at full strength and lifted slightly, so "near" reads as
+   the normal state and "dim" as the thing that changed. Emphasising the
+   neighbours *and* dimming the rest would be saying it twice. */
+.stx-tile.em-near .stx-tile-face {
+    border-color: color-mix(in srgb, var(--tone) 85%, var(--lat-text));
+}
+.stx-tile.em-near .stx-tile-name { color: var(--lat-text); }
+
+/* Out of the way. 22% — inside the 15–25 band, and chosen at the top of it
+   because the tiles are small and a 15% fade on a 64px square at 70% zoom is
+   not a fade, it is a rendering artefact. */
+.stx-tile.em-dim {
+    opacity: .22;
+    filter: saturate(.55);
+    transition: opacity .18s ease, filter .18s ease;
+}
+
+/* Still reachable. A dimmed tile is quieter, not disabled — a reader who spots
+   what they wanted in the faded half must be able to click it, and it comes
+   back to full strength under the pointer to say so. */
+.stx-tile.em-dim:hover,
+.stx-tile.em-dim:focus-visible { opacity: 1; filter: none; }
+
+/* The wires go back with the tiles they run into. A bright line ending in a
+   faded square is the one thing that makes a dimmed canvas look broken rather
+   than quiet. */
+.stx-wire.is-faded { opacity: .12; }
+
+@media (prefers-reduced-motion: reduce) {
+    .stx-tile.em-dim { transition: none; }
+}
+
+/* ==========================================================================
+   The route strip
+   ==========================================================================
+   One line above the canvas saying what the drawing is a picture of. See
+   components/SkillTree/RouteStrip. */
+.stx-route {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-top: 14px;
+    padding: 10px 16px;
+    border: 1px solid var(--lat-line);
+    border-radius: 12px;
+    background: var(--lat-panel);
+}
+
+.stx-route.is-traced { border-color: color-mix(in srgb, var(--lat-violet) 40%, var(--lat-line)); }
+
+.stx-route-label {
+    flex: none;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--lat-faint);
+}
+
+.stx-route-path {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    min-width: 0;
+}
+
+/* The separator is on the item rather than between them, so a wrapped line
+   still shows which way the route runs. */
+.stx-route-path li + li::before {
+    content: '›';
+    margin: 0 4px 0 2px;
+    color: var(--lat-faint);
+}
+
+.stx-route-path button {
+    padding: 2px 6px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--lat-muted);
+    cursor: pointer;
+    transition: color .14s ease, background .14s ease;
+}
+
+.stx-route-path button:hover { color: var(--lat-violet); background: var(--lat-violet-soft); }
+.stx-route-path button:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: 1px; }
+
+.stx-route-path li.is-here span {
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--lat-violet-soft);
+    font-size: 12.5px;
+    font-weight: 750;
+    color: var(--lat-violet);
+}
+
+/* The suggestion, told apart from the route it follows. Everything left of
+   this is what the curriculum says; this is what the page thinks. A dashed
+   lead-in, which is the vocabulary the canvas already uses for the same
+   distinction. */
+.stx-route-path li.is-next::before {
+    content: '⇢';
+    color: color-mix(in srgb, var(--lat-violet) 70%, transparent);
+}
+
+.stx-route-path li.is-next button {
+    font-style: italic;
+    color: color-mix(in srgb, var(--lat-violet) 88%, var(--lat-muted));
+}
+
+.stx-route-clear {
+    flex: none;
+    padding: 3px 10px;
+    border: 1px solid var(--lat-line);
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--lat-faint);
+    cursor: pointer;
+    transition: color .14s ease, border-color .14s ease;
+}
+
+.stx-route-clear:hover { color: var(--lat-text); border-color: var(--lat-violet); }
+
+/* ==========================================================================
+   Where this node sits — the panel's three counts
+   ========================================================================== */
+.stx-lp-path {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.stx-lp-path li {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--lat-grey-soft);
+    font-size: 11.5px;
+    color: var(--lat-muted);
+}
+
+.stx-lp-path b { font-weight: 750; color: var(--lat-text); }
+
+.stx-lp-path li.is-met {
+    background: var(--lat-green-soft);
+    color: color-mix(in srgb, var(--lat-green) 75%, var(--lat-text));
+}
+.stx-lp-path li.is-met b { color: var(--lat-green); }
+
+.stx-lp-path li.is-blocked {
+    background: var(--lat-violet-soft);
+    color: color-mix(in srgb, var(--lat-violet) 72%, var(--lat-text));
+}
+.stx-lp-path li.is-blocked b { color: var(--lat-violet); }
+
+.stx-lp-path li.is-opens b { color: var(--lat-blue); }
+
+@media (max-width: 640px) {
+    .stx-route { padding: 9px 12px; }
+    .stx-route-label { flex: 1 1 100%; }
+}

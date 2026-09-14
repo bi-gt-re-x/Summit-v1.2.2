@@ -41,6 +41,16 @@
  * anything it merely recommends. Every row selects the node it names, which is
  * what turns the panel into navigation.
  *
+ * ## Where this sits, before what it is
+ *
+ * "Your path" is three counts the panel could always have stated and never
+ * did: how many of the prerequisites are behind you, how many are not, and how
+ * many skills open when this one lands. All three are the graph read two ways
+ * — `requirementsOf` and `unlockedBy` — and they are the difference between a
+ * locked tile reading as a dead end and reading as a near-term target. The
+ * canvas says the same thing in emphasis; this says it in numbers, because a
+ * shade cannot say "one away".
+ *
  * ## Nothing empty is printed
  *
  * A list with no rows, an XP line on a node worth zero: each is absent rather
@@ -519,6 +529,36 @@ export function LatticePanel({
           exactly as tall as the canvas beside it however much a node carries. */}
       <div className="stx-lp-body">
         {node.blurb && <p className="stx-lp-blurb">{node.blurb}</p>}
+
+        {/* Where this sits, in the two directions that matter. Before the
+            percentage on purpose: "one prerequisite away" is a more useful
+            first fact about a locked node than "0%". */}
+        {(needs.length > 0 || opens.length > 0) && (
+          <ul className="stx-lp-path">
+            {blockers.length > 0 ? (
+              <li className="is-blocked">
+                {/* "1 of 1" is a fraction nobody needs. The count on its own is
+                    the whole fact until some of them are done. */}
+                <b>
+                  {blockers.length === needs.length
+                    ? blockers.length
+                    : `${blockers.length} of ${needs.length}`}
+                </b>{' '}
+                {blockers.length === 1 ? 'prerequisite' : 'prerequisites'} still to go
+              </li>
+            ) : needs.length > 0 ? (
+              <li className="is-met">
+                <b>All {needs.length}</b>{' '}
+                {needs.length === 1 ? 'prerequisite is' : 'prerequisites are'} done
+              </li>
+            ) : null}
+            {opens.length > 0 && (
+              <li className="is-opens">
+                <b>{opens.length}</b> {opens.length === 1 ? 'skill opens' : 'skills open'} after it
+              </li>
+            )}
+          </ul>
+        )}
 
         <section className={`stx-lp-progress is-${node.status}`}>
           <p className="stx-lp-line">
