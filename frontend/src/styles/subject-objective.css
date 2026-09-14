@@ -318,25 +318,32 @@
     color: var(--ax-text);
 }
 
-/* The only line on the page that tells somebody to stop doing something. */
+/* The only line on the page that tells somebody to stop doing something.
+
+   It was a filled slab in `--ax-faint`, which is a *text* colour — a mid grey
+   the size of a paragraph, sitting under a white panel, reading as a disabled
+   control rather than as the sharpest sentence in the section. It is one quiet
+   line now, with its label inline, which is what it always was. */
 .so-neck-out {
-    margin: 18px 0 0;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: var(--ax-faint);
-    font-size: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--ax-line-soft);
+    font-size: 0.86rem;
     line-height: 1.5;
-    color: var(--ax-text);
+    color: var(--ax-muted);
 }
 
 .so-neck-out span {
-    display: block;
-    margin-bottom: 3px;
-    font-size: 0.68rem;
+    flex: none;
+    font-size: 0.66rem;
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--ax-muted);
+    color: var(--ax-faint);
 }
 
 @media (max-width: 640px) {
@@ -406,6 +413,7 @@
 
 .so-verdict:first-child { border-top: 0; }
 
+/* Never acted on: quieter, but present. */
 .so-verdict.is-untaken { opacity: 0.66; }
 
 .so-verdict-name {
@@ -453,319 +461,6 @@
     margin: 12px 0 0;
     font-size: 0.76rem;
     color: var(--ax-faint);
-}
-
-@media (max-width: 640px) {
-    .so-band { padding: 20px 18px 18px; }
-    .so-band-marks { gap: 10px 16px; }
-}
-
-/* ---- The bottleneck ----------------------------------------------------
-   One block rather than a card among cards, because a bottleneck beside three
-   things of equal weight is not a bottleneck. The left edge is heavy and the
-   name is the second-largest type on the page, under the goal itself — which
-   is the hierarchy the section is arguing for: this is what is in the way of
-   that. */
-.so-neck {
-    margin-top: var(--ax-gap);
-    padding: 24px 26px 22px;
-    border: 1px solid var(--ax-line);
-    border-left: 4px solid var(--ax-bad);
-    border-radius: 16px;
-    background: var(--ax-card);
-    box-shadow: var(--ax-shadow);
-}
-
-.so-neck-label {
-    margin: 0 0 6px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.11em;
-    text-transform: uppercase;
-    color: var(--ax-bad);
-}
-
-.so-neck-name {
-    margin: 0;
-    font-size: clamp(1.15rem, 2vw, 1.5rem);
-    line-height: 1.25;
-    font-weight: 700;
-    color: var(--ax-text);
-}
-
-.so-neck-sure {
-    margin: 8px 0 0;
-    font-size: 0.78rem;
-    color: var(--ax-muted);
-}
-
-.so-neck-sure span {
-    color: var(--ax-faint-text, var(--ax-muted));
-    opacity: 0.85;
-}
-
-.so-neck-body {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 20px;
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px solid var(--ax-line-soft);
-}
-
-.so-neck-part h3 {
-    margin: 0 0 8px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--ax-muted);
-}
-
-.so-neck-evidence {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-variant-numeric: tabular-nums;
-}
-
-.so-neck-evidence li {
-    padding: 4px 0 4px 12px;
-    border-left: 1px solid var(--ax-line-soft);
-    font-size: 0.83rem;
-    color: var(--ax-muted);
-}
-
-.so-neck-reading {
-    margin: 0;
-    font-size: 0.92rem;
-    line-height: 1.55;
-    color: var(--ax-text);
-}
-
-/* The only line on the page that tells somebody to stop doing something. */
-.so-neck-out {
-    margin: 18px 0 0;
-    padding: 12px 14px;
-    border-radius: 10px;
-    background: var(--ax-faint);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--ax-text);
-}
-
-.so-neck-out span {
-    display: block;
-    margin-bottom: 3px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--ax-muted);
-}
-
-@media (max-width: 640px) {
-    .so-neck { padding: 20px 18px 18px; }
-}
-
-/* ---- Did your last advice work -----------------------------------------
-   The section that holds the page to what it said. Every verdict draws,
-   including the ones never acted on — a list that hid those would be a
-   highlight reel, and "you were told to do this and did not" is the commonest
-   thing the loop has to report. */
-.so-loop {
-    margin-top: var(--ax-gap);
-    padding: 22px 24px 20px;
-    border: 1px solid var(--ax-line);
-    border-radius: 16px;
-    background: var(--ax-card);
-}
-
-.so-loop-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px 16px;
-}
-
-.so-loop-head h2 {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--ax-text);
-}
-
-.so-loop-count {
-    margin: 0;
-    font-size: 0.8rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--ax-muted);
-}
-
-.so-loop-say {
-    margin: 10px 0 0;
-    max-width: 66ch;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--ax-text);
-}
-
-.so-loop-list {
-    margin: 16px 0 0;
-    padding: 0;
-    list-style: none;
-}
-
-.so-verdict {
-    padding: 14px 0;
-    border-top: 1px solid var(--ax-line-soft);
-}
-
-.so-verdict:first-child { border-top: 0; }
-
-/* Never acted on: quieter, but present. */
-.so-verdict.is-untaken { opacity: 0.72; }
-
-.so-verdict-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 8px 10px;
-}
-
-.so-verdict-head strong {
-    font-size: 0.96rem;
-    font-weight: 650;
-    color: var(--ax-text);
-}
-
-.so-verdict-kind {
-    padding: 2px 8px;
-    border: 1px solid var(--ax-line);
-    border-radius: 999px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--ax-muted);
-}
-
-.so-verdict-when {
-    margin: 4px 0 0;
-    font-size: 0.76rem;
-    font-variant-numeric: tabular-nums;
-    color: var(--ax-muted);
-}
-
-/* What it predicted, printed next to what happened. Without this on screen
-   the reader has only the outcome, and an outcome with no prediction against
-   it can be read as a success either way. */
-.so-verdict-signal {
-    margin: 10px 0 0;
-    padding: 8px 11px;
-    border-radius: 9px;
-    background: var(--ax-faint);
-    font-size: 0.83rem;
-    line-height: 1.45;
-    color: var(--ax-text);
-}
-
-.so-verdict-signal span {
-    display: block;
-    margin-bottom: 2px;
-    font-size: 0.64rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--ax-muted);
-}
-
-.so-verdict-word {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px;
-    margin: 10px 0 0;
-    font-size: 0.86rem;
-    font-weight: 700;
-    color: var(--ax-muted);
-}
-
-.so-verdict-word.is-moved { color: var(--ax-good); }
-.so-verdict-word.is-slipped { color: var(--ax-bad); }
-.so-verdict-word.is-flat { color: var(--ax-amber); }
-
-.so-verdict-word em {
-    font-style: normal;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    color: var(--ax-muted);
-}
-
-.so-verdict-reading {
-    margin: 6px 0 0;
-    max-width: 66ch;
-    font-size: 0.84rem;
-    line-height: 1.5;
-    color: var(--ax-muted);
-}
-
-/* The aggregate: which kind of session has been followed by movement. */
-.so-loop-kinds {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid var(--ax-line);
-}
-
-.so-loop-kinds h3 {
-    margin: 0 0 10px;
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--ax-muted);
-}
-
-.so-loop-kinds ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.so-loop-kinds li {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 6px 14px;
-    padding: 5px 0;
-    font-size: 0.84rem;
-}
-
-.so-kind-name {
-    min-width: 9rem;
-    font-weight: 650;
-    color: var(--ax-text);
-}
-
-.so-kind-count {
-    font-variant-numeric: tabular-nums;
-    color: var(--ax-muted);
-}
-
-.so-kind-move {
-    font-variant-numeric: tabular-nums;
-    color: var(--ax-muted);
-}
-
-.so-kind-move.is-up { color: var(--ax-good); }
-.so-kind-move.is-down { color: var(--ax-bad); }
-
-.so-loop-note {
-    margin: 10px 0 0;
-    max-width: 66ch;
-    font-size: 0.78rem;
-    line-height: 1.5;
-    color: var(--ax-muted);
 }
 
 @media (max-width: 640px) {

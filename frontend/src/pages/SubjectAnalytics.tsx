@@ -86,7 +86,7 @@ import { subjectState } from '@/components/Subject/state';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
-import { LinkGoal, MAX_GOALS } from '@/components/Subject/LinkGoal';
+import { LinkGoal } from '@/components/Subject/LinkGoal';
 import {
   bandVolume,
   dimensionAxes,
@@ -127,6 +127,7 @@ import {
   type SubjectReading,
 } from '@/services/analytics';
 import { getGoals, updateGoal } from '@/services/goals';
+import { measureOf } from '@/components/Goals';
 import { createTask } from '@/services/tasks';
 import { format } from '@/utils';
 import '@/styles/analytics.css';
@@ -1019,14 +1020,34 @@ export default function SubjectAnalytics() {
   const [linking, setLinking] = useState('');
   const [linkError, setLinkError] = useState('');
 
-  /* Active goals that do not already name this subject. Newest first, which is
-     the order the server returns them in. */
+  /* Active outcome goals that do not already name this subject, each with the
+     subjects it does name — "Reach AIME · Mathematics" is a goal a reader can
+     tell at a glance is the wrong one to hang Computer Science off.
+
+     Counters are left out. "Earn 250,000 XP" is fed by every task on the
+     account, so aiming a subject at one says nothing about the subject; the
+     split is `measureOf` in components/Goals/numbers, which is the same one
+     the goals page's System tab uses. */
   const linkable = useMemo(() => {
     const already = new Set(model.goals.map((goal) => goal.id));
     return (goals.data?.goals ?? [])
       .filter((goal) => goal.status === 'active' && !already.has(goal.id))
-      .map((goal) => ({ id: goal.id, title: goal.title }));
-  }, [goals.data, model.goals]);
+      .filter((goal) => ['number', 'milestones'].includes(measureOf(goal)))
+      .map((goal) => ({
+        id: goal.id,
+        title: goal.title,
+        subjects: String(goal.subject_ids ?? '')
+          .split(',')
+          .map((id) => catalogue.get(id.trim())?.name ?? '')
+          .filter(Boolean),
+      }));
+  }, [catalogue, goals.data, model.goals]);
+
+  /** What is aimed at now, for the control that can take one off again. */
+  const linkedGoals = useMemo(
+    () => model.goals.map((goal) => ({ id: goal.id, title: goal.title })),
+    [model.goals],
+  );
 
   /* Both directions through one call, because linking and unlinking are the
      same write: the goal's subject list with this id added or taken out. The
@@ -1184,19 +1205,19 @@ export default function SubjectAnalytics() {
                 that they stopped being the protagonist. */}
             <ObjectiveBand subject={subject.name} objective={objective} />
 
-            {/* Under the band rather than in the Goals fold, and only when
-                there is nothing to aim at: "No goal set for this subject" is a
-                heading the reader should be able to answer on the spot rather
-                than a dead end six folds above the control that fixes it. */}
-            {model.goals.length === 0 && (
-              <LinkGoal
-                linked={0}
-                options={linkable}
-                busy={linking}
-                error={linkError}
-                onLink={(goalId) => void setLinked(goalId, true)}
-              />
-            )}
+            {/* Under the band, always, and it is the only place this control
+                lives. "No goal set for this subject" is a heading the reader
+                should be able to answer where they read it — and once they
+                have, changing it is the same job in the same spot rather than
+                a second control six folds down. */}
+            <LinkGoal
+              linked={linkedGoals}
+              options={linkable}
+              busy={linking}
+              error={linkError}
+              onLink={(goalId) => void setLinked(goalId, true)}
+              onUnlink={(goalId) => void setLinked(goalId, false)}
+            />
 
             {/* ---- WHERE AM I ----------------------------------------- */}
             {/* The page answers three questions in order — where am I, why am
@@ -2143,16 +2164,6 @@ export default function SubjectAnalytics() {
                         <li key={goal.id} className="sb-goal">
                           <div className="sb-goal-head">
                             <strong>{goal.title}</strong>
-                            {/* The way back out. Two is a cap, and a cap with
-                                no way to undo it is a trap. */}
-                            <button
-                              type="button"
-                              className="sb-goal-drop"
-                              disabled={linking !== ''}
-                              onClick={() => void setLinked(goal.id, false)}
-                            >
-                              {linking === goal.id ? 'Removing…' : 'Not this subject'}
-                            </button>
                             <span
                               className={`sb-goal-state ${
                                 goal.drift === null ? 'is-flat' : goal.drift > 0 ? 'is-late' : 'is-early'
@@ -2313,16 +2324,6 @@ export default function SubjectAnalytics() {
                         </li>
                       ))}
                     </ul>
-                    {model.goals.length < MAX_GOALS && (
-                      <LinkGoal
-                        linked={model.goals.length}
-                        options={linkable}
-                        busy={linking}
-                        error={linkError}
-                        onLink={(goalId) => void setLinked(goalId, true)}
-                      />
-                    )}
-
                     <p className="ax-panel-note ax-panel-note-foot">
                       {/* The line said "every figure here is counted" before the
                           route was added, and stopped being true the moment it

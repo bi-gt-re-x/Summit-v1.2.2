@@ -503,12 +503,10 @@ export function bottleneckFrom(
           : `${state.ratedCount} rated tasks behind the comparison`,
       ],
       reading:
-        'What you can take on is moving faster than what you finish well. '
-        + 'The ceiling is not the material; it is reproducing what you can '
-        + 'already do often enough that it stops being a good day.',
+        'You are taking on more than you are finishing well. The fix is '
+        + 'repetition, not new material.',
       ruled_out: enough && families.notConceptual >= 60
-        ? 'Harder material is not the next move — most of what goes wrong is '
-          + 'not about knowing it.'
+        ? 'Harder material. Most of what goes wrong is not about knowing it.'
         : '',
       confidence: enough ? 0.7 : 0.5,
       source: 'counted',
@@ -526,11 +524,9 @@ export function bottleneckFrom(
         families.leading ? `most common: ${families.leading.label}, ${families.leading.share}%` : '',
       ].filter(Boolean),
       reading:
-        'The work is going wrong after it starts rather than because of what '
-        + 'is in it. That has a different fix from not knowing: the session '
-        + 'has to change shape before its contents do.',
-      ruled_out:
-        'Adding difficulty would put a second problem on top of the one you have.',
+        'The work goes wrong after it starts, not because of what is in it. '
+        + 'Change the shape of the session before its contents.',
+      ruled_out: 'Adding difficulty. That is a second problem on top of this one.',
       confidence: families.answered >= 12 ? 0.7 : 0.55,
       source: 'counted',
     };
@@ -547,10 +543,9 @@ export function bottleneckFrom(
         state.curve.drop !== null ? `a ${state.curve.drop}-point step between them` : '',
       ].filter(Boolean),
       reading:
-        `The curve holds and then falls, which is a ceiling rather than a `
-        + `general weakness. The level to work is ${holds.label} — the one `
-        + `that is landing — until it stops being the hard one.`,
-      ruled_out: `Everything below ${cliff.label} is not the problem.`,
+        `A ceiling, not a general weakness — the curve holds and then falls. `
+        + `The level to work is ${holds.label} until it stops being hard.`,
+      ruled_out: `Everything below ${cliff.label}.`,
       confidence: cliff.done >= 8 ? 0.65 : 0.45,
       source: 'counted',
     };
@@ -565,10 +560,9 @@ export function bottleneckFrom(
         `${plural(calibration.rushed, 'task')} came in under your own median for the level and rated 3 or below`,
       ],
       reading:
-        'Work is being finished quicker than it usually takes you and rated '
-        + 'badly for it. That is a pace problem, and a pace problem does not '
-        + 'improve by being given more to do.',
-      ruled_out: 'More volume is not the move.',
+        'You are finishing quicker than usual and rating it badly. That is '
+        + 'pace, and pace does not improve with more to do.',
+      ruled_out: 'More volume.',
       confidence: calibration.rushed >= 6 ? 0.6 : 0.45,
       source: 'counted',
     };
@@ -594,8 +588,7 @@ export function bottleneckFrom(
           .map((part) => `${part.label}: ${plural(part.points, 'point')}`),
       ],
       reading:
-        `More of the shortfall sits here than anywhere else. It is `
-        + `${gap.largest.label.toLowerCase()} — `
+        `More of the shortfall sits here than anywhere else: `
         + `${gap.parts.find((part) => part.key === gap.largest?.key)?.from ?? ''}.`,
       ruled_out: '',
       confidence: 0.45,

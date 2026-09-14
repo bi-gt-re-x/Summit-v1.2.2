@@ -26,6 +26,7 @@
  * counted sentences are written against.
  */
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { act } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/test/render';
@@ -166,6 +167,30 @@ describe('the page opens on what the subject is for', () => {
     expect(band.getByRole('heading', { name: /no goal set/i })).toBeInTheDocument();
   });
 
+  it('offers the outcome goals to aim at, and leaves the counters out', async () => {
+    // "Earn 250,000 XP" is fed by every task on the account, so aiming a
+    // subject at one says nothing about the subject. See components/Goals/
+    // numbers for the split, and components/Subject/LinkGoal for the cap.
+    await show({
+      theGoals: [
+        {
+          id: 'g1', title: 'Reach AIME', status: 'active', goal_type: 'xp',
+          measure: 'number', subject_ids: 'geometry', milestones: [],
+        },
+        {
+          id: 'g2', title: 'Earn 250,000 XP', status: 'active', goal_type: 'xp',
+          measure: '', subject_ids: '', milestones: [],
+        },
+      ],
+    });
+
+    const picker = within(screen.getByLabelText('Aim this subject at a goal'));
+    await userEvent.click(picker.getByRole('button', { name: /Choose a goal/ }));
+
+    expect(picker.getByText('Reach AIME')).toBeInTheDocument();
+    expect(picker.queryByText('Earn 250,000 XP')).not.toBeInTheDocument();
+  });
+
   it('draws no goal-kind chip, because arithmetic cannot know the kind', async () => {
     await show({
       prefs: { analytics_ambitions: { algebra: { aim: 'Get to AIME' } } },
@@ -201,8 +226,7 @@ describe('the bottleneck', () => {
     const neck = within(section('Your current bottleneck'));
     expect(neck.getByRole('heading', { name: 'Work at Hard' })).toBeInTheDocument();
     expect(neck.getByText(/The level to work is Fair/)).toBeInTheDocument();
-    expect(neck.getByText('Everything below Hard is not the problem.'))
-      .toBeInTheDocument();
+    expect(neck.getByText('Everything below Hard.')).toBeInTheDocument();
   });
 
   it('does not draw at all when the record cannot name one', async () => {

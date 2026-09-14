@@ -628,24 +628,6 @@
 }
 .sb-goal-head strong { font-size: 14px; font-weight: 650; color: var(--ax-text); flex: 1; }
 
-/* Quiet until it is wanted. Unlinking is the rarest thing anybody does in this
-   panel, and a button as loud as the goal's own title would read as the
-   panel's main action. */
-.sb-goal-drop {
-    flex: none;
-    padding: 2px 8px;
-    border: 1px solid transparent;
-    border-radius: 999px;
-    background: none;
-    font: inherit;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--ax-faint);
-    cursor: pointer;
-    transition: color .15s ease, border-color .15s ease;
-}
-.sb-goal-drop:hover:not(:disabled) { color: var(--ax-bad); border-color: var(--ax-line); }
-.sb-goal-drop:disabled { opacity: .5; cursor: default; }
 
 /* Late, early, or no projection. Amber rather than red for late: a goal that
    lands after its date is a thing to act on, not a failure, and the page has
@@ -1714,7 +1696,8 @@
     color: var(--ax-muted);
 }
 
-.sb-link-list {
+/* --- What it is aimed at now ------------------------------------------- */
+.sb-link-on {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -1723,10 +1706,96 @@
     gap: 6px;
 }
 
-.sb-link-list li {
+.sb-link-on li {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
+    padding: 9px 12px;
+    border: 1px solid var(--ax-line);
+    border-left: 3px solid var(--ax-violet);
+    border-radius: 10px;
+    background: var(--ax-card);
+    font-size: 0.86rem;
+    font-weight: 650;
+    color: var(--ax-text);
+}
+
+/* Quiet until it is wanted. Taking a goal off is the rarest thing anybody does
+   here, and a button as loud as the goal's own title would read as the main
+   action of the block. */
+.sb-link-drop {
+    flex: none;
+    padding: 2px 9px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--ax-faint);
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+}
+.sb-link-drop:hover:not(:disabled) { color: var(--ax-bad); border-color: var(--ax-line); }
+.sb-link-drop:disabled { opacity: .5; cursor: default; }
+
+/* --- The picker, shut ---------------------------------------------------
+   An account with a dozen goals would otherwise meet a dozen rows it has to
+   read past every time it opens a subject. */
+.sb-link-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 7px 13px;
+    border: 1px solid var(--ax-line);
+    border-radius: 999px;
+    background: var(--ax-card);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 650;
+    color: var(--ax-text);
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+}
+
+.sb-link-toggle:hover { border-color: var(--ax-violet); color: var(--ax-violet); }
+.sb-link-toggle:focus-visible { outline: 2px solid var(--ax-violet); outline-offset: 2px; }
+
+/* How many are behind it, so the row is worth pressing or visibly is not. */
+.sb-link-toggle em {
+    font-style: normal;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ax-faint);
+    font-variant-numeric: tabular-nums;
+}
+
+.sb-link-toggle svg { transition: transform .2s ease; color: var(--ax-faint); }
+.sb-link-toggle.is-open svg { transform: rotate(180deg); color: var(--ax-violet); }
+
+.sb-link-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .22s ease;
+}
+
+.sb-link-toggle.is-open + .sb-link-body { grid-template-rows: 1fr; }
+.sb-link-body > div { overflow: hidden; min-height: 0; }
+
+.sb-link-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sb-link-list li {
+    display: flex;
+    align-items: center;
     gap: 12px;
     padding: 8px 12px;
     border: 1px solid var(--ax-line);
@@ -1734,14 +1803,39 @@
     background: var(--ax-card);
 }
 
-.sb-link-list span {
+.sb-link-name {
+    flex: 1;
     min-width: 0;
     font-size: 0.86rem;
     font-weight: 600;
     color: var(--ax-text);
 }
 
+/* What the goal is already about. "Other" when it names no subject, which is
+   a real answer rather than a blank — a goal nobody has filed anywhere is
+   exactly the one this page is offering to file. */
+.sb-link-subject {
+    flex: none;
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--ax-card-2);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ax-muted);
+}
+
 .sb-link-list .ax-btn { flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+    .sb-link-body { transition: none; }
+    .sb-link-toggle svg { transition: none; }
+}
 
 .sb-link-error {
     margin: 0;

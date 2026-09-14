@@ -316,7 +316,7 @@ describe('bottleneckFrom', () => {
 
     expect(neck?.name).toBe('Turning capability into work that lands');
     // The half a reader cannot get anywhere else: the thing to stop doing.
-    expect(neck?.ruled_out).toContain('Harder material is not the next move');
+    expect(neck?.ruled_out).toContain('Harder material');
   });
 
   it('will not rule anything out on figures that do not support it', () => {
@@ -339,7 +339,7 @@ describe('bottleneckFrom', () => {
 
     expect(neck?.name).toBe('Work at Hard');
     expect(neck?.reading).toContain('The level to work is Fair');
-    expect(neck?.ruled_out).toBe('Everything below Hard is not the problem.');
+    expect(neck?.ruled_out).toBe('Everything below Hard.');
     expect(neck?.evidence).toContain('a 24-point step between them');
   });
 
