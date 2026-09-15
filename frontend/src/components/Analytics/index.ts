@@ -69,6 +69,10 @@ export {
    here so the next person does not have to work out why nothing draws them. */
 
 /** What a tab shows instead of inventing figures it does not have. */
+/* The one panel at the early stages allowed to state a tendency rather than a
+   total. Its restraint lives in utils/observations, not in the component. */
+export { ObservationNote } from './Observation';
+
 export { Building } from './Building';
 export type { BuildingProps } from './Building';
 

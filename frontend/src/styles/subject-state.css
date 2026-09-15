@@ -19,6 +19,103 @@
  * a taken step says "Recorded" rather than merely going green.
  */
 
+/* ---- What is actually here ----------------------------------------------
+   Above the standing card and needing none of what it needs. Counts, and the
+   shape of what has been taken on, for the reader who has filed work under a
+   subject and rated none of it — see components/Subject/Facts, including why
+   the split is difficulty rather than the topic breakdown it would rather be.
+
+   Deliberately plainer than the card below it: this is description, that is a
+   verdict, and giving them the same washes would say they were the same kind
+   of claim. */
+.sx-facts {
+    margin: 0 0 16px;
+}
+.sx-facts-digest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin: 0;
+    font-size: 19px;
+    font-weight: 680;
+    letter-spacing: -.015em;
+    line-height: 1.35;
+    color: var(--ax-text);
+    font-variant-numeric: tabular-nums;
+}
+.sx-facts-sep {
+    font-style: normal;
+    font-weight: 400;
+    color: var(--ax-faint);
+    margin: 0 9px;
+}
+
+.sx-facts-split {
+    margin: 14px 0 0;
+    padding: 14px 16px 13px;
+    border: 1px solid var(--ax-line);
+    border-radius: 12px;
+    background: var(--ax-card);
+}
+/* The axis rides in the heading rather than sitting under it as a footnote.
+   "What you have been taking on" over a list of difficulty words, with the
+   word "difficulty" somewhere further down, is how a reader concludes these
+   are topics. */
+.sx-facts-head {
+    margin: 0 0 11px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
+.sx-facts-head em {
+    font-style: normal;
+    color: var(--ax-violet);
+}
+.sx-facts-split ul {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.sx-facts-split li {
+    display: grid;
+    grid-template-columns: 74px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+}
+.sx-facts-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ax-muted);
+}
+.sx-facts-bar {
+    display: block;
+    height: 6px;
+    border-radius: 99px;
+    background: var(--ax-card-2);
+    overflow: hidden;
+}
+.sx-facts-bar i {
+    display: block;
+    height: 100%;
+    min-width: 3px;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--ax-violet) 60%, transparent);
+}
+.sx-facts-count {
+    font-size: 12.5px;
+    font-weight: 650;
+    color: var(--ax-text);
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 559px) {
+    .sx-facts-split li { grid-template-columns: 64px minmax(0, 1fr) auto; gap: 9px; }
+}
+
 /* ---- The standing card --------------------------------------------------
    One card that answers "where am I" before anything is scrolled: the ring,
    the verdict, the goal it is all for. The washes are two radial gradients

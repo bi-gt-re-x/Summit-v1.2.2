@@ -47,6 +47,8 @@ import type { Stat } from '../StatRow';
 import { number as fmtNumber } from '@/utils/format';
 import { partsOfDay } from '@/utils/habits';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { ObservationNote } from '../Observation';
+import { observations } from '@/utils/observations';
 import { stageShows } from '@/utils/dataMaturity';
 import type { LearningItem } from '../index';
 
@@ -139,6 +141,12 @@ export function OverviewTab({
    */
   if (maturity.stage === 'new' || maturity.stage === 'early') {
     const finished = tasks.filter((task) => task.status === 'done').length;
+
+    /* Computed in the branch rather than above it: nothing past `weekly` draws
+       this, and the tabs that do have a great deal more to say than one
+       tendency. Not memoised — it is four passes over the window's tasks and
+       this branch only renders for accounts with a handful of them. */
+    const early = observations(tasks);
     /* Against every task on the books, not against the ones that went well.
        Expired tasks count in the denominator — a rate that quietly drops the
        ones you missed is not a completion rate. */
@@ -210,6 +218,19 @@ export function OverviewTab({
             }
           />
         </section>
+
+        {/* The one inference allowed this early, and only once it is earned.
+            Everything else at this stage is a tally, which is the right
+            default and also the reason an account can spend a fortnight being
+            handed totals and never once told anything about itself. The
+            restraint is in utils/observations — a floor, an effect size, and a
+            tier that has to be earned on both — so this renders nothing at all
+            until there is something honest to render. */}
+        {early[0] && (
+          <section className="ax-section">
+            <ObservationNote observation={early[0]} />
+          </section>
+        )}
 
         {/* Day 4-7. Two tallies and nothing inferred from them — see the note
             at the top of Early for the line these sit on the safe side of.

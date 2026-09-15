@@ -336,6 +336,46 @@ body:has(.ax-page) .app-main {
     .ax-collect-fill { transition: none; }
 }
 
+/* The one panel at the early stages that states a tendency instead of a total.
+   Tinted by tier, so an established pattern and a first guess do not arrive
+   wearing the same confidence — see src/components/Analytics/Observation.tsx
+   and the thresholds in src/utils/observations.ts. */
+.ax-observe {
+    padding: 14px 17px 15px;
+    border: 1px solid var(--ax-line);
+    border-left: 3px solid color-mix(in srgb, var(--ax-violet) 45%, transparent);
+    border-radius: 11px;
+    background: var(--ax-card);
+}
+.ax-observe.is-moderate { border-left-color: color-mix(in srgb, var(--ax-violet) 75%, transparent); }
+.ax-observe.is-high { border-left-color: var(--ax-violet); }
+
+.ax-observe-tier {
+    margin: 0 0 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ax-violet);
+}
+.ax-observe-text {
+    margin: 0;
+    max-width: 62ch;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--ax-text);
+}
+/* The sample, always, and never decoration: a reader who can see what a
+   sentence was counted off can decide what it is worth. */
+.ax-observe-support {
+    margin: 6px 0 0;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ax-faint);
+    font-variant-numeric: tabular-nums;
+}
+
 /* The five stages drawn as a track, and the thresholds still ahead listed
    under it. Filled behind, hollow in front — a reader can count the rungs
    without reading a word, which is the whole reason it is a picture and not
