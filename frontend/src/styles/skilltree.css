@@ -1527,57 +1527,88 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     .stx-lp-flash { animation: none; }
 }
 
-/* ---- moving between trees ------------------------------------------------
-   One strip naming every tree adjacent to this one. The diamonds on the canvas
-   still work and still walk downward; this is the version you do not have to
-   scroll the canvas to find, and the only way to reach a sibling directly. */
-.stx-treenav {
+/* ==========================================================================
+   The family — where this lattice sits among the others
+   ==========================================================================
+   The three rows this replaced ("Up", "Branches into", "Beside") carried every
+   fact and none of the shape. See components/SkillTree/TreeFamily.
+
+   The whole diagram is chips and two 1px lines: a hierarchy drawn with borders
+   rather than with an SVG, because it is three rows deep and always will be —
+   the deep structure is the breadcrumb's job. */
+.stx-family {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--lat-line);
+    border-radius: 12px;
+    background: var(--lat-panel);
+}
+
+.stx-family-rung {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px 18px;
-    padding: 9px 14px;
-    border: 1px solid var(--lat-line);
-    border-radius: 999px;
-    background: var(--lat-panel);
-    box-shadow: var(--lat-shadow);
-    align-self: center;
-    max-width: 100%;
-}
-.stx-treenav-group { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 6px; }
-.stx-treenav-label {
-    font-size: 10.5px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--lat-faint);
-}
-.stx-treenav-link {
-    display: inline-flex;
-    align-items: center;
+    flex-wrap: wrap;
     gap: 6px;
+}
+
+.stx-family-rung.is-into { flex-direction: column; gap: 0; }
+.stx-family-kids {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* The joins. Vertical hairlines rather than a bracket: with the rows centred,
+   one line between them is enough to say "these hang off that", and a bracket
+   would have to know how wide the row below it wrapped to. */
+.stx-family-line {
+    display: block;
+    width: 1px;
+    height: 12px;
+    background: var(--lat-line);
+}
+
+.stx-family-rung.is-up { flex-direction: column; gap: 0; }
+
+.stx-family-chip {
     padding: 5px 12px;
     border: 1px solid var(--lat-line);
     border-radius: 999px;
-    background: transparent;
-    color: var(--lat-text);
+    background: var(--lat-panel);
     font: inherit;
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 650;
+    color: var(--lat-muted);
     cursor: pointer;
-    transition: background .14s ease, border-color .14s ease, color .14s ease;
+    white-space: nowrap;
+    transition: color .14s ease, border-color .14s ease, background .14s ease;
 }
-.stx-treenav-link:hover {
-    background: var(--lat-violet-soft);
+
+.stx-family-chip:hover { color: var(--lat-text); border-color: var(--lat-violet); }
+.stx-family-chip:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: 1px; }
+
+/* The one you are in. A filled chip rather than a lit border: this is the only
+   thing in the diagram that is not a way to somewhere else, and it should not
+   look pressable. */
+.stx-family-chip.is-here {
+    background: var(--lat-violet);
     border-color: var(--lat-violet);
-    color: var(--lat-violet);
+    color: #fff;
+    font-weight: 750;
+    cursor: default;
 }
-.stx-treenav-link i { font-style: normal; color: var(--lat-faint); }
-.stx-treenav-link:hover i { color: var(--lat-violet); }
-.stx-treenav-ico { width: 14px; height: 14px; color: var(--lat-faint); }
-.stx-treenav-link:hover .stx-treenav-ico { color: var(--lat-violet); }
-.stx-treenav-link.is-into { border-style: dashed; }
+html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
+
+/* A child is a lattice you have not opened, which is what the canvas says with
+   a dashed diamond. Same vocabulary here. */
+.stx-family-chip.is-child { border-style: dashed; }
 
 /* ---- how to improve ------------------------------------------------------
    The steps are the point of the panel once a skill has been chosen, so they
@@ -3540,4 +3571,75 @@ html[data-theme="dark"] .stx-region {
 
 @media (prefers-reduced-motion: reduce) {
     .stx-drawer-mark { transition: none; }
+}
+
+/* ==========================================================================
+   What a focus card says about the account
+   ==========================================================================
+   A name and a lattice were two facts the reader already knew — they chose
+   them. These are the ones they cannot see from the card's title: how far
+   round, how much is open, and what to do this afternoon. See the note in
+   components/SkillTree/FocusTopics about where the figures come from. */
+.stx-focus-pct {
+    flex: none;
+    margin-left: auto;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--lat-violet);
+    font-variant-numeric: tabular-nums;
+}
+
+/* The percentage said again as a shape. It is the one figure a reader compares
+   across five cards, and five numbers in a row is a table. */
+.stx-focus-bar {
+    display: block;
+    height: 3px;
+    margin: 0 12px;
+    border-radius: 999px;
+    background: var(--lat-line-soft);
+    overflow: hidden;
+}
+
+.stx-focus-bar i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--lat-violet);
+    /* Never invisible: a tree with one node done out of ninety is a different
+       state from one with nothing done, and a bar rounded to nought says they
+       are the same. */
+    min-width: 2px;
+}
+
+.stx-focus-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 10px;
+    margin: 7px 12px 0;
+    font-size: 10.5px;
+    color: var(--lat-faint);
+}
+
+.stx-focus-stats b { font-weight: 750; color: var(--lat-muted); font-variant-numeric: tabular-nums; }
+
+.stx-focus-next {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 4px 12px 9px;
+    font-size: 11px;
+    font-weight: 650;
+    color: var(--lat-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stx-focus-next span {
+    flex: none;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--lat-green);
 }

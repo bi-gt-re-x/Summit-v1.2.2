@@ -130,6 +130,8 @@ import {
   RouteStrip,
   SkillTree as SkillTreeCanvas,
   SubjectRail,
+  TreeFamily,
+  type FocusStanding,
   TilePeek,
   type TreeMode,
 } from '@/components/SkillTree';
@@ -163,7 +165,6 @@ import {
   navTargets,
   parentChain,
   parentOf,
-  siblingsOf,
   subjectTreeById,
 } from '@/skills/subjectTrees';
 import {
@@ -382,7 +383,11 @@ export default function SkillTrees() {
   // finding the right diamond on the canvas.
   const up = useMemo(() => parentOf(tree.id), [tree.id]);
   const into = useMemo(() => childrenOf(tree.id), [tree.id]);
-  const beside = useMemo(() => siblingsOf(tree.id), [tree.id]);
+  /* Every tree on this rung, the open one included and in authored order —
+     `siblingsOf` leaves it out, which is right for a list and wrong for a row:
+     a row of three with the fourth missing has hidden the only one the reader
+     needed to find. A root has no rung, so it is a row of one. */
+  const peers = useMemo(() => (up ? childrenOf(up.id) : [tree]), [tree, up]);
 
   // Everything the reader is currently inside, root first. The focus cards and
   // the rail light from this, so walking three forks down does not put every
@@ -618,6 +623,42 @@ export default function SkillTrees() {
      the field for the caret. The rail is not mounted until the first of those
      has happened. */
   const [searchAt, setSearchAt] = useState(0);
+
+  /* ---- where this account stands on each of its five -------------------
+     Real account state on an authored lattice: each focus subject's own tree
+     with this account's practice applied, counted. The cards print it; nothing
+     here is written back, and the lattice is the same lattice it would be for
+     anybody.
+
+     Only while the drawer is open. It is five trees' worth of graph building
+     and tallying, and a page that paid for it on every render would be paying
+     for five lattices nobody has asked to see. */
+  const focusStanding = useMemo(() => {
+    const rows = new Map<string, FocusStanding>();
+    if (!drawerOpen) return rows;
+
+    for (const id of focus) {
+      const subject = subjects.find((row) => row.id === id);
+      const target = treeForSubject(id, subject?.group);
+      const source = subjectTreeById(target.tree);
+      if (!source) continue;
+
+      const built = applyProgress(graphFromSubjectTree(source), progress, plans);
+      const tally = tallyGraph(built);
+      const doors = new Set(navTargets(source).keys());
+      const [chance] = opportunities(built, doors);
+
+      rows.set(id, {
+        mastered: tally.complete,
+        total: tally.total,
+        percent: Math.round(tally.percent),
+        open: tally.available,
+        next: chance?.node.name ?? null,
+      });
+    }
+    return rows;
+  }, [drawerOpen, focus, plans, progress, subjects]);
+
   /* Picking something in the drawer folds it away and goes back up. The
      drawer is at the bottom of the page and the thing it changes is at the
      top, so leaving it open would leave the reader looking at a control whose
@@ -876,55 +917,13 @@ export default function SkillTrees() {
           </header>
         </PageHero>
 
-        {/* ---- moving between trees ----
+        {/* ---- where this lattice sits ----
             The diamonds on the canvas walk downward and the breadcrumb walks
-            up, but both mean hunting for a control. This says every tree
-            adjacent to this one outright: the one above, the ones below, and
-            the ones beside it. */}
-        {(up || into.length > 0 || beside.length > 0) && (
-          <nav className="stx-treenav" aria-label="Move between trees">
-            {up && (
-              <span className="stx-treenav-group">
-                <span className="stx-treenav-label">Up</span>
-                <button type="button" className="stx-treenav-link is-up" onClick={() => goTo(up.id)}>
-                  <Ico icon="branch" className="stx-ico stx-treenav-ico" />
-                  {up.title}
-                </button>
-              </span>
-            )}
-            {into.length > 0 && (
-              <span className="stx-treenav-group">
-                <span className="stx-treenav-label">Branches into</span>
-                {into.map((child) => (
-                  <button
-                    key={child.id}
-                    type="button"
-                    className="stx-treenav-link is-into"
-                    onClick={() => goTo(child.id)}
-                  >
-                    {child.title}
-                    <i aria-hidden="true">›</i>
-                  </button>
-                ))}
-              </span>
-            )}
-            {beside.length > 0 && (
-              <span className="stx-treenav-group">
-                <span className="stx-treenav-label">Beside</span>
-                {beside.map((peer) => (
-                  <button
-                    key={peer.id}
-                    type="button"
-                    className="stx-treenav-link"
-                    onClick={() => goTo(peer.id)}
-                  >
-                    {peer.title}
-                  </button>
-                ))}
-              </span>
-            )}
-          </nav>
-        )}
+            up, and both mean hunting for a control. This is the same three
+            facts the "Up / Branches into / Beside" rows carried, drawn in the
+            shape they describe — see components/SkillTree/TreeFamily for why
+            three prepositions were not enough. */}
+        <TreeFamily here={tree} up={up} peers={peers} into={into} onGo={goTo} />
 
         {/* ---- the band of figures ---- */}
         <section className="stx-band" aria-label="Where this tree stands">
@@ -1172,6 +1171,7 @@ export default function SkillTrees() {
                 subjects={subjects}
                 focus={focus}
                 openTrail={trail}
+                standing={focusStanding}
                 onOpen={(subjectId) => {
                   openSubject(subjectId);
                   setDrawerOpen(false);

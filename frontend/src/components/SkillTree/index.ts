@@ -15,7 +15,10 @@ export type { MinimapProps } from './Minimap';
 export { SkillNode } from './SkillNode';
 export type { SkillNodeProps } from './SkillNode';
 export { FocusTopics } from './FocusTopics';
-export type { FocusTopicsProps } from './FocusTopics';
+export type { FocusStanding, FocusTopicsProps } from './FocusTopics';
+/** The lattice's place among the others, drawn. See ./TreeFamily. */
+export { TreeFamily } from './TreeFamily';
+export type { TreeFamilyProps } from './TreeFamily';
 /** The screen a new account meets before the lattice. See ./FocusSetup. */
 export { FocusSetup } from './FocusSetup';
 export type { FocusSetupProps } from './FocusSetup';

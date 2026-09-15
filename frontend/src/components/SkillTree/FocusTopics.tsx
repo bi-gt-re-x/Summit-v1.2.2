@@ -15,6 +15,23 @@
  * this account files the most tasks under. This component only draws them and
  * reports a change; it holds no state except which slot has its picker open.
  *
+ * ## A card says where the account stands
+ *
+ * The card used to print a subject's name and the lattice it opens, which is
+ * two facts a reader already knew — they chose it. What it could not say was
+ * the only thing worth asking of a focus topic: *how am I doing at this*.
+ *
+ * That figure is real account state rather than anything authored: the tree's
+ * own nodes with this account's practice applied, counted. It arrives as a
+ * prop rather than being worked out here, because five lattices' worth of
+ * arithmetic on every keystroke in the picker's filter would be five lattices'
+ * worth of arithmetic on every keystroke in the picker's filter. See
+ * `focusStanding` in pages/SkillTrees.
+ *
+ * The separation is the same one the whole page keeps: the lattice is authored
+ * and identical on every account, the standing is the account's, and a card
+ * that mixed them would be a card that could not be argued with.
+ *
  * ## The picker
  *
  * A popover under the card being changed, holding a filter and every subject
@@ -29,6 +46,19 @@ import { iconUrl as subjectIconUrl, type Subject } from '@/services/subjects';
 import { treeForSubject } from '@/skills/subjectMap';
 import { subjectTreeById } from '@/skills/subjectTrees';
 
+/** How an account stands on one focus topic's lattice. */
+export interface FocusStanding {
+  /** Nodes finished, and nodes there are. */
+  mastered: number;
+  total: number;
+  /** The tally's own percentage, rounded. */
+  percent: number;
+  /** How many can be started right now. */
+  open: number;
+  /** The best thing to do next, by name, or null on a finished tree. */
+  next: string | null;
+}
+
 export interface FocusTopicsProps {
   /** Every subject the account can pick from, in the catalogue's order. */
   subjects: Subject[];
@@ -41,6 +71,9 @@ export interface FocusTopicsProps {
   /** The open tree and its ancestors, so the card you walked in through stays
    *  lit while you are inside it. */
   openTrail: readonly string[];
+  /** Subject id → where this account stands on it. Missing draws the card the
+   *  way it always drew: a name and a lattice, and no claim about anybody. */
+  standing?: ReadonlyMap<string, FocusStanding>;
   /**
    * Back to the screen that asked for all five at once.
    *
@@ -57,6 +90,7 @@ export function FocusTopics({
   onOpen,
   onChange,
   openTrail,
+  standing,
   onChooseAll,
 }: FocusTopicsProps) {
   const [picking, setPicking] = useState<number | null>(null);
@@ -142,6 +176,7 @@ export function FocusTopics({
           const target = treeForSubject(id, subject?.group);
           const tree = subjectTreeById(target.tree);
           const here = tree ? openTrail.includes(tree.id) : false;
+          const stands = standing?.get(id);
           return (
             <li key={`${id}-${index}`} className={`stx-focus-card${here ? ' is-here' : ''}`}>
               <button
@@ -162,7 +197,44 @@ export function FocusTopics({
                   <strong>{subject?.name ?? id}</strong>
                   <em>{tree?.title ?? 'No lattice yet'}</em>
                 </span>
+                {stands && (
+                  <span className="stx-focus-pct" aria-hidden="true">
+                    {stands.percent}%
+                  </span>
+                )}
               </button>
+
+              {stands && (
+                <>
+                  {/* The bar is the percentage said again in a shape, which is
+                      the one figure on the card a reader compares across five
+                      of them — and five numbers in a row is a table. */}
+                  <span className="stx-focus-bar" aria-hidden="true">
+                    <i style={{ width: `${stands.percent}%` }} />
+                  </span>
+                  <p className="stx-focus-stats">
+                    <span>
+                      <b>
+                        {stands.mastered}/{stands.total}
+                      </b>{' '}
+                      mastered
+                    </span>
+                    {stands.open > 0 && (
+                      <span>
+                        <b>{stands.open}</b> open now
+                      </span>
+                    )}
+                  </p>
+                  {/* What to do, rather than what has happened — the only line
+                      on the card a reader can act on this afternoon. */}
+                  {stands.next && (
+                    <p className="stx-focus-next" title={stands.next}>
+                      <span>Next</span>
+                      {stands.next}
+                    </p>
+                  )}
+                </>
+              )}
               <button
                 type="button"
                 className="stx-focus-swap"
