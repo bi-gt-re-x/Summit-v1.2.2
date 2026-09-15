@@ -1,20 +1,37 @@
 /**
  * What a lattice node is, once you have clicked it.
  *
- * The column beside the canvas: the skill's drawing and name, what kind of
- * thing it is and where it stands, a sentence about it, the progress and the XP
- * behind that progress, then how to get better at it, then the two lists that
- * make the panel a way of walking the tree rather than a caption — what this
- * node opens, and what sits near it.
+ * ## Three kinds of truth, said out loud
  *
- * ## How to improve is the middle of the panel, not a footnote
+ * The panel holds three completely different kinds of claim and used to run
+ * them together in one column, so a reader had no way of knowing which
+ * sentences were about the subject and which were about them:
  *
- * Everything above it describes the skill; everything below it is navigation.
- * The section between the two is the only part that tells a reader what to do
- * with their afternoon, so it is the one that carries four things rather than
- * one — the steps, and then the three questions somebody asks the moment they
- * have read the steps: how will I know, how does this go wrong, how long. All
- * four are one call into skills/improve, which is what stops them disagreeing.
+ *   **Your progress** — account state. Where you stand, in a sentence before a
+ *   percentage, then the bar and the XP behind it.
+ *
+ *   **The curriculum** — authored, and identical on every account. What the
+ *   skill is, and what it sits on. Nothing under this heading is a claim about
+ *   the reader.
+ *
+ *   **Your next move** — derived from the first two. The steps, what finishing
+ *   looks like, the trap, the time.
+ *
+ * Then what comes next, which is navigation rather than a claim of any kind.
+ * The headings are the feature: the distinction was always in the
+ * architecture — see the note at the top of skills/subjectTrees — and was
+ * nowhere in the page.
+ *
+ * ## Your next move is the middle of the panel, not a footnote
+ *
+ * Everything above it describes; everything below it navigates. The section
+ * between the two is the only part that tells a reader what to do with their
+ * afternoon, so it is the one that carries four things rather than one — the
+ * steps, and then the three questions somebody asks the moment they have read
+ * them: how will I know, how does this go wrong, how long. All four are one
+ * call into skills/improve, which is what stops them disagreeing. "Done when"
+ * is pulled out of the row of three, because "how will I know I am finished"
+ * is the question a percentage answers worst.
  *
  * ## The name can be rewritten too
  *
@@ -36,29 +53,34 @@
  * ## Both lists are read from the graph, not from the node
  *
  * A node states what it `requires`; nothing states what it opens. That is the
- * right way round to store it — one edge, written once — so "Unlocks" is those
- * same edges read backwards, and "Related" is the node's own prerequisites plus
- * anything it merely recommends. Every row selects the node it names, which is
- * what turns the panel into navigation.
+ * right way round to store it — one edge, written once — so "what finishing
+ * this opens" is those same edges read backwards. The two lists at the foot
+ * were one called "Related", which put a gate and a nice-to-have under one
+ * heading; the prerequisites have a section of their own now, and what is left
+ * is the pair a reader chooses between. Every row selects the node it names,
+ * which is what turns the panel into navigation.
  *
- * ## A locked node is told what is in the way, by name
+ * ## Why this skill, whether or not it is locked
  *
- * "Locked" on its own is a word, not information. The checklist under the
- * counts names every prerequisite and ticks the ones that are done, so a node
- * blocked by one reads differently from a node blocked by four — and the
- * action at the foot of the panel becomes *start with the thing that is
- * blocking it* rather than a greyed-out button repeating the word. See
- * `nearestBlocker` in skills/route for which of several it picks.
+ * The prerequisite checklist used to be drawn only on a blocked node, so the
+ * question "why am I looking at this" was answered exactly when the answer was
+ * "you are not allowed it yet". An open node has a better reason and it was
+ * going unsaid: *these are the things you have already done*. Same list, same
+ * ticks, on every node that sits on anything — and a node that sits on nothing
+ * says so, because "a foundation" is an answer too.
  *
- * ## Where this sits, before what it is
+ * The action at the foot still becomes *start with the thing that is blocking
+ * it* on a locked node, rather than a greyed-out button repeating the word the
+ * badge already said. See `nearestBlocker` in skills/route.
  *
- * "Your path" is three counts the panel could always have stated and never
- * did: how many of the prerequisites are behind you, how many are not, and how
- * many skills open when this one lands. All three are the graph read two ways
- * — `requirementsOf` and `unlockedBy` — and they are the difference between a
- * locked tile reading as a dead end and reading as a near-term target. The
- * canvas says the same thing in emphasis; this says it in numbers, because a
- * shade cannot say "one away".
+ * ## A position, not only a percentage
+ *
+ * "72%" is four states' worth of arithmetic flattened into one number, and
+ * there are things it cannot say: *one prerequisite away* is the difference
+ * between a dead end and next week, *step 4 of 7* is a position a percentage
+ * rounds away, and *open now, nothing in the way* read as `0%`. So the
+ * progress section opens with a sentence and the number sits in the header
+ * beside the name, where a reader looks for it.
  *
  * ## Nothing empty is printed
  *
@@ -410,14 +432,16 @@ export function LatticePanel({
   // Everything under "How to improve", in one call. The group decides which
   // verbs the derived half speaks in, and the graph's own id is the tree's.
   const plan = improvePlan(node, { opens, needs, blockers, group: groupOf(graph.id) });
-  // Its own prerequisites first, then anything it suggests — the nodes a reader
-  // would look at next in either direction.
-  const near = [
-    ...needs,
+  /* What this node merely suggests, in either direction along a dashed edge.
+     Kept apart from `needs` now: the two used to share a heading called
+     "Related", which put a gate and a nice-to-have in one list and left the
+     reader to work out which was which from a dash on a line elsewhere. */
+  const suggested = [
     ...(node.recommends ?? [])
       .map((id) => graph.nodes.find((entry) => entry.id === id))
       .filter((entry): entry is GraphNode => Boolean(entry)),
-  ];
+    ...graph.nodes.filter((entry) => (entry.recommends ?? []).includes(node.id)),
+  ].filter((entry, at, all) => all.findIndex((one) => one.id === entry.id) === at);
 
   // What is actually shown: the reader's programme where they have written one,
   // and the suggested one otherwise. Everything below reads `programme`, so the
@@ -467,6 +491,48 @@ export function LatticePanel({
                     ? `Finish this skill · +${number(gain)} XP`
                     : `Practice · +${number(gain)} XP`,
               };
+  /*
+   * Where the reader stands, in a sentence.
+   *
+   * The percentage under it is four states' worth of arithmetic flattened
+   * into one number, and there are things it cannot say. "One prerequisite
+   * away" is the difference between a dead end and next week; "step 4 of 7"
+   * is a position a percentage rounds away; "open now, nothing in the way" is
+   * the single most actionable thing the panel ever gets to print, and it read
+   * as `0%`.
+   *
+   * Ordered by what a reader does about it rather than by status: finished
+   * first because there is nothing to do, then blocked because the thing to do
+   * is elsewhere, then the two kinds of part-done, then open.
+   */
+  const position =
+    node.status === 'complete'
+      ? node.on
+        ? `Mastered on ${node.on}.`
+        : 'Mastered.'
+      : blockers.length > 0
+        ? `${blockers.length} ${blockers.length === 1 ? 'prerequisite' : 'prerequisites'} away — ${
+            blockers.length === 1 ? 'one thing' : 'those'
+          } to finish before this opens.`
+        : steps
+          ? `Step ${at + 1} of ${programme.steps.length} of your own programme.`
+          : node.status === 'progress'
+            ? `${Math.round(node.percent)}% of the way through.`
+            : 'Open now — nothing is in the way of starting it.';
+
+  /*
+   * Why the reader is being shown this, in the panel's own words.
+   *
+   * The checklist under it was drawn only on a blocked node, which meant the
+   * question "why am I looking at this" was answered exactly when the answer
+   * was "you are not allowed it yet". An open node has a better reason and it
+   * was going unsaid: these are the things you have already done.
+   */
+  const why =
+    blockers.length > 0
+      ? `Waiting on ${blockers.length} of ${needs.length}:`
+      : `Open because ${needs.length === 1 ? 'this is done:' : `all ${needs.length} of these are done:`}`;
+
   // The first edit takes a copy of the suggested programme — see the note at
   // the top of utils/skillSteps on why an override rather than a diff.
   const changeSteps = onSteps ? (next: StepPlan) => onSteps(next) : undefined;
@@ -578,96 +644,104 @@ export function LatticePanel({
             )}
           </p>
         </div>
+        {/* The figure, in the header where the name is, rather than fifty
+            pixels down inside a section about progress. It is the one number a
+            reader looks for the instant a panel opens, and it was under two
+            paragraphs of prose. */}
+        <strong className={`stx-lp-big is-${node.status}`} aria-hidden="true">
+          {Math.round(node.percent)}%
+        </strong>
       </header>
 
       {/* Everything between the name and the button scrolls, so the panel is
           exactly as tall as the canvas beside it however much a node carries. */}
       <div className="stx-lp-body">
-        {node.blurb && <p className="stx-lp-blurb">{node.blurb}</p>}
+        {/* ---- 2. Your progress ----
+            First, because a reader who has clicked a tile they already know
+            is asking where *they* are on it, and because everything under
+            "Next move" only means anything once that is on the table. */}
+        <section className="stx-lp-truth is-mine">
+          <h3 className="stx-lp-truth-name">Your progress</h3>
 
-        {/* Where this sits, in the two directions that matter. Before the
-            percentage on purpose: "one prerequisite away" is a more useful
-            first fact about a locked node than "0%". */}
-        {(needs.length > 0 || opens.length > 0) && (
-          <ul className="stx-lp-path">
-            {blockers.length > 0 ? (
-              <li className="is-blocked">
-                {/* "1 of 1" is a fraction nobody needs. The count on its own is
-                    the whole fact until some of them are done. */}
-                <b>
-                  {blockers.length === needs.length
-                    ? blockers.length
-                    : `${blockers.length} of ${needs.length}`}
-                </b>{' '}
-                {blockers.length === 1 ? 'prerequisite' : 'prerequisites'} still to go
-              </li>
-            ) : needs.length > 0 ? (
-              <li className="is-met">
-                <b>All {needs.length}</b>{' '}
-                {needs.length === 1 ? 'prerequisite is' : 'prerequisites are'} done
-              </li>
-            ) : null}
-            {opens.length > 0 && (
-              <li className="is-opens">
-                <b>{opens.length}</b> {opens.length === 1 ? 'skill opens' : 'skills open'} after it
-              </li>
-            )}
-          </ul>
-        )}
+          {/* The state in a sentence rather than in a percentage. "72%" is
+              four states' worth of arithmetic flattened into one number: it
+              cannot say "one prerequisite away", and that is the state a
+              reader acts on. */}
+          <p className={`stx-lp-position is-${node.status}`}>{position}</p>
 
-        {/* What is actually in the way, by name. Only while something is: a
-            finished list of ticks under a node that is already open is a
-            paragraph saying nothing happened. */}
-        {blockers.length > 0 && (
-          <ul className="stx-lp-needs" aria-label="What this needs first">
-            {needs.map((need) => {
-              const done = need.status === 'complete';
-              return (
-                <li key={need.id} className={done ? 'is-done' : undefined}>
-                  <span className="stx-lp-need-mark" aria-hidden="true">
-                    {done ? '✓' : '○'}
-                  </span>
-                  <button type="button" onClick={() => onSelect(need)}>
-                    {need.name}
-                  </button>
-                  {!done && <em>{STATUS_LABEL[need.status]}</em>}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-
-        <section className={`stx-lp-progress is-${node.status}`}>
-          <p className="stx-lp-line">
-            <span>Progress</span>
-            <b>
-              {Math.round(node.percent)}%
-              {flash != null && (
-                <span className="stx-lp-flash" role="status">
-                  +{number(flash)} XP
-                </span>
-              )}
-            </b>
-          </p>
-          <ProgressIndicator percent={node.percent} shape="bar" />
-          {node.need > 0 && (
-            <p className="stx-lp-line stx-lp-xp">
-              <span>XP Earned</span>
+          <div className={`stx-lp-progress is-${node.status}`}>
+            <p className="stx-lp-line">
+              <span>Progress</span>
               <b>
-                {number(node.have)} / {number(node.need)} XP
+                {Math.round(node.percent)}%
+                {flash != null && (
+                  <span className="stx-lp-flash" role="status">
+                    +{number(flash)} XP
+                  </span>
+                )}
               </b>
             </p>
+            <ProgressIndicator percent={node.percent} shape="bar" />
+            {node.need > 0 && (
+              <p className="stx-lp-line stx-lp-xp">
+                <span>XP Earned</span>
+                <b>
+                  {number(node.have)} / {number(node.need)} XP
+                </b>
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* ---- 3. The curriculum ----
+            What the subject says, which is the same on every account. The
+            heading is doing real work: everything under it is authored and
+            nothing under it is about the reader, which is the distinction the
+            whole page is arranged around and had never been said out loud. */}
+        <section className="stx-lp-truth is-authored">
+          <h3 className="stx-lp-truth-name">The curriculum</h3>
+
+          {node.blurb && <p className="stx-lp-blurb">{node.blurb}</p>}
+
+          {/* Why this skill is where it is — the panel showing its working.
+              It used to appear only on a blocked node, which meant the
+              question "why am I being shown this" had an answer exactly when
+              the answer was "you are not allowed it yet". An open node has a
+              reason too, and it is a better one: these are the things you
+              have already done. */}
+          {needs.length > 0 ? (
+            <>
+              <p className="stx-lp-why">{why}</p>
+              <ul className="stx-lp-needs" aria-label="What this skill sits on">
+                {needs.map((need) => {
+                  const done = need.status === 'complete';
+                  return (
+                    <li key={need.id} className={done ? 'is-done' : undefined}>
+                      <span className="stx-lp-need-mark" aria-hidden="true">
+                        {done ? '✓' : '○'}
+                      </span>
+                      <button type="button" onClick={() => onSelect(need)}>
+                        {need.name}
+                      </button>
+                      {!done && <em>{STATUS_LABEL[need.status]}</em>}
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          ) : (
+            <p className="stx-lp-why">A foundation of this subject — nothing comes before it.</p>
           )}
         </section>
 
-        {/* How to improve — the part a reader came for once they have decided
-            to work on this. The headline is where *they* stand, the steps are
-            what to go and do, and the three notes are the questions asked the
-            moment the steps have been read: when am I done, what goes wrong,
-            how long. All of it is one call, so a locked node's steps and its
-            proof cannot disagree about what they are asking for. */}
-        <section className="stx-lp-section stx-lp-improve">
-          <h3>How to improve</h3>
+        {/* ---- 4. Your next move ----
+            The centre of the panel and the only part that says what to do with
+            an afternoon. Everything above describes; everything below
+            navigates. All four pieces are one call into skills/improve, which
+            is what stops the steps and the proof asking for different things. */}
+        <section className="stx-lp-truth is-move">
+          <h3 className="stx-lp-truth-name">Your next move</h3>
+
           <p className={`stx-lp-headline is-${node.status}`}>{plan.headline}</p>
           {/* `start` rather than a re-numbered list: step seven has to read as
               step seven, or the count under it is describing something else. */}
@@ -681,11 +755,17 @@ export function LatticePanel({
           <button type="button" className="stx-lp-more" onClick={openSteps}>
             All {programme.steps.length} steps
           </button>
+
+          {/* Pulled out of the row of three notes it used to sit in. "How will
+              I know I am done" is the question a set of steps raises and the
+              one a percentage answers worst — it deserves the weight the
+              other two do not. */}
+          <p className="stx-lp-proof">
+            <b>Done when</b>
+            {plan.proof}
+          </p>
+
           <dl className="stx-lp-notes">
-            <div className="stx-lp-note is-proof">
-              <dt>Done when</dt>
-              <dd>{plan.proof}</dd>
-            </div>
             <div className="stx-lp-note is-pitfall">
               <dt>Common trap</dt>
               <dd>{plan.pitfall}</dd>
@@ -697,8 +777,19 @@ export function LatticePanel({
           </dl>
         </section>
 
-        <Rows title="Unlocks" nodes={opens} onSelect={onSelect} />
-        <Rows title="Related Skills" nodes={near} onSelect={onSelect} showPercent />
+        {/* ---- 5. What comes next ----
+            Two lists that were one. "Related" held the prerequisites and the
+            suggestions together, which put a gate and a nice-to-have under one
+            heading — and the prerequisites have their own section above now.
+            What is left is the pair a reader actually chooses between: what
+            this opens, and what is merely worth a look. */}
+        {(opens.length > 0 || suggested.length > 0) && (
+          <section className="stx-lp-truth is-next">
+            <h3 className="stx-lp-truth-name">What comes next</h3>
+            <Rows title={`Finishing this opens ${opens.length === 1 ? 'a skill' : `${opens.length} skills`}`} nodes={opens} onSelect={onSelect} />
+            <Rows title="Worth exploring" nodes={suggested} onSelect={onSelect} showPercent />
+          </section>
+        )}
       </div>
 
       {/* The one control, and it says what pressing it does here rather than

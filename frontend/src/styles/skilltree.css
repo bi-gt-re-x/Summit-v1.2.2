@@ -3643,3 +3643,122 @@ html[data-theme="dark"] .stx-region {
     text-transform: uppercase;
     color: var(--lat-green);
 }
+
+/* ==========================================================================
+   The panel's three kinds of truth
+   ==========================================================================
+   Account state, authored curriculum, and the move derived from the two. The
+   distinction has always been in the architecture and was nowhere in the page
+   — see the note at the top of components/SkillTree/LatticePanel.
+
+   The headings are deliberately quiet. They are labels on a boundary, not
+   sections competing with the skill's own name; a reader should feel the
+   grouping and only read the words when they wonder what kind of claim they
+   are looking at. */
+.stx-lp-truth {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--lat-line-soft);
+}
+
+.stx-lp-truth-name {
+    --tone: var(--lat-faint);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--tone);
+}
+
+/* A short rule after the label, so the boundary is visible from the corner of
+   the eye without the words having to be read. */
+.stx-lp-truth-name::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: .3;
+}
+
+.stx-lp-truth.is-mine .stx-lp-truth-name { --tone: var(--lat-violet); }
+.stx-lp-truth.is-authored .stx-lp-truth-name { --tone: var(--lat-teal); }
+.stx-lp-truth.is-move .stx-lp-truth-name { --tone: var(--lat-green); }
+
+/* The first section in the body has the header above it and needs no rule. */
+.stx-lp-body > .stx-lp-truth:first-child { padding-top: 0; border-top: 0; }
+
+/* ---- where you stand, in a sentence ---- */
+.stx-lp-position {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--lat-text);
+}
+
+.stx-lp-position.is-locked { color: var(--lat-amber); }
+.stx-lp-position.is-available { color: var(--lat-blue); }
+.stx-lp-position.is-complete { color: var(--lat-green); }
+
+/* The figure, in the header. Tabular so a panel does not jog sideways as the
+   percentage climbs through the tens. */
+.stx-lp-big {
+    flex: none;
+    align-self: flex-start;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: var(--lat-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.stx-lp-big.is-progress { color: var(--lat-violet); }
+.stx-lp-big.is-complete { color: var(--lat-green); }
+/* A locked node's percentage is always nought — the one place the figure says
+   nothing, so it says it quietly. */
+.stx-lp-big.is-locked { color: var(--lat-faint); opacity: .55; }
+
+/* ---- why this skill ---- */
+.stx-lp-why {
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 650;
+    color: var(--lat-faint);
+}
+
+/* ---- done when ----
+   Out of the row of three notes and given the weight the other two do not
+   have: "how will I know I am finished" is the question a percentage answers
+   worst, and it was the third row of a dl. */
+.stx-lp-proof {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 10px 0 0;
+    padding: 9px 11px;
+    border: 1px solid color-mix(in srgb, var(--lat-green) 30%, var(--lat-line));
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--lat-green-soft) 60%, transparent);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--lat-text);
+}
+
+.stx-lp-proof b {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--lat-green);
+}
+
+/* The two lists at the foot sit inside a truth of their own, so they lose the
+   rule and the top padding they carried as standalone sections. */
+.stx-lp-truth .stx-lp-section { padding-top: 6px; border-top: 0; }
+.stx-lp-truth .stx-lp-section h3 { font-size: 12px; color: var(--lat-muted); font-weight: 700; }
