@@ -34,7 +34,7 @@
  * where words are better than shades.
  */
 import { difficultyRank } from './types';
-import { unlockedBy, type GraphNode, type SkillGraph } from '@/utils/skillGraph';
+import { unlockedBy, type GraphNode, type NodeStatus, type SkillGraph } from '@/utils/skillGraph';
 
 /** How much weight a tile gets while a focus is on. */
 export type Emphasis = 'here' | 'near' | 'dim';
@@ -213,5 +213,128 @@ export function emphasise(
       node.id,
       node.id === focus.here.id ? 'here' : near.has(node.id) ? 'near' : 'dim',
     ]),
+  );
+}
+
+// --------------------------------------------------------------------------
+// What to do next
+// --------------------------------------------------------------------------
+/** How many of a node's prerequisites are still outstanding. */
+function blockersOf(graph: SkillGraph, node: GraphNode): number {
+  const byId = new Map(graph.nodes.map((one) => [one.id, one]));
+  return node.requires.filter((id) => byId.get(id)?.status !== 'complete').length;
+}
+
+export interface Opportunity {
+  node: GraphNode;
+  /** Prerequisites still in the way. Zero on anything that can be started now. */
+  blocked: number;
+  /** How many skills it opens. */
+  opens: number;
+  /** Why it is on the list, in one phrase. */
+  why: string;
+}
+
+/** How many the overlay offers. Three is a choice; six is a second lattice. */
+export const CHANCES = 3;
+
+/**
+ * The handful of skills worth starting next, best first.
+ *
+ * This is not a new recommendation engine and deliberately does not become
+ * one. It is a *reading of the graph the page is already drawing* — status,
+ * percentage, prerequisites and what each node opens, all of which are on
+ * screen as colour and lines. The lattice stays an authored hierarchy; what
+ * this adds is the sentence a reader would otherwise have to assemble by
+ * scanning forty tiles for the green ones.
+ *
+ * Three bands, and the order between them is the whole argument:
+ *
+ *   1. **Part-done.** Finishing something is worth more than starting
+ *      something, and the closest to done is worth the most.
+ *   2. **Open now.** Nothing in the way. The lower rung first, for the reason
+ *      `currentSkill` gives — an unfinished pair is finished from the bottom.
+ *   3. **One prerequisite away.** A locked node with a single blocker is not a
+ *      dead end, it is next week, and a reader who cannot see the difference
+ *      between that and one blocked by four has been told nothing useful by
+ *      the word "Locked".
+ *
+ * Anything blocked by two or more is left off. That is not a near-term target,
+ * and a list that included it would be a list of the whole tree.
+ */
+export function opportunities(
+  graph: SkillGraph,
+  skip: ReadonlySet<string> = new Set(),
+): Opportunity[] {
+  const rows = graph.nodes
+    .filter((node) => !skip.has(node.id) && node.status !== 'complete')
+    .map((node) => {
+      const blocked = blockersOf(graph, node);
+      const opens = unlockedBy(graph, node.id).length;
+      const band =
+        node.status === 'progress' ? 0 : node.status === 'available' ? 1 : blocked === 1 ? 2 : 3;
+      return { node, blocked, opens, band };
+    })
+    .filter((row) => row.band < 3);
+
+  rows.sort((a, b) => {
+    if (a.band !== b.band) return a.band - b.band;
+    // Part-done: closest to finished.
+    if (a.band === 0) return b.node.percent - a.node.percent;
+    const rung = difficultyRank(a.node.difficulty) - difficultyRank(b.node.difficulty);
+    if (rung !== 0) return rung;
+    return b.opens - a.opens;
+  });
+
+  return rows.slice(0, CHANCES).map(({ node, blocked, opens, band }) => ({
+    node,
+    blocked,
+    opens,
+    why:
+      band === 0
+        ? `${Math.round(node.percent)}% done`
+        : band === 1
+          ? 'Open now'
+          : '1 prerequisite away',
+  }));
+}
+
+// --------------------------------------------------------------------------
+// One status at a time
+// --------------------------------------------------------------------------
+/** What the band across the top can narrow the canvas to. */
+export type Lens = NodeStatus | 'unlocked';
+
+export const LENS_WORD: Record<Lens, string> = {
+  complete: 'mastered',
+  progress: 'in progress',
+  available: 'open now',
+  locked: 'locked',
+  unlocked: 'unlocked',
+};
+
+/**
+ * The same three weights, decided by status rather than by one node.
+ *
+ * The figures across the top were six counts nobody could act on: a reader who
+ * learned they had twelve locked skills still had to find them. Pressing one
+ * narrows the canvas to what it counts, which costs a click and answers the
+ * question the figure raised.
+ *
+ * Nothing is `here` — a lens has no centre, and the "you are here" marker is
+ * drawn from the reader's position rather than from this, so it survives a
+ * filter being on. That is deliberate: losing your own position the moment you
+ * ask "where are the locked ones" is losing the one thing the canvas was for.
+ */
+export function spotlight(
+  graph: SkillGraph,
+  lens: Lens,
+  skip: ReadonlySet<string> = new Set(),
+): Map<string, Emphasis> {
+  const hit = (node: GraphNode) =>
+    lens === 'unlocked' ? node.status !== 'locked' : node.status === lens;
+
+  return new Map(
+    graph.nodes.map((node) => [node.id, !skip.has(node.id) && hit(node) ? 'near' : 'dim']),
   );
 }

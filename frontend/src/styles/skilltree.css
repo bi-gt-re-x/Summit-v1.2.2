@@ -2390,8 +2390,16 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 
 /* Out of the way. 22% — inside the 15–25 band, and chosen at the top of it
    because the tiles are small and a 15% fade on a 64px square at 70% zoom is
-   not a fade, it is a rendering artefact. */
-.stx-tile.em-dim {
+   not a fade, it is a rendering artefact.
+
+   On the tile's three parts rather than on the tile, so the "you are here"
+   marker is not one of them. Fading that is losing the reader's own position
+   the moment they ask where the locked ones are, which is losing the one thing
+   the canvas was for — and CSS opacity composites the whole subtree, so a
+   child cannot opt back out of it. */
+.stx-tile.em-dim .stx-tile-face,
+.stx-tile.em-dim .stx-tile-name,
+.stx-tile.em-dim .stx-tile-meta {
     opacity: .22;
     filter: saturate(.55);
     transition: opacity .18s ease, filter .18s ease;
@@ -2400,8 +2408,12 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 /* Still reachable. A dimmed tile is quieter, not disabled — a reader who spots
    what they wanted in the faded half must be able to click it, and it comes
    back to full strength under the pointer to say so. */
-.stx-tile.em-dim:hover,
-.stx-tile.em-dim:focus-visible { opacity: 1; filter: none; }
+.stx-tile.em-dim:hover .stx-tile-face,
+.stx-tile.em-dim:hover .stx-tile-name,
+.stx-tile.em-dim:hover .stx-tile-meta,
+.stx-tile.em-dim:focus-visible .stx-tile-face,
+.stx-tile.em-dim:focus-visible .stx-tile-name,
+.stx-tile.em-dim:focus-visible .stx-tile-meta { opacity: 1; filter: none; }
 
 /* The wires go back with the tiles they run into. A bright line ending in a
    faded square is the one thing that makes a dimmed canvas look broken rather
@@ -2409,7 +2421,9 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 .stx-wire.is-faded { opacity: .12; }
 
 @media (prefers-reduced-motion: reduce) {
-    .stx-tile.em-dim { transition: none; }
+    .stx-tile.em-dim .stx-tile-face,
+    .stx-tile.em-dim .stx-tile-name,
+    .stx-tile.em-dim .stx-tile-meta { transition: none; }
 }
 
 /* ==========================================================================
@@ -2553,4 +2567,149 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 @media (max-width: 640px) {
     .stx-route { padding: 9px 12px; }
     .stx-route-label { flex: 1 1 100%; }
+}
+
+/* ==========================================================================
+   The band as a control
+   ==========================================================================
+   Four of the six figures narrow the canvas to what they count. They keep the
+   shape they had — a row of counts that suddenly became a row of buttons would
+   be a different band — and earn the affordance on hover and while pressed. */
+.stx-figure.is-lens {
+    border-top: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 10px;
+    background: none;
+    font: inherit;
+    /* And the colour, which `font` does not carry. A bare button takes the
+       platform's `buttontext` — black in a light UA and white in a dark one —
+       so without this the four figures that became controls stopped agreeing
+       with the two that did not. */
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background .14s ease, box-shadow .14s ease;
+}
+
+.stx-figure.is-lens:hover { background: var(--lat-violet-soft); }
+.stx-figure.is-lens:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: -2px; }
+
+/* Pressed is a state worth seeing from across the page: a reader looking at a
+   canvas with three quarters of it faded needs to be able to find the control
+   that did it. */
+.stx-figure.is-lens.is-on {
+    background: var(--lat-violet-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lat-violet) 42%, transparent);
+}
+.stx-figure.is-lens.is-on .stx-figure-label { color: var(--lat-violet); font-weight: 700; }
+
+/* ==========================================================================
+   Next up
+   ==========================================================================
+   See components/SkillTree/NextUp. One lead and two alternatives, because
+   three equally weighted options is the shape of advice that gets ignored. */
+.stx-next {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    margin-top: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--lat-line);
+    border-left: 3px solid var(--lat-green);
+    border-radius: 12px;
+    background: var(--lat-panel);
+}
+
+.stx-next-lead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.stx-next-label {
+    flex: none;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--lat-green);
+}
+
+.stx-next-say {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    flex: 1;
+}
+
+.stx-next-say strong {
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+    color: var(--lat-text);
+}
+
+.stx-next-say span { font-size: 11.5px; color: var(--lat-muted); }
+
+.stx-next-open {
+    flex: none;
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--lat-green);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter .14s ease;
+}
+
+.stx-next-open:hover { filter: brightness(1.08); }
+.stx-next-open:focus-visible { outline: 2px solid var(--lat-green); outline-offset: 2px; }
+html[data-theme="dark"] .stx-next-open { color: #0d1117; }
+
+/* The alternatives. Quieter than the lead and still a control: the point of
+   listing them is that one of them might be the one you wanted. */
+.stx-next-rest {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: none;
+}
+
+.stx-next-rest button {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    padding: 5px 11px;
+    border: 1px solid var(--lat-line);
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+    transition: border-color .14s ease, background .14s ease;
+}
+
+.stx-next-rest button:hover {
+    border-color: var(--lat-green);
+    background: var(--lat-green-soft);
+}
+.stx-next-rest button:focus-visible { outline: 2px solid var(--lat-green); outline-offset: 1px; }
+
+.stx-next-name { font-size: 12px; font-weight: 650; color: var(--lat-text); }
+.stx-next-rest em { font-style: normal; font-size: 10.5px; color: var(--lat-faint); }
+
+@media (max-width: 640px) {
+    .stx-next { padding: 11px 13px; }
+    .stx-next-lead { flex: 1 1 100%; }
+    .stx-next-rest { flex: 1 1 100%; }
 }

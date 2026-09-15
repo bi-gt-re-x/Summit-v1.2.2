@@ -88,6 +88,21 @@ export interface SkillTreeProps {
    * lines that happen to touch. See `emphasise` in skills/route.
    */
   focus?: ReadonlyMap<string, 'here' | 'near' | 'dim'>;
+  /**
+   * Scroll until this node is in the middle of the box.
+   *
+   * For the controls that select a node the reader cannot see — the next-up
+   * strip, the route crumbs, later the search. Not for an ordinary click on a
+   * tile: yanking the canvas because somebody pressed something already in
+   * front of them is the behaviour that makes a map feel like it is fighting
+   * you.
+   *
+   * The `token` is what makes asking twice for the same node work. Without it
+   * the prop would be unchanged on the second press and the effect would not
+   * run, so a reader who scrolled away and pressed the same row again would
+   * get nothing.
+   */
+  reveal?: { id: string; token: number } | null;
 }
 
 export function SkillTree({
@@ -99,6 +114,7 @@ export function SkillTree({
   renderNode,
   fit = false,
   focus,
+  reveal,
 }: SkillTreeProps) {
   const layout = useMemo(() => layoutGraph(graph, geom), [graph, geom]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -299,6 +315,37 @@ export function SkillTree({
    */
   const drawnWidth = layout.width * scale;
   const drawnHeight = layout.height * scale;
+
+  /* Bring a node into the middle of the box.
+   *
+   * The arithmetic is the layout's own coordinates times the scale, against
+   * the scroller's client box — which works precisely because the canvas is a
+   * real scrolling element rather than a transform matrix, and is one of the
+   * things the note at the top of this file is about. `smooth` because the
+   * reader pressed something on a strip and needs to see where the canvas went;
+   * an instant jump reads as a different screen. */
+  const revealToken = reveal?.token;
+  const revealId = reveal?.id;
+  useEffect(() => {
+    const box = scroller.current;
+    if (!box || !revealId) return;
+    const placed = layout.nodes.find((one) => one.node.id === revealId);
+    if (!placed) return;
+
+    /* The scaled layer is centred inside the stage — `left: 50%` and a
+       negative margin below — so on a drawing narrower than the box there is
+       slack on both sides that the node's own coordinate knows nothing about.
+       `scrollWidth` is the stage's real width, which is where that slack is. */
+    const slack = Math.max(0, (box.scrollWidth - layout.width * scale) / 2);
+
+    box.scrollTo({
+      left: Math.max(0, slack + (placed.x + geom.nodeW / 2) * scale - box.clientWidth / 2),
+      top: Math.max(0, (placed.y + geom.nodeH / 2) * scale - box.clientHeight / 2),
+      behavior: 'smooth',
+    });
+    // Keyed on the token as well as the id, so pressing the same row twice
+    // scrolls twice.
+  }, [geom.nodeH, geom.nodeW, layout.nodes, layout.width, revealId, revealToken, scale]);
 
   return (
     <section className={`stx-canvas${full ? ' is-full' : ''}`}>

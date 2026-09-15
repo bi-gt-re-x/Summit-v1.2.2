@@ -57,6 +57,7 @@ import {
   FocusTopics,
   LatticeNode,
   LatticePanel,
+  NextUp,
   ProgressIndicator,
   RouteStrip,
   SkillTree as SkillTreeCanvas,
@@ -64,7 +65,14 @@ import {
 } from '@/components/SkillTree';
 import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
 import { iconForName } from '@/skills/iconMatch';
-import { currentSkill, emphasise, focusOn } from '@/skills/route';
+import {
+  currentSkill,
+  emphasise,
+  focusOn,
+  opportunities,
+  spotlight,
+  type Lens,
+} from '@/skills/route';
 import { latticeSubjects, treeForSubject } from '@/skills/subjectMap';
 import {
   DEFAULT_TREE,
@@ -130,22 +138,37 @@ function skillLevel(tally: GraphTally): string {
   return 'Unstarted';
 }
 
-/** One figure in the band across the top. */
+/**
+ * One figure in the band across the top.
+ *
+ * Four of the six are also a control. "Twelve locked" was a fact a reader could
+ * do nothing with — they still had to find the twelve — so pressing one narrows
+ * the canvas to what it counted. The other two are not a subset of anything:
+ * the overall percentage and the skill level describe the whole tree, and a
+ * filter for "everything" is a button that does nothing.
+ */
 function Figure({
   label,
   value,
   sub,
   icon,
   tone,
+  lens,
+  on = false,
+  onNarrow,
 }: {
   label: string;
   value: React.ReactNode;
   sub?: React.ReactNode;
   icon?: string;
   tone?: string;
+  /** What this figure counts, when pressing it can narrow the canvas to it. */
+  lens?: Lens;
+  on?: boolean;
+  onNarrow?: (lens: Lens) => void;
 }) {
-  return (
-    <div className={`stx-figure${tone ? ` is-${tone}` : ''}`}>
+  const body = (
+    <>
       <div className="stx-figure-text">
         <span className="stx-figure-label">{label}</span>
         <strong className="stx-figure-value">
@@ -158,7 +181,25 @@ function Figure({
           <Ico icon={icon} className="stx-ico stx-figure-ico" />
         </span>
       )}
-    </div>
+    </>
+  );
+
+  const shape = `stx-figure${tone ? ` is-${tone}` : ''}`;
+
+  if (!lens || !onNarrow) return <div className={shape}>{body}</div>;
+
+  return (
+    <button
+      type="button"
+      className={`${shape} is-lens${on ? ' is-on' : ''}`}
+      aria-pressed={on}
+      /* The label already says what it counts; this says what pressing it
+         does, which is the part a figure cannot. */
+      title={on ? `Show the whole tree again` : `Show only these on the tree`}
+      onClick={() => onNarrow(lens)}
+    >
+      {body}
+    </button>
   );
 }
 
@@ -332,12 +373,21 @@ export default function SkillTrees() {
      the node it was asked for. */
   const [tracedId, setTracedId] = useState<string | null>(null);
 
+  /* ---- The two ways of narrowing the canvas ----------------------------
+     A selection and a lens ask the same question — *which of these forty
+     concern me* — and answering it twice at once would be two dimmings
+     fighting over one canvas. So each clears the other and the newer one
+     wins, which is a rule a reader works out in one click rather than one
+     they have to be told. */
+  const [lens, setLens] = useState<Lens | null>(null);
+
   // Picking the same node again puts the panel and the lit run back.
   const select = useCallback(
     (node: GraphNode | null) =>
       setSelectedId((current) => {
         const next = node && current !== node.id ? node.id : null;
         setTracedId(null);
+        setLens(null);
         return next;
       }),
     [],
@@ -350,18 +400,37 @@ export default function SkillTrees() {
   const trace = useCallback((node: GraphNode) => {
     setSelectedId(node.id);
     setTracedId(node.id);
+    setLens(null);
+  }, []);
+
+  const narrow = useCallback((next: Lens) => {
+    setLens((current) => (current === next ? null : next));
+    setSelectedId(null);
+    setTracedId(null);
+  }, []);
+
+  /* Scroll the canvas until a node is on screen. Only for the controls that
+     select something the reader cannot see — the next-up strip and the route
+     crumbs. See `reveal` in components/SkillTree/SkillTree for the token. */
+  const [reveal, setReveal] = useState<{ id: string; token: number } | null>(null);
+  const open = useCallback((id: string) => {
+    setSelectedId(id);
+    setTracedId(null);
+    setLens(null);
+    setReveal({ id, token: Date.now() });
   }, []);
 
   /* ---- Where the reader is ---------------------------------------------
-     `here` is the marker and is always somewhere; the focus layer is only
-     built once a tile has been selected. Keeping those apart is what lets the
-     canvas answer "where am I" on arrival without also greying itself out.
-     Navigation diamonds are skipped: a doorway is never the thing somebody is
-     working on. See skills/route. */
-  const hereId = useMemo(() => {
-    if (selectedId) return selectedId;
-    return currentSkill(graph, new Set(nav.keys()))?.id ?? null;
-  }, [graph, nav, selectedId]);
+     `standing` is the page's own reading of where this account is on this
+     lattice, and it is what the marker falls back to. Navigation diamonds are
+     skipped: a doorway is never the thing somebody is working on. */
+  const navIds = useMemo(() => new Set(nav.keys()), [nav]);
+  const standing = useMemo(() => currentSkill(graph, navIds), [graph, navIds]);
+
+  /* The marker follows the selection once there is one, and the focus layer is
+     only built then. Keeping those apart is what lets the canvas answer "where
+     am I" on arrival without also greying itself out. */
+  const hereId = selectedId ?? standing?.id ?? null;
 
   /* Not `focus` — that name is already the five subjects across the top, and
      this is the reader's position on one lattice. */
@@ -370,10 +439,21 @@ export default function SkillTrees() {
     [graph, hereId],
   );
 
-  const weights = useMemo(
-    () => (selectedId && position ? emphasise(graph, position, tracedId === selectedId) : null),
-    [graph, position, selectedId, tracedId],
+  /* What to do next, with where the reader already is left off it: "next up:
+     the node you are standing on" is not a next step. The *computed* standing
+     rather than the selection, so clicking around the tree does not keep
+     rewriting the list. */
+  const chances = useMemo(
+    () => opportunities(graph, standing ? new Set([...navIds, standing.id]) : navIds),
+    [graph, navIds, standing],
   );
+
+  /* One emphasis layer, from whichever of the two is on. */
+  const weights = useMemo(() => {
+    if (lens) return spotlight(graph, lens, navIds);
+    if (selectedId && position) return emphasise(graph, position, tracedId === selectedId);
+    return null;
+  }, [graph, lens, navIds, position, selectedId, tracedId]);
 
   /* The "+250 XP" that appears for a moment after a click. Held with its node
      id so switching selection mid-flash cannot show one node's gain on
@@ -594,12 +674,52 @@ export default function SkillTrees() {
             <ProgressIndicator percent={totals.percent} shape="ring" size={54} />
           </div>
 
-          <Figure label="Skills Unlocked" value={unlocked} sub={`/ ${totals.total}`} tone="accent" />
-          <Figure label="Mastered" value={totals.complete} icon="trophy" tone="done" />
-          <Figure label="In Progress" value={totals.progress} icon="in-progress" tone="prog" />
-          <Figure label="Locked" value={totals.locked} icon="locked" tone="lock" />
+          <Figure
+            label="Skills Unlocked"
+            value={unlocked}
+            sub={`/ ${totals.total}`}
+            tone="accent"
+            lens="unlocked"
+            on={lens === 'unlocked'}
+            onNarrow={narrow}
+          />
+          <Figure
+            label="Mastered"
+            value={totals.complete}
+            icon="trophy"
+            tone="done"
+            lens="complete"
+            on={lens === 'complete'}
+            onNarrow={narrow}
+          />
+          <Figure
+            label="In Progress"
+            value={totals.progress}
+            icon="in-progress"
+            tone="prog"
+            lens="progress"
+            on={lens === 'progress'}
+            onNarrow={narrow}
+          />
+          <Figure
+            label="Locked"
+            value={totals.locked}
+            icon="locked"
+            tone="lock"
+            lens="locked"
+            on={lens === 'locked'}
+            onNarrow={narrow}
+          />
+          {/* Not a lens: a level is a reading of the whole tree rather than a
+              subset of it, and there is nothing to narrow to. */}
           <Figure label="Skill Level" value={skillLevel(totals)} icon="gem" tone="level" />
         </section>
+
+        {/* ---- what to do next ----
+            Above the route, because "where am I" is only worth answering as a
+            preamble to "so what now". Every figure on it is already on the
+            lattice as colour and lines; see skills/route. */}
+        <NextUp chances={chances} onOpen={open} />
 
         {/* ---- where the reader is, in one line ----
             Above the canvas rather than inside it, because it is the sentence
@@ -608,8 +728,8 @@ export default function SkillTrees() {
           <RouteStrip
             focus={position}
             traced={Boolean(selectedId) && tracedId === selectedId}
-            onSelect={(node) => setSelectedId(node.id)}
-            onClear={selectedId ? () => select(null) : undefined}
+            onSelect={(node) => open(node.id)}
+            onClear={selectedId || lens ? () => select(null) : undefined}
           />
         )}
 
@@ -622,6 +742,7 @@ export default function SkillTrees() {
             geom={LATTICE_GEOM}
             fit
             focus={weights ?? undefined}
+            reveal={reveal}
             renderNode={(placed, ctx) => {
               const to = nav.get(placed.node.id);
               return (

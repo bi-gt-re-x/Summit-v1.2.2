@@ -22,6 +22,8 @@ export { LatticeNode } from './LatticeNode';
 export type { LatticeNodeProps } from './LatticeNode';
 export { RouteStrip } from './RouteStrip';
 export type { RouteStripProps } from './RouteStrip';
+export { NextUp } from './NextUp';
+export type { NextUpProps } from './NextUp';
 export { LatticePanel } from './LatticePanel';
 export type { LatticePanelProps } from './LatticePanel';
 export { SkillConnection } from './SkillConnection';

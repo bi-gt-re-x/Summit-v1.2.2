@@ -11,7 +11,16 @@
 import { describe, expect, it } from 'vitest';
 import type { GraphNode, NodeStatus, SkillGraph } from '@/utils/skillGraph';
 import type { Difficulty } from './types';
-import { currentSkill, emphasise, focusOn, nextAfter, routeTo } from './route';
+import {
+  CHANCES,
+  currentSkill,
+  emphasise,
+  focusOn,
+  nextAfter,
+  opportunities,
+  routeTo,
+  spotlight,
+} from './route';
 
 function node(
   id: string,
@@ -38,11 +47,13 @@ function node(
 }
 
 /**
- *   arith ─┬─ fractions ── algebra ─┬─ linear ── systems
- *          └─ negatives ────────────┘
+ *   arith ─┬─ fractions ── algebra ── linear ─┬─ systems ─┐
+ *          ├─ negatives ─────────────┘        └───────────┴─ quad
+ *          └─ stats
  *
  * `algebra` is reachable from `arith` in two hops and in three; the three-hop
- * chain is the one the canvas draws it under.
+ * chain is the one the canvas draws it under. `quad` waits on two things at
+ * once, which is what makes it the node an opportunities list must leave out.
  */
 function ladder(over: Record<string, Partial<GraphNode>> = {}): SkillGraph {
   const rows: GraphNode[] = [
@@ -55,6 +66,7 @@ function ladder(over: Record<string, Partial<GraphNode>> = {}): SkillGraph {
     node('linear', 'available', { requires: ['algebra'], difficulty: 'intermediate' }),
     node('systems', 'locked', { requires: ['linear'], difficulty: 'advanced' }),
     node('stats', 'available', { requires: ['arith'], percent: 20, difficulty: 'intermediate' }),
+    node('quad', 'locked', { requires: ['linear', 'systems'], difficulty: 'advanced' }),
   ];
   return {
     id: 'mathematics',
@@ -121,7 +133,7 @@ describe('nextAfter', () => {
   });
 
   it('is null at the end of a branch', () => {
-    expect(nextAfter(ladder(), 'systems')).toBeNull();
+    expect(nextAfter(ladder(), 'quad')).toBeNull();
   });
 
   it('takes the reachable one over the one still waiting on others', () => {
@@ -170,5 +182,63 @@ describe('emphasise', () => {
     // Two steps up, and only on the traced reading.
     expect(weights.get('arith')).toBe('near');
     expect(emphasise(graph, focusOn(graph, 'systems')!).get('arith')).toBe('dim');
+  });
+});
+
+describe('opportunities', () => {
+  it('finishes before it starts, and starts before it queues', () => {
+    // `algebra` is part-done, `linear` and `stats` are open, `systems` is one
+    // prerequisite away. That is the order, and it is the argument.
+    const chances = opportunities(ladder());
+    expect(chances.map((one) => one.node.id)).toEqual(['algebra', 'linear', 'stats']);
+    expect(chances[0]?.why).toBe('60% done');
+    expect(chances[1]?.why).toBe('Open now');
+  });
+
+  it('offers a locked node with one prerequisite left, and not one with two', () => {
+    // A single blocker is next week; two is the rest of the tree, and a list
+    // holding those is a list of everything. `systems` waits only on `linear`;
+    // `quad` waits on `linear` and `systems` both.
+    const chances = opportunities(ladder({
+      algebra: { status: 'complete', percent: 100 },
+      stats: { status: 'complete', percent: 100 },
+    }));
+
+    expect(chances.map((one) => one.node.id)).toEqual(['linear', 'systems']);
+    expect(chances[1]?.why).toBe('1 prerequisite away');
+  });
+
+  it('leaves out what the caller is already looking at', () => {
+    // The page skips the node the marker is on: "next up: where you already
+    // are" is not a next step.
+    expect(opportunities(ladder(), new Set(['algebra']))[0]?.node.id).toBe('linear');
+  });
+
+  it('never offers more than it can fit', () => {
+    expect(opportunities(ladder()).length).toBeLessThanOrEqual(CHANCES);
+  });
+
+  it('has nothing to say about a finished tree', () => {
+    const graph = ladder();
+    const done = { ...graph, nodes: graph.nodes.map((one) => ({ ...one, status: 'complete' as const })) };
+    expect(opportunities(done)).toEqual([]);
+  });
+});
+
+describe('spotlight', () => {
+  it('keeps what the figure counted and puts the rest back', () => {
+    const weights = spotlight(ladder(), 'locked');
+    expect(weights.get('systems')).toBe('near');
+    expect(weights.get('algebra')).toBe('dim');
+  });
+
+  it('reads "unlocked" as everything that is not locked, the way the band does', () => {
+    const weights = spotlight(ladder(), 'unlocked');
+    expect(weights.get('arith')).toBe('near');
+    expect(weights.get('systems')).toBe('dim');
+  });
+
+  it('marks nothing as here, because a lens has no centre', () => {
+    expect([...spotlight(ladder(), 'complete').values()]).not.toContain('here');
   });
 });
