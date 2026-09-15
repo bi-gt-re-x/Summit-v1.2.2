@@ -34,6 +34,21 @@
  * box natively. That listener is attached by hand rather than with `onWheel`
  * because React registers wheel handlers passively, and a passive listener is
  * not allowed to prevent the browser's own pinch-zoom.
+ *
+ * ## Framing: a percentage is not a view
+ *
+ * Zoom controls answer "how magnified is this", which is never the question.
+ * The question is "show me the branch I am in", "show me what I have
+ * finished", "show me the whole thing" — so the canvas takes a *set of nodes*
+ * and works out the scale and the scroll that bring them into view together
+ * (`frameTo`). Which nodes is decided by the page, which is the only thing
+ * here that knows what a branch or a mastered skill is.
+ *
+ * ## And a map, so panning is not a way of getting lost
+ *
+ * A tree several screens wide has no horizon. ./Minimap draws the layout at
+ * thumbnail size with a box around what is on screen, and it is draggable —
+ * see that file for why it moves its own rectangle rather than re-rendering.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -44,6 +59,7 @@ import {
   type PlacedNode,
   type SkillGraph,
 } from '@/utils/skillGraph';
+import { Minimap } from './Minimap';
 import { SkillConnection } from './SkillConnection';
 import { SkillNode } from './SkillNode';
 
@@ -110,6 +126,30 @@ export interface SkillTreeProps {
    * landed 220ms after the scroll and undid it.
    */
   reveal?: { id: string; token: number } | null;
+  /**
+   * Put these nodes on the screen together — the camera, asked for by name.
+   *
+   * The canvas works out the box they occupy, the scale that brings it into
+   * view and the scroll that centres it. What it never works out is *which*
+   * nodes: "the branch I am standing in", "everything I have mastered" and
+   * "the whole tree" are judgements about meaning, and this file's whole
+   * arrangement is that it has none. The page names the set — see `frameOn` in
+   * pages/SkillTrees — and this does the arithmetic.
+   *
+   * Tokened like `reveal`, and for the same two reasons: asking for the same
+   * frame twice must work, and the layout is rebuilt on every practice click.
+   */
+  frame?: { ids: readonly string[]; token: number } | null;
+  /**
+   * The feed's own view buttons, placed in the canvas's control cluster.
+   *
+   * A slot rather than a list of framings, because the alternative is this
+   * file learning the words "branch" and "mastered" — and every camera control
+   * living in one cluster is worth more than the purity of refusing the feed a
+   * button. What lands here is drawn by the caller and understood by the
+   * caller; this only says where it goes.
+   */
+  views?: React.ReactNode;
 }
 
 export function SkillTree({
@@ -122,6 +162,8 @@ export function SkillTree({
   fit = false,
   focus,
   reveal,
+  frame,
+  views,
 }: SkillTreeProps) {
   const layout = useMemo(() => layoutGraph(graph, geom), [graph, geom]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -154,18 +196,25 @@ export function SkillTree({
    * the DOM still has the old size and reading it would place the node with
    * last frame's arithmetic.
    */
-  const centreOn = useCallback(
-    (placed: PlacedNode, at: number, behavior: ScrollBehavior) => {
+  const centreAt = useCallback(
+    (cx: number, cy: number, at: number, behavior: ScrollBehavior) => {
       const box = scroller.current;
       if (!box) return;
       const slack = Math.max(0, (box.clientWidth - layout.width * at) / 2);
       box.scrollTo({
-        left: Math.max(0, slack + (placed.x + geom.nodeW / 2) * at - box.clientWidth / 2),
-        top: Math.max(0, (placed.y + geom.nodeH / 2) * at - box.clientHeight / 2),
+        left: Math.max(0, slack + cx * at - box.clientWidth / 2),
+        top: Math.max(0, cy * at - box.clientHeight / 2),
         behavior,
       });
     },
-    [geom.nodeH, geom.nodeW, layout.width],
+    [layout.width],
+  );
+
+  /** The same, for a node: its middle rather than its corner. */
+  const centreOn = useCallback(
+    (placed: PlacedNode, at: number, behavior: ScrollBehavior) =>
+      centreAt(placed.x + geom.nodeW / 2, placed.y + geom.nodeH / 2, at, behavior),
+    [centreAt, geom.nodeH, geom.nodeW],
   );
 
   /**
@@ -408,6 +457,67 @@ export function SkillTree({
     centreOn(placed, scale, 'smooth');
   }, [centreOn, layout.nodes, revealId, revealToken, scale]);
 
+  /**
+   * Fit a set of nodes into the box: the camera move behind every framing
+   * control, and behind "Fit" itself, which is this over the whole tree.
+   *
+   * The scale is whichever of the two directions runs out of room first,
+   * never magnified past 100% — a branch of three tiles blown up to 160% is a
+   * canvas that has lost its context — and never below the zoom floor, where
+   * the tiles stop being legible and the frame stops being worth having.
+   *
+   * The scroll is queued behind the scale for the reason the fit gives: the
+   * scrollable area is still the old drawing's size until React has painted
+   * the new one, and an offset past the old maximum is clamped away.
+   */
+  const frameTo = useCallback(
+    (ids: readonly string[]) => {
+      const box = scroller.current;
+      if (!box) return;
+      const want = new Set(ids);
+      const rows = layout.nodes.filter((one) => want.has(one.node.id));
+      if (rows.length === 0) return;
+
+      const left = Math.min(...rows.map((one) => one.x));
+      const top = Math.min(...rows.map((one) => one.y));
+      const right = Math.max(...rows.map((one) => one.x)) + geom.nodeW;
+      // The label and the percentage hang below the tile, so the bottom of a
+      // node is not the bottom of what a reader sees as the node.
+      const bottom = Math.max(...rows.map((one) => one.y)) + geom.nodeH + geom.rowGap / 2;
+
+      const next = clampZoom(
+        Math.min(
+          ZOOM.start,
+          (box.clientWidth - geom.pad) / Math.max(1, right - left),
+          (box.clientHeight - geom.pad) / Math.max(1, bottom - top),
+        ),
+      );
+      setScale(next);
+      window.setTimeout(
+        () => centreAt((left + right) / 2, (top + bottom) / 2, next, 'smooth'),
+        0,
+      );
+    },
+    [centreAt, geom.nodeH, geom.nodeW, geom.pad, geom.rowGap, layout.nodes],
+  );
+
+  /** The whole drawing, which is what the canvas's own "Fit" button means. */
+  const fitAll = useCallback(
+    () => frameTo(layout.nodes.map((one) => one.node.id)),
+    [frameTo, layout.nodes],
+  );
+
+  /* The framing the page has asked for. Acted on once per token, exactly as
+     the reveal above is, so a practice click cannot replay the last one. */
+  const shown = useRef(0);
+  const frameToken = frame?.token;
+  const frameIds = frame?.ids;
+  useEffect(() => {
+    if (!frameToken || !frameIds || frameToken === shown.current) return;
+    shown.current = frameToken;
+    frameTo(frameIds);
+  }, [frameIds, frameTo, frameToken]);
+
   return (
     <section className={`stx-canvas${full ? ' is-full' : ''}`}>
       <div
@@ -480,6 +590,24 @@ export function SkillTree({
         )}
       </div>
 
+      {/* The map, on anything big enough to get lost in.
+          The threshold is a node count rather than "is the drawing wider than
+          the box", which would be truer and would also mean measuring on
+          every resize and zoom to decide whether a control exists — a control
+          that comes and goes as you pinch is worse than one that is sometimes
+          unnecessary. Sixteen tiles is about where a lattice stops fitting a
+          laptop canvas at full size. */}
+      {!bare && layout.nodes.length > 16 && (
+        <Minimap
+          layout={layout}
+          scale={scale}
+          geom={geom}
+          box={scroller}
+          selectedId={selectedId}
+          onJump={(cx, cy) => centreAt(cx, cy, scale, 'auto')}
+        />
+      )}
+
       <div className="stx-zoom" role="group" aria-label="Canvas">
         <button
           type="button"
@@ -502,17 +630,28 @@ export function SkillTree({
             <path d="M6 12h12" />
           </svg>
         </button>
+        {/* Two named views in place of the reset arrow that used to sit here.
+            "Reset" meant 100% at the top-left corner, which is a statement
+            about the scroll box rather than about the tree — and on anything
+            larger than a screen it put the reader back where they could see
+            least. A percentage is the same problem: it says how magnified the
+            drawing is and never what is in front of you. These say what you
+            will be looking at. */}
+        <i className="stx-zoom-cut" aria-hidden="true" />
+        <button type="button" className="stx-zoom-view" title="Fit the whole tree" onClick={fitAll}>
+          Fit
+        </button>
+        {views}
         <button
           type="button"
-          aria-label="Reset the view"
-          onClick={() => {
-            zoomTo(() => ZOOM.start);
-            requestAnimationFrame(() => scroller.current?.scrollTo({ top: 0, left: 0, behavior: 'smooth' }));
-          }}
+          className="stx-zoom-view"
+          title="Back to full size"
+          /* Full size about the middle of the viewport rather than about the
+             origin, so the tile you were reading is the tile still in front of
+             you. `zoomTo` holds the centre point for us. */
+          onClick={() => zoomTo(() => ZOOM.start)}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M20 11A8 8 0 1 0 12 20M20 5v6h-6" />
-          </svg>
+          1:1
         </button>
         <button
           type="button"

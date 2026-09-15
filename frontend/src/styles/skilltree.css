@@ -664,6 +664,29 @@ html[data-theme="dark"] .stx-page {
     font-variant-numeric: tabular-nums;
 }
 
+/* The named views — Fit, 1:1, and whatever the feed adds beside them. Words
+   rather than glyphs because there is no icon for "the branch you are in", and
+   a row of four ambiguous symbols is a row nobody presses. They keep the
+   cluster's height and drop its square width; the selector carries the parent
+   so it outranks `.stx-zoom button` without reaching for `!important`. */
+.stx-zoom .stx-zoom-view {
+    width: auto;
+    padding: 0 9px;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .01em;
+}
+
+/* The cluster is two kinds of control now — how much, and what of — and
+   without a rule between them they read as one row of six. */
+.stx-zoom-cut {
+    width: 1px;
+    height: 18px;
+    margin: 0 4px;
+    background: var(--stx-line);
+}
+
 /* Floats over the drawing, so it needs the same backing the zoom control has —
    without it the line lands on whatever node happens to be bottom-left and both
    become unreadable. */
@@ -2932,4 +2955,81 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
    component, because a stylus on a tablet reports as a pointer. */
 @media (hover: none) {
     .stx-peek { display: none; }
+}
+
+/* ==========================================================================
+   The minimap
+   ==========================================================================
+   The whole lattice at thumbnail size with a box around what is on screen.
+   See components/SkillTree/Minimap — including why the box is moved by hand
+   rather than rendered.
+
+   Top-right, because the zoom cluster has the bottom-right and the hint has
+   the bottom-left; a map over either of them is a map in the way. */
+.stx-mini {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px;
+    border: 1px solid var(--stx-line);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--stx-card) 88%, transparent);
+    backdrop-filter: blur(6px);
+    box-shadow: var(--stx-shadow);
+    /* Out of the way of the thing it is a map of: a reader dragging the canvas
+       under it should not lose the drag to the map. Only the drawing inside
+       takes the pointer. */
+    pointer-events: none;
+}
+
+.stx-mini-face {
+    display: block;
+    pointer-events: auto;
+    cursor: pointer;
+    touch-action: none;
+}
+
+/* Every tile, in the state it is in. Deliberately the four state tokens rather
+   than the six tier colours: at this size a reader is looking for *how far
+   round the tree they have got*, and six hues at three pixels each is a
+   confetti pattern. */
+.stx-mini-node {
+    fill: var(--stx-locked);
+    opacity: .5;
+}
+.stx-mini-node.is-available { fill: var(--stx-avail); opacity: .75; }
+.stx-mini-node.is-progress { fill: var(--stx-prog); opacity: .85; }
+/* The mastered terrain, which is the one thing worth seeing from across a
+   thumbnail. */
+.stx-mini-node.is-complete { fill: var(--stx-done); opacity: 1; }
+
+.stx-mini-node.is-selected {
+    fill: var(--stx-violet);
+    opacity: 1;
+    stroke: var(--stx-card);
+    /* Screen pixels rather than layout units — see the note on the viewport
+       box below. A width in layout units would be a twentieth of itself by
+       the time it was drawn. */
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+}
+
+/* What you can see, on what there is. An outline rather than a tint, so the
+   tiles inside it stay the colour they are. */
+.stx-mini-view {
+    fill: color-mix(in srgb, var(--stx-violet) 10%, transparent);
+    stroke: var(--stx-violet);
+    /* The rect is set in layout units and the viewBox scales it down, which
+       would take the stroke with it. `non-scaling-stroke` moves the width into
+       screen pixels instead, so the edge is the same hairline on a tree of
+       fifteen nodes and one of ninety. */
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+/* A map of a tree you cannot pan is decoration. Below this width the canvas is
+   mostly scrolled vertically and the map is competing for the room. */
+@media (max-width: 720px) {
+    .stx-mini { display: none; }
 }

@@ -397,10 +397,51 @@ export function spotlight(
   lens: Lens,
   skip: ReadonlySet<string> = new Set(),
 ): Map<string, Emphasis> {
+  const hit = new Set(litBy(graph, lens, skip));
+
+  return new Map(
+    graph.nodes.map((node) => [node.id, hit.has(node.id) ? 'near' : 'dim']),
+  );
+}
+
+/**
+ * What a lens counts, as ids.
+ *
+ * Split out of `spotlight` because the same set is now asked for twice and by
+ * two different verbs: the emphasis layer dims everything that is not in it,
+ * and the camera zooms to fit it. Two copies of "what counts as mastered"
+ * would eventually disagree, and the way that shows up is a canvas framed
+ * around one set of tiles with a different set lit inside it.
+ */
+export function litBy(
+  graph: SkillGraph,
+  lens: Lens,
+  skip: ReadonlySet<string> = new Set(),
+): string[] {
   const hit = (node: GraphNode) =>
     lens === 'unlocked' ? node.status !== 'locked' : node.status === lens;
 
-  return new Map(
-    graph.nodes.map((node) => [node.id, !skip.has(node.id) && hit(node) ? 'near' : 'dim']),
-  );
+  return graph.nodes.filter((node) => !skip.has(node.id) && hit(node)).map((node) => node.id);
+}
+
+/**
+ * The stretch of lattice one node sits in — what "fit this branch" means.
+ *
+ * The chain that leads to it, the node itself, and one step past it in both
+ * the required and the suggested direction. Deliberately the same set the
+ * focus layer calls `near` plus the traced route, because a reader who has
+ * lit a branch and then asks to be shown it should be shown the thing they
+ * lit — a frame that covered more would be answering a question about a
+ * different part of the tree.
+ */
+export function branchIds(focus: FocusRead): string[] {
+  return [
+    ...new Set([
+      focus.here.id,
+      ...focus.route.map((node) => node.id),
+      ...focus.requires.map((node) => node.id),
+      ...focus.unlocks.map((node) => node.id),
+      ...focus.suggests.map((node) => node.id),
+    ]),
+  ];
 }

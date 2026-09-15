@@ -9,6 +9,9 @@
  */
 export { SkillTree, ZOOM } from './SkillTree';
 export type { SkillTreeProps } from './SkillTree';
+/** The thumbnail of the whole lattice, inside the canvas. See ./Minimap. */
+export { Minimap } from './Minimap';
+export type { MinimapProps } from './Minimap';
 export { SkillNode } from './SkillNode';
 export type { SkillNodeProps } from './SkillNode';
 export { FocusTopics } from './FocusTopics';

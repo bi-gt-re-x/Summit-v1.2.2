@@ -61,6 +61,18 @@
  * opened at its top-left corner with the panel describing something the reader
  * could not see. `openTree` says all four in one call.
  *
+ * ## Pointing the canvas at something
+ *
+ * Zoom answers "how magnified is this", which is never what a reader wants to
+ * know. The canvas takes a *set of nodes* and works out the scale and the
+ * scroll that bring them into view together; this page decides which set,
+ * because "the branch I am in" and "everything I have mastered" are judgements
+ * about meaning and the canvas has none. Two of the framings are buttons in
+ * the canvas's own control cluster — Branch and Here, handed in through
+ * `views` — and the rest are the figures in the band, which now move the
+ * camera as well as dimming: a figure that says "twelve locked" and leaves you
+ * to find the twelve has answered half a question.
+ *
  * ## The figures are counted, not stored
  *
  * Every number in the band is `tallyGraph` on the tree that is open — there is
@@ -85,10 +97,12 @@ import {
 import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
 import { iconForName } from '@/skills/iconMatch';
 import {
+  branchIds,
   currentSkill,
   emphasise,
   focusOn,
   gatesOf,
+  litBy,
   opportunities,
   spotlight,
   type Lens,
@@ -307,6 +321,12 @@ export default function SkillTrees() {
     [designed, progress, plans, names],
   );
   const nav = useMemo(() => navTargets(tree), [tree]);
+  /* The doorways, as a set. Every reading of "where is this reader" and
+     "what is worth doing" leaves them out: a diamond carries a status like any
+     other node, and a door is never the thing somebody is working on or the
+     thing a filter meant. Declared with the graph rather than beside its first
+     use, because four things below now need it. */
+  const navIds = useMemo(() => new Set(nav.keys()), [nav]);
   const totals = useMemo(() => tallyGraph(graph), [graph]);
   const chain = useMemo(() => parentChain(tree.id), [tree.id]);
   // The three ways out of this tree, so walking the hierarchy never depends on
@@ -345,6 +365,16 @@ export default function SkillTrees() {
      crumbs, and anything that arrives from another tree entirely. See
      `reveal` in components/SkillTree/SkillTree for the token. */
   const [reveal, setReveal] = useState<{ id: string; token: number } | null>(null);
+
+  /* What the canvas is pointed at. The page names a set of nodes and the
+     canvas works out the scale and the scroll that bring them into view — see
+     `frame` in components/SkillTree/SkillTree. Which set is the judgement, and
+     judgements about what a lattice means live here. */
+  const [frame, setFrame] = useState<{ ids: readonly string[]; token: number } | null>(null);
+  const frameOn = useCallback(
+    (ids: readonly string[]) => setFrame(ids.length > 0 ? { ids, token: Date.now() } : null),
+    [],
+  );
 
   const goTo = useCallback((id: string) => {
     setTreeId(id);
@@ -456,11 +486,33 @@ export default function SkillTrees() {
     setLens(null);
   }, []);
 
-  const narrow = useCallback((next: Lens) => {
-    setLens((current) => (current === next ? null : next));
-    setSelectedId(null);
-    setTracedId(null);
-  }, []);
+  /*
+   * A figure in the band, pressed.
+   *
+   * Two things happen, and they are the same thought said twice: everything
+   * the figure does not count goes quiet, and the canvas moves to put what it
+   * *does* count on the screen. Dimming alone left a reader looking at an
+   * unchanged view of forty tiles with four of them lit somewhere off the
+   * bottom — the figure had answered "how many" and still not answered
+   * "where". Letting go frames the whole tree again, so the canvas ends where
+   * it started rather than zoomed into the corner the filter left it in.
+   *
+   * Both readings come from `litBy`, which is also what `spotlight` dims from,
+   * so the frame and the lit tiles cannot be two different sets.
+   */
+  const narrow = useCallback(
+    (next: Lens) => {
+      // Read rather than folded into the updater: moving the camera is a
+      // second piece of state, and a `setState` that changes another one is a
+      // function React is allowed to call twice.
+      const off = lens === next;
+      setLens(off ? null : next);
+      frameOn(off ? graph.nodes.map((node) => node.id) : litBy(graph, next, navIds));
+      setSelectedId(null);
+      setTracedId(null);
+    },
+    [frameOn, graph, lens, navIds],
+  );
 
   /** Select a node and scroll the canvas until it is on screen. */
   const open = useCallback((id: string) => {
@@ -472,9 +524,7 @@ export default function SkillTrees() {
 
   /* ---- Where the reader is ---------------------------------------------
      `standing` is the page's own reading of where this account is on this
-     lattice, and it is what the marker falls back to. Navigation diamonds are
-     skipped: a doorway is never the thing somebody is working on. */
-  const navIds = useMemo(() => new Set(nav.keys()), [nav]);
+     lattice, and it is what the marker falls back to. */
   const standing = useMemo(() => currentSkill(graph, navIds), [graph, navIds]);
 
   /* The marker follows the selection once there is one, and the focus layer is
@@ -813,6 +863,35 @@ export default function SkillTrees() {
             fit
             focus={weights ?? undefined}
             reveal={reveal}
+            frame={frame}
+            /* The two framings only this page can name. "Fit" and "1:1" sit
+               beside them and belong to the canvas, because the whole tree and
+               full size are facts about a drawing; a branch and a position are
+               facts about a reader. */
+            views={
+              <>
+                {position && position.route.length > 1 && (
+                  <button
+                    type="button"
+                    className="stx-zoom-view"
+                    title="Fit the branch you are in"
+                    onClick={() => frameOn(branchIds(position))}
+                  >
+                    Branch
+                  </button>
+                )}
+                {hereId && (
+                  <button
+                    type="button"
+                    className="stx-zoom-view"
+                    title="Go to where you are"
+                    onClick={() => frameOn([hereId])}
+                  >
+                    Here
+                  </button>
+                )}
+              </>
+            }
             renderNode={(placed, ctx) => {
               const to = nav.get(placed.node.id);
               return (

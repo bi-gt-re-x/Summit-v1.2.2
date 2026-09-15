@@ -13,10 +13,12 @@ import type { GraphNode, NodeStatus, SkillGraph } from '@/utils/skillGraph';
 import type { Difficulty } from './types';
 import {
   CHANCES,
+  branchIds,
   currentSkill,
   emphasise,
   focusOn,
   gatesOf,
+  litBy,
   nearestBlocker,
   nextAfter,
   opportunities,
@@ -242,6 +244,46 @@ describe('spotlight', () => {
 
   it('marks nothing as here, because a lens has no centre', () => {
     expect([...spotlight(ladder(), 'complete').values()]).not.toContain('here');
+  });
+});
+
+describe('litBy', () => {
+  it('is the set spotlight dims everything else from', () => {
+    /* The two must not drift: one decides what the canvas is framed around
+       and the other decides what stays bright, and a frame around one set of
+       tiles with a different set lit inside it is the bug this shares a
+       function to prevent. */
+    const graph = ladder();
+    for (const lens of ['complete', 'available', 'progress', 'locked', 'unlocked'] as const) {
+      const lit = new Set(litBy(graph, lens));
+      const weights = spotlight(graph, lens);
+      for (const node of graph.nodes) {
+        expect(weights.get(node.id)).toBe(lit.has(node.id) ? 'near' : 'dim');
+      }
+    }
+  });
+
+  it('leaves out what it was told to skip', () => {
+    expect(litBy(ladder(), 'complete', new Set(['arith']))).not.toContain('arith');
+  });
+});
+
+describe('branchIds', () => {
+  it('is the chain, the node, and one step past it', () => {
+    const focus = focusOn(ladder(), 'linear')!;
+    const ids = branchIds(focus);
+
+    // The route down to it...
+    expect(ids).toEqual(expect.arrayContaining(['arith', 'fractions', 'algebra', 'linear']));
+    // ...and what it opens.
+    expect(ids).toEqual(expect.arrayContaining(['systems', 'quad']));
+    // But not a cousin two steps away on a branch of its own.
+    expect(ids).not.toContain('stats');
+  });
+
+  it('names nothing twice, so the frame is not asked about one node five times', () => {
+    const ids = branchIds(focusOn(ladder(), 'algebra')!);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });
 
