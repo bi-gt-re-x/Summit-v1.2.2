@@ -69,6 +69,18 @@ export const ZOOM = { min: 0.5, max: 1.6, step: 0.15, start: 1 };
 const clampZoom = (value: number) =>
   Math.max(ZOOM.min, Math.min(ZOOM.max, Number(value.toFixed(3))));
 
+/**
+ * How far a region is drawn outside the tiles it holds.
+ *
+ * The box the layout hands back is tight to the node *boxes*, and a tile is
+ * not only its box: a name and a percentage hang below it, and the region's
+ * own label needs a line above. Drawn tight, a region would cut through both.
+ * Held here rather than as CSS padding because the box is positioned in canvas
+ * units, and a padding in screen pixels would grow and shrink against the
+ * drawing as the canvas is zoomed.
+ */
+const REGION_ROOM = { top: 34, side: 26, bottom: 46 };
+
 export interface SkillTreeProps {
   graph: SkillGraph;
   selectedId: string | null;
@@ -432,6 +444,39 @@ export function SkillTree({
     );
   }, [graph.nodes, layout.edges]);
 
+  /**
+   * The separate drawings, named.
+   *
+   * A graph whose pieces never join is several drawings, and the packer shelves
+   * them with a gap between — which read as an accident, because nothing said
+   * otherwise. A faint region behind each one, with a name on it, is what turns
+   * "these tiles are oddly far apart" into "these are two branches".
+   *
+   * The name is a *structural* choice and not a curriculum one: the piece's
+   * own root, taken as the top rank and then the leftmost of those, so it is
+   * the tile a reader's eye starts at. Nothing here knows what a branch of a
+   * subject is called, and a region that named itself after the wrong node
+   * would be worse than an unlabelled box.
+   *
+   * One region is no region. A single faint rectangle around a drawing that
+   * was never in pieces is a border, and it is a border saying nothing.
+   */
+  const regions = useMemo(() => {
+    if (layout.regions.length < 2) return [];
+    const at = new Map(layout.nodes.map((one) => [one.node.id, one]));
+    return layout.regions.map((region) => {
+      const lead = region.ids
+        .map((id) => at.get(id))
+        .filter((one): one is PlacedNode => Boolean(one))
+        .reduce<PlacedNode | null>((best, one) => {
+          if (!best) return one;
+          if (one.rank !== best.rank) return one.rank < best.rank ? one : best;
+          return one.x < best.x ? one : best;
+        }, null);
+      return { region, name: lead?.node.name ?? '' };
+    });
+  }, [layout.nodes, layout.regions]);
+
   const bare = layout.nodes.length === 0;
 
   /**
@@ -567,6 +612,26 @@ export function SkillTree({
                 '--stx-node-h': `${geom.nodeH}px`,
               }}
             >
+              {/* Under everything, and out of the way of every pointer: the
+                  regions are a background, and one that swallowed a drag
+                  would have made the canvas stop panning where the tiles are
+                  thinnest. */}
+              {regions.map(({ region, name }) => (
+                <div
+                  key={region.ids[0]}
+                  className="stx-region"
+                  style={{
+                    left: region.x - REGION_ROOM.side,
+                    top: region.y - REGION_ROOM.top,
+                    width: region.width + REGION_ROOM.side * 2,
+                    height: region.height + REGION_ROOM.top + REGION_ROOM.bottom,
+                  }}
+                  aria-hidden="true"
+                >
+                  <span className="stx-region-name">{name}</span>
+                </div>
+              ))}
+
               <svg
                 className="stx-wires"
                 width={layout.width}

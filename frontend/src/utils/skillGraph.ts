@@ -203,11 +203,35 @@ export interface PlacedEdge {
   kind: 'requires' | 'recommends';
 }
 
+/**
+ * One connected piece of the drawing, and the box it ended up in.
+ *
+ * The packer has always known these — it lays each piece out on its own and
+ * shelves them — and threw them away on the way out, which left the gaps
+ * between them looking like an accident rather than the statement they are.
+ * Handing them back costs nothing and lets a renderer say *these are separate
+ * branches* over the space it already put there.
+ *
+ * Geometry only. Which node a piece should be *named* after is a judgement and
+ * is made by whoever draws it.
+ */
+export interface GraphRegion {
+  /** Every node in the piece, in the order the feed sent them. */
+  ids: string[];
+  /** The box the piece occupies, in canvas units, node boxes included. */
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface GraphLayout {
   nodes: PlacedNode[];
   edges: PlacedEdge[];
   width: number;
   height: number;
+  /** The connected pieces. One entry for a graph that is all one drawing. */
+  regions: GraphRegion[];
 }
 
 /**
@@ -437,7 +461,28 @@ export function layoutGraph(graph: SkillGraph, geom: Geometry = GEOM): GraphLayo
   const right = placed.reduce((max, entry) => Math.max(max, entry.x + geom.nodeW), 0);
   const bottom = placed.reduce((max, entry) => Math.max(max, entry.y + geom.nodeH), 0);
 
-  return { nodes: placed, edges, width: right + geom.pad, height: bottom + geom.pad };
+  /* The pieces, measured where they landed rather than where they were
+     planned: `size` above is each piece's own extent before it was shelved,
+     and what a renderer needs is the box on the finished canvas. Taken from
+     the placed nodes, so it cannot disagree with them. */
+  const regions: GraphRegion[] = pieces.map((members) => {
+    const spots = members
+      .map((id) => placed.find((entry) => entry.node.id === id))
+      .filter((entry): entry is PlacedNode => Boolean(entry));
+    const xs = spots.map((entry) => entry.x);
+    const ys = spots.map((entry) => entry.y);
+    const x = Math.min(...xs);
+    const y = Math.min(...ys);
+    return {
+      ids: members,
+      x,
+      y,
+      width: Math.max(...xs) + geom.nodeW - x,
+      height: Math.max(...ys) + geom.nodeH - y,
+    };
+  });
+
+  return { nodes: placed, edges, width: right + geom.pad, height: bottom + geom.pad, regions };
 }
 
 // ---------------------------------------------------------------------------

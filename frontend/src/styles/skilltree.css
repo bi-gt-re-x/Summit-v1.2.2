@@ -3153,3 +3153,135 @@ html[data-theme="dark"] .stx-tile.is-complete .stx-tile-face {
    than taking the lit width, so the route you are inspecting is the brightest
    thing on the canvas whichever ground it crosses. */
 .stx-page--lattice .stx-wire.is-built.is-lit { stroke-width: 4; }
+
+/* ==========================================================================
+   The tier ladder, as a shape
+   ==========================================================================
+   Six tiers, six colours, and — until now — one shape: a 64px square with a
+   16px radius, whatever rung it was on. So the ladder was carried entirely by
+   hue and by a four-word chip under the tile, and neither survives being
+   looked at from a zoomed-out canvas.
+
+   The radius is the ladder. Foundation is a circle and mastery is nearly a
+   square, and everything between steps once — so a reader can see the
+   progression down the page without reading a word of it, and the shape says
+   the same thing the colour does for anybody who cannot tell the colours
+   apart. Size is deliberately untouched: a lattice of tiles at six different
+   sizes is a lattice with no rhythm, which was the thing worth keeping. */
+.stx-page--lattice .tier-foundation .stx-tile-face { border-radius: 50%; }
+.stx-page--lattice .tier-beginner .stx-tile-face { border-radius: 40%; }
+.stx-page--lattice .tier-intermediate .stx-tile-face { border-radius: 30%; }
+.stx-page--lattice .tier-advanced .stx-tile-face { border-radius: 22%; }
+.stx-page--lattice .tier-expert .stx-tile-face { border-radius: 15%; }
+.stx-page--lattice .tier-mastery .stx-tile-face { border-radius: 9%; }
+
+/* The top two rungs earn an outer line as well. Not a bigger tile and not a
+   brighter one — a second edge, which reads as *weight* at any zoom and stays
+   out of the way of the selection ring and the progress ring, both of which
+   are shadows on the same square. */
+.stx-page--lattice .tier-expert .stx-tile-face {
+    outline: 1px solid color-mix(in srgb, var(--tone) 40%, transparent);
+    outline-offset: 3px;
+}
+.stx-page--lattice .tier-mastery .stx-tile-face {
+    outline: 1.5px solid color-mix(in srgb, var(--tone) 55%, transparent);
+    outline-offset: 4px;
+}
+
+/* A diamond is a doorway rather than a rung, so it keeps its own shape — the
+   rotation that makes it a diamond is on the same element these rules set a
+   radius on, and a doorway with a mastery corner treatment would be claiming
+   to be a skill. */
+.stx-page--lattice .stx-tile.is-nav .stx-tile-face {
+    border-radius: 14px;
+    outline: none;
+}
+
+/* The legend teaches the shape the same way it teaches the colour. Without
+   this the ladder is a thing a reader has to notice; with it, it is a thing
+   they were told. */
+.stx-legend-dot { width: 10px; height: 10px; }
+.stx-legend-dot.tier-foundation { border-radius: 50%; }
+.stx-legend-dot.tier-beginner { border-radius: 40%; }
+.stx-legend-dot.tier-intermediate { border-radius: 30%; }
+.stx-legend-dot.tier-advanced { border-radius: 22%; }
+.stx-legend-dot.tier-expert { border-radius: 15%; }
+.stx-legend-dot.tier-mastery { border-radius: 9%; }
+
+/* ==========================================================================
+   Regions — the gaps, explained
+   ==========================================================================
+   A graph whose pieces never join is several drawings, and the packer shelves
+   them with a gap between. The gap was doing the work and nothing said so, so
+   it read as a canvas that had failed to lay out rather than as two branches.
+
+   Faint enough to be read through: everything above it — wires, tiles, labels
+   — has to stay exactly as legible as it was on a canvas with no regions at
+   all. See `regions` in components/SkillTree/SkillTree. */
+.stx-region {
+    position: absolute;
+    border: 1px dashed color-mix(in srgb, var(--lat-line) 80%, transparent);
+    border-radius: 22px;
+    background: color-mix(in srgb, var(--lat-grid) 26%, transparent);
+    pointer-events: none;
+}
+
+html[data-theme="dark"] .stx-region {
+    background: color-mix(in srgb, var(--lat-grid) 40%, transparent);
+}
+
+/* The name sits on the region's top edge rather than inside it, so it cannot
+   collide with the first row of tiles however tightly a piece is packed. */
+.stx-region-name {
+    position: absolute;
+    top: -9px;
+    left: 18px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--lat-page);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--lat-faint);
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   Optional — suggested, with nothing waiting on it
+   ==========================================================================
+   The fifth thing a tile can be, and the only one that is not a status: see
+   `optionalIds` in skills/route for what earns it. On the tile it appears only
+   while the tile is selected, because it is a fact about a decision and the
+   decision is made one node at a time. */
+/* Beside the tile rather than above or below it, which are both taken: the
+   "you are here" flag sits above — and a selected tile is always the marked
+   one — while the name and the tier row sit below. The column gap is 96px and
+   nothing else lives in it at the tile's own height. */
+.stx-tile-optional {
+    position: absolute;
+    left: calc(100% + 7px);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    padding: 2px 7px;
+    border: 1px dashed color-mix(in srgb, var(--lat-muted) 45%, transparent);
+    border-radius: 999px;
+    background: var(--lat-panel);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--lat-muted);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Dashed in the panel too, which is the vocabulary the canvas already uses for
+   "suggested rather than required" — the recommendation edges are dashed and
+   this is the node at the end of one. */
+.stx-lp-badge.is-optional {
+    border: 1px dashed color-mix(in srgb, var(--lat-muted) 50%, transparent);
+    background: none;
+    color: var(--lat-muted);
+}

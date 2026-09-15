@@ -116,6 +116,7 @@ import {
   gatesOf,
   litBy,
   opportunities,
+  optionalIds,
   pathOf,
   spotlight,
   type Lens,
@@ -566,6 +567,12 @@ export default function SkillTrees() {
      print `2/3` where every other tile prints a percentage. See skills/route. */
   const gates = useMemo(() => gatesOf(graph), [graph]);
 
+  /* Which nodes nothing is waiting on. A fifth thing a tile can be, and the
+     only one that is not a status: "can I start this" and "does anything
+     depend on my finishing it" are separate questions, and the lattice was
+     only answering the first. See `optionalIds` in skills/route. */
+  const optional = useMemo(() => optionalIds(graph), [graph]);
+
   /* ---- The tile under the pointer --------------------------------------
      Which node is being pointed at and where its tile was when the pointer
      arrived. The rectangle is held rather than recomputed because the card is
@@ -955,6 +962,7 @@ export default function SkillTrees() {
                   emphasis={weights?.get(placed.node.id)}
                   here={placed.node.id === hereId}
                   gate={gates.get(placed.node.id)}
+                  optional={optional.has(placed.node.id)}
                   onTrace={() => trace(placed.node)}
                   onPeek={(node, rect) => setPeeked({ id: node.id, rect })}
                   onPeekEnd={() => setPeeked(null)}

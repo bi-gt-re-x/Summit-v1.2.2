@@ -67,7 +67,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { improvePlan } from '@/skills/improve';
-import { nearestBlocker } from '@/skills/route';
+import { nearestBlocker, optionalIds } from '@/skills/route';
 import { groupOf, iconUrl } from '@/skills/subjectTrees';
 import {
   DIFFICULTY_LABEL,
@@ -562,6 +562,15 @@ export function LatticePanel({
               </span>
             ))}
             <span className={`stx-lp-badge is-state is-${node.status}`}>{STATUS_LABEL[node.status]}</span>
+            {/* Suggested rather than required — see `optionalIds` in
+                skills/route. After the status rather than before it, because
+                the two answer different questions and the first one a reader
+                asks is still "can I start this". */}
+            {optionalIds(graph).has(node.id) && (
+              <span className="stx-lp-badge is-optional" title="Nothing on this tree waits on it">
+                Optional
+              </span>
+            )}
             {renamed && onResetName && (
               <button type="button" className="stx-lp-name-reset" onClick={onResetName}>
                 Reset name

@@ -366,6 +366,49 @@ export function opportunities(
 }
 
 // --------------------------------------------------------------------------
+// Suggested, not required
+// --------------------------------------------------------------------------
+/**
+ * The nodes nothing is waiting on.
+ *
+ * The lattice has four states and they answer one question — *can I start
+ * this* — which leaves a second question unasked: *does anything depend on my
+ * finishing it*. Those come apart. A skill can be wide open and lead nowhere,
+ * and a reader deciding what to spend a fortnight on feels very differently
+ * about that than about the node three others are stacked behind.
+ *
+ * Both halves of the test matter:
+ *
+ *   - **Nothing requires it.** Finishing it opens no gate. That is the
+ *     "not required" half, and it is read off the same `requires` edges the
+ *     canvas is already drawing solid.
+ *   - **Something recommends it.** The tree went out of its way to suggest it,
+ *     in either direction along a dashed edge. That is the "recommended" half,
+ *     and it is what separates an optional skill from a plain leaf.
+ *
+ * Without the second half this would light up every dead end on the canvas,
+ * including the capstone a whole tree climbs towards — which is the opposite
+ * of optional. With it, the set is exactly what the dashed lines already said
+ * and nobody was reading: worth doing, nothing waiting.
+ */
+export function optionalIds(graph: SkillGraph): Set<string> {
+  const gates = new Set(graph.nodes.flatMap((node) => node.requires));
+  const suggested = new Set<string>();
+  for (const node of graph.nodes) {
+    for (const id of node.recommends ?? []) {
+      suggested.add(id);
+      suggested.add(node.id);
+    }
+  }
+
+  return new Set(
+    graph.nodes
+      .filter((node) => !gates.has(node.id) && suggested.has(node.id))
+      .map((node) => node.id),
+  );
+}
+
+// --------------------------------------------------------------------------
 // The route, as a lattice of its own
 // --------------------------------------------------------------------------
 /**

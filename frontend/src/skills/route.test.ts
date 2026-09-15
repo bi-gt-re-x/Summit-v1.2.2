@@ -22,6 +22,7 @@ import {
   nearestBlocker,
   nextAfter,
   opportunities,
+  optionalIds,
   pathOf,
   routeTo,
   spotlight,
@@ -245,6 +246,40 @@ describe('spotlight', () => {
 
   it('marks nothing as here, because a lens has no centre', () => {
     expect([...spotlight(ladder(), 'complete').values()]).not.toContain('here');
+  });
+});
+
+describe('optionalIds', () => {
+  it('is what nothing waits on and something suggests', () => {
+    /* `stats` gates nothing on this ladder. On its own that makes it a leaf,
+       not an option — so it only counts once the tree has actually suggested
+       it. */
+    expect(optionalIds(ladder()).has('stats')).toBe(false);
+
+    const suggested = ladder({ linear: { recommends: ['stats'] } });
+    expect(optionalIds(suggested).has('stats')).toBe(true);
+  });
+
+  it('leaves out a node other nodes are stacked behind', () => {
+    // `linear` is recommended by something *and* required by two others. It is
+    // as far from optional as a node on this tree gets.
+    const graph = ladder({ stats: { recommends: ['linear'] } });
+    expect(optionalIds(graph).has('linear')).toBe(false);
+  });
+
+  it('counts a suggestion pointing either way', () => {
+    // A dashed edge is drawn once and means the same thing from both ends, so
+    // a node that recommends something is as much a part of the pair as the
+    // node it recommends.
+    const graph = ladder({ stats: { recommends: ['algebra'] } });
+    expect(optionalIds(graph).has('stats')).toBe(true);
+  });
+
+  it('never calls a capstone optional', () => {
+    // `quad` is the end of the tree and nothing requires it. A rule that only
+    // asked "does anything wait on this" would mark the thing the whole
+    // lattice climbs towards as something you could skip.
+    expect(optionalIds(ladder()).has('quad')).toBe(false);
   });
 });
 

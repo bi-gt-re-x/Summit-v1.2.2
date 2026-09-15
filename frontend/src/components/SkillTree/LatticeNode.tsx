@@ -70,6 +70,16 @@ export interface LatticeNodeProps {
   /** Light the whole prerequisite chain up to this node. */
   onTrace?: () => void;
   /**
+   * Suggested rather than required — nothing on this tree waits on it.
+   *
+   * Drawn only while the tile is selected, on purpose. It is a fact about a
+   * *decision*, and the decision is being made about one node at a time; forty
+   * tiles each carrying a small grey word would be forty tiles harder to read
+   * in exchange for a fact nobody asked forty times. See `optionalIds` in
+   * skills/route.
+   */
+  optional?: boolean;
+  /**
    * The pointer has come to rest on this tile — draw the hover card for it.
    *
    * The tile hands over its own rectangle because it is the only thing that
@@ -93,6 +103,7 @@ export function LatticeNode({
   here = false,
   gate,
   onTrace,
+  optional = false,
   onPeek,
   onPeekEnd,
 }: LatticeNodeProps) {
@@ -122,6 +133,7 @@ export function LatticeNode({
         + (node.status === 'locked' && gate
           ? `. Locked, ${gate.met} of ${gate.need} prerequisites done`
           : '')
+        + (optional ? '. Optional' : '')
         + (here ? '. You are here' : '')
       }
       /* The name, and nothing else, because the hover card below says the
@@ -148,6 +160,11 @@ export function LatticeNode({
       onBlur={onPeekEnd}
     >
       {here && <span className="stx-tile-here">You are here</span>}
+      {optional && selected && !nav && (
+        <span className="stx-tile-optional" aria-hidden="true">
+          Optional
+        </span>
+      )}
       <span className="stx-tile-face" aria-hidden="true">
         <i className="stx-ico" />
       </span>
