@@ -16,6 +16,8 @@ import {
   currentSkill,
   emphasise,
   focusOn,
+  gatesOf,
+  nearestBlocker,
   nextAfter,
   opportunities,
   routeTo,
@@ -240,5 +242,53 @@ describe('spotlight', () => {
 
   it('marks nothing as here, because a lens has no centre', () => {
     expect([...spotlight(ladder(), 'complete').values()]).not.toContain('here');
+  });
+});
+
+describe('gatesOf', () => {
+  it('counts how far through its prerequisites a gated node is', () => {
+    const gates = gatesOf(ladder());
+    expect(gates.get('algebra')).toEqual({ met: 2, need: 2 });
+    expect(gates.get('quad')).toEqual({ met: 0, need: 2 });
+  });
+
+  it('gives a node with nothing above it no fraction at all', () => {
+    // `0 of 0` on a tile is worse than a blank.
+    expect(gatesOf(ladder()).has('arith')).toBe(false);
+  });
+
+  it('tells one left apart from two, which is the whole point of it', () => {
+    const gates = gatesOf(ladder());
+    const left = (id: string) => {
+      const gate = gates.get(id)!;
+      return gate.need - gate.met;
+    };
+    expect(left('systems')).toBe(1);
+    expect(left('quad')).toBe(2);
+  });
+});
+
+describe('nearestBlocker', () => {
+  const at = (id: string, graph = ladder()) =>
+    nearestBlocker(graph, graph.nodes.find((one) => one.id === id)!);
+
+  it('names the one prerequisite in the way', () => {
+    expect(at('systems')?.id).toBe('linear');
+  });
+
+  it('sends the reader to what is closest to done, not to the first listed', () => {
+    // `quad` waits on `linear` and `systems`. `linear` is open and `systems` is
+    // locked behind it, so `linear` is where a reader can actually start.
+    expect(at('quad')?.id).toBe('linear');
+  });
+
+  it('prefers something part-done over something merely open', () => {
+    const graph = ladder({ systems: { status: 'progress', percent: 30 } });
+    expect(at('quad', graph)?.id).toBe('systems');
+  });
+
+  it('is null when nothing is in the way', () => {
+    expect(at('arith')).toBeNull();
+    expect(at('algebra')).toBeNull();
   });
 });

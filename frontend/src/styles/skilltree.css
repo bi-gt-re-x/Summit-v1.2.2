@@ -2713,3 +2713,107 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
     .stx-next-lead { flex: 1 1 100%; }
     .stx-next-rest { flex: 1 1 100%; }
 }
+
+/* ==========================================================================
+   Degrees of lockedness
+   ==========================================================================
+   A gated tile prints how far through its prerequisites it is where every
+   other tile prints a percentage — see the note in components/SkillTree/
+   LatticeNode. Same pill as `.stx-tile-pct` so the row of tiles keeps one
+   rhythm; what changes is what it is coloured by. */
+.stx-tile-gate {
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--tone) 50%, var(--lat-line));
+    background: var(--lat-panel);
+    color: var(--lat-muted);
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+/* One left is the state this whole thing exists to separate from four left, so
+   it is the one that gets a colour. Never colour alone: the fraction says it
+   too, and so does the panel. */
+.stx-tile-gate[data-left="1"] {
+    border-color: color-mix(in srgb, var(--lat-amber) 60%, transparent);
+    background: var(--lat-amber-soft);
+    color: var(--lat-amber);
+}
+
+/* ==========================================================================
+   What this needs first
+   ==========================================================================
+   Named, ticked and reachable. A prerequisite a reader cannot click is a
+   prerequisite they have to go and find on the canvas. */
+.stx-lp-needs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stx-lp-needs li {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+}
+
+.stx-lp-need-mark {
+    flex: none;
+    width: 13px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--lat-faint);
+}
+
+.stx-lp-needs li.is-done .stx-lp-need-mark { color: var(--lat-green); }
+
+.stx-lp-needs button {
+    flex: 1;
+    min-width: 0;
+    padding: 2px 4px;
+    margin-left: -4px;
+    border: 0;
+    border-radius: 5px;
+    background: none;
+    font: inherit;
+    font-size: 12.5px;
+    text-align: left;
+    color: var(--lat-text);
+    cursor: pointer;
+    transition: color .14s ease, background .14s ease;
+}
+
+.stx-lp-needs button:hover { color: var(--lat-violet); background: var(--lat-violet-soft); }
+.stx-lp-needs button:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: 1px; }
+
+/* Done is quieter, because the list is read for what is *not* done. */
+.stx-lp-needs li.is-done button { color: var(--lat-muted); }
+
+.stx-lp-needs em {
+    flex: none;
+    font-style: normal;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--lat-faint);
+}
+
+/* The action that goes somewhere rather than adding to something. Outlined
+   rather than filled: it is a route out of this node, not a session in it, and
+   the filled button on every other state is what a session looks like. */
+.stx-lp-cta.is-go {
+    background: none;
+    border: 1px solid var(--lat-violet);
+    color: var(--lat-violet);
+}
+
+.stx-lp-cta.is-go:hover { background: var(--lat-violet-soft); }

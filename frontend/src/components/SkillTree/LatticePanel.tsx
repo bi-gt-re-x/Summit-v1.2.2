@@ -41,6 +41,15 @@
  * anything it merely recommends. Every row selects the node it names, which is
  * what turns the panel into navigation.
  *
+ * ## A locked node is told what is in the way, by name
+ *
+ * "Locked" on its own is a word, not information. The checklist under the
+ * counts names every prerequisite and ticks the ones that are done, so a node
+ * blocked by one reads differently from a node blocked by four — and the
+ * action at the foot of the panel becomes *start with the thing that is
+ * blocking it* rather than a greyed-out button repeating the word. See
+ * `nearestBlocker` in skills/route for which of several it picks.
+ *
  * ## Where this sits, before what it is
  *
  * "Your path" is three counts the panel could always have stated and never
@@ -58,6 +67,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { improvePlan } from '@/skills/improve';
+import { nearestBlocker } from '@/skills/route';
 import { groupOf, iconUrl } from '@/skills/subjectTrees';
 import {
   DIFFICULTY_LABEL,
@@ -421,6 +431,42 @@ export function LatticePanel({
   // first three is wrong for everybody past the first three.
   const window = programme.steps.slice(at, at + 3);
   const openSteps = () => setAllSteps(true);
+
+  /*
+   * What the one control at the foot of the panel says and does.
+   *
+   * Six states, and the only one that is not "press this again" is the locked
+   * node's, which sends the reader to whatever is in the way. `go` present is
+   * what tells the render which of the two buttons to draw — a navigation and
+   * a practice session are different verbs and should not share a handler.
+   */
+  const blocker = node.status === 'locked' ? nearestBlocker(graph, node) : null;
+  /* Sessions left on a node counted in XP: how many more times this button has
+     to be pressed, which is the question "Practice" never answered. Zero XP to
+     go is a node that is already complete, so the floor is one. */
+  const sessions = gain > 0 ? Math.max(1, Math.ceil((node.need - node.have) / gain)) : 0;
+  const stepsLeft = programme.steps.length - at;
+
+  const cta: { word: string; go?: () => void } =
+    node.status === 'complete'
+      ? { word: 'Mastered' }
+      : blocker
+        ? { word: `Start with ${blocker.name}`, go: () => onSelect(blocker) }
+        : node.status === 'locked'
+          ? { word: 'Locked' }
+          : steps
+            ? {
+                word:
+                  stepsLeft === 1
+                    ? 'Finish this skill · last step'
+                    : `Continue · step ${at + 1} of ${programme.steps.length}`,
+              }
+            : {
+                word:
+                  sessions === 1
+                    ? `Finish this skill · +${number(gain)} XP`
+                    : `Practice · +${number(gain)} XP`,
+              };
   // The first edit takes a copy of the suggested programme — see the note at
   // the top of utils/skillSteps on why an override rather than a diff.
   const changeSteps = onSteps ? (next: StepPlan) => onSteps(next) : undefined;
@@ -560,6 +606,28 @@ export function LatticePanel({
           </ul>
         )}
 
+        {/* What is actually in the way, by name. Only while something is: a
+            finished list of ticks under a node that is already open is a
+            paragraph saying nothing happened. */}
+        {blockers.length > 0 && (
+          <ul className="stx-lp-needs" aria-label="What this needs first">
+            {needs.map((need) => {
+              const done = need.status === 'complete';
+              return (
+                <li key={need.id} className={done ? 'is-done' : undefined}>
+                  <span className="stx-lp-need-mark" aria-hidden="true">
+                    {done ? '✓' : '○'}
+                  </span>
+                  <button type="button" onClick={() => onSelect(need)}>
+                    {need.name}
+                  </button>
+                  {!done && <em>{STATUS_LABEL[need.status]}</em>}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
         <section className={`stx-lp-progress is-${node.status}`}>
           <p className="stx-lp-line">
             <span>Progress</span>
@@ -624,26 +692,38 @@ export function LatticePanel({
         <Rows title="Related Skills" nodes={near} onSelect={onSelect} showPercent />
       </div>
 
-      {/* Four states, and each says what it actually is: a locked node names
-          what is in the way, a finished one has nothing left to add, a node
-          whose programme the reader has written is counted in steps rather than
-          XP so the button ticks the next one off, and the rest say what a
-          session is worth rather than just "Practice". */}
-      <button
-        type="button"
-        className="stx-lp-cta"
-        disabled={!onPractice || node.status === 'locked' || node.status === 'complete'}
-        onClick={() => onPractice?.(node)}
-      >
-        <Ico icon={node.status === 'complete' ? 'mastered' : 'practice'} className="stx-ico stx-lp-cta-ico" />
-        {node.status === 'locked'
-          ? 'Locked — finish what it needs first'
-          : node.status === 'complete'
-            ? 'Mastered'
-            : steps
-              ? `Done Step ${at + 1} of ${programme.steps.length}`
-              : `Practice This Skill · +${number(gain)} XP`}
-      </button>
+      {/* The one control, and it says what pressing it does here rather than
+          what it does in general.
+
+          A locked node used to get a greyed-out button repeating the word the
+          badge already said, which is the shape of a dead end. It now offers
+          the prerequisite to go and do — the panel's only action that moves
+          the reader somewhere rather than adding to something.
+
+          The rest is the difference between starting, continuing and
+          finishing, which are three different feelings and were one sentence.
+          `left` is sessions rather than steps on a node counted in XP: both
+          are "how many more times do I press this", which is the question the
+          word "Practice" was leaving unanswered. */}
+      {cta.go ? (
+        <button type="button" className="stx-lp-cta is-go" onClick={cta.go}>
+          <Ico icon="branch" className="stx-ico stx-lp-cta-ico" />
+          {cta.word}
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="stx-lp-cta"
+          disabled={!onPractice || node.status === 'complete'}
+          onClick={() => onPractice?.(node)}
+        >
+          <Ico
+            icon={node.status === 'complete' ? 'mastered' : 'practice'}
+            className="stx-ico stx-lp-cta-ico"
+          />
+          {cta.word}
+        </button>
+      )}
     </aside>
   );
 }

@@ -69,6 +69,7 @@ import {
   currentSkill,
   emphasise,
   focusOn,
+  gatesOf,
   opportunities,
   spotlight,
   type Lens,
@@ -448,6 +449,10 @@ export default function SkillTrees() {
     [graph, navIds, standing],
   );
 
+  /* How far through its prerequisites each gated node is, so a locked tile can
+     print `2/3` where every other tile prints a percentage. See skills/route. */
+  const gates = useMemo(() => gatesOf(graph), [graph]);
+
   /* One emphasis layer, from whichever of the two is on. */
   const weights = useMemo(() => {
     if (lens) return spotlight(graph, lens, navIds);
@@ -754,6 +759,7 @@ export default function SkillTrees() {
                   onNavigate={to ? () => goTo(to) : undefined}
                   emphasis={weights?.get(placed.node.id)}
                   here={placed.node.id === hereId}
+                  gate={gates.get(placed.node.id)}
                   onTrace={() => trace(placed.node)}
                 />
               );

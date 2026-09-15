@@ -217,6 +217,72 @@ export function emphasise(
 }
 
 // --------------------------------------------------------------------------
+// Degrees of lockedness
+// --------------------------------------------------------------------------
+export interface Gate {
+  /** Prerequisites finished. */
+  met: number;
+  /** Prerequisites there are. */
+  need: number;
+}
+
+/**
+ * How far through its prerequisites each gated node is.
+ *
+ * "Locked" was one word covering two states a reader feels completely
+ * differently about: one thing left, and four. The first is next week and the
+ * second is next term, and a tile that says the same about both has told
+ * nobody anything — which is how a lattice ends up looking like a wall of dead
+ * ends rather than a set of near-term targets.
+ *
+ * Only nodes that are gated at all. A foundation with nothing above it has no
+ * fraction, and `0 of 0` on a tile is worse than a blank.
+ */
+export function gatesOf(graph: SkillGraph): Map<string, Gate> {
+  const byId = new Map(graph.nodes.map((one) => [one.id, one]));
+  const gates = new Map<string, Gate>();
+
+  for (const node of graph.nodes) {
+    if (node.requires.length === 0) continue;
+    gates.set(node.id, {
+      met: node.requires.filter((id) => byId.get(id)?.status === 'complete').length,
+      need: node.requires.length,
+    });
+  }
+  return gates;
+}
+
+/**
+ * Which prerequisite to go and do first, or null when nothing is in the way.
+ *
+ * What turns a locked node from a dead end into a route: the panel's action on
+ * one is "start with the thing that is blocking it" rather than a greyed-out
+ * button repeating the word the tile already said.
+ *
+ * Part-done first, then open, then the fewest blockers of its own, then the
+ * lower rung — the same ordering `opportunities` argues for, because it is the
+ * same question asked of a smaller set.
+ */
+export function nearestBlocker(graph: SkillGraph, node: GraphNode): GraphNode | null {
+  const byId = new Map(graph.nodes.map((one) => [one.id, one]));
+  const blocking = node.requires
+    .map((id) => byId.get(id))
+    .filter((one): one is GraphNode => one !== undefined && one.status !== 'complete');
+
+  const band = (one: GraphNode) =>
+    one.status === 'progress' ? 0 : one.status === 'available' ? 1 : 2;
+
+  return blocking.reduce<GraphNode | null>((winner, one) => {
+    if (!winner) return one;
+    if (band(one) !== band(winner)) return band(one) < band(winner) ? one : winner;
+    const mine = blockersOf(graph, one);
+    const theirs = blockersOf(graph, winner);
+    if (mine !== theirs) return mine < theirs ? one : winner;
+    return difficultyRank(one.difficulty) < difficultyRank(winner.difficulty) ? one : winner;
+  }, null);
+}
+
+// --------------------------------------------------------------------------
 // What to do next
 // --------------------------------------------------------------------------
 /** How many of a node's prerequisites are still outstanding. */

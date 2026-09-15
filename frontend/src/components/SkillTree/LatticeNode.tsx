@@ -30,6 +30,15 @@
  * `here` also draws the label. It is a real element rather than a `::after` so
  * a screen reader meets it: "you are here" is the single most useful thing on
  * the canvas and is exactly the sort of thing that ends up sighted-only.
+ *
+ * ## A locked tile prints its gate, not its nought
+ *
+ * Every other tile ends in a percentage. A locked one's is always zero, which
+ * is a true figure answering no question — and it made "one prerequisite left"
+ * and "four prerequisites left" render identically, when those are the two
+ * states a reader feels most differently about. So a gated tile prints `2/3`
+ * instead, and the fraction is what turns a wall of dead ends into a set of
+ * near-term targets. See `gatesOf` in skills/route.
  */
 import type { CSSProperties } from 'react';
 import type { Emphasis } from '@/skills/route';
@@ -48,6 +57,8 @@ export interface LatticeNodeProps {
   emphasis?: Emphasis;
   /** Draw the "you are here" marker, whether or not a focus layer is on. */
   here?: boolean;
+  /** How far through its prerequisites, for the ones that have any. */
+  gate?: { met: number; need: number };
   /** Light the whole prerequisite chain up to this node. */
   onTrace?: () => void;
 }
@@ -60,6 +71,7 @@ export function LatticeNode({
   onNavigate,
   emphasis,
   here = false,
+  gate,
   onTrace,
 }: LatticeNodeProps) {
   const { node, x, y } = placed;
@@ -83,7 +95,13 @@ export function LatticeNode({
       }${emphasis ? ` em-${emphasis}` : ''}${here ? ' is-here' : ''}`}
       style={style}
       aria-pressed={nav ? undefined : selected}
-      aria-label={`${nav ? `Open ${node.name}` : node.name}${here ? '. You are here' : ''}`}
+      aria-label={
+        `${nav ? `Open ${node.name}` : node.name}`
+        + (node.status === 'locked' && gate
+          ? `. Locked, ${gate.met} of ${gate.need} prerequisites done`
+          : '')
+        + (here ? '. You are here' : '')
+      }
       title={nav ? `${node.name} →` : node.name}
       onClick={() => (nav ? onNavigate?.() : onSelect(node))}
       onDoubleClick={nav ? undefined : onTrace}
@@ -104,7 +122,14 @@ export function LatticeNode({
           is progress to report. */}
       <span className="stx-tile-meta" aria-hidden="true">
         <span className="stx-tile-tier">{DIFFICULTY_LABEL[node.difficulty]}</span>
-        {!nav && <span className="stx-tile-pct">{Math.round(node.percent)}%</span>}
+        {!nav
+          && (node.status === 'locked' && gate ? (
+            <span className="stx-tile-gate" data-left={gate.need - gate.met}>
+              {gate.met}/{gate.need}
+            </span>
+          ) : (
+            <span className="stx-tile-pct">{Math.round(node.percent)}%</span>
+          ))}
       </span>
     </button>
   );
