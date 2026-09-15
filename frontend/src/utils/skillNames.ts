@@ -25,10 +25,12 @@
  *
  * Same store, same reasoning, same precedent as utils/skillProgress and
  * utils/skillSteps: no table, unsettled rules, one file that an endpoint would
- * later replace without anything above it noticing.
+ * later replace without anything above it noticing. The reading and writing is
+ * utils/skillStore, shared with the other three.
  */
-import { userScopedKey } from './calendarStore';
+import { keepKnownNodes, treeRevision } from '@/skills/subjectTrees';
 import type { SkillGraph } from './skillGraph';
+import { skillStore } from './skillStore';
 
 /** What a reader has said a node should be called. */
 export interface NodeName {
@@ -40,8 +42,6 @@ export interface NodeName {
 /** Node id → the reader's own name for it. */
 export type NodeNames = Record<string, NodeName>;
 
-const KEY = 'skillTreeNames';
-
 /** Long enough for the longest name in the library, short enough for a tile. */
 export const NAME_MAX = 48;
 
@@ -50,16 +50,18 @@ export function cleanName(text: string): string {
   return text.replace(/\s+/g, ' ').trim().slice(0, NAME_MAX);
 }
 
-export function loadNames(username: string | null): NodeNames {
-  try {
-    const raw = localStorage.getItem(userScopedKey(KEY, username));
-    if (!raw) return {};
-    const parsed: unknown = JSON.parse(raw);
-    if (!parsed || typeof parsed !== 'object') return {};
+const namesStore = skillStore<NodeNames>({
+  key: 'skillTreeNames',
+  version: 1,
+  empty: {},
+  revision: treeRevision,
+  migrate: (from, raw) => (from === 0 ? raw : undefined),
+  validate: (raw) => {
+    if (!raw || typeof raw !== 'object') return {};
     // Validated rather than trusted, the same as the other two stores: one bad
     // entry should cost one node's name rather than every name on the account.
     const clean: NodeNames = {};
-    for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
+    for (const [id, value] of Object.entries(raw as Record<string, unknown>)) {
       const entry = value as Partial<NodeName> | null;
       if (!entry || typeof entry.name !== 'string') continue;
       const name = cleanName(entry.name);
@@ -67,19 +69,16 @@ export function loadNames(username: string | null): NodeNames {
       clean[id] = typeof entry.icon === 'string' && entry.icon ? { name, icon: entry.icon } : { name };
     }
     return clean;
-  } catch {
-    // A tree drawn under its designed names is a far better failure than one
-    // that does not draw.
-    return {};
-  }
+  },
+  onRevision: keepKnownNodes,
+});
+
+export function loadNames(username: string | null): NodeNames {
+  return namesStore.load(username);
 }
 
 export function saveNames(username: string | null, names: NodeNames): void {
-  try {
-    localStorage.setItem(userScopedKey(KEY, username), JSON.stringify(names));
-  } catch {
-    // The state above this is the session's source of truth.
-  }
+  namesStore.save(username, names);
 }
 
 /**

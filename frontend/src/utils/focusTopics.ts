@@ -29,39 +29,51 @@
  * skills/subjectMap is free to change; a stored `mandarin` still means Mandarin
  * afterwards, where a stored `foreign-language` would have silently become an
  * answer to a question nobody asked.
+ *
+ * ## The one of the four that does not prune
+ *
+ * The reading and writing is utils/skillStore, the same as the other three.
+ * What this store does not take is an `onRevision` pass: it holds *subject*
+ * ids, and the trees moving underneath it changes nothing about whether
+ * Mandarin is a subject. The catalogue is the server's, arrives per render, and
+ * an id no longer in it resolves to nothing and is dropped where it is read —
+ * see `resolveFocus` below and components/SkillTree/FocusTopics. Pruning
+ * against a list that has not loaded yet would empty somebody's band on a slow
+ * connection.
  */
-import { userScopedKey } from './calendarStore';
-
-const KEY = 'skillFocusTopics';
+import { skillStore } from './skillStore';
 
 /** How many the band across the top holds. */
 export const FOCUS_COUNT = 5;
 
-/** The stored ids, or null where this account has never chosen. */
-export function loadFocus(username: string | null): string[] | null {
-  try {
-    const raw = localStorage.getItem(userScopedKey(KEY, username));
-    if (!raw) return null;
-    const parsed: unknown = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return null;
+/**
+ * Null means "this account has never chosen", which is a different state from
+ * "chose and then cleared" and is the gate components/SkillTree/FocusSetup
+ * opens on. So `empty` is null and an empty stored array reads as null too —
+ * clearing the answer is how the band's "Choose again" reopens the screen.
+ */
+const focusStore = skillStore<string[] | null>({
+  key: 'skillFocusTopics',
+  version: 1,
+  empty: null,
+  // The pre-envelope document was the bare array. See utils/skillStore.
+  migrate: (from, raw) => (from === 0 ? raw : undefined),
+  validate: (raw) => {
+    if (!Array.isArray(raw)) return null;
     // Anything that is not a string is dropped rather than trusted: this is a
     // store a person can edit by hand, and one bad value should cost one slot.
-    const clean = parsed.filter((value): value is string => typeof value === 'string');
+    const clean = raw.filter((value): value is string => typeof value === 'string');
     return clean.length > 0 ? clean.slice(0, FOCUS_COUNT) : null;
-  } catch {
-    // Private-mode storage, a quota error, or JSON that is not ours. Falling
-    // back to the derived five is a far better failure than an empty band.
-    return null;
-  }
+  },
+});
+
+/** The stored ids, or null where this account has never chosen. */
+export function loadFocus(username: string | null): string[] | null {
+  return focusStore.load(username);
 }
 
 export function saveFocus(username: string | null, ids: string[]): void {
-  try {
-    localStorage.setItem(userScopedKey(KEY, username), JSON.stringify(ids.slice(0, FOCUS_COUNT)));
-  } catch {
-    // The click has already worked on screen; the state above this is the
-    // source of truth for the session.
-  }
+  focusStore.save(username, ids.slice(0, FOCUS_COUNT));
 }
 
 /**

@@ -195,3 +195,78 @@ export function navTargets(tree: SubjectTree): Map<string, string> {
   for (const node of tree.nodes) if (node.navTo) map.set(node.id, node.navTo);
   return map;
 }
+
+// --------------------------------------------------------------------------
+// What the authored content currently is
+// --------------------------------------------------------------------------
+/**
+ * Every node id on every tree, built once.
+ *
+ * Ids are unique across the whole hierarchy — that is the property
+ * utils/skillProgress relies on to cover sixty-two trees with one map — so this
+ * is the complete answer to "does this id still name a skill".
+ */
+let ids: Set<string> | null = null;
+
+export function knownNodeIds(): ReadonlySet<string> {
+  if (!ids) ids = new Set(TREES.flatMap((tree) => tree.nodes.map((node) => node.id)));
+  return ids;
+}
+
+/**
+ * A fingerprint of the authored content, so a browser store can tell whether
+ * the trees have moved under it.
+ *
+ * Derived rather than declared. A hand-maintained `TREE_REVISION = '2026-09'`
+ * is a constant somebody has to remember to bump in the same commit that edits
+ * a tree, and the failure when they forget is the one this whole mechanism
+ * exists to prevent — so it is computed from the thing it is a fingerprint of
+ * and cannot be forgotten.
+ *
+ * Over the ids alone, not the titles or the descriptions: this is asked
+ * whenever a store is read, and rewording a node's `desc` should not cost
+ * every account on the machine a rewrite of its progress. What it has to catch
+ * is a node appearing or disappearing, which is exactly what the ids say.
+ *
+ * FNV-1a, which is not a cryptographic hash and does not need to be — the
+ * question is "same or different", and the cost of a collision is one prune
+ * that does not run.
+ */
+let revision: string | null = null;
+
+export function treeRevision(): string {
+  if (revision !== null) return revision;
+  let hash = 0x811c9dc5;
+  for (const tree of TREES) {
+    for (const node of tree.nodes) {
+      for (let at = 0; at < node.id.length; at += 1) {
+        hash ^= node.id.charCodeAt(at);
+        hash = Math.imul(hash, 0x01000193);
+      }
+      // A separator, or `ab` + `c` and `a` + `bc` fingerprint the same.
+      hash ^= 0x2f;
+      hash = Math.imul(hash, 0x01000193);
+    }
+  }
+  revision = (hash >>> 0).toString(16);
+  return revision;
+}
+
+/**
+ * A node-keyed store with the ids no tree names any more taken out.
+ *
+ * What the three browser stores do when {@link treeRevision} moves. A retired
+ * id left in place is inert today — nothing looks it up, because the graph it
+ * would be looked up against no longer holds it — and is a hazard tomorrow:
+ * ids are short and meaningful (`m.algebra`, `c.vars`), so one retired and
+ * later reused for a different skill would land somebody's practice on a node
+ * they have never opened.
+ */
+export function keepKnownNodes<T>(record: Record<string, T>): Record<string, T> {
+  const known = knownNodeIds();
+  const kept: Record<string, T> = {};
+  for (const [id, value] of Object.entries(record)) {
+    if (known.has(id)) kept[id] = value;
+  }
+  return kept;
+}

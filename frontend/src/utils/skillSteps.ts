@@ -32,9 +32,11 @@
  * table for it, the rules are not settled, and inventing a schema for a feature
  * this young is how you end up migrating one. User-scoped key, read and written
  * in exactly one file, so an endpoint later changes this module and nothing
- * above it.
+ * above it. The reading and writing itself is utils/skillStore, which every
+ * skill tree store shares.
  */
-import { userScopedKey } from './calendarStore';
+import { keepKnownNodes, treeRevision } from '@/skills/subjectTrees';
+import { skillStore } from './skillStore';
 
 /** One node's programme, as its reader left it. */
 export interface StepPlan {
@@ -46,8 +48,6 @@ export interface StepPlan {
 
 /** Node id → the reader's own programme. Absent means "use the derived one". */
 export type StepPlans = Record<string, StepPlan>;
-
-const KEY = 'skillTreeSteps';
 
 /** How long one step is allowed to be. Long enough for a sentence, not a note. */
 export const STEP_MAX = 160;
@@ -66,17 +66,19 @@ export function cleanStep(text: string): string {
   return text.replace(/\s+/g, ' ').trim().slice(0, STEP_MAX);
 }
 
-export function loadSteps(username: string | null): StepPlans {
-  try {
-    const raw = localStorage.getItem(userScopedKey(KEY, username));
-    if (!raw) return {};
-    const parsed: unknown = JSON.parse(raw);
-    if (!parsed || typeof parsed !== 'object') return {};
+const stepsStore = skillStore<StepPlans>({
+  key: 'skillTreeSteps',
+  version: 1,
+  empty: {},
+  revision: treeRevision,
+  migrate: (from, raw) => (from === 0 ? raw : undefined),
+  validate: (raw) => {
+    if (!raw || typeof raw !== 'object') return {};
     // Validated rather than trusted, the same as the progress store: this is a
     // file a person can edit by hand, and one bad entry should cost one node
     // rather than every programme they have ever written.
     const clean: StepPlans = {};
-    for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
+    for (const [id, value] of Object.entries(raw as Record<string, unknown>)) {
       const plan = value as Partial<StepPlan> | null;
       if (!plan || !Array.isArray(plan.steps)) continue;
       const steps = plan.steps
@@ -92,20 +94,16 @@ export function loadSteps(username: string | null): StepPlans {
       clean[id] = { steps, at };
     }
     return clean;
-  } catch {
-    // Quota, private-mode storage, or JSON that is not ours. A panel showing
-    // the suggested programme is a far better failure than one showing nothing.
-    return {};
-  }
+  },
+  onRevision: keepKnownNodes,
+});
+
+export function loadSteps(username: string | null): StepPlans {
+  return stepsStore.load(username);
 }
 
 export function saveSteps(username: string | null, plans: StepPlans): void {
-  try {
-    localStorage.setItem(userScopedKey(KEY, username), JSON.stringify(plans));
-  } catch {
-    // The state above this is the session's source of truth; storage being
-    // unavailable must not stop the edit from having worked on screen.
-  }
+  stepsStore.save(username, plans);
 }
 
 /**

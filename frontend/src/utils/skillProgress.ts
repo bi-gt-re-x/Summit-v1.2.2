@@ -14,6 +14,11 @@
  * is the only thing that has to change — nothing above it knows where the
  * numbers came from.
  *
+ * The reading and writing is `skillStore` in utils/skillStore, which owns the
+ * scoping, the envelope and the versioning for all four of the skill tree's
+ * stores. What is left here is the two things only this store knows: what a
+ * valid entry looks like, and what to do with an id the trees no longer name.
+ *
  * ## The shape
  *
  * `{ [nodeId]: xpEarned }`, and nothing else. Not percentages: XP is the
@@ -30,44 +35,42 @@
  * practised nothing has an empty store rather than a copy of the seed, and
  * editing the seed later does not have to reconcile with what a browser saved.
  */
-import { userScopedKey } from './calendarStore';
+import { keepKnownNodes, treeRevision } from '@/skills/subjectTrees';
 import type { GraphNode, NodeStatus, SkillGraph } from './skillGraph';
+import { skillStore } from './skillStore';
 import { planPercent, type StepPlans } from './skillSteps';
 
 /** Node id → XP added by practising, on top of whatever the tree seeded. */
 export type SkillProgress = Record<string, number>;
 
-const KEY = 'skillTreeProgress';
-
-export function loadProgress(username: string | null): SkillProgress {
-  try {
-    const raw = localStorage.getItem(userScopedKey(KEY, username));
-    if (!raw) return {};
-    const parsed: unknown = JSON.parse(raw);
-    if (!parsed || typeof parsed !== 'object') return {};
+const progressStore = skillStore<SkillProgress>({
+  key: 'skillTreeProgress',
+  version: 1,
+  empty: {},
+  revision: treeRevision,
+  // The pre-envelope document was this exact shape, so it comes forward whole.
+  // See the note on version 0 in utils/skillStore.
+  migrate: (from, raw) => (from === 0 ? raw : undefined),
+  validate: (raw) => {
+    if (!raw || typeof raw !== 'object') return {};
     // Anything that is not a number is dropped rather than trusted: this is a
     // store a person can edit by hand, and one bad value should cost one node
     // rather than the whole tree.
     const clean: SkillProgress = {};
-    for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
+    for (const [id, value] of Object.entries(raw as Record<string, unknown>)) {
       if (typeof value === 'number' && Number.isFinite(value) && value > 0) clean[id] = value;
     }
     return clean;
-  } catch {
-    // A quota error, private-mode storage, or JSON that is not ours. A skill
-    // tree that opens at its starting position is a far better failure than one
-    // that does not open.
-    return {};
-  }
+  },
+  onRevision: keepKnownNodes,
+});
+
+export function loadProgress(username: string | null): SkillProgress {
+  return progressStore.load(username);
 }
 
 export function saveProgress(username: string | null, progress: SkillProgress): void {
-  try {
-    localStorage.setItem(userScopedKey(KEY, username), JSON.stringify(progress));
-  } catch {
-    // Storage being unavailable must not stop the click from having worked on
-    // screen; the state above this is the source of truth for the session.
-  }
+  progressStore.save(username, progress);
 }
 
 /**
