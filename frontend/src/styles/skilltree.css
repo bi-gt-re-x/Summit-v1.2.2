@@ -1839,6 +1839,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     flex-direction: column;
     gap: 8px;
 }
+/* Two notes now rather than three: "Done when" has a box of its own further
+   down, because it is the question a percentage answers worst. */
 .stx-lp-note {
     --tone: var(--lat-grey);
     padding-left: 10px;
@@ -1847,7 +1849,6 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     flex-direction: column;
     gap: 2px;
 }
-.stx-lp-note.is-proof { --tone: var(--lat-green); }
 .stx-lp-note.is-pitfall { --tone: var(--lat-amber); }
 .stx-lp-note.is-effort { --tone: var(--lat-violet); }
 .stx-lp-note dt {
@@ -2596,41 +2597,11 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 
 .stx-route-clear:hover { color: var(--lat-text); border-color: var(--lat-violet); }
 
-/* ==========================================================================
-   Where this node sits — the panel's three counts
-   ========================================================================== */
-.stx-lp-path {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.stx-lp-path li {
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: var(--lat-grey-soft);
-    font-size: 11.5px;
-    color: var(--lat-muted);
-}
-
-.stx-lp-path b { font-weight: 750; color: var(--lat-text); }
-
-.stx-lp-path li.is-met {
-    background: var(--lat-green-soft);
-    color: color-mix(in srgb, var(--lat-green) 75%, var(--lat-text));
-}
-.stx-lp-path li.is-met b { color: var(--lat-green); }
-
-.stx-lp-path li.is-blocked {
-    background: var(--lat-violet-soft);
-    color: color-mix(in srgb, var(--lat-violet) 72%, var(--lat-text));
-}
-.stx-lp-path li.is-blocked b { color: var(--lat-violet); }
-
-.stx-lp-path li.is-opens b { color: var(--lat-blue); }
+/* The three counts that used to sit here — "2 of 3 prerequisites still to
+   go", "4 skills open after it" — are gone with the rules that drew them. The
+   first is a sentence in `.stx-lp-position` now and the second is the heading
+   over the list it was counting, both of which say it where a reader was
+   already looking. */
 
 @media (max-width: 640px) {
     .stx-route { padding: 9px 12px; }
