@@ -33,6 +33,9 @@ export type { NextUpProps } from './NextUp';
 /** The card a tile raises under the pointer. See ./TilePeek. */
 export { TilePeek } from './TilePeek';
 export type { PeekRect, TilePeekProps } from './TilePeek';
+/** What a line between two tiles means. See ./EdgeCard. */
+export { EdgeCard } from './EdgeCard';
+export type { EdgeCardProps } from './EdgeCard';
 export { LatticePanel } from './LatticePanel';
 export type { LatticePanelProps } from './LatticePanel';
 export { SkillConnection } from './SkillConnection';

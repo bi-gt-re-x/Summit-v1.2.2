@@ -54,10 +54,13 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import {
   GEOM,
   layoutGraph,
+  stepFrom,
   type Geometry,
   type GraphNode,
+  type PlacedEdge,
   type PlacedNode,
   type SkillGraph,
+  type Step,
 } from '@/utils/skillGraph';
 import { Minimap } from './Minimap';
 import { SkillConnection } from './SkillConnection';
@@ -162,6 +165,15 @@ export interface SkillTreeProps {
    * caller; this only says where it goes.
    */
   views?: React.ReactNode;
+  /**
+   * A line was clicked — the page says what it means.
+   *
+   * The canvas knows an edge joins two ids and is drawn solid or dashed; it
+   * does not know that one of those is a gate and the other a suggestion,
+   * which is the only interesting thing about the click. So it reports the
+   * edge and where the pointer was and stops there.
+   */
+  onEdge?: (edge: PlacedEdge, at: { x: number; y: number }) => void;
 }
 
 export function SkillTree({
@@ -176,6 +188,7 @@ export function SkillTree({
   reveal,
   frame,
   views,
+  onEdge,
 }: SkillTreeProps) {
   const layout = useMemo(() => layoutGraph(graph, geom), [graph, geom]);
   const scroller = useRef<HTMLDivElement>(null);
@@ -375,14 +388,25 @@ export function SkillTree({
       return;
     }
     drag.current = { x: event.clientX, y: event.clientY, left: box.scrollLeft, top: box.scrollTop };
+    moved.current = false;
     box.setPointerCapture(event.pointerId);
     setDragging(true);
   }, []);
+
+  /* Whether the last press turned into a pan. A drag across the canvas ends
+     in a `click` on whatever was under the pointer, so without this a reader
+     who panned by grabbing a stretch of empty canvas — which is where the
+     wires are — would arrive somewhere new with a card open about a line they
+     never pressed. */
+  const moved = useRef(false);
 
   const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
     const box = scroller.current;
     const from = drag.current;
     if (!box || !from) return;
+    if (Math.abs(event.clientX - from.x) > 4 || Math.abs(event.clientY - from.y) > 4) {
+      moved.current = true;
+    }
     box.scrollLeft = from.left - (event.clientX - from.x);
     box.scrollTop = from.top - (event.clientY - from.y);
   }, []);
@@ -570,6 +594,54 @@ export function SkillTree({
     [frameTo, layout.nodes],
   );
 
+  /**
+   * The arrow keys, walking the drawing.
+   *
+   * Focus is moved rather than selection changed: the tiles are real buttons,
+   * so Enter and Space already activate the one under focus, and an arrow key
+   * that selected as it went would open a different panel four times on the
+   * way across a lattice. What the reader gets is what a grid gives them
+   * anywhere else — move, look, press.
+   *
+   * The move is made by focusing the tile's own button rather than by holding
+   * a "focused id" of our own. There is already a thing that knows which node
+   * the keyboard is on, and it is the browser; a second copy would be a second
+   * copy to keep in step with Tab, with a click, and with the focus ring.
+   *
+   * `preventDefault` only where a node was actually found, so an arrow at the
+   * edge of the drawing still scrolls the box the way it always did.
+   */
+  const onKeys = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      const map: Record<string, Step> = {
+        ArrowUp: 'up',
+        ArrowDown: 'down',
+        ArrowLeft: 'left',
+        ArrowRight: 'right',
+      };
+      const step = map[event.key];
+      if (!step || event.metaKey || event.ctrlKey || event.altKey) return;
+
+      const box = scroller.current;
+      if (!box) return;
+      const holder = (event.target as HTMLElement).closest('[data-node]');
+      const fromId = holder?.getAttribute('data-node') ?? selectedId;
+      if (!fromId) return;
+
+      const next = stepFrom(layout, fromId, step);
+      if (!next) return;
+      const tile = box.querySelector<HTMLElement>(`[data-node="${CSS.escape(next.node.id)}"] button`);
+      if (!tile) return;
+
+      event.preventDefault();
+      /* The browser scrolls a focused element into view on its own, and does
+         it in the scroll box rather than the page, which is exactly what is
+         wanted here — so this moves focus and stops. */
+      tile.focus();
+    },
+    [layout, selectedId],
+  );
+
   /* The framing the page has asked for. Acted on once per token, exactly as
      the reveal above is, so a practice click cannot replay the last one. */
   const shown = useRef(0);
@@ -590,6 +662,13 @@ export function SkillTree({
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
+        onKeyDown={onKeys}
+        /* Focusable, so the arrows and the scrollbars are reachable before
+           anybody has tabbed as far as a tile — a scroll box nobody can focus
+           is a scroll box a keyboard cannot move. */
+        tabIndex={0}
+        role="group"
+        aria-label="The lattice. Arrow keys move between skills."
       >
         {bare ? (
           <div className="stx-canvas-empty">{empty}</div>
@@ -646,13 +725,25 @@ export function SkillTree({
                     lit={lit.has(edge.id)}
                     faded={faded.has(edge.id)}
                     built={built.has(edge.id)}
+                    onInspect={
+                      onEdge
+                        ? (one, at) => {
+                            if (moved.current) return;
+                            onEdge(one, at);
+                          }
+                        : undefined
+                    }
                   />
                 ))}
               </svg>
 
               {layout.nodes.map((placed) =>
                 renderNode ? (
-                  <div key={placed.node.id}>
+                  /* `data-node` is how the arrow keys find the tile to move
+                     focus to. The canvas does not draw these tiles — the feed
+                     does, through `renderNode` — so the id has to be on the
+                     one element this file owns. */
+                  <div key={placed.node.id} data-node={placed.node.id}>
                     {renderNode(placed, {
                       selected: selectedId === placed.node.id,
                       onSelect,

@@ -3285,3 +3285,168 @@ html[data-theme="dark"] .stx-region {
     background: none;
     color: var(--lat-muted);
 }
+
+/* ==========================================================================
+   A line you can ask about
+   ==========================================================================
+   The visible wire keeps its 2.2px and a second, invisible path takes the
+   click — see components/SkillTree/SkillConnection. Widening the drawn line to
+   suit the pointer would be redrawing the canvas for the mouse. */
+.stx-page--lattice .stx-wire { pointer-events: none; }
+
+.stx-wire-hit {
+    stroke: transparent;
+    stroke-width: 16;
+    fill: none;
+    /* Only the stroke, not the area a curve encloses — without this a bowed
+       line would swallow every click inside its arc, which on this canvas is
+       usually a tile. */
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+/* The card. Fixed to the window like the hover card, and for the same two
+   reasons — the scaled layer and the scroll box — but this one takes the
+   pointer, because both of its ends are a way out of it. */
+.stx-edge {
+    position: fixed;
+    z-index: 62;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 12px 14px;
+    border: 1px solid var(--lat-line);
+    border-left: 3px solid var(--lat-blue);
+    border-radius: 12px;
+    background: var(--lat-panel);
+    box-shadow: var(--lat-shadow-lift);
+}
+
+/* A suggestion wears the dash the canvas uses for one. */
+.stx-edge.is-suggested {
+    border-left-style: dashed;
+    border-left-color: var(--lat-muted);
+}
+
+.stx-edge-kind {
+    margin: 0;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--lat-blue);
+}
+
+.stx-edge.is-suggested .stx-edge-kind { color: var(--lat-muted); }
+
+.stx-edge-pair {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    font-size: 13px;
+    color: var(--lat-text);
+}
+
+.stx-edge-pair b { font-weight: 750; }
+.stx-edge-pair i { font-style: normal; color: var(--lat-faint); }
+
+.stx-edge-say {
+    margin: 0;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--lat-muted);
+}
+
+.stx-edge-say b { font-weight: 700; color: var(--lat-text); }
+
+.stx-edge-ends {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 2px;
+}
+
+.stx-edge-ends button {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 5px 10px;
+    border: 1px solid var(--lat-line);
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 650;
+    color: var(--lat-text);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: border-color .14s ease, background .14s ease;
+}
+
+.stx-edge-ends button:hover { border-color: var(--lat-violet); background: var(--lat-violet-soft); }
+.stx-edge-ends button:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: 1px; }
+
+/* ==========================================================================
+   The keyboard
+   ==========================================================================
+   See hooks/useLatticeKeys for the four page verbs and why Space is not one of
+   them; the arrows are handled on the canvas itself. */
+
+/* The scroll box is focusable now, so it needs to say so when it is focused —
+   an outline on the box rather than inside it, where it would land on a tile
+   and read as a selection. */
+.stx-scroll:focus-visible {
+    outline: 2px solid var(--lat-violet);
+    outline-offset: -2px;
+}
+
+/* The `/` hint, in the corner of the search field the clear button uses once
+   there is something to clear. */
+.stx-find-key {
+    position: absolute;
+    right: 12px;
+    display: grid;
+    place-items: center;
+    width: 17px;
+    height: 17px;
+    border: 1px solid var(--lat-line);
+    border-radius: 5px;
+    background: var(--lat-grey-soft);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--lat-faint);
+    pointer-events: none;
+}
+
+/* The shortcuts, printed in the legend. Not a "?" overlay: this page already
+   has a place where it explains itself, and a second one would be a second
+   thing to find. */
+.stx-legend-keys-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 8px 0 0;
+    font-size: 11px;
+    color: var(--lat-faint);
+}
+
+.stx-legend-keys-row kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border: 1px solid var(--lat-line);
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    background: var(--lat-panel);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--lat-muted);
+}

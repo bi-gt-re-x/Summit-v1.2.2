@@ -5,6 +5,9 @@ export { useCalendarCursor } from './useCalendarCursor';
 export type { CalendarCursor } from './useCalendarCursor';
 export { useCalendarKeys } from './useCalendarKeys';
 export type { CalendarKeys } from './useCalendarKeys';
+/** The skill tree's page-level shortcuts. See ./useLatticeKeys. */
+export { useLatticeKeys } from './useLatticeKeys';
+export type { LatticeKeys } from './useLatticeKeys';
 export { useCalendarStore } from './useCalendarStore';
 export type { EventDraft, Scope, UseCalendarStore } from './useCalendarStore';
 export { useCalendarTasks } from './useCalendarTasks';

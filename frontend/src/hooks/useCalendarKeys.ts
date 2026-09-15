@@ -32,8 +32,12 @@
  * event modals — and a letter shortcut that steps the week while somebody is
  * typing "just the notes" into a title is not a shortcut, it is a fault.
  * `contentEditable` is checked as well as the tag: a rich field is a `div`.
+ * That test lives in utils/keys now — the lattice's shortcuts ask the same
+ * question, and two copies of it would be two chances to forget the
+ * `contenteditable` half.
  */
 import { useEffect } from 'react';
+import { claimed, typing } from '@/utils/keys';
 
 export interface CalendarKeys {
   /** Move by whole periods — a day, a week or a month, whichever this view is. */
@@ -44,21 +48,6 @@ export interface CalendarKeys {
   enabled?: boolean;
 }
 
-/** True when the keystroke belongs to something the reader is typing into. */
-function typing(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  const tag = target.tagName;
-  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
-  /* `isContentEditable` first, because it is the property that knows about
-     inheritance — but it is not implemented everywhere the tests run, and it
-     is a property rather than an attribute, so the attribute is checked as
-     well. `closest` rather than a look at the element itself: a keystroke
-     inside a rich field lands on whatever node the caret is in, which is
-     usually a child of the editable one. */
-  if (target.isContentEditable) return true;
-  return Boolean(target.closest('[contenteditable]:not([contenteditable="false"])'));
-}
-
 export function useCalendarKeys({ onStep, onToday, enabled = true }: CalendarKeys): void {
   useEffect(() => {
     if (!enabled) return;
@@ -66,8 +55,7 @@ export function useCalendarKeys({ onStep, onToday, enabled = true }: CalendarKey
     function onKeyDown(event: KeyboardEvent) {
       // A modifier means the key belongs to the browser or the OS — ⌘T is a
       // new tab, and taking it would be taking something that is not ours.
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
-      if (typing(event.target)) return;
+      if (claimed(event) || typing(event.target)) return;
 
       const key = event.key.toLowerCase();
       if (key === 'j' || key === 'n') onStep(1);

@@ -22,6 +22,19 @@
  * bright wire running into a faded tile is the one thing that makes a dimmed
  * canvas look broken rather than quiet.
  *
+ * ## A line you can ask about
+ *
+ * Two kinds of edge on one canvas — solid and dashed, gate and suggestion —
+ * and the difference was carried entirely by a dash and a word in a legend
+ * nobody reads twice. So a line is now clickable, and what it says when
+ * pressed is the difference: *this is why that is locked* against *this is
+ * merely worth doing first*.
+ *
+ * A second, invisible, much wider path is what actually takes the click. A
+ * 2.2px stroke is not something a pointer can reliably find, and thickening
+ * the visible one to make it clickable would be redrawing the canvas to suit
+ * the mouse.
+ *
  * `is-built` is ground already covered: *both* ends finished, rather than the
  * `is-complete` state above, which is decided by the far end alone. The
  * difference is the whole point of it — one completed node with three
@@ -40,6 +53,8 @@ export interface SkillConnectionProps {
   faded?: boolean;
   /** Both ends finished: a stretch of the tree that is behind the reader. */
   built?: boolean;
+  /** Present makes the line clickable — the page explains what it means. */
+  onInspect?: (edge: PlacedEdge, at: { x: number; y: number }) => void;
 }
 
 export function SkillConnection({
@@ -47,14 +62,25 @@ export function SkillConnection({
   lit = false,
   faded = false,
   built = false,
+  onInspect,
 }: SkillConnectionProps) {
   return (
-    <path
-      className={`stx-wire is-${edge.state} is-${edge.kind}${lit ? ' is-lit' : ''}${
-        faded ? ' is-faded' : ''
-      }${built ? ' is-built' : ''}`}
-      d={edge.d}
-      fill="none"
-    />
+    <>
+      <path
+        className={`stx-wire is-${edge.state} is-${edge.kind}${lit ? ' is-lit' : ''}${
+          faded ? ' is-faded' : ''
+        }${built ? ' is-built' : ''}`}
+        d={edge.d}
+        fill="none"
+      />
+      {onInspect && (
+        <path
+          className="stx-wire-hit"
+          d={edge.d}
+          fill="none"
+          onClick={(event) => onInspect(edge, { x: event.clientX, y: event.clientY })}
+        />
+      )}
+    </>
   );
 }

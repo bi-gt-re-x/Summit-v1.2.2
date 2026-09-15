@@ -83,6 +83,23 @@
  * saw "12 skills, 61%" would have been shown a different subject rather than a
  * different picture of this one.
  *
+ * ## Two things that had no keyboard and one that had no explanation
+ *
+ * The tiles have always been buttons, so Tab and Enter worked; nothing else
+ * did. The arrows now walk between tiles — spatially, because a reader
+ * pressing → means *that one, over there* — and four page verbs have letters:
+ * Esc clears, F frames where you are, R fits the tree, P practises. Every one
+ * of them is a control already on the page, which is the rule the set was
+ * chosen by. See hooks/useLatticeKeys, and components/SkillTree/SubjectRail
+ * for `/`.
+ *
+ * And the edges, which is where the structure of a subject actually lives,
+ * could not be interrogated at all: solid against dashed, explained once in a
+ * legend. Clicking a line now says which of the two it is and what that means
+ * for the node on the end of it — derived from the graph rather than authored,
+ * because sixty trees' worth of per-edge prose would be half-written within a
+ * month. See components/SkillTree/EdgeCard.
+ *
  * ## The figures are counted, not stored
  *
  * Every number in the band is `tallyGraph` on the tree that is open — there is
@@ -93,6 +110,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Ambient, PageHero } from '@/components';
 import {
+  EdgeCard,
   FocusSetup,
   FocusTopics,
   LatticeNode,
@@ -106,7 +124,13 @@ import {
   TilePeek,
   type TreeMode,
 } from '@/components/SkillTree';
-import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
+import {
+  useAuth,
+  useDocumentTitle,
+  useLatticeKeys,
+  usePageEntrance,
+  useSubjects,
+} from '@/hooks';
 import { iconForName } from '@/skills/iconMatch';
 import {
   branchIds,
@@ -141,6 +165,7 @@ import {
   tallyGraph,
   type GraphNode,
   type GraphTally,
+  type PlacedEdge,
 } from '@/utils/skillGraph';
 import { FOCUS_COUNT, loadFocus, resolveFocus, saveFocus } from '@/utils/focusTopics';
 import {
@@ -573,6 +598,20 @@ export default function SkillTrees() {
      only answering the first. See `optionalIds` in skills/route. */
   const optional = useMemo(() => optionalIds(graph), [graph]);
 
+  /* The line somebody asked about, and where they asked. Held here rather than
+     in the canvas because what an edge *means* — a gate, or a suggestion — is
+     the page's half of the split that runs through this whole file. See
+     components/SkillTree/EdgeCard. */
+  const [asked, setAsked] = useState<{ edge: PlacedEdge; at: { x: number; y: number } } | null>(
+    null,
+  );
+  const edgeEnds = useMemo(() => {
+    if (!asked) return null;
+    const from = graph.nodes.find((node) => node.id === asked.edge.from);
+    const to = graph.nodes.find((node) => node.id === asked.edge.to);
+    return from && to ? { from, to } : null;
+  }, [asked, graph.nodes]);
+
   /* ---- The tile under the pointer --------------------------------------
      Which node is being pointed at and where its tile was when the pointer
      arrived. The rectangle is held rather than recomputed because the card is
@@ -707,6 +746,19 @@ export default function SkillTrees() {
     },
     [username, plans, writePlans],
   );
+
+  /* ---- the four page verbs, on the keyboard ----------------------------
+     Every one of them is a control that is already on the page — see
+     hooks/useLatticeKeys for why that is the rule the set was chosen by, and
+     why Space is not one of them. Escape clears the card first where one is
+     open: a reader pressing it means "not this", and the nearest "this" is
+     whatever was opened last. */
+  useLatticeKeys({
+    onClear: () => (asked ? setAsked(null) : select(null)),
+    onHere: () => hereId && frameOn([hereId]),
+    onFit: () => frameOn(graph.nodes.map((node) => node.id)),
+    onPractise: selected ? () => practise(selected) : undefined,
+  });
 
   const entering = usePageEntrance(true);
   const unlocked = totals.total - totals.locked;
@@ -922,6 +974,7 @@ export default function SkillTrees() {
             focus={weights ?? undefined}
             reveal={reveal}
             frame={frame}
+            onEdge={(edge, at) => setAsked({ edge, at })}
             /* The two framings only this page can name. "Fit" and "1:1" sit
                beside them and belong to the canvas, because the whole tree and
                full size are facts about a drawing; a branch and a position are
@@ -1024,8 +1077,20 @@ export default function SkillTrees() {
           </ul>
           <p className="stx-legend-tip">
             <Ico icon="idea" className="stx-ico stx-legend-tip-ico" />
-            <b>Tip:</b> hover a tile to see what it needs · drag the canvas to explore · ⌘ or
-            Ctrl + scroll to zoom
+            <b>Tip:</b> hover a tile to see what it needs · click a line to ask what it means ·
+            drag to explore · ⌘ or Ctrl + scroll to zoom
+          </p>
+
+          {/* The shortcuts, written down. A binding nobody can see is a
+              secret; four of them are a secret nobody will guess. Printed in
+              the legend rather than behind a "?" overlay, because the legend
+              is already the place this page explains itself. */}
+          <p className="stx-legend-keys-row">
+            <kbd>↑</kbd>
+            <kbd>↓</kbd>
+            <kbd>←</kbd>
+            <kbd>→</kbd> move · <kbd>Enter</kbd> open · <kbd>P</kbd> practise · <kbd>F</kbd> frame
+            where you are · <kbd>R</kbd> fit · <kbd>/</kbd> search · <kbd>Esc</kbd> clear
           </p>
         </footer>
 
@@ -1035,6 +1100,23 @@ export default function SkillTrees() {
             by node, which is what restarts the fade: crossing a row of tiles
             then shows one card appearing where the pointer stopped rather
             than a card sliding along the row. */}
+        {/* What a line means, where one was asked about. Beside the hover card
+            and for the same reason: positioned against the window, so neither
+            the scaled canvas nor its scroll box can shrink or clip it. */}
+        {asked && edgeEnds && (
+          <EdgeCard
+            edge={asked.edge}
+            from={edgeEnds.from}
+            to={edgeEnds.to}
+            at={asked.at}
+            onOpen={(id) => {
+              setAsked(null);
+              open(id);
+            }}
+            onClose={() => setAsked(null)}
+          />
+        )}
+
         {peeked && peek && (
           <TilePeek
             key={peeked.id}

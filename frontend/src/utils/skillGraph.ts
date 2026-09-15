@@ -539,6 +539,56 @@ export function filterGraph(graph: SkillGraph, filter: GraphFilter): SkillGraph 
   return { ...graph, nodes };
 }
 
+/** The four directions an arrow key can mean. */
+export type Step = 'up' | 'down' | 'left' | 'right';
+
+/**
+ * The node an arrow key should move to, or null at the edge of the drawing.
+ *
+ * Spatial rather than structural, and that is the whole decision. The
+ * structural answer — up means a prerequisite, down means something this
+ * unlocks — sounds better and is wrong in the hand: a reader pressing → is
+ * looking at a tile and means *that one, over there*, and on a node with three
+ * prerequisites there is no such thing as "the" one above. So the arrows walk
+ * the picture, and the panel walks the graph.
+ *
+ * Candidates are whatever lies in the half-plane the key points at, scored on
+ * distance along that axis plus twice the drift across it. The doubling is
+ * what stops → skipping the neighbour beside you for something nearer in a
+ * straight line four rows down; two is enough to prefer the same row without
+ * making a diagonal move impossible when the row is empty.
+ */
+export function stepFrom(
+  layout: GraphLayout,
+  fromId: string,
+  step: Step,
+): PlacedNode | null {
+  const from = layout.nodes.find((one) => one.node.id === fromId);
+  if (!from) return null;
+
+  const vertical = step === 'up' || step === 'down';
+  const sign = step === 'up' || step === 'left' ? -1 : 1;
+
+  let best: PlacedNode | null = null;
+  let score = Infinity;
+
+  for (const one of layout.nodes) {
+    if (one.node.id === fromId) continue;
+    const along = ((vertical ? one.y - from.y : one.x - from.x)) * sign;
+    const across = vertical ? one.x - from.x : one.y - from.y;
+    // Strictly in front: a node level with this one is not up from it, and a
+    // tie would make ↑ and ↓ swap two tiles back and forth for ever.
+    if (along <= 0) continue;
+    const cost = along + Math.abs(across) * 2;
+    if (cost < score) {
+      score = cost;
+      best = one;
+    }
+  }
+
+  return best;
+}
+
 /**
  * The graph with only these nodes on it.
  *

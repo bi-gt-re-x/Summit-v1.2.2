@@ -39,6 +39,7 @@
  * in pages/SkillTrees.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { claimed, typing } from '@/utils/keys';
 import { iconUrl as subjectIconUrl, type Subject } from '@/services/subjects';
 import { treeForSubject } from '@/skills/subjectMap';
 import { SUBJECT_TREES, iconUrl } from '@/skills/subjectTrees';
@@ -81,6 +82,7 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
   const [at, setAt] = useState(0);
   const wrap = useRef<HTMLDivElement>(null);
   const list = useRef<HTMLUListElement>(null);
+  const field = useRef<HTMLInputElement>(null);
 
   /* Every searchable thing, flattened once. Subjects first so a subject the
      reader actually uses beats a skill that merely shares a word with it. */
@@ -131,6 +133,21 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
     scored.sort((a, b) => a.score - b.score || a.hit.name.length - b.hit.name.length);
     return scored.slice(0, MAX_HITS).map((row) => row.hit);
   }, [index, query]);
+
+  /* `/` puts the caret in the field, from anywhere on the page that is not
+     already a field. The keystroke is swallowed on the way, or the slash it
+     stands for would arrive in the box it just opened. */
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== '/' || claimed(event) || typing(event.target)) return;
+      event.preventDefault();
+      field.current?.focus();
+      field.current?.select();
+      setOpen(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   /* Back to the top whenever the list itself changes. Holding position would
      mean a fourth row that is now a different skill, and Enter taking
@@ -206,6 +223,7 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
       <div className="stx-find">
         <i className="stx-ico stx-find-ico" style={{ ['--ico' as string]: `url(${iconUrl('magnifier')})` }} />
         <input
+          ref={field}
           type="search"
           className="stx-find-input"
           placeholder="Search subjects, lattices and skills"
@@ -223,10 +241,17 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
           onFocus={() => setOpen(true)}
           onKeyDown={onKeys}
         />
-        {query && (
+        {query ? (
           <button type="button" className="stx-find-clear" aria-label="Clear search" onClick={() => setQuery('')}>
             ×
           </button>
+        ) : (
+          /* The shortcut, where the shortcut is. A binding nobody can see is a
+             secret, and this is the one corner of the field that is empty
+             exactly while the shortcut is the thing worth knowing. */
+          <kbd className="stx-find-key" aria-hidden="true">
+            /
+          </kbd>
         )}
 
         {showing && (
