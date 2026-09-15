@@ -39,7 +39,6 @@
  * in pages/SkillTrees.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { claimed, typing } from '@/utils/keys';
 import { iconUrl as subjectIconUrl, type Subject } from '@/services/subjects';
 import { treeForSubject } from '@/skills/subjectMap';
 import { SUBJECT_TREES, iconUrl } from '@/skills/subjectTrees';
@@ -68,12 +67,20 @@ export interface SubjectRailProps {
    */
   openTrail: readonly string[];
   onOpen: (tree: string, node?: string) => void;
+  /**
+   * Bumped to put the caret in the search field.
+   *
+   * A token rather than a boolean, for the reason `reveal` on the canvas is
+   * one: pressing `/` twice must focus twice, and a prop that is already true
+   * cannot say anything the second time.
+   */
+  focusAt?: number;
 }
 
 /** How many results are worth showing. Past this, refine the search. */
 const MAX_HITS = 12;
 
-export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
+export function SubjectRail({ subjects, openTrail, onOpen, focusAt = 0 }: SubjectRailProps) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   /* Which row the arrow keys are on. An index rather than an id, because the
@@ -134,20 +141,15 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
     return scored.slice(0, MAX_HITS).map((row) => row.hit);
   }, [index, query]);
 
-  /* `/` puts the caret in the field, from anywhere on the page that is not
-     already a field. The keystroke is swallowed on the way, or the slash it
-     stands for would arrive in the box it just opened. */
+  /* The caret, when the page says so. Not on the first render — `focusAt`
+     starts at nought — or a drawer opened for any other reason would steal
+     the keyboard from whatever the reader was doing. */
   useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key !== '/' || claimed(event) || typing(event.target)) return;
-      event.preventDefault();
-      field.current?.focus();
-      field.current?.select();
-      setOpen(true);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
+    if (!focusAt) return;
+    field.current?.focus();
+    field.current?.select();
+    setOpen(true);
+  }, [focusAt]);
 
   /* Back to the top whenever the list itself changes. Holding position would
      mean a fourth row that is now a different skill, and Enter taking

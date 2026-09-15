@@ -929,6 +929,16 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
 /* ---- title ---- */
 .stx-lead { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
 .stx-lead h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -.03em; }
+/* The lattice that is open, under the page's own name. Smaller than the h1 and
+   heavier than the line under it: it is the second question a reader asks and
+   the first thing they look for once they are here. */
+.stx-lead-tree {
+    margin: 2px 0 0;
+    font-size: 17px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+    color: var(--lat-text);
+}
 .stx-lead-sub { margin: 0; font-size: 13px; color: var(--lat-muted); max-width: 58ch; }
 .stx-crumbs {
     display: flex; align-items: center; gap: 6px;
@@ -3449,4 +3459,85 @@ html[data-theme="dark"] .stx-region {
     font-size: 10px;
     font-weight: 700;
     color: var(--lat-muted);
+}
+
+/* ==========================================================================
+   The subject drawer
+   ==========================================================================
+   The five focus cards, the search and the hundred-pill rail, folded away
+   under the lattice. All three choose what to look at and all three used to
+   sit above the thing they choose, so the page opened with three rows of
+   navigation and the canvas began below the fold. */
+.stx-drawer {
+    margin-top: 18px;
+    border: 1px solid var(--lat-line);
+    border-radius: 14px;
+    background: var(--lat-panel);
+    overflow: hidden;
+}
+
+.stx-drawer-tab {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 13px 16px;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+}
+
+.stx-drawer-tab:hover { background: var(--lat-grey-soft); }
+.stx-drawer-tab:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: -2px; }
+
+.stx-drawer-title {
+    flex: none;
+    font-size: 13.5px;
+    font-weight: 750;
+    color: var(--lat-text);
+}
+
+.stx-drawer-say {
+    flex: 1;
+    min-width: 0;
+    font-size: 11.5px;
+    color: var(--lat-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* A chevron drawn from a rotated corner, so there is no icon to ship and no
+   glyph to fall back from. It turns rather than swaps, which is what makes the
+   control read as one thing in two states. */
+.stx-drawer-mark {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-right: 4px;
+    border-right: 2px solid var(--lat-muted);
+    border-bottom: 2px solid var(--lat-muted);
+    transform: rotate(-135deg) translate(-2px, 2px);
+    transition: transform .18s ease;
+}
+
+.stx-drawer.is-open .stx-drawer-mark { transform: rotate(45deg) translate(-1px, -1px); }
+
+.stx-drawer-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 4px 16px 18px;
+    border-top: 1px solid var(--lat-line-soft);
+}
+
+/* The focus band was a page header and is now a drawer's first row, so it
+   loses the heading weight it wore when it was the first thing on the page. */
+.stx-drawer .stx-focus-head h2 { font-size: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .stx-drawer-mark { transition: none; }
 }

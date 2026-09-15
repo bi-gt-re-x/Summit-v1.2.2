@@ -3,12 +3,21 @@
  *
  * ## The shape of it
  *
- * A band of figures across the top, the lattice and its detail panel side by
- * side under that, and a legend along the bottom. The page holds which tree is
- * open and which node is picked and does nothing else: the canvas owns pan,
- * zoom, the vertical scroll and full screen, the layout in utils/skillGraph
- * owns placement, and skills/subjectTrees owns what is in a tree and where it
- * forks. This file is the seam between them.
+ * The page's name, then the lattice that is open, a band of figures, the
+ * canvas and its detail panel side by side, a legend, and — folded away at the
+ * bottom — the drawer holding the five focus topics, the search and the rail
+ * of every subject. The page holds which tree is open and which node is picked
+ * and does nothing else: the canvas owns pan, zoom, the vertical scroll and
+ * full screen, the layout in utils/skillGraph owns placement, and
+ * skills/subjectTrees owns what is in a tree and where it forks. This file is
+ * the seam between them.
+ *
+ * The drawer is at the bottom because everything in it *chooses what to look
+ * at*, and all three were above the thing they choose: the page opened with
+ * three rows of navigation and the lattice began below the fold. The title is
+ * the page's own rather than the open tree's for the same kind of reason — a
+ * reader arriving at a page headed "Mathematics" had to work out what kind of
+ * page it was from the drawing.
  *
  * ## Walking between subjects
  *
@@ -598,6 +607,39 @@ export default function SkillTrees() {
      only answering the first. See `optionalIds` in skills/route. */
   const optional = useMemo(() => optionalIds(graph), [graph]);
 
+  /* ---- the subject drawer ------------------------------------------------
+     Whether the five focus cards, the search and the rail are folded out. Held
+     for the visit rather than stored: it is a thing a reader opens to do
+     something and closes when they have, not a preference. */
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawer = useRef<HTMLElement>(null);
+  /* Bumped by `/`, which means "take me to the search" from anywhere on the
+     page — so it has to open the drawer, put it on screen, and only then ask
+     the field for the caret. The rail is not mounted until the first of those
+     has happened. */
+  const [searchAt, setSearchAt] = useState(0);
+  /* Picking something in the drawer folds it away and goes back up. The
+     drawer is at the bottom of the page and the thing it changes is at the
+     top, so leaving it open would leave the reader looking at a control whose
+     effect happened two screens above them. */
+  const openFromDrawer = useCallback(
+    (id: string, node?: string) => {
+      openTree(id, node);
+      setDrawerOpen(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
+    [openTree],
+  );
+
+  const revealDrawer = useCallback(() => {
+    setDrawerOpen(true);
+    setSearchAt(Date.now());
+    /* After the drawer has rendered, or this scrolls to a shut one. A timer
+       rather than a frame callback, for the reason the canvas's fit gives:
+       a frame never arrives in a tab that is not being rendered. */
+    window.setTimeout(() => drawer.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  }, []);
+
   /* The line somebody asked about, and where they asked. Held here rather than
      in the canvas because what an edge *means* — a gate, or a suggestion — is
      the page's half of the split that runs through this whole file. See
@@ -758,6 +800,7 @@ export default function SkillTrees() {
     onHere: () => hereId && frameOn([hereId]),
     onFit: () => frameOn(graph.nodes.map((node) => node.id)),
     onPractise: selected ? () => practise(selected) : undefined,
+    onSearch: revealDrawer,
   });
 
   const entering = usePageEntrance(true);
@@ -796,23 +839,19 @@ export default function SkillTrees() {
     <div className="stx-page stx-page--lattice">
       <Ambient />
       <div className={`stx-shell page-shell${entering ? ' pg-enter' : ''}`}>
-        <FocusTopics
-          subjects={subjects}
-          focus={focus}
-          openTrail={trail}
-          onOpen={openSubject}
-          onChange={setFocusAt}
-          onChooseAll={reopenSetup}
-        />
-
-        <SubjectRail subjects={subjects} openTrail={trail} onOpen={openTree} />
-
         {/* Green, which is what growth is coloured everywhere else here. The
             breadcrumb and the title stay centred inside it — this is the one
             header in the app that is not a left-aligned row, because what it
-            titles is a canvas rather than a list. */}
+            titles is a canvas rather than a list.
+
+            The page is called Skill Trees and says so first. Which lattice is
+            open is the second question and is answered under it: the page kept
+            its title for whichever tree happened to be showing, so a reader
+            arriving at "Mathematics" had to work out what kind of page they
+            were on from the drawing. */}
         <PageHero variant="skill-trees" tone="green">
           <header className="stx-lead">
+            <h1>Skill Trees</h1>
             {chain.length > 1 && (
               <nav className="stx-crumbs" aria-label="Where this tree sits">
                 {chain.map((crumb, index) => {
@@ -832,7 +871,7 @@ export default function SkillTrees() {
                 })}
               </nav>
             )}
-            <h1>{tree.title}</h1>
+            <h2 className="stx-lead-tree">{tree.title}</h2>
             <p className="stx-lead-sub">{tree.blurb}</p>
           </header>
         </PageHero>
@@ -1093,6 +1132,64 @@ export default function SkillTrees() {
             where you are · <kbd>R</kbd> fit · <kbd>/</kbd> search · <kbd>Esc</kbd> clear
           </p>
         </footer>
+
+        {/* ---- the subject drawer ----
+            The five focus cards, the search and the hundred-pill rail, folded
+            away under the lattice.
+
+            All three are about *choosing what to look at*, and all three were
+            above the thing they choose — so the page opened with three rows of
+            navigation and the canvas started below the fold. They are still
+            one click away, and the click is where the reader ends up anyway:
+            at the bottom, having read the tree.
+
+            Open is remembered for the visit rather than stored, and `/` opens
+            it from anywhere — a search field folded into a drawer is a search
+            field with a shortcut that silently does nothing. */}
+        <section className={`stx-drawer${drawerOpen ? ' is-open' : ''}`} ref={drawer}>
+          <button
+            type="button"
+            className="stx-drawer-tab"
+            aria-expanded={drawerOpen}
+            aria-controls="stx-drawer-body"
+            onClick={() => setDrawerOpen((current) => !current)}
+          >
+            <span className="stx-drawer-title">Your subjects</span>
+            <span className="stx-drawer-say">
+              {drawerOpen
+                ? 'Your five focus topics, the search and every subject you follow'
+                : `Your five focus topics · search · every subject you follow`}
+            </span>
+            <i className="stx-drawer-mark" aria-hidden="true" />
+          </button>
+
+          {/* Mounted only while it is open. The rail builds an index of eleven
+              hundred skills on its first render, and a drawer nobody has
+              opened should not have paid for it. */}
+          {drawerOpen && (
+            <div className="stx-drawer-body" id="stx-drawer-body">
+              <FocusTopics
+                subjects={subjects}
+                focus={focus}
+                openTrail={trail}
+                onOpen={(subjectId) => {
+                  openSubject(subjectId);
+                  setDrawerOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onChange={setFocusAt}
+                onChooseAll={reopenSetup}
+              />
+
+              <SubjectRail
+                subjects={subjects}
+                openTrail={trail}
+                onOpen={openFromDrawer}
+                focusAt={searchAt}
+              />
+            </div>
+          )}
+        </section>
 
         {/* The hover card. Last in the shell and positioned against the
             window, so nothing on the page can clip it and the scaled canvas

@@ -8,17 +8,22 @@
  * missing was the handful of verbs that belong to the *page* rather than to
  * whatever happens to be focused.
  *
- * ## The four, and what each replaces
+ * ## The five, and what each replaces
  *
  *     Esc   put the canvas back — clear the selection, the trace, the filter
  *     F     frame where you are standing
  *     R     fit the whole tree
  *     P     practise the selected skill
+ *     /     open the subject drawer and take the search field
  *
  * Every one of them is a control already on the page, which is the rule this
  * set was chosen by: a shortcut for something with no button is a secret, and
- * a page of secrets is a page nobody can learn. The search has its own — `/`,
- * in components/SkillTree/SubjectRail, where the field it focuses lives.
+ * a page of secrets is a page nobody can learn.
+ *
+ * `/` is here rather than with the search field it focuses because the field
+ * now lives inside a drawer and is not mounted while that is shut — a listener
+ * that only exists once you can see the field is a shortcut that works only
+ * when it is not needed.
  *
  * ## Space is deliberately not "practise"
  *
@@ -49,6 +54,8 @@ export interface LatticeKeys {
   onFit: () => void;
   /** P: practise the selected skill. Absent while nothing is selected. */
   onPractise?: () => void;
+  /** `/`: open the drawer and put the caret in the search field. */
+  onSearch?: () => void;
   /** False while a dialog or an editor owns the keyboard. */
   enabled?: boolean;
 }
@@ -58,6 +65,7 @@ export function useLatticeKeys({
   onHere,
   onFit,
   onPractise,
+  onSearch,
   enabled = true,
 }: LatticeKeys): void {
   useEffect(() => {
@@ -75,6 +83,9 @@ export function useLatticeKeys({
       else if (key === 'f') onHere();
       else if (key === 'r') onFit();
       else if (key === 'p' && onPractise) onPractise();
+      /* Swallowed on the way through, or the slash it stands for arrives in
+         the box it just opened. */
+      else if (key === '/' && onSearch) onSearch();
       else return;
 
       event.preventDefault();
@@ -82,5 +93,5 @@ export function useLatticeKeys({
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [enabled, onClear, onFit, onHere, onPractise]);
+  }, [enabled, onClear, onFit, onHere, onPractise, onSearch]);
 }
