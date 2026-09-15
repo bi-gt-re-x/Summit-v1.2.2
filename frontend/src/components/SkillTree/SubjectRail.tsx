@@ -22,11 +22,21 @@
  * hundred rows of two short strings, which is nothing to hold and a great deal
  * to rebuild on each keystroke.
  *
+ * ## Hands stay on the keyboard
+ *
+ * The results are driven with the arrow keys and taken with Enter, because the
+ * thing this most resembles is a command palette and nobody reaches for the
+ * mouse in one. Enter with nothing highlighted still takes the first row,
+ * which is what it always did.
+ *
  * ## What it does not do
  *
  * Navigate. It reports what was picked and the page decides what that means —
  * the same split the lattice tiles use, and what keeps this component drawable
- * without a router anywhere near it.
+ * without a router anywhere near it. What the page then does with a skill is
+ * the whole point of the search: it switches tree, selects the node, opens the
+ * panel on it *and* scrolls the canvas until it is on screen. See `openTree`
+ * in pages/SkillTrees.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { iconUrl as subjectIconUrl, type Subject } from '@/services/subjects';
@@ -65,7 +75,12 @@ const MAX_HITS = 12;
 export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
+  /* Which row the arrow keys are on. An index rather than an id, because the
+     list is rebuilt on every keystroke and "the second one" survives that
+     where "the row for Eigenvectors" does not. */
+  const [at, setAt] = useState(0);
   const wrap = useRef<HTMLDivElement>(null);
+  const list = useRef<HTMLUListElement>(null);
 
   /* Every searchable thing, flattened once. Subjects first so a subject the
      reader actually uses beats a skill that merely shares a word with it. */
@@ -117,6 +132,19 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
     return scored.slice(0, MAX_HITS).map((row) => row.hit);
   }, [index, query]);
 
+  /* Back to the top whenever the list itself changes. Holding position would
+     mean a fourth row that is now a different skill, and Enter taking
+     something the reader never saw highlighted. */
+  useEffect(() => {
+    setAt(0);
+  }, [query]);
+
+  /* Keep the highlighted row in the popup's own scroll. `nearest`, so arrowing
+     down a visible list does not scroll the page under it. */
+  useEffect(() => {
+    list.current?.querySelector('[data-at="on"]')?.scrollIntoView({ block: 'nearest' });
+  }, [at, query]);
+
   useEffect(() => {
     if (!open) return;
     const onDown = (event: MouseEvent) => {
@@ -133,10 +161,44 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
     };
   }, [open]);
 
+  /** Whether the popup is up, which three attributes on the field have to
+   *  agree with. Worked out once rather than repeated. */
+  const showing = open && query.trim().length >= 2;
+
   const go = (hit: RailHit) => {
     onOpen(hit.tree, hit.node);
     setOpen(false);
     setQuery('');
+  };
+
+  /**
+   * The arrow keys, on the input rather than on the rows.
+   *
+   * A listbox the reader never focuses: the text field keeps the caret the
+   * whole time and says which row is current through `aria-activedescendant`,
+   * which is the pattern a screen reader expects from a search field with
+   * results under it — and the alternative, moving real focus into the list,
+   * means every keystroke after that goes somewhere other than the query.
+   */
+  const onKeys = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (hits.length === 0) return;
+      // Held down rather than pressed once, this would otherwise scroll the
+      // page behind the popup as well as move the highlight.
+      event.preventDefault();
+      setOpen(true);
+      const step = event.key === 'ArrowDown' ? 1 : -1;
+      // Wrapping, because a twelve-row list is short enough that running off
+      // the end and stopping feels like something broke.
+      setAt((current) => (current + step + hits.length) % hits.length);
+      return;
+    }
+    if (event.key === 'Enter') {
+      const hit = hits[at] ?? hits[0];
+      if (hit) go(hit);
+      return;
+    }
+    if (event.key === 'Escape') setOpen(false);
   };
 
   return (
@@ -149,14 +211,17 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
           placeholder="Search subjects, lattices and skills"
           value={query}
           aria-label="Search subjects, lattices and skills"
+          role="combobox"
+          aria-expanded={showing}
+          aria-controls="stx-hits"
+          aria-autocomplete="list"
+          aria-activedescendant={showing && hits[at] ? `stx-hit-${at}` : undefined}
           onChange={(event) => {
             setQuery(event.target.value);
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' && hits[0]) go(hits[0]);
-          }}
+          onKeyDown={onKeys}
         />
         {query && (
           <button type="button" className="stx-find-clear" aria-label="Clear search" onClick={() => setQuery('')}>
@@ -164,21 +229,38 @@ export function SubjectRail({ subjects, openTrail, onOpen }: SubjectRailProps) {
           </button>
         )}
 
-        {open && query.trim().length >= 2 && (
-          <ul className="stx-hits" role="listbox" aria-label="Search results">
+        {showing && (
+          <ul className="stx-hits" id="stx-hits" ref={list} role="listbox" aria-label="Search results">
             {hits.length === 0 && <li className="stx-hit-none">Nothing matches that yet.</li>}
-            {hits.map((hit) => (
-              <li key={`${hit.kind}-${hit.tree}-${hit.node ?? hit.name}`}>
-                <button type="button" className="stx-hit" onClick={() => go(hit)}>
-                  <i className="stx-ico stx-hit-ico" style={{ ['--ico' as string]: `url(${hit.icon})` }} />
-                  <span className="stx-hit-text">
-                    <strong>{hit.name}</strong>
-                    <em>{hit.where}</em>
-                  </span>
-                  <span className={`stx-hit-kind is-${hit.kind}`}>{hit.kind}</span>
-                </button>
-              </li>
-            ))}
+            {hits.map((hit, index) => {
+              const on = index === at;
+              return (
+                <li
+                  key={`${hit.kind}-${hit.tree}-${hit.node ?? hit.name}`}
+                  id={`stx-hit-${index}`}
+                  role="option"
+                  aria-selected={on}
+                  data-at={on ? 'on' : undefined}
+                >
+                  <button
+                    type="button"
+                    className={`stx-hit${on ? ' is-on' : ''}`}
+                    /* Pointing at a row makes it the one Enter takes, so the
+                       mouse and the arrow keys cannot disagree about which
+                       row is current. */
+                    onMouseEnter={() => setAt(index)}
+                    onClick={() => go(hit)}
+                  >
+                    <i className="stx-ico stx-hit-ico" style={{ ['--ico' as string]: `url(${hit.icon})` }} />
+                    <span className="stx-hit-text">
+                      <strong>{hit.name}</strong>
+                      <em>{hit.where}</em>
+                    </span>
+                    <span className={`stx-hit-kind is-${hit.kind}`}>{hit.kind}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

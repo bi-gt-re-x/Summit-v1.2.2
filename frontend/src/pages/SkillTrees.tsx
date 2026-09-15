@@ -43,6 +43,24 @@
  * prerequisite chain. Both are transient — nothing is stored, and clearing the
  * selection puts the canvas back exactly as it was.
  *
+ * ## Pointing at a tile is a question too
+ *
+ * A tile is 64px and can hold three facts, so everything else about a skill
+ * needed a click — and finding one node among forty meant opening nine panels
+ * to read nine of them. Resting the pointer on a tile now raises a card with
+ * what it waits on, how much of that is done, and what it opens. It is drawn
+ * from the same `focusOn` the focus layer and the route strip run, so it
+ * cannot disagree with either. See components/SkillTree/TilePeek.
+ *
+ * ## Searching lands *on* the thing
+ *
+ * The search reaches every subject, every lattice and all eleven hundred
+ * skills, and picking a skill has to do four things at once: open its tree,
+ * select it, fill the panel, and scroll the canvas until it is on screen. The
+ * last was missing, which made the first three feel broken — the right tree
+ * opened at its top-left corner with the panel describing something the reader
+ * could not see. `openTree` says all four in one call.
+ *
  * ## The figures are counted, not stored
  *
  * Every number in the band is `tallyGraph` on the tree that is open — there is
@@ -62,6 +80,7 @@ import {
   RouteStrip,
   SkillTree as SkillTreeCanvas,
   SubjectRail,
+  TilePeek,
 } from '@/components/SkillTree';
 import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
 import { iconForName } from '@/skills/iconMatch';
@@ -301,19 +320,64 @@ export default function SkillTrees() {
   // pill out — see the note on `openTrail` in SubjectRail.
   const trail = useMemo(() => chain.map((entry) => entry.id), [chain]);
 
+  /* ---- What the reader has narrowed the canvas to ----------------------
+     Declared up here, above the two ways of changing tree, because both of
+     those have to put every one of them back: a focus layer, a traced chain
+     and a status filter are all readings of the lattice that is open, and
+     carrying any of them into the next one would be answering a question
+     about a tree nobody is looking at. The callbacks that set them are
+     further down, with the rest of the selection.
+
+     Whether the whole prerequisite chain is lit rather than only the
+     neighbours. Held as a node id rather than a boolean so it cannot outlive
+     the node it was asked for. */
+  const [tracedId, setTracedId] = useState<string | null>(null);
+
+  /* A selection and a lens ask the same question — *which of these forty
+     concern me* — and answering it twice at once would be two dimmings
+     fighting over one canvas. So each clears the other and the newer one
+     wins, which is a rule a reader works out in one click rather than one
+     they have to be told. */
+  const [lens, setLens] = useState<Lens | null>(null);
+
+  /* Scroll the canvas until a node is on screen. Only for the controls that
+     select something the reader cannot see — the next-up strip, the route
+     crumbs, and anything that arrives from another tree entirely. See
+     `reveal` in components/SkillTree/SkillTree for the token. */
+  const [reveal, setReveal] = useState<{ id: string; token: number } | null>(null);
+
   const goTo = useCallback((id: string) => {
     setTreeId(id);
     setSelectedId(null);
+    setTracedId(null);
+    setLens(null);
+    setReveal(null);
+    setPeeked(null);
   }, []);
 
   /* Opening a tree *at* a node — what the search and the subject rail do.
      Every route into a different tree passes through here or through `goTo`,
      and both say what the selection becomes, which is why there is no effect
      watching the tree id to clear it: one would run after this and wipe the
-     node the reader just searched for. */
+     node the reader just searched for.
+
+     The reveal is the other half of the same thought, and without it the
+     search was only two thirds of an answer: the right tree opened, the right
+     node selected, the panel filled in — and the canvas showing the top-left
+     corner of a lattice the node was nowhere near. A reader who typed
+     "eigen" has to *land on* Eigenvectors. See the fit in
+     components/SkillTree/SkillTree, which is where the scale and the scroll
+     are settled together. */
   const openTree = useCallback((id: string, node?: string) => {
     setTreeId(id);
     setSelectedId(node ?? null);
+    setTracedId(null);
+    setLens(null);
+    setReveal(node ? { id: node, token: Date.now() } : null);
+    /* A tile that is removed under the pointer never sends its leave event,
+       so the card would otherwise hang over the new tree describing a node
+       from the old one. */
+    setPeeked(null);
   }, []);
 
   /** A catalogue subject — Mandarin, Gym, Taxes — routed to its lattice. */
@@ -369,19 +433,7 @@ export default function SkillTrees() {
     [graph.nodes, selectedId],
   );
 
-  /* Whether the whole prerequisite chain is lit rather than only the
-     neighbours. Held as a node id rather than a boolean so it cannot outlive
-     the node it was asked for. */
-  const [tracedId, setTracedId] = useState<string | null>(null);
-
-  /* ---- The two ways of narrowing the canvas ----------------------------
-     A selection and a lens ask the same question — *which of these forty
-     concern me* — and answering it twice at once would be two dimmings
-     fighting over one canvas. So each clears the other and the newer one
-     wins, which is a rule a reader works out in one click rather than one
-     they have to be told. */
-  const [lens, setLens] = useState<Lens | null>(null);
-
+  // ---- The two ways of narrowing the canvas ------------------------------
   // Picking the same node again puts the panel and the lit run back.
   const select = useCallback(
     (node: GraphNode | null) =>
@@ -410,10 +462,7 @@ export default function SkillTrees() {
     setTracedId(null);
   }, []);
 
-  /* Scroll the canvas until a node is on screen. Only for the controls that
-     select something the reader cannot see — the next-up strip and the route
-     crumbs. See `reveal` in components/SkillTree/SkillTree for the token. */
-  const [reveal, setReveal] = useState<{ id: string; token: number } | null>(null);
+  /** Select a node and scroll the canvas until it is on screen. */
   const open = useCallback((id: string) => {
     setSelectedId(id);
     setTracedId(null);
@@ -452,6 +501,22 @@ export default function SkillTrees() {
   /* How far through its prerequisites each gated node is, so a locked tile can
      print `2/3` where every other tile prints a percentage. See skills/route. */
   const gates = useMemo(() => gatesOf(graph), [graph]);
+
+  /* ---- The tile under the pointer --------------------------------------
+     Which node is being pointed at and where its tile was when the pointer
+     arrived. The rectangle is held rather than recomputed because the card is
+     placed against the window — see components/SkillTree/TilePeek — and the
+     tile is the only thing that ever knew where it was on screen.
+
+     The *reading* is worked out here rather than in the card, from the same
+     `focusOn` the focus layer and the route strip already run: a hover card
+     that computed its own idea of what a node requires would be a second
+     answer to a question the page has already answered. */
+  const [peeked, setPeeked] = useState<{ id: string; rect: DOMRect } | null>(null);
+  const peek = useMemo(
+    () => (peeked ? focusOn(graph, peeked.id) : null),
+    [graph, peeked],
+  );
 
   /* One emphasis layer, from whichever of the two is on. */
   const weights = useMemo(() => {
@@ -761,6 +826,8 @@ export default function SkillTrees() {
                   here={placed.node.id === hereId}
                   gate={gates.get(placed.node.id)}
                   onTrace={() => trace(placed.node)}
+                  onPeek={(node, rect) => setPeeked({ id: node.id, rect })}
+                  onPeekEnd={() => setPeeked(null)}
                 />
               );
             }}
@@ -819,9 +886,25 @@ export default function SkillTrees() {
           </ul>
           <p className="stx-legend-tip">
             <Ico icon="idea" className="stx-ico stx-legend-tip-ico" />
-            <b>Tip:</b> drag the canvas to explore · ⌘ or Ctrl + scroll to zoom
+            <b>Tip:</b> hover a tile to see what it needs · drag the canvas to explore · ⌘ or
+            Ctrl + scroll to zoom
           </p>
         </footer>
+
+        {/* The hover card. Last in the shell and positioned against the
+            window, so nothing on the page can clip it and the scaled canvas
+            cannot shrink its text — see components/SkillTree/TilePeek. Keyed
+            by node, which is what restarts the fade: crossing a row of tiles
+            then shows one card appearing where the pointer stopped rather
+            than a card sliding along the row. */}
+        {peeked && peek && (
+          <TilePeek
+            key={peeked.id}
+            read={peek}
+            rect={peeked.rect}
+            nav={nav.has(peeked.id)}
+          />
+        )}
       </div>
     </div>
   );

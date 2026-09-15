@@ -2257,7 +2257,11 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     cursor: pointer;
     color: inherit;
 }
-.stx-hit:hover { background: var(--lat-violet-soft); }
+/* Pointed at, or arrowed to. One rule for both: the mouse sets the same
+   highlight the keys do, so the row Enter would take is never a different row
+   from the one under the cursor. */
+.stx-hit:hover,
+.stx-hit.is-on { background: var(--lat-violet-soft); }
 .stx-hit-ico { width: 17px; height: 17px; flex: 0 0 17px; color: var(--lat-violet); }
 .stx-hit-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .stx-hit-text strong { font-size: 13px; font-weight: 650; color: var(--lat-text); }
@@ -2817,3 +2821,115 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 }
 
 .stx-lp-cta.is-go:hover { background: var(--lat-violet-soft); }
+
+/* ==========================================================================
+   The hover card
+   ==========================================================================
+   What a 64px tile can say without being clicked. See
+   components/SkillTree/TilePeek for why it is fixed to the window rather than
+   drawn inside the tile, and why it appears late. */
+.stx-peek {
+    position: fixed;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px 12px;
+    border: 1px solid var(--lat-line);
+    border-radius: 11px;
+    background: var(--lat-panel);
+    box-shadow: var(--lat-shadow-lift);
+    /* Never catches the pointer. A tooltip you can hover is a tooltip that
+       eats the click it was explaining — and, worse, one that flickers as the
+       cursor crosses onto it and the tile behind it reports a leave. */
+    pointer-events: none;
+    /* The delay is the whole manners of the thing: sweeping across a row of
+       twelve tiles must show nothing at all, and only a pointer that actually
+       stopped gets a card. */
+    animation: stx-peek-in .13s ease .18s both;
+}
+
+@keyframes stx-peek-in {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* The fade is the affordance, so reduced motion keeps the delay and drops the
+   movement rather than dropping both. */
+@media (prefers-reduced-motion: reduce) {
+    .stx-peek { animation: stx-peek-in .01s linear .18s both; }
+}
+
+.stx-peek-name {
+    font-size: 13px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+    color: var(--lat-text);
+}
+
+.stx-peek-line {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0;
+    font-size: 11px;
+    color: var(--lat-muted);
+}
+
+.stx-peek-line i { font-style: normal; color: var(--lat-faint); }
+
+/* The tier, which is the one fact on the card that is also a colour on the
+   tile. `--tone` is set by the `tier-*` class the card does not carry, so this
+   names the neutral and lets the words do it. */
+.stx-peek-tier { font-weight: 700; color: var(--lat-text); }
+
+.stx-peek-head,
+.stx-peek-opens,
+.stx-peek-nav {
+    margin: 0;
+    font-size: 11px;
+    color: var(--lat-muted);
+}
+
+.stx-peek-head { padding-top: 3px; border-top: 1px solid var(--lat-line-soft); }
+.stx-peek-opens { color: var(--lat-blue); font-weight: 650; }
+
+.stx-peek-needs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.stx-peek-needs li {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--lat-text);
+}
+
+.stx-peek-needs i {
+    flex: none;
+    width: 10px;
+    font-style: normal;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--lat-faint);
+}
+
+/* Done is quieter, for the reason the panel's list is: it is read for what is
+   still outstanding. */
+.stx-peek-needs li.is-done { color: var(--lat-muted); }
+.stx-peek-needs li.is-done i { color: var(--lat-green); }
+.stx-peek-needs li.is-more { color: var(--lat-faint); font-size: 11px; padding-left: 16px; }
+
+/* A pointer is what raises this, and a touch screen has none — the tile's own
+   `title` is what a finger gets. Hidden here as well as guarded in the
+   component, because a stylus on a tablet reports as a pointer. */
+@media (hover: none) {
+    .stx-peek { display: none; }
+}

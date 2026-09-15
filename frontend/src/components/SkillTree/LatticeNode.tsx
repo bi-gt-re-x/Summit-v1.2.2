@@ -39,6 +39,14 @@
  * states a reader feels most differently about. So a gated tile prints `2/3`
  * instead, and the fraction is what turns a wall of dead ends into a set of
  * near-term targets. See `gatesOf` in skills/route.
+ *
+ * ## What a tile says without being clicked
+ *
+ * Three facts fit on 64px and the rest used to need a click, so finding one
+ * node among forty meant opening nine panels. The tile now reports its
+ * rectangle when the pointer settles on it and the page draws a card from
+ * that — see components/SkillTree/TilePeek, which owns everything about how
+ * the card looks and where it lands. This component only says *when*.
  */
 import type { CSSProperties } from 'react';
 import type { Emphasis } from '@/skills/route';
@@ -61,6 +69,18 @@ export interface LatticeNodeProps {
   gate?: { met: number; need: number };
   /** Light the whole prerequisite chain up to this node. */
   onTrace?: () => void;
+  /**
+   * The pointer has come to rest on this tile — draw the hover card for it.
+   *
+   * The tile hands over its own rectangle because it is the only thing that
+   * knows it: the card is positioned against the *window* rather than against
+   * the canvas, for the two reasons components/SkillTree/TilePeek gives. Read
+   * at the moment of the event rather than held, so a tile that has been
+   * scrolled or zoomed since reports where it is now.
+   */
+  onPeek?: (node: GraphNode, rect: DOMRect) => void;
+  /** The pointer has left. Always paired with `onPeek`. */
+  onPeekEnd?: () => void;
 }
 
 export function LatticeNode({
@@ -73,6 +93,8 @@ export function LatticeNode({
   here = false,
   gate,
   onTrace,
+  onPeek,
+  onPeekEnd,
 }: LatticeNodeProps) {
   const { node, x, y } = placed;
   const nav = Boolean(onNavigate);
@@ -102,9 +124,28 @@ export function LatticeNode({
           : '')
         + (here ? '. You are here' : '')
       }
+      /* The name, and nothing else, because the hover card below says the
+         rest and two tooltips on one tile is one too many. Kept rather than
+         dropped: the native one is what a touch device and a dragged pointer
+         still get. */
       title={nav ? `${node.name} →` : node.name}
       onClick={() => (nav ? onNavigate?.() : onSelect(node))}
       onDoubleClick={nav ? undefined : onTrace}
+      /* Pointer rather than mouse events, so a stylus is a hover and a finger
+         is not — a touch that raised a card would put one over the tile it
+         was about to tap. Focus is here too: tabbing through a lattice should
+         tell you the same things pointing at it does. */
+      onPointerEnter={
+        onPeek
+          ? (event) => {
+              if (event.pointerType === 'touch') return;
+              onPeek(node, event.currentTarget.getBoundingClientRect());
+            }
+          : undefined
+      }
+      onPointerLeave={onPeekEnd}
+      onFocus={onPeek ? (event) => onPeek(node, event.currentTarget.getBoundingClientRect()) : undefined}
+      onBlur={onPeekEnd}
     >
       {here && <span className="stx-tile-here">You are here</span>}
       <span className="stx-tile-face" aria-hidden="true">

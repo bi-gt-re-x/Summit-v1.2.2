@@ -24,6 +24,9 @@ export { RouteStrip } from './RouteStrip';
 export type { RouteStripProps } from './RouteStrip';
 export { NextUp } from './NextUp';
 export type { NextUpProps } from './NextUp';
+/** The card a tile raises under the pointer. See ./TilePeek. */
+export { TilePeek } from './TilePeek';
+export type { PeekRect, TilePeekProps } from './TilePeek';
 export { LatticePanel } from './LatticePanel';
 export type { LatticePanelProps } from './LatticePanel';
 export { SkillConnection } from './SkillConnection';

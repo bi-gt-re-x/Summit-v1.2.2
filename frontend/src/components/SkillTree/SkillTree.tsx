@@ -100,7 +100,14 @@ export interface SkillTreeProps {
    * The `token` is what makes asking twice for the same node work. Without it
    * the prop would be unchanged on the second press and the effect would not
    * run, so a reader who scrolled away and pressed the same row again would
-   * get nothing.
+   * get nothing. It is also what stops the canvas jumping on its own: the
+   * graph object changes on every practice click, and without the token being
+   * the thing that is watched, the last reveal would replay each time.
+   *
+   * A reveal that arrives *with a new tree* is handled by the fit below rather
+   * than here, because the fit is what decides the scale the node has to be
+   * centred at — and, left to fight, the fit's own "back to the top-left"
+   * landed 220ms after the scroll and undid it.
    */
   reveal?: { id: string; token: number } | null;
 }
@@ -121,6 +128,45 @@ export function SkillTree({
   const [scale, setScale] = useState(ZOOM.start);
   const [full, setFull] = useState(false);
   const [dragging, setDragging] = useState(false);
+
+  /* The reveal the fit is allowed to read. A ref rather than a dependency
+     because the fit runs on a *timer*, so by the time it fires every effect of
+     that commit has flushed and this holds the current value — which is what
+     lets one pass do both jobs for a tree opened at a node. */
+  const wanted = useRef(reveal);
+  useEffect(() => {
+    wanted.current = reveal;
+  });
+
+  /**
+   * Bring a node into the middle of the box, at a given scale.
+   *
+   * The arithmetic is the layout's own coordinates times the scale, against
+   * the scroller's client box — which works precisely because the canvas is a
+   * real scrolling element rather than a transform matrix, and is one of the
+   * things the note at the top of this file is about.
+   *
+   * The scaled layer is centred inside the stage — `left: 50%` and a negative
+   * margin below — so on a drawing narrower than the box there is slack on
+   * both sides that the node's own coordinate knows nothing about. That slack
+   * is `(box - drawing) / 2`, worked out from numbers we already hold rather
+   * than read off `scrollWidth`: this is called during a scale change, when
+   * the DOM still has the old size and reading it would place the node with
+   * last frame's arithmetic.
+   */
+  const centreOn = useCallback(
+    (placed: PlacedNode, at: number, behavior: ScrollBehavior) => {
+      const box = scroller.current;
+      if (!box) return;
+      const slack = Math.max(0, (box.clientWidth - layout.width * at) / 2);
+      box.scrollTo({
+        left: Math.max(0, slack + (placed.x + geom.nodeW / 2) * at - box.clientWidth / 2),
+        top: Math.max(0, (placed.y + geom.nodeH / 2) * at - box.clientHeight / 2),
+        behavior,
+      });
+    },
+    [geom.nodeH, geom.nodeW, layout.width],
+  );
 
   /**
    * Open a tree at a scale that fits its width.
@@ -153,8 +199,26 @@ export function SkillTree({
       if (!box) return;
       const room = box.clientWidth - 8;
       if (room <= 0) return;
-      setScale(clampZoom(Math.min(ZOOM.start, room / layout.width)));
-      box.scrollTo({ top: 0, left: 0 });
+      const next = clampZoom(Math.min(ZOOM.start, room / layout.width));
+      setScale(next);
+
+      /* Where a tree was opened *at* a node — the search, a focus card — the
+         top-left is the wrong place to land: the reader named a node and the
+         canvas would be showing them the root of a lattice they did not ask
+         about. So the fit ends on that node instead, at the scale it has just
+         chosen.
+
+         One more timer, because `setScale` has not been applied yet and the
+         scroll range is still the old drawing's: an offset past the old
+         maximum is clamped away and the node lands half off the screen. */
+      const placed = wanted.current
+        ? layout.nodes.find((one) => one.node.id === wanted.current?.id)
+        : undefined;
+      if (!placed) {
+        box.scrollTo({ top: 0, left: 0 });
+        return;
+      }
+      window.setTimeout(() => centreOn(placed, next, 'auto'), 0);
     };
     // Timers rather than requestAnimationFrame: a frame callback does not run
     // at all in a tab the browser is not currently rendering, so the fit would
@@ -168,6 +232,11 @@ export function SkillTree({
       window.clearTimeout(soon);
       window.clearTimeout(later);
     };
+    // `centreOn` and `layout.nodes` are deliberately not dependencies: this
+    // pass belongs to *arriving* at a graph, and re-running it because a
+    // practice click rebuilt the layout would re-fit a tree the reader had
+    // zoomed. It reads whatever the current ones are when the timer fires.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fit, layout.width, graph.id]);
 
 
@@ -316,36 +385,28 @@ export function SkillTree({
   const drawnWidth = layout.width * scale;
   const drawnHeight = layout.height * scale;
 
-  /* Bring a node into the middle of the box.
+  /* Scroll to a node the reader asked for from somewhere off the canvas.
    *
-   * The arithmetic is the layout's own coordinates times the scale, against
-   * the scroller's client box — which works precisely because the canvas is a
-   * real scrolling element rather than a transform matrix, and is one of the
-   * things the note at the top of this file is about. `smooth` because the
-   * reader pressed something on a strip and needs to see where the canvas went;
-   * an instant jump reads as a different screen. */
+   * `smooth`, because they pressed something on a strip and need to see where
+   * the canvas went; an instant jump reads as a different screen.
+   *
+   * Each token is acted on once. The effect has to watch the layout — a tree
+   * opened at a node has a layout that arrives in the same render as the
+   * request — but the layout is rebuilt on every practice click too, and
+   * without the guard the canvas would silently scroll back to the last
+   * revealed node each time somebody pressed Practice. Marked handled only
+   * where the node was actually found, so a request that arrives a beat before
+   * its tree still lands. */
+  const done = useRef(0);
   const revealToken = reveal?.token;
   const revealId = reveal?.id;
   useEffect(() => {
-    const box = scroller.current;
-    if (!box || !revealId) return;
+    if (!revealId || !revealToken || revealToken === done.current) return;
     const placed = layout.nodes.find((one) => one.node.id === revealId);
     if (!placed) return;
-
-    /* The scaled layer is centred inside the stage — `left: 50%` and a
-       negative margin below — so on a drawing narrower than the box there is
-       slack on both sides that the node's own coordinate knows nothing about.
-       `scrollWidth` is the stage's real width, which is where that slack is. */
-    const slack = Math.max(0, (box.scrollWidth - layout.width * scale) / 2);
-
-    box.scrollTo({
-      left: Math.max(0, slack + (placed.x + geom.nodeW / 2) * scale - box.clientWidth / 2),
-      top: Math.max(0, (placed.y + geom.nodeH / 2) * scale - box.clientHeight / 2),
-      behavior: 'smooth',
-    });
-    // Keyed on the token as well as the id, so pressing the same row twice
-    // scrolls twice.
-  }, [geom.nodeH, geom.nodeW, layout.nodes, layout.width, revealId, revealToken, scale]);
+    done.current = revealToken;
+    centreOn(placed, scale, 'smooth');
+  }, [centreOn, layout.nodes, revealId, revealToken, scale]);
 
   return (
     <section className={`stx-canvas${full ? ' is-full' : ''}`}>
