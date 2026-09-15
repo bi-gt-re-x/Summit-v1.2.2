@@ -73,6 +73,16 @@
  * camera as well as dimming: a figure that says "twelve locked" and leaves you
  * to find the twelve has answered half a question.
  *
+ * ## Three drawings of one tree
+ *
+ * Map, Path and Progress — see components/SkillTree/ModeSwitch for the
+ * argument. The rule that keeps them honest is here: only the **canvas** is
+ * handed the narrowed graph. The band, the panel, the next-up strip, the hover
+ * card and the gate fractions all stay on the full one, because they describe
+ * the tree and a view is not a fact about a tree. A reader in Path mode who
+ * saw "12 skills, 61%" would have been shown a different subject rather than a
+ * different picture of this one.
+ *
  * ## The figures are counted, not stored
  *
  * Every number in the band is `tallyGraph` on the tree that is open — there is
@@ -87,12 +97,14 @@ import {
   FocusTopics,
   LatticeNode,
   LatticePanel,
+  ModeSwitch,
   NextUp,
   ProgressIndicator,
   RouteStrip,
   SkillTree as SkillTreeCanvas,
   SubjectRail,
   TilePeek,
+  type TreeMode,
 } from '@/components/SkillTree';
 import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
 import { iconForName } from '@/skills/iconMatch';
@@ -104,6 +116,7 @@ import {
   gatesOf,
   litBy,
   opportunities,
+  pathOf,
   spotlight,
   type Lens,
 } from '@/skills/route';
@@ -123,6 +136,7 @@ import {
   DIFFICULTIES,
   DIFFICULTY_LABEL,
   LATTICE_GEOM,
+  keepOnly,
   tallyGraph,
   type GraphNode,
   type GraphTally,
@@ -575,6 +589,38 @@ export default function SkillTrees() {
     return null;
   }, [graph, lens, navIds, position, selectedId, tracedId]);
 
+  /* ---- Which of the three drawings ---------------------------------------
+     See components/SkillTree/ModeSwitch for what each one is for. Only Path
+     changes what is *on* the canvas; Progress is the same lattice recoloured,
+     which is a stylesheet's business rather than a graph's. */
+  const [mode, setMode] = useState<TreeMode>('map');
+
+  /* A mode belongs to a reading of a tree, not to a reader, so walking into
+     another lattice starts from the map again. Going straight to Path on a
+     subject somebody has never opened would show them four tiles and call it
+     a subject. */
+  useEffect(() => {
+    setMode('map');
+  }, [treeId]);
+
+  /* What the canvas is handed. Everything else on the page — the band, the
+     panel, the next-up strip, the hover card, the gate fractions — stays on
+     the full graph, because those describe the *tree* and a view is not a
+     fact about a tree. The one thing a narrowed canvas must not do is change
+     what the page believes. */
+  const shown = useMemo(
+    () => (mode === 'path' ? keepOnly(graph, pathOf(graph, hereId)) : graph),
+    [graph, hereId, mode],
+  );
+
+  /** What the canvas is showing, in the line under the switch. */
+  const say =
+    mode === 'map'
+      ? `Every skill in ${tree.title}, arranged the way the subject is built.`
+      : mode === 'path'
+        ? `${shown.nodes.length} of ${graph.nodes.length} skills — what is behind you, what you are on, and what opens next.`
+        : 'The same lattice, coloured by where you stand rather than by how hard each skill is.';
+
   /* The "+250 XP" that appears for a moment after a click. Held with its node
      id so switching selection mid-flash cannot show one node's gain on
      another, and the timer is cleared on unmount and on every new click. */
@@ -853,10 +899,15 @@ export default function SkillTrees() {
           />
         )}
 
+        {/* ---- how to read the tree ----
+            Directly above the canvas, because it decides what the canvas is
+            rather than what is emphasised on it. */}
+        <ModeSwitch mode={mode} onMode={setMode} say={say} />
+
         {/* ---- the lattice and what a node is ---- */}
-        <div className="stx-layout">
+        <div className={`stx-layout mode-${mode}`}>
           <SkillTreeCanvas
-            graph={graph}
+            graph={shown}
             selectedId={selectedId}
             onSelect={select}
             geom={LATTICE_GEOM}

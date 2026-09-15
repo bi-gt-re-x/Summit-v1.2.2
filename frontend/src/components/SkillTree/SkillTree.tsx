@@ -414,6 +414,24 @@ export function SkillTree({
     );
   }, [focus, layout.edges]);
 
+  /* Ground already covered: an edge with a finished node at *both* ends. The
+     wire's own `state` comes from the far end alone — see ./SkillConnection —
+     so without this a completed node with three unfinished prerequisites
+     draws three completed-looking lines, and a branch somebody actually
+     walked end to end is indistinguishable from one they landed in the middle
+     of. Computed here because it is a fact about a pair rather than about a
+     node, which is the one thing `layoutGraph` does not carry. */
+  const built = useMemo(() => {
+    const done = new Set(
+      graph.nodes.filter((node) => node.status === 'complete').map((node) => node.id),
+    );
+    return new Set(
+      layout.edges
+        .filter((edge) => edge.kind === 'requires' && done.has(edge.from) && done.has(edge.to))
+        .map((edge) => edge.id),
+    );
+  }, [graph.nodes, layout.edges]);
+
   const bare = layout.nodes.length === 0;
 
   /**
@@ -562,6 +580,7 @@ export function SkillTree({
                     edge={edge}
                     lit={lit.has(edge.id)}
                     faded={faded.has(edge.id)}
+                    built={built.has(edge.id)}
                   />
                 ))}
               </svg>

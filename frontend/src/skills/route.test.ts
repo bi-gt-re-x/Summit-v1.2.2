@@ -22,6 +22,7 @@ import {
   nearestBlocker,
   nextAfter,
   opportunities,
+  pathOf,
   routeTo,
   spotlight,
 } from './route';
@@ -244,6 +245,57 @@ describe('spotlight', () => {
 
   it('marks nothing as here, because a lens has no centre', () => {
     expect([...spotlight(ladder(), 'complete').values()]).not.toContain('here');
+  });
+});
+
+describe('pathOf', () => {
+  /* The ladder, read as a route. `algebra` is where the reader is standing:
+     `arith`, `fractions` and `negatives` are behind it, `linear` and `stats`
+     are open, and `systems` and `quad` are the step past `linear`. On this
+     small fixture that is most of the tree — the point of the function is what
+     it leaves out, and the tests below are where that shows. */
+  it('collects what is behind, what is open, and one step past', () => {
+    const path = pathOf(ladder(), 'algebra');
+
+    expect([...path].sort()).toEqual(
+      ['algebra', 'arith', 'fractions', 'linear', 'negatives', 'quad', 'stats', 'systems'].sort(),
+    );
+  });
+
+  it('takes every ancestor, not just the longest chain', () => {
+    // `algebra` waits on two things and the route strip prints one of them.
+    // A path view that showed only that one would be hiding a branch the
+    // reader finished on the way here.
+    const path = pathOf(ladder(), 'algebra');
+    expect(path.has('fractions')).toBe(true);
+    expect(path.has('negatives')).toBe(true);
+  });
+
+  it('leaves out a finished branch nobody is standing on', () => {
+    /* `stats` mastered and nothing depending on it: true about the subject,
+       not part of the route, and the whole reason this is smaller than the
+       lattice. */
+    const graph = ladder({ stats: { status: 'complete', percent: 100 } });
+    expect(pathOf(graph, 'algebra').has('stats')).toBe(false);
+  });
+
+  it('measures the horizon from the frontier, not from the ancestors', () => {
+    /* `stats` hangs off `arith`, which is behind the reader. A rule that
+       stepped one past everything it had collected would pull in every
+       sibling of every node on the way here — so with `stats` finished and
+       nobody on it, it stays out even though its parent is in. */
+    const graph = ladder({ stats: { status: 'complete', percent: 100 } });
+    const path = pathOf(graph, 'algebra');
+    expect(path.has('arith')).toBe(true);
+    expect(path.has('stats')).toBe(false);
+  });
+
+  it('still answers where nobody is standing anywhere', () => {
+    // No position at all: the frontier and its horizon are still a view, and
+    // a finished root with nothing above it is not part of one.
+    const path = pathOf(ladder(), null);
+    expect(path.has('linear')).toBe(true);
+    expect(path.has('arith')).toBe(false);
   });
 });
 

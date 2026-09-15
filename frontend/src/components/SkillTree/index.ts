@@ -25,6 +25,9 @@ export { LatticeNode } from './LatticeNode';
 export type { LatticeNodeProps } from './LatticeNode';
 export { RouteStrip } from './RouteStrip';
 export type { RouteStripProps } from './RouteStrip';
+/** Map · Path · Progress — three readings of one lattice. See ./ModeSwitch. */
+export { ModeSwitch, TREE_MODES } from './ModeSwitch';
+export type { ModeSwitchProps, TreeMode } from './ModeSwitch';
 export { NextUp } from './NextUp';
 export type { NextUpProps } from './NextUp';
 /** The card a tile raises under the pointer. See ./TilePeek. */

@@ -3033,3 +3033,123 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 @media (max-width: 720px) {
     .stx-mini { display: none; }
 }
+
+/* ==========================================================================
+   Map · Path · Progress
+   ==========================================================================
+   Three readings of one lattice — see components/SkillTree/ModeSwitch for what
+   each is for. Only Path changes what is drawn; Progress is this stylesheet
+   recolouring what Map already drew, which is the right place for it: nothing
+   about a node changes, only what its colour is answering. */
+.stx-modes {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 14px;
+}
+
+.stx-modes-set {
+    display: inline-flex;
+    flex: none;
+    padding: 3px;
+    border: 1px solid var(--lat-line);
+    border-radius: 999px;
+    background: var(--lat-panel);
+}
+
+.stx-mode {
+    padding: 5px 15px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 650;
+    color: var(--lat-muted);
+    cursor: pointer;
+    transition: color .14s ease, background .14s ease;
+}
+
+.stx-mode:hover { color: var(--lat-text); }
+.stx-mode:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: 1px; }
+.stx-mode.is-on {
+    background: var(--lat-violet);
+    color: #fff;
+    font-weight: 750;
+}
+html[data-theme="dark"] .stx-mode.is-on { color: #0d1117; }
+
+.stx-modes-say {
+    margin: 0;
+    flex: 1 1 260px;
+    min-width: 0;
+    font-size: 11.5px;
+    color: var(--lat-faint);
+}
+
+/* ---- Progress: coloured by where you stand ----
+   The tier palette is six hues answering "how hard is this", and in Progress
+   that is the wrong question — so `--tone` is redirected to the state the node
+   is in and every rule downstream follows without knowing anything changed.
+   The tile's own `tier-*` class still sets `--tone`, so these have to be more
+   specific than one class; the mode lives on the layout wrapper, which gives
+   them that for free. */
+.stx-layout.mode-progress .stx-tile.is-complete { --tone: var(--lat-green); --tone-soft: var(--lat-green-soft); }
+.stx-layout.mode-progress .stx-tile.is-progress { --tone: var(--lat-blue); --tone-soft: var(--lat-blue-soft); }
+.stx-layout.mode-progress .stx-tile.is-available { --tone: var(--lat-violet); --tone-soft: var(--lat-violet-soft); }
+.stx-layout.mode-progress .stx-tile.is-locked { --tone: var(--lat-grey); --tone-soft: var(--lat-grey-soft); }
+
+/* That last line is the exact thing the note by `.stx-tile.is-locked` above
+   argues against — draining a locked tile to grey, which made an unstarted
+   tree open as a page of identical squares. The argument still holds *for
+   Map*, where the colour is answering "how hard is this" and a tree nobody has
+   begun still has plenty to say. Here the colour is answering "how far round
+   have I got", and on an untouched tree the honest answer is a page of grey.
+   Which is why this is a mode a reader chooses and not the drawing they
+   arrive on. */
+
+/* The tier chip is the one thing on the tile that was *about* the tier, so in
+   this mode it is the one thing that must not take the state's colour — it
+   would be a label reading "Advanced" in the green that means finished. */
+.stx-layout.mode-progress .stx-tile-tier { color: var(--lat-faint); }
+
+/* ==========================================================================
+   Mastered terrain
+   ==========================================================================
+   Finishing a branch should look like something. Not a badge and not a burst —
+   the reward is that the ground you have covered reads as covered, from a zoom
+   level where you cannot make out a single label. */
+
+/* A finished tile is already a solid block of its tone. The gradient gives it
+   a lit top edge, so a run of them reads as a surface with a light on it
+   rather than as four identical squares. */
+.stx-tile.is-complete .stx-tile-face {
+    background-image: linear-gradient(
+        160deg,
+        color-mix(in srgb, #fff 24%, transparent),
+        transparent 62%
+    );
+}
+
+html[data-theme="dark"] .stx-tile.is-complete .stx-tile-face {
+    background-image: linear-gradient(
+        160deg,
+        color-mix(in srgb, #fff 18%, transparent),
+        transparent 58%
+    );
+}
+
+/* Both ends finished — see `built` in components/SkillTree/SkillTree. Heavier
+   and fully opaque, which is what turns a chain of completed nodes into one
+   continuous piece of terrain instead of four lines that happen to meet. */
+.stx-page--lattice .stx-wire.is-built {
+    stroke: var(--lat-green);
+    stroke-width: 3.2;
+    opacity: 1;
+}
+
+/* The selection still wins. A lit built wire keeps the extra weight rather
+   than taking the lit width, so the route you are inspecting is the brightest
+   thing on the canvas whichever ground it crosses. */
+.stx-page--lattice .stx-wire.is-built.is-lit { stroke-width: 4; }

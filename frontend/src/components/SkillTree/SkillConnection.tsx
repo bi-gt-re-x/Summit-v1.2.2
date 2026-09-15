@@ -21,6 +21,14 @@
  * on: a line with a dimmed node at either end goes back with it, because a
  * bright wire running into a faded tile is the one thing that makes a dimmed
  * canvas look broken rather than quiet.
+ *
+ * `is-built` is ground already covered: *both* ends finished, rather than the
+ * `is-complete` state above, which is decided by the far end alone. The
+ * difference is the whole point of it — one completed node with three
+ * unfinished prerequisites has three completed-looking lines running into it,
+ * and a run a reader actually walked end to end looks exactly the same. Built
+ * is drawn heavier and solid, so a finished branch reads as one continuous
+ * piece of terrain instead of as a set of lines that happen to touch.
  */
 import type { PlacedEdge } from '@/utils/skillGraph';
 
@@ -30,14 +38,21 @@ export interface SkillConnectionProps {
   lit?: boolean;
   /** Running into something the focus layer has dimmed — drawn back. */
   faded?: boolean;
+  /** Both ends finished: a stretch of the tree that is behind the reader. */
+  built?: boolean;
 }
 
-export function SkillConnection({ edge, lit = false, faded = false }: SkillConnectionProps) {
+export function SkillConnection({
+  edge,
+  lit = false,
+  faded = false,
+  built = false,
+}: SkillConnectionProps) {
   return (
     <path
       className={`stx-wire is-${edge.state} is-${edge.kind}${lit ? ' is-lit' : ''}${
         faded ? ' is-faded' : ''
-      }`}
+      }${built ? ' is-built' : ''}`}
       d={edge.d}
       fill="none"
     />

@@ -366,6 +366,88 @@ export function opportunities(
 }
 
 // --------------------------------------------------------------------------
+// The route, as a lattice of its own
+// --------------------------------------------------------------------------
+/**
+ * The part of a tree a reader is actually walking.
+ *
+ * A hundred-node lattice is an honest picture of a subject and a poor picture
+ * of a person's next month. Ninety of those tiles are behind three
+ * prerequisites they have not met, and the ones that matter — what they have
+ * done, what they are on, what opens next — are scattered among them. This is
+ * that scattering collected: typically a tenth of the tree, and the tenth the
+ * reader would have had to assemble by eye.
+ *
+ * Four things, and each is a different tense:
+ *
+ *   - **Behind.** Every ancestor of where they are standing — the whole
+ *     `requires` closure, not the longest chain, because a branch they
+ *     finished six weeks ago is part of how they got here even when the
+ *     canvas draws it off to one side.
+ *   - **Here.** The node itself.
+ *   - **Now.** Everything in progress or open, wherever it sits. This is the
+ *     frontier, and it is the answer to "what can I do today".
+ *   - **Next.** One step past the frontier and past `here` — never past the
+ *     ancestors, which looks like the same rule and is a different one: it
+ *     would pull in every sibling of every node on the way here, and a
+ *     finished branch nobody is on would arrive with four things hanging off
+ *     it. The horizon exists so the view does not end in a row of tiles with
+ *     nothing above them, not to grow it back into the lattice.
+ *
+ * What is deliberately *not* in it: a finished node on a branch nobody is on,
+ * and anything locked behind two or more. Both are true facts about the
+ * subject and neither is a fact about the route, and a view that included
+ * them would be the full lattice again with extra steps.
+ *
+ * The navigation diamonds are the one kind of node every other reading here
+ * skips and this one keeps. A doorway is never what somebody is *working on*,
+ * which is why `currentSkill` and `opportunities` drop them — but it is very
+ * often where the route goes next, and a path view that removed the way out of
+ * the lattice would be a path with the exits painted over.
+ */
+export function pathOf(graph: SkillGraph, hereId: string | null): Set<string> {
+  const byId = new Map(graph.nodes.map((node) => [node.id, node]));
+  const keep = new Set<string>();
+
+  /* Ancestors, depth-first with a seen set — the same guard `routeTo` carries,
+     and for the same reason: this runs on authored data in a browser, and a
+     cycle must not hang the page. */
+  const behind = (id: string) => {
+    const node = byId.get(id);
+    if (!node) return;
+    for (const need of node.requires) {
+      if (keep.has(need) || !byId.has(need)) continue;
+      keep.add(need);
+      behind(need);
+    }
+  };
+
+  if (hereId && byId.has(hereId)) {
+    keep.add(hereId);
+    behind(hereId);
+  }
+
+  /* The frontier, and the only part of this set the horizon is measured from.
+     Stepping past the *ancestors* as well looks like the same rule and is a
+     different one: it pulls in every sibling of every node on the way here,
+     which is how a finished branch nobody is on — and the four things hanging
+     off it — end up back in a view whose whole point is that they are not. */
+  const front = graph.nodes
+    .filter((node) => node.status === 'progress' || node.status === 'available')
+    .map((node) => node.id);
+  for (const id of front) keep.add(id);
+
+  // One step, from a snapshot: adding to the set while walking it would let
+  // the horizon walk the rest of the tree.
+  const from = hereId ? [hereId, ...front] : front;
+  for (const id of from) {
+    for (const node of unlockedBy(graph, id)) keep.add(node.id);
+  }
+
+  return keep;
+}
+
+// --------------------------------------------------------------------------
 // One status at a time
 // --------------------------------------------------------------------------
 /** What the band across the top can narrow the canvas to. */

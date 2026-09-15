@@ -494,6 +494,22 @@ export function filterGraph(graph: SkillGraph, filter: GraphFilter): SkillGraph 
   return { ...graph, nodes };
 }
 
+/**
+ * The graph with only these nodes on it.
+ *
+ * The same one rule `filterGraph` documents above: a survivor keeps its
+ * `requires` untouched and `layoutGraph` drops the edges pointing at nodes
+ * that did not survive, so a narrowed graph draws the paths *between* what is
+ * left rather than a set of orphans with lines running off the canvas.
+ *
+ * Which ids is somebody else's judgement — this file has no idea what a route
+ * or a frontier is. See `pathOf` in skills/route for the one that matters
+ * today.
+ */
+export function keepOnly(graph: SkillGraph, ids: ReadonlySet<string>): SkillGraph {
+  return { ...graph, nodes: graph.nodes.filter((node) => ids.has(node.id)) };
+}
+
 export interface GraphTally {
   total: number;
   complete: number;
