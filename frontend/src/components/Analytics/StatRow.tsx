@@ -48,6 +48,19 @@ export interface Stat {
   value: string;
   /** The trailing unit, set small beside the figure: "XP/day", "/ 25". */
   unit?: string;
+  /**
+   * The same figure as one phrase: "4 tasks", "2.3h focused", "83% completion".
+   *
+   * `StatRow` itself ignores this. It exists so that the digest line at the
+   * top of `Collecting` — the one a reader on their second day sees before
+   * anything else — can be *derived from this array* rather than assembled a
+   * second time by the caller. Two lists of the same five numbers is two
+   * chances to print 4 tasks above a tile reading 5.
+   *
+   * Optional, and absent is the normal case: only the stats worth putting in
+   * a one-line summary carry one.
+   */
+  short?: string;
   /** Colours the mark, the sparkline and nothing else. */
   tone: Tone;
   /** A drawing for the mark. Without one the row draws a tone dot instead. */

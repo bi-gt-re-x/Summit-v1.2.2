@@ -249,10 +249,34 @@ body:has(.ax-page) .app-main {
     text-transform: uppercase;
     color: var(--ax-violet);
 }
+/* The counts as one line, above the heading that explains them. Set larger
+   than the heading on purpose: on day two the figures are the product and the
+   sentence beside them is the caption, not the other way round. See the note
+   in src/components/Analytics/Collecting.tsx. */
+.ax-collect-digest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 9px;
+    margin: 0 0 10px;
+    font-size: 19px;
+    font-weight: 680;
+    letter-spacing: -.015em;
+    line-height: 1.35;
+    color: var(--ax-text);
+    font-variant-numeric: tabular-nums;
+}
+.ax-collect-sep {
+    color: var(--ax-faint);
+    font-weight: 400;
+}
+
 .ax-collect-head h2 {
     margin: 0 0 10px;
-    font-size: 23px;
-    font-weight: 700;
+    /* Below the digest above it. The heading was the largest thing here when
+       it was the only thing; now it introduces the line that leads. */
+    font-size: 17px;
+    font-weight: 650;
     letter-spacing: -.02em;
     line-height: 1.25;
     color: var(--ax-text);
@@ -311,6 +335,122 @@ body:has(.ax-page) .app-main {
 @media (prefers-reduced-motion: reduce) {
     .ax-collect-fill { transition: none; }
 }
+
+/* The five stages drawn as a track, and the thresholds still ahead listed
+   under it. Filled behind, hollow in front — a reader can count the rungs
+   without reading a word, which is the whole reason it is a picture and not
+   another sentence. See `StageLadder` in
+   src/components/Analytics/Collecting.tsx. */
+.ax-ladder {
+    margin: 16px 0 0;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--ax-line-soft);
+}
+.ax-ladder-head {
+    margin: 0 0 11px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
+
+/* Wraps to as many lines as it needs, which is what the connector has to
+   survive: `li + li::before` has no idea whether the rung it precedes starts a
+   new line, so on a narrow screen the second row opened with a dash pointing
+   at nothing. Below the breakpoint the connectors come off entirely and the
+   dots space themselves — five marks in a row read as a sequence without
+   being joined up, and a wrong line is worse than no line. */
+.ax-ladder-track {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.ax-ladder-track li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.ax-ladder-track li + li::before {
+    content: '';
+    width: 14px;
+    height: 1px;
+    margin: 0 9px 0 3px;
+    background: var(--ax-line);
+}
+.ax-ladder-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+    border: 1.5px solid var(--ax-line);
+    background: transparent;
+}
+.ax-ladder-track li.is-reached .ax-ladder-dot {
+    border-color: var(--ax-violet);
+    background: var(--ax-violet);
+}
+.ax-ladder-name {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ax-faint);
+    white-space: nowrap;
+}
+.ax-ladder-track li.is-reached .ax-ladder-name { color: var(--ax-muted); }
+/* The rung you are on, not merely one you have passed. */
+.ax-ladder-track li[aria-current='step'] .ax-ladder-name {
+    color: var(--ax-text);
+    font-weight: 680;
+}
+
+/* Explicit counts rather than `auto-fit`, which packed four rows into three
+   columns at the common width and left the fourth stranded on a line of its
+   own. Four milestones want 1, 2 or 4 across; three-and-an-orphan is the one
+   arrangement that reads as a mistake. */
+.ax-ladder-next {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3px 22px;
+    margin: 13px 0 0;
+    padding: 0;
+    list-style: none;
+}
+@media (min-width: 560px) {
+    .ax-ladder-next { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1180px) {
+    .ax-ladder-next { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.ax-ladder-next li {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: baseline;
+    gap: 7px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+.ax-ladder-need {
+    font-weight: 680;
+    color: var(--ax-text);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.ax-ladder-need em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--ax-faint);
+}
+.ax-ladder-arrow { color: var(--ax-faint); }
+
+@media (max-width: 559px) {
+    .ax-ladder-track { gap: 7px 15px; }
+    .ax-ladder-track li + li::before { display: none; }
+}
+.ax-ladder-brings { color: var(--ax-muted); }
 
 /* The one-line version of the block above, for the stages that no longer need
    a card. A rule and a sentence rather than a panel: from day seven the page

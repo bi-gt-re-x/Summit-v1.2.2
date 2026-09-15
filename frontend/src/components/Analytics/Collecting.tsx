@@ -24,10 +24,12 @@
  * rule `Locked` was written for — see the note there about what invented
  * figures cost — applied a stage earlier.
  */
+import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { StatRow, type Stat } from './StatRow';
+import { NEED_DAYS } from './useAnalyticsModel';
 import { ACTIVE_DAY_MEANS } from '@/utils/activeDay';
-import { STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
+import { STAGES, STAGE_BRINGS, STAGE_FLOOR, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
 
 /**
  * What a day has to have on it to be counted.
@@ -151,17 +153,131 @@ export function LearningStrip({ items }: { items: LearningItem[] }) {
   );
 }
 
+/**
+ * The whole ladder at once: where the account stands, and what is above it.
+ *
+ * ## The gap this fills
+ *
+ * Every countdown on this page was relative — "4 more days and weekly trends
+ * open here" — and a relative countdown only means something to a reader who
+ * already knows the shape of the thing they are climbing. On day two nobody
+ * does. They are told a number and a name, with no way to tell whether that
+ * name is the last rung or the first of six, so the honest answer to "what am
+ * I working toward?" was: read the next sentence in four days and find out.
+ *
+ * So the ladder is drawn rather than described. Five marks, filled behind you
+ * and hollow ahead, and under them the thresholds that are actually still
+ * coming with the reason to want each one. It says the same thing the
+ * countdown says and adds the only part the countdown could not: the scale.
+ *
+ * ## Why reached milestones are dropped
+ *
+ * Same rule as `LearningStrip`, for the same reason — a list of what you have
+ * already passed is a different page from a list of what is next, and mixing
+ * them turns a roadmap into a scorecard. The *track* ticks, because marking
+ * progress is the only job a track has; the list under it does not.
+ *
+ * The four thresholds are read from `STAGE_FLOOR` and `NEED_DAYS` rather than
+ * written here, so a number moved in either place moves on screen without
+ * anybody remembering this file exists.
+ */
+export function StageLadder({ maturity }: { maturity: Maturity }) {
+  const { activeDays, stage } = maturity;
+  const standing = STAGES.indexOf(stage);
+
+  /* Stage floors and tab gates in one list, because a reader does not have
+     two mental models of this page and should not be shown two ladders. What
+     opens at 21 is a tab rather than a stage, and that distinction is ours,
+     not theirs. */
+  const ahead = [
+    { need: STAGE_FLOOR.weekly, brings: 'Weekly trends' },
+    { need: STAGE_FLOOR.developing, brings: 'Performance analysis' },
+    { need: NEED_DAYS.habits, brings: 'Habit patterns' },
+    { need: NEED_DAYS.insights, brings: 'Insights' },
+  ].filter((step) => activeDays < step.need);
+
+  return (
+    <section className="ax-ladder">
+      <p className="ax-ladder-head">Your analytics are developing</p>
+
+      <ol
+        className="ax-ladder-track"
+        aria-label={`Stage ${standing + 1} of ${STAGES.length}: ${STAGE_BRINGS[stage]}`}
+      >
+        {STAGES.map((rung, at) => (
+          <li
+            key={rung}
+            className={at <= standing ? 'is-reached' : undefined}
+            aria-current={at === standing ? 'step' : undefined}
+          >
+            <span className="ax-ladder-dot" aria-hidden="true" />
+            <span className="ax-ladder-name">{STAGE_BRINGS[rung]}</span>
+          </li>
+        ))}
+      </ol>
+
+      {ahead.length > 0 && (
+        <ul className="ax-ladder-next">
+          {ahead.map((step, at) => (
+            <li key={step.need}>
+              {/* "active days" on the first row only. Repeating the unit down
+                  the column turns a scannable list into four sentences. */}
+              <span className="ax-ladder-need">
+                {step.need}
+                {at === 0 && <em> active days</em>}
+              </span>
+              <span className="ax-ladder-arrow" aria-hidden="true">
+                &#8594;
+              </span>
+              <span className="ax-ladder-brings">{step.brings}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export function Collecting({ maturity, stats, nextBrings }: CollectingProps) {
   const { activeDays, spanDays, toNext, next, progress } = maturity;
+
+  /* Derived from the row below rather than passed in beside it — see `short`
+     on Stat. Suppressed at zero, where every part of it would read "0" and a
+     headline of nothing is worse than no headline. */
+  const digest =
+    activeDays === 0
+      ? []
+      : stats.map((stat) => stat.short).filter((part): part is string => Boolean(part));
 
   return (
     <section className="ax-collect">
       <header className="ax-collect-head">
         <p className="ax-collect-eyebrow">{STAGE_LABEL[maturity.stage]}</p>
+
+        {/* The first thing on the page, above the explanation of itself. On
+            day two these counts *are* the product: they are exact, they are
+            about the reader, and they are the reason to come back tomorrow.
+            An account that opens with a paragraph about what is not available
+            yet has buried the only part that works. */}
+        {digest.length > 0 && (
+          <p className="ax-collect-digest">
+            {digest.map((part, at) => (
+              <Fragment key={part}>
+                {at > 0 && (
+                  <span className="ax-collect-sep" aria-hidden="true">
+                    &middot;
+                  </span>
+                )}
+                <span>{part}</span>
+              </Fragment>
+            ))}
+          </p>
+        )}
+
         <h2>
           {activeDays === 0
             ? 'Summit has nothing to go on yet.'
-            : 'Summit is still learning your habits.'}
+            : 'Summit is learning your work patterns.'}
         </h2>
         <p className="ax-collect-lead">
           {activeDays === 0 ? (
@@ -200,6 +316,11 @@ export function Collecting({ maturity, stats, nextBrings }: CollectingProps) {
             <ActiveDayNote />
           </div>
         )}
+
+        {/* Under the countdown, because it is the countdown's missing half:
+            the meter says how far to the next rung, this says how many rungs
+            there are and what each is for. */}
+        <StageLadder maturity={maturity} />
       </header>
 
       <StatRow stats={stats} />

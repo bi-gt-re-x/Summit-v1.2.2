@@ -102,6 +102,29 @@ export const STAGE_LABEL: Record<Stage, string> = {
 };
 
 /**
+ * What each stage *opens*, as opposed to what it is called.
+ *
+ * `STAGE_LABEL` names the rung somebody is standing on; this names what
+ * standing on it gets them. Both are needed and neither is a rewording of the
+ * other: "Developing profile" is where you are, "Performance" is what being
+ * there buys you. A reader on day two does not care what their stage is
+ * called — they care what arrives next, and that is a different word.
+ *
+ * Kept here beside the floors rather than in the component that draws them,
+ * because the ladder and the countdown sentences have to name the same thing
+ * the same way. Two vocabularies for five stages is how a page ends up
+ * promising "weekly trends" in one place and "your first patterns" in another
+ * for the same threshold.
+ */
+export const STAGE_BRINGS: Record<Stage, string> = {
+  new: 'Activity',
+  early: 'Patterns',
+  weekly: 'Trends',
+  developing: 'Performance',
+  full: 'Deep insights',
+};
+
+/**
  * What a stage is allowed to draw.
  *
  * The five decisions the page makes about a stage, in one place, because they

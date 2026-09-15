@@ -149,6 +149,7 @@ export function OverviewTab({
         key: 'tasks',
         label: 'Tasks finished',
         value: fmtNumber(figures.tasks.value),
+        short: `${fmtNumber(figures.tasks.value)} ${figures.tasks.value === 1 ? 'task' : 'tasks'}`,
         tone: 'green',
         glyph: 'check',
       },
@@ -157,6 +158,7 @@ export function OverviewTab({
         label: 'Focus time',
         value: figures.focusHours.value.toFixed(1),
         unit: 'h',
+        short: `${figures.focusHours.value.toFixed(1)}h focused`,
         tone: 'blue',
         glyph: 'clock',
       },
@@ -172,6 +174,9 @@ export function OverviewTab({
         label: 'Current streak',
         value: String(streak),
         unit: streak === 1 ? 'day' : 'days',
+        /* Dropped from the digest at zero rather than printed as "0-day
+           streak", which reads as a rebuke on somebody's first morning. */
+        ...(streak > 0 ? { short: `${streak}-day streak` } : {}),
         tone: 'amber',
         glyph: 'flame',
       },
@@ -184,6 +189,7 @@ export function OverviewTab({
               key: 'completion',
               label: 'Completion rate',
               value: `${completion}%`,
+              short: `${completion}% completion`,
               tone: 'pink' as const,
               glyph: 'target' as const,
               note: `${finished} of ${tasks.length} finished`,

@@ -75,7 +75,7 @@ export type { LockedProps } from './Locked';
 /* The stage before `Locked` has anything to gate. See the note at the top of
    Collecting for why the two are different components rather than one with a
    flag: a door and an empty room are not the same thing to stand in front of. */
-export { ActiveDayNote, Collecting, StageNote, LearningStrip } from './Collecting';
+export { ActiveDayNote, Collecting, StageLadder, StageNote, LearningStrip } from './Collecting';
 export type { LearningItem } from './Collecting';
 export type { CollectingProps } from './Collecting';
 
