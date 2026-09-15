@@ -20,7 +20,7 @@ import {
   WorkingPanel,
 } from '@/components/Insights';
 import { Patterns as DiscoveredPatterns } from '../Patterns';
-import { Locked } from '../Locked';
+import { Building } from '../Building';
 import { RatedTasksPanel, ReasonsPanel } from '../Quality';
 import { SubjectPanel } from '../Breakdown';
 import { InsightsPanel } from '../Longterm';
@@ -59,13 +59,19 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
   return (
     <>
       {waitFor('insights') > 0 && (
-        <Locked
+        <Building
           title="Insights"
           remaining={waitFor('insights')}
           need={NEED_DAYS.insights}
           have={historyDays}
           promise="An explanation needs two comparable stretches to hold against each other."
-          brings={['Why the last stretch went that way', 'Your hours, week and rhythm', 'What moves together, with r and n', 'What is working']}
+          asksLead="Summit will look for relationships across your work:"
+          asks={[
+            'When do you perform best?',
+            'Which subjects are improving fastest?',
+            'Where does perceived difficulty differ from execution?',
+            'What changed between your last two stretches?',
+          ]}
           action={
             <Link to="/habits" className="ax-btn">
               See habits

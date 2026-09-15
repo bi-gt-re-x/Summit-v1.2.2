@@ -69,12 +69,13 @@ export {
    here so the next person does not have to work out why nothing draws them. */
 
 /** What a tab shows instead of inventing figures it does not have. */
-export { Locked } from './Locked';
-export type { LockedProps } from './Locked';
+export { Building } from './Building';
+export type { BuildingProps } from './Building';
 
-/* The stage before `Locked` has anything to gate. See the note at the top of
+/* The stage before `Building` has anything to gate. See the note at the top of
    Collecting for why the two are different components rather than one with a
-   flag: a door and an empty room are not the same thing to stand in front of. */
+   flag: a room still being furnished and an empty one are not the same thing
+   to stand in. */
 export { ActiveDayNote, Collecting, StageLadder, StageNote, LearningStrip } from './Collecting';
 export type { LearningItem } from './Collecting';
 export type { CollectingProps } from './Collecting';

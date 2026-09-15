@@ -222,7 +222,7 @@ body:has(.ax-page) .app-main {
    reader is not meant to scan it, they are meant to read one sentence and know
    when to come back. */
 /* ---------- Collecting ----------------------------------------------------
-   The stage before there is anything to gate. Deliberately *not* `.ax-locked`:
+   The stage before there is anything to gate. Deliberately *not* `.ax-building`:
    that one is a card in the middle of an empty page, which is the right shape
    for a door and the wrong one for a page that is working — this sits at the
    top of a tab that still has real figures under it, so it reads as the tab's
@@ -319,7 +319,7 @@ body:has(.ax-page) .app-main {
 .ax-collect-count strong { color: var(--ax-text); font-weight: 650; }
 
 /* What a day has to have on it to be counted, wherever a countdown appears —
-   the collecting block, the "still filling in" strip and `Locked`. One rule
+   the collecting block, the "still filling in" strip and `Building`. One rule
    for all three, because it is one sentence saying one thing and three
    different sizes of it would read as three different claims. Quiet: it is the
    footnote under the number, not a second headline. See
@@ -622,14 +622,14 @@ body:has(.ax-page) .app-main {
 }
 .ax-finish-count strong { color: var(--ax-text); font-weight: 650; }
 
-.ax-locked {
+.ax-building {
     display: grid;
     place-items: center;
     min-height: 52vh;
     padding: 32px 0 40px;
 }
 
-.ax-locked-body {
+.ax-building-body {
     width: min(560px, 100%);
     background: var(--ax-card);
     border: 1px solid var(--ax-line);
@@ -639,7 +639,10 @@ body:has(.ax-page) .app-main {
     text-align: left;
 }
 
-.ax-locked-eyebrow {
+.ax-building-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
     margin: 0 0 6px;
     font-size: 11px;
     font-weight: 700;
@@ -647,40 +650,46 @@ body:has(.ax-page) .app-main {
     text-transform: uppercase;
     color: var(--ax-violet);
 }
+/* Says the state in one word, beside the tab it belongs to. The whole reason
+   this component stopped being called `Locked`: a reader glancing at the top
+   of the card should get "filling up" rather than "you do not have this". */
+.ax-building-chip {
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--ax-violet) 13%, transparent);
+    font-size: 10px;
+    letter-spacing: .06em;
+}
 
-.ax-locked-body h2 {
-    margin: 0 0 12px;
-    font-size: 30px;
+/* A sentence, not a numeral. This was 30px with a 56px `strong` inside it,
+   which was right when the headline was the day count — see the note in
+   src/components/Analytics/Building.tsx for why the count moved down. A
+   sentence set at 30px with a -.03em track reads as a slogan. */
+.ax-building-body h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
     font-weight: 700;
-    letter-spacing: -.03em;
+    letter-spacing: -.02em;
     color: var(--ax-text);
-    line-height: 1.1;
+    line-height: 1.25;
 }
 
-.ax-locked-body h2 strong {
-    font-size: 56px;
-    font-weight: 700;
-    letter-spacing: -.045em;
-    color: var(--ax-violet);
-    margin-right: 4px;
-}
-
-.ax-locked-lead {
+.ax-building-lead {
     margin: 0;
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: 14.5px;
+    line-height: 1.55;
     color: var(--ax-muted);
 }
 
-.ax-locked-meter {
-    margin: 20px 0 6px;
+.ax-building-meter {
+    margin: 22px 0 7px;
     height: 6px;
     border-radius: 999px;
     background: var(--ax-line-soft);
     overflow: hidden;
 }
 
-.ax-locked-fill {
+.ax-building-fill {
     display: block;
     height: 100%;
     border-radius: 999px;
@@ -688,50 +697,80 @@ body:has(.ax-page) .app-main {
     transition: width .4s ease;
 }
 
-.ax-locked-count {
+.ax-building-count {
     margin: 0;
     font-size: 13px;
     font-weight: 600;
     color: var(--ax-faint);
+    font-variant-numeric: tabular-nums;
+}
+.ax-building-count strong { color: var(--ax-text); font-weight: 700; }
+
+/* The countdown, demoted from the headline it used to be. Still the second
+   thing a reader looks for after the ratio, so it sits directly under it. */
+.ax-building-remaining {
+    margin: 5px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ax-muted);
 }
 
-.ax-locked-list {
-    margin: 24px 0 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    gap: 8px;
+/* What this tab will answer, above the meter. The most persuasive thing on the
+   screen and the only place the product can say what it is for while it cannot
+   demonstrate it — so it gets a tinted panel rather than sitting as loose text
+   between two paragraphs of explanation. */
+.ax-building-asks {
+    margin: 20px 0 0;
+    padding: 15px 17px 16px;
+    border: 1px solid var(--ax-line-soft);
+    border-radius: 11px;
+    background: var(--ax-card-2);
 }
-
-.ax-locked-list li {
-    position: relative;
-    padding-left: 22px;
-    font-size: 15px;
+.ax-building-asks-lead {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 620;
     line-height: 1.5;
     color: var(--ax-text);
 }
 
-.ax-locked-list li::before {
-    content: "";
-    position: absolute;
-    left: 4px;
-    top: 7px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--ax-violet) 55%, transparent);
+.ax-building-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 7px;
 }
 
-.ax-locked-action { margin-top: 22px; }
+.ax-building-list li {
+    position: relative;
+    padding-left: 15px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+
+.ax-building-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--ax-violet) 45%, transparent);
+}
+
+.ax-building-action { margin-top: 22px; }
 
 /* The second state: enough history, nothing found. No meter and no countdown —
    there is nothing to count to, and a progress bar here would imply the answer
    is still coming when it has already arrived. */
-.ax-locked-empty .ax-locked-body { text-align: left; }
+.ax-building-empty .ax-building-body { text-align: left; }
 
 /* ---------- The question phase ------------------------------------------- */
 /* The screen a new account answers before this page draws anything — see
-   src/components/Analytics/Setup.tsx. Same card as `.ax-locked` and
+   src/components/Analytics/Setup.tsx. Same card as `.ax-building` and
    deliberately so: they are the two things a young account sees here, and they
    should read as one idea rather than two designs.
 

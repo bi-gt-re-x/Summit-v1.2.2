@@ -11,7 +11,7 @@
  * drift apart the first time one of them is edited.
  *
  * It would also have broken the page. Before rendering a tab, the page has to
- * decide whether that tab has anything to say — the `Locked` gates and the
+ * decide whether that tab has anything to say — the `Building` gates and the
  * opening sentence both read figures belonging to the tab they are gating. A
  * memo that lives inside the tab is a memo the gate cannot see.
  *
@@ -751,7 +751,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
    * Days still needed for a tab, or 0 once the record is long enough.
    *
    * Days with work on them, now that `historyDays` counts those — which is why
-   * `Locked` no longer names the date a tab opens on. It cannot: the answer
+   * `Building` no longer names the date a tab opens on. It cannot: the answer
    * depends on how often the reader turns up, and a date computed as if every
    * day from here were a working one is a promise to break.
    */

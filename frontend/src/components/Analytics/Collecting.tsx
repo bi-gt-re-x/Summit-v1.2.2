@@ -1,14 +1,14 @@
 /**
  * What the page says before it has enough to analyse.
  *
- * ## Not a lock
+ * ## Not the same thing as `Building`
  *
- * `Locked` is the right shape for one tab that needs three weeks of record: it
- * is a door with a condition on it, and the reader came to that tab knowing
- * what they wanted. This is the whole page on somebody's second day, and a
- * door is the wrong metaphor for it — nothing is being withheld, there is
- * simply nothing yet. A page that opens with a padlock on day two teaches a
- * reader that the product is mostly unavailable to them.
+ * `Building` is the right shape for one tab that needs three weeks of record:
+ * the reader went to that tab wanting a specific answer, and it owes them the
+ * reason it cannot give one yet. This is the whole page on somebody's second
+ * day, and nobody arrived at it with a question that precise — so an
+ * explanation of what is missing would be answering something they never
+ * asked. What they want is what the page *does* have.
  *
  * So this states the position and then gets out of the way: one line on what
  * Summit is doing, a meter showing the account moving toward the next thing
@@ -21,7 +21,7 @@
  *
  * No trend, no comparison, no insight, no projection, no sample data. Every
  * figure it prints is a count of something that happened. This is the same
- * rule `Locked` was written for — see the note there about what invented
+ * rule `Building` was written for — see the note there about what invented
  * figures cost — applied a stage earlier.
  */
 import { Fragment } from 'react';
@@ -38,7 +38,7 @@ import { STAGES, STAGE_BRINGS, STAGE_FLOOR, STAGE_LABEL, type Maturity } from '@
  * calendar, and a reader watching a number go up is owed the rule behind it —
  * otherwise "4 more days" reads as a wait of four days, and somebody who
  * skips two of them thinks the page has stalled. It appears wherever a
- * countdown does, which is here, in the strip below, and in `Locked`.
+ * countdown does, which is here, in the strip below, and in `Building`.
  *
  * The words come from utils/activeDay, beside the predicate that enforces
  * them, so the sentence on screen cannot drift from the rule behind it.

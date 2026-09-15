@@ -1020,7 +1020,7 @@ function Heading({ className, children }: { className?: string; children: ReactN
  * panel drawn from invented figures. Both the chip and the figures behind it
  * are gone — a panel on this page is now always this account's own record, so
  * there is nothing left to disclaim. A tab that cannot be filled says so as a
- * whole rather than shipping placeholder panels with a footnote; see `Locked`.
+ * whole rather than shipping placeholder panels with a footnote; see `Building`.
  */
 export function Panel({
   title,

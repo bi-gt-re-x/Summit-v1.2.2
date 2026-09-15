@@ -17,7 +17,7 @@ import { AdviceCard, CategoryFilter, FollowupPanel, OutlookPanel } from '@/compo
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
 import { PanelGroup } from '../charts';
-import { Locked } from '../Locked';
+import { Building } from '../Building';
 import { SETTLE } from '@/utils/followup';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import type { AnalyticsData } from '../useAnalyticsData';
@@ -132,13 +132,19 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
       </section>
 
       {(waitFor('recommendations') > 0 || advice.length === 0) && (
-        <Locked
+        <Building
           title="Recommendations"
           remaining={waitFor('recommendations')}
           need={NEED_DAYS.recommendations}
           have={historyDays}
           promise="Each one is priced off your own averages, and an average needs a fortnight."
-          brings={['What to change, ranked by worth', 'The arithmetic behind each', 'How hard it is', 'One tap to your task list']}
+          asksLead="Summit will work out what to change, and what it is worth:"
+          asks={[
+            'Which single change would buy you the most?',
+            'What is that worth, in your own figures?',
+            'How hard would it actually be?',
+            'Did the last change you made work?',
+          ]}
           emptyMessage="No long gaps, no dead weekend, no late shift worth moving. Nothing to fix."
           action={
             <Link to="/analytics" className="ax-btn">

@@ -2,7 +2,7 @@
  * Habits — what the reader repeats, counted.
  *
  * The one tab gated on two things rather than one: enough record *and* a habit
- * actually found in it. Both arms lead to the same `Locked`, which says which
+ * actually found in it. Both arms lead to the same `Building`, which says which
  * of the two it is waiting on.
  *
  * It never says *why*. The moment it does, the Insights tab has no reason to
@@ -18,7 +18,7 @@ import {
   PatternsPanel,
   TimelinePanel,
 } from '../Habits';
-import { Locked } from '../Locked';
+import { Building } from '../Building';
 import { PanelGroup } from '../charts';
 import { FocusChapter } from '@/components/Growth';
 import { NEED_DAYS } from '../useAnalyticsModel';
@@ -42,13 +42,19 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
   return (
     <>
       {(waitFor('habits') > 0 || habits.length === 0) && (
-        <Locked
+        <Building
           title="Habits"
           remaining={waitFor('habits')}
           need={NEED_DAYS.habits}
           have={historyDays}
           promise="A habit needs weeks of repetition before there is one to find."
-          brings={['Routines, counted', 'Every day you worked', 'Holding or slipping', 'When each began']}
+          asksLead="Summit will look for what repeats in your work:"
+          asks={[
+            'Which routines have actually stuck?',
+            'Which days can you count on yourself?',
+            'Is a habit holding, or quietly slipping?',
+            'When did each one start?',
+          ]}
           emptyMessage="Nothing repeats often enough yet to count as a habit."
           action={
             <Link to="/tasks" className="ax-btn">

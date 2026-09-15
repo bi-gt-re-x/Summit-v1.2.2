@@ -101,7 +101,7 @@
  * new account's first impression of the analysis a page of numbers about
  * somebody who does not exist, and taught the reader to discount the real ones
  * that arrived later. A tab that cannot be filled now says what it is waiting
- * for and when it opens — see `Locked` — and a new account is offered the one
+ * for and when it opens — see `Building` — and a new account is offered the one
  * thing it can actually do here, which is answer the questions above.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
