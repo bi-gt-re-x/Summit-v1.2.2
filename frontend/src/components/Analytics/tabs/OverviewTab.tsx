@@ -22,6 +22,7 @@
  * the page held the figures; the model holds them now, so the only thing left
  * to pass is the one callback that opens a screen the page owns.
  */
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { PanelGroup } from '../charts';
 import {
@@ -49,6 +50,8 @@ import { partsOfDay } from '@/utils/habits';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
 import { observations } from '@/utils/observations';
+import { Knows } from '../Knows';
+import { whatSummitKnows } from '@/utils/knows';
 import { stageShows } from '@/utils/dataMaturity';
 import type { LearningItem } from '../index';
 
@@ -70,6 +73,7 @@ export function OverviewTab({
   const {
     breakdown,
     card,
+    nameOf,
     compareLabel,
     figures,
     subjectLabel,
@@ -114,6 +118,51 @@ export function OverviewTab({
   } = model;
   const { stats, baseline, standing } = data;
   const aim = baseline.data?.baseline ?? null;
+
+  /*
+   * What the page has worked out about the reader, as opposed to about the
+   * window — see the note at the top of utils/knows.
+   *
+   * Computed above the stage split because both branches draw it: the facts
+   * carry their own floors, so a young account gets the two that are true and
+   * a long one gets four, without this file deciding which stage deserves a
+   * profile.
+   */
+  const knows = useMemo(() => {
+    /* The recent leader, for the "current focus" line. Fourteen days rather
+       than the picker's window, because the point of the line is that it can
+       disagree with the all-time answer beside it — reading both off the same
+       range would make that impossible by construction. */
+    const cutoff = new Date(Date.parse(`${toIso}T00:00:00`) - 13 * 86_400_000)
+      .toISOString()
+      .slice(0, 10);
+    const lately = new Map<string, number>();
+    tasks.forEach((task) => {
+      if (task.status !== 'done' || !task.subject) return;
+      const day = (task.completed_at || '').slice(0, 10);
+      if (!day || day < cutoff || day > toIso) return;
+      lately.set(task.subject, (lately.get(task.subject) ?? 0) + 1);
+    });
+    let recentTop: string | null = null;
+    let most = 0;
+    lately.forEach((count, id) => {
+      if (count > most) {
+        most = count;
+        recentTop = nameOf(id);
+      }
+    });
+
+    return whatSummitKnows({
+      finished: tasks.filter((task) => task.status === 'done').length,
+      activeDays: maturity.activeDays,
+      windowDays: slice.current.length,
+      subjects: breakdown.rows.map((row) => ({
+        name: row.name ?? row.label,
+        count: row.count,
+      })),
+      recentTop,
+    });
+  }, [breakdown.rows, maturity.activeDays, nameOf, slice.current.length, tasks, toIso]);
 
   /*
    * Day 0-7, in one path that gains panels rather than two that replace each
@@ -242,6 +291,13 @@ export function OverviewTab({
           {/* No `previous`: there is no earlier period to compare against, and
               an empty map is how this component is told so. */}
           <SubjectPanel rows={breakdown.rows} previous={EMPTY_PREVIOUS} />
+        </section>
+
+        {/* The profile, under the counts it is drawn from. Each fact carries
+            its own floor, so this is two sentences on a young account and
+            nothing at all on a brand new one. */}
+        <section className="ax-section">
+          <Knows facts={knows} />
         </section>
 
         <WhereNext />
@@ -487,6 +543,13 @@ export function OverviewTab({
             <InsightsPanel insights={insights} />
           </PanelGroup>
         )}
+      </section>
+
+      {/* The profile. Same block as the early stages draw, further down a
+          longer page: by here the reader has seen the window's readings and
+          this is what they add up to about them. */}
+      <section className="ax-section">
+        <Knows facts={knows} />
       </section>
 
       <WhereNext />

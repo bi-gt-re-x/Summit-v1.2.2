@@ -34,8 +34,23 @@
  * is set when a task is written and is therefore the only composition that
  * exists on day one; difficulty is the more interesting of the two and takes
  * over as soon as it can.
+ *
+ * ## The third line: how it is changing
+ *
+ * "What have I done" and "what am I taking on" are both descriptions of a
+ * heap. The question a reader actually returns with is whether the heap is
+ * getting better, and the page answered that only in a badge inside the
+ * standing card — one of four, unlabelled, and below a ring most accounts
+ * cannot fill in.
+ *
+ * So the direction is said here in words, beside the counts it is drawn from.
+ * It is the same `Momentum` the badge reads, with the same floor: four rated
+ * tasks in each half, and a drift of at least three points before a direction
+ * is claimed at all. Under that, the line is absent rather than "flat" —
+ * "holding steady" over six tasks is a claim, not an absence of one.
  */
 import { DIFFICULTY_WORDS } from '@/utils/ratings';
+import type { Momentum } from './state';
 import type { AnalyticsTask } from '@/services/analytics';
 
 export interface Slice {
@@ -53,7 +68,22 @@ export interface SubjectFactsProps {
   /** What the rows are, in the heading's own words. */
   axis: string;
   rows: Slice[];
+  /**
+   * Which way execution is going, from ./state's `momentum`.
+   *
+   * Passed rather than computed: the standing card reads the same object for
+   * its badge, and two components working it out separately is how the badge
+   * and the sentence beside it come to disagree about a direction.
+   */
+  momentum: Momentum;
 }
+
+/** What the direction is called, and the shape of the claim behind it. */
+const DIRECTION: Record<string, { word: string; note: string }> = {
+  climbing: { word: 'Improving', note: 'executing better across this window than you were at the start of it' },
+  slipping: { word: 'Slipping', note: 'executing less well across this window than you were at the start of it' },
+  flat: { word: 'Holding', note: 'executing at much the same level across this window' },
+};
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
@@ -96,7 +126,14 @@ export function compositionOf(tasks: AnalyticsTask[]): { axis: string; rows: Sli
   return { axis: 'By priority', rows };
 }
 
-export function SubjectFacts({ finished, total, hours, axis, rows }: SubjectFactsProps) {
+export function SubjectFacts({
+  finished,
+  total,
+  hours,
+  axis,
+  rows,
+  momentum,
+}: SubjectFactsProps) {
   /* Against everything filed here, not against the ones that went well. A rate
      that quietly drops what you missed is not a completion rate — the same
      rule the Overview tab's early stage states about its own. */
@@ -123,6 +160,22 @@ export function SubjectFacts({ finished, total, hours, axis, rows }: SubjectFact
           </span>
         ))}
       </p>
+
+      {/* Absent rather than hedged when the floor is not met. See the header. */}
+      {momentum.known && DIRECTION[momentum.direction] && (
+        <p className="sx-facts-trend" data-way={momentum.direction}>
+          <span className="sx-facts-way">{DIRECTION[momentum.direction]!.word}</span>
+          <span className="sx-facts-note">
+            {momentum.change !== null && momentum.direction !== 'flat' && (
+              <strong>
+                {momentum.change > 0 ? '+' : ''}
+                {momentum.change} points&nbsp;&mdash;{' '}
+              </strong>
+            )}
+            {DIRECTION[momentum.direction]!.note}
+          </span>
+        </p>
+      )}
 
       {rows.length > 0 && (
         <div className="sx-facts-split">

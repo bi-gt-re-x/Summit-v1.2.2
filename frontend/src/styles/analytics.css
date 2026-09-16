@@ -357,6 +357,46 @@ body:has(.ax-page) .app-main {
     .ax-collect-fill { transition: none; }
 }
 
+/* What the page has worked out about the reader, rather than about the window.
+   Sentences, not tiles: these are the facts that accumulate into a picture of
+   somebody, and setting them as metrics is how they stop being read as such.
+   See src/components/Analytics/Knows.tsx and src/utils/knows.ts. */
+.ax-knows {
+    padding: 18px 20px 17px;
+    border: 1px solid var(--ax-line);
+    border-radius: var(--ax-radius);
+    background: var(--ax-card);
+}
+.ax-knows-head {
+    margin: 0 0 14px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
+.ax-knows dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 15px 28px;
+    margin: 0;
+}
+.ax-knows dt {
+    margin: 0 0 3px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--ax-violet);
+}
+.ax-knows dd {
+    margin: 0;
+    max-width: 38ch;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ax-text);
+}
+
 /* The one panel at the early stages that states a tendency instead of a total.
    Tinted by tier, so an established pattern and a first guess do not arrive
    wearing the same confidence — see src/components/Analytics/Observation.tsx

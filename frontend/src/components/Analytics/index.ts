@@ -73,6 +73,10 @@ export {
    total. Its restraint lives in utils/observations, not in the component. */
 export { ObservationNote } from './Observation';
 
+/* What the page has worked out about the reader, as opposed to about the
+   window. See the note at the top of utils/knows. */
+export { Knows } from './Knows';
+
 export { Building } from './Building';
 export type { BuildingProps } from './Building';
 

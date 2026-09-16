@@ -50,6 +50,40 @@
     margin: 0 9px;
 }
 
+/* Which way it is going, in words, beside the counts. Tinted by direction and
+   also labelled by it — colour is never the only carrier on this page. */
+.sx-facts-trend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+.sx-facts-way {
+    flex: none;
+    padding: 2px 9px;
+    border-radius: 99px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    background: color-mix(in srgb, var(--ax-faint) 16%, transparent);
+    color: var(--ax-muted);
+}
+.sx-facts-trend[data-way="climbing"] .sx-facts-way {
+    background: color-mix(in srgb, var(--ax-good) 15%, transparent);
+    color: var(--ax-good);
+}
+.sx-facts-trend[data-way="slipping"] .sx-facts-way {
+    background: color-mix(in srgb, var(--ax-bad) 15%, transparent);
+    color: var(--ax-bad);
+}
+.sx-facts-note { color: var(--ax-muted); }
+.sx-facts-note strong { color: var(--ax-text); font-weight: 680; }
+
 .sx-facts-split {
     margin: 14px 0 0;
     padding: 14px 16px 13px;

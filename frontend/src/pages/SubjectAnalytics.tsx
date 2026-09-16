@@ -1227,6 +1227,7 @@ export default function SubjectAnalytics() {
               hours={state.time.hours}
               axis={composition.axis}
               rows={composition.rows}
+              momentum={state.momentum}
             />
 
             {/* The first thing Summit can say rather than count. Draws only
