@@ -22,6 +22,7 @@ import { Building } from '../Building';
 import { PanelGroup } from '../charts';
 import { FocusChapter } from '@/components/Growth';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { whyFor } from '../milestones';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
@@ -47,7 +48,7 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
           remaining={waitFor('habits')}
           need={NEED_DAYS.habits}
           have={historyDays}
-          promise="A habit needs weeks of repetition before there is one to find."
+          promise={whyFor(NEED_DAYS.habits)}
           asksLead="Summit will look for what repeats in your work:"
           asks={[
             'Which routines have actually stuck?',

@@ -24,6 +24,7 @@ import { InsightsTab } from './InsightsTab';
 import { RecommendationsTab } from './RecommendationsTab';
 import { SubjectsTab } from './SubjectsTab';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { whyFor } from '../milestones';
 /* The model these are driven from — see ./fixtures, which gates.test.tsx used
    to hold and ./groups.test.tsx now needs too. */
 import { draw, fakeData, fakeModel, nameOf, subjects } from './fixtures';
@@ -32,12 +33,12 @@ import { reviewAdopted, summarise } from '@/utils/followup';
 import { days, task } from '@/test/factories';
 
 describe('Habits', () => {
-  it('is locked one day short of the record it needs', () => {
+  it('is still building one day short of the record it needs', () => {
     draw(<HabitsTab model={fakeModel({ historyDays: NEED_DAYS.habits - 1 })} subjects={subjects} />);
-    expect(screen.getByText(/needs weeks of repetition/i)).toBeInTheDocument();
+    expect(screen.getByText(whyFor(NEED_DAYS.habits))).toBeInTheDocument();
   });
 
-  it('is still locked on the day it unlocks, when nothing repeats yet', () => {
+  it('is still building on the day it unlocks, when nothing repeats yet', () => {
     // Two conditions, not one: enough record *and* a habit found in it. The
     // same panel covers both, and says which it is waiting on.
     draw(<HabitsTab model={fakeModel({ historyDays: NEED_DAYS.habits, habits: [] })} subjects={subjects} />);
@@ -74,40 +75,40 @@ describe('Habits', () => {
 });
 
 describe('Insights', () => {
-  it('is locked one day short', () => {
+  it('is still building one day short', () => {
     draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1 })} />);
-    expect(screen.getByText(/two comparable stretches/i)).toBeInTheDocument();
+    expect(screen.getByText(whyFor(NEED_DAYS.insights))).toBeInTheDocument();
   });
 
   it('opens on the day it unlocks — record alone, no second condition', () => {
     // Unlike Habits. An explanation of a quiet fortnight is still an
     // explanation, so there is nothing else to wait for.
     draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights })} />);
-    expect(screen.queryByText(/two comparable stretches/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(whyFor(NEED_DAYS.insights))).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /What is true now/i })).toBeInTheDocument();
   });
 });
 
 describe('Recommendations', () => {
-  it('is locked one day short', () => {
+  it('is still building one day short', () => {
     draw(<RecommendationsTab model={fakeModel({ historyDays: NEED_DAYS.recommendations - 1 })} data={fakeData()} />);
-    expect(screen.getByText(/an average needs a fortnight/i)).toBeInTheDocument();
+    expect(screen.getByText(whyFor(NEED_DAYS.recommendations))).toBeInTheDocument();
   });
 
-  it('is still locked with enough record and nothing to say', () => {
+  it('is still building with enough record and nothing to say', () => {
     draw(<RecommendationsTab model={fakeModel({ historyDays: 400, advice: [] })} data={fakeData()} />);
     expect(screen.getByText(/Nothing to fix/i)).toBeInTheDocument();
   });
 
-  it('shows the plan even while locked — it is gated on nothing', () => {
+  it('shows the plan even while the tab is still building — it is gated on nothing', () => {
     // An account three days old still has overdue work and a deadline, and
     // those are the days when being told what to do is worth most.
     draw(<RecommendationsTab model={fakeModel({ historyDays: 1 })} data={fakeData()} />);
-    expect(screen.getByText(/an average needs a fortnight/i)).toBeInTheDocument();
+    expect(screen.getByText(whyFor(NEED_DAYS.recommendations))).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('shows the follow-up even while locked — a different question', () => {
+  it('shows the follow-up even while the tab is still building — a different question', () => {
     // An account that adopted a change and then went quiet has nothing to
     // recommend and a result waiting. Hiding it behind the same gate would lose
     // the one thing this tab promised to come back and tell you.
@@ -128,7 +129,7 @@ describe('Recommendations', () => {
         data={fakeData()}
       />,
     );
-    expect(screen.getByText(/an average needs a fortnight/i)).toBeInTheDocument();
+    expect(screen.getByText(whyFor(NEED_DAYS.recommendations))).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /What happened after/i })).toBeInTheDocument();
   });
 });

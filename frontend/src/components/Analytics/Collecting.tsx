@@ -27,9 +27,9 @@
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { StatRow, type Stat } from './StatRow';
-import { NEED_DAYS } from './useAnalyticsModel';
+import { milestonesAhead, nextMilestone } from './milestones';
 import { ACTIVE_DAY_MEANS } from '@/utils/activeDay';
-import { STAGES, STAGE_BRINGS, STAGE_FLOOR, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
+import { STAGES, STAGE_BRINGS, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
 
 /**
  * What a day has to have on it to be counted.
@@ -56,8 +56,6 @@ export interface CollectingProps {
   maturity: Maturity;
   /** Already formatted, and already true. See the note above. */
   stats: Stat[];
-  /** One line naming what the next stage brings. The caller knows; this does not. */
-  nextBrings: string;
 }
 
 /**
@@ -73,9 +71,16 @@ export interface CollectingProps {
  * crossing from one to the other reads as the same voice getting quieter
  * rather than as a different notice appearing.
  */
-export function StageNote({ maturity, brings }: { maturity: Maturity; brings: string }) {
-  const { activeDays, next, toNext } = maturity;
-  if (!next || toNext === null) return null;
+export function StageNote({ maturity }: { maturity: Maturity }) {
+  const { activeDays } = maturity;
+
+  /* The next thing that actually opens, which is not always the next stage.
+     At fifteen active days the next stage is `full` at thirty, but Habits
+     opens at twenty-one — and "15 more days" is a discouraging and slightly
+     dishonest answer to a reader who is six days from something real. */
+  const next = nextMilestone(activeDays);
+  if (!next) return null;
+  const toNext = next.need - activeDays;
 
   return (
     <p className="ax-stage-note">
@@ -83,9 +88,12 @@ export function StageNote({ maturity, brings }: { maturity: Maturity; brings: st
       <span>
         Read from <strong>{activeDays} days</strong> of your work.{' '}
         <strong>
-          {toNext} more {toNext === 1 ? 'day' : 'days'}
+          {toNext} more work {toNext === 1 ? 'day' : 'days'}
         </strong>{' '}
-        and {brings}
+        <i className="ax-stage-arrow" aria-hidden="true">
+          &#8594;
+        </i>{' '}
+        <strong>{next.title}</strong>. {next.reward}
       </span>
     </p>
   );
@@ -188,13 +196,10 @@ export function StageLadder({ maturity }: { maturity: Maturity }) {
   /* Stage floors and tab gates in one list, because a reader does not have
      two mental models of this page and should not be shown two ladders. What
      opens at 21 is a tab rather than a stage, and that distinction is ours,
-     not theirs. */
-  const ahead = [
-    { need: STAGE_FLOOR.weekly, brings: 'Weekly trends' },
-    { need: STAGE_FLOOR.developing, brings: 'Performance analysis' },
-    { need: NEED_DAYS.habits, brings: 'Habit patterns' },
-    { need: NEED_DAYS.insights, brings: 'Insights' },
-  ].filter((step) => activeDays < step.need);
+     not theirs. Both the numbers and the words come from ./milestones — see
+     the note there about the two of them having drifted while they lived
+     apart. */
+  const ahead = milestonesAhead(activeDays);
 
   return (
     <section className="ax-ladder">
@@ -220,16 +225,23 @@ export function StageLadder({ maturity }: { maturity: Maturity }) {
         <ul className="ax-ladder-next">
           {ahead.map((step, at) => (
             <li key={step.need}>
-              {/* "active days" on the first row only. Repeating the unit down
-                  the column turns a scannable list into four sentences. */}
-              <span className="ax-ladder-need">
-                {step.need}
-                {at === 0 && <em> active days</em>}
-              </span>
-              <span className="ax-ladder-arrow" aria-hidden="true">
-                &#8594;
-              </span>
-              <span className="ax-ladder-brings">{step.brings}</span>
+              <p className="ax-ladder-line">
+                {/* "active days" on the first row only. Repeating the unit
+                    down the column turns a scannable list into four
+                    sentences. */}
+                <span className="ax-ladder-need">
+                  {step.need}
+                  {at === 0 && <em> active days</em>}
+                </span>
+                <span className="ax-ladder-arrow" aria-hidden="true">
+                  &#8594;
+                </span>
+                <span className="ax-ladder-brings">{step.title}</span>
+              </p>
+              {/* Why that number. A threshold with no reason behind it reads
+                  as a policy somebody chose; every one of these was picked for
+                  an actual reason and the reader was simply never told it. */}
+              <p className="ax-ladder-why">{step.why}</p>
             </li>
           ))}
         </ul>
@@ -238,8 +250,15 @@ export function StageLadder({ maturity }: { maturity: Maturity }) {
   );
 }
 
-export function Collecting({ maturity, stats, nextBrings }: CollectingProps) {
-  const { activeDays, spanDays, toNext, next, progress } = maturity;
+export function Collecting({ maturity, stats }: CollectingProps) {
+  const { activeDays, spanDays, progress } = maturity;
+
+  /* What opens next, and what it will do — from ./milestones rather than from
+     a sentence the caller passed down, which is how the countdown here and
+     the ladder below it came to promise different things at the same
+     threshold. */
+  const next = nextMilestone(activeDays);
+  const toNext = next ? next.need - activeDays : null;
 
   /* Derived from the row below rather than passed in beside it — see `short`
      on Stat. Suppressed at zero, where every part of it would read "0" and a
@@ -302,17 +321,28 @@ export function Collecting({ maturity, stats, nextBrings }: CollectingProps) {
             <div
               className="ax-collect-meter"
               role="img"
-              aria-label={`${activeDays} days recorded, ${toNext} more until ${STAGE_LABEL[next].toLowerCase()}`}
+              aria-label={`${activeDays} days recorded, ${toNext} more until ${next.title.toLowerCase()}`}
             >
               <span className="ax-collect-fill" style={{ width: `${Math.round(progress * 100)}%` }} />
             </div>
+
+            {/* The countdown names what it is counting to, rather than a stage
+                the reader would have to already know. "2 more work days →
+                Weekly trends" is a destination; "2 / 7 days" is a fraction. */}
             <p className="ax-collect-count">
               <strong>
-                {toNext} more {toNext === 1 ? 'day' : 'days'} with work on{' '}
-                {toNext === 1 ? 'it' : 'them'}
-              </strong>{' '}
-              and {nextBrings}
+                {toNext} more work {toNext === 1 ? 'day' : 'days'}
+              </strong>
+              <i className="ax-collect-arrow" aria-hidden="true">
+                &#8594;
+              </i>
+              <strong className="ax-collect-goal">{next.title}</strong>
             </p>
+            {/* And what will actually happen then, to their own record. A
+                category is not a reason to come back; a sentence about what
+                Summit will do with their week is. */}
+            <p className="ax-collect-reward">{next.reward}</p>
+
             <ActiveDayNote />
           </div>
         )}

@@ -208,15 +208,7 @@ export function OverviewTab({
     return (
       <>
         <section id="overview" className="ax-section">
-          <Collecting
-            maturity={maturity}
-            stats={basics}
-            nextBrings={
-              maturity.stage === 'new'
-                ? 'your first patterns open here'
-                : 'weekly trends and a comparison against last week open here'
-            }
-          />
+          <Collecting maturity={maturity} stats={basics} />
         </section>
 
         {/* The one inference allowed this early, and only once it is earned.
@@ -298,14 +290,7 @@ export function OverviewTab({
     <>
       {note && (
         <section className="ax-section">
-          <StageNote
-            maturity={maturity}
-            brings={
-              maturity.stage === 'weekly'
-                ? 'your Growth Rating and how you compare open here'
-                : 'the last of the long-range readings open here'
-            }
-          />
+          <StageNote maturity={maturity} />
           {/* What the rest of the page is still working on. Named rather than
               left silent: a reader who does not know Habits exists cannot look
               forward to it. See the note at the top of LearningStrip. */}

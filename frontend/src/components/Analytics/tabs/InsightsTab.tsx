@@ -28,6 +28,7 @@ import { PanelGroup } from '../charts';
 import { unlock } from '@/utils/insight';
 import { PATTERN_DAYS } from '@/utils/recent';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { whyFor } from '../milestones';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function InsightsTab({ model }: { model: AnalyticsModel }) {
@@ -64,7 +65,7 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
           remaining={waitFor('insights')}
           need={NEED_DAYS.insights}
           have={historyDays}
-          promise="An explanation needs two comparable stretches to hold against each other."
+          promise={whyFor(NEED_DAYS.insights)}
           asksLead="Summit will look for relationships across your work:"
           asks={[
             'When do you perform best?',

@@ -20,6 +20,7 @@ import { PanelGroup } from '../charts';
 import { Building } from '../Building';
 import { SETTLE } from '@/utils/followup';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { whyFor } from '../milestones';
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
@@ -137,7 +138,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           remaining={waitFor('recommendations')}
           need={NEED_DAYS.recommendations}
           have={historyDays}
-          promise="Each one is priced off your own averages, and an average needs a fortnight."
+          promise={whyFor(NEED_DAYS.recommendations)}
           asksLead="Summit will work out what to change, and what it is worth:"
           asks={[
             'Which single change would buy you the most?',

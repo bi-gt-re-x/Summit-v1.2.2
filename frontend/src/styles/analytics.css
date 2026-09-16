@@ -310,13 +310,34 @@ body:has(.ax-page) .app-main {
     transition: width .5s cubic-bezier(.22, 1, .36, 1);
     min-width: 3px;
 }
+/* The countdown names its destination rather than stating a fraction. See the
+   note in src/components/Analytics/Collecting.tsx. */
 .ax-collect-count {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 8px;
     margin: 9px 0 0;
-    font-size: 12.5px;
+    font-size: 13.5px;
     line-height: 1.5;
     color: var(--ax-muted);
 }
-.ax-collect-count strong { color: var(--ax-text); font-weight: 650; }
+.ax-collect-count strong { color: var(--ax-text); font-weight: 680; }
+.ax-collect-goal { color: var(--ax-violet) !important; }
+.ax-collect-arrow {
+    font-style: normal;
+    color: var(--ax-faint);
+}
+/* What will actually happen to their record. Quieter than the destination
+   above it and wider than the note below, because it is the sentence somebody
+   is meant to come back for. */
+.ax-collect-reward {
+    margin: 5px 0 0;
+    max-width: 64ch;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ax-muted);
+}
 
 /* What a day has to have on it to be counted, wherever a countdown appears —
    the collecting block, the "still filling in" strip and `Building`. One rule
@@ -466,12 +487,26 @@ body:has(.ax-page) .app-main {
     .ax-ladder-next { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .ax-ladder-next li {
+    margin: 0 0 9px;
+}
+.ax-ladder-line {
     display: grid;
     grid-template-columns: auto auto 1fr;
     align-items: baseline;
     gap: 7px;
+    margin: 0;
     font-size: 12px;
     line-height: 1.6;
+}
+/* The reason behind the number, under it. Small and muted: a reader scanning
+   for "when does Habits open" should be able to skip every one of these, and
+   a reader who stops on one should find a sentence rather than a slogan. */
+.ax-ladder-why {
+    margin: 1px 0 0;
+    max-width: 46ch;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ax-faint);
 }
 .ax-ladder-need {
     font-weight: 680;
@@ -512,6 +547,7 @@ body:has(.ax-page) .app-main {
     color: var(--ax-muted);
 }
 .ax-stage-note strong { color: var(--ax-text); font-weight: 650; }
+.ax-stage-arrow { font-style: normal; color: var(--ax-faint); }
 .ax-stage-chip {
     flex: none;
     padding: 2px 8px;
