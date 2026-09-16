@@ -27,7 +27,7 @@
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { StatRow, type Stat } from './StatRow';
-import { milestonesAhead, nextMilestone } from './milestones';
+import { MILESTONES, milestonesAhead, nextMilestone } from './milestones';
 import { ACTIVE_DAY_MEANS } from '@/utils/activeDay';
 import { STAGES, STAGE_BRINGS, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
 
@@ -206,7 +206,21 @@ export function LearningStrip({ items }: { items: LearningItem[] }) {
  * written here, so a number moved in either place moves on screen without
  * anybody remembering this file exists.
  */
-export function StageLadder({ maturity }: { maturity: Maturity }) {
+export function StageLadder({
+  maturity,
+  ahead: showAhead = true,
+}: {
+  maturity: Maturity;
+  /**
+   * Whether to list the thresholds still to come, each with its reason.
+   *
+   * Off on a brand new account, where `FirstMilestone` below is saying one
+   * number loudly and six more underneath it would bury the objective it
+   * exists to give. The track stays either way: five marks is the shape of the
+   * thing, and the shape is not the part that overwhelms.
+   */
+  ahead?: boolean;
+}) {
   const { activeDays, stage } = maturity;
   const standing = STAGES.indexOf(stage);
 
@@ -216,7 +230,7 @@ export function StageLadder({ maturity }: { maturity: Maturity }) {
      not theirs. Both the numbers and the words come from ./milestones — see
      the note there about the two of them having drifted while they lived
      apart. */
-  const ahead = milestonesAhead(activeDays);
+  const ahead = showAhead ? milestonesAhead(activeDays) : [];
 
   return (
     <section className="ax-ladder">
@@ -267,6 +281,63 @@ export function StageLadder({ maturity }: { maturity: Maturity }) {
   );
 }
 
+/**
+ * One number, for somebody who has just arrived.
+ *
+ * ## Why the ladder is not enough on day one
+ *
+ * `StageLadder` draws the whole progression, which is the right answer to "how
+ * far does this go" and the wrong one to "what do I do now". A reader on their
+ * first morning meets six thresholds, five stage names and four reasons, and
+ * the useful part — that the first thing opens after three days of work — is
+ * one row among them. Six objectives is no objective.
+ *
+ * So until the first rung is behind them they get that rung and nothing else:
+ * what it is, when it opens, what it will do, and how far along they are.
+ * The ladder's track still sits below it, because knowing there is more after
+ * this costs a reader nothing. Its reasoned list does not.
+ *
+ * It replaces nothing: the meter in `Collecting` is the same countdown to the
+ * same threshold, and this is that countdown given the whole card rather than
+ * a line. Once `activeDays` reaches three it is gone for good — a first
+ * milestone that is still being celebrated on day nine is a tutorial that will
+ * not end.
+ */
+export function FirstMilestone({ maturity }: { maturity: Maturity }) {
+  const { activeDays } = maturity;
+  const first = MILESTONES[0];
+  if (!first || activeDays >= first.need) return null;
+
+  const pct = Math.round((activeDays / first.need) * 100);
+
+  return (
+    <section className="ax-first">
+      <p className="ax-first-head">Your first analytics milestone</p>
+      <p className="ax-first-need">
+        <strong>{first.need}</strong> active days
+      </p>
+      <p className="ax-first-reward">{first.reward}</p>
+
+      <div
+        className="ax-first-meter"
+        role="img"
+        aria-label={`${activeDays} of ${first.need} active days`}
+      >
+        <span style={{ width: `${pct}%` }} />
+      </div>
+      <p className="ax-first-count">
+        <strong>{activeDays}</strong> / {first.need}
+      </p>
+      {/* The rule behind the number, and this is the one screen that cannot do
+          without it: the countdown block that normally carries this note is
+          suppressed while this card stands in for it, and a reader on their
+          first morning is exactly who has not yet learned what Summit counts
+          as a day. */}
+      <ActiveDayNote />
+    </section>
+  );
+}
+
 export function Collecting({ maturity, stats }: CollectingProps) {
   const { activeDays, spanDays, progress } = maturity;
 
@@ -276,6 +347,9 @@ export function Collecting({ maturity, stats }: CollectingProps) {
      threshold. */
   const next = nextMilestone(activeDays);
   const toNext = next ? next.need - activeDays : null;
+
+  /** Nothing has opened yet. See `FirstMilestone`. */
+  const beforeFirst = activeDays < (MILESTONES[0]?.need ?? 0);
 
   /* Derived from the row below rather than passed in beside it — see `short`
      on Stat. Suppressed at zero, where every part of it would read "0" and a
@@ -333,7 +407,12 @@ export function Collecting({ maturity, stats }: CollectingProps) {
           )}
         </p>
 
-        {next && toNext !== null && (
+        {/* Before the first rung, one objective said loudly; after it, the
+            running countdown. Never both — they count to the same threshold
+            and two meters for one number is the page arguing with itself. */}
+        {beforeFirst && <FirstMilestone maturity={maturity} />}
+
+        {!beforeFirst && next && toNext !== null && (
           <div className="ax-collect-next">
             <div
               className="ax-collect-meter"
@@ -367,7 +446,7 @@ export function Collecting({ maturity, stats }: CollectingProps) {
         {/* Under the countdown, because it is the countdown's missing half:
             the meter says how far to the next rung, this says how many rungs
             there are and what each is for. */}
-        <StageLadder maturity={maturity} />
+        <StageLadder maturity={maturity} ahead={!beforeFirst} />
       </header>
 
       <StatRow stats={stats} />

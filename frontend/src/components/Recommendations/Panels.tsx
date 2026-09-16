@@ -133,15 +133,30 @@ export function AdviceCard({
         <span className="ax-advice-chip">{difficultyLabel(item.effort)}</span>
       </div>
 
-      {/* Two lines, unlabelled. The card used to run three tagged paragraphs —
-          Why, Try, Expect — which meant a reader looking for the instruction
-          had to find it among two others and then read past the label to reach
-          it. The instruction is the card, so it is set as the card's own text;
-          the finding behind it sits under it in the quieter colour; and Expect
-          is gone, because "what changes if it works" was the title and the XP
-          figure said twice more. */}
-      <p className="ax-advice-do">{item.action}</p>
+      {/* The finding, then the instruction, each named.
+
+          This card ran three tagged paragraphs once — Why, Try, Expect — and
+          the labels came off because a reader looking for the instruction had
+          to find it among two others and read past a label to reach it. Expect
+          stayed gone: it was the title and the XP figure saying it a third
+          time.
+
+          Two of them are back, for a reason the old arrangement did not have.
+          Unlabelled, `because` read as justification prose — the sort of
+          sentence any productivity app prints under any tip — and a reader had
+          no way to tell it was a finding *from their own record*. That is the
+          only thing making this page different from a list of study advice,
+          and it was the one thing the card did not say.
+
+          So the order is the causal one and both halves are named: what was
+          noticed, then what to do about it. The instruction stays the card's
+          own text and the finding stays quieter, which is what keeps the
+          original objection answered — the eyebrow is a two-word label above a
+          small line, not a paragraph competing with the action. */}
+      <p className="ax-advice-label">Analytics noticed</p>
       <p className="ax-advice-why">{item.because}</p>
+      <p className="ax-advice-label">Recommendation</p>
+      <p className="ax-advice-do">{item.action}</p>
 
       <footer className="ax-advice-foot">
         <details className="ax-advice-evidence">

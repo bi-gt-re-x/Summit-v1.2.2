@@ -173,6 +173,19 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
             </p>
           )}
           <section className="ax-section">
+            {/* What this tab is, said once above the cards.
+                Each card names the finding behind it, but the cards are a grid
+                of them and the shape they share — measured, then understood,
+                then acted on, then measured again — is only visible from
+                above. Without it a reader has a list of tips; with it they
+                have the output of the rest of the page. */}
+            <p className="ax-loop">
+              <span className="ax-loop-step">You work</span>
+              <span className="ax-loop-step">Summit measures</span>
+              <span className="ax-loop-step is-here">It notices something</span>
+              <span className="ax-loop-step is-here">You get a change to try</span>
+              <span className="ax-loop-back">and the next reading says whether it worked</span>
+            </p>
             <CategoryFilter items={advice} chosen={category} onChoose={setCategory} />
             {shown.length > 0 && (
               <div className="ax-grid ax-grid-three">

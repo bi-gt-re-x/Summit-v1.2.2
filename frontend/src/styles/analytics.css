@@ -451,6 +451,74 @@ body:has(.ax-page) .app-main {
     font-variant-numeric: tabular-nums;
 }
 
+/* One objective, for an account on its first morning. Louder than the running
+   countdown it stands in for, because on day one there is nothing else on the
+   page competing to be the thing to do next — see `FirstMilestone` in
+   src/components/Analytics/Collecting.tsx. */
+.ax-first {
+    margin: 18px 0 0;
+    padding: 17px 19px 16px;
+    border: 1px solid color-mix(in srgb, var(--ax-violet) 28%, var(--ax-line));
+    border-radius: 13px;
+    background:
+        radial-gradient(90% 140% at 0% 0%, color-mix(in srgb, var(--ax-violet) 11%, transparent), transparent 70%),
+        var(--ax-card);
+}
+.ax-first-head {
+    margin: 0 0 9px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ax-violet);
+}
+.ax-first-need {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ax-muted);
+}
+.ax-first-need strong {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -.035em;
+    color: var(--ax-text);
+    margin-right: 7px;
+}
+.ax-first-reward {
+    margin: 8px 0 0;
+    max-width: 52ch;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ax-muted);
+}
+.ax-first-meter {
+    margin: 15px 0 6px;
+    height: 7px;
+    border-radius: 99px;
+    background: var(--ax-card-2);
+    overflow: hidden;
+}
+.ax-first-meter span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--ax-violet), var(--ax-blue));
+    transition: width .5s cubic-bezier(.22, 1, .36, 1);
+}
+.ax-first-count {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ax-faint);
+    font-variant-numeric: tabular-nums;
+}
+.ax-first-count strong { color: var(--ax-text); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) {
+    .ax-first-meter span { transition: none; }
+}
+
 /* The five stages drawn as a track, and the thresholds still ahead listed
    under it. Filled behind, hollow in front — a reader can count the rungs
    without reading a word, which is the whole reason it is a picture and not
@@ -3280,18 +3348,83 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 /* What to do, and why. No labels — the order carries it: the instruction is
    the loud one and the finding is the quiet one under it. */
+/* The loop, above the cards. Four steps and a return, with the two this tab
+   is responsible for marked — see the note in tabs/RecommendationsTab.tsx.
+   Chevrons are drawn between steps rather than as characters in the markup so
+   a screen reader gets five phrases and not five arrows. */
+.ax-loop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 0;
+    margin: 0 0 16px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ax-faint);
+}
+.ax-loop-step {
+    padding: 3px 10px;
+    border: 1px solid var(--ax-line);
+    border-radius: 99px;
+    white-space: nowrap;
+}
+.ax-loop-step.is-here {
+    border-color: color-mix(in srgb, var(--ax-violet) 40%, transparent);
+    background: color-mix(in srgb, var(--ax-violet) 10%, transparent);
+    color: var(--ax-violet);
+    font-weight: 620;
+}
+.ax-loop-step + .ax-loop-step::before,
+.ax-loop-step + .ax-loop-back::before {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 1px;
+    margin: 0 9px 0 -1px;
+    vertical-align: middle;
+    background: var(--ax-line);
+}
+.ax-loop-back {
+    margin-left: 10px;
+    font-style: italic;
+}
+
+/* Same wrapped-connector problem the ladder track has, and the same answer:
+   `+ ::before` cannot tell that the step it precedes starts a new line, so on
+   a narrow screen a row opened with a dash pointing at nothing. Below the
+   breakpoint the connectors come off and the chips space themselves. */
+@media (max-width: 559px) {
+    .ax-loop { gap: 7px 8px; }
+    .ax-loop-step + .ax-loop-step::before,
+    .ax-loop-step + .ax-loop-back::before { display: none; }
+    .ax-loop-back { margin-left: 0; }
+}
+
+/* "Analytics noticed" / "Recommendation". Two words above a line, not a
+   paragraph competing with it — see the note in
+   src/components/Recommendations/Panels.tsx for why the labels came back after
+   being deliberately removed. */
+.ax-advice-label {
+    margin: 12px 0 3px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
+
 .ax-advice-do {
-    margin: 10px 0 0;
+    margin: 0;
     font-size: 13px;
     line-height: 1.6;
     color: var(--ax-text);
 }
 
 .ax-advice-why {
-    margin: 7px 0 0;
+    margin: 0;
     font-size: 12px;
     line-height: 1.5;
-    color: var(--ax-faint);
+    color: var(--ax-muted);
 }
 
 .ax-advice-foot {
@@ -5002,8 +5135,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 /* The instruction is the card. It gets the room, and the finding under it gets
    enough of a gap to read as a second thought rather than a runover line. */
 .ax-view-recommendations .ax-advice-chips { margin: 12px 0 2px; }
-.ax-view-recommendations .ax-advice-do { margin-top: 14px; }
-.ax-view-recommendations .ax-advice-why { margin-top: 10px; }
+.ax-view-recommendations .ax-advice-label:first-of-type { margin-top: 16px; }
 .ax-view-recommendations .ax-advice-foot { padding-top: 18px; }
 
 /* The category row is a control for the grid under it, not a caption on the

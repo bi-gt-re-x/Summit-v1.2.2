@@ -84,7 +84,14 @@ export type { BuildingProps } from './Building';
    Collecting for why the two are different components rather than one with a
    flag: a room still being furnished and an empty one are not the same thing
    to stand in. */
-export { ActiveDayNote, Collecting, StageLadder, StageNote, LearningStrip } from './Collecting';
+export {
+  ActiveDayNote,
+  Collecting,
+  FirstMilestone,
+  StageLadder,
+  StageNote,
+  LearningStrip,
+} from './Collecting';
 export type { LearningItem } from './Collecting';
 export type { CollectingProps } from './Collecting';
 
