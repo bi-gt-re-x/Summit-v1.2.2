@@ -122,6 +122,7 @@ import { DEFAULT_BUDGET, buildPlan } from '@/utils/nextActions';
 import { reviewAdopted, summarise } from '@/utils/followup';
 import type { AnalyticsData } from './useAnalyticsData';
 import type { SubjectIndex } from '@/hooks/useSubjects';
+import { observations } from '@/utils/observations';
 import type { Task } from '@/types';
 import type { Prefs } from '@/services/settings';
 
@@ -284,6 +285,18 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     () => subjectXp(bySubject, subjects, fromIso, toIso, RADAR_SUBJECTS),
     [bySubject, fromIso, subjects, toIso],
   );
+
+  /*
+   * What can honestly be said about this reader as a tendency, strongest
+   * first — see the note at the top of utils/observations for the floors.
+   *
+   * Here rather than in the tabs that draw it, for the reason at the top of
+   * this file: four tabs want it now (Overview at its early stages, and the
+   * three gated ones, which show the strongest finding while they are still
+   * filling) and four call sites would be four chances to pass a different
+   * task list and print a different finding on each.
+   */
+  const observed = useMemo(() => observations(tasks), [tasks]);
 
   /** The same subjects over the period before, keyed for the per-row change. */
   const previousBySubject = useMemo(() => {
@@ -804,6 +817,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     nameOf,
 
     // Overview
+    observed,
     figures,
     sparks,
     insights,

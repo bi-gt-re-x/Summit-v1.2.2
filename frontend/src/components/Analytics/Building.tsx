@@ -55,6 +55,8 @@
  *   No meter here, and no day count: there is no number of days that fixes it.
  */
 import { ActiveDayNote } from './Collecting';
+import { ObservationNote } from './Observation';
+import type { Observation } from '@/utils/observations';
 import type { ReactNode } from 'react';
 
 export interface BuildingProps {
@@ -77,6 +79,16 @@ export interface BuildingProps {
   /** How many the account has. */
   have?: number;
   /**
+   * Calendar days this account has been going, for the line under the meter.
+   *
+   * "3 / 21 active days" on its own invites the reading that eighteen days
+   * have been *wasted*. "across 26 days here" says the other eighteen were
+   * simply days off, which is the rule `ActiveDayNote` states underneath and
+   * this quietly demonstrates. Omitted, or not longer than the active count,
+   * and the clause does not appear.
+   */
+  spanDays?: number;
+  /**
    * The opening line, when the default is not true.
    *
    * Only `'problem'` should need this: the building state's headline is the
@@ -91,6 +103,22 @@ export interface BuildingProps {
   asksLead: string;
   /** What this tab will answer, as questions the reader would ask. */
   asks: string[];
+  /**
+   * The strongest thing that can already be said, if anything can.
+   *
+   * The reason this is here at all: a threshold that hides *everything* until
+   * the day it lifts is a worse trade than it looks. Some findings clear their
+   * own floor long before a tab does — the floors in utils/observations are
+   * about the finding, not about the tab — and a reader who is told "26 more
+   * days" while Summit is quietly sitting on something true about them is
+   * being under-served in the name of rigour.
+   *
+   * Showing it wearing its confidence is the honest middle: more of the
+   * product is exposed, and nothing pretends four observations are forty. It
+   * is deliberately one finding rather than the list — the tab has not opened,
+   * and a page of them would be the tab opening.
+   */
+  observation?: Observation | null;
   /**
    * What to say when there are enough days and still no findings. Required for
    * that state, because the honest sentence is different every time and a
@@ -126,10 +154,12 @@ export function Building({
   remaining = 0,
   need = 0,
   have = 0,
+  spanDays = 0,
   headline,
   promise,
   asksLead,
   asks,
+  observation,
   emptyMessage,
   action,
 }: BuildingProps) {
@@ -186,6 +216,15 @@ export function Building({
             feel about the tab by the time they reach it. */}
         <Asks lead={asksLead} asks={asks} />
 
+        {/* What is already true, between what the tab will answer and how far
+            off it is. Placed there on purpose: it is the proof that the
+            questions above are not marketing. */}
+        {observation && (
+          <div className="ax-building-early">
+            <ObservationNote observation={observation} />
+          </div>
+        )}
+
         <div
           className="ax-building-meter"
           role="img"
@@ -198,6 +237,7 @@ export function Building({
             {have} / {need}
           </strong>{' '}
           active days
+          {spanDays > have && <em> · across {spanDays} days here</em>}
         </p>
         {/* No date. This used to read "Opens November 3", computed as today
             plus `remaining` — which was only ever right for somebody who works

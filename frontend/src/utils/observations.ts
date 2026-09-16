@@ -86,6 +86,22 @@ export const CONFIDENCE_LABEL: Record<Confidence, string> = {
   high: 'Established pattern',
 };
 
+/**
+ * The tier as a plain grade, printed beside the label.
+ *
+ * The label alone carries the hedge well enough for somebody reading one
+ * finding. It stops being enough the moment a finding appears somewhere the
+ * reader did not expect analysis at all — on a tab that has not opened yet,
+ * say, where the surrounding copy is busy explaining that there is not enough
+ * record for an answer. "Early observation" there could be misread as the tab
+ * having quietly opened; "Confidence: Low" cannot.
+ */
+export const CONFIDENCE_WORD: Record<Confidence, string> = {
+  low: 'Low',
+  moderate: 'Moderate',
+  high: 'High',
+};
+
 export interface Observation {
   key: string;
   /** The finding, in one sentence, in the reader's terms. */

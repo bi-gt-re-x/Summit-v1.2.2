@@ -74,6 +74,46 @@ describe('Habits', () => {
   });
 });
 
+describe('what a tab says while it is still building', () => {
+  /* The trade in utils/observations: a finding clears its own floor long
+     before a tab clears its threshold, and hiding it until the day the tab
+     opens serves nobody. It appears wearing its confidence. */
+  const finding = {
+    key: 'when-finished',
+    text: 'Most of your finished work here happens in the evening.',
+    support: '9 of 11 timed finishes',
+    confidence: 'low' as const,
+    n: 11,
+    strength: 0.4,
+  };
+
+  it('shows a finding that already holds, and grades it', () => {
+    draw(
+      <InsightsTab
+        model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding] })}
+      />,
+    );
+    expect(screen.getByText(finding.text)).toBeInTheDocument();
+    expect(screen.getByText('Early observation')).toBeInTheDocument();
+    expect(screen.getByText('Low')).toBeInTheDocument();
+  });
+
+  it('shows nothing of the sort when nothing clears its floor', () => {
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [] })} />);
+    expect(screen.queryByText(/Confidence:/)).not.toBeInTheDocument();
+  });
+
+  it('still refuses the tab itself', () => {
+    draw(
+      <InsightsTab
+        model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding] })}
+      />,
+    );
+    // The finding is not the tab opening.
+    expect(screen.getByText(whyFor(NEED_DAYS.insights))).toBeInTheDocument();
+  });
+});
+
 describe('Insights', () => {
   it('is still building one day short', () => {
     draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1 })} />);

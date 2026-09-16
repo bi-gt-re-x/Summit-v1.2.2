@@ -412,12 +412,26 @@ body:has(.ax-page) .app-main {
 .ax-observe.is-high { border-left-color: var(--ax-violet); }
 
 .ax-observe-tier {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px 10px;
     margin: 0 0 6px;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
     color: var(--ax-violet);
+}
+/* The grade beside the tier name. Quieter than the tier: it is the footnote
+   that stops "Early observation" being read as "this tab has opened". */
+.ax-observe-conf {
+    font-weight: 600;
+    color: var(--ax-faint);
+}
+.ax-observe-conf em {
+    font-style: normal;
+    color: var(--ax-muted);
 }
 .ax-observe-text {
     margin: 0;
@@ -821,6 +835,21 @@ body:has(.ax-page) .app-main {
     font-variant-numeric: tabular-nums;
 }
 .ax-building-count strong { color: var(--ax-text); font-weight: 700; }
+/* "across 26 days here" — the calendar length beside the worked one. Quiet,
+   because it is context for the ratio rather than a second figure. */
+.ax-building-count em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--ax-faint);
+}
+
+/* The one finding that already clears its own floor, shown while the tab is
+   still filling. See the note on `observation` in
+   src/components/Analytics/Building.tsx for why a gate that hides everything
+   until the day it lifts is the worse trade. */
+.ax-building-early {
+    margin: 18px 0 0;
+}
 
 /* The countdown, demoted from the headline it used to be. Still the second
    thing a reader looks for after the ratio, so it sits directly under it. */

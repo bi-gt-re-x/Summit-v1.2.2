@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   CONSISTENCY_FLOOR,
+  RECORD_FLOOR,
   SUBJECT_FLOOR,
   WORKLOAD_FLOOR,
   whatSummitKnows,
@@ -10,6 +11,7 @@ import {
 const base: KnowsInput = {
   finished: 40,
   activeDays: 10,
+  spanDays: 24,
   windowDays: 30,
   subjects: [
     { name: 'Mathematics', count: 20 },
@@ -91,12 +93,37 @@ describe('current focus', () => {
   });
 });
 
+describe('record', () => {
+  it('says how long the account has been going and how much of it was worked', () => {
+    expect(textOf('record')).toBe('You have been using Summit for 24 days, and worked on 10 of them.');
+  });
+
+  it('says so differently when no day was missed', () => {
+    expect(textOf('record', { activeDays: 12, spanDays: 12 })).toBe(
+      'You have worked on every one of your 12 days with Summit.',
+    );
+  });
+
+  it('leads, because it is the length of the record the rest are rates of', () => {
+    expect(keys()[0]).toBe('record');
+  });
+
+  it('stays quiet on a span nobody needs reminding of', () => {
+    expect(keys({ spanDays: RECORD_FLOOR - 1 })).not.toContain('record');
+  });
+
+  it('stays quiet when nothing has been worked', () => {
+    expect(keys({ activeDays: 0 })).not.toContain('record');
+  });
+});
+
 describe('the section as a whole', () => {
   it('says nothing at all about a brand new account', () => {
     expect(
       whatSummitKnows({
         finished: 1,
         activeDays: 1,
+        spanDays: 1,
         windowDays: 1,
         subjects: [{ name: 'Mathematics', count: 1 }],
         recentTop: null,

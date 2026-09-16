@@ -49,7 +49,6 @@ import { number as fmtNumber } from '@/utils/format';
 import { partsOfDay } from '@/utils/habits';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
-import { observations } from '@/utils/observations';
 import { Knows } from '../Knows';
 import { whatSummitKnows } from '@/utils/knows';
 import { stageShows } from '@/utils/dataMaturity';
@@ -74,6 +73,7 @@ export function OverviewTab({
     breakdown,
     card,
     nameOf,
+    observed,
     compareLabel,
     figures,
     subjectLabel,
@@ -155,6 +155,7 @@ export function OverviewTab({
     return whatSummitKnows({
       finished: tasks.filter((task) => task.status === 'done').length,
       activeDays: maturity.activeDays,
+      spanDays: maturity.spanDays,
       windowDays: slice.current.length,
       subjects: breakdown.rows.map((row) => ({
         name: row.name ?? row.label,
@@ -162,7 +163,7 @@ export function OverviewTab({
       })),
       recentTop,
     });
-  }, [breakdown.rows, maturity.activeDays, nameOf, slice.current.length, tasks, toIso]);
+  }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, slice.current.length, tasks, toIso]);
 
   /*
    * Day 0-7, in one path that gains panels rather than two that replace each
@@ -191,11 +192,6 @@ export function OverviewTab({
   if (maturity.stage === 'new' || maturity.stage === 'early') {
     const finished = tasks.filter((task) => task.status === 'done').length;
 
-    /* Computed in the branch rather than above it: nothing past `weekly` draws
-       this, and the tabs that do have a great deal more to say than one
-       tendency. Not memoised — it is four passes over the window's tasks and
-       this branch only renders for accounts with a handful of them. */
-    const early = observations(tasks);
     /* Against every task on the books, not against the ones that went well.
        Expired tasks count in the denominator — a rate that quietly drops the
        ones you missed is not a completion rate. */
@@ -267,9 +263,9 @@ export function OverviewTab({
             restraint is in utils/observations — a floor, an effect size, and a
             tier that has to be earned on both — so this renders nothing at all
             until there is something honest to render. */}
-        {early[0] && (
+        {observed[0] && (
           <section className="ax-section">
-            <ObservationNote observation={early[0]} />
+            <ObservationNote observation={observed[0]} />
           </section>
         )}
 

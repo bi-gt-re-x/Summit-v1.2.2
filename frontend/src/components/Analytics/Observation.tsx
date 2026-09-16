@@ -24,12 +24,23 @@
  * is worth, and that is the difference between a finding and a horoscope.
  */
 import type { Observation } from '@/utils/observations';
-import { CONFIDENCE_LABEL } from '@/utils/observations';
+import { CONFIDENCE_LABEL, CONFIDENCE_WORD } from '@/utils/observations';
 
 export function ObservationNote({ observation }: { observation: Observation }) {
   return (
     <section className={`ax-observe is-${observation.confidence}`}>
-      <p className="ax-observe-tier">{CONFIDENCE_LABEL[observation.confidence]}</p>
+      <p className="ax-observe-tier">
+        <span>{CONFIDENCE_LABEL[observation.confidence]}</span>
+        {/* The grade as well as the name of the tier. Belt and braces, and
+            worth it: this component now appears on tabs that have not opened,
+            where the copy around it is explaining that there is not enough
+            record for an answer — and a reader could take "Early observation"
+            there for the tab having quietly opened. "Confidence: Low" cannot
+            be read that way. */}
+        <span className="ax-observe-conf">
+          Confidence: <em>{CONFIDENCE_WORD[observation.confidence]}</em>
+        </span>
+      </p>
       <p className="ax-observe-text">{observation.text}</p>
       <p className="ax-observe-support">{observation.support}</p>
     </section>

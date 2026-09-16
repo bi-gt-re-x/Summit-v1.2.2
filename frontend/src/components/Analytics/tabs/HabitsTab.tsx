@@ -28,7 +28,7 @@ import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { subjects: SubjectIndex }) {
   const {
-    all, figures, habits, historyDays, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
+    all, figures, habits, historyDays, maturity, observed, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
     /* How much of the page is drawn. This tab ignored the detail setting
        entirely: an account with thirty habits handed a reader thirty cards
        whether they had asked for essentials or for everything. */
@@ -49,6 +49,8 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
           need={NEED_DAYS.habits}
           have={historyDays}
           promise={whyFor(NEED_DAYS.habits)}
+          observation={observed[0] ?? null}
+          spanDays={maturity.spanDays}
           asksLead="Summit will look for what repeats in your work:"
           asks={[
             'Which routines have actually stuck?',

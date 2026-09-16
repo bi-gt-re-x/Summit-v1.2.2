@@ -33,7 +33,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function InsightsTab({ model }: { model: AnalyticsModel }) {
   const {
-    aimedShare, balance, breakdown, clock, discovered, figures, historyDays, how, insights, links, previousBySubject,
+    aimedShare, balance, breakdown, clock, discovered, figures, historyDays, how, insights, links, maturity, observed, previousBySubject,
     qualitySummary, rated, ratingDepth, reasonRows, reasons, rhythm, slice, spanText, state, waitFor, week,
     wins, why,
     /* What the account asked this page to be — see utils/analyticsPrefs. This
@@ -66,6 +66,8 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
           need={NEED_DAYS.insights}
           have={historyDays}
           promise={whyFor(NEED_DAYS.insights)}
+          observation={observed[0] ?? null}
+          spanDays={maturity.spanDays}
           asksLead="Summit will look for relationships across your work:"
           asks={[
             'When do you perform best?',

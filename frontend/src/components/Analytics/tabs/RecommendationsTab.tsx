@@ -26,7 +26,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & { data: AnalyticsData }) {
   const {
-    adoptedIds, advice, category, goalAdvice, historyDays, plan, projection, recent, reviewSummary,
+    adoptedIds, advice, category, goalAdvice, historyDays, maturity, observed, plan, projection, recent, reviewSummary,
     reviews, setBudget, setCategory, setNudge, shown, shownDiagnoses, toneRules, waitFor, weekLeft,
     /* The three inputs this tab was not reading. `rhythm` carries the reader's
        typical sitting, drawn from their logged focus time; `reasons` is what
@@ -139,6 +139,8 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           need={NEED_DAYS.recommendations}
           have={historyDays}
           promise={whyFor(NEED_DAYS.recommendations)}
+          observation={observed[0] ?? null}
+          spanDays={maturity.spanDays}
           asksLead="Summit will work out what to change, and what it is worth:"
           asks={[
             'Which single change would buy you the most?',

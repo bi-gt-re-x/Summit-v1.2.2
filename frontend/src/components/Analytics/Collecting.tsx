@@ -72,7 +72,7 @@ export interface CollectingProps {
  * rather than as a different notice appearing.
  */
 export function StageNote({ maturity }: { maturity: Maturity }) {
-  const { activeDays } = maturity;
+  const { activeDays, spanDays } = maturity;
 
   /* The next thing that actually opens, which is not always the next stage.
      At fifteen active days the next stage is `full` at thirty, but Habits
@@ -86,7 +86,24 @@ export function StageNote({ maturity }: { maturity: Maturity }) {
     <p className="ax-stage-note">
       <span className="ax-stage-chip">{STAGE_LABEL[maturity.stage]}</span>
       <span>
-        Read from <strong>{activeDays} days</strong> of your work.{' '}
+        {/* The calendar length beside the worked one, so the figure reads as
+            a record being kept rather than as days gone missing. One clause
+            rather than two — "14 days of your work across 43" makes a reader
+            work out what the second number counts. See `spanDays` in
+            utils/dataMaturity: context, never a gate. */}
+        {spanDays > activeDays ? (
+          <>
+            Read from{' '}
+            <strong>
+              {activeDays} of your {spanDays} days
+            </strong>{' '}
+            with Summit.
+          </>
+        ) : (
+          <>
+            Read from <strong>{activeDays} days</strong> of your work.
+          </>
+        )}{' '}
         <strong>
           {toNext} more work {toNext === 1 ? 'day' : 'days'}
         </strong>{' '}

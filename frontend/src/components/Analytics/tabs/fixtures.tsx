@@ -14,6 +14,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import type { ReactElement } from 'react';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { dataMaturity } from '@/utils/dataMaturity';
 import { consistency } from '../data';
 import { TONE_RULES } from '@/utils/analyticsPrefs';
 import { balanceShape, clockShape, rhythmShape, weekShape } from '@/utils/behaviour';
@@ -59,6 +60,15 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     historyDays,
     waitFor: (key: keyof typeof NEED_DAYS) => Math.max(0, NEED_DAYS[key] - historyDays),
     streak: 0,
+    /* Derived from `historyDays` exactly as the real model derives it, so a
+       test that sets one gets a consistent answer from both — the same rule
+       `waitFor` above follows. `spanDays` equal to the active count is the
+       honest default here: these fixtures carry no day series, so there are no
+       unworked days to claim. */
+    maturity: dataMaturity([]),
+    /* No tasks in the fixture, so there is nothing to observe. A test that
+       wants a finding on a building tab passes one in. */
+    observed: [],
     all: [],
     tasks: [],
     slice: { current: [], previous: [] },

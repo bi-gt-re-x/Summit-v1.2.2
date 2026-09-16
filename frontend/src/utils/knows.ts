@@ -47,6 +47,18 @@ export interface KnowsInput {
   finished: number;
   /** Days in the window with work on them. */
   activeDays: number;
+  /**
+   * Calendar days from the first day with work on it to the last row of the
+   * series — how long this account has been going, as opposed to how much of
+   * it was worked.
+   *
+   * `dataMaturity` computes this and then uses it for nothing: it is context
+   * and never a gate, which was the right call and left it unsaid anywhere a
+   * reader could see it. It is the most useful sentence on a young account —
+   * it is the one that says a record is being kept at all, and that the days
+   * in between were not held against them.
+   */
+  spanDays: number;
   /** Every day in the window, worked or not. The consistency denominator. */
   windowDays: number;
   /**
@@ -61,6 +73,14 @@ export interface KnowsInput {
 /** An average needs more than the one day it would otherwise be. */
 export const WORKLOAD_FLOOR = 2;
 
+/**
+ * Days on the calendar before "how long you have been here" is worth saying.
+ *
+ * Five. Under that the sentence is telling somebody something they learned
+ * this week and remember perfectly well.
+ */
+export const RECORD_FLOOR = 5;
+
 /** Below this the rate is a fortnight's mood rather than a habit. */
 export const CONSISTENCY_FLOOR = 7;
 
@@ -72,8 +92,21 @@ export const CONSISTENCY_FLOOR = 7;
 export const SUBJECT_FLOOR = 2;
 
 export function whatSummitKnows(input: KnowsInput): Knowledge[] {
-  const { finished, activeDays, windowDays, subjects, recentTop } = input;
+  const { finished, activeDays, spanDays, windowDays, subjects, recentTop } = input;
   const found: Knowledge[] = [];
+
+  /* First, because it frames every figure under it: the others are rates and
+     shares, and this is the length of the record they are rates of. */
+  if (spanDays >= RECORD_FLOOR && activeDays > 0) {
+    found.push({
+      key: 'record',
+      heading: 'Record',
+      text:
+        activeDays >= spanDays
+          ? `You have worked on every one of your ${spanDays} days with Summit.`
+          : `You have been using Summit for ${spanDays} days, and worked on ${activeDays} of them.`,
+    });
+  }
 
   if (activeDays >= WORKLOAD_FLOOR && finished > 0) {
     const perDay = finished / activeDays;
