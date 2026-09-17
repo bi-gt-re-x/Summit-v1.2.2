@@ -143,6 +143,14 @@ export interface Prefs {
   catchup_seen_on: string;
   analytics_window: AnalyticsWindow;
   analytics_setup_done: boolean;
+  /**
+   * The highest stage this account has been shown the overlay for.
+   *
+   * Only the announcement's memory — the stage itself is worked out from the
+   * record by utils/dataMaturity on every render. Empty until the first one
+   * fires. See `analytics_stage_seen` in backend/api/settings.py.
+   */
+  analytics_stage_seen: string;
   analytics_home_tab: AnalyticsHomeTab;
   analytics_log_style: LogStyle;
   analytics_tone: AnalyticsTone;
@@ -288,6 +296,7 @@ export const DEFAULTS: Prefs = {
      front of the page. An account that already set a baseline is treated as
      having answered — see `firstRun` in pages/Analytics. */
   analytics_setup_done: false,
+  analytics_stage_seen: '',
   analytics_home_tab: 'overview',
   analytics_log_style: 'both',
   analytics_tone: 'balanced',

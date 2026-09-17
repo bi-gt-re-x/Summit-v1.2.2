@@ -77,6 +77,11 @@ export { ObservationNote } from './Observation';
    window. See the note at the top of utils/knows. */
 export { Knows } from './Knows';
 
+/* The one moment on this page allowed to take the screen. See the note at the
+   top of StageReached for why arriving is different from every other part of
+   the ladder. */
+export { StageReached } from './StageReached';
+
 export { Building } from './Building';
 export type { BuildingProps } from './Building';
 

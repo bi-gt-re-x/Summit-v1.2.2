@@ -105,6 +105,7 @@
  * thing it can actually do here, which is answer the questions above.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { STAGES, type Stage } from '@/utils/dataMaturity';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Ambient, ErrorState, Loading, PageHero } from '@/components';
 import { stageShows } from '@/utils/dataMaturity';
@@ -128,6 +129,7 @@ import {
   VIEWS,
   ViewTabs,
   NEED_DAYS,
+  StageReached,
   viewFor,
   type SetupAnswers,
   type View,
@@ -357,6 +359,44 @@ export default function Analytics() {
 
 
   /**
+   * Arriving at a new stage, announced once.
+   *
+   * The comparison is between the stage the record *is* at and the highest one
+   * this account has been told about — never between two computed stages, and
+   * nothing is stored about maturity itself. `STAGES` is ordered weakest-first
+   * so an index comparison is the whole test, and it is a comparison rather
+   * than an equality so an account that crosses two thresholds between visits
+   * is told about the one it landed on rather than about neither.
+   *
+   * Nothing fires on an empty `analytics_stage_seen`: that is a reader who has
+   * never been announced to, which includes every account that existed before
+   * this key did. Announcing "Getting started" to somebody on their first
+   * morning would be an interruption to tell them nothing has happened yet, so
+   * the first visit records where they are and stays quiet.
+   */
+  const seenStage = prefs.analytics_stage_seen;
+  const stageNow = model.maturity.stage;
+  const climbed =
+    ready &&
+    seenStage !== '' &&
+    STAGES.indexOf(stageNow) > STAGES.indexOf(seenStage as Stage);
+
+  const [announced, setAnnounced] = useState(false);
+
+  /* First sight of this account: record where it stands and say nothing. That
+     is what gives the next climb something to be measured against, and it is
+     why an account that existed before this key did is not greeted with an
+     overlay for a stage it reached months ago. */
+  useEffect(() => {
+    if (ready && seenStage === '') void update({ analytics_stage_seen: stageNow });
+  }, [ready, seenStage, stageNow, update]);
+
+  const closeStage = useCallback(() => {
+    setAnnounced(true);
+    void update({ analytics_stage_seen: stageNow });
+  }, [stageNow, update]);
+
+  /**
    * Leaving the questions unanswered, for good.
    *
    * Skipping used to set the local flag and nothing else, which made it a
@@ -526,6 +566,15 @@ export default function Analytics() {
 
   return (
     <div className="ax-page">
+      {/* Over the page rather than in it. See the note at the top of
+          StageReached for why this one moment is allowed to interrupt. */}
+      {climbed && !announced && (
+        <StageReached
+          stage={stageNow}
+          activeDays={model.maturity.activeDays}
+          onDone={closeStage}
+        />
+      )}
       <Ambient />
       {/* No `pg-enter` here, unlike every other page. This one has its own
           arrival and always did — `.ax-panel` and the tiles carry `ax-enter`,

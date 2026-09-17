@@ -21,6 +21,7 @@ import {
 } from '@/components/Insights';
 import { Patterns as DiscoveredPatterns } from '../Patterns';
 import { Building } from '../Building';
+import { ObservationNote } from '../Observation';
 import { RatedTasksPanel, ReasonsPanel } from '../Quality';
 import { SubjectPanel } from '../Breakdown';
 import { InsightsPanel } from '../Longterm';
@@ -66,7 +67,6 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
           need={NEED_DAYS.insights}
           have={historyDays}
           promise={whyFor(NEED_DAYS.insights)}
-          observation={observed[0] ?? null}
           spanDays={maturity.spanDays}
           asksLead="Summit will look for relationships across your work:"
           asks={[
@@ -81,6 +81,35 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
             </Link>
           }
         />
+      )}
+
+      {/* What this tab can already say, under the card explaining what it
+          cannot.
+
+          Insights is the *why* tab, and why needs two comparable stretches —
+          which is the gate and the reason nothing below is a correlation, a
+          projection or an explanation. What it is instead is every finding
+          that already clears its own floor in utils/observations, each
+          wearing the sample it came from and the confidence it earned.
+
+          That is the honest early form of this tab rather than a consolation
+          prize: the gated panels answer the same question with more behind
+          them, and these will still be true when they open. A reader who gets
+          nothing here until day twenty-eight learns to stop opening it. */}
+      {waitFor('insights') > 0 && observed.length > 0 && (
+        <section className="ax-section">
+          <PanelGroup
+            title="What is already true"
+            note="Findings with enough behind them to state, graded by how much that is."
+            defaultOpen
+          >
+            <div className="ax-observe-stack">
+              {observed.map((finding) => (
+                <ObservationNote key={finding.key} observation={finding} />
+              ))}
+            </div>
+          </PanelGroup>
+        </section>
       )}
 
       {waitFor('insights') === 0 && (

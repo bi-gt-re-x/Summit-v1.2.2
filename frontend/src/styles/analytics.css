@@ -451,6 +451,101 @@ body:has(.ax-page) .app-main {
     font-variant-numeric: tabular-nums;
 }
 
+/* Several findings in a column. They are cards in their own right, so they
+   need a gap rather than a divider — see `ObservationNote`. */
+.ax-observe-stack {
+    display: grid;
+    gap: 10px;
+}
+
+/* Arriving at a new stage. The only thing on this page allowed over the top of
+   it — see the note in src/components/Analytics/StageReached.tsx. */
+.ax-reached {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: color-mix(in srgb, #0d1117 58%, transparent);
+    backdrop-filter: blur(3px);
+    animation: ax-reached-in .22s ease both;
+}
+.ax-reached-card {
+    position: relative;
+    width: min(440px, 100%);
+    padding: 28px 30px 26px;
+    border: 1px solid color-mix(in srgb, var(--ax-violet) 30%, var(--ax-line));
+    border-radius: 16px;
+    background:
+        radial-gradient(85% 130% at 0% 0%, color-mix(in srgb, var(--ax-violet) 14%, transparent), transparent 68%),
+        var(--ax-card);
+    box-shadow: 0 20px 60px rgba(16, 24, 40, .28);
+    animation: ax-reached-rise .3s cubic-bezier(.22, 1, .36, 1) both;
+}
+.ax-reached-eyebrow {
+    margin: 0 0 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ax-violet);
+}
+.ax-reached-card h2 {
+    margin: 0 0 10px;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.15;
+    color: var(--ax-text);
+}
+.ax-reached-lead {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ax-muted);
+}
+.ax-reached-lead strong { color: var(--ax-text); font-weight: 650; }
+.ax-reached-reward {
+    margin: 12px 0 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--ax-card-2);
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ax-muted);
+}
+.ax-reached-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0 0;
+}
+.ax-reached-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ax-faint);
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+}
+.ax-reached-close:hover { color: var(--ax-text); background: var(--ax-card-2); }
+
+@keyframes ax-reached-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ax-reached-rise {
+    from { opacity: 0; transform: translateY(14px) scale(.97); }
+    to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ax-reached, .ax-reached-card { animation: none; }
+}
+
 /* The active-day rule at the length it can be left on screen permanently.
    Centred and faint: it is a standing footnote for the whole page rather than
    a note on any one panel, and a reader who already knows it should be able to

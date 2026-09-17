@@ -114,6 +114,55 @@ describe('what a tab says while it is still building', () => {
   });
 });
 
+describe('a gated tab still says what it can', () => {
+  /* The rule these pin: a tab that shows nothing at all until the day it opens
+     teaches a reader to stop opening it. Each one surfaces the part of its own
+     question that needs no threshold, while the answer itself stays gated. */
+  const finding = {
+    key: 'when-finished',
+    text: 'Most of your finished work here happens in the evening.',
+    support: '9 of 11 timed finishes',
+    confidence: 'low' as const,
+    n: 11,
+    strength: 0.4,
+  };
+
+  it('Insights lists every finding that already holds, not just the first', () => {
+    const second = { ...finding, key: 'deadlines', text: 'When you put a deadline on work here, you meet it.' };
+    draw(
+      <InsightsTab
+        model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding, second] })}
+      />,
+    );
+    expect(screen.getByText(finding.text)).toBeInTheDocument();
+    expect(screen.getByText(second.text)).toBeInTheDocument();
+  });
+
+  it('Insights stays silent when nothing clears its floor', () => {
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [] })} />);
+    expect(screen.queryByText(/What is already true/)).not.toBeInTheDocument();
+  });
+
+  it('Habits shows the counts a habit is made of', () => {
+    draw(<HabitsTab model={fakeModel({ historyDays: NEED_DAYS.habits - 1 })} subjects={subjects} />);
+    expect(screen.getByText('What is already true')).toBeInTheDocument();
+  });
+
+  it('neither of them opens the tab itself', () => {
+    draw(
+      <InsightsTab
+        model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding] })}
+      />,
+    );
+    expect(screen.getByText(whyFor(NEED_DAYS.insights))).toBeInTheDocument();
+  });
+
+  it('the day-one section goes away once the tab opens', () => {
+    draw(<HabitsTab model={fakeModel({ historyDays: 400, habits: [] })} subjects={subjects} />);
+    expect(screen.queryByText('What is already true')).not.toBeInTheDocument();
+  });
+});
+
 describe('Insights', () => {
   it('is still building one day short', () => {
     draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1 })} />);

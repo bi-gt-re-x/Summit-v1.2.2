@@ -363,6 +363,21 @@ FIELDS: Dict[str, Any] = {
     #: An account that set a baseline before this key existed is treated as done
     #: by the page rather than by a migration here.
     'analytics_setup_done': (False, _boolean),
+    #: The highest analytics stage this account has been *told* it reached.
+    #:
+    #: Not the stage it is on — utils/dataMaturity works that out from the
+    #: record every time, and storing it would be a second answer that could
+    #: drift. This is only the announcement's own memory: the page compares the
+    #: real stage against it, shows the overlay when the real one is higher,
+    #: and writes it forward. Empty means nothing has been announced yet, which
+    #: is why a brand new account does not get an overlay for arriving at the
+    #: stage it started on.
+    #:
+    #: On the account rather than in the browser for the reason
+    #: `analytics_setup_done` is: a milestone announced on a laptop should not
+    #: be announced again on a phone.
+    'analytics_stage_seen': ('', _one_of('', 'new', 'early', 'weekly',
+                                         'developing', 'full')),
     #: Which tab the page opens on. The same seven keys as VIEWS in
     #: frontend/src/components/Analytics/Header.tsx.
     'analytics_home_tab': ('overview', _one_of('recommendations', 'overview', 'goals',

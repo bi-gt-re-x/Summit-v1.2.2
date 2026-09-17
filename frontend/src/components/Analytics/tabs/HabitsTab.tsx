@@ -19,6 +19,8 @@ import {
   TimelinePanel,
 } from '../Habits';
 import { Building } from '../Building';
+import { FinishPanel, WhenPanel } from '../Early';
+import { partsOfDay } from '@/utils/habits';
 import { PanelGroup } from '../charts';
 import { FocusChapter } from '@/components/Growth';
 import { NEED_DAYS } from '../useAnalyticsModel';
@@ -28,7 +30,7 @@ import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { subjects: SubjectIndex }) {
   const {
-    all, figures, habits, historyDays, maturity, observed, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
+    all, figures, fromIso, habits, historyDays, maturity, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
     /* How much of the page is drawn. This tab ignored the detail setting
        entirely: an account with thirty habits handed a reader thirty cards
        whether they had asked for essentials or for everything. */
@@ -49,7 +51,6 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
           need={NEED_DAYS.habits}
           have={historyDays}
           promise={whyFor(NEED_DAYS.habits)}
-          observation={observed[0] ?? null}
           spanDays={maturity.spanDays}
           asksLead="Summit will look for what repeats in your work:"
           asks={[
@@ -65,6 +66,33 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
             </Link>
           }
         />
+      )}
+
+      {/* What the tab can already say, under the card explaining what it
+          cannot.
+
+          Habits are what *repeats*, and four days cannot say what repeats —
+          which is why the tab is gated and why nothing below claims a
+          tendency. But the raw material of a habit is a count of when work
+          landed and what got finished, and those are exact from the first
+          task. A tab that shows nothing at all until day twenty-one is a tab
+          that teaches a reader not to open it.
+
+          The same two panels the Overview shows at its early stages, for the
+          same reason and from the same constructors — see Early. */}
+      {waitFor('habits') > 0 && (
+        <section className="ax-section">
+          <PanelGroup
+            title="What is already true"
+            note="Counts, not patterns. The habits themselves need more of a record before there is one to find."
+            defaultOpen
+          >
+            <div className="ax-grid ax-grid-halves-even">
+              <WhenPanel parts={partsOfDay(tasks, fromIso, toIso)} days={maturity.activeDays} />
+              <FinishPanel tasks={tasks} days={maturity.activeDays} />
+            </div>
+          </PanelGroup>
+        </section>
       )}
 
       {waitFor('habits') === 0 && habits.length > 0 && (
