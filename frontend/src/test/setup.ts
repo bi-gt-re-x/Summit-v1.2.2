@@ -15,6 +15,30 @@ import { afterEach, vi } from 'vitest';
 // the document during the next, and `getByText` starts finding two of things.
 afterEach(cleanup);
 
+/* The shared task-history request, dropped between tests.
+ 
+   It is one promise held at module scope, per account, for the whole session —
+   which is the point of it in the app (services/taskHistory) and a trap in a
+   suite, because modules outlive tests inside a file. Without this, the second
+   test in a file that renders an analytics page is handed the *first* test's
+   tasks and asserts against data it never set up.
+ 
+   It is here rather than in the two suites that render those pages because a
+   third one would have to remember, and the failure it causes does not look
+   like a stale cache — it looks like the component computing the wrong
+   numbers.
+ 
+   Imported *inside* the hook rather than at the top of this file, and that is
+   not a style choice: a static import here loads services/taskHistory — and
+   through it the real services/analytics — before any suite's `vi.mock` has
+   registered, so every test that mocks the analytics service would find the
+   cache holding the unmocked module and reaching for `fetch`. The dynamic
+   import resolves against the registry the test itself is using. */
+afterEach(async () => {
+  const { invalidate } = await import('@/services/taskHistory');
+  invalidate();
+});
+
 /**
  * jsdom has no `matchMedia`, and the rail calls it on its first render.
  *

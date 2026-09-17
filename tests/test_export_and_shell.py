@@ -218,12 +218,14 @@ def test_the_order_is_a_literal(client):
 
 
 def test_the_task_read_still_returns_the_account_s_own_rows(client, task):
+    """`rows`, not `tasks`: the wire is columnar now. See
+    tests/test_analytics_tasks.py, which holds that shape to its promises."""
     reply = client.get('/api/analytics/tasks').json()
     assert reply['success'] is True
-    assert reply['tasks'], 'the fixture task should be here'
+    assert reply['rows'], 'the fixture task should be here'
 
 
 def test_the_task_read_is_scoped_to_the_caller(client, stranger, task):
-    """The order changed; the WHERE did not."""
-    assert client.get('/api/analytics/tasks').json()['tasks']
-    assert stranger.get('/api/analytics/tasks').json()['tasks'] == []
+    """The order changed and so did the encoding; the WHERE did not."""
+    assert client.get('/api/analytics/tasks').json()['rows']
+    assert stranger.get('/api/analytics/tasks').json()['rows'] == []

@@ -19,6 +19,7 @@
  */
 import { useCallback, useState } from 'react';
 import { useApi, useStats } from '@/hooks';
+import { taskHistory } from '@/services/taskHistory';
 import {
   analytics as analyticsService,
   goals as goalsService,
@@ -60,6 +61,11 @@ export function useAnalyticsData() {
   /*
    * The tasks, in the sixteen fields the panels actually count.
    *
+   * Through `taskHistory` rather than straight at the service: this is the
+   * largest response the app makes and the subject page wants the same one, so
+   * opening a subject from here and coming back used to be three downloads of
+   * identical bytes. See services/taskHistory.
+   *
    * See `analyticsTasks` in services/analytics and ANALYTICS_TASK_FIELDS on the
    * other side of it. Still the whole record rather than the window: the picker
    * slices in the browser so that changing it is instant, and the goal and
@@ -69,7 +75,7 @@ export function useAnalyticsData() {
   const tasksCall = useCallback(
     () =>
       username
-        ? analyticsService.analyticsTasks()
+        ? taskHistory(username)
         : Promise.resolve({ success: false as const, message: 'Sign in to see your analytics.' }),
     [username],
   );

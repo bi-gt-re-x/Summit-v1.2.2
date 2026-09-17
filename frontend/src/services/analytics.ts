@@ -122,15 +122,75 @@ export interface AnalyticsTasksResult {
   tasks: AnalyticsTask[];
 }
 
+/** What the endpoint actually sends: the names once, then a row of values each. */
+interface ColumnarTasks {
+  fields: (keyof AnalyticsTask)[];
+  rows: unknown[][];
+}
+
+/**
+ * Columns back into the objects every panel expects.
+ *
+ * The endpoint sends `{fields, rows}` because two thirds of the old payload was
+ * the sixteen field names repeated once per task — 4.00 MB of 5.99 MB on the
+ * largest account here. See `columns_table_for` in
+ * backend/database/connection.py for the measurements.
+ *
+ * This is the whole decoder, and it is deliberately the dumbest one that works:
+ * zip the names against each row. Anything cleverer on the wire — dropping
+ * nulls, interning repeated subjects, delta-encoding the dates — would save a
+ * little more and would need a decoder that can be subtly wrong about a field
+ * nothing notices for weeks.
+ *
+ * ## A null is a field that is not there
+ *
+ * The one thing this has to get right. The old endpoint sent objects built by
+ * `_decode_records`, which **omits** a NULL column rather than sending it — so
+ * a task that was never rated arrived with no `met_deadline` key at all. A
+ * positional row cannot omit anything, so the wire carries nulls to keep the
+ * columns lined up and they are dropped here.
+ *
+ * That is not tidiness. `utils/diagnosis` filters on
+ * `task.met_deadline !== undefined` to find the tasks that had a deadline, and
+ * `null !== undefined` is true — so a null left in place would put every
+ * unrated task into that count and quietly change what the page says about
+ * deadlines, with nothing on screen looking wrong.
+ *
+ * A row shorter than `fields` is not defended against, because SQLite cannot
+ * produce one: every row comes from one SELECT of the same column list.
+ */
+function rehydrate(data: ColumnarTasks): AnalyticsTask[] {
+  const { fields, rows } = data;
+  const width = fields.length;
+  const out = new Array<AnalyticsTask>(rows.length);
+  for (let at = 0; at < rows.length; at += 1) {
+    const values = rows[at]!;
+    const task = {} as Record<string, unknown>;
+    for (let field = 0; field < width; field += 1) {
+      const value = values[field];
+      if (value !== null) task[fields[field] as string] = value;
+    }
+    out[at] = task as unknown as AnalyticsTask;
+  }
+  return out;
+}
+
 /**
  * The account's tasks, narrowed to what this page counts.
  *
  * Unwindowed on purpose — the picker slices in the browser so that changing it
  * costs nothing, and the goal and habit panels are not scoped by it at all. The
  * saving is the width of each row, not the number of them.
+ *
+ * Callers get `{ tasks }` exactly as they always did; the columnar shape does
+ * not escape this function. Use `taskHistory` in ./taskHistory rather than
+ * calling this directly — two pages want this same answer and it is the largest
+ * response the app makes.
  */
-export function analyticsTasks(): Promise<ApiResult<AnalyticsTasksResult>> {
-  return get<AnalyticsTasksResult>('/api/analytics/tasks');
+export async function analyticsTasks(): Promise<ApiResult<AnalyticsTasksResult>> {
+  const result = await get<ColumnarTasks>('/api/analytics/tasks');
+  if (!result.success) return result;
+  return { success: true, tasks: rehydrate(result) };
 }
 
 export interface BaselineResult {

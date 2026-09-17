@@ -106,8 +106,8 @@ import { latticeFor, treeReading } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
 import { treeStanding } from '@/skills/standing';
 import { useApi, useAuth, useDocumentTitle, useSettings, useSubjectIndex } from '@/hooks';
+import { taskHistory } from '@/services/taskHistory';
 import {
-  analyticsTasks,
   saveSubjectMilestones,
   subjectBriefAvailable,
   readSubject,
@@ -267,10 +267,15 @@ export default function SubjectAnalytics() {
      that wrote back would change the other page under the reader. */
   const [span, setSpan] = useState<WindowKey>(prefs.analytics_window);
 
+  /* Through `taskHistory`, which is the same request the analytics page makes
+     and the largest one the app makes at all. A reader arrives here *from* that
+     page, so this used to be a second full download of bytes that were already
+     parsed a moment ago — and going back was a third. See
+     services/taskHistory. */
   const call = useMemo(
     () =>
       username
-        ? analyticsTasks
+        ? () => taskHistory(username)
         : () => Promise.resolve({ success: false as const, message: 'Sign in to see a subject.' }),
     [username],
   );
