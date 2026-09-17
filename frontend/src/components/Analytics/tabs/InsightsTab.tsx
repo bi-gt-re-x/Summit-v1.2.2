@@ -26,6 +26,7 @@ import { RatedTasksPanel, ReasonsPanel } from '../Quality';
 import { SubjectPanel } from '../Breakdown';
 import { InsightsPanel } from '../Longterm';
 import { PanelGroup } from '../charts';
+import { LimiterCard } from '../Limiter';
 import { unlock } from '@/utils/insight';
 import { PATTERN_DAYS } from '@/utils/recent';
 import { NEED_DAYS } from '../useAnalyticsModel';
@@ -34,7 +35,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function InsightsTab({ model }: { model: AnalyticsModel }) {
   const {
-    aimedShare, balance, breakdown, clock, discovered, figures, historyDays, how, insights, links, maturity, observed, previousBySubject,
+    aimedShare, balance, breakdown, clock, discovered, figures, goalLimits, historyDays, how, insights, links, maturity, observed, previousBySubject,
     qualitySummary, rated, ratingDepth, reasonRows, reasons, rhythm, slice, spanText, state, waitFor, week,
     wins, why,
     /* What the account asked this page to be — see utils/analyticsPrefs. This
@@ -210,6 +211,25 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
                 depth={ratingDepth}
                 span={spanText}
               />
+
+              {/* Why a *goal* looks like this, in the group about why anything
+                  does. It belongs under this heading and not under the one
+                  above it: a limiter is a cause, and the panels beside it are
+                  the other causes this tab found. The difference is only that
+                  this one is attached to something the reader chose, which is
+                  what makes it the finding they are most likely to act on.
+
+                  No instruction here — that is the Recommendations tab, and
+                  the rule at the top of this file. The card names what is
+                  true and opens the door; it does not say to walk through
+                  it. */}
+              {goalLimits.length > 0 && (
+                <div className="ax-limiters">
+                  {goalLimits.slice(0, findings).map((row) => (
+                    <LimiterCard key={row.goalId} row={row} />
+                  ))}
+                </div>
+              )}
             </PanelGroup>
 
             <PanelGroup title="When and what you work on" note="The shape of the week, and where the effort goes">

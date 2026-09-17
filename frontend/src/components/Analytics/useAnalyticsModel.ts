@@ -93,6 +93,7 @@ import {
   whyFindings,
 } from '@/utils/insight';
 import { goalActions, goalNotes, goalsOverview } from '@/utils/goalAnalytics';
+import { goalLimiters } from '@/utils/goalLimiter';
 import { goalHealth } from '@/utils/goalHealth';
 import {
   checkpointsByMonth,
@@ -583,6 +584,25 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
       .slice(0, 2);
   }, [liveGoals, tasks]);
 
+  /**
+   * What is most holding each goal up, and where to go about it.
+   *
+   * The one goal reading on this page that names a *subject* rather than a
+   * signal: `goalAdvice` above says the pace is short or the goal has gone
+   * quiet, and neither sentence can tell a reader which part of the work to
+   * open. Five tabs print this, at two sizes — see ./Limiter — and all five
+   * read the same array, so none of them can quietly disagree about which
+   * subject is the limiter.
+   *
+   * Empty on most accounts, and that is the design rather than a gap in it:
+   * utils/goalLimiter will not name a culprit off a pile too small to have
+   * one.
+   */
+  const goalLimits = useMemo(
+    () => goalLimiters(liveGoals, tasks, nameOf, (id) => subjects.get(id)?.group),
+    [liveGoals, nameOf, subjects, tasks],
+  );
+
   /** Subject ids some live goal names, for the line on the Subjects tab. */
   const goalSubjects = useMemo(
     () =>
@@ -885,6 +905,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     goalIdeas,
     aimedShare,
     goalAdvice,
+    goalLimits,
     goalPace,
     goalEffort,
     goalCheckpoints,

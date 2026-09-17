@@ -52,6 +52,7 @@ import { partsOfDay } from '@/utils/habits';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
 import { Knows } from '../Knows';
+import { LimiterLine } from '../Limiter';
 import { whatSummitKnows } from '@/utils/knows';
 import { OTHER_KEY } from '@/utils/subjectXp';
 import { stageShows } from '@/utils/dataMaturity';
@@ -75,6 +76,7 @@ export function OverviewTab({
   const {
     breakdown,
     card,
+    goalLimits,
     nameOf,
     observed,
     compareLabel,
@@ -559,6 +561,23 @@ export function OverviewTab({
       {/* The profile. Same block as the early stages draw, further down a
           longer page: by here the reader has seen the window's readings and
           this is what they add up to about them. */}
+      {/* One line, and only the worst one.
+
+          The Overview's whole argument is that it is the shortest honest
+          answer to "how am I doing" and hands the longer questions to the tabs
+          built for them — see the note at the top of this file, and `WhereNext`
+          at the bottom. A goal reading belongs in that answer, because a
+          reader's own goals are what "how am I doing" is usually about; a
+          column of them would be this tab restating the Recommendations tab at
+          lower resolution, which is the exact thing four rows were deleted for
+          doing. So: the most concentrated one, in a sentence, with the way
+          in. */}
+      {goalLimits[0] && (
+        <section className="ax-section">
+          <LimiterLine row={goalLimits[0]} />
+        </section>
+      )}
+
       <section className="ax-section">
         <Knows facts={knows} />
       </section>

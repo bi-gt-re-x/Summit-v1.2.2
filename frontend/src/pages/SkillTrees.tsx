@@ -117,6 +117,7 @@
  * data because it is a reading of the tally rather than a fact about a subject.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Ambient, PageHero } from '@/components';
 import {
   EdgeCard,
@@ -503,6 +504,36 @@ export default function SkillTrees() {
     },
     [username],
   );
+
+  /*
+   * Arriving from somewhere else, pointed at a subject.
+   *
+   * `?subject=<catalogue id>` opens that subject's lattice at its landing node
+   * — the same route `openSubject` takes from the rail, reached from a link
+   * instead of a click. The analytics page's goal limiters are what needed it:
+   * naming geometry as what is holding a goal up and then dropping the reader
+   * on whichever tree the page happened to open on is most of a broken promise.
+   * See components/Analytics/Limiter, which builds the link.
+   *
+   * It waits on `subjects`, because `openSubject` routes through the account's
+   * own catalogue and that arrives a moment after mount — running early would
+   * fall through to the group default for a subject the map knows perfectly
+   * well. And it runs once per id: the reader may walk somewhere else from
+   * here, and a link that kept dragging them back would be a cage.
+   */
+  const [params, setParams] = useSearchParams();
+  const linkedSubject = params.get('subject');
+  const followed = useRef<string | null>(null);
+  useEffect(() => {
+    if (!linkedSubject || subjects.length === 0 || followed.current === linkedSubject) return;
+    followed.current = linkedSubject;
+    openSubject(linkedSubject);
+    /* The address bar goes back to the plain page. What is on screen is now
+       the reader's position rather than the link's instruction, and leaving
+       the parameter there would re-fire this on every reload of a tree they
+       may have long since navigated away from. */
+    setParams({}, { replace: true });
+  }, [linkedSubject, openSubject, setParams, subjects]);
 
   /** Back to the question, from the band. Clears the stored answer so the
    *  screen's own gate — "has this account ever chosen" — is true again. */

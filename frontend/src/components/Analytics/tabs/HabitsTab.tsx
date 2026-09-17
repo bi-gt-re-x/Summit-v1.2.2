@@ -19,6 +19,7 @@ import {
   TimelinePanel,
 } from '../Habits';
 import { Building } from '../Building';
+import { LimiterLine } from '../Limiter';
 import { FinishPanel, WhenPanel } from '../Early';
 import { partsOfDay } from '@/utils/habits';
 import { PanelGroup } from '../charts';
@@ -30,7 +31,7 @@ import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { subjects: SubjectIndex }) {
   const {
-    all, figures, fromIso, habits, historyDays, maturity, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
+    all, figures, fromIso, goalLimits, habits, historyDays, maturity, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
     /* How much of the page is drawn. This tab ignored the detail setting
        entirely: an account with thirty habits handed a reader thirty cards
        whether they had asked for essentials or for everything. */
@@ -167,6 +168,21 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
                 this tab rather than on a page nobody navigated to — and why it
                 is the last thing opened rather than the last thing scrolled
                 past. */}
+            {/* What all this repeating is in aid of, once.
+
+                Habits counts what recurs; it never says why, and this does not
+                start. What it does is name the one subject a goal's shortfall
+                is concentrated in — which is the difference between a reader
+                leaving this tab knowing they are consistent and leaving it
+                knowing what to be consistent *at*. One line and one link, for
+                the reason `LimiterLine` gives: a card about goals on this tab
+                would make it a tab about goals. */}
+            {goalLimits[0] && (
+              <section className="ax-section">
+                <LimiterLine row={goalLimits[0]} />
+              </section>
+            )}
+
             <PanelGroup
               title="Can you execute it reliably"
               note="Planned against finished, focus scores, and recovery after a miss"

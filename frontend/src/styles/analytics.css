@@ -5941,9 +5941,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-goal-key i.is-said { background: color-mix(in srgb, var(--ax-violet) 38%, transparent); }
 .ax-goal-key i.is-did { background: var(--ax-blue); }
 
-/* The one-line additions on Insights and Subjects. A strip, not a panel: a
-   titled card around a single figure is how a tab about behaviour becomes a
-   tab about goals. */
+/* The one-line additions on Overview, Habits, Insights and Subjects. A strip,
+   not a panel: a titled card around a single figure is how a tab about
+   behaviour becomes a tab about goals. */
 .ax-goal-line {
     margin: 0;
     padding: 11px 15px;
@@ -5970,6 +5970,89 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-goal-advice strong { font-size: 13px; font-weight: 650; color: var(--ax-text); }
 .ax-goal-advice span { line-height: 1.55; }
 .ax-goal-advice li.is-urgent strong { color: var(--ax-amber); }
+
+/* ---- The limiter ------------------------------------------------------- */
+/* A goal, the subject carrying most of its shortfall, and the way in. Drawn
+   on Insights and Recommendations; the same finding is one line elsewhere,
+   which is `.ax-goal-line` above. See components/Analytics/Limiter.
+
+   The left edge is the only thing that carries the direction, and it carries
+   it as a stripe rather than as a colour on the text: the sentence says "you
+   are improving, but" and a card washed amber argues with its own first
+   clause. Green for improving, amber for slowing, red for stopped, and the
+   words stay the words either way. */
+.ax-limiters {
+    display: grid;
+    gap: 12px;
+}
+.ax-limiter {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 14px 16px 14px 18px;
+    border: 1px solid var(--ax-line);
+    border-left: 3px solid var(--ax-faint);
+    border-radius: 12px;
+    background: var(--ax-card);
+}
+.ax-limiter.is-accelerating { border-left-color: var(--ax-good); }
+.ax-limiter.is-slowing { border-left-color: var(--ax-amber); }
+.ax-limiter.is-stalled { border-left-color: var(--ax-bad); }
+
+/* The goal's name, over everything said about it. Small caps on the label so
+   "Goal" reads as a field rather than as the first word of the sentence. */
+.ax-limiter-goal {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 0;
+    font-size: 12px;
+}
+.ax-limiter-goal > span {
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--ax-faint);
+}
+
+/* The sentence the card exists for, and the only line on it set larger than
+   the page's body text. */
+.ax-limiter-read {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ax-text);
+}
+.ax-limiter-read strong { font-weight: 700; }
+
+.ax-limiter-share {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ax-text);
+}
+.ax-limiter-share > span { color: var(--ax-faint); margin-right: 4px; }
+
+/* The working, under the claim. Quieter than it on purpose — a reader who
+   accepts the sentence never has to read this, and a reader who does not has
+   to be able to find it without leaving the card. */
+.ax-limiter-because {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--ax-muted);
+}
+
+.ax-limiter-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin: 3px 0 0;
+    font-size: 12.5px;
+}
 
 /* On a phone the hand-off drops under the sentence it belongs to rather than
    squeezing it into a column two words wide. */
