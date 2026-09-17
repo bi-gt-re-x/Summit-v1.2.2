@@ -18,6 +18,7 @@ import { goalHealth, goalPace } from '@/utils/goalHealth';
 import { bottleneckOf, goalActions, goalReading } from '@/utils/goalAnalytics';
 import { MilestoneChecklist } from './MilestoneChecklist';
 import { AskModel } from './AskModel';
+import { SmartPlan } from './SmartPlan';
 import { GoalRead } from './GoalRead';
 import { stepProgress } from '@/utils/milestoneSteps';
 import type { Goal, Milestone, MilestoneStatus, MilestoneStep, Task } from '@/types';
@@ -68,6 +69,23 @@ export interface GoalDetailProps {
    * suggestion deleting somebody's plan. Same guard, same reason, as the card.
    */
   onSuggestSteps: (milestone: Milestone) => void;
+  /**
+   * Draft a checklist for every checkpoint that has none.
+   *
+   * Additive — `fillSteps` skips anything written and anything reached — so
+   * unlike the two above it runs on a press with nothing to confirm. It is the
+   * offer that was missing entirely: the per-row button only ever appeared on
+   * an empty row, so a goal with four empty rungs meant four separate presses
+   * and no way to ask for all of them.
+   */
+  onFillSteps: (goal: Goal) => void;
+  /**
+   * Draft the ladder on a goal that already has one.
+   *
+   * Separate from `onSuggestStones` because this one has to ask first: the
+   * write replaces the whole list. See `redraftStones` in pages/Goals.
+   */
+  onRedraftStones: (goal: Goal) => void;
   /** A draft is on its way to this goal or one of its checkpoints. */
   planning?: boolean;
   onReorder: (goal: Goal, order: string[]) => void;
@@ -372,6 +390,20 @@ export function GoalDetail(props: GoalDetailProps) {
               Add
             </button>
           </form>
+
+          {/* Under the form, and here whatever state the goal is in.
+
+              The empty-list prompt above is unchanged and stays where it is —
+              a suggestion belongs in the empty box. This is the other half:
+              the offers a reader goes *looking* for once there is a plan, which
+              until now were not on this screen at all. See ./SmartPlan for
+              which appear when, and which one asks before it writes. */}
+          <SmartPlan
+            goal={goal}
+            busy={busy || planning}
+            onRedraftStones={props.onRedraftStones}
+            onFillSteps={props.onFillSteps}
+          />
         </section>
 
         {/* ---- Why it is moving at this rate ------------------------------ */}

@@ -18,6 +18,7 @@ import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
 import { PanelGroup } from '../charts';
 import { LimiterCard } from '../Limiter';
+import { LensCard } from '../Lens';
 import { Building } from '../Building';
 import { SETTLE } from '@/utils/followup';
 import { NEED_DAYS } from '../useAnalyticsModel';
@@ -27,7 +28,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & { data: AnalyticsData }) {
   const {
-    adoptedIds, advice, category, goalAdvice, goalLimits, historyDays, maturity, observed, plan, projection, recent, reviewSummary,
+    adoptedIds, advice, category, goalAdvice, goalLimits, historyDays, lens, maturity, observed, plan, projection, recent, reviewSummary,
     reviews, setBudget, setCategory, setNudge, shown, shownDiagnoses, toneRules, waitFor, weekLeft,
     /* The three inputs this tab was not reading. `rhythm` carries the reader's
        typical sitting, drawn from their logged focus time; `reasons` is what
@@ -68,6 +69,15 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
 
   return (
     <>
+      {/* Above the plan, because it is the reason the plan is in this order.
+          A reader who meets the ranking first and the explanation second has
+          already decided the ranking is arbitrary. */}
+      {lens && (
+        <section className="ax-section">
+          <LensCard lens={lens} />
+        </section>
+      )}
+
       <section className="ax-section">
         <NextActions
           plan={plan}

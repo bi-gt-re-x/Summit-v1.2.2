@@ -61,6 +61,8 @@ function show(over: Partial<GoalDetailProps> = {}) {
     onValue: vi.fn(),
     onSuggestStones: vi.fn(),
     onSuggestSteps: vi.fn(),
+    onFillSteps: vi.fn(),
+    onRedraftStones: vi.fn(),
     ...over,
   } satisfies GoalDetailProps;
   render(<GoalDetail {...props} />);
@@ -117,8 +119,15 @@ describe('drafting one checkpoint’s steps', () => {
 });
 
 describe('while a draft is on its way', () => {
-  it('both offers read as busy', () => {
+  it('every offer on the drawer reads as busy', () => {
     show({ planning: true });
-    expect(screen.getByRole('button', { name: /thinking/i })).toBeDisabled();
+
+    /* All of them, not one. The drawer now carries the empty-list prompt and
+       the smart-plan row (components/Goals/SmartPlan), and one of them left
+       pressable during a draft is a second request against a goal that is
+       already being written to. */
+    const offers = screen.getAllByRole('button', { name: /thinking/i });
+    expect(offers.length).toBeGreaterThan(0);
+    offers.forEach((button) => expect(button).toBeDisabled());
   });
 });

@@ -4760,3 +4760,46 @@ button.gx-state-attn.is-on {
    The one thing worth repeating: the class comes off once the last band has
    landed (hooks/usePageEntrance), so switching tabs afterwards swaps content
    without replaying the whole page. */
+
+/* ---------- The smart plan row ------------------------------------------
+   The model's offers for a goal, gathered somewhere that does not depend on
+   the goal being empty. See components/Goals/SmartPlan for the argument; this
+   only has to make the row read as one offer rather than as loose buttons.
+
+   Set off by a rule above it rather than by a box. It sits at the foot of a
+   section that already has a border, and a second bordered thing inside the
+   first is how a panel becomes a stack of panels. */
+.gx-smart {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 14px;
+    padding-top: 13px;
+    border-top: 1px solid var(--gx-line);
+}
+.gx-smart-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+/* `.gx-ai` is `align-self: flex-start`, which in a row means the top edge. In
+   this one they sit side by side and should share a baseline. */
+.gx-smart-row .gx-ai { align-self: auto; }
+
+.gx-smart-note {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--gx-muted);
+    font-size: 11.5px;
+    line-height: 1.55;
+}
+
+/* On the card. No sentence, a lighter rule, and tighter — the card is a
+   summary and this is a way in, not the place the work is done. */
+.gx-smart.is-compact {
+    margin-top: 12px;
+    padding-top: 11px;
+    border-top-color: color-mix(in srgb, var(--gx-line) 70%, transparent);
+}
+.gx-smart.is-compact .gx-ai { font-size: 11.5px; padding: 5px 10px 5px 9px; }

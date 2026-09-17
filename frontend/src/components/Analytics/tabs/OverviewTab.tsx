@@ -53,6 +53,8 @@ import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
 import { Knows } from '../Knows';
 import { LimiterLine } from '../Limiter';
+import { LensLine } from '../Lens';
+import { throughLens } from '@/utils/goalLens';
 import { whatSummitKnows } from '@/utils/knows';
 import { OTHER_KEY } from '@/utils/subjectXp';
 import { stageShows } from '@/utils/dataMaturity';
@@ -77,6 +79,7 @@ export function OverviewTab({
     breakdown,
     card,
     goalLimits,
+    lens,
     nameOf,
     observed,
     compareLabel,
@@ -133,6 +136,23 @@ export function OverviewTab({
    * a long one gets four, without this file deciding which stage deserves a
    * profile.
    */
+  /**
+   * The five factors under the growth score, in the order this reader's goal
+   * makes useful.
+   *
+   * The score itself is untouched — same number, same contributions, same bars.
+   * What moves is which of the five is read first, and that is the one thing a
+   * lens is allowed to do. See utils/goalLens, and `LensLine` below, which is
+   * what stops this being a silent reordering.
+   *
+   * With no lens this is `card.factors` in the order the score built them, so
+   * an account with no goals sees exactly what it always did.
+   */
+  const scoreFactors = useMemo(
+    () => throughLens(card.factors, (factor) => factor.name, lens),
+    [card.factors, lens],
+  );
+
   const knows = useMemo(() => {
     /* The recent leader, for the "current focus" line. Fourteen days rather
        than the picker's window, because the point of the line is that it can
@@ -404,7 +424,7 @@ export function OverviewTab({
         {judgement && (
         <ScorePanel
           score={score}
-          factors={card.factors}
+          factors={scoreFactors}
           series={scoreLine}
           marks={scoreMarks}
           dates={scoreDates}
@@ -575,6 +595,15 @@ export function OverviewTab({
       {goalLimits[0] && (
         <section className="ax-section">
           <LimiterLine row={goalLimits[0]} />
+        </section>
+      )}
+
+      {/* One line, for the same reason the limiter above it is one line: this
+          tab is the shortest honest answer to "how am I doing" and hands the
+          longer questions on. The full reading is on Recommendations. */}
+      {lens && (
+        <section className="ax-section">
+          <LensLine lens={lens} />
         </section>
       )}
 

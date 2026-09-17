@@ -41,6 +41,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { GoalTile, HealthChip, categoryOf } from './Outcome';
 import { AskModel, Spark } from './AskModel';
+import { SmartPlan } from './SmartPlan';
 import { GoalVisual } from './GoalVisual';
 import { formatGoalDate, goalDate, goalNumbers, goalWeight, isOverdue } from './numbers';
 import { goalHealth } from '@/utils/goalHealth';
@@ -150,6 +151,13 @@ export interface ActiveGoalCardProps {
    */
   onRedraftStones: (goal: Goal) => void;
   /**
+   * Draft a checklist for every checkpoint that has none.
+   *
+   * Additive, so unlike the redraft it needs no confirmation — see
+   * ./SmartPlan, which is the row both of these now appear in.
+   */
+  onFillSteps: (goal: Goal) => void;
+  /**
    * Ask the model for this checkpoint's five steps, and save them.
    *
    * Offered only on a checkpoint whose checklist is *empty*, which is the
@@ -204,6 +212,7 @@ export function ActiveGoalCard({
   onLinkTask,
   onSuggest,
   onRedraftStones,
+  onFillSteps,
   onSuggestSteps,
   planning = false,
   onSaveStones,
@@ -1056,6 +1065,23 @@ export function ActiveGoalCard({
                 Mark complete
               </button>
             ))}
+
+          {/* The model's offers, on the card and not only behind the ⋯ menu.
+
+              The menu item stays — it is the right home for "redraft this
+              ladder" on a goal in good order, and it is where a per-goal
+              action belongs. What it could not do is be *found*: a reader who
+              has never opened that menu has no way to learn the app will fill
+              in the checklists they have not written. The compact row says so
+              on the card, and it disappears on a goal with a complete plan
+              rather than nagging. See ./SmartPlan. */}
+          <SmartPlan
+            goal={goal}
+            busy={drafting}
+            onRedraftStones={onRedraftStones}
+            onFillSteps={onFillSteps}
+            compact
+          />
         </section>
       </div>
 

@@ -68,6 +68,7 @@ function show(over: Partial<ActiveGoalCardProps> = {}) {
     onSuggest: vi.fn(async () => ['One', 'Two', 'Three', 'Four', 'Five']),
     onSuggestSteps: vi.fn(),
     onRedraftStones: vi.fn(),
+    onFillSteps: vi.fn(),
     onSaveStones: vi.fn(async () => true),
     onFocusMilestone: vi.fn(),
     onMilestoneSteps: vi.fn(),
@@ -148,8 +149,12 @@ describe('the checkpoints offer', () => {
   /** A plan already on its way to this ladder — see `planning` in the props. */
   it('reads as busy while the page is drafting under this goal', () => {
     show({ goal: bare(), planning: true });
-    const button = screen.getByRole('button', { name: /thinking/i });
-    expect(button).toBeDisabled();
+
+    /* Every offer on the card, not one: the empty panel's and the smart-plan
+       row's (components/Goals/SmartPlan) are two doors to the same write. */
+    const offers = screen.getAllByRole('button', { name: /thinking/i });
+    expect(offers.length).toBeGreaterThan(0);
+    offers.forEach((button) => expect(button).toBeDisabled());
   });
 });
 

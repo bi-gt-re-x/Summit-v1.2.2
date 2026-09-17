@@ -94,6 +94,7 @@ import {
 } from '@/utils/insight';
 import { goalActions, goalNotes, goalsOverview } from '@/utils/goalAnalytics';
 import { goalLimiters } from '@/utils/goalLimiter';
+import { leadingLens } from '@/utils/goalLens';
 import { goalHealth } from '@/utils/goalHealth';
 import {
   checkpointsByMonth,
@@ -476,6 +477,27 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     [nameOf, patternFinished, patternWindow],
   );
 
+  /* Declared here rather than down in the Goals block because `lens` below is
+     its first reader, and the plan under that reads the lens. */
+  const liveGoals = useMemo(() => goals.data?.goals ?? [], [goals.data]);
+
+  /**
+   * Which reading of this record the reader's goals call for.
+   *
+   * The page has always printed its five metrics in one order on every
+   * account, which is a guess about what the reader came for — and the same
+   * guess whether they are trying to stop losing easy marks or trying to solve
+   * harder problems than they currently can. See utils/goalLens.
+   *
+   * Above `plan` because the plan reads it. Null on most accounts and on every
+   * young one, and the page then behaves exactly as it did.
+   *
+   * Not scoped by the window picker, deliberately, and for the reason the goal
+   * panels are not either: what somebody is aiming at does not change because
+   * they looked at thirty days instead of a year.
+   */
+  const lens = useMemo(() => leadingLens(liveGoals, tasks), [liveGoals, tasks]);
+
   // ---- What to do next ----------------------------------------------------
   const [budget, setBudget] = useState<number>(DEFAULT_BUDGET);
   const plan = useMemo(
@@ -487,11 +509,12 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
         nameOf,
         budget,
         stamp,
+        lens,
       }),
     // `nudge` re-reads the plan against the clock: a task finished since the
     // page opened should leave it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [budget, goals.data, nameOf, recent, stamp, tasks, nudge],
+    [budget, goals.data, lens, nameOf, recent, stamp, tasks, nudge],
   );
 
   // ---- Habits -------------------------------------------------------------
@@ -531,9 +554,10 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
   );
 
   // ---- Goals --------------------------------------------------------------
-  /* All four read the goals fetched for the Records tab, so this tab costs no
-     request of its own — the same rule the rest of the page follows. */
-  const liveGoals = useMemo(() => goals.data?.goals ?? [], [goals.data]);
+  /* All of these read the goals fetched for the Records tab, so this tab costs
+     no request of its own — the same rule the rest of the page follows.
+     `liveGoals` itself is declared above, beside `lens`, which is its first
+     reader and runs before this block. */
   const goalSet = useMemo(() => goalsOverview(liveGoals, tasks), [liveGoals, tasks]);
   const goalRows = useMemo(() => goalNotes(liveGoals, tasks), [liveGoals, tasks]);
   const goalIdeas = useMemo(
@@ -906,6 +930,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     aimedShare,
     goalAdvice,
     goalLimits,
+    lens,
     goalPace,
     goalEffort,
     goalCheckpoints,
