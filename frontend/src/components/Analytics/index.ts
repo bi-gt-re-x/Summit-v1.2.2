@@ -86,6 +86,8 @@ export type { BuildingProps } from './Building';
    to stand in. */
 export {
   ActiveDayNote,
+  ActiveDayPrinciple,
+  AwayNotice,
   Collecting,
   FirstMilestone,
   StageLadder,

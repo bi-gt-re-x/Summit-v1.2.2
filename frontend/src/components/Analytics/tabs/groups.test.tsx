@@ -72,6 +72,9 @@ function matureOverview() {
       toNext: null,
       progress: 1,
       lastActive: '2026-08-01',
+      /* Current, so the away notice stays off this fixture — it is about the
+         panel groups, not about somebody who stopped. */
+      quietDays: 0,
     },
     detail: { quality: true, tallies: true, extras: true, rows: 12 },
     logStyle: 'tasks',

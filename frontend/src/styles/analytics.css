@@ -451,6 +451,51 @@ body:has(.ax-page) .app-main {
     font-variant-numeric: tabular-nums;
 }
 
+/* The active-day rule at the length it can be left on screen permanently.
+   Centred and faint: it is a standing footnote for the whole page rather than
+   a note on any one panel, and a reader who already knows it should be able to
+   stop seeing it. See `ActiveDayPrinciple` in
+   src/components/Analytics/Collecting.tsx. */
+.ax-principle {
+    margin: 26px 0 0;
+    text-align: center;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--ax-faint);
+}
+
+/* Somebody coming back after a long gap, above the empty windows they are
+   about to meet. Amber rather than violet: this is the page orienting a reader
+   who may think it has broken, which is a different job from the violet notes
+   that say what is still filling. Nothing here is a warning — see the note on
+   `AwayNotice` about why it does not chide. */
+.ax-away {
+    margin: 0 0 18px;
+    padding: 15px 18px 16px;
+    border: 1px solid color-mix(in srgb, var(--ax-amber) 34%, var(--ax-line));
+    border-left: 3px solid var(--ax-amber);
+    border-radius: 12px;
+    background:
+        radial-gradient(80% 140% at 0% 0%, color-mix(in srgb, var(--ax-amber) 9%, transparent), transparent 66%),
+        var(--ax-card);
+}
+.ax-away-head {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 660;
+    letter-spacing: -.01em;
+    line-height: 1.3;
+    color: var(--ax-text);
+}
+.ax-away-body {
+    margin: 0;
+    max-width: 68ch;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ax-muted);
+}
+.ax-away-body strong { color: var(--ax-text); font-weight: 650; }
+
 /* One objective, for an account on its first morning. Louder than the running
    countdown it stands in for, because on day one there is nothing else on the
    page competing to be the thing to do next — see `FirstMilestone` in

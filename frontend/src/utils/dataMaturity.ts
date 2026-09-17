@@ -186,7 +186,29 @@ export interface Maturity {
   progress: number;
   /** The most recent day with anything on it, ISO. Null on an empty record. */
   lastActive: string | null;
+  /**
+   * Calendar days since that day. 0 while the record is current.
+   *
+   * The one figure here that is about *absence*, and it is deliberately not a
+   * stage: an account that reached `full` and then stopped has not become less
+   * mature, and nothing it learned about itself became untrue — see the note on
+   * stages being floors. What has happened is that the window on screen is now
+   * mostly empty, and a page showing a month of zeros without saying why reads
+   * as the analytics having broken rather than as the reader having been away.
+   */
+  quietDays: number;
 }
+
+/**
+ * Days of quiet before the page says so.
+ *
+ * A fortnight. Under it there is nothing to remark on — people take a week
+ * off, and a page that says "you have been away for 4 days" to somebody who
+ * took a long weekend is nagging rather than orienting. Past it the window a
+ * reader lands on is mostly empty, and the absence is the most useful thing
+ * the page can explain about what they are looking at.
+ */
+export const DORMANT_AFTER = 14;
 
 /** The highest floor `activeDays` has reached. */
 export function stageFor(activeDays: number): Stage {
@@ -224,6 +246,7 @@ export function dataMaturity(days: GrowthDay[]): Maturity {
 
   const first = active[0]?.date ?? null;
   const lastRow = days[days.length - 1]?.date ?? null;
+  const lastActive = active[active.length - 1]?.date ?? null;
 
   return {
     activeDays,
@@ -232,6 +255,10 @@ export function dataMaturity(days: GrowthDay[]): Maturity {
     next,
     toNext,
     progress: Math.max(0, Math.min(1, progress)),
-    lastActive: active[active.length - 1]?.date ?? null,
+    lastActive,
+    /* Against the last row of the series rather than the clock, so this stays
+       a pure function of its input — the series runs to today, which is what
+       makes the two the same number in practice. */
+    quietDays: lastActive && lastRow ? daysBetween(lastActive, lastRow) : 0,
   };
 }

@@ -29,7 +29,7 @@ import { Link } from 'react-router-dom';
 import { StatRow, type Stat } from './StatRow';
 import { MILESTONES, milestonesAhead, nextMilestone } from './milestones';
 import { ACTIVE_DAY_MEANS } from '@/utils/activeDay';
-import { STAGES, STAGE_BRINGS, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
+import { DORMANT_AFTER, STAGES, STAGE_BRINGS, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
 
 /**
  * What a day has to have on it to be counted.
@@ -49,6 +49,72 @@ export function ActiveDayNote() {
       A day counts as soon as you {ACTIVE_DAY_MEANS} — any one of the three, however small. Days
       you do none of them are not counted against you; they are simply not counted.
     </p>
+  );
+}
+
+/**
+ * The rule in one line, for the pages that are past explaining themselves.
+ *
+ * `ActiveDayNote` above is three clauses and belongs beside a countdown, where
+ * a reader is watching a number and is owed the whole rule behind it. It is
+ * also, by design, only on the screens that have a countdown — so an account
+ * that reached `full` has not seen it for months, while every "active days"
+ * figure on the page still depends on it.
+ *
+ * This is the same rule at the length you can leave on screen forever. It is
+ * the product's most quietly reassuring idea and the one most likely to be
+ * missed: a reader who does not know it reads every gap in their record as
+ * time held against them, which is precisely backwards.
+ */
+export function ActiveDayPrinciple() {
+  return (
+    <p className="ax-principle">
+      Analytics grow from the days you actually work, not from calendar days.
+    </p>
+  );
+}
+
+/**
+ * What the page says to somebody coming back after a long gap.
+ *
+ * ## The failure this catches
+ *
+ * Stages are floors and never fall — an account that reached `full` keeps it,
+ * because nothing it learned about itself became untrue while nobody was
+ * looking. That is the right rule and it has an ugly consequence: a reader who
+ * stops for two months and returns lands on the full analytics page, every
+ * panel drawn, every window empty. Nothing on it is wrong and the whole thing
+ * reads as broken.
+ *
+ * So the gap is named before anything else on the page, and the sentence does
+ * two jobs: it explains the zeros, and it says the record behind them is
+ * intact. Nothing is reset, nothing is lost, and the fix is the same thing it
+ * always was — work, and the windows fill again.
+ *
+ * ## Why it is not a nag
+ *
+ * `DORMANT_AFTER` is a fortnight precisely so this cannot fire on a holiday,
+ * and the wording is careful to describe rather than chide: there is no
+ * "you have not worked since", no streak language, and no exhortation. A
+ * reader who took two months off for a reason of their own does not need the
+ * analytics page to have an opinion about it.
+ */
+export function AwayNotice({ maturity }: { maturity: Maturity }) {
+  const { quietDays, activeDays } = maturity;
+  if (quietDays < DORMANT_AFTER || activeDays === 0) return null;
+
+  return (
+    <section className="ax-away">
+      <p className="ax-away-head">
+        You have been away for <strong>{quietDays} days</strong>
+      </p>
+      <p className="ax-away-body">
+        Everything already on record is still here, and nothing has been reset —{' '}
+        <strong>{activeDays} days</strong> of your work are still behind these figures. The
+        windows below cover a stretch you were not working in, so most of them read as zero
+        until you start logging again.
+      </p>
+    </section>
   );
 }
 

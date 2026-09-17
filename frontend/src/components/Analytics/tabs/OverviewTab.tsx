@@ -27,6 +27,8 @@ import { Link } from 'react-router-dom';
 import { PanelGroup } from '../charts';
 import {
   BaselinePanel,
+  ActiveDayPrinciple,
+  AwayNotice,
   Collecting,
   ConsistencyPanel,
   LearningStrip,
@@ -252,6 +254,11 @@ export function OverviewTab({
 
     return (
       <>
+        {/* Before anything else, when there is a gap to explain. A reader
+            coming back to a page of zeros is owed the reason before they are
+            shown the zeros. */}
+        <AwayNotice maturity={maturity} />
+
         <section id="overview" className="ax-section">
           <Collecting maturity={maturity} stats={basics} />
         </section>
@@ -295,6 +302,8 @@ export function OverviewTab({
         <section className="ax-section">
           <Knows facts={knows} />
         </section>
+
+        <ActiveDayPrinciple />
 
         <WhereNext />
       </>
@@ -340,6 +349,8 @@ export function OverviewTab({
 
   return (
     <>
+      <AwayNotice maturity={maturity} />
+
       {note && (
         <section className="ax-section">
           <StageNote maturity={maturity} />
@@ -547,6 +558,12 @@ export function OverviewTab({
       <section className="ax-section">
         <Knows facts={knows} />
       </section>
+
+      {/* The rule every "active days" figure above depends on, at the length
+          it can be left on screen permanently. The full note only appears
+          beside a countdown, so an account past the staged tabs has not seen
+          it in months. See `ActiveDayPrinciple`. */}
+      <ActiveDayPrinciple />
 
       <WhereNext />
     </>
