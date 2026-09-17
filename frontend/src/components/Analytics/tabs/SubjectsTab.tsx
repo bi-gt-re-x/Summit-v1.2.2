@@ -14,6 +14,7 @@ import { latticeFor } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
 import { treeStanding } from '@/skills/standing';
 import { OTHER_KEY } from '@/utils/subjectXp';
+import { LimiterLine } from '../Limiter';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
@@ -31,7 +32,26 @@ export function SubjectsTab({
   subjects,
   username = null,
 }: { model: AnalyticsModel; subjects: SubjectIndex; username?: string | null }) {
-  const { all, namedSubjects, tasks, breakdown } = model;
+  const { all, goalLimits, namedSubjects, tasks, breakdown } = model;
+
+  /**
+   * The limiters whose subject is one this window actually shows.
+   *
+   * The tab's own rule, applied to a second kind of row: a sentence about a
+   * subject earns its place here only when the subject is on the page under
+   * it. A limiter on Chemistry, on a window where no chemistry was worked, is
+   * a finding about somewhere else — true, and belonging on the tab that is
+   * about goals rather than on the one that is about subjects.
+   *
+   * Which is also the whole of what "only where the subject has a goal" means
+   * in practice: `goalLimits` exists at all only for subjects some live goal's
+   * work is filed under, so the filter below is the second half of that test
+   * rather than a separate one.
+   */
+  const shown = useMemo(() => {
+    const worked = new Set((breakdown?.rows ?? []).map((row) => row.key));
+    return goalLimits.filter((row) => worked.has(row.subjectId));
+  }, [breakdown?.rows, goalLimits]);
 
   /**
    * What there is to learn in each subject that got worked.
@@ -128,6 +148,19 @@ export function SubjectsTab({
               See what is missing
             </Link>
           </p>
+        </section>
+      )}
+
+      {/* Under the line about how many subjects have a goal, and answering the
+          question it raises. That line says how many were aimed at; these say,
+          for the ones that were, what the aiming is running into. Lines rather
+          than cards for the reason the line above is a line: this tab is about
+          mastery, and the goal reading is context on it. */}
+      {shown.length > 0 && (
+        <section className="ax-section">
+          {shown.map((row) => (
+            <LimiterLine key={row.goalId} row={row} />
+          ))}
         </section>
       )}
 

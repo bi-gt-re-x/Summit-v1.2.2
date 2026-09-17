@@ -1,14 +1,14 @@
 /**
  * What the page says before it has enough to analyse.
  *
- * ## Not a lock
+ * ## Not the same thing as `Building`
  *
- * `Locked` is the right shape for one tab that needs three weeks of record: it
- * is a door with a condition on it, and the reader came to that tab knowing
- * what they wanted. This is the whole page on somebody's second day, and a
- * door is the wrong metaphor for it — nothing is being withheld, there is
- * simply nothing yet. A page that opens with a padlock on day two teaches a
- * reader that the product is mostly unavailable to them.
+ * `Building` is the right shape for one tab that needs three weeks of record:
+ * the reader went to that tab wanting a specific answer, and it owes them the
+ * reason it cannot give one yet. This is the whole page on somebody's second
+ * day, and nobody arrived at it with a question that precise — so an
+ * explanation of what is missing would be answering something they never
+ * asked. What they want is what the page *does* have.
  *
  * So this states the position and then gets out of the way: one line on what
  * Summit is doing, a meter showing the account moving toward the next thing
@@ -21,13 +21,15 @@
  *
  * No trend, no comparison, no insight, no projection, no sample data. Every
  * figure it prints is a count of something that happened. This is the same
- * rule `Locked` was written for — see the note there about what invented
+ * rule `Building` was written for — see the note there about what invented
  * figures cost — applied a stage earlier.
  */
+import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { StatRow, type Stat } from './StatRow';
+import { MILESTONES, milestonesAhead, nextMilestone } from './milestones';
 import { ACTIVE_DAY_MEANS } from '@/utils/activeDay';
-import { STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
+import { DORMANT_AFTER, STAGES, STAGE_BRINGS, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
 
 /**
  * What a day has to have on it to be counted.
@@ -36,7 +38,7 @@ import { STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
  * calendar, and a reader watching a number go up is owed the rule behind it —
  * otherwise "4 more days" reads as a wait of four days, and somebody who
  * skips two of them thinks the page has stalled. It appears wherever a
- * countdown does, which is here, in the strip below, and in `Locked`.
+ * countdown does, which is here, in the strip below, and in `Building`.
  *
  * The words come from utils/activeDay, beside the predicate that enforces
  * them, so the sentence on screen cannot drift from the rule behind it.
@@ -50,12 +52,76 @@ export function ActiveDayNote() {
   );
 }
 
+/**
+ * The rule in one line, for the pages that are past explaining themselves.
+ *
+ * `ActiveDayNote` above is three clauses and belongs beside a countdown, where
+ * a reader is watching a number and is owed the whole rule behind it. It is
+ * also, by design, only on the screens that have a countdown — so an account
+ * that reached `full` has not seen it for months, while every "active days"
+ * figure on the page still depends on it.
+ *
+ * This is the same rule at the length you can leave on screen forever. It is
+ * the product's most quietly reassuring idea and the one most likely to be
+ * missed: a reader who does not know it reads every gap in their record as
+ * time held against them, which is precisely backwards.
+ */
+export function ActiveDayPrinciple() {
+  return (
+    <p className="ax-principle">
+      Analytics grow from the days you actually work, not from calendar days.
+    </p>
+  );
+}
+
+/**
+ * What the page says to somebody coming back after a long gap.
+ *
+ * ## The failure this catches
+ *
+ * Stages are floors and never fall — an account that reached `full` keeps it,
+ * because nothing it learned about itself became untrue while nobody was
+ * looking. That is the right rule and it has an ugly consequence: a reader who
+ * stops for two months and returns lands on the full analytics page, every
+ * panel drawn, every window empty. Nothing on it is wrong and the whole thing
+ * reads as broken.
+ *
+ * So the gap is named before anything else on the page, and the sentence does
+ * two jobs: it explains the zeros, and it says the record behind them is
+ * intact. Nothing is reset, nothing is lost, and the fix is the same thing it
+ * always was — work, and the windows fill again.
+ *
+ * ## Why it is not a nag
+ *
+ * `DORMANT_AFTER` is a fortnight precisely so this cannot fire on a holiday,
+ * and the wording is careful to describe rather than chide: there is no
+ * "you have not worked since", no streak language, and no exhortation. A
+ * reader who took two months off for a reason of their own does not need the
+ * analytics page to have an opinion about it.
+ */
+export function AwayNotice({ maturity }: { maturity: Maturity }) {
+  const { quietDays, activeDays } = maturity;
+  if (quietDays < DORMANT_AFTER || activeDays === 0) return null;
+
+  return (
+    <section className="ax-away">
+      <p className="ax-away-head">
+        You have been away for <strong>{quietDays} days</strong>
+      </p>
+      <p className="ax-away-body">
+        Everything already on record is still here, and nothing has been reset —{' '}
+        <strong>{activeDays} days</strong> of your work are still behind these figures. The
+        windows below cover a stretch you were not working in, so most of them read as zero
+        until you start logging again.
+      </p>
+    </section>
+  );
+}
+
 export interface CollectingProps {
   maturity: Maturity;
   /** Already formatted, and already true. See the note above. */
   stats: Stat[];
-  /** One line naming what the next stage brings. The caller knows; this does not. */
-  nextBrings: string;
 }
 
 /**
@@ -71,19 +137,46 @@ export interface CollectingProps {
  * crossing from one to the other reads as the same voice getting quieter
  * rather than as a different notice appearing.
  */
-export function StageNote({ maturity, brings }: { maturity: Maturity; brings: string }) {
-  const { activeDays, next, toNext } = maturity;
-  if (!next || toNext === null) return null;
+export function StageNote({ maturity }: { maturity: Maturity }) {
+  const { activeDays, spanDays } = maturity;
+
+  /* The next thing that actually opens, which is not always the next stage.
+     At fifteen active days the next stage is `full` at thirty, but Habits
+     opens at twenty-one — and "15 more days" is a discouraging and slightly
+     dishonest answer to a reader who is six days from something real. */
+  const next = nextMilestone(activeDays);
+  if (!next) return null;
+  const toNext = next.need - activeDays;
 
   return (
     <p className="ax-stage-note">
       <span className="ax-stage-chip">{STAGE_LABEL[maturity.stage]}</span>
       <span>
-        Read from <strong>{activeDays} days</strong> of your work.{' '}
+        {/* The calendar length beside the worked one, so the figure reads as
+            a record being kept rather than as days gone missing. One clause
+            rather than two — "14 days of your work across 43" makes a reader
+            work out what the second number counts. See `spanDays` in
+            utils/dataMaturity: context, never a gate. */}
+        {spanDays > activeDays ? (
+          <>
+            Read from{' '}
+            <strong>
+              {activeDays} of your {spanDays} days
+            </strong>{' '}
+            with Summit.
+          </>
+        ) : (
+          <>
+            Read from <strong>{activeDays} days</strong> of your work.
+          </>
+        )}{' '}
         <strong>
-          {toNext} more {toNext === 1 ? 'day' : 'days'}
+          {toNext} more work {toNext === 1 ? 'day' : 'days'}
         </strong>{' '}
-        and {brings}
+        <i className="ax-stage-arrow" aria-hidden="true">
+          &#8594;
+        </i>{' '}
+        <strong>{next.title}</strong>. {next.reward}
       </span>
     </p>
   );
@@ -151,17 +244,216 @@ export function LearningStrip({ items }: { items: LearningItem[] }) {
   );
 }
 
-export function Collecting({ maturity, stats, nextBrings }: CollectingProps) {
-  const { activeDays, spanDays, toNext, next, progress } = maturity;
+/**
+ * The whole ladder at once: where the account stands, and what is above it.
+ *
+ * ## The gap this fills
+ *
+ * Every countdown on this page was relative — "4 more days and weekly trends
+ * open here" — and a relative countdown only means something to a reader who
+ * already knows the shape of the thing they are climbing. On day two nobody
+ * does. They are told a number and a name, with no way to tell whether that
+ * name is the last rung or the first of six, so the honest answer to "what am
+ * I working toward?" was: read the next sentence in four days and find out.
+ *
+ * So the ladder is drawn rather than described. Five marks, filled behind you
+ * and hollow ahead, and under them the thresholds that are actually still
+ * coming with the reason to want each one. It says the same thing the
+ * countdown says and adds the only part the countdown could not: the scale.
+ *
+ * ## Why reached milestones are dropped
+ *
+ * Same rule as `LearningStrip`, for the same reason — a list of what you have
+ * already passed is a different page from a list of what is next, and mixing
+ * them turns a roadmap into a scorecard. The *track* ticks, because marking
+ * progress is the only job a track has; the list under it does not.
+ *
+ * The four thresholds are read from `STAGE_FLOOR` and `NEED_DAYS` rather than
+ * written here, so a number moved in either place moves on screen without
+ * anybody remembering this file exists.
+ */
+export function StageLadder({
+  maturity,
+  ahead: showAhead = true,
+}: {
+  maturity: Maturity;
+  /**
+   * Whether to list the thresholds still to come, each with its reason.
+   *
+   * Off on a brand new account, where `FirstMilestone` below is saying one
+   * number loudly and six more underneath it would bury the objective it
+   * exists to give. The track stays either way: five marks is the shape of the
+   * thing, and the shape is not the part that overwhelms.
+   */
+  ahead?: boolean;
+}) {
+  const { activeDays, stage } = maturity;
+  const standing = STAGES.indexOf(stage);
+
+  /* Stage floors and tab gates in one list, because a reader does not have
+     two mental models of this page and should not be shown two ladders. What
+     opens at 21 is a tab rather than a stage, and that distinction is ours,
+     not theirs. Both the numbers and the words come from ./milestones — see
+     the note there about the two of them having drifted while they lived
+     apart. */
+  const ahead = showAhead ? milestonesAhead(activeDays) : [];
+
+  return (
+    <section className="ax-ladder">
+      <p className="ax-ladder-head">Your analytics are developing</p>
+
+      <ol
+        className="ax-ladder-track"
+        aria-label={`Stage ${standing + 1} of ${STAGES.length}: ${STAGE_BRINGS[stage]}`}
+      >
+        {STAGES.map((rung, at) => (
+          <li
+            key={rung}
+            className={at <= standing ? 'is-reached' : undefined}
+            aria-current={at === standing ? 'step' : undefined}
+          >
+            <span className="ax-ladder-dot" aria-hidden="true" />
+            <span className="ax-ladder-name">{STAGE_BRINGS[rung]}</span>
+          </li>
+        ))}
+      </ol>
+
+      {ahead.length > 0 && (
+        <ul className="ax-ladder-next">
+          {ahead.map((step, at) => (
+            <li key={step.need}>
+              <p className="ax-ladder-line">
+                {/* "active days" on the first row only. Repeating the unit
+                    down the column turns a scannable list into four
+                    sentences. */}
+                <span className="ax-ladder-need">
+                  {step.need}
+                  {at === 0 && <em> active days</em>}
+                </span>
+                <span className="ax-ladder-arrow" aria-hidden="true">
+                  &#8594;
+                </span>
+                <span className="ax-ladder-brings">{step.title}</span>
+              </p>
+              {/* Why that number. A threshold with no reason behind it reads
+                  as a policy somebody chose; every one of these was picked for
+                  an actual reason and the reader was simply never told it. */}
+              <p className="ax-ladder-why">{step.why}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+/**
+ * One number, for somebody who has just arrived.
+ *
+ * ## Why the ladder is not enough on day one
+ *
+ * `StageLadder` draws the whole progression, which is the right answer to "how
+ * far does this go" and the wrong one to "what do I do now". A reader on their
+ * first morning meets six thresholds, five stage names and four reasons, and
+ * the useful part — that the first thing opens after three days of work — is
+ * one row among them. Six objectives is no objective.
+ *
+ * So until the first rung is behind them they get that rung and nothing else:
+ * what it is, when it opens, what it will do, and how far along they are.
+ * The ladder's track still sits below it, because knowing there is more after
+ * this costs a reader nothing. Its reasoned list does not.
+ *
+ * It replaces nothing: the meter in `Collecting` is the same countdown to the
+ * same threshold, and this is that countdown given the whole card rather than
+ * a line. Once `activeDays` reaches three it is gone for good — a first
+ * milestone that is still being celebrated on day nine is a tutorial that will
+ * not end.
+ */
+export function FirstMilestone({ maturity }: { maturity: Maturity }) {
+  const { activeDays } = maturity;
+  const first = MILESTONES[0];
+  if (!first || activeDays >= first.need) return null;
+
+  const pct = Math.round((activeDays / first.need) * 100);
+
+  return (
+    <section className="ax-first">
+      <p className="ax-first-head">Your first analytics milestone</p>
+      <p className="ax-first-need">
+        <strong>{first.need}</strong> active days
+      </p>
+      <p className="ax-first-reward">{first.reward}</p>
+
+      <div
+        className="ax-first-meter"
+        role="img"
+        aria-label={`${activeDays} of ${first.need} active days`}
+      >
+        <span style={{ width: `${pct}%` }} />
+      </div>
+      <p className="ax-first-count">
+        <strong>{activeDays}</strong> / {first.need}
+      </p>
+      {/* The rule behind the number, and this is the one screen that cannot do
+          without it: the countdown block that normally carries this note is
+          suppressed while this card stands in for it, and a reader on their
+          first morning is exactly who has not yet learned what Summit counts
+          as a day. */}
+      <ActiveDayNote />
+    </section>
+  );
+}
+
+export function Collecting({ maturity, stats }: CollectingProps) {
+  const { activeDays, spanDays, progress } = maturity;
+
+  /* What opens next, and what it will do — from ./milestones rather than from
+     a sentence the caller passed down, which is how the countdown here and
+     the ladder below it came to promise different things at the same
+     threshold. */
+  const next = nextMilestone(activeDays);
+  const toNext = next ? next.need - activeDays : null;
+
+  /** Nothing has opened yet. See `FirstMilestone`. */
+  const beforeFirst = activeDays < (MILESTONES[0]?.need ?? 0);
+
+  /* Derived from the row below rather than passed in beside it — see `short`
+     on Stat. Suppressed at zero, where every part of it would read "0" and a
+     headline of nothing is worse than no headline. */
+  const digest =
+    activeDays === 0
+      ? []
+      : stats.map((stat) => stat.short).filter((part): part is string => Boolean(part));
 
   return (
     <section className="ax-collect">
       <header className="ax-collect-head">
         <p className="ax-collect-eyebrow">{STAGE_LABEL[maturity.stage]}</p>
+
+        {/* The first thing on the page, above the explanation of itself. On
+            day two these counts *are* the product: they are exact, they are
+            about the reader, and they are the reason to come back tomorrow.
+            An account that opens with a paragraph about what is not available
+            yet has buried the only part that works. */}
+        {digest.length > 0 && (
+          <p className="ax-collect-digest">
+            {digest.map((part, at) => (
+              <Fragment key={part}>
+                {at > 0 && (
+                  <span className="ax-collect-sep" aria-hidden="true">
+                    &middot;
+                  </span>
+                )}
+                <span>{part}</span>
+              </Fragment>
+            ))}
+          </p>
+        )}
+
         <h2>
           {activeDays === 0
             ? 'Summit has nothing to go on yet.'
-            : 'Summit is still learning your habits.'}
+            : 'Summit is learning your work patterns.'}
         </h2>
         <p className="ax-collect-lead">
           {activeDays === 0 ? (
@@ -181,25 +473,46 @@ export function Collecting({ maturity, stats, nextBrings }: CollectingProps) {
           )}
         </p>
 
-        {next && toNext !== null && (
+        {/* Before the first rung, one objective said loudly; after it, the
+            running countdown. Never both — they count to the same threshold
+            and two meters for one number is the page arguing with itself. */}
+        {beforeFirst && <FirstMilestone maturity={maturity} />}
+
+        {!beforeFirst && next && toNext !== null && (
           <div className="ax-collect-next">
             <div
               className="ax-collect-meter"
               role="img"
-              aria-label={`${activeDays} days recorded, ${toNext} more until ${STAGE_LABEL[next].toLowerCase()}`}
+              aria-label={`${activeDays} days recorded, ${toNext} more until ${next.title.toLowerCase()}`}
             >
               <span className="ax-collect-fill" style={{ width: `${Math.round(progress * 100)}%` }} />
             </div>
+
+            {/* The countdown names what it is counting to, rather than a stage
+                the reader would have to already know. "2 more work days →
+                Weekly trends" is a destination; "2 / 7 days" is a fraction. */}
             <p className="ax-collect-count">
               <strong>
-                {toNext} more {toNext === 1 ? 'day' : 'days'} with work on{' '}
-                {toNext === 1 ? 'it' : 'them'}
-              </strong>{' '}
-              and {nextBrings}
+                {toNext} more work {toNext === 1 ? 'day' : 'days'}
+              </strong>
+              <i className="ax-collect-arrow" aria-hidden="true">
+                &#8594;
+              </i>
+              <strong className="ax-collect-goal">{next.title}</strong>
             </p>
+            {/* And what will actually happen then, to their own record. A
+                category is not a reason to come back; a sentence about what
+                Summit will do with their week is. */}
+            <p className="ax-collect-reward">{next.reward}</p>
+
             <ActiveDayNote />
           </div>
         )}
+
+        {/* Under the countdown, because it is the countdown's missing half:
+            the meter says how far to the next rung, this says how many rungs
+            there are and what each is for. */}
+        <StageLadder maturity={maturity} ahead={!beforeFirst} />
       </header>
 
       <StatRow stats={stats} />

@@ -11,7 +11,7 @@
  * drift apart the first time one of them is edited.
  *
  * It would also have broken the page. Before rendering a tab, the page has to
- * decide whether that tab has anything to say — the `Locked` gates and the
+ * decide whether that tab has anything to say — the `Building` gates and the
  * opening sentence both read figures belonging to the tab they are gating. A
  * memo that lives inside the tab is a memo the gate cannot see.
  *
@@ -93,6 +93,8 @@ import {
   whyFindings,
 } from '@/utils/insight';
 import { goalActions, goalNotes, goalsOverview } from '@/utils/goalAnalytics';
+import { goalLimiters } from '@/utils/goalLimiter';
+import { leadingLens } from '@/utils/goalLens';
 import { goalHealth } from '@/utils/goalHealth';
 import {
   checkpointsByMonth,
@@ -122,6 +124,7 @@ import { DEFAULT_BUDGET, buildPlan } from '@/utils/nextActions';
 import { reviewAdopted, summarise } from '@/utils/followup';
 import type { AnalyticsData } from './useAnalyticsData';
 import type { SubjectIndex } from '@/hooks/useSubjects';
+import { observations } from '@/utils/observations';
 import type { Task } from '@/types';
 import type { Prefs } from '@/services/settings';
 
@@ -284,6 +287,18 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     () => subjectXp(bySubject, subjects, fromIso, toIso, RADAR_SUBJECTS),
     [bySubject, fromIso, subjects, toIso],
   );
+
+  /*
+   * What can honestly be said about this reader as a tendency, strongest
+   * first — see the note at the top of utils/observations for the floors.
+   *
+   * Here rather than in the tabs that draw it, for the reason at the top of
+   * this file: four tabs want it now (Overview at its early stages, and the
+   * three gated ones, which show the strongest finding while they are still
+   * filling) and four call sites would be four chances to pass a different
+   * task list and print a different finding on each.
+   */
+  const observed = useMemo(() => observations(tasks), [tasks]);
 
   /** The same subjects over the period before, keyed for the per-row change. */
   const previousBySubject = useMemo(() => {
@@ -462,6 +477,27 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     [nameOf, patternFinished, patternWindow],
   );
 
+  /* Declared here rather than down in the Goals block because `lens` below is
+     its first reader, and the plan under that reads the lens. */
+  const liveGoals = useMemo(() => goals.data?.goals ?? [], [goals.data]);
+
+  /**
+   * Which reading of this record the reader's goals call for.
+   *
+   * The page has always printed its five metrics in one order on every
+   * account, which is a guess about what the reader came for — and the same
+   * guess whether they are trying to stop losing easy marks or trying to solve
+   * harder problems than they currently can. See utils/goalLens.
+   *
+   * Above `plan` because the plan reads it. Null on most accounts and on every
+   * young one, and the page then behaves exactly as it did.
+   *
+   * Not scoped by the window picker, deliberately, and for the reason the goal
+   * panels are not either: what somebody is aiming at does not change because
+   * they looked at thirty days instead of a year.
+   */
+  const lens = useMemo(() => leadingLens(liveGoals, tasks), [liveGoals, tasks]);
+
   // ---- What to do next ----------------------------------------------------
   const [budget, setBudget] = useState<number>(DEFAULT_BUDGET);
   const plan = useMemo(
@@ -473,11 +509,12 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
         nameOf,
         budget,
         stamp,
+        lens,
       }),
     // `nudge` re-reads the plan against the clock: a task finished since the
     // page opened should leave it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [budget, goals.data, nameOf, recent, stamp, tasks, nudge],
+    [budget, goals.data, lens, nameOf, recent, stamp, tasks, nudge],
   );
 
   // ---- Habits -------------------------------------------------------------
@@ -517,9 +554,10 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
   );
 
   // ---- Goals --------------------------------------------------------------
-  /* All four read the goals fetched for the Records tab, so this tab costs no
-     request of its own — the same rule the rest of the page follows. */
-  const liveGoals = useMemo(() => goals.data?.goals ?? [], [goals.data]);
+  /* All of these read the goals fetched for the Records tab, so this tab costs
+     no request of its own — the same rule the rest of the page follows.
+     `liveGoals` itself is declared above, beside `lens`, which is its first
+     reader and runs before this block. */
   const goalSet = useMemo(() => goalsOverview(liveGoals, tasks), [liveGoals, tasks]);
   const goalRows = useMemo(() => goalNotes(liveGoals, tasks), [liveGoals, tasks]);
   const goalIdeas = useMemo(
@@ -569,6 +607,25 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
       .sort((a, b) => Number(b.tone === 'urgent') - Number(a.tone === 'urgent'))
       .slice(0, 2);
   }, [liveGoals, tasks]);
+
+  /**
+   * What is most holding each goal up, and where to go about it.
+   *
+   * The one goal reading on this page that names a *subject* rather than a
+   * signal: `goalAdvice` above says the pace is short or the goal has gone
+   * quiet, and neither sentence can tell a reader which part of the work to
+   * open. Five tabs print this, at two sizes — see ./Limiter — and all five
+   * read the same array, so none of them can quietly disagree about which
+   * subject is the limiter.
+   *
+   * Empty on most accounts, and that is the design rather than a gap in it:
+   * utils/goalLimiter will not name a culprit off a pile too small to have
+   * one.
+   */
+  const goalLimits = useMemo(
+    () => goalLimiters(liveGoals, tasks, nameOf, (id) => subjects.get(id)?.group),
+    [liveGoals, nameOf, subjects, tasks],
+  );
 
   /** Subject ids some live goal names, for the line on the Subjects tab. */
   const goalSubjects = useMemo(
@@ -751,7 +808,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
    * Days still needed for a tab, or 0 once the record is long enough.
    *
    * Days with work on them, now that `historyDays` counts those — which is why
-   * `Locked` no longer names the date a tab opens on. It cannot: the answer
+   * `Building` no longer names the date a tab opens on. It cannot: the answer
    * depends on how often the reader turns up, and a date computed as if every
    * day from here were a working one is a promise to break.
    */
@@ -804,6 +861,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     nameOf,
 
     // Overview
+    observed,
     figures,
     sparks,
     insights,
@@ -871,6 +929,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     goalIdeas,
     aimedShare,
     goalAdvice,
+    goalLimits,
+    lens,
     goalPace,
     goalEffort,
     goalCheckpoints,

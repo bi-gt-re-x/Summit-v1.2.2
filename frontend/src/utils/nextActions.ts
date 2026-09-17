@@ -161,6 +161,17 @@ export interface PlanInput {
   now?: Date;
   /** The week stamp, so ties break the same way all week. */
   stamp: string;
+  /**
+   * What the reader is aiming at, as a tilt on the ranking. Optional.
+   *
+   * Every candidate below still earns its place on its own evidence, and the
+   * lens never adds one or removes one — it multiplies weights inside a narrow
+   * band so that, between two suggestions the record likes equally, the one
+   * that serves the goal goes first. See utils/goalLens for why the band is
+   * narrow: a plan that could be rewritten by what somebody is aiming at this
+   * term would put a revision nudge above an overdue essay.
+   */
+  lens?: { weights: Partial<Record<ActionKind, number>> } | null;
 }
 
 /**
@@ -181,8 +192,9 @@ export function buildPlan({
   budget,
   now = new Date(),
   stamp,
+  lens = null,
 }: PlanInput): Plan {
-  const candidates = gather({ tasks, goals, days, nameOf, now, stamp });
+  const candidates = gather({ tasks, goals, days, nameOf, now, stamp, lens });
 
   const actions: NextAction[] = [];
   const more: NextAction[] = [];
@@ -226,6 +238,7 @@ function gather({
   nameOf,
   now,
   stamp,
+  lens = null,
 }: Omit<PlanInput, 'budget'> & { now: Date }): NextAction[] {
   const found: NextAction[] = [];
   const todayIso = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -473,8 +486,17 @@ function gather({
      Geometry are one suggestion the reader has to read twice. */
   const seenTask = new Set<string>();
   const seenSubject = new Set<string>();
+  /* The tilt, applied to the weight each rule already set.
+ 
+     On the weight rather than on the order, so it composes with the seeded
+     tiebreak below instead of fighting it, and so a kind the lens does not
+     mention is untouched rather than implicitly demoted. `weight` is not shown
+     anywhere, so multiplying it changes the order and nothing a reader sees is
+     a different number because of it. */
+  const tilt = (item: NextAction) => item.weight * (lens?.weights?.[item.kind] ?? 1);
+
   return found
-    .sort((a, b) => b.weight - a.weight || seeded(stamp + a.id) - seeded(stamp + b.id))
+    .sort((a, b) => tilt(b) - tilt(a) || seeded(stamp + a.id) - seeded(stamp + b.id))
     .filter((item) => {
       if (item.taskId) {
         if (seenTask.has(item.taskId)) return false;

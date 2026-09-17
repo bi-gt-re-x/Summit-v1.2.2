@@ -2,7 +2,7 @@
  * Habits — what the reader repeats, counted.
  *
  * The one tab gated on two things rather than one: enough record *and* a habit
- * actually found in it. Both arms lead to the same `Locked`, which says which
+ * actually found in it. Both arms lead to the same `Building`, which says which
  * of the two it is waiting on.
  *
  * It never says *why*. The moment it does, the Insights tab has no reason to
@@ -18,16 +18,20 @@ import {
   PatternsPanel,
   TimelinePanel,
 } from '../Habits';
-import { Locked } from '../Locked';
+import { Building } from '../Building';
+import { LimiterLine } from '../Limiter';
+import { FinishPanel, WhenPanel } from '../Early';
+import { partsOfDay } from '@/utils/habits';
 import { PanelGroup } from '../charts';
 import { FocusChapter } from '@/components/Growth';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { whyFor } from '../milestones';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { subjects: SubjectIndex }) {
   const {
-    all, figures, habits, historyDays, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
+    all, figures, fromIso, goalLimits, habits, historyDays, maturity, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
     /* How much of the page is drawn. This tab ignored the detail setting
        entirely: an account with thirty habits handed a reader thirty cards
        whether they had asked for essentials or for everything. */
@@ -42,13 +46,20 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
   return (
     <>
       {(waitFor('habits') > 0 || habits.length === 0) && (
-        <Locked
+        <Building
           title="Habits"
           remaining={waitFor('habits')}
           need={NEED_DAYS.habits}
           have={historyDays}
-          promise="A habit needs weeks of repetition before there is one to find."
-          brings={['Routines, counted', 'Every day you worked', 'Holding or slipping', 'When each began']}
+          promise={whyFor(NEED_DAYS.habits)}
+          spanDays={maturity.spanDays}
+          asksLead="Summit will look for what repeats in your work:"
+          asks={[
+            'Which routines have actually stuck?',
+            'Which days can you count on yourself?',
+            'Is a habit holding, or quietly slipping?',
+            'When did each one start?',
+          ]}
           emptyMessage="Nothing repeats often enough yet to count as a habit."
           action={
             <Link to="/tasks" className="ax-btn">
@@ -56,6 +67,33 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
             </Link>
           }
         />
+      )}
+
+      {/* What the tab can already say, under the card explaining what it
+          cannot.
+
+          Habits are what *repeats*, and four days cannot say what repeats —
+          which is why the tab is gated and why nothing below claims a
+          tendency. But the raw material of a habit is a count of when work
+          landed and what got finished, and those are exact from the first
+          task. A tab that shows nothing at all until day twenty-one is a tab
+          that teaches a reader not to open it.
+
+          The same two panels the Overview shows at its early stages, for the
+          same reason and from the same constructors — see Early. */}
+      {waitFor('habits') > 0 && (
+        <section className="ax-section">
+          <PanelGroup
+            title="What is already true"
+            note="Counts, not patterns. The habits themselves need more of a record before there is one to find."
+            defaultOpen
+          >
+            <div className="ax-grid ax-grid-halves-even">
+              <WhenPanel parts={partsOfDay(tasks, fromIso, toIso)} days={maturity.activeDays} />
+              <FinishPanel tasks={tasks} days={maturity.activeDays} />
+            </div>
+          </PanelGroup>
+        </section>
       )}
 
       {waitFor('habits') === 0 && habits.length > 0 && (
@@ -130,6 +168,21 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
                 this tab rather than on a page nobody navigated to — and why it
                 is the last thing opened rather than the last thing scrolled
                 past. */}
+            {/* What all this repeating is in aid of, once.
+
+                Habits counts what recurs; it never says why, and this does not
+                start. What it does is name the one subject a goal's shortfall
+                is concentrated in — which is the difference between a reader
+                leaving this tab knowing they are consistent and leaving it
+                knowing what to be consistent *at*. One line and one link, for
+                the reason `LimiterLine` gives: a card about goals on this tab
+                would make it a tab about goals. */}
+            {goalLimits[0] && (
+              <section className="ax-section">
+                <LimiterLine row={goalLimits[0]} />
+              </section>
+            )}
+
             <PanelGroup
               title="Can you execute it reliably"
               note="Planned against finished, focus scores, and recovery after a miss"

@@ -365,9 +365,20 @@ body:has(.dash) .app-main {
    have been a 170px hole between a small bordered box and a button, which is
    the card looking broken rather than roomy.
 
-   So the box grows and centres what is in it. The stepper is the thing a
-   reader comes to this card to touch, and centring puts it in the middle of
-   the panel instead of tucked under the heading.
+   So the box grows. **How it spends the height is the part that was wrong.**
+
+   It used to centre everything in it as one stack, which moved the hole rather
+   than filling it: the heading floated a third of the way down a tall bordered
+   box with an empty band above it and another below the bar, and nothing in
+   the box was anchored to anything. A reader saw a small amount of content
+   adrift in a large rectangle.
+
+   Two zones instead. The copy sits at the *top*, where a heading belongs and
+   where the eye enters the box. The control the reader came to touch — the
+   stepper, with the bar it moves directly under it — is one unit centred in
+   whatever is left. The slack is then a deliberate margin under a heading
+   rather than a gap in the middle of a stack, and the two things in the box
+   read as two things rather than as four loose ones.
 
    Scoped to the dashboard row: `html.focus-mode` re-lays this panel out for a
    running session — see the focus-mode block in styles/dashboard.css — and it
@@ -377,13 +388,39 @@ body:has(.dash) .app-main {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 4px;
+    padding: 24px 24px 26px;
 }
-/* The two that carry their own bottom margins inside a box that is now a flex
-   column with a gap; without this they are spaced twice. */
-.dash-main .focus-goal .focus-goal-title { margin-bottom: 0; }
-.dash-main .focus-goal .focus-goal-q { margin-bottom: 14px; }
+/* The heading block stays put at the top. */
+.dash-main .focus-goal .focus-goal-head { flex: none; }
+/* Its two lines carry their own bottom margins from the base rule, and the
+   block owns the spacing between them — the box does not. */
+.dash-main .focus-goal .focus-goal-title { margin-bottom: 6px; }
+.dash-main .focus-goal .focus-goal-q { margin-bottom: 0; }
+
+/* The control and its bar, centred together in what is left.
+   `auto` on both sides of the pair is what centres them; the bar is pinned to
+   the stepper by a fixed gap rather than floating on its own, because "4.0
+   hrs" and "0.0 / 4.0 hrs focused" are one statement read top to bottom. */
+.dash-main .focus-goal .focus-stepper {
+    margin-top: auto;
+    margin-bottom: 22px;
+}
+/* On the *row*, not on `.focus-progress-wrap`, and that is the one trap in
+   this layout. The wrapper is `display: contents` (styles/dashboard.css, where
+   focus-mode needs the bar and its label as two separate grid items), so it is
+   not a flex item at all and a margin on it does nothing — the last flex child
+   in this box is the label row underneath the bar. */
+.dash-main .focus-goal .focus-progress-row { margin-bottom: auto; }
+
+/* Bigger, because there is the room and it is the one control on the card.
+   At the old size it read as a setting on a form; at this size it reads as the
+   thing the panel is for. */
+.dash-main .focus-goal .focus-step-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 26px;
+}
+.dash-main .focus-goal .focus-amount #focusHours { font-size: 3rem; }
 
 /* ---- The finish-the-day button, under the list -------------------------- */
 /* On the Tasks page this button sits *above* the list and its own rule spends
@@ -441,6 +478,18 @@ body:has(.dash) .app-main {
     transition: color 0.15s ease;
 }
 .dash-panel-link:hover { color: #A38A70; }
+
+/* What is through the link, under it. The link is the promise and this is the
+   contents — see the note in components/Dashboard/InsightCards.tsx. Quiet
+   enough that a reader who already knows can skip it every day. The link above
+   carries `margin-top: auto`, so this rides at the foot of the card with it. */
+.dash-panel-lede {
+    margin: 3px 0 0;
+    text-align: center;
+    font-size: 0.74rem;
+    line-height: 1.45;
+    color: #98A1AE;
+}
 
 /* ---- Header: title, tabs, Add Task -------------------------------------- */
 .dash-panel-head {
@@ -965,6 +1014,11 @@ html[data-theme="dark"] .dash-activity-list li,
 html[data-theme="dark"] .dash-tab {
     color: #8b949e;
 }
+
+/* This sheet states its colours literally and carries an explicit dark block,
+   so a new class needs a line here or it keeps its light value on a dark page.
+   Quieter than `.dash-panel-link` above it in both themes. */
+html[data-theme="dark"] .dash-panel-lede { color: #6e7781; }
 
 html[data-theme="dark"] .dash-task-head,
 html[data-theme="dark"] .dash-task-empty,

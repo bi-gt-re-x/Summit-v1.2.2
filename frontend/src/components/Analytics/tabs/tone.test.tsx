@@ -63,6 +63,8 @@ function habitsModel(tone: keyof typeof TONE_RULES): AnalyticsModel {
     waitFor: () => 0,
     all: [], tasks: [], streak: 0, toIso: '2026-08-01', spanText: 'the last 90 days',
     habits: [ANCHOR, SLIPPING],
+    /* No goals in this fixture, so nothing for the limiter line to name. */
+    goalLimits: [],
     byDate: new Map(),
     patterns: PATTERNS,
     shifts: [],

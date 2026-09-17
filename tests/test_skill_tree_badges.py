@@ -58,40 +58,51 @@ def test_an_invented_subject_routes_nowhere():
 
 def test_standing_counts_the_accounts_own_xp():
     worth = TREES['machine-learning'][1]
-    reached, best, deep = _tree_standing([
+    reached, best, deep, done, groups, total = _tree_standing([
         task('machine_learning', worth // 2),
         task('machine_learning', 0),
     ])
     assert reached == 1
     assert best == 50
     assert deep == 1
+    # Halfway is not covered, and half a tree is not a whole one's worth.
+    assert done == 0
+    assert total == 0
+    # One lattice, and the field the subject is filed under.
+    assert groups == 1
 
 
 def test_standing_is_capped_at_a_whole_tree():
     """A subject can be worked far past what its lattice covers. Uncapped,
     "halfway into 3 trees" would be reachable by grinding one of them."""
     worth = TREES['mathematics'][1]
-    reached, best, deep = _tree_standing([task('mathematics', worth * 4)])
+    reached, best, deep, done, _groups, total = _tree_standing(
+        [task('mathematics', worth * 4)])
     assert reached == 1
     assert best == 100
     assert deep == 1
+    assert done == 1
+    # Four trees' worth of work in one lattice is still one tree's worth of
+    # standing. This is the figure the cap is the whole argument for.
+    assert total == 1
 
 
 def test_standing_ignores_what_it_cannot_route():
-    reached, best, deep = _tree_standing([
+    assert _tree_standing([
         task('not_a_subject', 999_999), task(None, 100), task('', 100),
-    ])
-    assert (reached, best, deep) == (0, 0, 0)
+    ]) == (0, 0, 0, 0, 0, 0)
 
 
 def test_many_subjects_on_one_tree_are_one_tree():
     """Five languages open Foreign Languages. Reaching all five is reaching one
     lattice, not five — which is the whole reason the badge counts trees rather
     than subjects, next to the `subjects` badges it sits beside."""
-    reached, _best, _deep = _tree_standing([
+    reached, _best, _deep, _done, groups, _total = _tree_standing([
         task('spanish', 500), task('french', 500), task('japanese', 500),
     ])
     assert reached == 1
+    # And one field. Three languages are not three things to be good at.
+    assert groups == 1
 
 
 def test_the_mastery_heading_exists_and_is_filled():

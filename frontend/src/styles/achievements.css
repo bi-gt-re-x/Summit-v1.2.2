@@ -57,6 +57,9 @@ body:has(.ac-page) .app-main {
     --ac-gold: #c08324;
     --ac-rose: #c2407a;
     --ac-flame: #d2691e;
+    /* Analytics. A seventh heading needed a seventh tone, and teal is the one
+       hue the other six leave free at this lightness. */
+    --ac-teal: #0f7f86;
 
     --ac-radius: 16px;
     --ac-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .05);
@@ -87,6 +90,7 @@ html[data-theme="dark"] .ac-page {
     --ac-gold: #e0b23c;
     --ac-rose: #ff7bb0;
     --ac-flame: #ff9245;
+    --ac-teal: #3fc4cd;
 
     --ac-shadow: 0 1px 2px rgba(0, 0, 0, .2), 0 8px 24px rgba(0, 0, 0, .26);
     color-scheme: dark;
@@ -406,6 +410,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 .ac-cat.cat-learning { --t: var(--ac-violet); }
 .ac-cat.cat-mastery { --t: var(--ac-rose); }
 .ac-cat.cat-milestones { --t: var(--ac-blue); }
+.ac-cat.cat-analytics { --t: var(--ac-teal); }
 .ac-cat.cat-special { --t: var(--ac-gold); }
 
 .ac-cat-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -717,3 +722,82 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
        motion this setting is asking not to see. */
     .ac-tile.is-earned:is(.tier-4, .tier-5):hover::after { animation: none; }
 }
+
+/* ---------- The skill trees ----------------------------------------------
+   The one heading with a section of its own. See `TreeWall` in
+   frontend/src/pages/Achievements.tsx for why it earns the space; this only
+   has to make it read as part of the page rather than as a panel bolted on.
+
+   It takes Mastery's own tone through `--t`, so the mark, the ladder bars and
+   every tile in it agree with the chip in the band above — which is the whole
+   argument for one tone per heading, applied to the section as well as to the
+   chip. */
+.ac-trees { --t: var(--ac-rose); }
+
+.ac-trees .ac-section-head h2 {
+    display: flex; align-items: center; gap: 10px;
+}
+.ac-trees-mark {
+    display: grid; place-items: center;
+    width: 30px; height: 30px; flex: none;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--t) 13%, transparent);
+    color: var(--t);
+}
+.ac-trees-mark svg { width: 17px; height: 17px; }
+
+.ac-trees-note {
+    margin: 0;
+    max-width: 78ch;
+    color: var(--ac-muted);
+    font-size: 12.5px;
+    line-height: 1.6;
+}
+
+/* The six ladders, each showing its next rung. `auto-fill` rather than a fixed
+   count: six is what there are today and the grid should not have to be edited
+   the day a seventh ladder is added. */
+.ac-ladders {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    margin: 0; padding: 0;
+    list-style: none;
+}
+.ac-ladder {
+    display: flex; align-items: flex-start; gap: 11px;
+    padding: 12px 13px;
+    border: 1px solid var(--ac-line);
+    border-radius: 12px;
+    background: var(--ac-card);
+    min-width: 0;
+}
+.ac-ladder-count {
+    flex: none;
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--t) 12%, transparent);
+    color: var(--t);
+    font-size: 11px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.ac-ladder-next {
+    display: flex; flex-direction: column; gap: 4px;
+    min-width: 0; flex: 1;
+    font-size: 11.5px;
+}
+.ac-ladder-next strong {
+    color: var(--ac-text);
+    font-size: 12.5px; font-weight: 650;
+}
+/* A ladder with every rung earned has no bar and needs none — the sentence in
+   it is the whole message, and an empty track under it would read as nothing
+   done rather than as everything. */
+.ac-ladder-next.is-done strong { color: var(--t); }
+
+.ac-trees .ac-foot a {
+    color: var(--t);
+    font-weight: 650;
+    text-decoration: none;
+}
+.ac-trees .ac-foot a:hover { text-decoration: underline; }

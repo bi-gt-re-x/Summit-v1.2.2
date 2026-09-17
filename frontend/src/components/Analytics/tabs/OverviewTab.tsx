@@ -22,10 +22,13 @@
  * the page held the figures; the model holds them now, so the only thing left
  * to pass is the one callback that opens a screen the page owns.
  */
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { PanelGroup } from '../charts';
 import {
   BaselinePanel,
+  ActiveDayPrinciple,
+  AwayNotice,
   Collecting,
   ConsistencyPanel,
   LearningStrip,
@@ -47,6 +50,13 @@ import type { Stat } from '../StatRow';
 import { number as fmtNumber } from '@/utils/format';
 import { partsOfDay } from '@/utils/habits';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { ObservationNote } from '../Observation';
+import { Knows } from '../Knows';
+import { LimiterLine } from '../Limiter';
+import { LensLine } from '../Lens';
+import { throughLens } from '@/utils/goalLens';
+import { whatSummitKnows } from '@/utils/knows';
+import { OTHER_KEY } from '@/utils/subjectXp';
 import { stageShows } from '@/utils/dataMaturity';
 import type { LearningItem } from '../index';
 
@@ -68,6 +78,10 @@ export function OverviewTab({
   const {
     breakdown,
     card,
+    goalLimits,
+    lens,
+    nameOf,
+    observed,
     compareLabel,
     figures,
     subjectLabel,
@@ -114,6 +128,72 @@ export function OverviewTab({
   const aim = baseline.data?.baseline ?? null;
 
   /*
+   * What the page has worked out about the reader, as opposed to about the
+   * window — see the note at the top of utils/knows.
+   *
+   * Computed above the stage split because both branches draw it: the facts
+   * carry their own floors, so a young account gets the two that are true and
+   * a long one gets four, without this file deciding which stage deserves a
+   * profile.
+   */
+  /**
+   * The five factors under the growth score, in the order this reader's goal
+   * makes useful.
+   *
+   * The score itself is untouched — same number, same contributions, same bars.
+   * What moves is which of the five is read first, and that is the one thing a
+   * lens is allowed to do. See utils/goalLens, and `LensLine` below, which is
+   * what stops this being a silent reordering.
+   *
+   * With no lens this is `card.factors` in the order the score built them, so
+   * an account with no goals sees exactly what it always did.
+   */
+  const scoreFactors = useMemo(
+    () => throughLens(card.factors, (factor) => factor.name, lens),
+    [card.factors, lens],
+  );
+
+  const knows = useMemo(() => {
+    /* The recent leader, for the "current focus" line. Fourteen days rather
+       than the picker's window, because the point of the line is that it can
+       disagree with the all-time answer beside it — reading both off the same
+       range would make that impossible by construction. */
+    const cutoff = new Date(Date.parse(`${toIso}T00:00:00`) - 13 * 86_400_000)
+      .toISOString()
+      .slice(0, 10);
+    const lately = new Map<string, number>();
+    tasks.forEach((task) => {
+      if (task.status !== 'done' || !task.subject) return;
+      const day = (task.completed_at || '').slice(0, 10);
+      if (!day || day < cutoff || day > toIso) return;
+      lately.set(task.subject, (lately.get(task.subject) ?? 0) + 1);
+    });
+    let recentTop: string | null = null;
+    let most = 0;
+    lately.forEach((count, id) => {
+      if (count > most) {
+        most = count;
+        recentTop = nameOf(id);
+      }
+    });
+
+    return whatSummitKnows({
+      finished: tasks.filter((task) => task.status === 'done').length,
+      activeDays: maturity.activeDays,
+      spanDays: maturity.spanDays,
+      windowDays: slice.current.length,
+      subjects: breakdown.rows.map((row) => ({
+        name: row.name ?? row.label,
+        count: row.count,
+        /* The tail bucket. It belongs in the total and cannot be the leader —
+           see `lumped` in utils/knows. */
+        lumped: row.key === OTHER_KEY,
+      })),
+      recentTop,
+    });
+  }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, slice.current.length, tasks, toIso]);
+
+  /*
    * Day 0-7, in one path that gains panels rather than two that replace each
    * other.
    *
@@ -139,6 +219,7 @@ export function OverviewTab({
    */
   if (maturity.stage === 'new' || maturity.stage === 'early') {
     const finished = tasks.filter((task) => task.status === 'done').length;
+
     /* Against every task on the books, not against the ones that went well.
        Expired tasks count in the denominator — a rate that quietly drops the
        ones you missed is not a completion rate. */
@@ -149,6 +230,7 @@ export function OverviewTab({
         key: 'tasks',
         label: 'Tasks finished',
         value: fmtNumber(figures.tasks.value),
+        short: `${fmtNumber(figures.tasks.value)} ${figures.tasks.value === 1 ? 'task' : 'tasks'}`,
         tone: 'green',
         glyph: 'check',
       },
@@ -157,6 +239,7 @@ export function OverviewTab({
         label: 'Focus time',
         value: figures.focusHours.value.toFixed(1),
         unit: 'h',
+        short: `${figures.focusHours.value.toFixed(1)}h focused`,
         tone: 'blue',
         glyph: 'clock',
       },
@@ -172,6 +255,9 @@ export function OverviewTab({
         label: 'Current streak',
         value: String(streak),
         unit: streak === 1 ? 'day' : 'days',
+        /* Dropped from the digest at zero rather than printed as "0-day
+           streak", which reads as a rebuke on somebody's first morning. */
+        ...(streak > 0 ? { short: `${streak}-day streak` } : {}),
         tone: 'amber',
         glyph: 'flame',
       },
@@ -184,6 +270,7 @@ export function OverviewTab({
               key: 'completion',
               label: 'Completion rate',
               value: `${completion}%`,
+              short: `${completion}% completion`,
               tone: 'pink' as const,
               glyph: 'target' as const,
               note: `${finished} of ${tasks.length} finished`,
@@ -193,17 +280,27 @@ export function OverviewTab({
 
     return (
       <>
+        {/* Before anything else, when there is a gap to explain. A reader
+            coming back to a page of zeros is owed the reason before they are
+            shown the zeros. */}
+        <AwayNotice maturity={maturity} />
+
         <section id="overview" className="ax-section">
-          <Collecting
-            maturity={maturity}
-            stats={basics}
-            nextBrings={
-              maturity.stage === 'new'
-                ? 'your first patterns open here'
-                : 'weekly trends and a comparison against last week open here'
-            }
-          />
+          <Collecting maturity={maturity} stats={basics} />
         </section>
+
+        {/* The one inference allowed this early, and only once it is earned.
+            Everything else at this stage is a tally, which is the right
+            default and also the reason an account can spend a fortnight being
+            handed totals and never once told anything about itself. The
+            restraint is in utils/observations — a floor, an effect size, and a
+            tier that has to be earned on both — so this renders nothing at all
+            until there is something honest to render. */}
+        {observed[0] && (
+          <section className="ax-section">
+            <ObservationNote observation={observed[0]} />
+          </section>
+        )}
 
         {/* Day 4-7. Two tallies and nothing inferred from them — see the note
             at the top of Early for the line these sit on the safe side of.
@@ -224,6 +321,15 @@ export function OverviewTab({
               an empty map is how this component is told so. */}
           <SubjectPanel rows={breakdown.rows} previous={EMPTY_PREVIOUS} />
         </section>
+
+        {/* The profile, under the counts it is drawn from. Each fact carries
+            its own floor, so this is two sentences on a young account and
+            nothing at all on a brand new one. */}
+        <section className="ax-section">
+          <Knows facts={knows} />
+        </section>
+
+        <ActiveDayPrinciple />
 
         <WhereNext />
       </>
@@ -269,16 +375,11 @@ export function OverviewTab({
 
   return (
     <>
+      <AwayNotice maturity={maturity} />
+
       {note && (
         <section className="ax-section">
-          <StageNote
-            maturity={maturity}
-            brings={
-              maturity.stage === 'weekly'
-                ? 'your Growth Rating and how you compare open here'
-                : 'the last of the long-range readings open here'
-            }
-          />
+          <StageNote maturity={maturity} />
           {/* What the rest of the page is still working on. Named rather than
               left silent: a reader who does not know Habits exists cannot look
               forward to it. See the note at the top of LearningStrip. */}
@@ -323,7 +424,7 @@ export function OverviewTab({
         {judgement && (
         <ScorePanel
           score={score}
-          factors={card.factors}
+          factors={scoreFactors}
           series={scoreLine}
           marks={scoreMarks}
           dates={scoreDates}
@@ -476,6 +577,45 @@ export function OverviewTab({
           </PanelGroup>
         )}
       </section>
+
+      {/* The profile. Same block as the early stages draw, further down a
+          longer page: by here the reader has seen the window's readings and
+          this is what they add up to about them. */}
+      {/* One line, and only the worst one.
+
+          The Overview's whole argument is that it is the shortest honest
+          answer to "how am I doing" and hands the longer questions to the tabs
+          built for them — see the note at the top of this file, and `WhereNext`
+          at the bottom. A goal reading belongs in that answer, because a
+          reader's own goals are what "how am I doing" is usually about; a
+          column of them would be this tab restating the Recommendations tab at
+          lower resolution, which is the exact thing four rows were deleted for
+          doing. So: the most concentrated one, in a sentence, with the way
+          in. */}
+      {goalLimits[0] && (
+        <section className="ax-section">
+          <LimiterLine row={goalLimits[0]} />
+        </section>
+      )}
+
+      {/* One line, for the same reason the limiter above it is one line: this
+          tab is the shortest honest answer to "how am I doing" and hands the
+          longer questions on. The full reading is on Recommendations. */}
+      {lens && (
+        <section className="ax-section">
+          <LensLine lens={lens} />
+        </section>
+      )}
+
+      <section className="ax-section">
+        <Knows facts={knows} />
+      </section>
+
+      {/* The rule every "active days" figure above depends on, at the length
+          it can be left on screen permanently. The full note only appears
+          beside a countdown, so an account past the staged tabs has not seen
+          it in months. See `ActiveDayPrinciple`. */}
+      <ActiveDayPrinciple />
 
       <WhereNext />
     </>

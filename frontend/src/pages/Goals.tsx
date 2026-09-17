@@ -889,6 +889,7 @@ export default function Goals() {
                     }
                     onSuggest={suggestMilestones}
                     onRedraftStones={redraftStones}
+                    onFillSteps={(entry) => void draftChecklists(entry.id)}
                     onSuggestSteps={(stone) => void suggestSteps(stone)}
                     /* Only while filtered. The health chip carries its reason
                        as a tooltip everywhere else, which is enough when the
@@ -1145,6 +1146,13 @@ export default function Goals() {
             );
           }}
           onSuggestSteps={(stone) => void suggestSteps(stone)}
+          /* The two the drawer's own row needs. `redraftStones` confirms where
+             a ladder exists; `draftChecklists` is additive and does not. Both
+             already existed for the card's menu — see the note on
+             `redraftStones` — and the drawer is where a plan is actually
+             built, so it is the door that most wanted them. */
+          onRedraftStones={redraftStones}
+          onFillSteps={(entry) => void draftChecklists(entry.id)}
           planning={
             planning === open.id
             || (open.milestones ?? []).some((stone) => stone.id === planning)

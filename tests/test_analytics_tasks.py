@@ -12,9 +12,63 @@ clause that drifts, a decode that stops running because it was written for the
 `SELECT *` path. So these check the two things a projection has to keep true:
 every row that was there is still there, and each one still decodes the way the
 rest of the app expects.
+
+The wire shape is columns rather than rows — `{fields, rows}` — because two
+thirds of the old payload was the sixteen field names repeated once per task.
+`read` below is the decoder, and it is the same zip the client does; see
+`rehydrate` in frontend/src/services/analytics.ts. Every assertion here is about
+the rows that come out of it, which is what the page actually sees, so this file
+holds the endpoint to the same promises it always did.
 """
 from backend.api.analytics import ANALYTICS_TASK_FIELDS
 from backend.database import connection as db
+
+
+def read(client):
+    """The endpoint's answer, as the rows every panel downstream works with.
+
+    Nulls are dropped, which is the client's decoder and not a convenience
+    here: the object endpoint omitted a NULL column entirely, and
+    `utils/diagnosis` on the other side tests `met_deadline !== undefined` to
+    find the tasks that had a deadline. A null left in would pass that test.
+    See `rehydrate` in frontend/src/services/analytics.ts.
+    """
+    body = client.get('/api/analytics/tasks').json()
+    assert body['success'] is True, body
+    return [
+        {f: v for f, v in zip(body['fields'], values) if v is not None}
+        for values in body['rows']
+    ]
+
+
+def test_an_absent_field_stays_absent(client):
+    """The trap in a positional encoding, pinned.
+
+    A row has to carry a slot for every field, so an unrated task's
+    `met_deadline` goes on the wire as null where it used to be missing. What
+    reaches the page must still be missing — see the note on `read`.
+    """
+    make(client, name='never rated')
+
+    body = client.get('/api/analytics/tasks').json()
+    at = body['fields'].index('met_deadline')
+    assert body['rows'][0][at] is None
+    assert 'met_deadline' not in read(client)[0]
+
+
+def test_sends_the_field_names_once(client):
+    """The saving, asserted rather than assumed.
+
+    A row carries values in `fields` order and no keys of its own. If somebody
+    puts the objects back on the wire this is the test that says so, because
+    everything else here passes either way — `read` above would still work.
+    """
+    make(client, name='one')
+
+    body = client.get('/api/analytics/tasks').json()
+    assert body['fields'] == [f for f in ANALYTICS_TASK_FIELDS]
+    assert body['rows'] and isinstance(body['rows'][0], list)
+    assert len(body['rows'][0]) == len(body['fields'])
 
 
 def make(client, **fields):
@@ -34,15 +88,13 @@ def test_returns_every_task_the_account_owns(client):
     for index in range(5):
         make(client, name='task %d' % index)
 
-    body = client.get('/api/analytics/tasks').json()
-    assert body['success'] is True
-    assert len(body['tasks']) == len(db.tasks_for('tester'))
+    assert len(read(client)) == len(db.tasks_for('tester'))
 
 
 def test_returns_only_the_declared_columns(client):
     make(client, description='a long description nothing on that page reads')
 
-    row = client.get('/api/analytics/tasks').json()['tasks'][0]
+    row = read(client)[0]
     assert set(row) <= set(ANALYTICS_TASK_FIELDS)
     # The field the projection exists for.
     assert 'description' not in row
@@ -52,7 +104,7 @@ def test_keeps_the_values_the_full_read_gives(client):
     make(client, name='rated', difficulty=4, execution=2, subject='maths')
 
     full = {t['id']: t for t in db.tasks_for('tester')}
-    for thin in client.get('/api/analytics/tasks').json()['tasks']:
+    for thin in read(client):
         for field, value in thin.items():
             assert full[thin['id']][field] == value, field
 
@@ -66,7 +118,7 @@ def test_decodes_booleans_as_booleans(client):
     """
     make(client, met_deadline=True)
 
-    row = client.get('/api/analytics/tasks').json()['tasks'][0]
+    row = read(client)[0]
     assert row['met_deadline'] is True
 
 
@@ -91,7 +143,7 @@ def test_is_scoped_to_the_signed_in_account(client, stranger):
     make(client, name='mine')
     stranger.post('/api/tasks', json={'name': 'theirs', 'xp_reward': 5, 'due_date': ''})
 
-    titles = [t['title'] for t in client.get('/api/analytics/tasks').json()['tasks']]
+    titles = [t['title'] for t in read(client)]
     assert 'theirs' not in titles
 
 

@@ -23,10 +23,9 @@ import { describe, expect, it } from 'vitest';
 import { GoalsTab } from './GoalsTab';
 import { HabitsTab } from './HabitsTab';
 import { OverviewTab } from './OverviewTab';
-import { draw, fakeData, fakeModel, nameOf, subjects } from './fixtures';
+import { draw, fakeData, fakeModel, matureOverview, nameOf, subjects } from './fixtures';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { buildHabits, habitSummary } from '@/utils/habits';
-import { summaryFigures } from '@/utils/growthSummary';
 import { task } from '@/test/factories';
 
 /**
@@ -53,49 +52,6 @@ function bodyOf(head: HTMLElement): HTMLElement {
   const body = head.closest('.ax-group')?.querySelector<HTMLElement>('.ax-group-body');
   if (!body) throw new Error('group has no body');
   return body;
-}
-
-/**
- * A mature account: past every gate, with quality, tallies and extras on.
- *
- * `maturity.stage` is 'full' so OverviewTab takes its long branch rather than
- * the Collecting one, which is the branch the groups live on.
- */
-function matureOverview() {
-  return fakeModel({
-    historyDays: 400,
-    maturity: {
-      stage: 'full',
-      activeDays: 120,
-      spanDays: 400,
-      next: null,
-      toNext: null,
-      progress: 1,
-      lastActive: '2026-08-01',
-    },
-    detail: { quality: true, tallies: true, extras: true, rows: 12 },
-    logStyle: 'tasks',
-    showStanding: true,
-    /* From the real builder over an empty slice, for the reason ./fixtures
-       gives: `Tiles` reads eight fields off this and a hand-written three
-       fails on the fourth. */
-    figures: summaryFigures({ current: [], previous: [] }),
-    rhythmRate: { rate: 0.5, previousRate: 0.4, bestMonth: null },
-    card: { value: 8, factors: [] },
-    score: 8,
-    scoreLine: [],
-    scoreMarks: [],
-    heatRows: [],
-    sparks: { xp: [], tasks: [], focusHours: [], consistency: [], quality: [] },
-    ratingRows: [],
-    ratingBands: [],
-    ratingGrid: [],
-    compareLabel: 'the 90 days before',
-    previousSpanText: 'the 90 days before',
-    grain: 'weekly',
-    metric: 'tasks',
-    fromIso: '2026-05-01',
-  });
 }
 
 describe('Overview', () => {

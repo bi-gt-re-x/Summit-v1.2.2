@@ -15,7 +15,7 @@ rule that lives in a table has to be migrated to change. The table is still
 written: `_sync_catalogue` reconciles it on first read — inserting what is
 missing and rewriting what has changed — so the schema stays the description of
 the app it belongs to and a reader querying the database directly sees the same
-hundred badges the page does.
+badges the page does.
 
 ## Earned once, dated forever
 
@@ -28,16 +28,35 @@ time, because that is a statement about now.
 
 ## Every metric is measured, none is invented
 
-Twenty-one metrics, and every one is a count over a table the app already
-keeps: tasks and when they were finished, the focus ledger, the XP ledger,
-goals, notes, records, calendar events. Nothing here maintains a counter of its
-own and nothing here writes to the account's own totals — the same rule
-records.py follows, that a page which scores the record does not get to change
-it.
+Every metric is a count over a table the app already keeps: tasks and when they
+were finished, the focus ledger, the XP ledger, goals, notes, records, calendar
+events. Nothing here maintains a counter of its own and nothing here writes to
+the account's own totals — the same rule records.py follows, that a page which
+scores the record does not get to change it.
 
-That constraint is what the hundred badges are built around. "Finish 200 tasks
+That constraint is what the whole catalogue is built around. "Finish 200 tasks
 before 8am" is a badge because `completed_at` is a timestamp; "read 50 articles"
 is not a badge, because nothing in this app knows what an article is.
+
+## The graded metrics come from the analytics engine, not from here
+
+Nine of them — the growth score, the five metric grades under it, the
+consistency rate, the share of finished work that was rated, and the share that
+met its deadline — are read off `analytics.ratings` in
+backend/tracking/analytics.py rather than recounted.
+
+That is the point of them rather than an implementation detail. A badge that
+recomputed "consistency" would be a second definition of a word the analytics
+page has already defined, scored and graded, and the two would disagree the
+first time either was edited — the reader would be told they are at 80% on one
+page and shown a locked badge asking for 80% on another. Going through the one
+engine means a badge is a *threshold on a published figure*, and the figure it
+is a threshold on is the one the reader can already see the working for.
+
+It also means these badges move both ways while unearned, which the counting
+ones cannot: a grade can fall. That is fine and is the same rule the streak
+badges follow — earning is a row with a date on it, and `_record_earned` never
+takes one back.
 
 ## Achievement XP is a score, not currency
 
@@ -50,7 +69,7 @@ above forbids.
 
 ## Hidden badges
 
-Five of the hundred are `hidden`: the page does not name them until they are
+Six of them are `hidden`: the page does not name them until they are
 earned. They exist so that the wall has a floor nobody can see the bottom of,
 and they are deliberately out of reach on any ordinary account — a five-hundred
 day streak, ten thousand hours of focus, level 250. The last of those is
@@ -68,20 +87,32 @@ from fastapi import APIRouter, Depends
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.config.skill_trees import TREES as SKILL_TREES, tree_for
+from backend.config.subjects import BY_ID as SUBJECTS
 from backend.database import connection as db
+from backend.tracking import analytics as analytics_tracking
 from backend.tracking.auth import load_user
 from backend.tracking.xp import event_day, level_for_total_xp
 
 router = APIRouter(tags=['achievements'])
 
-#: The six headings the wall is filed under, in reading order.
+#: The seven headings the wall is filed under, in reading order.
 #:
 #: Mastery is the skill trees. It is its own heading rather than more Learning
 #: badges because it answers a different question: Learning counts what was
 #: done, Mastery counts how far into a subject it went. A hundred hours of
 #: focus and a lattice half filled in are both worth saying, and neither is a
-#: bigger version of the other.
-CATEGORIES = ('Productivity', 'Consistency', 'Learning', 'Mastery', 'Milestones', 'Special')
+#: bigger version of the other. The page gives it a section of its own on top
+#: of the chip every heading gets — see `TreeWall` in
+#: frontend/src/pages/Achievements.tsx for why that one is worth the space.
+#:
+#: Analytics is the graded report card: not how much was done, but how well it
+#: scored. It is last before Special because it is the only heading a reader
+#: cannot move by working more — only by working better — so it reads as the
+#: end of the ladder rather than another rung on it.
+CATEGORIES = (
+    'Productivity', 'Consistency', 'Learning', 'Mastery', 'Milestones',
+    'Analytics', 'Special',
+)
 
 #: What each difficulty rating is called. 1 is a first afternoon, 5 is a year
 #: of the app taken seriously.
@@ -179,19 +210,66 @@ CATALOGUE = (
     #
     # Measured on the skill trees, and on the account's own XP rather than on
     # the trees' authored `percent` — see `_tree_standing`.
+    #
+    # Six ladders, because "how far into the trees have you got" is six
+    # questions and the first three could not tell them apart. `trees` is how
+    # many were touched at all and `trees_deep` how many passed half: a reader
+    # with twenty trees at 5% and a reader with two at 90% scored the same on
+    # both and are not doing the same thing.
+    #
+    # `trees_done` is the top of the depth ladder — a lattice actually covered,
+    # which `tree_best` can only ever say once however many are finished.
+    # `tree_groups` is breadth that means something: the nine catalogue fields
+    # (Maths and science, Computing, Creative…) rather than a count of
+    # lattices, so opening five languages is one field and not five. `tree_xp`
+    # is every lattice's own capped standing added up, in whole trees' worth of
+    # work, and it is the only figure here that keeps moving after a tree caps.
+    #
+    # Thresholds climb inside each ladder, so there is always exactly one next
+    # rung on each — tests/test_skill_tree_badges.py is what holds that true.
+
+    # How many lattices the work has touched at all.
     ('trees-1',      'First Lattice',         'Reach a skill tree.',                              'trees',       1,     1, 'Mastery'),
     ('trees-3',      'Three Fronts',          'Reach 3 different skill trees.',                   'trees',       3,     1, 'Mastery'),
+    ('trees-5',      'Five Lattices',         'Reach 5 different skill trees.',                   'trees',       5,     2, 'Mastery'),
     ('trees-8',      'Broad Front',           'Reach 8 different skill trees.',                   'trees',       8,     2, 'Mastery'),
     ('trees-15',     'Wide Curriculum',       'Reach 15 different skill trees.',                  'trees',       15,    3, 'Mastery'),
     ('trees-25',     'Whole Shelf',           'Reach 25 different skill trees.',                  'trees',       25,    4, 'Mastery'),
+    ('trees-40',     'Cartography',           'Reach 40 different skill trees.',                  'trees',       40,    5, 'Mastery'),
+
+    # How far into the single best one.
+    ('tree-10',      'First Steps Up',        'Get a tenth of the way into a skill tree.',        'tree_best',   10,    1, 'Mastery'),
     ('tree-25',      'Foot in the Door',      'Get a quarter of the way into a skill tree.',      'tree_best',   25,    1, 'Mastery'),
     ('tree-50',      'Halfway Up',            'Get halfway into a skill tree.',                   'tree_best',   50,    2, 'Mastery'),
     ('tree-75',      'Three Quarters',        'Get three quarters of the way into a skill tree.', 'tree_best',   75,    3, 'Mastery'),
+    ('tree-90',      'Near the Summit',       'Get 90% of the way into a skill tree.',            'tree_best',   90,    4, 'Mastery'),
     ('tree-100',     'Topped Out',            'Cover a whole skill tree.',                        'tree_best',   100,   4, 'Mastery'),
+
+    # How many got past half.
     ('deep-trees-1', 'Depth',                 'Get halfway into 1 skill tree.',                   'trees_deep',  1,     2, 'Mastery'),
+    ('deep-trees-2', 'Two Deep',              'Get halfway into 2 skill trees.',                  'trees_deep',  2,     2, 'Mastery'),
     ('deep-trees-3', 'Three Deep',            'Get halfway into 3 skill trees.',                  'trees_deep',  3,     3, 'Mastery'),
     ('deep-trees-6', 'Specialist',            'Get halfway into 6 skill trees.',                  'trees_deep',  6,     4, 'Mastery'),
     ('deep-trees-10', 'Many Mountains',       'Get halfway into 10 skill trees.',                 'trees_deep',  10,    5, 'Mastery'),
+    ('deep-trees-15', 'A Range of Peaks',     'Get halfway into 15 skill trees.',                 'trees_deep',  15,    5, 'Mastery'),
+
+    # How many were covered outright.
+    ('trees-done-1', 'Summit',                'Cover a whole skill tree.',                        'trees_done',  1,     3, 'Mastery'),
+    ('trees-done-2', 'Two Summits',           'Cover 2 whole skill trees.',                       'trees_done',  2,     4, 'Mastery'),
+    ('trees-done-5', 'Five Summits',          'Cover 5 whole skill trees.',                       'trees_done',  5,     5, 'Mastery'),
+    ('trees-done-10', 'The Whole Range',      'Cover 10 whole skill trees.',                      'trees_done',  10,    5, 'Mastery'),
+
+    # How many different fields they sit in.
+    ('tgroup-2',     'Two Fields',            'Reach skill trees in 2 different fields.',         'tree_groups', 2,     1, 'Mastery'),
+    ('tgroup-4',     'Four Fields',           'Reach skill trees in 4 different fields.',         'tree_groups', 4,     2, 'Mastery'),
+    ('tgroup-6',     'Six Fields',            'Reach skill trees in 6 different fields.',         'tree_groups', 6,     3, 'Mastery'),
+    ('tgroup-9',     'Every Field',           'Reach skill trees in all 9 fields.',               'tree_groups', 9,     5, 'Mastery'),
+
+    # And the total, which keeps going after every one of the above has capped.
+    ('treexp-1',     'A Tree’s Worth',        'Do a whole skill tree’s worth of work.',           'tree_xp',     1,     2, 'Mastery'),
+    ('treexp-3',     'Three Trees’ Worth',    'Do 3 skill trees’ worth of work.',                 'tree_xp',     3,     3, 'Mastery'),
+    ('treexp-8',     'Eight Trees’ Worth',    'Do 8 skill trees’ worth of work.',                 'tree_xp',     8,     4, 'Mastery'),
+    ('treexp-20',    'Twenty Trees’ Worth',   'Do 20 skill trees’ worth of work.',                'tree_xp',     20,    5, 'Mastery'),
 
     # ---- Milestones: the numbers the app counts in ----------------------
     ('xp-1000',      'Getting Going',         'Earn 1,000 XP.',                                   'xp',          1000,  1, 'Milestones'),
@@ -222,6 +300,43 @@ CATALOGUE = (
     ('rec-25',       'Statistician',          'Log 25 personal records.',                         'records',     25,    3, 'Milestones'),
     ('rec-50',       'Your Own Worst Rival',  'Log 50 personal records.',                         'records',     50,    4, 'Milestones'),
 
+    # ---- Analytics: not how much, but how well it scored -----------------
+    #
+    # Every threshold here is on a figure `analytics.ratings` publishes — see
+    # the module note. Nothing is recounted, so a badge asking for 80%
+    # consistency is asking for the number printed on the analytics page, and
+    # the reader can open the working behind it.
+    #
+    # The grade ladders stop at 90 rather than at 100. A metric's score is a
+    # blend, and the top of several of them is only reachable in a window where
+    # nothing went wrong at all; a badge nobody can earn is a badge that makes
+    # the wall feel rigged rather than hard. The S grade is the one exception,
+    # and it is deliberately the single hardest visible badge on the wall.
+    ('score-40',     'Graded',                'Reach a Growth Score of 40.',                      'growth_score', 40,   1, 'Analytics'),
+    ('score-60',     'Passing Grade',         'Reach a Growth Score of 60.',                      'growth_score', 60,   2, 'Analytics'),
+    ('score-75',     'Solid Record',          'Reach a Growth Score of 75.',                      'growth_score', 75,   3, 'Analytics'),
+    ('score-85',     'Straight B',            'Reach a Growth Score of 85.',                      'growth_score', 85,   4, 'Analytics'),
+    ('score-90',     'Top of the Class',      'Reach a Growth Score of 90.',                      'growth_score', 90,   5, 'Analytics'),
+    ('prod-70',      'Productive',            'Score 70 on productivity.',                        'productivity_score', 70, 2, 'Analytics'),
+    ('prod-90',      'Prolific',              'Score 90 on productivity.',                        'productivity_score', 90, 4, 'Analytics'),
+    ('qual-70',      'Good Work',             'Score 70 on quality.',                             'quality_score', 70,  2, 'Analytics'),
+    ('qual-90',      'Excellent Work',        'Score 90 on quality.',                             'quality_score', 90,  4, 'Analytics'),
+    ('cons-70',      'Reliable',              'Score 70 on consistency.',                         'consistency_score', 70, 2, 'Analytics'),
+    ('cons-90',      'Metronome',             'Score 90 on consistency.',                         'consistency_score', 90, 4, 'Analytics'),
+    ('eff-70',       'Efficient',             'Score 70 on efficiency.',                          'efficiency_score', 70, 2, 'Analytics'),
+    ('eff-90',       'Sharp',                 'Score 90 on efficiency.',                          'efficiency_score', 90, 4, 'Analytics'),
+    ('foc-70',       'Focused',               'Score 70 on focus.',                               'focus_score',  70,   2, 'Analytics'),
+    ('foc-90',       'Locked In',             'Score 90 on focus.',                               'focus_score',  90,   4, 'Analytics'),
+    ('rate-50',      'Half the Days',         'Show up on 50% of your days.',                     'consistency_rate', 50, 1, 'Analytics'),
+    ('rate-75',      'Most Days',             'Show up on 75% of your days.',                     'consistency_rate', 75, 3, 'Analytics'),
+    ('rate-90',      'Nearly Every Day',      'Show up on 90% of your days.',                     'consistency_rate', 90, 5, 'Analytics'),
+    ('ontime-75',    'Punctual',              'Meet 75% of your deadlines.',                      'on_time',      75,   2, 'Analytics'),
+    ('ontime-90',    'Dependable',            'Meet 90% of your deadlines.',                      'on_time',      90,   4, 'Analytics'),
+    ('rated-25',     'Marking Your Work',     'Rate 25 finished tasks.',                          'rated',        25,   1, 'Analytics'),
+    ('rated-100',    'Honest Record',         'Rate 100 finished tasks.',                         'rated',        100,  2, 'Analytics'),
+    ('rated-500',    'Nothing Unexamined',    'Rate 500 finished tasks.',                         'rated',        500,  4, 'Analytics'),
+
+
     # ---- Special: the odd ones, and the five nobody is told about -------
     ('night-10',     'Night Owl',             'Finish 10 tasks between midnight and 4am.',        'night',       10,    2, 'Special'),
     ('dayxp-5000',   'Once in a Lifetime',    'Earn 5,000 XP in a single day.',                   'day_xp',      5000,  5, 'Special'),
@@ -249,6 +364,17 @@ HIDDEN = (
     ('hidden-ascended',  'Ascended',           'Reach level 250.',                           'level',    250,   'Ascended'),
 )
 
+#: The nine read off the analytics report card rather than counted here.
+#:
+#: Named as a set because two things need to know which they are: `_graded`,
+#: which zeroes all of them for an account too new to score, and `_signature`,
+#: which has to include something that moves when a *grade* moves rather than
+#: only when a count does.
+GRADED_METRICS = (
+    'growth_score', 'productivity_score', 'quality_score', 'consistency_score',
+    'efficiency_score', 'focus_score', 'consistency_rate', 'on_time', 'rated',
+)
+
 #: What each metric is called on the page, so a locked badge can say "412 / 500
 #: tasks" without the client holding a second copy of this list.
 METRIC_LABELS = {
@@ -272,7 +398,22 @@ METRIC_LABELS = {
     'subjects': 'subjects',
     'trees': 'trees',
     'trees_deep': 'trees',
+    'trees_done': 'trees',
     'tree_best': '% of a tree',
+    'tree_groups': 'fields',
+    'tree_xp': "trees' worth",
+    # The graded half. A score is out of 100 and a rate is a percentage, and
+    # the unit says so rather than leaving "68 / 90" to be read as a count of
+    # something.
+    'growth_score': '/ 100',
+    'productivity_score': '/ 100',
+    'quality_score': '/ 100',
+    'consistency_score': '/ 100',
+    'efficiency_score': '/ 100',
+    'focus_score': '/ 100',
+    'consistency_rate': '% of days',
+    'on_time': '% on time',
+    'rated': 'rated',
     'notes': 'notes',
     'goals': 'goals',
     'records': 'records',
@@ -332,7 +473,7 @@ def _sync_catalogue():
     in the table already under earlier names and thresholds, and a table holding
     "Fifty in" for a badge the page calls "Half a Hundred" makes the claim at
     the top of this module — that a reader querying the database sees the same
-    hundred badges — false.
+    badges — false.
 
     A badge removed from the catalogue keeps its row and anybody's earning of
     it, because deleting it would cascade `user_achievements` and take
@@ -402,14 +543,36 @@ def _tree_standing(done):
     be reachable by grinding one subject until the arithmetic said 300%, which
     is the opposite of what the badge is for. Covering a tree is covering it.
 
-    Returns (trees reached, best percent, trees at or past half).
+    ## The six figures, and why breadth is counted twice
+
+    `reached` and `groups` are both breadth and they are not the same breadth.
+    Five languages open one lattice, so `reached` already refuses to call that
+    five subjects — but Spanish, French and Japanese are still one *field*, and
+    a reader who has opened eight lattices inside Computing has not gone wide.
+    `groups` is the catalogue's own nine headings (backend/config/subjects.py),
+    which is the coarsest honest answer to "how many different things is this
+    person doing".
+
+    `total` is the one figure that keeps moving after a tree is capped: every
+    lattice's own capped share, added up and divided by 100, so it reads as
+    whole trees' worth of work. A reader who has topped out four trees and is
+    a third into a fifth is at 4.3 and the badge ladder above has somewhere
+    left to go.
+
+    Returns (trees reached, best percent, trees at or past half, trees
+    covered, fields reached, whole trees' worth).
     """
     earned = {}
+    groups = set()
     for row in done:
-        tree = tree_for((row.get('subject') or '').strip())
+        subject = (row.get('subject') or '').strip()
+        tree = tree_for(subject)
         if tree is None:
             continue
         earned[tree] = earned.get(tree, 0) + float(row.get('xp_value') or 0)
+        group = (SUBJECTS.get(subject) or {}).get('group')
+        if group:
+            groups.add(group)
 
     shares = []
     for tree, xp in earned.items():
@@ -417,19 +580,69 @@ def _tree_standing(done):
         if worth > 0:
             shares.append(min(100, int(xp / worth * 100)))
 
-    return len(earned), max(shares, default=0), sum(1 for s in shares if s >= 50)
+    return (
+        len(earned),
+        max(shares, default=0),
+        sum(1 for s in shares if s >= 50),
+        sum(1 for s in shares if s >= 100),
+        len(groups),
+        int(sum(shares) // 100),
+    )
+
+
+def _graded(username):
+    """The nine figures that come off the analytics report card.
+
+    Read through `analytics.ratings` rather than recounted here, which is the
+    whole point of them — see "The graded metrics" in the module note.
+
+    `record=False` because reading the card normally files a dated snapshot per
+    metric (backend/tracking/analytics.py), and this is not a reader looking at
+    their report card. Letting the badge check write snapshots would put a row
+    in the history for every notification sweep, which would turn the analytics
+    page's own history chart into a record of how often the bell was polled.
+
+    An account too new to be scored gets zeros. That is the honest answer and
+    not a failure: every badge on these metrics is then simply unearned, which
+    is what an unscored account should see.
+    """
+    card = analytics_tracking.ratings(username, record=False)
+    if not card:
+        return dict.fromkeys(GRADED_METRICS, 0)
+
+    metrics = card.get('metrics') or {}
+
+    def score(name):
+        return int(round(float((metrics.get(name) or {}).get('score') or 0)))
+
+    quality = metrics.get('quality') or {}
+    consistency = metrics.get('consistency') or {}
+    efficiency = metrics.get('efficiency') or {}
+    return {
+        'growth_score': int(round(float((card.get('overall') or {}).get('score') or 0))),
+        'productivity_score': score('productivity'),
+        'quality_score': score('quality'),
+        'consistency_score': score('consistency'),
+        'efficiency_score': score('efficiency'),
+        'focus_score': score('focus'),
+        'consistency_rate': int(round(float(consistency.get('rate') or 0))),
+        'on_time': int(round(float(efficiency.get('on_time_pct') or 0))),
+        'rated': int(quality.get('rated_tasks') or 0),
+    }
 
 
 def _figures(username, user):
     """The account's current value for every metric a badge is measured on.
 
-    One pass over each table. Everything is counted off what the app already
-    stores — see the module note — so a figure here is always a re-reading of
-    the record rather than a number this endpoint keeps.
+    One pass over each table, plus one read of the analytics report card.
+    Everything is counted off what the app already stores — see the module note
+    — so a figure here is always a re-reading of the record rather than a
+    number this endpoint keeps.
     """
     mine = db.tasks_for(username)
     done = [row for row in mine if row.get('status') == 'done']
-    trees, tree_best, trees_deep = _tree_standing(done)
+    (trees, tree_best, trees_deep,
+     trees_done, tree_groups, tree_xp) = _tree_standing(done)
 
     per_day = {}
     early = night = weekend = priority = 0
@@ -487,7 +700,16 @@ def _figures(username, user):
     }
 
     return {
-        'tasks': int(user.get('tasks_completed') or 0),
+        # Counted off the record rather than read from `users.tasks_completed`.
+        #
+        # That column is a running total the app keeps, and it does not come
+        # back down when a finished task is deleted — on the largest account in
+        # this database it says 18,638 where the rows say 18,331. Every other
+        # surface that counts finished work counts the rows (the analytics page
+        # among them), so reading the column here made the badge ladder the one
+        # place in the app with a different idea of how much had been done, and
+        # handed out "Finish 2,500 tasks" three hundred tasks early.
+        'tasks': len(done),
         'priority': priority,
         'day_tasks': max(per_day.values(), default=0),
         'events': sum(
@@ -514,12 +736,16 @@ def _figures(username, user):
         'trees': trees,
         'tree_best': tree_best,
         'trees_deep': trees_deep,
+        'trees_done': trees_done,
+        'tree_groups': tree_groups,
+        'tree_xp': tree_xp,
         'notes': len(db.rows_for('notes', username)),
         'goals': sum(
             1 for row in db.rows_for('goals', username)
             if row.get('status') == 'completed'
         ),
         'records': len(db.rows_for('records', username)),
+        **_graded(username),
     }
 
 
@@ -544,6 +770,107 @@ def _record_earned(username, earned_ids):
     return mine
 
 
+# --------------------------------------------------------------------------
+# Earning, off the page
+# --------------------------------------------------------------------------
+#: Where the last-evaluated signature is kept, per account.
+#:
+#: `user_settings` is a plain key/value table and `get_settings` only ever
+#: returns keys listed in FIELDS (backend/api/settings.py), so an internal key
+#: stored here is invisible to the settings page rather than merely unlisted on
+#: it. That is why this is not a new column: the row already has a home.
+SIGNATURE_KEY = 'achievements_seen'
+
+
+def _signature(username):
+    """What the badges were last worked out against.
+
+    Three parts, and each is there for a failure the other two do not catch.
+
+    `db.badge_signature` is the record — every count a badge could be earned
+    off, in one cheap query.
+
+    The **day** is in it because nine of the metrics are grades, and a grade
+    moves with the calendar as well as with the work: the report card is scored
+    over a rolling ninety days, so a bad stretch ageing out of the window can
+    lift a score with nothing new happening. Without the day those nine badges
+    would only ever be noticed on a day something else also moved.
+
+    The **catalogue size** is in it because adding a badge has to re-open the
+    question for accounts that already cleared its threshold. Without it,
+    everything added above would stay unearned on every existing account until
+    that account happened to finish a task.
+    """
+    return '{}|{}|{}'.format(
+        db.badge_signature(username), datetime.now().date().isoformat(), len(ALL))
+
+
+def check_earned(username, user, force=False):
+    """Work out what this account has earned, and write down anything new.
+
+    Returns `(figures, newly earned)`. The sweep turns the second half into
+    sentences and throws the first away; the page wants both, which is why they
+    come back together — working the figures out is the expensive half and the
+    page would otherwise pay for it twice.
+
+    `figures` is None when the guard skipped the work, which is the one case a
+    caller must not read it: nothing was computed, and the honest answer to
+    "what are this account's figures" is that this call did not ask.
+
+    ## Why this is not only called by the page
+
+    It used to be. `list_achievements` was the only thing that ever wrote a row
+    to `user_achievements`, which meant a badge was not earned when you earned
+    it — it was earned when you next went and *looked at the wall*. The bell
+    already knew how to announce one (`_progress_candidates` in
+    backend/tracking/notify.py reads that table), so the notification was real
+    and arrived in the wrong order: finish the task, hear nothing, open
+    Achievements a week later, and only then be told.
+
+    So the sweep calls this too, and the badge is announced within the minute
+    — or within the second, because the client re-reads notifications on the
+    same `summit:stats-changed` event a completion fires.
+
+    ## The guard
+
+    Working this out is a pass over every task the account owns plus a reading
+    of the report card: ~400ms on the largest account here. The sweep runs on a
+    sixty-second poll *and* on every completion, so paying that each time would
+    have made finishing twelve tasks four seconds of server work for an answer
+    that did not change.
+
+    `force` is what the page passes. A reader looking at the wall gets the
+    figures worked out whatever the signature says, because the page prints
+    them all and not just the earned ones — the guard is about whether anything
+    could have been *earned*, which is a narrower question than the one the
+    page is asking.
+    """
+    if not force:
+        seen = db.user_setting(username, SIGNATURE_KEY)
+        if seen == _signature(username):
+            return None, []
+
+    # Before any row is written, because `user_achievements.achievement_id`
+    # references the catalogue table and a badge added to `CATALOGUE` in this
+    # release has no row there yet. The page reached this by calling it first;
+    # a sweep is now the other way in, and the foreign key does not care which.
+    _sync_catalogue()
+
+    figures = _figures(username, user)
+    earned_ids = [
+        badge['id'] for badge in ALL
+        if figures.get(badge['metric'], 0) >= badge['threshold']
+    ]
+    before = {row.get('achievement_id') for row in db.rows_for('user_achievements', username)}
+    _record_earned(username, earned_ids)
+
+    # Written after the work, not before: a signature stored ahead of a read
+    # that then failed would say the badges are up to date when they are not.
+    db.set_user_setting(username, SIGNATURE_KEY, _signature(username))
+    fresh = [badge for badge in ALL if badge['id'] in set(earned_ids) - before]
+    return figures, fresh
+
+
 @router.get('/api/achievements')
 def list_achievements(username: str = Depends(current_username)):
     name = (username or '').strip()
@@ -551,14 +878,15 @@ def list_achievements(username: str = Depends(current_username)):
     if not user:
         return fail('Account not found')
 
-    _sync_catalogue()
-    figures = _figures(name, user)
-
-    earned_ids = [
-        badge['id'] for badge in ALL
-        if figures.get(badge['metric'], 0) >= badge['threshold']
-    ]
-    dates = _record_earned(name, earned_ids)
+    # `force`, because this page prints every badge's progress and not only
+    # what is earned — see the note on `check_earned`. It writes the rows and
+    # updates the signature, so the sweep that runs a second later finds
+    # nothing left to do.
+    figures, _fresh = check_earned(name, user, force=True)
+    dates = {
+        row.get('achievement_id'): row.get('earned_at')
+        for row in db.rows_for('user_achievements', name)
+    }
 
     badges = []
     for badge in ALL:

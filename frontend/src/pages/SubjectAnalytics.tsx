@@ -78,7 +78,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Ambient, ErrorState, Loading, PageHero, type HeroTone } from '@/components';
-import { AreaChart, Columns, Radar, Scatter } from '@/components/Analytics';
+import { AreaChart, Columns, ObservationNote, Radar, Scatter } from '@/components/Analytics';
 import { WINDOWS, type WindowKey } from '@/components/Analytics/data';
 import { gradeFor } from '@/utils/analyticalScore';
 import { subjectModel, type SubjectGoal } from '@/components/Subject/model';
@@ -86,6 +86,7 @@ import { subjectState } from '@/components/Subject/state';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
+import { compositionOf, SubjectFacts } from '@/components/Subject/Facts';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
 import {
   bandVolume,
@@ -105,8 +106,8 @@ import { latticeFor, treeReading } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
 import { treeStanding } from '@/skills/standing';
 import { useApi, useAuth, useDocumentTitle, useSettings, useSubjectIndex } from '@/hooks';
+import { taskHistory } from '@/services/taskHistory';
 import {
-  analyticsTasks,
   saveSubjectMilestones,
   subjectBriefAvailable,
   readSubject,
@@ -130,6 +131,7 @@ import { getGoals, updateGoal } from '@/services/goals';
 import { measureOf } from '@/components/Goals';
 import { createTask } from '@/services/tasks';
 import { format } from '@/utils';
+import { observations } from '@/utils/observations';
 import '@/styles/analytics.css';
 import '@/styles/subject.css';
 import '@/styles/subject-state.css';
@@ -265,10 +267,15 @@ export default function SubjectAnalytics() {
      that wrote back would change the other page under the reader. */
   const [span, setSpan] = useState<WindowKey>(prefs.analytics_window);
 
+  /* Through `taskHistory`, which is the same request the analytics page makes
+     and the largest one the app makes at all. A reader arrives here *from* that
+     page, so this used to be a second full download of bytes that were already
+     parsed a moment ago — and going back was a third. See
+     services/taskHistory. */
   const call = useMemo(
     () =>
       username
-        ? analyticsTasks
+        ? () => taskHistory(username)
         : () => Promise.resolve({ success: false as const, message: 'Sign in to see a subject.' }),
     [username],
   );
@@ -319,6 +326,24 @@ export default function SubjectAnalytics() {
       ),
     [goals.data, span, subjectId, tasks.data, today],
   );
+
+  /* Everything filed under this subject, unwindowed — the facts panel counts
+     what is here rather than what landed in the picker's range, because "8
+     tasks" on a page about a subject means the subject and not the last
+     thirty days. `state` keeps the window; this deliberately does not. */
+  const mine = useMemo(
+    () => (tasks.data?.tasks ?? []).filter((task) => task.subject === subjectId),
+    [subjectId, tasks.data],
+  );
+
+  const composition = useMemo(() => compositionOf(mine), [mine]);
+
+  /* The one tendency this page is allowed to state before the folds below have
+     enough to diagnose anything. Scoped to this subject, so "most of your
+     finished work here happens in the evening" is about this subject rather
+     than about the account. Empty until something clears the floor in
+     utils/observations, and the panel simply does not draw. */
+  const found = useMemo(() => observations(mine), [mine]);
 
   /* The four relationships, hoisted out of the brief's request body.
      They were computed there and only there, which was fine while the model
@@ -1191,6 +1216,29 @@ export default function SubjectAnalytics() {
                 ))}
               </div>
             </div>
+
+            {/* ---- WHAT IS ACTUALLY HERE ------------------------------- */}
+            {/* Before the verdict, and needing none of what the verdict needs.
+                The page used to open on a ring reading "unrated" for anybody
+                who had filed work without rating it — the page reporting on
+                its own inputs rather than on the reader's. These are counts,
+                they are true from the first task, and they are what somebody
+                came to a page about one subject to see. See
+                components/Subject/Facts, including why the split is difficulty
+                rather than the topic breakdown it would obviously rather be. */}
+            <SubjectFacts
+              finished={mine.filter((task) => task.status === 'done').length}
+              total={mine.length}
+              hours={state.time.hours}
+              axis={composition.axis}
+              rows={composition.rows}
+              momentum={state.momentum}
+            />
+
+            {/* The first thing Summit can say rather than count. Draws only
+                once something clears the floor in utils/observations, wearing
+                the tier it earned and the sample behind it. */}
+            {found[0] && <ObservationNote observation={found[0]} />}
 
             {/* ---- WHAT ARE YOU TRYING TO ACCOMPLISH ------------------- */}
             {/* First, and at the size of a heading, because everything under

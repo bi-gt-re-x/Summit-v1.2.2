@@ -225,8 +225,7 @@ html.focus-mode .focus-panel {
 }
 html.focus-mode .focus-goal { display: contents; }
 html.focus-mode .focus-panel h2 { grid-area: head; margin: 0 0 4px; }
-html.focus-mode .focus-goal-title,
-html.focus-mode .focus-goal-q,
+html.focus-mode .focus-goal-head,
 html.focus-mode .focus-hint { display: none; }        /* redundant / moot mid-session */
 
 html.focus-mode .focus-stepper {
@@ -722,7 +721,6 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     background: #E9ECEF;
     border-radius: 20px;
     overflow: hidden;
-    margin-bottom: 10px;
 }
 .focus-progress-fill {
     height: 100%;
@@ -733,9 +731,16 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 .focus-progress-row {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 10px;
     font-size: 13px;
     color: #6C757D;
+    font-variant-numeric: tabular-nums;
 }
+/* The percentage is the reading; the words beside it are the working. Same
+   weight for both made the row one undifferentiated grey line. */
+.focus-progress-row #focusProgressPct { font-weight: 650; color: #2C302E; }
 /* Start Focus + hint are pushed to the bottom of the (tall) panel so the goal
    box sits up top and the action anchors down, with the hint just beneath it. */
 .focus-start-btn {
@@ -1620,6 +1625,7 @@ html[data-theme="dark"] .focus-progress-row,
 html[data-theme="dark"] .focus-hint {
     color: #8b949e;
 }
+html[data-theme="dark"] .focus-progress-row #focusProgressPct { color: #f0f2f5; }
 html[data-theme="dark"] .focus-step-btn {
     background: #0d1117;
     border-color: #30363d;

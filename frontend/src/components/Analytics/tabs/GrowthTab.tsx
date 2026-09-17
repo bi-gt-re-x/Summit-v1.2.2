@@ -57,7 +57,7 @@ import {
   movers,
   whatChanged,
 } from '../GrowthPeriod';
-import { Locked } from '../Locked';
+import { Building } from '../Building';
 import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
 import type { AnalyticsModel } from '../useAnalyticsModel';
@@ -166,17 +166,21 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
 
   if (periods.error && !data) {
     return (
-      <Locked
+      /* A failed request, not a short record — so `kind` rather than the
+         waiting state this used to borrow with need=1, have=0. That produced
+         a meter reading "0 / 1" and told somebody whose request had errored
+         that they needed one more day of work. See ../Building. */
+      <Building
         title="Growth"
-        remaining={1}
-        need={1}
-        have={0}
-        promise="Growth needs a graded record to read, and this one could not be loaded."
-        brings={[
-          'Every period, side by side',
-          'Which measure moved furthest',
-          'What actually changed underneath it',
-          'Where this month sits in all of it',
+        kind="problem"
+        headline="Summit could not load your graded record."
+        promise="Nothing is missing from your history — this one request failed. Try again in a moment."
+        asksLead="When it loads, Growth answers:"
+        asks={[
+          'Which period did you actually do best in?',
+          'Which measure moved furthest, and why?',
+          'What changed underneath the score?',
+          'Where does this month sit in all of it?',
         ]}
         action={
           <Link to="/analytics" className="ax-btn">

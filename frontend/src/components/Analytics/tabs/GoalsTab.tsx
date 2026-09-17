@@ -1,7 +1,7 @@
 /**
  * Goals — whether what the reader aimed at is going to happen.
  *
- * No `Locked` gate, unlike the tab it replaced. Trends needed three weeks
+ * No `Building` gate, unlike the tab it replaced. Trends needed three weeks
  * before a slope meant anything; this needs a goal, and an account with none is
  * exactly who the empty state here is written for — telling them to come back
  * in three weeks would be answering a question they did not ask.
@@ -39,7 +39,7 @@ export function GoalsTab({ model }: { model: AnalyticsModel }) {
   return (
     <>
       {/* ---- Goals ---------------------------------------------------
-          No `Locked` gate, unlike the tab it replaced. Trends needed three
+          No `Building` gate, unlike the tab it replaced. Trends needed three
           weeks before a slope meant anything; this needs a goal, and an
           account with none is exactly who the empty state here is written
           for — telling them to come back in three weeks would be answering

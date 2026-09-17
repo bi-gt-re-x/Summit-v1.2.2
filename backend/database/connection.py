@@ -952,6 +952,155 @@ def columns_for(table, user_id, columns, order='rowid'):
         con.close()
 
 
+def series_signature(user_id):
+    """A cheap reading of everything the growth series is folded out of.
+
+    Four scalars in one round trip, for `series` in backend/tracking/growth.py
+    to compare against the value its cached rows were built from. ~1ms against
+    the ~49ms the series costs to build, which is the whole point of it.
+
+    Sums rather than counts where a row can change without being added: editing
+    a task's rating moves its day's quality and changes no count, and a focus
+    session lengthening a day already on the ledger does the same. A count
+    alone would serve a chart that silently stopped updating.
+    """
+    con = connect()
+    try:
+        parts = []
+        for table, expression, clause in (
+            ('xp_events', 'COUNT(*) || "/" || CAST(COALESCE(SUM(amount), 0) AS INTEGER)', '1'),
+            ('focus_days', 'COUNT(*) || "/" || CAST(COALESCE(SUM(seconds), 0) AS INTEGER)', '1'),
+            # Only the rated, finished rows reach the series, so only their
+            # count and the sum of what they are rated matter here.
+            ('tasks',
+             'COUNT(*) || "/" || CAST(COALESCE(SUM(difficulty * execution), 0) AS INTEGER)',
+             "status = 'done' AND difficulty BETWEEN 1 AND 5 AND execution BETWEEN 1 AND 5"),
+        ):
+            if not _schema(con, table):
+                parts.append('-')
+                continue
+            row = con.execute(
+                'SELECT {} AS sig FROM "{}" WHERE user_id = ? AND {}'.format(
+                    expression, table, clause),
+                (user_id,)).fetchone()
+            parts.append(str(row['sig'] if row else ''))
+        return ':'.join(parts)
+    finally:
+        con.close()
+
+
+def rated_days_for(user_id):
+    """Per-day quality, difficulty and execution, aggregated by SQLite.
+
+    `{day: {rated_tasks, quality_score, avg_difficulty, avg_execution}}` — the
+    same map `_ratings_by_day` in backend/tracking/growth.py used to build by
+    pulling every task the account owns into Python and looping.
+
+    ## Why it moved down here
+
+    That loop read `tasks_for`, which is every column of every row — including
+    `description`, unbounded free text that this calculation does not look at.
+    On the largest account in this database it was 90ms of the 141ms the whole
+    growth series took, to produce about 1,800 rows of output from 20,000 rows
+    of input. Aggregating where the rows already are is ~5ms.
+
+    ## The rule is the same rule
+
+    Both halves or neither, each between 1 and 5 — that is `rating_of` in
+    backend/tracking/analytics.py, which is the authority on what counts as
+    rated and stays the authority for every other caller. The WHERE clause here
+    is that function, in SQL, and tests/test_report_card.py holds the two to the
+    same answer.
+
+    Written out rather than derived from it because a predicate cannot be
+    shared across that boundary: one is a Python function over a dict and the
+    other is a string SQLite parses. What can be shared is the test.
+    """
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return {}
+        rows = con.execute(
+            "SELECT substr(completed_at, 1, 10) AS day, "
+            '       COUNT(*) AS rated, '
+            '       AVG(difficulty * execution) AS quality, '
+            '       AVG(difficulty) AS difficulty, '
+            '       AVG(execution) AS execution '
+            'FROM tasks '
+            "WHERE user_id = ? AND status = 'done' "
+            "  AND completed_at IS NOT NULL AND completed_at != '' "
+            '  AND difficulty BETWEEN 1 AND 5 '
+            '  AND execution BETWEEN 1 AND 5 '
+            'GROUP BY day',
+            (user_id,)).fetchall()
+
+        # Rounded here to the same places the Python version rounded to, so the
+        # numbers on the chart do not move by a tenth when this lands.
+        return {
+            row['day']: {
+                'rated_tasks': row['rated'],
+                'quality_score': round(row['quality'], 1),
+                'avg_difficulty': round(row['difficulty'], 1),
+                'avg_execution': round(row['execution'], 1),
+            }
+            for row in rows if row['day']
+        }
+    finally:
+        con.close()
+
+
+def columns_table_for(table, user_id, columns, order='rowid'):
+    """`columns_for`, as columns rather than as rows.
+
+    Returns `(fields, rows)` — the field names once, and a list of value lists
+    in that order. The same data `columns_for` returns and the same query
+    behind it; what changes is the shape it is serialised in.
+
+    ## Why this exists
+
+    Measured on the largest account in this database — 20,538 tasks, the
+    sixteen fields in ANALYTICS_TASK_FIELDS:
+
+        one object per row    5.99 MB
+        the field names alone 4.00 MB      (67% of it)
+        as columns            3.44 MB      (57% of the original)
+
+    Two thirds of what that endpoint sent was the string "completed_at" and
+    fifteen others, repeated twenty thousand times. JSON has no way to say a
+    key once, so the only way to stop paying for it is not to send objects.
+
+    It parses about twice as fast on the client for the same reason — half the
+    tokens, and no per-row object allocation during the parse.
+
+    ## Why not something cleverer
+
+    Dropping nulls, interning the repeated `subject` and `priority` values, or
+    delta-encoding the dates would each save a little more and each needs a
+    matching decoder that can be wrong. This one has a decoder that cannot: zip
+    the names against each row. See `rehydrate` in
+    frontend/src/services/analytics.ts.
+    """
+    con = connect()
+    try:
+        schema = _schema(con, table)
+        if not schema:
+            return [], []
+        known = {name for name, _, _ in schema}
+        wanted = [name for name in columns if name in known]
+        if not wanted:
+            return [], []
+        query = 'SELECT {} FROM "{}" WHERE user_id = ? ORDER BY {}'.format(
+            ', '.join('"{}"'.format(name) for name in wanted), table, order)
+        records = _decode_records(con, table, con.execute(query, (user_id,)))
+        # Decoded through the same path as `columns_for`, so a JSON column or a
+        # stored boolean arrives as whatever the app expects rather than as
+        # whatever SQLite happened to hold. The transposition is the only
+        # difference between the two functions.
+        return wanted, [[row.get(name) for name in wanted] for row in records]
+    finally:
+        con.close()
+
+
 def find_row(table, row_id, user_id=None, key='id'):
     """One row by id, scoped to an account when one is given, or None."""
     con = connect()
@@ -1457,6 +1606,59 @@ def notifications_for(username, channels=None):
         sql += ' ORDER BY rowid DESC LIMIT ?'
         params.append(NOTIFICATION_CAP)
         return _decode_records(con, 'notifications', con.execute(sql, params))
+    finally:
+        con.close()
+
+
+def badge_signature(username):
+    """A cheap reading of everything a badge could be earned off.
+
+    Seven scalar aggregates in one round trip. It is not a figure anybody sees
+    and it is not compared for size — only for *change*, against the value
+    stored from the last time the badges were actually worked out. See
+    `_signature` in backend/api/achievements.py, which is the only caller and
+    holds the argument for why the guard exists.
+
+    The point is the asymmetry: working the badges out costs a pass over every
+    task the account owns plus a reading of the analytics report card, which is
+    ~400ms on the largest account in this database. This is four milliseconds
+    on the same account, and on an account where nothing has happened since the
+    last sweep it is the entire cost of deciding so.
+
+    Counts rather than sums where a count will do, and no ORDER BY anywhere:
+    every clause here is an index scan or a table count.
+    """
+    con = connect()
+    try:
+        parts = []
+        for table, clause, params in (
+            ('tasks', "status = 'done'", ()),
+            ('notes', '1', ()),
+            ('records', '1', ()),
+            ('goals', "status = 'completed'", ()),
+            ('calendar_events', 'completed', ()),
+            ('xp_events', '1', ()),
+        ):
+            if not _schema(con, table):
+                parts.append('-')
+                continue
+            row = con.execute(
+                'SELECT COUNT(*) AS n FROM "{}" WHERE user_id = ? AND {}'.format(
+                    table, clause),
+                (username,) + params).fetchone()
+            parts.append(str(row['n'] if row else 0))
+
+        # Focus is the one that has to be a sum: a session lengthening a day
+        # already on the ledger moves every focus badge and changes no count.
+        if _schema(con, 'focus_days'):
+            row = con.execute(
+                'SELECT CAST(COALESCE(SUM(seconds), 0) AS INTEGER) AS s '
+                'FROM focus_days WHERE user_id = ?', (username,)).fetchone()
+            parts.append(str(row['s'] if row else 0))
+        else:
+            parts.append('-')
+
+        return ':'.join(parts)
     finally:
         con.close()
 

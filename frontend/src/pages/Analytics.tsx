@@ -101,10 +101,11 @@
  * new account's first impression of the analysis a page of numbers about
  * somebody who does not exist, and taught the reader to discount the real ones
  * that arrived later. A tab that cannot be filled now says what it is waiting
- * for and when it opens — see `Locked` — and a new account is offered the one
+ * for and when it opens — see `Building` — and a new account is offered the one
  * thing it can actually do here, which is answer the questions above.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { STAGES, type Stage } from '@/utils/dataMaturity';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Ambient, ErrorState, Loading, PageHero } from '@/components';
 import { stageShows } from '@/utils/dataMaturity';
@@ -127,6 +128,8 @@ import {
   useAnalyticsModel,
   VIEWS,
   ViewTabs,
+  NEED_DAYS,
+  StageReached,
   viewFor,
   type SetupAnswers,
   type View,
@@ -356,6 +359,72 @@ export default function Analytics() {
 
 
   /**
+   * Arriving at a new stage, announced once.
+   *
+   * The comparison is between the stage the record *is* at and the highest one
+   * this account has been told about — never between two computed stages, and
+   * nothing is stored about maturity itself. `STAGES` is ordered weakest-first
+   * so an index comparison is the whole test, and it is a comparison rather
+   * than an equality so an account that crosses two thresholds between visits
+   * is told about the one it landed on rather than about neither.
+   *
+   * Nothing fires on an empty `analytics_stage_seen`: that is a reader who has
+   * never been announced to, which includes every account that existed before
+   * this key did. Announcing "Getting started" to somebody on their first
+   * morning would be an interruption to tell them nothing has happened yet, so
+   * the first visit records where they are and stays quiet.
+   */
+  const seenStage = prefs.analytics_stage_seen;
+  const stageNow = model.maturity.stage;
+  const climbed =
+    ready &&
+    seenStage !== '' &&
+    STAGES.indexOf(stageNow) > STAGES.indexOf(seenStage as Stage);
+
+  const [announced, setAnnounced] = useState(false);
+
+  /* First sight of this account: record where it stands and say nothing. That
+     is what gives the next climb something to be measured against, and it is
+     why an account that existed before this key did is not greeted with an
+     overlay for a stage it reached months ago. */
+  useEffect(() => {
+    if (ready && seenStage === '') void update({ analytics_stage_seen: stageNow });
+  }, [ready, seenStage, stageNow, update]);
+
+  const closeStage = useCallback(() => {
+    setAnnounced(true);
+    void update({ analytics_stage_seen: stageNow });
+  }, [stageNow, update]);
+
+  /**
+   * Leaving the questions unanswered, for good.
+   *
+   * Skipping used to set the local flag and nothing else, which made it a
+   * skip for exactly as long as the page stayed mounted: `editingSetup` is
+   * `useState`, so the next visit reset it to `null`, `firstRun` was still
+   * true — no flag, no baseline — and the wizard opened again. A reader who
+   * did not want to answer was asked on every single visit, which is the wall
+   * the screen was explicitly designed not to be.
+   *
+   * So a skip writes the same flag a finished run writes. That is what "not
+   * insisting" has to mean: the offer is made once. Every answer is still
+   * reachable afterwards — the baseline panel says "Set a baseline" and the
+   * settings page links back here with `?setup`, which is the re-entry the
+   * flag deliberately does not block.
+   *
+   * The screen closes whether or not the write lands. A failed flag costs the
+   * reader the same question next time; refusing to close costs them the page
+   * they were trying to reach.
+   */
+  const skipSetup = useCallback(() => {
+    setEditingSetup(false);
+    /* Only when it is not already set. An account reopening the screen from
+       the baseline panel is pressing Cancel, not skipping, and has answered
+       this long ago. */
+    if (!prefs.analytics_setup_done) void update({ analytics_setup_done: true });
+  }, [prefs.analytics_setup_done, update]);
+
+  /**
    * Whether the setup screen takes the page over.
    *
    * Only on an account that has genuinely never answered. Three conditions,
@@ -497,6 +566,15 @@ export default function Analytics() {
 
   return (
     <div className="ax-page">
+      {/* Over the page rather than in it. See the note at the top of
+          StageReached for why this one moment is allowed to interrupt. */}
+      {climbed && !announced && (
+        <StageReached
+          stage={stageNow}
+          activeDays={model.maturity.activeDays}
+          onDone={closeStage}
+        />
+      )}
       <Ambient />
       {/* No `pg-enter` here, unlike every other page. This one has its own
           arrival and always did — `.ax-panel` and the tiles carry `ax-enter`,
@@ -529,7 +607,28 @@ export default function Analytics() {
             onExportData={model.slice.current.length > 0 ? exportData : undefined}
             dataName={seriesFilename(username ?? 'account', new Date())}
           />
-          <ViewTabs active={view.key} onView={openView} />
+          {/* How far the three gated tabs are along, so the bar reads as
+              filling rather than as features the account does not have. From
+              the model, which is the only place that knows both the
+              thresholds and the active-day count — see `ViewTabs`. */}
+          <ViewTabs
+            active={view.key}
+            onView={openView}
+            filling={{
+              recommendations:
+                model.waitFor('recommendations') > 0
+                  ? { have: model.historyDays, need: NEED_DAYS.recommendations }
+                  : undefined,
+              habits:
+                model.waitFor('habits') > 0
+                  ? { have: model.historyDays, need: NEED_DAYS.habits }
+                  : undefined,
+              insights:
+                model.waitFor('insights') > 0
+                  ? { have: model.historyDays, need: NEED_DAYS.insights }
+                  : undefined,
+            }}
+          />
           {/* Not during setup, for the same reason the tab body is not: a
               window picker over a page with nothing in it to scope is a
               control that does nothing. The tabs stay, because they are the
@@ -556,7 +655,7 @@ export default function Analytics() {
             setOn={aim?.set_on ?? ''}
             prefs={prefs}
             onSave={saveSetup}
-            onSkip={() => setEditingSetup(false)}
+            onSkip={skipSetup}
           />
         ) : (
           <>

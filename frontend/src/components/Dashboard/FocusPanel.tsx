@@ -48,10 +48,17 @@ export function FocusPanel({ session }: FocusPanelProps) {
       </h2>
 
       <div className="focus-goal">
-        <h3 className="focus-goal-title">Focus Goal</h3>
-        <p className="focus-goal-q">
-          How much time do you want to focus today?
-        </p>
+        {/* The two lines of copy are one block, so the box can put them at its
+            top and centre the control below them. Four loose children could
+            only ever be evenly spaced or stacked; see the layout note on
+            `.dash-main .focus-goal` in styles/dashboard-home.css. */}
+        <div className="focus-goal-head">
+          <h3 className="focus-goal-title">Focus Goal</h3>
+          <p className="focus-goal-q">
+            How much time do you want to focus today?
+          </p>
+        </div>
+
         <div className="focus-stepper">
           <button
             type="button"

@@ -17,15 +17,18 @@ import { AdviceCard, CategoryFilter, FollowupPanel, OutlookPanel } from '@/compo
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
 import { PanelGroup } from '../charts';
-import { Locked } from '../Locked';
+import { LimiterCard } from '../Limiter';
+import { LensCard } from '../Lens';
+import { Building } from '../Building';
 import { SETTLE } from '@/utils/followup';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { whyFor } from '../milestones';
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & { data: AnalyticsData }) {
   const {
-    adoptedIds, advice, category, goalAdvice, historyDays, plan, projection, recent, reviewSummary,
+    adoptedIds, advice, category, goalAdvice, goalLimits, historyDays, lens, maturity, observed, plan, projection, recent, reviewSummary,
     reviews, setBudget, setCategory, setNudge, shown, shownDiagnoses, toneRules, waitFor, weekLeft,
     /* The three inputs this tab was not reading. `rhythm` carries the reader's
        typical sitting, drawn from their logged focus time; `reasons` is what
@@ -66,6 +69,15 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
 
   return (
     <>
+      {/* Above the plan, because it is the reason the plan is in this order.
+          A reader who meets the ranking first and the explanation second has
+          already decided the ranking is arbitrary. */}
+      {lens && (
+        <section className="ax-section">
+          <LensCard lens={lens} />
+        </section>
+      )}
+
       <section className="ax-section">
         <NextActions
           plan={plan}
@@ -92,6 +104,33 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           <DiagnosisEmpty enoughRecord={recent.previous.length >= 7} reported={reported} />
         )}
       </section>
+
+      {/* Why each goal is or is not moving, before what to do about it.
+
+          This sits above the goals' own advice rather than inside it, and the
+          two are different kinds of sentence. `goalAdvice` is an instruction
+          drawn from a goal's pace and its silences; a limiter names the
+          *subject* carrying the shortfall, which is the one reading on this
+          page a reader can act on without first deciding where to start. So it
+          ends in a way in rather than in a link back to the goals page.
+
+          Capped by the tone setting, same as the cards below: this is a
+          diagnosis and how many of those a reader meets at once is exactly
+          what that setting is about. See utils/analyticsPrefs. */}
+      {goalLimits.length > 0 && (
+        <section className="ax-section">
+          <PanelGroup
+            title="Why your goals are moving the way they are"
+            note="The subject carrying most of each goal's shortfall, counted off the tasks pointed at it. A goal whose work is spread evenly produces nothing here."
+          >
+            <div className="ax-limiters">
+              {goalLimits.slice(0, headlines).map((row) => (
+                <LimiterCard key={row.goalId} row={row} />
+              ))}
+            </div>
+          </PanelGroup>
+        </section>
+      )}
 
       {/* The goals' own advice, kept separate from the ranked list below
           rather than merged into it. `advice` is ranked by XP a year and
@@ -132,13 +171,21 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
       </section>
 
       {(waitFor('recommendations') > 0 || advice.length === 0) && (
-        <Locked
+        <Building
           title="Recommendations"
           remaining={waitFor('recommendations')}
           need={NEED_DAYS.recommendations}
           have={historyDays}
-          promise="Each one is priced off your own averages, and an average needs a fortnight."
-          brings={['What to change, ranked by worth', 'The arithmetic behind each', 'How hard it is', 'One tap to your task list']}
+          promise={whyFor(NEED_DAYS.recommendations)}
+          observation={observed[0] ?? null}
+          spanDays={maturity.spanDays}
+          asksLead="Summit will work out what to change, and what it is worth:"
+          asks={[
+            'Which single change would buy you the most?',
+            'What is that worth, in your own figures?',
+            'How hard would it actually be?',
+            'Did the last change you made work?',
+          ]}
           emptyMessage="No long gaps, no dead weekend, no late shift worth moving. Nothing to fix."
           action={
             <Link to="/analytics" className="ax-btn">
@@ -164,6 +211,19 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
             </p>
           )}
           <section className="ax-section">
+            {/* What this tab is, said once above the cards.
+                Each card names the finding behind it, but the cards are a grid
+                of them and the shape they share — measured, then understood,
+                then acted on, then measured again — is only visible from
+                above. Without it a reader has a list of tips; with it they
+                have the output of the rest of the page. */}
+            <p className="ax-loop">
+              <span className="ax-loop-step">You work</span>
+              <span className="ax-loop-step">Summit measures</span>
+              <span className="ax-loop-step is-here">It notices something</span>
+              <span className="ax-loop-step is-here">You get a change to try</span>
+              <span className="ax-loop-back">and the next reading says whether it worked</span>
+            </p>
             <CategoryFilter items={advice} chosen={category} onChoose={setCategory} />
             {shown.length > 0 && (
               <div className="ax-grid ax-grid-three">

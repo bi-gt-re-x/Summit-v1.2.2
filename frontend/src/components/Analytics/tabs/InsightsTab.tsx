@@ -20,19 +20,22 @@ import {
   WorkingPanel,
 } from '@/components/Insights';
 import { Patterns as DiscoveredPatterns } from '../Patterns';
-import { Locked } from '../Locked';
+import { Building } from '../Building';
+import { ObservationNote } from '../Observation';
 import { RatedTasksPanel, ReasonsPanel } from '../Quality';
 import { SubjectPanel } from '../Breakdown';
 import { InsightsPanel } from '../Longterm';
 import { PanelGroup } from '../charts';
+import { LimiterCard } from '../Limiter';
 import { unlock } from '@/utils/insight';
 import { PATTERN_DAYS } from '@/utils/recent';
 import { NEED_DAYS } from '../useAnalyticsModel';
+import { whyFor } from '../milestones';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function InsightsTab({ model }: { model: AnalyticsModel }) {
   const {
-    aimedShare, balance, breakdown, clock, discovered, figures, historyDays, how, insights, links, previousBySubject,
+    aimedShare, balance, breakdown, clock, discovered, figures, goalLimits, historyDays, how, insights, links, maturity, observed, previousBySubject,
     qualitySummary, rated, ratingDepth, reasonRows, reasons, rhythm, slice, spanText, state, waitFor, week,
     wins, why,
     /* What the account asked this page to be — see utils/analyticsPrefs. This
@@ -59,19 +62,55 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
   return (
     <>
       {waitFor('insights') > 0 && (
-        <Locked
+        <Building
           title="Insights"
           remaining={waitFor('insights')}
           need={NEED_DAYS.insights}
           have={historyDays}
-          promise="An explanation needs two comparable stretches to hold against each other."
-          brings={['Why the last stretch went that way', 'Your hours, week and rhythm', 'What moves together, with r and n', 'What is working']}
+          promise={whyFor(NEED_DAYS.insights)}
+          spanDays={maturity.spanDays}
+          asksLead="Summit will look for relationships across your work:"
+          asks={[
+            'When do you perform best?',
+            'Which subjects are improving fastest?',
+            'Where does perceived difficulty differ from execution?',
+            'What changed between your last two stretches?',
+          ]}
           action={
             <Link to="/habits" className="ax-btn">
               See habits
             </Link>
           }
         />
+      )}
+
+      {/* What this tab can already say, under the card explaining what it
+          cannot.
+
+          Insights is the *why* tab, and why needs two comparable stretches —
+          which is the gate and the reason nothing below is a correlation, a
+          projection or an explanation. What it is instead is every finding
+          that already clears its own floor in utils/observations, each
+          wearing the sample it came from and the confidence it earned.
+
+          That is the honest early form of this tab rather than a consolation
+          prize: the gated panels answer the same question with more behind
+          them, and these will still be true when they open. A reader who gets
+          nothing here until day twenty-eight learns to stop opening it. */}
+      {waitFor('insights') > 0 && observed.length > 0 && (
+        <section className="ax-section">
+          <PanelGroup
+            title="What is already true"
+            note="Findings with enough behind them to state, graded by how much that is."
+            defaultOpen
+          >
+            <div className="ax-observe-stack">
+              {observed.map((finding) => (
+                <ObservationNote key={finding.key} observation={finding} />
+              ))}
+            </div>
+          </PanelGroup>
+        </section>
       )}
 
       {waitFor('insights') === 0 && (
@@ -172,6 +211,25 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
                 depth={ratingDepth}
                 span={spanText}
               />
+
+              {/* Why a *goal* looks like this, in the group about why anything
+                  does. It belongs under this heading and not under the one
+                  above it: a limiter is a cause, and the panels beside it are
+                  the other causes this tab found. The difference is only that
+                  this one is attached to something the reader chose, which is
+                  what makes it the finding they are most likely to act on.
+
+                  No instruction here — that is the Recommendations tab, and
+                  the rule at the top of this file. The card names what is
+                  true and opens the door; it does not say to walk through
+                  it. */}
+              {goalLimits.length > 0 && (
+                <div className="ax-limiters">
+                  {goalLimits.slice(0, findings).map((row) => (
+                    <LimiterCard key={row.goalId} row={row} />
+                  ))}
+                </div>
+              )}
             </PanelGroup>
 
             <PanelGroup title="When and what you work on" note="The shape of the week, and where the effort goes">

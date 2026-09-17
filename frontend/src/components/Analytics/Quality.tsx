@@ -85,7 +85,7 @@ export function DepthPicker({ value, busy = false, onPick }: DepthPickerProps) {
 /**
  * What a quality panel says when the prompt has never been answered.
  *
- * Deliberately not the `Locked` treatment the gated tabs use. Locked counts
+ * Deliberately not the `Building` treatment the gated tabs use. That one counts
  * down to a date — "eleven more days" — because time is the only thing standing
  * between that account and the tab. Nothing is counting down here: rating is
  * optional, an account may never rate anything, and that is a supported way to
