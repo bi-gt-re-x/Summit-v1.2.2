@@ -13,7 +13,7 @@
  *
  * ## A locked hidden badge arrives blank
  *
- * Five of the hundred are hidden, and the server does not describe one until it
+ * Six of them are hidden, and the server does not describe one until it
  * is earned: the name is "???", the description says only that it exists, and
  * `threshold`, `value` and `metric` are all zeroed. That is why nothing here is
  * optional — the shape is the same for every badge, and the emptiness is the
@@ -31,11 +31,27 @@ export type Metric =
   | 'early' | 'weekend' | 'night'
   | 'focus' | 'focus_days' | 'focus_best'
   | 'subjects' | 'notes' | 'goals' | 'records'
-  | 'trees' | 'trees_deep' | 'tree_best';
+  | 'trees' | 'trees_deep' | 'trees_done' | 'tree_best' | 'tree_groups' | 'tree_xp'
+  /* The graded half, read off the analytics report card rather than counted.
+     See "The graded metrics" in backend/api/achievements.py. */
+  | 'growth_score' | 'productivity_score' | 'quality_score'
+  | 'consistency_score' | 'efficiency_score' | 'focus_score'
+  | 'consistency_rate' | 'on_time' | 'rated';
 
-/** The six headings the wall is filed under. */
+/** The seven headings the wall is filed under. */
 export type Category =
-  | 'Productivity' | 'Consistency' | 'Learning' | 'Mastery' | 'Milestones' | 'Special';
+  | 'Productivity' | 'Consistency' | 'Learning' | 'Mastery' | 'Milestones'
+  | 'Analytics' | 'Special';
+
+/**
+ * The heading the skill trees are filed under.
+ *
+ * Named rather than written out at the three call sites that test for it: the
+ * page gives this one category a section of its own, and a string literal
+ * repeated three times is how that section quietly stops matching the server
+ * if the heading is ever renamed.
+ */
+export const TREE_CATEGORY = 'Mastery' as const;
 
 export interface Badge {
   id: string;

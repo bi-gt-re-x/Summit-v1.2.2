@@ -1461,6 +1461,59 @@ def notifications_for(username, channels=None):
         con.close()
 
 
+def badge_signature(username):
+    """A cheap reading of everything a badge could be earned off.
+
+    Seven scalar aggregates in one round trip. It is not a figure anybody sees
+    and it is not compared for size — only for *change*, against the value
+    stored from the last time the badges were actually worked out. See
+    `_signature` in backend/api/achievements.py, which is the only caller and
+    holds the argument for why the guard exists.
+
+    The point is the asymmetry: working the badges out costs a pass over every
+    task the account owns plus a reading of the analytics report card, which is
+    ~400ms on the largest account in this database. This is four milliseconds
+    on the same account, and on an account where nothing has happened since the
+    last sweep it is the entire cost of deciding so.
+
+    Counts rather than sums where a count will do, and no ORDER BY anywhere:
+    every clause here is an index scan or a table count.
+    """
+    con = connect()
+    try:
+        parts = []
+        for table, clause, params in (
+            ('tasks', "status = 'done'", ()),
+            ('notes', '1', ()),
+            ('records', '1', ()),
+            ('goals', "status = 'completed'", ()),
+            ('calendar_events', 'completed', ()),
+            ('xp_events', '1', ()),
+        ):
+            if not _schema(con, table):
+                parts.append('-')
+                continue
+            row = con.execute(
+                'SELECT COUNT(*) AS n FROM "{}" WHERE user_id = ? AND {}'.format(
+                    table, clause),
+                (username,) + params).fetchone()
+            parts.append(str(row['n'] if row else 0))
+
+        # Focus is the one that has to be a sum: a session lengthening a day
+        # already on the ledger moves every focus badge and changes no count.
+        if _schema(con, 'focus_days'):
+            row = con.execute(
+                'SELECT CAST(COALESCE(SUM(seconds), 0) AS INTEGER) AS s '
+                'FROM focus_days WHERE user_id = ?', (username,)).fetchone()
+            parts.append(str(row['s'] if row else 0))
+        else:
+            parts.append('-')
+
+        return ':'.join(parts)
+    finally:
+        con.close()
+
+
 def live_fingerprints(username):
     """Every fingerprint this account already holds, deleted ones included.
 

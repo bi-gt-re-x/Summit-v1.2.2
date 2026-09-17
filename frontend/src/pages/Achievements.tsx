@@ -1,13 +1,14 @@
 /**
  * The badge wall.
  *
- * A hundred badges, and the page is arranged so that a reader meets them in
- * the order the questions arrive: how far am I, what did I just get, which
- * kinds am I behind on, and then the whole list.
+ * A wall of badges, arranged so that a reader meets them in the order the
+ * questions arrive: how far am I, what did I just get, which kinds am I behind
+ * on, what is next in the trees, and then the whole list.
  *
  *     the ring and three figures   how far along the wall is, and the streak
  *     Recently Earned              the last four, largest — the news
- *     Achievement Categories       five bars, one per heading
+ *     Achievement Categories       one bar per heading
+ *     Skill Trees                  the six tree ladders, and the way in
  *     All Achievements             the wall, in two grids: still to earn, then
  *                                  earned
  *
@@ -56,10 +57,10 @@
  * badge that is already won is a bar nobody reads, and it takes the row's
  * width from the one thing on it that is still news.
  *
- * ## The five hidden ones draw as they arrive
+ * ## The hidden ones draw as they arrive
  *
  * A locked hidden badge arrives with no name, no threshold and no progress —
- * see the service. The page does not have to know which five they are, and
+ * see the service. The page does not have to know which they are, and
  * could not leak them if it wanted to: it draws "???" because that is what it
  * was sent. What it adds is the lock styling and the line at the foot of the
  * list saying how many are still out there, which is the honest version of
@@ -67,14 +68,19 @@
  * and you have not found them.
  */
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import { useApi, useAuth, useDocumentTitle, usePageEntrance } from '@/hooks';
 import { achievements as service } from '@/services';
+import { TREE_CATEGORY } from '@/services/achievements';
 import type { Badge, Category, Metric } from '@/services/achievements';
 import '@/styles/achievements.css';
 
-/** The filter's options. "All" first, then the five headings. */
-const FILTERS = ['All Achievements', 'Productivity', 'Consistency', 'Learning', 'Mastery', 'Milestones', 'Special'] as const;
+/** The filter's options. "All" first, then the seven headings, server order. */
+const FILTERS = [
+  'All Achievements', 'Productivity', 'Consistency', 'Learning', 'Mastery',
+  'Milestones', 'Analytics', 'Special',
+] as const;
 type Filter = (typeof FILTERS)[number];
 
 /** How many of the most recent earnings lead the page. */
@@ -328,6 +334,24 @@ const METRIC_GLYPH: Record<Metric, ReactNode> = {
   trees: GLYPH.lattice,
   trees_deep: GLYPH.lattice,
   tree_best: GLYPH.lattice,
+  /* The three newer tree ladders take their own drawing rather than a fourth
+     lattice. Covering one outright is a summit, breadth across fields is a
+     globe, and the running total is a stack — a section of thirty-one badges
+     all wearing the same mark is a section nobody can scan. */
+  trees_done: GLYPH.mountain,
+  tree_groups: GLYPH.globe,
+  tree_xp: GLYPH.layers,
+  /* The graded half. A score is a gauge, a rate is a chart, and rating your
+     own work is a pen. */
+  growth_score: GLYPH.gauge,
+  productivity_score: GLYPH.gauge,
+  quality_score: GLYPH.gem,
+  consistency_score: GLYPH.gauge,
+  efficiency_score: GLYPH.stopwatch,
+  focus_score: GLYPH.target,
+  consistency_rate: GLYPH.bars,
+  on_time: GLYPH.clock,
+  rated: GLYPH.pen,
   notes: GLYPH.book,
   goals: GLYPH.target,
   records: GLYPH.medal,
@@ -345,7 +369,7 @@ const METRIC_GLYPH: Record<Metric, ReactNode> = {
  * already put in the reader's head.
  *
  * Keyed by id, so an override is impossible to attach to the wrong badge, and
- * deliberately partial — sixty of the hundred still take the family drawing,
+ * deliberately partial — most badges still take the family drawing,
  * because inventing a distinct picture for the fourth rung of the same ladder
  * is drawing a distinction the badges do not make. The rung is carried by the
  * tier's colour and its pips, which is how the wall says "III" without a word.
@@ -401,7 +425,7 @@ const BADGE_GLYPH: Record<string, ReactNode> = {
   'dayxp-5000': GLYPH.burst,
   'deep-14': GLYPH.hourglass,
 
-  // The five hidden ones, drawn only once they have been earned — until then
+  // The hidden ones, drawn only once they have been earned — until then
   // the padlock is the whole truth about them and Mark never asks for these.
   'hidden-nocturne': GLYPH.moonStar,
   'hidden-polymath': GLYPH.globe,
@@ -415,13 +439,14 @@ function glyphFor(badge: Badge): ReactNode {
   return BADGE_GLYPH[badge.id] ?? METRIC_GLYPH[badge.metric as Metric] ?? GLYPH.star;
 }
 
-/** The six headings, drawn. The same drawing the category's badges carry. */
+/** The seven headings, drawn. The same drawing the category's badges carry. */
 const CATEGORY_GLYPH: Record<Category, ReactNode> = {
   Productivity: GLYPH.target,
   Consistency: GLYPH.flame,
   Learning: GLYPH.book,
   Mastery: GLYPH.lattice,
   Milestones: GLYPH.trophy,
+  Analytics: GLYPH.gauge,
   Special: GLYPH.star,
 };
 
@@ -543,7 +568,7 @@ function RecentCard({ badge }: { badge: Badge }) {
  * bar and the score on one line and gave the description whatever was left,
  * which on a wide screen was one badge every sixty pixels of height and eight
  * hundred pixels of empty middle. Three or four tiles across is the same
- * hundred badges in a third of the scroll, and it puts badges beside each
+ * the whole wall in a third of the scroll, and it puts badges beside each
  * other, which is how a wall is read — the eye compares neighbours.
  *
  * The tile is the same size earned or locked. What changes is the tint and the
@@ -563,7 +588,7 @@ function BadgeTile({ badge }: { badge: Badge }) {
         <div className="ac-tile-top">
           <strong>{badge.name}</strong>
           {/* A secret badge's rank is withheld with the rest of it — the word
-              "Legendary" beside five blanked rows says which five they are. */}
+              "Legendary" beside the blanked rows would say which they are. */}
           <span className="ac-rank">{secret ? 'Hidden' : badge.tier_label}</span>
         </div>
         <span className="ac-quiet">{badge.description}</span>
@@ -642,6 +667,136 @@ function Wall({ title, note, badges }: { title: string; note: string; badges: Ba
     </>
   );
 }
+
+/**
+ * The skill trees, given a section of their own.
+ *
+ * ## Why this one heading gets more than a chip
+ *
+ * Every heading has a chip in the band above and a share of the wall below,
+ * and for five of the seven that is the right amount of room. Mastery is the
+ * exception for two reasons that have nothing to do with it being newer.
+ *
+ * It is the largest heading on the wall — thirty-one badges across six ladders
+ * — and it is the only one whose badges are not about the app at all. Every
+ * other badge is counted off something the reader did *here*: tasks finished,
+ * days turned up, XP earned. These are counted off how far into a *subject*
+ * the work went, against a curriculum somebody wrote, and the honest thing to
+ * do with a reader who has just learned that is show them the curriculum.
+ * Hence the way out at the foot of it, which is the only link on this page.
+ *
+ * Mixed into the wall, all of that was thirty-one tiles a reader met in tier
+ * order between "Night Owl" and "Six Figures", with nothing saying they were
+ * six ladders rather than a pile, and nothing saying where to go.
+ *
+ * ## It is a second view, not a second copy
+ *
+ * These badges are still in the wall below, under the filter and the search
+ * like everything else. This section is the same rows arranged by the thing
+ * that makes them different from each other — which ladder each is on — and
+ * that is a grouping the wall cannot do without becoming six walls.
+ */
+function TreeWall({ badges }: { badges: Badge[] }) {
+  /* The six ladders, in the order the server lists them, and each one's next
+     rung. `find` over a list already sorted by threshold inside its metric —
+     see the note in the Mastery block of backend/api/achievements.py, and the
+     test that holds it true. */
+  const ladders = useMemo(() => {
+    const out = new Map<string, { rows: Badge[]; next: Badge | null; earned: number }>();
+    badges.forEach((badge) => {
+      const key = badge.metric || 'other';
+      const entry = out.get(key) ?? { rows: [], next: null, earned: 0 };
+      entry.rows.push(badge);
+      if (badge.earned) entry.earned += 1;
+      out.set(key, entry);
+    });
+    out.forEach((entry) => {
+      entry.next = entry.rows.find((badge) => !badge.earned) ?? null;
+    });
+    return [...out.values()];
+  }, [badges]);
+
+  if (badges.length === 0) return null;
+
+  const earned = badges.filter((badge) => badge.earned).length;
+
+  return (
+    <section className="ac-section ac-trees">
+      <header className="ac-section-head">
+        <h2>
+          <span className="ac-trees-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+              {GLYPH.lattice}
+            </svg>
+          </span>
+          Skill Trees
+        </h2>
+        <span className="ac-quiet">
+          {earned} / {badges.length} earned
+        </span>
+      </header>
+
+      <p className="ac-trees-note">
+        Counted on your own XP in the subjects that open each lattice, against what
+        that lattice is worth — never on a tree&rsquo;s own drawing, which is the same on
+        every account. Six ladders: how many you have touched, how far into the best
+        one, how many passed half, how many you covered outright, how many fields they
+        sit in, and the whole lot added up.
+      </p>
+
+      {/* One row per ladder, and the row is the next rung on it. A reader
+          asking "what is next in the trees" has six answers, not one, and a
+          single "next badge" line would have had to pick one of them. */}
+      <ul className="ac-ladders">
+        {ladders.map((ladder) => {
+          const next = ladder.next;
+          return (
+            <li className="ac-ladder" key={ladder.rows[0]!.id}>
+              <span className="ac-ladder-count">
+                {ladder.earned} / {ladder.rows.length}
+              </span>
+              {next ? (
+                <span className="ac-ladder-next">
+                  <strong>{next.name}</strong>
+                  <span className="ac-quiet">{next.description}</span>
+                  {next.threshold > 0 && (
+                    <span className="ac-bar" role="presentation">
+                      <i style={{ width: `${Math.round((next.value / next.threshold) * 100)}%` }} />
+                    </span>
+                  )}
+                  <span className="ac-quiet">
+                    {next.value} / {next.threshold} {next.unit}
+                  </span>
+                </span>
+              ) : (
+                /* Every rung on this ladder is done. Saying so is the point of
+                   splitting them: a reader who has topped out one of the six
+                   should be able to see that without counting tiles. */
+                <span className="ac-ladder-next is-done">
+                  <strong>{ladder.rows[ladder.rows.length - 1]!.name}</strong>
+                  <span className="ac-quiet">Every rung on this one is yours.</span>
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+
+      <ul className="ac-grid">
+        {badges.map((badge) => (
+          <BadgeTile badge={badge} key={badge.id} />
+        ))}
+      </ul>
+
+      {/* The only link on the page. See the note at the top of this component
+          for why this heading is the one that earns it. */}
+      <p className="ac-foot">
+        <Link to="/skill-trees">Open the skill trees</Link>
+      </p>
+    </section>
+  );
+}
+
 
 /**
  * One of the three figures beside the ring.
@@ -779,6 +934,16 @@ export default function Achievements() {
           return near(b) - near(a) || a.name.localeCompare(b.name);
         }),
     [shown],
+  );
+
+  /* The skill trees, in the order the server sends them — which is ladder
+     order, and the one thing `TreeWall` cannot reconstruct from a set. Off
+     `badges` rather than off `shown`: this section is not what the filter and
+     the search are for, and a reader searching "streak" should not watch the
+     tree section empty out beside the wall that is actually answering them. */
+  const treeBadges = useMemo(
+    () => badges.filter((badge) => badge.category === TREE_CATEGORY),
+    [badges],
   );
 
   const hiddenLeft = useMemo(
@@ -931,6 +1096,11 @@ export default function Achievements() {
             ))}
           </ul>
         </section>
+
+        {/* Above the wall, because it is a way *in* to a section of it and a
+            reader who has scrolled past the whole wall has already made up
+            their mind. */}
+        <TreeWall badges={treeBadges} />
 
         <section className="ac-section" ref={listRef}>
           <header className="ac-section-head">
