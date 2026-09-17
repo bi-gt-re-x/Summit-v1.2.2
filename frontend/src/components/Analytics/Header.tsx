@@ -11,7 +11,7 @@
  * order than the sections they named. Overview is one continuous argument and
  * scrolls like one.
  */
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { HeroTone } from '@/components';
 import { WINDOWS, type WindowKey } from './data';
 
@@ -183,6 +183,16 @@ export function viewFor(pathname: string): View {
 export interface ViewTabsProps {
   active: ViewKey;
   onView: (view: View) => void;
+  /**
+   * How far along each tab that has a threshold is, keyed by view.
+   *
+   * Passed rather than computed here: `NEED_DAYS` and the account's active-day
+   * count both live on the model, and a bar that worked them out again would
+   * be a second answer to a question the tab underneath already answers.
+   * Absent for the four tabs that have no threshold, and absent entirely once
+   * they have all opened.
+   */
+  filling?: Partial<Record<ViewKey, { have: number; need: number }>>;
 }
 
 /**
@@ -196,23 +206,57 @@ export interface ViewTabsProps {
  * It is under the page title now: one sentence, for the tab that is actually
  * open, in a slot that already existed. The `title` stays, because on the other
  * six it is still the only thing that says where a label goes.
+ *
+ * ## The three that are still filling
+ *
+ * Every tab is visible and clickable from the first day, which is the right
+ * call — a bar that grows as an account ages teaches a reader that the product
+ * is mostly unavailable to them, and hiding a tab is the surest way to make
+ * sure nobody ever looks forward to it.
+ *
+ * But a tab that looks identical to the six beside it and then turns out to be
+ * empty reads as a feature the reader does not have. So the three with a
+ * threshold carry a hairline of how far along they are: no padlock, no count,
+ * nothing to read — just enough for the bar to say *filling* rather than
+ * *missing*, with the full explanation one click away where `Building` gives
+ * it properly.
+ *
+ * `title` carries the progress in words, because the hairline is decorative by
+ * design and a decorative thing is not something a screen reader should have
+ * to interpret.
  */
-export function ViewTabs({ active, onView }: ViewTabsProps) {
+export function ViewTabs({ active, onView, filling }: ViewTabsProps) {
   return (
     <div className="ax-views">
       <nav className="ax-tabs ax-tabs-major" aria-label="Analytics sections">
-        {VIEWS.map((view) => (
-          <button
-            key={view.key}
-            type="button"
-            className={`ax-tab${view.key === active ? ' is-on' : ''}`}
-            aria-current={view.key === active ? 'page' : undefined}
-            onClick={() => onView(view)}
-            title={view.purpose}
-          >
-            {view.label}
-          </button>
-        ))}
+        {VIEWS.map((view) => {
+          const wait = filling?.[view.key];
+          const part = wait && wait.need > 0 ? Math.min(1, wait.have / wait.need) : null;
+
+          return (
+            <button
+              key={view.key}
+              type="button"
+              className={`ax-tab${view.key === active ? ' is-on' : ''}${part === null ? '' : ' is-filling'}`}
+              aria-current={view.key === active ? 'page' : undefined}
+              onClick={() => onView(view)}
+              title={
+                part === null
+                  ? view.purpose
+                  : `${view.purpose} Still filling: ${wait!.have} of ${wait!.need} active days.`
+              }
+            >
+              {view.label}
+              {part !== null && (
+                <span
+                  className="ax-tab-fill"
+                  aria-hidden="true"
+                  style={{ '--at': `${Math.round(part * 100)}%` } as CSSProperties}
+                />
+              )}
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

@@ -2012,6 +2012,40 @@ html[data-theme="dark"] .ax-page .peak-hero,
     font-weight: 600;
 }
 
+/* A tab with a threshold still ahead of it. The label is not dimmed and there
+   is no padlock: the tab works, it is simply still filling, and the whole
+   point of the rename behind `Building` is that those are different things.
+   The hairline is the smallest mark that says so — see `ViewTabs` in
+   src/components/Analytics/Header.tsx. */
+.ax-tab.is-filling {
+    position: relative;
+}
+.ax-tab-fill {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ax-line);
+    overflow: hidden;
+}
+.ax-tab-fill::before {
+    content: '';
+    display: block;
+    width: var(--at, 0%);
+    min-width: 2px;
+    height: 100%;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--ax-violet) 60%, transparent);
+    transition: width .4s ease;
+}
+.ax-tab.is-on .ax-tab-fill::before { background: var(--ax-violet); }
+
+@media (prefers-reduced-motion: reduce) {
+    .ax-tab-fill::before { transition: none; }
+}
+
 /* ---------- Controls ------------------------------------------------------ */
 /* Everything on this row is 36px tall.
    It was three heights — the chip strip 37, the select 36, the compare readout

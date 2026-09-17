@@ -442,6 +442,18 @@ body:has(.dash) .app-main {
 }
 .dash-panel-link:hover { color: #A38A70; }
 
+/* What is through the link, under it. The link is the promise and this is the
+   contents — see the note in components/Dashboard/InsightCards.tsx. Quiet
+   enough that a reader who already knows can skip it every day. The link above
+   carries `margin-top: auto`, so this rides at the foot of the card with it. */
+.dash-panel-lede {
+    margin: 3px 0 0;
+    text-align: center;
+    font-size: 0.74rem;
+    line-height: 1.45;
+    color: #98A1AE;
+}
+
 /* ---- Header: title, tabs, Add Task -------------------------------------- */
 .dash-panel-head {
     display: flex;
@@ -965,6 +977,11 @@ html[data-theme="dark"] .dash-activity-list li,
 html[data-theme="dark"] .dash-tab {
     color: #8b949e;
 }
+
+/* This sheet states its colours literally and carries an explicit dark block,
+   so a new class needs a line here or it keeps its light value on a dark page.
+   Quieter than `.dash-panel-link` above it in both themes. */
+html[data-theme="dark"] .dash-panel-lede { color: #6e7781; }
 
 html[data-theme="dark"] .dash-task-head,
 html[data-theme="dark"] .dash-task-empty,

@@ -124,9 +124,19 @@ export function WeeklyOverview({
           are held against three of last, never against seven. */}
       {before && <p className="dash-week-vs-note">against the same days last week</p>}
 
+      {/* A promise rather than a destination label.
+          "View full analytics" names a page; it does not say why anybody would
+          open it, and this card has just answered the question most readers
+          came with. What is through the link is the part this card cannot do —
+          the comparison, the pattern, the thing to change — and a reader who
+          is never told that has no reason to find out. It is the only place
+          outside the analytics page itself that says analytics exist. */}
       <Link className="dash-panel-link" to="/analytics">
-        View full analytics<span aria-hidden="true"> →</span>
+        See what changed<span aria-hidden="true"> →</span>
       </Link>
+      <p className="dash-panel-lede">
+        Trends, what you repeat, and what to change next.
+      </p>
     </section>
   );
 }

@@ -127,6 +127,7 @@ import {
   useAnalyticsModel,
   VIEWS,
   ViewTabs,
+  NEED_DAYS,
   viewFor,
   type SetupAnswers,
   type View,
@@ -529,7 +530,28 @@ export default function Analytics() {
             onExportData={model.slice.current.length > 0 ? exportData : undefined}
             dataName={seriesFilename(username ?? 'account', new Date())}
           />
-          <ViewTabs active={view.key} onView={openView} />
+          {/* How far the three gated tabs are along, so the bar reads as
+              filling rather than as features the account does not have. From
+              the model, which is the only place that knows both the
+              thresholds and the active-day count — see `ViewTabs`. */}
+          <ViewTabs
+            active={view.key}
+            onView={openView}
+            filling={{
+              recommendations:
+                model.waitFor('recommendations') > 0
+                  ? { have: model.historyDays, need: NEED_DAYS.recommendations }
+                  : undefined,
+              habits:
+                model.waitFor('habits') > 0
+                  ? { have: model.historyDays, need: NEED_DAYS.habits }
+                  : undefined,
+              insights:
+                model.waitFor('insights') > 0
+                  ? { have: model.historyDays, need: NEED_DAYS.insights }
+                  : undefined,
+            }}
+          />
           {/* Not during setup, for the same reason the tab body is not: a
               window picker over a page with nothing in it to scope is a
               control that does nothing. The tabs stay, because they are the
