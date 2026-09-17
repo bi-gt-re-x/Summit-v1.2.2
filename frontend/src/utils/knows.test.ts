@@ -11,7 +11,7 @@ import {
 const base: KnowsInput = {
   finished: 40,
   activeDays: 10,
-  spanDays: 24,
+  spanDays: 90,
   windowDays: 30,
   subjects: [
     { name: 'Mathematics', count: 20 },
@@ -55,9 +55,48 @@ describe('consistency', () => {
   });
 });
 
+describe('the two day-count lines do not say the same thing twice', () => {
+  it('drops consistency when the window covers the whole record', () => {
+    /* "using Summit for 30 days, worked on 10" over "worked on 10 of the last
+       30 days" is one sentence with two headings. */
+    expect(keys({ spanDays: 30, windowDays: 30 })).not.toContain('consistency');
+  });
+
+  it('keeps it when the window is a shorter, more recent slice', () => {
+    expect(keys({ spanDays: 90, windowDays: 30 })).toContain('consistency');
+  });
+});
+
 describe('subjects', () => {
   it('states the leader as a share of the whole', () => {
     expect(textOf('subjects')).toBe('Mathematics is 50% of your recorded work.');
+  });
+
+  it('picks the leader by count, not by the order the rows arrive in', () => {
+    /* `subjectXp` ranks by XP. Taking the first row while quoting a count
+       share named the wrong subject and then made it look minor. */
+    expect(
+      textOf('subjects', {
+        subjects: [
+          { name: 'Chemistry', count: 3 },
+          { name: 'Mathematics', count: 40 },
+          { name: 'History', count: 7 },
+        ],
+      }),
+    ).toBe('Mathematics is 80% of your recorded work.');
+  });
+
+  it('will not call the remainder bucket a subject', () => {
+    expect(
+      textOf('subjects', {
+        subjects: [
+          { name: 'Other', count: 60, lumped: true },
+          { name: 'Mathematics', count: 30 },
+          { name: 'History', count: 10 },
+        ],
+      }),
+      // 30 of 100, because the remainder still counts toward the total.
+    ).toBe('Mathematics is 30% of your recorded work.');
   });
 
   it('will not call one subject a hundred per cent of the work', () => {
@@ -95,7 +134,7 @@ describe('current focus', () => {
 
 describe('record', () => {
   it('says how long the account has been going and how much of it was worked', () => {
-    expect(textOf('record')).toBe('You have been using Summit for 24 days, and worked on 10 of them.');
+    expect(textOf('record')).toBe('You have been using Summit for 90 days, and worked on 10 of them.');
   });
 
   it('says so differently when no day was missed', () => {

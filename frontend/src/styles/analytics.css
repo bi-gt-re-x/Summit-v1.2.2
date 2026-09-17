@@ -456,8 +456,13 @@ body:has(.ax-page) .app-main {
    a note on any one panel, and a reader who already knows it should be able to
    stop seeing it. See `ActiveDayPrinciple` in
    src/components/Analytics/Collecting.tsx. */
+/* No top margin. This is a direct child of `.ax-shell`, which is a flex column
+   with an 18px gap — a margin here is added to that gap rather than replacing
+   it, and 26 + 18 left the line floating in the middle of an empty band. Every
+   page-level child spaces itself from the shell; see `.ax-away` for the same
+   correction. */
 .ax-principle {
-    margin: 26px 0 0;
+    margin: 0;
     text-align: center;
     font-size: 11.5px;
     line-height: 1.5;
@@ -470,7 +475,8 @@ body:has(.ax-page) .app-main {
    that say what is still filling. Nothing here is a warning — see the note on
    `AwayNotice` about why it does not chide. */
 .ax-away {
-    margin: 0 0 18px;
+    /* Nothing: the shell's own gap already separates it from the tab below. */
+    margin: 0;
     padding: 15px 18px 16px;
     border: 1px solid color-mix(in srgb, var(--ax-amber) 34%, var(--ax-line));
     border-left: 3px solid var(--ax-amber);

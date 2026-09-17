@@ -29,7 +29,10 @@
    verdict, and giving them the same washes would say they were the same kind
    of claim. */
 .sx-facts {
-    margin: 0 0 16px;
+    /* The subject page is an `.ax-shell` too — a flex column with its own gap —
+       and this sits directly in it, so a bottom margin here is added to that
+       gap rather than replacing it. */
+    margin: 0;
 }
 .sx-facts-digest {
     display: flex;

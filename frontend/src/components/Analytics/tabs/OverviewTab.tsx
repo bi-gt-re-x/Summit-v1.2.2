@@ -53,6 +53,7 @@ import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
 import { Knows } from '../Knows';
 import { whatSummitKnows } from '@/utils/knows';
+import { OTHER_KEY } from '@/utils/subjectXp';
 import { stageShows } from '@/utils/dataMaturity';
 import type { LearningItem } from '../index';
 
@@ -162,6 +163,9 @@ export function OverviewTab({
       subjects: breakdown.rows.map((row) => ({
         name: row.name ?? row.label,
         count: row.count,
+        /* The tail bucket. It belongs in the total and cannot be the leader —
+           see `lumped` in utils/knows. */
+        lumped: row.key === OTHER_KEY,
       })),
       recentTop,
     });

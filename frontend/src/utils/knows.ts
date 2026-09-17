@@ -62,10 +62,25 @@ export interface KnowsInput {
   /** Every day in the window, worked or not. The consistency denominator. */
   windowDays: number;
   /**
-   * Subjects by finished tasks, biggest first. `name` is what the reader
-   * called it, never an id.
+   * The subject split. `name` is what the reader called it, never an id.
+   *
+   * Order is not read: the leader is picked by `count` here. The rows arrive
+   * ranked by XP — see `subjectXp` — and taking the first of those while
+   * reporting a share of the task count produced the wrong sentence outright,
+   * naming the highest-XP subject and then quoting a count share that made it
+   * look like a minor one.
    */
-  subjects: Array<{ name: string; count: number }>;
+  subjects: Array<{
+    name: string;
+    count: number;
+    /**
+     * A remainder rather than a subject — the "Other" bucket every tail lands
+     * in. It counts toward the total, because those tasks are real work, but
+     * it can never be the leader: "Other is 40% of your recorded work" tells a
+     * reader nothing about themselves.
+     */
+    lumped?: boolean;
+  }>;
   /** The most-worked subject over the recent stretch, when that is known. */
   recentTop: string | null;
 }
@@ -120,7 +135,15 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
     });
   }
 
-  if (windowDays >= CONSISTENCY_FLOOR && activeDays > 0) {
+  /* Dropped when the record line above has already said it. A window that
+     covers the whole record makes these the same sentence with two headings —
+     "using Summit for 95 days, and worked on 31 of them" over "you have worked
+     on 31 of the last 96 days" — which reads as the section padding itself
+     out. The consistency line earns its place only when the window is a
+     shorter, more recent slice than the record as a whole. */
+  const saidAlready = found.some((fact) => fact.key === 'record') && windowDays >= spanDays;
+
+  if (windowDays >= CONSISTENCY_FLOOR && activeDays > 0 && !saidAlready) {
     found.push({
       key: 'consistency',
       heading: 'Consistency',
@@ -129,10 +152,16 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
   }
 
   const named = subjects.filter((row) => row.count > 0);
+  /* Every row, remainder included — those are finished tasks and leaving them
+     out would inflate every share on the page. */
   const total = named.reduce((sum, row) => sum + row.count, 0);
-  const top = named[0];
+  const real = named.filter((row) => !row.lumped);
+  const top = real.reduce<(typeof real)[number] | undefined>(
+    (best, row) => (best === undefined || row.count > best.count ? row : best),
+    undefined,
+  );
 
-  if (top && named.length >= SUBJECT_FLOOR && total > 0) {
+  if (top && real.length >= SUBJECT_FLOOR && total > 0) {
     const share = Math.round((top.count / total) * 100);
     found.push({
       key: 'subjects',

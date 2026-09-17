@@ -357,6 +357,34 @@ export default function Analytics() {
 
 
   /**
+   * Leaving the questions unanswered, for good.
+   *
+   * Skipping used to set the local flag and nothing else, which made it a
+   * skip for exactly as long as the page stayed mounted: `editingSetup` is
+   * `useState`, so the next visit reset it to `null`, `firstRun` was still
+   * true — no flag, no baseline — and the wizard opened again. A reader who
+   * did not want to answer was asked on every single visit, which is the wall
+   * the screen was explicitly designed not to be.
+   *
+   * So a skip writes the same flag a finished run writes. That is what "not
+   * insisting" has to mean: the offer is made once. Every answer is still
+   * reachable afterwards — the baseline panel says "Set a baseline" and the
+   * settings page links back here with `?setup`, which is the re-entry the
+   * flag deliberately does not block.
+   *
+   * The screen closes whether or not the write lands. A failed flag costs the
+   * reader the same question next time; refusing to close costs them the page
+   * they were trying to reach.
+   */
+  const skipSetup = useCallback(() => {
+    setEditingSetup(false);
+    /* Only when it is not already set. An account reopening the screen from
+       the baseline panel is pressing Cancel, not skipping, and has answered
+       this long ago. */
+    if (!prefs.analytics_setup_done) void update({ analytics_setup_done: true });
+  }, [prefs.analytics_setup_done, update]);
+
+  /**
    * Whether the setup screen takes the page over.
    *
    * Only on an account that has genuinely never answered. Three conditions,
@@ -578,7 +606,7 @@ export default function Analytics() {
             setOn={aim?.set_on ?? ''}
             prefs={prefs}
             onSave={saveSetup}
-            onSkip={() => setEditingSetup(false)}
+            onSkip={skipSetup}
           />
         ) : (
           <>
