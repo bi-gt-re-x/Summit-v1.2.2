@@ -754,6 +754,9 @@ ACCOUNT_TABLES = (
     'day_focus_notes', 'calendar_entries', 'calendar_events', 'notes',
     'records', 'metric_snapshots', 'user_achievements', 'activity_log',
     'library_items', 'user_subjects', 'user_settings',
+    # Derived from tasks and goals: which goals each task counts toward. Only
+    # ids, but ids pointing at rows removed here. See data/sql/goals.sql.
+    'task_goal_matches',
     # Not content the account made, but entirely derived from content it made:
     # every row is a sentence about a task, a goal or a badge that is being
     # removed here. Left behind they would be notifications about a record that
@@ -809,6 +812,7 @@ def _forget_tasks(doomed):
         return 0
     _drop('library_task_links', lambda row: str(row.get('task_id') or '') not in doomed)
     _drop('calendar_entries', lambda row: str(row.get('task_id') or '') not in doomed)
+    _drop('task_goal_matches', lambda row: str(row.get('task_id') or '') not in doomed)
     _clear_column('notes', 'task_id', doomed)
     return _drop('tasks', lambda row: str(row.get('id') or '') not in doomed)
 
@@ -822,6 +826,7 @@ def _forget_goals(doomed):
     if not doomed:
         return 0
     _drop('goal_milestones', lambda row: str(row.get('goal_id') or '') not in doomed)
+    _drop('task_goal_matches', lambda row: str(row.get('goal_id') or '') not in doomed)
     _clear_column('notes', 'goal_id', doomed)
     rows = db.tasks()
     touched = False

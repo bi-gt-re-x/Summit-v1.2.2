@@ -74,7 +74,17 @@ CREATE TABLE IF NOT EXISTS tasks (
     -- than a table, and an answer that cannot be counted alongside other
     -- answers is not worth the question. Null is the ordinary state — it means
     -- the question was not asked or not answered.
-    reason              TEXT
+    reason              TEXT,
+
+    -- What the goal matcher concluded about this task, and which version of
+    -- it did: 'matched', 'ambiguous', 'unmatched' or 'pending', and an integer
+    -- that goes up when the matching rules change. Null on a task that has
+    -- never been through it, which is different from 'unmatched' — that one
+    -- was looked at and belongs to no goal. The goals themselves are rows of
+    -- task_goal_matches (data/sql/goals.sql). No CHECK, for the reason the
+    -- ratings above give; backend/goal_matcher narrows the values.
+    goal_match_status   TEXT,
+    goal_match_version  INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS tasks_user_status_idx ON tasks (user_id, status);

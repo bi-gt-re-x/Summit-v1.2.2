@@ -111,6 +111,41 @@ export interface Task {
 }
 
 // --------------------------------------------------------------------------
+// Which goals a task counts toward
+// --------------------------------------------------------------------------
+/**
+ * Worked out on the server when a task is created or edited, and stored. The
+ * front end only reads it: nothing here is classified while a page renders.
+ * Mirrors backend/goal_matcher/types.py, which has the full rules.
+ *
+ * References only. A match names a goal by id; the goal's title and the rest
+ * are read from the goal itself, never copied onto the task.
+ */
+export type GoalMatchSource = 'explicit' | 'rule' | 'ai';
+
+/**
+ * `matched` exactly when there are matches. `unmatched` is a valid answer —
+ * the task is not toward any goal — and must never be drawn as a gap to fill.
+ * `pending` only while a classification is actually queued.
+ */
+export type GoalMatchStatus = 'matched' | 'ambiguous' | 'unmatched' | 'pending';
+
+export interface TaskGoalMatch {
+  goal_id: string;
+  /** 0 to 1. An explicit link is always 1. */
+  score: number;
+  source: GoalMatchSource;
+}
+
+export interface TaskGoalMapping {
+  /** The matcher version that produced it; older ones are refreshed lazily. */
+  version: number;
+  status: GoalMatchStatus;
+  /** Strongest first, at most three, one per goal. */
+  matches: TaskGoalMatch[];
+}
+
+// --------------------------------------------------------------------------
 // Goals
 // --------------------------------------------------------------------------
 export type GoalType = 'xp' | 'streak' | 'tasks' | 'focus';

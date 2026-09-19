@@ -125,6 +125,37 @@ CREATE TABLE IF NOT EXISTS goal_milestones (
 CREATE INDEX IF NOT EXISTS goal_milestones_goal_idx
     ON goal_milestones (goal_id, position);
 
+-- task_goal_matches — which goals a task counts toward, worked out when the
+-- task is written and read back by everything else. See backend/goal_matcher.
+--
+-- Derived, not authored: the task is the source of truth and this is a cache
+-- of one conclusion about it. References only — a goal's title, description
+-- and figures stay on the goal, so renaming a goal changes nothing here.
+--
+-- One row per task-goal pair, so a goal cannot be listed twice for a task and
+-- "how many tasks count toward this goal" is one indexed count. Both ends
+-- cascade: a deleted goal or task takes its rows with it rather than leaving
+-- an id that names nothing. `write_table` swaps rows with foreign keys off, so
+-- the settings page's bulk deletes clear this table by hand first, and readers
+-- join against `goals` so a link that slipped through anyway is ignored.
+--
+-- A task with no rows here has no goals, which is a valid answer. What the
+-- matcher concluded — matched, ambiguous, unmatched, pending — and which
+-- version of it concluded that are on the task (`goal_match_status`,
+-- `goal_match_version`), since both are about the task and not any one goal.
+CREATE TABLE IF NOT EXISTS task_goal_matches (
+    task_id  TEXT NOT NULL REFERENCES tasks (id) ON DELETE CASCADE,
+    goal_id  TEXT NOT NULL REFERENCES goals (id) ON DELETE CASCADE,
+    user_id  TEXT NOT NULL,
+    score    REAL NOT NULL DEFAULT 0 CHECK (score BETWEEN 0 AND 1),
+    source   TEXT NOT NULL DEFAULT 'rule'
+             CHECK (source IN ('explicit', 'rule', 'ai')),
+    PRIMARY KEY (task_id, goal_id)
+);
+
+CREATE INDEX IF NOT EXISTS task_goal_matches_goal_idx
+    ON task_goal_matches (user_id, goal_id);
+
 -- ---- rows: goals ----
 INSERT INTO goals (id, user_id, title, description, goal_type, target_xp, current_xp, target_streak, current_streak, target_tasks, current_tasks, target_focus, current_focus, focus_baseline_seconds, target_value, progress, priority, deadline, status, created_at) VALUES ('1783024779328', 'demo', '1', '1', 'xp', 1111, 1111, 0, 0, 0, 0, NULL, NULL, NULL, 1111, 100, NULL, '', 'completed', '2026-07-02T15:39:39.328509');
 INSERT INTO goals (id, user_id, title, description, goal_type, target_xp, current_xp, target_streak, current_streak, target_tasks, current_tasks, target_focus, current_focus, focus_baseline_seconds, target_value, progress, priority, deadline, status, created_at) VALUES ('1783025498928', 'demo', '1', '1', 'xp', 1111, 1111, 0, 0, 0, 0, NULL, NULL, NULL, 1111, 100, NULL, '', 'completed', '2026-07-02T15:51:38.928766');

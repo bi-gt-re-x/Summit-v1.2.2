@@ -178,6 +178,12 @@ ADDED_COLUMNS = (
     # cannot attach one to a table with rows in it, and the endpoint in
     # backend/api/records.py narrows the value to the two words anyway.
     ('records', 'comparison_direction', 'TEXT'),
+
+    # What the goal matcher concluded about a task, and which version did.
+    # Existing rows get NULL: never looked at, which the matcher treats as due
+    # a lazy first pass rather than as "no goal". See data/sql/tasks.sql.
+    ('tasks', 'goal_match_status', 'TEXT'),
+    ('tasks', 'goal_match_version', 'INTEGER'),
 )
 
 # Tables added to the app after the database was first created.
@@ -378,6 +384,21 @@ ADDED_TABLES = ('''
 ''', '''
     CREATE UNIQUE INDEX IF NOT EXISTS subject_readings_one_per_subject
         ON subject_readings (user_id, subject)
+''', '''
+    -- Which goals a task counts toward. Mirrors data/sql/goals.sql, where the
+    -- note on what is stored and why lives.
+    CREATE TABLE IF NOT EXISTS task_goal_matches (
+        task_id  TEXT NOT NULL REFERENCES tasks (id) ON DELETE CASCADE,
+        goal_id  TEXT NOT NULL REFERENCES goals (id) ON DELETE CASCADE,
+        user_id  TEXT NOT NULL,
+        score    REAL NOT NULL DEFAULT 0 CHECK (score BETWEEN 0 AND 1),
+        source   TEXT NOT NULL DEFAULT 'rule'
+                 CHECK (source IN ('explicit', 'rule', 'ai')),
+        PRIMARY KEY (task_id, goal_id)
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS task_goal_matches_goal_idx
+        ON task_goal_matches (user_id, goal_id)
 ''')
 
 
@@ -1369,6 +1390,93 @@ def goal_milestones():
 
 def save_goal_milestones(rows):
     write_table('goal_milestones', rows)
+
+
+# --------------------------------------------------------------------------
+# Which goals a task counts toward — see backend/goal_matcher
+# --------------------------------------------------------------------------
+# SQLite's limit on bound parameters is far above this, but an IN list the
+# size of a whole task history is a statement nobody should be building.
+_IN_CHUNK = 500
+
+
+def save_goal_mapping(username, task_id, status, version, matches):
+    """Replace one task's goal matches and its match status, in one go.
+
+    `matches` is [(goal_id, score, source)]. Each row is inserted only if the
+    goal exists and is this account's, checked by the INSERT itself, so a goal
+    deleted a moment ago is skipped rather than raising, and another account's
+    goal id can never be linked. A 'matched' status left with no rows after
+    that becomes 'unmatched' — the one honest answer when every goal it named
+    has gone.
+
+    Returns the goal ids actually kept, in the order given, or None when the
+    task is not this account's.
+    """
+    con = connect()
+    try:
+        with con:
+            owned = con.execute(
+                'SELECT 1 FROM tasks WHERE id = ? AND user_id = ?',
+                (task_id, username)).fetchone()
+            if not owned:
+                return None
+            con.execute('DELETE FROM task_goal_matches WHERE task_id = ?', (task_id,))
+            kept = []
+            for goal_id, score, source in matches:
+                inserted = con.execute(
+                    'INSERT OR IGNORE INTO task_goal_matches '
+                    '(task_id, goal_id, user_id, score, source) '
+                    'SELECT ?, id, user_id, ?, ? FROM goals WHERE id = ? AND user_id = ?',
+                    (task_id, score, source, goal_id, username)).rowcount
+                if inserted:
+                    kept.append(goal_id)
+            if status == 'matched' and not kept:
+                status = 'unmatched'
+            con.execute(
+                'UPDATE tasks SET goal_match_status = ?, goal_match_version = ? '
+                'WHERE id = ? AND user_id = ?',
+                (status, version, task_id, username))
+        return kept
+    finally:
+        con.close()
+
+
+def goal_mappings_for(username, task_ids):
+    """{task_id: (status, version, [(goal_id, score, source)])} for these tasks.
+
+    Only tasks that have been through the matcher at all appear; one that
+    never has is absent, which is different from 'unmatched'. Rows naming a
+    goal that no longer exists are left out by the join — `write_table` can
+    remove a goal with foreign keys off, and a stale id must read as nothing
+    rather than as a goal.
+    """
+    ids = list(dict.fromkeys(str(task_id) for task_id in task_ids if task_id))
+    out = {}
+    if not ids:
+        return out
+    con = connect()
+    try:
+        for at in range(0, len(ids), _IN_CHUNK):
+            chunk = ids[at:at + _IN_CHUNK]
+            marks = ', '.join('?' for _ in chunk)
+            for row in con.execute(
+                    'SELECT id, goal_match_status, goal_match_version FROM tasks '
+                    'WHERE user_id = ? AND goal_match_status IS NOT NULL '
+                    'AND id IN ({})'.format(marks), [username] + chunk):
+                out[row['id']] = (row['goal_match_status'], row['goal_match_version'] or 0, [])
+            for row in con.execute(
+                    'SELECT m.task_id, m.goal_id, m.score, m.source '
+                    'FROM task_goal_matches m '
+                    'JOIN goals g ON g.id = m.goal_id AND g.user_id = m.user_id '
+                    'WHERE m.user_id = ? AND m.task_id IN ({})'.format(marks),
+                    [username] + chunk):
+                held = out.get(row['task_id'])
+                if held is not None:
+                    held[2].append((row['goal_id'], row['score'], row['source']))
+        return out
+    finally:
+        con.close()
 
 
 def xp_events():
