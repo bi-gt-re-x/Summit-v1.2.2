@@ -137,6 +137,7 @@ import {
 } from '@/utils/growthBench';
 import type { GrowthDay } from '@/types';
 import '@/styles/records.css';
+import { Icon } from '@/components/Icon';
 
 /** Below this there is no derived record worth the name — see the empty state. */
 const NEED_DAYS = 3;
@@ -312,7 +313,7 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
         )}
 
         {best.fresh ? (
-          <span className="rc-best-new">NEW RECORD 🔥</span>
+          <span className="rc-best-new">New record <Icon name="flame" /></span>
         ) : best.gain > 0 ? (
           <span className="rc-best-gain">↑ {gainText(best)} since first</span>
         ) : (
@@ -772,7 +773,7 @@ export default function Records() {
               </button>
             </div>
           </div>
-          <div className="rc-hero-art" aria-hidden="true">🏆</div>
+          <div className="rc-hero-art" aria-hidden="true"><Icon name="trophy" /></div>
         </header>
       </PageHero>
 
@@ -799,7 +800,7 @@ export default function Records() {
         <ul className="rc-tiles">
           {tales.map((story) => (
             <li className={`rc-tile tone-${story.tone}`} key={story.key}>
-              <span className="rc-tile-ico" aria-hidden="true">{story.icon}</span>
+              <span className="rc-tile-ico" aria-hidden="true"><Icon name={story.icon} /></span>
               <span className="rc-tile-figure">{story.figure}</span>
               <span className="rc-tile-label">{story.label}</span>
               <span className="rc-tile-detail">{story.detail}</span>
@@ -833,7 +834,7 @@ export default function Records() {
           old list truncated to. */}
       <section className="rc-section">
         <div className="rc-section-head">
-          <h2 className="rc-section-title">🏆 Your best</h2>
+          <h2 className="rc-section-title"><Icon name="trophy" /> Your best</h2>
           {cats.length > 0 && (
             <div className="rc-chips" role="group" aria-label="Filter by category">
               {['All', ...cats].map((name) => (
@@ -888,7 +889,7 @@ export default function Records() {
       {bests.length > 0 && evolving && (
         <section className="rc-section">
           <div className="rc-section-head">
-            <h2 className="rc-section-title">📈 How your records changed</h2>
+            <h2 className="rc-section-title"><Icon name="trend" /> How your records changed</h2>
             <div className="rc-ev-pick">
               {/* A descending line is the good news on a record measured in
                   time, and nothing on the chart said so. Said here, beside the
@@ -959,13 +960,13 @@ export default function Records() {
       <div className="rc-two">
         <section className="rc-section">
           <div className="rc-section-head">
-            <h2 className="rc-section-title">📜 Record timeline</h2>
+            <h2 className="rc-section-title"><Icon name="scroll" /> Record timeline</h2>
           </div>
 
           {rows.length > 0 && (
             <div className="rc-bar">
               <label className="rc-bar-search">
-                <span className="rc-bar-ico" aria-hidden="true">🔍</span>
+                <span className="rc-bar-ico" aria-hidden="true"><Icon name="search" /></span>
                 <input type="search" placeholder="Search records…" value={query}
                        aria-label="Search records"
                        onChange={(event) => narrow(setQuery)(event.target.value)} />
@@ -1035,7 +1036,7 @@ export default function Records() {
               onClick={() => setMilesShut((shut) => !shut)}
             >
               <Caret />
-              <h2 className="rc-section-title">🏅 Milestones</h2>
+              <h2 className="rc-section-title"><Icon name="medal" /> Milestones</h2>
               {milestones.length > 0 && <span className="rc-fold-n">{milestones.length}</span>}
             </button>
             <button type="button" className="rc-link" onClick={() => open('milestone')}>
@@ -1097,7 +1098,7 @@ export default function Records() {
           quieter register they have always had, and the chase under it is
           quieter still. */}
       <section className="rc-section rc-derived">
-        <h2 className="rc-section-title">⚙️ What Summit noticed</h2>
+        <h2 className="rc-section-title"><Icon name="sparkles" /> What Summit noticed</h2>
         <p className="rc-note">
           Counted from your own work rather than logged by hand — so these are
           Summit's observations about you, not your claims about yourself.

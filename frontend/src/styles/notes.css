@@ -686,7 +686,7 @@ html[data-theme="dark"] .nt-page {
     transition: background .13s ease, color .13s ease;
 }
 .nt-tool:hover { background: var(--nt-card-2); color: var(--nt-text); }
-.nt-tool[data-tool="bold"] { font-weight: 800; }
+.nt-tool[data-tool="bold"] { font-weight: 700; }
 .nt-tool[data-tool="italic"] { font-style: italic; font-family: Georgia, serif; }
 .nt-tool[data-tool="under"] { text-decoration: underline; }
 .nt-tool[data-tool="strike"] { text-decoration: line-through; }

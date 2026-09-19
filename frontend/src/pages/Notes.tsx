@@ -73,6 +73,7 @@ import type { Note } from '@/services/notes';
 import { isoDate } from '@/utils/dates';
 import { render } from '@/utils/markdown';
 import '@/styles/notes.css';
+import { Icon } from '@/components/Icon';
 
 /** A draft that has never been saved. Its id is empty, which is what `save` reads. */
 const BLANK = {
@@ -261,7 +262,7 @@ const TOOLS: Tool[][] = [
     { id: 'number', label: '1.', hint: 'Numbered list', prefix: '1. ' },
     { id: 'letter', label: 'a.', hint: 'Lettered list', prefix: 'a. ' },
     { id: 'roman', label: 'i.', hint: 'Roman list', prefix: 'i. ' },
-    { id: 'todo', label: '☑', hint: 'Checklist', prefix: '- [ ] ' },
+    { id: 'todo', label: <Icon name="checklist" />, hint: 'Checklist', prefix: '- [ ] ' },
   ],
   [
     { id: 'outdent', label: <Depth into={false} />, hint: 'Move out one level', shift: -1 },
@@ -273,10 +274,10 @@ const TOOLS: Tool[][] = [
     { id: 'right', label: <Lines at="right" />, hint: 'Align right', attr: 'right' },
   ],
   [
-    { id: 'quote', label: '❝', hint: 'Quote', prefix: '> ' },
+    { id: 'quote', label: <Icon name="quote" />, hint: 'Quote', prefix: '> ' },
     { id: 'code', label: '</>', hint: 'Code', wrap: '`' },
     { id: 'rule', label: '—', hint: 'Divider', text: '\n---\n' },
-    { id: 'link', label: '🔗', hint: 'Link', text: '[text](https://)' },
+    { id: 'link', label: <Icon name="link" />, hint: 'Link', text: '[text](https://)' },
   ],
 ];
 

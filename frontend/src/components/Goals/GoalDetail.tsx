@@ -22,6 +22,7 @@ import { SmartPlan } from './SmartPlan';
 import { GoalRead } from './GoalRead';
 import { stepProgress } from '@/utils/milestoneSteps';
 import type { Goal, Milestone, MilestoneStatus, MilestoneStep, Task } from '@/types';
+import { Icon } from '@/components/Icon';
 
 /**
  * Whether a checkpoint has any step somebody actually wrote.
@@ -313,7 +314,7 @@ export function GoalDetail(props: GoalDetailProps) {
                       in ./Outcome. */}
                   {row.status !== 'done' && (
                     <label className="gx-ms-date" title="When this checkpoint is meant to be reached">
-                      <span aria-hidden="true">{row.target_date ? '📅' : '+'}</span>
+                      <span aria-hidden="true">{row.target_date ? <Icon name="calendar" /> : '+'}</span>
                       <input
                         type="date"
                         value={row.target_date ? String(row.target_date).slice(0, 10) : ''}

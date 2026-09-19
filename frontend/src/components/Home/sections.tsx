@@ -16,6 +16,7 @@ import { Range } from '@/components/Range';
 import { RidgeChart } from './RidgeChart';
 import { Trend } from './Trend';
 import type { Theme } from '@/types';
+import { Icon } from '@/components/Icon';
 
 /** The date in the hero's eyebrow — what main.js wrote there. */
 function today(): string {
@@ -149,7 +150,7 @@ export function Hero({
                 Go to Dashboard <span className="lp-arrow">→</span>
               </Link>
               <Link to="/calendar" className="lp-btn lp-btn-ghost" id="calendarBtn">
-                <span className="pill-icon">📅</span> Open Calendar
+                <span className="pill-icon"><Icon name="calendar" /></span> Open Calendar
               </Link>
             </>
           ) : (
@@ -234,7 +235,7 @@ export function Hero({
 const FEATURES = [
   {
     ico: 'lp-ico-teal',
-    glyph: '📋',
+    glyph: 'clipboard' as const,
     title: 'One list, not four',
     body: 'Everything you have on, in one place — filtered, sorted and searchable, and a dozen of them dealt with at once.',
     bits: ['Priorities', 'Due dates', 'Bulk actions'],
@@ -243,7 +244,7 @@ const FEATURES = [
   },
   {
     ico: 'lp-ico-green',
-    glyph: '🌱',
+    glyph: 'sprout' as const,
     title: 'A score you can audit',
     body: 'Five measures, one growth score, and the working shown for each — no black box telling you how your week went.',
     bits: ['Streaks', 'Growth score', 'Records'],
@@ -252,7 +253,7 @@ const FEATURES = [
   },
   {
     ico: 'lp-ico-gold',
-    glyph: '🎯',
+    glyph: 'target' as const,
     title: 'Goals that move themselves',
     body: 'Name a target in XP, tasks or streak days. It advances as you work — there is no second place to keep score.',
     bits: ['XP', 'Milestones', 'Auto-advance'],
@@ -278,7 +279,7 @@ export function FeatureStrip() {
             navigate(f.to);
           }}
         >
-          <span className={`lp-feat-ico ${f.ico}`}>{f.glyph}</span>
+          <span className={`lp-feat-ico ${f.ico}`}><Icon name={f.glyph} /></span>
           <h3>{f.title}</h3>
           <p>{f.body}</p>
           <ul className="lp-feat-bits">
@@ -342,7 +343,7 @@ export function TaskStats() {
       <div className="lp-card lp-stats">
         <div className="lp-card-top">
           <div className="lp-stats-head">
-            <span className="lp-feat-ico lp-ico-teal lp-ico-sm">📊</span> Statistics
+            <span className="lp-feat-ico lp-ico-teal lp-ico-sm"><Icon name="chart" /></span> Statistics
           </div>
           <span className="lp-pill-mini">Last 30 days</span>
         </div>
@@ -399,7 +400,7 @@ export function TaskStats() {
           of its own. */}
       <ul className="lp-list">
         <li>
-          <span className="lp-list-ico">⭐</span>
+          <span className="lp-list-ico"><Icon name="star" /></span>
           <div>
             <h4>Priority</h4>
             <p>
@@ -409,7 +410,7 @@ export function TaskStats() {
           </div>
         </li>
         <li>
-          <span className="lp-list-ico">🗂</span>
+          <span className="lp-list-ico"><Icon name="folder" /></span>
           <div>
             <h4>Subjects</h4>
             <p>
@@ -419,7 +420,7 @@ export function TaskStats() {
           </div>
         </li>
         <li>
-          <span className="lp-list-ico">⏱</span>
+          <span className="lp-list-ico"><Icon name="timer" /></span>
           <div>
             <h4>Due dates and timers</h4>
             <p>
@@ -631,10 +632,10 @@ export function Pricing({
  * rest.
  */
 const TECH = [
-  { ico: 'lp-ico-teal', glyph: '🖥', title: 'Frontend', bits: ['React 19', 'TypeScript', 'Vite'] },
-  { ico: 'lp-ico-green', glyph: '🔧', title: 'Backend', bits: ['Python', 'FastAPI', 'Uvicorn'] },
-  { ico: 'lp-ico-gold', glyph: '💾', title: 'Database', bits: ['SQLite'] },
-  { ico: 'lp-ico-purple', glyph: '📊', title: 'Visualization', bits: ['SVG', 'Canvas'] },
+  { ico: 'lp-ico-teal', glyph: 'monitor' as const, title: 'Frontend', bits: ['React 19', 'TypeScript', 'Vite'] },
+  { ico: 'lp-ico-green', glyph: 'wrench' as const, title: 'Backend', bits: ['Python', 'FastAPI', 'Uvicorn'] },
+  { ico: 'lp-ico-gold', glyph: 'database' as const, title: 'Database', bits: ['SQLite'] },
+  { ico: 'lp-ico-purple', glyph: 'chart' as const, title: 'Visualization', bits: ['SVG', 'Canvas'] },
 ];
 
 export function TechStack() {
@@ -648,7 +649,7 @@ export function TechStack() {
         <svg className="tech-wires" id="techWires" aria-hidden="true" />
         {TECH.map((t) => (
           <div className="lp-card lp-techitem" key={t.title}>
-            <span className={`lp-feat-ico ${t.ico}`}>{t.glyph}</span>
+            <span className={`lp-feat-ico ${t.ico}`}><Icon name={t.glyph} /></span>
             <div>
               <h4>{t.title}</h4>
               <p>

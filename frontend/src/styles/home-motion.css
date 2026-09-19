@@ -240,7 +240,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     display: block;
     color: var(--lp-heading);
     font-size: var(--text-3xl);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.1;
     letter-spacing: -0.02em;
     /* The counter swaps digits every frame; a tabular figure keeps the number
@@ -275,7 +275,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     perspective: 420px;
     color: var(--lp-heading);
     font-size: var(--text-3xl);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.1;
 }
 .dd-flip-in {
@@ -293,7 +293,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     display: inline-block;
     color: var(--lp-accent-2);
     font-size: var(--text-3xl);
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1.1;
 }
 .dd-grade.dd-grade-pop { animation: ddGradePop 420ms var(--hm-ease); }
@@ -356,7 +356,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     background: var(--lp-accent);
     color: #fff;
     font-size: var(--text-xs);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: 0.01em;
     white-space: nowrap;
     box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
@@ -397,7 +397,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 }
 .td-xp b {
     color: var(--lp-heading);
-    font-weight: 800;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 .td-xp small { color: var(--lp-muted); font-size: var(--text-xs); font-weight: 600; }

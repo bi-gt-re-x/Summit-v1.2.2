@@ -42,6 +42,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks';
 import { auth as authService } from '@/services';
 import '@/styles/verify-banner.css';
+import { Icon } from '@/components/Icon';
 
 /** One key per account, so signing into a second one on this tab asks again. */
 const DISMISS_KEY = 'summit.verify-banner.dismissed';
@@ -99,7 +100,7 @@ export function VerifyBanner() {
   return (
     <div className="vb" role="status">
       <span className="vb-mark" aria-hidden="true">
-        ✉
+        <Icon name="mail" />
       </span>
       <p className="vb-text">
         {said ?? (

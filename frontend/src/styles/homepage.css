@@ -493,7 +493,7 @@ html[data-theme="dark"] .home-main {
 .lp-hero-title {
     color: var(--lp-heading);
     font-size: clamp(2.05rem, 3.5vw, 3rem);
-    line-height: 1.08; font-weight: 800;
+    line-height: 1.08; font-weight: 700;
     margin: 14px 0 16px; max-width: 15ch;
     letter-spacing: -.025em;
 }
@@ -542,7 +542,7 @@ html[data-theme="dark"] .home-main {
    this change exists to remove. See the note in pages/Homepage.tsx. */
 .lp-section-demo { margin-top: var(--lp-step-3); }
 .lp-head { text-align: center; max-width: 46rem; margin: 0 auto var(--lp-step-3); }
-.lp-head h2 { color: var(--lp-heading); font-size: clamp(1.6rem, 2.5vw, 2.15rem); font-weight: 800; margin: 0 0 10px; letter-spacing: -.02em; line-height: 1.2; }
+.lp-head h2 { color: var(--lp-heading); font-size: clamp(1.6rem, 2.5vw, 2.15rem); font-weight: 700; margin: 0 0 10px; letter-spacing: -.02em; line-height: 1.2; }
 .lp-head p { color: var(--lp-muted); font-size: var(--text-lg); line-height: 1.65; margin: 0; }
 
 /* Feature strip */
@@ -559,10 +559,18 @@ html[data-theme="dark"] .home-main {
 .lp-feature .lp-feat-bits { margin-bottom: var(--lp-step-2); }
 .lp-feature .lp-link { margin-top: auto; }
 .lp-feat-ico { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: var(--radius-md); font-size: var(--text-2xl); }
-.lp-ico-teal { background: rgba(20, 184, 166, .15); }
-.lp-ico-green { background: rgba(34, 197, 94, .15); }
-.lp-ico-gold { background: rgba(217, 164, 65, .18); }
-.lp-ico-purple { background: rgba(139, 92, 246, .15); }
+.lp-ico-teal { background: rgba(20, 184, 166, .15); color: #0f8f84; }
+.lp-ico-green { background: rgba(34, 197, 94, .15); color: #178a45; }
+.lp-ico-gold { background: rgba(217, 164, 65, .18); color: #a8741a; }
+.lp-ico-purple { background: rgba(139, 92, 246, .15); color: #7447e0; }
+/* The line icons read heavier than the emoji they replaced at the same size. */
+.lp-feat-ico .icon { width: 22px; height: 22px; }
+.lp-ico-sm .icon { width: 14px; height: 14px; }
+.lp-list-ico { color: var(--lp-accent); }
+html[data-theme="dark"] .lp-ico-teal { color: #4fd1c5; }
+html[data-theme="dark"] .lp-ico-green { color: #5bd68b; }
+html[data-theme="dark"] .lp-ico-gold { color: #e6b94f; }
+html[data-theme="dark"] .lp-ico-purple { color: #a78bfa; }
 .lp-link { color: var(--lp-accent); font-weight: 700; font-size: var(--text-md); text-decoration: none; }
 .lp-link:hover { text-decoration: underline; }
 .lp-quote { display: flex; flex-direction: column; justify-content: center; gap: 2px; background: var(--lp-surface-2); }
@@ -571,7 +579,7 @@ html[data-theme="dark"] .home-main {
 
 /* Split */
 .lp-split { display: grid; grid-template-columns: 1fr 1fr; gap: var(--lp-step-2); align-items: start; }
-.lp-stats-head { color: var(--lp-heading); font-weight: 800; font-size: var(--text-lg); margin-bottom: 14px; }
+.lp-stats-head { color: var(--lp-heading); font-weight: 700; font-size: var(--text-lg); margin-bottom: 14px; }
 .lp-stat { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--lp-border); color: var(--lp-muted); font-size: var(--text-md); }
 .lp-stat:last-child { border-bottom: none; }
 .lp-stat b { color: var(--lp-heading); }
@@ -585,7 +593,7 @@ html[data-theme="dark"] .home-main {
 
 .lp-metric { display: flex; flex-direction: column; color: var(--lp-accent); min-height: 156px; }
 .lp-metric-label { display: block; color: var(--lp-muted); font-size: var(--text-sm); font-weight: 600; }
-.lp-metric-num { display: block; color: var(--lp-heading); font-size: var(--text-3xl); font-weight: 800; margin: 4px 0 10px; }
+.lp-metric-num { display: block; color: var(--lp-heading); font-size: var(--text-3xl); font-weight: 700; margin: 4px 0 10px; }
 .lp-metric-note { display: block; color: var(--lp-muted); font-size: var(--text-sm); margin-top: auto; }
 .lp-area { width: 100%; height: auto; margin-top: auto; color: var(--lp-accent); }
 
@@ -605,7 +613,7 @@ html[data-theme="dark"] .home-main {
 /* Streak grid */
 .lp-streak-grid { display: grid; grid-template-columns: 0.8fr 1.2fr 1fr; gap: var(--lp-step-2); align-items: start; }
 .lp-streak { text-align: center; }
-.lp-streak-num { display: block; color: var(--lp-heading); font-size: var(--text-3xl); font-weight: 800; margin: 8px 0; }
+.lp-streak-num { display: block; color: var(--lp-heading); font-size: var(--text-3xl); font-weight: 700; margin: 8px 0; }
 .lp-level { margin-top: 14px; }
 .lp-level-top { display: flex; justify-content: space-between; color: var(--lp-muted); font-size: var(--text-sm); margin-bottom: 6px; }
 .lp-track .lp-spark, .lp-track .lp-bars-sm { color: var(--lp-accent); fill: var(--lp-accent); margin-top: 12px; }
@@ -660,7 +668,7 @@ html[data-theme="dark"] .home-main {
     border: 1px solid var(--lp-border);
     border-radius: var(--radius-lg);
 }
-.lp-final h2 { color: var(--lp-heading); font-size: clamp(1.6rem, 2.6vw, 2.1rem); font-weight: 800; margin: 0 0 10px; letter-spacing: -.02em; }
+.lp-final h2 { color: var(--lp-heading); font-size: clamp(1.6rem, 2.6vw, 2.1rem); font-weight: 700; margin: 0 0 10px; letter-spacing: -.02em; }
 .lp-final p { color: var(--lp-muted); font-size: var(--text-lg); margin: 0 auto var(--lp-step-3); max-width: 42ch; }
 
 /* Footer links */
@@ -763,8 +771,8 @@ html[data-theme="dark"] .lp-trend.up { color: #4ade80; }
 .lp-metric-row .lp-metric-note { margin-top: 0; }
 .lp-ring-sm { position: relative; width: 58px; margin: 0; flex-shrink: 0; }
 .lp-ring-sm svg { width: 58px; height: 58px; }
-.lp-ring-sm em { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-style: normal; font-weight: 800; font-size: var(--text-sm); color: var(--lp-heading); }
-.lp-grade-badge { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--lp-gold); color: #241a05; font-weight: 800; font-size: var(--text-xl); flex-shrink: 0; }
+.lp-ring-sm em { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-style: normal; font-weight: 700; font-size: var(--text-sm); color: var(--lp-heading); }
+.lp-grade-badge { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--lp-gold); color: #241a05; font-weight: 700; font-size: var(--text-xl); flex-shrink: 0; }
 
 /* ---- Detailed calendar ---- */
 .lp-calendar { display: block; height: auto; }
@@ -924,7 +932,7 @@ html[data-theme="dark"] .lp-trend.up { color: #4ade80; }
 .lp-ax-num {
     display: flex; align-items: baseline; gap: 2px;
     color: var(--lp-heading);
-    font-size: 2.7rem; font-weight: 800; line-height: 1; letter-spacing: -.03em;
+    font-size: 2.7rem; font-weight: 700; line-height: 1; letter-spacing: -.03em;
 }
 /* The figure is its own element because countThrough rewrites textContent, and
    a "/10" living inside it would be rewritten away on the first frame. */
@@ -984,7 +992,7 @@ html[data-theme="dark"] .lp-trend.up { color: #4ade80; }
 }
 .lp-ax-val {
     color: var(--lp-heading);
-    font-size: var(--text-sm); font-weight: 800; text-align: right;
+    font-size: var(--text-sm); font-weight: 700; text-align: right;
     font-variant-numeric: tabular-nums;
 }
 .lp-ax-val em { font-style: normal; }
@@ -1568,7 +1576,7 @@ body.auth-open { overflow: hidden; }
     color: #a8845c;
     margin-bottom: 10px;
 }
-.auth-heading { margin: 0 0 6px; font-size: var(--text-2xl); font-weight: 800; color: #141a22; }
+.auth-heading { margin: 0 0 6px; font-size: var(--text-2xl); font-weight: 700; color: #141a22; }
 .auth-sub { margin: 0 0 30px; font-size: var(--text-md); line-height: 1.5; color: #667082; }
 
 .auth-step { display: flex; flex-direction: column; gap: 18px; }
@@ -1648,7 +1656,7 @@ body.auth-open { overflow: hidden; }
     border-radius: 50%;
     background: linear-gradient(135deg, #4285f4 0%, #ea4335 50%, #fbbc05 100%);
     color: #fff;
-    font-weight: 800;
+    font-weight: 700;
     font-size: var(--text-xs);
 }
 .auth-google[hidden], .auth-or[hidden] { display: none; }

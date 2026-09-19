@@ -385,7 +385,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 }
 .levelup-level {
     font-size: var(--text-3xl);
-    font-weight: 800;
+    font-weight: 700;
     margin-top: 2px;
 }
 @keyframes levelBadge {
@@ -541,7 +541,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 .goalfx-title {
     margin: 0;
     font-size: var(--text-xl);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -.01em;
     color: #1f2733;
 }
@@ -711,7 +711,7 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 }
 .focus-amount #focusHours {
     font-size: 2.6rem;
-    font-weight: 800;
+    font-weight: 700;
     line-height: 1;
     color: #2C302E;
 }
@@ -740,7 +740,7 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 }
 /* The percentage is the reading; the words beside it are the working. Same
    weight for both made the row one undifferentiated grey line. */
-.focus-progress-row #focusProgressPct { font-weight: 650; color: #2C302E; }
+.focus-progress-row #focusProgressPct { font-weight: 600; color: #2C302E; }
 /* Start Focus + hint are pushed to the bottom of the (tall) panel so the goal
    box sits up top and the action anchors down, with the hint just beneath it. */
 .focus-start-btn {
@@ -1248,7 +1248,7 @@ body.easter-shake {
     top: 30px;
     right: 24px;
     font-size: var(--text-2xl);
-    font-weight: bold;
+    font-weight: 700;
     line-height: 1;
     cursor: pointer;
 }

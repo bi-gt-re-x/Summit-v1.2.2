@@ -185,7 +185,7 @@ html[data-theme="dark"] [data-family] {
 .cal-dot.is-done {
     width: 9px; height: 9px; border-radius: 0; background: none;
     display: inline-flex; align-items: center; justify-content: center;
-    color: var(--ev-accent); font-size: var(--text-2xs); font-weight: 800; line-height: 1;
+    color: var(--ev-accent); font-size: var(--text-2xs); font-weight: 700; line-height: 1;
 }
 
 /* ---- A task's left side --------------------------------------------------

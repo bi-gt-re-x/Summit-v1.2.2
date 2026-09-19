@@ -37,7 +37,7 @@
     line-height: 1.6;
     color: #6C757D;
 }
-.sf-empty strong { font-weight: 650; color: #2C302E; }
+.sf-empty strong { font-weight: 600; color: #2C302E; }
 
 /* The `›` said inline in the empty state, so the arrow in the sentence and the
    arrow on the button are recognisably the same thing. */
@@ -78,7 +78,7 @@
 }
 .sf-at strong {
     font-size: var(--text-sm);
-    font-weight: 650;
+    font-weight: 600;
     color: #2C302E;
     overflow: hidden;
     text-overflow: ellipsis;

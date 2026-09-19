@@ -91,7 +91,7 @@
 
 .sb-topline-grade strong {
     font-size: 56px;
-    font-weight: 800;
+    font-weight: 700;
     line-height: .95;
     letter-spacing: -.045em;
     color: var(--sb-band);
@@ -194,7 +194,7 @@
 .sb-tile-value {
     margin-top: 3px;
     font-size: var(--text-3xl);
-    font-weight: 750;
+    font-weight: 700;
     letter-spacing: -.028em;
     color: var(--ax-text);
     line-height: 1.05;
@@ -373,7 +373,7 @@
 }
 
 .sb-table tbody th {
-    font-weight: 650;
+    font-weight: 600;
     color: var(--ax-text);
     white-space: nowrap;
 }
@@ -530,7 +530,7 @@
     border-radius: 50%;
     background: color-mix(in srgb, currentColor 14%, var(--ax-card));
     font-size: var(--text-xs);
-    font-weight: 800;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 
@@ -569,7 +569,7 @@
     justify-content: space-between;
     gap: 10px;
 }
-.sb-recent-head strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.sb-recent-head strong { font-size: var(--text-md); font-weight: 600; color: var(--ax-text); }
 
 .sb-recent-meta {
     margin: 3px 0 0;
@@ -626,7 +626,7 @@
     justify-content: space-between;
     gap: 10px;
 }
-.sb-goal-head strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); flex: 1; }
+.sb-goal-head strong { font-size: var(--text-md); font-weight: 600; color: var(--ax-text); flex: 1; }
 
 
 /* Late, early, or no projection. Amber rather than red for late: a goal that
@@ -723,7 +723,7 @@
 .sb-plan-fact dd {
     margin: 0;
     font-size: var(--text-sm);
-    font-weight: 650;
+    font-weight: 600;
     color: var(--ax-text);
     font-variant-numeric: tabular-nums;
 }
@@ -757,7 +757,7 @@
 .sb-lever strong {
     display: block;
     font-size: var(--text-sm);
-    font-weight: 650;
+    font-weight: 600;
     color: var(--ax-text);
 }
 
@@ -787,7 +787,7 @@
     flex-wrap: wrap;
 }
 
-.sb-route-head strong { font-size: var(--text-sm); font-weight: 650; color: var(--ax-text); }
+.sb-route-head strong { font-size: var(--text-sm); font-weight: 600; color: var(--ax-text); }
 
 .sb-route-head p {
     margin: 3px 0 0;
@@ -834,7 +834,7 @@
     top: 10px;
     width: 16px;
     font-size: var(--text-xs);
-    font-weight: 800;
+    font-weight: 700;
     color: var(--ax-violet);
     font-variant-numeric: tabular-nums;
 }
@@ -846,7 +846,7 @@
     gap: 10px;
 }
 
-.sb-phase-head strong { font-size: var(--text-sm); font-weight: 650; color: var(--ax-text); }
+.sb-phase-head strong { font-size: var(--text-sm); font-weight: 600; color: var(--ax-text); }
 
 /* The tilde is doing work. This is the one figure in the panel the model
    supplied rather than the app counted, and it is set apart from the tabular
@@ -894,7 +894,7 @@
 .sb-route-week h4 {
     margin: 0 0 6px;
     font-size: var(--text-2xs);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
     color: var(--ax-violet);
@@ -968,7 +968,7 @@
     flex-wrap: wrap;
 }
 
-.sb-tree strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.sb-tree strong { font-size: var(--text-md); font-weight: 600; color: var(--ax-text); }
 .sb-tree p { margin: 4px 0 0; font-size: var(--text-sm); line-height: 1.5; color: var(--ax-muted); max-width: 62ch; }
 .sb-tree-choice { color: var(--ax-faint) !important; }
 
@@ -1030,7 +1030,7 @@
     justify-content: space-between;
     gap: 10px;
 }
-.sb-brief-practice-head strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.sb-brief-practice-head strong { font-size: var(--text-md); font-weight: 600; color: var(--ax-text); }
 
 /* The one figure on this page a model supplied rather than the record. It is
    a recommendation and reads as one — no bar, no comparison, no delta. */
@@ -1111,7 +1111,7 @@
 .sb-path-open {
     margin-left: auto;
     font-size: var(--text-sm);
-    font-weight: 650;
+    font-weight: 600;
     color: var(--ax-violet);
     text-decoration: none;
     white-space: nowrap;
@@ -1244,7 +1244,7 @@
     gap: 16px;
     flex-wrap: wrap;
 }
-.sb-draft-head strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.sb-draft-head strong { font-size: var(--text-md); font-weight: 600; color: var(--ax-text); }
 .sb-draft-head p {
     margin: 4px 0 0;
     font-size: var(--text-sm);
@@ -1310,7 +1310,7 @@
     background: color-mix(in srgb, var(--sb-band) 14%, transparent);
     color: color-mix(in srgb, var(--sb-band) 70%, var(--ax-text));
     font-size: var(--text-2xs);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
 }
@@ -1466,7 +1466,7 @@
 
 .sb-fold-figure strong {
     font-size: var(--text-lg);
-    font-weight: 750;
+    font-weight: 700;
     letter-spacing: -.02em;
     /* Tabular so a column of folds keeps its figures on one axis. */
     font-variant-numeric: tabular-nums;
@@ -1717,7 +1717,7 @@
     border-radius: var(--radius-md);
     background: var(--ax-card);
     font-size: var(--text-md);
-    font-weight: 650;
+    font-weight: 600;
     color: var(--ax-text);
 }
 
@@ -1754,7 +1754,7 @@
     background: var(--ax-card);
     font: inherit;
     font-size: var(--text-sm);
-    font-weight: 650;
+    font-weight: 600;
     color: var(--ax-text);
     cursor: pointer;
     transition: border-color .15s ease, color .15s ease;

@@ -191,7 +191,7 @@ html[data-theme="dark"] .page-state-files code { color: #8b949e; }
 }
 .page-state-crash h2 {
     margin: 0;
-    font-size: var(--text-lg); font-weight: 650; letter-spacing: -.01em;
+    font-size: var(--text-lg); font-weight: 600; letter-spacing: -.01em;
 }
 .page-state-crash p {
     margin: 0;

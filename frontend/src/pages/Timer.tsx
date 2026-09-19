@@ -43,6 +43,7 @@ import {
 } from '@/components/Timer/pomodoro';
 import * as format from '@/utils/format';
 import '@/styles/timer.css';
+import { Icon, type IconName } from '@/components/Icon';
 
 const PHASE_LABEL: Record<Phase, string> = {
   focus: 'Focus', break: 'Break', long: 'Long break',
@@ -251,11 +252,11 @@ function Donut({ percent, sub }: { percent: number; sub: string }) {
 }
 
 function Tile({ tone, glyph, label, value, delta }: {
-  tone: string; glyph: string; label: string; value: string; delta: number | null;
+  tone: string; glyph: IconName; label: string; value: string; delta: number | null;
 }) {
   return (
     <div className="pom-tile">
-      <span className={`pom-tile-icon pom-tone-${tone}`} aria-hidden="true">{glyph}</span>
+      <span className={`pom-tile-icon pom-tone-${tone}`} aria-hidden="true"><Icon name={glyph} /></span>
       <span className="pom-tile-label">{label}</span>
       <strong className="pom-tile-value">{value}</strong>
       {delta === null ? (
@@ -505,13 +506,13 @@ export default function Timer() {
   return (
     <div className={`pom-page${entering ? ' pg-enter' : ''}`}>
       <header className="pom-head">
-        <span className="pom-head-sun" aria-hidden="true">☀️</span>
+        <span className="pom-head-sun" aria-hidden="true"><Icon name="sun" /></span>
         <div className="pom-head-text">
           <h1>{greeting(today.getHours())}, {displayName || username || 'there'}</h1>
           <p>Focus today. Build the future you want.</p>
         </div>
         <span className="pom-date">
-          <span aria-hidden="true">📅</span>
+          <Icon name="calendar" />
           {today.toLocaleDateString(undefined, {
             weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
           })}
@@ -536,7 +537,7 @@ export default function Timer() {
 
               <div className="pom-picks">
                 <label className="pom-pick">
-                  <span className="pom-pick-glyph" aria-hidden="true">🔥</span>
+                  <span className="pom-pick-glyph" aria-hidden="true"><Icon name="flame" /></span>
                   <span className="pom-pick-top">
                     <b>{level.name}</b>
                     <i>{level.hint}</i>
@@ -547,7 +548,7 @@ export default function Timer() {
                   </select>
                 </label>
                 <label className="pom-pick">
-                  <span className="pom-pick-glyph" aria-hidden="true">🎯</span>
+                  <span className="pom-pick-glyph" aria-hidden="true"><Icon name="target" /></span>
                   <span className="pom-pick-top">
                     <b>{style.name}</b>
                     <i>{style.focus} min work · {style.rest} min break</i>
@@ -561,14 +562,14 @@ export default function Timer() {
 
               <button type="button" className="pom-start"
                 onClick={running ? pomodoro.pause : pomodoro.start}>
-                <span aria-hidden="true">{running ? '❚❚' : '▶'}</span>
+                <Icon name={running ? 'pause' : 'play'} />
                 {running ? 'Pause Focus' : 'Start Focus'}
               </button>
 
               <ul className="pom-perks">
                 <li><span aria-hidden="true">✦</span> Earns XP</li>
-                <li><span aria-hidden="true">📈</span> Tracks progress</li>
-                <li><span aria-hidden="true">🔥</span> Builds streak</li>
+                <li><Icon name="trend" /> Tracks progress</li>
+                <li><Icon name="flame" /> Builds streak</li>
               </ul>
             </div>
 
@@ -610,19 +611,19 @@ export default function Timer() {
 
             <div className="pom-hero-side">
               <div className="pom-side-card">
-                <span className="pom-side-icon pom-tone-amber" aria-hidden="true">🔥</span>
+                <span className="pom-side-icon pom-tone-amber" aria-hidden="true"><Icon name="flame" /></span>
                 <span className="pom-side-label">Today&apos;s Focus</span>
                 <strong>{doneToday} / {level.target}</strong>
                 <em>pomodoros</em>
               </div>
               <div className="pom-side-card">
-                <span className="pom-side-icon pom-tone-rose" aria-hidden="true">🔥</span>
+                <span className="pom-side-icon pom-tone-rose" aria-hidden="true"><Icon name="flame" /></span>
                 <span className="pom-side-label">Current Streak</span>
                 <strong>{stats?.current_streak ?? 0}</strong>
                 <em>days</em>
               </div>
               <div className="pom-side-card">
-                <span className="pom-side-icon pom-tone-violet" aria-hidden="true">⭐</span>
+                <span className="pom-side-icon pom-tone-violet" aria-hidden="true"><Icon name="star" /></span>
                 <span className="pom-side-label">Next Level</span>
                 <strong>Level {(levelNow?.level ?? 1) + 1}</strong>
                 <em>{levelNow
@@ -635,7 +636,7 @@ export default function Timer() {
           {/* ---- Progress ---------------------------------------------- */}
           <section className="pom-panel">
             <header className="pom-panel-head">
-              <h2><span aria-hidden="true">📊</span> Your Progress</h2>
+              <h2><Icon name="chart" /> Your Progress</h2>
               <div className="pom-toggle" role="group" aria-label="Range">
                 {RANGES.map((option) => (
                   <button key={option.id} type="button"
@@ -650,17 +651,17 @@ export default function Timer() {
               <Donut percent={goalPercent}
                 sub={`${fmtHM(session.focused)} / ${fmtHM(goalSeconds)}`} />
               <div className="pom-tiles">
-                <Tile tone="blue" glyph="🕐" label="Total Focus Time"
+                <Tile tone="blue" glyph="clock" label="Total Focus Time"
                   value={fmtHM(totalNow * 3600)} delta={change(totalNow, totalBefore)} />
-                <Tile tone="rose" glyph="🍅" label="Pomodoros Today"
+                <Tile tone="rose" glyph="timer" label="Pomodoros Today"
                   value={String(doneToday)} delta={null} />
-                <Tile tone="amber" glyph="⚡" label="Avg. Focus / Day"
+                <Tile tone="amber" glyph="zap" label="Avg. Focus / Day"
                   value={workedNow ? fmtHM((totalNow / workedNow) * 3600) : '0m'}
                   delta={change(
                     workedNow ? totalNow / workedNow : 0,
                     workedBefore ? totalBefore / workedBefore : 0,
                   )} />
-                <Tile tone="green" glyph="✅" label="Tasks Completed"
+                <Tile tone="green" glyph="check" label="Tasks Completed"
                   value={String(tasksNow)} delta={change(tasksNow, tasksBefore)} />
               </div>
             </div>
@@ -693,7 +694,7 @@ export default function Timer() {
           {/* ---- The ten ----------------------------------------------- */}
           <section className="pom-panel">
             <header className="pom-panel-head">
-              <h2><span aria-hidden="true">💡</span> Ten Ways to Divide an Hour</h2>
+              <h2><Icon name="lightbulb" /> Ten Ways to Divide an Hour</h2>
               <span className="pom-quiet">{style.name} in use</span>
             </header>
             <StyleGrid current={style.id} onPick={pomodoro.choose} />
@@ -703,7 +704,7 @@ export default function Timer() {
           <div className="pom-split">
             <section className="pom-panel">
               <header className="pom-panel-head">
-                <h2><span aria-hidden="true">📈</span> Focus Analytics</h2>
+                <h2><Icon name="trend" /> Focus Analytics</h2>
                 <div className="pom-toggle" role="group" aria-label="Grain">
                   {GRAINS.map((option) => (
                     <button key={option} type="button"
@@ -719,7 +720,7 @@ export default function Timer() {
             <section className="pom-panel">
               <header className="pom-panel-head">
                 <div className="pom-panel-title">
-                  <h2><span aria-hidden="true">🗓️</span> Growth Ratings</h2>
+                  <h2><Icon name="calendar" /> Growth Ratings</h2>
                   <p>Your overall growth this week</p>
                 </div>
                 <Link className="pom-link" to="/analytics">View details →</Link>
@@ -752,7 +753,7 @@ export default function Timer() {
           <div className="pom-split">
             <section className="pom-panel">
               <header className="pom-panel-head">
-                <h2><span aria-hidden="true">🎯</span> Active Goals</h2>
+                <h2><Icon name="target" /> Active Goals</h2>
                 <Link className="pom-link" to="/goals">View all</Link>
               </header>
               {activeGoals.length ? (
@@ -777,7 +778,7 @@ export default function Timer() {
 
             <section className="pom-panel">
               <header className="pom-panel-head">
-                <h2><span aria-hidden="true">📋</span> Upcoming Tasks</h2>
+                <h2><Icon name="clipboard" /> Upcoming Tasks</h2>
                 <Link className="pom-link" to="/tasks">View all</Link>
               </header>
               {upcoming.length ? (
@@ -803,7 +804,7 @@ export default function Timer() {
           {/* ---- Level ------------------------------------------------- */}
           <div className="pom-split is-level">
             <section className="pom-level">
-              <span className="pom-level-gem" aria-hidden="true">💎</span>
+              <span className="pom-level-gem" aria-hidden="true"><Icon name="gem" /></span>
               <div className="pom-level-text">
                 <h2>Level Up Your Focus</h2>
                 <p>Complete focus sessions, earn XP, and get closer to your goals.</p>
@@ -811,7 +812,7 @@ export default function Timer() {
               <Link className="pom-level-cta" to="/achievements">View Rewards</Link>
             </section>
             <section className="pom-panel pom-levelcard">
-              <span className="pom-level-trophy" aria-hidden="true">🏆</span>
+              <span className="pom-level-trophy" aria-hidden="true"><Icon name="trophy" /></span>
               <div className="pom-levelcard-body">
                 <div className="pom-levelcard-top">
                   <strong>Level {levelNow?.level ?? 1}</strong>

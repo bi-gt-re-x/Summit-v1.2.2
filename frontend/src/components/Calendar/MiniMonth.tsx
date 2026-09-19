@@ -29,6 +29,7 @@
  */
 import { dates } from '@/utils';
 import type { DayLoad } from '@/utils/calendarBusy';
+import { Icon } from '@/components/Icon';
 
 export interface MiniMonthProps {
   /** The month on show. */
@@ -96,7 +97,7 @@ export function MiniMonth({
             aria-label="Previous month"
             onClick={() => onStep(-1)}
           >
-            ❮
+            <Icon name="chevron-left" />
           </button>
           <button
             type="button"
@@ -104,7 +105,7 @@ export function MiniMonth({
             aria-label="Next month"
             onClick={() => onStep(1)}
           >
-            ❯
+            <Icon name="chevron-right" />
           </button>
         </div>
       </div>

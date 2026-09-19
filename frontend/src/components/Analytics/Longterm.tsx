@@ -14,6 +14,7 @@ import { GLYPHS, type GlyphName } from './glyphs';
 import { rankLabel } from './score';
 import type { Standing, StandingKey } from '@/services/analytics';
 import type { Insight } from '@/utils/growthSummary';
+import { Icon } from '@/components/Icon';
 
 // --------------------------------------------------------------------------
 // Compounding
@@ -33,14 +34,14 @@ export function StreaksPanel({ current, best, bestMonth }: StreaksPanelProps) {
       <div className="ax-streaks">
         <div className="ax-streak">
           <span className="ax-streak-icon" aria-hidden="true">
-            🔥
+            <Icon name="flame" />
           </span>
           <span className="ax-muted">Current Streak</span>
           <strong>{current} days</strong>
         </div>
         <div className="ax-streak">
           <span className="ax-streak-icon" aria-hidden="true">
-            🏆
+            <Icon name="trophy" />
           </span>
           <span className="ax-muted">Longest Streak</span>
           <strong>{best} days</strong>

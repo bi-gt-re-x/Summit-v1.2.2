@@ -24,6 +24,7 @@ import { SubjectPicker } from '@/components/SubjectPicker';
 import { useSubjects } from '@/hooks/useSubjects';
 import { MAX_TASK_XP, MIN_TASK_XP, xpToPriority } from '@/utils/priority';
 import type { NewTask } from '@/services/tasks';
+import { Icon } from '@/components/Icon';
 
 export interface TaskModalProps {
   open: boolean;
@@ -407,7 +408,7 @@ export function TaskModal({
           </div>
 
           <p className="calendar-hint">
-            📅 To put a task on the calendar, open the{' '}
+            <Icon name="calendar" /> To put a task on the calendar, open the{' '}
             <a href="/calendar">Calendar</a>, drag across a time slot, and
             choose <strong>Task</strong>.
           </p>

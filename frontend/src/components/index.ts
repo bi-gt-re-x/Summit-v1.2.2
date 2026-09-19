@@ -41,3 +41,7 @@ export { RefreshButton } from './RefreshButton';
 export type { RefreshButtonProps } from './RefreshButton';
 export { SubjectPicker } from './SubjectPicker';
 export type { SubjectPickerProps } from './SubjectPicker';
+/* Every icon in the app, by name — Lucide's, in place of emoji. See
+   components/Icon.tsx. */
+export { Icon } from './Icon';
+export type { IconName, IconProps } from './Icon';

@@ -36,6 +36,7 @@ import {
   type Effects,
   type Timeline,
 } from '@/utils/homePlay';
+import { Icon } from '@/components/Icon';
 
 const STREAK_FROM = 27;
 const STREAK_TO = 28;
@@ -348,7 +349,7 @@ export function CalendarDemo() {
     <div className="lp-card lp-calendar cal-armed" id="calDemo" ref={card} aria-hidden="true">
       <div className="lp-cal-topbar">
         <div className="lp-cal-title">
-          <span className="lp-cal-ico">📅</span> This Week · July 2026
+          <span className="lp-cal-ico"><Icon name="calendar" /></span> This Week · July 2026
         </div>
         <div className="lp-cal-legend">
           <span>
@@ -361,7 +362,7 @@ export function CalendarDemo() {
             <i className="lp-lg lp-lg-c" /> Goals
           </span>
           <span className="cal-streak" id="calStreak" ref={streak}>
-            <i>🔥</i>{' '}
+            <i><Icon name="flame" /></i>{' '}
             <b id="calStreakNum" ref={streakNum as React.RefObject<HTMLElement>}>
               {STREAK_FROM}
             </b>{' '}

@@ -306,7 +306,7 @@ export function DaySidebar({
         </div>
         <ul className="day-tasks-left">
           {pending.length === 0 ? (
-            <li className="day-tasks-empty">Nothing left — you’re all caught up. 🎉</li>
+            <li className="day-tasks-empty">Nothing left — you’re all caught up.</li>
           ) : (
             pending.slice(0, 5).map((block) => {
               const priority = String(block.priority || '').toLowerCase();

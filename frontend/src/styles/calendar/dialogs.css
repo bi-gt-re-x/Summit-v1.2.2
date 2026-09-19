@@ -146,7 +146,7 @@
 
     font-size: var(--text-3xl);
 
-    font-weight: bold;
+    font-weight: 700;
 
     color: #666;
 
@@ -674,7 +674,7 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
     transition: transform .22s ease, width .22s ease;
 }
 .wk-overlap-msg { line-height: 1.45; font-weight: 600; }
-.wk-overlap-msg strong { font-weight: 800; }
+.wk-overlap-msg strong { font-weight: 700; }
 
 /* One row per side: what it is and when it runs, its name, and the way out.
    The dialog used to offer two bare names, which on a seven-column week is a
@@ -690,7 +690,7 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 .wk-overlap-where { display: flex; align-items: center; gap: 8px; }
 .wk-overlap-kind {
     flex: none; border-radius: var(--radius-full); padding: 2px 8px;
-    font-size: var(--text-2xs); font-weight: 800; letter-spacing: .04em;
+    font-size: var(--text-2xs); font-weight: 700; letter-spacing: .04em;
     text-transform: uppercase; background: rgba(255,255,255,.24);
 }
 .wk-overlap-when { font-size: var(--text-sm); font-weight: 700; opacity: .9; }
@@ -709,7 +709,7 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 .wk-overlap-reveal {
     background: #fff; color: #8f302e; border: none;
     border-radius: var(--radius-md); padding: 10px 16px; cursor: pointer;
-    font: inherit; font-size: var(--text-md); font-weight: 800; width: 100%;
+    font: inherit; font-size: var(--text-md); font-weight: 700; width: 100%;
 }
 .wk-overlap-reveal:hover { background: #ffeceb; }
 
@@ -740,7 +740,7 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
     background: #fff; color: #1f2733; padding: 34px 36px;
     border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
 }
-.wk-choose-title { font-size: var(--text-2xl); font-weight: 800; margin-bottom: 4px; }
+.wk-choose-title { font-size: var(--text-2xl); font-weight: 700; margin-bottom: 4px; }
 .wk-choose-row { display: flex; gap: 16px; }
 .wk-choose-btn {
     flex: 1; border: none; border-radius: var(--radius-md); padding: 20px 18px;
@@ -792,7 +792,7 @@ html[data-theme="dark"] #addTaskModal .xp-input-field { background: #232a33; bor
     background: #fff; border: 1px solid #e5e8ee; border-radius: var(--radius-lg);
     padding: 22px 24px; box-shadow: var(--shadow-lg);
 }
-.wk-confirm-title { margin: 0 0 8px; font-size: var(--text-xl); font-weight: 800; color: #1a2230; }
+.wk-confirm-title { margin: 0 0 8px; font-size: var(--text-xl); font-weight: 700; color: #1a2230; }
 .wk-confirm-msg { margin: 0 0 20px; font-size: var(--text-md); line-height: 1.5; color: #55607a; }
 .wk-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
 .wk-confirm-cancel, .wk-confirm-delete {

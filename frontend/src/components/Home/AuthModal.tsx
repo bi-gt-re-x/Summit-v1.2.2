@@ -34,6 +34,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth, useTheme } from '@/hooks';
 import { auth as authService } from '@/services';
 import type { Theme } from '@/types';
+import { Icon } from '@/components/Icon';
 
 export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile';
 
@@ -492,7 +493,7 @@ export function AuthModal({
 
         {/* Check your inbox */}
         <section className={`auth-step${step === 'inbox' ? '' : ' hidden'}`} data-step="inbox">
-          <div className="auth-inbox-mark">✉</div>
+          <div className="auth-inbox-mark"><Icon name="mail" /></div>
           <p className="auth-inbox-text">
             {mailFailed ? (
               <>

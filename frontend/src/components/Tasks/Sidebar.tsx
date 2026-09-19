@@ -11,6 +11,7 @@ import { useFocusSession } from '@/hooks';
 import type { Task } from '@/types';
 import type { Streak } from './board';
 import { timeLabel } from './board';
+import { Icon } from '@/components/Icon';
 
 // --------------------------------------------------------------------------
 // Focus timer
@@ -192,7 +193,7 @@ function Streaks({ rows, onAll }: { rows: Streak[]; onAll: () => void }) {
               <span className="tk-streak-flames" aria-hidden="true">
                 {Array.from({ length: FLAMES }, (_, index) => (
                   <i key={index} className={index < row.days ? 'is-lit' : undefined}>
-                    🔥
+                    <Icon name="flame" />
                   </i>
                 ))}
               </span>

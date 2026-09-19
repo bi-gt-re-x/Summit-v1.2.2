@@ -38,6 +38,7 @@ import type { DayLoad } from '@/utils/calendarBusy';
 import { fmtHM } from '@/hooks/useFocusSession';
 import { useCountUp } from '@/hooks/useCountUp';
 import { OTHER_KEY, type SubjectXp } from '@/utils/subjectXp';
+import { Icon, type IconName } from '@/components/Icon';
 
 export interface WeekStats {
   total: number;
@@ -84,7 +85,7 @@ export interface PriorityRow {
 
 export interface UpcomingEntry {
   id: string;
-  icon: string;
+  icon: IconName;
   title: string;
   /** "Aug 4, 2026" */
   date: string;
@@ -308,7 +309,7 @@ function WeekFocusCard({
 
   return (
     <section className="wk-panel">
-      <h3 className="wk-panel-title">⏱️ Weekly Focus Time</h3>
+      <h3 className="wk-panel-title"><Icon name="timer" /> Weekly Focus Time</h3>
       <p className="wk-focustime">
         {fmtHM(focus.focused)} <span className="wk-focustime-of">/ {fmtHM(focus.planned)}</span>
       </p>
@@ -583,9 +584,9 @@ export function WeekSidebar({
 
       {/* --- Streaks ------------------------------------------------------- */}
       <section className="wk-panel">
-        <h3 className="wk-panel-title">🔥 Streaks</h3>
+        <h3 className="wk-panel-title"><Icon name="flame" /> Streaks</h3>
         <div className="wk-streak-num">
-          🔥 {streak} Day {streak === 1 ? 'Streak' : 'Streak'}
+          <Icon name="flame" /> {streak} Day Streak
         </div>
         <div className="wk-streak-sub">Keep it up!</div>
         <div className="wk-dots">
@@ -618,7 +619,7 @@ export function WeekSidebar({
             {upcoming.map((entry) => (
               <li key={entry.id}>
                 <span className="wk-upcoming-ico" aria-hidden="true">
-                  {entry.icon}
+                  <Icon name={entry.icon} />
                 </span>
                 <span className="wk-upcoming-body">
                   <span className="wk-upcoming-name">{entry.title}</span>

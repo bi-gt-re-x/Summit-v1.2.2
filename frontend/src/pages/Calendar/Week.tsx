@@ -88,6 +88,7 @@ import '@/styles/calendar/overview.css';
 import '@/styles/calendar/week.css';
 import '@/styles/calendar/day.css';
 import '@/styles/calendar/palette.css';
+import type { IconName } from '@/components/Icon';
 
 /**
  * The first day of the week a date falls in.
@@ -445,7 +446,7 @@ export default function Week() {
         id: `task-${task.id}`,
         iso: day(task.due_date),
         sortAt: `${day(task.due_date)} ${(task.due_date || '').slice(11, 16) || '99:99'}`,
-        icon: '📌',
+        icon: 'pin' as IconName,
         title: task.title || 'Untitled',
         when: clockLabel((task.due_date || '').slice(11, 16)),
       }));
@@ -459,7 +460,7 @@ export default function Week() {
           id: `event-${key}-${index}`,
           iso,
           sortAt: `${iso} ${section.startTime || '99:99'}`,
-          icon: '🗓️',
+          icon: 'calendar' as IconName,
           title: section.task || 'Untitled',
           when: clockLabel(section.startTime),
         });

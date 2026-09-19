@@ -494,8 +494,7 @@ export default function Dashboard() {
                   This greeted people by their username whatever they had typed
                   into Settings, which made "Display name" a field that stored a
                   value and changed nothing. */}
-              {dates.greeting(now)}, {displayName || username}!{' '}
-              <span aria-hidden="true">👋</span>
+              {dates.greeting(now)}, {displayName || username}
             </h1>
             {/* "Here is your day." stood here and said nothing — a sentence
                 under a greeting, on a page that does not fit one screen. The

@@ -134,7 +134,7 @@ html[data-theme="dark"] .st-page {
 .st-nav-link.is-on {
     background: color-mix(in srgb, var(--st-violet) 12%, transparent);
     color: var(--st-violet);
-    font-weight: 650;
+    font-weight: 600;
 }
 
 .st-content { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
@@ -307,7 +307,7 @@ html[data-theme="dark"] .st-page {
     gap: 8px;
     min-height: 22px;
 }
-.st-theme-name { font-size: var(--text-sm); font-weight: 650; color: var(--st-text); }
+.st-theme-name { font-size: var(--text-sm); font-weight: 600; color: var(--st-text); }
 .st-theme-live {
     padding: 2px 8px;
     border-radius: var(--radius-full);

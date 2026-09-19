@@ -36,6 +36,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { formatValue, isBetter, personalBests } from '@/utils/records';
 import type { Direction, RecordDraft, RecordKind, RecordRow } from '@/services/records';
+import { Icon } from '@/components/Icon';
 
 /**
  * The units on offer.
@@ -386,7 +387,7 @@ export function RecordModal({
                   is also the one place the direction is visibly doing
                   something at the moment it is chosen, which is what makes a
                   wrong answer to it correctable before it is saved. */}
-              {beats && <span className="rc-modal-beats"> — a new personal best 🏆</span>}
+              {beats && <span className="rc-modal-beats"> — a new personal best <Icon name="trophy" /></span>}
             </p>
           )}
 

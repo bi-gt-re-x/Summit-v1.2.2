@@ -121,7 +121,7 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
 .rc-title {
     margin: 0 0 8px;
     font-size: clamp(1.8rem, 3vw, 2.6rem);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1.1;
 }
@@ -152,7 +152,7 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
     align-items: baseline;
     gap: 8px;
     font-size: var(--text-2xl);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
@@ -266,7 +266,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-tile-ico { font-size: var(--text-xl); line-height: 1; }
 .rc-tile-figure {
     font-size: var(--text-3xl);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1.1;
     color: var(--tone, var(--rc-text));
@@ -382,7 +382,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     color: var(--rc-accent-2);
 }
 .rc-best-name { margin-bottom: 8px; font-size: var(--text-md); font-weight: 600; color: var(--rc-muted); }
-.rc-best-value { font-size: var(--text-3xl); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.rc-best-value { font-size: var(--text-3xl); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
 .rc-best-label { margin-bottom: 10px; font-size: var(--text-xs); color: var(--rc-faint); }
 /* ---------- The card's own evolution --------------------------------------
    The sparkline plots goodness rather than magnitude, so a record measured
@@ -1049,3 +1049,6 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     .rc-best > button, .rc-track > i { transition: none; }
     .rc-best > button:hover { transform: none; }
 }
+
+/* A story tile's icon takes the tile's tone — see styles/tokens.css. */
+.rc-tile-ico { --icon-flame: currentColor; --icon-gold: currentColor; }

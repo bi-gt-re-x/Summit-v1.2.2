@@ -31,6 +31,13 @@
     --text-2xl: 24px;
     --text-3xl: 32px;
 
+    /* Four weights, the four index.html loads. Body, emphasis, labels and
+       headings; nothing in the app is heavier than a heading. */
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
     /* ---------- Shape ---------------------------------------------------- */
     /* Controls and chips, cards and panels, heroes and dialogs, pills. Hairline
        radii (1–3px) on thin bars are left as written. */
@@ -90,3 +97,22 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+/* ---------- Icons ------------------------------------------------------
+   components/Icon.tsx. Sized in `em` by default, so an icon beside a heading
+   is the heading's size; nudged down so it sits on the text rather than
+   above it. */
+.icon {
+    flex-shrink: 0;
+    vertical-align: -0.125em;
+}
+
+/* A flame means a streak and a trophy means a record everywhere in the app,
+   so those two keep a colour of their own, as the emoji they replaced did.
+   A tile that tints its icon from a tone (the timer's, a record story's, a
+   landing-page feature) sets both back to its own colour. `currentColor` in
+   `color` is the parent's colour, so this is inheritance restored. */
+.lucide-flame { color: var(--icon-flame, #ef6c1a); }
+.lucide-trophy,
+.lucide-medal,
+.lucide-crown { color: var(--icon-gold, #d4a017); }

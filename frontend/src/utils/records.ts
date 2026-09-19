@@ -46,6 +46,7 @@
  * corner of the UI and correctly in another.
  */
 import type { Direction, RecordRow } from '@/services/records';
+import type { IconName } from '@/components/Icon';
 
 const DAY = 86_400_000;
 
@@ -302,7 +303,7 @@ export function trail(best: Best, max = 6): string[] {
  */
 export interface Story {
   key: string;
-  icon: string;
+  icon: IconName;
   figure: string;
   label: string;
   detail: string;
@@ -349,7 +350,7 @@ export function stories(bests: Best[], today: Date = new Date()): Story[] {
     const unit = leap.best.unit === 'minutes' ? 'minutes' : '';
     out.push({
       key: 'leap',
-      icon: '⚡',
+      icon: 'zap',
       figure: `${leap.best.direction === 'lower' ? '−' : '+'}${formatValue(leap.size, unit)}`,
       label: 'Biggest leap',
       detail: `${leap.best.name} · ${formatValue(leap.from, unit)} → ${formatValue(
@@ -377,7 +378,7 @@ export function stories(bests: Best[], today: Date = new Date()): Story[] {
   if (run) {
     out.push({
       key: 'run',
-      icon: '🔥',
+      icon: 'flame',
       figure: `${run.length}`,
       label: 'Longest run',
       detail: `${run.best.name} · ${run.length} entries, each better than the last`,
@@ -392,7 +393,7 @@ export function stories(bests: Best[], today: Date = new Date()): Story[] {
   if (fresh.length > 0) {
     out.push({
       key: 'month',
-      icon: '📈',
+      icon: 'trend',
       figure: `${fresh.length}`,
       label: fresh.length === 1 ? 'Record this month' : 'Records this month',
       detail: fresh
@@ -416,7 +417,7 @@ export function stories(bests: Best[], today: Date = new Date()): Story[] {
     const months = monthsBetween(standing.on, today);
     out.push({
       key: 'standing',
-      icon: '🛡️',
+      icon: 'shield',
       figure: months >= 12 ? `${Math.floor(months / 12)}y` : `${months}mo`,
       label: 'Standing longest',
       detail: `${standing.name} · ${formatValue(standing.value, standing.unit, standing.target)} still unbeaten`,

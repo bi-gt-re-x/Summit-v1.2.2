@@ -120,7 +120,7 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
 
 .wk-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .wk-stat { background: #fafbfc; border: 1px solid #eef0f4; border-radius: var(--radius-md); padding: 14px 14px; }
-.wk-stat-num { font-size: var(--text-2xl); font-weight: 800; color: #1a1f26; }
+.wk-stat-num { font-size: var(--text-2xl); font-weight: 700; color: #1a1f26; }
 .wk-stat-label { font-size: var(--text-xs); color: #6b7280; margin-top: 2px; }
 
 
@@ -469,7 +469,7 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
 .wk-task-name { cursor: pointer; }
 .wk-task-tick {
     display: inline-block; overflow: hidden; vertical-align: baseline;
-    max-width: 0; opacity: 0; color: #2e7d52; font-weight: 800;
+    max-width: 0; opacity: 0; color: #2e7d52; font-weight: 700;
     transition: max-width .14s ease, opacity .14s ease, margin-right .14s ease;
 }
 .wk-task-name:hover .wk-task-tick,

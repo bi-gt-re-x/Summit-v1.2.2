@@ -224,7 +224,7 @@ html[data-theme="dark"] .peak-hero {
     background: color-mix(in srgb, var(--peak-a) 15%, transparent);
     color: var(--peak-a);
     font-size: var(--text-2xs);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: .14em;
     text-transform: uppercase;
     white-space: nowrap;

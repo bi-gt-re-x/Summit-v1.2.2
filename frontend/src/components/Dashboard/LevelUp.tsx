@@ -14,6 +14,7 @@
  * does not leave one pending.
  */
 import { useEffect, useMemo } from 'react';
+import { Icon } from '@/components/Icon';
 
 /** How long the badge stays up, in ms. */
 const SHOW_MS = 1800;
@@ -49,7 +50,7 @@ export function LevelUp({ level, onDone }: LevelUpProps) {
       aria-hidden="true"
     >
       <div className="levelup-badge">
-        {milestone && <div className="levelup-crown">👑</div>}
+        {milestone && <div className="levelup-crown"><Icon name="crown" /></div>}
         <div className="levelup-title">
           {milestone ? 'MILESTONE!' : 'LEVEL UP!'}
         </div>

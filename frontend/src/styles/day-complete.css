@@ -54,7 +54,7 @@ html[data-theme="dark"] .tk-day-backdrop {
     border-radius: var(--dc-radius);
     background: color-mix(in srgb, var(--dc-green) 8%, transparent);
     color: var(--dc-green);
-    font: inherit; font-size: var(--text-md); font-weight: 650;
+    font: inherit; font-size: var(--text-md); font-weight: 600;
     cursor: pointer;
     transition: background .15s ease, border-color .15s ease;
 }
@@ -130,7 +130,7 @@ html[data-theme="dark"] .tk-day-backdrop { background: rgba(0, 0, 0, .6); }
 .tk-day-cancel, .tk-day-go {
     padding: 9px 16px;
     border-radius: var(--radius-md);
-    font: inherit; font-size: var(--text-sm); font-weight: 650;
+    font: inherit; font-size: var(--text-sm); font-weight: 600;
     cursor: pointer;
 }
 .tk-day-cancel {

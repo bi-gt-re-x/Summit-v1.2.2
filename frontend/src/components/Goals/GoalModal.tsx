@@ -29,6 +29,7 @@ import { SubjectPicker } from '@/components/SubjectPicker';
 import type { Subject } from '@/services/subjects';
 import type { Goal, GoalType } from '@/types';
 import type { NewGoal } from '@/services/goals';
+import { Icon } from '@/components/Icon';
 
 export interface GoalModalProps {
   open: boolean;
@@ -214,7 +215,7 @@ export function GoalModal({
 
           {type === 'focus' && (
             <p className="gm-hint" id="focusGoalHint">
-              ⏱ Fills in as you log focus time after the goal is set.
+              <Icon name="timer" /> Fills in as you log focus time after the goal is set.
             </p>
           )}
 

@@ -26,18 +26,24 @@ import {
   type Effects,
   type Timeline,
 } from '@/utils/homePlay';
+import { Icon, type IconName } from '@/components/Icon';
 
-/** Escaped rather than literal, so the file survives any re-encoding. */
-const FLAME = '🔥';
+/** Lucide's flame (components/Icon.tsx), as markup: the flames are made one at
+ *  a time by the timeline below rather than rendered, so they cannot be a
+ *  component. A constant, so nothing user-supplied ever reaches innerHTML. */
+const FLAME =
+  '<svg class="icon lucide-flame" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor"' +
+  ' stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+  '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>';
 const STREAK_STOPS = [0, 7, 14, 28];
 const STREAK_FULL = 28;
 /** Where the bar ends up. The markup starts it there; `reset` pulls it back. */
 const XP_FULL = '78%';
 
-const XP_EVENTS = [
-  { label: '🏆 Level 10 unlocked', xp: '+200 XP' },
-  { label: '✅ Completed project', xp: '+200 XP' },
-  { label: '✅ Completed project', xp: '+200 XP' },
+const XP_EVENTS: { icon: IconName; label: string; xp: string }[] = [
+  { icon: 'trophy', label: 'Level 10 unlocked', xp: '+200 XP' },
+  { icon: 'check', label: 'Completed project', xp: '+200 XP' },
+  { icon: 'check', label: 'Completed project', xp: '+200 XP' },
 ];
 
 // --------------------------------------------------------------------------
@@ -102,7 +108,7 @@ function StreakCard() {
         const box = flames.current;
         if (!box) return;
         const flame = document.createElement('span');
-        flame.textContent = FLAME;
+        flame.innerHTML = FLAME;
         flame.className = 'is-new';
         box.appendChild(flame);
         sparkFrom(flame);
@@ -127,7 +133,7 @@ function StreakCard() {
       box.textContent = '';
       for (let i = 0; i < 3; i++) {
         const flame = document.createElement('span');
-        flame.textContent = FLAME;
+        flame.innerHTML = FLAME;
         box.appendChild(flame);
       }
     }
@@ -217,7 +223,9 @@ function XpHistory() {
         </span>
         {XP_EVENTS.map((event, i) => (
           <div className="lp-stat xp-row" key={i}>
-            <span>{event.label}</span>
+            <span>
+              <Icon name={event.icon} /> {event.label}
+            </span>
             <b>{event.xp}</b>
           </div>
         ))}
