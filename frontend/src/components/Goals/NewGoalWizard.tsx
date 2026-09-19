@@ -54,6 +54,7 @@ import { AskModel } from './AskModel';
 import { SubjectPicker } from '@/components/SubjectPicker';
 import type { Subject } from '@/services/subjects';
 import type { DraftedGoal, NewGoal } from '@/services/goals';
+import { CHART_CHOICES } from '@/utils/goalVisuals';
 import type { GoalCategory, GoalMeasure } from '@/types';
 
 const STEPS = [
@@ -62,7 +63,65 @@ const STEPS = [
   'When do you want it?',
   'How will you know?',
   'Break it into checkpoints',
+  'How should it look?',
 ] as const;
+
+/**
+ * The chart step's options, each with a thumbnail of the shape it draws.
+ *
+ * Automatic comes first and is the default: most people have no opinion yet,
+ * and the page picks well from the data. The rest mirror the ⋯ menu on the
+ * card (`CHART_CHOICES`), so a choice made here can be changed there later.
+ */
+const CHART_BLURBS: Record<string, string> = {
+  '': 'We pick the best chart for the data you log.',
+  progress: 'Progress over time, as a line.',
+  step: 'One step up for each checkpoint reached.',
+  heatmap: 'Which days you worked, over twelve weeks.',
+  basic: 'One bar: how far along you are.',
+  roadmap: 'Your checkpoints, in order.',
+  volume: 'How much you do on each day of the week.',
+  difficulty: 'How well it went at each difficulty.',
+};
+
+function ChartThumb({ id }: { id: string }) {
+  const bars = (heights: number[]) =>
+    heights.map((h, i) => <rect key={i} x={4 + i * 10} y={30 - h} width={6} height={h} rx={1} />);
+  return (
+    <svg className="gx-chart-thumb" viewBox="0 0 80 34" aria-hidden="true">
+      {id === '' && <path className="is-line" d="M40 6 L42.5 14 L50 17 L42.5 20 L40 28 L37.5 20 L30 17 L37.5 14 Z" />}
+      {id === 'progress' && <path className="is-line" d="M4 28 L20 22 L36 24 L52 12 L76 6" />}
+      {id === 'step' && <path className="is-line" d="M4 28 H22 V20 H44 V12 H62 V6 H76" />}
+      {id === 'heatmap' &&
+        Array.from({ length: 24 }, (_, i) => (
+          <rect
+            key={i}
+            x={4 + (i % 8) * 9.5}
+            y={4 + Math.floor(i / 8) * 9.5}
+            width={7}
+            height={7}
+            rx={1.5}
+            opacity={[0.2, 0.9, 0.5, 0.2, 0.7, 1, 0.35, 0.6][(i * 5) % 8]}
+          />
+        ))}
+      {id === 'basic' && (
+        <>
+          <rect className="is-track" x={4} y={14} width={72} height={6} rx={3} />
+          <rect x={4} y={14} width={44} height={6} rx={3} />
+        </>
+      )}
+      {id === 'roadmap' &&
+        [0, 1, 2].map((i) => (
+          <g key={i}>
+            <rect className="is-track" x={4} y={6 + i * 10} width={72} height={4} rx={2} />
+            <rect x={4} y={6 + i * 10} width={[72, 32, 6][i]} height={4} rx={2} />
+          </g>
+        ))}
+      {id === 'volume' && bars([10, 18, 8, 22, 14, 6, 12])}
+      {id === 'difficulty' && bars([24, 20, 15, 9, 5])}
+    </svg>
+  );
+}
 
 /**
  * One line of advice per step, at the top of the panel.
@@ -83,6 +142,7 @@ const TIPS: Record<number, string> = {
   2: 'Add a date so we can tell you if you’re on track.',
   3: 'Use milestones for a finish line, or a number for something you count up.',
   4: 'Three to six works. Each should be a state the goal reaches, not a task you do.',
+  5: 'Not sure? Leave it on Automatic. You can change it from the card any time.',
 };
 
 /** How far out a goal's date starts, when the reader has not moved it. */
@@ -181,6 +241,8 @@ export function NewGoalWizard({
   const [unit, setUnit] = useState('');
   const [current, setCurrent] = useState('');
   const [target, setTarget] = useState('');
+  /** Which chart the card draws. '' lets the page pick. */
+  const [chart, setChart] = useState('');
   const [milestones, setMilestones] = useState<string[]>([]);
   const [draft, setDraft] = useState('');
   const [suggesting, setSuggesting] = useState(false);
@@ -209,6 +271,7 @@ export function NewGoalWizard({
     setUnit('');
     setCurrent('');
     setTarget('');
+    setChart('');
     setMilestones([]);
     setDraft('');
     setIdea('');
@@ -321,11 +384,12 @@ export function NewGoalWizard({
       unit: unit.trim(),
       current_value: Number(current) || 0,
       target_number: Number(target) || 0,
+      chart,
       milestones,
     });
     reset();
   }, [
-    category, current, deadline, description, measure, milestones, onSave,
+    category, chart, current, deadline, description, measure, milestones, onSave,
     priority, reset, subjectId, target, title, unit, why,
   ]);
 
@@ -664,6 +728,34 @@ export function NewGoalWizard({
                 model drafts them once the goal is made. Either way, each checkpoint then gets its
                 steps drafted.
               </p>
+            </>
+          )}
+
+          {step === 5 && (
+            <>
+              <label id="gx-chart-label">The chart on this goal's card</label>
+              <div className="gx-choices gx-chart-choices" role="radiogroup" aria-labelledby="gx-chart-label">
+                {[{ id: '', label: 'Automatic' }, ...CHART_CHOICES].map((choice) => (
+                  <button
+                    key={choice.id || 'auto'}
+                    type="button"
+                    role="radio"
+                    aria-checked={chart === choice.id}
+                    className={`gx-choice${chart === choice.id ? ' is-on' : ''}`}
+                    onClick={() => setChart(choice.id)}
+                  >
+                    <ChartThumb id={choice.id} />
+                    <strong>{choice.label}</strong>
+                    <span>{CHART_BLURBS[choice.id]}</span>
+                  </button>
+                ))}
+              </div>
+              {(chart === 'progress' || chart === 'step') && (
+                <p className="gx-hint">It fills in as you reach checkpoints.</p>
+              )}
+              {(chart === 'heatmap' || chart === 'volume' || chart === 'difficulty') && (
+                <p className="gx-hint">It fills in as you finish tasks linked to this goal.</p>
+              )}
             </>
           )}
         </div>

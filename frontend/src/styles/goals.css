@@ -1859,6 +1859,23 @@ button.gx-state-attn.is-on {
 .gx-page .gx-choice strong { font-size: var(--text-md); font-weight: 700; }
 .gx-page .gx-choice span { font-size: var(--text-xs); line-height: 1.5; color: var(--gx-muted); }
 
+/* The chart step: eight small tiles rather than two big ones. */
+.gx-chart-choices { grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
+.gx-page .gx-chart-choices .gx-choice { padding: var(--space-3); gap: var(--space-1); }
+.gx-page .gx-chart-choices .gx-choice strong { font-size: var(--text-sm); }
+.gx-chart-thumb { width: 100%; height: 34px; margin-bottom: var(--space-1); }
+.gx-chart-thumb rect { fill: var(--gx-violet); }
+.gx-chart-thumb rect.is-track { fill: var(--gx-line); }
+.gx-chart-thumb path.is-line {
+    fill: none;
+    stroke: var(--gx-violet);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.gx-chart-thumb path.is-line[d$="Z"] { fill: var(--gx-violet); stroke: none; }
+.gx-page .gx-choice:not(.is-on) .gx-chart-thumb { opacity: .55; }
+
 .gx-number-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-top: var(--space-4); }
 .gx-number-row label { margin-bottom: var(--space-1); }
 
@@ -1977,6 +1994,7 @@ button.gx-state-attn.is-on {
 @media (max-width: 720px) {
     .gx-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .gx-choices, .gx-number-row { grid-template-columns: 1fr; }
+    .gx-chart-choices { grid-template-columns: 1fr 1fr; }
     .gx-head-tools { width: 100%; }
     .gx-drawer { padding: var(--space-5) var(--space-4) var(--space-8); }
     .gx-cta { flex-wrap: wrap; }
