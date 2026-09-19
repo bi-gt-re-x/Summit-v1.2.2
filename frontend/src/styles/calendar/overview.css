@@ -22,9 +22,9 @@
    them from. The same values, under the panel's own names, on the panel
    itself. */
 .cal-overview {
-    --cal-ink: #12151b;
-    --cal-ink-soft: #6b7280;
-    --cal-surface: #ffffff;
+    --cal-ink: var(--color-ink);
+    --cal-ink-soft: var(--color-ink-muted);
+    --cal-surface: var(--color-surface);
     --cal-accent: #3d5cc0;
     --cal-accent-soft: #eef2fc;
     --cal-good: #16a34a;
@@ -33,9 +33,9 @@
     --cal-extra-soft: #fdf3e7;
 }
 html[data-theme="dark"] .cal-overview {
-    --cal-ink: #e9edf3;
-    --cal-ink-soft: #9aa3b1;
-    --cal-surface: #14171e;
+    --cal-ink: var(--color-ink);
+    --cal-ink-soft: var(--color-ink-muted);
+    --cal-surface: var(--color-surface);
     --cal-accent: #7f9cff;
     --cal-accent-soft: #1a2133;
     --cal-good: #3fb950;
@@ -60,7 +60,7 @@ html[data-theme="dark"] .cal-overview {
     align-items: flex-start;
     gap: 3px;
     padding: 12px;
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: var(--tile-bg);
     min-width: 0;
 }
@@ -70,7 +70,7 @@ html[data-theme="dark"] .cal-overview {
     justify-content: center;
     width: 28px;
     height: 28px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--cal-surface);
     color: var(--tile-ink);
     margin-bottom: 5px;
@@ -85,7 +85,7 @@ html[data-theme="dark"] .cal-overview {
     stroke-linejoin: round;
 }
 .cal-tile-label {
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--cal-ink-soft);
     white-space: nowrap;
@@ -94,14 +94,14 @@ html[data-theme="dark"] .cal-overview {
     max-width: 100%;
 }
 .cal-tile-value {
-    font-size: 17px;
+    font-size: var(--text-lg);
     font-weight: 800;
     letter-spacing: -0.01em;
     color: var(--tile-ink);
     line-height: 1.15;
 }
 .cal-tile-sub {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--cal-ink-soft);
     white-space: nowrap;
     overflow: hidden;
@@ -132,9 +132,9 @@ html[data-theme="dark"] .cal-overview {
         text-overflow: clip;
         line-height: 1.3;
     }
-    .cal-tile-label { font-size: 12px; }
-    .cal-tile-value { font-size: 20px; }
-    .cal-tile-sub { font-size: 11px; }
+    .cal-tile-label { font-size: var(--text-xs); }
+    .cal-tile-value { font-size: var(--text-xl); }
+    .cal-tile-sub { font-size: var(--text-2xs); }
 }
 
 /* One tile carries a coloured figure, not four. Colour on all of them made the
@@ -155,7 +155,7 @@ html[data-theme="dark"] .cal-overview {
 .cal-overview .wk-weekly { display: flex; align-items: center; gap: 14px; }
 .cal-overview .wk-weekly-said {
     margin: 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.45;
     color: var(--cal-ink-soft);
 }
@@ -176,6 +176,6 @@ html[data-theme="dark"] .cal-overview {
     color: inherit;
     background: var(--cal-surface);
     border: 1px solid var(--cal-accent);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     padding: 0 4px;
 }

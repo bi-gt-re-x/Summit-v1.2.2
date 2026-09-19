@@ -33,29 +33,29 @@ body:has(.rc-page) .app-main {
 
 .rc-page {
     --rc-bg: transparent;
-    --rc-card: #ffffff;
-    --rc-card-2: #f7f8fb;
+    --rc-card: var(--color-surface);
+    --rc-card-2: var(--color-surface-2);
     --rc-raised: #ffffff;
-    --rc-line: #e6e9ef;
-    --rc-line-soft: #eef0f5;
+    --rc-line: var(--color-line);
+    --rc-line-soft: var(--color-line-soft);
 
-    --rc-text: #1f2733;
-    --rc-muted: #6b7684;
-    --rc-faint: #98a1ae;
+    --rc-text: var(--color-ink);
+    --rc-muted: var(--color-ink-muted);
+    --rc-faint: var(--color-ink-faint);
 
-    --rc-accent: #6c5ce7;
+    --rc-accent: var(--color-accent);
     --rc-accent-2: #8b7cf8;
     --rc-gold: #c08324;
     --rc-good: #1f8a54;
     --rc-bad: #c0392b;
 
-    --rc-violet: #6d5ae0;
+    --rc-violet: var(--color-accent);
     --rc-amber: #c08324;
     --rc-blue: #2f6fd0;
     --rc-green: #1f8a54;
 
-    --rc-radius: 16px;
-    --rc-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .05);
+    --rc-radius: var(--radius-lg);
+    --rc-shadow: var(--shadow-md);
 
     box-sizing: border-box;
     width: 100%;
@@ -64,32 +64,32 @@ body:has(.rc-page) .app-main {
     padding: 26px 24px 60px;
     background: var(--rc-bg);
     color: var(--rc-text);
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
 }
 
 html[data-theme="dark"] .rc-page {
-    --rc-card: #161d2c;
-    --rc-card-2: #1b2334;
+    --rc-card: var(--color-surface);
+    --rc-card-2: var(--color-surface-2);
     --rc-raised: #212a3e;
-    --rc-line: #28324a;
-    --rc-line-soft: #212a3e;
+    --rc-line: var(--color-line);
+    --rc-line-soft: var(--color-line-soft);
 
     --rc-text: #e7ecf6;
-    --rc-muted: #8f9bb3;
-    --rc-faint: #6d7a94;
+    --rc-muted: var(--color-ink-muted);
+    --rc-faint: var(--color-ink-faint);
 
-    --rc-accent: #6d5ce7;
+    --rc-accent: var(--color-accent);
     --rc-accent-2: #a78bfa;
     --rc-gold: #e0b23c;
     --rc-good: #46c483;
     --rc-bad: #f0736d;
 
-    --rc-violet: #9b8bff;
+    --rc-violet: var(--color-accent);
     --rc-amber: #e0b23c;
     --rc-blue: #6a9bff;
     --rc-green: #46c483;
 
-    --rc-shadow: 0 1px 2px rgba(0, 0, 0, .28), 0 10px 30px rgba(0, 0, 0, .2);
+    --rc-shadow: var(--shadow-md);
 }
 
 .rc-page { color-scheme: light; }
@@ -126,12 +126,12 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
     line-height: 1.1;
 }
 .rc-hero-text { min-width: 0; }
-.rc-sub { margin: 0; max-width: 46ch; font-size: 14px; line-height: 1.55; color: var(--rc-muted); }
+.rc-sub { margin: 0; max-width: 46ch; font-size: var(--text-md); line-height: 1.55; color: var(--rc-muted); }
 /* The thesis, when there is a record to hang it on: one size up and in the
    page's own text colour, because the line under it is the evidence and a
    claim in the muted colour reads as a caption for it rather than as the
    point. */
-.rc-sub.is-thesis { font-size: 16px; font-weight: 600; color: var(--rc-text); }
+.rc-sub.is-thesis { font-size: var(--text-lg); font-weight: 600; color: var(--rc-text); }
 
 /* ---------- The headline record ------------------------------------------- */
 /* "18 → 25 on AMC 8 · +7 since your first attempt". The figures are the size
@@ -144,21 +144,21 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
     align-items: baseline;
     gap: 6px 10px;
     margin: 12px 0 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     color: var(--rc-muted);
 }
 .rc-lead-span {
     display: inline-flex;
     align-items: baseline;
     gap: 8px;
-    font-size: 27px;
+    font-size: var(--text-2xl);
     font-weight: 800;
     letter-spacing: -.03em;
     line-height: 1.1;
     font-variant-numeric: tabular-nums;
 }
 .rc-lead-from { color: var(--rc-faint); }
-.rc-lead-arrow { font-size: 19px; font-weight: 600; color: var(--rc-faint); }
+.rc-lead-arrow { font-size: var(--text-xl); font-weight: 600; color: var(--rc-faint); }
 .rc-lead-to { color: var(--rc-text); }
 .rc-lead-tail { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
 .rc-lead-tail strong { color: var(--rc-text); font-weight: 700; }
@@ -193,11 +193,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     gap: 7px;
     padding: 10px 16px;
     border: 1px solid var(--rc-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--rc-card);
     color: var(--rc-text);
     font: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     cursor: pointer;
     transition: border-color .15s ease, filter .15s ease, transform .12s ease;
@@ -221,7 +221,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     background: transparent;
     color: var(--rc-accent-2);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
 }
@@ -231,10 +231,10 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     margin: 0 0 18px;
     padding: 11px 14px;
     border: 1px solid color-mix(in srgb, var(--rc-bad) 40%, transparent);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--rc-bad) 10%, transparent);
     color: var(--rc-bad);
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 
 /* ---------- The four stories ---------------------------------------------- */
@@ -263,16 +263,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
        without four tinted boxes shouting at once. */
     border-top: 2px solid var(--tone, var(--rc-accent-2));
 }
-.rc-tile-ico { font-size: 19px; line-height: 1; }
+.rc-tile-ico { font-size: var(--text-xl); line-height: 1; }
 .rc-tile-figure {
-    font-size: 30px;
+    font-size: var(--text-3xl);
     font-weight: 800;
     letter-spacing: -.03em;
     line-height: 1.1;
     color: var(--tone, var(--rc-text));
     font-variant-numeric: tabular-nums;
 }
-.rc-tile-label { font-size: 12.5px; font-weight: 600; color: var(--rc-text); }
+.rc-tile-label { font-size: var(--text-sm); font-weight: 600; color: var(--rc-text); }
 /* Two lines at most. A story whose subject runs to a paragraph is a story
    nobody reads off a tile, and the record it names is one tap away. */
 .rc-tile-detail {
@@ -280,7 +280,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.45;
     color: var(--rc-faint);
 }
@@ -289,7 +289,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    line and not four tiles. */
 .rc-meta {
     margin: -8px 0 26px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--rc-faint);
 }
 
@@ -308,7 +308,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-section-title {
     margin: 0 0 16px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -317,33 +317,33 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-section-head .rc-section-title { margin: 0; }
 .rc-sub-title {
     margin: 26px 0 14px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
     color: var(--rc-faint);
 }
-.rc-sub-title.is-quiet { margin-top: 32px; font-size: 11px; letter-spacing: .07em; }
+.rc-sub-title.is-quiet { margin-top: 32px; font-size: var(--text-2xs); letter-spacing: .07em; }
 
 /* The line that says what a milestone is. Records and milestones share a
    table, a dialog and a page, and the difference between them is a sentence
    nobody should have to reconstruct from which section a thing landed in. */
 .rc-define {
     margin: -4px 0 14px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.6;
     color: var(--rc-faint);
 }
 .rc-define strong { color: var(--rc-muted); font-weight: 700; }
-.rc-note { margin: 0 0 16px; font-size: 12.5px; line-height: 1.6; color: var(--rc-faint); max-width: 78ch; }
+.rc-note { margin: 0 0 16px; font-size: var(--text-sm); line-height: 1.6; color: var(--rc-faint); max-width: 78ch; }
 .rc-empty {
     margin: 0;
     padding: 20px 18px;
     border: 1px dashed var(--rc-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--rc-card-2);
     color: var(--rc-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.6;
 }
 
@@ -375,15 +375,15 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-best > button:hover { border-color: var(--rc-accent-2); transform: translateY(-2px); }
 .rc-best-cat {
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
     color: var(--rc-accent-2);
 }
-.rc-best-name { margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--rc-muted); }
-.rc-best-value { font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
-.rc-best-label { margin-bottom: 10px; font-size: 11.5px; color: var(--rc-faint); }
+.rc-best-name { margin-bottom: 8px; font-size: var(--text-md); font-weight: 600; color: var(--rc-muted); }
+.rc-best-value { font-size: var(--text-3xl); font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+.rc-best-label { margin-bottom: 10px; font-size: var(--text-xs); color: var(--rc-faint); }
 /* ---------- The card's own evolution --------------------------------------
    The sparkline plots goodness rather than magnitude, so a record measured
    downward still climbs — the reason is in Records.tsx, above `Spark`. Drawn
@@ -416,7 +416,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     align-items: baseline;
     gap: 3px 4px;
     margin: 6px 0 10px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--rc-faint);
     font-variant-numeric: tabular-nums;
@@ -428,14 +428,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-best-trail > span.is-now { color: var(--rc-accent-2); }
 
-.rc-best-gain { font-size: 12px; font-weight: 600; color: var(--rc-good); }
+.rc-best-gain { font-size: var(--text-xs); font-weight: 600; color: var(--rc-good); }
 .rc-best-gain.is-quiet { color: var(--rc-faint); font-weight: 500; }
-.rc-best-new { font-size: 12px; font-weight: 700; color: var(--rc-gold); }
+.rc-best-new { font-size: var(--text-xs); font-weight: 700; color: var(--rc-gold); }
 .rc-best-when {
     margin-top: 11px;
     padding-top: 10px;
     border-top: 1px solid var(--rc-line-soft);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--rc-faint);
 }
 /* A record just broken. The one place on the page allowed to glow. */
@@ -453,11 +453,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-chip {
     padding: 6px 13px;
     border: 1px solid var(--rc-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--rc-card);
     color: var(--rc-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
     transition: background .14s ease, color .14s ease, border-color .14s ease;
@@ -504,7 +504,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-timeline > li:last-child::before { display: none; }
 .rc-tl-when {
     padding-top: 9px;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .04em;
     color: var(--rc-faint);
@@ -553,14 +553,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     text-align: left;
     cursor: pointer;
 }
-.rc-tl-name { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-tl-name { font-size: var(--text-sm); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rc-tl-name em { font-style: normal; color: var(--rc-accent-2); }
-.rc-tl-note { font-size: 11px; color: var(--rc-faint); }
+.rc-tl-note { font-size: var(--text-2xs); color: var(--rc-faint); }
 .rc-tl-note.is-record {
     font-weight: 700;
     letter-spacing: .02em;
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     color: var(--rc-gold);
 }
 .rc-tl-body:hover .rc-tl-name { text-decoration: underline; }
@@ -574,11 +574,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     gap: 11px;
     padding: 9px 8px;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--rc-muted);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
@@ -589,7 +589,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     width: 17px; height: 17px;
     border: 1.5px solid var(--rc-line);
     border-radius: 50%;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     color: transparent;
 }
 /* Scoped to the li's own button, not any button inside it: a key milestone
@@ -602,7 +602,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-miles li.is-done > button .rc-mile-name { color: var(--rc-text); }
 .rc-mile-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.rc-mile-when { font-size: 11.5px; color: var(--rc-faint); white-space: nowrap; }
+.rc-mile-when { font-size: var(--text-xs); color: var(--rc-faint); white-space: nowrap; }
 
 /* ---------- Folding ------------------------------------------------------- */
 /* One chevron, one rotation, used by the section head and by every key
@@ -636,10 +636,10 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-fold:hover .rc-section-title { color: var(--rc-text); }
 .rc-fold-n {
     padding: 1px 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--rc-card-2);
     color: var(--rc-faint);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
 }
 
@@ -662,14 +662,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
     color: var(--rc-muted);
 }
 .rc-key.is-open > .rc-key-head .rc-key-name { color: var(--rc-text); }
-.rc-key-n { font-size: 11.5px; font-weight: 600; color: var(--rc-faint); white-space: nowrap; }
+.rc-key-n { font-size: var(--text-xs); font-weight: 600; color: var(--rc-faint); white-space: nowrap; }
 .rc-key.is-done > .rc-key-head .rc-key-n { color: var(--rc-good); }
 
 .rc-key-kids {
@@ -680,7 +680,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     padding: 0 0 0 15px;
     border-left: 1.5px solid var(--rc-line);
 }
-.rc-key-kids button { font-size: 12.5px; padding: 7px 8px; }
+.rc-key-kids button { font-size: var(--text-sm); padding: 7px 8px; }
 
 /* ---------- Record evolution ---------------------------------------------- */
 .rc-ev-wrap {
@@ -696,14 +696,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-ev-figs { margin: 0; display: flex; flex-direction: column; gap: 13px; }
 .rc-ev-figs div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.rc-ev-figs dt { font-size: 12px; color: var(--rc-muted); }
-.rc-ev-figs dd { margin: 0; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.rc-ev-figs dt { font-size: var(--text-xs); color: var(--rc-muted); }
+.rc-ev-figs dd { margin: 0; font-size: var(--text-lg); font-weight: 700; font-variant-numeric: tabular-nums; }
 .rc-ev-figs dd.is-up { color: var(--rc-good); }
 
 .rc-ev { min-width: 0; color: var(--rc-accent-2); }
 .rc-ev-svg { width: 100%; height: auto; display: block; overflow: visible; }
 .rc-ev-grid { stroke: var(--rc-line-soft); stroke-width: 1; }
-.rc-ev-axis { fill: var(--rc-faint); font-size: 10px; }
+.rc-ev-axis { fill: var(--rc-faint); font-size: var(--text-2xs); }
 /* Filled by the gradient in the markup; it must not also take the line stroke. */
 .rc-ev-area { stroke: none; }
 .rc-ev-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
@@ -721,16 +721,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-ev-pick { display: flex; align-items: center; gap: 9px; }
 .rc-ev-dir {
     padding: 4px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--rc-blue) 14%, transparent);
     color: var(--rc-blue);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .02em;
     white-space: nowrap;
 }
-.rc-ev-point { fill: var(--rc-text); font-size: 11px; font-weight: 700; }
-.rc-ev-when { fill: var(--rc-faint); font-size: 9.5px; }
+.rc-ev-point { fill: var(--rc-text); font-size: var(--text-2xs); font-weight: 700; }
+.rc-ev-when { fill: var(--rc-faint); font-size: var(--text-2xs); }
 
 /* ---------- Search and sort ----------------------------------------------- */
 /* ---------- The history toolbar --------------------------------------------
@@ -755,11 +755,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     min-width: 0;
     padding: 0 10px;
     border: 1px solid var(--rc-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--rc-card-2);
 }
 .rc-bar-search:focus-within { border-color: var(--rc-accent-2); }
-.rc-bar-ico { font-size: 12px; line-height: 1; opacity: .65; }
+.rc-bar-ico { font-size: var(--text-xs); line-height: 1; opacity: .65; }
 .rc-bar-search input[type="search"] {
     min-width: 0;
     width: 100%;
@@ -768,24 +768,24 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     background: transparent;
     color: var(--rc-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     outline: none;
 }
 
 .rc-select {
     padding: 8px 11px;
     border: 1px solid var(--rc-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--rc-card-2);
     color: var(--rc-text);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     cursor: pointer;
     outline: none;
 }
 .rc-select:focus, .rc-select:hover { border-color: var(--rc-accent-2); }
 /* In the toolbar, where three controls share a line inside half the page. */
-.rc-select.is-small { padding: 7px 8px; font-size: 12.5px; }
+.rc-select.is-small { padding: 7px 8px; font-size: var(--text-sm); }
 
 /* ---------- The dialog ----------------------------------------------------- */
 .rc-modal-back {
@@ -804,9 +804,9 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: flex;
     flex-direction: column;
     border: 1px solid var(--rc-line);
-    border-radius: 18px;
+    border-radius: var(--radius-lg);
     background: var(--rc-raised);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, .4);
+    box-shadow: var(--shadow-lg);
     color: var(--rc-text);
 }
 .rc-modal-head {
@@ -817,14 +817,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     padding: 17px 20px;
     border-bottom: 1px solid var(--rc-line-soft);
 }
-.rc-modal-head h2 { margin: 0; font-size: 16px; font-weight: 700; }
+.rc-modal-head h2 { margin: 0; font-size: var(--text-lg); font-weight: 700; }
 .rc-modal-x {
     display: grid;
     place-items: center;
     width: 30px; height: 30px;
     padding: 0;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--rc-muted);
     cursor: pointer;
@@ -841,17 +841,17 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     gap: 2px;
     padding: 11px 13px;
     border: 1px solid var(--rc-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--rc-card-2);
     color: var(--rc-text);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     text-align: left;
     cursor: pointer;
     transition: border-color .14s ease, background .14s ease;
 }
-.rc-kind button em { font-style: normal; font-size: 11px; font-weight: 400; color: var(--rc-faint); }
+.rc-kind button em { font-style: normal; font-size: var(--text-2xs); font-weight: 400; color: var(--rc-faint); }
 .rc-kind button.is-on {
     border-color: var(--rc-accent-2);
     background: color-mix(in srgb, var(--rc-accent-2) 12%, transparent);
@@ -859,7 +859,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 
 .rc-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .rc-field > span {
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--rc-muted);
 }
@@ -867,17 +867,17 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     width: 100%;
     padding: 9px 11px;
     border: 1px solid var(--rc-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--rc-card-2);
     color: var(--rc-text);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     outline: none;
     transition: border-color .14s ease;
 }
 .rc-field textarea { resize: vertical; line-height: 1.55; }
 .rc-field input:focus, .rc-field select:focus, .rc-field textarea:focus { border-color: var(--rc-accent-2); }
-.rc-field-hint { font-style: normal; font-size: 11px; line-height: 1.5; color: var(--rc-faint); }
+.rc-field-hint { font-style: normal; font-size: var(--text-2xs); line-height: 1.5; color: var(--rc-faint); }
 .rc-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
 
 /* Which way is better. Two buttons rather than a select: there are exactly two
@@ -892,16 +892,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     gap: 3px;
     padding: 9px 11px;
     border: 1px solid var(--rc-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--rc-card);
     color: var(--rc-muted);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     text-align: left;
     cursor: pointer;
 }
-.rc-dir button em { font-style: normal; font-size: 11px; font-weight: 400; color: var(--rc-faint); }
+.rc-dir button em { font-style: normal; font-size: var(--text-2xs); font-weight: 400; color: var(--rc-faint); }
 .rc-dir button:hover { border-color: var(--rc-accent-2); }
 .rc-dir button.is-on {
     border-color: var(--rc-accent);
@@ -912,12 +912,12 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-modal-preview {
     margin: 0;
     padding: 10px 12px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--rc-card-2);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     color: var(--rc-muted);
 }
-.rc-modal-preview strong { color: var(--rc-accent-2); font-size: 14px; }
+.rc-modal-preview strong { color: var(--rc-accent-2); font-size: var(--text-md); }
 /* What you are about to save beats the record. Gold, because it is the same
    event the timeline draws in gold, and said here so it is not a surprise
    discovered on the page afterwards — see RecordModal.tsx. */
@@ -926,7 +926,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-modal-preview.is-record strong { color: var(--rc-gold); }
 .rc-modal-beats { font-weight: 700; color: var(--rc-gold); }
-.rc-modal-error { margin: 0; font-size: 12.5px; color: var(--rc-bad); }
+.rc-modal-error { margin: 0; font-size: var(--text-sm); color: var(--rc-bad); }
 
 .rc-modal-foot {
     display: flex;
@@ -971,18 +971,18 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     gap: 3px;
     padding: 15px 16px;
     border: 1px solid var(--rc-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: var(--rc-card);
 }
 .rc-card.is-unset { opacity: .62; }
 .rc-ico { color: var(--rc-faint); }
 .rc-ico svg { width: 17px; height: 17px; }
-.rc-label { font-size: 12px; color: var(--rc-muted); }
+.rc-label { font-size: var(--text-xs); color: var(--rc-muted); }
 .rc-figure { display: flex; align-items: baseline; gap: 5px; }
-.rc-num { font-size: 23px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.rc-unit { font-size: 12px; color: var(--rc-muted); }
-.rc-none { font-size: 14px; color: var(--rc-faint); }
-.rc-when { margin-top: 3px; font-size: 11px; color: var(--rc-faint); }
+.rc-num { font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.rc-unit { font-size: var(--text-xs); color: var(--rc-muted); }
+.rc-none { font-size: var(--text-md); color: var(--rc-faint); }
+.rc-when { margin-top: 3px; font-size: var(--text-2xs); color: var(--rc-faint); }
 
 .rc-chases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
 
@@ -1003,29 +1003,29 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-chases.is-quiet .rc-chase.is-held { border-color: var(--rc-line-soft); }
 .rc-chases.is-quiet .rc-track { height: 5px; }
 .rc-chases.is-quiet .rc-chase-head { margin-bottom: 7px; }
-.rc-chases.is-quiet .rc-chase-foot { margin-top: 7px; font-size: 11.5px; }
+.rc-chases.is-quiet .rc-chase-foot { margin-top: 7px; font-size: var(--text-xs); }
 .rc-chase {
     padding: 14px 16px;
     border: 1px solid var(--rc-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: var(--rc-card);
 }
 .rc-chase.is-held { border-color: color-mix(in srgb, var(--rc-good) 45%, transparent); }
 .rc-chase-head { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
 .rc-chase-ico { color: var(--rc-faint); display: grid; place-items: center; }
 .rc-chase-ico svg { width: 16px; height: 16px; }
-.rc-chase-label { flex: 1; font-size: 13px; font-weight: 600; }
-.rc-chase-target { font-size: 12.5px; color: var(--rc-muted); font-variant-numeric: tabular-nums; }
-.rc-track { height: 8px; border-radius: 999px; background: var(--rc-card-2); overflow: hidden; }
+.rc-chase-label { flex: 1; font-size: var(--text-sm); font-weight: 600; }
+.rc-chase-target { font-size: var(--text-sm); color: var(--rc-muted); font-variant-numeric: tabular-nums; }
+.rc-track { height: 8px; border-radius: var(--radius-full); background: var(--rc-card-2); overflow: hidden; }
 .rc-track > i {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--rc-accent-2), var(--rc-accent));
     transition: width .6s cubic-bezier(.22, 1, .36, 1);
 }
 .rc-chase.is-held .rc-track > i { background: var(--rc-good); }
-.rc-chase-foot { margin: 9px 0 0; font-size: 12px; color: var(--rc-muted); }
+.rc-chase-foot { margin: 9px 0 0; font-size: var(--text-xs); color: var(--rc-muted); }
 .rc-chase-foot strong { color: var(--rc-text); }
 
 /* ---------- Narrower ------------------------------------------------------- */
@@ -1039,7 +1039,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     .rc-hero-art { display: none; }
     /* The headline still reads at this width; it is the only thing in the hero
        that has to. */
-    .rc-lead-span { font-size: 23px; }
+    .rc-lead-span { font-size: var(--text-2xl); }
     /* The toolbar's three controls stop sharing a line before they start
        truncating their own labels. */
     .rc-bar { flex-direction: column; align-items: stretch; }

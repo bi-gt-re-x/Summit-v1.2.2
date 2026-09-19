@@ -17,20 +17,20 @@
 
 .ax-page {
     /* Surfaces */
-    --ax-bg: #f4f6f8;
-    --ax-card: #ffffff;
-    --ax-card-2: #f7f8fb;
-    --ax-line: #e6e9ef;
-    --ax-line-soft: #eef0f5;
+    --ax-bg: var(--color-bg);
+    --ax-card: var(--color-surface);
+    --ax-card-2: var(--color-surface-2);
+    --ax-line: var(--color-line);
+    --ax-line-soft: var(--color-line-soft);
 
     /* Type */
-    --ax-text: #1f2733;
-    --ax-muted: #6b7684;
-    --ax-faint: #98a1ae;
+    --ax-text: var(--color-ink);
+    --ax-muted: var(--color-ink-muted);
+    --ax-faint: var(--color-ink-faint);
 
     /* Series. The same five everywhere, in this order, so a colour means one
        thing across the page: violet is XP, blue is focus, green is tasks. */
-    --ax-violet: #6c5ce7;
+    --ax-violet: var(--color-accent);
     --ax-blue: #2f80ed;
     --ax-green: #27ae60;
     --ax-amber: #e69500;
@@ -39,29 +39,29 @@
     --ax-good: #1a7f4b;
     --ax-bad: #c0392b;
 
-    --ax-radius: 14px;
+    --ax-radius: var(--radius-lg);
     --ax-gap: 16px;
-    --ax-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .05);
+    --ax-shadow: var(--shadow-md);
 
     background: var(--ax-bg);
     color: var(--ax-text);
     min-height: 100vh;
     padding: 26px 0 40px;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
 }
 
 html[data-theme="dark"] .ax-page {
-    --ax-bg: #0d1117;
-    --ax-card: #151b24;
-    --ax-card-2: #1b222c;
-    --ax-line: #232b36;
-    --ax-line-soft: #1e2530;
+    --ax-bg: var(--color-bg);
+    --ax-card: var(--color-surface);
+    --ax-card-2: var(--color-surface-2);
+    --ax-line: var(--color-line);
+    --ax-line-soft: var(--color-line-soft);
 
     --ax-text: #e6edf3;
-    --ax-muted: #8b949e;
-    --ax-faint: #6e7781;
+    --ax-muted: var(--color-ink-muted);
+    --ax-faint: var(--color-ink-faint);
 
-    --ax-violet: #8b7cf8;
+    --ax-violet: var(--color-accent);
     --ax-blue: #4da3ff;
     --ax-green: #3fb950;
     --ax-amber: #e3a008;
@@ -70,7 +70,7 @@ html[data-theme="dark"] .ax-page {
     --ax-good: #3fb950;
     --ax-bad: #f85149;
 
-    --ax-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    --ax-shadow: var(--shadow-md);
 }
 
 /* body is a centred flex column (dashboard.css), so its child sizes to its
@@ -103,7 +103,7 @@ body:has(.ax-page) .app-main {
 
 /* ---------- Shared atoms -------------------------------------------------- */
 .ax-muted { color: var(--ax-muted); }
-.ax-small { font-size: 11.5px; }
+.ax-small { font-size: var(--text-xs); }
 .ax-big { font-size: 40px; font-weight: 700; letter-spacing: -.03em; }
 
 .ax-sr {
@@ -138,7 +138,7 @@ body:has(.ax-page) .app-main {
     margin: 0;
     padding: 18px 12px;
     color: var(--ax-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     text-align: center;
 }
@@ -163,7 +163,7 @@ body:has(.ax-page) .app-main {
     background: none;
     color: var(--ax-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
@@ -177,7 +177,7 @@ body:has(.ax-page) .app-main {
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid var(--ax-line-soft);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--ax-muted);
 }
@@ -189,7 +189,7 @@ body:has(.ax-page) .app-main {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
 }
 .ax-delta-up { color: var(--ax-good); }
@@ -208,7 +208,7 @@ body:has(.ax-page) .app-main {
     border-radius: 50%;
     border: 1px solid var(--ax-line);
     color: var(--ax-faint);
-    font-size: 9px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     display: inline-grid;
     place-items: center;
@@ -243,7 +243,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-collect-eyebrow {
     margin: 0 0 7px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -259,7 +259,7 @@ body:has(.ax-page) .app-main {
     align-items: baseline;
     gap: 0 9px;
     margin: 0 0 10px;
-    font-size: 19px;
+    font-size: var(--text-xl);
     font-weight: 680;
     letter-spacing: -.015em;
     line-height: 1.35;
@@ -275,7 +275,7 @@ body:has(.ax-page) .app-main {
     margin: 0 0 10px;
     /* Below the digest above it. The heading was the largest thing here when
        it was the only thing; now it introduces the line that leads. */
-    font-size: 17px;
+    font-size: var(--text-lg);
     font-weight: 650;
     letter-spacing: -.02em;
     line-height: 1.25;
@@ -284,7 +284,7 @@ body:has(.ax-page) .app-main {
 .ax-collect-lead {
     margin: 0;
     max-width: 68ch;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.6;
     color: var(--ax-muted);
 }
@@ -298,7 +298,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-collect-meter {
     height: 7px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: var(--ax-card-2);
     overflow: hidden;
 }
@@ -318,7 +318,7 @@ body:has(.ax-page) .app-main {
     align-items: baseline;
     gap: 0 8px;
     margin: 9px 0 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -334,7 +334,7 @@ body:has(.ax-page) .app-main {
 .ax-collect-reward {
     margin: 5px 0 0;
     max-width: 64ch;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -348,7 +348,7 @@ body:has(.ax-page) .app-main {
 .ax-active-note {
     margin: 8px 0 0;
     max-width: 62ch;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.55;
     color: var(--ax-faint);
 }
@@ -369,7 +369,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-knows-head {
     margin: 0 0 14px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -383,7 +383,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-knows dt {
     margin: 0 0 3px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -392,7 +392,7 @@ body:has(.ax-page) .app-main {
 .ax-knows dd {
     margin: 0;
     max-width: 38ch;
-    font-size: 14px;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-text);
 }
@@ -405,7 +405,7 @@ body:has(.ax-page) .app-main {
     padding: 14px 17px 15px;
     border: 1px solid var(--ax-line);
     border-left: 3px solid color-mix(in srgb, var(--ax-violet) 45%, transparent);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--ax-card);
 }
 .ax-observe.is-moderate { border-left-color: color-mix(in srgb, var(--ax-violet) 75%, transparent); }
@@ -417,7 +417,7 @@ body:has(.ax-page) .app-main {
     align-items: baseline;
     gap: 3px 10px;
     margin: 0 0 6px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -436,7 +436,7 @@ body:has(.ax-page) .app-main {
 .ax-observe-text {
     margin: 0;
     max-width: 62ch;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 600;
     line-height: 1.45;
     color: var(--ax-text);
@@ -445,7 +445,7 @@ body:has(.ax-page) .app-main {
    sentence was counted off can decide what it is worth. */
 .ax-observe-support {
     margin: 6px 0 0;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
@@ -476,16 +476,16 @@ body:has(.ax-page) .app-main {
     width: min(440px, 100%);
     padding: 28px 30px 26px;
     border: 1px solid color-mix(in srgb, var(--ax-violet) 30%, var(--ax-line));
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background:
         radial-gradient(85% 130% at 0% 0%, color-mix(in srgb, var(--ax-violet) 14%, transparent), transparent 68%),
         var(--ax-card);
-    box-shadow: 0 20px 60px rgba(16, 24, 40, .28);
+    box-shadow: var(--shadow-lg);
     animation: ax-reached-rise .3s cubic-bezier(.22, 1, .36, 1) both;
 }
 .ax-reached-eyebrow {
     margin: 0 0 8px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -493,7 +493,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-reached-card h2 {
     margin: 0 0 10px;
-    font-size: 27px;
+    font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1.15;
@@ -501,7 +501,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-reached-lead {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--text-md);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -509,9 +509,9 @@ body:has(.ax-page) .app-main {
 .ax-reached-reward {
     margin: 12px 0 0;
     padding: 12px 14px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -528,10 +528,10 @@ body:has(.ax-page) .app-main {
     width: 30px;
     height: 30px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--ax-faint);
-    font-size: 21px;
+    font-size: var(--text-xl);
     line-height: 1;
     cursor: pointer;
 }
@@ -559,7 +559,7 @@ body:has(.ax-page) .app-main {
 .ax-principle {
     margin: 0;
     text-align: center;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }
@@ -575,14 +575,14 @@ body:has(.ax-page) .app-main {
     padding: 15px 18px 16px;
     border: 1px solid color-mix(in srgb, var(--ax-amber) 34%, var(--ax-line));
     border-left: 3px solid var(--ax-amber);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background:
         radial-gradient(80% 140% at 0% 0%, color-mix(in srgb, var(--ax-amber) 9%, transparent), transparent 66%),
         var(--ax-card);
 }
 .ax-away-head {
     margin: 0 0 6px;
-    font-size: 16px;
+    font-size: var(--text-lg);
     font-weight: 660;
     letter-spacing: -.01em;
     line-height: 1.3;
@@ -591,7 +591,7 @@ body:has(.ax-page) .app-main {
 .ax-away-body {
     margin: 0;
     max-width: 68ch;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--ax-muted);
 }
@@ -605,14 +605,14 @@ body:has(.ax-page) .app-main {
     margin: 18px 0 0;
     padding: 17px 19px 16px;
     border: 1px solid color-mix(in srgb, var(--ax-violet) 28%, var(--ax-line));
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background:
         radial-gradient(90% 140% at 0% 0%, color-mix(in srgb, var(--ax-violet) 11%, transparent), transparent 70%),
         var(--ax-card);
 }
 .ax-first-head {
     margin: 0 0 9px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -620,13 +620,13 @@ body:has(.ax-page) .app-main {
 }
 .ax-first-need {
     margin: 0;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 600;
     line-height: 1.2;
     color: var(--ax-muted);
 }
 .ax-first-need strong {
-    font-size: 34px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.035em;
     color: var(--ax-text);
@@ -635,14 +635,14 @@ body:has(.ax-page) .app-main {
 .ax-first-reward {
     margin: 8px 0 0;
     max-width: 52ch;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.55;
     color: var(--ax-muted);
 }
 .ax-first-meter {
     margin: 15px 0 6px;
     height: 7px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: var(--ax-card-2);
     overflow: hidden;
 }
@@ -655,7 +655,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-first-count {
     margin: 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
 }
@@ -677,7 +677,7 @@ body:has(.ax-page) .app-main {
 }
 .ax-ladder-head {
     margin: 0 0 11px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -715,7 +715,7 @@ body:has(.ax-page) .app-main {
     flex: none;
     width: 8px;
     height: 8px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     border: 1.5px solid var(--ax-line);
     background: transparent;
 }
@@ -724,7 +724,7 @@ body:has(.ax-page) .app-main {
     background: var(--ax-violet);
 }
 .ax-ladder-name {
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ax-faint);
     white-space: nowrap;
@@ -763,7 +763,7 @@ body:has(.ax-page) .app-main {
     align-items: baseline;
     gap: 7px;
     margin: 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.6;
 }
 /* The reason behind the number, under it. Small and muted: a reader scanning
@@ -772,7 +772,7 @@ body:has(.ax-page) .app-main {
 .ax-ladder-why {
     margin: 1px 0 0;
     max-width: 46ch;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }
@@ -808,9 +808,9 @@ body:has(.ax-page) .app-main {
     padding: 11px 15px;
     border: 1px solid var(--ax-line);
     border-left: 3px solid var(--ax-violet);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--ax-card);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -819,10 +819,10 @@ body:has(.ax-page) .app-main {
 .ax-stage-chip {
     flex: none;
     padding: 2px 8px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--ax-violet) 13%, transparent);
     color: var(--ax-violet);
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
@@ -835,12 +835,12 @@ body:has(.ax-page) .app-main {
     margin: 10px 0 0;
     padding: 13px 15px 9px;
     border: 1px solid var(--ax-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
 .ax-learning-head {
     margin: 0 0 8px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -868,7 +868,7 @@ body:has(.ax-page) .app-main {
     text-decoration: none;
 }
 .ax-learning-name {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ax-muted);
     overflow: hidden;
@@ -879,7 +879,7 @@ body:has(.ax-page) .app-main {
 .ax-learning-meter {
     display: block;
     height: 4px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: var(--ax-line);
     overflow: hidden;
 }
@@ -891,7 +891,7 @@ body:has(.ax-page) .app-main {
     background: var(--ax-violet);
 }
 .ax-learning-left {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -900,7 +900,7 @@ body:has(.ax-page) .app-main {
 /* What the score is read from, under the rows it explains. */
 .ax-summary-basis {
     margin: 14px 0 0;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }
@@ -912,11 +912,11 @@ body:has(.ax-page) .app-main {
    figure inside it. */
 .ax-early {
     padding: 3px 9px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     border: 1px solid color-mix(in srgb, var(--ax-amber) 34%, transparent);
     background: color-mix(in srgb, var(--ax-amber) 12%, transparent);
     color: var(--ax-amber);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .04em;
     white-space: nowrap;
@@ -924,7 +924,7 @@ body:has(.ax-page) .app-main {
 .ax-early-foot {
     margin-top: auto;
     padding-top: 12px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
 }
 
@@ -937,14 +937,14 @@ body:has(.ax-page) .app-main {
     gap: 12px;
     padding: 9px 0;
     border-bottom: 1px solid var(--ax-line-soft);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ax-finish li:last-child { border-bottom: 0; }
 .ax-finish-name { color: var(--ax-text); font-weight: 600; }
 .ax-finish-bar {
     display: block;
     height: 7px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: var(--ax-card-2);
     overflow: hidden;
 }
@@ -961,7 +961,7 @@ body:has(.ax-page) .app-main {
 .ax-finish-bar i.is-low { background: var(--ax-green); }
 .ax-finish-count {
     color: var(--ax-muted);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-variant-numeric: tabular-nums;
 }
 .ax-finish-count strong { color: var(--ax-text); font-weight: 650; }
@@ -988,7 +988,7 @@ body:has(.ax-page) .app-main {
     align-items: center;
     gap: 9px;
     margin: 0 0 6px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -999,9 +999,9 @@ body:has(.ax-page) .app-main {
    of the card should get "filling up" rather than "you do not have this". */
 .ax-building-chip {
     padding: 2px 8px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--ax-violet) 13%, transparent);
-    font-size: 10px;
+    font-size: var(--text-2xs);
     letter-spacing: .06em;
 }
 
@@ -1011,7 +1011,7 @@ body:has(.ax-page) .app-main {
    sentence set at 30px with a -.03em track reads as a slogan. */
 .ax-building-body h2 {
     margin: 0 0 10px;
-    font-size: 22px;
+    font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.02em;
     color: var(--ax-text);
@@ -1020,7 +1020,7 @@ body:has(.ax-page) .app-main {
 
 .ax-building-lead {
     margin: 0;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -1028,7 +1028,7 @@ body:has(.ax-page) .app-main {
 .ax-building-meter {
     margin: 22px 0 7px;
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line-soft);
     overflow: hidden;
 }
@@ -1036,14 +1036,14 @@ body:has(.ax-page) .app-main {
 .ax-building-fill {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-violet);
     transition: width .4s ease;
 }
 
 .ax-building-count {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
@@ -1069,7 +1069,7 @@ body:has(.ax-page) .app-main {
    thing a reader looks for after the ratio, so it sits directly under it. */
 .ax-building-remaining {
     margin: 5px 0 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -1082,12 +1082,12 @@ body:has(.ax-page) .app-main {
     margin: 20px 0 0;
     padding: 15px 17px 16px;
     border: 1px solid var(--ax-line-soft);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
 .ax-building-asks-lead {
     margin: 0 0 10px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 620;
     line-height: 1.5;
     color: var(--ax-text);
@@ -1104,7 +1104,7 @@ body:has(.ax-page) .app-main {
 .ax-building-list li {
     position: relative;
     padding-left: 15px;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -1156,7 +1156,7 @@ body:has(.ax-page) .app-main {
 
 .ax-setup-eyebrow {
     margin: 0 0 6px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -1165,7 +1165,7 @@ body:has(.ax-page) .app-main {
 
 .ax-setup-body h2 {
     margin: 0 0 12px;
-    font-size: 32px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1.15;
@@ -1174,7 +1174,7 @@ body:has(.ax-page) .app-main {
 
 .ax-setup-lead {
     margin: 0;
-    font-size: 16px;
+    font-size: var(--text-lg);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -1183,7 +1183,7 @@ body:has(.ax-page) .app-main {
 
 .ax-setup-q h3 {
     margin: 0 0 12px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 650;
     letter-spacing: .04em;
     text-transform: uppercase;
@@ -1193,7 +1193,7 @@ body:has(.ax-page) .app-main {
 .ax-setup-q h3 em {
     font-style: normal;
     font-weight: 500;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 
@@ -1204,12 +1204,12 @@ body:has(.ax-page) .app-main {
 .ax-setup-day {
     width: 52px;
     height: 50px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     color: var(--ax-text);
     font-family: inherit;
-    font-size: 18px;
+    font-size: var(--text-xl);
     font-weight: 650;
     cursor: pointer;
     transition: background .12s ease, border-color .12s ease, color .12s ease;
@@ -1240,12 +1240,12 @@ body:has(.ax-page) .app-main {
     width: 140px;
     height: 62px;
     padding: 0 14px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     color: var(--ax-text);
     font-family: inherit;
-    font-size: 30px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.03em;
     transition: border-color .12s ease, box-shadow .12s ease;
@@ -1258,7 +1258,7 @@ body:has(.ax-page) .app-main {
 }
 
 .ax-setup-hours-unit {
-    font-size: 15px;
+    font-size: var(--text-lg);
     color: var(--ax-muted);
 }
 
@@ -1266,38 +1266,38 @@ body:has(.ax-page) .app-main {
     width: 100%;
     height: 40px;
     padding: 0 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     color: var(--ax-text);
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     cursor: pointer;
 }
 
 .ax-setup-sum {
     margin: 26px 0 0;
-    font-size: 15px;
+    font-size: var(--text-lg);
     color: var(--ax-faint);
 }
 
 .ax-setup-sum strong {
     color: var(--ax-text);
     font-weight: 700;
-    font-size: 28px;
+    font-size: var(--text-3xl);
     letter-spacing: -.03em;
     margin-right: 4px;
 }
 
 .ax-setup-sum em {
     font-style: normal;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--ax-faint);
 }
 
 .ax-setup-failed {
     margin: 14px 0 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--ax-bad);
 }
 
@@ -1326,7 +1326,7 @@ body:has(.ax-page) .app-main {
     background: none;
     padding: 0;
     font-family: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--ax-faint);
     cursor: pointer;
     text-decoration: underline;
@@ -1334,7 +1334,7 @@ body:has(.ax-page) .app-main {
 
 .ax-setup-set-on {
     margin: 16px 0 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 
@@ -1359,7 +1359,7 @@ body:has(.ax-page) .app-main {
     height: 5px;
     padding: 0;
     border: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line);
     cursor: pointer;
     transition: background .16s ease, width .16s ease;
@@ -1377,7 +1377,7 @@ body:has(.ax-page) .app-main {
     display: grid;
     gap: 4px;
     padding: 13px 15px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     text-align: left;
@@ -1388,8 +1388,8 @@ body:has(.ax-page) .app-main {
 
 .ax-setup-choice:hover { border-color: var(--ax-violet); }
 
-.ax-setup-choice strong { font-size: 14.5px; font-weight: 650; color: var(--ax-text); }
-.ax-setup-choice span { font-size: 12.5px; line-height: 1.5; color: var(--ax-faint); }
+.ax-setup-choice strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.ax-setup-choice span { font-size: var(--text-sm); line-height: 1.5; color: var(--ax-faint); }
 
 .ax-setup-choice.is-on {
     border-color: var(--ax-violet);
@@ -1409,7 +1409,7 @@ body:has(.ax-page) .app-main {
     display: grid;
     gap: 3px;
     padding: 11px 13px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     text-align: left;
@@ -1419,8 +1419,8 @@ body:has(.ax-page) .app-main {
 }
 
 .ax-setup-tab:hover { border-color: var(--ax-violet); }
-.ax-setup-tab strong { font-size: 13.5px; font-weight: 650; color: var(--ax-text); }
-.ax-setup-tab span { font-size: 11.5px; line-height: 1.45; color: var(--ax-faint); }
+.ax-setup-tab strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.ax-setup-tab span { font-size: var(--text-xs); line-height: 1.45; color: var(--ax-faint); }
 
 .ax-setup-tab.is-on {
     border-color: var(--ax-violet);
@@ -1445,18 +1445,18 @@ body:has(.ax-page) .app-main {
     gap: 2px;
     padding: 11px 13px;
     border: 1px solid var(--ax-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
     text-decoration: none;
     transition: border-color .12s ease;
 }
 .ax-lattice:hover { border-color: var(--ax-violet); }
 
-.ax-lattice-subject { font-size: 13.5px; font-weight: 650; color: var(--ax-text); }
-.ax-lattice-tree { font-size: 12px; color: var(--ax-muted); }
+.ax-lattice-subject { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.ax-lattice-tree { font-size: var(--text-xs); color: var(--ax-muted); }
 .ax-lattice-facts {
     margin-top: 2px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
 }
@@ -1485,26 +1485,26 @@ body:has(.ax-page) .app-main {
     gap: 10px;
 }
 .ax-treedepth-name {
-    font-size: 13px; font-weight: 620; color: var(--ax-text);
+    font-size: var(--text-sm); font-weight: 620; color: var(--ax-text);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .ax-treedepth-bar {
     height: 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line);
     overflow: hidden;
 }
 .ax-treedepth-bar > span {
     display: block; height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--ax-violet), var(--ax-blue));
 }
 .ax-treedepth-pct {
-    font-size: 12.5px; font-weight: 700; color: var(--ax-text);
+    font-size: var(--text-sm); font-weight: 700; color: var(--ax-text);
     font-variant-numeric: tabular-nums; text-align: right;
 }
 .ax-treedepth-xp {
-    font-size: 11.5px; color: var(--ax-faint);
+    font-size: var(--text-xs); color: var(--ax-faint);
     font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 @media (max-width: 560px) {
@@ -1537,7 +1537,7 @@ body:has(.ax-page) .app-main {
 
 .ax-skeleton-bars span {
     height: 10px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: var(--ax-line-soft);
 }
 .ax-skeleton-bars span:nth-child(1) { width: 82%; }
@@ -1558,7 +1558,7 @@ body:has(.ax-page) .app-main {
 }
 
 .ax-setup-depth-name {
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 650;
     color: var(--ax-text);
     overflow: hidden;
@@ -1591,7 +1591,7 @@ body:has(.ax-page) .app-main {
     align-items: center;
     gap: 9px;
     padding: 9px 11px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     text-align: left;
@@ -1602,7 +1602,7 @@ body:has(.ax-page) .app-main {
 
 .ax-setup-pick:hover:not(:disabled) { border-color: var(--ax-violet); }
 .ax-setup-pick strong {
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--ax-text);
     overflow: hidden;
@@ -1620,7 +1620,7 @@ body:has(.ax-page) .app-main {
     height: 20px;
     border-radius: 50%;
     border: 1px solid var(--ax-line);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     color: var(--ax-faint);
 }
@@ -1645,7 +1645,7 @@ body:has(.ax-page) .app-main {
 .ax-baseline-row-said {
     display: block;
     margin-top: 2px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 650;
     color: var(--ax-bad);
 }
@@ -1656,10 +1656,10 @@ body:has(.ax-page) .app-main {
 .ax-baseline-edit {
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 3px 10px;
     font-family: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ax-muted);
     cursor: pointer;
@@ -1685,17 +1685,17 @@ body:has(.ax-page) .app-main {
 }
 
 .ax-baseline-row-label {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 650;
     letter-spacing: .04em;
     text-transform: uppercase;
     color: var(--ax-faint);
 }
 
-.ax-baseline-row-actual { font-size: 20px; font-weight: 650; letter-spacing: -.02em; color: var(--ax-text); }
+.ax-baseline-row-actual { font-size: var(--text-xl); font-weight: 650; letter-spacing: -.02em; color: var(--ax-text); }
 .ax-baseline-row-actual em {
     font-style: normal;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 500;
     color: var(--ax-faint);
 }
@@ -1703,7 +1703,7 @@ body:has(.ax-page) .app-main {
 .ax-baseline-row-track {
     display: block;
     height: 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line-soft);
     overflow: hidden;
 }
@@ -1711,7 +1711,7 @@ body:has(.ax-page) .app-main {
 .ax-baseline-row-fill {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-violet);
     transition: width .4s ease;
 }
@@ -1723,13 +1723,13 @@ body:has(.ax-page) .app-main {
 .ax-baseline-row-pct {
     display: block;
     margin-top: 6px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 
 .ax-baseline-row-foot {
     margin: 16px 0 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }
@@ -1748,7 +1748,7 @@ body:has(.ax-page) .app-main {
     background: var(--ax-card-2);
 }
 
-.ax-baseline-offer strong { font-size: 17px; font-weight: 650; color: var(--ax-text); }
+.ax-baseline-offer strong { font-size: var(--text-lg); font-weight: 650; color: var(--ax-text); }
 
 /* ---------- What happened after a change --------------------------------- */
 /* The follow-up rows. Deliberately quiet: three of the six states are refusals
@@ -1766,7 +1766,7 @@ body:has(.ax-page) .app-main {
     padding: 14px 16px;
     border: 1px solid var(--ax-line);
     border-left: 3px solid var(--ax-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
 
@@ -1785,7 +1785,7 @@ body:has(.ax-page) .app-main {
 
 .ax-followup-name strong {
     display: block;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 650;
     letter-spacing: -.01em;
     color: var(--ax-text);
@@ -1794,15 +1794,15 @@ body:has(.ax-page) .app-main {
 .ax-followup-name span {
     display: block;
     margin-top: 2px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 
 .ax-followup-chip {
     flex: none;
     padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 11px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .03em;
     border: 1px solid transparent;
@@ -1838,7 +1838,7 @@ body:has(.ax-page) .app-main {
     display: inline-flex;
     align-items: baseline;
     gap: 8px;
-    font-size: 22px;
+    font-size: var(--text-2xl);
     font-weight: 650;
     letter-spacing: -.02em;
     color: var(--ax-faint);
@@ -1846,37 +1846,37 @@ body:has(.ax-page) .app-main {
 
 .ax-followup-was em {
     font-style: normal;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .04em;
     text-transform: uppercase;
     color: var(--ax-faint);
 }
 
-.ax-followup-arrow { font-size: 16px; color: var(--ax-faint); }
+.ax-followup-arrow { font-size: var(--text-lg); color: var(--ax-faint); }
 
 .ax-followup-now {
-    font-size: 26px;
+    font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.03em;
     color: var(--ax-text);
 }
 
 .ax-followup-pct {
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 650;
     color: var(--ax-muted);
 }
 
 .ax-followup-window {
     margin: 6px 0 0;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 
 .ax-followup-note {
     margin: 10px 0 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -1887,7 +1887,7 @@ body:has(.ax-page) .app-main {
     background: none;
     padding: 0;
     font-family: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
     cursor: pointer;
     text-decoration: underline;
@@ -1899,7 +1899,7 @@ body:has(.ax-page) .app-main {
    row. */
 .ax-followup-caveat {
     margin: 14px 0 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }
@@ -1916,9 +1916,9 @@ body:has(.ax-page) .app-main {
     margin: 10px 0 0;
     padding: 18px;
     border: 1px dashed var(--ax-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     text-align: center;
     color: var(--ax-muted);
@@ -1977,7 +1977,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    beside it rather than as a fourth control. */
 .peak-hero .ax-compare {
     padding: 5px 12px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--peak-surface) 52%, transparent);
     -webkit-backdrop-filter: blur(7px);
     backdrop-filter: blur(7px);
@@ -2043,7 +2043,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-head h1 {
     margin: 0 0 4px;
-    font-size: 32px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.03em;
     display: flex;
@@ -2055,7 +2055,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    gets a measure rather than running the width of the header. */
 .ax-head-purpose { max-width: 62ch; }
 
-.ax-head p { margin: 0; font-size: 15px; color: var(--ax-muted); }
+.ax-head p { margin: 0; font-size: var(--text-lg); color: var(--ax-muted); }
 
 .ax-head-icon {
     width: 20px; height: 20px;
@@ -2074,12 +2074,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 8px;
     height: 36px;
     padding: 0 14px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     color: var(--ax-text);
     font-family: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 500;
     /* Two of these are `<Link>`s — Overall analytics on the subject page, Open
        the tree — and nothing in this sheet resets an anchor, so they wore the
@@ -2130,7 +2130,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     gap: 4px;
     padding: 5px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--ax-card);
     border: 1px solid var(--ax-line);
     overflow-x: auto;
@@ -2142,11 +2142,11 @@ html[data-theme="dark"] .ax-page .peak-hero,
     flex: 1 0 auto;
     padding: 9px 18px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--ax-muted);
     font-family: inherit;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     font-weight: 550;
     white-space: nowrap;
     cursor: pointer;
@@ -2213,7 +2213,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     height: var(--ax-control-h, auto);
     gap: 3px;
     padding: 0 4px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card);
     border: 1px solid var(--ax-line);
     box-sizing: border-box;
@@ -2235,11 +2235,11 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-chip {
     padding: 6px 14px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--ax-muted);
     font-family: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 500;
     cursor: pointer;
     transition: background .16s, color .16s;
@@ -2268,12 +2268,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     max-width: 190px;
     text-overflow: ellipsis;
     padding: 0 32px 0 13px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background-color: var(--ax-card);
     color: var(--ax-text);
     font-family: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 500;
     cursor: pointer;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
@@ -2292,14 +2292,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: center;
     height: var(--ax-control-h, auto);
     gap: 8px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ax-compare-value {
     display: inline-flex;
     align-items: center;
     height: var(--ax-control-h, auto);
     padding: 0 13px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
     font-weight: 600;
@@ -2397,7 +2397,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     margin: 0 -10px;
     padding: 13px 10px;
     border: 0;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: none;
     color: inherit;
     font: inherit;
@@ -2416,7 +2416,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-group-title { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .ax-group-title strong {
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 700;
     letter-spacing: -.015em;
     transition: color .15s ease;
@@ -2486,7 +2486,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    the spacing under a claim is the spacing the page was designed around. */
 .ax-claim {
     margin: 0 0 12px;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.55;
     color: var(--ax-text);
 }
@@ -2516,15 +2516,15 @@ html[data-theme="dark"] .ax-page .peak-hero,
     --ax-chart-h: 320px;
     padding: 22px 24px 18px;
 }
-.ax-hero > .ax-panel > .ax-panel-head :is(h2, h3, h4) { font-size: 20px; letter-spacing: -.02em; }
-.ax-hero > .ax-panel > .ax-panel-note { font-size: 12.5px; margin-bottom: 16px; }
+.ax-hero > .ax-panel > .ax-panel-head :is(h2, h3, h4) { font-size: var(--text-xl); letter-spacing: -.02em; }
+.ax-hero > .ax-panel > .ax-panel-note { font-size: var(--text-sm); margin-bottom: 16px; }
 
 .ax-compact > .ax-panel {
     --ax-chart-h: 150px;
     padding: 12px 14px 10px;
 }
-.ax-compact > .ax-panel > .ax-panel-head :is(h2, h3, h4) { font-size: 14px; }
-.ax-compact > .ax-panel > .ax-panel-note { font-size: 11.5px; margin-bottom: 8px; }
+.ax-compact > .ax-panel > .ax-panel-head :is(h2, h3, h4) { font-size: var(--text-md); }
+.ax-compact > .ax-panel > .ax-panel-note { font-size: var(--text-xs); margin-bottom: 8px; }
 
 /* ---------- Panels -------------------------------------------------------- */
 .ax-panel {
@@ -2555,14 +2555,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
    panel. */
 .ax-panel :is(h2, h3, h4) {
     margin: 0;
-    font-size: 17px;
+    font-size: var(--text-lg);
     font-weight: 650;
     letter-spacing: -.015em;
 }
 
 .ax-panel-note {
     margin: 0 0 12px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--ax-muted);
 }
 .ax-panel-note-foot { margin: 12px 0 0; line-height: 1.5; }
@@ -2576,7 +2576,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     text-align: center;
     padding: 8px;
     border: 1px solid var(--ax-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
 }
 
 /* ---------- KPI tiles ----------------------------------------------------- */
@@ -2590,7 +2590,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    a finding, and full width because it is about the whole row. */
 .ax-tiles-scope {
     margin: 10px 2px 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -2634,7 +2634,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-tile header { display: flex; align-items: center; gap: 7px; }
 
 .ax-tile-label {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--ax-muted);
     white-space: nowrap;
@@ -2648,7 +2648,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    one drawing sit in five different colours without five copies of it. */
 .ax-tile-icon {
     width: 24px; height: 24px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     flex: none;
     background: color-mix(in srgb, currentColor 15%, transparent);
     position: relative;
@@ -2668,13 +2668,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-tone-pink { color: var(--ax-pink); }
 
 .ax-tile-value {
-    font-size: 36px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.025em;
     line-height: 1.15;
 }
 .ax-tile-unit {
-    font-size: 16px;
+    font-size: var(--text-lg);
     font-weight: 500;
     font-style: normal;
     color: var(--ax-muted);
@@ -2714,7 +2714,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     text-align: right;
     flex: none;
@@ -2763,7 +2763,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-chart-plot:focus-visible {
     outline: 2px solid var(--ax-violet);
     outline-offset: 3px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
 }
 
 /* No `cursor: crosshair`: the chart is read by pointing, not by aiming, and a
@@ -2795,9 +2795,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
     padding: 7px 10px;
     background: var(--ax-card);
     border: 1px solid var(--ax-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     box-shadow: var(--ax-shadow);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.45;
     color: var(--ax-text);
     white-space: nowrap;
@@ -2806,7 +2806,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-readout-when {
     color: var(--ax-muted);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     letter-spacing: .02em;
 }
 
@@ -2857,7 +2857,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     justify-content: space-between;
     margin-top: 8px;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
 }
 .ax-chart-x span {
@@ -2872,7 +2872,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 18px;
     flex-wrap: wrap;
     margin-top: 12px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-muted);
 }
 .ax-legend-item { display: inline-flex; align-items: center; gap: 6px; }
@@ -2894,10 +2894,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 12px;
     margin-bottom: 14px;
 }
-.ax-score-head p { margin: 2px 0 4px; font-size: 12px; }
+.ax-score-head p { margin: 2px 0 4px; font-size: var(--text-xs); }
 
 .ax-score-value {
-    font-size: 30px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.025em;
 }
@@ -2908,14 +2908,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: center;
     gap: 1px;
     padding: 10px 14px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--ax-violet) 12%, transparent);
     border: 1px solid color-mix(in srgb, var(--ax-violet) 26%, transparent);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--ax-muted);
     text-align: center;
 }
-.ax-percentile strong { font-size: 14px; color: var(--ax-text); }
+.ax-percentile strong { font-size: var(--text-md); color: var(--ax-text); }
 .ax-percentile-icon {
     width: 16px; height: 16px;
     background: var(--ax-violet);
@@ -2942,21 +2942,21 @@ html[data-theme="dark"] .ax-page .peak-hero,
     grid-template-columns: 66px minmax(0, 1fr) auto;
     align-items: center;
     gap: 8px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
 }
 
 .ax-factor-label { color: var(--ax-text); font-weight: 600; }
 
 .ax-factor-track {
     height: 5px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line-soft);
     overflow: hidden;
 }
 .ax-factor-track i {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-violet);
     transform-origin: left;
     animation: ax-grow-x .55s cubic-bezier(.22, .68, .3, 1) .18s both;
@@ -2965,7 +2965,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-factor-raw {
     grid-column: 2;
     grid-row: 2;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     white-space: nowrap;
     overflow: hidden;
@@ -2975,7 +2975,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-factor-score {
     grid-column: 3;
     grid-row: 1 / span 2;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ax-muted);
     font-variant-numeric: tabular-nums;
@@ -3000,7 +3000,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-radar-ring { fill: none; stroke: var(--ax-line); stroke-width: 1; }
 .ax-radar-label {
     fill: var(--ax-muted);
-    font-size: 9px;
+    font-size: var(--text-2xs);
     font-family: inherit;
 }
 .ax-radar-empty {
@@ -3008,7 +3008,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     place-items: center;
     min-height: 160px;
     color: var(--ax-muted);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 
 .ax-subject-legend {
@@ -3018,7 +3018,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     flex-direction: column;
     gap: 8px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
 }
 .ax-subject-legend li {
     display: grid;
@@ -3049,7 +3049,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: grid;
     grid-template-rows: repeat(7, 1fr);
     gap: 2px;
-    font-size: 8px;
+    font-size: var(--text-2xs);
     line-height: 1;
     color: var(--ax-faint);
     flex: none;
@@ -3063,7 +3063,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     gap: 2px;
     margin-top: 4px;
-    font-size: 8.5px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     overflow: hidden;
 }
@@ -3081,7 +3081,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     gap: 2px;
     margin-bottom: 4px;
-    font-size: 8px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     overflow: hidden;
 }
@@ -3196,7 +3196,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     justify-content: flex-end;
 }
@@ -3246,12 +3246,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 2px;
     text-align: center;
     padding: 11px 8px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
     border: 1px solid var(--ax-line);
 }
-.ax-figure .ax-muted { font-size: 11px; }
-.ax-figure strong { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+.ax-figure .ax-muted { font-size: var(--text-2xs); }
+.ax-figure strong { font-size: var(--text-xl); font-weight: 700; letter-spacing: -.02em; }
 
 /* ---------- Streaks ------------------------------------------------------- */
 .ax-streaks {
@@ -3269,16 +3269,16 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 2px;
     text-align: center;
     padding: 14px 10px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
     border: 1px solid var(--ax-line);
 }
 .ax-best-month { margin-top: 10px; }
 .ax-streak .ax-muted,
-.ax-best-month .ax-muted { font-size: 11px; }
-.ax-streak strong { font-size: 17px; font-weight: 700; }
-.ax-best-month strong { font-size: 15px; font-weight: 700; }
-.ax-streak-icon { font-size: 20px; line-height: 1.2; }
+.ax-best-month .ax-muted { font-size: var(--text-2xs); }
+.ax-streak strong { font-size: var(--text-lg); font-weight: 700; }
+.ax-best-month strong { font-size: var(--text-lg); font-weight: 700; }
+.ax-streak-icon { font-size: var(--text-xl); line-height: 1.2; }
 
 /* ---------- Insights ------------------------------------------------------ */
 .ax-insights {
@@ -3297,12 +3297,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: start;
 }
 .ax-insight div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ax-insight strong { font-size: 12.5px; font-weight: 600; line-height: 1.4; }
-.ax-insight .ax-muted { font-size: 11.5px; line-height: 1.4; }
+.ax-insight strong { font-size: var(--text-sm); font-weight: 600; line-height: 1.4; }
+.ax-insight .ax-muted { font-size: var(--text-xs); line-height: 1.4; }
 
 .ax-insight-icon {
     width: 26px; height: 26px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     flex: none;
     background: color-mix(in srgb, currentColor 16%, transparent);
     position: relative;
@@ -3334,19 +3334,19 @@ html[data-theme="dark"] .ax-page .peak-hero,
     grid-template-columns: 96px minmax(0, 1fr) auto;
     align-items: center;
     gap: 10px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
 }
 .ax-standing-label { color: var(--ax-muted); }
 .ax-standing-track {
     height: 7px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     background: var(--ax-line-soft);
     overflow: hidden;
 }
 .ax-standing-track i {
     display: block;
     height: 100%;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     transition: width .35s ease;
 }
 .ax-standing-rank { font-weight: 600; white-space: nowrap; }
@@ -3367,13 +3367,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
    readable measure by construction. */
 .ax-prose {
     margin: 12px 0 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.65;
     color: var(--ax-muted);
 }
 .ax-prose strong { color: var(--ax-text); font-weight: 600; }
 .ax-prose-lead {
-    font-size: 14px;
+    font-size: var(--text-md);
     line-height: 1.6;
     color: var(--ax-text);
     margin-top: 4px;
@@ -3385,7 +3385,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    and a word at 36px wraps in a quarter of a row. `StatRow` decides this from
    the longest value it was given, and applies it to the whole row rather than
    to the one stat, because a row of mixed faces reads as a mistake. */
-.ax-tile-value-sm { font-size: 26px; }
+.ax-tile-value-sm { font-size: var(--text-2xl); }
 .ax-tile-dot {
     width: 9px; height: 9px;
     border-radius: 3px;
@@ -3414,7 +3414,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 
 .ax-column-value {
-    font-size: 9px;
+    font-size: var(--text-2xs);
     font-weight: 600;
     color: var(--ax-muted);
     white-space: nowrap;
@@ -3438,7 +3438,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-column-bar.is-peak { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ax-text) 12%, transparent); }
 
 .ax-column-label {
-    font-size: 9px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     white-space: nowrap;
 }
@@ -3466,7 +3466,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
         radial-gradient(closest-side, var(--ax-card) 72%, transparent 73%),
         conic-gradient(var(--ax-violet) var(--share), var(--ax-line-soft) 0);
 }
-.ax-balance-ring strong { font-size: 19px; font-weight: 700; }
+.ax-balance-ring strong { font-size: var(--text-xl); font-weight: 700; }
 
 /* ---------- Advice cards -------------------------------------------------- */
 .ax-advice { gap: 0; }
@@ -3481,18 +3481,18 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-advice-rank {
     width: 26px; height: 26px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     display: grid;
     place-items: center;
     color: #fff;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     flex: none;
 }
 
 .ax-advice-kind {
     display: block;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -3508,7 +3508,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    the arithmetic folded behind "Show the numbers" — and only the type comes down. */
 .ax-advice h2 {
     margin: 0;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     line-height: 1.35;
 }
@@ -3521,7 +3521,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     white-space: nowrap;
 }
 .ax-advice-impact strong {
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--ax-good);
 }
@@ -3538,14 +3538,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: center;
     gap: 6px 0;
     margin: 0 0 16px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }
 .ax-loop-step {
     padding: 3px 10px;
     border: 1px solid var(--ax-line);
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     white-space: nowrap;
 }
 .ax-loop-step.is-here {
@@ -3586,7 +3586,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    being deliberately removed. */
 .ax-advice-label {
     margin: 12px 0 3px;
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -3595,14 +3595,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-advice-do {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--ax-text);
 }
 
 .ax-advice-why {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -3671,7 +3671,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 @media (max-width: 768px) {
     .ax-page { padding: 18px 0 30px; }
-    .ax-head h1 { font-size: 20px; }
+    .ax-head h1 { font-size: var(--text-xl); }
     .ax-figures { grid-template-columns: 1fr; }
 }
 
@@ -3857,7 +3857,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-tabs-major .ax-tab {
     padding: 9px 18px;
-    font-size: 13.5px;
+    font-size: var(--text-md);
 }
 
 /* The open tab is filled rather than outlined — at five tabs an inset ring is
@@ -3887,14 +3887,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-chips-sm { padding: 3px; }
 .ax-chips-sm .ax-chip {
     padding: 4px 10px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
 }
 
 /* A heading between sections, for the one place a tab breaks into named parts
    without a panel around them. */
 .ax-band {
     margin: 0 0 14px 2px;
-    font-size: 19px;
+    font-size: var(--text-xl);
     font-weight: 650;
     letter-spacing: -.015em;
     color: var(--ax-text);
@@ -3932,7 +3932,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-habit-name { min-width: 0; }
 .ax-habit-name h3 {
     margin: 0;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     letter-spacing: -.01em;
     overflow: hidden;
@@ -3942,7 +3942,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-habit-source {
     display: block;
     margin-top: 2px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
 }
 
@@ -3951,8 +3951,8 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-habit-badge {
     flex: none;
     padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 10px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .03em;
     text-transform: uppercase;
@@ -3967,7 +3967,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     margin-top: 2px;
 }
 .ax-habit-figure strong {
-    font-size: 26px;
+    font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.025em;
     line-height: 1;
@@ -3975,14 +3975,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-habit-track {
     height: 5px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line-soft);
     overflow: hidden;
 }
 .ax-habit-track i {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     transition: width .35s ease;
 }
 
@@ -3998,7 +3998,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
 }
 
@@ -4021,10 +4021,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
     border-top: 1px solid var(--ax-line-soft);
 }
 .ax-habit-facts div { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.ax-habit-facts dt { font-size: 10.5px; color: var(--ax-faint); }
+.ax-habit-facts dt { font-size: var(--text-2xs); color: var(--ax-faint); }
 .ax-habit-facts dd {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     overflow: hidden;
@@ -4057,7 +4057,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-daycard {
     margin-top: 12px;
     padding: 11px 13px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card-2);
     min-height: 74px;
@@ -4070,7 +4070,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 10px;
     margin-bottom: 7px;
 }
-.ax-daycard-head strong { font-size: 13px; }
+.ax-daycard-head strong { font-size: var(--text-sm); }
 .ax-daycard-list {
     list-style: none;
     margin: 0;
@@ -4081,10 +4081,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-daycard-list li {
     padding: 3px 9px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
 }
 
 /* ---------- Patterns ------------------------------------------------------ */
@@ -4104,7 +4104,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-patterns li .ax-dot { margin-top: 5px; }
 .ax-patterns li > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.ax-patterns strong { font-size: 12.5px; font-weight: 500; line-height: 1.45; }
+.ax-patterns strong { font-size: var(--text-sm); font-weight: 500; line-height: 1.45; }
 
 /* The frequency word carries the confidence, so it is the part that is set
    apart — "Usually" is 75% of occurrences, "Sometimes" is under half. */
@@ -4124,7 +4124,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-bucket {
     padding: 11px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card-2);
     min-width: 0;
@@ -4135,10 +4135,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 7px;
     margin-bottom: 5px;
 }
-.ax-bucket header strong { font-size: 12.5px; }
+.ax-bucket header strong { font-size: var(--text-sm); }
 .ax-bucket-count {
     margin-left: auto;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--ax-muted);
@@ -4157,7 +4157,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     justify-content: space-between;
     gap: 10px;
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 .ax-bucket li span:first-child {
     overflow: hidden;
@@ -4181,7 +4181,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 12px;
 }
 .ax-phase-name {
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -4205,12 +4205,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 
 .ax-phase-text {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--ax-muted);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
-.ax-phase-text strong { color: var(--ax-text); font-size: 13px; }
+.ax-phase-text strong { color: var(--ax-text); font-size: var(--text-sm); }
 
 .ax-shifts {
     list-style: none;
@@ -4228,14 +4228,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: start;
 }
 .ax-shifts li > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ax-shifts strong { font-size: 12.5px; }
+.ax-shifts strong { font-size: var(--text-sm); }
 
 .ax-shift-tag {
     flex: none;
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid;
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .04em;
     text-transform: uppercase;
@@ -4244,9 +4244,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-phase-badge {
     padding: 4px 11px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .03em;
     background: color-mix(in srgb, currentColor 12%, transparent);
@@ -4283,7 +4283,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     text-align: left;
     cursor: pointer;
 }
-.ax-finding-head strong { font-size: 12.5px; font-weight: 600; line-height: 1.5; }
+.ax-finding-head strong { font-size: var(--text-sm); font-weight: 600; line-height: 1.5; }
 .ax-finding-head .ax-dot { margin-top: 5px; }
 .ax-finding-head:hover strong { color: var(--ax-violet); }
 
@@ -4317,9 +4317,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-evidence {
     display: inline-block;
     padding: 2px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .03em;
     text-transform: uppercase;
@@ -4335,11 +4335,11 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: start;
     margin: 10px 0 4px;
     padding: 13px 15px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px dashed var(--ax-line);
     background: var(--ax-card-2);
 }
-.ax-waiting p { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--ax-muted); }
+.ax-waiting p { margin: 0; font-size: var(--text-sm); line-height: 1.6; color: var(--ax-muted); }
 .ax-waiting-mark {
     width: 16px; height: 16px;
     margin-top: 2px;
@@ -4364,14 +4364,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: start;
 }
 .ax-wins li > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ax-wins strong { font-size: 12.5px; font-weight: 500; line-height: 1.45; }
+.ax-wins strong { font-size: var(--text-sm); font-weight: 500; line-height: 1.45; }
 
 /* A tick rather than a dot: this panel is the one that says things are going
    right, and it should be readable as that without the heading. */
 .ax-win-mark {
     width: 15px; height: 15px;
     margin-top: 3px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     flex: none;
     position: relative;
 }
@@ -4401,7 +4401,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: block;
     width: 100%;
     height: auto;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
     border: 1px solid var(--ax-line-soft);
 }
@@ -4416,7 +4416,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     justify-content: space-between;
     gap: 10px;
     margin-top: 6px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
 }
 
@@ -4433,9 +4433,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-advice-priority {
     padding: 2px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .03em;
     text-transform: uppercase;
@@ -4444,11 +4444,11 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-advice-chip {
     padding: 2px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid var(--ax-line);
     background: var(--ax-card-2);
     color: var(--ax-muted);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 600;
 }
 
@@ -4457,7 +4457,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-advice-evidence { min-width: 0; }
 
 .ax-advice-evidence summary {
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--ax-faint);
     cursor: pointer;
@@ -4472,7 +4472,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-advice-evidence span {
     display: block;
     margin-top: 6px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -4483,12 +4483,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     flex: none;
     height: 32px;
     padding: 0 15px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-violet);
     background: transparent;
     color: var(--ax-violet);
     font-family: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
@@ -4544,10 +4544,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-opening {
     margin: 0 0 2px;
     padding: 11px 15px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
-    font-size: 13.5px;
+    font-size: var(--text-md);
     color: var(--ax-text);
 }
 .ax-opening strong { font-weight: 700; }
@@ -4565,7 +4565,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    attention is a fourth thing to read rather than a way out. */
 .ax-next > p {
     margin: 0 0 10px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -4591,17 +4591,17 @@ html[data-theme="dark"] .ax-page .peak-hero,
     border-color: color-mix(in srgb, var(--ax-violet) 50%, transparent);
     transform: translateY(-1px);
 }
-.ax-next-row strong { font-size: 13.5px; font-weight: 650; color: var(--ax-text); }
-.ax-next-row span { font-size: 12px; line-height: 1.5; color: var(--ax-muted); }
+.ax-next-row strong { font-size: var(--text-md); font-weight: 650; color: var(--ax-text); }
+.ax-next-row span { font-size: var(--text-xs); line-height: 1.5; color: var(--ax-muted); }
 
 /* The confirmation after a recommendation is taken. */
 .ax-adopted {
     margin: 0 0 4px;
     padding: 11px 15px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     border: 1px solid color-mix(in srgb, var(--ax-green) 34%, transparent);
     background: color-mix(in srgb, var(--ax-green) 9%, transparent);
-    font-size: 13.5px;
+    font-size: var(--text-md);
 }
 .ax-adopted a { color: var(--ax-violet); font-weight: 600; }
 
@@ -4634,7 +4634,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     min-height: 352px;
     padding: 18px 2px 6px;
 }
-.ax-quality-empty p { margin: 0; font-size: 13.5px; line-height: 1.62; }
+.ax-quality-empty p { margin: 0; font-size: var(--text-md); line-height: 1.62; }
 .ax-quality-empty strong { color: var(--ax-text); }
 
 /* ---- How much is asked ---------------------------------------------------
@@ -4648,17 +4648,17 @@ html[data-theme="dark"] .ax-page .peak-hero,
     padding: 3px;
     gap: 2px;
     border: 1px solid var(--ax-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
 .ax-depth-pick {
     padding: 4px 9px;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: none;
     color: var(--ax-muted);
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 650;
     white-space: nowrap;
     cursor: pointer;
@@ -4668,7 +4668,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-depth-pick.is-on {
     background: var(--ax-card);
     color: var(--ax-violet);
-    box-shadow: 0 1px 2px rgba(16, 24, 40, .08);
+    box-shadow: var(--shadow-sm);
 }
 .ax-depth-pick:disabled { cursor: default; opacity: .6; }
 
@@ -4689,19 +4689,19 @@ html[data-theme="dark"] .ax-page .peak-hero,
     justify-content: space-between;
     gap: 10px;
     margin: 0 0 10px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .04em;
     text-transform: uppercase;
     color: var(--ax-text);
 }
 .ax-reasons-title .ax-muted {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 500;
     letter-spacing: 0;
     text-transform: none;
 }
-.ax-reasons-none { margin: 0; font-size: 12.5px; }
+.ax-reasons-none { margin: 0; font-size: var(--text-sm); }
 
 .ax-reasons-list {
     list-style: none;
@@ -4723,7 +4723,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-reasons-label {
     grid-area: label;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     color: var(--ax-text);
 }
 .ax-reasons-list .ax-factor-track { grid-area: track; }
@@ -4732,7 +4732,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     align-items: baseline;
     gap: 6px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--ax-text);
     font-variant-numeric: tabular-nums;
@@ -4773,8 +4773,8 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: center;
     gap: 10px;
 }
-.ax-quality-half-label { font-size: 12.5px; font-weight: 600; color: var(--ax-text); }
-.ax-quality-half-value { font-size: 12.5px; font-weight: 650; white-space: nowrap; }
+.ax-quality-half-label { font-size: var(--text-sm); font-weight: 600; color: var(--ax-text); }
+.ax-quality-half-value { font-size: var(--text-sm); font-weight: 650; white-space: nowrap; }
 .ax-quality-half-value em {
     font-style: normal;
     font-weight: 500;
@@ -4795,7 +4795,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     grid-template-columns: auto minmax(0, 1fr) auto auto;
     align-items: center;
     gap: 9px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ax-quality-band-label { color: var(--ax-text); }
 .ax-quality-band-share { font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -4831,7 +4831,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     grid-area: y;
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--ax-muted);
     text-align: center;
     align-self: center;
@@ -4851,12 +4851,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-qgrid-cell {
     min-height: 32px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line-soft);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 650;
     font-variant-numeric: tabular-nums;
     color: var(--ax-text);
@@ -4871,7 +4871,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 6px;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     color: var(--ax-muted);
     text-align: center;
 }
@@ -4884,7 +4884,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-rated-title {
     margin: 0 0 10px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 650;
     letter-spacing: .04em;
     text-transform: uppercase;
@@ -4902,14 +4902,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-rated-score {
     grid-area: score;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     text-align: right;
 }
 .ax-rated-name {
     grid-area: name;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--ax-text);
     overflow: hidden;
@@ -4940,11 +4940,11 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-plan-budget-btn {
     padding: 5px 10px;
     border: 1px solid var(--ax-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-card-2);
     color: var(--ax-muted);
     font: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     cursor: pointer;
     transition: background .16s ease, color .16s ease, border-color .16s ease;
@@ -4982,8 +4982,8 @@ html[data-theme="dark"] .ax-page .peak-hero,
     flex: none;
     min-width: 74px;
     padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 10.5px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .04em;
     text-transform: uppercase;
@@ -4999,7 +4999,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-plan-body { min-width: 0; }
 .ax-plan-title {
     margin: 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     color: var(--ax-text);
     line-height: 1.45;
@@ -5011,7 +5011,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    list with extra steps. Quiet, but never hidden behind a click. */
 .ax-plan-why {
     margin: 3px 0 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-muted);
 }
@@ -5019,7 +5019,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-plan-mins {
     flex: none;
     padding-top: 1px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
@@ -5037,13 +5037,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-plan-spare {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 
 .ax-plan-more { margin-top: 10px; }
 .ax-plan-more > summary {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ax-muted);
     cursor: pointer;
@@ -5062,7 +5062,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     text-align: left;
     color: var(--ax-muted);
     font: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     cursor: pointer;
 }
@@ -5107,7 +5107,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-diag.is-warning { --ax-diag-tone: var(--ax-pink); }
 
 .ax-diag-tone {
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -5116,7 +5116,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-diag-head {
     margin: 0;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 700;
     line-height: 1.4;
     letter-spacing: -.01em;
@@ -5127,7 +5127,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    headline skips to the action, and one who does not checks the claim here. */
 .ax-diag-detail {
     margin: 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--ax-muted);
 }
@@ -5137,12 +5137,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 8px;
     margin-top: 2px;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
 .ax-diag-action p {
     margin: 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-text);
 }
@@ -5156,7 +5156,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    suggestion; with one it is something the next fortnight can answer. */
 .ax-diag-watch {
     margin: 0;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }
@@ -5192,7 +5192,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 
 .ax-pat-kind {
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -5203,8 +5203,8 @@ html[data-theme="dark"] .ax-page .peak-hero,
    subtle: a reader should be able to dismiss a weak one at a glance. */
 .ax-pat-strength {
     padding: 2px 7px;
-    border-radius: 999px;
-    font-size: 10px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .03em;
     text-transform: uppercase;
@@ -5215,7 +5215,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-pat-lift {
     margin-left: auto;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--ax-text);
@@ -5223,7 +5223,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-pat-text {
     margin: 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     line-height: 1.5;
     color: var(--ax-text);
@@ -5233,13 +5233,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
    from being typography rather than evidence. */
 .ax-pat-basis {
     margin: 3px 0 0;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 
 .ax-pat-so {
     margin: 7px 0 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -5371,10 +5371,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
     min-width: 52px;
     height: 52px;
     padding: 0 12px;
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: color-mix(in srgb, var(--grade-color, var(--ax-violet)) 14%, transparent);
     color: var(--grade-color, var(--ax-violet));
-    font-size: 26px;
+    font-size: var(--text-2xl);
     font-weight: 800;
     line-height: 1;
     letter-spacing: -.02em;
@@ -5383,7 +5383,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-summary-lead {
     margin: 0;
     min-width: 0;
-    font-size: 16px;
+    font-size: var(--text-lg);
     font-weight: 600;
     line-height: 1.45;
     color: var(--ax-text);
@@ -5392,14 +5392,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
    the top of Summary.tsx. Big enough to be the thing the eye lands on, small
    enough that the words around it are still part of the same statement. */
 .ax-summary-lead strong {
-    font-size: 26px;
+    font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.02em;
     color: var(--ax-text);
     font-variant-numeric: tabular-nums;
 }
 .ax-summary-lead strong em {
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     font-style: normal;
     color: var(--ax-faint);
@@ -5458,7 +5458,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-summary-rows p {
     margin: 0;
     min-width: 0;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     line-height: 1.55;
     color: var(--ax-text);
 }
@@ -5472,7 +5472,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    underline when the reader goes for it. */
 .ax-summary-more {
     flex: none;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ax-violet);
     text-decoration: none;
@@ -5489,7 +5489,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-summary-how > summary {
     cursor: pointer;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--ax-muted);
     list-style: none;
@@ -5506,7 +5506,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-summary-how > summary:hover { color: var(--ax-text); }
 .ax-summary-how p {
     margin: 9px 0 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -5525,13 +5525,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
     margin: 0 0 14px;
 }
 .ax-goal-figure {
-    font-size: 30px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.02em;
     color: var(--ax-text);
     font-variant-numeric: tabular-nums;
 }
-.ax-goal-head p { margin: 0; font-size: 12.5px; line-height: 1.5; }
+.ax-goal-head p { margin: 0; font-size: var(--text-sm); line-height: 1.5; }
 
 /* The spread, as one bar rather than four tiles — the question is proportion,
    and four numbers side by side make the reader do the division. */
@@ -5574,14 +5574,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
     border-radius: 2px;
 }
 .ax-goal-legend strong {
-    font-size: 18px;
+    font-size: var(--text-xl);
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -.02em;
     color: var(--ax-text);
     font-variant-numeric: tabular-nums;
 }
-.ax-goal-legend span { font-size: 11px; line-height: 1.3; color: var(--ax-muted); }
+.ax-goal-legend span { font-size: var(--text-2xs); line-height: 1.3; color: var(--ax-muted); }
 /* A band with nothing in it is still a reading, and still says less than the
    ones with something in them. */
 .ax-goal-legend li.is-zero { opacity: .45; }
@@ -5603,7 +5603,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 6px;
     padding: 10px 0;
     border-bottom: 1px solid var(--ax-line-soft);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ax-goal-pace li:last-child { border-bottom: 0; }
 .ax-goal-pace-top {
@@ -5617,14 +5617,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-goal-pace-bar {
     position: relative;
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-card-2);
 }
 .ax-goal-pace-bar i {
     display: block;
     height: 100%;
     min-width: 3px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-blue);
 }
 .ax-goal-pace li.is-late .ax-goal-pace-bar i { background: var(--ax-amber); }
@@ -5643,7 +5643,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     flex-wrap: wrap;
     gap: 2px 14px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-muted);
 }
 .ax-goal-pace-foot strong {
@@ -5661,7 +5661,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     text-decoration: none;
 }
 .ax-goal-name:hover { text-decoration: underline; }
-.ax-goal-drift { font-size: 12px; font-weight: 600; }
+.ax-goal-drift { font-size: var(--text-xs); font-weight: 600; }
 .ax-goal-pace li.is-late .ax-goal-drift { color: var(--ax-amber); }
 .ax-goal-pace li.is-early .ax-goal-drift { color: var(--ax-green); }
 /* Every one of these panels is the last line of its card, and the row they sit
@@ -5673,7 +5673,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     margin: 12px 0 0;
     margin-top: auto;
     padding-top: 12px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
 }
 
@@ -5684,7 +5684,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     padding: 9px 0 9px 12px;
     border-left: 2px solid var(--ax-line);
     margin: 0 0 8px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ax-goal-notes li:last-child { margin-bottom: 0; }
 .ax-goal-notes li.is-good { border-left-color: var(--ax-green); }
@@ -5711,19 +5711,19 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 11px;
     padding: 12px 14px;
     border: 1px solid var(--ax-line-soft);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
 .ax-goal-suggest div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.ax-goal-suggest strong { font-size: 13px; font-weight: 650; color: var(--ax-text); }
-.ax-goal-suggest span { font-size: 12px; line-height: 1.5; }
+.ax-goal-suggest strong { font-size: var(--text-sm); font-weight: 650; color: var(--ax-text); }
+.ax-goal-suggest span { font-size: var(--text-xs); line-height: 1.5; }
 .ax-goal-kind {
     align-self: start;
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-card-2);
     color: var(--ax-muted);
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
@@ -5747,14 +5747,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-goal-stats li { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .ax-goal-stats strong {
-    font-size: 19px;
+    font-size: var(--text-xl);
     font-weight: 700;
     letter-spacing: -.02em;
     line-height: 1.1;
     color: var(--ax-text);
     font-variant-numeric: tabular-nums;
 }
-.ax-goal-stats span { font-size: 10.5px; line-height: 1.35; color: var(--ax-muted); }
+.ax-goal-stats span { font-size: var(--text-2xs); line-height: 1.35; color: var(--ax-muted); }
 
 /* The key to the pace map. Its dots carry health in the colour and priority in
    the area, and until this existed the page said neither out loud. */
@@ -5765,7 +5765,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     margin: 12px 0 0;
     padding: 0;
     list-style: none;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
 }
 .ax-pacemap-key li { display: flex; align-items: center; gap: 6px; color: var(--ax-muted); }
 .ax-pacemap-key i { flex: none; width: 9px; height: 9px; border-radius: 50%; }
@@ -5782,7 +5782,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    than a heading: it is a sentence to be read once, not a title. */
 .ax-goal-lead {
     margin: 0 0 4px;
-    font-size: 17px;
+    font-size: var(--text-lg);
     font-weight: 600;
     line-height: 1.45;
     letter-spacing: -.01em;
@@ -5802,13 +5802,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-goal-soon h4 {
     margin: 0 0 8px;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
     color: var(--ax-faint);
 }
-.ax-goal-soon p { margin: 0; font-size: 12.5px; line-height: 1.5; }
+.ax-goal-soon p { margin: 0; font-size: var(--text-sm); line-height: 1.5; }
 .ax-goal-soon ul { margin: 0; padding: 0; list-style: none; }
 .ax-goal-soon li {
     display: flex;
@@ -5816,7 +5816,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     justify-content: space-between;
     gap: 12px;
     padding: 5px 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ax-goal-soon a {
     min-width: 0;
@@ -5828,7 +5828,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     text-decoration: none;
 }
 .ax-goal-soon a:hover { text-decoration: underline; }
-.ax-goal-soon li span { flex: none; font-size: 11.5px; }
+.ax-goal-soon li span { flex: none; font-size: var(--text-xs); }
 
 /* ---------- The pace map -------------------------------------------------
    Time gone against work done. The diagonal is the whole chart, so it is the
@@ -5866,7 +5866,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     justify-content: space-between;
     margin: 4px 2px 0;
     padding-right: 16.7%;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: .04em;
     text-transform: uppercase;
@@ -5895,12 +5895,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-goal-effort-count {
     flex: none;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
 }
 .ax-goal-effort-name {
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--ax-text);
     overflow: hidden;
@@ -5917,7 +5917,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     left: 0;
     height: 6px;
     min-width: 2px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
 }
 .ax-goal-effort-bars i.is-said {
     top: 0;
@@ -5932,12 +5932,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     flex-wrap: wrap;
     gap: 6px 18px;
     margin: 12px 0 0;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--ax-muted);
 }
 .ax-goal-key:last-child { margin-top: auto; padding-top: 12px; }
 .ax-goal-key span { display: flex; align-items: center; gap: 7px; }
-.ax-goal-key i { width: 14px; height: 5px; border-radius: 999px; }
+.ax-goal-key i { width: 14px; height: 5px; border-radius: var(--radius-full); }
 .ax-goal-key i.is-said { background: color-mix(in srgb, var(--ax-violet) 38%, transparent); }
 .ax-goal-key i.is-did { background: var(--ax-blue); }
 
@@ -5947,10 +5947,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-goal-line {
     margin: 0;
     padding: 11px 15px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--ax-line);
     background: var(--ax-card);
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-text);
 }
@@ -5964,10 +5964,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 3px;
     padding: 11px 0;
     border-bottom: 1px solid var(--ax-line-soft);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ax-goal-advice li:last-child { border-bottom: 0; }
-.ax-goal-advice strong { font-size: 13px; font-weight: 650; color: var(--ax-text); }
+.ax-goal-advice strong { font-size: var(--text-sm); font-weight: 650; color: var(--ax-text); }
 .ax-goal-advice span { line-height: 1.55; }
 .ax-goal-advice li.is-urgent strong { color: var(--ax-amber); }
 
@@ -5993,7 +5993,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     padding: 14px 16px 14px 18px;
     border: 1px solid var(--ax-line);
     border-left: 3px solid var(--ax-faint);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--ax-card);
 }
 .ax-limiter.is-accelerating { border-left-color: var(--ax-good); }
@@ -6007,12 +6007,12 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: baseline;
     gap: 8px;
     margin: 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 .ax-limiter-goal > span {
     text-transform: uppercase;
     letter-spacing: .06em;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     color: var(--ax-faint);
 }
@@ -6021,7 +6021,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    the page's body text. */
 .ax-limiter-read {
     margin: 0;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-text);
 }
@@ -6029,7 +6029,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-limiter-share {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-text);
 }
@@ -6040,7 +6040,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    to be able to find it without leaving the card. */
 .ax-limiter-because {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -6051,7 +6051,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: center;
     gap: 10px 14px;
     margin: 3px 0 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 
 /* On a phone the hand-off drops under the sentence it belongs to rather than
@@ -6062,15 +6062,15 @@ html[data-theme="dark"] .ax-page .peak-hero,
     .ax-goal-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
     .ax-summary-head { gap: 13px; }
-    .ax-summary-grade { min-width: 46px; height: 46px; font-size: 22px; }
-    .ax-summary-lead { font-size: 15px; }
-    .ax-summary-lead strong { font-size: 23px; }
+    .ax-summary-grade { min-width: 46px; height: 46px; font-size: var(--text-2xl); }
+    .ax-summary-lead { font-size: var(--text-lg); }
+    .ax-summary-lead strong { font-size: var(--text-2xl); }
     .ax-summary-rows li {
         flex-direction: column;
         align-items: flex-start;
         gap: 5px;
     }
-    .ax-summary-rows p { font-size: 14px; }
+    .ax-summary-rows p { font-size: var(--text-md); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -6132,7 +6132,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-gy-eyebrow {
     margin: 0 0 6px;
     color: currentColor;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -6146,7 +6146,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     max-width: 22ch;
     margin: 0 0 20px;
     color: var(--ax-text);
-    font-size: 30px;
+    font-size: var(--text-3xl);
     font-weight: 750;
     line-height: 1.15;
     letter-spacing: -0.028em;
@@ -6174,7 +6174,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-gy-move-label {
     margin: 0 0 4px;
     color: currentColor;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .02em;
 }
@@ -6203,26 +6203,26 @@ html[data-theme="dark"] .ax-page .peak-hero,
    look like a headline figure with a footnote, and it is a comparison. */
 .ax-gy-was {
     color: var(--ax-faint);
-    font-size: 28px;
+    font-size: var(--text-3xl);
     font-weight: 500;
 }
 
 .ax-gy-arrow {
     color: var(--ax-line);
-    font-size: 20px;
+    font-size: var(--text-xl);
     font-weight: 600;
 }
 
 .ax-gy-now {
     color: var(--ax-text);
-    font-size: 34px;
+    font-size: var(--text-3xl);
     font-weight: 750;
     letter-spacing: -0.03em;
 }
 
 .ax-gy-of {
     color: var(--ax-faint);
-    font-size: 14px;
+    font-size: var(--text-md);
     font-style: normal;
     font-weight: 600;
 }
@@ -6230,7 +6230,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-gy-move-note {
     margin: 6px 0 0;
     color: var(--ax-muted);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
 }
 
@@ -6249,7 +6249,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     padding-top: 16px;
     border-top: 1px solid var(--ax-line-soft);
     color: var(--ax-muted);
-    font-size: 14.5px;
+    font-size: var(--text-md);
     font-weight: 500;
     line-height: 1.55;
     letter-spacing: -0.004em;
@@ -6275,7 +6275,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 650;
 }
 
@@ -6292,9 +6292,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 @media (max-width: 620px) {
     .ax-gy-verdict { padding: 20px 18px 16px; }
-    .ax-gy-headline { font-size: 24px; margin-bottom: 16px; }
-    .ax-gy-was { font-size: 24px; }
-    .ax-gy-now { font-size: 29px; }
+    .ax-gy-headline { font-size: var(--text-2xl); margin-bottom: 16px; }
+    .ax-gy-was { font-size: var(--text-2xl); }
+    .ax-gy-now { font-size: var(--text-3xl); }
     /* Stacked, so the divider that separated the two columns now separates the
        two rows. */
     .ax-gy-move + .ax-gy-move {
@@ -6303,7 +6303,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
         border-top: 1px solid var(--ax-line);
     }
     .ax-gy-legend { gap: 10px; }
-    .ax-gy-legend li { font-size: 11px; }
+    .ax-gy-legend li { font-size: var(--text-2xs); }
 }
 
 /* ---------- The Growth tab's year table ------------------------------------
@@ -6327,7 +6327,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     width: 100%;
     min-width: var(--ax-gy-min);
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 
 .ax-gy th,
@@ -6347,7 +6347,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     padding-top: 0;
     border-bottom: 1px solid var(--ax-line);
     color: var(--ax-faint);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 650;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -6374,7 +6374,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 /* Qualifies the two columns after it rather than being a reading of its own. */
 .ax-gy tbody td.is-aside {
     color: var(--ax-faint);
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 
 /* The column the tab's argument rests on. */
@@ -6398,9 +6398,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
     margin-left: 7px;
     padding: 1px 7px;
     border: 1px solid var(--ax-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     color: var(--ax-faint);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: none;
@@ -6420,7 +6420,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     justify-content: space-between;
     gap: 16px;
     padding: 8px 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 
 .ax-gy-notes li + li {
@@ -6499,13 +6499,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-gp-card-label {
     color: var(--ax-muted);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 650;
     letter-spacing: .02em;
 }
 
 .ax-gp-card-value {
-    font-size: 21px;
+    font-size: var(--text-xl);
     font-weight: 750;
     letter-spacing: -.02em;
     font-variant-numeric: tabular-nums;
@@ -6520,14 +6520,14 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-gp-card-note {
     color: var(--ax-faint);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-variant-numeric: tabular-nums;
 }
 
 .ax-gp-eyebrow {
     margin: 0 0 10px;
     color: currentColor;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -6576,7 +6576,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
        stop short of it or they drift down against the dates. */
     padding-bottom: 22px;
     color: var(--ax-faint);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
@@ -6627,7 +6627,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     height: 22px;
     margin-top: 2px;
     color: var(--ax-faint);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
 }
 
 /* Positioned rather than spread, because the labels mark specific points on
@@ -6648,7 +6648,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     min-width: 150px;
     padding: 9px 11px;
     border: 1px solid var(--ax-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card);
     box-shadow: var(--ax-shadow);
     pointer-events: none;
@@ -6661,7 +6661,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-gp-tip-date {
     margin: 0 0 6px;
     color: var(--ax-muted);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .03em;
     text-transform: uppercase;
@@ -6673,7 +6673,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     align-items: center;
     gap: 7px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.7;
 }
 
@@ -6708,11 +6708,11 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 6px;
     padding: 4px 10px;
     border: 1px solid var(--ax-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: none;
     color: var(--ax-muted);
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 650;
     cursor: pointer;
     transition: border-color .16s ease, color .16s ease;
@@ -6736,7 +6736,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     width: 34px;
     height: 34px;
     flex: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: currentColor;
     -webkit-mask: var(--ico) center / 19px 19px no-repeat;
     mask: var(--ico) center / 19px 19px no-repeat;
@@ -6745,7 +6745,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-gp-mover-name {
     margin: 0;
     color: var(--ax-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .02em;
 }
@@ -6753,7 +6753,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-gp-mover-asks {
     margin: 0 0 8px;
     color: var(--ax-faint);
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 
 /* ---------- Then and now, one row per metric ------------------------------- */
@@ -6780,13 +6780,13 @@ html[data-theme="dark"] .ax-page .peak-hero,
 
 .ax-gp-metric-name {
     color: var(--ax-text);
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 700;
 }
 
 .ax-gp-metric-asks {
     color: var(--ax-faint);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
 }
 
 .ax-gp-metric-scores {
@@ -6794,7 +6794,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     align-items: baseline;
     gap: 9px;
     margin: 6px 0 8px;
-    font-size: 26px;
+    font-size: var(--text-2xl);
     font-weight: 750;
     letter-spacing: -.025em;
     line-height: 1.05;
@@ -6802,10 +6802,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
     font-variant-numeric: tabular-nums;
 }
 
-.ax-gp-metric-scores .ax-gp-was { font-size: 22px; }
+.ax-gp-metric-scores .ax-gp-was { font-size: var(--text-2xl); }
 
 .ax-gp-change {
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-style: normal;
     font-weight: 700;
     color: var(--ax-faint);
@@ -6821,7 +6821,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     position: relative;
     display: block;
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line-soft);
     overflow: hidden;
 }
@@ -6832,7 +6832,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     top: 0;
     bottom: 0;
     left: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
 }
 
 .ax-gp-bar-was { background: var(--ax-line); }
@@ -6841,7 +6841,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-gp-metric-raw {
     margin: 8px 0 0;
     color: var(--ax-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
 }
 .ax-gp-metric-raw strong { color: var(--ax-text); font-weight: 650; }
@@ -6863,7 +6863,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     position: relative;
     padding: 9px 0 9px 20px;
     color: var(--ax-muted);
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.55;
     border-top: 1px solid var(--ax-line-soft);
 }
@@ -6937,24 +6937,24 @@ html[data-theme="dark"] .ax-page .peak-hero,
     margin: 0;
 }
 
-.ax-gp-feed-head strong { color: var(--ax-text); font-size: 13.5px; font-weight: 700; }
-.ax-gp-feed-head time { color: var(--ax-faint); font-size: 11.5px; flex: none; }
+.ax-gp-feed-head strong { color: var(--ax-text); font-size: var(--text-md); font-weight: 700; }
+.ax-gp-feed-head time { color: var(--ax-faint); font-size: var(--text-xs); flex: none; }
 
 .ax-gp-feed-detail {
     margin: 2px 0 0;
     color: var(--ax-muted);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.5;
 }
 
 @media (max-width: 720px) {
     .ax-gp-big { font-size: 40px; }
-    .ax-gp-metric-scores { font-size: 22px; }
-    .ax-gp-metric-scores .ax-gp-was { font-size: 19px; }
+    .ax-gp-metric-scores { font-size: var(--text-2xl); }
+    .ax-gp-metric-scores .ax-gp-was { font-size: var(--text-xl); }
     /* The toggles lead the panel on a narrow screen rather than being pushed
        to a second right-aligned line under the title. */
     .ax-gp-toggles { justify-content: flex-start; }
-    .ax-gp-tip { min-width: 120px; font-size: 11px; }
+    .ax-gp-tip { min-width: 120px; font-size: var(--text-2xs); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -6972,9 +6972,9 @@ html[data-theme="dark"] .ax-page .peak-hero,
     gap: 5px;
     padding: 2px 8px;
     border: 1px solid var(--ax-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     color: var(--ax-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0;
 }
@@ -7024,7 +7024,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     --ax-blue: #3b82f6;      /* productivity */
     --ax-green: #16a34a;     /* consistency  */
     --ax-amber: #d97706;     /* quality      */
-    --ax-violet: #7c3aed;    /* efficiency   */
+    --ax-violet: var(--color-accent);    /* efficiency   */
     --ax-pink: #db2777;      /* focus        */
 
     /* The mean of the four, which is not a fifth measure and does not get a
@@ -7050,7 +7050,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     --ax-blue: #4d9fff;
     --ax-green: #3ddc84;
     --ax-amber: #f5b642;
-    --ax-violet: #b57bff;
+    --ax-violet: var(--color-accent);
     --ax-pink: #ff7ab8;
 
     --ax-gp-overall: #c9d3e0;
@@ -7061,13 +7061,13 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     --ax-gp-rule: #263041;
 
     --ax-card: var(--ax-gp-card);
-    --ax-card-2: #141a25;
+    --ax-card-2: var(--color-surface-2);
     --ax-line: var(--ax-gp-line);
-    --ax-line-soft: #161d28;
+    --ax-line-soft: var(--color-line-soft);
     --ax-text: #e8eef7;
-    --ax-muted: #8b98ab;
-    --ax-faint: #66748a;
-    --ax-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+    --ax-muted: var(--color-ink-muted);
+    --ax-faint: var(--color-ink-faint);
+    --ax-shadow: var(--shadow-md);
 }
 
 .ax-view-growth .ax-panel {
@@ -7088,7 +7088,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
    a block of reading rather than a heading in a report. */
 .ax-view-growth .ax-panel :is(h2, h3, h4),
 .ax-gp-heading {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 750;
     letter-spacing: .1em;
     text-transform: uppercase;
@@ -7149,7 +7149,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-eyebrow {
     margin: 0;
     color: var(--ax-muted);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 750;
     letter-spacing: .11em;
     text-transform: uppercase;
@@ -7167,7 +7167,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-overall-note {
     margin: 2px 0 0;
     color: var(--ax-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.5;
 }
 .ax-gp-overall-note strong { color: var(--ax-text); font-weight: 700; }
@@ -7184,7 +7184,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     gap: 7px;
     margin: 0;
     color: var(--ax-text);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 700;
 }
 
@@ -7204,7 +7204,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 
 .ax-gp-metric-card-value {
     color: currentColor;
-    font-size: 25px;
+    font-size: var(--text-2xl);
     font-weight: 760;
     letter-spacing: -.03em;
     line-height: 1.1;
@@ -7217,7 +7217,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     gap: 6px;
     margin: 0;
     color: var(--ax-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
 }
 .ax-gp-metric-card-grade > span:last-child { color: currentColor; }
@@ -7229,18 +7229,18 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     display: inline-flex;
     padding: 3px;
     border: 1px solid var(--ax-gp-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
 
 .ax-gp-tab {
     padding: 5px 11px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: none;
     color: var(--ax-muted);
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 650;
     white-space: nowrap;
     cursor: pointer;
@@ -7271,7 +7271,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     background: none;
     color: var(--ax-muted);
     font: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 620;
     cursor: pointer;
 }
@@ -7283,7 +7283,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     height: 14px;
     flex: none;
     border: 1.5px solid var(--ax-gp-rule);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     background: none;
     transition: background .15s ease, border-color .15s ease;
 }
@@ -7329,7 +7329,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     top: -30px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1;
     color: var(--ax-muted);
 }
@@ -7346,7 +7346,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
        "Reached C" came out as two lines of one word each. */
     width: 132px;
     color: var(--ax-faint);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 650;
     line-height: 1.25;
     text-align: center;
@@ -7373,9 +7373,9 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     left: 0;
     transform: translate(0, -50%);
     padding: 1px 5px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: var(--ax-gp-card);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 750;
     font-variant-numeric: tabular-nums;
 }
@@ -7407,7 +7407,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-when > span:last-child { text-align: right; }
 
 .ax-gp-when b {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 750;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -7416,7 +7416,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-when .is-now b { color: var(--ax-green); }
 .ax-gp-when em {
     color: var(--ax-faint);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-style: normal;
     font-variant-numeric: tabular-nums;
 }
@@ -7425,10 +7425,10 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-total {
     margin: 12px 0 0;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--ax-violet) 12%, transparent);
     color: var(--ax-text);
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 700;
     text-align: center;
 }
@@ -7456,7 +7456,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     width: 30px;
     height: 30px;
     flex: none;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, currentColor 18%, transparent);
     position: relative;
 }
@@ -7473,7 +7473,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-mover-name {
     margin: 0;
     color: currentColor;
-    font-size: 20px;
+    font-size: var(--text-xl);
     font-weight: 760;
     letter-spacing: -.02em;
 }
@@ -7482,8 +7482,8 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     margin-left: auto;
     padding: 4px 12px;
     border: 1px solid currentColor;
-    border-radius: 999px;
-    font-size: 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-md);
     font-weight: 750;
     font-variant-numeric: tabular-nums;
 }
@@ -7493,7 +7493,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-mover-asks {
     margin: 0 0 12px;
     color: var(--ax-muted);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.5;
 }
 
@@ -7508,7 +7508,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     align-items: center;
     gap: 12px;
     padding: 9px 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 .ax-gp-parts li + li { border-top: 1px solid var(--ax-line-soft); }
 
@@ -7517,7 +7517,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-gp-part-bar {
     position: relative;
     height: 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-line-soft);
     overflow: hidden;
 }
@@ -7527,7 +7527,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     top: 0;
     bottom: 0;
     left: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-blue);
 }
 .ax-gp-parts li.is-down .ax-gp-part-fill { background: var(--ax-amber); }
@@ -7560,10 +7560,10 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     gap: 9px;
     margin: auto 0 0;
     padding: 11px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ax-card-2);
     color: var(--ax-muted);
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.55;
 }
 .ax-gp-mover-why strong { color: var(--ax-text); font-weight: 700; }
@@ -7588,9 +7588,9 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     gap: 8px;
 }
 
-.ax-gp-card-go { color: var(--ax-faint); font-size: 15px; line-height: 1; }
+.ax-gp-card-go { color: var(--ax-faint); font-size: var(--text-lg); line-height: 1; }
 
-.ax-gp-card-value { font-size: 24px; }
+.ax-gp-card-value { font-size: var(--text-2xl); }
 
 .ax-gp-card-note { padding-bottom: 12px; line-height: 1.5; }
 
@@ -7646,7 +7646,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 
 .ax-setup-aim {
     border: 1px solid var(--ax-line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--ax-card);
     padding: 14px 16px 16px;
     display: grid;
@@ -7655,7 +7655,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 
 .ax-setup-aim h4 {
     margin: 0;
-    font-size: 14px;
+    font-size: var(--text-md);
     font-weight: 700;
     letter-spacing: -.01em;
     color: var(--ax-text);
@@ -7675,7 +7675,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 }
 
 .ax-setup-aim label > span {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--ax-muted);
 }
 
@@ -7707,15 +7707,15 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     max-height: 80vh;
     overflow-y: auto;
     border: 1px solid var(--ax-line);
-    border-radius: 18px;
+    border-radius: var(--radius-lg);
     background: var(--ax-card);
     padding: 22px 24px 20px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, .34);
+    box-shadow: var(--shadow-lg);
 }
 
 .ax-setup-alert h3 {
     margin: 0 0 8px;
-    font-size: 17px;
+    font-size: var(--text-lg);
     font-weight: 700;
     letter-spacing: -.02em;
     color: var(--ax-text);
@@ -7723,7 +7723,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 
 .ax-setup-alert-lead {
     margin: 0 0 16px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--ax-muted);
 }
@@ -7743,7 +7743,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     display: grid;
     gap: 4px;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border-left: 3px solid var(--ax-line);
     background: color-mix(in srgb, var(--ax-line) 22%, transparent);
 }
@@ -7753,13 +7753,13 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 }
 
 .ax-setup-alert-list strong {
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--ax-text);
 }
 
 .ax-setup-alert-list span {
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -7787,7 +7787,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     flex-direction: column;
     gap: 8px;
     padding: 15px 17px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     border: 1px solid color-mix(in srgb, var(--t) 24%, var(--ax-line));
     background: color-mix(in srgb, var(--t) 6%, var(--ax-card));
 }
@@ -7802,7 +7802,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     flex-wrap: wrap;
     gap: 8px;
     margin: 0;
-    font-size: 11px;
+    font-size: var(--text-2xs);
 }
 .ax-lens-head > span {
     text-transform: uppercase;
@@ -7810,17 +7810,17 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     font-weight: 700;
     color: var(--ax-faint);
 }
-.ax-lens-head strong { font-size: 14px; font-weight: 700; color: var(--t); }
+.ax-lens-head strong { font-size: var(--text-md); font-weight: 700; color: var(--t); }
 
 .ax-lens-read {
     margin: 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.55;
     color: var(--ax-text);
 }
 .ax-lens-because {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.55;
     color: var(--ax-muted);
 }
@@ -7832,7 +7832,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     padding: 0 0 0 16px;
     display: grid;
     gap: 3px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--ax-text);
 }
@@ -7842,7 +7842,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     margin: 4px 0 0;
     padding-top: 9px;
     border-top: 1px solid color-mix(in srgb, var(--t) 18%, transparent);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--ax-faint);
 }

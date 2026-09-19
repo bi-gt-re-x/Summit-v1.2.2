@@ -14,12 +14,12 @@
  */
 .tk-rate-backdrop {
     --rt-ink: #111827;
-    --rt-ink-soft: #6b7280;
-    --rt-ink-faint: #9aa3b2;
-    --rt-surface: #ffffff;
+    --rt-ink-soft: var(--color-ink-muted);
+    --rt-ink-faint: var(--color-ink-faint);
+    --rt-surface: var(--color-surface);
     --rt-surface-soft: #f6f7fb;
-    --rt-line: #e6e9f0;
-    --rt-accent: #6c5ce7;
+    --rt-line: var(--color-line);
+    --rt-accent: var(--color-accent);
     --rt-star: #e8a33d;
     --rt-star-off: #d7dbe4;
 
@@ -35,13 +35,13 @@
 }
 
 html[data-theme="dark"] .tk-rate-backdrop {
-    --rt-ink: #f0f2f6;
-    --rt-ink-soft: #c2c9d4;
-    --rt-ink-faint: #8b93a2;
-    --rt-surface: #161b22;
-    --rt-surface-soft: #1b212b;
-    --rt-line: #263041;
-    --rt-accent: #8b7cf0;
+    --rt-ink: var(--color-ink);
+    --rt-ink-soft: var(--color-ink-muted);
+    --rt-ink-faint: var(--color-ink-faint);
+    --rt-surface: var(--color-surface);
+    --rt-surface-soft: var(--color-surface-2);
+    --rt-line: var(--color-line);
+    --rt-accent: var(--color-accent);
     --rt-star: #f0b458;
     --rt-star-off: #39414f;
 
@@ -57,8 +57,8 @@ html[data-theme="dark"] .tk-rate-backdrop {
     width: min(420px, 100%);
     background: var(--rt-surface);
     border: 1px solid var(--rt-line);
-    border-radius: 16px;
-    box-shadow: 0 18px 48px rgba(16, 24, 40, .22);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     padding: 24px 26px 20px;
     animation: tk-rate-rise .16s ease-out;
 }
@@ -70,7 +70,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 
 .tk-rate-title {
     margin: 0;
-    font-size: 19px;
+    font-size: var(--text-xl);
     font-weight: 650;
     letter-spacing: -.02em;
     color: var(--rt-ink);
@@ -81,7 +81,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
    be a paragraph and this is a caption. */
 .tk-rate-task {
     margin: 5px 0 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--rt-ink-faint);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -96,7 +96,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 
 .tk-rate-label {
     padding: 0;
-    font-size: 14px;
+    font-size: var(--text-md);
     font-weight: 650;
     color: var(--rt-ink);
 }
@@ -104,7 +104,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 .tk-rate-label span {
     margin-left: 7px;
     font-weight: 400;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     color: var(--rt-ink-faint);
 }
 
@@ -119,7 +119,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
     position: relative;
     cursor: pointer;
     line-height: 1;
-    font-size: 30px;
+    font-size: var(--text-3xl);
     color: var(--rt-star-off);
     transition: color .1s ease, transform .1s ease;
 }
@@ -140,7 +140,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 .tk-rate-star input:focus-visible + span {
     outline: 2px solid var(--rt-accent);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
 /* The word for whatever the cursor is over. Holds its height when empty so
@@ -148,7 +148,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 .tk-rate-word {
     margin-left: 10px;
     min-height: 1em;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--rt-ink-soft);
 }
@@ -184,10 +184,10 @@ html[data-theme="dark"] .tk-rate-backdrop {
     align-items: center;
     padding: 7px 12px;
     border: 1px solid var(--rt-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--rt-surface-soft);
     color: var(--rt-ink-soft);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 550;
     cursor: pointer;
     transition: border-color .14s ease, background .14s ease, color .14s ease;
@@ -233,7 +233,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
     background: none;
     padding: 0;
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     color: var(--rt-ink-faint);
     cursor: pointer;
 }
@@ -243,11 +243,11 @@ html[data-theme="dark"] .tk-rate-backdrop {
     height: 38px;
     padding: 0 20px;
     border: 0;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--rt-accent);
     color: #fff;
     font-family: inherit;
-    font-size: 14px;
+    font-size: var(--text-md);
     font-weight: 650;
     cursor: pointer;
 }
@@ -263,7 +263,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 
 @media (max-width: 420px) {
     .tk-rate-popup { padding: 20px 18px 16px; }
-    .tk-rate-star { font-size: 26px; }
+    .tk-rate-star { font-size: var(--text-2xl); }
     .tk-rate-word { width: 100%; margin: 6px 0 0; }
     .tk-rate-stars { flex-wrap: wrap; }
 }

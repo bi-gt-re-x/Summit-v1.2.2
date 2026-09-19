@@ -77,7 +77,7 @@
 
     padding: 0;
 
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
 
     width: min(680px, 94%);
 
@@ -89,7 +89,7 @@
 
     max-height: calc(100vh - min(10vh, 88px));
 
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--shadow-lg);
 
     animation: fadeIn 0.3s ease-out;
 
@@ -126,7 +126,7 @@
 
     border-bottom: 1px solid #e0e0e0;
 
-    border-radius: 20px 20px 0 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 
 }
 
@@ -136,15 +136,15 @@
 
     color: #1a237e;
 
-    font-family: 'Century Gothic', sans-serif;
+    font-family: var(--font-sans);
 
-    font-size: 22px;
+    font-size: var(--text-2xl);
 
 }
 
 .calendar-container .close-btn {
 
-    font-size: 32px;
+    font-size: var(--text-3xl);
 
     font-weight: bold;
 
@@ -199,11 +199,11 @@
 
     color: #333;
 
-    font-family: 'Century Gothic', sans-serif;
+    font-family: var(--font-sans);
 
     font-weight: 600;
 
-    font-size: 15px;
+    font-size: var(--text-lg);
 
 }
 
@@ -217,11 +217,11 @@
 
     border: 2px solid #1a237e;
 
-    border-radius: 10px;
+    border-radius: var(--radius-md);
 
-    font-family: 'Century Gothic', sans-serif;
+    font-family: var(--font-sans);
 
-    font-size: 15px;
+    font-size: var(--text-lg);
 
     color: #333;
 
@@ -249,11 +249,11 @@
 
     border: 2px solid #1a237e;
 
-    border-radius: 10px;
+    border-radius: var(--radius-md);
 
-    font-family: 'Century Gothic', sans-serif;
+    font-family: var(--font-sans);
 
-    font-size: 15px;
+    font-size: var(--text-lg);
 
     color: #333;
 
@@ -297,7 +297,7 @@
 
 .recurrence-note {
 
-    font-size: 13px;
+    font-size: var(--text-sm);
 
     color: #666;
 
@@ -305,7 +305,7 @@
 
     margin: 0 0 10px 0;
 
-    font-family: 'Century Gothic', sans-serif;
+    font-family: var(--font-sans);
 
 }
 
@@ -327,7 +327,7 @@
 
     cursor: pointer;
 
-    font-size: 15px;
+    font-size: var(--text-lg);
 
     padding: 8px 0;
 
@@ -385,13 +385,13 @@
 
     cursor: pointer;
 
-    font-size: 14px;
+    font-size: var(--text-md);
 
     padding: 8px 10px;
 
     background: #f8f9fa;
 
-    border-radius: 8px;
+    border-radius: var(--radius-md);
 
     transition: background 0.2s ease;
 
@@ -429,7 +429,7 @@
 
     border-top: 1px solid #e0e0e0;
 
-    border-radius: 0 0 20px 20px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 
 }
 
@@ -439,9 +439,9 @@
 
     padding: 12px 28px;
 
-    border-radius: 10px;
+    border-radius: var(--radius-md);
 
-    font-family: 'Century Gothic', sans-serif;
+    font-family: var(--font-sans);
 
     font-weight: 600;
 
@@ -449,7 +449,7 @@
 
     transition: opacity 0.3s ease, transform 0.3s ease;
 
-    font-size: 15px;
+    font-size: var(--text-lg);
 
 }
 
@@ -547,7 +547,7 @@ html[data-theme="light"] .btn-confirm:hover {
 html[data-theme="light"] .calendar-container .modal-body::-webkit-scrollbar{ width: 10px; }
 html[data-theme="light"] .calendar-container .modal-body::-webkit-scrollbar-thumb{
     background: #b79a6a;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
 }
 
 /* ── Add/Edit/Delete Section modal — futuristic space look for dark theme.
@@ -619,7 +619,7 @@ html[data-theme="dark"] .btn-confirm:hover {
 html[data-theme="dark"] .calendar-container .modal-body::-webkit-scrollbar{ width: 10px; }
 html[data-theme="dark"] .calendar-container .modal-body::-webkit-scrollbar-thumb{
     background: rgba(45, 212, 191, 0.35);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
 }
 
 /* Three-dots overflow menu on grid blocks (events + tasks). */
@@ -627,8 +627,8 @@ html[data-theme="dark"] .calendar-container .modal-body::-webkit-scrollbar-thumb
     position: absolute; top: 2px; right: 2px; z-index: 4;
     width: 18px; height: 16px; padding: 0; margin: 0;
     border: none; background: transparent; cursor: pointer;
-    color: inherit; opacity: 0; line-height: 1; font-size: 14px;
-    border-radius: 5px; display: flex; align-items: center; justify-content: center;
+    color: inherit; opacity: 0; line-height: 1; font-size: var(--text-md);
+    border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
     transition: opacity .12s ease;
 }
 .wk-card-menu:hover { opacity: 1; background: rgba(16, 24, 40, .12); }
@@ -641,12 +641,12 @@ html[data-theme="dark"] .calendar-container .modal-body::-webkit-scrollbar-thumb
 .wk-card-pop {
     position: fixed; z-index: 1200; min-width: 118px;
     display: flex; flex-direction: column; padding: 4px 0;
-    background: #fff; border: 1px solid #e3e6ee; border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(16, 24, 40, .22); overflow: hidden;
+    background: #fff; border: 1px solid #e3e6ee; border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg); overflow: hidden;
 }
 .wk-card-pop .wk-dd-item {
     border: none; background: transparent; text-align: left;
-    padding: 8px 14px; font: inherit; font-size: 13px; cursor: pointer;
+    padding: 8px 14px; font: inherit; font-size: var(--text-sm); cursor: pointer;
     color: #2c3550; white-space: nowrap;
 }
 .wk-card-pop .wk-dd-item:hover { background: #f2f5fb; }
@@ -669,8 +669,8 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
     display: flex; flex-direction: column; gap: 12px;
     width: min(92vw, 460px); text-align: left;
     background: #b0413e; color: #fff; padding: 20px 22px;
-    border-radius: 14px; font-size: 15px; font-weight: 600;
-    box-shadow: 0 16px 44px rgba(16,24,40,.4);
+    border-radius: var(--radius-lg); font-size: var(--text-lg); font-weight: 600;
+    box-shadow: var(--shadow-lg);
     transition: transform .22s ease, width .22s ease;
 }
 .wk-overlap-msg { line-height: 1.45; font-weight: 600; }
@@ -685,31 +685,31 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 }
 .wk-overlap-item {
     display: flex; flex-direction: column; gap: 6px;
-    background: rgba(255,255,255,.13); border-radius: 10px; padding: 11px 13px;
+    background: rgba(255,255,255,.13); border-radius: var(--radius-md); padding: 11px 13px;
 }
 .wk-overlap-where { display: flex; align-items: center; gap: 8px; }
 .wk-overlap-kind {
-    flex: none; border-radius: 999px; padding: 2px 8px;
-    font-size: 10.5px; font-weight: 800; letter-spacing: .04em;
+    flex: none; border-radius: var(--radius-full); padding: 2px 8px;
+    font-size: var(--text-2xs); font-weight: 800; letter-spacing: .04em;
     text-transform: uppercase; background: rgba(255,255,255,.24);
 }
-.wk-overlap-when { font-size: 12.5px; font-weight: 700; opacity: .9; }
+.wk-overlap-when { font-size: var(--text-sm); font-weight: 700; opacity: .9; }
 .wk-overlap-name {
-    font-size: 15.5px; font-weight: 700; line-height: 1.3;
+    font-size: var(--text-lg); font-weight: 700; line-height: 1.3;
     overflow-wrap: anywhere;
 }
 .wk-overlap-close {
     background: rgba(255,255,255,.22); color: #fff; border: none;
-    border-radius: 8px; padding: 8px 14px; cursor: pointer;
-    font: inherit; font-size: 13px; font-weight: 700; width: 100%;
+    border-radius: var(--radius-md); padding: 8px 14px; cursor: pointer;
+    font: inherit; font-size: var(--text-sm); font-weight: 700; width: 100%;
     margin-top: 2px;
 }
 .wk-overlap-close:hover { background: rgba(255,255,255,.34); }
 
 .wk-overlap-reveal {
     background: #fff; color: #8f302e; border: none;
-    border-radius: 9px; padding: 10px 16px; cursor: pointer;
-    font: inherit; font-size: 13.5px; font-weight: 800; width: 100%;
+    border-radius: var(--radius-md); padding: 10px 16px; cursor: pointer;
+    font: inherit; font-size: var(--text-md); font-weight: 800; width: 100%;
 }
 .wk-overlap-reveal:hover { background: #ffeceb; }
 
@@ -723,9 +723,9 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 }
 .wk-overlap-backdrop.is-peeking .wk-overlap-popup {
     pointer-events: auto; width: min(88vw, 340px);
-    font-size: 13.5px;
+    font-size: var(--text-md);
 }
-.wk-overlap-backdrop.is-peeking .wk-overlap-name { font-size: 14px; }
+.wk-overlap-backdrop.is-peeking .wk-overlap-name { font-size: var(--text-md); }
 
 /* Drag-to-create chooser: after a drag, ask whether to make an event or a task.
    Neutral (not an error), centered on a light dismissable backdrop. */
@@ -738,13 +738,13 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
     display: flex; flex-direction: column; gap: 20px;
     width: min(94vw, 520px); text-align: center;
     background: #fff; color: #1f2733; padding: 34px 36px;
-    border-radius: 18px; box-shadow: 0 20px 56px rgba(16,24,40,.42);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);
 }
-.wk-choose-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.wk-choose-title { font-size: var(--text-2xl); font-weight: 800; margin-bottom: 4px; }
 .wk-choose-row { display: flex; gap: 16px; }
 .wk-choose-btn {
-    flex: 1; border: none; border-radius: 12px; padding: 20px 18px;
-    cursor: pointer; font: inherit; font-size: 17px; font-weight: 700; color: #fff;
+    flex: 1; border: none; border-radius: var(--radius-md); padding: 20px 18px;
+    cursor: pointer; font: inherit; font-size: var(--text-lg); font-weight: 700; color: #fff;
     background: #3b4658;
 }
 .wk-choose-btn.is-task { background: #8b5cf6; }
@@ -769,7 +769,7 @@ html[data-theme="dark"] .wk-choose-cancel:hover { color: #e6e8f0; }
 }
 #addTaskModal .xp-input-field {
     flex: 0 0 56px; width: 56px; padding: 6px 8px; border: 1.5px solid #D9D9D9;
-    border-radius: 8px; background: #F8F9FA; color: #2C302E; font-size: 14px;
+    border-radius: var(--radius-md); background: #F8F9FA; color: #2C302E; font-size: var(--text-md);
     font-weight: 600; text-align: center; outline: none; -moz-appearance: textfield;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -789,15 +789,15 @@ html[data-theme="dark"] #addTaskModal .xp-input-field { background: #232a33; bor
 }
 .wk-confirm-popup {
     width: min(92vw, 400px); text-align: left;
-    background: #fff; border: 1px solid #e5e8ee; border-radius: 16px;
-    padding: 22px 24px; box-shadow: 0 20px 60px rgba(16, 24, 40, .4);
+    background: #fff; border: 1px solid #e5e8ee; border-radius: var(--radius-lg);
+    padding: 22px 24px; box-shadow: var(--shadow-lg);
 }
-.wk-confirm-title { margin: 0 0 8px; font-size: 18px; font-weight: 800; color: #1a2230; }
-.wk-confirm-msg { margin: 0 0 20px; font-size: 14px; line-height: 1.5; color: #55607a; }
+.wk-confirm-title { margin: 0 0 8px; font-size: var(--text-xl); font-weight: 800; color: #1a2230; }
+.wk-confirm-msg { margin: 0 0 20px; font-size: var(--text-md); line-height: 1.5; color: #55607a; }
 .wk-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
 .wk-confirm-cancel, .wk-confirm-delete {
-    border-radius: 999px; padding: 9px 20px; cursor: pointer;
-    font: inherit; font-size: 14px; font-weight: 700; border: 1px solid transparent;
+    border-radius: var(--radius-full); padding: 9px 20px; cursor: pointer;
+    font: inherit; font-size: var(--text-md); font-weight: 700; border: 1px solid transparent;
 }
 .wk-confirm-cancel { background: #f1f3f7; border-color: #e5e8ee; color: #2c3550; }
 .wk-confirm-cancel:hover { background: #e7eaf1; }
@@ -810,4 +810,4 @@ html[data-theme="dark"] .wk-confirm-msg { color: #aab2c5; }
 html[data-theme="dark"] .wk-confirm-cancel { background: #232a35; border-color: #333c48; color: #e6e8f0; }
 html[data-theme="dark"] .wk-confirm-cancel:hover { background: #2c3440; }
 
-.wk-empty { margin: 0; font-size: 13px; color: #9aa0ad; }
+.wk-empty { margin: 0; font-size: var(--text-sm); color: #9aa0ad; }

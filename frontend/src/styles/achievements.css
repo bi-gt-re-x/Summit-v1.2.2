@@ -42,16 +42,16 @@ body:has(.ac-page) .app-main {
 }
 
 .ac-page {
-    --ac-card: #ffffff;
-    --ac-card-2: #f7f8fb;
-    --ac-line: #e6e9ef;
-    --ac-well: #eef1f6;
+    --ac-card: var(--color-surface);
+    --ac-card-2: var(--color-surface-2);
+    --ac-line: var(--color-line);
+    --ac-well: var(--color-surface-2);
 
-    --ac-text: #1f2733;
-    --ac-muted: #6b7684;
-    --ac-faint: #98a1ae;
+    --ac-text: var(--color-ink);
+    --ac-muted: var(--color-ink-muted);
+    --ac-faint: var(--color-ink-faint);
 
-    --ac-violet: #6d5ae0;
+    --ac-violet: var(--color-accent);
     --ac-blue: #2f6fd0;
     --ac-green: #1f8a54;
     --ac-gold: #c08324;
@@ -61,8 +61,8 @@ body:has(.ac-page) .app-main {
        hue the other six leave free at this lightness. */
     --ac-teal: #0f7f86;
 
-    --ac-radius: 16px;
-    --ac-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .05);
+    --ac-radius: var(--radius-lg);
+    --ac-shadow: var(--shadow-md);
 
     box-sizing: border-box;
     width: 100%;
@@ -71,20 +71,20 @@ body:has(.ac-page) .app-main {
        leave the right of a large screen empty for no gain. */
     padding: 26px 28px 60px;
     color: var(--ac-text);
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
 }
 
 html[data-theme="dark"] .ac-page {
-    --ac-card: #161d2c;
-    --ac-card-2: #1b2334;
-    --ac-line: #28324a;
+    --ac-card: var(--color-surface);
+    --ac-card-2: var(--color-surface-2);
+    --ac-line: var(--color-line);
     --ac-well: #0f1523;
 
     --ac-text: #e7ecf6;
-    --ac-muted: #8f9bb3;
-    --ac-faint: #6d7a94;
+    --ac-muted: var(--color-ink-muted);
+    --ac-faint: var(--color-ink-faint);
 
-    --ac-violet: #9b8bff;
+    --ac-violet: var(--color-accent);
     --ac-blue: #6a9bff;
     --ac-green: #46c483;
     --ac-gold: #e0b23c;
@@ -92,7 +92,7 @@ html[data-theme="dark"] .ac-page {
     --ac-flame: #ff9245;
     --ac-teal: #3fc4cd;
 
-    --ac-shadow: 0 1px 2px rgba(0, 0, 0, .2), 0 8px 24px rgba(0, 0, 0, .26);
+    --ac-shadow: var(--shadow-md);
     color-scheme: dark;
 }
 
@@ -117,18 +117,18 @@ html[data-theme="dark"] .ac-page {
     display: flex; align-items: flex-start; justify-content: space-between;
     gap: 16px; flex-wrap: wrap;
 }
-.ac-head h1 { margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -.02em; }
-.ac-head p { margin: 5px 0 0; font-size: 13.5px; }
+.ac-head h1 { margin: 0; font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.02em; }
+.ac-head p { margin: 5px 0 0; font-size: var(--text-md); }
 .ac-head-tools { display: flex; align-items: center; gap: 9px; }
 
 .ac-select select {
     appearance: none;
     padding: 9px 34px 9px 14px;
     border: 1px solid var(--ac-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ac-card);
     color: var(--ac-text);
-    font: inherit; font-size: 13px; font-weight: 550;
+    font: inherit; font-size: var(--text-sm); font-weight: 550;
     cursor: pointer;
     /* The chevron, drawn rather than shipped — one arrow does not earn a file
        under utils/icons/. currentColor is not available inside a data URI, so
@@ -161,7 +161,7 @@ html[data-theme="dark"] .ac-page {
     padding-right: 26px;
     border-right: 1px solid var(--ac-line);
 }
-.ac-band-ring .ac-quiet { font-size: 11.5px; }
+.ac-band-ring .ac-quiet { font-size: var(--text-xs); }
 
 .ac-ring { position: relative; width: 108px; height: 108px; }
 .ac-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
@@ -180,7 +180,7 @@ html[data-theme="dark"] .ac-page {
     display: grid; place-items: center;
 }
 .ac-ring-face strong {
-    font-size: 25px; font-weight: 700; letter-spacing: -.02em;
+    font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.02em;
     font-variant-numeric: tabular-nums;
 }
 
@@ -188,11 +188,11 @@ html[data-theme="dark"] .ac-page {
 .ac-stat-top { display: flex; align-items: center; gap: 9px; }
 .ac-stat-top svg { width: 22px; height: 22px; color: var(--t, var(--ac-violet)); flex: none; }
 .ac-stat-top strong {
-    font-size: 27px; font-weight: 700; line-height: 1.05; letter-spacing: -.02em;
+    font-size: var(--text-2xl); font-weight: 700; line-height: 1.05; letter-spacing: -.02em;
     font-variant-numeric: tabular-nums;
 }
-.ac-stat-label { font-size: 12.5px; font-weight: 600; }
-.ac-stat .ac-quiet { font-size: 11.5px; }
+.ac-stat-label { font-size: var(--text-sm); font-weight: 600; }
+.ac-stat .ac-quiet { font-size: var(--text-xs); }
 
 /* The one title in the app, when it has been earned. Rose, because the badge
    that confers it is the only Legendary hidden one — see `Ascended`. */
@@ -200,9 +200,9 @@ html[data-theme="dark"] .ac-page {
     margin: 0;
     padding: 11px 16px;
     border: 1px solid color-mix(in srgb, var(--ac-rose) 40%, var(--ac-line));
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--ac-rose) 9%, var(--ac-card));
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 .ac-title-banner strong { color: var(--ac-rose); }
 
@@ -212,12 +212,12 @@ html[data-theme="dark"] .ac-page {
     display: flex; align-items: center; justify-content: space-between;
     gap: 14px; flex-wrap: wrap;
 }
-.ac-section-head h2 { margin: 0; font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
+.ac-section-head h2 { margin: 0; font-size: var(--text-lg); font-weight: 650; letter-spacing: -.01em; }
 
 .ac-view-all {
     padding: 0; border: 0; background: none;
     color: var(--ac-violet);
-    font: inherit; font-size: 12.5px; font-weight: 650;
+    font: inherit; font-size: var(--text-sm); font-weight: 650;
     cursor: pointer;
 }
 .ac-view-all:hover { text-decoration: underline; }
@@ -252,15 +252,15 @@ html[data-theme="dark"] .ac-page {
         var(--ac-card);
     box-shadow: 0 8px 22px color-mix(in srgb, var(--t) 15%, transparent), var(--ac-shadow);
 }
-.ac-recent-card strong { font-size: 14.5px; font-weight: 650; letter-spacing: -.01em; }
-.ac-recent-card .ac-quiet { font-size: 11.5px; line-height: 1.5; }
+.ac-recent-card strong { font-size: var(--text-md); font-weight: 650; letter-spacing: -.01em; }
+.ac-recent-card .ac-quiet { font-size: var(--text-xs); line-height: 1.5; }
 .ac-recent-foot {
     display: flex; align-items: center; justify-content: space-between;
     gap: 10px; width: 100%;
     margin-top: 6px; padding-top: 11px;
     border-top: 1px solid var(--ac-line);
 }
-.ac-recent-foot .ac-quiet { font-size: 11px; }
+.ac-recent-foot .ac-quiet { font-size: var(--text-2xs); }
 
 /* ---------- The mark ------------------------------------------------------
    A hexagon in the tier's tone with the badge's drawing inside it. Two sizes:
@@ -390,7 +390,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     width: 100%;
     padding: 14px 15px;
     border: 1px solid var(--ac-line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--ac-card);
     box-shadow: var(--ac-shadow);
     color: inherit; font: inherit; text-align: left;
@@ -417,14 +417,14 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 .ac-cat-ico {
     display: grid; place-items: center;
     width: 34px; height: 34px; flex: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--t) 15%, transparent);
     color: var(--t);
 }
 .ac-cat-ico svg { width: 17px; height: 17px; }
 .ac-cat-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.ac-cat-text strong { font-size: 13px; font-weight: 650; }
-.ac-cat-text .ac-quiet { font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.ac-cat-text strong { font-size: var(--text-sm); font-weight: 650; }
+.ac-cat-text .ac-quiet { font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
 
 /* ---------- Search -------------------------------------------------------- */
 .ac-search {
@@ -432,7 +432,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     min-width: 0; width: min(280px, 100%);
     padding: 8px 12px;
     border: 1px solid var(--ac-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--ac-card);
     color: var(--ac-faint);
 }
@@ -442,7 +442,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     min-width: 0; flex: 1;
     border: 0; background: none; outline: none;
     color: var(--ac-text);
-    font: inherit; font-size: 13px;
+    font: inherit; font-size: var(--text-sm);
 }
 .ac-search input::placeholder { color: var(--ac-faint); }
 
@@ -456,18 +456,18 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 .ac-wall-head h3 {
     display: flex; align-items: baseline; gap: 8px;
     margin: 0; flex: none;
-    font-size: 13px; font-weight: 700;
+    font-size: var(--text-sm); font-weight: 700;
     letter-spacing: .06em; text-transform: uppercase;
 }
 .ac-wall-count {
     padding: 2px 8px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: var(--ac-well);
     color: var(--ac-muted);
-    font-size: 11.5px; font-weight: 700; letter-spacing: 0;
+    font-size: var(--text-xs); font-weight: 700; letter-spacing: 0;
     font-variant-numeric: tabular-nums;
 }
-.ac-wall-head .ac-quiet { font-size: 11.5px; }
+.ac-wall-head .ac-quiet { font-size: var(--text-xs); }
 /* The rule takes whatever the heading leaves. */
 .ac-wall-head::after {
     content: ""; flex: 1;
@@ -499,7 +499,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     gap: 9px 13px;
     padding: 14px 15px 12px;
     border: 1px solid var(--ac-line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--ac-card);
     transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease;
 }
@@ -573,10 +573,10 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     gap: 9px; min-width: 0;
 }
 .ac-tile-top strong {
-    font-size: 13.5px; font-weight: 650; letter-spacing: -.01em;
+    font-size: var(--text-md); font-weight: 650; letter-spacing: -.01em;
     min-width: 0;
 }
-.ac-tile-text .ac-quiet { font-size: 11.5px; line-height: 1.5; }
+.ac-tile-text .ac-quiet { font-size: var(--text-xs); line-height: 1.5; }
 
 /* The tier in words, for the reader who has not yet learned the colours or
    the pips. A chip rather than 9.5px of faint uppercase floating beside the
@@ -585,9 +585,9 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 .ac-rank {
     flex: none;
     padding: 3px 7px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--ac-faint) 15%, transparent);
-    font-size: 9px; font-weight: 800;
+    font-size: var(--text-2xs); font-weight: 800;
     letter-spacing: .08em; text-transform: uppercase;
     color: var(--ac-faint);
 }
@@ -605,10 +605,10 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 .ac-title {
     align-self: flex-start;
     margin-top: 3px;
-    font-style: normal; font-size: 10px; font-weight: 700;
+    font-style: normal; font-size: var(--text-2xs); font-weight: 700;
     letter-spacing: .04em; text-transform: uppercase;
     padding: 3px 8px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--ac-rose) 16%, transparent);
     color: var(--ac-rose);
 }
@@ -622,18 +622,18 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     padding-top: 10px;
     border-top: 1px solid color-mix(in srgb, var(--ac-line) 70%, transparent);
 }
-.ac-tile-foot .ac-quiet { font-size: 11px; font-variant-numeric: tabular-nums; }
+.ac-tile-foot .ac-quiet { font-size: var(--text-2xs); font-variant-numeric: tabular-nums; }
 
 .ac-done {
     display: flex; align-items: center; gap: 6px; min-width: 0;
-    font-size: 11.5px; font-weight: 650;
+    font-size: var(--text-xs); font-weight: 650;
     color: var(--ac-green);
 }
 .ac-done svg { width: 14px; height: 14px; flex: none; }
 .ac-secret-note { font-style: italic; }
 
 .ac-progress { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1; }
-.ac-figures { font-size: 11px; font-variant-numeric: tabular-nums; }
+.ac-figures { font-size: var(--text-2xs); font-variant-numeric: tabular-nums; }
 
 /* ---------- Bars ----------------------------------------------------------
    One bar, painted from `--t`, so a bar's colour is its difficulty wherever it
@@ -641,7 +641,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 .ac-bar {
     display: block;
     height: 6px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: var(--ac-well);
     overflow: hidden;
 }
@@ -655,10 +655,10 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 /* ---------- The score pill ------------------------------------------------ */
 .ac-xp {
     padding: 5px 10px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--t) 13%, transparent);
     color: var(--t);
-    font-size: 11.5px; font-weight: 700;
+    font-size: var(--text-xs); font-weight: 700;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
@@ -672,18 +672,18 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     margin: 0; padding: 26px;
     text-align: center;
     border: 1px dashed var(--ac-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     color: var(--ac-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 .ac-foot {
     display: flex; align-items: center; justify-content: center; gap: 9px;
     margin: 4px 0 0; padding: 15px;
     border: 1px dashed var(--ac-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: var(--ac-card-2);
     color: var(--ac-muted);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: center;
 }
 .ac-foot svg { width: 15px; height: 15px; flex: none; }
@@ -740,7 +740,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 .ac-trees-mark {
     display: grid; place-items: center;
     width: 30px; height: 30px; flex: none;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--t) 13%, transparent);
     color: var(--t);
 }
@@ -750,7 +750,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     margin: 0;
     max-width: 78ch;
     color: var(--ac-muted);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
 }
 
@@ -768,27 +768,27 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     display: flex; align-items: flex-start; gap: 11px;
     padding: 12px 13px;
     border: 1px solid var(--ac-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--ac-card);
     min-width: 0;
 }
 .ac-ladder-count {
     flex: none;
     padding: 3px 8px;
-    border-radius: 99px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--t) 12%, transparent);
     color: var(--t);
-    font-size: 11px; font-weight: 700;
+    font-size: var(--text-2xs); font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
 .ac-ladder-next {
     display: flex; flex-direction: column; gap: 4px;
     min-width: 0; flex: 1;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
 }
 .ac-ladder-next strong {
     color: var(--ac-text);
-    font-size: 12.5px; font-weight: 650;
+    font-size: var(--text-sm); font-weight: 650;
 }
 /* A ladder with every rung earned has no bar and needs none — the sentence in
    it is the whole message, and an empty track under it would read as nothing

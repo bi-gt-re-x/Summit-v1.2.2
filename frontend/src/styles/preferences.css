@@ -143,23 +143,18 @@ html[data-theme="dark"]:root[data-accent="slate"] { --pref-accent: #8b97ab; }
     --pref-accent-2: var(--skin-accent-2);
 }
 
-/* The ground. The one surface in the app that is set centrally — `body` in
-   dashboard.css, and its dark override — so it is the one a skin can tint
-   without touching the stylesheets it did not write.
- 
-   Specificity: `html[data-theme="dark"] body` is (0,2,1), so a skin needs at
-   least that to win over it in the dark-based skins. `html:root[data-skin] body`
-   is (0,2,1) too and loses on order unless this sheet is emitted later, which
-   is not something to depend on — so the attribute is named twice. */
-html:root[data-skin][data-skin] body { background: var(--skin-ground); }
+/* The ground and the cards. Both are shared tokens now (styles/tokens.css),
+   and every page's own name for its card and its ground points at them, so a
+   skin repaints the whole app by setting two properties on the root.
 
-/* Card surfaces are deliberately left alone. They are per-page tokens and
-   there are hundreds of them across forty-four stylesheets, most written as
-   literal hexes; a skin that tried to repaint every one would be a rewrite of
-   the whole app's CSS wearing a feature's clothes. The ground above and the
-   accent below are the two things that *are* centrally reachable, and between
-   them they are what the eye reads as "a different theme" — the cards go on
-   being the light or dark cards of the base the skin pins. */
+   Specificity: tokens.css sets these on `:root` and again on
+   `html[data-theme="dark"]`, which is (0,1,1). `html:root[data-skin]` is
+   (0,2,1), so a skin wins over both without depending on sheet order. */
+html:root[data-skin] {
+    --color-bg: var(--skin-ground);
+    --color-surface: var(--skin-surface);
+    --color-accent: var(--skin-accent);
+}
 
 /* Every page's own name for "the accent", pointed at the chosen one.
    Listed rather than globbed because CSS cannot glob a custom property, and

@@ -21,7 +21,7 @@
    see the note in styles/calendar/month.css. margin and min-height are on the
    always-loaded body rule in styles/dashboard.css. */
 body:has(.content-container) {
-    font-family: 'Century Gothic', 'Inter', 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
     background: #f4f6f8;
     color: #1f2733;
     line-height: 1.6;
@@ -31,7 +31,7 @@ body:has(.content-container) {
 .content-container {
     background: rgba(255, 255, 255, 0.9);
     padding: clamp(26px, 4vw, 44px);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     /* Sized for the prose rather than for the screen. At 800px a line of the
        privacy policy ran to about ninety characters; the eye loses its place
        returning across one that long, and these are three pages of nothing but

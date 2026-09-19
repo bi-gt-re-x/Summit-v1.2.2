@@ -20,11 +20,11 @@
  */
 
 /* S gold, A+ deep green, A green, B blue, C yellow, D orange, F red. */
-.grade-S { --grade-color: #cf9a12; --grade-shadow: rgba(207, 154, 18, 0.38); }
-.grade-Aplus { --grade-color: #0f8f45; --grade-shadow: rgba(15, 143, 69, 0.32); }
-.grade-A { --grade-color: #16a34a; --grade-shadow: rgba(22, 163, 74, 0.30); }
-.grade-B { --grade-color: #2563eb; --grade-shadow: rgba(37, 99, 235, 0.30); }
-.grade-C { --grade-color: #eab308; --grade-shadow: rgba(234, 179, 8, 0.30); }
-.grade-D { --grade-color: #ed7014; --grade-shadow: rgba(237, 112, 20, 0.30); }
-.grade-F { --grade-color: #dc2626; --grade-shadow: rgba(220, 38, 38, 0.30); }
-.grade-none { --grade-color: #9ca3af; --grade-shadow: rgba(156, 163, 175, 0.22); }
+.grade-S { --grade-color: #cf9a12; --grade-shadow: var(--shadow-md); }
+.grade-Aplus { --grade-color: #0f8f45; --grade-shadow: var(--shadow-md); }
+.grade-A { --grade-color: #16a34a; --grade-shadow: var(--shadow-md); }
+.grade-B { --grade-color: #2563eb; --grade-shadow: var(--shadow-md); }
+.grade-C { --grade-color: #eab308; --grade-shadow: var(--shadow-md); }
+.grade-D { --grade-color: #ed7014; --grade-shadow: var(--shadow-md); }
+.grade-F { --grade-color: #dc2626; --grade-shadow: var(--shadow-md); }
+.grade-none { --grade-color: #9ca3af; --grade-shadow: var(--shadow-md); }

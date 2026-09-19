@@ -7,8 +7,8 @@
 .day-header-actions { display: flex; align-items: center; gap: 10px; }
 .day-action-btn {
     display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid #e5e8ee; background: #fff; border-radius: 12px;
-    padding: 9px 16px; font: inherit; font-size: 14px; font-weight: 600;
+    border: 1px solid #e5e8ee; background: #fff; border-radius: var(--radius-md);
+    padding: 9px 16px; font: inherit; font-size: var(--text-md); font-weight: 600;
     color: #2c302e; cursor: pointer; transition: background .15s ease, border-color .15s ease;
 }
 .day-action-btn svg { width: 16px; height: 16px; }
@@ -61,8 +61,8 @@
 
 .day-allday-input {
     flex: 1 1 auto; min-width: 0; box-sizing: border-box;
-    font: inherit; font-size: 14px; color: #3a3f4a;
-    background: #fafbfc; border: 1px solid #eef0f4; border-radius: 12px;
+    font: inherit; font-size: var(--text-md); color: #3a3f4a;
+    background: #fafbfc; border: 1px solid #eef0f4; border-radius: var(--radius-md);
     /* Room on the left for the icon, which sits over the field rather than
        beside it — beside it, five icons and five fields would be ten things
        competing for one row. */
@@ -71,7 +71,7 @@
 }
 .day-focus-item:not(.is-primary) .day-allday-input {
     padding-right: 28px;   /* the × */
-    font-size: 13.5px;
+    font-size: var(--text-md);
 }
 .day-allday-input::placeholder { color: #9aa0ad; }
 .day-allday-input:focus {
@@ -91,7 +91,7 @@
 }
 .day-focus-ico.is-empty {
     box-sizing: border-box;
-    width: 13px; height: 13px; border-radius: 999px;
+    width: 13px; height: 13px; border-radius: var(--radius-full);
     border: 1.5px dashed #c8cdd8;
 }
 
@@ -100,8 +100,8 @@
     transform: translateY(-50%);
     width: 20px; height: 20px; padding: 0;
     display: inline-flex; align-items: center; justify-content: center;
-    border: 0; border-radius: 999px; background: transparent;
-    color: #9aa0ad; font: inherit; font-size: 16px; line-height: 1;
+    border: 0; border-radius: var(--radius-full); background: transparent;
+    color: #9aa0ad; font: inherit; font-size: var(--text-lg); line-height: 1;
     cursor: pointer; opacity: 0; transition: opacity .14s ease, background .14s ease;
 }
 /* Only on the field it belongs to, and always once focused — a control that
@@ -117,8 +117,8 @@
     flex: none;
     display: inline-flex; align-items: center; gap: 6px;
     padding: 10px 14px; box-sizing: border-box;
-    border: 1px dashed #d5dae3; border-radius: 12px; background: transparent;
-    color: #7c8494; font: inherit; font-size: 13.5px; font-weight: 600;
+    border: 1px dashed #d5dae3; border-radius: var(--radius-md); background: transparent;
+    color: #7c8494; font: inherit; font-size: var(--text-md); font-weight: 600;
     cursor: pointer; transition: border-color .14s ease, color .14s ease, background .14s ease;
 }
 .day-focus-add:hover { border-color: #a8845c; color: #a8845c; background: #fdfbf8; }
@@ -143,25 +143,25 @@
 .day-sidebar { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
 .day-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .day-panel-head .wk-panel-title { margin: 0; }
-.day-panel-link { font-size: 13px; font-weight: 600; color: #a8845c; cursor: pointer; }
+.day-panel-link { font-size: var(--text-sm); font-weight: 600; color: #a8845c; cursor: pointer; }
 .day-panel-link:hover { text-decoration: underline; }
 
 /* Mini month calendar */
 .day-mini-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.day-mini-title { font-size: 15px; font-weight: 700; color: #1a1f26; }
+.day-mini-title { font-size: var(--text-lg); font-weight: 700; color: #1a1f26; }
 .day-mini-nav { display: flex; gap: 4px; }
 .day-mini-arrow {
     width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center;
-    border: none; background: transparent; border-radius: 8px;
-    color: #6b7280; font-size: 12px; cursor: pointer;
+    border: none; background: transparent; border-radius: var(--radius-md);
+    color: #6b7280; font-size: var(--text-xs); cursor: pointer;
 }
 .day-mini-arrow:hover { background: #f2f3f6; color: #1a1f26; }
 .day-mini-dow { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 6px; }
-.day-mini-dow span { font-size: 11px; font-weight: 600; color: #9297ab; }
+.day-mini-dow span { font-size: var(--text-2xs); font-weight: 600; color: #9297ab; }
 .day-mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
 .day-mini-cell {
     aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center;
-    font-size: 12.5px; color: #3a3f4a; border-radius: 999px; cursor: pointer;
+    font-size: var(--text-sm); color: #3a3f4a; border-radius: var(--radius-full); cursor: pointer;
     border: none; background: transparent; font-family: inherit;
     transition: background .12s ease;
 }
@@ -215,12 +215,12 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
 .day-mini-cell.is-inweek.is-muted { color: #bdb3a4; }
 .day-mini-cell.is-inweek:hover { background: #ebe5db; box-shadow: -2px 0 0 #ebe5db, 2px 0 0 #ebe5db; }
 .day-mini-cell.is-week-head {
-    border-radius: 999px 0 0 999px;
+    border-radius: var(--radius-full) 0 0 var(--radius-full);
     box-shadow: 2px 0 0 #f4f1ec;
 }
 .day-mini-cell.is-week-head:hover { box-shadow: 2px 0 0 #ebe5db; }
 .day-mini-cell.is-week-tail {
-    border-radius: 0 999px 999px 0;
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
     box-shadow: -2px 0 0 #f4f1ec;
 }
 .day-mini-cell.is-week-tail:hover { box-shadow: -2px 0 0 #ebe5db; }
@@ -231,7 +231,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
     font-weight: 700;
     color: #ffffff;
     background: #c4553d;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
 }
 .day-mini-cell.is-today:hover { background: #ab4632; }
 /* The disc has to survive the band's own box-shadow, which would otherwise
@@ -244,16 +244,16 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
 /* Focus card (placeholder) */
 .day-focus-row { display: flex; align-items: center; gap: 12px; }
 .day-focus-icon {
-    flex: none; width: 40px; height: 40px; border-radius: 12px;
+    flex: none; width: 40px; height: 40px; border-radius: var(--radius-md);
     display: inline-flex; align-items: center; justify-content: center;
     background: rgba(139, 122, 168, .16); color: #7a6aa8;
 }
 .day-focus-icon svg { width: 20px; height: 20px; }
 .day-focus-main { flex: 1 1 auto; min-width: 0; }
-.day-focus-name { font-size: 14px; font-weight: 700; color: #7a6aa8; }
-.day-focus-sub { font-size: 12px; color: #9297ab; }
-.day-focus-time { font-size: 13px; font-weight: 600; color: #6b7280; }
-.day-focus-barrow { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 6px; font-size: 12px; color: #6b7280; }
+.day-focus-name { font-size: var(--text-md); font-weight: 700; color: #7a6aa8; }
+.day-focus-sub { font-size: var(--text-xs); color: #9297ab; }
+.day-focus-time { font-size: var(--text-sm); font-weight: 600; color: #6b7280; }
+.day-focus-barrow { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 6px; font-size: var(--text-xs); color: #6b7280; }
 .day-focus-pct { font-weight: 700; color: #7a6aa8; }
 .day-sidebar .wk-progress-bar { background: linear-gradient(90deg, #8b7aa8, #a893c9); }
 
@@ -261,53 +261,53 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
    The one thing the grid beside this is worst at: it draws every block and
    leaves the reader to find the one that matters against a moving red line. */
 .day-next-when {
-    font-size: 12px; font-weight: 700; color: #a8845c;
+    font-size: var(--text-xs); font-weight: 700; color: #a8845c;
     white-space: nowrap;
 }
 .day-next-card {
     display: flex; align-items: center; gap: 12px;
-    padding: 12px; border-radius: 12px;
+    padding: 12px; border-radius: var(--radius-md);
     background: #fafbfc; border: 1px solid #eef0f4;
 }
 /* Something happening now is the only state here worth a colour. */
 .day-next-card.is-running { border-color: #cdbb99; background: #fbf6ea; }
 .day-next-icon {
-    flex: none; width: 36px; height: 36px; border-radius: 10px;
+    flex: none; width: 36px; height: 36px; border-radius: var(--radius-md);
     display: inline-flex; align-items: center; justify-content: center;
     background: #fff; border: 1px solid #eef0f4;
 }
 .day-next-icon .cal-ico { width: 18px; height: 18px; }
 .day-next-main { flex: 1 1 auto; min-width: 0; }
 .day-next-name {
-    font-size: 14px; font-weight: 700; color: #2c302e;
+    font-size: var(--text-md); font-weight: 700; color: #2c302e;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.day-next-sub { font-size: 12px; color: #9297ab; margin-top: 2px; }
+.day-next-sub { font-size: var(--text-xs); color: #9297ab; margin-top: 2px; }
 
 /* ---- How the day is booked -----------------------------------------------
    One band from the first start to the last end, with the booked runs on it.
    The runs are merged in utils/dayShape, so two blocks over the same hour are
    one mark here — which is the whole reason this is a band and not a sum. */
-.day-band-span { font-size: 12px; font-weight: 600; color: #9297ab; white-space: nowrap; }
+.day-band-span { font-size: var(--text-xs); font-weight: 600; color: #9297ab; white-space: nowrap; }
 .day-band {
-    position: relative; height: 12px; border-radius: 999px;
+    position: relative; height: 12px; border-radius: var(--radius-full);
     background: #f0f1f4; overflow: hidden;
 }
 .day-band-run {
     position: absolute; top: 0; bottom: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, #8b7aa8, #a893c9);
 }
 /* A run whose every block is finished. The day's progress, drawn where the
    day's shape is — green because that is what finished is everywhere else in
    this sidebar. */
 .day-band-run.is-done { background: linear-gradient(90deg, #2e9e6b, #56c191); }
-.day-band-note { margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: #6b7280; }
+.day-band-note { margin: 12px 0 0; font-size: var(--text-sm); line-height: 1.5; color: #6b7280; }
 .day-band-note strong { color: #2c302e; font-weight: 700; }
 
 /* Daily Overview stat tiles: label on top, big number, small sub. */
 .day-stats .wk-stat { padding: 14px 14px; }
-.wk-stat-sub { font-size: 12px; color: #9297ab; margin-top: 2px; }
+.wk-stat-sub { font-size: var(--text-xs); color: #9297ab; margin-top: 2px; }
 .day-stats .wk-stat-num { margin-top: 4px; }
 .day-stat-green { color: #2e9e6b !important; }
 .day-stat-purple { color: #7a6aa8 !important; }
@@ -341,7 +341,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
    hidden until the row is hovered or the button is focused, so a list of five
    reads as five tasks rather than as five empty boxes. */
 .day-task-ring {
-    flex: none; width: 20px; height: 20px; border-radius: 999px;
+    flex: none; width: 20px; height: 20px; border-radius: var(--radius-full);
     border: 2px solid #cfd3db; box-sizing: border-box;
     padding: 0; background: transparent; cursor: pointer;
     display: inline-flex; align-items: center; justify-content: center;
@@ -364,20 +364,20 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
    said nothing about the reward, which is the half of a to-do list this app is
    actually built on. */
 .day-task-xp {
-    flex: none; font-size: 12px; font-weight: 700; color: #7a6aa8;
+    flex: none; font-size: var(--text-xs); font-weight: 700; color: #7a6aa8;
     font-variant-numeric: tabular-nums;
 }
-.day-task-name { flex: 1 1 auto; min-width: 0; font-size: 14px; color: #2c302e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.day-task-name { flex: 1 1 auto; min-width: 0; font-size: var(--text-md); color: #2c302e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* The difficulty pill. One neutral chip for all three bands: the word in it is
    already the whole message, and red / amber / grey made the sidebar's loudest
    colour a property of every hard task. Difficulty is not a colour anywhere on
    the calendar. The `.high` / `.med` / `.low` classes still ride on the
    element and nothing paints with them. */
 .day-task-diff {
-    flex: none; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+    flex: none; font-size: var(--text-2xs); font-weight: 700; padding: 3px 10px; border-radius: var(--radius-full);
     background: #eef2f7; color: #5a6472;
 }
-.day-tasks-empty { font-size: 13px; color: #9297ab; padding: 10px 0; }
+.day-tasks-empty { font-size: var(--text-sm); color: #9297ab; padding: 10px 0; }
 
 /* The per-block icon is no longer this view's alone, and no longer a badge
    floated against the block's left edge: it sits inline ahead of the name, in
@@ -419,7 +419,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
 .day-sidebar::-webkit-scrollbar-track { background: transparent; }
 .day-scroll::-webkit-scrollbar-thumb,
 .day-sidebar::-webkit-scrollbar-thumb {
-    background: #c3c9d4; border-radius: 8px;
+    background: #c3c9d4; border-radius: var(--radius-md);
     border: 2px solid transparent; background-clip: padding-box;
 }
 .day-scroll::-webkit-scrollbar-thumb:hover,
@@ -458,17 +458,17 @@ html[data-theme="dark"] .day-mini-cell.is-muted { color: #4b525e; }
 html[data-theme="dark"] .day-mini-cell.is-inweek {
     background: #241d14;
     color: #d8c3a5;
-    box-shadow: -2px 0 0 #241d14, 2px 0 0 #241d14;
+    box-shadow: var(--shadow-sm);
 }
 html[data-theme="dark"] .day-mini-cell.is-inweek.is-muted { color: #7a6a55; }
 html[data-theme="dark"] .day-mini-cell.is-inweek:hover {
     background: #2e2519;
-    box-shadow: -2px 0 0 #2e2519, 2px 0 0 #2e2519;
+    box-shadow: var(--shadow-sm);
 }
-html[data-theme="dark"] .day-mini-cell.is-week-head { box-shadow: 2px 0 0 #241d14; }
-html[data-theme="dark"] .day-mini-cell.is-week-head:hover { box-shadow: 2px 0 0 #2e2519; }
-html[data-theme="dark"] .day-mini-cell.is-week-tail { box-shadow: -2px 0 0 #241d14; }
-html[data-theme="dark"] .day-mini-cell.is-week-tail:hover { box-shadow: -2px 0 0 #2e2519; }
+html[data-theme="dark"] .day-mini-cell.is-week-head { box-shadow: var(--shadow-sm); }
+html[data-theme="dark"] .day-mini-cell.is-week-head:hover { box-shadow: var(--shadow-sm); }
+html[data-theme="dark"] .day-mini-cell.is-week-tail { box-shadow: var(--shadow-sm); }
+html[data-theme="dark"] .day-mini-cell.is-week-tail:hover { box-shadow: var(--shadow-sm); }
 html[data-theme="dark"] .day-mini-cell.is-today { background: #d4614a; color: #1a0f0c; }
 html[data-theme="dark"] .day-mini-cell.is-today:hover { background: #e0705a; }
 html[data-theme="dark"] .day-mini-cell.is-inweek.is-today { box-shadow: none; }

@@ -52,15 +52,15 @@ body:has(.gx-page) .app-main {
 
 .gx-page  {
     --gx-bg: transparent;
-    --gx-card: #ffffff;
-    --gx-card-2: #f7f8fa;
-    --gx-line: #e6e8ee;
-    --gx-line-soft: #eff1f5;
-    --gx-text: #171a21;
-    --gx-muted: #626a7a;
-    --gx-faint: #9199a8;
+    --gx-card: var(--color-surface);
+    --gx-card-2: var(--color-surface-2);
+    --gx-line: var(--color-line);
+    --gx-line-soft: var(--color-line-soft);
+    --gx-text: var(--color-ink);
+    --gx-muted: var(--color-ink-muted);
+    --gx-faint: var(--color-ink-faint);
 
-    --gx-violet: #6d5ae0;
+    --gx-violet: var(--color-accent);
     --gx-blue: #2f6fd0;
     --gx-teal: #1a9086;
     --gx-amber: #c08324;
@@ -104,26 +104,26 @@ body:has(.gx-page) .app-main {
        a right edge because they share this. */
     --gx-pad: 18px;
 
-    --gx-radius: 16px;
-    --gx-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 6px 18px rgba(16, 24, 40, .05);
+    --gx-radius: var(--radius-lg);
+    --gx-shadow: var(--shadow-md);
 
     position: relative;
     min-height: 100vh;
     padding: 28px 0 64px;
     color: var(--gx-text);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--font-sans);
 }
 
 html[data-theme="dark"] .gx-page {
-    --gx-card: #161b22;
-    --gx-card-2: #0f141b;
-    --gx-line: #262c36;
-    --gx-line-soft: #1d222b;
-    --gx-text: #f2f4f8;
-    --gx-muted: #9aa4b2;
-    --gx-faint: #6b7684;
+    --gx-card: var(--color-surface);
+    --gx-card-2: var(--color-surface-2);
+    --gx-line: var(--color-line);
+    --gx-line-soft: var(--color-line-soft);
+    --gx-text: var(--color-ink);
+    --gx-muted: var(--color-ink-muted);
+    --gx-faint: var(--color-ink-faint);
 
-    --gx-violet: #9b8bff;
+    --gx-violet: var(--color-accent);
     --gx-blue: #6a9bff;
     --gx-teal: #3fbfae;
     --gx-amber: #e0b23c;
@@ -184,16 +184,16 @@ html[data-theme="dark"] .gx-page {
     margin: 0;
     padding: 22px 20px;
     border: 1px dashed var(--gx-line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--gx-card-2);
     color: var(--gx-muted);
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.6;
 }
 
 .gx-hint {
     margin: 6px 0 18px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.6;
     color: var(--gx-faint);
 }
@@ -206,7 +206,7 @@ html[data-theme="dark"] .gx-page {
 
 .gx-page .gx-cat  {
     display: inline-block;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -223,7 +223,7 @@ html[data-theme="dark"] .gx-page {
 .gx-page .gx-link  {
     border: 0; background: none; padding: 0;
     color: var(--gx-violet);
-    font: inherit; font-size: 12px; font-weight: 600;
+    font: inherit; font-size: var(--text-xs); font-weight: 600;
     cursor: pointer;
 }
 
@@ -231,9 +231,9 @@ html[data-theme="dark"] .gx-page {
     border: 1px solid var(--gx-line);
     background: var(--gx-card);
     color: var(--gx-text);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     padding: 9px 18px;
-    font: inherit; font-size: 13px; font-weight: 600;
+    font: inherit; font-size: var(--text-sm); font-weight: 600;
     cursor: pointer;
     transition: background .15s, border-color .15s, opacity .15s;
 }
@@ -300,12 +300,12 @@ html[data-theme="dark"] .gx-page {
     display: grid;
     place-items: center;
     width: 34px; height: 34px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     color: var(--gx-violet);
     background: color-mix(in srgb, var(--gx-violet) 15%, transparent);
 }
 .gx-head-ico svg { width: 20px; height: 20px; }
-.gx-head p { margin: 0; font-size: 13.5px; }
+.gx-head p { margin: 0; font-size: var(--text-md); }
 .gx-head-tools { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 
 /* ---------- The state block, under the masthead title --------------------
@@ -322,12 +322,12 @@ html[data-theme="dark"] .gx-page {
 .gx-state { margin: 13px 0 0; }
 .gx-state-count {
     margin: 0;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 600;
     color: var(--gx-text);
 }
 .gx-state-count strong {
-    font-size: 21px;
+    font-size: var(--text-xl);
     font-weight: 800;
     /* Tabular, so the figure does not shuffle the words beside it when a goal
        is completed and 10 becomes 9. */
@@ -336,12 +336,12 @@ html[data-theme="dark"] .gx-page {
 }
 .gx-state-kinds {
     margin: 2px 0 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     color: var(--gx-muted);
 }
 .gx-state-none {
     margin: 13px 0 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     color: var(--gx-muted);
 }
 
@@ -360,10 +360,10 @@ html[data-theme="dark"] .gx-page {
     margin: 7px 0 0;
     padding: 4px 10px 4px 8px;
     border: 1px solid transparent;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: none;
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     line-height: 1.5;
     color: var(--gx-watch);
@@ -411,7 +411,7 @@ button.gx-state-attn.is-on {
     border-radius: var(--gx-radius);
     background: color-mix(in srgb, var(--gx-watch) 9%, var(--gx-card));
 }
-.gx-filtered-what { font-size: 13px; color: var(--gx-text); min-width: 0; }
+.gx-filtered-what { font-size: var(--text-sm); color: var(--gx-text); min-width: 0; }
 .gx-filtered-what strong {
     color: var(--gx-watch);
     font-weight: 800;
@@ -428,12 +428,12 @@ button.gx-state-attn.is-on {
 }
 .gx-band-head h2 {
     margin: 0 0 2px;
-    font-size: 16px;
+    font-size: var(--text-lg);
     font-weight: 700;
     letter-spacing: -.015em;
     color: var(--gx-text);
 }
-.gx-band-head p { margin: 0; font-size: 12.5px; line-height: 1.5; max-width: 62ch; }
+.gx-band-head p { margin: 0; font-size: var(--text-sm); line-height: 1.5; max-width: 62ch; }
 
 /* Two bands abreast. `minmax(0, 1fr)` on both, so a long milestone title
    inside one cannot push the column wider than its half. */
@@ -483,16 +483,16 @@ button.gx-state-attn.is-on {
     gap: 8px;
     min-height: 20px;
 }
-.gx-stat-label { font-size: 11.5px; font-weight: 600; color: var(--gx-muted); }
+.gx-stat-label { font-size: var(--text-xs); font-weight: 600; color: var(--gx-muted); }
 .gx-stat-value {
-    font-size: 30px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1.05;
     color: var(--tone, var(--gx-text));
 }
 .gx-stat-foot {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--gx-faint);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -503,7 +503,7 @@ button.gx-state-attn.is-on {
     display: grid;
     place-items: center;
     width: 30px; height: 30px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     color: var(--tone, var(--gx-muted));
     background: color-mix(in srgb, var(--tone, var(--gx-muted)) 13%, transparent);
 }
@@ -562,7 +562,7 @@ button.gx-state-attn.is-on {
     display: grid;
     place-items: center;
     width: 34px; height: 34px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     color: var(--tone, var(--gx-violet));
     background: color-mix(in srgb, var(--tone, var(--gx-violet)) 15%, transparent);
     border: 1px solid color-mix(in srgb, var(--tone, var(--gx-violet)) 26%, transparent);
@@ -575,8 +575,8 @@ button.gx-state-attn.is-on {
     gap: 6px;
     flex: none;
     padding: 4px 11px;
-    border-radius: 8px;
-    font-size: 11.5px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
     font-weight: 700;
     white-space: nowrap;
     border: 1px solid transparent;
@@ -595,14 +595,14 @@ button.gx-state-attn.is-on {
 .gx-track {
     display: block;
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-line);
     overflow: hidden;
 }
 .gx-fill {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--tone, var(--gx-violet));
     transform-origin: left;
 }
@@ -675,7 +675,7 @@ button.gx-state-attn.is-on {
 .gx-card-title { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .gx-card-title h3 {
     margin: 0;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 700;
     line-height: 1.3;
     color: var(--gx-text);
@@ -689,7 +689,7 @@ button.gx-state-attn.is-on {
    the text colour every other number on the page uses. It is the one figure a
    reader is scanning the grid for, so it is the one worth making findable. */
 .gx-card-pct {
-    font-size: 27px;
+    font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1;
@@ -698,14 +698,14 @@ button.gx-state-attn.is-on {
 }
 .gx-card-bar .gx-track { flex: 1; }
 
-.gx-card-figures { margin: -4px 0 0; font-size: 12.5px; color: var(--gx-muted); }
+.gx-card-figures { margin: -4px 0 0; font-size: var(--text-sm); color: var(--gx-muted); }
 
 .gx-card-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .gx-card-facts li {
     display: flex;
     align-items: center;
     gap: 7px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--gx-muted);
     min-width: 0;
 }
@@ -722,17 +722,17 @@ button.gx-state-attn.is-on {
     gap: 12px;
     padding: 10px 14px;
     border: 0;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-text);
-    font: inherit; font-size: 13px;
+    font: inherit; font-size: var(--text-sm);
     cursor: pointer;
     text-align: left;
 }
 .gx-rest button:hover { background: color-mix(in srgb, var(--tone, var(--gx-card-2)) var(--gx-wash), var(--gx-card-2)); }
 .gx-rest-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gx-rest-pct {
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--gx-muted);
     font-variant-numeric: tabular-nums;
@@ -839,14 +839,14 @@ button.gx-state-attn.is-on {
 }
 .gx-ladder-name:hover .gx-ladder-title { color: var(--tone); }
 .gx-ladder-title {
-    font-size: 15.5px;
+    font-size: var(--text-lg);
     font-weight: 700;
     line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.gx-ladder-name .gx-quiet { font-size: 11.5px; }
+.gx-ladder-name .gx-quiet { font-size: var(--text-xs); }
 
 .gx-ladder-pct {
     flex: none;
@@ -857,13 +857,13 @@ button.gx-state-attn.is-on {
     text-align: right;
 }
 .gx-ladder-pct strong {
-    font-size: 26px;
+    font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.03em;
     line-height: 1;
     font-variant-numeric: tabular-nums;
 }
-.gx-ladder-pct .gx-quiet { font-size: 11px; }
+.gx-ladder-pct .gx-quiet { font-size: var(--text-2xs); }
 
 /* ---- The rungs ----------------------------------------------------------- */
 .gx-rungs {
@@ -881,12 +881,12 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 11px;
     padding: 5px 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     min-width: 0;
 }
 .gx-rung.is-empty { grid-template-columns: 1fr; padding: 8px 0 4px; }
 .gx-rung-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gx-rung-when { font-size: 11px; white-space: nowrap; }
+.gx-rung-when { font-size: var(--text-2xs); white-space: nowrap; }
 
 /* Reached checkpoints stay legible rather than being greyed to the floor:
    what you have done is the part of the plan worth being able to read. */
@@ -904,7 +904,7 @@ button.gx-state-attn.is-on {
     background: var(--gx-card-2);
     color: var(--gx-faint);
     font: inherit;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     cursor: pointer;
     transition: background .14s ease, border-color .14s ease, color .14s ease;
@@ -925,7 +925,7 @@ button.gx-state-attn.is-on {
     place-items: center;
     width: 24px;
     height: 24px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     color: var(--gx-faint);
 }
@@ -934,18 +934,18 @@ button.gx-state-attn.is-on {
     width: 100%;
     padding: 7px 10px;
     border: 1px solid var(--gx-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     color: var(--gx-text);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 .gx-rung-input:focus { outline: 2px solid var(--tone); outline-offset: 1px; border-color: transparent; }
 .gx-rung-input::placeholder { color: var(--gx-faint); }
 
 .gx-ladder-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.gx-ladder-tools .gx-quiet { font-size: 12px; }
-.gx-ladder-note { margin: 0; font-size: 12px; color: var(--gx-bad); }
+.gx-ladder-tools .gx-quiet { font-size: var(--text-xs); }
+.gx-ladder-note { margin: 0; font-size: var(--text-xs); color: var(--gx-bad); }
 
 /* ---------- The three counts above the strip ------------------------------ */
 .gx-counts {
@@ -964,8 +964,8 @@ button.gx-state-attn.is-on {
     box-shadow: var(--gx-shadow);
     min-width: 0;
 }
-.gx-count .gx-quiet { font-size: 12px; }
-.gx-count-of { font-size: 20px; font-weight: 600; color: var(--gx-faint); }
+.gx-count .gx-quiet { font-size: var(--text-xs); }
+.gx-count-of { font-size: var(--text-xl); font-weight: 600; color: var(--gx-faint); }
 
 /* ---------- One rail per goal --------------------------------------------- */
 .gx-rails {
@@ -1001,7 +1001,7 @@ button.gx-state-attn.is-on {
     content: '→';
     flex: none;
     padding: 0 5px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--gx-faint);
 }
 .gx-link button {
@@ -1011,11 +1011,11 @@ button.gx-state-attn.is-on {
     max-width: 190px;
     padding: 4px 9px;
     border: 1px solid transparent;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-card-2);
     color: var(--gx-muted);
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     cursor: pointer;
     transition: border-color .14s ease, color .14s ease;
@@ -1030,7 +1030,7 @@ button.gx-state-attn.is-on {
 .gx-link button > i {
     flex: none;
     font-style: normal;
-    font-size: 9px;
+    font-size: var(--text-2xs);
     line-height: 1;
 }
 
@@ -1082,13 +1082,13 @@ button.gx-state-attn.is-on {
 }
 .gx-rail-title {
     min-width: 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 700;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.gx-rail-head .gx-quiet { flex: none; font-size: 12px; font-variant-numeric: tabular-nums; }
+.gx-rail-head .gx-quiet { flex: none; font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
 
 /* ---------- Panels the bands sit in -------------------------------------- */
 /* A band's content is one surface, so the page reads as a handful of slabs
@@ -1114,7 +1114,7 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 12px;
     padding: 11px 12px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
 }
 .gx-next-row:hover { background: var(--gx-card-2); }
 .gx-next-body {
@@ -1127,14 +1127,14 @@ button.gx-state-attn.is-on {
     min-width: 0;
     font: inherit;
 }
-.gx-next-title { font-size: 13.5px; font-weight: 650; color: var(--gx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gx-next-goal { font-size: 11px; color: var(--gx-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gx-next-title { font-size: var(--text-md); font-weight: 650; color: var(--gx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gx-next-goal { font-size: var(--text-2xs); color: var(--gx-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gx-next-bar { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
 .gx-next-bar .gx-track { flex: 1; max-width: 190px; }
-.gx-next-count { font-size: 10.5px; font-weight: 600; color: var(--gx-muted); font-variant-numeric: tabular-nums; }
+.gx-next-count { font-size: var(--text-2xs); font-weight: 600; color: var(--gx-muted); font-variant-numeric: tabular-nums; }
 .gx-next-when { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; white-space: nowrap; }
-.gx-next-when strong { font-size: 12px; font-weight: 650; color: var(--gx-text); }
-.gx-next-when span { font-size: 10.5px; color: var(--gx-faint); }
+.gx-next-when strong { font-size: var(--text-xs); font-weight: 650; color: var(--gx-text); }
+.gx-next-when span { font-size: var(--text-2xs); color: var(--gx-faint); }
 
 /* ---------- Health distribution ------------------------------------------ */
 .gx-dist { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
@@ -1155,11 +1155,11 @@ button.gx-state-attn.is-on {
     justify-content: center;
     gap: 1px;
 }
-.gx-dist-centre strong { font-size: 29px; font-weight: 700; letter-spacing: -.03em; color: var(--gx-text); }
-.gx-dist-centre span { font-size: 10.5px; color: var(--gx-faint); }
+.gx-dist-centre strong { font-size: var(--text-3xl); font-weight: 700; letter-spacing: -.03em; color: var(--gx-text); }
+.gx-dist-centre span { font-size: var(--text-2xs); color: var(--gx-faint); }
 
 .gx-dist-key { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 10px; }
-.gx-dist-key li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: 12.5px; }
+.gx-dist-key li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: var(--text-sm); }
 .gx-dist-key i { width: 9px; height: 9px; border-radius: 3px; }
 .gx-dist-key i.is-on-track    { background: var(--gx-good); }
 .gx-dist-key i.is-at-risk     { background: var(--gx-watch); }
@@ -1167,7 +1167,7 @@ button.gx-state-attn.is-on {
 .gx-dist-key i.is-not-started { background: var(--gx-faint); }
 .gx-dist-key span { color: var(--gx-muted); }
 .gx-dist-key strong { font-weight: 650; color: var(--gx-text); font-variant-numeric: tabular-nums; }
-.gx-dist-key strong .gx-quiet { font-weight: 400; font-size: 11.5px; }
+.gx-dist-key strong .gx-quiet { font-weight: 400; font-size: var(--text-xs); }
 
 /* ---------- Insight rows --------------------------------------------------
    Three columns on every row — mark, reading, way in — so the icons line up
@@ -1189,7 +1189,7 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 12px;
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     text-align: left;
 }
 /* One width for every row's link, so the arrows sit on a line rather than
@@ -1200,14 +1200,14 @@ button.gx-state-attn.is-on {
     flex: none;
     display: grid; place-items: center;
     width: 30px; height: 30px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
 }
 .gx-note.tone-good  .gx-note-ico { color: var(--gx-good);  background: color-mix(in srgb, var(--gx-good) 13%, transparent); }
 .gx-note.tone-watch .gx-note-ico { color: var(--gx-watch); background: color-mix(in srgb, var(--gx-watch) 15%, transparent); }
 .gx-note.tone-note  .gx-note-ico { color: var(--gx-blue);  background: color-mix(in srgb, var(--gx-blue) 15%, transparent); }
 .gx-note > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.gx-note strong { font-size: 13px; font-weight: 650; color: var(--gx-text); line-height: 1.4; }
-.gx-note .gx-quiet { font-size: 11.5px; line-height: 1.5; }
+.gx-note strong { font-size: var(--text-sm); font-weight: 650; color: var(--gx-text); line-height: 1.4; }
+.gx-note .gx-quiet { font-size: var(--text-xs); line-height: 1.5; }
 
 /* ---------- What is behind you -------------------------------------------- */
 .gx-done { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -1217,7 +1217,7 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 11px;
     padding: 10px 12px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
 }
 .gx-done-row:hover { background: var(--gx-card-2); }
 .gx-done-mark {
@@ -1229,13 +1229,13 @@ button.gx-state-attn.is-on {
 }
 .gx-done-row.is-goal .gx-done-mark { background: var(--gx-violet); }
 .gx-done-body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.gx-done-title { font-size: 13px; font-weight: 600; color: var(--gx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gx-done-body .gx-quiet { font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gx-done-title { font-size: var(--text-sm); font-weight: 600; color: var(--gx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gx-done-body .gx-quiet { font-size: var(--text-2xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gx-tag {
     flex: none;
     padding: 3px 9px;
-    border-radius: 7px;
-    font-size: 10px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .04em;
     text-transform: uppercase;
@@ -1260,8 +1260,8 @@ button.gx-state-attn.is-on {
     border: 1px solid color-mix(in srgb, var(--gx-violet) 24%, var(--gx-line));
 }
 .gx-cta > div { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.gx-cta strong { font-size: 13.5px; font-weight: 700; color: var(--gx-violet); }
-.gx-cta .gx-quiet { font-size: 12px; }
+.gx-cta strong { font-size: var(--text-md); font-weight: 700; color: var(--gx-violet); }
+.gx-cta .gx-quiet { font-size: var(--text-xs); }
 
 /* ---------- The drawer ---------------------------------------------------- */
 .gx-drawer-backdrop {
@@ -1294,20 +1294,20 @@ button.gx-state-attn.is-on {
 .gx-drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .gx-drawer-head h2 {
     margin: 4px 0 6px;
-    font-size: 23px;
+    font-size: var(--text-2xl);
     font-weight: 750;
     letter-spacing: -.02em;
     line-height: 1.25;
 }
-.gx-drawer-head p { margin: 0; font-size: 13px; line-height: 1.55; }
+.gx-drawer-head p { margin: 0; font-size: var(--text-sm); line-height: 1.55; }
 
 .gx-page .gx-close  {
     flex: none;
     width: 32px; height: 32px;
-    border: 0; border-radius: 9px;
+    border: 0; border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-muted);
-    font-size: 22px; line-height: 1;
+    font-size: var(--text-2xl); line-height: 1;
     cursor: pointer;
 }
 .gx-page .gx-close:hover { background: var(--gx-line-soft); color: var(--gx-text); }
@@ -1315,17 +1315,17 @@ button.gx-state-attn.is-on {
 .gx-why {
     margin: 0;
     padding: 14px 16px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tone, var(--gx-violet)) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--tone, var(--gx-violet)) 22%, transparent);
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.6;
     font-style: italic;
 }
 .gx-why-label {
     display: block;
     font-style: normal;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -1343,16 +1343,16 @@ button.gx-state-attn.is-on {
     border-radius: var(--gx-radius);
 }
 .gx-panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.gx-panel-head h3 { margin: 0; font-size: 14.5px; font-weight: 700; }
-.gx-panel-head .gx-quiet { font-size: 12px; }
+.gx-panel-head h3 { margin: 0; font-size: var(--text-md); font-weight: 700; }
+.gx-panel-head .gx-quiet { font-size: var(--text-xs); }
 
 .gx-detail-progress { display: flex; align-items: center; gap: 16px; }
 .gx-detail-progress > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-.gx-detail-progress p { margin: 0; font-size: 12.5px; }
-.gx-detail-reason { margin: 0; font-size: 12.5px; line-height: 1.55; }
+.gx-detail-progress p { margin: 0; font-size: var(--text-sm); }
+.gx-detail-reason { margin: 0; font-size: var(--text-sm); line-height: 1.55; }
 
 .gx-value-row { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
-.gx-value-row label { font-size: 12px; color: var(--gx-muted); }
+.gx-value-row label { font-size: var(--text-xs); color: var(--gx-muted); }
 
 .gx-facts {
     display: grid;
@@ -1363,8 +1363,8 @@ button.gx-state-attn.is-on {
     border-top: 1px solid var(--gx-line-soft);
 }
 .gx-facts > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.gx-facts dt { font-size: 11px; color: var(--gx-faint); }
-.gx-facts dd { margin: 0; font-size: 13px; font-weight: 600; color: var(--gx-text); }
+.gx-facts dt { font-size: var(--text-2xs); color: var(--gx-faint); }
+.gx-facts dd { margin: 0; font-size: var(--text-sm); font-weight: 600; color: var(--gx-text); }
 
 /* ---------- Milestones ---------------------------------------------------- */
 .gx-milestones { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
@@ -1384,22 +1384,22 @@ button.gx-state-attn.is-on {
     border: 1px solid var(--gx-line);
     background: var(--gx-card-2);
     color: var(--gx-muted);
-    font-size: 12px; font-weight: 700;
+    font-size: var(--text-xs); font-weight: 700;
     cursor: pointer;
 }
 .gx-ms.is-done .gx-ms-tick { background: var(--gx-good); border-color: var(--gx-good); color: #fff; }
 .gx-ms-body { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-.gx-ms-title { font-size: 13.5px; font-weight: 600; color: var(--gx-text); }
+.gx-ms-title { font-size: var(--text-md); font-weight: 600; color: var(--gx-text); }
 .gx-ms.is-done .gx-ms-title { color: var(--gx-muted); text-decoration: line-through; text-decoration-thickness: 1px; }
-.gx-ms-body .gx-quiet { font-size: 11px; }
+.gx-ms-body .gx-quiet { font-size: var(--text-2xs); }
 .gx-ms-tools { display: flex; gap: 2px; opacity: 0; transition: opacity .14s; }
 .gx-ms:hover .gx-ms-tools, .gx-ms:focus-within .gx-ms-tools { opacity: 1; }
 .gx-page .gx-ms-tools button  {
     width: 24px; height: 24px;
-    border: 0; border-radius: 7px;
+    border: 0; border-radius: var(--radius-sm);
     background: transparent;
     color: var(--gx-faint);
-    font-size: 13px;
+    font-size: var(--text-sm);
     cursor: pointer;
 }
 .gx-page .gx-ms-tools button:hover:not(:disabled) { background: var(--gx-line-soft); color: var(--gx-text); }
@@ -1418,7 +1418,7 @@ button.gx-state-attn.is-on {
     padding: 4px 7px;
     margin: -4px -7px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     text-align: left;
     cursor: pointer;
@@ -1427,7 +1427,7 @@ button.gx-state-attn.is-on {
 .gx-page .gx-ms-body.is-pickable:disabled { cursor: default; }
 .gx-ms.is-active .gx-ms-title { color: var(--gx-accent, var(--gx-text)); }
 .gx-ms-focus-tag {
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -1448,14 +1448,14 @@ button.gx-state-attn.is-on {
     justify-content: space-between;
     gap: 10px;
 }
-.gx-checklist-head .gx-quiet { font-size: 11px; }
+.gx-checklist-head .gx-quiet { font-size: var(--text-2xs); }
 .gx-page .gx-checklist-add  {
     padding: 2px 6px;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--gx-muted);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 600;
     cursor: pointer;
 }
@@ -1475,10 +1475,10 @@ button.gx-state-attn.is-on {
     display: grid; place-items: center;
     padding: 0;
     border: 1.5px solid var(--gx-line);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: #fff;
-    font-size: 10px; font-weight: 700;
+    font-size: var(--text-2xs); font-weight: 700;
     cursor: pointer;
     transition: border-color .14s ease, background .14s ease;
 }
@@ -1495,11 +1495,11 @@ button.gx-state-attn.is-on {
     padding: 2px 5px;
     margin: 0 -5px;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--gx-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: text;
     overflow: hidden;
@@ -1516,11 +1516,11 @@ button.gx-state-attn.is-on {
     padding: 2px 5px;
     margin: 0 -5px;
     border: 1px solid var(--gx-accent, var(--gx-line));
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--gx-card);
     color: var(--gx-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 /* The checkpoint's own date, in the tools cluster beside the arrows — so it
    is held back on hover with them. That is right here and would not be
@@ -1532,9 +1532,9 @@ button.gx-state-attn.is-on {
     display: grid;
     place-items: center;
     width: 24px; height: 24px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     color: var(--gx-faint);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     cursor: pointer;
 }
 .gx-page .gx-ms-date:hover { background: var(--gx-line-soft); color: var(--gx-text); }
@@ -1555,8 +1555,8 @@ button.gx-state-attn.is-on {
     place-items: center;
     min-width: 54px;
     padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 11px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-2xs);
     color: var(--gx-faint);
     white-space: nowrap;
     cursor: pointer;
@@ -1577,10 +1577,10 @@ button.gx-state-attn.is-on {
 
 .gx-page .gx-cstep-cut  {
     width: 20px; height: 20px;
-    border: 0; border-radius: 6px;
+    border: 0; border-radius: var(--radius-sm);
     background: transparent;
     color: var(--gx-faint);
-    font-size: 12px;
+    font-size: var(--text-xs);
     cursor: pointer;
     opacity: 0;
     transition: opacity .14s;
@@ -1601,13 +1601,13 @@ button.gx-state-attn.is-on {
     margin: 0 0 12px;
     padding: 12px 13px;
     border: 1px dashed var(--gx-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
 }
 .gx-ms-empty > span {
     min-width: 0;
     flex: 1 1 240px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--gx-muted);
 }
@@ -1626,29 +1626,29 @@ button.gx-state-attn.is-on {
     flex-direction: column;
     gap: 2px;
     padding: 12px 13px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     border: 1px solid var(--gx-line);
     min-width: 0;
 }
-.gx-readings strong { font-size: 17px; font-weight: 700; letter-spacing: -.01em; color: var(--gx-text); }
+.gx-readings strong { font-size: var(--text-lg); font-weight: 700; letter-spacing: -.01em; color: var(--gx-text); }
 .gx-readings strong.is-accelerating { color: var(--gx-good); }
 .gx-readings strong.is-slowing { color: var(--gx-watch); }
 .gx-readings strong.is-stalled { color: var(--gx-bad); }
-.gx-readings .gx-quiet { font-size: 11px; line-height: 1.45; }
+.gx-readings .gx-quiet { font-size: var(--text-2xs); line-height: 1.45; }
 
 .gx-bottleneck {
     margin: 0;
     padding: 12px 14px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-watch) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--gx-watch) 26%, transparent);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
 }
 .gx-bottleneck strong { display: block; color: var(--gx-text); font-weight: 700; margin-bottom: 2px; }
 
-.gx-pattern { margin: 0; font-size: 12.5px; line-height: 1.55; }
+.gx-pattern { margin: 0; font-size: var(--text-sm); line-height: 1.55; }
 /* ---------- Summit's read, in the goal drawer -----------------------------
    Last panel, below everything counted, and marked as a model's writing
    throughout. A paragraph written by a model and a percentage counted from the
@@ -1657,10 +1657,10 @@ button.gx-state-attn.is-on {
    a chip in its header while the read is on screen, and a caveat under it. */
 .gx-read-mark {
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--gx-violet) 13%, transparent);
     color: var(--gx-violet);
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -1668,21 +1668,21 @@ button.gx-state-attn.is-on {
 .gx-read-gate,
 .gx-read-lead {
     margin: 0 0 10px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--gx-muted);
 }
 .gx-read-gate strong { color: var(--gx-text); font-weight: 700; }
 .gx-read-say {
     margin: 0 0 14px;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.65;
     color: var(--gx-text);
 }
 .gx-read-block { margin-bottom: 14px; }
 .gx-read-block h4 {
     margin: 0 0 6px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -1692,9 +1692,9 @@ button.gx-state-attn.is-on {
 .gx-read-week > li {
     position: relative;
     padding: 7px 11px 7px 24px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.5;
 }
 .gx-read-week > li::before {
@@ -1710,22 +1710,22 @@ button.gx-state-attn.is-on {
 .gx-read-phases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
 .gx-read-phases > li { display: flex; flex-direction: column; gap: 1px; }
 .gx-read-phase-head { display: flex; align-items: baseline; gap: 8px; }
-.gx-read-phase-head strong { font-size: 12.5px; font-weight: 700; }
+.gx-read-phase-head strong { font-size: var(--text-sm); font-weight: 700; }
 .gx-read-phase-head em {
     font-style: normal;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     color: var(--gx-violet);
     font-variant-numeric: tabular-nums;
 }
-.gx-read-phases .gx-quiet { font-size: 11.5px; line-height: 1.5; }
+.gx-read-phases .gx-quiet { font-size: var(--text-xs); line-height: 1.5; }
 .gx-read-failed {
     margin: 10px 0 0;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--gx-bad);
 }
 
-.gx-caveat { margin: 0; font-size: 11px; line-height: 1.55; color: var(--gx-faint); }
+.gx-caveat { margin: 0; font-size: var(--text-2xs); line-height: 1.55; color: var(--gx-faint); }
 
 /* ---------- Recommendations ----------------------------------------------- */
 .gx-actions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -1734,7 +1734,7 @@ button.gx-state-attn.is-on {
     flex-direction: column;
     gap: 3px;
     padding: 13px 15px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     border: 1px solid var(--gx-line);
     border-left: 3px solid var(--gx-line);
@@ -1742,9 +1742,9 @@ button.gx-state-attn.is-on {
 .gx-action.is-urgent { border-left-color: var(--gx-bad); }
 .gx-action.is-nudge  { border-left-color: var(--gx-watch); }
 .gx-action.is-good   { border-left-color: var(--gx-good); }
-.gx-action strong { font-size: 13.5px; font-weight: 700; color: var(--gx-text); }
-.gx-action .gx-quiet { font-size: 12px; line-height: 1.55; }
-.gx-effect { font-size: 11px; color: var(--gx-faint); font-style: italic; }
+.gx-action strong { font-size: var(--text-md); font-weight: 700; color: var(--gx-text); }
+.gx-action .gx-quiet { font-size: var(--text-xs); line-height: 1.55; }
+.gx-effect { font-size: var(--text-2xs); color: var(--gx-faint); font-style: italic; }
 
 .gx-drawer-foot { display: flex; gap: 10px; justify-content: flex-end; padding-top: 4px; }
 
@@ -1758,11 +1758,11 @@ button.gx-state-attn.is-on {
     box-sizing: border-box;
     padding: 10px 13px;
     border: 1px solid var(--gx-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--gx-card);
     color: var(--gx-text);
     font: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     outline: none;
     transition: border-color .15s, box-shadow .15s;
 }
@@ -1772,7 +1772,7 @@ button.gx-state-attn.is-on {
     border-color: var(--gx-violet);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--gx-violet) 18%, transparent);
 }
-.gx-page label { display: block; font-size: 12px; font-weight: 600; color: var(--gx-muted); margin-bottom: 6px; }
+.gx-page label { display: block; font-size: var(--text-xs); font-weight: 600; color: var(--gx-muted); margin-bottom: 6px; }
 .gx-page input[type="range"] { accent-color: var(--gx-violet); padding: 0; border: 0; background: none; }
 
 /* ---------- The wizard ---------------------------------------------------- */
@@ -1786,8 +1786,8 @@ button.gx-state-attn.is-on {
     background: var(--gx-card, #fff);
     color: var(--gx-text);
     border: 1px solid var(--gx-line);
-    border-radius: 20px;
-    box-shadow: 0 24px 64px rgba(16, 24, 40, .3);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
     animation: gx-rise .2s cubic-bezier(.22, .68, .3, 1) both;
 }
@@ -1796,14 +1796,14 @@ button.gx-state-attn.is-on {
 .gx-wizard-head { padding: 24px 26px 0; position: relative; }
 .gx-wizard-head h2 {
     margin: 6px 0 0;
-    font-size: 21px;
+    font-size: var(--text-xl);
     font-weight: 750;
     letter-spacing: -.02em;
     padding-right: 40px;
 }
 .gx-wizard-head .gx-close { position: absolute; top: 18px; right: 18px; }
 .gx-wizard-step {
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -1830,9 +1830,9 @@ button.gx-state-attn.is-on {
     border: 1px solid var(--gx-line);
     background: var(--gx-card-2);
     color: var(--gx-muted);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     padding: 6px 14px;
-    font: inherit; font-size: 12.5px; font-weight: 600;
+    font: inherit; font-size: var(--text-sm); font-weight: 600;
     cursor: pointer;
 }
 .gx-page .gx-chip.is-on  {
@@ -1849,15 +1849,15 @@ button.gx-state-attn.is-on {
     text-align: left;
     padding: 15px 16px;
     border: 1px solid var(--gx-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     color: var(--gx-text);
     font: inherit;
     cursor: pointer;
 }
 .gx-page .gx-choice.is-on { border-color: var(--gx-violet); background: color-mix(in srgb, var(--gx-violet) 8%, transparent); }
-.gx-page .gx-choice strong { font-size: 13.5px; font-weight: 700; }
-.gx-page .gx-choice span { font-size: 11.5px; line-height: 1.5; color: var(--gx-muted); }
+.gx-page .gx-choice strong { font-size: var(--text-md); font-weight: 700; }
+.gx-page .gx-choice span { font-size: var(--text-xs); line-height: 1.5; color: var(--gx-muted); }
 
 .gx-number-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
 .gx-number-row label { margin-bottom: 5px; }
@@ -1869,10 +1869,10 @@ button.gx-state-attn.is-on {
     justify-content: space-between;
     gap: 10px;
     padding: 10px 13px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     border: 1px solid var(--gx-line);
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 .gx-draft-list li::before {
     counter-increment: gx-step;
@@ -1883,14 +1883,14 @@ button.gx-state-attn.is-on {
     border-radius: 50%;
     background: var(--gx-violet);
     color: #fff;
-    font-size: 10.5px; font-weight: 700;
+    font-size: var(--text-2xs); font-weight: 700;
 }
 .gx-draft-list li span { flex: 1; min-width: 0; }
 .gx-page .gx-draft-list li button  {
     border: 0; background: none; padding: 0;
     width: 22px; height: 22px;
     color: var(--gx-faint);
-    font-size: 15px;
+    font-size: var(--text-lg);
     cursor: pointer;
 }
 .gx-page .gx-draft-list li button:hover { color: var(--gx-bad); }
@@ -1898,8 +1898,8 @@ button.gx-state-attn.is-on {
 /* The model's button on the checkpoints step, and what it says when it could
    not draft anything. */
 .gx-ms-suggest { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 12px; }
-.gx-ms-suggest .gx-quiet { font-size: 11.5px; }
-.gx-ms-problem { margin: 0 0 12px; font-size: 12px; line-height: 1.5; color: var(--gx-bad); }
+.gx-ms-suggest .gx-quiet { font-size: var(--text-xs); }
+.gx-ms-problem { margin: 0 0 12px; font-size: var(--text-xs); line-height: 1.5; color: var(--gx-bad); }
 
 /* ---------- Drafting the whole goal ---------------------------------------
    The box at the top of the wizard's first step. Set apart from the fields
@@ -1911,7 +1911,7 @@ button.gx-state-attn.is-on {
     margin: 0 0 20px;
     padding: 13px 14px 11px;
     border: 1px solid color-mix(in srgb, var(--gx-violet) var(--gx-edge), transparent);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-violet) var(--gx-wash-soft), transparent);
 }
 .gx-idea > label { margin-top: 0; }
@@ -1940,7 +1940,7 @@ button.gx-state-attn.is-on {
     gap: 12px;
     padding: 12px 14px;
     border: 1px solid var(--gx-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     color: var(--gx-text);
     font: inherit;
@@ -1953,15 +1953,15 @@ button.gx-state-attn.is-on {
     background: color-mix(in srgb, var(--gx-violet) 8%, transparent);
 }
 .gx-syspick-text { display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0; }
-.gx-syspick-text strong { font-size: 13.5px; font-weight: 700; }
-.gx-syspick-text span { font-size: 11.5px; line-height: 1.45; color: var(--gx-muted); }
+.gx-syspick-text strong { font-size: var(--text-md); font-weight: 700; }
+.gx-syspick-text span { font-size: var(--text-xs); line-height: 1.45; color: var(--gx-muted); }
 .gx-syspick-note {
     flex: none;
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-line-soft);
     color: var(--gx-muted);
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
 }
 
@@ -2039,17 +2039,17 @@ button.gx-state-attn.is-on {
     gap: 4px;
     padding: 4px;
     border: 1px solid var(--gx-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
 }
 .gx-tab {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     padding: 8px 10px;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: none;
     color: var(--gx-muted);
-    font: inherit; font-size: 12.5px; font-weight: 650;
+    font: inherit; font-size: var(--text-sm); font-weight: 650;
     cursor: pointer;
     transition: background .15s ease, color .15s ease;
 }
@@ -2062,10 +2062,10 @@ button.gx-state-attn.is-on {
 .gx-tab-count {
     min-width: 18px;
     padding: 1px 5px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--gx-violet) 13%, transparent);
     color: var(--gx-violet);
-    font-size: 10.5px; font-weight: 700;
+    font-size: var(--text-2xs); font-weight: 700;
 }
 
 /* ---------- The panel under them ------------------------------------------ */
@@ -2080,17 +2080,17 @@ button.gx-state-attn.is-on {
 .gx-panel-empty, .gx-panel-note {
     margin: 0;
     color: var(--gx-faint);
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1.55;
 }
 .gx-panel-note { text-align: center; }
 .gx-panel-cta {
     padding: 9px 12px;
     border: 1px dashed var(--gx-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: none;
     color: var(--gx-violet);
-    font: inherit; font-size: 12.5px; font-weight: 650;
+    font: inherit; font-size: var(--text-sm); font-weight: 650;
     cursor: pointer;
     transition: background .15s ease, border-color .15s ease;
 }
@@ -2106,7 +2106,7 @@ button.gx-state-attn.is-on {
     display: flex; flex-direction: column; gap: 5px;
     padding: 9px 10px;
     border: 0;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: none;
     text-align: left;
     font: inherit;
@@ -2116,16 +2116,16 @@ button.gx-state-attn.is-on {
 .gx-railrow:hover { background: var(--gx-card-2); }
 .gx-railrow-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .gx-railrow-title {
-    color: var(--gx-text); font-size: 13px; font-weight: 600;
+    color: var(--gx-text); font-size: var(--text-sm); font-weight: 600;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
 }
-.gx-railrow-pct { color: var(--gx-muted); font-size: 11.5px; font-weight: 700; flex: none; }
-.gx-railrow-sub { font-size: 11.5px; }
+.gx-railrow-pct { color: var(--gx-muted); font-size: var(--text-xs); font-weight: 700; flex: none; }
+.gx-railrow-sub { font-size: var(--text-xs); }
 .gx-railrow-track {
-    height: 4px; border-radius: 999px; background: var(--gx-line-soft); overflow: hidden;
+    height: 4px; border-radius: var(--radius-full); background: var(--gx-line-soft); overflow: hidden;
 }
 .gx-railrow-track i {
-    display: block; height: 100%; border-radius: 999px;
+    display: block; height: 100%; border-radius: var(--radius-full);
     background: var(--gx-violet);
     transition: width .3s ease;
 }
@@ -2146,7 +2146,7 @@ button.gx-state-attn.is-on {
    not survive is four counters dressed as four more goals. */
 .gx-sys-lead {
     margin: 0 0 12px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--gx-muted);
     max-width: 64ch;
@@ -2163,7 +2163,7 @@ button.gx-state-attn.is-on {
        at the outer edge. */
     background: var(--gx-line);
     border: 1px solid var(--gx-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     overflow: hidden;
 }
 .gx-metric {
@@ -2180,7 +2180,7 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: center;
     gap: 7px;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -2189,7 +2189,7 @@ button.gx-state-attn.is-on {
 .gx-metric-ico {
     width: 22px; height: 22px; flex: none;
     display: grid; place-items: center;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: color-mix(in srgb, currentColor 13%, transparent);
 }
 .gx-metric-ico svg { width: 13px; height: 13px; }
@@ -2205,7 +2205,7 @@ button.gx-state-attn.is-on {
 .gx-sys-ico {
     width: 30px; height: 30px; flex: none;
     display: grid; place-items: center;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, currentColor 12%, transparent);
 }
 .gx-sys-ico svg { width: 16px; height: 16px; }
@@ -2217,7 +2217,7 @@ button.gx-state-attn.is-on {
 /* The count, and the biggest thing in the column — it is the reason the column
    exists, and it is the one figure on this page nobody can type. */
 .gx-metric-now {
-    font-size: 25px;
+    font-size: var(--text-2xl);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -.02em;
@@ -2225,12 +2225,12 @@ button.gx-state-attn.is-on {
     font-variant-numeric: tabular-nums;
 }
 .gx-metric-of {
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--gx-faint);
     font-variant-numeric: tabular-nums;
 }
 .gx-metric-pct {
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 700;
     color: var(--gx-muted);
     font-variant-numeric: tabular-nums;
@@ -2240,14 +2240,14 @@ button.gx-state-attn.is-on {
 .gx-metric-do { display: flex; gap: 12px; margin-top: 2px; white-space: nowrap; }
 .gx-metric-do button {
     border: 0; background: none; padding: 0;
-    color: var(--gx-muted); font: inherit; font-size: 11.5px; font-weight: 600;
+    color: var(--gx-muted); font: inherit; font-size: var(--text-xs); font-weight: 600;
     cursor: pointer;
 }
 .gx-metric-do button:hover { color: var(--gx-text); text-decoration: underline; }
 .gx-metric-do button.is-bad:hover { color: var(--gx-bad); }
 
-.gx-sys-track { margin-top: 3px; height: 6px; border-radius: 999px; background: var(--gx-line-soft); overflow: hidden; }
-.gx-sys-fill { display: block; height: 100%; border-radius: 999px; transition: width .3s ease; }
+.gx-sys-track { margin-top: 3px; height: 6px; border-radius: var(--radius-full); background: var(--gx-line-soft); overflow: hidden; }
+.gx-sys-fill { display: block; height: 100%; border-radius: var(--radius-full); transition: width .3s ease; }
 .gx-sys-fill.is-xp     { background: var(--gx-violet); }
 .gx-sys-fill.is-streak { background: var(--gx-amber); }
 .gx-sys-fill.is-tasks  { background: var(--gx-blue); }
@@ -2260,11 +2260,11 @@ button.gx-state-attn.is-on {
     width: 100%;
     padding: 11px 16px;
     border: 1px dashed var(--gx-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 650;
     text-align: left;
     cursor: pointer;
@@ -2297,10 +2297,10 @@ button.gx-state-attn.is-on {
     margin: 0 0 16px;
     padding: 11px 13px;
     border: 1px solid color-mix(in srgb, var(--gx-violet) 26%, transparent);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-violet) 7%, transparent);
     color: var(--gx-muted);
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
 }
 .gx-wizard-tip > span {
@@ -2336,10 +2336,10 @@ button.gx-state-attn.is-on {
     width: 26px; height: 26px;
     padding: 0;
     border: 1px solid var(--gx-line);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     color: var(--gx-muted);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     cursor: pointer;
     transition: border-color .15s ease, color .15s ease;
 }
@@ -2347,7 +2347,7 @@ button.gx-state-attn.is-on {
 .gx-cal-span {
     min-width: 15ch;
     text-align: center;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--gx-text);
     font-variant-numeric: tabular-nums;
@@ -2355,10 +2355,10 @@ button.gx-state-attn.is-on {
 .gx-cal-today {
     padding: 4px 10px;
     border: 1px solid var(--gx-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: transparent;
     color: var(--gx-muted);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     cursor: pointer;
 }
 .gx-cal-today:hover { border-color: var(--gx-violet); color: var(--gx-violet); }
@@ -2370,7 +2370,7 @@ button.gx-state-attn.is-on {
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--gx-muted);
 }
 .gx-cal-key li { display: flex; align-items: center; gap: 5px; }
@@ -2390,7 +2390,7 @@ button.gx-state-attn.is-on {
 .gx-cal-month { min-width: 0; }
 .gx-cal-month h3 {
     margin: 0 0 7px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .02em;
     color: var(--gx-text);
@@ -2402,7 +2402,7 @@ button.gx-state-attn.is-on {
 }
 .gx-cal-dow {
     margin-bottom: 4px;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 600;
     color: var(--gx-faint);
     text-align: center;
@@ -2416,11 +2416,11 @@ button.gx-state-attn.is-on {
     place-items: center;
     padding: 0;
     border: 1px solid transparent;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: var(--gx-card-2);
     color: var(--gx-muted);
     font: inherit;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-variant-numeric: tabular-nums;
     cursor: default;
     transition: transform .12s ease, border-color .12s ease;
@@ -2455,14 +2455,14 @@ button.gx-state-attn.is-on {
 }
 
 /* ---------- What the picked day holds ------------------------------------ */
-.gx-cal-hint { margin: 0; font-size: 12px; line-height: 1.5; color: var(--gx-muted); }
+.gx-cal-hint { margin: 0; font-size: var(--text-xs); line-height: 1.5; color: var(--gx-muted); }
 .gx-cal-day {
     padding-top: 12px;
     border-top: 1px solid var(--gx-line-soft);
 }
 .gx-cal-day h4 {
     margin: 0 0 8px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--gx-text);
 }
@@ -2476,18 +2476,18 @@ button.gx-state-attn.is-on {
     gap: 9px;
     padding: 6px 8px;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
 .gx-cal-day button:hover { background: var(--gx-card-2); }
-.gx-cal-mark { color: var(--tone); font-size: 11px; text-align: center; }
+.gx-cal-mark { color: var(--tone); font-size: var(--text-2xs); text-align: center; }
 .gx-cal-goal {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     color: var(--tone);
     text-transform: uppercase;
@@ -2525,7 +2525,7 @@ button.gx-state-attn.is-on {
     gap: 12px;
     padding: 11px 13px;
     border: 1px solid var(--gx-line-soft);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     transition: border-color .15s ease, opacity .2s ease;
 }
@@ -2557,7 +2557,7 @@ button.gx-state-attn.is-on {
 
 .gx-move-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .gx-move-title {
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2571,7 +2571,7 @@ button.gx-state-attn.is-on {
     background: transparent;
     color: var(--tone);
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     text-align: left;
     cursor: pointer;
@@ -2585,7 +2585,7 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: center;
     gap: 9px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--gx-faint);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -2593,7 +2593,7 @@ button.gx-state-attn.is-on {
 .gx-move-late { color: var(--gx-bad); font-weight: 600; }
 .gx-move-xp {
     padding: 2px 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--gx-violet) 15%, transparent);
     color: var(--gx-violet);
     font-weight: 600;
@@ -2601,18 +2601,18 @@ button.gx-state-attn.is-on {
 
 /* ---------- Momentum ------------------------------------------------------ */
 .gx-mo { display: flex; flex-direction: column; gap: 12px; }
-.gx-mo-line { margin: 0; font-size: 13px; line-height: 1.55; color: var(--gx-muted); }
-.gx-mo-line strong { color: var(--gx-text); font-size: 15px; }
+.gx-mo-line { margin: 0; font-size: var(--text-sm); line-height: 1.55; color: var(--gx-muted); }
+.gx-mo-line strong { color: var(--gx-text); font-size: var(--text-lg); }
 .gx-mo-bar {
     height: 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-card-2);
     overflow: hidden;
 }
 .gx-mo-bar > span {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--gx-violet), var(--gx-teal));
     transition: width .5s cubic-bezier(.22, 1, .36, 1);
 }
@@ -2620,7 +2620,7 @@ button.gx-state-attn.is-on {
 .gx-mo-days i {
     flex: 1;
     height: 20px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: var(--gx-card-2);
     border: 1px solid var(--gx-line-soft);
 }
@@ -2649,14 +2649,14 @@ button.gx-state-attn.is-on {
 }
 .gx-traj-title {
     min-width: 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 700;
     color: color-mix(in srgb, var(--tone, var(--gx-text)) 72%, var(--gx-text));
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.gx-traj-head .gx-quiet { flex: none; font-size: 12px; font-variant-numeric: tabular-nums; }
+.gx-traj-head .gx-quiet { flex: none; font-size: var(--text-xs); font-variant-numeric: tabular-nums; }
 
 /* The scale. A track, the covered part of it, and a mark where the value is —
    the mark is what makes it a position rather than a bar. */
@@ -2668,13 +2668,13 @@ button.gx-state-attn.is-on {
     position: relative;
     height: 8px;
     margin: 0 0 14px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--tone, var(--gx-card-2)) 15%, var(--gx-card-2));
 }
 .gx-traj-fill {
     position: absolute;
     inset: 0 auto 0 0;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, color-mix(in srgb, var(--tone) 55%, transparent), var(--tone));
     transition: width .6s cubic-bezier(.22, 1, .36, 1);
 }
@@ -2702,16 +2702,16 @@ button.gx-state-attn.is-on {
 
 .gx-traj-figs { display: flex; gap: 26px; margin: 0; }
 .gx-traj-figs div { display: flex; flex-direction: column; gap: 2px; }
-.gx-traj-figs dt { font-size: 11px; color: var(--gx-faint); }
+.gx-traj-figs dt { font-size: var(--text-2xs); color: var(--gx-faint); }
 .gx-traj-figs dd {
     margin: 0;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }
-.gx-traj-figs dd em { font-style: normal; font-size: 11.5px; font-weight: 500; color: var(--gx-muted); }
-.gx-traj-figs dd.is-there { color: var(--gx-good); font-size: 13.5px; }
-.gx-traj-none { margin: 0; font-size: 12.5px; color: var(--gx-faint); }
+.gx-traj-figs dd em { font-style: normal; font-size: var(--text-xs); font-weight: 500; color: var(--gx-muted); }
+.gx-traj-figs dd.is-there { color: var(--gx-good); font-size: var(--text-md); }
+.gx-traj-none { margin: 0; font-size: var(--text-sm); color: var(--gx-faint); }
 
 /* Checkpoint goals: stops on a line, not a scale. */
 .gx-stops {
@@ -2751,7 +2751,7 @@ button.gx-state-attn.is-on {
 .gx-stop > span {
     display: block;
     padding: 0 5px;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     line-height: 1.35;
     color: var(--gx-faint);
     overflow: hidden;
@@ -2779,7 +2779,7 @@ button.gx-state-attn.is-on {
     gap: 14px;
     padding: 9px 10px;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-text);
     font: inherit;
@@ -2788,18 +2788,18 @@ button.gx-state-attn.is-on {
 }
 .gx-area > button:not(:disabled) { cursor: pointer; }
 .gx-area > button:not(:disabled):hover { background: var(--gx-card-2); }
-.gx-area-name { font-size: 13px; font-weight: 600; }
-.gx-area-n { font-size: 11.5px; color: var(--gx-faint); white-space: nowrap; }
-.gx-area-bar { height: 7px; border-radius: 999px; background: var(--gx-card-2); overflow: hidden; }
+.gx-area-name { font-size: var(--text-sm); font-weight: 600; }
+.gx-area-n { font-size: var(--text-xs); color: var(--gx-faint); white-space: nowrap; }
+.gx-area-bar { height: 7px; border-radius: var(--radius-full); background: var(--gx-card-2); overflow: hidden; }
 .gx-area-bar > i {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--tone);
     transition: width .55s cubic-bezier(.22, 1, .36, 1);
 }
 .gx-area-pct {
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 700;
     text-align: right;
     font-variant-numeric: tabular-nums;
@@ -2824,11 +2824,11 @@ button.gx-state-attn.is-on {
     gap: 12px;
     padding: 6px 10px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
 }
 .gx-area-goals > li > button:not(:disabled) { cursor: pointer; }
@@ -2860,18 +2860,18 @@ button.gx-state-attn.is-on {
     gap: 4px;
     padding: 4px;
     border: 1px solid var(--gx-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--gx-card);
     align-self: flex-start;
 }
 .gx-tab {
     padding: 8px 16px;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-muted);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
     transition: background .14s ease, color .14s ease;
@@ -2890,13 +2890,13 @@ button.gx-state-attn.is-on {
     width: 100%;
     min-width: 860px;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: var(--text-sm);
 }
 .gx-table thead th {
     padding: 0 14px 10px;
     border-bottom: 1px solid var(--gx-line);
     color: var(--gx-faint);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -2916,7 +2916,7 @@ button.gx-state-attn.is-on {
 .gx-table tbody tr:last-child { border-bottom: 0; }
 .gx-table tbody tr:hover { background: color-mix(in srgb, var(--tone, var(--gx-card-2)) var(--gx-wash), var(--gx-card-2)); }
 .gx-table td { padding: 13px 14px; vertical-align: middle; }
-.gx-table td .gx-quiet { display: block; margin-top: 2px; font-size: 11px; }
+.gx-table td .gx-quiet { display: block; margin-top: 2px; font-size: var(--text-2xs); }
 .gx-table td .gx-quiet.is-late { color: var(--gx-bad); }
 
 .gx-table-goal {
@@ -2931,23 +2931,23 @@ button.gx-state-attn.is-on {
     text-align: left;
     cursor: pointer;
 }
-.gx-table-title { font-size: 13.5px; font-weight: 600; }
+.gx-table-title { font-size: var(--text-md); font-weight: 600; }
 .gx-table-goal:hover .gx-table-title { color: var(--tone); text-decoration: underline; }
 
 .gx-table-pct { display: flex; align-items: center; gap: 9px; }
-.gx-table-pct strong { min-width: 38px; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.gx-table-pct strong { min-width: 38px; font-size: var(--text-md); font-variant-numeric: tabular-nums; }
 .gx-table-bar {
     flex: 1;
     min-width: 70px;
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-card-2);
     overflow: hidden;
 }
 .gx-table-bar > i {
     display: block;
     height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--tone);
     transition: width .5s cubic-bezier(.22, 1, .36, 1);
 }
@@ -2955,8 +2955,8 @@ button.gx-state-attn.is-on {
 .gx-pill {
     display: inline-block;
     padding: 4px 11px;
-    border-radius: 999px;
-    font-size: 11.5px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
     font-weight: 600;
     white-space: nowrap;
 }
@@ -2977,7 +2977,7 @@ button.gx-state-attn.is-on {
     color: var(--gx-faint);
 }
 
-.gx-table-date, .gx-table-next { font-size: 12.5px; }
+.gx-table-date, .gx-table-next { font-size: var(--text-sm); }
 .gx-table-next {
     display: block;
     max-width: 20ch;
@@ -2991,7 +2991,7 @@ button.gx-state-attn.is-on {
     width: 28px; height: 28px;
     padding: 0;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-faint);
     cursor: pointer;
@@ -3018,7 +3018,7 @@ button.gx-state-attn.is-on {
    inside that one would be the box-in-a-box the masthead was fixed for. */
 .gx-verdict { display: flex; flex-direction: column; gap: 2px; }
 .gx-verdict-label {
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .09em;
     text-transform: uppercase;
@@ -3038,20 +3038,20 @@ button.gx-state-attn.is-on {
     background: var(--gx-faint);
 }
 .gx-verdict-say > strong {
-    font-size: 21px;
+    font-size: var(--text-xl);
     font-weight: 800;
     letter-spacing: -.02em;
     color: var(--gx-text);
 }
 .gx-verdict-say > em {
     font-style: normal;
-    font-size: 14px;
+    font-size: var(--text-md);
     font-weight: 700;
     color: var(--gx-muted);
     font-variant-numeric: tabular-nums;
 }
-.gx-verdict-counts { margin: 0; font-size: 12.5px; color: var(--gx-muted); }
-.gx-verdict-none { margin: 0; font-size: 13px; color: var(--gx-muted); }
+.gx-verdict-counts { margin: 0; font-size: var(--text-sm); color: var(--gx-muted); }
+.gx-verdict-none { margin: 0; font-size: var(--text-sm); color: var(--gx-muted); }
 
 /* The same four colours as the ring's arcs and the rows' dots, so one fact is
    not three colour schemes. */
@@ -3081,7 +3081,7 @@ button.gx-state-attn.is-on {
     gap: 10px;
     padding: 7px 8px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-text);
     font: inherit;
@@ -3104,7 +3104,7 @@ button.gx-state-attn.is-on {
 .gx-health-row.is-not-started i { background: var(--gx-faint); }
 
 .gx-health-name {
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -3114,14 +3114,14 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: baseline;
     gap: 6px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     color: var(--gx-text);
 }
 .gx-health-score em {
     font-style: normal;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -3145,7 +3145,7 @@ button.gx-state-attn.is-on {
 }
 .gx-health-side h5 {
     margin: 0 0 4px;
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
@@ -3156,7 +3156,7 @@ button.gx-state-attn.is-on {
 .gx-health-side li {
     position: relative;
     padding-left: 11px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--gx-muted);
 }
@@ -3301,13 +3301,13 @@ button.gx-state-attn.is-on {
             color-mix(in srgb, var(--tone) var(--gx-wash), transparent),
             transparent 88%);
 }
-.ag-top > .gx-tile { width: 44px; height: 44px; border-radius: 13px; }
+.ag-top > .gx-tile { width: 44px; height: 44px; border-radius: var(--radius-md); }
 
 .ag-top-text { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .ag-title-row { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; min-width: 0; }
 .ag-title-row h3 {
     margin: 0;
-    font-size: 19px;
+    font-size: var(--text-xl);
     font-weight: 700;
     letter-spacing: -.02em;
     overflow: hidden;
@@ -3317,17 +3317,17 @@ button.gx-state-attn.is-on {
 .ag-badge {
     flex: none;
     padding: 2px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
     background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
     color: var(--tone);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     white-space: nowrap;
 }
 .ag-why {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--gx-muted);
     max-width: 74ch;
@@ -3338,10 +3338,10 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 5px;
     padding: 2px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-card-2);
     color: var(--gx-faint);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 600;
 }
 /* A 4px dot before each tag, which is what separates a tag from a button at a
@@ -3358,8 +3358,8 @@ button.gx-state-attn.is-on {
 
 .ag-top-right { display: flex; align-items: center; gap: 12px; }
 .ag-progress { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
-.ag-progress strong { font-size: 21px; font-weight: 800; letter-spacing: -.03em; }
-.ag-progress span { font-size: 11px; color: var(--gx-faint); }
+.ag-progress strong { font-size: var(--text-xl); font-weight: 800; letter-spacing: -.03em; }
+.ag-progress span { font-size: var(--text-2xs); color: var(--gx-faint); }
 
 .ag-ring { width: 46px; height: 46px; flex: none; }
 .ag-ring-track { fill: none; stroke: var(--gx-line); }
@@ -3370,7 +3370,7 @@ button.gx-state-attn.is-on {
     place-items: center;
     width: 30px; height: 30px;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-faint);
     cursor: pointer;
@@ -3400,18 +3400,18 @@ button.gx-state-attn.is-on {
     flex-direction: column;
     padding: 5px;
     border: 1px solid var(--gx-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--gx-card);
-    box-shadow: 0 10px 30px rgba(16, 24, 40, .14);
+    box-shadow: var(--shadow-lg);
 }
 .ag-menu button {
     padding: 8px 10px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-text);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
@@ -3497,8 +3497,8 @@ button.gx-state-attn.is-on {
     margin: 8px 0 0;
     padding: 7px 10px;
     border-left: 2px solid currentColor;
-    border-radius: 0 6px 6px 0;
-    font-size: 12.5px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: var(--text-sm);
     line-height: 1.45;
     background: color-mix(in srgb, currentColor 8%, transparent);
 }
@@ -3509,29 +3509,29 @@ button.gx-state-attn.is-on {
 
 .ag-panel-head h4 {
     margin: 0;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--gx-faint);
 }
-.ag-quiet { font-size: 11.5px; color: var(--gx-faint); }
+.ag-quiet { font-size: var(--text-xs); color: var(--gx-faint); }
 .ag-quiet.is-late { color: var(--gx-bad); font-weight: 600; }
 
 .ag-range select {
     padding: 3px 22px 3px 8px;
     border: 1px solid var(--gx-line);
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: var(--gx-card-2);
     color: var(--gx-muted);
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     cursor: pointer;
 }
 
 .ag-empty {
     margin: 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--gx-faint);
     max-width: 56ch;
@@ -3541,11 +3541,11 @@ button.gx-state-attn.is-on {
     align-self: flex-start;
     padding: 6px 12px;
     border: 1px solid var(--gx-line);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-muted);
     font: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     cursor: pointer;
 }
@@ -3577,7 +3577,7 @@ button.gx-state-attn.is-on {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     color: var(--gx-faint);
     text-align: right;
     /* Half a line up, so each label sits on its gridline rather than under it. */
@@ -3608,7 +3608,7 @@ button.gx-state-attn.is-on {
 .ag-chart-months li {
     position: absolute;
     transform: translateX(-50%);
-    font-size: 10px;
+    font-size: var(--text-2xs);
     color: var(--gx-faint);
 }
 .ag-chart-months li:first-child { transform: none; }
@@ -3624,11 +3624,11 @@ button.gx-state-attn.is-on {
     gap: 10px;
     padding: 5px 6px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
@@ -3639,7 +3639,7 @@ button.gx-state-attn.is-on {
     width: 16px; height: 16px;
     border: 1.5px solid var(--gx-line);
     border-radius: 50%;
-    font-size: 9px;
+    font-size: var(--text-2xs);
     color: transparent;
 }
 .ag-stones li.is-done .ag-stone-tick {
@@ -3665,18 +3665,18 @@ button.gx-state-attn.is-on {
     gap: 12px;
     padding: 6px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--gx-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
 .ag-roadmap li.is-done .ag-road-name { color: var(--gx-text); }
 .ag-road-bar {
     height: 5px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-line);
     overflow: hidden;
 }
@@ -3699,7 +3699,7 @@ button.gx-state-attn.is-on {
 .ag-caption {
     margin: 0;
     padding-top: 2px;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     line-height: 1.5;
     color: var(--gx-faint);
 }
@@ -3714,7 +3714,7 @@ button.gx-state-attn.is-on {
     margin: 6px 0 0;
     padding-top: 6px;
     border-top: 1px dashed color-mix(in srgb, var(--gx-line) 80%, transparent);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     line-height: 1.45;
     color: var(--gx-faint);
 }
@@ -3729,12 +3729,12 @@ button.gx-state-attn.is-on {
     grid-template-columns: 92px minmax(0, 1fr) auto;
     align-items: center;
     gap: 10px;
-    font-size: 12px;
+    font-size: var(--text-xs);
 }
 .ag-bar-label { color: var(--gx-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ag-bar-track {
     height: 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-line);
     overflow: hidden;
 }
@@ -3777,7 +3777,7 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-rows: repeat(7, 18px);
     gap: 3px;
-    font-size: 8.5px;
+    font-size: var(--text-2xs);
     line-height: 1;
     color: var(--gx-faint);
     align-items: center;
@@ -3806,7 +3806,7 @@ button.gx-state-attn.is-on {
 .ag-scale-track {
     position: relative;
     height: 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--gx-line);
 }
 .ag-scale-track > i {
@@ -3821,14 +3821,14 @@ button.gx-state-attn.is-on {
     position: absolute;
     bottom: calc(100% + 5px);
     transform: translateX(-50%);
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 800;
     letter-spacing: -.02em;
     color: var(--tone);
     white-space: nowrap;
 }
-.ag-scale-ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--gx-faint); }
-.ag-scale-left { margin: 2px 0 0; font-size: 12.5px; font-weight: 600; }
+.ag-scale-ends { display: flex; justify-content: space-between; font-size: var(--text-2xs); color: var(--gx-faint); }
+.ag-scale-left { margin: 2px 0 0; font-size: var(--text-sm); font-weight: 600; }
 
 /* ---------- Current focus ------------------------------------------------- */
 .ag-focus {
@@ -3838,17 +3838,17 @@ button.gx-state-attn.is-on {
     gap: 11px;
     padding: 12px 13px;
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
 }
-.ag-focus-ico .gx-tile { width: 30px; height: 30px; border-radius: 9px; }
+.ag-focus-ico .gx-tile { width: 30px; height: 30px; border-radius: var(--radius-md); }
 .ag-focus-text { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .ag-focus-text strong {
     /* The name of the thing being worked on, and the largest text in either
        panel below the goal's own title. It was 13.5px — the same size as the
        chart's heading opposite, which made the two columns read as a pair of
        equal sections rather than as the answer and its explanation. */
-    font-size: 15.5px;
+    font-size: var(--text-lg);
     font-weight: 700;
     letter-spacing: -.01em;
     overflow: hidden;
@@ -3856,7 +3856,7 @@ button.gx-state-attn.is-on {
     white-space: nowrap;
 }
 .ag-focus-text span {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--gx-muted);
     /* The step count leads this line, so it is the one figure on the card that
        changes every time a box is ticked. Tabular, or "3 / 5" and "4 / 5" set
@@ -3866,12 +3866,12 @@ button.gx-state-attn.is-on {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.ag-focus-pct { font-size: 14px; font-weight: 800; color: var(--tone); letter-spacing: -.02em; }
-.ag-focus-when { font-size: 11.5px; color: var(--gx-muted); white-space: nowrap; }
+.ag-focus-pct { font-size: var(--text-md); font-weight: 800; color: var(--tone); letter-spacing: -.02em; }
+.ag-focus-when { font-size: var(--text-xs); color: var(--gx-muted); white-space: nowrap; }
 .ag-focus-bar {
     grid-column: 1 / -1;
     height: 4px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--tone) 18%, transparent);
     overflow: hidden;
 }
@@ -3908,7 +3908,7 @@ button.gx-state-attn.is-on {
     margin: 6px 0 0;
     padding: 4px;
     border: 1px solid var(--gx-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--gx-card);
     display: flex;
     flex-direction: column;
@@ -3922,11 +3922,11 @@ button.gx-state-attn.is-on {
     gap: 10px;
     padding: 6px 8px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--gx-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
@@ -3941,7 +3941,7 @@ button.gx-state-attn.is-on {
 .ag-focus-pick button em {
     flex: none;
     font-style: normal;
-    font-size: 10px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -3976,8 +3976,8 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 9px;
     padding: 6px 8px;
-    border-radius: 9px;
-    font-size: 12.5px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
     color: var(--gx-text);
     counter-increment: ag-step;
     transition: background .14s ease;
@@ -3986,7 +3986,7 @@ button.gx-state-attn.is-on {
     content: counter(ag-step) ".";
     color: var(--gx-faint);
     font-weight: 700;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     text-align: right;
     font-variant-numeric: tabular-nums;
 }
@@ -4013,7 +4013,7 @@ button.gx-state-attn.is-on {
    every step finished last month; animating it would replay the whole
    checklist on every page load. `.is-just-done` is worn for 600ms by the one
    row the reader touched. */
-.ag-step-check { border-radius: 5px; }
+.ag-step-check { border-radius: var(--radius-sm); }
 .ag-step-check svg {
     width: 11px; height: 11px;
     fill: none;
@@ -4102,7 +4102,7 @@ button.gx-state-attn.is-on {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--gx-muted);
 }
 .ag-step-name.is-empty {
@@ -4111,7 +4111,7 @@ button.gx-state-attn.is-on {
     background: transparent;
     color: var(--gx-faint);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-style: italic;
     text-align: left;
     cursor: pointer;
@@ -4122,7 +4122,7 @@ button.gx-state-attn.is-on {
    card — naming and dating are both planning, and the drawer is where
    planning happens. */
 .ag-step-due {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--gx-faint);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
@@ -4138,7 +4138,7 @@ button.gx-state-attn.is-on {
     display: grid; place-items: center;
     padding: 0;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--gx-faint);
     cursor: pointer;
@@ -4152,7 +4152,7 @@ button.gx-state-attn.is-on {
 .ag-step-link:hover:not(:disabled) { background: var(--gx-line-soft); color: var(--gx-text); }
 .ag-step-link:disabled { opacity: 0; cursor: default; }
 
-.ag-steps-rest { margin: 7px 0 0; font-size: 11px; }
+.ag-steps-rest { margin: 7px 0 0; font-size: var(--text-2xs); }
 
 /* ---------- The line the card is for -------------------------------------- */
 /* "Next · Complete the Level 4 set". The chart explains why, the checkpoint
@@ -4180,13 +4180,13 @@ button.gx-state-attn.is-on {
     gap: 9px;
     margin: 12px 0 0;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
     border-left: 3px solid var(--tone);
     background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
 }
 .ag-next > span {
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     font-weight: 800;
     letter-spacing: .09em;
     text-transform: uppercase;
@@ -4194,7 +4194,7 @@ button.gx-state-attn.is-on {
 }
 .ag-next > strong {
     min-width: 0;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 650;
     color: var(--gx-text);
     overflow: hidden;
@@ -4207,7 +4207,7 @@ button.gx-state-attn.is-on {
     background: none;
     color: var(--gx-violet, var(--tone));
     font: inherit;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     text-decoration: underline;
     cursor: pointer;
 }
@@ -4217,11 +4217,11 @@ button.gx-state-attn.is-on {
     margin: 8px 0 0;
     padding: 8px;
     border: 1px solid var(--gx-line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--gx-card);
 }
 .ag-link-box input { width: 100%; }
-.ag-found-none { margin: 8px 2px 2px; font-size: 11.5px; line-height: 1.5; }
+.ag-found-none { margin: 8px 2px 2px; font-size: var(--text-xs); line-height: 1.5; }
 
 /* ---------- Finishing something ------------------------------------------
    Green, full width, and only on screen when the thing it names is genuinely
@@ -4233,11 +4233,11 @@ button.gx-state-attn.is-on {
     margin: 12px 0 0;
     padding: 10px 14px;
     border: 1px solid color-mix(in srgb, var(--gx-good) 45%, transparent);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-good) 13%, transparent);
     color: var(--gx-good);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 700;
     cursor: pointer;
     transition: background .14s ease, transform .14s ease;
@@ -4274,13 +4274,13 @@ button.gx-state-attn.is-on {
     margin: 12px 0 0;
     padding: 12px 13px;
     border: 1px solid color-mix(in srgb, var(--gx-good) 38%, transparent);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-good) 8%, var(--gx-card));
     animation: ag-finish-in .22s var(--gx-ease, ease) both;
 }
 .ag-confirm p {
     margin: 0 0 10px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--gx-text);
 }
@@ -4290,9 +4290,9 @@ button.gx-state-attn.is-on {
 .ag-confirm-yes {
     flex: 1;
     padding: 8px 12px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 700;
     cursor: pointer;
     transition: background .14s ease;
@@ -4360,10 +4360,10 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 4px;
     padding: 18px 26px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     border: 1px solid color-mix(in srgb, var(--gx-good) 40%, transparent);
     background: var(--gx-card);
-    box-shadow: 0 18px 40px rgba(16, 24, 40, .16);
+    box-shadow: var(--shadow-lg);
     text-align: center;
     animation: ag-cheer-card-life 2s cubic-bezier(.22, .9, .3, 1) both;
 }
@@ -4374,7 +4374,7 @@ button.gx-state-attn.is-on {
     border-radius: 50%;
     background: var(--gx-good);
     color: #fff;
-    font-size: 17px;
+    font-size: var(--text-lg);
     font-weight: 800;
     animation: ag-cheer-mark-in .5s cubic-bezier(.2, 1.25, .4, 1) .06s both;
 }
@@ -4389,10 +4389,10 @@ button.gx-state-attn.is-on {
     border: 2px solid var(--gx-good);
     animation: ag-cheer-ring .8s cubic-bezier(.2, .7, .3, 1) .1s both;
 }
-.ag-cheer-card strong { font-size: 14.5px; font-weight: 750; color: var(--gx-text); }
+.ag-cheer-card strong { font-size: var(--text-md); font-weight: 750; color: var(--gx-text); }
 .ag-cheer-card span:last-child {
     max-width: 240px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--gx-muted);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -4486,8 +4486,8 @@ button.gx-state-attn.is-on {
     align-items: center;
     gap: 10px;
     padding: 5px 6px;
-    border-radius: 8px;
-    font-size: 12.5px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
     color: var(--gx-muted);
 }
 .ag-actions li:hover { background: var(--gx-card-2); }
@@ -4495,7 +4495,7 @@ button.gx-state-attn.is-on {
     width: 17px; height: 17px;
     padding: 0;
     border: 1.6px solid var(--gx-line);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: transparent;
     cursor: pointer;
     transition: border-color .14s ease, background .14s ease;
@@ -4562,11 +4562,11 @@ button.gx-state-attn.is-on {
     gap: 7px;
     padding: 6px 12px 6px 10px;
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tone) var(--gx-wash-soft), transparent);
     color: var(--tone);
     font: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 650;
     cursor: pointer;
     transition: background .14s ease, border-color .14s ease;
@@ -4610,7 +4610,7 @@ button.gx-state-attn.is-on {
     background: transparent;
     color: var(--tone);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
 }
@@ -4620,11 +4620,11 @@ button.gx-state-attn.is-on {
     width: 100%;
     padding: 8px 10px;
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
     color: var(--gx-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
 }
 .ag-add input:focus-visible { outline: 2px solid var(--tone); outline-offset: 1px; }
 
@@ -4635,7 +4635,7 @@ button.gx-state-attn.is-on {
     padding: 4px;
     list-style: none;
     border: 1px solid var(--gx-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--gx-card-2);
 }
 .ag-found-row {
@@ -4645,11 +4645,11 @@ button.gx-state-attn.is-on {
     width: 100%;
     padding: 6px 8px;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--gx-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
@@ -4680,11 +4680,11 @@ button.gx-state-attn.is-on {
     gap: 7px;
     padding: 7px 13px;
     border: 1px solid var(--gx-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--gx-card);
     color: var(--gx-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
 }
@@ -4699,7 +4699,7 @@ button.gx-state-attn.is-on {
 }
 .ag-facts > div { display: flex; flex-direction: column; gap: 3px; }
 .ag-facts dt {
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
@@ -4710,7 +4710,7 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
 }
 .ag-facts dd.is-late { color: var(--gx-bad); }
@@ -4736,7 +4736,7 @@ button.gx-state-attn.is-on {
         border-top: 1px solid var(--gx-line-soft);
     }
     .ag-top-right .ag-menu-wrap { margin-left: auto; }
-    .ag-title-row h3 { font-size: 17px; }
+    .ag-title-row h3 { font-size: var(--text-lg); }
     .ag-foot { flex-direction: column; align-items: stretch; }
     .ag-facts { gap: 18px; justify-content: space-between; }
     .ag-details { align-self: flex-start; }
@@ -4791,7 +4791,7 @@ button.gx-state-attn.is-on {
     margin: 0;
     max-width: 62ch;
     color: var(--gx-muted);
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     line-height: 1.55;
 }
 
@@ -4802,4 +4802,4 @@ button.gx-state-attn.is-on {
     padding-top: 11px;
     border-top-color: color-mix(in srgb, var(--gx-line) 70%, transparent);
 }
-.gx-smart.is-compact .gx-ai { font-size: 11.5px; padding: 5px 10px 5px 9px; }
+.gx-smart.is-compact .gx-ai { font-size: var(--text-xs); padding: 5px 10px 5px 9px; }

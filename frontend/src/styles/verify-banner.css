@@ -17,13 +17,13 @@
     border-bottom: 1px solid #f0d9a8;
     background: #fdf6e7;
     color: #6b4e16;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.45;
 }
 
 .vb-mark {
     flex: none;
-    font-size: 15px;
+    font-size: var(--text-lg);
     opacity: .8;
 }
 
@@ -45,7 +45,7 @@
     flex: none;
     padding: 5px 12px;
     border: 1px solid #e3c886;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: #fff;
     color: #6b4e16;
     font: inherit;
@@ -70,10 +70,10 @@
     height: 26px;
     padding: 0;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: none;
     color: inherit;
-    font-size: 17px;
+    font-size: var(--text-lg);
     line-height: 1;
     opacity: .55;
     cursor: pointer;

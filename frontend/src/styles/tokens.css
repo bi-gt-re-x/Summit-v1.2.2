@@ -1,0 +1,92 @@
+/* ==========================================================================
+   tokens.css — the one set of design decisions every page reads.
+
+   Before this file each page sheet declared its own palette (`--gx-card`,
+   `--tk-line`, `--ax-shadow` …), thirty-six families of them, and each picked
+   its own near-copy of the same white, the same hairline, the same shadow. The
+   result was 140 font sizes, 69 corner radii and 191 shadows, and pages that
+   did not quite look like one product.
+
+   The page families still exist — deleting them is a rewrite of every sheet —
+   but their neutral members now *point here* rather than holding a hex, so a
+   change made here is made everywhere. New rules should use these tokens
+   directly and not add to a page family.
+
+   Loaded first, from main.tsx, so every other sheet can read it.
+   ========================================================================== */
+
+:root {
+    /* ---------- Type ----------------------------------------------------- */
+    --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* Eight steps. Anything larger is a display figure (a timer, a big stat)
+       and sizes itself. */
+    --text-2xs: 11px;
+    --text-xs: 12px;
+    --text-sm: 13px;
+    --text-md: 14px;
+    --text-lg: 16px;
+    --text-xl: 20px;
+    --text-2xl: 24px;
+    --text-3xl: 32px;
+
+    /* ---------- Shape ---------------------------------------------------- */
+    /* Controls and chips, cards and panels, heroes and dialogs, pills. Hairline
+       radii (1–3px) on thin bars are left as written. */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-full: 999px;
+
+    /* ---------- Space ---------------------------------------------------- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+
+    /* ---------- Elevation ------------------------------------------------ */
+    /* Resting on the page, a card, and something floating over the page. */
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, .05);
+    --shadow-md: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .06);
+    --shadow-lg: 0 2px 6px rgba(16, 24, 40, .06), 0 20px 48px rgba(16, 24, 40, .16);
+
+    /* ---------- Colour --------------------------------------------------- */
+    --color-bg: #f4f6f8;
+    --color-surface: #ffffff;
+    --color-surface-2: #f7f8fb;
+    --color-line: #e6e9ef;
+    --color-line-soft: #eef0f5;
+    --color-ink: #1f2733;
+    --color-ink-muted: #6b7684;
+    --color-ink-faint: #98a1ae;
+    --color-accent: #6c5ce7;
+}
+
+html[data-theme="dark"] {
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow-md: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    --shadow-lg: 0 2px 6px rgba(0, 0, 0, .35), 0 20px 48px rgba(0, 0, 0, .45);
+
+    --color-bg: #0d1117;
+    --color-surface: #161b22;
+    --color-surface-2: #1b212b;
+    --color-line: #263041;
+    --color-line-soft: #1f2733;
+    --color-ink: #e6edf3;
+    --color-ink-muted: #8f9bb3;
+    --color-ink-faint: #6e7781;
+    --color-accent: #8b7cf0;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: var(--text-md);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

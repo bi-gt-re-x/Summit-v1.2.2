@@ -13,12 +13,12 @@
  */
 .cu-backdrop {
     --cu-ink: #111827;
-    --cu-ink-soft: #6b7280;
-    --cu-ink-faint: #9aa3b2;
-    --cu-surface: #ffffff;
+    --cu-ink-soft: var(--color-ink-muted);
+    --cu-ink-faint: var(--color-ink-faint);
+    --cu-surface: var(--color-surface);
     --cu-surface-soft: #f6f7fb;
-    --cu-line: #e6e9f0;
-    --cu-accent: #6c5ce7;
+    --cu-line: var(--color-line);
+    --cu-accent: var(--color-accent);
 
     position: fixed;
     inset: 0;
@@ -32,13 +32,13 @@
 }
 
 html[data-theme="dark"] .cu-backdrop {
-    --cu-ink: #f0f2f6;
-    --cu-ink-soft: #c2c9d4;
-    --cu-ink-faint: #8b93a2;
-    --cu-surface: #161b22;
-    --cu-surface-soft: #1b212b;
-    --cu-line: #263041;
-    --cu-accent: #8b7cf0;
+    --cu-ink: var(--color-ink);
+    --cu-ink-soft: var(--color-ink-muted);
+    --cu-ink-faint: var(--color-ink-faint);
+    --cu-surface: var(--color-surface);
+    --cu-surface-soft: var(--color-surface-2);
+    --cu-line: var(--color-line);
+    --cu-accent: var(--color-accent);
 
     background: rgba(0, 0, 0, .6);
 }
@@ -54,15 +54,15 @@ html[data-theme="dark"] .cu-backdrop {
     overflow-y: auto;
     background: var(--cu-surface);
     border: 1px solid var(--cu-line);
-    border-radius: 16px;
-    box-shadow: 0 24px 60px rgba(16, 20, 30, .22);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     padding: 22px 22px 18px;
     color: var(--cu-ink);
 }
 
 .cu-title {
     margin: 0 0 6px;
-    font-size: 18px;
+    font-size: var(--text-xl);
     font-weight: 700;
     letter-spacing: -.02em;
     color: var(--cu-ink);
@@ -70,7 +70,7 @@ html[data-theme="dark"] .cu-backdrop {
 
 .cu-lead {
     margin: 0 0 16px;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--cu-ink-soft);
 }
@@ -91,7 +91,7 @@ html[data-theme="dark"] .cu-backdrop {
     flex-wrap: wrap;
     padding: 10px 12px;
     border: 1px solid var(--cu-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--cu-surface-soft);
     transition: border-color .12s ease, background .12s ease;
 }
@@ -112,13 +112,13 @@ html[data-theme="dark"] .cu-backdrop {
 }
 
 .cu-when strong {
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 650;
     color: var(--cu-ink);
 }
 
 .cu-when span {
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--cu-ink-faint);
 }
 
@@ -139,11 +139,11 @@ html[data-theme="dark"] .cu-backdrop {
     height: 36px;
     padding: 0 8px;
     border: 1px solid var(--cu-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--cu-surface);
     color: var(--cu-ink);
     font-family: inherit;
-    font-size: 15px;
+    font-size: var(--text-lg);
     font-weight: 600;
     text-align: center;
     transition: border-color .12s ease, box-shadow .12s ease;
@@ -173,13 +173,13 @@ html[data-theme="dark"] .cu-backdrop {
 .cu-field input:disabled { opacity: .55; }
 
 .cu-field span {
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--cu-ink-faint);
 }
 
 .cu-failed {
     margin: 14px 0 0;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     color: #c0395f;
 }
 
@@ -196,7 +196,7 @@ html[data-theme="dark"] .cu-failed { color: #f08aa5; }
     margin: 0;
     flex: 1 1 auto;
     min-height: 16px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     color: var(--cu-ink-soft);
 }
 
@@ -205,7 +205,7 @@ html[data-theme="dark"] .cu-failed { color: #f08aa5; }
     background: none;
     padding: 8px 6px;
     font-family: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     color: var(--cu-ink-faint);
     cursor: pointer;
 }
@@ -215,11 +215,11 @@ html[data-theme="dark"] .cu-failed { color: #f08aa5; }
 .cu-save {
     padding: 9px 18px;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--cu-accent);
     color: #fff;
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 650;
     cursor: pointer;
     transition: opacity .12s ease;

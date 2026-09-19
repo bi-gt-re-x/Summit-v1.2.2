@@ -20,7 +20,7 @@
     margin-top: var(--ax-gap);
     padding: 26px 28px 22px;
     border: 1px solid var(--ax-line);
-    border-radius: 18px;
+    border-radius: var(--radius-lg);
     background:
         radial-gradient(120% 140% at 0% 0%, var(--ax-card-2), transparent 60%),
         var(--ax-card);
@@ -29,7 +29,7 @@
 
 .so-band-subject {
     margin: 0 0 6px;
-    font-size: 0.72rem;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -62,22 +62,22 @@
 .so-kind-chip {
     padding: 3px 11px;
     border: 1px solid var(--ax-line);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--ax-faint);
-    font-size: 0.74rem;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: 0.04em;
     color: var(--ax-text);
 }
 
 .so-kind-means {
-    font-size: 0.86rem;
+    font-size: var(--text-md);
     color: var(--ax-muted);
 }
 
 .so-band-focus {
     margin: 16px 0 0;
-    font-size: 1.02rem;
+    font-size: var(--text-lg);
     line-height: 1.5;
     color: var(--ax-text);
 }
@@ -85,7 +85,7 @@
 .so-band-focus-label {
     display: block;
     margin-bottom: 3px;
-    font-size: 0.7rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -95,7 +95,7 @@
 /* The reader's own sentence, under the model's reading of it. */
 .so-band-yours {
     margin: 12px 0 0;
-    font-size: 0.85rem;
+    font-size: var(--text-md);
     color: var(--ax-muted);
 }
 
@@ -103,7 +103,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    font-size: 0.68rem;
+    font-size: var(--text-2xs);
     margin-right: 6px;
 }
 
@@ -124,7 +124,7 @@
 }
 
 .so-mark-label {
-    font-size: 0.68rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -132,7 +132,7 @@
 }
 
 .so-mark strong {
-    font-size: 0.96rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--ax-text);
 }
@@ -147,14 +147,14 @@
 
 .so-matters-head h2 {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--ax-text);
 }
 
 .so-matters-note {
     margin: 4px 0 0;
-    font-size: 0.84rem;
+    font-size: var(--text-sm);
     color: var(--ax-muted);
 }
 
@@ -173,7 +173,7 @@
     padding: 18px 18px 16px;
     border: 1px solid var(--ax-line);
     border-left: 3px solid var(--ax-line);
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: var(--ax-card);
 }
 
@@ -186,7 +186,7 @@
     align-items: center;
     gap: 6px;
     margin: 0 0 8px;
-    font-size: 0.68rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -199,7 +199,7 @@
 
 .so-card-claim {
     margin: 0;
-    font-size: 0.98rem;
+    font-size: var(--text-lg);
     line-height: 1.4;
     font-weight: 650;
     color: var(--ax-text);
@@ -217,7 +217,7 @@
 .so-card-evidence li {
     padding: 3px 0 3px 12px;
     border-left: 1px solid var(--ax-line-soft);
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
     color: var(--ax-muted);
 }
 
@@ -225,7 +225,7 @@
     margin: 12px 0 0;
     padding-top: 10px;
     border-top: 1px solid var(--ax-line-soft);
-    font-size: 0.86rem;
+    font-size: var(--text-md);
     line-height: 1.45;
     color: var(--ax-text);
 }
@@ -246,14 +246,14 @@
     padding: 24px 26px 22px;
     border: 1px solid var(--ax-line);
     border-left: 4px solid var(--ax-bad);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: var(--ax-card);
     box-shadow: var(--ax-shadow);
 }
 
 .so-neck-label {
     margin: 0 0 6px;
-    font-size: 0.7rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.11em;
     text-transform: uppercase;
@@ -270,7 +270,7 @@
 
 .so-neck-sure {
     margin: 8px 0 0;
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     color: var(--ax-muted);
 }
 
@@ -290,7 +290,7 @@
 
 .so-neck-part h3 {
     margin: 0 0 8px;
-    font-size: 0.7rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
@@ -307,13 +307,13 @@
 .so-neck-evidence li {
     padding: 4px 0 4px 12px;
     border-left: 1px solid var(--ax-line-soft);
-    font-size: 0.83rem;
+    font-size: var(--text-sm);
     color: var(--ax-muted);
 }
 
 .so-neck-reading {
     margin: 0;
-    font-size: 0.92rem;
+    font-size: var(--text-md);
     line-height: 1.55;
     color: var(--ax-text);
 }
@@ -332,14 +332,14 @@
     margin: 16px 0 0;
     padding-top: 14px;
     border-top: 1px solid var(--ax-line-soft);
-    font-size: 0.86rem;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-muted);
 }
 
 .so-neck-out span {
     flex: none;
-    font-size: 0.66rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
@@ -359,7 +359,7 @@
     margin-top: var(--ax-gap);
     padding: 22px 24px 20px;
     border: 1px solid var(--ax-line);
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: var(--ax-card);
 }
 
@@ -373,14 +373,14 @@
 
 .so-loop-head h2 {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--ax-text);
 }
 
 .so-loop-count {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     font-variant-numeric: tabular-nums;
     color: var(--ax-muted);
 }
@@ -388,7 +388,7 @@
 .so-loop-say {
     margin: 10px 0 0;
     max-width: 66ch;
-    font-size: 0.9rem;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-text);
 }
@@ -419,7 +419,7 @@
 .so-verdict-name {
     flex: 1;
     min-width: 140px;
-    font-size: 0.88rem;
+    font-size: var(--text-md);
     font-weight: 650;
     color: var(--ax-text);
 }
@@ -428,7 +428,7 @@
    2026-09-12" is a date nobody reads against anything. */
 .so-verdict-done {
     flex: none;
-    font-size: 0.72rem;
+    font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
@@ -440,7 +440,7 @@
     align-items: baseline;
     gap: 5px;
     flex: none;
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
     font-weight: 700;
     color: var(--ax-muted);
 }
@@ -459,7 +459,7 @@
 /* What is not on the list, counted rather than drawn. */
 .so-loop-more {
     margin: 12px 0 0;
-    font-size: 0.76rem;
+    font-size: var(--text-xs);
     color: var(--ax-faint);
 }
 

@@ -22,18 +22,18 @@
     box-sizing: border-box;
     padding: 9px 12px;
     border: 1px solid #EAEAEA;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: #F8F9FB;
     color: #2C302E;
     font-family: inherit;
-    font-size: 14px;
+    font-size: var(--text-md);
     flex: none;
 }
 .sf-input:focus { outline: none; border-color: #A38A70; background: #FFFFFF; }
 
 .sf-empty {
     margin: 10px 2px 2px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: #6C757D;
 }
@@ -47,10 +47,10 @@
     width: 17px;
     height: 17px;
     border: 1px solid #EAEAEA;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: #F8F9FB;
     color: #2C302E;
-    font-size: 12px;
+    font-size: var(--text-xs);
     line-height: 1;
     vertical-align: -3px;
 }
@@ -63,7 +63,7 @@
     margin-top: 9px;
     padding: 6px;
     border: 1px solid #EAEAEA;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: #F8F9FB;
     flex: none;
 }
@@ -77,14 +77,14 @@
     text-align: center;
 }
 .sf-at strong {
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 650;
     color: #2C302E;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.sf-at em { font-style: normal; font-size: 11px; color: #9297A3; }
+.sf-at em { font-style: normal; font-size: var(--text-2xs); color: #9297A3; }
 
 .sf-step {
     flex: none;
@@ -93,10 +93,10 @@
     display: grid;
     place-items: center;
     border: 1px solid #EAEAEA;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: #FFFFFF;
     color: #6C757D;
-    font-size: 19px;
+    font-size: var(--text-xl);
     line-height: 1;
     cursor: pointer;
 }
@@ -123,7 +123,7 @@
 
 .sf-group-head {
     padding: 0 4px 5px;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
@@ -143,11 +143,11 @@
     gap: 9px;
     padding: 8px 9px;
     border: 0;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: none;
     color: #2C302E;
     font: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     text-align: left;
     cursor: pointer;
 }
@@ -167,7 +167,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.sf-row-meta { flex: none; font-size: 11.5px; font-weight: 400; color: #9297A3; }
+.sf-row-meta { flex: none; font-size: var(--text-xs); font-weight: 400; color: #9297A3; }
 
 /* --- Dark ---------------------------------------------------------------- */
 html[data-theme="dark"] .sf-input {

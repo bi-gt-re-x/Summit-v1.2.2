@@ -172,7 +172,7 @@ html[data-theme="dark"] [data-family] {
    the edge says it too now, and the dot stays because a 5px rule at the far
    left of a block is a poor thing to have to find. */
 .cal-dot {
-    flex: none; width: 7px; height: 7px; border-radius: 999px;
+    flex: none; width: 7px; height: 7px; border-radius: var(--radius-full);
     background: var(--ev-accent);
     margin-right: 5px;
 }
@@ -185,7 +185,7 @@ html[data-theme="dark"] [data-family] {
 .cal-dot.is-done {
     width: 9px; height: 9px; border-radius: 0; background: none;
     display: inline-flex; align-items: center; justify-content: center;
-    color: var(--ev-accent); font-size: 11px; font-weight: 800; line-height: 1;
+    color: var(--ev-accent); font-size: var(--text-2xs); font-weight: 800; line-height: 1;
 }
 
 /* ---- A task's left side --------------------------------------------------

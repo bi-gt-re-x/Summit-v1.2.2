@@ -70,7 +70,7 @@ body:has(.dash) .app-main {
 
 .dash-hello {
     margin: 0;
-    font-size: 1.75rem;
+    font-size: var(--text-3xl);
     font-weight: 800;
     line-height: 1.2;
     color: #2C302E;
@@ -78,7 +78,7 @@ body:has(.dash) .app-main {
 
 .dash-sub {
     margin: 6px 0 0;
-    font-size: 0.95rem;
+    font-size: var(--text-lg);
     color: #6C757D;
 }
 
@@ -97,7 +97,7 @@ body:has(.dash) .app-main {
     align-items: center;
     gap: 8px;
     margin: 0;
-    font-size: 0.9rem;
+    font-size: var(--text-md);
     font-weight: 500;
     color: #6C757D;
     white-space: nowrap;
@@ -124,7 +124,7 @@ body:has(.dash) .app-main {
     align-items: center;
     gap: 9px;
     margin: 0 0 14px;
-    font-size: 0.95rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: #2C302E;
 }
@@ -137,7 +137,7 @@ body:has(.dash) .app-main {
     justify-content: center;
     width: 28px;
     height: 28px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     flex: none;
 }
 .dash-ico-focus  { background: #E7F5EE; color: #22A06B; }
@@ -150,25 +150,25 @@ body:has(.dash) .app-main {
 /* ---- The big figure the Focus and Streak cards lead with ---------------- */
 .dash-big {
     margin: 2px 0 0;
-    font-size: 2.2rem;
+    font-size: var(--text-3xl);
     font-weight: 800;
     line-height: 1.05;
     color: #2C302E;
 }
 .dash-big-unit {
-    font-size: 1rem;
+    font-size: var(--text-lg);
     font-weight: 600;
     color: #6C757D;
 }
 .dash-stat-sub {
     margin: 4px 0 0;
-    font-size: 0.9rem;
+    font-size: var(--text-md);
     color: #6C757D;
 }
 .dash-stat-foot {
     margin: auto 0 8px;   /* auto-top pins it to the card's foot */
     padding-top: 14px;
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
     color: #6C757D;
 }
 
@@ -213,13 +213,13 @@ body:has(.dash) .app-main {
     pointer-events: none;
 }
 .dash-ring-pct {
-    font-size: 1.45rem;
+    font-size: var(--text-2xl);
     font-weight: 800;
     color: #2C302E;
     line-height: 1;
 }
 .dash-ring-label {
-    font-size: 0.66rem;
+    font-size: var(--text-2xs);
     color: #6C757D;
     text-align: center;
 }
@@ -244,14 +244,14 @@ body:has(.dash) .app-main {
 .dash-figure dd {
     order: -1;
     margin: 0;
-    font-size: 1.15rem;
+    font-size: var(--text-xl);
     font-weight: 800;
     color: #2C302E;
     min-width: 2.4ch;
     text-align: right;
 }
 .dash-figure dt {
-    font-size: 0.85rem;
+    font-size: var(--text-md);
     color: #6C757D;
     white-space: nowrap;
 }
@@ -265,12 +265,12 @@ body:has(.dash) .app-main {
     margin-bottom: 12px;
 }
 .dash-xp-level {
-    font-size: 1.35rem;
+    font-size: var(--text-xl);
     font-weight: 800;
     color: #2C302E;
 }
 .dash-xp-count {
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     color: #6C757D;
     white-space: nowrap;
 }
@@ -280,7 +280,7 @@ body:has(.dash) .app-main {
     gap: 7px;
     margin: auto 0 0;
     padding-top: 16px;
-    font-size: 0.85rem;
+    font-size: var(--text-md);
     color: #6C757D;
 }
 .dash-xp-today strong { color: #22A06B; font-weight: 700; }
@@ -291,7 +291,7 @@ body:has(.dash) .app-main {
    on it, one at each edge. */
 .dash-xp-goal {
     margin-left: auto;
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     color: #98a1ae;
     white-space: nowrap;
 }
@@ -299,13 +299,13 @@ body:has(.dash) .app-main {
 /* ---- The bars ----------------------------------------------------------- */
 .dash-bar {
     height: 8px;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     background: #E9ECEF;
     overflow: hidden;
 }
 .dash-bar-fill {
     height: 100%;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     background: #A38A70;
     transition: width 0.4s ease;
 }
@@ -418,7 +418,7 @@ body:has(.dash) .app-main {
 .dash-main .focus-goal .focus-step-btn {
     width: 52px;
     height: 52px;
-    font-size: 26px;
+    font-size: var(--text-2xl);
 }
 .dash-main .focus-goal .focus-amount #focusHours { font-size: 3rem; }
 
@@ -460,7 +460,7 @@ body:has(.dash) .app-main {
     align-items: center;
     gap: 9px;
     margin: 0;
-    font-size: 1.05rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: #2C302E;
 }
@@ -471,7 +471,7 @@ body:has(.dash) .app-main {
     margin-top: auto;
     padding-top: 14px;
     text-align: center;
-    font-size: 0.85rem;
+    font-size: var(--text-md);
     font-weight: 500;
     color: #6C757D;
     text-decoration: none;
@@ -486,7 +486,7 @@ body:has(.dash) .app-main {
 .dash-panel-lede {
     margin: 3px 0 0;
     text-align: center;
-    font-size: 0.74rem;
+    font-size: var(--text-xs);
     line-height: 1.45;
     color: #98A1AE;
 }
@@ -506,15 +506,15 @@ body:has(.dash) .app-main {
     margin: 0 auto;
     padding: 4px;
     background: #F4F5F7;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
 }
 .dash-tab {
     border: none;
     background: none;
     padding: 6px 14px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     font: inherit;
-    font-size: 0.85rem;
+    font-size: var(--text-md);
     font-weight: 500;
     color: #6C757D;
     cursor: pointer;
@@ -533,9 +533,9 @@ body:has(.dash) .app-main {
     background: #24282C;
     color: #FFFFFF;
     padding: 9px 16px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     font: inherit;
-    font-size: 0.85rem;
+    font-size: var(--text-md);
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -558,7 +558,7 @@ body:has(.dash) .app-main {
 
 .dash-task-head {
     margin: 0 0 8px;
-    font-size: 0.7rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -576,7 +576,7 @@ body:has(.dash) .app-main {
 
 .dash-task-empty {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: var(--text-md);
     font-style: italic;
     color: #9AA0A6;
 }
@@ -588,7 +588,7 @@ body:has(.dash) .app-main {
     padding: 11px 14px;
     background: #FBFAF9;
     border: 1.5px solid #EFEDE9;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     transition: background-color 0.2s ease, border-color 0.2s ease,
                 opacity 0.35s ease, transform 0.35s ease,
                 margin 0.35s ease, padding 0.35s ease, max-height 0.35s ease;
@@ -602,11 +602,11 @@ body:has(.dash) .app-main {
     width: 20px;
     height: 20px;
     border: 2px solid #C9BCAE;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: var(--text-sm);
     line-height: 1;
     color: #FFFFFF;
     cursor: pointer;
@@ -626,7 +626,7 @@ body:has(.dash) .app-main {
     flex: 1 1 auto;
 }
 .dash-task-name {
-    font-size: 0.95rem;
+    font-size: var(--text-lg);
     font-weight: 500;
     color: #2C302E;
     overflow: hidden;
@@ -639,7 +639,7 @@ body:has(.dash) .app-main {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.76rem;
+    font-size: var(--text-xs);
     font-weight: 500;
 }
 .dash-task-dot {
@@ -668,9 +668,9 @@ body:has(.dash) .app-main {
     flex: 0 1 auto;
     min-width: 0;
     padding: 3px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: #F2EEE8;
-    font-size: 0.74rem;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: #7A6A55;
 }
@@ -684,7 +684,7 @@ body:has(.dash) .app-main {
 
 .dash-task-when {
     flex: none;
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
     color: #6C757D;
     white-space: nowrap;
 }
@@ -738,7 +738,7 @@ body:has(.dash) .app-main {
 }
 
 .dash-insight { min-height: 0; }
-.dash-insight-title { margin-bottom: 16px; font-size: 1rem; }
+.dash-insight-title { margin-bottom: 16px; font-size: var(--text-lg); }
 
 /* ---- Weekly Overview ---------------------------------------------------- */
 .dash-week-grid {
@@ -757,12 +757,12 @@ body:has(.dash) .app-main {
 }
 .dash-week-cell dd {
     margin: 0 0 4px;
-    font-size: 1.15rem;
+    font-size: var(--text-xl);
     font-weight: 800;
     color: #2C302E;
 }
 .dash-week-cell dt {
-    font-size: 0.7rem;
+    font-size: var(--text-2xs);
     color: #6C757D;
     line-height: 1.25;
 }
@@ -772,14 +772,14 @@ body:has(.dash) .app-main {
 .dash-week-vs {
     display: block;
     margin-top: 4px;
-    font-size: 0.7rem;
+    font-size: var(--text-2xs);
     font-weight: 700;
     line-height: 1.2;
 }
 .dash-week-vs-note {
     margin: 14px 0 0;
     text-align: center;
-    font-size: 0.7rem;
+    font-size: var(--text-2xs);
     color: #9AA0A6;
 }
 .dash-week-vs.is-up   { color: #1F8A54; }
@@ -806,7 +806,7 @@ body:has(.dash) .app-main {
     align-items: center;
     gap: 9px;
     min-width: 0;
-    font-size: 0.88rem;
+    font-size: var(--text-md);
     color: #6C757D;
 }
 .dash-activity-ico { flex: none; color: #A38A70; }
@@ -822,11 +822,11 @@ body:has(.dash) .app-main {
     flex: none;
     color: #22A06B;
     font-weight: 700;
-    font-size: 0.82rem;
+    font-size: var(--text-sm);
 }
 .dash-activity-at {
     flex: none;
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     min-width: 5.5ch;
     text-align: right;
 }
@@ -969,7 +969,7 @@ html.focus-mode .dash-main .dash-tasks { order: 1; min-height: 0; }
 @media (max-width: 768px) {
     .dash { padding: 0 16px; margin-top: 18px; gap: 16px; }
     .dash-stats { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-    .dash-hello { font-size: 1.4rem; }
+    .dash-hello { font-size: var(--text-2xl); }
     .dash-panel-head { flex-wrap: wrap; }
     .dash-tabs { margin: 0; order: 1; width: 100%; justify-content: center; }
     .dash-add { margin-left: auto; }
@@ -1085,9 +1085,9 @@ html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
     gap: 16px;
     padding: 14px 22px;
     border: 1px solid #EAEAEA;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: #FFFFFF;
-    box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 6px 18px rgba(16, 24, 40, .04);
+    box-shadow: var(--shadow-md);
 }
 /* A day with nothing left is the one state here that is good news. */
 .dash-next.is-clear { border-color: #CDE9D8; background: #F4FBF7; }
@@ -1096,7 +1096,7 @@ html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
     flex: none;
     width: 38px;
     height: 38px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1116,14 +1116,14 @@ html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
 
 .dash-next-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .dash-next-label {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
     color: #9297A3;
 }
 .dash-next-name {
-    font-size: 1.05rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: #2C302E;
     overflow: hidden;
@@ -1138,17 +1138,17 @@ html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
 .dash-next-fact { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
 .dash-next-fact em {
     font-style: normal;
-    font-size: 0.95rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: #2C302E;
     white-space: nowrap;
 }
-.dash-next-fact small { font-size: 11px; color: #9297A3; white-space: nowrap; }
+.dash-next-fact small { font-size: var(--text-2xs); color: #9297A3; white-space: nowrap; }
 
 /* ---- What it is for ------------------------------------------------------ */
 .dash-goals-all {
     margin-left: auto;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: #6d5ae0;
     text-decoration: none;
@@ -1165,23 +1165,23 @@ html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
 }
 .dash-goal-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .dash-goal-name {
-    font-size: 0.9rem;
+    font-size: var(--text-md);
     font-weight: 650;
     color: #2C302E;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-.dash-goal-pct { flex: none; font-size: 0.85rem; font-weight: 700; color: #6C757D; }
+.dash-goal-pct { flex: none; font-size: var(--text-md); font-weight: 700; color: #6C757D; }
 .dash-goal-track {
     display: block;
     height: 7px;
     margin: 7px 0 5px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: #F0F2F5;
     overflow: hidden;
 }
-.dash-goal-fill { display: block; height: 100%; border-radius: 999px; background: #6d5ae0; }
+.dash-goal-fill { display: block; height: 100%; border-radius: var(--radius-full); background: #6d5ae0; }
 /* Behind its own pace. The bar is the only place on this card where a colour
    is a judgement, and it is the reason the goal was picked for the slot. */
 .dash-goal-fill.is-late { background: #E69500; }
@@ -1190,12 +1190,12 @@ html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
     align-items: baseline;
     justify-content: space-between;
     gap: 10px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: #6C757D;
 }
 .dash-goal-late { flex: none; font-weight: 650; color: #C0392B; }
 
-.dash-empty { margin: 0; font-size: 0.85rem; line-height: 1.6; color: #6C757D; }
+.dash-empty { margin: 0; font-size: var(--text-md); line-height: 1.6; color: #6C757D; }
 .dash-empty a { color: #6d5ae0; }
 
 /* ---- Dark ---------------------------------------------------------------- */
@@ -1232,7 +1232,7 @@ html[data-theme="dark"] .dash-empty a { color: #9d8bff; }
 .dash-trend {
     display: block;
     margin: -4px 0 10px;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 700;
     line-height: 1.3;
 }
@@ -1267,14 +1267,14 @@ html[data-theme="dark"] .dash-week-vs.is-down { color: #f85149; }
     gap: 14px;
     padding: 16px 22px;
     border: 1px solid #EAEAEA;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     background: #FAFBFC;
 }
 .dash-move-ico {
     flex: none;
     width: 34px;
     height: 34px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1291,18 +1291,18 @@ html[data-theme="dark"] .dash-week-vs.is-down { color: #f85149; }
 }
 .dash-move-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .dash-move-label {
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
     color: #9297A3;
 }
-.dash-move-title { font-size: 0.95rem; font-weight: 700; color: #2C302E; }
-.dash-move-why { font-size: 0.82rem; line-height: 1.5; color: #6C757D; }
+.dash-move-title { font-size: var(--text-lg); font-weight: 700; color: #2C302E; }
+.dash-move-why { font-size: var(--text-sm); line-height: 1.5; color: #6C757D; }
 .dash-move-all {
     flex: none;
     align-self: center;
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: #6d5ae0;
     text-decoration: none;

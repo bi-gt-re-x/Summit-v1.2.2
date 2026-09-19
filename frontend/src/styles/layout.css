@@ -47,7 +47,7 @@
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-    background: #c3c9d4; border-radius: 8px;
+    background: #c3c9d4; border-radius: var(--radius-md);
     border: 2px solid transparent; background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover { background: #aab1c0; background-clip: padding-box; }

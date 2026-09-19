@@ -66,7 +66,7 @@
     display: block;
     color: var(--lp-accent);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: var(--text-lg);
     letter-spacing: -0.01em;
     margin-bottom: 2px;
 }
@@ -127,7 +127,7 @@
     grid-template-columns: 74px 1fr;
     background: var(--lp-surface);
     border: 1px solid var(--lp-border);
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--lp-shadow);
 }
@@ -137,22 +137,22 @@
 @keyframes ddFloat {
     0%, 100% {
         transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-        box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+        box-shadow: var(--shadow-lg);
     }
     50% {
         transform: translate3d(0, -6px, 0) rotate(0.22deg) scale(1.004);
-        box-shadow: 0 24px 50px rgba(16, 24, 40, 0.14);
+        box-shadow: var(--shadow-lg);
     }
 }
 html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 @keyframes ddFloatDark {
     0%, 100% {
         transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+        box-shadow: var(--shadow-lg);
     }
     50% {
         transform: translate3d(0, -6px, 0) rotate(0.22deg) scale(1.004);
-        box-shadow: 0 28px 56px rgba(0, 0, 0, 0.6);
+        box-shadow: var(--shadow-lg);
     }
 }
 
@@ -179,7 +179,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     height: 38px;
     display: grid;
     place-items: center;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     color: var(--lp-muted);
     opacity: 1;
     transform: translate3d(0, 0, 0);
@@ -199,14 +199,14 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     gap: 12px;
     margin-bottom: 18px;
 }
-.dd-top b { display: block; color: var(--lp-heading); font-size: 1.05rem; }
-.dd-top small { display: block; color: var(--lp-muted); font-size: 0.82rem; margin-top: 2px; }
+.dd-top b { display: block; color: var(--lp-heading); font-size: var(--text-lg); }
+.dd-top small { display: block; color: var(--lp-muted); font-size: var(--text-sm); margin-top: 2px; }
 .dd-top-pill {
-    font-size: 0.76rem;
+    font-size: var(--text-xs);
     font-weight: 600;
     color: var(--lp-muted);
     border: 1px solid var(--lp-border);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     padding: 5px 12px;
 }
 
@@ -218,7 +218,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 .dd-card {
     background: var(--lp-surface-2);
     border: 1px solid var(--lp-border);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     padding: 14px 16px 16px;
     min-height: 96px;
     opacity: 1;
@@ -231,7 +231,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 .dd-label {
     display: block;
     color: var(--lp-muted);
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     font-weight: 600;
     letter-spacing: 0.01em;
     margin-bottom: 6px;
@@ -239,7 +239,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 .dd-num {
     display: block;
     color: var(--lp-heading);
-    font-size: 1.9rem;
+    font-size: var(--text-3xl);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -252,7 +252,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 .dd-bar {
     margin-top: 12px;
     height: 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--lp-border);
     overflow: hidden;
 }
@@ -274,7 +274,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     display: inline-block;
     perspective: 420px;
     color: var(--lp-heading);
-    font-size: 1.9rem;
+    font-size: var(--text-3xl);
     font-weight: 800;
     line-height: 1.1;
 }
@@ -292,7 +292,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 .dd-grade {
     display: inline-block;
     color: var(--lp-accent-2);
-    font-size: 1.9rem;
+    font-size: var(--text-3xl);
     font-weight: 800;
     line-height: 1.1;
 }
@@ -307,7 +307,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     .dd-frame { grid-template-columns: 58px 1fr; }
     .dd-cards { grid-template-columns: repeat(2, 1fr); }
     .dd-card-wide { grid-column: span 2; }
-    .dd-num, .dd-flip, .dd-grade { font-size: 1.5rem; }
+    .dd-num, .dd-flip, .dd-grade { font-size: var(--text-2xl); }
 }
 
 /* ============================================================
@@ -352,10 +352,10 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     z-index: 8;
     pointer-events: none;
     padding: 4px 10px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--lp-accent);
     color: #fff;
-    font-size: 0.78rem;
+    font-size: var(--text-xs);
     font-weight: 800;
     letter-spacing: 0.01em;
     white-space: nowrap;
@@ -374,14 +374,14 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     gap: 16px;
     margin-bottom: 14px;
 }
-.td-title { color: var(--lp-heading); font-weight: 700; font-size: 1rem; }
+.td-title { color: var(--lp-heading); font-weight: 700; font-size: var(--text-lg); }
 
 .td-xp { display: flex; align-items: center; gap: 10px; }
 .td-xp-bar {
     display: block;
     width: 132px;
     height: 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--lp-border);
     overflow: hidden;
 }
@@ -400,7 +400,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     font-weight: 800;
     font-variant-numeric: tabular-nums;
 }
-.td-xp small { color: var(--lp-muted); font-size: 0.75rem; font-weight: 600; }
+.td-xp small { color: var(--lp-muted); font-size: var(--text-xs); font-weight: 600; }
 
 .td-list { list-style: none; margin: 0; padding: 0; }
 
@@ -411,7 +411,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     padding: 13px 14px;
     margin-bottom: 8px;
     border: 1px solid var(--lp-border);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--lp-surface-2);
     opacity: 1;
     transform: translate3d(0, 0, 0);
@@ -443,7 +443,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
     flex: none;
     width: 22px;
     height: 22px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     border: 2px solid var(--lp-border);
     background: transparent;
     color: #fff;
@@ -466,10 +466,10 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 .td-tag {
     flex: none;
     color: var(--lp-muted);
-    font-size: 0.76rem;
+    font-size: var(--text-xs);
     font-weight: 700;
     border: 1px solid var(--lp-border);
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     padding: 3px 9px;
 }
 
@@ -507,7 +507,7 @@ html[data-theme="dark"] .dd-frame.dd-float { animation-name: ddFloatDark; }
 .lp-ev.is-dragging {
     z-index: 5;
     transform: translate3d(var(--cal-dx, 0), var(--cal-dy, 0), 0) rotate(2.4deg) scale(1.06);
-    box-shadow: 0 18px 34px rgba(16, 24, 40, 0.28);
+    box-shadow: var(--shadow-lg);
     transition: transform 620ms var(--hm-ease-soft), box-shadow 240ms var(--hm-ease);
 }
 /* The landing: a short overshoot so it settles rather than stops dead. */
@@ -561,10 +561,10 @@ html[data-theme="dark"] .lp-cal-body.is-target { background: rgba(124, 131, 255,
     z-index: 5;
     pointer-events: none;
     padding: 5px 10px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: var(--lp-heading);
     color: var(--lp-surface);
-    font-size: 0.74rem;
+    font-size: var(--text-xs);
     font-weight: 700;
     white-space: nowrap;
     opacity: 0;
@@ -755,7 +755,7 @@ html[data-theme="dark"] .lp-cal-body.is-target { background: rgba(124, 131, 255,
 }
 .lp-feature:hover {
     transform: translate3d(0, -10px, 0);
-    box-shadow: 0 22px 46px rgba(16, 24, 40, 0.16);
+    box-shadow: var(--shadow-lg);
     background: var(--lp-surface);
     border-color: var(--lp-accent);
 }
@@ -764,7 +764,7 @@ html[data-theme="dark"] .lp-cal-body.is-target { background: rgba(124, 131, 255,
 /* The link's arrow moves on the link's own hover too, not only the card's, so
    a reader who goes straight for the link still gets the answer. */
 .lp-link:hover .lp-arrow { transform: translate3d(6px, 0, 0); }
-html[data-theme="dark"] .lp-feature:hover { box-shadow: 0 22px 46px rgba(0, 0, 0, 0.55); }
+html[data-theme="dark"] .lp-feature:hover { box-shadow: var(--shadow-lg); }
 
 /* ============================================================
    Philosophy — the icons draw themselves

@@ -32,13 +32,13 @@
     --peak-b: #4bc4e6;
     --peak-c: #8257e5;
 
-    --peak-surface: #ffffff;
+    --peak-surface: var(--color-surface);
     /* What lies on a summit. The card's own colour on white; a pale blue in
        the dark, where the card is darker than the rock in front of it — see
        the note on `cap` in components/Range.tsx. */
     --peak-snow: #ffffff;
-    --peak-line: #e7eaf2;
-    --peak-shadow: 0 1px 2px rgba(20, 28, 46, .04), 0 10px 30px rgba(20, 28, 46, .06);
+    --peak-line: var(--color-line);
+    --peak-shadow: var(--shadow-md);
 
     position: relative;
     isolation: isolate;
@@ -55,7 +55,7 @@
     padding: 26px 28px;
 
     border: 1px solid var(--peak-line);
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     background-color: var(--peak-surface);
     background-image:
         radial-gradient(88% 130% at 0% 0%,
@@ -72,10 +72,7 @@
 .peak-hero * { box-sizing: border-box; }
 
 html[data-theme="dark"] .peak-hero {
-    --peak-surface: #161d2c;
     --peak-snow: #ccd8ef;
-    --peak-line: #28324a;
-    --peak-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .26);
 }
 
 /* ---------- The scenery ----------------------------------------------------
@@ -223,10 +220,10 @@ html[data-theme="dark"] .peak-hero {
     gap: 7px;
     align-self: flex-start;
     padding: 4px 11px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--peak-a) 15%, transparent);
     color: var(--peak-a);
-    font-size: .64rem;
+    font-size: var(--text-2xs);
     font-weight: 800;
     letter-spacing: .14em;
     text-transform: uppercase;
@@ -280,6 +277,6 @@ html[data-theme="dark"] .peak-tone-slate  { --peak-a: #94a3b8; --peak-b: #c2cede
     .peak-range { width: min(72%, 460px); height: 76%; }
 }
 @media (max-width: 560px) {
-    .peak-hero { min-height: 126px; padding: 18px 16px; border-radius: 16px; }
+    .peak-hero { min-height: 126px; padding: 18px 16px; border-radius: var(--radius-lg); }
     .peak-range { width: 88%; height: 66%; opacity: .9; }
 }

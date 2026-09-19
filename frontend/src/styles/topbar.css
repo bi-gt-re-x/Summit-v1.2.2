@@ -47,7 +47,7 @@
     height: 38px;
     padding: 0;
     border: none;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: none;
     color: #6C757D;
     cursor: pointer;
@@ -65,10 +65,10 @@
     height: 16px;
     padding: 0 4px;
     box-sizing: border-box;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: #C0392B;
     color: #FFFFFF;
-    font-size: 10.5px;
+    font-size: var(--text-2xs);
     font-weight: 700;
     line-height: 16px;
     text-align: center;
@@ -92,11 +92,11 @@
     margin-left: 6px;
     padding: 4px 10px 4px 4px;
     border: none;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: none;
     color: #2C302E;
     font-family: inherit;
-    font-size: 14px;
+    font-size: var(--text-md);
     font-weight: 600;
     cursor: pointer;
 }
@@ -124,8 +124,8 @@
     box-sizing: border-box;
     background: #FFFFFF;
     border: 1px solid #EAEAEA;
-    border-radius: 14px;
-    box-shadow: 0 12px 32px rgba(16, 24, 40, .12);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     padding: 12px;
 }
 
@@ -140,17 +140,17 @@
     box-sizing: border-box;
     padding: 9px 12px;
     border: 1px solid #EAEAEA;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: #F8F9FB;
     color: #2C302E;
     font-family: inherit;
-    font-size: 14px;
+    font-size: var(--text-md);
 }
 .topbar-search-input:focus { outline: none; border-color: #A38A70; background: #FFFFFF; }
 
 .topbar-empty {
     margin: 10px 2px 2px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.55;
     color: #6C757D;
 }
@@ -168,10 +168,10 @@
     align-items: center;
     gap: 9px;
     padding: 8px 9px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     color: #2C302E;
     text-decoration: none;
-    font-size: 13.5px;
+    font-size: var(--text-md);
 }
 .topbar-results a:hover { background: #F4F6F8; }
 
@@ -179,7 +179,7 @@
 .topbar-dot.is-open { background: #A38A70; }
 .topbar-dot.is-done { background: #27AE60; }
 .topbar-result-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.topbar-result-meta { flex: none; font-size: 11.5px; color: #9297A3; }
+.topbar-result-meta { flex: none; font-size: var(--text-xs); color: #9297A3; }
 
 /* `.topbar-alerts` above is now only the box: the bell's contents are drawn by
    components/Notifications/Panel.tsx and dressed by styles/notifications.css,
@@ -195,8 +195,8 @@
     border-bottom: 1px solid #F0F2F5;
     margin-bottom: 6px;
 }
-.topbar-account-head strong { font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; }
-.topbar-account-head span { font-size: 11.5px; color: #6C757D; }
+.topbar-account-head strong { font-size: var(--text-md); overflow: hidden; text-overflow: ellipsis; }
+.topbar-account-head span { font-size: var(--text-xs); color: #6C757D; }
 
 /* --- The avatar picker, inherited from the rail -------------------------- */
 /* All fifty in one line. overflow-x carries them; `flex: none` on the options
@@ -218,7 +218,7 @@
 }
 .topbar-avatar-row::-webkit-scrollbar { height: 7px; }
 .topbar-avatar-row::-webkit-scrollbar-track { background: transparent; }
-.topbar-avatar-row::-webkit-scrollbar-thumb { background: #C9CDD4; border-radius: 4px; }
+.topbar-avatar-row::-webkit-scrollbar-thumb { background: #C9CDD4; border-radius: var(--radius-sm); }
 
 .topbar-avatar-option {
     flex: none;
@@ -245,11 +245,11 @@
     box-sizing: border-box;
     padding: 8px 9px;
     border: none;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: none;
     color: #2C302E;
     font-family: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     text-align: left;
     text-decoration: none;
@@ -257,7 +257,7 @@
 }
 .topbar-account-menu a:hover,
 .topbar-signout:hover { background: #F4F6F8; }
-.topbar-signout { color: #C0392B; margin-top: 4px; border-top: 1px solid #F0F2F5; border-radius: 0 0 9px 9px; }
+.topbar-signout { color: #C0392B; margin-top: 4px; border-top: 1px solid #F0F2F5; border-radius: 0 0 var(--radius-md) var(--radius-md); }
 
 /* --- Dark ---------------------------------------------------------------- */
 html[data-theme="dark"] .topbar {
@@ -276,7 +276,7 @@ html[data-theme="dark"] .topbar-caret { color: #6E7681; }
 html[data-theme="dark"] .topbar-panel {
     background: #161B22;
     border-color: #30363D;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, .5);
+    box-shadow: var(--shadow-lg);
 }
 html[data-theme="dark"] .topbar-search-input {
     background: #0D1117;

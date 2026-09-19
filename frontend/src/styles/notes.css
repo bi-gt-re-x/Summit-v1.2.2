@@ -38,17 +38,17 @@ body:has(.nt-page) .app-main {
        the app's own surface. The goals page settled this the same way; the
        panels below carry `--nt-card`, which is what makes them panels. */
     --nt-bg: transparent;
-    --nt-card: #ffffff;
-    --nt-card-2: #f7f8fb;
+    --nt-card: var(--color-surface);
+    --nt-card-2: var(--color-surface-2);
     --nt-raised: #ffffff;
-    --nt-line: #e6e9ef;
-    --nt-line-soft: #eef0f5;
+    --nt-line: var(--color-line);
+    --nt-line-soft: var(--color-line-soft);
 
-    --nt-text: #1f2733;
-    --nt-muted: #6b7684;
-    --nt-faint: #98a1ae;
+    --nt-text: var(--color-ink);
+    --nt-muted: var(--color-ink-muted);
+    --nt-faint: var(--color-ink-faint);
 
-    --nt-accent: #6c5ce7;
+    --nt-accent: var(--color-accent);
     --nt-accent-2: #8b7cf8;
     --nt-on-accent: #ffffff;
     --nt-good: #1f8a54;
@@ -71,39 +71,39 @@ body:has(.nt-page) .app-main {
     --nt-ink-pink: #c02a70;
     --nt-ink-grey: #6b7684;
 
-    --nt-radius: 16px;
+    --nt-radius: var(--radius-lg);
     --nt-gap: 16px;
-    --nt-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .05);
+    --nt-shadow: var(--shadow-md);
 
     background: var(--nt-bg);
     color: var(--nt-text);
     min-height: calc(100vh - var(--topnav-h, 0px));
     padding: 18px 0 22px;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
 }
 
 /* The navy the design is drawn against. Panels are lifted off the page rather
    than outlined — at this contrast a border does the separating on its own and
    a heavy one makes the grid look like a spreadsheet. */
 html[data-theme="dark"] .nt-page {
-    --nt-card: #1c2436;
-    --nt-card-2: #222b40;
+    --nt-card: var(--color-surface);
+    --nt-card-2: var(--color-surface-2);
     --nt-raised: #27314a;
-    --nt-line: #2b3550;
-    --nt-line-soft: #232c42;
+    --nt-line: var(--color-line);
+    --nt-line-soft: var(--color-line-soft);
 
     --nt-text: #e7ecf6;
-    --nt-muted: #8f9bb3;
-    --nt-faint: #6d7a94;
+    --nt-muted: var(--color-ink-muted);
+    --nt-faint: var(--color-ink-faint);
 
-    --nt-accent: #6d5ce7;
+    --nt-accent: var(--color-accent);
     --nt-accent-2: #a78bfa;
     --nt-on-accent: #ffffff;
     --nt-good: #46c483;
     --nt-warn: #e0b23c;
     --nt-bad: #f0736d;
 
-    --nt-shadow: 0 1px 2px rgba(0, 0, 0, .28), 0 10px 30px rgba(0, 0, 0, .22);
+    --nt-shadow: var(--shadow-md);
 
     /* The same nine, lifted. A note that says `{red}` says it in both themes,
        and #c0392b on the dark card is a colour you have to lean in to read. */
@@ -219,13 +219,13 @@ html[data-theme="dark"] .nt-page {
 }
 .nt-head-titles h1 {
     margin: 0 0 4px;
-    font-size: 30px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.025em;
 }
 .nt-head-titles p {
     margin: 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     line-height: 1.5;
     color: var(--nt-muted);
 }
@@ -254,11 +254,11 @@ html[data-theme="dark"] .nt-page {
     width: 100%;
     padding: 11px 52px 11px 40px;
     border: 1px solid var(--nt-line);
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--nt-card);
     color: var(--nt-text);
     font: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     outline: none;
     transition: border-color .15s ease, box-shadow .15s ease;
 }
@@ -274,11 +274,11 @@ html[data-theme="dark"] .nt-page {
     right: 10px;
     padding: 3px 7px;
     border: 1px solid var(--nt-line);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: var(--nt-card-2);
     color: var(--nt-faint);
     font-family: inherit;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     pointer-events: none;
 }
 
@@ -289,7 +289,7 @@ html[data-theme="dark"] .nt-page {
 .nt-new-group {
     display: flex;
     align-items: stretch;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     box-shadow: 0 1px 2px rgba(16, 24, 40, .12), 0 6px 16px color-mix(in srgb, var(--nt-accent) 32%, transparent);
     transition: box-shadow .16s ease, transform .12s ease;
 }
@@ -308,7 +308,7 @@ html[data-theme="dark"] .nt-page {
     background: linear-gradient(180deg, var(--nt-accent-2), var(--nt-accent));
     color: var(--nt-on-accent);
     font: inherit;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     cursor: pointer;
     transition: filter .15s ease, transform .12s ease;
@@ -318,14 +318,14 @@ html[data-theme="dark"] .nt-page {
     align-items: center;
     gap: 8px;
     padding: 11px 17px;
-    border-radius: 11px 0 0 11px;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
 .nt-new svg { width: 16px; height: 16px; }
 .nt-new-more {
     display: grid;
     place-items: center;
     width: 34px;
-    border-radius: 0 11px 11px 0;
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
     border-left: 1px solid rgba(255, 255, 255, .22);
 }
 .nt-new-more svg { width: 15px; height: 15px; }
@@ -405,7 +405,7 @@ html[data-theme="dark"] .nt-page {
 .nt-scope {
     flex: 1;
     min-width: 0;
-    font-size: 14px;
+    font-size: var(--text-md);
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -419,7 +419,7 @@ html[data-theme="dark"] .nt-page {
     width: 30px; height: 30px;
     padding: 0;
     border: 1px solid transparent;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--nt-muted);
     cursor: pointer;
@@ -453,7 +453,7 @@ html[data-theme="dark"] .nt-page {
     background: transparent;
     color: var(--nt-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
 }
@@ -478,7 +478,7 @@ html[data-theme="dark"] .nt-page {
     gap: 8px;
     padding: 12px 13px;
     border: 1px solid var(--nt-line-soft);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--nt-card-2);
     color: inherit;
     font: inherit;
@@ -500,7 +500,7 @@ html[data-theme="dark"] .nt-page {
 .nt-item-title {
     flex: 1;
     min-width: 0;
-    font-size: 13.5px;
+    font-size: var(--text-md);
     font-weight: 600;
     line-height: 1.35;
     overflow: hidden;
@@ -514,15 +514,15 @@ html[data-theme="dark"] .nt-page {
 .nt-chip {
     flex: none;
     padding: 2px 8px;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: color-mix(in srgb, var(--nt-accent-2) 18%, transparent);
     color: var(--nt-accent-2);
-    font-size: 11px;
+    font-size: var(--text-2xs);
     font-weight: 600;
 }
 .nt-item-when {
     min-width: 0;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     color: var(--nt-faint);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -531,7 +531,7 @@ html[data-theme="dark"] .nt-page {
 
 .nt-list-empty {
     margin: 18px 6px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--nt-muted);
 }
@@ -540,18 +540,18 @@ html[data-theme="dark"] .nt-page {
 .nt-item-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
 /* Smaller here than in the rail: the index is scanned, and a pill sized for
    reading crowds out the title it is meant to be describing. */
-.nt-item-tags .nt-tag { padding: 2px 7px; font-size: 10.5px; border-radius: 6px; }
-.nt-item-more { font-size: 10.5px; color: var(--nt-faint); font-weight: 600; }
+.nt-item-tags .nt-tag { padding: 2px 7px; font-size: var(--text-2xs); border-radius: var(--radius-sm); }
+.nt-item-more { font-size: var(--text-2xs); color: var(--nt-faint); font-weight: 600; }
 
 /* A menu row with a hint under it, for the template list. */
 .nt-menu.is-wide { min-width: 232px; }
 .nt-menu.is-wide button { display: flex; flex-direction: column; gap: 1px; padding: 8px 11px; }
-.nt-menu.is-wide button em { font-style: normal; font-size: 11px; color: var(--nt-faint); }
+.nt-menu.is-wide button em { font-style: normal; font-size: var(--text-2xs); color: var(--nt-faint); }
 /* The filter menu: a label, and how many notes carry it. */
 .nt-menu button { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .nt-menu button em {
     font-style: normal;
-    font-size: 11px;
+    font-size: var(--text-2xs);
     color: var(--nt-faint);
     font-variant-numeric: tabular-nums;
 }
@@ -574,7 +574,7 @@ html[data-theme="dark"] .nt-page {
     background: transparent;
     color: var(--nt-text);
     font: inherit;
-    font-size: 16px;
+    font-size: var(--text-lg);
     font-weight: 700;
     letter-spacing: -.01em;
     outline: none;
@@ -588,7 +588,7 @@ html[data-theme="dark"] .nt-page {
     display: flex;
     align-items: center;
     gap: 7px;
-    font-size: 12px;
+    font-size: var(--text-xs);
     color: var(--nt-muted);
     white-space: nowrap;
 }
@@ -616,9 +616,9 @@ html[data-theme="dark"] .nt-page {
     display: flex;
     flex-direction: column;
     border: 1px solid var(--nt-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--nt-raised);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, .3);
+    box-shadow: var(--shadow-lg);
 }
 /* Anchored to the left edge of its control instead of the right. `right: 0` is
    correct for the "..." at the end of the header and wrong for anything at the
@@ -629,11 +629,11 @@ html[data-theme="dark"] .nt-page {
 .nt-menu button {
     padding: 9px 11px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--nt-text);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
@@ -675,11 +675,11 @@ html[data-theme="dark"] .nt-page {
     min-width: 28px; height: 28px;
     padding: 0 5px;
     border: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--nt-muted);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     line-height: 1;
     cursor: pointer;
@@ -690,8 +690,8 @@ html[data-theme="dark"] .nt-page {
 .nt-tool[data-tool="italic"] { font-style: italic; font-family: Georgia, serif; }
 .nt-tool[data-tool="under"] { text-decoration: underline; }
 .nt-tool[data-tool="strike"] { text-decoration: line-through; }
-.nt-tool[data-tool="code"] { font-size: 11.5px; }
-.nt-tool[data-tool="face"] { font-family: Georgia, serif; font-size: 14px; }
+.nt-tool[data-tool="code"] { font-size: var(--text-xs); }
+.nt-tool[data-tool="face"] { font-family: Georgia, serif; font-size: var(--text-md); }
 .nt-tool.is-on { background: var(--nt-card-2); color: var(--nt-text); }
 
 /* The two palette buttons carry a bar of the colour they last opened, the way
@@ -718,7 +718,7 @@ html[data-theme="dark"] .nt-page {
 .nt-tool-swatch.is-set[data-tool="mark"]::after {
     background: color-mix(in srgb, var(--sw) 45%, transparent);
 }
-.nt-tool[data-tool="mark"] { font-size: 11px; }
+.nt-tool[data-tool="mark"] { font-size: var(--text-2xs); }
 
 /* Nine squares and a way out, three to a row. */
 .nt-swatches {
@@ -731,15 +731,15 @@ html[data-theme="dark"] .nt-page {
     gap: 6px;
     padding: 9px;
     border: 1px solid var(--nt-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--nt-raised);
-    box-shadow: 0 10px 28px rgba(16, 24, 40, .14);
+    box-shadow: var(--shadow-lg);
 }
 .nt-swatch {
     width: 26px; height: 26px;
     padding: 0;
     border: 1px solid var(--nt-line);
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: var(--sw);
     cursor: pointer;
     transition: transform .12s ease;
@@ -751,11 +751,11 @@ html[data-theme="dark"] .nt-page {
     grid-column: 1 / -1;
     padding: 5px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: var(--nt-card-2);
     color: var(--nt-muted);
     font: inherit;
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     cursor: pointer;
 }
@@ -773,8 +773,8 @@ html[data-theme="dark"] .nt-page {
 .nt-face.is-sans span { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
 .nt-face.is-serif span { font-family: 'Lora', Georgia, serif; }
 .nt-face.is-mono span { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; }
-.nt-face.is-display span { font-family: 'Playfair Display', Georgia, serif; font-size: 15px; }
-.nt-face.is-hand span { font-family: 'Caveat', cursive; font-size: 17px; }
+.nt-face.is-display span { font-family: 'Playfair Display', Georgia, serif; font-size: var(--text-lg); }
+.nt-face.is-hand span { font-family: 'Caveat', cursive; font-size: var(--text-lg); }
 
 /* ---------- Font and size, where the headings were ------------------------
    Wider than a `.nt-tool` because both carry a word or a number and a chevron,
@@ -786,11 +786,11 @@ html[data-theme="dark"] .nt-page {
     height: 28px;
     padding: 0 6px 0 9px;
     border: 1px solid var(--nt-line);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--nt-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     line-height: 1;
     cursor: pointer;
@@ -808,16 +808,16 @@ html[data-theme="dark"] .nt-page {
 .nt-sizes { max-height: 320px; overflow-y: auto; }
 .nt-sizes button { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .nt-sizes button > span { font-variant-numeric: tabular-nums; }
-.nt-sizes button em { font-size: 10.5px; font-style: normal; color: var(--nt-faint); }
-.nt-sizes button:nth-child(1) > span { font-size: 12px; }
-.nt-sizes button:nth-child(2) > span { font-size: 13px; }
-.nt-sizes button:nth-child(3) > span { font-size: 14px; }
-.nt-sizes button:nth-child(4) > span { font-size: 15px; }
-.nt-sizes button:nth-child(5) > span { font-size: 16px; }
-.nt-sizes button:nth-child(6) > span { font-size: 18px; }
-.nt-sizes button:nth-child(7) > span { font-size: 20px; }
-.nt-sizes button:nth-child(8) > span { font-size: 22px; }
-.nt-sizes button:nth-child(9) > span { font-size: 24px; }
+.nt-sizes button em { font-size: var(--text-2xs); font-style: normal; color: var(--nt-faint); }
+.nt-sizes button:nth-child(1) > span { font-size: var(--text-xs); }
+.nt-sizes button:nth-child(2) > span { font-size: var(--text-sm); }
+.nt-sizes button:nth-child(3) > span { font-size: var(--text-md); }
+.nt-sizes button:nth-child(4) > span { font-size: var(--text-lg); }
+.nt-sizes button:nth-child(5) > span { font-size: var(--text-lg); }
+.nt-sizes button:nth-child(6) > span { font-size: var(--text-xl); }
+.nt-sizes button:nth-child(7) > span { font-size: var(--text-xl); }
+.nt-sizes button:nth-child(8) > span { font-size: var(--text-2xl); }
+.nt-sizes button:nth-child(9) > span { font-size: var(--text-2xl); }
 
 /* ---------- The note, and its facts --------------------------------------- */
 .nt-editor-body {
@@ -833,7 +833,7 @@ html[data-theme="dark"] .nt-page {
     background: transparent;
     color: var(--nt-text);
     font: inherit;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     line-height: 1.75;
     resize: none;
     outline: none;
@@ -847,17 +847,17 @@ html[data-theme="dark"] .nt-page {
     gap: 2px;
     padding: 2px;
     margin-right: 6px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--nt-card-2);
 }
 .nt-mode button {
     padding: 5px 11px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--nt-muted);
     font: inherit;
-    font-size: 12px;
+    font-size: var(--text-xs);
     font-weight: 600;
     cursor: pointer;
     transition: background .14s ease, color .14s ease;
@@ -865,7 +865,7 @@ html[data-theme="dark"] .nt-page {
 .nt-mode button.is-on {
     background: var(--nt-raised);
     color: var(--nt-text);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+    box-shadow: var(--shadow-sm);
 }
 
 /* ---------- The rendered note ---------------------------------------------
@@ -877,7 +877,7 @@ html[data-theme="dark"] .nt-page {
     min-height: 0;
     overflow-y: auto;
     padding: 20px 24px 30px;
-    font-size: 14.5px;
+    font-size: var(--text-md);
     line-height: 1.75;
 }
 .nt-preview > :first-child { margin-top: 0; }
@@ -888,10 +888,10 @@ html[data-theme="dark"] .nt-page {
     line-height: 1.3;
     letter-spacing: -.01em;
 }
-.nt-preview h1 { font-size: 21px; }
-.nt-preview h2 { font-size: 17px; }
-.nt-preview h3 { font-size: 14.5px; }
-.nt-preview h4 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
+.nt-preview h1 { font-size: var(--text-xl); }
+.nt-preview h2 { font-size: var(--text-lg); }
+.nt-preview h3 { font-size: var(--text-md); }
+.nt-preview h4 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: .05em; }
 .nt-preview p { margin: 0 0 13px; }
 .nt-preview ul, .nt-preview ol { margin: 0 0 14px; padding-left: 22px; }
 /* A nested list is inside the item above it, not after it, so it loses the
@@ -912,19 +912,19 @@ html[data-theme="dark"] .nt-page {
 .nt-preview strong { font-weight: 700; }
 .nt-preview code {
     padding: 2px 6px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     background: var(--nt-card-2);
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--font-mono);
     font-size: .88em;
 }
 .nt-preview pre {
     margin: 0 0 15px;
     padding: 13px 15px;
     border: 1px solid var(--nt-line-soft);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: var(--nt-card-2);
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 12.5px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
     line-height: 1.6;
     overflow-x: auto;
 }
@@ -944,7 +944,7 @@ html[data-theme="dark"] .nt-page {
     margin-right: 9px;
     vertical-align: -2px;
     border: 1.5px solid var(--nt-faint);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 .md-box.is-on {
     border-color: var(--nt-accent-2);
@@ -983,7 +983,7 @@ html[data-theme="dark"] .nt-page {
    is asymmetric on purpose so consecutive highlights do not merge into a bar. */
 .nt-preview :is(mark, span)[class*="md-b-"] {
     padding: 1px 3px;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     background: color-mix(in srgb, var(--md-wash) 30%, transparent);
     color: inherit;
 }
@@ -1013,14 +1013,14 @@ html[data-theme="dark"] .nt-page {
 /* Sizes, in points, because the selector says a number and has to mean it.
    `line-height` comes with the big ones: a 36px run on the body's 1.75 leading
    sits in a line half again too tall and pushes its neighbours apart. */
-.md-s-12 { font-size: 12px; }
-.md-s-14 { font-size: 14px; }
-.md-s-16 { font-size: 16px; }
-.md-s-18 { font-size: 18px; }
-.md-s-20 { font-size: 20px; line-height: 1.5; }
-.md-s-24 { font-size: 24px; line-height: 1.4; }
-.md-s-30 { font-size: 30px; line-height: 1.3; }
-.md-s-36 { font-size: 36px; line-height: 1.25; }
+.md-s-12 { font-size: var(--text-xs); }
+.md-s-14 { font-size: var(--text-md); }
+.md-s-16 { font-size: var(--text-lg); }
+.md-s-18 { font-size: var(--text-xl); }
+.md-s-20 { font-size: var(--text-xl); line-height: 1.5; }
+.md-s-24 { font-size: var(--text-2xl); line-height: 1.4; }
+.md-s-30 { font-size: var(--text-3xl); line-height: 1.3; }
+.md-s-36 { font-size: var(--text-3xl); line-height: 1.25; }
 .md-s-48 { font-size: 48px; line-height: 1.15; }
 /* A run set larger than the line it sits in needs to be its own box to get the
    leading it asked for. */
@@ -1044,12 +1044,12 @@ html[data-theme="dark"] .nt-page {
 }
 .nt-meta-sec h3 {
     margin: 0 0 9px;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     font-weight: 600;
     color: var(--nt-muted);
 }
-.nt-meta-value { margin: 0; font-size: 12.5px; line-height: 1.5; }
-.nt-meta-note { margin: 7px 0 0; font-size: 11px; color: var(--nt-faint); }
+.nt-meta-value { margin: 0; font-size: var(--text-sm); line-height: 1.5; }
+.nt-meta-note { margin: 7px 0 0; font-size: var(--text-2xs); color: var(--nt-faint); }
 
 /* ---------- Subject tags -------------------------------------------------
    A pill takes its two shades from the palette family the subject already
@@ -1064,11 +1064,11 @@ html[data-theme="dark"] .nt-page {
     gap: 5px;
     max-width: 100%;
     padding: 3px 5px 3px 9px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     border: 1px solid color-mix(in srgb, var(--fam, var(--nt-accent-2)) 34%, transparent);
     background: color-mix(in srgb, var(--fam, var(--nt-accent-2)) 15%, transparent);
     color: var(--fam, var(--nt-accent-2));
-    font-size: 11.5px;
+    font-size: var(--text-xs);
     font-weight: 600;
     line-height: 1.5;
 }
@@ -1083,7 +1083,7 @@ html[data-theme="dark"] .nt-page {
     width: 15px; height: 15px;
     padding: 0;
     border: 0;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: inherit;
     cursor: pointer;
@@ -1131,11 +1131,11 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     gap: 6px;
     padding: 7px 11px;
     border: 1px dashed var(--nt-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--nt-muted);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     cursor: pointer;
     transition: border-color .14s ease, color .14s ease, background .14s ease;
 }
@@ -1161,7 +1161,7 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     margin-top: 2px;
     padding: 8px;
     border: 1px solid var(--nt-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--nt-card-2);
     box-shadow: inset 0 1px 0 color-mix(in srgb, var(--nt-accent-2) 22%, transparent);
 }
@@ -1170,11 +1170,11 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     margin-bottom: 7px;
     padding: 8px 10px;
     border: 1px solid var(--nt-line);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: var(--nt-card-2);
     color: var(--nt-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     outline: none;
 }
 .nt-picker-search:focus { border-color: var(--nt-accent-2); }
@@ -1194,11 +1194,11 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     gap: 9px;
     padding: 7px 9px;
     border: 0;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--nt-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     text-align: left;
     cursor: pointer;
 }
@@ -1209,8 +1209,8 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     background: var(--fam, var(--nt-faint));
 }
 .nt-picker-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.nt-picker-group { font-size: 10.5px; color: var(--nt-faint); white-space: nowrap; }
-.nt-picker-none { margin: 10px 8px; font-size: 12px; color: var(--nt-faint); }
+.nt-picker-group { font-size: var(--text-2xs); color: var(--nt-faint); white-space: nowrap; }
+.nt-picker-none { margin: 10px 8px; font-size: var(--text-xs); color: var(--nt-faint); }
 
 /* ---------- The notebook select ------------------------------------------ */
 .nt-select-wrap { position: relative; display: block; }
@@ -1218,11 +1218,11 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     width: 100%;
     padding: 8px 30px 8px 11px;
     border: 1px solid var(--nt-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--nt-card-2);
     color: var(--nt-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     cursor: pointer;
     outline: none;
     appearance: none;
@@ -1244,11 +1244,11 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     width: 100%;
     padding: 8px 11px;
     border: 1px solid var(--nt-line);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--nt-card-2);
     color: var(--nt-text);
     font: inherit;
-    font-size: 12.5px;
+    font-size: var(--text-sm);
     outline: none;
 }
 .nt-date:focus { border-color: var(--nt-accent-2); }
@@ -1262,17 +1262,17 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     padding: 11px 16px;
     border-top: 1px solid var(--nt-line-soft);
 }
-.nt-message { margin-right: auto; font-size: 12.5px; color: var(--nt-bad); }
-.nt-count { font-size: 12px; color: var(--nt-faint); font-variant-numeric: tabular-nums; }
+.nt-message { margin-right: auto; font-size: var(--text-sm); color: var(--nt-bad); }
+.nt-count { font-size: var(--text-xs); color: var(--nt-faint); font-variant-numeric: tabular-nums; }
 
 .nt-save {
     padding: 9px 18px;
     border: 0;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: linear-gradient(180deg, var(--nt-accent-2), var(--nt-accent));
     color: var(--nt-on-accent);
     font: inherit;
-    font-size: 13px;
+    font-size: var(--text-sm);
     font-weight: 600;
     cursor: pointer;
     transition: filter .15s ease;

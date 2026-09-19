@@ -18,12 +18,12 @@ body:has(.pom-page) .app-main {
 }
 
 .pom-page {
-    --pom-card: #ffffff;
+    --pom-card: var(--color-surface);
     --pom-card-2: #f6f8fc;
-    --pom-line: #e7eaf2;
-    --pom-text: #1c2331;
-    --pom-muted: #6b7688;
-    --pom-faint: #98a2b3;
+    --pom-line: var(--color-line);
+    --pom-text: var(--color-ink);
+    --pom-muted: var(--color-ink-muted);
+    --pom-faint: var(--color-ink-faint);
 
     --pom-focus: #7c5cf0;
     --pom-focus-2: #4bc4e6;
@@ -39,12 +39,12 @@ body:has(.pom-page) .app-main {
     --pom-amber: #d98324;
     --pom-indigo: #5b63d3;
     --pom-teal: #16a3a3;
-    --pom-violet: #9a4de0;
+    --pom-violet: var(--color-accent);
     --pom-cyan: #1c9dbb;
     --pom-slate: #64748b;
 
-    --pom-radius: 20px;
-    --pom-shadow: 0 1px 2px rgba(20, 28, 46, .04), 0 10px 30px rgba(20, 28, 46, .06);
+    --pom-radius: var(--radius-lg);
+    --pom-shadow: var(--shadow-md);
 
     box-sizing: border-box;
     width: 100%;
@@ -52,17 +52,17 @@ body:has(.pom-page) .app-main {
     margin-inline: auto;
     padding: 24px 26px 60px;
     color: var(--pom-text);
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-family: var(--font-sans);
 }
 .pom-page * { box-sizing: border-box; }
 
 html[data-theme="dark"] .pom-page {
-    --pom-card: #161d2c;
-    --pom-card-2: #1b2334;
-    --pom-line: #28324a;
+    --pom-card: var(--color-surface);
+    --pom-card-2: var(--color-surface-2);
+    --pom-line: var(--color-line);
     --pom-text: #e7ecf6;
-    --pom-muted: #8f9bb3;
-    --pom-faint: #6d7a94;
+    --pom-muted: var(--color-ink-muted);
+    --pom-faint: var(--color-ink-faint);
 
     --pom-focus: #9b7cf8;
     --pom-focus-2: #63d3ee;
@@ -78,11 +78,11 @@ html[data-theme="dark"] .pom-page {
     --pom-amber: #e6a94e;
     --pom-indigo: #8b92ea;
     --pom-teal: #3fc9c9;
-    --pom-violet: #c084fc;
+    --pom-violet: var(--color-accent);
     --pom-cyan: #4cc4dd;
     --pom-slate: #94a3b8;
 
-    --pom-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px rgba(0, 0, 0, .26);
+    --pom-shadow: var(--shadow-md);
     color-scheme: dark;
 }
 
@@ -116,22 +116,22 @@ html[data-theme="dark"] .pom-page {
 }
 .pom-head h1 {
     margin: 0;
-    font-size: 1.55rem;
+    font-size: var(--text-2xl);
     font-weight: 800;
     letter-spacing: -.025em;
 }
 .pom-head p {
     margin: 3px 0 0;
     color: var(--pom-muted);
-    font-size: .88rem;
+    font-size: var(--text-md);
 }
 .pom-date {
     display: inline-flex; align-items: center; gap: 7px;
     color: var(--pom-muted);
-    font-size: .82rem;
+    font-size: var(--text-sm);
     white-space: nowrap;
 }
-.pom-head-sun { font-size: 1.5rem; line-height: 1; }
+.pom-head-sun { font-size: var(--text-2xl); line-height: 1; }
 .pom-head-text { flex: 1; }
 
 .pom-link {
@@ -140,19 +140,19 @@ html[data-theme="dark"] .pom-page {
     background: none;
     color: var(--pom-muted);
     font: inherit;
-    font-size: .82rem;
+    font-size: var(--text-sm);
     text-decoration: none;
     cursor: pointer;
 }
 .pom-link:hover { color: var(--pom-text); text-decoration: underline; }
-.pom-quiet { color: var(--pom-faint); font-size: .8rem; }
-.pom-empty { margin: 0; color: var(--pom-muted); font-size: .87rem; }
+.pom-quiet { color: var(--pom-faint); font-size: var(--text-sm); }
+.pom-empty { margin: 0; color: var(--pom-muted); font-size: var(--text-md); }
 
 .pom-btn {
     height: 44px;
     padding: 0 20px;
     border: 1px solid var(--pom-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--pom-card);
     color: var(--pom-text);
     font: inherit;
@@ -183,7 +183,7 @@ html[data-theme="dark"] .pom-page {
 .pom-steps span.is-on { background: var(--pom-focus); }
 .pom-setup h2 {
     margin: 0 0 20px;
-    font-size: 1.4rem;
+    font-size: var(--text-2xl);
     font-weight: 750;
     letter-spacing: -.02em;
 }
@@ -198,7 +198,7 @@ html[data-theme="dark"] .pom-page {
     gap: 7px;
     padding: 18px 16px;
     border: 1px solid var(--pom-line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--pom-card-2);
     color: inherit;
     font: inherit;
@@ -210,16 +210,16 @@ html[data-theme="dark"] .pom-page {
 .pom-choice.is-on { border-color: var(--pom-focus); box-shadow: inset 0 0 0 1px var(--pom-focus); }
 .pom-choice-label {
     display: flex; align-items: center; gap: 8px;
-    font-size: 1rem; font-weight: 700;
+    font-size: var(--text-lg); font-weight: 700;
 }
-.pom-choice-nums { font-size: .84rem; font-weight: 600; }
-.pom-choice-hint { color: var(--pom-muted); font-size: .82rem; line-height: 1.45; }
+.pom-choice-nums { font-size: var(--text-sm); font-weight: 600; }
+.pom-choice-hint { color: var(--pom-muted); font-size: var(--text-sm); line-height: 1.45; }
 .pom-tag {
     padding: 2px 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--pom-focus) 15%, transparent);
     color: var(--pom-focus);
-    font-size: .62rem; font-style: normal; font-weight: 700;
+    font-size: var(--text-2xs); font-style: normal; font-weight: 700;
     letter-spacing: .07em; text-transform: uppercase;
 }
 .pom-setup-foot {
@@ -259,21 +259,21 @@ html[data-theme="dark"] .pom-page {
 .pom-badge {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 11px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--pom-now) 16%, transparent);
     color: var(--pom-now);
-    font-size: .64rem; font-weight: 800;
+    font-size: var(--text-2xs); font-weight: 800;
     letter-spacing: .14em; text-transform: uppercase;
 }
 .pom-hero-left h2 {
     margin: 12px 0 6px;
-    font-size: 1.62rem; font-weight: 800; letter-spacing: -.03em;
+    font-size: var(--text-2xl); font-weight: 800; letter-spacing: -.03em;
 }
 .pom-hero-left > p {
     margin: 0 0 18px;
     max-width: 34ch;
     color: var(--pom-muted);
-    font-size: .86rem; line-height: 1.5;
+    font-size: var(--text-md); line-height: 1.5;
 }
 
 .pom-picks { display: grid; gap: 10px; }
@@ -285,7 +285,7 @@ html[data-theme="dark"] .pom-page {
     gap: 11px;
     padding: 11px 14px;
     border: 1px solid var(--pom-line);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--pom-card);
     cursor: pointer;
 }
@@ -302,14 +302,14 @@ html[data-theme="dark"] .pom-page {
 .pom-pick-glyph {
     display: grid; place-items: center;
     width: 30px; height: 30px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     background: var(--pom-card-2);
-    font-size: .92rem;
+    font-size: var(--text-md);
 }
 .pom-pick-top { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .pom-pick-top b, .pom-pick-top i { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pom-pick-top b { font-size: .88rem; font-weight: 700; }
-.pom-pick-top i { color: var(--pom-muted); font-size: .74rem; font-style: normal; }
+.pom-pick-top b { font-size: var(--text-md); font-weight: 700; }
+.pom-pick-top i { color: var(--pom-muted); font-size: var(--text-xs); font-style: normal; }
 /* The native control sits invisibly over the card so the whole thing is the
    hit target, and the menu is the platform's own rather than a re-implemented
    one that would have to re-solve keyboard, scroll and small screens. */
@@ -330,10 +330,10 @@ html[data-theme="dark"] .pom-page {
     height: 50px;
     margin-top: 16px;
     border: none;
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: linear-gradient(135deg, var(--pom-now), var(--pom-purple));
     color: #fff;
-    font: inherit; font-size: .98rem; font-weight: 700;
+    font: inherit; font-size: var(--text-lg); font-weight: 700;
     cursor: pointer;
     box-shadow: 0 10px 24px -10px var(--pom-now);
     transition: filter .15s ease, transform .1s ease;
@@ -349,10 +349,10 @@ html[data-theme="dark"] .pom-page {
 .pom-perks li {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 4px 11px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--pom-card-2);
     color: var(--pom-muted);
-    font-size: .73rem; font-weight: 600;
+    font-size: var(--text-xs); font-weight: 600;
 }
 
 /* The ring */
@@ -373,14 +373,14 @@ html[data-theme="dark"] .pom-page {
 }
 .pom-ring-phase {
     color: var(--pom-now);
-    font-size: .68rem; font-weight: 800;
+    font-size: var(--text-2xs); font-weight: 800;
     letter-spacing: .18em; text-transform: uppercase;
 }
 .pom-ring-time {
     font-size: 2.9rem; font-weight: 700;
     font-variant-numeric: tabular-nums; letter-spacing: -.035em; line-height: 1;
 }
-.pom-ring-sub { color: var(--pom-faint); font-size: .78rem; }
+.pom-ring-sub { color: var(--pom-faint); font-size: var(--text-xs); }
 
 .pom-ring-controls { display: flex; gap: 10px; }
 .pom-round {
@@ -414,25 +414,25 @@ html[data-theme="dark"] .pom-page {
     gap: 1px 11px;
     padding: 14px 15px;
     border: 1px solid var(--pom-line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--pom-card);
 }
 .pom-side-icon {
     grid-row: span 2;
     display: grid; place-items: center;
     width: 34px; height: 34px;
-    border-radius: 10px;
-    font-size: .9rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-md);
 }
-.pom-side-label { color: var(--pom-muted); font-size: .73rem; }
+.pom-side-label { color: var(--pom-muted); font-size: var(--text-xs); }
 .pom-side-card strong {
     grid-column: 2;
-    font-size: 1.24rem; font-weight: 750;
+    font-size: var(--text-xl); font-weight: 750;
     font-variant-numeric: tabular-nums; line-height: 1.15;
 }
 .pom-side-card em {
     grid-column: 2;
-    color: var(--pom-faint); font-size: .72rem; font-style: normal;
+    color: var(--pom-faint); font-size: var(--text-xs); font-style: normal;
 }
 
 /* ---- Panels -------------------------------------------------------------- */
@@ -451,9 +451,9 @@ html[data-theme="dark"] .pom-page {
 .pom-panel-head h2 {
     display: inline-flex; align-items: center; gap: 9px;
     margin: 0;
-    font-size: 1.06rem; font-weight: 750; letter-spacing: -.015em;
+    font-size: var(--text-lg); font-weight: 750; letter-spacing: -.015em;
 }
-.pom-panel-head h2 > span { font-size: 1.02rem; }
+.pom-panel-head h2 > span { font-size: var(--text-lg); }
 /* A heading with a line under it, where a panel needs to say what window it
    is describing. `baseline` on the head would align the link to the *second*
    line, so the title and its line become one block first. */
@@ -461,7 +461,7 @@ html[data-theme="dark"] .pom-page {
 .pom-panel-title p {
     margin: 3px 0 0;
     color: var(--pom-muted);
-    font-size: .78rem;
+    font-size: var(--text-xs);
 }
 
 /* The segmented control the range and the grain both use. */
@@ -469,16 +469,16 @@ html[data-theme="dark"] .pom-page {
     display: inline-flex;
     gap: 2px;
     padding: 3px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: var(--pom-card-2);
 }
 .pom-toggle button {
     padding: 6px 13px;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: none;
     color: var(--pom-muted);
-    font: inherit; font-size: .77rem; font-weight: 650;
+    font: inherit; font-size: var(--text-xs); font-weight: 650;
     cursor: pointer;
     transition: background .15s ease, color .15s ease;
 }
@@ -486,7 +486,7 @@ html[data-theme="dark"] .pom-page {
 .pom-toggle button.is-on {
     background: var(--pom-card);
     color: var(--pom-focus);
-    box-shadow: 0 1px 3px rgba(20, 28, 46, .10);
+    box-shadow: var(--shadow-sm);
 }
 .pom-split {
     display: grid;
@@ -517,10 +517,10 @@ html[data-theme="dark"] .pom-page {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 1px;
 }
-.pom-donut-text strong { font-size: 1.7rem; font-weight: 750; letter-spacing: -.03em; }
-.pom-donut-text span { color: var(--pom-muted); font-size: .74rem; }
+.pom-donut-text strong { font-size: var(--text-2xl); font-weight: 750; letter-spacing: -.03em; }
+.pom-donut-text span { color: var(--pom-muted); font-size: var(--text-xs); }
 .pom-donut-text em {
-    color: var(--pom-faint); font-size: .68rem; font-style: normal;
+    color: var(--pom-faint); font-size: var(--text-2xs); font-style: normal;
     font-variant-numeric: tabular-nums;
 }
 
@@ -533,29 +533,29 @@ html[data-theme="dark"] .pom-page {
     display: flex; flex-direction: column; gap: 2px;
     padding: 14px 15px;
     border: 1px solid var(--pom-line);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: var(--pom-card-2);
 }
 .pom-tile-icon {
     display: grid; place-items: center;
     width: 30px; height: 30px;
     margin-bottom: 6px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
 }
 .pom-tile-icon svg { width: 16px; height: 16px; }
-.pom-tile-label { color: var(--pom-muted); font-size: .74rem; }
+.pom-tile-label { color: var(--pom-muted); font-size: var(--text-xs); }
 .pom-tile-value {
-    font-size: 1.3rem; font-weight: 750;
+    font-size: var(--text-xl); font-weight: 750;
     font-variant-numeric: tabular-nums; letter-spacing: -.02em;
 }
 .pom-tile-delta {
     color: var(--pom-green);
-    font-size: .71rem; font-weight: 650;
+    font-size: var(--text-2xs); font-weight: 650;
 }
 .pom-tile-delta i { color: var(--pom-faint); font-style: normal; font-weight: 500; }
 .pom-tile-delta.is-down { color: var(--pom-rose); }
 .pom-tile-delta.is-flat { color: var(--pom-faint); font-weight: 500; }
-.pom-tile-icon { font-size: .92rem; }
+.pom-tile-icon { font-size: var(--text-md); }
 
 /* The week */
 /* The week's bars and the quote, side by side the way the design has them. */
@@ -571,7 +571,7 @@ html[data-theme="dark"] .pom-page {
 .pom-week h3 {
     margin: 0 0 14px;
     color: var(--pom-muted);
-    font-size: .8rem; font-weight: 650;
+    font-size: var(--text-sm); font-weight: 650;
 }
 .pom-bars {
     display: grid;
@@ -588,11 +588,11 @@ html[data-theme="dark"] .pom-page {
     width: 100%;
     max-width: 42px;
     min-height: 4px;
-    border-radius: 8px 8px 4px 4px;
+    border-radius: var(--radius-md) var(--radius-md) var(--radius-sm) var(--radius-sm);
     background: linear-gradient(180deg, var(--pom-focus), var(--pom-blue));
     transition: height .4s ease;
 }
-.pom-bar-name { color: var(--pom-faint); font-size: .7rem; }
+.pom-bar-name { color: var(--pom-faint); font-size: var(--text-2xs); }
 
 /* ---- The ten ------------------------------------------------------------- */
 .pom-grid {
@@ -607,7 +607,7 @@ html[data-theme="dark"] .pom-page {
     width: 100%; height: 100%;
     padding: 15px 15px 13px;
     border: 1px solid color-mix(in srgb, var(--tone) 22%, var(--pom-line));
-    border-radius: 15px;
+    border-radius: var(--radius-lg);
     background: color-mix(in srgb, var(--tone) 5%, var(--pom-card));
     color: inherit;
     font: inherit; text-align: left;
@@ -642,28 +642,28 @@ html[data-theme="dark"] .pom-page {
 .pom-icon {
     display: grid; place-items: center;
     width: 32px; height: 32px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
 }
 .pom-icon svg { width: 18px; height: 18px; }
-.pom-card-name { font-size: .95rem; font-weight: 700; }
+.pom-card-name { font-size: var(--text-lg); font-weight: 700; }
 
 .pom-nums { display: flex; align-items: baseline; gap: 14px; }
 .pom-num { display: flex; align-items: baseline; gap: 4px; }
 .pom-num b {
-    font-size: 1.32rem; font-weight: 750;
+    font-size: var(--text-xl); font-weight: 750;
     font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1;
 }
-.pom-num i { color: var(--pom-muted); font-size: .7rem; font-style: normal; }
-.pom-num.is-rest b { color: var(--pom-muted); font-weight: 650; font-size: 1.14rem; }
+.pom-num i { color: var(--pom-muted); font-size: var(--text-2xs); font-style: normal; }
+.pom-num.is-rest b { color: var(--pom-muted); font-weight: 650; font-size: var(--text-xl); }
 
-.pom-card-who { flex: 1; color: var(--pom-muted); font-size: .8rem; line-height: 1.45; }
+.pom-card-who { flex: 1; color: var(--pom-muted); font-size: var(--text-sm); line-height: 1.45; }
 .pom-card-foot { display: flex; gap: 6px; padding-top: 9px; }
 .pom-chip {
     padding: 2px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--pom-card-2);
     color: var(--pom-faint);
-    font-size: .69rem; font-weight: 650;
+    font-size: var(--text-2xs); font-weight: 650;
     font-variant-numeric: tabular-nums;
 }
 .pom-chip.is-xp {
@@ -681,7 +681,7 @@ html[data-theme="dark"] .pom-page {
     display: flex; flex-direction: column; align-items: center; gap: 5px;
     padding: 15px 8px 13px;
     border: 1px solid color-mix(in srgb, var(--tone, var(--pom-focus)) 22%, var(--pom-line));
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     background: color-mix(in srgb, var(--tone, var(--pom-focus)) 7%, var(--pom-card));
 }
 /* Filled, with the letter reversed out of it. A grade is the loudest thing in
@@ -692,11 +692,11 @@ html[data-theme="dark"] .pom-page {
     border-radius: 50%;
     background: var(--tone, var(--pom-focus));
     color: #fff;
-    font-size: .92rem; font-weight: 800;
+    font-size: var(--text-md); font-weight: 800;
     box-shadow: 0 4px 10px -4px var(--tone, var(--pom-focus));
 }
-.pom-rating-name { color: var(--pom-muted); font-size: .75rem; }
-.pom-rating-score { font-size: .92rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.pom-rating-name { color: var(--pom-muted); font-size: var(--text-xs); }
+.pom-rating-score { font-size: var(--text-md); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* Grade colours, so an S does not look like an F. */
 .pom-grade-s     { --tone: var(--pom-teal); }
@@ -716,22 +716,22 @@ html[data-theme="dark"] .pom-page {
     padding-top: 16px;
     border-top: 1px solid var(--pom-line);
 }
-.pom-overall > span { color: var(--pom-muted); font-size: .82rem; }
+.pom-overall > span { color: var(--pom-muted); font-size: var(--text-sm); }
 .pom-overall strong {
     justify-self: end;
-    font-size: 1.5rem; font-weight: 750;
+    font-size: var(--text-2xl); font-weight: 750;
     font-variant-numeric: tabular-nums; letter-spacing: -.02em;
 }
 .pom-overall-bar {
     grid-column: span 2;
     height: 7px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--pom-line);
     overflow: hidden;
 }
 .pom-overall-bar span {
     display: block; height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--pom-focus), var(--pom-focus-2));
     transition: width .4s ease;
 }
@@ -749,17 +749,17 @@ html[data-theme="dark"] .pom-page {
 .pom-goals li:last-child { border-bottom: none; }
 .pom-goal-title {
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    font-size: .87rem; font-weight: 600;
+    font-size: var(--text-md); font-weight: 600;
 }
-.pom-goal-bar { height: 7px; border-radius: 999px; background: var(--pom-line); overflow: hidden; }
+.pom-goal-bar { height: 7px; border-radius: var(--radius-full); background: var(--pom-line); overflow: hidden; }
 .pom-goal-bar span {
     display: block; height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--pom-focus), var(--pom-purple));
 }
 .pom-goal-pct {
     color: var(--pom-muted);
-    font-size: .8rem; font-weight: 650;
+    font-size: var(--text-sm); font-weight: 650;
     font-variant-numeric: tabular-nums; text-align: right;
 }
 
@@ -777,21 +777,21 @@ html[data-theme="dark"] .pom-page {
 .pom-tasks-title {
     flex: 1;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    font-size: .87rem;
+    font-size: var(--text-md);
 }
 /* The subject's own colour, hashed from its name in pages/Timer.tsx so the
    same subject is the same colour on every row it appears on. */
 .pom-tasks-tag {
     padding: 2px 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--tone, var(--pom-slate)) 15%, transparent);
     color: var(--tone, var(--pom-muted));
-    font-size: .7rem; font-weight: 600;
+    font-size: var(--text-2xs); font-weight: 600;
     text-transform: capitalize;
 }
 .pom-tasks-xp {
     color: var(--pom-faint);
-    font-size: .74rem; font-weight: 650;
+    font-size: var(--text-xs); font-weight: 650;
     font-variant-numeric: tabular-nums;
 }
 
@@ -807,8 +807,8 @@ html[data-theme="dark"] .pom-page {
     color: #fff;
     box-shadow: var(--pom-shadow);
 }
-.pom-level-text h2 { margin: 0; font-size: 1.14rem; font-weight: 750; }
-.pom-level-text p { margin: 4px 0 0; color: rgba(255, 255, 255, .72); font-size: .84rem; }
+.pom-level-text h2 { margin: 0; font-size: var(--text-xl); font-weight: 750; }
+.pom-level-text p { margin: 4px 0 0; color: rgba(255, 255, 255, .72); font-size: var(--text-sm); }
 .pom-level-meter {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -818,19 +818,19 @@ html[data-theme="dark"] .pom-page {
     flex: 1 1 300px;
 }
 .pom-level-name, .pom-level-xp {
-    font-size: .82rem; font-weight: 700;
+    font-size: var(--text-sm); font-weight: 700;
     font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .pom-level-xp { color: rgba(255, 255, 255, .78); }
 .pom-level-bar {
     height: 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: rgba(255, 255, 255, .18);
     overflow: hidden;
 }
 .pom-level-bar span {
     display: block; height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--pom-focus), var(--pom-blue));
     transition: width .4s ease;
 }
@@ -871,7 +871,7 @@ html[data-theme="dark"] .pom-page {
     min-height: 178px;
     margin: 0;
     padding: 20px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     isolation: isolate;
 }
 .pom-art-scene {
@@ -893,25 +893,25 @@ html[data-theme="dark"] .pom-page {
 .pom-quote blockquote {
     margin: 0;
     color: #fff;
-    font-size: .95rem; font-weight: 600; line-height: 1.5;
+    font-size: var(--text-lg); font-weight: 600; line-height: 1.5;
     text-shadow: 0 1px 12px rgba(0, 0, 0, .45);
 }
 .pom-quote figcaption {
     margin-top: 8px;
     color: rgba(255, 255, 255, .78);
-    font-size: .78rem; font-weight: 600;
+    font-size: var(--text-xs); font-weight: 600;
 }
 
 /* ---- The line ------------------------------------------------------------ */
 .pom-line { width: 100%; height: auto; overflow: visible; }
 .pom-line-rule { stroke: var(--pom-line); stroke-width: 1; }
-.pom-line-tick { fill: var(--pom-faint); font-size: 10px; font-weight: 600; }
+.pom-line-tick { fill: var(--pom-faint); font-size: var(--text-2xs); font-weight: 600; }
 .pom-line-area { fill: url(#pom-line-fill); }
 /* The label on the best day. Dark in both themes, like every tooltip in the
    app — it sits over the chart's own fill, not over the page. */
 .pom-line-tip rect { fill: #1f2740; }
-.pom-line-tip-day { fill: rgba(255, 255, 255, .72); font-size: 9px; font-weight: 600; }
-.pom-line-tip-num { fill: #fff; font-size: 11px; font-weight: 750; }
+.pom-line-tip-day { fill: rgba(255, 255, 255, .72); font-size: var(--text-2xs); font-weight: 600; }
+.pom-line-tip-num { fill: #fff; font-size: var(--text-2xs); font-weight: 750; }
 .pom-line-run {
     fill: none;
     stroke: var(--pom-focus);
@@ -937,10 +937,10 @@ html[data-theme="dark"] .pom-page {
 .pom-goal-icon {
     display: grid; place-items: center;
     width: 34px; height: 34px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tone, var(--pom-focus)) 14%, transparent);
     color: var(--tone, var(--pom-focus));
-    font-size: .82rem;
+    font-size: var(--text-sm);
 }
 .pom-goal-main { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
 .pom-chev { width: 16px; height: 16px; color: var(--pom-faint); }
@@ -948,11 +948,11 @@ html[data-theme="dark"] .pom-page {
 .pom-check {
     width: 17px; height: 17px; flex-shrink: 0;
     border: 1.8px solid var(--pom-line);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
 }
 .pom-tasks-when {
     color: var(--pom-faint);
-    font-size: .74rem; font-weight: 600;
+    font-size: var(--text-xs); font-weight: 600;
     white-space: nowrap;
 }
 
@@ -973,16 +973,16 @@ html[data-theme="dark"] .pom-page {
 .pom-level-gem {
     display: grid; place-items: center;
     width: 46px; height: 46px;
-    border-radius: 13px;
+    border-radius: var(--radius-md);
     background: rgba(255, 255, 255, .14);
-    font-size: 1.2rem;
+    font-size: var(--text-xl);
 }
 .pom-level-cta {
     padding: 10px 18px;
-    border-radius: 11px;
+    border-radius: var(--radius-md);
     background: #fff;
     color: #3b1e8f;
-    font-size: .84rem; font-weight: 700;
+    font-size: var(--text-sm); font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -997,30 +997,30 @@ html[data-theme="dark"] .pom-page {
 .pom-level-trophy {
     display: grid; place-items: center;
     width: 42px; height: 42px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--pom-amber) 15%, transparent);
-    font-size: 1.1rem;
+    font-size: var(--text-lg);
 }
 .pom-levelcard-body { min-width: 0; }
 .pom-levelcard-top {
     display: flex; align-items: baseline; justify-content: space-between;
     gap: 10px; margin-bottom: 9px;
 }
-.pom-levelcard-top strong { font-size: 1rem; font-weight: 750; }
+.pom-levelcard-top strong { font-size: var(--text-lg); font-weight: 750; }
 .pom-levelcard-top span {
     color: var(--pom-muted);
-    font-size: .78rem; font-variant-numeric: tabular-nums;
+    font-size: var(--text-xs); font-variant-numeric: tabular-nums;
 }
 .pom-level-bar {
     height: 9px;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: var(--pom-line);
     overflow: hidden;
 }
 .pom-level .pom-level-bar { background: rgba(255, 255, 255, .18); }
 .pom-level-bar span {
     display: block; height: 100%;
-    border-radius: 999px;
+    border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--pom-focus), var(--pom-blue));
     transition: width .4s ease;
 }
