@@ -93,6 +93,7 @@ import type { TabId } from '@/components/Goals';
 import { fromTitles, stepProgress } from '@/utils/milestoneSteps';
 import { ConfirmDialog } from '@/components/ui';
 import '@/styles/goals.css';
+import { announceStatsChanged } from '@/utils/statsBus';
 
 /** How often to re-read while a focus goal is running. */
 const FOCUS_POLL_MS = 30_000;
@@ -253,6 +254,9 @@ export default function Goals() {
         setError(result.message ?? 'That task could not be completed.');
         return;
       }
+      // The rail's level and the bell did not hear about completions made
+      // here. See utils/statsBus.
+      announceStatsChanged();
       await Promise.all([load(true), account.reload()]);
     },
     [account, busy, load, username],

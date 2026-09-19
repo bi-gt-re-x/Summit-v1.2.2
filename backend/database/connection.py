@@ -419,6 +419,16 @@ ADDED_TABLES = ('''
 ''', '''
     CREATE INDEX IF NOT EXISTS task_goal_matches_goal_idx
         ON task_goal_matches (user_id, goal_id)
+''', '''
+    -- What the model said about an ambiguous task, keyed on the question.
+    -- Mirrors data/sql/goals.sql, where the note on it lives.
+    CREATE TABLE IF NOT EXISTS goal_ai_answers (
+        user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        ask_key     TEXT NOT NULL,
+        goal_ids    TEXT NOT NULL DEFAULT '',
+        created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+        PRIMARY KEY (user_id, ask_key)
+    )
 ''')
 
 
@@ -1609,6 +1619,32 @@ def save_goal_mapping(username, task_id, status, version, matches):
     return save_goal_mappings(username, [(task_id, status, version, matches)]).get(str(task_id))
 
 
+def goal_ai_answer(username, key):
+    """A cached model answer as a list of goal ids, or None if it was never asked."""
+    con = connect()
+    try:
+        row = con.execute(
+            'SELECT goal_ids FROM goal_ai_answers WHERE user_id = ? AND ask_key = ?',
+            (username, key)).fetchone()
+    finally:
+        con.close()
+    if row is None:
+        return None
+    return [part for part in str(row[0] or '').split(',') if part]
+
+
+def save_goal_ai_answer(username, key, goal_ids):
+    """Keep one model answer against the question that produced it."""
+    con = connect()
+    try:
+        with con:
+            con.execute(
+                'INSERT OR REPLACE INTO goal_ai_answers (user_id, ask_key, goal_ids) '
+                'VALUES (?, ?, ?)', (username, key, ','.join(str(g) for g in goal_ids)))
+    finally:
+        con.close()
+
+
 def goal_links_for(username):
     """{task_id: [goal_id, ...]} for every task of this account that has any.
 
@@ -1651,6 +1687,37 @@ def stale_goal_tasks(username, version, limit, fields=('id', 'title', 'subject',
                  'AND (goal_match_version IS NULL OR goal_match_version < ?) '
                  'ORDER BY rowid LIMIT ?').format(', '.join('"{}"'.format(n) for n in wanted))
         return _decode_records(con, 'tasks', con.execute(query, (username, version, int(limit))))
+    finally:
+        con.close()
+
+
+def mark_goal_tasks_stale(username, subjects=None, goal_id=None):
+    """Mark the tasks a goal change could affect as due a fresh match.
+
+    `subjects` None means every task (a cross-subject goal reaches all of
+    them); otherwise the tasks filed under one of them, the tasks filed under
+    nothing (which are compared with every goal), and the tasks already
+    matched to `goal_id`. One UPDATE, setting the version to 0: the stored
+    answer stays readable until the catch-up replaces it. Tasks never matched
+    are already due and are left alone. Returns how many were marked.
+    """
+    where = ['user_id = ?', 'goal_match_version IS NOT NULL', 'goal_match_version > 0']
+    params = [username]
+    if subjects is not None:
+        either = ["subject IS NULL", "subject = ''"]
+        wanted = sorted(subjects)
+        if wanted:
+            either.append('subject IN ({})'.format(', '.join('?' for _ in wanted)))
+            params.extend(wanted)
+        if goal_id:
+            either.append('id IN (SELECT task_id FROM task_goal_matches WHERE goal_id = ?)')
+            params.append(goal_id)
+        where.append('({})'.format(' OR '.join(either)))
+    con = connect()
+    try:
+        with con:
+            return con.execute('UPDATE tasks SET goal_match_version = 0 WHERE {}'.format(
+                ' AND '.join(where)), params).rowcount
     finally:
         con.close()
 

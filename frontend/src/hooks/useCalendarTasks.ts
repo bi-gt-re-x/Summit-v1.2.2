@@ -68,6 +68,7 @@ import { tasks as taskService } from '@/services';
 import { isCalendarPlaced, isoStamp } from '@/utils/calendarGrid';
 import type { RatingDepth } from '@/services/settings';
 import type { Task, UserStats } from '@/types';
+import { announceStatsChanged } from '@/utils/statsBus';
 
 const NO_STATS: UserStats = {
   level: 1,
@@ -191,6 +192,9 @@ export function useCalendarTasks(): UseCalendarTasks {
               };
             }),
           }));
+          // The rail and the bell re-read once the burst settles; the cached
+          // task history is dropped at once. See utils/statsBus.
+          announceStatsChanged();
 
           /* Ask how it went, now that the work is banked. Nothing waits on
              the answer — the XP is already awarded and this dialog can be

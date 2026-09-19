@@ -94,6 +94,21 @@ describe('what it will not serve', () => {
 
     expect(ids(await taskHistory('alpha'))).toEqual(['after']);
   });
+
+  it('forgets at once on a write, before the batched refresh is sent', async () => {
+    // utils/statsBus holds "the numbers moved" back to one per burst. The
+    // cache must not wait with it: a page opened in that gap would read the
+    // record from before the write.
+    const { announceStatsChanged, flushStatsChanged } = await import('@/utils/statsBus');
+    analyticsTasks.mockResolvedValueOnce(answer('before'));
+    analyticsTasks.mockResolvedValueOnce(answer('after'));
+
+    await taskHistory('alpha');
+    announceStatsChanged();
+
+    expect(ids(await taskHistory('alpha'))).toEqual(['after']);
+    flushStatsChanged();
+  });
 });
 
 describe('when the fetch fails', () => {

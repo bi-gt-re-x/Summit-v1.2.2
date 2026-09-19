@@ -26,7 +26,7 @@
  * moving when the + on the panel is pressed.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Ambient, ErrorState, Loading, PageHero, RefreshButton, STATS_CHANGED } from '@/components';
+import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import {
   CatchUp,
   DailyQuote,
@@ -78,6 +78,7 @@ import type { NewTask } from '@/services/tasks';
 import type { Goal, Task } from '@/types';
 import '@/styles/dashboard.css';
 import '@/styles/dashboard-home.css';
+import { announceStatsChanged } from '@/utils/statsBus';
 
 export default function Dashboard() {
   const { data, error, loading, refreshing, reload, mutate, username } = useUserData();
@@ -318,7 +319,7 @@ export default function Dashboard() {
         // The rail shows the level and the XP total and is mounted outside the
         // router, so it never re-reads on its own. This is the one thing that
         // moves those numbers.
-        window.dispatchEvent(new Event(STATS_CHANGED));
+        announceStatsChanged();
 
         // Ask how it went, now that the work is banked — unless the reader
         // has turned the questions off in Settings, which this used to ignore

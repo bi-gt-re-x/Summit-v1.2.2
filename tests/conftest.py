@@ -151,6 +151,19 @@ def fresh_db(tmp_path, monkeypatch):
     db._ensure_database()
     yield path
 
+    # The goal matcher's background work, finished while this database is
+    # still the one it was queued against. Creating or editing a goal queues a
+    # catch-up on worker threads (backend/goal_matcher/queue.py); those
+    # threads outlive the test, and the path below is about to be put back, so
+    # a job still running would write into the next test's database.
+    #
+    # Here rather than in an autouse fixture of its own: one depending on
+    # `fresh_db` would build a database for every test in the suite, including
+    # the ones that never touch it.
+    from backend.goal_matcher.queue import work
+    assert work.wait_idle(timeout=30), 'goal matcher jobs still running after the test'
+    work.clear()
+
 
 @pytest.fixture
 def app(fresh_db):

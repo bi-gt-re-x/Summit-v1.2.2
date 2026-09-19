@@ -757,6 +757,8 @@ ACCOUNT_TABLES = (
     # Derived from tasks and goals: which goals each task counts toward. Only
     # ids, but ids pointing at rows removed here. See data/sql/goals.sql.
     'task_goal_matches',
+    # Cached model answers about this account's tasks and goals.
+    'goal_ai_answers',
     # Not content the account made, but entirely derived from content it made:
     # every row is a sentence about a task, a goal or a badge that is being
     # removed here. Left behind they would be notifications about a record that

@@ -47,6 +47,7 @@ from pydantic import BaseModel
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
+from backend.goal_matcher import service as goal_matcher
 from backend.tracking import focus as focus_tracking
 from backend.tracking import planner
 from backend.tracking import xp as xp_tracking
@@ -827,6 +828,9 @@ def add_goal(body: AddGoal, username: str = Depends(current_username)):
     for stone in fresh:
         stone['goal_id'] = goal['id']
         db.insert_row('goal_milestones', stone)
+    # Existing tasks may be work toward it. They are marked and matched in the
+    # background, never here — see backend/goal_matcher/service.py.
+    goal_matcher.goal_changed(username, None, goal)
     return ok(message='Goal added successfully', id=goal['id'])
 
 
@@ -862,6 +866,7 @@ def update_goal(body: UpdateGoal, username: str = Depends(current_username)):
     goal = db.find_row('goals', body.id, user_id=username)
     if not goal:
         return fail('Goal not found')
+    before = dict(goal)
 
     sent = body.model_fields_set
     for field in EDITABLE:
@@ -886,6 +891,9 @@ def update_goal(body: UpdateGoal, username: str = Depends(current_username)):
                                     goal.get('id')))
 
     _save_goal(goal, username)
+    # A new title or subject changes which tasks it would match. Queued, not
+    # run: see backend/goal_matcher/service.py.
+    goal_matcher.goal_changed(username, before, goal)
     return ok()
 
 
@@ -893,6 +901,12 @@ def update_goal(body: UpdateGoal, username: str = Depends(current_username)):
 def delete_goal(body: DeleteGoal, username: str = Depends(current_username)):
     if not body.goal_id:
         return fail('Goal ID required')
+
+    # Before the delete: the tasks matched to it are found through the very
+    # rows the delete is about to cascade away.
+    doomed = db.find_row('goals', body.goal_id, user_id=username)
+    if doomed:
+        goal_matcher.goal_changed(username, doomed, None)
 
     # The checkpoints go with it, and they no longer have to be swept up by
     # hand: `goal_milestones.goal_id` declares ON DELETE CASCADE and this is a
@@ -921,7 +935,8 @@ def add_milestone(body: AddMilestone, username: str = Depends(current_username))
     if not username or not body.goal_id or not body.title:
         return fail('Username, goal and title are required')
 
-    if not db.find_row('goals', body.goal_id, user_id=username):
+    goal = db.find_row('goals', body.goal_id, user_id=username)
+    if not goal:
         return fail('Goal not found')
 
     rows = db.rows_for('goal_milestones', username)
@@ -943,6 +958,8 @@ def add_milestone(body: AddMilestone, username: str = Depends(current_username))
         "created_at": datetime.now().isoformat(),
     })
     _recompute_goal(body.goal_id, username)
+    # A checkpoint's words are part of what tasks are matched on.
+    goal_matcher.goal_changed(username, goal, goal, checkpoints_changed=True)
     # The id goes back for the same reason `/api/add_goal` returns one: the
     # caller's next move is usually about the row it just made, and finding it
     # again by title is a guess when two checkpoints are named the same thing.
@@ -986,7 +1003,11 @@ def update_milestone(body: UpdateMilestone, username: str = Depends(current_user
                                   {'status': 'pending'}, user_id=username)
 
     _save_stone(row, username)
-    _recompute_goal(row.get('goal_id'), username)
+    goal = _recompute_goal(row.get('goal_id'), username)
+    # Renaming a checkpoint changes what tasks it matches; ticking it off
+    # does not.
+    if 'title' in sent and goal:
+        goal_matcher.goal_changed(username, goal, goal, checkpoints_changed=True)
     return ok()
 
 
@@ -1015,7 +1036,9 @@ def delete_milestone(body: DeleteMilestone, username: str = Depends(current_user
             db.update_row('tasks', task['id'],
                           {'milestone_id': None}, user_id=username)
 
-    _recompute_goal(goal_id, username)
+    goal = _recompute_goal(goal_id, username)
+    if goal:
+        goal_matcher.goal_changed(username, goal, goal, checkpoints_changed=True)
     return ok()
 
 
@@ -1256,7 +1279,9 @@ def set_milestones(body: SetMilestones, username: str = Depends(current_username
                               {'milestone_id': None}, user_id=username)
         db.delete_row('goal_milestones', extra['id'], user_id=username)
 
-    _recompute_goal(body.goal_id, username)
+    goal = _recompute_goal(body.goal_id, username)
+    if goal:
+        goal_matcher.goal_changed(username, goal, goal, checkpoints_changed=True)
     return ok()
 
 

@@ -54,12 +54,17 @@ import { format } from '@/utils';
 import { rankFor } from '@/utils/mastery';
 import { earnedTitle } from '@/utils/easterEgg';
 import { AUTOMATIC, chooseTitle, chosenTitle, titlesFor } from '@/utils/rankTitle';
+import { STATS_CHANGED } from '@/utils/statsBus';
 import '@/styles/rail.css';
 
 const COLLAPSE_KEY = 'topnavCollapsed';
 
-/** Fired by the dashboard when a completion moves the XP total. */
-export const STATS_CHANGED = 'summit:stats-changed';
+/**
+ * Fired when a completion moves the XP total. Defined in utils/statsBus, which
+ * sends it once per burst of changes rather than once per task; re-exported
+ * here because this is where every listener has always imported it from.
+ */
+export { STATS_CHANGED };
 
 interface Tab {
   to: string;

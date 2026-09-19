@@ -156,6 +156,25 @@ CREATE TABLE IF NOT EXISTS task_goal_matches (
 CREATE INDEX IF NOT EXISTS task_goal_matches_goal_idx
     ON task_goal_matches (user_id, goal_id);
 
+-- goal_ai_answers — what the model said, keyed on what it was asked.
+--
+-- Only ambiguous tasks are ever asked about (backend/goal_matcher/ai.py), and
+-- the question is one task title, its subject and a shortlist of goals. The
+-- key is a hash of exactly that, so eighty-five tasks with the same title are
+-- one question, and a restart does not buy the answer again.
+--
+-- Ids only, comma-separated, the same as `subject_ids` on a goal: the answer
+-- is which of the goals offered, and a goal that has since been deleted is
+-- dropped when the row is read.
+CREATE TABLE IF NOT EXISTS goal_ai_answers (
+    user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+    ask_key     TEXT NOT NULL,
+    goal_ids    TEXT NOT NULL DEFAULT '',
+    created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (user_id, ask_key)
+);
+
+
 -- ---- rows: goals ----
 INSERT INTO goals (id, user_id, title, description, goal_type, target_xp, current_xp, target_streak, current_streak, target_tasks, current_tasks, target_focus, current_focus, focus_baseline_seconds, target_value, progress, priority, deadline, status, created_at) VALUES ('1783024779328', 'demo', '1', '1', 'xp', 1111, 1111, 0, 0, 0, 0, NULL, NULL, NULL, 1111, 100, NULL, '', 'completed', '2026-07-02T15:39:39.328509');
 INSERT INTO goals (id, user_id, title, description, goal_type, target_xp, current_xp, target_streak, current_streak, target_tasks, current_tasks, target_focus, current_focus, focus_baseline_seconds, target_value, progress, priority, deadline, status, created_at) VALUES ('1783025498928', 'demo', '1', '1', 'xp', 1111, 1111, 0, 0, 0, 0, NULL, NULL, NULL, 1111, 100, NULL, '', 'completed', '2026-07-02T15:51:38.928766');

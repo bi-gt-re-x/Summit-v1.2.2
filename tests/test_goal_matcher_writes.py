@@ -10,6 +10,7 @@ import pytest
 from backend.database import connection as db
 from backend.goal_matcher import service, store
 from backend.goal_matcher import deterministic
+from backend.goal_matcher.queue import work
 
 
 def make_goal(client, title, subjects='', measure='milestones', milestones=()):
@@ -18,6 +19,9 @@ def make_goal(client, title, subjects='', measure='milestones', milestones=()):
         'milestones': list(milestones),
     }).json()
     assert reply['success'], reply
+    # A new goal queues a catch-up in the background (step 14). Let it land
+    # before the test goes on, as a reader's next click would a moment later.
+    work.wait_idle()
     return reply['id']
 
 

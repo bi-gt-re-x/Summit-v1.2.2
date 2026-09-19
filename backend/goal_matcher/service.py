@@ -18,9 +18,12 @@ the reader linked it to (MATCH_FIELDS). Completing a task, rating it, moving
 its date or its timer changes none of those and runs nothing. Neither does
 opening a page: nothing here is reachable from a read.
 """
+import time
 from typing import Mapping, Optional
 
-from backend.goal_matcher import candidate_index, store
+from backend.database import connection as db
+from backend.goal_matcher import ai, candidate_index, store
+from backend.goal_matcher.queue import work
 from backend.goal_matcher.deterministic import Classification, TaskInput, classify
 from backend.goal_matcher.types import TaskGoalMapping, TaskGoalMatch
 
@@ -28,6 +31,15 @@ from backend.goal_matcher.types import TaskGoalMapping, TaskGoalMatch
 # quick and cannot hold the database for long; the pass is resumable, so the
 # rest are picked up by the next one.
 REFRESH_SLICE = 200
+
+# What a match the model chose is worth. Above the match threshold, below an
+# explicit link: the reader saying so outranks the model saying so.
+AI_SCORE = 0.8
+
+# Ambiguous tasks one catch-up pass may ask the model about. A backfill over a
+# whole history must not turn into hundreds of calls; the rest stay ambiguous,
+# which is what they are, and are asked about if they are written again.
+AI_PER_PASS = 20
 
 # Tasks classified and stored per transaction in a batch. One transaction per
 # chunk rather than per task is most of the speed; a chunk rather than the
@@ -84,6 +96,63 @@ def classify_task(index: candidate_index.CandidateIndex, task: Mapping) -> Class
     return with_explicit(classify(index, task_input(task)), task.get('goal_id'))
 
 
+def ask_about(username: str, task: Mapping, candidates) -> bool:
+    """Queue the model on an ambiguous task, and mark it pending meanwhile.
+
+    Only ambiguous tasks get here, and only when a model is configured. The
+    task is marked 'pending' so the state says what is true — queued, not
+    concluded — and the question runs on a worker (queue.py), never in the
+    request. Returns whether it was queued.
+    """
+    task_id = str(task['id'])
+    if not candidates or not ai.available():
+        return False
+    # What the answer will be checked against: an edit in the meantime
+    # reclassifies the task itself, and a stale answer must not overwrite it.
+    was = {field: task.get(field) for field in MATCH_FIELDS}
+    if not work.submit(('ai', task_id),
+                       lambda: resolve(username, task_id, was, [g for g, _ in candidates])):
+        return False
+    store.save_mapping(username, task_id, TaskGoalMapping.pending())
+    return True
+
+
+def resolve(username: str, task_id: str, was: Mapping, candidate_ids) -> Optional[TaskGoalMapping]:
+    """Ask the model about one ambiguous task and store what it says.
+
+    Runs on a worker. Does nothing if the task changed after it was queued —
+    that edit has already rematched it — and nothing if the question cannot be
+    answered, which leaves the task ambiguous rather than guessing.
+    """
+    task = db.find_row('tasks', task_id, user_id=username)
+    if not task or any((task.get(field) or None) != (was.get(field) or None)
+                       for field in MATCH_FIELDS):
+        return None
+
+    titles = {row['id']: row.get('title') or ''
+              for row in db.columns_for('goals', username, ('id', 'title'))}
+    stages = {}
+    for row in db.columns_for('goal_milestones', username, ('goal_id', 'title'), order='position'):
+        stages.setdefault(row.get('goal_id'), []).append(row.get('title') or '')
+    offered = [(goal_id, titles[goal_id], stages.get(goal_id, []))
+               for goal_id in candidate_ids if goal_id in titles]
+
+    chosen = ai.ask(username, task.get('title') or '', task.get('subject') or '', offered)
+    if chosen is None:
+        # No answer. Back to what it was: plausible goals, none confident.
+        return store.save_mapping(username, task_id, TaskGoalMapping(status='ambiguous'))
+
+    mapping = TaskGoalMapping(status='matched', matches=tuple(
+        TaskGoalMatch(goal_id=goal_id, score=AI_SCORE, source='ai') for goal_id in chosen
+    )) if chosen else TaskGoalMapping.unmatched()
+    # Checked again: the task may have been edited while the model was asked.
+    fresh = db.find_row('tasks', task_id, user_id=username)
+    if not fresh or any((fresh.get(field) or None) != (was.get(field) or None)
+                        for field in MATCH_FIELDS):
+        return None
+    return store.save_mapping(username, task_id, mapping)
+
+
 def refresh_task(username: str, task: Mapping,
                  index: Optional[candidate_index.CandidateIndex] = None) -> Optional[TaskGoalMapping]:
     """Work out and store one task's goals. Returns what was stored, or None.
@@ -97,7 +166,10 @@ def refresh_task(username: str, task: Mapping,
     try:
         index = index if index is not None else candidate_index.load(username)
         result = classify_task(index, task)
-        return store.save_mapping(username, str(task['id']), result.mapping)
+        stored = store.save_mapping(username, str(task['id']), result.mapping)
+        if stored is not None and stored.status == 'ambiguous':
+            ask_about(username, task, result.candidates)
+        return stored
     except Exception as exc:  # noqa: BLE001 - enrichment never fails the write it follows
         print('[goal_matcher] could not match task {}: {!r}'.format(task.get('id'), exc))
         return None
@@ -131,22 +203,31 @@ def refresh_tasks(username: str, tasks, index: Optional[candidate_index.Candidat
     """
     tasks = list(tasks)
     if not tasks:
-        return {'refreshed': 0, 'failed': 0}
+        return {'refreshed': 0, 'failed': 0, 'asked': 0}
     try:
         index = index if index is not None else candidate_index.load(username)
     except Exception as exc:  # noqa: BLE001 - enrichment never fails the write it follows
         print('[goal_matcher] could not load goals for {}: {!r}'.format(username, exc))
-        return {'refreshed': 0, 'failed': len(tasks)}
+        return {'refreshed': 0, 'failed': len(tasks), 'asked': 0}
 
-    refreshed = failed = 0
+    refreshed = failed = asked = 0
     for part in chunks(tasks, chunk_size):
         try:
-            mappings = {str(task['id']): classify_task(index, task).mapping for task in part}
-            refreshed += len(store.save_mappings(username, mappings))
+            found = {str(task['id']): classify_task(index, task) for task in part}
+            stored = store.save_mappings(
+                username, {task_id: result.mapping for task_id, result in found.items()})
+            refreshed += len(stored)
+            # The few the rules could not settle, up to this pass's budget.
+            for task in part:
+                if asked >= AI_PER_PASS:
+                    break
+                result = found[str(task['id'])]
+                if result.mapping.status == 'ambiguous' and ask_about(username, task, result.candidates):
+                    asked += 1
         except Exception as exc:  # noqa: BLE001 - one chunk failing is one chunk
             failed += len(part)
             print('[goal_matcher] could not match {} tasks: {!r}'.format(len(part), exc))
-    return {'refreshed': refreshed, 'failed': failed}
+    return {'refreshed': refreshed, 'failed': failed, 'asked': asked}
 
 
 def refresh_stale(username: str, limit: int = REFRESH_SLICE) -> dict:
@@ -165,3 +246,80 @@ def refresh_stale(username: str, limit: int = REFRESH_SLICE) -> dict:
         return {'refreshed': 0, 'remaining': 0}
     done = refresh_tasks(username, due)
     return {'refreshed': done['refreshed'], 'remaining': store.stale_count(username)}
+
+
+# ---------------------------------------------------------------------------
+# When goals change
+# ---------------------------------------------------------------------------
+# The goal fields a match reads. An edit to anything else — the deadline, the
+# figures, the reason — leaves every task's answer as true as it was.
+GOAL_FIELDS = ('title', 'subject_ids', 'measure', 'goal_type')
+
+# Between catch-up slices, so a long catch-up never holds the database from
+# the requests that are using it.
+SLICE_PAUSE = 0.05
+
+
+def _goal_matters(before: Optional[Mapping], after: Optional[Mapping]) -> bool:
+    """Whether this change to a goal could change any task's match."""
+    was = bool(before) and candidate_index.is_candidate(before)
+    now = bool(after) and candidate_index.is_candidate(after)
+    if not was and not now:
+        return False
+    if before is None or after is None:
+        return True
+    if was != now:
+        # Reopened, or its measure moved to or from a counter. A goal being
+        # *completed* lands here too, and is deliberately not a change: the
+        # tasks already matched to it were work toward it, and stay so.
+        return now
+    return any((before.get(f) or '') != (after.get(f) or '') for f in GOAL_FIELDS)
+
+
+def goal_changed(username: str, before: Optional[Mapping], after: Optional[Mapping],
+                 checkpoints_changed: bool = False) -> int:
+    """A goal was created, edited or deleted. Queue the tasks it could affect.
+
+    Nothing is scanned or rematched here. The tasks the change could reach —
+    its subjects before and after, or all of them for a goal with no subject —
+    are marked stale in one UPDATE, and one catch-up job for the account is
+    queued. The request that changed the goal returns straight away.
+
+    Call it *before* deleting a goal: its matches are how the tasks toward it
+    are found, and the delete takes them with it. Returns how many tasks were
+    marked.
+    """
+    try:
+        if not (_goal_matters(before, after) or
+                (checkpoints_changed and after and candidate_index.is_candidate(after))):
+            return 0
+        sides = [goal for goal in (before, after) if goal]
+        subjects = set()
+        cross = False
+        for goal in sides:
+            found = candidate_index.subjects_of(goal.get('subject_ids'))
+            cross = cross or not found
+            subjects |= found
+        goal_id = str(sides[0].get('id') or '')
+        marked = db.mark_goal_tasks_stale(username, None if cross else subjects, goal_id)
+        schedule_catch_up(username)
+        return marked
+    except Exception as exc:  # noqa: BLE001 - enrichment never fails the write it follows
+        print('[goal_matcher] could not queue tasks for a goal change: {!r}'.format(exc))
+        return 0
+
+
+def catch_up(username: str, slice_size: int = REFRESH_SLICE) -> int:
+    """Refresh every stale task, a slice at a time. Returns how many were matched."""
+    total = 0
+    while True:
+        result = refresh_stale(username, limit=slice_size)
+        total += result['refreshed']
+        if result['refreshed'] == 0 or result['remaining'] == 0:
+            return total
+        time.sleep(SLICE_PAUSE)
+
+
+def schedule_catch_up(username: str) -> bool:
+    """Queue one catch-up for the account. Asking again while it waits does nothing."""
+    return work.submit(('catch_up', username), lambda: catch_up(username))

@@ -55,7 +55,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Ambient, ErrorState, Loading, PageHero, STATS_CHANGED } from '@/components';
+import { Ambient, ErrorState, Loading, PageHero } from '@/components';
 import { GROUPS, SORTS } from '@/components/Tasks';
 import { useApi, useAuth, useDocumentTitle, usePageEntrance, useSettings, useTheme } from '@/hooks';
 import { settings as service } from '@/services';
@@ -78,6 +78,7 @@ import type {
 } from '@/services/settings';
 import type { Theme } from '@/types';
 import '@/styles/settings.css';
+import { announceStatsChanged } from '@/utils/statsBus';
 
 const GOAL_MIN = 10;
 const GOAL_MAX = 2000;
@@ -679,7 +680,7 @@ export default function Settings() {
       setAsk(null);
       await refresh();
       reload();
-      window.dispatchEvent(new Event(STATS_CHANGED));
+      announceStatsChanged();
       flash(result.message);
     },
     [asking, flash, navigate, refresh, reload, signOut, username],

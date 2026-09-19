@@ -8,12 +8,16 @@ import pytest
 
 from backend.database import connection as db
 from backend.goal_matcher import service, store, types
+from backend.goal_matcher.queue import work
 from backend.main import create_app
 
 
 def make_goal(client, title, subjects=''):
-    return client.post('/api/add_goal', json={
+    goal_id = client.post('/api/add_goal', json={
         'title': title, 'measure': 'milestones', 'subject_ids': subjects}).json()['id']
+    # A new goal queues a catch-up in the background; let it land first.
+    work.wait_idle()
+    return goal_id
 
 
 def make_task(client, name, subject=None):
@@ -171,7 +175,7 @@ def test_a_batch_is_one_goals_read_and_one_transaction_per_chunk(client, monkeyp
 
     result = service.refresh_tasks('tester', store.stale_tasks('tester', 100), chunk_size=10)
 
-    assert result == {'refreshed': 25, 'failed': 0}
+    assert result == {'refreshed': 25, 'failed': 0, 'asked': 0}
     assert loads == ['tester']
     assert writes == [10, 10, 5]
     assert len(store.goal_links('tester')) == 25
@@ -192,7 +196,7 @@ def test_a_chunk_that_fails_costs_that_chunk_and_no_more(client, monkeypatch):
     monkeypatch.setattr(db, 'save_goal_mappings', flaky)
     result = service.refresh_tasks('tester', store.stale_tasks('tester', 100), chunk_size=10)
 
-    assert result == {'refreshed': 15, 'failed': 10}
+    assert result == {'refreshed': 15, 'failed': 10, 'asked': 0}
     # The failed chunk is untouched, so still stale, and the next pass takes it.
     assert store.stale_count('tester') == 10
     monkeypatch.setattr(db, 'save_goal_mappings', real_save)
@@ -207,5 +211,5 @@ def test_a_batch_skips_tasks_that_are_not_this_accounts(client, stranger):
     result = service.refresh_tasks('tester', [{'id': mine, 'title': 'Violin lesson', 'subject': 'music'},
                                               {'id': theirs, 'title': 'Violin lesson', 'subject': 'music'}])
 
-    assert result == {'refreshed': 1, 'failed': 0}
+    assert result == {'refreshed': 1, 'failed': 0, 'asked': 0}
     assert list(store.goal_links('tester')) == [mine]

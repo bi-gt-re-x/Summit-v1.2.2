@@ -72,7 +72,7 @@ import {
   type GroupKey,
   type TaskQuery,
 } from '@/components/Tasks';
-import { Ambient, ErrorState, Loading, PageHero, RefreshButton, STATS_CHANGED } from '@/components';
+import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import { measureOf } from '@/components/Goals';
 import { useDocumentTitle, usePageEntrance, useSettings, useSubjects, useUserData } from '@/hooks';
 import { goals as goalService, tasks as taskService } from '@/services';
@@ -81,6 +81,7 @@ import type { Goal, Task } from '@/types';
 import { isoStamp } from '@/utils/calendarGrid';
 import { useConfirm } from '@/components/ui';
 import '@/styles/tasks.css';
+import { announceStatsChanged } from '@/utils/statsBus';
 
 /**
  * How many rows a heading draws before it asks.
@@ -376,7 +377,7 @@ export default function Tasks() {
         }));
         // The rail carries the level and the XP total and never re-reads on its
         // own. This is what moves them.
-        window.dispatchEvent(new Event(STATS_CHANGED));
+        announceStatsChanged();
         // Ask, now that the work is banked and nothing depends on the answer —
         // unless the reader has turned the questions off in Settings. How many
         // are asked is that same preference: see components/Tasks/RatePrompt.
@@ -395,7 +396,7 @@ export default function Tasks() {
    *
    * What the bulk bar and "finish the day" use. Each used to call `complete`
    * per task — sixty tasks was sixty requests, sixty `mutate`s re-rendering the
-   * whole list, and sixty STATS_CHANGED events each making the rail re-read.
+   * whole list, and sixty "stats changed" events each making the rail re-read.
    * Now the server does the sixty completions in one transaction and the page
    * applies the result once.
    *
@@ -434,7 +435,7 @@ export default function Tasks() {
             return at ? { ...entry, status: 'done' as const, completed_at: at } : entry;
           }),
         }));
-        window.dispatchEvent(new Event(STATS_CHANGED));
+        announceStatsChanged();
       }
       return open.filter((task) => stamps.has(String(task.id)));
     },

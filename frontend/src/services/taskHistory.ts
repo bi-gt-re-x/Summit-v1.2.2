@@ -93,4 +93,8 @@ export function invalidate(): void {
    window to listen on. */
 if (typeof window !== 'undefined') {
   window.addEventListener('summit:stats-changed', invalidate);
+  // Fired at once on every write, where the event above is held back and
+  // sent once per burst — see utils/statsBus. Dropping the cache is free, so
+  // it happens immediately; a page opened mid-burst reads the new record.
+  window.addEventListener('summit:tasks-written', invalidate);
 }
