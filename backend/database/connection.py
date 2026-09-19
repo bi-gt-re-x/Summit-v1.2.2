@@ -576,6 +576,7 @@ def _ensure_database():
         directory = os.path.dirname(DB_PATH)
         if directory and not os.path.isdir(directory):
             os.makedirs(directory)
+        _forget_schemas()
         if not os.path.exists(DB_PATH) or os.path.getsize(DB_PATH) == 0:
             _build(DB_PATH)
         # Run for a fresh build too. It costs one PRAGMA per entry and it
@@ -583,6 +584,8 @@ def _ensure_database():
         # like, rather than a build that is right and a catch-up that has to
         # be remembered to agree with it.
         _catch_up(DB_PATH)
+        # The catch-up is the one thing that adds columns and rebuilds tables.
+        _forget_schemas()
         _built = True
 
 
@@ -605,10 +608,34 @@ def connect():
 # --------------------------------------------------------------------------
 # Columns
 # --------------------------------------------------------------------------
+# A table's columns, per database file. Filled on first use and dropped
+# whenever the shape can change — which is only when the database is built or
+# caught up, at startup.
+#
+# Worth having because every targeted write asks: `insert_row`, `update_row`
+# and `columns_for` each read the schema to decide which keys are columns, so
+# creating one task ran five PRAGMAs before this. They are fast, and they were
+# still a third of the statements in that request.
+_schema_cache = {}
+
+
+def _forget_schemas():
+    _schema_cache.clear()
+
+
 def _schema(con, table):
     """[(name, declared type, nullable)] for a table, or [] if there isn't one."""
+    key = (DB_PATH, table)
+    held = _schema_cache.get(key)
+    if held is not None:
+        return held
     rows = con.execute('PRAGMA table_info("{}")'.format(table)).fetchall()
-    return [(r['name'], (r['type'] or '').upper(), not r['notnull']) for r in rows]
+    found = [(r['name'], (r['type'] or '').upper(), not r['notnull']) for r in rows]
+    # A table that is not there yet is not cached: the next caller may be
+    # asking after it has been created.
+    if found:
+        _schema_cache[key] = found
+    return found
 
 
 def _decode(table, column, value, sql_type):
@@ -1598,9 +1625,19 @@ def save_goal_mappings(username, entries):
             con.executemany(
                 'INSERT INTO task_goal_matches (task_id, goal_id, user_id, score, source) '
                 'VALUES (?, ?, ?, ?, ?)', links)
-            con.executemany(
-                'UPDATE tasks SET goal_match_status = ?, goal_match_version = ? '
-                'WHERE id = ? AND user_id = ?', statuses)
+            # Grouped, not one statement per task: a pass over a whole history
+            # lands nearly every task on the same (status, version) pair, so
+            # this is two or three statements per chunk rather than a hundred.
+            grouped = {}
+            for status, version, task_id, _ in statuses:
+                grouped.setdefault((status, version), []).append(task_id)
+            for (status, version), ids_for in grouped.items():
+                for at in range(0, len(ids_for), _IN_CHUNK):
+                    part = ids_for[at:at + _IN_CHUNK]
+                    con.execute(
+                        'UPDATE tasks SET goal_match_status = ?, goal_match_version = ? '
+                        'WHERE user_id = ? AND id IN ({})'.format(', '.join('?' for _ in part)),
+                        [status, version, username] + part)
             con.execute('COMMIT')
         except BaseException:
             con.execute('ROLLBACK')

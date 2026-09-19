@@ -205,24 +205,20 @@ def _link(goal_id, milestone_id, username):
     still worth creating without the link, and failing the whole write over a
     stale id would lose the thing the person actually typed.
     """
-    goals = {g['id']: g for g in db.goals() if g.get('user_id') == username}
-    goal = goals.get(goal_id) if goal_id else None
+    # Nothing to resolve is the common case — most tasks name no goal — and it
+    # used to read every goal in the database to find that out.
+    if not goal_id:
+        return None, None
+
+    goal = db.find_row('goals', goal_id, user_id=username)
     if not goal:
         return None, None
 
     if not milestone_id:
         return goal['id'], None
 
-    stone = next(
-        (
-            m for m in db.goal_milestones()
-            if m.get('id') == milestone_id
-            and m.get('user_id') == username
-            and m.get('goal_id') == goal['id']
-        ),
-        None,
-    )
-    return goal['id'], (stone['id'] if stone else None)
+    stone = db.find_row('goal_milestones', milestone_id, user_id=username)
+    return goal['id'], (stone['id'] if stone and stone.get('goal_id') == goal['id'] else None)
 
 
 def _create(body: CreateTask, username: str):

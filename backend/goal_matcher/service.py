@@ -110,10 +110,15 @@ def ask_about(username: str, task: Mapping, candidates) -> bool:
     # What the answer will be checked against: an edit in the meantime
     # reclassifies the task itself, and a stale answer must not overwrite it.
     was = {field: task.get(field) for field in MATCH_FIELDS}
+    # Marked before it is queued, not after: a worker can finish the question
+    # before this line runs, and writing 'pending' over its answer would leave
+    # the task queued for something that already happened.
+    store.save_mapping(username, task_id, TaskGoalMapping.pending())
     if not work.submit(('ai', task_id),
                        lambda: resolve(username, task_id, was, [g for g, _ in candidates])):
+        # Nobody is going to ask, so it is not pending — it is what it was.
+        store.save_mapping(username, task_id, TaskGoalMapping(status='ambiguous'))
         return False
-    store.save_mapping(username, task_id, TaskGoalMapping.pending())
     return True
 
 
@@ -255,8 +260,11 @@ def refresh_stale(username: str, limit: int = REFRESH_SLICE) -> dict:
 # figures, the reason — leaves every task's answer as true as it was.
 GOAL_FIELDS = ('title', 'subject_ids', 'measure', 'goal_type')
 
-# Between catch-up slices, so a long catch-up never holds the database from
-# the requests that are using it.
+# The most a catch-up pauses between slices, so a long one never holds the
+# database from the requests using it. The actual pause is the shorter of this
+# and the time the slice itself took: a slice is quick now that a chunk's
+# status writes are grouped, and pausing for longer than the work took turned
+# a three-second catch-up into an eight-second one for no benefit.
 SLICE_PAUSE = 0.05
 
 
@@ -313,11 +321,13 @@ def catch_up(username: str, slice_size: int = REFRESH_SLICE) -> int:
     """Refresh every stale task, a slice at a time. Returns how many were matched."""
     total = 0
     while True:
+        started = time.perf_counter()
         result = refresh_stale(username, limit=slice_size)
         total += result['refreshed']
         if result['refreshed'] == 0 or result['remaining'] == 0:
             return total
-        time.sleep(SLICE_PAUSE)
+        # Half the time to the database, half to everyone else.
+        time.sleep(min(SLICE_PAUSE, time.perf_counter() - started))
 
 
 def schedule_catch_up(username: str) -> bool:

@@ -215,3 +215,81 @@ def test_a_queued_task_says_it_is_queued(client, model, monkeypatch):
     gate.set()
     work.wait_idle()
     assert mapping(task).status == 'ambiguous'
+
+
+# ---------------------------------------------------------------------------
+# Step 16: the rest of the cases a model can put us in
+# ---------------------------------------------------------------------------
+def test_nothing_is_asked_when_there_is_nothing_to_choose_between(client, model):
+    """No candidates is not a question. It is an answer the rules already gave."""
+    assert ai.ask('tester', 'Graph theory', 'mathematics', []) is None
+    assert model.asked == []
+
+
+@pytest.mark.parametrize('failure', [
+    TimeoutError('timed out'),
+    ConnectionError('connection reset'),
+    planner.PlannerUnavailable('rate limited'),
+])
+def test_every_way_a_call_can_fail_reads_the_same(client, model, failure):
+    ambiguous_goals(client)
+    model.reply = failure
+
+    task = ambiguous_task(client)
+
+    assert mapping(task).status == 'ambiguous'
+    assert mapping(task).goal_ids == ()
+
+
+def test_a_task_that_has_not_changed_is_never_asked_about_twice(client, model):
+    usaco, discrete = ambiguous_goals(client)
+    model.reply = {'goals': [1]}
+    task = ambiguous_task(client)
+    assert len(model.asked) == 1
+
+    # Edits that do not touch the title or the subject, and a catch-up over
+    # everything: none of it is a new question.
+    client.post('/api/complete_task', json={'task_id': task})
+    client.put('/api/tasks/%s' % task, json={'priority': 'high'})
+    client.put('/api/tasks/%s' % task, json={'name': 'Graph theory'})
+    service.catch_up('tester')
+    work.wait_idle()
+
+    assert len(model.asked) == 1
+    assert mapping(task).goal_ids == (usaco,)
+
+
+def test_a_failed_answer_is_not_cached_and_is_asked_again_next_time(client, model):
+    ambiguous_goals(client)
+    model.reply = RuntimeError('down')
+    first = ambiguous_task(client)
+    assert mapping(first).status == 'ambiguous'
+
+    model.reply = {'goals': [1]}
+    second = ambiguous_task(client, title='Graph theory')
+
+    assert len(model.asked) == 2
+    assert mapping(second).status == 'matched'
+
+
+def test_an_answer_that_lands_before_the_mark_is_not_overwritten_by_it(client, model):
+    """The worker can finish before the line that marks the task queued."""
+    ambiguous_goals(client)
+    model.reply = {'goals': [1]}
+    marks = []
+    real = store.save_mapping
+
+    def watch(username, task_id, mapping):
+        marks.append(mapping.status)
+        return real(username, task_id, mapping)
+
+    from backend.goal_matcher import service as svc
+    original, svc.store.save_mapping = svc.store.save_mapping, watch
+    try:
+        task = ambiguous_task(client)
+    finally:
+        svc.store.save_mapping = original
+
+    # Marked pending first, then answered — never the other way round.
+    assert marks.index('pending') < marks.index('matched')
+    assert mapping(task).status == 'matched'

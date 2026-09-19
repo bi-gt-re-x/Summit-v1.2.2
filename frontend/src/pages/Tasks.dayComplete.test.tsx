@@ -140,6 +140,24 @@ describe('finishing the day from the tasks page', () => {
     expect(completeTask).not.toHaveBeenCalled();
   });
 
+  it('sends sixty at once as one request, and applies the result once', async () => {
+    const user = userEvent.setup();
+    const many = Array.from({ length: 60 }, (_, at) =>
+      task({ id: `t${at}`, title: `Job ${at}`, due_date: TODAY }));
+    show(many, 'none');
+    const heard = vi.fn();
+    window.addEventListener('summit:stats-changed', heard);
+
+    await user.click(await screen.findByRole('button', { name: /today's tasks/ }));
+    await user.click(screen.getByRole('button', { name: 'Complete 60' }));
+
+    await waitFor(() => expect(completeTasks).toHaveBeenCalledTimes(1));
+    expect(completeTasks.mock.calls[0]![0]).toHaveLength(60);
+    // One rail refresh for the sixty, not sixty.
+    await waitFor(() => expect(heard).toHaveBeenCalledTimes(1));
+    window.removeEventListener('summit:stats-changed', heard);
+  });
+
   it('then asks about each one in turn, not just the last', async () => {
     const user = userEvent.setup();
     show([
