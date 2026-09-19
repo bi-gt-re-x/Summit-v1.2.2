@@ -185,3 +185,24 @@ describe('the sentence agrees with the rule that chose it', () => {
     expect(pick(goal({ category: 'music' }), days(4))?.id).toBe('heatmap');
   });
 });
+
+describe('a chart the reader chose', () => {
+  it('wins over the automatic pick, even with nothing behind it', () => {
+    const chosen = pick(goal({ chart: 'heatmap', milestones: [stone('a')] }));
+
+    expect(chosen?.id).toBe('heatmap');
+    expect(chosen?.why).toMatch(/You chose this chart/);
+  });
+
+  it('draws charts the automatic pick never offers', () => {
+    expect(pick(goal({ chart: 'step' }))?.id).toBe('step');
+    expect(pick(goal({ chart: 'basic' }))?.id).toBe('basic');
+  });
+
+  it('falls back to the automatic pick for an empty or unknown choice', () => {
+    const roadmap = { milestones: [stone('a'), stone('b')] };
+
+    expect(pick(goal({ chart: '', ...roadmap }))?.id).toBe('roadmap');
+    expect(pick(goal({ chart: 'pie', ...roadmap }))?.id).toBe('roadmap');
+  });
+});

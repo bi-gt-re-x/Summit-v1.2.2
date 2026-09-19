@@ -397,6 +397,16 @@ export default function Goals() {
     [username, write],
   );
 
+  /* Which chart a card draws. Written like any other edit, so the card redraws
+     from what the server kept rather than from what was clicked. */
+  const setChart = useCallback(
+    (goal: Goal, chart: string) => {
+      if (!username) return;
+      void write(() => goalService.updateGoal(goal.id, { chart }));
+    },
+    [username, write],
+  );
+
   const confirmDelete = useCallback(async () => {
     if (!username || !pendingDelete) return;
     const gone = pendingDelete.id;
@@ -908,6 +918,7 @@ export default function Goals() {
                     onMilestoneStatus={setMilestoneStatus}
                     onCompleteGoal={completeGoal}
                     nameOf={subjectName}
+                    onChart={setChart}
                   />
                 ))}
               </div>

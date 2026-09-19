@@ -251,6 +251,11 @@ export interface Goal {
   target_number: number;
   /** Comma-separated subject ids, split at the call sites that read them. */
   subject_ids: string;
+  /**
+   * Which chart the card draws. Empty (or missing on an old row) lets the page
+   * pick from the goal's data — see utils/goalVisuals.
+   */
+  chart?: string;
   /** In execution order. The API sends them with every goal. */
   milestones: Milestone[];
 }

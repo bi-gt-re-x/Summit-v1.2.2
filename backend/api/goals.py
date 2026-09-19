@@ -72,13 +72,18 @@ MEASURES = ('xp', 'streak', 'tasks', 'focus', 'number', 'milestones')
 CATEGORIES = ('math', 'coding', 'ai', 'school', 'music', 'fitness',
               'projects', 'personal', 'other')
 
+# Which chart the goal card draws. Empty means the page picks one from the
+# goal's data — see frontend/src/utils/goalVisuals.ts, which owns the list.
+CHARTS = ('', 'progress', 'step', 'heatmap', 'basic', 'roadmap', 'volume',
+          'difficulty')
+
 # What /api/update_goal is allowed to write straight through from the request.
 EDITABLE = ('title', 'description', 'status', 'goal_type',
             'deadline', 'current_xp', 'current_streak', 'current_tasks',
             'current_focus', 'target_xp', 'target_streak', 'target_tasks',
             'target_focus',
             'category', 'why', 'start_date', 'unit', 'current_value',
-            'target_number', 'subject_ids')
+            'target_number', 'subject_ids', 'chart')
 
 
 # --------------------------------------------------------------------------
@@ -107,6 +112,7 @@ class AddGoal(BaseModel):
     current_value: float = 0
     target_number: float = 0
     subject_ids: str = ''
+    chart: str = ''
     # Checkpoint titles to create with the goal, in execution order.
     milestones: List[str] = []
 
@@ -139,6 +145,7 @@ class UpdateGoal(BaseModel):
     current_value: Optional[float] = None
     target_number: Optional[float] = None
     subject_ids: Optional[str] = None
+    chart: Optional[str] = None
 
 
 class DeleteGoal(BaseModel):
@@ -784,6 +791,7 @@ def add_goal(body: AddGoal, username: str = Depends(current_username)):
         "current_value": body.current_value,
         "target_number": body.target_number,
         "subject_ids": body.subject_ids,
+        "chart": body.chart if body.chart in CHARTS else '',
     }
 
     titles = [title.strip() for title in body.milestones if title and title.strip()]
@@ -861,6 +869,8 @@ def update_goal(body: UpdateGoal, username: str = Depends(current_username)):
         goal['measure'] = body.measure
     if 'category' in sent and body.category not in CATEGORIES:
         goal['category'] = 'other'
+    if 'chart' in sent and body.chart not in CHARTS:
+        goal['chart'] = ''
 
     # `progress` and `status` are not in EDITABLE and are not taken from the
     # request: they are what the goal's own numbers come to. A caller marking a

@@ -52,7 +52,11 @@ export type VisualId =
   /** How much work landed on each day of the week. */
   | 'volume'
   /** The checkpoints, as a roadmap. */
-  | 'roadmap';
+  | 'roadmap'
+  /** Checkpoints reached over time, one step up per checkpoint. Chosen only. */
+  | 'step'
+  /** One bar: how far along, against the goal's own target. Chosen only. */
+  | 'basic';
 
 export interface VisualMeta {
   /** The panel heading. */
@@ -90,7 +94,41 @@ export const VISUALS: Record<VisualId, VisualMeta> = {
     title: 'Roadmap',
     caption: 'The checkpoints between here and done.',
   },
+  step: {
+    title: 'Checkpoints reached',
+    caption: 'Each step up is a checkpoint reached.',
+  },
+  basic: {
+    title: 'Progress',
+    caption: 'How far along, in one bar.',
+  },
 };
+
+/**
+ * The charts a reader can pin to a goal, in menu order.
+ *
+ * The automatic pick below stays the default. These exist because the reader
+ * sometimes knows better — a goal they want to watch for consistency even
+ * while the data would support a richer chart. `step` and `basic` are only
+ * ever chosen, never picked: the automatic order already has a better chart
+ * for every case either would cover.
+ */
+export const CHART_CHOICES: { id: VisualId; label: string }[] = [
+  { id: 'progress', label: 'Line graph' },
+  { id: 'step', label: 'Step chart' },
+  { id: 'heatmap', label: 'Heatmap' },
+  { id: 'basic', label: 'Basic graph' },
+  { id: 'roadmap', label: 'Roadmap' },
+  { id: 'volume', label: 'Weekly volume' },
+  { id: 'difficulty', label: 'Difficulty' },
+];
+
+const CHOSEN = new Set<string>(CHART_CHOICES.map((choice) => choice.id));
+
+/** The goal's pinned chart, or null when the page should pick. */
+export function chosenChart(goal: Goal): VisualId | null {
+  return goal.chart && CHOSEN.has(goal.chart) ? (goal.chart as VisualId) : null;
+}
 
 /**
  * What each kind of goal wants to be shown, best first.
@@ -179,6 +217,13 @@ const FITS: Record<VisualId, (context: VisualContext) => boolean> = {
   volume: (ctx) => dated(ctx.done).length >= 4,
 
   roadmap: (ctx) => (ctx.goal.milestones ?? []).length > 0,
+
+  // Never reached by the automatic pick; kept so the table stays total.
+  step: (ctx) =>
+    (ctx.goal.milestones ?? []).some(
+      (stone) => stone.status === 'done' && Boolean(stone.completed_at),
+    ),
+  basic: () => true,
 };
 
 export interface Pick {
@@ -245,6 +290,9 @@ const WHY: Record<VisualId, (context: VisualContext) => string> = {
   roadmap: (ctx) =>
     `${(ctx.goal.milestones ?? []).length} checkpoints are set and there is not yet enough `
     + 'finished work to chart. The plan is the most honest thing to show.',
+
+  step: () => '',
+  basic: () => '',
 };
 
 /**
@@ -254,6 +302,17 @@ const WHY: Record<VisualId, (context: VisualContext) => string> = {
  * against it, which the card answers with an invitation rather than a chart.
  */
 export function pickVisual(context: VisualContext): Pick | null {
+  // A chart the reader chose is drawn whatever the data says. The panel copes
+  // with thin data on its own, and says so, rather than overruling them.
+  const chosen = chosenChart(context.goal);
+  if (chosen) {
+    return {
+      id: chosen,
+      meta: VISUALS[chosen],
+      why: 'You chose this chart. Pick Automatic from the ⋯ menu to let the page choose.',
+    };
+  }
+
   const category = (context.goal.category || 'other') as GoalCategory;
   const order = BY_CATEGORY[category] ?? BY_CATEGORY.other;
 

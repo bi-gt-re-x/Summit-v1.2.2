@@ -42,7 +42,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { GoalTile, HealthChip, categoryOf } from './Outcome';
 import { AskModel, Spark } from './AskModel';
 import { SmartPlan } from './SmartPlan';
-import { GoalVisual } from './GoalVisual';
+import { ChartMenu, GoalVisual } from './GoalVisual';
 import { formatGoalDate, goalDate, goalNumbers, goalWeight, isOverdue } from './numbers';
 import { goalHealth } from '@/utils/goalHealth';
 import { pickVisual, visualContext } from '@/utils/goalVisuals';
@@ -190,6 +190,8 @@ export interface ActiveGoalCardProps {
   onCompleteGoal: (goal: Goal) => void;
   /** Turns a subject id into its name, for the charts that group by subject. */
   nameOf: (id: string) => string;
+  /** Pin a chart to the left panel, or '' to let the page pick. */
+  onChart?: (goal: Goal, chart: string) => void;
   /**
    * Print the health reason instead of hiding it in the chip's tooltip.
    *
@@ -221,6 +223,7 @@ export function ActiveGoalCard({
   onMilestoneStatus,
   onCompleteGoal,
   nameOf,
+  onChart,
   explain = false,
 }: ActiveGoalCardProps) {
   /** Midnight today, so a step due today is not drawn as late. */
@@ -571,6 +574,7 @@ export function ActiveGoalCard({
               pick={visual}
               nameOf={nameOf}
               onOpen={() => onOpen(goal)}
+              onChart={onChart && ((chart) => onChart(goal, chart))}
             />
           ) : (
             /* Nothing fits, which on this page means one thing: no checkpoints
@@ -580,6 +584,7 @@ export function ActiveGoalCard({
             <>
               <header className="ag-panel-head">
                 <h4>Nothing to chart yet</h4>
+                {onChart && <ChartMenu goal={goal} onChart={(chart) => onChart(goal, chart)} />}
               </header>
               <p className="ag-empty">
                 Break this into checkpoints and the percentage starts to mean something.

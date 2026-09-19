@@ -251,3 +251,29 @@ describe('the current checkpoint', () => {
     expect(screen.queryByText('Next')).not.toBeInTheDocument();
   });
 });
+
+describe('choosing the chart', () => {
+  it('offers every chart from the panel menu and saves the one picked', async () => {
+    const user = userEvent.setup();
+    const onChart = vi.fn();
+    show({ onChart });
+
+    await user.click(screen.getByRole('button', { name: /Chart for/ }));
+    const names = screen.getAllByRole('menuitemradio').map((item) => item.textContent);
+    expect(names).toEqual([
+      'Automatic', 'Line graph', 'Step chart', 'Heatmap', 'Basic graph',
+      'Roadmap', 'Weekly volume', 'Difficulty',
+    ]);
+    expect(screen.getByRole('menuitemradio', { name: 'Automatic' })).toHaveAttribute('aria-checked', 'true');
+
+    await user.click(screen.getByRole('menuitemradio', { name: 'Step chart' }));
+    expect(onChart).toHaveBeenCalledWith(expect.objectContaining({ id: 'g-1' }), 'step');
+  });
+
+  it('draws the chart the goal was given', () => {
+    show({ goal: goal({ chart: 'basic' }), onChart: vi.fn() });
+
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument();
+    expect(screen.getByText(/You chose this chart/)).toBeInTheDocument();
+  });
+});

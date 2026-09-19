@@ -51,6 +51,8 @@ export interface NewGoal {
   current_value?: number;
   target_number?: number;
   subject_ids?: string;
+  /** Which chart the card draws; empty lets the page pick. */
+  chart?: string;
   /** Checkpoint titles to create with the goal, in execution order. */
   milestones?: string[];
 }
@@ -94,6 +96,7 @@ export type GoalEdit = Partial<
     | 'current_value'
     | 'target_number'
     | 'subject_ids'
+    | 'chart'
   >
 >;
 

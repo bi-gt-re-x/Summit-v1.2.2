@@ -111,6 +111,8 @@ ADDED_COLUMNS = (
     ('goals', 'current_value', 'NUMERIC'),
     ('goals', 'target_number', 'NUMERIC'),
     ('goals', 'subject_ids', 'TEXT'),
+    # Which chart the card draws; empty lets the page pick.
+    ('goals', 'chart', 'TEXT'),
 
     # Which goal and which checkpoint a task is execution for. Both nullable
     # and both meaningless to every task that already exists, which is the

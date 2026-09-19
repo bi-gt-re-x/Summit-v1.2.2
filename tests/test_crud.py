@@ -127,6 +127,20 @@ def test_goal_round_trip(client):
     assert db.find_row('goals', goal_id) is None
 
 
+def test_a_goal_keeps_the_chart_it_was_given(client):
+    reply = client.post('/api/add_goal', json={
+        'title': 'chart me', 'goal_type': 'xp', 'target_xp': 10, 'chart': 'step',
+    }).json()
+    assert db.find_row('goals', reply['id'], user_id='tester')['chart'] == 'step'
+
+    client.post('/api/update_goal', json={'id': reply['id'], 'chart': 'heatmap'})
+    assert db.find_row('goals', reply['id'], user_id='tester')['chart'] == 'heatmap'
+
+    # Anything off the list reads as "let the page pick" rather than an error.
+    client.post('/api/update_goal', json={'id': reply['id'], 'chart': 'pie'})
+    assert db.find_row('goals', reply['id'], user_id='tester')['chart'] == ''
+
+
 def test_goal_progress_is_capped_at_its_target(client):
     goal_id = make_goal(client, target=100)
     reply = client.post('/api/update_goal_progress',

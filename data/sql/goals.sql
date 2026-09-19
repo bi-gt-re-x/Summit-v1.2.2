@@ -71,7 +71,10 @@ CREATE TABLE IF NOT EXISTS goals (
     -- Comma-separated subject ids. A list rather than JSON because it is only
     -- ever read whole and split, and a TEXT column that a human can read in a
     -- database browser is worth more here than a structure nothing nests.
-    subject_ids             TEXT DEFAULT ''
+    subject_ids             TEXT DEFAULT '',
+    -- Which chart the goal card draws. Empty lets the page pick one from the
+    -- goal's data; see frontend/src/utils/goalVisuals.ts.
+    chart                   TEXT DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS goals_user_status_idx ON goals (user_id, status);

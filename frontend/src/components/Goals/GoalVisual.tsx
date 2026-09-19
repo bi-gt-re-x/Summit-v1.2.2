@@ -23,7 +23,9 @@
 import { useState } from 'react';
 import { formatGoalDate, goalDate, goalNumbers } from './numbers';
 import {
+  CHART_CHOICES,
   VISUALS,
+  chosenChart,
   difficultyBars,
   heatCells,
   subjectBars,
@@ -104,7 +106,12 @@ export interface Point {
   percent: number;
 }
 
-export function Sparkline({ points }: { points: Point[] }) {
+/**
+ * `step` draws the same points as a staircase: flat until a checkpoint is
+ * reached, then straight up. That is the truer shape for checkpoints, which
+ * are reached on a day rather than gradually.
+ */
+export function Sparkline({ points, step = false }: { points: Point[]; step?: boolean }) {
   const w = 300;
   const h = 118;
   const padX = 4;
@@ -117,7 +124,15 @@ export function Sparkline({ points }: { points: Point[] }) {
     y: h - (pct(point.percent) / 100) * (h - 8) - 4,
   }));
 
-  const line = placed.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+  const line = placed
+    .map((p, i) =>
+      i === 0
+        ? `M${p.x.toFixed(1)},${p.y.toFixed(1)}`
+        : step
+          ? `H${p.x.toFixed(1)} V${p.y.toFixed(1)}`
+          : `L${p.x.toFixed(1)},${p.y.toFixed(1)}`,
+    )
+    .join(' ');
   const area = `${line} L${placed[placed.length - 1]!.x.toFixed(1)},${h} L${placed[0]!.x.toFixed(1)},${h} Z`;
 
   // Four month labels across the span, evenly. Not one per point: the points
@@ -245,6 +260,7 @@ function Roadmap({ goal, onOpen }: { goal: Goal; onOpen: () => void }) {
 /** The figure between nothing and the target, on one line. */
 function Scale({ goal }: { goal: Goal }) {
   const n = goalNumbers(goal);
+  if (n.target <= 0) return <p className="ag-empty">No target set yet, so there is nothing to measure against.</p>;
   const done = pct(n.progress);
   const short = (value: number) => Math.round(value * 10) / 10;
 
@@ -279,9 +295,69 @@ export interface GoalVisualProps {
   /** Turns a subject id into its name. */
   nameOf: (id: string) => string;
   onOpen: () => void;
+  /** Pin a chart to the goal, or '' to let the page pick. Absent hides the menu. */
+  onChart?: (chart: string) => void;
 }
 
-export function GoalVisual({ goal, context, pick, nameOf, onOpen }: GoalVisualProps) {
+/** The ⋯ in the panel's corner: which chart this goal draws. */
+export function ChartMenu({
+  goal,
+  onChart,
+}: {
+  goal: Goal;
+  onChart: (chart: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const current = chosenChart(goal) ?? '';
+  const choose = (chart: string) => {
+    setOpen(false);
+    if (chart !== current) onChart(chart);
+  };
+
+  return (
+    <div className="ag-menu-wrap">
+      <button
+        type="button"
+        className="ag-kebab"
+        aria-label={`Chart for ${goal.title}`}
+        aria-expanded={open}
+        onClick={() => setOpen((was) => !was)}
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="5" cy="12" r="1.7" />
+          <circle cx="12" cy="12" r="1.7" />
+          <circle cx="19" cy="12" r="1.7" />
+        </svg>
+      </button>
+      {open && (
+        <>
+          <button
+            type="button"
+            className="ag-menu-veil"
+            aria-label="Close menu"
+            onClick={() => setOpen(false)}
+          />
+          <div className="ag-menu ag-chart-menu" role="menu" aria-label="Chart">
+            {[{ id: '', label: 'Automatic' }, ...CHART_CHOICES].map((choice) => (
+              <button
+                key={choice.id || 'auto'}
+                type="button"
+                role="menuitemradio"
+                aria-checked={current === choice.id}
+                className={current === choice.id ? 'is-on' : ''}
+                onClick={() => choose(choice.id)}
+              >
+                {choice.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+export function GoalVisual({ goal, context, pick, nameOf, onOpen, onChart }: GoalVisualProps) {
   const today = Date.now();
   /* Opens on the window that has something in it — see `movement`. Checked once
      on first render rather than watched, so a reader who picks a range keeps it. */
@@ -290,37 +366,48 @@ export function GoalVisual({ goal, context, pick, nameOf, onOpen }: GoalVisualPr
   );
 
   const meta = VISUALS[pick.id];
-  const line = pick.id === 'progress' ? series(goal, range, today) : [];
+  const timed = pick.id === 'progress' || pick.id === 'step';
+  const line = timed ? series(goal, range, today) : [];
+  const stones = goal.milestones ?? [];
 
   return (
     <>
       <header className="ag-panel-head">
         <h4>{meta.title}</h4>
-        {pick.id === 'progress' && (
-          <label className="ag-range">
-            <span className="gx-sr">Range</span>
-            <select value={range} onChange={(event) => setRange(event.target.value as 'year' | 'all')}>
-              <option value="year">This Year</option>
-              <option value="all">All Time</option>
-            </select>
-          </label>
-        )}
+        <div className="ag-panel-tools">
+          {timed && (
+            <label className="ag-range">
+              <span className="gx-sr">Range</span>
+              <select value={range} onChange={(event) => setRange(event.target.value as 'year' | 'all')}>
+                <option value="year">This Year</option>
+                <option value="all">All Time</option>
+              </select>
+            </label>
+          )}
+          {onChart && <ChartMenu goal={goal} onChart={onChart} />}
+        </div>
       </header>
 
-      {pick.id === 'progress' && line.length > 1 && <Sparkline points={line} />}
-      {pick.id === 'scale' && <Scale goal={goal} />}
+      {timed && line.length > 1 && <Sparkline points={line} step={pick.id === 'step'} />}
+      {/* A chosen chart can land on a goal with nothing behind it yet. Said
+          plainly, rather than drawing an empty frame. */}
+      {timed && line.length <= 1 && (
+        <p className="ag-empty">No checkpoints reached yet, so there is no line to draw.</p>
+      )}
+      {(pick.id === 'scale' || pick.id === 'basic') && <Scale goal={goal} />}
       {pick.id === 'difficulty' && <Bars rows={difficultyBars(context)} />}
       {pick.id === 'skills' && <Bars rows={subjectBars(context, nameOf)} />}
       {pick.id === 'volume' && <Bars rows={weekdayBars(context)} />}
       {pick.id === 'heatmap' && <Heat context={context} />}
-      {pick.id === 'roadmap' && <Roadmap goal={goal} onOpen={onOpen} />}
+      {pick.id === 'roadmap' && stones.length > 0 && <Roadmap goal={goal} onOpen={onOpen} />}
+      {pick.id === 'roadmap' && stones.length === 0 && (
+        <p className="ag-empty">No checkpoints yet.</p>
+      )}
 
       <p className="ag-caption">{meta.caption}</p>
-      {/* Why this chart and not one of the other six. It was a `title` on the
-          caption above — invisible on a touch screen, and the sentence it held
-          was the same one for every chart of a given category, which made it a
-          tooltip worth nothing. It names the evidence now, so a reader who
-          wants a different chart can see what it would take. */}
+      {/* Why this chart and not one of the others. It names the evidence, so a
+          reader who wants a different chart can see what it would take — or,
+          for a chart they chose, how to hand the choice back. */}
       <p className="ag-why-chart">{pick.why}</p>
     </>
   );

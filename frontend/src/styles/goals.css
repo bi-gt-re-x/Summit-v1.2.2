@@ -3417,6 +3417,11 @@ button.gx-state-attn.is-on {
 }
 .ag-menu button:hover { background: var(--gx-card-2); }
 .ag-menu button.is-bad { color: var(--gx-bad); }
+/* The chart picker marks the one in use rather than listing actions. */
+.ag-chart-menu { min-width: 164px; }
+.ag-chart-menu button.is-on { color: var(--tone); font-weight: 600; }
+.ag-chart-menu button.is-on::after { content: '✓'; float: right; margin-left: var(--space-3); }
+.ag-panel-tools { display: flex; align-items: center; gap: var(--space-1); }
 
 /* ---------- Body ---------------------------------------------------------- */
 .ag-body {
