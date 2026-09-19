@@ -3,7 +3,8 @@
  *
  * The stylesheets imported here are the ones every page depends on:
  * `tokens.css` is the shared type scale, radii, shadows and colours, first so
- * every sheet after it can read them;
+ * every sheet after it can read them; `ui.css` dresses the building blocks in
+ * components/ui (button, card, badge, figure, dialog);
  * `grades.css` is the letter-grade palette every page that shows one reads,
  * `layout.css` is the shared responsive foundation (`.page-shell`, the
  * 1024/768/480 breakpoints), `page-enter.css` is the arrival cascade every
@@ -32,6 +33,7 @@ import {
 } from '@/context';
 
 import '@/styles/tokens.css';
+import '@/styles/ui.css';
 import '@/styles/grades.css';
 import '@/styles/layout.css';
 import '@/styles/page-enter.css';

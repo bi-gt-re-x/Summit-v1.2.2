@@ -7,8 +7,8 @@
  */
 export { AskModel, Spark } from './AskModel';
 export type { AskModelProps } from './AskModel';
-export { ConfirmModal, GoalModal } from './GoalModal';
-export type { ConfirmModalProps, GoalModalProps } from './GoalModal';
+export { GoalModal } from './GoalModal';
+export type { GoalModalProps } from './GoalModal';
 export { MilestoneCalendar, milestoneDays } from './MilestoneCalendar';
 export type { MilestoneCalendarProps, MilestoneDay } from './MilestoneCalendar';
 export { Trajectory, reading } from './Trajectory';

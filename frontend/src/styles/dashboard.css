@@ -160,7 +160,7 @@ body {
                 transform 0.6s ease, margin-bottom 0.6s ease,
                 flex-grow 0.6s ease;
 }
-.top-section > .card {
+.top-section > .ui-card {
     min-height: 0;
     transition: padding 0.6s ease, border-width 0.6s ease;
 }
@@ -176,7 +176,7 @@ html.focus-mode .top-section {
                 transform 0.6s ease, margin-bottom 0.6s ease,
                 flex-grow 0.6s ease, visibility 0s linear 0.6s;
 }
-html.focus-mode .top-section > .card {
+html.focus-mode .top-section > .ui-card {
     overflow: hidden;
     padding-top: 0;
     padding-bottom: 0;
@@ -254,26 +254,17 @@ html.focus-mode .focus-progress-wrap {
 }
 html.focus-mode .focus-progress { height: 10px; margin: 0; }
 
-.card {
-    background: #FFFFFF;
-    padding: 24px;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    border: 1.5px solid #EAEAEA;
-    text-align: left;
-}
-
 /* User-stats card sits flush with the Statistics card beside it (no offset). */
 .user-stats {
     position: relative;
 }
 
-.card h2 {
+.dash .ui-card h2 {
     margin-top: 0;
     margin-bottom: 20px;
     font-size: var(--text-xl);
     font-weight: 700;
-    color: #2C302E;
+    color: var(--color-ink);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -1371,22 +1362,7 @@ body.easter-shake {
     border: 1px solid #CCCCCC;
 }
 
-.dash .confirm-add-btn {
-    width: 100%;
-    padding: 14px;
-    background-color: #2C302E;
-    color: #FFFFFF;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    font-size: var(--text-lg);
-    font-weight: 600;
-    margin-top: 24px;
-}
-
-.dash .confirm-add-btn:hover {
-    background-color: #454B48;
-}
+.dash-modal-submit { margin-top: 24px; }
 
 /* "Show on calendar" free-slot suggestion / overlap warning under the toggle. */
 .cal-suggest {
@@ -1514,10 +1490,6 @@ html[data-theme="dark"] .logo img {
 }
 
 /* Cards & containers */
-html[data-theme="dark"] .card {
-    background: #1a1f26;
-    border-color: #30363d;
-}html[data-theme="dark"] .card h2,
 html[data-theme="dark"] .username,
 html[data-theme="dark"] .stat-row strong{
     color: #f0f2f5;
@@ -1590,14 +1562,6 @@ html[data-theme="dark"] .dropdown-content {
     background: #21262d;
     border-color: #30363d;
     color: #f0f2f5;
-}
-html[data-theme="dark"] .confirm-add-btn {
-    background: #21262d;
-    color: #f0f2f5;
-    border: 1px solid #30363d;
-}
-html[data-theme="dark"] .confirm-add-btn:hover {
-    background: #30363d;
 }
 html[data-theme="dark"] .modal-separator {
     background: #30363d;

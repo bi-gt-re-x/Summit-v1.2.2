@@ -200,32 +200,3 @@ html[data-theme="dark"] .cu-failed { color: #f08aa5; }
     color: var(--cu-ink-soft);
 }
 
-.cu-skip {
-    border: none;
-    background: none;
-    padding: 8px 6px;
-    font-family: inherit;
-    font-size: var(--text-sm);
-    color: var(--cu-ink-faint);
-    cursor: pointer;
-}
-
-.cu-skip:hover { color: var(--cu-ink-soft); }
-
-.cu-save {
-    padding: 9px 18px;
-    border: none;
-    border-radius: var(--radius-md);
-    background: var(--cu-accent);
-    color: #fff;
-    font-family: inherit;
-    font-size: var(--text-md);
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity .12s ease;
-}
-
-.cu-save:disabled {
-    opacity: .45;
-    cursor: default;
-}

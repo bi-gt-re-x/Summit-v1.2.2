@@ -6,10 +6,9 @@
    level-up celebration, focus mode's colour scheme, and the dark theme for all
    of those. What is here is only the page around them.
 
-   Every class in this file is prefixed `dash-`, and the one shared name it
-   reuses is `.card` — the white/14px/1.5px-border base that dashboard.css
-   already defines in both themes, so a card added here is dark-mode-correct
-   without a second rule.
+   Every class in this file is prefixed `dash-`. The cards themselves are the
+   shared Card (components/ui, styles/ui.css), which is right in both themes
+   and every skin without a second rule here.
 
    Palette, matching the rest of the app:
        #2C302E  ink            #6C757D  muted ink
@@ -237,6 +236,7 @@ body:has(.dash) .app-main {
 }
 .dash-figure {
     display: flex;
+    flex-direction: row;
     align-items: baseline;
     gap: 10px;
     min-width: 0;
@@ -1230,27 +1230,18 @@ html[data-theme="dark"] .dash-empty a { color: #9d8bff; }
    components/Dashboard/summary. It rides on the card's title so it takes no
    line of its own, on a page that does not fit one screen. */
 .dash-trend {
-    display: block;
+    align-self: flex-start;
     margin: -4px 0 10px;
-    font-size: var(--text-xs);
-    font-weight: 700;
-    line-height: 1.3;
 }
 /* An account with no history behind it keeps the space so the four cards in
    the row still line up with one another, and says nothing in it. */
-.dash-trend.is-none { min-height: 15px; }
-.dash-trend.is-up   { color: #1F8A54; }
-.dash-trend.is-down { color: #C0392B; }
-.dash-trend.is-flat { color: #9297A3; font-weight: 600; }
+.dash-trend.is-none { display: block; min-height: 22px; }
 
 /* The focus card's baseline, beside its goal rather than in the title: that
    card's title already carries an icon, and the goal is the line the figure is
    read against anyway. */
 .dash-stat-usual { margin-left: 6px; color: #9AA0A6; }
 
-html[data-theme="dark"] .dash-trend.is-up   { color: #3fb950; }
-html[data-theme="dark"] .dash-trend.is-down { color: #f85149; }
-html[data-theme="dark"] .dash-trend.is-flat,
 html[data-theme="dark"] .dash-stat-usual    { color: #6e7681; }
 
 html[data-theme="dark"] .dash-week-vs.is-up   { color: #3fb950; }

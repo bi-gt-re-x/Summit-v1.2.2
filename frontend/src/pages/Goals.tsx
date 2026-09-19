@@ -46,7 +46,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActiveGoalCard,
   Band,
-  ConfirmModal,
   GoalDetail,
   GoalInsights,
   GoalModal,
@@ -92,6 +91,7 @@ import type { Goal, Milestone, MilestoneStatus, MilestoneStep, Task } from '@/ty
 import { goalHealth } from '@/utils/goalHealth';
 import type { TabId } from '@/components/Goals';
 import { fromTitles, stepProgress } from '@/utils/milestoneSteps';
+import { ConfirmDialog } from '@/components/ui';
 import '@/styles/goals.css';
 
 /** How often to re-read while a focus goal is running. */
@@ -1192,7 +1192,7 @@ export default function Goals() {
         onSave={saveGoal}
       />
 
-      <ConfirmModal
+      <ConfirmDialog
         open={pendingDraft !== null}
         title="Redraft this goal's checkpoints?"
         body={
@@ -1207,8 +1207,9 @@ export default function Goals() {
         onConfirm={() => void confirmRedraft()}
       />
 
-      <ConfirmModal
+      <ConfirmDialog
         open={pendingDelete !== null}
+        danger
         title="Delete this goal?"
         body="Its checkpoints go with it. Any tasks linked to it are kept — they lose the link, not the work."
         confirmLabel="Delete"

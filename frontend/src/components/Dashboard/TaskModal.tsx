@@ -25,6 +25,7 @@ import { useSubjects } from '@/hooks/useSubjects';
 import { MAX_TASK_XP, MIN_TASK_XP, xpToPriority } from '@/utils/priority';
 import type { NewTask } from '@/services/tasks';
 import { Icon } from '@/components/Icon';
+import { Button } from '@/components/ui';
 
 export interface TaskModalProps {
   open: boolean;
@@ -413,9 +414,9 @@ export function TaskModal({
             choose <strong>Task</strong>.
           </p>
 
-          <button type="submit" className="confirm-add-btn" disabled={busy}>
+          <Button type="submit" variant="primary" size="lg" block className="dash-modal-submit" disabled={busy}>
             Confirm &amp; Add Task
-          </button>
+          </Button>
         </form>
       </div>
     </div>

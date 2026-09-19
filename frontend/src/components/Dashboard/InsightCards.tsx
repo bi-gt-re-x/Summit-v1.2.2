@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 import { useCountUp } from '@/hooks';
 import { format } from '@/utils';
 import type { Activity, WeekSummary } from './summary';
+import { Card } from '@/components/ui';
 
 // --------------------------------------------------------------------------
 // Weekly Overview
@@ -99,7 +100,7 @@ export function WeeklyOverview({
   ];
 
   return (
-    <section className="card dash-panel dash-insight">
+    <Card className="dash-panel dash-insight">
       <h2 className="dash-panel-title dash-insight-title">
         <span className="dash-stat-ico dash-ico-week" aria-hidden="true">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
@@ -137,7 +138,7 @@ export function WeeklyOverview({
       <p className="dash-panel-lede">
         Trends, what you repeat, and what to change next.
       </p>
-    </section>
+    </Card>
   );
 }
 
@@ -155,7 +156,7 @@ export function WeeklyOverview({
 // --------------------------------------------------------------------------
 export function RecentActivity({ entries }: { entries: Activity[] }) {
   return (
-    <section className="card dash-panel dash-insight">
+    <Card className="dash-panel dash-insight">
       <h2 className="dash-panel-title dash-insight-title">
         <span className="dash-stat-ico dash-ico-pulse" aria-hidden="true">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -190,6 +191,6 @@ export function RecentActivity({ entries }: { entries: Activity[] }) {
       <Link className="dash-panel-link" to="/history">
         View all activity<span aria-hidden="true"> →</span>
       </Link>
-    </section>
+    </Card>
   );
 }

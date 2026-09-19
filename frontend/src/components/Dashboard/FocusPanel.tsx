@@ -18,6 +18,7 @@
 import { useState } from 'react';
 import '@/styles/focus-session.css';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
+import { Button, Card } from '@/components/ui';
 
 export interface FocusPanelProps {
   session: UseFocusSession;
@@ -30,7 +31,7 @@ export function FocusPanel({ session }: FocusPanelProps) {
   const focusedHours = focus.focused / 3600;
 
   return (
-    <div className="card focus-panel">
+    <Card className="focus-panel" as="div">
       <h2>
         <svg
           width="24"
@@ -169,27 +170,22 @@ export function FocusPanel({ session }: FocusPanelProps) {
               session?
             </p>
             <div className="focus-confirm-actions">
-              <button
-                type="button"
-                className="focus-confirm-btn"
-                onClick={() => setConfirming(false)}
-              >
+              <Button variant="secondary" onClick={() => setConfirming(false)}>
                 Keep Going
-              </button>
-              <button
-                type="button"
-                className="focus-confirm-btn danger"
+              </Button>
+              <Button
+                variant="danger"
                 onClick={() => {
                   focus.stop();
                   setConfirming(false);
                 }}
               >
                 Stop Focus
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

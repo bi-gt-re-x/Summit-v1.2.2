@@ -19,6 +19,7 @@ import { subjectOf } from '@/hooks/useSubjects';
 import type { TaskBuckets } from './summary';
 import type { Subject } from '@/services/subjects';
 import type { Task } from '@/types';
+import { Card } from '@/components/ui';
 
 /**
  * How many rows a tab shows before it defers to the tasks page.
@@ -124,7 +125,7 @@ export function TaskPanel({
   const hidden = all.length - shown.length;
 
   return (
-    <section className="card dash-panel dash-tasks">
+    <Card className="dash-panel dash-tasks">
       <header className="dash-panel-head">
         <h2 className="dash-panel-title">Tasks</h2>
 
@@ -216,6 +217,6 @@ export function TaskPanel({
         {hidden > 0 ? `View all tasks (${hidden} more)` : 'View all tasks'}
         <span aria-hidden="true"> →</span>
       </Link>
-    </section>
+    </Card>
   );
 }

@@ -79,6 +79,7 @@ import { goals as goalService, tasks as taskService } from '@/services';
 import type { NewTask } from '@/services/tasks';
 import type { Goal, Task } from '@/types';
 import { isoStamp } from '@/utils/calendarGrid';
+import { useConfirm } from '@/components/ui';
 import '@/styles/tasks.css';
 
 /**
@@ -150,6 +151,7 @@ export default function Tasks() {
   const { data, error, loading, refreshing, reload, mutate, username } = useUserData();
   const subjects = useSubjects(username);
   const { prefs } = useSettings();
+  const [confirm, confirmDialog] = useConfirm();
 
   /* The account's outcome goals, for the link control on each row. Read once
      rather than through useApi: nothing on this page writes a goal, and a
@@ -508,14 +510,20 @@ export default function Tasks() {
   );
 
   const drop = useCallback(
-    (task: Task, ask = true) => {
+    async (task: Task, ask = true) => {
       if (!username) return;
       // The confirmation is a preference; off means the click is the decision.
       // `ask` is how the bulk bar opts out of it: twelve selected rows used to
       // mean twelve separate confirm dialogs, one per task, which is not asking
       // a question — it is charging for the answer. It asks once, up there,
       // for all of them.
-      if (ask && prefs.confirm_delete && !window.confirm(`Delete “${task.title}”?`)) return;
+      if (
+        ask
+        && prefs.confirm_delete
+        && !(await confirm({ title: `Delete “${task.title}”?`, confirmLabel: 'Delete', danger: true }))
+      ) {
+        return;
+      }
       void run(task.id, async () => {
         const result = await taskService.deleteTask(task.id);
         if (!result.success) {
@@ -534,7 +542,7 @@ export default function Tasks() {
         return true;
       });
     },
-    [username, mutate, run, prefs.confirm_delete],
+    [username, mutate, run, prefs.confirm_delete, confirm],
   );
 
   const add = useCallback(
@@ -986,14 +994,17 @@ export default function Tasks() {
               count={chosen.length}
               busy={saving}
               onComplete={() => void bulk((task) => (task.status === 'done' ? Promise.resolve() : complete(task)))}
-              onDelete={() => {
+              onDelete={async () => {
                 if (
                   prefs.confirm_delete
-                  && !window.confirm(
-                    chosen.length === 1
-                      ? `Delete “${chosen[0]?.title}”?`
-                      : `Delete ${chosen.length} tasks?`,
-                  )
+                  && !(await confirm({
+                    title:
+                      chosen.length === 1
+                        ? `Delete “${chosen[0]?.title}”?`
+                        : `Delete ${chosen.length} tasks?`,
+                    confirmLabel: 'Delete',
+                    danger: true,
+                  }))
                 ) {
                   return;
                 }
@@ -1128,6 +1139,7 @@ export default function Tasks() {
           onClose={nextReview}
         />
       )}
+      {confirmDialog}
     </div>
   );
 }

@@ -30,6 +30,7 @@ import type { Subject } from '@/services/subjects';
 import type { Goal, GoalType } from '@/types';
 import type { NewGoal } from '@/services/goals';
 import { Icon } from '@/components/Icon';
+import { Button } from '@/components/ui';
 
 export interface GoalModalProps {
   open: boolean;
@@ -255,85 +256,18 @@ export function GoalModal({
             and says what your work there is doing about it.
           </p>
 
-          <button
+          <Button
             type="submit"
-            className="confirm-add-btn"
+            variant="primary"
+            size="lg"
+            block
+            className="gx-modal-submit"
             id="saveGoalBtn"
             disabled={busy}
           >
             {goal ? 'Save Changes' : 'Add Goal'}
-          </button>
+          </Button>
         </form>
-      </div>
-    </div>
-  );
-}
-
-export interface ConfirmModalProps {
-  open: boolean;
-  title: string;
-  body: string;
-  confirmLabel: string;
-  cancelLabel?: string;
-  busy?: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-}
-
-/**
- * The page's four confirmations — delete, give up, complete early, and the
- * deadline extension's sibling — were four near-identical blocks of markup in
- * goals.html. They are one component with different words in it.
- */
-export function ConfirmModal({
-  open,
-  title,
-  body,
-  confirmLabel,
-  cancelLabel = 'Cancel',
-  busy = false,
-  onCancel,
-  onConfirm,
-}: ConfirmModalProps) {
-  if (!open) return null;
-  return (
-    <div className="modal" style={{ display: 'block' }}>
-      <div className="modal-content">
-        <span
-          className="close"
-          onClick={onCancel}
-          role="button"
-          aria-label="Close"
-        >
-          ×
-        </span>
-        <h2>{title}</h2>
-        <p>{body}</p>
-        <div
-          style={{
-            display: 'flex',
-            gap: '10px',
-            justifyContent: 'center',
-            marginTop: '20px',
-          }}
-        >
-          <button
-            type="button"
-            onClick={onCancel}
-            className="confirm-add-btn"
-            style={{ background: '#666' }}
-          >
-            {cancelLabel}
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="confirm-add-btn"
-            disabled={busy}
-          >
-            {confirmLabel}
-          </button>
-        </div>
       </div>
     </div>
   );

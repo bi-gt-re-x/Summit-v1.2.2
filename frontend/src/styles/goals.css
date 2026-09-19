@@ -4803,3 +4803,7 @@ button.gx-state-attn.is-on {
     border-top-color: color-mix(in srgb, var(--gx-line) 70%, transparent);
 }
 .gx-smart.is-compact .gx-ai { font-size: var(--text-xs); padding: 5px 10px 5px 9px; }
+
+/* The goal dialog's save button — the shared Button (components/ui); this is
+   only the air above it. */
+.gx-modal-submit { margin-top: 20px; }

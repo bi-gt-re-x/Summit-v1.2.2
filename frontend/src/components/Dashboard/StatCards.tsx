@@ -19,6 +19,7 @@ import { format } from '@/utils';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
 import type { DaySummary, Typical } from './summary';
 import type { UserStats } from '@/types';
+import { Badge, Card, Stat } from '@/components/ui';
 
 // --------------------------------------------------------------------------
 // The ring
@@ -90,32 +91,23 @@ export function TodayCard({
   const left = useCountUp(xpLeft);
 
   return (
-    <section className="card dash-stat dash-stat-today">
+    <Card className="dash-stat dash-stat-today">
       <h2 className="dash-stat-title">Today&apos;s Progress</h2>
       <Trend now={day.done} usual={{ ...usual, value: usual.tasks }} />
       <div className="dash-today-body">
         <ProgressRing percent={day.percent} label={caption} />
         <dl className="dash-today-figures">
-          <div className="dash-figure">
-            <dt>Tasks</dt>
-            <dd>{format.number(total)}</dd>
-          </div>
-          <div className="dash-figure">
-            <dt>Completed</dt>
-            <dd>{format.number(done)}</dd>
-          </div>
+          <Stat className="dash-figure" label="Tasks" value={format.number(total)} />
+          <Stat className="dash-figure" label="Completed" value={format.number(done)} />
           {/* Not "XP Earned". That figure is the card immediately to the
               right of this one — `+60 XP today` — and having the same number
               twice on two adjacent cards spent one of four slots restating a
               neighbour. This is the other half of it: what finishing the rest
               of today is worth, which nothing else on the page says. */}
-          <div className="dash-figure">
-            <dt>XP left</dt>
-            <dd>{format.number(left)}</dd>
-          </div>
+          <Stat className="dash-figure" label="XP left" value={format.number(left)} />
         </dl>
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -158,13 +150,14 @@ function Trend({ now, usual }: { now: number; usual: Typical & { value: number }
   /* Within a tenth either way is not a change, it is the same day. Saying
      "↑ 3%" about a normal Tuesday is how a comparison stops being read. */
   if (Math.abs(change) < 10) {
-    return <span className="dash-trend is-flat">about usual</span>;
+    return <Badge className="dash-trend">about usual</Badge>;
   }
 
   const up = change > 0;
   return (
-    <span
-      className={`dash-trend${up ? ' is-up' : ' is-down'}`}
+    <Badge
+      tone={up ? 'success' : 'danger'}
+      className="dash-trend"
       /* The short form on screen and the sentence in the tooltip. "↑ 105%
          above your usual day" is a line of prose in a card the width of a
          phone, and four cards each carrying one is most of what made this row
@@ -172,7 +165,7 @@ function Trend({ now, usual }: { now: number; usual: Typical & { value: number }
       title={`${Math.abs(change)}% ${up ? 'above' : 'below'} your usual day`}
     >
       <span aria-hidden="true">{up ? '↑' : '↓'}</span> {Math.abs(change)}% vs usual
-    </span>
+    </Badge>
   );
 }
 
@@ -221,7 +214,7 @@ export function XpCard({
   const goalMet = xpToday >= goal;
 
   return (
-    <section className="card dash-stat">
+    <Card className="dash-stat">
       <h2 className="dash-stat-title">XP Overview</h2>
       <Trend now={xpToday} usual={{ ...usual, value: usual.xp }} />
       <div className="dash-xp-head">
@@ -255,7 +248,7 @@ export function XpCard({
           {goalMet ? 'daily goal met' : `of ${format.number(goal)} goal`}
         </span>
       </p>
-    </section>
+    </Card>
   );
 }
 
@@ -290,7 +283,7 @@ export function FocusCard({
   const percent = useCountUp(session.percent);
 
   return (
-    <section className="card dash-stat">
+    <Card className="dash-stat">
       <h2 className="dash-stat-title">
         <span className="dash-stat-ico dash-ico-focus" aria-hidden="true">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -321,7 +314,7 @@ export function FocusCard({
           aria-label="Focus goal progress"
         />
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -351,7 +344,7 @@ export function StreakCard({ stats }: { stats: UserStats }) {
   const toBeat = best > current ? best - current : 0;
 
   return (
-    <section className="card dash-stat">
+    <Card className="dash-stat">
       <h2 className="dash-stat-title">
         <span className="dash-stat-ico dash-ico-streak" aria-hidden="true">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -377,6 +370,6 @@ export function StreakCard({ stats }: { stats: UserStats }) {
       <p className="dash-stat-foot">
         Best Streak: {shownBest} {best === 1 ? 'day' : 'days'}
       </p>
-    </section>
+    </Card>
   );
 }

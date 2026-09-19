@@ -33,6 +33,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { iconUrl, type Subject } from '@/services/subjects';
 import { create, remove, setColor } from '@/services/subjects';
 import { refreshSubjects } from '@/hooks/useSubjects';
+import { useConfirm } from '@/components/ui';
 import {
   FAMILIES,
   FAMILY_MEANING,
@@ -174,6 +175,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [confirm, confirmDialog] = useConfirm();
   const field = useRef<HTMLInputElement>(null);
 
   const mine = useMemo(() => subjects.filter((s) => s.custom), [subjects]);
@@ -231,16 +233,22 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
     async (subject: Subject) => {
       if (!username) return;
       const used = subject.used > 0
-        ? `\n\n${subject.used} task${subject.used === 1 ? '' : 's'} filed under it will keep the work but lose the subject.`
-        : '';
-      if (!window.confirm(`Delete “${subject.name}”?${used}`)) return;
+        ? `${subject.used} task${subject.used === 1 ? '' : 's'} filed under it will keep the work but lose the subject.`
+        : undefined;
+      const sure = await confirm({
+        title: `Delete “${subject.name}”?`,
+        body: used,
+        confirmLabel: 'Delete',
+        danger: true,
+      });
+      if (!sure) return;
       setBusyId(subject.id);
       const result = await remove(subject.id);
       if (!result.success) setError(result.message);
       await refreshSubjects(username);
       setBusyId(null);
     },
-    [username],
+    [username, confirm],
   );
 
   const row = (subject: Subject, deletable: boolean) => (
@@ -326,6 +334,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
       <p className="sl-note">
         A colour set here is what the subject prefers. Busy weeks may shift some apart.
       </p>
+      {confirmDialog}
     </aside>
   );
 }

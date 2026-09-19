@@ -266,7 +266,7 @@ export function ActiveGoalCard({
   /**
    * The reader has pressed "Mark complete" and is being asked to mean it.
    *
-   * In the card rather than the page's `ConfirmModal`, which is what deleting
+   * In the card rather than the page's `ConfirmDialog`, which is what deleting
    * uses. A modal is the right weight for a destructive action arriving from
    * anywhere; this one is reversible, is offered only on a goal whose every
    * checkpoint is already reached, and is answered in the same panel that

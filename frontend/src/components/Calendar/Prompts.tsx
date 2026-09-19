@@ -1,9 +1,9 @@
 /**
  * The two things the grid stops you for: a deletion, and a clash.
  *
- * `DeleteConfirm` is the ordinary one — a blocking card, because deleting a
- * recurring event from a keystroke away from the mouse is not a thing to do by
- * accident. When the thing repeats it asks which: this day, or every day it
+ * `DeleteConfirm` is the ordinary one — a blocking dialog (components/ui),
+ * because deleting a recurring event from a keystroke away from the mouse is
+ * not a thing to do by accident. When the thing repeats it asks which: this day, or every day it
  * lands on.
  *
  * `ConflictDialog` is the unusual one. Two blocks booked over each other is a
@@ -14,6 +14,7 @@
  */
 import { useState } from 'react';
 import type { Scope } from '@/hooks/useCalendarStore';
+import { Button, Dialog } from '@/components/ui';
 
 export interface DeleteConfirmProps {
   kind: 'task' | 'event';
@@ -35,57 +36,50 @@ export function DeleteConfirm({
   const repeats = occurrences > 1;
 
   return (
-    <div
-      className="wk-confirm-backdrop"
-      onClick={(event) => {
-        if (event.target === event.currentTarget) onCancel();
-      }}
-    >
-      <div className="wk-confirm-popup" role="dialog" aria-modal="true">
-        <h3 className="wk-confirm-title">Delete {kind}?</h3>
-        <p className="wk-confirm-msg">
-          {repeats
-            ? `“${name}” lands on ${occurrences} days. This can’t be undone.`
-            : `Delete “${name}”? This can’t be undone.`}
-        </p>
-
-        {repeats && (
-          <div className="radio-group">
-            <label>
-              <input
-                type="radio"
-                name="deleteScope"
-                checked={scope === 'one'}
-                onChange={() => setScope('one')}
-              />{' '}
-              This occurrence
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="deleteScope"
-                checked={scope === 'all'}
-                onChange={() => setScope('all')}
-              />{' '}
-              All {occurrences} occurrences
-            </label>
-          </div>
-        )}
-
-        <div className="wk-confirm-actions">
-          <button type="button" className="wk-confirm-cancel" onClick={onCancel}>
+    <Dialog
+      open
+      onClose={onCancel}
+      role="alertdialog"
+      title={`Delete ${kind}?`}
+      description={
+        repeats
+          ? `“${name}” lands on ${occurrences} days. This can’t be undone.`
+          : `Delete “${name}”? This can’t be undone.`
+      }
+      actions={
+        <>
+          <Button variant="ghost" onClick={onCancel} data-autofocus="">
             Cancel
-          </button>
-          <button
-            type="button"
-            className="wk-confirm-delete"
-            onClick={() => onConfirm(scope)}
-          >
+          </Button>
+          <Button variant="danger" onClick={() => onConfirm(scope)}>
             Delete
-          </button>
+          </Button>
+        </>
+      }
+    >
+      {repeats && (
+        <div className="radio-group">
+          <label>
+            <input
+              type="radio"
+              name="deleteScope"
+              checked={scope === 'one'}
+              onChange={() => setScope('one')}
+            />{' '}
+            This occurrence
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="deleteScope"
+              checked={scope === 'all'}
+              onChange={() => setScope('all')}
+            />{' '}
+            All {occurrences} occurrences
+          </label>
         </div>
-      </div>
-    </div>
+      )}
+    </Dialog>
   );
 }
 
@@ -106,34 +100,25 @@ export interface CreateChooserProps {
  */
 export function CreateChooser({ when, onChoose, onCancel }: CreateChooserProps) {
   return (
-    <div
-      className="wk-choose-backdrop"
-      onClick={(event) => {
-        if (event.target === event.currentTarget) onCancel();
-      }}
-    >
-      <div className="wk-choose-popup" role="dialog" aria-modal="true">
-        <div>
-          <div className="wk-choose-title">New on this slot</div>
-          <p className="wk-empty">{when}</p>
-        </div>
-        <div className="wk-choose-row">
-          <button type="button" className="wk-choose-btn" onClick={() => onChoose('event')}>
+    <Dialog
+      open
+      onClose={onCancel}
+      title="New on this slot"
+      description={when}
+      actions={
+        <>
+          <Button variant="ghost" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button variant="secondary" onClick={() => onChoose('event')}>
             Event
-          </button>
-          <button
-            type="button"
-            className="wk-choose-btn is-task"
-            onClick={() => onChoose('task')}
-          >
+          </Button>
+          <Button variant="primary" onClick={() => onChoose('task')} data-autofocus="">
             Task
-          </button>
-        </div>
-        <button type="button" className="wk-choose-cancel" onClick={onCancel}>
-          Cancel
-        </button>
-      </div>
-    </div>
+          </Button>
+        </>
+      }
+    />
   );
 }
 

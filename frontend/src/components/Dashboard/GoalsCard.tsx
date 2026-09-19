@@ -29,6 +29,7 @@ import { Link } from 'react-router-dom';
 import { goalNumbers } from '@/components/Goals';
 import { goalPace } from '@/utils/goalHealth';
 import type { Goal } from '@/types';
+import { Card } from '@/components/ui';
 
 export interface GoalsCardProps {
   goals: Goal[];
@@ -56,7 +57,7 @@ export function GoalsCard({ goals, limit = 2 }: GoalsCardProps) {
     .slice(0, limit);
 
   return (
-    <section className="card dash-panel dash-insight dash-goals">
+    <Card className="dash-panel dash-insight dash-goals">
       <h2 className="dash-panel-title dash-insight-title">
         <span className="dash-stat-ico dash-ico-goal" aria-hidden="true">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -116,6 +117,6 @@ export function GoalsCard({ goals, limit = 2 }: GoalsCardProps) {
           })}
         </ul>
       )}
-    </section>
+    </Card>
   );
 }
