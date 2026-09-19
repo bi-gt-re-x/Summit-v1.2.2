@@ -151,6 +151,37 @@ export function useSubjects(username: string | null): Subject[] {
  * of its tabs — and `Map<string, Subject>` spelled out at each of them says
  * less than the name does.
  */
+/**
+ * Whether the catalogue has answered for this account yet.
+ *
+ * `useSubjects` starts on an empty list and fills in, which is right for a
+ * picker but wrong for a page that wants to draw once with everything in
+ * place — an empty catalogue and one still on its way look the same. This
+ * shares the same request (`load` dedupes), so asking costs nothing extra.
+ */
+export function useSubjectsReady(username: string | null): boolean {
+  const [ready, setReady] = useState(() => !username || cache.has(username));
+  useEffect(() => {
+    if (!username) {
+      setReady(true);
+      return undefined;
+    }
+    if (cache.has(username)) {
+      setReady(true);
+      return undefined;
+    }
+    let live = true;
+    setReady(false);
+    void load(username).then(() => {
+      if (live) setReady(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, [username]);
+  return ready;
+}
+
 export type SubjectIndex = Map<string, Subject>;
 
 export function useSubjectIndex(username: string | null): SubjectIndex {

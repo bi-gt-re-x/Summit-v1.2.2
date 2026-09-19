@@ -25,7 +25,7 @@ export { usePageEntrance } from './usePageEntrance';
 export { usePinnedViewport } from './usePinnedViewport';
 export { fmtHM, focusedSeconds, useFocusSession } from './useFocusSession';
 export type { FocusState, UseFocusSession } from './useFocusSession';
-export { subjectOf, useSubjectIndex, useSubjects } from './useSubjects';
+export { subjectOf, useSubjectIndex, useSubjects, useSubjectsReady } from './useSubjects';
 export { useMediaQuery } from './useMediaQuery';
 export { useSettings } from './useSettings';
 export { useTheme } from './useTheme';

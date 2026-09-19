@@ -134,7 +134,7 @@ import {
   type SetupAnswers,
   type View,
 } from '@/components/Analytics';
-import { useDocumentTitle, useSettings, useSubjectIndex } from '@/hooks';
+import { useDocumentTitle, useSettings, useSubjectIndex, useSubjectsReady } from '@/hooks';
 import { saveSubjectMilestones } from '@/services/analytics';
 import { PATTERN_DAYS, RECENT_DAYS } from '@/utils/recent';
 import { buildReport, reportFilename } from '@/utils/report';
@@ -186,6 +186,7 @@ export default function Analytics() {
    * nothing but lay them out.
    */
   const subjects = useSubjectIndex(username);
+  const subjectsReady = useSubjectsReady(username);
   const model = useAnalyticsModel(data, subjects);
 
   /**
@@ -448,7 +449,30 @@ export default function Analytics() {
     aim === null;
   const showSetup = editingSetup ?? (firstRun || askedSetup);
 
-  if (series.loading) return <Loading label="Reading your history" />;
+  /*
+   * Drawn once, with everything.
+   *
+   * The page used to open as soon as the day series answered and then redraw
+   * as each of the other eight calls landed — eleven paints in the first
+   * quarter-second, with gates flipping, panels appearing under the reader
+   * and the opening sentence rewriting itself. Every tab reads several of
+   * these, so none of them is optional for a correct first frame. So the page
+   * waits for all of them, the preferences and the subject catalogue, and
+   * then paints the finished thing.
+   *
+   * `loading` rather than `pending`: it is only true before a call's *first*
+   * answer, so a re-read after adopting advice or saving a baseline keeps the
+   * page on screen and never brings the spinner back. A call that fails still
+   * counts as answered — the panel that needed it says so, and the rest of the
+   * page is not held hostage to it.
+   */
+  const firstLoad = [
+    data.tasks, series, data.ratings, data.standing, data.goals,
+    baseline, data.adopted, data.gradedLog, data.scoreLog,
+  ].some((call) => call.loading);
+  if (firstLoad || !ready || !subjectsReady) {
+    return <Loading label="Reading your history" />;
+  }
   if (!series.data) {
     return (
       <ErrorState
