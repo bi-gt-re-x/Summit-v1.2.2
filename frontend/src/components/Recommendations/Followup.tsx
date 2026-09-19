@@ -127,8 +127,7 @@ export function FollowupPanel({ reviews, summary, onDrop, dropping }: FollowupPa
           would become wallpaper. It is the most important sentence in the panel
           and it is the one a reader will stop seeing if it appears six times. */}
       <p className="ax-followup-caveat">
-        Before and after on one account, nothing held constant. Whether the change caused it is
-        yours to judge.
+        A simple before-and-after. Other things may have changed too.
       </p>
     </Panel>
   );

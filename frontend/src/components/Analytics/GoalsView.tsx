@@ -645,11 +645,10 @@ export function PaceMapPanel({ points, undated }: PaceMapProps) {
       </ul>
 
       <p className="ax-muted ax-goal-foot">
-        The diagonal is on pace. Anything under it has used more of its time than it has
-        finished of its work
+        Goals below the diagonal are behind schedule.
         {undated > 0
-          ? `. ${undated} more ${undated === 1 ? 'goal has' : 'goals have'} no date, so ${undated === 1 ? 'it is' : 'they are'} not plotted.`
-          : '.'}
+          ? ` ${undated} ${undated === 1 ? 'goal has' : 'goals have'} no due date and ${undated === 1 ? 'is' : 'are'} not shown.`
+          : ''}
       </p>
     </Panel>
   );

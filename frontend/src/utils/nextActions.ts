@@ -220,7 +220,7 @@ export function buildPlan({
     actions.push({
       ...first,
       minutes: budget,
-      because: `${first.because} It needs about ${first.minutes} minutes; this is a start on it, not the whole thing.`,
+      because: `${first.because} Takes about ${first.minutes} min; this gets it started.`,
     });
     left = 0;
   }
@@ -267,7 +267,7 @@ function gather({
         id: `overdue-${task.id}`,
         kind: 'overdue',
         title: `Finish “${task.title}”`,
-        because: `It was due ${late === 1 ? 'yesterday' : `${late} days ago`}, and it is the oldest thing still open.`,
+        because: `Due ${late === 1 ? 'yesterday' : `${late} days ago`}. Your oldest open task.`,
         minutes: slot,
         taskId: task.id,
         subject: task.subject,
@@ -336,7 +336,7 @@ function gather({
           : stone
             ? `Work on “${stone.title}” for ${entry.goal.title}`
             : `Put an hour into ${entry.goal.title}`,
-        because: `${entry.remaining} day${entry.remaining === 1 ? '' : 's'} left and it is ${Math.round(entry.behind)} points behind where the calendar says it should be.`,
+        because: `${entry.remaining} day${entry.remaining === 1 ? '' : 's'} left, ${Math.round(entry.behind)}% behind schedule.`,
         minutes: slot,
         taskId: linked?.id,
         goalId: entry.goal.id,
@@ -376,7 +376,7 @@ function gather({
         id: `weak-${worst.subject}`,
         kind: 'weak-subject',
         title: `Practise ${nameOf(worst.subject)}`,
-        because: `You rate your ${nameOf(worst.subject)} work ${worst.execution!.toFixed(1)} out of 5, against ${average.toFixed(1)} across everything else — ${worst.rated} rated tasks.`,
+        because: `You rate it ${worst.execution!.toFixed(1)}/5, compared with ${average.toFixed(1)} for other subjects (${worst.rated} rated tasks).`,
         minutes: PRACTICE_MINUTES,
         subject: worst.subject,
         weight: 620 + (average - worst.execution!) * 40,
@@ -408,11 +408,11 @@ function gather({
     found.push({
       id: 'review-poor',
       kind: 'review',
-      title: `Redo the ${takeable} most recent tasks you rated badly`,
+      title: `Redo your ${takeable} latest low-rated tasks`,
       because:
         poor.length > takeable
-          ? `You marked ${poor.length} tasks 1 or 2 out of 5 for execution in the last fortnight. Start with the newest ${takeable} — they are the ones still fresh enough to fix.`
-          : `You marked ${poor.length} tasks 1 or 2 out of 5 for execution in the last fortnight and none of them has been revisited.`,
+          ? `${poor.length} tasks rated 1–2/5 for execution in the last two weeks. Start with the newest ${takeable}.`
+          : `${poor.length} tasks rated 1–2/5 for execution in the last two weeks, none revisited yet.`,
       minutes: Math.min(30, Math.max(MIN_SLOT, takeable * 6)),
       subject,
       weight: 560 + Math.min(poor.length, 12) * 6,
@@ -436,7 +436,7 @@ function gather({
       id: `neglected-${neglected.subject}`,
       kind: 'neglected',
       title: `Come back to ${nameOf(neglected.subject)}`,
-      because: `${neglected.since} days since the last one, after ${neglected.count} tasks. This is the point where a subject stops being paused and starts being dropped.`,
+      because: `Nothing in ${neglected.since} days, after ${neglected.count} tasks.`,
       minutes: PRACTICE_MINUTES,
       subject: neglected.subject,
       weight: 540 + Math.min(neglected.since!, 40),
@@ -454,7 +454,7 @@ function gather({
       id: `stale-${stale.task.id}`,
       kind: 'stale',
       title: `Do or drop “${stale.task.title}”`,
-      because: `It has been on the list ${stale.age} days without a date. Either it happens this week or it is not really a task.`,
+      because: `On your list for ${stale.age} days with no due date. Do it this week or delete it.`,
       minutes: Math.min(slot, 20),
       taskId: stale.task.id,
       subject: stale.task.subject,
@@ -474,7 +474,7 @@ function gather({
       id: 'streak',
       kind: 'streak',
       title: quickest ? `Close “${quickest.title}”` : 'Close one small task',
-      because: 'Nothing is logged today yet. One finished task keeps the day on the record.',
+      because: 'Nothing done today yet. One task keeps your streak going.',
       minutes: MIN_SLOT,
       taskId: quickest?.id,
       subject: quickest?.subject,

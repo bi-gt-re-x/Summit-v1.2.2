@@ -150,8 +150,7 @@ export function Summary({
     return (
       <section className="ax-panel ax-summary is-empty">
         <p className="ax-empty">
-          No score yet. It is the average of five measures and each one needs a few days of
-          record behind it before it means anything.
+          No score yet. It needs a few days of activity first.
         </p>
       </section>
     );

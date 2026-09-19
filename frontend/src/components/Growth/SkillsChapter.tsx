@@ -37,7 +37,7 @@ import {
   type CurveKey,
   type SkillCard,
 } from '@/utils/growthSkills';
-import { MAX_LEVEL, TIERS, costOf } from '@/utils/mastery';
+import { MAX_LEVEL, costOf } from '@/utils/mastery';
 import { longDate } from '@/utils/growthChapters';
 import { EmptyChapter, HeroRow, Notes, PanelHead, Seg, W, H } from './ChapterParts';
 import { Glyph } from './GrowthPanels';
@@ -78,8 +78,8 @@ export function SkillsChapter({ all, tasks, subjects }: SkillsChapterProps) {
         title="Skills & Subjects"
         message={
           unfiled.count > 0
-            ? `${unfiled.count} finished tasks carry no subject, so there is nothing to split. Give a task a subject and it becomes a skill here.`
-            : 'No finished tasks are filed under a subject yet, so there is nothing to split.'
+            ? `${unfiled.count} finished tasks have no subject. Add subjects to your tasks to see skills here.`
+            : 'No finished tasks have a subject yet.'
         }
       />
     );
@@ -402,8 +402,8 @@ export function SkillsChapter({ all, tasks, subjects }: SkillsChapterProps) {
             {
               tone: 'note',
               icon: 'info',
-              head: 'A skill is a subject with finished work in it.',
-              hint: `Counted off your own tasks. The ladder runs 1 to ${MAX_LEVEL} across ${TIERS.length} bands and steepens as it climbs — level 1 costs ${costOf(1)} XP, level 99 costs ${costOf(99).toLocaleString()}. Not the ladder your account level follows.`,
+              head: 'Each subject you work on becomes a skill.',
+              hint: `Levels run from 1 to ${MAX_LEVEL} and get harder as you go: level 1 costs ${costOf(1)} XP, level 99 costs ${costOf(99).toLocaleString()}. Separate from your account level.`,
             },
             {
               tone: unfiled.xp > lifetime ? 'watch' : 'note',
@@ -411,20 +411,20 @@ export function SkillsChapter({ all, tasks, subjects }: SkillsChapterProps) {
               head: `${Math.round(unfiled.xp).toLocaleString()} XP is filed under no subject.`,
               hint:
                 unfiled.count === 0
-                  ? 'Everything you have finished is filed, so these levels are the whole picture.'
-                  : `${unfiled.count} finished tasks carry no subject, so they count towards your account level and nothing here. A subject is what moves a skill.`,
+                  ? 'All your finished tasks have a subject.'
+                  : `${unfiled.count} finished tasks have no subject, so they only count toward your account level.`,
             },
             {
               tone: 'watch',
               icon: 'alert',
-              head: 'There are no prerequisites, because nothing records them.',
-              hint: 'A branching tree — Python before Data Science before PyTorch — needs a graph nobody has written yet. The track above is the real ladder.',
+              head: 'Skills have no prerequisites.',
+              hint: 'The levels above show your progress in each skill.',
             },
             {
               tone: 'good',
               icon: 'check',
               head: `${top.label} is your biggest at ${Math.round(top.xp).toLocaleString()} XP.`,
-              hint: `That is ${Math.round((top.xp / Math.max(1, lifetime)) * 100)}% of everything you have filed, over ${top.tasks} finished tasks.`,
+              hint: `${Math.round((top.xp / Math.max(1, lifetime)) * 100)}% of your subject XP, from ${top.tasks} tasks.`,
             },
           ]}
         />

@@ -145,20 +145,16 @@ export function NextActions({
       footer={
         <PanelNote label="How this is chosen">
           <p>
-            Eight sources, in this order of precedence: work already overdue, work due today, the
-            goal furthest behind its own deadline, the subject you rate worst, work you rated
-            badly and have not been back to, a subject that has gone quiet, a task old enough to
-            be a decision rather than a task, and — only when nothing at all is logged today — the
-            streak.
+            In order: overdue tasks, tasks due today, the goal furthest behind, your lowest-rated
+            subject, low-rated tasks you haven't revisited, a subject you've stopped, old undated
+            tasks, and your streak if nothing is done today.
           </p>
           <p>
-            The streak is last deliberately. It is the cheapest reason to do anything, and a page
-            that leads with it every morning has taught you that the number is the point.
+            The streak comes last on purpose, so the real work comes first.
           </p>
           <p>
-            Minutes are the median time your own finished tasks have actually taken, not an
-            estimate of how long something ought to take. The plan is rebuilt when you finish
-            something and the whole set is re-derived weekly — {weekLeft}{' '}
+            Minutes are based on how long your finished tasks usually take. The list updates when
+            you finish something and resets weekly: {weekLeft}{' '}
             {weekLeft === 1 ? 'day' : 'days'} until the next one.
           </p>
         </PanelNote>
@@ -166,8 +162,7 @@ export function NextActions({
     >
       {actions.length === 0 ? (
         <p className="ax-empty">
-          Nothing overdue, no goal behind its deadline, no subject far enough off its own average
-          to name. No plan, rather than an invented one.
+          Nothing overdue, no goals behind and no weak subjects. You're all caught up.
         </p>
       ) : (
         <>

@@ -300,8 +300,8 @@ export function ScorePanel({
         />
       ) : (
         <p className="ax-score-nohistory">
-          No line yet. Your score is recorded each time you open this page, and two readings
-          are the fewest a line can be drawn between.
+          No trend yet. Your score is saved each time you open this page, and a trend needs at least
+          two.
         </p>
       )}
 

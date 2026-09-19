@@ -47,8 +47,7 @@ export function LensCard({ lens }: { lens: GoalLens }) {
           tooltip. A reader who suspects the page is hiding something from them
           stops trusting the parts that are not hidden either. */}
       <p className="ax-lens-foot">
-        Nothing is hidden and no figure changes — a different goal would put the
-        same panels in a different order.
+        This only changes the order of panels, not the numbers.
       </p>
     </article>
   );

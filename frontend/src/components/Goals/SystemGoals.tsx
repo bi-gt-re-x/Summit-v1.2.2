@@ -154,8 +154,7 @@ export function SystemGoals({ counters, onEdit, onDelete, onNew }: SystemGoalsPr
   if (counters.length === 0) {
     return (
       <p className="gx-empty">
-        None set. A target on something the app already counts — 50,000 XP, a 30-day streak,
-        500 tasks, 100 hours of focus. You pick the number.
+        None yet. Set a target like 50,000 XP, a 30-day streak, 500 tasks or 100 hours of focus.
         <button type="button" className="gx-link" onClick={onNew}>
           Set one
         </button>
@@ -171,8 +170,8 @@ export function SystemGoals({ counters, onEdit, onDelete, onNew }: SystemGoalsPr
           tick; these four are counts the app keeps, and the reader's only
           decision in them is where to stop. */}
       <p className="gx-sys-lead">
-        Counts Summit already keeps. You choose the target — the figure beside
-        it is the app&rsquo;s own record and nothing here can edit it.
+        Targets for totals Summit already tracks. You set the target; the total updates
+        automatically.
       </p>
       <ul className="gx-metrics" aria-label="System goals">
         {counters.map((goal) => (

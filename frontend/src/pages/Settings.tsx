@@ -118,15 +118,11 @@ function goalOptions(current: number): number[] {
 
 /** What each of the three levels actually does, said in full under the seg. */
 const RATING_DEPTHS: Record<Prefs['rating_depth'], string> = {
-  none: 'Finishing a task finishes it. Nothing is asked, and Quality on Analytics falls back to '
-    + 'the average XP per task — a measure of how ambitiously you fill in the form, which is why '
-    + 'it is the fallback rather than the measure.',
-  ratings: 'Two star rows after a finished task: how hard it was, and how well it went. Quality '
-    + 'is the two multiplied, and the grid, the bands and the best-and-worst list all come from '
-    + 'them.',
-  reasons: 'The two star rows, and then one more question — the main thing that made the '
-    + 'difference, from six words. It is the only input on Analytics that can say *why* a window '
-    + 'went the way it did rather than what it came to.',
+  none: 'No questions after a task. Analytics estimates quality from XP per task instead.',
+  ratings: 'Rate difficulty and how well it went after each task. Analytics uses these for '
+    + 'quality.',
+  reasons: 'Both ratings, plus what made the difference. This lets Analytics explain why a '
+    + 'period went well or badly.',
 };
 
 const RATING_DEPTH_NAMES: Record<Prefs['rating_depth'], string> = {

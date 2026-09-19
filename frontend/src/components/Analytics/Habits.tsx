@@ -600,12 +600,12 @@ export function habitLead(summary: HabitSummary, span: string): string {
   const parts: string[] = [];
   if (summary.tracked > 0) {
     parts.push(
-      `${summary.tracked} recurring ${summary.tracked === 1 ? 'behaviour' : 'behaviours'} show up in ${span}`,
+      `${summary.tracked} ${summary.tracked === 1 ? 'habit' : 'habits'} found in ${span}`,
     );
   }
   if (summary.anchor) {
     parts.push(
-      `and ${summary.anchor.name} is the steadiest of them, appearing in ${summary.anchor.consistency}% of the weeks`,
+      `and ${summary.anchor.name} is your most consistent (${summary.anchor.consistency}% of weeks)`,
     );
   }
   return parts.length
@@ -653,14 +653,14 @@ export function HabitOpening({
     ) : null;
 
   return (
-    <Panel title="What you actually do" note={span}>
+    <Panel title="Your routine" note={span}>
       <p className="ax-prose ax-prose-lead">
         You worked <strong>{summary.activeRate}%</strong> of the days here.{' '}
         {summary.activeRate >= 80
-          ? 'At that rate the totals climb on their own.'
+          ? 'That is a strong routine.'
           : summary.activeRate >= 50
-            ? 'A real routine with holes in it. What is missing is frequency, not effort.'
-            : 'Most of the calendar is empty. How often you turn up matters more than what you do.'}
+            ? 'A good routine with some gaps. Try to work on more days.'
+            : 'You’re missing most days. Working more often matters more than working longer.'}
       </p>
       {leadWithStrength ? [hold, slip] : [slip, hold]}
     </Panel>

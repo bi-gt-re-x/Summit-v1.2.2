@@ -41,7 +41,7 @@ function StrengthChip({ strength }: { strength: Finding['strength'] }) {
     <span
       className="ax-evidence"
       style={{ color: toneVar(hue), borderColor: toneVar(hue) }}
-      title="How much weight this finding can carry, from its sample size and its correlation"
+      title="How reliable this finding is"
     >
       {STRENGTH_TEXT[strength]}
     </span>

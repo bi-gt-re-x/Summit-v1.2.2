@@ -199,7 +199,7 @@ export interface Diagnosis {
   weight: number;
 }
 
-const round = (value: number) => Math.round(value);
+const round = (value: number) => Math.round(value).toLocaleString('en-US');
 const one = (value: number) => (Math.round(value * 10) / 10).toFixed(1);
 
 /** "18% longer" / "12% shorter" — a signed change said as a word. */
@@ -230,10 +230,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'productive-inefficient',
       tone: 'tension',
-      headline: 'Your output is holding, but each task is costing more.',
-      detail: `You finished ${round(now.completionRate)}% of the work you gave yourself a date for, and the average task took ${moreLess(slower, 'longer', 'less time')} than it did the fortnight before — ${round(now.minutesPerTask!)} minutes against ${round(before.minutesPerTask!)}.`,
-      action: 'Put a timer on the next three sittings at your old average and stop when it goes, finished or not. A task that will not fit is two tasks.',
-      watch: 'Minutes per task, back toward where it was, with the completion rate unmoved.',
+      headline: 'Tasks are taking longer',
+      detail: `You're still finishing ${round(now.completionRate)}% of dated tasks, but the average task now takes ${round(now.minutesPerTask!)} min, up from ${round(before.minutesPerTask!)}.`,
+      action: `Time your next 3 sessions at ${round(before.minutesPerTask!)} min. If a task doesn't fit, split it.`,
+      watch: 'Minutes per task',
       weight: 92,
     });
   }
@@ -249,10 +249,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'volume-over-quality',
       tone: 'warning',
-      headline: 'You are getting through more, and rating it worse.',
-      detail: `Tasks per working day are ${moreLess(volume, 'up', 'down')}, and your own execution rating fell from ${one(before.execution!)} to ${one(now.execution!)} out of 5 across ${now.ratedCount} rated tasks.`,
-      action: 'Take one task off tomorrow and give the time to the hardest one left. The count is not the thing being measured.',
-      watch: 'Execution back above ' + one(before.execution!) + ' without the task count collapsing.',
+      headline: 'More tasks, lower quality',
+      detail: `You're doing ${moreLess(volume, 'more', 'fewer')} tasks a day, but your execution rating dropped from ${one(before.execution!)} to ${one(now.execution!)} (${now.ratedCount} rated tasks).`,
+      action: 'Drop one task tomorrow and spend that time on the hardest one.',
+      watch: `Execution rating back above ${one(before.execution!)}`,
       weight: 95,
     });
   }
@@ -267,10 +267,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'levelling-up',
       tone: 'good',
-      headline: 'You have moved up a level of difficulty without losing quality.',
-      detail: `The work you rated got harder — ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 — and your execution held at ${one(now.execution!)}. That is the pattern that actually means improvement rather than practice.`,
-      action: 'Keep the difficulty and stop adding volume. This is the fortnight to repeat, not to beat.',
-      watch: 'Difficulty steady at ' + one(now.difficulty!) + ' for another fortnight before you push again.',
+      headline: 'Harder work, same quality',
+      detail: `Difficulty rose from ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 and your execution held at ${one(now.execution!)}.`,
+      action: 'Keep this level for another two weeks before adding more.',
+      watch: `Difficulty holding at ${one(now.difficulty!)}`,
       weight: 88,
     });
   }
@@ -280,10 +280,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'drifting-easy',
       tone: 'warning',
-      headline: 'The work is getting easier, and that is a choice you did not make on purpose.',
-      detail: `Average difficulty fell from ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 over ${now.ratedCount} rated tasks, while you kept finishing about as many. Easy work still pays XP, which is exactly why this is hard to notice.`,
-      action: 'Put one task you expect to rate 4 or 5 for difficulty at the top of tomorrow, before anything else.',
-      watch: 'At least one task a day rated 4+ for difficulty this week.',
+      headline: 'Your tasks are getting easier',
+      detail: `Average difficulty fell from ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 (${now.ratedCount} rated tasks), while your task count stayed flat.`,
+      action: 'Start tomorrow with one task you expect to rate 4 or 5 for difficulty.',
+      watch: 'One task a day rated 4+ for difficulty',
       weight: 84,
     });
   }
@@ -294,10 +294,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'present-but-thin',
       tone: 'tension',
-      headline: 'You are turning up every day, and doing less each time.',
-      detail: `You worked on ${now.activeDays} of ${now.days} days — ${round(now.activeRate)}% — but a working day is now worth ${round(now.xpPerActiveDay)} XP against ${round(before.xpPerActiveDay)} before, ${moreLess(perDay, 'more', 'less')}.`,
-      action: 'The streak is safe; spend it. Pick two days this week and give one of them a proper long sitting instead of the daily minimum.',
-      watch: 'XP on your two best days, not the number of days.',
+      headline: 'Showing up daily, doing less each day',
+      detail: `You worked ${now.activeDays} of ${now.days} days, but each day earned ${round(now.xpPerActiveDay)} XP, down from ${round(before.xpPerActiveDay)}.`,
+      action: 'Pick two days this week for one long session each.',
+      watch: 'XP on your two best days',
       weight: 80,
     });
   }
@@ -308,10 +308,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'cramming',
       tone: 'tension',
-      headline: 'The same work, packed into fewer days.',
-      detail: `You worked ${now.activeDays} days of ${now.days} against ${before.activeDays} before, and each of those days carried ${moreLess(perDay, 'more', 'less')} XP. The total held; the spread did not.`,
-      action: 'Move one task off your heaviest day onto the emptiest one. Spread beats intensity for anything you intend to remember.',
-      watch: 'Working days back above ' + round(before.activeRate) + '% with the daily total roughly where it is.',
+      headline: 'Same work, fewer days',
+      detail: `You worked ${now.activeDays} of ${now.days} days (down from ${before.activeDays}), with ${moreLess(perDay, 'more', 'less')} XP on each.`,
+      action: 'Move one task from your busiest day to your quietest.',
+      watch: `Working days back above ${round(before.activeRate)}%`,
       weight: 78,
     });
   }
@@ -322,10 +322,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'time-without-return',
       tone: 'warning',
-      headline: 'You are putting in more time and getting the same back.',
-      detail: `Focus is ${moreLess(focus, 'up', 'down')} — ${round(now.focusPerActiveDay)} minutes a working day against ${round(before.focusPerActiveDay)} — and the XP those days earn has not moved. The extra time is going somewhere that is not finished work.`,
-      action: 'Time one session end to end and write down where the first twenty minutes went. It is usually the start, not the middle.',
-      watch: 'XP per working day rising while focus minutes stay where they are.',
+      headline: 'More focus time, same results',
+      detail: `You're focusing ${round(now.focusPerActiveDay)} min a day, up from ${round(before.focusPerActiveDay)}, but daily XP hasn't changed.`,
+      action: 'In your next session, note what you did in the first 20 minutes.',
+      watch: 'XP per day, with focus time flat',
       weight: 82,
     });
   }
@@ -340,10 +340,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'deadlines-slipping',
       tone: 'warning',
-      headline: 'You are finishing the work, and finishing it late.',
-      detail: `${round(now.deadlineRate)}% of the ${now.deadlineCount} dated tasks you closed beat their date, down from ${round(before.deadlineRate!)}%. The work is getting done; the dates are not describing it any more.`,
-      action: 'For the next week, put the date a day earlier than you mean it, or stop putting dates on the tasks that do not really have one.',
-      watch: 'The share beating their date, back over 60%.',
+      headline: 'Finishing, but late',
+      detail: `${round(now.deadlineRate)}% of your ${now.deadlineCount} dated tasks were on time, down from ${round(before.deadlineRate!)}%.`,
+      action: "Set due dates a day earlier this week, and drop dates from tasks that don't need one.",
+      watch: 'On-time rate back above 60%',
       weight: 86,
     });
   }
@@ -353,10 +353,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'gap',
       tone: 'tension',
-      headline: 'The problem is not the working days, it is the ones between them.',
-      detail: `Your longest silence this fortnight ran ${now.longestGap} days, and you worked ${round(now.activeRate)}% of days overall. On the days you did work you averaged ${round(now.xpPerActiveDay)} XP, which is not the behaviour of somebody who has lost interest.`,
-      action: 'Put one fifteen-minute task on the day after your next working day. Closing the gap is worth more than lengthening the session.',
-      watch: 'Longest gap under three days.',
+      headline: 'Long gaps between sessions',
+      detail: `Your longest break was ${now.longestGap} days. On days you worked, you averaged ${round(now.xpPerActiveDay)} XP.`,
+      action: 'Schedule a 15-minute task for the day after your next session.',
+      watch: 'Longest gap under 3 days',
       weight: 90,
     });
   }
@@ -372,10 +372,10 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'steady',
       tone: 'good',
-      headline: 'Nothing is pulling against anything else.',
-      detail: `${now.finishedCount} tasks over ${now.activeDays} working days, at ${round(now.xpPerActiveDay)} XP a day, and neither the pace nor the ratings moved more than a rounding error from the fortnight before.`,
-      action: 'This is the baseline to change something against. Pick one thing — difficulty, or a subject you have been avoiding — and move only that.',
-      watch: 'Whichever one thing you change, against these figures.',
+      headline: 'Steady fortnight',
+      detail: `${now.finishedCount} tasks over ${now.activeDays} days at ${round(now.xpPerActiveDay)} XP a day, about the same as the fortnight before.`,
+      action: 'Change one thing, like difficulty or a subject you have been avoiding, and keep the rest the same.',
+      watch: 'The one thing you changed',
       weight: 40,
     });
   }

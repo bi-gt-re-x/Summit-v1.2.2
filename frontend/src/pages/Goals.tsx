@@ -1211,7 +1211,7 @@ export default function Goals() {
         open={pendingDelete !== null}
         danger
         title="Delete this goal?"
-        body="Its checkpoints go with it. Any tasks linked to it are kept — they lose the link, not the work."
+        body="Its checkpoints are deleted too. Linked tasks are kept."
         confirmLabel="Delete"
         busy={busy}
         onCancel={() => setPendingDelete(null)}

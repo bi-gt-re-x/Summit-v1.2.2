@@ -166,8 +166,7 @@ export function FocusPanel({ session }: FocusPanelProps) {
           >
             <p className="focus-confirm-title">Stop focusing?</p>
             <p className="focus-confirm-msg">
-              Your time so far is saved — but are you sure you want to quit this
-              session?
+              Your time so far is saved. Stop this session?
             </p>
             <div className="focus-confirm-actions">
               <Button variant="secondary" onClick={() => setConfirming(false)}>

@@ -78,8 +78,8 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
         kind: 'first',
         title: busiest ? `Set a goal on ${busiest.label}` : 'Set your first goal',
         because: busiest
-          ? `${busiest.label} is where most of your work has gone and nothing is aiming it anywhere.`
-          : 'Nothing here is aimed at anything yet, so none of these figures have a target to be read against.',
+          ? `Most of your work is in ${busiest.label}, but it has no goal.`
+          : 'You have no goals yet, so there is nothing to measure against.',
       },
     ];
   }
@@ -102,7 +102,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
       id: `subject-${orphan.id}`,
       kind: 'subject',
       title: `Aim a goal at ${orphan.label}`,
-      because: `${Math.round(orphan.share * 100)}% of your work in this window was ${orphan.label}, and no goal names it.`,
+      because: `${Math.round(orphan.share * 100)}% of your recent work was ${orphan.label}, which has no goal.`,
     });
   }
 
@@ -120,7 +120,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
       kind: 'outcome',
       title: 'Set one goal that is not a counter',
       because:
-        'Every goal you have counts something that only goes up, so none of them can tell you it is going badly. A checkpoint or a number goal can.',
+        'Your goals only count up, so they can’t show when you fall behind. Add one with checkpoints or a target.',
     });
   }
 
@@ -131,7 +131,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
       id: 'streak',
       kind: 'streak',
       title: `Put a streak goal behind your ${currentStreak} days`,
-      because: `You are ${currentStreak} days in and nothing is holding you to it, so the run ends quietly when it ends.`,
+      because: `You're on a ${currentStreak}-day streak. A streak goal helps you keep it.`,
     });
   }
 
@@ -151,8 +151,8 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
       title: `Put a date on "${moving[0].title}"`,
       because:
         moving.length === 1
-          ? 'It is moving and open-ended, so there is no pace to read and nothing to be early or late against.'
-          : `${moving.length} of your goals are moving with no date on them, so none of them has a pace to read.`,
+          ? 'It has no due date, so there is no way to tell if it is on track.'
+          : `${moving.length} of your goals have no due date, so there is no way to tell if they are on track.`,
     });
   }
 

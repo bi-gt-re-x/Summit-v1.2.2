@@ -38,8 +38,8 @@ export type Strength = 'strong' | 'likely' | 'weak';
 
 export const STRENGTH_TEXT: Record<Strength, string> = {
   strong: 'Strong evidence',
-  likely: 'Likely correlation',
-  weak: 'Possible, not established',
+  likely: 'Likely',
+  weak: 'Weak evidence',
 };
 
 export const STRENGTH_HUE: Record<Strength, string> = {
@@ -113,7 +113,7 @@ export function unlock(have: number, need: number, what: string): Unlock {
   const short = need - have;
   return {
     ready: false,
-    message: `${short} more ${short === 1 ? 'day' : 'days'} of use and this shows ${what}.`,
+    message: `Shows ${what} after ${short} more ${short === 1 ? 'day' : 'days'} of use.`,
   };
 }
 
@@ -178,16 +178,16 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
     const byDays = Math.abs(daysChange) >= Math.abs(perDayChange);
     out.push({
       id: 'why-decomposition',
-      headline: `Your output ${totalChange > 0 ? 'rose' : 'fell'} ${pct(totalChange)} over the last ${window} days, and ${
-        byDays ? 'how often you worked' : 'how much you did on a working day'
-      } is what moved it`,
-      detail: `Working days went ${daysChange >= 0 ? 'up' : 'down'} ${pct(daysChange)} (${
+      headline: `Your XP ${totalChange > 0 ? 'rose' : 'fell'} ${pct(totalChange)} in the last ${window} days, mostly because of ${
+        byDays ? 'how often you worked' : 'how much you did each day'
+      }`,
+      detail: `Days worked went ${daysChange >= 0 ? 'up' : 'down'} ${pct(daysChange)} (${
         wasActive.length
-      } → ${nowActive.length}) while XP on a working day went ${
+      } → ${nowActive.length}) and XP per day went ${
         perDayChange >= 0 ? 'up' : 'down'
       } ${pct(perDayChange)} (${Math.round(perDayWas).toLocaleString()} → ${Math.round(
         perDayNow,
-      ).toLocaleString()}). A period's total is those two multiplied together, so this is a decomposition rather than a guess.`,
+      ).toLocaleString()}).`,
       strength: 'strong',
       tone: totalChange > 0 ? 'green' : 'amber',
     });
@@ -207,10 +207,10 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
   if (Math.abs(shareNow - shareWas) >= 6) {
     out.push({
       id: 'why-weekend',
-      headline: `Weekends are taking ${shareNow > shareWas ? 'a larger' : 'a smaller'} share of your week than they were`,
-      detail: `${Math.round(shareWas)}% of your XP came from Saturdays and Sundays in the previous ${window} days, against ${Math.round(
-        shareNow,
-      )}% in the last ${window}. Two of seven days is 29% of the calendar, so anything far below that is a five-day week by habit rather than by plan.`,
+      headline: `You're doing ${shareNow > shareWas ? 'more' : 'less'} on weekends`,
+      detail: `Weekends made up ${Math.round(shareNow)}% of your XP in the last ${window} days, compared with ${Math.round(
+        shareWas,
+      )}% before.`,
       strength: now.length >= 28 ? 'likely' : 'weak',
       tone: 'blue',
     });
@@ -230,13 +230,11 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
     const steadier = spreadNow < spreadWas;
     out.push({
       id: 'why-variance',
-      headline: `Your working days have become ${steadier ? 'more' : 'less'} alike than they were`,
-      detail: `The day-to-day spread of your XP ${
-        steadier ? 'narrowed' : 'widened'
-      } from ${spreadWas.toFixed(2)} to ${spreadNow.toFixed(2)} (standard deviation over the mean). ${
-        steadier
-          ? 'A routine that is running, rather than decided each morning.'
-          : 'Work in bursts. More fragile than the same total spread evenly.'
+      headline: steadier ? 'Your days are more consistent' : 'Your days are less consistent',
+      detail: `The variation in your daily XP ${
+        steadier ? 'fell' : 'rose'
+      } from ${spreadWas.toFixed(2)} to ${spreadNow.toFixed(2)}. ${
+        steadier ? 'You have a steadier routine.' : 'You are working in bursts.'
       }`,
       strength: 'likely',
       tone: steadier ? 'green' : 'amber',
@@ -287,16 +285,14 @@ export function howFindings(
     );
     out.push({
       id: 'how-session',
-      headline: `You appear to work best in sittings of ${bandLow}–${bandHigh} minutes`,
-      detail: `Across ${focusDays.length} days with focus time logged, your ${
+      headline: `You work best in ${bandLow}–${bandHigh} minute sessions`,
+      detail: `Over ${focusDays.length} days, your ${
         longRate >= shortRate ? 'longest' : 'shortest'
-      } third of sittings produced ${pct(
+      } sessions earned ${pct(
         ((Math.max(longRate, shortRate) - Math.min(longRate, shortRate)) /
           Math.max(0.0001, Math.min(longRate, shortRate))) *
           100,
-      )} more XP per minute than the other end. Focus time and XP move together at r = ${r.toFixed(
-        2,
-      )} over ${n} days.`,
+      )} more XP per minute than your ${longRate >= shortRate ? 'shortest' : 'longest'}.`,
       strength: strengthOf(r, n),
       tone: 'green',
     });
@@ -313,12 +309,12 @@ export function howFindings(
     if (Math.abs(scheduled - spontaneous) >= 5) {
       out.push({
         id: 'how-scheduled',
-        headline: `Tasks you give a date to are ${pct(scheduled - spontaneous)} ${
+        headline: `Tasks with a due date are ${pct(scheduled - spontaneous)} ${
           scheduled > spontaneous ? 'more' : 'less'
-        } likely to get finished`,
-        detail: `${Math.round(scheduled)}% of your ${withDate.length} dated tasks reached done, against ${Math.round(
+        } likely to get done`,
+        detail: `You finished ${Math.round(scheduled)}% of ${withDate.length} dated tasks and ${Math.round(
           spontaneous,
-        )}% of the ${without.length} without a date. This is an association and not a mechanism — the tasks you bother to schedule may simply be the ones you already meant to do.`,
+        )}% of ${without.length} without a date.`,
         strength: strengthOf(0.4, Math.min(withDate.length, without.length)),
         tone: 'violet',
       });
@@ -337,14 +333,10 @@ export function howFindings(
     if (Math.abs(hard - easy) >= 8) {
       out.push({
         id: 'how-difficulty',
-        headline: `Your ${hard >= easy ? 'hardest' : 'easiest'} tasks are the ones that reliably get done`,
-        detail: `${Math.round(hard)}% of high-priority tasks finish against ${Math.round(
+        headline: hard >= easy ? 'You finish your high-priority tasks' : 'Your high-priority tasks are slipping',
+        detail: `You finish ${Math.round(hard)}% of high-priority tasks and ${Math.round(
           easy,
-        )}% of low-priority ones. ${
-          hard >= easy
-            ? 'What matters is getting through. The small stuff piles up.'
-            : 'The important work slips — it is being scheduled last.'
-        }`,
+        )}% of low-priority ones.`,
         strength: strengthOf(0.4, Math.min(high.length, low.length)),
         tone: 'amber',
       });
@@ -355,13 +347,13 @@ export function howFindings(
   if (clock.coreWindow && clock.coreWindow.share >= 45) {
     out.push({
       id: 'how-window',
-      headline: `Half of everything you finish lands between ${hourLabel(
+      headline: `You get most done between ${hourLabel(
         clock.coreWindow.from,
       )} and ${hourLabel(clock.coreWindow.to)}`,
-      detail: `${clock.coreWindow.share}% of your completions fall inside that run of hours. ${
+      detail: `${clock.coreWindow.share}% of your tasks are finished in this window. ${
         clock.coreWindow.share >= 60
-          ? 'A working window, not a preference. Anything scheduled elsewhere competes with your worst hours.'
-          : 'A loose window — spread across the day rather than anchored to it.'
+          ? 'Schedule important work here.'
+          : 'The rest are spread across the day.'
       }`,
       strength: clock.coreWindow.share >= 60 ? 'strong' : 'likely',
       tone: 'blue',
@@ -372,8 +364,8 @@ export function howFindings(
   if (rhythm.gapCount > 0 && rhythm.span >= 60) {
     out.push({
       id: 'how-gaps',
-      headline: 'Your habit restarts rather than continues after a break',
-      detail: `${rhythm.gapCount} breaks of three days or more across ${rhythm.span.toLocaleString()} days. A gap costs the days themselves and then the restart — the first day back is almost never the day you left off at.`,
+      headline: 'Breaks are costing you momentum',
+      detail: `You had ${rhythm.gapCount} breaks of 3+ days in ${rhythm.span.toLocaleString()} days. The first day back is usually slower.`,
       strength: rhythm.gapCount >= 4 ? 'likely' : 'weak',
       tone: 'pink',
     });
@@ -448,7 +440,7 @@ export function whatsWorking(
     if (nowRate - wasRate >= 4) {
       out.push({
         id: 'win-consistency',
-        text: `You are turning up on ${Math.round(nowRate - wasRate)} percentage points more of your days`,
+        text: `You're working on more days`,
         figure: `${Math.round(wasRate)}% → ${Math.round(nowRate)}% of days worked`,
         tone: 'amber',
       });
@@ -461,8 +453,8 @@ export function whatsWorking(
     .forEach((habit) => {
       out.push({
         id: `win-habit-${habit.name}`,
-        text: `${habit.name} has held for ${habit.streak} ${habit.unit === 'day' ? 'days' : 'weeks'} without a break`,
-        figure: `${habit.consistency}% consistency across the range`,
+        text: `${habit.name}: ${habit.streak} ${habit.unit === 'day' ? 'days' : 'weeks'} in a row`,
+        figure: `${habit.consistency}% consistent`,
         tone: 'green',
       });
     });
@@ -523,7 +515,7 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
       strength,
       reading:
         strength === 'weak'
-          ? `Too loose to lean on — r = ${r.toFixed(2)} over ${n} observations.`
+          ? `No clear link yet (${n} days of data).`
           : r >= 0
             ? positive
             : negative,
@@ -543,8 +535,8 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     active
       .filter((day) => num(day.focus_minutes) > 0)
       .map((day) => [num(day.focus_minutes), num(day.xp_earned)] as [number, number]),
-    'Longer focus days are higher-XP days. Focus time is the half you decide.',
-    'Your longer focus days are not your higher-XP days — focus is being logged against work that produces no tasks.',
+    'More focus time means more XP.',
+    'More focus time does not mean more XP. Some focus time is not turning into finished tasks.',
     'green',
   );
 
@@ -552,8 +544,8 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     'rel-tasks-xp',
     'Tasks finished → XP earned',
     active.map((day) => [num(day.tasks_completed), num(day.xp_earned)] as [number, number]),
-    'Your XP tracks how many tasks you close, not which ones.',
-    'Your XP does not follow your task count — a few large tasks carry your totals.',
+    'Your XP rises with the number of tasks you finish.',
+    'A few large tasks make up most of your XP.',
     'violet',
   );
 
@@ -563,8 +555,8 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     active
       .filter((day) => num(day.focus_minutes) > 0 && num(day.avg_task_xp) > 0)
       .map((day) => [num(day.focus_minutes), num(day.avg_task_xp)] as [number, number]),
-    'Longer sittings appear to go with larger individual tasks — depth rather than volume.',
-    'Longer sittings go with smaller tasks — a long session spent on many small things.',
+    'Longer sessions go with bigger tasks.',
+    'Longer sessions go with many small tasks.',
     'blue',
   );
 
@@ -590,10 +582,10 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
       strength: top > 0 && bottom / top <= 0.5 ? 'strong' : 'likely',
       reading:
         top > 0 && bottom / top <= 0.5
-          ? `Your best weekday carries ${(top / Math.max(bottom, 1)).toFixed(
+          ? `Your best weekday has ${(top / Math.max(bottom, 1)).toFixed(
               1,
-            )}× your worst. The week is not flat — do not plan as though it were.`
-          : 'Your weekdays carry comparable loads. A flat week is what makes long streaks possible.',
+            )}× the output of your worst. Plan around that.`
+          : 'Your weekdays are fairly even.',
       points: normalise(weekPairs),
       tone: 'amber',
     });
@@ -617,8 +609,8 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     'rel-planning',
     'Tasks scheduled → tasks finished',
     [...byWeek.values()].map((entry) => [entry.dated, entry.done] as [number, number]),
-    'Weeks you schedule more are weeks you finish more. Which causes which, this page cannot say.',
-    'Scheduling more does not go with finishing more — the dates on your tasks are decoration, not a plan.',
+    'Weeks with more scheduled tasks are weeks you finish more.',
+    'Scheduling more tasks does not mean you finish more.',
     'pink',
   );
 
@@ -673,31 +665,31 @@ export function currentState(
     phase === 'High consistency' ? 'green' : phase === 'Building' ? 'blue' : phase === 'Intermittent' ? 'amber' : 'pink';
 
   const parts: string[] = [
-    `You are in a ${phase.toLowerCase()} phase — ${Math.round(
+    `${phase}: you worked ${Math.round(
       nowRate,
-    )}% of the last ${window} days had work on them${
-      before.length === now.length ? `, against ${Math.round(wasRate)}% in the ${window} before` : ''
+    )}% of the last ${window} days${
+      before.length === now.length ? ` (${Math.round(wasRate)}% before)` : ''
     }`,
   ];
   if (change !== null && Math.abs(change) >= 5) {
-    parts.push(`output per day is ${change > 0 ? 'up' : 'down'} ${pct(change)} over the same comparison`);
+    parts.push(`daily XP is ${change > 0 ? 'up' : 'down'} ${pct(change)}`);
   }
   if (rhythm.typicalSession > 0) {
-    parts.push(`and a typical sitting is holding at ${Math.round(rhythm.typicalSession)} minutes`);
+    parts.push(`and a typical session is ${Math.round(rhythm.typicalSession)} minutes`);
   }
 
   const weaknesses: string[] = [];
   if (week.weekendGap !== null && week.weekendGap <= -35) {
-    weaknesses.push(`weekends, which run ${Math.abs(week.weekendGap)}% lighter than your weekdays`);
+    weaknesses.push(`weekends (${Math.abs(week.weekendGap)}% lighter than weekdays)`);
   }
   if (rhythm.gapCount >= 2) {
-    weaknesses.push(`the ${rhythm.gapCount} breaks of three days or more in this range`);
+    weaknesses.push(`gaps (${rhythm.gapCount} breaks of 3+ days)`);
   }
   if (balance.fading.length > 0) {
-    weaknesses.push(`${balance.fading[0]}, which has quietly stopped`);
+    weaknesses.push(`${balance.fading[0]}, which you have stopped`);
   }
   if (rhythm.activeRate < 50) {
-    weaknesses.push(`how often you turn up at all — ${Math.round(rhythm.activeRate)}% of days`);
+    weaknesses.push(`how often you work (${Math.round(rhythm.activeRate)}% of days)`);
   }
 
   return {
@@ -705,7 +697,7 @@ export function currentState(
     tone,
     sentence: `${parts.join(', ')}.`,
     weakness: weaknesses.length
-      ? `The weakest part of the picture right now is ${weaknesses[0]}.`
-      : 'Nothing in the record stands out as the weak point right now, which is a real result rather than an empty one.',
+      ? `Weakest area: ${weaknesses[0]}.`
+      : 'No weak spots right now.',
   };
 }

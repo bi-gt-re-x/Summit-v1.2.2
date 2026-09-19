@@ -146,8 +146,7 @@ export function summarise(verdicts: Verdict[]): LoopSummary {
     /* Not "3 of 5 worked": that invites a percentage nobody should compute off
        five paired observations on one person. See what a verdict may claim,
        at the top of this file. */
-    say = 'What was followed by movement is worth keeping in rotation — a '
-      + 'pattern rather than a proof.';
+    say = 'Keep doing what seemed to help, but it is not proof.';
   }
 
   return {

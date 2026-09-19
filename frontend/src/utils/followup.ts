@@ -595,7 +595,7 @@ export function reviewAdopted(input: ReviewInput): Review[] {
           outcome: 'early',
           label: measure.label,
           daysLeft,
-          note: `${daysLeft} more ${daysLeft === 1 ? 'day' : 'days'} before ${measure.label.toLowerCase()} is worth comparing.`,
+          note: `Check back in ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}.`,
         };
       }
 
@@ -607,7 +607,7 @@ export function reviewAdopted(input: ReviewInput): Review[] {
             ...base,
             outcome: 'thin',
             label: measure.label,
-            note: 'No report-card reading from before this change to compare against.',
+            note: 'No earlier score to compare against.',
           };
         }
         return verdict(base, measure, reading.before, reading.after, {
@@ -636,7 +636,7 @@ export function reviewAdopted(input: ReviewInput): Review[] {
           ...base,
           outcome: 'thin',
           label: measure.label,
-          note: 'Your record does not go back far enough before this change to compare against.',
+          note: 'Not enough history from before this change.',
         };
       }
 
@@ -654,7 +654,7 @@ export function reviewAdopted(input: ReviewInput): Review[] {
           ...base,
           outcome: 'thin',
           label: measure.label,
-          note: `Not enough logged on both sides to read ${measure.label.toLowerCase()}.`,
+          note: 'Not enough data yet.',
         };
       }
 
@@ -705,10 +705,10 @@ function verdict(
 
   const note =
     outcome === 'held'
-      ? `${measure.label} has not moved enough to call it a change.`
+      ? `${measure.label} has not changed much.`
       : outcome === 'improved'
-        ? `${measure.label} went ${direction} ${size} — the direction this change was for.`
-        : `${measure.label} went ${direction} ${size}, against what this change was for.`;
+        ? `${measure.label} went ${direction} ${size}, as intended.`
+        : `${measure.label} went ${direction} ${size}, the opposite of what was intended.`;
 
   return { ...base, outcome, label: measure.label, unit: measure.unit, before, after, delta, pct, note, ...window };
 }
@@ -750,10 +750,10 @@ export function summarise(reviews: Review[]): ReviewSummary {
     headline = 'Nothing adopted yet.';
   } else if (judged === 0) {
     headline = waiting > 0
-      ? `${waiting} change${waiting === 1 ? '' : 's'} still too new to judge.`
+      ? `${waiting} change${waiting === 1 ? '' : 's'} too new to judge.`
       : 'Nothing here can be measured yet.';
   } else {
-    headline = `${improved} of ${judged} moved the way they were meant to.`;
+    headline = `${improved} of ${judged} worked.`;
   }
 
   return { total: reviews.length, judged, improved, worsened, held, waiting, headline };

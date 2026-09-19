@@ -1100,8 +1100,7 @@ export default function Records() {
       <section className="rc-section rc-derived">
         <h2 className="rc-section-title"><Icon name="sparkles" /> What Summit noticed</h2>
         <p className="rc-note">
-          Counted from your own work rather than logged by hand — so these are
-          Summit's observations about you, not your claims about yourself.
+          Worked out from your activity, not entered by hand.
         </p>
 
         {all.length < NEED_DAYS ? (

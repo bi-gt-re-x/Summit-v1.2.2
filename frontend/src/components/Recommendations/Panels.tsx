@@ -153,9 +153,9 @@ export function AdviceCard({
           own text and the finding stays quieter, which is what keeps the
           original objection answered — the eyebrow is a two-word label above a
           small line, not a paragraph competing with the action. */}
-      <p className="ax-advice-label">Analytics noticed</p>
+      <p className="ax-advice-label">Why</p>
       <p className="ax-advice-why">{item.because}</p>
-      <p className="ax-advice-label">Recommendation</p>
+      <p className="ax-advice-label">What to do</p>
       <p className="ax-advice-do">{item.action}</p>
 
       <footer className="ax-advice-foot">

@@ -315,7 +315,7 @@ function candidates(
           ? `most common: ${perf.families.leading.label}, ${perf.families.leading.share}%`
           : '',
       ].filter(Boolean),
-      relevance: 'Harder material would add a second problem on top of this one.',
+      relevance: 'Harder material would make it worse.',
     },
     {
       id: 'divergence',
@@ -340,8 +340,8 @@ function candidates(
         `${(state.momentum.change ?? 0) > 0 ? '+' : ''}${state.momentum.change} points, earlier half to later`,
       ],
       relevance: state.momentum.direction === 'climbing'
-        ? 'Whatever is being done now is worth keeping in rotation.'
-        : 'Something changed recently and it is worth finding out what.',
+        ? 'Keep doing what you are doing now.'
+        : 'Something changed recently. Find out what.',
     },
     {
       id: 'rushed',
@@ -369,18 +369,18 @@ function candidates(
       ].filter(Boolean),
       relevance: (goal?.drift ?? 0) > 0
         ? 'Either the rate rises or the date moves.'
-        : 'There is room to raise the level rather than the volume.',
+        : 'You have room to take on harder work.',
     },
     {
       id: 'idle',
       when: Boolean(goal && goal.sinceWork !== null && goal.sinceWork >= 14),
-      claim: 'Nothing has been pointed at this goal lately.',
+      claim: 'No recent work on this goal.',
       direction: 'hurts',
       evidence: [
         `${plural(goal?.sinceWork ?? 0, 'day')} since a task here named it`,
         `${goal?.recentDays ?? 0} of the last 14 days had one`,
       ],
-      relevance: 'A goal with no work pointed at it is not being pursued.',
+      relevance: 'No recent work is linked to this goal.',
     },
   ];
 }
@@ -524,9 +524,9 @@ export function bottleneckFrom(
         families.leading ? `most common: ${families.leading.label}, ${families.leading.share}%` : '',
       ].filter(Boolean),
       reading:
-        'The work goes wrong after it starts, not because of what is in it. '
-        + 'Change the shape of the session before its contents.',
-      ruled_out: 'Adding difficulty. That is a second problem on top of this one.',
+        'Problems come from how sessions go, not the material. '
+        + 'Change how you work before what you work on.',
+      ruled_out: 'Adding difficulty. That would make it worse.',
       confidence: families.answered >= 12 ? 0.7 : 0.55,
       source: 'counted',
     };
@@ -543,8 +543,8 @@ export function bottleneckFrom(
         state.curve.drop !== null ? `a ${state.curve.drop}-point step between them` : '',
       ].filter(Boolean),
       reading:
-        `A ceiling, not a general weakness — the curve holds and then falls. `
-        + `The level to work is ${holds.label} until it stops being hard.`,
+        `You do well up to ${holds.label}, then drop off. `
+        + `Practise at ${holds.label} until it feels easy.`,
       ruled_out: `Everything below ${cliff.label}.`,
       confidence: cliff.done >= 8 ? 0.65 : 0.45,
       source: 'counted',

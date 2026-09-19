@@ -174,8 +174,8 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       strength: strengthFor(evening.smaller, evening.lift),
       soWhat:
         evening.lift > 0
-          ? 'Worth moving one thing that matters into the earlier half of the day and seeing whether the rating follows it.'
-          : 'Worth checking what you put in the morning — it may be the work you like least rather than the hour.',
+          ? 'Try moving one important task earlier in the day.'
+          : 'Check what you do in the mornings. It may be the tasks, not the time.',
       weight: evening.smaller + Math.abs(evening.lift),
     });
   }
@@ -190,14 +190,14 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
     found.push({
       id: 'difficulty-morning',
       kind: 'timing',
-      text: `You take on ${pct(morning.lift)} ${morning.lift >= 0 ? 'harder' : 'easier'} work before noon than after it.`,
+      text: `Your morning tasks are ${pct(morning.lift)} ${morning.lift >= 0 ? 'harder' : 'easier'} than your afternoon ones.`,
       basis: `${morning.withCount} tasks finished in the morning, ${morning.withoutCount} later.`,
       lift: morning.lift,
       strength: strengthFor(morning.smaller, morning.lift),
       soWhat:
         morning.lift > 0
-          ? 'The hard thing already goes in the morning. Protect that hour before anything else claims it.'
-          : 'The hardest work is landing in the afternoon. Try moving one such task to first thing for a week.',
+          ? 'Keep your mornings free for hard work.'
+          : 'Try doing one hard task first thing each day this week.',
       weight: morning.smaller + Math.abs(morning.lift),
     });
   }
@@ -215,14 +215,14 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
     found.push({
       id: 'exec-weekend',
       kind: 'context',
-      text: `Your execution rating is ${pct(weekend.lift)} ${upDown(weekend.lift)} at the weekend than on weekdays.`,
+      text: `Your execution is ${pct(weekend.lift)} ${upDown(weekend.lift)} on weekends than weekdays.`,
       basis: `${weekend.withCount} tasks at the weekend, ${weekend.withoutCount} in the week.`,
       lift: weekend.lift,
       strength: strengthFor(weekend.smaller, weekend.lift),
       soWhat:
         weekend.lift > 0
-          ? 'The weekend is where your best work happens. It is the wrong time to schedule the easy catch-up.'
-          : 'Weekday work is going better. Whatever the weekend is missing, it is not time.',
+          ? 'You do your best work on weekends. Save hard tasks for then.'
+          : 'Your weekday work goes better.',
       weight: weekend.smaller + Math.abs(weekend.lift),
     });
   }
@@ -237,13 +237,13 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
     found.push({
       id: 'exec-goal-linked',
       kind: 'context',
-      text: `Work that names a goal is rated ${pct(linked.lift)} ${upDown(linked.lift)} than work that does not.`,
+      text: `Tasks linked to a goal are rated ${pct(linked.lift)} ${upDown(linked.lift)} than other tasks.`,
       basis: `${linked.withCount} tasks linked to a goal, ${linked.withoutCount} unlinked.`,
       lift: linked.lift,
       strength: strengthFor(linked.smaller, linked.lift),
       soWhat:
         linked.lift > 0
-          ? 'Linking a task to the goal it serves is a minute of work and it is showing up in the ratings. The goals page can claim an existing task.'
+          ? 'Link more tasks to your goals. You can do this from the Goals page.'
           : undefined,
       weight: linked.smaller + Math.abs(linked.lift),
     });
@@ -267,14 +267,14 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
         found.push({
           id: 'long-days',
           kind: 'context',
-          text: `Days with more than ${Math.round(median)} minutes of focus close ${pct(lift)} ${lift >= 0 ? 'more' : 'fewer'} tasks than your shorter days.`,
+          text: `On days with over ${Math.round(median)} minutes of focus, you finish ${pct(lift)} ${lift >= 0 ? 'more' : 'fewer'} tasks.`,
           basis: `${long.length} longer days against ${short.length} shorter ones.`,
           lift,
           strength: strengthFor(Math.min(long.length, short.length), lift),
           soWhat:
             lift > 0
-              ? `One long day is worth more than two short ones for you. ${Math.round(median)} minutes is the line.`
-              : 'The longer days are not paying for themselves. The return is coming from somewhere other than time at the desk.',
+              ? `Longer focus days work well for you. Aim for ${Math.round(median)}+ minutes.`
+              : 'Longer focus days are not helping. More time is not the answer here.',
           weight: Math.min(long.length, short.length) + Math.abs(lift),
         });
       }
@@ -308,13 +308,13 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
     subjectRows.push({
       id: `subject-exec-${subject}`,
       kind: 'subject',
-      text: `${nameOf(subject)} goes ${pct(lift)} ${lift >= 0 ? 'better' : 'worse'} than the rest of your work, by your own rating.`,
+      text: `You rate ${nameOf(subject)} ${pct(lift)} ${lift >= 0 ? 'higher' : 'lower'} than your other subjects.`,
       basis: `${mine.length} rated ${nameOf(subject)} tasks against ${rest.length} elsewhere.`,
       lift,
       strength: strengthFor(smaller, lift),
       soWhat:
         lift < 0
-          ? `${nameOf(subject)} is where the effort is going least far. Worth an hour of a different approach rather than another hour of the same one.`
+          ? `Try a different approach to ${nameOf(subject)}.`
           : undefined,
       weight: smaller + Math.abs(lift),
     });
@@ -342,11 +342,11 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       found.push({
         id: 'rating-run',
         kind: 'streak',
-        text: `Your average task rating has risen ${run} weeks running — ${first.toFixed(1)} to ${last.toFixed(1)} out of 5.`,
+        text: `Your ratings have risen ${run} weeks in a row, from ${first.toFixed(1)} to ${last.toFixed(1)} out of 5.`,
         basis: `${weekly.slice(-run - 1).reduce((sum, week) => sum + week.count, 0)} rated tasks across ${run + 1} weeks.`,
         lift: pctChange(last, first) ?? 0,
         strength: run >= 4 ? 'strong' : 'likely',
-        soWhat: 'Whatever changed about four weeks ago is working. It is worth knowing what it was.',
+        soWhat: 'Whatever you changed recently is working. Keep it up.',
         weight: 60 + run * 8,
       });
     }

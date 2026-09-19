@@ -141,8 +141,7 @@ export function FinishPanel({ tasks, days }: FinishPanelProps) {
         })}
       </ul>
       <p className="ax-muted ax-early-foot">
-        Every task you have set, not just this window's. A rate over a handful moves a long way
-        on one task, so read it as a tally rather than as a score.
+        All your tasks, not just this period. With only a few tasks, one task moves this a lot.
       </p>
     </Panel>
   );

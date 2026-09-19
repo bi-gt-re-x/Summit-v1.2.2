@@ -79,9 +79,9 @@ const TIPS: Record<number, string> = {
   // Not a tip so much as the reason the field is not optional. Somebody who
   // knows what the subject buys them picks the right one rather than the
   // nearest one.
-  1: 'The reason you would still want this in three months. You will read it back on a bad week.',
-  2: 'A date you half-believe beats no date. With one, the app can say whether you are on pace.',
-  3: 'Milestones when finishing is a state you arrive at, a number when it accumulates.',
+  1: 'Why this matters to you.',
+  2: 'Add a date so we can tell you if you’re on track.',
+  3: 'Use milestones for a finish line, or a number for something you count up.',
   4: 'Three to six works. Each should be a state the goal reaches, not a task you do.',
 };
 
@@ -416,9 +416,7 @@ export function NewGoalWizard({
                     </p>
                   )}
                   <p className="gx-hint">
-                    Say roughly what you want and the rest of this wizard fills
-                    itself in. You still pick the subject, and you can change
-                    every word of it.
+                    Describe your goal and we’ll fill in the rest. You can edit everything.
                   </p>
                 </div>
               )}

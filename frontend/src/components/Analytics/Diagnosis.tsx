@@ -35,8 +35,8 @@ import type { Diagnosis, DiagnosisTone } from '@/utils/diagnosis';
 
 const TONE_LABEL: Record<DiagnosisTone, string> = {
   good: 'Going well',
-  tension: 'Pulling apart',
-  warning: 'Worth catching now',
+  tension: 'Mixed signals',
+  warning: 'Needs attention',
 };
 
 const TONE_CLASS: Record<DiagnosisTone, string> = {
@@ -99,16 +99,16 @@ export function DiagnosisEmpty({
     <Panel title="Growth diagnosis" className="ax-diag-empty">
       <p className="ax-empty">
         {enoughRecord
-          ? 'Nothing is pulling against anything else this fortnight — the pace, the ratings and the spread all sit within a rounding error of the fortnight before. That is a finding, not a gap: it is the baseline to change one thing against.'
-          : 'A diagnosis compares this fortnight against the one before it, so it needs two of them. Keep going and this fills in on its own.'}
+          ? 'No big changes from the fortnight before. Your pace, ratings and spread are steady.'
+          : 'This compares the last two fortnights, so it needs about a month of history. It will fill in as you go.'}
       </p>
       {/* Their own words, under the arithmetic's silence. Stated as a count
           rather than as a cause: this is what was reported, and how often —
           the page does not get to promote it to a diagnosis on its own. */}
       {reported && (
         <p className="ax-empty">
-          The one thing you did report: <strong>{reported.phrase}</strong>, after{' '}
-          {reported.count} {reported.count === 1 ? 'task' : 'tasks'} this window.
+          You reported <strong>{reported.phrase}</strong> after{' '}
+          {reported.count} {reported.count === 1 ? 'task' : 'tasks'} this fortnight.
         </p>
       )}
     </Panel>

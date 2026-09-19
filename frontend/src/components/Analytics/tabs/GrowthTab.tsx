@@ -428,8 +428,7 @@ function WhenPanel({ clock }: { clock: AnalyticsModel['clock'] }) {
     >
       {core === null ? (
         <p className="ax-empty">
-          A shape needs a few weeks of finished tasks with times on them. This fills in on
-          its own.
+          This needs a few weeks of finished tasks.
         </p>
       ) : (
         <ul className="ax-gy-notes">

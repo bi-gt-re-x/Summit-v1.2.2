@@ -63,14 +63,14 @@ describe('the gate', () => {
   it('refuses on a single year, however much is in it', () => {
     // A whole busy year is still one row, and one row is not a comparison.
     draw(<YearOnYear model={model(year(2025, { tasks: 5, xp: 50 }), rated(2025, 400, 3, 4))} />);
-    expect(screen.getByText(/needs two calendar years to hold against each other/i)).toBeInTheDocument();
+    expect(screen.getByText(/need two calendar years of data/i)).toBeInTheDocument();
     expect(document.querySelector('.ax-gy')).toBeNull();
   });
 
   it('does not count a year the account sat out toward the two', () => {
     const all = [...year(2024, { tasks: 2 }), ...year(2025)];
     draw(<YearOnYear model={model(all)} />);
-    expect(screen.getByText(/needs two calendar years to hold against each other/i)).toBeInTheDocument();
+    expect(screen.getByText(/need two calendar years of data/i)).toBeInTheDocument();
   });
 
   it('opens once two years have work in them', () => {
@@ -127,7 +127,7 @@ describe('the headline', () => {
 
     const lead = document.querySelector('.ax-gy-lead') as HTMLElement;
     expect(lead).not.toBeNull();
-    expect(lead.textContent).toMatch(/better at the work rather than picking easier work/);
+    expect(lead.textContent).toMatch(/with difficulty steady/);
     // Both figures, not just the flattering one.
     expect(lead.textContent).toMatch(/2\.8 to 3\.7/);
     expect(lead.textContent).toMatch(/3\.0/);

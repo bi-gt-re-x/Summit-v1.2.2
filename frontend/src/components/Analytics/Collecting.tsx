@@ -458,17 +458,14 @@ export function Collecting({ maturity, stats }: CollectingProps) {
         <p className="ax-collect-lead">
           {activeDays === 0 ? (
             <>
-              Finish a task or run a focus session and this page starts filling in. Everything
-              here is measured from what you actually do — there is no sample data to look at
-              in the meantime.
+              Finish a task or start a focus session to begin filling this page.
             </>
           ) : (
             <>
               {activeDays === 1 ? 'One day' : `${activeDays} days`} of your work{' '}
               {activeDays === 1 ? 'is' : 'are'} on record
               {spanDays > activeDays + 1 ? `, across ${spanDays} days` : ''}. The figures below
-              are counts and they are exact. Trends, patterns and ratings need more to be worth
-              printing, and they arrive on their own as you go.
+              are exact counts. Trends, patterns and ratings appear as you log more.
             </>
           )}
         </p>

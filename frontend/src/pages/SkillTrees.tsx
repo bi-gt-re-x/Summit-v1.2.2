@@ -778,8 +778,8 @@ export default function SkillTrees() {
     mode === 'map'
       ? `Every skill in ${tree.title}, arranged the way the subject is built.`
       : mode === 'path'
-        ? `${shown.nodes.length} of ${graph.nodes.length} skills — what is behind you, what you are on, and what opens next.`
-        : 'The same lattice, coloured by where you stand rather than by how hard each skill is.';
+        ? `${shown.nodes.length} of ${graph.nodes.length} skills: done, in progress and next up.`
+        : 'Coloured by your progress instead of difficulty.';
 
   /* The "+250 XP" that appears for a moment after a click. Held with its node
      id so switching selection mid-flash cannot show one node's gain on

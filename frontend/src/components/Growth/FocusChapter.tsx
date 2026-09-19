@@ -477,18 +477,18 @@ export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps
               icon: onTime.pct !== null && onTime.pct >= 70 ? 'check' : 'alert',
               head:
                 onTime.pct === null
-                  ? 'No finished task has carried a deadline yet.'
-                  : `${onTime.pct}% of finished tasks beat their own deadline.`,
+                  ? 'No finished tasks with a due date yet.'
+                  : `${onTime.pct}% of tasks finished on time.`,
               hint:
                 onTime.pct === null
-                  ? 'Follow-through is measured off tasks with a due date — give one a date and this figure appears.'
-                  : `${onTime.met} of ${onTime.total} timed tasks. Follow-through above counts late-but-done as done; this one does not.`,
+                  ? 'Add a due date to a task to see this.'
+                  : `${onTime.met} of ${onTime.total} dated tasks were on time.`,
             },
             {
               tone: 'note',
               icon: 'info',
-              head: `The current streak is ${streak} ${streak === 1 ? 'day' : 'days'}.`,
-              hint: 'A streak is one number about today. Everything else on this page is about the shape of the months behind it.',
+              head: `Current streak: ${streak} ${streak === 1 ? 'day' : 'days'}.`,
+              hint: 'The rest of this page looks at the longer term.',
             },
           ]}
         />

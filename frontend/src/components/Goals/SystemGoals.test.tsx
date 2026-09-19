@@ -62,10 +62,10 @@ describe('saying what a system goal is', () => {
   /* The sentence is the change. Everything else here follows from it. */
   it('states outright that the app keeps the count and the reader picks the target', () => {
     show();
-    const lead = screen.getByText(/Counts Summit already keeps/);
+    const lead = screen.getByText(/Targets for totals Summit already tracks/);
 
-    expect(lead).toHaveTextContent(/You choose the target/);
-    expect(lead).toHaveTextContent(/nothing here can edit it/);
+    expect(lead).toHaveTextContent(/You set the target/);
+    expect(lead).toHaveTextContent(/the total updates automatically/);
   });
 
   it('heads each column with what is counted, not with the title somebody wrote', () => {

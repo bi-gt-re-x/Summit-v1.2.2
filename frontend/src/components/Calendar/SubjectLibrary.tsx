@@ -332,7 +332,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
       </section>
 
       <p className="sl-note">
-        A colour set here is what the subject prefers. Busy weeks may shift some apart.
+        Colours may shift slightly on busy weeks so subjects stay distinct.
       </p>
       {confirmDialog}
     </aside>

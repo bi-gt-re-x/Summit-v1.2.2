@@ -252,8 +252,7 @@ export function GoalModal({
             />
           </div>
           <p className="gm-hint">
-            What links this goal to your record. Its subject's analytics page reads the goal
-            and says what your work there is doing about it.
+            Links this goal to a subject so its analytics page can track it.
           </p>
 
           <Button

@@ -85,7 +85,7 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
         <section className="ax-section">
           <PanelGroup
             title="What is already true"
-            note="Counts, not patterns. The habits themselves need more of a record before there is one to find."
+            note="Just the counts for now. Habits appear once you have more history."
             defaultOpen
           >
             <div className="ax-grid ax-grid-halves-even">

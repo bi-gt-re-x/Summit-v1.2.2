@@ -121,7 +121,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         <section className="ax-section">
           <PanelGroup
             title="Why your goals are moving the way they are"
-            note="The subject carrying most of each goal's shortfall, counted off the tasks pointed at it. A goal whose work is spread evenly produces nothing here."
+            note="The subject holding each goal back the most."
           >
             <div className="ax-limiters">
               {goalLimits.slice(0, headlines).map((row) => (
@@ -141,7 +141,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         <section className="ax-section">
           <PanelGroup
             title="From your goals"
-            note="What each goal's own figures say, where they say anything. A goal that is simply going well produces nothing here."
+            note="Goals that need attention. Goals on track are not listed."
           >
             <ul className="ax-goal-advice">
               {goalAdvice.map((row) => (

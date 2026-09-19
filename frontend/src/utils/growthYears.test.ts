@@ -178,7 +178,7 @@ describe('growthArc', () => {
     const arc = growthArc(realish());
     expect(arc.kind).toBe('better');
     expect(arc.executionGain).toBeGreaterThan(0.5);
-    expect(arc.sentence).toMatch(/better at the work rather than picking easier work/);
+    expect(arc.sentence).toMatch(/with difficulty steady/);
     // Both figures are named, whichever leads.
     expect(arc.sentence).toMatch(/2\.8 to 3\.6|2\.8 to 3\.5/);
     expect(arc.headline).toBe('You got better at the work');

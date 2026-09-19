@@ -91,8 +91,7 @@ export function Tiles({
       series: sparks.consistency,
       tone: 'amber',
       hint:
-        'Share of days you finished a task, logged a focus session, or earned any XP. '
-        + 'This measures showing up.',
+        'Share of days you did any work.',
     },
     {
       key: 'quality',
@@ -122,7 +121,7 @@ export function Tiles({
             delta: figures.tasks.delta,
             series: sparks.tasks,
             tone: 'green' as const,
-            hint: 'The volume behind the three rates beside it, counted on the day each task was finished.',
+            hint: 'Tasks finished, counted on the day you finished them.',
           },
         ]
       : []),

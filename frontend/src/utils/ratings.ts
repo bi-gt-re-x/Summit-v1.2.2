@@ -303,7 +303,7 @@ export function qualityBands(rated: RatedTask[]): QualityBand[] {
     ),
     band(
       'Easy, went badly',
-      'Difficulty below 3, execution below 3. Usually a day thing rather than a task thing.',
+      'Difficulty below 3, execution below 3. Usually an off day, not the task.',
       'pink',
       count((task) => task.difficulty < 3 && task.execution < 3),
     ),
@@ -350,20 +350,20 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
       gap > 0
         ? {
             tone: 'watch',
-            headline: 'You are executing well above the difficulty you take on.',
-            hint: `Execution ${execution.toFixed(1)} against difficulty ${difficulty.toFixed(1)}. The work has stopped stretching you — take harder tasks, not better ones.`,
+            headline: 'Your tasks may be too easy.',
+            hint: `Execution ${execution.toFixed(1)}, difficulty ${difficulty.toFixed(1)}. Try harder tasks.`,
           }
         : {
             tone: 'watch',
-            headline: 'You are taking on more than is going well.',
-            hint: `Difficulty ${difficulty.toFixed(1)} against execution ${execution.toFixed(1)}. Fine as a phase — worth watching that it stays one.`,
+            headline: 'Your tasks may be too hard.',
+            hint: `Difficulty ${difficulty.toFixed(1)}, execution ${execution.toFixed(1)}. Fine for now, but keep an eye on it.`,
           },
     );
   } else {
     out.push({
       tone: 'good',
-      headline: 'Difficulty and execution are well matched.',
-      hint: `${difficulty.toFixed(1)} against ${execution.toFixed(1)} — you are working at roughly the hardest level you can still do well, which is where the learning is.`,
+      headline: 'Your tasks are the right difficulty.',
+      hint: `Difficulty ${difficulty.toFixed(1)}, execution ${execution.toFixed(1)}. You're challenged but still doing well.`,
     });
   }
 
@@ -375,7 +375,7 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
     out.push({
       tone: share >= 60 ? 'good' : 'watch',
       headline: `${share}% of your hardest tasks went well.`,
-      hint: `${hardWell} of ${hard.length} tasks you rated 4 or 5 for difficulty came out at 3 or better for execution.`,
+      hint: `${hardWell} of ${hard.length} hard tasks (4–5 difficulty) rated 3+ for execution.`,
     });
   }
 
@@ -391,8 +391,8 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
     if (Math.abs(change) >= 1.5) {
       out.push({
         tone: change > 0 ? 'good' : 'watch',
-        headline: `Quality has ${change > 0 ? 'risen' : 'fallen'} ${Math.abs(change).toFixed(1)} points across this window.`,
-        hint: `${avg(early).toFixed(1)} over the first ${early.length} rated tasks against ${avg(late).toFixed(1)} over the last ${late.length}.`,
+        headline: `Quality ${change > 0 ? 'up' : 'down'} ${Math.abs(change).toFixed(1)} points.`,
+        hint: `From ${avg(early).toFixed(1)} (first ${early.length} tasks) to ${avg(late).toFixed(1)} (last ${late.length}).`,
       });
     }
   }
@@ -402,11 +402,11 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
   // it is even when — especially when — the findings sound confident.
   out.push({
     tone: 'note',
-    headline: `These read ${summary.rated} of the ${summary.finished} tasks you finished.`,
+    headline: `Based on ${summary.rated} of ${summary.finished} finished tasks.`,
     hint:
       summary.coverage >= 60
-        ? 'A high enough share that the sample is unlikely to be flattering you.'
-        : 'A minority of your work, and one you chose. An impression, not a measurement.',
+        ? 'Enough to be reliable.'
+        : 'Less than half your tasks, so treat this as a rough guide.',
   });
 
   return out;
@@ -517,7 +517,7 @@ export function reasonFindings(summary: ReasonSummary): RatingFinding[] {
     out.push({
       tone: 'watch',
       headline: `When work goes badly, it ${worst.phrase}.`,
-      hint: `${worst.count} of the ${summary.struggled} tasks you rated below 3 for execution came back with that reason — ${worst.share}% of them. It is the one thing on this page you could change on purpose.`,
+      hint: `${worst.count} of ${summary.struggled} low-rated tasks (${worst.share}%) gave this reason.`,
     });
   }
 
@@ -525,7 +525,7 @@ export function reasonFindings(summary: ReasonSummary): RatingFinding[] {
     out.push({
       tone: 'good',
       headline: `When it goes well, it ${best.phrase}.`,
-      hint: `${best.count} of the ${summary.succeeded} tasks you rated 3 or better named that — ${best.share}%. Worth arranging for rather than waiting for.`,
+      hint: `${best.count} of ${summary.succeeded} well-rated tasks (${best.share}%) gave this reason. Plan for it.`,
     });
   }
 
@@ -545,8 +545,8 @@ export function reasonFindings(summary: ReasonSummary): RatingFinding[] {
     if (OPPOSITES[worst.key] === best.key) {
       out.push({
         tone: 'note',
-        headline: 'Your best and worst work turn on the same thing.',
-        hint: `Bad tasks ${worst.phrase}; good ones ${best.phrase}. That is one condition, not two problems, and it is the one worth protecting.`,
+        headline: 'Your best and worst tasks have the same cause.',
+        hint: `Bad tasks ${worst.phrase}; good ones ${best.phrase}. Protect that condition.`,
       });
     }
   }
@@ -554,8 +554,8 @@ export function reasonFindings(summary: ReasonSummary): RatingFinding[] {
   if (out.length === 0) {
     out.push({
       tone: 'note',
-      headline: `${summary.answered} ${summary.answered === 1 ? 'reason' : 'reasons'} given in this window.`,
-      hint: `A side needs ${REASON_FLOOR} before anything is claimed from it — one of six answers landing twice is chance, not a pattern.`,
+      headline: `${summary.answered} ${summary.answered === 1 ? 'reason' : 'reasons'} given so far.`,
+      hint: `Findings appear after ${REASON_FLOOR} answers.`,
     });
   }
 

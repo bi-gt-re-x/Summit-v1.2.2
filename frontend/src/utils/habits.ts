@@ -631,7 +631,7 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
       if (ratio <= 0.65) {
         out.push({
           id: 'weekend-light',
-          text: 'weekends carry much less than weekdays',
+          text: 'you do much less on weekends',
           support: `${Math.round(weekendRate * 10) / 10} finished on an average weekend day against ${
             Math.round(weekdayRate * 10) / 10
           } on a weekday`,
@@ -641,7 +641,7 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
       } else if (ratio >= 1.35) {
         out.push({
           id: 'weekend-heavy',
-          text: 'weekends carry more than weekdays',
+          text: 'you do more on weekends',
           support: `${Math.round(weekendRate * 10) / 10} finished on an average weekend day against ${
             Math.round(weekdayRate * 10) / 10
           } on a weekday`,
@@ -690,8 +690,8 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
     if (share >= 30) {
       out.push({
         id: 'second-session',
-        text: 'a second sitting comes after the evening break',
-        support: `${split} of ${workedDays.length} working days had work both before 5 PM and after 7 PM`,
+        text: 'you often work again in the evening',
+        support: `${split} of ${workedDays.length} days had work before 5 PM and after 7 PM`,
         frequency: wordFor(share),
         tone: 'green',
       });
@@ -762,7 +762,7 @@ export function habitShifts(habits: Habit[], toIso: string): HabitShift[] {
       out.push({
         name: habit.name,
         event: 'stopped',
-        detail: `Nothing in the last stretch of the range — ${gapDays} days since the last one.`,
+        detail: `None in the last ${gapDays} days.`,
         tone: 'pink',
       });
       return;
@@ -771,7 +771,7 @@ export function habitShifts(habits: Habit[], toIso: string): HabitShift[] {
       out.push({
         name: habit.name,
         event: 'started',
-        detail: `Began in this range and is now running at ${last.toFixed(1)}× a week.`,
+        detail: `New. Now ${last.toFixed(1)}× a week.`,
         tone: 'blue',
       });
       return;

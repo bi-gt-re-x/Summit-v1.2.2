@@ -73,7 +73,7 @@ describe('milestonesAhead', () => {
 
 describe('whyFor', () => {
   it('answers for a threshold that exists', () => {
-    expect(whyFor(NEED_DAYS.insights)).toContain('two comparable stretches');
+    expect(whyFor(NEED_DAYS.insights)).toContain('two periods to compare');
   });
 
   it('is empty rather than undefined for one that does not', () => {

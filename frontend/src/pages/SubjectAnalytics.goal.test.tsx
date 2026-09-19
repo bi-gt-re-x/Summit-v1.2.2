@@ -150,7 +150,7 @@ describe('the goal panel', () => {
     );
 
     const box = within(panel());
-    expect(box.getByText(/point the work you are already doing at it/i)).toBeInTheDocument();
+    expect(box.getByText(/link your tasks to this goal/i)).toBeInTheDocument();
     expect(box.getByText(/none of the 6 tasks/i)).toBeInTheDocument();
   });
 

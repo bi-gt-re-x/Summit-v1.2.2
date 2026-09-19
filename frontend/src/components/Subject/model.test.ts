@@ -261,7 +261,7 @@ describe('the difficulty bands, which stand in for sub-skills', () => {
     // Lowercased mid-sentence, and it names both ends: the point of the
     // line is the gap, so a sentence with only the weak half in it would
     // read as a verdict on the subject rather than on one end of it.
-    expect(wide.insight).toContain('hard end');
+    expect(wide.insight).toContain('hard work scores');
     expect(wide.insight).toContain('easy work');
   });
 });
@@ -435,7 +435,7 @@ describe('what to do next', () => {
     // It asks for what is missing rather than reporting a state, which is the
     // shorter and more useful of the two things it could say.
     expect(led.title).toMatch(/give .* a target and a date/i);
-    expect(led.detail).toMatch(/nothing to pace against/i);
+    expect(led.detail).toMatch(/needed to track pace/i);
   });
 
   it('does not lead with a goal that belongs to another subject', () => {

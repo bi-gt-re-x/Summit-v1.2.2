@@ -86,9 +86,7 @@ export function NotificationPanel({ onClose }: { onClose: () => void }) {
 
       {items.length === 0 ? (
         <p className="nf-empty">
-          Nothing waiting. Anything the app has to say about your tasks, your
-          calendar, your goals or your week turns up here — and once you have
-          deleted it, it stays gone until something new happens.
+          No notifications.
         </p>
       ) : (
         <ul className="nf-list">

@@ -183,9 +183,9 @@ describe('Recommendations reads what you type after a task', () => {
         data={fakeData()}
       />,
     );
-    expect(screen.getByText(/The one thing you did report/)).toBeInTheDocument();
+    expect(screen.getByText(/You reported/)).toBeInTheDocument();
     expect(screen.getByText('distracted')).toBeInTheDocument();
-    expect(screen.getByText(/after 9 tasks this window/)).toBeInTheDocument();
+    expect(screen.getByText(/after 9 tasks this fortnight/)).toBeInTheDocument();
   });
 
   it('says nothing extra when the reader answers that question about nothing', () => {
@@ -197,7 +197,7 @@ describe('Recommendations reads what you type after a task', () => {
         data={fakeData()}
       />,
     );
-    expect(screen.queryByText(/The one thing you did report/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/You reported/)).not.toBeInTheDocument();
   });
 });
 

@@ -174,10 +174,9 @@ function checkText(
       field,
       hard: true,
       note:
-        `This reads as an instruction to the model rather than as ${
+        `This looks like an instruction, not ${
           field === 'aim' ? 'an aim' : 'a level'
-        }. It is quoted straight into the write-up, so write what you are `
-        + 'actually chasing here and it will be read as that.',
+        }. Write what you are actually aiming for.`,
     });
     return found;
   }
@@ -194,9 +193,7 @@ function checkText(
       field,
       hard: true,
       note:
-        `“${value}” has no words in it, so there is nothing to read your ${what} `
-        + 'from. Write it as a short phrase, or leave it blank — blank is a real '
-        + 'answer and the write-up handles it.',
+        `“${value}” has no words in it. Write a short phrase or leave it blank.`,
     });
     return found;
   }
@@ -207,9 +204,7 @@ function checkText(
       field,
       hard: true,
       note:
-        `“${value}” does not read as words. The model is told to reason towards `
-        + `your ${what}, so it will reason towards this one. Write it out, or `
-        + 'clear the field.',
+        `“${value}” doesn't look like words. Write your ${what} out, or clear the field.`,
     });
     return found;
   }
@@ -220,9 +215,7 @@ function checkText(
       field,
       hard: false,
       note:
-        `This is at the ${AIM_MAX}-character limit, so it is probably cut off `
-        + 'mid-sentence. A half-sentence is read as a whole one — shorten it to '
-        + 'something that ends.',
+        `This hits the ${AIM_MAX}-character limit and may be cut off. Shorten it.`,
     });
   }
 
@@ -276,8 +269,7 @@ function checkCheckpoints(subject: string, raw: string): AmbitionProblem[] {
     add(
       false,
       `${long.length === 1 ? 'One checkpoint is' : `${long.length} checkpoints are`} `
-        + `longer than ${CHECKPOINT_MAX} characters and will be cut off there. `
-        + 'A checkpoint is a stage, not a paragraph — shorten it and it stays whole.',
+        + `longer than ${CHECKPOINT_MAX} characters and will be cut off. Shorten ${long.length === 1 ? 'it' : 'them'}.`,
     );
   }
 
@@ -293,7 +285,7 @@ function checkCheckpoints(subject: string, raw: string): AmbitionProblem[] {
       false,
       `${repeated.size === 1 ? 'A checkpoint appears' : `${repeated.size} checkpoints appear`} `
         + `twice (${[...repeated].slice(0, 3).map((line) => `“${line}”`).join(', ')}). `
-        + 'Both copies are saved and both are read, so the stage is counted twice.',
+        + 'Remove the duplicate.',
     );
   }
 

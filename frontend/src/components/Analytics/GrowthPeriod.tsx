@@ -756,10 +756,8 @@ export function MoverPanel({
         {fell
           ? `${kind === 'best' ? 'Up' : 'Down'} from ${shown.from} to ${shown.to} out of 100`
           : kind === 'worst'
-            ? `Nothing fell by more than a few points. This is your lowest measure at `
-              + `${shown.to} out of 100, which is where the next point is cheapest`
-            : `Nothing moved up by more than a few points — a steady stretch. This is your `
-              + `strongest measure at ${shown.to} out of 100`}
+            ? `No big drops. Your lowest measure is ${shown.to} out of 100, the easiest to raise`
+            : `No big gains. Your strongest measure is ${shown.to} out of 100`}
         {' '}— {meta.asks}.
       </p>
 
@@ -972,7 +970,7 @@ export function milestones(data: GrowthPeriods, limit = 6): Milestone[] {
           date: point.date,
           kind: 'grade',
           headline: `Reached ${nextLetter}`,
-          detail: `Your overall score crossed into ${nextLetter} at ${point.overall} out of 100.`,
+          detail: `Your overall score reached ${nextLetter} (${point.overall}/100).`,
         });
       }
       letter = nextLetter;

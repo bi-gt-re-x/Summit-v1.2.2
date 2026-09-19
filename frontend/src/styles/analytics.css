@@ -3580,7 +3580,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     .ax-loop-back { margin-left: 0; }
 }
 
-/* "Analytics noticed" / "Recommendation". Two words above a line, not a
+/* "Why" / "What to do". One word above a line, not a
    paragraph competing with it — see the note in
    src/components/Recommendations/Panels.tsx for why the labels came back after
    being deliberately removed. */

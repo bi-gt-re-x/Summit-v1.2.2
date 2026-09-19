@@ -178,13 +178,13 @@ export function ClockPanel({ clock }: { clock: ClockShape }) {
       <p className="ax-prose">
         {clock.coreWindow ? (
           <>
-            Half of everything you finish happens between{' '}
+            You finish half your tasks between{' '}
             <strong>
               {hourLabel(clock.coreWindow.from)} and {hourLabel(clock.coreWindow.to)}
             </strong>
             . {clock.coreWindow.share >= 60
-              ? 'A tight window. Worth defending.'
-              : 'A loose window. Your work is spread across the day rather than anchored to it.'}
+              ? 'Keep this time free for work.'
+              : 'The rest is spread across the day.'}
           </>
         ) : (
           'No finished task carries a completion time yet.'

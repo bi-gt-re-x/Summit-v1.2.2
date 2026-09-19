@@ -49,8 +49,8 @@ import type { RatingDepth } from '@/services/settings';
  */
 export const DEPTHS: { key: RatingDepth; label: string; hint: string }[] = [
   { key: 'none', label: 'Nothing', hint: 'Finishing a task asks nothing. Quality falls back to average XP per task.' },
-  { key: 'ratings', label: 'Ratings', hint: 'Two star rows: how hard it was, how well it went. Everything on this tab comes from them.' },
-  { key: 'reasons', label: '+ Reasons', hint: 'The two rows and one more — what made the difference. Adds the reasons panel on Insights.' },
+  { key: 'ratings', label: 'Ratings', hint: 'Rate difficulty and how well it went.' },
+  { key: 'reasons', label: '+ Reasons', hint: 'Both ratings, plus what made the difference. Adds a reasons panel to Insights.' },
 ];
 
 export interface DepthPickerProps {
@@ -120,12 +120,8 @@ function QualityEmpty({
         </p>
         <p className="ax-muted">
           {off
-            ? 'Finishing a task asks nothing, so there is nothing here to draw. Quality on the '
-              + 'report card falls back to your average XP per task — a figure set when a task is '
-              + 'created rather than after it is done. Turn the questions on above and this fills '
-              + 'in from the next task you finish.'
-            : 'The star rows appear once, after you finish a task, and can be skipped. Nothing '
-              + 'else on this page depends on them.'}
+            ? 'Ratings are off, so there is nothing to show. Turn them on above to start.'
+            : 'You rate each task once, when you finish it. You can skip it.'}
         </p>
         {!off && (
           <Link to="/tasks" className="ax-btn">

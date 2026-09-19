@@ -90,8 +90,8 @@ export function YearOnYear({ model }: { model: AnalyticsModel }) {
     return (
       <Panel title="Year on year" note="How hard the work was, and how well it went">
         <p className="ax-empty">
-          A year-on-year reading needs two calendar years to hold against each other. The
-          periods above work from your first day.
+          Year-on-year comparisons need two calendar years of data. The periods above work from day
+          one.
         </p>
       </Panel>
     );
@@ -323,10 +323,8 @@ function RatingLines({ years }: { years: GrowthYear[] }) {
         ]}
       />
       <PanelNote label="Reading this">
-        The filled line is execution — how well the work went. The lighter one is difficulty —
-        how hard it was. Both are your own ratings out of five, so they share an axis, but they
-        answer different questions: which line sits higher means nothing, and only the shape of
-        each is worth reading.
+        The solid line is execution (how well it went) and the lighter line is difficulty. Both are
+        your ratings out of 5. Compare each line's shape, not which is higher.
       </PanelNote>
     </Panel>
   );

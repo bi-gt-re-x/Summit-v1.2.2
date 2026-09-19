@@ -239,7 +239,7 @@ export function goalLens(goal: Goal, tasks: Task[]): GoalLens | null {
   if (mean >= HARD) {
     return wrap(
       'depth',
-      `The ${rated} tasks you rated for this average ${mean.toFixed(1)} out of 5 for difficulty, so this is a goal about harder work rather than more of it.`,
+      `Your ${rated} rated tasks for this goal average ${mean.toFixed(1)}/5 for difficulty, so focus on harder work, not more of it.`,
     );
   }
   return wrap(

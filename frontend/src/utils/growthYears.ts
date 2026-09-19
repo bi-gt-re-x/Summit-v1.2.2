@@ -298,9 +298,8 @@ export function growthArc(years: GrowthYear[]): GrowthArc {
   if (rose && !harder && !easier) {
     kind = 'better';
     headline = 'You got better at the work';
-    sentence = `From ${span} your execution went ${exec} out of 5 while the difficulty of what `
-      + `you took on held at ${to.difficulty!.toFixed(1)}. You got better at the work rather than `
-      + `picking easier work.`;
+    sentence = `From ${span} your execution went ${exec} out of 5, with difficulty steady at ` +
+    `${to.difficulty!.toFixed(1)}.`;
   } else if (rose && harder) {
     kind = 'both';
     headline = 'Harder work, executed better';

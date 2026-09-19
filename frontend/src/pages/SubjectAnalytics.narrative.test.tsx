@@ -225,7 +225,7 @@ describe('the bottleneck', () => {
 
     const neck = within(section('Your current bottleneck'));
     expect(neck.getByRole('heading', { name: 'Work at Hard' })).toBeInTheDocument();
-    expect(neck.getByText(/The level to work is Fair/)).toBeInTheDocument();
+    expect(neck.getByText(/Practise at Fair until it feels easy/)).toBeInTheDocument();
     expect(neck.getByText('Everything below Hard.')).toBeInTheDocument();
   });
 

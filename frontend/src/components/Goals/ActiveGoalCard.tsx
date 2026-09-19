@@ -955,8 +955,7 @@ export function ActiveGoalCard({
                     </ul>
                   ) : (
                     <p className="ag-quiet ag-found-none">
-                      No open task matches. Steps do not need one — a link is for work you
-                      had already written down.
+                      No matching open tasks. Steps don’t need a linked task.
                     </p>
                   )}
                 </div>
@@ -988,8 +987,7 @@ export function ActiveGoalCard({
                and the thing it named did not exist on the card. */
             <>
               <p className="ag-empty">
-                No checkpoints yet, so the percentage above has nothing to
-                measure. Five of them is usually the whole plan.
+                No checkpoints yet. Add some to track progress.
               </p>
               {/* The offer, unless the panel opposite is already making it.
  

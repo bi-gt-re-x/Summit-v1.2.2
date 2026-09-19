@@ -1081,8 +1081,8 @@ export function growthInsights(slice: RangeSlice): Insight[] {
             }
           : {
               tone: 'good',
-              headline: 'Weekends are carrying you',
-              hint: `You earn ${gap}% more per day at weekends than on weekdays.`,
+              headline: 'Weekends are your best days',
+              hint: `You earn ${gap}% more XP per day on weekends.`,
             },
       );
     }
@@ -1115,13 +1115,13 @@ export function growthInsights(slice: RangeSlice): Insight[] {
       share >= 70
         ? {
             tone: 'good',
-            headline: 'Consistency is your superpower',
-            hint: `You showed up on ${share}% of the days in this range.`,
+            headline: 'Very consistent',
+            hint: `You worked on ${share}% of days in this period.`,
           }
         : {
             tone: 'note',
-            headline: `You earned XP on ${active} of these ${current.length} days.`,
-            hint: 'Consistency moves the line more than any single big day.',
+            headline: `You worked on ${active} of ${current.length} days.`,
+            hint: 'Working more often helps more than one big day.',
           },
     );
   }
@@ -1146,7 +1146,7 @@ export function growthInsights(slice: RangeSlice): Insight[] {
       out.push({
         tone: 'good',
         headline: `Your best day was ${peakXp.toLocaleString()} XP, on ${dayName(peak.date)}.`,
-        hint: `That is ${times.toFixed(1)}× your average working day — worth knowing what was different about it.`,
+        hint: `${times.toFixed(1)}× your average day.`,
       });
     }
   }
@@ -1163,11 +1163,11 @@ export function growthInsights(slice: RangeSlice): Insight[] {
   if (longest >= 2) {
     out.push({
       tone: longest >= 7 ? 'good' : 'note',
-      headline: `Your longest unbroken run here was ${longest} days.`,
+      headline: `Your longest streak here was ${longest} days.`,
       hint:
         longest >= 7
-          ? 'A week without a gap is the hardest part of any streak to rebuild.'
-          : 'Runs are worth more than single days — the line moves on the days either side of a good one.',
+          ? 'Keep it going.'
+          : 'Try to work on back-to-back days.',
     });
   }
 
@@ -1178,8 +1178,8 @@ export function growthInsights(slice: RangeSlice): Insight[] {
     const perDay = tasksDone / active;
     out.push({
       tone: 'note',
-      headline: `${tasksDone.toLocaleString()} task${tasksDone === 1 ? '' : 's'} finished across this range.`,
-      hint: `About ${perDay.toFixed(1)} on each day you worked.`,
+      headline: `${tasksDone.toLocaleString()} task${tasksDone === 1 ? '' : 's'} finished.`,
+      hint: `About ${perDay.toFixed(1)} per day worked.`,
     });
   }
 
@@ -1189,8 +1189,8 @@ export function growthInsights(slice: RangeSlice): Insight[] {
     const perDay = Math.round(focusMinutes / active);
     out.push({
       tone: 'note',
-      headline: `${hours >= 10 ? Math.round(hours).toLocaleString() : hours.toFixed(1)} hours of focus in this range.`,
-      hint: `Around ${perDay} minutes on a day you worked.`,
+      headline: `${hours >= 10 ? Math.round(hours).toLocaleString() : hours.toFixed(1)} hours of focus.`,
+      hint: `About ${perDay} minutes per day worked.`,
     });
   }
 
@@ -1221,35 +1221,35 @@ function quietRows(days: GrowthDay[], active: number, have: number): Insight[] {
     days.length === 0
       ? {
           tone: 'note',
-          headline: 'There are no days in this range yet.',
-          hint: 'Your record starts on the day you signed up — this panel fills in from there.',
+          headline: 'No data yet.',
+          hint: 'This fills in from the day you signed up.',
         }
       : active === 0
       ? {
           tone: 'note',
-          headline: `No XP recorded on any of these ${days.length} days.`,
-          hint: 'This panel reads the range in the header — a longer one may well have something in it.',
+          headline: `No XP in the last ${days.length} days.`,
+          hint: 'Try a longer time range.',
         }
       : {
           tone: 'note',
           headline: `${banked.toLocaleString()} XP over ${active} working day${active === 1 ? '' : 's'}.`,
-          hint: 'Too few days here for a pattern; the readings below sharpen as the range fills.',
+          hint: 'Not enough days for patterns yet.',
         },
     last
       ? {
           tone: 'note',
-          headline: `The last day with anything on it was ${dayName(last.date)}.`,
-          hint: `It was worth ${Math.round(Number(last.xp_earned) || 0).toLocaleString()} XP.`,
+          headline: `You last worked on ${dayName(last.date)}.`,
+          hint: `You earned ${Math.round(Number(last.xp_earned) || 0).toLocaleString()} XP.`,
         }
       : {
           tone: 'note',
-          headline: 'Nothing has happened here yet.',
-          hint: 'Finish a task and this panel will have something to say.',
+          headline: 'Nothing here yet.',
+          hint: 'Finish a task to get started.',
         },
     {
       tone: 'note',
-      headline: 'Every row here is counted, never estimated.',
-      hint: 'A finding appears when the figures support it and stays away when they do not, which is why this range is quiet.',
+      headline: 'Nothing stands out.',
+      hint: 'Findings appear here when something changes.',
     },
   ];
 

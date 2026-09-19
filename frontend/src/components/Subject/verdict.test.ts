@@ -120,7 +120,7 @@ describe('summarise', () => {
     // is exactly where that would have crept back in.
     const summary = summarise(verdictsFrom([advice()], 71));
 
-    expect(summary.say).toContain('pattern rather than a proof');
+    expect(summary.say).toContain('not proof');
     expect(summary.say).not.toMatch(/\d+ of \d+/);
     expect(summary.say).not.toMatch(/\d+%/);
   });

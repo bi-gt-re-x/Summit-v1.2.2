@@ -180,10 +180,8 @@ export function SubjectsTab({
             </div>
           </div>
           <p className="ax-panel-note">
-            Your XP in each lattice against what the whole lattice is worth, over everything
-            you have finished rather than over the window above — a lattice is a curriculum,
-            not a month. Subjects that open one tree are counted as one, so the five languages
-            are Foreign Languages and not five separate climbs. Capped at a whole tree.
+            Your all-time XP in each skill tree, out of the tree's total. Related subjects share one
+            tree (for example, all languages count toward Foreign Languages).
           </p>
           <ul className="ax-treedepth">
             {standing.map((tree) => (

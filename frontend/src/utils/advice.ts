@@ -195,27 +195,27 @@ export interface AdviceInput {
  */
 const REASON_ACTIONS: Record<string, { action: string; effort: number }> = {
   distracted: {
-    action: 'Put the next hard task in a block with the phone in another room. Start it before you open anything else.',
+    action: 'Put your phone in another room and start the next hard task before opening anything else.',
     effort: 2,
   },
   unclear: {
-    action: 'Write the first step as its own task. Not knowing where to start is a planning problem and it is solved at the list, not at the desk.',
+    action: 'Add the first step of each task as its own task, so you always know where to start.',
     effort: 1,
   },
   underestimated: {
-    action: 'Split anything you would rate 4 or 5 for difficulty into two tasks before you start it, not after it goes wrong.',
+    action: 'Split any task you expect to rate 4 or 5 for difficulty into two before you start.',
     effort: 2,
   },
   'no-time': {
-    action: 'Put the hard one first in the day rather than last. Running out of time is a queue-order problem before it is a time problem.',
+    action: 'Do the hardest task first in the day, not last.',
     effort: 2,
   },
   'low-energy': {
-    action: 'Move the hardest task to your best hour — the Habits tab knows which one that is for you.',
+    action: 'Move your hardest task to your best hour (see the Habits tab).',
     effort: 2,
   },
   interrupted: {
-    action: 'Book one uninterrupted block a day and defend it. Of the six causes this is the one you can arrange against directly.',
+    action: 'Block out one uninterrupted session a day.',
     effort: 3,
   },
 };
@@ -321,8 +321,8 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'frequency',
       category: 'Consistency',
       title: 'Fill the three-day gaps',
-      because: `${rhythm.gapCount} breaks of three days or more. A gap costs the days plus the streak.`,
-      action: 'On a day you would skip, do the smallest thing that counts — fifteen minutes, one problem, one page.',
+      because: `You had ${rhythm.gapCount} breaks of 3+ days, and each one resets your streak.`,
+      action: 'On days you would skip, do something small: 15 minutes, one problem or one page.',
       evidence: `${rhythm.gapCount} breaks of 3+ days across ${rhythm.span.toLocaleString()} days${
         rhythm.longestGap ? `, the longest running ${rhythm.longestGap.days} days` : ''
       }.`,
@@ -341,8 +341,8 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'frequency',
       category: 'Scheduling',
       title: 'Claim one weekend day',
-      because: `Weekends run ${Math.abs(week.weekendGap)}% lighter. Two of every seven days are near-unavailable.`,
-      action: 'One day, not both. Take the better of the two and give it one fixed session at the same hour every week.',
+      because: `You do ${Math.abs(week.weekendGap)}% less on weekends than on weekdays.`,
+      action: 'Pick one weekend day and schedule a session at the same time each week.',
       evidence: `Weekend days average ${Math.round(
         week.stats.filter((stat) => stat.index === 0 || stat.index === 6).reduce((sum, stat) => sum + stat.avgXp, 0) / 2,
       ).toLocaleString()} XP against ${Math.round(
@@ -363,8 +363,8 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'depth',
       category: 'Focus Time',
       title: 'Add 15 minutes to each sitting',
-      because: `Your sittings run ${Math.round(rhythm.typicalSession)} minutes — short enough that much of one goes on starting.`,
-      action: 'Add it to the end of a sitting you were having anyway. Starting costs more than continuing.',
+      because: `Your sessions usually last ${Math.round(rhythm.typicalSession)} minutes, which leaves little time once you get going.`,
+      action: 'Add 15 minutes to the end of a session you already have planned.',
       evidence: `Typical sitting ${Math.round(rhythm.typicalSession)} minutes${
         rhythm.longestSession ? `, against a best of ${Math.round(rhythm.longestSession.minutes)}` : ''
       }, across the ${Math.round(rhythm.activeRate)}% of days you work.`,
@@ -384,10 +384,10 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'timing',
       category: 'Scheduling',
       title: 'Move one session earlier',
-      because: `${clock.lateShare}% of your work lands after 10 PM. Late work is the first thing a bad day loses.`,
+      because: `${clock.lateShare}% of your work happens after 10 PM, when it is easiest to skip.`,
       action: clock.coreWindow
-        ? `Move the day's most important task into ${hourText(clock.coreWindow.from)}–${hourText(clock.coreWindow.to)}, your reliable window. Leave the late slot for work that can be missed.`
-        : "Put the day's most important task in the hour you are most reliably free.",
+        ? `Move your most important task to ${hourText(clock.coreWindow.from)}–${hourText(clock.coreWindow.to)}, when you work most reliably.`
+        : 'Do your most important task at the time you are most reliably free.',
       evidence: `${clock.lateShare}% of completions land after 10 PM or before 5 AM${
         clock.coreWindow
           ? `, against a reliable window of ${hourText(clock.coreWindow.from)}–${hourText(
@@ -414,11 +414,11 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'balance',
       category: 'Consistency',
       title: `Restart ${balance.fading[0]}`,
-      because: `${balance.fading.join(' and ')} had real work early in this range and none in the second half.`,
-      action: 'Book one session. That is enough to find out whether you dropped it on purpose or it just drifted.',
+      because: `You worked on ${balance.fading.join(' and ')} early in this period, then stopped.`,
+      action: 'Schedule one session this week, or drop it on purpose.',
       evidence: `${balance.fading.join(', ')} carried real work in the first half of this range and none in the second.`,
       impact: 0,
-      workings: 'No XP claim: this is about what is missing from the week, not about the total.',
+      workings: 'This one does not change your XP.',
       effort: 2,
     });
   }
@@ -429,11 +429,11 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'balance',
       category: 'Productivity',
       title: `${balance.leader} is ${balance.concentration}% of your week`,
-      because: 'More than everything else combined. Depth is not a fault, but it should be a choice.',
-      action: 'If it is deliberate, protect it. If it is drift, book one recurring session.',
+      because: 'That is more than all your other subjects combined.',
+      action: 'If that is intended, keep going. If not, add one weekly session for another subject.',
       evidence: `${balance.leader} holds ${balance.concentration}% of your XP across ${balance.carrying} subjects with real weight behind them.`,
       impact: 0,
-      workings: 'No XP claim: the total does not change, only what it is made of.',
+      workings: 'This one does not change your XP.',
       effort: 1,
     });
   }
@@ -467,11 +467,11 @@ export function recommendations(input: AdviceInput): Advice[] {
         kind: 'quality',
         category: 'Subjects',
         title: `Change how you practise ${worst.name}`,
-        because: `You rate ${worst.name} ${worst.execution!.toFixed(1)} out of 5 against ${elsewhere.toFixed(1)} across your other subjects. The hours are going in; the rating is not following them.`,
-        action: `Next ${worst.name} session, change one thing about the method — worked examples before problems, or out loud instead of on paper. More of the same is the one option the record has already tested.`,
+        because: `You rate ${worst.name} ${worst.execution!.toFixed(1)}/5, compared with ${elsewhere.toFixed(1)} for your other subjects.`,
+        action: `Try a different method in your next ${worst.name} session, like worked examples before problems.`,
         evidence: `${worst.rated} rated ${worst.name} tasks at ${worst.execution!.toFixed(1)}/5, ${behind.toFixed(1)} below the ${others.length} other subject${others.length === 1 ? '' : 's'} you rated.`,
         impact: 0,
-        workings: 'No XP claim: this changes what an hour is worth, which the XP total cannot see.',
+        workings: 'This one does not change your XP.',
         effort: 3,
       });
     }
@@ -489,11 +489,11 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'load',
       category: 'Subjects',
       title: `Drop a step in ${overreaching.name}`,
-      because: `You are rating ${overreaching.name} ${overreaching.difficulty!.toFixed(1)}/5 for difficulty and ${overreaching.execution!.toFixed(1)}/5 for how it went. That is not a subject going badly, it is a step size you have not earned yet.`,
-      action: `Spend one session on the level below and finish it cleanly. The point is one session that goes well, not one that is easy.`,
+      because: `${overreaching.name} rates ${overreaching.difficulty!.toFixed(1)}/5 for difficulty but only ${overreaching.execution!.toFixed(1)}/5 for how it went. The jump may be too big.`,
+      action: `Spend one session on easier material and finish it well.`,
       evidence: `${overreaching.rated} rated ${overreaching.name} tasks: difficulty ${overreaching.difficulty!.toFixed(1)}, execution ${overreaching.execution!.toFixed(1)}.`,
       impact: 0,
-      workings: 'No XP claim: the work already pays; this is about whether it lands.',
+      workings: 'This one does not change your XP.',
       effort: 2,
     });
   }
@@ -509,9 +509,9 @@ export function recommendations(input: AdviceInput): Advice[] {
       id: `subject-rising:${rising.id}`,
       kind: 'balance',
       category: 'Subjects',
-      title: `Push ${rising.name} while it is moving`,
-      because: `${rising.name} ratings rose ${rising.movement!.toFixed(1)} points across this window — the clearest improvement on the page.`,
-      action: `Add one ${rising.name} session this week and make it the harder kind. Whatever changed is working, and the window for compounding it is now.`,
+      title: `Keep pushing ${rising.name}`,
+      because: `Your ${rising.name} ratings rose ${rising.movement!.toFixed(1)} points, your biggest improvement.`,
+      action: `Add one harder ${rising.name} session this week.`,
       evidence: `${rising.rated} rated ${rising.name} tasks, execution up ${rising.movement!.toFixed(1)} between the halves of this window.`,
       impact: Math.round(perDay * 0.5 * 52),
       workings: `Half a working day's XP a week for a year, at ${Math.round(perDay).toLocaleString()} XP a working day.`,
@@ -535,12 +535,12 @@ export function recommendations(input: AdviceInput): Advice[] {
       id: `subject-dropped:${dropped.id}`,
       kind: 'balance',
       category: 'Subjects',
-      title: `${dropped.name} has been quiet ${dropped.sinceDays} days`,
-      because: `${dropped.lifetimeDone} finished tasks behind it and nothing for three weeks. A subject with that much history does not usually stop on purpose without you noticing.`,
-      action: 'Book one short session, or take it off the list on purpose. Either is better than the current arrangement, which is neither.',
-      evidence: `Last ${dropped.name} task ${dropped.sinceDays} days ago, after ${dropped.lifetimeDone} on the record.`,
+      title: `No ${dropped.name} for ${dropped.sinceDays} days`,
+      because: `You have finished ${dropped.lifetimeDone} ${dropped.name} tasks, but none in the last three weeks.`,
+      action: 'Schedule one short session, or remove the subject if you are done with it.',
+      evidence: `Last ${dropped.name} task ${dropped.sinceDays} days ago, ${dropped.lifetimeDone} in total.`,
       impact: 0,
-      workings: 'No XP claim: this is about what is missing from the week, not about the total.',
+      workings: 'This one does not change your XP.',
       effort: 1,
     });
   }
@@ -556,11 +556,11 @@ export function recommendations(input: AdviceInput): Advice[] {
         kind: 'quality',
         category: METRIC_CATEGORY[name] ?? 'Productivity',
         title: `${name[0]!.toUpperCase()}${name.slice(1)} is holding your grade down`,
-        because: `${metric.score}/100 — the lowest of your five graded metrics.`,
-        action: METRIC_ADVICE[name] ?? 'Work on this metric directly. It is the lowest of the five.',
+        because: `It scores ${metric.score}/100, your lowest of the five.`,
+        action: METRIC_ADVICE[name] ?? 'Focus on this one first.',
         evidence: `${name} scores ${metric.score}/100, the lowest of the five graded metrics.`,
         impact: 0,
-        workings: 'No XP claim: the report card grades how you work, not how much.',
+        workings: 'This one does not change your XP.',
         effort: 3,
       });
     }
@@ -580,12 +580,12 @@ export function recommendations(input: AdviceInput): Advice[] {
       id: 'plan-a-light-day',
       kind: 'load',
       category: 'Burnout',
-      title: 'Plan the light day before you need it',
-      because: `${load.longestRun} days running with work on every one of them, and no let-up you chose.`,
-      action: 'Pick one day a week and set its target at the smallest thing that counts. The streak survives.',
+      title: 'Plan a light day',
+      because: `You have worked ${load.longestRun} days in a row without a lighter day.`,
+      action: 'Pick one day a week to do the minimum. Your streak stays intact.',
       evidence: `Longest unbroken run in this range: ${load.longestRun} days, across ${rhythm.span.toLocaleString()} days at ${Math.round(rhythm.activeRate)}% active.`,
       impact: 0,
-      workings: 'No XP claim: this is about the pace being one you can hold, not about the total.',
+      workings: 'This one does not change your XP.',
       effort: 1,
     });
   }
@@ -596,12 +596,12 @@ export function recommendations(input: AdviceInput): Advice[] {
       id: 'even-out-the-load',
       kind: 'load',
       category: 'Burnout',
-      title: 'Your output is piled into your biggest days',
-      because: `A tenth of your working days — ${load.topDays} of them — carry ${load.topShare}% of everything in this range.`,
-      action: 'Cap the big days rather than lifting the small ones. Move the last hour onto the next quiet day.',
+      title: 'Your work is bunched into a few days',
+      because: `${load.topDays} days account for ${load.topShare}% of your XP in this period.`,
+      action: 'On your busiest days, move the last hour of work to the next quiet day.',
       evidence: `${load.topDays} of your working days hold ${load.topShare}% of the window's XP.`,
       impact: 0,
-      workings: 'No XP claim: spreading the same work over more days does not add any of it.',
+      workings: 'This one does not change your XP.',
       effort: 3,
     });
   }
@@ -613,12 +613,12 @@ export function recommendations(input: AdviceInput): Advice[] {
       id: 'execution-slipping',
       kind: 'quality',
       category: 'Execution',
-      title: 'The work is getting done, not going well',
-      because: `You rate execution ${value.toFixed(1)} out of 5 — most of what you finish, you finish unhappy with.`,
-      action: 'Give one task a whole sitting instead of a share of it. Execution suffers first when a session is split.',
+      title: 'Tasks are done, but not well',
+      because: `You rate your execution ${value.toFixed(1)}/5 on average.`,
+      action: 'Give one task a full session instead of splitting the time.',
       evidence: `Execution averages ${value.toFixed(1)}/5 across the ${quality.rated} tasks you rated, against a difficulty of ${(quality.difficulty ?? 0).toFixed(1)}/5.`,
       impact: 0,
-      workings: 'No XP claim: this is your own rating of the work, and XP does not read it.',
+      workings: 'This one does not change your XP.',
       effort: 3,
     });
   }
@@ -630,11 +630,11 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'quality',
       category: 'Quality',
       title: 'Rate what you finish',
-      because: `${quality.coverage}% of your finished tasks carry a rating, so most of the quality picture is missing rather than bad.`,
-      action: 'Answer the two star rows instead of closing them. Ten rated tasks is enough to say something.',
+      because: `Only ${quality.coverage}% of your finished tasks are rated, so there is not enough to go on.`,
+      action: 'Rate your next 10 tasks when you finish them.',
       evidence: `${quality.rated} of ${quality.finished} finished tasks in this range were rated on both rows.`,
       impact: 0,
-      workings: 'No XP claim: rating a task does not change what it was worth.',
+      workings: 'This one does not change your XP.',
       effort: 1,
     });
   }
@@ -646,12 +646,12 @@ export function recommendations(input: AdviceInput): Advice[] {
       id: 'stretch-harder',
       kind: 'quality',
       category: 'Quality',
-      title: 'Nothing you finish is hard',
-      because: `Difficulty averages ${(quality.difficulty ?? 0).toFixed(1)}/5 while execution runs ${(quality.execution ?? 0).toFixed(1)}/5 — comfortable work, done well.`,
-      action: 'Put one task on the list you are not sure you can finish. Comfortable work still earns XP.',
+      title: 'Your tasks are all easy',
+      because: `Difficulty averages ${(quality.difficulty ?? 0).toFixed(1)}/5 and execution ${(quality.execution ?? 0).toFixed(1)}/5. You are doing well on easy work.`,
+      action: 'Add one task you are not sure you can finish.',
       evidence: `Across ${quality.rated} rated tasks: difficulty ${(quality.difficulty ?? 0).toFixed(1)}/5, execution ${(quality.execution ?? 0).toFixed(1)}/5, quality ${(quality.quality ?? 0).toFixed(1)}/25.`,
       impact: 0,
-      workings: 'No XP claim: harder work is not worth more XP, it is worth more.',
+      workings: 'This one does not change your XP.',
       effort: 4,
     });
   }
@@ -669,12 +669,12 @@ export function recommendations(input: AdviceInput): Advice[] {
         id: `reason-${worstReason.key}`,
         kind: 'quality',
         category: 'Execution',
-        title: `Your work goes wrong the same way every time`,
-        because: `Of the ${reasons.struggled} tasks you rated below 3 for execution, ${worstReason.count} came back the same: it ${worstReason.phrase}.`,
+        title: `The same problem keeps coming up`,
+        because: `${worstReason.count} of your ${reasons.struggled} low-rated tasks had the same cause: it ${worstReason.phrase}.`,
         action: how.action,
         evidence: `${worstReason.share}% of your badly-rated work names one cause out of six offered. The next most common accounts for ${reasons.struggle[1]?.share ?? 0}%.`,
         impact: 0,
-        workings: 'No XP claim: this is your own account of why the work went the way it did, and XP does not read it.',
+        workings: 'This one does not change your XP.',
         effort: how.effort,
       });
     }
@@ -754,8 +754,8 @@ function fallbacks(
       kind: 'frequency',
       category: 'Consistency',
       title: 'Add one day a week',
-      because: `You work ${Math.round(rhythm.activeRate)}% of days. The week has room without any day getting longer.`,
-      action: 'Take the day you most often skip and give it the smallest session that counts.',
+      because: `You work on ${Math.round(rhythm.activeRate)}% of days, so there is room for one more.`,
+      action: 'Add a short session on the day you most often skip.',
       evidence: `${Math.round(rhythm.activeRate)}% of the ${rhythm.span.toLocaleString()} days in
         this range carried work.`,
       impact: Math.round(52 * perDay),
@@ -775,8 +775,8 @@ function fallbacks(
       kind: 'depth',
       category: 'Focus Time',
       title: 'Add 10 minutes to each sitting',
-      because: `Your sittings run ${Math.round(rhythm.typicalSession)} minutes. Starting costs more than continuing, and you have already paid it.`,
-      action: 'Add the time to the end of a sitting you were having anyway, not to tomorrow\u2019s plan.',
+      because: `Your sessions usually last ${Math.round(rhythm.typicalSession)} minutes.`,
+      action: 'Add 10 minutes to the end of a session you already have planned.',
       evidence: `Typical sitting ${Math.round(rhythm.typicalSession)} minutes${
         rhythm.longestSession ? `, against a best of ${Math.round(rhythm.longestSession.minutes)}` : ''
       }, across the ${Math.round(rhythm.activeRate)}% of days you work.`,
@@ -803,14 +803,14 @@ function fallbacks(
           id: `metric-${name}`,
           kind: 'quality',
           category: METRIC_CATEGORY[name] ?? 'Productivity',
-          title: `${name[0]!.toUpperCase()}${name.slice(1)} is your cheapest point`,
-          because: `${metric.score}/100 — among the lowest of your five graded metrics, so a point costs least here.`,
-          action: METRIC_ADVICE[name] ?? 'Work on this metric directly. It is among the lowest of the five.',
+          title: `${name[0]!.toUpperCase()}${name.slice(1)} is the easiest score to raise`,
+          because: `It scores ${metric.score}/100, one of your lowest.`,
+          action: METRIC_ADVICE[name] ?? 'Focus on this one first.',
           evidence: `${name} scores ${metric.score}/100 against a best of ${Math.max(
             ...metrics.map(([, entry]) => entry.score),
           )}/100 elsewhere on the card.`,
           impact: 0,
-          workings: 'No XP claim: the report card grades how you work, not how much.',
+          workings: 'This one does not change your XP.',
           effort: 2,
         });
       });
@@ -825,11 +825,11 @@ function fallbacks(
       kind: 'balance',
       category: 'Productivity',
       title: `${balance.leader} is ${balance.concentration}% of your week`,
-      because: `Across ${balance.carrying} subjects with real weight behind them. Depth is not a fault, but it should be a choice.`,
-      action: 'If it is deliberate, protect it. If it is drift, book one recurring session on the subject you would rather be building.',
+      because: `That is out of ${balance.carrying} active subjects.`,
+      action: 'If that is intended, keep going. If not, add one weekly session for another subject.',
       evidence: `${balance.leader} holds ${balance.concentration}% of your XP across ${balance.carrying} subjects with real weight behind them.`,
       impact: 0,
-      workings: 'No XP claim: the total does not change, only what it is made of.',
+      workings: 'This one does not change your XP.',
       effort: 1,
     });
   }
@@ -847,9 +847,9 @@ function fallbacks(
       id: 'quietest-weekday',
       kind: 'timing',
       category: 'Scheduling',
-      title: `${quietest.label} goes missing`,
-      because: `${Math.round(quietest.avgXp).toLocaleString()} XP against ${Math.round(busiest.avgXp).toLocaleString()} on a ${busiest.label} — the same day every week, not bad luck.`,
-      action: 'Something else owns that slot. Find out what, then move the session to an hour that is free.',
+      title: `${quietest.label}s are your weakest day`,
+      because: `You average ${Math.round(quietest.avgXp).toLocaleString()} XP on ${quietest.label}s and ${Math.round(busiest.avgXp).toLocaleString()} on ${busiest.label}s.`,
+      action: `Find what is taking up your ${quietest.label}s and move your session to a free hour.`,
       evidence: `${quietest.label} averages ${Math.round(quietest.avgXp).toLocaleString()} XP across
         ${quietest.days} of them, ${Math.round(quietest.activeRate)}% of which carried any work.`,
       impact: Math.round(lift * 52),
@@ -875,9 +875,9 @@ function fallbacks(
         id: 'raise-the-floor',
         kind: 'depth',
         category: 'Consistency',
-        title: 'Raise the floor, not the ceiling',
-        because: `Your quietest working days average ${Math.round(quietAvg).toLocaleString()} XP against a typical ${Math.round(median).toLocaleString()}.`,
-        action: 'Set a minimum for any day you work, and hold it. Quiet days are recoverable; best days are not.',
+        title: 'Raise your minimum',
+        because: `Your quietest days average ${Math.round(quietAvg).toLocaleString()} XP, compared with a typical ${Math.round(median).toLocaleString()}.`,
+        action: 'Set a minimum amount of work for any day you study, and stick to it.',
         evidence: `The quietest ${quiet.length} of ${worked.length} working days average
           ${Math.round(quietAvg).toLocaleString()} XP, against a median of
           ${Math.round(median).toLocaleString()}.`,
@@ -901,16 +901,16 @@ function fallbacks(
       id: behind ? 'execution-is-the-half' : 'difficulty-is-the-half',
       kind: 'quality',
       category: behind ? 'Execution' : 'Quality',
-      title: behind ? 'Execution is the half to move' : 'Difficulty is the half to move',
+      title: behind ? 'Focus on execution' : 'Take on harder tasks',
       because: behind
-        ? `Execution ${quality.execution.toFixed(1)} against difficulty ${quality.difficulty.toFixed(1)} — quality is the product, and this is the smaller number.`
-        : `Difficulty ${quality.difficulty.toFixed(1)} against execution ${quality.execution.toFixed(1)} — you finish well what you take on, and what you take on is the smaller number.`,
+        ? `Your execution (${quality.execution.toFixed(1)}/5) is lower than your difficulty (${quality.difficulty.toFixed(1)}/5).`
+        : `Your difficulty (${quality.difficulty.toFixed(1)}/5) is lower than your execution (${quality.execution.toFixed(1)}/5).`,
       action: behind
-        ? 'Finish one task properly before starting the next. A point of execution costs less than a point of difficulty.'
-        : 'Take on one task a week you would normally leave off. You already finish what you start.',
+        ? 'Finish one task properly before starting the next.'
+        : 'Add one harder task each week.',
       evidence: `Across ${quality.rated} rated tasks: difficulty ${quality.difficulty.toFixed(1)}/5, execution ${quality.execution.toFixed(1)}/5, quality ${(quality.quality ?? 0).toFixed(1)}/25.`,
       impact: 0,
-      workings: 'No XP claim: these are your own ratings of the work, and XP does not read them.',
+      workings: 'This one does not change your XP.',
       effort: 2,
     });
   }
@@ -925,12 +925,12 @@ function fallbacks(
       id: 'after-the-peak',
       kind: 'load',
       category: 'Burnout',
-      title: 'Your big days cost you the next one',
-      because: `The day after a heavy one runs ${drop}% below your ordinary day. The push is being paid for, just not on the day you notice.`,
-      action: 'Stop a heavy day one task early. It moves to tomorrow, a day you were going to lose anyway.',
+      title: 'Big days are followed by slow ones',
+      because: `The day after a heavy day is ${drop}% below your normal output.`,
+      action: 'End heavy days one task early and do it the next day.',
       evidence: `Days following your heaviest ${load.topDays} average ${Math.round(load.afterHeavy).toLocaleString()} XP against ${Math.round(load.ordinary).toLocaleString()} on every other day.`,
       impact: 0,
-      workings: 'No XP claim: this moves work between days rather than adding any.',
+      workings: 'This one does not change your XP.',
       effort: 2,
     });
   }
@@ -948,12 +948,12 @@ function fallbacks(
       id: 'log-the-focus',
       kind: 'depth',
       category: 'Focus Time',
-      title: 'Most of your work goes unlogged',
-      because: `${share}% of the days you finished something have any focus time on them, so the focus score is grading the timer rather than the work.`,
-      action: 'Start the timer before the first task. It is the only input that has to be running to count.',
+      title: 'Most of your focus time is not logged',
+      because: `Only ${share}% of your working days have focus time logged, so your focus score is too low.`,
+      action: 'Start the focus timer before your first task each day.',
       evidence: `${focusDays} of ${workedDays} working days in this range carry any focus minutes.`,
       impact: 0,
-      workings: 'No XP claim: logging a session does not add XP to it.',
+      workings: 'This one does not change your XP.',
       effort: 1,
     });
   }
@@ -999,19 +999,13 @@ const METRIC_CATEGORY: Record<string, AdviceCategory> = {
 
 /** What each report-card metric actually responds to. */
 const METRIC_ADVICE: Record<string, string> = {
-  productivity: `Productivity is average XP a day across the whole range, so blank days count against
-    it just as much as small ones. It moves on frequency far more than on effort — a fortnight
-    without a gap will shift it further than a heroic weekend.`,
-  quality: `Quality is the average XP a finished task carries. It rises when you stop splitting work
-    into trivial tickets to feel productive: one task worth doing beats three worth ten points.`,
-  consistency: `Consistency is the share of days with anything on them. Nothing else on the report
-    card is this easy to move deliberately, and nothing else punishes a gap as hard.`,
-  efficiency: `Efficiency reads how long finished tasks took against their deadlines. It improves by
-    setting deadlines you actually believe — a task with an honest due date that you meet scores
-    better than one with an optimistic date you miss.`,
-  focus: `Focus is logged focus time against your daily goal. If the goal is set higher than any week
-    you have ever actually had, lowering it to something you would hit four days in five will do more
-    for this number, and for the habit, than trying harder.`,
+  productivity: `Productivity is your average XP per day, including days off. Working more days
+    raises it faster than working longer.`,
+  quality: `Quality is the average XP per finished task. Fewer, bigger tasks raise it.`,
+  consistency: `Consistency is the share of days you do any work. Avoid gaps to raise it.`,
+  efficiency: `Efficiency measures how often you meet due dates. Set dates you can realistically hit.`,
+  focus: `Focus is logged focus time against your daily goal. If you rarely hit the goal, lower it
+    to one you can reach four days out of five.`,
 };
 
 function hourText(hour: number): string {

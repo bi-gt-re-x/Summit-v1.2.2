@@ -275,9 +275,9 @@ describe('the movers', () => {
       },
     }));
     draw(<GrowthTab model={fakeModel()} />);
-    expect(await screen.findByText(/Nothing moved up by more than a few points/i))
+    expect(await screen.findByText(/No big gains/i))
       .toBeInTheDocument();
-    expect(screen.getByText(/Nothing fell by more than a few points/i)).toBeInTheDocument();
+    expect(screen.getByText(/No big drops/i)).toBeInTheDocument();
   });
 
   it('falls back to a measure rather than drawing an empty panel', async () => {

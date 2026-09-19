@@ -57,34 +57,34 @@ export const MILESTONES: Milestone[] = [
   {
     need: STAGE_FLOOR.early,
     title: 'Your first patterns',
-    why: 'Three days is where a tally stops being one day repeated and starts describing how you work.',
-    reward: 'Summit will show when in the day you work, and what you actually finish.',
+    why: 'Three days is enough to start seeing how you work.',
+    reward: 'See when you work and what you finish.',
   },
   {
     need: STAGE_FLOOR.weekly,
     title: 'Weekly trends',
-    why: 'A week is the shortest stretch that can be held against another week without measuring which days happened to land in the window.',
-    reward: 'Summit will compare this week against the one before it.',
+    why: 'A full week can be compared with the next.',
+    reward: 'Compare this week with last week.',
   },
   {
     /* Also `NEED_DAYS.recommendations`. One entry, because two lines both
        saying "at 14" is the page describing its own internals. */
     need: STAGE_FLOOR.developing,
     title: 'Performance and recommendations',
-    why: 'Enough history to evaluate performance rather than describe activity, and to price advice against an average that means something.',
-    reward: 'Summit will grade your record, show where you stand, and name the change worth making first.',
+    why: 'Two weeks is enough to judge performance and give advice.',
+    reward: 'Get a grade, your ranking and recommendations.',
   },
   {
     need: NEED_DAYS.habits,
     title: 'Habit patterns',
-    why: 'Three weeks is where a repetition has happened often enough to be a habit rather than a run of good days.',
-    reward: 'Summit will name what you do consistently, and tell you when one starts slipping.',
+    why: 'Three weeks is enough to spot real habits.',
+    reward: 'See your habits and when they slip.',
   },
   {
     need: NEED_DAYS.insights,
     title: 'Insights',
-    why: 'An explanation needs two comparable stretches to hold against each other, and four weeks is the first point there are two.',
-    reward: 'Summit will look for what moves with what, and say why a stretch went the way it did.',
+    why: 'Four weeks gives two periods to compare.',
+    reward: 'Find out what affects your results and why.',
   },
   {
     need: STAGE_FLOOR.full,
@@ -92,8 +92,8 @@ export const MILESTONES: Milestone[] = [
     /* Honest about being the thin one. Nothing opens at 30 — see `stageShows`
        in utils/dataMaturity, where `full` is every flag already on. Saying so
        is better than inventing a feature to justify the number. */
-    why: 'A month is where the long-range readings stop needing to be qualified.',
-    reward: 'Nothing new opens. The notes saying how little record a figure rests on come off.',
+    why: 'A month of data makes long-term figures reliable.',
+    reward: 'Everything is unlocked, without the low-data warnings.',
   },
 ];
 

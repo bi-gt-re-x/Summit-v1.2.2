@@ -107,7 +107,7 @@ export function SmartPlan({
                 /* The promise is the safety, so it is on the control. A reader
                    deciding whether to press this wants to know what it will
                    not touch. */
-                title="Draft steps for the checkpoints that have none. Anything you have written is left alone."
+                title="Draft steps for checkpoints that have none. Your own steps are kept."
               />
             )}
             <AskModel
@@ -123,10 +123,10 @@ export function SmartPlan({
       {!compact && (
         <p className="gx-smart-note">
           {stones.length === 0
-            ? 'Five checkpoints and a checklist under each, drafted from this goal’s own terms. Every row is yours to rename, retime or delete.'
+            ? 'Five checkpoints with steps for each. You can edit or delete any of them.'
             : empty > 0
-              ? 'Only the checkpoints with nothing written get steps. Redrafting replaces the whole ladder, and asks first.'
-              : 'Every checkpoint has steps. Redrafting replaces the whole ladder, and asks first.'}
+              ? 'Only empty checkpoints get steps. Redrafting replaces everything (you’ll be asked first).'
+              : 'Every checkpoint has steps. Redrafting replaces everything (you’ll be asked first).'}
         </p>
       )}
     </div>
