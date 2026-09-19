@@ -80,6 +80,17 @@ export interface Task {
    */
   goal_id?: string;
   milestone_id?: string;
+  /**
+   * Every goal the task counts toward, strongest first: the one linked by hand
+   * (`goal_id`) and any the server matched from the title and subject when the
+   * task was written. Absent when there are none, or when the task has not
+   * been through the matcher yet — read it through `goalIdsOf` in
+   * utils/goalLinks, which falls back to `goal_id` for exactly that case.
+   */
+  goal_ids?: string[];
+  /** What the matcher concluded. Absent on a task it has never looked at. */
+  goal_match_status?: GoalMatchStatus;
+  goal_match_version?: number;
   due_date?: string;
   show_on_calendar?: boolean;
   created_at: string;

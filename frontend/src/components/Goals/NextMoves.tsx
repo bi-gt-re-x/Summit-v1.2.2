@@ -27,6 +27,7 @@ import { useMemo, useState } from 'react';
 import { categoryOf } from './Outcome';
 import { goalNumbers } from './numbers';
 import type { Goal, Task } from '@/types';
+import { goalIdsOf } from '@/utils/goalLinks';
 
 const DAY = 86_400_000;
 
@@ -43,12 +44,16 @@ function goalIndex(goals: Goal[]): Map<string, Goal> {
   return index;
 }
 
-/** The goal a task is work toward, or undefined. `goal_id` wins over the checkpoint. */
+/**
+ * The goal a task is work toward, or undefined. The strongest of its goals —
+ * the hand-made link first, then the best match — wins over the checkpoint.
+ */
 export function goalOf(task: Task, index: Map<string, Goal>): Goal | undefined {
-  return (
-    (task.goal_id ? index.get(task.goal_id) : undefined) ??
-    (task.milestone_id ? index.get(task.milestone_id) : undefined)
-  );
+  for (const id of goalIdsOf(task)) {
+    const goal = index.get(id);
+    if (goal) return goal;
+  }
+  return task.milestone_id ? index.get(task.milestone_id) : undefined;
 }
 
 const at = (iso?: string): number | null => {

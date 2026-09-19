@@ -23,6 +23,7 @@ import { GoalRead } from './GoalRead';
 import { stepProgress } from '@/utils/milestoneSteps';
 import type { Goal, Milestone, MilestoneStatus, MilestoneStep, Task } from '@/types';
 import { Icon } from '@/components/Icon';
+import { countsToward } from '@/utils/goalLinks';
 
 /**
  * Whether a checkpoint has any step somebody actually wrote.
@@ -112,7 +113,7 @@ export function GoalDetail(props: GoalDetailProps) {
   const actions = goalActions(goal, tasks);
   const category = categoryOf(goal);
   const rows = goal.milestones ?? [];
-  const linked = tasks.filter((task) => task.goal_id === goal.id);
+  const linked = tasks.filter((task) => countsToward(task, goal.id));
 
   /* Due dates of every task on the account, so a step linked to one can print
      the date it is taking rather than the word "task". Built once here rather

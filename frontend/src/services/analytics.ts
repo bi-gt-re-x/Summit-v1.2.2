@@ -116,6 +116,8 @@ export interface AnalyticsTask {
   reason?: string;
   goal_id?: string;
   milestone_id?: string;
+  /** Every goal it counts toward, from `goal_links`. See `goal_ids` on Task. */
+  goal_ids?: string[];
 }
 
 export interface AnalyticsTasksResult {
@@ -126,6 +128,12 @@ export interface AnalyticsTasksResult {
 interface ColumnarTasks {
   fields: (keyof AnalyticsTask)[];
   rows: unknown[][];
+  /**
+   * {task_id: goal ids} for the tasks that count toward any goal, as the
+   * server stored them when each task was written. Beside the rows rather
+   * than a column of them, since most rows would carry a null.
+   */
+  goal_links?: Record<string, string[]>;
 }
 
 /**
@@ -159,8 +167,9 @@ interface ColumnarTasks {
  * A row shorter than `fields` is not defended against, because SQLite cannot
  * produce one: every row comes from one SELECT of the same column list.
  */
-function rehydrate(data: ColumnarTasks): AnalyticsTask[] {
+export function rehydrate(data: ColumnarTasks): AnalyticsTask[] {
   const { fields, rows } = data;
+  const links = data.goal_links ?? {};
   const width = fields.length;
   const out = new Array<AnalyticsTask>(rows.length);
   for (let at = 0; at < rows.length; at += 1) {
@@ -170,6 +179,9 @@ function rehydrate(data: ColumnarTasks): AnalyticsTask[] {
       const value = values[field];
       if (value !== null) task[fields[field] as string] = value;
     }
+    // Attached once, here, so no panel ever has to look a task up in the map.
+    const goals = links[task.id as string];
+    if (goals && goals.length) task.goal_ids = goals;
     out[at] = task as unknown as AnalyticsTask;
   }
   return out;

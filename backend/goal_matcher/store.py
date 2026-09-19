@@ -64,3 +64,27 @@ def mappings_for(username: str, task_ids: Iterable[str]) -> Dict[str, TaskGoalMa
 def mapping_for(username: str, task_id: str) -> Optional[TaskGoalMapping]:
     """One task's stored mapping, or None if it has never been matched."""
     return mappings_for(username, [task_id]).get(str(task_id))
+
+
+def goal_links(username: str) -> Dict[str, list]:
+    """{task_id: [goal_id, ...]} for every task that counts toward any goal.
+
+    Read straight from the stored rows. This is what pages consume, and it
+    never classifies anything: a task not yet matched simply is not in it.
+    """
+    return db.goal_links_for(username)
+
+
+def with_goal_ids(username: str, tasks: list) -> list:
+    """Give each task row that has goals a `goal_ids` list, in place.
+
+    One query for the whole list, however long it is. Tasks toward nothing
+    are left without the key, the way a NULL column is left out of a row.
+    """
+    links = db.goal_links_for(username)
+    if links:
+        for task in tasks:
+            ids = links.get(str(task.get('id')))
+            if ids:
+                task['goal_ids'] = ids
+    return tasks

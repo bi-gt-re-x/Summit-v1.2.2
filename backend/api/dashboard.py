@@ -46,6 +46,7 @@ from pydantic import BaseModel
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
+from backend.goal_matcher import store as goal_store
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
 
@@ -136,7 +137,8 @@ def get_user_data(username: str = Depends(current_username)):
     if not user:
         return fail('User not found')
 
-    return ok(stats=_stats_of(user), tasks=db.tasks_for(username))
+    return ok(stats=_stats_of(user),
+              tasks=goal_store.with_goal_ids(username, db.tasks_for(username)))
 
 
 @router.post('/api/track_daily_xp')

@@ -44,6 +44,7 @@ from pydantic import BaseModel
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
+from backend.goal_matcher import store as goal_store
 from backend.tracking import analytics as analytics_tracking
 from backend.tracking import standing as standing_tracking
 from backend.tracking import subject_brief
@@ -199,7 +200,12 @@ def get_analytics_tasks(username: str = Depends(current_username)):
     """
     fields, rows = db.columns_table_for('tasks', username, ANALYTICS_TASK_FIELDS,
                                         order=TASK_ORDER)
-    return ok(fields=fields, rows=rows)
+    # Which goals each task counts toward, as stored when the task was
+    # written: {task_id: [goal_id, ...]}, only for tasks that have any. Kept
+    # beside the rows rather than as a seventeenth column, because on a big
+    # account nearly every row would carry a null for it. Nothing is matched
+    # here — see backend/goal_matcher.
+    return ok(fields=fields, rows=rows, goal_links=goal_store.goal_links(username))
 
 
 @router.get('/api/standing')

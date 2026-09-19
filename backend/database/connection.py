@@ -1442,6 +1442,32 @@ def save_goal_mapping(username, task_id, status, version, matches):
         con.close()
 
 
+def goal_links_for(username):
+    """{task_id: [goal_id, ...]} for every task of this account that has any.
+
+    What every page reads to know which goals a task counts toward, and all it
+    reads: stored rows, one query on (user_id, goal_id), no matching. Tasks
+    with no goals are absent rather than mapped to an empty list, so on an
+    account where most work is toward nothing the answer stays small.
+
+    Explicit links first, then by score, so the first id is the strongest.
+    Rows naming a goal that no longer exists are left out by the join.
+    """
+    con = connect()
+    try:
+        out = {}
+        for row in con.execute(
+                'SELECT m.task_id, m.goal_id FROM task_goal_matches m '
+                'JOIN goals g ON g.id = m.goal_id AND g.user_id = m.user_id '
+                'WHERE m.user_id = ? '
+                "ORDER BY m.task_id, m.source != 'explicit', m.score DESC, m.goal_id",
+                (username,)):
+            out.setdefault(row['task_id'], []).append(row['goal_id'])
+        return out
+    finally:
+        con.close()
+
+
 def goal_mappings_for(username, task_ids):
     """{task_id: (status, version, [(goal_id, score, source)])} for these tasks.
 

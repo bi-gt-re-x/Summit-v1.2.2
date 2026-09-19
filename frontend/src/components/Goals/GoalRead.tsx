@@ -44,6 +44,7 @@ import { fmtGoalNumber, formatGoalDate, goalNumbers } from './numbers';
 import { goalHealth, goalPace, healthFactors } from '@/utils/goalHealth';
 import type { GoalPlan } from '@/services/analytics';
 import type { Goal, Task } from '@/types';
+import { countsToward } from '@/utils/goalLinks';
 
 /** Finished, linked tasks before a read is worth asking for. */
 export const EVIDENCE = 4;
@@ -52,7 +53,7 @@ export const EVIDENCE = 4;
 function linkedTo(goal: Goal, tasks: Task[]): Task[] {
   const stones = new Set((goal.milestones ?? []).map((stone) => stone.id));
   return tasks.filter(
-    (task) => task.goal_id === goal.id || (task.milestone_id && stones.has(task.milestone_id)),
+    (task) => countsToward(task, goal.id) || (task.milestone_id && stones.has(task.milestone_id)),
   );
 }
 

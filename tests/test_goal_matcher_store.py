@@ -77,8 +77,15 @@ def test_saving_again_replaces_rather_than_adds(client):
     assert len(raw_rows(task)) == 1
 
 
+def legacy_task(title):
+    """A task as one written before the matcher existed: straight into the table."""
+    row = db.insert_row('tasks', {'id': db.new_id('tasks'), 'user_id': 'tester', 'title': title,
+                                  'status': 'todo', 'priority': 'medium', 'xp_value': 5})
+    return row['id']
+
+
 def test_unmatched_is_stored_as_an_answer_and_differs_from_never_matched(client):
-    looked_at, never = make_task(client, 'Read chapter 7'), make_task(client, 'Other')
+    looked_at, never = make_task(client, 'Read chapter 7'), legacy_task('Other')
 
     store.save_mapping('tester', looked_at, TaskGoalMapping.unmatched())
 

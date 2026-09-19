@@ -40,6 +40,7 @@
 import type { GrowthDay, Task } from '@/types';
 import type { Strength } from './insight';
 import { PATTERN_DAYS, mean, pctChange } from './recent';
+import { isGoalWork } from '@/utils/goalLinks';
 
 /** Fewest tasks on each side of a split before the split is worth reading. */
 const MIN_GROUP = 6;
@@ -230,7 +231,7 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
   // ---- Work that names a goal ---------------------------------------------
   const linked = split(
     finished,
-    (task) => Boolean(task.goal_id || task.milestone_id),
+    (task) => isGoalWork(task) || Boolean(task.milestone_id),
     (task) => (rated(task) ? num(task.execution) : null),
   );
   if (linked) {

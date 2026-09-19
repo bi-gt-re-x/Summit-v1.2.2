@@ -25,6 +25,7 @@
  */
 import { goalNumbers, measureOf } from '@/components/Goals/numbers';
 import type { Goal, GrowthDay, Task } from '@/types';
+import { countsToward, goalIdsOf, isGoalWork } from '@/utils/goalLinks';
 
 /** A subject's share of the window's XP, and whether a goal already names it. */
 export interface SubjectShare {
@@ -142,7 +143,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
   const moving = active.filter((goal) => {
     if (goal.deadline) return false;
     if (goalNumbers(goal).progress <= 0) return false;
-    return tasks.some((task) => task.goal_id === goal.id && task.status === 'done');
+    return tasks.some((task) => countsToward(task, goal.id) && task.status === 'done');
   });
   if (moving.length > 0 && moving[0]) {
     out.push({
@@ -170,7 +171,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
 export function goalWorkShare(tasks: Task[]): { share: number; aimed: number; total: number } | null {
   const done = tasks.filter((task) => task.status === 'done');
   if (done.length === 0) return null;
-  const aimed = done.filter((task) => task.goal_id).length;
+  const aimed = done.filter(isGoalWork).length;
   return { share: aimed / done.length, aimed, total: done.length };
 }
 
@@ -342,12 +343,12 @@ export function effortAgainstPriority(goals: Goal[], tasks: Task[]): EffortRow[]
   const live = goals.filter((goal) => goal.status !== 'completed');
   if (live.length === 0) return [];
 
-  const done = tasks.filter((task) => task.status === 'done' && task.goal_id);
+  // A task toward two goals is work on both, so it counts once for each.
   const counts = new Map<string, number>();
-  done.forEach((task) => {
-    const id = String(task.goal_id);
-    counts.set(id, (counts.get(id) ?? 0) + 1);
-  });
+  for (const task of tasks) {
+    if (task.status !== 'done') continue;
+    for (const id of goalIdsOf(task)) counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
   const aimed = live.reduce((sum, goal) => sum + (counts.get(goal.id) ?? 0), 0);
 
   return live

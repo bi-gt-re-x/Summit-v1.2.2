@@ -28,6 +28,7 @@ import { categoryOf } from './Outcome';
 import { formatGoalDate, goalNumbers, isOverdue } from './numbers';
 import { goalHealth, healthFactors } from '@/utils/goalHealth';
 import type { Goal, Task } from '@/types';
+import { countsToward } from '@/utils/goalLinks';
 
 const DAY = 86_400_000;
 
@@ -83,7 +84,7 @@ function lastActivity(goal: Goal, tasks: Task[], today: Date): string {
 
   for (const task of tasks) {
     if (task.status !== 'done' || !task.completed_at) continue;
-    const mine = task.goal_id === goal.id || (task.milestone_id && ids.has(task.milestone_id));
+    const mine = countsToward(task, goal.id) || (task.milestone_id && ids.has(task.milestone_id));
     if (!mine) continue;
     const at = new Date(task.completed_at).getTime();
     if (!Number.isNaN(at) && at > newest) newest = at;

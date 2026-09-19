@@ -38,6 +38,7 @@
  */
 import { goalNumbers } from '@/components/Goals/numbers';
 import type { Goal, Task } from '@/types';
+import { countsToward } from '@/utils/goalLinks';
 
 export type HealthState = 'on-track' | 'at-risk' | 'off-track' | 'not-started';
 
@@ -133,9 +134,12 @@ function clamp01(value: number): number {
   return Math.max(0, Math.min(1, value));
 }
 
-/** The tasks explicitly pointed at this goal. */
+/**
+ * The tasks that count toward this goal: linked to it by hand, or matched to it
+ * from their title when they were written. See utils/goalLinks.
+ */
 export function tasksFor(goal: Goal, tasks: Task[]): Task[] {
-  return tasks.filter((task) => task.goal_id === goal.id);
+  return tasks.filter((task) => countsToward(task, goal.id));
 }
 
 /**

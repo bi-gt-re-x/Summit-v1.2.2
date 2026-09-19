@@ -52,6 +52,7 @@
  */
 import type { Goal, GrowthDay, Task } from '@/types';
 import { RECENT_DAYS, seeded } from './recent';
+import { countsToward, goalIdsOf } from '@/utils/goalLinks';
 
 /** The time budgets offered. The middle one is the default. */
 export const BUDGETS = [15, 30, 45, 60, 90, 120] as const;
@@ -271,7 +272,7 @@ function gather({
         minutes: slot,
         taskId: task.id,
         subject: task.subject,
-        goalId: task.goal_id,
+        goalId: goalIdsOf(task)[0],
         weight: 1000 - index * 10 + Math.min(late, 30),
       });
     });
@@ -289,7 +290,7 @@ function gather({
         minutes: slot,
         taskId: task.id,
         subject: task.subject,
-        goalId: task.goal_id,
+        goalId: goalIdsOf(task)[0],
         weight: 900 - index * 10 + (task.priority === 'high' ? 25 : 0),
       });
     });
@@ -326,7 +327,7 @@ function gather({
         .filter((item) => item.status !== 'done')
         .sort((a, b) => a.position - b.position)[0];
       const linked = open.find(
-        (task) => task.goal_id === entry.goal.id || (stone && task.milestone_id === stone.id),
+        (task) => countsToward(task, entry.goal.id) || (stone && task.milestone_id === stone.id),
       );
       found.push({
         id: `goal-${entry.goal.id}`,

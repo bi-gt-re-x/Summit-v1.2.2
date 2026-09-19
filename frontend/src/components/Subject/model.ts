@@ -60,6 +60,7 @@ import { goalNumbers } from '@/components/Goals/numbers';
 import { goalPace } from '@/utils/goalHealth';
 import type { AnalyticsTask } from '@/services/analytics';
 import type { Goal } from '@/types';
+import { countsToward, isGoalWork } from '@/utils/goalLinks';
 
 // --------------------------------------------------------------------------
 // Days
@@ -748,13 +749,13 @@ function goalsFor(
     .map((goal) => {
       const pace = goalPace(goal, at);
       const numbers = goalNumbers(goal);
-      const linked = done.filter((task) => task.goal_id === goal.id);
+      const linked = done.filter((task) => countsToward(task, goal.id));
       /* Off every task in the subject rather than the window's, for the same
          reason recency is: a seven-day window cannot see a fortnight. */
       const since = shift(today, -(RECENT_DAYS - 1));
       const days = new Set(
         everDone
-          .filter((task) => task.goal_id === goal.id && dayOf(task.completed_at) >= since)
+          .filter((task) => countsToward(task, goal.id) && dayOf(task.completed_at) >= since)
           .map((task) => dayOf(task.completed_at))
           .filter(Boolean),
       );
@@ -806,7 +807,7 @@ function goalsFor(
   function lastDayAgainst(goalId: string): string {
     let last = '';
     for (const task of everDone) {
-      if (task.goal_id !== goalId) continue;
+      if (!countsToward(task, goalId)) continue;
       const day = dayOf(task.completed_at);
       if (day > last) last = day;
     }
@@ -1201,7 +1202,7 @@ export function subjectModel(
     }));
 
   const goalAimed = done.length
-    ? Math.round((done.filter((task) => task.goal_id).length / done.length) * 100)
+    ? Math.round((done.filter(isGoalWork).length / done.length) * 100)
     : null;
 
   /* Every finished task in this subject, not just the window's, because

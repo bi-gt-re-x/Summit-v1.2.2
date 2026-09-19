@@ -25,6 +25,8 @@ from backend.api.reply import fail, ok
 from backend.api import subjects as user_subjects
 from backend.config import subjects as subject_catalogue
 from backend.database import connection as db
+from backend.goal_matcher import service as goal_matcher
+from backend.goal_matcher import store as goal_store
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
 
@@ -249,6 +251,9 @@ def _create(body: CreateTask, username: str):
         "goal_id": goal_id,
         "milestone_id": milestone_id,
     })
+    # Which goals it counts toward, worked out now so no page has to later.
+    # Never fails the create: see backend/goal_matcher/service.py.
+    goal_matcher.after_write(username, None, task)
     return ok(task_id=task['id'])
 
 
@@ -257,7 +262,9 @@ def _create(body: CreateTask, username: str):
 # --------------------------------------------------------------------------
 @router.get('/api/tasks')
 def list_tasks(username: str = Depends(current_username)):
-    return ok(tasks=db.tasks_for(username))
+    # Each task carries the goals it counts toward, read from what was stored
+    # when it was written. Nothing is matched here.
+    return ok(tasks=goal_store.with_goal_ids(username, db.tasks_for(username)))
 
 
 @router.get('/api/tasks/search')
@@ -299,6 +306,9 @@ def update_task(task_id: str, body: UpdateTask,
     task = db.find_row('tasks', task_id, user_id=username)
     if not task:
         return fail('Task not found')
+    # What the goal match was worked out from, to tell afterwards whether this
+    # edit changed any of it. Completing or re-dating a task does not.
+    before = {field: task.get(field) for field in goal_matcher.MATCH_FIELDS}
 
     sent = body.model_fields_set
 
@@ -331,6 +341,7 @@ def update_task(task_id: str, body: UpdateTask,
         task['completed_at'] = datetime.now().isoformat() if body.completed else None
 
     db.save_task(task, username)
+    goal_matcher.after_write(username, before, task)
     return ok()
 
 

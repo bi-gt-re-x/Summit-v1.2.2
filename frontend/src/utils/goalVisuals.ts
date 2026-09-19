@@ -35,6 +35,7 @@
  * checkpoints. Nothing is estimated and nothing is shared with another goal.
  */
 import type { Goal, GoalCategory, Task } from '@/types';
+import { countsToward } from '@/utils/goalLinks';
 
 const DAY = 86_400_000;
 
@@ -168,7 +169,7 @@ export interface VisualContext {
 export function linkedTasks(goal: Goal, tasks: Task[]): Task[] {
   const stones = new Set((goal.milestones ?? []).map((stone) => stone.id));
   return tasks.filter(
-    (task) => task.goal_id === goal.id || (task.milestone_id && stones.has(task.milestone_id)),
+    (task) => countsToward(task, goal.id) || (task.milestone_id && stones.has(task.milestone_id)),
   );
 }
 
