@@ -24,6 +24,16 @@ from backend.goal_matcher import candidate_index, store
 from backend.goal_matcher.deterministic import Classification, TaskInput, classify
 from backend.goal_matcher.types import TaskGoalMapping, TaskGoalMatch
 
+# How many stale tasks one refresh pass takes on. Small enough that a pass is
+# quick and cannot hold the database for long; the pass is resumable, so the
+# rest are picked up by the next one.
+REFRESH_SLICE = 200
+
+# Tasks classified and stored per transaction in a batch. One transaction per
+# chunk rather than per task is most of the speed; a chunk rather than the
+# whole batch keeps each write short, and means a failure costs one chunk.
+CHUNK_SIZE = 100
+
 # The task fields a match is worked out from. A change to any other field
 # leaves the stored mapping as true as it was.
 MATCH_FIELDS = ('title', 'subject', 'goal_id')
@@ -98,3 +108,60 @@ def after_write(username: str, before: Optional[Mapping], after: Mapping) -> Opt
     if not needs_refresh(before, after):
         return None
     return refresh_task(username, after)
+
+
+def chunks(items, size):
+    """`items` in lists of at most `size`, in order."""
+    items = list(items)
+    for at in range(0, len(items), size):
+        yield items[at:at + size]
+
+
+def refresh_tasks(username: str, tasks, index: Optional[candidate_index.CandidateIndex] = None,
+                  chunk_size: int = CHUNK_SIZE) -> dict:
+    """Work out and store the goals of many tasks. Returns how many of each.
+
+    The goals are read once for the whole batch. Classifying is in memory and
+    cheap; storing is one transaction per chunk of CHUNK_SIZE. A chunk that
+    fails is reported, counted and skipped, and the chunks after it still run
+    — its tasks are left as they were, and a later pass picks them up.
+
+    Only the matchable fields of each task are read (see `task_input`), so a
+    caller can pass full rows or narrow ones.
+    """
+    tasks = list(tasks)
+    if not tasks:
+        return {'refreshed': 0, 'failed': 0}
+    try:
+        index = index if index is not None else candidate_index.load(username)
+    except Exception as exc:  # noqa: BLE001 - enrichment never fails the write it follows
+        print('[goal_matcher] could not load goals for {}: {!r}'.format(username, exc))
+        return {'refreshed': 0, 'failed': len(tasks)}
+
+    refreshed = failed = 0
+    for part in chunks(tasks, chunk_size):
+        try:
+            mappings = {str(task['id']): classify_task(index, task).mapping for task in part}
+            refreshed += len(store.save_mappings(username, mappings))
+        except Exception as exc:  # noqa: BLE001 - one chunk failing is one chunk
+            failed += len(part)
+            print('[goal_matcher] could not match {} tasks: {!r}'.format(len(part), exc))
+    return {'refreshed': refreshed, 'failed': failed}
+
+
+def refresh_stale(username: str, limit: int = REFRESH_SLICE) -> dict:
+    """Bring up to `limit` out-of-date tasks up to the current matcher version.
+
+    Out of date means never matched, or matched by an older version. The index
+    is read once for the pass. Resumable and safe to repeat: each task stored
+    is no longer stale, so the next pass starts where this one stopped, and a
+    pass with nothing to do reads one indexed count and returns.
+
+    Never called on startup or from a page read. It is the controlled way to
+    catch a history up after a version bump, one bounded slice at a time.
+    """
+    due = store.stale_tasks(username, limit)
+    if not due:
+        return {'refreshed': 0, 'remaining': 0}
+    done = refresh_tasks(username, due)
+    return {'refreshed': done['refreshed'], 'remaining': store.stale_count(username)}

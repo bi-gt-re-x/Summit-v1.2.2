@@ -14,7 +14,7 @@ The older /api/add_task and /api/delete_task endpoints are kept because older
 scripts still call them.
 """
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -92,6 +92,10 @@ class UpdateDueDate(BaseModel):
 
 class CompleteTask(BaseModel):
     task_id: Optional[str] = None
+
+
+class CompleteTasks(BaseModel):
+    task_ids: List[str] = []
 
 
 class RateTask(BaseModel):
@@ -433,63 +437,161 @@ def timer_expired(body: TaskId,
 # --------------------------------------------------------------------------
 # Completion
 # --------------------------------------------------------------------------
+#: The most tasks one request may complete. A selection larger than this is
+#: split by the client into several requests; see completeTasks in
+#: frontend/src/services/tasks.ts.
+MAX_COMPLETE = 1000
+
+#: Tasks per transaction inside one request. Sixty tasks is one chunk, and
+#: one transaction; a thousand is ten, each short enough not to hold the
+#: database while the rest of the app waits.
+COMPLETE_CHUNK = 100
+
+
+def _timing(now):
+    """The fields a completion records about how it went, for one task row."""
+    def derive(row):
+        out = {}
+        created_dt = _parse_dt(row.get('created_at'))
+        if created_dt is not None:
+            out['completion_seconds'] = round(max(0, (now - created_dt).total_seconds()))
+        due_dt = _parse_dt(row.get('due_date')) if row.get('due_date') else None
+        if due_dt is not None:
+            out['met_deadline'] = now <= due_dt
+        return out
+    return derive
+
+
+def _complete(username, task_ids):
+    """Complete tasks, any number, as one action. Returns the outcome, or None.
+
+    None when the account does not exist. Otherwise:
+
+        completed      [(task_id, xp)] — finished by this call
+        already_done   finished before it; nothing awarded again
+        not_found      not this account's, or not there
+        failed         in a chunk that could not be written; safe to retry
+        account        the account row afterwards
+        stamp          the completion time every task in the call shares
+
+    Stamps the task, records how long it took and whether it beat its date,
+    adds its XP and one to the task count, extends the streak and recomputes
+    the level — per task, what completing one always did, but written as one
+    transaction per COMPLETE_CHUNK rather than a request each. A chunk that
+    fails leaves its tasks untouched and the ones after it unattempted: each
+    chunk is all or nothing, so a retry of the failed ones is exact.
+
+    Nothing here rematches a task's goals. Completion is not an input to the
+    match (see backend/goal_matcher/service.py).
+    """
+    _, user = load_user(username)
+    if not user:
+        return None
+
+    now = datetime.now()
+    # The streak, extended once: every completion in a batch lands on the same
+    # day, and a second task on the same day never moves it.
+    streak = dict(user)
+    xp_tracking.extend_streak(streak)
+    account = {field: streak.get(field) for field in
+               ('current_streak', 'best_streak', 'last_task_date', 'day_state')}
+
+    outcome = {'completed': [], 'already_done': [], 'not_found': [], 'failed': [],
+               'account': user, 'stamp': now.isoformat()}
+    # Each task once, in the order first sent. A duplicate would only find its
+    # own earlier copy done and be reported as already done, which is true but
+    # confusing; dropping it here keeps the reply about the tasks asked for.
+    ids = list(dict.fromkeys(str(task_id) for task_id in task_ids if task_id))
+    for at in range(0, len(ids), COMPLETE_CHUNK):
+        part = ids[at:at + COMPLETE_CHUNK]
+        try:
+            done = db.complete_tasks(
+                username, user['id'], part, now.isoformat(), now.date().isoformat(),
+                _timing(now), account,
+                lambda total: xp_tracking.level_for_total_xp(total)['level'])
+        except Exception as exc:  # noqa: BLE001 - report what failed; the rest stands
+            print('[tasks] could not complete {} tasks: {!r}'.format(len(part), exc))
+            outcome['failed'].extend(ids[at:])
+            break
+        outcome['completed'].extend(done['completed'])
+        outcome['already_done'].extend(done['already_done'])
+        outcome['not_found'].extend(done['not_found'])
+        if done['account']:
+            outcome['account'] = done['account']
+
+    # Count them toward the "complete N tasks" goals, once for the batch.
+    apply_task_completion(username, len(outcome['completed']))
+    return outcome
+
+
+def _progress(account):
+    """The account's standing after a completion, in the shape the page reads."""
+    levels = xp_tracking.level_for_total_xp(int(account.get('xp') or 0))
+    return {
+        'new_xp': levels['xp_in_level'],
+        'new_level': levels['level'],
+        'xp_required': levels['xp_required'],
+        'new_tasks_completed': account.get('tasks_completed', 0),
+        'current_streak': account.get('current_streak', 0),
+        'best_streak': account.get('best_streak', 0),
+    }
+
+
+@router.post('/api/complete_tasks')
+def complete_tasks(body: CompleteTasks, username: str = Depends(current_username)):
+    """Complete several tasks as one action: one request, one reply.
+
+    The bulk bar and "finish the day" used to call /api/complete_task once per
+    task — sixty tasks was sixty requests, sixty account writes and sixty
+    re-renders. This is one of each. Retrying it is safe: a task already done
+    is reported as such and earns nothing twice.
+    """
+    ids = list(body.task_ids or [])
+    if len(ids) > MAX_COMPLETE:
+        return fail('At most {} tasks at a time.'.format(MAX_COMPLETE), status=400)
+    outcome = _complete(username, ids)
+    if outcome is None:
+        return fail('User not found')
+    return ok(
+        # One stamp for the batch: they were completed as one action.
+        completed=[{'task_id': task_id, 'xp_earned': xp, 'completed_at': outcome['stamp']}
+                   for task_id, xp in outcome['completed']],
+        already_done=outcome['already_done'],
+        not_found=outcome['not_found'],
+        failed=outcome['failed'],
+        xp_earned=sum(xp for _, xp in outcome['completed']),
+        **_progress(outcome['account']),
+    )
+
+
 @router.post('/api/complete_task')
 def complete_task(body: CompleteTask, username: str = Depends(current_username)):
+    """Complete one task. The batch path with a batch of one.
+
+    Same reply as it always had. One difference, and it is a fix: completing
+    a task that is already done used to award its XP again, so a retried
+    request — a double tap, a timeout — paid twice. Now it succeeds and awards
+    nothing, and says so in `already_done`.
+    """
     if not username or not body.task_id:
         return fail('Username and task_id required')
 
-    task = db.find_row('tasks', body.task_id, user_id=username)
-    if not task:
-        return fail('Task not found')
-
-    _, user = load_user(username)
-    if not user:
+    outcome = _complete(username, [body.task_id])
+    if outcome is None:
         return fail('User not found')
+    if outcome['not_found']:
+        return fail('Task not found')
+    if outcome['failed']:
+        return fail('That did not save. Try again.')
 
-    xp_reward = task.get('xp_value', 0)
-    now = datetime.now()
-
-    # Stamp the task done, and record the timing the efficiency metric reads:
-    # how long it took (creation -> completion) and, when it had a due date,
-    # whether it beat that deadline. Tasks completed before this was added lack
-    # these fields and are simply left out of the efficiency scores.
-    task['status'] = 'done'
-    task['completed_at'] = now.isoformat()
-
-    created_dt = _parse_dt(task.get('created_at'))
-    if created_dt is not None:
-        task['completion_seconds'] = round(max(0, (now - created_dt).total_seconds()))
-
-    due_dt = _parse_dt(task.get('due_date')) if task.get('due_date') else None
-    if due_dt is not None:
-        task['met_deadline'] = now <= due_dt
-
-    # One row written, not a whole table. This used to be `db.save_tasks(tasks)`
-    # + `db.save_users(users)` — a DELETE and a full re-INSERT of every task in
-    # the system and every account, to mark one checkbox.
-    db.save_task(task, username)
-
-    # XP in, level recalculated, streak extended. Writes the account row itself,
-    # adding in SQL so two completions at once cannot cancel each other out —
-    # see the note on it.
-    levels = xp_tracking.award_task_completion(user, xp_reward)
-
-    xp_tracking.log_event(username, xp_reward, 'task_completion', tasks_completed=1)
-
-    # Count this completion toward the user's active "complete N tasks" goals.
-    apply_task_completion(username)
-
+    xp_reward = sum(xp for _, xp in outcome['completed'])
     return ok(
         message='Task completed successfully!',
         xp_earned=xp_reward,
-        new_xp=levels['xp_in_level'],
-        new_level=levels['level'],
-        new_tasks_completed=user['tasks_completed'],
-        xp_required=levels['xp_required'],
-        current_streak=user['current_streak'],
-        best_streak=user['best_streak'],
+        already_done=bool(outcome['already_done']),
         task_id=body.task_id,
         completion_status='done',
+        **_progress(outcome['account']),
     )
 
 

@@ -15,7 +15,23 @@ import { stats, task } from '@/test/factories';
 import type { Task } from '@/types';
 
 const completeTask = vi.fn();
+const completeTasks = vi.fn();
 const rateTask = vi.fn();
+
+/** What the batch endpoint says back, for the ids it was sent. `refuse` fail. */
+function batch(ids: string[], refuse: string[] = []) {
+  const landed = ids.filter((id) => !refuse.includes(id));
+  return {
+    success: true,
+    completed: landed.map((id) => ({ task_id: id, xp_earned: 20, completed_at: '2026-09-19T12:00:00' })),
+    already_done: [],
+    not_found: [],
+    failed: ids.filter((id) => refuse.includes(id)),
+    xp_earned: 20 * landed.length,
+    new_xp: 40, new_level: 4, new_tasks_completed: landed.length, xp_required: 100,
+    current_streak: 2, best_streak: 5,
+  };
+}
 
 vi.mock('@/services', async (original) => {
   const real = await original<Record<string, unknown>>();
@@ -24,6 +40,7 @@ vi.mock('@/services', async (original) => {
     goals: { getGoals: () => Promise.resolve({ success: true, goals: [] }) },
     tasks: {
       completeTask: (...args: unknown[]) => completeTask(...args),
+      completeTasks: (...args: unknown[]) => completeTasks(...args),
       rateTask: (...args: unknown[]) => rateTask(...args),
       updateTask: () => Promise.resolve({ success: true }),
       deleteTask: () => Promise.resolve({ success: true }),
@@ -70,6 +87,7 @@ beforeEach(() => {
     current_streak: 2,
     best_streak: 5,
   });
+  completeTasks.mockImplementation((ids: string[]) => Promise.resolve(batch(ids)));
   rateTask.mockResolvedValue({ success: true });
 });
 
@@ -113,11 +131,13 @@ describe('finishing the day from the tasks page', () => {
     ]);
 
     await user.click(await screen.findByRole('button', { name: /today's tasks/ }));
-    expect(completeTask).not.toHaveBeenCalled();
+    expect(completeTasks).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole('button', { name: 'Complete 3' }));
-    await waitFor(() => expect(completeTask).toHaveBeenCalledTimes(3));
-    expect(completeTask.mock.calls.map((call) => call[0])).toEqual(['a', 'b', 'c']);
+    // One request for the whole day, not one per task.
+    await waitFor(() => expect(completeTasks).toHaveBeenCalledTimes(1));
+    expect(completeTasks.mock.calls[0]![0]).toEqual(['a', 'b', 'c']);
+    expect(completeTask).not.toHaveBeenCalled();
   });
 
   it('then asks about each one in turn, not just the last', async () => {
@@ -154,7 +174,7 @@ describe('finishing the day from the tasks page', () => {
     await user.click(within(screen.getByRole('dialog')).getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'Complete it' }));
 
-    await waitFor(() => expect(completeTask).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(completeTasks).toHaveBeenCalledTimes(1));
     expect(screen.queryByText('Rate your performance on this task')).not.toBeInTheDocument();
   });
 
@@ -166,19 +186,13 @@ describe('finishing the day from the tasks page', () => {
     expect(within(screen.getByRole('dialog')).queryByRole('checkbox')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Complete it' }));
 
-    await waitFor(() => expect(completeTask).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(completeTasks).toHaveBeenCalledTimes(1));
     expect(screen.queryByText('Rate your performance on this task')).not.toBeInTheDocument();
   });
 
   it('does not queue a review for a task the server refused to complete', async () => {
     const user = userEvent.setup();
-    completeTask.mockImplementation((id: string) =>
-      Promise.resolve(
-        id === 'b'
-          ? { success: false, message: 'No.' }
-          : { success: true, xp_earned: 20, new_level: 4, new_tasks_completed: 1, current_streak: 1, best_streak: 1 },
-      ),
-    );
+    completeTasks.mockImplementation((ids: string[]) => Promise.resolve(batch(ids, ['b'])));
     show([
       task({ id: 'a', title: 'Landed fine', due_date: TODAY }),
       task({ id: 'b', title: 'Server refused', due_date: TODAY }),

@@ -89,6 +89,8 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 CREATE INDEX IF NOT EXISTS tasks_user_status_idx ON tasks (user_id, status);
 CREATE INDEX IF NOT EXISTS tasks_user_completed_idx ON tasks (user_id, completed_at DESC);
+-- What the goal matcher has not reached yet, or reached with an older version.
+CREATE INDEX IF NOT EXISTS tasks_user_match_idx ON tasks (user_id, goal_match_version);
 
 -- ---- rows: tasks ----
 INSERT INTO tasks (id, user_id, title, description, priority, status, xp_value, due_date, show_on_calendar, timer_duration, timer_expired, created_at, completed_at, completion_seconds, met_deadline) VALUES ('1781399054116', 'demo', '1', '1', 'low', 'done', 10, '2026-06-15T11:00:00', NULL, NULL, NULL, '2026-06-13T20:04:14.120090', NULL, NULL, NULL);

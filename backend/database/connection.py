@@ -184,6 +184,26 @@ ADDED_COLUMNS = (
     # a lazy first pass rather than as "no goal". See data/sql/tasks.sql.
     ('tasks', 'goal_match_status', 'TEXT'),
     ('tasks', 'goal_match_version', 'INTEGER'),
+
+    # Which task a completion event is for — with the timestamp, the event's
+    # idempotency key. Existing rows get NULL: logged before anyone recorded
+    # it, and outside the unique index below. See data/sql/growth.sql.
+    ('xp_events', 'task_id', 'TEXT'),
+)
+
+# Indexes on columns that ADDED_COLUMNS supplies. Their own list, applied after
+# the columns, because an index is created against the table as it is at that
+# moment: put in ADDED_TABLES, which runs first, it would name a column a
+# database older than the column does not have yet, and startup would fail.
+ADDED_INDEXES = (
+    # The goal matcher's "what is out of date" question, answered from an
+    # index rather than a scan of the account's tasks. See data/sql/tasks.sql.
+    'CREATE INDEX IF NOT EXISTS tasks_user_match_idx ON tasks (user_id, goal_match_version)',
+    # One completion of one task is one ledger row, however often the request
+    # that completed it arrives. Partial, so every event without a task —
+    # daily rolls, older rows — is untouched by it.
+    'CREATE UNIQUE INDEX IF NOT EXISTS xp_events_task_completion_idx '
+    'ON xp_events (task_id, timestamp) WHERE task_id IS NOT NULL',
 )
 
 # Tables added to the app after the database was first created.
@@ -508,9 +528,10 @@ def _rebuild_table(con, spec):
 def _catch_up(path):
     """Bring an existing database up to the shape the app expects.
 
-    Tables first, then columns, then the constraint rebuilds: a column cannot
-    be added to a table that is not there, and a rebuild has to copy the
-    columns the two lists above have already put in place.
+    Tables first, then columns, then the indexes on those columns, then the
+    constraint rebuilds: a column cannot be added to a table that is not
+    there, an index cannot name a column that is not there, and a rebuild has
+    to copy the columns the lists above have already put in place.
     """
     con = sqlite3.connect(path)
     try:
@@ -525,6 +546,8 @@ def _catch_up(path):
                 continue
             con.execute('ALTER TABLE "{}" ADD COLUMN "{}" {}'.format(
                 table, column, sql_type))
+        for statement in ADDED_INDEXES:
+            con.execute(statement)
         for spec in REBUILT_TABLES:
             _rebuild_table(con, spec)
         con.commit()
@@ -1200,6 +1223,116 @@ def new_id(table):
         return str(stamp)
 
 
+def new_ids(table, count):
+    """`count` fresh ids for `table` at once, consecutive and in order.
+
+    `new_id` in a loop, without a connection per id: the floor is found once,
+    under the same lock, and the block is reserved past it so the next
+    `new_id` call steps over all of them.
+    """
+    if count <= 0:
+        return []
+    first = int(new_id(table))
+    with _id_lock:
+        last = first + count - 1
+        _last_id[table] = max(_last_id.get(table, 0), last)
+    return [str(first + at) for at in range(count)]
+
+
+# --------------------------------------------------------------------------
+# Completing tasks, several at once
+# --------------------------------------------------------------------------
+def complete_tasks(username, account_id, task_ids, stamp, day, derive, account, level_for):
+    """Mark tasks done and move the account on for them, in one transaction.
+
+    Everything a completion writes lands together or not at all: each task's
+    row, one ledger event per task, and the account's XP, task count, streak
+    and level. BEGIN IMMEDIATE holds the write lock from the first read, so a
+    second request for the same tasks waits for this one and then finds them
+    done.
+
+    A task is only completed if it is not done already — the UPDATE says so
+    itself (`status != 'done'`), and only the rows it actually changed earn
+    XP. That is what makes a retry, or two requests racing, harmless: the
+    second finds nothing left to change and awards nothing.
+
+    `derive(row)` gives the timing fields for one task (completion_seconds,
+    met_deadline — None leaves a field as it was). `account` is the streak
+    fields to set, applied only if something was completed. `level_for(xp)`
+    turns the new XP total into a level.
+
+    Returns {'completed': [(id, xp)], 'already_done': [id], 'not_found': [id],
+    'account': the account row after}.
+    """
+    task_ids = [str(task_id) for task_id in task_ids]
+    con = connect()
+    try:
+        con.execute('BEGIN IMMEDIATE')
+        try:
+            found = {}
+            for at in range(0, len(task_ids), _IN_CHUNK):
+                chunk = task_ids[at:at + _IN_CHUNK]
+                for row in con.execute(
+                        'SELECT id, status, xp_value, created_at, due_date FROM tasks '
+                        'WHERE user_id = ? AND id IN ({})'.format(', '.join('?' for _ in chunk)),
+                        [username] + chunk):
+                    found[row['id']] = dict(row)
+
+            completed, already, missing = [], [], []
+            for task_id in task_ids:
+                row = found.get(task_id)
+                if row is None:
+                    missing.append(task_id)
+                    continue
+                if row['status'] == 'done':
+                    already.append(task_id)
+                    continue
+                timing = derive(row)
+                changed = con.execute(
+                    "UPDATE tasks SET status = 'done', completed_at = ?, "
+                    'completion_seconds = COALESCE(?, completion_seconds), '
+                    'met_deadline = COALESCE(?, met_deadline) '
+                    "WHERE id = ? AND user_id = ? AND status != 'done'",
+                    (stamp, timing.get('completion_seconds'),
+                     _encode('tasks', 'met_deadline', timing.get('met_deadline')),
+                     task_id, username)).rowcount
+                if changed:
+                    row['status'] = 'done'
+                    completed.append((task_id, int(row.get('xp_value') or 0)))
+                else:
+                    already.append(task_id)
+
+            if completed:
+                # OR IGNORE against the (task_id, timestamp) key: the status
+                # guard above already means a completion is only logged once,
+                # and this is the ledger refusing a duplicate even if a
+                # future path were to forget that guard.
+                con.executemany(
+                    'INSERT OR IGNORE INTO xp_events (id, user_id, amount, reason, timestamp, '
+                    'date, tasks_completed, task_id) VALUES (?, ?, ?, ?, ?, ?, 1, ?)',
+                    [(event_id, username, xp, 'task_completion', stamp, day, task_id)
+                     for event_id, (task_id, xp)
+                     in zip(new_ids('xp_events', len(completed)), completed)])
+                setters = ['xp = COALESCE(xp, 0) + ?', 'tasks_completed = COALESCE(tasks_completed, 0) + ?']
+                params = [sum(xp for _, xp in completed), len(completed)]
+                for name in _columns_for(con, 'users', account):
+                    setters.append('"{}" = ?'.format(name))
+                    params.append(_encode('users', name, account[name]))
+                con.execute('UPDATE users SET {} WHERE id = ?'.format(', '.join(setters)),
+                            params + [account_id])
+                total = con.execute('SELECT xp FROM users WHERE id = ?', (account_id,)).fetchone()
+                con.execute('UPDATE users SET level = ? WHERE id = ?',
+                            (level_for(int(total[0] or 0)), account_id))
+            con.execute('COMMIT')
+        except BaseException:
+            con.execute('ROLLBACK')
+            raise
+    finally:
+        con.close()
+    return {'completed': completed, 'already_done': already, 'not_found': missing,
+            'account': find_row('users', account_id)}
+
+
 # --------------------------------------------------------------------------
 # One load/save pair per store
 # --------------------------------------------------------------------------
@@ -1400,46 +1533,80 @@ def save_goal_milestones(rows):
 _IN_CHUNK = 500
 
 
-def save_goal_mapping(username, task_id, status, version, matches):
-    """Replace one task's goal matches and its match status, in one go.
+def save_goal_mappings(username, entries):
+    """Store several tasks' goal matches and statuses in one transaction.
 
-    `matches` is [(goal_id, score, source)]. Each row is inserted only if the
-    goal exists and is this account's, checked by the INSERT itself, so a goal
-    deleted a moment ago is skipped rather than raising, and another account's
-    goal id can never be linked. A 'matched' status left with no rows after
-    that becomes 'unmatched' — the one honest answer when every goal it named
-    has gone.
+    `entries` is [(task_id, status, version, [(goal_id, score, source)])].
+    Tasks that are not this account's are skipped. Goal ids are checked
+    against this account's goals once, for the whole batch, and any that are
+    missing or someone else's are dropped rather than raised; a 'matched'
+    status left with no goals after that is stored as 'unmatched', the one
+    honest answer when every goal it named has gone.
 
-    Returns the goal ids actually kept, in the order given, or None when the
-    task is not this account's.
+    BEGIN IMMEDIATE takes the write lock before the goals are read, so no
+    other writer can delete one between the check and the insert.
+
+    Returns {task_id: [goal ids kept]} for the tasks that were stored.
     """
+    entries = list(entries)
+    if not entries:
+        return {}
     con = connect()
     try:
-        with con:
-            owned = con.execute(
-                'SELECT 1 FROM tasks WHERE id = ? AND user_id = ?',
-                (task_id, username)).fetchone()
-            if not owned:
-                return None
-            con.execute('DELETE FROM task_goal_matches WHERE task_id = ?', (task_id,))
-            kept = []
-            for goal_id, score, source in matches:
-                inserted = con.execute(
-                    'INSERT OR IGNORE INTO task_goal_matches '
-                    '(task_id, goal_id, user_id, score, source) '
-                    'SELECT ?, id, user_id, ?, ? FROM goals WHERE id = ? AND user_id = ?',
-                    (task_id, score, source, goal_id, username)).rowcount
-                if inserted:
-                    kept.append(goal_id)
-            if status == 'matched' and not kept:
-                status = 'unmatched'
-            con.execute(
+        con.execute('BEGIN IMMEDIATE')
+        try:
+            ids = list(dict.fromkeys(str(entry[0]) for entry in entries))
+            owned = set()
+            for at in range(0, len(ids), _IN_CHUNK):
+                chunk = ids[at:at + _IN_CHUNK]
+                owned.update(row[0] for row in con.execute(
+                    'SELECT id FROM tasks WHERE user_id = ? AND id IN ({})'.format(
+                        ', '.join('?' for _ in chunk)), [username] + chunk))
+            goals = {row[0] for row in con.execute(
+                'SELECT id FROM goals WHERE user_id = ?', (username,))}
+
+            kept, links, statuses = {}, [], []
+            for task_id, status, version, matches in entries:
+                task_id = str(task_id)
+                if task_id not in owned or task_id in kept:
+                    continue
+                named = []
+                for goal_id, score, source in matches:
+                    if goal_id in goals and goal_id not in named:
+                        named.append(goal_id)
+                        links.append((task_id, goal_id, username, score, source))
+                kept[task_id] = named
+                if status == 'matched' and not named:
+                    status = 'unmatched'
+                statuses.append((status, version, task_id, username))
+
+            stored = list(kept)
+            for at in range(0, len(stored), _IN_CHUNK):
+                chunk = stored[at:at + _IN_CHUNK]
+                con.execute('DELETE FROM task_goal_matches WHERE task_id IN ({})'.format(
+                    ', '.join('?' for _ in chunk)), chunk)
+            con.executemany(
+                'INSERT INTO task_goal_matches (task_id, goal_id, user_id, score, source) '
+                'VALUES (?, ?, ?, ?, ?)', links)
+            con.executemany(
                 'UPDATE tasks SET goal_match_status = ?, goal_match_version = ? '
-                'WHERE id = ? AND user_id = ?',
-                (status, version, task_id, username))
+                'WHERE id = ? AND user_id = ?', statuses)
+            con.execute('COMMIT')
+        except BaseException:
+            con.execute('ROLLBACK')
+            raise
         return kept
     finally:
         con.close()
+
+
+def save_goal_mapping(username, task_id, status, version, matches):
+    """One task's version of `save_goal_mappings`.
+
+    Returns the goal ids kept, in the order given, or None when the task is
+    not this account's.
+    """
+    return save_goal_mappings(username, [(task_id, status, version, matches)]).get(str(task_id))
 
 
 def goal_links_for(username):
@@ -1464,6 +1631,38 @@ def goal_links_for(username):
                 (username,)):
             out.setdefault(row['task_id'], []).append(row['goal_id'])
         return out
+    finally:
+        con.close()
+
+
+def stale_goal_tasks(username, version, limit, fields=('id', 'title', 'subject', 'goal_id')):
+    """Up to `limit` of this account's tasks due a goal match, oldest first.
+
+    Due means never matched, or matched by a version of the matcher older than
+    `version`. Only the fields matching reads are selected — never the
+    description — and the list is bounded, so a caller works through a large
+    history a slice at a time instead of loading it whole.
+    """
+    con = connect()
+    try:
+        known = {name for name, _, _ in _schema(con, 'tasks')}
+        wanted = [name for name in fields if name in known]
+        query = ('SELECT {} FROM tasks WHERE user_id = ? '
+                 'AND (goal_match_version IS NULL OR goal_match_version < ?) '
+                 'ORDER BY rowid LIMIT ?').format(', '.join('"{}"'.format(n) for n in wanted))
+        return _decode_records(con, 'tasks', con.execute(query, (username, version, int(limit))))
+    finally:
+        con.close()
+
+
+def stale_goal_task_count(username, version):
+    """How many of this account's tasks are due a goal match. One indexed count."""
+    con = connect()
+    try:
+        return con.execute(
+            'SELECT COUNT(*) FROM tasks WHERE user_id = ? '
+            'AND (goal_match_version IS NULL OR goal_match_version < ?)',
+            (username, version)).fetchone()[0]
     finally:
         con.close()
 

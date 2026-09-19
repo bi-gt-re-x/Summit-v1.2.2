@@ -22,10 +22,19 @@ CREATE TABLE IF NOT EXISTS xp_events (
     date             TEXT,
 
     tasks_completed  INTEGER,
-    avg_task_xp      NUMERIC
+    avg_task_xp      NUMERIC,
+
+    -- The task a 'task_completion' row is for. Null on every other reason and
+    -- on completions logged before it was recorded. With the timestamp it is
+    -- the completion's idempotency key: the unique index below means one
+    -- completion of one task can be logged once, however many times the
+    -- request that completed it was sent.
+    task_id          TEXT
 );
 
 CREATE INDEX IF NOT EXISTS xp_events_user_date_idx ON xp_events (user_id, date);
+CREATE UNIQUE INDEX IF NOT EXISTS xp_events_task_completion_idx
+    ON xp_events (task_id, timestamp) WHERE task_id IS NOT NULL;
 
 -- The growth chart's series: one row per day with anything recorded. The app
 -- fills the gaps so the x-axis is real time rather than a list of active days.

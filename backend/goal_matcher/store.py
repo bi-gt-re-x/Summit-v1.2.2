@@ -12,6 +12,7 @@ reference, never as an error: enriching a task must not stop it being saved.
 from typing import Dict, Iterable, Optional
 
 from backend.database import connection as db
+from backend.goal_matcher import types
 from backend.goal_matcher.types import TaskGoalMapping, TaskGoalMatch
 
 
@@ -48,6 +49,25 @@ def save_mapping(username: str, task_id: str, mapping: TaskGoalMapping) -> Optio
     return TaskGoalMapping(status=status, matches=tuple(
         TaskGoalMatch(goal_id=g, score=s, source=src) for g, s, src in rows),
         version=mapping.version)
+
+
+def save_mappings(username: str, mappings: Dict[str, TaskGoalMapping]) -> Dict[str, TaskGoalMapping]:
+    """Store many tasks' mappings in one transaction. Returns what was kept.
+
+    The batch form of `save_mapping`, with the same rules: tasks that are not
+    this account's are skipped, and goals that are gone are dropped.
+    """
+    kept = db.save_goal_mappings(username, [
+        (task_id, mapping.status, mapping.version,
+         [(m.goal_id, m.score, m.source) for m in mapping.matches])
+        for task_id, mapping in mappings.items()])
+    out = {}
+    for task_id, goal_ids in kept.items():
+        mapping = mappings[task_id]
+        matches = tuple(m for m in mapping.matches if m.goal_id in goal_ids)
+        status = mapping.status if matches or mapping.status != 'matched' else 'unmatched'
+        out[task_id] = TaskGoalMapping(status=status, matches=matches, version=mapping.version)
+    return out
 
 
 def mappings_for(username: str, task_ids: Iterable[str]) -> Dict[str, TaskGoalMapping]:
@@ -88,3 +108,22 @@ def with_goal_ids(username: str, tasks: list) -> list:
             if ids:
                 task['goal_ids'] = ids
     return tasks
+
+
+# The fields a refresh reads off a stale task. Matching needs these and no more.
+STALE_FIELDS = ('id', 'title', 'subject', 'goal_id')
+
+
+def stale_tasks(username: str, limit: int) -> list:
+    """Up to `limit` tasks never matched, or matched by an older version.
+
+    Bounded on purpose: a caller refreshing a large history takes it a slice at
+    a time, so a version bump over twenty thousand tasks never becomes one
+    twenty-thousand-row read.
+    """
+    return db.stale_goal_tasks(username, types.current_version(), limit, STALE_FIELDS)
+
+
+def stale_count(username: str) -> int:
+    """How many tasks are due a match. One indexed count."""
+    return db.stale_goal_task_count(username, types.current_version())

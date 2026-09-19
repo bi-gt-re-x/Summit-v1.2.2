@@ -632,16 +632,20 @@ def apply_task_xp(username, xp):
     return {"updated": updated, "completed": completed}
 
 
-def apply_task_completion(username):
-    """Count one completed task toward every active "complete N tasks" goal.
+def apply_task_completion(username, count=1):
+    """Count completed tasks toward every active "complete N tasks" goal.
 
     Mirrors how earned XP advances every active XP goal. Runs server-side on
     each completion, so the goals page reflects it whether or not it is open.
+    A batch passes its size, so sixty completions are one write per goal
+    rather than sixty.
     """
+    if count <= 0:
+        return
     for goal in _goals_of(db.rows_for('goals', username), username, 'tasks',
                           unfinished=True):
         target = goal.get('target_tasks', 0) or 0
-        new_value = (goal.get('current_tasks', 0) or 0) + 1
+        new_value = (goal.get('current_tasks', 0) or 0) + count
         if target and new_value > target:
             new_value = target
         goal['current_tasks'] = new_value

@@ -30,13 +30,23 @@ ambiguous task's candidates are *not* stored as matches: anything counted as a
 relationship has to be one, and "maybe" is not.
 """
 from dataclasses import dataclass, field
-from typing import Literal, Tuple
+from typing import Literal, Optional, Tuple
 
 from backend.goal_matcher.config import MAX_MATCHES_PER_TASK
 
 # Bumped whenever the matching rules change, so earlier answers can be told
 # apart and refreshed lazily. See `is_stale` below.
+#
+# Bumping it reprocesses nothing by itself. Every stored mapping with a lower
+# number becomes stale — found by an indexed query, refreshed a bounded slice
+# at a time (service.refresh_stale) or when the task is next edited. Nothing
+# runs at startup and nothing runs when a page opens.
 GOAL_MATCHER_VERSION = 1
+
+
+def current_version() -> int:
+    """The version in force right now. Read at call time, never captured."""
+    return GOAL_MATCHER_VERSION
 
 # A task can count toward several goals, but only a few — MAX_MATCHES_PER_TASK
 # in config.py. Past three the secondary matches are almost always noise, and
@@ -99,9 +109,14 @@ class TaskGoalMapping:
 
     status: Status
     matches: Tuple[TaskGoalMatch, ...] = field(default=())
-    version: int = GOAL_MATCHER_VERSION
+    # Left out, it is the matcher's version *now* — read when the mapping is
+    # made rather than when this class was defined, so a bump takes effect
+    # without a restart and can be tested.
+    version: Optional[int] = None
 
     def __post_init__(self):
+        if self.version is None:
+            object.__setattr__(self, 'version', current_version())
         if self.status not in STATUSES:
             raise ValueError('Unknown mapping status: {!r}'.format(self.status))
         matches = _tidy(tuple(self.matches))
@@ -118,9 +133,9 @@ class TaskGoalMapping:
     def explicit(self) -> Tuple[TaskGoalMatch, ...]:
         return tuple(match for match in self.matches if match.source == 'explicit')
 
-    def is_stale(self, version: int = GOAL_MATCHER_VERSION) -> bool:
+    def is_stale(self, version: Optional[int] = None) -> bool:
         """Worked out by an older matcher, so due a lazy refresh."""
-        return self.version < version
+        return self.version < (current_version() if version is None else version)
 
     def to_api(self) -> dict:
         """The shape the front end reads. See `TaskGoalMapping` in types/models.ts."""

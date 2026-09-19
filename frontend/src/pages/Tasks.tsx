@@ -389,6 +389,58 @@ export default function Tasks() {
     [username, mutate, run, prefs.rating_depth],
   );
 
+  /**
+   * Finish many tasks as one action: one request, one state update, one
+   * signal to the rail.
+   *
+   * What the bulk bar and "finish the day" use. Each used to call `complete`
+   * per task — sixty tasks was sixty requests, sixty `mutate`s re-rendering the
+   * whole list, and sixty STATS_CHANGED events each making the rail re-read.
+   * Now the server does the sixty completions in one transaction and the page
+   * applies the result once.
+   *
+   * Returns the tasks that were actually finished by this call, which is what
+   * the review queue should ask about — not ones that were already done, and
+   * not ones the server could not write.
+   */
+  const completeMany = useCallback(
+    async (tasks: readonly Task[]): Promise<Task[]> => {
+      const open = tasks.filter((task) => task.status !== 'done');
+      if (!username || open.length === 0) return [];
+      const result = await taskService.completeTasks(open.map((task) => String(task.id)));
+      if (!result.success) {
+        setFailure(result.message);
+        return [];
+      }
+      if (result.failed.length > 0) {
+        setFailure(
+          `${result.failed.length} ${result.failed.length === 1 ? 'task' : 'tasks'} did not save. Try again.`,
+        );
+      }
+      const stamps = new Map(result.completed.map((row) => [String(row.task_id), row.completed_at]));
+      if (stamps.size > 0) {
+        mutate((current) => ({
+          ...current,
+          stats: {
+            ...current.stats,
+            xp: (Number(current.stats.xp) || 0) + (Number(result.xp_earned) || 0),
+            level: result.new_level,
+            tasks_completed: result.new_tasks_completed,
+            current_streak: result.current_streak,
+            best_streak: result.best_streak,
+          },
+          tasks: current.tasks.map((entry) => {
+            const at = stamps.get(String(entry.id));
+            return at ? { ...entry, status: 'done' as const, completed_at: at } : entry;
+          }),
+        }));
+        window.dispatchEvent(new Event(STATS_CHANGED));
+      }
+      return open.filter((task) => stamps.has(String(task.id)));
+    },
+    [username, mutate],
+  );
+
   // ---- Rating a finished task ---------------------------------------------
   /**
    * The tasks still to be asked about. The dialog shows the head of the queue.
@@ -641,11 +693,9 @@ export default function Tasks() {
   /**
    * A bulk action is the single action, repeated in order.
    *
-   * One request per task rather than a batch endpoint, because there is not one
-   * — and because completing ten tasks is ten completions with ten XP awards
-   * and a streak behind them, which is exactly what ten calls produce. Serial
-   * rather than parallel: they all move the same account's totals, and the
-   * backend recalculates the level on each.
+   * Only deleting still goes this way. Completing has its own batch endpoint
+   * and goes through `completeMany`, as one request. Serial rather than
+   * parallel: every action moves the same account.
    */
   const bulk = useCallback(
     async (action: (task: Task) => Promise<unknown>) => {
@@ -670,15 +720,39 @@ export default function Tasks() {
   );
 
   /**
+   * The bulk bar's Complete: the picked tasks as one batch, then the same
+   * ticks-off and re-read `bulk` does.
+   *
+   * One review prompt, not one per task. Each per-task completion used to
+   * raise its own and each replaced the last, so a reader finishing twenty
+   * rows was asked once; queueing all twenty would turn a bulk action into
+   * twenty dialogs. "Finish the day" is where asking about every task is the
+   * point, and it does.
+   */
+  const completePicked = useCallback(async () => {
+    setSaving(true);
+    const done = await completeMany(chosen);
+    setPicked((current) => {
+      const next = new Set(current);
+      chosen.forEach((task) => next.delete(task.id));
+      return next;
+    });
+    setSaving(false);
+    const first = done[0];
+    if (first && prefs.rating_depth !== 'none') {
+      setReviews([{ id: String(first.id), name: first.title }]);
+    }
+    reload();
+  }, [chosen, completeMany, prefs.rating_depth, reload]);
+
+  /**
    * Finish the day: every task due today, in order, then the reviews.
    *
-   * The same one-call-per-task shape as `bulk` and for the same reasons — there
-   * is no batch endpoint, and ten completions really are ten XP awards with a
-   * streak behind them. What it does differently is hold the prompts back
-   * (`complete(task, false)`) and raise them together at the end, so the reader
-   * confirms once, watches the list empty, and is then asked about the tasks
-   * that actually landed. A task whose completion failed is not in the queue:
-   * there is nothing to rate about work the server did not record.
+   * One batch — see `completeMany` — then the prompts raised together at the
+   * end, so the reader confirms once, watches the list empty, and is then
+   * asked about the tasks that actually landed. A task whose completion failed
+   * is not in the queue: there is nothing to rate about work the server did
+   * not record.
    *
    * `reload` at the end for the same reason `bulk` does it — the page has
    * applied every change already and this is the cheap way to be sure.
@@ -688,17 +762,12 @@ export default function Tasks() {
       const todo = dayTasks;
       if (todo.length === 0) return;
       setSaving(true);
-      const done: { id: string; name: string }[] = [];
-      for (const task of todo) {
-        if (await complete(task, false)) {
-          done.push({ id: String(task.id), name: task.title });
-        }
-      }
+      const done = (await completeMany(todo)).map((task) => ({ id: String(task.id), name: task.title }));
       setSaving(false);
       if (review && prefs.rating_depth !== 'none' && done.length > 0) setReviews(done);
       reload();
     },
-    [complete, dayTasks, prefs.rating_depth, reload],
+    [completeMany, dayTasks, prefs.rating_depth, reload],
   );
 
   const toggleGroup = useCallback((key: string) => {
@@ -993,7 +1062,7 @@ export default function Tasks() {
             <BulkBar
               count={chosen.length}
               busy={saving}
-              onComplete={() => void bulk((task) => (task.status === 'done' ? Promise.resolve() : complete(task)))}
+              onComplete={() => void completePicked()}
               onDelete={async () => {
                 if (
                   prefs.confirm_delete

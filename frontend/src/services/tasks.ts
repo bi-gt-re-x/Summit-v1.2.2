@@ -243,6 +243,78 @@ export function completeTask(
   });
 }
 
+/** What one batch completion did, task by task, and where it left the account. */
+export interface BatchCompletionResult {
+  /** Finished by this call, each with the XP it earned. */
+  completed: { task_id: string; xp_earned: number; completed_at: string }[];
+  /** Already finished before it. Nothing was awarded again. */
+  already_done: string[];
+  /** Not this account's, or not there. */
+  not_found: string[];
+  /** In a chunk the server could not write. Untouched, and safe to send again. */
+  failed: string[];
+  xp_earned: number;
+  new_xp: number;
+  new_level: number;
+  new_tasks_completed: number;
+  xp_required: number;
+  current_streak: number;
+  best_streak: number;
+}
+
+/** The most one request may carry; backend MAX_COMPLETE. */
+export const MAX_COMPLETE = 1000;
+
+/**
+ * Complete many tasks as one action.
+ *
+ * One request for any selection up to MAX_COMPLETE, rather than one per task.
+ * Duplicate ids are dropped before sending. A larger selection goes as several
+ * requests, one after another — never in parallel, since they all move the
+ * same account — and the replies are merged into one, so the caller still
+ * makes one state update however many requests it took.
+ *
+ * Safe to retry: a task already done is reported in `already_done` and earns
+ * nothing twice.
+ */
+export async function completeTasks(
+  taskIds: readonly string[],
+): Promise<ApiResult<BatchCompletionResult>> {
+  const ids = [...new Set(taskIds.map(String))];
+  const merged: BatchCompletionResult = {
+    completed: [], already_done: [], not_found: [], failed: [],
+    xp_earned: 0, new_xp: 0, new_level: 0, new_tasks_completed: 0,
+    xp_required: 0, current_streak: 0, best_streak: 0,
+  };
+  if (ids.length === 0) return { success: true, ...merged };
+
+  for (let at = 0; at < ids.length; at += MAX_COMPLETE) {
+    const part = ids.slice(at, at + MAX_COMPLETE);
+    const result = await post<BatchCompletionResult>('/api/complete_tasks', { task_ids: part });
+    if (!result.success) {
+      // Everything not yet sent is as untouched as a failed chunk, and as safe
+      // to send again.
+      if (at === 0) return result;
+      merged.failed.push(...ids.slice(at));
+      break;
+    }
+    merged.completed.push(...result.completed);
+    merged.already_done.push(...result.already_done);
+    merged.not_found.push(...result.not_found);
+    merged.failed.push(...result.failed);
+    merged.xp_earned += result.xp_earned;
+    // The account's standing is whatever the last reply left it at.
+    merged.new_xp = result.new_xp;
+    merged.new_level = result.new_level;
+    merged.new_tasks_completed = result.new_tasks_completed;
+    merged.xp_required = result.xp_required;
+    merged.current_streak = result.current_streak;
+    merged.best_streak = result.best_streak;
+    if (result.failed.length) break;
+  }
+  return { success: true, ...merged };
+}
+
 export interface TaskRating {
   task_id: string;
   difficulty?: number;
