@@ -29,6 +29,10 @@ What it does, in order:
      "homework", "prac" → "practice"), so the same thing written two ways is
      one word. Deliberately short: an expansion that guesses ("comp" —
      competition or computer?) is worse than none.
+  8. Plurals folded to one form ("contributions" → "contribution", "theories"
+     → "theory"), so a goal's "models" is a task's "model". Crude on purpose —
+     it only has to turn both spellings into the *same* word, not the right
+     one — and it skips every word already on a list in config.py.
 
 It is idempotent: normalising a normalised string changes nothing.
 """
@@ -36,6 +40,12 @@ import re
 import unicodedata
 from functools import lru_cache
 from typing import Tuple
+
+from backend.goal_matcher.config import GENERIC, IGNORED, WEAK
+
+# Every word the matcher has an opinion about. Plural folding leaves these
+# alone, so "does" stays "does" rather than becoming "doe".
+_LISTED = IGNORED | GENERIC | WEAK
 
 # Kept before punctuation is stripped. Lowercase keys, matched as whole tokens
 # of the lowercased text so "c++" in "learn c++ basics" becomes "cpp" and the
@@ -113,10 +123,24 @@ def normalize(text: str) -> str:
     out = []
     for word in plain.split():
         if word.isalpha() or word.isdigit() or _ORDINAL.fullmatch(word):
-            out.append(ABBREVIATIONS.get(word, word))
+            out.extend(ABBREVIATIONS.get(word, word).split())
         else:
-            out.extend(ABBREVIATIONS.get(run, run) for run in _RUNS.findall(word))
-    return ' '.join(out)
+            for run in _RUNS.findall(word):
+                out.extend(ABBREVIATIONS.get(run, run).split())
+    return ' '.join(_singular(word) for word in out)
+
+
+def _singular(word: str) -> str:
+    """One form for a word and its plural. Never ends in a foldable "s"."""
+    if len(word) <= 3 or not word.isalpha() or word in _LISTED or not word.endswith('s'):
+        return word
+    if word.endswith('ies'):
+        return word[:-3] + 'y'
+    if word.endswith('sses'):
+        return word[:-2]
+    if word.endswith(('ss', 'us', 'is')):
+        return word
+    return word[:-1]
 
 
 def words(text: str) -> Tuple[str, ...]:
@@ -127,3 +151,53 @@ def words(text: str) -> Tuple[str, ...]:
 def cache_info():
     """Hits and misses, for the matcher's metrics."""
     return normalize.cache_info()
+
+
+# ---------------------------------------------------------------------------
+# What a word is worth to the matcher
+# ---------------------------------------------------------------------------
+# The tiers themselves are word lists in config.py; this only sorts a word
+# into one.
+
+# 'key' is a word that says what something is about: "aime", "violin",
+# "usaco". Everything else is weaker, down to 'ignored', which is not
+# evidence of anything.
+KINDS = ('key', 'weak', 'number', 'generic', 'ignored')
+
+
+@lru_cache(maxsize=_CACHE_SIZE)
+def kind_of(word: str) -> str:
+    """Which tier a normalised word falls in."""
+    if not word or word in IGNORED:
+        return 'ignored'
+    if word.isdigit():
+        return 'number'
+    if _ORDINAL.fullmatch(word):
+        return 'weak'
+    # One letter is never a word worth matching on: the "i" of "AIME I", the
+    # "v" of "v2" and the "p" of "P3" are all noise on their own.
+    if len(word) == 1:
+        return 'ignored'
+    if word in GENERIC:
+        return 'generic'
+    if word in WEAK:
+        return 'weak'
+    return 'key'
+
+
+def kept(tokens):
+    """The words that can be evidence of anything, in order."""
+    return tuple(word for word in tokens if kind_of(word) != 'ignored')
+
+
+def key_pairs(tokens):
+    """Adjacent pairs, ignored words skipped, that include a key word.
+
+    "Reach USACO Gold" gives ("reach", "usaco") and ("usaco", "gold"); "AMC 10
+    practice" gives ("amc", "10"). A pair of two weak words — "rating 2000" —
+    is left out, because "chess rating 2000" is not a Codeforces goal.
+    """
+    words = kept(tokens)
+    return frozenset(
+        (a, b) for a, b in zip(words, words[1:])
+        if 'key' in (kind_of(a), kind_of(b)))

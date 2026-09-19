@@ -10,26 +10,36 @@ from backend.goal_matcher.normalize import ABBREVIATIONS, normalize, words
     ('AMC 8 Geometry Practice #4', 'amc 8 geometry practice 4'),
     # Punctuation and separators people put in titles.
     ('Geometry—practice / set_2 | review: ch.3', 'geometry practice set 2 review ch 3'),
-    ('  lots   of\tspace\n', 'lots of space'),
+    ('  lots   of\tspace\n', 'lot of space'),
     ('AMC 8 24+', 'amc 8 24'),
     # Letters and digits run together are the same words written apart.
     ('AMC8 prep', 'amc 8 prep'),
     ('USACO silver P3', 'usaco silver p 3'),
     # ...except an ordinal, which is one word.
     ('Read the 7th chapter', 'read the 7th chapter'),
-    # An apostrophe joins rather than splits.
-    ("Euler's formula", 'eulers formula'),
-    ('Euler’s formula', 'eulers formula'),
+    # An apostrophe joins rather than splits, and the possessive then folds
+    # like a plural, so "Euler's" and "Euler" are one word.
+    ("Euler's formula", 'euler formula'),
+    ('Euler’s formula', 'euler formula'),
+    # Plurals fold to one form, so a goal's "models" is a task's "model".
+    ('Transformer models', 'transformer model'),
+    ('Open-source contributions', 'open source contribution'),
+    ('Number theories', 'number theory'),
+    ('Glasses and processes', 'glass and process'),
+    # ...but short words, words ending -ss/-us/-is, and listed words are kept.
+    ('Physics analysis of gas: does it pass', 'physic analysis of gas does it pass'),
+    ('Calculus bonus', 'calculus bonus'),
+    ('Problems and exercises', 'problems and exercises'),
     # Accents are not a different word.
     ('Étude in E minor', 'etude in e minor'),
     # Names whose punctuation is the name.
-    ('Learn C++ templates', 'learn cpp templates'),
+    ('Learn C++ templates', 'learn cpp template'),
     ('Unity scripting (C#)', 'unity scripting csharp'),
     # Abbreviations, whole words only.
     ('Calc HW 5', 'calculus homework 5'),
     ('geom prac', 'geometry practice'),
     ('ML reading', 'machine learning reading'),
-    ('Algorithms', 'algorithms'),  # "alg" inside a word is left alone
+    ('Algorithms', 'algorithm'),  # "alg" inside a word is left alone
     ('', ''),
     (None, ''),
     ('!!! — ###', ''),
@@ -59,7 +69,7 @@ def test_no_expansion_is_itself_an_abbreviation():
 
 def test_words_are_the_normalised_words_in_order():
     assert words('Calc HW: related rates, calc') == (
-        'calculus', 'homework', 'related', 'rates', 'calculus')
+        'calculus', 'homework', 'related', 'rate', 'calculus')
 
 
 def test_it_is_memoised_so_a_repeated_title_costs_nothing():

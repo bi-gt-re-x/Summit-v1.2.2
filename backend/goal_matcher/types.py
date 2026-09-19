@@ -32,14 +32,16 @@ relationship has to be one, and "maybe" is not.
 from dataclasses import dataclass, field
 from typing import Literal, Tuple
 
+from backend.goal_matcher.config import MAX_MATCHES_PER_TASK
+
 # Bumped whenever the matching rules change, so earlier answers can be told
 # apart and refreshed lazily. See `is_stale` below.
 GOAL_MATCHER_VERSION = 1
 
-# A task can count toward several goals, but only a few. Past three the
-# secondary matches are almost always noise, and every extra one is a goal
-# whose numbers go up for work that was not really toward it.
-MAX_MATCHES_PER_TASK = 3
+# A task can count toward several goals, but only a few — MAX_MATCHES_PER_TASK
+# in config.py. Past three the secondary matches are almost always noise, and
+# every extra one is a goal whose numbers go up for work that was not toward it.
+__all__ = ['GOAL_MATCHER_VERSION', 'MAX_MATCHES_PER_TASK', 'TaskGoalMapping', 'TaskGoalMatch']
 
 Status = Literal['matched', 'ambiguous', 'unmatched', 'pending']
 Source = Literal['explicit', 'rule', 'ai']
@@ -132,3 +134,8 @@ class TaskGoalMapping:
     @classmethod
     def unmatched(cls) -> 'TaskGoalMapping':
         return cls(status='unmatched')
+
+    @classmethod
+    def pending(cls) -> 'TaskGoalMapping':
+        """Queued for asynchronous classification. Only the queue sets this."""
+        return cls(status='pending')
