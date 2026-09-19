@@ -68,9 +68,9 @@ body {
     max-width: 1370px;
     /* The navigation is a fixed rail down the left and body.has-rail already
        reserves its width, so this is only the gap above the first card. */
-    margin: 28px auto 5px;
+    margin: var(--space-6) auto var(--space-1);
     min-height: calc(100vh - var(--topnav-h, 64px) - 33px);
-    padding: 0 24px;
+    padding: 0 var(--space-6);
 }
 
 /* On a screen the page is pinned to (see styles/rail.css), the container
@@ -218,19 +218,19 @@ html.focus-mode .focus-panel {
         "head    head"
         "stepper bar"
         "button  bar";
-    column-gap: 32px;
-    row-gap: 12px;
+    column-gap: var(--space-8);
+    row-gap: var(--space-3);
     align-content: center;
-    padding: 16px 26px;
+    padding: var(--space-4) var(--space-6);
 }
 html.focus-mode .focus-goal { display: contents; }
-html.focus-mode .focus-panel h2 { grid-area: head; margin: 0 0 4px; }
+html.focus-mode .focus-panel h2 { grid-area: head; margin: 0 0 var(--space-1); }
 html.focus-mode .focus-goal-head,
 html.focus-mode .focus-hint { display: none; }        /* redundant / moot mid-session */
 
 html.focus-mode .focus-stepper {
     grid-area: stepper;
-    gap: 22px;
+    gap: var(--space-6);
     margin: 0;
     align-self: center;
 }
@@ -240,7 +240,7 @@ html.focus-mode .focus-amount #focusHours { font-size: var(--text-3xl); }
 html.focus-mode .focus-start-btn {
     grid-area: button;
     margin: 0;
-    padding: 11px;
+    padding: var(--space-3);
     align-self: center;
 }
 
@@ -249,7 +249,7 @@ html.focus-mode .focus-progress-wrap {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
+    gap: var(--space-2);
     min-width: 0;
 }
 html.focus-mode .focus-progress { height: 10px; margin: 0; }
@@ -261,13 +261,13 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 
 .dash .ui-card h2 {
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
     font-size: var(--text-xl);
     font-weight: 700;
     color: var(--color-ink);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2);
 }
 
 /* ==========================================================================
@@ -276,8 +276,8 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 .username-row {
     display: flex;
     align-items: center;
-    gap: 3px;
-    margin-top: 20px;
+    gap: var(--space-1);
+    margin-top: var(--space-5);
 }
 
 .username-row .label {
@@ -294,7 +294,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
     text-align: right;
     font-size: var(--text-xs);
     color: #6C757D;
-    margin-bottom: 6px;
+    margin-bottom: var(--space-2);
 }
 
 .xp-bar-container {
@@ -303,7 +303,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
     background: #E9ECEF;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
 }
 
 .xp-bar-fill {
@@ -364,7 +364,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
     background: #2C302E;
     color: #fff;
     border-radius: var(--radius-lg);
-    padding: 22px 42px;
+    padding: var(--space-6) var(--space-10);
     box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(163, 138, 112, 0.5);
     animation: levelBadge 1.8s cubic-bezier(0.25, 1.4, 0.4, 1) forwards;
 }
@@ -408,7 +408,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 .levelup-overlay.milestone .levelup-badge {
     background: linear-gradient(135deg, #8a6d3b, #c9a227 45%, #f4d47c);
     color: #2C302E;
-    padding: 28px 54px;
+    padding: var(--space-6) var(--space-12);
     box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35), 0 0 0 4px rgba(244, 212, 124, 0.55), 0 0 46px rgba(201, 162, 39, 0.6);
     animation-duration: 2.6s;
 }
@@ -422,7 +422,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 .levelup-crown {
     font-size: var(--text-3xl);
     line-height: 1;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
     animation: crownBob 0.9s ease-in-out infinite alternate;
 }
 @keyframes crownBob {
@@ -441,7 +441,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
     top: 50%;
     width: 60px;
     height: 60px;
-    margin: -30px 0 0 -30px;
+    margin: -32px 0 0 -32px;
     border-radius: 50%;
     border: 4px solid rgba(244, 212, 124, 0.85);
     animation: shockwave 1.2s ease-out forwards;
@@ -466,7 +466,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: var(--space-5);
 }
 
 .goalfx-sky {
@@ -503,7 +503,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 .goalfx-card {
     position: relative;
     width: min(100%, 360px);
-    padding: 24px 26px 20px;
+    padding: var(--space-6) var(--space-6) var(--space-5);
     border-radius: var(--radius-lg);
     background: #fff;
     text-align: center;
@@ -522,7 +522,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
     justify-content: center;
     width: 52px;
     height: 52px;
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
     border-radius: 50%;
     background: rgba(34, 160, 107, .12);
     color: #22a06b;
@@ -537,7 +537,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
     color: #1f2733;
 }
 .goalfx-line {
-    margin: 6px 0 18px;
+    margin: var(--space-2) 0 var(--space-4);
     font-size: var(--text-md);
     line-height: 1.55;
     color: #6b7684;
@@ -545,7 +545,7 @@ html.focus-mode .focus-progress { height: 10px; margin: 0; }
 
 .goalfx-go {
     width: 100%;
-    padding: 10px 16px;
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-md);
     background: #2C302E;
@@ -588,8 +588,8 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 .stat-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 0;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
     border-bottom: 1px solid #F1F3F5;
 }
 
@@ -623,14 +623,14 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
 }
 
 .add-task-btn {
     background: #2C302E;
     color: #FFFFFF;
     border: none;
-    padding: 8px 18px;
+    padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-lg);
     font-size: var(--text-md);
     font-weight: 500;
@@ -656,17 +656,17 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     background: #FAFAF8;
     border: 1.5px solid #EAEAEA;
     border-radius: var(--radius-md);
-    padding: 26px 24px;
-    margin-bottom: 24px;   /* min gap before the (bottom-anchored) Start button */
+    padding: var(--space-6) var(--space-6);
+    margin-bottom: var(--space-6);   /* min gap before the (bottom-anchored) Start button */
 }
 .focus-goal-title {
-    margin: 0 0 8px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-lg);
     font-weight: 700;
     color: #2C302E;
 }
 .focus-goal-q {
-    margin: 0 0 24px;
+    margin: 0 0 var(--space-6);
     font-size: var(--text-md);
     color: #6C757D;
 }
@@ -674,8 +674,8 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 28px;
-    margin-bottom: 28px;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
 }
 .focus-step-btn {
     width: 48px;
@@ -696,7 +696,7 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 .focus-amount {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: var(--space-2);
     min-width: 96px;
     justify-content: center;
 }
@@ -723,8 +723,8 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 12px;
-    margin-top: 10px;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
     font-size: var(--text-sm);
     color: #6C757D;
     font-variant-numeric: tabular-nums;
@@ -740,14 +740,14 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     color: #FFFFFF;
     border: none;
     border-radius: var(--radius-md);
-    padding: 16px;
+    padding: var(--space-4);
     font-size: var(--text-lg);
     font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: var(--space-2);
     transition: background-color 0.2s ease;
 }
 .focus-start-btn:hover { background: #454B48; }
@@ -762,8 +762,8 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    margin: 16px 0 0;
+    gap: var(--space-2);
+    margin: var(--space-4) 0 0;
     font-size: var(--text-sm);
     color: #6C757D;
 }
@@ -772,7 +772,7 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 .task-panels {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--space-5);
     width: 100%;
 }
 
@@ -803,7 +803,7 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
        overflow-x to auto, so the pop-away animation's brief scale-up would
        flash a horizontal scrollbar at the bottom of the card. */
     overflow-x: hidden;
-    padding-right: 4px;
+    padding-right: var(--space-1);
 }
 
 /* Tasks card sub-sections: "Todo Tasks" (not on calendar) above "Calendar Tasks".
@@ -811,13 +811,13 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 .task-groups {
     flex: 1 1 auto; min-height: 0;
     overflow-y: auto; overflow-x: hidden;
-    display: flex; flex-direction: column; gap: 16px;
-    padding-right: 4px;
+    display: flex; flex-direction: column; gap: var(--space-4);
+    padding-right: var(--space-1);
 }
 .task-groups .task-list { flex: none; overflow: visible; min-height: 0; padding-right: 0; }
 .task-subsection { display: flex; flex-direction: column; }
 .task-subhead {
-    margin: 0 0 8px; font-size: var(--text-xs); font-weight: 700;
+    margin: 0 0 var(--space-2); font-size: var(--text-xs); font-weight: 700;
     letter-spacing: .05em; text-transform: uppercase; color: #8a8f98;
 }
 .task-empty { margin: 2px 2px 0; font-size: var(--text-sm); color: #9aa0a6; font-style: italic; }
@@ -830,10 +830,10 @@ html[data-theme="dark"] .task-empty { color: #7a828c; }
     align-items: center;
     justify-content: space-between;
     background: #FFFFFF;
-    padding: 14px 16px;
+    padding: var(--space-4) var(--space-4);
     border: 2px solid #C4C4C4;
     border-radius: var(--radius-md);
-    margin-bottom: 10px;
+    margin-bottom: var(--space-2);
     transition: opacity 0.2s ease;
     animation: taskEnter 0.32s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
@@ -891,8 +891,8 @@ html[data-theme="dark"] .task-empty { color: #7a828c; }
 /* Hint at the bottom of the Add Task popup: calendar tasks are made on the
    calendar page, not here. */
 .calendar-hint {
-    margin: 18px 0 6px;
-    padding: 10px 12px;
+    margin: var(--space-4) 0 var(--space-2);
+    padding: var(--space-2) var(--space-3);
     font-size: var(--text-sm);
     line-height: 1.45;
     color: #6C757D;
@@ -916,7 +916,7 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
    #addTaskModal for the same reason. */
 #taskModal .xp-input-field {
     width: 56px;
-    padding: 6px 8px;
+    padding: var(--space-2) var(--space-2);
     border: 1.5px solid #D9D9D9;
     border-radius: var(--radius-md);
     background: #F8F9FA;
@@ -967,7 +967,7 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
 .task-left {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: var(--space-4);
     flex-grow: 1;
 }
 
@@ -1012,21 +1012,21 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
 /* Conflict modal: a new task overlaps an existing task/event by >75%. A blocking
    backdrop centers the prompt so the dashboard can't be used until one is deleted. */
 .conflict-backdrop {
-    position: fixed; inset: 0; z-index: 1000; padding: 20px;
+    position: fixed; inset: 0; z-index: 1000; padding: var(--space-5);
     display: flex; align-items: center; justify-content: center;
     background: rgba(16, 24, 40, .45);
 }
 .conflict-popup {
-    display: flex; flex-direction: column; gap: 12px;
+    display: flex; flex-direction: column; gap: var(--space-3);
     max-width: min(92vw, 440px); text-align: center;
-    background: #b0413e; color: #fff; padding: 20px 22px;
+    background: #b0413e; color: #fff; padding: var(--space-5) var(--space-6);
     border-radius: var(--radius-lg); font-size: var(--text-lg); font-weight: 600;
     box-shadow: var(--shadow-lg);
 }
-.conflict-popup-msg { line-height: 1.45; margin-bottom: 4px; }
+.conflict-popup-msg { line-height: 1.45; margin-bottom: var(--space-1); }
 .conflict-popup-btn {
     background: rgba(255, 255, 255, .22); color: #fff; border: none;
-    border-radius: var(--radius-md); padding: 10px 16px; cursor: pointer;
+    border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); cursor: pointer;
     font: inherit; font-weight: 700; width: 100%;
 }
 .conflict-popup-btn:hover { background: rgba(255, 255, 255, .32); }
@@ -1043,7 +1043,7 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
        carries 24px of its own margin, so this is the second half of the gap
        and the only half worth spending — 32 of it put the quote nearer the
        bottom edge of the page than the cards it belongs to. */
-    margin-top: 8px;
+    margin-top: var(--space-2);
     text-align: center;
     font-style: italic;
     color: #6C757D;
@@ -1215,7 +1215,7 @@ body.easter-shake {
 .dash .modal-content {
     background-color: #FFFFFF;
     margin: 10% auto;
-    padding: 32px;
+    padding: var(--space-8);
     border: 1px solid #EAEAEA;
     width: 90%;
     max-width: 500px;
@@ -1252,12 +1252,12 @@ body.easter-shake {
     margin-top: 0;
     font-size: var(--text-xl);
     font-weight: 700;
-    margin-bottom: 24px;
+    margin-bottom: var(--space-6);
 }
 
 .dash .modal-content input[type="text"] {
     width: 100%;
-    padding: 12px;
+    padding: var(--space-3);
     border-radius: var(--radius-md);
     border: 1px solid #CCCCCC;
     font-size: var(--text-md);
@@ -1272,14 +1272,14 @@ body.easter-shake {
     width: 100%;
     height: 1px;
     background: #EAEAEA;
-    margin: 24px 0;
+    margin: var(--space-6) 0;
 }
 
 /* Dropdown Grid Rules */
 .dash .dropdown-buttons {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-4);
     width: 100%;
 }
 
@@ -1287,7 +1287,7 @@ body.easter-shake {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
 .dash .or-text {
@@ -1298,7 +1298,7 @@ body.easter-shake {
 
 .dash .dropdown-btn {
     flex: 1;
-    padding: 12px 16px;
+    padding: var(--space-3) var(--space-4);
     background-color: #F8F9FA;
     border: 1px solid #CCCCCC;
     border-radius: var(--radius-md);
@@ -1315,14 +1315,14 @@ body.easter-shake {
     background-color: #F8F9FA;
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-md);
-    padding: 16px;
+    padding: var(--space-4);
     text-align: left;
     animation: slideDown 0.2s ease;
 }
 
 .dash .timer-inputs {
     display: flex;
-    gap: 12px;
+    gap: var(--space-3);
 }
 
 .dash .timer-input-group {
@@ -1339,7 +1339,7 @@ body.easter-shake {
 .dash .timer-input-group label {
     font-size: 0px;
     color: #6C757D;
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
 }
 
 .dash .timer-input-group input[type="range"] {
@@ -1348,26 +1348,26 @@ body.easter-shake {
 
 .dash .timer-input-group input[type="number"] {
     width: 100%;
-    padding: 6px;
+    padding: var(--space-2);
     border: 1px solid #CCCCCC;
     border-radius: var(--radius-sm);
     text-align: center;
-    margin-top: 6px;
+    margin-top: var(--space-2);
 }
 
 .dash .due-date-input {
     width: 100%;
-    padding: 10px;
+    padding: var(--space-2);
     border-radius: var(--radius-sm);
     border: 1px solid #CCCCCC;
 }
 
-.dash-modal-submit { margin-top: 24px; }
+.dash-modal-submit { margin-top: var(--space-6); }
 
 /* "Show on calendar" free-slot suggestion / overlap warning under the toggle. */
 .cal-suggest {
-    margin-top: 10px;
-    padding: 9px 12px;
+    margin-top: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     line-height: 1.4;
@@ -1408,7 +1408,7 @@ html[data-theme="dark"] .cal-suggest-bad .cal-suggest-link { color: #ff9297; }
     align-items: center;
     justify-content: space-between;
     background: #FFFFFF;
-    padding: 14px 16px;
+    padding: var(--space-4) var(--space-4);
     border: 2px solid #C4C4C4;
     transition: all 0.2s ease;
 }
@@ -1416,7 +1416,7 @@ html[data-theme="dark"] .cal-suggest-bad .cal-suggest-link { color: #ff9297; }
 .task-left {
     display: flex;
     align-items: center;
-    gap: 14px; /* Space between checkbox and text */
+    gap: var(--space-4); /* Space between checkbox and text */
     flex-grow: 1;
 }
 

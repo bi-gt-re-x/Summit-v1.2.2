@@ -109,7 +109,7 @@ body:has(.gx-page) .app-main {
 
     position: relative;
     min-height: 100vh;
-    padding: 28px 0 64px;
+    padding: var(--space-6) 0 var(--space-16);
     color: var(--gx-text);
     font-family: var(--font-sans);
 }
@@ -173,7 +173,7 @@ html[data-theme="dark"] .gx-page {
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: var(--space-6);
 }
 
 /* ---------- Atoms --------------------------------------------------------- */
@@ -182,7 +182,7 @@ html[data-theme="dark"] .gx-page {
 
 .gx-empty {
     margin: 0;
-    padding: 22px 20px;
+    padding: var(--space-6) var(--space-5);
     border: 1px dashed var(--gx-line);
     border-radius: var(--radius-lg);
     background: var(--gx-card-2);
@@ -192,7 +192,7 @@ html[data-theme="dark"] .gx-page {
 }
 
 .gx-hint {
-    margin: 6px 0 18px;
+    margin: var(--space-2) 0 var(--space-4);
     font-size: var(--text-xs);
     line-height: 1.6;
     color: var(--gx-faint);
@@ -201,8 +201,8 @@ html[data-theme="dark"] .gx-page {
 /* The subject field in the wizard and in the edit dialog. Both are a wrapper
    and nothing else: SubjectPicker carries its own styles (styles/subject-picker.css)
    and the only thing either dialog has to say is how much room it gets. */
-.gx-subject { margin: 4px 0 0; }
-.gm-subject { margin: 6px 0 0; }
+.gx-subject { margin: var(--space-1) 0 0; }
+.gm-subject { margin: var(--space-2) 0 0; }
 
 .gx-page .gx-cat  {
     display: inline-block;
@@ -232,7 +232,7 @@ html[data-theme="dark"] .gx-page {
     background: var(--gx-card);
     color: var(--gx-text);
     border-radius: var(--radius-full);
-    padding: 9px 18px;
+    padding: var(--space-2) var(--space-4);
     font: inherit; font-size: var(--text-sm); font-weight: 600;
     cursor: pointer;
     transition: background .15s, border-color .15s, opacity .15s;
@@ -257,7 +257,7 @@ html[data-theme="dark"] .gx-page {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 20px 24px;
+    gap: var(--space-5) var(--space-6);
     flex-wrap: wrap;
     padding: 20px var(--gx-pad);
     border: 1px solid var(--gx-line);
@@ -286,8 +286,8 @@ html[data-theme="dark"] .gx-page {
 .gx-head h1 {
     display: flex;
     align-items: center;
-    gap: 11px;
-    margin: 0 0 4px;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-1);
     font-size: clamp(1.6rem, 3vw, 2.1rem);
     font-weight: 700;
     letter-spacing: -.025em;
@@ -306,7 +306,7 @@ html[data-theme="dark"] .gx-page {
 }
 .gx-head-ico svg { width: 20px; height: 20px; }
 .gx-head p { margin: 0; font-size: var(--text-md); }
-.gx-head-tools { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.gx-head-tools { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 
 /* ---------- The state block, under the masthead title --------------------
    Three lines, and the sizes are the whole argument. The count is the largest
@@ -319,7 +319,7 @@ html[data-theme="dark"] .gx-page {
    It replaced a "Vision" pill and a greeting stacked on top of each other,
    which between them spent four lines and two font sizes saying one number
    twice. */
-.gx-state { margin: 13px 0 0; }
+.gx-state { margin: var(--space-3) 0 0; }
 .gx-state-count {
     margin: 0;
     font-size: var(--text-lg);
@@ -332,7 +332,7 @@ html[data-theme="dark"] .gx-page {
     /* Tabular, so the figure does not shuffle the words beside it when a goal
        is completed and 10 becomes 9. */
     font-variant-numeric: tabular-nums;
-    margin-right: 3px;
+    margin-right: var(--space-1);
 }
 .gx-state-kinds {
     margin: 2px 0 0;
@@ -340,7 +340,7 @@ html[data-theme="dark"] .gx-page {
     color: var(--gx-muted);
 }
 .gx-state-none {
-    margin: 13px 0 0;
+    margin: var(--space-3) 0 0;
     font-size: var(--text-md);
     color: var(--gx-muted);
 }
@@ -356,9 +356,9 @@ html[data-theme="dark"] .gx-page {
 .gx-state-clear {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    margin: 7px 0 0;
-    padding: 4px 10px 4px 8px;
+    gap: var(--space-2);
+    margin: var(--space-2) 0 0;
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-2);
     border: 1px solid transparent;
     border-radius: var(--radius-full);
     background: none;
@@ -376,7 +376,7 @@ html[data-theme="dark"] .gx-page {
     background: currentColor;
     flex: none;
 }
-.gx-state-clear { color: var(--gx-good); padding-left: 8px; }
+.gx-state-clear { color: var(--gx-good); padding-left: var(--space-2); }
 
 button.gx-state-attn {
     cursor: pointer;
@@ -404,9 +404,9 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--space-3);
     flex-wrap: wrap;
-    padding: 10px 14px;
+    padding: var(--space-2) var(--space-4);
     border: 1px solid color-mix(in srgb, var(--gx-watch) 30%, transparent);
     border-radius: var(--gx-radius);
     background: color-mix(in srgb, var(--gx-watch) 9%, var(--gx-card));
@@ -419,12 +419,12 @@ button.gx-state-attn.is-on {
 }
 
 /* ---------- Bands --------------------------------------------------------- */
-.gx-band { display: flex; flex-direction: column; gap: 13px; min-width: 0; }
+.gx-band { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
 .gx-band-head {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 16px;
+    gap: var(--space-4);
 }
 .gx-band-head h2 {
     margin: 0 0 2px;
@@ -440,7 +440,7 @@ button.gx-state-attn.is-on {
 .gx-two {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 20px;
+    gap: var(--space-5);
     align-items: start;
 }
 
@@ -453,7 +453,7 @@ button.gx-state-attn.is-on {
 .gx-strip {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
+    gap: var(--space-3);
 }
 /* The strip carried five tones and painted none of them on the card itself.
    Five identical boxes in a row is exactly the case where colour does the most
@@ -462,8 +462,8 @@ button.gx-state-attn.is-on {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    padding: 15px 17px 14px;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-4) var(--space-4);
     background:
         linear-gradient(
             165deg,
@@ -480,7 +480,7 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 8px;
+    gap: var(--space-2);
     min-height: 20px;
 }
 .gx-stat-label { font-size: var(--text-xs); font-weight: 600; color: var(--gx-muted); }
@@ -572,9 +572,9 @@ button.gx-state-attn.is-on {
 .gx-page .gx-health  {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     flex: none;
-    padding: 4px 11px;
+    padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-md);
     font-size: var(--text-xs);
     font-weight: 700;
@@ -611,7 +611,7 @@ button.gx-state-attn.is-on {
    ProgressBar), and a second easing on top of that would put the bar somewhere
    its own reading is not. */
 
-.gx-steps { display: flex; gap: 3px; }
+.gx-steps { display: flex; gap: var(--space-1); }
 .gx-step { flex: 1 1 0; height: 5px; min-width: 4px; border-radius: 3px; background: var(--gx-line); }
 .gx-step.is-done { background: var(--tone, var(--gx-violet)); }
 .gx-step.is-next { background: color-mix(in srgb, var(--tone, var(--gx-violet)) 45%, transparent); }
@@ -620,7 +620,7 @@ button.gx-state-attn.is-on {
 .gx-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 14px;
+    gap: var(--space-4);
 }
 /* Every card carried `--tone` already and spent it on a 34px tile, a hairline
    sparkline and a hover border — so a screen of goals came out as a grid of
@@ -638,8 +638,8 @@ button.gx-state-attn.is-on {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 19px 18px 34px;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-4) var(--space-8);
     background:
         linear-gradient(
             165deg,
@@ -671,7 +671,7 @@ button.gx-state-attn.is-on {
 /* Same treatment as the strip: the line is the floor of the card. */
 .gx-card .gx-spark { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 40px; opacity: 1; }
 
-.gx-card-head { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.gx-card-head { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 .gx-card-title { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .gx-card-title h3 {
     margin: 0;
@@ -684,7 +684,7 @@ button.gx-state-attn.is-on {
     white-space: nowrap;
 }
 
-.gx-card-bar { display: flex; align-items: center; gap: 11px; }
+.gx-card-bar { display: flex; align-items: center; gap: var(--space-3); }
 /* The biggest number on the card, and now in the card's colour rather than in
    the text colour every other number on the page uses. It is the one figure a
    reader is scanning the grid for, so it is the one worth making findable. */
@@ -700,18 +700,18 @@ button.gx-state-attn.is-on {
 
 .gx-card-figures { margin: -4px 0 0; font-size: var(--text-sm); color: var(--gx-muted); }
 
-.gx-card-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.gx-card-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .gx-card-facts li {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     font-size: var(--text-xs);
     color: var(--gx-muted);
     min-width: 0;
 }
 .gx-card-facts svg { flex: none; color: var(--gx-faint); }
 
-.gx-card-foot { display: flex; align-items: center; gap: 8px; }
+.gx-card-foot { display: flex; align-items: center; gap: var(--space-2); }
 
 .gx-rest { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .gx-rest button {
@@ -719,8 +719,8 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 10px 14px;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -769,7 +769,7 @@ button.gx-state-attn.is-on {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-4);
 }
 /* Same wash as the priority cards, and softer: a ladder is a tall card full of
    checkpoint sentences, so the tint stops well before the reading starts. The
@@ -780,8 +780,8 @@ button.gx-state-attn.is-on {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 17px 19px 16px;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5) var(--space-4);
     background:
         linear-gradient(
             170deg,
@@ -822,7 +822,7 @@ button.gx-state-attn.is-on {
     to { opacity: 1; transform: none; }
 }
 
-.gx-ladder-head { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.gx-ladder-head { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 .gx-ladder-name {
     flex: 1;
     min-width: 0;
@@ -879,12 +879,12 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: 24px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 11px;
-    padding: 5px 0;
+    gap: var(--space-3);
+    padding: var(--space-1) 0;
     font-size: var(--text-sm);
     min-width: 0;
 }
-.gx-rung.is-empty { grid-template-columns: 1fr; padding: 8px 0 4px; }
+.gx-rung.is-empty { grid-template-columns: 1fr; padding: var(--space-2) 0 var(--space-1); }
 .gx-rung-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gx-rung-when { font-size: var(--text-2xs); white-space: nowrap; }
 
@@ -932,7 +932,7 @@ button.gx-state-attn.is-on {
 .gx-rung-input {
     grid-column: 2 / -1;
     width: 100%;
-    padding: 7px 10px;
+    padding: var(--space-2) var(--space-2);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
@@ -943,7 +943,7 @@ button.gx-state-attn.is-on {
 .gx-rung-input:focus { outline: 2px solid var(--tone); outline-offset: 1px; border-color: transparent; }
 .gx-rung-input::placeholder { color: var(--gx-faint); }
 
-.gx-ladder-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.gx-ladder-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .gx-ladder-tools .gx-quiet { font-size: var(--text-xs); }
 .gx-ladder-note { margin: 0; font-size: var(--text-xs); color: var(--gx-bad); }
 
@@ -951,13 +951,13 @@ button.gx-state-attn.is-on {
 .gx-counts {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    gap: var(--space-3);
 }
 .gx-count {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    padding: 16px 18px;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-4);
     background: var(--gx-card);
     border: 1px solid var(--gx-line);
     border-radius: var(--gx-radius);
@@ -971,7 +971,7 @@ button.gx-state-attn.is-on {
 .gx-rails {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 14px;
+    gap: var(--space-4);
     align-items: start;
 }
 
@@ -989,27 +989,27 @@ button.gx-state-attn.is-on {
    end of a line. */
 .gx-chain {
     list-style: none;
-    margin: 6px 0 0;
+    margin: var(--space-2) 0 0;
     padding: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 4px 0;
+    gap: var(--space-1) 0;
 }
 .gx-link { display: flex; align-items: center; min-width: 0; }
 .gx-link:not(:first-child)::before {
     content: '→';
     flex: none;
-    padding: 0 5px;
+    padding: 0 var(--space-1);
     font-size: var(--text-2xs);
     color: var(--gx-faint);
 }
 .gx-link button {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: var(--space-1);
     max-width: 190px;
-    padding: 4px 9px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid transparent;
     border-radius: var(--radius-full);
     background: var(--gx-card-2);
@@ -1058,7 +1058,7 @@ button.gx-state-attn.is-on {
     font-weight: 600;
 }
 .gx-rail {
-    padding: 15px 18px 12px;
+    padding: var(--space-4) var(--space-4) var(--space-3);
     background: var(--gx-card);
     border: 1px solid var(--gx-line);
     border-radius: var(--gx-radius);
@@ -1070,8 +1070,8 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 4px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-1);
     padding: 0;
     border: 0;
     background: transparent;
@@ -1097,7 +1097,7 @@ button.gx-state-attn.is-on {
    rails, the counts, the priority grid and the overflow list under it would
    otherwise be cards inside a card. */
 .gx-band > :not(.gx-band-head):not(.gx-cards):not(.gx-rest):not(.gx-ladders):not(.gx-rails):not(.gx-counts):not(.gx-strip):not(.gx-sys-lead) {
-    padding: 16px 18px;
+    padding: var(--space-4) var(--space-4);
     background: var(--gx-card);
     border: 1px solid var(--gx-line);
     border-radius: var(--gx-radius);
@@ -1112,15 +1112,15 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 12px;
-    padding: 11px 12px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
     border-radius: var(--radius-md);
 }
 .gx-next-row:hover { background: var(--gx-card-2); }
 .gx-next-body {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: var(--space-1);
     border: 0; background: none; padding: 0;
     text-align: left;
     cursor: pointer;
@@ -1129,7 +1129,7 @@ button.gx-state-attn.is-on {
 }
 .gx-next-title { font-size: var(--text-md); font-weight: 600; color: var(--gx-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gx-next-goal { font-size: var(--text-2xs); color: var(--gx-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gx-next-bar { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.gx-next-bar { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); }
 .gx-next-bar .gx-track { flex: 1; max-width: 190px; }
 .gx-next-count { font-size: var(--text-2xs); font-weight: 600; color: var(--gx-muted); font-variant-numeric: tabular-nums; }
 .gx-next-when { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; white-space: nowrap; }
@@ -1137,7 +1137,7 @@ button.gx-state-attn.is-on {
 .gx-next-when span { font-size: var(--text-2xs); color: var(--gx-faint); }
 
 /* ---------- Health distribution ------------------------------------------ */
-.gx-dist { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.gx-dist { display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap; }
 .gx-dist-ring { position: relative; width: 132px; height: 132px; flex: none; }
 .gx-dist-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
 .gx-dist-ring circle { fill: none; stroke-width: 5; }
@@ -1158,8 +1158,8 @@ button.gx-state-attn.is-on {
 .gx-dist-centre strong { font-size: var(--text-3xl); font-weight: 700; letter-spacing: -.03em; color: var(--gx-text); }
 .gx-dist-centre span { font-size: var(--text-2xs); color: var(--gx-faint); }
 
-.gx-dist-key { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 10px; }
-.gx-dist-key li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: var(--text-sm); }
+.gx-dist-key { list-style: none; margin: 0; padding: 0; flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: var(--space-2); }
+.gx-dist-key li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: var(--space-2); font-size: var(--text-sm); }
 .gx-dist-key i { width: 9px; height: 9px; border-radius: 3px; }
 .gx-dist-key i.is-on-track    { background: var(--gx-good); }
 .gx-dist-key i.is-at-risk     { background: var(--gx-watch); }
@@ -1182,13 +1182,13 @@ button.gx-state-attn.is-on {
    The dead half came later and won, turning this grid into a column flex —
    the icon stacked over the text and every row measured itself. It is gone,
    and these names belong to this component alone. */
-.gx-notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.gx-notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
 .gx-note {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     text-align: left;
 }
@@ -1215,8 +1215,8 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: 24px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 11px;
-    padding: 10px 12px;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
 }
 .gx-done-row:hover { background: var(--gx-card-2); }
@@ -1233,7 +1233,7 @@ button.gx-state-attn.is-on {
 .gx-done-body .gx-quiet { font-size: var(--text-2xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .gx-tag {
     flex: none;
-    padding: 3px 9px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     font-size: var(--text-2xs);
     font-weight: 700;
@@ -1249,8 +1249,8 @@ button.gx-state-attn.is-on {
 .gx-cta {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 16px 18px;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-4);
     border-radius: var(--gx-radius);
     background: linear-gradient(
         100deg,
@@ -1282,8 +1282,8 @@ button.gx-state-attn.is-on {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 26px 28px 40px;
+    gap: var(--space-4);
+    padding: var(--space-6) var(--space-6) var(--space-10);
     background: var(--gx-card-2, #fff);
     border-left: 1px solid var(--gx-line);
     color: var(--gx-text);
@@ -1291,9 +1291,9 @@ button.gx-state-attn.is-on {
 }
 @keyframes gx-slide { from { transform: translateX(28px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-.gx-drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.gx-drawer-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .gx-drawer-head h2 {
-    margin: 4px 0 6px;
+    margin: var(--space-1) 0 var(--space-2);
     font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.02em;
@@ -1314,7 +1314,7 @@ button.gx-state-attn.is-on {
 
 .gx-why {
     margin: 0;
-    padding: 14px 16px;
+    padding: var(--space-4) var(--space-4);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tone, var(--gx-violet)) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--tone, var(--gx-violet)) 22%, transparent);
@@ -1330,36 +1330,36 @@ button.gx-state-attn.is-on {
     letter-spacing: .07em;
     text-transform: uppercase;
     color: var(--tone, var(--gx-violet));
-    margin-bottom: 5px;
+    margin-bottom: var(--space-1);
 }
 
 .gx-panel {
     display: flex;
     flex-direction: column;
-    gap: 13px;
-    padding: 18px 20px;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
     background: var(--gx-card);
     border: 1px solid var(--gx-line);
     border-radius: var(--gx-radius);
 }
-.gx-panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.gx-panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .gx-panel-head h3 { margin: 0; font-size: var(--text-md); font-weight: 700; }
 .gx-panel-head .gx-quiet { font-size: var(--text-xs); }
 
-.gx-detail-progress { display: flex; align-items: center; gap: 16px; }
-.gx-detail-progress > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.gx-detail-progress { display: flex; align-items: center; gap: var(--space-4); }
+.gx-detail-progress > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .gx-detail-progress p { margin: 0; font-size: var(--text-sm); }
 .gx-detail-reason { margin: 0; font-size: var(--text-sm); line-height: 1.55; }
 
-.gx-value-row { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+.gx-value-row { display: flex; align-items: flex-end; gap: var(--space-2); flex-wrap: wrap; }
 .gx-value-row label { font-size: var(--text-xs); color: var(--gx-muted); }
 
 .gx-facts {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
+    gap: var(--space-2);
     margin: 0;
-    padding-top: 12px;
+    padding-top: var(--space-3);
     border-top: 1px solid var(--gx-line-soft);
 }
 .gx-facts > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -1372,8 +1372,8 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: 26px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 11px;
-    padding: 9px 0;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
     border-bottom: 1px solid var(--gx-line-soft);
 }
 .gx-ms:last-child { border-bottom: 0; }
@@ -1415,8 +1415,8 @@ button.gx-state-attn.is-on {
     flex-direction: column;
     align-items: flex-start;
     gap: 1px;
-    padding: 4px 7px;
-    margin: -4px -7px;
+    padding: var(--space-1) var(--space-2);
+    margin: -4px -8px;
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -1440,17 +1440,17 @@ button.gx-state-attn.is-on {
    cards, and the checkpoints are the list here — the steps are detail. */
 .gx-checklist {
     grid-column: 2 / -1;
-    margin: 4px 0 2px;
+    margin: var(--space-1) 0 2px;
 }
 .gx-checklist-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--space-2);
 }
 .gx-checklist-head .gx-quiet { font-size: var(--text-2xs); }
 .gx-page .gx-checklist-add  {
-    padding: 2px 6px;
+    padding: 2px var(--space-2);
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -1462,13 +1462,13 @@ button.gx-state-attn.is-on {
 .gx-page .gx-checklist-add:hover:not(:disabled) { background: var(--gx-line-soft); color: var(--gx-text); }
 .gx-page .gx-checklist-add:disabled { opacity: .35; cursor: default; }
 
-.gx-checklist-list { list-style: none; margin: 5px 0 0; padding: 0; }
+.gx-checklist-list { list-style: none; margin: var(--space-1) 0 0; padding: 0; }
 .gx-cstep {
     display: grid;
     grid-template-columns: 18px minmax(0, 1fr) auto 20px;
     align-items: center;
-    gap: 9px;
-    padding: 3px 0;
+    gap: var(--space-2);
+    padding: var(--space-1) 0;
 }
 .gx-page .gx-cstep-tick  {
     width: 16px; height: 16px;
@@ -1492,8 +1492,8 @@ button.gx-state-attn.is-on {
 /* The text is a button so a click opens the editor. Styled as text, for the
    same reason the checkpoint body above is. */
 .gx-page .gx-cstep-text  {
-    padding: 2px 5px;
-    margin: 0 -5px;
+    padding: 2px var(--space-1);
+    margin: 0 -4px;
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -1513,8 +1513,8 @@ button.gx-state-attn.is-on {
 
 .gx-page .gx-cstep-input  {
     width: 100%;
-    padding: 2px 5px;
-    margin: 0 -5px;
+    padding: 2px var(--space-1);
+    margin: 0 -4px;
     border: 1px solid var(--gx-accent, var(--gx-line));
     border-radius: var(--radius-sm);
     background: var(--gx-card);
@@ -1554,7 +1554,7 @@ button.gx-state-attn.is-on {
     display: inline-grid;
     place-items: center;
     min-width: 54px;
-    padding: 2px 6px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
     font-size: var(--text-2xs);
     color: var(--gx-faint);
@@ -1597,9 +1597,9 @@ button.gx-state-attn.is-on {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 10px 14px;
-    margin: 0 0 12px;
-    padding: 12px 13px;
+    gap: var(--space-2) var(--space-4);
+    margin: 0 0 var(--space-3);
+    padding: var(--space-3) var(--space-3);
     border: 1px dashed var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
@@ -1612,20 +1612,20 @@ button.gx-state-attn.is-on {
     color: var(--gx-muted);
 }
 
-.gx-ms-add { display: flex; gap: 9px; }
+.gx-ms-add { display: flex; gap: var(--space-2); }
 .gx-ms-add input { flex: 1; min-width: 0; }
 
 /* ---------- The readings -------------------------------------------------- */
 .gx-readings {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 12px;
+    gap: var(--space-3);
 }
 .gx-readings > div {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 12px 13px;
+    padding: var(--space-3) var(--space-3);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
     border: 1px solid var(--gx-line);
@@ -1639,7 +1639,7 @@ button.gx-state-attn.is-on {
 
 .gx-bottleneck {
     margin: 0;
-    padding: 12px 14px;
+    padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-watch) 10%, transparent);
     border: 1px solid color-mix(in srgb, var(--gx-watch) 26%, transparent);
@@ -1656,7 +1656,7 @@ button.gx-state-attn.is-on {
    pages is that somebody can tell which is which — so the panel says so twice:
    a chip in its header while the read is on screen, and a caveat under it. */
 .gx-read-mark {
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--gx-violet) 13%, transparent);
     color: var(--gx-violet);
@@ -1667,31 +1667,31 @@ button.gx-state-attn.is-on {
 }
 .gx-read-gate,
 .gx-read-lead {
-    margin: 0 0 10px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--gx-muted);
 }
 .gx-read-gate strong { color: var(--gx-text); font-weight: 700; }
 .gx-read-say {
-    margin: 0 0 14px;
+    margin: 0 0 var(--space-4);
     font-size: var(--text-md);
     line-height: 1.65;
     color: var(--gx-text);
 }
-.gx-read-block { margin-bottom: 14px; }
+.gx-read-block { margin-bottom: var(--space-4); }
 .gx-read-block h4 {
-    margin: 0 0 6px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--gx-muted);
 }
-.gx-read-week { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.gx-read-week { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
 .gx-read-week > li {
     position: relative;
-    padding: 7px 11px 7px 24px;
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-6);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
     font-size: var(--text-sm);
@@ -1707,9 +1707,9 @@ button.gx-state-attn.is-on {
     border-radius: 50%;
     background: var(--gx-violet);
 }
-.gx-read-phases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.gx-read-phases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .gx-read-phases > li { display: flex; flex-direction: column; gap: 1px; }
-.gx-read-phase-head { display: flex; align-items: baseline; gap: 8px; }
+.gx-read-phase-head { display: flex; align-items: baseline; gap: var(--space-2); }
 .gx-read-phase-head strong { font-size: var(--text-sm); font-weight: 700; }
 .gx-read-phase-head em {
     font-style: normal;
@@ -1720,7 +1720,7 @@ button.gx-state-attn.is-on {
 }
 .gx-read-phases .gx-quiet { font-size: var(--text-xs); line-height: 1.5; }
 .gx-read-failed {
-    margin: 10px 0 0;
+    margin: var(--space-2) 0 0;
     font-size: var(--text-xs);
     color: var(--gx-bad);
 }
@@ -1728,12 +1728,12 @@ button.gx-state-attn.is-on {
 .gx-caveat { margin: 0; font-size: var(--text-2xs); line-height: 1.55; color: var(--gx-faint); }
 
 /* ---------- Recommendations ----------------------------------------------- */
-.gx-actions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.gx-actions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .gx-action {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    padding: 13px 15px;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
     border: 1px solid var(--gx-line);
@@ -1746,7 +1746,7 @@ button.gx-state-attn.is-on {
 .gx-action .gx-quiet { font-size: var(--text-xs); line-height: 1.55; }
 .gx-effect { font-size: var(--text-2xs); color: var(--gx-faint); font-style: italic; }
 
-.gx-drawer-foot { display: flex; gap: 10px; justify-content: flex-end; padding-top: 4px; }
+.gx-drawer-foot { display: flex; gap: var(--space-2); justify-content: flex-end; padding-top: var(--space-1); }
 
 /* ---------- Fields -------------------------------------------------------- */
 .gx-page input[type="text"],
@@ -1756,7 +1756,7 @@ button.gx-state-attn.is-on {
 .gx-page textarea  {
     width: 100%;
     box-sizing: border-box;
-    padding: 10px 13px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card);
@@ -1772,11 +1772,11 @@ button.gx-state-attn.is-on {
     border-color: var(--gx-violet);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--gx-violet) 18%, transparent);
 }
-.gx-page label { display: block; font-size: var(--text-xs); font-weight: 600; color: var(--gx-muted); margin-bottom: 6px; }
+.gx-page label { display: block; font-size: var(--text-xs); font-weight: 600; color: var(--gx-muted); margin-bottom: var(--space-2); }
 .gx-page input[type="range"] { accent-color: var(--gx-violet); padding: 0; border: 0; background: none; }
 
 /* ---------- The wizard ---------------------------------------------------- */
-.gx-drawer-backdrop:has(.gx-wizard) { justify-content: center; align-items: center; padding: 20px; }
+.gx-drawer-backdrop:has(.gx-wizard) { justify-content: center; align-items: center; padding: var(--space-5); }
 
 .gx-wizard {
     width: min(96vw, 620px);
@@ -1793,13 +1793,13 @@ button.gx-state-attn.is-on {
 }
 @keyframes gx-rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-.gx-wizard-head { padding: 24px 26px 0; position: relative; }
+.gx-wizard-head { padding: var(--space-6) var(--space-6) 0; position: relative; }
 .gx-wizard-head h2 {
-    margin: 6px 0 0;
+    margin: var(--space-2) 0 0;
     font-size: var(--text-xl);
     font-weight: 700;
     letter-spacing: -.02em;
-    padding-right: 40px;
+    padding-right: var(--space-10);
 }
 .gx-wizard-head .gx-close { position: absolute; top: 18px; right: 18px; }
 .gx-wizard-step {
@@ -1810,28 +1810,28 @@ button.gx-state-attn.is-on {
     color: var(--gx-violet);
 }
 
-.gx-wizard-rail { display: flex; gap: 4px; padding: 18px 26px 0; }
+.gx-wizard-rail { display: flex; gap: var(--space-1); padding: var(--space-4) var(--space-6) 0; }
 .gx-wizard-rail i { flex: 1; height: 3px; border-radius: 2px; background: var(--gx-line); transition: background .2s; }
 .gx-wizard-rail i.is-on { background: var(--gx-violet); }
 
-.gx-wizard-body { padding: 22px 26px 6px; overflow-y: auto; flex: 1; min-height: 0; }
-.gx-wizard-body > label:not(:first-child) { margin-top: 16px; }
+.gx-wizard-body { padding: var(--space-6) var(--space-6) var(--space-2); overflow-y: auto; flex: 1; min-height: 0; }
+.gx-wizard-body > label:not(:first-child) { margin-top: var(--space-4); }
 
 .gx-wizard-foot {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
-    padding: 16px 26px 22px;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6) var(--space-6);
     border-top: 1px solid var(--gx-line-soft);
 }
 
-.gx-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.gx-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .gx-page .gx-chip  {
     border: 1px solid var(--gx-line);
     background: var(--gx-card-2);
     color: var(--gx-muted);
     border-radius: var(--radius-full);
-    padding: 6px 14px;
+    padding: var(--space-2) var(--space-4);
     font: inherit; font-size: var(--text-sm); font-weight: 600;
     cursor: pointer;
 }
@@ -1841,13 +1841,13 @@ button.gx-state-attn.is-on {
     color: var(--tone);
 }
 
-.gx-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+.gx-choices { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
 .gx-page .gx-choice  {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--space-1);
     text-align: left;
-    padding: 15px 16px;
+    padding: var(--space-4) var(--space-4);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
@@ -1859,16 +1859,16 @@ button.gx-state-attn.is-on {
 .gx-page .gx-choice strong { font-size: var(--text-md); font-weight: 700; }
 .gx-page .gx-choice span { font-size: var(--text-xs); line-height: 1.5; color: var(--gx-muted); }
 
-.gx-number-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
-.gx-number-row label { margin-bottom: 5px; }
+.gx-number-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin-top: var(--space-4); }
+.gx-number-row label { margin-bottom: var(--space-1); }
 
-.gx-draft-list { list-style: none; margin: 0 0 12px; padding: 0; display: flex; flex-direction: column; gap: 6px; counter-reset: gx-step; }
+.gx-draft-list { list-style: none; margin: 0 0 var(--space-3); padding: 0; display: flex; flex-direction: column; gap: var(--space-2); counter-reset: gx-step; }
 .gx-draft-list li {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 10px 13px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
     border: 1px solid var(--gx-line);
@@ -1897,9 +1897,9 @@ button.gx-state-attn.is-on {
 
 /* The model's button on the checkpoints step, and what it says when it could
    not draft anything. */
-.gx-ms-suggest { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 12px; }
+.gx-ms-suggest { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-bottom: var(--space-3); }
 .gx-ms-suggest .gx-quiet { font-size: var(--text-xs); }
-.gx-ms-problem { margin: 0 0 12px; font-size: var(--text-xs); line-height: 1.5; color: var(--gx-bad); }
+.gx-ms-problem { margin: 0 0 var(--space-3); font-size: var(--text-xs); line-height: 1.5; color: var(--gx-bad); }
 
 /* ---------- Drafting the whole goal ---------------------------------------
    The box at the top of the wizard's first step. Set apart from the fields
@@ -1908,8 +1908,8 @@ button.gx-state-attn.is-on {
    the four below it would read as another thing to answer rather than as the
    way past them. */
 .gx-idea {
-    margin: 0 0 20px;
-    padding: 13px 14px 11px;
+    margin: 0 0 var(--space-5);
+    padding: var(--space-3) var(--space-4) var(--space-3);
     border: 1px solid color-mix(in srgb, var(--gx-violet) var(--gx-edge), transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-violet) var(--gx-wash-soft), transparent);
@@ -1918,7 +1918,7 @@ button.gx-state-attn.is-on {
 .gx-idea-row {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: var(--space-2);
     flex-wrap: wrap;
 }
 .gx-idea-row input { flex: 1 1 220px; min-width: 0; }
@@ -1927,18 +1927,18 @@ button.gx-state-attn.is-on {
    box reads as a submit for a form this is not part of. */
 .gx-idea-row .gx-ai { align-self: center; flex: none; }
 .gx-idea .gx-hint { margin-bottom: 0; }
-.gx-idea .gx-ms-problem { margin: 8px 0 0; }
+.gx-idea .gx-ms-problem { margin: var(--space-2) 0 0; }
 
 /* ---------- The system goal setup ---------------------------------------- */
 /* The four counters, as a list: each needs a sentence on what exactly it
    counts, and four of those do not fit two-up. See SystemGoalWizard. */
-.gx-syspick { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.gx-syspick { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .gx-page .gx-syspick-row {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
@@ -1957,7 +1957,7 @@ button.gx-state-attn.is-on {
 .gx-syspick-text span { font-size: var(--text-xs); line-height: 1.45; color: var(--gx-muted); }
 .gx-syspick-note {
     flex: none;
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--gx-line-soft);
     color: var(--gx-muted);
@@ -1978,19 +1978,19 @@ button.gx-state-attn.is-on {
     .gx-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .gx-choices, .gx-number-row { grid-template-columns: 1fr; }
     .gx-head-tools { width: 100%; }
-    .gx-drawer { padding: 20px 18px 34px; }
+    .gx-drawer { padding: var(--space-5) var(--space-4) var(--space-8); }
     .gx-cta { flex-wrap: wrap; }
     .gx-cta .gx-btn { width: 100%; }
     /* The percentage moves under the title rather than shrinking to fit
        beside it — a goal's name is the part that has to stay readable. */
     .gx-ladder-head { flex-wrap: wrap; }
-    .gx-ladder-pct { flex-direction: row; align-items: baseline; gap: 8px; }
+    .gx-ladder-pct { flex-direction: row; align-items: baseline; gap: var(--space-2); }
     .gx-counts { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 460px) {
     .gx-strip { grid-template-columns: minmax(0, 1fr); }
-    .gx-ladder { padding: 15px 14px 14px; }
-    .gx-rail { padding: 14px 14px 10px; }
+    .gx-ladder { padding: var(--space-4) var(--space-4) var(--space-4); }
+    .gx-rail { padding: var(--space-4) var(--space-4) var(--space-2); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2021,14 +2021,14 @@ button.gx-state-attn.is-on {
     gap: clamp(16px, 1.6vw, 26px);
     align-items: start;
 }
-.gx-main { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.gx-main { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
 
 .gx-rail-col {
     position: sticky;
     top: calc(var(--topnav-h, 0px) + 18px);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
     min-width: 0;
 }
 
@@ -2036,15 +2036,15 @@ button.gx-state-attn.is-on {
 .gx-tabs {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4px;
-    padding: 4px;
+    gap: var(--space-1);
+    padding: var(--space-1);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
 }
 .gx-tab {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 8px 10px;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: none;
@@ -2061,7 +2061,7 @@ button.gx-state-attn.is-on {
 }
 .gx-tab-count {
     min-width: 18px;
-    padding: 1px 5px;
+    padding: 1px var(--space-1);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--gx-violet) 13%, transparent);
     color: var(--gx-violet);
@@ -2070,7 +2070,7 @@ button.gx-state-attn.is-on {
 
 /* ---------- The panel under them ------------------------------------------ */
 .gx-panel {
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: column; gap: var(--space-2);
     padding: 14px var(--gx-pad);
     border: 1px solid var(--gx-line);
     border-radius: var(--gx-radius);
@@ -2085,7 +2085,7 @@ button.gx-state-attn.is-on {
 }
 .gx-panel-note { text-align: center; }
 .gx-panel-cta {
-    padding: 9px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 1px dashed var(--gx-line);
     border-radius: var(--radius-md);
     background: none;
@@ -2103,8 +2103,8 @@ button.gx-state-attn.is-on {
 .gx-raillist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .gx-railrow {
     width: 100%;
-    display: flex; flex-direction: column; gap: 5px;
-    padding: 9px 10px;
+    display: flex; flex-direction: column; gap: var(--space-1);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: none;
@@ -2114,7 +2114,7 @@ button.gx-state-attn.is-on {
     transition: background .15s ease;
 }
 .gx-railrow:hover { background: var(--gx-card-2); }
-.gx-railrow-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.gx-railrow-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
 .gx-railrow-title {
     color: var(--gx-text); font-size: var(--text-sm); font-weight: 600;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
@@ -2145,7 +2145,7 @@ button.gx-state-attn.is-on {
    the list this replaced was protecting, and it survives the change; what does
    not survive is four counters dressed as four more goals. */
 .gx-sys-lead {
-    margin: 0 0 12px;
+    margin: 0 0 var(--space-3);
     font-size: var(--text-sm);
     line-height: 1.55;
     color: var(--gx-muted);
@@ -2169,9 +2169,9 @@ button.gx-state-attn.is-on {
 .gx-metric {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
     min-width: 0;
-    padding: 14px 16px 13px;
+    padding: var(--space-4) var(--space-4) var(--space-3);
     background: var(--gx-card-2);
 }
 .gx-metric.is-done { background: color-mix(in srgb, var(--gx-good) 7%, var(--gx-card-2)); }
@@ -2179,7 +2179,7 @@ button.gx-state-attn.is-on {
 .gx-metric-head {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
@@ -2237,7 +2237,7 @@ button.gx-state-attn.is-on {
 }
 .gx-metric-pct.is-done { color: var(--gx-good); }
 
-.gx-metric-do { display: flex; gap: 12px; margin-top: 2px; white-space: nowrap; }
+.gx-metric-do { display: flex; gap: var(--space-3); margin-top: 2px; white-space: nowrap; }
 .gx-metric-do button {
     border: 0; background: none; padding: 0;
     color: var(--gx-muted); font: inherit; font-size: var(--text-xs); font-weight: 600;
@@ -2246,7 +2246,7 @@ button.gx-state-attn.is-on {
 .gx-metric-do button:hover { color: var(--gx-text); text-decoration: underline; }
 .gx-metric-do button.is-bad:hover { color: var(--gx-bad); }
 
-.gx-sys-track { margin-top: 3px; height: 6px; border-radius: var(--radius-full); background: var(--gx-line-soft); overflow: hidden; }
+.gx-sys-track { margin-top: var(--space-1); height: 6px; border-radius: var(--radius-full); background: var(--gx-line-soft); overflow: hidden; }
 .gx-sys-fill { display: block; height: 100%; border-radius: var(--radius-full); transition: width .3s ease; }
 .gx-sys-fill.is-xp     { background: var(--gx-violet); }
 .gx-sys-fill.is-streak { background: var(--gx-amber); }
@@ -2256,9 +2256,9 @@ button.gx-state-attn.is-on {
 /* The way to another one, under the list rather than in the page header: the
    header's button makes the kind of goal the tab you are on is about. */
 .gx-page .gx-sys-add {
-    margin-top: 10px;
+    margin-top: var(--space-2);
     width: 100%;
-    padding: 11px 16px;
+    padding: var(--space-3) var(--space-4);
     border: 1px dashed var(--gx-line);
     border-radius: var(--radius-md);
     background: transparent;
@@ -2293,9 +2293,9 @@ button.gx-state-attn.is-on {
 .gx-wizard-tip {
     display: flex;
     align-items: flex-start;
-    gap: 9px;
-    margin: 0 0 16px;
-    padding: 11px 13px;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-4);
+    padding: var(--space-3) var(--space-3);
     border: 1px solid color-mix(in srgb, var(--gx-violet) 26%, transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-violet) 7%, transparent);
@@ -2320,16 +2320,16 @@ button.gx-state-attn.is-on {
    its own state rather than from the goal's category. A grid mixing nine
    category hues stops being readable as density, which is the only thing this
    view is for. */
-.gx-cal { display: flex; flex-direction: column; gap: 14px; }
+.gx-cal { display: flex; flex-direction: column; gap: var(--space-4); }
 
 .gx-cal-head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--space-2);
 }
-.gx-cal-nav { display: flex; align-items: center; gap: 6px; }
+.gx-cal-nav { display: flex; align-items: center; gap: var(--space-2); }
 .gx-cal-arrow {
     display: grid;
     place-items: center;
@@ -2353,7 +2353,7 @@ button.gx-state-attn.is-on {
     font-variant-numeric: tabular-nums;
 }
 .gx-cal-today {
-    padding: 4px 10px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-full);
     background: transparent;
@@ -2366,14 +2366,14 @@ button.gx-state-attn.is-on {
 .gx-cal-key {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     margin: 0;
     padding: 0;
     list-style: none;
     font-size: var(--text-xs);
     color: var(--gx-muted);
 }
-.gx-cal-key li { display: flex; align-items: center; gap: 5px; }
+.gx-cal-key li { display: flex; align-items: center; gap: var(--space-1); }
 .gx-cal-dot { width: 9px; height: 9px; border-radius: 3px; }
 .gx-cal-dot.is-done { background: var(--gx-good); }
 .gx-cal-dot.is-due  { background: var(--gx-violet); }
@@ -2385,11 +2385,11 @@ button.gx-state-attn.is-on {
 .gx-cal-months {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
-    gap: 16px;
+    gap: var(--space-4);
 }
 .gx-cal-month { min-width: 0; }
 .gx-cal-month h3 {
-    margin: 0 0 7px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .02em;
@@ -2398,10 +2398,10 @@ button.gx-state-attn.is-on {
 .gx-cal-dow, .gx-cal-grid {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 3px;
+    gap: var(--space-1);
 }
 .gx-cal-dow {
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
     font-size: var(--text-2xs);
     font-weight: 600;
     color: var(--gx-faint);
@@ -2457,24 +2457,24 @@ button.gx-state-attn.is-on {
 /* ---------- What the picked day holds ------------------------------------ */
 .gx-cal-hint { margin: 0; font-size: var(--text-xs); line-height: 1.5; color: var(--gx-muted); }
 .gx-cal-day {
-    padding-top: 12px;
+    padding-top: var(--space-3);
     border-top: 1px solid var(--gx-line-soft);
 }
 .gx-cal-day h4 {
-    margin: 0 0 8px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-sm);
     font-weight: 700;
     color: var(--gx-text);
 }
-.gx-cal-day ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.gx-cal-day ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
 .gx-cal-day li { min-width: 0; }
 .gx-cal-day button {
     width: 100%;
     display: grid;
     grid-template-columns: 16px auto minmax(0, 1fr);
     align-items: baseline;
-    gap: 9px;
-    padding: 6px 8px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -2517,13 +2517,13 @@ button.gx-state-attn.is-on {
 .gx-two-wide { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
 
 /* ---------- Next moves ---------------------------------------------------- */
-.gx-moves { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.gx-moves { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .gx-move {
     display: grid;
     grid-template-columns: 26px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 12px;
-    padding: 11px 13px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
     border: 1px solid var(--gx-line-soft);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
@@ -2584,7 +2584,7 @@ button.gx-state-attn.is-on {
 .gx-move-facts {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: var(--space-2);
     font-size: var(--text-xs);
     color: var(--gx-faint);
     font-variant-numeric: tabular-nums;
@@ -2592,7 +2592,7 @@ button.gx-state-attn.is-on {
 }
 .gx-move-late { color: var(--gx-bad); font-weight: 600; }
 .gx-move-xp {
-    padding: 2px 7px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--gx-violet) 15%, transparent);
     color: var(--gx-violet);
@@ -2600,7 +2600,7 @@ button.gx-state-attn.is-on {
 }
 
 /* ---------- Momentum ------------------------------------------------------ */
-.gx-mo { display: flex; flex-direction: column; gap: 12px; }
+.gx-mo { display: flex; flex-direction: column; gap: var(--space-3); }
 .gx-mo-line { margin: 0; font-size: var(--text-sm); line-height: 1.55; color: var(--gx-muted); }
 .gx-mo-line strong { color: var(--gx-text); font-size: var(--text-lg); }
 .gx-mo-bar {
@@ -2616,7 +2616,7 @@ button.gx-state-attn.is-on {
     background: linear-gradient(90deg, var(--gx-violet), var(--gx-teal));
     transition: width .5s cubic-bezier(.22, 1, .36, 1);
 }
-.gx-mo-days { display: flex; gap: 5px; }
+.gx-mo-days { display: flex; gap: var(--space-1); }
 .gx-mo-days i {
     flex: 1;
     height: 20px;
@@ -2630,15 +2630,15 @@ button.gx-state-attn.is-on {
 }
 
 /* ---------- Trajectory ---------------------------------------------------- */
-.gx-traj { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px; }
+.gx-traj { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-5); }
 .gx-traj-row { min-width: 0; }
 .gx-traj-head {
     width: 100%;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 11px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
     padding: 0;
     border: 0;
     background: transparent;
@@ -2667,7 +2667,7 @@ button.gx-state-attn.is-on {
 .gx-traj-rail {
     position: relative;
     height: 8px;
-    margin: 0 0 14px;
+    margin: 0 0 var(--space-4);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--tone, var(--gx-card-2)) 15%, var(--gx-card-2));
 }
@@ -2682,7 +2682,7 @@ button.gx-state-attn.is-on {
     position: absolute;
     top: 50%;
     width: 15px; height: 15px;
-    margin-left: -7.5px;
+    margin-left: -8px;
     border-radius: 50%;
     background: var(--tone);
     border: 2.5px solid var(--gx-card);
@@ -2700,7 +2700,7 @@ button.gx-state-attn.is-on {
     transform: translateY(-50%);
 }
 
-.gx-traj-figs { display: flex; gap: 26px; margin: 0; }
+.gx-traj-figs { display: flex; gap: var(--space-6); margin: 0; }
 .gx-traj-figs div { display: flex; flex-direction: column; gap: 2px; }
 .gx-traj-figs dt { font-size: var(--text-2xs); color: var(--gx-faint); }
 .gx-traj-figs dd {
@@ -2726,7 +2726,7 @@ button.gx-state-attn.is-on {
     position: relative;
     flex: 1;
     min-width: 0;
-    padding-top: 20px;
+    padding-top: var(--space-5);
     text-align: center;
 }
 /* The line between the stops, drawn on each so it stops at the last one. */
@@ -2742,7 +2742,7 @@ button.gx-state-attn.is-on {
     position: absolute;
     top: 0; left: 50%;
     width: 13px; height: 13px;
-    margin-left: -6.5px;
+    margin-left: -8px;
     border-radius: 50%;
     border: 2px solid var(--gx-line);
     background: var(--gx-card);
@@ -2750,7 +2750,7 @@ button.gx-state-attn.is-on {
 }
 .gx-stop > span {
     display: block;
-    padding: 0 5px;
+    padding: 0 var(--space-1);
     font-size: var(--text-2xs);
     line-height: 1.35;
     color: var(--gx-faint);
@@ -2767,7 +2767,7 @@ button.gx-state-attn.is-on {
 .gx-stop.is-active > span { color: var(--gx-text); font-weight: 600; }
 
 /* ---------- Growth areas -------------------------------------------------- */
-.gx-areas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.gx-areas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
 .gx-area > button {
     width: 100%;
     display: grid;
@@ -2776,8 +2776,8 @@ button.gx-state-attn.is-on {
        to how much of the outstanding work it is. */
     grid-template-columns: minmax(88px, 1.1fr) minmax(90px, 2fr) 44px auto;
     align-items: center;
-    gap: 14px;
-    padding: 9px 10px;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -2812,8 +2812,8 @@ button.gx-state-attn.is-on {
    that its figures come from the reader's own work. */
 .gx-area-goals {
     list-style: none;
-    margin: 2px 0 8px;
-    padding: 0 0 0 10px;
+    margin: 2px 0 var(--space-2);
+    padding: 0 0 0 var(--space-2);
     border-left: 2px solid color-mix(in srgb, var(--tone) 35%, transparent);
 }
 .gx-area-goals > li > button {
@@ -2821,8 +2821,8 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    padding: 6px 10px;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -2845,7 +2845,7 @@ button.gx-state-attn.is-on {
 
 @media (max-width: 1080px) {
     .gx-two-wide { grid-template-columns: minmax(0, 1fr); }
-    .gx-traj-figs { gap: 18px; }
+    .gx-traj-figs { gap: var(--space-4); }
 }
 @media (prefers-reduced-motion: reduce) {
     .gx-mo-bar > span, .gx-traj-fill, .gx-traj-dot, .gx-area-bar > i { transition: none; }
@@ -2857,15 +2857,15 @@ button.gx-state-attn.is-on {
 .gx-tabs {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    padding: 4px;
+    gap: var(--space-1);
+    padding: var(--space-1);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card);
     align-self: flex-start;
 }
 .gx-tab {
-    padding: 8px 16px;
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -2893,7 +2893,7 @@ button.gx-state-attn.is-on {
     font-size: var(--text-sm);
 }
 .gx-table thead th {
-    padding: 0 14px 10px;
+    padding: 0 var(--space-4) var(--space-2);
     border-bottom: 1px solid var(--gx-line);
     color: var(--gx-faint);
     font-size: var(--text-2xs);
@@ -2915,7 +2915,7 @@ button.gx-state-attn.is-on {
 }
 .gx-table tbody tr:last-child { border-bottom: 0; }
 .gx-table tbody tr:hover { background: color-mix(in srgb, var(--tone, var(--gx-card-2)) var(--gx-wash), var(--gx-card-2)); }
-.gx-table td { padding: 13px 14px; vertical-align: middle; }
+.gx-table td { padding: var(--space-3) var(--space-4); vertical-align: middle; }
 .gx-table td .gx-quiet { display: block; margin-top: 2px; font-size: var(--text-2xs); }
 .gx-table td .gx-quiet.is-late { color: var(--gx-bad); }
 
@@ -2934,7 +2934,7 @@ button.gx-state-attn.is-on {
 .gx-table-title { font-size: var(--text-md); font-weight: 600; }
 .gx-table-goal:hover .gx-table-title { color: var(--tone); text-decoration: underline; }
 
-.gx-table-pct { display: flex; align-items: center; gap: 9px; }
+.gx-table-pct { display: flex; align-items: center; gap: var(--space-2); }
 .gx-table-pct strong { min-width: 38px; font-size: var(--text-md); font-variant-numeric: tabular-nums; }
 .gx-table-bar {
     flex: 1;
@@ -2954,7 +2954,7 @@ button.gx-state-attn.is-on {
 
 .gx-pill {
     display: inline-block;
-    padding: 4px 11px;
+    padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
     font-weight: 600;
@@ -3027,7 +3027,7 @@ button.gx-state-attn.is-on {
 .gx-verdict-say {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: var(--space-2);
     margin: 0;
 }
 .gx-verdict-say > i {
@@ -3062,8 +3062,8 @@ button.gx-state-attn.is-on {
 
 .gx-health-list {
     list-style: none;
-    margin: 18px 0 0;
-    padding: 16px 0 0;
+    margin: var(--space-4) 0 0;
+    padding: var(--space-4) 0 0;
     border-top: 1px solid var(--gx-line-soft);
     display: flex;
     flex-direction: column;
@@ -3078,8 +3078,8 @@ button.gx-state-attn.is-on {
        can be two of them and neither gets cut. */
     grid-template-columns: 9px minmax(0, 1fr) auto;
     align-items: baseline;
-    gap: 10px;
-    padding: 7px 8px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -3113,7 +3113,7 @@ button.gx-state-attn.is-on {
 .gx-health-score {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: var(--space-2);
     font-size: var(--text-sm);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
@@ -3139,12 +3139,12 @@ button.gx-state-attn.is-on {
 .gx-health-why {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 10px 16px;
-    margin: 2px 0 10px;
-    padding: 9px 10px 9px 27px;
+    gap: var(--space-2) var(--space-4);
+    margin: 2px 0 var(--space-2);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
 }
 .gx-health-side h5 {
-    margin: 0 0 4px;
+    margin: 0 0 var(--space-1);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
@@ -3155,7 +3155,7 @@ button.gx-state-attn.is-on {
 .gx-health-side ul { list-style: none; margin: 0; padding: 0; }
 .gx-health-side li {
     position: relative;
-    padding-left: 11px;
+    padding-left: var(--space-3);
     font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--gx-muted);
@@ -3223,7 +3223,7 @@ button.gx-state-attn.is-on {
        page were the ones *inside* a card and the boundary between two of them
        was the weakest. Scrolling, that reads as one unbroken run of bands
        rather than as a stack of separate goals. */
-    gap: 34px;
+    gap: var(--space-8);
 }
 
 /* The fallback tone, for a card that somehow arrives without one of the
@@ -3284,7 +3284,7 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: start;
-    gap: 14px;
+    gap: var(--space-4);
     /* An extra 3px of top padding for the band the card draws over this
        edge, so the tile and the title sit where they did before it existed. */
     padding: calc(var(--gx-pad) + 3px) var(--gx-pad) var(--gx-pad);
@@ -3303,8 +3303,8 @@ button.gx-state-attn.is-on {
 }
 .ag-top > .gx-tile { width: 44px; height: 44px; border-radius: var(--radius-md); }
 
-.ag-top-text { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-.ag-title-row { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; min-width: 0; }
+.ag-top-text { min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.ag-title-row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; min-width: 0; }
 .ag-title-row h3 {
     margin: 0;
     font-size: var(--text-xl);
@@ -3316,7 +3316,7 @@ button.gx-state-attn.is-on {
 }
 .ag-badge {
     flex: none;
-    padding: 2px 9px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
     background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
@@ -3332,12 +3332,12 @@ button.gx-state-attn.is-on {
     color: var(--gx-muted);
     max-width: 74ch;
 }
-.ag-tags { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ag-tags { list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .ag-tags li {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 2px 9px;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--gx-card-2);
     color: var(--gx-faint);
@@ -3356,7 +3356,7 @@ button.gx-state-attn.is-on {
 .ag-tags li.is-hot { color: var(--gx-watch); }
 .ag-tags li.is-late { color: var(--gx-bad); background: color-mix(in srgb, var(--gx-bad) 10%, transparent); }
 
-.ag-top-right { display: flex; align-items: center; gap: 12px; }
+.ag-top-right { display: flex; align-items: center; gap: var(--space-3); }
 .ag-progress { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.1; }
 .ag-progress strong { font-size: var(--text-xl); font-weight: 700; letter-spacing: -.03em; }
 .ag-progress span { font-size: var(--text-2xs); color: var(--gx-faint); }
@@ -3398,14 +3398,14 @@ button.gx-state-attn.is-on {
     min-width: 148px;
     display: flex;
     flex-direction: column;
-    padding: 5px;
+    padding: var(--space-1);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card);
     box-shadow: var(--shadow-lg);
 }
 .ag-menu button {
-    padding: 8px 10px;
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -3442,7 +3442,7 @@ button.gx-state-attn.is-on {
 .ag-panel {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
     min-width: 0;
     /* A little more below than above. The last thing in either column is a
        control — "+ Add another step", "View details" — and a button sitting
@@ -3484,18 +3484,18 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--space-2);
     min-height: 24px;
 }
-.ag-panel-head-tight { margin-top: 4px; }
+.ag-panel-head-tight { margin-top: var(--space-1); }
 
 /* The health reason, printed rather than left in the chip's tooltip. Only
    drawn when the attention filter put this card on screen — see `explain` in
    components/Goals/ActiveGoalCard. It takes its colour from the state so the
    sentence and the chip above it cannot read as two different verdicts. */
 .ag-why-here {
-    margin: 8px 0 0;
-    padding: 7px 10px;
+    margin: var(--space-2) 0 0;
+    padding: var(--space-2) var(--space-2);
     border-left: 2px solid currentColor;
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     font-size: var(--text-sm);
@@ -3519,7 +3519,7 @@ button.gx-state-attn.is-on {
 .ag-quiet.is-late { color: var(--gx-bad); font-weight: 600; }
 
 .ag-range select {
-    padding: 3px 22px 3px 8px;
+    padding: var(--space-1) var(--space-6) var(--space-1) var(--space-2);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-sm);
     background: var(--gx-card-2);
@@ -3536,10 +3536,10 @@ button.gx-state-attn.is-on {
     color: var(--gx-faint);
     max-width: 56ch;
 }
-.ag-empty-tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.ag-empty-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .ag-more {
     align-self: flex-start;
-    padding: 6px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: transparent;
@@ -3568,7 +3568,7 @@ button.gx-state-attn.is-on {
        to its minimum left the difference as a void between chart and caption.
        Row one takes the slack, so the space is spent on the picture. */
     grid-template-rows: minmax(118px, 1fr) 16px;
-    column-gap: 6px;
+    column-gap: var(--space-2);
 }
 .ag-chart-scale {
     list-style: none;
@@ -3621,8 +3621,8 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: 18px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
-    padding: 5px 6px;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -3662,8 +3662,8 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 34% auto;
     align-items: center;
-    gap: 12px;
-    padding: 6px;
+    gap: var(--space-3);
+    padding: var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -3711,8 +3711,8 @@ button.gx-state-attn.is-on {
    subordinate to the other, and making this one fainter than an already faint
    caption would put it below the floor at which it is worth printing. */
 .ag-why-chart {
-    margin: 6px 0 0;
-    padding-top: 6px;
+    margin: var(--space-2) 0 0;
+    padding-top: var(--space-2);
     border-top: 1px dashed color-mix(in srgb, var(--gx-line) 80%, transparent);
     font-size: var(--text-2xs);
     line-height: 1.45;
@@ -3720,7 +3720,7 @@ button.gx-state-attn.is-on {
 }
 
 /* ---------- Labelled bars: difficulty, subjects, weekdays ----------------- */
-.ag-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.ag-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .ag-bars li {
     display: grid;
     /* Wide enough for the longest label any of the three charts produces — a
@@ -3728,7 +3728,7 @@ button.gx-state-attn.is-on {
        "Very hard" and "Mon" both fit inside it with room to spare. */
     grid-template-columns: 92px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2);
     font-size: var(--text-xs);
 }
 .ag-bar-label { color: var(--gx-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -3765,10 +3765,10 @@ button.gx-state-attn.is-on {
 .ag-heat {
     display: grid;
     grid-template-columns: 14px auto;
-    gap: 6px;
+    gap: var(--space-2);
     justify-content: center;
     align-content: center;
-    padding: 6px 0;
+    padding: var(--space-2) 0;
 }
 .ag-heat-days {
     list-style: none;
@@ -3776,7 +3776,7 @@ button.gx-state-attn.is-on {
     padding: 0;
     display: grid;
     grid-template-rows: repeat(7, 18px);
-    gap: 3px;
+    gap: var(--space-1);
     font-size: var(--text-2xs);
     line-height: 1;
     color: var(--gx-faint);
@@ -3789,7 +3789,7 @@ button.gx-state-attn.is-on {
     grid-template-rows: repeat(7, 1fr);
     grid-auto-flow: column;
     grid-auto-columns: 18px;
-    gap: 3px;
+    gap: var(--space-1);
 }
 .ag-heat-grid i {
     height: 18px;
@@ -3802,7 +3802,7 @@ button.gx-state-attn.is-on {
 .ag-heat-grid i.is-l4 { background: var(--tone); }
 
 /* ---------- Distance to target -------------------------------------------- */
-.ag-scale { display: flex; flex-direction: column; gap: 7px; padding-top: 14px; }
+.ag-scale { display: flex; flex-direction: column; gap: var(--space-2); padding-top: var(--space-4); }
 .ag-scale-track {
     position: relative;
     height: 9px;
@@ -3835,8 +3835,8 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    gap: 11px;
-    padding: 12px 13px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
@@ -3894,7 +3894,7 @@ button.gx-state-attn.is-on {
 .ag-focus.is-pickable:disabled { cursor: default; }
 .ag-focus.is-pickable:not(:disabled) .ag-focus-text strong::after {
     content: '⌄';
-    margin-left: 6px;
+    margin-left: var(--space-2);
     color: var(--gx-faint);
     font-weight: 600;
 }
@@ -3905,8 +3905,8 @@ button.gx-state-attn.is-on {
    already has a drawer over a card. */
 .ag-focus-pick {
     list-style: none;
-    margin: 6px 0 0;
-    padding: 4px;
+    margin: var(--space-2) 0 0;
+    padding: var(--space-1);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card);
@@ -3919,8 +3919,8 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 10px;
-    padding: 6px 8px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -3958,7 +3958,7 @@ button.gx-state-attn.is-on {
 .ag-steps {
     counter-reset: ag-step calc(var(--ag-step-from, 1) - 1);
     list-style: none;
-    margin: 10px 0 0;
+    margin: var(--space-2) 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -3966,7 +3966,7 @@ button.gx-state-attn.is-on {
        a finished row is a tinted band rather than a tick, they have to be
        separable — the gap is what makes the tint read as three rows in two
        states instead of as one shape with a ragged edge. */
-    gap: 4px;
+    gap: var(--space-1);
 }
 .ag-step {
     /* The containing block for the tick's sweep — see `.is-just-done::after`. */
@@ -3974,8 +3974,8 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: 17px 17px minmax(0, 1fr) auto 22px;
     align-items: center;
-    gap: 9px;
-    padding: 6px 8px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     color: var(--gx-text);
@@ -4084,7 +4084,7 @@ button.gx-state-attn.is-on {
     min-width: 0;
     display: flex;
     align-items: baseline;
-    gap: 7px;
+    gap: var(--space-2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -4152,7 +4152,7 @@ button.gx-state-attn.is-on {
 .ag-step-link:hover:not(:disabled) { background: var(--gx-line-soft); color: var(--gx-text); }
 .ag-step-link:disabled { opacity: 0; cursor: default; }
 
-.ag-steps-rest { margin: 7px 0 0; font-size: var(--text-2xs); }
+.ag-steps-rest { margin: var(--space-2) 0 0; font-size: var(--text-2xs); }
 
 /* ---------- The line the card is for -------------------------------------- */
 /* "Next · Complete the Level 4 set". The chart explains why, the checkpoint
@@ -4177,9 +4177,9 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
     align-items: baseline;
-    gap: 9px;
-    margin: 12px 0 0;
-    padding: 10px 12px;
+    gap: var(--space-2);
+    margin: var(--space-3) 0 0;
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
     border-left: 3px solid var(--tone);
@@ -4214,14 +4214,14 @@ button.gx-state-attn.is-on {
 
 /* The task search, when one step is choosing what it points at. */
 .ag-link-box {
-    margin: 8px 0 0;
-    padding: 8px;
+    margin: var(--space-2) 0 0;
+    padding: var(--space-2);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card);
 }
 .ag-link-box input { width: 100%; }
-.ag-found-none { margin: 8px 2px 2px; font-size: var(--text-xs); line-height: 1.5; }
+.ag-found-none { margin: var(--space-2) 2px 2px; font-size: var(--text-xs); line-height: 1.5; }
 
 /* ---------- Finishing something ------------------------------------------
    Green, full width, and only on screen when the thing it names is genuinely
@@ -4230,8 +4230,8 @@ button.gx-state-attn.is-on {
    because the reader ticked the last box rather than saying they were done. */
 .ag-finish {
     width: 100%;
-    margin: 12px 0 0;
-    padding: 10px 14px;
+    margin: var(--space-3) 0 0;
+    padding: var(--space-2) var(--space-4);
     border: 1px solid color-mix(in srgb, var(--gx-good) 45%, transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-good) 13%, transparent);
@@ -4271,25 +4271,25 @@ button.gx-state-attn.is-on {
 
 /* ---------- and the step that follows it ---------------------------------- */
 .ag-confirm {
-    margin: 12px 0 0;
-    padding: 12px 13px;
+    margin: var(--space-3) 0 0;
+    padding: var(--space-3) var(--space-3);
     border: 1px solid color-mix(in srgb, var(--gx-good) 38%, transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--gx-good) 8%, var(--gx-card));
     animation: ag-finish-in .22s var(--gx-ease, ease) both;
 }
 .ag-confirm p {
-    margin: 0 0 10px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--gx-text);
 }
 .ag-confirm strong { font-weight: 700; }
-.ag-confirm-do { display: flex; gap: 8px; }
+.ag-confirm-do { display: flex; gap: var(--space-2); }
 .ag-confirm-no,
 .ag-confirm-yes {
     flex: 1;
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     font: inherit;
     font-size: var(--text-sm);
@@ -4358,8 +4358,8 @@ button.gx-state-attn.is-on {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 18px 26px;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-6);
     border-radius: var(--radius-lg);
     border: 1px solid color-mix(in srgb, var(--gx-good) 40%, transparent);
     background: var(--gx-card);
@@ -4484,8 +4484,8 @@ button.gx-state-attn.is-on {
     display: grid;
     grid-template-columns: 18px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
-    padding: 5px 6px;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     color: var(--gx-muted);
@@ -4530,7 +4530,7 @@ button.gx-state-attn.is-on {
 .gx-btn-ai {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     border-color: color-mix(in srgb, var(--gx-violet) var(--gx-edge), transparent);
     background: color-mix(in srgb, var(--gx-violet) var(--gx-wash-soft), transparent);
     color: var(--gx-violet);
@@ -4548,7 +4548,7 @@ button.gx-state-attn.is-on {
     display: inline-grid;
     place-items: center;
     width: 13px; height: 13px;
-    margin-right: 7px;
+    margin-right: var(--space-2);
     vertical-align: -2px;
     color: var(--tone);
 }
@@ -4559,8 +4559,8 @@ button.gx-state-attn.is-on {
     align-self: flex-start;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 12px 6px 10px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tone) var(--gx-wash-soft), transparent);
@@ -4599,13 +4599,13 @@ button.gx-state-attn.is-on {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 4px 14px;
+    gap: var(--space-1) var(--space-4);
     margin-top: 2px;
 }
 
 .ag-add-btn {
     align-self: flex-start;
-    padding: 5px 2px;
+    padding: var(--space-1) 2px;
     border: 0;
     background: transparent;
     color: var(--tone);
@@ -4618,7 +4618,7 @@ button.gx-state-attn.is-on {
 .ag-add-btn:disabled { opacity: .5; cursor: default; }
 .ag-add input {
     width: 100%;
-    padding: 8px 10px;
+    padding: var(--space-2) var(--space-2);
     border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
     border-radius: var(--radius-md);
     background: var(--gx-card-2);
@@ -4631,8 +4631,8 @@ button.gx-state-attn.is-on {
 /* The existing-task search under the box. Sits in the flow rather than floating:
    the card is tall and the list is short, so there is nothing to overlap. */
 .ag-found {
-    margin: 6px 0 0;
-    padding: 4px;
+    margin: var(--space-2) 0 0;
+    padding: var(--space-1);
     list-style: none;
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
@@ -4641,9 +4641,9 @@ button.gx-state-attn.is-on {
 .ag-found-row {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2);
     width: 100%;
-    padding: 6px 8px;
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -4670,15 +4670,15 @@ button.gx-state-attn.is-on {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: var(--space-4);
     padding: 13px var(--gx-pad);
     background: var(--gx-card-2);
 }
 .ag-details {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 7px 13px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--gx-line);
     border-radius: var(--radius-md);
     background: var(--gx-card);
@@ -4695,9 +4695,9 @@ button.gx-state-attn.is-on {
     margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 26px;
+    gap: var(--space-6);
 }
-.ag-facts > div { display: flex; flex-direction: column; gap: 3px; }
+.ag-facts > div { display: flex; flex-direction: column; gap: var(--space-1); }
 .ag-facts dt {
     font-size: var(--text-2xs);
     font-weight: 700;
@@ -4709,7 +4709,7 @@ button.gx-state-attn.is-on {
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     font-size: var(--text-sm);
     font-weight: 600;
 }
@@ -4732,13 +4732,13 @@ button.gx-state-attn.is-on {
     .ag-top-right {
         grid-column: 1 / -1;
         justify-content: flex-start;
-        padding-top: 4px;
+        padding-top: var(--space-1);
         border-top: 1px solid var(--gx-line-soft);
     }
     .ag-top-right .ag-menu-wrap { margin-left: auto; }
     .ag-title-row h3 { font-size: var(--text-lg); }
     .ag-foot { flex-direction: column; align-items: stretch; }
-    .ag-facts { gap: 18px; justify-content: space-between; }
+    .ag-facts { gap: var(--space-4); justify-content: space-between; }
     .ag-details { align-self: flex-start; }
 }
 
@@ -4772,16 +4772,16 @@ button.gx-state-attn.is-on {
 .gx-smart {
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    margin-top: 14px;
-    padding-top: 13px;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
     border-top: 1px solid var(--gx-line);
 }
 .gx-smart-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
 }
 /* `.gx-ai` is `align-self: flex-start`, which in a row means the top edge. In
    this one they sit side by side and should share a baseline. */
@@ -4798,12 +4798,12 @@ button.gx-state-attn.is-on {
 /* On the card. No sentence, a lighter rule, and tighter — the card is a
    summary and this is a way in, not the place the work is done. */
 .gx-smart.is-compact {
-    margin-top: 12px;
-    padding-top: 11px;
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
     border-top-color: color-mix(in srgb, var(--gx-line) 70%, transparent);
 }
-.gx-smart.is-compact .gx-ai { font-size: var(--text-xs); padding: 5px 10px 5px 9px; }
+.gx-smart.is-compact .gx-ai { font-size: var(--text-xs); padding: var(--space-1) var(--space-2) var(--space-1) var(--space-2); }
 
 /* The goal dialog's save button — the shared Button (components/ui); this is
    only the air above it. */
-.gx-modal-submit { margin-top: 20px; }
+.gx-modal-submit { margin-top: var(--space-5); }

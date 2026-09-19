@@ -28,7 +28,7 @@
     z-index: 900;
     display: grid;
     place-items: center;
-    padding: 20px;
+    padding: var(--space-5);
     background: rgba(16, 20, 30, .45);
     backdrop-filter: blur(2px);
     animation: tk-rate-in .14s ease-out;
@@ -59,7 +59,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
     border: 1px solid var(--rt-line);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    padding: 24px 26px 20px;
+    padding: var(--space-6) var(--space-6) var(--space-5);
     animation: tk-rate-rise .16s ease-out;
 }
 
@@ -80,7 +80,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
    off and not about the day in general. One line, clipped — a task title can
    be a paragraph and this is a caption. */
 .tk-rate-task {
-    margin: 5px 0 0;
+    margin: var(--space-1) 0 0;
     font-size: var(--text-sm);
     color: var(--rt-ink-faint);
     overflow: hidden;
@@ -89,7 +89,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 }
 
 .tk-rate-row {
-    margin: 22px 0 0;
+    margin: var(--space-6) 0 0;
     padding: 0;
     border: 0;
 }
@@ -102,17 +102,17 @@ html[data-theme="dark"] .tk-rate-backdrop {
 }
 
 .tk-rate-label span {
-    margin-left: 7px;
+    margin-left: var(--space-2);
     font-weight: 400;
     font-size: var(--text-sm);
     color: var(--rt-ink-faint);
 }
 
 .tk-rate-stars {
-    margin-top: 8px;
+    margin-top: var(--space-2);
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--space-1);
 }
 
 .tk-rate-star {
@@ -146,7 +146,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 /* The word for whatever the cursor is over. Holds its height when empty so
    the dialog does not jump the first time a star is hovered. */
 .tk-rate-word {
-    margin-left: 10px;
+    margin-left: var(--space-2);
     min-height: 1em;
     font-size: var(--text-sm);
     font-weight: 600;
@@ -172,17 +172,17 @@ html[data-theme="dark"] .tk-rate-backdrop {
    here. The inputs are hidden without leaving the tree.
    -------------------------------------------------------------------------- */
 .tk-rate-reasons {
-    margin-top: 10px;
+    margin-top: var(--space-2);
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: var(--space-2);
 }
 
 .tk-rate-reason {
     position: relative;
     display: inline-flex;
     align-items: center;
-    padding: 7px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--rt-line);
     border-radius: var(--radius-full);
     background: var(--rt-surface-soft);
@@ -221,11 +221,11 @@ html[data-theme="dark"] .tk-rate-backdrop {
 }
 
 .tk-rate-actions {
-    margin-top: 26px;
+    margin-top: var(--space-6);
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 14px;
+    gap: var(--space-4);
 }
 
 .tk-rate-skip {
@@ -241,7 +241,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
 
 .tk-rate-save {
     height: 38px;
-    padding: 0 20px;
+    padding: 0 var(--space-5);
     border: 0;
     border-radius: var(--radius-md);
     background: var(--rt-accent);
@@ -262,8 +262,8 @@ html[data-theme="dark"] .tk-rate-backdrop {
 }
 
 @media (max-width: 420px) {
-    .tk-rate-popup { padding: 20px 18px 16px; }
+    .tk-rate-popup { padding: var(--space-5) var(--space-4) var(--space-4); }
     .tk-rate-star { font-size: var(--text-2xl); }
-    .tk-rate-word { width: 100%; margin: 6px 0 0; }
+    .tk-rate-word { width: 100%; margin: var(--space-2) 0 0; }
     .tk-rate-stars { flex-wrap: wrap; }
 }

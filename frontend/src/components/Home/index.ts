@@ -8,8 +8,6 @@
  * charts, and the last of it.
  */
 export { Analytics } from './Analytics';
-export { AuthModal, DEEP_LINKED } from './AuthModal';
-export type { AuthStep } from './AuthModal';
 export { CalendarDemo } from './CalendarDemo';
 export { DashboardDemo } from './DashboardDemo';
 export { Performance } from './Performance';

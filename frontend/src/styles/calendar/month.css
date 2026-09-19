@@ -72,7 +72,7 @@
 
     list-style: none;
 
-    padding: 18px 4px;
+    padding: var(--space-4) var(--space-1);
 
     text-align: center;
 
@@ -91,7 +91,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
 .task-section {
 
-    padding: 10px 0;
+    padding: var(--space-2) 0;
 
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
@@ -180,7 +180,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     flex: 1;
 
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
 
     border: 1px solid rgba(0, 0, 0, 0.2);
 
@@ -188,7 +188,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     font-size: var(--text-md);
 
-    margin-left: 10px;
+    margin-left: var(--space-2);
 
     color: white;
 
@@ -203,7 +203,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     padding: 0;
 
-    margin: 10px 0 0 0;
+    margin: var(--space-2) 0 0 0;
 
     margin-left: 0;
 
@@ -218,13 +218,13 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     align-items: center;
 
-    padding: 5px 0;
+    padding: var(--space-1) 0;
 
-    gap: 8px;
+    gap: var(--space-2);
 
     border-left: 3px solid transparent;
 
-    padding-left: 8px;
+    padding-left: var(--space-2);
 
 }
 
@@ -290,9 +290,9 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
     color: black;
     font-size: var(--text-xs);
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
-    margin-left: 8px;
+    margin-left: var(--space-2);
     text-transform: uppercase;
 }
 
@@ -304,9 +304,9 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
     color: black;
     font-size: var(--text-xs);
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
-    margin-left: 8px;
+    margin-left: var(--space-2);
     text-transform: uppercase;
 }
 
@@ -318,9 +318,9 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
     color: #fff;
     font-size: var(--text-xs);
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
-    margin-left: 8px;
+    margin-left: var(--space-2);
     text-transform: uppercase;
     animation: pulse 1s infinite;
 }
@@ -352,9 +352,9 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
     color: black;
     font-size: var(--text-xs);
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
-    margin-left: 8px;
+    margin-left: var(--space-2);
     text-transform: uppercase;
     animation: pulse 1s infinite;
 }
@@ -394,7 +394,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     color: white;
 
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
 
     border-radius: 3px;
 
@@ -409,13 +409,13 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
 .xp-difficulty-label {
 
-    margin-left: 10px;
+    margin-left: var(--space-2);
 
     background-color: rgba(0, 0, 0, 0.1);
 
     color: #333;
 
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
 
     border-radius: 3px;
 
@@ -434,7 +434,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     height: 4px;
 
-    margin-bottom: 4px;
+    margin-bottom: var(--space-1);
 
     border-radius: 2px;
 
@@ -449,13 +449,13 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     align-items: center;
 
-    gap: 10px;
+    gap: var(--space-2);
 
-    margin-bottom: 15px;
+    margin-bottom: var(--space-4);
 
     margin-left: 0px;
 
-    padding: 10px;
+    padding: var(--space-2);
 
     border-radius: var(--radius-sm);
 
@@ -474,7 +474,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     flex: 0 0 70%;
 
-    margin-right: 30px;
+    margin-right: var(--space-8);
 
     position: relative;
 
@@ -495,7 +495,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     color: white;
 
-    padding: 2px 6px;
+    padding: 2px var(--space-2);
 
     border-radius: 3px;
 
@@ -514,7 +514,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     flex: 0 0 30%;
 
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
 
     border: 1px solid #ddd;
 
@@ -556,7 +556,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     min-width: 0;
 
-    padding: 5px 10px;
+    padding: var(--space-1) var(--space-2);
 
     border: 1px solid rgba(0, 0, 0, 0.2);
 
@@ -579,7 +579,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     cursor: pointer;
 
-    padding: 0 5px;
+    padding: 0 var(--space-1);
 
 }
 
@@ -593,7 +593,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
 .add-subtask-item {
 
-    padding: 5px 0;
+    padding: var(--space-1) 0;
 
 }
 
@@ -606,7 +606,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     color: white;
 
-    padding: 5px 12px;
+    padding: var(--space-1) var(--space-3);
 
     cursor: pointer;
 
@@ -634,13 +634,13 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     color: white;
 
-    padding: 3px 10px;
+    padding: var(--space-1) var(--space-2);
 
     cursor: pointer;
 
     font-size: var(--text-xs);
 
-    margin-top: 5px;
+    margin-top: var(--space-1);
 
     border-radius: var(--radius-sm);
 
@@ -662,9 +662,9 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     align-items: center;
 
-    gap: 5px;
+    gap: var(--space-1);
 
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
 
     margin-left: 0px;
 
@@ -681,7 +681,7 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     border-radius: var(--radius-md);
 
-    padding: 5px 20px;
+    padding: var(--space-1) var(--space-5);
 
     font-family: var(--font-sans);
 
@@ -715,13 +715,13 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 
     border-radius: var(--radius-md);
 
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
 
     font-family: var(--font-sans);
 
     font-size: var(--text-md);
 
-    margin-top: 5px;
+    margin-top: var(--space-1);
 
     box-sizing: border-box;
 
@@ -885,8 +885,8 @@ body.classic .timestamp-section input[type="time"] {
 
 /* Add-Event overlap warning / free-slot suggestion under the time pickers. */
 .event-suggest {
-    margin-top: 6px;
-    padding: 10px 14px;
+    margin-top: var(--space-2);
+    padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-md);
     font-size: var(--text-md);
     line-height: 1.45;
@@ -931,7 +931,7 @@ html[data-theme="dark"] .event-suggest-bad .event-suggest-link { color: #ff9297;
 
 .xp-difficulty-label {
     font-size: var(--text-2xs);
-    padding: 2px 6px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
     background: rgba(0, 0, 0, 0.05);
     color: #555;
@@ -988,9 +988,9 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--space-5);
     margin: 0;
-    padding: 0 12px 4px 0;
+    padding: 0 var(--space-3) var(--space-1) 0;
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
@@ -1026,7 +1026,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     position: relative;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: var(--space-4);
     border-bottom: none;
     border: 1px solid var(--fx-card-border);
     /* The accent is drawn as a border so the card keeps one box: an inset
@@ -1037,7 +1037,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     /* The right gutter used to be 62px, held open for a badge that floated
        over the card. The badge is in the foot's row now and only the ⋮ needs
        clearing, which is 40px of it. */
-    padding: 15px 40px 15px 18px;
+    padding: var(--space-4) var(--space-10) var(--space-4) var(--space-4);
     background: var(--mv-surface);
     color: var(--mv-ink);
     box-shadow: var(--shadow-md);
@@ -1096,15 +1096,15 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: var(--space-1);
 }
 
 /* Tag row (Task N + difficulty pill) — tasks only */
 #dailyTasks .card-tags {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
+    gap: var(--space-2);
+    margin-bottom: var(--space-1);
 }
 #dailyTasks .task-kind-badge {
     background: var(--mv-surface-soft);
@@ -1113,7 +1113,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 3px 9px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
 }
 /* The band, as a word rather than a second pill. Two pills side by side make
@@ -1177,8 +1177,8 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    margin-top: 6px;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
     min-height: 26px;
 }
 
@@ -1186,7 +1186,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
 #dailyTasks .timestamp-section {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     margin: 0;
     min-width: 0;
 }
@@ -1196,7 +1196,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
 #dailyTasks .task-times {
     display: inline-flex;
     align-items: baseline;
-    gap: 9px;
+    gap: var(--space-2);
     font-size: var(--text-md);
     font-weight: 500;
     color: var(--mv-ink-soft);
@@ -1253,7 +1253,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     border: 1px solid var(--mv-line);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
-    padding: 6px;
+    padding: var(--space-2);
     z-index: 20;
 }
 #dailyTasks .card-menu.open { display: block; }
@@ -1267,7 +1267,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     font-family: var(--font-sans);
     font-size: var(--text-md);
     font-weight: 500;
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     cursor: pointer;
 }
@@ -1280,7 +1280,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     flex: none;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     background: transparent;
     border: none;
     color: var(--mv-good);
@@ -1318,7 +1318,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     flex: none;
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     color: var(--mv-ink-soft);
     font-weight: 600;
     font-size: var(--text-sm);
@@ -1344,7 +1344,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
 .day-progress {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: var(--space-4);
 }
 .day-progress-ring {
     width: 46px;
@@ -1379,13 +1379,13 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
 /* "Today's focus" — a large field pinned above the scrolling event list */
 .daily-focus-holder {
     flex: 0 0 auto;
-    margin: 0 0 18px 0;
+    margin: 0 0 var(--space-4) 0;
 }
 .daily-focus-holder .daily-focus-input {
     flex: none;
     width: 100%;
     box-sizing: border-box;
-    padding: 15px 18px;
+    padding: var(--space-4) var(--space-4);
     font-size: var(--text-lg);
     border-radius: var(--radius-md);
     background: rgba(255, 255, 255, 0.05);
@@ -1411,9 +1411,9 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-md);
-    padding: 14px;
+    padding: var(--space-4);
     margin: 0 0 2px;
-    gap: 12px;
+    gap: var(--space-3);
     flex-wrap: wrap;
     align-items: center;
     flex: 0 0 auto;
@@ -1426,7 +1426,7 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     overflow: visible;
     display: flex;
     align-items: center;
-    padding: 5px 12px;
+    padding: var(--space-1) var(--space-3);
     box-sizing: border-box;
 }
 /* Show the marker inline instead of as a floating badge so it never overlaps */
@@ -1667,7 +1667,7 @@ html[data-theme="dark"] #monthView {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    padding-right: 4px;
+    padding-right: var(--space-1);
 }
 .mv-side {
     flex: 0 1 380px;
@@ -1676,7 +1676,7 @@ html[data-theme="dark"] #monthView {
     min-height: 0;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-4);
     overflow-y: auto;
     padding-right: 2px;
 }
@@ -1699,8 +1699,8 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 .mv-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 14px;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
     min-height: 42px;
 }
 .mv-title {
@@ -1711,7 +1711,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     color: var(--mv-ink);
     white-space: nowrap;
 }
-.mv-nav { display: inline-flex; gap: 8px; }
+.mv-nav { display: inline-flex; gap: var(--space-2); }
 .mv-arrow {
     width: 34px;
     height: 34px;
@@ -1743,7 +1743,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     font-family: inherit;
     font-size: var(--text-md);
     font-weight: 600;
-    padding: 8px 20px;
+    padding: var(--space-2) var(--space-5);
     border-radius: var(--radius-full);
     cursor: pointer;
     transition: background 0.15s ease, opacity 0.15s ease;
@@ -1778,7 +1778,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 
 .mv-daynames {
     flex: none;
-    padding: 11px 0;
+    padding: var(--space-3) 0;
     border-bottom: 1px solid var(--mv-line);
     background: var(--mv-surface-soft);
 }
@@ -1822,11 +1822,11 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     position: relative;
     border-top: 1px solid var(--mv-line-soft);
     border-left: 1px solid var(--mv-line-soft);
-    padding: 8px 10px 12px;
+    padding: var(--space-2) var(--space-2) var(--space-3);
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 6px;
+    gap: var(--space-2);
     min-width: 0;
     overflow: hidden;
     cursor: pointer;
@@ -1849,7 +1849,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: var(--space-2);
     min-width: 0;
 }
 
@@ -1884,7 +1884,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 1px 8px;
+    gap: 1px var(--space-2);
     min-width: 0;
 }
 
@@ -1919,7 +1919,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 .mv-cell-focus {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     min-width: 0;
     font-size: var(--text-sm);
     font-weight: 600;
@@ -1931,7 +1931,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
        padding would otherwise hold it a few pixels short of the date above it,
        so the edges of a column line up down the month. */
     margin-left: -8px;
-    padding: 3px 7px 3px 6px;
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-2);
     border-left: 2px solid var(--ev-accent);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     background: var(--ev-bg);
@@ -1959,7 +1959,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 .mv-cell-marks {
     margin-top: auto;
     display: flex;
-    gap: 3px;
+    gap: var(--space-1);
     min-height: 4px;
 }
 .mv-mark {
@@ -1984,17 +1984,17 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     flex: none;
     list-style: none;
     margin: 0;
-    padding: 11px 14px;
+    padding: var(--space-3) var(--space-4);
     border-top: 1px solid var(--mv-line);
     background: var(--mv-surface-soft);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 6px 20px;
+    gap: var(--space-2) var(--space-5);
     font-size: var(--text-xs);
     color: var(--mv-ink-soft);
 }
-.mv-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.mv-legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
 .mv-legend-dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: currentColor; }
 /* Each key is drawn as the badge it explains — its fill, ringed in the band's
    tone so the two pale ones do not vanish into the strip's own background. */
@@ -2016,7 +2016,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     justify-content: center;
     min-width: 28px;
     height: 28px;
-    padding: 0 7px;
+    padding: 0 var(--space-2);
     border-radius: var(--radius-full);
     font-size: var(--text-md);
     font-weight: 700;
@@ -2049,7 +2049,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 .mv-cell-events {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: var(--space-1);
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--mv-ink-soft);
@@ -2143,8 +2143,8 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 8px 12px;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
     border-bottom: 1px solid var(--mv-line-soft);
     background: color-mix(in srgb, var(--mv-accent) 10%, transparent);
     color: var(--mv-accent);
@@ -2158,7 +2158,7 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 }
 .mv-pending-stop {
     flex-shrink: 0;
-    padding: 4px 12px;
+    padding: var(--space-1) var(--space-3);
     border: 1px solid color-mix(in srgb, var(--mv-accent) 40%, transparent);
     border-radius: var(--radius-full);
     background: var(--mv-surface);
@@ -2207,11 +2207,11 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
 /* ---- The summary strip under the grid ----------------------------------- */
 .mv-summary {
     flex: 0 0 auto;
-    margin-top: 18px;
+    margin-top: var(--space-4);
     display: flex;
     align-items: center;
     gap: clamp(14px, 1.6vw, 26px);
-    padding: 16px 20px;
+    padding: var(--space-4) var(--space-5);
     border: 1px solid var(--mv-warm-line);
     border-radius: var(--radius-lg);
     background: var(--mv-warm);
@@ -2240,7 +2240,7 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
     font-weight: 700;
     color: var(--mv-ink);
 }
-.mv-summary-lead { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mv-summary-lead { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .mv-summary-title { font-size: var(--text-lg); font-weight: 700; color: var(--mv-ink); }
 .mv-summary-sub { font-size: var(--text-sm); color: var(--mv-ink-soft); }
 /* One line of verdict, read off the same ratio the ring draws. */
@@ -2260,7 +2260,7 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
 .mv-summary-fig {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: var(--space-2);
     padding-left: clamp(14px, 1.6vw, 26px);
     border-left: 1px solid var(--mv-warm-line);
     min-width: 0;
@@ -2313,7 +2313,7 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
    nothing at all. See components/Calendar/DayPanel.tsx. */
 .dp-add {
     flex: none;
-    padding: 7px 14px;
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-full);
     background: var(--mv-accent);
@@ -2333,8 +2333,8 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
     flex: none;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-full);
     background: var(--mv-accent);
@@ -2352,8 +2352,8 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
 .dp-goal {
     display: flex;
     align-items: center;
-    gap: 11px;
-    margin-bottom: 14px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
 }
 .dp-goal-ico {
     flex: none;
@@ -2373,8 +2373,8 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
     stroke: currentColor;
     stroke-width: 1.7;
 }
-.dp-goal-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-.dp-goal-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.dp-goal-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.dp-goal-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
 .dp-goal-label { font-size: var(--text-sm); font-weight: 600; color: var(--mv-ink); }
 .dp-goal-figs { font-size: var(--text-sm); color: var(--mv-ink-soft); white-space: nowrap; }
 .dp-goal-figs strong { font-size: var(--text-md); font-weight: 700; color: var(--mv-ink); }
@@ -2396,10 +2396,10 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
    you can work from. See components/Calendar/MonthTools.tsx. */
 .mv-tools {
     flex: 0 0 auto;
-    margin-top: 14px;
+    margin-top: var(--space-4);
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.15fr) minmax(0, 1.15fr);
-    gap: 14px;
+    gap: var(--space-4);
 }
 /* Below this the three sit badly side by side — Next Up's names ellipsise to
    nothing long before the cards do. */
@@ -2410,14 +2410,14 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
 .mv-quick-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
+    gap: var(--space-2);
 }
 .mv-quick {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 12px 4px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-1);
     border: 1px solid var(--mv-line);
     border-radius: var(--radius-lg);
     background: var(--mv-surface);
@@ -2456,9 +2456,9 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
 
 /* ---- Next Up and Goals Progress ---- */
 .mv-upcoming,
-.mv-goals { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.mv-goals { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .mv-upcoming li,
-.mv-goals li { display: flex; align-items: center; gap: 11px; min-width: 0; }
+.mv-goals li { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 .mv-upcoming-ico,
 .mv-goal-ico {
     flex: none;
@@ -2495,7 +2495,7 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
 .mv-upcoming-when { font-size: var(--text-xs); color: var(--mv-ink-soft); }
 .mv-upcoming-away { flex: none; font-size: var(--text-xs); color: var(--mv-ink-soft); white-space: nowrap; }
 
-.mv-goal-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.mv-goal-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .mv-goal-name {
     font-size: var(--text-md);
     font-weight: 600;
@@ -2514,11 +2514,11 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
    figure joined the row. */
 .mv-analytics {
     align-self: flex-start;
-    margin-top: 8px;
+    margin-top: var(--space-2);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--mv-warm-line);
     border-radius: var(--radius-full);
     background: var(--mv-surface);
@@ -2537,23 +2537,23 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
     background: var(--mv-surface);
     border: 1px solid var(--mv-line);
     border-radius: var(--radius-lg);
-    padding: 18px 20px;
+    padding: var(--space-4) var(--space-5);
     box-shadow: var(--shadow-sm);
 }
 .mv-card-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--space-3);
 }
 .mv-card-title {
-    margin: 0 0 14px 0;
+    margin: 0 0 var(--space-4) 0;
     font-size: var(--text-lg);
     font-weight: 700;
     letter-spacing: -0.01em;
     color: var(--mv-ink);
 }
-.mv-card-head .mv-card-title { margin-bottom: 14px; }
+.mv-card-head .mv-card-title { margin-bottom: var(--space-4); }
 .mv-card-link {
     border: none;
     background: none;
@@ -2572,7 +2572,7 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
    this view no longer uses — the theme-scoped copies are named as well because
    the light and dark rules that set the divider are more specific than the
    base one. */
-.mv-card-plan { display: flex; min-height: 0; padding-bottom: 14px; }
+.mv-card-plan { display: flex; min-height: 0; padding-bottom: var(--space-4); }
 .mv-side .calendar-right,
 html[data-theme="light"] .mv-side .calendar-right,
 html[data-theme="dark"] .mv-side .calendar-right {
@@ -2588,16 +2588,16 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
     font-weight: 700;
     letter-spacing: -0.01em;
     color: var(--mv-ink);
-    margin-bottom: 12px;
+    margin-bottom: var(--space-3);
 }
 /* The list scrolls inside the card rather than the card growing without
    limit: four cards is a panel, forty is the whole column. */
 .mv-side #dailyTasks {
-    gap: 12px;
+    gap: var(--space-3);
     max-height: 340px;
-    padding-right: 6px;
+    padding-right: var(--space-2);
 }
-.mv-side .daily-focus-holder { margin-bottom: 14px; }
+.mv-side .daily-focus-holder { margin-bottom: var(--space-4); }
 
 /* ---- Monthly Overview: four tiles --------------------------------------- */
 /* ---- Top Performing Days ------------------------------------------------ */
@@ -2607,12 +2607,12 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-3);
 }
 .mv-topdays li {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2);
     min-width: 0;
 }
 .mv-topday-rank {
@@ -2656,8 +2656,8 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
 .mv-insight {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    padding: 14px;
+    gap: var(--space-3);
+    padding: var(--space-4);
     border-radius: var(--radius-md);
     background: var(--mv-good-soft);
 }
@@ -2681,7 +2681,7 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-.mv-insight-body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.mv-insight-body { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .mv-insight-head {
     font-size: var(--text-md);
     font-weight: 600;
@@ -2717,11 +2717,11 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
 /* Short windows: the cells give up their counts before they give up the month.
    A four-line cell in 60px of height is unreadable; the number alone is not. */
 @media (min-width: 1181px) and (max-height: 720px) {
-    .mv-cell { padding: 7px 9px; gap: 2px; }
+    .mv-cell { padding: var(--space-2) var(--space-2); gap: 2px; }
     .mv-daynum { min-width: 26px; height: 26px; font-size: var(--text-md); }
     .mv-cell-events, .mv-cell-xp { font-size: var(--text-xs); }
-    .mv-summary { padding: 12px 16px; margin-top: 12px; }
-    .mv-header { margin-bottom: 14px; }
+    .mv-summary { padding: var(--space-3) var(--space-4); margin-top: var(--space-3); }
+    .mv-header { margin-bottom: var(--space-4); }
 }
 
 /* ---- Fitting the strip and the tiles into a real column -----------------
@@ -2743,22 +2743,22 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
 /* The plan cards are in a narrower column than the one they were drawn for, so
    the type comes down a size. Nothing has to be reserved for the badge any
    more — the foot is a row and the two halves share it. */
-.mv-side #dailyTasks .task-section { padding: 14px 16px; }
+.mv-side #dailyTasks .task-section { padding: var(--space-4) var(--space-4); }
 .mv-side #dailyTasks .task-section .timestamp-section input[type="time"] {
     font-size: var(--text-sm);
     min-width: 74px;
 }
-.mv-side #dailyTasks .task-times { font-size: var(--text-sm); gap: 7px; }
+.mv-side #dailyTasks .task-times { font-size: var(--text-sm); gap: var(--space-2); }
 .mv-side #dailyTasks .task-title { font-size: var(--text-lg); }
 .mv-side #dailyTasks .completed-badge,
 .mv-side #dailyTasks .complete-hint { font-size: var(--text-xs); }
 .mv-side #dailyTasks .card-menu-wrap { top: 11px; right: 11px; }
-.mv-side #dailyTasks .task-section { padding-right: 36px; }
+.mv-side #dailyTasks .task-section { padding-right: var(--space-8); }
 
 /* The strip is a row until it cannot be one. Without the wrap the figures ran
    over the title when the column was narrow — an overlap is the one failure a
    summary must not have, because it makes two true numbers unreadable. */
-.mv-summary { flex-wrap: wrap; row-gap: 12px; }
+.mv-summary { flex-wrap: wrap; row-gap: var(--space-3); }
 .mv-summary-lead { min-width: 0; }
 .mv-summary-figs { flex: 0 1 auto; min-width: 0; }
 .mv-fig-label { font-size: var(--text-xs); }

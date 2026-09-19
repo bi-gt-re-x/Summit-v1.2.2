@@ -43,7 +43,7 @@ body:has(.content-container) {
        top bar, only a Home button floating over the corner. This one sits
        clear of the rail, whose width body.has-rail has already reserved,
        so this is the gap below it rather than room made for it. */
-    margin: 28px auto 56px;
+    margin: var(--space-6) auto var(--space-12);
     color: #333;
 }
 
@@ -116,7 +116,7 @@ html[data-theme="dark"] .effective-date {
 
 @media (max-width: 768px) {
     .content-container {
-        padding: 26px 20px;
-        margin: 18px 16px 32px;
+        padding: var(--space-6) var(--space-5);
+        margin: var(--space-4) var(--space-4) var(--space-8);
     }
 }

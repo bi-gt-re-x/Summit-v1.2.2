@@ -68,10 +68,10 @@ def _with_theme(body, theme):
     return response
 
 
-def _home(**params):
-    """Redirect to the home page, carrying the popup's state in the query."""
+def _to_login(**params):
+    """Redirect to the sign-in page, carrying the flow's state in the query."""
     query = '&'.join('{}={}'.format(k, v) for k, v in params.items() if v != '')
-    return RedirectResponse('/home?{}'.format(query) if query else '/home',
+    return RedirectResponse('/login?{}'.format(query) if query else '/login',
                             status_code=303)
 
 
@@ -283,13 +283,13 @@ def verify_link(request: Request, token: str):
     """The link from the e-mail. Confirms, signs in, opens Complete Profile."""
     user = auth.consume_verify_token(token)
     if not user:
-        return _home(auth='login', verify='invalid')
+        return _to_login(auth='login', verify='invalid')
     auth.sign_in(request, user)
     if auth.profile_complete(user):
         # The front door rather than the dashboard: '/' is the route that reads
         # the account's chosen start page. See FrontDoor in frontend/src/App.tsx.
         return RedirectResponse('/', status_code=303)
-    return _home(auth='profile', verify='ok')
+    return _to_login(auth='profile', verify='ok')
 
 
 @router.get('/api/auth/verify_status')
@@ -392,7 +392,7 @@ def complete_profile(request: Request, body: CompleteProfile):
 @router.get('/auth/google')
 def google_start(request: Request, next: str = ''):
     if not auth.google_configured():
-        return _home(auth='login', oauth='unconfigured')
+        return _to_login(auth='login', oauth='unconfigured')
     state = secrets.token_urlsafe(24)
     request.session['oauth_state'] = state
     request.session['oauth_next'] = next or ''
@@ -402,28 +402,28 @@ def google_start(request: Request, next: str = ''):
 @router.get('/auth/google/callback')
 def google_callback(request: Request, state: str = '', code: str = ''):
     if not auth.google_configured():
-        return _home(auth='login', oauth='unconfigured')
+        return _to_login(auth='login', oauth='unconfigured')
     if state != request.session.pop('oauth_state', None):
-        return _home(auth='login', oauth='state')
+        return _to_login(auth='login', oauth='state')
     if not code:
-        return _home(auth='login', oauth='denied')
+        return _to_login(auth='login', oauth='denied')
 
     try:
         info = auth.google_profile(code, request)
     except Exception as exc:              # noqa: BLE001 - surface as a popup message
         print('[auth] google sign-in failed: {}'.format(exc))
-        return _home(auth='login', oauth='failed')
+        return _to_login(auth='login', oauth='failed')
 
     email = str(info.get('email') or '').strip()
     if not email or not info.get('email_verified', True):
-        return _home(auth='login', oauth='noemail')
+        return _to_login(auth='login', oauth='noemail')
 
     user = auth.upsert_google_user(info, email)
     auth.sign_in(request, user)
 
     nxt = request.session.pop('oauth_next', '') or ''
     if not auth.profile_complete(user):
-        return _home(auth='profile', next=nxt)
+        return _to_login(auth='profile', next=nxt)
     if nxt.startswith('/'):
         return RedirectResponse(nxt, status_code=303)
     # As above: the front door decides where an account opens.

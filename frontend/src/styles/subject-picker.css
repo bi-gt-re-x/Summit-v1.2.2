@@ -21,7 +21,7 @@
     /* The dialogs put this between the name field and the XP slider, and both
        of those own their own vertical rhythm; this matches it rather than
        inventing a third. */
-    margin: 18px 0 20px;
+    margin: var(--space-4) 0 var(--space-5);
     text-align: left;
     font-family: inherit;
     /* The rail is allowed to run the control's full width and no further —
@@ -44,7 +44,7 @@ html[data-theme="dark"] .subject-picker {
     font-size: var(--text-sm);
     font-weight: 500;
     color: var(--sp-ink-soft);
-    margin-bottom: 6px;
+    margin-bottom: var(--space-2);
 }
 /* The field says which it is once, quietly, instead of the dialog having to
    explain it in a hint underneath. Optional on a task, required on a goal —
@@ -76,14 +76,14 @@ html[data-theme="dark"] .subject-picker {
 }
 
 /* ---- Closed: one button, and a way to undo it ------------------------- */
-.sp-closed { display: flex; align-items: center; gap: 8px; }
+.sp-closed { display: flex; align-items: center; gap: var(--space-2); }
 
 .sp-chosen {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     max-width: 100%;
-    padding: 9px 16px;
+    padding: var(--space-2) var(--space-4);
     border: 1px solid var(--sp-line);
     border-radius: var(--radius-full);
     background: var(--sp-surface);
@@ -126,7 +126,7 @@ html[data-theme="dark"] .subject-picker {
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 9px 14px;
+    padding: var(--space-2) var(--space-4);
     border: 1px solid var(--sp-accent);
     border-radius: var(--radius-md);
     background: var(--sp-surface);
@@ -143,9 +143,9 @@ html[data-theme="dark"] .subject-picker {
    flush against it. */
 .sp-rail {
     display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    padding: 2px 6px;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: 2px var(--space-2);
     overflow-x: auto;
     overflow-y: hidden;
     /* Without this the flex row grows to the width of a hundred pills and
@@ -173,8 +173,8 @@ html[data-theme="dark"] .subject-picker {
     scroll-snap-align: start;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 13px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--sp-line);
     border-radius: var(--radius-full);
     background: var(--sp-surface);
@@ -194,7 +194,7 @@ html[data-theme="dark"] .subject-picker {
 }
 
 .sp-empty {
-    margin: 10px 0 0;
+    margin: var(--space-2) 0 0;
     font-size: var(--text-sm);
     color: var(--sp-ink-soft);
 }

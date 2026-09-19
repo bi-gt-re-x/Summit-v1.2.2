@@ -70,7 +70,7 @@
        every visit to this page start with 68px of scroll under an otherwise
        complete screen. */
     min-height: calc(100vh - var(--topnav-h, 0px));
-    padding: 26px 0 60px;
+    padding: var(--space-6) 0 var(--space-16);
 }
 
 html[data-theme='dark'] .tk-page {
@@ -93,7 +93,7 @@ html[data-theme='dark'] .tk-page {
 }
 
 
-.tk-shell { display: flex; flex-direction: column; gap: 18px; }
+.tk-shell { display: flex; flex-direction: column; gap: var(--space-4); }
 .tk-quiet { color: var(--tk-muted); font-size: var(--text-sm); margin: 0; }
 .tk-sr {
     position: absolute; width: 1px; height: 1px;
@@ -102,10 +102,10 @@ html[data-theme='dark'] .tk-page {
 }
 
 /* ---------- The header ---------------------------------------------------- */
-.tk-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.tk-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 .tk-head-title h1 {
-    display: flex; align-items: center; gap: 11px;
-    margin: 0 0 5px;
+    display: flex; align-items: center; gap: var(--space-3);
+    margin: 0 0 var(--space-1);
     font-size: var(--text-3xl); font-weight: 700; letter-spacing: -.02em;
 }
 .tk-head-ico {
@@ -116,11 +116,11 @@ html[data-theme='dark'] .tk-page {
     background: color-mix(in srgb, var(--tk-violet) 14%, transparent);
 }
 .tk-head-ico svg { width: 19px; height: 19px; }
-.tk-head-tools { display: flex; align-items: center; gap: 10px; }
+.tk-head-tools { display: flex; align-items: center; gap: var(--space-2); }
 
 .tk-new {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
     border: 0; border-radius: var(--radius-md);
     background: var(--tk-violet); color: #fff;
     font-size: var(--text-md); font-weight: 600;
@@ -132,7 +132,7 @@ html[data-theme='dark'] .tk-page {
 .tk-new svg { width: 16px; height: 16px; }
 .tk-new-caret {
     display: grid; place-items: center;
-    margin-left: 2px; padding-left: 8px;
+    margin-left: 2px; padding-left: var(--space-2);
     border-left: 1px solid rgba(255, 255, 255, .28);
     transition: transform .18s ease;
 }
@@ -141,7 +141,7 @@ html[data-theme='dark'] .tk-page {
 
 .tk-failure {
     margin: 0;
-    padding: 10px 13px;
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);
     color: var(--tk-red);
@@ -162,7 +162,7 @@ html[data-theme='dark'] .tk-page {
     gap: clamp(16px, 1.6vw, 26px);
     align-items: start;
 }
-.tk-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.tk-main { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
 
 /* ---------- Stat cards ---------------------------------------------------- */
 /* Five across when there is room for five, and however many fit when there is
@@ -178,7 +178,7 @@ html[data-theme='dark'] .tk-page {
 .tk-stat {
     position: relative;
     display: flex; flex-direction: column; gap: 2px;
-    padding: 15px 16px 10px;
+    padding: var(--space-4) var(--space-4) var(--space-2);
     border: 1px solid var(--tk-line);
     border-radius: var(--tk-radius);
     background: var(--tk-card);
@@ -205,15 +205,15 @@ html[data-theme='dark'] .tk-page {
 }
 .tk-stat-badge svg { width: 12px; height: 12px; }
 
-.tk-spark { display: block; width: 100%; height: 22px; margin-top: 8px; }
+.tk-spark { display: block; width: 100%; height: 22px; margin-top: var(--space-2); }
 .tk-spark path { stroke: var(--tk-violet); }
 .tk-spark.is-amber path { stroke: var(--tk-amber); }
 .tk-spark.is-red path { stroke: var(--tk-red); }
 .tk-spark.is-green path { stroke: var(--tk-green); }
 
 /* ---------- Toolbar ------------------------------------------------------- */
-.tk-toolbar { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.tk-toolbar-top { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.tk-toolbar { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.tk-toolbar-top { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
 
 .tk-search {
     /* Shrinks to a floor rather than to nothing: the menus beside it may take
@@ -222,8 +222,8 @@ html[data-theme='dark'] .tk-page {
        block at the foot of this file. */
     flex: 1 1 200px;
     min-width: 0;
-    display: flex; align-items: center; gap: 10px;
-    padding: 0 13px;
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: 0 var(--space-3);
     height: 46px;
     border: 1px solid var(--tk-line);
     border-radius: var(--radius-md);
@@ -241,7 +241,7 @@ html[data-theme='dark'] .tk-page {
 .tk-search input::-webkit-search-cancel-button { display: none; }
 .tk-search kbd {
     flex: none;
-    padding: 3px 7px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--tk-line);
     border-radius: var(--radius-sm);
     background: var(--tk-card-2);
@@ -267,10 +267,10 @@ html[data-theme='dark'] .tk-page {
 .tk-menu { position: relative; min-width: 0; }
 .tk-menu + .tk-menu .tk-tool { border-left: 1px solid var(--tk-line); }
 .tk-tool {
-    display: inline-flex; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: var(--space-2);
     height: 44px;
     min-width: 0;
-    padding: 0 13px;
+    padding: 0 var(--space-3);
     border: 0; background: none;
     color: var(--tk-muted);
     font-size: var(--text-sm); font-weight: 500;
@@ -299,7 +299,7 @@ html[data-theme='dark'] .tk-page {
 .tk-tool-count {
     display: grid; place-items: center;
     min-width: 17px; height: 17px;
-    padding: 0 5px;
+    padding: 0 var(--space-1);
     border-radius: var(--radius-full);
     background: var(--tk-violet); color: #fff;
     font-size: var(--text-2xs); font-weight: 700;
@@ -317,7 +317,7 @@ html[data-theme='dark'] .tk-page {
     position: absolute; z-index: 30; top: calc(100% + 7px); right: 0;
     min-width: 232px;
     max-width: min(300px, calc(100vw - 32px));
-    padding: 6px;
+    padding: var(--space-2);
     border: 1px solid var(--tk-line);
     border-radius: var(--radius-md);
     background: var(--tk-card);
@@ -325,14 +325,14 @@ html[data-theme='dark'] .tk-page {
     display: flex; flex-direction: column; gap: 1px;
 }
 .tk-menu-head {
-    margin: 4px 8px 5px;
+    margin: var(--space-1) var(--space-2) var(--space-1);
     font-size: var(--text-2xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
     color: var(--tk-faint);
 }
 .tk-menu-item {
-    display: flex; align-items: center; gap: 8px;
+    display: flex; align-items: center; gap: var(--space-2);
     width: 100%;
-    padding: 8px 10px;
+    padding: var(--space-2) var(--space-2);
     border: 0; border-radius: var(--radius-md);
     background: none; color: var(--tk-text);
     font-size: var(--text-sm); text-align: left;
@@ -345,7 +345,7 @@ html[data-theme='dark'] .tk-page {
    A tick slot that holds its width whether or not it is filled, so the labels
    keep one left edge as the choice moves between them — and so selection is
    carried by a mark rather than by colour alone. */
-.tk-menu-item.is-choice { align-items: flex-start; gap: 9px; padding: 7px 10px; }
+.tk-menu-item.is-choice { align-items: flex-start; gap: var(--space-2); padding: var(--space-2) var(--space-2); }
 .tk-tick {
     flex: none;
     display: grid; place-items: center;
@@ -370,15 +370,15 @@ html[data-theme='dark'] .tk-page {
 
 /* The one pairing of group and sort that cannot do what it says. */
 .tk-menu-note {
-    margin: 6px 4px 2px;
-    padding: 8px 9px;
+    margin: var(--space-2) var(--space-1) 2px;
+    padding: var(--space-2) var(--space-2);
     border-radius: var(--radius-md);
     background: var(--tk-card-2);
     font-size: var(--text-xs); line-height: 1.5;
     color: var(--tk-muted);
 }
 .tk-menu-note button {
-    border: 0; background: none; padding: 0 0 0 3px;
+    border: 0; background: none; padding: 0 0 0 var(--space-1);
     color: var(--tk-violet); font: inherit; font-weight: 600;
     cursor: pointer;
 }
@@ -391,11 +391,11 @@ html[data-theme='dark'] .tk-page {
    the row menu is already the full width of the choice it offers. */
 .tk-menu-panel.is-goals { max-height: 300px; overflow-y: auto; }
 .tk-menu-item.is-back { color: var(--tk-muted); font-size: var(--text-sm); }
-.tk-menu-empty { margin: 8px 10px; font-size: var(--text-sm); color: var(--tk-faint); }
+.tk-menu-empty { margin: var(--space-2) var(--space-2); font-size: var(--text-sm); color: var(--tk-faint); }
 .tk-menu-item.is-pick input { accent-color: var(--tk-violet); }
 .tk-menu-clear {
-    margin-top: 4px;
-    padding: 8px 10px;
+    margin-top: var(--space-1);
+    padding: var(--space-2) var(--space-2);
     border: 0; border-top: 1px solid var(--tk-line-soft); border-radius: 0 0 var(--radius-md) var(--radius-md);
     background: none; color: var(--tk-muted);
     font-size: var(--text-xs); text-align: left;
@@ -404,8 +404,8 @@ html[data-theme='dark'] .tk-page {
 .tk-menu-clear:hover { color: var(--tk-violet); }
 
 /* ---------- Chips --------------------------------------------------------- */
-.tk-chips { display: flex; align-items: center; gap: 10px 20px; flex-wrap: wrap; }
-.tk-chip-set { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.tk-chips { display: flex; align-items: center; gap: var(--space-2) var(--space-5); flex-wrap: wrap; }
+.tk-chip-set { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 
 /* What each run of chips actually filters.
  *
@@ -431,8 +431,8 @@ html[data-theme='dark'] .tk-page {
     color: var(--tk-faint);
 }
 .tk-chip {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 13px;
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--tk-line);
     border-radius: var(--radius-md);
     background: var(--tk-card);
@@ -459,8 +459,8 @@ html[data-theme='dark'] .tk-page {
 
 /* ---------- Bulk bar ------------------------------------------------------ */
 .tk-bulk {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 14px;
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
     border: 1px solid color-mix(in srgb, var(--tk-violet) 40%, transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tk-violet) 10%, transparent);
@@ -468,7 +468,7 @@ html[data-theme='dark'] .tk-page {
 }
 .tk-bulk strong { margin-right: auto; }
 .tk-bulk-do {
-    padding: 6px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 0; border-radius: var(--radius-md);
     background: var(--tk-violet); color: #fff;
     font-size: var(--text-sm); font-weight: 600; cursor: pointer;
@@ -481,22 +481,22 @@ html[data-theme='dark'] .tk-page {
 }
 
 /* ---------- Groups -------------------------------------------------------- */
-.tk-group { display: flex; flex-direction: column; gap: 12px; }
+.tk-group { display: flex; flex-direction: column; gap: var(--space-3); }
 .tk-group-head { display: flex; flex-direction: column; gap: 1px; }
 .tk-group-toggle {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: var(--space-2);
     padding: 0; border: 0; background: none;
     color: inherit; cursor: pointer;
 }
 .tk-group-toggle h2 {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: var(--space-2);
     margin: 0;
     font-size: var(--text-lg); font-weight: 600; letter-spacing: -.01em;
 }
 .tk-group-count {
     display: grid; place-items: center;
     min-width: 21px; height: 21px;
-    padding: 0 6px;
+    padding: 0 var(--space-2);
     border-radius: var(--radius-sm);
     background: var(--tk-card-2);
     border: 1px solid var(--tk-line);
@@ -511,7 +511,7 @@ html[data-theme='dark'] .tk-page {
 /* 12px, not 8. A row pads itself by 15px, so at 8px the space *between* two
    tasks was smaller than the space inside one and a screen of them read as a
    single striped block rather than as a list of separate things to do. */
-.tk-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.tk-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 
 /* ---------- A row --------------------------------------------------------- */
 .tk-row {
@@ -519,8 +519,8 @@ html[data-theme='dark'] .tk-page {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto auto auto;
     align-items: center;
-    gap: 13px;
-    padding: 15px 15px 15px 18px;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-4) var(--space-4);
     border: 1px solid var(--tk-line);
     border-radius: var(--radius-md);
     background: var(--tk-card);
@@ -580,22 +580,22 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 }
 .tk-check input:focus-visible + span { outline: 2px solid var(--tk-violet); outline-offset: 2px; }
 
-.tk-row-body { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
-.tk-row-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tk-row-body { min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.tk-row-line { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 .tk-title {
     font-size: var(--text-md); font-weight: 600; letter-spacing: -.01em;
     cursor: text;
 }
 .tk-rename {
     min-width: 240px;
-    padding: 3px 8px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--tk-violet); border-radius: var(--radius-sm);
     background: var(--tk-card-2); color: var(--tk-text);
     font: 600 14px/1.3 inherit;
     outline: 0;
 }
 .tk-tag {
-    padding: 2.5px 8px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     font-size: var(--text-2xs); font-weight: 600;
     border: 1px solid transparent;
@@ -609,8 +609,8 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
     border-color: var(--tk-line);
 }
 
-.tk-row-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.tk-row-meta span { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--tk-faint); }
+.tk-row-meta { display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+.tk-row-meta span { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--tk-faint); }
 .tk-row-meta span.is-late { color: var(--tk-red); }
 /* The goal a task is execution for. Violet like the XP figure, because both
    are the row saying what the work counts toward rather than what it is. */
@@ -643,7 +643,7 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 
 .tk-empty {
     margin: 0;
-    padding: 34px 16px;
+    padding: var(--space-8) var(--space-4);
     text-align: center;
     color: var(--tk-muted);
     font-size: var(--text-md);
@@ -670,25 +670,25 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 .tk-rail {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-4);
     position: sticky;
     top: 20px;
     max-height: calc(100vh - 40px);
     overflow-y: auto;
     /* The page behind should not start scrolling when the rail runs out. */
     overscroll-behavior: contain;
-    padding-inline: 6px;
-    margin-inline: -6px;
+    padding-inline: var(--space-2);
+    margin-inline: -8px;
 }
 .tk-side {
-    display: flex; flex-direction: column; gap: 12px;
-    padding: 16px;
+    display: flex; flex-direction: column; gap: var(--space-3);
+    padding: var(--space-4);
     border: 1px solid var(--tk-line);
     border-radius: var(--tk-radius);
     background: var(--tk-card);
     box-shadow: var(--tk-shadow);
 }
-.tk-side-head { display: flex; align-items: center; gap: 9px; }
+.tk-side-head { display: flex; align-items: center; gap: var(--space-2); }
 .tk-side-head h2 { margin: 0; font-size: var(--text-md); font-weight: 600; letter-spacing: -.01em; }
 .tk-side-ico { display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-sm); }
 .tk-side-ico svg { width: 15px; height: 15px; }
@@ -726,7 +726,7 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 /* h:mm:ss needs to fit the same ring m:ss does. */
 .tk-dial-face strong.is-long { font-size: var(--text-2xl); }
 .tk-dial-face span { font-size: var(--text-xs); color: var(--tk-faint); }
-.tk-dial-tools { display: flex; align-items: center; gap: 12px; }
+.tk-dial-tools { display: flex; align-items: center; gap: var(--space-3); }
 .tk-play {
     display: grid; place-items: center;
     width: 42px; height: 42px;
@@ -749,11 +749,11 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 .tk-dial-note { margin: 0; font-size: var(--text-xs); color: var(--tk-faint); }
 
 /* ---------- Upcoming ------------------------------------------------------ */
-.tk-next { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tk-next { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .tk-next li {
     position: relative;
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px 10px 14px;
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
     border-radius: var(--radius-md);
     background: var(--tk-card-2);
 }
@@ -780,8 +780,8 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 .tk-next-body span { font-size: var(--text-2xs); color: var(--tk-faint); }
 
 /* ---------- Streaks ------------------------------------------------------- */
-.tk-streaks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.tk-streaks li { display: flex; align-items: center; gap: 9px; }
+.tk-streaks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.tk-streaks li { display: flex; align-items: center; gap: var(--space-2); }
 .tk-streak-name {
     flex: 1 1 auto; min-width: 0;
     font-size: var(--text-sm); font-weight: 500;
@@ -795,7 +795,7 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 /* ---------- Quick add ----------------------------------------------------- */
 .tk-quick-box {
     width: 100%;
-    padding: 11px 13px;
+    padding: var(--space-3) var(--space-3);
     border: 1px solid var(--tk-line); border-radius: var(--radius-md);
     background: var(--tk-card-2); color: var(--tk-text);
     font-size: var(--text-sm);
@@ -803,7 +803,7 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 }
 .tk-quick-box::placeholder { color: var(--tk-faint); }
 .tk-quick-box:focus { border-color: color-mix(in srgb, var(--tk-violet) 55%, transparent); }
-.tk-quick-tools { display: flex; align-items: center; gap: 8px; }
+.tk-quick-tools { display: flex; align-items: center; gap: var(--space-2); }
 .tk-quick-tool {
     display: grid; place-items: center;
     width: 38px; height: 34px;
@@ -905,10 +905,10 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
    whole list stops. Full width and dashed so it reads as the seam in a list it
    belongs to and not as another row in it. */
 .tk-more-rows {
-    display: flex; align-items: baseline; justify-content: center; gap: 5px;
+    display: flex; align-items: baseline; justify-content: center; gap: var(--space-1);
     width: 100%;
-    margin-top: 8px;
-    padding: 9px 12px;
+    margin-top: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border: 1px dashed var(--tk-line);
     border-radius: var(--radius-md);
     background: none;
@@ -927,18 +927,18 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
    here rather than beside the toolbar's because the form is a panel in its own
    right, not a control. */
 .tk-composer {
-    display: flex; flex-direction: column; gap: 14px;
-    padding: 16px;
+    display: flex; flex-direction: column; gap: var(--space-4);
+    padding: var(--space-4);
     border: 1px solid var(--tk-line);
     border-radius: var(--tk-radius);
     background: var(--tk-card);
     box-shadow: var(--tk-shadow);
 }
-.tk-composer-main { display: flex; align-items: center; gap: 10px; }
+.tk-composer-main { display: flex; align-items: center; gap: var(--space-2); }
 .tk-composer-name {
     flex: 1 1 auto; min-width: 0;
     height: 42px;
-    padding: 0 13px;
+    padding: 0 var(--space-3);
     border: 1px solid var(--tk-line); border-radius: var(--radius-md);
     background: var(--tk-card-2); color: var(--tk-text);
     font-size: var(--text-md);
@@ -950,7 +950,7 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 .tk-btn {
     flex: none;
     height: 42px;
-    padding: 0 17px;
+    padding: 0 var(--space-4);
     border: 1px solid var(--tk-line); border-radius: var(--radius-md);
     background: var(--tk-card); color: var(--tk-text);
     font-size: var(--text-md); font-weight: 600;
@@ -968,25 +968,25 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 .tk-composer-more {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    padding-top: 14px;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
     border-top: 1px solid var(--tk-line-soft);
 }
-.tk-field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.tk-field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .tk-field > span {
     font-size: var(--text-2xs); font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
     color: var(--tk-faint);
 }
 .tk-input, .tk-select {
     height: 38px;
-    padding: 0 10px;
+    padding: 0 var(--space-2);
     border: 1px solid var(--tk-line); border-radius: var(--radius-md);
     background: var(--tk-card-2); color: var(--tk-text);
     font-size: var(--text-sm);
     outline: 0;
 }
 .tk-input:focus, .tk-select:focus { border-color: color-mix(in srgb, var(--tk-violet) 55%, transparent); }
-.tk-select { appearance: none; cursor: pointer; padding-right: 26px; }
+.tk-select { appearance: none; cursor: pointer; padding-right: var(--space-6); }
 .tk-field-subject { grid-column: span 2; }
 @media (max-width: 620px) {
     .tk-field-subject { grid-column: auto; }

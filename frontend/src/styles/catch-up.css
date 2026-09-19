@@ -25,7 +25,7 @@
     z-index: 900;
     display: grid;
     place-items: center;
-    padding: 20px;
+    padding: var(--space-5);
     background: rgba(16, 20, 30, .45);
     backdrop-filter: blur(2px);
     animation: cu-in .14s ease-out;
@@ -56,12 +56,12 @@ html[data-theme="dark"] .cu-backdrop {
     border: 1px solid var(--cu-line);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    padding: 22px 22px 18px;
+    padding: var(--space-6) var(--space-6) var(--space-4);
     color: var(--cu-ink);
 }
 
 .cu-title {
-    margin: 0 0 6px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-xl);
     font-weight: 700;
     letter-spacing: -.02em;
@@ -69,7 +69,7 @@ html[data-theme="dark"] .cu-backdrop {
 }
 
 .cu-lead {
-    margin: 0 0 16px;
+    margin: 0 0 var(--space-4);
     font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--cu-ink-soft);
@@ -80,16 +80,16 @@ html[data-theme="dark"] .cu-backdrop {
     margin: 0;
     padding: 0;
     display: grid;
-    gap: 8px;
+    gap: var(--space-2);
 }
 
 .cu-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: var(--space-3);
     flex-wrap: wrap;
-    padding: 10px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--cu-line);
     border-radius: var(--radius-md);
     background: var(--cu-surface-soft);
@@ -125,19 +125,19 @@ html[data-theme="dark"] .cu-backdrop {
 .cu-fields {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
 }
 
 .cu-field {
     display: flex;
     align-items: baseline;
-    gap: 4px;
+    gap: var(--space-1);
 }
 
 .cu-field input {
     width: 52px;
     height: 36px;
-    padding: 0 8px;
+    padding: 0 var(--space-2);
     border: 1px solid var(--cu-line);
     border-radius: var(--radius-md);
     background: var(--cu-surface);
@@ -178,7 +178,7 @@ html[data-theme="dark"] .cu-backdrop {
 }
 
 .cu-failed {
-    margin: 14px 0 0;
+    margin: var(--space-4) 0 0;
     font-size: var(--text-sm);
     color: #c0395f;
 }
@@ -188,8 +188,8 @@ html[data-theme="dark"] .cu-failed { color: #f08aa5; }
 .cu-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 18px;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
 }
 
 .cu-total {

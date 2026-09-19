@@ -122,7 +122,7 @@
 
     align-items: center;
 
-    padding: 21px 30px;
+    padding: var(--space-5) var(--space-8);
 
     border-bottom: 1px solid #e0e0e0;
 
@@ -174,7 +174,7 @@
 
     min-height: 0;
 
-    padding: 28px 30px;
+    padding: var(--space-6) var(--space-8);
 
     overflow-y: auto;
 
@@ -187,7 +187,7 @@
    needing one. */
 .form-group {
 
-    margin-bottom: 22px;
+    margin-bottom: var(--space-6);
 
 }
 
@@ -195,7 +195,7 @@
 
     display: block;
 
-    margin-bottom: 9px;
+    margin-bottom: var(--space-2);
 
     color: #333;
 
@@ -213,7 +213,7 @@
 
     width: 100%;
 
-    padding: 14px 18px;
+    padding: var(--space-4) var(--space-4);
 
     border: 2px solid #1a237e;
 
@@ -237,7 +237,7 @@
 
     display: flex;
 
-    gap: 10px;
+    gap: var(--space-2);
 
 }
 
@@ -245,7 +245,7 @@
 
     flex: 1;
 
-    padding: 14px 12px;
+    padding: var(--space-4) var(--space-3);
 
     border: 2px solid #1a237e;
 
@@ -291,7 +291,7 @@
 
     flex-direction: column;
 
-    gap: 14px;
+    gap: var(--space-4);
 
 }
 
@@ -303,7 +303,7 @@
 
     font-style: italic;
 
-    margin: 0 0 10px 0;
+    margin: 0 0 var(--space-2) 0;
 
     font-family: var(--font-sans);
 
@@ -323,13 +323,13 @@
 
     align-items: center;
 
-    gap: 12px;
+    gap: var(--space-3);
 
     cursor: pointer;
 
     font-size: var(--text-lg);
 
-    padding: 8px 0;
+    padding: var(--space-2) 0;
 
 }
 
@@ -359,9 +359,9 @@
 
     grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
 
-    gap: 12px;
+    gap: var(--space-3);
 
-    margin-top: 10px;
+    margin-top: var(--space-2);
 
 }
 
@@ -371,7 +371,7 @@
 
     grid-template-columns: repeat(auto-fit, minmax(62px, 1fr));
 
-    gap: 8px;
+    gap: var(--space-2);
 
 }
 
@@ -381,13 +381,13 @@
 
     align-items: center;
 
-    gap: 10px;
+    gap: var(--space-2);
 
     cursor: pointer;
 
     font-size: var(--text-md);
 
-    padding: 8px 10px;
+    padding: var(--space-2) var(--space-2);
 
     background: #f8f9fa;
 
@@ -423,9 +423,9 @@
 
     justify-content: flex-end;
 
-    gap: 15px;
+    gap: var(--space-4);
 
-    padding: 21px 30px;
+    padding: var(--space-5) var(--space-8);
 
     border-top: 1px solid #e0e0e0;
 
@@ -437,7 +437,7 @@
 
 .btn-confirm {
 
-    padding: 12px 28px;
+    padding: var(--space-3) var(--space-6);
 
     border-radius: var(--radius-md);
 
@@ -640,13 +640,13 @@ html[data-theme="dark"] .calendar-container .modal-body::-webkit-scrollbar-thumb
 /* Body-level popover so the block's overflow:hidden can't clip it. */
 .wk-card-pop {
     position: fixed; z-index: 1200; min-width: 118px;
-    display: flex; flex-direction: column; padding: 4px 0;
+    display: flex; flex-direction: column; padding: var(--space-1) 0;
     background: #fff; border: 1px solid #e3e6ee; border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg); overflow: hidden;
 }
 .wk-card-pop .wk-dd-item {
     border: none; background: transparent; text-align: left;
-    padding: 8px 14px; font: inherit; font-size: var(--text-sm); cursor: pointer;
+    padding: var(--space-2) var(--space-4); font: inherit; font-size: var(--text-sm); cursor: pointer;
     color: #2c3550; white-space: nowrap;
 }
 .wk-card-pop .wk-dd-item:hover { background: #f2f5fb; }
@@ -660,15 +660,15 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 /* Conflict modal: two blocks overlap >75%. A blocking backdrop centers the
    prompt so the calendar can't be used until one side is deleted (no keep-both). */
 .wk-overlap-backdrop {
-    position: fixed; inset: 0; z-index: 1000; padding: 20px;
+    position: fixed; inset: 0; z-index: 1000; padding: var(--space-5);
     display: flex; align-items: center; justify-content: center;
     background: rgba(16, 24, 40, .45);
     transition: background .18s ease;
 }
 .wk-overlap-popup {
-    display: flex; flex-direction: column; gap: 12px;
+    display: flex; flex-direction: column; gap: var(--space-3);
     width: min(92vw, 460px); text-align: left;
-    background: #b0413e; color: #fff; padding: 20px 22px;
+    background: #b0413e; color: #fff; padding: var(--space-5) var(--space-6);
     border-radius: var(--radius-lg); font-size: var(--text-lg); font-weight: 600;
     box-shadow: var(--shadow-lg);
     transition: transform .22s ease, width .22s ease;
@@ -680,16 +680,16 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
    The dialog used to offer two bare names, which on a seven-column week is a
    question about two rectangles the reader may never have looked at. */
 .wk-overlap-list {
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: column; gap: var(--space-2);
     list-style: none; margin: 0; padding: 0;
 }
 .wk-overlap-item {
-    display: flex; flex-direction: column; gap: 6px;
-    background: rgba(255,255,255,.13); border-radius: var(--radius-md); padding: 11px 13px;
+    display: flex; flex-direction: column; gap: var(--space-2);
+    background: rgba(255,255,255,.13); border-radius: var(--radius-md); padding: var(--space-3) var(--space-3);
 }
-.wk-overlap-where { display: flex; align-items: center; gap: 8px; }
+.wk-overlap-where { display: flex; align-items: center; gap: var(--space-2); }
 .wk-overlap-kind {
-    flex: none; border-radius: var(--radius-full); padding: 2px 8px;
+    flex: none; border-radius: var(--radius-full); padding: 2px var(--space-2);
     font-size: var(--text-2xs); font-weight: 700; letter-spacing: .04em;
     text-transform: uppercase; background: rgba(255,255,255,.24);
 }
@@ -700,7 +700,7 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 }
 .wk-overlap-close {
     background: rgba(255,255,255,.22); color: #fff; border: none;
-    border-radius: var(--radius-md); padding: 8px 14px; cursor: pointer;
+    border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); cursor: pointer;
     font: inherit; font-size: var(--text-sm); font-weight: 700; width: 100%;
     margin-top: 2px;
 }
@@ -708,7 +708,7 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 
 .wk-overlap-reveal {
     background: #fff; color: #8f302e; border: none;
-    border-radius: var(--radius-md); padding: 10px 16px; cursor: pointer;
+    border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); cursor: pointer;
     font: inherit; font-size: var(--text-md); font-weight: 700; width: 100%;
 }
 .wk-overlap-reveal:hover { background: #ffeceb; }
@@ -731,13 +731,13 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
    page's global `.modal-content input { width:100% }` (mainpage.css) would blow
    these up, so the widths are scoped under #addTaskModal to win on specificity:
    the slider fills the row and the number box stays a fixed 56px pill. */
-.xp-slider-row { display: flex; gap: 12px; align-items: center; margin-top: 6px; }
+.xp-slider-row { display: flex; gap: var(--space-3); align-items: center; margin-top: var(--space-2); }
 .xp-value { color: #A38A70; font-weight: 700; }
 #addTaskModal .xp-slider-row input[type="range"] {
     flex: 1 1 auto; width: auto; min-width: 0; accent-color: #A38A70;
 }
 #addTaskModal .xp-input-field {
-    flex: 0 0 56px; width: 56px; padding: 6px 8px; border: 1.5px solid #D9D9D9;
+    flex: 0 0 56px; width: 56px; padding: var(--space-2) var(--space-2); border: 1.5px solid #D9D9D9;
     border-radius: var(--radius-md); background: #F8F9FA; color: #2C302E; font-size: var(--text-md);
     font-weight: 600; text-align: center; outline: none; -moz-appearance: textfield;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;

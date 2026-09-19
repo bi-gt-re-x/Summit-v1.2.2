@@ -25,13 +25,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: var(--space-3);
     /* 45vh put the spinner a fifth of the way down the screen, which reads as
        a page that stopped rather than one still arriving. Two thirds is enough
        for it to land just above true centre — where the eye expects to be told
        to wait. */
     min-height: 66vh;
-    padding: 40px 24px;
+    padding: var(--space-10) var(--space-6);
     text-align: center;
     color: #6C757D;
     font-size: var(--text-lg);
@@ -69,8 +69,8 @@
     /* An error is a message, not a screenful — it sits where it is put, which
        on the dashboard is a banner between two rows. */
     min-height: 0;
-    padding: 18px 24px;
-    gap: 10px;
+    padding: var(--space-4) var(--space-6);
+    gap: var(--space-2);
 }
 
 /* --- empty, and not built yet ------------------------------------------- */
@@ -86,7 +86,7 @@
    loudest thing said about a page whose whole point is that there is nothing
    here yet. A pill says the same in three words and gets out of the way. */
 .page-state-note {
-    padding: 4px 12px;
+    padding: var(--space-1) var(--space-3);
     border: 1px solid #E8DFD4;
     border-radius: var(--radius-full);
     background: #FBF8F4;
@@ -102,13 +102,13 @@
 .page-state-aside {
     width: 100%;
     max-width: 460px;
-    margin-top: 10px;
-    padding-top: 18px;
+    margin-top: var(--space-2);
+    padding-top: var(--space-4);
     border-top: 1px solid #EAEAEA;
 }
 
 .page-state-aside > p {
-    margin: 0 0 8px;
+    margin: 0 0 var(--space-2);
     color: #9AA1A9;
     font-size: var(--text-xs);
     font-weight: 600;
@@ -122,7 +122,7 @@
 .page-state-files {
     list-style: none;
     margin: 0;
-    padding: 12px 16px;
+    padding: var(--space-3) var(--space-4);
     background: #F6F7F9;
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-md);
@@ -171,10 +171,10 @@ html[data-theme="dark"] .page-state-files code { color: #8b949e; }
    and the two buttons that are actually worth offering. */
 .page-state-crash {
     display: flex; flex-direction: column; align-items: center;
-    gap: 10px;
+    gap: var(--space-2);
     max-width: 520px;
-    margin: 48px auto;
-    padding: 28px 24px;
+    margin: var(--space-12) auto;
+    padding: var(--space-6) var(--space-6);
     text-align: center;
     border: 1px solid var(--ps-line, #e6e9ef);
     border-radius: var(--radius-lg);
@@ -202,7 +202,7 @@ html[data-theme="dark"] .page-state-files code { color: #8b949e; }
     display: block;
     max-width: 100%;
     margin-top: 2px;
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     background: var(--ps-well, #f2f4f8);
     color: var(--ps-muted, #6b7684);
@@ -213,7 +213,7 @@ html[data-theme="dark"] .page-state-files code { color: #8b949e; }
        property that was null. */
     overflow-wrap: anywhere;
 }
-.page-state-actions { display: flex; gap: 9px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+.page-state-actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); flex-wrap: wrap; justify-content: center; }
 
 html[data-theme="dark"] .page-state-crash {
     --ps-line: var(--color-line);

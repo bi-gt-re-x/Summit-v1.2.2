@@ -467,7 +467,7 @@ describe('the foot', () => {
 
     expect(screen.getByRole('link', { name: 'Log In' })).toHaveAttribute(
       'href',
-      '/home?auth=login',
+      '/login?auth=login',
     );
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });

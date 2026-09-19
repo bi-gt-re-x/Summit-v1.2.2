@@ -28,7 +28,7 @@
   background: #fff;
   color: #2c302e;
   border-radius: var(--radius-lg);
-  padding: 26px 28px;
+  padding: var(--space-6) var(--space-6);
   max-width: 340px;
   width: calc(100vw - 48px);
   box-shadow: var(--shadow-lg);
@@ -43,16 +43,16 @@
 .focus-confirm-title {
   font-size: var(--text-lg);
   font-weight: 700;
-  margin: 0 0 6px;
+  margin: 0 0 var(--space-2);
 }
 .focus-confirm-msg {
   font-size: var(--text-md);
   color: #6c757d;
-  margin: 0 0 18px;
+  margin: 0 0 var(--space-4);
 }
 .focus-confirm-actions {
   display: flex;
-  gap: 10px;
+  gap: var(--space-2);
   justify-content: center;
 }
 html[data-theme="dark"] .focus-confirm-box {

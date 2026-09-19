@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0 24px;
+    padding: 0 var(--space-6);
     background: #FFFFFF;
     border-bottom: 1px solid #EAEAEA;
     transition: left .22s ease;
@@ -30,7 +30,7 @@
 .topbar-actions {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
 }
 
 /* Each control and the panel it opens. `position: relative` here is what the
@@ -63,7 +63,7 @@
     right: 4px;
     min-width: 16px;
     height: 16px;
-    padding: 0 4px;
+    padding: 0 var(--space-1);
     box-sizing: border-box;
     border-radius: var(--radius-full);
     background: #C0392B;
@@ -88,9 +88,9 @@
 .topbar-account {
     display: flex;
     align-items: center;
-    gap: 9px;
-    margin-left: 6px;
-    padding: 4px 10px 4px 4px;
+    gap: var(--space-2);
+    margin-left: var(--space-2);
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
     border: none;
     border-radius: var(--radius-full);
     background: none;
@@ -126,19 +126,19 @@
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
-    padding: 12px;
+    padding: var(--space-3);
 }
 
 .topbar-search { width: min(360px, 78vw); }
 .topbar-alerts { width: min(340px, 82vw); }
 /* Wider than the 216px it was: the avatar picker moved in from the rail, and
    fifty pictures in a 216px scroller is a peephole. */
-.topbar-account-menu { width: min(300px, 88vw); padding: 10px; }
+.topbar-account-menu { width: min(300px, 88vw); padding: var(--space-2); }
 
 .topbar-search-input {
     width: 100%;
     box-sizing: border-box;
-    padding: 9px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-md);
     background: #F8F9FB;
@@ -149,7 +149,7 @@
 .topbar-search-input:focus { outline: none; border-color: #A38A70; background: #FFFFFF; }
 
 .topbar-empty {
-    margin: 10px 2px 2px;
+    margin: var(--space-2) 2px 2px;
     font-size: var(--text-sm);
     line-height: 1.55;
     color: #6C757D;
@@ -157,7 +157,7 @@
 
 .topbar-results {
     list-style: none;
-    margin: 8px 0 0;
+    margin: var(--space-2) 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -166,8 +166,8 @@
 .topbar-results a {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 8px 9px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border-radius: var(--radius-md);
     color: #2C302E;
     text-decoration: none;
@@ -191,9 +191,9 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 6px 9px 10px;
+    padding: var(--space-2) var(--space-2) var(--space-2);
     border-bottom: 1px solid #F0F2F5;
-    margin-bottom: 6px;
+    margin-bottom: var(--space-2);
 }
 .topbar-account-head strong { font-size: var(--text-md); overflow: hidden; text-overflow: ellipsis; }
 .topbar-account-head span { font-size: var(--text-xs); color: #6C757D; }
@@ -206,9 +206,9 @@
    reader there is more of it to the right. */
 .topbar-avatar-row {
     display: flex;
-    gap: 7px;
-    margin: 0 -10px 8px;
-    padding: 2px 10px 8px;
+    gap: var(--space-2);
+    margin: 0 -8px var(--space-2);
+    padding: 2px var(--space-2) var(--space-2);
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: thin;
@@ -243,7 +243,7 @@
     display: block;
     width: 100%;
     box-sizing: border-box;
-    padding: 8px 9px;
+    padding: var(--space-2) var(--space-2);
     border: none;
     border-radius: var(--radius-md);
     background: none;
@@ -257,7 +257,7 @@
 }
 .topbar-account-menu a:hover,
 .topbar-signout:hover { background: #F4F6F8; }
-.topbar-signout { color: #C0392B; margin-top: 4px; border-top: 1px solid #F0F2F5; border-radius: 0 0 var(--radius-md) var(--radius-md); }
+.topbar-signout { color: #C0392B; margin-top: var(--space-1); border-top: 1px solid #F0F2F5; border-radius: 0 0 var(--radius-md) var(--radius-md); }
 
 /* --- Dark ---------------------------------------------------------------- */
 html[data-theme="dark"] .topbar {
@@ -308,9 +308,9 @@ html[data-theme="dark"] .topbar-avatar-row::-webkit-scrollbar-thumb { background
 
 /* --- Narrow -------------------------------------------------------------- */
 @media (max-width: 640px) {
-    .topbar { padding: 0 12px; }
+    .topbar { padding: 0 var(--space-3); }
     /* The name goes, the avatar stays. A truncated username in a 90px box is
        not an identity, and the picture already is one. */
     .topbar-name, .topbar-caret { display: none; }
-    .topbar-account { padding: 4px; }
+    .topbar-account { padding: var(--space-1); }
 }

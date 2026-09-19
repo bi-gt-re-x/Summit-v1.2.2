@@ -78,7 +78,7 @@ body:has(.nt-page) .app-main {
     background: var(--nt-bg);
     color: var(--nt-text);
     min-height: calc(100vh - var(--topnav-h, 0px));
-    padding: 18px 0 22px;
+    padding: var(--space-4) 0 var(--space-6);
     font-family: var(--font-sans);
 }
 
@@ -137,7 +137,7 @@ html[data-theme="dark"] .nt-page {
     --shell-fluid: 95%;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: var(--space-4);
     position: relative;
     z-index: 1;
 }
@@ -214,11 +214,11 @@ html[data-theme="dark"] .nt-page {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 20px;
+    gap: var(--space-5);
     flex-wrap: wrap;
 }
 .nt-head-titles h1 {
-    margin: 0 0 4px;
+    margin: 0 0 var(--space-1);
     font-size: var(--text-3xl);
     font-weight: 700;
     letter-spacing: -.025em;
@@ -232,7 +232,7 @@ html[data-theme="dark"] .nt-page {
 .nt-head-tools {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     flex-wrap: wrap;
 }
 
@@ -252,7 +252,7 @@ html[data-theme="dark"] .nt-page {
 }
 .nt-search {
     width: 100%;
-    padding: 11px 52px 11px 40px;
+    padding: var(--space-3) var(--space-12) var(--space-3) var(--space-10);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-md);
     background: var(--nt-card);
@@ -272,7 +272,7 @@ html[data-theme="dark"] .nt-page {
 .nt-kbd {
     position: absolute;
     right: 10px;
-    padding: 3px 7px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-sm);
     background: var(--nt-card-2);
@@ -316,8 +316,8 @@ html[data-theme="dark"] .nt-page {
 .nt-new {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 11px 17px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md) 0 0 var(--radius-md);
 }
 .nt-new svg { width: 16px; height: 16px; }
@@ -365,7 +365,7 @@ html[data-theme="dark"] .nt-page {
    the contents instead, which is also where it reads better: what you notice
    on reopening is the list coming back, not the column growing. */
 .nt-body.is-shut { grid-template-columns: 54px minmax(0, 1fr); }
-.nt-body.is-shut .nt-list-head { padding: 13px 0; justify-content: center; }
+.nt-body.is-shut .nt-list-head { padding: var(--space-3) 0; justify-content: center; }
 /* Held rather than removed from the tree, so reopening does not re-run the
    index's own entrance animation on every toggle. */
 .nt-body.is-shut .nt-scope,
@@ -398,8 +398,8 @@ html[data-theme="dark"] .nt-page {
 .nt-list-head {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 13px 14px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--nt-line-soft);
 }
 .nt-scope {
@@ -439,16 +439,16 @@ html[data-theme="dark"] .nt-page {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 10px 12px 16px;
+    padding: var(--space-2) var(--space-3) var(--space-4);
 }
-.nt-sec + .nt-sec { margin-top: 14px; }
+.nt-sec + .nt-sec { margin-top: var(--space-4); }
 
 .nt-sec-head {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 4px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-1);
     border: 0;
     background: transparent;
     color: var(--nt-muted);
@@ -469,14 +469,14 @@ html[data-theme="dark"] .nt-page {
     color: var(--nt-faint);
 }
 
-.nt-list { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.nt-list { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 
 .nt-item {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px 13px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3);
     border: 1px solid var(--nt-line-soft);
     border-radius: var(--radius-md);
     background: var(--nt-card-2);
@@ -496,7 +496,7 @@ html[data-theme="dark"] .nt-page {
     box-shadow: inset 3px 0 0 var(--nt-accent-2);
 }
 
-.nt-item-top { display: flex; align-items: flex-start; gap: 8px; }
+.nt-item-top { display: flex; align-items: flex-start; gap: var(--space-2); }
 .nt-item-title {
     flex: 1;
     min-width: 0;
@@ -510,10 +510,10 @@ html[data-theme="dark"] .nt-page {
 .nt-pin { flex: none; color: var(--nt-accent-2); }
 .nt-pin svg { width: 13px; height: 13px; display: block; }
 
-.nt-item-meta { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.nt-item-meta { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
 .nt-chip {
     flex: none;
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
     background: color-mix(in srgb, var(--nt-accent-2) 18%, transparent);
     color: var(--nt-accent-2);
@@ -530,25 +530,25 @@ html[data-theme="dark"] .nt-page {
 }
 
 .nt-list-empty {
-    margin: 18px 6px;
+    margin: var(--space-4) var(--space-2);
     font-size: var(--text-sm);
     line-height: 1.6;
     color: var(--nt-muted);
 }
 
 /* ---------- What a note is about, in the index --------------------------- */
-.nt-item-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.nt-item-tags { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); }
 /* Smaller here than in the rail: the index is scanned, and a pill sized for
    reading crowds out the title it is meant to be describing. */
-.nt-item-tags .nt-tag { padding: 2px 7px; font-size: var(--text-2xs); border-radius: var(--radius-sm); }
+.nt-item-tags .nt-tag { padding: 2px var(--space-2); font-size: var(--text-2xs); border-radius: var(--radius-sm); }
 .nt-item-more { font-size: var(--text-2xs); color: var(--nt-faint); font-weight: 600; }
 
 /* A menu row with a hint under it, for the template list. */
 .nt-menu.is-wide { min-width: 232px; }
-.nt-menu.is-wide button { display: flex; flex-direction: column; gap: 1px; padding: 8px 11px; }
+.nt-menu.is-wide button { display: flex; flex-direction: column; gap: 1px; padding: var(--space-2) var(--space-3); }
 .nt-menu.is-wide button em { font-style: normal; font-size: var(--text-2xs); color: var(--nt-faint); }
 /* The filter menu: a label, and how many notes carry it. */
-.nt-menu button { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.nt-menu button { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .nt-menu button em {
     font-style: normal;
     font-size: var(--text-2xs);
@@ -556,20 +556,20 @@ html[data-theme="dark"] .nt-page {
     font-variant-numeric: tabular-nums;
 }
 .nt-menu button.is-on { color: var(--nt-accent-2); font-weight: 600; }
-.nt-menu hr { margin: 5px 7px; border: 0; border-top: 1px solid var(--nt-line-soft); }
+.nt-menu hr { margin: var(--space-1) var(--space-2); border: 0; border-top: 1px solid var(--nt-line-soft); }
 
 /* ---------- The editor's header ------------------------------------------- */
 .nt-editor-head {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 13px 16px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--nt-line-soft);
 }
 .nt-title {
     flex: 1;
     min-width: 0;
-    padding: 4px 0;
+    padding: var(--space-1) 0;
     border: 0;
     background: transparent;
     color: var(--nt-text);
@@ -587,7 +587,7 @@ html[data-theme="dark"] .nt-page {
     flex: none;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     font-size: var(--text-xs);
     color: var(--nt-muted);
     white-space: nowrap;
@@ -602,7 +602,7 @@ html[data-theme="dark"] .nt-page {
 .nt-state.is-busy i { background: var(--nt-good); animation: nt-pulse 1s ease-in-out infinite; }
 @keyframes nt-pulse { 50% { opacity: .3; } }
 
-.nt-editor-tools { flex: none; display: flex; align-items: center; gap: 4px; }
+.nt-editor-tools { flex: none; display: flex; align-items: center; gap: var(--space-1); }
 
 /* ---------- The "..." menu ------------------------------------------------ */
 .nt-menu-wrap { position: relative; }
@@ -612,7 +612,7 @@ html[data-theme="dark"] .nt-page {
     right: 0;
     z-index: 30;
     min-width: 190px;
-    padding: 5px;
+    padding: var(--space-1);
     display: flex;
     flex-direction: column;
     border: 1px solid var(--nt-line);
@@ -627,7 +627,7 @@ html[data-theme="dark"] .nt-page {
 .nt-menu.is-left { right: auto; left: 0; }
 
 .nt-menu button {
-    padding: 9px 11px;
+    padding: var(--space-2) var(--space-3);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -653,16 +653,16 @@ html[data-theme="dark"] .nt-page {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 6px;
-    padding: 8px 14px;
+    gap: var(--space-2) var(--space-2);
+    padding: var(--space-2) var(--space-4);
     border-bottom: 1px solid var(--nt-line-soft);
 }
 .nt-tool-group { display: flex; align-items: center; gap: 2px; }
 /* Hairlines between the groups, so the toolbar reads as four kinds of button
    rather than as thirteen. */
 .nt-tool-group + .nt-tool-group {
-    margin-left: 4px;
-    padding-left: 6px;
+    margin-left: var(--space-1);
+    padding-left: var(--space-2);
     border-left: 1px solid var(--nt-line-soft);
 }
 .nt-tool-end { margin-left: auto; border-left: 0; }
@@ -673,7 +673,7 @@ html[data-theme="dark"] .nt-page {
     display: grid;
     place-items: center;
     min-width: 28px; height: 28px;
-    padding: 0 5px;
+    padding: 0 var(--space-1);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -728,8 +728,8 @@ html[data-theme="dark"] .nt-page {
     z-index: 30;
     display: grid;
     grid-template-columns: repeat(3, 26px);
-    gap: 6px;
-    padding: 9px;
+    gap: var(--space-2);
+    padding: var(--space-2);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-md);
     background: var(--nt-raised);
@@ -749,7 +749,7 @@ html[data-theme="dark"] .nt-page {
 .nt-swatch:hover { transform: scale(1.12); }
 .nt-swatch-clear {
     grid-column: 1 / -1;
-    padding: 5px;
+    padding: var(--space-1);
     border: 0;
     border-radius: var(--radius-sm);
     background: var(--nt-card-2);
@@ -761,7 +761,7 @@ html[data-theme="dark"] .nt-page {
 }
 .nt-swatch-clear:hover { color: var(--nt-text); }
 
-.nt-menu-rule { height: 1px; margin: 5px 0; background: var(--nt-line-soft); }
+.nt-menu-rule { height: 1px; margin: var(--space-1) 0; background: var(--nt-line-soft); }
 
 /* The drawn glyphs. `currentColor` on both the bars and the arrowhead, so they
    take the button's hover the way a character label does. */
@@ -782,9 +782,9 @@ html[data-theme="dark"] .nt-page {
 .nt-pick {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--space-1);
     height: 28px;
-    padding: 0 6px 0 9px;
+    padding: 0 var(--space-2) 0 var(--space-2);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-md);
     background: transparent;
@@ -806,7 +806,7 @@ html[data-theme="dark"] .nt-page {
 /* Nine numbers, each set at the size it names — the only honest way to draw a
    size list, and the reason it is a list rather than a row of buttons. */
 .nt-sizes { max-height: 320px; overflow-y: auto; }
-.nt-sizes button { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.nt-sizes button { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .nt-sizes button > span { font-variant-numeric: tabular-nums; }
 .nt-sizes button em { font-size: var(--text-2xs); font-style: normal; color: var(--nt-faint); }
 .nt-sizes button:nth-child(1) > span { font-size: var(--text-xs); }
@@ -828,7 +828,7 @@ html[data-theme="dark"] .nt-page {
 }
 .nt-body-input {
     min-height: 0;
-    padding: 20px 24px;
+    padding: var(--space-5) var(--space-6);
     border: 0;
     background: transparent;
     color: var(--nt-text);
@@ -846,12 +846,12 @@ html[data-theme="dark"] .nt-page {
     display: flex;
     gap: 2px;
     padding: 2px;
-    margin-right: 6px;
+    margin-right: var(--space-2);
     border-radius: var(--radius-md);
     background: var(--nt-card-2);
 }
 .nt-mode button {
-    padding: 5px 11px;
+    padding: var(--space-1) var(--space-3);
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -876,13 +876,13 @@ html[data-theme="dark"] .nt-page {
 .nt-preview {
     min-height: 0;
     overflow-y: auto;
-    padding: 20px 24px 30px;
+    padding: var(--space-5) var(--space-6) var(--space-8);
     font-size: var(--text-md);
     line-height: 1.75;
 }
 .nt-preview > :first-child { margin-top: 0; }
 .nt-preview h1, .nt-preview h2, .nt-preview h3 {
-    margin: 26px 0 10px;
+    margin: var(--space-6) 0 var(--space-2);
     color: var(--nt-accent-2);
     font-weight: 700;
     line-height: 1.3;
@@ -892,18 +892,18 @@ html[data-theme="dark"] .nt-page {
 .nt-preview h2 { font-size: var(--text-lg); }
 .nt-preview h3 { font-size: var(--text-md); }
 .nt-preview h4 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: .05em; }
-.nt-preview p { margin: 0 0 13px; }
-.nt-preview ul, .nt-preview ol { margin: 0 0 14px; padding-left: 22px; }
+.nt-preview p { margin: 0 0 var(--space-3); }
+.nt-preview ul, .nt-preview ol { margin: 0 0 var(--space-4); padding-left: var(--space-6); }
 /* A nested list is inside the item above it, not after it, so it loses the
    gap a top-level list gets and keeps the indent. */
-.nt-preview :is(ul, ol) :is(ul, ol) { margin: 5px 0 2px; }
-.nt-preview li { margin-bottom: 5px; }
+.nt-preview :is(ul, ol) :is(ul, ol) { margin: var(--space-1) 0 2px; }
+.nt-preview li { margin-bottom: var(--space-1); }
 /* Three depths of bullet, which is as far as an outline usefully goes. */
 .nt-preview ul { list-style: disc; }
 .nt-preview ul ul { list-style: circle; }
 .nt-preview ul ul ul { list-style: square; }
 .nt-preview hr {
-    margin: 20px 0;
+    margin: var(--space-5) 0;
     border: 0;
     border-top: 1px solid var(--nt-line);
 }
@@ -911,15 +911,15 @@ html[data-theme="dark"] .nt-page {
 .nt-preview a { color: var(--nt-accent-2); text-decoration: underline; text-underline-offset: 2px; }
 .nt-preview strong { font-weight: 700; }
 .nt-preview code {
-    padding: 2px 6px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
     background: var(--nt-card-2);
     font-family: var(--font-mono);
     font-size: .88em;
 }
 .nt-preview pre {
-    margin: 0 0 15px;
-    padding: 13px 15px;
+    margin: 0 0 var(--space-4);
+    padding: var(--space-3) var(--space-4);
     border: 1px solid var(--nt-line-soft);
     border-radius: var(--radius-md);
     background: var(--nt-card-2);
@@ -931,8 +931,8 @@ html[data-theme="dark"] .nt-page {
 /* A rule down the side rather than a tinted box: a quote inside a note is an
    aside, and a filled panel makes it louder than the note it sits in. */
 .nt-preview blockquote {
-    margin: 0 0 13px;
-    padding: 2px 0 2px 15px;
+    margin: 0 0 var(--space-3);
+    padding: 2px 0 2px var(--space-4);
     border-left: 3px solid color-mix(in srgb, var(--nt-accent-2) 55%, transparent);
     color: var(--nt-muted);
 }
@@ -941,7 +941,7 @@ html[data-theme="dark"] .nt-page {
 .md-box {
     display: inline-block;
     width: 14px; height: 14px;
-    margin-right: 9px;
+    margin-right: var(--space-2);
     vertical-align: -2px;
     border: 1.5px solid var(--nt-faint);
     border-radius: var(--radius-sm);
@@ -982,7 +982,7 @@ html[data-theme="dark"] .nt-page {
    strength puts white text on yellow, and the text is the point. The padding
    is asymmetric on purpose so consecutive highlights do not merge into a bar. */
 .nt-preview :is(mark, span)[class*="md-b-"] {
-    padding: 1px 3px;
+    padding: 1px var(--space-1);
     border-radius: var(--radius-sm);
     background: color-mix(in srgb, var(--md-wash) 30%, transparent);
     color: inherit;
@@ -1036,34 +1036,34 @@ html[data-theme="dark"] .nt-page {
 .nt-meta {
     min-height: 0;
     overflow-y: auto;
-    padding: 20px 18px;
+    padding: var(--space-5) var(--space-4);
     border-left: 1px solid var(--nt-line-soft);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--space-5);
 }
 .nt-meta-sec h3 {
-    margin: 0 0 9px;
+    margin: 0 0 var(--space-2);
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--nt-muted);
 }
 .nt-meta-value { margin: 0; font-size: var(--text-sm); line-height: 1.5; }
-.nt-meta-note { margin: 7px 0 0; font-size: var(--text-2xs); color: var(--nt-faint); }
+.nt-meta-note { margin: var(--space-2) 0 0; font-size: var(--text-2xs); color: var(--nt-faint); }
 
 /* ---------- Subject tags -------------------------------------------------
    A pill takes its two shades from the palette family the subject already
    wears everywhere else — see components/Notes/SubjectTags. `data-family` is
    the hook, so one rule per family covers every subject in the catalogue. */
-.nt-tags { position: relative; display: flex; flex-direction: column; gap: 9px; align-items: flex-start; }
-.nt-tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.nt-tags { position: relative; display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
+.nt-tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
 .nt-tag {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: var(--space-1);
     max-width: 100%;
-    padding: 3px 5px 3px 9px;
+    padding: var(--space-1) var(--space-1) var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     border: 1px solid color-mix(in srgb, var(--fam, var(--nt-accent-2)) 34%, transparent);
     background: color-mix(in srgb, var(--fam, var(--nt-accent-2)) 15%, transparent);
@@ -1075,7 +1075,7 @@ html[data-theme="dark"] .nt-page {
 /* A pill with no remove button is a label, not a control, and should not
    reserve the space for one. */
 .nt-tag > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.nt-tag:not(:has(button)) { padding-right: 9px; }
+.nt-tag:not(:has(button)) { padding-right: var(--space-2); }
 .nt-tag > button {
     flex: none;
     display: grid;
@@ -1128,8 +1128,8 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
 .nt-add-tag {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 7px 11px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border: 1px dashed var(--nt-line);
     border-radius: var(--radius-md);
     background: transparent;
@@ -1159,7 +1159,7 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
 .nt-picker {
     width: 100%;
     margin-top: 2px;
-    padding: 8px;
+    padding: var(--space-2);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-md);
     background: var(--nt-card-2);
@@ -1167,8 +1167,8 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
 }
 .nt-picker-search {
     width: 100%;
-    margin-bottom: 7px;
-    padding: 8px 10px;
+    margin-bottom: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-md);
     background: var(--nt-card-2);
@@ -1191,8 +1191,8 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     display: grid;
     grid-template-columns: 9px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 9px;
-    padding: 7px 9px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-sm);
     background: transparent;
@@ -1210,13 +1210,13 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
 }
 .nt-picker-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nt-picker-group { font-size: var(--text-2xs); color: var(--nt-faint); white-space: nowrap; }
-.nt-picker-none { margin: 10px 8px; font-size: var(--text-xs); color: var(--nt-faint); }
+.nt-picker-none { margin: var(--space-2) var(--space-2); font-size: var(--text-xs); color: var(--nt-faint); }
 
 /* ---------- The notebook select ------------------------------------------ */
 .nt-select-wrap { position: relative; display: block; }
 .nt-select {
     width: 100%;
-    padding: 8px 30px 8px 11px;
+    padding: var(--space-2) var(--space-8) var(--space-2) var(--space-3);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-md);
     background: var(--nt-card-2);
@@ -1242,7 +1242,7 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
 
 .nt-date {
     width: 100%;
-    padding: 8px 11px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--nt-line);
     border-radius: var(--radius-md);
     background: var(--nt-card-2);
@@ -1258,15 +1258,15 @@ html[data-theme="dark"] [data-family="gray"]   { --fam: var(--event-gray-200); }
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 18px;
-    padding: 11px 16px;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
     border-top: 1px solid var(--nt-line-soft);
 }
 .nt-message { margin-right: auto; font-size: var(--text-sm); color: var(--nt-bad); }
 .nt-count { font-size: var(--text-xs); color: var(--nt-faint); font-variant-numeric: tabular-nums; }
 
 .nt-save {
-    padding: 9px 18px;
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-md);
     background: linear-gradient(180deg, var(--nt-accent-2), var(--nt-accent));
@@ -1293,10 +1293,10 @@ html[data-theme="dark"] .nt-page { color-scheme: dark; }
     .nt-meta {
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 18px 28px;
+        gap: var(--space-4) var(--space-6);
         border-left: 0;
         border-top: 1px solid var(--nt-line-soft);
-        padding: 14px 18px;
+        padding: var(--space-4) var(--space-4);
     }
     .nt-meta-sec { min-width: 140px; }
 }

@@ -5,9 +5,9 @@ view, this runs before every request and checks one list — so GATED_PATHS is
 the whole answer to "what needs an account?", and the page routes stay free of
 auth plumbing.
 
-A signed-out visitor is bounced to the home page with the sign-in popup already
-open, and `next` carries where they were headed so finishing the flow lands
-them there instead of on the home page.
+A signed-out visitor is bounced to the sign-in page (/login), and `next`
+carries where they were headed so finishing the flow lands them there instead
+of on the home page.
 
 The Flask version matched on endpoint name; this one matches on path, which
 says the same thing about the same four pages and keeps working when those
@@ -45,9 +45,9 @@ def register(app):
     app.middleware('http')(gate_pages)
 
 
-def _to_home(reason, path):
+def _to_login(reason, path):
     return RedirectResponse(
-        '/home?{}'.format(urlencode({'auth': reason, 'next': path})),
+        '/login?{}'.format(urlencode({'auth': reason, 'next': path})),
         status_code=303)
 
 
@@ -56,7 +56,7 @@ async def gate_pages(request, call_next):
     if path in GATED_PATHS:
         user = signed_in_user(request)
         if not user:
-            return _to_home('login', path)
+            return _to_login('login', path)
         if not profile_complete(user):
-            return _to_home('profile', path)
+            return _to_login('profile', path)
     return await call_next(request)

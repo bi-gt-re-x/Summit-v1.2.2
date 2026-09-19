@@ -16,20 +16,20 @@
    it is the one thing here that can be read from the grid underneath it. */
 .wk-header {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 22px; flex-wrap: nowrap; margin-bottom: 26px;
+    gap: var(--space-6); flex-wrap: nowrap; margin-bottom: var(--space-6);
     flex: none;
 }
-.wk-headmain { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.wk-headmain { display: flex; align-items: center; gap: var(--space-4); min-width: 0; }
 /* The Day view still lays its header out this way and loads this file. */
-.wk-titlegroup { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.wk-headtools { display: flex; align-items: center; gap: 10px; flex: none; }
+.wk-titlegroup { display: flex; align-items: center; gap: var(--space-4); min-width: 0; }
+.wk-headtools { display: flex; align-items: center; gap: var(--space-2); flex: none; }
 .wk-title {
     margin: 0; font-size: clamp(1.15rem, 1.75vw, 1.5rem); font-weight: 700;
     letter-spacing: -0.01em;
     color: #111827; white-space: nowrap;
     min-width: 0; overflow: hidden; text-overflow: ellipsis;
 }
-.wk-nav { display: flex; gap: 6px; flex: none; }
+.wk-nav { display: flex; gap: var(--space-2); flex: none; }
 
 .wk-arrow, .wk-today {
     border: 1px solid #e5e7eb; background: #fff; border-radius: var(--radius-full);
@@ -44,7 +44,7 @@
 }
 .wk-icon-btn:hover { background: #f2f4f7; color: #2c302e; }
 .wk-arrow { width: 32px; height: 32px; font-size: var(--text-lg); line-height: 1; }
-.wk-today { padding: 7px 18px; font-size: var(--text-md); font-weight: 600; }
+.wk-today { padding: var(--space-2) var(--space-4); font-size: var(--text-md); font-weight: 600; }
 .wk-icon-btn {
     width: 34px; height: 34px; border-radius: var(--radius-md);
     display: inline-flex; align-items: center; justify-content: center;
@@ -65,10 +65,10 @@
 .wk-main {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 294px);
-    gap: 44px; align-items: start;
+    gap: var(--space-10); align-items: start;
 }
 @media (max-width: 1400px) {
-    .wk-main { grid-template-columns: minmax(0, 1fr) minmax(0, 264px); gap: 26px; }
+    .wk-main { grid-template-columns: minmax(0, 1fr) minmax(0, 264px); gap: var(--space-6); }
 }
 /* Collapsed: drop the sidebar column so the day grid widens to fill the card. */
 .wk-main.sidebar-collapsed { grid-template-columns: minmax(0, 1fr); }
@@ -93,12 +93,12 @@
 .wk-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-4);
     min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
     overflow-anchor: none;
-    padding-right: 4px;
+    padding-right: var(--space-1);
 }
 body:has(.calendar-container) .wk-sidebar {
     scrollbar-width: thin;
@@ -113,13 +113,13 @@ body:has(.calendar-container) .wk-sidebar::-webkit-scrollbar-thumb {
 html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar { scrollbar-color: #3a424d transparent; }
 html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrollbar-thumb { background: #3a424d; }
 .wk-panel {
-    background: #fff; border: 1px solid #eef0f2; border-radius: var(--radius-lg); padding: 20px;
+    background: #fff; border: 1px solid #eef0f2; border-radius: var(--radius-lg); padding: var(--space-5);
     box-shadow: var(--shadow-md);
 }
-.wk-panel-title { margin: 0 0 16px; font-size: var(--text-lg); font-weight: 600; color: #111827; }
+.wk-panel-title { margin: 0 0 var(--space-4); font-size: var(--text-lg); font-weight: 600; color: #111827; }
 
-.wk-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.wk-stat { background: #fafbfc; border: 1px solid #eef0f4; border-radius: var(--radius-md); padding: 14px 14px; }
+.wk-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.wk-stat { background: #fafbfc; border: 1px solid #eef0f4; border-radius: var(--radius-md); padding: var(--space-4) var(--space-4); }
 .wk-stat-num { font-size: var(--text-2xl); font-weight: 700; color: #1a1f26; }
 .wk-stat-label { font-size: var(--text-xs); color: #6b7280; margin-top: 2px; }
 
@@ -128,22 +128,22 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
 .wk-progress-bar { height: 100%; background: #4f6bed; border-radius: var(--radius-full); }
 
 .wk-streak-num { font-size: var(--text-lg); font-weight: 600; color: #111827; }
-.wk-streak-sub { font-size: var(--text-sm); color: #9ca3af; margin-top: 4px; }
+.wk-streak-sub { font-size: var(--text-sm); color: #9ca3af; margin-top: var(--space-1); }
 /* Weekly Focus Time reads as one figure — focused against planned — so it
    borrows the streak card's type scale. */
 .wk-focustime { font-size: var(--text-2xl); font-weight: 700; color: #111827; margin: 0; }
-.wk-focustime-sub { font-size: var(--text-sm); color: #9ca3af; margin-top: 6px; }
+.wk-focustime-sub { font-size: var(--text-sm); color: #9ca3af; margin-top: var(--space-2); }
 .wk-gridwrap { min-width: 0; position: relative; }
 .wk-grid-head { display: grid; grid-template-columns: var(--wk-gutter) minmax(0, 1fr); }
 .wk-corner { }
 .wk-dayhead-row { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.wk-dayhead { text-align: center; padding-bottom: 6px; }
+.wk-dayhead { text-align: center; padding-bottom: var(--space-2); }
 .wk-dayname { font-size: var(--text-md); font-weight: 600; color: #111827; }
-.wk-daydate { font-size: var(--text-sm); color: #9ca3af; margin-top: 5px; }
+.wk-daydate { font-size: var(--text-sm); color: #9ca3af; margin-top: var(--space-1); }
 /* Today's date: black rounded-rectangle badge with white text. */
 .wk-daydate.today {
     display: inline-block; background: #111827; color: #fff; font-weight: 600;
-    border-radius: var(--radius-md); padding: 4px 11px; margin-top: 1px;
+    border-radius: var(--radius-md); padding: var(--space-1) var(--space-3); margin-top: 1px;
 }
 
 .wk-allday-row {
@@ -151,15 +151,15 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
     align-items: center;
     border-top: 1px solid #eef0f2; border-bottom: 1px solid #eef0f2;
 }
-.wk-allday-label { font-size: var(--text-sm); color: #9ca3af; padding: 8px 0; }
-.wk-allday-cells { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; padding: 7px 0; }
+.wk-allday-label { font-size: var(--text-sm); color: #9ca3af; padding: var(--space-2) 0; }
+.wk-allday-cells { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-2); padding: var(--space-2) 0; }
 .wk-allday-cell { display: flex; justify-content: center; }
 
 /* Editable per-day focus field (one per day column, in the Focus row). */
 .wk-day-focus {
     width: calc(100% - 6px); box-sizing: border-box; text-align: center;
     font: inherit; font-size: var(--text-xs); font-weight: 600; color: #4b5162;
-    background: #f5f6f8; border: 1px solid #e9ebf0; border-radius: var(--radius-md); padding: 5px 6px;
+    background: #f5f6f8; border: 1px solid #e9ebf0; border-radius: var(--radius-md); padding: var(--space-1) var(--space-2);
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 .wk-day-focus::placeholder { color: #aab0bd; font-weight: 500; }
@@ -177,7 +177,7 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
    changes size; entering full screen changes the size of every box on this
    page at once, and the grid drifting off the hour the reader left it on is
    the browser being helpful about a position that was already correct. */
-.wk-scroll { display: grid; grid-template-columns: var(--wk-gutter) minmax(0, 1fr); max-height: 62vh; overflow-y: auto; overflow-anchor: none; margin-top: 0; padding-top: 28px; }
+.wk-scroll { display: grid; grid-template-columns: var(--wk-gutter) minmax(0, 1fr); max-height: 62vh; overflow-y: auto; overflow-anchor: none; margin-top: 0; padding-top: var(--space-6); }
 
 /* Above 1120px the calendar card is a fixed 100vh panel with hidden overflow
    (below that it's height:auto and the whole page scrolls). In the fixed-card
@@ -271,7 +271,7 @@ html[data-theme="dark"] .wk-daycol.today { background: rgba(127, 156, 255, .06);
     position: absolute; right: 1px; left: auto;
     transform: translateY(-50%);
     background: #e5484d; color: #fff; font-size: var(--text-2xs); font-weight: 700;
-    padding: 1px 5px; border-radius: var(--radius-sm); white-space: nowrap; z-index: 9;
+    padding: 1px var(--space-1); border-radius: var(--radius-sm); white-space: nowrap; z-index: 9;
     pointer-events: none;
     box-shadow: 0 0 0 3px #fff;
 }
@@ -294,7 +294,7 @@ html[data-theme="dark"] .wk-drag-preview { border-color: #8fbcff; background: rg
     display: flex; align-items: flex-start; overflow: hidden;
 }
 .wk-move-preview > span {
-    padding: 3px 7px; font-size: var(--text-2xs); font-weight: 700; color: #2c5aa0;
+    padding: var(--space-1) var(--space-2); font-size: var(--text-2xs); font-weight: 700; color: #2c5aa0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .wk-move-preview.is-bad { border-color: #c0392b; background: rgba(192, 57, 43, .16); }
@@ -330,7 +330,7 @@ body.wk-moving .wk-resize:hover { background: transparent; }
 body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
 
 .wk-event {
-    position: absolute; left: 3px; right: 3px; border-radius: var(--radius-md); padding: 5px 8px;
+    position: absolute; left: 3px; right: 3px; border-radius: var(--radius-md); padding: var(--space-1) var(--space-2);
     border: 1px solid transparent; overflow: hidden; box-sizing: border-box;
     /* A bolder, more-opaque left accent border (its colour set per block). */
     border-left-width: 3px;
@@ -348,7 +348,7 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
    `COMPACT_UNDER` in utils/calendarGrid.ts — and everything below it used to
    be drawn with two lines and the room for one and a half, so the time was
    sliced through the middle by this element's own `overflow: hidden`. */
-.wk-event.is-compact { justify-content: center; padding-top: 3px; padding-bottom: 3px; }
+.wk-event.is-compact { justify-content: center; padding-top: var(--space-1); padding-bottom: var(--space-1); }
 .wk-event.is-compact .wk-event-head { align-items: center; }
 
 /* ---- and in a narrow column, the name wins ------------------------------
@@ -372,7 +372,7 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
 }
 /* Header row: title (left, truncates) + start time (right), kept at the top. */
 .wk-event-head {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 6px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2);
 }
 /* A full-size task gives the name and the start time a line each.
  *
@@ -382,14 +382,14 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
  * blocks keep the row — they have the width problem too, but they have no
  * second line to give, and a truncated name beats a clipped one. */
 .wk-event.wk-task:not(.is-compact):not(.is-snug) .wk-event-head {
-    flex-direction: column; align-items: flex-start; gap: 6px;
+    flex-direction: column; align-items: flex-start; gap: var(--space-2);
     /* The gap for the ⋮ moves onto the name. Stacked, the name is the only
        line beside the button; leaving the reserve on the whole column stole
        16 of the 46px the start time needs and broke "11:35 AM" over two. */
     padding-right: 0;
 }
 .wk-event.wk-task:not(.is-compact):not(.is-snug) .wk-event-head .wk-event-title {
-    padding-right: 16px; align-self: stretch;
+    padding-right: var(--space-4); align-self: stretch;
 }
 .wk-event-head .wk-event-title { flex: 1 1 auto; min-width: 0; margin: 0; }
 .wk-event-start { font-size: var(--text-2xs); opacity: .75; flex: none; white-space: nowrap; }
@@ -411,7 +411,7 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
 .wk-event-foot > * { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wk-event.is-compact .wk-event-foot {
     flex-direction: row; align-items: baseline;
-    justify-content: space-between; gap: 6px;
+    justify-content: space-between; gap: var(--space-2);
 }
 
 /* A task's end time, on the floor of the block.
@@ -444,7 +444,7 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
  * Only on blocks with the room: `is-snug` is under SNUG_MINUTES, where the
  * lines already have to give something up, and `is-compact` is under
  * COMPACT_UNDER, a single row with nothing to space. */
-.wk-event.wk-task:not(.is-compact):not(.is-snug) { row-gap: 6px; }
+.wk-event.wk-task:not(.is-compact):not(.is-snug) { row-gap: var(--space-2); }
 /* Task and event block colours are NOT here.
  *
  * Every one of them — the tint, the edge, the ink, the left accent, and what
@@ -473,7 +473,7 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
     transition: max-width .14s ease, opacity .14s ease, margin-right .14s ease;
 }
 .wk-task-name:hover .wk-task-tick,
-.wk-task-name:focus-visible .wk-task-tick { max-width: 1.2em; opacity: 1; margin-right: 3px; }
+.wk-task-name:focus-visible .wk-task-tick { max-width: 1.2em; opacity: 1; margin-right: var(--space-1); }
 .wk-task-name:hover, .wk-task-name:focus-visible { color: #2e7d52; }
 .wk-task-name:focus-visible { outline: 2px solid #2e7d52; outline-offset: 1px; border-radius: var(--radius-sm); }
 /* Mid-request: the block is dimmed and inert until the server answers, so a
@@ -514,8 +514,8 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
    guessed from its name. Inline ahead of the title in both views — see the
    note on `BlockTitle` in components/Calendar/GridBlock.tsx.
    It never shrinks, and on a one-row block it comes down with the text. */
-.wk-event-ico { flex: none; width: 13px; height: 13px; margin-right: 5px; opacity: .85; }
-.wk-event.is-compact .wk-event-ico { width: 11px; height: 11px; margin-right: 4px; }
+.wk-event-ico { flex: none; width: 13px; height: 13px; margin-right: var(--space-1); opacity: .85; }
+.wk-event.is-compact .wk-event-ico { width: 11px; height: 11px; margin-right: var(--space-1); }
 
 /* Below the design's width the icon gives some of itself back.
  *
@@ -527,14 +527,14 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
  * it costs seven pixels less, which at this size is two more characters of the
  * name. The Focus chips one screen up make the same trade at the same width. */
 @media (max-width: 1400px) {
-    .wk-event-ico { width: 11px; height: 11px; margin-right: 3px; }
-    .wk-event.is-compact .wk-event-ico { width: 10px; height: 10px; margin-right: 3px; }
+    .wk-event-ico { width: 11px; height: 11px; margin-right: var(--space-1); }
+    .wk-event.is-compact .wk-event-ico { width: 10px; height: 10px; margin-right: var(--space-1); }
 }
 
 /* Leave room at the top-right for the three-dots menu button so the title (and
    a task's start time) truncate with an ellipsis instead of running under it. */
-.wk-event-cal > .wk-event-title { padding-right: 16px; }
-.wk-event-head { padding-right: 16px; }
+.wk-event-cal > .wk-event-title { padding-right: var(--space-4); }
+.wk-event-head { padding-right: var(--space-4); }
 /* Hidden until the block is under the pointer. Seven columns of blocks each
    showing a ⋮ is a lot of furniture for a control nobody is reaching for yet. */
 /* The menu shows itself on hover *of the block*, so this half is the grid's
@@ -545,7 +545,7 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
 .wk-event:hover .wk-card-menu { opacity: .6; }
 .wk-event-xp {
     font-size: var(--text-2xs); font-weight: 500; opacity: .95; flex: none;
-    display: flex; align-items: center; gap: 4px;
+    display: flex; align-items: center; gap: var(--space-1);
     /* A direct child of the block now, not of the footer, so it carries the
        footer's clipping rules itself. */
     max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -586,19 +586,19 @@ body.wk-resizing, body.wk-resizing * { cursor: ns-resize !important; }
 }
 
 /* Recurring-event delete: stacked full-width choices + a date checklist. */
-.wk-recur-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.wk-recur-actions { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-1); }
 .wk-recur-btn {
-    width: 100%; text-align: left; border-radius: var(--radius-md); padding: 12px 14px;
+    width: 100%; text-align: left; border-radius: var(--radius-md); padding: var(--space-3) var(--space-4);
     cursor: pointer; font: inherit; font-size: var(--text-md); font-weight: 700;
     background: #f1f3f7; border: 1px solid #e5e8ee; color: #2c3550;
 }
 .wk-recur-btn:hover { background: #e7eaf1; }
 .wk-recur-list {
-    max-height: 240px; overflow-y: auto; margin: 4px 0 18px;
-    border: 1px solid #e5e8ee; border-radius: var(--radius-md); padding: 6px;
+    max-height: 240px; overflow-y: auto; margin: var(--space-1) 0 var(--space-4);
+    border: 1px solid #e5e8ee; border-radius: var(--radius-md); padding: var(--space-2);
 }
 .wk-recur-row {
-    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-2);
     border-radius: var(--radius-md); cursor: pointer; font-size: var(--text-md); color: #2c3550;
 }
 .wk-recur-row:hover { background: #f1f3f7; }
@@ -624,7 +624,7 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
        the same way, is the thing where the wheel does the wrong one. */
     .wk-sidebar { overflow: visible; padding-right: 0; }
     /* Sidebar stacks above the grid here, so the header flows normally too. */
-    .wk-header { display: flex; flex-wrap: wrap; gap: 16px; }
+    .wk-header { display: flex; flex-wrap: wrap; gap: var(--space-4); }
     .wk-headmain { flex: 1 1 auto; padding-left: 0; }
 }
 
@@ -639,8 +639,8 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
    panel: it is the one thing in that column that does something, and
    everything under it is a reading of the week. */
 .wk-library-btn {
-    display: flex; align-items: center; gap: 10px;
-    width: 100%; padding: 11px 14px;
+    display: flex; align-items: center; gap: var(--space-2);
+    width: 100%; padding: var(--space-3) var(--space-4);
     border: 1px solid #e5e7eb; border-radius: var(--radius-md);
     background: #fff; color: #374151;
     font-family: inherit; font-size: var(--text-md); font-weight: 600;
@@ -652,42 +652,42 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
 
 .sl-head {
     display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; flex: none;
+    gap: var(--space-3); flex: none;
 }
 .sl-title { margin: 0; font-size: var(--text-lg); font-weight: 700; color: #111827; }
 .sl-back {
     border: 1px solid #e5e7eb; background: #fff; border-radius: var(--radius-full);
-    padding: 6px 16px; font-family: inherit; font-size: var(--text-sm); font-weight: 600;
+    padding: var(--space-2) var(--space-4); font-family: inherit; font-size: var(--text-sm); font-weight: 600;
     color: #374151; cursor: pointer;
 }
 .sl-back:hover { background: #f6f7f9; color: #111827; }
 
-.sl-panel { padding: 16px; }
+.sl-panel { padding: var(--space-4); }
 .sl-section {
-    margin: 0 0 12px; font-size: var(--text-2xs); font-weight: 700; letter-spacing: .06em;
+    margin: 0 0 var(--space-3); font-size: var(--text-2xs); font-weight: 700; letter-spacing: .06em;
     text-transform: uppercase; color: #9297ab;
 }
 
 .sl-error {
-    margin: 0; padding: 9px 12px; border-radius: var(--radius-md);
+    margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
     background: #fdecea; border: 1px solid #f5c6c0;
     font-size: var(--text-sm); color: #8d3228; flex: none;
 }
 
 /* ---- Adding one of your own ---- */
-.sl-add { display: flex; gap: 8px; margin-bottom: 12px; }
+.sl-add { display: flex; gap: var(--space-2); margin-bottom: var(--space-3); }
 .sl-add-field, .sl-search {
     flex: 1 1 auto; min-width: 0; box-sizing: border-box;
-    padding: 8px 11px; border: 1px solid #e5e7eb; border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3); border: 1px solid #e5e7eb; border-radius: var(--radius-md);
     background: #fafbfc; color: #111827; font-family: inherit; font-size: var(--text-sm);
 }
 .sl-add-field:focus, .sl-search:focus {
     outline: none; border-color: #a8845c; background: #fff;
     box-shadow: 0 0 0 3px rgba(168,132,92,.15);
 }
-.sl-search { width: 100%; margin-bottom: 12px; }
+.sl-search { width: 100%; margin-bottom: var(--space-3); }
 .sl-add-btn {
-    flex: none; padding: 8px 15px; border: 0; border-radius: var(--radius-md);
+    flex: none; padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius-md);
     background: #2c302e; color: #fff;
     font-family: inherit; font-size: var(--text-sm); font-weight: 600; cursor: pointer;
 }
@@ -702,7 +702,7 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
 .sl-row.is-open { background: #fafbfc; }
 .sl-row.is-busy { opacity: .55; pointer-events: none; }
 
-.sl-rowhead { display: flex; align-items: center; gap: 9px; padding: 5px 7px; }
+.sl-rowhead { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-2); }
 
 /* The colour, and the way to change it. A filled disc rather than a square:
    it is the same mark the grid's blocks carry beside their names. */
@@ -715,7 +715,7 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
 .sl-dot:focus-visible { outline-color: #a8845c; }
 
 .sl-name {
-    flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 8px;
+    flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: var(--space-2);
     padding: 0; border: 0; background: none; cursor: pointer;
     font-family: inherit; font-size: var(--text-md); color: #374151; text-align: left;
 }
@@ -725,7 +725,7 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
 
 .sl-count {
     flex: none; font-size: var(--text-2xs); font-weight: 600; color: #9297ab;
-    background: #f2f4f7; border-radius: var(--radius-full); padding: 1px 7px;
+    background: #f2f4f7; border-radius: var(--radius-full); padding: 1px var(--space-2);
 }
 
 .sl-del {
@@ -736,8 +736,8 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
 .sl-del:hover { background: #fdecea; color: #b42318; }
 
 /* ---- The twelve ---- */
-.sl-picker { padding: 2px 7px 10px; }
-.sl-swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
+.sl-picker { padding: 2px var(--space-2) var(--space-2); }
+.sl-swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-2); }
 .sl-swatch {
     aspect-ratio: 1 / 1; padding: 0; border: 0; border-radius: 50%;
     background: var(--sw, #9ca3af); cursor: pointer;
@@ -748,7 +748,7 @@ html[data-theme="dark"] .wk-recur-row:hover { background: #232a35; }
 .sl-swatch:focus-visible { outline-color: #a8845c; }
 
 .sl-reset {
-    margin-top: 10px; padding: 0; border: 0; background: none;
+    margin-top: var(--space-2); padding: 0; border: 0; background: none;
     font-family: inherit; font-size: var(--text-xs); font-weight: 600; color: #a8845c;
     cursor: pointer;
 }
@@ -844,7 +844,7 @@ html[data-theme="dark"] .wk-task-name:focus-visible { outline-color: #86d6a5; }
 .wk-priorities-count {
     font-weight: 600;
     color: #9297ab;
-    margin-left: 4px;
+    margin-left: var(--space-1);
 }
 html[data-theme="dark"] .wk-priorities-count { color: #6b7280; }
 
@@ -861,7 +861,7 @@ html[data-theme="dark"] .wk-priorities-count { color: #6b7280; }
    ========================================================================== */
 
 /* ---- This Week Progress: the ring, and the week's three figures ---- */
-.wk-weekly { display: flex; align-items: center; gap: 18px; }
+.wk-weekly { display: flex; align-items: center; gap: var(--space-4); }
 
 .wk-ring { position: relative; width: 88px; height: 88px; flex: none; }
 .wk-ring svg { width: 100%; height: 100%; display: block; }
@@ -883,7 +883,7 @@ html[data-theme="dark"] .wk-priorities-count { color: #6b7280; }
    dressed in styles/calendar/overview.css with the panel it belongs to. */
 
 /* ---- The per-day XP sparkline ---- */
-.wk-spark { margin-top: 14px; }
+.wk-spark { margin-top: var(--space-4); }
 .wk-spark svg { width: 100%; height: 44px; display: block; overflow: visible; }
 .wk-spark-area { fill: rgba(59, 130, 246, .10); stroke: none; }
 .wk-spark-line {
@@ -908,17 +908,17 @@ html[data-theme="dark"] .wk-priorities-count { color: #6b7280; }
 
 .wk-break-total {
     display: flex; align-items: baseline; justify-content: space-between;
-    padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid #eef0f4;
+    padding-bottom: var(--space-3); margin-bottom: var(--space-3); border-bottom: 1px solid #eef0f4;
     font-size: var(--text-sm); color: #6b7280;
 }
 .wk-break-total strong { font-size: var(--text-lg); font-weight: 700; color: #111827; }
 
-.wk-break { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.wk-break { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .wk-break li {
     /* Label, bar, figure — the bars share a column so their lengths can be
        compared, which is the only thing this panel is for. */
     display: grid; grid-template-columns: 48px minmax(0, 1fr) 46px;
-    align-items: center; gap: 10px;
+    align-items: center; gap: var(--space-2);
 }
 .wk-break-label { font-size: var(--text-xs); color: #4b5162; }
 .wk-break-track { height: 6px; background: #f0f1f4; border-radius: var(--radius-full); overflow: hidden; }
@@ -956,13 +956,13 @@ html[data-theme="dark"] .wk-break-fill.tone-prio-high { background: #8b949e; }
  */
 .wk-break-subject li { grid-template-columns: 96px minmax(0, 1fr) 50px; }
 .wk-break-subject .wk-break-label {
-    display: flex; align-items: center; gap: 6px; min-width: 0;
+    display: flex; align-items: center; gap: var(--space-2); min-width: 0;
 }
 .wk-break-ico { flex: none; width: 14px; height: 14px; opacity: .8; }
 /* Other is not one thing and has no drawing; a dot keeps the five names and
    this one on the same left edge. */
 .wk-break-ico.is-other {
-    display: block; width: 8px; height: 8px; margin: 0 3px;
+    display: block; width: 8px; height: 8px; margin: 0 var(--space-1);
     border-radius: var(--radius-full); background: currentColor; opacity: .45;
 }
 .wk-break-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -994,7 +994,7 @@ html[data-theme="dark"] .wk-break-fill.tone-sub-other { background: #5b6472; }
  * the hover targets, and a target the size of its own 3px bar is not one. */
 .wk-chart {
     display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 4px; margin-top: 14px;
+    gap: var(--space-1); margin-top: var(--space-4);
 }
 .wk-chart-col { display: flex; flex-direction: column; align-items: stretch; min-width: 0; }
 /* `.wk-chart-value` — the peak label over the XP-per-day chart — went with
@@ -1014,14 +1014,14 @@ html[data-theme="dark"] .wk-break-fill.tone-sub-other { background: #5b6472; }
    context. Weight, not a second hue — this is one series. */
 .wk-chart-bar.is-today { background: #1d4ed8; }
 .wk-chart-day {
-    margin-top: 6px; font-size: var(--text-2xs); color: #9ca3af; text-align: center;
+    margin-top: var(--space-2); font-size: var(--text-2xs); color: #9ca3af; text-align: center;
 }
 .wk-chart-day.is-today { color: #3b82f6; font-weight: 600; }
 
 /* Focused against planned. The goal is the pale full-width column behind; the
    focused time is the narrower solid one in front, so the pair is told apart
    by width and position before it is told apart by colour. */
-.wk-chart-focus { margin-top: 16px; }
+.wk-chart-focus { margin-top: var(--space-4); }
 .wk-chart-focus .wk-chart-track { height: 56px; }
 .wk-chart-goal {
     position: absolute; left: 0; right: 0; bottom: 0;
@@ -1030,15 +1030,15 @@ html[data-theme="dark"] .wk-break-fill.tone-sub-other { background: #5b6472; }
 .wk-chart-bar.is-focus { position: relative; width: 56%; background: #a8845c; }
 .wk-chart-bar.is-focus.is-today { background: #8a6743; }
 .wk-chart-legend {
-    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-    margin: 12px 0 0; font-size: var(--text-2xs); color: #9aa0ad;
+    display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap;
+    margin: var(--space-3) 0 0; font-size: var(--text-2xs); color: #9aa0ad;
 }
 .wk-chart-key { width: 9px; height: 9px; border-radius: 2px; }
 .wk-chart-key.is-focus { background: #a8845c; }
 .wk-chart-key.is-goal { background: #e6e9f0; }
 /* The keys after the first get room to breathe from the label before them. */
-.wk-chart-legend .wk-chart-key + * { margin-right: 4px; }
-.wk-chart-legend .wk-chart-key:not(:first-child) { margin-left: 8px; }
+.wk-chart-legend .wk-chart-key + * { margin-right: var(--space-1); }
+.wk-chart-legend .wk-chart-key:not(:first-child) { margin-left: var(--space-2); }
 
 html[data-theme="dark"] .wk-chart-day { color: #6b7684; }
 html[data-theme="dark"] .wk-chart-day.is-today { color: #6a9bff; }
@@ -1051,8 +1051,8 @@ html[data-theme="dark"] .wk-chart-bar.is-focus.is-today { background: #e0b98d; }
 html[data-theme="dark"] .wk-chart-legend { color: #9aa4b2; }
 
 /* ---- Streak dots ---- */
-.wk-dots { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 14px; }
-.wk-dot-cell { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.wk-dots { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--space-2); margin-top: var(--space-4); }
+.wk-dot-cell { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
 .wk-dot {
     width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -1065,10 +1065,10 @@ html[data-theme="dark"] .wk-chart-legend { color: #9aa4b2; }
 .wk-dot-day { font-size: var(--text-2xs); color: #9aa0ad; }
 
 /* ---- Upcoming ---- */
-.wk-upcoming { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.wk-upcoming { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .wk-upcoming li {
-    display: flex; align-items: center; gap: 11px;
-    padding: 9px 0;
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-2) 0;
 }
 /* Rows rather than boxes, and a hairline between them. The design sets these
    straight on the card; a bordered tile each turned four items into four more
@@ -1086,7 +1086,7 @@ html[data-theme="dark"] .wk-chart-legend { color: #9aa4b2; }
 /* Focused reads as the figure; planned is what it is measured against, so it
    is the same line at a smaller weight rather than a line of its own. */
 .wk-focustime-of { font-size: var(--text-lg); font-weight: 600; color: #6b7280; }
-.wk-focustime + .wk-progress { margin-top: 12px; }
+.wk-focustime + .wk-progress { margin-top: var(--space-3); }
 
 /* Weekly Focus Time is the last card in the overview column now, not a card
    floated over the grid — so it needs no placement of its own. The float's
@@ -1102,7 +1102,7 @@ html[data-theme="dark"] .wk-chart-legend { color: #9aa4b2; }
    the foot of the page. */
 .wk-fullcal {
     display: block; width: 100%;
-    padding: 11px 12px; border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-3); border-radius: var(--radius-md);
     background: #f4f5f7; border: 0; cursor: pointer;
     font: inherit; font-size: var(--text-sm); font-weight: 600; color: #374151;
 }
@@ -1115,7 +1115,7 @@ html[data-theme="dark"] .wk-fullcal:hover { background: #161b22; color: #f4f4f6;
 /* The way out of a summary, matching .dash-panel-link on the dashboard: a
    button because it navigates through the router, dressed as the link it is. */
 .wk-panel-link {
-    display: inline-block; margin-top: 12px; padding: 0;
+    display: inline-block; margin-top: var(--space-3); padding: 0;
     background: none; border: 0; cursor: pointer;
     font: inherit; font-size: var(--text-sm); font-weight: 600; color: #4f6bed;
 }
@@ -1159,8 +1159,8 @@ html[data-theme="dark"] .wk-spark-area { fill: rgba(168, 132, 92, .10); }
    design's padding a word like "Physics" ellipsised on any card narrower than
    the mock-up's. */
 .wk-focus-chip {
-    display: inline-flex; align-items: center; gap: 7px;
-    max-width: 100%; padding: 7px 14px;
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    max-width: 100%; padding: var(--space-2) var(--space-4);
     background: #fff; border: 1px solid #e5e7eb; border-radius: var(--radius-md);
     font: inherit; font-size: var(--text-sm); font-weight: 500; color: #374151;
     cursor: pointer; white-space: nowrap; overflow: hidden;
@@ -1172,7 +1172,7 @@ html[data-theme="dark"] .wk-spark-area { fill: rgba(168, 132, 92, .10); }
    and between the two the word is the one doing the work — the icon is guessed
    from that word in the first place. */
 @media (max-width: 1400px) {
-    .wk-focus-chip { padding: 8px 10px; gap: 5px; font-size: var(--text-sm); }
+    .wk-focus-chip { padding: var(--space-2) var(--space-2); gap: var(--space-1); font-size: var(--text-sm); }
 }
 .wk-focus-chip:hover { background: #f9fafb; border-color: #d1d5db; }
 .wk-focus-chip-text { overflow: hidden; text-overflow: ellipsis; }
@@ -1183,7 +1183,7 @@ html[data-theme="dark"] .wk-spark-area { fill: rgba(168, 132, 92, .10); }
 /* A day can carry five focuses and this column can show one, so the chip shows
    the primary and counts the rest. The hover text lists them all. */
 .wk-focus-chip-more {
-    flex: none; margin-left: auto; padding: 1px 5px;
+    flex: none; margin-left: auto; padding: 1px var(--space-1);
     border-radius: var(--radius-full); background: rgba(120, 128, 144, .16);
     font-size: var(--text-2xs); font-weight: 700;
 }

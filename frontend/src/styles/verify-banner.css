@@ -12,8 +12,8 @@
 .vb {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 9px 16px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
     border-bottom: 1px solid #f0d9a8;
     background: #fdf6e7;
     color: #6b4e16;
@@ -43,7 +43,7 @@
 .vb-btn,
 .vb-link {
     flex: none;
-    padding: 5px 12px;
+    padding: var(--space-1) var(--space-3);
     border: 1px solid #e3c886;
     border-radius: var(--radius-md);
     background: #fff;
@@ -90,7 +90,7 @@
 @media (max-width: 640px) {
     .vb {
         flex-wrap: wrap;
-        row-gap: 8px;
+        row-gap: var(--space-2);
     }
 
     .vb-text {

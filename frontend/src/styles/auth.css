@@ -1,0 +1,373 @@
+/* ==========================================================================
+   auth.css — the sign-in page (/login, pages/Login.tsx).
+
+   The whole account journey — choose a path, log in or create an account,
+   confirm the e-mail, complete the profile — used to be a white card laid
+   over the landing page. It is a page of its own now: the brand on one side,
+   the form on the other, and the form on its own on a phone. Everything is
+   written from the shared tokens, so it follows the theme and the skins.
+   ========================================================================== */
+/* dashboard.css centres `body`'s children once it has loaded, which shrinks
+   `#root` to its content — the same fix every full-width page makes (see
+   styles/records.css). */
+body:has(.auth-page) > #root,
+body:has(.auth-page) .app-main {
+    width: 100%;
+    align-self: stretch;
+}
+.auth-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    background: var(--color-bg);
+    color: var(--color-ink);
+}
+
+/* ---------- The brand side --------------------------------------------- */
+.auth-aside {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-12);
+    color: #fff;
+    background:
+        radial-gradient(90% 70% at 10% 0%, color-mix(in srgb, #4bc4e6 55%, transparent) 0%, transparent 60%),
+        radial-gradient(80% 80% at 100% 100%, color-mix(in srgb, #8257e5 70%, transparent) 0%, transparent 65%),
+        var(--color-accent);
+}
+/* The range the heroes stand on (components/Range), in white over the
+   accent: the tokens it paints from are set here, since there is no
+   `.peak-hero` around it. */
+.auth-aside {
+    --peak-a: #ffffff;
+    --peak-b: #dbe4ff;
+    --peak-c: #ffffff;
+    --peak-surface: var(--color-accent);
+    --peak-snow: #ffffff;
+}
+.auth-aside .peak-range {
+    width: 100%;
+    height: 42%;
+    opacity: .55;
+    z-index: -1;
+}
+.auth-home {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    align-self: flex-start;
+    color: #fff;
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    text-decoration: none;
+}
+.auth-home img { display: block; background: #fff; border-radius: var(--radius-sm); padding: var(--space-1); }
+.auth-pitch h1 {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-bold);
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    max-width: 14ch;
+}
+.auth-pitch p {
+    margin: 0 0 var(--space-6);
+    max-width: 38ch;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    color: rgba(255, 255, 255, .82);
+}
+.auth-points { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.auth-points li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-md);
+    font-weight: var(--weight-medium);
+}
+.auth-points .icon {
+    width: 32px;
+    height: 32px;
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, .16);
+    color: #fff;
+}
+.auth-aside-foot { margin: 0; font-size: var(--text-xs); color: rgba(255, 255, 255, .7); }
+
+/* ---------- The form side ---------------------------------------------- */
+.auth-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--space-6);
+}
+.auth-main-top {
+    display: none;
+    align-self: stretch;
+    margin-bottom: var(--space-6);
+}
+
+.auth-card {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    animation: authCardIn 0.22s ease-out;
+}
+@keyframes authCardIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .auth-card { animation: none; }
+}
+
+.auth-heading { margin: 0 0 var(--space-2); font-size: var(--text-2xl); font-weight: 700; color: var(--color-ink); }
+.auth-sub { margin: 0 0 var(--space-8); font-size: var(--text-md); line-height: 1.5; color: var(--color-ink-muted); }
+
+.auth-step { display: flex; flex-direction: column; gap: var(--space-4); }
+.auth-step[data-step="choose"] { gap: var(--space-6); padding-top: var(--space-2); }
+.auth-step.hidden { display: none; }
+
+.auth-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    margin-top: var(--space-2);
+}
+.auth-optional { font-weight: 400; color: var(--color-ink-faint); }
+.auth-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--space-3) var(--space-3);
+    font-size: var(--text-lg);
+    font-family: inherit;
+    color: var(--color-ink);
+    background: var(--color-surface-2);
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.auth-input:focus { border-color: var(--color-accent); background: var(--color-surface); }
+.auth-input::placeholder { color: var(--color-ink-faint); }
+
+/* Full width of the form column, the same height as the fields above them. */
+.auth-primary, .auth-secondary, .auth-google {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: var(--space-3) var(--space-4);
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-md);
+    font-weight: var(--weight-semibold);
+    font-family: inherit;
+    text-align: center;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.auth-primary {
+    background: var(--color-accent);
+    color: #fff;
+    border: 1.5px solid var(--color-accent);
+}
+.auth-primary:hover { background: color-mix(in srgb, var(--color-accent) 86%, #000); box-shadow: var(--shadow-md); }
+.auth-secondary {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border: 1.5px solid var(--color-line);
+}
+.auth-secondary:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.auth-google {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border: 1.5px solid var(--color-line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+.auth-google:hover { box-shadow: var(--shadow-md); }
+.auth-google-g {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4285f4 0%, #ea4335 50%, #fbbc05 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: var(--text-xs);
+}
+.auth-google[hidden], .auth-or[hidden] { display: none; }
+
+.auth-or {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    margin: var(--space-2) 0 2px;
+    font-size: var(--text-xs);
+    color: var(--color-ink-faint);
+}
+.auth-or::before, .auth-or::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--color-line);
+}
+
+.auth-link {
+    align-self: center;
+    margin-top: var(--space-4);
+    padding: var(--space-1) var(--space-2);
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+    cursor: pointer;
+}
+.auth-switch {
+    margin: var(--space-2) 0 0;
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+}
+.auth-switch .auth-link { display: inline; width: auto; margin: 0; padding: 0; font-size: inherit; color: var(--color-accent); font-weight: var(--weight-semibold); }
+.auth-link:hover { color: var(--color-accent); text-decoration: underline; }
+
+/* Password strength — a bar that fills and colours with the score. */
+.auth-strength { margin-top: var(--space-1); }
+.auth-strength-bar {
+    height: 5px;
+    border-radius: 3px;
+    background: var(--color-surface-2);
+    overflow: hidden;
+}
+.auth-strength-bar span {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: 3px;
+    background: #d94f4f;
+    transition: width 0.25s ease, background 0.25s ease;
+}
+.auth-strength-bar span.lvl-2 { background: #e0a33a; }
+.auth-strength-bar span.lvl-3 { background: #d7c04a; }
+.auth-strength-bar span.lvl-4 { background: #63b06a; }
+.auth-strength-bar span.lvl-5 { background: #2e9e6b; }
+.auth-strength-label { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--color-ink-muted); }
+
+/* Age and terms, ticked before an account can be made.
+   Laid out as a row so the box sits beside the sentence rather than above it,
+   and `align-items: flex-start` so a wrapped sentence keeps the box on its
+   first line instead of centring it against two. */
+.auth-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+}
+.auth-consent input {
+    flex-shrink: 0;
+    /* Nudged down onto the text's first baseline; a checkbox aligned to the
+       top of the line box sits visibly high next to 12.5px text. */
+    margin-top: 2px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+.auth-consent a { color: var(--color-accent); text-decoration: underline; }
+.auth-consent a:hover { color: var(--color-accent); }
+/* The button is disabled until the box is ticked, so it has to look it —
+   otherwise a reader who has not read the line reads a broken button. */
+.auth-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.auth-primary:disabled:hover { background: var(--color-ink); box-shadow: none; }
+
+/* "Check your inbox" */
+.auth-inbox-mark { font-size: 40px; text-align: center; color: var(--color-accent); }
+.auth-inbox-text { margin: var(--space-1) 0 0; font-size: var(--text-md); line-height: 1.6; color: var(--color-ink-muted); text-align: center; }
+.auth-inbox-text strong { color: var(--color-ink); }
+.auth-devlink {
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+}
+.auth-devlink p { margin: 0 0 var(--space-2); font-size: var(--text-xs); color: var(--color-ink-muted); }
+.auth-devlink[hidden] { display: none; }
+
+/* Theme + daily-goal pickers */
+.auth-choices { display: flex; gap: var(--space-3); width: 100%; }
+.auth-choice {
+    flex: 1;
+    padding: var(--space-2) var(--space-2);
+    font-family: inherit;
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+.auth-choice span { font-size: var(--text-2xs); font-weight: 500; color: var(--color-ink-faint); }
+.auth-choice:hover { border-color: var(--color-ink-faint); }
+.auth-choice.is-on {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: #fff;
+}
+.auth-choice.is-on span { color: rgba(255, 255, 255, .78); }
+
+.auth-message {
+    margin: var(--space-4) 0 0;
+    min-height: 18px;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    text-align: center;
+}
+
+
+/* One column on a tablet and a phone: the brand side goes, and the mark
+   moves above the form so the page still says whose it is. */
+@media (max-width: 900px) {
+    .auth-page { grid-template-columns: 1fr; }
+    .auth-aside { display: none; }
+    .auth-main { justify-content: flex-start; padding-top: var(--space-6); }
+    .auth-main-top { display: flex; }
+    .auth-main-top .auth-home { color: var(--color-ink); }
+    .auth-main-top .auth-home img { background: none; padding: 0; }
+}
+@media (max-width: 480px) {
+    .auth-main { padding: var(--space-4); }
+    .auth-heading { font-size: var(--text-xl); }
+    .auth-step { gap: var(--space-3); }
+}

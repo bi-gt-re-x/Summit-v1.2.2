@@ -29,7 +29,7 @@ templates that are left. A path appears in exactly one of the two.
 | `GET /engine` | Hidden; gated client-side by today's unlock | `routes/pages.py` |
 
 A signed-out visitor asking for a gated page is redirected to
-`/home?auth=login&next=<path>` (`middleware/gate.py`).
+`/login?auth=login&next=<path>` (`middleware/gate.py`), the React sign-in page.
 
 ## Account
 

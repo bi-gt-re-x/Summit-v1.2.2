@@ -9,10 +9,10 @@
  *
  * What this file itself owns is only what spans the whole page:
  *
- *   * whether the account popup is up, and on which panel. A gated page bounces
- *     a signed-out visitor to /home?auth=login&next=/dashboard and the
- *     verification link lands on /home?auth=profile, so the URL is what decides
- *     that on arrival — and the hero's call to action decides it after.
+ *   * sending account links on. Signing in is its own page now (/login,
+ *     pages/Login.tsx); the buttons here link to it, and an old
+ *     /home?auth=… link — a bookmark, an e-mail sent before the move — is
+ *     forwarded there with its query intact.
  *   * the four page-wide motions, as hooks over the rendered tree: the opening,
  *     the scroll reveals, the count-ups, the charts drawing themselves, and the
  *     closing flourishes. Each measures something that only exists once the
@@ -33,14 +33,12 @@
  * go stale.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { Ambient } from '@/components';
 import {
   Analytics,
-  AuthModal,
   CalendarDemo,
   DashboardDemo,
-  DEEP_LINKED,
   FeatureStrip,
   FinalCta,
   Footer,
@@ -61,7 +59,6 @@ import {
 } from '@/components/Home';
 import { useAuth, useDocumentTitle, useTheme } from '@/hooks';
 import { useSecretScripts } from '@/hooks/useSecretScripts';
-import type { AuthStep } from '@/components/Home';
 import type { Theme } from '@/types';
 import '@/styles/homepage.css';
 import '@/styles/home-motion.css';
@@ -74,24 +71,15 @@ const SECTIONS = [
   ['pricing', 'Pricing'],
 ] as const;
 
-/**
- * Where the flow finishes. Only a path on this site, never somewhere else.
- *
- * With nothing to go back to the answer is the front door, not the dashboard.
- * `/` is the one route that reads the account's chosen start page (FrontDoor
- * in App.tsx) — naming the dashboard here instead meant signing in from the
- * landing page always landed on the dashboard, whatever the account had asked
- * for, and the preference only appeared to work if you happened to arrive via
- * a gated link.
- */
-function safeNext(raw: string | null): string {
-  return raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
-}
-
 export default function Homepage() {
   useDocumentTitle('Home');
 
   const [params] = useSearchParams();
+  const navigate = useNavigate();
+  const toLogin = useCallback(
+    (step: 'login' | 'create') => navigate(`/login?auth=${step}`),
+    [navigate],
+  );
   const { status, username, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const signedIn = status === 'signed-in';
@@ -126,34 +114,6 @@ export default function Homepage() {
   useCharts(page);
   useFinalMotion(page);
 
-  // --- the account popup ---------------------------------------------------
-  const wanted = params.get('auth');
-  const next = safeNext(params.get('next'));
-  const [step, setStep] = useState<AuthStep | null>(null);
-
-  // The URL opens the popup, and re-opens it if the URL changes underneath —
-  // which is what happens when a gated route bounces a visitor here.
-  useEffect(() => {
-    if (wanted && DEEP_LINKED.includes(wanted as AuthStep)) {
-      setStep(wanted as AuthStep);
-    }
-  }, [wanted]);
-
-  /** The line the popup opens with, when the URL is reporting a failure. */
-  const notice = params.get('verify') === 'invalid'
-    ? { text: 'That verification link has already been used or expired.', kind: 'error' as const }
-    : params.get('oauth') === 'unconfigured'
-      ? { text: 'Google sign-in is not configured on this server yet.', kind: 'error' as const }
-      : params.get('oauth')
-        ? { text: 'Google sign-in did not complete. Try again.', kind: 'error' as const }
-        : params.get('next')
-          ? { text: 'You need an account to open that page.', kind: 'info' as const }
-          : null;
-
-  useEffect(() => {
-    if (params.get('verify') === 'invalid' || params.get('oauth')) setStep('login');
-  }, [params]);
-
   // --- the toast -----------------------------------------------------------
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -170,6 +130,13 @@ export default function Homepage() {
     },
     [],
   );
+
+  // An account link from before /login existed: the server's redirects, a
+  // bookmark, a verification e-mail. Forwarded whole, so `next`, `verify` and
+  // `oauth` arrive with it. After every hook, so the hooks run in one order.
+  if (params.has('auth') || params.has('verify') || params.has('oauth')) {
+    return <Navigate to={`/login?${params.toString()}`} replace />;
+  }
 
   return (
     <>
@@ -222,13 +189,13 @@ export default function Homepage() {
             </div>
           ) : (
             <div className="auth-buttons">
-              <button type="button" className="auth-btn" onClick={() => setStep('login')}>
+              <button type="button" className="auth-btn" onClick={() => toLogin('login')}>
                 Log In
               </button>
               <button
                 type="button"
                 className="auth-btn auth-btn-primary"
-                onClick={() => setStep('create')}
+                onClick={() => toLogin('create')}
               >
                 Sign Up
               </button>
@@ -242,7 +209,7 @@ export default function Homepage() {
           <Hero
             signedIn={signedIn}
             username={username}
-            onGetStarted={() => setStep('choose')}
+            onGetStarted={() => toLogin('create')}
           />
 
           {/* Not a screenshot: a working mock the reader watches fill in.
@@ -322,26 +289,18 @@ export default function Homepage() {
           <Philosophy />
           <Pricing
             signedIn={signedIn}
-            onGetStarted={() => setStep('choose')}
+            onGetStarted={() => toLogin('create')}
             onTheme={setTheme}
             onToast={say}
           />
           <TechStack />
-          <FinalCta signedIn={signedIn} onGetStarted={() => setStep('choose')} />
+          <FinalCta signedIn={signedIn} onGetStarted={() => toLogin('create')} />
         </div>
       </div>
 
       <Footer />
 
       <div className={`hfx-toast${toast ? ' is-shown' : ''}`}>{toast}</div>
-
-      <AuthModal
-        step={step}
-        notice={notice}
-        next={next}
-        onStep={setStep}
-        onClose={() => setStep(null)}
-      />
     </>
   );
 }

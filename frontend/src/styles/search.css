@@ -20,7 +20,7 @@
 .sf-input {
     width: 100%;
     box-sizing: border-box;
-    padding: 9px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-md);
     background: #F8F9FB;
@@ -32,7 +32,7 @@
 .sf-input:focus { outline: none; border-color: #A38A70; background: #FFFFFF; }
 
 .sf-empty {
-    margin: 10px 2px 2px;
+    margin: var(--space-2) 2px 2px;
     font-size: var(--text-sm);
     line-height: 1.6;
     color: #6C757D;
@@ -59,9 +59,9 @@
 .sf-cursor {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 9px;
-    padding: 6px;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: var(--space-2);
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-md);
     background: #F8F9FB;
@@ -119,10 +119,10 @@
     padding: 0 2px;
 }
 
-.sf-group { margin-top: 10px; min-height: 0; }
+.sf-group { margin-top: var(--space-2); min-height: 0; }
 
 .sf-group-head {
-    padding: 0 4px 5px;
+    padding: 0 var(--space-1) var(--space-1);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
@@ -140,8 +140,8 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 8px 9px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: none;

@@ -757,7 +757,7 @@ export function Rail() {
           /* A plain Link, not a NavLink: it points at /home, so on the landing
              page NavLink would mark it active and paint it as the "you are
              here" pill, which it is not. */
-          <Link className="rail-link rail-signin" to="/home?auth=login" title="Log In">
+          <Link className="rail-link rail-signin" to="/login?auth=login" title="Log In">
             <svg {...stroke}>
               <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
               <path d="M10 17l5-5-5-5" />

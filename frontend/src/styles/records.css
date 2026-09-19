@@ -61,7 +61,7 @@ body:has(.rc-page) .app-main {
     width: 100%;
     max-width: 1500px;
     margin-inline: auto;
-    padding: 26px 24px 60px;
+    padding: var(--space-6) var(--space-6) var(--space-16);
     background: var(--rc-bg);
     color: var(--rc-text);
     font-family: var(--font-sans);
@@ -105,8 +105,8 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 26px;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
     width: 100%;
 }
 
@@ -117,9 +117,9 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
    bands on their own margins rather than on a shell gap, which is why it needs
    the second rule and the other pages do not. See components/Hero.tsx. */
 .peak-hero .rc-hero { margin-bottom: 0; }
-.rc-top { margin-bottom: 26px; }
+.rc-top { margin-bottom: var(--space-6); }
 .rc-title {
-    margin: 0 0 8px;
+    margin: 0 0 var(--space-2);
     font-size: clamp(1.8rem, 3vw, 2.6rem);
     font-weight: 700;
     letter-spacing: -.03em;
@@ -142,15 +142,15 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 6px 10px;
-    margin: 12px 0 0;
+    gap: var(--space-2) var(--space-2);
+    margin: var(--space-3) 0 0;
     font-size: var(--text-md);
     color: var(--rc-muted);
 }
 .rc-lead-span {
     display: inline-flex;
     align-items: baseline;
-    gap: 8px;
+    gap: var(--space-2);
     font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.03em;
@@ -160,12 +160,12 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
 .rc-lead-from { color: var(--rc-faint); }
 .rc-lead-arrow { font-size: var(--text-xl); font-weight: 600; color: var(--rc-faint); }
 .rc-lead-to { color: var(--rc-text); }
-.rc-lead-tail { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
+.rc-lead-tail { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1); }
 .rc-lead-tail strong { color: var(--rc-text); font-weight: 700; }
 .rc-lead-dot { color: var(--rc-faint); }
 .rc-lead-gain { font-weight: 700; color: var(--rc-good); font-variant-numeric: tabular-nums; }
 
-.rc-hero-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.rc-hero-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
 /* Big enough to read as the page's own trophy rather than as an emoji that
    wandered in. Hidden on narrow screens, where it is only taking the width. */
 .rc-hero-art { flex: none; font-size: 92px; line-height: 1; filter: saturate(1.15); }
@@ -180,7 +180,7 @@ html[data-theme="dark"] .rc-page { color-scheme: dark; }
 .peak-hero .rc-hero-art {
     font-size: 56px;
     align-self: center;
-    margin-right: 6px;
+    margin-right: var(--space-2);
     filter: saturate(1.15) drop-shadow(0 8px 14px rgba(20, 28, 46, .22));
 }
 html[data-theme="dark"] .peak-hero .rc-hero-art {
@@ -190,8 +190,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-btn {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 10px 16px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card);
@@ -228,8 +228,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-link:hover { text-decoration: underline; }
 
 .rc-error {
-    margin: 0 0 18px;
-    padding: 11px 14px;
+    margin: 0 0 var(--space-4);
+    padding: var(--space-3) var(--space-4);
     border: 1px solid color-mix(in srgb, var(--rc-bad) 40%, transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--rc-bad) 10%, transparent);
@@ -244,17 +244,17 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    the label names the record it came from. */
 .rc-tiles {
     list-style: none;
-    margin: 0 0 34px;
+    margin: 0 0 var(--space-8);
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 14px;
+    gap: var(--space-4);
 }
 .rc-tile {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    padding: 16px 18px;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-4);
     border: 1px solid var(--rc-line);
     border-radius: var(--rc-radius);
     background: var(--rc-card);
@@ -288,13 +288,13 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 /* The counts, demoted. They answer "how much is in here", which is worth one
    line and not four tiles. */
 .rc-meta {
-    margin: -8px 0 26px;
+    margin: -8px 0 var(--space-6);
     font-size: var(--text-xs);
     color: var(--rc-faint);
 }
 
 /* ---------- Sections ------------------------------------------------------ */
-.rc-section { margin-bottom: 38px; }
+.rc-section { margin-bottom: var(--space-10); }
 /* Title on the left, whatever the section is steered by on the right — chips
    here, a select on the evolution. Wraps rather than squeezing: eleven
    categories is a second line, not eleven unreadable chips. */
@@ -303,11 +303,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
 }
 .rc-section-title {
-    margin: 0 0 16px;
+    margin: 0 0 var(--space-4);
     font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .07em;
@@ -316,29 +316,29 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-section-head .rc-section-title { margin: 0; }
 .rc-sub-title {
-    margin: 26px 0 14px;
+    margin: var(--space-6) 0 var(--space-4);
     font-size: var(--text-xs);
     font-weight: 700;
     letter-spacing: .05em;
     text-transform: uppercase;
     color: var(--rc-faint);
 }
-.rc-sub-title.is-quiet { margin-top: 32px; font-size: var(--text-2xs); letter-spacing: .07em; }
+.rc-sub-title.is-quiet { margin-top: var(--space-8); font-size: var(--text-2xs); letter-spacing: .07em; }
 
 /* The line that says what a milestone is. Records and milestones share a
    table, a dialog and a page, and the difference between them is a sentence
    nobody should have to reconstruct from which section a thing landed in. */
 .rc-define {
-    margin: -4px 0 14px;
+    margin: -4px 0 var(--space-4);
     font-size: var(--text-xs);
     line-height: 1.6;
     color: var(--rc-faint);
 }
 .rc-define strong { color: var(--rc-muted); font-weight: 700; }
-.rc-note { margin: 0 0 16px; font-size: var(--text-sm); line-height: 1.6; color: var(--rc-faint); max-width: 78ch; }
+.rc-note { margin: 0 0 var(--space-4); font-size: var(--text-sm); line-height: 1.6; color: var(--rc-faint); max-width: 78ch; }
 .rc-empty {
     margin: 0;
-    padding: 20px 18px;
+    padding: var(--space-5) var(--space-4);
     border: 1px dashed var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card-2);
@@ -354,7 +354,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
-    gap: 14px;
+    gap: var(--space-4);
 }
 .rc-best > button {
     width: 100%;
@@ -362,7 +362,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 17px 18px 15px;
+    padding: var(--space-4) var(--space-4) var(--space-4);
     border: 1px solid var(--rc-line);
     border-radius: var(--rc-radius);
     background: var(--rc-card);
@@ -381,9 +381,9 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     text-transform: uppercase;
     color: var(--rc-accent-2);
 }
-.rc-best-name { margin-bottom: 8px; font-size: var(--text-md); font-weight: 600; color: var(--rc-muted); }
+.rc-best-name { margin-bottom: var(--space-2); font-size: var(--text-md); font-weight: 600; color: var(--rc-muted); }
 .rc-best-value { font-size: var(--text-3xl); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
-.rc-best-label { margin-bottom: 10px; font-size: var(--text-xs); color: var(--rc-faint); }
+.rc-best-label { margin-bottom: var(--space-2); font-size: var(--text-xs); color: var(--rc-faint); }
 /* ---------- The card's own evolution --------------------------------------
    The sparkline plots goodness rather than magnitude, so a record measured
    downward still climbs — the reason is in Records.tsx, above `Spark`. Drawn
@@ -392,7 +392,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-spark {
     width: 100%;
     height: 30px;
-    margin: 0 0 4px;
+    margin: 0 0 var(--space-1);
     overflow: visible;
     color: var(--rc-accent-2);
 }
@@ -414,8 +414,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 3px 4px;
-    margin: 6px 0 10px;
+    gap: var(--space-1) var(--space-1);
+    margin: var(--space-2) 0 var(--space-2);
     font-size: var(--text-xs);
     font-weight: 600;
     color: var(--rc-faint);
@@ -423,7 +423,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-best-trail > span + span::before {
     content: '→';
-    margin-right: 4px;
+    margin-right: var(--space-1);
     color: var(--rc-line);
 }
 .rc-best-trail > span.is-now { color: var(--rc-accent-2); }
@@ -432,8 +432,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-best-gain.is-quiet { color: var(--rc-faint); font-weight: 500; }
 .rc-best-new { font-size: var(--text-xs); font-weight: 700; color: var(--rc-gold); }
 .rc-best-when {
-    margin-top: 11px;
-    padding-top: 10px;
+    margin-top: var(--space-3);
+    padding-top: var(--space-2);
     border-top: 1px solid var(--rc-line-soft);
     font-size: var(--text-xs);
     color: var(--rc-faint);
@@ -449,9 +449,9 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    second time under their headings. The section is gone and the chips moved
    into the personal-bests header, which is what they were always filtering —
    see Records.tsx. The grid of category cards went with it. */
-.rc-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.rc-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .rc-chip {
-    padding: 6px 13px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-full);
     background: var(--rc-card);
@@ -472,13 +472,13 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 
 /* Opening the bests row past the eight it draws. A link rather than a button,
    because it changes how much of one section is showing and nothing else. */
-.rc-more { margin-top: 14px; }
+.rc-more { margin-top: var(--space-4); }
 
 /* ---------- Timeline and milestones --------------------------------------- */
 .rc-two {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 20px;
+    gap: var(--space-5);
     align-items: start;
 }
 
@@ -491,8 +491,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     position: relative;
     display: grid;
     grid-template-columns: 62px minmax(0, 1fr);
-    gap: 4px;
-    padding: 9px 0;
+    gap: var(--space-1);
+    padding: var(--space-2) 0;
 }
 .rc-timeline > li::before {
     content: '';
@@ -503,13 +503,13 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-timeline > li:last-child::before { display: none; }
 .rc-tl-when {
-    padding-top: 9px;
+    padding-top: var(--space-2);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .04em;
     color: var(--rc-faint);
     text-align: right;
-    padding-right: 8px;
+    padding-right: var(--space-2);
 }
 .rc-tl-day { list-style: none; margin: 0; padding: 0; min-width: 0; }
 .rc-tl-day > li {
@@ -517,8 +517,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: grid;
     grid-template-columns: 22px minmax(0, 1fr);
     align-items: center;
-    gap: 4px;
-    padding: 5px 0;
+    gap: var(--space-1);
+    padding: var(--space-1) 0;
 }
 .rc-tl-dot {
     justify-self: center;
@@ -545,7 +545,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: flex;
     flex-direction: column;
     gap: 1px;
-    padding: 0 0 0 6px;
+    padding: 0 0 0 var(--space-2);
     border: 0;
     background: transparent;
     color: var(--rc-text);
@@ -571,8 +571,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: grid;
     grid-template-columns: 20px minmax(0, 1fr) auto;
     align-items: center;
-    gap: 11px;
-    padding: 9px 8px;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -624,7 +624,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-fold {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     padding: 0;
     border: 0;
     background: transparent;
@@ -635,7 +635,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-fold:hover .rc-caret,
 .rc-fold:hover .rc-section-title { color: var(--rc-text); }
 .rc-fold-n {
-    padding: 1px 7px;
+    padding: 1px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--rc-card-2);
     color: var(--rc-faint);
@@ -652,7 +652,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     /* Caret, heading, count. The tick that used to sit between the first two
        is gone with the claim it was making — see `GroupRow` in Records.tsx. */
     grid-template-columns: 14px minmax(0, 1fr) auto;
-    gap: 9px;
+    gap: var(--space-2);
 }
 /* The heading of a group, drawn as a heading. It carried a tick in the
    milestone column and read as an achievement of its own — see `GroupRow` in
@@ -676,26 +676,26 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     list-style: none;
     /* Indented to the parent's name column, with the rule standing in for the
        run of the fold — the child rows are the same rows, one level in. */
-    margin: 0 0 4px 16px;
-    padding: 0 0 0 15px;
+    margin: 0 0 var(--space-1) var(--space-4);
+    padding: 0 0 0 var(--space-4);
     border-left: 1.5px solid var(--rc-line);
 }
-.rc-key-kids button { font-size: var(--text-sm); padding: 7px 8px; }
+.rc-key-kids button { font-size: var(--text-sm); padding: var(--space-2) var(--space-2); }
 
 /* ---------- Record evolution ---------------------------------------------- */
 .rc-ev-wrap {
     display: grid;
     grid-template-columns: 210px minmax(0, 1fr);
-    gap: 20px;
+    gap: var(--space-5);
     align-items: center;
-    padding: 18px;
+    padding: var(--space-4);
     border: 1px solid var(--rc-line);
     border-radius: var(--rc-radius);
     background: var(--rc-card);
     box-shadow: var(--rc-shadow);
 }
-.rc-ev-figs { margin: 0; display: flex; flex-direction: column; gap: 13px; }
-.rc-ev-figs div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.rc-ev-figs { margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.rc-ev-figs div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .rc-ev-figs dt { font-size: var(--text-xs); color: var(--rc-muted); }
 .rc-ev-figs dd { margin: 0; font-size: var(--text-lg); font-weight: 700; font-variant-numeric: tabular-nums; }
 .rc-ev-figs dd.is-up { color: var(--rc-good); }
@@ -718,9 +718,9 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 
 /* The record picker, and the one word that stops a descending line being read
    as decline. */
-.rc-ev-pick { display: flex; align-items: center; gap: 9px; }
+.rc-ev-pick { display: flex; align-items: center; gap: var(--space-2); }
 .rc-ev-dir {
-    padding: 4px 9px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--rc-blue) 14%, transparent);
     color: var(--rc-blue);
@@ -744,16 +744,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
 }
 .rc-bar-search {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     flex: 1 1 170px;
     min-width: 0;
-    padding: 0 10px;
+    padding: 0 var(--space-2);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card-2);
@@ -763,7 +763,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-bar-search input[type="search"] {
     min-width: 0;
     width: 100%;
-    padding: 7px 0;
+    padding: var(--space-2) 0;
     border: 0;
     background: transparent;
     color: var(--rc-text);
@@ -773,7 +773,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 
 .rc-select {
-    padding: 8px 11px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card-2);
@@ -785,7 +785,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-select:focus, .rc-select:hover { border-color: var(--rc-accent-2); }
 /* In the toolbar, where three controls share a line inside half the page. */
-.rc-select.is-small { padding: 7px 8px; font-size: var(--text-sm); }
+.rc-select.is-small { padding: var(--space-2) var(--space-2); font-size: var(--text-sm); }
 
 /* ---------- The dialog ----------------------------------------------------- */
 .rc-modal-back {
@@ -794,7 +794,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     z-index: 200;
     display: grid;
     place-items: center;
-    padding: 20px;
+    padding: var(--space-5);
     background: rgba(8, 11, 18, .58);
     backdrop-filter: blur(3px);
 }
@@ -813,8 +813,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    padding: 17px 20px;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
     border-bottom: 1px solid var(--rc-line-soft);
 }
 .rc-modal-head h2 { margin: 0; font-size: var(--text-lg); font-weight: 700; }
@@ -832,14 +832,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-modal-x:hover { background: var(--rc-card-2); color: var(--rc-text); }
 .rc-modal-x svg { width: 16px; height: 16px; }
 
-.rc-modal-body { padding: 18px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+.rc-modal-body { padding: var(--space-4) var(--space-5); overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-4); }
 
-.rc-kind { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.rc-kind { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
 .rc-kind button {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 11px 13px;
+    padding: var(--space-3) var(--space-3);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card-2);
@@ -857,7 +857,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     background: color-mix(in srgb, var(--rc-accent-2) 12%, transparent);
 }
 
-.rc-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.rc-field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
 .rc-field > span {
     font-size: var(--text-xs);
     font-weight: 600;
@@ -865,7 +865,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-field input, .rc-field select, .rc-field textarea {
     width: 100%;
-    padding: 9px 11px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card-2);
@@ -878,19 +878,19 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-field textarea { resize: vertical; line-height: 1.55; }
 .rc-field input:focus, .rc-field select:focus, .rc-field textarea:focus { border-color: var(--rc-accent-2); }
 .rc-field-hint { font-style: normal; font-size: var(--text-2xs); line-height: 1.5; color: var(--rc-faint); }
-.rc-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.rc-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-3); }
 
 /* Which way is better. Two buttons rather than a select: there are exactly two
    answers, both need a line of explanation to be picked correctly, and a
    select shows neither until it is opened. Shaped like .rc-kind above because
    it is the same kind of question — a fact about the entry that changes what
    the rest of the form means. */
-.rc-dir { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.rc-dir { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
 .rc-dir button {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    padding: 9px 11px;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card);
@@ -911,7 +911,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 
 .rc-modal-preview {
     margin: 0;
-    padding: 10px 12px;
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-md);
     background: var(--rc-card-2);
     font-size: var(--text-sm);
@@ -931,8 +931,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-modal-foot {
     display: flex;
     justify-content: flex-end;
-    gap: 9px;
-    padding: 14px 20px;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5);
     border-top: 1px solid var(--rc-line-soft);
 }
 
@@ -951,8 +951,8 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    instead of in size.
    ========================================================================== */
 .rc-derived {
-    margin-top: 54px;
-    padding-top: 30px;
+    margin-top: var(--space-12);
+    padding-top: var(--space-8);
     border-top: 1px solid var(--rc-line);
 }
 .rc-derived .rc-card { background: var(--rc-card-2); }
@@ -963,13 +963,13 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
-    gap: 12px;
+    gap: var(--space-3);
 }
 .rc-card {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    padding: 15px 16px;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-4);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card);
@@ -978,13 +978,13 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-ico { color: var(--rc-faint); }
 .rc-ico svg { width: 17px; height: 17px; }
 .rc-label { font-size: var(--text-xs); color: var(--rc-muted); }
-.rc-figure { display: flex; align-items: baseline; gap: 5px; }
+.rc-figure { display: flex; align-items: baseline; gap: var(--space-1); }
 .rc-num { font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .rc-unit { font-size: var(--text-xs); color: var(--rc-muted); }
 .rc-none { font-size: var(--text-md); color: var(--rc-faint); }
-.rc-when { margin-top: 3px; font-size: var(--text-2xs); color: var(--rc-faint); }
+.rc-when { margin-top: var(--space-1); font-size: var(--text-2xs); color: var(--rc-faint); }
 
-.rc-chases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.rc-chases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-4); }
 
 /* Records within reach — kept, and kept subordinate. It answers "what should
    I chase next", which is the Goals page's question asked on a page about
@@ -993,7 +993,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    than the ones that carry real progress elsewhere. See Records.tsx. */
 .rc-chases.is-quiet { gap: 0; }
 .rc-chases.is-quiet .rc-chase {
-    padding: 11px 2px;
+    padding: var(--space-3) 2px;
     border: 0;
     border-bottom: 1px solid var(--rc-line-soft);
     border-radius: 0;
@@ -1002,16 +1002,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-chases.is-quiet .rc-chase:last-child { border-bottom: 0; }
 .rc-chases.is-quiet .rc-chase.is-held { border-color: var(--rc-line-soft); }
 .rc-chases.is-quiet .rc-track { height: 5px; }
-.rc-chases.is-quiet .rc-chase-head { margin-bottom: 7px; }
-.rc-chases.is-quiet .rc-chase-foot { margin-top: 7px; font-size: var(--text-xs); }
+.rc-chases.is-quiet .rc-chase-head { margin-bottom: var(--space-2); }
+.rc-chases.is-quiet .rc-chase-foot { margin-top: var(--space-2); font-size: var(--text-xs); }
 .rc-chase {
-    padding: 14px 16px;
+    padding: var(--space-4) var(--space-4);
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
     background: var(--rc-card);
 }
 .rc-chase.is-held { border-color: color-mix(in srgb, var(--rc-good) 45%, transparent); }
-.rc-chase-head { display: flex; align-items: center; gap: 9px; margin-bottom: 9px; }
+.rc-chase-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
 .rc-chase-ico { color: var(--rc-faint); display: grid; place-items: center; }
 .rc-chase-ico svg { width: 16px; height: 16px; }
 .rc-chase-label { flex: 1; font-size: var(--text-sm); font-weight: 600; }
@@ -1025,14 +1025,14 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     transition: width .6s cubic-bezier(.22, 1, .36, 1);
 }
 .rc-chase.is-held .rc-track > i { background: var(--rc-good); }
-.rc-chase-foot { margin: 9px 0 0; font-size: var(--text-xs); color: var(--rc-muted); }
+.rc-chase-foot { margin: var(--space-2) 0 0; font-size: var(--text-xs); color: var(--rc-muted); }
 .rc-chase-foot strong { color: var(--rc-text); }
 
 /* ---------- Narrower ------------------------------------------------------- */
 @media (max-width: 1080px) {
     .rc-two { grid-template-columns: minmax(0, 1fr); }
     .rc-ev-wrap { grid-template-columns: minmax(0, 1fr); }
-    .rc-ev-figs { flex-direction: row; flex-wrap: wrap; gap: 22px; }
+    .rc-ev-figs { flex-direction: row; flex-wrap: wrap; gap: var(--space-6); }
     .rc-ev-figs div { flex-direction: column; gap: 2px; }
 }
 @media (max-width: 720px) {

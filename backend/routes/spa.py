@@ -37,6 +37,9 @@ SPA_ROUTES = (
     # everyone else to the landing page — is `FrontDoor` in src/App.tsx now.
     '/',
     '/home',
+    # Signing in and signing up. The gate and the auth redirects land here —
+    # see backend/middleware/gate.py and backend/routes/auth.py.
+    '/login',
     '/dashboard',
     '/about-us',
     '/privacy-policy',

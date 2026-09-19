@@ -24,8 +24,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    padding: 2px 4px 8px;
+    gap: var(--space-3);
+    padding: 2px var(--space-1) var(--space-2);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .05em;
@@ -36,7 +36,7 @@
 .nf-clear {
     border: 0;
     background: none;
-    padding: 3px 6px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-sm);
     font: inherit;
     font-size: var(--text-2xs);
@@ -48,7 +48,7 @@
 .nf-clear:focus-visible { outline: 2px solid #C0392B; outline-offset: 1px; }
 
 .nf-empty {
-    margin: 10px 2px 2px;
+    margin: var(--space-2) 2px 2px;
     font-size: var(--text-sm);
     line-height: 1.55;
     color: #6C757D;
@@ -56,7 +56,7 @@
 
 .nf-list {
     list-style: none;
-    margin: 4px 0 0;
+    margin: var(--space-1) 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -85,10 +85,10 @@
 .nf-body {
     display: flex;
     align-items: flex-start;
-    gap: 9px;
+    gap: var(--space-2);
     flex: 1 1 auto;
     min-width: 0;
-    padding: 9px 4px 9px 9px;
+    padding: var(--space-2) var(--space-1) var(--space-2) var(--space-2);
     color: #2C302E;
     text-decoration: none;
 }
@@ -98,7 +98,7 @@
     height: 8px;
     border-radius: 50%;
     flex: none;
-    margin-top: 5px;
+    margin-top: var(--space-1);
 }
 .nf-dot.is-urgent { background: #C0392B; }
 .nf-dot.is-warn   { background: #E69500; }
@@ -127,7 +127,7 @@
 
 .nf-drop {
     flex: none;
-    margin: 7px 5px 0 0;
+    margin: var(--space-2) var(--space-1) 0 0;
     width: 24px;
     height: 24px;
     display: grid;
@@ -159,7 +159,7 @@
     z-index: 90;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-2);
     width: min(360px, calc(100vw - 36px));
     pointer-events: none;
 }
@@ -168,8 +168,8 @@
     pointer-events: auto;
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 12px 12px 12px 14px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
     box-sizing: border-box;
     background: #FFFFFF;
     border: 1px solid #EAEAEA;
@@ -188,12 +188,12 @@
     to   { opacity: 1; transform: none; }
 }
 
-.nf-toast .nf-dot { margin-top: 6px; }
+.nf-toast .nf-dot { margin-top: var(--space-2); }
 
 .nf-toast-text {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: var(--space-1);
     flex: 1 1 auto;
     min-width: 0;
 }
@@ -214,7 +214,7 @@
 
 .nf-toast-go {
     align-self: flex-start;
-    margin-top: 3px;
+    margin-top: var(--space-1);
     font-size: var(--text-xs);
     font-weight: 600;
     color: #A38A70;

@@ -50,9 +50,9 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 20px;
+    gap: var(--space-5);
     min-height: 156px;
-    padding: 26px 28px;
+    padding: var(--space-6) var(--space-6);
 
     border: 1px solid var(--peak-line);
     border-radius: var(--radius-lg);
@@ -217,9 +217,9 @@ html[data-theme="dark"] .peak-hero {
 .peak-eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     align-self: flex-start;
-    padding: 4px 11px;
+    padding: var(--space-1) var(--space-3);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--peak-a) 15%, transparent);
     color: var(--peak-a);
@@ -231,7 +231,7 @@ html[data-theme="dark"] .peak-hero {
     /* It sits over a title rather than beside one, and a heading's own
        margin-top is zero on every page here, so the air between the two has to
        come from this side. */
-    margin-bottom: 10px;
+    margin-bottom: var(--space-2);
 }
 html[data-theme="dark"] .peak-eyebrow {
     background: color-mix(in srgb, var(--peak-a) 22%, transparent);
@@ -273,10 +273,10 @@ html[data-theme="dark"] .peak-tone-slate  { --peak-a: #94a3b8; --peak-b: #c2cede
    header with the scenery taken out of it is the plain `<h1>` this file
    exists to replace. */
 @media (max-width: 900px) {
-    .peak-hero { min-height: 138px; padding: 22px 20px; gap: 16px; }
+    .peak-hero { min-height: 138px; padding: var(--space-6) var(--space-5); gap: var(--space-4); }
     .peak-range { width: min(72%, 460px); height: 76%; }
 }
 @media (max-width: 560px) {
-    .peak-hero { min-height: 126px; padding: 18px 16px; border-radius: var(--radius-lg); }
+    .peak-hero { min-height: 126px; padding: var(--space-4) var(--space-4); border-radius: var(--radius-lg); }
     .peak-range { width: 88%; height: 66%; opacity: .9; }
 }

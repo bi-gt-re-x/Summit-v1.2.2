@@ -3,12 +3,12 @@
    sidebar (mini-month, Focus, Daily Overview, Tasks Left) live here. */
 
 /* ---- Header: title/nav on the left, Focus + Add Task on the right ---- */
-.day-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.day-header-actions { display: flex; align-items: center; gap: 10px; }
+.day-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+.day-header-actions { display: flex; align-items: center; gap: var(--space-2); }
 .day-action-btn {
-    display: inline-flex; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: var(--space-2);
     border: 1px solid #e5e8ee; background: #fff; border-radius: var(--radius-md);
-    padding: 9px 16px; font: inherit; font-size: var(--text-md); font-weight: 600;
+    padding: var(--space-2) var(--space-4); font: inherit; font-size: var(--text-md); font-weight: 600;
     color: #2c302e; cursor: pointer; transition: background .15s ease, border-color .15s ease;
 }
 .day-action-btn svg { width: 16px; height: 16px; }
@@ -22,7 +22,7 @@
 .day-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 22px;
+    gap: var(--space-6);
     flex: 1 1 auto;
     min-height: 0;
 }
@@ -38,7 +38,7 @@
     align-items: center;
     border-top: 1px solid #eef0f2;
     border-bottom: 1px solid #eef0f2;
-    padding: 8px 0;
+    padding: var(--space-2) 0;
     flex: none;   /* stays put while the grid below scrolls */
 }
 /* Up to five focuses across the row, and the + that opens the next one.
@@ -49,7 +49,7 @@
  * the way it always did rather than like a fifth of a row. They still shrink
  * evenly, so five of them fit without the primary crowding the rest out. */
 .day-allday-field {
-    display: flex; align-items: center; gap: 8px; padding-right: 4px;
+    display: flex; align-items: center; gap: var(--space-2); padding-right: var(--space-1);
     min-width: 0;
 }
 .day-focus-item {
@@ -66,11 +66,11 @@
     /* Room on the left for the icon, which sits over the field rather than
        beside it — beside it, five icons and five fields would be ten things
        competing for one row. */
-    padding: 11px 14px 11px 36px;
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-8);
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 .day-focus-item:not(.is-primary) .day-allday-input {
-    padding-right: 28px;   /* the × */
+    padding-right: var(--space-6);   /* the × */
     font-size: var(--text-md);
 }
 .day-allday-input::placeholder { color: #9aa0ad; }
@@ -115,8 +115,8 @@
    the next field waiting to exist, which is what pressing it makes. */
 .day-focus-add {
     flex: none;
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 10px 14px; box-sizing: border-box;
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4); box-sizing: border-box;
     border: 1px dashed #d5dae3; border-radius: var(--radius-md); background: transparent;
     color: #7c8494; font: inherit; font-size: var(--text-md); font-weight: 600;
     cursor: pointer; transition: border-color .14s ease, color .14s ease, background .14s ease;
@@ -126,7 +126,7 @@
 /* Below the design's width the + keeps its sign and drops its word: five
    fields and a labelled button do not fit, and the + is the whole message. */
 @media (max-width: 1180px) {
-    .day-focus-add { padding: 10px 12px; }
+    .day-focus-add { padding: var(--space-2) var(--space-3); }
     .day-focus-add-label { display: none; }
 }
 
@@ -140,23 +140,23 @@
 .day-col { position: relative; border-left: 1px solid #c3ccd9; }
 
 /* ---- Overview sidebar ---- */
-.day-sidebar { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
-.day-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.day-sidebar { display: flex; flex-direction: column; gap: var(--space-4); min-height: 0; }
+.day-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
 .day-panel-head .wk-panel-title { margin: 0; }
 .day-panel-link { font-size: var(--text-sm); font-weight: 600; color: #a8845c; cursor: pointer; }
 .day-panel-link:hover { text-decoration: underline; }
 
 /* Mini month calendar */
-.day-mini-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.day-mini-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2); }
 .day-mini-title { font-size: var(--text-lg); font-weight: 700; color: #1a1f26; }
-.day-mini-nav { display: flex; gap: 4px; }
+.day-mini-nav { display: flex; gap: var(--space-1); }
 .day-mini-arrow {
     width: 26px; height: 26px; display: inline-flex; align-items: center; justify-content: center;
     border: none; background: transparent; border-radius: var(--radius-md);
     color: #6b7280; font-size: var(--text-xs); cursor: pointer;
 }
 .day-mini-arrow:hover { background: #f2f3f6; color: #1a1f26; }
-.day-mini-dow { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 6px; }
+.day-mini-dow { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: var(--space-2); }
 .day-mini-dow span { font-size: var(--text-2xs); font-weight: 600; color: #9297ab; }
 .day-mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
 .day-mini-cell {
@@ -242,7 +242,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
 .day-mini-cell.is-selected:hover { background: #2b323c; }
 
 /* Focus card (placeholder) */
-.day-focus-row { display: flex; align-items: center; gap: 12px; }
+.day-focus-row { display: flex; align-items: center; gap: var(--space-3); }
 .day-focus-icon {
     flex: none; width: 40px; height: 40px; border-radius: var(--radius-md);
     display: inline-flex; align-items: center; justify-content: center;
@@ -253,7 +253,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
 .day-focus-name { font-size: var(--text-md); font-weight: 700; color: #7a6aa8; }
 .day-focus-sub { font-size: var(--text-xs); color: #9297ab; }
 .day-focus-time { font-size: var(--text-sm); font-weight: 600; color: #6b7280; }
-.day-focus-barrow { display: flex; align-items: center; justify-content: space-between; margin: 14px 0 6px; font-size: var(--text-xs); color: #6b7280; }
+.day-focus-barrow { display: flex; align-items: center; justify-content: space-between; margin: var(--space-4) 0 var(--space-2); font-size: var(--text-xs); color: #6b7280; }
 .day-focus-pct { font-weight: 700; color: #7a6aa8; }
 .day-sidebar .wk-progress-bar { background: linear-gradient(90deg, #8b7aa8, #a893c9); }
 
@@ -265,8 +265,8 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
     white-space: nowrap;
 }
 .day-next-card {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px; border-radius: var(--radius-md);
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3); border-radius: var(--radius-md);
     background: #fafbfc; border: 1px solid #eef0f4;
 }
 /* Something happening now is the only state here worth a colour. */
@@ -302,13 +302,13 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
    day's shape is — green because that is what finished is everywhere else in
    this sidebar. */
 .day-band-run.is-done { background: linear-gradient(90deg, #2e9e6b, #56c191); }
-.day-band-note { margin: 12px 0 0; font-size: var(--text-sm); line-height: 1.5; color: #6b7280; }
+.day-band-note { margin: var(--space-3) 0 0; font-size: var(--text-sm); line-height: 1.5; color: #6b7280; }
 .day-band-note strong { color: #2c302e; font-weight: 700; }
 
 /* Daily Overview stat tiles: label on top, big number, small sub. */
-.day-stats .wk-stat { padding: 14px 14px; }
+.day-stats .wk-stat { padding: var(--space-4) var(--space-4); }
 .wk-stat-sub { font-size: var(--text-xs); color: #9297ab; margin-top: 2px; }
-.day-stats .wk-stat-num { margin-top: 4px; }
+.day-stats .wk-stat-num { margin-top: var(--space-1); }
 .day-stat-green { color: #2e9e6b !important; }
 .day-stat-purple { color: #7a6aa8 !important; }
 
@@ -332,7 +332,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
 /* Tasks Left list: a check ring, the task name, and its difficulty pushed to
    the far right (no due/start time). */
 .day-tasks-left { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.day-task-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #d3d9e2; }
+.day-task-item { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) 0; border-top: 1px solid #d3d9e2; }
 .day-task-item:first-child { border-top: none; }
 /* The checkbox, and it is a real one now.
    It was a bare `span` for a long time — a circle the exact size and shape of
@@ -374,10 +374,10 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
    the calendar. The `.high` / `.med` / `.low` classes still ride on the
    element and nothing paints with them. */
 .day-task-diff {
-    flex: none; font-size: var(--text-2xs); font-weight: 700; padding: 3px 10px; border-radius: var(--radius-full);
+    flex: none; font-size: var(--text-2xs); font-weight: 700; padding: var(--space-1) var(--space-2); border-radius: var(--radius-full);
     background: #eef2f7; color: #5a6472;
 }
-.day-tasks-empty { font-size: var(--text-sm); color: #9297ab; padding: 10px 0; }
+.day-tasks-empty { font-size: var(--text-sm); color: #9297ab; padding: var(--space-2) 0; }
 
 /* The per-block icon is no longer this view's alone, and no longer a badge
    floated against the block's left edge: it sits inline ahead of the name, in
@@ -404,7 +404,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
     .day-layout { grid-template-rows: minmax(0, 1fr); align-items: stretch; }
     /* overflow-anchor as on the Week view's column — see styles/calendar/week.css
        for why a box that changes size must not re-scroll itself. */
-    .day-sidebar { overflow-y: auto; overflow-x: hidden; overflow-anchor: none; padding-right: 4px; }
+    .day-sidebar { overflow-y: auto; overflow-x: hidden; overflow-anchor: none; padding-right: var(--space-1); }
 }
 @media (max-width: 1120px) {
     .day-layout { grid-template-columns: minmax(0, 1fr); }

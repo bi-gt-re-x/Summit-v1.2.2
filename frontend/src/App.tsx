@@ -26,6 +26,7 @@ import Unbuilt, { PATHS as UNBUILT_PATHS } from '@/pages/Unbuilt';
 import type { Prefs } from '@/services/settings';
 
 const Homepage = lazy(() => import('@/pages/Homepage'));
+const Login = lazy(() => import('@/pages/Login'));
 const Goals = lazy(() => import('@/pages/Goals'));
 const Tasks = lazy(() => import('@/pages/Tasks'));
 const Analytics = lazy(() => import('@/pages/Analytics'));
@@ -141,9 +142,11 @@ function pinsViewport(pathname: string): boolean {
  * in, and it carries its own header and its own Log In / Sign Up row — the ones
  * it had before React, which styles/homepage.css still dresses. The rail beside
  * that would be a second navigation for pages the reader cannot open yet.
+ * The sign-in page (/login) is the same: a signed-out visitor's page, with the
+ * mark in its own layout.
  */
 function isLanding(pathname: string): boolean {
-  return pathname === '/home';
+  return pathname === '/home' || pathname === '/login';
 }
 
 export default function App() {
@@ -193,6 +196,7 @@ export default function App() {
             {/* Public */}
             <Route path="/" element={<FrontDoor />} />
             <Route path="/home" element={<Homepage />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />

@@ -63,7 +63,7 @@
     background: var(--stx-bg);
     color: var(--stx-text);
     min-height: calc(100vh - var(--topnav-h, 0px));
-    padding: 26px 0 40px;
+    padding: var(--space-6) 0 var(--space-10);
     font-family: var(--font-sans);
 }
 
@@ -120,8 +120,8 @@ html[data-theme="dark"] .stx-page {
     align-items: flex-end;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 18px;
-    padding: 4px 2px 2px;
+    gap: var(--space-4);
+    padding: var(--space-1) 2px 2px;
 }
 .stx-head h1 {
     margin: 0;
@@ -130,7 +130,7 @@ html[data-theme="dark"] .stx-page {
     letter-spacing: -.03em;
 }
 .stx-head-text p {
-    margin: 5px 0 0;
+    margin: var(--space-1) 0 0;
     font-size: var(--text-md);
     color: var(--stx-muted);
     max-width: 62ch;
@@ -138,10 +138,10 @@ html[data-theme="dark"] .stx-page {
 .stx-head-figures {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: var(--space-5);
     flex-wrap: wrap;
 }
-.stx-level { display: flex; align-items: center; gap: 11px; }
+.stx-level { display: flex; align-items: center; gap: var(--space-3); }
 .stx-level > div { display: flex; flex-direction: column; line-height: 1.15; }
 .stx-level span {
     font-size: var(--text-2xs);
@@ -152,7 +152,7 @@ html[data-theme="dark"] .stx-page {
 }
 .stx-level strong { font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.03em; }
 
-.stx-milestone { display: flex; flex-direction: column; gap: 7px; min-width: 210px; }
+.stx-milestone { display: flex; flex-direction: column; gap: var(--space-2); min-width: 210px; }
 .stx-milestone-top { font-size: var(--text-sm); color: var(--stx-muted); }
 .stx-milestone-top b { color: var(--stx-text); font-weight: 700; }
 .stx-milestone-top em {
@@ -175,8 +175,8 @@ html[data-theme="dark"] .stx-page {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 9px;
-    padding: 10px 12px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-md);
     background: var(--stx-card);
@@ -198,7 +198,7 @@ html[data-theme="dark"] .stx-page {
 }
 .stx-search input {
     width: 100%;
-    padding: 8px 10px 8px 31px;
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-8);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-md);
     background: var(--stx-card-2);
@@ -208,7 +208,7 @@ html[data-theme="dark"] .stx-page {
 }
 .stx-search input::placeholder { color: var(--stx-faint); }
 .stx-field select {
-    padding: 8px 26px 8px 10px;
+    padding: var(--space-2) var(--space-6) var(--space-2) var(--space-2);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-md);
     background: var(--stx-card-2);
@@ -223,9 +223,9 @@ html[data-theme="dark"] .stx-page {
     outline-offset: 1px;
 }
 
-.stx-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.stx-chips { display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .stx-chip {
-    padding: 6px 11px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-full);
     background: transparent;
@@ -251,7 +251,7 @@ html[data-theme="dark"] .stx-page {
     margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: var(--space-2);
     font-size: var(--text-xs);
     color: var(--stx-faint);
 }
@@ -325,11 +325,11 @@ html[data-theme="dark"] .stx-page {
 .stx-canvas-empty {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: var(--space-1);
     align-items: center;
     justify-content: center;
     height: 100%;
-    padding: 30px;
+    padding: var(--space-8);
     text-align: center;
 }
 .stx-canvas-empty strong { font-size: var(--text-lg); }
@@ -363,9 +363,9 @@ html[data-theme="dark"] .stx-page {
     position: absolute;
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: var(--space-2);
     box-sizing: border-box;
-    padding: 11px 12px;
+    padding: var(--space-3) var(--space-3);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-md);
     background: var(--stx-card);
@@ -418,7 +418,7 @@ html[data-theme="dark"] .stx-page {
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--state) 30%, transparent), var(--stx-shadow-lift);
 }
 
-.stx-node-top { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.stx-node-top { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
 .stx-node-name {
     flex: 1;
     min-width: 0;
@@ -430,7 +430,7 @@ html[data-theme="dark"] .stx-page {
 }
 .stx-node-xp {
     flex: none;
-    padding: 1px 6px;
+    padding: 1px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--stx-card-2);
     color: var(--stx-muted);
@@ -439,7 +439,7 @@ html[data-theme="dark"] .stx-page {
 }
 .stx-node.is-locked .stx-node-xp { background: var(--stx-line-soft); }
 
-.stx-node-meta { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.stx-node-meta { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
 .stx-node-gate {
     flex: 1;
     min-width: 0;
@@ -468,8 +468,8 @@ html[data-theme="dark"] .stx-page {
     --state: var(--stx-locked);
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 3px 9px 3px 7px;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2) var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--state) 12%, transparent);
     color: var(--state);
@@ -482,7 +482,7 @@ html[data-theme="dark"] .stx-page {
 .stx-badge.is-progress { --state: var(--stx-prog); }
 .stx-badge.is-complete { --state: var(--stx-done); }
 .stx-badge svg { width: 13px; height: 13px; flex: none; }
-.stx-badge.is-compact { padding: 3px; gap: 0; }
+.stx-badge.is-compact { padding: var(--space-1); gap: 0; }
 
 /* ---------- Progress ------------------------------------------------------- */
 .stx-bar {
@@ -521,10 +521,10 @@ html[data-theme="dark"] .stx-page {
     top: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-2);
     max-height: calc(100vh - 40px);
     overflow: auto;
-    padding: 16px;
+    padding: var(--space-4);
     border: 1px solid var(--stx-line);
     border-radius: var(--stx-radius);
     background: var(--stx-card);
@@ -538,7 +538,7 @@ html[data-theme="dark"] .stx-page {
     color: var(--stx-faint);
     text-align: center;
 }
-.stx-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.stx-panel-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .stx-panel-x {
     display: grid;
     place-items: center;
@@ -567,7 +567,7 @@ html[data-theme="dark"] .stx-page {
     text-transform: uppercase;
     color: var(--stx-faint);
 }
-.stx-panel-blurb { margin: 4px 0 0; font-size: var(--text-sm); line-height: 1.6; color: var(--stx-muted); }
+.stx-panel-blurb { margin: var(--space-1) 0 0; font-size: var(--text-sm); line-height: 1.6; color: var(--stx-muted); }
 
 .stx-tags {
     list-style: none;
@@ -575,10 +575,10 @@ html[data-theme="dark"] .stx-page {
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: var(--space-1);
 }
 .stx-tags li {
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--stx-card-2);
     color: var(--stx-faint);
@@ -589,32 +589,32 @@ html[data-theme="dark"] .stx-page {
 .stx-panel-progress {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 13px;
+    gap: var(--space-4);
+    padding: var(--space-3);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-md);
     background: var(--stx-card-2);
 }
-.stx-panel-progress dl { margin: 0; display: grid; gap: 5px; min-width: 0; flex: 1; }
-.stx-panel-progress div { display: flex; justify-content: space-between; gap: 10px; font-size: var(--text-sm); }
+.stx-panel-progress dl { margin: 0; display: grid; gap: var(--space-1); min-width: 0; flex: 1; }
+.stx-panel-progress div { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--text-sm); }
 .stx-panel-progress dt { color: var(--stx-faint); }
 .stx-panel-progress dd { margin: 0; font-weight: 600; text-align: right; }
 
 .stx-panel-title {
-    margin: 8px 0 0;
+    margin: var(--space-2) 0 0;
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .07em;
     text-transform: uppercase;
     color: var(--stx-faint);
 }
-.stx-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.stx-links { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
 .stx-links button {
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 7px 8px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: transparent;
@@ -634,7 +634,7 @@ html[data-theme="dark"] .stx-page {
     display: flex;
     align-items: center;
     gap: 2px;
-    padding: 4px;
+    padding: var(--space-1);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--stx-card) 88%, transparent);
@@ -671,7 +671,7 @@ html[data-theme="dark"] .stx-page {
    so it outranks `.stx-zoom button` without reaching for `!important`. */
 .stx-zoom .stx-zoom-view {
     width: auto;
-    padding: 0 9px;
+    padding: 0 var(--space-2);
     font: inherit;
     font-size: var(--text-xs);
     font-weight: 700;
@@ -683,7 +683,7 @@ html[data-theme="dark"] .stx-page {
 .stx-zoom-cut {
     width: 1px;
     height: 18px;
-    margin: 0 4px;
+    margin: 0 var(--space-1);
     background: var(--stx-line);
 }
 
@@ -694,7 +694,7 @@ html[data-theme="dark"] .stx-page {
     position: absolute;
     left: 14px; bottom: 14px;
     margin: 0;
-    padding: 5px 10px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--stx-card) 88%, transparent);
@@ -709,8 +709,8 @@ html[data-theme="dark"] .stx-page {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
-    padding: 30px;
+    gap: var(--space-2);
+    padding: var(--space-8);
     border: 1px solid var(--stx-line);
     border-radius: var(--stx-radius);
     background: var(--stx-card);
@@ -721,8 +721,8 @@ html[data-theme="dark"] .stx-page {
 
 .stx-cta {
     align-self: flex-start;
-    margin-top: 4px;
-    padding: 9px 16px;
+    margin-top: var(--space-1);
+    padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-md);
     background: var(--stx-violet);
     color: #fff;
@@ -759,7 +759,7 @@ html[data-theme="dark"] .stx-page {
 
 @media (max-width: 640px) {
     .stx-head h1 { font-size: var(--text-2xl); }
-    .stx-head-figures { gap: 14px; }
+    .stx-head-figures { gap: var(--space-4); }
     .stx-head-xp { display: none; }
     .stx-search { max-width: none; }
     .stx-scroll { height: clamp(360px, 56vh, 560px); }
@@ -907,7 +907,7 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
 .stx-page--lattice .stx-shell {
     --shell-max: 2200px;
     --shell-fluid: 97%;
-    gap: 14px;
+    gap: var(--space-4);
 }
 
 /* ---- the shared icon mask ----
@@ -927,7 +927,7 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
 /* ---- subject switcher ---- */
 
 /* ---- title ---- */
-.stx-lead { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.stx-lead { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); text-align: center; }
 .stx-lead h1 { margin: 0; font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.03em; }
 /* The lattice that is open, under the page's own name. Smaller than the h1 and
    heavier than the line under it: it is the second question a reader asks and
@@ -941,11 +941,11 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
 }
 .stx-lead-sub { margin: 0; font-size: var(--text-sm); color: var(--lat-muted); max-width: 58ch; }
 .stx-crumbs {
-    display: flex; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: var(--space-2);
     flex-wrap: wrap; justify-content: center;
     font-size: var(--text-sm);
 }
-.stx-crumb { display: inline-flex; align-items: center; gap: 6px; color: var(--lat-faint); }
+.stx-crumb { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--lat-faint); }
 .stx-crumb button {
     border: 0; background: none; padding: 0;
     color: var(--lat-muted); font: inherit; font-weight: 600; cursor: pointer;
@@ -960,7 +960,7 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
     flex-wrap: wrap;
     align-items: stretch;
     gap: 0;
-    padding: 14px 6px;
+    padding: var(--space-4) var(--space-2);
     border: 1px solid var(--lat-line);
     border-radius: var(--lat-radius);
     background: var(--lat-panel);
@@ -971,14 +971,14 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
+    gap: var(--space-4);
     flex: 1 1 170px;
-    padding: 2px 18px;
+    padding: 2px var(--space-4);
     border-right: 1px solid var(--lat-line-soft);
 }
 .stx-figure:last-child { border-right: 0; }
 .stx-figure--ring { flex: 1 1 200px; }
-.stx-figure-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.stx-figure-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .stx-figure-label {
     font-size: var(--text-xs);
     font-weight: 600;
@@ -988,7 +988,7 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
 .stx-figure-value {
     display: flex;
     align-items: baseline;
-    gap: 5px;
+    gap: var(--space-1);
     font-size: var(--text-2xl);
     font-weight: 700;
     letter-spacing: -.02em;
@@ -1023,7 +1023,7 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
 .stx-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 14px;
+    gap: var(--space-4);
     align-items: start;
 }
 
@@ -1063,7 +1063,7 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
     right: auto; bottom: auto;
     flex-direction: column;
     gap: 2px;
-    padding: 5px;
+    padding: var(--space-1);
     border-radius: var(--radius-md);
     background: var(--lat-panel);
     border: 1px solid var(--lat-line);
@@ -1211,11 +1211,11 @@ html[data-theme="dark"] .stx-tile.is-complete .stx-tile-face { color: #0d1117; }
     transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--space-1);
     pointer-events: none;
 }
 .stx-tile-tier {
-    padding: 1px 7px;
+    padding: 1px var(--space-2);
     border-radius: var(--radius-full);
     border: 1px solid var(--tone);
     color: var(--tone);
@@ -1232,7 +1232,7 @@ html[data-theme="dark"] .stx-tile.is-complete .stx-tile-face { color: #0d1117; }
     color: color-mix(in srgb, var(--tone) 70%, var(--lat-faint));
 }
 .stx-tile-pct {
-    padding: 1px 7px;
+    padding: 1px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--state);
     color: #fff;
@@ -1247,8 +1247,8 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 .stx-lp {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: 18px;
+    gap: var(--space-4);
+    padding: var(--space-4);
     border: 1px solid var(--lat-line);
     border-radius: var(--lat-radius);
     background: var(--lat-panel);
@@ -1269,9 +1269,9 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: var(--space-4);
     /* Room for the scrollbar so it never sits on top of the text. */
-    padding-right: 4px;
+    padding-right: var(--space-1);
     margin-right: -4px;
 }
 .stx-lp.is-empty { height: auto; }
@@ -1280,16 +1280,16 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: var(--space-2);
     text-align: center;
-    padding: 40px 8px;
+    padding: var(--space-10) var(--space-2);
     color: var(--lat-muted);
 }
 .stx-lp-blank strong { font-size: var(--text-lg); color: var(--lat-text); }
 .stx-lp-blank span { font-size: var(--text-sm); max-width: 32ch; }
 .stx-lp-blank-ico { width: 30px; height: 30px; color: var(--lat-faint); }
 
-.stx-lp-head { display: flex; align-items: center; gap: 13px; }
+.stx-lp-head { display: flex; align-items: center; gap: var(--space-3); }
 .stx-lp-head-body { min-width: 0; flex: 1; }
 .stx-lp-head h2 { margin: 0; font-size: var(--text-xl); font-weight: 700; letter-spacing: -.02em; }
 
@@ -1302,8 +1302,8 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 .stx-lp-name {
     display: block;
     max-width: 100%;
-    padding: 1px 5px;
-    margin: -1px -5px;
+    padding: 1px var(--space-1);
+    margin: -1px -4px;
     border: 0;
     /* The same two pixels the field spends on its underline, so clicking the
        title does not shunt the badges down by a line's worth of nothing. */
@@ -1319,8 +1319,8 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 .stx-lp-name:not(:disabled):hover { background: var(--lat-violet-soft); }
 .stx-lp-name-field {
     width: 100%;
-    padding: 1px 5px;
-    margin: -1px -5px;
+    padding: 1px var(--space-1);
+    margin: -1px -4px;
     border: 0;
     border-bottom: 2px solid var(--lat-violet);
     border-radius: 0;
@@ -1354,9 +1354,9 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     color: var(--tone);
 }
 .stx-lp-avatar-ico { width: 24px; height: 24px; }
-.stx-lp-badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 0; }
+.stx-lp-badges { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-2) 0 0; }
 .stx-lp-badge {
-    padding: 3px 9px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     font-size: var(--text-2xs);
     font-weight: 700;
@@ -1371,39 +1371,39 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 .stx-lp-progress {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding-top: 14px;
+    gap: var(--space-2);
+    padding-top: var(--space-4);
     border-top: 1px solid var(--lat-line-soft);
 }
 .stx-lp-line {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: var(--space-2);
     margin: 0;
     font-size: var(--text-sm);
     color: var(--lat-muted);
 }
 .stx-lp-line b { color: var(--lat-text); font-weight: 700; }
-.stx-lp-xp { padding-top: 6px; }
+.stx-lp-xp { padding-top: var(--space-2); }
 .stx-page--lattice .stx-bar { background: var(--lat-line-soft); }
 .stx-page--lattice .stx-bar i { background: var(--state, var(--lat-violet)); }
 
-.stx-lp-section { display: flex; flex-direction: column; gap: 7px; padding-top: 14px; border-top: 1px solid var(--lat-line-soft); }
+.stx-lp-section { display: flex; flex-direction: column; gap: var(--space-2); padding-top: var(--space-4); border-top: 1px solid var(--lat-line-soft); }
 .stx-lp-section h3 {
     margin: 0;
     font-size: var(--text-sm);
     font-weight: 700;
     letter-spacing: -.01em;
 }
-.stx-lp-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.stx-lp-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
 .stx-lp-row {
     --tone: var(--lat-grey);
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: var(--space-2);
     width: 100%;
-    padding: 8px 10px;
+    padding: var(--space-2) var(--space-2);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
     background: transparent;
@@ -1425,8 +1425,8 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px;
+    gap: var(--space-2);
+    padding: var(--space-3);
     border: 0;
     border-radius: var(--radius-md);
     background: var(--lat-violet);
@@ -1447,8 +1447,8 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 12px;
-    padding: 12px 18px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     border: 1px solid var(--lat-line);
     border-radius: var(--lat-radius);
     background: var(--lat-panel);
@@ -1458,7 +1458,7 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 18px;
+    gap: var(--space-4);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -1466,7 +1466,7 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     font-weight: 600;
     color: var(--lat-muted);
 }
-.stx-legend-keys li { display: flex; align-items: center; gap: 7px; }
+.stx-legend-keys li { display: flex; align-items: center; gap: var(--space-2); }
 .stx-legend-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--tone); }
 .stx-legend-line svg {
     width: 28px; height: 6px;
@@ -1477,7 +1477,7 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 .stx-legend-tip {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     margin: 0;
     font-size: var(--text-sm);
     color: var(--lat-muted);
@@ -1492,7 +1492,7 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 
 @media (max-width: 640px) {
     .stx-lead h1 { font-size: var(--text-2xl); }
-    .stx-figure { border-right: 0; flex-basis: 140px; padding: 6px 12px; }
+    .stx-figure { border-right: 0; flex-basis: 140px; padding: var(--space-2) var(--space-3); }
     .stx-page--lattice .stx-scroll { height: clamp(400px, 58vh, 620px); }
     .stx-legend { justify-content: center; }
 }
@@ -1510,8 +1510,8 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
    Beside the percentage rather than over the canvas, because that is the number
    it just changed and the eye is already there. */
 .stx-lp-flash {
-    margin-left: 8px;
-    padding: 2px 7px;
+    margin-left: var(--space-2);
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--lat-green-soft);
     color: var(--lat-green);
@@ -1541,8 +1541,8 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     flex-direction: column;
     align-items: center;
     gap: 0;
-    margin-top: 14px;
-    padding: 12px 14px;
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
     background: var(--lat-panel);
@@ -1553,7 +1553,7 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--space-2);
 }
 
 .stx-family-rung.is-into { flex-direction: column; gap: 0; }
@@ -1562,7 +1562,7 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--space-2);
 }
 
 /* The joins. Vertical hairlines rather than a bracket: with the rows centred,
@@ -1578,7 +1578,7 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 .stx-family-rung.is-up { flex-direction: column; gap: 0; }
 
 .stx-family-chip {
-    padding: 5px 12px;
+    padding: var(--space-1) var(--space-3);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-full);
     background: var(--lat-panel);
@@ -1623,10 +1623,10 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-lp-improve .stx-lp-headline.is-locked { color: var(--lat-grey); }
 .stx-lp-steps {
     margin: 2px 0 0;
-    padding-left: 20px;
+    padding-left: var(--space-5);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--space-2);
     font-size: var(--text-sm);
     line-height: 1.5;
     color: var(--lat-muted);
@@ -1657,8 +1657,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-lp-more:hover { text-decoration: underline; }
 
 /* The full programme, with the panel given over to it. */
-.stx-lp.is-steps { gap: 12px; }
-.stx-lp-steps-head { display: flex; flex-direction: column; gap: 8px; }
+.stx-lp.is-steps { gap: var(--space-3); }
+.stx-lp-steps-head { display: flex; flex-direction: column; gap: var(--space-2); }
 .stx-lp-steps-head h2 { margin: 0; font-size: var(--text-lg); font-weight: 700; letter-spacing: -.02em; }
 .stx-lp-steps-count {
     margin: 2px 0 0;
@@ -1680,7 +1680,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     cursor: pointer;
 }
 .stx-lp-back:hover { color: var(--lat-violet); }
-.stx-lp-steps.is-all { gap: 10px; padding-left: 22px; }
+.stx-lp-steps.is-all { gap: var(--space-2); padding-left: var(--space-6); }
 
 /* ---- editing a step ----
    A row is a button rather than text, because the whole of it is the target:
@@ -1690,8 +1690,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-lp-programme {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding-right: 4px;
+    gap: var(--space-3);
+    padding-right: var(--space-1);
     margin-right: -4px;
 }
 /* The number is drawn rather than marked.
@@ -1706,7 +1706,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     display: grid;
     grid-template-columns: 20px minmax(0, 1fr) 18px;
     align-items: start;
-    gap: 2px 6px;
+    gap: 2px var(--space-2);
     counter-increment: step;
 }
 .stx-lp-step::before {
@@ -1720,7 +1720,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-lp-step.is-now::before { color: var(--lat-violet); }
 .stx-lp-step.is-done::before { text-decoration: none; }
 .stx-lp-step-text {
-    padding: 2px 4px;
+    padding: 2px var(--space-1);
     margin: -2px -4px;
     border: 0;
     border-radius: var(--radius-sm);
@@ -1755,7 +1755,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 /* Both open states put their buttons on a second row under the field, in the
    step's own column rather than under the number. */
 .stx-lp-step.is-editing,
-.stx-lp-step.is-confirming { grid-template-columns: 20px minmax(0, 1fr); gap: 6px; }
+.stx-lp-step.is-confirming { grid-template-columns: 20px minmax(0, 1fr); gap: var(--space-2); }
 .stx-lp-step-acts { grid-column: 2; }
 /* Struck-through text inside an open editor would be unreadable, and a step
    being deleted is not a step you have done. */
@@ -1763,7 +1763,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-lp-step.is-confirming { opacity: 1; text-decoration: none; }
 .stx-lp-step-field {
     width: 100%;
-    padding: 7px 9px;
+    padding: var(--space-2) var(--space-2);
     border: 1px solid var(--lat-violet);
     border-radius: var(--radius-md);
     background: var(--lat-field);
@@ -1774,9 +1774,9 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 }
 .stx-lp-step-field:focus { outline: 2px solid var(--lat-violet-soft); outline-offset: 1px; }
 .stx-lp-step-ask { font-size: var(--text-sm); font-weight: 600; color: var(--lat-rose); line-height: 1.5; }
-.stx-lp-step-acts { display: flex; gap: 8px; }
+.stx-lp-step-acts { display: flex; gap: var(--space-2); }
 .stx-lp-step-act {
-    padding: 4px 10px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-sm);
     background: transparent;
@@ -1803,8 +1803,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-lp-step-add {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding-top: 12px;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
     border-top: 1px solid var(--lat-line-soft);
 }
 .stx-lp-more:disabled { color: var(--lat-faint); cursor: default; text-decoration: none; }
@@ -1834,16 +1834,16 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
    edge — done / trap / time — which is the whole of the colour coding and does
    the work a third heading would otherwise have to do. */
 .stx-lp-notes {
-    margin: 10px 0 0;
+    margin: var(--space-2) 0 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--space-2);
 }
 /* Two notes now rather than three: "Done when" has a box of its own further
    down, because it is the question a percentage answers worst. */
 .stx-lp-note {
     --tone: var(--lat-grey);
-    padding-left: 10px;
+    padding-left: var(--space-2);
     border-left: 2px solid var(--tone);
     display: flex;
     flex-direction: column;
@@ -1881,7 +1881,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
    thing to look at is first. */
 
 /* ---- the focus band ---- */
-.stx-focus { display: flex; flex-direction: column; gap: 10px; }
+.stx-focus { display: flex; flex-direction: column; gap: var(--space-2); }
 .stx-focus-head { display: flex; flex-direction: column; gap: 2px; text-align: center; }
 .stx-focus-head h2 {
     margin: 0;
@@ -1897,7 +1897,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-focus-row {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
+    gap: var(--space-2);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -1925,8 +1925,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-focus-open {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 11px 12px 9px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-3) var(--space-2);
     border: 0;
     background: none;
     font: inherit;
@@ -1964,8 +1964,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     white-space: nowrap;
 }
 .stx-focus-swap {
-    margin: 0 12px 9px;
-    padding: 3px 0 0;
+    margin: 0 var(--space-3) var(--space-2);
+    padding: var(--space-1) 0 0;
     border: 0;
     border-top: 1px solid var(--lat-line-soft);
     background: none;
@@ -2000,16 +2000,16 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-setup {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--space-4);
     max-width: 940px;
     width: 100%;
     margin: 0 auto;
-    padding: 26px 22px 22px;
+    padding: var(--space-6) var(--space-6) var(--space-6);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-lg);
     background: var(--lat-panel);
 }
-.stx-setup-head { display: flex; flex-direction: column; gap: 6px; text-align: center; }
+.stx-setup-head { display: flex; flex-direction: column; gap: var(--space-2); text-align: center; }
 .stx-setup-eyebrow {
     margin: 0;
     font-size: var(--text-2xs);
@@ -2036,7 +2036,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-setup-slots {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 8px;
+    gap: var(--space-2);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -2065,9 +2065,9 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-setup-slot-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
     width: 100%;
-    padding: 7px 9px;
+    padding: var(--space-2) var(--space-2);
     border: 0;
     background: none;
     font: inherit;
@@ -2098,10 +2098,10 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-setup-slot-x { font-style: normal; font-size: var(--text-lg); color: var(--lat-faint); }
 .stx-setup-slot-btn:hover .stx-setup-slot-x { color: var(--lat-violet); }
 
-.stx-setup-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.stx-setup-bar { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 .stx-setup-filter {
     flex: 1 1 200px;
-    padding: 8px 11px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
     background: var(--lat-page, transparent);
@@ -2111,7 +2111,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 }
 .stx-setup-filter:focus { outline: none; border-color: var(--lat-violet); }
 .stx-setup-suggest {
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
     background: none;
@@ -2130,10 +2130,10 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-right: 4px;
+    gap: var(--space-2);
+    padding-right: var(--space-1);
 }
-.stx-setup-group { display: flex; flex-direction: column; gap: 6px; }
+.stx-setup-group { display: flex; flex-direction: column; gap: var(--space-2); }
 .stx-setup-group-name {
     font-size: var(--text-2xs);
     font-weight: 700;
@@ -2141,12 +2141,12 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     text-transform: uppercase;
     color: var(--lat-faint);
 }
-.stx-setup-choices { display: flex; flex-wrap: wrap; gap: 6px; }
+.stx-setup-choices { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .stx-setup-choice {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-full);
     background: none;
@@ -2163,17 +2163,17 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     font-weight: 700;
 }
 .stx-setup-choice-ico { width: 15px; height: 15px; flex: 0 0 15px; }
-.stx-setup-none { margin: 6px 0; font-size: var(--text-sm); color: var(--lat-faint); }
+.stx-setup-none { margin: var(--space-2) 0; font-size: var(--text-sm); color: var(--lat-faint); }
 
 .stx-setup-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding-top: 4px;
+    gap: var(--space-3);
+    padding-top: var(--space-1);
     border-top: 1px solid var(--lat-line-soft);
 }
 .stx-setup-go {
-    padding: 10px 18px;
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-md);
     background: var(--lat-violet);
@@ -2212,8 +2212,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     overflow: hidden;
 }
 .stx-focus-filter {
-    margin: 8px;
-    padding: 7px 10px;
+    margin: var(--space-2);
+    padding: var(--space-2) var(--space-2);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
     background: var(--lat-page, transparent);
@@ -2222,10 +2222,10 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     color: var(--lat-text);
 }
 .stx-focus-filter:focus { outline: none; border-color: var(--lat-violet); }
-.stx-focus-list { overflow-y: auto; padding: 0 6px 8px; }
+.stx-focus-list { overflow-y: auto; padding: 0 var(--space-2) var(--space-2); }
 .stx-focus-group { display: flex; flex-direction: column; }
 .stx-focus-group-name {
-    padding: 7px 6px 3px;
+    padding: var(--space-2) var(--space-2) var(--space-1);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .08em;
@@ -2235,8 +2235,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-focus-choice {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px;
+    gap: var(--space-2);
+    padding: var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: none;
@@ -2249,10 +2249,10 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-focus-choice:hover { background: var(--lat-violet-soft); color: var(--lat-violet); }
 .stx-focus-choice.is-on { color: var(--lat-violet); font-weight: 700; }
 .stx-focus-choice-ico { width: 15px; height: 15px; flex: 0 0 15px; }
-.stx-focus-none { margin: 10px 8px; font-size: var(--text-xs); color: var(--lat-faint); }
+.stx-focus-none { margin: var(--space-2) var(--space-2); font-size: var(--text-xs); color: var(--lat-faint); }
 
 /* ---- search + rail ---- */
-.stx-rail { display: flex; flex-direction: column; gap: 9px; }
+.stx-rail { display: flex; flex-direction: column; gap: var(--space-2); }
 
 .stx-find { position: relative; display: flex; align-items: center; }
 .stx-find-ico {
@@ -2265,7 +2265,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 }
 .stx-find-input {
     width: 100%;
-    padding: 10px 34px 10px 36px;
+    padding: var(--space-2) var(--space-8) var(--space-2) var(--space-8);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-full);
     background: var(--lat-panel);
@@ -2301,7 +2301,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     max-height: 340px;
     overflow-y: auto;
     margin: 0;
-    padding: 6px;
+    padding: var(--space-2);
     list-style: none;
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
@@ -2311,9 +2311,9 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-hit {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--space-2);
     width: 100%;
-    padding: 7px 8px;
+    padding: var(--space-2) var(--space-2);
     border: 0;
     border-radius: var(--radius-md);
     background: none;
@@ -2334,7 +2334,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 /* What kind of thing was found, because "Statistics" is a subject, a lattice
    and a skill, and picking the wrong one lands somewhere unexpected. */
 .stx-hit-kind {
-    padding: 2px 7px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-full);
     font-size: var(--text-2xs);
     font-weight: 700;
@@ -2345,15 +2345,15 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 }
 .stx-hit-kind.is-subject { background: var(--lat-violet-soft); color: var(--lat-violet); }
 .stx-hit-kind.is-tree { background: var(--lat-green-soft); color: var(--lat-green); }
-.stx-hit-none { padding: 10px 8px; font-size: var(--text-sm); color: var(--lat-faint); }
+.stx-hit-none { padding: var(--space-2) var(--space-2); font-size: var(--text-sm); color: var(--lat-faint); }
 
 /* One row, scrolled sideways. A hundred pills wrapped would be nine rows and
    the lattice would start below the fold. */
 .stx-pills {
     display: flex;
-    gap: 7px;
+    gap: var(--space-2);
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding-bottom: var(--space-1);
     scrollbar-width: thin;
     scroll-snap-type: x proximity;
 }
@@ -2362,10 +2362,10 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
 .stx-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     flex: 0 0 auto;
     scroll-snap-align: start;
-    padding: 6px 13px;
+    padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-full);
     border: 1px solid var(--lat-line);
     background: var(--lat-panel);
@@ -2403,7 +2403,7 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     left: 50%;
     transform: translateX(-50%);
     z-index: 3;
-    padding: 3px 8px;
+    padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
     background: var(--lat-violet);
     color: #fff;
@@ -2425,8 +2425,8 @@ html[data-theme="dark"] .stx-family-chip.is-here { color: #0d1117; }
     left: 50%;
     width: 6px;
     height: 6px;
-    margin-left: -3px;
-    margin-top: -3px;
+    margin-left: -4px;
+    margin-top: -4px;
     background: inherit;
     transform: rotate(45deg);
     border-radius: 1px;
@@ -2504,9 +2504,9 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px 14px;
-    margin-top: 14px;
-    padding: 10px 16px;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-4);
+    padding: var(--space-2) var(--space-4);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
     background: var(--lat-panel);
@@ -2539,12 +2539,12 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
    still shows which way the route runs. */
 .stx-route-path li + li::before {
     content: '›';
-    margin: 0 4px 0 2px;
+    margin: 0 var(--space-1) 0 2px;
     color: var(--lat-faint);
 }
 
 .stx-route-path button {
-    padding: 2px 6px;
+    padding: 2px var(--space-2);
     border: 0;
     border-radius: var(--radius-sm);
     background: none;
@@ -2559,7 +2559,7 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 .stx-route-path button:focus-visible { outline: 2px solid var(--lat-violet); outline-offset: 1px; }
 
 .stx-route-path li.is-here span {
-    padding: 2px 8px;
+    padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
     background: var(--lat-violet-soft);
     font-size: var(--text-sm);
@@ -2583,7 +2583,7 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 
 .stx-route-clear {
     flex: none;
-    padding: 3px 10px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-full);
     background: none;
@@ -2604,7 +2604,7 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
    already looking. */
 
 @media (max-width: 640px) {
-    .stx-route { padding: 9px 12px; }
+    .stx-route { padding: var(--space-2) var(--space-3); }
     .stx-route-label { flex: 1 1 100%; }
 }
 
@@ -2652,9 +2652,9 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 10px 18px;
-    margin-top: 14px;
-    padding: 12px 16px;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
     border: 1px solid var(--lat-line);
     border-left: 3px solid var(--lat-green);
     border-radius: var(--radius-md);
@@ -2664,7 +2664,7 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 .stx-next-lead {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     flex: 1 1 320px;
     min-width: 0;
 }
@@ -2697,7 +2697,7 @@ html[data-theme="dark"] .stx-tile-here { color: #0d1117; }
 
 .stx-next-open {
     flex: none;
-    padding: 6px 14px;
+    padding: var(--space-2) var(--space-4);
     border: 0;
     border-radius: var(--radius-full);
     background: var(--lat-green);
@@ -2718,7 +2718,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 .stx-next-rest {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--space-2);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -2728,8 +2728,8 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 .stx-next-rest button {
     display: flex;
     align-items: baseline;
-    gap: 7px;
-    padding: 5px 11px;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-full);
     background: none;
@@ -2748,7 +2748,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 .stx-next-rest em { font-style: normal; font-size: var(--text-2xs); color: var(--lat-faint); }
 
 @media (max-width: 640px) {
-    .stx-next { padding: 11px 13px; }
+    .stx-next { padding: var(--space-3) var(--space-3); }
     .stx-next-lead { flex: 1 1 100%; }
     .stx-next-rest { flex: 1 1 100%; }
 }
@@ -2761,7 +2761,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
    LatticeNode. Same pill as `.stx-tile-pct` so the row of tiles keeps one
    rhythm; what changes is what it is coloured by. */
 .stx-tile-gate {
-    padding: 1px 7px;
+    padding: 1px var(--space-2);
     border-radius: var(--radius-full);
     border: 1px solid color-mix(in srgb, var(--tone) 50%, var(--lat-line));
     background: var(--lat-panel);
@@ -2799,7 +2799,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 .stx-lp-needs li {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: var(--space-2);
     min-width: 0;
 }
 
@@ -2817,7 +2817,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 .stx-lp-needs button {
     flex: 1;
     min-width: 0;
-    padding: 2px 4px;
+    padding: 2px var(--space-1);
     margin-left: -4px;
     border: 0;
     border-radius: var(--radius-sm);
@@ -2868,8 +2868,8 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
     z-index: 60;
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    padding: 10px 12px;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-md);
     background: var(--lat-panel);
@@ -2906,7 +2906,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: var(--space-1);
     margin: 0;
     font-size: var(--text-2xs);
     color: var(--lat-muted);
@@ -2927,7 +2927,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
     color: var(--lat-muted);
 }
 
-.stx-peek-head { padding-top: 3px; border-top: 1px solid var(--lat-line-soft); }
+.stx-peek-head { padding-top: var(--space-1); border-top: 1px solid var(--lat-line-soft); }
 .stx-peek-opens { color: var(--lat-blue); font-weight: 600; }
 
 .stx-peek-needs {
@@ -2942,7 +2942,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
 .stx-peek-needs li {
     display: flex;
     align-items: baseline;
-    gap: 6px;
+    gap: var(--space-2);
     font-size: var(--text-xs);
     color: var(--lat-text);
 }
@@ -2960,7 +2960,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
    still outstanding. */
 .stx-peek-needs li.is-done { color: var(--lat-muted); }
 .stx-peek-needs li.is-done i { color: var(--lat-green); }
-.stx-peek-needs li.is-more { color: var(--lat-faint); font-size: var(--text-2xs); padding-left: 16px; }
+.stx-peek-needs li.is-more { color: var(--lat-faint); font-size: var(--text-2xs); padding-left: var(--space-4); }
 
 /* A pointer is what raises this, and a touch screen has none — the tile's own
    `title` is what a finger gets. Hidden here as well as guarded in the
@@ -2982,7 +2982,7 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
     position: absolute;
     top: 12px;
     right: 12px;
-    padding: 6px;
+    padding: var(--space-2);
     border: 1px solid var(--stx-line);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--stx-card) 88%, transparent);
@@ -3057,21 +3057,21 @@ html[data-theme="dark"] .stx-next-open { color: #0d1117; }
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 6px 14px;
-    margin-top: 14px;
+    gap: var(--space-2) var(--space-4);
+    margin-top: var(--space-4);
 }
 
 .stx-modes-set {
     display: inline-flex;
     flex: none;
-    padding: 3px;
+    padding: var(--space-1);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-full);
     background: var(--lat-panel);
 }
 
 .stx-mode {
-    padding: 5px 15px;
+    padding: var(--space-1) var(--space-4);
     border: 0;
     border-radius: var(--radius-full);
     background: none;
@@ -3248,7 +3248,7 @@ html[data-theme="dark"] .stx-region {
     position: absolute;
     top: -9px;
     left: 18px;
-    padding: 1px 8px;
+    padding: 1px var(--space-2);
     border-radius: var(--radius-full);
     background: var(--lat-page);
     font-size: var(--text-2xs);
@@ -3276,7 +3276,7 @@ html[data-theme="dark"] .stx-region {
     top: 50%;
     transform: translateY(-50%);
     z-index: 3;
-    padding: 2px 7px;
+    padding: 2px var(--space-2);
     border: 1px dashed color-mix(in srgb, var(--lat-muted) 45%, transparent);
     border-radius: var(--radius-full);
     background: var(--lat-panel);
@@ -3325,8 +3325,8 @@ html[data-theme="dark"] .stx-region {
     z-index: 62;
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    padding: 12px 14px;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
     border: 1px solid var(--lat-line);
     border-left: 3px solid var(--lat-blue);
     border-radius: var(--radius-md);
@@ -3355,7 +3355,7 @@ html[data-theme="dark"] .stx-region {
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--space-2);
     margin: 0;
     font-size: var(--text-sm);
     color: var(--lat-text);
@@ -3376,14 +3376,14 @@ html[data-theme="dark"] .stx-region {
 .stx-edge-ends {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: var(--space-2);
     padding-top: 2px;
 }
 
 .stx-edge-ends button {
     flex: 1 1 auto;
     min-width: 0;
-    padding: 5px 10px;
+    padding: var(--space-1) var(--space-2);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-full);
     background: none;
@@ -3441,8 +3441,8 @@ html[data-theme="dark"] .stx-region {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 5px;
-    margin: 8px 0 0;
+    gap: var(--space-1);
+    margin: var(--space-2) 0 0;
     font-size: var(--text-2xs);
     color: var(--lat-faint);
 }
@@ -3452,7 +3452,7 @@ html[data-theme="dark"] .stx-region {
     place-items: center;
     min-width: 18px;
     height: 18px;
-    padding: 0 5px;
+    padding: 0 var(--space-1);
     border: 1px solid var(--lat-line);
     border-bottom-width: 2px;
     border-radius: var(--radius-sm);
@@ -3471,7 +3471,7 @@ html[data-theme="dark"] .stx-region {
    sit above the thing they choose, so the page opened with three rows of
    navigation and the canvas began below the fold. */
 .stx-drawer {
-    margin-top: 18px;
+    margin-top: var(--space-4);
     border: 1px solid var(--lat-line);
     border-radius: var(--radius-lg);
     background: var(--lat-panel);
@@ -3481,9 +3481,9 @@ html[data-theme="dark"] .stx-region {
 .stx-drawer-tab {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
     width: 100%;
-    padding: 13px 16px;
+    padding: var(--space-3) var(--space-4);
     border: 0;
     background: none;
     font: inherit;
@@ -3519,7 +3519,7 @@ html[data-theme="dark"] .stx-region {
     flex: none;
     width: 8px;
     height: 8px;
-    margin-right: 4px;
+    margin-right: var(--space-1);
     border-right: 2px solid var(--lat-muted);
     border-bottom: 2px solid var(--lat-muted);
     transform: rotate(-135deg) translate(-2px, 2px);
@@ -3531,8 +3531,8 @@ html[data-theme="dark"] .stx-region {
 .stx-drawer-body {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    padding: 4px 16px 18px;
+    gap: var(--space-4);
+    padding: var(--space-1) var(--space-4) var(--space-4);
     border-top: 1px solid var(--lat-line-soft);
 }
 
@@ -3565,7 +3565,7 @@ html[data-theme="dark"] .stx-region {
 .stx-focus-bar {
     display: block;
     height: 3px;
-    margin: 0 12px;
+    margin: 0 var(--space-3);
     border-radius: var(--radius-full);
     background: var(--lat-line-soft);
     overflow: hidden;
@@ -3585,8 +3585,8 @@ html[data-theme="dark"] .stx-region {
 .stx-focus-stats {
     display: flex;
     flex-wrap: wrap;
-    gap: 3px 10px;
-    margin: 7px 12px 0;
+    gap: var(--space-1) var(--space-2);
+    margin: var(--space-2) var(--space-3) 0;
     font-size: var(--text-2xs);
     color: var(--lat-faint);
 }
@@ -3596,8 +3596,8 @@ html[data-theme="dark"] .stx-region {
 .stx-focus-next {
     display: flex;
     align-items: baseline;
-    gap: 6px;
-    margin: 4px 12px 9px;
+    gap: var(--space-2);
+    margin: var(--space-1) var(--space-3) var(--space-2);
     font-size: var(--text-2xs);
     font-weight: 600;
     color: var(--lat-text);
@@ -3629,8 +3629,8 @@ html[data-theme="dark"] .stx-region {
 .stx-lp-truth {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding-top: 14px;
+    gap: var(--space-2);
+    padding-top: var(--space-4);
     border-top: 1px solid var(--lat-line-soft);
 }
 
@@ -3638,7 +3638,7 @@ html[data-theme="dark"] .stx-region {
     --tone: var(--lat-faint);
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: var(--space-2);
     margin: 0;
     font-size: var(--text-2xs);
     font-weight: 700;
@@ -3710,9 +3710,9 @@ html[data-theme="dark"] .stx-region {
 .stx-lp-proof {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    margin: 10px 0 0;
-    padding: 9px 11px;
+    gap: var(--space-1);
+    margin: var(--space-2) 0 0;
+    padding: var(--space-2) var(--space-3);
     border: 1px solid color-mix(in srgb, var(--lat-green) 30%, var(--lat-line));
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--lat-green-soft) 60%, transparent);
@@ -3731,5 +3731,5 @@ html[data-theme="dark"] .stx-region {
 
 /* The two lists at the foot sit inside a truth of their own, so they lose the
    rule and the top padding they carried as standalone sections. */
-.stx-lp-truth .stx-lp-section { padding-top: 6px; border-top: 0; }
+.stx-lp-truth .stx-lp-section { padding-top: var(--space-2); border-top: 0; }
 .stx-lp-truth .stx-lp-section h3 { font-size: var(--text-xs); color: var(--lat-muted); font-weight: 700; }

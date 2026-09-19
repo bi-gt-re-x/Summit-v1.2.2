@@ -52,14 +52,14 @@ html[data-theme="dark"] .cal-overview {
 .cal-tiles {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: var(--space-2);
 }
 .cal-tile {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 3px;
-    padding: 12px;
+    gap: var(--space-1);
+    padding: var(--space-3);
     border-radius: var(--radius-md);
     background: var(--tile-bg);
     min-width: 0;
@@ -73,7 +73,7 @@ html[data-theme="dark"] .cal-overview {
     border-radius: var(--radius-md);
     background: var(--cal-surface);
     color: var(--tile-ink);
-    margin-bottom: 5px;
+    margin-bottom: var(--space-1);
 }
 .cal-tile-ico svg {
     width: 15px;
@@ -124,8 +124,8 @@ html[data-theme="dark"] .cal-overview {
        and a figure to stay whole, so nothing has to wrap or ellipsise any more —
        which is what the four-across layout spent all its rules on. The `sub` is
        the one line long enough to still need wrapping ("of 1h 30m planned"). */
-    .cal-tiles { gap: 9px; }
-    .cal-tile { padding: 13px 14px; }
+    .cal-tiles { gap: var(--space-2); }
+    .cal-tile { padding: var(--space-3) var(--space-4); }
     .cal-tile-sub {
         white-space: normal;
         overflow: visible;
@@ -147,12 +147,12 @@ html[data-theme="dark"] .cal-overview {
 /* ---- Inside the panel ---------------------------------------------------
    The wrapper is `.wk-panel`, which every sidebar card already is, plus this
    for what is only true of the overview. */
-.cal-overview .cal-tiles { margin-top: 12px; }
+.cal-overview .cal-tiles { margin-top: var(--space-3); }
 
 /* The Week view's ring, in the `lead` slot above the tiles. It used to sit
    beside three figures that are tiles now; on its own it gets the row, and the
    sentence under it carries what the figures beside it used to. */
-.cal-overview .wk-weekly { display: flex; align-items: center; gap: 14px; }
+.cal-overview .wk-weekly { display: flex; align-items: center; gap: var(--space-4); }
 .cal-overview .wk-weekly-said {
     margin: 0;
     font-size: var(--text-sm);
@@ -163,7 +163,7 @@ html[data-theme="dark"] .cal-overview {
 /* The Day view's two extra figures, under the tiles: what is still on the
    table, and how much of the day is spoken for. Neither is a question a week
    or a month can be asked, so neither is a tile. */
-.cal-overview-extra { margin-top: 12px; }
+.cal-overview-extra { margin-top: var(--space-3); }
 
 /* The focus tile's figure is a field on today — the one editable number in the
    panel. It looks like a figure until it is hovered, because it is one. */
@@ -177,5 +177,5 @@ html[data-theme="dark"] .cal-overview {
     background: var(--cal-surface);
     border: 1px solid var(--cal-accent);
     border-radius: var(--radius-sm);
-    padding: 0 4px;
+    padding: 0 var(--space-1);
 }

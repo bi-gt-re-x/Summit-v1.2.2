@@ -47,13 +47,19 @@
     --radius-full: 999px;
 
     /* ---------- Space ---------------------------------------------------- */
+    /* A 4px grid, named by how many fours: --space-3 is 12px, --space-6 is
+       24px. Every margin, padding and gap in styles/ is on it; hairlines of
+       1–2px are left as written. */
     --space-1: 4px;
     --space-2: 8px;
     --space-3: 12px;
     --space-4: 16px;
-    --space-5: 24px;
-    --space-6: 32px;
-    --space-7: 48px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
 
     /* ---------- Elevation ------------------------------------------------ */
     /* Resting on the page, a card, and something floating over the page. */

@@ -174,7 +174,7 @@ html[data-theme="dark"] [data-family] {
 .cal-dot {
     flex: none; width: 7px; height: 7px; border-radius: var(--radius-full);
     background: var(--ev-accent);
-    margin-right: 5px;
+    margin-right: var(--space-1);
 }
 /* Finished: the same mark in the same place, drawn as a tick. One glyph rather
    than a disc *and* a tick — the block used to carry both, which is two marks
