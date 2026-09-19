@@ -41,7 +41,7 @@ const STREAK_FULL = 28;
 const XP_FULL = '78%';
 
 const XP_EVENTS: { icon: IconName; label: string; xp: string }[] = [
-  { icon: 'trophy', label: 'Level 10 unlocked', xp: '+200 XP' },
+  { icon: 'trophy', label: 'Level 13 unlocked', xp: '+200 XP' },
   { icon: 'check', label: 'Completed project', xp: '+200 XP' },
   { icon: 'check', label: 'Completed project', xp: '+200 XP' },
 ];
@@ -238,8 +238,8 @@ function XpHistory() {
               "Level 10 unlocked" would overflow the card on the flip. */}
           <span className="xp-flip" id="xpLevel" ref={level}>
             <span className="xp-flip-in">
-              <span className="xp-face xp-face-front">Level 9</span>
-              <span className="xp-face xp-face-back">Level 10 unlocked</span>
+              <span className="xp-face xp-face-front">Level 12</span>
+              <span className="xp-face xp-face-back">Level 13 unlocked</span>
             </span>
           </span>
         </div>
@@ -311,7 +311,7 @@ function TrackingCard() {
           Best day <b>Fri</b>
         </span>
         <span className="lp-chip">
-          Avg <b>167 XP</b>
+          Avg <b>162 XP</b>
         </span>
       </div>
     </div>

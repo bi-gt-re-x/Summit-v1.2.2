@@ -36,11 +36,14 @@ import {
 } from '@/utils/homePlay';
 
 /** The rating steps C -> B -> A; the ends are named so nothing indexes for them. */
-const GRADES = ['C', 'B', 'A'] as const;
+/* The same student as the hero (see HERO_XP in ./sections): crossing into
+   level 13 at 7,800 XP and ending the term on 8,610, graded B. */
+const GRADES = ['C', 'B'] as const;
 const FIRST_GRADE = 'C';
-const LAST_GRADE = 'A';
-const XP_STOPS = [0, 75, 220, 500];
-const XP_FULL = 500;
+const LAST_GRADE = 'B';
+const XP_STOPS = [7420, 7650, 7800, 8610];
+const XP_FULL = 8610;
+const xpText = (value: number) => Math.round(value).toLocaleString('en-US');
 const TASK_STOPS = [0, 24, 67, 142];
 const TASKS_FULL = 142;
 /** The three pulls the bar fills in, as a fraction of full. */
@@ -104,7 +107,7 @@ export function DashboardDemo() {
     level.current?.classList.remove('is-flipped');
     grade.current?.classList.remove('dd-grade-pop');
     if (grade.current) grade.current.textContent = FIRST_GRADE;
-    if (xp.current) xp.current.textContent = '0';
+    if (xp.current) xp.current.textContent = xpText(XP_STOPS[0]!);
     if (tasks.current) tasks.current.textContent = '0';
     if (bar.current) bar.current.style.transform = 'scaleX(0)';
 
@@ -139,7 +142,7 @@ export function DashboardDemo() {
     });
 
     t.at(1150, () => {
-      counters.current.push(countThrough(xp.current, XP_STOPS, { duration: 1260 }));
+      counters.current.push(countThrough(xp.current, XP_STOPS, { duration: 1260, format: xpText }));
     });
     t.at(1500, () => {
       counters.current.push(countThrough(tasks.current, TASK_STOPS, { duration: 1260 }));
@@ -167,7 +170,7 @@ export function DashboardDemo() {
   const still = useCallback(() => {
     stage.current?.classList.remove('dd-armed');
     if (bar.current) bar.current.style.transform = 'scaleX(1)';
-    if (xp.current) xp.current.textContent = String(XP_FULL);
+    if (xp.current) xp.current.textContent = xpText(XP_FULL);
     if (tasks.current) tasks.current.textContent = String(TASKS_FULL);
     if (grade.current) grade.current.textContent = LAST_GRADE;
     level.current?.classList.add('is-flipped');
@@ -215,14 +218,14 @@ export function DashboardDemo() {
               <b>Dashboard</b>
               <small>Daily XP · Streak</small>
             </div>
-            <span className="dd-top-pill">This week</span>
+            <span className="dd-top-pill">Last 30 days</span>
           </div>
 
           <div className="dd-cards">
             <article className="dd-card dd-card-wide">
               <span className="dd-label">Total XP</span>
               <strong className="dd-num" id="ddXp" ref={xp}>
-                0
+                {xpText(XP_STOPS[0]!)}
               </strong>
               <div className="dd-bar">
                 <i id="ddBar" ref={bar as React.RefObject<HTMLElement>} />
@@ -232,8 +235,8 @@ export function DashboardDemo() {
               <span className="dd-label">Level</span>
               <span className="dd-flip" id="ddLevel" ref={level}>
                 <span className="dd-flip-in">
-                  <span className="dd-face dd-face-front">8</span>
-                  <span className="dd-face dd-face-back">9</span>
+                  <span className="dd-face dd-face-front">12</span>
+                  <span className="dd-face dd-face-back">13</span>
                 </span>
               </span>
             </article>

@@ -56,6 +56,15 @@ function greeting(name: string | null): string {
  * outright that what the reader is looking at is the real component running,
  * and nothing here is presented as somebody's account.
  */
+/*
+ * One made-up term, and every figure on the page is read off it, so no two
+ * cards can disagree about the same student. Six weeks at about 60 XP a day
+ * and six at about 145 is 8,610 XP; level N costs N × 100 (utils/format), so
+ * that is level 13 with 810 of 1,300 in hand — the 62% bar under the chart.
+ * The last thirty days at ~145 a day is ~4,350 XP, or 142 tasks at ~30 each.
+ * The growth score is the Analytics section's five factors averaged: 83, a B.
+ * Change one of these and change the rest with it.
+ */
 const HERO_XP = [
   { name: 'Weeks 1–6', values: [40, 65, 30, 75, 55, 90, 60] },
   { name: 'Weeks 7–12', values: [95, 140, 110, 175, 130, 210, 165] },
@@ -189,7 +198,7 @@ export function Hero({
             label="Daily XP over a term: a first half averaging around 60, a second half averaging around 145."
           />
           <div className="lp-prev-row">
-            <span>Level 9</span>
+            <span>Level 13</span>
             <span className="lp-prev-bar">
               <i style={{ width: '62%' }} />
             </span>
@@ -210,7 +219,7 @@ export function Hero({
             <polygon points="60,34 90,54 80,92 40,92 30,54" className="lp-radar-fill" />
           </svg>
           <div className="lp-prev-overall">
-            Overall <strong>88</strong>
+            Overall <strong>83</strong>
           </div>
         </div>
         {/* A 📅 floated here at 45% opacity, over nothing, meaning nothing. It
@@ -266,7 +275,7 @@ export function FeatureStrip() {
   const navigate = useNavigate();
 
   return (
-    <section className="lp-strip">
+    <section className="lp-strip" id="features">
       {FEATURES.map((f) => (
         // The whole card is the target, not just the link in it. The link is
         // still a real link — keyboard, middle-click and "open in new tab" all
@@ -307,9 +316,8 @@ export function FeatureStrip() {
           people it would work on are the ones deciding whether to trust a
           study tool with their year.
 
-          So the card says something true instead. There is no user to quote
-          yet, and saying that plainly is a better argument than a fake quote
-          is. */}
+          So the card says something true instead: why the thing was built,
+          which needs no reviewer to vouch for it. */}
       <article className="lp-card lp-quote">
         <p className="lp-quote-kicker">Why this exists</p>
         <p>
@@ -317,10 +325,7 @@ export function FeatureStrip() {
           tell me whether the week had actually gone well, or just felt like it.”
         </p>
         <div className="lp-quote-foot">
-          <span className="lp-quote-by">
-            The reason Summit counts what it counts
-            <small>No reviews yet — this is the first version to be public</small>
-          </span>
+          <span className="lp-quote-by">The reason Summit counts what it counts</span>
         </div>
       </article>
     </section>
@@ -350,27 +355,27 @@ export function TaskStats() {
         <div className="lp-stat">
           <span>Total tasks created</span>
           <span className="lp-stat-v">
-            <b>1,241</b>
+            <b>164</b>
           </span>
         </div>
         <div className="lp-stat">
           <span>Total completed</span>
           <span className="lp-stat-v">
-            <b>1,105</b>
+            <b>142</b>
             <Trend value={8} suffix="%" />
           </span>
         </div>
         <div className="lp-stat">
           <span>Goals completed</span>
           <span className="lp-stat-v">
-            <b>18</b>
-            <Trend value={3} />
+            <b>3</b>
+            <Trend value={1} />
           </span>
         </div>
         <div className="lp-stat">
           <span>Average XP / day</span>
           <span className="lp-stat-v">
-            <b>200</b>
+            <b>145</b>
           </span>
         </div>
         <div className="lp-stat">
@@ -544,7 +549,7 @@ export function Pricing({
   };
 
   return (
-    <section className="lp-section">
+    <section className="lp-section" id="pricing">
       {/* Was "Features Comparison and Pricing". There is nothing to compare —
           one plan, everything in it, no paid tier to hold anything back — so
           the heading was promising a table the section does not have and

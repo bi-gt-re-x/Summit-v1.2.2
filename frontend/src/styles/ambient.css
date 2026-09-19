@@ -35,7 +35,6 @@
 
 /* Everything the page actually shows sits above the ambient layer. */
 .site-nav,
-.account-row,
 .home-main,
 .footer { position: relative; z-index: 1; }
 

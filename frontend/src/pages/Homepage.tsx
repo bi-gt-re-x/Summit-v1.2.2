@@ -19,15 +19,13 @@
  *     page is laid out, which is why they are hooks over a ref and not markup.
  *   * the toast, which belongs to no section.
  *
- *   * its own Log In / Sign Up row, and the theme select beside it. There is no
- *     bar above them: the page opens straight on the hero. It carried one for a
- *     while — a brand mark and the theme select, the pair the server-rendered
- *     header held — but the mark linked to the page it was already on, and a
- *     strip of chrome between the reader and the first thing the page has to
- *     say is a strip of chrome. The app's navigation is a rail down the left
- *     and App.tsx leaves this route without that too, since a rail offering the
- *     dashboard and the goals page to someone who cannot open either is not
- *     navigation.
+ *   * its own header: the Summit mark, links to the page's own sections, and
+ *     the theme select and Log In / Sign Up. The page went a while with no bar
+ *     at all, and a landing page with no name on it and no way to the pricing
+ *     but scrolling read as unfinished. The links are to sections of this page
+ *     rather than to the app, because App.tsx leaves this route without the
+ *     rail for the same reason: a stranger cannot open the dashboard, so
+ *     offering it is not navigation. The mark takes you back to the top.
  *
  * The one thing the server-rendered page had that is still deliberately not
  * here: it wrote the signed-in username into localStorage from the template.
@@ -67,6 +65,14 @@ import type { AuthStep } from '@/components/Home';
 import type { Theme } from '@/types';
 import '@/styles/homepage.css';
 import '@/styles/home-motion.css';
+
+/** The header's links: a section of this page each, in the order they come. */
+const SECTIONS = [
+  ['see-it', 'Product'],
+  ['features', 'Features'],
+  ['analytics', 'Analytics'],
+  ['pricing', 'Pricing'],
+] as const;
 
 /**
  * Where the flow finishes. Only a path on this site, never somewhere else.
@@ -169,48 +175,67 @@ export default function Homepage() {
     <>
       <Ambient cursor />
 
-      {/* Which pair this shows is decided from the server's answer rather than
-          from localStorage, which is what the original got wrong: an account
-          signed in on the server but with no localStorage — cleared storage,
-          another browser — was being offered Log In and Sign Up.
+      {/* Which of the right-hand pair this shows is decided from the server's
+          answer rather than from localStorage, which is what the original got
+          wrong: an account signed in on the server but with no localStorage —
+          cleared storage, another browser — was being offered Log In and Sign
+          Up. The theme select stays beside them because the landing page is
+          the one place a reader can pick a theme before they have an account.
 
-          The theme select sits on this row now. It used to have a bar of its
-          own across the top of the page, with the brand mark beside it; the bar
-          is gone, so the one control it carried joins the row that was already
-          here rather than going with it — the landing page is the one place a
-          reader can pick a theme before they have an account. */}
-      <div className="account-row">
-        <select
-          className="theme-select"
-          aria-label="Theme"
-          value={theme}
-          onChange={(event) => setTheme(event.target.value as Theme)}
+          Sticky, and the section links drop away on a phone, where the bar
+          keeps only the mark and the account buttons. */}
+      <header className="lp-header">
+        <a
+          className="lp-brand"
+          href="#top"
+          onClick={(event) => {
+            event.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
         >
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-        </select>
-        {signedIn ? (
-          <div className="user-greeting">
-            <span>Hello, {username}</span>
-            <button type="button" className="logout-btn" onClick={() => void signOut()}>
-              Log Out
-            </button>
-          </div>
-        ) : (
-          <div className="auth-buttons">
-            <button type="button" className="auth-btn" onClick={() => setStep('login')}>
-              Log In
-            </button>
-            <button
-              type="button"
-              className="auth-btn auth-btn-primary"
-              onClick={() => setStep('create')}
-            >
-              Sign Up
-            </button>
-          </div>
-        )}
-      </div>
+          <img src="/static/images/logo.svg" alt="" width={28} height={28} />
+          <span>Summit</span>
+        </a>
+        <nav className="lp-nav" aria-label="On this page">
+          {SECTIONS.map(([id, label]) => (
+            <a key={id} href={`#${id}`}>
+              {label}
+            </a>
+          ))}
+        </nav>
+        <div className="account-row">
+          <select
+            className="theme-select"
+            aria-label="Theme"
+            value={theme}
+            onChange={(event) => setTheme(event.target.value as Theme)}
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+          {signedIn ? (
+            <div className="user-greeting">
+              <span>Hello, {username}</span>
+              <button type="button" className="logout-btn" onClick={() => void signOut()}>
+                Log Out
+              </button>
+            </div>
+          ) : (
+            <div className="auth-buttons">
+              <button type="button" className="auth-btn" onClick={() => setStep('login')}>
+                Log In
+              </button>
+              <button
+                type="button"
+                className="auth-btn auth-btn-primary"
+                onClick={() => setStep('create')}
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
 
       <div className="home-main" ref={page}>
         <div className="lp">
@@ -286,7 +311,7 @@ export default function Homepage() {
               happened: a score made of productivity, consistency and focus
               means nothing to someone who has not yet been shown the tasks,
               the streak and the calendar those are measured from. */}
-          <section className="lp-section">
+          <section className="lp-section" id="analytics">
             <SectionHead
               title="Analytics that end in a suggestion"
               blurb="Five measures become one Growth Score, and the score becomes a ranked list of what to change next week. Every figure opens up to show the arithmetic behind it."

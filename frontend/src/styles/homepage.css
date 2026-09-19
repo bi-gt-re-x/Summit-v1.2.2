@@ -52,14 +52,77 @@ body {
    standing over. Every reader saw that and nobody could have named it — the
    page simply looked as though its top right corner belonged to something
    else. */
-.account-row {
+/* ---------- The header ------------------------------------------------
+   The mark, the section links and the account row. Sticky, over a frosted
+   strip of the page ground so the content scrolling under it stays legible. */
+.lp-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
     max-width: 1180px;
     margin: 0 auto;
-    padding: 20px 24px 0;
+    padding: var(--space-3) var(--space-5);
+    background: color-mix(in srgb, var(--color-bg) 78%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+}
+.lp-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-ink);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: -.01em;
+    text-decoration: none;
+}
+.lp-brand img { display: block; }
+.lp-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+.lp-nav a {
+    padding: 6px var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--color-ink-muted);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    transition: color .15s ease, background-color .15s ease;
+}
+.lp-nav a:hover { color: var(--color-ink); background: color-mix(in srgb, var(--color-ink) 6%, transparent); }
+.lp-brand:focus-visible,
+.lp-nav a:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 35%, transparent);
+    border-radius: var(--radius-md);
+}
+.account-row {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 14px;
+    margin-left: auto;
+}
+/* A section a header link jumps to glides there, and lands below the bar
+   rather than under it. The app's reduce-motion setting already turns
+   `scroll-behavior` off (styles/preferences.css). */
+html:has(.lp-header) { scroll-behavior: smooth; }
+.home-main [id] { scroll-margin-top: 76px; }
+@media (prefers-reduced-motion: reduce) {
+    html:has(.lp-header) { scroll-behavior: auto; }
+}
+
+@media (max-width: 860px) {
+    .lp-nav { display: none; }
+}
+@media (max-width: 480px) {
+    .lp-header { padding: var(--space-3) var(--space-4); gap: var(--space-3); }
+    .lp-brand span { display: none; }
 }
 
 .auth-buttons {
@@ -1460,7 +1523,7 @@ html[data-theme="dark"] .lp-final {
 
 /* The surrounding chrome dissolves with the cards, leaving a clean void. */
 body.pent-void .site-nav,
-body.pent-void .account-row,
+body.pent-void .lp-header,
 body.pent-void .footer {
     opacity: 0;
     pointer-events: none;
