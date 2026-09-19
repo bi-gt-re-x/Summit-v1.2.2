@@ -15,6 +15,9 @@ from backend.database import connection as db
 from backend.goal_matcher import types
 from backend.goal_matcher.types import TaskGoalMapping, TaskGoalMatch
 
+__all__ = ['TaskGoalMapping', 'TaskGoalMatch', 'goal_links', 'mapping_for', 'mappings_for',
+           'save_mapping', 'save_mappings', 'stale_count', 'stale_tasks', 'with_goal_ids']
+
 
 def _mapping(status, version, rows) -> TaskGoalMapping:
     matches = tuple(TaskGoalMatch(goal_id=goal_id, score=score, source=source)

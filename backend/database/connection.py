@@ -864,6 +864,49 @@ def insert_row(table, row, key='id'):
         con.close()
 
 
+def insert_rows(table, rows, key='id'):
+    """Add many rows in one transaction. Returns (written, skipped ids).
+
+    `insert_row` in a loop is a connection, an id query and an INSERT each;
+    this reserves the ids in one go (`new_ids`) and writes them together.
+
+    A row carrying an id that is already there is skipped rather than
+    replaced or renumbered, which is what makes a repeated bulk write safe:
+    the caller sends the same list again and gets back what was missing.
+    """
+    rows = [dict(row) for row in rows]
+    if not rows:
+        return [], []
+    con = connect()
+    try:
+        named = [str(row[key]) for row in rows if row.get(key)]
+        taken = set()
+        for at in range(0, len(named), _IN_CHUNK):
+            chunk = named[at:at + _IN_CHUNK]
+            taken.update(str(found[0]) for found in con.execute(
+                'SELECT "{}" FROM "{}" WHERE "{}" IN ({})'.format(
+                    key, table, key, ', '.join('?' for _ in chunk)), chunk))
+
+        wanted = [row for row in rows if not row.get(key) or str(row[key]) not in taken]
+        fresh = new_ids(table, sum(1 for row in wanted if not row.get(key)))
+        for row in wanted:
+            if not row.get(key):
+                row[key] = fresh.pop(0)
+
+        names = _insert_columns(con, table, wanted[0]) if wanted else []
+        if names:
+            sql = 'INSERT INTO "{}" ({}) VALUES ({})'.format(
+                table,
+                ', '.join('"{}"'.format(name) for name in names),
+                ', '.join('?' for _ in names))
+            with con:
+                con.executemany(sql, [[_encode(table, name, row.get(name)) for name in names]
+                                      for row in wanted])
+        return wanted, sorted(taken)
+    finally:
+        con.close()
+
+
 def update_row(table, row_id, changes, user_id=None, key='id'):
     """Change some columns of one row. Returns True if a row was changed.
 
@@ -1750,6 +1793,29 @@ def mark_goal_tasks_stale(username, subjects=None, goal_id=None):
             either.append('id IN (SELECT task_id FROM task_goal_matches WHERE goal_id = ?)')
             params.append(goal_id)
         where.append('({})'.format(' OR '.join(either)))
+    con = connect()
+    try:
+        with con:
+            return con.execute('UPDATE tasks SET goal_match_version = 0 WHERE {}'.format(
+                ' AND '.join(where)), params).rowcount
+    finally:
+        con.close()
+
+
+def mark_pending_goal_tasks_stale(username, queued=()):
+    """Mark tasks stuck at 'pending' as due a fresh match. Returns how many.
+
+    'Pending' means a question is queued about the task, and the queue is one
+    process's memory: after a restart nothing is queued and the state is a
+    claim about work that no longer exists. `queued` is what genuinely is in
+    flight right now and is left alone.
+    """
+    where = ["user_id = ?", "goal_match_status = 'pending'"]
+    params = [username]
+    queued = [str(task_id) for task_id in queued]
+    if queued:
+        where.append('id NOT IN ({})'.format(', '.join('?' for _ in queued)))
+        params.extend(queued)
     con = connect()
     try:
         with con:

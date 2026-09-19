@@ -22,7 +22,7 @@ import time
 from typing import Mapping, Optional
 
 from backend.database import connection as db
-from backend.goal_matcher import ai, candidate_index, store
+from backend.goal_matcher import ai, candidate_index, metrics, store
 from backend.goal_matcher.queue import work
 from backend.goal_matcher.deterministic import Classification, TaskInput, classify
 from backend.goal_matcher.types import TaskGoalMapping, TaskGoalMatch
@@ -169,9 +169,12 @@ def refresh_task(username: str, task: Mapping,
     Pass `index` when refreshing several tasks, so the goals are read once.
     """
     try:
-        index = index if index is not None else candidate_index.load(username)
-        result = classify_task(index, task)
-        stored = store.save_mapping(username, str(task['id']), result.mapping)
+        with metrics.timed():
+            index = index if index is not None else candidate_index.load(username)
+            result = classify_task(index, task)
+            stored = store.save_mapping(username, str(task['id']), result.mapping)
+        if stored is not None:
+            metrics.outcome(stored.status, bool(stored.explicit))
         if stored is not None and stored.status == 'ambiguous':
             ask_about(username, task, result.candidates)
         return stored
@@ -216,12 +219,15 @@ def refresh_tasks(username: str, tasks, index: Optional[candidate_index.Candidat
         return {'refreshed': 0, 'failed': len(tasks), 'asked': 0}
 
     refreshed = failed = asked = 0
+    started = time.perf_counter()
     for part in chunks(tasks, chunk_size):
         try:
             found = {str(task['id']): classify_task(index, task) for task in part}
             stored = store.save_mappings(
                 username, {task_id: result.mapping for task_id, result in found.items()})
             refreshed += len(stored)
+            for mapping in stored.values():
+                metrics.outcome(mapping.status, bool(mapping.explicit))
             # The few the rules could not settle, up to this pass's budget.
             for task in part:
                 if asked >= AI_PER_PASS:
@@ -232,6 +238,16 @@ def refresh_tasks(username: str, tasks, index: Optional[candidate_index.Candidat
         except Exception as exc:  # noqa: BLE001 - one chunk failing is one chunk
             failed += len(part)
             print('[goal_matcher] could not match {} tasks: {!r}'.format(len(part), exc))
+    elapsed = (time.perf_counter() - started) * 1000
+    metrics.count('runs')
+    metrics.count('duration_ms', elapsed)
+    metrics.most('slowest_run_ms', elapsed)
+    # Only failures are worth a line here. A catch-up over a long history is a
+    # hundred of these passes, and a hundred lines saying it went fine is a log
+    # nobody reads; `catch_up` prints the one line that sums them up.
+    if failed:
+        print('[goal_matcher] {} of {} tasks could not be matched'.format(
+            failed, failed + refreshed))
     return {'refreshed': refreshed, 'failed': failed, 'asked': asked}
 
 
@@ -248,9 +264,10 @@ def refresh_stale(username: str, limit: int = REFRESH_SLICE) -> dict:
     """
     due = store.stale_tasks(username, limit)
     if not due:
-        return {'refreshed': 0, 'remaining': 0}
+        return {'refreshed': 0, 'remaining': 0, 'asked': 0}
     done = refresh_tasks(username, due)
-    return {'refreshed': done['refreshed'], 'remaining': store.stale_count(username)}
+    return {'refreshed': done['refreshed'], 'asked': done['asked'],
+            'remaining': store.stale_count(username)}
 
 
 # ---------------------------------------------------------------------------
@@ -317,14 +334,37 @@ def goal_changed(username: str, before: Optional[Mapping], after: Optional[Mappi
         return 0
 
 
+def recover_pending(username: str) -> int:
+    """Free tasks left claiming a question nobody is going to answer.
+
+    A task is 'pending' while the model is queued about it, and the queue
+    lives in one process's memory: a restart in the middle leaves the state
+    true of a job that no longer exists. Tasks genuinely queued right now are
+    left alone; the rest are marked due and the pass below picks them up.
+    """
+    queued = [key[1] for key in work.keys() if isinstance(key, tuple) and key[0] == 'ai']
+    return db.mark_pending_goal_tasks_stale(username, queued)
+
+
 def catch_up(username: str, slice_size: int = REFRESH_SLICE) -> int:
     """Refresh every stale task, a slice at a time. Returns how many were matched."""
+    # Once, before the loop: a task this pass marks due is one this pass then
+    # classifies, and re-marking inside the loop would be a pass with no end.
+    recover_pending(username)
     total = 0
+    began = time.perf_counter()
+    asked = 0
     while True:
         started = time.perf_counter()
         result = refresh_stale(username, limit=slice_size)
         total += result['refreshed']
+        asked += result.get('asked', 0)
         if result['refreshed'] == 0 or result['remaining'] == 0:
+            if total:
+                # One line for the whole catch-up: counts and milliseconds,
+                # nothing about any task.
+                print('[goal_matcher] matched {} tasks in {:.0f} ms ({} asked)'.format(
+                    total, (time.perf_counter() - began) * 1000, asked))
             return total
         # Half the time to the database, half to everyone else.
         time.sleep(min(SLICE_PAUSE, time.perf_counter() - started))

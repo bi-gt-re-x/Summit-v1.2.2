@@ -32,6 +32,7 @@ import json
 from typing import List, Optional, Sequence, Tuple
 
 from backend.database import connection as db
+from backend.goal_matcher import metrics
 from backend.goal_matcher.config import MAX_MATCHES_PER_TASK
 from backend.goal_matcher.normalize import normalize
 from backend.tracking import planner
@@ -146,8 +147,10 @@ def ask(username: str, title: str, subject: str,
     key = cache_key(title, subject, candidates)
     held = db.goal_ai_answer(username, key)
     if held is not None:
+        metrics.count('ai_cached')
         return [goal_id for goal_id in held if goal_id in {c[0] for c in candidates}]
 
+    metrics.count('ai_asked')
     try:
         text = planner.from_provider(
             brief(title, subject, candidates),
@@ -156,14 +159,17 @@ def ask(username: str, title: str, subject: str,
             instruction='Which of these goals is this task work toward?',
         )
     except Exception as exc:  # noqa: BLE001 - every failure reads the same here
+        metrics.count('ai_failed')
         print('[goal_matcher] the model could not be asked: {!r}'.format(exc))
         return None
 
     numbers = _read(text, len(candidates))
     if numbers is None:
+        metrics.count('ai_unreadable')
         print('[goal_matcher] the model answer could not be read')
         return None
 
+    metrics.count('ai_answered')
     chosen = [candidates[number - 1][0] for number in numbers]
     db.save_goal_ai_answer(username, key, chosen)
     return chosen

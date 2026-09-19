@@ -32,6 +32,8 @@ import threading
 from collections import OrderedDict
 from typing import Callable, Hashable
 
+from backend.goal_matcher import metrics
+
 # Workers running jobs at once. Three keeps a burst of model calls well inside
 # any provider's rate limit and leaves the database free for requests.
 CONCURRENCY = 3
@@ -68,6 +70,7 @@ class WorkQueue:
                 return True
             if len(self._waiting) >= self.max_waiting:
                 self.refused += 1
+                metrics.count('jobs_refused')
                 return False
             self._waiting[key] = job
             self._start()
@@ -90,8 +93,10 @@ class WorkQueue:
                 key, job = self._waiting.popitem(last=False)
                 self._running[key] = job
             try:
+                metrics.count('jobs_run')
                 job()
             except Exception as exc:  # noqa: BLE001 - one job failing is one job
+                metrics.count('jobs_failed')
                 print('[goal_matcher] background job {!r} failed: {!r}'.format(key, exc))
             finally:
                 with self._lock:
@@ -102,6 +107,16 @@ class WorkQueue:
                     self._lock.notify_all()
 
     # -- watching -------------------------------------------------------------
+    def keys(self) -> set:
+        """Every key waiting or running now.
+
+        What tells a recovery pass which tasks really are queued: nothing
+        else can know, because the queue is this process's memory and a
+        restart empties it.
+        """
+        with self._lock:
+            return set(self._waiting) | set(self._running)
+
     def pending(self) -> int:
         """Jobs waiting or running."""
         with self._lock:

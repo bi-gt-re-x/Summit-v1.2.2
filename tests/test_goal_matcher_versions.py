@@ -102,11 +102,11 @@ def test_a_refresh_pass_is_bounded_and_resumable(client):
     violin = make_goal(client, 'Violin ARCT', 'music')
     ids = [legacy_task('Violin lesson {}'.format(i), 'music') for i in range(7)]
 
-    assert service.refresh_stale('tester', limit=3) == {'refreshed': 3, 'remaining': 4}
-    assert service.refresh_stale('tester', limit=3) == {'refreshed': 3, 'remaining': 1}
-    assert service.refresh_stale('tester', limit=3) == {'refreshed': 1, 'remaining': 0}
+    assert service.refresh_stale('tester', limit=3) == {'refreshed': 3, 'remaining': 4, 'asked': 0}
+    assert service.refresh_stale('tester', limit=3) == {'refreshed': 3, 'remaining': 1, 'asked': 0}
+    assert service.refresh_stale('tester', limit=3) == {'refreshed': 1, 'remaining': 0, 'asked': 0}
     # Nothing left: a pass does nothing and says so.
-    assert service.refresh_stale('tester', limit=3) == {'refreshed': 0, 'remaining': 0}
+    assert service.refresh_stale('tester', limit=3) == {'refreshed': 0, 'remaining': 0, 'asked': 0}
 
     assert all(store.mapping_for('tester', t).goal_ids == (violin,) for t in ids)
 
@@ -200,7 +200,7 @@ def test_a_chunk_that_fails_costs_that_chunk_and_no_more(client, monkeypatch):
     # The failed chunk is untouched, so still stale, and the next pass takes it.
     assert store.stale_count('tester') == 10
     monkeypatch.setattr(db, 'save_goal_mappings', real_save)
-    assert service.refresh_stale('tester') == {'refreshed': 10, 'remaining': 0}
+    assert service.refresh_stale('tester') == {'refreshed': 10, 'remaining': 0, 'asked': 0}
 
 
 def test_a_batch_skips_tasks_that_are_not_this_accounts(client, stranger):

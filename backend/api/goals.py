@@ -46,8 +46,11 @@ from pydantic import BaseModel
 
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
+from backend.config import settings
 from backend.database import connection as db
+from backend.goal_matcher import metrics as goal_metrics
 from backend.goal_matcher import service as goal_matcher
+from backend.goal_matcher.queue import work as goal_queue
 from backend.tracking import focus as focus_tracking
 from backend.tracking import planner
 from backend.tracking import xp as xp_tracking
@@ -726,6 +729,20 @@ def sync_focus_goals(username):
 # --------------------------------------------------------------------------
 # The API
 # --------------------------------------------------------------------------
+@router.get('/api/goal_matcher/metrics')
+def goal_matcher_metrics(username: str = Depends(current_username)):
+    """What the matcher has done since the server started. Development only.
+
+    Counts and milliseconds, nothing about any account's work — but they are
+    process-wide, so on a shared install they would describe other people's
+    activity to whoever asked. Behind `dev_mode` for that reason, the same
+    way the verification link is (backend/routes/auth.py).
+    """
+    if not settings.dev_mode():
+        return fail('There is nothing here.', status=404)
+    return ok(metrics=goal_metrics.snapshot(), queued=goal_queue.pending())
+
+
 @router.post('/api/add_goal')
 def add_goal(body: AddGoal, username: str = Depends(current_username)):
     if not username or not body.title:

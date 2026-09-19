@@ -25,6 +25,7 @@ from backend.api.reply import fail, ok
 from backend.api import subjects as user_subjects
 from backend.config import subjects as subject_catalogue
 from backend.database import connection as db
+from backend.goal_matcher import metrics
 from backend.goal_matcher import service as goal_matcher
 from backend.goal_matcher import store as goal_store
 from backend.tracking import xp as xp_tracking
@@ -92,6 +93,12 @@ class UpdateDueDate(BaseModel):
 
 class CompleteTask(BaseModel):
     task_id: Optional[str] = None
+
+
+class CreateTasks(BaseModel):
+    """Several tasks in one request. Each is an ordinary CreateTask."""
+
+    tasks: List[CreateTask] = []
 
 
 class CompleteTasks(BaseModel):
@@ -297,6 +304,86 @@ def search_tasks(q: str = '', limit: int = 8, open: bool = False,
 def create_task(body: CreateTask,
                 username: str = Depends(current_username)):
     return _create(body, username)
+
+
+#: The most tasks one request may create.
+MAX_CREATE = 500
+
+
+def _links_for(username, bodies):
+    """`_link`, for a batch: the same answers from one read instead of two each.
+
+    Returns a function of (goal_id, milestone_id). Reads nothing at all when
+    no task in the batch names a goal, which is the ordinary case.
+    """
+    if not any(one.goal_id for one in bodies):
+        return lambda goal_id, milestone_id: (None, None)
+
+    goals = {row['id'] for row in db.columns_for('goals', username, ('id',))}
+    stones = {row['id']: row.get('goal_id')
+              for row in db.columns_for('goal_milestones', username, ('id', 'goal_id'))}
+
+    def resolve(goal_id, milestone_id):
+        if not goal_id or goal_id not in goals:
+            return None, None
+        if not milestone_id:
+            return goal_id, None
+        return goal_id, (milestone_id if stones.get(milestone_id) == goal_id else None)
+
+    return resolve
+
+
+@router.post('/api/tasks/bulk')
+def create_tasks(body: CreateTasks, username: str = Depends(current_username)):
+    """Create several tasks as one action: one insert, one matching pass.
+
+    For an importer, a seeded week, or anything that would otherwise send
+    sixty creates. Each task is the same shape POST /api/tasks takes, and the
+    result is the same as sixty of those: the rows, and their goals worked
+    out — but as one transaction and one read of the account's goals rather
+    than sixty of each.
+
+    A task may carry its own id, and one already in the table is skipped
+    rather than written twice, so sending the same list again after a
+    timeout adds only what is missing.
+    """
+    wanted = list(body.tasks or [])
+    if not wanted:
+        return ok(task_ids=[], created=0, already_there=[])
+    if len(wanted) > MAX_CREATE:
+        return fail('At most {} tasks at a time.'.format(MAX_CREATE), status=400)
+
+    # The goals and checkpoints this account owns, read once for the batch
+    # rather than per task — `_link` is two reads each, which is sixty of them
+    # for sixty tasks.
+    links = _links_for(username, wanted)
+
+    now = datetime.now().isoformat()
+    rows = []
+    for one in wanted:
+        goal_id, milestone_id = links(one.goal_id, one.milestone_id)
+        rows.append({
+            "id": one.id or None,
+            "user_id": username,
+            "title": one.name,
+            "description": '',
+            "priority": one.priority,
+            "status": "todo",
+            "xp_value": one.xp_reward,
+            "due_date": one.due_date,
+            "show_on_calendar": one.show_on_calendar,
+            "created_at": one.created_at or now,
+            "subject": _subject(one.subject, username),
+            "goal_id": goal_id,
+            "milestone_id": milestone_id,
+        })
+
+    written, skipped = db.insert_rows('tasks', rows)
+    # One index for the batch, one transaction per hundred. Never fails the
+    # create: see backend/goal_matcher/service.py.
+    goal_matcher.refresh_tasks(username, written)
+    return ok(task_ids=[row['id'] for row in written], created=len(written),
+              already_there=skipped)
 
 
 @router.put('/api/tasks/{task_id}')
@@ -517,6 +604,9 @@ def _complete(username, task_ids):
 
     # Count them toward the "complete N tasks" goals, once for the batch.
     apply_task_completion(username, len(outcome['completed']))
+    metrics.count('batches')
+    metrics.count('tasks_completed', len(outcome['completed']))
+    metrics.most('largest_batch', len(outcome['completed']))
     return outcome
 
 
