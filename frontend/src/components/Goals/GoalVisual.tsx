@@ -20,7 +20,7 @@
  * how they look — because a card that changed its visual language per goal would
  * be four dialects on one page.
  */
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { formatGoalDate, goalDate, goalNumbers } from './numbers';
 import {
   CHART_CHOICES,
@@ -52,8 +52,12 @@ function monthYear(value?: string): string {
 // Primitive 1 — labelled bars
 // ---------------------------------------------------------------------------
 function Bars({ rows }: { rows: Bar[] }) {
+  /* How many rows there are, so the stylesheet can size the list to them —
+     see `--rows` in goals.css. The list takes the panel's leftover, but only
+     as much of it as its rows can use, which is the difference between a chart
+     that fills the space and one that merely occupies it. */
   return (
-    <ul className="ag-bars">
+    <ul className="ag-bars" style={{ '--rows': rows.length } as CSSProperties}>
       {rows.map((row) => (
         <li key={row.label} className={row.empty ? 'is-empty' : ''}>
           <span className="ag-bar-label">{row.label}</span>
@@ -234,13 +238,13 @@ export function movement(goal: Goal, range: 'year' | 'all', today: number): numb
  * most a bar can honestly say here.
  */
 function Roadmap({ goal, onOpen }: { goal: Goal; onOpen: () => void }) {
-  const stones = goal.milestones ?? [];
+  const stones = (goal.milestones ?? []).slice(0, 8);
   const share = (stone: Milestone) =>
     stone.status === 'done' ? 100 : stone.status === 'active' ? 45 : 6;
 
   return (
-    <ul className="ag-roadmap">
-      {stones.slice(0, 8).map((stone) => (
+    <ul className="ag-roadmap" style={{ '--rows': stones.length } as CSSProperties}>
+      {stones.map((stone) => (
         <li key={stone.id} className={`is-${stone.status}`}>
           <button type="button" onClick={onOpen}>
             <span className="ag-road-name">{stone.title}</span>
@@ -257,6 +261,24 @@ function Roadmap({ goal, onOpen }: { goal: Goal; onOpen: () => void }) {
   );
 }
 
+/**
+ * How far through the goal's own window today is, as a percentage, or null.
+ *
+ * The same two dates the card's footer prints and `ActiveGoalCard` measures
+ * pace from: the run began at `start_date`, or at creation for a goal that
+ * predates the field. Null when there is no deadline, which is a real answer —
+ * an open-ended goal has no clock to be ahead or behind.
+ *
+ * Deliberately not clamped. Past 100 the window has closed, and that is the one
+ * reading the caller must not confuse with "all of the time has been used".
+ */
+function clockPercent(goal: Goal): number | null {
+  const from = time(goal.start_date || goal.created_at);
+  const to = time(goal.deadline);
+  if (!from || !to || to <= from) return null;
+  return ((Date.now() - from) / (to - from)) * 100;
+}
+
 /** The figure between nothing and the target, on one line. */
 function Scale({ goal }: { goal: Goal }) {
   const n = goalNumbers(goal);
@@ -264,10 +286,39 @@ function Scale({ goal }: { goal: Goal }) {
   const done = pct(n.progress);
   const short = (value: number) => Math.round(value * 10) / 10;
 
+  /* Divided where the goal is actually divided. A target of five checkpoints is
+     five steps, and a bar drawn as one continuous run says the reader is 20% of
+     the way through something smooth when they are one of five of the way
+     through something lumpy. Only for small whole targets: 2,500 problems is
+     not five hundred segments, it is a bar. */
+  const steps = Number.isInteger(n.target) && n.target >= 2 && n.target <= 12 ? n.target : 0;
+
+  /* The other half of "how far along": how far along the *clock* is. The bar
+     alone cannot answer the question anyone looking at it is asking — 20% is
+     good news in year one of six and bad news in month eleven of twelve — and
+     the goal already carries both dates. */
+  const clock = clockPercent(goal);
+  const elapsed = clock === null ? null : pct(clock);
+
   return (
     <div className="ag-scale">
       <div className="ag-scale-track">
         <i style={{ width: `${done}%` }} />
+        {steps > 1 && (
+          <span className="ag-scale-ticks" aria-hidden="true">
+            {Array.from({ length: steps - 1 }, (_, index) => (
+              <i key={index} style={{ left: `${((index + 1) / steps) * 100}%` }} />
+            ))}
+          </span>
+        )}
+        {elapsed !== null && (
+          <span
+            className="ag-scale-clock"
+            style={{ left: `${elapsed}%` }}
+            aria-hidden="true"
+            title={`Today — ${elapsed}% of the way to the target date`}
+          />
+        )}
         <b style={{ left: `${done}%` }}>{short(n.current).toLocaleString()}</b>
       </div>
       <div className="ag-scale-ends">
@@ -281,6 +332,17 @@ function Scale({ goal }: { goal: Goal }) {
           ? 'Target reached.'
           : `${short(n.target - n.current).toLocaleString()} ${n.label} to go.`}
       </p>
+      {/* What the mark on the bar is. Said as two figures side by side rather
+          than as a verdict: "behind schedule" is a judgement the app does not
+          have the standing to make about somebody's five-year goal, and the two
+          numbers let the reader make it themselves. */}
+      {clock !== null && (
+        <p className="ag-scale-pace">
+          {clock > 100
+            ? `The target date has passed. ${done}% of the work is done.`
+            : `The mark is today: ${elapsed}% of the time, ${done}% of the work.`}
+        </p>
+      )}
     </div>
   );
 }

@@ -277,3 +277,77 @@ describe('choosing the chart', () => {
     expect(screen.getByText(/You chose this chart/)).toBeInTheDocument();
   });
 });
+
+/**
+ * The bar was one length against one target and nothing else, on the panel with
+ * the most room to say more. Two things it can say from what the goal already
+ * carries: how the target is divided, and where the clock is.
+ */
+describe('the basic graph', () => {
+  const milestones = (count: number, done: number) =>
+    Array.from({ length: count }, (_, i) => stone(`m${i}`, i < done ? 'done' : 'pending'));
+
+  it('divides the bar where the target is divided', () => {
+    show({ goal: goal({ chart: 'basic', milestones: milestones(5, 1) }), onChart: vi.fn() });
+
+    // Four dividers make five segments — one per checkpoint, so "1 of 5" is
+    // something the bar shows rather than something the caption claims.
+    expect(document.querySelectorAll('.ag-scale-ticks i')).toHaveLength(4);
+    expect(screen.getByText('4 milestones to go.')).toBeInTheDocument();
+  });
+
+  it('leaves a large target as one bar', () => {
+    show({
+      goal: goal({ chart: 'basic', measure: 'number', target_number: 2500, current_value: 500,
+                   unit: 'problems', milestones: [] }),
+      onChart: vi.fn(),
+    });
+
+    // 2,500 problems is a bar, not two and a half thousand segments.
+    expect(document.querySelectorAll('.ag-scale-ticks i')).toHaveLength(0);
+  });
+
+  it('marks where the clock is, against where the work is', () => {
+    // Half the window gone, one checkpoint of four done.
+    const from = Date.now() - 100 * 86_400_000;
+    const to = Date.now() + 100 * 86_400_000;
+    show({
+      goal: goal({
+        chart: 'basic',
+        start_date: new Date(from).toISOString(),
+        deadline: new Date(to).toISOString(),
+        milestones: milestones(4, 1),
+      }),
+      onChart: vi.fn(),
+    });
+
+    expect(screen.getByText(/50% of the time, 25% of the work/)).toBeInTheDocument();
+    expect(document.querySelector('.ag-scale-clock')).toHaveStyle({ left: '50%' });
+  });
+
+  it('says so when the target date has gone', () => {
+    show({
+      goal: goal({
+        chart: 'basic',
+        start_date: '2020-01-01',
+        deadline: '2021-01-01',
+        milestones: milestones(4, 1),
+      }),
+      onChart: vi.fn(),
+    });
+
+    expect(screen.getByText(/The target date has passed/)).toBeInTheDocument();
+  });
+
+  it('says nothing about a clock a goal does not have', () => {
+    show({
+      goal: goal({ chart: 'basic', deadline: '', milestones: milestones(4, 1) }),
+      onChart: vi.fn(),
+    });
+
+    // An open-ended goal is not ahead or behind. Inventing a window to measure
+    // it against would be the app making the deadline up.
+    expect(screen.queryByText(/of the time,/)).not.toBeInTheDocument();
+    expect(document.querySelector('.ag-scale-clock')).toBeNull();
+  });
+});

@@ -3492,16 +3492,45 @@ button.gx-state-attn.is-on {
    height; this stops the shorter one's content from stretching to fill it, and
    leaves whatever is left over at the foot of the column. */
 .ag-panel > * { flex: none; }
-/* ...except the plot, which is the one visual that reads better bigger. A line
-   over time says the same thing at any height, so on a goal whose focus list
-   runs long it takes the leftover rather than leaving it under the chart.
 
-   Nothing else grows, and nothing centres. A roadmap of one checkpoint centred
-   in a tall panel looks like a card that failed to load; the same row sitting
-   under its heading with the space trailing below just looks like a goal with
-   one checkpoint, which is what it is. The slack belongs at the bottom of the
-   column, in one piece, not wrapped around the content. */
+/* ...except the visual, which takes the leftover.
+
+   The right-hand column is a checklist and it is usually the taller of the two,
+   so the left column had two hundred and fifty empty pixels under a chart drawn
+   at its minimum size — five bars in the top third of the panel and nothing
+   underneath. The chart is the reason the card is open; it should not be the
+   smallest thing on it.
+
+   ## Growth is per row, and capped
+
+   The list grows, and its rows share what it gained, so a chart expands by as
+   much as it has rows to expand with. That is the distinction the earlier
+   version of this rule was reaching for and got backwards by refusing to grow
+   anything: the problem was never that space is *distributed*, it was that a
+   sparse chart stretched to fill a tall panel reads as a rendering fault. A
+   roadmap of one checkpoint must not become one sixty-pixel bar floating in the
+   middle of nothing.
+
+   So each row may grow to about two and a half times its natural height and no
+   further, and the list itself may grow only as far as its rows can use —
+   `--rows` is the count, set on the element by `Bars` and `Roadmap`. Five bars
+   fill the panel; one bar takes one row's worth and leaves the rest of the
+   slack at the foot of the column, in one piece, where it was always meant to
+   be. The cap is what makes "expand to fit" and "do not stretch a lone row"
+   the same rule rather than opposite ones.
+
+   Without the second half of that the caption ends up pinned to the panel's
+   floor with a field of white above it, because a list that grows and then
+   caps its rows has simply moved the empty space inside itself.
+
+   The heatmap and the scale are not in this: both are fixed geometry. The grid
+   is deliberately capped small so the pattern reads rather than the days (see
+   `.ag-heat`), and the scale is one bar whose height is not a variable. Neither
+   has rows to spend the space on, so theirs falls to the foot of the column. */
 .ag-chart { flex: 1 1 auto; }
+.ag-bars, .ag-roadmap { flex: 1 1 auto; }
+.ag-bars { max-height: calc(var(--rows, 5) * 46px + (var(--rows, 5) - 1) * var(--space-2)); }
+.ag-roadmap { max-height: calc(var(--rows, 5) * 68px + (var(--rows, 5) - 1) * 2px); }
 
 .ag-panel-head {
     display: flex;
@@ -3680,7 +3709,13 @@ button.gx-state-attn.is-on {
 }
 
 /* ---------- Roadmap ------------------------------------------------------- */
+/* Rows share the leftover, capped, exactly as the bars do. 68px against a
+   natural ~37px: eight checkpoints fill the panel and one checkpoint stays a
+   row rather than becoming a banner. */
+.ag-roadmap { display: flex; flex-direction: column; gap: 2px; }
+.ag-roadmap > li { flex: 1 1 auto; max-height: 68px; display: flex; }
 .ag-roadmap li button {
+    flex: 1 1 auto;
     width: 100%;
     display: grid;
     grid-template-columns: minmax(0, 1fr) 34% auto;
@@ -3745,6 +3780,13 @@ button.gx-state-attn.is-on {
 /* ---------- Labelled bars: difficulty, subjects, weekdays ----------------- */
 .ag-bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .ag-bars li {
+    /* Shares the panel's leftover with its siblings, up to the cap — see the
+       note by `.ag-chart`. 46px against a natural ~18px, so five bars fill a
+       tall panel and two bars do not become two stripes with a canyon between
+       them. The grid inside stays centred, so what grows is the air around the
+       bar rather than the bar. */
+    flex: 1 1 auto;
+    max-height: 46px;
     display: grid;
     /* Wide enough for the longest label any of the three charts produces — a
        subject name, which "Computer Science" was being cut in half by at 74px.
@@ -3852,6 +3894,41 @@ button.gx-state-attn.is-on {
 }
 .ag-scale-ends { display: flex; justify-content: space-between; font-size: var(--text-2xs); color: var(--gx-faint); }
 .ag-scale-left { margin: 2px 0 0; font-size: var(--text-sm); font-weight: 600; }
+
+/* The divisions of a small whole target, drawn over the fill rather than under
+   it, so the segment you are inside is divided too. The card's own surface
+   colour rather than a line colour: these are gaps in the bar, not marks on
+   it. */
+.ag-scale-ticks { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; }
+.ag-scale-ticks i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-1px);
+    background: var(--gx-card-2);
+}
+
+/* Today, on the same scale as the work. Taller than the track it crosses so it
+   reads as a mark *against* the bar rather than a segment of it, and in the
+   muted grey rather than in `--tone`: the goal's colour is spent on what has
+   been done, and the clock is not an achievement. */
+.ag-scale-clock {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 2px;
+    transform: translateX(-1px);
+    border-radius: var(--radius-full);
+    background: var(--gx-muted);
+}
+
+.ag-scale-pace {
+    margin: 0;
+    font-size: var(--text-2xs);
+    line-height: 1.45;
+    color: var(--gx-faint);
+}
 
 /* ---------- Current focus ------------------------------------------------- */
 .ag-focus {
