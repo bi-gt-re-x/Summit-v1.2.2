@@ -13,6 +13,8 @@ import {
   CheckpointsPanel as GoalCheckpointsPanel,
   EffortPanel as GoalEffortPanel,
   GoalTiles,
+  GoalWorkPanel,
+  LinkCoveragePanel,
   NotesPanel as GoalNotesPanel,
   PaceMapPanel as GoalPaceMapPanel,
   PacePanel as GoalPacePanel,
@@ -25,6 +27,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 export function GoalsTab({ model }: { model: AnalyticsModel }) {
   const {
     goalLead, goalSet, goalPace, goalCheckpoints, goalEffort, liveGoals, tasks, goalRows, goalIdeas,
+    goalWorkRows, goalCoverage,
     /* How much supporting detail was asked for. This tab read the tone and not
        this, so the notes list ran to whatever length the account's goals
        happened to give it at every setting. */
@@ -72,6 +75,28 @@ export function GoalsTab({ model }: { model: AnalyticsModel }) {
         what to aim at next — and they were three more rows of equal-weight
         panels between the reader and the bottom of the page.
       */}
+      {/*
+        The work itself, and the rule that decided it counted.
+
+        Above "What you have reached" deliberately. Everything below this point
+        is built on the phrase "work that counts toward a goal", and the tab
+        used every figure that phrase produces without once saying what it
+        meant — so a reader could watch a goal's total move without having
+        filed anything there and had no way to find out why. The legend goes
+        before the charts that use it.
+      */}
+      <section className="ax-section">
+        <PanelGroup
+          title="The work behind the goals"
+          note="What you finished toward each, and how it came to count"
+        >
+          <div className="ax-grid ax-grid-halves-even">
+            <GoalWorkPanel rows={goalWorkRows} />
+            <LinkCoveragePanel coverage={goalCoverage} />
+          </div>
+        </PanelGroup>
+      </section>
+
       <section className="ax-section">
         <PanelGroup
           title="What you have reached"

@@ -19,6 +19,8 @@ import { RecurrencePicker } from './RecurrencePicker';
 import { TimePicker } from './TimePicker';
 import { SubjectPicker } from '@/components/SubjectPicker';
 import { useSubjects } from '@/hooks/useSubjects';
+import { useLinkableGoals } from '@/hooks/useLinkableGoals';
+import { GoalField, MATCH_BY_NAME } from '@/components/Tasks/GoalField';
 import { MAX_TASK_XP, MIN_TASK_XP } from '@/utils/priority';
 import type { Scope } from '@/hooks/useCalendarStore';
 import type { RecurrenceType } from '@/utils/calendarStore';
@@ -34,6 +36,12 @@ export interface TaskDraft {
   xp: number;
   /** The chosen subject's id, or null. Optional on every task. */
   subject: string | null;
+  /**
+   * The goal this is for, or '' to let the matcher read the name. Optional on
+   * every task, and only offered when the account has an outcome goal to
+   * offer — see `GoalField`.
+   */
+  goalId: string;
   recurrence: RecurrenceType;
   recurrenceDays: number[];
 }
@@ -70,9 +78,11 @@ export function TaskModal({
 }: TaskModalProps) {
   const editing = Boolean(initial);
   const subjects = useSubjects(username ?? null);
+  const goals = useLinkableGoals(username ?? null);
 
   const [name, setName] = useState(initial?.name ?? defaults?.name ?? '');
   const [subject, setSubject] = useState<string | null>(initial?.subject ?? null);
+  const [goalId, setGoalId] = useState(MATCH_BY_NAME);
   const [startTime, setStartTime] = useState(initial?.startTime ?? defaults?.startTime ?? '');
   const [endTime, setEndTime] = useState(initial?.endTime ?? defaults?.endTime ?? '');
   const [xp, setXp] = useState(initial?.xp ?? MIN_TASK_XP);
@@ -107,6 +117,7 @@ export function TaskModal({
         endTime,
         xp,
         subject,
+        goalId,
         recurrence: allowRecurrence ? recurrence : 'none',
         recurrenceDays: allowRecurrence ? days : [],
       },
@@ -168,6 +179,14 @@ export function TaskModal({
             value={subject}
             onChange={setSubject}
           />
+
+          {/* Only on the way in. An edit here rewrites the block's rows (see
+              `saveTask`), and offering the field on that path would mean a
+              reader changing a block's end time silently re-deciding what it
+              counts toward. Changing a link is the row menu's job. */}
+          {!editing && (
+            <GoalField goals={goals} value={goalId} onChange={setGoalId} id="calGoal" hint />
+          )}
 
           <div className="form-group">
             <label htmlFor="taskXpSlider">

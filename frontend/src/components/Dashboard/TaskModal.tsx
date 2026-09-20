@@ -21,9 +21,11 @@
  */
 import { useEffect, useState } from 'react';
 import { SubjectPicker } from '@/components/SubjectPicker';
+import { GoalField, MATCH_BY_NAME } from '@/components/Tasks/GoalField';
 import { useSubjects } from '@/hooks/useSubjects';
 import { MAX_TASK_XP, MIN_TASK_XP, xpToPriority } from '@/utils/priority';
 import type { NewTask } from '@/services/tasks';
+import type { Goal } from '@/types';
 import { Icon } from '@/components/Icon';
 import { Button } from '@/components/ui';
 
@@ -36,6 +38,8 @@ export interface TaskModalProps {
   defaultXp?: number;
   /** Used only while the XP slider is untouched — see `submit`. */
   defaultPriority?: NewTask['priority'];
+  /** The account's goals, for the optional "counts toward" field. */
+  goals?: Goal[];
   onClose: () => void;
   onAdd: (task: NewTask & { timer_duration?: number }) => void;
 }
@@ -56,6 +60,7 @@ export function TaskModal({
   username,
   defaultXp = MIN_TASK_XP,
   defaultPriority = 'medium',
+  goals = [],
   onClose,
   onAdd,
 }: TaskModalProps) {
@@ -66,6 +71,7 @@ export function TaskModal({
   const opening = Math.max(MIN_XP, Math.min(MAX_XP, Math.round(defaultXp)));
   const [name, setName] = useState('');
   const [subject, setSubject] = useState<string | null>(null);
+  const [goalId, setGoalId] = useState(MATCH_BY_NAME);
   const [xp, setXp] = useState(opening);
   const [panel, setPanel] = useState<Panel>('none');
   const [hours, setHours] = useState(0);
@@ -81,6 +87,7 @@ export function TaskModal({
     if (!open) return;
     setName('');
     setSubject(null);
+    setGoalId(MATCH_BY_NAME);
     setXp(opening);
     setPanel('none');
     setHours(0);
@@ -146,6 +153,9 @@ export function TaskModal({
     // Left out entirely when nothing was chosen, rather than sent as null: the
     // field is optional and an absent key is what "not answered" looks like.
     if (subject) task.subject = subject;
+    // Same rule as the subject: absent means "not answered", which the backend
+    // reads as "let the matcher decide from the name".
+    if (goalId) task.goal_id = goalId;
     // Stored in minutes, entered as hours + minutes.
     if (panel === 'timer') {
       const total = hours * 60 + minutes;
@@ -185,6 +195,14 @@ export function TaskModal({
             subjects={subjects}
             value={subject}
             onChange={setSubject}
+          />
+
+          <GoalField
+            goals={goals}
+            value={goalId}
+            onChange={setGoalId}
+            id="dashGoal"
+            hint
           />
 
           <div style={{ marginTop: '20px', textAlign: 'left' }}>

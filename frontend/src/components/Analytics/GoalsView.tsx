@@ -34,6 +34,7 @@ import type {
   PacePoint,
   ReachedMonth,
 } from '@/utils/goalSuggest';
+import type { GoalWorkRow, LinkCoverage } from '@/utils/goalWork';
 import type { Goal, Task } from '@/types';
 import { goalHealth, goalPace } from '@/utils/goalHealth';
 import { goalNumbers } from '@/components/Goals/numbers';
@@ -777,6 +778,184 @@ export function EffortPanel({ rows }: { rows: EffortRow[] }) {
           {Math.round(worst.effort * 100)}% of your goal work.
         </p>
       )}
+    </Panel>
+  );
+}
+
+// --------------------------------------------------------------------------
+// The work itself
+// --------------------------------------------------------------------------
+/** "2,410" — the figures here are counts and XP, never fractions. */
+const whole = (value: number) => Math.round(value).toLocaleString();
+
+/** "4h 20m", "35m", "—". Recorded time only; most tasks carry none. */
+function spent(minutes: number): string {
+  if (minutes <= 0) return '—';
+  const hours = Math.floor(minutes / 60);
+  const rest = Math.round(minutes % 60);
+  if (hours === 0) return `${rest}m`;
+  return rest === 0 ? `${hours}h` : `${hours}h ${rest}m`;
+}
+
+/** "today", "yesterday", "12 days ago", "not yet". */
+function worked(days: number | null): string {
+  if (days === null) return 'not yet';
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  return `${days} days ago`;
+}
+
+/**
+ * What has actually been done toward each goal.
+ *
+ * The panel the tab was missing: everything else here is a rate, a share or a
+ * projection, and none of them say what the reader did. A goal at 20% with
+ * four finished tasks behind it and one with forty are different situations
+ * and every other panel drew them the same.
+ *
+ * The chosen/matched split is on the row rather than in a tooltip for the
+ * reason the effort panel puts its count there: a figure whose confidence
+ * varies has to carry the thing that varies it. Forty tasks the reader filed
+ * themselves is a fact; forty the matcher inferred is a reading.
+ */
+export function GoalWorkPanel({ rows }: { rows: GoalWorkRow[] }) {
+  if (rows.length === 0) {
+    return (
+      <Panel title="What you have done toward each">
+        <p className="ax-empty">No live goals to account for yet.</p>
+      </Panel>
+    );
+  }
+
+  const busiest = Math.max(...rows.map((row) => row.finished), 1);
+  const idle = rows.filter((row) => row.finished === 0);
+
+  return (
+    <Panel title="What you have done toward each">
+      <ul className="ax-goal-work">
+        {rows.map((row) => (
+          <li key={row.id}>
+            <div className="ax-goal-work-head">
+              <span className="ax-goal-work-name" title={row.title}>
+                {row.title}
+              </span>
+              <span className="ax-goal-work-when">{worked(row.daysSince)}</span>
+            </div>
+            {/* Length is the count against the busiest goal, so the row is
+                readable as a row and the column is readable as a comparison. */}
+            <span className="ax-goal-work-bar">
+              <i
+                className={row.finished === 0 ? 'is-none' : undefined}
+                style={{ width: `${(row.finished / busiest) * 100}%` }}
+              />
+            </span>
+            <dl className="ax-goal-work-figures">
+              <div>
+                <dt>Finished</dt>
+                <dd>{whole(row.finished)}</dd>
+              </div>
+              <div>
+                <dt>XP</dt>
+                <dd>{whole(row.xp)}</dd>
+              </div>
+              <div>
+                <dt>Tracked</dt>
+                <dd>{spent(row.minutes)}</dd>
+              </div>
+              <div>
+                {/* Only where there is something to split. "0 chosen" under a
+                    goal with no work is a second way of saying nothing. */}
+                <dt>You filed</dt>
+                <dd>
+                  {row.finished === 0 ? '—' : `${whole(row.chosen)} of ${whole(row.finished)}`}
+                </dd>
+              </div>
+            </dl>
+          </li>
+        ))}
+      </ul>
+      {idle.length > 0 && (
+        <p className="ax-muted ax-goal-foot">
+          {idle.length === 1 ? (
+            <>
+              <strong>{idle[0]!.title}</strong> has nothing finished against it yet.
+            </>
+          ) : (
+            <>
+              {idle.length} goals have nothing finished against them yet.
+            </>
+          )}{' '}
+          A task counts toward a goal when you file it there or when its name says so.
+        </p>
+      )}
+    </Panel>
+  );
+}
+
+// --------------------------------------------------------------------------
+// How work reaches a goal at all
+// --------------------------------------------------------------------------
+/**
+ * The counting rule, made visible.
+ *
+ * Every other figure on this tab is built on "work that counts toward a goal",
+ * and until now the page never said what that meant. The reader could see a
+ * goal's total move without having filed anything there and had no way to find
+ * out why — the matcher is real and it is invisible, which is the worst
+ * combination for a number somebody is meant to trust.
+ *
+ * So this panel is the legend for the rest of the tab: three counts, in the
+ * order the app decides them, and a sentence saying that the third is normal.
+ * `loose` is deliberately not styled as a problem. Most of anybody's finished
+ * work belongs to no goal, and a page that treats every unlinked task as
+ * something to fix is a page asking its reader to file "email Mr Chen" against
+ * a five-year plan.
+ */
+export function LinkCoveragePanel({ coverage }: { coverage: LinkCoverage }) {
+  if (coverage.finished === 0) {
+    return (
+      <Panel title="How work reaches a goal">
+        <p className="ax-empty">Nothing finished yet, so nothing has been counted either way.</p>
+      </Panel>
+    );
+  }
+
+  const share = (value: number) => (value / coverage.finished) * 100;
+  const parts = [
+    { key: 'chosen', label: 'You filed it there', value: coverage.chosen },
+    { key: 'matched', label: 'Matched from the name', value: coverage.matched },
+    { key: 'loose', label: 'Counts toward nothing', value: coverage.loose },
+  ];
+
+  return (
+    <Panel title="How work reaches a goal">
+      <p className="ax-goal-cover-lead">
+        <strong>{Math.round(coverage.share * 100)}%</strong> of your finished work is aimed at
+        a goal.
+      </p>
+
+      <span className="ax-goal-cover-bar" aria-hidden="true">
+        {parts.map((part) => (
+          <i key={part.key} className={`is-${part.key}`} style={{ width: `${share(part.value)}%` }} />
+        ))}
+      </span>
+
+      <ul className="ax-goal-cover-key">
+        {parts.map((part) => (
+          <li key={part.key}>
+            <i className={`is-${part.key}`} aria-hidden="true" />
+            <span className="ax-goal-cover-label">{part.label}</span>
+            <strong>{whole(part.value)}</strong>
+          </li>
+        ))}
+      </ul>
+
+      <p className="ax-muted ax-goal-foot">
+        Choosing a goal when you write a task down is the definite version and nothing
+        overrides it. Leave it and the name decides: a task called after a goal, or filed
+        under a subject the goal is about, is counted toward it. Anything the name does not
+        reach counts toward nothing, which is what most work is.
+      </p>
     </Panel>
   );
 }

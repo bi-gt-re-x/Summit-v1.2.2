@@ -13,13 +13,16 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { SubjectPicker } from '@/components';
+import { GoalField, MATCH_BY_NAME } from './GoalField';
 import type { Subject } from '@/services/subjects';
 import type { NewTask } from '@/services/tasks';
-import type { Task } from '@/types';
+import type { Goal, Task } from '@/types';
 import { MAX_TASK_XP, MIN_TASK_XP, XP_BANDS, xpToBand, xpToPriority } from '@/utils/priority';
 
 export interface ComposerProps {
   subjects: Subject[];
+  /** The account's goals, for the optional "counts toward" field. */
+  goals: Goal[];
   busy: boolean;
   onAdd: (task: NewTask) => void;
   /** What a new task is worth before the reader changes it. From Settings. */
@@ -30,11 +33,12 @@ export interface ComposerProps {
   defaultPriority: Task['priority'];
 }
 
-export function Composer({ subjects, busy, onAdd, defaultXp, defaultPriority }: ComposerProps) {
+export function Composer({ subjects, goals, busy, onAdd, defaultXp, defaultPriority }: ComposerProps) {
   const [name, setName] = useState('');
   const [xp, setXp] = useState(defaultXp);
   const [due, setDue] = useState('');
   const [subject, setSubject] = useState<string | null>(null);
+  const [goalId, setGoalId] = useState(MATCH_BY_NAME);
   const [open, setOpen] = useState(false);
   const field = useRef<HTMLInputElement>(null);
 
@@ -69,6 +73,10 @@ export function Composer({ subjects, busy, onAdd, defaultXp, defaultPriority }: 
       xp_reward: worth,
       due_date: due || null,
       subject,
+      // Absent rather than empty when the reader left it alone: the backend
+      // reads "no goal_id" as "let the matcher decide", and an empty string
+      // would be a link to a goal that does not exist.
+      ...(goalId ? { goal_id: goalId } : {}),
     });
     // The name is the only field cleared: the rest are almost always the same
     // for the next one, and re-choosing them every time is the friction this
@@ -170,6 +178,10 @@ export function Composer({ subjects, busy, onAdd, defaultXp, defaultPriority }: 
               id="tk-composer"
             />
           </div>
+
+          {/* Kept, like the subject and the difficulty, when the name clears:
+              somebody adding three tasks for one goal chooses it once. */}
+          <GoalField goals={goals} value={goalId} onChange={setGoalId} id="tk-composer" />
         </div>
       )}
     </form>

@@ -25,6 +25,7 @@ import { summaryFigures } from '@/utils/growthSummary';
 import { DETAIL_RULES } from '@/utils/analyticsPrefs';
 import { goalsOverview } from '@/utils/goalAnalytics';
 import { checkpointsByMonth, effortAgainstPriority, paceMap } from '@/utils/goalSuggest';
+import { goalWork, linkCoverage } from '@/utils/goalWork';
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
@@ -108,6 +109,8 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     goalPace: paceMap([], () => 'on-track'),
     goalEffort: effortAgainstPriority([], []),
     goalCheckpoints: checkpointsByMonth([]),
+    goalWorkRows: goalWork([], []),
+    goalCoverage: linkCoverage([]),
     goalRows: [],
     /* No goals and no tasks, so no goal has a shortfall to attribute. A test
        that wants a limiter on a tab passes one in. */

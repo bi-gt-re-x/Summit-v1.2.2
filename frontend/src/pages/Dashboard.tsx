@@ -648,6 +648,7 @@ export default function Dashboard() {
         username={username}
         defaultXp={prefs.default_xp}
         defaultPriority={prefs.default_priority}
+        goals={goals}
         onClose={() => setAdding(false)}
         onAdd={(task) => void addTask(task)}
       />

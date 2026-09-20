@@ -7846,3 +7846,122 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     line-height: 1.5;
     color: var(--ax-faint);
 }
+
+/* ---------- The work behind the goals ------------------------------------ */
+/* `GoalWorkPanel` — what was finished toward each live goal. A row is a name,
+   when it was last worked, one bar for the count and four small figures. The
+   bar is the count against the busiest goal, so the column reads as a
+   comparison while each row still reads on its own. */
+.ax-goal-work { margin: 0; padding: 0; list-style: none; }
+.ax-goal-work li {
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--ax-line-soft);
+}
+.ax-goal-work li:last-child { border-bottom: 0; }
+.ax-goal-work-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-width: 0;
+}
+.ax-goal-work-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--ax-text);
+}
+.ax-goal-work-when {
+    flex: none;
+    font-size: var(--text-2xs);
+    color: var(--ax-faint);
+}
+.ax-goal-work-bar {
+    display: block;
+    height: 6px;
+    margin: var(--space-1) 0;
+    border-radius: var(--radius-full);
+    background: var(--ax-line);
+    overflow: hidden;
+}
+.ax-goal-work-bar i {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ax-green);
+}
+/* A goal with nothing finished keeps its row and its bar, at zero. Kept as a
+   rule rather than as an absent element so the row's height does not change
+   with its content — a list that reflows around its emptiest member draws the
+   eye to the wrong thing. */
+.ax-goal-work-bar i.is-none { background: transparent; }
+.ax-goal-work-figures {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin: 0;
+}
+.ax-goal-work-figures dt {
+    font-size: var(--text-2xs);
+    color: var(--ax-faint);
+}
+.ax-goal-work-figures dd {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ax-text);
+}
+
+/* `LinkCoveragePanel` — the counting rule, as one stacked bar and a key.
+   Three colours and they are not the series palette: this is not a measure,
+   it is a legend for how every other figure on the tab was arrived at. Green
+   for what the reader said, violet for what the app worked out, and the line
+   colour for what counts toward nothing — which is the majority of anybody's
+   work and must not be drawn as a warning. */
+.ax-goal-cover-lead {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--ax-muted);
+}
+.ax-goal-cover-lead strong { color: var(--ax-text); font-size: var(--text-lg); }
+.ax-goal-cover-bar {
+    display: flex;
+    height: 10px;
+    border-radius: var(--radius-full);
+    background: var(--ax-line);
+    overflow: hidden;
+}
+.ax-goal-cover-bar i { display: block; height: 100%; }
+.ax-goal-cover-bar i.is-chosen { background: var(--ax-green); }
+.ax-goal-cover-bar i.is-matched { background: var(--ax-violet); }
+.ax-goal-cover-bar i.is-loose { background: transparent; }
+.ax-goal-cover-key {
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+.ax-goal-cover-key li {
+    display: grid;
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+}
+.ax-goal-cover-key i {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--ax-line);
+}
+.ax-goal-cover-key i.is-chosen { background: var(--ax-green); }
+.ax-goal-cover-key i.is-matched { background: var(--ax-violet); }
+.ax-goal-cover-key i.is-loose { background: var(--ax-line); }
+.ax-goal-cover-label { color: var(--ax-muted); }
+.ax-goal-cover-key strong { font-variant-numeric: tabular-nums; color: var(--ax-text); }

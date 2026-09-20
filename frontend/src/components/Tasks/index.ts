@@ -9,6 +9,8 @@
  */
 export { Composer } from './Composer';
 export type { ComposerProps } from './Composer';
+export { GoalField, linkableGoals, MATCH_BY_NAME } from './GoalField';
+export type { GoalFieldProps } from './GoalField';
 export { DayComplete } from './DayComplete';
 export type { DayCompleteProps } from './DayComplete';
 export { TaskRow } from './TaskRow';

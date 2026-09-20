@@ -78,6 +78,7 @@ import {
 import type { MilestoneDraftRequest } from '@/components/Goals';
 import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import {
+  forgetLinkableGoals,
   useAuth,
   useDocumentTitle,
   usePageEntrance,
@@ -171,6 +172,13 @@ export default function Goals() {
       if (result.success) {
         setList(result.goals ?? []);
         setError(null);
+        /* The calendar's dialogs hold their own cached copy of this list, for
+           the "counts toward" field — see hooks/useLinkableGoals. Every create,
+           edit and delete on this page ends in a re-read, so this is the one
+           line that keeps that copy honest without a subscription. Dropped
+           rather than replaced: the cache stores only the linkable subset and
+           rebuilding it here would put that filter in two places. */
+        forgetLinkableGoals();
       } else {
         setError(result.message);
       }

@@ -104,6 +104,7 @@ import {
   paceMap,
   suggestGoals,
 } from '@/utils/goalSuggest';
+import { goalWork, linkCoverage } from '@/utils/goalWork';
 import {
   qualityBands,
   qualityGrid,
@@ -652,6 +653,14 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
   const goalEffort = useMemo(() => effortAgainstPriority(liveGoals, tasks), [liveGoals, tasks]);
   const goalCheckpoints = useMemo(() => checkpointsByMonth(liveGoals), [liveGoals]);
 
+  /* What was actually done toward each goal, and how the counting reached it.
+     Unwindowed, like the effort figures beside them: "what have I done toward
+     this" is a question about the goal's whole run, and a goal set eight
+     months ago would otherwise read as untouched every time the reader picked
+     the 30-day lens. */
+  const goalWorkRows = useMemo(() => goalWork(liveGoals, tasks), [liveGoals, tasks]);
+  const goalCoverage = useMemo(() => linkCoverage(tasks), [tasks]);
+
   /**
    * The dozen words at the head of the tab.
    *
@@ -933,6 +942,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     lens,
     goalPace,
     goalEffort,
+    goalWorkRows,
+    goalCoverage,
     goalCheckpoints,
     goalLead,
     namedSubjects,

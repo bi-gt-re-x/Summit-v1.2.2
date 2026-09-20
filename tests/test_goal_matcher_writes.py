@@ -332,3 +332,70 @@ def test_deleting_the_linked_goal_leaves_no_trace_of_it(client):
 
     assert 'goal_id' not in db.find_row('tasks', task, user_id='tester')
     assert 'goal_ids' not in by_id(client.get('/api/tasks').json()['tasks'])[task]
+
+
+# --------------------------------------------------------------------------
+# The three ways a new task reaches a goal
+# --------------------------------------------------------------------------
+# The rule the forms now state out loud: choose a goal and the task is filed
+# there; leave it and the name decides; if the name reaches nothing, the task
+# counts toward nothing. All three were already true — `goal_id` has been on
+# CreateTask since the column existed and the matcher has always read the name
+# — but nothing that creates a task offered the first, so the only route to it
+# was the row menu afterwards. These pin the three apart, because the field
+# on those forms is a promise about which of them happens.
+def test_choosing_a_goal_files_the_task_there(client):
+    goal = make_goal(client, 'Reach USACO Gold', subjects='computer_science')
+    task = make_task(client, 'Email Mr Chen', goal_id=goal)
+
+    row = db.find_row('tasks', task, user_id='tester')
+    assert row['goal_id'] == goal
+    # And it counts: the stored mapping carries the chosen goal even though
+    # nothing about the title says so.
+    assert goal in mapping(task).goal_ids
+
+
+def test_leaving_it_alone_lets_the_name_decide(client):
+    goal = make_goal(client, 'Reach USACO Gold', subjects='computer_science')
+    task = make_task(client, 'USACO Gold practice set')
+
+    row = db.find_row('tasks', task, user_id='tester')
+    # No hand-made link — the reader did not make one.
+    assert not row.get('goal_id')
+    assert mapping(task).goal_ids == (goal,)
+
+
+def test_a_name_that_reaches_nothing_counts_toward_nothing(client):
+    make_goal(client, 'Reach USACO Gold', subjects='computer_science')
+    task = make_task(client, 'Email Mr Chen')
+
+    row = db.find_row('tasks', task, user_id='tester')
+    assert not row.get('goal_id')
+    # Stored as matched-to-nothing rather than left blank — see step 7 above,
+    # which is what stops it being re-asked on every read.
+    assert mapping(task).goal_ids == ()
+
+
+def test_a_chosen_goal_outranks_the_name_without_silencing_it(client):
+    """What choosing actually buys, which is not exclusivity.
+
+    A task filed against one goal and named after another counts toward both,
+    because a task counting toward two goals is work on both — that is the
+    model everything downstream is built on (`goalIdsOf` returns a list, and
+    the analytics tab's effort split counts a shared task once for each).
+
+    What the choice buys is rank and permanence: it is stored `explicit` at the
+    top of the list, and nothing the matcher later decides removes it. A
+    rematch can drop the rule-based match beside it; it cannot drop this one.
+    """
+    usaco = make_goal(client, 'Reach USACO Gold', subjects='computer_science')
+    violin = make_goal(client, 'Pass RCM Level 8 violin', subjects='music')
+    task = make_task(client, 'USACO Gold practice set', goal_id=violin)
+
+    assert db.find_row('tasks', task, user_id='tester')['goal_id'] == violin
+
+    matches = mapping(task).matches
+    assert matches[0].goal_id == violin
+    assert matches[0].source == 'explicit'
+    # And the name is still heard: the task is work on the coding goal too.
+    assert usaco in mapping(task).goal_ids

@@ -284,6 +284,9 @@ export function useBlockActions(
               due_date: dueDate,
               show_on_calendar: true,
               subject: draft.subject,
+              // Absent when the reader left the field alone, which is what
+              // hands the task to the matcher. See `GoalField`.
+              ...(draft.goalId ? { goal_id: draft.goalId } : {}),
             })
             .then((result) => {
               if (result.success) {

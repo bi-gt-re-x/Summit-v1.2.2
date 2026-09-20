@@ -93,6 +93,8 @@ function goalsModel(tone: keyof typeof TONE_RULES): AnalyticsModel {
     goalPace: { points: [], undated: [] },
     goalCheckpoints: [],
     goalEffort: [],
+    goalWorkRows: [],
+    goalCoverage: { finished: 0, chosen: 0, matched: 0, loose: 0, share: 0 },
     liveGoals: [],
     tasks: [],
     goalRows: [],

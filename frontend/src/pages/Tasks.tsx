@@ -1043,6 +1043,7 @@ export default function Tasks() {
             {composing && (
               <Composer
                 subjects={subjects}
+                goals={linkable}
                 busy={saving}
                 onAdd={add}
                 defaultXp={prefs.default_xp}
