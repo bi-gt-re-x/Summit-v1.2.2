@@ -74,15 +74,25 @@ rewritten is the web layer above them.
 never decides what an account's XP, level or streak is. Scripts fetch with
 `cache: 'no-store'` so a second tab can't show a stale number.
 
-**Writes are atomic.** `database/connection.py` replaces a table's rows inside
-one transaction, because the threaded dev server can read a table on one
-request while another request is rewriting it. A reader sees all of the old
-rows or all of the new ones.
+**Writes are atomic.** Every write in `database/connection.py` runs inside one
+transaction, because the threaded dev server can read a table on one request
+while another request is writing it. A reader sees all of the old rows or all
+of the new ones.
+
+**Writes are scoped to the rows that changed.** The module was built on
+`read_table` + `write_table` — read every row, change one, write them all back
+— and that pair is now reserved for bulk saves and seeding. The request paths
+go through `insert_row`, `update_row`, `find_row`, `rows_for`, `columns_for`
+and the per-table upserts beside them, which touch one account's rows and name
+the columns they read. Each of those replaced a whole-table rewrite that had
+been costing a page view thousands of statements.
 
 **Reads can write.** A stale streak is decayed and self-tracking goals are
-re-synced when they are read, and asking for the report card files a snapshot
+re-synced when they are read, and asking for the report card files six rows
 into `metric_snapshots`. So the database changes as the app is used, with no
-user action — `data/sql/` does not.
+user action — `data/sql/` does not. A read that writes writes *little*: that
+is the rule those paths are held to, and tests/test_report_card.py and
+tests/test_achievement_earning.py count the statements to keep it.
 
 **The theme is server-rendered.** `<html data-theme="...">` is decided from the
 `theme` cookie before a byte is sent, so navigation never flashes the wrong

@@ -225,7 +225,15 @@ def test_a_top_band_snapshot_can_be_written(client):
 # account's whole history twice in one request. The saving is only real if the
 # card is the same card either way.
 def test_the_card_is_the_same_whoever_read_the_rows(client):
-    """Handed the rows, or reading them itself: one answer."""
+    """Handed the rows, or reading them itself: one answer.
+
+    Both spellings of "handed": the narrowed columns the achievements page
+    actually passes, and every column, which is what a caller holding rows read
+    for some other purpose would have. A card that needs a column outside
+    SCORED_TASK_FIELDS or SCORED_LEDGER_FIELDS fails the first and passes the
+    second, which is the failure worth catching — the narrow read is the one on
+    the page.
+    """
     today = date.today()
     for back in range(0, 12):
         when = (today - timedelta(days=back)).isoformat()
@@ -237,13 +245,22 @@ def test_the_card_is_the_same_whoever_read_the_rows(client):
     from backend.tracking import xp as xp_tracking
 
     own = analytics.ratings('tester', record=False)
-    handed = analytics.ratings(
+    focus_history = focus_tracking.history_for('tester')
+
+    narrowed = analytics.ratings(
         'tester', record=False,
         tasks=db.columns_for('tasks', 'tester', analytics.SCORED_TASK_FIELDS),
-        events=xp_tracking.events_for('tester'),
-        focus_history=focus_tracking.history_for('tester'))
+        events=db.columns_for('xp_events', 'tester', analytics.SCORED_LEDGER_FIELDS),
+        focus_history=focus_history)
 
-    assert own == handed
+    whole = analytics.ratings(
+        'tester', record=False,
+        tasks=db.tasks_for('tester'),
+        events=xp_tracking.events_for('tester'),
+        focus_history=focus_history)
+
+    assert own == narrowed
+    assert own == whole
 
 
 def test_the_focus_trend_is_the_windowed_history(client):
@@ -309,3 +326,143 @@ def test_the_fast_date_parse_agrees_with_the_slow_one():
     ]
     for value in values:
         assert xp_tracking.parse_day(value) == slow(value), value
+
+
+# --------------------------------------------------------------------------
+# Filing the day's grades is six rows
+# --------------------------------------------------------------------------
+# Reading the report card files it, so `/api/get_growth_ratings` is a read that
+# leaves six rows behind. It used to leave them by reading every snapshot ever
+# taken, dropping the six being replaced and writing all of them back — 2,316
+# INSERTs on the author's database to store six rows, on a page anyone can
+# refresh, growing by six rows a day per account for ever.
+def _statements(work):
+    """Every statement `work` runs, upper-cased on one line."""
+    seen = []
+    real = db.connect
+
+    def counting():
+        con = real()
+        con.set_trace_callback(lambda sql: seen.append(' '.join(str(sql).split()).upper()))
+        return con
+
+    db.connect = counting
+    try:
+        work()
+    finally:
+        db.connect = real
+    return seen
+
+
+def _a_card(score=60):
+    """A card in the shape `save_snapshot` reads."""
+    block = lambda: {'score': score, 'grade': analytics.grade_for_score(score),
+                     'trend': {'direction': 'flat', 'pct': 0}}
+    return {'overall': block(),
+            'metrics': {name: block() for name in analytics.METRICS}}
+
+
+def test_filing_a_day_writes_six_rows_however_long_the_history(client):
+    """The property the fix is about. A write that rewrites the history shows
+    up here as a statement count that grows with the number of days stored."""
+    for day in range(1, 60):
+        analytics.save_snapshot('tester', _a_card(), day='2026-01-{:02d}'.format(
+            (day % 28) + 1) if day < 28 else '2026-02-{:02d}'.format((day % 28) + 1))
+    assert len(db.rows_for('metric_snapshots', 'tester')) > 100
+
+    writes = [sql for sql in _statements(
+        lambda: analytics.save_snapshot('tester', _a_card(), day='2026-03-01'))
+        if sql.startswith(('INSERT', 'UPDATE', 'DELETE'))]
+    assert len(writes) == 6, writes
+    assert not any(sql.startswith('DELETE') for sql in writes), writes
+
+
+def test_reading_the_card_twice_in_a_day_replaces_that_day(client):
+    """Not appends, and not a delete followed by an insert: the day's six rows
+    are replaced in place, so a reader refreshing the page never sees their own
+    history briefly missing a day."""
+    analytics.save_snapshot('tester', _a_card(40), day='2026-03-01')
+    analytics.save_snapshot('tester', _a_card(80), day='2026-03-01')
+
+    stored = [r for r in db.rows_for('metric_snapshots', 'tester')
+              if r['date'] == '2026-03-01']
+    assert len(stored) == 6, stored
+    assert {r['score'] for r in stored} == {80}, stored
+    assert {r['grade'] for r in stored} == {analytics.grade_for_score(80)}
+
+
+def test_filing_a_day_leaves_every_other_day_and_account_alone(client, stranger):
+    """The whole-table rewrite made that a property of the rewrite being
+    correct. It is now a property of the write being scoped to six keys."""
+    analytics.save_snapshot('tester', _a_card(40), day='2026-03-01')
+    analytics.save_snapshot('stranger', _a_card(50), day='2026-03-01')
+    analytics.save_snapshot('tester', _a_card(60), day='2026-03-02')
+
+    analytics.save_snapshot('tester', _a_card(90), day='2026-03-02')
+
+    def scores(user, day):
+        return {r['score'] for r in db.rows_for('metric_snapshots', user)
+                if r['date'] == day}
+
+    assert scores('tester', '2026-03-02') == {90}
+    assert scores('tester', '2026-03-01') == {40}
+    assert scores('stranger', '2026-03-01') == {50}
+
+
+def test_the_detail_survives_the_round_trip(client):
+    """`detail` is a JSON column and the figures behind each score live in it.
+    A write that stores it as the string "{'score': ...}" reads back as a
+    different thing, and nothing downstream would say so."""
+    card = _a_card(70)
+    card['metrics']['focus']['focused_minutes'] = 53
+    card['metrics']['focus']['goal_minutes'] = 390
+    analytics.save_snapshot('tester', card, day='2026-03-01')
+
+    focus = [r for r in analytics.history('tester', metric='focus')
+             if r['date'] == '2026-03-01'][0]
+    assert focus['detail']['focused_minutes'] == 53
+    assert focus['detail']['goal_minutes'] == 390
+    assert focus['detail']['trend'] == {'direction': 'flat', 'pct': 0}
+    assert 'score' not in focus['detail'] and 'grade' not in focus['detail']
+
+
+def test_the_history_is_one_account_s_oldest_first(client, stranger):
+    """`history` read the whole table and filtered in Python. Scoped in SQL, it
+    has to return the same list in the same order — and still only one
+    account's, which is what the page is asking for."""
+    analytics.save_snapshot('stranger', _a_card(10), day='2026-03-02')
+    for day, score in (('2026-03-03', 30), ('2026-03-01', 20), ('2026-03-02', 25)):
+        analytics.save_snapshot('tester', _a_card(score), day=day)
+
+    overall = analytics.history('tester', metric='overall')
+    assert [r['date'] for r in overall] == ['2026-03-01', '2026-03-02', '2026-03-03']
+    assert [r['score'] for r in overall] == [20, 25, 30]
+    assert all(r['user_id'] == 'tester' for r in analytics.history('tester'))
+
+    everything = analytics.history('tester')
+    assert everything == sorted(everything, key=lambda r: (r['date'], r['metric']))
+    assert len(everything) == 18
+
+
+def test_reading_the_report_card_reads_each_table_once(client):
+    """The endpoint as a whole: four reads and six writes, whatever is stored.
+    A `SELECT *` creeping back onto it shows up as the column list changing."""
+    finish(client, xp=40)
+    client.get('/api/get_growth_ratings')
+
+    statements = _statements(lambda: client.get('/api/get_growth_ratings'))
+    reads = [sql for sql in statements if sql.startswith('SELECT')]
+    for table in ('TASKS', 'XP_EVENTS', 'FOCUS_DAYS'):
+        hits = [sql for sql in reads if 'FROM "{}"'.format(table) in sql]
+        assert len(hits) == 1, (table, hits)
+
+    # And the two big ones name their columns. `focus_days` is exempt and
+    # stays exempt: it has four columns and the score reads all four, so
+    # `SELECT *` there is the column list, spelled shorter.
+    for table in ('TASKS', 'XP_EVENTS'):
+        hit = next(sql for sql in reads if 'FROM "{}"'.format(table) in sql)
+        assert not hit.startswith('SELECT * FROM'), hit
+
+    writes = [sql for sql in statements
+              if sql.startswith(('INSERT', 'UPDATE', 'DELETE'))]
+    assert len(writes) == 6, writes

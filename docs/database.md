@@ -78,10 +78,16 @@ points at nothing rolls the whole write back.
 or all of the new. WAL is on, so a reader never blocks on the writer.
 
 **Reads write.** `GET /api/get_user_data` decays a stale streak,
-`GET /api/get_goals` re-syncs streak and focus goals, and
-`GET /api/get_growth_ratings` files a snapshot into `metric_snapshots`. All
-three save as they go — into the database, which is why the seed files no
-longer churn.
+`GET /api/get_goals` re-syncs streak and focus goals, `GET /api/achievements`
+records anything newly earned, and `GET /api/get_growth_ratings` files six
+graded rows into `metric_snapshots`. All of them save as they go — into the
+database, which is why the seed files no longer churn.
+
+Each of those writes only the rows it changed. They did not: filing the day's
+six grades rewrote every snapshot ever taken, and reading the badge wall
+rewrote the badge catalogue and every account's preferences. A read that costs
+thousands of INSERTs is a read that gets slower every day it is used, and the
+statement counts are pinned by tests for that reason.
 
 **Ids are millisecond timestamps**, stepped forward past collisions
 (`connection.new_id`). They are primary keys, so two rows created in the same

@@ -656,9 +656,11 @@ TASK_FIELDS = tuple(dict.fromkeys(
     ('status', 'completed_at', 'priority', 'subject', 'xp_value')
     + analytics_tracking.SCORED_TASK_FIELDS))
 
-#: The ledger columns, on the same footing: the four `_figures` and the card
-#: between them read, out of the nine the table has.
-LEDGER_FIELDS = ('amount', 'date', 'timestamp', 'tasks_completed')
+#: The ledger columns, from the same place: `_figures` reads the amount and
+#: the day, and the card's trends read the task count, which is exactly
+#: SCORED_LEDGER_FIELDS. Named rather than re-listed, because two lists of the
+#: same four columns is one list that stops being the same.
+LEDGER_FIELDS = analytics_tracking.SCORED_LEDGER_FIELDS
 
 
 def _figures(username, user):

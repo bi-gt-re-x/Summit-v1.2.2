@@ -2124,6 +2124,89 @@ def save_metric_snapshots(rows):
     write_table('metric_snapshots', rows)
 
 
+def metric_snapshots_for(username, metric=None):
+    """One account's dated grades, oldest first, optionally for one metric.
+
+    The filter `history` in backend/tracking/analytics.py was doing in Python
+    after reading the whole table. The table is shared and it only grows —
+    every reader files six rows a day for ever — so the Python version's cost
+    was every account's whole history on every call. `metric_snapshots_user_
+    metric_idx` leads on user_id, so this reads only the rows it returns.
+    """
+    con = connect()
+    try:
+        if not _schema(con, 'metric_snapshots'):
+            return []
+        clause = 'WHERE user_id = ?'
+        params = [username]
+        if metric:
+            clause += ' AND metric = ?'
+            params.append(metric)
+        return _decode_records(con, 'metric_snapshots', con.execute(
+            'SELECT * FROM metric_snapshots {} ORDER BY date, metric'.format(clause),
+            params))
+    finally:
+        con.close()
+
+
+def record_metric_snapshots(username, day, rows):
+    """Write one account's grades for one day, replacing that day's if present.
+
+    Six rows — five metrics and the overall — by their own primary key,
+    `(user_id, date, metric)`.
+
+    ## Why this is not `save_metric_snapshots`
+
+    It was. Reading the report card files the day's grades, so `/api/
+    get_growth_ratings` is a read that leaves six rows behind; filing them
+    through `write_table` meant reading every snapshot ever taken, dropping the
+    six being replaced, and writing all of them back. On this database that was
+    2,316 INSERTs and a DELETE of the table to store six rows, on a page anyone
+    can refresh: 84ms of work to write six rows, growing by six rows a day per
+    account for ever, so the *only* direction it could go was worse. This is
+    1ms and does not grow.
+
+    Two things were wrong with it besides the cost, and they are the two the
+    note on `write_table` warns about. Two accounts opening their report cards
+    at the same moment each read the table and each wrote all of it back, and
+    the second lost the first's day. And clearing the table for the rewrite
+    needs foreign keys off, which is a lot of machinery to have running on a
+    page view.
+
+    ON CONFLICT rather than a delete and an insert, so a second look at the
+    card on the same day replaces that day's six rows rather than briefly
+    removing them.
+    """
+    con = connect()
+    try:
+        schema = _schema(con, 'metric_snapshots')
+        if not schema:
+            return
+        known = {name for name, _, _ in schema}
+        fields = [name for name in ('user_id', 'date', 'metric', 'score', 'grade', 'detail')
+                  if name in known]
+        statement = (
+            'INSERT INTO metric_snapshots ({names}) VALUES ({marks}) '
+            'ON CONFLICT (user_id, date, metric) DO UPDATE SET {sets}'.format(
+                names=', '.join('"{}"'.format(n) for n in fields),
+                marks=', '.join('?' for _ in fields),
+                sets=', '.join('"{n}" = excluded."{n}"'.format(n=n) for n in fields
+                               if n not in ('user_id', 'date', 'metric'))))
+        # The owner and the day are this call's, not the caller's: they are
+        # the two thirds of the primary key that say which rows are being
+        # replaced, and a row that disagreed with them would quietly file
+        # somebody else's grade.
+        def values(row):
+            full = dict(row, user_id=username, date=day)
+            return [_encode('metric_snapshots', name, full.get(name))
+                    for name in fields]
+
+        with con:
+            con.executemany(statement, [values(row) for row in rows])
+    finally:
+        con.close()
+
+
 def user_subjects():
     """What each account has changed about the subject catalogue.
 

@@ -269,6 +269,19 @@ SCORED_TASK_FIELDS = ('status', 'completed_at', 'xp_value',
                       'difficulty', 'execution',
                       'completion_seconds', 'met_deadline')
 
+#: The ledger columns the score is made of, on the same footing.
+#:
+#: Four of the nine. The others are the row's id and owner, the reason it was
+#: written and the task it was written for, and a pre-averaged `avg_task_xp`
+#: that nothing here reads — 23,270 rows of them on the largest account in this
+#: database, which was 10.2 MB to total up two numbers a day.
+#:
+#: `date` and `timestamp` are both here and only one is used per row: rows
+#: written before the date column existed carry only a timestamp, and
+#: `event_day` in backend/tracking/xp.py prefers the explicit one. Selecting
+#: one of the two would silently lose the older half of a long account.
+SCORED_LEDGER_FIELDS = ('amount', 'date', 'timestamp', 'tasks_completed')
+
 
 def empty_day():
     """One day's bucket with nothing in it yet.
@@ -303,7 +316,8 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
     `ratings()` needs the raw task rows for its week-over-week trends — passes
     them in rather than paying for the scan twice.
     """
-    events = xp_tracking.events_for(username) if events is None else events
+    events = (db.columns_for('xp_events', username, SCORED_LEDGER_FIELDS)
+              if events is None else events)
     tasks = (db.columns_for('tasks', username, SCORED_TASK_FIELDS)
              if tasks is None else tasks)
     focus_history = (focus_tracking.history_for(username)
@@ -655,7 +669,8 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
     # calls used to sit inline here; it now lives in `score_window` above,
     # because the Growth tab asks the same five questions of six other windows
     # and two copies of this arithmetic is exactly what that would have become.
-    events = xp_tracking.events_for(username) if events is None else events
+    events = (db.columns_for('xp_events', username, SCORED_LEDGER_FIELDS)
+              if events is None else events)
     all_tasks = (db.columns_for('tasks', username, SCORED_TASK_FIELDS)
                  if tasks is None else tasks)
     focus_history = (focus_tracking.history_for(username)
@@ -863,39 +878,42 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
 # History
 # --------------------------------------------------------------------------
 def save_snapshot(username, card, day=None):
-    """Write today's grades to analytics.sql, replacing today's if present."""
+    """Write today's grades to analytics.sql, replacing today's if present.
+
+    Six rows: the five metrics and the overall. It used to build those six and
+    hand them to `write_table` along with every snapshot ever taken, which
+    rewrote the whole history to append to it — 2,316 INSERTs on this database
+    to store six rows, growing by six a day per account for ever. See
+    `record_metric_snapshots` in backend/database/connection.py, which writes
+    the six by their own primary key.
+
+    `detail` is everything the metric reports that is not the score or the
+    grade — the figures behind it and its trend — kept loose because the five
+    report different ones.
+    """
     day = day or date.today().isoformat()
-    rows = [r for r in db.metric_snapshots()
-            if not (r.get('user_id') == username and r.get('date') == day)]
 
-    for name in METRICS:
-        metric = card['metrics'][name]
-        rows.append({
-            'user_id': username,
-            'date': day,
+    def snapshot(name, block):
+        return {
             'metric': name,
-            'score': metric['score'],
-            'grade': metric['grade'],
-            'detail': {k: v for k, v in metric.items() if k not in ('score', 'grade')},
-        })
-    rows.append({
-        'user_id': username,
-        'date': day,
-        'metric': 'overall',
-        'score': card['overall']['score'],
-        'grade': card['overall']['grade'],
-        'detail': {k: v for k, v in card['overall'].items() if k not in ('score', 'grade')},
-    })
+            'score': block['score'],
+            'grade': block['grade'],
+            'detail': {k: v for k, v in block.items() if k not in ('score', 'grade')},
+        }
 
-    db.save_metric_snapshots(rows)
+    db.record_metric_snapshots(username, day, (
+        [snapshot(name, card['metrics'][name]) for name in METRICS]
+        + [snapshot('overall', card['overall'])]))
 
 
 def history(username, metric=None):
-    """Past grades for an account, oldest first."""
-    rows = [r for r in db.metric_snapshots() if r.get('user_id') == username]
-    if metric:
-        rows = [r for r in rows if r.get('metric') == metric]
-    return sorted(rows, key=lambda r: (r.get('date') or '', r.get('metric') or ''))
+    """Past grades for an account, oldest first.
+
+    Scoped and sorted in SQL rather than read whole and filtered in Python:
+    this table is shared and only ever grows, so the Python version read every
+    account's entire history to return one account's.
+    """
+    return db.metric_snapshots_for(username, metric)
 
 
 # --------------------------------------------------------------------------
