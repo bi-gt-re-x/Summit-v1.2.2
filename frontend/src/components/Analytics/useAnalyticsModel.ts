@@ -105,6 +105,8 @@ import {
   suggestGoals,
 } from '@/utils/goalSuggest';
 import { goalWork, linkCoverage } from '@/utils/goalWork';
+import { skillScores } from '@/utils/skillScore';
+import { skillFindings } from '@/utils/skillFindings';
 import {
   qualityBands,
   qualityGrid,
@@ -661,6 +663,17 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
   const goalWorkRows = useMemo(() => goalWork(liveGoals, tasks), [liveGoals, tasks]);
   const goalCoverage = useMemo(() => linkCoverage(tasks), [tasks]);
 
+  /* The skill model — see utils/skillScore. Over the whole record rather than
+     the chosen window, for the same reason the goal figures are: "how good am
+     I at this" is a question about everything the reader has done, and the
+     model already decays old work on its own rather than needing a window to
+     do it. */
+  const skills = useMemo(() => skillScores(tasks), [tasks]);
+  const skillNotes = useMemo(
+     () => skillFindings(skills, nameOf, rules.headlines),
+     [skills, nameOf, rules.headlines],
+  );
+
   /**
    * The dozen words at the head of the tab.
    *
@@ -944,6 +957,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     goalEffort,
     goalWorkRows,
     goalCoverage,
+    skills,
+    skillNotes,
     goalCheckpoints,
     goalLead,
     namedSubjects,

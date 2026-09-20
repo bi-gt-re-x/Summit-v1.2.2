@@ -15,6 +15,7 @@ import { loadProgress } from '@/utils/skillProgress';
 import { treeStanding } from '@/skills/standing';
 import { OTHER_KEY } from '@/utils/subjectXp';
 import { LimiterLine } from '../Limiter';
+import { SkillScorePanel } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
@@ -32,7 +33,7 @@ export function SubjectsTab({
   subjects,
   username = null,
 }: { model: AnalyticsModel; subjects: SubjectIndex; username?: string | null }) {
-  const { all, goalLimits, namedSubjects, tasks, breakdown } = model;
+  const { all, goalLimits, namedSubjects, tasks, breakdown, skills, nameOf } = model;
 
   /**
    * The limiters whose subject is one this window actually shows.
@@ -121,6 +122,19 @@ export function SubjectsTab({
 
   return (
     <>
+      {/* The scored list, above the lattice chapter rather than inside it.
+
+          The chapter below draws the trees, and a tree's node percentages are
+          authored illustration — identical on every account, as
+          skills/standing.ts says out loud. This panel is the opposite: every
+          number in it is a re-reading of the reader's own ratings, and it goes
+          first because when a page shows an account two numbers about the same
+          subject, the one made of their own work should be the one they meet
+          first. */}
+      <section className="ax-section">
+        <SkillScorePanel rows={skills} nameOf={nameOf} />
+      </section>
+
       {/* The two chapters that arrived whole. Each was a tab of the growth
           page and neither had a counterpart here — mastery and achievement
           are questions the five original tabs never asked. They keep their own

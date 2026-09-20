@@ -26,6 +26,7 @@ import { DETAIL_RULES } from '@/utils/analyticsPrefs';
 import { goalsOverview } from '@/utils/goalAnalytics';
 import { checkpointsByMonth, effortAgainstPriority, paceMap } from '@/utils/goalSuggest';
 import { goalWork, linkCoverage } from '@/utils/goalWork';
+import { skillScores } from '@/utils/skillScore';
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
@@ -111,6 +112,10 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     goalCheckpoints: checkpointsByMonth([]),
     goalWorkRows: goalWork([], []),
     goalCoverage: linkCoverage([]),
+    // The skill model, from the real constructors over an empty record — the
+    // same rule the goal fields above follow.
+    skills: skillScores([]),
+    skillNotes: [],
     goalRows: [],
     /* No goals and no tasks, so no goal has a shortfall to attribute. A test
        that wants a limiter on a tab passes one in. */

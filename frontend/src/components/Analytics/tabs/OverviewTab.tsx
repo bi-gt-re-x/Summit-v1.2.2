@@ -63,6 +63,7 @@ import type { LearningItem } from '../index';
 /** No earlier period to compare a subject against. Shared, so it is one object. */
 const EMPTY_PREVIOUS = new Map<string, number>();
 import type { AnalyticsData } from '../useAnalyticsData';
+import { SkillStandingRow } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function OverviewTab({
@@ -79,6 +80,7 @@ export function OverviewTab({
     breakdown,
     card,
     goalLimits,
+    skills,
     lens,
     nameOf,
     observed,
@@ -401,6 +403,14 @@ export function OverviewTab({
           logStyle={logStyle}
           scopedOut={subjectLabel}
         />
+      </section>
+
+      {/* Where the account stands as a learner, which the tiles above cannot
+          say: they are about volume and rate, and this is about how well the
+          work went. Four figures, because a reader who wanted the eight
+          subjects behind them would be on the Subjects tab. */}
+      <section id="skills" className="ax-section">
+        <SkillStandingRow rows={skills} nameOf={nameOf} />
       </section>
 
       {/* The line on its own until the score has something to say. `ax-grid-

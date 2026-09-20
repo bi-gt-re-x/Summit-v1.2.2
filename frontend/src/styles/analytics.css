@@ -7965,3 +7965,145 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-goal-cover-key i.is-loose { background: var(--ax-line); }
 .ax-goal-cover-label { color: var(--ax-muted); }
 .ax-goal-cover-key strong { font-variant-numeric: tabular-nums; color: var(--ax-text); }
+
+/* ---------- The skill model ---------------------------------------------- */
+/* components/Analytics/SkillView, drawn from utils/skillScore. One vocabulary
+   across six tabs, because a reader meeting the same model on the Overview,
+   Subjects, Growth, Habits, Insights and Recommendations tabs has to recognise
+   it as the same model. */
+
+/* The band, as the only colour on a card. Six bands and they are a ladder, so
+   they are one ramp darkening rather than six hues — a reader must be able to
+   rank two cards by colour without learning a legend. */
+.ax-skill-card.is-beginner   { --skill: var(--ax-faint); }
+.ax-skill-card.is-developing { --skill: var(--ax-amber); }
+.ax-skill-card.is-competent  { --skill: var(--ax-blue); }
+.ax-skill-card.is-strong     { --skill: var(--ax-violet); }
+.ax-skill-card.is-advanced   { --skill: var(--ax-green); }
+.ax-skill-card.is-mastery    { --skill: var(--ax-good); }
+
+.ax-skill-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+.ax-skill-card {
+    padding: var(--space-3);
+    border: 1px solid var(--ax-line-soft);
+    border-left: 3px solid var(--skill, var(--ax-line));
+    border-radius: var(--ax-radius);
+    background: var(--ax-card-2);
+}
+.ax-skill-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+.ax-skill-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--ax-text);
+}
+.ax-skill-score {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+    color: var(--skill, var(--ax-text));
+}
+.ax-skill-band {
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--skill, var(--ax-faint));
+}
+
+.ax-skill-parts { margin: var(--space-3) 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ax-skill-parts li {
+    display: grid;
+    grid-template-columns: 116px minmax(0, 1fr) 28px;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-2xs);
+}
+.ax-skill-part-label { color: var(--ax-muted); }
+.ax-skill-part-track { height: 5px; border-radius: var(--radius-full); background: var(--ax-line); overflow: hidden; }
+.ax-skill-part-track i { display: block; height: 100%; border-radius: inherit; background: var(--skill, var(--ax-violet)); }
+.ax-skill-part-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--ax-text); }
+
+/* The disclosure. Quiet, because a reader scanning eight subjects wants eight
+   numbers — and present, because a number nobody can interrogate is a number
+   nobody should trust. */
+.ax-skill-why-toggle {
+    margin-top: var(--space-3);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--skill, var(--ax-violet));
+    font: inherit;
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    cursor: pointer;
+}
+.ax-skill-why-toggle:hover { text-decoration: underline; }
+.ax-skill-why { margin-top: var(--space-2); padding-top: var(--space-2); border-top: 1px dashed var(--ax-line); }
+.ax-skill-why p { margin: 0 0 var(--space-2); font-size: var(--text-sm); line-height: 1.55; color: var(--ax-muted); }
+.ax-skill-evidence {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: var(--space-2);
+    margin: 0;
+}
+.ax-skill-evidence dt { font-size: var(--text-2xs); color: var(--ax-faint); }
+.ax-skill-evidence dd { margin: 0; font-size: var(--text-sm); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ax-text); }
+/* The one line on the card that is about the number's own reliability. */
+.ax-skill-caveat { margin: var(--space-2) 0 0 !important; font-size: var(--text-2xs) !important; color: var(--ax-faint) !important; }
+
+/* ---- Growth: the web and its legend ---- */
+.ax-skill-shape { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--ax-gap); align-items: center; }
+.ax-skill-shape-key { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+.ax-skill-shape-key li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: var(--space-2); font-size: var(--text-sm); color: var(--ax-muted); }
+.ax-skill-shape-key strong { font-variant-numeric: tabular-nums; color: var(--ax-text); }
+.ax-skill-shape-key small { grid-column: 1 / -1; font-size: var(--text-2xs); color: var(--ax-faint); }
+
+/* ---- Habits: what went cold ---- */
+.ax-skill-cold { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+.ax-skill-cold li { display: grid; grid-template-columns: minmax(0, 1fr) 90px 42px 34px; align-items: center; gap: var(--space-2); font-size: var(--text-sm); }
+.ax-skill-cold-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ax-text); }
+.ax-skill-cold-bar { height: 5px; border-radius: var(--radius-full); background: var(--ax-line); overflow: hidden; }
+/* Amber and not red. A subject left for a fortnight is a fact about a week,
+   not a failure — the page states it and does not scold. */
+.ax-skill-cold-bar i { display: block; height: 100%; border-radius: inherit; background: var(--ax-amber); }
+.ax-skill-cold-days { text-align: right; font-variant-numeric: tabular-nums; color: var(--ax-muted); font-size: var(--text-2xs); }
+.ax-skill-cold-score { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ax-text); }
+
+/* ---- Insights: the sentences ---- */
+.ax-skill-findings { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+.ax-skill-findings li {
+    padding: var(--space-2) var(--space-3);
+    border-left: 3px solid var(--ax-line);
+    border-radius: 0;
+    background: var(--ax-card-2);
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--ax-text);
+}
+.ax-skill-findings li.is-good  { border-left-color: var(--ax-good); }
+.ax-skill-findings li.is-watch { border-left-color: var(--ax-amber); }
+.ax-skill-findings li.is-bad   { border-left-color: var(--ax-bad); }
+
+/* ---- Recommendations: the limiting part ---- */
+.ax-skill-limits { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+.ax-skill-limits li { padding-bottom: var(--space-3); border-bottom: 1px solid var(--ax-line-soft); }
+.ax-skill-limits li:last-child { padding-bottom: 0; border-bottom: 0; }
+.ax-skill-limit-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.ax-skill-limit-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: var(--ax-text); }
+.ax-skill-limit-score { flex: none; font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ax-violet); }
+.ax-skill-limit-text { margin: 4px 0 0; font-size: var(--text-sm); line-height: 1.5; color: var(--ax-muted); }
+
+@media (max-width: 720px) {
+    .ax-skill-shape { grid-template-columns: minmax(0, 1fr); }
+    .ax-skill-parts li { grid-template-columns: 96px minmax(0, 1fr) 28px; }
+}

@@ -31,6 +31,7 @@ import { unlock } from '@/utils/insight';
 import { PATTERN_DAYS } from '@/utils/recent';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { whyFor } from '../milestones';
+import { SkillFindingsPanel } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function InsightsTab({ model }: { model: AnalyticsModel }) {
@@ -44,6 +45,11 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
        weakest measure. Neither moves a figure: `why` and `how` are computed in
        full and ranked the same way at every setting. */
     detail, toneRules,
+    /* The skill model's sentences. On this tab and not the others because
+       this is where the page is allowed to state a case — see the note on
+       `skillFindings`, which stops at stating one and leaves what to do
+       about it to Recommendations. */
+    skillNotes,
   } = model;
 
   /*
@@ -274,6 +280,15 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
           anything" is one such condition — but it is a single figure, and a
           titled card around a single figure is how a tab about behaviour
           becomes a tab about goals. */}
+      {/* What the record says about the reader as a learner, rather than
+          about their output. Gated with the rest of the tab: a finding about
+          a subject needs enough of a subject to be about. */}
+      {waitFor('insights') === 0 && (
+        <section className="ax-section">
+          <SkillFindingsPanel findings={skillNotes} />
+        </section>
+      )}
+
       {waitFor('insights') === 0 && aimedShare && (
         <section className="ax-section">
           <p className="ax-goal-line">

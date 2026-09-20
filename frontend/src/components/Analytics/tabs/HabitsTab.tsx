@@ -26,6 +26,7 @@ import { PanelGroup } from '../charts';
 import { FocusChapter } from '@/components/Growth';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { whyFor } from '../milestones';
+import { SkillColdPanel } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
@@ -41,6 +42,10 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
        how many patterns are put in front of somebody at once. Neither moves a
        figure; `habitSummary` counts the same days at every setting. */
     toneRules,
+    /* Which subjects have gone quiet. A habits tab that only counts days
+       worked cannot say *what* was dropped, and dropping a subject is the
+       habit failure that costs a skill score. */
+    skills, nameOf,
   } = model;
 
   return (
@@ -182,6 +187,15 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
                 <LimiterLine row={goalLimits[0]} />
               </section>
             )}
+
+            {/* Between the two chapters: the rhythm above is about whether
+                you turn up, and this is about what you turn up *to*. */}
+            <PanelGroup
+              title="What has been left alone"
+              note="Subjects you have scored, and how long since each had work in it"
+            >
+              <SkillColdPanel rows={skills} nameOf={nameOf} />
+            </PanelGroup>
 
             <PanelGroup
               title="Can you execute it reliably"

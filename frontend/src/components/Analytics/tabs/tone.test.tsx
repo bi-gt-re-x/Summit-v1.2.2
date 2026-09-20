@@ -67,6 +67,10 @@ function habitsModel(tone: keyof typeof TONE_RULES): AnalyticsModel {
     goalLimits: [],
     byDate: new Map(),
     patterns: PATTERNS,
+    /* No rated work in this fixture, so nothing for the cold-subject panel to
+       name — which is the state it is written to say nothing in. */
+    skills: [],
+    nameOf: (id: string) => id,
     shifts: [],
     summary: { ...habitSummary([], []), tracked: 2, strong: 1, activeRate: 64,
                anchor: ANCHOR, slipping: SLIPPING },

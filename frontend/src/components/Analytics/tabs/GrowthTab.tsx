@@ -60,6 +60,7 @@ import {
 import { Building } from '../Building';
 import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
+import { SkillShapePanel } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { PeriodMetric } from '@/services/analytics';
 
@@ -105,7 +106,7 @@ const OVERALL_COLOR = 'var(--ax-gp-overall)';
 const OVERALL_TONE: Tone = 'pink';
 
 export function GrowthTab({ model }: { model: AnalyticsModel }) {
-  const { clock, heatRows, rhythmRate } = model;
+  const { clock, heatRows, rhythmRate, skills, nameOf } = model;
   const { period, setPeriod, periods } = useGrowthPeriods();
   const [lines, setLines] = useState<Array<PeriodMetric | 'overall'>>(OPENS_WITH);
 
@@ -205,6 +206,16 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               checked against the arithmetic without moving. */}
           <section className="ax-section">
             <MetricStrip data={data} />
+          </section>
+
+          {/* The shape of the strongest subject, beside the five metrics
+              above it. Both are the same idea at two grains — the strip says
+              how the account is doing overall, this says what one skill is
+              actually made of — and a reader who has just met a growth score
+              built from five parts is the reader most likely to want the six
+              behind a single subject. */}
+          <section className="ax-section">
+            <SkillShapePanel rows={skills} nameOf={nameOf} />
           </section>
 
           {/* The line. The period control lives in this panel's header because
