@@ -9,8 +9,6 @@ and focus-type goals all read one number that survives a cleared browser.
 Also here: the one-line "Focus" note attached to a calendar day, which the
 Week, Day and Month views all show, so an edit in one view lands everywhere.
 """
-from datetime import datetime
-
 from backend.database import connection as db
 from backend.tracking.auth import find_user
 
@@ -139,19 +137,6 @@ def history_range(username, start='', end=''):
 def total_seconds(username):
     """An account's all-time tracked focus seconds."""
     return sum(_seconds(r) for r in _rows_for(username))
-
-
-def seconds_in_window(username, lo_days, hi_days, today):
-    """Focused seconds recorded between `lo_days` and `hi_days` ago."""
-    total = 0.0
-    for row in _rows_for(username):
-        try:
-            d = datetime.strptime(str(row.get('date'))[:10], '%Y-%m-%d').date()
-        except (ValueError, TypeError):
-            continue
-        if lo_days <= (today - d).days <= hi_days:
-            total += _seconds(row)
-    return total
 
 
 # --------------------------------------------------------------------------

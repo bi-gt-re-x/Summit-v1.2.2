@@ -2188,26 +2188,61 @@ def user_setting(username, key):
     usually a dict. None means the account has never set this key, which is a
     real answer and is not the same as an empty one: the analytics page shows a
     new reader the baseline setup screen precisely because the key is absent.
+
+    Found by its own primary key rather than by reading the table and scanning
+    it in Python. The table is shared, so the scan read every account's
+    preferences to answer a question about one.
     """
-    for row in read_table('user_settings'):
-        if row.get('user_id') == username and row.get('key') == key:
-            return row.get('value')
-    return None
+    con = connect()
+    try:
+        if not _schema(con, 'user_settings'):
+            return None
+        row = con.execute(
+            'SELECT value FROM user_settings WHERE user_id = ? AND key = ?',
+            (username, key)).fetchone()
+        if row is None or row['value'] is None:
+            return None
+        return _decode('user_settings', 'value', row['value'], 'TEXT')
+    finally:
+        con.close()
 
 
 def set_user_setting(username, key, value):
     """Write one account's value for one key, replacing any previous one.
 
-    The whole table is rewritten because that is what `write_table` does and
-    what every other saver here relies on — see the note on it. The table holds
-    one short row per preference per account, so the cost of the rewrite is not
-    a consideration at this size.
+    One row, by its own primary key. This used to read the whole table, drop
+    the row being replaced, and write every remaining row back — the
+    delete-everything-and-reinsert pattern the note on `write_table` warns
+    about, on a table every account shares. Ninety-three preferences across
+    sixteen accounts meant 93 INSERTs to store one string, and the achievements
+    page did it on every view.
+
+    Three things were wrong with it and only the first is speed. It scaled with
+    everybody's preferences rather than with this account's. It lost writes:
+    two requests storing different keys each read the table and each wrote all
+    of it back, and the second overwrote the first. And it reset `updated_at`
+    on every row in the table every time, so the column recorded when somebody
+    last saved anything rather than when this preference last changed.
+
+    ON CONFLICT rather than a read followed by a write, so "is it already
+    there" and "put it there" are one statement and two requests cannot both
+    decide it is missing.
     """
-    rows = [row for row in read_table('user_settings')
-            if not (row.get('user_id') == username and row.get('key') == key)]
-    rows.append({'user_id': username, 'key': key, 'value': value})
-    write_table('user_settings', rows, columns=['user_id', 'key', 'value'])
-    return value
+    con = connect()
+    try:
+        known = {name for name, _, _ in _schema(con, 'user_settings')}
+        if not known:
+            return value
+        stamp = ", updated_at = datetime('now')" if 'updated_at' in known else ''
+        with con:
+            con.execute(
+                'INSERT INTO user_settings (user_id, key, value) VALUES (?, ?, ?) '
+                'ON CONFLICT (user_id, key) DO UPDATE SET value = excluded.value'
+                + stamp,
+                (username, key, _encode('user_settings', 'value', value)))
+        return value
+    finally:
+        con.close()
 
 
 # --------------------------------------------------------------------------

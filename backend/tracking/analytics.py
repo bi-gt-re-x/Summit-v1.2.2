@@ -253,6 +253,23 @@ def _trend(current, previous):
 # The buckets it fills are `empty_day`'s, the same ones `_daily_rollup` fills,
 # and the scorer they go to is the same `score_window`. tests/test_standing.py
 # holds the two builders to the same buckets, field for field.
+
+#: The task columns the score is made of.
+#:
+#: `_daily_rollup` and the week-over-week trends in `ratings()` read these
+#: seven and nothing else. Stated once and selected explicitly, because the
+#: alternative is `SELECT *`: on the largest account in this database that was
+#: 20,539 rows carrying `title` and `description` — free text, unbounded, and
+#: not part of any score — at 33.5 MB and 152ms per read, on a page that reads
+#: it and a badge wall that reads it again.
+#:
+#: The list is the contract. A metric that needs an eighth column adds it here
+#: and gets a KeyError on the rows it forgot rather than a silent zero.
+SCORED_TASK_FIELDS = ('status', 'completed_at', 'xp_value',
+                      'difficulty', 'execution',
+                      'completion_seconds', 'met_deadline')
+
+
 def empty_day():
     """One day's bucket with nothing in it yet.
 
@@ -287,7 +304,8 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
     them in rather than paying for the scan twice.
     """
     events = xp_tracking.events_for(username) if events is None else events
-    tasks = db.tasks_for(username) if tasks is None else tasks
+    tasks = (db.columns_for('tasks', username, SCORED_TASK_FIELDS)
+             if tasks is None else tasks)
     focus_history = (focus_tracking.history_for(username)
                      if focus_history is None else focus_history)
 
@@ -608,11 +626,19 @@ def score_window(rollup, start, end, daily_goal):
 # --------------------------------------------------------------------------
 # The report card
 # --------------------------------------------------------------------------
-def ratings(username, record=True):
+def ratings(username, record=True, tasks=None, events=None, focus_history=None):
     """The five-metric graded report card, or None when there's no account.
 
     Writing the result is the default: every look at the report card leaves a
     dated row per metric behind in analytics.sql.
+
+    The three sources are optional for the same reason `_daily_rollup`'s are,
+    and for one caller in particular: the achievements page reads the task
+    rows, the ledger and the focus days to count its own badges and then asks
+    for this card, which read all three again. That was the account's whole
+    history twice in one request — 152ms and 33.5 MB of task rows each time on
+    the largest account here. A caller that already holds them passes them in;
+    the task rows have to carry at least SCORED_TASK_FIELDS.
     """
     user = find_user(db.users(), username=username)
     if not user:
@@ -629,9 +655,11 @@ def ratings(username, record=True):
     # calls used to sit inline here; it now lives in `score_window` above,
     # because the Growth tab asks the same five questions of six other windows
     # and two copies of this arithmetic is exactly what that would have become.
-    events = xp_tracking.events_for(username)
-    all_tasks = db.tasks_for(username)
-    focus_history = focus_tracking.history_for(username)
+    events = xp_tracking.events_for(username) if events is None else events
+    all_tasks = (db.columns_for('tasks', username, SCORED_TASK_FIELDS)
+                 if tasks is None else tasks)
+    focus_history = (focus_tracking.history_for(username)
+                     if focus_history is None else focus_history)
     rollup = _daily_rollup(username, tasks=all_tasks, events=events,
                            focus_history=focus_history)
 
@@ -753,8 +781,19 @@ def ratings(username, record=True):
     quality_trend = _trend(this_quality, prev_quality)
     consistency_trend = _trend(this_w['active_days'], prev_w['active_days'])
     efficiency_trend = _trend(window_efficiency(0, 6) or 0, window_efficiency(7, 13) or 0)
-    focus_trend = _trend(focus_tracking.seconds_in_window(username, 0, 6, today),
-                         focus_tracking.seconds_in_window(username, 7, 13, today))
+    # Windowed out of the history already read. This was
+    # `focus_tracking.seconds_in_window`, which read the focus table for each
+    # of the two windows — a third and fourth read of a table this function
+    # has already read in full. The rule is unchanged: a day counts when it
+    # falls in the window, and its seconds are the seconds. That helper had no
+    # other caller and went with the line, rather than staying as a second
+    # copy of the rule for nobody.
+    def focused_seconds(lo_days, hi_days):
+        return sum(record_row['seconds']
+                   for day_iso, record_row in focus_history.items()
+                   if in_window(day_iso, lo_days, hi_days))
+
+    focus_trend = _trend(focused_seconds(0, 6), focused_seconds(7, 13))
 
     card = {
         "overall": {

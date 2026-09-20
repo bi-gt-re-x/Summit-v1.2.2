@@ -214,3 +214,98 @@ def test_a_top_band_snapshot_can_be_written(client):
     stored = analytics.history('tester', metric='overall')
     assert stored[-1]['grade'] == 'A+', stored[-1]
     assert client.get('/api/get_growth_ratings').status_code == 200
+
+
+# --------------------------------------------------------------------------
+# The card does not care who read its rows
+# --------------------------------------------------------------------------
+# `ratings` takes the task rows, the ledger and the focus history as optional
+# arguments now, because the achievements page reads all three to count its
+# badges and then asks for this card — which read all three again, the
+# account's whole history twice in one request. The saving is only real if the
+# card is the same card either way.
+def test_the_card_is_the_same_whoever_read_the_rows(client):
+    """Handed the rows, or reading them itself: one answer."""
+    today = date.today()
+    for back in range(0, 12):
+        when = (today - timedelta(days=back)).isoformat()
+        finish(client, xp=30 + back, when=when, difficulty=4, execution=3)
+    db.insert_row('focus_days', {'user_id': 'tester', 'date': today.isoformat(),
+                                 'seconds': 5400, 'goal_hours': 2})
+
+    from backend.tracking import focus as focus_tracking
+    from backend.tracking import xp as xp_tracking
+
+    own = analytics.ratings('tester', record=False)
+    handed = analytics.ratings(
+        'tester', record=False,
+        tasks=db.columns_for('tasks', 'tester', analytics.SCORED_TASK_FIELDS),
+        events=xp_tracking.events_for('tester'),
+        focus_history=focus_tracking.history_for('tester'))
+
+    assert own == handed
+
+
+def test_the_focus_trend_is_the_windowed_history(client):
+    """That trend used to read the focus table twice more on its own, through
+    `focus.seconds_in_window`. It is windowed out of the history the card has
+    already read, which has to come to the same total — including over the days
+    that have a row and no seconds on them.
+
+    `seconds_in_window` itself is gone: that line was its only caller, and a
+    second copy of this rule kept for nobody is how two answers to one question
+    start. The rule it held is written out here instead.
+    """
+    from backend.tracking import focus as focus_tracking
+
+    today = date.today()
+    for back, seconds in ((1, 3600), (3, 1800), (5, 0), (8, 7200), (10, 900)):
+        db.insert_row('focus_days', {
+            'user_id': 'tester', 'date': (today - timedelta(days=back)).isoformat(),
+            'seconds': seconds, 'goal_hours': 2})
+
+    history = focus_tracking.history_for('tester')
+
+    def windowed(lo, hi):
+        return sum(record['seconds'] for day, record in history.items()
+                   if lo <= (today - date.fromisoformat(day)).days <= hi)
+
+    assert windowed(0, 6) == 3600 + 1800 + 0
+    assert windowed(7, 13) == 7200 + 900
+
+    # And the card's own trend is the sign of the difference between them.
+    card = analytics.ratings('tester', record=False)
+    assert card['metrics']['focus']['trend'] == analytics._trend(
+        windowed(0, 6), windowed(7, 13))
+
+
+def test_the_fast_date_parse_agrees_with_the_slow_one():
+    """`parse_day` reaches `date.fromisoformat` for text shaped like a date and
+    `strptime` for everything else, because it is called 61,285 times to build
+    one report card on the largest account here and `strptime` re-reads the
+    locale on every call. The two have to answer the same.
+
+    Including on the rubbish: a value neither accepts is None, and a value
+    `fromisoformat` alone would accept — the compact `20260919` — must not
+    start parsing now that it is in the path.
+    """
+    from datetime import datetime
+
+    from backend.tracking import xp as xp_tracking
+
+    def slow(raw):
+        if not raw:
+            return None
+        try:
+            return datetime.strptime(str(raw)[:10], '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            return None
+
+    values = [
+        '2026-09-19', '2026-09-19T14:03:11', '2026-09-19T14:03:11.123456',
+        '1999-01-01', '2026-02-29', '2026-13-01', '2026-09-32',
+        '20260919', '2026-9-19', '2026-09-1', '', None, 0, 'not a date',
+        '   ', 'T', date.today().isoformat(),
+    ]
+    for value in values:
+        assert xp_tracking.parse_day(value) == slow(value), value

@@ -112,11 +112,20 @@ The schema is deliberately plain, so the distance is short:
    `GIN` index on `library_items.tags`. Nothing else in `data/sql/` changes.
 2. Load the files in the order `config/settings.py:SCHEMA_FILES` gives —
    `users` first, since every foreign key points at `users.username`.
-3. Repoint `connection.py` at a connection pool instead of a file. `read_table`
-   and `write_table` are the only two functions that run SQL; nothing above
-   them knows where the data lives, so `tracking/` and `pages/` do not change.
+3. Repoint `connection.py` at a connection pool instead of a file. Every
+   statement in the app is written in that one module and nowhere else, so
+   `tracking/` and `api/` do not change — none of them knows where the data
+   lives. Most of the SQL is portable as written; what is not is the SQLite
+   spelling of a few things — `PRAGMA table_info` and `PRAGMA foreign_key_check`,
+   `datetime('now')` for a default timestamp, and the `typeof(...)` guards in
+   the aggregate reads, which exist because a SQLite column holds whatever was
+   written to it and a PostgreSQL one does not.
 
-The one thing that would need rethinking is `write_table`: replacing a whole
-table on every save is fine for a local file and wasteful over a network. The
-row dicts already carry their primary keys, so it can become an upsert plus a
-delete of what is missing.
+The one thing that would need rethinking is `write_table`, which replaces a
+whole table on every save: fine for a local file and wasteful over a network.
+It is no longer on any hot path — the targeted reads and writes beside it
+(`rows_for`, `columns_for`, `insert_row`, `update_row`, `find_row` and the
+per-key `set_user_setting`) took over the request paths one at a time, and what
+is left of `write_table` is bulk saves and the seeding scripts. The row dicts
+carry their primary keys, so the rest can become an upsert plus a delete of
+what is missing.

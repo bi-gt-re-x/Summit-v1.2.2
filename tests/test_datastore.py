@@ -212,3 +212,93 @@ def test_an_object_column_still_falls_back_to_an_empty_object(two_accounts):
 
     rows = [r for r in db.read_table('metric_snapshots') if r['user_id'] == alice]
     assert rows[0]['detail'] == {}
+
+
+# --------------------------------------------------------------------------
+# One preference is one row
+# --------------------------------------------------------------------------
+# `set_user_setting` read the whole table, dropped the row being replaced and
+# wrote every remaining row back. The table is shared, so storing one string
+# cost an INSERT per preference on the instance — 93 of them on the author's
+# database, on every view of the achievements page, which writes a signature
+# each time it is read. It is an UPSERT on the row's own primary key now.
+def _statements(work):
+    """Every statement `work` runs, upper-cased on one line."""
+    seen = []
+    real = db.connect
+
+    def counting():
+        con = real()
+        con.set_trace_callback(lambda sql: seen.append(' '.join(str(sql).split()).upper()))
+        return con
+
+    db.connect = counting
+    try:
+        work()
+    finally:
+        db.connect = real
+    return seen
+
+
+def test_storing_one_preference_writes_one_row(two_accounts):
+    """The property, not the clock: a write that scales with the table shows
+    up here as a statement count that grows with what is already stored."""
+    alice, bob = two_accounts
+    for i in range(20):
+        db.set_user_setting(alice, 'filler{}'.format(i), i)
+        db.set_user_setting(bob, 'filler{}'.format(i), i)
+
+    writes = [sql for sql in _statements(
+        lambda: db.set_user_setting(alice, 'theme_mode', 'dark'))
+        if sql.startswith(('INSERT', 'UPDATE', 'DELETE'))]
+    assert len(writes) == 1, writes
+    assert not any(sql.startswith('DELETE') for sql in writes), writes
+
+
+def test_replacing_a_preference_leaves_every_other_one_alone(two_accounts):
+    """Including other accounts'. The whole-table rewrite made that a property
+    of the rewrite being correct rather than of the write being scoped."""
+    alice, bob = two_accounts
+    db.set_user_setting(alice, 'theme_mode', 'dark')
+    db.set_user_setting(alice, 'default_xp', 40)
+    db.set_user_setting(bob, 'theme_mode', 'light')
+
+    db.set_user_setting(alice, 'theme_mode', 'sepia')
+
+    assert db.user_setting(alice, 'theme_mode') == 'sepia'
+    assert db.user_setting(alice, 'default_xp') == 40
+    assert db.user_setting(bob, 'theme_mode') == 'light'
+    assert len(db.read_table('user_settings')) == 3
+
+
+def test_a_preference_that_was_never_set_reads_as_none(two_accounts):
+    """None means "never set", which is not the same as an empty value — the
+    analytics page shows the baseline setup screen on exactly that difference."""
+    alice, _ = two_accounts
+    db.set_user_setting(alice, 'theme_mode', 'dark')
+    assert db.user_setting(alice, 'analytics_baseline') is None
+    assert db.user_setting('nobody', 'theme_mode') is None
+
+
+def test_replacing_a_preference_bumps_only_its_own_timestamp(two_accounts):
+    """`updated_at` said when somebody last saved anything, because every row
+    was rewritten on every save. It now says when this preference changed."""
+    alice, _ = two_accounts
+    db.set_user_setting(alice, 'theme_mode', 'dark')
+    db.set_user_setting(alice, 'default_xp', 40)
+
+    def stamps():
+        return {row['key']: row['updated_at'] for row in db.read_table('user_settings')}
+
+    before = stamps()
+    with db.connect() as con:
+        con.execute("UPDATE user_settings SET updated_at = '2020-01-01 00:00:00'")
+    db.set_user_setting(alice, 'theme_mode', 'sepia')
+    after = stamps()
+
+    # The one that was written moved; the one that was not did not. Not
+    # compared against `before`: datetime('now') has second resolution and
+    # both writes above land in the same second.
+    assert after['theme_mode'] != '2020-01-01 00:00:00'
+    assert after['default_xp'] == '2020-01-01 00:00:00'
+    assert before['theme_mode'] != '2020-01-01 00:00:00'

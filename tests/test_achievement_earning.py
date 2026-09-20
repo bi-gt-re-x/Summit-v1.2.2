@@ -211,3 +211,116 @@ def test_every_badge_has_a_figure_to_be_measured_against(app):
     for badge in achievements.ALL:
         assert badge['metric'] in figures, badge['id']
         assert badge['metric'] in achievements.METRIC_LABELS, badge['id']
+
+
+# --------------------------------------------------------------------------
+# Reading the wall is a read
+# --------------------------------------------------------------------------
+# It was not. Every view of the page deleted the 158-row catalogue and
+# reinserted it, rewrote all 93 rows of `user_settings` to store one signature,
+# and read the account's whole task history twice — once to count the badges
+# and once more inside the report card it asked for the graded nine. 289
+# statements and 55 MB for a page of counts.
+#
+# `_sync_catalogue` meant to write only what changed and could not: it merged
+# each stored row with the catalogue's version and compared, and `_row_for`
+# states `icon` and `title` as None where a stored NULL is simply a missing
+# key. `{**row, 'icon': None} != row` however equal the two are, so it rewrote
+# the table every time. These tests hold the behaviour it was reaching for.
+def _statements(work):
+    """Every statement `work` runs, upper-cased on one line."""
+    seen = []
+    real = db.connect
+
+    def counting():
+        con = real()
+        con.set_trace_callback(lambda sql: seen.append(' '.join(str(sql).split()).upper()))
+        return con
+
+    db.connect = counting
+    try:
+        work()
+    finally:
+        db.connect = real
+    return seen
+
+
+def test_syncing_an_unchanged_catalogue_writes_nothing(app):
+    """The first call reconciles; the second has nothing to do and must do it."""
+    achievements._sync_catalogue()
+    writes = [sql for sql in _statements(achievements._sync_catalogue)
+              if sql.startswith(('INSERT', 'UPDATE', 'DELETE'))]
+    assert writes == [], writes
+
+
+def test_syncing_still_fixes_a_row_that_drifted(app):
+    """The point of syncing at all: the table has to say what the app says, or
+    the claim that a reader querying the database sees the same badges is
+    false. One row changed is one UPDATE, not a rewrite of the catalogue."""
+    achievements._sync_catalogue()
+    badge = achievements.ALL[0]
+    db.update_row('achievements', badge['id'],
+                  {'name': 'Stale name', 'threshold': 999999})
+
+    statements = _statements(achievements._sync_catalogue)
+    writes = [sql for sql in statements
+              if sql.startswith(('INSERT', 'UPDATE', 'DELETE'))]
+    assert len(writes) == 1, writes
+    assert writes[0].startswith('UPDATE'), writes
+
+    stored = db.find_row('achievements', badge['id'])
+    assert stored['name'] == badge['name']
+    assert stored['threshold'] == badge['threshold']
+
+
+def test_syncing_inserts_a_badge_the_table_has_never_seen(app):
+    """A release that adds a badge has to reach accounts that already cleared
+    its threshold — and `user_achievements` references this table, so the row
+    has to exist before anybody can be recorded as having earned it."""
+    achievements._sync_catalogue()
+    badge = achievements.ALL[0]
+    db.delete_row('achievements', badge['id'])
+
+    achievements._sync_catalogue()
+    assert db.find_row('achievements', badge['id'])['name'] == badge['name']
+
+
+def test_a_dropped_badge_keeps_its_row_and_its_earnings(app):
+    """The one direction this does not sync, deliberately: deleting the row
+    would cascade `user_achievements` and take somebody's history with it."""
+    achievements._sync_catalogue()
+    db.insert_row('achievements', {
+        'id': 'retired-badge', 'name': 'Retired', 'description': '',
+        'metric': 'tasks', 'threshold': 1, 'tier': 1, 'category': 'Special',
+        'xp_reward': 0, 'hidden': 0, 'title': None})
+
+    achievements._sync_catalogue()
+    assert db.find_row('achievements', 'retired-badge') is not None
+
+
+def test_the_page_reads_each_table_once(app):
+    """The fix as a property. Every source the page counts off is read once:
+    a second read of the tasks — which is what asking for the report card used
+    to cost on top of counting the badges — shows up here as a two."""
+    make_account('counted')
+    _finish('counted')
+    achievements.list_achievements(username='counted')   # first visit does the earning
+
+    statements = _statements(
+        lambda: achievements.list_achievements(username='counted'))
+    # Row reads only. `badge_signature` asks each table for a COUNT and a SUM,
+    # which is four scalars in one round trip and is the guard that stops the
+    # sweep doing any of this — it is not the reading this test is about.
+    reads = [sql for sql in statements
+             if sql.startswith('SELECT') and 'COUNT(*)' not in sql]
+
+    for table in ('TASKS', 'XP_EVENTS', 'FOCUS_DAYS', 'ACHIEVEMENTS'):
+        hits = [sql for sql in reads if 'FROM "{}"'.format(table) in sql]
+        assert len(hits) == 1, (table, hits)
+
+    writes = [sql for sql in statements
+              if sql.startswith(('INSERT', 'UPDATE', 'DELETE'))]
+    # One: the signature this read was worked out against. The catalogue is
+    # already reconciled and nothing new was earned.
+    assert len(writes) == 1, writes
+    assert 'USER_SETTINGS' in writes[0], writes

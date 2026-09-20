@@ -90,6 +90,7 @@ from backend.config.skill_trees import TREES as SKILL_TREES, tree_for
 from backend.config.subjects import BY_ID as SUBJECTS
 from backend.database import connection as db
 from backend.tracking import analytics as analytics_tracking
+from backend.tracking import focus as focus_tracking
 from backend.tracking.auth import load_user
 from backend.tracking.xp import event_day, level_for_total_xp
 
@@ -479,27 +480,41 @@ def _sync_catalogue():
     it, because deleting it would cascade `user_achievements` and take
     somebody's history with it. An obsolete row simply stops being returned.
     That is the one direction this does not sync, and it is deliberate.
+
+    ## Only what changed
+
+    The catalogue changes when a release changes it and at no other time, so on
+    all but the first read after a deploy this writes nothing at all. That was
+    the intent before, and it did not hold: it merged each row with the
+    catalogue's version and asked whether the merge differed, and the merge
+    always differed. `_row_for` states `icon` and `title` as None where the
+    stored row, read back, simply has no such key — `read_table` leaves a NULL
+    column out rather than setting it to None, which the note at the top of
+    connection.py says in as many words. `{**row, 'icon': None} != row` however
+    equal the two rows are, so `changed` was True every time and every read of
+    the page deleted 158 catalogue rows and reinserted them.
+
+    Comparing field by field instead is what fixes it — `row.get(name)` is None
+    for a missing key and for a stored NULL alike, which is the comparison that
+    was wanted. The writes are `insert_row` and `update_row` rather than a
+    whole-table rewrite, so a badge whose name changed costs one UPDATE of one
+    row instead of a DELETE of the catalogue.
     """
-    rows = db.read_table('achievements')
-    wanted = {badge['id']: _row_for(badge) for badge in ALL}
-    changed = False
+    held = {row['id']: row for row in db.read_table('achievements') if row.get('id')}
 
-    updated = []
-    for row in rows:
-        fresh = wanted.pop(row.get('id'), None)
-        if fresh is None:
-            updated.append(row)
+    for badge in ALL:
+        fresh = _row_for(badge)
+        row = held.get(badge['id'])
+        if row is None:
+            db.insert_row('achievements', fresh)
             continue
-        merged = {**row, **fresh}
-        if merged != row:
-            changed = True
-        updated.append(merged)
-
-    if wanted:
-        updated.extend(wanted.values())
-        changed = True
-    if changed:
-        db.write_table('achievements', updated)
+        # A stored BOOLEAN reads back as True where `_row_for` states 1, and
+        # `True == 1` in Python, so the plain comparison is the right one here
+        # as well as the cheap one.
+        changes = {name: value for name, value in fresh.items()
+                   if name != 'id' and row.get(name) != value}
+        if changes:
+            db.update_row('achievements', badge['id'], changes)
 
 
 def _hour_and_day(stamp):
@@ -590,7 +605,7 @@ def _tree_standing(done):
     )
 
 
-def _graded(username):
+def _graded(username, tasks=None, events=None, focus_history=None):
     """The nine figures that come off the analytics report card.
 
     Read through `analytics.ratings` rather than recounted here, which is the
@@ -606,7 +621,11 @@ def _graded(username):
     not a failure: every badge on these metrics is then simply unearned, which
     is what an unscored account should see.
     """
-    card = analytics_tracking.ratings(username, record=False)
+    # The rows come from `_figures`, which has already read them; see the note
+    # there. `ratings` reads them itself when they are not handed over, so the
+    # other caller of this function is unaffected.
+    card = analytics_tracking.ratings(username, record=False, tasks=tasks,
+                                      events=events, focus_history=focus_history)
     if not card:
         return dict.fromkeys(GRADED_METRICS, 0)
 
@@ -631,6 +650,17 @@ def _graded(username):
     }
 
 
+#: The task columns every badge is counted off, plus the ones the report card
+#: scores on. See `_figures`, which reads them once and hands the rows to both.
+TASK_FIELDS = tuple(dict.fromkeys(
+    ('status', 'completed_at', 'priority', 'subject', 'xp_value')
+    + analytics_tracking.SCORED_TASK_FIELDS))
+
+#: The ledger columns, on the same footing: the four `_figures` and the card
+#: between them read, out of the nine the table has.
+LEDGER_FIELDS = ('amount', 'date', 'timestamp', 'tasks_completed')
+
+
 def _figures(username, user):
     """The account's current value for every metric a badge is measured on.
 
@@ -638,8 +668,26 @@ def _figures(username, user):
     Everything is counted off what the app already stores — see the module note
     — so a figure here is always a re-reading of the record rather than a
     number this endpoint keeps.
+
+    ## Read once, counted twice
+
+    Named columns rather than every column, and one read rather than two. This
+    used to be `db.tasks_for`, which is `SELECT *` — seventeen fields per row
+    including `description`, unbounded free text that no badge is measured on —
+    and then `_graded` asked for the report card, which read every task, the
+    whole ledger and the focus history all over again to score them. On the
+    largest account here that was the same 20,539 rows twice, at 20.8 MB and
+    33.5 MB, inside one request for a page of badge counts.
+
+    So the three sources are read here, narrowed to TASK_FIELDS and
+    LEDGER_FIELDS, and handed to `_graded` for the card. Nothing is recounted
+    off them that the card counts — the nine graded figures are still the
+    card's, which is the rule the module note sets out. What is shared is the
+    rows, not the arithmetic.
     """
-    mine = db.tasks_for(username)
+    mine = db.columns_for('tasks', username, TASK_FIELDS)
+    events = db.columns_for('xp_events', username, LEDGER_FIELDS)
+    focus_history = focus_tracking.history_for(username)
     done = [row for row in mine if row.get('status') == 'done']
     (trees, tree_best, trees_deep,
      trees_done, tree_groups, tree_xp) = _tree_standing(done)
@@ -668,20 +716,22 @@ def _figures(username, user):
             if weekday >= 5:
                 weekend += 1
 
-    focus_rows = db.rows_for('focus_days', username, order='date')
-    focus_seconds = sum(float(row.get('seconds') or 0) for row in focus_rows)
-    focus_best = max((float(row.get('seconds') or 0) for row in focus_rows), default=0)
+    # `history_for` rather than the raw rows: it is one row per day already,
+    # and its `_seconds` is the coercion every other focus reader goes through.
+    focus_days_seconds = [record['seconds'] for record in focus_history.values()]
+    focus_seconds = sum(focus_days_seconds)
+    focus_best = max(focus_days_seconds, default=0)
     # A day counts as hit only where a goal was actually set on it. `goal_hours`
     # defaults to 2 in the schema, so a zero means somebody turned the goal off
     # rather than met one of nothing.
     perfect = sum(
-        1 for row in focus_rows
-        if float(row.get('goal_hours') or 0) > 0
-        and float(row.get('seconds') or 0) >= float(row.get('goal_hours')) * 3600
+        1 for record in focus_history.values()
+        if record['goal_hours'] > 0
+        and record['seconds'] >= record['goal_hours'] * 3600
     )
 
     xp_per_day = {}
-    for event in db.rows_for('xp_events', username):
+    for event in events:
         day = event_day(event)
         if day:
             xp_per_day[day] = xp_per_day.get(day, 0) + float(event.get('amount') or 0)
@@ -694,10 +744,8 @@ def _figures(username, user):
     # is what the analytics gates read.
     worked_days = set(per_day)
     worked_days |= {day for day, amount in xp_per_day.items() if amount > 0}
-    worked_days |= {
-        str(row.get('date') or '')[:10] for row in focus_rows
-        if float(row.get('seconds') or 0) > 0 and row.get('date')
-    }
+    worked_days |= {day[:10] for day, record in focus_history.items()
+                    if record['seconds'] > 0}
 
     return {
         # Counted off the record rather than read from `users.tasks_completed`.
@@ -730,7 +778,7 @@ def _figures(username, user):
         'months': len(months),
         'level': int(user.get('level') or 1),
         'focus': int(focus_seconds // 3600),
-        'focus_days': sum(1 for row in focus_rows if float(row.get('seconds') or 0) > 0),
+        'focus_days': sum(1 for seconds in focus_days_seconds if seconds > 0),
         'focus_best': int(focus_best // 3600),
         'subjects': len(subjects),
         'trees': trees,
@@ -745,7 +793,7 @@ def _figures(username, user):
             if row.get('status') == 'completed'
         ),
         'records': len(db.rows_for('records', username)),
-        **_graded(username),
+        **_graded(username, tasks=mine, events=events, focus_history=focus_history),
     }
 
 
