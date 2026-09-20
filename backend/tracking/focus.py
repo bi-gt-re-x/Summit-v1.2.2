@@ -39,6 +39,32 @@ def history_for(username):
             for r in _rows_for(username) if r.get('date')}
 
 
+def history_for_everyone():
+    """`history_for`, for every account at once: `{username: {day: {...}}}`.
+
+    One read of a table that holds 1,880 rows, for the one caller that wants
+    all of them — `/api/standing`, which compares accounts and so cannot scope
+    itself to one. Asking `history_for` per account read this table sixteen
+    times over for the standing panel and four times over per account inside
+    the report card it called, which is where the bulk of that endpoint's 64
+    focus reads came from.
+
+    Aggregating it in SQL would buy nothing: there is already one row per
+    account per day, which is the shape the callers want, and the coercion
+    below is the same `_seconds` and `_goal_hours` every other reader goes
+    through rather than a second opinion written in SQLite.
+    """
+    histories = {}
+    for row in db.focus_days():
+        username = row.get('user_id')
+        day = row.get('date')
+        if not username or not day:
+            continue
+        histories.setdefault(username, {})[day] = {
+            'seconds': _seconds(row), 'goal_hours': _goal_hours(row)}
+    return histories
+
+
 def record_day(username, day, seconds, goal_hours):
     """Store one day's focus total. Returns the stored record, or None.
 

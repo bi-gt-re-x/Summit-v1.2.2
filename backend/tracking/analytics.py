@@ -245,6 +245,40 @@ def _trend(current, previous):
 # arithmetic in it is the arithmetic that used to sit inline in `ratings()`,
 # moved rather than rewritten — see test_report_card.py, which pins the
 # figures it produces and did not change when it moved.
+#
+# `rollups_for_everyone` does not bend that rule either, and it is the one
+# below that looks like it might. It is a second way of *building* the days —
+# from SQL aggregates rather than from row dicts, because the standing panel
+# needs them for every account at once — and no way at all of scoring them.
+# The buckets it fills are `empty_day`'s, the same ones `_daily_rollup` fills,
+# and the scorer they go to is the same `score_window`. tests/test_standing.py
+# holds the two builders to the same buckets, field for field.
+def empty_day():
+    """One day's bucket with nothing in it yet.
+
+    Lifted out of `_daily_rollup` when a second builder appeared:
+    `rollups_for_everyone` below fills the same buckets from SQL aggregates
+    rather than from row dicts, and two copies of this list of fields is
+    exactly the drift that would have made the two disagree by a field nobody
+    noticed. `score_window` reads every key here and no others.
+    """
+    return {
+        # Productivity
+        'xp': 0, 'earned': False,
+        # Consistency — a wider thing than earning; see `worked` in the two
+        # builders below.
+        'worked': False,
+        # Quality
+        'tasks': 0, 'task_xp': 0,
+        'rated': 0, 'quality_sum': 0, 'difficulty_sum': 0, 'execution_sum': 0,
+        # Efficiency
+        'timed': 0, 'seconds_sum': 0,
+        'deadline_tracked': 0, 'on_time': 0,
+        # Focus
+        'focus_seconds': 0.0, 'focus_goal_seconds': 0.0,
+    }
+
+
 def _daily_rollup(username, tasks=None, events=None, focus_history=None):
     """One bucket per day the account did anything on.
 
@@ -261,20 +295,7 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
 
     def bucket(day_iso):
         if day_iso not in days:
-            days[day_iso] = {
-                # Productivity
-                'xp': 0, 'earned': False,
-                # Consistency — a wider thing than earning; see `worked` below.
-                'worked': False,
-                # Quality
-                'tasks': 0, 'task_xp': 0,
-                'rated': 0, 'quality_sum': 0, 'difficulty_sum': 0, 'execution_sum': 0,
-                # Efficiency
-                'timed': 0, 'seconds_sum': 0,
-                'deadline_tracked': 0, 'on_time': 0,
-                # Focus
-                'focus_seconds': 0.0, 'focus_goal_seconds': 0.0,
-            }
+            days[day_iso] = empty_day()
         return days[day_iso]
 
     for event in events:
@@ -335,6 +356,88 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
                 row['on_time'] += 1
 
     return days
+
+
+def rollups_for_everyone(ledger=None, focus_histories=None):
+    """`_daily_rollup` for every account at once: `{username: {day: bucket}}`.
+
+    Same buckets, same arithmetic, three queries instead of four per account.
+    `/api/standing` is the caller: it scores every account on the instance so
+    that it can rank one of them, and doing that through `_daily_rollup` meant
+    reading each account's whole task history and whole ledger into Python —
+    26,004 task rows and 23,270 ledger rows on this database, most of it
+    columns a score never looks at. The two `db` calls below fold the same
+    tables to daily totals inside SQLite and hand back only the totals.
+
+    Nothing is decided here that `_daily_rollup` does not decide: the day keys
+    are the same days, the sums are the same sums, and `worked` is set by the
+    same three things — a ledger event, a focus session with time on it, or a
+    finished task. What is gone is the per-row Python, not a rule.
+    """
+    # Optional for the same reason `_daily_rollup`'s three sources are: the
+    # standing panel reads the ledger and the focus days for its own figures
+    # too, and paying for either scan twice is the thing this function is for.
+    ledger = db.ledger_days() if ledger is None else ledger
+    focus_histories = (focus_tracking.history_for_everyone()
+                       if focus_histories is None else focus_histories)
+
+    rollups = {}
+
+    def bucket(username, day_iso):
+        days = rollups.setdefault(username, {})
+        if day_iso not in days:
+            days[day_iso] = empty_day()
+        return days[day_iso]
+
+    # A day with a ledger row on it earned something, whatever the amount —
+    # `_daily_rollup` marks `earned` on the presence of an event, not on its
+    # size, and a row here means at least one event.
+    for username, days in ledger.items():
+        for day_iso, totals in days.items():
+            row = bucket(username, day_iso)
+            row['xp'] += totals['xp']
+            row['earned'] = True
+            row['worked'] = True
+
+    # A focus session earns no XP, so a day spent at the timer without ticking
+    # anything off is a day the ledger cannot see. A row with no seconds on it
+    # is skipped rather than counted as a zero — see `_daily_rollup`, which
+    # explains why adding its goal to the denominator marks a day off twice.
+    for username, history in focus_histories.items():
+        for day_iso, record in history.items():
+            seconds = record['seconds']
+            if seconds <= 0:
+                continue
+            row = bucket(username, day_iso)
+            row['focus_seconds'] += seconds
+            row['focus_goal_seconds'] += record['goal_hours'] * 3600.0
+            row['worked'] = True
+
+    for username, days in db.completed_task_days().items():
+        for day_iso, totals in days.items():
+            row = bucket(username, day_iso)
+            row['worked'] = True
+            for field, value in totals.items():
+                row[field] += value
+
+    return rollups
+
+
+def scoring_window(user, today=None):
+    """The inclusive day range the report card is scored over: `(start, end)`.
+
+    The last ninety days, or the whole account where it is younger than that —
+    a three-day-old account is scored on three days rather than being marked
+    down for eighty-seven days it did not exist for. See SCORING_WINDOW_DAYS.
+
+    A function rather than four lines inside `ratings()` because the standing
+    panel scores every account on the instance and has to score them over the
+    window the card would have used, or its `score` measure is comparing
+    figures the card never printed.
+    """
+    today = today or date.today()
+    lifetime_days = max((today - created_date_for(user)).days + 1, 1)
+    return today - timedelta(days=min(lifetime_days, SCORING_WINDOW_DAYS) - 1), today
 
 
 def score_window(rollup, start, end, daily_goal):
@@ -517,13 +620,9 @@ def ratings(username, record=True):
 
     today = date.today()
 
-    # The window the card is scored over: the last ninety days, or the whole
-    # account where it is younger than that. A three-day-old account is scored
-    # on three days rather than being marked down for eighty-seven days it did
-    # not exist for. See SCORING_WINDOW_DAYS.
-    lifetime_days = max((today - created_date_for(user)).days + 1, 1)
-    total_days = min(lifetime_days, SCORING_WINDOW_DAYS)
-    window_start = today - timedelta(days=total_days - 1)
+    # The window the card is scored over. `total_days` is reassigned below out
+    # of the figures `score_window` measured; this is the range going in.
+    window_start, today = scoring_window(user, today)
 
     # Read once, folded into one row per day, and scored by the one scorer
     # this module has. Everything from `within` down to the five `_clamp`

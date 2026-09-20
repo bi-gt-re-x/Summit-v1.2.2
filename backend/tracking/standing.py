@@ -34,7 +34,6 @@ from datetime import date
 from backend.database import connection as db
 from backend.tracking import analytics as analytics_tracking
 from backend.tracking import focus as focus_tracking
-from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import created_date_for, find_user
 
 # Days with work on them before an account counts as somebody to be compared to.
@@ -62,13 +61,18 @@ COHORT_FLOOR = 20
 MEASURES = ('xp', 'focus', 'consistency', 'tasks', 'score')
 
 
-def _profile(username, user):
-    """One account's five measures, over the whole of its history."""
-    created = created_date_for(user)
-    today = date.today()
-    total_days = max((today - created).days + 1, 1)
+def _profile(user, today, ledger, focus_history, rollup):
+    """One account's five measures, over the whole of its history.
 
-    totals = xp_tracking.daily_totals(username)
+    Every source is handed in rather than read here, and that is the whole
+    shape of this endpoint's cost. Reading them inside meant each of the four
+    reads happened once per account — and then once more per account inside the
+    report card this used to call for its `score` — so the bill was the number
+    of accounts multiplied by the size of everyone's history. `standing()`
+    below now reads each table once, for everybody, and hands out the slices.
+    """
+    created = created_date_for(user)
+    total_days = max((today - created).days + 1, 1)
 
     # Days worked, on the same three counts every other surface uses: a
     # finished task, a logged focus session, or any XP. The ledger alone is not
@@ -77,15 +81,16 @@ def _profile(username, user):
     # consistency and kept it out of the cohort under `MIN_ACTIVE_DAYS`. A task
     # finished for 0 XP files no ledger event either. See
     # frontend/src/utils/activeDay.ts, which is the client's copy of this rule.
-    worked = {day for day, bucket in totals.items() if (bucket.get('xp') or 0) > 0}
-    worked |= {day for day, bucket in totals.items() if (bucket.get('tasks') or 0) > 0}
+    worked = {day for day, bucket in ledger.items() if (bucket.get('xp') or 0) > 0}
+    worked |= {day for day, bucket in ledger.items() if (bucket.get('tasks') or 0) > 0}
 
     focus_minutes = 0.0
-    for day_iso, record in focus_tracking.history_for(username).items():
-        try:
-            seconds = float(record.get('seconds', 0) or 0)
-        except (TypeError, ValueError, AttributeError):
-            continue
+    for day_iso, record in focus_history.items():
+        # Already a float and already floored at zero: `history_for_everyone`
+        # coerces through the same `_seconds` every other focus reader goes
+        # through, so the try/except this loop used to carry was guarding
+        # against a shape it can no longer be handed.
+        seconds = record['seconds']
         if seconds <= 0:
             continue
         focus_minutes += seconds / 60.0
@@ -93,20 +98,25 @@ def _profile(username, user):
 
     active_days = len(worked)
 
-    # `record=False`: this reads every account on the instance, and the default
-    # would file a dated snapshot against each of them every time somebody
-    # opened their own analytics page.
-    card = analytics_tracking.ratings(username, record=False)
+    # The report card's overall score, from the one scorer this app has, over
+    # the window the card itself would have used. It used to come from
+    # `ratings()`, which builds the whole card — five grades, five figures and
+    # ten week-over-week trends — so that this line could read one integer off
+    # it, and re-read `users`, the ledger, the tasks and the focus days to do
+    # it. Scoring the rollup directly is the same number without the card.
+    start, end = analytics_tracking.scoring_window(user, today)
+    daily_goal = user.get('daily_goal') or analytics_tracking.DEFAULT_DAILY_GOAL
+    score = analytics_tracking.score_window(rollup, start, end, daily_goal)['overall']
 
     return {
         'active_days': active_days,
-        'xp': sum(bucket.get('xp') or 0 for bucket in totals.values()),
-        'tasks': sum(bucket.get('tasks') or 0 for bucket in totals.values()),
+        'xp': sum(bucket.get('xp') or 0 for bucket in ledger.values()),
+        'tasks': sum(bucket.get('tasks') or 0 for bucket in ledger.values()),
         'focus': focus_minutes,
         # Capped at 100: an account created today with work on it would
         # otherwise read as more than every day it has existed for.
         'consistency': (min(active_days, total_days) / total_days) * 100.0,
-        'score': (card or {}).get('overall', {}).get('score', 0),
+        'score': score,
     }
 
 
@@ -140,23 +150,52 @@ def _top_percent(mine, others):
 
 
 def standing(username):
-    """The five placements, the cohort behind them, or None with no account."""
+    """The five placements, the cohort behind them, or None with no account.
+
+    ## What this reads
+
+    Four tables, once each, whoever is being placed. The measures it compares
+    are every account's, so unlike every other endpoint in this app it cannot
+    scope its reads to one account — but that is an argument for reading each
+    table once, not for reading it once per account, which is what this did.
+    Sixteen accounts came to 132 queries and 33 MB of row dicts, and grew with
+    the number of accounts multiplied by the size of everyone's history.
+
+    The reads are hoisted here so `_profile` is handed its slices: `db.users()`
+    for the created dates and daily goals, the ledger and the focus days for
+    the four measures folded from them, and the daily rollups — the same
+    buckets `_daily_rollup` makes, built for everybody by SQLite — for the
+    fifth. An account with no rows in a table gets an empty slice, which is the
+    same answer the per-account reads gave it.
+    """
     users = db.users()
     me = find_user(users, username=username)
     if not me:
         return None
 
-    mine = _profile(username, me)
+    today = date.today()
+    ledger = db.ledger_days()
+    focus_histories = focus_tracking.history_for_everyone()
+    rollups = analytics_tracking.rollups_for_everyone(
+        ledger=ledger, focus_histories=focus_histories)
+
+    def profile(name, user):
+        return _profile(user, today,
+                        ledger.get(name) or {},
+                        focus_histories.get(name) or {},
+                        rollups.get(name) or {})
+
+    mine = profile(username, me)
 
     others = []
     for user in users:
         name = user.get('username')
         if not name or name == username:
             continue
-        profile = _profile(name, user)
-        if profile['active_days'] < MIN_ACTIVE_DAYS:
+        other = profile(name, user)
+        if other['active_days'] < MIN_ACTIVE_DAYS:
             continue
-        others.append(profile)
+        others.append(other)
 
     enough = len(others) >= COHORT_FLOOR
     rows = [{

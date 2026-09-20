@@ -1175,6 +1175,160 @@ def rated_days_for(user_id):
         con.close()
 
 
+# --------------------------------------------------------------------------
+# Every account at once
+# --------------------------------------------------------------------------
+# The two below are the only targeted reads in this module that span accounts,
+# and they exist for the only endpoint that has to: `/api/standing` places one
+# account against all the others, so "read only this account's rows" — the
+# rule the section above is built on — is not available to it.
+#
+# What is available is the other half of the same rule: read only the *columns*
+# that are looked at, and let SQLite do the folding. The per-account version
+# walked every account in turn, pulling its whole task history and whole
+# ledger into Python to produce a few hundred daily totals apiece — and read
+# the ledger twice and the focus days four times over for each account,
+# because the report card it called for one of the five numbers read them all
+# again. Measured on this database, sixteen accounts came to 129 queries and
+# 33 MB of row dicts, in 4.6 seconds, and grew with the number of accounts
+# multiplied by the size of everyone's history: at 216 accounts it was 1,733
+# queries and 15.8 seconds. These two queries read each table once, whoever is
+# being placed, and return the daily totals rather than the rows.
+#
+# The day keys and the field names are `_daily_rollup`'s, in
+# backend/tracking/analytics.py, which is what both of these feed; the WHERE
+# clauses are `rating_of` and the completion checks beside it, written in SQL
+# the same way `rated_days_for` above writes them. tests/test_standing.py holds
+# the two to the same answer, account by account.
+
+# Rated on both rows and in range on both — `rating_of` in
+# backend/tracking/analytics.py, which stays the authority for every caller
+# that has a task dict in hand. `typeof` stands in for its isinstance check: a
+# column declared INTEGER will still hold whatever was written to it, and a
+# comparison against text does not mean in SQLite what it means in Python.
+_RATED = ("typeof(difficulty) IN ('integer', 'real') "
+          "AND typeof(execution) IN ('integer', 'real') "
+          'AND difficulty BETWEEN 1 AND 5 '
+          'AND execution BETWEEN 1 AND 5')
+
+# A timing was recorded. `isinstance(x, (int, float))` in `_daily_rollup`,
+# which a NULL fails because a NULL column is left out of the row dict
+# entirely — see the note at the top of this module.
+_TIMED = "typeof(completion_seconds) IN ('integer', 'real')"
+
+
+def ledger_days():
+    """Every account's XP ledger, folded to one row per day by SQLite.
+
+    `{user_id: {day: {'xp': n, 'tasks': n}}}` — the map `daily_totals` in
+    backend/tracking/xp.py builds for one account, for all of them at once and
+    without the 23,270 intermediate dicts.
+
+    A row here means the day had at least one ledger event on it, which is not
+    the same as having earned anything: an event of 0 XP for 0 tasks still
+    files a row, and the two callers disagree on what to make of that — the
+    report card counts the day as worked, the standing panel does not. Both
+    readings need the totals rather than the presence, so both are returned and
+    neither is decided here.
+
+    The day is the explicit `date` where there is one and the timestamp's date
+    otherwise, which is `event_day` in the same module: rows written before the
+    date column existed carry only a timestamp.
+    """
+    con = connect()
+    try:
+        if not _schema(con, 'xp_events'):
+            return {}
+        rows = con.execute(
+            'SELECT user_id, day, SUM(xp) AS xp, SUM(tasks) AS tasks FROM ('
+            '  SELECT user_id,'
+            "         CASE WHEN COALESCE(date, '') != '' THEN substr(date, 1, 10)"
+            "              WHEN COALESCE(timestamp, '') != '' THEN substr(timestamp, 1, 10)"
+            '              ELSE NULL END AS day,'
+            '         COALESCE(amount, 0) AS xp,'
+            # Missing means one, which is what a task_completion row is; a
+            # stored 0 means 0. `event.get('tasks_completed', 1) or 0`.
+            '         COALESCE(tasks_completed, 1) AS tasks'
+            '  FROM xp_events'
+            ') WHERE day IS NOT NULL GROUP BY user_id, day').fetchall()
+
+        days = {}
+        for row in rows:
+            days.setdefault(row['user_id'], {})[row['day']] = {
+                'xp': row['xp'] or 0,
+                'tasks': row['tasks'] or 0,
+            }
+        return days
+    finally:
+        con.close()
+
+
+def completed_task_days():
+    """Every account's finished tasks, folded to one row per day by SQLite.
+
+    `{user_id: {day: {...}}}`, carrying the counts and sums `_daily_rollup` in
+    backend/tracking/analytics.py folds out of the task rows: how many were
+    finished and for how much XP, how many were rated and to what, how many
+    were timed and for how long, and how many met a deadline.
+
+    This is the read the standing panel was paying most for. It walked 26,004
+    task rows — every column of them, `description` included, which is
+    unbounded free text nothing in a score looks at — to produce about two
+    thousand rows of output. Rated the same way `rated_days_for` above rates,
+    for the same reason: the predicate cannot cross the boundary between a
+    Python function over a dict and a string SQLite parses, but the test can.
+    """
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return {}
+        rows = con.execute(
+            'SELECT user_id, substr(completed_at, 1, 10) AS day,'
+            '       COUNT(*) AS tasks,'
+            '       SUM(COALESCE(xp_value, 0)) AS task_xp,'
+            '       SUM(CASE WHEN {rated} THEN 1 ELSE 0 END) AS rated,'
+            # int(difficulty) * int(execution), as `rating_of` writes it.
+            '       SUM(CASE WHEN {rated} THEN CAST(difficulty AS INTEGER)'
+            '                                 * CAST(execution AS INTEGER)'
+            '                ELSE 0 END) AS quality_sum,'
+            '       SUM(CASE WHEN {rated} THEN CAST(difficulty AS INTEGER)'
+            '                ELSE 0 END) AS difficulty_sum,'
+            '       SUM(CASE WHEN {rated} THEN CAST(execution AS INTEGER)'
+            '                ELSE 0 END) AS execution_sum,'
+            '       SUM(CASE WHEN {timed} THEN 1 ELSE 0 END) AS timed,'
+            '       SUM(CASE WHEN {timed} THEN completion_seconds'
+            '                ELSE 0 END) AS seconds_sum,'
+            # Tracked is "the column was answered", which a false answer is.
+            # On time is the answer being true.
+            '       SUM(CASE WHEN met_deadline IS NOT NULL THEN 1 ELSE 0 END)'
+            '           AS deadline_tracked,'
+            '       SUM(CASE WHEN met_deadline IS NOT NULL AND met_deadline != 0'
+            '                THEN 1 ELSE 0 END) AS on_time'
+            '  FROM tasks'
+            "  WHERE status = 'done' AND COALESCE(completed_at, '') != ''"
+            ' GROUP BY user_id, day'.format(rated=_RATED, timed=_TIMED)).fetchall()
+
+        days = {}
+        for row in rows:
+            if not row['day']:
+                continue
+            days.setdefault(row['user_id'], {})[row['day']] = {
+                'tasks': row['tasks'] or 0,
+                'task_xp': row['task_xp'] or 0,
+                'rated': row['rated'] or 0,
+                'quality_sum': row['quality_sum'] or 0,
+                'difficulty_sum': row['difficulty_sum'] or 0,
+                'execution_sum': row['execution_sum'] or 0,
+                'timed': row['timed'] or 0,
+                'seconds_sum': row['seconds_sum'] or 0,
+                'deadline_tracked': row['deadline_tracked'] or 0,
+                'on_time': row['on_time'] or 0,
+            }
+        return days
+    finally:
+        con.close()
+
+
 def columns_table_for(table, user_id, columns, order='rowid'):
     """`columns_for`, as columns rather than as rows.
 
