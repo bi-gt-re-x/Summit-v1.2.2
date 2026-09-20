@@ -7982,20 +7982,66 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-skill-card.is-advanced   { --skill: var(--ax-green); }
 .ax-skill-card.is-mastery    { --skill: var(--ax-good); }
 
-.ax-skill-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+/* Tighter when they are all shut: eight rows a name apart is a ranking, and
+   eight rows three gaps apart is eight cards that happen to be near each
+   other. The gap grows for the one that is open, which is the only one with
+   anything under its head. */
+.ax-skill-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-1); }
 .ax-skill-card {
+    padding: var(--space-2) var(--space-3);
+    transition: padding .18s ease;
+}
+.ax-skill-card.is-open {
+    margin: var(--space-2) 0;
     padding: var(--space-3);
+}
+.ax-skill-card {
     border: 1px solid var(--ax-line-soft);
     border-left: 3px solid var(--skill, var(--ax-line));
     border-radius: var(--ax-radius);
     background: var(--ax-card-2);
 }
+/* The whole head is the button — see the note on `SkillCard`. Laid out as a
+   grid so the score and the band line up down the column whatever the subject
+   is called, which is what makes eight shut rows readable as a ranking. */
 .ax-skill-head {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto auto 16px;
     align-items: baseline;
     gap: var(--space-2);
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
 }
+.ax-skill-head:hover .ax-skill-name { color: var(--skill, var(--ax-violet)); }
+.ax-skill-head:focus-visible {
+    outline: 2px solid var(--skill, var(--ax-violet));
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+}
+/* Drawn rather than a glyph, so it turns with the row instead of being swapped
+   for a different character. */
+.ax-skill-chevron {
+    align-self: center;
+    justify-self: end;
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid var(--ax-faint);
+    border-bottom: 1.5px solid var(--ax-faint);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform .18s ease;
+}
+.ax-skill-card.is-open .ax-skill-chevron { transform: rotate(225deg) translate(-2px, -2px); }
+
+/* What the head opens. The parts and the working, in that order. */
+.ax-skill-open { margin-top: var(--space-3); }
+
+/* The line above the list, inside the group. */
+.ax-skill-lead { margin: 0 0 var(--space-3); font-size: var(--text-sm); line-height: 1.55; }
 .ax-skill-name {
     min-width: 0;
     overflow: hidden;
@@ -8020,7 +8066,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     color: var(--skill, var(--ax-faint));
 }
 
-.ax-skill-parts { margin: var(--space-3) 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.ax-skill-parts { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .ax-skill-parts li {
     display: grid;
     grid-template-columns: 116px minmax(0, 1fr) 28px;

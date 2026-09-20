@@ -9,6 +9,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { bandFor, explainSkill, skillScores, SKILL_BANDS } from './skillScore';
+import { skillAdvice } from './skillAdvice';
 import type { Task } from '@/types';
 
 const TODAY = new Date('2026-09-20T12:00:00');
@@ -202,5 +203,48 @@ describe('why is it this number', () => {
   it('says nothing about confidence once there is enough of it', () => {
     const row = only(skillScores(run(60, { difficulty: 4, execution: 4 }), TODAY));
     expect(explainSkill(row, nameOf).caveat).toBeNull();
+  });
+});
+
+describe('what the recommendations tab is handed', () => {
+  const nameOf = (id: string) => (id === 'geometry' ? 'Geometry' : id);
+
+  it('names a hard-end ceiling and carries no XP claim', () => {
+    const rows = skillScores(
+      [
+        ...run(9, { difficulty: 2, execution: 5 }),
+        ...run(9, { difficulty: 5, execution: 2 }),
+      ],
+      TODAY,
+    );
+    const advice = skillAdvice(rows, nameOf);
+    const ceiling = advice.find((item) => item.id.startsWith('skill-ceiling:'));
+
+    expect(ceiling?.title).toBe('Work the hard end of Geometry');
+    // Every other rule on that tab is ranked by XP a year. "Attempt harder
+    // problems" does not convert to one without inventing the conversion, so
+    // it states none and sorts to the bottom.
+    expect(ceiling?.impact).toBe(0);
+    expect(ceiling?.category).toBe('Subjects');
+  });
+
+  it('asks for ratings where a record cannot be scored', () => {
+    const rows = skillScores(
+      [
+        ...run(6, { difficulty: 3, execution: 4 }),
+        ...run(20, { difficulty: undefined, execution: undefined }),
+      ],
+      TODAY,
+    );
+    const advice = skillAdvice(rows, nameOf);
+    const unrated = advice.find((item) => item.id.startsWith('skill-unrated:'));
+
+    expect(unrated?.title).toBe('Rate your Geometry work');
+    expect(unrated?.evidence).toMatch(/6 of 26 finished tasks rated/);
+  });
+
+  it('says nothing about a subject that is rated and even', () => {
+    const rows = skillScores(run(20, { difficulty: 3, execution: 4 }), TODAY);
+    expect(skillAdvice(rows, nameOf)).toEqual([]);
   });
 });

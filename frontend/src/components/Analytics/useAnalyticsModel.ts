@@ -107,6 +107,7 @@ import {
 import { goalWork, linkCoverage } from '@/utils/goalWork';
 import { skillScores } from '@/utils/skillScore';
 import { skillFindings } from '@/utils/skillFindings';
+import { skillAdvice } from '@/utils/skillAdvice';
 import {
   qualityBands,
   qualityGrid,
@@ -705,7 +706,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
   }, [breakdown, goalSubjects]);
 
   // ---- Recommendations ----------------------------------------------------
-  const advice = useMemo(
+  const habitAdvice = useMemo(
     () =>
       recommendations({
         // The fortnight, not the picker — see "The recent window" above.
@@ -737,6 +738,25 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
       recentWeek,
     ],
   );
+
+  /* The habit rules, plus the two the skill model adds.
+
+     Merged here rather than inside `recommendations` because that function
+     takes a window's shape and knows nothing about ratings per subject over
+     the whole record — and the skill rules need exactly that. Both sets go
+     through the same list, the same category filter and the same "Add to
+     tasks", so a reader meets one kind of suggestion rather than two.
+
+     Re-sorted on the way out by the same two keys `rank` uses. The skill rules
+     carry no XP figure and so land at the bottom, which is where a change
+     whose payoff is a better score rather than more of one belongs. */
+  const advice = useMemo(() => {
+    const extra = skillAdvice(skills, nameOf);
+    if (extra.length === 0) return habitAdvice;
+    return [...habitAdvice, ...extra].sort(
+      (a, b) => b.impact - a.impact || a.effort - b.effort,
+    );
+  }, [habitAdvice, nameOf, skills]);
 
   const banked = Number(all[all.length - 1]?.cumulative_xp) || 0;
   /* The same fortnight the advice came from, not the picker's window. Both

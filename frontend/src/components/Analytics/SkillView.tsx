@@ -97,60 +97,86 @@ export function SkillStandingRow({
 // Subjects — the scored list, and why each is what it is
 // --------------------------------------------------------------------------
 /**
- * One subject: the score, the band, the six parts, and the explanation behind
- * a disclosure.
+ * One subject, as a disclosure inside a disclosure.
  *
- * The explanation is folded because it is four lines per subject and a reader
- * scanning eight subjects wants eight numbers. It is *there* because a number
- * nobody can interrogate is a number nobody should trust — which is the whole
- * complaint against the lattice's authored percentages that this replaces.
+ * ## Two levels, and why each is shut
+ *
+ * The **subject** is shut because eight subjects open at once is eight sets of
+ * six bars — fifty-four rows of chart for a reader who came to see where they
+ * stand. Shut, the row is the three things that answer that: the name, the
+ * number and the band. That is the list; everything else is the argument for
+ * it.
+ *
+ * The **working** inside it is shut for the same reason one level down. The
+ * six parts say *what* the score is made of and are worth meeting on the way
+ * in; the two sentences and the evidence table say *why*, which is a question
+ * a reader asks about one subject at a time.
+ *
+ * Neither is hidden. A number nobody can interrogate is a number nobody should
+ * trust, and that is the whole complaint against the lattice percentages this
+ * replaces — so the path from "78" to the eighteen tasks behind it is two
+ * clicks and no navigation.
  */
 function SkillCard({ row, nameOf }: { row: SkillRow; nameOf: (id: string) => string }) {
   const [open, setOpen] = useState(false);
-  const why = explainSkill(row, nameOf);
+  const [why, setWhy] = useState(false);
+  const explained = explainSkill(row, nameOf);
+  const name = nameOf(row.subject);
 
   return (
-    <li className={`ax-skill-card ${bandClass(row)}`}>
-      <div className="ax-skill-head">
-        <span className="ax-skill-name">{nameOf(row.subject)}</span>
-        <span className="ax-skill-score">{row.score}</span>
-        <span className="ax-skill-band">{row.band}</span>
-      </div>
-
-      <ul className="ax-skill-parts" aria-label={`What makes up ${nameOf(row.subject)}`}>
-        {PART_WEIGHTS.map((part) => (
-          <li key={part.key}>
-            <span className="ax-skill-part-label">{part.label}</span>
-            <span className="ax-skill-part-track">
-              <i style={{ width: `${Math.round(row.parts[part.key])}%` }} />
-            </span>
-            <span className="ax-skill-part-value">{Math.round(row.parts[part.key])}</span>
-          </li>
-        ))}
-      </ul>
-
+    <li className={`ax-skill-card ${bandClass(row)}${open ? ' is-open' : ''}`}>
+      {/* The whole head is the control, so the row reads as a thing you open
+          rather than as a label with a chevron parked at the end of it. */}
       <button
         type="button"
-        className="ax-skill-why-toggle"
+        className="ax-skill-head"
         aria-expanded={open}
         onClick={() => setOpen((was) => !was)}
       >
-        {open ? 'Hide the working' : `Why ${row.score}?`}
+        <span className="ax-skill-name">{name}</span>
+        <span className="ax-skill-score">{row.score}</span>
+        <span className="ax-skill-band">{row.band}</span>
+        <span className="ax-skill-chevron" aria-hidden="true" />
       </button>
 
       {open && (
-        <div className="ax-skill-why">
-          <p>{why.lifting}</p>
-          <p>{why.limiting}</p>
-          <dl className="ax-skill-evidence">
-            {why.evidence.map((item) => (
-              <div key={item.label}>
-                <dt>{item.label}</dt>
-                <dd>{item.value}</dd>
-              </div>
+        <div className="ax-skill-open">
+          <ul className="ax-skill-parts" aria-label={`What makes up ${name}`}>
+            {PART_WEIGHTS.map((part) => (
+              <li key={part.key}>
+                <span className="ax-skill-part-label">{part.label}</span>
+                <span className="ax-skill-part-track">
+                  <i style={{ width: `${Math.round(row.parts[part.key])}%` }} />
+                </span>
+                <span className="ax-skill-part-value">{Math.round(row.parts[part.key])}</span>
+              </li>
             ))}
-          </dl>
-          {why.caveat && <p className="ax-skill-caveat">{why.caveat}</p>}
+          </ul>
+
+          <button
+            type="button"
+            className="ax-skill-why-toggle"
+            aria-expanded={why}
+            onClick={() => setWhy((was) => !was)}
+          >
+            {why ? 'Hide the working' : `Why ${row.score}?`}
+          </button>
+
+          {why && (
+            <div className="ax-skill-why">
+              <p>{explained.lifting}</p>
+              <p>{explained.limiting}</p>
+              <dl className="ax-skill-evidence">
+                {explained.evidence.map((item) => (
+                  <div key={item.label}>
+                    <dt>{item.label}</dt>
+                    <dd>{item.value}</dd>
+                  </div>
+                ))}
+              </dl>
+              {explained.caveat && <p className="ax-skill-caveat">{explained.caveat}</p>}
+            </div>
+          )}
         </div>
       )}
     </li>
@@ -169,17 +195,12 @@ export function SkillScorePanel({
   if (rows.length === 0) return <NoSkills title="Skill level by subject" />;
 
   return (
-    <Panel
-      title="Skill level by subject"
-      note="Scored from your own ratings, not from the lattice"
-      claim={
-        <>
-          Every score below is worked out from the tasks you rated — accuracy, difficulty,
-          consistency, recent form, delivery and how recently you were in it. Open one to
-          see the arithmetic.
-        </>
-      }
-    >
+    <Panel title="Skill level by subject" note="Scored from your own ratings, not from the lattice">
+      <p className="ax-muted ax-skill-lead">
+        Every score is worked out from the tasks you rated — accuracy, difficulty,
+        consistency, recent form, delivery and how recently you were in it. Open a subject
+        for the six parts, and the working behind them.
+      </p>
       <ul className="ax-skill-list">
         {rows.slice(0, limit).map((row) => (
           <SkillCard key={row.subject} row={row} nameOf={nameOf} />

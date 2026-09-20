@@ -72,6 +72,10 @@ const FULL_CONFIDENCE = 30;
 /** Where a subject with almost no evidence is pulled toward. */
 const PRIOR = 30;
 
+/** The shrinkage, in a clause a recommendation can drop into a sentence. */
+export const SUBJECT_RULE_FLOOR_NOTE =
+  'a score is held toward the middle until there are enough rated tasks behind it';
+
 /** A task's weight halves this often, so the score follows current work. */
 const HALF_LIFE_DAYS = 45;
 

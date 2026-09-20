@@ -130,44 +130,52 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           Capped by the tone setting, same as the cards below: this is a
           diagnosis and how many of those a reader meets at once is exactly
           what that setting is about. See utils/analyticsPrefs. */}
-      {goalLimits.length > 0 && (
+      {/* Both shut groups in one section, and that is a spacing fix rather
+          than a tidy-up. This tab sets a `--space-8` gap between sections —
+          right for panels of prose, and wrong for a shut group, which is two
+          lines of text and a chevron. One per section put forty pixels above
+          and below each of them, so two collapsed headers floated in a white
+          field looking like a page that had failed to load its middle. Stacked
+          inside one section they fall under `.ax-group + .ax-group`, which is
+          the rhythm every other group stack in the app already uses. */}
+      {(goalLimits.length > 0 || goalAdvice.length > 0) && (
         <section className="ax-section">
-          <PanelGroup
-            title="Why your goals are moving the way they are"
-            note="The subject holding each goal back the most."
-          >
-            <div className="ax-limiters">
-              {goalLimits.slice(0, headlines).map((row) => (
-                <LimiterCard key={row.goalId} row={row} />
-              ))}
-            </div>
-          </PanelGroup>
-        </section>
-      )}
+          {goalLimits.length > 0 && (
+            <PanelGroup
+              title="Why your goals are moving the way they are"
+              note="The subject holding each goal back the most."
+            >
+              <div className="ax-limiters">
+                {goalLimits.slice(0, headlines).map((row) => (
+                  <LimiterCard key={row.goalId} row={row} />
+                ))}
+              </div>
+            </PanelGroup>
+          )}
 
-      {/* The goals' own advice, kept separate from the ranked list below
-          rather than merged into it. `advice` is ranked by XP a year and
-          these are not comparable to that — a goal drifting past its date
-          is not worth "1,200 XP", it is worth the goal. Two rows at most:
-          this is a pointer to the goals page, not a second copy of it. */}
-      {goalAdvice.length > 0 && (
-        <section className="ax-section">
-          <PanelGroup
-            title="From your goals"
-            note="Goals that need attention. Goals on track are not listed."
-          >
-            <ul className="ax-goal-advice">
-              {goalAdvice.map((row) => (
-                <li key={row.id} className={`is-${row.tone}`}>
-                  <strong>{row.title}</strong>
-                  <span className="ax-muted">{row.because}</span>
-                  <Link to="/goals" className="ax-link">
-                    {row.goalTitle}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </PanelGroup>
+          {/* The goals' own advice, kept separate from the ranked list below
+              rather than merged into it. `advice` is ranked by XP a year and
+              these are not comparable to that — a goal drifting past its date
+              is not worth "1,200 XP", it is worth the goal. Two rows at most:
+              this is a pointer to the goals page, not a second copy of it. */}
+          {goalAdvice.length > 0 && (
+            <PanelGroup
+              title="From your goals"
+              note="Goals that need attention. Goals on track are not listed."
+            >
+              <ul className="ax-goal-advice">
+                {goalAdvice.map((row) => (
+                  <li key={row.id} className={`is-${row.tone}`}>
+                    <strong>{row.title}</strong>
+                    <span className="ax-muted">{row.because}</span>
+                    <Link to="/goals" className="ax-link">
+                      {row.goalTitle}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </PanelGroup>
+          )}
         </section>
       )}
 
