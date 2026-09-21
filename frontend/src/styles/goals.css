@@ -2169,57 +2169,69 @@ button.gx-state-attn.is-on {
     color: var(--gx-muted);
     max-width: 64ch;
 }
-.gx-metrics {
+/* ---- System goals, as cards ----
+   The four counters are drawn on the Active tab's `.ag-card` shell so the page
+   has one idea of what a goal looks like. Everything below is the difference
+   between a counter and an outcome goal, and nothing below restates the shell.
+
+   A stack rather than the wrapping grid these were: a card carrying a header,
+   two panels and a footer is far too tall to sit beside another one, which is
+   the same reason the Active tab's cards are full width. */
+.gx-sys-cards {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 1px;
-    /* The hairline between columns is the gap over the line colour, the same
-       trick the goal card's two panels use, so there is no border to double up
-       at the outer edge. */
-    background: var(--gx-line);
-    border: 1px solid var(--gx-line);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-}
-.gx-metric {
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
-    min-width: 0;
-    padding: var(--space-4) var(--space-4) var(--space-3);
-    background: var(--gx-card-2);
+    gap: var(--space-4);
 }
-.gx-metric.is-done { background: color-mix(in srgb, var(--gx-good) 7%, var(--gx-card-2)); }
+/* The shell draws a tone band across the top, and takes the colour from the
+   goal's category. A counter has no useful category — all four are filed under
+   "other", which is grey — so the tone is the counter's own here, the colour
+   already used for its bar and its glyph. The band then says which of the four
+   this is before a word of it is read. `Ring` is told the same colour by name
+   from the component; the two lists are kept in step by hand. */
+.gx-sys-card.is-xp     { --tone: var(--gx-violet); }
+.gx-sys-card.is-streak { --tone: var(--gx-amber); }
+.gx-sys-card.is-tasks  { --tone: var(--gx-blue); }
+.gx-sys-card.is-focus  { --tone: var(--gx-teal); }
+/* Reached: green wins over the counter's own colour, as it does on an outcome
+   card whose every checkpoint is behind it. */
+.gx-sys-card.is-done { --tone: var(--gx-good); }
 
-.gx-metric-head {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-2xs);
-    font-weight: 700;
-    letter-spacing: .07em;
-    text-transform: uppercase;
-    color: var(--gx-muted);
+/* The counter's glyph, in the slot `.gx-top > .gx-tile` holds on an outcome
+   card and at the same size, so the two headers line up down the page. */
+.gx-sys-tile {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--tone) var(--gx-edge), transparent);
+    background: color-mix(in srgb, var(--tone) var(--gx-wash), transparent);
+    color: var(--tone);
 }
-.gx-metric-ico {
-    width: 22px; height: 22px; flex: none;
-    display: grid; place-items: center;
-    border-radius: var(--radius-sm);
-    background: color-mix(in srgb, currentColor 13%, transparent);
-}
-.gx-metric-ico svg { width: 13px; height: 13px; }
-.gx-metric-ico.is-xp     { color: var(--gx-violet); }
-.gx-metric-ico.is-streak { color: var(--gx-amber); }
-.gx-metric-ico.is-tasks  { color: var(--gx-blue); }
-.gx-metric-ico.is-focus  { color: var(--gx-teal); }
+.gx-sys-tile svg { width: 22px; height: 22px; }
+/* No tone of its own: it inherits the card's, so a reached counter turns green
+   here too rather than keeping its glyph in the colour of an unmet target. */
 
-/* The same four glyphs, in the wizard that makes one of these. It borrowed the
-   list's icon rule and outlived it — the list is a strip of metrics now and
-   `.gx-metric-ico` is sized for a column head, which is smaller than a row in
-   a picker wants. See `gx-syspick-row` in components/Goals/SystemGoalWizard. */
+/* The badge itself needs no rule: `.ag-badge` already draws it in the card's
+   tone, which here is the counter's own colour, so "System goal" arrives in the
+   same violet or amber as the band above it and the ring beside it.
+
+   The sentence in the right-hand panel. `.ag-empty` already styles a line of
+   prose in a panel; this only stops it being centred as an empty state is. */
+.gx-sys-how { text-align: left; margin: 0 0 var(--space-3); }
+
+/* No "View Details" on a counter — there is no drawer behind it — so the facts
+   have the footer to themselves and start at its left edge. */
+.gx-sys-foot { justify-content: flex-start; }
+
+/* The same four glyphs, in the wizard that makes one of these. It has its own
+   rule because a row in a picker wants a size of its own: `.gx-sys-tile` above
+   is 44px, sized to sit in a card header beside a title.
+   See `gx-syspick-row` in components/Goals/SystemGoalWizard. */
 .gx-sys-ico {
     width: 30px; height: 30px; flex: none;
     display: grid; place-items: center;
@@ -2234,11 +2246,15 @@ button.gx-state-attn.is-on {
 
 /* The count, and the biggest thing in the column — it is the reason the column
    exists, and it is the one figure on this page nobody can type. */
+/* Larger than it was as a column head. It has a panel to itself now and it is
+   still meant to be the first thing read on the card — the figure the whole
+   tab is about, against a target beside it in small text. */
 .gx-metric-now {
-    font-size: var(--text-2xl);
+    display: block;
+    font-size: var(--text-3xl);
     font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -.02em;
+    line-height: 1.05;
+    letter-spacing: -.03em;
     color: var(--gx-text);
     font-variant-numeric: tabular-nums;
 }

@@ -12,9 +12,13 @@
  * four more goals with a different icon. That is the failure these tests are
  * about: not a crash, a category error the interface was actively encouraging.
  *
- * So the figure is stated as the app's, the target is stated as the reader's,
- * and the only controls are the two things that genuinely belong to them —
- * changing the number to stop at, and dropping the counter.
+ * They are drawn on the outcome card's shell now, which is that same shape on
+ * purpose — one page, one idea of what a goal looks like. So the category error
+ * is no longer held off by the layout being different, and every one of these
+ * tests is now load-bearing rather than corroborating. What holds it off is
+ * said in words and checked below: a badge reading "System goal", a line saying
+ * the app keeps the count, no checkpoint panel and nothing shaped like one, and
+ * the only two controls being the ones that genuinely belong to the reader.
  */
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -54,9 +58,14 @@ function show(counters: Goal[] = FOUR) {
   return { onEdit, onDelete, onNew };
 }
 
-/** One metric column, found by the thing it counts. */
+/**
+ * One counter's card, found by the thing it counts.
+ *
+ * `closest` with a class selector is typed `Element`, where the old `'li'`
+ * resolved to an `HTMLLIElement`; `within` wants the narrower one.
+ */
 const column = (name: string) =>
-  screen.getByText(name, { selector: '.gx-metric-head' }).closest('li')!;
+  screen.getByText(name, { selector: '.ag-tags li' }).closest('.ag-card') as HTMLElement;
 
 describe('saying what a system goal is', () => {
   /* The sentence is the change. Everything else here follows from it. */
@@ -68,31 +77,63 @@ describe('saying what a system goal is', () => {
     expect(lead).toHaveTextContent(/the total updates automatically/);
   });
 
-  it('heads each column with what is counted, not with the title somebody wrote', () => {
+  it('names which of the four each card is', () => {
     show();
 
-    // "Earn 50,000 XP" repeats the target printed underneath it and buries the
-    // one word that says which of the four this is.
+    // On a card the title is the reader's own — "Earn 50,000 XP" — so the one
+    // word that says which counter this is has to be stated somewhere it will
+    // not be buried. It is a tag, in the row where an outcome card puts its
+    // term and its priority.
     expect(column('XP')).toBeInTheDocument();
     expect(column('Streak')).toBeInTheDocument();
     expect(column('Tasks')).toBeInTheDocument();
     expect(column('Focus')).toBeInTheDocument();
   });
 
-  it('keeps the title the reader wrote within reach', () => {
+  it('heads the card with the title the reader wrote', () => {
     show();
-    expect(column('XP')).toHaveAttribute('title', 'Earn 50,000 XP');
+    // Level 3 specifically: the two panel heads below it are headings too.
+    expect(within(column('XP')).getByRole('heading', { level: 3 })).toHaveTextContent(
+      'Earn 50,000 XP',
+    );
+  });
+
+  /* The two things holding off the category error the shell reintroduces. A
+     card that looks like an outcome goal has to say that it is not one. */
+  it('says on every card that the app keeps the count', () => {
+    show();
+    for (const name of ['XP', 'Streak', 'Tasks', 'Focus']) {
+      const card = within(column(name));
+      expect(card.getByText('System goal')).toBeInTheDocument();
+      expect(card.getByText(/Summit keeps this count/)).toBeInTheDocument();
+    }
+  });
+
+  it('draws no checkpoint panel, and nothing shaped like one', () => {
+    const { container } = render(
+      <SystemGoals counters={FOUR} onEdit={vi.fn()} onDelete={vi.fn()} onNew={vi.fn()} />,
+    );
+
+    // Every one of these is a claim about work somebody is doing.
+    expect(container.querySelector('.ag-steps')).toBeNull();
+    expect(container.querySelector('.ag-focus')).toBeNull();
+    expect(container.querySelector('.ag-next')).toBeNull();
+    expect(screen.queryByText(/checkpoint/i)).toBeNull();
   });
 });
 
 describe('the figures', () => {
   it('leads with the count and says what it is counting toward', () => {
     show();
-    const xp = column('XP');
+    const xp = within(column('XP'));
 
-    expect(within(xp).getByText('12,450')).toBeInTheDocument();
-    expect(within(xp).getByText(/of 50,000/)).toBeInTheDocument();
-    expect(within(xp).getByText('25%')).toBeInTheDocument();
+    expect(xp.getByText('12,450')).toBeInTheDocument();
+    expect(xp.getByText(/of 50,000/)).toBeInTheDocument();
+    // The percentage moved to the header, beside the ring, where an outcome
+    // card carries it. The panel says the distance instead, which is the thing
+    // the figure above it does not already state.
+    expect(xp.getByText('25%')).toBeInTheDocument();
+    expect(xp.getByText(/37,550 xp to go/i)).toBeInTheDocument();
   });
 
   it('shows focus as time rather than as a count of minutes', () => {
