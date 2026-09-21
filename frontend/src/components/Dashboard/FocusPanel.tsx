@@ -122,13 +122,20 @@ export function FocusPanel({ session, pomodoro }: FocusPanelProps) {
       </div>
 
       {/* One interval per dot, filled as they are finished. The cycle's length
-          is the style's, so a Gentle run shows four and a Deep one shows
-          three — the row is the shape of this cycle rather than a fixed four. */}
-      <ul className="fp-dots" aria-label={`${done} of ${style.rounds} intervals this cycle`}>
-        {Array.from({ length: style.rounds }, (_, at) => (
-          <li key={at} className={at < done ? 'is-done' : ''} aria-hidden="true" />
-        ))}
-      </ul>
+          is the style's, so a Gentle run shows four and a Sprint shows three —
+          the row is the shape of this cycle rather than a fixed four.
+
+          Three of the ten styles are `rounds: 1` — DeskTime's 52 minutes,
+          Ultradian's 90, Animedoro's 40 — and a row of one dot is not a
+          progress indicator, it is a full stop under the clock. Drawn only
+          where there is a cycle to be part way through. */}
+      {style.rounds > 1 && (
+        <ul className="fp-dots" aria-label={`${done} of ${style.rounds} intervals this cycle`}>
+          {Array.from({ length: style.rounds }, (_, at) => (
+            <li key={at} className={at < done ? 'is-done' : ''} aria-hidden="true" />
+          ))}
+        </ul>
+      )}
 
       <div className="fp-controls">
         <button
