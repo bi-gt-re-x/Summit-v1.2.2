@@ -61,14 +61,20 @@
    narrower card. At a flat 320px it took a quarter of a 1280px window and the
    seven day columns were left at 75px each — narrow enough that the Focus chips
    and the block titles ellipsised. The grid is what the page is for; the column
-   beside it gives way first. */
+   beside it gives way first.
+
+   The caps are 1.3x what they were — 294 and 264 — because the panels in it are
+   read, not glanced at: the subject library's rows and the week's figures were
+   wrapping inside a column sized for neither. It is a cap and not a width, so
+   the grid still takes what it needs first and the column only reaches 382 on a
+   card wide enough to spare it. */
 .wk-main {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 294px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 382px);
     gap: var(--space-10); align-items: start;
 }
 @media (max-width: 1400px) {
-    .wk-main { grid-template-columns: minmax(0, 1fr) minmax(0, 264px); gap: var(--space-6); }
+    .wk-main { grid-template-columns: minmax(0, 1fr) minmax(0, 343px); gap: var(--space-6); }
 }
 /* Collapsed: drop the sidebar column so the day grid widens to fill the card. */
 .wk-main.sidebar-collapsed { grid-template-columns: minmax(0, 1fr); }
@@ -264,9 +270,15 @@ html[data-theme="dark"] .wk-daycol.today { background: rgba(127, 156, 255, .06);
    column — its right edge a couple px short of the column border so the border
    still shows and the badge itself isn't clipped.
    The ring is the surface showing through around it, so the badge is separated
-   from the rail rather than crowded into it. The hour label it lands on top of
-   is hidden outright — see LABEL_CLEARANCE in components/Calendar/TimeGrid.tsx;
-   a ring is not enough to keep "7:59 AM" and "8 AM" apart in 48px of gutter. */
+   from the rail rather than crowded into it.
+
+   Hour labels are never hidden for it any more. They were, by a LABEL_CLEARANCE
+   check in components/Calendar/TimeGrid.tsx that no longer exists: the badge
+   dropped its meridiem (`nowLabel` in utils/calendarGrid) and the two now sit
+   side by side in the gutter, the labels at right: 42px and the badge in the
+   half that leaves. That split is what keeps them apart, so a badge wide enough
+   to cross it — "7:59 AM" against "8 AM" — is what the bare form exists to
+   prevent. */
 .wk-nowlabel {
     position: absolute; right: 1px; left: auto;
     transform: translateY(-50%);

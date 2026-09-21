@@ -18,10 +18,13 @@
 .day-action-btn.is-running:hover { background: #c9453f; border-color: #c9453f; }
 
 
-/* ---- Two-column body: day grid on the left, overview sidebar on the right ---- */
+/* ---- Two-column body: day grid on the left, overview sidebar on the right ----
+   442px is 1.3x the 340 it was, taken off the grid. The Day view can afford it
+   where the Week view could not: one day column takes whatever is left and
+   cannot ellipsise the way seven at 75px each did. */
 .day-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(0, 1fr) 442px;
     gap: var(--space-6);
     flex: 1 1 auto;
     min-height: 0;

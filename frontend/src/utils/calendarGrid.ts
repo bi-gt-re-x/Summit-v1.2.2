@@ -13,7 +13,7 @@
  *
  * Ported from the rendering half of calendar-week.js.
  */
-import { hmText, hourText, rangeText, timeText } from './clock';
+import { clockFormat, hmText, hourText, rangeText, timeText } from './clock';
 import { familyForSection } from './calendarColors';
 import { familyForSubject, type Family } from './eventPalette';
 import { eventFamilyKey, taskFamilyKey } from './calendarFamilies';
@@ -636,17 +636,26 @@ export function nowOffset(now: Date = new Date()): number | null {
 }
 
 /**
- * "6:40" for the badge beside the now line — no meridiem.
+ * "6:40" for the badge beside the now line — no meridiem, and "18:40" on a
+ * twenty-four hour clock.
  *
- * It was "6:40 PM", and those three characters were the whole problem: the
- * badge then needed more of the hour rail than the rail has spare, so it landed
- * on top of whichever hour label it passed and that label had to be hidden to
- * get out of its way. Twice an hour the rail was missing an hour. Without the
- * meridiem the badge fits in the gap the rail already leaves, and nothing has
- * to give. Nothing is lost with it: the badge sits on a line between two
- * labelled hours that both say AM or PM.
+ * The meridiem is dropped, and those three characters are the reason: the badge
+ * sits in the right-hand half of an 82px gutter (`.wk-nowlabel`, right: 1px)
+ * and the hour labels in the left (`right: 42px`). "6:40 PM" is wider than the
+ * half it has, so it used to land on top of whichever hour label it passed and
+ * that label had to be hidden to get out of its way — twice an hour the rail
+ * was missing an hour. Nothing is lost by dropping it: the badge sits on a line
+ * between two labelled hours that both say AM or PM.
+ *
+ * That last sentence is the whole justification, and it is only true when the
+ * hours *do* say AM or PM. This read the clock nowhere and wrote twelve-hour
+ * time always, so on a 24-hour account the rail ran 14, 15, 16 with a badge
+ * between two of them reading "3:37" — a different clock from the labels it was
+ * being compared against, which is the one thing the bare form cannot survive.
+ * It follows the account's clock now, the way every other formatter above does.
  */
 export function nowLabel(now: Date = new Date()): string {
+  if (clockFormat() === '24h') return timeText(now);
   return `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')}`;
 }
 
