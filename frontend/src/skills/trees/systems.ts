@@ -23,7 +23,7 @@ export const SYSTEMS: SubjectTree = {
       desc: 'Getting correct results when things happen at once or in an unpredictable order. Race conditions are the defining hazard: the bug is real, intermittent, and disappears when you look at it.' },
     { id: 's.locks', name: 'Locks & Deadlock', icon: 'locked', tier: 'expert', requires: ['s.concurrency'], state: lock, percent: 0, xp: 2500,
       desc: 'Protecting shared state, and the new failure that protection creates: two holders each waiting on the other forever. Consistent lock ordering is the cheapest cure.' },
-    { id: 's.io', name: 'Buffered I/O', icon: 'cache', tier: 'advanced', requires: ['s.files'], state: lock, percent: 0, xp: 1800,
+    { id: 's.io', name: 'Buffered I/O', icon: 'buffer', tier: 'advanced', requires: ['s.files'], state: lock, percent: 0, xp: 1800,
       desc: 'Why reading a file one byte at a time is thousands of times slower than reading it in blocks. Buffering is the general trick of paying a large fixed cost rarely instead of a small one constantly.' },
     { id: 's.net', name: 'Networking', icon: 'network', tier: 'advanced', requires: ['s.io'], state: lock, percent: 0, xp: 2300,
       desc: 'Two machines agreeing how to say something to each other, in layers. Knowing what DNS, TCP and TLS each did before your request left is what makes network debugging tractable.' },

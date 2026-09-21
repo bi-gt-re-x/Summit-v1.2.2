@@ -58,7 +58,7 @@ export const HUMANITIES: SubjectTree = {
       desc: 'A subject of its own: the questions that do not resolve into evidence, and how to argue about them anyway.' },
     { id: 'hu.psychology', name: 'Psychology', icon: 'psychology', tier: 'advanced', requires: ['hu.people'], navTo: 'psychology', state: lock,
       desc: 'A subject of its own: how minds actually behave, measured carefully rather than assumed from introspection.' },
-    { id: 'hu.debate', name: 'Competitive Debate', icon: 'argument', tier: 'advanced', requires: ['hu.argue', 'hu.evidence'], navTo: 'debate', state: lock,
+    { id: 'hu.debate', name: 'Competitive Debate', icon: 'debate', tier: 'advanced', requires: ['hu.argue', 'hu.evidence'], navTo: 'debate', state: lock,
       desc: 'A subject of its own: policy, LD and public forum — winning arguments, then winning rounds.' },
   ],
 };

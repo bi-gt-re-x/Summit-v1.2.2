@@ -15,7 +15,7 @@ export const CALCULUS: SubjectTree = {
       desc: 'The rate at which something changes at a single instant, defined as a limit of average rates. Being able to say what it means for a real quantity matters more than being able to compute it.' },
     { id: 'k.rules', name: 'Differentiation Rules', icon: 'equations', tier: 'advanced', requires: ['k.deriv'], state: lock, percent: 0, xp: 2100,
       desc: 'Product, quotient and chain — the shortcuts that make derivatives fast once you have done a few from first principles. The chain rule is the one that keeps being the culprit.' },
-    { id: 'k.implicit', name: 'Implicit Differentiation', icon: 'equations', tier: 'expert', requires: ['k.rules'], state: lock, percent: 0, xp: 2200,
+    { id: 'k.implicit', name: 'Implicit Differentiation', icon: 'implicit', tier: 'expert', requires: ['k.rules'], state: lock, percent: 0, xp: 2200,
       desc: 'Differentiating a relationship that is not written as y equals something. The trick is remembering that y is still a function of x, so the chain rule applies every time it appears.' },
     { id: 'k.optim', name: 'Optimization', icon: 'target', tier: 'expert', requires: ['k.rules'], state: lock, percent: 0, xp: 2300,
       desc: 'Finding the largest or smallest value something can take, by looking where the derivative is zero. The modelling is the hard half; the calculus is usually two lines.' },

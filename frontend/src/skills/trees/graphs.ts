@@ -13,7 +13,7 @@ export const GRAPHS: SubjectTree = {
       desc: 'Exploring a level at a time with a queue. Because it reaches every node at distance one before distance two, it hands you shortest paths for free on unweighted graphs.' },
     { id: 'g.dfs', name: 'Depth-First Search', icon: 'branch', tier: 'intermediate', requires: ['g.repr'], state: lock, percent: 0, xp: 1900,
       desc: 'Following one route as far as it goes before backing up. Natural to write recursively, and the base for cycle detection, topological order and component finding.' },
-    { id: 'g.components', name: 'Connected Components', icon: 'network', tier: 'intermediate', requires: ['g.dfs'], state: lock, percent: 0, xp: 1800,
+    { id: 'g.components', name: 'Connected Components', icon: 'connected-components', tier: 'intermediate', requires: ['g.dfs'], state: lock, percent: 0, xp: 1800,
       desc: 'Finding the separate islands in a graph that is not fully joined up. One traversal per unvisited node, and a surprising number of grid puzzles are exactly this.' },
     { id: 'g.cycles', name: 'Cycle Detection', icon: 'loops', tier: 'advanced', requires: ['g.dfs'], state: lock, percent: 0, xp: 2000,
       desc: 'Deciding whether a graph contains a loop — which differs between directed and undirected graphs. In a dependency graph a cycle is the thing that makes an ordering impossible.' },
@@ -29,7 +29,7 @@ export const GRAPHS: SubjectTree = {
       desc: 'Dijkstra with a heuristic nudging the search toward the goal. As long as the heuristic never overestimates, the answer stays optimal and the search visits far fewer nodes.' },
     { id: 'g.bipartite', name: 'Bipartite Matching', icon: 'puzzle', tier: 'expert', requires: ['g.components'], state: lock, percent: 0, xp: 2500,
       desc: 'Pairing two sets so as many pairs as possible are matched. Scheduling, assignment and rota problems are usually this in disguise.' },
-    { id: 'g.flow', name: 'Network Flow', icon: 'network', tier: 'mastery', requires: ['g.topo', 'g.mst', 'g.bipartite'], state: lock, percent: 0, xp: 3000,
+    { id: 'g.flow', name: 'Network Flow', icon: 'flow', tier: 'mastery', requires: ['g.topo', 'g.mst', 'g.bipartite'], state: lock, percent: 0, xp: 3000,
       desc: 'How much can be pushed through a capacitated network, and where the bottleneck is. The max-flow min-cut theorem tying those two together is one of the genuinely beautiful results in the subject.' },
   ],
 };
