@@ -366,13 +366,27 @@ body:has(.dash) .app-main {
    small clock adrift in a tall white card, which is the same complaint the
    goal box it replaced had.
 
-   So the dial is 248px here. It is the one object on the panel and the row has
+   So the dial is 312px here. It is the one object on the panel and the row has
    the space for it, which leaves the slack at something a reader sees as
-   margin rather than as absence. The clock inside scales with it — a 2.9rem
-   figure in a 248px ring sits where a 32px one did in a 168px ring.
+   margin rather than as absence. The clock inside scales with it — a 3.5rem
+   figure in a 312px ring sits where a 32px one did in a 168px ring.
 
-   The ring is drawn from a viewBox, so these two numbers are the whole change:
-   the stroke, the radius and the text all follow.
+   The ring is drawn from a viewBox, so the width and the height carry almost
+   all of it: the radius and the arc follow on their own. The stroke does not,
+   and is the one thing held back. Scaling a 10-unit stroke from a 168 viewBox
+   to 312px draws it at 18.6 real pixels, which is a band rather than a line;
+   8.5 lands at 15.8 and keeps the weight the ring had at 248px. Growing the
+   circle should make it bigger, not heavier.
+
+   ## Where the slack goes
+
+   Above the dial and above the controls, and nowhere else. It used to sit
+   above the dial and *below* the controls, which centred the stack and left
+   the buttons floating some eighty pixels clear of the day's line at the foot
+   — the panel read as a clock with its controls tucked under it and then a
+   band of nothing. Moving that second `auto` to the top of the controls drops
+   them to just above the footer, where a control bar belongs, and hands the
+   space back to the gap under the ring.
 
    **`html:not(.focus-mode)` is load-bearing, not decoration.** A running
    session re-lays this panel out across a short strip and sizes the dial down
@@ -384,20 +398,20 @@ body:has(.dash) .app-main {
    in the selector is both the fix and the reason there is nothing to keep in
    step. */
 html:not(.focus-mode) .dash-main .focus-panel .fp-dial {
-    width: 248px;
-    height: 248px;
+    width: 312px;
+    height: 312px;
     margin-top: auto;
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
 }
-html:not(.focus-mode) .dash-main .focus-panel .fp-time { font-size: 2.9rem; }
-html:not(.focus-mode) .dash-main .focus-panel .fp-phase { font-size: var(--text-xs); }
+html:not(.focus-mode) .dash-main .focus-panel .fp-dial-track,
+html:not(.focus-mode) .dash-main .focus-panel .fp-dial-run { stroke-width: 8.5; }
+html:not(.focus-mode) .dash-main .focus-panel .fp-time { font-size: 3.5rem; }
+html:not(.focus-mode) .dash-main .focus-panel .fp-phase { font-size: var(--text-sm); }
 html:not(.focus-mode) .dash-main .focus-panel .fp-sub { font-size: var(--text-xs); }
 
-/* The controls close the centred stack; the day's line is what the remaining
-   slack sits above, so it ends on the panel's floor. Expressed as a margin
-   under the controls rather than over the line, because it is the stack that
-   is being centred and the line is a footer. */
-html:not(.focus-mode) .dash-main .focus-panel .fp-controls { margin-bottom: auto; }
+/* The second `auto`, over the controls rather than under them: it is what puts
+   the buttons on the floor of the panel instead of halfway up it. */
+html:not(.focus-mode) .dash-main .focus-panel .fp-controls { margin-top: auto; }
 
 /* ---- The finish-the-day button, under the list -------------------------- */
 /* On the Tasks page this button sits *above* the list and its own rule spends
