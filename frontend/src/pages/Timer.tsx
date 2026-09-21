@@ -38,16 +38,12 @@ import { focus as focusService, goals as goalService, growth as growthService } 
 import { StyleGrid } from '@/components/Timer/Styles';
 import { QuoteScene } from '@/components/Timer/art';
 import {
-  LEVELS, NEARBY, RECOMMENDED, SITTINGS, STYLES, clock, styleFor,
+  LEVELS, NEARBY, PHASE_LABEL, RECOMMENDED, SITTINGS, STYLES, clock, styleFor,
   type Phase, type Sitting,
 } from '@/components/Timer/pomodoro';
 import * as format from '@/utils/format';
 import '@/styles/timer.css';
 import { Icon, type IconName } from '@/components/Icon';
-
-const PHASE_LABEL: Record<Phase, string> = {
-  focus: 'Focus', break: 'Break', long: 'Long break',
-};
 
 const SETUP_KEY = 'pomodoro:setup';
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];

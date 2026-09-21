@@ -1,64 +1,195 @@
-/* The "Really stop?" confirmation, shared by the dashboard's Focus panel and
- * the calendar Day view's Focus button — stopping a session always asks first.
+/* The dashboard Focus panel's pomodoro.
  *
- * focus.js injected these rules into a <style> tag at runtime,
- * because the two pages that needed them had no stylesheet in common. A
- * component can just import a file, so they are a file now. The rules are the
- * injected ones, unchanged apart from being formatted to read.
+ * This file used to hold one thing: the "Really stop?" confirmation, ported out
+ * of a <style> tag focus.js injected at runtime. Its header said the rules were
+ * shared with the calendar Day view's Focus button, and that had stopped being
+ * true some time ago — components/Dashboard/FocusPanel was the only file that
+ * used `.focus-confirm-*` and the only one that imports this stylesheet. The
+ * panel is a pomodoro now and its primary control pauses rather than stops, so
+ * there is nothing left to confirm: pausing is reversible, and the rules went
+ * with the markup that was the last thing referencing them.
  *
- * The colours follow html[data-theme], which is set before first paint —
- * see index.html.
+ * The layout for `html.focus-mode` is not here. It is in styles/dashboard.css
+ * beside the rest of that mode, because it is a statement about the dashboard's
+ * grid rather than about this panel.
  */
 
-.focus-confirm-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(20, 22, 26, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100000;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+/* The three phase colours, and the second stop each gradient runs to.
+ *
+ * Restated rather than shared: the canonical set is in styles/timer.css, scoped
+ * to `.pom-page`, and the dashboard does not load that stylesheet — it is a
+ * page's worth of rules for one panel. The values are deliberately identical,
+ * because the two are the same cycle and a pomodoro that was violet on one page
+ * and blue on the other would read as two different things.
+ *
+ * Written against the three phase classes rather than against `.focus-panel`
+ * alone, and that is not style. dashboard.css owns the bare `.focus-panel`
+ * rule, and a second sheet writing another one is the silent override
+ * scripts/check_css.mjs exists to catch — whichever Vite loads second would
+ * win. The panel always carries exactly one of these three, so the list matches
+ * everywhere the bare selector would have.
+ */
+.focus-panel.is-focus,
+.focus-panel.is-break,
+.focus-panel.is-long {
+    --fp-focus: #7c5cf0;
+    --fp-focus-2: #4bc4e6;
+    --fp-break: #1f9d61;
+    --fp-break-2: #63d99b;
+    --fp-long: #2f74d0;
+    --fp-long-2: #6fb0f5;
 }
-.focus-confirm-overlay.show {
-  opacity: 1;
+html[data-theme="dark"] .focus-panel.is-focus,
+html[data-theme="dark"] .focus-panel.is-break,
+html[data-theme="dark"] .focus-panel.is-long {
+    --fp-focus: #9b7cf8;
+    --fp-focus-2: #63d3ee;
+    --fp-break: #35b478;
+    --fp-break-2: #6ee7b7;
+    --fp-long: #4b8ef0;
+    --fp-long-2: #93c5fd;
 }
-.focus-confirm-box {
-  background: #fff;
-  color: #2c302e;
-  border-radius: var(--radius-lg);
-  padding: var(--space-6) var(--space-6);
-  max-width: 340px;
-  width: calc(100vw - 48px);
-  box-shadow: var(--shadow-lg);
-  text-align: center;
-  font-family: inherit;
-  transform: scale(0.92);
-  transition: transform 0.15s ease;
+
+/* ---- The dial ---- */
+/* The text sits on the ring rather than under it, so the panel spends its
+   height on one object instead of two stacked ones. */
+.fp-dial {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 168px;
+    height: 168px;
+    margin: var(--space-2) auto var(--space-1);
 }
-.focus-confirm-overlay.show .focus-confirm-box {
-  transform: scale(1);
+.fp-dial-svg {
+    width: 100%;
+    height: 100%;
+    /* From the top, clockwise. An arc that began at three o'clock would be a
+       clock face running from the wrong place. */
+    transform: rotate(-90deg);
 }
-.focus-confirm-title {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  margin: 0 0 var(--space-2);
+.fp-dial-track {
+    fill: none;
+    stroke: var(--color-line);
+    stroke-width: 10;
 }
-.focus-confirm-msg {
-  font-size: var(--text-md);
-  color: #6c757d;
-  margin: 0 0 var(--space-4);
+.fp-dial-run {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    /* Only the sweep. `stroke-dashoffset` is set from the clock every half
+       second (hooks/usePomodoro), and a transition long enough to see would put
+       the arc permanently behind the number beside it. */
+    transition: stroke-dashoffset .3s linear;
 }
-.focus-confirm-actions {
-  display: flex;
-  gap: var(--space-2);
-  justify-content: center;
+
+.fp-dial-text {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    line-height: 1;
 }
-html[data-theme="dark"] .focus-confirm-box {
-  background: #161b22;
-  color: #e6e9f0;
+.fp-phase {
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--fp-tone, var(--fp-focus));
 }
-html[data-theme="dark"] .focus-confirm-msg {
-  color: #9aa4b2;
+.fp-time {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    color: var(--color-ink);
+    /* The seconds change every second and the minutes do not; proportional
+       digits would shuffle the whole number sideways twice a second. */
+    font-variant-numeric: tabular-nums;
 }
+.fp-sub {
+    font-size: var(--text-2xs);
+    color: var(--color-ink-faint);
+}
+
+/* Which of the three the dial is in, for the text that is not the arc. */
+.focus-panel.is-focus { --fp-tone: var(--fp-focus); }
+.focus-panel.is-break { --fp-tone: var(--fp-break); }
+.focus-panel.is-long  { --fp-tone: var(--fp-long); }
+
+/* ---- The cycle ---- */
+.fp-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0 0 var(--space-3);
+    padding: 0;
+}
+.fp-dots li {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-line);
+    transition: background .2s ease;
+}
+.fp-dots li.is-done { background: var(--fp-tone, var(--fp-focus)); }
+
+/* ---- Controls ---- */
+.fp-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+.fp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    color: var(--color-ink-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.fp-btn:hover { color: var(--color-ink); border-color: var(--color-ink-faint); }
+
+/* The one control anybody presses, so it is the one that looks pressable. It
+   takes the phase's colour: a break that offered a violet Start would be
+   inviting the reader back to work in the middle of their rest. */
+.fp-primary {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    border-color: transparent;
+    background: var(--fp-tone, var(--fp-focus));
+    color: #fff;
+}
+.fp-primary:hover { background: var(--fp-tone, var(--fp-focus)); color: #fff; filter: brightness(1.06); }
+
+.fp-round {
+    flex: none;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md);
+    padding: 0;
+}
+
+/* ---- The day ---- */
+.fp-today {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: var(--space-4) 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-ink-muted);
+    font-variant-numeric: tabular-nums;
+}
+.fp-today strong { font-size: var(--text-md); color: var(--color-ink); }
+.fp-today-hrs { color: var(--color-ink-faint); }

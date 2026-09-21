@@ -202,57 +202,70 @@ html.focus-mode .bottom-section .focus-panel {
 }
 html.focus-mode .bottom-section .task-manager { order: 1; min-height: 0; }
 
-/* The progress bar + its label are a single unit ("the bar"); in normal mode
-   this wrapper is transparent so the panel keeps its original vertical flow. */
-.focus-progress-wrap { display: contents; }
-
-/* Focus-mode Focus panel: a two-column layout that reads far better inside the
-   short 30% strip — the time stepper and Start/Stop button stack on the LEFT,
-   the progress bar sits on the RIGHT. `display: contents` on .focus-goal lifts
-   the stepper + bar out so they can be placed directly on the panel's grid. */
+/* Focus-mode Focus panel: the same parts, turned on their side.
+ *
+ * The panel is a column on the ordinary page — dial, cycle, controls, day —
+ * and that column is far too tall for the short 30% strip this mode leaves it.
+ * So the dial moves to the left and everything else stacks beside it, which
+ * fits the strip and puts the one thing worth looking at mid-session where the
+ * eye already is.
+ *
+ * It is the same markup either way. Only these rules differ, which is what
+ * keeps the two modes from being two panels — see the note in
+ * components/Dashboard/FocusPanel.
+ */
 html.focus-mode .focus-panel {
     display: grid;
-    grid-template-columns: minmax(190px, 260px) minmax(0, 1fr);
-    grid-template-rows: auto auto auto;
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
-        "head    head"
-        "stepper bar"
-        "button  bar";
+        "head  head"
+        "dial  cycle"
+        "dial  controls"
+        "dial  day";
     column-gap: var(--space-8);
-    row-gap: var(--space-3);
+    row-gap: var(--space-2);
     align-content: center;
     padding: var(--space-4) var(--space-6);
 }
-html.focus-mode .focus-goal { display: contents; }
 html.focus-mode .focus-panel h2 { grid-area: head; margin: 0 0 var(--space-1); }
-html.focus-mode .focus-goal-head,
-html.focus-mode .focus-hint { display: none; }        /* redundant / moot mid-session */
 
-html.focus-mode .focus-stepper {
-    grid-area: stepper;
-    gap: var(--space-6);
+/* Smaller, because the strip is short. The ring is drawn from a viewBox, so
+   the whole thing scales from these two numbers and nothing inside it needs
+   restating — the stroke thins with it, which is what keeps a 124px dial from
+   looking like a bracelet. */
+html.focus-mode .fp-dial {
+    grid-area: dial;
+    width: 124px;
+    height: 124px;
     margin: 0;
     align-self: center;
 }
-html.focus-mode .focus-step-btn { width: 34px; height: 34px; font-size: var(--text-xl); border-radius: var(--radius-md); }
-html.focus-mode .focus-amount #focusHours { font-size: var(--text-3xl); }
+html.focus-mode .fp-time { font-size: var(--text-2xl); }
+/* The interval length under the clock goes: the phase above it already says
+   which phase this is, and mid-session the reader knows how long it is. */
+html.focus-mode .fp-sub { display: none; }
 
-html.focus-mode .focus-start-btn {
-    grid-area: button;
+html.focus-mode .fp-dots {
+    grid-area: cycle;
+    justify-content: flex-start;
     margin: 0;
-    padding: var(--space-3);
+    align-self: end;
+}
+html.focus-mode .fp-controls {
+    grid-area: controls;
+    justify-content: flex-start;
     align-self: center;
 }
-
-html.focus-mode .focus-progress-wrap {
-    grid-area: bar;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: var(--space-2);
-    min-width: 0;
+/* Capped rather than filling: the row is as wide as the panel here, and a
+   Start button four hundred pixels across is a target nobody needed. */
+html.focus-mode .fp-primary { flex: 0 1 200px; }
+html.focus-mode .fp-today {
+    grid-area: day;
+    justify-content: flex-start;
+    gap: var(--space-4);
+    margin: 0;
+    align-self: start;
 }
-html.focus-mode .focus-progress { height: 10px; margin: 0; }
 
 /* User-stats card sits flush with the Statistics card beside it (no offset). */
 .user-stats {
@@ -652,122 +665,6 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
     min-height: 0;
     overflow-y: auto;
 }
-.focus-goal {
-    background: #FAFAF8;
-    border: 1.5px solid #EAEAEA;
-    border-radius: var(--radius-md);
-    padding: var(--space-6) var(--space-6);
-    margin-bottom: var(--space-6);   /* min gap before the (bottom-anchored) Start button */
-}
-.focus-goal-title {
-    margin: 0 0 var(--space-2);
-    font-size: var(--text-lg);
-    font-weight: 700;
-    color: #2C302E;
-}
-.focus-goal-q {
-    margin: 0 0 var(--space-6);
-    font-size: var(--text-md);
-    color: #6C757D;
-}
-.focus-stepper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-6);
-    margin-bottom: var(--space-6);
-}
-.focus-step-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-md);
-    border: 1.5px solid #EAEAEA;
-    background: #FFFFFF;
-    color: #6C757D;
-    font-size: var(--text-2xl);
-    line-height: 1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-.focus-step-btn:hover { background: #F2F2EE; color: #2C302E; }
-.focus-amount {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2);
-    min-width: 96px;
-    justify-content: center;
-}
-.focus-amount #focusHours {
-    font-size: 2.6rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #2C302E;
-}
-.focus-unit { font-size: var(--text-lg); font-weight: 500; color: #6C757D; }
-.focus-progress {
-    height: 8px;
-    background: #E9ECEF;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-}
-.focus-progress-fill {
-    height: 100%;
-    background: #A38A70;
-    border-radius: var(--radius-lg);
-    transition: width 0.4s ease;
-}
-.focus-progress-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-    font-size: var(--text-sm);
-    color: #6C757D;
-    font-variant-numeric: tabular-nums;
-}
-/* The percentage is the reading; the words beside it are the working. Same
-   weight for both made the row one undifferentiated grey line. */
-.focus-progress-row #focusProgressPct { font-weight: 600; color: #2C302E; }
-/* Start Focus + hint are pushed to the bottom of the (tall) panel so the goal
-   box sits up top and the action anchors down, with the hint just beneath it. */
-.focus-start-btn {
-    margin-top: auto;
-    background: #2C302E;
-    color: #FFFFFF;
-    border: none;
-    border-radius: var(--radius-md);
-    padding: var(--space-4);
-    font-size: var(--text-lg);
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    transition: background-color 0.2s ease;
-}
-.focus-start-btn:hover { background: #454B48; }
-.focus-start-btn svg { flex: none; }
-/* Running: the button becomes a red "Stop Focus". */
-.focus-start-btn .focus-ico-stop { display: none; }
-.focus-start-btn.is-running { background: #b0413e; color: #fff; }
-.focus-start-btn.is-running:hover { background: #983733; }
-.focus-start-btn.is-running .focus-ico-play { display: none; }
-.focus-start-btn.is-running .focus-ico-stop { display: inline-flex; }
-.focus-hint {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    margin: var(--space-4) 0 0;
-    font-size: var(--text-sm);
-    color: #6C757D;
-}
-.focus-hint svg { flex: none; }
 
 .task-panels {
     display: flex;
@@ -1570,34 +1467,3 @@ html[data-theme="dark"] .close {
     color: #8b949e;
 }
 
-/* Focus panel (dark) */
-html[data-theme="dark"] .focus-goal {
-    background: #12161c;
-    border-color: #30363d;
-}
-html[data-theme="dark"] .focus-goal-title,
-html[data-theme="dark"] .focus-amount #focusHours {
-    color: #f0f2f5;
-}
-html[data-theme="dark"] .focus-goal-q,
-html[data-theme="dark"] .focus-unit,
-html[data-theme="dark"] .focus-progress-row,
-html[data-theme="dark"] .focus-hint {
-    color: #8b949e;
-}
-html[data-theme="dark"] .focus-progress-row #focusProgressPct { color: #f0f2f5; }
-html[data-theme="dark"] .focus-step-btn {
-    background: #0d1117;
-    border-color: #30363d;
-    color: #c9d1d9;
-}
-html[data-theme="dark"] .focus-step-btn:hover { background: #21262d; color: #f0f2f5; }
-html[data-theme="dark"] .focus-progress { background: #30363d; }
-/* Start Focus -> light button, to pop on the dark dashboard (like + Add Task). */
-html[data-theme="dark"] .focus-start-btn {
-    background: #f0f2f5;
-    color: #0d1117;
-}
-html[data-theme="dark"] .focus-start-btn:hover { background: #ffffff; }
-html[data-theme="dark"] .focus-start-btn.is-running { background: #b0413e; color: #fff; }
-html[data-theme="dark"] .focus-start-btn.is-running:hover { background: #c34c48; }

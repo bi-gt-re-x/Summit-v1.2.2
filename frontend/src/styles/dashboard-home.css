@@ -335,8 +335,8 @@ body:has(.dash) .app-main {
    of a fourteen-row day.
 
    603px is that times 1.4. The Focus panel is unchanged by it — see
-   `.dash-main .focus-goal` below, which takes the slack so the card fills
-   rather than growing a hole above its button — and the task list gets the
+   `.dash-main .focus-panel .fp-dial` below, which takes the slack so the card
+   fills rather than growing a hole in the middle — and the task list gets the
    room, which is where it was wanted.
    ========================================================================== */
 .dash {
@@ -356,71 +356,28 @@ body:has(.dash) .app-main {
    than keeping a 508px column of nothing beside it. */
 .dash-main.is-solo { grid-template-columns: minmax(0, 1fr); }
 
-/* The goal box takes the row's extra height, rather than the gap above the
-   button taking it.
- 
-   `.focus-start-btn` is `margin-top: auto`, so it is pinned to the foot of the
-   card and every pixel the row grows by lands in the space above it. At the
-   old 431 that space was a few pixels and read as a margin; at 603 it would
-   have been a 170px hole between a small bordered box and a button, which is
-   the card looking broken rather than roomy.
+/* The dial takes the row's extra height.
 
-   So the box grows. **How it spends the height is the part that was wrong.**
+   The panel is a short stack — dial, cycle, controls, day — inside a 603px row
+   sized for the task list beside it, so there is a great deal of slack and the
+   question is where it goes. Everything here used to be about that: a bordered
+   goal box that grew, with the copy pinned to its top and the stepper centred
+   in what was left, because the alternative was a 170px hole above a button.
 
-   It used to centre everything in it as one stack, which moved the hole rather
-   than filling it: the heading floated a third of the way down a tall bordered
-   box with an empty band above it and another below the bar, and nothing in
-   the box was anchored to anything. A reader saw a small amount of content
-   adrift in a large rectangle.
-
-   Two zones instead. The copy sits at the *top*, where a heading belongs and
-   where the eye enters the box. The control the reader came to touch — the
-   stepper, with the bar it moves directly under it — is one unit centred in
-   whatever is left. The slack is then a deliberate margin under a heading
-   rather than a gap in the middle of a stack, and the two things in the box
-   read as two things rather than as four loose ones.
+   The pomodoro answers it more simply, because it has one object in it rather
+   than four loose ones. The dial is centred in the slack and the three small
+   things sit under it, so the panel reads as a clock with its controls beneath
+   rather than as a form with a gap in the middle.
 
    Scoped to the dashboard row: `html.focus-mode` re-lays this panel out for a
-   running session — see the focus-mode block in styles/dashboard.css — and it
-   sizes the box itself. */
-.dash-main .focus-goal {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: var(--space-6) var(--space-6) var(--space-6);
-}
-/* The heading block stays put at the top. */
-.dash-main .focus-goal .focus-goal-head { flex: none; }
-/* Its two lines carry their own bottom margins from the base rule, and the
-   block owns the spacing between them — the box does not. */
-.dash-main .focus-goal .focus-goal-title { margin-bottom: var(--space-2); }
-.dash-main .focus-goal .focus-goal-q { margin-bottom: 0; }
-
-/* The control and its bar, centred together in what is left.
-   `auto` on both sides of the pair is what centres them; the bar is pinned to
-   the stepper by a fixed gap rather than floating on its own, because "4.0
-   hrs" and "0.0 / 4.0 hrs focused" are one statement read top to bottom. */
-.dash-main .focus-goal .focus-stepper {
+   running session — see the focus-mode block in styles/dashboard.css. */
+.dash-main .focus-panel .fp-dial {
     margin-top: auto;
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-5);
 }
-/* On the *row*, not on `.focus-progress-wrap`, and that is the one trap in
-   this layout. The wrapper is `display: contents` (styles/dashboard.css, where
-   focus-mode needs the bar and its label as two separate grid items), so it is
-   not a flex item at all and a margin on it does nothing — the last flex child
-   in this box is the label row underneath the bar. */
-.dash-main .focus-goal .focus-progress-row { margin-bottom: auto; }
-
-/* Bigger, because there is the room and it is the one control on the card.
-   At the old size it read as a setting on a form; at this size it reads as the
-   thing the panel is for. */
-.dash-main .focus-goal .focus-step-btn {
-    width: 52px;
-    height: 52px;
-    font-size: var(--text-2xl);
-}
-.dash-main .focus-goal .focus-amount #focusHours { font-size: 3rem; }
+/* The day's line is pinned to the foot, so the slack lands above the dial and
+   below the controls in equal measure rather than all in one place. */
+.dash-main .focus-panel .fp-today { margin-top: auto; }
 
 /* ---- The finish-the-day button, under the list -------------------------- */
 /* On the Tasks page this button sits *above* the list and its own rule spends

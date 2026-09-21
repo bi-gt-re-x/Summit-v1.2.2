@@ -21,9 +21,11 @@
  * thing that asks the server again.
  *
  * The focus session is owned here rather than inside the Focus panel, because
- * two things now show it: the panel and the Focus Time stat card. One
- * `useFocusSession` shared between them is what keeps the goal on the card
- * moving when the + on the panel is pressed.
+ * two things show it: the panel and the Focus Time stat card. One
+ * `useFocusSession` shared between them is what stops the two disagreeing
+ * about the same day. The pomodoro over it is owned here for the same reason
+ * and one stronger: it starts and stops that session, so a second copy would
+ * be a second hand on the account's focus clock.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
@@ -69,6 +71,7 @@ import {
   useUserData,
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
+import { usePomodoro } from '@/hooks/usePomodoro';
 import { focus as focusService, goals as goalService, tasks as taskService } from '@/services';
 import { weekStartDay } from '@/services/settings';
 import { dates, format } from '@/utils';
@@ -83,6 +86,13 @@ import { announceStatsChanged } from '@/utils/statsBus';
 export default function Dashboard() {
   const { data, error, loading, refreshing, reload, mutate, username } = useUserData();
   const session = useFocusSession(username);
+  /* The cycle over the session, for the Focus panel.
+   *
+   * Owned here for the reason the session is: it is one account-wide record in
+   * localStorage, and a second copy of it would be a second thing starting and
+   * stopping the focus clock. It takes `session` because a running focus phase
+   * *is* a running session — see the note at the top of hooks/usePomodoro. */
+  const pomodoro = usePomodoro(username, session);
 
   /* The tab carries the session while it runs.
    *
@@ -559,7 +569,7 @@ export default function Dashboard() {
           onCompleteDay={(review) => void completeDay(review)}
           busy={saving}
         />
-        {prefs.show_focus && <FocusPanel session={session} />}
+        {prefs.show_focus && <FocusPanel session={session} pomodoro={pomodoro} />}
       </div>
 
       {/* Three, not four. Top Priorities used to sit in this row: the same

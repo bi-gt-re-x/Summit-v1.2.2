@@ -12,7 +12,7 @@
  * The clock is timestamp-based (hooks/useFocusSession), so the assertions here
  * are on the *shape* of what the tab says rather than on a particular second.
  */
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/test/render';
@@ -86,12 +86,12 @@ describe('the dashboard tab while a session runs', () => {
     await userEvent.click(await screen.findByRole('button', { name: /start focus/i }));
     await waitFor(() => expect(document.title).toContain('· Focus ·'));
 
-    /* Stopping asks first — the panel's own confirmation, not a browser one.
-       Both the panel's button and the dialog's are called "Stop Focus", so the
-       second click has to be scoped to the dialog or it matches two. */
-    await userEvent.click(screen.getByRole('button', { name: /stop focus/i }));
-    const dialog = await screen.findByRole('dialog', { name: /stop focus session/i });
-    await userEvent.click(within(dialog).getByRole('button', { name: /stop focus/i }));
+    /* Pausing the pomodoro is what stops the session now.
+       The panel used to run an open-ended stopwatch, and stopping it asked
+       first — an accidental click should not end a session. A paused interval
+       is not an ended one and resumes where it was, so there is nothing left to
+       confirm and nothing to scope this click against. */
+    await userEvent.click(screen.getByRole('button', { name: /pause focus/i }));
 
     await waitFor(() => expect(document.title).toBe('Dashboard · Summit'));
   });

@@ -36,6 +36,19 @@
 export type Phase = 'focus' | 'break' | 'long';
 
 /**
+ * What each phase is called on screen.
+ *
+ * Here rather than on a page because two of them show it now — the Timer page
+ * and the dashboard's Focus panel — and a cycle whose phases are named one way
+ * in one place and another way in the other is one cycle described twice.
+ */
+export const PHASE_LABEL: Record<Phase, string> = {
+  focus: 'Focus',
+  break: 'Break',
+  long: 'Long break',
+};
+
+/**
  * The ten card colours.
  *
  * One per style rather than one per family: the grid is the only place all ten
