@@ -28,7 +28,7 @@
  * Where there is no history the fallbacks are deliberately modest, because an
  * over-long estimate makes the plan not fit and the reader stop trusting it.
  *
- * ## The eight sources, and why each earns its place
+ * ## The nine sources, and why each earns its place
  *
  * Overdue and due-today work outranks everything, because a plan that ignores
  * a deadline the reader already knows about is a plan they will close. Goal
@@ -36,11 +36,25 @@
  * conditions the record has noticed: a subject rated worse than the rest, one
  * that has not been touched in a fortnight, work rated badly and never revisited,
  * a task that has sat untouched long enough to be a decision rather than a
- * task, and — only when the day is still empty — the streak.
+ * task, the subject with the longest live run behind it, and — only when the
+ * day is still empty — the streak.
  *
  * The streak is last on purpose. It is the cheapest possible reason to do
  * something, and an app that leads with it every morning has taught its reader
  * that the point is the number rather than the work.
+ *
+ * ## Eight of the nine are complaints
+ *
+ * Overdue, behind, worst-rated, dropped, badly done, gone stale — every rule
+ * here was written about something going wrong, which is right for a planner
+ * and wrong as the whole of one. A page whose entire vocabulary is deficit is
+ * a page a reader stops opening, and "you have done this four days running,
+ * today is the cheap day to make it five" is advice rather than praise: it is
+ * the same record, read for what is working.
+ *
+ * That is `momentum`, and it sits below every deficit deliberately. It should
+ * fill a plan, never lead one — an overdue essay does not wait because
+ * something else is going well.
  *
  * ## What it will not do
  *
@@ -79,6 +93,9 @@ const POOR_EXECUTION = 2;
 /** Fewest finished tasks in a subject before its rating is worth acting on. */
 const SUBJECT_FLOOR = 5;
 
+/** Consecutive days on a subject before the run is worth pressing. */
+const MOMENTUM_DAYS = 3;
+
 /** Most badly-rated tasks a single review action will ask for. */
 const REVIEW_MAX = 5;
 
@@ -93,6 +110,7 @@ export type ActionKind =
   | 'neglected'
   | 'review'
   | 'stale'
+  | 'momentum'
   | 'streak';
 
 export interface NextAction {
@@ -210,24 +228,35 @@ export function buildPlan({
     }
   });
 
-  /* A budget shorter than anything on the list used to come back empty, which
-     is the one answer a planner must never give: the reader asked what to do
-     with fifteen minutes and was told nothing, while an overdue essay sat two
-     rows down in "more". Fifteen minutes of the most important thing is a real
-     answer — you do not have to finish a task to have started it — so the top
-     candidate is taken at the length actually available and says so. */
-  if (actions.length === 0 && more.length > 0 && budget >= MIN_SLOT) {
+  /* Whatever is left over, spent on the best thing that did not fit.
+
+     This began as the empty-plan case: a budget shorter than anything on the
+     list came back with nothing, which is the one answer a planner must never
+     give — the reader asked what to do with fifteen minutes and was told
+     nothing while an overdue essay sat two rows down in "more". Fifteen
+     minutes of the most important thing is a real answer, because you do not
+     have to finish a task to have started it.
+
+     The same argument holds for a plan that is merely short. Forty of
+     forty-five minutes planned leaves five, which is nothing; but thirty of
+     forty-five leaves fifteen, and answering that with "nothing shorter to
+     add" while five candidates sit under a fold is the same failure in a
+     smaller hole. So the trim runs whenever a usable slot is left, and the
+     empty plan is just the case where the whole budget is the slot.
+
+     Only one, and only last. A plan of four part-started things is not a plan,
+     and the reader should reach the bottom of the list with at most one row
+     that says "as far as you get". */
+  if (left >= MIN_SLOT && more.length > 0) {
     const first = more.shift()!;
     actions.push({
       ...first,
-      minutes: budget,
+      minutes: left,
       because: `${first.because} Takes about ${first.minutes} min; this gets it started.`,
     });
     left = 0;
   }
 
-  /* One subject practised twice, or two tasks from the same goal, is a plan
-     that has found one thing to say and said it three times. */
   const planned = actions.reduce((sum, item) => sum + item.minutes, 0);
   return { budget, actions, spare: Math.max(0, budget - planned), more, planned };
 }
@@ -463,19 +492,78 @@ function gather({
     });
   }
 
-  // ---- 8. The streak, and only if today is still empty ----------------------
+  // ---- 8. The subject you are on a run with ---------------------------------
+  /* The only rule here that is not about something being wrong.
+
+     The other eight are deficits — overdue, behind, worst-rated, dropped,
+     badly done, gone stale — which is right for a planner and wrong as the
+     whole of one: a page that has only ever told a reader what is going badly
+     is a page they stop opening, and "press the thing that is working" is real
+     advice rather than encouragement. It is the record's own figure either
+     way, and it ranks below every deficit, so it fills a plan rather than
+     leading one. */
+  const runs = [...bySubject.entries()]
+    .map(([subject, list]) => {
+      const done = new Set(
+        list.map((task) => task.completed_at?.slice(0, 10)).filter(Boolean) as string[],
+      );
+      /* Counted back from today, and allowed to start yesterday: at nine in
+         the morning a run of four days shows nothing done today yet, and
+         calling that a broken run would end every streak overnight. */
+      let run = 0;
+      let cursor = new Date(`${todayIso}T00:00:00`);
+      if (!done.has(todayIso)) cursor = new Date(cursor.getTime() - day);
+      while (done.has(cursor.toISOString().slice(0, 10))) {
+        run += 1;
+        cursor = new Date(cursor.getTime() - day);
+      }
+      return { subject, run };
+    })
+    .filter((row) => row.run >= MOMENTUM_DAYS)
+    .sort((a, b) => b.run - a.run)[0];
+
+  if (runs) {
+    found.push({
+      id: `momentum-${runs.subject}`,
+      kind: 'momentum',
+      title: `Keep ${nameOf(runs.subject)} going`,
+      because: `${runs.run} days running. Your longest current run — the cheapest day to keep it is today.`,
+      minutes: Math.min(PRACTICE_MINUTES, Math.max(MIN_SLOT, slot)),
+      subject: runs.subject,
+      weight: 400 + Math.min(runs.run, 20) * 4,
+    });
+  }
+
+  // ---- 9. The streak, and only if today is still empty ----------------------
   const today = days[days.length - 1];
   const todayEmpty =
     today && today.date === todayIso && num(today.tasks_completed) === 0 && num(today.xp_earned) === 0;
   if (todayEmpty) {
-    const quickest = open
-      .filter((task) => !task.due_date)
-      .sort((a, b) => num(a.xp_value) - num(b.xp_value))[0];
+    /* An undated task first, because spending a deadline to feed a streak is
+       robbing tomorrow. But *any* open task closes a day, and falling through
+       to no task at all is what produced the line this rule became known for:
+       "Close one small task", every morning, pointing at nothing. An account
+       whose work all carries dates got the generic sentence forever. */
+    const bySize = (a: Task, b: Task) => num(a.xp_value) - num(b.xp_value);
+    const quickest =
+      open.filter((task) => !task.due_date).sort(bySize)[0] ?? [...open].sort(bySize)[0];
+
+    /* How long the run already is, from the same series the streak card reads.
+       A number the reader recognises is a better reason than a rule they have
+       to take on trust. */
+    let run = 0;
+    for (let at = days.length - 2; at >= 0; at -= 1) {
+      if (num(days[at]!.tasks_completed) === 0) break;
+      run += 1;
+    }
+
     found.push({
       id: 'streak',
       kind: 'streak',
       title: quickest ? `Close “${quickest.title}”` : 'Close one small task',
-      because: 'Nothing done today yet. One task keeps your streak going.',
+      because: run >= 2
+        ? `${run} days running, and nothing finished today. One task carries it.`
+        : 'Nothing done today yet. One task keeps your streak going.',
       minutes: MIN_SLOT,
       taskId: quickest?.id,
       subject: quickest?.subject,

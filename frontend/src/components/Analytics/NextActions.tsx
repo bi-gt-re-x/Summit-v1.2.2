@@ -45,6 +45,7 @@ const KIND_LABEL: Record<ActionKind, string> = {
   neglected: 'Dropped',
   review: 'Review',
   stale: 'Stale',
+  momentum: 'On a run',
   streak: 'Streak',
 };
 
@@ -56,6 +57,9 @@ const KIND_TONE: Record<ActionKind, string> = {
   neglected: 'blue',
   review: 'green',
   stale: 'amber',
+  /* The one row that is not about something being wrong, so it is the one
+     row that does not wear a warning colour. */
+  momentum: 'violet',
   streak: 'green',
 };
 
@@ -147,10 +151,13 @@ export function NextActions({
           <p>
             In order: overdue tasks, tasks due today, the goal furthest behind, your lowest-rated
             subject, low-rated tasks you haven't revisited, a subject you've stopped, old undated
-            tasks, and your streak if nothing is done today.
+            tasks, the subject you're on the longest run with, and your streak if nothing is done
+            today.
           </p>
           <p>
-            The streak comes last on purpose, so the real work comes first.
+            The streak comes last on purpose, so the real work comes first. If a row is shorter
+            than the time it needs, it is the last one in the plan and says how long it really
+            takes — you don't have to finish something to have started it.
           </p>
           <p>
             Minutes are based on how long your finished tasks usually take. The list updates when
@@ -180,11 +187,13 @@ export function NextActions({
             {/* Only when there is something left over. A plan that fills its
                 budget has nothing to say here that the heading did not already
                 say in the same two numbers. */}
+            {/* Spare minutes now mean one thing only. Anything left over that
+                is worth a row has already been trimmed into the plan by
+                `buildPlan`, so a gap this size is the list running out rather
+                than the packing giving up — the old "nothing shorter to add"
+                branch could no longer be reached. */}
             {spare >= 10 ? (
-              <p className="ax-plan-spare">
-                {spare} min spare —{' '}
-                {more.length > 0 ? 'nothing shorter to add' : 'nothing else worth suggesting'}
-              </p>
+              <p className="ax-plan-spare">{spare} min spare — nothing else worth suggesting</p>
             ) : (
               <span />
             )}
@@ -194,8 +203,16 @@ export function NextActions({
           </div>
           {more.length > 0 && (
             <details className="ax-plan-more">
+              {/* What they actually need, not the budget they did not fit.
+                  "5 more, too long for 45 minutes" was wrong twice over: the
+                  budget is not what they were measured against — the minutes
+                  left after the plan was packed are — and a reader with 45
+                  minutes reads it as "none of this is ever worth doing today".
+                  The shortest one's length is the number that answers the
+                  question the fold is hiding. */}
               <summary>
-                {more.length} more, too long for {budget} minutes
+                {more.length} more · the shortest needs{' '}
+                {Math.min(...more.map((item) => item.minutes))} min
               </summary>
               <ul className="ax-plan-list">
                 {more.map((item) => (
