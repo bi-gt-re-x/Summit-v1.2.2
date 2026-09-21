@@ -1070,10 +1070,32 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
     box-shadow: var(--lat-shadow);
     color: var(--lat-muted);
 }
+/* `:not(.stx-zoom-view)` is the whole fix for a control that was coming out
+   ragged.
+
+   The named views — Fit, Branch, Here, 1:1 — are words, and `.stx-zoom
+   .stx-zoom-view` above sets `width: auto` for exactly that reason; its comment
+   says it carries the parent so it outranks `.stx-zoom button`. It does, and
+   this rule is a class more specific again, so down here the words were being
+   squared off at 30px. "Branch" needs 52 and "Here" 38, so both spilled out of
+   a 48px panel and the cluster read as a column of text that had come loose
+   from the thing behind it.
+
+   Squaring is for the glyph buttons, which are square. The words size to
+   themselves. */
+.stx-page--lattice .stx-zoom button:not(.stx-zoom-view) {
+    width: 30px;
+}
 .stx-page--lattice .stx-zoom button {
-    width: 30px; height: 30px;
+    height: 30px;
     border-radius: var(--radius-md);
     color: var(--lat-muted);
+}
+/* Stretched rather than centred, so four words of four different lengths make
+   one column edge instead of four. */
+.stx-page--lattice .stx-zoom .stx-zoom-view {
+    width: 100%;
+    padding: 0 var(--space-2);
 }
 .stx-page--lattice .stx-zoom button:hover:not(:disabled) {
     background: var(--lat-violet-soft);
@@ -1086,6 +1108,18 @@ body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
     font-weight: 700;
     color: var(--lat-faint);
     padding: 2px 0 1px;
+}
+
+/* The rule between "how much" and "what of", turned to match the column.
+   `.stx-zoom-cut` is built for the horizontal cluster at the foot of the other
+   canvas — 1px wide, 18px tall, with margin either side — and stacked down a
+   column that is a tick hanging in the middle of a gap rather than a divider.
+   Here it lies across the cluster and takes its margins vertically. */
+.stx-page--lattice .stx-zoom-cut {
+    width: 100%;
+    height: 1px;
+    margin: var(--space-1) 0;
+    background: var(--lat-line);
 }
 
 /* ---- connections ---- */
