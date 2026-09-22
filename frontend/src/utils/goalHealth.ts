@@ -39,6 +39,7 @@
 import { goalNumbers } from '@/components/Goals/numbers';
 import type { Goal, Task } from '@/types';
 import { countsToward } from '@/utils/goalLinks';
+import { isoDate } from '@/utils/dates';
 
 export type HealthState = 'on-track' | 'at-risk' | 'off-track' | 'not-started';
 
@@ -191,7 +192,20 @@ export function goalHealth(
   const done = linked.filter((task) => task.status === 'done' && task.completed_at);
   const days = workDays(done);
 
-  const now = atMidnight(today.toISOString()) ?? today.getTime();
+  /* `isoDate`, not `toISOString`, and the difference is a whole day.
+
+     `toISOString()` gives the date in **UTC**; `atMidnight` parses what it is
+     handed as **local** midnight. West of UTC those agree only until the
+     evening — at 19:00 in New York it is already tomorrow in UTC, so `now`
+     became local midnight of *tomorrow* while every date it is measured
+     against (`completed_at`, `deadline`) stayed local. Every "days since" and
+     "days left" the goals page prints then read one too high from early
+     evening until midnight, and correctly again the next morning, which is
+     exactly the shape of bug nobody reports because it fixes itself overnight.
+
+     `isoDate` builds the stamp from local parts. See `fromIsoDate` in
+     utils/dates, which is the same trap in the other direction, written down. */
+  const now = atMidnight(isoDate(today)) ?? today.getTime();
   const start = atMidnight(goal.start_date) ?? atMidnight(goal.created_at);
   const end = atMidnight(goal.deadline);
 
@@ -374,7 +388,10 @@ export function goalPace(goal: Goal, today: Date = new Date()): GoalPace {
   const empty: GoalPace = { need: null, have: null, lands: null, drift: null };
   if (!numbers.target) return empty;
 
-  const now = atMidnight(today.toISOString()) ?? today.getTime();
+  /* Local, for the reason set out on the same line in `goalHealth` above: a
+     UTC stamp read as a local midnight is a day ahead every evening west of
+     UTC, and pace is measured in days. */
+  const now = atMidnight(isoDate(today)) ?? today.getTime();
   const start = atMidnight(goal.start_date) ?? atMidnight(goal.created_at);
   const end = atMidnight(goal.deadline);
   if (start === null) return empty;
