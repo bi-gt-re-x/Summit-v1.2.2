@@ -28,11 +28,23 @@
  * intervals at that length ran better than its intervals at the others. The
  * minutes it prints are that style's minutes, not an average of anything.
  *
+ * ## The intention, and why it is the account's own words
+ *
+ * A row can also carry what the sitting was *for* — one line, optionally with
+ * a number — and what came of it. That pairing is the only thing here that is
+ * not derived from the clock, and it is the only thing that can say whether an
+ * hour was worth having: fifty unbroken minutes is a good sitting and a bad
+ * afternoon if the thing you sat down to do is still not done.
+ *
+ * The result is asked for rather than counted, and `done` says so at length.
+ * Substituting a number the app can count for the one the intention was about
+ * would be the more impressive-looking lie.
+ *
  * ## Everything here is pure
  *
- * No clock, no storage. The day is passed in. That is the same split
- * pomodoro.ts uses, and it is what makes the arithmetic testable without
- * pretending to be a timer — see intervals.test.ts.
+ * No clock, no storage. The day, and `now` where recency matters, are passed
+ * in. That is the same split pomodoro.ts uses, and it is what makes the
+ * arithmetic testable without pretending to be a timer — see intervals.test.ts.
  */
 import { STYLES, styleFor } from '@/components/Timer/pomodoro';
 
@@ -56,6 +68,108 @@ export interface Interval {
   pauses: number;
   /** Whether the clock reached the end of the phase. */
   finished: boolean;
+  /**
+   * Epoch ms the interval ended.
+   *
+   * Optional only because rows written before it existed do not have one, and
+   * dropping somebody's record to tidy the shape would be the migration doing
+   * harm. Read it as "unknown", never as zero: `wasJustNow` treats a row
+   * without it as old, which is the safe direction — the page asks its one
+   * question about the sitting somebody has just done and must not open an
+   * interrogation about yesterday's on the next reload.
+   */
+  at?: number;
+  /**
+   * What success was going to look like, in the account's own words.
+   *
+   * Set before the sitting, carried here when it ends. Absent is the ordinary
+   * state: an intention is worth asking for and not worth insisting on, so a
+   * sitting without one is a sitting, not an incomplete record.
+   */
+  intent?: string;
+  /** The number the intent named, when it named one. */
+  target?: number;
+  /**
+   * What the account says it actually did, against `target`.
+   *
+   * A self-report, and the page labels it as one. Nothing in the app can count
+   * problems worked or scales practised, and the alternative to asking was to
+   * quietly substitute a number the app *can* count — tasks closed — for the
+   * one the intention was about. That would be a different measurement wearing
+   * this one's label.
+   */
+  done?: number;
+  /**
+   * Whether an intention with no number was met.
+   *
+   * The other half of `done`, and a separate field rather than a 1 or a 0 in
+   * it: "understand integration by parts" is answered yes or no, and storing
+   * that as a count would make `execution` divide one kind of answer by
+   * another kind's target.
+   */
+  met?: boolean;
+}
+
+/** How recent a row has to be for the page to ask about it, in ms. */
+const JUST_NOW_MS = 45 * 60_000;
+
+/**
+ * Whether this row is the sitting that has just happened.
+ *
+ * The result question is about the work still in somebody's head. Past this
+ * window the honest thing is to leave the row as it is: an unanswered intention
+ * from yesterday is a fact about yesterday, and asking about it tomorrow
+ * collects a guess.
+ */
+export function wasJustNow(interval: Interval, now: number): boolean {
+  return interval.at !== undefined && now - interval.at <= JUST_NOW_MS;
+}
+
+/**
+ * The intention this row still owes an answer to, or null.
+ *
+ * Both halves matter: a row with no intention was never going to be scored,
+ * and a row already answered must not be asked again.
+ */
+export function unanswered(interval: Interval | undefined, now: number): Interval | null {
+  if (!interval || !interval.intent) return null;
+  if (interval.done !== undefined || interval.met !== undefined) return null;
+  return wasJustNow(interval, now) ? interval : null;
+}
+
+/**
+ * What was done against what was intended, as a percentage, or null.
+ *
+ * Null whenever the intention had no number — which is most of them, and is
+ * not a gap in the data. "Finish 15 problems" can be scored and "understand
+ * integration by parts" cannot, and a percentage invented for the second would
+ * be the page marking its own homework.
+ */
+export function execution(interval: Interval): number | null {
+  if (interval.target === undefined || interval.target <= 0) return null;
+  if (interval.done === undefined) return null;
+  return Math.round((interval.done / interval.target) * 100);
+}
+
+/**
+ * The one line under the bars.
+ *
+ * Three bands and no arithmetic on show, because the number is directly above
+ * it. Deliberately flat about falling short: a sitting that got two thirds of
+ * the way is two thirds of the way, and a page that spun that as encouragement
+ * would be worth less the next time it said anything.
+ */
+export function verdict(interval: Interval): string {
+  const pct = execution(interval);
+  if (pct === null) {
+    if (interval.met === undefined) return '';
+    return interval.met
+      ? 'You did what you set out to do.'
+      : 'Not this time — the sitting still counted.';
+  }
+  if (pct >= 100) return 'You did more than you set out to.';
+  if (pct >= 70) return 'Most of the way to what you set out to do.';
+  return 'Short of what you set out to do.';
 }
 
 /**

@@ -37,14 +37,36 @@
  * them at more than one length, and the session readout is about today rather
  * than about the account. The hours remain the account's, on the server, in the
  * tiles — losing the log loses the shape and not one minute of the work.
+ *
+ * ## What the time is for
+ *
+ * The climb is the page's one piece of borrowed data: the account's own goals,
+ * from the same endpoint the Goals page reads. It puts them under two headings
+ * and the headings are the content. A goal measured in focus time is advanced
+ * by this page, so its own figures are printed under a line saying the minutes
+ * count; every other kind is listed as what today's *finished work* fed, which
+ * is what `goalIdsOf` (utils/goalLinks) says and nothing more. One list holding
+ * both would tell somebody an afternoon at the clock was progress on a goal
+ * that only counts closed tasks.
+ *
+ * ## The one figure on this page nobody can count
+ *
+ * A sitting may be given an intention — one line, optionally with a number —
+ * and afterwards the page asks what came of it. That answer is a **self-report**
+ * and is labelled as one wherever it is shown. Nothing here knows how many
+ * problems were worked, and the alternative to asking was to print the number
+ * the app *can* count, tasks closed, under an objective about something else.
+ * The question is asked once, about the sitting that has just happened, and is
+ * dropped rather than carried — see `unanswered` in
+ * components/Timer/intervals.ts.
  */
 import type { ReactElement } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Range } from '@/components';
 import {
   timerTitle, useApi, useAuth, useDocumentTitle, usePageEntrance, useSettings, useStats,
-  useUserData,
+  useSubjectIndex, useUserData,
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import { usePomodoro } from '@/hooks/usePomodoro';
@@ -56,9 +78,12 @@ import {
   type Phase, type Sitting,
 } from '@/components/Timer/pomodoro';
 import {
-  MIN_INTERVALS, focusScore, pace, recommend, tasksPerHour,
-  type Interval, type Recommendation,
+  MIN_INTERVALS, execution, focusScore, pace, recommend, tasksPerHour, unanswered, verdict,
+  wasJustNow, type Interval, type Recommendation,
 } from '@/components/Timer/intervals';
+import { currentStone } from '@/utils/goalStage';
+import { goalIdsOf } from '@/utils/goalLinks';
+import type { Goal, Milestone } from '@/types';
 import * as format from '@/utils/format';
 import '@/styles/timer.css';
 import { Icon, type IconName } from '@/components/Icon';
@@ -416,6 +441,289 @@ function Recommend({ at, sittings, current, onUse }: {
   );
 }
 
+// --------------------------------------------------------------------------
+// The climb
+// --------------------------------------------------------------------------
+/** A goal whose own target this page's minutes advance. */
+export interface Counting {
+  goal: Goal;
+  /** Minutes recorded against it, and the minutes it asks for. */
+  now: number;
+  target: number;
+  next: Milestone | null;
+  /** Subject names the goal names, resolved. Empty when it names none. */
+  subjects: string[];
+}
+
+/** A goal today's finished tasks counted toward, and how many did. */
+export interface Working {
+  goal: Goal;
+  tasks: number;
+}
+
+/**
+ * What this time is for.
+ *
+ * ## Why a timer page draws goals at all
+ *
+ * A clock can tell you a sitting was fifty minutes and cannot tell you whether
+ * it was worth having. The account already holds the other half — goals with
+ * checkpoints in execution order, and tasks that count toward them — and until
+ * now the Timer page did not read it: you could spend an afternoon on this page
+ * without the page ever saying what the afternoon was for.
+ *
+ * ## Two lists, because there are two different claims
+ *
+ * The first is **minutes**: a goal measured in focus time is advanced by this
+ * page directly, and the figure under it is that goal's own arithmetic —
+ * `current_focus` against `target_focus`, which is the same pair the Goals page
+ * prints. Running the timer moves it, so saying so is a statement of fact.
+ *
+ * The second is **work**: the goals that today's finished tasks counted toward,
+ * by `goalIdsOf` (utils/goalLinks) rather than by any matching of our own. Time
+ * spent here is not counted toward those goals in minutes, and they are under a
+ * heading that says what they are instead of being blended into one list. A
+ * page that showed them together would be claiming the clock feeds a goal that
+ * only counts finished tasks.
+ *
+ * `why` is printed when the goal has one because it is the account's own answer
+ * to the question this panel asks, written when the goal was created — better
+ * than anything this page could compose.
+ */
+function Climb({ counting, working }: { counting: Counting[]; working: Working[] }) {
+  // Named, so it is a landmark rather than a plain box: this is the panel a
+  // reader goes looking for to answer one question, and a section with no
+  // accessible name is not reachable that way at all.
+  const heading = useId();
+
+  return (
+    <section className="pom-panel pom-climb" aria-labelledby={heading}>
+      <header className="pom-panel-head">
+        <div className="pom-panel-title">
+          <h2 id={heading}><Icon name="target" /> Today&apos;s Climb</h2>
+          <p>What this time is for</p>
+        </div>
+        <Link className="pom-link" to="/goals">All goals</Link>
+      </header>
+
+      {counting.length === 0 && working.length === 0 ? (
+        <p className="pom-empty">
+          Nothing counts this page&apos;s minutes yet. A goal measured in focus
+          time would — <Link className="pom-link" to="/goals">set one</Link>.
+        </p>
+      ) : (
+        <div className="pom-climb-body">
+          {counting.length > 0 && (
+            <div className="pom-climb-group">
+              <h3>Counting your minutes</h3>
+              {counting.map((row) => (
+                <ol className="pom-chain" key={row.goal.id}>
+                  {row.subjects.length > 0 && (
+                    <li className="pom-chain-step is-quiet">{row.subjects.join(' · ')}</li>
+                  )}
+                  <li className="pom-chain-step is-goal">
+                    <Link to="/goals">{row.goal.title}</Link>
+                    <em>{Math.round(row.goal.progress)}%</em>
+                  </li>
+                  {row.next && <li className="pom-chain-step is-now">{row.next.title}</li>}
+                  <li className="pom-chain-step is-quiet">
+                    {fmtHM(row.now * 60)} of {fmtHM(row.target * 60)} recorded
+                  </li>
+                  {row.goal.why && <li className="pom-chain-why">“{row.goal.why}”</li>}
+                </ol>
+              ))}
+            </div>
+          )}
+
+          {working.length > 0 && (
+            <div className="pom-climb-group">
+              <h3>What today&apos;s finished work fed</h3>
+              <ul className="pom-climb-fed">
+                {working.map((row) => (
+                  <li key={row.goal.id}>
+                    <Link to="/goals">{row.goal.title}</Link>
+                    <em>{row.tasks} task{row.tasks === 1 ? '' : 's'} today</em>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+// --------------------------------------------------------------------------
+// The intention
+// --------------------------------------------------------------------------
+/**
+ * What success looks like for this sitting.
+ *
+ * One line, and a number when the line has one. Deliberately not a required
+ * field and not a modal in front of Start: most sittings do not need an
+ * objective written down, and a timer that would not start until one was typed
+ * would collect a lot of "work" and mean nothing by it.
+ *
+ * The number is what makes the result scoreable — see `execution` in
+ * components/Timer/intervals.ts — and it is optional for the same reason the
+ * whole thing is: "understand integration by parts" is a real objective and
+ * has no number, and demanding one would turn every intention into a count of
+ * something countable instead.
+ */
+function IntentField({ intent, target, unit, onSet }: {
+  intent: string;
+  target: number | null;
+  /** What the account's own goal counts in — "problems" — or null. */
+  unit: string | null;
+  onSet: (intent: string, target: number | null) => void;
+}) {
+  const [text, setText] = useState(intent);
+  const [count, setCount] = useState(target === null ? '' : String(target));
+
+  if (intent) {
+    return (
+      <div className="pom-intent is-set">
+        <span className="pom-intent-icon" aria-hidden="true"><Icon name="pin" /></span>
+        <span className="pom-intent-text">
+          <b>{intent}</b>
+          {target !== null && <i>target {target}{unit ? ` ${unit}` : ''}</i>}
+        </span>
+        <button type="button" className="pom-btn" onClick={() => { setText(''); setCount(''); onSet('', null); }}>
+          Clear
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form
+      className="pom-intent"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const parsed = Number(count);
+        onSet(text, count.trim() && Number.isFinite(parsed) && parsed > 0 ? parsed : null);
+      }}
+    >
+      <label className="pom-intent-label" htmlFor="pom-intent-text">
+        What does success look like?
+      </label>
+      <div className="pom-intent-row">
+        <input id="pom-intent-text" className="pom-intent-input" type="text" maxLength={80}
+          placeholder="Finish 15 problems" value={text}
+          onChange={(event) => setText(event.target.value)} />
+        <input className="pom-intent-count" type="number" min="1" max="999"
+          aria-label={unit ? `How many ${unit}` : 'How many'} placeholder="15"
+          value={count} onChange={(event) => setCount(event.target.value)} />
+        <button type="submit" className="pom-btn is-primary" disabled={!text.trim()}>Set</button>
+      </div>
+    </form>
+  );
+}
+
+/**
+ * The one question after a sitting that had an objective, then the answer.
+ *
+ * ## Why it asks instead of counting
+ *
+ * Nothing in the app knows how many problems got worked. It knows how many
+ * *tasks* were closed, which is a different measurement, and quietly printing
+ * that under "Finish 15 problems" would be the page answering a question it was
+ * not asked. So the number comes from the person who was there, and the panel
+ * says so.
+ *
+ * ## Why it is a strip and not a dialog
+ *
+ * The sitting ended, which means a break has already started. A modal over the
+ * break would take the break: somebody who stepped away comes back to a box
+ * demanding a number before they can see their own timer. The strip waits, and
+ * `unanswered` stops it waiting past the point where the answer would be a
+ * guess — the reasoning is on `wasJustNow` in components/Timer/intervals.ts.
+ */
+function Outcome({ sitting, asking, onReport, onSkip }: {
+  sitting: Interval;
+  asking: boolean;
+  onReport: (result: { done?: number; met?: boolean }) => void;
+  onSkip: () => void;
+}) {
+  const [count, setCount] = useState('');
+  const scored = execution(sitting);
+
+  if (asking) {
+    return (
+      <section className="pom-outcome is-asking">
+        <span className="pom-outcome-head">
+          <b>You set out to</b>
+          <i>{sitting.intent}</i>
+        </span>
+        {sitting.target === undefined ? (
+          <span className="pom-outcome-answer">
+            <button type="button" className="pom-btn is-primary" onClick={() => onReport({ met: true })}>
+              Did it
+            </button>
+            <button type="button" className="pom-btn" onClick={() => onReport({ met: false })}>
+              Not this time
+            </button>
+          </span>
+        ) : (
+          <form
+            className="pom-outcome-answer"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const parsed = Number(count);
+              if (!count.trim() || !Number.isFinite(parsed) || parsed < 0) return;
+              onReport({ done: parsed });
+            }}
+          >
+            <label htmlFor="pom-outcome-count">How many of the {sitting.target}?</label>
+            <input id="pom-outcome-count" className="pom-intent-count" type="number" min="0" max="999"
+              value={count} onChange={(event) => setCount(event.target.value)} />
+            <button type="submit" className="pom-btn is-primary" disabled={!count.trim()}>Log it</button>
+          </form>
+        )}
+        <button type="button" className="pom-link" onClick={onSkip}>Skip</button>
+      </section>
+    );
+  }
+
+  return (
+    <section className="pom-outcome">
+      <span className="pom-outcome-head">
+        <b>{sitting.minutes} min on</b>
+        <i>{sitting.intent}</i>
+      </span>
+      <dl className="pom-outcome-bars" aria-label="How that sitting went">
+        {scored !== null && (
+          <div className="pom-outcome-bar">
+            <dt>Execution <b>{scored}%</b></dt>
+            <dd>
+              <span className="pom-outcome-track">
+                <span style={{ width: `${Math.min(100, scored)}%` }} />
+              </span>
+              {/* The numbers behind the bar, because a percentage with no
+                  numerator is a figure nobody can check. */}
+              <em>{sitting.done} of {sitting.target}, your count</em>
+            </dd>
+          </div>
+        )}
+        <div className="pom-outcome-bar">
+          <dt>Focus <b>{focusScore(sitting)}%</b></dt>
+          <dd>
+            <span className="pom-outcome-track">
+              <span style={{ width: `${focusScore(sitting)}%` }} />
+            </span>
+            <em>
+              {sitting.pauses === 0 ? 'unbroken' : `${sitting.pauses} pause${sitting.pauses === 1 ? '' : 's'}`}
+              {sitting.finished ? '' : ', cut short'}
+            </em>
+          </dd>
+        </div>
+      </dl>
+      <p className="pom-outcome-verdict">{verdict(sitting)}</p>
+    </section>
+  );
+}
+
 export interface Reading {
   label: string;
   /** The figure, or a dash when it cannot honestly be given. */
@@ -665,6 +973,60 @@ export default function Timer() {
 
   const suggestion = useMemo(() => recommend(intervals), [intervals]);
 
+  // ---- The climb -----------------------------------------------------------
+  const subjectIndex = useSubjectIndex(username);
+  const allGoals = goals.data?.goals ?? [];
+
+  /* Goals this page's minutes advance: measured in focus time, still open, and
+     actually asking for some. `subject_ids` is stored comma-separated — split
+     at the call site, as the field's own note says. */
+  const counting = useMemo<Counting[]>(() => allGoals
+    .filter((goal) => goal.status === 'active' && goal.measure === 'focus' && goal.target_focus > 0)
+    .map((goal) => ({
+      goal,
+      now: goal.current_focus,
+      target: goal.target_focus,
+      next: currentStone(goal),
+      subjects: (goal.subject_ids || '')
+        .split(',')
+        .map((id) => subjectIndex.get(id.trim())?.name)
+        .filter((name): name is string => Boolean(name)),
+    })), [allGoals, subjectIndex]);
+
+  /* Goals today's finished tasks counted toward, read from the links the
+     server put on the task rather than matched here. */
+  const working = useMemo<Working[]>(() => {
+    const counts = new Map<string, number>();
+    tasks
+      .filter((task) => task.status === 'done'
+        && (task.completed_at ?? '').slice(0, 10) === iso(today))
+      .forEach((task) => goalIdsOf(task)
+        .forEach((id) => counts.set(id, (counts.get(id) ?? 0) + 1)));
+    return allGoals
+      .filter((goal) => counts.has(goal.id))
+      .map((goal) => ({ goal, tasks: counts.get(goal.id) ?? 0 }))
+      .sort((a, b) => b.tasks - a.tasks);
+  }, [allGoals, tasks, today]);
+
+  /* What the account's own goal counts in — "problems", "users" — for the
+     intention's number to be labelled with. The first counting goal's unit,
+     because that is the goal this page's minutes are going into; null when it
+     has none, and then the field just says "how many". */
+  const unit = counting.find((row) => row.goal.unit)?.goal.unit ?? null;
+
+  // ---- The sitting just finished -------------------------------------------
+  const [skippedAt, setSkippedAt] = useState<number | null>(null);
+  const asking = unanswered(lastSitting, Date.now());
+  /* Shown while the sitting is still the one in somebody's head: either to ask
+     about it, or — once answered — to show what came of it. Skipping hides it
+     without writing anything, because "I would rather not say" is not a
+     result. */
+  const outcome = lastSitting?.intent
+    && lastSitting.at !== skippedAt
+    && wasJustNow(lastSitting, Date.now())
+    ? lastSitting
+    : null;
+
   // This week's seven bars, whatever the range control above is set to.
   const week = useMemo(() => {
     const monday = weekStart(today);
@@ -724,6 +1086,16 @@ export default function Timer() {
         <Setup onPick={(id) => finish(id)} onSkip={() => finish()} />
       ) : (
         <>
+          {/* ---- What just happened ------------------------------------ */}
+          {outcome && (
+            <Outcome
+              sitting={outcome}
+              asking={asking !== null}
+              onReport={pomodoro.report}
+              onSkip={() => setSkippedAt(outcome.at ?? null)}
+            />
+          )}
+
           {/* ---- Hero -------------------------------------------------- */}
           <section className={`pom-hero is-${phase}`}>
             {/* The one hero in the app that does not take a tone: its three
@@ -763,6 +1135,9 @@ export default function Timer() {
 
               <Recommend at={suggestion} sittings={intervals.length}
                 current={style.id} onUse={pomodoro.choose} />
+
+              <IntentField intent={pomodoro.intent} target={pomodoro.target}
+                unit={unit} onSet={pomodoro.setIntent} />
 
               <button type="button" className="pom-start"
                 onClick={running ? pomodoro.pause : pomodoro.start}>
@@ -837,6 +1212,9 @@ export default function Timer() {
               </div>
             </div>
           </section>
+
+          {/* ---- The climb --------------------------------------------- */}
+          <Climb counting={counting} working={working} />
 
           {/* ---- Progress ---------------------------------------------- */}
           <section className="pom-panel">

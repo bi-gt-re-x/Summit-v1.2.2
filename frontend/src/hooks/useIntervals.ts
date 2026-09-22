@@ -51,12 +51,26 @@ function load(user: string): Interval[] {
 function isInterval(row: unknown): row is Interval {
   if (!row || typeof row !== 'object') return false;
   const it = row as Partial<Interval>;
-  return typeof it.day === 'string'
+  const required = typeof it.day === 'string'
     && typeof it.styleId === 'string'
     && typeof it.planned === 'number'
     && typeof it.minutes === 'number'
     && typeof it.pauses === 'number'
     && typeof it.finished === 'boolean';
+  // The optional fields are checked when they are there rather than waved
+  // through: a `target` that came back as a string would reach the arithmetic
+  // and print NaN on the page, which is a worse outcome than losing one row
+  // that only a hand-edited store could produce.
+  const optional = maybe(it.at, 'number')
+    && maybe(it.intent, 'string')
+    && maybe(it.target, 'number')
+    && maybe(it.done, 'number')
+    && maybe(it.met, 'boolean');
+  return required && optional;
+}
+
+function maybe(value: unknown, type: 'number' | 'string' | 'boolean'): boolean {
+  return value === undefined || typeof value === type;
 }
 
 export interface UseIntervals {
@@ -64,6 +78,17 @@ export interface UseIntervals {
   intervals: Interval[];
   /** Append one finished interval. */
   record: (interval: Interval) => void;
+  /**
+   * Fill in what came of the newest row's intention.
+   *
+   * Separate from `record` because the two happen at different moments: the
+   * row is written the instant the clock runs out, and the result can only be
+   * given afterwards by somebody who was there. A row is only ever amended
+   * once, by the strip that asked — see `unanswered` in
+   * components/Timer/intervals.ts, which is what stops the question coming
+   * back.
+   */
+  amend: (patch: Pick<Interval, 'done' | 'met'>) => void;
 }
 
 export function useIntervals(username: string | null): UseIntervals {
@@ -79,8 +104,7 @@ export function useIntervals(username: string | null): UseIntervals {
     setIntervals(read);
   }, [user]);
 
-  const record = useCallback((interval: Interval) => {
-    const next = [...latest.current, interval].slice(-MAX_KEPT);
+  const write = useCallback((next: Interval[]) => {
     latest.current = next;
     setIntervals(next);
     try {
@@ -91,5 +115,16 @@ export function useIntervals(username: string | null): UseIntervals {
     }
   }, [user]);
 
-  return { intervals, record };
+  const record = useCallback((interval: Interval) => {
+    write([...latest.current, interval].slice(-MAX_KEPT));
+  }, [write]);
+
+  const amend = useCallback((patch: Pick<Interval, 'done' | 'met'>) => {
+    const rows = latest.current;
+    const last = rows[rows.length - 1];
+    if (!last) return;
+    write([...rows.slice(0, -1), { ...last, ...patch }]);
+  }, [write]);
+
+  return { intervals, record, amend };
 }

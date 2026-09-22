@@ -461,6 +461,134 @@ html[data-theme="dark"] .pom-page {
 }
 .pom-hud-stat span { color: var(--pom-faint); font-size: var(--text-2xs); line-height: 1.35; }
 
+/* The intention, under the recommendation.
+
+   Two fields on one row: the line, and the number it may or may not have. The
+   number is narrow on purpose — it is optional, and a box the same width as
+   the sentence beside it would read as a second required answer. */
+.pom-intent { margin-top: var(--space-3); }
+.pom-intent-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--pom-muted);
+    font-size: var(--text-xs); font-weight: 700;
+}
+.pom-intent-row { display: flex; gap: var(--space-2); }
+.pom-intent-input, .pom-intent-count {
+    min-width: 0;
+    height: 38px;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--pom-line);
+    border-radius: var(--radius-md);
+    background: var(--pom-card);
+    color: var(--pom-text);
+    font: inherit; font-size: var(--text-sm);
+}
+.pom-intent-input { flex: 1; }
+.pom-intent-count { width: 72px; text-align: center; font-variant-numeric: tabular-nums; }
+.pom-intent-input:focus, .pom-intent-count:focus { outline: none; border-color: var(--pom-now); }
+.pom-intent.is-set {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--pom-line);
+    border-radius: var(--radius-md);
+    background: var(--pom-card-2);
+}
+.pom-intent-icon { display: inline-grid; place-items: center; color: var(--pom-now); }
+.pom-intent-icon svg { width: 16px; height: 16px; }
+.pom-intent-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.pom-intent-text b { font-size: var(--text-sm); font-weight: 700; }
+.pom-intent-text i { color: var(--pom-muted); font-size: var(--text-xs); font-style: normal; }
+
+/* What came of the last sitting.
+
+   Above the hero, full width, because it is the most recent thing that
+   happened and the thing it is about — the ring — is directly under it. It is
+   a strip rather than a dialog for the reason in `Outcome`: the break has
+   already started, and a modal would take it. */
+.pom-outcome {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    border: 1px solid color-mix(in srgb, var(--pom-focus) 30%, transparent);
+    border-radius: var(--pom-radius);
+    background: var(--pom-card);
+    box-shadow: var(--pom-shadow);
+}
+.pom-outcome-head { display: flex; flex-direction: column; gap: 2px; min-width: 180px; flex: 1; }
+.pom-outcome-head b { color: var(--pom-muted); font-size: var(--text-xs); font-weight: 700; }
+.pom-outcome-head i { font-size: var(--text-md); font-style: normal; font-weight: 700; }
+.pom-outcome-answer { display: flex; align-items: center; gap: var(--space-2); }
+.pom-outcome-answer label { color: var(--pom-muted); font-size: var(--text-xs); font-weight: 600; }
+.pom-outcome-bars { display: grid; gap: var(--space-2); margin: 0; min-width: 240px; flex: 2; }
+.pom-outcome-bar dt { display: flex; justify-content: space-between; color: var(--pom-muted); font-size: var(--text-xs); }
+.pom-outcome-bar dt b { color: var(--pom-text); font-variant-numeric: tabular-nums; }
+.pom-outcome-bar dd { margin: 0; display: grid; gap: 3px; }
+.pom-outcome-track {
+    display: block; height: 7px;
+    border-radius: var(--radius-full);
+    background: var(--pom-line);
+    overflow: hidden;
+}
+.pom-outcome-track > span {
+    display: block; height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--pom-focus-2), var(--pom-focus));
+}
+.pom-outcome-bar em { color: var(--pom-faint); font-size: var(--text-2xs); font-style: normal; }
+.pom-outcome-verdict { width: 100%; margin: 0; font-size: var(--text-sm); font-weight: 600; }
+
+/* The climb: what the time is for.
+
+   The chain is a list with a rule down the left and a dot per step, rather
+   than arrows between boxes: the steps are of very different lengths — a
+   subject, a goal title, a checkpoint — and a row of arrows sets them in a
+   line that has to be read across and then back. Down the page, in order, is
+   how the plan is actually shaped. */
+.pom-climb-body { display: grid; gap: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.pom-climb-group h3 {
+    margin: 0 0 var(--space-3);
+    color: var(--pom-muted);
+    font-size: var(--text-xs); font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+}
+.pom-chain { margin: 0 0 var(--space-4); padding: 0 0 0 var(--space-4); list-style: none; border-left: 2px solid var(--pom-line); }
+.pom-chain:last-child { margin-bottom: 0; }
+.pom-chain-step { position: relative; padding: var(--space-1) 0; font-size: var(--text-sm); }
+.pom-chain-step::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--space-4) * -1 - 5px);
+    top: calc(var(--space-1) + 6px);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--pom-line);
+}
+.pom-chain-step.is-goal { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); font-weight: 700; }
+.pom-chain-step.is-goal a { color: inherit; text-decoration: none; }
+.pom-chain-step.is-goal a:hover { text-decoration: underline; }
+.pom-chain-step.is-goal em { color: var(--pom-now); font-style: normal; font-variant-numeric: tabular-nums; }
+.pom-chain-step.is-goal::before { background: var(--pom-now); }
+.pom-chain-step.is-now { color: var(--pom-text); font-weight: 600; }
+.pom-chain-step.is-now::before { background: var(--pom-now); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pom-now) 22%, transparent); }
+.pom-chain-step.is-quiet { color: var(--pom-faint); font-size: var(--text-xs); }
+.pom-chain-why {
+    margin-top: var(--space-1);
+    color: var(--pom-muted);
+    font-size: var(--text-xs); font-style: italic; line-height: 1.5;
+}
+.pom-climb-fed { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); }
+.pom-climb-fed li {
+    display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--pom-card-2);
+    font-size: var(--text-sm);
+}
+.pom-climb-fed a { color: inherit; text-decoration: none; font-weight: 600; }
+.pom-climb-fed a:hover { text-decoration: underline; }
+.pom-climb-fed em { color: var(--pom-faint); font-size: var(--text-xs); font-style: normal; white-space: nowrap; }
+
 /* The three cards down the side */
 .pom-hero-side { display: grid; gap: var(--space-3); }
 .pom-side-card {

@@ -100,6 +100,20 @@ interface Stored {
    * not an interruption of anything and is not counted.
    */
   pauses: number;
+  /**
+   * What this sitting is for, and the number it named.
+   *
+   * Kept with the cycle rather than in page state so that it survives a reload
+   * and a walk to another page mid-sitting: an intention that vanished when the
+   * tab was refreshed would be worse than not asking for one, because the
+   * sitting it belonged to carries on either way.
+   *
+   * Cleared when a sitting ends, by the same rule as `pauses` — the row it
+   * belonged to has it by then, and a stale objective sitting over a new
+   * interval would be claiming something nobody said.
+   */
+  intent: string;
+  target: number | null;
 }
 
 function key(user: string): string {
@@ -126,6 +140,8 @@ function fresh(styleId: string, levelId = DEFAULT_LEVEL, keep?: Stored): Stored 
     dayIso: keep?.dayIso ?? todayIso(),
     doneToday: keep?.doneToday ?? 0,
     pauses: 0,
+    intent: '',
+    target: null,
   };
 }
 
@@ -150,6 +166,13 @@ function load(user: string): Stored {
       // than trusted, so the tile is right on a page left open overnight.
       doneToday: saved.dayIso === today ? Number(saved.doneToday) || 0 : 0,
       pauses: Number(saved.pauses) || 0,
+      // An intention is for the sitting it was written on. One stored on a
+      // previous day is not this day's, and reading it back would put
+      // yesterday's objective over this morning's first interval.
+      intent: saved.dayIso === today && typeof saved.intent === 'string' ? saved.intent : '',
+      target: saved.dayIso === today && typeof saved.target === 'number'
+        ? saved.target
+        : null,
     };
   } catch {
     // A private window, cleared site data, or a value from an older shape.
@@ -193,6 +216,14 @@ export interface UsePomodoro {
   pauses: number;
   /** Every focus interval this browser has a record of, oldest first. */
   intervals: Interval[];
+  /** What this sitting is for, in the account's own words. Empty when unset. */
+  intent: string;
+  /** The number that intention named, or null when it named none. */
+  target: number | null;
+  /** Set both. An empty line clears the target with it. */
+  setIntent: (intent: string, target: number | null) => void;
+  /** Answer the newest row's intention. See `amend` in hooks/useIntervals. */
+  report: (result: { done?: number; met?: boolean }) => void;
 }
 
 export function usePomodoro(
@@ -246,6 +277,12 @@ export function usePomodoro(
         minutes,
         pauses: from.pauses,
         finished,
+        at,
+        // Written only when there was one, so a row's own shape says whether
+        // this sitting was ever going to be scored. See `intent` in
+        // components/Timer/intervals.ts.
+        ...(from.intent ? { intent: from.intent } : {}),
+        ...(from.intent && from.target !== null ? { target: from.target } : {}),
       };
     },
     [],
@@ -277,9 +314,11 @@ export function usePomodoro(
       done: cycle.done,
       dayIso: today,
       doneToday,
-      // A new phase has not been interrupted yet. The interval that was
-      // interrupted has already been written down by the caller.
+      // A new phase has not been interrupted yet, and is not yet for anything.
+      // The interval that was both has already been written down by the caller.
       pauses: 0,
+      intent: '',
+      target: null,
     };
 
     if (endsAt <= at) {
@@ -390,6 +429,24 @@ export function usePomodoro(
     [leaving, log, write],
   );
 
+  const setIntent = useCallback(
+    (intent: string, target: number | null) => {
+      const text = intent.trim();
+      // No line, no number: a target without an objective is a figure with
+      // nothing to be a figure *of*, and it would score a sitting against a
+      // goal nobody wrote down.
+      write({ ...latest.current, intent: text, target: text ? target : null });
+    },
+    [write],
+  );
+
+  const report = useCallback(
+    (result: { done?: number; met?: boolean }) => {
+      log.amend(result);
+    },
+    [log],
+  );
+
   const setLevel = useCallback(
     (levelId: number) => {
       // Only the aim changes; a sitting already under way is not interrupted
@@ -417,5 +474,9 @@ export function usePomodoro(
     goalHours: goalHoursFor(level, style),
     pauses: state.pauses,
     intervals: log.intervals,
+    intent: state.intent,
+    target: state.target,
+    setIntent,
+    report,
   };
 }

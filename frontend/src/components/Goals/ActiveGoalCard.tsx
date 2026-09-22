@@ -46,6 +46,7 @@ import { ChartMenu, GoalVisual } from './GoalVisual';
 import { formatGoalDate, goalDate, goalNumbers, goalWeight, isOverdue } from './numbers';
 import { goalHealth } from '@/utils/goalHealth';
 import { pickVisual, visualContext } from '@/utils/goalVisuals';
+import { currentStone } from '@/utils/goalStage';
 import {
   MAX_STEPS,
   addStep,
@@ -335,14 +336,8 @@ export function ActiveGoalCard({
   /** Every task that is work toward this goal, by either route. */
   const mine = context.linked;
 
-  /** The checkpoint being worked on: the active one, else the first unfinished. */
-  const focus = useMemo(
-    () =>
-      stones.find((stone) => stone.status === 'active') ??
-      stones.find((stone) => stone.status !== 'done') ??
-      null,
-    [stones],
-  );
+  /** The checkpoint being worked on. The rule is utils/goalStage's. */
+  const focus = useMemo(() => currentStone(goal), [goal]);
 
   /** The checkpoints the focus could be moved to — everything not yet reached. */
   const switchable = useMemo(() => stones.filter((stone) => stone.status !== 'done'), [stones]);

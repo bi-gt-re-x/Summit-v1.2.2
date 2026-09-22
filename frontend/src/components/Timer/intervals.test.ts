@@ -15,11 +15,15 @@
 import { describe, expect, it } from 'vitest';
 import {
   MIN_INTERVALS,
+  execution,
   focusScore,
   isStyleLength,
   pace,
   recommend,
   tasksPerHour,
+  unanswered,
+  verdict,
+  wasJustNow,
   type Interval,
 } from './intervals';
 
@@ -149,6 +153,64 @@ describe('recommending', () => {
       ...many(3, { styleId: 'gentle', planned: 10, minutes: 3, pauses: 4, finished: false }),
     ];
     expect(recommend(log50)?.styleId).toBe('deep-work');
+  });
+});
+
+describe('scoring an intention', () => {
+  it('scores what was done against what was intended', () => {
+    expect(execution(row({ intent: 'Finish 15', target: 15, done: 17 }))).toBe(113);
+    expect(execution(row({ intent: 'Finish 15', target: 15, done: 12 }))).toBe(80);
+  });
+
+  it('refuses to score an intention that had no number', () => {
+    // "Understand integration by parts" is a real objective and not a
+    // quantity. A percentage here would be the page marking its own homework.
+    expect(execution(row({ intent: 'Understand integration by parts' }))).toBeNull();
+    expect(execution(row({ intent: 'Finish 15', target: 15 }))).toBeNull();
+  });
+
+  it('is flat about falling short, and says so without arithmetic', () => {
+    expect(verdict(row({ intent: 'x', target: 10, done: 11 }))).toMatch(/more than/i);
+    expect(verdict(row({ intent: 'x', target: 10, done: 8 }))).toMatch(/most of the way/i);
+    expect(verdict(row({ intent: 'x', target: 10, done: 2 }))).toMatch(/short of/i);
+  });
+
+  it('answers a yes-or-no intention in kind', () => {
+    expect(verdict(row({ intent: 'x', met: true }))).toMatch(/did what you set out/i);
+    expect(verdict(row({ intent: 'x', met: false }))).toMatch(/not this time/i);
+    expect(verdict(row({ intent: 'x' }))).toBe('');
+  });
+});
+
+describe('what the page may still ask about', () => {
+  const now = 1_780_000_000_000;
+
+  it('asks about a sitting that has just happened', () => {
+    expect(unanswered(row({ intent: 'Finish 15', target: 15, at: now - 60_000 }), now))
+      .not.toBeNull();
+  });
+
+  it('does not ask about one with no intention', () => {
+    expect(unanswered(row({ at: now - 60_000 }), now)).toBeNull();
+  });
+
+  it('does not ask twice', () => {
+    expect(unanswered(row({ intent: 'x', target: 5, done: 4, at: now - 60_000 }), now)).toBeNull();
+    expect(unanswered(row({ intent: 'x', met: false, at: now - 60_000 }), now)).toBeNull();
+    // Nothing done, explicitly: an answer of zero is an answer.
+    expect(unanswered(row({ intent: 'x', target: 5, done: 0, at: now - 60_000 }), now)).toBeNull();
+  });
+
+  it('stops asking once the answer would be a guess', () => {
+    expect(unanswered(row({ intent: 'x', target: 5, at: now - 3 * 3600_000 }), now)).toBeNull();
+  });
+
+  it('treats a row from before the timestamp existed as old', () => {
+    // Rows written by the build that had no `at`. Read as unknown, never as
+    // the epoch — the other direction would interrogate somebody about a
+    // sitting from last week on their next reload.
+    expect(wasJustNow(row({ intent: 'x' }), now)).toBe(false);
+    expect(unanswered(row({ intent: 'x', target: 5 }), now)).toBeNull();
   });
 });
 

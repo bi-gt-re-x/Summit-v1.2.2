@@ -34,6 +34,7 @@ import { useCountUp } from '@/hooks';
 import { formatGoalDate } from './numbers';
 import { goalHealth, systemHealth, type GoalHealth, type HealthState } from '@/utils/goalHealth';
 import { goalNotes, goalsOverview, type GoalNote } from '@/utils/goalAnalytics';
+import { currentStone } from '@/utils/goalStage';
 import type { Goal, GoalCategory, Milestone, Task } from '@/types';
 
 const DAY = 86_400_000;
@@ -383,13 +384,10 @@ export function GoalChain({
     return <p className="gx-empty">No checkpoints yet. Break this goal into stages.</p>;
   }
 
-  /* The one being worked on, by the same rule the card uses: the checkpoint
-     explicitly made active, else the first that is not done. Both places have
-     to agree or the page says a goal is on two different stages. */
-  const current =
-    stones.find((row) => row.status === 'active') ??
-    stones.find((row) => row.status !== 'done') ??
-    null;
+  /* The one being worked on, by the rule every page that draws a stage shares
+     — utils/goalStage, which exists because this was written here and in the
+     goal card and the two had to agree. */
+  const current = currentStone(goal);
 
   const shown = stones.slice(0, limit);
   const category = categoryOf(goal);
