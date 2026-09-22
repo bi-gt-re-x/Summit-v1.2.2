@@ -34,9 +34,23 @@
  * ordinary one with a structure over it. Both calls are no-ops when the session
  * is already in that state, which is what makes driving them from an effect
  * safe.
+ *
+ * ## It also writes down how each interval went
+ *
+ * The session banks *hours*. What it cannot say is where one sitting ended, how
+ * often it was interrupted, or whether it was abandoned — and those are what a
+ * recommendation about length has to be read off. So every focus phase leaves a
+ * row in the interval log as it ends: hooks/useIntervals holds them,
+ * components/Timer/intervals.ts says what may be concluded from them.
+ *
+ * This is the only writer. Both pages that run a cycle run this hook, so a
+ * pomodoro started on the dashboard is recorded exactly as one started on the
+ * Timer page — the same reason the session itself lives here.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
+import { useIntervals } from '@/hooks/useIntervals';
+import type { Interval } from '@/components/Timer/intervals';
 import {
   DEFAULT_LEVEL,
   DEFAULT_STYLE,
@@ -77,6 +91,15 @@ interface Stored {
    */
   dayIso: string;
   doneToday: number;
+  /**
+   * Times the phase now running has been paused.
+   *
+   * Reset by every phase change rather than carried, because it describes one
+   * interval and is the interruption term in its focus score — see
+   * `focusScore` in components/Timer/intervals.ts. A pause during a break is
+   * not an interruption of anything and is not counted.
+   */
+  pauses: number;
 }
 
 function key(user: string): string {
@@ -102,6 +125,7 @@ function fresh(styleId: string, levelId = DEFAULT_LEVEL, keep?: Stored): Stored 
     // day and survives it, or Reset would be a way to un-work an afternoon.
     dayIso: keep?.dayIso ?? todayIso(),
     doneToday: keep?.doneToday ?? 0,
+    pauses: 0,
   };
 }
 
@@ -125,6 +149,7 @@ function load(user: string): Stored {
       // Yesterday's count is not today's. Read against the stored day rather
       // than trusted, so the tile is right on a page left open overnight.
       doneToday: saved.dayIso === today ? Number(saved.doneToday) || 0 : 0,
+      pauses: Number(saved.pauses) || 0,
     };
   } catch {
     // A private window, cleared site data, or a value from an older shape.
@@ -164,6 +189,10 @@ export interface UsePomodoro {
   setLevel: (levelId: number) => void;
   /** The focus goal this level and style imply, in hours. */
   goalHours: number;
+  /** Times the phase now running has been paused. */
+  pauses: number;
+  /** Every focus interval this browser has a record of, oldest first. */
+  intervals: Interval[];
 }
 
 export function usePomodoro(
@@ -175,6 +204,7 @@ export function usePomodoro(
   const [, setTick] = useState(0);
   const latest = useRef(state);
   latest.current = state;
+  const log = useIntervals(username);
 
   const write = useCallback(
     (nextState: Stored) => {
@@ -189,6 +219,37 @@ export function usePomodoro(
   useEffect(() => {
     setState(load(user));
   }, [user]);
+
+  /**
+   * The row for the focus interval a state is in the middle of, or null.
+   *
+   * Null for a break — there is nothing to record about one — and null for a
+   * focus phase less than a minute in, which is a timer somebody started and
+   * changed their mind about rather than a sitting. `finished` is passed rather
+   * than inferred because only the caller knows how the phase ended: the clock
+   * reaching it is one thing and Skip, Reset or a change of style are another,
+   * and a recommendation built from them without the distinction would read an
+   * abandoned interval as a completed one.
+   */
+  const leaving = useCallback(
+    (from: Stored, at: number, finished: boolean): Interval | null => {
+      if (from.phase !== 'focus') return null;
+      const style = styleFor(from.styleId);
+      const total = style.focus * 60_000;
+      const leftMs = from.endsAt !== null ? Math.max(0, from.endsAt - at) : from.leftMs;
+      const minutes = Math.round((total - Math.min(total, leftMs)) / 60_000);
+      if (minutes < 1) return null;
+      return {
+        day: todayIso(),
+        styleId: style.id,
+        planned: style.focus,
+        minutes,
+        pauses: from.pauses,
+        finished,
+      };
+    },
+    [],
+  );
 
   /** Walk a finished phase forward. Returns the state to store. */
   const advance = useCallback((from: Stored, at: number): Stored => {
@@ -216,6 +277,9 @@ export function usePomodoro(
       done: cycle.done,
       dayIso: today,
       doneToday,
+      // A new phase has not been interrupted yet. The interval that was
+      // interrupted has already been written down by the caller.
+      pauses: 0,
     };
 
     if (endsAt <= at) {
@@ -233,19 +297,26 @@ export function usePomodoro(
       const now = Date.now();
       const current = latest.current;
       if (current.endsAt && now >= current.endsAt) {
+        // Recorded before the walk, and only once however many phases the walk
+        // covers: the first of them is the interval that was actually sat, and
+        // the rest are the arithmetic of catching up on an empty room.
+        const row = leaving(current, now, true);
+        if (row) log.record(row);
         write(advance(current, now));
       } else {
         setTick((n) => n + 1);
       }
     }, TICK_MS);
     return () => window.clearInterval(id);
-  }, [state.endsAt, advance, write]);
+  }, [state.endsAt, advance, leaving, log, write]);
 
   // Catch up once on mount too, so a phase that ended while the page was
   // closed has already rolled over by the time anything is drawn.
   useEffect(() => {
     const current = latest.current;
     if (current.endsAt && Date.now() >= current.endsAt) {
+      const row = leaving(current, Date.now(), true);
+      if (row) log.record(row);
       write(advance(current, Date.now()));
     }
     // Once, for the state this mounted with.
@@ -281,21 +352,27 @@ export function usePomodoro(
       ...current,
       endsAt: null,
       leftMs: Math.max(0, current.endsAt - Date.now()),
+      // Counted only against work. A break that was paused was not interrupted.
+      pauses: current.phase === 'focus' ? current.pauses + 1 : current.pauses,
     });
   }, [write]);
 
   const skip = useCallback(() => {
     const current = latest.current;
     const now = Date.now();
+    const row = leaving(current, now, false);
+    if (row) log.record(row);
     // Treated as a phase that has just ended, so one path decides what comes
     // next whether the clock got there or the reader did.
     write(advance({ ...current, endsAt: now }, now));
-  }, [advance, write]);
+  }, [advance, leaving, log, write]);
 
   const reset = useCallback(() => {
     const current = latest.current;
+    const row = leaving(current, Date.now(), false);
+    if (row) log.record(row);
     write(fresh(current.styleId, current.levelId, current));
-  }, [write]);
+  }, [leaving, log, write]);
 
   const choose = useCallback(
     (styleId: string) => {
@@ -303,9 +380,14 @@ export function usePomodoro(
       // three rounds into a method they have just stopped using. The day's
       // count is not part of the cycle and carries over.
       const current = latest.current;
+      // An interval under way when the style changes is one that was abandoned
+      // at that length, which is exactly the kind of row a recommendation
+      // about length should see.
+      const row = leaving(current, Date.now(), false);
+      if (row) log.record(row);
       write(fresh(styleId, current.levelId, current));
     },
-    [write],
+    [leaving, log, write],
   );
 
   const setLevel = useCallback(
@@ -333,5 +415,7 @@ export function usePomodoro(
     doneToday: state.dayIso === todayIso() ? state.doneToday : 0,
     setLevel,
     goalHours: goalHoursFor(level, style),
+    pauses: state.pauses,
+    intervals: log.intervals,
   };
 }

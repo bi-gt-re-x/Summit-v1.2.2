@@ -20,9 +20,23 @@
  * comparison exist.
  *
  * Where a figure would need something the app does not record, it is not shown
- * rather than estimated. There is no average *session* length here because no
- * session boundary is stored — only the day's total — so that tile is an
- * average per working day, and is labelled as one.
+ * rather than estimated. There is no average *session* length in the tiles
+ * because the server stores no session boundary — only the day's total — so
+ * that tile is an average per working day, and is labelled as one.
+ *
+ * ## The two readings that are local, and why they are marked as such
+ *
+ * The recommendation and the session readout are the exceptions, and they are
+ * not exceptions to the rule above. Neither is estimated from the day totals:
+ * both read the interval log, which is a real record of real sittings written
+ * as each one ends — hooks/useIntervals holds it, hooks/usePomodoro writes it,
+ * components/Timer/intervals.ts is the arithmetic.
+ *
+ * That log lives in this browser. So the recommendation says how many sittings
+ * it rests on, it declines to say anything at all until there are enough of
+ * them at more than one length, and the session readout is about today rather
+ * than about the account. The hours remain the account's, on the server, in the
+ * tiles — losing the log loses the shape and not one minute of the work.
  */
 import type { ReactElement } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -41,6 +55,10 @@ import {
   LEVELS, NEARBY, PHASE_LABEL, RECOMMENDED, SITTINGS, STYLES, clock, styleFor,
   type Phase, type Sitting,
 } from '@/components/Timer/pomodoro';
+import {
+  MIN_INTERVALS, focusScore, pace, recommend, tasksPerHour,
+  type Interval, type Recommendation,
+} from '@/components/Timer/intervals';
 import * as format from '@/utils/format';
 import '@/styles/timer.css';
 import { Icon, type IconName } from '@/components/Icon';
@@ -340,6 +358,102 @@ function Line({ points }: { points: { label: string; hours: number }[] }) {
   );
 }
 
+/**
+ * The recommendation, or the reason there is not one yet.
+ *
+ * Both states are on purpose. A picker that silently starts suggesting things
+ * once enough has been recorded is a page that changes shape for reasons the
+ * reader cannot see, so the waiting state says what it is waiting for and how
+ * far along it is — and it counts *sittings*, because that is the unit that
+ * moves the number and "use the app more" is not an instruction anybody can
+ * act on.
+ *
+ * The verdict names its own sample size for the same reason. "50 min, from 8
+ * sittings" is a claim a reader can weigh; "50 min" is one they can only take
+ * or leave.
+ */
+function Recommend({ at, sittings, current, onUse }: {
+  at: Recommendation | null;
+  sittings: number;
+  current: string;
+  onUse: (styleId: string) => void;
+}) {
+  if (!at) {
+    const togo = Math.max(0, MIN_INTERVALS - sittings);
+    return (
+      <p className="pom-rec is-waiting">
+        <span className="pom-rec-icon" aria-hidden="true"><Icon name="sparkles" /></span>
+        {togo > 0
+          ? `Recommended lengths start after ${MIN_INTERVALS} recorded sittings — ${togo} to go.`
+          : 'Run a couple of different lengths and this will recommend one.'}
+      </p>
+    );
+  }
+
+  const style = styleFor(at.styleId);
+  return (
+    <div className="pom-rec">
+      <span className="pom-rec-icon" aria-hidden="true"><Icon name="sparkles" /></span>
+      <span className="pom-rec-text">
+        <b>Recommended focus · {at.minutes} min</b>
+        <i>
+          {at.low === at.high
+            ? `Your ${at.minutes}-minute sittings run cleanest, over ${at.sample} recorded.`
+            : `You work best between ${at.low} and ${at.high} minutes, over ${at.sample} recorded.`}
+        </i>
+      </span>
+      {current === at.styleId ? (
+        // Not "{name} in use" — the method grid's header already says exactly
+        // that further down the page, and one page saying one sentence twice
+        // reads as two facts.
+        <span className="pom-rec-on">Already your pick</span>
+      ) : (
+        <button type="button" className="pom-btn" onClick={() => onUse(at.styleId)}>
+          Use {style.name}
+        </button>
+      )}
+    </div>
+  );
+}
+
+export interface Reading {
+  label: string;
+  /** The figure, or a dash when it cannot honestly be given. */
+  value: string;
+  /** What the figure is of. Always present: a bare number invites a guess. */
+  note: string;
+}
+
+/**
+ * The three readings under the ring.
+ *
+ * A definition list rather than a row of divs because that is what it is, and
+ * a screen reader reading "Focus, 85 per cent, on course if seen through" gets
+ * the same three-part thing a sighted reader gets from the stack.
+ *
+ * Every reading can be a dash, and each one says what it is of rather than
+ * carrying a bare number — "Pace +12%" means nothing without "against your own
+ * normal", and a reader who has to guess what a percentage is against will
+ * guess wrong.
+ *
+ * The list is named because "Focus" is the phase above it as well as a reading
+ * inside it, and a screen reader meeting the second one with no context has no
+ * way to tell which of the two it has landed on.
+ */
+function Hud({ readings }: { readings: Reading[] }) {
+  return (
+    <dl className="pom-hud" aria-label="This session">
+      {readings.map((reading) => (
+        <div className="pom-hud-stat" key={reading.label}>
+          <dt>{reading.label}</dt>
+          <dd>{reading.value}</dd>
+          <span>{reading.note}</span>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 function Rating({ name, grade, score }: { name: string; grade: string; score: number }) {
   return (
     <div className={`pom-rating pom-grade-${grade.replace('+', 'plus').toLowerCase()}`}>
@@ -430,7 +544,9 @@ export default function Timer() {
     setSetup(false);
   }, [pomodoro, updatePrefs]);
 
-  const { style, phase, running, remaining, percent, level, doneToday } = pomodoro;
+  const {
+    style, phase, running, remaining, percent, level, doneToday, pauses, intervals,
+  } = pomodoro;
   const days = history.data?.days ?? {};
 
   const hoursOn = useCallback(
@@ -459,6 +575,95 @@ export default function Timer() {
   }).length, [tasks]);
   const tasksNow = doneIn(shift(today, -(span - 1)), today);
   const tasksBefore = doneIn(shift(today, -(span * 2 - 1)), shift(today, -span));
+
+  // ---- The three readings under the ring -----------------------------------
+  /* The pace baseline, on a window of its own.
+   *
+   * Thirty days ending yesterday, asked for separately rather than sliced out
+   * of the Progress panel's history: that one's span follows the range control,
+   * and a reading that moved when somebody pressed 30D would be reporting the
+   * control rather than the work. Today is left out because today is the thing
+   * being compared against it. */
+  const baselineCall = useCallback(
+    () => focusService.history(iso(shift(today, -30)), iso(shift(today, -1))),
+    [today],
+  );
+  const baseline = useApi(baselineCall, []);
+
+  const baselineRate = useMemo(() => {
+    const seen = baseline.data?.days ?? {};
+    const seconds = Object.values(seen)
+      .reduce((sum, day) => sum + (Number(day?.seconds) || 0), 0);
+    return tasksPerHour(doneIn(shift(today, -30), shift(today, -1)), seconds);
+  }, [baseline.data, doneIn, today]);
+
+  const tasksToday = doneIn(today, today);
+  const pacePct = pace(tasksPerHour(tasksToday, session.focused), baselineRate);
+
+  /* Difficulty is the account's own rating of the work it finished today, and
+   * an unrated task is left out rather than counted as easy — absent is not
+   * zero, which is the rule for this field wherever it is read. See `difficulty`
+   * in types/models.ts. */
+  const ratedToday = useMemo(() => tasks.filter((task) => task.status === 'done'
+    && (task.completed_at ?? '').slice(0, 10) === iso(today)
+    && typeof task.difficulty === 'number'), [tasks, today]);
+  const difficulty = ratedToday.length
+    ? ratedToday.reduce((sum, task) => sum + (task.difficulty ?? 0), 0) / ratedToday.length
+    : null;
+
+  /* The focus score this interval is *on course for*, taken as seen through.
+   *
+   * The recorded score weighs how much of the interval ran, so a live reading
+   * that counted the minutes not yet sat would start every sitting at thirty
+   * and climb — which reads as a second progress bar beside the ring rather
+   * than as quality. Holding the length constant and moving only with the
+   * interruptions makes the number on screen the number that gets written down
+   * if the sitting is finished. Between sittings it shows the last one, because
+   * an empty panel says less than the thing that just happened. */
+  const lastSitting: Interval | undefined = intervals[intervals.length - 1];
+  const onCourse = focusScore({
+    day: iso(today),
+    styleId: style.id,
+    planned: style.focus,
+    minutes: style.focus,
+    pauses,
+    finished: true,
+  });
+  const focusReading: Reading = running && phase === 'focus'
+    ? {
+      label: 'Focus',
+      value: `${onCourse}%`,
+      note: pauses === 0
+        ? 'on course · unbroken'
+        : `on course · ${pauses} pause${pauses === 1 ? '' : 's'}`,
+    }
+    : lastSitting
+      ? {
+        label: 'Focus',
+        value: `${focusScore(lastSitting)}%`,
+        note: `last sitting · ${lastSitting.minutes}m${lastSitting.finished ? '' : ', cut short'}`,
+      }
+      : { label: 'Focus', value: '—', note: 'no sitting recorded yet' };
+
+  const readings: Reading[] = [
+    focusReading,
+    {
+      label: 'Pace',
+      value: pacePct === null ? '—' : `${pacePct >= 0 ? '+' : ''}${pacePct}%`,
+      note: pacePct === null
+        ? 'needs 15 min today and a month behind it'
+        : 'tasks an hour, against your own normal',
+    },
+    {
+      label: 'Difficulty',
+      value: difficulty === null ? '—' : `${difficulty.toFixed(1)} / 5`,
+      note: difficulty === null
+        ? 'nothing rated today'
+        : `your rating of ${ratedToday.length} finished today`,
+    },
+  ];
+
+  const suggestion = useMemo(() => recommend(intervals), [intervals]);
 
   // This week's seven bars, whatever the range control above is set to.
   const week = useMemo(() => {
@@ -556,6 +761,9 @@ export default function Timer() {
                 </label>
               </div>
 
+              <Recommend at={suggestion} sittings={intervals.length}
+                current={style.id} onUse={pomodoro.choose} />
+
               <button type="button" className="pom-start"
                 onClick={running ? pomodoro.pause : pomodoro.start}>
                 <Icon name={running ? 'pause' : 'play'} />
@@ -603,6 +811,7 @@ export default function Timer() {
                   </svg>
                 </button>
               </div>
+              <Hud readings={readings} />
             </div>
 
             <div className="pom-hero-side">
