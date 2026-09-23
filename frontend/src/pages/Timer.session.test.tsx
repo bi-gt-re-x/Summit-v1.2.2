@@ -216,8 +216,9 @@ describe('the live goal line', () => {
 
     await waitFor(() =>
       expect(screen.getByText(/toward qualify for aime/i)).toBeInTheDocument());
-    // The goal's own standing, in its own units.
-    expect(screen.getByText('2h')).toBeInTheDocument();
+    // The goal's own standing against what it asks for, in its own units. One
+    // element now, beside the label, the way the other bars in the block read.
+    expect(screen.getByText(/2h of 10h/i)).toBeInTheDocument();
   });
 
   it('stays away for a goal this page cannot move', async () => {
@@ -226,7 +227,7 @@ describe('the live goal line', () => {
     await userEvent.click(await screen.findByRole('button', { name: /^start focus$/i }));
 
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: /^pause focus$/i })).toBeInTheDocument());
+      expect(screen.getByRole('button', { name: /^pause$/i })).toBeInTheDocument());
     expect(screen.queryByText(/toward ship the rewrite/i)).not.toBeInTheDocument();
   });
 });

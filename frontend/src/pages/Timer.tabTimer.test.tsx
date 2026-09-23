@@ -83,7 +83,7 @@ describe('the focus tab while a phase runs', () => {
     await userEvent.click(await screen.findByRole('button', { name: /^start focus$/i }));
     await waitFor(() => expect(document.title).toContain('· Focus ·'));
 
-    await userEvent.click(screen.getByRole('button', { name: /^pause focus$/i }));
+    await userEvent.click(screen.getByRole('button', { name: /^pause$/i }));
     await waitFor(() => expect(document.title).toBe('Timer · Summit'));
   });
 });

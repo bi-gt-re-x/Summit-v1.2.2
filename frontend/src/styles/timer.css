@@ -239,18 +239,17 @@ html[data-theme="dark"] .pom-page {
        job is to show a clock. They are their own panels below; see the Method
        and Before You Start sections in pages/Timer.tsx.
 
-       Three tracks rather than two so the clock is centred on the *card* and
-       not on whatever is left over beside the side rail. The first and third
-       are the same flexible width, the rail is pinned to the end of the third,
-       and the difference between the two is the breathing room the rail needs
-       — which is why the left gutter is wider than the right and should be:
-       the right one is carrying three cards' worth of weight.
+       The clock leads and the rail is pinned to the end, with one flexible
+       track between them holding the slack. Centring the clock — on the left
+       column or on the card — left a few hundred pixels of empty gradient at
+       the start of a card whose first object should be the thing you came for,
+       and the mountains that fill the other end are drawn from the right.
 
        `--space-7` used to set the gap and the padding here. There is no such
        token — the scale in styles/tokens.css runs 1-6, 8, 10, 12, 16 — so both
        declarations were invalid and the hero drew with no padding and no gap,
        with the side cards flush against its right edge. */
-    grid-template-columns: minmax(0, 1fr) minmax(0, 380px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
     gap: var(--space-8);
     align-items: center;
     padding: var(--space-8);
@@ -340,7 +339,7 @@ html[data-theme="dark"] .pom-page {
 
 /* The ring */
 .pom-hero-mid {
-    grid-column: 2;
+    grid-column: 1;
     display: flex; flex-direction: column; align-items: center;
     gap: var(--space-6);
     width: 100%;
@@ -480,24 +479,6 @@ html[data-theme="dark"] .pom-page {
     background: color-mix(in srgb, var(--pom-now) 10%, transparent);
     color: var(--pom-text);
 }
-
-/* The live goal line, under the controls while work is running. */
-.pom-live { display: grid; gap: var(--space-2); width: 100%; margin: 0; }
-.pom-live-bar {
-    display: block; height: 6px;
-    border-radius: var(--radius-full);
-    background: var(--pom-line);
-    overflow: hidden;
-}
-.pom-live-bar > span {
-    display: block; height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, var(--pom-focus-2), var(--pom-focus));
-    transition: width .4s ease;
-}
-.pom-live-text { color: var(--pom-muted); font-size: var(--text-xs); text-align: center; }
-.pom-live-text b { color: var(--pom-text); font-variant-numeric: tabular-nums; }
-.pom-live-text i { color: var(--pom-faint); font-style: normal; }
 
 /* The replay: one sitting, along its own length.
 
@@ -702,7 +683,7 @@ html[data-theme="dark"] .pom-page {
 
 /* The three cards down the side */
 .pom-hero-side {
-    grid-column: 3;
+    grid-column: 2;
     justify-self: end;
     display: grid; gap: var(--space-3);
     width: 232px;
@@ -1053,7 +1034,7 @@ html[data-theme="dark"] .pom-page {
 
 @media (prefers-reduced-motion: reduce) {
     .pom-ring-run, .pom-donut-run, .pom-bar-fill,
-    .pom-live-bar > span, .pom-outcome-track > span, .pom-hero { transition: none; }
+    .pom-outcome-track > span, .pom-hero { transition: none; }
     .pom-card:hover, .pom-choice:hover { transform: none; }
 }
 
@@ -1141,3 +1122,246 @@ html[data-theme="dark"] .pom-page {
 .pom-side-icon,
 .pom-tile-icon,
 .pom-pick-glyph { --icon-flame: currentColor; --icon-gold: currentColor; }
+
+/* ==========================================================================
+   THE SITTING — the page while a focus phase runs.
+
+   See components/Timer/FocusView.tsx for what is on screen and why that is the
+   list. This is how it is arranged and how the page gets out of its way.
+
+   The phase colours are declared here again rather than inherited, because
+   `.pom-hero.is-*` above is the only place they were set and the hero is not
+   rendered while this is.
+   ========================================================================== */
+.pom-sit.is-focus { --pom-now: var(--pom-focus); --pom-now-2: var(--pom-focus-2); }
+.pom-sit.is-break { --pom-now: var(--pom-break); --pom-now-2: var(--pom-break-2); }
+.pom-sit.is-long  { --pom-now: var(--pom-long);  --pom-now-2: var(--pom-long-2); }
+
+/* The tint.
+
+   Fixed and over everything, so the rail and the top bar dim with the page —
+   the sitting is a state the whole window is in, not a panel on it. It takes
+   no clicks, which is the part that matters: the shell underneath stays usable
+   for somebody who needs to leave, and the only thing this does is make
+   leaving feel like a decision rather than a reflex.
+
+   Above the rail, which is `z-index: 900` in styles/rail.css, and that is the
+   only reason these three numbers are as large as they are. Nothing between
+   them and the rail sets a `z-index` — `.app-main` and `#root` carry width
+   rules and nothing else — so a layer inside the page can still be painted
+   over the shell, which is what makes the whole window dim rather than the
+   column the page happens to sit in. `.pom-page--sitting` must therefore stay
+   out of it: a `z-index` there would open a stacking context and trap all
+   three underneath the rail again.
+
+   Two layers, not one flat black. A wash plus a vignette that is heaviest at
+   the edges keeps the middle of the screen — where the clock is — the
+   brightest thing in the room. */
+.pom-sit-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 940;
+    pointer-events: none;
+    background:
+        radial-gradient(115% 85% at 42% 45%, rgba(26, 30, 58, .55) 0%, rgba(7, 9, 22, .94) 100%),
+        rgba(9, 11, 26, .74);
+    animation: pomSitIn .5s var(--hm-ease, ease) both;
+}
+/* A dark account needs less of it, not a different colour: the page under it
+   is already dark and the same wash again reads as a fault in the screen. */
+html[data-theme="dark"] .pom-sit-scrim {
+    background:
+        radial-gradient(115% 85% at 42% 45%, rgba(14, 17, 36, .45) 0%, rgba(2, 3, 10, .88) 100%),
+        rgba(4, 6, 16, .5);
+}
+
+/* The page itself keeps its width but drops the reading padding: there is one
+   thing on it and it should be allowed to be tall. No `z-index` here — see the
+   note on the scrim. */
+.pom-page--sitting {
+    position: relative;
+    min-height: 78vh;
+    display: grid;
+    align-items: center;
+    padding-block: var(--space-8);
+}
+
+/* The dots are drawn over the tint rather than under it. Under it they are a
+   field of grey behind frosted glass, which is the one thing a background with
+   a canvas in it should not look like.
+
+   That lifts the whole ambient layer, and two of its four parts do not want to
+   be up there. `.hm-gradient` is a soft *light* wash — over the tint it undoes
+   it, which is what a first attempt at this looked like — and `.hm-grid` takes
+   its colour from the theme, so on a light account it would be near-black
+   lines on a dark ground. The grid is restated for the ground it is actually
+   on; the wash is dropped, because the tint is the sitting's weather and two
+   of them fight. The canvas picks its own colours — see `palette` in
+   components/Ambient.tsx. */
+.pom-page--sitting .hm-ambient { z-index: 941; }
+.pom-page--sitting .hm-gradient { display: none; }
+.pom-page--sitting .hm-grid { color: rgba(255, 255, 255, .055); }
+
+.pom-sit {
+    position: relative;
+    z-index: 942;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 330px);
+    align-items: center;
+    gap: var(--space-12);
+    animation: pomSitIn .55s var(--hm-ease, ease) both;
+}
+
+@keyframes pomSitIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ---- The clock ----------------------------------------------------------- */
+.pom-sit-clock { display: flex; flex-direction: column; align-items: center; gap: var(--space-6); }
+.pom-sit-ring { position: relative; width: min(340px, 70vw); aspect-ratio: 1; }
+.pom-sit-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+/* Brighter than the hero's track: this one is read against a tinted page. */
+.pom-sit-track { fill: none; stroke: rgba(255, 255, 255, .16); stroke-width: 10; }
+.pom-sit-run {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset .3s linear;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--pom-now) 55%, transparent));
+}
+.pom-sit-read {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: var(--space-2);
+    color: #fff;
+}
+.pom-sit-phase {
+    color: color-mix(in srgb, var(--pom-now-2) 75%, #fff);
+    font-size: var(--text-xs); font-weight: 700;
+    letter-spacing: .28em; text-transform: uppercase;
+}
+/* `clamp` rather than a breakpoint: the clock is the one thing on this screen
+   that should use whatever room the window has. */
+.pom-sit-time {
+    font-size: clamp(3rem, 7vw, 5rem); font-weight: 700;
+    font-variant-numeric: tabular-nums; letter-spacing: -.04em; line-height: 1;
+}
+
+/* The one control. Outlined rather than filled — the filled primary on this
+   page means "start", and a button that looks like Start but stops the clock
+   is the kind of thing somebody presses once and does not trust again. */
+.pom-sit-pause {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    min-width: 190px; height: 50px;
+    border: 1px solid rgba(255, 255, 255, .34);
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+    font: inherit; font-size: var(--text-md); font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background .15s ease, border-color .15s ease;
+}
+.pom-sit-pause:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .5); }
+.pom-sit-esc { margin: 0; color: rgba(255, 255, 255, .55); font-size: var(--text-xs); }
+.pom-kbd {
+    padding: 1px 6px;
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono, ui-monospace, monospace); font-size: var(--text-2xs);
+}
+
+/* ---- The column beside it ------------------------------------------------ */
+.pom-sit-aside { display: grid; gap: var(--space-4); }
+.pom-sit-card {
+    padding: var(--space-5);
+    border: 1px solid rgba(255, 255, 255, .13);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, .07);
+    backdrop-filter: blur(10px);
+}
+.pom-sit-card h2 {
+    margin: 0 0 var(--space-4);
+    color: rgba(255, 255, 255, .62);
+    font-size: var(--text-2xs); font-weight: 700;
+    letter-spacing: .16em; text-transform: uppercase;
+}
+
+/* The two bars. Equal tracks, so tasks and minutes read as the same kind of
+   statement even though they count different things. */
+.pom-sit-bars { display: grid; gap: var(--space-4); }
+.pom-sit-bar { display: grid; gap: var(--space-2); }
+.pom-sit-bar-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
+.pom-sit-bar-head b { color: #fff; font-size: var(--text-sm); font-weight: 600; }
+.pom-sit-bar-head i {
+    color: rgba(255, 255, 255, .6);
+    font-size: var(--text-xs); font-style: normal;
+    font-variant-numeric: tabular-nums;
+}
+.pom-sit-track-2 {
+    display: block;
+    height: 7px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, .14);
+    overflow: hidden;
+}
+.pom-sit-track-2 > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--pom-now-2), var(--pom-now));
+    transition: width .45s var(--hm-ease, ease);
+}
+
+/* The tasks. The whole row is the button: a 7px checkbox beside a label that
+   does nothing is a target somebody misses, and there is no second action on
+   a row here for a wider one to collide with. */
+.pom-sit-tasks { display: grid; gap: var(--space-1); margin: 0; padding: 0; list-style: none; }
+.pom-sit-tasks button {
+    display: flex; align-items: center; gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2) var(--space-2);
+    border: none;
+    border-radius: var(--radius-md);
+    background: none;
+    color: rgba(255, 255, 255, .88);
+    font: inherit; font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.pom-sit-tasks button:hover:not(:disabled) { background: rgba(255, 255, 255, .1); }
+.pom-sit-tasks button:disabled { opacity: .5; cursor: progress; }
+.pom-sit-check {
+    flex: none;
+    width: 17px; height: 17px;
+    border: 1.5px solid rgba(255, 255, 255, .45);
+    border-radius: 50%;
+    transition: background .15s ease, border-color .15s ease;
+}
+.pom-sit-tasks button:hover:not(:disabled) .pom-sit-check {
+    border-color: var(--pom-now-2);
+    background: color-mix(in srgb, var(--pom-now-2) 35%, transparent);
+}
+.pom-sit-task-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pom-sit-empty { margin: 0; color: rgba(255, 255, 255, .55); font-size: var(--text-sm); }
+
+.pom-sit-quote {
+    margin: 0;
+    padding: 0 var(--space-2);
+    color: rgba(255, 255, 255, .62);
+    font-size: var(--text-sm); font-style: italic; line-height: 1.6;
+}
+.pom-sit-quote i { display: block; margin-top: var(--space-2); font-style: normal; opacity: .75; }
+
+/* ---- Narrow -------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .pom-sit { grid-template-columns: minmax(0, 1fr); gap: var(--space-8); justify-items: center; }
+    .pom-sit-aside { width: min(420px, 100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pom-sit, .pom-sit-scrim { animation: none; }
+    .pom-sit-run, .pom-sit-track-2 > span { transition: none; }
+}

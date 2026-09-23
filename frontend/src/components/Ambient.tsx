@@ -35,30 +35,38 @@
  * page with no canvas and no loop behind it, which a `display: none` would not
  * have given. `reduced` already stops the motion; this is for a reader who
  * wants the plain background as well.
+ *
+ * ## `surge`, and why it is opt-in too
+ *
+ * With `surge` a dot occasionally breaks its drift: it accelerates, turns
+ * blue, coasts, brakes to a full stop, holds there, and fades back to its
+ * ordinary colour before drifting on. One sitting's worth of that reads as a
+ * field with something going on in it rather than as wallpaper.
+ *
+ * It is off everywhere except the focus sitting (pages/Timer.tsx), and for the
+ * same reason the cursor glow is: movement with a beginning and an end pulls
+ * the eye, which is right behind a clock somebody is watching on purpose and
+ * wrong behind a task list somebody is reading. Nothing accelerates when the
+ * machine has asked for less motion — `reduced` stops the whole loop before
+ * any of this is reached.
  */
 import { useEffect, useRef, useState } from 'react';
 import { useSettings } from '@/hooks/useSettings';
+import { startParticles } from '@/utils/ambientField';
 import { reduced } from '@/utils/homePlay';
 import '@/styles/ambient.css';
-
-/** Enough to read as a field and cheap enough to be free; fewer where they crowd. */
-const PARTICLES = typeof window !== 'undefined' && window.innerWidth < 720 ? 18 : 40;
-
-interface Dot {
-  x: number;
-  y: number;
-  r: number;
-  vx: number;
-  vy: number;
-  a: number;
-}
 
 export interface AmbientProps {
   /** Whether the glow follows the pointer. The landing page, and nothing else. */
   cursor?: boolean;
+  /**
+   * Whether dots break into a run, turn blue and stop. The focus sitting, and
+   * nothing else — see the note at the top of this file.
+   */
+  surge?: boolean;
 }
 
-export function Ambient({ cursor = false }: AmbientProps) {
+export function Ambient({ cursor = false, surge = false }: AmbientProps) {
   const { prefs } = useSettings();
   const on = prefs.show_ambient;
   const layer = useRef<HTMLDivElement>(null);
@@ -76,8 +84,8 @@ export function Ambient({ cursor = false }: AmbientProps) {
   // background off has to stop the loop, not just stop drawing it.
   useEffect(() => {
     if (reduced || !on) return;
-    return startParticles(canvas.current);
-  }, [on]);
+    return startParticles(canvas.current, surge);
+  }, [on, surge]);
 
   // `cursor` is a dependency rather than a guard inside the effect, so turning
   // it off unbinds the pointer listeners instead of leaving them running over
@@ -101,140 +109,6 @@ export function Ambient({ cursor = false }: AmbientProps) {
       {cursor && <div className="hm-cursor" ref={glow} />}
     </div>
   );
-}
-
-function startParticles(canvas: HTMLCanvasElement | null): (() => void) | undefined {
-  const ctx = canvas?.getContext('2d');
-  if (!canvas || !ctx) return;
-
-  let dots: Dot[] = [];
-  let w = 0;
-  let h = 0;
-  let frame: number | null = null;
-  let last = 0;
-
-  /**
-   * Returns false when there is nothing to measure yet. A canvas sized while
-   * the page is laid out at zero — loaded in a background tab, or in a window
-   * that has not been presented — stays zero for good otherwise, and the field
-   * never appears. The draw loop retries.
-   */
-  function resize(): boolean {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = canvas!.clientWidth || window.innerWidth || 0;
-    h = canvas!.clientHeight || window.innerHeight || 0;
-    if (!w || !h) return false;
-    canvas!.width = Math.round(w * dpr);
-    canvas!.height = Math.round(h * dpr);
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-    return true;
-  }
-
-  function seed() {
-    dots = [];
-    for (let i = 0; i < PARTICLES; i++) {
-      dots.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: 0.8 + Math.random() * 1.6,
-        // Pixels per second. Slow: a dot crosses the screen in about two minutes.
-        vx: (Math.random() - 0.5) * 12,
-        vy: -4 - Math.random() * 10,
-        a: 0.1 + Math.random() * 0.22,
-      });
-    }
-  }
-
-  function colour(): string {
-    return document.documentElement.getAttribute('data-theme') === 'dark'
-      ? '255, 255, 255'
-      : '30, 41, 59';
-  }
-
-  function draw(now: number) {
-    frame = requestAnimationFrame(draw);
-
-    // Nothing measurable yet — try again next frame rather than drawing into a
-    // zero-sized canvas forever.
-    if (!w || !h) {
-      if (!resize()) return;
-      seed();
-    }
-
-    if (!last) last = now;
-    // Seconds since the last frame, clamped so a backgrounded tab does not
-    // teleport every dot when it comes back.
-    const dt = Math.min((now - last) / 1000, 0.05);
-    last = now;
-
-    ctx!.clearRect(0, 0, w, h);
-    const rgb = colour();
-    dots.forEach((d) => {
-      d.x += d.vx * dt;
-      d.y += d.vy * dt;
-      // Off one edge, back on the other.
-      if (d.y < -8) {
-        d.y = h + 8;
-        d.x = Math.random() * w;
-      }
-      if (d.x < -8) d.x = w + 8;
-      if (d.x > w + 8) d.x = -8;
-
-      ctx!.beginPath();
-      ctx!.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-      ctx!.fillStyle = `rgba(${rgb},${d.a})`;
-      ctx!.fill();
-    });
-  }
-
-  function play() {
-    if (frame) return;
-    last = 0;
-    frame = requestAnimationFrame(draw);
-  }
-  function pause() {
-    if (!frame) return;
-    cancelAnimationFrame(frame);
-    frame = null;
-  }
-
-  if (resize()) seed();
-  play();
-
-  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
-  const onResize = () => {
-    if (resizeTimer) clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      if (resize()) seed();
-    }, 150);
-  };
-  window.addEventListener('resize', onResize);
-
-  // A hidden tab paints nothing, and neither should this.
-  const onVisibility = () => (document.hidden ? pause() : play());
-  document.addEventListener('visibilitychange', onVisibility);
-
-  // The layer is fixed, so once the reader is a couple of screens down the dots
-  // are still being drawn behind content that covers them. Stop there and pick
-  // up again on the way back.
-  let scrollTimer: ReturnType<typeof setTimeout> | null = null;
-  const onScroll = () => {
-    if (scrollTimer) clearTimeout(scrollTimer);
-    scrollTimer = setTimeout(() => {
-      if (window.scrollY > window.innerHeight * 2) pause();
-      else if (!document.hidden) play();
-    }, 120);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  return () => {
-    pause();
-    if (resizeTimer) clearTimeout(resizeTimer);
-    if (scrollTimer) clearTimeout(scrollTimer);
-    window.removeEventListener('resize', onResize);
-    window.removeEventListener('scroll', onScroll);
-    document.removeEventListener('visibilitychange', onVisibility);
-  };
 }
 
 function startCursorGlow(glow: HTMLDivElement | null): (() => void) | undefined {

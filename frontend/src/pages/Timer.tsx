@@ -127,18 +127,36 @@
  * explaining the dashes, directly under the one control the page exists for.
  * The same figures are in the record below, where they are read rather than
  * glanced at. The hero is the clock, the primary button, reset and set-up.
+ *
+ * ## While a focus phase runs, this page is something else
+ *
+ * Everything above describes the page you arrive at. Press Start Focus and it
+ * is replaced by components/Timer/FocusView — the clock, one pause, what today
+ * is adding up to, what is next, and a quote — over a tinted window with the
+ * drifting field behind it. Pausing brings this page back, and so does Escape,
+ * which pauses.
+ *
+ * `running && phase === 'focus'` is the whole condition. There is no flag,
+ * because a flag can disagree with the clock, and a page that is "in focus
+ * mode" while nothing is running is a page telling a story about work nobody
+ * is doing. A break brings this page back on its own, which is right: a break
+ * is when the things the sitting hides are worth looking at again.
+ *
+ * Fenced by Timer.sitting.test.tsx, which pins what has to be gone, what has
+ * to stay, and both ways back — none of which a type checker can see.
  */
 import type { ReactElement } from 'react';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Range } from '@/components';
+import { Ambient, Range } from '@/components';
 import {
   timerTitle, useApi, useAuth, useDocumentTitle, usePageEntrance, useSettings, useStats,
   useSubjectIndex, useUserData,
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import { usePomodoro } from '@/hooks/usePomodoro';
-import { focus as focusService, goals as goalService } from '@/services';
+import { focus as focusService, goals as goalService, tasks as taskService } from '@/services';
+import { announceStatsChanged } from '@/utils/statsBus';
 import { StyleGrid } from '@/components/Timer/Styles';
 import { QuoteScene } from '@/components/Timer/art';
 import {
@@ -156,6 +174,7 @@ import type { Goal, Milestone, Task } from '@/types';
 import * as format from '@/utils/format';
 import '@/styles/timer.css';
 import { Icon, type IconName } from '@/components/Icon';
+import { FocusView } from '@/components/Timer/FocusView';
 
 const SETUP_KEY = 'pomodoro:setup';
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -1041,35 +1060,6 @@ function Outcome({ sitting, asking, fed, onReport, onSkip }: {
   );
 }
 
-/**
- * What the goal did while you sat there.
- *
- * Only for a goal measured in focus time, and only while a focus phase runs,
- * because that is the only arrangement in which this page moves a goal's own
- * figure. `minutes` is the session's own total for today — the focus session
- * is the ledger, not this page — added to the goal's recorded standing, which
- * is what the same figure will say once the server has heard about today.
- *
- * It is a line rather than a panel. The reader is working; the ring is the
- * thing on screen, and this is a note under it.
- */
-function LiveGoal({ goal, minutes }: { goal: Counting; minutes: number }) {
-  const now = goal.now + minutes;
-  const pct = goal.target > 0 ? Math.min(100, Math.round((now / goal.target) * 100)) : 0;
-
-  return (
-    <p className="pom-live" aria-live="off">
-      <span className="pom-live-bar" aria-hidden="true">
-        <span style={{ width: `${pct}%` }} />
-      </span>
-      <span className="pom-live-text">
-        <b>{fmtHM(now * 60)}</b> of {fmtHM(goal.target * 60)} toward {goal.goal.title}
-        {minutes > 0 && <i> · {fmtHM(minutes * 60)} of it today</i>}
-      </span>
-    </p>
-  );
-}
-
 const CHEVRON: ReactElement = (
   <svg className="pom-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1083,7 +1073,7 @@ export default function Timer() {
   const user = username || 'Default';
   const account = useUserData();
   const { stats } = useStats();
-  const { displayName, prefs, ready, update: updatePrefs } = useSettings();
+  const { dailyGoal, displayName, prefs, ready, update: updatePrefs } = useSettings();
   const session = useFocusSession(username);
   const pomodoro = usePomodoro(username, session);
 
@@ -1307,6 +1297,88 @@ export default function Timer() {
   const goalPercent = goalSeconds
     ? Math.min(100, Math.round((session.focused / goalSeconds) * 100)) : 0;
 
+  /* ---- The sitting --------------------------------------------------------
+   *
+   * A running focus phase *is* the collapsed view — there is no third piece of
+   * state saying whether to show it, because a mode that could disagree with
+   * the clock is a mode that will. Pausing leaves it and so does Escape, which
+   * pauses; a break brings the page back on its own, which is right, because a
+   * break is when the things this view hides are worth looking at again.
+   *
+   * See components/Timer/FocusView for what it holds and why that is the list.
+   */
+  const sitting = running && phase === 'focus';
+
+  /* Ticked here, and not yet reloaded.
+   *
+   * `completeTask` returns before the account's task list is refetched, and
+   * the row has to leave the list on the click rather than a round trip later
+   * — a checkbox that waits is a checkbox somebody presses twice. Cleared when
+   * the reload lands and the task is genuinely `done`. */
+  const [ticked, setTicked] = useState<ReadonlySet<string>>(new Set());
+  const [ticking, setTicking] = useState(false);
+
+  const finishTask = useCallback(async (task: Task) => {
+    if (ticking) return;
+    setTicking(true);
+    setTicked((was) => new Set(was).add(task.id));
+    const result = await taskService.completeTask(task.id);
+    setTicking(false);
+    if (!result.success) {
+      // Put it back. The list is the truth and the optimistic row was a guess.
+      setTicked((was) => {
+        const next = new Set(was);
+        next.delete(task.id);
+        return next;
+      });
+      return;
+    }
+    // The rail's level and the bell did not hear about completions made here.
+    // See utils/statsBus, and the same call on pages/Goals.tsx.
+    announceStatsChanged();
+    await account.reload();
+  }, [account, ticking]);
+
+  /** Tasks finished today, which is what the sitting's first bar counts. */
+  const tasksDoneToday = useMemo(() => tasks.filter((task) => task.status === 'done'
+    && (task.completed_at ?? '').slice(0, 10) === iso(today)).length, [tasks, today]);
+
+  /* Drop the optimistic ids the reload has caught up with, so a long sitting
+     does not accumulate a set of every task it ever ticked. */
+  useEffect(() => {
+    setTicked((was) => {
+      if (!was.size) return was;
+      const open = new Set(tasks.filter((t) => t.status !== 'done').map((t) => t.id));
+      const next = new Set([...was].filter((id) => open.has(id)));
+      return next.size === was.size ? was : next;
+    });
+  }, [tasks]);
+
+  if (sitting) {
+    return (
+      <div className="pom-page pom-page--sitting">
+        <Ambient cursor surge />
+        <div className="pom-sit-scrim" aria-hidden="true" />
+        <FocusView
+          phase={phase}
+          percent={percent}
+          remaining={remaining}
+          onPause={pomodoro.pause}
+          tasksDone={tasksDoneToday}
+          tasksGoal={dailyGoal}
+          focused={session.focused}
+          focusGoal={goalSeconds}
+          upcoming={upcoming}
+          onComplete={(task) => void finishTask(task)}
+          busy={ticking}
+          done={ticked}
+          goal={counting[0] ?? null}
+          goalMinutes={Math.round(session.focused / 60)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={`pom-page${entering ? ' pg-enter' : ''}`}>
       <header className="pom-head">
@@ -1385,9 +1457,6 @@ export default function Timer() {
                 </button>
               </div>
 
-              {running && phase === 'focus' && counting[0] && (
-                <LiveGoal goal={counting[0]} minutes={Math.round(session.focused / 60)} />
-              )}
             </div>
 
             <div className="pom-hero-side">
