@@ -50,7 +50,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
 import { useIntervals } from '@/hooks/useIntervals';
-import type { Interval } from '@/components/Timer/intervals';
+import type { Interval, Readiness } from '@/components/Timer/intervals';
 import {
   DEFAULT_LEVEL,
   DEFAULT_STYLE,
@@ -114,10 +114,23 @@ interface Stored {
    */
   intent: string;
   target: number | null;
+  /**
+   * How ready the account said it was today, or null for unasked.
+   *
+   * Unlike the intention this survives the sitting that carried it: it is an
+   * answer about the person and not about the interval, and re-asking after
+   * every break would make it a reflex rather than a reading. It is dropped
+   * with the day, by `load`, for the same reason `doneToday` is.
+   */
+  readiness: Readiness | null;
 }
 
 function key(user: string): string {
   return `pomodoro:${user}`;
+}
+
+function isReadiness(value: unknown): value is Readiness {
+  return value === 'low' || value === 'normal' || value === 'high';
 }
 
 function todayIso(): string {
@@ -142,6 +155,9 @@ function fresh(styleId: string, levelId = DEFAULT_LEVEL, keep?: Stored): Stored 
     pauses: 0,
     intent: '',
     target: null,
+    // Kept across a reset with the day's count, and for the same reason: how
+    // the reader feels is not part of the cycle they have just restarted.
+    readiness: keep?.readiness ?? null,
   };
 }
 
@@ -172,6 +188,10 @@ function load(user: string): Stored {
       intent: saved.dayIso === today && typeof saved.intent === 'string' ? saved.intent : '',
       target: saved.dayIso === today && typeof saved.target === 'number'
         ? saved.target
+        : null,
+      // Yesterday's answer is not today's, whatever it was.
+      readiness: saved.dayIso === today && isReadiness(saved.readiness)
+        ? saved.readiness
         : null,
     };
   } catch {
@@ -222,6 +242,10 @@ export interface UsePomodoro {
   target: number | null;
   /** Set both. An empty line clears the target with it. */
   setIntent: (intent: string, target: number | null) => void;
+  /** How ready the account said it was today, or null for unasked. */
+  readiness: Readiness | null;
+  /** Answer it, or press the same one again to take the answer back. */
+  setReadiness: (readiness: Readiness | null) => void;
   /** Answer the newest row's intention. See `amend` in hooks/useIntervals. */
   report: (result: { done?: number; met?: boolean }) => void;
 }
@@ -283,6 +307,7 @@ export function usePomodoro(
         // components/Timer/intervals.ts.
         ...(from.intent ? { intent: from.intent } : {}),
         ...(from.intent && from.target !== null ? { target: from.target } : {}),
+        ...(from.readiness ? { readiness: from.readiness } : {}),
       };
     },
     [],
@@ -319,6 +344,7 @@ export function usePomodoro(
       pauses: 0,
       intent: '',
       target: null,
+      readiness: from.readiness,
     };
 
     if (endsAt <= at) {
@@ -440,6 +466,13 @@ export function usePomodoro(
     [write],
   );
 
+  const setReadiness = useCallback(
+    (readiness: Readiness | null) => {
+      write({ ...latest.current, readiness });
+    },
+    [write],
+  );
+
   const report = useCallback(
     (result: { done?: number; met?: boolean }) => {
       log.amend(result);
@@ -477,6 +510,8 @@ export function usePomodoro(
     intent: state.intent,
     target: state.target,
     setIntent,
+    readiness: state.readiness,
+    setReadiness,
     report,
   };
 }

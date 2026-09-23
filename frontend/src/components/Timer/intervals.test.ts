@@ -18,7 +18,9 @@ import {
   execution,
   focusScore,
   isStyleLength,
+  marks,
   pace,
+  readinessEffect,
   recommend,
   tasksPerHour,
   unanswered,
@@ -211,6 +213,98 @@ describe('what the page may still ask about', () => {
     // sitting from last week on their next reload.
     expect(wasJustNow(row({ intent: 'x' }), now)).toBe(false);
     expect(unanswered(row({ intent: 'x', target: 5 }), now)).toBeNull();
+  });
+});
+
+describe('what readiness has been worth', () => {
+  it('says nothing from an account that never answered', () => {
+    expect(readinessEffect(many(10))).toBeNull();
+  });
+
+  it('says nothing when only one level was ever pressed', () => {
+    // The commonest shape: somebody who always says Normal has said nothing
+    // about readiness, and turning that into advice would be the page reading
+    // its own default back.
+    expect(readinessEffect(many(8, { readiness: 'normal' }))).toBeNull();
+  });
+
+  it('says nothing from one or two sittings at a level', () => {
+    expect(readinessEffect([
+      ...many(4, { readiness: 'high' }),
+      ...many(2, { readiness: 'low', minutes: 6, pauses: 4, finished: false }),
+    ])).toBeNull();
+  });
+
+  it('reports a real difference, with the sample behind it', () => {
+    const read = readinessEffect([
+      ...many(4, { readiness: 'high' }),
+      ...many(4, { readiness: 'low', minutes: 8, pauses: 4, finished: false }),
+    ])!;
+    expect(read.clear).toBe(true);
+    expect(read.best).toBe('high');
+    expect(read.worst).toBe('low');
+    expect(read.bestScore).toBeGreaterThan(read.worstScore);
+    expect(read.sample).toBe(8);
+  });
+
+  it('reports no difference as a finding rather than staying quiet', () => {
+    // Both levels run the same. The page has a sentence for this, and it is
+    // the one that would never be written by accident.
+    const read = readinessEffect([
+      ...many(4, { readiness: 'high' }),
+      ...many(4, { readiness: 'low' }),
+    ])!;
+    expect(read).not.toBeNull();
+    expect(read.clear).toBe(false);
+    expect(read.bestScore).toBe(read.worstScore);
+  });
+});
+
+describe('the marks', () => {
+  it('has nothing to show for an empty log', () => {
+    const best = marks([]);
+    expect(best.unbroken).toBeNull();
+    expect(best.best).toBeNull();
+    expect(best.run).toBe(0);
+  });
+
+  it('counts only a sitting that ran clean through as unbroken', () => {
+    const best = marks([
+      row({ planned: 90, minutes: 90, pauses: 2 }),
+      row({ planned: 50, minutes: 50, pauses: 0 }),
+      // Longer, and abandoned: not a record of sitting still.
+      row({ planned: 90, minutes: 80, pauses: 0, finished: false }),
+    ]);
+    expect(best.unbroken?.minutes).toBe(50);
+  });
+
+  it('finds the best-scoring sitting', () => {
+    const best = marks([
+      row({ pauses: 3 }),
+      row({ pauses: 0 }),
+      row({ pauses: 1 }),
+    ]);
+    expect(focusScore(best.best!)).toBe(100);
+  });
+
+  it('counts the longest run of sittings seen through', () => {
+    // Two, then an abandoned one, then three, then another abandoned one,
+    // then one: the answer is the middle run and not the total.
+    const best = marks([
+      row(), row(), row({ finished: false }), row(), row(), row(), row({ finished: false }), row(),
+    ]);
+    expect(best.run).toBe(3);
+  });
+
+  it('keeps a record that a later abandoned sitting cannot take away', () => {
+    // The property that makes these safe to show somebody who is tired: a bad
+    // afternoon does not delete the best morning.
+    const good = [row({ planned: 50, minutes: 50 }), row({ planned: 50, minutes: 50 })];
+    const after = marks([...good, row({ minutes: 3, pauses: 6, finished: false })]);
+    expect(after.unbroken?.minutes).toBe(50);
+    expect(focusScore(after.best!)).toBe(100);
+    // The run breaks, which is what a run is.
+    expect(after.run).toBe(2);
   });
 });
 

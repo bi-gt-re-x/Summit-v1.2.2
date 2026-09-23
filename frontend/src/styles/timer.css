@@ -461,6 +461,65 @@ html[data-theme="dark"] .pom-page {
 }
 .pom-hud-stat span { color: var(--pom-faint); font-size: var(--text-2xs); line-height: 1.35; }
 
+/* Readiness: three buttons, one row.
+
+   Sized down from the method toggle it borrows its shape from. This is a
+   question the reader answers once and then ignores for the rest of the day,
+   and a control the size of the Start button would keep asking to be looked
+   at. */
+.pom-ready { margin-top: var(--space-4); }
+.pom-ready-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    color: var(--pom-muted);
+    font-size: var(--text-xs); font-weight: 700;
+}
+.pom-ready-row { display: flex; gap: var(--space-2); }
+.pom-ready-row button {
+    flex: 1;
+    height: 34px;
+    border: 1px solid var(--pom-line);
+    border-radius: var(--radius-md);
+    background: var(--pom-card);
+    color: var(--pom-muted);
+    font: inherit; font-size: var(--text-xs); font-weight: 600;
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.pom-ready-row button:hover { color: var(--pom-text); border-color: var(--pom-now); }
+.pom-ready-row button.is-on {
+    border-color: var(--pom-now);
+    background: color-mix(in srgb, var(--pom-now) 10%, transparent);
+    color: var(--pom-text);
+}
+
+/* The marks.
+
+   Three across on a wide page and stacked on a narrow one, each a figure with
+   a label over it and a line under saying what it was. The line is not
+   decoration: "1h 30m" as a personal best means nothing without "start to
+   finish, no pauses" to say what was being measured. */
+.pom-mark-row {
+    display: grid; gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    margin: 0;
+}
+.pom-mark { display: flex; flex-direction: column; gap: 3px; }
+.pom-mark dt { color: var(--pom-muted); font-size: var(--text-xs); font-weight: 700; }
+.pom-mark dd {
+    margin: 0;
+    font-size: var(--text-2xl); font-weight: 700;
+    font-variant-numeric: tabular-nums; letter-spacing: -.03em;
+}
+.pom-mark span { color: var(--pom-faint); font-size: var(--text-xs); line-height: 1.4; }
+.pom-marks-note {
+    margin: var(--space-4) 0 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--pom-line);
+    color: var(--pom-muted);
+    font-size: var(--text-sm); line-height: 1.55;
+}
+
 /* The intention, under the recommendation.
 
    Two fields on one row: the line, and the number it may or may not have. The

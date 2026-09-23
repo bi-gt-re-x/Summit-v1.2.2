@@ -65,7 +65,8 @@ function isInterval(row: unknown): row is Interval {
     && maybe(it.intent, 'string')
     && maybe(it.target, 'number')
     && maybe(it.done, 'number')
-    && maybe(it.met, 'boolean');
+    && maybe(it.met, 'boolean')
+    && maybe(it.readiness, 'string');
   return required && optional;
 }
 

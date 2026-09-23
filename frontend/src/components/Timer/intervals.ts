@@ -108,7 +108,31 @@ export interface Interval {
    * another kind's target.
    */
   met?: boolean;
+  /**
+   * How ready the account said it was, when it said.
+   *
+   * Asked once and carried across the day rather than per sitting: readiness
+   * is a fact about the person at that hour, and a question repeated every
+   * twenty-five minutes would be answered on autopilot within an afternoon.
+   */
+  readiness?: Readiness;
 }
+
+/**
+ * The three answers to "how ready are you?".
+ *
+ * Three rather than a slider, and no numbers on them. The reading this feeds
+ * is a comparison between groups — see `readinessEffect` — and a 1-10 scale
+ * would produce ten groups of almost nothing each, which is a more precise
+ * question and a less answerable one.
+ */
+export type Readiness = 'low' | 'normal' | 'high';
+
+export const READINESS: { id: Readiness; label: string; glyph: string }[] = [
+  { id: 'low', label: 'Low', glyph: '🔋' },
+  { id: 'normal', label: 'Normal', glyph: '◉' },
+  { id: 'high', label: 'High', glyph: '⚡' },
+];
 
 /** How recent a row has to be for the page to ask about it, in ms. */
 const JUST_NOW_MS = 45 * 60_000;
@@ -286,6 +310,132 @@ function commonest(ids: string[]): string {
 /** Whether a length is one of the ten the app can actually run. */
 export function isStyleLength(minutes: number): boolean {
   return STYLES.some((style) => style.focus === minutes);
+}
+
+// --------------------------------------------------------------------------
+// Readiness, and whether it makes any difference
+// --------------------------------------------------------------------------
+/** Sittings at one readiness before that level is allowed into the comparison. */
+const MIN_PER_LEVEL = 3;
+/**
+ * Points between the best and worst level before the page will say they differ.
+ *
+ * Eight, on a score whose interruption term moves in steps of fifteen and
+ * seven and a half. Under that the two groups are the same handful of sittings
+ * arranged differently, and "you work better when you are ready" is a sentence
+ * people will believe on sight — which is exactly why it should not be printed
+ * until the record says it. The honest middle answer, and the one nobody ever
+ * writes, is that it made no difference.
+ */
+const MIN_GAP = 8;
+
+export interface ReadinessRead {
+  /** Whether the levels differ by enough to state a direction. */
+  clear: boolean;
+  best: Readiness;
+  bestScore: number;
+  worst: Readiness;
+  worstScore: number;
+  /** Sittings behind the comparison, across the levels that qualified. */
+  sample: number;
+}
+
+/**
+ * What readiness has actually been worth to this account, or null.
+ *
+ * Null until at least two levels have enough sittings of their own — the same
+ * refusal `recommend` makes, for the same reason. An account that has only
+ * ever pressed "Normal" has said nothing about readiness, and a page that
+ * turned that into advice would be reading its own default back to it.
+ *
+ * What is compared is the focus score, which is interruptions and completion
+ * and not the quality of anybody's thinking. The page's wording has to stay
+ * inside that: this can say sittings run cleaner, and cannot say the work was
+ * better.
+ */
+export function readinessEffect(intervals: Interval[]): ReadinessRead | null {
+  const groups = new Map<Readiness, number[]>();
+  intervals.forEach((row) => {
+    if (!row.readiness) return;
+    const scores = groups.get(row.readiness) ?? [];
+    scores.push(focusScore(row));
+    groups.set(row.readiness, scores);
+  });
+
+  const eligible = [...groups.entries()]
+    .filter(([, scores]) => scores.length >= MIN_PER_LEVEL)
+    .map(([level, scores]) => ({
+      level,
+      score: Math.round(scores.reduce((sum, n) => sum + n, 0) / scores.length),
+      count: scores.length,
+    }));
+  if (eligible.length < 2) return null;
+
+  eligible.sort((a, b) => b.score - a.score);
+  const best = eligible[0]!;
+  const worst = eligible[eligible.length - 1]!;
+
+  return {
+    clear: best.score - worst.score >= MIN_GAP,
+    best: best.level,
+    bestScore: best.score,
+    worst: worst.level,
+    worstScore: worst.score,
+    sample: eligible.reduce((sum, row) => sum + row.count, 0),
+  };
+}
+
+// --------------------------------------------------------------------------
+// Marks
+// --------------------------------------------------------------------------
+export interface Marks {
+  /** The longest sitting that ran to the end and was never paused. */
+  unbroken: Interval | null;
+  /** The best-scoring sitting. */
+  best: Interval | null;
+  /** The longest run of consecutive sittings that were all seen through. */
+  run: number;
+}
+
+/**
+ * The account's own high-water marks.
+ *
+ * ## Why these three and not a day streak
+ *
+ * A day streak measures turning up, which is worth something, and it is the
+ * only thing it measures: a streak is kept intact by one token sitting a day
+ * and is destroyed by one holiday, so past a certain length it stops being
+ * about the work and starts being about the streak. The app already counts one
+ * of those, honestly, on the account — this panel is deliberately not a second.
+ *
+ * Each of these is a performance somebody actually put in. They are records
+ * rather than rates: they cannot be lost by taking a week off, which is the
+ * property that makes them safe to show somebody who is tired.
+ *
+ * `run` breaks on an abandoned sitting rather than on a missed day for the
+ * same reason — it is a run of *finishing what you started*, and a fortnight
+ * away does not undo the twelve before it.
+ */
+export function marks(intervals: Interval[]): Marks {
+  let unbroken: Interval | null = null;
+  let best: Interval | null = null;
+  let run = 0;
+  let longest = 0;
+
+  intervals.forEach((row) => {
+    if (row.finished && row.pauses === 0) {
+      if (!unbroken || row.minutes > unbroken.minutes) unbroken = row;
+    }
+    if (!best || focusScore(row) > focusScore(best)) best = row;
+    if (row.finished) {
+      run += 1;
+      if (run > longest) longest = run;
+    } else {
+      run = 0;
+    }
+  });
+
+  return { unbroken, best, run: longest };
 }
 
 // --------------------------------------------------------------------------

@@ -59,6 +59,22 @@
  * The question is asked once, about the sitting that has just happened, and is
  * dropped rather than carried — see `unanswered` in
  * components/Timer/intervals.ts.
+ *
+ * ## Readiness, and the marks
+ *
+ * The readiness question is asked once a day and pays nothing back on the day
+ * it is asked: no advice, no encouragement, no judgement in response to an
+ * answer. Its whole return is one sentence in the marks panel weeks later,
+ * which either says readiness has made a difference to how cleanly this
+ * account's sittings run or says it has not — and it can say "no difference",
+ * which is a finding and the one a page like this would otherwise never print.
+ *
+ * The marks themselves are records rather than rates: longest unbroken
+ * sitting, best focus score, longest run seen through. None can be lost by
+ * taking a week off. That is deliberate and it is not a criticism of the
+ * account's day streak, which is a real fact, is counted by the server, and is
+ * already in the hero — the reasoning is on `marks` in
+ * components/Timer/intervals.ts.
  */
 import type { ReactElement } from 'react';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
@@ -78,8 +94,9 @@ import {
   type Phase, type Sitting,
 } from '@/components/Timer/pomodoro';
 import {
-  MIN_INTERVALS, execution, focusScore, pace, recommend, tasksPerHour, unanswered, verdict,
-  wasJustNow, type Interval, type Recommendation,
+  MIN_INTERVALS, READINESS, execution, focusScore, marks, pace, readinessEffect, recommend,
+  tasksPerHour, unanswered, verdict, wasJustNow,
+  type Interval, type Readiness, type ReadinessRead, type Recommendation,
 } from '@/components/Timer/intervals';
 import { currentStone } from '@/utils/goalStage';
 import { goalIdsOf } from '@/utils/goalLinks';
@@ -622,6 +639,129 @@ function IntentField({ intent, target, unit, onSet }: {
 }
 
 /**
+ * How ready you are, asked once a day.
+ *
+ * ## What it is for, and what it is not
+ *
+ * It is one half of a pair: this, and the focus score of the sittings that
+ * follow it. On its own it is worth nothing — nobody needs an app to tell them
+ * they felt tired — and the page prints no encouragement, no advice and no
+ * emoji-coded judgement in response to an answer. The whole return on it
+ * arrives weeks later, as one sentence in the marks panel that either says
+ * readiness has made a difference for this account or says it has not.
+ *
+ * ## Why it can be un-answered
+ *
+ * Pressing the chosen level again clears it. An answer given by mis-clicking
+ * is worse than no answer: it goes into the comparison with the same weight as
+ * a considered one, and there is no other way to take it back.
+ */
+function ReadinessPicker({ readiness, onSet }: {
+  readiness: Readiness | null;
+  onSet: (readiness: Readiness | null) => void;
+}) {
+  return (
+    <div className="pom-ready">
+      <span className="pom-ready-label" id="pom-ready-label">How ready are you?</span>
+      <div className="pom-ready-row" role="group" aria-labelledby="pom-ready-label">
+        {READINESS.map((level) => (
+          <button
+            key={level.id}
+            type="button"
+            className={readiness === level.id ? 'is-on' : ''}
+            aria-pressed={readiness === level.id}
+            onClick={() => onSet(readiness === level.id ? null : level.id)}
+          >
+            <span aria-hidden="true">{level.glyph}</span> {level.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The account's high-water marks, and what readiness has been worth.
+ *
+ * ## Why none of these is a streak
+ *
+ * The reasoning is on `marks` in components/Timer/intervals.ts: a record
+ * cannot be lost by taking a week off, which is what makes it safe to show
+ * somebody who is tired. The account's real day streak is a real fact and it is
+ * already on this page, in the hero, counted by the server — this panel is
+ * deliberately not a second one.
+ *
+ * ## The readiness line says nothing three ways
+ *
+ * Not enough answers, enough answers but no difference worth stating, and a
+ * difference. The middle one is the sentence that would never get written by
+ * accident, and it is the one most likely to be true: "it made no difference
+ * for you" is a finding, and leaving it out would turn the panel into a page
+ * that can only ever agree with the idea that readiness matters.
+ */
+function MarksPanel({ log, effect }: { log: Interval[]; effect: ReadinessRead | null }) {
+  const heading = useId();
+  const best = marks(log);
+  const answered = log.filter((row) => row.readiness).length;
+
+  const rows = [
+    {
+      key: 'unbroken',
+      label: 'Longest unbroken sitting',
+      value: best.unbroken ? fmtHM(best.unbroken.minutes * 60) : '—',
+      note: best.unbroken
+        ? `${styleFor(best.unbroken.styleId).name}, start to finish, no pauses`
+        : 'no sitting has run clean through yet',
+    },
+    {
+      key: 'best',
+      label: 'Best focus score',
+      value: best.best ? `${focusScore(best.best)}%` : '—',
+      note: best.best
+        ? `${best.best.minutes} min, ${best.best.pauses === 0 ? 'unbroken' : `${best.best.pauses} pause${best.best.pauses === 1 ? '' : 's'}`}`
+        : 'nothing recorded yet',
+    },
+    {
+      key: 'run',
+      label: 'Longest run seen through',
+      value: best.run > 0 ? `${best.run}` : '—',
+      note: best.run > 0
+        ? `sitting${best.run === 1 ? '' : 's'} in a row, none abandoned`
+        : 'a run starts with one finished sitting',
+    },
+  ];
+
+  return (
+    <section className="pom-panel pom-marks" aria-labelledby={heading}>
+      <header className="pom-panel-head">
+        <div className="pom-panel-title">
+          <h2 id={heading}><Icon name="medal" /> Your Best Sittings</h2>
+          <p>Records, not streaks — none of these can be lost by taking a week off</p>
+        </div>
+      </header>
+
+      <dl className="pom-mark-row">
+        {rows.map((row) => (
+          <div className="pom-mark" key={row.key}>
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
+            <span>{row.note}</span>
+          </div>
+        ))}
+      </dl>
+
+      <p className="pom-marks-note">
+        {effect === null
+          ? `Readiness is logged on ${answered} sitting${answered === 1 ? '' : 's'}. Answer it at two different levels and this will say whether it makes any difference for you.`
+          : effect.clear
+            ? `Sittings you start on ${effect.best} readiness run cleaner — ${effect.bestScore}% against ${effect.worstScore}% on ${effect.worst}, over ${effect.sample} sittings.`
+            : `Readiness has made no real difference to how cleanly your sittings run — ${effect.bestScore}% against ${effect.worstScore}%, over ${effect.sample}. Worth knowing.`}
+      </p>
+    </section>
+  );
+}
+
+/**
  * The one question after a sitting that had an objective, then the answer.
  *
  * ## Why it asks instead of counting
@@ -972,6 +1112,7 @@ export default function Timer() {
   ];
 
   const suggestion = useMemo(() => recommend(intervals), [intervals]);
+  const effect = useMemo(() => readinessEffect(intervals), [intervals]);
 
   // ---- The climb -----------------------------------------------------------
   const subjectIndex = useSubjectIndex(username);
@@ -1136,6 +1277,8 @@ export default function Timer() {
               <Recommend at={suggestion} sittings={intervals.length}
                 current={style.id} onUse={pomodoro.choose} />
 
+              <ReadinessPicker readiness={pomodoro.readiness} onSet={pomodoro.setReadiness} />
+
               <IntentField intent={pomodoro.intent} target={pomodoro.target}
                 unit={unit} onSet={pomodoro.setIntent} />
 
@@ -1215,6 +1358,9 @@ export default function Timer() {
 
           {/* ---- The climb --------------------------------------------- */}
           <Climb counting={counting} working={working} />
+
+          {/* ---- Marks ------------------------------------------------- */}
+          <MarksPanel log={intervals} effect={effect} />
 
           {/* ---- Progress ---------------------------------------------- */}
           <section className="pom-panel">
