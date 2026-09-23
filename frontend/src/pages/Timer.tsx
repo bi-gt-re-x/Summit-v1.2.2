@@ -10,14 +10,31 @@
  * sittings you are *aiming* at, and the extra XP that follows a harder day is
  * the extra work, counted the ordinary way. See LEVELS in components/Timer.
  *
+ * ## One panel, one job
+ *
+ * The page is a column of separate panels and each answers one question: the
+ * clock, then the method, then the optional questions, then the climb, the
+ * marks, the record, the ten styles, the line and the task list.
+ *
+ * It was not. The hero held the clock *and* the two method selects *and* the
+ * length recommendation *and* three optional questions *and* the primary
+ * button, in one card with a second start button a hundred pixels from the
+ * first — six unrelated decisions in the panel whose job is to show a timer.
+ * Anything added to this page from here belongs in a panel of its own or in
+ * one of the existing ones, and not in the hero.
+ *
+ * Three panels came off it in the same pass: growth ratings and active goals,
+ * both of which are the Goals and Analytics pages' own subjects and were being
+ * restated here, and the level banner, which sold the page you were already
+ * on.
+ *
  * ## Every figure is read, not written
  *
- * The tiles, the bars, the line, the ratings, the goals and the tasks are all
- * the account's own record, from the endpoints that already serve them
- * elsewhere. The deltas are a real period against the real one before it, which
- * is why the range control refetches — "vs previous" has to mean the week
- * before the week on screen, and a window twice the size is what makes that
- * comparison exist.
+ * The tiles, the bars, the line, the goals and the tasks are all the account's
+ * own record, from the endpoints that already serve them elsewhere. The deltas
+ * are a real period against the real one before it, which is why the range
+ * control refetches — "vs previous" has to mean the week before the week on
+ * screen, and a window twice the size is what makes that comparison exist.
  *
  * Where a figure would need something the app does not record, it is not shown
  * rather than estimated. There is no average *session* length in the tiles
@@ -114,7 +131,7 @@ import {
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import { usePomodoro } from '@/hooks/usePomodoro';
-import { focus as focusService, goals as goalService, growth as growthService } from '@/services';
+import { focus as focusService, goals as goalService } from '@/services';
 import { StyleGrid } from '@/components/Timer/Styles';
 import { QuoteScene } from '@/components/Timer/art';
 import {
@@ -1084,16 +1101,6 @@ function Hud({ readings }: { readings: Reading[] }) {
   );
 }
 
-function Rating({ name, grade, score }: { name: string; grade: string; score: number }) {
-  return (
-    <div className={`pom-rating pom-grade-${grade.replace('+', 'plus').toLowerCase()}`}>
-      <span className="pom-rating-disc">{grade}</span>
-      <span className="pom-rating-name">{name}</span>
-      <span className="pom-rating-score">{score}%</span>
-    </div>
-  );
-}
-
 const CHEVRON: ReactElement = (
   <svg className="pom-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1163,7 +1170,6 @@ export default function Timer() {
     [today, span],
   );
   const history = useApi(historyCall, [span]);
-  const ratings = useApi(useCallback(() => growthService.ratings(), []), []);
   const goals = useApi(useCallback(() => goalService.getGoals(), []), []);
 
   const entering = usePageEntrance(true);
@@ -1420,9 +1426,7 @@ export default function Timer() {
     .sort((a, b) => (a.due_date ?? '9').localeCompare(b.due_date ?? '9'))
     .slice(0, 5), [tasks]);
 
-  const activeGoals = (goals.data?.goals ?? []).filter((g) => g.status === 'active').slice(0, 4);
   const levelNow = stats ? format.levelForTotalXp(stats.xp) : null;
-  const metrics = ratings.data?.metrics;
   const goalSeconds = session.goalHours * 3600;
   const goalPercent = goalSeconds
     ? Math.min(100, Math.round((session.focused / goalSeconds) * 100)) : 0;
@@ -1458,66 +1462,13 @@ export default function Timer() {
             />
           )}
 
-          {/* ---- Hero -------------------------------------------------- */}
+          {/* ---- The clock --------------------------------------------- */}
           <section className={`pom-hero is-${phase}`}>
             {/* The one hero in the app that does not take a tone: its three
                 colours follow the phase, set on `.pom-hero.is-*` in
                 styles/timer.css, so the range turns green on a break with the
                 ring and the button. See components/Range.tsx. */}
             <Range variant="focus" />
-            <div className="pom-hero-left">
-              <span className="pom-badge"><span aria-hidden="true">◎</span> Focus mode</span>
-              <h2>Pick your focus</h2>
-              <p>Choose how hard you want to work and what type of pomodoro fits your goals.</p>
-
-              <div className="pom-picks">
-                <label className="pom-pick">
-                  <span className="pom-pick-glyph" aria-hidden="true"><Icon name="flame" /></span>
-                  <span className="pom-pick-top">
-                    <b>{level.name}</b>
-                    <i>{level.hint}</i>
-                  </span>
-                  <select value={level.id} aria-label="Intensity"
-                    onChange={(e) => pomodoro.setLevel(Number(e.target.value))}>
-                    {LEVELS.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-                  </select>
-                </label>
-                <label className="pom-pick">
-                  <span className="pom-pick-glyph" aria-hidden="true"><Icon name="target" /></span>
-                  <span className="pom-pick-top">
-                    <b>{style.name}</b>
-                    <i>{style.focus} min work · {style.rest} min break</i>
-                  </span>
-                  <select value={style.id} aria-label="Pomodoro style"
-                    onChange={(e) => pomodoro.choose(e.target.value)}>
-                    {STYLES.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-                  </select>
-                </label>
-              </div>
-
-              <Recommend at={suggestion} sittings={intervals.length}
-                current={style.id} onUse={pomodoro.choose} />
-
-              <ReadinessPicker readiness={pomodoro.readiness} onSet={pomodoro.setReadiness} />
-
-              <KindPicker kind={pomodoro.kind} onSet={pomodoro.setKind} />
-
-              <IntentField intent={pomodoro.intent} target={pomodoro.target}
-                unit={unit} onSet={pomodoro.setIntent} />
-
-              <button type="button" className="pom-start"
-                onClick={running ? pomodoro.pause : pomodoro.start}>
-                <Icon name={running ? 'pause' : 'play'} />
-                {running ? 'Pause Focus' : 'Start Focus'}
-              </button>
-
-              <ul className="pom-perks">
-                <li><span aria-hidden="true">✦</span> Earns XP</li>
-                <li><Icon name="trend" /> Tracks progress</li>
-                <li><Icon name="flame" /> Builds streak</li>
-              </ul>
-            </div>
-
             <div className="pom-hero-mid">
               <div className="pom-ring-wrap">
                 <Ring percent={percent} phase={phase} />
@@ -1529,14 +1480,19 @@ export default function Timer() {
                   </span>
                 </div>
               </div>
+
+              <button type="button" className="pom-start"
+                onClick={running ? pomodoro.pause : pomodoro.start}>
+                <Icon name={running ? 'pause' : 'play'} />
+                {running ? 'Pause Focus' : 'Start Focus'}
+              </button>
+
+              {/* Reset and set-up-again only. The round play button that used
+                  to lead this row was the same action as the button directly
+                  above it, a hundred pixels apart — two primaries for one
+                  decision, which is the cramming this layout was pulled apart
+                  to fix. */}
               <div className="pom-ring-controls">
-                <button type="button" className="pom-round is-primary"
-                  onClick={running ? pomodoro.pause : pomodoro.start}
-                  aria-label={running ? 'Pause' : 'Start'}>
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    {running ? <path d="M8 5h3v14H8zm5 0h3v14h-3z" /> : <path d="M7 4.5v15l13-7.5z" />}
-                  </svg>
-                </button>
                 <button type="button" className="pom-round" onClick={pomodoro.reset} aria-label="Reset">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
                     strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1552,6 +1508,7 @@ export default function Timer() {
                   </svg>
                 </button>
               </div>
+
               <Hud readings={readings} />
               {running && phase === 'focus' && counting[0] && (
                 <LiveGoal goal={counting[0]} minutes={Math.round(session.focused / 60)} />
@@ -1579,6 +1536,67 @@ export default function Timer() {
                   ? `${(levelNow.xpRequired - levelNow.xpInLevel).toLocaleString()} XP to go`
                   : '—'}</em>
               </div>
+            </div>
+          </section>
+
+          {/* ---- Method ------------------------------------------------ */}
+          {/* The two decisions that shape the cycle, on their own. They used
+              to sit in the hero's left column above five more controls, which
+              made one panel answer four unrelated questions. */}
+          <section className="pom-panel pom-method">
+            <header className="pom-panel-head">
+              <div className="pom-panel-title">
+                <h2><Icon name="target" /> Pick Your Focus</h2>
+                <p>How hard you are going, and how long one sitting runs</p>
+              </div>
+            </header>
+
+            <div className="pom-picks">
+              <label className="pom-pick">
+                <span className="pom-pick-glyph" aria-hidden="true"><Icon name="flame" /></span>
+                <span className="pom-pick-top">
+                  <b>{level.name}</b>
+                  <i>{level.hint}</i>
+                </span>
+                <select value={level.id} aria-label="Intensity"
+                  onChange={(e) => pomodoro.setLevel(Number(e.target.value))}>
+                  {LEVELS.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+                </select>
+              </label>
+              <label className="pom-pick">
+                <span className="pom-pick-glyph" aria-hidden="true"><Icon name="target" /></span>
+                <span className="pom-pick-top">
+                  <b>{style.name}</b>
+                  <i>{style.focus} min work · {style.rest} min break</i>
+                </span>
+                <select value={style.id} aria-label="Pomodoro style"
+                  onChange={(e) => pomodoro.choose(e.target.value)}>
+                  {STYLES.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <Recommend at={suggestion} sittings={intervals.length}
+              current={style.id} onUse={pomodoro.choose} />
+          </section>
+
+          {/* ---- Before you start -------------------------------------- */}
+          {/* Every one of these is optional, which is why they are together
+              and below the clock: a reader who wants to press Start and work
+              can, and never has to scroll past three questions to reach it. */}
+          <section className="pom-panel pom-before">
+            <header className="pom-panel-head">
+              <div className="pom-panel-title">
+                <h2><Icon name="pin" /> Before You Start</h2>
+                <p>All optional — each one buys a reading further down the page</p>
+              </div>
+            </header>
+
+            <div className="pom-before-grid">
+              <ReadinessPicker readiness={pomodoro.readiness} onSet={pomodoro.setReadiness} />
+              <KindPicker kind={pomodoro.kind} onSet={pomodoro.setKind} />
+              <IntentField intent={pomodoro.intent} target={pomodoro.target}
+                unit={unit} onSet={pomodoro.setIntent} />
             </div>
           </section>
 
@@ -1655,132 +1673,46 @@ export default function Timer() {
             <StyleGrid current={style.id} onPick={pomodoro.choose} />
           </section>
 
-          {/* ---- Analytics and ratings --------------------------------- */}
-          <div className="pom-split">
-            <section className="pom-panel">
-              <header className="pom-panel-head">
-                <h2><Icon name="trend" /> Focus Analytics</h2>
-                <div className="pom-toggle" role="group" aria-label="Grain">
-                  {GRAINS.map((option) => (
-                    <button key={option} type="button"
-                      className={grain === option ? 'is-on' : ''}
-                      aria-pressed={grain === option}
-                      onClick={() => setGrain(option)}>{option}</button>
-                  ))}
-                </div>
-              </header>
-              <Line points={line} />
-            </section>
+          {/* ---- Analytics --------------------------------------------- */}
+          <section className="pom-panel">
+            <header className="pom-panel-head">
+              <h2><Icon name="trend" /> Focus Analytics</h2>
+              <div className="pom-toggle" role="group" aria-label="Grain">
+                {GRAINS.map((option) => (
+                  <button key={option} type="button"
+                    className={grain === option ? 'is-on' : ''}
+                    aria-pressed={grain === option}
+                    onClick={() => setGrain(option)}>{option}</button>
+                ))}
+              </div>
+            </header>
+            <Line points={line} />
+          </section>
 
-            <section className="pom-panel">
-              <header className="pom-panel-head">
-                <div className="pom-panel-title">
-                  <h2><Icon name="calendar" /> Growth Ratings</h2>
-                  <p>Your overall growth this week</p>
-                </div>
-                <Link className="pom-link" to="/analytics">View details →</Link>
-              </header>
-              {metrics ? (
-                <>
-                  <div className="pom-ratings">
-                    <Rating name="Consistency" grade={metrics.consistency.grade} score={metrics.consistency.score} />
-                    <Rating name="Quality" grade={metrics.quality.grade} score={metrics.quality.score} />
-                    <Rating name="Productivity" grade={metrics.productivity.grade} score={metrics.productivity.score} />
-                    <Rating name="Efficiency" grade={metrics.efficiency.grade} score={metrics.efficiency.score} />
-                  </div>
-                  <div className="pom-overall">
-                    <span>Overall Score</span>
-                    <strong>{ratings.data?.overall.score}%</strong>
-                    <div className="pom-overall-bar">
-                      <span style={{ width: `${ratings.data?.overall.score ?? 0}%` }} />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <p className="pom-empty">
-                  {ratings.error ? 'Could not read your ratings.' : 'Reading your ratings…'}
-                </p>
-              )}
-            </section>
-          </div>
-
-          {/* ---- Goals and tasks --------------------------------------- */}
-          <div className="pom-split">
-            <section className="pom-panel">
-              <header className="pom-panel-head">
-                <h2><Icon name="target" /> Active Goals</h2>
-                <Link className="pom-link" to="/goals">View all</Link>
-              </header>
-              {activeGoals.length ? (
-                <ul className="pom-goals">
-                  {activeGoals.map((goal, at) => (
-                    <li key={goal.id}>
-                      <span className={`pom-goal-icon pom-tone-${TONES[at % TONES.length]}`}
-                        aria-hidden="true">◈</span>
-                      <span className="pom-goal-main">
-                        <span className="pom-goal-title">{goal.title}</span>
-                        <span className="pom-goal-bar">
-                          <span style={{ width: `${Math.min(100, goal.progress)}%` }} />
-                        </span>
+          {/* ---- Tasks -------------------------------------------------- */}
+          <section className="pom-panel">
+            <header className="pom-panel-head">
+              <h2><Icon name="clipboard" /> Upcoming Tasks</h2>
+              <Link className="pom-link" to="/tasks">View all</Link>
+            </header>
+            {upcoming.length ? (
+              <ul className="pom-tasks">
+                {upcoming.map((task) => (
+                  <li key={task.id}>
+                    <span className="pom-check" aria-hidden="true" />
+                    <span className="pom-tasks-title">{task.title}</span>
+                    {task.subject && (
+                      <span className={`pom-tasks-tag pom-tone-${toneFor(task.subject)}`}>
+                        {task.subject}
                       </span>
-                      <span className="pom-goal-pct">{Math.round(goal.progress)}%</span>
-                      {CHEVRON}
-                    </li>
-                  ))}
-                </ul>
-              ) : <p className="pom-empty">Nothing you are aiming at yet.</p>}
-            </section>
-
-            <section className="pom-panel">
-              <header className="pom-panel-head">
-                <h2><Icon name="clipboard" /> Upcoming Tasks</h2>
-                <Link className="pom-link" to="/tasks">View all</Link>
-              </header>
-              {upcoming.length ? (
-                <ul className="pom-tasks">
-                  {upcoming.map((task) => (
-                    <li key={task.id}>
-                      <span className="pom-check" aria-hidden="true" />
-                      <span className="pom-tasks-title">{task.title}</span>
-                      {task.subject && (
-                        <span className={`pom-tasks-tag pom-tone-${toneFor(task.subject)}`}>
-                          {task.subject}
-                        </span>
-                      )}
-                      <span className="pom-tasks-when">{due(task.due_date, today)}</span>
-                      {CHEVRON}
-                    </li>
-                  ))}
-                </ul>
-              ) : <p className="pom-empty">Nothing on your plate.</p>}
-            </section>
-          </div>
-
-          {/* ---- Level ------------------------------------------------- */}
-          <div className="pom-split is-level">
-            <section className="pom-level">
-              <span className="pom-level-gem" aria-hidden="true"><Icon name="gem" /></span>
-              <div className="pom-level-text">
-                <h2>Level Up Your Focus</h2>
-                <p>Complete focus sessions, earn XP, and get closer to your goals.</p>
-              </div>
-              <Link className="pom-level-cta" to="/achievements">View Rewards</Link>
-            </section>
-            <section className="pom-panel pom-levelcard">
-              <span className="pom-level-trophy" aria-hidden="true"><Icon name="trophy" /></span>
-              <div className="pom-levelcard-body">
-                <div className="pom-levelcard-top">
-                  <strong>Level {levelNow?.level ?? 1}</strong>
-                  <span>
-                    {(levelNow?.xpInLevel ?? 0).toLocaleString()} / {(levelNow?.xpRequired ?? 0).toLocaleString()} XP
-                  </span>
-                </div>
-                <div className="pom-level-bar">
-                  <span style={{ width: `${levelNow?.percent ?? 0}%` }} />
-                </div>
-              </div>
-            </section>
-          </div>
+                    )}
+                    <span className="pom-tasks-when">{due(task.due_date, today)}</span>
+                    {CHEVRON}
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="pom-empty">Nothing on your plate.</p>}
+          </section>
         </>
       )}
     </div>
