@@ -107,7 +107,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { STAGES, type Stage } from '@/utils/dataMaturity';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Ambient, ErrorState, Loading, PageHero } from '@/components';
+import { ErrorState, Loading, PageHero } from '@/components';
 import { stageShows } from '@/utils/dataMaturity';
 import {
   AnalyticsSetup,
@@ -599,7 +599,6 @@ export default function Analytics() {
           onDone={closeStage}
         />
       )}
-      <Ambient />
       {/* No `pg-enter` here, unlike every other page. This one has its own
           arrival and always did — `.ax-panel` and the tiles carry `ax-enter`,
           which is the same fade and the same ten pixels, and the charts inside

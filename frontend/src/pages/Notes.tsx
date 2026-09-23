@@ -60,7 +60,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { Ambient, ErrorState, Loading, PageHero } from '@/components';
+import { ErrorState, Loading, PageHero } from '@/components';
 import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
 import { notes as noteService } from '@/services';
 import {
@@ -829,7 +829,6 @@ export default function Notes() {
 
   return (
     <div className="nt-page">
-      <Ambient />
       <div className={`nt-shell page-shell${entering ? ' pg-enter' : ''}`}>
         {/* ---- The page's own header ---- */}
         {/* Slate. Notes is the one page here that is not measuring anything, and

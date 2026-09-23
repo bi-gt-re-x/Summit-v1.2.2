@@ -22,6 +22,8 @@ export { timerTitle, useDocumentTitle } from './useDocumentTitle';
 export { useNotifications } from './useNotifications';
 export { useNow } from './useNow';
 export { useNowScroll } from './useNowScroll';
+export { useHandover } from './useHandover';
+export type { Handover } from './useHandover';
 export { usePageEntrance } from './usePageEntrance';
 export { usePinnedViewport } from './usePinnedViewport';
 export { fmtHM, focusedSeconds, useFocusSession } from './useFocusSession';

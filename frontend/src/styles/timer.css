@@ -1213,8 +1213,49 @@ html[data-theme="dark"] .pom-sit-scrim {
 }
 
 @keyframes pomSitIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from { opacity: 0; transform: scale(.985); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Leaving.
+ *
+ * `.is-going` is put on whichever of the two is on its way out, and both sides
+ * carry it — the full page on the way into a sitting, the sitting on the way
+ * back. pages/Timer.tsx holds the outgoing one on screen for exactly as long
+ * as these run (`SWAP_MS`) and then swaps, so the pair reads as one movement
+ * rather than as a disappearance followed by an arrival.
+ *
+ * `pointer-events: none` for the duration: a button that is fading out is not
+ * a button, and a click that lands on it in the last fifty milliseconds would
+ * do something the reader cannot see they have done.
+ *
+ * `forwards`, not `both`: the outgoing side is already on screen and should
+ * not flash back to its start frame before it goes.
+ *
+ * The curve is an ease-*in*, and not `--hm-ease` like everything else in this
+ * file. `--hm-ease` is front-loaded — right for an arrival, which should
+ * commit and then settle — and on the way out it spends the fade in the first
+ * third and leaves the screen blank for the rest, waiting for a timer. This
+ * one holds and then goes, so the swap happens on the frame the fade ends. */
+@keyframes pomSitOut {
+    from { opacity: 1; transform: none; }
+    to   { opacity: 0; transform: scale(.99); }
+}
+@keyframes pomPageOut {
+    from { opacity: 1; transform: none; }
+    to   { opacity: 0; transform: translateY(6px); }
+}
+
+.pom-page--sitting.is-going .pom-sit,
+.pom-page--sitting.is-going .pom-sit-scrim {
+    animation: pomSitOut .2s cubic-bezier(.4, 0, 1, 1) forwards;
+    pointer-events: none;
+}
+/* The full page on its way into a sitting. Not `.pom-page--sitting`, which is
+   the other one — this is the ordinary page wearing the same leaving class. */
+.pom-page.is-going:not(.pom-page--sitting) > *:not(.hm-ambient) {
+    animation: pomPageOut .2s cubic-bezier(.4, 0, 1, 1) forwards;
+    pointer-events: none;
 }
 
 /* ---- The clock ----------------------------------------------------------- */
@@ -1361,7 +1402,13 @@ html[data-theme="dark"] .pom-sit-scrim {
     .pom-sit-aside { width: min(420px, 100%); }
 }
 
+/* The component passes 0 for the swap under the same query, so nothing is
+   waiting on an animation that is not running. */
 @media (prefers-reduced-motion: reduce) {
-    .pom-sit, .pom-sit-scrim { animation: none; }
+    .pom-sit,
+    .pom-sit-scrim,
+    .pom-page--sitting.is-going .pom-sit,
+    .pom-page--sitting.is-going .pom-sit-scrim,
+    .pom-page.is-going:not(.pom-page--sitting) > *:not(.hm-ambient) { animation: none; }
     .pom-sit-run, .pom-sit-track-2 > span { transition: none; }
 }

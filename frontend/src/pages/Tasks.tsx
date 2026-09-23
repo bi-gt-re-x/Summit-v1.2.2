@@ -72,7 +72,7 @@ import {
   type GroupKey,
   type TaskQuery,
 } from '@/components/Tasks';
-import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
+import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import { measureOf } from '@/components/Goals';
 import { useDocumentTitle, usePageEntrance, useSettings, useSubjects, useUserData } from '@/hooks';
 import { goals as goalService, tasks as taskService } from '@/services';
@@ -940,7 +940,6 @@ export default function Tasks() {
 
   return (
     <div className="tk-page">
-      <Ambient />
       <div className={`tk-shell page-shell${entering ? ' pg-enter' : ''}`}>
         {/* Teal: the rail puts Analytics above Tasks and Goals below it, and the
             tone is the one thing that says which of the three is open before

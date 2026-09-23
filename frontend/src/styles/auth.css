@@ -19,7 +19,9 @@ body:has(.auth-page) .app-main {
     min-height: 100vh;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    background: var(--color-bg);
+    /* No background of its own: `body` already paints this exact colour and
+       the app's backdrop is drawn between the two. See the note on `.ax-page`
+       in styles/analytics.css. */
     color: var(--color-ink);
 }
 

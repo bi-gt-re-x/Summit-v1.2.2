@@ -33,7 +33,15 @@
    ========================================================================== */
 
 .stx-page {
-    --stx-bg: var(--color-bg);
+    /* Transparent, not a colour. The app paints its own backdrop behind every
+       page — the graph paper and the drifting field, from App.tsx — and a page
+       that fills a slab of flat grey over it hides the thing it is standing
+       on. It was `var(--color-bg)`, which is the same grey `body` already
+       paints, so nothing about this page looks different except that the
+       background is now visible through it. The panels below carry their own
+       surface, which is what makes them panels; see the same note on
+       `.nt-page` in styles/notes.css, which settled it first. */
+    --stx-bg: transparent;
     --stx-card: var(--color-surface);
     --stx-card-2: var(--color-surface-2);
     --stx-line: var(--color-line);
@@ -68,7 +76,7 @@
 }
 
 html[data-theme="dark"] .stx-page {
-    --stx-bg: var(--color-bg);
+    --stx-bg: transparent;
     --stx-card: var(--color-surface);
     --stx-card-2: var(--color-surface-2);
     --stx-line: var(--color-line);

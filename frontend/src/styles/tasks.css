@@ -10,7 +10,15 @@
    Everything sizes off `--rail-w`, like every other page — see components/Rail.
    ========================================================================== */
 .tk-page {
-    --tk-bg: #f6f7fb;
+    /* Transparent, not a colour. The app paints its own backdrop behind every
+       page — the graph paper and the drifting field, from App.tsx — and a page
+       that fills a slab of flat grey over it hides the thing it is standing
+       on. It was `#f6f7fb`, a shade off the grey `body` already paints, so
+       this page loses a tint nobody could have named and gains the background
+       every other page has. The panels below carry their own surface, which is
+       what makes them panels; see the same note on `.nt-page` in
+       styles/notes.css, which settled it first. */
+    --tk-bg: transparent;
     --tk-card: var(--color-surface);
     --tk-card-2: #f8f9fc;
     --tk-line: var(--color-line);
@@ -74,7 +82,7 @@
 }
 
 html[data-theme='dark'] .tk-page {
-    --tk-bg: var(--color-bg);
+    --tk-bg: transparent;
     --tk-card: var(--color-surface);
     --tk-card-2: var(--color-surface-2);
     --tk-line: var(--color-line);

@@ -76,7 +76,7 @@ import {
   planGoal,
 } from '@/components/Goals';
 import type { MilestoneDraftRequest } from '@/components/Goals';
-import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
+import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import {
   forgetLinkableGoals,
   useAuth,
@@ -776,7 +776,6 @@ export default function Goals() {
 
   return (
     <div className="gx-page">
-      <Ambient />
       <div className={`gx-shell page-shell${entering ? ' pg-enter' : ''}`}>
         {/* This header was already a card of its own — a tinted strip with a
             border and a shadow. It keeps its layout and gives up its surface to

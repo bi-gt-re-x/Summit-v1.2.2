@@ -12,7 +12,7 @@
  */
 import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { AppBoundary, Loading, Rail, Toasts, Topbar, VerifyBanner } from '@/components';
+import { Ambient, AppBoundary, Loading, Rail, Toasts, Topbar, VerifyBanner } from '@/components';
 import { RequireAccount } from './RequireAccount';
 import { useAuth, usePinnedViewport, useSettings } from '@/hooks';
 import { useChainAccount } from '@/hooks/useChainAccount';
@@ -157,6 +157,8 @@ export default function App() {
   // every page but this one wants it. Off here, so the landing page gets the
   // full width back.
   const landing = isLanding(pathname);
+  /* See the note on <Ambient /> below. */
+  const ownsAmbient = pathname === '/timer';
   useEffect(() => {
     document.body.classList.toggle('has-rail', !landing);
     return () => document.body.classList.add('has-rail');
@@ -173,6 +175,26 @@ export default function App() {
 
   return (
     <>
+      {/* The graph paper, the slow wash and the drifting dots, once for the
+          whole app.
+          
+          It used to be a line in each page's own markup, which meant ten
+          copies of it and six pages without one — the written pages, the sign
+          in page, the records page, the calendar — because a page nobody
+          remembered to add it to simply did not have it. A background is a
+          property of the app, not a thing each screen opts into, and a screen
+          written next week gets this one without anybody remembering.
+          
+          The glow that follows the pointer stays off everywhere but the
+          landing page. The reasoning is on components/Ambient: a light that
+          chases the cursor suits a page being read and follows every trip to a
+          checkbox on a page being worked.
+          
+          The timer is the one page that renders its own. While a sitting is
+          running its field accelerates — `surge`, in the same component — and
+          a second canvas behind the first would be a second rAF loop drawing
+          something nobody can see. See pages/Timer.tsx. */}
+      {!ownsAmbient && <Ambient cursor={pathname === '/home'} />}
       {!landing && <Rail />}
       {/* Beside the rail rather than above it: the rail owns the full height
           and the bar starts at `--rail-w`. Outside the router with the rail,

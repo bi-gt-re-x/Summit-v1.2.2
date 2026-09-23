@@ -69,7 +69,7 @@
  */
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
+import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import { useApi, useAuth, useDocumentTitle, usePageEntrance } from '@/hooks';
 import { achievements as service } from '@/services';
 import { TREE_CATEGORY } from '@/services/achievements';
@@ -964,7 +964,6 @@ export default function Achievements() {
 
   return (
     <div className="ac-page">
-      <Ambient />
       <div className={`ac-shell page-shell${entering ? ' pg-enter' : ''}`}>
         {/* Rose, which is this page and nothing else in the rail. */}
         <PageHero variant="achievements" tone="rose">

@@ -77,7 +77,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Ambient, ErrorState, Loading, PageHero, type HeroTone } from '@/components';
+import { ErrorState, Loading, PageHero, type HeroTone } from '@/components';
 import { AreaChart, Columns, ObservationNote, Radar, Scatter } from '@/components/Analytics';
 import { WINDOWS, type WindowKey } from '@/components/Analytics/data';
 import { gradeFor } from '@/utils/analyticalScore';
@@ -1157,7 +1157,6 @@ export default function SubjectAnalytics() {
        two sheets writing one class, and whichever Vite loads second wins —
        scripts/check_css.mjs fails the build for exactly that. */
     <div className="ax-page sb-page">
-      <Ambient />
       <div className="ax-shell page-shell">
         {/* The range is seeded on the subject's own id, so every subject page
             is a different place — which is the one thing a page whose whole

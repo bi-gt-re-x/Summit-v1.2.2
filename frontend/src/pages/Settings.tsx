@@ -55,7 +55,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Ambient, ErrorState, Loading, PageHero } from '@/components';
+import { ErrorState, Loading, PageHero } from '@/components';
 import { GROUPS, SORTS } from '@/components/Tasks';
 import { useApi, useAuth, useDocumentTitle, usePageEntrance, useSettings, useTheme } from '@/hooks';
 import { settings as service } from '@/services';
@@ -1769,7 +1769,6 @@ export default function Settings() {
 
   return (
     <div className="st-page">
-      <Ambient />
       <div className={`st-shell page-shell${entering ? ' pg-enter' : ''}`}>
         {/* Slate, like Notes: the two pages that change things rather than
             report them. */}

@@ -22,10 +22,24 @@
     --hm-ease-soft: cubic-bezier(0.45, 0.05, 0.25, 1);
 }
 
+/* `-1`, and that is the whole of what makes this a *background*.
+   
+   It was `0` — a positioned element, which paints in step 8 of the painting
+   order, after every in-flow box on the page. The layer was therefore drawn
+   *over* the content on each of the ten app pages that rendered it: a grid at
+   4% and a field of dots at 10-30% laid across the text, faint enough that it
+   read as a slightly hazy page rather than as a bug. The landing page was the
+   exception, and only because of the rule below it, which lifts its three
+   bands to `z-index: 1` to climb back over the thing that should never have
+   been above them.
+   
+   At `-1` the layer paints between `body`'s background and the content, which
+   is what every rule in this file assumes. `html` sets no background of its
+   own, so `body`'s is propagated to the canvas and stays below this. */
 .hm-ambient {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: -1;
     pointer-events: none;
     overflow: hidden;
     /* No `size` containment: the canvas inside measures itself against this
@@ -33,7 +47,12 @@
     contain: layout paint style;
 }
 
-/* Everything the page actually shows sits above the ambient layer. */
+/* The landing page's three bands.
+   
+   The `z-index` no longer has anything to climb over. The rule stays for the
+   `position`, which is the containing block a handful of absolutely-positioned
+   pieces inside these three are measured against — removing it would move
+   them, and that is a different change from this one. */
 .site-nav,
 .home-main,
 .footer { position: relative; z-index: 1; }

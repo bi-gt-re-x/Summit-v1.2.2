@@ -146,17 +146,18 @@
  * to stay, and both ways back — none of which a type checker can see.
  */
 import type { ReactElement } from 'react';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Ambient, Range } from '@/components';
 import {
-  timerTitle, useApi, useAuth, useDocumentTitle, usePageEntrance, useSettings, useStats,
-  useSubjectIndex, useUserData,
+  timerTitle, useApi, useAuth, useDocumentTitle, useHandover, usePageEntrance, useSettings,
+  useStats, useSubjectIndex, useUserData,
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import { usePomodoro } from '@/hooks/usePomodoro';
 import { focus as focusService, goals as goalService, tasks as taskService } from '@/services';
 import { announceStatsChanged } from '@/utils/statsBus';
+import { reduced } from '@/utils/homePlay';
 import { StyleGrid } from '@/components/Timer/Styles';
 import { QuoteScene } from '@/components/Timer/art';
 import {
@@ -177,6 +178,10 @@ import { Icon, type IconName } from '@/components/Icon';
 import { FocusView } from '@/components/Timer/FocusView';
 
 const SETUP_KEY = 'pomodoro:setup';
+
+/** How long the page and the sitting take to leave. Equal to `pomSitOut` and
+    `pomPageOut` in styles/timer.css; see the note where it is used. */
+const SWAP_MS = 200;
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 /** The four windows the Progress panel offers, and what each one spans. */
@@ -1309,6 +1314,38 @@ export default function Timer() {
    */
   const sitting = running && phase === 'focus';
 
+  /* The swap between the two, in both directions.
+   *
+   * `sitting` flips the instant the button is pressed, and rendering off it
+   * directly means the page it is replacing gets no exit: the reader sees the
+   * whole screen disappear and then a clock fade up into the gap where it was.
+   * `useHandover` holds the outgoing side on screen for the length of its own
+   * fade and swaps when that is done, so leaving looks like arriving played
+   * backwards instead of like a cut.
+   *
+   * `SWAP_MS` is the length of `pomSitOut` and `pomPageOut` in
+   * styles/timer.css and has to stay equal to them — shorter and the swap
+   * happens mid-fade, longer and the screen sits finished-and-blank waiting
+   * for a timer. Zero under `prefers-reduced-motion`, which is also what takes
+   * both animations off. */
+  const swap = useHandover(sitting, reduced ? 0 : SWAP_MS);
+
+  /* The page cascades back in when the sitting lets go of it, the same arrival
+   * it gets on a fresh load — see styles/page-enter.css. `usePageEntrance`
+   * cannot do this one: it fires once per mount and the page never unmounted,
+   * the sitting was rendered in front of it. */
+  const [returning, setReturning] = useState(false);
+  const sat = useRef(false);
+  useEffect(() => {
+    if (swap.shown) { sat.current = true; return; }
+    if (!sat.current) return;
+    sat.current = false;
+    if (reduced) return;
+    setReturning(true);
+    const settled = window.setTimeout(() => setReturning(false), 900);
+    return () => window.clearTimeout(settled);
+  }, [swap.shown]);
+
   /* Ticked here, and not yet reloaded.
    *
    * `completeTask` returns before the account's task list is refetched, and
@@ -1354,9 +1391,9 @@ export default function Timer() {
     });
   }, [tasks]);
 
-  if (sitting) {
+  if (swap.shown) {
     return (
-      <div className="pom-page pom-page--sitting">
+      <div className={`pom-page pom-page--sitting${swap.leaving ? ' is-going' : ''}`}>
         <Ambient cursor surge />
         <div className="pom-sit-scrim" aria-hidden="true" />
         <FocusView
@@ -1380,7 +1417,13 @@ export default function Timer() {
   }
 
   return (
-    <div className={`pom-page${entering ? ' pg-enter' : ''}`}>
+    <div
+      className={`pom-page${entering || returning ? ' pg-enter' : ''}${swap.leaving ? ' is-going' : ''}`}
+    >
+      {/* This page's own, because the shell stands down for `/timer` — the
+          sitting's field runs the surge cycle and two canvases would be two
+          loops. See the note on <Ambient /> in App.tsx. */}
+      <Ambient />
       <header className="pom-head">
         <span className="pom-head-sun" aria-hidden="true"><Icon name="sun" /></span>
         <div className="pom-head-text">

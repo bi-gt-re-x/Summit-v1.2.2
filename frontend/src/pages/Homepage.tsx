@@ -34,7 +34,6 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
-import { Ambient } from '@/components';
 import {
   Analytics,
   CalendarDemo,
@@ -140,7 +139,6 @@ export default function Homepage() {
 
   return (
     <>
-      <Ambient cursor />
 
       {/* Which of the right-hand pair this shows is decided from the server's
           answer rather than from localStorage, which is what the original got

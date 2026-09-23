@@ -28,7 +28,7 @@
  * be a second hand on the account's focus clock.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Ambient, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
+import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import {
   CatchUp,
   DailyQuote,
@@ -488,9 +488,6 @@ export default function Dashboard() {
 
   return (
     <div className={`dash${entering ? ' pg-enter' : ''}`}>
-      {/* The same background the landing page has, minus the glow that follows
-          the pointer — see components/Ambient.tsx. */}
-      <Ambient />
 
       {/* The greeting slides away with the stat row while a focus session
           runs — see html.focus-mode in styles/dashboard-home.css, which folds

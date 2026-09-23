@@ -118,7 +118,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Ambient, PageHero } from '@/components';
+import { PageHero } from '@/components';
 import {
   EdgeCard,
   FocusSetup,
@@ -891,7 +891,6 @@ export default function SkillTrees() {
   if (focusRead && chosenFocus === null && !skippedSetup && subjects.length > 0) {
     return (
       <div className="stx-page stx-page--lattice">
-        <Ambient />
         <div className={`stx-shell page-shell${entering ? ' pg-enter' : ''}`}>
           <FocusSetup
             subjects={subjects}
@@ -909,7 +908,6 @@ export default function SkillTrees() {
 
   return (
     <div className="stx-page stx-page--lattice">
-      <Ambient />
       <div className={`stx-shell page-shell${entering ? ' pg-enter' : ''}`}>
         {/* Green, which is what growth is coloured everywhere else here. The
             breadcrumb and the title stay centred inside it — this is the one
