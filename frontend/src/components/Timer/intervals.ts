@@ -116,6 +116,66 @@ export interface Interval {
    * twenty-five minutes would be answered on autopilot within an afternoon.
    */
   readiness?: Readiness;
+  /**
+   * Minutes into the sitting at which it was paused, in order.
+   *
+   * The same events `pauses` counts, with their positions kept. Two sittings
+   * paused three times are not the same sitting when one was interrupted in
+   * the first four minutes and the other fell apart at the end, and the count
+   * alone cannot tell them apart. `pauses` stays because rows written before
+   * this existed have it and nothing else.
+   */
+  breaks?: number[];
+  /**
+   * What kind of work it was, when the account said.
+   *
+   * A label and a grouping, not a mode: nothing about the timer behaves
+   * differently. What it changes is which question gets asked of the record —
+   * see `recommend`, which will answer for one kind on its own once there is
+   * enough of it, because the length that suits reading is not the length that
+   * suits drills.
+   */
+  kind?: Kind;
+}
+
+/**
+ * The kinds of work a sitting can be.
+ *
+ * ## Why these are labels and not modes
+ *
+ * Nothing here changes the clock, the breaks or the score. A "mode" that
+ * measured different things would mean two sittings of the same length were no
+ * longer comparable, and comparing them is the entire value of keeping a
+ * record at all — the recommendation, the marks and the readiness reading all
+ * rest on one score meaning one thing.
+ *
+ * What a kind buys is a *group*. Twenty-five minutes is right for drills and
+ * wrong for a proof, and an account that does both has a recommendation
+ * averaged over two different activities. Tagging the sitting lets the answer
+ * be given per kind once there is enough of each, and `lead` decides which of
+ * the three readings goes first while that kind is running, because pace is
+ * the interesting one on a speed run and difficulty is the interesting one
+ * when the work is new.
+ */
+export type Kind =
+  | 'deep' | 'speed' | 'learning' | 'repetition' | 'experiment' | 'challenge' | 'recovery';
+
+export const KINDS: { id: Kind; label: string; glyph: string; lead: 'Focus' | 'Pace' | 'Difficulty' }[] = [
+  { id: 'deep', label: 'Deep work', glyph: '🎯', lead: 'Focus' },
+  { id: 'speed', label: 'Speed run', glyph: '⚡', lead: 'Pace' },
+  { id: 'learning', label: 'Learning', glyph: '🧠', lead: 'Difficulty' },
+  { id: 'repetition', label: 'Repetition', glyph: '🔁', lead: 'Pace' },
+  { id: 'experiment', label: 'Experiment', glyph: '🧪', lead: 'Difficulty' },
+  { id: 'challenge', label: 'Challenge', glyph: '🏆', lead: 'Difficulty' },
+  { id: 'recovery', label: 'Recovery', glyph: '🌱', lead: 'Focus' },
+];
+
+export const kindOf = (id: Kind | null | undefined) => KINDS.find((kind) => kind.id === id) ?? null;
+
+/** When the sitting ran, from its end and its length. */
+export function ranFrom(interval: Interval): { from: number; to: number } | null {
+  if (interval.at === undefined) return null;
+  return { from: interval.at - interval.minutes * 60_000, to: interval.at };
 }
 
 /**
@@ -251,6 +311,14 @@ export interface Recommendation {
   high: number;
   /** How many intervals the whole verdict rests on. */
   sample: number;
+  /**
+   * The kind this answer is about, or null when it is about everything.
+   *
+   * The page prints it. "50 min for deep work" and "50 min" are different
+   * claims, and a reader who tags their sittings deserves to know which of the
+   * two they are being given.
+   */
+  kind: Kind | null;
 }
 
 /**
@@ -261,8 +329,13 @@ export interface Recommendation {
  * two intervals of its own to be eligible, so one abandoned experiment at
  * ninety minutes cannot win by being the only ninety on the list.
  */
-export function recommend(intervals: Interval[]): Recommendation | null {
-  const usable = intervals.filter((row) => row.planned > 0 && row.minutes > 0);
+export function recommend(intervals: Interval[], kind: Kind | null = null): Recommendation | null {
+  // Asked about a kind, answered about that kind — or not at all. Falling back
+  // to every sitting would answer a question about drills with an average over
+  // drills and proofs, which is the averaging this grouping exists to undo.
+  // The page asks twice, and says which answer it got.
+  const scope = kind ? intervals.filter((row) => row.kind === kind) : intervals;
+  const usable = scope.filter((row) => row.planned > 0 && row.minutes > 0);
   if (usable.length < MIN_INTERVALS) return null;
 
   const byLength = new Map<number, { scores: number[]; styles: string[] }>();
@@ -292,6 +365,7 @@ export function recommend(intervals: Interval[]): Recommendation | null {
     low: Math.min(...band),
     high: Math.max(...band),
     sample: usable.length,
+    kind,
   };
 }
 
@@ -436,6 +510,117 @@ export function marks(intervals: Interval[]): Marks {
   });
 
   return { unbroken, best, run: longest };
+}
+
+// --------------------------------------------------------------------------
+// The next move
+// --------------------------------------------------------------------------
+export interface Move {
+  /** What to do. One sentence, imperative, about the next sitting. */
+  move: string;
+  /** The reading it came from, in figures the reader can check. */
+  because: string;
+}
+
+/** Sittings a pattern has to hold across before it is called one. */
+const RUN = 3;
+
+/**
+ * One thing worth doing differently next time, or nothing.
+ *
+ * ## Nothing is the common answer, and it is not a failure
+ *
+ * Most afternoons contain no pattern. A page that produced a suggestion after
+ * every sitting would be generating them from an empty record, and the reader
+ * would learn within a week that the suggestions mean nothing — which also
+ * spends the credibility of the one that eventually does.
+ *
+ * So every rule below needs the same thing in hand: a run of at least `RUN`
+ * sittings all saying the same thing. Under that, null.
+ *
+ * ## Every move states its own evidence
+ *
+ * `because` is not a justification written to sound convincing; it is the
+ * figures the rule fired on. A reader who disagrees can check it, and a rule
+ * that cannot produce one has no business making a suggestion. That is also
+ * what keeps this from becoming a horoscope: there is no rule here whose
+ * reason is "you seem tired".
+ *
+ * The moves are about *length and shape*, because that is what this record
+ * knows. Nothing here has an opinion about what the reader should be working
+ * on, which is the goals' business and is on the same page already.
+ *
+ * ## The order is the priority, and it is deliberate
+ *
+ * Only one move is given, so the order the rules are tried in decides which
+ * problem gets named. Sittings being abandoned comes first: not finishing is
+ * the loudest thing a record can say. Then aiming past what the sittings
+ * deliver, then interruptions above this account's normal.
+ *
+ * "You could go longer" is last on purpose. It is the only move here that
+ * fires on everything going *well*, and it should not be handed to somebody
+ * whose last three sittings ran the full length and produced 40% of what they
+ * set out to do — that reader has a problem, and more minutes is not the
+ * answer to it.
+ */
+export function nextMove(intervals: Interval[]): Move | null {
+  const recent = intervals.slice(-RUN);
+  if (recent.length < RUN) return null;
+
+  const lengths = new Set(recent.map((row) => row.planned));
+  const sameLength = lengths.size === 1 ? recent[0]!.planned : null;
+
+  // Every one of the last few abandoned, all at one length: the length is too
+  // long for whatever is being attempted at it.
+  if (sameLength && recent.every((row) => !row.finished)) {
+    const shorter = STYLES.filter((style) => style.focus < sameLength).pop();
+    return {
+      move: shorter
+        ? `Try ${shorter.name} — ${shorter.focus} min — for the next one.`
+        : 'Try a shorter sitting for the next one.',
+      because: `Your last ${RUN} at ${sameLength} min were all cut short.`,
+    };
+  }
+
+  // Aiming past what the sittings actually deliver, repeatedly.
+  const scored = recent.filter((row) => execution(row) !== null);
+  if (scored.length === RUN && scored.every((row) => (execution(row) ?? 0) < 70)) {
+    const share = Math.round(
+      scored.reduce((sum, row) => sum + (execution(row) ?? 0), 0) / scored.length,
+    );
+    return {
+      move: 'Set a smaller number on the next one.',
+      because: `Your last ${RUN} intentions came in at ${share}% of what you aimed for.`,
+    };
+  }
+
+  // Interruptions well above this account's own normal, across the run.
+  const older = intervals.slice(0, -RUN);
+  if (older.length >= RUN) {
+    const mean = (rows: Interval[]) => rows.reduce((sum, row) => sum + row.pauses, 0) / rows.length;
+    const now = mean(recent);
+    const usual = mean(older);
+    if (now >= usual + 2 && now >= 2) {
+      return {
+        move: 'Worth a break, or a shorter sitting, before the next one.',
+        because: `The last ${RUN} averaged ${now.toFixed(1)} pauses against your usual ${usual.toFixed(1)}.`,
+      };
+    }
+  }
+
+  // Nothing is wrong, and there is room above the length being used. Last, so
+  // it can only reach a reader whose sittings are not failing some other way.
+  if (sameLength && recent.every((row) => row.finished && row.pauses === 0)) {
+    const longer = STYLES.find((style) => style.focus > sameLength);
+    if (longer) {
+      return {
+        move: `You could go longer — ${longer.name} runs ${longer.focus} min.`,
+        because: `Your last ${RUN} at ${sameLength} min all ran clean through, unbroken.`,
+      };
+    }
+  }
+
+  return null;
 }
 
 // --------------------------------------------------------------------------

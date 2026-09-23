@@ -50,7 +50,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
 import { useIntervals } from '@/hooks/useIntervals';
-import type { Interval, Readiness } from '@/components/Timer/intervals';
+import { KINDS, type Interval, type Kind, type Readiness } from '@/components/Timer/intervals';
 import {
   DEFAULT_LEVEL,
   DEFAULT_STYLE,
@@ -123,6 +123,22 @@ interface Stored {
    * with the day, by `load`, for the same reason `doneToday` is.
    */
   readiness: Readiness | null;
+  /**
+   * Minutes into the phase now running at which it was paused, in order.
+   *
+   * The positions behind `pauses`. Reset with it on every phase change, for
+   * the same reason: it describes one interval.
+   */
+  breaks: number[];
+  /**
+   * What kind of work this is, when the account has said.
+   *
+   * Carried across sittings like readiness rather than cleared like the
+   * intention — an afternoon of drills is an afternoon of drills, and asking
+   * again after every break would be asking somebody to re-state something
+   * that has not changed.
+   */
+  kind: Kind | null;
 }
 
 function key(user: string): string {
@@ -131,6 +147,10 @@ function key(user: string): string {
 
 function isReadiness(value: unknown): value is Readiness {
   return value === 'low' || value === 'normal' || value === 'high';
+}
+
+function isKind(value: unknown): value is Kind {
+  return KINDS.some((kind) => kind.id === value);
 }
 
 function todayIso(): string {
@@ -156,8 +176,11 @@ function fresh(styleId: string, levelId = DEFAULT_LEVEL, keep?: Stored): Stored 
     intent: '',
     target: null,
     // Kept across a reset with the day's count, and for the same reason: how
-    // the reader feels is not part of the cycle they have just restarted.
+    // the reader feels, and what they are working on, are not part of the
+    // cycle they have just restarted.
     readiness: keep?.readiness ?? null,
+    breaks: [],
+    kind: keep?.kind ?? null,
   };
 }
 
@@ -193,6 +216,10 @@ function load(user: string): Stored {
       readiness: saved.dayIso === today && isReadiness(saved.readiness)
         ? saved.readiness
         : null,
+      breaks: Array.isArray(saved.breaks)
+        ? saved.breaks.filter((at): at is number => typeof at === 'number')
+        : [],
+      kind: saved.dayIso === today && isKind(saved.kind) ? saved.kind : null,
     };
   } catch {
     // A private window, cleared site data, or a value from an older shape.
@@ -246,6 +273,10 @@ export interface UsePomodoro {
   readiness: Readiness | null;
   /** Answer it, or press the same one again to take the answer back. */
   setReadiness: (readiness: Readiness | null) => void;
+  /** What kind of work this is, or null for untagged. */
+  kind: Kind | null;
+  /** Tag it, or press the same one again to untag. */
+  setKind: (kind: Kind | null) => void;
   /** Answer the newest row's intention. See `amend` in hooks/useIntervals. */
   report: (result: { done?: number; met?: boolean }) => void;
 }
@@ -308,6 +339,8 @@ export function usePomodoro(
         ...(from.intent ? { intent: from.intent } : {}),
         ...(from.intent && from.target !== null ? { target: from.target } : {}),
         ...(from.readiness ? { readiness: from.readiness } : {}),
+        ...(from.breaks.length ? { breaks: from.breaks } : {}),
+        ...(from.kind ? { kind: from.kind } : {}),
       };
     },
     [],
@@ -345,6 +378,8 @@ export function usePomodoro(
       intent: '',
       target: null,
       readiness: from.readiness,
+      breaks: [],
+      kind: from.kind,
     };
 
     if (endsAt <= at) {
@@ -413,12 +448,19 @@ export function usePomodoro(
   const pause = useCallback(() => {
     const current = latest.current;
     if (!current.endsAt) return;
+    const leftMs = Math.max(0, current.endsAt - Date.now());
+    const work = current.phase === 'focus';
+    // Where in the sitting it happened, for the replay. Whole minutes: the
+    // strip it draws is a couple of hundred pixels wide, and a second's
+    // precision on it would be a number nobody can see and nobody can use.
+    const into = Math.round((styleFor(current.styleId).focus * 60_000 - leftMs) / 60_000);
     write({
       ...current,
       endsAt: null,
-      leftMs: Math.max(0, current.endsAt - Date.now()),
+      leftMs,
       // Counted only against work. A break that was paused was not interrupted.
-      pauses: current.phase === 'focus' ? current.pauses + 1 : current.pauses,
+      pauses: work ? current.pauses + 1 : current.pauses,
+      breaks: work ? [...current.breaks, into] : current.breaks,
     });
   }, [write]);
 
@@ -473,6 +515,13 @@ export function usePomodoro(
     [write],
   );
 
+  const setKind = useCallback(
+    (kind: Kind | null) => {
+      write({ ...latest.current, kind });
+    },
+    [write],
+  );
+
   const report = useCallback(
     (result: { done?: number; met?: boolean }) => {
       log.amend(result);
@@ -512,6 +561,8 @@ export function usePomodoro(
     setIntent,
     readiness: state.readiness,
     setReadiness,
+    kind: state.kind,
+    setKind,
     report,
   };
 }

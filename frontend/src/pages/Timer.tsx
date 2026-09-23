@@ -75,6 +75,34 @@
  * account's day streak, which is a real fact, is counted by the server, and is
  * already in the hero — the reasoning is on `marks` in
  * components/Timer/intervals.ts.
+ *
+ * ## What the page fills in by itself
+ *
+ * Three things are claimed without anybody being asked to confirm them, which
+ * is the reason each is narrow.
+ *
+ * The **replay** draws the sitting along its own length with the pauses where
+ * they fell, and says the same thing in a line of text — the strip is
+ * decoration to a screen reader and the sentence is not.
+ *
+ * The **accounting** names the tasks finished inside the sitting's own window
+ * and the goals the server had already linked them to. Nothing is matched or
+ * guessed here: a task closed four minutes after the clock ran out was closed
+ * in the break, and claiming it would be the page taking credit for it. A
+ * sitting that closed nothing says nothing rather than printing a zero.
+ *
+ * The **next move** is one suggestion, only when a run of sittings says the
+ * same thing, always with the figures it fired on. Its rule order is a
+ * priority — see `nextMove` — and "you could go longer" is last, because it is
+ * the only move that fires on everything going well.
+ *
+ * ## Kinds change what is asked, not what is measured
+ *
+ * Tagging a sitting deep work or a speed run changes which of the three
+ * readings leads and which slice of the record the recommendation is drawn
+ * from. It does not change the clock, the score or what is stored. Two
+ * sittings of the same length stay comparable whatever they were tagged,
+ * because every reading on this page rests on that.
  */
 import type { ReactElement } from 'react';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
@@ -94,13 +122,13 @@ import {
   type Phase, type Sitting,
 } from '@/components/Timer/pomodoro';
 import {
-  MIN_INTERVALS, READINESS, execution, focusScore, marks, pace, readinessEffect, recommend,
-  tasksPerHour, unanswered, verdict, wasJustNow,
-  type Interval, type Readiness, type ReadinessRead, type Recommendation,
+  KINDS, MIN_INTERVALS, READINESS, execution, focusScore, kindOf, marks, nextMove, pace,
+  ranFrom, readinessEffect, recommend, tasksPerHour, unanswered, verdict, wasJustNow,
+  type Interval, type Kind, type Move, type Readiness, type ReadinessRead, type Recommendation,
 } from '@/components/Timer/intervals';
 import { currentStone } from '@/utils/goalStage';
 import { goalIdsOf } from '@/utils/goalLinks';
-import type { Goal, Milestone } from '@/types';
+import type { Goal, Milestone, Task } from '@/types';
 import * as format from '@/utils/format';
 import '@/styles/timer.css';
 import { Icon, type IconName } from '@/components/Icon';
@@ -437,7 +465,13 @@ function Recommend({ at, sittings, current, onUse }: {
     <div className="pom-rec">
       <span className="pom-rec-icon" aria-hidden="true"><Icon name="sparkles" /></span>
       <span className="pom-rec-text">
-        <b>Recommended focus · {at.minutes} min</b>
+        <b>
+          Recommended focus · {at.minutes} min
+          {/* Which question this answers. "50 min for deep work" and "50 min"
+              are different claims, and a reader who tags their sittings should
+              be told which one they have been given. */}
+          {at.kind && <> for {kindOf(at.kind)?.label.toLowerCase()}</>}
+        </b>
         <i>
           {at.low === at.high
             ? `Your ${at.minutes}-minute sittings run cleanest, over ${at.sample} recorded.`
@@ -639,6 +673,92 @@ function IntentField({ intent, target, unit, onSet }: {
 }
 
 /**
+ * What kind of work this is.
+ *
+ * Seven chips, and pressing the chosen one again clears it — the same
+ * affordance readiness has, for the same reason. Nothing about the timer
+ * changes when one is picked: the reasoning is on `Kind` in
+ * components/Timer/intervals.ts, and the short version is that a "mode" which
+ * measured different things would stop two sittings of the same length being
+ * comparable, which is the whole value of the record.
+ */
+function KindPicker({ kind, onSet }: {
+  kind: Kind | null;
+  onSet: (kind: Kind | null) => void;
+}) {
+  return (
+    <div className="pom-kinds">
+      <span className="pom-ready-label" id="pom-kind-label">What kind of work?</span>
+      <div className="pom-kind-row" role="group" aria-labelledby="pom-kind-label">
+        {KINDS.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            className={kind === option.id ? 'is-on' : ''}
+            aria-pressed={kind === option.id}
+            onClick={() => onSet(kind === option.id ? null : option.id)}
+          >
+            <span aria-hidden="true">{option.glyph}</span> {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The sitting, drawn along its own length, with the pauses where they fell.
+ *
+ * ## What a count cannot say
+ *
+ * "Three pauses" describes a sitting interrupted in its first five minutes and
+ * a sitting that fell apart in its last ten equally, and those are not the same
+ * afternoon: the first is someone settling in, the second is someone who
+ * should have stopped. The positions are the only part of this record that can
+ * tell them apart, so they are kept — see `breaks` in
+ * components/Timer/intervals.ts.
+ *
+ * ## Why it is this small
+ *
+ * A strip a couple of hundred pixels wide, with no axis but its own length and
+ * no interaction. Everything a bigger chart would add — a scale, a tooltip, a
+ * click target per mark — would be inviting the reader to study one
+ * twenty-five minute sitting, and there is nothing in one sitting worth that
+ * much attention. The pattern across many of them is what the marks panel and
+ * the next move are for.
+ */
+function Replay({ sitting }: { sitting: Interval }) {
+  const breaks = sitting.breaks ?? [];
+  const span = Math.max(sitting.planned, sitting.minutes, 1);
+
+  return (
+    <div className="pom-replay">
+      <span className="pom-replay-track" aria-hidden="true">
+        <span className="pom-replay-ran" style={{ width: `${Math.min(100, (sitting.minutes / span) * 100)}%` }} />
+        {breaks.map((at, index) => (
+          <span
+            key={`${at}-${index}`}
+            className="pom-replay-mark"
+            style={{ left: `${Math.min(100, (at / span) * 100)}%` }}
+          />
+        ))}
+      </span>
+      <span className="pom-replay-scale" aria-hidden="true">
+        <i>0m</i>
+        <i>{span}m</i>
+      </span>
+      {/* The same thing in words, because the strip above is decoration to a
+          screen reader and this is the only form of it that is not. */}
+      <span className="pom-replay-said">
+        {breaks.length === 0
+          ? `${sitting.minutes} min, no pauses.`
+          : `${sitting.minutes} min, paused at ${breaks.map((at) => `${at}m`).join(', ')}.`}
+      </span>
+    </div>
+  );
+}
+
+/**
  * How ready you are, asked once a day.
  *
  * ## What it is for, and what it is not
@@ -699,7 +819,11 @@ function ReadinessPicker({ readiness, onSet }: {
  * for you" is a finding, and leaving it out would turn the panel into a page
  * that can only ever agree with the idea that readiness matters.
  */
-function MarksPanel({ log, effect }: { log: Interval[]; effect: ReadinessRead | null }) {
+function MarksPanel({ log, effect, move }: {
+  log: Interval[];
+  effect: ReadinessRead | null;
+  move: Move | null;
+}) {
   const heading = useId();
   const best = marks(log);
   const answered = log.filter((row) => row.readiness).length;
@@ -750,6 +874,19 @@ function MarksPanel({ log, effect }: { log: Interval[]; effect: ReadinessRead | 
         ))}
       </dl>
 
+      {/* Only when there is one. A page that produced a suggestion after every
+          sitting would be generating them from an empty record, and the reader
+          would learn inside a week that they mean nothing. See `nextMove`. */}
+      {move && (
+        <div className="pom-move">
+          <span className="pom-move-icon" aria-hidden="true"><Icon name="sparkles" /></span>
+          <span className="pom-move-text">
+            <b>{move.move}</b>
+            <i>{move.because}</i>
+          </span>
+        </div>
+      )}
+
       <p className="pom-marks-note">
         {effect === null
           ? `Readiness is logged on ${answered} sitting${answered === 1 ? '' : 's'}. Answer it at two different levels and this will say whether it makes any difference for you.`
@@ -780,9 +917,11 @@ function MarksPanel({ log, effect }: { log: Interval[]; effect: ReadinessRead | 
  * `unanswered` stops it waiting past the point where the answer would be a
  * guess — the reasoning is on `wasJustNow` in components/Timer/intervals.ts.
  */
-function Outcome({ sitting, asking, onReport, onSkip }: {
+function Outcome({ sitting, asking, fed, onReport, onSkip }: {
   sitting: Interval;
   asking: boolean;
+  /** What was closed while it ran, and what that counted toward. */
+  fed: { tasks: Task[]; goals: string[] };
   onReport: (result: { done?: number; met?: boolean }) => void;
   onSkip: () => void;
 }) {
@@ -859,8 +998,51 @@ function Outcome({ sitting, asking, onReport, onSkip }: {
           </dd>
         </div>
       </dl>
+      <div className="pom-outcome-foot">
+        <Replay sitting={sitting} />
+        {/* What the sitting did, without anybody filing it anywhere. The
+            window is the sitting's own — see `ranFrom` — and the goals are the
+            ones the server already linked those tasks to, so nothing here is
+            matched, guessed or asked for. A sitting that closed nothing says
+            nothing rather than printing a zero. */}
+        {fed.tasks.length > 0 && (
+          <p className="pom-outcome-fed">
+            <b>{fed.tasks.length} task{fed.tasks.length === 1 ? '' : 's'}</b> finished while it ran
+            {fed.goals.length > 0 && <> → {fed.goals.join(', ')}</>}
+          </p>
+        )}
+      </div>
       <p className="pom-outcome-verdict">{verdict(sitting)}</p>
     </section>
+  );
+}
+
+/**
+ * What the goal did while you sat there.
+ *
+ * Only for a goal measured in focus time, and only while a focus phase runs,
+ * because that is the only arrangement in which this page moves a goal's own
+ * figure. `minutes` is the session's own total for today — the focus session
+ * is the ledger, not this page — added to the goal's recorded standing, which
+ * is what the same figure will say once the server has heard about today.
+ *
+ * It is a line rather than a panel. The reader is working; the ring is the
+ * thing on screen, and this is a note under it.
+ */
+function LiveGoal({ goal, minutes }: { goal: Counting; minutes: number }) {
+  const now = goal.now + minutes;
+  const pct = goal.target > 0 ? Math.min(100, Math.round((now / goal.target) * 100)) : 0;
+
+  return (
+    <p className="pom-live" aria-live="off">
+      <span className="pom-live-bar" aria-hidden="true">
+        <span style={{ width: `${pct}%` }} />
+      </span>
+      <span className="pom-live-text">
+        <b>{fmtHM(now * 60)}</b> of {fmtHM(goal.target * 60)} toward {goal.goal.title}
+        {minutes > 0 && <i> · {fmtHM(minutes * 60)} of it today</i>}
+      </span>
+    </p>
   );
 }
 
@@ -1093,7 +1275,7 @@ export default function Timer() {
       }
       : { label: 'Focus', value: '—', note: 'no sitting recorded yet' };
 
-  const readings: Reading[] = [
+  const unordered: Reading[] = [
     focusReading,
     {
       label: 'Pace',
@@ -1111,8 +1293,26 @@ export default function Timer() {
     },
   ];
 
-  const suggestion = useMemo(() => recommend(intervals), [intervals]);
+  /* All three are always shown; the kind decides which goes first. Pace is the
+     interesting one on a speed run and difficulty is the interesting one when
+     the work is new, and the leftmost column is where a reader looks. Hiding
+     the other two would make two sittings of different kinds report different
+     things, which is what `Kind` exists not to do. */
+  const lead = kindOf(pomodoro.kind)?.lead;
+  const readings = lead
+    ? [...unordered].sort((a, b) => Number(b.label === lead) - Number(a.label === lead))
+    : unordered;
+
+  /* Asked about the kind of work in hand first, and about everything only if
+     that has nothing to say. The answers are different claims — "50 min for
+     deep work" against "50 min" — so `Recommendation` carries which one it is
+     and the strip prints it. */
+  const suggestion = useMemo(
+    () => recommend(intervals, pomodoro.kind) ?? recommend(intervals),
+    [intervals, pomodoro.kind],
+  );
   const effect = useMemo(() => readinessEffect(intervals), [intervals]);
+  const move = useMemo(() => nextMove(intervals), [intervals]);
 
   // ---- The climb -----------------------------------------------------------
   const subjectIndex = useSubjectIndex(username);
@@ -1167,6 +1367,26 @@ export default function Timer() {
     && wasJustNow(lastSitting, Date.now())
     ? lastSitting
     : null;
+
+  /* What was finished while that sitting ran, and what it counted toward.
+     Nobody files anything: the window is the sitting's own, and the goals are
+     the ones already linked to those tasks. A task closed in a break falls
+     outside the window and is not claimed. */
+  const fed = useMemo(() => {
+    const span = outcome ? ranFrom(outcome) : null;
+    if (!span) return { tasks: [] as Task[], goals: [] as string[] };
+    const closed = tasks.filter((row) => {
+      if (row.status !== 'done' || !row.completed_at) return false;
+      const at = new Date(row.completed_at).getTime();
+      return Number.isFinite(at) && at >= span.from && at <= span.to;
+    });
+    const titles = new Set<string>();
+    closed.forEach((row) => goalIdsOf(row).forEach((id) => {
+      const found = allGoals.find((goal) => goal.id === id);
+      if (found) titles.add(found.title);
+    }));
+    return { tasks: closed, goals: [...titles] };
+  }, [outcome, tasks, allGoals]);
 
   // This week's seven bars, whatever the range control above is set to.
   const week = useMemo(() => {
@@ -1232,6 +1452,7 @@ export default function Timer() {
             <Outcome
               sitting={outcome}
               asking={asking !== null}
+              fed={fed}
               onReport={pomodoro.report}
               onSkip={() => setSkippedAt(outcome.at ?? null)}
             />
@@ -1278,6 +1499,8 @@ export default function Timer() {
                 current={style.id} onUse={pomodoro.choose} />
 
               <ReadinessPicker readiness={pomodoro.readiness} onSet={pomodoro.setReadiness} />
+
+              <KindPicker kind={pomodoro.kind} onSet={pomodoro.setKind} />
 
               <IntentField intent={pomodoro.intent} target={pomodoro.target}
                 unit={unit} onSet={pomodoro.setIntent} />
@@ -1330,6 +1553,9 @@ export default function Timer() {
                 </button>
               </div>
               <Hud readings={readings} />
+              {running && phase === 'focus' && counting[0] && (
+                <LiveGoal goal={counting[0]} minutes={Math.round(session.focused / 60)} />
+              )}
             </div>
 
             <div className="pom-hero-side">
@@ -1360,7 +1586,7 @@ export default function Timer() {
           <Climb counting={counting} working={working} />
 
           {/* ---- Marks ------------------------------------------------- */}
-          <MarksPanel log={intervals} effect={effect} />
+          <MarksPanel log={intervals} effect={effect} move={move} />
 
           {/* ---- Progress ---------------------------------------------- */}
           <section className="pom-panel">

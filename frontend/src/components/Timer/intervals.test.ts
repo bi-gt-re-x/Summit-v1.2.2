@@ -19,7 +19,9 @@ import {
   focusScore,
   isStyleLength,
   marks,
+  nextMove,
   pace,
+  ranFrom,
   readinessEffect,
   recommend,
   tasksPerHour,
@@ -305,6 +307,105 @@ describe('the marks', () => {
     expect(focusScore(after.best!)).toBe(100);
     // The run breaks, which is what a run is.
     expect(after.run).toBe(2);
+  });
+});
+
+describe('recommending for one kind of work', () => {
+  const drills = many(6, { styleId: 'short-burst', planned: 15, minutes: 15, kind: 'repetition' });
+  const proofs = [
+    ...many(4, { styleId: 'deep-work', planned: 50, minutes: 50, kind: 'deep' }),
+    ...many(3, { styleId: 'classic', planned: 25, minutes: 6, pauses: 3, finished: false, kind: 'deep' }),
+  ];
+
+  it('answers about the kind it was asked about', () => {
+    const at = recommend([...drills, ...proofs], 'deep');
+    expect(at?.minutes).toBe(50);
+    expect(at?.kind).toBe('deep');
+    // Only the deep-work sittings were counted, not all thirteen.
+    expect(at?.sample).toBe(7);
+  });
+
+  it('refuses rather than falling back to every sitting', () => {
+    // Two speed runs among a hundred others is not an answer about speed runs,
+    // and answering with the average over everything would be the averaging
+    // this grouping exists to undo. The page asks again without a kind.
+    const log = [...drills, ...proofs, ...many(2, { planned: 20, minutes: 20, kind: 'speed' })];
+    expect(recommend(log, 'speed')).toBeNull();
+    expect(recommend(log)).not.toBeNull();
+  });
+
+  it('says when it is answering about everything', () => {
+    expect(recommend([...drills, ...proofs])?.kind).toBeNull();
+  });
+});
+
+describe('when the sitting ran', () => {
+  it('works back from the end and the length', () => {
+    const at = 1_780_000_000_000;
+    expect(ranFrom(row({ at, minutes: 25 }))).toEqual({ from: at - 25 * 60_000, to: at });
+  });
+
+  it('is nothing for a row with no timestamp', () => {
+    expect(ranFrom(row())).toBeNull();
+  });
+});
+
+describe('the next move', () => {
+  it('says nothing from a short log', () => {
+    expect(nextMove(many(2))).toBeNull();
+  });
+
+  it('says nothing when there is no pattern', () => {
+    // The common case, and the one a horoscope would fill in anyway.
+    expect(nextMove([
+      row({ planned: 25, minutes: 25 }),
+      row({ planned: 50, minutes: 20, finished: false }),
+      row({ planned: 25, minutes: 25, pauses: 1 }),
+    ])).toBeNull();
+  });
+
+  it('suggests something shorter after a run of abandoned sittings', () => {
+    const move = nextMove(many(3, { styleId: 'deep-work', planned: 50, minutes: 20, finished: false }))!;
+    expect(move.move).toMatch(/study hall|shorter/i);
+    expect(move.because).toMatch(/last 3 at 50 min were all cut short/i);
+  });
+
+  it('suggests going longer after a run of clean ones', () => {
+    const move = nextMove(many(3, { styleId: 'classic', planned: 25, minutes: 25, pauses: 0 }))!;
+    expect(move.move).toMatch(/longer/i);
+    expect(move.because).toMatch(/ran clean through/i);
+  });
+
+  it('will not tell somebody to sit longer while they are under-delivering', () => {
+    // Three full, unbroken sittings that each produced under half of what was
+    // intended. "You could go longer" is the wrong answer to that, and it is
+    // the one the rule order exists to prevent.
+    const move = nextMove(many(3, {
+      styleId: 'classic', planned: 25, minutes: 25, pauses: 0,
+      intent: 'Finish 20', target: 20, done: 8,
+    }))!;
+    expect(move.move).toMatch(/smaller number/i);
+  });
+
+  it('notices interruptions above the account\'s own normal', () => {
+    const move = nextMove([
+      ...many(4, { pauses: 0 }),
+      ...many(3, { planned: 25, minutes: 25, pauses: 3 }),
+    ])!;
+    expect(move.move).toMatch(/break|shorter/i);
+    expect(move.because).toMatch(/against your usual/i);
+  });
+
+  it('suggests a smaller number after a run of missed intentions', () => {
+    const move = nextMove(many(3, { intent: 'Finish 20', target: 20, done: 8 }))!;
+    expect(move.move).toMatch(/smaller number/i);
+    expect(move.because).toMatch(/40%/);
+  });
+
+  it('always brings the figures it fired on', () => {
+    const move = nextMove(many(3, { styleId: 'classic', planned: 25, minutes: 25 }))!;
+    // A suggestion whose reason cannot be checked is a horoscope.
+    expect(move.because).toMatch(/\d/);
   });
 });
 
