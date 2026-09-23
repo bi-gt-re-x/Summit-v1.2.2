@@ -183,18 +183,6 @@ describe('the kind of work', () => {
     await waitFor(() => expect(speed).toHaveAttribute('aria-pressed', 'false'));
   });
 
-  it('changes which reading leads, and hides none of them', async () => {
-    show();
-    await userEvent.click((await kinds()).getByRole('button', { name: /speed run/i }));
-
-    const hud = within(await screen.findByLabelText('This session'));
-    await waitFor(() => {
-      const labels = hud.getAllByRole('term').map((node) => node.textContent);
-      expect(labels[0]).toBe('Pace');
-      expect(labels).toHaveLength(3);
-    });
-  });
-
   it('asks the record about that kind, and says so', async () => {
     logged([
       ...Array.from({ length: 6 }, () => sitting({

@@ -41,19 +41,19 @@
  * because the server stores no session boundary — only the day's total — so
  * that tile is an average per working day, and is labelled as one.
  *
- * ## The two readings that are local, and why they are marked as such
+ * ## The one reading that is local, and why it is marked as such
  *
- * The recommendation and the session readout are the exceptions, and they are
- * not exceptions to the rule above. Neither is estimated from the day totals:
- * both read the interval log, which is a real record of real sittings written
- * as each one ends — hooks/useIntervals holds it, hooks/usePomodoro writes it,
+ * The recommendation is the exception, and it is not an exception to the rule
+ * above. It is not estimated from the day totals: it reads the interval log,
+ * which is a real record of real sittings written as each one ends —
+ * hooks/useIntervals holds it, hooks/usePomodoro writes it,
  * components/Timer/intervals.ts is the arithmetic.
  *
  * That log lives in this browser. So the recommendation says how many sittings
- * it rests on, it declines to say anything at all until there are enough of
- * them at more than one length, and the session readout is about today rather
- * than about the account. The hours remain the account's, on the server, in the
- * tiles — losing the log loses the shape and not one minute of the work.
+ * it rests on, and it declines to say anything at all until there are enough
+ * of them at more than one length. The hours remain the account's, on the
+ * server, in the tiles — losing the log loses the shape and not one minute of
+ * the work.
  *
  * ## What the time is for
  *
@@ -115,11 +115,18 @@
  *
  * ## Kinds change what is asked, not what is measured
  *
- * Tagging a sitting deep work or a speed run changes which of the three
- * readings leads and which slice of the record the recommendation is drawn
- * from. It does not change the clock, the score or what is stored. Two
- * sittings of the same length stay comparable whatever they were tagged,
- * because every reading on this page rests on that.
+ * Tagging a sitting deep work or a speed run changes which slice of the record
+ * the recommendation is drawn from. It does not change the clock, the score or
+ * what is stored. Two sittings of the same length stay comparable whatever
+ * they were tagged, because every reading on this page rests on that.
+ *
+ * ## The hero shows the clock and nothing else
+ *
+ * It used to carry three live readings under the ring — focus, pace and
+ * difficulty — which on a fresh account were three dashes and three sentences
+ * explaining the dashes, directly under the one control the page exists for.
+ * The same figures are in the record below, where they are read rather than
+ * glanced at. The hero is the clock, the primary button, reset and set-up.
  */
 import type { ReactElement } from 'react';
 import { useCallback, useEffect, useId, useMemo, useState } from 'react';
@@ -139,8 +146,8 @@ import {
   type Phase, type Sitting,
 } from '@/components/Timer/pomodoro';
 import {
-  KINDS, MIN_INTERVALS, READINESS, execution, focusScore, kindOf, marks, nextMove, pace,
-  ranFrom, readinessEffect, recommend, tasksPerHour, unanswered, verdict, wasJustNow,
+  KINDS, MIN_INTERVALS, READINESS, execution, focusScore, kindOf, marks, nextMove,
+  ranFrom, readinessEffect, recommend, unanswered, verdict, wasJustNow,
   type Interval, type Kind, type Move, type Readiness, type ReadinessRead, type Recommendation,
 } from '@/components/Timer/intervals';
 import { currentStone } from '@/utils/goalStage';
@@ -1063,44 +1070,6 @@ function LiveGoal({ goal, minutes }: { goal: Counting; minutes: number }) {
   );
 }
 
-export interface Reading {
-  label: string;
-  /** The figure, or a dash when it cannot honestly be given. */
-  value: string;
-  /** What the figure is of. Always present: a bare number invites a guess. */
-  note: string;
-}
-
-/**
- * The three readings under the ring.
- *
- * A definition list rather than a row of divs because that is what it is, and
- * a screen reader reading "Focus, 85 per cent, on course if seen through" gets
- * the same three-part thing a sighted reader gets from the stack.
- *
- * Every reading can be a dash, and each one says what it is of rather than
- * carrying a bare number — "Pace +12%" means nothing without "against your own
- * normal", and a reader who has to guess what a percentage is against will
- * guess wrong.
- *
- * The list is named because "Focus" is the phase above it as well as a reading
- * inside it, and a screen reader meeting the second one with no context has no
- * way to tell which of the two it has landed on.
- */
-function Hud({ readings }: { readings: Reading[] }) {
-  return (
-    <dl className="pom-hud" aria-label="This session">
-      {readings.map((reading) => (
-        <div className="pom-hud-stat" key={reading.label}>
-          <dt>{reading.label}</dt>
-          <dd>{reading.value}</dd>
-          <span>{reading.note}</span>
-        </div>
-      ))}
-    </dl>
-  );
-}
-
 const CHEVRON: ReactElement = (
   <svg className="pom-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1181,7 +1150,7 @@ export default function Timer() {
   }, [pomodoro, updatePrefs]);
 
   const {
-    style, phase, running, remaining, percent, level, doneToday, pauses, intervals,
+    style, phase, running, remaining, percent, level, doneToday, intervals,
   } = pomodoro;
   const days = history.data?.days ?? {};
 
@@ -1212,102 +1181,9 @@ export default function Timer() {
   const tasksNow = doneIn(shift(today, -(span - 1)), today);
   const tasksBefore = doneIn(shift(today, -(span * 2 - 1)), shift(today, -span));
 
-  // ---- The three readings under the ring -----------------------------------
-  /* The pace baseline, on a window of its own.
-   *
-   * Thirty days ending yesterday, asked for separately rather than sliced out
-   * of the Progress panel's history: that one's span follows the range control,
-   * and a reading that moved when somebody pressed 30D would be reporting the
-   * control rather than the work. Today is left out because today is the thing
-   * being compared against it. */
-  const baselineCall = useCallback(
-    () => focusService.history(iso(shift(today, -30)), iso(shift(today, -1))),
-    [today],
-  );
-  const baseline = useApi(baselineCall, []);
-
-  const baselineRate = useMemo(() => {
-    const seen = baseline.data?.days ?? {};
-    const seconds = Object.values(seen)
-      .reduce((sum, day) => sum + (Number(day?.seconds) || 0), 0);
-    return tasksPerHour(doneIn(shift(today, -30), shift(today, -1)), seconds);
-  }, [baseline.data, doneIn, today]);
-
-  const tasksToday = doneIn(today, today);
-  const pacePct = pace(tasksPerHour(tasksToday, session.focused), baselineRate);
-
-  /* Difficulty is the account's own rating of the work it finished today, and
-   * an unrated task is left out rather than counted as easy — absent is not
-   * zero, which is the rule for this field wherever it is read. See `difficulty`
-   * in types/models.ts. */
-  const ratedToday = useMemo(() => tasks.filter((task) => task.status === 'done'
-    && (task.completed_at ?? '').slice(0, 10) === iso(today)
-    && typeof task.difficulty === 'number'), [tasks, today]);
-  const difficulty = ratedToday.length
-    ? ratedToday.reduce((sum, task) => sum + (task.difficulty ?? 0), 0) / ratedToday.length
-    : null;
-
-  /* The focus score this interval is *on course for*, taken as seen through.
-   *
-   * The recorded score weighs how much of the interval ran, so a live reading
-   * that counted the minutes not yet sat would start every sitting at thirty
-   * and climb — which reads as a second progress bar beside the ring rather
-   * than as quality. Holding the length constant and moving only with the
-   * interruptions makes the number on screen the number that gets written down
-   * if the sitting is finished. Between sittings it shows the last one, because
-   * an empty panel says less than the thing that just happened. */
+  /* The sitting just finished, or the one running. Read by the Outcome
+     panel below, which asks what came of it. */
   const lastSitting: Interval | undefined = intervals[intervals.length - 1];
-  const onCourse = focusScore({
-    day: iso(today),
-    styleId: style.id,
-    planned: style.focus,
-    minutes: style.focus,
-    pauses,
-    finished: true,
-  });
-  const focusReading: Reading = running && phase === 'focus'
-    ? {
-      label: 'Focus',
-      value: `${onCourse}%`,
-      note: pauses === 0
-        ? 'on course · unbroken'
-        : `on course · ${pauses} pause${pauses === 1 ? '' : 's'}`,
-    }
-    : lastSitting
-      ? {
-        label: 'Focus',
-        value: `${focusScore(lastSitting)}%`,
-        note: `last sitting · ${lastSitting.minutes}m${lastSitting.finished ? '' : ', cut short'}`,
-      }
-      : { label: 'Focus', value: '—', note: 'no sitting recorded yet' };
-
-  const unordered: Reading[] = [
-    focusReading,
-    {
-      label: 'Pace',
-      value: pacePct === null ? '—' : `${pacePct >= 0 ? '+' : ''}${pacePct}%`,
-      note: pacePct === null
-        ? 'needs 15 min today and a month behind it'
-        : 'tasks an hour, against your own normal',
-    },
-    {
-      label: 'Difficulty',
-      value: difficulty === null ? '—' : `${difficulty.toFixed(1)} / 5`,
-      note: difficulty === null
-        ? 'nothing rated today'
-        : `your rating of ${ratedToday.length} finished today`,
-    },
-  ];
-
-  /* All three are always shown; the kind decides which goes first. Pace is the
-     interesting one on a speed run and difficulty is the interesting one when
-     the work is new, and the leftmost column is where a reader looks. Hiding
-     the other two would make two sittings of different kinds report different
-     things, which is what `Kind` exists not to do. */
-  const lead = kindOf(pomodoro.kind)?.lead;
-  const readings = lead
-    ? [...unordered].sort((a, b) => Number(b.label === lead) - Number(a.label === lead))
-    : unordered;
 
   /* Asked about the kind of work in hand first, and about everything only if
      that has nothing to say. The answers are different claims — "50 min for
@@ -1509,7 +1385,6 @@ export default function Timer() {
                 </button>
               </div>
 
-              <Hud readings={readings} />
               {running && phase === 'focus' && counting[0] && (
                 <LiveGoal goal={counting[0]} minutes={Math.round(session.focused / 60)} />
               )}

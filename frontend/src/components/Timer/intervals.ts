@@ -152,22 +152,23 @@ export interface Interval {
  * What a kind buys is a *group*. Twenty-five minutes is right for drills and
  * wrong for a proof, and an account that does both has a recommendation
  * averaged over two different activities. Tagging the sitting lets the answer
- * be given per kind once there is enough of each, and `lead` decides which of
- * the three readings goes first while that kind is running, because pace is
- * the interesting one on a speed run and difficulty is the interesting one
- * when the work is new.
+ * be given per kind once there is enough of each.
+ *
+ * A kind used to carry a `lead` as well, naming which of the hero's three live
+ * readings went first while it ran. Those readings are gone from the hero —
+ * see the header of pages/Timer.tsx — and nothing read the field afterwards.
  */
 export type Kind =
   | 'deep' | 'speed' | 'learning' | 'repetition' | 'experiment' | 'challenge' | 'recovery';
 
-export const KINDS: { id: Kind; label: string; glyph: string; lead: 'Focus' | 'Pace' | 'Difficulty' }[] = [
-  { id: 'deep', label: 'Deep work', glyph: '🎯', lead: 'Focus' },
-  { id: 'speed', label: 'Speed run', glyph: '⚡', lead: 'Pace' },
-  { id: 'learning', label: 'Learning', glyph: '🧠', lead: 'Difficulty' },
-  { id: 'repetition', label: 'Repetition', glyph: '🔁', lead: 'Pace' },
-  { id: 'experiment', label: 'Experiment', glyph: '🧪', lead: 'Difficulty' },
-  { id: 'challenge', label: 'Challenge', glyph: '🏆', lead: 'Difficulty' },
-  { id: 'recovery', label: 'Recovery', glyph: '🌱', lead: 'Focus' },
+export const KINDS: { id: Kind; label: string; glyph: string }[] = [
+  { id: 'deep', label: 'Deep work', glyph: '🎯' },
+  { id: 'speed', label: 'Speed run', glyph: '⚡' },
+  { id: 'learning', label: 'Learning', glyph: '🧠' },
+  { id: 'repetition', label: 'Repetition', glyph: '🔁' },
+  { id: 'experiment', label: 'Experiment', glyph: '🧪' },
+  { id: 'challenge', label: 'Challenge', glyph: '🏆' },
+  { id: 'recovery', label: 'Recovery', glyph: '🌱' },
 ];
 
 export const kindOf = (id: Kind | null | undefined) => KINDS.find((kind) => kind.id === id) ?? null;

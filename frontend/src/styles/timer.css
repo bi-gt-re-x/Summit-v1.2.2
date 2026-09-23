@@ -233,15 +233,27 @@ html[data-theme="dark"] .pom-page {
     overflow: hidden;
     isolation: isolate;
     display: grid;
-    /* Two columns now, not three. The left one held the method pickers, the
-       recommendation, three optional questions and the Start button — six
-       unrelated decisions stacked in a card whose job is to show a clock.
-       They are their own panels below; see the Method and Before You Start
-       sections in pages/Timer.tsx. */
-    grid-template-columns: minmax(0, 1fr) 232px;
-    gap: var(--space-7);
+    /* The clock, and the three cards down the side. The column that held the
+       method pickers, the recommendation, three optional questions and the
+       Start button is gone — six unrelated decisions stacked in a card whose
+       job is to show a clock. They are their own panels below; see the Method
+       and Before You Start sections in pages/Timer.tsx.
+
+       Three tracks rather than two so the clock is centred on the *card* and
+       not on whatever is left over beside the side rail. The first and third
+       are the same flexible width, the rail is pinned to the end of the third,
+       and the difference between the two is the breathing room the rail needs
+       — which is why the left gutter is wider than the right and should be:
+       the right one is carrying three cards' worth of weight.
+
+       `--space-7` used to set the gap and the padding here. There is no such
+       token — the scale in styles/tokens.css runs 1-6, 8, 10, 12, 16 — so both
+       declarations were invalid and the hero drew with no padding and no gap,
+       with the side cards flush against its right edge. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 380px) minmax(0, 1fr);
+    gap: var(--space-8);
     align-items: center;
-    padding: var(--space-7) var(--space-6);
+    padding: var(--space-8);
     border: 1px solid var(--pom-line);
     border-radius: var(--pom-radius);
     background-color: var(--pom-card);
@@ -328,10 +340,10 @@ html[data-theme="dark"] .pom-page {
 
 /* The ring */
 .pom-hero-mid {
+    grid-column: 2;
     display: flex; flex-direction: column; align-items: center;
-    gap: var(--space-5);
-    width: min(420px, 100%);
-    margin-inline: auto;
+    gap: var(--space-6);
+    width: 100%;
 }
 /* The one primary action, sized to the column rather than to a sentence. */
 .pom-hero-mid .pom-start { max-width: 320px; margin-top: 0; }
@@ -413,32 +425,6 @@ html[data-theme="dark"] .pom-page {
 .pom-rec-on { color: var(--pom-now); font-size: var(--text-xs); font-weight: 700; white-space: nowrap; }
 .pom-rec .pom-btn { white-space: nowrap; }
 
-/* The readings under the ring.
-
-   Three columns of equal width so the row does not jump when a figure turns
-   into a dash — which it does routinely, and a layout that reflowed every time
-   would draw the eye to the one reading that has nothing to say. */
-.pom-hud {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2);
-    width: 100%;
-    margin: 0;
-    padding-top: var(--space-3);
-    border-top: 1px solid var(--pom-line);
-    text-align: center;
-}
-.pom-hud-stat { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.pom-hud-stat dt {
-    color: var(--pom-muted);
-    font-size: var(--text-2xs); font-weight: 700;
-    letter-spacing: .12em; text-transform: uppercase;
-}
-.pom-hud-stat dd {
-    margin: 0;
-    font-size: var(--text-lg); font-weight: 700;
-    font-variant-numeric: tabular-nums; letter-spacing: -.02em;
-}
-.pom-hud-stat span { color: var(--pom-faint); font-size: var(--text-2xs); line-height: 1.35; }
-
 /* Readiness: three buttons, one row.
 
    Sized down from the method toggle it borrows its shape from. This is a
@@ -495,7 +481,7 @@ html[data-theme="dark"] .pom-page {
     color: var(--pom-text);
 }
 
-/* The live goal line, under the readings while work is running. */
+/* The live goal line, under the controls while work is running. */
 .pom-live { display: grid; gap: var(--space-2); width: 100%; margin: 0; }
 .pom-live-bar {
     display: block; height: 6px;
@@ -715,7 +701,12 @@ html[data-theme="dark"] .pom-page {
 .pom-climb-fed em { color: var(--pom-faint); font-size: var(--text-xs); font-style: normal; white-space: nowrap; }
 
 /* The three cards down the side */
-.pom-hero-side { display: grid; gap: var(--space-3); }
+.pom-hero-side {
+    grid-column: 3;
+    justify-self: end;
+    display: grid; gap: var(--space-3);
+    width: 232px;
+}
 .pom-side-card {
     display: grid;
     grid-template-columns: 34px 1fr;
@@ -1034,13 +1025,21 @@ html[data-theme="dark"] .pom-page {
 }
 
 /* ---- Narrow -------------------------------------------------------------- */
+/* Below this the two gutters that centre the clock are wider than the space
+   they are balancing, so the rail goes under the clock as a row of three and
+   the clock takes the whole width. */
 @media (max-width: 1080px) {
-    .pom-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .pom-hero-side { grid-column: span 2; grid-template-columns: repeat(3, 1fr); }
+    .pom-hero { grid-template-columns: minmax(0, 1fr); }
+    .pom-hero-mid { grid-column: 1; margin-inline: auto; }
+    .pom-hero-side {
+        grid-column: 1;
+        justify-self: stretch;
+        width: auto;
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 @media (max-width: 820px) {
-    .pom-hero { grid-template-columns: minmax(0, 1fr); }
-    .pom-hero-side { grid-column: auto; grid-template-columns: 1fr; }
+    .pom-hero-side { grid-template-columns: 1fr; }
     .pom-progress { grid-template-columns: minmax(0, 1fr); justify-items: center; }
 }
 @media (max-width: 640px) {
