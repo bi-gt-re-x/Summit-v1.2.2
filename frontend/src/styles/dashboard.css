@@ -972,17 +972,12 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
    of ten clicks on an image otherwise ends in a dragged ghost of it and a blue
    selection over the card.
 
-   Positioned against `.dash-stat-focus` in dashboard-home.css, which is that
-   card. The offsets are the card's own padding — `--space-5` down and
-   `--space-6` in — plus 5px, which is what centres an 18px mark on the 28px
-   heading band beside it (`.dash-stat-title`'s `min-height`, which is the
-   icon disc's height). Level with "Focus Time" rather than level with the top
-   of its line box: the two are a mark and a title on one row, and a mark
-   sitting a few pixels proud of the words reads as a mistake. */
+   It sits in `.dash-stat-aside` — the corner slot every card in that row has,
+   in dashboard-home.css — rather than being absolutely positioned over the
+   card, which is what it was while the row had no header to put it in. In the
+   flow it cannot land on top of a long title, and the two cards that carry a
+   trend badge in the same slot get the same alignment for free. */
 .dash-focus-mark {
-    position: absolute;
-    top: calc(var(--space-5) + 5px);
-    right: var(--space-6);
     opacity: 0.4;
     cursor: default;
     user-select: none;

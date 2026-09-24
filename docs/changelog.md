@@ -2,6 +2,37 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-24 — The four stat cards get one header, and a week
+
+The row had four different card shapes. Two led with an icon and two with bare
+text; two carried a line under the name and two did not; the corner was a
+different thing on each. Four cards holding four halves of the same question
+looked like four unrelated panels.
+
+- **One header on all four**: a 40px tinted disc, the name, a line under it
+  about what the card is for, and a corner. The disc is a circle and larger
+  than the 28px squares further down the page, which is what says this row is
+  the top of the dashboard and the panels below it are not.
+- **The corner is the Focus card's alone** — the 18px mark that opens the
+  hidden chain, in the flow now rather than absolutely positioned over the
+  card. The trend badge went back to a line under the header: a card is about
+  270px of content here, and a name beside "about usual" is more than that.
+- **Two footnotes became panels.** The Focus card's goal and the Streak card's
+  record are each a *second* number, and a second number in the same box as
+  the first reads as a continuation of it. Inset, bordered, they read as what
+  the figure above is measured against.
+- **Today's Progress stacks its figures** — a mark, the number, the label
+  under it — so the card reads as three numbers first and three labels second.
+- **The Streak card grew a week.** Seven marks, worked out from
+  `current_streak` rather than fetched: a run of *n* is the last *n* days up to
+  today, so the strip is the figure beside it drawn sideways and the two cannot
+  disagree. Days still to come are drawn as neither done nor missed. It starts
+  on the day `week_starts_on` says the week starts on.
+
+The tag lines are pitched at `--text-xs` and the corner wraps before the name
+does, both for the same reason: at four across 1370px, one card wrapping where
+the others do not is the whole of what made the row look untidy.
+
 ## 2026-09-24 — The day turns over, and the goal comes off the method
 
 Two bugs in `hooks/useFocusSession.ts`, both of them the same mistake: it read

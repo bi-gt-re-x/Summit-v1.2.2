@@ -112,45 +112,104 @@ body:has(.dash) .app-main {
 }
 
 .dash-stat {
-    padding: var(--space-5) var(--space-6);
+    padding: var(--space-6);
     display: flex;
     flex-direction: column;
     min-width: 0;
 }
 
-/* The Focus card is the one with something pinned inside it: the mark in its
-   top-right corner, which is the hidden chain's front door. This is the
-   containing block that corner is measured from — the mark itself, and why it
-   is a logo and not a button, are in styles/dashboard.css. */
-.dash-stat-focus {
-    position: relative;
+/* ---- The header the four cards share ------------------------------------
+   A disc, a name with a line under it, and the card's own corner. All four
+   wear it, which is most of what makes the row read as a row: before this,
+   two cards had an icon and two did not, and the two that did sat a few
+   pixels lower than the two that did not.
+
+   `align-items: flex-start` and not `center`: the heading block is two lines
+   and the disc is one square, and centring the disc against both puts it
+   level with the gap between them. Against the top it is level with the name,
+   which is the thing it belongs to. */
+.dash-stat-head {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    /* The corner wraps before the name does. A stat card here is about 270px
+       of content, and "Today's Progress" beside an "about usual" badge is a
+       few pixels more than that — so with everything on one line the *name*
+       broke over two, on one card of four, which is the unevenness this
+       header exists to remove. The basis below is what makes the badge give
+       way instead: too little room for both and it drops to a line of its
+       own, where there is always space for it. */
+    flex-wrap: wrap;
 }
 
-/* `min-height` is the icon's height, and it is what keeps the row of four
-   level.
-
-   Two of these headings carry a 28px tinted disc and two are bare text, so the
-   heading box was 28px on the Focus and Streak cards and one line of
-   `--text-lg` — about 24 — on Today's Progress and XP Overview. Four cards in
-   a grid row all start at the same y, so that difference came straight out the
-   other side: the two titles with an icon sat a few pixels lower than the two
-   without, and every figure under them inherited the offset. Nothing was
-   misaligned within a card, which is why it reads as vaguely untidy rather
-   than as one thing being wrong.
-
-   Reserving the icon's height on all four makes the heading box the same
-   everywhere, and `align-items: center` then puts a bare title on the same
-   centre line as one sitting beside a disc. An icon added to either of the
-   other two later changes nothing. */
-.dash-stat-title {
-    display: flex;
+/* The tinted disc. A circle and 40px, rather than the 28px rounded square
+   `.dash-stat-ico` draws further down the page — this row is the top of the
+   dashboard and the panels below it are not, and the two sizes are what says
+   so. The tints are per card and set with the card, because the colour is
+   what the card is about and not a shared decoration. */
+.dash-stat-chip {
+    flex: none;
+    display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    min-height: 28px;
-    margin: 0 0 var(--space-4);
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.dash-chip-today  { background: #E9EDFC; color: #4361EE; }
+.dash-chip-xp     { background: #EFE9FC; color: #7B52D3; }
+.dash-chip-focus  { background: #E7F5EE; color: #22A06B; }
+.dash-chip-streak { background: #FDEEE4; color: #E07A34; }
+
+.dash-stat-heading {
+    /* 9.5rem is about the longest of the four names. Flex wraps on base sizes
+       before it shrinks anything, so a name that would not fit beside the
+       corner takes the line and sends the corner to the next one. */
+    flex: 1 1 9.5rem;
+    min-width: 0;
+}
+
+.dash-stat-name {
+    margin: 0;
     font-size: var(--text-lg);
     font-weight: 700;
+    line-height: 1.25;
     color: #2C302E;
+}
+
+/* The line under the name. It is about the card and never about the figure —
+   see the note on `StatHead` in components/Dashboard/StatCards.tsx — so it is
+   pitched to be read once and then not read again: small, muted, and the same
+   every day. */
+.dash-stat-tag {
+    margin: 2px 0 0;
+    /* A step below the labels elsewhere on the card, which is both how the
+       reference draws it and what keeps the longest of the four —
+       "Distraction-free. Progress fueled." — on one line at this width. Two
+       cards with a one-line tag and two with a two-line tag would put the
+       figures below them on different heights, which is the thing this row
+       was just fixed for. */
+    font-size: var(--text-xs);
+    line-height: 1.4;
+    /* One line, always. All four fit at this size and this width, and the
+       floor is here so that a tag edited to something longer later makes the
+       header taller on every card rather than on one of them. */
+    min-height: 1.4em;
+    color: #6C757D;
+}
+
+/* The corner: the trend badge on two cards, the hidden chain's mark on the
+   Focus card, nothing on the Streak card. It was absolutely positioned while
+   the mark was the only thing in it; in the header's own row it cannot
+   overlap a long title, and a card that has nothing to put there simply has a
+   shorter row. */
+.dash-stat-aside {
+    flex: none;
+    display: flex;
+    align-items: center;
+    margin-left: auto;   /* right-hand end of whichever line it lands on */
+    padding-top: 2px;
 }
 
 /* A tinted disc behind a card's icon. The tint says what kind of number the
@@ -211,15 +270,119 @@ body:has(.dash) .app-main {
     min-height: 0;
 }
 
-/* No `auto` margin any more: `.dash-stat-mid` above takes the slack, so this
-   is simply the last thing in the card and sits where the padding leaves it.
-   The bottom margin goes with it — it was holding the line off a floor it is
-   no longer pressed against. */
-.dash-stat-foot {
-    margin: 0;
-    padding-top: var(--space-4);
+/* ---- The inset strip along a card's foot --------------------------------
+   The Focus card's goal and the Streak card's record both live in one of
+   these. It was a bare line of small grey text, and a second number in the
+   same box as the first reads as a continuation of it — "0.0 hrs … Daily
+   Goal: 1.5 hrs" is two readings of the same thing unless something says
+   otherwise. The box is what says otherwise: this is the thing the figure
+   above is measured against.
+   
+   No `auto` margin. `.dash-stat-mid` takes the card's slack, so this is
+   simply the last item and lands where the padding leaves it — which is also
+   what puts the two panels on the same line as each other across the row. */
+.dash-stat-panel {
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid #EDEFF2;
+    border-radius: var(--radius-md);
+    background: #F8F9FB;
+}
+.dash-stat-panel-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    /* The bar in the Focus card's panel is a third child and belongs under the
+       line, not beside it; everything else is one row. */
+    flex-wrap: wrap;
+}
+.dash-stat-panel-ico {
+    flex: none;
+    display: inline-flex;
+    color: #9AA0A6;
+}
+.dash-stat-panel-text {
+    flex: 1 1 auto;
+    min-width: 0;
     font-size: var(--text-sm);
     color: #6C757D;
+}
+.dash-stat-panel .dash-bar {
+    flex: 1 0 100%;
+    height: 6px;
+    margin-top: var(--space-2);
+}
+
+/* ---- The week, seven marks ----------------------------------------------
+   Read off the streak rather than off a history — the arithmetic, and what it
+   can and cannot honestly show, are in `WeekDots` in
+   components/Dashboard/StatCards.tsx.
+   
+   Laid out as seven equal columns rather than a flex row with a gap, so the
+   marks are evenly spaced whatever the day names are: `minmax(0, 1fr)` keeps
+   a three-letter column from being widened by anything inside it. */
+.dash-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-1);
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    list-style: none;
+}
+.dash-week-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+.dash-week-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid #E4E7EC;
+    background: #F4F5F7;
+    color: transparent;
+}
+.dash-week-dot svg { width: 13px; height: 13px; }
+/* A day inside the run. The Streak card's own orange, so the strip and the
+   flame in the header are plainly the same subject. */
+.dash-week-day.is-done .dash-week-dot {
+    border-color: #E07A34;
+    background: #E07A34;
+    color: #fff;
+}
+/* Today, whether or not it has been earned yet: a ring around it, so the
+   reader can find which of the seven they are standing on. */
+.dash-week-day.is-today .dash-week-dot {
+    box-shadow: 0 0 0 2px rgba(224, 122, 52, 0.28);
+}
+.dash-week-name {
+    font-size: var(--text-xs);
+    color: #9AA0A6;
+    white-space: nowrap;
+}
+.dash-week-day.is-today .dash-week-name {
+    color: #6C757D;
+    font-weight: 600;
+}
+/* What the dot says, for a reader who cannot see it. Each stylesheet in this
+   codebase carries its own copy of this rule rather than there being one
+   global class; see tasks.css and analytics.css. */
+.dash-week-say {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* ---- Today's Progress --------------------------------------------------- */
@@ -285,24 +448,42 @@ body:has(.dash) .app-main {
     border-left: 1.5px solid #EAEAEA;
     padding-left: var(--space-5);
 }
+/* A mark, the number, and what it counts — the number over the label rather
+   than beside it.
+   
+   Side by side, the three rows were "28 Tasks / 0 Completed / 898 XP left",
+   and the eye had to find where each number ended and its label began three
+   times. Stacked, the figures make a column of their own and the labels make
+   a second one under them, so the card is read as three numbers first and
+   explained second, which is the order somebody glancing at a dashboard wants.
+   
+   A grid rather than nested boxes because `<dl>` will not take an extra
+   wrapper this deep: the mark spans both rows in the first column, the value
+   and the label take the second. */
 .dash-figure {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: var(--space-2);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: var(--space-3);
     min-width: 0;
 }
-.dash-figure dd {
-    order: -1;
+.dash-figure-ico {
+    grid-row: 1 / 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #9AA0A6;
+}
+.dash-figure-value {
     margin: 0;
     font-size: var(--text-xl);
     font-weight: 700;
+    line-height: 1.15;
     color: #2C302E;
-    min-width: 2.4ch;
-    text-align: right;
 }
-.dash-figure dt {
-    font-size: var(--text-md);
+.dash-figure-label {
+    font-size: var(--text-sm);
     color: #6C757D;
     white-space: nowrap;
 }
@@ -320,7 +501,14 @@ body:has(.dash) .app-main {
     font-weight: 700;
     color: #2C302E;
 }
+/* The bar's own reading, boxed. Bare, it read as a second fact beside "Level
+   119"; in a pill it reads as the caption on the bar underneath, which is what
+   it is. */
 .dash-xp-count {
+    padding: 4px var(--space-3);
+    border: 1px solid #EAEAEA;
+    border-radius: var(--radius-lg);
+    background: #F7F8FA;
     font-size: var(--text-sm);
     color: #6C757D;
     white-space: nowrap;
@@ -329,9 +517,12 @@ body:has(.dash) .app-main {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    /* The XP card's footnote, and the same rule as `.dash-stat-foot`: the
-       slack is spent in `.dash-stat-mid`, so this needs no `auto` to reach the
-       bottom and lands level with the other three. */
+    /* The XP card's footnote. It is the one of the four that is not in a
+       `.dash-stat-panel` — it is a reading of the figure above rather than a
+       target beside it, so boxing it would be claiming a comparison that is
+       not there. The rule about the margin is the panels': the slack is spent
+       in `.dash-stat-mid`, so this needs no `auto` to reach the bottom and
+       lands level with them. */
     margin: 0;
     padding-top: var(--space-4);
     font-size: var(--text-md);
@@ -1032,12 +1223,12 @@ html.focus-mode .dash-main .dash-tasks { order: 1; min-height: 0; }
    DARK THEME
    ========================================================================== */
 html[data-theme="dark"] .dash-hello,
-html[data-theme="dark"] .dash-stat-title,
+html[data-theme="dark"] .dash-stat-name,
 html[data-theme="dark"] .dash-panel-title,
 html[data-theme="dark"] .dash-big,
 html[data-theme="dark"] .dash-ring-pct,
 html[data-theme="dark"] .dash-xp-level,
-html[data-theme="dark"] .dash-figure dd,
+html[data-theme="dark"] .dash-figure-value,
 html[data-theme="dark"] .dash-week-cell dd,
 html[data-theme="dark"] .dash-task-name,
 html[data-theme="dark"] .dash-activity-name strong {
@@ -1047,11 +1238,12 @@ html[data-theme="dark"] .dash-activity-name strong {
 html[data-theme="dark"] .dash-sub,
 html[data-theme="dark"] .dash-date,
 html[data-theme="dark"] .dash-stat-sub,
-html[data-theme="dark"] .dash-stat-foot,
+html[data-theme="dark"] .dash-stat-tag,
+html[data-theme="dark"] .dash-stat-panel-text,
 html[data-theme="dark"] .dash-ring-label,
 html[data-theme="dark"] .dash-xp-count,
 html[data-theme="dark"] .dash-xp-today,
-html[data-theme="dark"] .dash-figure dt,
+html[data-theme="dark"] .dash-figure-label,
 html[data-theme="dark"] .dash-week-cell dt,
 html[data-theme="dark"] .dash-task-when,
 html[data-theme="dark"] .dash-panel-link,
@@ -1100,6 +1292,42 @@ html[data-theme="dark"] .dash-tab.is-active { background: #A38A70; color: #16191
 html[data-theme="dark"] .dash-add { background: #30363d; }
 html[data-theme="dark"] .dash-add:hover { background: #3a424d; }
 html[data-theme="dark"] .dash-panel-link:hover { color: #d8c3a5; }
+
+/* The four discs at the top of the page, and the pieces that came with them.
+   The tints are the light theme's hues taken down to something that reads on
+   #161b22 rather than desaturated: a green disc that has gone grey says the
+   card is disabled. */
+html[data-theme="dark"] .dash-chip-today  { background: #161f3a; color: #93aaff; }
+html[data-theme="dark"] .dash-chip-xp     { background: #221b39; color: #b79cf5; }
+html[data-theme="dark"] .dash-chip-focus  { background: #13291d; color: #7ee0a6; }
+html[data-theme="dark"] .dash-chip-streak { background: #2e2116; color: #e79f23; }
+
+html[data-theme="dark"] .dash-stat-panel {
+    border-color: #262c34;
+    background: #12171d;
+}
+html[data-theme="dark"] .dash-stat-panel-ico,
+html[data-theme="dark"] .dash-figure-ico,
+html[data-theme="dark"] .dash-week-name { color: #6e7681; }
+
+html[data-theme="dark"] .dash-xp-count {
+    border-color: #30363d;
+    background: #12171d;
+}
+
+html[data-theme="dark"] .dash-week-dot {
+    border-color: #30363d;
+    background: #12171d;
+}
+html[data-theme="dark"] .dash-week-day.is-done .dash-week-dot {
+    border-color: #e79f23;
+    background: #e79f23;
+    color: #1b1206;
+}
+html[data-theme="dark"] .dash-week-day.is-today .dash-week-dot {
+    box-shadow: 0 0 0 2px rgba(231, 159, 35, 0.3);
+}
+html[data-theme="dark"] .dash-week-day.is-today .dash-week-name { color: #8b949e; }
 
 html[data-theme="dark"] .dash-ico-focus  { background: #13291d; color: #7ee0a6; }
 html[data-theme="dark"] .dash-ico-streak { background: #2e2116; color: #e79f23; }

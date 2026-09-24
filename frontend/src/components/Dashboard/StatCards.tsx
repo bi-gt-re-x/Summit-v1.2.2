@@ -14,12 +14,14 @@
  * those same animated numbers, so the arc, the bar and the label they belong to
  * always agree mid-flight; nothing here is transitioned separately in CSS.
  */
-import { useCountUp } from '@/hooks';
+import type { ReactNode } from 'react';
+import { useCountUp, useSettings } from '@/hooks';
 import { format } from '@/utils';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
 import type { DaySummary, Typical } from './summary';
 import type { UserStats } from '@/types';
-import { Badge, Card, Stat } from '@/components/ui';
+import type { WeekStart } from '@/services/settings';
+import { Badge, Card } from '@/components/ui';
 import { useMarkEgg } from '@/hooks/useMarkEgg';
 
 // --------------------------------------------------------------------------
@@ -66,6 +68,157 @@ function ProgressRing({ percent, label }: { percent: number; label: string }) {
   );
 }
 
+/* --------------------------------------------------------------------------
+ * The furniture every card in the row shares
+ * ----------------------------------------------------------------------- */
+
+/**
+ * The header: a disc, a name, a line under it, and the card's own corner.
+ *
+ * All four wear the same one, which is most of what makes the row read as a
+ * row. Before this, two cards had an icon and two had none, two had a line
+ * under the title and two did not, and the corner was a different thing on
+ * each — so four cards that hold four halves of the same question looked like
+ * four unrelated panels.
+ *
+ * `tag` is a line about the card and never about the figure. It stays the same
+ * whatever the number does, which is the point: it explains what the card is
+ * for to somebody meeting it, and becomes wallpaper to everybody else. A line
+ * that changed with the data would be a second reading of the same figure and
+ * would have to be read every time.
+ *
+ * `aside` is the corner, and only the Focus card uses it — for the mark that
+ * opens the hidden chain, which is 18px and fits anywhere. The trend badge
+ * was there too for a while and had to come out: a stat card is about 270px
+ * of content at the width this row is drawn at, and a name beside a badge
+ * reading "about usual" is more than that, so either the name broke over two
+ * lines or the badge dropped to one of its own. Both are the unevenness this
+ * header exists to remove. It is a line under the header instead, which is
+ * where it was before and where there is room for it on every card.
+ */
+function StatHead({
+  tone,
+  icon,
+  title,
+  tag,
+  aside,
+}: {
+  /** Which of the four tints the disc takes. */
+  tone: 'today' | 'xp' | 'focus' | 'streak';
+  icon: ReactNode;
+  title: string;
+  tag: string;
+  aside?: ReactNode;
+}) {
+  return (
+    <header className="dash-stat-head">
+      <span className={`dash-stat-chip dash-chip-${tone}`} aria-hidden="true">
+        {icon}
+      </span>
+      <div className="dash-stat-heading">
+        <h2 className="dash-stat-name">{title}</h2>
+        <p className="dash-stat-tag">{tag}</p>
+      </div>
+      {aside != null && <div className="dash-stat-aside">{aside}</div>}
+    </header>
+  );
+}
+
+/**
+ * The inset strip along the foot of a card: an icon, a line, and sometimes a
+ * bar under it.
+ *
+ * It is a container and not merely a smaller typeface because of what it
+ * holds. Every one of these is a *second* number — the goal beside the hours,
+ * the record beside the run — and a second number in the same box as the first
+ * reads as a continuation of it. Boxing it says "this is the thing the figure
+ * above is measured against", which is exactly what it is.
+ */
+function StatPanel({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <div className="dash-stat-panel">
+      <div className="dash-stat-panel-row">
+        <span className="dash-stat-panel-ico" aria-hidden="true">
+          {icon}
+        </span>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/** A figure in Today's Progress: a mark, the number, and what it counts. */
+function Figure({ icon, value, label }: { icon: ReactNode; value: ReactNode; label: string }) {
+  return (
+    <div className="dash-figure">
+      <span className="dash-figure-ico" aria-hidden="true">
+        {icon}
+      </span>
+      <dd className="dash-figure-value">{value}</dd>
+      <dt className="dash-figure-label">{label}</dt>
+    </div>
+  );
+}
+
+/* The glyphs. Written out rather than pulled from components/Icon because each
+   one is drawn at the size it is used at — 20 in a disc, 16 in a row — and a
+   shared icon scaled by CSS loses the stroke weight that makes a 16px mark
+   readable. */
+const ICON = {
+  tasks: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <path d="m8 12 2.6 2.6L16 9" />
+    </svg>
+  ),
+  star: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3.5 2.7 5.6 6.1.9-4.4 4.3 1 6.2-5.4-2.9-5.4 2.9 1-6.2L3.2 10l6.1-.9z" />
+    </svg>
+  ),
+  clock: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  ),
+  flame: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.5-3.3" />
+    </svg>
+  ),
+  tick: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <path d="m8 12 2.6 2.6L16 9" />
+    </svg>
+  ),
+  done: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8.5 12 2.4 2.4L15.8 9" />
+    </svg>
+  ),
+  spark: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3.5 2.7 5.6 6.1.9-4.4 4.3 1 6.2-5.4-2.9-5.4 2.9 1-6.2L3.2 10l6.1-.9z" />
+    </svg>
+  ),
+  smallClock: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.5v4.8l3 1.9" />
+    </svg>
+  ),
+  trophy: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 4h10v4a5 5 0 0 1-10 0z" />
+      <path d="M7 6H5a2 2 0 0 0 2 3.6M17 6h2a2 2 0 0 1-2 3.6" />
+      <path d="M12 13v4M9 21h6M10 21a2 2 0 0 1 4 0" />
+    </svg>
+  ),
+} as const;
+
 // --------------------------------------------------------------------------
 // Today's Progress
 // --------------------------------------------------------------------------
@@ -93,20 +246,25 @@ export function TodayCard({
 
   return (
     <Card className="dash-stat dash-stat-today">
-      <h2 className="dash-stat-title">Today&apos;s Progress</h2>
+      <StatHead
+        tone="today"
+        icon={ICON.tasks}
+        title="Today&apos;s Progress"
+        tag="Small steps. Big results."
+      />
       <Trend now={day.done} usual={{ ...usual, value: usual.tasks }} />
       <div className="dash-stat-mid">
         <div className="dash-today-body">
           <ProgressRing percent={day.percent} label={caption} />
           <dl className="dash-today-figures">
-            <Stat className="dash-figure" label="Tasks" value={format.number(total)} />
-            <Stat className="dash-figure" label="Completed" value={format.number(done)} />
+            <Figure icon={ICON.tick} label="Tasks" value={format.number(total)} />
+            <Figure icon={ICON.done} label="Completed" value={format.number(done)} />
             {/* Not "XP Earned". That figure is the card immediately to the
                 right of this one — `+60 XP today` — and having the same number
                 twice on two adjacent cards spent one of four slots restating a
                 neighbour. This is the other half of it: what finishing the rest
                 of today is worth, which nothing else on the page says. */}
-            <Stat className="dash-figure" label="XP left" value={format.number(left)} />
+            <Figure icon={ICON.spark} label="XP left" value={format.number(left)} />
           </dl>
         </div>
       </div>
@@ -218,11 +376,20 @@ export function XpCard({
 
   return (
     <Card className="dash-stat">
-      <h2 className="dash-stat-title">XP Overview</h2>
+      <StatHead
+        tone="xp"
+        icon={ICON.star}
+        title="XP Overview"
+        tag="Level up your potential."
+      />
       <Trend now={xpToday} usual={{ ...usual, value: usual.xp }} />
       <div className="dash-stat-mid">
         <div className="dash-xp-head">
           <span className="dash-xp-level">Level {level.level}</span>
+          {/* A pill rather than a bare line. It is the bar's own reading —
+              where the level is up to, in the units the bar is drawn in — and
+              boxing it stops it being read as a second fact beside "Level
+              119". */}
           <span className="dash-xp-count">
             {format.number(xpInLevel)} / {format.number(level.xpRequired)} XP
           </span>
@@ -299,47 +466,48 @@ export function FocusCard({
           corner of a card, and for anybody not counting to ten that is all it
           is. Decorative to a screen reader for the same reason — it says
           nothing the wordmark in the rail has not already said. */}
-      <img
-        className="dash-focus-mark"
-        src="/static/images/logo.svg"
-        alt=""
-        width={18}
-        height={18}
-        ref={markRef}
-        onClick={onMarkClick}
+      <StatHead
+        tone="focus"
+        icon={ICON.clock}
+        title="Focus Time"
+        tag="Distraction-free progress."
+        aside={
+          <img
+            className="dash-focus-mark"
+            src="/static/images/logo.svg"
+            alt=""
+            width={18}
+            height={18}
+            ref={markRef}
+            onClick={onMarkClick}
+          />
+        }
       />
-      <h2 className="dash-stat-title">
-        <span className="dash-stat-ico dash-ico-focus" aria-hidden="true">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 7v5l3 2" />
-          </svg>
-        </span>
-        Focus Time
-      </h2>
       <div className="dash-stat-mid">
         <p className="dash-big">
           {hours.toFixed(1)} <span className="dash-big-unit">hrs</span>
         </p>
         <p className="dash-stat-sub">Today</p>
       </div>
-      <p className="dash-stat-foot">
-        Daily Goal: {session.goalHours.toFixed(1)} hrs
-        {usualHours !== null && usualHours > 0 && (
-          <span className="dash-stat-usual">· usually {usualHours.toFixed(1)}</span>
-        )}
-      </p>
-      <div className="dash-bar dash-bar-green">
-        <div
-          className="dash-bar-fill"
-          style={{ width: `${percent}%` }}
-          role="progressbar"
-          aria-valuenow={session.percent}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Focus goal progress"
-        />
-      </div>
+      <StatPanel icon={ICON.smallClock}>
+        <span className="dash-stat-panel-text">
+          Daily Goal: {session.goalHours.toFixed(1)} hrs
+          {usualHours !== null && usualHours > 0 && (
+            <span className="dash-stat-usual">· usually {usualHours.toFixed(1)}</span>
+          )}
+        </span>
+        <div className="dash-bar dash-bar-green">
+          <div
+            className="dash-bar-fill"
+            style={{ width: `${percent}%` }}
+            role="progressbar"
+            aria-valuenow={session.percent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Focus goal progress"
+          />
+        </div>
+      </StatPanel>
     </Card>
   );
 }
@@ -347,6 +515,72 @@ export function FocusCard({
 // --------------------------------------------------------------------------
 // Current Streak
 // --------------------------------------------------------------------------
+/** Sunday first, because `Date.getDay()` is. Rotated below if the week is not. */
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+
+/**
+ * This week, seven marks, read off the streak rather than off a history.
+ *
+ * There is no per-day record on this page — the card is given
+ * `current_streak` and `best_streak` and nothing else — and fetching one for a
+ * strip of seven dots would be a request per dashboard for a decoration. It
+ * does not need one. A current streak of *n* is, by definition, the last *n*
+ * days up to and including today; the backend decays a streak that went stale
+ * overnight while answering, so a streak of 3 on screen means today and the
+ * two days before it. That is enough to fill the week exactly, and it cannot
+ * disagree with the figure above it, because it *is* the figure above it.
+ *
+ * What it cannot show is a day worked before a break earlier in the same week.
+ * A streak says nothing about what happened on the far side of the day that
+ * broke it, and drawing that day as done would be inventing a fact. It stays
+ * empty, and the honest reading of the strip is "how far back does the run I
+ * am on reach", not "which days did I work".
+ *
+ * Days later than today are drawn as neither — they have not happened, and a
+ * Friday shown as missed on a Tuesday is the app telling somebody they have
+ * failed at a day that has not started.
+ */
+function WeekDots({ streak, startsOn }: { streak: number; startsOn: WeekStart }) {
+  const today = new Date().getDay();
+  const order = startsOn === 'monday' ? [1, 2, 3, 4, 5, 6, 0] : [0, 1, 2, 3, 4, 5, 6];
+  const here = order.indexOf(today);
+
+  return (
+    <ol className="dash-week" aria-label="This week">
+      {order.map((weekday, at) => {
+        /* Positions within the week that is drawn, so the sign is meaningful:
+           positive is a day already past, zero is today, negative is one still
+           to come. Counting with `getDay()` arithmetic instead would make
+           "three days ago" and "four days ahead" the same number. */
+        const back = here - at;
+        const done = back >= 0 && back < streak;
+        const isToday = back === 0;
+        return (
+          <li
+            key={weekday}
+            className={`dash-week-day${done ? ' is-done' : ''}${isToday ? ' is-today' : ''}`}
+          >
+            <span className="dash-week-dot" aria-hidden="true">
+              {done && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m6 12.5 4 4 8-9" />
+                </svg>
+              )}
+            </span>
+            <span className="dash-week-name">{DAY_NAMES[weekday]}</span>
+            {/* The dot is a picture; this is what it says. Without it the
+                strip reads out as seven day names and nothing else. */}
+            <span className="dash-week-say">
+              {back < 0 ? 'still to come' : done ? 'done' : 'not yet'}
+            </span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+
 /**
  * The streak, and a line of encouragement pitched at where it is.
  *
@@ -369,24 +603,27 @@ export function StreakCard({ stats }: { stats: UserStats }) {
      the reader's own record. */
   const toBeat = best > current ? best - current : 0;
 
+  /* The only preference this row reads. The week strip below has to start on
+     the day the rest of the app starts its weeks on, or the calendar and the
+     dashboard disagree about which column is Monday. */
+  const { prefs } = useSettings();
+
   return (
     <Card className="dash-stat">
-      <h2 className="dash-stat-title">
-        <span className="dash-stat-ico dash-ico-streak" aria-hidden="true">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.5-3.3" />
-          </svg>
-        </span>
-        Current Streak
-      </h2>
+      <StatHead
+        tone="streak"
+        icon={ICON.flame}
+        title="Current Streak"
+        tag="Consistency builds greatness."
+      />
       <div className="dash-stat-mid">
         <p className="dash-big">
           {shownCurrent} <span className="dash-big-unit">{current === 1 ? 'day' : 'days'}</span>
         </p>
-      {/* The line under the figure is where the target goes, because it is the
-          only thing on this card the reader can act on. "Nice run" is what a
-          streak already at its own record gets — there is nothing left to
-          chase and saying so is the whole reward. */}
+        {/* The line under the figure is where the target goes, because it is
+            the only thing on this card the reader can act on. "Your best run
+            yet" is what a streak already at its own record gets — there is
+            nothing left to chase and saying so is the whole reward. */}
         <p className="dash-stat-sub">
           {current === 0
             ? 'Keep it going!'
@@ -394,10 +631,13 @@ export function StreakCard({ stats }: { stats: UserStats }) {
               ? `${toBeat} ${toBeat === 1 ? 'day' : 'days'} to your best`
               : 'Your best run yet.'}
         </p>
+        <WeekDots streak={current} startsOn={prefs.week_starts_on} />
       </div>
-      <p className="dash-stat-foot">
-        Best Streak: {shownBest} {best === 1 ? 'day' : 'days'}
-      </p>
+      <StatPanel icon={ICON.trophy}>
+        <span className="dash-stat-panel-text">
+          Best Streak: {shownBest} {best === 1 ? 'day' : 'days'}
+        </span>
+      </StatPanel>
     </Card>
   );
 }
