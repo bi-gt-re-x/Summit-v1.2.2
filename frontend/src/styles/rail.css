@@ -364,31 +364,17 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* Ten clicks land here, and text that selects itself under a tenth click
-       is text somebody has to click somewhere else to be rid of — the word
-       goes blue, the second click of every pair extends the selection, and by
-       the fourth the rail looks broken rather than secret. `cursor: default`
-       for the same reason and no more: an I-beam over a word nobody is reading
-       invites the drag that starts the selection. Neither is a hint — a
-       pointer cursor would be, which is why it is not that. */
+    /* A label beside a control gets clicked by people aiming at the control,
+       and text that selects itself under a stray click is text somebody has to
+       click somewhere else to be rid of. `cursor: default` for the same reason
+       and no more: an I-beam over a word nobody is reading invites the drag
+       that starts the selection. Neither is a hint that it does anything,
+       because it does not — the hidden chain's door moved to the foot of the
+       dashboard (hooks/useQuoteEgg.ts) and the tremble that used to live here
+       went with it. */
     user-select: none;
     -webkit-user-select: none;
     cursor: default;
-}
-
-/* The tremble, from the fourth of the hidden chain's ten clicks — amplitude
-   driven by --tremble, which hooks/useTitleEgg.ts raises each time. Smaller
-   and faster than the screen's wobble underneath it: this is one word moving,
-   and a word that travelled as far as the page would simply look broken. */
-@keyframes titleTremble {
-    0%, 100% { transform: translate(0, 0); }
-    20% { transform: translate(calc(var(--tremble) * -1), calc(var(--tremble) * 0.3)); }
-    40% { transform: translate(var(--tremble), calc(var(--tremble) * -0.3)); }
-    60% { transform: translate(calc(var(--tremble) * -0.6), 0); }
-    80% { transform: translate(calc(var(--tremble) * 0.4), calc(var(--tremble) * 0.2)); }
-}
-.rail-rank-title.title-tremble {
-    animation: titleTremble 0.28s ease both;
 }
 
 /* --- Choosing a title --------------------------------------------------- */

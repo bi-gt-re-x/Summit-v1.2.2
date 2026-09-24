@@ -2,6 +2,38 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-24 — The hidden chain gets its own front door
+
+The way in was ten clicks on the rank in the rail's foot. The rail is mounted
+outside the router, so those clicks could land anywhere in the app — and the
+quote they open is on the dashboard alone. Bridging that took a navigation, an
+in-memory latch and a window event carrying the news between two components
+that never shared a parent.
+
+The door is a small Summit mark at the foot of the dashboard now, sitting over
+the quote it opens. Door and room are one component, so the tenth click plays
+the reveal where it stands.
+
+- **`hooks/useTitleEgg.ts` is gone**, and with it `armReveal`, `takeReveal` and
+  the `summit:egg-unlocked` event in `utils/easterEgg.ts`. All three existed to
+  get a reveal across a page change that no longer happens. A mechanism whose
+  reason has gone reads like it is still load-bearing, so it went with the
+  reason.
+- **The rail's title is a title again** — no ref, no click handler, and the
+  tremble it used to do is out of `styles/rail.css`.
+- **The mark is furniture first.** No role, no tabIndex, no alt text, no
+  pointer cursor: what it looks like is the sign-off at the foot of the page.
+  It is silent for its first three clicks, silent in the light, and silent for
+  good once the chain has paid out a title — the same three gates the rank had.
+- **`Rail.egg.test.tsx` is now `Rail.title.test.tsx`**, holding the title menu;
+  the chain's door is tested where it lives, in
+  `components/Dashboard/DailyQuote.test.tsx`.
+
+One consequence worth knowing: Settings can hide the daily quote, and hiding it
+hides the door with it. That is the right way round — the clue has nowhere to
+appear without the line it replaces — but the chain has no entrance for a
+reader who has switched the quote off.
+
 ## 2026-07-31 — The month view moves up the page
 
 Both sides of the month — the name and its grid, the plan and its events, the

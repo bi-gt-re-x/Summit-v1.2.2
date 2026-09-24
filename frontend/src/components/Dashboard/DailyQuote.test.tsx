@@ -1,13 +1,15 @@
 /**
- * The line at the foot of the dashboard, and the secret that replaces it.
+ * The line at the foot of the dashboard, the mark above it, and the secret
+ * that connects them.
  *
- * Two things are being protected. The first is that the quote is a quote: it
+ * Three things are being protected. The first is that the quote is a quote: it
  * paints immediately, it improves when the fetch lands, and it survives the
- * fetch never landing. The second is the reveal — which is *not* triggered
- * here any more. The ten clicks are on the rail's title, a component away
- * (hooks/useTitleEgg.ts and components/Rail.egg.test.tsx), and this file tests
- * the two ways the news reaches the quote: a latch, for a dashboard that has
- * to mount on the way, and an event, for one that was already open.
+ * fetch never landing. The second is that the mark is a logo — silent for its
+ * first three clicks, silent in the light, and silent for ever once the chain
+ * has paid out. The third is the reveal itself, which now happens here rather
+ * than arriving from somewhere else: the door moved off the rail's title and
+ * onto this mark, so the latch and the window event that used to carry the
+ * news between two components went with it (hooks/useQuoteEgg.ts).
  *
  * The storage key is asserted literally rather than through
  * utils/easterEgg.ts, because its exact spelling is a contract with three
@@ -20,7 +22,6 @@ import { act, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DailyQuote } from './DailyQuote';
 import { renderWithProviders } from '@/test/render';
-import { EGG_UNLOCKED, armReveal, takeReveal } from '@/utils/easterEgg';
 
 const daily = vi.hoisted(() => vi.fn());
 vi.mock('@/services', () => ({ quote: { daily } }));
@@ -38,11 +39,25 @@ const KEY = 'easterEgg:myles:2026-08-30';
 /** The whole reveal, from the slide-out to the spotlight lifting. */
 const WHOLE_REVEAL = 4000;
 
+/** The door. Deliberately not a button, so it is found by its class. */
+function mark() {
+  return document.querySelector('.quote-mark') as HTMLElement;
+}
+
+function dark(on: boolean) {
+  document.documentElement.setAttribute('data-theme', on ? 'dark' : 'light');
+}
+
+/** n clicks on the mark, at whatever pace: there is no streak to keep. */
+function click(n: number) {
+  for (let i = 0; i < n; i++) mark().click();
+}
+
 beforeEach(() => {
   vi.useFakeTimers({ shouldAdvanceTime: true });
   vi.setSystemTime(TODAY);
   localStorage.clear();
-  takeReveal(); // the latch is module state; do not let one test arm another
+  dark(true);
   daily.mockResolvedValue({ success: true, quote: 'Keep going.', author: 'Anon' });
 });
 
@@ -50,6 +65,8 @@ afterEach(() => {
   vi.useRealTimers();
   document.body.className = '';
   document.documentElement.className = '';
+  document.documentElement.removeAttribute('style');
+  document.documentElement.removeAttribute('data-theme');
   document.getElementById('easterDark')?.remove();
 });
 
@@ -67,7 +84,7 @@ describe('the daily quote', () => {
     expect(screen.getByText(/getting started/)).toBeInTheDocument();
   });
 
-  it('is not a way in on its own — clicking it does nothing', async () => {
+  it('is not a way in on its own — clicking the line does nothing', () => {
     renderWithProviders(<DailyQuote />);
     const line = document.getElementById('dailyQuote')!;
     for (let i = 0; i < 12; i++) line.click();
@@ -76,11 +93,43 @@ describe('the daily quote', () => {
   });
 });
 
-describe('the hidden quote', () => {
-  it('plays the whole reveal for a dashboard that mounts owing one', async () => {
-    localStorage.setItem(KEY, '1');
-    armReveal();
+describe('the way into the hidden chain', () => {
+  it('does nothing at all for the first three clicks', () => {
     renderWithProviders(<DailyQuote />);
+
+    click(3);
+
+    // No bounce, no wobble, and nothing written down. As far as anyone
+    // clicking a logo twice out of idleness can tell, it is a logo.
+    expect(mark()).not.toHaveClass('easter-pop');
+    expect(document.body.className).not.toContain('easter-wobble');
+    expect(document.documentElement.style.getPropertyValue('--wob')).toBe('');
+    expect(localStorage.getItem(KEY)).toBeNull();
+  });
+
+  it('starts bouncing on the fourth, and harder with each one after', () => {
+    renderWithProviders(<DailyQuote />);
+
+    click(4);
+    expect(mark()).toHaveClass('easter-pop');
+    // The fourth is the first that shows anything, so it is the smallest.
+    expect(mark().style.getPropertyValue('--pop')).toBe('1.06');
+    expect(document.documentElement.style.getPropertyValue('--wob')).toBe('2.20px');
+
+    click(5); // nine in total
+    expect(mark().style.getPropertyValue('--pop')).toBe('1.36');
+    expect(document.documentElement.style.getPropertyValue('--wob')).toBe('13.20px');
+  });
+
+  it('opens on the tenth, and plays the whole reveal there and then', async () => {
+    renderWithProviders(<DailyQuote />);
+
+    click(9);
+    expect(localStorage.getItem(KEY)).toBeNull();
+    expect(screen.queryByText(CLUE)).not.toBeInTheDocument();
+
+    click(1);
+    expect(localStorage.getItem(KEY)).toBe('1');
 
     // The old line leaves first; the clue is not there yet.
     expect(document.getElementById('dailyQuote')).toHaveClass('quote-slide-out');
@@ -98,34 +147,66 @@ describe('the hidden quote', () => {
     expect(document.getElementById('easterDark')).toBeNull();
   });
 
-  it('plays it on the announcement for a dashboard already open', async () => {
+  it('plays it once — the eleventh click is not a second show', async () => {
     renderWithProviders(<DailyQuote />);
-    expect(screen.queryByText(CLUE)).not.toBeInTheDocument();
 
-    localStorage.setItem(KEY, '1');
-    armReveal();
-    await act(async () => {
-      window.dispatchEvent(new CustomEvent(EGG_UNLOCKED));
-    });
-    await act(() => vi.advanceTimersByTimeAsync(600));
-
-    expect(screen.getByText(CLUE)).toBeInTheDocument();
-  });
-
-  it('plays it once, however the news arrives', async () => {
-    localStorage.setItem(KEY, '1');
-    armReveal();
-    renderWithProviders(<DailyQuote />);
+    click(10);
     await act(() => vi.advanceTimersByTimeAsync(WHOLE_REVEAL));
 
-    // The latch is spent, so a second announcement is not a second show.
-    await act(async () => {
-      window.dispatchEvent(new CustomEvent(EGG_UNLOCKED));
-    });
+    click(5);
     expect(document.getElementById('dailyQuote')).not.toHaveClass('quote-slide-out');
+    expect(document.body.className).not.toContain('easter-wobble');
     expect(screen.getByText(CLUE)).toBeInTheDocument();
   });
 
+  it('stays shut in the light, however many times it is clicked', () => {
+    dark(false);
+    renderWithProviders(<DailyQuote />);
+
+    click(12);
+
+    expect(localStorage.getItem(KEY)).toBeNull();
+    expect(screen.queryByText(CLUE)).not.toBeInTheDocument();
+    expect(mark()).not.toHaveClass('easter-pop');
+  });
+
+  it('is retired once the chain has handed out a title', () => {
+    localStorage.setItem('summitTitle:myles', 'Admin');
+    renderWithProviders(<DailyQuote />);
+
+    click(12);
+
+    expect(localStorage.getItem(KEY)).toBeNull();
+    expect(screen.queryByText(CLUE)).not.toBeInTheDocument();
+  });
+
+  it('is not retired by somebody else’s title', () => {
+    // The bug this guards: one account finishing the chain closed it for
+    // everybody who signed in on that browser afterwards, and the only symptom
+    // was a mark that did nothing and a pentagon that did nothing either.
+    localStorage.setItem('summitTitle:ada', 'Admin');
+    localStorage.setItem('summitTitle:Default', 'Admin');
+    renderWithProviders(<DailyQuote />);
+
+    click(10);
+
+    expect(localStorage.getItem(KEY)).toBe('1');
+  });
+
+  it('tells the scripts whose chain this is', () => {
+    // frontend/secret/pentagon-egg.js has no way to ask React, so the unlock
+    // has to be written where it will go looking: `easterEgg:<currentUser>:<day>`.
+    renderWithProviders(<DailyQuote />);
+    click(10);
+
+    expect(localStorage.getItem('currentUser')).toBe('myles');
+    const asTheScriptReadsIt =
+      'easterEgg:' + (localStorage.getItem('currentUser') || 'Default') + ':2026-08-30';
+    expect(localStorage.getItem(asTheScriptReadsIt)).toBe('1');
+  });
+});
+
+describe('the hidden quote', () => {
   it('shows the clue again on the next visit, without the theatrics', () => {
     localStorage.setItem(KEY, '1');
     renderWithProviders(<DailyQuote />);
@@ -135,20 +216,17 @@ describe('the hidden quote', () => {
     expect(document.getElementById('dailyQuote')).not.toHaveClass('quote-slide-out');
   });
 
-  it('is retired once the chain has handed out a title', async () => {
+  it('is retired once the chain has handed out a title', () => {
     localStorage.setItem(KEY, '1');
     localStorage.setItem('summitTitle:myles', 'Admin');
-    armReveal();
     renderWithProviders(<DailyQuote />);
 
-    await act(() => vi.advanceTimersByTimeAsync(WHOLE_REVEAL));
     expect(screen.queryByText(CLUE)).not.toBeInTheDocument();
   });
 
   it('leaves nothing on the page when the dashboard is left mid-reveal', async () => {
-    localStorage.setItem(KEY, '1');
-    armReveal();
     const view = renderWithProviders(<DailyQuote />);
+    click(10);
 
     view.unmount();
     await act(() => vi.advanceTimersByTimeAsync(WHOLE_REVEAL));

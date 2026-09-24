@@ -11,13 +11,13 @@
  *
  * ## Why load them rather than port them
  *
- * The dashboard's stage had to be ported: its trigger moved to the rail, its
- * element is React's, and its reveal had to survive a page swap (see
- * hooks/useQuoteEgg.ts and hooks/useTitleEgg.ts). None of that is true of
- * these three. Each binds to markup React renders and drives animations React
- * never touches, so a port would be a transcription — the same logic in a
- * different syntax, with a fresh chance to get the timing wrong. Left as they
- * are, they are the files that have always worked.
+ * The dashboard's stage had to be ported: its trigger is a mark React renders
+ * and its reveal swaps text React owns, so neither end of it could be left to
+ * a script reaching into the DOM (see hooks/useQuoteEgg.ts). None of that is
+ * true of these three. Each binds to markup React renders and drives
+ * animations React never touches, so a port would be a transcription — the
+ * same logic in a different syntax, with a fresh chance to get the timing
+ * wrong. Left as they are, they are the files that have always worked.
  *
  * ## One execution per mount, and exactly one
  *

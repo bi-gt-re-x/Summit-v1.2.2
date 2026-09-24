@@ -49,7 +49,6 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth, useMediaQuery, useSettings, useStats, useSubjectIndex } from '@/hooks';
 import { followedSubjects } from '@/utils/analyticsPrefs';
 import { useChainAccount } from '@/hooks/useChainAccount';
-import { useTitleEgg } from '@/hooks/useTitleEgg';
 import { format } from '@/utils';
 import { rankFor } from '@/utils/mastery';
 import { earnedTitle } from '@/utils/easterEgg';
@@ -452,20 +451,20 @@ export function Rail() {
      `titleShown` in utils/rankTitle for the case that causes. */
   const title = picked && titles.includes(picked) ? picked : rank;
 
-  /* Ten clicks on that title open the hidden chain. The rail is the only
-     thing on screen from every page, which is why the door is here and the
-     room is on the dashboard — see hooks/useTitleEgg.ts. */
-  const { titleRef, onTitleClick } = useTitleEgg();
+  /* The title used to be the way into the hidden chain — ten clicks on it,
+     from any page, because the rail is on all of them. The door is on the
+     dashboard now, beside the quote it opens (hooks/useQuoteEgg.ts), so the
+     title here is a title and nothing else. */
 
   return (
     <nav className="rail" aria-label="Main">
       {/* Mark and wordmark are both the link home. The mark used to be a bare
           span, because the easter egg counted clicks on it and had to cancel
           the navigation to do so — a logo that quietly stopped going home in
-          dark mode. The egg's ten clicks live on the dashboard's daily quote
-          now (hooks/useQuoteEgg.ts), which is not a link and has nothing to
-          cancel, so the mark is a link again and behaves like one in both
-          themes.
+          dark mode. The egg's ten clicks live on a second copy of the mark at
+          the foot of the dashboard now (hooks/useQuoteEgg.ts), which is not a
+          link and has nothing to cancel, so this one is a link again and
+          behaves like one in both themes.
 
           The mark is the file again, and that is the rebrand undoing a
           workaround rather than adding one. It was inlined because the old
@@ -672,16 +671,9 @@ export function Rail() {
                   it is a strip. "Grand Champion" in 54px of usable width is an
                   ellipsis, and an ellipsis is not a rank. */}
               <div className="rail-rank-head">
-                {/* No role, no tabIndex, no cursor: this is where the hidden
-                    chain starts, and a title that announced itself as a button
-                    would be advertising it. What it looks like is a label, and
-                    for anybody not counting to ten that is all it is. */}
-                <span
-                  className="rail-rank-title"
-                  title={`${title} · Level ${level.level}`}
-                  ref={titleRef}
-                  onClick={onTitleClick}
-                >
+                {/* No role, no tabIndex, no cursor: it is a label, and the
+                    three dots beside it are the control. */}
+                <span className="rail-rank-title" title={`${title} · Level ${level.level}`}>
                   {title}
                 </span>
                 <button
