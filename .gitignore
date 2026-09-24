@@ -39,3 +39,8 @@ data/backups/*.db
 # A development session key, generated on first run when SECRET_KEY is unset.
 # Per-machine and never shared — see backend/config/settings.py.
 data/.session_key
+
+# The C++ engine's build output. The source is checked in; the shared library
+# is per-machine and per-architecture, and `engine/build.sh` makes it in
+# seconds. See engine/README.md.
+engine/build/

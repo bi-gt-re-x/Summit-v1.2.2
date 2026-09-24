@@ -2,6 +2,42 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-24 — A C++ engine, for the one thing Python is wrong for
+
+`engine/` builds one small shared library; `backend/engine/` loads it with
+ctypes and is the only thing in the backend that knows it exists. Nothing
+requires it — `backend/engine/schedule.py` keeps a pure-Python planner and uses
+it when the library is missing, stale or switched off with `SUMMIT_ENGINE=0`.
+An unbuilt engine is a slightly worse plan, never a broken app.
+
+What it does is **schedule**: fit a list of tasks into the week ahead, by
+greedy seed and then simulated annealing over relocate-and-swap. 200 tasks
+across 40 slots is 328,000 candidate rearrangements in 10ms, about 32 million
+iterations a second.
+
+**What it does not do is the rollup**, and that is the part worth keeping. The
+daily rollup in `analytics.py` was the obvious candidate — the "10,000 users ×
+50,000 events" shape — and it was written, proved equal to the Python on five
+random datasets, and was *three times slower*. Flattening the nested dicts into
+buffers cost 483ms against the 511ms the whole Python rollup took, before the
+engine had added a single number. A rollup's work is proportional to the rows
+going into it, so moving the work moves the rows, and there is nothing left to
+win. It was deleted rather than shipped behind a flag.
+
+So the rule, written at the top of `engine/include/summit/schedule.h`: **send
+C++ a small question with a large answer behind it.** Planning sends 12KB and
+gets 800 bytes back with a few million rearrangements in between; that ratio is
+the whole reason the boundary is worth crossing.
+
+No rule about Summit is in the C++. It is handed durations, values, deadlines,
+subject ids, capacities and weights, all decided in Python. The one exception
+is the scoring function, which exists in both languages because the fallback
+planner needs a ruler on a machine with no engine — and the two are asserted
+equal in `tests/test_engine_schedule.py`.
+
+Nothing is wired to a route yet. The measurements and the call shape are in
+`engine/README.md`.
+
 ## 2026-09-24 — The four stat cards get one header, and a week
 
 The row had four different card shapes. Two led with an icon and two with bare
