@@ -2,6 +2,54 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-24 — The day turns over, and the goal comes off the method
+
+Two bugs in `hooks/useFocusSession.ts`, both of them the same mistake: it read
+an answer once and never asked again.
+
+**The day.** The record is keyed `focus:<user>:<date>` and the date was read
+off the clock at every write, while the state in memory belonged to whatever
+day the tab had loaded on. Past midnight those disagree, so the first save of
+the new day wrote yesterday's banked seconds under today's key and the morning
+opened already won. The day is carried in the hook's state now and `rollOver`
+turns it — on a minute's watch and whenever a hidden tab comes back. A session
+running across midnight is cut in two rather than stopped: the part before is
+banked against the day it was earned on, and the new day picks it up from its
+own midnight.
+
+**The goal.** It was `focus_goal_hours` in Settings, while the same account was
+separately choosing a pomodoro level and style that already say how long its
+day is meant to be. The order is the day's own goal, then the method
+(`utils/pomodoroChoice`, read off `goalHoursFor`), then Settings for an account
+that has never opened the timer. The timer announces a change so the Focus card
+follows a level moved on another page without a reload.
+
+## 2026-09-24 — The stat cards spend their slack on the figure
+
+Four cards in one grid row are all as tall as the tallest, which is Today's
+Progress and its ring. The other three put the difference in a single band —
+heading, figure, a hole, then a footnote pinned to the floor by `margin-top:
+auto`. `.dash-stat-mid` takes the slack instead and centres what is in it, so
+the gap is split around the thing the card is about, and the footnotes line up
+across the row without anything being pinned anywhere.
+
+## 2026-09-24 — The hidden chain works in the light
+
+The door and the pentagon after it both checked for dark mode, and between them
+they made the chain unfindable rather than hidden: ten clicks on the mark in a
+light-themed dashboard did nothing at all and explained nothing. Both gates are
+gone. The silence of the first three clicks is what hides it, and the pentagon
+no longer takes a pointer cursor in one theme and not the other — which was the
+one visible tell it had.
+
+## 2026-09-24 — No graph paper behind the calendar
+
+The app's background grid is 80px squares that creep a square every forty
+seconds; the calendar draws its own at 86px. Matching the pitch was tried and
+cannot work, because the calendar's hours scroll inside their own pane and a
+fixed layer cannot follow them. The paper comes off on a calendar view. The
+wash and the drifting dots stay — they have nothing to line up with.
+
 ## 2026-09-24 — The four stat cards line up
 
 Two of the headings on the dashboard's top row carry a 28px tinted disc and two
@@ -14,19 +62,6 @@ untidy rather than as a bug.
 
 `.dash-stat-title` reserves the icon's height on all four now, and centres what
 is in it. Giving either of the other two an icon later changes nothing.
-
-## 2026-09-24 — The calendar's background is the paper it is ruled on
-
-The app's graph paper is an 80px grid in 3.8% black that creeps one square every
-forty seconds. On a calendar view that sat behind a real grid at a different
-pitch, in a different grey, sliding — two rulers disagreeing.
-
-While a calendar view is open it takes the calendar's own figures: 86px squares,
-which is `HOUR_H` in `utils/calendarGrid.ts` and the pitch every hour rule is
-drawn at, in `.wk-hourline`'s grey in both themes, and the drift stops. The two
-share a pitch and an ink but not an origin — the hours live in a pane that
-scrolls independently of a fixed background layer, and holding those together
-would mean writing the scroll offset onto the layer every frame.
 
 ## 2026-09-24 — The hidden chain gets its own front door
 
@@ -53,8 +88,9 @@ the tenth click and nothing has to be held over.
   which reads as a control with a rate rather than as something about to give.
 - **The mark is furniture first.** No role, no tabIndex, no alt text, no
   pointer cursor: what it looks like is a logo in the corner of a card. Silent
-  for its first three clicks, silent in the light, and silent for good once the
-  chain has paid out a title — the same three gates the rank had.
+  for its first three clicks, and silent for good once the chain has paid out a
+  title. (It was also silent in the light, which turned out to be a way of
+  being broken rather than hidden — see the entry above.)
 - **`Rail.egg.test.tsx` is now `Rail.title.test.tsx`**, holding the title menu.
   The door is tested in `components/Dashboard/StatCards.egg.test.tsx` and the
   room in `components/Dashboard/DailyQuote.test.tsx`.

@@ -76,45 +76,28 @@
 .hm-ambient.hm-animate .hm-grid { animation: hmGridDrift 40s linear infinite; }
 html[data-theme="dark"] .hm-grid { color: rgba(255, 255, 255, 0.045); }
 
-/* --- the same paper the calendar is ruled on ---------------------------- */
-/* On a calendar view the page has a grid of its own, and two grids at
-   different pitches in different greys read as a printing error. `on-calendar`
-   is set by App.tsx while one of the three views is open; these three rules
-   are the whole of what it does.
+/* --- no paper behind a page that is already ruled ----------------------- */
+/* The calendar draws a grid of its own: seven day separators and a hundred and
+   sixty hour rules, at a pitch of 86px (`HOUR_H` in utils/calendarGrid.ts).
+   This one is 80px squares that creep a square every forty seconds, so behind
+   a calendar there were two grids, at two pitches, in two greys, one of them
+   moving.
 
-   **86px** is `HOUR_H` in utils/calendarGrid.ts — the height of one hour in
-   the Week and Day views, and the pitch every hour rule is drawn at. Squares
-   rather than rows, because the columns it would otherwise have to agree with
-   are a seventh of the grid's width each and so are not a fixed pitch at all.
+   Matching the pitch does not fix that, and was tried: the calendar's hours
+   scroll inside their own pane and a fixed layer cannot follow them, so the
+   two would line up at one scroll position and nowhere else. Holding them
+   together means writing the pane's scroll offset onto this layer every frame,
+   which is a rAF loop for a background nobody looks at straight on.
 
-   **The ink** is `.wk-hourline`'s, in calendar/week.css, in both themes. The
-   background grid was three-and-a-bit per cent black, which sat well under a
-   page of cards and looked like a second, fainter grid beside a real one. The
-   calendar's own rule is the right weight for a ruler on this background; it
-   is already proved by the lines inside the card.
+   So the paper comes off on a calendar view. The rest of the layer stays — the
+   slow wash and the field of drifting dots, which have nothing to line up with
+   and read as depth rather than as a second ruler.
 
-   **The drift stops.** One square every forty seconds is unnoticeable against
-   a page of prose and is exactly the wrong thing next to a fixed ruler: the
-   two would be aligned twice a minute and visibly out of step the rest of the
-   time. `inset` comes back to zero with it — the -80px was overscan so the
-   drift never exposed an edge, and it is only a phase offset once nothing
-   moves.
-
-   What this does *not* do is phase-lock the two. The calendar's hours live in
-   a pane that scrolls independently of a fixed background layer, so the lines
-   share a pitch and an ink but not an origin, and scrolling the grid slides
-   one past the other. Holding them together would mean writing the pane's
-   scroll offset onto this layer every frame, which is a rAF loop for a
-   background nobody is looking straight at. */
-body.on-calendar .hm-grid {
-    inset: 0;
-    background-image:
-        repeating-linear-gradient(to right, currentColor 0 1px, transparent 1px 86px),
-        repeating-linear-gradient(to bottom, currentColor 0 1px, transparent 1px 86px);
-    color: #eceef1;
-}
-body.on-calendar .hm-ambient.hm-animate .hm-grid { animation: none; }
-html[data-theme="dark"] body.on-calendar .hm-grid { color: #1b2029; }
+   `display: none` rather than `opacity: 0`: it is two repeating gradients over
+   the whole viewport, and there is no reason to composite them on every frame
+   of a page that will never show them. `on-calendar` is set by App.tsx while
+   one of the three views is open, and this is the whole of what it does. */
+body.on-calendar .hm-grid { display: none; }
 
 @keyframes hmGridDrift {
     from { transform: translate3d(0, 0, 0); }

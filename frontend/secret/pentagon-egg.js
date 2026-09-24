@@ -23,24 +23,26 @@
         try { return localStorage.getItem('easterEgg:' + user() + ':' + todayStr()) === '1'; }
         catch (e) { return false; }
     }
-    // The whole hidden chain only lives in the dark.
-    function isDark() {
-        return document.documentElement.getAttribute('data-theme') === 'dark';
-    }
-
     function init() {
         var pent = document.querySelector('.lp-preview-rating .lp-radar');
         if (!pent) return;
         if (!quoteUnlocked()) return;          // stays inert until the quote is found
 
-        if (isDark()) { pent.style.cursor = 'pointer'; }
+        /* No `cursor: pointer`. It used to be set here, and only in dark mode,
+           which was the one visible difference between a pentagon that was a
+           door and one that was a drawing — an arrow turning into a hand is
+           exactly the tell a secret cannot afford. */
         pent.style.pointerEvents = 'auto';
 
         var clicks = 0;
         var busy = false;
         pent.addEventListener('click', function () {
             if (busy) return;
-            if (!isDark()) { clicks = 0; return; }   // only reachable in dark mode
+            /* The dark-mode gate is gone from the whole chain. It was here and
+               on the door that opens this one, and it meant a reader in the
+               light clicked ten times on the dashboard, got nothing, and had no
+               way to find out why — the one state where a secret is not
+               mysterious but broken. The clue is a clue in both themes now. */
             clicks++;
             // Every click pops — the third one's pop is built into the front of
             // the spin, so it turns straight out of the same bounce.

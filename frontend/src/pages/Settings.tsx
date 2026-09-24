@@ -925,7 +925,7 @@ export default function Settings() {
           {
             id: 'home',
             label: 'Open on',
-            hint: 'Where signing in lands, and what the app opens on next time.',
+            hint: 'Where signing in lands, and where the app opens from a bare link. Reloading a page you are already on keeps you on it.',
             control: (
               <select
                 className="st-input"

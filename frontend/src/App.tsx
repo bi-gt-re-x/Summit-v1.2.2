@@ -88,7 +88,11 @@ export function CalendarHome() {
   return <Navigate to={`/calendar/${prefs.calendar_view}${search}${hash}`} replace />;
 }
 
-function FrontDoor() {
+/* Exported for App.frontDoor.test.tsx. The redirect is the whole of what the
+   Startup setting does — the select in Settings writes `home_page` and this is
+   the only thing that reads it — so it is the one piece of this file worth
+   being able to render on its own. */
+export function FrontDoor() {
   const { status } = useAuth();
   const { prefs, ready } = useSettings();
   if (status === 'loading') return <Loading />;

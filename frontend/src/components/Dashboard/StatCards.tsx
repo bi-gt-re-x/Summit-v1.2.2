@@ -95,18 +95,20 @@ export function TodayCard({
     <Card className="dash-stat dash-stat-today">
       <h2 className="dash-stat-title">Today&apos;s Progress</h2>
       <Trend now={day.done} usual={{ ...usual, value: usual.tasks }} />
-      <div className="dash-today-body">
-        <ProgressRing percent={day.percent} label={caption} />
-        <dl className="dash-today-figures">
-          <Stat className="dash-figure" label="Tasks" value={format.number(total)} />
-          <Stat className="dash-figure" label="Completed" value={format.number(done)} />
-          {/* Not "XP Earned". That figure is the card immediately to the
-              right of this one — `+60 XP today` — and having the same number
-              twice on two adjacent cards spent one of four slots restating a
-              neighbour. This is the other half of it: what finishing the rest
-              of today is worth, which nothing else on the page says. */}
-          <Stat className="dash-figure" label="XP left" value={format.number(left)} />
-        </dl>
+      <div className="dash-stat-mid">
+        <div className="dash-today-body">
+          <ProgressRing percent={day.percent} label={caption} />
+          <dl className="dash-today-figures">
+            <Stat className="dash-figure" label="Tasks" value={format.number(total)} />
+            <Stat className="dash-figure" label="Completed" value={format.number(done)} />
+            {/* Not "XP Earned". That figure is the card immediately to the
+                right of this one — `+60 XP today` — and having the same number
+                twice on two adjacent cards spent one of four slots restating a
+                neighbour. This is the other half of it: what finishing the rest
+                of today is worth, which nothing else on the page says. */}
+            <Stat className="dash-figure" label="XP left" value={format.number(left)} />
+          </dl>
+        </div>
       </div>
     </Card>
   );
@@ -218,22 +220,24 @@ export function XpCard({
     <Card className="dash-stat">
       <h2 className="dash-stat-title">XP Overview</h2>
       <Trend now={xpToday} usual={{ ...usual, value: usual.xp }} />
-      <div className="dash-xp-head">
-        <span className="dash-xp-level">Level {level.level}</span>
-        <span className="dash-xp-count">
-          {format.number(xpInLevel)} / {format.number(level.xpRequired)} XP
-        </span>
-      </div>
-      <div className="dash-bar">
-        <div
-          className="dash-bar-fill"
-          style={{ width: `${percent}%` }}
-          role="progressbar"
-          aria-valuenow={Math.round(level.percent)}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label={`Level ${level.level} progress`}
-        />
+      <div className="dash-stat-mid">
+        <div className="dash-xp-head">
+          <span className="dash-xp-level">Level {level.level}</span>
+          <span className="dash-xp-count">
+            {format.number(xpInLevel)} / {format.number(level.xpRequired)} XP
+          </span>
+        </div>
+        <div className="dash-bar">
+          <div
+            className="dash-bar-fill"
+            style={{ width: `${percent}%` }}
+            role="progressbar"
+            aria-valuenow={Math.round(level.percent)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Level ${level.level} progress`}
+          />
+        </div>
       </div>
       <p className="dash-xp-today">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -313,10 +317,12 @@ export function FocusCard({
         </span>
         Focus Time
       </h2>
-      <p className="dash-big">
-        {hours.toFixed(1)} <span className="dash-big-unit">hrs</span>
-      </p>
-      <p className="dash-stat-sub">Today</p>
+      <div className="dash-stat-mid">
+        <p className="dash-big">
+          {hours.toFixed(1)} <span className="dash-big-unit">hrs</span>
+        </p>
+        <p className="dash-stat-sub">Today</p>
+      </div>
       <p className="dash-stat-foot">
         Daily Goal: {session.goalHours.toFixed(1)} hrs
         {usualHours !== null && usualHours > 0 && (
@@ -373,20 +379,22 @@ export function StreakCard({ stats }: { stats: UserStats }) {
         </span>
         Current Streak
       </h2>
-      <p className="dash-big">
-        {shownCurrent} <span className="dash-big-unit">{current === 1 ? 'day' : 'days'}</span>
-      </p>
+      <div className="dash-stat-mid">
+        <p className="dash-big">
+          {shownCurrent} <span className="dash-big-unit">{current === 1 ? 'day' : 'days'}</span>
+        </p>
       {/* The line under the figure is where the target goes, because it is the
           only thing on this card the reader can act on. "Nice run" is what a
           streak already at its own record gets — there is nothing left to
           chase and saying so is the whole reward. */}
-      <p className="dash-stat-sub">
-        {current === 0
-          ? 'Keep it going!'
-          : toBeat > 0
-            ? `${toBeat} ${toBeat === 1 ? 'day' : 'days'} to your best`
-            : 'Your best run yet.'}
-      </p>
+        <p className="dash-stat-sub">
+          {current === 0
+            ? 'Keep it going!'
+            : toBeat > 0
+              ? `${toBeat} ${toBeat === 1 ? 'day' : 'days'} to your best`
+              : 'Your best run yet.'}
+        </p>
+      </div>
       <p className="dash-stat-foot">
         Best Streak: {shownBest} {best === 1 ? 'day' : 'days'}
       </p>

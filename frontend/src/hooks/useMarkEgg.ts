@@ -22,12 +22,18 @@
  * land on a page with no quote on it, so the reveal had to be owed across a
  * navigation. Both ends are on the dashboard now and are mounted together.
  *
- * ## The dark
+ * ## There is no dark-mode gate any more
  *
- * The whole chain only lives in the dark, and that gate is the chain's rather
- * than this file's: frontend/secret/pentagon-egg.js checks the same thing
- * before the next clue will wake up, so a door that opened in the light would
- * hand the reader a clue pointing at a pentagon that then does nothing.
+ * There was, here and on the pentagon this door leads to, and between them
+ * they made the chain unfindable rather than hidden. A reader in the light
+ * theme clicked the mark ten times, got nothing at all, and had no way to
+ * learn that the theme was the reason — which is the one state a secret must
+ * not be in: not mysterious, just broken. Both gates are gone, so the door
+ * answers in whichever theme the reader is actually using.
+ *
+ * The silence of the first three clicks is what hides it, and that is enough:
+ * it is a count nobody arrives at by accident, and the mark gives no other
+ * sign — no pointer cursor, no tooltip, no role.
  *
  * The bounce is `.dash-focus-mark.easter-pop` and the screen's shake is
  * `body.easter-wobble`, both in styles/dashboard.css.
@@ -57,11 +63,6 @@ export interface UseMarkEgg {
   markRef: React.RefObject<HTMLImageElement | null>;
   /** The ten clicks land here. */
   onMarkClick: () => void;
-}
-
-/** The whole hidden chain only lives in the dark. */
-function isDark(): boolean {
-  return document.documentElement.getAttribute('data-theme') === 'dark';
 }
 
 export function useMarkEgg(): UseMarkEgg {
@@ -137,11 +138,6 @@ export function useMarkEgg(): UseMarkEgg {
        just a logo. */
     if (account === null) return;
     if (unlockedToday(account) || earnedTitle(account)) return;
-    // In the light it is a logo too. The count does not survive the trip.
-    if (!isDark()) {
-      clicks.current = 0;
-      return;
-    }
 
     clicks.current += 1;
     if (clicks.current < NEEDED) {

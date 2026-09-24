@@ -50,6 +50,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
 import { useIntervals } from '@/hooks/useIntervals';
+import { POMODORO_CHANGED, pomodoroKey } from '@/utils/pomodoroChoice';
 import { KINDS, type Interval, type Kind, type Readiness } from '@/components/Timer/intervals';
 import {
   DEFAULT_LEVEL,
@@ -141,9 +142,11 @@ interface Stored {
   kind: Kind | null;
 }
 
-function key(user: string): string {
-  return `pomodoro:${user}`;
-}
+/* The key itself lives in utils/pomodoroChoice, beside the reader that
+   hooks/useFocusSession.ts uses to take the day's focus goal off the style and
+   level stored under it. One key, written down once; this hook is still the
+   only thing that writes to it. */
+const key = pomodoroKey;
 
 function isReadiness(value: unknown): value is Readiness {
   return value === 'low' || value === 'normal' || value === 'high';
@@ -297,6 +300,10 @@ export function usePomodoro(
       latest.current = nextState;
       setState(nextState);
       save(user, nextState);
+      /* The focus session reads the style and the level out of this record to
+         work out the day's goal, and it is a different hook — nothing tells it
+         that localStorage moved inside one tab. See utils/pomodoroChoice. */
+      window.dispatchEvent(new CustomEvent(POMODORO_CHANGED));
     },
     [user],
   );

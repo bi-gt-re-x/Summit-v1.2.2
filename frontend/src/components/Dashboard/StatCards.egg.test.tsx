@@ -3,10 +3,16 @@
  *
  * Almost all of this is about the door staying shut. It is a logo on a card
  * anybody might click, so the tests that matter are the ones that prove it
- * does nothing — for the first three clicks, in the light, and for ever once
- * the chain has paid the account its title. The silence is asserted as
- * carefully as the shake, because a secret that answers the first click is a
- * button with a strange icon.
+ * does nothing — for the first three clicks, and for ever once the chain has
+ * paid the account its title. The silence is asserted as carefully as the
+ * shake, because a secret that answers the first click is a button with a
+ * strange icon.
+ *
+ * What is *not* a gate any more is the theme. There was a dark-mode check
+ * here and another on the pentagon, and between them they made the chain
+ * unfindable rather than hidden: ten clicks in the light did nothing and
+ * explained nothing. One test below stands where that one did, and asserts
+ * the opposite.
  *
  * The escalation is pinned by value and not merely by direction. "It shakes
  * harder each time" is true of a straight line too, and a straight line is
@@ -185,15 +191,20 @@ describe('the mark on the Focus card', () => {
     expect(document.body.className).not.toContain('easter-wobble');
   });
 
-  it('stays shut in the light, however many times it is clicked', () => {
+  it('opens in the light as readily as in the dark', () => {
+    // It did not, and the theme was the only reason — ten clicks in the light
+    // did nothing and said nothing, which is a secret nobody can tell from a
+    // broken logo. The gate came off here and off the pentagon this leads to
+    // (frontend/secret/pentagon-egg.js).
     dark(false);
     draw();
 
-    click(12);
+    click(4);
+    expect(mark()).toHaveClass('easter-pop');
 
-    expect(localStorage.getItem(KEY)).toBeNull();
-    expect(announced).toBe(0);
-    expect(mark()).not.toHaveClass('easter-pop');
+    click(6);
+    expect(localStorage.getItem(KEY)).toBe('1');
+    expect(announced).toBe(1);
   });
 
   it('is retired once the chain has handed out a title', () => {
