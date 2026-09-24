@@ -159,10 +159,21 @@ export default function App() {
   const landing = isLanding(pathname);
   /* See the note on <Ambient /> below. */
   const ownsAmbient = pathname === '/timer';
+
+  /* `on-calendar` re-rules the background's graph paper to the calendar's own
+     hour pitch while a calendar view is open — styles/ambient.css has the
+     figures and the caveat. A body class rather than a prop on <Ambient />,
+     because what changes is a stylesheet's mind about one layer and not
+     anything the component renders; `has-rail` beside it works the same way. */
+  const onCalendar = pathname === '/calendar' || pathname.startsWith('/calendar/');
   useEffect(() => {
     document.body.classList.toggle('has-rail', !landing);
     return () => document.body.classList.add('has-rail');
   }, [landing]);
+  useEffect(() => {
+    document.body.classList.toggle('on-calendar', onCalendar);
+    return () => document.body.classList.remove('on-calendar');
+  }, [onCalendar]);
 
   /* Whose hidden chain this is. Above the router so the name is right before
      any page mounts a script that reads it — see hooks/useChainAccount.ts. */

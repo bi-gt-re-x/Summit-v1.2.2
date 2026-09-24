@@ -118,10 +118,35 @@ body:has(.dash) .app-main {
     min-width: 0;
 }
 
+/* The Focus card is the one with something pinned inside it: the mark in its
+   top-right corner, which is the hidden chain's front door. This is the
+   containing block that corner is measured from — the mark itself, and why it
+   is a logo and not a button, are in styles/dashboard.css. */
+.dash-stat-focus {
+    position: relative;
+}
+
+/* `min-height` is the icon's height, and it is what keeps the row of four
+   level.
+
+   Two of these headings carry a 28px tinted disc and two are bare text, so the
+   heading box was 28px on the Focus and Streak cards and one line of
+   `--text-lg` — about 24 — on Today's Progress and XP Overview. Four cards in
+   a grid row all start at the same y, so that difference came straight out the
+   other side: the two titles with an icon sat a few pixels lower than the two
+   without, and every figure under them inherited the offset. Nothing was
+   misaligned within a card, which is why it reads as vaguely untidy rather
+   than as one thing being wrong.
+
+   Reserving the icon's height on all four makes the heading box the same
+   everywhere, and `align-items: center` then puts a bare title on the same
+   centre line as one sitting beside a disc. An icon added to either of the
+   other two later changes nothing. */
 .dash-stat-title {
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    min-height: 28px;
     margin: 0 0 var(--space-4);
     font-size: var(--text-lg);
     font-weight: 700;

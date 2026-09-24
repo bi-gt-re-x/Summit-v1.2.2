@@ -70,7 +70,6 @@ const GONE = new Map([
   ['utils/skillTree', 'Task-derived skill trees. Nothing rendered them.'],
   ['utils/growthChart.ts', 'The growth canvas renderer, kept for a component already gone.'],
   ['utils/trends', "The Trends tab's arithmetic, removed with the tab."],
-  ['hooks/useTitleEgg.ts', "The chain's door while it was the rail's title; it is the dashboard's mark now."],
 ]);
 
 const REF =

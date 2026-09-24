@@ -38,6 +38,23 @@
  * first-time reader is in.
  */
 
+/**
+ * Announced when the tenth click lands, so the quote can play its reveal.
+ *
+ * The same device as `summit:stats-changed` in components/Rail.tsx, for the
+ * same reason: one fact, one direction, no reply. The door is the mark in the
+ * corner of the Focus card and the room is the quote at the foot of the page —
+ * two children of pages/Dashboard.tsx with no state between them and no reason
+ * to be given any, since one of them has exactly one thing to tell the other.
+ *
+ * No latch goes with it any more. There was one, back when the door was the
+ * rail's title and the tenth click could land on a page where the quote was
+ * not mounted: the reveal had to survive a navigation, so it was owed rather
+ * than played. Both ends are on the dashboard now and are on screen together,
+ * so the event is heard the moment it is sent.
+ */
+export const EGG_UNLOCKED = 'summit:egg-unlocked';
+
 /** Nobody signed in — the landing page's own door still works signed out. */
 export const ANON = 'Default';
 

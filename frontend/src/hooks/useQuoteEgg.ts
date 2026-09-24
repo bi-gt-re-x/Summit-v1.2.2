@@ -1,36 +1,27 @@
 /**
- * The hidden chain's front door, and the room behind it.
+ * The hidden quote — what the ten clicks on the Focus card's mark are for.
  *
- * At the foot of the dashboard, beside the day's quote, sits a small Summit
- * mark. Ten clicks on it in the dark and the quote slips away, replaced for
- * the rest of the day by a cryptic clue. The swap is sleek: the old line
- * glides out, the new one rises in with an ominous glow, the rest of the
- * screen goes dark for a beat, and the whole page shakes.
+ * When the chain is unlocked, the day's quote at the foot of the dashboard
+ * slips away and is replaced, for the rest of the day, by a cryptic clue. The
+ * swap is sleek: the old line glides out, the new one rises in with an ominous
+ * glow, the rest of the screen goes dark for a beat, and the whole page shakes.
  *
- * ## Why one hook and not two
+ * This hook is the *room*, not the door. The counting lives in
+ * hooks/useMarkEgg.ts, on the mark in the corner of the Focus card, and the
+ * tenth click there sends `EGG_UNLOCKED`. Both are children of
+ * pages/Dashboard.tsx and are on screen together, so the news arrives the
+ * moment it is sent and there is nothing to hold it over. All this file
+ * decides is which of the three states the line is in:
  *
- * The counting used to live in `hooks/useTitleEgg.ts`, on the rail's title,
- * and the rail is mounted outside the router — so the tenth click could land
- * on any page, and getting the reveal played on a dashboard that might not be
- * mounted yet took a navigation, an in-memory latch and a window event
- * between two components that never shared a parent.
+ *   * the tenth click just landed — play the whole thing
+ *   * unlocked earlier          — the clue, plainly, no theatrics
+ *   * neither                   — the day's quote, untouched
  *
- * The door is on the dashboard now, in the same element as the quote it
- * opens, so none of that has anywhere left to go: the tenth click calls
- * `reveal()` directly. The latch and the event were deleted with it rather
- * than left standing, because a mechanism whose reason has gone is worse than
- * no mechanism — it reads like it is still load-bearing.
- *
- * The door is silent for its first three clicks (see SILENT), and the whole
- * chain only lives in the dark: the pentagon in frontend/secret/pentagon-egg.js
- * checks the same thing before the next clue will wake up, so a chain
- * half-open in the light would dead-end.
- *
- * One consequence worth naming: Settings can hide the quote
- * (`show_quote` in pages/Dashboard.tsx), and hiding it hides the door with
- * it. That is the right way round — the clue has nowhere to appear without
- * the line it replaces — but it does mean the chain has no entrance for a
- * reader who has switched the quote off.
+ * One consequence worth naming: Settings can hide this line (`show_quote` in
+ * pages/Dashboard.tsx), and it can hide the stat cards the door sits on
+ * (`show_stats`). Either switch breaks the chain's first step — one takes away
+ * the door, the other the room it opens — and neither says so, because a
+ * setting that explained itself would be advertising the secret.
  *
  * ## Where the theatre lives
  *
@@ -49,25 +40,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useChainAccount } from '@/hooks/useChainAccount';
-import { earnedTitle, markUnlockedToday, unlockedToday } from '@/utils/easterEgg';
+import { EGG_UNLOCKED, earnedTitle, unlockedToday } from '@/utils/easterEgg';
 
 /** What the day's quote is replaced by. The pentagon is on the landing page. */
 const CLUE = '"The pentagon is the key, find it" -Mysterious,,';
-
-/** Clicks on the mark to unlock. */
-const NEEDED = 10;
-
-/**
- * Clicks that do nothing at all.
- *
- * Three, because two is inside the range of an accidental double-click and
- * four is enough clicks that somebody who meant them has already stopped. The
- * silence is the point: a secret that answers the first click is a button.
- */
-const SILENT = 3;
-
-/** How long a pop and its wobble run before the page is let still again. */
-const POP = 340;
 
 /* The reveal's beats, in ms. SLIDE_OUT matches the transition on #dailyQuote
    in styles/dashboard.css; the rest are measured from the swap. */
@@ -84,20 +60,10 @@ export interface UseQuoteEgg {
   containerClass: string;
   /** Put this on the quote element; the egg drives its classes directly. */
   quoteRef: React.RefObject<HTMLParagraphElement | null>;
-  /** Put this on the mark beside it; the egg drives its classes too. */
-  markRef: React.RefObject<HTMLImageElement | null>;
-  /** The ten clicks land here. */
-  onMarkClick: () => void;
-}
-
-/** The whole hidden chain only lives in the dark. */
-function isDark(): boolean {
-  return document.documentElement.getAttribute('data-theme') === 'dark';
 }
 
 export function useQuoteEgg(): UseQuoteEgg {
   const quoteRef = useRef<HTMLParagraphElement>(null);
-  const markRef = useRef<HTMLImageElement>(null);
   const [clue, setClue] = useState<string | null>(null);
   const [spotlight, setSpotlight] = useState(false);
 
@@ -201,75 +167,22 @@ export function useQuoteEgg(): UseQuoteEgg {
     if (unlockedToday(account)) setClue(CLUE);
   }, [account]);
 
-  /* --- The door ---------------------------------------------------------- */
-
-  /* Not state: the count is read and written inside one click and never
-     rendered, so putting it in state would re-render the dashboard's footer
-     nine times to show nothing. */
-  const clicks = useRef(0);
-
-  /**
-   * Click n of ten, from the fourth: the mark bounces and the screen shakes
-   * with it, both harder each time. Both amplitudes are measured from the
-   * first click that shows anything, so the fourth is a twitch rather than
-   * arriving already a third of the way up the scale.
-   */
-  const pop = useCallback(
-    (n: number) => {
-      const felt = n - SILENT;
-
-      const mark = markRef.current;
-      if (mark) {
-        mark.style.setProperty('--pop', (1 + felt * 0.06).toFixed(2));
-        mark.classList.remove('easter-pop');
-        void mark.offsetWidth; // restart the animation
-        mark.classList.add('easter-pop');
-      }
-
-      const root = document.documentElement;
-      root.style.setProperty('--wob', `${(felt * 2.2).toFixed(2)}px`);
-      root.style.setProperty('--wob-rot', `${(felt * 0.24).toFixed(2)}deg`);
-      root.classList.add('easter-shake-clip');
-      document.body.classList.remove('easter-wobble');
-      void document.body.offsetWidth; // restart the animation
-      document.body.classList.add('easter-wobble');
-
-      after(POP, () => {
-        document.body.classList.remove('easter-wobble');
-        root.classList.remove('easter-shake-clip');
-        mark?.classList.remove('easter-pop');
-      });
-    },
-    [after],
-  );
-
-  const onMarkClick = useCallback(() => {
-    /* Nothing to find: nobody is known yet, the clue is out for today, or the
-       chain has already paid out this account's title. Either way the mark is
-       just a logo. */
-    if (account === null) return;
-    if (unlockedToday(account) || earnedTitle(account)) return;
-    // In the light it is a logo too. The count does not survive the trip.
-    if (!isDark()) {
-      clicks.current = 0;
-      return;
-    }
-
-    clicks.current += 1;
-    if (clicks.current < NEEDED) {
-      if (clicks.current > SILENT) pop(clicks.current);
-      return;
-    }
-
-    clicks.current = 0;
-    markUnlockedToday(account);
-    /* The pop's wobble is still on the body and would fight the reveal's own,
-       bigger shake for the same animation slot. `reveal()` clears it first. */
-    reveal();
-  }, [account, pop, reveal]);
+  /* The tenth click, from the mark in the Focus card's corner. Nothing is
+     held over between the two: both are on the dashboard, so by the time this
+     is sent the quote is already mounted and listening. The unlock is written
+     by the door before it announces itself, which is why this asks about the
+     title and not about the day — the day is the thing that just changed. */
+  useEffect(() => {
+    const onUnlocked = () => {
+      if (account === null || earnedTitle(account)) return;
+      reveal();
+    };
+    window.addEventListener(EGG_UNLOCKED, onUnlocked);
+    return () => window.removeEventListener(EGG_UNLOCKED, onUnlocked);
+  }, [reveal, account]);
 
   const containerClass =
     (clue ? ' quote-ominous' : '') + (spotlight ? ' quote-spotlight' : '');
 
-  return { clue, containerClass, quoteRef, markRef, onMarkClick };
+  return { clue, containerClass, quoteRef };
 }

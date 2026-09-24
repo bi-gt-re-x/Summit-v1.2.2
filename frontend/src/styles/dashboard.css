@@ -955,34 +955,44 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
     flex: none;
 }
 
-/* The Summit mark, sitting over the quote as the page's sign-off — and the
-   way into the hidden chain, which is the half of it that has to look like the
-   other half. So: quiet enough to be furniture, opaque enough to be worth a
-   click once somebody wonders. No pointer cursor, because that is the one
-   thing that would give it away; `user-select: none` because a run of clicks
-   on an image otherwise ends in a dragged ghost of it.
+/* ==========================================================================
+   HIDDEN QUOTE EASTER EGG
+   Ten clicks in the dark on the mark in the Focus card's corner
+   (hooks/useMarkEgg.ts): the quote below slides out sleekly, and the
+   mysterious one rises in with an ominous glow while the whole screen shakes
+   (hooks/useQuoteEgg.ts).
+   ========================================================================== */
 
-   The door's ten clicks and its bounce are in hooks/useQuoteEgg.ts. */
-.quote-mark {
-    display: block;
-    margin: 0 auto var(--space-1);
-    opacity: 0.45;
+/* The door: the Summit mark in the top-right corner of the Focus card.
+
+   It has to look like the thing it is pretending to be, so it is a logo in a
+   corner — quiet enough to be furniture, solid enough to be worth a click once
+   somebody wonders about it. No pointer cursor, because that is the one thing
+   that would give it away, and no `title`. `user-select: none` because a run
+   of ten clicks on an image otherwise ends in a dragged ghost of it and a blue
+   selection over the card.
+
+   Positioned against `.dash-stat-focus` in dashboard-home.css, which is that
+   card. The offsets are the card's own padding — `--space-5` down and
+   `--space-6` in — plus 5px, which is what centres an 18px mark on the 28px
+   heading band beside it (`.dash-stat-title`'s `min-height`, which is the
+   icon disc's height). Level with "Focus Time" rather than level with the top
+   of its line box: the two are a mark and a title on one row, and a mark
+   sitting a few pixels proud of the words reads as a mistake. */
+.dash-focus-mark {
+    position: absolute;
+    top: calc(var(--space-5) + 5px);
+    right: var(--space-6);
+    opacity: 0.4;
     cursor: default;
     user-select: none;
     -webkit-user-select: none;
     -webkit-user-drag: none;
     transition: opacity 0.25s ease;
 }
-.quote-mark:hover {
-    opacity: 0.7;
+.dash-focus-mark:hover {
+    opacity: 0.65;
 }
-
-/* ==========================================================================
-   HIDDEN QUOTE EASTER EGG (driven by hooks/useQuoteEgg.ts)
-   Ten clicks on the mark above the quote, in the dark: the quote slides out
-   sleekly, and the mysterious one rises in with an ominous glow while the
-   whole screen shakes.
-   ========================================================================== */
 #dailyQuote {
     display: inline-block;
     transition: transform 0.55s cubic-bezier(0.6, 0.02, 0.2, 1), opacity 0.55s ease;
@@ -1034,20 +1044,20 @@ body.easter-wobble {
 }
 
 /* The mark's own answer to each click from the fourth: a bounce that grows
-   with the count (--pop, raised by the hook), so the tenth is plainly the end
-   of something that has been building.
+   with the count (--pop, raised by hooks/useMarkEgg.ts), so the ninth is
+   plainly the last thing before something gives.
 
    It is the mark that bounces, because it is the mark you click. This was
    `.rail-brand-mark` while the nav logo was the way in, and `#dailyQuote`
    while the quote itself was — see the note in components/Rail.tsx for the
-   first move and hooks/useQuoteEgg.ts for the last. */
+   first of those moves. */
 @keyframes easterPop {
     0%   { transform: scale(1); }
     38%  { transform: scale(var(--pop, 1.1)); }
     68%  { transform: scale(0.95); }
     100% { transform: scale(1); }
 }
-.quote-mark.easter-pop {
+.dash-focus-mark.easter-pop {
     animation: easterPop 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
     transform-origin: 50% 50%;
 }

@@ -11,15 +11,13 @@
  * The markup keeps `.quote-container` and `#dailyQuote` because the hidden
  * quote's stylesheet is written against exactly those — the HIDDEN QUOTE
  * EASTER EGG block in styles/dashboard.css. This line is what the hidden chain
- * replaces, and the small mark above it is the way in: ten clicks on it in the
- * dark. Both ends live in hooks/useQuoteEgg.ts.
+ * replaces; the ten clicks that unlock it are on the mark in the corner of the
+ * Focus card (hooks/useMarkEgg.ts), and hooks/useQuoteEgg.ts is how the two
+ * meet.
  *
  * The quote element deliberately takes no `className`. The egg restarts CSS
  * animations on it by hand, and React must not be holding the other end of the
- * class attribute while it does — see the note in the hook. The mark carries
- * one, but a constant one: React writes `quote-mark` on the first render and
- * has nothing to change on any later one, so the class the egg adds and
- * removes beside it is never overwritten.
+ * class attribute while it does — see the note in the hook.
  */
 import { useEffect, useState } from 'react';
 
@@ -34,7 +32,7 @@ const PLACEHOLDER = {
 
 export function DailyQuote() {
   const [line, setLine] = useState(PLACEHOLDER);
-  const { clue, containerClass, quoteRef, markRef, onMarkClick } = useQuoteEgg();
+  const { clue, containerClass, quoteRef } = useQuoteEgg();
 
   useEffect(() => {
     let live = true;
@@ -61,22 +59,6 @@ export function DailyQuote() {
 
   return (
     <div className={`quote-container${containerClass}`}>
-      {/* No role, no tabIndex, no alt text and no pointer cursor: this is
-          where the hidden chain starts, and a mark that announced itself as a
-          button would be advertising it. What it looks like is the sign-off
-          at the foot of the page, and for anybody not counting to ten that is
-          all it is. Decorative to a screen reader for the same reason — the
-          quote below is the content here, and the mark says nothing the
-          wordmark in the rail has not already said. */}
-      <img
-        className="quote-mark"
-        src="/static/images/logo.svg"
-        alt=""
-        width={18}
-        height={18}
-        ref={markRef}
-        onClick={onMarkClick}
-      />
       <p id="dailyQuote" ref={quoteRef}>
         {clue ?? `“${line.quote}” - ${line.author}`}
       </p>

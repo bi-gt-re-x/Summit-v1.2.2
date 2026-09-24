@@ -2,6 +2,32 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-24 — The four stat cards line up
+
+Two of the headings on the dashboard's top row carry a 28px tinted disc and two
+are bare text, so the heading box was 28px on Focus Time and Current Streak and
+about 19 on Today's Progress and XP Overview — a 16px `--text-lg` line. Four
+cards in a grid row all start at the same y, so the two titles with an icon sat
+four or five pixels below the two without, and every figure under them inherited
+it. Nothing was wrong inside any one card, which is why it read as vaguely
+untidy rather than as a bug.
+
+`.dash-stat-title` reserves the icon's height on all four now, and centres what
+is in it. Giving either of the other two an icon later changes nothing.
+
+## 2026-09-24 — The calendar's background is the paper it is ruled on
+
+The app's graph paper is an 80px grid in 3.8% black that creeps one square every
+forty seconds. On a calendar view that sat behind a real grid at a different
+pitch, in a different grey, sliding — two rulers disagreeing.
+
+While a calendar view is open it takes the calendar's own figures: 86px squares,
+which is `HOUR_H` in `utils/calendarGrid.ts` and the pitch every hour rule is
+drawn at, in `.wk-hourline`'s grey in both themes, and the drift stops. The two
+share a pitch and an ink but not an origin — the hours live in a pane that
+scrolls independently of a fixed background layer, and holding those together
+would mean writing the scroll offset onto the layer every frame.
+
 ## 2026-09-24 — The hidden chain gets its own front door
 
 The way in was ten clicks on the rank in the rail's foot. The rail is mounted
@@ -10,29 +36,33 @@ quote they open is on the dashboard alone. Bridging that took a navigation, an
 in-memory latch and a window event carrying the news between two components
 that never shared a parent.
 
-The door is a small Summit mark at the foot of the dashboard now, sitting over
-the quote it opens. Door and room are one component, so the tenth click plays
-the reveal where it stands.
+The door is the Summit mark in the top-right corner of the Focus card now, and
+the quote it opens is at the foot of the same page. Both are children of
+`pages/Dashboard.tsx` and are on screen together, so one window event carries
+the tenth click and nothing has to be held over.
 
-- **`hooks/useTitleEgg.ts` is gone**, and with it `armReveal`, `takeReveal` and
-  the `summit:egg-unlocked` event in `utils/easterEgg.ts`. All three existed to
-  get a reveal across a page change that no longer happens. A mechanism whose
-  reason has gone reads like it is still load-bearing, so it went with the
-  reason.
+- **`hooks/useTitleEgg.ts` is gone**, and so are `armReveal` and `takeReveal` in
+  `utils/easterEgg.ts`. The latch existed to get a reveal across a page change
+  that no longer happens. `EGG_UNLOCKED` stays, because the door and the room
+  are still two components.
 - **The rail's title is a title again** — no ref, no click handler, and the
   tremble it used to do is out of `styles/rail.css`.
+- **The build is a curve, not a ramp.** Three clicks in silence, then the shake
+  climbs as the square of the count: 0.7px on the fourth, 6.3 on the sixth,
+  25.2 on the ninth, against the reveal's own 30. Linear gave six even steps,
+  which reads as a control with a rate rather than as something about to give.
 - **The mark is furniture first.** No role, no tabIndex, no alt text, no
-  pointer cursor: what it looks like is the sign-off at the foot of the page.
-  It is silent for its first three clicks, silent in the light, and silent for
-  good once the chain has paid out a title — the same three gates the rank had.
-- **`Rail.egg.test.tsx` is now `Rail.title.test.tsx`**, holding the title menu;
-  the chain's door is tested where it lives, in
-  `components/Dashboard/DailyQuote.test.tsx`.
+  pointer cursor: what it looks like is a logo in the corner of a card. Silent
+  for its first three clicks, silent in the light, and silent for good once the
+  chain has paid out a title — the same three gates the rank had.
+- **`Rail.egg.test.tsx` is now `Rail.title.test.tsx`**, holding the title menu.
+  The door is tested in `components/Dashboard/StatCards.egg.test.tsx` and the
+  room in `components/Dashboard/DailyQuote.test.tsx`.
 
-One consequence worth knowing: Settings can hide the daily quote, and hiding it
-hides the door with it. That is the right way round — the clue has nowhere to
-appear without the line it replaces — but the chain has no entrance for a
-reader who has switched the quote off.
+One consequence worth knowing: Settings can hide the daily quote (`show_quote`)
+and the stat cards (`show_stats`). One takes away the room and the other the
+door, and neither says so — a setting that explained itself would be
+advertising the secret.
 
 ## 2026-07-31 — The month view moves up the page
 

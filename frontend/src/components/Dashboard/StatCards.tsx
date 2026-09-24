@@ -20,6 +20,7 @@ import type { UseFocusSession } from '@/hooks/useFocusSession';
 import type { DaySummary, Typical } from './summary';
 import type { UserStats } from '@/types';
 import { Badge, Card, Stat } from '@/components/ui';
+import { useMarkEgg } from '@/hooks/useMarkEgg';
 
 // --------------------------------------------------------------------------
 // The ring
@@ -262,6 +263,9 @@ export function XpCard({
  * driven by, passed down rather than re-read. Two `useFocusSession` calls would
  * each hold their own copy of the day's localStorage record, and pressing + on
  * the panel would move its goal while this card went on showing the old one.
+ *
+ * The mark in the corner is the hidden chain's front door — ten clicks on it
+ * in the dark. See hooks/useMarkEgg.ts; the card is otherwise unaware of it.
  */
 export function FocusCard({
   session,
@@ -281,9 +285,25 @@ export function FocusCard({
   // Already whole percents out of the hook that computes it, so the same rule
   // holds: it moves when the bar would move.
   const percent = useCountUp(session.percent);
+  const { markRef, onMarkClick } = useMarkEgg();
 
   return (
-    <Card className="dash-stat">
+    <Card className="dash-stat dash-stat-focus">
+      {/* No role, no tabIndex, no alt text and no pointer cursor: this is
+          where the hidden chain starts, and a mark that announced itself as a
+          button would be advertising it. What it looks like is a logo in the
+          corner of a card, and for anybody not counting to ten that is all it
+          is. Decorative to a screen reader for the same reason — it says
+          nothing the wordmark in the rail has not already said. */}
+      <img
+        className="dash-focus-mark"
+        src="/static/images/logo.svg"
+        alt=""
+        width={18}
+        height={18}
+        ref={markRef}
+        onClick={onMarkClick}
+      />
       <h2 className="dash-stat-title">
         <span className="dash-stat-ico dash-ico-focus" aria-hidden="true">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
