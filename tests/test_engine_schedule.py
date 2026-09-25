@@ -22,7 +22,9 @@ purpose, and a suite that went red on a machine with no C++ compiler would
 have made it mandatory by the back door. The greedy's own tests run either
 way, at the bottom, because that path is the one most people will be on.
 """
+import ctypes
 import random
+from array import array
 
 import pytest
 
@@ -109,6 +111,42 @@ def test_the_search_actually_improves_on_its_seed():
     assert total_gain > 0
 
 
+def _score_in_engine(work, day, slot_of, *, late_penalty, switch_penalty):
+    """`summit_plan_score` called directly, for the comparison below.
+
+    Built here rather than exposed on `schedule` because nothing but this
+    needs it: a caller wanting to score somebody else's plan already has
+    `schedule.score_plan`, which works with or without the engine. What is
+    being tested is the ABI boundary, so the test crosses it itself.
+    """
+    minutes = array('i', (task.minutes for task in work))
+    values = array('d', (task.value for task in work))
+    dues = array('i', (task.due for task in work))
+    subjects = array('i', (task.subject for task in work))
+    slot_minutes = array('i', (slot.minutes for slot in day))
+    slot_weights = array('d', (slot.weight for slot in day))
+    assignment = (ctypes.c_int32 * len(work))(*slot_of)
+
+    call_tasks = engine.Tasks(
+        minutes=schedule._ptr(minutes, ctypes.c_int32),
+        value=schedule._ptr(values, ctypes.c_double),
+        due=schedule._ptr(dues, ctypes.c_int32),
+        subject=schedule._ptr(subjects, ctypes.c_int32),
+        count=len(work),
+    )
+    call_slots = engine.Slots(
+        minutes=schedule._ptr(slot_minutes, ctypes.c_int32),
+        weight=schedule._ptr(slot_weights, ctypes.c_double),
+        count=len(day),
+    )
+    options = engine.PlanOpts(late_penalty=late_penalty,
+                              switch_penalty=switch_penalty,
+                              iterations=0, seed=1)
+    return engine.library().summit_plan_score(
+        ctypes.byref(call_tasks), ctypes.byref(call_slots),
+        ctypes.byref(options), assignment)
+
+
 @needs_engine
 def test_the_two_scorers_agree():
     # score_plan is written in Python and in C++ — the one piece of arithmetic
@@ -119,6 +157,49 @@ def test_the_two_scorers_agree():
     in_python = schedule.score_plan(work, day, found.slot_of,
                                     switch_penalty=12.5, late_penalty=0.7)
     assert found.score == pytest.approx(in_python, rel=1e-9)
+
+
+@needs_engine
+@pytest.mark.parametrize('seed', [1, 8, 31, 64])
+def test_the_two_scorers_agree_on_arrangements_no_planner_would_pick(seed):
+    """The same check, on assignments neither planner would ever produce.
+
+    Agreeing on a good plan is weak evidence: both planners aim at the same
+    thing, so the plans they make exercise the parts of the objective that are
+    usually in play and leave the rest alone. Random assignments hit the
+    corners — a task far past its deadline, six subjects alternating in one
+    slot, a slot packed well over its capacity — and those are precisely the
+    terms most likely to have been transcribed differently between the two
+    languages.
+
+    Over-capacity is deliberate. Both scorers score what they are given rather
+    than refusing it, because a caller comparing plans wants to know *how*
+    bad; if one of them quietly started rejecting instead, this is what would
+    notice.
+    """
+    rng = random.Random(seed)
+    work, day = _week(seed, tasks=50, slots=8)
+    late, switch = 0.65, 17.5
+
+    for _ in range(25):
+        slot_of = [rng.choice([-1] + list(range(len(day)))) for _ in work]
+        in_python = schedule.score_plan(work, day, slot_of,
+                                        late_penalty=late, switch_penalty=switch)
+        in_cpp = _score_in_engine(work, day, slot_of,
+                                  late_penalty=late, switch_penalty=switch)
+        assert in_cpp == pytest.approx(in_python, rel=1e-9, abs=1e-9)
+
+
+@needs_engine
+def test_a_slot_index_that_does_not_exist_is_ignored_by_both():
+    # Not a thing a planner produces, but a thing a caller can hand over —
+    # a plan kept from a week that had more slots in it.
+    work, day = _week(9, tasks=6, slots=2)
+    beyond = [0, 1, 99, -1, 0, -5]
+    assert _score_in_engine(work, day, beyond, late_penalty=0.5, switch_penalty=0.0) \
+        == pytest.approx(
+            schedule.score_plan(work, day, beyond, late_penalty=0.5, switch_penalty=0.0),
+            rel=1e-9)
 
 
 @needs_engine
