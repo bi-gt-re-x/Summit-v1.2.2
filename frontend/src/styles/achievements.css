@@ -231,7 +231,9 @@ html[data-theme="dark"] .ac-page {
     list-style: none; margin: 0; padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: var(--space-3);
+    /* Matched to the wall below it, for the reason given there: four cards
+       twelve pixels apart are one wide card with lines in it. */
+    gap: var(--space-5);
 }
 .ac-recent-card {
     position: relative;
@@ -487,7 +489,13 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
     list-style: none; margin: 0; padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--space-3);
+    /* `--space-5`, the gap every other row of cards in this app uses — the
+       dashboard's four figures, the goals ladder, the records shelf. It was
+       `--space-3`, which is the gap for things that belong together inside one
+       card, and at twelve pixels a hundred tiles read as a single ruled sheet
+       rather than as a hundred separate objects. A wall is read by comparing
+       neighbours, and neighbours have to be visibly separate to be compared. */
+    gap: var(--space-5);
 }
 
 .ac-tile {

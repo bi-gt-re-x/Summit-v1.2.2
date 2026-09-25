@@ -2,6 +2,40 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-25 — Every badge gets its own picture
+
+The wall had forty drawings for a hundred and forty-nine badges. Everything
+without an exception fell back to its metric, so the seven streak badges were
+seven identical flames, the six tree-progress badges six identical lattices,
+and a page whose whole job is to be looked at had one picture for every four
+things on it. A row of tiles differing only in their text is a list with
+decoration.
+
+All 149 are drawn now, and where a family climbs the drawing climbs with it:
+the streak runs spark, flame, torch, bonfire, comet, sun, orbit — a year being
+one trip round. The mountains go footprints, stairs, ladder, an arrow, a tent,
+a flag on the top.
+
+- **51 new shapes**, each a stroked path that still reads at the sixteen
+  pixels a tile's hexagon actually gives it — which is what rules out anything
+  with a face, a hand, or more than about six strokes.
+- **The tables moved** to `components/Achievements/glyphs.tsx`, the way
+  `components/Analytics/glyphs.ts` already does it. The page was 1,155 lines
+  and most of the growth would have been art.
+- **Not globally unique, and deliberately so.** 149 distinct shapes that all
+  still read at that size do not exist, and inventing them would mean drawings
+  that say nothing about their badge. What is guaranteed is that no two badges
+  sharing a metric or a category share a drawing — the ones that end up beside
+  each other.
+- **`tests/test_achievement_art.py`** holds the catalogue and the art
+  together. A badge added in `backend/api/achievements.py` without a drawing
+  now fails a test instead of quietly becoming the fifth identical flame.
+
+The wall's gap went from `--space-3` to `--space-5`, the gap every other row of
+cards in the app uses. Twelve pixels is the spacing for things that belong
+together inside one card; a hundred tiles at twelve pixels read as a single
+ruled sheet. The four recent cards above it match.
+
 ## 2026-09-24 — A C++ engine, for the one thing Python is wrong for
 
 `engine/` builds one small shared library; `backend/engine/` loads it with
