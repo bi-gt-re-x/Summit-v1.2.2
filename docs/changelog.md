@@ -2,6 +2,51 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-25 — The goal groups get a card, and say something new
+
+## The whitespace was never the gap
+
+This has been reported five times and fixed twice, both times by adjusting the
+space below the two collapsed groups. Measured, that space is 24px — ordinary
+section rhythm, and not what anybody was looking at.
+
+The two `PanelGroup`s were the only things on the Recommendations tab not
+inside a panel. Shut, they were four lines of text and two chevrons on the
+page's own background, with a hairline over each and no edge anywhere near
+them. Nothing said where the region ended, so everything below it read as part
+of it. That is not a gap that can be tuned away.
+
+Both groups are in one `.ax-panel` now. Shut, it is a closed card with two
+rows; open, a card with its contents inside. The 24px below is unchanged and
+now reads as the space between two cards, because that is what it is.
+
+## "From your goals" became rows you can tell apart
+
+The rows were three stacked spans with a hairline between them, no padding and
+no background — a list, on a tab made of cards. Worse, they led with the
+instruction, so two goals stalled for the same reason produced two rows both
+opening **Put one of its tasks on this week**, identical for two lines, with
+the only thing distinguishing them in grey at the bottom.
+
+They are cards now, with the amber stripe `.ax-limiter` uses, and the **goal's
+own name leads**. The instruction follows it, which is the order it can
+actually be read in.
+
+## Two sentences that said nothing
+
+- **"…is currently the biggest limiter"** is a comparison, and at 100% there is
+  nothing to compare against. When one subject holds the whole shortfall the
+  card says *"Nothing has moved lately, and all of it is Computer Science."*
+- **"This accounts for about 100% of the work on this goal that went badly"**
+  sat directly above *"26 of the 26 tasks you rated as going badly on this goal
+  are filed under Computer Science"* — one fact, written twice, the second time
+  better. The percentage line is dropped whenever it is a share of everything.
+- **"Nothing finished in 1116 days"** is accurate and unreadable. It is *over 3
+  years* now; months above eight weeks, years above eighteen months, exact days
+  below that, where the difference between eleven and nineteen is worth having.
+  `goalAnalytics.since.test.ts` pins the boundaries and the plurals — it caught
+  "1 days" on its first run.
+
 ## 2026-09-25 — Every badge gets its own picture
 
 The wall had forty drawings for a hundred and forty-nine badges. Everything

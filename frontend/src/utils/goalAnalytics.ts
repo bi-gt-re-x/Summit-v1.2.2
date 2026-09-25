@@ -197,6 +197,34 @@ export interface GoalAction {
 }
 
 /**
+ * A gap, in the largest unit that is still honest about it.
+ *
+ * It was always days, which is right up to a point and absurd past it: a goal
+ * abandoned three years ago reported "Nothing finished in 1116 days", and a
+ * four-digit number is something a reader has to do arithmetic on before it
+ * means anything. Nobody converts 1116 into "about three years" in their head
+ * while scanning a page; they read it as "a big number" and move on, which is
+ * the same as not having been told.
+ *
+ * Months above eight weeks, years above eighteen months, and "days" below
+ * that, where the exact count is the useful part — the difference between
+ * eleven days and nineteen is a thing to act on, the difference between 1116
+ * and 1124 is not.
+ */
+export function sinceWhen(days: number): string {
+  if (days < 56) return `${days} day${days === 1 ? '' : 's'}`;
+  if (days < 550) {
+    const months = Math.round(days / 30.4);
+    return `about ${months} month${months === 1 ? '' : 's'}`;
+  }
+  // Rounded to the half year: "over 3 years" and "over 3.5 years" are both
+  // readings somebody can hold, and the half is the difference between a goal
+  // abandoned last spring and one abandoned the spring before.
+  const years = Math.round((days / 365.25) * 2) / 2;
+  return `over ${years} years`;
+}
+
+/**
  * What this goal's own figures suggest doing, if anything.
  *
  * Every one is guarded by the numbers behind it, and the list is empty when
@@ -227,7 +255,7 @@ export function goalActions(
       because:
         daysSinceWork === null
           ? 'No task linked to this goal has ever been finished.'
-          : `Nothing finished in ${daysSinceWork} days, though ${reading.linked} task${reading.linked === 1 ? ' is' : 's are'} linked.`,
+          : `Nothing finished in ${sinceWhen(daysSinceWork)}, though ${reading.linked} task${reading.linked === 1 ? ' is' : 's are'} linked.`,
       title: 'Put one of its tasks on this week',
       effect: 'Opens the calendar on the next free block.',
       tone: 'urgent',

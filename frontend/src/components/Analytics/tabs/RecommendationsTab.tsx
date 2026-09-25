@@ -130,16 +130,24 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           Capped by the tone setting, same as the cards below: this is a
           diagnosis and how many of those a reader meets at once is exactly
           what that setting is about. See utils/analyticsPrefs. */}
-      {/* Both shut groups in one section, and that is a spacing fix rather
-          than a tidy-up. This tab sets a `--space-8` gap between sections —
-          right for panels of prose, and wrong for a shut group, which is two
-          lines of text and a chevron. One per section put forty pixels above
-          and below each of them, so two collapsed headers floated in a white
-          field looking like a page that had failed to load its middle. Stacked
-          inside one section they fall under `.ax-group + .ax-group`, which is
-          the rhythm every other group stack in the app already uses. */}
+      {/* Both groups inside one panel, and that is the fix the last two
+          attempts at this missed.
+
+          They were bare: a heading, a note and a chevron on the page's own
+          background, with a hairline over each. Every other thing on this tab
+          is a card. Shut, they were four lines of text floating in a field
+          with no edge anywhere near them — which reads as a page that failed
+          to load its middle, and which no amount of adjusting the gap below
+          them could fix, because the gap was never the problem. It measures
+          24px. The problem was that nothing said where the region ended.
+
+          A panel says it. Shut, this is a closed card with two rows in it;
+          open, it is a card with its contents inside. The space below is the
+          same 24px it always was and now reads as the space between two
+          cards, which is what it is. */}
       {(goalLimits.length > 0 || goalAdvice.length > 0) && (
         <section className="ax-section">
+          <div className="ax-panel ax-goal-groups">
           {goalLimits.length > 0 && (
             <PanelGroup
               title="Why your goals are moving the way they are"
@@ -166,16 +174,25 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
               <ul className="ax-goal-advice">
                 {goalAdvice.map((row) => (
                   <li key={row.id} className={`is-${row.tone}`}>
-                    <strong>{row.title}</strong>
-                    <span className="ax-muted">{row.because}</span>
-                    <Link to="/goals" className="ax-link">
+                    {/* The goal first. It was last, under the instruction, and
+                        two goals stalled for the same reason produced two rows
+                        that both opened "Put one of its tasks on this week" —
+                        identical for their first two lines, with the only
+                        thing telling them apart at the bottom in grey. The
+                        name identifies the row; the instruction is what to do
+                        about it, and reads as an instruction once you know
+                        which goal it is about. */}
+                    <Link to="/goals" className="ax-goal-advice-goal">
                       {row.goalTitle}
                     </Link>
+                    <strong>{row.title}</strong>
+                    <span className="ax-muted">{row.because}</span>
                   </li>
                 ))}
               </ul>
             </PanelGroup>
           )}
+          </div>
         </section>
       )}
 

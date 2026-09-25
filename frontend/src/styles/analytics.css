@@ -5965,19 +5965,81 @@ html[data-theme="dark"] .ax-page .peak-hero,
 .ax-goal-line strong { font-weight: 700; }
 
 /* The goals' own advice on the Recommendations tab. */
-.ax-goal-advice { margin: 0; padding: 0; list-style: none; }
+/* Rows that are objects, not lines in a table.
+ *
+ * These were three stacked spans separated by a hairline, on no background,
+ * with no padding — the only findings on the tab drawn as a list when
+ * everything around them is a card. Two of them, both opening with the same
+ * instruction because two goals were stalled for the same reason, read as one
+ * repeated paragraph rather than as two goals that each need something.
+ *
+ * Same card language as `.ax-limiter` below, down to the stripe: the left
+ * edge carries the urgency so the words do not have to, and a row about a
+ * goal that has gone quiet is not shouted at in amber type. */
+.ax-goal-advice {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-3);
+}
 .ax-goal-advice li {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    padding: var(--space-3) 0;
-    border-bottom: 1px solid var(--ax-line-soft);
+    padding: var(--space-4);
+    padding-left: calc(var(--space-4) + 3px);
+    border: 1px solid var(--ax-line);
+    border-radius: var(--radius-lg);
+    background: var(--ax-card);
     font-size: var(--text-sm);
 }
-.ax-goal-advice li:last-child { border-bottom: 0; }
+/* The stripe, drawn as a pseudo-element so the border-radius still rounds it.
+   Amber for a goal that has stopped, quiet grey for one that only needs a
+   nudge — the same two readings the tone carries in the model. */
+.ax-goal-advice li::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    background: var(--ax-line);
+}
+.ax-goal-advice li.is-urgent::before { background: var(--ax-amber); }
+
+/* The goal's own name leads the row.
+ *
+ * It used to be last, as a link under the instruction, and the instruction led
+ * — so two stalled goals produced two rows both opening "Put one of its tasks
+ * on this week" and the only thing telling them apart was a line of grey text
+ * at the bottom. The name is what identifies the row; the instruction is what
+ * to do about it. */
+.ax-goal-advice-goal {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--ax-text);
+    text-decoration: none;
+    letter-spacing: -.01em;
+}
+.ax-goal-advice-goal:hover { color: var(--ax-violet); }
 .ax-goal-advice strong { font-size: var(--text-sm); font-weight: 600; color: var(--ax-text); }
 .ax-goal-advice span { line-height: 1.55; }
 .ax-goal-advice li.is-urgent strong { color: var(--ax-amber); }
+
+/* ---- The two goal groups, in a card ------------------------------------
+   The panel that ends the region. See the note at the groups in
+   components/Analytics/tabs/RecommendationsTab.
+
+   The first group loses its rule: the card's own top edge is already the line
+   that says a new thing starts here, and two of them a pixel apart is a
+   double rule. The second keeps its, because there it is a divider between
+   two groups rather than the boundary of the region. */
+.ax-goal-groups > .ax-group:first-child { border-top: 0; }
+/* The heads bleed their hover tint 10px past the text on both sides, which
+   inside a card's padding would put it under the card's edge. Pulled back to
+   the padding it actually has. */
+.ax-goal-groups .ax-group-head { width: 100%; margin: 0; }
 
 /* ---- The limiter ------------------------------------------------------- */
 /* A goal, the subject carrying most of its shortfall, and the way in. Drawn
