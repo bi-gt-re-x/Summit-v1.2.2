@@ -937,3 +937,51 @@ def test_the_work_the_page_sends_is_the_work_the_model_is_shown(client, monkeypa
     assert 'AMC10 2019 #14' in seen['brief']
     assert 'difficulty 4, execution 2' in seen['brief']
     assert 'note: stuck on the geometry one' in seen['brief']
+
+
+class TestAFindingSaysWhichWayItCuts:
+    """The page draws findings and insights as one list of coloured rows.
+
+    The colour is the `direction`, and it is the same closed word
+    `goal_evidence` already uses rather than a second vocabulary for the
+    same idea. Without it the page has to guess a tone from the prose, and
+    "execution is improving" would be drawn in the colour of a problem
+    because it arrived in a list called diagnosis.
+    """
+
+    def test_a_finding_and_an_insight_both_carry_one(self):
+        out = subject_ai._clean({
+            'diagnosis': [{'finding': 'Execution is climbing', 'direction': 'helps',
+                           'confidence': 0.7, 'evidence': []}],
+            'insights': [{'observation': 'Rushing is costing quality',
+                          'direction': 'hurts', 'evidence': '', 'implication': 'slow down'}],
+        })
+
+        assert out['diagnosis'][0]['direction'] == 'helps'
+        assert out['insights'][0]['direction'] == 'hurts'
+
+    def test_an_unrecognised_direction_becomes_the_neutral_one(self):
+        # A word the page has no colour for steers nothing and draws as
+        # nothing, so it becomes 'watch' rather than a fourth tone.
+        out = subject_ai._clean({
+            'diagnosis': [{'finding': 'Something', 'direction': 'catastrophic',
+                           'confidence': 0.5, 'evidence': []}],
+        })
+        assert out['diagnosis'][0]['direction'] == 'watch'
+
+    def test_a_reading_written_before_the_field_existed_still_draws(self):
+        """Saved readings are replayed from the database on a refresh.
+
+        One written before this field was added has no direction anywhere in
+        it, and the page still has to colour its rows.
+        """
+        out = subject_ai._clean({
+            'diagnosis': [{'finding': 'Old finding', 'confidence': 0.5, 'evidence': []}],
+            'insights': [{'observation': 'Old insight', 'evidence': '', 'implication': 'x'}],
+        })
+
+        assert out['diagnosis'][0]['direction'] == 'watch'
+        assert out['insights'][0]['direction'] == 'watch'
+
+    def test_the_model_is_told_not_to_file_good_news_as_a_problem(self):
+        assert 'Not everything a record says is a problem.' in subject_ai.SYSTEM

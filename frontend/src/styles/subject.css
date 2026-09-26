@@ -54,38 +54,9 @@
     margin-top: 0;
 }
 
-/* The one deliberate exception, and it is a movement break rather than a
-   gap: everything below this heading is the working behind everything above
-   it, and the page should feel like it has finished answering before it
-   starts showing how. */
-.sb-page > .ax-shell > .sb-detail-head {
-    margin-top: var(--sb-block);
-}
-
-/* --- Where the working starts ------------------------------------------
-   A heading rather than a rule, because the split it marks is editorial: above
-   it is the answer, below it is why. Without something saying so, the reader
-   who scrolls past the recommendations has no way to know the rest is
-   optional. The line beside it does the work a bare rule would, without
-   claiming a section of its own. */
-.sb-detail-head {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin: var(--sb-block) 0 0;
-    font-size: var(--text-xs);
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--ax-faint);
-}
-
-.sb-detail-head::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--ax-line);
-}
+/* No `.sb-detail-head` any more. The split it marked — above is the answer,
+   below is why — is a tab now, and a tab says it without spending a heading
+   and a rule on the page every reader scrolls past. */
 
 /* --- Panels ------------------------------------------------------------- */
 .sb-grid {
@@ -792,6 +763,211 @@
     color: var(--ax-bad);
 }
 
+/* --- The tab strip and the window picker, on one line -------------------
+   `.ax-controls` is analytics.css's row and already wraps; this only has to
+   push the two ends apart and let them stack on a narrow screen. */
+.sb-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+/* --- The four counts ----------------------------------------------------
+   Under the verdict and above everything that needs interpreting. Tinted
+   rather than white, and each in its own hue, because the row's job is to
+   be read at a glance from across the page: four white cards with four grey
+   labels is a table, and a table is read left to right.
+
+   `auto-fit` with a floor rather than four fixed columns, so the row
+   becomes two-by-two on a tablet and one column on a phone without a media
+   query deciding when. */
+.sb-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: var(--sb-gap);
+}
+
+.sb-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    border: 1px solid var(--sb-card-line, var(--ax-line));
+    border-radius: var(--ax-radius);
+    /* A wash off the top-left rather than a flat fill: flat tints at this
+       size read as status banners, and none of these is a status. */
+    background:
+        radial-gradient(120% 140% at 0% 0%,
+            color-mix(in srgb, var(--sb-card-tint) 16%, transparent) 0%,
+            transparent 68%),
+        var(--ax-card);
+}
+
+.sb-card.is-green  { --sb-card-tint: var(--ax-green); }
+.sb-card.is-blue   { --sb-card-tint: var(--ax-blue); }
+.sb-card.is-violet { --sb-card-tint: var(--ax-violet); }
+.sb-card.is-rose   { --sb-card-tint: var(--ax-pink); }
+
+.sb-card header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+/* The icon in a tinted disc, in the card's own hue. */
+.sb-card-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--sb-card-tint) 15%, transparent);
+    color: color-mix(in srgb, var(--sb-card-tint) 78%, var(--ax-text));
+}
+
+.sb-card-label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--ax-muted);
+    min-width: 0;
+}
+
+.sb-card-value {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+    color: var(--ax-text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* The focus card holds a phrase rather than a figure, so it drops to a size
+   text is read at. Six words at 34px is a headline that wraps to three
+   lines and pushes the row's height around. */
+.sb-card.is-word .sb-card-value {
+    font-size: var(--text-lg);
+    line-height: 1.3;
+    letter-spacing: -.015em;
+    font-variant-numeric: normal;
+}
+
+.sb-card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.45;
+}
+.sb-card-note { color: var(--ax-muted); }
+
+.sb-card-chip {
+    padding: 1px var(--space-2);
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    background: var(--ax-card-2);
+    color: var(--ax-muted);
+}
+.sb-card-chip.is-up {
+    background: color-mix(in srgb, var(--ax-good) 14%, transparent);
+    color: var(--ax-good);
+}
+.sb-card-chip.is-down {
+    background: color-mix(in srgb, var(--ax-bad) 14%, transparent);
+    color: var(--ax-bad);
+}
+
+/* --- Key insights -------------------------------------------------------
+   The findings and the insights as one list of rows. It was three lists —
+   findings with a confidence badge, a numbered "in this order" block, and
+   insights in a FROM/SO layout — three type scales stacked, all about the
+   same handful of figures.
+
+   A row is an icon, a claim, a line of detail and a word for which way it
+   cuts. The word is the point: a reader scans the right-hand edge, stops at
+   "needs focus", and reads those. */
+.sb-keys-note {
+    margin: var(--space-1) 0 var(--space-3);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+
+.sb-keys {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+}
+
+.sb-key {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--ax-radius);
+    background: var(--ax-card-2);
+}
+
+.sb-key-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--sb-key-tint) 14%, transparent);
+    color: color-mix(in srgb, var(--sb-key-tint) 80%, var(--ax-text));
+}
+
+.sb-key.is-hurts { --sb-key-tint: var(--ax-bad); }
+.sb-key.is-helps { --sb-key-tint: var(--ax-good); }
+.sb-key.is-watch { --sb-key-tint: var(--ax-blue); }
+
+.sb-key-say { min-width: 0; }
+.sb-key-say strong {
+    display: block;
+    font-size: var(--text-md);
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--ax-text);
+}
+.sb-key-say p {
+    margin: 2px 0 0;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+
+/* The word, not a colour alone: every tone here also says what it is, which
+   is the rule the rest of this page keeps. */
+.sb-key-tag {
+    flex: none;
+    padding: 2px var(--space-3);
+    border-radius: var(--radius-full);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    white-space: nowrap;
+    background: color-mix(in srgb, var(--sb-key-tint) 14%, transparent);
+    color: color-mix(in srgb, var(--sb-key-tint) 78%, var(--ax-text));
+}
+
+@media (max-width: 560px) {
+    /* The tag drops under the claim rather than squeezing it to nothing. */
+    .sb-key { grid-template-columns: auto minmax(0, 1fr); }
+    .sb-key-tag { grid-column: 2; justify-self: start; }
+}
+
 /* --- How much you work on this ------------------------------------------
    The calendar at the head of "What the record says". Everything it draws —
    the grid, the weekday column, the month initials, the key — is the
@@ -1101,15 +1277,10 @@
     color: var(--ax-good);
 }
 
-/* The line under the Evidence heading. Quiet: it is a signpost saying the
-   panels below are the working for the sections above, not a claim of its
-   own. */
-.sb-page > .ax-shell > .sb-detail-note,
+/* The line the Evidence tab opens on. Quiet: it is a signpost saying these
+   panels are the working behind the other tab, not a claim of its own. */
 .sb-detail-note {
-    /* Hugs the heading it belongs to. Negative, because the shell's gap sits
-       between them and this is one block in two elements rather than two
-       sections. */
-    margin: calc(var(--space-1) - var(--sb-gap)) 0 0;
+    margin: 0;
     max-width: 60ch;
     font-size: var(--text-md);
     line-height: 1.5;

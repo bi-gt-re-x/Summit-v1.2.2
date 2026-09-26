@@ -390,12 +390,23 @@ one off five, and the brief tells you how many there are. Do not diagnose \
 what the brief cannot support — "the record is too thin to say" is a real and \
 useful answer.
 
+Each also carries a `direction`, which is the same word `goal_evidence` uses \
+and means the same thing: `hurts` when the finding is in the reader's way, \
+`helps` when it is working for them, `watch` when it could go either way. \
+This is what the page colours the row by, so a finding that is plainly good \
+news — execution climbing, a level holding — must not be filed as `hurts` \
+merely because it appears in a list called diagnosis. Not everything a \
+record says is a problem.
+
 `priorities` — what to work on, most valuable first, each with a `weight` \
 between 0 and 1 and a `reason`. Name the thing, not the metric: "intermediate \
 AMC10 under a clock" is a priority, "improve execution" is the measurement \
 it would move. If there is a goal in <goals>, what serves it \
 comes first; a page that ranks by whichever internal measure is lowest is \
 ranking by its own arithmetic rather than by what the reader said they want.
+
+Keep this short — one or two. It is the ordering behind `next_steps` rather \
+than a section of its own, and the page draws the steps.
 
 `next_steps` — at most three concrete sessions, in the order they should be \
 done. Each has:
@@ -429,9 +440,15 @@ padding, and they are what a reader means when they say the advice is \
 generic.
 
 `insights` — at most four. Each is an `observation`, the `evidence` behind it, \
-and the `implication` — what it means the reader should do differently. An \
-observation with no implication is a statistic they can already see. Do not \
-repeat a diagnosis here.
+the `implication` — what it means the reader should do differently — and a \
+`direction`, read exactly as it is on a diagnosis. An observation with no \
+implication is a statistic they can already see. Do not repeat a diagnosis \
+here.
+
+The findings and the insights are drawn as one list, in that order, so read \
+them as one: seven rows about the same three things is the page the reader \
+complains about. Say each thing once, in whichever of the two it belongs, \
+and write fewer rows rather than padding to the caps.
 
 IF PREVIOUS RECOMMENDATIONS ARE PRESENT
 
@@ -502,10 +519,12 @@ SCHEMA = {
                 'type': 'object',
                 'properties': {
                     'finding': {'type': 'string'},
+                    'direction': {'type': 'string',
+                                  'enum': list(EVIDENCE_DIRECTIONS)},
                     'confidence': {'type': 'number'},
                     'evidence': {'type': 'array', 'items': {'type': 'string'}},
                 },
-                'required': ['finding', 'confidence', 'evidence'],
+                'required': ['finding', 'direction', 'confidence', 'evidence'],
                 'additionalProperties': False,
             },
         },
@@ -547,10 +566,13 @@ SCHEMA = {
                 'type': 'object',
                 'properties': {
                     'observation': {'type': 'string'},
+                    'direction': {'type': 'string',
+                                  'enum': list(EVIDENCE_DIRECTIONS)},
                     'evidence': {'type': 'string'},
                     'implication': {'type': 'string'},
                 },
-                'required': ['observation', 'evidence', 'implication'],
+                'required': ['observation', 'direction', 'evidence',
+                             'implication'],
                 'additionalProperties': False,
             },
         },
@@ -923,6 +945,19 @@ def _clamp(value: Any, low: int, high: int, fallback: int) -> int:
     return max(low, min(high, number))
 
 
+def _way(value: Any) -> str:
+    """Which way a finding cuts, narrowed to the three the page draws.
+
+    The same closed list `goal_evidence` uses, rather than a second
+    vocabulary for the same idea: a finding is helping, in the way, or worth
+    watching, and the page has one set of colours for those three. An
+    unrecognised word steers nothing and draws as nothing, so it becomes the
+    honest neutral answer instead of a category of one.
+    """
+    word = str(value or '').strip()
+    return word if word in EVIDENCE_DIRECTIONS else 'watch'
+
+
 def _unit(value: Any) -> float:
     """A 0-1 weight, defensively. Out-of-range confidence is not confidence."""
     try:
@@ -1047,6 +1082,12 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             continue
         diagnosis.append({
             'finding': finding,
+            # Which way it cuts. Narrowed to the three the page can draw,
+            # and an unrecognised one becomes 'watch' rather than a fourth
+            # tone nothing has a colour for — the same rule `goal_read.kind`
+            # follows. A reading saved before this field existed has no
+            # direction at all, and gets the same neutral answer.
+            'direction': _way(entry.get('direction')),
             'confidence': _unit(entry.get('confidence')),
             'evidence': evidence,
         })
@@ -1114,6 +1155,7 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             continue
         insights.append({
             'observation': observation,
+            'direction': _way(entry.get('direction')),
             'evidence': evidence,
             'implication': implication,
         })

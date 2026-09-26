@@ -459,6 +459,15 @@ export const STEP_WORDS: Record<StepType, string> = {
 /** One finding, with how sure the model is and what it rests on. */
 export interface Diagnosis {
   finding: string;
+  /**
+   * Which way it cuts, and what the row is coloured by.
+   *
+   * The same closed word `goal_evidence` uses, rather than a second
+   * vocabulary for the same idea. Normalised server-side, so a reading
+   * saved before the field existed comes back as `watch` rather than
+   * undefined. See `_way` in backend/tracking/subject_ai.py.
+   */
+  direction: EvidenceDirection;
   /** 0-1. Bounded server-side; out-of-range confidence is not confidence. */
   confidence: number;
   evidence: string[];
@@ -507,6 +516,8 @@ export interface NextStep {
 /** An observation is not an insight until it says what to do differently. */
 export interface Insight {
   observation: string;
+  /** Read exactly as it is on a `Diagnosis` — the two draw as one list. */
+  direction: EvidenceDirection;
   evidence: string;
   implication: string;
 }

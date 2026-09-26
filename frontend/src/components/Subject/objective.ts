@@ -42,13 +42,7 @@
  * from a subject that merely has competitions in it. That is the model's
  * call, and it is asked to justify it.
  */
-import type {
-  Bottleneck,
-  EvidenceDirection,
-  GoalEvidence,
-  GoalKind,
-  GoalRead,
-} from '@/services/analytics';
+import type { Bottleneck, GoalKind, GoalRead } from '@/services/analytics';
 import type { Performance } from './performance';
 import type { SubjectState } from './state';
 import type { SubjectGoal } from './model';
@@ -81,12 +75,6 @@ export interface Objective {
   source: 'read' | 'counted';
   /** The goal's own position: days left, drift, how much work points at it. */
   marks: ObjectiveMark[];
-}
-
-/** A card under "what matters now". */
-export interface EvidenceCard extends GoalEvidence {
-  id: string;
-  source: 'read' | 'counted';
 }
 
 /** The words each kind is drawn with. `unstated` draws no chip at all. */
@@ -253,199 +241,19 @@ export function objectiveFrom(
   };
 }
 
-// ---------------------------------------------------------------------------
-// What matters now
-// ---------------------------------------------------------------------------
-interface Candidate {
-  id: string;
-  when: boolean;
-  claim: string;
-  direction: EvidenceDirection;
-  evidence: string[];
-  relevance: string;
-}
-
 /**
- * The counted evidence cards.
+ * Rated tasks behind a shortfall split before it may name anything.
  *
- * Every one is a relationship this app already computed, written as a claim
- * with the figures under it. They are ordered by what a reader could act on
- * this week rather than by size, and cut to three — the section answers "what
- * matters", and eight cards is the dashboard it replaces.
+ * The composite bottleneck divides the gap between the measures, and a
+ * division is only as trustworthy as the count under it — "turning up
+ * carries most of your shortfall" read off two afternoons is the kind of
+ * sentence that makes a reader stop believing the rest of the page.
  *
- * The `relevance` line here is mechanical: what the finding implies about what
- * to do. It cannot be goal-aware, because the arithmetic does not know what
- * kind of goal this is — that is the whole reason the model's version of this
- * section is better, and the page labels which one it is showing.
- */
-function candidates(
-  state: SubjectState,
-  perf: Performance,
-  goal: SubjectGoal | null,
-): Candidate[] {
-  const curve = state.curve;
-  const cliff = curve.threshold;
-  const hold = curve.best;
-
-  return [
-    {
-      id: 'cliff',
-      when: Boolean(cliff && cliff.execution !== null),
-      claim: `Work stops landing at ${cliff?.label}.`,
-      direction: 'hurts',
-      evidence: [
-        `${cliff?.label}: execution ${cliff?.execution} over ${plural(cliff?.done ?? 0, 'rated task')}`,
-        hold && hold.execution !== null
-          ? `${hold.label}: execution ${hold.execution} over ${plural(hold.done, 'rated task')}`
-          : '',
-        curve.drop !== null ? `a ${curve.drop}-point step between them` : '',
-      ].filter(Boolean),
-      relevance: `The level to work is ${hold?.label ?? 'the one below it'}, not the one above.`,
-    },
-    {
-      id: 'families',
-      when: perf.families.known && perf.families.answered >= 6
-        && perf.families.notConceptual >= 60,
-      claim: 'Most of what goes wrong is not about knowing the material.',
-      direction: 'hurts',
-      evidence: [
-        `${perf.families.notConceptual}% of named struggles were not conceptual`,
-        `out of ${plural(perf.families.answered, 'answered struggle')}`,
-        perf.families.leading
-          ? `most common: ${perf.families.leading.label}, ${perf.families.leading.share}%`
-          : '',
-      ].filter(Boolean),
-      relevance: 'Harder material would make it worse.',
-    },
-    {
-      id: 'divergence',
-      when: perf.divergence.known && perf.divergence.reading === 'capability-ahead',
-      claim: 'Capability is moving faster than the result.',
-      direction: 'watch',
-      evidence: [
-        `execution ${(perf.divergence.capability ?? 0) > 0 ? '+' : ''}${perf.divergence.capability} points across the window`,
-        `quality ${(perf.divergence.outcome ?? 0) > 0 ? '+' : ''}${perf.divergence.outcome} points over the same run`,
-      ],
-      relevance: 'The gap is between what you can do and what you finish.',
-    },
-    {
-      id: 'momentum',
-      when: state.momentum.known && state.momentum.direction !== 'flat',
-      claim: state.momentum.direction === 'climbing'
-        ? 'Execution is improving across this window.'
-        : 'Execution is falling across this window.',
-      direction: state.momentum.direction === 'climbing' ? 'helps' : 'hurts',
-      evidence: [
-        `${state.momentum.earlier} to ${state.momentum.later} on execution`,
-        `${(state.momentum.change ?? 0) > 0 ? '+' : ''}${state.momentum.change} points, earlier half to later`,
-      ],
-      relevance: state.momentum.direction === 'climbing'
-        ? 'Keep doing what you are doing now.'
-        : 'Something changed recently. Find out what.',
-    },
-    {
-      id: 'rushed',
-      when: perf.calibration.known && perf.calibration.rushed >= 3,
-      claim: 'A run of work was finished fast and rated badly.',
-      direction: 'hurts',
-      evidence: [
-        `${plural(perf.calibration.rushed, 'task')} came in under your own median for the level and rated 3 or below`,
-      ],
-      relevance: 'Rushing has a different fix from not knowing.',
-    },
-    {
-      id: 'drift',
-      when: Boolean(goal && goal.drift !== null && goal.drift !== 0),
-      claim: (goal?.drift ?? 0) > 0
-        ? 'The current rate does not reach the date.'
-        : 'The current rate arrives ahead of the date.',
-      direction: (goal?.drift ?? 0) > 0 ? 'hurts' : 'helps',
-      evidence: [
-        `${goal?.title}: ${Math.round(goal?.progress ?? 0)}% done`,
-        goal?.expected !== null && goal?.expected !== undefined
-          ? `${Math.round(goal.expected)}% of its time gone`
-          : '',
-        `${plural(Math.abs(goal?.drift ?? 0), 'day')} ${(goal?.drift ?? 0) > 0 ? 'late' : 'early'} at this rate`,
-      ].filter(Boolean),
-      relevance: (goal?.drift ?? 0) > 0
-        ? 'Either the rate rises or the date moves.'
-        : 'You have room to take on harder work.',
-    },
-    {
-      id: 'idle',
-      when: Boolean(goal && goal.sinceWork !== null && goal.sinceWork >= 14),
-      claim: 'No recent work on this goal.',
-      direction: 'hurts',
-      evidence: [
-        `${plural(goal?.sinceWork ?? 0, 'day')} since a task here named it`,
-        `${goal?.recentDays ?? 0} of the last 14 days had one`,
-      ],
-      relevance: 'No recent work is linked to this goal.',
-    },
-  ];
-}
-
-/** How many cards the section draws. See the note on the model's own cap. */
-export const EVIDENCE_SHOWN = 3;
-
-/**
- * Rated tasks before the composite gap may name a bottleneck.
- *
- * Every other naming below carries its own floor, inherited from whatever it
- * reads: a rung needs three, a momentum half needs four, a leading reason
- * needs six. The gap has none of its own — it is a mean over whichever
- * dimensions happen to be known, so it produces a confident-looking answer
- * off two rated tasks, and "turning up carries most of your shortfall" read
- * off two afternoons is the kind of sentence that makes a reader stop
- * believing the rest of the page.
- *
- * Six, matching the floor the reasons use, and for the same reason: below it,
- * naming something stops being a finding and starts being noise with a
+ * Six, matching the floor the reasons use, and for the same reason: below
+ * it, naming something stops being a finding and starts being noise with a
  * number attached.
  */
 export const GAP_FLOOR = 6;
-
-/**
- * The section's cards: the model's when there are any, the counted ones
- * otherwise.
- *
- * Not merged. The model's three are chosen *against the goal* out of the same
- * evidence these are chosen from by rule, so interleaving them would put two
- * readings of one record side by side with nothing saying which was which —
- * and the counted card would usually be the one restating a figure the model
- * had already decided was not the point.
- */
-export function evidenceFrom(
-  state: SubjectState,
-  perf: Performance,
-  goals: SubjectGoal[],
-  read?: GoalEvidence[] | null,
-  named?: string,
-): EvidenceCard[] {
-  if (read && read.length > 0) {
-    return read.slice(0, EVIDENCE_SHOWN).map((card, at) => ({
-      ...card,
-      id: `read-${at}`,
-      source: 'read' as const,
-    }));
-  }
-
-  /* `named` is the candidate the bottleneck below was named from. It is
-     dropped rather than reordered: a card and a bottleneck arguing the same
-     finding off the same two figures is the page saying one thing twice, and
-     the bottleneck is the one with the judgement and the ruled-out line on
-     it. What is left here is what *else* bears on the goal. */
-  const ranked = candidates(state, perf, goals[0] ?? null)
-    .filter((one) => one.when && one.id !== named);
-  return ranked.slice(0, EVIDENCE_SHOWN).map((one) => ({
-    id: one.id,
-    claim: one.claim,
-    direction: one.direction,
-    evidence: one.evidence,
-    relevance: one.relevance,
-    source: 'counted' as const,
-  }));
-}
 
 // ---------------------------------------------------------------------------
 // The bottleneck
@@ -453,22 +261,6 @@ export function evidenceFrom(
 /** The named bottleneck, and where the naming came from. */
 export interface NamedBottleneck extends Bottleneck {
   source: 'read' | 'counted';
-  /**
-   * Which candidate this was named from, when it was named by rule.
-   *
-   * The bottleneck and the evidence cards above it are chosen out of the
-   * same arithmetic, so left to themselves they pick the same finding and
-   * the page states it twice with the same figures under it — "Work stops
-   * landing at Hard" as a card, then "Work at Hard" as the bottleneck, both
-   * citing the same two rungs and the same step between them. `evidenceFrom`
-   * takes this and drops that card, so the section above the bottleneck is
-   * what *else* bears on the goal.
-   *
-   * Absent on a bottleneck the model named: those are chosen against the
-   * goal out of a reading, and the model's own evidence cards are chosen the
-   * same way, so it is already the model's job not to say a thing twice.
-   */
-  from?: string;
 }
 
 /**
@@ -533,7 +325,6 @@ export function bottleneckFrom(
         : '',
       confidence: enough ? 0.7 : 0.5,
       source: 'counted',
-      from: 'divergence',
     };
   }
 
@@ -553,7 +344,6 @@ export function bottleneckFrom(
       ruled_out: 'Adding difficulty. That would make it worse.',
       confidence: families.answered >= 12 ? 0.7 : 0.55,
       source: 'counted',
-      from: 'families',
     };
   }
 
@@ -573,7 +363,6 @@ export function bottleneckFrom(
       ruled_out: `Everything below ${cliff.label}.`,
       confidence: cliff.done >= 8 ? 0.65 : 0.45,
       source: 'counted',
-      from: 'cliff',
     };
   }
 
@@ -591,7 +380,6 @@ export function bottleneckFrom(
       ruled_out: 'More volume.',
       confidence: calibration.rushed >= 6 ? 0.6 : 0.45,
       source: 'counted',
-      from: 'rushed',
     };
   }
 
@@ -620,7 +408,6 @@ export function bottleneckFrom(
       ruled_out: '',
       confidence: 0.45,
       source: 'counted',
-      // No `from`: the shortfall split is not one of the cards.
     };
   }
 

@@ -93,6 +93,11 @@ async function show(rows: unknown[]) {
     auth: { username: 'alpha' },
   });
   await act(async () => { await new Promise((r) => { setTimeout(r, 60); }); });
+  /* The folds are the Evidence tab now, so every test in this file has
+     to open it first. The page opens on the overview. */
+  await act(async () => {
+    screen.getByRole('button', { name: 'Evidence' }).click();
+  });
 }
 
 describe('the skill tree panel', () => {

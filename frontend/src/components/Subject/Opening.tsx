@@ -1,64 +1,38 @@
 /**
- * The two sections the subject page now opens on.
+ * The band the subject page opens its argument on.
  *
  * Named for what it is rather than for what it draws, because the arithmetic
- * behind it is `./objective` and a `Objective.tsx` beside an `objective.ts`
+ * behind it is `./objective` and an `Objective.tsx` beside an `objective.ts`
  * is two files on a case-insensitive filesystem and one on a case-sensitive
  * one. The pair is the same split the rest of this folder keeps: a lowercase
  * module that works things out, a capitalised one that lays them out.
  *
- * **The band** — what the reader is trying to accomplish, before anything
- * else and at the size of a heading. The goal as an aim rather than a label,
- * the kind of thing it is, and the one sentence saying what has to change
- * next.
+ * **The band** — what the reader is trying to accomplish, at the size of a
+ * heading. The goal as an aim rather than a label, the kind of thing it is,
+ * and the one sentence saying what has to change next.
  *
- * **What matters now** — the handful of facts that bear on *that goal*, each
- * as a claim with its counted figures under it. Three at most.
+ * ## It used to have two neighbours
+ *
+ * `WhatMatters` drew three cards of evidence bearing on the goal, and
+ * `BottleneckPanel` named the one thing most in the way underneath them.
+ * All four were chosen out of the same arithmetic in `./objective`, so the
+ * region argued one finding up to four times with the same counted lines
+ * repeated under each — two screens of page restating the difficulty cliff.
+ *
+ * Both are gone. What survived is the bottleneck's *name*, which was the
+ * only part of it a reader could act on: it is the "Focus area" card at the
+ * top of the page now (components/Subject/Cards), and the figures the cards
+ * were arguing from are the Evidence tab, which is what that tab is for.
  *
  * ## Why a claim leads and the number follows
  *
- * "Execution: 76 (+4.2%)" is a figure the reader has to interpret. "Your
- * execution is improving, 24 to 30 across recent timed work" is the same
- * figure having been interpreted, and the interpretation is the part they
- * wanted. The number is not removed — it is in `evidence` under every card,
- * where it is arguable. It stops being the headline.
- *
- * ## The label that has to be there
- *
- * A card says whether it is the model's reading or the app's arithmetic, and
- * that is not a disclaimer. The counted cards are chosen by rule and cannot
- * know what kind of goal this is; the model's are chosen against the goal and
- * can be wrong in a way arithmetic cannot. A reader deciding how much to
- * trust a claim needs to know which kind it is, and no amount of care in the
- * wording substitutes for saying so.
+ * That rule outlived the cards and still governs this band. "Execution: 76
+ * (+4.2%)" is a figure the reader has to interpret; "convert strong solving
+ * into consistent contest execution" is the same record having been
+ * interpreted, and the interpretation is the part they wanted.
  */
-import type {
-  EvidenceCard,
-  NamedBottleneck,
-  Objective as ObjectiveRead,
-} from './objective';
+import type { Objective as ObjectiveRead } from './objective';
 import { KIND_MEANS, KIND_WORDS } from './objective';
-
-/** Confidence in words. A bare 0.65 is a number nobody can act on. */
-function sureness(value: number): string {
-  if (value >= 0.85) return 'high confidence';
-  if (value >= 0.6) return 'fair confidence';
-  if (value >= 0.4) return 'low confidence';
-  return 'a guess';
-}
-
-/** The arrow each direction draws. Never colour alone — see subject-state.css. */
-const DIRECTION_MARK: Record<EvidenceCard['direction'], string> = {
-  helps: '↑',
-  hurts: '↓',
-  watch: '→',
-};
-
-const DIRECTION_WORD: Record<EvidenceCard['direction'], string> = {
-  helps: 'Working for you',
-  hurts: 'In the way',
-  watch: 'Worth watching',
-};
 
 export function ObjectiveBand({
   subject,
@@ -120,111 +94,6 @@ export function ObjectiveBand({
             </li>
           ))}
         </ul>
-      )}
-    </section>
-  );
-}
-
-export function WhatMatters({ cards }: { cards: EvidenceCard[] }) {
-  const first = cards[0];
-  if (!first) return null;
-
-  const read = first.source === 'read';
-
-  return (
-    <section className="so-matters" aria-label="What matters now">
-      <div className="so-matters-head">
-        <h2>What matters now</h2>
-        <p className="so-matters-note">
-          {read
-            ? 'Read against your goal. Every figure under a claim was counted.'
-            : 'Chosen by rule from your record. Read it back for the version weighed '
-              + 'against your goal.'}
-        </p>
-      </div>
-
-      <ul className="so-cards">
-        {cards.map((card) => (
-          <li key={card.id} className={`so-card is-${card.direction}`}>
-            <p className="so-card-tag">
-              <span aria-hidden="true">{DIRECTION_MARK[card.direction]}</span>
-              {DIRECTION_WORD[card.direction]}
-            </p>
-
-            <p className="so-card-claim">{card.claim}</p>
-
-            {card.evidence.length > 0 && (
-              <ul className="so-card-evidence">
-                {card.evidence.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
-            )}
-
-            {card.relevance && <p className="so-card-why">{card.relevance}</p>}
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
-/**
- * THE BOTTLENECK — the page's only outright judgement.
- *
- * Drawn as one block rather than as a card among cards, because a bottleneck
- * beside three other things of equal weight is not a bottleneck. The order
- * inside it is the argument: the name, then what says so, then what it means,
- * then what it rules out.
- *
- * `ruled_out` is last and is the part a reader cannot get anywhere else.
- * Everything above it narrows; that line is the only one that tells somebody
- * to stop doing something, and stopping the wrong work is worth more than
- * starting the right work. It is empty rather than reassuring when nothing in
- * the record supports ruling anything out.
- */
-export function BottleneckPanel({ bottleneck }: { bottleneck: NamedBottleneck | null }) {
-  if (!bottleneck) return null;
-
-  return (
-    <section className="so-neck" aria-label="Your current bottleneck">
-      <p className="so-neck-label">Your current bottleneck</p>
-      <h2 className="so-neck-name">{bottleneck.name}</h2>
-
-      <p className="so-neck-sure">
-        {sureness(bottleneck.confidence)}
-        <span>
-          {bottleneck.source === 'read'
-            ? ' · read against your goal'
-            : ' · named by rule from your record'}
-        </span>
-      </p>
-
-      <div className="so-neck-body">
-        {bottleneck.evidence.length > 0 && (
-          <div className="so-neck-part">
-            <h3>What says so</h3>
-            <ul className="so-neck-evidence">
-              {bottleneck.evidence.map((line) => (
-                <li key={line}>{line}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {bottleneck.reading && (
-          <div className="so-neck-part">
-            <h3>What it means</h3>
-            <p className="so-neck-reading">{bottleneck.reading}</p>
-          </div>
-        )}
-      </div>
-
-      {bottleneck.ruled_out && (
-        <p className="so-neck-out">
-          <span>Ruled out</span>
-          {bottleneck.ruled_out}
-        </p>
       )}
     </section>
   );

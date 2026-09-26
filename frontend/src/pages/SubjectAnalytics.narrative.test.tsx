@@ -213,42 +213,6 @@ describe('the page opens on what the subject is for', () => {
   });
 });
 
-describe('what matters now', () => {
-  it('leads each card with a claim and puts the counted figures under it', async () => {
-    await show();
-
-    const cards = within(section('What matters now'));
-    expect(cards.getByText('Execution is falling across this window.')).toBeInTheDocument();
-    expect(cards.getByText(/100 to 25 on execution/)).toBeInTheDocument();
-    expect(cards.getByText('Something changed recently. Find out what.'))
-      .toBeInTheDocument();
-  });
-
-  it('does not repeat the finding the bottleneck is about', async () => {
-    /* The cards and the bottleneck are chosen out of the same arithmetic, so
-       left alone they pick the same one — this fixture's bottleneck is the
-       difficulty cliff, and the cliff card above it said the same thing with
-       the same two rungs and the same step under it. A reader meeting one
-       finding twice in two sections, forty pixels apart, learns that the
-       first section is decoration.
-
-       The bottleneck keeps it, because it is the one with the judgement and
-       the ruled-out line on it. What is left above is what *else* bears. */
-    await show();
-
-    expect(within(section('Your current bottleneck'))
-      .getByRole('heading', { name: 'Work at Hard' })).toBeInTheDocument();
-    expect(within(section('What matters now'))
-      .queryByText('Work stops landing at Hard.')).not.toBeInTheDocument();
-  });
-
-  it('says the cards were chosen by rule until a reading is made', async () => {
-    await show();
-    expect(within(section('What matters now')).getByText(/chosen by rule/i))
-      .toBeInTheDocument();
-  });
-});
-
 describe('what the record says', () => {
   it('draws the work calendar before anybody has asked a model anything', async () => {
     /* The section used to be the model's reading and nothing else, so on a
@@ -285,58 +249,58 @@ describe('what the record says', () => {
   });
 });
 
-describe('the bottleneck', () => {
-  it('names one thing, with what says so and what it rules out', async () => {
-    await show();
-
-    const neck = within(section('Your current bottleneck'));
-    expect(neck.getByRole('heading', { name: 'Work at Hard' })).toBeInTheDocument();
-    expect(neck.getByText(/Practise at Fair until it feels easy/)).toBeInTheDocument();
-    expect(neck.getByText('Everything below Hard.')).toBeInTheDocument();
-  });
-
-  it('does not draw at all when the record cannot name one', async () => {
-    // Two rated tasks is under every floor in this feature — no rung counts,
-    // no halves to compare, and only one measure known, so the composite has
-    // nothing to be largest of. The honest page for that has no section
-    // rather than a naming at low confidence.
-    await show({
-      rows: ['2026-09-01', '2026-09-02'].map((day, at) => did(`t${at}`, day, 3, 3)),
-    });
-
-    expect(screen.queryByLabelText('Your current bottleneck')).not.toBeInTheDocument();
-  });
-});
-
 describe('the order of the page', () => {
   it('puts what to do above the figures it was argued from', async () => {
     await show();
 
-    const order = Array.from(
-      document.querySelectorAll('[aria-label], .sb-detail-head'),
-    ).map((node) => node.getAttribute('aria-label') ?? node.textContent);
+    const order = Array.from(document.querySelectorAll('[aria-label]'))
+      .map((node) => node.getAttribute('aria-label'));
+    const at = (label: string) => order.indexOf(label);
 
-    const at = (label: string) => order.findIndex((one) => one === label);
-
-    expect(at('What this subject is for')).toBeLessThan(at('What matters now'));
-    expect(at('What matters now')).toBeLessThan(at('Your current bottleneck'));
-    expect(at('Your current bottleneck')).toBeLessThan(at('What to do next'));
-    expect(at('What to do next')).toBeLessThan(at('Evidence'));
+    expect(at('Where this subject stands')).toBeLessThan(at('What this subject is for'));
+    expect(at('What this subject is for')).toBeLessThan(at('What to do next'));
   });
 
-  it('names the folds underneath as the evidence they are', async () => {
+  it('opens the four counts under the verdict, before anything is interpreted', async () => {
+    /* They need none of what the verdict needs: counts are true from the
+       first task, where the ring says "unrated" until something is rated. */
     await show();
 
-    expect(screen.getByRole('heading', { name: 'Evidence' })).toBeInTheDocument();
-    expect(screen.getByText(/The working behind everything above/))
-      .toBeInTheDocument();
+    const cards = document.querySelector('.sb-cards')!;
+    expect(within(cards as HTMLElement).getByText('Total tasks')).toBeInTheDocument();
+    expect(within(cards as HTMLElement).getByText('Completed')).toBeInTheDocument();
+    expect(within(cards as HTMLElement).getByText('Current streak')).toBeInTheDocument();
+    expect(within(cards as HTMLElement).getByText('Focus area')).toBeInTheDocument();
+  });
+});
+
+describe('the evidence is a tab', () => {
+  it('keeps the working off the overview entirely', async () => {
+    /* Shut was already right — the page ran to fourteen panels before the
+       folds existed — but a shut fold is still a row to read past, and
+       there were nine of them between the last thing a reader came for and
+       the bottom of the page. */
+    await show();
+
+    expect(screen.queryByRole('button', { name: /Where you stand/ }))
+      .not.toBeInTheDocument();
   });
 
-  it('shuts the evidence, and states each fold\'s answer on its shut row', async () => {
+  it('shows the folds once the tab is chosen, and hides the overview', async () => {
+    await show();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
+
+    expect(screen.getByRole('button', { name: /Where you stand/ })).toBeInTheDocument();
+    expect(screen.queryByLabelText('Where this subject stands')).not.toBeInTheDocument();
+  });
+
+  it('states each fold\'s answer on its shut row', async () => {
     // The whole point of the folds: a reader who opens nothing still learns
     // where the work falls off, so they open the one that surprised them
     // rather than all nine. See components/Subject/Fold.
     await show();
+    await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
 
     const difficulty = screen.getByRole('button', { name: /Difficulty/ });
     expect(difficulty).toHaveAttribute('aria-expanded', 'false');
@@ -412,6 +376,7 @@ describe('the skill tree', () => {
     // paragraphs of curriculum description beneath it.
     await show();
 
+    await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
     const fold = screen.getByRole('button', { name: /Skill tree/ }).closest('section')!;
     expect(within(fold).getByText(/of this tree/i)).toBeInTheDocument();
     expect(within(fold).queryByText('What this says')).not.toBeInTheDocument();

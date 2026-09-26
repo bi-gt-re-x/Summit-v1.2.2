@@ -2,6 +2,57 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-26 — The subject page gets tabs, four counts and one list of insights
+
+Four changes, and the shape of the page after them is: what it comes to, what
+it is for, what to do, what the record says — then a tab holding the working.
+
+**Evidence is a tab.** Nine folds used to sit on the end of the overview.
+Shut was already right, but a shut fold is still a row to read past, and
+there were nine of them between the last thing a reader came for and the
+bottom of the page. The strip is the analytics page's own `.ax-tabs-major`
+pills, beside the window picker, so a reader arriving from there does not
+have to learn a second control.
+
+**Four counts under the verdict.** Total tasks, completed with its change
+against the window before, the streak, and the focus area. They need none of
+what the verdict above them needs: counts are true from the first task, where
+the ring says "unrated" until something is rated. The streak moved here off
+the standing card's badge row, which keeps its two readings — which way it is
+going, and where execution stops holding.
+
+**"What matters now" and the bottleneck panel are gone.** Three evidence
+cards over a fourth card naming the bottleneck, all four chosen out of the
+same arithmetic in `objective.ts` — so the region argued one finding up to
+four times, with the same counted lines repeated under each. Two screens of
+page restating the difficulty cliff. `evidenceFrom` and the candidate list
+behind it are deleted.
+
+What survived is the bottleneck's *name*, which was the only part of it a
+reader could act on: it is the "Focus area" card. Its confidence did not —
+a bottleneck named at 0.45 and one named at 0.8 are the same instruction to
+somebody reading a card. Where the record cannot name one, `bottleneckFrom`
+returns null and the card says "Not yet" rather than hedging.
+
+**One list of key insights.** The reading drew three shapes stacked —
+findings with a confidence badge, a numbered "In this order" block, and
+insights in a `FROM:` / `SO:` layout — three type scales all about the same
+handful of figures. It is one list now: icon, claim, a line of detail, and a
+word for which way it cuts.
+
+That word is a new `direction` on every finding and every insight, the same
+closed `helps` / `hurts` / `watch` the goal evidence already used rather than
+a second vocabulary. Without it the page has to guess a tone from the prose,
+and "execution is improving" gets drawn in the colour of a problem because it
+arrived in a list called diagnosis. Readings saved before the field existed
+normalise to `watch`.
+
+The priorities went with the badges. "In this order" was a third ranked list
+under two the reader can act on — the app's ranked advice and the model's
+next steps, both of which make real tasks. The model still writes them; they
+order the steps.
+
+
 ## 2026-09-26 — "What the record says" gets a calendar, and says something without being asked
 
 Every figure on the subject page is about how the work *goes* — execution 47,

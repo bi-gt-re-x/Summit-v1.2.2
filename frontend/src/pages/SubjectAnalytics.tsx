@@ -81,13 +81,14 @@ import { ErrorState, Loading, PageHero, type HeroTone } from '@/components';
 import { AreaChart, ObservationNote, Radar, Scatter } from '@/components/Analytics';
 import { WINDOWS, type WindowKey } from '@/components/Analytics/data';
 import { gradeFor } from '@/utils/analyticalScore';
-import { subjectModel, type SubjectGoal } from '@/components/Subject/model';
+import { spanFor, subjectModel, type SubjectGoal } from '@/components/Subject/model';
 import { subjectState } from '@/components/Subject/state';
 import { recentWork } from '@/components/Subject/recentWork';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
 import { SubjectHeat } from '@/components/Subject/Heat';
+import { SubjectCards } from '@/components/Subject/Cards';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
 import {
   dimensionAxes,
@@ -96,10 +97,10 @@ import {
   WEB_FLOOR,
 } from '@/components/Subject/graphs';
 import { NextSteps } from '@/components/Subject/NextSteps';
-import { BottleneckPanel, ObjectiveBand, WhatMatters } from '@/components/Subject/Opening';
+import { ObjectiveBand } from '@/components/Subject/Opening';
 import { Verdicts } from '@/components/Subject/Verdicts';
 import { summarise, verdictsFrom } from '@/components/Subject/verdict';
-import { bottleneckFrom, evidenceFrom, objectiveFrom } from '@/components/Subject/objective';
+import { bottleneckFrom, objectiveFrom } from '@/components/Subject/objective';
 import { Reading } from '@/components/Subject/Reading';
 import { performance } from '@/components/Subject/performance';
 import { latticeFor, treeReading } from '@/components/Subject/lattice';
@@ -153,6 +154,26 @@ function Delta({ value, unit = '%' }: { value: number | null; unit?: string }) {
     </span>
   );
 }
+
+/**
+ * The two halves of the page.
+ *
+ * Two, not seven: the analytics page's tabs are seven different questions
+ * about an account, and this page asks one question about one subject and
+ * then shows its working. A tab per fold would be a filing cabinet.
+ */
+const TABS = [
+  {
+    key: 'overview' as const,
+    label: 'Overview',
+    purpose: 'Where this subject stands, and what to do next.',
+  },
+  {
+    key: 'evidence' as const,
+    label: 'Evidence',
+    purpose: 'The working: every figure the overview is argued from.',
+  },
+];
 
 /** A 0-100 bar. Labelled by its row, so it is decoration and hidden. */
 function Bar({ percent }: { percent: number }) {
@@ -265,6 +286,18 @@ export default function SubjectAnalytics() {
      that wrote back would change the other page under the reader. */
   const [span, setSpan] = useState<WindowKey>(prefs.analytics_window);
 
+  /* ---- Which half of the page is open ---------------------------------
+     The same split the analytics page makes with its seven tabs, at the
+     size this page needs: what the subject is doing, and the working
+     behind it. The folds were on the same scroll as the answer, so a
+     reader who came to find out how a subject was going scrolled past nine
+     shut panels to leave — and a shut panel is still a row to read past.
+
+     Not in the URL. The tab is a way of looking at one page rather than a
+     place, the page is already reached by a route with a subject in it, and
+     the window picker beside it is not in the URL either. */
+  const [tab, setTab] = useState<'overview' | 'evidence'>('overview');
+
   /* Through `taskHistory`, which is the same request the analytics page makes
      and the largest one the app makes at all. A reader arrives here *from* that
      page, so this used to be a second full download of bytes that were already
@@ -333,6 +366,20 @@ export default function SubjectAnalytics() {
     () => (tasks.data?.tasks ?? []).filter((task) => task.subject === subjectId),
     [subjectId, tasks.data],
   );
+
+  /* Everything filed here inside the window, finished or not — the
+     denominator of the completion rate on the cards, and the only count on
+     the page that includes work still open. `mine` is unwindowed, which is
+     right for the facts panels and wrong for a card sitting under a picker. */
+  const windowTotal = useMemo(() => {
+    const from = spanFor(span, today);
+    return mine.filter((task) => {
+      const day = String(task.completed_at || task.created_at || '').slice(0, 10);
+      if (!day) return false;
+      if (from.from && day < from.from) return false;
+      return !from.to || day <= from.to;
+    }).length;
+  }, [mine, span, today]);
 
   /* The one tendency this page is allowed to state before the folds below have
      enough to diagnose anything. Scoped to this subject, so "most of your
@@ -700,24 +747,18 @@ export default function SubjectAnalytics() {
   );
 
   /* ---- WHAT IS THE BOTTLENECK -----------------------------------------
-     Null is a real answer, and the section does not draw for it. A subject
-     whose figures do not agree on one has no bottleneck, and naming one at
-     0.3 confidence is how a reader spends a month on the wrong thing.
+     The page's one outright judgement, and all that is left of it is its
+     name — the "Focus area" card at the top. The panel that carried its
+     evidence, its reading and what it ruled out is gone, along with the
+     three cards above it that argued the same finding out of the same
+     arithmetic.
 
-     Worked out before the cards above it, which is a change: the two are
-     chosen out of the same arithmetic, so left alone they pick the same
-     finding and the page prints it twice with the same figures underneath.
-     The bottleneck wins that tie — it is the one carrying the judgement —
-     and the cards are told which card not to be. */
+     Null is a real answer and the card says so plainly. A subject whose
+     figures do not agree on a bottleneck has none, and naming one at 0.3
+     confidence is how a reader spends a month on the wrong thing. */
   const bottleneck = useMemo(
     () => bottleneckFrom(state, perf, reading?.bottleneck ?? null),
     [perf, reading, state],
-  );
-
-  const evidenceCards = useMemo(
-    () => evidenceFrom(state, perf, model.goals, reading?.goal_evidence ?? null,
-                       bottleneck?.from),
-    [bottleneck, model.goals, perf, reading, state],
   );
 
   /* ---- DID THE ADVICE WORK --------------------------------------------
@@ -1156,7 +1197,26 @@ export default function SubjectAnalytics() {
           </p>
         ) : (
           <>
-            <div className="ax-controls">
+            {/* The two halves of the page, and the window they are both
+                scoped by, on one line. The same pill strip the analytics
+                page's seven tabs use — `.ax-tabs-major` — because a reader
+                arriving from there should not have to learn a second
+                control that does the same job. */}
+            <div className="ax-controls sb-controls">
+              <nav className="ax-tabs ax-tabs-major" aria-label="Subject sections">
+                {TABS.map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    className={`ax-tab${option.key === tab ? ' is-on' : ''}`}
+                    aria-current={option.key === tab ? 'page' : undefined}
+                    title={option.purpose}
+                    onClick={() => setTab(option.key)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </nav>
               <div className="ax-chips" role="group" aria-label="Time window">
                 {WINDOWS.map((option) => (
                   <button
@@ -1172,6 +1232,8 @@ export default function SubjectAnalytics() {
               </div>
             </div>
 
+            {tab === 'overview' && (
+              <>
             {/* ---- WHERE AM I ----------------------------------------- */}
             {/* One card, and it is the first thing on the page.
 
@@ -1231,18 +1293,27 @@ export default function SubjectAnalytics() {
                   {state.time.hours > 0 && (
                     <span className="sx-badge">{state.time.hours}h logged</span>
                   )}
-                  {/* The one figure the "Where you stand" tiles had that
-                      nothing else on the page carries. The other two were
-                      hours, which is the badge beside this, and finished,
-                      which is under the ring. */}
-                  {model.streak > 0 && (
-                    <span className="sx-badge">
-                      {model.streak} {model.streak === 1 ? 'day' : 'days'} running
-                    </span>
-                  )}
+                  {/* No streak badge: the cards under this carry it. What is
+                      left here is the two that are readings rather than
+                      counts — which way it is going, and where it stops
+                      going well. The cards count; this says what it means. */}
                 </div>
               </div>
             </section>
+
+            {/* ---- The four counts ------------------------------------ */}
+            {/* Under the verdict, because they need none of what it needs:
+                counts are true from the first task, where the ring says
+                "unrated" until something is rated. The fourth is not a
+                count — it is the bottleneck's name, which had a panel of
+                its own until the three cards arguing with it went. */}
+            <SubjectCards
+              total={windowTotal}
+              finished={model.finished}
+              finishedBefore={model.finishedBefore}
+              streak={model.streak}
+              focus={bottleneck?.name ?? ''}
+            />
 
             {/* The first thing Summit can say rather than count. Draws only
                 once something clears the floor in utils/observations, wearing
@@ -1300,24 +1371,19 @@ export default function SubjectAnalytics() {
               onUnlink={(goalId) => void setLinked(goalId, false)}
             />
 
-            {/* ---- WHAT EVIDENCE MATTERS FOR THAT --------------------- */}
-            {/* Three at most, each a claim with its counted figures beneath.
-                The model's when there is a reading, because choosing which of
-                thirty figures bears on qualifying for a particular competition
-                needs to know what that competition is; the app's own rules
-                otherwise, which is always. */}
-            <WhatMatters cards={evidenceCards} />
+            {/* No "What matters now", and no bottleneck panel.
 
-            {/* ---- WHAT IS THE BOTTLENECK ----------------------------- */}
-            {/* The page's only outright judgement, and the section the two
-                above it exist to support. One, never two: a page with two
-                bottlenecks on it has none.
+                They were three evidence cards over a fourth card that named
+                the bottleneck, and all four were chosen out of the same
+                arithmetic — so the section argued one finding up to four
+                times, with the same counted lines repeated under each. Two
+                screens of the page, restating the difficulty cliff.
 
-                It sits above Do This Next rather than beside it because the
-                steps are an answer to it — a reader who disagrees with the
-                naming should disagree before reading the prescription, not
-                after acting on it. */}
-            <BottleneckPanel bottleneck={bottleneck} />
+                What survives is the naming, which was the only part a reader
+                could act on: it is the "Focus area" card at the top, where
+                the eye lands first, without the evidence list it was
+                arguing with. The evidence is still on the page — it is the
+                Evidence tab, which is what that tab is. */}
 
             {/* ---- WHAT SHOULD I DO NEXT ------------------------------- */}
             {/* The section the rest of the page exists to produce, and it is
@@ -1437,21 +1503,16 @@ export default function SubjectAnalytics() {
             >
               <SubjectHeat mine={mine} today={today} subject={subject.name} />
 
-              {reading &&
-                (reading.diagnosis.length > 0 ||
-                  reading.priorities.length > 0 ||
-                  reading.insights.length > 0) && (
-                  <div className="sb-record-read">
-                    <p className="ax-panel-note">
-                      Model-written from the figures above. Each finding shows its evidence.
-                    </p>
-                    <Reading
-                      diagnosis={reading.diagnosis}
-                      priorities={reading.priorities}
-                      insights={reading.insights}
-                    />
-                  </div>
-                )}
+              {reading && (reading.diagnosis.length > 0 || reading.insights.length > 0) && (
+                <div className="sb-record-read">
+                  <h3 className="sb-sub">Key insights</h3>
+                  <p className="sb-keys-note">
+                    Model-written from the figures above. The word on the right is which
+                    way each one cuts.
+                  </p>
+                  <Reading diagnosis={reading.diagnosis} insights={reading.insights} />
+                </div>
+              )}
             </Panel>
 
             {/* ---- DID YOUR LAST ADVICE WORK --------------------------- */}
@@ -1466,21 +1527,27 @@ export default function SubjectAnalytics() {
                 looking for it. */}
             <Verdicts verdicts={verdicts} summary={loop} />
 
-            {/* ---- THE WORKING ---------------------------------------- */}
-            {/* Everything below this line is evidence for everything above it,
-                and all of it is shut.
+              </>
+            )}
 
-                It was not, and the page ran to fourteen panels and eight
-                screens — so a reader who came to find out how a subject was
-                going walked past twelve panels they had not asked for to reach
-                the two they had. The evidence is not the problem; making
-                somebody scroll through it to leave is. Each fold states its own
-                answer on the shut row, so a reader opens the one whose figure
-                surprised them rather than all of them. See
-                components/Subject/Fold. */}
-            <h2 className="sb-detail-head">Evidence</h2>
-            <p className="sb-detail-note">
-              The working behind everything above, counted from your own tasks.
+            {/* ---- THE WORKING ---------------------------------------- */}
+            {/* A tab of its own now, rather than nine shut folds on the end
+                of the answer.
+
+                Shut was already the right call — the page ran to fourteen
+                panels and eight screens before it — but a shut fold is
+                still a row to read past, and there were nine of them between
+                the last thing a reader came for and the bottom of the page.
+                Behind a tab they cost nothing until they are wanted, and
+                "the working" is exactly the kind of thing a tab is for.
+
+                Each fold still states its own answer on its shut row, so a
+                reader who opens this opens the one whose figure surprised
+                them rather than all of them. See components/Subject/Fold. */}
+            {tab === 'evidence' && (
+              <>
+            <p className="sb-detail-note sb-detail-lead">
+              The working behind the overview, counted from your own tasks.
             </p>
 
             <div className="sb-folds">
@@ -2493,6 +2560,8 @@ export default function SubjectAnalytics() {
                   `/api/subject_brief` is untouched and still answers. Nothing
                   on this page calls it. */}
             </div>
+              </>
+            )}
           </>
         )}
       </div>

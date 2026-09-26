@@ -14,7 +14,7 @@
  * clause. Every test below about `read` is really a test about that.
  */
 import { describe, expect, it } from 'vitest';
-import { bottleneckFrom, evidenceFrom, objectiveFrom } from './objective';
+import { bottleneckFrom, objectiveFrom } from './objective';
 import type { Performance } from './performance';
 import type { SubjectGoal } from './model';
 import type { SubjectState } from './state';
@@ -212,114 +212,6 @@ describe('objectiveFrom', () => {
     const left = band.marks.find((mark) => mark.label === 'Overdue');
     expect(left?.value).toBe('12 days');
     expect(left?.tone).toBe('bad');
-  });
-});
-
-// ---------------------------------------------------------------------------
-describe('evidenceFrom', () => {
-  it('draws counted cards when there is no reading', () => {
-    const cards = evidenceFrom(
-      stateWith({
-        momentum: { known: true, change: 8, earlier: 62, later: 70, direction: 'climbing' },
-      }),
-      perfWith(), [],
-    );
-
-    const [card] = cards;
-    expect(cards).toHaveLength(1);
-    expect(card?.source).toBe('counted');
-    expect(card?.direction).toBe('helps');
-    // The claim leads and the figure follows — the whole shift this section is.
-    expect(card?.claim).toBe('Execution is improving across this window.');
-    expect(card?.evidence).toContain('62 to 70 on execution');
-  });
-
-  it('leaves out the card the bottleneck was named from', () => {
-    /* Both are chosen out of the same arithmetic, so without this the page
-       states one finding twice — as a card, then as the bottleneck under it,
-       with the same figures beneath both. The bottleneck keeps it: it is the
-       one carrying the judgement and the ruled-out line. */
-    const state = stateWith({
-      momentum: { known: true, change: -9, earlier: 70, later: 61, direction: 'slipping' },
-      curve: cliffCurve(),
-    });
-    const perf = perfWith();
-
-    const neck = bottleneckFrom(state, perf);
-    expect(neck?.from).toBe('cliff');
-
-    const claims = evidenceFrom(state, perf, [], null, neck?.from).map((card) => card.claim);
-    expect(claims).not.toContain('Work stops landing at Hard.');
-    // And what else bears is still there.
-    expect(claims).toContain('Execution is falling across this window.');
-  });
-
-  it('keeps every card when nothing was named from one', () => {
-    // A bottleneck named from the shortfall split has no card of its own, so
-    // there is nothing to drop and the cliff card stays.
-    const state = stateWith({ curve: cliffCurve() });
-
-    const claims = evidenceFrom(state, perfWith(), [], null, undefined)
-      .map((card) => card.claim);
-    expect(claims).toContain('Work stops landing at Hard.');
-  });
-
-  it('caps at three however much is wrong', () => {
-    const cards = evidenceFrom(
-      stateWith({
-        momentum: { known: true, change: -9, earlier: 70, later: 61, direction: 'slipping' },
-        curve: cliffCurve(),
-      }),
-      perfWith({
-        families: {
-          known: true, answered: 12, shares: [],
-          leading: { key: 'execution', label: 'The sitting', share: 58 },
-          notConceptual: 83,
-        },
-        calibration: { known: true, outgrown: [], overestimated: [], rushed: 5 },
-      }),
-      [goalWith({ drift: 9, sinceWork: 20, recentDays: 0 })],
-    );
-
-    expect(cards).toHaveLength(3);
-  });
-
-  it('leads with the cliff, because that is the one that names a level', () => {
-    const cards = evidenceFrom(
-      stateWith({
-        momentum: { known: true, change: 8, earlier: 62, later: 70, direction: 'climbing' },
-        curve: cliffCurve(),
-      }),
-      perfWith(), [],
-    );
-
-    expect(cards[0]?.claim).toBe('Work stops landing at Hard.');
-    expect(cards[0]?.relevance).toBe('The level to work is Fair, not the one above.');
-  });
-
-  it("uses the model's cards instead of its own, not as well as", () => {
-    // Interleaving would put two readings of one record side by side with
-    // nothing saying which was which.
-    const cards = evidenceFrom(
-      stateWith({
-        momentum: { known: true, change: 8, earlier: 62, later: 70, direction: 'climbing' },
-      }),
-      perfWith(), [],
-      [{
-        claim: 'Your contest execution is improving.',
-        direction: 'helps',
-        evidence: ['62 to 70 on execution'],
-        relevance: 'Timed work is what the goal is scored on.',
-      }],
-    );
-
-    expect(cards).toHaveLength(1);
-    expect(cards[0]?.source).toBe('read');
-    expect(cards[0]?.claim).toBe('Your contest execution is improving.');
-  });
-
-  it('draws nothing rather than filler when there is no evidence either way', () => {
-    expect(evidenceFrom(stateWith(), perfWith(), [])).toEqual([]);
   });
 });
 

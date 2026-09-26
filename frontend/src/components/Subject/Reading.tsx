@@ -1,114 +1,112 @@
 /**
- * WHY AM I THERE — the model's reading, with its working shown.
+ * KEY INSIGHTS — everything the reading found, as one list of rows.
  *
- * Two shapes, and the difference between them is not cosmetic.
+ * ## It was three lists
  *
- * **Diagnosis** is a claim about the reader, so it carries a confidence and
- * the figures it rests on. A reading off forty rated tasks is not the same
- * kind of statement as one off five, and a panel that presented them
- * identically would be flattening the only thing that separates a finding
- * from a guess. The confidence is the model's own estimate and is labelled as
- * that; the evidence is not — every line of it is a figure the app counted.
+ * Findings with a confidence badge, then a numbered "In this order" block,
+ * then insights in a `FROM:` / `SO:` layout. Three shapes, three type scales
+ * and three ways of attaching evidence, stacked, all saying things about the
+ * same handful of figures. The badges made it worse rather than better: a row
+ * reading "a guess" in amber is the page shouting a caveat at a reader who
+ * has not yet been told the claim.
  *
- * **Insight** is an observation plus what to do differently about it. The
- * `implication` is required, and that requirement is the whole design: an
- * observation with no implication is a statistic the reader can already see
- * on the cards above, and a page of those is the "here are 47 charts" failure
- * this system exists to avoid.
+ * One list now. Icon, claim, one line of detail, and a word for which way it
+ * cuts. A reader scans the words on the right, stops at the ones that say
+ * "needs focus", and reads those. That is what a list of findings is for.
+ *
+ * ## The priorities are gone, not moved
+ *
+ * "In this order" was a third ranked list on a page that already has two —
+ * the app's own ranked advice and the model's next steps, both directly
+ * above this under "Do this next", both of which can be turned into tasks.
+ * A ranking nobody can act on, under two that can, is the section a reader
+ * learns to skip. The model still produces them; they order the steps.
+ *
+ * ## Confidence did not survive either, and that is deliberate
+ *
+ * It is still on the wire and still honest — but as a chip beside every row
+ * it was noise on four rows out of five, and on the fifth it said "a guess"
+ * about a claim the reader had no reason to doubt. What a low-confidence
+ * finding needs is not a badge; it is not to be written. The prompt says so,
+ * and `_clean` drops any row citing a figure nobody counted.
  */
-import type { Diagnosis, Insight, Priority } from '@/services/analytics';
+import { Icon, type IconName } from '@/components/Icon';
+import type { Diagnosis, EvidenceDirection, Insight } from '@/services/analytics';
 
-/** Confidence, in words. A bare 0.72 is a number nobody can act on. */
-function sureness(value: number): string {
-  if (value >= 0.85) return 'high confidence';
-  if (value >= 0.6) return 'fair confidence';
-  if (value >= 0.4) return 'low confidence';
-  return 'a guess';
+/** What each direction is called on the row, and the tone it is drawn in. */
+const WAY: Record<EvidenceDirection, { word: string; icon: IconName }> = {
+  hurts: { word: 'needs focus', icon: 'target' },
+  helps: { word: 'working', icon: 'trend' },
+  watch: { word: 'worth watching', icon: 'lightbulb' },
+};
+
+/** One row of the list, whichever of the two shapes it came from. */
+interface Finding {
+  id: string;
+  claim: string;
+  /** One line under the claim. The evidence, or what to do about it. */
+  detail: string;
+  direction: EvidenceDirection;
+}
+
+/**
+ * The findings and the insights, in that order, as one list.
+ *
+ * Merged here rather than server-side because they are two different
+ * questions to a model — what is true, and what it means you should do — and
+ * one thing to a reader. The prompt is told they draw as one list, so it
+ * writes them as one and stops saying the same thing in both.
+ */
+export function findingRows(diagnosis: Diagnosis[], insights: Insight[]): Finding[] {
+  return [
+    ...diagnosis.map((entry, at) => ({
+      id: `d${at}`,
+      claim: entry.finding,
+      /* The counted lines, joined. A diagnosis carries up to four and they
+         are short — "Easy: execution 47 over 141 tasks" — so a bullet list
+         under every row was three lines of chrome for one line of content. */
+      detail: entry.evidence.join(' · '),
+      direction: entry.direction,
+    })),
+    ...insights.map((entry, at) => ({
+      id: `i${at}`,
+      claim: entry.observation,
+      /* The implication, not the evidence. An insight's whole reason for
+         existing is that it says what to do differently, and if only one
+         line fits it is that one. */
+      detail: entry.implication || entry.evidence,
+      direction: entry.direction,
+    })),
+  ].filter((row) => row.claim);
 }
 
 export function Reading({
   diagnosis,
-  priorities,
   insights,
 }: {
   diagnosis: Diagnosis[];
-  priorities: Priority[];
   insights: Insight[];
 }) {
+  const rows = findingRows(diagnosis, insights);
+  if (!rows.length) return null;
+
   return (
-    <div className="sx-reading">
-      {diagnosis.length > 0 && (
-        <ul className="sx-findings">
-          {diagnosis.map((entry) => (
-            <li key={entry.finding} className="sx-finding">
-              <div className="sx-finding-head">
-                <strong>{entry.finding}</strong>
-                <span
-                  className="sx-sure"
-                  data-band={
-                    entry.confidence >= 0.85
-                      ? 'high'
-                      : entry.confidence >= 0.6
-                        ? 'fair'
-                        : 'low'
-                  }
-                >
-                  {sureness(entry.confidence)}
-                </span>
-              </div>
-              {entry.evidence.length > 0 && (
-                <ul className="sx-finding-evidence">
-                  {entry.evidence.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {priorities.length > 0 && (
-        <div className="sx-priorities">
-          <h4>In this order</h4>
-          <ol>
-            {priorities.map((entry) => (
-              <li key={entry.focus}>
-                <div className="sx-priority-head">
-                  <strong>{entry.focus}</strong>
-                  {/* The weight as a bar rather than a decimal: it is a
-                      ranking the model produced, and 0.91 printed beside
-                      0.88 invites a precision that is not there. */}
-                  <span className="sx-priority-bar" aria-hidden="true">
-                    <span style={{ width: `${Math.round(entry.weight * 100)}%` }} />
-                  </span>
-                </div>
-                <p>{entry.reason}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
-
-      {insights.length > 0 && (
-        <ul className="sx-insights">
-          {insights.map((entry) => (
-            <li key={entry.observation} className="sx-insight">
-              <p className="sx-insight-obs">{entry.observation}</p>
-              {entry.evidence && (
-                <p className="sx-insight-ev">
-                  <span>From:</span> {entry.evidence}
-                </p>
-              )}
-              {entry.implication && (
-                <p className="sx-insight-imp">
-                  <span>So:</span> {entry.implication}
-                </p>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul className="sb-keys">
+      {rows.map((row) => {
+        const way = WAY[row.direction] ?? WAY.watch;
+        return (
+          <li key={row.id} className={`sb-key is-${row.direction}`}>
+            <span className="sb-key-mark" aria-hidden="true">
+              <Icon name={way.icon} size={18} />
+            </span>
+            <div className="sb-key-say">
+              <strong>{row.claim}</strong>
+              {row.detail && <p>{row.detail}</p>}
+            </div>
+            <span className="sb-key-tag">{way.word}</span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
