@@ -1,13 +1,26 @@
 /**
- * The four counts at the top of a subject, before anything is interpreted.
+ * The three counts at the top of a subject, before anything is interpreted.
  *
  * ## What they are for
  *
  * The standing card above these states a score and a verdict, both of which
  * need ratings behind them. These need nothing: they are counts, they are
- * true from the first task, and they are the four a reader coming to a page
- * about one subject actually arrives wanting — how much is there, how much
- * of it is done, am I still going, and what should I be working on.
+ * true from the first task, and they are what a reader coming to a page
+ * about one subject arrives wanting — how much is there, am I still going,
+ * and what should I be working on.
+ *
+ * ## There were four
+ *
+ * "Completed" was the fourth, and it printed the same figure the ring above
+ * prints under itself — forty pixels apart, on the same screen, in the same
+ * window. One number, twice, which is the thing this page has spent three
+ * passes getting rid of.
+ *
+ * Its change chip was worth keeping, so it moved to the tasks card, where
+ * the drawing had it in the first place: a percentage against the window
+ * before, on the count it is a change in. What did not survive is the
+ * completion rate — finished over filed is a fact about the pile rather
+ * than about the work, and the task board answers it.
  *
  * ## Why the last one is not a count
  *
@@ -37,9 +50,8 @@ import { Icon, type IconName } from '@/components/Icon';
 export interface SubjectCardsProps {
   /** Filed under this subject in the window, finished or not. */
   total: number;
-  /** Finished in the window, and in the equal-length run before it. */
-  finished: number;
-  finishedBefore: number;
+  /** The same, in the equal-length run before it. 0 when there is none. */
+  totalBefore: number;
   /** Consecutive days with work here, up to today. */
   streak: number;
   /** The bottleneck's name, or '' when the record cannot name one. */
@@ -49,7 +61,7 @@ export interface SubjectCardsProps {
 interface Card {
   key: string;
   icon: IconName;
-  tone: 'green' | 'blue' | 'violet' | 'rose';
+  tone: 'green' | 'violet' | 'rose';
   label: string;
   /** The figure, already formatted. */
   value: string;
@@ -64,15 +76,8 @@ function change(now: number, before: number): number | null {
   return Math.round(((now - before) / before) * 100);
 }
 
-export function SubjectCards({
-  total,
-  finished,
-  finishedBefore,
-  streak,
-  focus,
-}: SubjectCardsProps) {
-  const moved = change(finished, finishedBefore);
-  const rate = total > 0 ? Math.round((finished / total) * 100) : null;
+export function SubjectCards({ total, totalBefore, streak, focus }: SubjectCardsProps) {
+  const moved = change(total, totalBefore);
 
   const cards: Card[] = [
     {
@@ -81,15 +86,6 @@ export function SubjectCards({
       tone: 'green',
       label: 'Total tasks',
       value: String(total),
-      chip: null,
-      note: total === 1 ? 'filed in this window' : 'filed here in this window',
-    },
-    {
-      key: 'finished',
-      icon: 'check',
-      tone: 'blue',
-      label: 'Completed',
-      value: String(finished),
       chip:
         moved === null
           ? null
@@ -97,7 +93,7 @@ export function SubjectCards({
               text: `${moved > 0 ? '+' : ''}${moved}%`,
               way: moved > 0 ? 'up' : moved < 0 ? 'down' : 'flat',
             },
-      note: rate === null ? 'nothing filed yet' : `${rate}% of what you filed`,
+      note: moved === null ? 'filed here in this window' : 'against the window before',
     },
     {
       key: 'streak',

@@ -261,16 +261,19 @@ describe('the order of the page', () => {
     expect(at('What this subject is for')).toBeLessThan(at('What to do next'));
   });
 
-  it('opens the four counts under the verdict, before anything is interpreted', async () => {
+  it('opens the three counts under the verdict, before anything is interpreted', async () => {
     /* They need none of what the verdict needs: counts are true from the
-       first task, where the ring says "unrated" until something is rated. */
+       first task, where the ring says "unrated" until something is rated.
+
+       Three, not four. A "Completed" card printed the same figure the ring
+       above prints under itself. */
     await show();
 
-    const cards = document.querySelector('.sb-cards')!;
-    expect(within(cards as HTMLElement).getByText('Total tasks')).toBeInTheDocument();
-    expect(within(cards as HTMLElement).getByText('Completed')).toBeInTheDocument();
-    expect(within(cards as HTMLElement).getByText('Current streak')).toBeInTheDocument();
-    expect(within(cards as HTMLElement).getByText('Focus area')).toBeInTheDocument();
+    const cards = within(document.querySelector('.sb-cards') as HTMLElement);
+    expect(cards.getByText('Total tasks')).toBeInTheDocument();
+    expect(cards.getByText('Current streak')).toBeInTheDocument();
+    expect(cards.getByText('Focus area')).toBeInTheDocument();
+    expect(cards.queryByText('Completed')).not.toBeInTheDocument();
   });
 });
 

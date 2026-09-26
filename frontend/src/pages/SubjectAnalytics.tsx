@@ -372,13 +372,22 @@ export default function SubjectAnalytics() {
      the page that includes work still open. `mine` is unwindowed, which is
      right for the facts panels and wrong for a card sitting under a picker. */
   const windowTotal = useMemo(() => {
-    const from = spanFor(span, today);
-    return mine.filter((task) => {
-      const day = String(task.completed_at || task.created_at || '').slice(0, 10);
-      if (!day) return false;
-      if (from.from && day < from.from) return false;
-      return !from.to || day <= from.to;
-    }).length;
+    const span_ = spanFor(span, today);
+    const count = (from: string, to: string) =>
+      mine.filter((task) => {
+        const day = String(task.completed_at || task.created_at || '').slice(0, 10);
+        if (!day) return false;
+        if (from && day < from) return false;
+        return !to || day <= to;
+      }).length;
+
+    return {
+      now: count(span_.from, span_.to),
+      /* All Time has no window before it by definition, so the card draws no
+         chip rather than comparing the record against the void it was made
+         out of. `previousFrom` is empty exactly then. */
+      before: span_.previousFrom ? count(span_.previousFrom, span_.previousTo) : 0,
+    };
   }, [mine, span, today]);
 
   /* The one tendency this page is allowed to state before the folds below have
@@ -1301,16 +1310,20 @@ export default function SubjectAnalytics() {
               </div>
             </section>
 
-            {/* ---- The four counts ------------------------------------ */}
+            {/* ---- The three counts ----------------------------------- */}
             {/* Under the verdict, because they need none of what it needs:
                 counts are true from the first task, where the ring says
-                "unrated" until something is rated. The fourth is not a
+                "unrated" until something is rated. The third is not a
                 count — it is the bottleneck's name, which had a panel of
-                its own until the three cards arguing with it went. */}
+                its own until the three cards arguing with it went.
+
+                There were four. "Completed" was the same figure the ring
+                prints under itself, forty pixels above, so it went — and
+                its change chip moved onto the tasks card, which is where
+                the drawing had it anyway. */}
             <SubjectCards
-              total={windowTotal}
-              finished={model.finished}
-              finishedBefore={model.finishedBefore}
+              total={windowTotal.now}
+              totalBefore={windowTotal.before}
               streak={model.streak}
               focus={bottleneck?.name ?? ''}
             />

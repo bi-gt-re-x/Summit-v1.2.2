@@ -806,7 +806,6 @@
 }
 
 .sb-card.is-green  { --sb-card-tint: var(--ax-green); }
-.sb-card.is-blue   { --sb-card-tint: var(--ax-blue); }
 .sb-card.is-violet { --sb-card-tint: var(--ax-violet); }
 .sb-card.is-rose   { --sb-card-tint: var(--ax-pink); }
 

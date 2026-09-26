@@ -2,7 +2,7 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
-## 2026-09-26 — The subject page gets tabs, four counts and one list of insights
+## 2026-09-26 — The subject page gets tabs, three counts and one list of insights
 
 Four changes, and the shape of the page after them is: what it comes to, what
 it is for, what to do, what the record says — then a tab holding the working.
@@ -14,12 +14,19 @@ bottom of the page. The strip is the analytics page's own `.ax-tabs-major`
 pills, beside the window picker, so a reader arriving from there does not
 have to learn a second control.
 
-**Four counts under the verdict.** Total tasks, completed with its change
-against the window before, the streak, and the focus area. They need none of
-what the verdict above them needs: counts are true from the first task, where
-the ring says "unrated" until something is rated. The streak moved here off
-the standing card's badge row, which keeps its two readings — which way it is
+**Three counts under the verdict.** Total tasks with its change against the
+window before, the streak, and the focus area. They need none of what the
+verdict above them needs: counts are true from the first task, where the ring
+says "unrated" until something is rated. The streak moved here off the
+standing card's badge row, which keeps its two readings — which way it is
 going, and where execution stops holding.
+
+There were four. A "Completed" card printed `state.finished`, which is the
+figure the ring above prints under itself — the same number twice, forty
+pixels apart, in the same window. Its change chip was worth keeping and moved
+onto the tasks card, where the drawing had it anyway. The completion rate
+went with the card: finished over filed is a fact about the pile rather than
+about the work.
 
 **"What matters now" and the bottleneck panel are gone.** Three evidence
 cards over a fourth card naming the bottleneck, all four chosen out of the
