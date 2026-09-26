@@ -2,6 +2,49 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-25 — The dashboard's cards come back, tinted
+
+Worked against a drawing of the page, and it reverses most of the entry below
+it: that pass took every band out of its box and divided the page with rules,
+and the drawing keeps the boxes. What it changes is what a box *is*.
+
+**The four figures are tinted, each its own hue.** They already declared one —
+every card's disc is `.dash-chip-today` / `-xp` / `-focus` / `-streak`, four
+tints that existed only as a 34px circle. The colour now runs across the whole
+card: a flat 5% wash with a 12% bloom in the top-left corner. A corner gradient
+on its own was the first attempt and it faded out before the middle, leaving
+four white cards with coloured corners; the drawing's are tinted edge to edge.
+Four to eight per cent is the whole usable range — under it the row is four
+identical rectangles told apart by their heading, over it the wash competes
+with the figure printed on top of it.
+
+The tint is keyed off `:has(.dash-chip-*)` rather than a second class on the
+card. The tone is a prop on `StatHead` and it reaches the DOM once, as the
+disc's class; reading it back means a tone cannot be changed on the disc and
+forgotten on the card, which is how a set of four like this usually drifts.
+One rule serves all four, with `--tone` mixed into the wash, the border and the
+foot strip, so a tone is one colour in one place rather than three values kept
+in step by hand.
+
+**Flatter and rounder**: 20px corners rather than 16, a border a shade lighter
+than the app's, and the shadow down to a 4% hairline. A tinted card does not
+need a shadow to lift off the page; it is already a different colour from it.
+
+Kept from the pass below: the greeting stays out of a box, the mountain range
+behind it stays hidden, and the page keeps the width it gained — the drawing
+runs its cards very nearly to the edge, and the 1370px cap was leaving a band of
+ground down each side of a 1600px window.
+
+The half of the page the drawing does not show follows the cards above rather
+than inventing a second treatment. The three insight panels stay white like the
+task list: tint is doing a job in the figure row — telling four similar things
+apart — that it has none to do among three panels that are read rather than
+scanned, and four tinted figures over three tinted panels leaves the page with
+no quiet part. "Worth changing" takes the accent from its own disc at the same
+strength, because it is the page's voice rather than a fifth figure. The quote
+stays a line of text: boxing it would end the page on a card holding one
+sentence.
+
 ## 2026-09-25 — The dashboard comes out of its boxes
 
 Every band on the dashboard was a card: a white surface, a 1px border, a 16px

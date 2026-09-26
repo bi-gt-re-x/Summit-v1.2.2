@@ -43,14 +43,11 @@ body:has(.dash) .app-main {
     padding: 0 var(--space-5);
     display: flex;
     flex-direction: column;
-    /* No gap. The page is seven bands deep — greeting, figures, what's next,
-       the two panels, the three cards, what to change, the quote — and they
-       used to be told apart by being seven floating boxes with 24px of ground
-       showing between them. They are told apart by a rule now, and a rule
-       needs the space *inside* the band rather than outside it, so each band
-       below pays for its own room and the gap that used to double it is gone.
-       See "Lines, not boxes" at the foot of this file. */
-    gap: 0;
+    /* The page is seven bands deep — greeting, figures, what's next, the two
+       panels, the three cards, what to change, the quote. At 20px they read as
+       one wall of boxes; the extra air is what lets each band be looked at on
+       its own, and it is the gap the drawing leaves between its cards. */
+    gap: var(--space-6);
     box-sizing: border-box;
     text-align: left;
 }
@@ -1136,13 +1133,6 @@ html.focus-mode .quote-container {
     overflow: hidden;
     pointer-events: none;
     visibility: hidden;
-    /* The bands carry their own padding and a rule along the top now, and
-       neither is covered by `max-height: 0` — padding is added to the height
-       the max caps, and a 1px border paints whether or not there is anything
-       under it. Without these two lines focus mode left a stack of hairlines
-       and about 150px of empty band behind the panel it was clearing. */
-    padding-block: 0;
-    border-block-width: 0;
     transition: opacity 0.45s ease, transform 0.6s ease,
                 margin 0.6s ease, max-height 0.6s ease,
                 padding 0.6s ease, visibility 0s linear 0.6s;
@@ -1220,7 +1210,7 @@ html.focus-mode .dash-main .dash-tasks { order: 1; min-height: 0; }
 }
 
 @media (max-width: 768px) {
-    .dash { padding: 0 var(--space-4); margin-top: var(--space-4); }
+    .dash { padding: 0 var(--space-4); margin-top: var(--space-4); gap: var(--space-4); }
     .dash-stats { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
     .dash-hello { font-size: var(--text-2xl); }
     .dash-panel-head { flex-wrap: wrap; }
@@ -1607,183 +1597,174 @@ html[data-theme="dark"] .dash-week-vs-note { color: #6e7681; }
 
 
 /* ==========================================================================
-   LINES, NOT BOXES
+   THE CARDS, AS DRAWN
    ==========================================================================
 
-   Every band on this page used to be a card: a white surface, a 1px border, a
-   16px radius and a shadow, floating on the graph-paper ground with 24px of it
-   showing in between. Seven of them down the page, and three or four across
-   inside the widest ones, which is how a figure ends up four frames deep — the
-   window, the page's ground, the card, and the cell inside it. `.dash-week-cell`
-   above already dropped one of those frames for exactly this reason; this is
-   the same argument applied to the rest of the page.
+   Worked against a mockup of this page, and it puts the surfaces back: the
+   previous pass took every band out of its box and divided the page with rules
+   instead. The drawing keeps the boxes and does the separating with them —
+   what it changes is what a box *is*.
 
-   What a card was doing here was saying *this group ends and the next begins*.
-   A rule says that with one pixel instead of a border on four sides, a radius,
-   a shadow and the ground around it — and it says it without also implying the
-   contents are a separate object that happens to be parked on the page.
+   Three things carry it, and they are the whole section:
 
-   So: the surfaces are stripped, and the grouping moves to the lines.
+     1. **The four figures are tinted, each its own hue.** They already
+        declared one: every card's disc is `.dash-chip-today` / `-xp` /
+        `-focus` / `-streak`, four tints that existed only as a 34px circle.
+        The drawing spends that colour on the whole card — a wash at the top
+        left fading out before the middle — so the row reads as four different
+        things at a glance instead of four identical white rectangles
+        distinguished by their heading.
+     2. **Flatter and rounder.** 20px corners rather than 16, a border a
+        shade lighter than the app's, and the shadow almost gone. A tinted
+        card does not need a shadow to lift off the page; it is already a
+        different colour from it.
+     3. **The greeting stays out of a box**, which is the one thing the
+        previous pass had right and the drawing agrees with — the name and the
+        date sit directly on the page.
 
-     - Down the page, each band gets `border-top` and pays for its own room in
-       padding. The greeting is first and so has no rule above it.
-     - Across a band, columns are divided by `border-left` on every child but
-       the first, and each column carries the horizontal padding that keeps its
-       content off that line.
-     - The outermost columns lose their outer padding, so the first word of the
-       page and the last figure in a row both sit on the page's own margin
-       rather than a card's inset. That is most of the "edge whitespace": it was
-       24px of card padding inside 24px of page padding inside the gap to the
-       rail.
+   The page stays as wide as that pass left it. The drawing runs its cards very
+   nearly to the edge, and the 1370px cap this file used to carry was leaving a
+   band of ground down each side of a 1600px window.
 
-   Scoped to `.dash` throughout, and written against the page's own classes
-   rather than `.ui-card`, deliberately. `.ui-card` is the whole app's surface
-   (components/ui/Card) and half a dozen things that are genuinely boxes —
-   the task dialog, the catch-up sheet, the level-up card — mount inside `.dash`
-   and must keep their chrome. Naming the six page surfaces cannot reach them.
+   ## Why the tint is keyed off `:has()`
 
-   Undoing this is one block: delete from here to the end of the file and put
-   `gap: var(--space-6)` and `max-width: 1370px` back on `.dash` above. */
+   The tone is a prop on `StatHead` (components/Dashboard/StatCards) and it
+   reaches the DOM only as the disc's class. Rather than pass the same word
+   twice — once for the disc, once for the card — each card reads the disc it
+   already contains. A tone can then never be changed on one and forgotten on
+   the other, which is the usual way a set like this drifts. The file already
+   leans on `:has()` for `body:has(.dash)` at the top.
+ */
 
-.dash .dash-hero,
-.dash .dash-stat,
-.dash .dash-panel,
-.dash .focus-panel,
-.dash .dash-next,
-.dash .dash-move {
+/* ---- The page -------------------------------------------------------- */
+/* The drawing has no weather behind the greeting: the name sits on the page.
+   `.peak-scene` is lit by the hero's own gradient and clipped by its radius,
+   so with the box gone it is a grey smear over the ground. */
+.dash > .dash-hero {
+    padding: 0;
+    min-height: 0;
     background: none;
     border: 0;
     border-radius: 0;
     box-shadow: none;
 }
-
-/* `.is-clear` is the good-news state of the "what's next" strip and it sets its
-   own tint and border colour further up, after the rule that would clear them.
-   Same specificity, later in the file, so it wins — it has to be named. The
-   state still reads: its disc stays green. */
-.dash .dash-next.is-clear {
-    background: none;
-    border: 0;
-}
-
-/* The range in the greeting goes with the box it was drawn on.
- *
- * `.peak-scene` (components/Range) is a picture of mountains fading up out of
- * the hero's own gradient — it is lit by that sky and clipped by that radius.
- * With the card gone it is a grey smear in the top right of the page, sitting
- * over graph paper it was never drawn against. The greeting keeps the hero's
- * layout and loses only the weather. */
 .dash .dash-hero .peak-scene { display: none; }
 
-/* ---- Down the page ------------------------------------------------------ */
-.dash > .dash-hero { padding: 0 0 var(--space-6); min-height: 0; }
-
-.dash > .dash-stats,
-.dash > .dash-next,
-.dash > .dash-main,
-.dash > .dash-insights,
-.dash > .dash-move,
-.dash > .quote-container {
-    border-top: 1px solid var(--color-line);
-    padding: var(--space-6) 0;
+/* ---- Every card on the page ------------------------------------------ */
+/* Named rather than `.dash .ui-card`, deliberately: the task dialog, the
+   catch-up sheet and the level-up card all mount inside `.dash` and carry the
+   app's own card chrome on purpose. Naming the page's six surfaces cannot
+   reach them. */
+.dash .dash-stat,
+.dash .dash-panel,
+.dash .focus-panel,
+.dash .dash-next,
+.dash .dash-move {
+    border-radius: var(--dash-card-radius);
+    border: 1px solid var(--dash-card-line);
+    box-shadow: var(--dash-card-shadow);
+    background: var(--color-surface);
 }
 
-/* The two that are a single line of text rather than a block sit tighter: a
-   band's padding should be proportional to what is in it, and 24px over and
-   under one sentence is a band that looks empty. */
-.dash > .dash-next { padding: var(--space-4) 0; }
-.dash > .quote-container { padding: var(--space-5) 0 0; }
+.dash {
+    --dash-card-radius: 20px;
+    --dash-card-line: color-mix(in srgb, var(--color-line) 70%, transparent);
+    /* Barely there. A tinted card is already separated from the ground by
+       being a different colour, and the drawing lifts these off the page by a
+       hair rather than by a shelf. */
+    --dash-card-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+}
+html[data-theme="dark"] .dash {
+    --dash-card-line: var(--color-line);
+    --dash-card-shadow: none;
+}
 
-/* ---- Across a band ------------------------------------------------------ */
-.dash .dash-stats { gap: 0; }
+/* ---- The four figures, each in its own colour ------------------------- */
+/*
+ * One rule, four tones. Each card sets `--tone` from the disc it contains and
+ * the wash, the border and the inset strip are all mixed from it, so a tone is
+ * one colour in one place rather than three values to keep in step.
+ *
+ * Two layers, because one did not carry. A corner gradient alone faded out
+ * before the middle and left most of the card white — measured against the
+ * drawing, the cards there are tinted edge to edge. So: a flat 5% wash over
+ * the whole surface, and a 12% bloom in the top-left corner over it.
+ *
+ * That is the whole usable range. Below about 4% flat the four cards are the
+ * same white and the row is four headings; above about 8% the wash starts
+ * competing with the figure printed on it, which is the one thing on the card
+ * anybody came to read.
+ */
+.dash .dash-stat:has(.dash-chip-today)  { --tone: #4361EE; }
+.dash .dash-stat:has(.dash-chip-xp)     { --tone: #7B52D3; }
+.dash .dash-stat:has(.dash-chip-focus)  { --tone: #22A06B; }
+.dash .dash-stat:has(.dash-chip-streak) { --tone: #E07A34; }
+
 .dash .dash-stat {
-    padding: 0 var(--space-6);
-    justify-content: flex-start;
-}
-.dash .dash-stat + .dash-stat { border-left: 1px solid var(--color-line); }
-.dash .dash-stat:first-child { padding-left: 0; }
-.dash .dash-stat:last-child { padding-right: 0; }
-
-.dash .dash-main { gap: 0; }
-.dash .dash-main > * { padding: 0 var(--space-6); }
-.dash .dash-main > * + * { border-left: 1px solid var(--color-line); }
-.dash .dash-main > :first-child { padding-left: 0; }
-.dash .dash-main > :last-child { padding-right: 0; }
-/* The list scrolls inside the column, so its own scrollbar would otherwise run
-   along the dividing line. */
-.dash .dash-main.is-solo > * { padding: 0; }
-
-.dash .dash-insights { gap: 0; }
-.dash .dash-insight { padding: 0 var(--space-6); }
-.dash .dash-insight + .dash-insight { border-left: 1px solid var(--color-line); }
-.dash .dash-insights > :first-child { padding-left: 0; }
-.dash .dash-insights > :last-child { padding-right: 0; }
-
-/* The panels set their own inset for a card they no longer have. */
-.dash .dash-panel { padding-block: 0; }
-
-/* ---- Narrow ------------------------------------------------------------- */
-/* A left-hand rule on a column with nothing to its left is a line down the
-   side of the page, so the divisions have to turn horizontal at exactly the
-   widths the grids actually reflow — 1240 and 768 above, not a number picked
-   to look about right. The three grids do not reflow together, which is why
-   each is handled on its own rather than as one list of selectors. */
-
-@media (max-width: 1240px) {
-    /* Four figures become 2x2. The rule between the pair stays vertical; a new
-       one goes between the rows. `nth-child` and not `+ *`, because the third
-       card starts a row and would otherwise carry a line on its left. */
-    /* `.dash .dash-stat` alone cannot clear the wide layout's rule: that one is
-       written `.dash .dash-stat + .dash-stat`, which is a class more specific,
-       so it wins wherever the two disagree no matter which comes later. Every
-       reset below is written in the same shape as the rule it is undoing. */
-    .dash .dash-stat,
-    .dash .dash-stat + .dash-stat {
-        border-left: 0;
-        padding: var(--space-5) var(--space-6);
-    }
-    .dash .dash-stat:nth-child(odd) { padding-left: 0; }
-    .dash .dash-stat:nth-child(even) {
-        padding-right: 0;
-        border-left: 1px solid var(--color-line);
-    }
-    .dash .dash-stat:nth-child(-n + 2) { padding-top: 0; }
-    .dash .dash-stat:nth-child(n + 3) {
-        border-top: 1px solid var(--color-line);
-        padding-bottom: 0;
-    }
-
-    /* The three insight panels and the task/focus row are both one column
-       here, so both divide the way the page itself does. */
-    .dash .dash-insight,
-    .dash .dash-insight + .dash-insight,
-    .dash .dash-main > *,
-    .dash .dash-main > * + * {
-        border-left: 0;
-        padding: var(--space-5) 0;
-    }
-    .dash .dash-insight + .dash-insight,
-    .dash .dash-main > * + * {
-        border-top: 1px solid var(--color-line);
-    }
-    .dash .dash-insight:first-child,
-    .dash .dash-main > :first-child { padding-top: 0; }
-    .dash .dash-insight:last-child,
-    .dash .dash-main > :last-child { padding-bottom: 0; }
+    background:
+        radial-gradient(130% 130% at 0% 0%,
+            color-mix(in srgb, var(--tone, transparent) 12%, transparent) 0%,
+            transparent 72%),
+        color-mix(in srgb, var(--tone, transparent) 5%, var(--color-surface));
+    border-color: color-mix(in srgb, var(--tone, var(--color-line)) 22%, var(--dash-card-line));
+    /* The drawing gives its cards more room than 24px. */
+    padding: var(--space-6) var(--space-6) var(--space-5);
 }
 
-@media (max-width: 768px) {
-    /* One column: every division is horizontal. */
-    .dash .dash-stat,
-    .dash .dash-stat + .dash-stat,
-    .dash .dash-stat:nth-child(even) {
-        border-left: 0;
-        padding: var(--space-5) 0;
-    }
-    .dash .dash-stat + .dash-stat,
-    .dash .dash-stat:nth-child(n + 3) {
-        border-top: 1px solid var(--color-line);
-    }
-    .dash .dash-stat:first-child { padding-top: 0; }
-    .dash .dash-stat:last-child { padding-bottom: 0; }
+/* The inset strip along a card's foot — the goal under the hours, the record
+   under the run — picks the same tone up, so it reads as part of its card
+   rather than a grey box dropped into a coloured one. */
+.dash .dash-stat .dash-stat-panel {
+    background: color-mix(in srgb, var(--tone, transparent) 6%, var(--color-surface-2));
+    border-color: color-mix(in srgb, var(--tone, var(--color-line)) 16%, var(--dash-card-line));
+}
+
+html[data-theme="dark"] .dash .dash-stat {
+    background:
+        radial-gradient(130% 130% at 0% 0%,
+            color-mix(in srgb, var(--tone, transparent) 20%, transparent) 0%,
+            transparent 72%),
+        color-mix(in srgb, var(--tone, transparent) 9%, var(--color-surface));
+    border-color: color-mix(in srgb, var(--tone, var(--color-line)) 30%, var(--color-line));
+}
+
+/* ---- The bottom of the page ------------------------------------------- */
+/* Everything under the task row, in the same language. It is not in the
+   drawing — the image stops at the fold — so these follow the cards above
+   rather than inventing a second treatment for the half nobody drew.
+ *
+ * The three insight panels are white like the task list: they are read, not
+ * scanned, and four tinted figures over three tinted panels is a page with no
+ * quiet part left in it. Tint is doing a job in the figure row (telling four
+ * similar things apart) that it has no job to do here.
+ */
+.dash .dash-insight { background: var(--color-surface); }
+
+/* "Worth changing" is advice rather than a reading, and the one card on the
+   page that ends in a link out. It takes the accent it already uses on its
+   disc, at the same 7%, so it reads as the page's own voice rather than as a
+   fifth figure. */
+.dash .dash-move {
+    background:
+        radial-gradient(90% 200% at 0% 0%,
+            color-mix(in srgb, var(--color-accent) 7%, transparent) 0%,
+            transparent 60%),
+        var(--color-surface);
+    border-color: color-mix(in srgb, var(--color-accent) 16%, var(--dash-card-line));
+    padding: var(--space-5) var(--space-6);
+}
+
+/* The quote is a line of text, not a panel. Boxing it would make the page end
+   on a card holding one sentence. */
+.dash > .quote-container { padding-top: var(--space-2); }
+
+/* ---- What is next, and the row under it -------------------------------- */
+.dash .dash-next { padding: var(--space-4) var(--space-5); }
+.dash .dash-next.is-clear {
+    border-color: color-mix(in srgb, #22A06B 22%, var(--dash-card-line));
+    background:
+        radial-gradient(90% 200% at 0% 0%,
+            color-mix(in srgb, #22A06B 7%, transparent) 0%,
+            transparent 60%),
+        var(--color-surface);
 }
