@@ -374,7 +374,15 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     transition: border-color .15s ease, transform .14s ease;
 }
 .rc-best > button:hover { border-color: var(--rc-accent-2); transform: translateY(-2px); }
+/* A chip rather than a line of small caps, which is how the layout draws it
+   and what makes the top of the card scan as a label attached to something
+   rather than as the card's first line of text. `align-self: start` so it
+   shrink-wraps the word instead of ruling across the card. */
 .rc-best-cat {
+    align-self: start;
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--rc-accent-2) 12%, transparent);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
@@ -475,11 +483,134 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-more { margin-top: var(--space-4); }
 
 /* ---------- Timeline and milestones --------------------------------------- */
+/* `.rc-two` put the history beside the milestones. Drawn to the layout both
+   run the width of the page: the history rows carry six columns now — figure,
+   change, category, date — and half a page is not enough width for them
+   without the figures wrapping under the names. The rule is kept because the
+   selector is still in the sheet's vocabulary; nothing renders it. */
 .rc-two {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-5);
     align-items: start;
+}
+
+/* ---- Recent records ----------------------------------------------------
+ *
+ * Six tracks: mark, what it was, category, when, the figure, the change. The
+ * three on the right are fixed so that every row's figures line up into
+ * columns down the list — the whole reason to draw this flat rather than as a
+ * dated spine is that a reader can run an eye down the change column, and that
+ * only works if the column is a column.
+ *
+ * `minmax(0, 1fr)` on the name, so a long record title ellipses instead of
+ * pushing the figures off the end.
+ */
+.rc-recs { list-style: none; margin: 0; padding: 0; }
+
+.rc-rec {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 156px 104px 108px 92px;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--rc-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.rc-recs > li + li { border-top: 1px solid var(--rc-line); }
+.rc-rec:hover { background: color-mix(in srgb, var(--rc-accent) 7%, transparent); }
+.rc-rec:hover .rc-rec-name { text-decoration: underline; }
+
+.rc-rec-ico {
+    width: 34px; height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: var(--rc-card-2);
+    color: var(--rc-accent-2);
+}
+.rc-rec-ico svg { width: 17px; height: 17px; }
+.rc-recs > li.is-record .rc-rec-ico {
+    background: color-mix(in srgb, var(--rc-gold) 16%, transparent);
+    color: var(--rc-gold);
+}
+
+.rc-rec-main { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.rc-rec-name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.rc-rec-note { font-size: var(--text-2xs); color: var(--rc-faint); }
+.rc-rec-note.is-record {
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--rc-gold);
+}
+
+/* A cell that is always present and sometimes empty — see the note at the call
+   site. The pill is the `em` inside it, so an empty cell draws nothing. */
+.rc-rec-cat { min-width: 0; }
+.rc-rec-cat em {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 3px var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--rc-card-2);
+    font-style: normal;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--rc-muted);
+    white-space: nowrap;
+}
+
+.rc-rec-when {
+    font-size: var(--text-xs);
+    color: var(--rc-faint);
+    white-space: nowrap;
+}
+.rc-rec-value {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+.rc-rec-step {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--rc-faint);
+    white-space: nowrap;
+}
+.rc-rec-step.is-up { color: var(--rc-good); }
+
+/* Under about 1100 the six tracks stop fitting. The category and the date are
+   the two the row can lose — the category is a filter the toolbar already
+   shows, and the date is the one thing a reader can usually infer from where
+   they are in a list ordered by date. */
+@media (max-width: 1100px) {
+    .rc-rec { grid-template-columns: 34px minmax(0, 1fr) 96px 84px; }
+    .rc-rec-cat, .rc-rec-when { display: none; }
+}
+@media (max-width: 620px) {
+    .rc-rec { grid-template-columns: 34px minmax(0, 1fr) auto; }
+    .rc-rec-step { display: none; }
 }
 
 /* The date is written once and the things that happened on it hang off it —

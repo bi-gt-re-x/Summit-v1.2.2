@@ -2,6 +2,46 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-25 — The records page is laid out to the drawing
+
+Worked against a layout of the page. The top half already matched it — hero,
+four figures, the meta line, the filter chips and the grid of bests are what
+they were. Everything below the bests moved.
+
+**One section, not two.** The chart lived under "How your records changed" and
+the search, category and sort lived on the history column below it. They are
+one thing: the toolbar narrows the *rows*, and the rows are what the chart is
+drawn from, so a strip that appeared to govern only the list under it was in
+fact governing both. It now sits at the top of the section, which is where the
+drawing puts it, and the section is called "Records timeline".
+
+**The history is a flat list of rows, full width.** It was a dotted spine down
+the left with the date written once above everything that happened under it,
+in a column beside the milestones. The drawing lays it out as six columns —
+mark, what it was, category, when, the figure, the change — so the date comes
+back onto every row and the section takes the whole page. Half a page is not
+enough width for six columns without the figures wrapping under the names.
+
+Losing the day grouping is a real trade and worth naming: two records set on
+one afternoon no longer read as one afternoon. What is bought is that every row
+is independently readable and the figures line up into columns down the list,
+which is the point of drawing it flat — a reader can run an eye down the change
+column. It also settles an inconsistency that was already there: the list can
+be sorted by biggest improvement, and under that ordering a day heading groups
+by something the list is no longer sorted on.
+
+Paging is unchanged and still counts days; the rows are flattened at the point
+of rendering, so there is still one definition of how much history is showing.
+
+**Smaller things the drawing asked for.** The category on a best card is a chip
+rather than a line of small caps, so the top of the card scans as a label
+attached to something rather than as its first line of text. The milestones
+section and "What Summit noticed" keep their place under the new list — the
+drawing stops at the fold and does not say to remove them.
+
+Not followed: the drawing is blue throughout and this page is violet and gold,
+which is the app's accent and not this page's to change.
+
 ## 2026-09-25 — The dashboard's cards come back, tinted
 
 Worked against a drawing of the page, and it reverses most of the entry below

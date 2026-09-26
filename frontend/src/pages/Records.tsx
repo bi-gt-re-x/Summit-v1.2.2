@@ -329,16 +329,25 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
 }
 
 /**
- * One line of history, and what it was at the time.
+ * One row of recent history: what it was, when, and what it beat.
  *
  * The difference between this and a table row is `moment`: whether the entry
  * beat everything before it, and by how much. A record being broken is the
  * only event on this page worth stopping at, so it is the only one drawn in
  * gold and the only one carrying its own figure — everything else is context
- * for it, which is what makes the column read as a story rather than as an
- * audit of things that were typed in.
+ * for it, which is what makes the list read as a story rather than as an audit
+ * of things that were typed in.
  *
  * A milestone has no `moment`: nothing was beaten, it happened.
+ *
+ * ## Six columns, and why the date moved back onto the row
+ *
+ * This was a dotted spine with the date written once above everything that
+ * happened under it — two records set on one afternoon being one afternoon.
+ * Drawn to the layout it is a flat list, so the date comes back per row and
+ * pays for itself by making every row independently readable: the rows are
+ * now sortable by improvement as well as by date, and under that ordering a
+ * day heading is grouping by something the list is no longer sorted on.
  */
 function Entry({
   row,
@@ -355,25 +364,47 @@ function Entry({
     <li className={`${row.kind === 'milestone' ? 'is-milestone' : ''}${
       moment?.broke ? ' is-record' : ''
     }`}>
-      <span className="rc-tl-dot" aria-hidden="true" />
-      <button type="button" className="rc-tl-body" onClick={onOpen}>
-        <span className="rc-tl-name">
-          {row.name}
-          {row.kind === 'record' && <em> — {formatValue(row.value, row.unit, row.target)}</em>}
+      <button type="button" className="rc-rec" onClick={onOpen}>
+        <span className="rc-rec-ico" aria-hidden="true">
+          <Icon name={row.kind === 'milestone' ? 'medal' : 'trophy'} />
         </span>
-        {moment?.broke ? (
-          <span className="rc-tl-note is-record">
-            New record{step && ` · ${step}`}
-          </span>
-        ) : moment?.first ? (
-          <span className="rc-tl-note">
-            First entry{row.category ? ` · ${row.category}` : ''}
-          </span>
-        ) : (
-          <span className="rc-tl-note">
-            {row.category || (row.kind === 'milestone' ? 'Milestone' : 'Record')}
-          </span>
-        )}
+
+        <span className="rc-rec-main">
+          <span className="rc-rec-name">{row.name}</span>
+          {moment?.broke ? (
+            <span className="rc-rec-note is-record">
+              New record{step && ` · ${step}`}
+            </span>
+          ) : moment?.first ? (
+            <span className="rc-rec-note">
+              First entry{row.category ? `: ${row.category}` : ''}
+            </span>
+          ) : (
+            <span className="rc-rec-note">
+              {row.kind === 'milestone' ? 'Milestone' : 'Personal best'}
+            </span>
+          )}
+        </span>
+
+        {/* Empty rather than absent when a row has no category: the grid has
+            six tracks and a missing cell would slide the date, the figure and
+            the change one column left on that row alone. */}
+        <span className="rc-rec-cat">
+          {row.category ? <em>{row.category}</em> : null}
+        </span>
+
+        <span className="rc-rec-when">{formatOn(row.achieved_on)}</span>
+
+        <span className="rc-rec-value">
+          {row.kind === 'record' ? formatValue(row.value, row.unit, row.target) : '—'}
+        </span>
+
+        {/* The change carries the row's colour: a step is good news whichever
+            direction the record is measured in, and `stepText` has already
+            signed it. Nothing at all for a milestone, which beat nothing. */}
+        <span className={`rc-rec-step${step ? ' is-up' : ''}`}>
+          {step ? <>&#8599; {step}</> : ''}
+        </span>
       </button>
     </li>
   );
@@ -889,7 +920,7 @@ export default function Records() {
       {bests.length > 0 && evolving && (
         <section className="rc-section">
           <div className="rc-section-head">
-            <h2 className="rc-section-title"><Icon name="trend" /> How your records changed</h2>
+            <h2 className="rc-section-title"><Icon name="trend" /> Records timeline</h2>
             <div className="rc-ev-pick">
               {/* A descending line is the good news on a record measured in
                   time, and nothing on the chart said so. Said here, beside the
@@ -908,6 +939,43 @@ export default function Records() {
               </select>
             </div>
           </div>
+
+          {/* The toolbar sits on the chart rather than over the list it
+              filters, which is where the layout puts it and is also where it
+              does the most work: the search, the category and the sort narrow
+              the *rows*, and the rows are what the chart is drawn from, so one
+              strip at the top of the pair governs both halves of the section
+              instead of appearing to govern only the list under it. */}
+          {rows.length > 0 && (
+            <div className="rc-bar">
+              <label className="rc-bar-search">
+                <span className="rc-bar-ico" aria-hidden="true"><Icon name="search" /></span>
+                <input type="search" placeholder="Search records…" value={query}
+                       aria-label="Search records"
+                       onChange={(event) => narrow(setQuery)(event.target.value)} />
+              </label>
+
+              {/* The same filter the chips above set, and it shows what they
+                  set — so the section always says what it is showing without
+                  scrolling back up to look. */}
+              <select className="rc-select is-small" value={category}
+                      aria-label="Filter by category"
+                      onChange={(event) => pickCategory(event.target.value)}>
+                <option value="All">All categories</option>
+                {cats.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+
+              <select className="rc-select is-small" value={sort}
+                      aria-label="Order the history"
+                      onChange={(event) => narrow(setSort)(event.target.value as Sort)}>
+                <option value="newest">Newest ↓</option>
+                <option value="oldest">Oldest ↑</option>
+                <option value="improvement">Biggest improvement</option>
+              </select>
+            </div>
+          )}
 
           <div className="rc-ev-wrap">
             <dl className="rc-ev-figs">
@@ -957,76 +1025,39 @@ export default function Records() {
           written once for everything that happened under it, and an entry that
           beat everything before it says so and by how much. Those readings are
           `moments` in utils/records. */}
-      <div className="rc-two">
-        <section className="rc-section">
-          <div className="rc-section-head">
-            <h2 className="rc-section-title"><Icon name="scroll" /> Record timeline</h2>
-          </div>
+      <section className="rc-section">
+        <div className="rc-section-head">
+          <h2 className="rc-section-title"><Icon name="scroll" /> Recent records</h2>
+        </div>
 
-          {rows.length > 0 && (
-            <div className="rc-bar">
-              <label className="rc-bar-search">
-                <span className="rc-bar-ico" aria-hidden="true"><Icon name="search" /></span>
-                <input type="search" placeholder="Search records…" value={query}
-                       aria-label="Search records"
-                       onChange={(event) => narrow(setQuery)(event.target.value)} />
-              </label>
+        {history.length === 0 ? (
+          <p className="rc-empty">
+            {rows.length === 0 ? 'Nothing dated yet.' : 'Nothing matches that.'}
+          </p>
+        ) : (
+          <>
+            {/* Still paged by day — `days` is a count of days and the button
+                below says so — but drawn flat, because every row now carries
+                its own date. Flattening here rather than changing the paging
+                keeps one definition of "how much history is showing". */}
+            <ol className="rc-recs">
+              {history.slice(0, days).flatMap((day) => day.rows).map((row) => (
+                <Entry key={row.id} row={row} moment={meant.get(row.id)}
+                       onOpen={() => open(row.kind, row)} />
+              ))}
+            </ol>
+            {history.length > days && (
+              <button type="button" className="rc-link rc-more"
+                      onClick={() => setDays((shown) => shown + DAYS_SHOWN)}>
+                Show {Math.min(DAYS_SHOWN, history.length - days)} more{' '}
+                {history.length - days === 1 ? 'day' : 'days'}
+              </button>
+            )}
+          </>
+        )}
+      </section>
 
-              {/* The same filter the chips above set, and it shows what they
-                  set — so the history column always says what it is showing
-                  without scrolling back up to look. */}
-              <select className="rc-select is-small" value={category}
-                      aria-label="Filter by category"
-                      onChange={(event) => pickCategory(event.target.value)}>
-                <option value="All">All categories</option>
-                {cats.map((name) => (
-                  <option key={name} value={name}>{name}</option>
-                ))}
-              </select>
-
-              <select className="rc-select is-small" value={sort}
-                      aria-label="Order the history"
-                      onChange={(event) => narrow(setSort)(event.target.value as Sort)}>
-                <option value="newest">Newest ↓</option>
-                <option value="oldest">Oldest ↑</option>
-                <option value="improvement">Biggest improvement</option>
-              </select>
-            </div>
-          )}
-
-          {history.length === 0 ? (
-            <p className="rc-empty">
-              {rows.length === 0 ? 'Nothing dated yet.' : 'Nothing matches that.'}
-            </p>
-          ) : (
-            <>
-              <ol className="rc-timeline">
-                {history.slice(0, days).map((day) => (
-                  <li key={day.on}>
-                    <span className="rc-tl-when">
-                      {formatOn(day.on).replace(/, \d{4}$/, '').toUpperCase()}
-                    </span>
-                    <ul className="rc-tl-day">
-                      {day.rows.map((row) => (
-                        <Entry key={row.id} row={row} moment={meant.get(row.id)}
-                               onOpen={() => open(row.kind, row)} />
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ol>
-              {history.length > days && (
-                <button type="button" className="rc-link rc-more"
-                        onClick={() => setDays((shown) => shown + DAYS_SHOWN)}>
-                  Show {Math.min(DAYS_SHOWN, history.length - days)} more{' '}
-                  {history.length - days === 1 ? 'day' : 'days'}
-                </button>
-              )}
-            </>
-          )}
-        </section>
-
-        <section className="rc-section">
+      <section className="rc-section">
           <div className="rc-section-head">
             <button
               type="button"
@@ -1080,8 +1111,7 @@ export default function Records() {
               )}
             </>
           )}
-        </section>
-      </div>
+      </section>
 
       {/* ---- 6. What Summit noticed -----------------------------------------
           The page as it was, kept whole and kept separate. See the header.
