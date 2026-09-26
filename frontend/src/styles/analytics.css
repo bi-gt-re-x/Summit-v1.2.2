@@ -53,7 +53,25 @@
 
     background: var(--ax-bg);
     color: var(--ax-text);
-    min-height: 100vh;
+    /* No `min-height: 100vh`, and this is the whitespace at the bottom of
+       every analytics tab.
+       
+       It was holding the page open to a full viewport so that `--ax-bg` would
+       cover the window on a short tab. `--ax-bg` is `transparent` in both
+       themes — it has been since the background moved to the app shell — so
+       the rule was reserving a viewport for a colour that is not painted.
+       
+       Worse than useless: this box starts *below* the top bar, so `100vh`
+       asks for a viewport measured from there and overshoots the window by
+       the bar's own height. Measured at 1200x900 with content ending at
+       410px, the document came to 1029px — a page that fits on screen, made
+       scrollable, with 620px of nothing under the last card and no way to
+       reach anything by scrolling to it. Every tab inherits it, which is why
+       this reads as "the analytics pages have whitespace at the bottom"
+       rather than as one page being wrong.
+       
+       Nothing replaces it. `body` paints the ground and components/Ambient
+       draws over the whole viewport regardless of how tall this is. */
     padding: var(--space-6) 0 var(--space-10);
     font-family: var(--font-sans);
 }
@@ -974,11 +992,20 @@ body:has(.ax-page) .app-main {
 }
 .ax-finish-count strong { color: var(--ax-text); font-weight: 600; }
 
+/* The "not enough record yet" card, and the room it is given.
+ *
+ * `52vh` before, which is the same reasoning the page's own `min-height: 100vh`
+ * was written under and wrong for the same reason: a viewport is not a unit of
+ * content. This block is not always the only thing on its tab — Recommendations
+ * renders it *after* its sections — so on a tall window half a viewport of
+ * centred air opened up under the last real panel, and on a short one the card
+ * was pinched. 340px centres a card of about 200 with room either side, at
+ * every window size. */
 .ax-building {
     display: grid;
     place-items: center;
-    min-height: 52vh;
-    padding: var(--space-8) 0 var(--space-10);
+    min-height: 340px;
+    padding: var(--space-6) 0 var(--space-8);
 }
 
 .ax-building-body {

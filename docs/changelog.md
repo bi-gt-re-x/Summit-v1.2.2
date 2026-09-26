@@ -2,6 +2,28 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-25 — The analytics pages stop reserving a viewport they do not use
+
+`.ax-page` carried `min-height: 100vh` so that `--ax-bg` would cover the window
+on a short tab. `--ax-bg` has been `transparent` in both themes since the
+background moved to the app shell, so the rule was holding a viewport open for
+a colour that is never painted.
+
+It was worse than idle. The box starts *below* the top bar, so `100vh` measures
+a viewport from there and overshoots the window by the bar's own height.
+Measured at 1200×900 with content ending at 410px, the document came to 1029px:
+a page that fits on screen, made scrollable, with 620px of nothing under the
+last card. Every one of the seven tabs inherits it, which is why this reads as
+"the analytics pages have whitespace at the bottom" rather than as one page
+being wrong. With it gone the same page is 900px, not scrollable, and the only
+space under the last card is the 40px of page padding that was always meant to
+be there.
+
+`.ax-building` — the "not enough record yet" card — loses its `52vh` for the
+same reason: a viewport is not a unit of content, and that block is not always
+the only thing on its tab. 340px centres a card of about 200 at any window
+size.
+
 ## 2026-09-25 — The goal groups get a card, and say something new
 
 ## The whitespace was never the gap
