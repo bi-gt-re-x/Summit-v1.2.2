@@ -259,11 +259,25 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     border-radius: var(--rc-radius);
     background: var(--rc-card);
     box-shadow: var(--rc-shadow);
-    /* A hairline of the tile's own colour, so four tiles read as four things
-       without four tinted boxes shouting at once. */
-    border-top: 2px solid var(--tone, var(--rc-accent-2));
+    gap: var(--space-2);
 }
-.rc-tile-ico { font-size: var(--text-xl); line-height: 1; }
+
+/* The tile's mark, as the layout draws it: a tinted square holding the glyph.
+   It replaces a 2px rule of the same colour along the top of the card — the
+   rule was carrying the tone at the cost of a second border on a page whose
+   cards already have one, and the square carries it where the eye starts. */
+.rc-tile-ico {
+    width: 34px; height: 34px;
+    margin-bottom: var(--space-1);
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--tone, var(--rc-accent-2)) 13%, transparent);
+    color: var(--tone, var(--rc-accent-2));
+    font-size: var(--text-md);
+    line-height: 1;
+}
+.rc-tile-ico svg { width: 17px; height: 17px; }
 .rc-tile-figure {
     font-size: var(--text-3xl);
     font-weight: 700;
@@ -315,6 +329,52 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     color: var(--rc-muted);
 }
 .rc-section-head .rc-section-title { margin: 0; }
+
+/* ---- A section drawn as a card -----------------------------------------
+ *
+ * Most headings on this page are a line of small caps *above* what they name;
+ * the layout draws the last two sections as panels with the heading inside
+ * them, set in sentence case beside a glyph. So this is a modifier rather than
+ * a change to the section: "Your best" and its chips stay a label over a grid,
+ * which is what the layout shows too.
+ */
+.rc-card {
+    padding: var(--space-5);
+    border: 1px solid var(--rc-line);
+    border-radius: var(--rc-radius);
+    background: var(--rc-card);
+    box-shadow: var(--rc-shadow);
+}
+/* The chart already carried a card of its own, and a card inside a card is the
+   frame this page keeps having to be talked out of. */
+.rc-card .rc-ev-wrap {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.rc-section-title.is-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    letter-spacing: -.01em;
+    text-transform: none;
+    color: var(--rc-text);
+}
+.rc-head-ico {
+    flex: none;
+    width: 32px; height: 32px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--rc-accent-2) 13%, transparent);
+    color: var(--rc-accent-2);
+}
+.rc-head-ico svg { width: 17px; height: 17px; }
 .rc-sub-title {
     margin: var(--space-6) 0 var(--space-4);
     font-size: var(--text-xs);
@@ -374,20 +434,35 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     transition: border-color .15s ease, transform .14s ease;
 }
 .rc-best > button:hover { border-color: var(--rc-accent-2); transform: translateY(-2px); }
-/* A chip rather than a line of small caps, which is how the layout draws it
-   and what makes the top of the card scan as a label attached to something
-   rather than as the card's first line of text. `align-self: start` so it
-   shrink-wraps the word instead of ruling across the card. */
+/* The head of a best card: a tinted square holding the category's glyph, and
+   the category beside it in small caps. The label was briefly a pill of its
+   own; the layout puts the tint in the square and leaves the word plain, which
+   keeps one tinted object on the line rather than two competing ones. */
+.rc-best-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
+}
+.rc-best-ico {
+    flex: none;
+    width: 28px; height: 28px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--rc-accent-2) 13%, transparent);
+    color: var(--rc-accent-2);
+}
+.rc-best-ico svg { width: 15px; height: 15px; }
 .rc-best-cat {
-    align-self: start;
-    padding: 3px var(--space-2);
-    border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--rc-accent-2) 12%, transparent);
     font-size: var(--text-2xs);
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
     color: var(--rc-accent-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .rc-best-name { margin-bottom: var(--space-2); font-size: var(--text-md); font-weight: 600; color: var(--rc-muted); }
 .rc-best-value { font-size: var(--text-3xl); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
@@ -506,7 +581,17 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
  * `minmax(0, 1fr)` on the name, so a long record title ellipses instead of
  * pushing the figures off the end.
  */
-.rc-recs { list-style: none; margin: 0; padding: 0; }
+/* Each row is its own bordered card with air around it, which is how the
+   layout draws them — not rows divided by a rule. It costs a little density
+   and buys a hit target that looks like one. */
+.rc-recs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
 
 .rc-rec {
     width: 100%;
@@ -515,16 +600,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-3);
-    border: 0;
+    border: 1px solid var(--rc-line);
     border-radius: var(--radius-md);
-    background: transparent;
+    background: var(--rc-card);
     color: var(--rc-text);
     font: inherit;
     text-align: left;
     cursor: pointer;
-    transition: background .15s ease;
+    transition: background .15s ease, border-color .15s ease;
 }
-.rc-recs > li + li { border-top: 1px solid var(--rc-line); }
+.rc-rec:hover { border-color: color-mix(in srgb, var(--rc-accent) 35%, var(--rc-line)); }
 .rc-rec:hover { background: color-mix(in srgb, var(--rc-accent) 7%, transparent); }
 .rc-rec:hover .rc-rec-name { text-decoration: underline; }
 
@@ -584,11 +669,23 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     white-space: nowrap;
 }
 .rc-rec-value {
-    font-size: var(--text-sm);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.25;
     text-align: right;
     white-space: nowrap;
+}
+.rc-rec-value em {
+    font-style: normal;
+    font-size: var(--text-md);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.rc-rec-value i {
+    font-style: normal;
+    font-size: var(--text-2xs);
+    color: var(--rc-faint);
 }
 .rc-rec-step {
     font-size: var(--text-xs);

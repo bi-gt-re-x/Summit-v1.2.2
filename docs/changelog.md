@@ -2,6 +2,47 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-26 — The records page, laid out exactly to the drawing
+
+A second pass over the layout, taking the remaining details literally. The
+palette is deliberately not followed: the drawing is blue throughout and this
+page stays violet and gold, which is the app's accent.
+
+**Marks in squares, four places.** The drawing puts a tinted rounded square
+holding a glyph at the head of every group: on each of the four figures, on
+every best card, on the two panel headings, and at the left of every history
+row. The figures previously carried their tone as a 2px rule along the top of
+the card — a second border on a page whose cards already have one — and that
+rule is now the square, which puts the colour where the eye starts.
+
+**The category chips went back to plain words.** The pass before this made the
+category on a best card a pill; the drawing tints the *square* and leaves the
+word beside it plain, which keeps one tinted object on the line rather than two
+competing for the same job.
+
+**The last two sections are panels with their headings inside them,** set in
+sentence case beside a glyph, rather than a line of small caps above them.
+"Your best" keeps the old treatment because the drawing shows it that way too —
+so this is a modifier on a section, not a change to what a section is. The
+chart carried a card of its own and loses it inside the new one: a card inside
+a card is the frame this page keeps having to be talked out of.
+
+**Every history row is its own bordered card** with air between, not a row
+divided by a rule, and its figure sits over the thing it is measured in — "918"
+over "problems", "25" over "/ 25". `splitValue` cuts what `formatValue` already
+produced rather than formatting a second time, so there are not two places
+deciding what 133.5 looks like. Minutes have to be excluded by name: "4h 18m"
+is one figure with a space in it, and splitting on the last space would print
+"4h" over "18m".
+
+**Inferred, where the drawing could not be followed literally.** It shows a
+different glyph per category and the app has no category→icon map to reuse —
+the subject icons in services/subjects are image URLs keyed on subjects, which
+categories are not. `CATEGORY_ICON` is that map, over the names categories
+actually take, with `trophy` under anything unlisted. The icon set has no note,
+bracket or barbell in it, so these are the nearest marks it does have: the chip
+is the layout, and the picture inside it is a detail the set can grow into.
+
 ## 2026-09-25 — The records page is laid out to the drawing
 
 Worked against a layout of the page. The top half already matched it — hero,

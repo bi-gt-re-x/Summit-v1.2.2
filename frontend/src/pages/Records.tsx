@@ -137,7 +137,7 @@ import {
 } from '@/utils/growthBench';
 import type { GrowthDay } from '@/types';
 import '@/styles/records.css';
-import { Icon } from '@/components/Icon';
+import { Icon, type IconName } from '@/components/Icon';
 
 /** Below this there is no derived record worth the name — see the empty state. */
 const NEED_DAYS = 3;
@@ -288,6 +288,66 @@ function Spark({ best }: { best: Best }) {
  * has come back to a record five times should be able to see all five without
  * opening anything.
  */
+/**
+ * The glyph a category wears, on the card chips and the history rows.
+ *
+ * The layout draws a different mark for each category. There is no
+ * category→icon mapping anywhere in the app to reuse — the subject icons in
+ * services/subjects are image URLs keyed on *subjects*, which categories are
+ * not — so this is the map, over the names the categories actually take, with
+ * `trophy` under anything unlisted. Matching on a lowercased name rather than
+ * an id because a category here is free text the reader typed.
+ *
+ * The icon set (components/Icon) has no note, bracket or barbell in it, so
+ * these are the nearest thing it does have rather than the drawing's exact
+ * glyphs. The shape of the chip is what the layout is; the picture inside it
+ * is a detail the set can grow into.
+ */
+const CATEGORY_ICON: Record<string, IconName> = {
+  coding: 'monitor',
+  'competitive math': 'target',
+  math: 'target',
+  music: 'star',
+  habits: 'checklist',
+  fitness: 'flame',
+  running: 'zap',
+  training: 'timer',
+  research: 'lightbulb',
+  'machine learning': 'database',
+  summit: 'sprout',
+  reading: 'scroll',
+};
+
+function catIcon(category: string): IconName {
+  return CATEGORY_ICON[category.trim().toLowerCase()] ?? 'trophy';
+}
+
+/**
+ * A figure split into the number and the thing it is measured in.
+ *
+ * The layout sets the figure large and its unit small underneath it, which
+ * `formatValue` cannot give as one string. Rather than a second formatter with
+ * its own rounding — two places deciding what 133.5 looks like is how they end
+ * up disagreeing — this takes what `formatValue` produced and cuts it.
+ *
+ * Minutes are the case that has to be excluded by name: "4h 18m" is one figure
+ * with a space in it, and splitting on the last space would print "4h" over
+ * "18m".
+ */
+function splitValue(value: number, unit: string, target = 0): [string, string] {
+  const whole = formatValue(value, unit, target);
+
+  if (target > 0) {
+    const cut = whole.indexOf(' / ');
+    if (cut > 0) return [whole.slice(0, cut), whole.slice(cut + 1)];
+  }
+  if (unit && unit !== 'points' && unit !== 'minutes') {
+    const cut = whole.lastIndexOf(' ');
+    if (cut > 0) return [whole.slice(0, cut), whole.slice(cut + 1)];
+  }
+  return [whole, ''];
+}
+
 function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
   const dated = best.history.filter((row) => row.achieved_on).length;
   const steps = trail(best);
@@ -295,7 +355,12 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
   return (
     <li className={`rc-best${best.fresh ? ' is-fresh' : ''}`}>
       <button type="button" onClick={onOpen}>
-        <span className="rc-best-cat">{best.category || 'Uncategorised'}</span>
+        <span className="rc-best-head">
+          <span className="rc-best-ico" aria-hidden="true">
+            <Icon name={catIcon(best.category)} />
+          </span>
+          <span className="rc-best-cat">{best.category || 'Uncategorised'}</span>
+        </span>
         <span className="rc-best-name">{best.name}</span>
         <span className="rc-best-value">{formatValue(best.value, best.unit, best.target)}</span>
         <span className="rc-best-label">Personal best</span>
@@ -366,7 +431,7 @@ function Entry({
     }`}>
       <button type="button" className="rc-rec" onClick={onOpen}>
         <span className="rc-rec-ico" aria-hidden="true">
-          <Icon name={row.kind === 'milestone' ? 'medal' : 'trophy'} />
+          <Icon name={row.kind === 'milestone' ? 'medal' : catIcon(row.category)} />
         </span>
 
         <span className="rc-rec-main">
@@ -396,7 +461,16 @@ function Entry({
         <span className="rc-rec-when">{formatOn(row.achieved_on)}</span>
 
         <span className="rc-rec-value">
-          {row.kind === 'record' ? formatValue(row.value, row.unit, row.target) : '—'}
+          {row.kind === 'record' ? (
+            <>
+              <em>{splitValue(row.value, row.unit, row.target)[0]}</em>
+              {splitValue(row.value, row.unit, row.target)[1] && (
+                <i>{splitValue(row.value, row.unit, row.target)[1]}</i>
+              )}
+            </>
+          ) : (
+            <em>—</em>
+          )}
         </span>
 
         {/* The change carries the row's colour: a step is good news whichever
@@ -918,9 +992,12 @@ export default function Records() {
           cards give the figure and the shape, and this gives the whole series
           with an axis to read it against. */}
       {bests.length > 0 && evolving && (
-        <section className="rc-section">
+        <section className="rc-section rc-card">
           <div className="rc-section-head">
-            <h2 className="rc-section-title"><Icon name="trend" /> Records timeline</h2>
+            <h2 className="rc-section-title is-card">
+              <span className="rc-head-ico" aria-hidden="true"><Icon name="trend" /></span>
+              Records timeline
+            </h2>
             <div className="rc-ev-pick">
               {/* A descending line is the good news on a record measured in
                   time, and nothing on the chart said so. Said here, beside the
@@ -1025,9 +1102,22 @@ export default function Records() {
           written once for everything that happened under it, and an entry that
           beat everything before it says so and by how much. Those readings are
           `moments` in utils/records. */}
-      <section className="rc-section">
+      <section className="rc-section rc-card">
         <div className="rc-section-head">
-          <h2 className="rc-section-title"><Icon name="scroll" /> Recent records</h2>
+          <h2 className="rc-section-title is-card">
+            <span className="rc-head-ico" aria-hidden="true"><Icon name="clock" /></span>
+            Recent records
+          </h2>
+          {/* The layout puts a way out of this card in its corner. It scrolls
+              to the toolbar above rather than going anywhere: every record the
+              account owns is already in this list, and the control that shows
+              more of them is the one it lands on. */}
+          {history.length > days && (
+            <button type="button" className="rc-link"
+                    onClick={() => setDays((shown) => shown + DAYS_SHOWN)}>
+              View all records →
+            </button>
+          )}
         </div>
 
         {history.length === 0 ? (
