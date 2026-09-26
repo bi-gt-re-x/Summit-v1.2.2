@@ -143,10 +143,12 @@ html[data-theme="dark"] .st-page {
 /* ---------- Cards --------------------------------------------------------- */
 .st-card {
     display: flex; flex-direction: column;
-    /* The reading measure, protected here rather than on the page, so the nav
-       still sits at the far left of a wide window. */
+    /* Was 820px, "the reading measure". A settings row is a label at the left
+       and a control at the right, and that pattern reads fine at any width —
+       what does not is the description under the label, so the measure moved
+       onto that text (`.st-row-text` below) and off the card. The card fills
+       the column now. */
     width: 100%;
-    max-width: 820px;
     padding: var(--space-2) var(--space-6) var(--space-2);
     border: 1px solid var(--st-line);
     border-radius: var(--st-radius);
@@ -169,7 +171,10 @@ html[data-theme="dark"] .st-page {
     border-top: 1px solid var(--st-line);
 }
 .st-card h2 + .st-row { border-top: 0; }
-.st-row-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+/* The reading measure lives here now rather than on the card. A label and its
+   control read fine at any width; the sentence under the label does not, and
+   it is the only prose on the page. */
+.st-row-text { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; max-width: 72ch; }
 .st-label { font-size: var(--text-md); font-weight: 600; }
 .st-row-text .st-quiet { font-size: var(--text-xs); line-height: 1.5; }
 .st-row-control { display: flex; justify-content: flex-end; min-width: 0; }

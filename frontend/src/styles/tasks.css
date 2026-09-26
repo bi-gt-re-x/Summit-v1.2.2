@@ -69,7 +69,7 @@
        arbitrarily wide — the rail stops growing at 360px on its own and the
        list takes the rest. A page of prose would want the ceiling back. */
     --shell-max: 100%;
-    --shell-fluid: 97%;
+    --shell-fluid: 100%;
 
     background: var(--tk-bg);
     color: var(--tk-text);

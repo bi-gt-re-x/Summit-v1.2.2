@@ -288,8 +288,8 @@ html[data-theme="dark"] body:has(.calendar-container) { background: #0d1117; }
     /* Sizing via the shared .page-shell class: min(97%, cap), centered. The
        card is a fit-height design (height: 100%), so it always fits vertically;
        a slightly larger cap just lets it fill wider monitors before centering. */
-    --shell-fluid: 97%;
-    --shell-max: 1920px;
+    --shell-fluid: 100%;
+    --shell-max: 100%;
     height: 100%;
     min-height: 0;
     max-height: 100%;

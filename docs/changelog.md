@@ -2,6 +2,45 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-26 — The tail of Records gets its containers, and every page fills its column
+
+Two things, and the second is app-wide.
+
+**The rest of the records page is in cards.** Milestones, "What Summit noticed"
+and the chase under it were still bare blocks on the page ground while the two
+sections above them had become panels. They are panels now, with the same
+heading treatment — a glyph in a tinted square and the title in sentence case.
+
+**Every page fills the column it is given.** `.page-shell` was
+`min(95%, 1400px)`, and both halves of that were spending screen on nothing.
+The 1400 capped every page that did not override it — settings stopped at
+1400px in a 1789px column, 389px of it empty. The 95% is worse in kind: it is a
+*share*, so the band it leaves grows with the window, which is the opposite of
+what a margin should do. The default is now no ceiling and a flat 20px gutter,
+with a cap left to pages that genuinely want one.
+
+Then the pages that set their own: analytics 1500 → none, skill tree 1520 →
+none, records 1500 → none, the dashboard's 1680 → none, and the proportional
+gutters on tasks, goals, notes and the calendar (95–97%) → the shared 20px.
+
+Two things this turned up:
+
+- **The dashboard had the `.app-main` bug too.** `body:has(.dash) .app-main`
+  sets a width on `<main>`, which is *inside* the React mount point, and
+  `width: 100%` of a shrink-to-fit parent is the shrink-to-fit width. goals,
+  notes, records and analytics each document having fallen into this and name
+  `#root` as well; the dashboard did not. It was invisible while the page had a
+  `max-width` holding it open, and the moment the cap came off `#root`
+  collapsed to 1477 in a 1789px column. Fixed the way the others were.
+- **Settings' reading measure moved off the card and onto the text.** The
+  820px cap was there to protect the measure, but a settings row is a label at
+  the left and a control at the right and that reads fine at any width. What
+  does not is the sentence under the label, which is the only prose on the
+  page — so `.st-row-text` carries a 72ch cap and the card fills its column.
+
+Measured at 1800×950 with the rail settled: every app page now ends flush with
+its column, and what is left at the edges is each page's own padding.
+
 ## 2026-09-26 — The records page, laid out exactly to the drawing
 
 A second pass over the layout, taking the remaining details literally. The

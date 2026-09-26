@@ -48,7 +48,9 @@ body:has(.pom-page) .app-main {
 
     box-sizing: border-box;
     width: 100%;
-    max-width: 1240px;
+    /* The dial centres itself inside this; the page no longer holds a
+       band of ground either side of it to do that. */
+    max-width: none;
     margin-inline: auto;
     padding: var(--space-6) var(--space-6) var(--space-16);
     color: var(--pom-text);

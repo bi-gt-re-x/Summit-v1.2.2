@@ -11,14 +11,27 @@
       480px  phone
    ========================================================================== */
 
-/* Centered fluid page container.
-   Pages tune the cap per container:
-     .my-page-card { --shell-max: 1700px; }
-   and, when a page wants to hug the viewport edges more closely:
-     .my-page-card { --shell-fluid: 97%; } */
+/* Centered page container.
+ *
+ * **No ceiling, and a fixed gutter.** This was `min(95%, 1400px)`, and both
+ * halves of that were leaving ground down the sides of a wide window: the
+ * 1400 capped every page that did not override it — settings stopped at 1400
+ * in a 1789px column — and the 95% is a *share*, so the band it leaves grows
+ * with the screen, which is the opposite of what a margin should do. At 1789
+ * the two together spent 389px on nothing.
+ *
+ * A 20px gutter either side instead, at every width, with the cap left to the
+ * pages that genuinely want one. The edge of a window is not a scarce resource
+ * on a 1800px screen and a percentage margin is a strange way to ration it.
+ *
+ * Pages still tune both per container:
+ *     .my-page-card { --shell-max: 1200px; }   a real reading measure
+ *     .my-page-card { --shell-fluid: 97%; }    a proportional gutter
+ * but neither is the default any more. */
 .page-shell {
-    width: min(var(--shell-fluid, 95%), var(--shell-max, 1400px));
+    width: min(var(--shell-fluid, 100%), var(--shell-max, 100%));
     margin-inline: auto;
+    padding-inline: var(--space-5);
     box-sizing: border-box;
 }
 

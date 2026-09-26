@@ -168,7 +168,7 @@ html[data-theme="dark"] .gx-page {
        short version is that `--shell-fluid` is a share of the content column,
        which is the box being sized, and it is the only term left. */
     --shell-max: 100%;
-    --shell-fluid: 97%;
+    --shell-fluid: 100%;
     position: relative;
     z-index: 1;
     display: flex;

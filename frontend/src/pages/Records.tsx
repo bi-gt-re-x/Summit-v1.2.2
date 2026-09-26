@@ -1147,7 +1147,7 @@ export default function Records() {
         )}
       </section>
 
-      <section className="rc-section">
+      <section className="rc-section rc-card">
           <div className="rc-section-head">
             <button
               type="button"
@@ -1157,7 +1157,10 @@ export default function Records() {
               onClick={() => setMilesShut((shut) => !shut)}
             >
               <Caret />
-              <h2 className="rc-section-title"><Icon name="medal" /> Milestones</h2>
+              <h2 className="rc-section-title is-card">
+                <span className="rc-head-ico" aria-hidden="true"><Icon name="medal" /></span>
+                Milestones
+              </h2>
               {milestones.length > 0 && <span className="rc-fold-n">{milestones.length}</span>}
             </button>
             <button type="button" className="rc-link" onClick={() => open('milestone')}>
@@ -1217,8 +1220,11 @@ export default function Records() {
           it, and it reads as one: it sits under a rule, its cards stay in the
           quieter register they have always had, and the chase under it is
           quieter still. */}
-      <section className="rc-section rc-derived">
-        <h2 className="rc-section-title"><Icon name="sparkles" /> What Summit noticed</h2>
+      <section className="rc-section rc-derived rc-card">
+        <h2 className="rc-section-title is-card">
+          <span className="rc-head-ico" aria-hidden="true"><Icon name="sparkles" /></span>
+          What Summit noticed
+        </h2>
         <p className="rc-note">
           Worked out from your activity, not entered by hand.
         </p>

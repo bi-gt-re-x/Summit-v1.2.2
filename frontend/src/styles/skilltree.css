@@ -102,8 +102,8 @@ html[data-theme="dark"] .stx-page {
 }
 
 .stx-shell {
-    --shell-max: 1520px;
-    --shell-fluid: 96%;
+    --shell-max: 100%;
+    --shell-fluid: 100%;
     display: flex;
     flex-direction: column;
     gap: var(--stx-gap);

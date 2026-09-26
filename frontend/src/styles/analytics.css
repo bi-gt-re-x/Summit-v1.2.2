@@ -120,8 +120,11 @@ body:has(.ax-page) .app-main {
 }
 
 .ax-shell {
-    --shell-max: 1500px;
-    --shell-fluid: 96%;
+    /* No ceiling and no proportional gutter — see `.page-shell`. The
+       Subjects tab is the widest thing this page draws and it was the
+       one that showed the old 1500 worst. */
+    --shell-max: 100%;
+    --shell-fluid: 100%;
     display: flex;
     flex-direction: column;
     gap: var(--space-4);

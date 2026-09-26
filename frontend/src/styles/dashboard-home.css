@@ -22,23 +22,31 @@
    PAGE SHELL
    ========================================================================== */
 
-/* body is a centred flex column (dashboard.css), so <main> is a flex item and
-   sizes to its content rather than stretching. The page wants the full width
-   to centre itself inside. Scoped with :has so no other route is touched. */
+/* body is a centred flex column (dashboard.css), so its child sizes to its
+   content rather than stretching. The page wants the full width to centre
+   itself inside. Scoped with :has so no other route is touched.
+ *
+ * The child that shrinks is `#root`, not `<main>` — <main> is inside the React
+ * mount point, and `width: 100%` of a shrink-to-fit parent is the shrink-to-fit
+ * width. Naming only `.app-main` is a rule that does nothing, which is the same
+ * trap goals.css, notes.css, records.css and analytics.css each document having
+ * fallen into. It was hidden here until the page's `max-width` came off: the cap
+ * was holding the width open, so the missing half of the rule never showed.
+ * With the cap gone, #root collapsed to 1477 in a 1789px column. */
+body:has(.dash) > #root,
 body:has(.dash) .app-main {
     width: 100%;
+    min-width: 0;
 }
 
 .dash {
     width: 100%;
-    /* 1370 in a 1600 window left about 140px of ground down each side on top
-       of the rail, and the page inside it was already spending 24px of card
-       padding before a word. Content on this page is a four-column figure row
-       and a task list beside a dial — all of it wants width, none of it gains
-       anything from being held off the edge. The cap is here to stop a line of
-       body text running the width of a cinema display, and 1680 is where that
-       starts to matter rather than where a 16-inch laptop does. */
-    max-width: 1680px;
+    /* No cap. 1370 left ~140px of ground down each side of a 1600px window and
+       1680 still left 109 of a 1789px one; the page's own padding is the
+       margin. Nothing here is a line of body text running the width of the
+       screen — it is a four-column figure row and a task list beside a dial,
+       all of which want the width. */
+    max-width: none;
     margin: var(--space-6) auto var(--space-8);
     padding: 0 var(--space-5);
     display: flex;
