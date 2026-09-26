@@ -2,6 +2,34 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-25 — What Summit knows starts saying what to do about it
+
+The block was four facts and nothing else. "Mathematics is 16% of your recorded
+work" is true, and a reader who has just been told it still cannot say whether
+that is good or what it asks of them — so the page's most personal section was
+also its least useful, four more numbers on a screen that already had ninety.
+
+Every fact now carries an `advice`: the consequence, then the instruction. It is
+**chosen by the figure rather than attached to the heading**, which is the whole
+difference between a coach and a template — a 90% share and a 20% share are the
+same sentence with a different number and want opposite advice, so each builder
+branches on where its own figure sits, against named thresholds. An unbroken
+record is told to stop protecting itself and spend a day on something hard; a
+patchy one is told which day of the week to defend. A ten-task average is told
+to cut to three; a two-task average is told to add one it might not finish. A
+subject at 16% of five reads as a week with no centre, one at 60% as a
+specialism to keep or to take an hour back from.
+
+The advice never invents evidence — it restates, in the imperative, what the
+figure beside it already establishes. Anything needing a second number belongs
+on Recommendations, which is built to carry the arithmetic, and that boundary is
+what keeps the Overview from becoming a second copy of it.
+
+In the markup the order flipped: the instruction is in body ink and the figure
+is set under it, small and muted behind a hairline. Same two sentences either
+way round, and the order is what decides whether the block coaches or recites.
+The evidence stays, because advice with nothing under it is a horoscope.
+
 ## 2026-09-25 — The analytics pages stop reserving a viewport they do not use
 
 `.ax-page` carried `min-height: 100vh` so that `--ax-bg` would cover the window

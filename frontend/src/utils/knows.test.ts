@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   CONSISTENCY_FLOOR,
+  HEAVY_LOAD,
+  LIGHT_LOAD,
   RECORD_FLOOR,
   SUBJECT_FLOOR,
   WORKLOAD_FLOOR,
@@ -26,6 +28,9 @@ const keys = (over: Partial<KnowsInput> = {}) =>
 
 const textOf = (key: string, over: Partial<KnowsInput> = {}) =>
   whatSummitKnows({ ...base, ...over }).find((k) => k.key === key)?.text;
+
+const adviceOf = (key: string, over: Partial<KnowsInput> = {}) =>
+  whatSummitKnows({ ...base, ...over }).find((k) => k.key === key)?.advice ?? '';
 
 describe('workload', () => {
   it('averages against days worked, not days on the calendar', () => {
@@ -175,5 +180,93 @@ describe('the section as a whole', () => {
       expect(fact.heading.length).toBeGreaterThan(0);
       expect(fact.text.endsWith('.')).toBe(true);
     });
+  });
+
+  it('gives every fact something to do about it', () => {
+    whatSummitKnows({ ...base, recentTop: 'History' }).forEach((fact) => {
+      expect(fact.advice.endsWith('.')).toBe(true);
+      /* Long enough to be a consequence and an instruction rather than a
+         tacked-on imperative. The shortest real one runs to about eighty. */
+      expect(fact.advice.length).toBeGreaterThan(40);
+    });
+  });
+});
+
+/*
+ * The advice is chosen by the figure, not by the heading — that is the whole
+ * claim the block makes, so what is worth pinning is that the *same* fact gives
+ * opposite advice at opposite ends of its own range. The cases below assert the
+ * turn, not the wording: each checks that two inputs on either side of a
+ * threshold disagree, and names the shape it expects with one keyword.
+ */
+describe('the advice turns on the figure', () => {
+  it('tells a heavy list to cut and a light one to add', () => {
+    const heavy = adviceOf('workload', { activeDays: 10, finished: HEAVY_LOAD * 10 });
+    const light = adviceOf('workload', { activeDays: 10, finished: (LIGHT_LOAD - 1) * 10 });
+    expect(heavy).toMatch(/cut/i);
+    expect(light).toMatch(/add/i);
+    expect(heavy).not.toBe(light);
+  });
+
+  it('stops asking an unbroken record to be more consistent', () => {
+    const held = adviceOf('record', { activeDays: 90, spanDays: 90 });
+    const patchy = adviceOf('record', { activeDays: 30, spanDays: 90 });
+    expect(held).toMatch(/not your problem/i);
+    expect(patchy).toMatch(/60 days went by unworked/);
+  });
+
+  it('reads a dominant subject and a scattered week differently', () => {
+    const dominant = adviceOf('subjects', {
+      subjects: [
+        { name: 'Mathematics', count: 80 },
+        { name: 'History', count: 10 },
+        { name: 'Computer Science', count: 10 },
+      ],
+    });
+    const scattered = adviceOf('subjects', {
+      subjects: [
+        { name: 'Mathematics', count: 25 },
+        { name: 'History', count: 25 },
+        { name: 'Computer Science', count: 25 },
+        { name: 'Violin', count: 25 },
+      ],
+    });
+    expect(dominant).toMatch(/Over half/);
+    expect(scattered).toMatch(/Nothing owns your time/);
+  });
+
+  it('does not call a deliberate pair of interests unfocused', () => {
+    /* Two subjects at 50/50 is the scattered *share* without the scattered
+       shape, and the third-subject guard is what keeps it off. */
+    expect(
+      adviceOf('subjects', {
+        subjects: [
+          { name: 'Mathematics', count: 50 },
+          { name: 'History', count: 50 },
+        ],
+      }),
+    ).toMatch(/Over half|clear lead/);
+  });
+
+  it('names both subjects when the focus has moved', () => {
+    const moved = adviceOf('focus', { recentTop: 'Computer Science' });
+    expect(moved).toContain('Mathematics');
+    expect(moved).toContain('Computer Science');
+  });
+
+  it('leaves a clear lead alone', () => {
+    /* 38%: ahead of the other two and nowhere near owning the account, which
+       is the one band where the honest advice is to change nothing about the
+       split. The base fixture sits exactly on DOMINANT_SHARE and is therefore
+       the wrong account to ask. */
+    const middle = adviceOf('subjects', {
+      subjects: [
+        { name: 'Mathematics', count: 15 },
+        { name: 'History', count: 15 },
+        { name: 'Computer Science', count: 10 },
+      ],
+    });
+    expect(middle).toMatch(/clear lead/i);
+    expect(middle).not.toMatch(/Over half|Nothing owns/);
   });
 });

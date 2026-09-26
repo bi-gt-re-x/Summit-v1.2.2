@@ -403,8 +403,11 @@ body:has(.ax-page) .app-main {
 }
 .ax-knows dl {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: var(--space-4) var(--space-6);
+    /* 230px held a single sentence. Each entry is now advice over its evidence,
+       so the column has to carry two blocks without breaking either into a
+       column of three-word lines. */
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: var(--space-5) var(--space-6);
     margin: 0;
 }
 .ax-knows dt {
@@ -421,6 +424,31 @@ body:has(.ax-page) .app-main {
     font-size: var(--text-md);
     line-height: 1.5;
     color: var(--ax-text);
+}
+/* The instruction, and the figure it came from, in that order.
+ *
+ * The entry used to be the figure alone in body ink. It is now the advice in
+ * body ink with the figure set under it, small and muted — the same two
+ * sentences, and the order is the whole difference between a block that
+ * coaches and a block that recites. The figure stays because advice with no
+ * evidence under it is a horoscope, and it stays *quiet* because a reader who
+ * wants the arithmetic will look down for it and a reader who does not should
+ * not have to read past it. See components/Analytics/Knows. */
+.ax-knows-do {
+    display: block;
+    font-weight: 500;
+    color: var(--ax-text);
+    text-wrap: pretty;
+}
+.ax-knows-fact {
+    display: block;
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--ax-line-soft);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--ax-muted);
+    font-variant-numeric: tabular-nums;
 }
 
 /* The one panel at the early stages that states a tendency instead of a total.

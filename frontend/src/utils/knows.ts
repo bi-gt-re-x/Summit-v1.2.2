@@ -16,6 +16,27 @@
  * evidence already gathered, said in the first person plural about somebody
  * rather than in the third person about a chart.
  *
+ * ## Every fact ends in something to do
+ *
+ * A fact on its own is a statistic, and four of them in a row is a page
+ * reciting. "Mathematics is 16% of your recorded work" is true, and a reader
+ * who has just been told it still has no idea whether that is good, or what it
+ * asks of them — so the section read as trivia about themselves and the page
+ * spent its most personal block saying nothing actionable.
+ *
+ * So each fact carries an `advice`: the consequence, then the instruction. It
+ * is **chosen by the figure, not attached to the heading** — that is the whole
+ * difference between a coach and a template. A 90% share and a 20% share are
+ * the same sentence with a different number and want opposite advice (one is a
+ * specialism to protect, the other a week with no centre), so each builder
+ * below branches on where its own figure actually sits, and the thresholds it
+ * branches on are named constants with the reasoning attached.
+ *
+ * The advice never invents evidence. It may only restate, in the imperative,
+ * something the figure beside it already establishes; anything that needs a
+ * second number belongs on the Recommendations tab, which is built to carry
+ * the arithmetic for it. See pages/Analytics for why that boundary matters.
+ *
  * ## Every one of them has a floor, and the floors are not decorative
  *
  * "You average 4.2 tasks per active day" over a single active day is not an
@@ -40,6 +61,12 @@ export interface Knowledge {
   heading: string;
   /** The fact itself. One sentence, about the reader. */
   text: string;
+  /**
+   * What the fact means and what to do about it. One or two sentences, ending
+   * in an instruction, chosen by where `text`'s figure sits — see the note at
+   * the top of this file.
+   */
+  advice: string;
 }
 
 export interface KnowsInput {
@@ -106,6 +133,43 @@ export const CONSISTENCY_FLOOR = 7;
  */
 export const SUBJECT_FLOOR = 2;
 
+/**
+ * Where a record stops being about turning up.
+ *
+ * Nine days in ten. Above it the habit is not the thing holding the reader
+ * back and telling them to be more consistent is advice for somebody else; the
+ * gain left is in what the days contain. Below it there is still a day of the
+ * week going missing, and that is the cheaper fix.
+ */
+export const HELD_RATIO = 0.9;
+
+/**
+ * A day's list that has stopped being a day's list.
+ *
+ * Eight finished tasks on an average working day is not a plan, it is a list
+ * being used as a scratchpad — the advice that helps is to cut it, not to add
+ * to it. Below `LIGHT_LOAD` the opposite: the list is short enough that the
+ * question is what is on it rather than how much.
+ */
+export const HEAVY_LOAD = 8;
+export const LIGHT_LOAD = 3;
+
+/** Turning up is handled at four days in five; below two in five it is not. */
+export const STEADY_RATE = 0.8;
+export const THIN_RATE = 0.4;
+
+/**
+ * When one subject owns the account, and when none does.
+ *
+ * Half is a specialism — worth naming as a choice, because a reader who did
+ * not choose it should see it. A quarter or less, with three or more subjects
+ * in play, is a week with no centre: nothing is wrong with any single figure
+ * and the whole is still unfocused, which is the one shape a share can show
+ * and a total cannot.
+ */
+export const DOMINANT_SHARE = 50;
+export const SCATTERED_SHARE = 25;
+
 export function whatSummitKnows(input: KnowsInput): Knowledge[] {
   const { finished, activeDays, spanDays, windowDays, subjects, recentTop } = input;
   const found: Knowledge[] = [];
@@ -113,6 +177,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
   /* First, because it frames every figure under it: the others are rates and
      shares, and this is the length of the record they are rates of. */
   if (spanDays >= RECORD_FLOOR && activeDays > 0) {
+    const held = activeDays / spanDays;
     found.push({
       key: 'record',
       heading: 'Record',
@@ -120,6 +185,14 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
         activeDays >= spanDays
           ? `You have worked on every one of your ${spanDays} days with Summit.`
           : `You have been using Summit for ${spanDays} days, and worked on ${activeDays} of them.`,
+      /* An unbroken record is the one case where the useful advice is to stop
+         protecting it: a reader who has not missed a day in three years is
+         being held back by the safe day they take to keep the run alive, not
+         by the run. */
+      advice:
+        held >= HELD_RATIO
+          ? 'Turning up is not your problem, so stop spending effort on it. Put a day into something hard enough that it might not go well.'
+          : `The record is patchy rather than short — ${spanDays - activeDays} days went by unworked. Pick the one day of the week you miss most and defend that day only.`,
     });
   }
 
@@ -132,6 +205,12 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
          gate on this page uses, so a reader who skips a week does not appear
          to have got slower. See utils/activeDay. */
       text: `You average ${perDay.toFixed(1)} tasks on the days you work.`,
+      advice:
+        perDay >= HEAVY_LOAD
+          ? 'That is a full list every time you sit down, which is how days end with the hard thing still on it. Cut the next one to three and put the hardest first.'
+          : perDay < LIGHT_LOAD
+            ? 'A short list is fine when it is the right list. Add one task you are not sure you can finish rather than three you are.'
+            : 'That is a list you can actually finish, so leave the size alone. The gain left is in which tasks make it on.',
     });
   }
 
@@ -148,6 +227,12 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       key: 'consistency',
       heading: 'Consistency',
       text: `You have worked on ${activeDays} of the last ${windowDays} days.`,
+      advice:
+        activeDays / windowDays >= STEADY_RATE
+          ? 'Showing up is handled. Stop counting days and start asking what is in them.'
+          : activeDays / windowDays < THIN_RATE
+            ? 'Most of that window went unrecorded, so an average is not the thing to chase. Fix three days of the week and let the rest fall where they fall.'
+            : 'One more day a week is the cheapest gain on this page — it costs a single session and moves every rate above.',
     });
   }
 
@@ -167,6 +252,15 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       key: 'subjects',
       heading: 'Subjects',
       text: `${top.name} is ${share}% of your recorded work.`,
+      /* The scattered case needs three subjects, not two: a 50/50 split across
+         two is a deliberate pair of interests, and calling that unfocused is
+         the advice misreading its own figure. */
+      advice:
+        share >= DOMINANT_SHARE
+          ? `Over half of everything you do is ${top.name}. Hold that if it is the point, and if it is not, this is the week to take an hour back off it.`
+          : share <= SCATTERED_SHARE && real.length >= 3
+            ? `Nothing owns your time — your widest subject is still only ${share}% of it. If one of these matters more than the others, your week should be able to show which.`
+            : `A clear lead without crowding anything out. Leave the split alone and spend the attention inside ${top.name}.`,
     });
   }
 
@@ -176,6 +270,10 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       key: 'focus',
       heading: 'Current focus',
       text: `Lately you have been working on ${recentTop} most.`,
+      /* The only fact here that reports a *change*, so it is the only one whose
+         advice can ask the reader a question they alone can answer: the figures
+         cannot tell a deliberate switch from an avoided subject. */
+      advice: `You have moved off ${top.name} and onto ${recentTop}. If you chose that, let it run; if you did not, ${top.name} goes in tomorrow's first block.`,
     });
   }
 
