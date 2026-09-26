@@ -83,6 +83,7 @@ import { WINDOWS, type WindowKey } from '@/components/Analytics/data';
 import { gradeFor } from '@/utils/analyticalScore';
 import { subjectModel, type SubjectGoal } from '@/components/Subject/model';
 import { subjectState } from '@/components/Subject/state';
+import { recentWork } from '@/components/Subject/recentWork';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
@@ -933,6 +934,14 @@ export default function SubjectAnalytics() {
       vocabulary: lattice
         ? [lattice.title, ...lattice.branches.map((branch) => branch.title)]
         : [],
+      /* The work itself, and the only thing going up that is not a
+         measurement. Everything above it describes the *shape* of the record
+         — execution is 47, the curve falls off at Hard — and a model given
+         only that writes the shape back as an instruction: "Focused Easy
+         Execution Practice. Solve 10 Easy problems." The titles are what make
+         it possible to say which Easy problems, and that the answer is to
+         stop doing them. See components/Subject/recentWork. */
+      recent_work: recentWork(tasks.data?.tasks ?? [], subjectId, span, today),
     });
 
     setThinking(false);

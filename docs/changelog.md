@@ -2,6 +2,58 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-26 — The subject reading is shown the work, not only the shape of it
+
+Every next step this panel wrote was a category heading with an imperative in
+front of it:
+
+> **01 Focused Easy Execution Practice** — Targeted practice, Easy, 60 min
+> Easy execution is 47, the lowest among levels and covers 141 tasks.
+> Solve 10 Easy algorithm problems · Self-rate after each · Review mistakes
+> immediately
+
+Nothing in it is wrong and nothing in it is advice. It could have been
+generated for any account in any subject, and every clause is already on the
+chart above the panel.
+
+That was not a prompt problem, which is why tightening the prompt never fixed
+it. The brief had no way to produce anything else: it carried seven sections
+of aggregate — execution is 47, the curve falls off at Hard, 88 tasks were
+finished fast and rated badly — and **not one word about what the reader is
+actually working on**. Handed only the shape of a record, a model can say the
+shape back or say nothing.
+
+So the brief now carries a `<recent_work>` section: the forty most recently
+finished tasks in the window, newest first, as the reader titled them, each
+with the two ratings they gave it, how long it took, the reason they picked,
+and the task's own note. The same finding then has something to attach to —
+"Sprint sets rated 5 at difficulty 2" is a reason to move up, and it can name
+what to move up *to*.
+
+Three details worth recording:
+
+- **The note is fetched on the server, not sent.** `description` is the one
+  task field `ANALYTICS_TASK_FIELDS` deliberately withholds — unbounded free
+  text on every row, most of the payload when it was included. Sending it to
+  the browser so the browser could send it back would put it on the wire twice
+  to reach somewhere it can be read from the database once. The page sends
+  ids; `columns_by_ids` joins the notes on in one indexed query, on the one
+  action that was already going to cost a model call.
+- **Titles are labelled as what they are.** The same guard `<skill_vocabulary>`
+  carries. A title is what somebody typed, and left unlabelled beside seven
+  counted sections it is an invitation to "your Sprint-round work is at 72" —
+  a number about a person that nobody counted.
+- **The prompt now has a test in it.** For every next step, priority and
+  drill: could this sentence have been written for somebody else? If it could,
+  it is filler. "Self-rate after each" is true of every session this app has
+  ever recommended.
+
+The model is also told what to do when the titles say nothing — "Maths",
+"homework", "study". Pitch at the subject and the difficulty and say so. A
+confidently invented syllabus is worse than a general instruction, because the
+reader cannot tell which parts were known.
+
+
 ## 2026-09-26 — The tail of Records gets its containers, and every page fills its column
 
 Two things, and the second is app-wide.

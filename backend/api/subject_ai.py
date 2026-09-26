@@ -65,6 +65,16 @@ VOCABULARY = 24
 #: outcomes table to mean something, few enough that the brief stays a brief.
 HISTORY = 12
 
+#: Rows of real work the brief carries. Mirrors `SAMPLE` in
+#: frontend/src/components/Subject/recentWork — the client decides which
+#: forty, and this is the ceiling it is held to rather than trusted on.
+WORK = 40
+
+#: A task's own note, as much of it as goes to the model. Free text with no
+#: ceiling in the database, and forty unbounded ones would be the whole
+#: brief. Long enough for the sentence somebody actually writes in that box.
+NOTE = 200
+
 
 # --------------------------------------------------------------------------
 # What the page sends
@@ -126,6 +136,24 @@ class GoalRead(BaseModel):
     levers: List[str] = []
 
 
+class WorkRow(BaseModel):
+    """One finished task, as the page sampled it.
+
+    No note here: the description is looked up on this side from `id`, so a
+    field the browser is deliberately never sent (see `ANALYTICS_TASK_FIELDS`
+    in api/analytics.py) does not have to travel there and back to reach the
+    model.
+    """
+
+    id: str = ''
+    title: str = ''
+    on: str = ''
+    difficulty: Optional[int] = None
+    execution: Optional[int] = None
+    minutes: Optional[int] = None
+    reason: str = ''
+
+
 class SubjectStateBody(BaseModel):
     """The whole deterministic state, as the page computed it."""
 
@@ -155,6 +183,10 @@ class SubjectStateBody(BaseModel):
     #: The authored skill tree's area names. A curriculum, not a measurement —
     #: the prompt says so at length.
     vocabulary: List[str] = []
+    #: The most recently finished tasks, newest first. The only input to the
+    #: reading that is not a measurement, and the only one that says what the
+    #: work actually is. See `_work` and the note on it.
+    recent_work: List[WorkRow] = []
 
 
 def _text(value, cap=TEXT):
@@ -167,6 +199,51 @@ def _rung(rung):
         'execution': rung.execution, 'quality': rung.quality,
         'cleared': rung.cleared, 'minutes': rung.minutes,
     }
+
+
+def _work(username: str, rows: List[WorkRow]):
+    """The sampled tasks, bounded, with each one's own note added.
+
+    ## Why the note is fetched here rather than sent
+
+    `description` is the one task field the analytics endpoint deliberately
+    withholds: unbounded free text on every row, which nothing on those pages
+    reads, and which was most of the payload when it was included. Sending it
+    to the browser so the browser could send it back would put it on the wire
+    twice to reach a place it can be read from the database once.
+
+    So the client sends ids and this joins the notes on. One indexed query,
+    on the one action in the app that was already going to cost a model call.
+
+    ## Everything is cut on this side
+
+    The caps here are not validation theatre — the client is the thing being
+    bounded. A title is a line, not a paragraph, and a note is the sentence
+    somebody wrote in the box rather than the essay they could have.
+    """
+    kept = [row for row in rows[:WORK] if _text(row.title)]
+    if not kept:
+        return []
+
+    notes = db.columns_by_ids('tasks', username,
+                              [row.id for row in kept if row.id],
+                              ('id', 'description'))
+
+    out = []
+    for row in kept:
+        entry = {
+            'title': _text(row.title),
+            'on': _text(row.on, 10),
+            # Absent rather than nought: a rating nobody gave is not a bad
+            # one, and a minute count nobody recorded is not an instant task.
+            'difficulty': row.difficulty if row.difficulty in range(1, 6) else None,
+            'execution': row.execution if row.execution in range(1, 6) else None,
+            'minutes': row.minutes if (row.minutes or 0) > 0 else None,
+            'reason': _text(row.reason, 40),
+            'note': _text((notes.get(row.id) or {}).get('description'), NOTE),
+        }
+        out.append(entry)
+    return out
 
 
 # --------------------------------------------------------------------------
@@ -288,6 +365,7 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
             for goal in body.goals[:GOALS]
         ],
         'vocabulary': [_text(item, 60) for item in body.vocabulary[:VOCABULARY]],
+        'recent_work': _work(username, body.recent_work),
         'previous': [
             {'title': row.get('title'), 'type': row.get('kind'),
              'difficulty': row.get('difficulty'), 'minutes': row.get('minutes'),

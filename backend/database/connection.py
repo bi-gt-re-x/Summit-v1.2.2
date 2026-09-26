@@ -1078,6 +1078,54 @@ def columns_for(table, user_id, columns, order='rowid'):
         con.close()
 
 
+def columns_by_ids(table, user_id, ids, columns):
+    """`columns_for`, narrowed to a named handful of rows.
+
+    For the caller that already holds most of what it needs and wants one
+    more field off a few dozen specific rows. The subject reading is the one
+    that needed it: the page sends up the tasks it sampled, and the server
+    adds each one's `description` — free text that
+    `ANALYTICS_TASK_FIELDS` deliberately keeps out of the browser's copy, and
+    which would be the largest thing in it if it did not.
+
+    Reading the account's whole task table to find forty rows would undo that
+    saving on the server instead, so this is one indexed query over an `IN`
+    list bounded by the caller. Ids are parameters rather than interpolated;
+    column names are checked against the live schema, for the two reasons
+    `columns_for` gives.
+
+    Returns {id: row}, and a row that is not this account's is simply absent
+    — the same answer as a row that does not exist, which is the right one.
+    """
+    wanted_ids = [str(value) for value in (ids or []) if str(value or '').strip()]
+    if not wanted_ids:
+        return {}
+
+    con = connect()
+    try:
+        schema = _schema(con, table)
+        if not schema:
+            return {}
+        known = {name for name, _, _ in schema}
+        wanted = [name for name in columns if name in known]
+        # Without the key there is nothing to file the rows under, and a
+        # caller asking for a column that this deployment does not have
+        # should get nothing rather than every row of the table.
+        if 'id' not in known or not wanted:
+            return {}
+        if 'id' not in wanted:
+            wanted = ['id'] + wanted
+
+        query = 'SELECT {} FROM "{}" WHERE user_id = ? AND id IN ({})'.format(
+            ', '.join('"{}"'.format(name) for name in wanted), table,
+            ', '.join('?' * len(wanted_ids)))
+        rows = _decode_records(con, table,
+                               con.execute(query, [user_id] + wanted_ids))
+        return {row['id']: row for row in rows if row.get('id')}
+    finally:
+        con.close()
+
+
 def series_signature(user_id):
     """A cheap reading of everything the growth series is folded out of.
 

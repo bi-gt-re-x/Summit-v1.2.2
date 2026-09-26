@@ -83,11 +83,12 @@ def test_the_brief_is_sectioned_so_the_instruction_can_name_a_section():
     """XML sections are not decoration. "Use the figures in
     <difficulty_analysis>" is followable in a way "use the figures above" is
     not, and a later change to one section leaves the others alone."""
-    brief = subject_ai.brief_from(STATE)
+    brief = subject_ai.brief_from({**STATE, 'recent_work': WORK})
 
     for section in ('subject_profile', 'dimensions', 'difficulty_analysis',
                     'time_analysis', 'recent_trends', 'mistake_patterns',
-                    'skill_vocabulary', 'goals', 'recommendation_outcomes'):
+                    'recent_work', 'skill_vocabulary', 'goals',
+                    'recommendation_outcomes'):
         assert '<{}>'.format(section) in brief, section
         assert '</{}>'.format(section) in brief, section
 
@@ -743,3 +744,196 @@ class TestAReadingSurvivesARefresh:
         _save(client, monkeypatch)
         body = stranger.get('/api/subject_reading_saved?subject=Algebra').json()
         assert body['reading'] is None
+
+
+# ---------------------------------------------------------------------------
+# The work itself
+# ---------------------------------------------------------------------------
+WORK = [
+    {'title': 'MATHCOUNTS Sprint 21-30', 'on': '2026-09-04', 'difficulty': 2,
+     'execution': 5, 'minutes': 18, 'reason': ''},
+    {'title': 'AMC10 2019 #14', 'on': '2026-09-03', 'difficulty': 4,
+     'execution': 2, 'minutes': 41, 'reason': 'Ran out of time'},
+]
+
+
+class TestTheWorkItselfReachesTheModel:
+    """The one input that is not a measurement.
+
+    Every other section describes the shape of the record, and a model given
+    only those can do one thing with them: say the shape back with a verb in
+    front. "Focused Easy Execution Practice — solve 10 Easy problems" is the
+    difficulty curve with an imperative bolted on, and it is what this
+    section exists to make impossible.
+    """
+
+    def test_the_titles_arrive_because_nothing_else_says_what_the_work_is(self):
+        brief = subject_ai.brief_from({**STATE, 'recent_work': WORK})
+
+        assert '<recent_work>' in brief
+        assert 'MATHCOUNTS Sprint 21-30' in brief
+        assert 'AMC10 2019 #14' in brief
+
+    def test_how_it_went_and_how_long_it_took_arrive_beside_the_title(self):
+        # A title on its own is a reading list. Tied to its rating and its
+        # minutes it is evidence: this is what they work on, this is what it
+        # costs them, and this is where it stops going well.
+        brief = subject_ai.brief_from({**STATE, 'recent_work': WORK})
+
+        assert 'difficulty 4, execution 2' in brief
+        assert '41 min' in brief
+        assert 'reason: Ran out of time' in brief
+
+    def test_a_note_on_the_task_arrives_when_there_is_one(self):
+        brief = subject_ai.brief_from({
+            **STATE,
+            'recent_work': [{**WORK[0], 'note': 'guessed the last four'}],
+        })
+        assert 'note: guessed the last four' in brief
+
+    def test_an_unrated_task_says_so_rather_than_printing_a_blank(self):
+        # A blank beside "difficulty" reads as a low score. There is a
+        # difference between work that went badly and work nobody rated, and
+        # the model cannot see it unless the brief states it.
+        brief = subject_ai.brief_from({
+            **STATE,
+            'recent_work': [{'title': 'Untimed drill', 'on': '2026-09-02',
+                             'difficulty': None, 'execution': None,
+                             'minutes': None, 'reason': ''}],
+        })
+        assert 'not rated' in brief
+
+    def test_the_section_is_labelled_as_what_they_wrote_not_as_a_measurement(self):
+        """The same guard `<skill_vocabulary>` carries.
+
+        A title is what somebody typed. Left unlabelled beside seven counted
+        sections it is an invitation to "your Sprint-round work is at 72",
+        which is the worst thing this panel can produce.
+        """
+        brief = subject_ai.brief_from({**STATE, 'recent_work': WORK})
+        assert 'not measurements' in brief
+
+    def test_no_work_leaves_the_section_out_rather_than_sending_it_empty(self):
+        brief = subject_ai.brief_from({**STATE, 'recent_work': []})
+        assert '<recent_work>' not in brief
+
+
+class TestTheSampleIsBoundedOnTheServer:
+    def test_the_client_is_held_to_the_cap_rather_than_trusted_on_it(self, client):
+        from backend.api import subject_ai as api
+
+        rows = [api.WorkRow(id='', title='Task %d' % at) for at in range(api.WORK + 30)]
+        assert len(api._work('tester', rows)) == api.WORK
+
+    def test_a_title_is_a_line_not_a_paragraph(self, client):
+        from backend.api import subject_ai as api
+
+        kept = api._work('tester', [api.WorkRow(id='', title='x' * 5000)])
+        assert len(kept[0]['title']) == api.TEXT
+
+    def test_a_row_with_no_title_is_not_a_row(self, client):
+        from backend.api import subject_ai as api
+
+        assert api._work('tester', [api.WorkRow(id='', title='   ')]) == []
+
+    def test_a_rating_outside_the_scale_is_no_rating(self, client):
+        # Absent is not nought: a task nobody rated says nothing about the
+        # work, where a task rated 1 says something quite specific.
+        from backend.api import subject_ai as api
+
+        kept = api._work('tester', [api.WorkRow(id='', title='t', difficulty=9,
+                                                execution=0, minutes=0)])
+        assert kept[0]['difficulty'] is None
+        assert kept[0]['execution'] is None
+        assert kept[0]['minutes'] is None
+
+
+class TestTheNoteIsFetchedRatherThanSent:
+    """`description` is the field `ANALYTICS_TASK_FIELDS` exists to withhold.
+
+    Sending it to the browser so the browser could send it back would put
+    unbounded free text on the wire twice to reach somewhere it can be read
+    from the database once.
+    """
+
+    def _task(self, client, name, description=''):
+        from backend.database import connection as db
+
+        made = client.post('/api/tasks', json={'name': name, 'xp_reward': 10}).json()
+        if description:
+            db.update_row('tasks', made['task_id'], {'description': description},
+                          user_id='tester')
+        return made['task_id']
+
+    def test_the_note_is_joined_on_from_the_id_alone(self, client):
+        from backend.api import subject_ai as api
+
+        task_id = self._task(client, 'AMC10 set', 'stuck on #18 both times')
+        kept = api._work('tester', [api.WorkRow(id=task_id, title='AMC10 set')])
+
+        assert kept[0]['note'] == 'stuck on #18 both times'
+
+    def test_a_note_is_cut_to_the_sentence_somebody_writes(self, client):
+        from backend.api import subject_ai as api
+
+        task_id = self._task(client, 'long one', 'y' * 4000)
+        kept = api._work('tester', [api.WorkRow(id=task_id, title='long one')])
+
+        assert len(kept[0]['note']) == api.NOTE
+
+    def test_a_task_with_no_note_carries_none(self, client):
+        from backend.api import subject_ai as api
+
+        task_id = self._task(client, 'plain')
+        kept = api._work('tester', [api.WorkRow(id=task_id, title='plain')])
+
+        assert kept[0]['note'] == ''
+
+    def test_another_account_s_note_is_not_reachable_by_naming_its_id(self, client, stranger):
+        """The id comes from the client, so it is a parameter like any other."""
+        from backend.api import subject_ai as api
+        from backend.database import connection as db
+
+        made = stranger.post('/api/tasks', json={'name': 'theirs', 'xp_reward': 10}).json()
+        db.update_row('tasks', made['task_id'], {'description': 'private'},
+                      user_id='stranger')
+
+        kept = api._work('tester', [api.WorkRow(id=made['task_id'], title='theirs')])
+        assert kept[0]['note'] == ''
+
+
+def test_the_work_the_page_sends_is_the_work_the_model_is_shown(client, monkeypatch):
+    """The wiring, end to end, because every piece of it passes on its own.
+
+    The page samples, the endpoint bounds and joins the notes on, and
+    `brief_from` prints a section. Three correct halves and a field renamed
+    anywhere between them is a panel that quietly goes back to writing
+    "Focused Easy Execution Practice" with nothing to say why.
+    """
+    from backend.database import connection as db
+
+    made = client.post('/api/tasks', json={'name': 'AMC10 2019 #14',
+                                           'xp_reward': 10}).json()
+    db.update_row('tasks', made['task_id'],
+                  {'description': 'stuck on the geometry one'}, user_id='tester')
+
+    seen = {}
+    monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+    monkeypatch.setattr(subject_ai, 'read',
+                        lambda state, *a, **k: seen.update(
+                            brief=subject_ai.brief_from(state)) or dict(READING))
+
+    body = client.post('/api/subject_reading', json={
+        'subject': 'Algebra',
+        'span': 'the last 30 days',
+        'recent_work': [{
+            'id': made['task_id'], 'title': 'AMC10 2019 #14', 'on': '2026-09-03',
+            'difficulty': 4, 'execution': 2, 'minutes': 41,
+            'reason': 'Ran out of time',
+        }],
+    }).json()
+
+    assert body['success'] is True
+    assert 'AMC10 2019 #14' in seen['brief']
+    assert 'difficulty 4, execution 2' in seen['brief']
+    assert 'note: stuck on the geometry one' in seen['brief']

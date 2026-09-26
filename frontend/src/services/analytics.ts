@@ -660,6 +660,24 @@ export interface SubjectStatePayload {
   }>;
   /** The authored tree's area names. A curriculum, carrying no measurement. */
   vocabulary?: string[];
+  /**
+   * The work itself: the most recently finished tasks, with their titles.
+   *
+   * The one input here that is not a measurement, and the reason a next step
+   * can name real material instead of saying the difficulty curve back with a
+   * verb in front of it. The server looks each row's note up by `id` rather
+   * than having the browser carry free text it never reads.
+   * See components/Subject/recentWork.
+   */
+  recent_work?: Array<{
+    id: string;
+    title: string;
+    on: string;
+    difficulty: number | null;
+    execution: number | null;
+    minutes: number | null;
+    reason: string;
+  }>;
 }
 
 /** Whether the reading is available at all on this install. */

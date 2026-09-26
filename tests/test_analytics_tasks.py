@@ -149,3 +149,31 @@ def test_is_scoped_to_the_signed_in_account(client, stranger):
 
 def test_needs_a_session(anon):
     assert anon.get('/api/analytics/tasks').status_code == 401
+
+
+def test_rows_by_id_are_scoped_and_checked_like_every_other_read(client, stranger):
+    """`columns_by_ids` takes its ids from a client, so both guards matter.
+
+    The subject reading uses it to add each sampled task's `description` —
+    the one field this endpoint exists to withhold — and the ids it passes
+    came over the wire.
+    """
+    mine = make(client, name='mine', description='my note')
+
+    # The column list goes into the query string, so unknown names are
+    # dropped rather than reaching the SQL, exactly as `columns_for` does.
+    found = db.columns_by_ids('tasks', 'tester', [mine], ('description', 'nope'))
+    assert set(found[mine]) == {'id', 'description'}
+    assert db.columns_by_ids('tasks', 'tester', [mine],
+                             ('"; DROP TABLE tasks; --',)) == {}
+    assert db.tasks_for('tester')
+
+    # A row belonging to somebody else is absent rather than returned, which
+    # is the same answer as a row that does not exist.
+    theirs = stranger.post('/api/tasks', json={'name': 'theirs', 'xp_reward': 10}).json()
+    assert db.columns_by_ids('tasks', 'tester', [theirs['task_id']],
+                             ('description',)) == {}
+
+    # Nothing asked for is nothing read.
+    assert db.columns_by_ids('tasks', 'tester', [], ('description',)) == {}
+    assert db.columns_by_ids('tasks', 'tester', ['', None], ('description',)) == {}

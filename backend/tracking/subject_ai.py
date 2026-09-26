@@ -214,6 +214,88 @@ The relationships section says what each proportion is out of. Thirty answers \
 support a claim; five do not. Set `confidence` from that, and say "the record \
 is too thin to say" when it is.
 
+WHAT THEY ARE ACTUALLY DOING
+
+<recent_work> is the reader's own most recently finished tasks, titled in \
+their own words, with how each one went and how long it took. Read it \
+before you write a single recommendation. It is the only thing in the \
+brief that says what the work *is*, and it is what the difference between \
+advice and filler comes down to.
+
+Everything else you have been given is the *shape* of the record. \
+Execution is 47. The curve falls off at Hard. Eighty-eight tasks were \
+finished quickly and rated badly. All true, and a recommendation written \
+from those alone can only ever be the shape said back with a verb in front \
+of it:
+
+  "Focused Easy Execution Practice — solve 10 Easy problems. Easy execution \
+is 47, the lowest among levels."
+
+That is the difficulty curve with an imperative bolted on. It names no \
+material, could have been written for any account in any subject, and \
+tells the reader nothing they could not read off the chart above it. It is \
+the single most common failure of this panel and the one this section \
+exists to end.
+
+With the titles in front of you, the same finding produces an instruction:
+
+  "MATHCOUNTS Sprint 21-30, timed. The Sprint sets in <recent_work> are \
+rated 5 at difficulty 2, so the Easy execution figure is coming off work \
+that has stopped teaching you anything."
+
+  "Stop drilling Sprint rounds. Start intermediate AMC10. Every Hard task \
+in <recent_work> is an AMC10 problem, and every one of them is rated 2."
+
+  "Three timed mocks. The only timed work in <recent_work> is rated above \
+everything else on the list."
+
+Note what those quote: titles, and the ratings printed beside them. Both \
+are in the brief. What they never do is count the rows up — "your last \
+eleven tasks" is arithmetic, and arithmetic is the half of this page you \
+are not asked for. Point at the section; do not tally it.
+
+THE TEST EVERY RECOMMENDATION HAS TO PASS
+
+For each next step, each priority and each drill, ask: **could this \
+sentence have been written for somebody else?** If it could, it is filler. \
+Rewrite it until it could not.
+
+  - Name the material. The source, the round, the chapter, the problem \
+range, the paper, the topic — whatever <recent_work> shows this reader \
+actually works from, or the next thing up from it that you know the \
+subject well enough to name.
+  - Say what to stop doing, when the record supports it. "More of this" is \
+the easiest recommendation to write and usually the wrong one. If the \
+titles show weeks of work at a level that is no longer teaching them \
+anything, the useful sentence is that they should stop.
+  - `title` is the session, and it should read like something a person would \
+write on a to-do list, because "Make it a task" does exactly that. \
+"MATHCOUNTS Sprint 21-30, timed" is a task. "Focused Easy Execution \
+Practice" is a category heading.
+  - `drills` are the specific things to do inside it, and the same test \
+applies to each one. "Self-rate after each" is true of every session this \
+app has ever recommended. Cut it.
+
+This applies to all six kinds of session equally. A `review` names what is \
+being reviewed, a `timed_set` names what is in the set and at what pace, a \
+`concept` names the concept.
+
+WHERE THE LIMIT IS
+
+Titles and notes are what the reader typed. They are not measurements, and \
+they are not a syllabus.
+
+  - You may name what you see in <recent_work> and reason about it. You may \
+not state how good they are at anything you read there — the same rule as \
+<skill_vocabulary>, and for the same reason. "Your Sprint-round work is at \
+72" is a number nobody counted.
+  - If the titles do not name any material — "Maths", "homework", "study" — \
+then say so and pitch the step at the subject and difficulty instead. Do \
+not invent a competition, a textbook or a paper the record gives you no \
+reason to think they use. A confidently wrong syllabus is worse than a \
+general instruction, because the reader cannot tell which parts you knew.
+  - Specific does not mean long. One named thing beats three hedged ones.
+
 WHAT YOU DO KNOW THAT THE APP DOES NOT
 
 **The subject.** What work at a given difficulty in it usually involves, what \
@@ -309,13 +391,19 @@ what the brief cannot support — "the record is too thin to say" is a real and 
 useful answer.
 
 `priorities` — what to work on, most valuable first, each with a `weight` \
-between 0 and 1 and a `reason`. If there is a goal in <goals>, what serves it \
+between 0 and 1 and a `reason`. Name the thing, not the metric: "intermediate \
+AMC10 under a clock" is a priority, "improve execution" is the measurement \
+it would move. If there is a goal in <goals>, what serves it \
 comes first; a page that ranks by whichever internal measure is lowest is \
 ranking by its own arithmetic rather than by what the reader said they want.
 
 `next_steps` — at most three concrete sessions, in the order they should be \
 done. Each has:
-  - `title`: what the session is, six words or fewer.
+  - `title`: what the session is, six words or fewer, naming the material. \
+Write the line somebody would put on a to-do list — "Make it a task" turns \
+this into a real task, under this subject, at this difficulty, and a task \
+called "Focused Easy Execution Practice" is one nobody will know how to \
+start.
   - `focus`: the area from the vocabulary it is about, or the subject itself.
   - `type`: one of targeted_practice, mixed_practice, timed_set, review, \
 concept, project.
@@ -333,7 +421,12 @@ a prediction rather than a measurement, and it is what turns a recommendation \
 into an experiment somebody can settle. Do not hedge it into uselessness; a \
 signal that cannot come out negative is not a signal.
   - `drills`: two to four specific things to do in the session, a few words \
-each, concrete to the subject.
+each, concrete to the subject and to what <recent_work> shows they work \
+from. Every one of them has to fail the could-this-be-for-anybody test. \
+"Review mistakes immediately" and "self-rate after each" are instructions \
+for every session ever recommended, so they are not drills — they are \
+padding, and they are what a reader means when they say the advice is \
+generic.
 
 `insights` — at most four. Each is an `observation`, the `evidence` behind it, \
 and the `implication` — what it means the reader should do differently. An \
@@ -727,6 +820,48 @@ def brief_from(state: Dict[str, Any]) -> str:
     # these are already computed and are not to be recomputed.
     parts.append(_section('relationships', _relationship_lines(
         state.get('performance') or {})))
+
+    # ---- The work itself -------------------------------------------------
+    # The only section here that is not a measurement, and the one that
+    # decides whether a next step can name anything.
+    #
+    # Every other section describes the shape of the record: execution is 47,
+    # the curve falls off at Hard, 88 tasks were finished quickly and rated
+    # badly. A model handed only that can do exactly one thing with it, which
+    # is say it back with a verb in front — "Focused Easy Execution Practice.
+    # Solve 10 Easy problems." True, useless, and unimprovable by any amount
+    # of prompting, because nothing in the brief has ever said what the reader
+    # is working on.
+    #
+    # The titles say. They are also the only place a sub-skill appears at all:
+    # <skill_vocabulary> is an authored curriculum identical on every account,
+    # and these are this reader's own words for their own work. That is why
+    # the section leads with what it is and does not pretend to be counted —
+    # a title is what somebody typed, not a measurement of them.
+    work = state.get('recent_work') or []
+    if work:
+        lines = ['The reader\'s own most recently finished tasks here, newest '
+                 'first, as they titled them. Titles and notes are what they '
+                 'wrote, not measurements. Difficulty and execution are the '
+                 'two 1-5 rows they answered on finishing; "reason" is the '
+                 'one they picked from the fixed list.']
+        for entry in work:
+            said = ['"{}"'.format(entry.get('title'))]
+            if entry.get('on'):
+                said.append(entry['on'])
+            if entry.get('difficulty') and entry.get('execution'):
+                said.append('difficulty {}, execution {}'.format(
+                    entry['difficulty'], entry['execution']))
+            else:
+                said.append('not rated')
+            if entry.get('minutes'):
+                said.append('{} min'.format(entry['minutes']))
+            if entry.get('reason'):
+                said.append('reason: {}'.format(entry['reason']))
+            if entry.get('note'):
+                said.append('note: {}'.format(entry['note']))
+            lines.append('  ' + ' \u2014 '.join(said))
+        parts.append(_section('recent_work', lines))
 
     # ---- The curriculum's own words, and nothing more --------------------
     vocabulary = [str(entry).strip() for entry in (state.get('vocabulary') or [])
