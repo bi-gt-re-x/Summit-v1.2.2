@@ -234,6 +234,36 @@ describe('evidenceFrom', () => {
     expect(card?.evidence).toContain('62 to 70 on execution');
   });
 
+  it('leaves out the card the bottleneck was named from', () => {
+    /* Both are chosen out of the same arithmetic, so without this the page
+       states one finding twice — as a card, then as the bottleneck under it,
+       with the same figures beneath both. The bottleneck keeps it: it is the
+       one carrying the judgement and the ruled-out line. */
+    const state = stateWith({
+      momentum: { known: true, change: -9, earlier: 70, later: 61, direction: 'slipping' },
+      curve: cliffCurve(),
+    });
+    const perf = perfWith();
+
+    const neck = bottleneckFrom(state, perf);
+    expect(neck?.from).toBe('cliff');
+
+    const claims = evidenceFrom(state, perf, [], null, neck?.from).map((card) => card.claim);
+    expect(claims).not.toContain('Work stops landing at Hard.');
+    // And what else bears is still there.
+    expect(claims).toContain('Execution is falling across this window.');
+  });
+
+  it('keeps every card when nothing was named from one', () => {
+    // A bottleneck named from the shortfall split has no card of its own, so
+    // there is nothing to drop and the cliff card stays.
+    const state = stateWith({ curve: cliffCurve() });
+
+    const claims = evidenceFrom(state, perfWith(), [], null, undefined)
+      .map((card) => card.claim);
+    expect(claims).toContain('Work stops landing at Hard.');
+  });
+
   it('caps at three however much is wrong', () => {
     const cards = evidenceFrom(
       stateWith({

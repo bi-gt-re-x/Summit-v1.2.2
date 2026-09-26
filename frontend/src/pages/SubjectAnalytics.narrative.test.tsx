@@ -206,10 +206,28 @@ describe('what matters now', () => {
     await show();
 
     const cards = within(section('What matters now'));
-    expect(cards.getByText('Work stops landing at Hard.')).toBeInTheDocument();
-    expect(cards.getByText(/execution 25 over 4 rated tasks/)).toBeInTheDocument();
-    expect(cards.getByText('The level to work is Fair, not the one above.'))
+    expect(cards.getByText('Execution is falling across this window.')).toBeInTheDocument();
+    expect(cards.getByText(/100 to 25 on execution/)).toBeInTheDocument();
+    expect(cards.getByText('Something changed recently. Find out what.'))
       .toBeInTheDocument();
+  });
+
+  it('does not repeat the finding the bottleneck is about', async () => {
+    /* The cards and the bottleneck are chosen out of the same arithmetic, so
+       left alone they pick the same one — this fixture's bottleneck is the
+       difficulty cliff, and the cliff card above it said the same thing with
+       the same two rungs and the same step under it. A reader meeting one
+       finding twice in two sections, forty pixels apart, learns that the
+       first section is decoration.
+
+       The bottleneck keeps it, because it is the one with the judgement and
+       the ruled-out line on it. What is left above is what *else* bears. */
+    await show();
+
+    expect(within(section('Your current bottleneck'))
+      .getByRole('heading', { name: 'Work at Hard' })).toBeInTheDocument();
+    expect(within(section('What matters now'))
+      .queryByText('Work stops landing at Hard.')).not.toBeInTheDocument();
   });
 
   it('says the cards were chosen by rule until a reading is made', async () => {

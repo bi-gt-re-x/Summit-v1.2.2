@@ -2,6 +2,83 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-26 — The subject page stops saying everything twice
+
+An audit of every figure the page draws, against every other place it drew it.
+Sixteen sections became twelve, the page is about 15% shorter with the same
+folds shut, and nothing counted was lost — it is stated once now, in the
+section that owns it.
+
+### The repeats
+
+- **Two cards answering "where am I".** A `SubjectFacts` strip opened the page
+  with "34 tasks · 12.4h · 71% completed" and a momentum sentence, and the
+  standing card under it had a ring, a verdict and four badges — of which one
+  was the same hours, one the same momentum, and one the goal that
+  `ObjectiveBand` states underneath at the size of a heading. One card now,
+  and it is the first thing on the page.
+- **The bottleneck and the card above it were the same finding.** Both are
+  chosen out of the same arithmetic, so both picked the cliff: "Work stops
+  landing at Hard" as an evidence card, then "Work at Hard" as the
+  bottleneck, citing the same two rungs and the same 50-point step. The
+  bottleneck keeps it — it is the one with the judgement and the ruled-out
+  line — and `evidenceFrom` is told which card not to be.
+- **Difficulty, three times.** A curve (execution per level), a column chart
+  (tasks per level) and a table with both as columns. The table is the
+  superset; the chart is gone. The facts strip was drawing the same split a
+  fourth time.
+- **Seven dimensions, twice.** Bars, then a radar with a legend printing the
+  same seven values under it. The radar stays for the shape; the legend goes.
+- **Recent sessions, twice.** A strip of anonymous percentage dots above the
+  list of the same tasks by name, score and duration. The named list is the
+  one that says which session went wrong; the run's trend survives as the
+  fold's shut-row figure.
+- **Hours, three times** (standing badge, a "Time on it" tile, and the whole
+  "Time spent" fold) — and in two formats, 9h 27m against 9.5h, which reads
+  as two facts. **Finished, four times.** The tile row went; its streak, the
+  only figure on it that lives nowhere else, is a badge on the standing card.
+- Smaller ones: the "Most work at" figure over a lead saying the same with
+  counts; "Usual task" as a shut-row figure over a body row of the same name;
+  the reasons fold's lead over the first row of its own list; the goals
+  fold's lead over the meta line on the same goal; `model.insight` two
+  screens above the table it is about; `lattice.nodes` on the shut row and
+  again under the tree's title.
+
+### What was cut for not being usable
+
+- **"Read this back to me".** A second model, asked to turn the same figures
+  into prose, returning a reading and a list of practice sessions with
+  minutes and a why on each — which is what "Do this next" now returns,
+  except that those steps can be made into real tasks, are kept on record,
+  and are checked afterwards by the verdicts strip. `/api/subject_brief` is
+  untouched; nothing on this page calls it.
+- **"What the score is made of".** Four rates under the claim "the letter
+  above is their mean", which was not true: the letter comes from
+  `state.overall`, the mean of the seven dimensions drawn immediately above.
+  Two of the four were those dimensions again, Timeliness reads "not
+  measurable yet" unless tasks are dated, and Follow-through is finished over
+  filed, which is a fact about the pile.
+- Curriculum sizes in the skill-tree fold — skills, core, per-branch counts.
+  Identical on every account and actionable on none, which that fold's own
+  comment had said for a while without acting on it.
+
+### The rhythm
+
+Sections were spaced by the shell's gap *and* their own `margin-top`, which
+measured out as 40, 24, 34, 40, 49, 40, 40, 48 down the page — eight rules
+each deciding alone. The shell's gap is the only spacer now, raised from 16 to
+24, with 40 before the Evidence heading because that is a movement break
+rather than a gap.
+
+### The order
+
+Standing, then what it is for, then what bears on that, then the one thing in
+the way, then what to do about it, then whether the last advice worked, then
+the working. The page used to open on counts and put the standing card below
+the goal band; the question a reader arrives with is answered before anything
+is scrolled.
+
+
 ## 2026-09-26 — The subject reading is shown the work, not only the shape of it
 
 Every next step this panel wrote was a category heading with an imperative in

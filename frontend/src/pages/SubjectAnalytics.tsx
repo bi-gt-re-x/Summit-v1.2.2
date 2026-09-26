@@ -87,10 +87,8 @@ import { recentWork } from '@/components/Subject/recentWork';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
-import { compositionOf, SubjectFacts } from '@/components/Subject/Facts';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
 import {
-  bandVolume,
   dimensionAxes,
   effortPoints,
   weekLoad,
@@ -119,11 +117,9 @@ import {
   suggestSubjectGoal,
   takeRecommendation,
   writeGoalPlan,
-  writeSubjectBrief,
   type GoalDraft,
   type GoalPlan,
   type NextStep,
-  type SubjectBrief,
   type PastRecommendation,
   type SubjectMilestone,
   type SubjectReading,
@@ -337,8 +333,6 @@ export default function SubjectAnalytics() {
     [subjectId, tasks.data],
   );
 
-  const composition = useMemo(() => compositionOf(mine), [mine]);
-
   /* The one tendency this page is allowed to state before the folds below have
      enough to diagnose anything. Scoped to this subject, so "most of your
      finished work here happens in the evening" is about this subject rather
@@ -369,9 +363,6 @@ export default function SubjectAnalytics() {
    * number. Nothing on this page depends on it — the write-up is a reading of
    * findings that are already all on screen.
    */
-  const [brief, setBrief] = useState<SubjectBrief | null>(null);
-  const [writing, setWriting] = useState(false);
-  const [briefError, setBriefError] = useState('');
   const [canWrite, setCanWrite] = useState(false);
 
   /* Asked once, so an install with no key draws no button at all. A control
@@ -388,62 +379,6 @@ export default function SubjectAnalytics() {
     };
   }, [username]);
 
-  /* Cleared when the window or the subject changes: a reading of the last
-     ninety days sitting under a page now showing seven is prose about figures
-     that are no longer on screen. */
-  useEffect(() => {
-    setBrief(null);
-    setBriefError('');
-  }, [span, subjectId]);
-
-  const write = useCallback(async () => {
-    if (!subject) return;
-    setWriting(true);
-    setBriefError('');
-    /* Exactly what the page is showing, and nothing it is not. The server
-       sends these to the model and forbids it any number that is not among
-       them — so a figure here that the page did not draw would be a figure
-       the reader cannot check. */
-    const result = await writeSubjectBrief({
-      subject: subject.name,
-      span: WINDOWS.find((option) => option.key === span)?.label ?? '',
-      /* What this subject is for, in the reader's own words. It is what turns
-         "your hardest band is weakest" into "and here is what to chase next" —
-         without it the model is reading a table with no destination. */
-      aim: ambition?.aim ?? '',
-      level: ambition?.level ?? '',
-      checkpoints: milestones.filter((entry) => !entry.done).map((entry) => entry.title),
-      score: model.score,
-      grade: model.grade,
-      finished: model.finished,
-      finished_before: model.finishedBefore,
-      streak: model.streak,
-      rates: model.rates
-        .filter((rate) => rate.known)
-        .map((rate) => ({ label: rate.label, now: Math.round(rate.now) })),
-      bands: model.bands
-        .filter((band) => band.done > 0)
-        .map((band) => ({
-          label: band.label,
-          done: band.done,
-          holding: band.holding === null ? null : Math.round(band.holding),
-        })),
-      struggles: model.struggles.map((driver) => ({
-        label: driver.label,
-        share: driver.share,
-        count: driver.count,
-      })),
-      goals: model.goals.map((goal) => ({
-        title: goal.title,
-        progress: Math.round(goal.progress),
-        deadline: goal.deadline,
-        drift: goal.drift,
-      })),
-    });
-    setWriting(false);
-    if (result.success) setBrief(result.brief);
-    else setBriefError(result.message || 'Could not write this up.');
-  }, [model, span, subject]);
 
   /**
    * The lattice this subject opens on, and what the reader has practised of it.
@@ -763,18 +698,25 @@ export default function SubjectAnalytics() {
     [ambition, model.goals, perf, reading, state, today],
   );
 
-  const evidenceCards = useMemo(
-    () => evidenceFrom(state, perf, model.goals, reading?.goal_evidence ?? null),
-    [model.goals, perf, reading, state],
-  );
-
   /* ---- WHAT IS THE BOTTLENECK -----------------------------------------
      Null is a real answer, and the section does not draw for it. A subject
      whose figures do not agree on one has no bottleneck, and naming one at
-     0.3 confidence is how a reader spends a month on the wrong thing. */
+     0.3 confidence is how a reader spends a month on the wrong thing.
+
+     Worked out before the cards above it, which is a change: the two are
+     chosen out of the same arithmetic, so left alone they pick the same
+     finding and the page prints it twice with the same figures underneath.
+     The bottleneck wins that tie — it is the one carrying the judgement —
+     and the cards are told which card not to be. */
   const bottleneck = useMemo(
     () => bottleneckFrom(state, perf, reading?.bottleneck ?? null),
     [perf, reading, state],
+  );
+
+  const evidenceCards = useMemo(
+    () => evidenceFrom(state, perf, model.goals, reading?.goal_evidence ?? null,
+                       bottleneck?.from),
+    [bottleneck, model.goals, perf, reading, state],
   );
 
   /* ---- DID THE ADVICE WORK --------------------------------------------
@@ -1006,11 +948,12 @@ export default function SubjectAnalytics() {
      quiet period from producing a "0" top tick over a line that is not flat. */
   const seriesPeak = Math.max(...model.series.done, 1);
 
-  /* The four charts the folds added, all of them pure functions of figures
-     this page already has. See components/Subject/graphs for what each one is
-     counted from and what it leaves out. */
+  /* The charts the folds draw, all of them pure functions of figures this
+     page already has. See components/Subject/graphs for what each one is
+     counted from and what it leaves out. `bandVolume` is gone with the chart
+     that used it: how much work sits at each difficulty is the "Finished"
+     column of the table in the same fold. */
   const axes = useMemo(() => dimensionAxes(state.dimensions), [state.dimensions]);
-  const volume = useMemo(() => bandVolume(model.bands), [model.bands]);
   const week = useMemo(() => weekLoad(model.done), [model.done]);
   const cloud = useMemo(() => effortPoints(model.done), [model.done]);
 
@@ -1225,66 +1168,26 @@ export default function SubjectAnalytics() {
               </div>
             </div>
 
-            {/* ---- WHAT IS ACTUALLY HERE ------------------------------- */}
-            {/* Before the verdict, and needing none of what the verdict needs.
-                The page used to open on a ring reading "unrated" for anybody
-                who had filed work without rating it — the page reporting on
-                its own inputs rather than on the reader's. These are counts,
-                they are true from the first task, and they are what somebody
-                came to a page about one subject to see. See
-                components/Subject/Facts, including why the split is difficulty
-                rather than the topic breakdown it would obviously rather be. */}
-            <SubjectFacts
-              finished={mine.filter((task) => task.status === 'done').length}
-              total={mine.length}
-              hours={state.time.hours}
-              axis={composition.axis}
-              rows={composition.rows}
-              momentum={state.momentum}
-            />
-
-            {/* The first thing Summit can say rather than count. Draws only
-                once something clears the floor in utils/observations, wearing
-                the tier it earned and the sample behind it. */}
-            {found[0] && <ObservationNote observation={found[0]} />}
-
-            {/* ---- WHAT ARE YOU TRYING TO ACCOMPLISH ------------------- */}
-            {/* First, and at the size of a heading, because everything under
-                it is an answer to it. The page used to open on four figures of
-                equal weight — quality, execution, consistency, momentum — all
-                counted, all true, and none of them a statement about what the
-                reader came here to do. A dashboard leaves the interpreting to
-                the reader, and interpreting is the part they wanted.
-
-                The figures have not gone anywhere. They are the evidence under
-                the cards below and the panels further down. What changed is
-                that they stopped being the protagonist. */}
-            <ObjectiveBand subject={subject.name} objective={objective} />
-
-            {/* Under the band, always, and it is the only place this control
-                lives. "No goal set for this subject" is a heading the reader
-                should be able to answer where they read it — and once they
-                have, changing it is the same job in the same spot rather than
-                a second control six folds down. */}
-            <LinkGoal
-              linked={linkedGoals}
-              options={linkable}
-              busy={linking}
-              error={linkError}
-              onLink={(goalId) => void setLinked(goalId, true)}
-              onUnlink={(goalId) => void setLinked(goalId, false)}
-            />
-
             {/* ---- WHERE AM I ----------------------------------------- */}
-            {/* The page answers three questions in order — where am I, why am
-                I there, what should I do next — and this is the first, in one
-                card, before anything is scrolled. The ring is the mean of
-                every measured dimension; the sentence under it is the model's
-                own verdict from ./model. Everything below is the working.
+            {/* One card, and it is the first thing on the page.
 
-                It borrows the Timer's surfaces on purpose: two radial washes,
-                a stroked ring, badges. Those are the two pages somebody sits
-                in front of rather than passes through. See styles/subject-state.css. */}
+                It used to be two. A `SubjectFacts` strip opened the page with
+                "34 tasks · 12.4h · 71% completed" and a momentum sentence, and
+                this card followed with a ring, a verdict and four badges — of
+                which one was the same hours, one the same momentum, and one
+                the goal that `ObjectiveBand` states underneath at the size of
+                a heading. Two cards, one question, every figure twice.
+
+                Facts existed because the ring says "unrated" to an account
+                that has filed work without rating it, and the counts are true
+                from the first task. That is a reason for the counts to be on
+                this card, not a reason for a second card: the ring degrades to
+                "unrated" and the row beneath it still says what is here.
+
+                The badges are the row now — hours, direction, where execution
+                falls off, and what is still open. No goal badge: the objective
+                band directly under this owns that question and answers it more
+                fully. */}
             <section
               className="sx-hero"
               aria-label="Where this subject stands"
@@ -1321,33 +1224,33 @@ export default function SubjectAnalytics() {
                       Falls off at {state.curve.threshold.label}
                     </span>
                   )}
-                  {model.goals[0] && (
-                    <span className="sx-badge is-goal">
-                      Chasing {model.goals[0].title}
-                    </span>
-                  )}
                   {state.time.hours > 0 && (
                     <span className="sx-badge">{state.time.hours}h logged</span>
                   )}
+                  {/* The one figure the "Where you stand" tiles had that
+                      nothing else on the page carries. The other two were
+                      hours, which is the badge beside this, and finished,
+                      which is under the ring. */}
+                  {model.streak > 0 && (
+                    <span className="sx-badge">
+                      {model.streak} {model.streak === 1 ? 'day' : 'days'} running
+                    </span>
+                  )}
                 </div>
-
-                {/* What the reader said this is all for. Quieter than the
-                    verdict, because it is their sentence rather than a
-                    reading of their record. */}
-                {ambition?.aim && (
-                  <p className="sb-topline-aim">
-                    <span>Chasing</span> {ambition.aim}
-                    {ambition.level && <em> · at {ambition.level} now</em>}
-                  </p>
-                )}
               </div>
             </section>
 
+            {/* The first thing Summit can say rather than count. Draws only
+                once something clears the floor in utils/observations, wearing
+                the tier it earned and the sample behind it. */}
+            {found[0] && <ObservationNote observation={found[0]} />}
+
             {/* ---- The path, under the verdict --------------------- */}
-            {/* On top, because "how am I doing" and "at what" are one question
-                and the page was answering only the first for two screens. It
-                is a strip rather than a panel: the reader is oriented by it on
-                the way past, and the tree itself is one click away. */}
+            {/* Orientation, read on the way past. It carried the reader's
+                own "N% of this tree" until the skill-tree fold at the foot of
+                the page printed the same percentage twice more — as its shut
+                row and again as a bar. One figure, in the fold that is about
+                the tree; crumbs and a way in, here. */}
             {lattice && (
               <div className="sb-path">
                 <nav className="sb-path-crumbs" aria-label="Where this subject sits">
@@ -1360,24 +1263,38 @@ export default function SubjectAnalytics() {
                     </span>
                   ))}
                 </nav>
-                {/* One figure, and it is the reader's. The strip used to
-                    carry four — skills, core, branches, practised — three of
-                    which are the curriculum's size and belong in the tree
-                    panel at the foot of the page, where they now are. A strip
-                    read on the way past has room for the answer, not for the
-                    working. */}
-                {standing && (
-                  <p className="sb-path-facts">
-                    <span className="is-yours">
-                      <strong>{standing.percent}%</strong> of this tree
-                    </span>
-                  </p>
-                )}
                 <Link className="sb-path-open" to="/skill-trees">
                   Open the tree →
                 </Link>
               </div>
             )}
+
+            {/* ---- WHAT ARE YOU TRYING TO ACCOMPLISH ------------------- */}
+            {/* First, and at the size of a heading, because everything under
+                it is an answer to it. The page used to open on four figures of
+                equal weight — quality, execution, consistency, momentum — all
+                counted, all true, and none of them a statement about what the
+                reader came here to do. A dashboard leaves the interpreting to
+                the reader, and interpreting is the part they wanted.
+
+                The figures have not gone anywhere. They are the evidence under
+                the cards below and the panels further down. What changed is
+                that they stopped being the protagonist. */}
+            <ObjectiveBand subject={subject.name} objective={objective} />
+
+            {/* Under the band, always, and it is the only place this control
+                lives. "No goal set for this subject" is a heading the reader
+                should be able to answer where they read it — and once they
+                have, changing it is the same job in the same spot rather than
+                a second control six folds down. */}
+            <LinkGoal
+              linked={linkedGoals}
+              options={linkable}
+              busy={linking}
+              error={linkError}
+              onLink={(goalId) => void setLinked(goalId, true)}
+              onUnlink={(goalId) => void setLinked(goalId, false)}
+            />
 
             {/* ---- WHAT EVIDENCE MATTERS FOR THAT --------------------- */}
             {/* Three at most, each a claim with its counted figures beneath.
@@ -1536,8 +1453,6 @@ export default function SubjectAnalytics() {
               The working behind everything above, counted from your own tasks.
             </p>
 
-            {model.insight && <p className="ax-opening is-down sb-insight">{model.insight}</p>}
-
             <div className="sb-folds">
               {/* ---- Where you stand ------------------------------------
                   Open on arrival, and the only one that is: it is the fold a
@@ -1575,34 +1490,15 @@ export default function SubjectAnalytics() {
                   ) : undefined
                 }
               >
-                <div className="sb-tiles">
-                  <div className="sb-tile">
-                    <span className="sb-tile-label">Finished</span>
-                    <strong className="sb-tile-value">{model.finished}</strong>
-                    <span className="sb-tile-note">
-                      against {model.finishedBefore} the window before
-                    </span>
-                  </div>
-                  <div className="sb-tile">
-                    <span className="sb-tile-label">Time on it</span>
-                    <strong className="sb-tile-value">
-                      {model.invested > 0 ? format.duration(model.invested) : '—'}
-                    </strong>
-                    <span className="sb-tile-note">
-                      {model.invested > 0
-                        ? 'logged against the tasks you finished'
-                        : 'no time logged against these tasks'}
-                    </span>
-                  </div>
-                  <div className="sb-tile">
-                    <span className="sb-tile-label">Streak</span>
-                    <strong className="sb-tile-value">{model.streak}</strong>
-                    <span className="sb-tile-note">
-                      {model.streak === 1 ? 'day running' : 'days running'} in this subject
-                    </span>
-                  </div>
-                </div>
-
+                {/* No tile row here. It was Finished, Time on it and Streak:
+                    finished is under the ring at the top of the page, on this
+                    fold's own shut row, and in "Over time" as this window
+                    against the one before; time on it is a badge on the
+                    standing card and the entire "Time spent" fold below, where
+                    it was 9h 27m against the card's 9.5h — the same quantity
+                    in two formats, which reads as two facts. The streak was
+                    the only one of the three that lives nowhere else, so it is
+                    a badge on the standing card now. */}
                 {/* The seven, kept separate on purpose. A single blended score
                     cannot tell "reaching past what you can land" from "coasting
                     below what you could" — see the note in Subject/Dimensions. */}
@@ -1611,6 +1507,11 @@ export default function SubjectAnalytics() {
                 {/* The same measures as one shape. Seven bars say seven things;
                     the web says which of them is the odd one out, and that is
                     the reading the bars could not give. */}
+                {/* No legend under it. `Dimensions` above is the same seven
+                    labels carrying the same seven values, so a legend here was
+                    the list printed twice with the second copy unsorted. The
+                    web is kept for the one thing the bars cannot show, which
+                    is which measure is the odd one out. */}
                 {axes.length >= WEB_FLOOR && (
                   <div className="sb-web">
                     <h3 className="sb-sub">The shape of it</h3>
@@ -1619,39 +1520,28 @@ export default function SubjectAnalytics() {
                       tone="violet"
                       label={`${subject.name} across ${axes.length} measures`}
                     />
-                    <ul className="sb-web-legend">
-                      {axes.map((axis) => (
-                        <li key={axis.label}>
-                          <span>{axis.label}</span>
-                          <strong>{Math.round(axis.value * 100)}</strong>
-                        </li>
-                      ))}
-                    </ul>
                   </div>
                 )}
 
-                <Panel
-                  title="What the score is made of"
-                  note="Four rates. The letter above is their mean."
-                >
-                  <ul className="sb-rows">
-                    {model.rates.map((entry) => (
-                      <li key={entry.key} className="sb-row sb-row-rate">
-                        <span className="sb-row-name">{entry.label}</span>
-                        {entry.known ? (
-                          <>
-                            <strong className="sb-row-value">{Math.round(entry.now)}%</strong>
-                            <Bar percent={entry.now} />
-                            <Delta value={entry.delta} unit="pts" />
-                          </>
-                        ) : (
-                          <span className="sb-row-value is-none">not measurable yet</span>
-                        )}
-                        <span className="sb-row-note">{entry.note}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Panel>
+                {/* No "What the score is made of" panel here.
+
+                    It listed four rates under the claim "the letter above is
+                    their mean", and that was not true. The letter comes from
+                    `state.overall`, which is the mean of the seven dimensions
+                    drawn immediately above — `model.score` is a second
+                    composite built from these four rates, and the ring
+                    deliberately does not use it (see the note on the Ring).
+                    So the panel explained the grade with figures the grade is
+                    not made of.
+
+                    Two of the four were the bars above it anyway: Quality and
+                    Consistency are dimensions as well as rates, printing the
+                    same number twice in one fold body. Of the other two,
+                    Timeliness reads "not measurable yet" on any account that
+                    does not date its tasks, and Follow-through is finished
+                    over filed — a fact about the pile, which is the same
+                    thing the old facts strip's "71% completed" was, and the
+                    task board answers it. */}
 
                 <Panel
                   title="Standings"
@@ -1691,7 +1581,6 @@ export default function SubjectAnalytics() {
                       value: state.curve.threshold?.label ?? 'nowhere',
                       tone: state.curve.threshold ? 'warn' : 'good',
                     },
-                    { label: 'Most work at', value: peakBand?.label ?? '—' },
                   ]}
                   lead={
                     peakBand && peakBand.done > 0 ? (
@@ -1710,23 +1599,6 @@ export default function SubjectAnalytics() {
                       <Curve curve={state.curve} />
                     </Panel>
                   )}
-
-                  {/* How much, not how well. The curve above deliberately does
-                      not say: an 88% off three tasks and an 88% off ninety are
-                      the same bar on it. */}
-                  <div className="sb-plot">
-                    <figure>
-                      <h3 className="sb-sub">Where the work sits</h3>
-                      <Columns
-                        columns={volume}
-                        tone="blue"
-                        label="Tasks finished at each difficulty"
-                      />
-                      <figcaption>
-                        How much, at each level. The curve above is how well it goes.
-                      </figcaption>
-                    </figure>
-                  </div>
 
                   {model.bands.some((band) => band.done > 0) && (
                     <Panel
@@ -1787,12 +1659,14 @@ export default function SubjectAnalytics() {
                           </tbody>
                         </table>
                       </div>
-                      {model.weakest && model.strongest && model.weakest.level !== model.strongest.level && (
-                        <p className="ax-panel-note ax-panel-note-foot">
-                          <strong>Weakest:</strong> {model.weakest.label.toLowerCase()} at{' '}
-                          {Math.round(model.weakest.holding!)}%. <strong>Strongest:</strong>{' '}
-                          {model.strongest.label.toLowerCase()} at {Math.round(model.strongest.holding!)}%.
-                        </p>
+                      {/* Not "weakest: X at 41%. strongest: Y at 78%" — the
+                          table above is those two rows and marks the weak one
+                          itself. `model.insight` is the same pair with the
+                          conclusion attached, and it used to be printed two
+                          screens up under the Evidence heading, nowhere near
+                          the figures it is about. */}
+                      {model.insight && (
+                        <p className="ax-panel-note ax-panel-note-foot">{model.insight}</p>
                       )}
                     </Panel>
                   )}
@@ -1932,7 +1806,6 @@ export default function SubjectAnalytics() {
                   note="Whether the minutes bought anything."
                   figures={[
                     { label: 'Logged', value: `${state.time.hours}h` },
-                    { label: 'Usual task', value: `${state.time.typical} min` },
                     {
                       label: 'Rushed',
                       value: String(state.time.rushed),
@@ -2032,14 +1905,6 @@ export default function SubjectAnalytics() {
                       ? [{ label: 'Goes right', value: topStrength.label, tone: 'good' as const }]
                       : []),
                   ]}
-                  lead={
-                    topReason ? (
-                      <>
-                        <b>{topReason.label}</b> is behind {topReason.share}% of the work that went
-                        badly — {topReason.count} {topReason.count === 1 ? 'task' : 'tasks'}.
-                      </>
-                    ) : undefined
-                  }
                 >
                     <Panel
                       title="What makes it go badly, and well"
@@ -2105,43 +1970,14 @@ export default function SubjectAnalytics() {
                     { label: 'Last worked', value: model.recent[0]?.on ?? '—' },
                   ]}
                 >
-                  {/* ---- The run --------------------------------------- */}
-                  {model.run.readings.length > 0 && (
-                    <Panel
-                      title="Your last few sessions"
-                      note="Difficulty × execution, oldest first."
-                    >
-                      <ol className="sb-run">
-                        {model.run.readings.map((reading) => (
-                          <li key={reading.id}>
-                            <span
-                              className={`sb-run-dot ${
-                                reading.percent >= 80
-                                  ? 'is-good'
-                                  : reading.percent >= 60
-                                    ? 'is-mid'
-                                    : 'is-poor'
-                              }`}
-                              aria-hidden="true"
-                            />
-                            <span className="sb-run-value">{reading.percent}%</span>
-                            <span className="sb-run-day">{reading.on.slice(5)}</span>
-                          </li>
-                        ))}
-                      </ol>
-                      {model.run.trend !== null && (
-                        <p className="ax-panel-note ax-panel-note-foot">
-                          <strong>Trend:</strong>{' '}
-                          {model.run.trend > 0
-                            ? `improving. The later half of this run averages ${model.run.trend} points above the earlier half.`
-                            : model.run.trend < 0
-                              ? `slipping. The later half averages ${Math.abs(model.run.trend)} points below the earlier half.`
-                              : 'flat. Both halves of this run average the same.'}
-                        </p>
-                      )}
-                    </Panel>
-                  )}
-
+                  {/* No strip of percentage dots above the list any more.
+                      It was `model.run` — the same recent tasks as the list
+                      below, drawn as difficulty x execution — so the fold
+                      showed one set of sessions twice, once anonymously. The
+                      list names them, which is the version that tells a reader
+                      which session went wrong. The run's trend survives as the
+                      figure on the shut row, where it is a summary rather than
+                      a second copy. */}
                   {model.recent.length > 0 && (
                     <Panel
                       title="Recent work"
@@ -2164,6 +2000,16 @@ export default function SubjectAnalytics() {
                           </li>
                         ))}
                       </ul>
+                      {model.run.trend !== null && (
+                        <p className="ax-panel-note ax-panel-note-foot">
+                          <strong>Trend:</strong>{' '}
+                          {model.run.trend > 0
+                            ? `improving. The later half of this run averages ${model.run.trend} points above the earlier half.`
+                            : model.run.trend < 0
+                              ? `slipping. The later half averages ${Math.abs(model.run.trend)} points below the earlier half.`
+                              : 'flat. Both halves of this run average the same.'}
+                        </p>
+                      )}
                       {model.goalAimed !== null && (
                         <p className="ax-panel-note ax-panel-note-foot">
                           <strong>{model.goalAimed}%</strong> of what you finished here was aimed
@@ -2201,15 +2047,6 @@ export default function SubjectAnalytics() {
                           : 'good',
                     },
                   ]}
-                  lead={
-                    <>
-                      <b>{leadGoal.title}</b> is {Math.round(leadGoal.progress)}% done
-                      {leadGoal.expected !== null && (
-                        <> with {Math.round(leadGoal.expected)}% of its time gone</>
-                      )}
-                      .
-                    </>
-                  }
                 >
                   <Panel
                     title="What this subject is for"
@@ -2544,12 +2381,11 @@ export default function SubjectAnalytics() {
                 <Fold
                   title="Skill tree"
                   note="Where this sits in the curriculum."
-                  figures={[
-                    ...(standing
+                  figures={
+                    standing
                       ? [{ label: 'Of this tree', value: `${standing.percent}%` }]
-                      : []),
-                    { label: 'Skills', value: String(lattice.nodes) },
-                  ]}
+                      : []
+                  }
                   lead={treeRead.standing}
                 >
                   {/* The fold is the panel, and what is left inside it is the
@@ -2585,11 +2421,12 @@ export default function SubjectAnalytics() {
                   <div className="sb-tree">
                     <div>
                       <strong>{lattice.title}</strong>
-                      <p className="sb-tree-choice">
-                        {lattice.nodes} skills, {lattice.core} core
-                        {lattice.practised > 0 && <> · {lattice.practised} practised</>}
-                        {lattice.chosen && <> · your branch</>}
-                      </p>
+                      {/* Whether this is the branch they chose, and nothing
+                          else. "148 skills, 32 core" is the size of a
+                          curriculum that is identical on every account — the
+                          same reasoning that took the rest of this line out
+                          already, applied to what was left of it. */}
+                      {lattice.chosen && <p className="sb-tree-choice">Your branch</p>}
                     </div>
                     <div className="sb-tree-actions">
                       <Link className="ax-btn ax-btn-primary" to="/skill-trees">
@@ -2609,7 +2446,6 @@ export default function SubjectAnalytics() {
                       {lattice.branches.map((branch) => (
                         <li key={branch.id}>
                           <span>{branch.title}</span>
-                          <em>{branch.nodes} skills</em>
                         </li>
                       ))}
                     </ul>
@@ -2617,74 +2453,20 @@ export default function SubjectAnalytics() {
                 </Fold>
               )}
 
-              {/* ---- The write-up --------------------------------------
-                  Last, and the only fold that is not counted. The note says so
-                  before the button is pressed rather than after: a reader has
-                  to know which half of this page is arithmetic before they
-                  decide what to act on. */}
-              {canWrite && (
-                <Fold
-                  title="Read this back to me"
-                  note="A model turns the figures above into prose."
-                  figures={[{ label: 'Written by', value: 'a model', tone: 'warn' }]}
-                >
-                  <div className="sb-brief">
-                    <div className="sx-ask">
-                      <div>
-                        <strong>The figures, in sentences</strong>
-                        <p>
-                          Written from the numbers above and no others. Costs an API call, and
-                          is not saved.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        className="ax-btn"
-                        onClick={() => void write()}
-                        disabled={writing}
-                      >
-                        {writing ? 'Writing…' : brief ? 'Write it again' : 'Write it up'}
-                      </button>
-                    </div>
+              {/* No "Read this back to me" fold here any more.
 
-                    {briefError && (
-                      <p className="sb-brief-error" role="alert">
-                        {briefError}
-                      </p>
-                    )}
+                  It asked a model to turn the same figures into prose, and
+                  returned a reading plus a list of practice sessions with
+                  minutes and a why on each — which is what "Do this next" at
+                  the top of the page now returns, except that those steps can
+                  be turned into real tasks, are kept on record, and are
+                  checked afterwards by the verdicts strip. Two models writing
+                  the same advice about the same numbers, one of them at the
+                  bottom behind a fold and saved nowhere, is the duplication
+                  this page was hardest to read for.
 
-                    {brief && (
-                      <div className="sb-brief-body">
-                        {brief.reading && <p className="sb-brief-reading">{brief.reading}</p>}
-                        {brief.practice.length > 0 && (
-                          <ol className="sb-brief-practice">
-                            {brief.practice.map((item) => (
-                              <li key={item.title}>
-                                <div className="sb-brief-practice-head">
-                                  <strong>{item.title}</strong>
-                                  <span className="sb-brief-minutes">{item.minutes} min</span>
-                                </div>
-                                {item.focus.length > 0 && (
-                                  <ul className="sb-brief-focus">
-                                    {item.focus.map((point) => (
-                                      <li key={point}>{point}</li>
-                                    ))}
-                                  </ul>
-                                )}
-                                {item.why && (
-                                  <p className="sb-brief-why">
-                                    <span>Why:</span> {item.why}
-                                  </p>
-                                )}
-                              </li>
-                            ))}
-                          </ol>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </Fold>
-              )}
+                  `/api/subject_brief` is untouched and still answers. Nothing
+                  on this page calls it. */}
             </div>
           </>
         )}

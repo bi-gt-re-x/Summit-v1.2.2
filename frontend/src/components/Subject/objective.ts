@@ -420,6 +420,7 @@ export function evidenceFrom(
   perf: Performance,
   goals: SubjectGoal[],
   read?: GoalEvidence[] | null,
+  named?: string,
 ): EvidenceCard[] {
   if (read && read.length > 0) {
     return read.slice(0, EVIDENCE_SHOWN).map((card, at) => ({
@@ -429,7 +430,13 @@ export function evidenceFrom(
     }));
   }
 
-  const ranked = candidates(state, perf, goals[0] ?? null).filter((one) => one.when);
+  /* `named` is the candidate the bottleneck below was named from. It is
+     dropped rather than reordered: a card and a bottleneck arguing the same
+     finding off the same two figures is the page saying one thing twice, and
+     the bottleneck is the one with the judgement and the ruled-out line on
+     it. What is left here is what *else* bears on the goal. */
+  const ranked = candidates(state, perf, goals[0] ?? null)
+    .filter((one) => one.when && one.id !== named);
   return ranked.slice(0, EVIDENCE_SHOWN).map((one) => ({
     id: one.id,
     claim: one.claim,
@@ -446,6 +453,22 @@ export function evidenceFrom(
 /** The named bottleneck, and where the naming came from. */
 export interface NamedBottleneck extends Bottleneck {
   source: 'read' | 'counted';
+  /**
+   * Which candidate this was named from, when it was named by rule.
+   *
+   * The bottleneck and the evidence cards above it are chosen out of the
+   * same arithmetic, so left to themselves they pick the same finding and
+   * the page states it twice with the same figures under it — "Work stops
+   * landing at Hard" as a card, then "Work at Hard" as the bottleneck, both
+   * citing the same two rungs and the same step between them. `evidenceFrom`
+   * takes this and drops that card, so the section above the bottleneck is
+   * what *else* bears on the goal.
+   *
+   * Absent on a bottleneck the model named: those are chosen against the
+   * goal out of a reading, and the model's own evidence cards are chosen the
+   * same way, so it is already the model's job not to say a thing twice.
+   */
+  from?: string;
 }
 
 /**
@@ -510,6 +533,7 @@ export function bottleneckFrom(
         : '',
       confidence: enough ? 0.7 : 0.5,
       source: 'counted',
+      from: 'divergence',
     };
   }
 
@@ -529,6 +553,7 @@ export function bottleneckFrom(
       ruled_out: 'Adding difficulty. That would make it worse.',
       confidence: families.answered >= 12 ? 0.7 : 0.55,
       source: 'counted',
+      from: 'families',
     };
   }
 
@@ -548,6 +573,7 @@ export function bottleneckFrom(
       ruled_out: `Everything below ${cliff.label}.`,
       confidence: cliff.done >= 8 ? 0.65 : 0.45,
       source: 'counted',
+      from: 'cliff',
     };
   }
 
@@ -565,6 +591,7 @@ export function bottleneckFrom(
       ruled_out: 'More volume.',
       confidence: calibration.rushed >= 6 ? 0.6 : 0.45,
       source: 'counted',
+      from: 'rushed',
     };
   }
 
@@ -593,6 +620,7 @@ export function bottleneckFrom(
       ruled_out: '',
       confidence: 0.45,
       source: 'counted',
+      // No `from`: the shortfall split is not one of the cards.
     };
   }
 
