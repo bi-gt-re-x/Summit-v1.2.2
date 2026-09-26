@@ -2,6 +2,47 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-26 — "What the record says" gets a calendar, and says something without being asked
+
+Every figure on the subject page is about how the work *goes* — execution 47,
+quality 43, falls off at Hard. None of them is about how much of it there is,
+or when. A reader who has not opened a subject in three weeks and one who has
+worked it every day got the same page.
+
+So the section leads with a heatmap: one square a day, shaded by how much
+landed in this subject, with its own window — 7D, 30D, 90D, 1Y, All Time. The
+gaps are as legible as the dark squares, which is the point; a fortnight off
+is a white band and it is invisible everywhere else on the page.
+
+**It is the habits tab's calendar, filtered.** `habitDays` and `habitCalendar`
+already build this grid out of a task list, and `.ax-heat` in analytics.css
+already draws it at two shapes — a week per column above a month, the ordinary
+month calendar below one, where four columns of squares read as a rendering
+fault. The only thing the subject version adds is which tasks go in. Two
+heatmaps shading by different rules, or turning the week over on different
+days, would be two readers' worth of confusion for nothing.
+
+**Its window is not the page's**, for the reason the habits calendar gives:
+seven days is seven squares and not a map, All Time on a long account is a
+decade of them, and "what does my rhythm look like" is asked at whatever zoom
+the reader wants. Keeping them apart also means moving this cannot silently
+rewrite the verdict at the top of the page.
+
+**The section now draws without a reading.** It used to be the model's
+findings and nothing else, so on a page nobody had pressed the button on it
+did not exist — a section called "what the record says" that says nothing
+until a model is asked has the relationship backwards. The calendar is
+counted and leads; the findings follow under their own note, behind a dashed
+rule, so which half is arithmetic and which is prose stays visible without
+reading the note that says so.
+
+**"Which days" is gone from the Over time fold.** Seven bars of tasks per
+weekday was the only thing on the page counting the calendar, and the
+heatmap's *rows* are the weekdays — the same reading at day resolution, with
+the gaps a weekday total averages away. The busiest day is still named on
+that fold's shut row, because stating it beats reading it off a grid.
+
+
 ## 2026-09-26 — The subject page stops saying everything twice
 
 An audit of every figure the page draws, against every other place it drew it.

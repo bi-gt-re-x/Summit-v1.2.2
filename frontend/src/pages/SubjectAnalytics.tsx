@@ -78,7 +78,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading, PageHero, type HeroTone } from '@/components';
-import { AreaChart, Columns, ObservationNote, Radar, Scatter } from '@/components/Analytics';
+import { AreaChart, ObservationNote, Radar, Scatter } from '@/components/Analytics';
 import { WINDOWS, type WindowKey } from '@/components/Analytics/data';
 import { gradeFor } from '@/utils/analyticalScore';
 import { subjectModel, type SubjectGoal } from '@/components/Subject/model';
@@ -87,6 +87,7 @@ import { recentWork } from '@/components/Subject/recentWork';
 import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
+import { SubjectHeat } from '@/components/Subject/Heat';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
 import {
   dimensionAxes,
@@ -957,7 +958,10 @@ export default function SubjectAnalytics() {
   const week = useMemo(() => weekLoad(model.done), [model.done]);
   const cloud = useMemo(() => effortPoints(model.done), [model.done]);
 
-  /* The busiest day, stated rather than left to be read off the bars. */
+  /* The busiest weekday, stated rather than left to be read off a grid.
+     The bars it used to caption are gone — the heatmap's rows are the
+     weekdays now — but the shut row of "Over time" still names it, and a
+     named answer beats a shape the reader has to count. */
   const busiest = useMemo(
     () => week.find((day) => day.peak && day.value > 0) ?? null,
     [week],
@@ -1407,22 +1411,48 @@ export default function SubjectAnalytics() {
               )}
             </section>
 
-            {/* ---- The reading behind those steps ---------------------- */}
-            {reading &&
-              (reading.diagnosis.length > 0 ||
-                reading.priorities.length > 0 ||
-                reading.insights.length > 0) && (
-                <Panel
-                  title="What the record says"
-                  note="Model-written from the figures above. Each finding shows its evidence."
-                >
-                  <Reading
-                    diagnosis={reading.diagnosis}
-                    priorities={reading.priorities}
-                    insights={reading.insights}
-                  />
-                </Panel>
-              )}
+            {/* ---- WHAT THE RECORD SAYS -------------------------------- */}
+            {/* Two halves, and the section draws for the first one alone.
+
+                It used to be the model's reading and nothing else, so on a
+                page nobody had pressed the button on it did not exist — and
+                a section called "what the record says" that says nothing
+                until a model is asked has the relationship backwards. The
+                record says something from the first task.
+
+                So the calendar leads, and it is counted: one square a day,
+                shaded by how much landed here, with its own window. It
+                answers the one question the rest of the page does not ask —
+                every figure above is about how the work *goes*, and none of
+                them about how much of it there is or when. A fortnight off
+                is a white band on this and is invisible everywhere else.
+
+                The model's findings follow when there are any, under their
+                own note, because which half of a panel is arithmetic and
+                which is prose is the thing a reader has to know before
+                deciding what to act on. */}
+            <Panel
+              title="What the record says"
+              note="Counted from your own tasks. The findings under the calendar are model-written."
+            >
+              <SubjectHeat mine={mine} today={today} subject={subject.name} />
+
+              {reading &&
+                (reading.diagnosis.length > 0 ||
+                  reading.priorities.length > 0 ||
+                  reading.insights.length > 0) && (
+                  <div className="sb-record-read">
+                    <p className="ax-panel-note">
+                      Model-written from the figures above. Each finding shows its evidence.
+                    </p>
+                    <Reading
+                      diagnosis={reading.diagnosis}
+                      priorities={reading.priorities}
+                      insights={reading.insights}
+                    />
+                  </div>
+                )}
+            </Panel>
 
             {/* ---- DID YOUR LAST ADVICE WORK --------------------------- */}
             {/* The small section that makes the rest of the page worth
@@ -1768,19 +1798,14 @@ export default function SubjectAnalytics() {
                     </div>
                   </Panel>
 
-                  {/* Which days the work happens on. Nothing else on this page
-                      counts the calendar. */}
-                  <div className="sb-plot">
-                    <figure>
-                      <h3 className="sb-sub">Which days</h3>
-                      <Columns columns={week} tone="green" label="Tasks finished by weekday" />
-                      <figcaption>
-                        {busiest && busiest.value > 0
-                          ? `Most of it lands on ${busiest.label}.`
-                          : 'Nothing dated in this window.'}
-                      </figcaption>
-                    </figure>
-                  </div>
+                  {/* No "Which days" columns here. Seven bars of tasks-per-
+                      weekday was the only thing on this page counting the
+                      calendar, and the heatmap under "What the record says"
+                      is now a calendar whose *rows* are the weekdays — the
+                      same reading at day resolution, with the gaps in it
+                      that a weekday total averages away. The busiest day is
+                      still named on this fold's shut row, because stating it
+                      beats reading it off a grid. */}
 
                   <Panel
                     title="Your progress"

@@ -792,6 +792,86 @@
     color: var(--ax-bad);
 }
 
+/* --- How much you work on this ------------------------------------------
+   The calendar at the head of "What the record says". Everything it draws —
+   the grid, the weekday column, the month initials, the key — is the
+   `.ax-heat` language analytics.css already owns and the habits tab already
+   uses; only the block around it belongs to this page.
+
+   Not a panel of its own. It is the counted half of a panel whose other half
+   is prose, and a border between them would make them two sections that
+   happen to be adjacent rather than two answers to one question. */
+.sb-heat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* Left, not centred, and a slightly larger ceiling on the square.
+   `.ax-heat-wide` is written for the habits tab, where the panel is the
+   width of the map; here the panel is the width of the page, so 90 days at
+   the shared 22px ceiling drew a 334px stamp floating in the middle of 1080
+   and read as a widget that had failed to load. 28px fills a year to about
+   the panel's width and leaves 90 days a map rather than a postage stamp,
+   and the block starts at the left margin the heading above it starts at. */
+.sb-heat .ax-heat-wide {
+    --ax-heat-cell: 28px;
+    justify-content: flex-start;
+}
+
+/* Under a month the map turns into the ordinary month calendar, which
+   `.is-calendar` lays out as a column and centres. Centred under a
+   left-aligned heading in a page-width panel is a week of squares adrift in
+   the middle of the card, so it starts where everything above it starts. */
+.sb-heat .ax-heat-wide.is-calendar {
+    align-items: flex-start;
+}
+
+/* The key sits under the map rather than under the panel, so the scale is
+   beside the thing it is a scale for. */
+.sb-heat .ax-heat-key {
+    justify-content: space-between;
+}
+
+/* The heading and the window chips on one line, the chips falling under the
+   sentence when there is no room for both. `align-items: flex-end` rather
+   than centre: the chips should sit on the sentence's baseline-ish line, not
+   float in the middle of a two-line block. */
+.sb-heat-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+.sb-heat-head > div { min-width: 0; }
+.sb-heat-head .sb-sub { margin-top: 0; }
+
+/* The count, in words, under the heading. The grid says what the shape is
+   and this says what it comes to — a reader should not have to estimate a
+   number off how full a rectangle looks. */
+.sb-heat-say {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+.sb-heat-say strong {
+    font-weight: 700;
+    color: var(--ax-text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* The model's half, under the counted one. A rule rather than a gap, for the
+   reason the route planner inside the goals fold carries one: the reader has
+   to be able to see where the arithmetic stops without reading the note that
+   says so. */
+.sb-record-read {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px dashed var(--ax-line);
+}
+
 /* --- Where this subject sits, under the verdict --------------------------
    A strip rather than a panel. It orients the reader on the way past — what
    this subject opens, how big it is, and how much of it they have touched —

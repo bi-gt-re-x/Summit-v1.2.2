@@ -144,6 +144,18 @@ const section = (label: string) =>
   screen.getByRole('region', { name: label })
   ?? screen.getByLabelText(label);
 
+/**
+ * The same, for a `Panel`.
+ *
+ * `Panel` renders a bare `<section>` with its title as a heading rather than
+ * as an `aria-label`, and an unnamed `<section>` is not a `region` — so the
+ * helper above cannot find one. Scoping to the heading's own panel is the
+ * honest way to ask "inside this card" without adding an attribute to the
+ * component for the tests' convenience.
+ */
+const panel = (title: string) =>
+  within(screen.getByRole('heading', { name: title }).closest('.ax-panel') as HTMLElement);
+
 // ---------------------------------------------------------------------------
 describe('the page opens on what the subject is for', () => {
   it('leads with the goal rather than with a figure', async () => {
@@ -234,6 +246,42 @@ describe('what matters now', () => {
     await show();
     expect(within(section('What matters now')).getByText(/chosen by rule/i))
       .toBeInTheDocument();
+  });
+});
+
+describe('what the record says', () => {
+  it('draws the work calendar before anybody has asked a model anything', async () => {
+    /* The section used to be the model's reading and nothing else, so on a
+       page nobody had pressed the button on it did not exist — a section
+       called "what the record says" that says nothing until a model is asked
+       has the relationship backwards. The record says something from the
+       first task. */
+    await show();
+
+    const said = panel('What the record says');
+    expect(said.getByRole('heading', { name: 'How much you work on this' }))
+      .toBeInTheDocument();
+    expect(said.getByRole('group', { name: 'Heatmap window' })).toBeInTheDocument();
+  });
+
+  it('counts this subject and not the whole account', async () => {
+    /* `SubjectHeat` deliberately does not filter — it counts what it is
+       handed, and this is the guard that the page hands it the right list.
+       Without it, another subject's work draws as this one's and nothing
+       else on the page contradicts it. */
+    await show({
+      rows: [
+        ...ceilingRecord(),
+        did('other1', '2026-09-02', 3, 4, { subject: 'history' }),
+        did('other2', '2026-09-03', 3, 4, { subject: 'history' }),
+      ],
+    });
+
+    // The eight tasks of `ceilingRecord` sit on eight separate days; the two
+    // history tasks land on days already in that run, so a page counting
+    // them would still say eight days and ten tasks.
+    expect(panel('What the record says').getByText(/days had work in/))
+      .toHaveTextContent('8 tasks in all');
   });
 });
 
