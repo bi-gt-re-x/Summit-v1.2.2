@@ -2,6 +2,53 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-09-25 — The dashboard comes out of its boxes
+
+Every band on the dashboard was a card: a white surface, a 1px border, a 16px
+radius and a shadow, floating on the graph-paper ground with 24px of it showing
+in between. Seven down the page and three or four across inside the widest of
+them, which is how a single figure ended up four frames deep — the window, the
+page's ground, the card, and the cell inside it. `.dash-week-cell` had already
+dropped one of those frames for exactly this reason; this is that argument
+applied to the rest of the page.
+
+What the cards were doing was saying *this group ends and the next begins*. A
+rule says it with one pixel instead of four borders, a radius, a shadow and the
+ground around it — and without also implying the contents are a separate object
+parked on the page. So the surfaces are stripped and the grouping moves to the
+lines: `border-top` down the page, `border-left` between columns, and each band
+or column paying for its own room in padding instead of a shared gap.
+
+The edge whitespace went three ways. The page was capped at 1370px, which on a
+1600-wide window left about 140px of ground down each side — the cap is 1680 now,
+which is where a line of text actually starts being too long to track rather than
+where a 16-inch laptop happens to sit. Page padding drops 24px to 20px. And the
+cards' own 24px inset is simply gone, so the first word of the page and the last
+figure in a row sit on the page's margin rather than a card's.
+
+Three things this turned up on the way:
+
+- **The rules follow the real breakpoints.** The three grids reflow at 1240 and
+  768 and they do not reflow together, so each is handled separately. A left-hand
+  rule on a column with nothing to its left is a line down the side of the page.
+- **Every reset is written in the shape of the rule it undoes.** `.dash .dash-stat`
+  cannot clear `.dash .dash-stat + .dash-stat`: one class more specific wins
+  wherever they disagree, whatever the source order. The 2x2 layout kept a stray
+  rule on the third card until the resets matched.
+- **Focus mode had to learn about padding.** It collapses four bands with
+  `max-height: 0`, which covers neither the padding added to that height nor a
+  1px border that paints over nothing. Without `padding-block: 0` and
+  `border-block-width: 0` it left a stack of hairlines and ~150px of empty band.
+
+The greeting's mountain range is hidden here rather than unboxed. It is lit by
+the hero's own gradient and clipped by its radius; with the card gone it was a
+grey smear over graph paper it was never drawn against.
+
+Scoped to `.dash` throughout and written against the page's own six classes
+rather than `.ui-card`, deliberately: the task dialog, the catch-up sheet and the
+level-up card all mount inside `.dash` and are genuinely boxes. Other pages are
+untouched.
+
 ## 2026-09-25 — What Summit knows starts saying what to do about it
 
 The block was four facts and nothing else. "Mathematics is 16% of your recorded

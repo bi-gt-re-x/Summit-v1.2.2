@@ -31,16 +31,26 @@ body:has(.dash) .app-main {
 
 .dash {
     width: 100%;
-    max-width: 1370px;
-    margin: var(--space-8) auto var(--space-8);
-    padding: 0 var(--space-6);
+    /* 1370 in a 1600 window left about 140px of ground down each side on top
+       of the rail, and the page inside it was already spending 24px of card
+       padding before a word. Content on this page is a four-column figure row
+       and a task list beside a dial — all of it wants width, none of it gains
+       anything from being held off the edge. The cap is here to stop a line of
+       body text running the width of a cinema display, and 1680 is where that
+       starts to matter rather than where a 16-inch laptop does. */
+    max-width: 1680px;
+    margin: var(--space-6) auto var(--space-8);
+    padding: 0 var(--space-5);
     display: flex;
     flex-direction: column;
-    /* The page is seven bands deep — greeting, figures, what's next, the two
-       panels, the three cards, what to change, the quote. At 20px they read as
-       one wall of boxes; the extra air is what lets each band be looked at on
-       its own. */
-    gap: var(--space-6);
+    /* No gap. The page is seven bands deep — greeting, figures, what's next,
+       the two panels, the three cards, what to change, the quote — and they
+       used to be told apart by being seven floating boxes with 24px of ground
+       showing between them. They are told apart by a rule now, and a rule
+       needs the space *inside* the band rather than outside it, so each band
+       below pays for its own room and the gap that used to double it is gone.
+       See "Lines, not boxes" at the foot of this file. */
+    gap: 0;
     box-sizing: border-box;
     text-align: left;
 }
@@ -1126,6 +1136,13 @@ html.focus-mode .quote-container {
     overflow: hidden;
     pointer-events: none;
     visibility: hidden;
+    /* The bands carry their own padding and a rule along the top now, and
+       neither is covered by `max-height: 0` — padding is added to the height
+       the max caps, and a 1px border paints whether or not there is anything
+       under it. Without these two lines focus mode left a stack of hairlines
+       and about 150px of empty band behind the panel it was clearing. */
+    padding-block: 0;
+    border-block-width: 0;
     transition: opacity 0.45s ease, transform 0.6s ease,
                 margin 0.6s ease, max-height 0.6s ease,
                 padding 0.6s ease, visibility 0s linear 0.6s;
@@ -1203,7 +1220,7 @@ html.focus-mode .dash-main .dash-tasks { order: 1; min-height: 0; }
 }
 
 @media (max-width: 768px) {
-    .dash { padding: 0 var(--space-4); margin-top: var(--space-4); gap: var(--space-4); }
+    .dash { padding: 0 var(--space-4); margin-top: var(--space-4); }
     .dash-stats { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
     .dash-hello { font-size: var(--text-2xl); }
     .dash-panel-head { flex-wrap: wrap; }
@@ -1587,3 +1604,186 @@ html[data-theme="dark"] .dash-move-all { color: #9d8bff; }
 }
 
 html[data-theme="dark"] .dash-week-vs-note { color: #6e7681; }
+
+
+/* ==========================================================================
+   LINES, NOT BOXES
+   ==========================================================================
+
+   Every band on this page used to be a card: a white surface, a 1px border, a
+   16px radius and a shadow, floating on the graph-paper ground with 24px of it
+   showing in between. Seven of them down the page, and three or four across
+   inside the widest ones, which is how a figure ends up four frames deep — the
+   window, the page's ground, the card, and the cell inside it. `.dash-week-cell`
+   above already dropped one of those frames for exactly this reason; this is
+   the same argument applied to the rest of the page.
+
+   What a card was doing here was saying *this group ends and the next begins*.
+   A rule says that with one pixel instead of a border on four sides, a radius,
+   a shadow and the ground around it — and it says it without also implying the
+   contents are a separate object that happens to be parked on the page.
+
+   So: the surfaces are stripped, and the grouping moves to the lines.
+
+     - Down the page, each band gets `border-top` and pays for its own room in
+       padding. The greeting is first and so has no rule above it.
+     - Across a band, columns are divided by `border-left` on every child but
+       the first, and each column carries the horizontal padding that keeps its
+       content off that line.
+     - The outermost columns lose their outer padding, so the first word of the
+       page and the last figure in a row both sit on the page's own margin
+       rather than a card's inset. That is most of the "edge whitespace": it was
+       24px of card padding inside 24px of page padding inside the gap to the
+       rail.
+
+   Scoped to `.dash` throughout, and written against the page's own classes
+   rather than `.ui-card`, deliberately. `.ui-card` is the whole app's surface
+   (components/ui/Card) and half a dozen things that are genuinely boxes —
+   the task dialog, the catch-up sheet, the level-up card — mount inside `.dash`
+   and must keep their chrome. Naming the six page surfaces cannot reach them.
+
+   Undoing this is one block: delete from here to the end of the file and put
+   `gap: var(--space-6)` and `max-width: 1370px` back on `.dash` above. */
+
+.dash .dash-hero,
+.dash .dash-stat,
+.dash .dash-panel,
+.dash .focus-panel,
+.dash .dash-next,
+.dash .dash-move {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* `.is-clear` is the good-news state of the "what's next" strip and it sets its
+   own tint and border colour further up, after the rule that would clear them.
+   Same specificity, later in the file, so it wins — it has to be named. The
+   state still reads: its disc stays green. */
+.dash .dash-next.is-clear {
+    background: none;
+    border: 0;
+}
+
+/* The range in the greeting goes with the box it was drawn on.
+ *
+ * `.peak-scene` (components/Range) is a picture of mountains fading up out of
+ * the hero's own gradient — it is lit by that sky and clipped by that radius.
+ * With the card gone it is a grey smear in the top right of the page, sitting
+ * over graph paper it was never drawn against. The greeting keeps the hero's
+ * layout and loses only the weather. */
+.dash .dash-hero .peak-scene { display: none; }
+
+/* ---- Down the page ------------------------------------------------------ */
+.dash > .dash-hero { padding: 0 0 var(--space-6); min-height: 0; }
+
+.dash > .dash-stats,
+.dash > .dash-next,
+.dash > .dash-main,
+.dash > .dash-insights,
+.dash > .dash-move,
+.dash > .quote-container {
+    border-top: 1px solid var(--color-line);
+    padding: var(--space-6) 0;
+}
+
+/* The two that are a single line of text rather than a block sit tighter: a
+   band's padding should be proportional to what is in it, and 24px over and
+   under one sentence is a band that looks empty. */
+.dash > .dash-next { padding: var(--space-4) 0; }
+.dash > .quote-container { padding: var(--space-5) 0 0; }
+
+/* ---- Across a band ------------------------------------------------------ */
+.dash .dash-stats { gap: 0; }
+.dash .dash-stat {
+    padding: 0 var(--space-6);
+    justify-content: flex-start;
+}
+.dash .dash-stat + .dash-stat { border-left: 1px solid var(--color-line); }
+.dash .dash-stat:first-child { padding-left: 0; }
+.dash .dash-stat:last-child { padding-right: 0; }
+
+.dash .dash-main { gap: 0; }
+.dash .dash-main > * { padding: 0 var(--space-6); }
+.dash .dash-main > * + * { border-left: 1px solid var(--color-line); }
+.dash .dash-main > :first-child { padding-left: 0; }
+.dash .dash-main > :last-child { padding-right: 0; }
+/* The list scrolls inside the column, so its own scrollbar would otherwise run
+   along the dividing line. */
+.dash .dash-main.is-solo > * { padding: 0; }
+
+.dash .dash-insights { gap: 0; }
+.dash .dash-insight { padding: 0 var(--space-6); }
+.dash .dash-insight + .dash-insight { border-left: 1px solid var(--color-line); }
+.dash .dash-insights > :first-child { padding-left: 0; }
+.dash .dash-insights > :last-child { padding-right: 0; }
+
+/* The panels set their own inset for a card they no longer have. */
+.dash .dash-panel { padding-block: 0; }
+
+/* ---- Narrow ------------------------------------------------------------- */
+/* A left-hand rule on a column with nothing to its left is a line down the
+   side of the page, so the divisions have to turn horizontal at exactly the
+   widths the grids actually reflow — 1240 and 768 above, not a number picked
+   to look about right. The three grids do not reflow together, which is why
+   each is handled on its own rather than as one list of selectors. */
+
+@media (max-width: 1240px) {
+    /* Four figures become 2x2. The rule between the pair stays vertical; a new
+       one goes between the rows. `nth-child` and not `+ *`, because the third
+       card starts a row and would otherwise carry a line on its left. */
+    /* `.dash .dash-stat` alone cannot clear the wide layout's rule: that one is
+       written `.dash .dash-stat + .dash-stat`, which is a class more specific,
+       so it wins wherever the two disagree no matter which comes later. Every
+       reset below is written in the same shape as the rule it is undoing. */
+    .dash .dash-stat,
+    .dash .dash-stat + .dash-stat {
+        border-left: 0;
+        padding: var(--space-5) var(--space-6);
+    }
+    .dash .dash-stat:nth-child(odd) { padding-left: 0; }
+    .dash .dash-stat:nth-child(even) {
+        padding-right: 0;
+        border-left: 1px solid var(--color-line);
+    }
+    .dash .dash-stat:nth-child(-n + 2) { padding-top: 0; }
+    .dash .dash-stat:nth-child(n + 3) {
+        border-top: 1px solid var(--color-line);
+        padding-bottom: 0;
+    }
+
+    /* The three insight panels and the task/focus row are both one column
+       here, so both divide the way the page itself does. */
+    .dash .dash-insight,
+    .dash .dash-insight + .dash-insight,
+    .dash .dash-main > *,
+    .dash .dash-main > * + * {
+        border-left: 0;
+        padding: var(--space-5) 0;
+    }
+    .dash .dash-insight + .dash-insight,
+    .dash .dash-main > * + * {
+        border-top: 1px solid var(--color-line);
+    }
+    .dash .dash-insight:first-child,
+    .dash .dash-main > :first-child { padding-top: 0; }
+    .dash .dash-insight:last-child,
+    .dash .dash-main > :last-child { padding-bottom: 0; }
+}
+
+@media (max-width: 768px) {
+    /* One column: every division is horizontal. */
+    .dash .dash-stat,
+    .dash .dash-stat + .dash-stat,
+    .dash .dash-stat:nth-child(even) {
+        border-left: 0;
+        padding: var(--space-5) 0;
+    }
+    .dash .dash-stat + .dash-stat,
+    .dash .dash-stat:nth-child(n + 3) {
+        border-top: 1px solid var(--color-line);
+    }
+    .dash .dash-stat:first-child { padding-top: 0; }
+    .dash .dash-stat:last-child { padding-bottom: 0; }
+}
