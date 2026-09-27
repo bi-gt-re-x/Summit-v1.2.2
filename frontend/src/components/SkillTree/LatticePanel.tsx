@@ -109,6 +109,7 @@ import {
   removeStep,
   type StepPlan,
 } from '@/utils/skillSteps';
+import type { WrittenStep } from '@/services/skillSteps';
 import { ProgressIndicator } from './ProgressIndicator';
 
 const number = (value: number) => Math.round(value).toLocaleString();
@@ -152,6 +153,129 @@ function Rows({
         ))}
       </ul>
     </section>
+  );
+}
+
+/**
+ * The written programme: a row per step, and the row opens.
+ *
+ * ## Why this is a separate component from `Programme` below
+ *
+ * They draw different things. `Programme` draws a list of sentences the reader
+ * owns and can edit; this draws a table the server wrote and nobody edits — a
+ * name, what mastering it means, and one concrete thing to try. The two have
+ * different shapes, different affordances and different rules about who may
+ * change them, and merging them would mean a component branching on which of
+ * two data models it holds at every line.
+ *
+ * ## Clicking a step opens it rather than navigating
+ *
+ * Everything a reader needs in order to *decide* is on the closed row: the
+ * title, the one-line definition, and the thing to try. Everything they need in
+ * order to *do it* — how to go about it, how to know it worked, the mistake
+ * people make — is three or four more lines, and putting all of it on screen at
+ * once turns a seven-step programme into a page of prose nobody reads.
+ *
+ * More than one may be open at a time. A reader comparing step three with step
+ * six is doing something reasonable, and an accordion that closes the first
+ * when the second opens is a component being tidy at the reader's expense.
+ */
+function WrittenProgramme({
+  steps,
+  at,
+  onOpenChange,
+}: {
+  steps: WrittenStep[];
+  /** Which step the reader is on, 0-based. Opens expanded. */
+  at: number;
+  /** Told when a step opens, so a parent can scroll or measure. Optional. */
+  onOpenChange?: (ordinal: number, open: boolean) => void;
+}) {
+  // The current step starts open, because it is the one the reader came for.
+  const [open, setOpen] = useState<Set<number>>(
+    () => new Set(steps[at] ? [steps[at]!.ordinal] : []),
+  );
+  const current = steps[at]?.ordinal;
+
+  // A different node has been picked: the set of open rows belonged to the last
+  // one, and its ordinals mean something else here.
+  useEffect(() => {
+    setOpen(new Set(steps[at] ? [steps[at]!.ordinal] : []));
+    // Keyed on the programme itself rather than on a node id the component is
+    // not given — a new array is a new programme.
+  }, [steps, at]);
+
+  const toggle = (ordinal: number) => {
+    setOpen((was) => {
+      const next = new Set(was);
+      if (next.has(ordinal)) next.delete(ordinal);
+      else next.add(ordinal);
+      onOpenChange?.(ordinal, next.has(ordinal));
+      return next;
+    });
+  };
+
+  return (
+    <ol className="stx-ws">
+      {steps.map((step, index) => {
+        const isOpen = open.has(step.ordinal);
+        const state = index < at ? 'is-done' : step.ordinal === current ? 'is-now' : '';
+        const panelId = `stx-ws-body-${step.ordinal}`;
+        return (
+          <li key={step.ordinal} className={`stx-ws-step ${state} ${isOpen ? 'is-open' : ''}`}>
+            {/* The whole row is the control, not a chevron in the corner: the
+                target is the thing a reader is already pointing at. */}
+            <button
+              type="button"
+              className="stx-ws-head"
+              aria-expanded={isOpen}
+              aria-controls={panelId}
+              onClick={() => toggle(step.ordinal)}
+            >
+              <span className="stx-ws-num" aria-hidden="true">
+                {step.ordinal}
+              </span>
+              <span className="stx-ws-lines">
+                <span className="stx-ws-title">{step.title}</span>
+                <span className="stx-ws-mastery">{step.mastery}</span>
+                <span className="stx-ws-try">
+                  <b>Try:</b> {step.practice}
+                </span>
+              </span>
+              <span className="stx-ws-mark" aria-hidden="true">
+                {isOpen ? '−' : '+'}
+              </span>
+            </button>
+
+            {isOpen && (
+              <div className="stx-ws-body" id={panelId}>
+                <p className="stx-ws-detail">{step.detail}</p>
+                <dl className="stx-ws-facts">
+                  <div>
+                    <dt>Done when</dt>
+                    <dd>{step.proof}</dd>
+                  </div>
+                  <div>
+                    <dt>Watch for</dt>
+                    <dd>{step.pitfall}</dd>
+                  </div>
+                  <div>
+                    <dt>Roughly</dt>
+                    <dd>{step.minutes} minutes</dd>
+                  </div>
+                </dl>
+                {/* The row's own evidence. Small, and at the bottom, because a
+                    reader is not here for it — but a table that claims every
+                    step was checked should be able to say what checked it. */}
+                <p className="stx-ws-verified" title={`Checks: ${step.verified.checks.join(', ')}`}>
+                  Verified by {step.verified.by} · {step.verified.checks.length} checks
+                </p>
+              </div>
+            )}
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -378,6 +502,14 @@ export interface LatticePanelProps {
   flash?: number | null;
   /** The reader's own programme for this node, where they have written one. */
   steps?: StepPlan | null;
+  /**
+   * The written programme the server holds for this node.
+   *
+   * Absent means nothing has been generated for it yet, and the panel falls
+   * back to the derived advice in skills/improve — see the note on
+   * `WrittenProgramme` below for why the two coexist.
+   */
+  written?: WrittenStep[] | null;
   /** Store a programme for this node. Absent leaves the list read-only. */
   onSteps?: (plan: StepPlan) => void;
   /** Throw the reader's programme away and go back to the suggested one. */
@@ -399,6 +531,7 @@ export function LatticePanel({
   gain = 0,
   flash = null,
   steps = null,
+  written = null,
   onSteps,
   onResetSteps,
   onRename,
@@ -447,7 +580,24 @@ export function LatticePanel({
   // and the suggested one otherwise. Everything below reads `programme`, so the
   // panel never has to ask which of the two it is looking at — only the reset
   // control does, and only to know whether there is anything to reset.
-  const programme: StepPlan = steps ?? { steps: plan.steps, at: plan.at };
+  /*
+   * Three programmes can exist for a node, and they rank in this order:
+   *
+   *   1. one the reader has written      `steps`    theirs, never overwritten
+   *   2. the written one from the server `written`  checked, subject-specific
+   *   3. the derived ladder              `plan`     generic, always available
+   *
+   * The reader's own comes first because editing a programme is a statement
+   * that the suggestion was wrong for them, and a server that quietly replaced
+   * it next week would be taking that back. The written one comes before the
+   * ladder for the reason the whole table exists — see data/sql/skillsteps.sql.
+   * The ladder is the floor: a node nobody has generated for still answers.
+   */
+  const useWritten = !steps && written !== null && written.length > 0;
+  const programme: StepPlan = steps ?? {
+    steps: useWritten ? written!.map((step) => step.title) : plan.steps,
+    at: plan.at,
+  };
   const at = Math.min(programme.at, Math.max(0, programme.steps.length - 1));
 
   // Three at a time: the one the reader is on and the two after it. A panel
@@ -570,14 +720,20 @@ export function LatticePanel({
             </p>
           </div>
         </header>
-        <Programme
-          plan={programme}
-          at={at}
-          onChange={changeSteps}
-          onReset={onResetSteps}
-          editable={Boolean(changeSteps)}
-          edited={Boolean(steps)}
-        />
+        {useWritten ? (
+          <div className="stx-lp-body stx-lp-programme">
+            <WrittenProgramme steps={written!} at={at} />
+          </div>
+        ) : (
+          <Programme
+            plan={programme}
+            at={at}
+            onChange={changeSteps}
+            onReset={onResetSteps}
+            editable={Boolean(changeSteps)}
+            edited={Boolean(steps)}
+          />
+        )}
       </aside>
     );
   }
@@ -743,15 +899,23 @@ export function LatticePanel({
           <h3 className="stx-lp-truth-name">Your next move</h3>
 
           <p className={`stx-lp-headline is-${node.status}`}>{plan.headline}</p>
-          {/* `start` rather than a re-numbered list: step seven has to read as
-              step seven, or the count under it is describing something else. */}
-          <ol className="stx-lp-steps is-window" start={at + 1} onClick={openSteps}>
-            {window.map((step, index) => (
-              <li key={step} className={index === 0 ? 'is-now' : ''}>
-                {step}
-              </li>
-            ))}
-          </ol>
+          {useWritten ? (
+            /* The written steps open where they stand. The reader's next three
+               are the ones worth room in the panel, and any of them expands in
+               place — "All N steps" is still there for the whole list, but it
+               is no longer the only way to read what a step actually asks. */
+            <WrittenProgramme steps={written!.slice(at, at + 3)} at={0} />
+          ) : (
+            /* `start` rather than a re-numbered list: step seven has to read as
+               step seven, or the count under it is describing something else. */
+            <ol className="stx-lp-steps is-window" start={at + 1} onClick={openSteps}>
+              {window.map((step, index) => (
+                <li key={step} className={index === 0 ? 'is-now' : ''}>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          )}
           <button type="button" className="stx-lp-more" onClick={openSteps}>
             All {programme.steps.length} steps
           </button>

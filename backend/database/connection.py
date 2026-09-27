@@ -45,6 +45,7 @@ JSON_COLUMNS = {
     ('setting_defaults', 'value'),
     ('library_items', 'tags'),
     ('calendar_documents', 'data'),
+    ('skill_steps', 'checks'),
 }
 
 # The JSON columns that hold a *scalar* — a word, a number, a flag — rather
@@ -429,6 +430,64 @@ ADDED_TABLES = ('''
         created_at  TEXT NOT NULL DEFAULT (datetime('now')),
         PRIMARY KEY (user_id, ask_key)
     )
+''', '''
+    -- The written practice programme for every node in the skill library.
+    -- Mirrors data/sql/skillsteps.sql, where the note on why these are stored
+    -- rather than derived in the browser lives.
+    --
+    -- Not account-scoped, and the only table here that is not: this is the
+    -- curriculum, identical for every reader, which is what lets it be written
+    -- once by scripts/generate_skill_steps.py instead of per person.
+    CREATE TABLE IF NOT EXISTS skill_steps (
+        node_id      TEXT    NOT NULL,
+        ordinal      INTEGER NOT NULL,
+        title        TEXT    NOT NULL,
+        mastery      TEXT    NOT NULL,
+        practice     TEXT    NOT NULL,
+        detail       TEXT    NOT NULL,
+        proof        TEXT    NOT NULL,
+        pitfall      TEXT    NOT NULL,
+        minutes      INTEGER NOT NULL DEFAULT 20,
+        tree_id      TEXT    NOT NULL,
+        tier         TEXT    NOT NULL,
+        model        TEXT    NOT NULL,
+        generated_at TEXT    NOT NULL,
+        attempts     INTEGER NOT NULL DEFAULT 1,
+        verified_at  TEXT    NOT NULL,
+        verifier     TEXT    NOT NULL,
+        checks       TEXT    NOT NULL DEFAULT '[]',
+        PRIMARY KEY (node_id, ordinal),
+        CHECK (ordinal >= 1),
+        CHECK (length(title) > 0),
+        CHECK (length(mastery) > 0),
+        CHECK (length(practice) > 0),
+        CHECK (length(detail) > 0),
+        CHECK (length(proof) > 0),
+        CHECK (length(pitfall) > 0),
+        CHECK (length(verified_at) > 0),
+        CHECK (length(verifier) > 0),
+        CHECK (checks LIKE '["%')
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS skill_steps_tree ON skill_steps (tree_id, node_id)
+''', '''
+    -- What quality control did, failures included. Mirrors
+    -- data/sql/skillsteps.sql. Append-only: a step that failed, was rewritten
+    -- and then passed is three rows in that order.
+    CREATE TABLE IF NOT EXISTS skill_step_audit (
+        run_id     TEXT    NOT NULL,
+        node_id    TEXT    NOT NULL,
+        ordinal    INTEGER,
+        stage      TEXT    NOT NULL,
+        outcome    TEXT    NOT NULL,
+        reason     TEXT    NOT NULL DEFAULT '',
+        at         TEXT    NOT NULL,
+        CHECK (stage IN ('generate', 'rules', 'review', 'repair', 'store')),
+        CHECK (outcome IN ('pass', 'fail', 'drop', 'error'))
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS skill_step_audit_run
+        ON skill_step_audit (run_id, node_id)
 ''')
 
 
@@ -2807,5 +2866,175 @@ def notification_facts(username, day, tomorrow, week_ago, fortnight_ago):
                 (username, week_ago))]
 
         return facts
+    finally:
+        con.close()
+
+
+# --------------------------------------------------------------------------
+# Skill steps
+# --------------------------------------------------------------------------
+# The written practice programme for the skill library — see
+# data/sql/skillsteps.sql. The only tables here that belong to nobody: this is
+# the curriculum, the same on every account, so none of these take a username.
+#
+# They are hand-written SQL rather than `read_table` because the table is
+# roughly ten thousand rows and every caller wants a handful of them. Reading
+# all of it to serve one node would be the one query in the app whose cost
+# grows with the size of the library rather than with the size of the answer.
+
+#: Columns a step is served with. Provenance is included on purpose: the panel
+#: does not draw it, but `verified_at` is the evidence for the claim the whole
+#: table makes, and an endpoint that cannot show its working is asking to be
+#: trusted. See backend/api/skillsteps.py.
+SKILL_STEP_COLUMNS = (
+    'node_id', 'ordinal', 'title', 'mastery', 'practice', 'detail',
+    'proof', 'pitfall', 'minutes', 'tree_id', 'tier', 'model',
+    'generated_at', 'attempts', 'verified_at', 'verifier', 'checks',
+)
+
+
+def _step_row(record):
+    """One row as a dict, with `checks` decoded from its JSON text."""
+    row = dict(record)
+    raw = row.get('checks') or '[]'
+    try:
+        decoded = json.loads(raw)
+    except (TypeError, ValueError):
+        # A row whose evidence is unreadable is still a verified row — the
+        # CHECK constraint would not have let it in otherwise — so the step
+        # stands and only the audit trail is lost. Same reasoning as the
+        # JSON_COLUMNS fallback above: degrade the metadata, not the content.
+        decoded = []
+    row['checks'] = decoded if isinstance(decoded, list) else []
+    return row
+
+
+def skill_steps_for(node_ids):
+    """Node id → its steps in order, for the ids asked for.
+
+    A node with nothing written for it is absent from the result rather than
+    present with an empty list. The caller has to tell the two apart: the panel
+    falls back to derived advice for the first, and an empty list would be a
+    node whose programme is legitimately nothing at all, which is not a thing.
+    """
+    ids = [str(one) for one in node_ids if one]
+    if not ids:
+        return {}
+    con = connect()
+    try:
+        if not _schema(con, 'skill_steps'):
+            return {}
+        out = {}
+        columns = ', '.join('"{}"'.format(name) for name in SKILL_STEP_COLUMNS)
+        # Chunked because SQLite's default parameter ceiling is 999 and the
+        # page prefetches a whole tree, which on Mathematics is over forty.
+        # The ceiling is nowhere near, and the chunking is what keeps that
+        # true when a tree gets big rather than when someone notices.
+        for start in range(0, len(ids), 400):
+            batch = ids[start:start + 400]
+            marks = ', '.join('?' for _ in batch)
+            query = (
+                'SELECT {} FROM skill_steps WHERE node_id IN ({}) '
+                'ORDER BY node_id, ordinal'.format(columns, marks))
+            for record in con.execute(query, batch):
+                row = _step_row(record)
+                out.setdefault(row['node_id'], []).append(row)
+        return out
+    finally:
+        con.close()
+
+
+def skill_step_coverage():
+    """How much of the library is written, per tree.
+
+    Tree id → (nodes with steps, total steps). The denominator is not here and
+    cannot be: how many nodes a tree *has* lives in TypeScript. The caller
+    joins the two — see backend/api/skillsteps.py.
+    """
+    con = connect()
+    try:
+        if not _schema(con, 'skill_steps'):
+            return {}
+        return {
+            row[0]: (row[1], row[2])
+            for row in con.execute(
+                'SELECT tree_id, COUNT(DISTINCT node_id), COUNT(*) '
+                'FROM skill_steps GROUP BY tree_id')
+        }
+    finally:
+        con.close()
+
+
+def save_node_steps(node_id, rows):
+    """Replace one node's programme, all or nothing.
+
+    A node is the unit because a programme is ordered and its steps refer to
+    each other — half of a rewritten list interleaved with half of the old one
+    is a programme that has a step four twice and no step five. The delete and
+    the insert share a transaction so no reader can see between them.
+
+    Passing an empty list deletes the node's programme, which is how the
+    generator retracts content that stopped passing review.
+    """
+    con = connect()
+    try:
+        with con:
+            con.execute('DELETE FROM skill_steps WHERE node_id = ?', (node_id,))
+            for row in rows:
+                values = dict(row)
+                values['node_id'] = node_id
+                checks = values.get('checks') or []
+                if not isinstance(checks, str):
+                    values['checks'] = json.dumps(list(checks))
+                columns = ', '.join('"{}"'.format(name) for name in SKILL_STEP_COLUMNS)
+                marks = ', '.join(':{}'.format(name) for name in SKILL_STEP_COLUMNS)
+                con.execute(
+                    'INSERT INTO skill_steps ({}) VALUES ({})'.format(columns, marks),
+                    {name: values.get(name) for name in SKILL_STEP_COLUMNS})
+        return len(rows)
+    finally:
+        con.close()
+
+
+def log_step_audit(rows):
+    """Append to the quality-control trail. Never updates; see the SQL note."""
+    if not rows:
+        return 0
+    con = connect()
+    try:
+        with con:
+            con.executemany(
+                'INSERT INTO skill_step_audit '
+                '(run_id, node_id, ordinal, stage, outcome, reason, at) '
+                'VALUES (:run_id, :node_id, :ordinal, :stage, :outcome, :reason, :at)',
+                [{
+                    'run_id': row.get('run_id', ''),
+                    'node_id': row.get('node_id', ''),
+                    'ordinal': row.get('ordinal'),
+                    'stage': row.get('stage', 'store'),
+                    'outcome': row.get('outcome', 'pass'),
+                    'reason': (row.get('reason') or '')[:400],
+                    'at': row.get('at') or datetime.now().isoformat(timespec='seconds'),
+                } for row in rows])
+        return len(rows)
+    finally:
+        con.close()
+
+
+def step_audit_summary(run_id=None):
+    """Stage and outcome counts for a run, or for every run there has been."""
+    con = connect()
+    try:
+        if not _schema(con, 'skill_step_audit'):
+            return []
+        if run_id:
+            query = ('SELECT stage, outcome, COUNT(*) FROM skill_step_audit '
+                     'WHERE run_id = ? GROUP BY stage, outcome ORDER BY stage, outcome')
+            rows = con.execute(query, (run_id,))
+        else:
+            query = ('SELECT stage, outcome, COUNT(*) FROM skill_step_audit '
+                     'GROUP BY stage, outcome ORDER BY stage, outcome')
+            rows = con.execute(query)
+        return [{'stage': row[0], 'outcome': row[1], 'count': row[2]} for row in rows]
     finally:
         con.close()

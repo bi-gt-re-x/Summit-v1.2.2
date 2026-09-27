@@ -1,6 +1,24 @@
 /**
  * How to get better at a node — the other half of what a skill *is*.
  *
+ * ## This is the fallback now, not the first answer
+ *
+ * A node's practice steps are written ahead of time by a model that knows the
+ * subject, checked, and stored in the `skill_steps` table — see
+ * data/sql/skillsteps.sql. The panel draws those when they exist, and drops back
+ * to this file when they do not.
+ *
+ * The reason is the limitation this module cannot design its way out of. The
+ * ladder below has to fit Loops and Squat Depth and Key Signatures, so no rung
+ * of it may name anything belonging to any of them, so no rung can ever say
+ * "Factor x^2 - 7x + 12" — the best it can manage is "Do one from memory". That
+ * is a real ceiling on the whole approach rather than a rung worth rewording.
+ *
+ * It stays because a derived sentence is worth a great deal more than a blank
+ * panel, and twelve hundred nodes will not all have written steps for a while.
+ * Nothing here needs to change as that number climbs; the panel simply stops
+ * calling it, node by node.
+ *
  * Kept apart from skills/subjectTrees on purpose. That file answers "what is
  * this, where does it sit, what does it gate"; this one answers "what would you
  * actually go and do about it", which is a different kind of claim, changes for

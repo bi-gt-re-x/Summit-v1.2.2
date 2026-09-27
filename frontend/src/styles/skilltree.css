@@ -3775,3 +3775,186 @@ html[data-theme="dark"] .stx-region {
    rule and the top padding they carried as standalone sections. */
 .stx-lp-truth .stx-lp-section { padding-top: var(--space-2); border-top: 0; }
 .stx-lp-truth .stx-lp-section h3 { font-size: var(--text-xs); color: var(--lat-muted); font-weight: 700; }
+
+/* ---------------------------------------------------------------------------
+   The written programme — a step per row, and the row opens.
+
+   Drawn as a stack of cards rather than as the numbered list beside it,
+   because these rows carry three lines each and a numbered list of
+   three-line items reads as prose with digits in it. The card edge is what
+   says where one step stops.
+
+   Everything here is under `.stx-ws`, which nothing else claims — see
+   scripts/check_css.mjs on why a class written in two sheets is a bug that
+   only exists in the union of them.
+   --------------------------------------------------------------------------- */
+.stx-ws {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stx-ws-step {
+    overflow: hidden;
+    border: 1px solid var(--lat-line);
+    border-radius: var(--radius-md);
+    background: var(--lat-panel);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.stx-ws-step.is-now {
+    border-color: color-mix(in srgb, var(--lat-violet) 45%, var(--lat-line));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--lat-violet) 22%, transparent);
+}
+
+/* A finished step stays legible rather than being greyed to the point of
+   uselessness: a reader going back to check what step two asked is a normal
+   thing to do, and it is the commonest reason this list is reopened. */
+.stx-ws-step.is-done .stx-ws-title { color: var(--lat-muted); }
+.stx-ws-step.is-done .stx-ws-num {
+    background: color-mix(in srgb, var(--lat-green) 18%, transparent);
+    color: var(--lat-green);
+}
+
+.stx-ws-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-2);
+    align-items: start;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.stx-ws-head:hover { background: var(--lat-page); }
+
+/* The focus ring is inset because the row is flush with the card edge, and an
+   outline drawn outside it is clipped by the overflow rule above. */
+.stx-ws-head:focus-visible {
+    outline: 2px solid var(--lat-violet);
+    outline-offset: -2px;
+}
+
+.stx-ws-num {
+    display: grid;
+    place-items: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-sm);
+    background: var(--lat-page);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--lat-muted);
+}
+
+.stx-ws-step.is-now .stx-ws-num {
+    background: color-mix(in srgb, var(--lat-violet) 16%, transparent);
+    color: var(--lat-violet);
+}
+
+.stx-ws-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.stx-ws-title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--lat-text);
+}
+
+.stx-ws-mastery {
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-muted);
+}
+
+/* The Try: line is the thing to go and do, so it is the one part of a closed
+   row that is allowed to look like an instruction rather than a description. */
+.stx-ws-try {
+    margin-top: 2px;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-text);
+}
+
+.stx-ws-try b {
+    margin-right: .35em;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--lat-violet);
+}
+
+.stx-ws-mark {
+    font-size: var(--text-base);
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--lat-faint);
+}
+
+.stx-ws-body {
+    padding: 0 var(--space-3) var(--space-3);
+    border-top: 1px solid var(--lat-line-soft);
+    margin-top: var(--space-1);
+}
+
+.stx-ws-detail {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-xs);
+    line-height: 1.6;
+    color: var(--lat-text);
+}
+
+.stx-ws-facts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin: var(--space-2) 0 0;
+}
+
+.stx-ws-facts > div {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: var(--space-2);
+    align-items: baseline;
+}
+
+.stx-ws-facts dt {
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--lat-muted);
+}
+
+.stx-ws-facts dd {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-text);
+}
+
+.stx-ws-verified {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-2xs);
+    color: var(--lat-faint);
+}
+
+/* Narrow panel: the label column stops being worth 5.5rem long before the
+   panel is phone width, because these labels are two words. */
+@media (max-width: 520px) {
+    .stx-ws-facts > div { grid-template-columns: 1fr; gap: 0; }
+}

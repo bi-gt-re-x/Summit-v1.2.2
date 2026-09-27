@@ -22,6 +22,7 @@ export * as notifications from './notifications';
 export * as quote from './quote';
 export * as records from './records';
 export * as settings from './settings';
+export * as skillSteps from './skillSteps';
 export * as subjects from './subjects';
 export * as tasks from './tasks';
 export * from './constants';

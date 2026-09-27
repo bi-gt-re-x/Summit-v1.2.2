@@ -73,7 +73,7 @@ DB_PATH = os.environ.get('SUMMIT_DB') or os.path.join(DATA_DIR, 'summit.db')
 SCHEMA_FILES = [
     'users', 'tasks', 'goals', 'growth', 'focus', 'events', 'analytics',
     'achievements', 'history', 'library', 'notes', 'settings', 'subjects',
-    'records', 'notifications',
+    'records', 'notifications', 'skillsteps',
 ]
 
 # --- Behaviour -----------------------------------------------------------

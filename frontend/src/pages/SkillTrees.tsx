@@ -199,6 +199,12 @@ import {
   type StepPlan,
   type StepPlans,
 } from '@/utils/skillSteps';
+/* Namespaced, because this module and utils/skillSteps both export a
+   `loadSteps` and they are different things: that one reads the programme a
+   reader has edited out of their own browser, this one fetches the written
+   programme the server holds for everybody. */
+import * as writtenSteps from '@/services/skillSteps';
+import type { Programmes } from '@/services/skillSteps';
 import '@/styles/skilltree.css';
 
 /** The drawing, painted through the shared mask. */
@@ -371,6 +377,28 @@ export default function SkillTrees() {
     () => applyNames(applyProgress(designed, progress, plans), names),
     [designed, progress, plans, names],
   );
+  /* The written programmes for this tree, fetched once when it opens.
+     A whole tree rather than the selected node, because a reader clicks tiles
+     and a spinner inside the panel on every click is worse than one request on
+     arrival — see the note in services/skillSteps. A tree whose nodes have
+     nothing written simply leaves this empty and the panel derives, exactly as
+     it did before the table existed. */
+  const [written, setWritten] = useState<Programmes>({});
+  useEffect(() => {
+    let live = true;
+    const ids = designed.nodes.map((node) => node.id);
+    writtenSteps.loadSteps(ids).then((programmes) => {
+      if (live) setWritten(programmes);
+    });
+    // Cleared on the way out rather than merged: a stale programme drawn under
+    // a node of the same id on a different tree is the one wrong thing this
+    // could do, and the cache in the service means refetching costs nothing.
+    return () => {
+      live = false;
+      setWritten({});
+    };
+  }, [designed]);
+
   const nav = useMemo(() => navTargets(tree), [tree]);
   /* The doorways, as a set. Every reading of "where is this reader" and
      "what is worth doing" leaves them out: a diamond carries a status like any
@@ -1098,6 +1126,7 @@ export default function SkillTrees() {
             onPractice={practise}
             gain={selected ? practiceGain(selected) : 0}
             steps={selected ? plans[selected.id] ?? null : null}
+            written={selected ? written[selected.id] ?? null : null}
             onSteps={selected ? (plan) => writePlans(selected.id, plan) : undefined}
             onResetSteps={selected ? () => writePlans(selected.id, null) : undefined}
             onRename={selected ? (name) => rename(selected.id, name) : undefined}
