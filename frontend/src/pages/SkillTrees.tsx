@@ -384,6 +384,13 @@ export default function SkillTrees() {
      nothing written simply leaves this empty and the panel derives, exactly as
      it did before the table existed. */
   const [written, setWritten] = useState<Programmes>({});
+  /* Whether the panel has taken the section over. The panel owns the decision
+     and this owns the grid, because the widening is a change to the *layout*
+     — see `.stx-layout.is-wide` in styles/skilltree.css. Kept as a callback
+     identity that never changes, or the effect in the panel that reports it
+     would fire on every render of this page. */
+  const [wide, setWide] = useState(false);
+  const onExpand = useCallback((open: boolean) => setWide(open), []);
   useEffect(() => {
     let live = true;
     const ids = designed.nodes.map((node) => node.id);
@@ -1059,7 +1066,7 @@ export default function SkillTrees() {
         <ModeSwitch mode={mode} onMode={setMode} say={say} />
 
         {/* ---- the lattice and what a node is ---- */}
-        <div className={`stx-layout mode-${mode}`}>
+        <div className={`stx-layout mode-${mode}${wide ? ' is-wide' : ''}`}>
           <SkillTreeCanvas
             graph={shown}
             selectedId={selectedId}
@@ -1132,6 +1139,7 @@ export default function SkillTrees() {
             onRename={selected ? (name) => rename(selected.id, name) : undefined}
             renamed={Boolean(selected && names[selected.id])}
             onResetName={selected ? () => rename(selected.id, null) : undefined}
+            onExpand={onExpand}
             flash={flash && selected && flash.id === selected.id ? flash.gain : null}
             placeholder={
               <>

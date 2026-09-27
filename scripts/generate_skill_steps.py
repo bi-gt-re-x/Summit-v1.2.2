@@ -61,6 +61,7 @@ import os
 import re
 import sys
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 
@@ -102,6 +103,29 @@ STEPS_BY_TIER = {
 # retry below would spend another call on for no reason.
 GENERATE_MAX_TOKENS = 16000
 REVIEW_MAX_TOKENS = 12000
+
+#: How many times a rate-limited request is waited out before giving up, and
+#: how long each wait is. Six tries at thirty seconds covers three minutes of a
+#: busy window, which is long enough for Groq's per-minute budget to clear
+#: several times over and short enough that a genuinely dead key still fails.
+RATE_LIMIT_TRIES = 6
+RATE_LIMIT_WAIT = 30
+
+#: The completion budget sent to Groq, which is the throughput lever and not
+#: an obvious one.
+#:
+#: Groq's free tier counts the prompt *plus the completion you asked for*
+#: against a fixed per-minute allowance — the tokens you reserve, not the
+#: tokens you use. Asking for the Anthropic-sized budgets above therefore books
+#: most of a minute per call whatever the model actually writes, and the run
+#: crawls at a third of a node a minute while the model sits idle.
+#:
+#: These are sized to the real answers. Ten steps of six short fields is around
+#: 2,000 tokens of JSON and a verdict list is a few hundred, so the ceiling
+#: only has to clear those with room for the reasoning. It roughly trebled the
+#: rate.
+GROQ_BUDGET = 3200
+GROQ_REVIEW_BUDGET = 1400
 
 
 # ---------------------------------------------------------------------------
@@ -146,6 +170,25 @@ THE ONE RULE: every practice line must name its object.
 If you cannot name an object for a step, the step is wrong — write a different
 step. A programme of five specific steps beats one of ten vague ones.
 
+THE SECOND RULE: the object must be one the reader already has, or one the step
+gives them. They have no files, no repository and no dataset from you.
+
+  NO   Run calculate_sum.rb with input 3,4,5.      no such file exists
+  NO   Fix the IndexError in process_data.rb.      invented, and unopenable
+  NO   Open the project's config and change it.    which project
+  YES  Write a script that sums [3, 4, 5] and prints the total.
+  YES  Type this in and run it: for i in range(3): print(i / 0)
+  YES  Take a program you have already written and ...
+  YES  Factor x^2 - 7x + 12.
+
+A step may name a real, public, findable thing — Python's `itertools` docs, the
+Moonlight Sonata, a barbell — and may tell the reader to make something. It may
+not refer to a file, a bug, a dataset or a codebase that only exists inside the
+step. If a step needs code to debug, give the code.
+
+Keep one technology per programme. A Ruby filename with a Python error message
+in it is a step nobody can act on.
+
 More rules, all of them things that get this rejected:
 
 - `practice` starts with an imperative verb and states the actual problem,
@@ -158,7 +201,10 @@ More rules, all of them things that get this rejected:
 - `pitfall` names the specific mistake people make here, not "be careful".
 - `title` is one to six words, no full stop, and no two steps share one.
 - Steps go easiest first, and each builds on the one before it.
-- Vary the verbs. Ten steps that all begin "Practise" is a failed programme.
+- Vary the whole sentence, not just the numbers. Ten practice lines built from
+  one template with the values swapped is a failed programme — they get
+  rejected as duplicates. Each step is a different kind of work, so each
+  practice line should read like a different instruction.
 - Be correct. A wrong worked answer is worse than a vague step, and every
   number you write will be checked by somebody who sits down and tries it.
 """
@@ -181,6 +227,14 @@ For each step, decide PASS or FAIL. Fail it for any of these:
 4. MISPLACED. It is far above or below the stated level, or it comes before
    something it depends on.
 5. DUPLICATE. It is another step in the same list, reworded.
+6. UNAVAILABLE. It tells the reader to open, run or fix something that does not
+   exist for them — a named source file, a specific bug, a dataset, a
+   repository — without giving it to them. "Run calculate_sum.rb" and "fix the
+   IndexError in process_data.rb" are both failures: there is no such file.
+   Telling the reader to write something, or to use their own existing work, or
+   to use a real public resource, is fine. So is giving them the code inline.
+   Also fail a step that mixes technologies incoherently, such as a Ruby
+   filename raising a Python exception.
 
 Pass anything that is correct, specific and in the right place. Do not fail a
 step for style, for length, or because you would have picked a different
@@ -317,7 +371,7 @@ def repair_brief(node, steps, problems):
 # ---------------------------------------------------------------------------
 # Talking to the model
 # ---------------------------------------------------------------------------
-def ask(brief, system, schema, model_id, max_tokens, provider=''):
+def ask(brief, system, schema, model_id, max_tokens, provider='', groq_budget=0):
     """One schema-constrained answer, parsed.
 
     The provider machinery in backend/tracking/planner.py is reused rather than
@@ -336,6 +390,46 @@ def ask(brief, system, schema, model_id, max_tokens, provider=''):
     name = provider or planner.provider()
     if not name:
         raise ValueError(planner.NO_KEY)
+    # A rate limit is not a failure, it is a queue. Groq's free tier counts
+    # tokens per minute and this script is deliberately trying to saturate it,
+    # so a 429 is the expected steady state rather than an error — without a
+    # wait here the run would "fail" most of the library in about a minute and
+    # write nothing. Anthropic rate-limits too, more rarely.
+    for attempt in range(RATE_LIMIT_TRIES):
+        try:
+            return _parse(_call(name, brief, system, schema, model_id,
+                                max_tokens, groq_budget))
+        except Exception as exc:  # noqa: BLE001 - re-raised below unless it is a 429
+            text = str(exc)
+            limited = 'rate-limit' in text or 'rate_limit' in text or '429' in text
+            if not limited or attempt == RATE_LIMIT_TRIES - 1:
+                raise
+            # Linear rather than exponential: the window that is full is a
+            # fixed sixty seconds, so doubling past it only wastes the minute
+            # after the one that was busy.
+            time.sleep(RATE_LIMIT_WAIT * (attempt + 1))
+    raise ValueError('unreachable')
+
+
+def effective_model(provider, model_id):
+    """The model that will actually answer, which is not always `--model`.
+
+    `--model` defaults to an Anthropic id, and a run that falls through to Groq
+    ignores it and serves gpt-oss-120b instead. Recording the flag rather than
+    the fact put `rules+claude-sonnet-5` on eight programmes Sonnet never saw —
+    which is the one thing an audit trail must not do, because the whole point
+    of storing provenance is to be able to find and redo the weaker content.
+    """
+    name = provider or planner.provider()
+    if name == 'groq':
+        return model_id if model_id.startswith('openai/') else planner.GROQ_MODEL
+    if name == 'grok':
+        return planner.GROK_MODEL
+    return model_id
+
+
+def _call(name, brief, system, schema, model_id, max_tokens, groq_budget=0):
+    """One request to whichever provider is answering, as raw text."""
     if name == 'anthropic':
         text = planner.from_anthropic(
             brief, system=system, schema=schema, model_id=model_id,
@@ -349,7 +443,7 @@ def ask(brief, system, schema, model_id, max_tokens, provider=''):
             # against one 8000-a-minute ceiling, so the Anthropic budgets above
             # are refused outright with a 413 rather than truncated. Its own
             # cap is the one to send.
-            max_tokens=planner.GROQ_MAX_TOKENS,
+            max_tokens=min(max_tokens, groq_budget or GROQ_BUDGET),
             reasoning=planner.GROQ_REASONING, timeout=180.0)
     elif name == 'grok':
         text = planner._from_openai_chat(
@@ -360,6 +454,11 @@ def ask(brief, system, schema, model_id, max_tokens, provider=''):
         raise ValueError(
             'Provider {!r} cannot hold a JSON schema, and a step with a field '
             'missing is not worth the call. Use anthropic, groq or grok.'.format(name))
+    return text
+
+
+def _parse(text):
+    """The answer as an object."""
     if not text:
         raise ValueError('empty answer')
     try:
@@ -373,6 +472,22 @@ def ask(brief, system, schema, model_id, max_tokens, provider=''):
         return json.loads(match.group(0))
 
 
+def stopped(text):
+    """A field with terminal punctuation on it.
+
+    A missing full stop is the commonest thing the rules reject and the least
+    interesting: the content is right and the model simply did not type the
+    dot. Repairing it through the model costs two more calls and can come back
+    with a different example, so it is normalised here instead. This adds
+    punctuation and never changes a word — anything that would alter meaning
+    stays a rejection.
+    """
+    clean = str(text or '').strip()
+    if clean and clean[-1] not in '.!?':
+        clean += '.'
+    return clean
+
+
 def numbered(raw):
     """The model's steps, with ordinals and a sane `minutes`, in order."""
     steps = []
@@ -382,12 +497,14 @@ def numbered(raw):
             minutes = 20
         steps.append({
             'ordinal': index,
-            'title': str(step.get('title', '')).strip(),
-            'mastery': str(step.get('mastery', '')).strip(),
-            'practice': str(step.get('practice', '')).strip(),
-            'proof': str(step.get('proof', '')).strip(),
-            'pitfall': str(step.get('pitfall', '')).strip(),
-            'detail': str(step.get('detail', '')).strip(),
+            # A title is a label and is the one field that must NOT end in a
+            # full stop, so it is stripped rather than stopped.
+            'title': str(step.get('title', '')).strip().rstrip('.').strip(),
+            'mastery': stopped(step.get('mastery')),
+            'practice': stopped(step.get('practice')),
+            'proof': stopped(step.get('proof')),
+            'pitfall': stopped(step.get('pitfall')),
+            'detail': stopped(step.get('detail')),
             'minutes': max(skillsteps.MINUTES_RANGE[0],
                            min(skillsteps.MINUTES_RANGE[1], minutes)),
         })
@@ -468,7 +585,8 @@ def build(node, model_id, rounds, provider=''):
         # ---- stage two: the model marks it -------------------------------
         try:
             marks = ask(review_brief(node, steps), REVIEW_SYSTEM, REVIEW_SCHEMA,
-                        model_id, REVIEW_MAX_TOKENS, provider)
+                        model_id, REVIEW_MAX_TOKENS, provider,
+                        groq_budget=GROQ_REVIEW_BUDGET)
         except Exception as exc:  # noqa: BLE001
             out.log('review', 'error', str(exc)[:300])
             out.note = str(exc)[:160]
@@ -610,8 +728,10 @@ def main():
         return 0
 
     run_id = datetime.now().isoformat(timespec='seconds')
+    # What actually answers, which is what gets written on every row.
+    answering = effective_model(args.provider, args.model)
     print('{} node(s), {} via {}, {} workers, run {}'.format(
-        len(nodes), args.model, args.provider or planner.provider() or 'no provider',
+        len(nodes), answering, args.provider or planner.provider() or 'no provider',
         args.workers, run_id))
 
     lock = threading.Lock()
@@ -623,7 +743,7 @@ def main():
             # Serialised because SQLite takes one writer, and because the
             # progress line is unreadable interleaved.
             if not args.dry_run:
-                store(out, node, args.model, run_id)
+                store(out, node, answering, run_id)
             if out.steps:
                 tally['ok'] += 1
                 tally['steps'] += len(out.steps)

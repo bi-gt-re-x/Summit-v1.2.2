@@ -249,6 +249,18 @@ function WrittenProgramme({
 
             {isOpen && (
               <div className="stx-ws-body" id={panelId}>
+                {/* The target problem is the point of opening a step: the
+                    practice line on the closed row says what kind of thing to
+                    do, and this is the actual worked item to sit down with.
+                    It leads the body rather than following the method, because
+                    a reader who already knows how does not want to scroll past
+                    an explanation to reach the question. */}
+                <div className="stx-ws-target">
+                  <p className="stx-ws-target-label">Target problem to solve</p>
+                  <p className="stx-ws-target-slot">
+                    A problem for <b>{step.title}</b> will appear here.
+                  </p>
+                </div>
                 <p className="stx-ws-detail">{step.detail}</p>
                 <dl className="stx-ws-facts">
                   <div>
@@ -520,6 +532,15 @@ export interface LatticePanelProps {
   renamed?: boolean;
   /** Put the designed name back. */
   onResetName?: () => void;
+  /**
+   * Told when the step list takes the screen over.
+   *
+   * The panel owns whether it is expanded; the *page* owns the grid it sits
+   * in, and widening that grid is what makes the list cover the canvas rather
+   * than sit in a 340px column beside it. So the state stays here and the fact
+   * of it is announced — see `is-wide` in styles/skilltree.css.
+   */
+  onExpand?: (open: boolean) => void;
 }
 
 export function LatticePanel({
@@ -537,6 +558,7 @@ export function LatticePanel({
   onRename,
   renamed = false,
   onResetName,
+  onExpand,
 }: LatticePanelProps) {
   // The step list opens over the whole panel rather than beside it, so this is
   // panel-wide state rather than the section's. Reset on every change of node:
@@ -548,6 +570,18 @@ export function LatticePanel({
     setAllSteps(false);
     setNaming(false);
   }, [node?.id]);
+
+  // Kept in an effect rather than called from the two setters, so the page
+  // hears about the reset above as well as about a click. A panel that closed
+  // itself on a new node and left the grid wide would leave the canvas hidden
+  // behind an empty column.
+  useEffect(() => {
+    onExpand?.(allSteps);
+  }, [allSteps, onExpand]);
+
+  // Leaving the page entirely — unmounting mid-expansion — has to put the grid
+  // back too.
+  useEffect(() => () => onExpand?.(false), [onExpand]);
 
   if (!node) {
     return (
@@ -710,7 +744,7 @@ export function LatticePanel({
       <aside className={`stx-lp is-steps tier-${node.difficulty}`}>
         <header className="stx-lp-steps-head">
           <button type="button" className="stx-lp-back" onClick={() => setAllSteps(false)}>
-            ← Back
+            <span aria-hidden="true">←</span> Back to Tree
           </button>
           <div>
             <h2>{node.name}</h2>

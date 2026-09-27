@@ -66,10 +66,13 @@ BOUNDS = {
     'mastery': (25, 190),
     'practice': (12, 200),
     'detail': (80, 480),
-    # The floor is low because a proof line is frequently just the answer, and
-    # on a maths step the answer is short: "2/3 and 6/7." is the whole of what
-    # the reader needs and is twelve characters.
-    'proof': (10, 200),
+    # There is effectively no floor on a proof, and that is deliberate. A proof
+    # line is the answer, and the answer to "Evaluate 5 > 3 and 2 < 1" is
+    # "False." — six characters, complete, and exactly what the reader needs.
+    # A floor here was rejecting every correct short answer on the Operators
+    # and Booleans nodes. Whether a proof actually settles the question is a
+    # judgement, so it is the model reviewer's, not a character count's.
+    'proof': (2, 200),
     'pitfall': (15, 200),
 }
 
@@ -156,6 +159,44 @@ track train transcribe translate transpose trim tune turn type use verify
 visualise visualize walk watch weigh work write
 """.split())
 
+#: Openings that are never an instruction.
+#:
+#: The counterpart to IMPERATIVES, and the more important of the two. A closed
+#: list of verbs is the wrong shape for this check: English has thousands of
+#: them, a generated step will reach for `hypothesise` or `insert` sooner or
+#: later, and every valid verb missing from the list costs two model calls to
+#: "repair" a step that was already right. The first run of the generator
+#: rejected `insert` and `hypothesize` inside one node.
+#:
+#: So an unrecognised opener is assumed to be a verb, and only these are
+#: refused. They are what a mastery statement that has wandered into the
+#: practice column actually starts with — a pronoun, an article, a subject —
+#: and that is the failure the check is for.
+NON_IMPERATIVE = frozenset("""
+a all an and any anybody anyone anything both each either everybody everyone
+everything few he her hers him his i it its many me mine most much my neither
+no nobody none nothing one ones other others our ours several she some somebody
+someone something that the their theirs them there these they this those to us
+we what whatever which who whoever whom whose you your yours
+students learners readers people someone
+be been being am are is was were do does did has have had can could may might
+must shall should will would
+""".split())
+
+
+def _not_an_instruction(opener):
+    """Whether a practice line's first word rules out its being an order.
+
+    Two signals, both conservative. A pronoun, article or auxiliary — "You
+    should be able to factor..." — is a description of the reader. A gerund —
+    "Understanding recursion is..." — is a noun phrase. Anything else is taken
+    for a verb, because the cost of guessing wrong in that direction is one
+    slightly loose step, and the cost of guessing wrong in the other is a
+    correct step regenerated twice.
+    """
+    return opener in NON_IMPERATIVE or (len(opener) > 5 and opener.endswith('ing'))
+
+
 #: Words a practice line may open a scene-setting clause with, before the
 #: imperative arrives after the comma. Deliberately closed: the point is to
 #: accept "For x^2 - 9x + 20 = 0, name the best method" without also accepting
@@ -230,6 +271,19 @@ def _stem(word):
 #: Two three-word lines sharing a verb come out at 1.0, which says nothing about
 #: whether they are the same step.
 OVERLAP_FLOOR = 3
+
+#: The floor for calling two *practice lines* the same, which is higher.
+#:
+#: A bag of words is a poor description of a short arithmetic instruction.
+#: "Evaluate 3 + 4 * 2" and "Evaluate (3 + 4) * 2" are different exercises —
+#: one is the whole point of the other — and they share every token they have.
+#: So do "Evaluate 5 > 3" and "Evaluate 2 < 1". Below five content words the
+#: measure cannot tell a duplicate from two neighbouring drills on the same
+#: small numbers, and it was rejecting whole programmes on the Operators node
+#: for it. Longer lines carry enough vocabulary for the ratio to mean
+#: something, and the model reviewer has DUPLICATE as one of its verdicts for
+#: the short ones.
+DUPLICATE_FLOOR = 5
 
 
 def overlap(left, right):
@@ -316,7 +370,9 @@ def failures(step, node, others=()):
             for clause in re.split(r',\s*', sentence.strip())[1:]:
                 if clause.split():
                     openers.append(re.sub(r'[^a-z]', '', clause.split()[0].lower()))
-    if not any(opener in IMPERATIVES for opener in openers):
+    openers = [opener for opener in openers if opener]
+    if not any(opener in IMPERATIVES for opener in openers) and (
+            not openers or _not_an_instruction(openers[0])):
         bad.append('concrete:no sentence opens with an imperative ({})'.format(
             ', '.join(openers[:3]) or practice[:12]))
     # Something in the line has to be a *thing*: a number, a piece of notation,
@@ -346,8 +402,15 @@ def failures(step, node, others=()):
         if str(other.get('title', '')).strip().lower() == step['title'].strip().lower():
             bad.append('distinct:title repeats step "{}"'.format(other.get('title')))
             break
-        if overlap(other.get('practice', ''), step['practice']) > 0.75:
-            bad.append('distinct:practice repeats step "{}"'.format(other.get('title')))
+        if (min(len(words(other.get('practice', ''))), len(words(step['practice'])))
+                >= DUPLICATE_FLOOR
+                and overlap(other.get('practice', ''), step['practice']) > 0.75):
+            # The offending line goes in the reason. A bare "repeats step 4"
+            # is unactionable when the content was rejected and never stored:
+            # without the text there is no way to tell a real duplicate from a
+            # measure that is wrong about two short drills.
+            bad.append('distinct:practice repeats step "{}" — {!r}'.format(
+                other.get('title'), step['practice'][:80]))
             break
 
     # ---- on-topic: it has to be about this node -----------------------------

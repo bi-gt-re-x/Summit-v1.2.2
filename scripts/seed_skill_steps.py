@@ -1,7 +1,16 @@
-"""Load the written-ahead programmes in data/skill_steps_seed.json into the table.
+"""The committed corpus of practice programmes: load it, check it, write it out.
 
     .venv-fastapi/bin/python scripts/seed_skill_steps.py            # load it
     .venv-fastapi/bin/python scripts/seed_skill_steps.py --check    # just check it
+    .venv-fastapi/bin/python scripts/seed_skill_steps.py --export   # table -> file
+
+## The file is the artefact, not the table
+
+data/summit.db is git-ignored, so a generator run that takes hours exists on
+one machine and reaches nobody. `--export` writes the table back into
+data/skill_steps_seed.json, which is committed — so the corpus is reviewable in
+a diff, survives a fresh clone, and a checkout with no model key gets the whole
+library from one command. The loop is: generate, export, read the diff, commit.
 
 ## Why there are two ways in
 
@@ -61,13 +70,71 @@ def load(path, key):
         return json.load(handle).get(key)
 
 
+def _unpack(entry):
+    """A programme and its provenance, from either shape the file may hold.
+
+    A bare list is hand-written content, which is how the file started and is
+    still the easiest thing to type. An object carries `steps` plus where they
+    came from, which is what `--export` writes so that generated programmes
+    keep saying they were generated.
+    """
+    if isinstance(entry, dict):
+        return entry.get('steps') or [], {
+            'model': entry.get('model') or 'authored',
+            'verifier': entry.get('verifier') or 'rules+authored',
+            'checks': entry.get('checks') or SEED_CHECKS,
+        }
+    return entry or [], {
+        'model': 'authored',
+        'verifier': 'rules+authored',
+        'checks': SEED_CHECKS,
+    }
+
+
+def export():
+    """Write every stored programme back out to the seed file.
+
+    The database is git-ignored, so a generator run that takes hours lives in
+    exactly one untracked file on one machine. This is what makes the corpus a
+    committed artefact: export, review the diff, commit. A fresh clone then
+    gets the whole library from `seed_skill_steps.py` with no model key and no
+    waiting.
+
+    Provenance is carried across per programme, so an exported file still
+    distinguishes what a model wrote from what a person did.
+    """
+    stored = connection.skill_steps_for(
+        [node['id'] for node in load(NODES_PATH, 'nodes') or []])
+    out = {}
+    for node_id, rows in sorted(stored.items()):
+        first = rows[0]
+        out[node_id] = {
+            'model': first['model'],
+            'verifier': first['verifier'],
+            'checks': first['checks'],
+            'steps': [{field: row[field] for field in
+                       (*skillsteps.STEP_FIELDS, 'minutes')} for row in rows],
+        }
+    with open(SEED_PATH, 'w') as handle:
+        json.dump({'programmes': out}, handle, indent=2, ensure_ascii=False)
+        handle.write('\n')
+    print('Exported {} programmes, {} steps to data/skill_steps_seed.json'.format(
+        len(out), sum(len(one['steps']) for one in out.values())))
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--check', action='store_true',
                         help='Run the checks and report. Writes nothing.')
+    parser.add_argument('--export', action='store_true',
+                        help='Write the database back out to the seed file.')
     parser.add_argument('--node', action='append', default=[],
                         help='Only this node id. Repeatable.')
     args = parser.parse_args()
+
+    if args.export:
+        return export()
 
     nodes = {node['id']: node for node in load(NODES_PATH, 'nodes') or []}
     seed = load(SEED_PATH, 'programmes') or {}
@@ -79,7 +146,8 @@ def main():
     written = failed = steps_total = 0
     audit = []
 
-    for node_id, raw in sorted(seed.items()):
+    for node_id, entry in sorted(seed.items()):
+        raw, provenance = _unpack(entry)
         node = nodes.get(node_id)
         if not node:
             # A programme for a node that no longer exists. Not fatal — the
@@ -126,12 +194,12 @@ def main():
                 **step,
                 'tree_id': node['tree'],
                 'tier': node['tier'],
-                'model': 'authored',
+                'model': provenance['model'],
                 'generated_at': stamp,
                 'attempts': 1,
                 'verified_at': stamp,
-                'verifier': 'rules+authored',
-                'checks': SEED_CHECKS,
+                'verifier': provenance['verifier'],
+                'checks': provenance['checks'],
             } for step in steps])
             audit.append({'run_id': run_id, 'node_id': node_id, 'ordinal': None,
                           'stage': 'store', 'outcome': 'pass',

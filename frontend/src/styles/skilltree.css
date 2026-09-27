@@ -3958,3 +3958,128 @@ html[data-theme="dark"] .stx-region {
 @media (max-width: 520px) {
     .stx-ws-facts > div { grid-template-columns: 1fr; gap: 0; }
 }
+
+/* ---------------------------------------------------------------------------
+   The panel taking the section over.
+
+   Opening the step list used to give the reader a twelve-step programme in a
+   340px column beside a canvas they had stopped looking at. The steps are what
+   they asked for, so the steps get the room: the panel grows left across the
+   whole section and the canvas goes with it, in one motion.
+
+   ## Why the grid animates rather than the panel
+
+   The obvious implementation is to lift the panel out with `position: absolute;
+   inset: 0`, and it cannot be animated — there is no transition between static
+   and absolute, so the panel would simply appear at full width. Animating the
+   *track sizes* keeps both boxes in the grid the whole way across, so the
+   canvas is squeezed out rather than covered up, which is the motion the page
+   actually wants: the tree slides away, it does not get hidden behind a sheet.
+
+   Both track lists here are interpolatable — `1fr` to `0fr` and a width to a
+   percentage — which is the constraint that decided the shape of the rule.
+   --------------------------------------------------------------------------- */
+.stx-page--lattice .stx-layout {
+    transition:
+        grid-template-columns .42s cubic-bezier(.22, .61, .36, 1),
+        column-gap .42s cubic-bezier(.22, .61, .36, 1);
+}
+
+.stx-page--lattice .stx-layout.is-wide {
+    grid-template-columns: minmax(0, 0fr) minmax(0, 100%);
+    column-gap: 0;
+}
+
+/* The canvas keeps its width while the column closes, so the tree slides out
+   of frame instead of reflowing to nothing as it goes. Without this the nodes
+   re-lay-out on every frame of the transition, which is both ugly and the most
+   expensive thing on the page. */
+.stx-page--lattice .stx-layout.is-wide .stx-canvas {
+    min-width: 0;
+    pointer-events: none;
+}
+
+/* Long lines are the cost of a wide panel, so the content stops before the
+   full width even though the panel does not. The panel itself spans the
+   section — that is the effect — and the column of text inside it stays at a
+   readable measure. */
+.stx-lp.is-steps .stx-lp-programme,
+.stx-lp.is-steps .stx-lp-steps-head {
+    width: 100%;
+    max-width: 62rem;
+    margin-inline: auto;
+}
+
+/* Back to Tree is a way out of a takeover rather than a link in a panel, so it
+   is given the weight of one. */
+.stx-lp-back {
+    display: inline-flex;
+    align-items: center;
+    gap: .45em;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--lat-line);
+    border-radius: var(--radius-sm);
+    background: var(--lat-panel);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--lat-text);
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+
+.stx-lp-back:hover {
+    background: var(--lat-page);
+    border-color: color-mix(in srgb, var(--lat-violet) 40%, var(--lat-line));
+}
+
+/* The arrow moves, not the button: a control that shifts under the pointer is
+   a control that is harder to click the second time. */
+.stx-lp-back:hover span { transform: translateX(-2px); }
+.stx-lp-back span { transition: transform .15s ease; }
+
+.stx-lp-back:focus-visible {
+    outline: 2px solid var(--lat-violet);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   The target problem — what opening a step is for.
+   --------------------------------------------------------------------------- */
+.stx-ws-target {
+    margin: var(--space-2) 0 0;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid color-mix(in srgb, var(--lat-violet) 32%, var(--lat-line));
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--lat-violet-soft) 55%, transparent);
+}
+
+.stx-ws-target-label {
+    margin: 0;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--lat-violet);
+}
+
+/* Dashed, because it is a slot rather than content: a reader should be able to
+   tell at a glance that the problem is not here yet and nothing has failed to
+   load. */
+.stx-ws-target-slot {
+    margin: var(--space-1) 0 0;
+    padding: var(--space-2);
+    border: 1px dashed color-mix(in srgb, var(--lat-violet) 35%, var(--lat-line));
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-muted);
+}
+
+.stx-ws-target-slot b { color: var(--lat-text); }
+
+/* A reader who has asked for less movement gets the layout change without the
+   travel: the panel is simply wide on the next frame. */
+@media (prefers-reduced-motion: reduce) {
+    .stx-page--lattice .stx-layout { transition: none; }
+    .stx-lp-back, .stx-lp-back span { transition: none; }
+}

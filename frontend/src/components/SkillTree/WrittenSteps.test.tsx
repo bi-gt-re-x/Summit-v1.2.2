@@ -102,12 +102,20 @@ function node(id: string, status: NodeStatus, over: Partial<GraphNode> = {}): Gr
   };
 }
 
-function draw(steps: WrittenStep[] | null) {
+function draw(steps: WrittenStep[] | null, onExpand = vi.fn()) {
   const picked = node('quadratics', 'available');
   const graph: SkillGraph = { id: 'mathematics', name: 'Mathematics', nodes: [picked] };
   render(
-    <LatticePanel graph={graph} node={picked} onSelect={vi.fn()} gain={250} written={steps} />,
+    <LatticePanel
+      graph={graph}
+      node={picked}
+      onSelect={vi.fn()}
+      gain={250}
+      written={steps}
+      onExpand={onExpand}
+    />,
   );
+  return { onExpand };
 }
 
 describe('a written step, closed', () => {
@@ -120,7 +128,9 @@ describe('a written step, closed', () => {
 
   it('shows the skill name and what mastery means', () => {
     draw(PROGRAMME);
-    expect(screen.getByText('Recognise a Quadratic')).toBeInTheDocument();
+    // By role rather than by text: an open step names itself again inside its
+    // target-problem slot, and the row is the thing being asserted about.
+    expect(screen.getByRole('button', { name: /Recognise a Quadratic/ })).toBeInTheDocument();
     expect(screen.getByText('Identify whether an expression is quadratic.')).toBeInTheDocument();
   });
 
@@ -214,5 +224,58 @@ describe('the whole programme', () => {
     expect(screen.getByText('Use the Formula')).toBeInTheDocument();
     expect(screen.getByText('Complete the Square')).toBeInTheDocument();
     expect(screen.getAllByText('Try:')).toHaveLength(5);
+  });
+});
+
+describe('the target problem', () => {
+  const row = (title: string) => screen.getByRole('button', { name: new RegExp(title) });
+
+  it('is what opening a step reveals', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(row('Expand Binomials'));
+    // One per open step, and the step the reader is on opens by itself.
+    expect(screen.getAllByText('Target problem to solve')).toHaveLength(2);
+  });
+
+  it('is not on a closed step', () => {
+    draw(PROGRAMME);
+    // Only the current step is open on arrival, so exactly one slot shows.
+    expect(screen.getAllByText('Target problem to solve')).toHaveLength(1);
+  });
+
+  it('names the step it belongs to while the problem itself is still a slot', () => {
+    draw(PROGRAMME);
+    const slot = screen.getByText(/will appear here/);
+    expect(slot).toHaveTextContent('Recognise a Quadratic');
+  });
+});
+
+describe('taking the section over', () => {
+  it('tells the page when the step list opens, so the grid can widen', async () => {
+    const { onExpand } = draw(PROGRAMME);
+    onExpand.mockClear();
+    await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
+    expect(onExpand).toHaveBeenLastCalledWith(true);
+  });
+
+  it('offers the way back by name rather than as a bare arrow', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
+    expect(screen.getByRole('button', { name: /Back to Tree/ })).toBeInTheDocument();
+  });
+
+  it('puts the grid back when the reader goes back to the tree', async () => {
+    const { onExpand } = draw(PROGRAMME);
+    await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
+    onExpand.mockClear();
+    await userEvent.click(screen.getByRole('button', { name: /Back to Tree/ }));
+    expect(onExpand).toHaveBeenLastCalledWith(false);
+  });
+
+  it('keeps every step openable in the expanded list', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Use the Formula/ }));
+    expect(screen.getByText('Compute b^2 - 4ac first and on its own.')).toBeInTheDocument();
   });
 });

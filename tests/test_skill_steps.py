@@ -320,10 +320,14 @@ def test_the_seed_file_passes_the_same_checks_the_generator_does():
 
     assert seed, 'the seed file is empty'
     problems = []
-    for node_id, raw in seed.items():
+    for node_id, entry in seed.items():
+        # Two shapes are valid: a bare list of steps for hand-written content,
+        # and an object carrying provenance for anything `--export` wrote back
+        # out of the table. See `_unpack` in scripts/seed_skill_steps.py.
+        raw = entry.get('steps', []) if isinstance(entry, dict) else entry
         node = nodes.get(node_id)
         assert node, 'seed names {}, which is not a node'.format(node_id)
-        steps = [{'ordinal': n, **entry} for n, entry in enumerate(raw, start=1)]
+        steps = [{'ordinal': n, **one} for n, one in enumerate(raw, start=1)]
         per_step, whole = skillsteps.review_programme(steps, node)
         problems.extend('{}: {}'.format(node_id, reason) for reason in whole)
         for one, reasons in zip(steps, per_step):
