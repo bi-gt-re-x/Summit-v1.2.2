@@ -7447,6 +7447,3999 @@
         }
       ]
     },
+    "mu.chords": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Stack a Major Triad",
+          "mastery": "Build a major chord from a root by stacking two thirds.",
+          "practice": "Build major triads on C, G and F, naming all 3 notes of each.",
+          "detail": "A major third then a minor third: 4 semitones then 3. C gives C E G, G gives G B D, F gives F A C. Every major triad has the same 4-then-3 shape, so the chord is the shape rather than the letters.",
+          "proof": "C E G, G B D and F A C.",
+          "pitfall": "Stacking 2 major thirds, which gives an augmented chord rather than a major one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3 notes of a C major triad.",
+              "answer": "C, E, G."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What are the 2 interval sizes in semitones, bottom to top?",
+              "answer": "4 then 3."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Stacking 4 then 3 semitones from F gives which 3 notes?",
+              "answer": "F, A, C."
+            }
+          ]
+        },
+        {
+          "title": "Make It Minor",
+          "mastery": "Convert a major triad to minor by lowering one note.",
+          "practice": "Turn C major into C minor and name which of the 3 notes moves, and by how much.",
+          "detail": "Flatten the middle note by a semitone: C E G becomes C Eb G, so the stack is 3 then 4 rather than 4 then 3. The root and the fifth do not move, which is why major and minor chords on the same root sound related rather than unrelated.",
+          "proof": "C Eb G, with only the third moved down 1 semitone.",
+          "pitfall": "Flattening the fifth as well, which gives a diminished chord.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3 notes of a C minor triad.",
+              "answer": "C, Eb, G."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 1 of the 3 notes moves when major becomes minor, and how far?",
+              "answer": "The third, down 1 semitone."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What are the 2 interval sizes of a minor triad in semitones?",
+              "answer": "3 then 4."
+            }
+          ]
+        },
+        {
+          "title": "Diminished and Augmented",
+          "mastery": "Build the two triads made of equal thirds.",
+          "practice": "Build a diminished and an augmented triad on C, naming the 3 notes of each.",
+          "detail": "Diminished is 3 then 3 — C Eb Gb — and augmented is 4 then 4 — C E G#. Both are symmetrical, which is why they sound unsettled: no note is obviously the root when every interval is the same size.",
+          "proof": "C Eb Gb and C E G#.",
+          "pitfall": "Calling C Eb Gb a minor chord, which has a perfect fifth rather than a diminished one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3 notes of a C diminished triad.",
+              "answer": "C, Eb, Gb."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 3 notes of a C augmented triad.",
+              "answer": "C, E, G#."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What do the 2 interval sizes have in common in both chords?",
+              "answer": "They are equal — 3 and 3, or 4 and 4."
+            }
+          ]
+        },
+        {
+          "title": "Chords of a Key",
+          "mastery": "Name the triads that a major key produces on each degree.",
+          "practice": "Build triads on all 7 degrees of C major and label each major, minor or diminished.",
+          "detail": "Using only the key's own notes gives major on 1, 4 and 5; minor on 2, 3 and 6; diminished on 7. That pattern is the same in every major key, which is why chord numbers transfer between keys and letters do not.",
+          "proof": "Major on 1, 4, 5; minor on 2, 3, 6; diminished on 7.",
+          "pitfall": "Making every chord major, which forces 3 notes outside the key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 3 degrees of a major key carry major triads?",
+              "answer": "1, 4 and 5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which degree of the 7 carries the diminished triad?",
+              "answer": "7."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In C major, what kind of triad sits on degree 2, and what are its notes?",
+              "answer": "Minor — D, F, A."
+            }
+          ]
+        },
+        {
+          "title": "Add the Seventh",
+          "mastery": "Extend a triad to four notes and hear the difference.",
+          "practice": "Build a G dominant seventh, naming all 4 notes, and say which note wants to resolve.",
+          "detail": "Add a minor third above the fifth: G B D F. The F is a semitone above E, the third of C major, and that pull is what makes a dominant seventh want to land on C. Play G7 then C to hear it, then G7 alone and notice it does not feel finished.",
+          "proof": "G B D F, and the F resolves down to E.",
+          "pitfall": "Adding a major seventh to a dominant chord, which gives F# and removes the pull entirely.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 4 notes of a G dominant seventh.",
+              "answer": "G, B, D, F."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 4 notes creates the pull towards C major?",
+              "answer": "The F, which falls a semitone to E."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which interval is added above the fifth of G B D to make a 4-note dominant seventh?",
+              "answer": "A minor third."
+            }
+          ]
+        },
+        {
+          "title": "Read a Chord Symbol",
+          "mastery": "Turn a written chord symbol into specific notes.",
+          "practice": "Name the notes of Am, D7 and Fmaj7 — 3 symbols.",
+          "detail": "The letter is the root, m means minor, 7 means a dominant seventh, maj7 means a major seventh. So A C E, D F# A C, and F A C E. The symbols are compact and unambiguous once you know that 7 alone means the flattened one.",
+          "proof": "A C E, D F# A C, and F A C E.",
+          "pitfall": "Reading D7 as a D major seventh, which gives C# instead of C.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3 notes of Am.",
+              "answer": "A, C, E."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 4 notes of D7.",
+              "answer": "D, F#, A, C."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the 4 notes of Fmaj7.",
+              "answer": "F, A, C, E."
+            }
+          ]
+        },
+        {
+          "title": "Play Them in Time",
+          "mastery": "Change between chords cleanly at a steady tempo.",
+          "practice": "Play C, F, G, C at 60 BPM, 1 chord per 2 beats, with no gap at the changes.",
+          "detail": "The difficulty is the change, not the chord, so practise the join: play the last beat of one chord and the first of the next, 8 times, before running the sequence. A gap at the change is the thing a listener notices and the player does not.",
+          "proof": "4 chords in 8 beats at 60 with no audible gap between them.",
+          "pitfall": "Practising the 4 chords separately, which leaves every change unpractised.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At 60 BPM with 1 chord per 2 beats, how long do the 4 chords take?",
+              "answer": "8 beats, about 8 seconds."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What should be drilled 8 times before running the sequence?",
+              "answer": "Each join between 2 consecutive chords."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Who notices the gap at 1 of the 4 chord changes first?",
+              "answer": "The listener, not the player."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.composition": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Start From One Idea",
+          "mastery": "Write a motif short enough to develop.",
+          "practice": "Write a 2-bar motif of no more than 6 notes and play it 4 times.",
+          "detail": "Short ideas are workable and long ones are finished: 6 notes can be inverted, displaced and extended, while a 16-bar tune can only be repeated. Play it 4 times and check it survives repetition without becoming annoying, which is the test it has to pass.",
+          "proof": "A 2-bar motif of 6 notes or fewer that survives 4 repetitions.",
+          "pitfall": "Starting with a complete 16-bar melody, which leaves nothing to develop.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is the motif 2 bars of 6 notes, or 16 bars?",
+              "answer": "2 bars, no more than 6 notes."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why is a 16-bar tune a worse starting point than 6 notes?",
+              "answer": "It is already finished, so there is nothing left to develop."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What test must the motif pass on the 4th repetition?",
+              "answer": "Surviving repetition without becoming annoying."
+            }
+          ]
+        },
+        {
+          "title": "Develop Before Adding",
+          "mastery": "Extend a piece by transforming what you have.",
+          "practice": "Write 8 bars using only your 6-note motif and 3 transformations of it.",
+          "detail": "The instinct when 8 bars are needed is to invent 4 new ideas, which produces a piece that goes nowhere because nothing returns. Transform instead: sequence it up a step, invert it, stretch it to double length. The listener hears development rather than a list.",
+          "proof": "8 bars traceable to 1 motif and 3 named transformations.",
+          "pitfall": "Writing 4 new ideas in 8 bars, which sounds like a list rather than a piece.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many transformations fill the 8 bars, and of how many motifs?",
+              "answer": "3 transformations of 1 motif."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 transformations available.",
+              "answer": "Sequencing it up a step, and inverting it."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does a piece of 4 unrelated ideas sound like?",
+              "answer": "A list rather than a piece."
+            }
+          ]
+        },
+        {
+          "title": "Plan the Shape First",
+          "mastery": "Decide a piece's sections before writing its notes.",
+          "practice": "Write a plan for 32 bars as 4 sections of 8, naming the loudest and the quietest.",
+          "detail": "Four boxes with a dynamic and a function each — state, develop, contrast, return — is enough of a plan. Naming the loudest and quietest sections in advance is what gives the piece a shape rather than a uniform intensity, which is the commonest fault in a first composition.",
+          "proof": "A 4-box plan with a named peak and trough.",
+          "pitfall": "Starting to write bar 1 with no plan, which produces 32 bars at 1 intensity.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many sections does the 32-bar plan hold, and of what length?",
+              "answer": "4 sections of 8 bars."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 sections are named in advance?",
+              "answer": "The loudest and the quietest."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the commonest fault in a first 32-bar composition?",
+              "answer": "A uniform intensity with no shape."
+            }
+          ]
+        },
+        {
+          "title": "Write a Bass Line",
+          "mastery": "Support a melody with a line that moves independently.",
+          "practice": "Write a bass line under 8 bars of melody, moving in the opposite direction at least 4 times.",
+          "detail": "A bass line that follows the melody's contour adds thickness and nothing else. Moving against it creates 2 lines, which is what makes the texture sound composed. Mark the 4 places you moved against the melody so the choice is visible.",
+          "proof": "A bass line with 4 marked points of contrary motion.",
+          "pitfall": "Doubling the melody an octave down, which is 1 line played twice.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many times must the bass move against the melody in 8 bars?",
+              "answer": "At least 4."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does doubling the melody 1 octave down produce?",
+              "answer": "1 line played twice, not 2 lines."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why mark the 4 points of contrary motion?",
+              "answer": "It makes the choice visible and checkable."
+            }
+          ]
+        },
+        {
+          "title": "Harmonise Your Own Tune",
+          "mastery": "Choose chords that support a melody you wrote.",
+          "practice": "Harmonise your 8-bar melody with no more than 5 chords, changing at most once per bar.",
+          "detail": "Fewer chords, changed less often, almost always sounds better than more: a chord per beat leaves no room for the melody to be the subject. Five chords across 8 bars is a reasonable ceiling for a first attempt, and the cadence is the 1 place worth spending an extra change.",
+          "proof": "8 bars harmonised with 5 chords or fewer.",
+          "pitfall": "Changing chord on every beat, which buries the melody under harmony.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the chord ceiling for the 8 bars, and how often may they change?",
+              "answer": "5 chords, at most 1 change per bar."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What happens to the melody when the chord changes on every 1 of 4 beats?",
+              "answer": "The melody stops being the subject."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where in the 8 bars is an extra chord change most worth spending?",
+              "answer": "At the cadence."
+            }
+          ]
+        },
+        {
+          "title": "Write the Ending",
+          "mastery": "Finish a piece so it sounds finished rather than stopped.",
+          "practice": "Write 2 endings for the same 8 bars — 1 cadencing and 1 fading — and choose between them.",
+          "detail": "An ending is a decision, and the 2 obvious options sound very different: a perfect cadence closes, a fade leaves the piece open. Write both and play them to somebody. The one you keep should be the one that matches the plan, not the one that was easier to write.",
+          "proof": "2 written endings and a stated reason for the choice.",
+          "pitfall": "Stopping when the material runs out, which sounds like an accident.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 2 endings this step asks for.",
+              "answer": "A cadence and a fade."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What should decide which of the 2 you keep?",
+              "answer": "The plan, not which was easier to write."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does stopping when the material runs out after 8 bars sound like?",
+              "answer": "An accident rather than an ending."
+            }
+          ]
+        },
+        {
+          "title": "Notate It Properly",
+          "mastery": "Write a score somebody else could read and play.",
+          "practice": "Notate your 32 bars with key, time signature, tempo, 3 dynamics and 2 articulations.",
+          "detail": "A score missing its tempo and dynamics is a set of pitches: the performer has to invent the parts you left out, and they will invent something else. Include the tempo as a number, not only a word, and put a dynamic at every section boundary.",
+          "proof": "A score carrying a numeric tempo, 3 dynamics and 2 articulation marks.",
+          "pitfall": "Notating only the pitches and rhythms and leaving the interpretation to be guessed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 5 things this step requires on the score.",
+              "answer": "Key, time signature, tempo, 3 dynamics and 2 articulations."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why give the tempo as a number as well as a word like Allegro?",
+              "answer": "A word names a band of about 40 BPM; a number is exact."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where should a dynamic marking always appear across the 4 sections?",
+              "answer": "At every section boundary."
+            }
+          ]
+        },
+        {
+          "title": "Get It Played",
+          "mastery": "Hear your piece performed by somebody who is not you.",
+          "practice": "Give your score to 1 other player and note 3 places where what you heard differs from what you meant.",
+          "detail": "Another player reads what is on the page rather than what is in your head, which is the only honest test of a score. Where they play something unintended, the notation is usually at fault — a missing articulation, an ambiguous tempo — and that is fixable.",
+          "proof": "3 differences noted, each traced to something on the page.",
+          "pitfall": "Telling the player what you meant before they read it, which destroys the test.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many differences does this step ask you to note — 3 or 10?",
+              "answer": "3."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A player plays something you did not intend. Where is the fault usually?",
+              "answer": "In the notation — a missing or ambiguous mark."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why not explain your intentions to the 1 player before they read it?",
+              "answer": "It destroys the test of whether the score says what you meant."
+            }
+          ]
+        },
+        {
+          "title": "Revise From the Recording",
+          "mastery": "Rewrite a piece after hearing it, rather than after finishing it.",
+          "practice": "Listen to a recording of your 32 bars and make 3 specific changes to the score.",
+          "detail": "First drafts are too long, too uniform and too busy in the middle, in roughly that order. Cut before you add: removing 4 bars is more often the right change than writing 4 more. Mark the 3 changes on the score with the bar numbers and play it again.",
+          "proof": "3 marked changes with bar numbers, and a second recording.",
+          "pitfall": "Treating the first version as finished because it is written down.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3 usual faults of a first draft, in order.",
+              "answer": "Too long, too uniform, too busy in the middle."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which is more often right: cutting 4 bars or adding 4?",
+              "answer": "Cutting."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What must each of the 3 changes carry?",
+              "answer": "A bar number."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.dynamics": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read the Dynamic Marks",
+          "mastery": "Order the common volume markings and say what each means.",
+          "practice": "Put these 6 in order from quietest to loudest: mf, pp, ff, p, f, mp.",
+          "detail": "The ladder is pp, p, mp, mf, f, ff — piano is quiet, forte is loud, and m is the middle of each. They are relative to the piece and the instrument rather than absolute, so mf on a flute and mf on a trombone are different sound levels.",
+          "proof": "pp, p, mp, mf, f, ff in that order.",
+          "pitfall": "Reading p as loud because piano is an instrument, which inverts half the ladder.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Put these 6 in order from quietest to loudest: mf, pp, ff, p, f, mp.",
+              "answer": "pp, p, mp, mf, f, ff."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 6 is louder, mp or mf?",
+              "answer": "mf."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Are the 6 markings absolute sound levels or relative?",
+              "answer": "Relative to the piece and the instrument."
+            }
+          ]
+        },
+        {
+          "title": "Play a Crescendo",
+          "mastery": "Grow the volume steadily across a stated number of bars.",
+          "practice": "Play 4 bars of a single repeated note growing from p to f, changing level once per bar.",
+          "detail": "Divide the range into 4 steps — p, mp, mf, f — one per bar, so the growth is even rather than arriving in the last beat. Recording it is the only reliable check: a crescendo almost always sounds bigger from behind the instrument than in front of it.",
+          "proof": "A recording where each of the 4 bars is audibly louder than the one before.",
+          "pitfall": "Staying at p for 3 bars and jumping to f in the last, which is a step rather than a crescendo.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 4 levels for a bar-by-bar crescendo from p to f.",
+              "answer": "p, mp, mf, f."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You stay at p for 3 bars then jump to f. What have you played?",
+              "answer": "A step change, not a crescendo."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why record the 4 bars rather than judging while playing?",
+              "answer": "A crescendo sounds larger from behind the instrument than in front of it."
+            }
+          ]
+        },
+        {
+          "title": "Separate and Join Notes",
+          "mastery": "Play the same notes staccato and legato and hear the difference.",
+          "practice": "Play a 5-note phrase twice at 70 BPM, once fully detached and once fully joined.",
+          "detail": "Staccato shortens each note and leaves silence before the next; legato holds each until the next begins, with no gap and no overlap. The pitches and rhythm are identical, so the 2 versions isolate articulation as the only variable.",
+          "proof": "The 2 recordings differ only in the gaps between the 5 notes.",
+          "pitfall": "Playing staccato faster than legato, which changes the tempo as well as the articulation.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does staccato leave between 2 consecutive notes?",
+              "answer": "Silence — each note is shortened."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the gap between 2 legato notes?",
+              "answer": "None, and no overlap either."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your staccato version of 5 notes is faster than the legato one. What went wrong?",
+              "answer": "The tempo changed as well as the articulation, so the comparison is spoiled."
+            }
+          ]
+        },
+        {
+          "title": "Accent One Note",
+          "mastery": "Make a single note stand out without disturbing the rest.",
+          "practice": "Play 4 equal crotchets at 70 BPM with an accent on beat 3 only.",
+          "detail": "An accent is a louder attack on 1 note, not a louder bar. Keep beats 1, 2 and 4 matched and lift only the third, then check by recording: an accent people can hear as an accent rather than as a lurch is a surprisingly small difference in level.",
+          "proof": "Beat 3 is audibly stronger and the other 3 beats are level with each other.",
+          "pitfall": "Also lengthening the accented note, which turns it into a rhythmic change rather than a dynamic one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of the 4 beats carries the accent in this exercise?",
+              "answer": "Beat 3."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What must stay equal while beat 3 is accented?",
+              "answer": "Beats 1, 2 and 4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You lengthen the accented note as well. What have you changed?",
+              "answer": "The rhythm, not only the dynamic."
+            }
+          ]
+        },
+        {
+          "title": "Shape a Phrase",
+          "mastery": "Give a phrase a high point and taper either side of it.",
+          "practice": "Play an 8-note phrase with its loudest note at note 5, growing to it and easing after.",
+          "detail": "Decide the high point before playing, then work backwards: notes 1 to 4 grow, note 5 peaks, 6 to 8 ease off. A phrase played at 1 level is the default and sounds like an exercise, which is what shaping is for.",
+          "proof": "A recording where note 5 is the loudest and the shape either side is even.",
+          "pitfall": "Putting the high point on the last note, which usually sounds like the phrase has stopped rather than arrived.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In an 8-note phrase peaking at note 5, which notes grow?",
+              "answer": "Notes 1 to 4."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What do notes 6 to 8 do?",
+              "answer": "Ease off from the peak."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does an 8-note phrase played at 1 level sound like?",
+              "answer": "An exercise rather than music."
+            }
+          ]
+        },
+        {
+          "title": "Follow a Marked Score",
+          "mastery": "Play every dynamic and articulation a passage asks for.",
+          "practice": "Take 8 bars of marked music and list every dynamic and articulation mark in it before playing.",
+          "detail": "List them first — the p at bar 1, the crescendo over bars 3 to 4, the staccato in bar 6 — so you know what the passage asks for rather than discovering it while playing. Then play it and mark the ones you missed. Most players miss about half at first reading.",
+          "proof": "A list of the marks in the 8 bars, with the ones you missed ticked off after playing.",
+          "pitfall": "Reading the notes at first sight and adding the dynamics on a later pass, which usually means never.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why list the marks in 8 bars before playing them?",
+              "answer": "So the passage is played as written rather than discovered mid-phrase."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Roughly what share of the marks in 8 bars does a player miss at first reading?",
+              "answer": "About half."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You mark 2 misses after playing. What do those 2 become?",
+              "answer": "The targets of the next run-through."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.ear": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Match a Pitch",
+          "mastery": "Sing back a single played note accurately.",
+          "practice": "Sing back 5 played notes within your range and check each against the instrument.",
+          "detail": "Sing the note before checking, then play it again to compare. If you are consistently flat or sharp by the same amount, that is easier to fix than random error. Five notes is enough to see which it is.",
+          "proof": "5 sung notes checked, with the direction of any consistent error noted.",
+          "pitfall": "Humming along while the note still sounds, which is matching rather than reproducing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You are flat on all 5 notes by about the same amount. Random or systematic error?",
+              "answer": "Systematic, and easier to correct."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why sing before playing the note a 2nd time?",
+              "answer": "Otherwise you are matching a sounding pitch rather than reproducing it."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many notes does this step ask for, and why not 1?",
+              "answer": "5, so the pattern of error is visible."
+            }
+          ]
+        },
+        {
+          "title": "Two Intervals Apart",
+          "mastery": "Distinguish two well-separated intervals by ear.",
+          "practice": "Name 10 intervals drawn only from a minor second and a perfect fifth, and score yourself.",
+          "detail": "Start with 2 intervals that sound nothing alike — 1 semitone against 7. Getting 9 or 10 means the discrimination is reliable and a third interval can join. This is deliberately easy, because the habit of scoring and adding is what makes ear training work.",
+          "proof": "A score of 9 or 10 out of 10 before any interval is added.",
+          "pitfall": "Starting with a set of 6 intervals, where a score of 4 gives no information.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many semitones separate a minor second from a perfect fifth — 1 against what?",
+              "answer": "1 against 7."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What score out of 10 allows a 3rd interval into the set?",
+              "answer": "9 or more."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why not begin with 6 intervals?",
+              "answer": "A score of 4 out of 10 says nothing about which pairs are confused."
+            }
+          ]
+        },
+        {
+          "title": "Build the Interval Set",
+          "mastery": "Add intervals to your recognisable set one at a time.",
+          "practice": "Add a major third to your set of 2 and score 10 more, then decide whether to add a fourth.",
+          "detail": "One at a time, scoring each round. Note the confusions by pair rather than only the total: mistaking a major third for a perfect fourth is a specific thing to drill, and it disappears from view if you only record 7 out of 10.",
+          "proof": "A score out of 10 for the set of 3, with the confused pairs written down.",
+          "pitfall": "Adding 3 intervals at once after a good round, which usually collapses the score.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your set of 3 scores 7 of 10 with 3 thirds called fourths. What do you drill?",
+              "answer": "The third against the fourth specifically."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Are intervals added to the set 1 at a time or 3?",
+              "answer": "1."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why record the confused pair rather than just 7 out of 10?",
+              "answer": "The pair names what to practise; the total does not."
+            }
+          ]
+        },
+        {
+          "title": "Hear Major From Minor",
+          "mastery": "Identify a chord's quality by ear.",
+          "practice": "Name 10 played triads as major or minor, keeping the root constant.",
+          "detail": "Keep the root the same so only the quality varies — that isolates what you are listening for. Aim for 9 of 10 before letting the root move, because a moving root adds pitch memory to a problem that was about quality.",
+          "proof": "9 or more correct out of 10 with a fixed root.",
+          "pitfall": "Varying the root from the start, which makes 2 problems out of 1.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 1 of the 3 notes differs between a major and a minor triad?",
+              "answer": "The third."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why keep the root fixed for the first 10 trials?",
+              "answer": "It isolates quality from pitch memory."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What score out of 10 lets the root start moving?",
+              "answer": "9 of 10 or better."
+            }
+          ]
+        },
+        {
+          "title": "Follow a Bass Line",
+          "mastery": "Sing the lowest line of a played progression.",
+          "practice": "Listen to a 4-chord progression 3 times and sing the 4 bass notes back.",
+          "detail": "The bass is the easiest line to isolate and the one that tells you most about the harmony. Three hearings, then sing; checking against the instrument afterwards usually shows the first and last notes right and the middle 2 approximate, which is normal and improves quickly.",
+          "proof": "4 bass notes sung, with the number correct written down.",
+          "pitfall": "Trying to hear all 3 notes of every chord before the bass line is reliable.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which line of a 4-chord progression is easiest to isolate?",
+              "answer": "The bass."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You get bass notes 1 and 4 right and 2 and 3 approximate. Normal or not?",
+              "answer": "Normal — the ends are easiest and the middle improves with practice."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many hearings before singing the 4 notes?",
+              "answer": "3."
+            }
+          ]
+        },
+        {
+          "title": "Name a Progression",
+          "mastery": "Identify a common progression from a small set by ear.",
+          "practice": "Name 10 played progressions drawn from 1-4-5-1 and 1-5-6m-4, and score yourself.",
+          "detail": "Two progressions, both 4 chords, one cadencing and one looping. Listen for whether it closes: a 1-4-5-1 arrives and a 1-5-6m-4 does not. That single question answers most of the trials without identifying any individual chord.",
+          "proof": "A score out of 10, with the deciding cue written in 1 line.",
+          "pitfall": "Trying to name each chord in turn, which is slower and less reliable than hearing whether it closed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of the 2 progressions closes rather than loops?",
+              "answer": "1-4-5-1."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What single question decides most of the 10 trials?",
+              "answer": "Whether the progression closed or not."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is more reliable: naming 4 chords in turn, or hearing the shape?",
+              "answer": "Hearing the shape."
+            }
+          ]
+        },
+        {
+          "title": "Transcribe a Short Phrase",
+          "mastery": "Write down a melody you have only heard.",
+          "practice": "Transcribe a 4-bar melody from a recording, 1 bar at a time, and check it by playing it back.",
+          "detail": "Work bar by bar and get the rhythm before the pitches — a correct rhythm with 2 wrong notes is closer than the reverse. Playing your transcription against the recording is the check, and any note that clashes is one to redo rather than to argue about.",
+          "proof": "4 written bars that play back against the recording without clashing.",
+          "pitfall": "Transcribing pitches first and fitting the rhythm afterwards, which usually needs starting again.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which comes first in transcribing 4 bars: the rhythm or the pitches?",
+              "answer": "The rhythm."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How do you check the 4 bars?",
+              "answer": "Play the transcription against the recording and listen for clashes."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is a correct rhythm with 2 wrong pitches closer than correct pitches with a wrong rhythm?",
+              "answer": "Yes."
+            }
+          ]
+        },
+        {
+          "title": "Keep a Weekly Score",
+          "mastery": "Track ear training numerically so progress is visible.",
+          "practice": "Record your scores for 3 exercise types each week and compare 4 weeks of figures.",
+          "detail": "Ear training improves slowly and invisibly, which is why most people stop. Three numbers a week — intervals, chord quality, progressions — turns that into a line you can see. A score that has not moved in 4 weeks means the set is wrong, not that you cannot do it.",
+          "proof": "4 weeks of 3 scores each, with any flat line identified.",
+          "pitfall": "Practising without scoring, which leaves no way to tell progress from familiarity.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many numbers does this step record each week — 1 or 3?",
+              "answer": "3."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A score has not moved across 4 weeks. What does that indicate?",
+              "answer": "The exercise set is wrong, rather than the ability being fixed."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Practising without a score across 4 weeks makes what impossible to tell?",
+              "answer": "Progress from mere familiarity."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.form": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Find the Phrases",
+          "mastery": "Divide a piece into its natural units.",
+          "practice": "Mark the phrase endings in 16 bars and say how many bars each phrase runs.",
+          "detail": "Listen for where the line breathes: a cadence, a rest, a repeated rhythm starting again. Most phrases are 4 or 8 bars, and 16 bars usually divides into 4 of 4. Where a phrase is 5 bars, that irregularity is usually the most interesting thing on the page.",
+          "proof": "Phrase endings marked, with the bar count of each written in.",
+          "pitfall": "Marking phrases at bar lines rather than at cadences, which finds 16 phrases in 16 bars.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "16 bars most often divides into how many phrases of what length?",
+              "answer": "4 phrases of 4 bars."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 signals of a phrase ending.",
+              "answer": "A cadence, and a rest or breath in the line."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A phrase runs 5 bars where the others run 4. Is that an error?",
+              "answer": "No — it is usually the most interesting moment in the passage."
+            }
+          ]
+        },
+        {
+          "title": "Label What Repeats",
+          "mastery": "Use letters to record a piece's sections and repeats.",
+          "practice": "Label a 32-bar piece with letters, giving the same letter to sections that repeat.",
+          "detail": "Call the first section A, and use A again only when the material returns. AABA is the commonest 32-bar shape — 8 bars each — and writing the letters takes 2 minutes and tells you most of what there is to know about the architecture.",
+          "proof": "A letter per 8-bar section, with repeats sharing a letter.",
+          "pitfall": "Giving a new letter to a section that returns with small changes, which hides the return.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the commonest 32-bar form, in letters?",
+              "answer": "AABA, 8 bars each."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A section returns with a small variation. Same letter or new one?",
+              "answer": "The same letter, since the material has returned."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many bars does each section of AABA hold in a 32-bar piece?",
+              "answer": "8."
+            }
+          ]
+        },
+        {
+          "title": "Binary and Ternary",
+          "mastery": "Tell a two-part form from a three-part one.",
+          "practice": "Label 2 short pieces as AB or ABA and say what makes each what it is.",
+          "detail": "Binary is a statement and a contrast; ternary adds a return, which changes how the piece feels far more than the extra section suggests. The return is what makes ternary sound resolved and binary sound like it stopped.",
+          "proof": "1 piece labelled AB and 1 ABA, with the return identified.",
+          "pitfall": "Calling any 3-section piece ternary, when ABC is 3 sections and no return.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of AB and ABA has a return?",
+              "answer": "ABA."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is a piece in 3 sections labelled ABC ternary?",
+              "answer": "No — ternary needs the return, not just 3 sections."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does the return do to how an ABA piece of 3 sections ends?",
+              "answer": "It makes it sound resolved rather than stopped."
+            }
+          ]
+        },
+        {
+          "title": "Verse and Chorus",
+          "mastery": "Identify the sections of a popular song form.",
+          "practice": "Map a 3-minute song into verse, chorus and bridge, with a bar count for each section.",
+          "detail": "The chorus repeats with the same words, the verse repeats with new ones, and the bridge appears once. Counting bars usually shows 8 or 16 per section and a chorus that arrives sooner than you remember — often inside the first 60 seconds.",
+          "proof": "A map of the song with a bar count against every section.",
+          "pitfall": "Labelling by intensity rather than by repetition, which calls any loud section a chorus.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 3-minute song, what distinguishes a verse from a chorus?",
+              "answer": "The chorus repeats with the same words; the verse repeats with new ones."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many times does a bridge usually appear in a 3-minute song?",
+              "answer": "Once."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is loudness a poor test for a chorus in a 3-minute song?",
+              "answer": "Form is about repetition, not intensity."
+            }
+          ]
+        },
+        {
+          "title": "Follow a Sonata Exposition",
+          "mastery": "Identify the two theme areas and the key change between them.",
+          "practice": "Mark where the 2nd theme of a sonata exposition starts and name the key it arrives in.",
+          "detail": "The first theme is in the home key; the second arrives in the dominant, or in the relative major if the piece is minor. Finding the key change is easier than finding the theme: look for the new key signature's accidentals appearing consistently, then look 2 bars earlier.",
+          "proof": "The second theme marked, with its key named and justified by the accidentals.",
+          "pitfall": "Looking for the theme by its tune, when the key change is the reliable signal.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a major-key sonata, which key does the 2nd theme usually arrive in?",
+              "answer": "The dominant."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In a minor-key sonata, which key is the 2nd theme likely to arrive in?",
+              "answer": "The relative major."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is the more reliable signal of the 2nd theme, the tune or the key change?",
+              "answer": "The key change."
+            }
+          ]
+        },
+        {
+          "title": "Track a Theme's Return",
+          "mastery": "Notice how returning material has been changed.",
+          "practice": "Compare a theme's first and last appearance and list 3 differences.",
+          "detail": "Returns are rarely literal: the key, the instrumentation, the accompaniment or the ending may differ. Listing 3 differences is what turns listening into analysis, and the change at the end is usually the most deliberate one — a return that has not changed has not gone anywhere.",
+          "proof": "3 named differences between the 2 appearances.",
+          "pitfall": "Hearing a return as identical because the tune is the same, and missing the changed harmony under it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 3 things that commonly change when a theme returns.",
+              "answer": "The key, the instrumentation and the accompaniment."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 3 changes is usually the most deliberate?",
+              "answer": "The one at the ending."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The tune is identical on both appearances. What should you check?",
+              "answer": "The harmony and accompaniment underneath it."
+            }
+          ]
+        },
+        {
+          "title": "Map a Whole Piece",
+          "mastery": "Produce a one-page diagram of a piece's architecture.",
+          "practice": "Diagram a 5-minute piece on 1 page, with sections, bar numbers and keys marked.",
+          "detail": "Boxes for sections, bar numbers under them, keys above, arrows for returns. On 1 page the proportions become visible — a development twice the length of the exposition, a coda that is a third of the piece — and those proportions are what a listener actually experiences.",
+          "proof": "1 page showing every section with its bars and key.",
+          "pitfall": "Writing a list of sections rather than a diagram, which loses the proportions.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What 3 things are marked on each box of the diagram?",
+              "answer": "The section, its bar numbers and its key."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does a diagram show that a list of 6 sections does not?",
+              "answer": "The proportions — how long each section is relative to the others."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How are returns shown on the 1-page diagram?",
+              "answer": "With arrows back to the earlier section."
+            }
+          ]
+        },
+        {
+          "title": "Build a Form Yourself",
+          "mastery": "Write a short piece to a plan you chose in advance.",
+          "practice": "Plan 24 bars as ABA with 8 bars each, then write it and check the return is recognisable.",
+          "detail": "Write the plan before the notes: 8 bars of A, 8 of contrasting B, then A again with 1 deliberate change. Deciding the architecture first is what stops a piece wandering, and the deliberate change in the return is what stops it being a repeat.",
+          "proof": "24 bars in ABA with the return carrying 1 intentional change.",
+          "pitfall": "Composing forwards until it feels finished, which usually produces 40 bars of A with no shape.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many bars does each section of a 24-bar ABA hold?",
+              "answer": "8."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does the returning A of 8 bars carry that the first A did not?",
+              "answer": "1 deliberate change."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What usually happens to 24 bars composed forwards with no plan?",
+              "answer": "It wanders — lots of A and no shape."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.harmony": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Hear Two Lines at Once",
+          "mastery": "Follow two independent melodies sounding together.",
+          "practice": "Play 4 bars of a 2-part piece, then play each line alone and sing 1 while playing the other.",
+          "detail": "Separating the lines is the skill: play the upper alone, then the lower, then sing the upper while playing the lower. Singing 1 part while playing another is where the independence becomes real rather than theoretical.",
+          "proof": "Both lines played alone, and the upper sung while the lower is played.",
+          "pitfall": "Hearing the 2 parts as a chord sequence, which loses the horizontal motion that is the point.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What are the 3 passes over the 4 bars?",
+              "answer": "Upper line alone, lower line alone, then 1 sung while the other is played."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is lost by hearing 2 parts as a chord sequence?",
+              "answer": "The horizontal motion of each line."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of the 3 passes makes the independence of 2 lines real?",
+              "answer": "Singing 1 part while playing the other."
+            }
+          ]
+        },
+        {
+          "title": "Move by Step",
+          "mastery": "Write a second line that moves mostly stepwise.",
+          "practice": "Write a lower line under an 8-note melody using steps of 1 or 2 semitones wherever possible.",
+          "detail": "Stepwise motion is what makes a line singable and audible as a line rather than as a series of notes chosen for their chords. Allow a leap when the harmony demands it, then step back in the opposite direction afterwards, which is how a leap stops sounding like a mistake.",
+          "proof": "A lower line where most intervals are 1 or 2 semitones.",
+          "pitfall": "Writing the lower line as the root of each chord, which leaps constantly and sings badly.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What interval size should most of the 8 steps be?",
+              "answer": "1 or 2 semitones."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You need a leap of 7 semitones for the harmony. What follows it?",
+              "answer": "Stepwise motion back in the opposite direction."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is wrong with using each chord's root as the lower line?",
+              "answer": "It leaps constantly and does not sing as a line."
+            }
+          ]
+        },
+        {
+          "title": "Contrary Motion",
+          "mastery": "Make two lines move in opposite directions.",
+          "practice": "Write 4 bars where the upper line rises 5 notes while the lower falls, and mark each pair.",
+          "detail": "Two lines moving apart sound independent; 2 moving in parallel sound like 1 line thickened. Contrary motion is the cheapest way to make a texture sound like counterpoint, and marking the direction under each pair is how you check it actually happened.",
+          "proof": "5 pairs marked, each with the 2 lines moving in opposite directions.",
+          "pitfall": "Writing both lines in the same direction throughout, which is a single line in disguise.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "2 lines both rising across 5 notes sound like what?",
+              "answer": "1 line thickened rather than 2 independent lines."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the cheapest way to make 2 lines sound independent?",
+              "answer": "Contrary motion — moving them in opposite directions."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How do you check the direction of all 5 pairs?",
+              "answer": "Mark the direction of each line under every pair."
+            }
+          ]
+        },
+        {
+          "title": "Avoid the Parallel Fifths",
+          "mastery": "Spot and fix consecutive perfect fifths between two lines.",
+          "practice": "Find the 2 parallel fifths in a given 4-bar exercise and rewrite them using contrary motion.",
+          "detail": "Two lines a fifth apart moving in the same direction fuse into 1 sound, which is why the convention exists — it is a description of what the ear does rather than an arbitrary rule. The fix is usually to move 1 line in the opposite direction or to change its interval.",
+          "proof": "2 parallel fifths found and rewritten so the lines separate.",
+          "pitfall": "Treating the rule as arbitrary and ignoring it, then wondering why 2 parts sound like 1.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "2 lines a perfect fifth apart move up together. What does the ear hear?",
+              "answer": "1 fused sound rather than 2 lines."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 fixes for a parallel fifth.",
+              "answer": "Move 1 line in the opposite direction, or change the interval between them."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many semitones is the perfect fifth these 2 lines move in?",
+              "answer": "7."
+            }
+          ]
+        },
+        {
+          "title": "Resolve the Tension",
+          "mastery": "Place a dissonance and take it to a consonance by step.",
+          "practice": "Write a 4th above the bass on beat 1 and resolve it down by step on beat 2, in 2 bars.",
+          "detail": "Dissonance is not an error, it is the thing that makes the resolution mean something — what matters is that it resolves, by step, and soon. A dissonance left hanging or leapt away from sounds like a mistake even when it was intentional.",
+          "proof": "2 bars where the dissonance on beat 1 steps down to a consonance on beat 2.",
+          "pitfall": "Leaping away from a dissonance, which makes it sound unintended.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A dissonance on beat 1 resolves how, and when?",
+              "answer": "By step, on the next beat."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What happens when a dissonance on beat 1 is leapt away from?",
+              "answer": "It sounds like a mistake rather than a deliberate tension."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is dissonance an error in 2-part writing?",
+              "answer": "No — it creates the tension the resolution releases."
+            }
+          ]
+        },
+        {
+          "title": "Write Four Parts",
+          "mastery": "Harmonise a melody in four voices with sensible spacing.",
+          "practice": "Harmonise a 4-note melody in 4 parts, keeping the upper 3 voices within an octave of each other.",
+          "detail": "The bass may sit low, but gaps between the upper 3 make the chord sound hollow. Double the root when a triad has to fill 4 voices, and avoid doubling the third, which thickens the chord's quality more than it needs.",
+          "proof": "4 chords in 4 parts with the upper 3 voices inside an octave.",
+          "pitfall": "Leaving a tenth between the 2 upper voices, which sounds like 2 separate textures.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of the 4 voices may sit far from the others?",
+              "answer": "The bass."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Filling 4 voices from a 3-note triad, which note do you double?",
+              "answer": "The root."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of the 4 voices is usually not doubled, and why?",
+              "answer": "The third, because it thickens the chord's quality."
+            }
+          ]
+        },
+        {
+          "title": "Analyse Eight Bars",
+          "mastery": "Label the harmony of a passage in numerals.",
+          "practice": "Take 8 bars of a chorale and write the numeral for each chord, marking any 2 inversions.",
+          "detail": "Identify the bass note, then the chord above it, then the numeral and inversion. Working bass-first is faster and less error-prone than looking at the whole stack. The point of the labels is to see the pattern: most chorale phrases turn out to use 5 or 6 chords.",
+          "proof": "A numeral under every chord in the 8 bars, with the inversions marked.",
+          "pitfall": "Naming chords from the top note down, which misidentifies every inversion.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which note of a 4-note stack do you identify first when labelling it?",
+              "answer": "The bass."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why is working from the top note of 4 downwards unreliable?",
+              "answer": "It misidentifies inversions."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Roughly how many distinct chords does a chorale phrase of 8 bars usually use?",
+              "answer": "About 5 or 6."
+            }
+          ]
+        },
+        {
+          "title": "Hear Your Own Writing",
+          "mastery": "Play back what you wrote and correct what the page hid.",
+          "practice": "Play your 4-part harmonisation of 4 chords and list 2 things you would change.",
+          "detail": "Writing that looks correct often sounds thin, muddy or static, and only playing it reveals which. List 2 specific changes — a doubled third, a gap between voices, a bass that leapt — rather than a general impression, then make them and play it again.",
+          "proof": "2 specific changes listed and applied, with the passage played before and after.",
+          "pitfall": "Accepting writing that follows the rules without ever hearing it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 2 faults that look fine on the page and sound wrong.",
+              "answer": "A doubled third, and a gap between the upper voices."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many changes does this step ask you to list — 2 or 10?",
+              "answer": "2, both specific."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the final check on 4-part writing?",
+              "answer": "Playing it and listening."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.improv": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Improvise on Three Notes",
+          "mastery": "Make music from a deliberately tiny set of pitches.",
+          "practice": "Improvise 8 bars over a C drone using only C, D and E, varying rhythm rather than pitch.",
+          "detail": "Three notes removes the choice of what to play and leaves the choice of when, which is where most of the interest is anyway. Vary length, rests and accent. Eight bars on 3 notes that holds attention is a better exercise than 8 bars of scale running.",
+          "proof": "8 bars using only 3 pitches, with the rhythm audibly varied.",
+          "pitfall": "Adding more notes when it starts to feel limited, which is the moment the exercise begins working.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many pitches does this 8-bar exercise allow, and which?",
+              "answer": "3 — C, D and E."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "If the 3 pitches cannot vary, what does?",
+              "answer": "The rhythm — length, rests and accent."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You want a 4th note at bar 5. What is the instruction?",
+              "answer": "Stay with 3 — the constraint is what the exercise is for."
+            }
+          ]
+        },
+        {
+          "title": "Play a Motif and Answer It",
+          "mastery": "State a short idea and reply to it.",
+          "practice": "Improvise a 2-bar motif, then answer it with 2 bars that share its rhythm but end differently.",
+          "detail": "Call and response is the smallest complete musical shape. Keep the rhythm of the answer identical and change only where it lands, so the relationship is audible. A solo made of unrelated 2-bar fragments is what improvising without this sounds like.",
+          "proof": "4 bars where the answer's rhythm matches the call and its ending differs.",
+          "pitfall": "Making the answer a completely new idea, which sounds like starting again rather than replying.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Are the call and the answer 2 bars each or 4?",
+              "answer": "2 each."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What stays the same between the 2, and what changes?",
+              "answer": "The rhythm stays; the ending changes."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A completely new idea in bars 3 and 4 sounds like what?",
+              "answer": "Starting again rather than answering."
+            }
+          ]
+        },
+        {
+          "title": "Improvise Over Two Chords",
+          "mastery": "Change your note choices when the harmony changes.",
+          "practice": "Improvise 8 bars over 2 bars each of C and F, landing on a chord tone at every change.",
+          "detail": "The change is the only moment that must be right: hit a note from the new chord on its first beat and the rest follows. Practise the changes alone — play only the first beat of each chord for 8 bars — before improvising through them.",
+          "proof": "4 chord changes, each met with a note belonging to the arriving chord.",
+          "pitfall": "Playing a C scale through the F bars, which sounds fine until the B lands.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which beat of a new chord must carry a chord tone — the 1st or the 4th?",
+              "answer": "The 1st."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which note of a C scale clashes over an F chord, a semitone above F's 3rd?",
+              "answer": "The B, a semitone above F's third."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What do you practise before improvising through 4 changes?",
+              "answer": "The first beat of each chord alone."
+            }
+          ]
+        },
+        {
+          "title": "Use Space",
+          "mastery": "Leave silence inside an improvisation on purpose.",
+          "practice": "Improvise 8 bars where at least 2 full bars are silent, placed deliberately.",
+          "detail": "Silence is what makes a phrase a phrase, and the reflex under pressure is to fill everything. Decide in advance which 2 bars are empty. Recording is the check: 2 bars of rest almost always sound shorter in the room than they look on the plan.",
+          "proof": "A recording with 2 audibly empty bars in 8.",
+          "pitfall": "Filling the planned silence because it felt too long while playing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many of the 8 bars are silent?",
+              "answer": "At least 2."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "When is the placement of the 2 silent bars decided?",
+              "answer": "In advance, before playing."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How does 2 bars of silence feel while playing, against how it sounds?",
+              "answer": "Longer while playing than it sounds on the recording."
+            }
+          ]
+        },
+        {
+          "title": "Develop One Idea",
+          "mastery": "Take a single motif through several transformations.",
+          "practice": "Take a 1-bar motif and play 6 variations: louder, slower, higher, rhythmically displaced, inverted, fragmented.",
+          "detail": "Six versions of 1 idea is a solo; 6 unrelated ideas is a warm-up. Name the transformation before playing each, so the variation is a decision rather than a drift. Displacement and inversion are the 2 that most people never try.",
+          "proof": "6 named variations of the same 1-bar motif.",
+          "pitfall": "Playing 6 different ideas and calling them variations.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many variations of the 1-bar motif does this step ask for?",
+              "answer": "6."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 transformations most players never try.",
+              "answer": "Rhythmic displacement and inversion."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the difference between 6 variations and 6 ideas?",
+              "answer": "Variations develop 1 idea; 6 ideas is a warm-up."
+            }
+          ]
+        },
+        {
+          "title": "Improvise in a Mode",
+          "mastery": "Use a mode's characteristic note deliberately while improvising.",
+          "practice": "Improvise 8 bars in D Dorian over a D drone, landing on the B natural at least 4 times.",
+          "detail": "The characteristic note is what makes the mode audible, and under pressure it is the note people avoid because it feels exposed. Counting the landings forces the issue: 4 in 8 bars is enough that a listener hears Dorian rather than D minor.",
+          "proof": "8 bars with the B natural landed on 4 times or more.",
+          "pitfall": "Avoiding the characteristic note, which leaves the improvisation sounding like plain D minor.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which note makes D Dorian audible, and how many landings are asked for?",
+              "answer": "B natural, at least 4 times in 8 bars."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does avoiding it leave the 8 bars sounding like?",
+              "answer": "Plain D minor."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do players avoid the B natural under pressure in 8 bars of Dorian?",
+              "answer": "It feels exposed, being the note that defines the mode."
+            }
+          ]
+        },
+        {
+          "title": "Trade Four Bars",
+          "mastery": "Improvise in dialogue with another player.",
+          "practice": "Trade 4-bar phrases with 1 other player for 32 bars, answering what they just played.",
+          "detail": "Listen to their 4 bars and take something from them — a rhythm, a shape, the last note — into yours. Trading without listening is 2 people soloing alternately. Thirty-two bars is 4 exchanges each, which is long enough to develop something.",
+          "proof": "8 phrases traded, each carrying something from the one before.",
+          "pitfall": "Planning your 4 bars while they play theirs, which is not listening.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "32 bars of 4-bar trading gives how many phrases each?",
+              "answer": "4 each, 8 in total."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 things you can take from their phrase into yours.",
+              "answer": "A rhythm, or the last note."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is trading 4 bars each without listening called?",
+              "answer": "2 people soloing alternately."
+            }
+          ]
+        },
+        {
+          "title": "Record and Listen Back",
+          "mastery": "Judge your own improvisation from a recording.",
+          "practice": "Record 32 bars of improvisation and list 2 things that worked and 2 that did not.",
+          "detail": "Playing and judging cannot happen at once, which is why recording is the only real feedback. Expect the recording to be less busy than it felt and the silences to be shorter. Name 4 specific moments with bar numbers rather than an overall impression.",
+          "proof": "4 named moments with bar numbers, 2 good and 2 not.",
+          "pitfall": "Listening back for an overall verdict, which produces a mood rather than something to work on.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many specific moments does this step ask you to name from 32 bars?",
+              "answer": "4 — 2 that worked and 2 that did not."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What should each of the 4 carry?",
+              "answer": "A bar number."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can you not judge 32 bars while playing them?",
+              "answer": "Playing and judging cannot happen at the same time."
+            }
+          ]
+        },
+        {
+          "title": "Improvise Inside a Form",
+          "mastery": "Solo over a repeating structure without losing your place.",
+          "practice": "Improvise over a 12-bar blues for 2 choruses, and say which bar you are in at any point.",
+          "detail": "Count the form while playing — bar 5 is where the harmony moves, bar 9 is the turnaround. Losing the place is the standard failure, and the cure is to mark those 2 bars with something deliberate so the structure is audible in your own playing.",
+          "proof": "2 choruses of 12 bars with the chord changes met in the right bars.",
+          "pitfall": "Playing 11 or 13 bars and arriving at the turnaround in the wrong place.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many bars is 2 choruses of a 12-bar blues?",
+              "answer": "24."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 bars of the 12 are worth marking deliberately?",
+              "answer": "Bar 5, where the harmony moves, and bar 9, the turnaround."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the standard failure when soloing over 2 choruses of a repeating form?",
+              "answer": "Losing the place and arriving at the turnaround in the wrong bar."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.intervals": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Count the Size",
+          "mastery": "Name an interval's number by counting letters inclusively.",
+          "practice": "Name the size of C to G, D to A, and E to C, counting the start note as 1.",
+          "detail": "Count both end notes: C to G is C D E F G, so a fifth. E to C is E F G A B C, a sixth. Counting the steps between rather than the letters inclusive gives a number one too small, which is the single most common interval error.",
+          "proof": "A fifth, a fifth and a sixth.",
+          "pitfall": "Counting gaps instead of letters, which calls C to G a fourth.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Counting C as 1, what size is C up to G?",
+              "answer": "A fifth."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Counting E as 1, what size is E up to C?",
+              "answer": "A sixth."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Counting the 4 gaps rather than the 5 letters gives what error on C to G?",
+              "answer": "A fourth — 1 too small."
+            }
+          ]
+        },
+        {
+          "title": "Add the Quality",
+          "mastery": "Distinguish major from minor by counting semitones.",
+          "practice": "Count the semitones in C to E and in C to Eb, then name both of the 2 intervals.",
+          "detail": "C to E is 4 semitones, a major third; C to E flat is 3, a minor third. The size comes from the letters and the quality from the semitone count, which is why both notes keep the letter E — the size is a third either way.",
+          "proof": "4 semitones is a major third and 3 is a minor third.",
+          "pitfall": "Calling C to E flat a second because the note was altered, when the letter distance is unchanged.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is C up to E 3 semitones or 4, and what interval is that?",
+              "answer": "4 — a major third."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is C up to Eb 3 semitones or 4?",
+              "answer": "3, a minor third."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does flattening the upper note change the interval's size or its quality?",
+              "answer": "Its quality only."
+            }
+          ]
+        },
+        {
+          "title": "The Perfect Intervals",
+          "mastery": "Identify the intervals that are called perfect rather than major.",
+          "practice": "Give the semitone counts for a perfect fourth, a perfect fifth and an octave — 3 numbers.",
+          "detail": "5, 7 and 12 semitones. Unisons, fourths, fifths and octaves are perfect rather than major or minor, which is a naming convention with acoustic roots: these are the intervals whose frequency ratios are simplest. Altering one gives diminished or augmented rather than minor.",
+          "proof": "5, 7 and 12 semitones, and none of the 3 is called major.",
+          "pitfall": "Calling a fifth major, which is not a category a fifth has.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is a perfect fifth 7 semitones or 8?",
+              "answer": "7."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is a perfect fourth 5 semitones or 6?",
+              "answer": "5."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which 4 interval sizes are called perfect?",
+              "answer": "The unison, fourth, fifth and octave."
+            }
+          ]
+        },
+        {
+          "title": "Invert an Interval",
+          "mastery": "Work out what an interval becomes when the notes swap.",
+          "practice": "Invert C up to E and C up to G, and give the 2 new intervals.",
+          "detail": "The 2 sizes always sum to 9: a third inverts to a sixth, a fifth to a fourth. Major becomes minor and perfect stays perfect, so C to E major third inverts to E to C minor sixth. That rule saves learning the large intervals separately.",
+          "proof": "A minor sixth and a perfect fourth, and both pairs of sizes sum to 9.",
+          "pitfall": "Expecting the sizes to sum to 8, which is the octave rather than the inversion rule.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A major third of 4 semitones inverts to which interval?",
+              "answer": "A minor sixth."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What do the 2 sizes of an interval and its inversion always sum to?",
+              "answer": "9."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A perfect fifth of 7 semitones inverts to what?",
+              "answer": "A perfect fourth."
+            }
+          ]
+        },
+        {
+          "title": "Sing Then Check",
+          "mastery": "Produce an interval with your voice and verify it.",
+          "practice": "Sing a perfect fifth above 3 given notes, then check each against an instrument.",
+          "detail": "Sing first and check second, otherwise you are copying rather than producing. Use a reference for the starting note only. A fifth is the easiest to hold, which is why it comes first; being within a semitone on all 3 is a reasonable first standard.",
+          "proof": "All 3 sung fifths land within a semitone of the instrument.",
+          "pitfall": "Playing the target interval first, which turns the exercise into imitation.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You sing a fifth above C. Which note are you aiming at?",
+              "answer": "G."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why sing all 3 before checking any?",
+              "answer": "Playing first turns the exercise into imitation rather than production."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is a reasonable first standard for accuracy across 3 sung fifths?",
+              "answer": "Within a semitone."
+            }
+          ]
+        },
+        {
+          "title": "Name What You Hear",
+          "mastery": "Identify a played interval by ear from a small set.",
+          "practice": "Name 10 intervals played at random from major third, perfect fifth and octave, keeping score.",
+          "detail": "Three well-separated intervals first, not all 12: the point is to build 3 reliable anchors rather than to guess among many. Keep score — 8 of 10 is the threshold to add a fourth interval to the set, and below 6 means dropping back to 2.",
+          "proof": "A score out of 10, with the confusions noted by pair.",
+          "pitfall": "Starting with all 12 intervals, where a 30 per cent score teaches nothing about which are confused.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You score 8 of 10 on 3 intervals. What is the next step?",
+              "answer": "Add a 4th interval to the set."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You score 5 of 10. What do you do?",
+              "answer": "Drop back to 2 well-separated intervals."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why start with 3 intervals rather than all 12?",
+              "answer": "A low score across 12 says nothing about which pairs are confused."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.inversions": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Move the Bottom Note Up",
+          "mastery": "Produce the first inversion of a triad.",
+          "practice": "Invert C major once by moving C up an octave, and name the resulting 3 notes bottom to top.",
+          "detail": "C E G becomes E G C. The chord is still C major — same 3 notes — but the lowest sounding note is now E. That distinction between the chord and its bass is the whole subject, and it is why a chord symbol sometimes carries a slash.",
+          "proof": "E G C, still a C major chord.",
+          "pitfall": "Calling E G C an E minor chord, which would need E G B.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3 notes of C major in first inversion, bottom to top.",
+              "answer": "E, G, C."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 3 notes is in the bass?",
+              "answer": "E, the third."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is E G C a C chord or an E chord, given its 3 notes?",
+              "answer": "A C major chord, with E in the bass."
+            }
+          ]
+        },
+        {
+          "title": "Second Inversion",
+          "mastery": "Produce and recognise a triad with its fifth in the bass.",
+          "practice": "Write C major in second inversion, naming the 3 notes, and say which degree is lowest.",
+          "detail": "Move E up too and you get G C E, with the fifth in the bass. A triad has 3 positions — root, first and second inversion — because it has 3 notes, and after 3 moves you are back where you started an octave up.",
+          "proof": "G C E, with the fifth in the bass.",
+          "pitfall": "Expecting a third inversion of a triad, which does not exist — only a 4-note chord has one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3 notes of C major in second inversion.",
+              "answer": "G, C, E."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many positions does a 3-note chord have?",
+              "answer": "3 — root, first and second inversion."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which chord size is needed for a third inversion — 3 notes or 4?",
+              "answer": "A 4-note chord, such as a seventh."
+            }
+          ]
+        },
+        {
+          "title": "Read the Slash Notation",
+          "mastery": "Interpret a chord symbol that names its own bass note.",
+          "practice": "Name the notes of C/E and G/D — 2 symbols — and say which inversion each is.",
+          "detail": "The letter after the slash is the bass. C/E is C major with E at the bottom, so first inversion; G/D is G major with D, so second. The notation exists because the bass note matters to how a progression moves even when the chord does not change.",
+          "proof": "C/E is E G C in first inversion, G/D is D G B in second.",
+          "pitfall": "Reading C/E as a 2-chord instruction, when it names 1 chord and its bass.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which inversion is C/E, and what are its 3 notes bottom to top?",
+              "answer": "First inversion — E, G, C."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which inversion is G/D?",
+              "answer": "Second inversion."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does the letter after the slash in C/E name?",
+              "answer": "The bass note, not a second chord."
+            }
+          ]
+        },
+        {
+          "title": "Smooth the Bass Line",
+          "mastery": "Choose inversions so the lowest line moves by small steps.",
+          "practice": "Play C, F, G, C using inversions so the bass moves by no more than 2 semitones at a time.",
+          "detail": "Root position gives a bass of C, F, G, C — leaps of 5 and 2 semitones. Using F/C and G/B instead gives C, C, B, C, which barely moves. The chords are unchanged and the progression sounds smoother, which is what inversions are for.",
+          "proof": "A bass line whose largest step is 2 semitones.",
+          "pitfall": "Choosing inversions by what is easiest to play, which usually leaves the bass leaping.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Root-position C, F, G, C gives which 4-note bass line?",
+              "answer": "C, F, G, C — with leaps of 5 and 2 semitones."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What bass line do C, F/C, G/B, C give?",
+              "answer": "C, C, B, C."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is inversion choosing for, in 1 phrase?",
+              "answer": "A bass line that moves by small steps."
+            }
+          ]
+        },
+        {
+          "title": "Keep the Hand Still",
+          "mastery": "Use inversions to change chords without moving the hand far.",
+          "practice": "Play C, F, G, C keeping every chord inside a 5-note span, and name the inversions used.",
+          "detail": "Instead of jumping to each root position, pick the inversion nearest the hand: C E G, then C F A, then B D G, then C E G. The hand barely moves and the changes become reliable at tempo, which is the practical reason players learn inversions at all.",
+          "proof": "All 4 chords played inside a 5-note span.",
+          "pitfall": "Playing all 4 in root position and blaming the tempo for the missed changes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name an inversion of F major that sits inside the same 5-note span as C E G.",
+              "answer": "C, F, A — second inversion."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which inversion of G major keeps the hand inside the 5-note span around C E G?",
+              "answer": "B, D, G — first inversion."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What practical problem do inversions solve across 4 chords at tempo?",
+              "answer": "They remove the hand leaps that make changes unreliable."
+            }
+          ]
+        },
+        {
+          "title": "Hear the Difference",
+          "mastery": "Tell root position from an inversion by ear.",
+          "practice": "Name which of 10 played C major chords were root position and which were first inversion.",
+          "detail": "Listen to the lowest note rather than the chord: root position sounds settled and an inversion sounds like it is leaning somewhere. Score out of 10, and if you are under 6, play the 2 versions yourself alternately until the bass is what you notice first.",
+          "proof": "A score out of 10, with the misses noted.",
+          "pitfall": "Listening to the top note, which is often the same in both and tells you nothing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of the 3 notes tells you the inversion by ear?",
+              "answer": "The lowest one."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You score 5 of 10. What is the next step?",
+              "answer": "Play the 2 versions alternately yourself until the bass is what you hear first."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is the top note unhelpful across 10 trials?",
+              "answer": "It is often the same in both positions."
+            }
+          ]
+        },
+        {
+          "title": "Voice a Progression",
+          "mastery": "Choose inversions across a whole progression deliberately.",
+          "practice": "Write out C, Am, F, G, C with an inversion chosen for each and 1 line saying why.",
+          "detail": "Decide the bass line first — where it should step and where it should leap for effect — then pick the inversion that produces it. Writing the reason next to each chord is what turns this from guesswork into a decision you can revise.",
+          "proof": "5 chords with an inversion and a stated reason each.",
+          "pitfall": "Choosing inversions chord by chord without looking at the bass line they add up to.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Across 5 chords, what do you decide before choosing the inversions?",
+              "answer": "The bass line you want."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why write a reason beside each of the 5 choices?",
+              "answer": "It makes the voicing a decision that can be revised rather than guesswork."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where across 5 chords might a bass leap be wanted rather than avoided?",
+              "answer": "At a point of arrival, such as the final chord."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.keys": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read a Key Signature",
+          "mastery": "Name the key from the sharps or flats written at the start.",
+          "practice": "Name the major key for 1 sharp, for 2 sharps and for 1 flat.",
+          "detail": "Sharps appear in the order F, C, G, D, A, E, B and flats in the reverse. One sharp is G major, 2 is D major, 1 flat is F major. Read the last sharp and go up a semitone; read the second-to-last flat, or remember that 1 flat is F.",
+          "proof": "G major, D major and F major.",
+          "pitfall": "Naming the key from the first sharp rather than the last, which is wrong by a fifth.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which major key has 1 sharp?",
+              "answer": "G major."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A signature shows 3 sharps. Which major key is it?",
+              "answer": "A major."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The last sharp of a signature is C#. Which major key is that, going up 1 semitone?",
+              "answer": "D major."
+            }
+          ]
+        },
+        {
+          "title": "Learn the Sharp Order",
+          "mastery": "Recite the order sharps and flats are always written in.",
+          "practice": "Write the 7 sharps in order, then the 7 flats, and check the 2 lists are reverses.",
+          "detail": "Sharps: F C G D A E B. Flats: B E A D G C F. The order is fixed, so a key signature with 3 sharps always has F, C and G sharp — never some other 3. Knowing the order means you never have to memorise the signatures themselves.",
+          "proof": "F C G D A E B and B E A D G C F, each the reverse of the other.",
+          "pitfall": "Assuming 3 sharps could be any 3 notes, which makes every signature a separate thing to learn.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the order of the 7 sharps.",
+              "answer": "F, C, G, D, A, E, B."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 3 notes are sharp in a key signature with 3 sharps?",
+              "answer": "F, C and G."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the order of the 7 flats.",
+              "answer": "B, E, A, D, G, C, F."
+            }
+          ]
+        },
+        {
+          "title": "Walk the Circle of Fifths",
+          "mastery": "Move between keys a fifth apart and track the accidentals.",
+          "practice": "Walk up 4 fifths from C, naming each key and how many sharps it carries.",
+          "detail": "C to G to D to A to E, gaining 1 sharp each time: 0, 1, 2, 3, 4. Going down in fifths gains flats instead. The circle is a single fact that generates every key signature, which is why it is worth being able to walk rather than to look up.",
+          "proof": "G 1, D 2, A 3, E 4 sharps.",
+          "pitfall": "Going up in fourths by mistake, which walks the flat side and gives the wrong count.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Starting at C and going up 3 fifths, which key do you reach?",
+              "answer": "A major, with 3 sharps."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many sharps does E major carry, 4 fifths up from C?",
+              "answer": "4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Going down 1 fifth from C reaches which key, with how many flats?",
+              "answer": "F major, with 1 flat."
+            }
+          ]
+        },
+        {
+          "title": "Find the Relative Minor",
+          "mastery": "Name the minor key sharing a given major key's signature.",
+          "practice": "Name the relative minor of C major, G major and F major — 3 keys.",
+          "detail": "Go down 3 semitones from the major, or up to the 6th degree: A minor, E minor and D minor. Both keys use the same notes and the same signature, and what separates them is which note the music treats as home.",
+          "proof": "A minor, E minor and D minor.",
+          "pitfall": "Going down 3 letter names rather than 3 semitones, which lands a note out on several keys.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the relative minor of G major, which has 1 sharp?",
+              "answer": "E minor."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the relative minor of F major, which has 1 flat?",
+              "answer": "D minor."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many semitones down from a major key is its relative minor — 3 or 4?",
+              "answer": "3."
+            }
+          ]
+        },
+        {
+          "title": "Name the Degrees",
+          "mastery": "Refer to notes of a key by their position rather than their letter.",
+          "practice": "In D major, name the notes of degrees 1, 4 and 5 — 3 notes.",
+          "detail": "Degree 1 is the tonic, 4 the subdominant, 5 the dominant. In D major that is D, G and A. Talking in degrees is what makes a progression transferable: a 1-4-5 works in every key, and the letters change while the relationship does not.",
+          "proof": "D, G and A.",
+          "pitfall": "Counting degrees from the bottom of the stave rather than from the key's tonic.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In D major, which note is degree 5?",
+              "answer": "A."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In D major, which note is degree 4?",
+              "answer": "G."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why are 3 degrees more useful than 3 letter names?",
+              "answer": "The degrees transfer to every key while the letters do not."
+            }
+          ]
+        },
+        {
+          "title": "Spot a Key Change",
+          "mastery": "Notice when a passage has left its home key.",
+          "practice": "Look at 8 bars with 2 unexpected accidentals and say which key the music has moved to.",
+          "detail": "Accidentals that keep reappearing are a new key rather than decoration; 1 stray sharp is a passing note, the same sharp 4 times is a modulation. Check which key's signature those accidentals would form, and whether the passage cadences there.",
+          "proof": "A named key, justified by the accidentals and where the phrase lands.",
+          "pitfall": "Reading every accidental as a modulation, which finds 5 key changes in 8 bars.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The same sharp appears 4 times in 8 bars. Decoration or modulation?",
+              "answer": "Most likely a modulation."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "1 stray flat appears once in 8 bars. What is it likely to be?",
+              "answer": "A passing accidental, not a key change."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the 2 pieces of evidence for a modulation.",
+              "answer": "Repeated accidentals, and a cadence in the new key."
+            }
+          ]
+        },
+        {
+          "title": "Transpose a Melody",
+          "mastery": "Rewrite a tune in a new key keeping the intervals intact.",
+          "practice": "Transpose a 4-bar melody from C major up to D major, 1 tone higher.",
+          "detail": "Move every note up by the same interval, then apply the new signature — 2 sharps for D. Work in degrees rather than letters: degree 3 stays degree 3, which is what keeps the tune recognisable. Check the highest and lowest notes are still playable afterwards.",
+          "proof": "The 4 bars in D major with 2 sharps, and every interval unchanged.",
+          "pitfall": "Moving the notes without changing the signature, which keeps the letters right and the tune wrong.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Transposing 4 bars from C major to D major moves every note by how much?",
+              "answer": "1 tone, or 2 semitones."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does the D major signature carry 1 sharp or 2?",
+              "answer": "2."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What must be unchanged after transposing 4 bars?",
+              "answer": "Every interval between consecutive notes."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.modes": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Same Notes, New Home",
+          "mastery": "Produce a mode by starting a scale on a different degree.",
+          "practice": "Play the 7 notes of C major starting and ending on D, and name the mode.",
+          "detail": "D E F G A B C D is D Dorian — the same 7 notes as C major with D treated as home. Nothing is added or altered; what changes is which note the ear measures the others against, which is why modes are a matter of context rather than of pitch content.",
+          "proof": "D Dorian, using the same 7 notes as C major.",
+          "pitfall": "Adding accidentals to make it sound minor, which produces a different scale rather than a mode.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Starting C major's 7 notes on D gives which mode?",
+              "answer": "D Dorian."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many notes are added or altered to make a mode of C major's 7?",
+              "answer": "0."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What changes between C major and D Dorian?",
+              "answer": "Which note is home, not the 7 pitches."
+            }
+          ]
+        },
+        {
+          "title": "Name the Seven",
+          "mastery": "List the modes in order of the degree they start on.",
+          "practice": "Name the 7 modes of the major scale in order from degree 1 to degree 7.",
+          "detail": "Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian. Ionian is the major scale and Aeolian the natural minor, so 2 of the 7 already have familiar names. Learning the order means you can derive any mode from any major scale.",
+          "proof": "The 7 in order, with Ionian as major and Aeolian as minor.",
+          "pitfall": "Learning the 7 as separate scales, which is 7 times the work and hides the relationship.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 7 modes in order from degree 1.",
+              "answer": "Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 7 is the major scale, and which the natural minor?",
+              "answer": "Ionian and Aeolian."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which mode starts on degree 5?",
+              "answer": "Mixolydian."
+            }
+          ]
+        },
+        {
+          "title": "Find the Characteristic Note",
+          "mastery": "Name the one note that distinguishes a mode from its nearest familiar scale.",
+          "practice": "Compare D Dorian with D natural minor and name the 1 note that differs.",
+          "detail": "D Dorian has B natural where D minor has B flat, so the sixth degree is raised. That single note is what makes Dorian sound brighter than minor, and every mode has one such note — finding it is faster than learning the whole scale.",
+          "proof": "The sixth degree: B natural against B flat.",
+          "pitfall": "Trying to hear the whole mode at once rather than the 1 note that identifies it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which degree differs between D Dorian and D natural minor?",
+              "answer": "The 6th — B natural against B flat."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does that 1 note make Dorian brighter or darker than minor?",
+              "answer": "Brighter."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Do 1 or 3 notes usually separate a mode from its nearest familiar scale?",
+              "answer": "1."
+            }
+          ]
+        },
+        {
+          "title": "Mixolydian and the Flat Seventh",
+          "mastery": "Build and hear the mode that is major with a lowered seventh.",
+          "practice": "Play G Mixolydian against G major and say which of the 7 degrees is lowered.",
+          "detail": "G Mixolydian is G A B C D E F G — F natural where G major has F sharp. The lowered seventh removes the pull to the tonic, which is why it sounds settled rather than driving, and why so much folk and rock harmony sits in it.",
+          "proof": "F natural rather than F sharp, and the resolution feels weaker.",
+          "pitfall": "Playing G major and calling it Mixolydian, which differs by exactly 1 note.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 7 notes of G Mixolydian.",
+              "answer": "G, A, B, C, D, E, F, G."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 1 note differs from G major?",
+              "answer": "The 7th — F natural rather than F sharp."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does lowering the 7th do to the pull towards the tonic?",
+              "answer": "It weakens it, so the mode sounds settled rather than driving."
+            }
+          ]
+        },
+        {
+          "title": "Lydian and the Sharp Fourth",
+          "mastery": "Build and hear the mode that is major with a raised fourth.",
+          "practice": "Sound F Lydian after F major, then describe what the raised 4th does to the brightness.",
+          "detail": "F Lydian is F G A B C D E F — B natural where F major has B flat. The raised fourth is the brightest alteration in the modal set and is unstable: it pulls upwards rather than resolving, which is why it suits suspended, floating passages.",
+          "proof": "B natural rather than B flat, and the mode sounds brighter than major.",
+          "pitfall": "Confusing the raised fourth with the lowered seventh, which are opposite alterations.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 7 notes of F Lydian.",
+              "answer": "F, G, A, B, C, D, E, F."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 1 note differs from F major?",
+              "answer": "The 4th — B natural rather than B flat."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is Lydian brighter or darker than major, and by which single degree?",
+              "answer": "Brighter, by the raised 4th."
+            }
+          ]
+        },
+        {
+          "title": "Play Over a Drone",
+          "mastery": "Hear a mode against a fixed bass rather than in isolation.",
+          "practice": "Hold a D drone and play the 7 notes of D Dorian over it for 60 seconds.",
+          "detail": "A mode played as a scale sounds like the major scale it came from; played over a drone on its own tonic it does not. The drone supplies the context that makes D home, which is the whole mechanism, and 60 seconds is long enough for the ear to accept it.",
+          "proof": "The 7 notes sound like D Dorian rather than like C major.",
+          "pitfall": "Practising modes as scales with no bass, which trains the fingers and not the ear.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why does D Dorian played alone sound like C major?",
+              "answer": "Nothing establishes D as home — the 7 notes are identical."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What supplies the context that makes D home across those 60 seconds?",
+              "answer": "A drone on D."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is the D drone held for about 60 seconds or 6?",
+              "answer": "About 60 seconds."
+            }
+          ]
+        },
+        {
+          "title": "Harmonise a Mode",
+          "mastery": "Find the chords a mode produces on its own degrees.",
+          "practice": "Build triads on degrees 1, 4 and 5 of D Dorian and name their qualities.",
+          "detail": "D F A is minor, G B D is major, A C E is minor. The major chord on degree 4 is Dorian's signature — in a natural minor that chord is minor — so the raised sixth shows up in the harmony as well as the scale.",
+          "proof": "Minor, major, minor on degrees 1, 4 and 5.",
+          "pitfall": "Harmonising a mode with its parent major key's chords, which loses what made the mode different.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What quality is the triad on degree 4 of D Dorian, and which 3 notes?",
+              "answer": "Major — G, B, D."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What quality is the triad on degree 1 of D Dorian?",
+              "answer": "Minor — D, F, A."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which degree's chord is Dorian's signature, and why?",
+              "answer": "The 4th, because the raised 6th makes it major where minor keys have it minor."
+            }
+          ]
+        },
+        {
+          "title": "Use a Mode Deliberately",
+          "mastery": "Write a short passage that establishes a mode rather than its parent key.",
+          "practice": "Write 8 bars in D Dorian that avoid the C major cadence and land on D.",
+          "detail": "Establishing a mode means avoiding the moves that would make its parent key sound like home: no G7 to C, and cadence onto D instead. Using the characteristic note prominently — B natural in D Dorian — is the other half of the job.",
+          "proof": "8 bars ending on D with the B natural audible and no cadence onto C.",
+          "pitfall": "Writing 8 bars that cadence onto C, which is C major with an unusual opening note.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which cadence must 8 bars in D Dorian avoid?",
+              "answer": "G7 to C, which would make C sound like home."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which note should feature prominently in 8 bars of D Dorian, and why?",
+              "answer": "B natural — the raised 6th that identifies Dorian."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where should the 8 bars land?",
+              "answer": "On D."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.notes": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Name the Treble Lines",
+          "mastery": "Say what sits on each of the 5 treble lines with no recital and no landmark.",
+          "practice": "Name the 5 treble stave lines from the bottom up, then say them again from the top down.",
+          "detail": "Bottom to top they are E, G, B, D, F. Learn them as a set rather than as a mnemonic to recite, because a mnemonic has to be run from the start each time and that is the counting this step exists to remove. Say them downwards too, which is where the recital breaks.",
+          "proof": "E G B D F upwards and F D B G E downwards, both without hesitating.",
+          "pitfall": "Running the mnemonic from the bottom every time, which is exactly the counting you are trying to stop.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 5 treble stave lines from the bottom up.",
+              "answer": "E, G, B, D, F."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What note sits on the 3rd line of the treble stave?",
+              "answer": "B."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name those 5 lines from the top down.",
+              "answer": "F, D, B, G, E."
+            }
+          ]
+        },
+        {
+          "title": "Name the Treble Spaces",
+          "mastery": "Name the pitch in each space of the treble stave.",
+          "practice": "Name the 4 treble stave spaces from the bottom up, then name 3 spaces at random.",
+          "detail": "Bottom to top they are F, A, C, E. Together with the lines they alternate, so the full sequence from the bottom line is E, F, G, A, B, C, D, E, F. Testing spaces at random is the part that matters, since in order they can be recited.",
+          "proof": "F A C E upwards, and 3 random spaces named correctly.",
+          "pitfall": "Naming spaces by stepping up from the nearest line, which is faster than counting from the bottom and still counting.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 4 treble stave spaces from the bottom up.",
+              "answer": "F, A, C, E."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the full sequence of 9 positions from the bottom line to the top?",
+              "answer": "E, F, G, A, B, C, D, E, F."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is higher, the 2nd space or the 3rd line?",
+              "answer": "The 3rd line — B against A."
+            }
+          ]
+        },
+        {
+          "title": "Read the Bass Clef",
+          "mastery": "Name pitches on the bass stave as fluently as the treble.",
+          "practice": "Name the 5 bass stave lines from the bottom up and the 4 spaces, then compare with the treble.",
+          "detail": "Lines are G, B, D, F, A and spaces are A, C, E, G. The whole stave sits a step and an octave below the treble, which is why the same written position is a different pitch — reading bass as treble is the commonest error and it is wrong by a sixth.",
+          "proof": "G B D F A and A C E G, named without reference to the treble.",
+          "pitfall": "Reading the bass stave with treble names, which puts every note out by a consistent interval.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 5 bass stave lines from the bottom up.",
+              "answer": "G, B, D, F, A."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 4 bass stave spaces from the bottom up.",
+              "answer": "A, C, E, G."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What note is on the 3rd line of the bass stave?",
+              "answer": "D."
+            }
+          ]
+        },
+        {
+          "title": "Find Middle C",
+          "mastery": "Locate the same pitch on both staves.",
+          "practice": "Write middle C on the treble stave and then on the bass, counting the 1 ledger line each needs.",
+          "detail": "Middle C sits 1 ledger line below the treble stave and 1 above the bass, which is the join between them. Writing it both ways makes the grand stave make sense: the 2 staves are 1 note apart, and that note is the one they share.",
+          "proof": "Both are 1 ledger line from their stave, and the pitch is the same.",
+          "pitfall": "Placing middle C on the bottom line of the treble stave, which is E and a third too high.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Middle C sits how many ledger lines below the treble stave — 1 or 2?",
+              "answer": "1."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Middle C sits how many ledger lines above the bass stave — 1 or 2?",
+              "answer": "1 ledger line above it."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What note is the 1st line of the treble stave, if not middle C?",
+              "answer": "E."
+            }
+          ]
+        },
+        {
+          "title": "Read Without Counting",
+          "mastery": "Name a note on sight rather than working it out from a landmark.",
+          "practice": "Name 20 random notes across both staves in under 60 seconds, checking each answer.",
+          "detail": "Use 3 or 4 landmarks — middle C, treble G on the second line, bass F on the fourth — and read neighbours as steps from them. Twenty notes in a minute is 3 seconds each, which is too fast to count up from the bottom line and slow enough to be reachable.",
+          "proof": "20 correct names inside 60 seconds.",
+          "pitfall": "Practising in order rather than at random, which trains the sequence and not the recognition.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "20 notes in 60 seconds allows how long each?",
+              "answer": "About 3 seconds."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 3 useful landmark notes across the 2 staves.",
+              "answer": "Middle C, treble G on the 2nd line, bass F on the 4th."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why test 20 notes at random rather than in order?",
+              "answer": "Reading in order trains the sequence instead of recognition."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.performance": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Play It Through Without Stopping",
+          "mastery": "Perform a whole piece start to finish whatever happens.",
+          "practice": "Play a 32-bar piece end to end 3 times, never stopping to correct a mistake.",
+          "detail": "Practice trains stopping and fixing; performance requires the opposite. Three complete run-throughs is the minimum to find out where the piece actually breaks under continuity, which is rarely where it breaks in slow practice.",
+          "proof": "3 complete run-throughs with no stops, and a note of where each wobbled.",
+          "pitfall": "Restarting at the first error, which trains the opening and nothing else.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many uninterrupted run-throughs of 32 bars does this step ask for?",
+              "answer": "3."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does restarting at every error train, across 32 bars?",
+              "answer": "The opening bars and nothing else."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where does a 32-bar piece break under continuity, against in slow practice?",
+              "answer": "Usually somewhere different."
+            }
+          ]
+        },
+        {
+          "title": "Know Your Recovery Points",
+          "mastery": "Choose places in a piece you can restart from cleanly.",
+          "practice": "Mark 4 recovery points in a 32-bar piece and practise entering at each one cold.",
+          "detail": "When something goes wrong in performance you need the next place you can rejoin — usually a section start or a phrase beginning. Four across 32 bars is about right. Practise starting from each without a run-up, because that is how you will have to use them.",
+          "proof": "4 marked points, each entered cleanly from cold.",
+          "pitfall": "Only ever practising from the beginning, which leaves no way back in after a slip.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many recovery points across 32 bars?",
+              "answer": "About 4."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where do the 4 recovery points usually sit?",
+              "answer": "At section starts or phrase beginnings."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why practise entering each of the 4 cold rather than with a run-up?",
+              "answer": "That is how they will be used in performance."
+            }
+          ]
+        },
+        {
+          "title": "Perform for One Person",
+          "mastery": "Play for a listener and notice what changes.",
+          "practice": "Play the piece for 1 person and write down 3 things that went differently from practice.",
+          "detail": "An audience of 1 produces most of the effect of an audience of 50, at a fraction of the cost. Expect the tempo to be faster and the dynamics flatter. Writing 3 specific differences gives you something to practise rather than a general anxiety.",
+          "proof": "3 written differences from your solo practice.",
+          "pitfall": "Waiting for a real performance to find out what changes, at which point it is too late to practise for it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How large an audience produces most of the effect — 1 person or 50?",
+              "answer": "1 person."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 things that typically change in front of a listener.",
+              "answer": "The tempo gets faster and the dynamics flatten."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many differences do you write down after playing for 1 person?",
+              "answer": "3."
+            }
+          ]
+        },
+        {
+          "title": "Set the Tempo Under Pressure",
+          "mastery": "Start a piece at the tempo you intended, not the one adrenaline suggests.",
+          "practice": "Start the piece 3 times from silence, checking each opening tempo against a metronome.",
+          "detail": "Nerves add about 10 per cent, so the tempo you feel is the right one is usually too fast. Count 4 beats internally before starting, and check against the metronome afterwards. Knowing your error is 10 per cent lets you aim 10 per cent slow.",
+          "proof": "3 opening tempos measured, with the average error stated.",
+          "pitfall": "Starting at the tempo that feels right on the day, which is the one adrenaline set.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Do nerves add about 10 per cent to a starting tempo, or 50?",
+              "answer": "About 10 per cent."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What do you do before the 1st note?",
+              "answer": "Count 4 beats internally at the intended tempo."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Knowing your error is 10 per cent, what do you aim for?",
+              "answer": "About 10 per cent slower than feels right."
+            }
+          ]
+        },
+        {
+          "title": "Handle the Slip",
+          "mastery": "Continue past a visible mistake without breaking the performance.",
+          "practice": "Perform the piece introducing 1 deliberate wrong note, and carry on as though nothing happened.",
+          "detail": "Audiences notice reactions far more than notes. Practising a deliberate slip removes the flinch, which is the thing that turns a missed note into a visible failure. Keep the face and the tempo steady and most listeners will not register it at all.",
+          "proof": "A performance with a known wrong note and no visible reaction to it.",
+          "pitfall": "Grimacing or stopping, which tells the room about a note most of them missed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What do audiences notice more than 1 wrong note?",
+              "answer": "The performer's reaction to it."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does this exercise use 1 deliberate wrong note or 5?",
+              "answer": "1."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What 2 things stay steady through the slip?",
+              "answer": "The face and the tempo."
+            }
+          ]
+        },
+        {
+          "title": "Shape It for the Room",
+          "mastery": "Adjust dynamics and pacing to the space you are in.",
+          "practice": "Play 8 bars in 2 different rooms and note how the dynamics and tempo had to change.",
+          "detail": "A reverberant room blurs fast passages and swallows quiet ones, so the same piece needs slightly slower tempi and a wider dynamic range. Arriving early enough to play 8 bars in the actual space is the difference between adapting and being surprised.",
+          "proof": "Notes on how the 2 rooms differed and what you changed.",
+          "pitfall": "Playing the identical interpretation in every space and letting the room decide how it lands.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does a reverberant room do to a fast passage and to a quiet 1?",
+              "answer": "Blurs the fast passage and swallows the quiet one."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 things do you adjust for such a room?",
+              "answer": "The tempo, slightly slower, and the dynamic range, wider."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is it worth playing 8 bars in the space beforehand, or none?",
+              "answer": "About 8."
+            }
+          ]
+        },
+        {
+          "title": "Build the Pre-Performance Routine",
+          "mastery": "Fix what you do in the hour before playing.",
+          "practice": "Write 5 things you will do in the hour before performing, in order, and use them twice.",
+          "detail": "A routine removes decisions from an hour with no capacity for them: warm up, run 2 recovery points, breathe, check the instrument, wait. Nothing new on the day. Using it twice before it matters is what makes it familiar rather than another thing to remember.",
+          "proof": "5 written items, used before 2 separate performances.",
+          "pitfall": "Practising something new in the hour before playing, which raises arousal and displaces what was ready.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does the pre-performance routine hold 5 items or 20?",
+              "answer": "5, in a fixed order."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "May you practise 1 new passage in that hour?",
+              "answer": "No — nothing new on the day."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many times should the 5-item routine be used before it matters?",
+              "answer": "At least twice."
+            }
+          ]
+        },
+        {
+          "title": "Communicate Something",
+          "mastery": "Decide what a piece is about and play that.",
+          "practice": "Write 1 sentence saying what your piece is about, then play it twice: once neutrally and once for that sentence.",
+          "detail": "A technically clean performance that is about nothing is the commonest kind. Decide the sentence — this is relentless, this is a lullaby that keeps waking — then let it change the tempo, the dynamics and the pauses. Record both and the difference is usually obvious.",
+          "proof": "2 recordings of the same notes that sound different, and the sentence they differ by.",
+          "pitfall": "Aiming only for accuracy, which produces a performance nobody remembers.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does this step compare 2 recordings or 1, and what differs?",
+              "answer": "2 — the same notes, played neutrally and for the sentence."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does the 1 sentence change, in practice?",
+              "answer": "The tempo, the dynamics and the pauses."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is wrong with aiming only for accuracy across 32 bars?",
+              "answer": "It produces a performance nobody remembers."
+            }
+          ]
+        },
+        {
+          "title": "Debrief Every Performance",
+          "mastery": "Convert a performance into specific practice.",
+          "practice": "After performing, write 3 lines: what held, what broke, and the 1 thing next week's practice starts with.",
+          "detail": "Write it within an hour, while the detail survives. \"Bar 17 fell apart because the left hand was not secure at tempo\" is a practice plan; \"it went badly\" is a mood. One thing, not 6, so it actually gets done.",
+          "proof": "3 written lines ending in a single named practice target.",
+          "pitfall": "Debriefing days later, by which time only the feeling remains.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How soon after performing is the 3-line debrief written?",
+              "answer": "Within about 1 hour."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many practice targets come out of the 3 lines?",
+              "answer": "1."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is a plan: \"bar 17 fell apart at tempo\" or \"it went badly\"?",
+              "answer": "The first — it names what to practise."
+            }
+          ]
+        },
+        {
+          "title": "Perform It Again",
+          "mastery": "Play the same piece for a second audience with the debrief applied.",
+          "practice": "Perform the same piece a 2nd time after fixing the 1 target, and compare the 2 debriefs.",
+          "detail": "The second performance of a piece is where the work shows: the target either held or it did not, and either answer is worth having. Comparing the 2 debriefs is also how you learn whether your diagnosis was right, which is a separate skill from playing.",
+          "proof": "2 debriefs compared, with a verdict on whether the fix held.",
+          "pitfall": "Moving to a new piece after 1 performance, which never tests whether the fix worked.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does comparing the 2 debriefs tell you?",
+              "answer": "Whether the fix held, and whether the diagnosis was right."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is lost by moving to a new piece after 1 performance?",
+              "answer": "The test of whether the fix worked."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many targets were fixed between the 2 performances?",
+              "answer": "1."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.progressions": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Number the Chords",
+          "mastery": "Write a progression in numerals so it transfers between keys.",
+          "practice": "Write C, F, G, C as 4 numerals, then write the same progression in G major.",
+          "detail": "Numerals name the degree the chord is built on, so C F G C in C major is 1 4 5 1, and in G major that is G C D G. Writing progressions this way is what lets a pattern learned once be played in 12 keys.",
+          "proof": "1 4 5 1, which in G major gives G, C, D, G.",
+          "pitfall": "Writing letter names and then transposing them one at a time, which loses the pattern.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write C, F, G, C in C major as 4 numerals.",
+              "answer": "1, 4, 5, 1."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A 1 4 5 1 in G major uses which 4 chords?",
+              "answer": "G, C, D, G."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Transferred to F major, the same 4 numerals give which chords?",
+              "answer": "F, Bb, C, F."
+            }
+          ]
+        },
+        {
+          "title": "Resolve Five to One",
+          "mastery": "Hear and play the strongest cadence in tonal music.",
+          "practice": "Play G7 then C at 60 BPM, then play G7 alone and stop, and describe the difference.",
+          "detail": "The dominant seventh contains the note a semitone below the tonic's third, so it leans. Stopping on G7 leaves the phrase open, which is the clearest demonstration available that harmony creates expectation rather than just colour.",
+          "proof": "The G7 to C version sounds finished and the G7 alone does not.",
+          "pitfall": "Playing G major rather than G7, which resolves less strongly and blunts the point.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 2 chords make a perfect cadence in C major?",
+              "answer": "G, usually G7, then C."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Stopping on G7 leaves the phrase how?",
+              "answer": "Open — it expects the C that has not arrived."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which 1 note of G7 does most of the pulling, and where to?",
+              "answer": "The F, down a semitone to E."
+            }
+          ]
+        },
+        {
+          "title": "The Four-Chord Loop",
+          "mastery": "Play the progression most popular songs are built on.",
+          "practice": "Play 1, 5, 6-minor, 4 in C major as 4 named chords, twice through at 70 BPM.",
+          "detail": "In C that is C, G, Am, F. It works because it leaves and returns without a strong cadence, so it loops rather than concluding. Play it 8 times and notice that nothing about it demands an ending, which is exactly why songs sit on it for 3 minutes.",
+          "proof": "C, G, Am, F, played twice with the loop joining cleanly.",
+          "pitfall": "Ending the loop on the 4 chord and expecting it to sound final, which it never does.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Play 1 5 6m 4 in C major. Which 4 chords?",
+              "answer": "C, G, Am, F."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Play the same 4 numerals in G major.",
+              "answer": "G, D, Em, C."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the 4-chord loop not sound like it wants to end?",
+              "answer": "It returns without a strong cadence, so nothing demands a conclusion."
+            }
+          ]
+        },
+        {
+          "title": "The Two-Five-One",
+          "mastery": "Play the progression that drives most jazz harmony.",
+          "practice": "Play Dm7, G7, Cmaj7 at 60 BPM and name the note that each chord moves by a step.",
+          "detail": "2 5 1 in C major. Each chord shares notes with the next, so the movement is small: the F in Dm7 stays for G7 and falls to E for Cmaj7. Hearing that single line move is what makes the progression feel inevitable rather than arbitrary.",
+          "proof": "The 3 chords played in sequence, with the F to E movement audible.",
+          "pitfall": "Playing all 3 in root position with wide leaps, which hides the voice that connects them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 2 5 1 in C major with sevenths names which 3 chords?",
+              "answer": "Dm7, G7, Cmaj7."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which note is shared by Dm7 and G7 and then falls a semitone?",
+              "answer": "The F, which falls to E."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The same 3 numerals in F major give which chords, with sevenths?",
+              "answer": "Gm7, C7, Fmaj7."
+            }
+          ]
+        },
+        {
+          "title": "Name the Cadences",
+          "mastery": "Identify the four common ways a phrase can end.",
+          "practice": "Label these 4 endings: 5 to 1, 4 to 1, 1 to 5, and 5 to 6-minor.",
+          "detail": "Perfect, plagal, imperfect and interrupted. The first 2 close, the third leaves the door open, the fourth substitutes a minor chord where the ear expected the tonic. Play all 4 in C major and label them by what they do rather than by the name.",
+          "proof": "Perfect, plagal, imperfect and interrupted, each played in C major.",
+          "pitfall": "Labelling any ending on the tonic as perfect, when 4 to 1 is plagal.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which cadence is 4 to 1, as in F to C?",
+              "answer": "Plagal."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which cadence is 5 to 6-minor, as in G to Am?",
+              "answer": "Interrupted."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of the 4 leaves the phrase most open?",
+              "answer": "The imperfect, 1 to 5."
+            }
+          ]
+        },
+        {
+          "title": "Harmonise a Melody",
+          "mastery": "Choose chords that fit a given tune.",
+          "practice": "Harmonise an 8-note melody in C major using only C, F and G, 1 chord per 2 notes.",
+          "detail": "For each pair of notes, pick the chord that contains them, preferring 1, 4 and 5 for the first attempt. Where 2 chords both fit, the choice is yours and the bass line decides it. Where none fits, the melody note is probably passing rather than structural.",
+          "proof": "4 chords chosen, each containing the melody notes it sits under.",
+          "pitfall": "Changing chord on every note, which produces harmony nobody can hear as movement.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The melody holds E and G. Which of C, F and G major contains both?",
+              "answer": "C major — C, E, G."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The melody holds A and F. Which of the 3 fits?",
+              "answer": "F major — F, A, C."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "No chord of the 3 contains a melody note. What is that note likely to be?",
+              "answer": "A passing note rather than a structural one."
+            }
+          ]
+        },
+        {
+          "title": "Write Your Own Eight Bars",
+          "mastery": "Build a progression with a shape and an ending you chose.",
+          "practice": "Write 8 bars of chords in C major with 1 chord per bar, ending on a perfect cadence.",
+          "detail": "Decide the ending first — bars 7 and 8 as G then C — then work backwards so the middle leads there. Use no more than 5 different chords; a progression with 8 different chords in 8 bars usually has no shape at all, only motion.",
+          "proof": "8 bars using at most 5 chords and closing on G to C.",
+          "pitfall": "Writing 8 bars forwards and hoping the last one lands somewhere final.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 2 bars of the 8 do you write first?",
+              "answer": "Bars 7 and 8 — the cadence."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the suggested cap on distinct chords across 8 bars?",
+              "answer": "5."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does a progression of 8 different chords in 8 bars usually lack?",
+              "answer": "Shape — it has motion but no structure."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.pulse": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Clap With a Metronome",
+          "mastery": "Match an external beat and stay locked to it.",
+          "practice": "Clap along with a metronome at 80 BPM for 60 seconds without drifting ahead or behind.",
+          "detail": "Set the metronome at 80 and listen for 4 clicks before joining, so you enter on a beat rather than between them. Aim to hide the click under your clap: if you can still hear it distinctly, you are early or late. A minute is long enough for drift to show.",
+          "proof": "Your clap covers the click for the whole minute, and you can hear it again the moment you drift.",
+          "pitfall": "Clapping slightly ahead of every click, which feels like leading and is 20 milliseconds of early.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At 80 BPM, how many beats pass in 60 seconds?",
+              "answer": "80."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many clicks do you listen to before joining at 80 BPM, and why?",
+              "answer": "4, so you enter on a beat rather than between 2."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You can hear the click clearly under your clap. What does that tell you?",
+              "answer": "You are early or late — a locked clap hides it."
+            }
+          ]
+        },
+        {
+          "title": "Count Bars of Four",
+          "mastery": "Hold a bar structure while the beat continues.",
+          "practice": "Count 8 bars of 4 at 90 BPM aloud, accenting beat 1 of each bar.",
+          "detail": "Say one-two-three-four and lean on the one. Eight bars at 4 beats is 32 beats, which at 90 BPM takes about 21 seconds. Losing the count is normal at first, and it happens at the bar line rather than inside the bar.",
+          "proof": "You reach bar 8 with the accents landing on the metronome's beat 1 every time.",
+          "pitfall": "Accenting every beat, which loses the bar and leaves you with an undifferentiated pulse.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many beats are in 8 bars of 4?",
+              "answer": "32."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 90 BPM, roughly how long do those 32 beats take?",
+              "answer": "About 21 seconds."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of the 4 beats of each bar takes the accent?",
+              "answer": "Beat 1."
+            }
+          ]
+        },
+        {
+          "title": "Keep Time Without the Click",
+          "mastery": "Maintain a tempo after the reference stops.",
+          "practice": "Clap 4 bars with a metronome at 100 BPM, mute it for 4 bars, then check you are still together.",
+          "detail": "Most people speed up when the click goes. Count aloud through the silent bars rather than feeling your way, and check where you are when it returns: ahead means you rushed, behind means you sagged, and both are useful information rather than failure.",
+          "proof": "The metronome returns on your beat 1 after 4 silent bars.",
+          "pitfall": "Speeding up in the silence, which is the default and is why the check exists.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You mute 4 bars of 4 at 100 BPM. How many beats are you holding alone?",
+              "answer": "16."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The click returns on your beat 3. Did you rush or sag?",
+              "answer": "You rushed — you arrived at bar 2 early."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which direction do most players drift across 4 silent bars?",
+              "answer": "Faster."
+            }
+          ]
+        },
+        {
+          "title": "Read a Tempo Marking",
+          "mastery": "Convert a written tempo into a metronome setting.",
+          "practice": "Set a metronome for Allegro at 120 BPM and for Adagio at 60, and describe the difference in feel.",
+          "detail": "A marking like Allegro is a range rather than a number — roughly 120 to 168 — and Adagio is around 60. Setting both and playing the same phrase at each makes the point faster than any definition: the notes are identical and the music is not.",
+          "proof": "You can state an approximate BPM range for both markings.",
+          "pitfall": "Treating Allegro as exactly 120, when it names a band rather than a value.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Roughly what BPM range does Allegro name?",
+              "answer": "About 120 to 168."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Roughly what BPM is Adagio?",
+              "answer": "About 60."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is a tempo marking like Allegro a single value or a band of 40 BPM?",
+              "answer": "A band."
+            }
+          ]
+        },
+        {
+          "title": "Change Tempo Deliberately",
+          "mastery": "Move between two tempos on purpose and land on the new one.",
+          "practice": "Play 4 bars at 80 BPM then 4 bars at 100, switching exactly on a bar line.",
+          "detail": "Decide the new tempo before the change rather than accelerating into it. Count the last bar of the old tempo, then start the new one on its beat 1. Check with the metronome set to 100 for the second half: if you arrive at 92, the change was a drift and not a decision.",
+          "proof": "The second 4 bars sit at 100 against the metronome, from beat 1.",
+          "pitfall": "Gradually accelerating across the bar line, which lands somewhere between the 2 tempos.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You aim for 100 BPM after 4 bars at 80 and arrive at 92. What happened?",
+              "answer": "The tempo drifted upwards rather than changing on the bar line."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where exactly does the change from 80 to 100 BPM happen?",
+              "answer": "On beat 1 of the 5th bar."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What do you decide before the change to 100 rather than during it?",
+              "answer": "The new tempo."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.rhythm": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Note Values in a Bar",
+          "mastery": "Say how many of each note value fill a bar of four.",
+          "practice": "Write how many crotchets, quavers and semiquavers fill 1 bar of 4/4.",
+          "detail": "A crotchet is 1 beat, so 4 fill the bar; a quaver is half a beat, so 8 do; a semiquaver is a quarter, so 16. The arithmetic is halving each time, and being fluent with it is what lets you read a bar rather than decode it.",
+          "proof": "4 crotchets, 8 quavers, 16 semiquavers.",
+          "pitfall": "Counting a quaver as 1 beat because it is the note you see most, which doubles every bar.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many quavers fill a bar of 4/4?",
+              "answer": "8."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many semiquavers fill 1 crotchet beat?",
+              "answer": "4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many semiquavers fill a bar of 4/4?",
+              "answer": "16."
+            }
+          ]
+        },
+        {
+          "title": "Clap a Written Rhythm",
+          "mastery": "Perform a notated rhythm accurately at a slow tempo.",
+          "practice": "Clap crotchet, 2 quavers, crotchet, crotchet at 70 BPM, counting 1, 2-and, 3, 4 aloud.",
+          "detail": "Say the subdivision out loud — one, two-and, three, four — so the quavers land on the beat and the and. Start at 70 rather than 100: the point is placement, and a tempo you can hold exposes whether the second quaver is early.",
+          "proof": "The 5 claps land on 1, 2, the and of 2, 3 and 4.",
+          "pitfall": "Rushing the pair of quavers so the second one arrives before the and.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 1, 2-and, 3, 4, how many claps does the bar hold?",
+              "answer": "5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where does the 2nd quaver of the pair fall?",
+              "answer": "On the and of beat 2."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why count the subdivision aloud at 70 BPM?",
+              "answer": "It fixes where the off-beat falls instead of leaving it to feel."
+            }
+          ]
+        },
+        {
+          "title": "Add the Rests",
+          "mastery": "Place silence as precisely as sound.",
+          "practice": "Clap crotchet, rest, crotchet, rest at 70 BPM, and count all 4 beats aloud.",
+          "detail": "A rest is not a pause in the counting: beats 2 and 4 still happen, you simply do not clap on them. Keep counting aloud through the rests, and move your hands on the rest without touching if you tend to lose the beat there.",
+          "proof": "Claps on 1 and 3 only, with the count unbroken across all 4 beats.",
+          "pitfall": "Shortening the bar by skipping the counting during the rests.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Crotchet, rest, crotchet, rest in 4/4: on which beats do you clap?",
+              "answer": "1 and 3."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A bar of crotchet, rest, crotchet, rest in 4/4 still holds how many beats?",
+              "answer": "4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What continues through the 2 rests?",
+              "answer": "The counting — the beat does not pause."
+            }
+          ]
+        },
+        {
+          "title": "Play Against the Beat",
+          "mastery": "Place notes on the off-beat while the pulse stays on the beat.",
+          "practice": "Clap only the ands of a bar of 4 at 70 BPM while tapping your foot on 1, 2, 3, 4.",
+          "detail": "The foot keeps the beat and the hands take the off-beats, which is harder than it sounds because the two want to synchronise. Start by clapping the and of beat 2 only, then add the others. Four claps against 4 taps, none of them together.",
+          "proof": "4 claps and 4 taps alternate, with no clap landing on a tap.",
+          "pitfall": "Drifting until the claps land on the beat, at which point you are playing the pulse.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many off-beats does a bar of 4 have?",
+              "answer": "4 — the and of each beat."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your claps end up on the same instant as your foot taps. What has gone wrong?",
+              "answer": "The off-beats have drifted onto the beat."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of the 2 — hands or foot — keeps the pulse in this exercise?",
+              "answer": "The foot."
+            }
+          ]
+        },
+        {
+          "title": "Tie and Dot a Note",
+          "mastery": "Work out the length of dotted and tied notes.",
+          "practice": "Give the beat count for these 3: a dotted crotchet, a dotted minim, and a crotchet tied to a quaver.",
+          "detail": "A dot adds half the note's value, so a dotted crotchet is 1.5 beats and a dotted minim is 3. A tie adds the 2 values, so a crotchet tied to a quaver is also 1.5. Two notations for the same length, chosen by whether the note crosses a beat or a bar line.",
+          "proof": "1.5, 3 and 1.5 beats.",
+          "pitfall": "Reading a dot as doubling the note, which turns a dotted crotchet into 2 beats.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many beats is a dotted crotchet in 4/4?",
+              "answer": "1.5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 4/4, how many beats is a dotted minim?",
+              "answer": "3."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A crotchet tied to a quaver lasts how long, and why 2 notations for it?",
+              "answer": "1.5 beats; the tie is used when the note crosses a beat or bar line."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.scales": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Major Step Pattern",
+          "mastery": "State the sequence of tones and semitones a major scale uses.",
+          "practice": "Write the step pattern of a major scale as 7 intervals, then check it against C major.",
+          "detail": "Tone, tone, semitone, tone, tone, tone, semitone. On C major every step lands on a white key, which is why it is the scale the pattern is learned from: the semitones fall between E and F and between B and C, where there is no black key.",
+          "proof": "T T S T T T S, and C major needs no sharps or flats.",
+          "pitfall": "Putting the first semitone after the second note, which gives a minor scale instead.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the major scale pattern of 7 steps using T and S.",
+              "answer": "T T S T T T S."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Between which 2 pairs of notes do C major's semitones fall?",
+              "answer": "E to F, and B to C."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does C major need 0 accidentals or 1?",
+              "answer": "0."
+            }
+          ]
+        },
+        {
+          "title": "Build G Major",
+          "mastery": "Apply the pattern to a new starting note.",
+          "practice": "Build a major scale from G using T T S T T T S and name the 1 note that needs an accidental.",
+          "detail": "G, A, B, C, D, E, then the pattern demands a tone above E, which is F sharp, then a semitone to G. Writing F natural breaks the final semitone, and that single note is the whole content of G major's key signature.",
+          "proof": "G A B C D E F# G, with F sharp as the only accidental.",
+          "pitfall": "Writing F natural, which leaves a tone between the 7th note and the octave.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 7 notes of G major.",
+              "answer": "G, A, B, C, D, E, F#, G."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 7 notes of G major needs an accidental, and which?",
+              "answer": "The 7th, F, which becomes F sharp."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Using F natural as the 7th note breaks what?",
+              "answer": "The final step becomes a tone rather than the semitone the pattern needs."
+            }
+          ]
+        },
+        {
+          "title": "Build F Major",
+          "mastery": "Apply the pattern where the accidental is a flat.",
+          "practice": "Build a major scale from F using the 7 steps and name the 1 note that must be flattened.",
+          "detail": "F, G, A, then the pattern wants a semitone, which is B flat rather than B. Then C, D, E, F. This is the first scale where the accidental is a flat, and writing it as A sharp would be the same pitch with the wrong name — the scale must use each letter once.",
+          "proof": "F G A Bb C D E F, with B flat as the only accidental.",
+          "pitfall": "Naming the flattened note A sharp, which is the right pitch and duplicates the letter A.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 7 notes of F major.",
+              "answer": "F, G, A, Bb, C, D, E, F."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 7 notes of F major is flattened?",
+              "answer": "The 4th, B."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is the 4th note called B flat rather than A sharp?",
+              "answer": "A major scale uses each of the 7 letters once, and A is already taken."
+            }
+          ]
+        },
+        {
+          "title": "The Natural Minor",
+          "mastery": "State the minor step pattern and build a minor scale.",
+          "practice": "Build the natural minor from A and compare its 7 notes with C major's.",
+          "detail": "Tone, semitone, tone, tone, semitone, tone, tone. From A that gives A B C D E F G A — the same 7 notes as C major, started 3 semitones lower. That shared set is what relative keys means, and hearing them as different is the point.",
+          "proof": "A B C D E F G A, with no accidentals, and the same notes as C major.",
+          "pitfall": "Assuming a scale with no accidentals must be C major, when A minor has none either.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the natural minor pattern of 7 steps using T and S.",
+              "answer": "T S T T S T T."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 7 notes of A natural minor.",
+              "answer": "A, B, C, D, E, F, G, A."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which major key shares those 7 notes?",
+              "answer": "C major."
+            }
+          ]
+        },
+        {
+          "title": "Play It Hands Separately",
+          "mastery": "Perform a scale evenly with one hand at a stated tempo.",
+          "practice": "Play a 1-octave major scale up and down with your right hand at 60 BPM, 1 note per beat.",
+          "detail": "One note per click at 60 is slow enough that unevenness is audible. Listen for the join where the thumb passes under, which is where almost every scale develops a bump. Play it 4 times and only raise the tempo when all 4 are even.",
+          "proof": "8 notes up and 8 down with no audible gap at the thumb crossing.",
+          "pitfall": "Raising the tempo before the crossing is even, which practises the bump faster.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 1-octave scale up and down is how many notes, counting the top once?",
+              "answer": "15."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 60 BPM with 1 note per beat, where does unevenness usually appear?",
+              "answer": "At the thumb crossing."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many even repetitions at 60 BPM before raising the tempo?",
+              "answer": "4."
+            }
+          ]
+        },
+        {
+          "title": "Two Octaves, Hands Together",
+          "mastery": "Play a scale across two octaves with both hands in time.",
+          "practice": "Play a 2-octave major scale hands together at 50 BPM, 1 note per beat, then at 70.",
+          "detail": "Hands together doubles the coordination problem at the crossings, because the 2 thumbs pass at different points. Start slower than the single-hand tempo, not faster. If one hand leads, play 4 bars of the passage where they diverge rather than restarting the whole scale.",
+          "proof": "2 octaves up and down at 50 with the hands landing together, then the same at 70.",
+          "pitfall": "Restarting the whole scale each time the crossing goes wrong, which practises the opening most.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why start hands together slower than the single-hand tempo of 60?",
+              "answer": "The 2 thumb crossings fall at different points, which doubles the coordination problem."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "One hand leads at the crossing of a 2-octave scale. Restart or drill the crossing?",
+              "answer": "Drill the crossing — restarting practises the opening."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A 2-octave scale up and down is how many notes, counting the top once?",
+              "answer": "29."
+            }
+          ]
+        }
+      ]
+    },
+    "mu.sightread": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Scan Before Playing",
+          "mastery": "Read a passage's key facts before the first note.",
+          "practice": "Take 8 unseen bars and note the key, time signature and hardest bar in 30 seconds.",
+          "detail": "Thirty seconds buys most of what sight reading needs: what key, how many beats, and where the trouble is. Finding the hardest bar in advance means you can slow the whole passage to a tempo that survives it, rather than discovering it at speed.",
+          "proof": "3 facts noted inside 30 seconds, before playing a note.",
+          "pitfall": "Starting to play immediately, which finds the hard bar at the worst moment.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 3 facts does the 30-second scan collect?",
+              "answer": "The key, the time signature and the hardest bar."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why find the hardest bar before playing 8 bars?",
+              "answer": "The tempo can be set to survive it rather than discovering it at speed."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How long does the scan of 8 bars take?",
+              "answer": "About 30 seconds."
+            }
+          ]
+        },
+        {
+          "title": "Choose a Survivable Tempo",
+          "mastery": "Pick a speed the whole passage can be played at without stopping.",
+          "practice": "Set a tempo from the hardest bar, then play all 8 bars at it without stopping.",
+          "detail": "The tempo is decided by the worst bar, not the first: a passage played at 80 that collapses in bar 6 is slower overall than one played at 50 throughout. Practising this is mostly practising the humility to pick 50.",
+          "proof": "8 bars played end to end with no stop, however slow.",
+          "pitfall": "Choosing the tempo from the easy opening, which guarantees a breakdown later.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which bar of the 8 decides the tempo?",
+              "answer": "The hardest one."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is 80 BPM with a collapse in bar 6 faster overall than 50 throughout?",
+              "answer": "No — the collapse costs more than the extra speed gains."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the 1 rule about stopping?",
+              "answer": "Do not stop, whatever goes wrong."
+            }
+          ]
+        },
+        {
+          "title": "Keep Going After a Mistake",
+          "mastery": "Continue in time when a note goes wrong.",
+          "practice": "Play 8 bars deliberately missing 2 notes, and carry on without correcting either.",
+          "detail": "Stopping to fix a note is the habit that makes sight reading unusable in an ensemble, and practising it deliberately is the fastest cure. Miss the notes on purpose, keep the pulse, and note afterwards that the passage was still recognisable.",
+          "proof": "8 bars in time with 2 known misses and no correction.",
+          "pitfall": "Going back to fix the wrong note, which loses the place and the pulse together.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You miss a note in bar 3 of 8. Correct it or continue?",
+              "answer": "Continue — the pulse matters more than the note."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What 2 things are lost by going back to fix a note?",
+              "answer": "The place in the music and the pulse."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why miss 2 notes deliberately?",
+              "answer": "It practises continuing, which is the actual skill."
+            }
+          ]
+        },
+        {
+          "title": "Look Ahead One Bar",
+          "mastery": "Read ahead of what your hands are playing.",
+          "practice": "Play 8 bars keeping your eyes 1 bar ahead of your hands, and say what bar 4 held while playing bar 3.",
+          "detail": "Your hands play what your eyes left a moment ago, which is why looking at the note you are playing is too late. Start by looking ahead through easy bars only. Being able to report the next bar's contents while playing is the test that it is really happening.",
+          "proof": "You can name what bar 4 held while your hands were in bar 3.",
+          "pitfall": "Looking at the note under your fingers, which leaves no time to prepare the next one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How far ahead of the hands should the eyes be — 1 bar or 4?",
+              "answer": "About 1 bar."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What test shows that looking 1 bar ahead is really happening?",
+              "answer": "Being able to say what the next bar holds while playing the current one."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is reading the note under your fingers in bar 3 too late?",
+              "answer": "There is no time left to prepare it."
+            }
+          ]
+        },
+        {
+          "title": "Read the Rhythm Alone",
+          "mastery": "Separate rhythm from pitch when reading is hard.",
+          "practice": "Clap the rhythm of 8 unseen bars, then play the pitches, then combine both.",
+          "detail": "Two easy problems instead of one hard one. Clap the rhythm with the counting aloud, then play the notes without regard to time, then put them together. On a difficult passage this is faster than attempting both at once, which is the point.",
+          "proof": "The rhythm clapped, the pitches played, then the passage together.",
+          "pitfall": "Attempting both at once on a passage where either alone is already difficult.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What are the 3 passes over the 8 bars, in order?",
+              "answer": "Rhythm clapped, pitches played, then both together."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why split 1 hard problem into 2 easier ones?",
+              "answer": "Each pass is manageable, and together they are faster than failing at both."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "During the pitch pass over 8 bars, what is ignored?",
+              "answer": "The timing."
+            }
+          ]
+        },
+        {
+          "title": "Read a Chord at Sight",
+          "mastery": "Take in a vertical stack of notes as a shape.",
+          "practice": "Read 10 written triads and name each as a chord rather than as 3 separate notes.",
+          "detail": "Learn the look of a stack: 3 notes on consecutive lines is a root-position triad, and the gaps tell you the inversion. Naming the chord rather than spelling it is what makes chordal reading possible at tempo, because 3 notes read separately cost 3 times as long.",
+          "proof": "10 triads named as chords, with the inversion stated.",
+          "pitfall": "Spelling each of the 3 notes and then working out the chord, which is too slow to play from.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "3 notes on consecutive stave lines is which position of a triad?",
+              "answer": "Root position."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What tells you the inversion of a written triad of 3 notes?",
+              "answer": "The gaps in the stack."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is spelling all 3 notes too slow?",
+              "answer": "It costs 3 readings where the shape costs 1."
+            }
+          ]
+        },
+        {
+          "title": "Sight Read Every Day",
+          "mastery": "Build the habit that is the only real driver of improvement.",
+          "practice": "Sight read 8 new bars a day for 7 days and log the tempo and the number of stops.",
+          "detail": "New material every day, never the same passage twice — a passage played a second time is practice rather than sight reading. Log the tempo and the stops, because those 2 numbers moving is what improvement looks like here.",
+          "proof": "7 log entries with a tempo and a stop count each.",
+          "pitfall": "Rereading yesterday's 8 bars, which is practice and does nothing for sight reading.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Are 8 new bars read a day for 7 days, or 1 passage reread?",
+              "answer": "8 bars a day for 7 days."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 numbers go in the log?",
+              "answer": "The tempo and the number of stops."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why must the 8 bars be new each day?",
+              "answer": "A repeated passage is practice, not sight reading."
+            }
+          ]
+        },
+        {
+          "title": "Read With Someone Else",
+          "mastery": "Sight read in time with another player.",
+          "practice": "Read 8 bars of a duet with 1 other player, agreeing the tempo before you start.",
+          "detail": "An ensemble removes the option of stopping, which is why this is the strongest version of the exercise. Agree the tempo and count 4 beats in. When you get lost, find the next bar line rather than the next note — coming back in on a bar line is recoverable and coming back mid-bar is not.",
+          "proof": "8 bars played together with both parts ending in the same bar.",
+          "pitfall": "Trying to rejoin mid-bar after losing your place, which usually loses the other player too.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You lose your place in bar 5 of 8. What do you look for?",
+              "answer": "The next bar line, not the next note."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is agreed before the 8 bars start?",
+              "answer": "The tempo, with 4 beats counted in."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is duet reading of 8 bars stronger than reading alone?",
+              "answer": "Stopping is not an option."
+            }
+          ]
+        }
+      ]
+    },
     "ph.newton": {
       "model": "openai/gpt-oss-120b",
       "verifier": "rules+openai/gpt-oss-120b",
