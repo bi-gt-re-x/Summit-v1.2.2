@@ -416,6 +416,38 @@ def test_a_set_must_open_light_and_end_heavy():
     assert any('easier' in reason for reason in whole), whole
 
 
+def test_how_many_problems_a_step_gets_follows_its_cost():
+    """The same table frontend/src/utils/problemSet.test.ts asserts.
+
+    Two languages decide this — the panel drew graded slots before there was
+    anything to put in them, and the generator now fills them — so the numbers
+    are asserted in both places rather than trusted to stay in step. A
+    disagreement here is a step served with four questions into a layout drawn
+    for three.
+    """
+    assert [skillsteps.problem_count(m) for m in (5, 15, 20, 25, 30, 45, 180)] == \
+        [3, 3, 4, 5, 6, 9, 9]
+
+
+def test_a_generated_set_is_graded_in_a_shape_the_rules_accept():
+    """The slope the pipeline assigns is the slope the reviewer demands.
+
+    `problem_slots` exists so that no call ever has to argue with the `graded`
+    checks: the bands are a fact about how the panel reads, not a judgement made
+    per set. If these two ever disagree the generator fails every node it
+    writes and the reason will look like a content problem, so it is asserted
+    directly.
+    """
+    for minutes in (5, 20, 25, 30, 60):
+        slots = skillsteps.problem_slots(minutes)
+        written = [problem(slot=one['slot'], weight=one['weight'],
+                           prompt='Factor x^2 + {}x + {}.'.format(one['slot'] + 4, one['slot'] + 3),
+                           answer='(x + {})(x + 1).'.format(one['slot'] + 3))
+                   for one in slots]
+        _, whole = skillsteps.review_problems(written, step())
+        assert whole == [], (minutes, whole)
+
+
 def test_a_set_that_only_restates_its_step_is_rejected():
     """One problem repeating the practice line is fine; all of them is not."""
     line = step()['practice']

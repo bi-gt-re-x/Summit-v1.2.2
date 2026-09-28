@@ -531,6 +531,49 @@ WEIGHTS = ('warmup', 'core', 'stretch')
 #: The named checks a problem is credited with when it passes.
 PROBLEM_CHECKS = ('shape', 'concrete', 'distinct', 'graded', 'answered')
 
+#: How many problems a step is owed, and the share of them that open light.
+#: These mirror frontend/src/utils/problemSet, which drew the graded slots
+#: before there was anything to put in them — the numbers live in both places
+#: because both have to agree on what a set looks like, and the note there is
+#: the one that explains why a set is thirds.
+MIN_PROBLEMS = 3
+MAX_PROBLEMS = 9
+WARM_UP_SHARE = 3
+
+
+def problem_count(minutes):
+    """How many problems a step of this cost gets.
+
+    Read off the step's own minutes rather than fixed, so a five-minute step
+    and a ninety-minute one are not owed the same sheet. `countFor` in
+    problemSet.ts is the same arithmetic; the half-up rounding is written out
+    because Python's `round` goes to even and JavaScript's does not.
+    """
+    cost = int((int(minutes or 0) / 5) + 0.5)
+    return max(MIN_PROBLEMS, min(MAX_PROBLEMS, cost))
+
+
+def problem_slots(minutes):
+    """The bands for one step's set, in order, easiest first.
+
+    The slope is decided here rather than asked for, which is the point: that a
+    set opens on a warm-up and ends on a stretch is a fact about how the panel
+    reads, not a judgement a writer should be making per step — and
+    `review_problems` rejects a set that gets it wrong. A generator that picks
+    its own bands is a generator that argues with the validator.
+    """
+    total = problem_count(minutes)
+    warm = max(1, -(-total // WARM_UP_SHARE))
+    # Symmetrical with the warm-up band, so the core is the widest part of any
+    # set big enough to have one, and never overlapping on a small set.
+    stretch = max(1, min(total - warm, warm))
+    return [
+        {'slot': at,
+         'weight': ('warmup' if at <= warm
+                    else 'stretch' if at > total - stretch else 'core')}
+        for at in range(1, total + 1)
+    ]
+
 
 def _prose(text):
     """A line's content words with the numbers and notation taken out.

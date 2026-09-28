@@ -19,18 +19,23 @@
  * The first third is the floor rather than the target: `WARM_UP_SHARE` rounds
  * up, so a set of four opens with two warm-ups rather than one.
  *
- * ## Why this is derived rather than stored
+ * ## Why the shape is still derived when the questions are stored
  *
- * The problems themselves are not written yet — see the slots in
- * components/SkillTree/LatticePanel. What *is* decided is the shape of a set:
- * how many, in what order, under which headings. Deciding that here means the
- * panel already lays out a graded ladder, and filling it later is a change of
- * source rather than a change of design.
+ * The questions arrive per step from the server, the same way the steps
+ * themselves do — see services/skillSteps, and the note at the top of
+ * data/sql/skillsteps.sql on why generated content is stored rather than
+ * derived. What stays here is the shape of a set: how many, in what order,
+ * under which headings.
  *
- * When the problems do arrive they will arrive per step from the server, the
- * same way the steps themselves did — see services/skillSteps and the note at
- * the top of data/sql/skillsteps.sql on why generated content is stored rather
- * than derived. `slotsFor` is then the thing that gets deleted, not extended.
+ * It stays because most of the library still has none. A reader on a node the
+ * generator has not reached should meet a graded ladder of empty slots rather
+ * than a feature that is invisible until a run gets there, so the panel lays
+ * the slope out either way and fills what it has. `countFor` is also the number
+ * the generator writes to: `problem_slots` in backend/tracking/skillsteps.py is
+ * this arithmetic again in Python, and the two are asserted against the same
+ * table — here in problemSet.test.ts and there in tests/test_skill_steps.py.
+ * A set graded differently from the slots drawn for it is a step served four
+ * questions into a layout expecting three.
  */
 /**
  * The least a step has to be for problems to be built on it.

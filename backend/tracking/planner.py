@@ -818,6 +818,28 @@ def _from_openai_chat(url: str, token: str, model_id: str, label: str,
         raise PlannerUnavailable(
             '“{}” is not being served by {}. Set a model that is.'.format(model_id, label))
     if response.status_code == 429:
+        # Two different refusals arrive as 429 and they want opposite
+        # responses. A per-minute allowance is a queue: wait in it. A per-day
+        # one is closed until the window rolls, and a caller that waits in it
+        # sleeps all afternoon for nothing. Only the body says which — the
+        # status and the headers look identical — so it is read here rather
+        # than left to every caller.
+        #
+        # What reads the distinction: RATE_LIMIT_TRIES in
+        # scripts/generate_skill_steps.py, which waits out a busy minute and
+        # stops the whole run on a spent day rather than sleeping through six
+        # hundred nodes it cannot write.
+        detail = ''
+        try:
+            detail = ((response.json() or {}).get('error') or {}).get('message') or ''
+        except ValueError:
+            detail = ''
+        lower = detail.lower()
+        if 'per day' in lower or 'tpd' in lower or 'rpd' in lower:
+            raise PlannerUnavailable(
+                '{} has spent this key\'s allowance for the day rather than for '
+                'the minute, so waiting will not help: {}'.format(
+                    label, detail[:200]))
         raise PlannerUnavailable(
             '{} is rate-limiting this key. Try again in a minute.'.format(label))
     # Not "too large" in the sense the status code usually means. Free tiers
