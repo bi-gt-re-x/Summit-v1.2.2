@@ -46,6 +46,7 @@ JSON_COLUMNS = {
     ('library_items', 'tags'),
     ('calendar_documents', 'data'),
     ('skill_steps', 'checks'),
+    ('skill_problems', 'checks'),
 }
 
 # The JSON columns that hold a *scalar* — a word, a number, a flag — rather
@@ -488,6 +489,36 @@ ADDED_TABLES = ('''
 ''', '''
     CREATE INDEX IF NOT EXISTS skill_step_audit_run
         ON skill_step_audit (run_id, node_id)
+''', '''
+    -- The questions behind a step. Mirrors data/sql/skillsteps.sql, where the
+    -- note on why a problem set is rows rather than a column lives.
+    CREATE TABLE IF NOT EXISTS skill_problems (
+        node_id      TEXT    NOT NULL,
+        ordinal      INTEGER NOT NULL,
+        slot         INTEGER NOT NULL,
+        weight       TEXT    NOT NULL,
+        prompt       TEXT    NOT NULL,
+        answer       TEXT    NOT NULL,
+        hint         TEXT    NOT NULL DEFAULT '',
+        tree_id      TEXT    NOT NULL,
+        model        TEXT    NOT NULL,
+        generated_at TEXT    NOT NULL,
+        verified_at  TEXT    NOT NULL,
+        verifier     TEXT    NOT NULL,
+        checks       TEXT    NOT NULL DEFAULT '[]',
+        PRIMARY KEY (node_id, ordinal, slot),
+        CHECK (ordinal >= 1),
+        CHECK (slot >= 1),
+        CHECK (weight IN ('warmup', 'core', 'stretch')),
+        CHECK (length(prompt) > 0),
+        CHECK (length(answer) > 0),
+        CHECK (length(verified_at) > 0),
+        CHECK (length(verifier) > 0),
+        CHECK (checks LIKE '["%')
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS skill_problems_step
+        ON skill_problems (node_id, ordinal, slot)
 ''')
 
 
@@ -3036,5 +3067,127 @@ def step_audit_summary(run_id=None):
                      'GROUP BY stage, outcome ORDER BY stage, outcome')
             rows = con.execute(query)
         return [{'stage': row[0], 'outcome': row[1], 'count': row[2]} for row in rows]
+    finally:
+        con.close()
+
+
+#: Columns a problem is served with.
+SKILL_PROBLEM_COLUMNS = (
+    'node_id', 'ordinal', 'slot', 'weight', 'prompt', 'answer', 'hint',
+    'tree_id', 'model', 'generated_at', 'verified_at', 'verifier', 'checks',
+)
+
+
+def skill_problems_for(node_ids):
+    """Node id → its problems, ordered by step then slot.
+
+    One query for a whole node rather than one per step: the problems screen is
+    opened from a list that already holds every step, and a request per step
+    would be nine round trips to draw one page.
+    """
+    ids = [str(one) for one in node_ids if one]
+    if not ids:
+        return {}
+    con = connect()
+    try:
+        if not _schema(con, 'skill_problems'):
+            return {}
+        out = {}
+        columns = ', '.join('"{}"'.format(name) for name in SKILL_PROBLEM_COLUMNS)
+        for start in range(0, len(ids), 400):
+            batch = ids[start:start + 400]
+            marks = ', '.join('?' for _ in batch)
+            query = (
+                'SELECT {} FROM skill_problems WHERE node_id IN ({}) '
+                'ORDER BY node_id, ordinal, slot'.format(columns, marks))
+            for record in con.execute(query, batch):
+                row = _step_row(record)
+                out.setdefault(row['node_id'], []).append(row)
+        return out
+    finally:
+        con.close()
+
+
+def save_step_problems(node_id, ordinal, rows):
+    """Replace one step's problem set, all or nothing.
+
+    The step is the unit for the same reason the node is the unit in
+    `save_node_steps`: a set is graded from light to heavy, and half a new set
+    interleaved with half an old one is a slope with a step missing out of the
+    middle of it.
+    """
+    con = connect()
+    try:
+        with con:
+            con.execute(
+                'DELETE FROM skill_problems WHERE node_id = ? AND ordinal = ?',
+                (node_id, ordinal))
+            for row in rows:
+                values = dict(row)
+                values['node_id'] = node_id
+                values['ordinal'] = ordinal
+                checks = values.get('checks') or []
+                if not isinstance(checks, str):
+                    values['checks'] = json.dumps(list(checks))
+                columns = ', '.join('"{}"'.format(n) for n in SKILL_PROBLEM_COLUMNS)
+                marks = ', '.join(':{}'.format(n) for n in SKILL_PROBLEM_COLUMNS)
+                con.execute(
+                    'INSERT INTO skill_problems ({}) VALUES ({})'.format(columns, marks),
+                    {n: values.get(n) for n in SKILL_PROBLEM_COLUMNS})
+        return len(rows)
+    finally:
+        con.close()
+
+
+def skill_problem_coverage():
+    """Tree id → (steps with problems, total problems)."""
+    con = connect()
+    try:
+        if not _schema(con, 'skill_problems'):
+            return {}
+        return {
+            row[0]: (row[1], row[2])
+            for row in con.execute(
+                'SELECT tree_id, COUNT(DISTINCT node_id || ":" || ordinal), COUNT(*) '
+                'FROM skill_problems GROUP BY tree_id')
+        }
+    finally:
+        con.close()
+
+
+def subject_work_by_tree(subject_tree):
+    """How much finished work each skill tree has behind it, across all accounts.
+
+    `subject_tree` is the catalogue's subject → tree map from
+    backend/config/skill_trees. It is passed in rather than imported so this
+    module keeps depending only on the database, which is the layering rule in
+    backend/api/__init__.py.
+
+    This is what decides where writing effort goes. The library is twelve
+    hundred nodes and no run has ever finished it, so "which trees do the
+    people using this app actually work in" is the difference between content
+    somebody reads and content nobody opens. Returns tree id →
+    (xp, accounts, tasks), heaviest first.
+    """
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return []
+        totals = {}
+        query = ("SELECT subject, user_id, COUNT(*), SUM(xp_value) FROM tasks "
+                 "WHERE status = 'done' AND subject IS NOT NULL AND subject != '' "
+                 "GROUP BY subject, user_id")
+        for subject, user, count, xp in con.execute(query):
+            tree = subject_tree.get(subject)
+            if not tree:
+                continue
+            entry = totals.setdefault(tree, {'xp': 0, 'accounts': set(), 'tasks': 0})
+            entry['xp'] += xp or 0
+            entry['tasks'] += count
+            entry['accounts'].add(user)
+        return sorted(
+            ((tree, entry['xp'], len(entry['accounts']), entry['tasks'])
+             for tree, entry in totals.items()),
+            key=lambda row: (-row[1], row[0]))
     finally:
         con.close()

@@ -27,6 +27,23 @@
  */
 import { get } from './api';
 
+/**
+ * One question behind a step.
+ *
+ * `answer` is always present — a question nobody wrote the answer to cannot be
+ * marked, and a reader who gets it wrong finds out nothing. `hint` may be
+ * empty, and usually is on a warm-up: one that needs a hint is not a warm-up.
+ */
+export interface Problem {
+  /** Position in the step's set, 1-based. */
+  slot: number;
+  /** Which band it is in — see utils/problemSet. */
+  weight: 'warmup' | 'core' | 'stretch';
+  prompt: string;
+  answer: string;
+  hint: string;
+}
+
 /** One step, as the panel draws it. Mirrors backend/tracking/skillsteps.py. */
 export interface WrittenStep {
   /** 1-based position in the programme. */
@@ -45,6 +62,11 @@ export interface WrittenStep {
   pitfall: string;
   /** Roughly what it costs. */
   minutes: number;
+  /**
+   * The written questions, light first. Empty where none are written yet, and
+   * the panel then draws the default ladder of slots from utils/problemSet.
+   */
+  problems: Problem[];
   /** What passed this step, and when. Every stored step carries one. */
   verified: {
     at: string;

@@ -472,8 +472,22 @@ def programmes_for(node_ids):
     absent, not empty — see the note on `skill_steps_for`.
     """
     stored = connection.skill_steps_for(node_ids)
+    # Problems come back with the steps rather than behind a second request.
+    # The screen that draws them is one click from the step list and holds a
+    # whole set, so fetching per step would be nine round trips to draw one
+    # page — and the page already has every step in memory by then.
+    problems = connection.skill_problems_for(node_ids)
     out = {}
     for node_id, rows in stored.items():
+        by_step = {}
+        for problem in problems.get(node_id, []):
+            by_step.setdefault(problem['ordinal'], []).append({
+                'slot': problem['slot'],
+                'weight': problem['weight'],
+                'prompt': problem['prompt'],
+                'answer': problem['answer'],
+                'hint': problem['hint'],
+            })
         out[node_id] = [{
             'ordinal': row['ordinal'],
             'title': row['title'],
@@ -483,6 +497,10 @@ def programmes_for(node_ids):
             'proof': row['proof'],
             'pitfall': row['pitfall'],
             'minutes': row['minutes'],
+            # Absent rather than empty when nothing is written: the panel draws
+            # a graded set of slots for a step with no problems, and an empty
+            # array would be a step whose set is legitimately nothing.
+            'problems': by_step.get(row['ordinal'], []),
             'verified': {
                 'at': row['verified_at'],
                 'by': row['verifier'],
@@ -492,3 +510,149 @@ def programmes_for(node_ids):
             },
         } for row in rows]
     return out
+
+# ---------------------------------------------------------------------------
+# Problems
+# ---------------------------------------------------------------------------
+#: What a generated problem has to arrive with. `hint` is optional by design —
+#: a warm-up that needs one is not a warm-up.
+PROBLEM_FIELDS = ('prompt', 'answer')
+
+PROBLEM_BOUNDS = {
+    'prompt': (10, 400),
+    'answer': (1, 400),
+    'hint': (0, 240),
+}
+
+#: The bands a set is graded into, easiest first. Mirrors
+#: frontend/src/utils/problemSet, which draws them.
+WEIGHTS = ('warmup', 'core', 'stretch')
+
+#: The named checks a problem is credited with when it passes.
+PROBLEM_CHECKS = ('shape', 'concrete', 'distinct', 'graded', 'answered')
+
+
+def _prose(text):
+    """A line's content words with the numbers and notation taken out.
+
+    What is left is the wording, which is the only thing that can *restate*
+    anything. Used only by the answer check; everywhere else the numbers are
+    the content and dropping them would be the bug fixed in `words`.
+    """
+    return {word for word in words(text)
+            if not any(character.isdigit() for character in word)}
+
+
+def _share(left, right):
+    """`overlap` for two word sets that have already been built."""
+    if not left or not right:
+        return 0.0
+    return len(left & right) / min(len(left), len(right))
+
+
+def problem_failures(problem, step, others=()):
+    """Every named check this problem fails. Empty is a pass.
+
+    Stricter than the step checks in one place and looser in another, both
+    deliberate. Stricter: a problem must have an answer, because a question
+    whose answer nobody wrote down cannot be marked and will be got wrong in
+    silence. Looser: there is no `on-topic` check, because a problem inherits
+    its topic from the step it hangs under and a good stretch question often
+    shares no vocabulary with it at all.
+    """
+    bad = []
+    missing = [name for name in PROBLEM_FIELDS
+               if not str(problem.get(name) or '').strip()]
+    if missing:
+        return ['shape:missing ' + ','.join(missing)]
+
+    for name, (low, high) in PROBLEM_BOUNDS.items():
+        length = len(str(problem.get(name) or '').strip())
+        if length < low or length > high:
+            bad.append('shape:{} is {} chars, wants {}-{}'.format(name, length, low, high))
+
+    if problem.get('weight') not in WEIGHTS:
+        bad.append('graded:weight {!r} is not one of {}'.format(
+            problem.get('weight'), '/'.join(WEIGHTS)))
+
+    prompt = str(problem['prompt']).strip()
+    # The same rule the steps live by: a question has to name what it is about.
+    # "Try a harder one" is not a problem.
+    if not (SPECIFIC_CHARS.search(prompt) or NOTATION.search(prompt)
+            or '"' in prompt or "'" in prompt
+            or re.search(r'\b[A-Z][a-z]{2,}', prompt[1:])):
+        bad.append('concrete:names no number, notation or proper noun')
+    for phrase in VAGUE:
+        if phrase in prompt.lower():
+            bad.append('not-generic:"{}"'.format(phrase))
+
+    # Both duplicate tests need the same floor the step-level one needed, and
+    # for a sharper version of the same reason. `overlap` divides by the
+    # smaller set, so a short prompt whose words all appear in a longer one
+    # scores a flat 1.00 — and on a graded set that is the normal case, not a
+    # duplicate: "Evaluate 2 + 3 x 4" is the warm-up for "Evaluate
+    # 20 - 3 x 4 + 8 / 2 and list the order you applied", and containment is
+    # exactly what makes it a good warm-up. Below five content words the
+    # measure cannot tell the two apart, so it does not try.
+    def comparable(text):
+        return len(words(text)) >= DUPLICATE_FLOOR
+
+    # An answer that restates the question has not answered it — but only the
+    # *prose* can restate anything. "Order -7, 3, -2, 0 and -10 from smallest
+    # to largest" is answered by "-10, -7, -2, 0, 3", which reuses every token
+    # in the prompt and is exactly right: the answer to an ordering question is
+    # a permutation of the question. So numbers and notation are dropped before
+    # the comparison, and what is left is the wording.
+    answer_prose = _prose(problem.get('answer', ''))
+    if (len(answer_prose) >= DUPLICATE_FLOOR
+            and _share(answer_prose, _prose(prompt)) > 0.85):
+        bad.append('answered:the answer restates the question')
+
+    for other in others:
+        if other is problem:
+            continue
+        if (comparable(prompt) and comparable(other.get('prompt', ''))
+                and overlap(other.get('prompt', ''), prompt) > 0.8):
+            bad.append('distinct:repeats {!r}'.format(
+                str(other.get('prompt', ''))[:60]))
+            break
+
+    return bad
+
+
+def review_problems(problems, step):
+    """Check a whole set. Returns (per-problem failures, set-wide failures).
+
+    The set-wide half is where the slope is enforced: a set has to start on a
+    warm-up, end on a stretch, and never get easier as it goes. That is the
+    property a reader actually feels, and it is a fact about the ordering
+    rather than about any one question — so no per-problem check could see it.
+    """
+    whole = []
+    slots = [problem.get('slot') for problem in problems]
+    if slots != list(range(1, len(problems) + 1)):
+        whole.append('graded:slots are {} not 1..{}'.format(slots, len(problems)))
+    order = [WEIGHTS.index(problem['weight']) if problem.get('weight') in WEIGHTS
+             else -1 for problem in problems]
+    if -1 not in order and order != sorted(order):
+        whole.append('graded:the set gets easier partway through')
+    if problems and order and -1 not in order:
+        if order[0] != 0:
+            whole.append('graded:the set does not open on a warm-up')
+        if order[-1] != len(WEIGHTS) - 1:
+            whole.append('graded:the set does not end on a stretch')
+    # Whether the set restates the step is a question about the set, not about
+    # any one problem in it. A warm-up that is a piece of the step's own
+    # practice line is a good warm-up — "Evaluate (8 + 4) / (3 + 1)" opening a
+    # set whose step says "evaluate it and compare with 8 + 4 / 3 + 1" is
+    # exactly the right first rung. What is worthless is a set where *every*
+    # problem is that line again, which adds nothing the step did not already
+    # show. Only the second is refused.
+    practice = (step or {}).get('practice', '')
+    if practice and problems and all(
+            overlap(problem.get('prompt', ''), practice) > 0.9 for problem in problems):
+        whole.append('distinct:the set only restates the step')
+
+    per = [problem_failures(problem, step, problems) for problem in problems]
+    return per, whole
+

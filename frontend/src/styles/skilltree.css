@@ -4326,3 +4326,75 @@ html[data-theme="dark"] .stx-region {
     color: color-mix(in srgb, var(--lat-violet) 78%, var(--lat-text));
     text-decoration-color: currentColor;
 }
+
+/* ---------------------------------------------------------------------------
+   A written problem.
+
+   The answer is behind a control rather than beside the question, and that is
+   the point of the component: a reader whose eye reaches the answer before
+   they have finished reading the question never attempts it. The hint comes
+   first because it is the cheaper thing to spend, and offering both at once
+   means nobody ever spends the cheaper one.
+   --------------------------------------------------------------------------- */
+.stx-work-slot.is-written {
+    border-style: solid;
+    background: var(--lat-panel);
+    align-items: start;
+}
+
+.stx-problem { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.stx-problem-prompt {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--lat-text);
+}
+
+.stx-problem-hint,
+.stx-problem-answer {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    line-height: 1.55;
+}
+
+.stx-problem-hint {
+    border-left: 3px solid var(--lat-amber);
+    background: color-mix(in srgb, var(--lat-amber-soft) 50%, transparent);
+    color: var(--lat-text);
+}
+
+.stx-problem-answer {
+    border-left: 3px solid var(--lat-green);
+    background: color-mix(in srgb, var(--lat-green-soft) 55%, transparent);
+    color: var(--lat-text);
+}
+
+.stx-problem-acts { display: flex; gap: var(--space-2); margin: 0; }
+
+.stx-problem-act {
+    padding: 3px var(--space-2);
+    border: 1px solid var(--lat-line);
+    border-radius: var(--radius-sm);
+    background: var(--lat-page);
+    font: inherit;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    color: var(--lat-muted);
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+}
+
+.stx-problem-act:hover {
+    border-color: color-mix(in srgb, var(--lat-violet) 45%, var(--lat-line));
+    color: var(--lat-text);
+}
+
+.stx-problem-act.is-answer { color: var(--lat-green); }
+
+.stx-problem-act:focus-visible {
+    outline: 2px solid var(--lat-violet);
+    outline-offset: 2px;
+}

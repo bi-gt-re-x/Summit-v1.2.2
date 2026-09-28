@@ -31,6 +31,7 @@ function written(over: Partial<WrittenStep> = {}, ordinal = 1): WrittenStep {
     proof: 'You get (x - 3)(x - 4).',
     pitfall: 'Getting the signs wrong when b is negative.',
     minutes: 15,
+    problems: [],
     verified: {
       at: '2026-09-26T12:00:00',
       by: 'rules+authored',
@@ -406,5 +407,73 @@ describe('a node with nothing written for it', () => {
     // A clause, not the whole instruction, and never trailing punctuation.
     expect(heading.textContent!.length).toBeLessThan(45);
     expect(heading.textContent).not.toMatch(/[,.;:]$/);
+  });
+});
+
+describe('a written problem', () => {
+  const withProblems = () => {
+    const steps = PROGRAMME.map((step) => ({ ...step }));
+    steps[1] = {
+      ...steps[1]!,
+      problems: [
+        { slot: 1, weight: 'warmup' as const, prompt: 'Expand (x + 2)(x + 5).', answer: 'x^2 + 7x + 10.', hint: '' },
+        { slot: 2, weight: 'core' as const, prompt: 'Expand (2x - 3)(x + 7).', answer: '2x^2 + 11x - 21.', hint: 'The middle term is 14x - 3x.' },
+        { slot: 3, weight: 'stretch' as const, prompt: 'Expand (x + 5)^2.', answer: 'x^2 + 10x + 25.', hint: '' },
+      ],
+    };
+    return steps;
+  };
+  const workLinkFor = (title: string) =>
+    screen.getByRole('button', { name: new RegExp(`Problems for ${title}`) });
+
+  it('shows the question and not the answer', async () => {
+    draw(withProblems());
+    await userEvent.click(workLinkFor('Expand Binomials'));
+    expect(screen.getByText('Expand (2x - 3)(x + 7).')).toBeInTheDocument();
+    expect(screen.queryByText('2x^2 + 11x - 21.')).not.toBeInTheDocument();
+  });
+
+  it('reveals the answer only when it is asked for', async () => {
+    draw(withProblems());
+    await userEvent.click(workLinkFor('Expand Binomials'));
+    const [first] = screen.getAllByRole('button', { name: 'Show answer' });
+    await userEvent.click(first!);
+    expect(screen.getByText('x^2 + 7x + 10.')).toBeInTheDocument();
+  });
+
+  it('hides it again', async () => {
+    draw(withProblems());
+    await userEvent.click(workLinkFor('Expand Binomials'));
+    const [first] = screen.getAllByRole('button', { name: 'Show answer' });
+    await userEvent.click(first!);
+    await userEvent.click(screen.getByRole('button', { name: 'Hide answer' }));
+    expect(screen.queryByText('x^2 + 7x + 10.')).not.toBeInTheDocument();
+  });
+
+  it('offers a hint only where one was written', async () => {
+    draw(withProblems());
+    await userEvent.click(workLinkFor('Expand Binomials'));
+    // Only the middle problem has a hint.
+    expect(screen.getAllByRole('button', { name: 'Hint' })).toHaveLength(1);
+  });
+
+  it('spends the hint without giving the answer away', async () => {
+    draw(withProblems());
+    await userEvent.click(workLinkFor('Expand Binomials'));
+    await userEvent.click(screen.getByRole('button', { name: 'Hint' }));
+    expect(screen.getByText('The middle term is 14x - 3x.')).toBeInTheDocument();
+    expect(screen.queryByText('2x^2 + 11x - 21.')).not.toBeInTheDocument();
+  });
+
+  it('draws the written questions in place of the slots', async () => {
+    draw(withProblems());
+    await userEvent.click(workLinkFor('Expand Binomials'));
+    expect(screen.queryByText(/will appear here/)).not.toBeInTheDocument();
+  });
+
+  it('still shows slots for a step nobody has written problems for', async () => {
+    draw(withProblems());
+    await userEvent.click(workLinkFor('Recognise a Quadratic'));
+    expect(screen.getAllByText(/will appear here/).length).toBeGreaterThan(0);
   });
 });

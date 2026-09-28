@@ -91,6 +91,38 @@ def _unpack(entry):
     }
 
 
+def _problems_of(raw_step, ordinal):
+    """One step's problem set out of the seed file, numbered and banded.
+
+    `slot` and `weight` may be stated, and are filled in when they are not:
+    position from the order they were written, and the band from the default
+    slope in frontend/src/utils/problemSet — the first third warm-up, the last
+    third stretch. Writing a set out by hand and having it graded for you is
+    the common case; stating the band is for the set where the default is
+    wrong.
+    """
+    raw = raw_step.get('problems') or []
+    if not raw:
+        return []
+    total = len(raw)
+    warm = max(1, -(-total // 3))
+    stretch = max(1, min(total - warm, warm))
+    out = []
+    for at, problem in enumerate(raw, start=1):
+        weight = problem.get('weight')
+        if weight not in skillsteps.WEIGHTS:
+            weight = ('warmup' if at <= warm
+                      else 'stretch' if at > total - stretch else 'core')
+        out.append({
+            'slot': problem.get('slot') or at,
+            'weight': weight,
+            'prompt': str(problem.get('prompt', '')).strip(),
+            'answer': str(problem.get('answer', '')).strip(),
+            'hint': str(problem.get('hint', '') or '').strip(),
+        })
+    return out
+
+
 def export():
     """Write every stored programme back out to the seed file.
 
@@ -105,21 +137,34 @@ def export():
     """
     stored = connection.skill_steps_for(
         [node['id'] for node in load(NODES_PATH, 'nodes') or []])
+    problems = connection.skill_problems_for(list(stored))
     out = {}
     for node_id, rows in sorted(stored.items()):
+        sets = {}
+        for one in problems.get(node_id, []):
+            sets.setdefault(one['ordinal'], []).append(one)
         first = rows[0]
         out[node_id] = {
             'model': first['model'],
             'verifier': first['verifier'],
             'checks': first['checks'],
-            'steps': [{field: row[field] for field in
-                       (*skillsteps.STEP_FIELDS, 'minutes')} for row in rows],
+            'steps': [{
+                **{field: row[field] for field in (*skillsteps.STEP_FIELDS, 'minutes')},
+                **({'problems': [
+                    {'slot': one['slot'], 'weight': one['weight'],
+                     'prompt': one['prompt'], 'answer': one['answer'],
+                     **({'hint': one['hint']} if one['hint'] else {})}
+                    for one in sets.get(row['ordinal'], [])]}
+                   if sets.get(row['ordinal']) else {}),
+            } for row in rows],
         }
     with open(SEED_PATH, 'w') as handle:
         json.dump({'programmes': out}, handle, indent=2, ensure_ascii=False)
         handle.write('\n')
-    print('Exported {} programmes, {} steps to data/skill_steps_seed.json'.format(
-        len(out), sum(len(one['steps']) for one in out.values())))
+    print('Exported {} programmes, {} steps, {} problems.'.format(
+        len(out), sum(len(one['steps']) for one in out.values()),
+        sum(len(step.get('problems', []))
+            for one in out.values() for step in one['steps'])))
     return 0
 
 
@@ -144,6 +189,7 @@ def main():
     run_id = 'seed:{}'.format(datetime.now().isoformat(timespec='seconds'))
     stamp = datetime.now().isoformat(timespec='seconds')
     written = failed = steps_total = 0
+    problems_total = failed_problems = 0
     audit = []
 
     for node_id, entry in sorted(seed.items()):
@@ -204,6 +250,37 @@ def main():
             audit.append({'run_id': run_id, 'node_id': node_id, 'ordinal': None,
                           'stage': 'store', 'outcome': 'pass',
                           'reason': '{} steps'.format(len(steps)), 'at': stamp})
+        # Problems are stored per step, after the step itself, because the
+        # step is what they hang off — a set for an ordinal with no step would
+        # be unreachable content.
+        for step, raw_step in zip(steps, raw):
+            problems = _problems_of(raw_step, step['ordinal'])
+            if not problems:
+                continue
+            per_problem, whole_set = skillsteps.review_problems(problems, step)
+            faults = list(whole_set) + [one for group in per_problem for one in group]
+            if faults:
+                failed_problems += 1
+                print('  FAIL {:<20} step {} problems: {}'.format(
+                    node_id, step['ordinal'], faults[0]))
+                audit.extend({
+                    'run_id': run_id, 'node_id': node_id, 'ordinal': step['ordinal'],
+                    'stage': 'rules', 'outcome': 'fail',
+                    'reason': 'problem: ' + reason, 'at': stamp,
+                } for reason in faults)
+                continue
+            if not args.check:
+                connection.save_step_problems(node_id, step['ordinal'], [{
+                    **problem,
+                    'tree_id': node['tree'],
+                    'model': provenance['model'],
+                    'generated_at': stamp,
+                    'verified_at': stamp,
+                    'verifier': provenance['verifier'],
+                    'checks': list(skillsteps.PROBLEM_CHECKS),
+                } for problem in problems])
+            problems_total += len(problems)
+
         written += 1
         steps_total += len(steps)
         print('  ok   {:<20} {} steps  {}'.format(node_id, len(steps), node['name']))
@@ -211,8 +288,10 @@ def main():
     if not args.check:
         connection.log_step_audit(audit)
 
-    print('\n{} node(s) passed, {} failed, {} steps.'.format(
-        written, failed, steps_total))
+    print('\n{} node(s) passed, {} failed, {} steps, {} problems.'.format(
+        written, failed, steps_total, problems_total))
+    if failed_problems:
+        print('{} problem set(s) rejected.'.format(failed_problems))
     if args.check:
         print('--check: nothing was written.')
     return 1 if failed else 0

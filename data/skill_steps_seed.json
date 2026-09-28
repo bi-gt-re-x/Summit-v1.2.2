@@ -621,7 +621,28 @@
           "detail": "Say them out loud rather than reading them. The pairs people stall on are almost always 6x7, 7x8, 8x9 and 12x7, so give those four their own pass. A table you can recite forwards but not answer at random is still being computed.",
           "proof": "The three answers are 54, 56 and 48, and none of them took a pause.",
           "pitfall": "Rebuilding 7 x 8 from 7 x 7 every time, which is recall you have not actually got.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Answer these three without pausing: 6 x 9, 7 x 8, 12 x 4.",
+              "answer": "54, 56, 48."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write out the 7 times table from 7 x 1 to 7 x 12, then cover it and answer 7 x 6 and 7 x 11.",
+              "answer": "42 and 77.",
+              "hint": "The table ends 77, 84 — count back one step from 84 for 7 x 11."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Answer 12 x 7, 8 x 9, 6 x 7 and 11 x 12 in under 20 seconds total.",
+              "answer": "84, 72, 42, 132."
+            }
+          ]
         },
         {
           "title": "Long Multiplication",
@@ -630,7 +651,28 @@
           "detail": "Set the digits in columns and keep the carries above the line where you can see them. The second row is the tens digit, so it starts one column left. The subtraction check is worth doing every time: it uses different arithmetic, so it catches errors a re-run of the same method repeats.",
           "proof": "Both routes give 9716.",
           "pitfall": "Losing the place-value zero on the second row, which shifts the whole answer by a factor of ten.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Multiply 43 x 12 by hand.",
+              "answer": "516."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Multiply 218 x 43 by hand, then verify with 218 x 40 + 218 x 3.",
+              "answer": "9374 both ways.",
+              "hint": "218 x 40 is 8720."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Multiply 526 x 407 by hand, and say why the middle row is all zeros.",
+              "answer": "214082. The tens digit of 407 is 0, so that row contributes nothing."
+            }
+          ]
         },
         {
           "title": "Short Division",
@@ -639,7 +681,28 @@
           "detail": "Work left to right, carrying what is left over into the next digit. When the divisor does not fit, the quotient digit is 0 and it must be written down. Multiplying back is the check that costs ten seconds and catches nearly everything.",
           "proof": "788 exactly, and 788 x 6 returns 4728.",
           "pitfall": "Dropping a digit when the divisor does not go into it, instead of writing a zero.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Divide 96 by 4.",
+              "answer": "24."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Divide 4728 by 6 and check by multiplying back.",
+              "answer": "788, and 788 x 6 = 4728."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Divide 6035 by 7 and give the quotient and remainder.",
+              "answer": "862 remainder 1.",
+              "hint": "7 does not go into 6, so the first quotient digit sits over the 0."
+            }
+          ]
         },
         {
           "title": "Estimate Before You Compute",
@@ -648,7 +711,27 @@
           "detail": "Round each number to one significant figure and multiply those. If the exact answer lands far from the estimate, one of the two is wrong and it is usually the exact one. Rounding one number up and the other down keeps the estimate honest.",
           "proof": "The estimate is 24000, the exact answer is 23868, and they agree to within 1%.",
           "pitfall": "Rounding both numbers the same way, which pushes the estimate off in one direction rather than bracketing it.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Estimate 39 x 21 by rounding each to one significant figure.",
+              "answer": "800, against the exact 819."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Estimate 612 x 39, then compute it exactly and give the percentage error of the estimate.",
+              "answer": "Estimate 24000, exact 23868, error about 0.55%."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Estimate 4870 / 61 to one significant figure, then say whether your estimate is high or low and why.",
+              "answer": "About 80; the exact value is 79.8, so the estimate is slightly high because 61 was rounded down to 60."
+            }
+          ]
         },
         {
           "title": "Catch a Wrong Answer",
@@ -657,7 +740,113 @@
           "detail": "Three cheap tests catch most errors. The magnitude: roughly how many digits should the answer have. The last digit: it is fixed by the last digits of the inputs. The sign: two negatives make a positive. Run all three on every answer that matters.",
           "proof": "Only 1161 survives: the last digit of 3 x 7 must be 1, and 11610 is ten times too big.",
           "pitfall": "Trusting a calculator answer that is off by a factor of ten because a key was mistyped.",
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Without computing, say which of 43 x 27 = 1161, 1160 or 11610 can be right.",
+              "answer": "1161. The last digit must be 1 and the answer must have four digits."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A calculator gives 18 x 24 = 4320. Say what went wrong.",
+              "answer": "It is ten times too big; the answer is 432."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Someone reports that 0.4 x 0.3 = 1.2. Give the right answer and name the error.",
+              "answer": "0.12. They counted one decimal place instead of two."
+            }
+          ]
+        }
+      ]
+    },
+    "m.combinatorics": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Multiply the Choices",
+          "mastery": "Count outcomes of a sequence of independent choices by multiplying.",
+          "practice": "A menu has 4 starters, 6 mains and 3 desserts. Count the possible three-course meals.",
+          "detail": "When one choice does not restrict the next, the totals multiply. Draw two stages of a tree to see why: each of the 4 starters branches into all 6 mains. Add only when the choices are alternatives rather than stages.",
+          "proof": "72, from 4 x 6 x 3.",
+          "pitfall": "Adding the options instead of multiplying, giving 13.",
+          "minutes": 15
+        },
+        {
+          "title": "Factorials and Arrangements",
+          "mastery": "Count the orderings of a set of distinct objects.",
+          "practice": "Count the ways to arrange 5 different books on a shelf, then the ways to seat 4 people in a row.",
+          "detail": "The first position has n choices, the next n-1, and so on, which is n factorial. It grows brutally fast — 10 objects already give over three million arrangements — so a small answer to an arrangement question is usually a wrong one.",
+          "proof": "120 and 24.",
+          "pitfall": "Reaching for a formula when the question is a plain factorial.",
           "minutes": 20
+        },
+        {
+          "title": "Order Matters: Permutations",
+          "mastery": "Count selections where the order of what you pick changes the outcome.",
+          "practice": "Count the ways to award gold, silver and bronze among 8 runners.",
+          "detail": "Pick r from n with order mattering: n! over (n-r)!. The test is whether swapping two chosen items gives a different outcome. Gold and silver swapped is a different podium, so order matters here.",
+          "proof": "336, from 8 x 7 x 6.",
+          "pitfall": "Dividing by 3 factorial, which would be right only if the medals were identical.",
+          "minutes": 25
+        },
+        {
+          "title": "Order Does Not: Combinations",
+          "mastery": "Count selections where only the set chosen matters, not its order.",
+          "practice": "Count the ways to choose a committee of 3 from 8 people.",
+          "detail": "Combinations are permutations divided by the orderings of the chosen group: n! over r!(n-r)!. Ask the swap test again — two committee members swapped is the same committee, so divide. The two formulas differ by exactly that r! factor.",
+          "proof": "56, from 8!/(3!5!).",
+          "pitfall": "Using the permutation count, which counts the same committee six times over.",
+          "minutes": 25
+        },
+        {
+          "title": "Repetition Allowed",
+          "mastery": "Count selections where the same item may be chosen more than once.",
+          "practice": "Count the 4-digit PINs using digits 0 to 9 with repeats allowed, then the ones with no repeats.",
+          "detail": "With repetition the count is n to the power r, because every position has the full n choices. Without it the pool shrinks by one each time. Read the question for the word 'distinct' or 'different' before choosing.",
+          "proof": "10000 and 5040.",
+          "pitfall": "Applying a no-repeat formula to a question that never forbade repeats.",
+          "minutes": 25
+        },
+        {
+          "title": "Count the Complement",
+          "mastery": "Count what you want by counting what you do not and subtracting.",
+          "practice": "Count the 5-letter strings from A to Z that contain at least one vowel.",
+          "detail": "'At least one' is nearly always easier as everything minus none. Count the whole space, count the cases you do not want, subtract. Direct counting here means splitting into exactly-one, exactly-two and so on, and adding overlaps you will get wrong.",
+          "proof": "26^5 - 21^5, which is 11881376 - 4084101 = 7797275.",
+          "pitfall": "Trying to count 'at least one' directly and double-counting strings with two.",
+          "minutes": 30
+        },
+        {
+          "title": "Overlapping Sets",
+          "mastery": "Count a union without counting the overlap twice.",
+          "practice": "Of 30 students, 18 take French and 15 take Spanish, and 7 take both. Count those taking at least one.",
+          "detail": "Inclusion-exclusion: add the sets, subtract the intersection, because everyone in both was counted twice. Draw the two circles and label the three regions — 11, 7 and 8 here — and the arithmetic checks itself against the total.",
+          "proof": "26, from 18 + 15 - 7.",
+          "pitfall": "Adding the two groups and reporting 33, which exceeds the class.",
+          "minutes": 25
+        },
+        {
+          "title": "Choose the Right Count",
+          "mastery": "Decide, unprompted, which counting method a worded problem needs.",
+          "practice": "For these three, name the method: seating 6 people in a row; picking 2 of 10 books; 3-letter codes from 26 letters with repeats.",
+          "detail": "Two questions decide it every time: does order matter, and is repetition allowed. Answer both in writing before picking a formula. Most errors here are not arithmetic — they are answering the wrong one of the four cases.",
+          "proof": "Factorial, combination, and n to the power r: 720, 45 and 17576.",
+          "pitfall": "Pattern-matching on the numbers in the question rather than on its structure.",
+          "minutes": 30
         }
       ]
     },
@@ -757,7 +946,27 @@
           "detail": "A percentage is a fraction with a denominator of 100, so per cent to decimal is a division by 100 and the point moves two places left. Fraction to decimal is just the division the bar was always asking for. Build the table rather than memorising pairs.",
           "proof": "3/8 = 0.375 = 37.5%; 0.45 = 9/20 = 45%; 12% = 0.12 = 3/25.",
           "pitfall": "Moving the decimal point the wrong way, turning 12% into 1.2 rather than 0.12.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write 1/2 as a decimal and a percentage.",
+              "answer": "0.5 and 50%."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Give 3/8 as a decimal and a percentage.",
+              "answer": "0.375 and 37.5%."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Give 12% as a decimal and as a fraction in lowest terms.",
+              "answer": "0.12 and 3/25."
+            }
+          ]
         },
         {
           "title": "Decimal Arithmetic",
@@ -766,7 +975,27 @@
           "detail": "For addition, line up the points and pad with zeros so every number has the same number of places. For multiplication, ignore the points entirely, multiply as whole numbers, then count the total decimal places in both inputs and put that many in the answer.",
           "proof": "16.15, 1.0 and 0.018.",
           "pitfall": "Lining up the right-hand digits instead of the decimal points when adding.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Compute 12.4 + 3.75.",
+              "answer": "16.15."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Compute 2.5 x 0.4.",
+              "answer": "1.0."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Compute 0.6 x 0.03 and say how many decimal places the answer needs.",
+              "answer": "0.018, three places, because the inputs have one and two."
+            }
+          ]
         },
         {
           "title": "Percentage Of",
@@ -775,7 +1004,27 @@
           "detail": "Turn the percentage into a decimal and multiply. Reversing it is a division by that same decimal, not by the percentage itself. Writing the sentence as an equation first — 0.3 x n = 72 — makes which operation is needed obvious rather than remembered.",
           "proof": "36, and 240 — the second is 72 divided by 0.3.",
           "pitfall": "Dividing by the percentage rather than by the decimal, so 30% becomes a division by 30.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find 10% of 240.",
+              "answer": "24."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Find 15% of 240.",
+              "answer": "36."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Find the number whose 30% is 72.",
+              "answer": "240, from 72 divided by 0.3."
+            }
+          ]
         },
         {
           "title": "Percentage Change",
@@ -784,7 +1033,27 @@
           "detail": "Change divided by the original, times 100. The original is the number you started from, and swapping it for the final value is the error. That a rise and an equal fall do not return you to the start is not a trick — the base moved, and the second percentage is of the larger number.",
           "proof": "A 15% increase, and 92 reduced by 15% is 78.2, not 80.",
           "pitfall": "Believing a 15% rise and a 15% fall cancel, because the two are percentages of different numbers.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A price rises from 80 to 92. Find the percentage increase.",
+              "answer": "15%."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Take 92 down by 15% and say whether you get back to 80.",
+              "answer": "78.2, so no — the base has moved."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A value falls 20% then rises 20%. Give the overall change as a percentage of the original.",
+              "answer": "A 4% fall, since 0.8 x 1.2 = 0.96."
+            }
+          ]
         },
         {
           "title": "Reverse a Percentage",
@@ -793,7 +1062,28 @@
           "detail": "After a 12% discount the price is 88% of the original, so the original is the price divided by 0.88. Write the multiplier first — 0.88 for a 12% cut, 1.12 for a 12% rise — and the division follows. Check by applying the change forwards to your answer.",
           "proof": "75, because 66 divided by 0.88 is 75, and 12% of 75 is 9.",
           "pitfall": "Adding 12% back onto 66, which gives 73.92 and is not the original.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A price of 100 is cut by 10%. Give the new price.",
+              "answer": "90."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A jacket costs 66 after a 12% discount. Find the original price.",
+              "answer": "75.",
+              "hint": "66 is 88% of the original."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A bill is 141 including 17.5% tax. Find the amount before tax, to the nearest penny.",
+              "answer": "120.00, from 141 divided by 1.175."
+            }
+          ]
         }
       ]
     },
@@ -893,7 +1183,28 @@
           "detail": "Multiplying the numerator and denominator by the same number is multiplying by 1, which is why the value holds. Reducing is the same move in reverse: divide both by their highest common factor. Find that factor rather than halving repeatedly and hoping.",
           "proof": "6/8, 15/20, 75/100, and 18/24 reduces to 3/4 — all four name the same quantity.",
           "pitfall": "Adding to the top and bottom instead of multiplying, which changes the value.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write 3/4 with a denominator of 8.",
+              "answer": "6/8."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Reduce 18/24 to lowest terms and name the factor you divided by.",
+              "answer": "3/4, dividing both by 6."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Reduce 84/126 to lowest terms.",
+              "answer": "2/3, dividing both by 42.",
+              "hint": "Both are divisible by 6, then by 7."
+            }
+          ]
         },
         {
           "title": "Add Unlike Denominators",
@@ -902,7 +1213,28 @@
           "detail": "Find a common denominator first — the lowest common multiple keeps the numbers small, but any common multiple works. Rescale both fractions to it, then add only the numerators. The denominator counts what size the pieces are, and it does not change when you count more of them.",
           "proof": "11/12 and 11/24.",
           "pitfall": "Adding the denominators together, so 1/2 + 1/3 comes out as 2/5.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Compute 1/4 + 1/4.",
+              "answer": "1/2."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Compute 2/3 + 1/4 in lowest terms.",
+              "answer": "11/12."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Compute 5/6 - 3/8 in lowest terms.",
+              "answer": "11/24.",
+              "hint": "The lowest common denominator is 24."
+            }
+          ]
         },
         {
           "title": "Multiply and Divide",
@@ -911,7 +1243,28 @@
           "detail": "Multiplication needs no common denominator: tops together, bottoms together. Cancel any factor shared by a numerator and a denominator first, even across the two fractions, and the arithmetic stays small. Division is multiplication by the reciprocal, and only the divisor flips.",
           "proof": "2/3 and 6/7.",
           "pitfall": "Inverting the first fraction rather than the second when dividing.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Compute 2/3 x 3/5.",
+              "answer": "2/5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Compute 7/8 x 4/21, cancelling common factors before multiplying.",
+              "answer": "1/6.",
+              "hint": "The 4 cancels with the 8 and the 7 cancels with the 21."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Compute 9/10 divided by 3/4, then say what the answer would be if you had inverted the wrong fraction.",
+              "answer": "6/5. Inverting the first instead would give 5/6."
+            }
+          ]
         },
         {
           "title": "Mixed Numbers",
@@ -920,7 +1273,28 @@
           "detail": "Going in, multiply the whole number by the denominator and add the numerator. Coming out, divide and keep the remainder on top. Always convert to improper before multiplying or dividing — the mixed form is for reading, not for arithmetic.",
           "proof": "17/5, and 47/6 is 7 and 5/6.",
           "pitfall": "Leaving a mixed number in place during multiplication, which quietly drops the whole part.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Convert 3 and 2/5 to an improper fraction.",
+              "answer": "17/5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Convert 47/6 to a mixed number.",
+              "answer": "7 and 5/6."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Compute 2 and 1/2 multiplied by 1 and 1/3, giving a mixed number.",
+              "answer": "3 and 1/3.",
+              "hint": "Convert both to improper fractions first: 5/2 and 4/3."
+            }
+          ]
         },
         {
           "title": "Compare Two Fractions",
@@ -929,7 +1303,28 @@
           "detail": "Rescale everything to one denominator and compare the numerators. Cross-multiplication is the shortcut for exactly two: a/b beats c/d when ad exceeds bc. Both beat converting to decimals, which rounds and can make two close fractions look equal.",
           "proof": "15/24, 14/24 and 16/24, so the order is 7/12, 5/8, 2/3.",
           "pitfall": "Assuming the fraction with the bigger numerator is bigger, regardless of the denominator.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is larger, 3/5 or 2/5?",
+              "answer": "3/5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Order 5/8, 7/12 and 2/3 from smallest to largest.",
+              "answer": "7/12, 5/8, 2/3.",
+              "hint": "Rescale all three to twenty-fourths."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Decide which is larger, 7/9 or 8/11, using cross-multiplication.",
+              "answer": "7/9, since 7 x 11 = 77 beats 8 x 9 = 72."
+            }
+          ]
         }
       ]
     },
@@ -1006,6 +1401,74 @@
           "detail": "Changes inside the bracket act on the input and move the graph the opposite way horizontally. Changes outside act on the output and move it the intuitive way vertically. A minus outside flips it top to bottom. Test one point to settle any doubt.",
           "proof": "Two right and one up; the second is the parabola flipped and lifted three.",
           "pitfall": "Shifting left for (x - 2) because of the minus sign, when the graph moves right.",
+          "minutes": 30
+        }
+      ]
+    },
+    "m.geometry": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Angle Facts",
+          "mastery": "Use the angle rules on a line, at a point and in a triangle to find a missing angle.",
+          "practice": "Two angles on a straight line are 3x and 2x. Find x, then find both angles.",
+          "detail": "Angles on a straight line total 180, at a point 360, and in a triangle 180. Write the equation before touching the arithmetic, and say which rule you used. Re-read the question at the end — it usually wants the angles, not x.",
+          "proof": "x = 36, so the angles are 108 and 72, and they sum to 180.",
+          "pitfall": "Solving for x and giving that as the angle, when the angle was 3x.",
+          "minutes": 15
+        },
+        {
+          "title": "Parallel Line Angles",
+          "mastery": "Name corresponding, alternate and co-interior angles and use them to find one.",
+          "practice": "A transversal crosses two parallel lines. One angle is 68. Find the co-interior angle and the alternate angle.",
+          "detail": "Corresponding angles are in matching corners and are equal. Alternate angles sit inside on opposite sides and are equal. Co-interior sit inside on the same side and total 180. Trace the F, Z and C shapes on the diagram before naming anything.",
+          "proof": "Co-interior is 112, alternate is 68.",
+          "pitfall": "Calling a co-interior pair equal, when they add to 180 rather than match.",
+          "minutes": 20
+        },
+        {
+          "title": "Triangle Properties",
+          "mastery": "Classify a triangle and use its properties to find sides or angles.",
+          "practice": "An isosceles triangle has an apex angle of 40. Find the two base angles.",
+          "detail": "Equilateral gives three 60s. Isosceles gives two equal base angles opposite the two equal sides. Mark the equal sides on your own sketch before computing — which angles are equal follows from which sides are, and a misread diagram is the usual cause of a wrong answer here.",
+          "proof": "Both are 70, since 180 - 40 leaves 140 to share equally.",
+          "pitfall": "Splitting the wrong angle when the diagram is not drawn to scale.",
+          "minutes": 20
+        },
+        {
+          "title": "Area and Perimeter",
+          "mastery": "Compute area and perimeter for rectangles, triangles, circles and compound shapes.",
+          "practice": "Find the area of a triangle with base 12 and height 7, then the area of a circle of radius 5 to one decimal place.",
+          "detail": "Triangle area is half base times perpendicular height, and the height must meet the base at a right angle. Circle area is pi r squared; circumference is 2 pi r. For a compound shape, cut it into pieces you know and add, marking each piece on the sketch.",
+          "proof": "42, and 78.5.",
+          "pitfall": "Using the slant side as the height of a triangle instead of the perpendicular one.",
+          "minutes": 25
+        },
+        {
+          "title": "Pythagoras",
+          "mastery": "Find any side of a right triangle given the other two.",
+          "practice": "Find the hypotenuse when the legs are 9 and 12, then find the missing leg when the hypotenuse is 13 and one leg is 5.",
+          "detail": "The square on the hypotenuse equals the sum of the squares on the other two. Finding the hypotenuse is an addition; finding a leg is a subtraction. Identify the hypotenuse first — it is always opposite the right angle and always the longest side.",
+          "proof": "15, and 12.",
+          "pitfall": "Adding the squares when finding a leg, where they should be subtracted.",
+          "minutes": 20
+        },
+        {
+          "title": "Prove It for Every Case",
+          "mastery": "Argue a geometric claim from stated reasons rather than from the drawing.",
+          "practice": "Prove that the angles in any triangle sum to 180, using a line drawn parallel to one side.",
+          "detail": "Draw a line through one vertex parallel to the opposite side. The two outer angles at that vertex equal two of the triangle's angles by alternate angles, and the three together lie on a straight line. Give a reason for every step; a diagram shows one case and a proof covers all of them.",
+          "proof": "The two alternate-angle pairs at the parallel line place all three angles on a straight line, which is 180.",
+          "pitfall": "Measuring the drawing and calling the measurement a proof.",
           "minutes": 30
         }
       ]
@@ -1165,7 +1628,27 @@
           "detail": "Further left is smaller, always. The distance between two points is the difference, and it is never negative. Drawing the line and marking the numbers takes twenty seconds and removes the whole class of ordering mistakes.",
           "proof": "-10, -7, -2, 0, 3, and the distance is 10.",
           "pitfall": "Ranking -10 above -2 because 10 is bigger than 2.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Order -3, 1 and -7 from smallest to largest.",
+              "answer": "-7, -3, 1."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Order -7, 3, -2, 0 and -10 from smallest to largest.",
+              "answer": "-10, -7, -2, 0, 3."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "On a number line, find the distance from -7 to 3, and from -12 to -4.",
+              "answer": "10 and 8, and neither distance can be negative."
+            }
+          ]
         },
         {
           "title": "Add and Subtract Signs",
@@ -1174,7 +1657,28 @@
           "detail": "Subtracting a negative is adding. Rewrite every double sign as a single one before you compute anything: 5 - (-3) becomes 5 + 3. Addition of a negative is subtraction, so -4 + 7 is 7 - 4 with the sign of the larger magnitude.",
           "proof": "8 and 3; the double minus in the first became a plus.",
           "pitfall": "Reading -6 - 2 as -4 by treating the second minus as a subtraction of a negative.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Compute 5 - (-3).",
+              "answer": "8."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Compute -4 + 7 and -6 - 2.",
+              "answer": "3 and -8."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Compute -8 - (-15) + (-4).",
+              "answer": "3.",
+              "hint": "Rewrite every double sign as a single one first."
+            }
+          ]
         },
         {
           "title": "Multiply and Divide Signs",
@@ -1183,7 +1687,27 @@
           "detail": "Two negatives multiply to a positive; one negative gives a negative. With more than two factors, count the negatives — an even count is positive, an odd count is negative. Work out the sign first and the magnitude second, and they cannot contaminate each other.",
           "proof": "24, then -4, and the triple product is positive at 30.",
           "pitfall": "Applying the addition rules to multiplication, so -6 x -4 comes out as -24.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Compute -6 x -4.",
+              "answer": "24."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Compute -20 divided by 5, then -2 x 3 x -5.",
+              "answer": "-4 and 30."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Give the sign of (-2) x (-3) x (-4) x (-5) without computing, then give the value.",
+              "answer": "Positive, because there are four negatives. The value is 120."
+            }
+          ]
         },
         {
           "title": "Powers of Negatives",
@@ -1192,7 +1716,27 @@
           "detail": "Without brackets the exponent binds to the 3 and the minus sign is applied afterwards, so -3^2 is -(3^2). With brackets the whole negative number is squared. An even power of a negative is positive; an odd power keeps the sign.",
           "proof": "9, -9 and -8.",
           "pitfall": "Treating -3^2 and (-3)^2 as the same expression.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate (-3)^2.",
+              "answer": "9."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Evaluate -3^2 and (-2)^3.",
+              "answer": "-9 and -8."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Evaluate (-1)^99 and (-2)^4, and state the rule you used for the sign.",
+              "answer": "-1 and 16. An odd power keeps the sign; an even power makes it positive."
+            }
+          ]
         },
         {
           "title": "Signs Inside Algebra",
@@ -1201,7 +1745,28 @@
           "detail": "The sign in front of a bracket belongs to every term inside it. Write the multiplier with its sign attached — here it is -2, not 2 — and distribute that. A bare minus in front of a bracket is a multiplier of -1 and flips every term.",
           "proof": "14 - 6x, and 3x + 7.",
           "pitfall": "Distributing the 2 but not the minus sign, so -2(3x - 5) becomes -6x - 10.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Expand 4(2x - 3).",
+              "answer": "8x - 12."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Expand and simplify 4 - 2(3x - 5).",
+              "answer": "14 - 6x."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Expand and simplify -(x - 7) + 2x - 3(1 - x).",
+              "answer": "6x + 4.",
+              "hint": "The bare minus in front of the first bracket is a multiplier of -1."
+            }
+          ]
         }
       ]
     },
@@ -1224,7 +1789,27 @@
           "detail": "Brackets, then indices, then multiplication and division, then addition and subtraction. The last two pairs are equal in rank and settle left to right. That second half is the part people skip, and it is what makes 6 - 2 - 1 come out as 3 rather than 5.",
           "proof": "14 and 3, from precedence and from left-to-right association.",
           "pitfall": "Treating left-to-right as the whole rule, which turns 2 + 3 x 4 into 20.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate 2 + 3 x 4.",
+              "answer": "14."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Evaluate 6 - 2 - 1 and say which rule fixes the order.",
+              "answer": "3, by left-to-right association."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Evaluate 20 - 3 x 4 + 8 / 2 and list the order you applied the operations in.",
+              "answer": "12: the product 12 and the quotient 4 first, then 20 - 12 + 4 left to right."
+            }
+          ]
         },
         {
           "title": "Nested Brackets",
@@ -1233,7 +1818,27 @@
           "detail": "Rewrite the whole expression after each bracket closes rather than editing it in place. It costs three extra lines and removes the step where you lose track of which bracket you are inside. Count the opening and closing brackets before you start.",
           "proof": "The answer is 17: the inner bracket is 2, then 4 + 4 = 8, then 24 - 7.",
           "pitfall": "Starting at the leftmost bracket rather than the innermost one.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate 2 x (5 - 3).",
+              "answer": "4."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Evaluate 5 x (2 + 3 x (6 - 4)) - 9.",
+              "answer": "31."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Evaluate 2 x (3 + (8 - (4 - 1))) and write the expression out again after each bracket closes.",
+              "answer": "16, via 4 - 1 = 3, then 8 - 3 = 5, then 3 + 5 = 8."
+            }
+          ]
         },
         {
           "title": "Powers Before Products",
@@ -1242,7 +1847,27 @@
           "detail": "An exponent attaches to the single thing immediately under it, not to everything to its left. Writing the implied bracket in — 2 x (3^2) — settles the question every time. The same reasoning covers -3^2, which is -9 rather than 9.",
           "proof": "18 and 36 — the exponent binds to the 3 alone in the first, to the product in the second.",
           "pitfall": "Reading 2 x 3^2 as (2 x 3)^2 because the multiplication is written first.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate 3^2 and (-3)^2.",
+              "answer": "9 and 9."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Evaluate 4 x 2^3 and (4 x 2)^3, and state which number the exponent attaches to in each.",
+              "answer": "32 and 512. In the first it attaches to the 2 alone; in the second to the whole product."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Evaluate -3^2 + (-3)^2 and explain the two different signs.",
+              "answer": "0. The first is -(3^2) = -9, the second is 9."
+            }
+          ]
         },
         {
           "title": "Implied Brackets in Fractions",
@@ -1251,7 +1876,28 @@
           "detail": "A horizontal bar is a bracket you cannot see. The moment the expression goes on one line, those brackets have to be written. This is the single most common transcription error when copying working into a calculator, and it is silent.",
           "proof": "The first is 3; the second is about 10.33, because only the 4 is divided.",
           "pitfall": "Typing a written fraction into a calculator without bracketing the numerator and denominator.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate (8 + 4) / (3 + 1).",
+              "answer": "3."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Evaluate 12 / (2 + 4) and 12 / 2 + 4, and say which one the written fraction 12 over (2+4) means.",
+              "answer": "2 and 10. The written fraction means the first."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the fraction with numerator 5 + 7 over denominator 2 x 3 on a single line, then evaluate it.",
+              "answer": "It must be bracketed as (5 + 7) / (2 x 3), which comes to 2.",
+              "hint": "An unbracketed 5 + 7 / 2 x 3 gives 15.5 instead."
+            }
+          ]
         },
         {
           "title": "Rebuild a Wrong Answer",
@@ -1260,7 +1906,285 @@
           "detail": "Work the expression yourself, then compare line by line against theirs until the two diverge. The first line that differs is the error, and naming it — precedence, association, a sign — is what stops it recurring. This is also how you debug your own working.",
           "proof": "They worked strictly left to right: 10 - 2 = 8, 8 x 3 = 24, 24 + 4 = 28. The correct answer is 8.",
           "pitfall": "Fixing the final number without finding the step that produced it, so the same slip returns.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Someone evaluated 10 - 2 x 3 as 24. Name the mistake.",
+              "answer": "They subtracted before multiplying; the answer is 4."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A student gets 28 from 10 - 2 x 3 + 4. Name the order they used and give the right answer.",
+              "answer": "Strictly left to right. The correct answer is 8."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A student writes 24 / 2 x 3 = 4. Give the correct value and the rule they broke.",
+              "answer": "36. Division and multiplication rank equally and settle left to right."
+            }
+          ]
+        }
+      ]
+    },
+    "m.precalc": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Polynomial Behaviour",
+          "mastery": "Predict the shape and end behaviour of a polynomial from its leading term.",
+          "practice": "Say what y = -2x^3 + 5x does as x goes to plus and minus infinity, and give its maximum number of roots.",
+          "detail": "The highest power dominates once x is large, so it alone fixes both ends. Odd degree means the ends go opposite ways; a negative leading coefficient flips them. Degree caps the number of roots and the number of turning points at one less.",
+          "proof": "Down on the right, up on the left, and at most 3 roots.",
+          "pitfall": "Reading the end behaviour off the constant term rather than the leading one.",
+          "minutes": 25
+        },
+        {
+          "title": "Rational Functions",
+          "mastery": "Locate the asymptotes and holes of a rational function.",
+          "practice": "Find every asymptote and hole of y = (x^2 - 4)/(x^2 - x - 2).",
+          "detail": "Factor both parts first. A factor cancelling top and bottom is a hole; one left in the denominator is a vertical asymptote. The horizontal behaviour comes from comparing degrees — equal degrees give the ratio of leading coefficients.",
+          "proof": "A hole at x = 2, a vertical asymptote at x = -1, and y = 1 horizontally.",
+          "pitfall": "Calling every zero of the denominator an asymptote, when a shared factor gives a hole.",
+          "minutes": 30
+        },
+        {
+          "title": "Exponentials and Logs Together",
+          "mastery": "Move between exponential and logarithmic form and solve either.",
+          "practice": "Solve 2^(x+1) = 40 to three decimal places, then solve log base 5 of (x - 1) = 2.",
+          "detail": "Logs undo exponentials. Take logs of both sides to bring a variable exponent down; exponentiate to undo a log. Any log equation needs its answer checked against the domain, because the algebra will happily return a value that makes the argument negative.",
+          "proof": "x = 3.322, and x = 26.",
+          "pitfall": "Forgetting to check the log solution lies in the domain of the original expression.",
+          "minutes": 30
+        },
+        {
+          "title": "Trig Identities",
+          "mastery": "Simplify or verify an expression using the standard identities.",
+          "practice": "Verify that (1 - cos^2 x)/sin x equals sin x for every x where it is defined.",
+          "detail": "Start from the messier side and transform it into the other, one identity per line, naming the identity used. The Pythagorean identity does most of the work. Note the excluded values — the two sides agree only where the original is defined.",
+          "proof": "1 - cos^2 x is sin^2 x, so the fraction is sin^2 x over sin x.",
+          "pitfall": "Working on both sides at once, which proves the two are consistent rather than equal.",
+          "minutes": 30
+        },
+        {
+          "title": "Solve Trig Equations in Range",
+          "mastery": "Find every solution of a trig equation in a stated interval.",
+          "practice": "Solve 2 cos x - 1 = 0 for x between 0 and 360 degrees.",
+          "detail": "Isolate the ratio, take the inverse for the first solution, then use the symmetry of the circle for the rest in range. Cosine is positive in the first and fourth quadrants, so a positive cosine has two answers in a full turn.",
+          "proof": "x = 60 and x = 300.",
+          "pitfall": "Reporting the single value the calculator gives and missing the reflection.",
+          "minutes": 30
+        },
+        {
+          "title": "Transform Any Function",
+          "mastery": "Describe and apply shifts, stretches and reflections to any graph.",
+          "practice": "Describe how y = -3f(x - 2) + 1 differs from y = f(x), in the order the changes apply.",
+          "detail": "Inside the bracket acts on the input and runs backwards; outside acts on the output and runs forwards. Order matters: stretch and reflect before translating vertically. Track one point through every stage as a check.",
+          "proof": "Right 2, vertical stretch by 3, reflected in the x-axis, then up 1.",
+          "pitfall": "Applying the vertical shift before the reflection, which moves it the wrong way.",
+          "minutes": 30
+        },
+        {
+          "title": "Functions in Pieces",
+          "mastery": "Evaluate and sketch a piecewise function, including at its joins.",
+          "practice": "For f(x) = x^2 when x < 2 and 3x - 2 otherwise, find f(1), f(2) and f(3), and say whether it is continuous at 2.",
+          "detail": "Check which condition the input satisfies before substituting; only one branch applies. At a join, evaluate the limit from each side — equal means continuous, different means a jump. Draw open and closed circles on the sketch to show which piece owns the endpoint.",
+          "proof": "1, 4 and 7; continuous, because both pieces approach 4.",
+          "pitfall": "Using the wrong branch at the boundary, where the inequality decides which applies.",
+          "minutes": 30
+        },
+        {
+          "title": "Ready for Limits",
+          "mastery": "Evaluate an expression that is undefined at a point by simplifying first.",
+          "practice": "Simplify (x^2 - 9)/(x - 3) and say what it approaches as x nears 3.",
+          "detail": "Factor and cancel to remove the problem factor. The simplified form agrees with the original everywhere except the removed point, which is exactly the distinction a limit is built on: what a function approaches need not be what it equals.",
+          "proof": "It equals x + 3 everywhere except x = 3, and approaches 6.",
+          "pitfall": "Concluding that the expression equals 6 at x = 3, where it is undefined.",
+          "minutes": 30
+        }
+      ]
+    },
+    "m.prob": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Probability as a Fraction",
+          "mastery": "Express a probability as favourable outcomes over total outcomes.",
+          "practice": "Find the probability of drawing a heart from a standard 52-card deck, and of drawing a face card.",
+          "detail": "Count the whole sample space first and write it down, then count what counts as success. Every probability lands between 0 and 1, so a result outside that is an arithmetic error rather than a surprising finding.",
+          "proof": "13/52 = 1/4, and 12/52 = 3/13.",
+          "pitfall": "Counting the favourable outcomes correctly and the total wrongly.",
           "minutes": 15
+        },
+        {
+          "title": "Not This",
+          "mastery": "Use the complement to get a probability that is awkward head-on.",
+          "practice": "Find the probability of at least one head in 3 fair coin tosses.",
+          "detail": "P(at least one) is 1 - P(none). Counting directly means splitting into exactly one, exactly two and exactly three and adding, which is three chances to slip. The complement is one line.",
+          "proof": "7/8, from 1 minus the 1/8 chance of no heads at all.",
+          "pitfall": "Adding the three single-head probabilities and passing 1.",
+          "minutes": 20
+        },
+        {
+          "title": "And, Or, and Overlap",
+          "mastery": "Combine two events correctly depending on whether they can both happen.",
+          "practice": "From one card, find P(heart or face card).",
+          "detail": "For 'or', add and subtract the overlap. For 'and' with independent events, multiply. The word that decides it is whether the two can occur together — mutually exclusive events have no overlap to subtract.",
+          "proof": "22/52 = 11/26, from 13 + 12 - 3 face cards that are hearts.",
+          "pitfall": "Adding 13/52 and 12/52 and double-counting the three hearts that are face cards.",
+          "minutes": 25
+        },
+        {
+          "title": "With and Without Replacement",
+          "mastery": "Adjust the second probability when the first draw changes the pool.",
+          "practice": "From 5 red and 3 blue counters, find P(two reds) with replacement and without.",
+          "detail": "With replacement the pool resets and the two draws are independent. Without, both numerator and denominator drop by one for the colour taken. Write the second fraction out fully rather than reusing the first.",
+          "proof": "25/64 with, and 5/14 without.",
+          "pitfall": "Leaving the denominator at 8 on the second draw after removing a counter.",
+          "minutes": 25
+        },
+        {
+          "title": "Tree Diagrams",
+          "mastery": "Lay out a two-stage experiment as a tree and read probabilities off it.",
+          "practice": "Draw the tree for taking 2 sweets from a bag of 4 toffees and 6 mints, then find P(one of each).",
+          "detail": "Multiply along a branch, add across branches. Every set of branches leaving a node must total 1, which is the check that catches a mislabelled tree before you use it. A mixed outcome needs both orders added, not one.",
+          "proof": "8/15, from the two mixed branches at 4/15 each.",
+          "pitfall": "Finding one mixed branch and forgetting the other order.",
+          "minutes": 25
+        },
+        {
+          "title": "Conditional Probability",
+          "mastery": "Compute the probability of one event given that another has occurred.",
+          "practice": "Of 30 students, 18 play football and 7 of those also play chess. Find P(chess given football).",
+          "detail": "Given narrows the sample space. P(A given B) is P(A and B) over P(B), and the denominator is the condition rather than the total. Re-read which event is the condition — swapping them gives a different and usually very different answer.",
+          "proof": "7/18.",
+          "pitfall": "Dividing by the whole 30 rather than by the 18 the condition restricts you to.",
+          "minutes": 30
+        },
+        {
+          "title": "Where Intuition Fails",
+          "mastery": "Work through a probability result that contradicts the obvious answer.",
+          "practice": "For the Monty Hall problem with 3 doors, compute the win probability for switching and for staying.",
+          "detail": "The host's choice is not random — he never opens the car — so opening a door carries information. Enumerate the three equally likely initial picks and follow each through. Writing out all three cases is what converts disbelief into agreement.",
+          "proof": "2/3 for switching and 1/3 for staying.",
+          "pitfall": "Assuming the two remaining doors are equally likely once one is opened.",
+          "minutes": 30
+        },
+        {
+          "title": "Expected Value",
+          "mastery": "Compute the long-run average outcome of a chance process.",
+          "practice": "A game pays 10 on a six and costs 2 to play. Find the expected value per game with a fair die.",
+          "detail": "Multiply each outcome by its probability and add. The result is an average over many plays and need not be a value the game can actually pay. A negative expected value means the game loses money in the long run however good one night looks.",
+          "proof": "-1/3: the payout averages 10/6, minus the 2 stake.",
+          "pitfall": "Comparing the prize with the stake and ignoring how rarely the prize lands.",
+          "minutes": 30
+        }
+      ]
+    },
+    "m.proof": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Claim, Reason, Conclusion",
+          "mastery": "Tell a proof apart from a demonstration of particular cases.",
+          "practice": "Say why checking that 3, 5 and 7 are odd primes does not prove every odd number above 1 is prime.",
+          "detail": "A proof argues from things already agreed to the claim, with a reason at every step. Examples can only ever disprove: one counterexample kills a universal claim, and a thousand confirmations do not establish it. Hunt for the counterexample before trying to prove anything.",
+          "proof": "9 is odd and not prime, so three examples establish nothing about all cases.",
+          "pitfall": "Treating a run of confirming examples as evidence that a claim holds generally.",
+          "minutes": 20
+        },
+        {
+          "title": "Direct Proof",
+          "mastery": "Prove a claim by arguing straight from the definitions.",
+          "practice": "Prove that the sum of any two even numbers is even, writing them as 2m and 2n.",
+          "detail": "Write each object in its defining form with its own letter — 2m and 2n, not 2n twice. Manipulate until the conclusion's defining form appears. State which definition you used at the start and which you arrived at.",
+          "proof": "2m + 2n = 2(m + n), which is 2 times an integer and so even.",
+          "pitfall": "Writing the two evens as 2n and 2n, which proves it only when they are equal.",
+          "minutes": 25
+        },
+        {
+          "title": "Find a Counterexample",
+          "mastery": "Disprove a universal claim by producing one case that breaks it.",
+          "practice": "Disprove: every number of the form n^2 + n + 41 is prime.",
+          "detail": "One case is enough, and it must be a genuine instance of the claim rather than an edge case the claim excluded. Try the boundaries first: zero, one, negatives, and the value that makes a term vanish or repeat.",
+          "proof": "n = 41 gives 41 x 43, which is not prime.",
+          "pitfall": "Testing only small n, where this particular claim holds for the first forty values.",
+          "minutes": 25
+        },
+        {
+          "title": "Proof by Contradiction",
+          "mastery": "Prove a claim by assuming its negation and deriving an impossibility.",
+          "practice": "Prove that the square root of 2 is irrational.",
+          "detail": "Assume the opposite, reason correctly, and arrive at a statement that cannot be true. The contradiction must be flat — a thing both true and false — not just unexpected. State the assumption explicitly at the top so the reader knows what is being discharged.",
+          "proof": "Assuming it is p/q in lowest terms forces both p and q even, contradicting lowest terms.",
+          "pitfall": "Deriving something merely surprising and calling it a contradiction.",
+          "minutes": 30
+        },
+        {
+          "title": "Proof by Induction",
+          "mastery": "Prove a statement for all integers from a base case and a step.",
+          "practice": "Prove that 2^n > n for every positive integer n.",
+          "detail": "Base case, assumption at k, then the claim at k+1 derived from that assumption. Write the assumption as an inequality or equation you can substitute. If the step would work without it, the proof is wrong somewhere.",
+          "proof": "n = 1 gives 2 > 1; and if 2^k > k then 2^(k+1) = 2 x 2^k > 2k >= k+1.",
+          "pitfall": "Never actually using the assumption in the inductive step, which proves nothing.",
+          "minutes": 30
+        },
+        {
+          "title": "Construction and Existence",
+          "mastery": "Prove something exists by producing one, and read a non-constructive proof.",
+          "practice": "Prove that there are infinitely many primes, using Euclid's argument.",
+          "detail": "An existence claim can be settled by exhibiting an example. Euclid's argument is subtler: it shows any finite list is incomplete without naming the missing prime. Note what it does and does not produce — that distinction is the whole interest of it.",
+          "proof": "Any finite list multiplied together plus 1 has a prime factor on no such list.",
+          "pitfall": "Claiming the new number is itself prime, which it need not be.",
+          "minutes": 30
+        },
+        {
+          "title": "Find the Broken Step",
+          "mastery": "Locate the invalid line in an argument that reaches a false conclusion.",
+          "practice": "An argument divides by (a - b) after setting a = b, and concludes 1 = 2. Name the invalid step.",
+          "detail": "Work down the argument and test each line for the operation it performs and whether that operation is always allowed. Division by a quantity that could be zero, taking a square root and keeping one sign, and squaring both sides all hide here.",
+          "proof": "Dividing by a - b is dividing by zero, which is not a permitted operation.",
+          "pitfall": "Rejecting the conclusion without being able to say which line failed.",
+          "minutes": 30
+        },
+        {
+          "title": "Write One Up",
+          "mastery": "Present a proof another person can follow and check line by line.",
+          "practice": "Write a full proof that (2m+1)(2n+1) is odd, with a reason on every line.",
+          "detail": "Say what you are proving, what you assume, then each step with its reason, then the conclusion. Read it back as somebody who does not already believe it. A proof only you can follow has not done its job.",
+          "proof": "(2m+1)(2n+1) = 2(2mn + m + n) + 1, which is odd by definition.",
+          "pitfall": "Leaving the algebra to speak for itself, so the reader has to reconstruct the reasoning.",
+          "minutes": 30
         }
       ]
     },
@@ -1283,7 +2207,27 @@
           "detail": "A quadratic has a highest power of exactly 2 in one variable. Rewrite each one in the form ax^2 + bx + c before deciding, filling in zeros where a term is absent. For 4 - 9x^2 that is -9x^2 + 0x + 4, so a is -9, b is 0 and c is 4.",
           "proof": "The first and the last; the second is cubic and the third is linear.",
           "pitfall": "Missing a quadratic written out of order, such as 4 - 9x^2, because it does not open with the squared term.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is 5x - 2 quadratic?",
+              "answer": "No. Its highest power of x is 1, so it is linear."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "For 4 - 9x^2, write it as ax^2 + bx + c and give a, b and c.",
+              "answer": "-9x^2 + 0x + 4, so a = -9, b = 0, c = 4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Say which of 3x^2 - 7x + 2, x^3 + 1, 5x - 2 and 4 - 9x^2 are quadratic, and name the degree of each.",
+              "answer": "The first and last are quadratic (degree 2); x^3 + 1 is degree 3 and 5x - 2 is degree 1."
+            }
+          ]
         },
         {
           "title": "Expand Binomials",
@@ -1292,7 +2236,28 @@
           "detail": "Multiply each term in the first bracket by each term in the second — four products for two binomials. The two middle products combine into a single term. A squared bracket is still two brackets, so it still has four products and a middle term of twice the cross product.",
           "proof": "2x^2 + 11x - 21, and x^2 + 10x + 25.",
           "pitfall": "Writing (x + 5)^2 as x^2 + 25, which drops the two middle terms entirely.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Expand (x + 2)(x + 5).",
+              "answer": "x^2 + 7x + 10."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Expand (2x - 3)(x + 7).",
+              "answer": "2x^2 + 11x - 21.",
+              "hint": "The middle term is 14x - 3x."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Expand (x + 5)^2 and say what is wrong with writing it as x^2 + 25.",
+              "answer": "x^2 + 10x + 25. Writing x^2 + 25 drops the two cross terms that make up 10x."
+            }
+          ]
         },
         {
           "title": "Factor Simple Quadratics",
@@ -1301,7 +2266,28 @@
           "detail": "Find two numbers multiplying to c and adding to b. With c positive both share b's sign; with c negative they have opposite signs and the larger carries b's sign. List the factor pairs of c rather than guessing at them.",
           "proof": "(x - 3)(x - 4), and (x + 5)(x - 3); expanding either returns the original.",
           "pitfall": "Getting the signs wrong when c is positive but b is negative, so both factors must be negative.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Factor x^2 + 5x + 6.",
+              "answer": "(x + 2)(x + 3)."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Factor x^2 - 7x + 12.",
+              "answer": "(x - 3)(x - 4).",
+              "hint": "c is positive and b negative, so both numbers are negative."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Factor x^2 + 2x - 15, then expand your answer to check it.",
+              "answer": "(x + 5)(x - 3), and expanding returns x^2 + 2x - 15."
+            }
+          ]
         },
         {
           "title": "Factor With a Leading Coefficient",
@@ -1310,7 +2296,28 @@
           "detail": "Multiply a by c and find two numbers with that product which add to b. Split the middle term into those two, then factor in pairs. For 2x^2 + 7x + 3 the product is 6, the pair is 1 and 6, and the split gives 2x^2 + x + 6x + 3.",
           "proof": "(2x + 1)(x + 3), and (3x - 2)(2x + 1).",
           "pitfall": "Ignoring the leading coefficient and factoring as though a were 1.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Factor 2x^2 + 7x + 3.",
+              "answer": "(2x + 1)(x + 3)."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Factor 6x^2 - x - 2.",
+              "answer": "(3x - 2)(2x + 1).",
+              "hint": "a times c is -12; find two numbers with product -12 and sum -1."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Factor 4x^2 - 12x + 9 and say what is special about the result.",
+              "answer": "(2x - 3)^2. It is a perfect square, so the quadratic has one repeated root."
+            }
+          ]
         },
         {
           "title": "Complete the Square",
@@ -1319,7 +2326,28 @@
           "detail": "Halve the coefficient of x and square it. Add that number and immediately subtract it, so nothing changes. Here half of 6 is 3 and 3 squared is 9, giving x^2 + 6x + 9 - 9 + 1. The first three terms are (x + 3)^2 and the rest is -8.",
           "proof": "(x + 3)^2 - 8, so the vertex is at (-3, -8).",
           "pitfall": "Forgetting to subtract the square you added, which changes the expression rather than rewriting it.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Complete the square on x^2 + 6x.",
+              "answer": "(x + 3)^2 - 9."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write x^2 + 6x + 1 in completed-square form and state the vertex.",
+              "answer": "(x + 3)^2 - 8, vertex at (-3, -8)."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write x^2 - 5x + 2 in completed-square form, keeping fractions exact.",
+              "answer": "(x - 5/2)^2 - 17/4.",
+              "hint": "Half of -5 is -5/2, and its square is 25/4."
+            }
+          ]
         },
         {
           "title": "Use the Formula",
@@ -1328,7 +2356,28 @@
           "detail": "Substitute with brackets around every coefficient, negatives included. Compute b^2 - 4ac first and on its own: positive gives two roots, zero gives one, negative gives none over the reals. The formula always works, which makes it the fallback rather than the first choice.",
           "proof": "x = (2 + sqrt 10)/2 and (2 - sqrt 10)/2; the second discriminant is -19, so there are no real roots.",
           "pitfall": "Dropping the minus sign on b, so -4 goes into the formula as 4.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Give the discriminant of x^2 + x + 5 and say how many real roots it has.",
+              "answer": "-19, so no real roots."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Solve 2x^2 - 4x - 3 = 0 with the quadratic formula, leaving a surd.",
+              "answer": "x = (2 + sqrt 10)/2 and (2 - sqrt 10)/2.",
+              "hint": "The discriminant is 16 + 24 = 40."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Solve 3x^2 - 2x - 8 = 0 with the formula and check your roots by factoring.",
+              "answer": "x = 2 and x = -4/3, and the quadratic factors as (3x + 4)(x - 2)."
+            }
+          ]
         },
         {
           "title": "Pick the Quickest Route",
@@ -1337,6 +2386,266 @@
           "detail": "Try factoring first and abandon it after about twenty seconds. Complete the square when the question wants a vertex or when a is 1 and b is even. Use the formula when nothing factors neatly. Spending ten seconds choosing saves more than it costs.",
           "proof": "Factoring, the formula, and completing the square; x^2 - 9x + 20 factors to (x - 4)(x - 5).",
           "pitfall": "Reaching for the formula every time, which turns a ten-second factorisation into two minutes of arithmetic.",
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve x^2 - 9x + 20 = 0 by the quickest method.",
+              "answer": "Factoring gives (x - 4)(x - 5), so x = 4 and x = 5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "For 3x^2 + 5x - 1 = 0, name the best method and say why the others are worse.",
+              "answer": "The formula: nothing factors neatly and a is not 1, so completing the square brings fractions."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For x^2 + 4x - 6 = 0, name the best method, solve it, and give the vertex of the parabola.",
+              "answer": "Completing the square gives (x + 2)^2 - 10, so x = -2 +/- sqrt 10 and the vertex is (-2, -10)."
+            }
+          ]
+        }
+      ]
+    },
+    "m.sequences": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Spot the Rule",
+          "mastery": "Work out the rule generating a sequence and continue it.",
+          "practice": "Give the next two terms of 3, 7, 11, 15 and of 2, 6, 18, 54, and name each rule.",
+          "detail": "Check the differences first, then the ratios. A constant difference is arithmetic, a constant ratio geometric. Test your rule against every term given, not just the last two — many sequences agree for three terms and diverge on the fourth.",
+          "proof": "19 and 23 by adding 4; 162 and 486 by multiplying by 3.",
+          "pitfall": "Assuming a sequence is arithmetic because the first two gaps happen to match.",
+          "minutes": 15
+        },
+        {
+          "title": "The nth Term",
+          "mastery": "Write a formula for the nth term of an arithmetic sequence.",
+          "practice": "Find the nth term of 5, 8, 11, 14, then use it to find the 50th term.",
+          "detail": "The coefficient of n is the common difference. Substitute n = 1 into that alone and compare with the real first term; the gap is the constant to add. Always test the formula on two known terms before using it on an unknown one.",
+          "proof": "3n + 2, and the 50th term is 152.",
+          "pitfall": "Writing 3n and forgetting the constant that fixes the first term.",
+          "minutes": 20
+        },
+        {
+          "title": "Arithmetic Series",
+          "mastery": "Sum an arithmetic sequence without adding the terms one at a time.",
+          "practice": "Sum the first 100 whole numbers, then sum 5 + 8 + 11 + ... + 152.",
+          "detail": "Pair the first with the last: each pair totals the same, and there are n/2 pairs. So the sum is n times the average of the first and last terms. Count the terms with (last - first)/difference + 1, and check that count separately.",
+          "proof": "5050, and 3925 over 50 terms.",
+          "pitfall": "Getting the number of terms wrong by one, which is the commonest error in the whole topic.",
+          "minutes": 25
+        },
+        {
+          "title": "Geometric Sequences",
+          "mastery": "Find terms and sums of a sequence with a constant ratio.",
+          "practice": "For 3, 6, 12, 24, find the 10th term and the sum of the first 10 terms.",
+          "detail": "The nth term is a times r to the power n-1, and the sum is a(r^n - 1)/(r - 1). Note the n-1: the first term has been multiplied by r zero times. Check the ratio is genuinely constant across every pair before using either formula.",
+          "proof": "1536, and 3069.",
+          "pitfall": "Using the arithmetic sum formula on a geometric sequence.",
+          "minutes": 25
+        },
+        {
+          "title": "Infinite Sums",
+          "mastery": "Decide whether an infinite geometric series settles on a value, and find it.",
+          "practice": "Sum 1 + 1/2 + 1/4 + 1/8 + ... , then say what happens to 1 + 2 + 4 + 8 + ...",
+          "detail": "An infinite geometric series converges only when the ratio is strictly between -1 and 1, and then sums to a/(1 - r). Check the ratio before reaching for the formula — used outside that range it returns a confident and meaningless number.",
+          "proof": "The first sums to 2; the second grows without limit.",
+          "pitfall": "Applying the infinite-sum formula when the ratio is 1 or greater.",
+          "minutes": 30
+        },
+        {
+          "title": "Recursive Definitions",
+          "mastery": "Read and use a sequence defined in terms of its own earlier terms.",
+          "practice": "For a(1) = 2 and a(n) = 3a(n-1) - 1, compute the first five terms.",
+          "detail": "A recursive rule needs the previous term, so the terms come out in order and there is no shortcut to the hundredth. Tabulate n and a(n) in two columns and fill down. Some recursions have a closed form; most useful ones do not.",
+          "proof": "2, 5, 14, 41, 122.",
+          "pitfall": "Substituting n into the rule as though it were a closed formula.",
+          "minutes": 25
+        },
+        {
+          "title": "Prove a Formula by Induction",
+          "mastery": "Prove a statement for all n by base case and inductive step.",
+          "practice": "Prove that 1 + 2 + ... + n = n(n+1)/2 for every positive integer n.",
+          "detail": "Three parts, all required: check n = 1, assume it holds at n = k, then derive it at n = k+1 using that assumption. Write the assumption out as a line of algebra. A step that never uses it has proved nothing.",
+          "proof": "n = 1 gives 1; assuming it for k, adding k+1 gives (k+1)(k+2)/2, which is the formula at k+1.",
+          "pitfall": "Proving the base case and the step and never stating the assumption being used.",
+          "minutes": 35
+        },
+        {
+          "title": "Where Series Appear",
+          "mastery": "Recognise a sequence or series inside a problem not stated as one.",
+          "practice": "A loan of 1000 grows 5% a year with no repayments. Write the balance after n years and find n when it passes 2000.",
+          "detail": "Repeated proportional change is geometric; repeated fixed change is arithmetic. Decide which before writing anything. Compound interest, population growth and depreciation are all the same geometric sequence wearing different words.",
+          "proof": "1000 x 1.05^n, which passes 2000 during year 15.",
+          "pitfall": "Adding 5% of the original each year, which is arithmetic rather than geometric.",
+          "minutes": 30
+        }
+      ]
+    },
+    "m.stats": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Three Averages",
+          "mastery": "Compute mean, median and mode, and say which one a dataset calls for.",
+          "practice": "For 3, 7, 7, 8, 40, find all three averages and say which best describes the set.",
+          "detail": "Mean is the total over the count, median the middle once ordered, mode the commonest. One extreme value moves the mean and leaves the median alone, which is why house prices are quoted as medians. Order the data first — an unordered median is the commonest slip.",
+          "proof": "Mean 13, median 7, mode 7; the median, because 40 drags the mean above every other value.",
+          "pitfall": "Quoting the mean on a skewed set, where it describes no member of it.",
+          "minutes": 20
+        },
+        {
+          "title": "Spread, Not Just Centre",
+          "mastery": "Measure how spread out a dataset is with range and interquartile range.",
+          "practice": "For 2, 4, 4, 5, 9, 12, 15, find the range and the interquartile range.",
+          "detail": "Range is max minus min and one outlier controls it. The IQR is the middle half — the upper quartile minus the lower — and ignores the tails, which is what makes it the honest one. Two sets can share a mean and share nothing else.",
+          "proof": "Range 13, IQR 8, from quartiles at 4 and 12.",
+          "pitfall": "Reporting a centre with no spread, so two very different sets look identical.",
+          "minutes": 25
+        },
+        {
+          "title": "Read a Chart Honestly",
+          "mastery": "Spot the ways a chart can mislead while being factually correct.",
+          "practice": "A bar chart of 98, 99 and 101 starts its axis at 97. Say what the reader will conclude and why it is wrong.",
+          "detail": "Check three things on any chart: where the axis starts, what the units are, and whether the scale is linear. A bar chart with a truncated axis is the commonest honest lie in print. Redraw it from zero and see how much of the effect survives.",
+          "proof": "The last bar looks four times the first; truncating the axis exaggerates a 3% difference.",
+          "pitfall": "Trusting the shape of a chart without reading the axis.",
+          "minutes": 25
+        },
+        {
+          "title": "Standard Deviation",
+          "mastery": "Compute a standard deviation and say what it means for the data.",
+          "practice": "Find the standard deviation of 2, 4, 4, 4, 5, 5, 7, 9.",
+          "detail": "Subtract the mean from each value, square the differences, average those, then take the square root. The squaring is what stops the positives and negatives cancelling. The result is in the same units as the data, which the variance is not, and that is why it is the one quoted.",
+          "proof": "2, since the variance is 4.",
+          "pitfall": "Forgetting the final square root and reporting the variance instead.",
+          "minutes": 30
+        },
+        {
+          "title": "Correlation Is Not Cause",
+          "mastery": "Read a scatter plot for strength and direction without claiming a cause.",
+          "practice": "Ice cream sales and drowning rates correlate at 0.9. Give a third factor that explains both.",
+          "detail": "A correlation coefficient runs from -1 to 1 and measures how closely points follow a line. It says nothing about direction of influence. Before claiming a cause, ask what third thing could move both, and whether the relationship could run the other way.",
+          "proof": "Temperature. Hot weather raises both independently.",
+          "pitfall": "Reading a strong correlation as evidence that one variable drives the other.",
+          "minutes": 25
+        },
+        {
+          "title": "Sample and Bias",
+          "mastery": "Judge whether a sample can support the claim being made from it.",
+          "practice": "A website poll of its own readers reports 78% support. Name the bias and say who is missing.",
+          "detail": "Ask who could have been picked, who actually answered, and who was never in the frame. A biased sample of ten thousand is worse than a random sample of a hundred, because the size lends it false authority. Name the population the claim is about before judging the sample.",
+          "proof": "Self-selection: only readers who felt strongly, and only that site's audience, ever answered.",
+          "pitfall": "Treating a large sample as a representative one, when size does not fix bias.",
+          "minutes": 25
+        },
+        {
+          "title": "Say What the Data Cannot",
+          "mastery": "State the limits of a dataset alongside the conclusion drawn from it.",
+          "practice": "Take a claim like \"our users are 40% faster\" and write 2 sentences: what the data shows, and one question it cannot settle.",
+          "detail": "A conclusion without its limits is a conclusion somebody will over-apply. Name the population, the time window and the thing you did not measure. 'More research is needed' is not a limit; 'this says nothing about anyone under 18' is.",
+          "proof": "The second sentence names a specific unanswered question, such as which users, or over what period.",
+          "pitfall": "Adding a vague disclaimer that does not name any particular limit.",
+          "minutes": 25
+        }
+      ]
+    },
+    "m.trig": {
+      "model": "authored",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Three Ratios",
+          "mastery": "State sine, cosine and tangent as ratios of sides in a right triangle.",
+          "practice": "In a right triangle with opposite 3, adjacent 4 and hypotenuse 5, write sin, cos and tan of the angle.",
+          "detail": "Opposite and adjacent are named from the angle you are working with, and only the hypotenuse is fixed. Label the triangle from that angle every single time before writing a ratio. SOH CAH TOA is the mnemonic; the labelling is the skill.",
+          "proof": "3/5, 4/5 and 3/4.",
+          "pitfall": "Labelling opposite and adjacent relative to the right angle rather than to the angle in question.",
+          "minutes": 20
+        },
+        {
+          "title": "Find a Missing Side",
+          "mastery": "Use a trig ratio to find an unknown side given an angle and one side.",
+          "practice": "A right triangle has a 35 degree angle and a hypotenuse of 10. Find the side opposite that angle, to two decimal places.",
+          "detail": "Decide which two sides the question involves, pick the ratio that links them, then rearrange before substituting. Check the mode on the calculator once at the start of any trig session. A side longer than the hypotenuse is always an error.",
+          "proof": "5.74, from 10 sin 35.",
+          "pitfall": "Leaving the calculator in radians, which gives 10 sin 35 as about -4.28.",
+          "minutes": 25
+        },
+        {
+          "title": "Find a Missing Angle",
+          "mastery": "Use an inverse trig function to recover an angle from two sides.",
+          "practice": "A right triangle has opposite 7 and adjacent 24. Find the angle to one decimal place.",
+          "detail": "Form the ratio from the two sides you have, then apply the inverse of the matching function. The answer must lie between 0 and 90 in a right triangle, which is the sanity check. Keep full precision until the final rounding.",
+          "proof": "16.3 degrees, from arctan of 7/24.",
+          "pitfall": "Using the ratio rather than its inverse, and getting a number that is not an angle.",
+          "minutes": 25
+        },
+        {
+          "title": "Build the Unit Circle",
+          "mastery": "Read sine and cosine off the unit circle for the standard angles.",
+          "practice": "Give sin and cos of 0, 30, 45, 60 and 90 degrees without a table.",
+          "detail": "Cosine is the x coordinate of the point on the circle and sine is the y. Two triangles — 30-60-90 and 45-45-90 — generate every standard value, so draw those once and read the rest off them. Derived beats memorised because it comes back after a month away.",
+          "proof": "Sine runs 0, 1/2, root2/2, root3/2, 1; cosine runs the same values backwards.",
+          "pitfall": "Memorising the table and losing it, rather than deriving it from two triangles.",
+          "minutes": 30
+        },
+        {
+          "title": "Beyond the First Quadrant",
+          "mastery": "Determine the sign of each ratio in any quadrant and find related angles.",
+          "practice": "Give sin 150, cos 210 and tan 315 exactly, using the reference angle each time.",
+          "detail": "Find the reference angle to the nearest part of the x-axis, evaluate there, then attach the sign from the quadrant. Sketch the circle and mark the quadrant before answering — the value and the sign are two separate decisions and mixing them is the whole difficulty.",
+          "proof": "1/2, -root3/2 and -1.",
+          "pitfall": "Taking the reference angle correctly and then forgetting the sign the quadrant demands.",
+          "minutes": 30
+        },
+        {
+          "title": "Trig as a Wave",
+          "mastery": "Sketch y = sin x and y = cos x and state period and amplitude.",
+          "practice": "Plot y = 2 sin x across a full turn, then give the height of its peak and the width of one cycle of y = sin 2x.",
+          "detail": "A multiplier outside stretches the graph vertically and sets the amplitude. A multiplier inside squeezes it horizontally and divides the period. Plot the five key points of one cycle rather than sketching a freehand wave.",
+          "proof": "The peak is at 2; one cycle of y = sin 2x spans 180 degrees.",
+          "pitfall": "Swapping the two effects, so the coefficient inside the function is read as the amplitude.",
+          "minutes": 30
+        },
+        {
+          "title": "Solve a Trig Equation",
+          "mastery": "Find every solution of a trig equation within a stated range.",
+          "practice": "Solve sin x = 0.5 for x between 0 and 360 degrees.",
+          "detail": "The inverse function returns one angle. Use the symmetry of the circle to find the others in range: for sine, the second is 180 minus the first. Sketch the wave and draw the horizontal line — the number of crossings is the number of answers you owe.",
+          "proof": "x = 30 and x = 150.",
+          "pitfall": "Giving only the calculator's answer and missing the second solution in range.",
           "minutes": 30
         }
       ]

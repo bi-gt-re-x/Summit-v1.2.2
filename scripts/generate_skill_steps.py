@@ -660,6 +660,51 @@ def load_nodes():
         return json.load(handle).get('nodes', [])
 
 
+def activity_order():
+    """Tree ids, heaviest first by the work accounts have actually finished.
+
+    The library is twelve hundred nodes and no run has ever reached the end of
+    it, so the order matters more than the total. A tree nine accounts have
+    filed two hundred thousand XP against is a tree somebody will open; one
+    nobody has ever touched is content written into a drawer.
+
+    Node-level completion is not in the database — it lives in the browser, see
+    the note at the top of frontend/src/utils/skillSteps — so the signal is the
+    finished tasks accounts filed under subjects, mapped through the catalogue
+    to the tree each subject opens. That is a coarser claim than "they finished
+    this node" and it is the honest one available.
+    """
+    from backend.config import skill_trees
+    return connection.subject_work_by_tree(skill_trees.SUBJECT_TREE)
+
+
+def priority_report():
+    """Which trees accounts actually work in, and how much is written there."""
+    nodes = load_nodes()
+    per_tree = {}
+    for node in nodes:
+        per_tree.setdefault(node['tree'], 0)
+        per_tree[node['tree']] += 1
+    stored = connection.skill_step_coverage()
+    problems = connection.skill_problem_coverage()
+
+    print('{:<24} {:>9} {:>5} {:>7} {:>8} {:>9}'.format(
+        'tree', 'xp done', 'accts', 'nodes', 'written', 'problems'))
+    ranked = activity_order()
+    for tree, xp, accounts, _tasks in ranked:
+        written, _steps = stored.get(tree, (0, 0))
+        _sets, probs = problems.get(tree, (0, 0))
+        print('{:<24} {:>9} {:>5} {:>7} {:>8} {:>9}'.format(
+            tree, xp, accounts, per_tree.get(tree, 0), written, probs))
+    touched = {row[0] for row in ranked}
+    idle = sorted(tree for tree in per_tree if tree not in touched)
+    print()
+    print('{} tree(s) with finished work behind them, {} with none.'.format(
+        len(ranked), len(idle)))
+    print('Nodes in the worked trees: {}'.format(
+        sum(per_tree.get(row[0], 0) for row in ranked)))
+
+
 def report():
     """What is in the table now, per tree. No model calls, no writes."""
     nodes = load_nodes()
@@ -702,12 +747,20 @@ def main():
                         help='anthropic | groq | grok. Default: whichever is keyed.')
     parser.add_argument('--report', action='store_true',
                         help='Print coverage and exit. Calls nothing.')
+    parser.add_argument('--priority', action='store_true',
+                        help='Rank trees by the work accounts have finished. Calls nothing.')
+    parser.add_argument('--by-activity', action='store_true',
+                        help='Work the trees accounts actually use first, and skip the rest.')
     parser.add_argument('--dry-run', action='store_true',
                         help='Generate and check, but write nothing.')
     args = parser.parse_args()
 
     if args.report:
         report()
+        return 0
+
+    if args.priority:
+        priority_report()
         return 0
 
     nodes = load_nodes()
@@ -717,6 +770,13 @@ def main():
         nodes = [node for node in nodes if node['tier'] in set(args.tier)]
     if args.node:
         nodes = [node for node in nodes if node['id'] in set(args.node)]
+    if args.by_activity:
+        # Heaviest-used tree first, and trees nobody has touched are dropped
+        # rather than pushed to the back: a run that never finishes should
+        # spend every call it makes on a node somebody will open.
+        rank = {tree: at for at, (tree, *_) in enumerate(activity_order())}
+        nodes = [node for node in nodes if node['tree'] in rank]
+        nodes.sort(key=lambda node: (rank[node['tree']], node['id']))
     if not args.redo:
         have = set(connection.skill_steps_for([node['id'] for node in nodes]))
         nodes = [node for node in nodes if node['id'] not in have]

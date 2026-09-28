@@ -179,3 +179,80 @@ CREATE TABLE IF NOT EXISTS skill_step_audit (
 );
 
 CREATE INDEX IF NOT EXISTS skill_step_audit_run ON skill_step_audit (run_id, node_id);
+
+
+-- skill_problems — the actual questions behind a step.
+--
+-- Built: scripts/generate_skill_steps.py --problems writes them,
+-- backend/api/skillsteps.py serves them inside their step, and
+-- frontend/src/components/SkillTree/LatticePanel.tsx draws them on the
+-- problems screen.
+--
+-- ## Why these are rows and not part of the step
+--
+-- A step already carries one `practice` line — the single thing to go and do.
+-- That is what a reader needs in order to *choose* a step, and it is written
+-- into skill_steps for the same reason the rest of the step is.
+--
+-- A problem set is a different object. It is ordered, it is graded from light
+-- to heavy, a reader works through it one at a time, and there are between
+-- three and nine of them per step. Folding that into a column on skill_steps
+-- would mean a JSON blob whose length is the interesting part, which is the
+-- shape data/sql/skillsteps.sql already argues against for the steps
+-- themselves.
+--
+-- ## The slope is stored, not computed
+--
+-- `weight` says which band a problem is in — warm-up, core or stretch — and it
+-- is a column rather than a function of `slot`, because the band is a claim
+-- about the *question* and not about its position. Deriving it from the index
+-- would mean a set could never be reordered, and reordering a set is the most
+-- likely edit it will ever get. frontend/src/utils/problemSet computes a
+-- default shape for a step that has no problems yet; once there are rows, the
+-- rows decide.
+--
+-- ## Every row here has passed quality control too
+--
+-- Same invariant as skill_steps and for the same reason: `verified_at` and
+-- `verifier` are NOT NULL, `checks` must be a non-empty JSON array, and a
+-- problem that fails review is never written. A wrong answer in this table is
+-- worse than a wrong sentence in skill_steps — a reader will sit down, work it
+-- out, get something different, and conclude they are wrong.
+CREATE TABLE IF NOT EXISTS skill_problems (
+    node_id      TEXT    NOT NULL,
+    -- Which step of that node's programme this belongs to.
+    ordinal      INTEGER NOT NULL,
+    -- Position within the step's own set, 1-based and dense.
+    slot         INTEGER NOT NULL,
+    -- 'warmup' | 'core' | 'stretch'. See frontend/src/utils/problemSet.
+    weight       TEXT    NOT NULL,
+
+    -- The question, stated so it can be worked without anything else open.
+    prompt       TEXT    NOT NULL,
+    -- The answer, or the property a correct answer has. Checked, so it has to
+    -- be right.
+    answer       TEXT    NOT NULL,
+    -- One line of help, shown only if the reader asks. May be empty: a warm-up
+    -- that needs a hint is not a warm-up.
+    hint         TEXT    NOT NULL DEFAULT '',
+
+    tree_id      TEXT    NOT NULL,
+    model        TEXT    NOT NULL,
+    generated_at TEXT    NOT NULL,
+    verified_at  TEXT    NOT NULL,
+    verifier     TEXT    NOT NULL,
+    checks       TEXT    NOT NULL DEFAULT '[]',
+
+    PRIMARY KEY (node_id, ordinal, slot),
+
+    CHECK (ordinal >= 1),
+    CHECK (slot >= 1),
+    CHECK (weight IN ('warmup', 'core', 'stretch')),
+    CHECK (length(prompt) > 0),
+    CHECK (length(answer) > 0),
+    CHECK (length(verified_at) > 0),
+    CHECK (length(verifier) > 0),
+    CHECK (checks LIKE '["%')
+);
+
+CREATE INDEX IF NOT EXISTS skill_problems_step ON skill_problems (node_id, ordinal, slot);

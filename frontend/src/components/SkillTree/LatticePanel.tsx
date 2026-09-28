@@ -109,7 +109,7 @@ import {
   removeStep,
   type StepPlan,
 } from '@/utils/skillSteps';
-import type { WrittenStep } from '@/services/skillSteps';
+import type { Problem as ProblemRow, WrittenStep } from '@/services/skillSteps';
 import {
   WEIGHT_BLURB,
   WEIGHT_LABEL,
@@ -226,6 +226,50 @@ function asPractice(
 }
 
 /**
+ * One question, with its answer behind a control.
+ *
+ * The answer is hidden until asked for, and that is the whole design of this
+ * component. A problem whose answer is on screen beside it is not a problem —
+ * a reader's eye reaches it before they have finished reading the question,
+ * and the work of attempting it never happens. The hint sits in front of the
+ * answer for the same reason: it is the cheaper thing to spend first, and
+ * offering both at once means nobody ever takes the cheaper one.
+ */
+function Problem({ problem }: { problem: ProblemRow }) {
+  const [showHint, setShowHint] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+
+  // A new question is a new attempt: both reveals close.
+  useEffect(() => {
+    setShowHint(false);
+    setShowAnswer(false);
+  }, [problem.prompt]);
+
+  return (
+    <div className="stx-problem">
+      <p className="stx-problem-prompt">{problem.prompt}</p>
+      {showHint && problem.hint && <p className="stx-problem-hint">{problem.hint}</p>}
+      {showAnswer && <p className="stx-problem-answer">{problem.answer}</p>}
+      <p className="stx-problem-acts">
+        {problem.hint && !showHint && !showAnswer && (
+          <button type="button" className="stx-problem-act" onClick={() => setShowHint(true)}>
+            Hint
+          </button>
+        )}
+        <button
+          type="button"
+          className="stx-problem-act is-answer"
+          aria-expanded={showAnswer}
+          onClick={() => setShowAnswer((was) => !was)}
+        >
+          {showAnswer ? 'Hide answer' : 'Show answer'}
+        </button>
+      </p>
+    </div>
+  );
+}
+
+/**
  * One step, with everything else gone.
  *
  * ## Why this is a screen rather than a bigger expansion
@@ -256,17 +300,37 @@ function asPractice(
 function StepWorkspace({
   step,
   node,
+  problems,
   onBack,
   onBackToTree,
 }: {
   step: PracticeStep;
+  /** The written questions for this step, if any have been. */
+  problems?: ProblemRow[];
   node: GraphNode;
   /** Back to the programme this step belongs to. */
   onBack: () => void;
   /** Out of the takeover entirely. */
   onBackToTree: () => void;
 }) {
-  const bands = bandsFor(step);
+  /* Written problems where there are any, and the default ladder of empty
+     slots where there are not. Both are grouped the same way, so everything
+     below draws one shape — the only difference a reader sees is whether a
+     row holds a question or says one is coming. */
+  const written = problems ?? [];
+  const bands = written.length > 0
+    ? (['warmup', 'core', 'stretch'] as const)
+        .map((weight) => ({
+          weight,
+          slots: written
+            .filter((one) => one.weight === weight)
+            .map((one) => ({ index: one.slot, weight: one.weight, problem: one })),
+        }))
+        .filter((band) => band.slots.length > 0)
+    : bandsFor(step).map((band) => ({
+        weight: band.weight,
+        slots: band.slots.map((slot) => ({ ...slot, problem: undefined })),
+      }));
   const total = bands.reduce((sum, band) => sum + band.slots.length, 0);
 
   return (
@@ -301,14 +365,21 @@ function StepWorkspace({
             </h3>
             <ol className="stx-work-list">
               {band.slots.map((slot) => (
-                <li key={slot.index} className="stx-work-slot">
+                <li
+                  key={slot.index}
+                  className={`stx-work-slot${slot.problem ? ' is-written' : ''}`}
+                >
                   <span className="stx-work-num" aria-hidden="true">
                     {slot.index}
                   </span>
-                  <span className="stx-work-slot-text">
-                    A {WEIGHT_LABEL[band.weight].toLowerCase()} problem for{' '}
-                    <b>{step.title}</b> will appear here.
-                  </span>
+                  {slot.problem ? (
+                    <Problem problem={slot.problem} />
+                  ) : (
+                    <span className="stx-work-slot-text">
+                      A {WEIGHT_LABEL[band.weight].toLowerCase()} problem for{' '}
+                      <b>{step.title}</b> will appear here.
+                    </span>
+                  )}
                 </li>
               ))}
             </ol>
@@ -975,6 +1046,11 @@ export function LatticePanel({
     return (
       <StepWorkspace
         step={workingOn}
+        problems={
+          useWritten
+            ? written!.find((one) => one.ordinal === workingOn.ordinal)?.problems
+            : undefined
+        }
         node={node}
         // Back lands where they came from: the full list if it was open behind
         // this, the panel if the link was clicked from the three-step window.

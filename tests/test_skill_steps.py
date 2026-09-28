@@ -17,8 +17,16 @@ import json
 
 import pytest
 
-from backend.database import connection
-from backend.tracking import skillsteps
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))), 'scripts'))
+
+import seed_skill_steps  # noqa: E402
+
+from backend.database import connection  # noqa: E402
+from backend.tracking import skillsteps  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -300,7 +308,7 @@ def test_the_served_shape_is_the_one_the_panel_draws(client):
     first = client.get('/api/skill-steps?nodes=t.shape').json()['steps']['t.shape'][0]
     assert set(first) == {
         'ordinal', 'title', 'mastery', 'practice',
-        'detail', 'proof', 'pitfall', 'minutes', 'verified',
+        'detail', 'proof', 'pitfall', 'minutes', 'problems', 'verified',
     }
 
 
@@ -334,3 +342,150 @@ def test_the_seed_file_passes_the_same_checks_the_generator_does():
             problems.extend(
                 '{} step {}: {}'.format(node_id, one['ordinal'], reason) for reason in reasons)
     assert problems == [], problems
+
+
+# ---------------------------------------------------------------------------
+# Problems
+# ---------------------------------------------------------------------------
+def problem(**over):
+    """A problem that passes every check, so a test can break exactly one."""
+    return {
+        'slot': 1,
+        'weight': 'warmup',
+        'prompt': 'Factor x^2 - 7x + 12.',
+        'answer': '(x - 3)(x - 4).',
+        'hint': '',
+        **over,
+    }
+
+
+def test_a_good_problem_passes():
+    assert skillsteps.problem_failures(problem(), step()) == []
+
+
+def test_a_problem_with_no_answer_is_rejected():
+    """Stricter than the step rules, on purpose.
+
+    A question nobody wrote the answer to cannot be marked, so a reader who
+    gets it wrong finds out nothing — which is worse than no question.
+    """
+    assert skillsteps.problem_failures(problem(answer=''), step()) == ['shape:missing answer']
+
+
+def test_a_problem_naming_nothing_is_rejected():
+    bad = skillsteps.problem_failures(problem(prompt='Try a harder one of these.'), step())
+    assert any(reason.startswith('concrete') for reason in bad), bad
+
+
+def test_an_ordering_answer_is_not_a_restatement():
+    """The answer to "put these in order" is those things, in order.
+
+    It reuses every token in the question and is exactly correct, which is why
+    the restatement check compares wording rather than numbers.
+    """
+    assert skillsteps.problem_failures(problem(
+        prompt='Order -7, 3, -2, 0 and -10 from smallest to largest.',
+        answer='-10, -7, -2, 0, 3.',
+    ), step()) == []
+
+
+def test_an_answer_that_only_repeats_the_question_is_rejected():
+    bad = skillsteps.problem_failures(problem(
+        prompt='Explain why completing the square reveals the vertex of a parabola.',
+        answer='Completing the square reveals the vertex of the parabola.',
+    ), step())
+    assert any(reason.startswith('answered') for reason in bad), bad
+
+
+def test_a_warm_up_contained_in_its_stretch_is_not_a_duplicate():
+    """Containment is what makes a good warm-up, not what makes a duplicate."""
+    warm = problem(slot=1, prompt='Evaluate 2 + 3 x 4.', answer='14.')
+    hard = problem(slot=2, weight='core',
+                   prompt='Evaluate 20 - 3 x 4 + 8 / 2 and list the order you applied.',
+                   answer='12, taking the product and the quotient first.')
+    assert skillsteps.problem_failures(hard, step(), [warm, hard]) == []
+
+
+def test_a_set_must_open_light_and_end_heavy():
+    backwards = [
+        problem(slot=1, weight='stretch'),
+        problem(slot=2, weight='core', prompt='Factor 6x^2 - x - 2.', answer='(3x - 2)(2x + 1).'),
+        problem(slot=3, weight='warmup', prompt='Factor x^2 + 5x + 6.', answer='(x + 2)(x + 3).'),
+    ]
+    _, whole = skillsteps.review_problems(backwards, step())
+    assert any('easier' in reason for reason in whole), whole
+
+
+def test_a_set_that_only_restates_its_step_is_rejected():
+    """One problem repeating the practice line is fine; all of them is not."""
+    line = step()['practice']
+    same = [problem(slot=n, weight=w, prompt=line, answer='It factors.')
+            for n, w in ((1, 'warmup'), (2, 'core'), (3, 'stretch'))]
+    _, whole = skillsteps.review_problems(same, step())
+    assert any(reason.startswith('distinct') for reason in whole), whole
+
+
+def test_problems_are_served_inside_their_step(client):
+    connection.save_node_steps('t.prob', rows_for('t.prob', 5))
+    connection.save_step_problems('t.prob', 2, [{
+        'slot': 1, 'weight': 'warmup', 'prompt': 'Factor x^2 + 5x + 6.',
+        'answer': '(x + 2)(x + 3).', 'hint': '', 'tree_id': 'mathematics',
+        'model': 'authored', 'generated_at': '2026-09-27T12:00:00',
+        'verified_at': '2026-09-27T12:00:00', 'verifier': 'rules+authored',
+        'checks': list(skillsteps.PROBLEM_CHECKS),
+    }])
+    steps = client.get('/api/skill-steps?nodes=t.prob').json()['steps']['t.prob']
+    assert steps[0]['problems'] == []
+    assert len(steps[1]['problems']) == 1
+    assert steps[1]['problems'][0]['prompt'] == 'Factor x^2 + 5x + 6.'
+
+
+def test_an_unverified_problem_cannot_be_stored():
+    with pytest.raises(Exception):
+        connection.save_step_problems('t.bad', 1, [{
+            'slot': 1, 'weight': 'warmup', 'prompt': 'x', 'answer': 'y', 'hint': '',
+            'tree_id': 't', 'model': 'm', 'generated_at': 'now',
+            'verified_at': '', 'verifier': '', 'checks': [],
+        }])
+
+
+def test_the_seed_problems_pass_the_same_checks():
+    """Every problem in the committed corpus, against the live rules.
+
+    Normalised through the loader's own `_problems_of` rather than read raw,
+    because the file leaves `slot` and `weight` out on purpose — a set written
+    by hand is numbered and graded by the order it was written in, and testing
+    the un-normalised form would be testing a shape that never reaches the
+    database.
+    """
+    import os
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, 'data', 'skill_steps_seed.json')) as handle:
+        seed = json.load(handle)['programmes']
+
+    problems_seen = 0
+    faults = []
+    for node_id, entry in seed.items():
+        raw = entry.get('steps', []) if isinstance(entry, dict) else entry
+        for at, one in enumerate(raw, start=1):
+            written = seed_skill_steps._problems_of(one, at)
+            if not written:
+                continue
+            problems_seen += len(written)
+            per, whole = skillsteps.review_problems(written, {**one, 'ordinal': at})
+            faults.extend('{} step {}: {}'.format(node_id, at, r) for r in whole)
+            for slot, reasons in zip(written, per):
+                faults.extend('{} step {} slot {}: {}'.format(
+                    node_id, at, slot.get('slot'), r) for r in reasons)
+    assert problems_seen > 0, 'the corpus has no problems in it'
+    assert faults == [], faults
+
+
+def test_activity_ranks_trees_by_finished_work():
+    """The order writing effort is spent in, and why it is not alphabetical."""
+    from backend.config import skill_trees
+    ranked = connection.subject_work_by_tree(skill_trees.SUBJECT_TREE)
+    # Whatever the fixture database holds, the contract is the shape and the
+    # ordering: heaviest first, and every row names a real tree.
+    assert all(len(row) == 4 for row in ranked)
+    assert ranked == sorted(ranked, key=lambda row: (-row[1], row[0]))
