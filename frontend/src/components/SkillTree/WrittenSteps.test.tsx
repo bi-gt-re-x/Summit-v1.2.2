@@ -130,7 +130,7 @@ describe('a written step, closed', () => {
     draw(PROGRAMME);
     // By role rather than by text: an open step names itself again inside its
     // target-problem slot, and the row is the thing being asserted about.
-    expect(screen.getByRole('button', { name: /Recognise a Quadratic/ })).toBeInTheDocument();
+    expect(row('Recognise a Quadratic')).toBeInTheDocument();
     expect(screen.getByText('Identify whether an expression is quadratic.')).toBeInTheDocument();
   });
 
@@ -154,9 +154,21 @@ describe('a written step, closed', () => {
   });
 });
 
+/** The row for a step, by its title. The whole row is the control.
+ *
+ *  There are now two buttons carrying a step's title — the row and the
+ *  "Problems for ..." link beside it — so the row is picked out by the thing
+ *  only it has: an aria-expanded. */
+const row = (title: string) =>
+  screen
+    .getAllByRole('button', { name: new RegExp(title) })
+    .find((one) => one.hasAttribute('aria-expanded'))!;
+
+/** The link beside a step that gives its problems the whole page. */
+const workLink = (title: string) =>
+  screen.getByRole('button', { name: new RegExp(`Problems for ${title}`) });
+
 describe('opening a step', () => {
-  /** The row for a step, by its title. The whole row is the control. */
-  const row = (title: string) => screen.getByRole('button', { name: new RegExp(title) });
 
   it('is a click on the row itself', async () => {
     draw(PROGRAMME);
@@ -228,8 +240,6 @@ describe('the whole programme', () => {
 });
 
 describe('the target problem', () => {
-  const row = (title: string) => screen.getByRole('button', { name: new RegExp(title) });
-
   it('is what opening a step reveals', async () => {
     draw(PROGRAMME);
     await userEvent.click(row('Expand Binomials'));
@@ -275,7 +285,77 @@ describe('taking the section over', () => {
   it('keeps every step openable in the expanded list', async () => {
     draw(PROGRAMME);
     await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
-    await userEvent.click(screen.getByRole('button', { name: /Use the Formula/ }));
+    await userEvent.click(row('Use the Formula'));
     expect(screen.getByText('Compute b^2 - 4ac first and on its own.')).toBeInTheDocument();
+  });
+});
+
+describe('the problems screen', () => {
+  it('is reached by a link beside the step, not by the row itself', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(workLink('Expand Binomials'));
+    expect(screen.getByRole('heading', { name: 'Expand Binomials' })).toBeInTheDocument();
+  });
+
+  it('clears everything else away', async () => {
+    draw(PROGRAMME);
+    // The other steps and the rest of the panel are on screen beforehand.
+    expect(screen.getByText('Your progress')).toBeInTheDocument();
+    await userEvent.click(workLink('Expand Binomials'));
+    expect(screen.queryByText('Your progress')).not.toBeInTheDocument();
+    expect(screen.queryByText('The curriculum')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Recognise a Quadratic/ })).not.toBeInTheDocument();
+  });
+
+  it('takes the section over, so the canvas goes too', async () => {
+    const { onExpand } = draw(PROGRAMME);
+    onExpand.mockClear();
+    await userEvent.click(workLink('Expand Binomials'));
+    expect(onExpand).toHaveBeenLastCalledWith(true);
+  });
+
+  it('opens light and ends heavy, with the bands named', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(workLink('Expand Binomials'));
+    const headings = screen.getAllByRole('heading', { level: 3 }).map((one) => one.textContent);
+    expect(headings[0]).toMatch(/Warm-up/);
+    expect(headings[headings.length - 1]).toMatch(/Stretch/);
+  });
+
+  it('leaves the problems themselves as slots for now', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(workLink('Expand Binomials'));
+    // 20 minutes buys four problems; see countFor in utils/problemSet.
+    expect(screen.getAllByText(/will appear here/)).toHaveLength(4);
+  });
+
+  it('goes back to the steps it came from', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(workLink('Expand Binomials'));
+    await userEvent.click(screen.getByRole('button', { name: /Back to Steps/ }));
+    expect(screen.getByText('Your progress')).toBeInTheDocument();
+  });
+
+  it('offers a way out of the takeover without climbing back', async () => {
+    const { onExpand } = draw(PROGRAMME);
+    await userEvent.click(workLink('Expand Binomials'));
+    onExpand.mockClear();
+    await userEvent.click(screen.getByRole('button', { name: /Back to Tree/ }));
+    expect(onExpand).toHaveBeenLastCalledWith(false);
+  });
+
+  it('is reachable from the expanded list as well as from the panel', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
+    await userEvent.click(workLink('Use the Formula'));
+    expect(screen.getByRole('heading', { name: 'Use the Formula' })).toBeInTheDocument();
+  });
+
+  it('does not replace expanding a step in place', async () => {
+    draw(PROGRAMME);
+    await userEvent.click(row('Expand Binomials'));
+    expect(row('Expand Binomials')).toHaveAttribute('aria-expanded', 'true');
+    // Still on the programme, not on the problems screen.
+    expect(screen.getByText('Your progress')).toBeInTheDocument();
   });
 });

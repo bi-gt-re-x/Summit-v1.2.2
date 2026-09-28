@@ -110,6 +110,7 @@ import {
   type StepPlan,
 } from '@/utils/skillSteps';
 import type { WrittenStep } from '@/services/skillSteps';
+import { WEIGHT_BLURB, WEIGHT_LABEL, bandsFor } from '@/utils/problemSet';
 import { ProgressIndicator } from './ProgressIndicator';
 
 const number = (value: number) => Math.round(value).toLocaleString();
@@ -157,6 +158,113 @@ function Rows({
 }
 
 /**
+ * One step, with everything else gone.
+ *
+ * ## Why this is a screen rather than a bigger expansion
+ *
+ * Expanding a row answers "what does this step involve" while the reader is
+ * still choosing between twelve of them, so the other eleven stay on screen —
+ * that is the whole use of it. This answers a different question: the choosing
+ * is over, and what is wanted now is the problems and nothing competing with
+ * them. A reader working through a stretch problem does not benefit from the
+ * step list, the canvas, the prerequisites or the XP bar being in their
+ * peripheral vision, so none of them are.
+ *
+ * Both exist because both questions are real. Adding this did not cost the
+ * expansion anything.
+ *
+ * ## The set is a slope, not a pile
+ *
+ * Problems come in three bands — warm-up, core, stretch — and the first third
+ * are the light ones. See utils/problemSet for why, and for the arithmetic
+ * that decides how many a step is owed. The bands are drawn as headings rather
+ * than inferred from the questions, so a reader who is stuck on the last one
+ * can see that it is supposed to be the hard one.
+ *
+ * The problems themselves are not written yet. What is here is the ladder they
+ * will land in, drawn as dashed slots so it reads as "not yet" rather than
+ * "failed to load".
+ */
+function StepWorkspace({
+  step,
+  node,
+  onBack,
+  onBackToTree,
+}: {
+  step: WrittenStep;
+  node: GraphNode;
+  /** Back to the programme this step belongs to. */
+  onBack: () => void;
+  /** Out of the takeover entirely. */
+  onBackToTree: () => void;
+}) {
+  const bands = bandsFor(step);
+  const total = bands.reduce((sum, band) => sum + band.slots.length, 0);
+
+  return (
+    <aside className={`stx-lp is-steps is-work tier-${node.difficulty}`}>
+      <header className="stx-lp-steps-head">
+        <button type="button" className="stx-lp-back" onClick={onBack}>
+          <span aria-hidden="true">←</span> Back to Steps
+        </button>
+        <div>
+          <h2>{step.title}</h2>
+          <p className="stx-lp-steps-count">
+            {node.name} · step {step.ordinal} · {total} problems
+          </p>
+        </div>
+        {/* The second way out. A reader two levels deep should not have to
+            climb back through a screen they are finished with. */}
+        <button type="button" className="stx-lp-back is-far" onClick={onBackToTree}>
+          Back to Tree
+        </button>
+      </header>
+
+      <div className="stx-lp-body stx-lp-programme">
+        {/* The step itself, restated in one line. Without it the problems are
+            a list of questions with no statement of what they are for. */}
+        <p className="stx-work-brief">{step.mastery}</p>
+
+        {bands.map((band) => (
+          <section key={band.weight} className={`stx-work-band is-${band.weight}`}>
+            <h3 className="stx-work-band-name">
+              {WEIGHT_LABEL[band.weight]}
+              <span>{WEIGHT_BLURB[band.weight]}</span>
+            </h3>
+            <ol className="stx-work-list">
+              {band.slots.map((slot) => (
+                <li key={slot.index} className="stx-work-slot">
+                  <span className="stx-work-num" aria-hidden="true">
+                    {slot.index}
+                  </span>
+                  <span className="stx-work-slot-text">
+                    A {WEIGHT_LABEL[band.weight].toLowerCase()} problem for{' '}
+                    <b>{step.title}</b> will appear here.
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+
+        {/* What the step already says about finishing, kept because it is the
+            only thing on this screen that answers "am I done". */}
+        <dl className="stx-ws-facts stx-work-facts">
+          <div>
+            <dt>Done when</dt>
+            <dd>{step.proof}</dd>
+          </div>
+          <div>
+            <dt>Watch for</dt>
+            <dd>{step.pitfall}</dd>
+          </div>
+        </dl>
+      </div>
+    </aside>
+  );
+}
+
+/**
  * The written programme: a row per step, and the row opens.
  *
  * ## Why this is a separate component from `Programme` below
@@ -184,12 +292,15 @@ function WrittenProgramme({
   steps,
   at,
   onOpenChange,
+  onWork,
 }: {
   steps: WrittenStep[];
   /** Which step the reader is on, 0-based. Opens expanded. */
   at: number;
   /** Told when a step opens, so a parent can scroll or measure. Optional. */
   onOpenChange?: (ordinal: number, open: boolean) => void;
+  /** Take the page over with this step's problems. Absent hides the link. */
+  onWork?: (step: WrittenStep) => void;
 }) {
   // The current step starts open, because it is the one the reader came for.
   const [open, setOpen] = useState<Set<number>>(
@@ -224,7 +335,12 @@ function WrittenProgramme({
         return (
           <li key={step.ordinal} className={`stx-ws-step ${state} ${isOpen ? 'is-open' : ''}`}>
             {/* The whole row is the control, not a chevron in the corner: the
-                target is the thing a reader is already pointing at. */}
+                target is the thing a reader is already pointing at.
+
+                The link beside it is a second, different verb and has to stay
+                outside the row's own button — a button inside a button is
+                invalid, and the browser resolves it by swallowing one of the
+                two clicks. */}
             <button
               type="button"
               className="stx-ws-head"
@@ -246,6 +362,23 @@ function WrittenProgramme({
                 {isOpen ? '−' : '+'}
               </span>
             </button>
+
+            {/* Two ways into a step, on purpose, because they answer different
+                questions. Expanding keeps the programme on screen and is for
+                "what does this one involve" — you are still choosing. This is
+                for "I am doing this one now": it clears the page down to the
+                problems and nothing else, because a reader who has committed
+                to a step should not be looking at the other eleven. */}
+            {onWork && (
+              <button
+                type="button"
+                className="stx-ws-work"
+                onClick={() => onWork(step)}
+              >
+                Problems for {step.title}
+                <span aria-hidden="true">→</span>
+              </button>
+            )}
 
             {isOpen && (
               <div className="stx-ws-body" id={panelId}>
@@ -564,10 +697,17 @@ export function LatticePanel({
   // panel-wide state rather than the section's. Reset on every change of node:
   // a reader who clicks a new tile wants that tile, not the steps of the last.
   const [allSteps, setAllSteps] = useState(false);
+  /* Which step has the page to itself, by ordinal. Separate from `allSteps`
+     rather than a third value of it, because the two are independent: the
+     problems screen can be opened from the panel's three-step window without
+     the reader ever having opened the full list, and going back has to land
+     wherever they came from. */
+  const [workingOn, setWorkingOn] = useState<number | null>(null);
   const [naming, setNaming] = useState(false);
   const [nameDraft, setNameDraft] = useState('');
   useEffect(() => {
     setAllSteps(false);
+    setWorkingOn(null);
     setNaming(false);
   }, [node?.id]);
 
@@ -576,8 +716,8 @@ export function LatticePanel({
   // itself on a new node and left the grid wide would leave the canvas hidden
   // behind an empty column.
   useEffect(() => {
-    onExpand?.(allSteps);
-  }, [allSteps, onExpand]);
+    onExpand?.(allSteps || workingOn !== null);
+  }, [allSteps, workingOn, onExpand]);
 
   // Leaving the page entirely — unmounting mid-expansion — has to put the grid
   // back too.
@@ -736,6 +876,28 @@ export function LatticePanel({
     if (next && next !== node!.name) onRename?.(next);
   }
 
+  /* The problems screen wins over both other layouts. It is the deepest thing
+     the panel can be showing and the reader got to it deliberately, so nothing
+     above it in this function may pre-empt it. */
+  const worked = useWritten && workingOn !== null
+    ? written!.find((one) => one.ordinal === workingOn) ?? null
+    : null;
+  if (worked) {
+    return (
+      <StepWorkspace
+        step={worked}
+        node={node}
+        // Back lands where they came from: the full list if it was open behind
+        // this, the panel if the link was clicked from the three-step window.
+        onBack={() => setWorkingOn(null)}
+        onBackToTree={() => {
+          setWorkingOn(null);
+          setAllSteps(false);
+        }}
+      />
+    );
+  }
+
   // The whole panel, given over to the programme. Not a section that grew a
   // scrollbar — the steps are what the reader asked for, so everything else
   // gets out of the way and the list has the full height to itself.
@@ -756,7 +918,11 @@ export function LatticePanel({
         </header>
         {useWritten ? (
           <div className="stx-lp-body stx-lp-programme">
-            <WrittenProgramme steps={written!} at={at} />
+            <WrittenProgramme
+              steps={written!}
+              at={at}
+              onWork={(step) => setWorkingOn(step.ordinal)}
+            />
           </div>
         ) : (
           <Programme
@@ -938,7 +1104,11 @@ export function LatticePanel({
                are the ones worth room in the panel, and any of them expands in
                place — "All N steps" is still there for the whole list, but it
                is no longer the only way to read what a step actually asks. */
-            <WrittenProgramme steps={written!.slice(at, at + 3)} at={0} />
+            <WrittenProgramme
+              steps={written!.slice(at, at + 3)}
+              at={0}
+              onWork={(step) => setWorkingOn(step.ordinal)}
+            />
           ) : (
             /* `start` rather than a re-numbered list: step seven has to read as
                step seven, or the count under it is describing something else. */

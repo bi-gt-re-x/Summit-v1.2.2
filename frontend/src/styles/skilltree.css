@@ -4083,3 +4083,140 @@ html[data-theme="dark"] .stx-region {
     .stx-page--lattice .stx-layout { transition: none; }
     .stx-lp-back, .stx-lp-back span { transition: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Working on one step, with everything else gone.
+
+   The link sits under the row it belongs to rather than inside it: a button
+   inside a button is invalid, and nesting the two controls would make the
+   smaller one impossible to hit without also firing the larger. It is quiet
+   until the row is hovered or the link itself is focused, because twelve
+   equally loud links down the side of a programme is a column of noise.
+   --------------------------------------------------------------------------- */
+.stx-ws-work {
+    display: inline-flex;
+    align-items: center;
+    gap: .4em;
+    margin: 0 var(--space-3) var(--space-2) calc(var(--space-3) + 1.5rem + var(--space-2));
+    padding: 2px 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--lat-violet);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in srgb, var(--lat-violet) 40%, transparent);
+    cursor: pointer;
+    opacity: .62;
+    transition: opacity .15s ease;
+}
+
+.stx-ws-step:hover .stx-ws-work,
+.stx-ws-step.is-now .stx-ws-work,
+.stx-ws-work:hover,
+.stx-ws-work:focus-visible { opacity: 1; }
+
+.stx-ws-work:focus-visible {
+    outline: 2px solid var(--lat-violet);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+.stx-ws-work span { transition: transform .15s ease; }
+.stx-ws-work:hover span { transform: translateX(2px); }
+
+/* The far exit in the workspace header — out of the takeover in one move,
+   rather than climbing back through a screen already finished with. */
+.stx-lp-back.is-far { margin-left: auto; }
+
+.stx-work-brief {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--lat-muted);
+}
+
+.stx-work-band { margin: 0; }
+
+.stx-work-band-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--lat-text);
+}
+
+/* The band's own sentence, which is what turns three headings into a stated
+   slope rather than three arbitrary groups. */
+.stx-work-band-name span {
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--lat-muted);
+}
+
+.stx-work-band.is-warmup .stx-work-band-name { color: var(--lat-green); }
+.stx-work-band.is-core .stx-work-band-name { color: var(--lat-blue); }
+.stx-work-band.is-stretch .stx-work-band-name { color: var(--lat-amber); }
+
+.stx-work-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stx-work-slot {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2);
+    align-items: center;
+    padding: var(--space-3);
+    border: 1px dashed var(--lat-line);
+    border-radius: var(--radius-md);
+    background: var(--lat-panel);
+}
+
+.stx-work-band.is-warmup .stx-work-slot {
+    border-color: color-mix(in srgb, var(--lat-green) 30%, var(--lat-line));
+}
+.stx-work-band.is-core .stx-work-slot {
+    border-color: color-mix(in srgb, var(--lat-blue) 30%, var(--lat-line));
+}
+.stx-work-band.is-stretch .stx-work-slot {
+    border-color: color-mix(in srgb, var(--lat-amber) 34%, var(--lat-line));
+}
+
+.stx-work-num {
+    display: grid;
+    place-items: center;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--lat-page);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--lat-muted);
+}
+
+.stx-work-slot-text {
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-muted);
+}
+
+.stx-work-slot-text b { color: var(--lat-text); }
+
+.stx-work-facts { padding-top: var(--space-2); border-top: 1px solid var(--lat-line-soft); }
