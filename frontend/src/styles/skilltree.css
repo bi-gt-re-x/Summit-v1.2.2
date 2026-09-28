@@ -4220,3 +4220,109 @@ html[data-theme="dark"] .stx-region {
 .stx-work-slot-text b { color: var(--lat-text); }
 
 .stx-work-facts { padding-top: var(--space-2); border-top: 1px solid var(--lat-line-soft); }
+
+/* ---------------------------------------------------------------------------
+   Room to read.
+
+   The step lists were set at the density of a table of contents, which is the
+   right density for a list of titles and the wrong one for a list of
+   instructions — nine sentences at a two-pixel row gap is a paragraph with
+   numbers in it. Each row is its own piece of work and is spaced like one.
+   --------------------------------------------------------------------------- */
+.stx-lp-steps.is-all {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.stx-lp-step {
+    /* A second row for the problems link, in the step's own column rather
+       than under its number. */
+    grid-template-rows: auto auto;
+    gap: var(--space-1) var(--space-2);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--lat-line-soft);
+    line-height: 1.6;
+}
+
+.stx-lp-steps.is-all .stx-lp-step:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.stx-lp-step .stx-ws-work.is-derived { grid-column: 2; grid-row: 2; }
+.stx-lp-step .stx-lp-step-del { grid-column: 3; grid-row: 1; }
+
+/* The three-step window in the panel. Each item is now two controls — the
+   sentence, which opens the full list, and the link into that step's
+   problems — so the row needs to be a column rather than a line of text. */
+.stx-lp-steps.is-window {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.stx-lp-steps.is-window li { line-height: 1.55; }
+
+.stx-lp-window-text {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    line-height: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.stx-lp-window-text:hover { color: var(--lat-text); }
+
+.stx-lp-window-text:focus-visible {
+    outline: 2px solid var(--lat-violet);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* The derived link sits under its sentence rather than under a number, and
+   carries no left indent of its own — the grid and the list marker already
+   put it where it belongs. */
+.stx-ws-work.is-derived { margin: 2px 0 0; }
+
+/* The written rows get the same treatment: a card per step, with air between
+   the cards and inside them. */
+.stx-ws { gap: var(--space-3); }
+.stx-ws-head { padding: var(--space-3); gap: var(--space-3); }
+.stx-ws-lines { gap: 5px; }
+.stx-ws-title { line-height: 1.4; }
+.stx-ws-mastery, .stx-ws-try { line-height: 1.6; }
+.stx-ws-body { padding: 0 var(--space-3) var(--space-3); }
+.stx-ws-detail { line-height: 1.7; }
+.stx-ws-facts { gap: var(--space-2); }
+
+/* The problems screen is the one place with the whole width, so its list gets
+   the most room of all. */
+.stx-lp.is-work .stx-lp-programme { gap: var(--space-5); }
+.stx-work-list { gap: var(--space-3); }
+.stx-work-slot { padding: var(--space-3) var(--space-4); }
+
+/* The problems link is a primary way through the page, not a hover
+   affordance. It was held at 62% and revealed on hover, which is the right
+   treatment for a destructive control tucked beside a row and the wrong one
+   for the thing a reader is meant to click — on a dark theme it read as
+   disabled, and on a touch screen there is no hover to reveal it with. */
+.stx-ws-work {
+    opacity: 1;
+    gap: .45em;
+    padding: 3px 0;
+    text-decoration-color: color-mix(in srgb, var(--lat-violet) 55%, transparent);
+}
+
+.stx-ws-work .icon {
+    width: 1.05em;
+    height: 1.05em;
+    flex: none;
+}
+
+.stx-ws-work:hover {
+    color: color-mix(in srgb, var(--lat-violet) 78%, var(--lat-text));
+    text-decoration-color: currentColor;
+}

@@ -32,7 +32,27 @@
  * the top of data/sql/skillsteps.sql on why generated content is stored rather
  * than derived. `slotsFor` is then the thing that gets deleted, not extended.
  */
-import type { WrittenStep } from '@/services/skillSteps';
+/**
+ * The least a step has to be for problems to be built on it.
+ *
+ * `WrittenStep` satisfies this and carries more. The looser shape exists
+ * because the problems screen has to work on the derived programme too: most
+ * of the library has no written steps yet, and a reader on one of those nodes
+ * should still get a graded set rather than a feature that is invisible until
+ * a generator run reaches them. See `asPractice` in
+ * components/SkillTree/LatticePanel for how a ladder rung becomes one of
+ * these.
+ */
+export interface PracticeStep {
+  ordinal: number;
+  /** A short label for the step — what the problems are for. */
+  title: string;
+  /** One line of what this step is, shown above the problems. */
+  mastery: string;
+  proof: string;
+  pitfall: string;
+  minutes: number;
+}
 
 /** How hard a problem in the set is meant to be. */
 export type ProblemWeight = 'warmup' | 'core' | 'stretch';
@@ -70,7 +90,7 @@ export const WARM_UP_SHARE = 1 / 3;
 export const MIN_PROBLEMS = 3;
 export const MAX_PROBLEMS = 9;
 
-export function countFor(step: Pick<WrittenStep, 'minutes'>): number {
+export function countFor(step: Pick<PracticeStep, 'minutes'>): number {
   const byCost = Math.round(step.minutes / 5);
   return Math.max(MIN_PROBLEMS, Math.min(MAX_PROBLEMS, byCost));
 }
@@ -82,7 +102,7 @@ export function countFor(step: Pick<WrittenStep, 'minutes'>): number {
  * problems the split is one of each, and with nine it is 3/3/3. What never
  * changes is that the set opens on a warm-up and ends on a stretch.
  */
-export function slotsFor(step: Pick<WrittenStep, 'minutes'>): ProblemSlot[] {
+export function slotsFor(step: Pick<PracticeStep, 'minutes'>): ProblemSlot[] {
   const total = countFor(step);
   const warm = Math.max(1, Math.ceil(total * WARM_UP_SHARE));
   // The stretch band is the same size as the warm-up one, so the slope is
@@ -99,7 +119,7 @@ export function slotsFor(step: Pick<WrittenStep, 'minutes'>): ProblemSlot[] {
 
 /** The set grouped into its bands, in order, skipping any band that is empty. */
 export function bandsFor(
-  step: Pick<WrittenStep, 'minutes'>,
+  step: Pick<PracticeStep, 'minutes'>,
 ): { weight: ProblemWeight; slots: ProblemSlot[] }[] {
   const slots = slotsFor(step);
   return (['warmup', 'core', 'stretch'] as ProblemWeight[])

@@ -110,7 +110,13 @@ import {
   type StepPlan,
 } from '@/utils/skillSteps';
 import type { WrittenStep } from '@/services/skillSteps';
-import { WEIGHT_BLURB, WEIGHT_LABEL, bandsFor } from '@/utils/problemSet';
+import {
+  WEIGHT_BLURB,
+  WEIGHT_LABEL,
+  bandsFor,
+  type PracticeStep,
+} from '@/utils/problemSet';
+import { Icon } from '@/components/Icon';
 import { ProgressIndicator } from './ProgressIndicator';
 
 const number = (value: number) => Math.round(value).toLocaleString();
@@ -158,6 +164,68 @@ function Rows({
 }
 
 /**
+ * Roughly what a step at each tier costs, in minutes.
+ *
+ * Only the derived programme needs this. A written step states its own cost;
+ * a rung of the generic ladder in skills/improve has none, and the number is
+ * what decides how many problems the step is owed — see `countFor` in
+ * utils/problemSet. Tier is the only signal a rung carries, so tier is what it
+ * is read from.
+ */
+const TIER_MINUTES: Record<string, number> = {
+  foundation: 10,
+  beginner: 15,
+  intermediate: 20,
+  advanced: 30,
+  expert: 40,
+  mastery: 45,
+};
+
+/**
+ * A short label for a step that only exists as one sentence.
+ *
+ * The derived ladder is a list of instructions, not a table, so there is no
+ * title to put at the top of the problems screen. This takes the first clause
+ * and caps it, which on a rung like "Make up your own input, work out the
+ * answer by hand, then check the code agrees." gives "Make up your own input"
+ * — the part that names the work.
+ */
+function labelFor(text: string): string {
+  const clause = text.split(/[,.;:]/)[0]!.trim();
+  const words = clause.split(/\s+/).slice(0, 6).join(' ');
+  return (words || text.slice(0, 40)).replace(/\s+$/, '');
+}
+
+/**
+ * One rung of the derived ladder, in the shape the problems screen takes.
+ *
+ * The point of this function is that the feature does not wait for content.
+ * Most of the library still answers from skills/improve, and a link that only
+ * appeared on the nodes a generator had already reached would be a feature
+ * most readers never saw. A derived step is a worse step — it does not name
+ * its object, which is the whole complaint against the ladder — but the
+ * *problems* hanging off it are slots either way, so there is nothing lost by
+ * hanging them off this too.
+ */
+function asPractice(
+  text: string,
+  ordinal: number,
+  node: GraphNode,
+  plan: { proof: string; pitfall: string },
+): PracticeStep {
+  return {
+    ordinal,
+    title: labelFor(text),
+    // The whole instruction is the brief: the title above is a truncation of
+    // it, so the screen would otherwise show only half a sentence.
+    mastery: text,
+    proof: plan.proof,
+    pitfall: plan.pitfall,
+    minutes: TIER_MINUTES[node.difficulty] ?? 20,
+  };
+}
+
+/**
  * One step, with everything else gone.
  *
  * ## Why this is a screen rather than a bigger expansion
@@ -191,7 +259,7 @@ function StepWorkspace({
   onBack,
   onBackToTree,
 }: {
-  step: WrittenStep;
+  step: PracticeStep;
   node: GraphNode;
   /** Back to the programme this step belongs to. */
   onBack: () => void;
@@ -375,6 +443,7 @@ function WrittenProgramme({
                 className="stx-ws-work"
                 onClick={() => onWork(step)}
               >
+                <Icon name="target" />
                 Problems for {step.title}
                 <span aria-hidden="true">→</span>
               </button>
@@ -441,6 +510,7 @@ function Programme({
   onReset,
   editable,
   edited,
+  onWork,
 }: {
   plan: StepPlan;
   at: number;
@@ -449,6 +519,8 @@ function Programme({
   editable: boolean;
   /** Whether this programme is the reader's or still the suggested one. */
   edited: boolean;
+  /** Take the page over with this step's problems, by 0-based position. */
+  onWork?: (index: number) => void;
 }) {
   const [editingAt, setEditingAt] = useState<number | null>(null);
   const [confirmAt, setConfirmAt] = useState<number | null>(null);
@@ -559,6 +631,21 @@ function Programme({
               >
                 {step}
               </button>
+              {onWork && (
+                /* The same link the written programme carries, on the derived
+                   one too. Most of the library still answers from the ladder,
+                   and a way into the problems that only existed on generated
+                   nodes would be a feature almost nobody found. */
+                <button
+                  type="button"
+                  className="stx-ws-work is-derived"
+                  onClick={() => onWork(index)}
+                >
+                  <Icon name="target" />
+                  Problems for {labelFor(step)}
+                  <span aria-hidden="true">→</span>
+                </button>
+              )}
               {editable && plan.steps.length > 1 && (
                 <button
                   type="button"
@@ -697,12 +784,17 @@ export function LatticePanel({
   // panel-wide state rather than the section's. Reset on every change of node:
   // a reader who clicks a new tile wants that tile, not the steps of the last.
   const [allSteps, setAllSteps] = useState(false);
-  /* Which step has the page to itself, by ordinal. Separate from `allSteps`
-     rather than a third value of it, because the two are independent: the
-     problems screen can be opened from the panel's three-step window without
-     the reader ever having opened the full list, and going back has to land
-     wherever they came from. */
-  const [workingOn, setWorkingOn] = useState<number | null>(null);
+  /* Which step has the page to itself. Separate from `allSteps` rather than a
+     third value of it, because the two are independent: the problems screen
+     can be opened from the panel's three-step window without the reader ever
+     having opened the full list, and going back has to land wherever they came
+     from.
+
+     The step itself rather than an index, because the two programmes number
+     differently — a written step knows its own ordinal and a ladder rung is
+     only a position in an array — and the screen needs the same shape from
+     both. */
+  const [workingOn, setWorkingOn] = useState<PracticeStep | null>(null);
   const [naming, setNaming] = useState(false);
   const [nameDraft, setNameDraft] = useState('');
   useEffect(() => {
@@ -879,13 +971,10 @@ export function LatticePanel({
   /* The problems screen wins over both other layouts. It is the deepest thing
      the panel can be showing and the reader got to it deliberately, so nothing
      above it in this function may pre-empt it. */
-  const worked = useWritten && workingOn !== null
-    ? written!.find((one) => one.ordinal === workingOn) ?? null
-    : null;
-  if (worked) {
+  if (workingOn) {
     return (
       <StepWorkspace
-        step={worked}
+        step={workingOn}
         node={node}
         // Back lands where they came from: the full list if it was open behind
         // this, the panel if the link was clicked from the three-step window.
@@ -921,7 +1010,7 @@ export function LatticePanel({
             <WrittenProgramme
               steps={written!}
               at={at}
-              onWork={(step) => setWorkingOn(step.ordinal)}
+              onWork={(step) => setWorkingOn(step)}
             />
           </div>
         ) : (
@@ -932,6 +1021,9 @@ export function LatticePanel({
             onReset={onResetSteps}
             editable={Boolean(changeSteps)}
             edited={Boolean(steps)}
+            onWork={(index) =>
+              setWorkingOn(asPractice(programme.steps[index]!, index + 1, node, plan))
+            }
           />
         )}
       </aside>
@@ -1107,15 +1199,32 @@ export function LatticePanel({
             <WrittenProgramme
               steps={written!.slice(at, at + 3)}
               at={0}
-              onWork={(step) => setWorkingOn(step.ordinal)}
+              onWork={(step) => setWorkingOn(step)}
             />
           ) : (
             /* `start` rather than a re-numbered list: step seven has to read as
                step seven, or the count under it is describing something else. */
-            <ol className="stx-lp-steps is-window" start={at + 1} onClick={openSteps}>
+            /* `start` rather than a re-numbered list: step seven has to read
+               as step seven, or the count under it is describing something
+               else. The row still opens the full list; the link under it goes
+               straight to that step's problems. */
+            <ol className="stx-lp-steps is-window" start={at + 1}>
               {window.map((step, index) => (
                 <li key={step} className={index === 0 ? 'is-now' : ''}>
-                  {step}
+                  <button type="button" className="stx-lp-window-text" onClick={openSteps}>
+                    {step}
+                  </button>
+                  <button
+                    type="button"
+                    className="stx-ws-work is-derived"
+                    onClick={() =>
+                      setWorkingOn(asPractice(step, at + index + 1, node, plan))
+                    }
+                  >
+                    <Icon name="target" />
+                    Problems for {labelFor(step)}
+                    <span aria-hidden="true">→</span>
+                  </button>
                 </li>
               ))}
             </ol>

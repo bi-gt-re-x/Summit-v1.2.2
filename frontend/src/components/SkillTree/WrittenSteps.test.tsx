@@ -359,3 +359,52 @@ describe('the problems screen', () => {
     expect(screen.getByText('Your progress')).toBeInTheDocument();
   });
 });
+
+describe('a node with nothing written for it', () => {
+  /* Most of the library is still answered by the derived ladder in
+     skills/improve, so this is the path the majority of readers are on. The
+     problems have to be reachable from it or the feature is one almost nobody
+     ever finds. */
+
+  it('still offers a way into the problems', () => {
+    draw(null);
+    expect(screen.getAllByRole('button', { name: /Problems for/ }).length)
+      .toBeGreaterThan(0);
+  });
+
+  it('opens the same screen, with the same slope', async () => {
+    draw(null);
+    const [first] = screen.getAllByRole('button', { name: /Problems for/ });
+    await userEvent.click(first!);
+    const headings = screen.getAllByRole('heading', { level: 3 }).map((one) => one.textContent);
+    expect(headings[0]).toMatch(/Warm-up/);
+    expect(headings[headings.length - 1]).toMatch(/Stretch/);
+    expect(screen.getAllByText(/will appear here/).length).toBeGreaterThan(0);
+  });
+
+  it('clears the page down the same way', async () => {
+    draw(null);
+    const [first] = screen.getAllByRole('button', { name: /Problems for/ });
+    await userEvent.click(first!);
+    expect(screen.queryByText('Your progress')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Back to Steps/ })).toBeInTheDocument();
+  });
+
+  it('takes the section over, as the written path does', async () => {
+    const { onExpand } = draw(null);
+    onExpand.mockClear();
+    const [first] = screen.getAllByRole('button', { name: /Problems for/ });
+    await userEvent.click(first!);
+    expect(onExpand).toHaveBeenLastCalledWith(true);
+  });
+
+  it('titles the screen from the step rather than showing half a sentence', async () => {
+    draw(null);
+    const [first] = screen.getAllByRole('button', { name: /Problems for/ });
+    await userEvent.click(first!);
+    const heading = screen.getByRole('heading', { level: 2 });
+    // A clause, not the whole instruction, and never trailing punctuation.
+    expect(heading.textContent!.length).toBeLessThan(45);
+    expect(heading.textContent).not.toMatch(/[,.;:]$/);
+  });
+});
