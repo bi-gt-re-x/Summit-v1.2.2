@@ -39,9 +39,6 @@ import type { Theme } from '@/types';
  * The list the settings page shows is the same one, with names and swatches on
  * it — see THEMES in pages/Settings. This is only the half the provider needs,
  * kept here so applying a skin does not mean importing a page into a context.
- */
-/**
- * The base each skin is drawn against.
  *
  * Exported because it is written down twice: the inline script in
  * frontend/index.html has to apply the same base before the first paint, and

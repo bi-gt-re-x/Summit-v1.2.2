@@ -68,8 +68,39 @@ export function Topbar() {
      `displayName`, so an account named "temu" with the username "Alpha" read
      as two people on one screen. One name on the surface; the username is in
      the menu below, which is where "which account am I in" belongs. */
-  const { displayName } = useSettings();
+  const { displayName, update } = useSettings();
   const { theme, setTheme } = useTheme();
+
+  /**
+   * Light and dark, from the bar rather than from Settings — and recorded the
+   * same way Settings records it.
+   *
+   * This called `setTheme` alone, which applies the colour and writes the
+   * cookie and the account's `theme` but says nothing about *why*. Two
+   * preferences then talked over it on the next load:
+   *
+   * - `theme_mode` defaults to `'system'`, and SettingsProvider follows the
+   *   device whenever it is. So the toggle worked, persisted, and was
+   *   overwritten by the device's own setting the next time the page opened —
+   *   the theme appearing not to save at all, on a default account.
+   * - A skin pins the base it was drawn against, and re-pins it now, so under
+   *   Midnight or Sunset the toggle went back the moment it was pressed.
+   *
+   * Both are the reader's earlier instructions still being obeyed, so the fix
+   * is to update them rather than to stop them running: pressing this is a
+   * statement about light and dark, which is what `theme_mode` records and
+   * what clearing the skin means. It is the pair pages/Settings already
+   * writes for its own light and dark cards — see `pickMode` there — so the
+   * two controls now leave the account in the same state rather than in two
+   * states that disagree on the next load.
+   */
+  const chooseTheme = useCallback(
+    (next: Theme) => {
+      setTheme(next);
+      void update({ theme_mode: next, theme_skin: '' });
+    },
+    [setTheme, update],
+  );
   // Shared with the rail, which shows the same level under the avatar. Six
   // integers, read once for the session — this used to be the account's whole
   // task list, twice, because the bar and the rail each asked for it.
@@ -233,7 +264,7 @@ export function Topbar() {
           aria-checked={theme === 'dark'}
           aria-label="Dark mode"
           title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          onClick={() => setTheme((theme === 'dark' ? 'light' : 'dark') as Theme)}
+          onClick={() => chooseTheme((theme === 'dark' ? 'light' : 'dark') as Theme)}
         >
           {theme === 'dark' ? (
             <svg {...stroke}>
