@@ -160,7 +160,12 @@ html:root[data-skin] {
    Listed rather than globbed because CSS cannot glob a custom property, and
    because the list being explicit is what makes it checkable: a page added
    later without a line here keeps its own colour, which is a visible miss
-   rather than a silent one.
+   rather than a silent one. Four of them had been missed exactly that way —
+   see the note on `--pom-violet` below — and the tell was that all four
+   declared their token as `var(--color-accent)`, which a skin repoints on
+   `:root` and an accent does not. A page whose accent token reads
+   `--color-accent` and whose selector is not below follows half the
+   preferences and no error says so.
 
    Each selector is (0,3,0) or better against a page's own (0,1,0) and its dark
    block's (0,2,1), so it wins in both themes without !important and without
@@ -183,6 +188,10 @@ html:root[data-skin] {
 :root[data-accent] .subject-picker,
 :root[data-accent] .tk-rate-backdrop,
 :root[data-accent] .gr-scope,
+:root[data-accent] .pom-page,
+:root[data-accent] .cu-backdrop,
+:root[data-accent] .tk-day-all,
+:root[data-accent] .tk-day-backdrop,
 :root[data-accent] #monthView,
 :root[data-skin] .ac-page,
 :root[data-skin] .ax-page,
@@ -196,6 +205,10 @@ html:root[data-skin] {
 :root[data-skin] .subject-picker,
 :root[data-skin] .tk-rate-backdrop,
 :root[data-skin] .gr-scope,
+:root[data-skin] .pom-page,
+:root[data-skin] .cu-backdrop,
+:root[data-skin] .tk-day-all,
+:root[data-skin] .tk-day-backdrop,
 :root[data-skin] #monthView {
     --ac-violet: var(--pref-accent);
     --ax-violet: var(--pref-accent);
@@ -215,6 +228,17 @@ html:root[data-skin] {
        and pointing it at one turned a green figure violet. */
     --lp-accent: var(--pref-accent);
     --mv-accent: var(--pref-accent);
+    /* Four more that were declared `var(--color-accent)` and so followed a
+       skin but not an accent — which is the confusing half of that pair to
+       get wrong, because the reader sees every other page change and these
+       stay violet. The Timer, the skill tree's lattice view, the catch-up
+       sheet and the day-complete overlay. `--lat-violet` needs no selector of
+       its own: the lattice is `.stx-page--lattice` on the same element that
+       already carries `.stx-page`. */
+    --pom-violet: var(--pref-accent);
+    --lat-violet: var(--pref-accent);
+    --cu-accent: var(--pref-accent);
+    --dc-violet: var(--pref-accent);
     /* The tints. These are backgrounds a card or a tile sits behind the
        accent's own ink on, so they are the accent at low opacity rather than
        one of the two source colours — which also means one value works in both

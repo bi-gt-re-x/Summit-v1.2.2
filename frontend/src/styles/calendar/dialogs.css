@@ -309,11 +309,18 @@
 
 }
 
+/* A wash rather than a fill. `#fff5f5` is a pink so pale it reads as white,
+   which is what it did in dark mode: the modal's own fields are
+   `rgba(255,255,255,.05)` on near-black with near-white text, and this
+   painted the failing one opaque near-white under that same text — 1.03:1,
+   the one field on the form nobody could read being the one the form was
+   complaining about. Translucent red composites over whichever ground is
+   behind it, so the signal survives both themes without a second rule. */
 .invalid-input {
 
     border: 2px solid red !important;
 
-    background-color: #fff5f5 !important;
+    background-color: rgba(220, 38, 38, 0.10) !important;
 
 }
 

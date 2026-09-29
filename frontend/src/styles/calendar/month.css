@@ -1167,6 +1167,27 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
 #dailyTasks .task-input::placeholder,
 #dailyTasks .task-input-inline::placeholder { color: var(--mv-ink-faint); }
 
+/* The subtask row, dressed like the title above it rather than left to the
+   browser. The two fields above were given the card's own ink here and these
+   two were not, and in dark mode that showed: the bullet stayed `#333` on a
+   dark card tint — 1.1:1, which is not a faint bullet, it is no bullet — and
+   the field kept the user agent's white box, a lit rectangle on a dark row.
+
+   `color: inherit` rather than a colour of its own, for the same reason the
+   title uses it: the card's ink is already the right one in both themes and
+   in every event family, and a second answer here would have to be kept in
+   step with all of them. The completed row keeps its dimmed ink, because
+   that is a state and not a theme. */
+#dailyTasks .bullet { color: var(--mv-ink-soft); }
+
+#dailyTasks .subtask-input {
+    background: transparent !important;
+    border-color: var(--mv-line);
+    color: inherit !important;
+}
+
+#dailyTasks .subtask-item.task-completed .subtask-input { color: var(--mv-ink-soft) !important; }
+
 /* ---- The card's foot ------------------------------------------------------
    The times on the left and what to do about it on the right, as one row.
    Both halves used to float over this line absolutely, which meant every card
