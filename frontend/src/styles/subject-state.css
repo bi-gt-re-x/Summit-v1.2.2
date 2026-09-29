@@ -14,6 +14,10 @@
  * are the ones somebody sits in front of rather than passes through, and a
  * reader who has learned the Timer's surfaces should recognise these.
  *
+ * `--sb-pad` and `--sb-pad-lg` come from `.sb-page` in subject.css, which is
+ * the page every rule here draws inside. One scale for the page, not one
+ * per prefix — see the rhythm block at the top of that file.
+ *
  * Colour is never the only carrier. Every state that has a colour also has a
  * word or a shape — the cliff rung on the curve is labelled as well as tinted,
  * a taken step says "Recorded" rather than merely going green.
@@ -36,9 +40,9 @@
     isolation: isolate;
     display: grid;
     grid-template-columns: 168px minmax(0, 1fr);
-    gap: var(--space-6);
+    gap: var(--space-8);
     align-items: center;
-    padding: var(--space-6) var(--space-6);
+    padding: var(--sb-pad-lg) var(--sb-pad-lg);
     margin-top: var(--ax-gap);
     border: 1px solid var(--ax-line);
     border-radius: var(--radius-lg);
@@ -139,7 +143,7 @@
 .sx-metrics {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
-    gap: var(--space-2);
+    gap: var(--space-3);
     margin-top: var(--ax-gap);
 }
 
@@ -166,7 +170,7 @@
     display: grid;
     gap: var(--space-1);
     width: 100%;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-5) var(--space-6);
     border: none;
     background: none;
     text-align: left;
@@ -230,7 +234,7 @@
 .sx-metric-back li { font-size: var(--text-xs); color: var(--ax-faint); }
 
 /* ---- The difficulty curve ---------------------------------------------- */
-.sx-curve { display: grid; gap: var(--space-4); }
+.sx-curve { display: grid; gap: var(--space-6); }
 
 .sx-curve-plot {
     display: grid;
@@ -305,7 +309,7 @@
 
 .sx-curve-read {
     margin: 0;
-    padding: var(--space-3) var(--space-3);
+    padding: var(--space-5) var(--space-5);
     border-radius: var(--radius-md);
     background: var(--ax-card-2);
     font-size: var(--text-sm);
@@ -319,14 +323,14 @@
    working; this is the answer. */
 .sx-steps { display: grid; gap: var(--ax-gap); }
 
-.sx-step-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+.sx-step-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-5); }
 
 .sx-step {
     position: relative;
     display: grid;
     grid-template-columns: 34px minmax(0, 1fr);
-    gap: var(--space-3);
-    padding: var(--space-4) var(--space-4);
+    gap: var(--space-5);
+    padding: var(--sb-pad) var(--sb-pad);
     border: 1px solid var(--ax-line);
     border-radius: var(--radius-lg);
     background-color: var(--ax-card);
@@ -358,7 +362,7 @@
     box-shadow: none;
 }
 
-.sx-step-body { min-width: 0; display: grid; gap: var(--space-2); }
+.sx-step-body { min-width: 0; display: grid; gap: var(--space-3); }
 .sx-step-head {
     display: flex; align-items: baseline; justify-content: space-between;
     gap: var(--space-2); flex-wrap: wrap;
@@ -452,12 +456,12 @@
 
 /* ---- What actually worked ---------------------------------------------- */
 .sx-effect {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-5) var(--space-6);
     border: 1px dashed var(--ax-line);
     border-radius: var(--radius-md);
     background: var(--ax-card-2);
 }
-.sx-effect ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.sx-effect ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
 /* A grid rather than a wrapping flex row: the three columns are a small table
    and `margin-left: auto` on the last one dropped it to its own line the
    moment the first two grew, which read as a fourth entry. */
@@ -488,14 +492,14 @@
     list-style: none; margin: 0; padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: var(--space-2);
+    gap: var(--space-3);
 }
 .sx-standing {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-5) var(--space-6);
     border: 1px solid var(--ax-line);
     border-radius: var(--radius-md);
     background: var(--ax-card);
-    display: grid; gap: var(--space-2);
+    display: grid; gap: var(--space-3);
 }
 .sx-standing.is-reached {
     border-color: color-mix(in srgb, var(--ax-green) 40%, transparent);
@@ -530,7 +534,7 @@
 /* ---- The panel that asks for the reading -------------------------------- */
 .sx-ask {
     display: flex; align-items: center; justify-content: space-between;
-    gap: var(--space-4) var(--space-5); flex-wrap: wrap;
+    gap: var(--space-6) var(--space-6); flex-wrap: wrap;
 }
 .sx-ask p {
     margin: var(--space-1) 0 0;
@@ -545,7 +549,7 @@
    already happened, this predicts something that has not. */
 .sx-step-signal {
     margin: var(--space-2) 0 0;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3) var(--space-5);
     border: 1px dashed var(--ax-line);
     border-radius: var(--radius-md);
     font-size: var(--text-md);

@@ -12,13 +12,17 @@
  * was four equal-weight figures at the top saying nothing about what any of
  * them were for.
  *
+ * `--sb-pad` and `--sb-pad-lg` come from `.sb-page` in subject.css, which is
+ * the page every rule here draws inside. One scale for the page, not one
+ * per prefix — see the rhythm block at the top of that file.
+ *
  * Colour is never the only carrier. Every direction on a card has an arrow and
  * a word as well as a tint, which is the rule the rest of this page keeps. */
 
 /* ---- The band ---------------------------------------------------------- */
 .so-band {
     margin-top: var(--ax-gap);
-    padding: var(--space-6) var(--space-6) var(--space-6);
+    padding: var(--sb-pad-lg) var(--sb-pad-lg) var(--sb-pad-lg);
     border: 1px solid var(--ax-line);
     border-radius: var(--radius-lg);
     background:
@@ -111,8 +115,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2) var(--space-6);
-    margin: var(--space-5) 0 0;
-    padding: var(--space-4) 0 0;
+    margin: var(--space-6) 0 0;
+    padding: var(--space-6) 0 0;
     border-top: 1px solid var(--ax-line-soft);
     list-style: none;
 }
@@ -147,7 +151,7 @@
    thing the loop has to report. */
 .so-loop {
     margin-top: var(--ax-gap);
-    padding: var(--space-6) var(--space-6) var(--space-5);
+    padding: var(--sb-pad-lg) var(--sb-pad-lg) var(--sb-pad);
     border: 1px solid var(--ax-line);
     border-radius: var(--radius-lg);
     background: var(--ax-card);
@@ -184,7 +188,7 @@
 }
 
 .so-loop-list {
-    margin: var(--space-4) 0 0;
+    margin: var(--space-6) 0 0;
     padding: 0;
     list-style: none;
 }
@@ -197,7 +201,7 @@
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--space-2) var(--space-4);
-    padding: var(--space-2) 0;
+    padding: var(--space-3) 0;
     border-top: 1px solid var(--ax-line-soft);
 }
 
@@ -254,5 +258,5 @@
 }
 
 @media (max-width: 640px) {
-    .so-loop { padding: var(--space-4) var(--space-4) var(--space-4); }
+    .so-loop { padding: var(--sb-pad) var(--sb-pad) var(--sb-pad); }
 }
