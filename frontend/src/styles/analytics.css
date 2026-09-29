@@ -8281,3 +8281,204 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     .ax-skill-shape { grid-template-columns: minmax(0, 1fr); }
     .ax-skill-parts li { grid-template-columns: 96px minmax(0, 1fr) 28px; }
 }
+
+/* ---------- The Insights opening: state, and what changed ----------------- */
+/* Two blocks that belong to one section of one tab, and are here rather than in
+   a file of their own because everything they are made of — the card surface,
+   the tone hues, the muted type — is defined above and would otherwise be
+   imported twice. See components/Insights/Overview and components/Insights/
+   Changed for what each is for. */
+
+.ax-state {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ax-gap);
+}
+
+/* Four meters, and the same ladder the tile row uses: the count stops being the
+   point below full width and the legible width of one starts being it. */
+.ax-meters {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--ax-gap);
+}
+@media (max-width: 1280px) {
+    .ax-meters { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+}
+@media (max-width: 480px) {
+    .ax-meters { grid-template-columns: 1fr; }
+}
+
+.ax-meter {
+    background: var(--ax-card);
+    border: 1px solid var(--ax-line);
+    border-radius: var(--ax-radius);
+    box-shadow: var(--ax-shadow);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.ax-meter header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+}
+
+.ax-meter-label {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--ax-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* The figure takes the meter's own hue. `.ax-meter` carries `.ax-tone-*`, which
+   sets `color`, so this and the bar below are the same colour without either
+   being told which one it is. */
+.ax-meter-value {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    letter-spacing: -.025em;
+    line-height: 1;
+    color: currentColor;
+}
+
+.ax-meter-track {
+    height: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, currentColor 14%, transparent);
+    overflow: hidden;
+}
+
+/* Width is the score, set inline as `--ax-fill`. A transition so a window change
+   moves the bar rather than teleporting it — the figure above it animates
+   nowhere, and a bar that jumps while the number beside it is being read looks
+   like a different bar. */
+.ax-meter-fill {
+    display: block;
+    height: 100%;
+    width: var(--ax-fill, 0%);
+    background: currentColor;
+    border-radius: inherit;
+    transition: width .35s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+    .ax-meter-fill { transition: none; }
+}
+
+.ax-meter-raw {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+
+/* The overall score, under the four parts it is the mean of. One line, because
+   the number itself already has a panel of its own on the Overview tab. */
+.ax-state-score {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ax-text);
+}
+.ax-state-score strong { font-size: var(--text-lg); }
+.ax-state-grade {
+    font-weight: 700;
+    font-size: var(--text-sm);
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--ax-line);
+    background: var(--ax-card);
+}
+
+/* ---------- What changed -------------------------------------------------- */
+.ax-changes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+}
+
+/* A claim, not a panel. The left edge carries the kind's hue, which is the only
+   thing that distinguishes the three at a glance once the section is long. */
+.ax-change {
+    border: 1px solid var(--ax-line);
+    border-left: 3px solid currentColor;
+    border-radius: var(--ax-radius);
+    background: color-mix(in srgb, currentColor 5%, var(--ax-card));
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.ax-change-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.ax-change-mark {
+    width: 20px; height: 20px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, currentColor 18%, transparent);
+    color: currentColor;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.ax-change-kind {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: currentColor;
+}
+
+/* The movement, pushed to the trailing edge so it lands in the same place on
+   every card and can be scanned down the column. */
+.ax-change-move {
+    margin-left: auto;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ax-text);
+    white-space: nowrap;
+}
+
+.ax-change-text {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--ax-text);
+}
+
+.ax-change-basis {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    font-size: var(--text-xs);
+    color: var(--ax-muted);
+}
+
+.ax-change-strength {
+    border: 1px solid var(--ax-line);
+    border-radius: 999px;
+    padding: 0 6px;
+    white-space: nowrap;
+}

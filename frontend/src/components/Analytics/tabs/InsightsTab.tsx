@@ -1,20 +1,37 @@
 /**
  * Insights — why the record looks like this, with the evidence.
  *
- * Fifteen panels, in three named groups, and the grouping is the point: the tab
- * answers three questions — what is true now, why it is true, and when and on
- * what you work — and a reader scrolling eight rows of equal weight had to work
- * out for themselves which one each panel was answering.
+ * The tab reads top to bottom as one argument, and the order is the design:
+ *
+ *     1  your overall state      four metrics and four movements, above
+ *                                everything, because "how am I doing" is the
+ *                                question a reader arrives with
+ *     2  what changed            the three or four measured differences of the
+ *                                last month, one card per kind
+ *     3  the groups              what is true now, why it happens, and when and
+ *                                on what you work — the evidence under the
+ *                                claims above
+ *
+ * What it opened on before was four behavioural tiles — strongest day, peak
+ * hour, typical sitting, widest subject. All true, none of them the answer to
+ * the question, and they have moved into the group about when and what you work
+ * on, which is what they were always describing. See `StateOverview`.
+ *
+ * The three groups are still the point of the lower half: the tab carries
+ * fifteen panels and a reader scrolling eight rows of equal weight had to work
+ * out for themselves which question each one was answering.
  *
  * It never says what to do. That is the Recommendations tab.
  */
 import { Link } from 'react-router-dom';
 import {
+  ChangedPanel,
   ClockPanel,
   CurrentStatePanel,
   HeadlineTiles,
   HowPanel,
   RelationshipsPanel,
+  StateOverview,
   WeekPanel,
   WhyPanel,
   WorkingPanel,
@@ -36,8 +53,8 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function InsightsTab({ model }: { model: AnalyticsModel }) {
   const {
-    aimedShare, balance, breakdown, clock, discovered, figures, goalLimits, historyDays, how, insights, links, maturity, observed, previousBySubject,
-    qualitySummary, rated, ratingDepth, reasonRows, reasons, rhythm, slice, spanText, state, waitFor, week,
+    aimedShare, analytical, balance, breakdown, changes, changeWindow, clock, discovered, figures, goalLimits, historyDays, how, insights, links, maturity, observed, previousBySubject,
+    qualitySummary, rated, ratingDepth, reasonRows, reasons, rhythm, slice, spanText, state, streak, waitFor, week, weekChange,
     wins, why,
     /* What the account asked this page to be — see utils/analyticsPrefs. This
        tab read neither of these until now, which is how a reader who had asked
@@ -121,14 +138,41 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
 
       {waitFor('insights') === 0 && (
         <>
+          {/* 1 — your overall state. Above every group and outside the
+              disclosure, because a reader who opens this tab and folds
+              everything shut should still be left with the answer. */}
           <section className="ax-section">
-            <HeadlineTiles
-              week={week}
-              clock={clock}
-              rhythm={rhythm}
-              balance={balance}
-              hours={figures.focusHours.value}
+            <StateOverview
+              analytical={analytical}
+              streak={streak}
+              weekChange={weekChange}
+              /* The strongest measured improvement, which is `wins` already
+                 ranked — the same list the "What's working" panel below draws
+                 from, so the tile and that panel cannot name different
+                 winners. */
+              improvement={wins[0] ? { text: wins[0].text, figure: wins[0].figure } : null}
+              /* The weakest of the report card's five, with the sentence from
+                 `currentState` naming what is behind it. Two sources on one
+                 tile deliberately: the metric says which measure, and the
+                 sentence says what in the record made it that. */
+              weakness={
+                analytical.weakest
+                  ? {
+                      label: analytical.weakest.label,
+                      score: analytical.weakest.score,
+                      note: state.weakness,
+                    }
+                  : null
+              }
             />
+          </section>
+
+          {/* 2 — what changed. The tab's own claim, and the only section here
+              that is neither a shape nor a chart: see `ChangedPanel`. Capped
+              the way every other finding list on the tab is, so a reader who
+              asked for a short page gets three cards rather than nine. */}
+          <section className="ax-section">
+            <ChangedPanel changes={changes.slice(0, findings)} window={changeWindow} />
           </section>
 
           {/* Three groups, and the grouping is the point.
@@ -239,6 +283,16 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
             </PanelGroup>
 
             <PanelGroup title="When and what you work on" note="The shape of the week, and where the effort goes">
+              {/* The four tiles this tab used to open on. They describe how the
+                  work happens rather than how it is going, which is this
+                  group's subject and not the tab's opening question. */}
+              <HeadlineTiles
+                week={week}
+                clock={clock}
+                rhythm={rhythm}
+                balance={balance}
+                hours={figures.focusHours.value}
+              />
               <div className="ax-grid ax-grid-halves-even">
                 <ClockPanel clock={clock} />
                 <WeekPanel week={week} />

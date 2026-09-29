@@ -22,6 +22,8 @@ import { habitSummary } from '@/utils/habits';
 import { currentState } from '@/utils/insight';
 import { summariseRatings, summariseReasons } from '@/utils/ratings';
 import { summaryFigures } from '@/utils/growthSummary';
+import { analyticalScore } from '@/utils/analyticalScore';
+import { CHANGE_WINDOW } from '@/utils/changed';
 import { DETAIL_RULES } from '@/utils/analyticsPrefs';
 import { goalsOverview } from '@/utils/goalAnalytics';
 import { checkpointsByMonth, effortAgainstPriority, paceMap } from '@/utils/goalSuggest';
@@ -135,6 +137,14 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     /* The figures every tab now reaches into for hours logged. From the real
        builder over an empty slice, for the reason `EMPTY` gives. */
     figures: summaryFigures({ current: [], previous: [] }),
+    /* The Insights opening. `analyticalScore(null)` is what an account with no
+       report card gets — the honest empty value, and the one that makes the
+       meters draw nothing rather than four zeros. A test that wants the meters
+       passes a card in; see ./insightsStory.test.tsx. */
+    analytical: analyticalScore(null),
+    weekChange: null,
+    changes: [],
+    changeWindow: CHANGE_WINDOW,
   };
   return { ...base, ...over } as unknown as AnalyticsModel;
 }

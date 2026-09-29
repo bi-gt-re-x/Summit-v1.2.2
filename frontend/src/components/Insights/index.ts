@@ -14,6 +14,16 @@
 export { HeadlineTiles, WeekPanel, ClockPanel } from './Panels';
 export type { HeadlineTilesProps } from './Panels';
 
+/* The tab's opening and the section under it. Both are about the *account*
+   rather than about one shape of its behaviour, which is why they are their own
+   files rather than two more panels in ./Panels — see the note at the top of
+   each. */
+export { StateOverview } from './Overview';
+export type { StateOverviewProps } from './Overview';
+
+export { ChangedPanel } from './Changed';
+export type { ChangedPanelProps } from './Changed';
+
 export {
   FindingCard,
   WhyPanel,

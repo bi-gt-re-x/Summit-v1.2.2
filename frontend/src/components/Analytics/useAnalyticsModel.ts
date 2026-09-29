@@ -92,6 +92,7 @@ import {
   whatsWorking,
   whyFindings,
 } from '@/utils/insight';
+import { CHANGE_WINDOW, whatChanged } from '@/utils/changed';
 import { goalActions, goalNotes, goalsOverview } from '@/utils/goalAnalytics';
 import { goalLimiters } from '@/utils/goalLimiter';
 import { leadingLens } from '@/utils/goalLens';
@@ -557,6 +558,55 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     [balance, rhythm, slice, week],
   );
 
+  /**
+   * The last 7 days against the 7 before them, in XP, as a signed percentage.
+   *
+   * Read off `all` rather than the picker's window, and that is the one figure
+   * on the page which ignores it deliberately: "this week" is a fixed question
+   * with a fixed answer, and a reader who moves the window to a year does not
+   * mean to be told how this year compares with last year under a tile
+   * labelled `This week`. Every other comparison on the page follows the
+   * window; this one follows the calendar.
+   *
+   * Null when there is no complete previous week to compare with, which the
+   * tile draws as nothing rather than as a rise from zero.
+   */
+  const weekChange = useMemo(() => {
+    if (all.length < 14) return null;
+    const sum = (rows: typeof all) =>
+      rows.reduce((total, day) => total + (Number(day.xp_earned) || 0), 0);
+    const now = sum(all.slice(-7));
+    const was = sum(all.slice(-14, -7));
+    if (was <= 0) return null;
+    return ((now - was) / was) * 100;
+  }, [all]);
+
+  /**
+   * What changed lately — the Insights tab's opening claim, assembled.
+   *
+   * Reads the three finders rather than adding a fourth: `wins`, the whole
+   * `diagnoses` list and `discovered`. The uncapped diagnosis list is the right
+   * one here because `whatChanged` draws one card per kind per round and does
+   * its own ranking — handing it the tone-capped list would cap problems twice
+   * and let a gentle setting silence the lane rather than shorten it. The cap
+   * that matters is applied where the tab draws them.
+   *
+   * The pattern window, not the picker's, for the task half: the same reason
+   * `discovered` reads it — a split of tasks needs a stretch long enough to
+   * have two sides and short enough to still be about now.
+   */
+  const changes = useMemo(
+    () =>
+      whatChanged({
+        days: all,
+        finished: patternFinished,
+        wins,
+        diagnoses,
+        patterns: discovered,
+      }),
+    [all, diagnoses, discovered, patternFinished, wins],
+  );
+
   // ---- Goals --------------------------------------------------------------
   /* All of these read the goals fetched for the Records tab, so this tab costs
      no request of its own — the same rule the rest of the page follows.
@@ -961,6 +1011,9 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     why,
     how,
     wins,
+    weekChange,
+    changes,
+    changeWindow: CHANGE_WINDOW,
     links,
     state,
 
