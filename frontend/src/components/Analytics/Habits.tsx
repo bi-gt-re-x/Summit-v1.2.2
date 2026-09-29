@@ -31,6 +31,7 @@ import {
   type HabitStrength,
   type HabitSummary,
 } from '@/utils/habits';
+import type { HabitFacts } from '@/utils/habitEffects';
 
 /** Sunday first, matching every other weekday list in the app. */
 const WEEKDAY_INITIALS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -129,7 +130,16 @@ export function HabitTiles({
  * answer "is it alive"; everything else is a footnote and is set as one. A card
  * that gave nine numbers equal weight would be a table with rounded corners.
  */
-export function HabitCard({ habit, todayIso }: { habit: Habit; todayIso: string }) {
+export function HabitCard({
+  habit,
+  todayIso,
+  facts,
+}: {
+  habit: Habit;
+  todayIso: string;
+  /** What the habit is worth — see utils/habitEffects. Absent draws no lines. */
+  facts?: HabitFacts;
+}) {
   const tone = STRENGTH_TONE[habit.strength];
   const unit = habit.unit === 'day' ? 'day' : 'week';
 
@@ -193,11 +203,74 @@ export function HabitCard({ habit, todayIso }: { habit: Habit; todayIso: string 
           <dd>{since(habit.lastCompleted, todayIso)}</dd>
         </div>
       </dl>
+
+      {/* Behaviour, then consequence.
+
+          The block above is the diary: how often, how finished, how long ago.
+          These three lines are what the habit is *for* — the week against last
+          week, the condition it goes best under, and what it is associated
+          with. A card that stops at the diary tells a reader what they already
+          know; see utils/habitEffects for what each figure is and what it
+          refuses to claim.
+
+          Each line is drawn only when its comparison cleared its floor, and the
+          block disappears entirely on a habit with nothing behind it yet —
+          three greyed-out placeholders would be worse than the card this
+          replaced. */}
+      {facts && (facts.week || facts.condition || facts.effect) && (
+        <div className="ax-habit-effect">
+          {facts.week && (
+            <p className="ax-habit-week">
+              <strong>{facts.week.now}</strong> this week
+              {facts.week.before > 0 || facts.week.now > 0 ? (
+                <span
+                  className={`ax-delta ax-delta-${
+                    facts.week.change > 0 ? 'up' : facts.week.change < 0 ? 'down' : 'flat'
+                  }`}
+                >
+                  {facts.week.change > 0 ? '↑' : facts.week.change < 0 ? '↓' : '→'}{' '}
+                  {facts.week.change === 0
+                    ? 'same as last week'
+                    : `${Math.abs(facts.week.change)} from last week`}
+                </span>
+              ) : null}
+            </p>
+          )}
+          {facts.condition && (
+            <p className="ax-habit-cond">
+              <span className="ax-habit-cond-label">Best</span> {facts.condition.label}
+              <span className="ax-muted"> · {Math.round(facts.condition.lift)}% better</span>
+            </p>
+          )}
+          {facts.effect && (
+            <p
+              className={`ax-habit-impact ax-tone-${facts.effect.lift >= 0 ? 'green' : 'pink'}`}
+              title={facts.effect.basis}
+            >
+              <span className="ax-habit-cond-label">Impact</span>
+              <strong>
+                {facts.effect.lift > 0 ? '+' : '−'}
+                {Math.abs(Math.round(facts.effect.lift))}%
+              </strong>
+              <span className="ax-muted">on {facts.effect.measure}</span>
+            </p>
+          )}
+        </div>
+      )}
     </article>
   );
 }
 
-export function HabitCards({ habits, todayIso }: { habits: Habit[]; todayIso: string }) {
+export function HabitCards({
+  habits,
+  todayIso,
+  effects,
+}: {
+  habits: Habit[];
+  todayIso: string;
+  /** Habit key → what it is worth. Absent draws the cards without the block. */
+  effects?: Map<string, HabitFacts>;
+}) {
   if (habits.length === 0) {
     return (
       <p className="ax-empty">
@@ -208,7 +281,12 @@ export function HabitCards({ habits, todayIso }: { habits: Habit[]; todayIso: st
   return (
     <div className="ax-habit-grid">
       {habits.map((habit) => (
-        <HabitCard key={habit.id} habit={habit} todayIso={todayIso} />
+        <HabitCard
+          key={habit.id}
+          habit={habit}
+          todayIso={todayIso}
+          facts={effects?.get(habit.key)}
+        />
       ))}
     </div>
   );

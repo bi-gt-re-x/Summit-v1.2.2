@@ -93,6 +93,8 @@ import {
   whyFindings,
 } from '@/utils/insight';
 import { CHANGE_WINDOW, whatChanged } from '@/utils/changed';
+import { habitEffects } from '@/utils/habitEffects';
+import { subjectFocus } from '@/utils/subjectFocus';
 import { goalActions, goalNotes, goalsOverview } from '@/utils/goalAnalytics';
 import { goalLimiters } from '@/utils/goalLimiter';
 import { leadingLens } from '@/utils/goalLens';
@@ -540,6 +542,19 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     [bySubject, fromIso, habits, toIso],
   );
   const shifts = useMemo(() => habitShifts(habits, toIso), [habits, toIso]);
+  /**
+   * What each habit is worth — the consequence line on its card.
+   *
+   * Separate from `buildHabits` so that building the habits stays a function of
+   * the task list alone: this needs the day series too, for the focus bands and
+   * for the days-with-against-days-without fallback. Keyed by the habit's
+   * bucketing key rather than merged onto the habit, so a surface that draws the
+   * cards without the consequence block does not pay for the comparison.
+   */
+  const effects = useMemo(
+    () => habitEffects({ habits, tasks, days: all, toIso }),
+    [all, habits, tasks, toIso],
+  );
   const summary = useMemo(() => habitSummary(habits, slice.current), [habits, slice]);
 
   // ---- Insights -----------------------------------------------------------
@@ -720,6 +735,28 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
      model already decays old work on its own rather than needing a window to
      do it. */
   const skills = useMemo(() => skillScores(tasks), [tasks]);
+
+  /**
+   * The subjects worth a paragraph, with their branches and the largest gap.
+   *
+   * Ordered by the skill model rather than by XP — the section is about how a
+   * subject is going, not how much of it there is — and it reads the window's
+   * own subject rows so the bars cannot describe a different period from the
+   * figures above them. `detail.rows` decides how many: a reader who asked for
+   * essentials gets their strongest subject rather than five.
+   */
+  const focus = useMemo(
+    () =>
+      subjectFocus({
+        skills,
+        rows: breakdown.rows,
+        previous: previousBySubject,
+        nameOf,
+        limit: Math.max(1, Math.min(4, detail.rows)),
+      }),
+    [breakdown.rows, detail.rows, nameOf, previousBySubject, skills],
+  );
+
   const skillNotes = useMemo(
      () => skillFindings(skills, nameOf, rules.headlines),
      [skills, nameOf, rules.headlines],
@@ -1002,6 +1039,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
 
     // Habits
     habits,
+    effects,
     byDate,
     patterns,
     shifts,
@@ -1032,6 +1070,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     goalCoverage,
     skills,
     skillNotes,
+    focus,
     goalCheckpoints,
     goalLead,
     namedSubjects,

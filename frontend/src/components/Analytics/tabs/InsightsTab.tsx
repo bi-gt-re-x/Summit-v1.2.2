@@ -8,7 +8,10 @@
  *                                question a reader arrives with
  *     2  what changed            the three or four measured differences of the
  *                                last month, one card per kind
- *     3  the groups              what is true now, why it happens, and when and
+ *     3  subject insights        each strong subject's figures, the branches of
+ *                                its skill tree, and the largest gap — the one
+ *                                section that ends in a link out of analytics
+ *     4  the groups              what is true now, why it happens, and when and
  *                                on what you work — the evidence under the
  *                                claims above
  *
@@ -32,6 +35,7 @@ import {
   HowPanel,
   RelationshipsPanel,
   StateOverview,
+  SubjectInsights,
   WeekPanel,
   WhyPanel,
   WorkingPanel,
@@ -53,7 +57,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function InsightsTab({ model }: { model: AnalyticsModel }) {
   const {
-    aimedShare, analytical, balance, breakdown, changes, changeWindow, clock, discovered, figures, goalLimits, historyDays, how, insights, links, maturity, observed, previousBySubject,
+    aimedShare, analytical, balance, breakdown, changes, changeWindow, clock, discovered, figures, focus, goalLimits, historyDays, how, insights, links, maturity, observed, previousBySubject,
     qualitySummary, rated, ratingDepth, reasonRows, reasons, rhythm, slice, spanText, state, streak, waitFor, week, weekChange,
     wins, why,
     /* What the account asked this page to be — see utils/analyticsPrefs. This
@@ -173,6 +177,14 @@ export function InsightsTab({ model }: { model: AnalyticsModel }) {
               asked for a short page gets three cards rather than nine. */}
           <section className="ax-section">
             <ChangedPanel changes={changes.slice(0, findings)} window={changeWindow} />
+          </section>
+
+          {/* 3 — subject insights. Above the groups because it is a claim about
+              the reader rather than evidence for one, and because it is the
+              only section on the page with a way out of it: every branch and
+              the recommended focus open the skill tree at that node. */}
+          <section className="ax-section">
+            <SubjectInsights rows={focus} />
           </section>
 
           {/* Three groups, and the grouping is the point.

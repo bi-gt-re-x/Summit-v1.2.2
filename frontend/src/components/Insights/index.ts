@@ -24,6 +24,10 @@ export type { StateOverviewProps } from './Overview';
 export { ChangedPanel } from './Changed';
 export type { ChangedPanelProps } from './Changed';
 
+/* The section that ends in a skill tree rather than in a sentence. */
+export { SubjectInsights } from './Subjects';
+export type { SubjectInsightsProps } from './Subjects';
+
 export {
   FindingCard,
   WhyPanel,

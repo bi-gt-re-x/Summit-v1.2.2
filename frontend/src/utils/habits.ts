@@ -85,6 +85,17 @@ export const STRENGTH_NOTE: Record<HabitStrength, string> = {
 export interface Habit {
   id: string;
   name: string;
+  /**
+   * What this habit was bucketed by — `subject:<id>` or `stem:<stem>`.
+   *
+   * The id above cannot serve. It is built from the *display name*, and for a
+   * routine that name is the commonest spelling the reader used ("Violin
+   * practice" over the stem "violin practice"), so it does not map back to the
+   * tasks the bucket was filled from. Anything that needs those tasks again —
+   * see utils/habitEffects, which asks what each habit is worth — matches on
+   * this instead, with the same two rules `buildHabits` used to fill it.
+   */
+  key: string;
   /** Which signal produced it — shown so a reader knows why the card exists. */
   source: 'subject' | 'routine';
   /** Share of the weeks in the range this appeared in at all, 0-100. */
@@ -120,7 +131,7 @@ export interface Habit {
  * a repeat are stripped; what survives is the stem two entries have to share
  * to be counted as the same thing.
  */
-function stemOf(title: string): string {
+export function stemOf(title: string): string {
   return String(title || '')
     .toLowerCase()
     .replace(/[#№]/g, ' ')
@@ -139,6 +150,8 @@ function titleCase(text: string): string {
 interface Bucket {
   name: string;
   source: Habit['source'];
+  /** The bucketing key — see `Habit.key`. */
+  key: string;
   /** The distinct days it happened on, ascending. */
   days: string[];
   seen: Set<string>;
@@ -149,8 +162,8 @@ interface Bucket {
   finished: number;
 }
 
-function emptyBucket(name: string, source: Habit['source']): Bucket {
-  return { name, source, days: [], seen: new Set(), total: 0, xp: 0, filed: 0, finished: 0 };
+function emptyBucket(name: string, source: Habit['source'], key: string): Bucket {
+  return { name, source, key, days: [], seen: new Set(), total: 0, xp: 0, filed: 0, finished: 0 };
 }
 
 /** The longest run of consecutive keys in an ascending list, by a step function. */
@@ -240,12 +253,12 @@ export function buildHabits(
 
     if (task.subject) {
       const key = `subject:${task.subject}`;
-      const bucket = bySubject.get(key) ?? emptyBucket(nameOf(task.subject), 'subject');
+      const bucket = bySubject.get(key) ?? emptyBucket(nameOf(task.subject), 'subject', key);
       bySubject.set(key, bucket);
       targets.push(bucket);
     }
     if (stem.length >= 3) {
-      const bucket = byStem.get(stem) ?? emptyBucket(titleCase(stem), 'routine');
+      const bucket = byStem.get(stem) ?? emptyBucket(titleCase(stem), 'routine', `stem:${stem}`);
       byStem.set(stem, bucket);
       targets.push(bucket);
       const counts = spelling.get(stem) ?? new Map<string, number>();
@@ -353,6 +366,7 @@ export function buildHabits(
     return {
       id: `${bucket.source}:${bucket.name}`,
       name: bucket.name,
+      key: bucket.key,
       source: bucket.source,
       consistency,
       streak,

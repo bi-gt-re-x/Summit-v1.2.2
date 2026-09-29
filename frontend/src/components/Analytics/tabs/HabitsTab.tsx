@@ -1,12 +1,25 @@
 /**
- * Habits — what the reader repeats, counted.
+ * Habits — what the reader repeats, and what each repetition is worth.
  *
  * The one tab gated on two things rather than one: enough record *and* a habit
  * actually found in it. Both arms lead to the same `Building`, which says which
  * of the two it is waiting on.
  *
- * It never says *why*. The moment it does, the Insights tab has no reason to
- * exist.
+ * ## Behaviour, then consequence
+ *
+ * This tab used to stop at counting: how often, how finished, how long a run.
+ * That is a diary, and a reader already knows what is in their own diary — so
+ * every card now carries three more lines, which are the point of it. This week
+ * against last week, the condition the habit goes best under, and what it is
+ * associated with: "+14% on how the work goes". See utils/habitEffects for how
+ * each is measured and what it refuses to claim.
+ *
+ * The rule this tab was written under was that it never says *why*, because the
+ * moment it did the Insights tab had no reason to exist. That rule is narrower
+ * now rather than gone: **this tab says what one behaviour of yours costs or
+ * buys; Insights says what is true across the whole record.** A per-habit effect
+ * has nowhere else it could live — putting it on Insights would mean repeating
+ * every habit's name over there to hang it off.
  */
 import { Link } from 'react-router-dom';
 import {
@@ -32,7 +45,7 @@ import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { subjects: SubjectIndex }) {
   const {
-    all, figures, fromIso, goalLimits, habits, historyDays, maturity, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
+    all, effects, figures, fromIso, goalLimits, habits, historyDays, maturity, patterns, shifts, spanText, streak, summary, tasks, toIso, byDate, waitFor,
     /* How much of the page is drawn. This tab ignored the detail setting
        entirely: an account with thirty habits handed a reader thirty cards
        whether they had asked for essentials or for everything. */
@@ -133,7 +146,7 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
           <section className="ax-section">
             <PanelGroup
               title="Your habits"
-              note="Every routine found in your record, and how each is holding"
+              note="What each one is worth, not just how often it happens"
               defaultOpen
             >
               {/* `habits` is already ordered strongest-first by `buildHabits`,
@@ -144,6 +157,7 @@ export function HabitsTab({ model, subjects }: { model: AnalyticsModel } & { sub
               <HabitCards
                 habits={habits.slice(0, Math.max(4, detail.rows))}
                 todayIso={toIso}
+                effects={effects}
               />
             </PanelGroup>
 

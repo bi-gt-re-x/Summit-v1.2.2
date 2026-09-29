@@ -19,6 +19,8 @@ import { InsightsTab } from './InsightsTab';
 import { draw, fakeModel } from './fixtures';
 import { analyticalScore } from '@/utils/analyticalScore';
 import type { Change } from '@/utils/changed';
+import { subjectFocus } from '@/utils/subjectFocus';
+import type { SkillRow } from '@/utils/skillScore';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { Ratings } from '@/types';
 
@@ -50,6 +52,43 @@ const change = (over: Partial<Change> = {}): Change => ({
   ...over,
 });
 
+/**
+ * A scored subject with branches under it.
+ *
+ * Through the real `subjectFocus` over the real routing table, so the section is
+ * drawn from the same arithmetic the page uses — `algebra` and `geometry` both
+ * route to nodes of the mathematics tree, which is what gives it bars at all.
+ */
+function focusRows() {
+  const row: SkillRow = {
+    subject: 'mathematics',
+    score: 91,
+    raw: 91,
+    band: 'Strong' as SkillRow['band'],
+    parts: { accuracy: 90, difficulty: 80, consistency: 84, recent: 88, execution: 86, retention: 70 },
+    confidence: 0.8,
+    finished: 60,
+    rated: 40,
+    avgExecution: 4.3,
+    avgDifficulty: 4.08,
+    hardAccuracy: 78,
+    daysSince: 1,
+    activeWeeks: 21,
+    weeks: 25,
+    trend: 6,
+  };
+  return subjectFocus({
+    skills: [row],
+    // 91% of m.algebra's 2000 XP, 60% of m.geometry's 1800.
+    rows: [
+      { key: 'algebra', label: 'algebra', xp: 1820, count: 20 },
+      { key: 'geometry', label: 'geometry', xp: 1080, count: 12 },
+    ],
+    previous: new Map(),
+    nameOf: (id: string) => id,
+  });
+}
+
 /** A mature Insights tab with the opening's figures on it. */
 function model(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
   return fakeModel({
@@ -59,6 +98,7 @@ function model(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     weekChange: 18,
     wins: [{ id: 'w1', text: 'Your daily XP is up 20% on the previous 30 days', figure: '100 → 120', tone: 'violet' }],
     changes: [change()],
+    focus: focusRows(),
     ...over,
   });
 }
@@ -155,5 +195,49 @@ describe('what changed', () => {
     const changed = screen.getByText('What changed');
     const first = screen.getByText('What is true now');
     expect(positionOf(changed)).toBeLessThan(positionOf(first));
+  });
+});
+
+describe('subject insights', () => {
+  it('gives each subject its four figures', () => {
+    draw(<InsightsTab model={model()} />);
+    expect(screen.getByText('Subject insights')).toBeInTheDocument();
+    ['Performance', 'Difficulty', 'Consistency', 'Trend'].forEach((label) => {
+      expect(screen.getByText(label, { selector: '.ax-subject-figure dt' })).toBeInTheDocument();
+    });
+    expect(screen.getByText('4.1')).toBeInTheDocument();
+  });
+
+  it('draws a bar per branch of the subject tree, with a way in', () => {
+    draw(<InsightsTab model={model()} />);
+    expect(screen.getByRole('meter', { name: /Algebra 91%/ })).toBeInTheDocument();
+    expect(screen.getByRole('meter', { name: /Geometry 60%/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Geometry' })).toHaveAttribute(
+      'href',
+      '/skill-trees?subject=geometry&node=m.geometry',
+    );
+  });
+
+  it('recommends the largest gap and links into it', () => {
+    draw(<InsightsTab model={model()} />);
+    expect(screen.getByText('Recommended focus')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Open the Geometry branch/ })).toHaveAttribute(
+      'href',
+      '/skill-trees?subject=geometry&node=m.geometry',
+    );
+  });
+
+  it('sits above the evidence groups and below what changed', () => {
+    draw(<InsightsTab model={model()} />);
+    const changed = positionOf(screen.getByText('What changed'));
+    const subjects = positionOf(screen.getByText('Subject insights'));
+    const groups = positionOf(screen.getByText('What is true now'));
+    expect(changed).toBeLessThan(subjects);
+    expect(subjects).toBeLessThan(groups);
+  });
+
+  it('says what it needs when no subject is scored', () => {
+    draw(<InsightsTab model={model({ focus: [] })} />);
+    expect(screen.getByText(/Rate a few finished tasks/)).toBeInTheDocument();
   });
 });

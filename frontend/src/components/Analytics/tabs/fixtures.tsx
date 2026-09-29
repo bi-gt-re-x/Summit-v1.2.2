@@ -145,6 +145,11 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     weekChange: null,
     changes: [],
     changeWindow: CHANGE_WINDOW,
+    /* The Insights subject section and the Habits consequence block. Empty is
+       the honest default for both: no tasks in the fixture means no subject is
+       scored and no habit has a comparison behind it. */
+    focus: [],
+    effects: new Map(),
   };
   return { ...base, ...over } as unknown as AnalyticsModel;
 }
