@@ -72,9 +72,28 @@ export interface FocusChapterProps {
   tasks: Task[];
   subjects: Map<string, Subject>;
   streak: number;
+  /** Panels this host already draws itself — see `FocusPanel`. */
+  omit?: FocusPanel[];
 }
 
-export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps) {
+/**
+ * The panels a host can turn off.
+ *
+ * Three of the eight below are drawn elsewhere on the Insights tab by that
+ * tab's own components — the calendar, the per-habit steadiness list and the
+ * consistency trail. Rendering this chapter whole inside a group on that page
+ * meant a reader opened one heading and met the same calendar they had just
+ * scrolled past, plus a second opinion on the same habits, at a different size
+ * and from a different window.
+ *
+ * An opt-out rather than a split, because the Growth page still wants all
+ * eight and the chapter is one argument there. A host that already answers
+ * part of it names the part.
+ */
+export type FocusPanel = 'calendar' | 'stability' | 'trail';
+
+export function FocusChapter({ all, tasks, subjects, streak, omit = [] }: FocusChapterProps) {
+  const hides = (panel: FocusPanel) => omit.includes(panel);
   const [window, setWindow] = useState<WindowKey>('30');
   /** Which square the reader has opened. Null means the most recent day. */
   const [picked, setPicked] = useState<string | null>(null);
@@ -141,6 +160,7 @@ export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps
       </div>
 
       {/* --- The calendar, and the day the reader opened -------------------- */}
+      {!hides('calendar') && (
       <section className="gr-panel gr-span-2 gr-heat gr-plan" data-window={window}>
         <PanelHead
           title="Consistency"
@@ -211,7 +231,11 @@ export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps
           <span>More XP</span>
         </div>
       </section>
+      )}
 
+      {/* The day detail is the calendar's other half — there is nothing to tap
+          without it, so the two go together. */}
+      {!hides('calendar') && (
       <section className="gr-panel gr-day">
         <PanelHead title={chosen ? dayName(chosen.date) : 'No day'} icon="calendar" note="tap a square" />
         {!chosen ? (
@@ -261,6 +285,7 @@ export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps
           </>
         )}
       </section>
+      )}
 
       {/* --- Week by week, with the line through it ------------------------- */}
       <section className="gr-panel gr-span-2 gr-chart-panel">
@@ -324,6 +349,7 @@ export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps
       </section>
 
       {/* --- The recurring work --------------------------------------------- */}
+      {!hides('stability') && (
       <section className="gr-panel gr-span-2">
         <PanelHead
           title="Habit stability"
@@ -370,8 +396,10 @@ export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps
           </ul>
         )}
       </section>
+      )}
 
       {/* --- The same score, four times ------------------------------------- */}
+      {!hides('trail') && (
       <section className="gr-panel">
         <PanelHead
           title="Consistency over time"
@@ -397,6 +425,7 @@ export function FocusChapter({ all, tasks, subjects, streak }: FocusChapterProps
             : 'A second reading appears once the account is a month older.'}
         </p>
       </section>
+      )}
 
       {/* --- The calendar, read for recovery rather than for failure -------- */}
       <section className="gr-panel gr-span-2 gr-recov">

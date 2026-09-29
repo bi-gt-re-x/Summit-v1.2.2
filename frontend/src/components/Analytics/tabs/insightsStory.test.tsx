@@ -49,6 +49,7 @@ const change = (over: Partial<Change> = {}): Change => ({
   text: 'The work you take on has got harder.',
   move: '3.2 → 3.8',
   weight: 50,
+  family: 'difficulty',
   ...over,
 });
 

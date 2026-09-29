@@ -610,6 +610,51 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
    * `discovered` reads it — a split of tasks needs a stretch long enough to
    * have two sides and short enough to still be about now.
    */
+  /**
+   * The same subject figures `SubjectPanel` draws, as a movement per subject.
+   *
+   * Read from `breakdown` and `previousBySubject` rather than counted again:
+   * those two are already this window against the one before it, and a second
+   * count here would be a second answer to a question the panel further down
+   * the tab has already given.
+   */
+  const subjectMoves = useMemo(
+    () =>
+      breakdown.rows
+        .filter((row) => row.key !== 'other')
+        .map((row) => ({
+          key: row.key,
+          name: row.name ?? nameOf(row.key),
+          now: row.xp,
+          before: previousBySubject.get(row.key) ?? 0,
+        })),
+    [breakdown.rows, nameOf, previousBySubject],
+  );
+
+  /**
+   * The skill score over each of the two windows, so the level can be read as
+   * a movement rather than only as a standing.
+   *
+   * `skills` above is the lifetime reading and stays that way — it is what the
+   * cold-subject and findings panels are about. These two are the same
+   * function over two equal stretches, which is what makes the difference
+   * between them the score's own arithmetic rather than a second idea of what
+   * a level is.
+   */
+  const skillWindows = useMemo(() => {
+    const between = (from: string, to: string) =>
+      from && to
+        ? tasks.filter((task) => {
+            const done = task.completed_at?.slice(0, 10);
+            return done !== undefined && done >= from && done <= to;
+          })
+        : [];
+    return {
+      now: skillScores(between(fromIso, toIso)),
+      before: skillScores(between(wasFrom, wasTo)),
+    };
+  }, [tasks, fromIso, toIso, wasFrom, wasTo]);
+
   const changes = useMemo(
     () =>
       whatChanged({
@@ -618,8 +663,20 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
         wins,
         diagnoses,
         patterns: discovered,
+        subjects: subjectMoves,
+        skillsNow: skillWindows.now,
+        skillsBefore: skillWindows.before,
+        nameOf,
+        /* Every task, not the finished half: the overdue card is about what is
+           still owed, which is the one thing in this section that cannot be
+           read from work that is already done. */
+        open: tasks,
+        todayIso: toIso,
       }),
-    [all, diagnoses, discovered, patternFinished, wins],
+    [
+      all, diagnoses, discovered, nameOf, patternFinished, skillWindows,
+      subjectMoves, tasks, toIso, wins,
+    ],
   );
 
   // ---- Goals --------------------------------------------------------------

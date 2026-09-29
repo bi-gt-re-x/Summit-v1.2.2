@@ -2442,8 +2442,40 @@ html[data-theme="dark"] .ax-page .peak-hero,
  * welded across its top edge looks like a rendering fault. Moving the rule out
  * here leaves the button free to be a rounded target, and the divided-list
  * reading — which is the right one for a stack of groups — is unchanged. */
-.ax-group { display: flex; flex-direction: column; border-top: 1px solid var(--ax-line); }
-.ax-group + .ax-group { margin-top: 0; }
+/* A group is a card, not a hairline.
+ *
+ * These were stacked rows separated by a 1px rule and sitting directly on the
+ * page's own ground, and at six in a row that is what a tab of shut groups
+ * looked like: a list of links, on nothing, with a chevron at the far right of
+ * a very wide empty line. Nothing said where one section ended except a line
+ * the same weight as every other line on the page, and the heading, its note
+ * and its control read as three things that happened to be on the same row
+ * rather than as one object.
+ *
+ * So each one is a surface with an edge, the same surface `.ax-panel` uses —
+ * a shut group and an open panel are both "a section of this page" and there
+ * was no reason for them to be two different kinds of thing. The rule between
+ * them becomes the gap between them, which is the same trade `.sb-page` made
+ * on the subject page: fewer, larger pieces rather than more of them.
+ *
+ * `--ax-gap` between, not a margin on the head: the stack is what spaces
+ * these, and a card that brought its own top margin would double up wherever
+ * a section holds only one. */
+.ax-group {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-3) var(--space-5) var(--space-4);
+    border: 1px solid var(--ax-line);
+    border-radius: var(--ax-radius);
+    background: var(--ax-card);
+    box-shadow: var(--ax-shadow);
+    transition: border-color .16s ease, box-shadow .16s ease;
+}
+.ax-group + .ax-group { margin-top: var(--ax-gap); }
+
+/* The pointer is over the card, so the card answers — the head's own tint
+   still marks the part that is actually the button. */
+.ax-group:hover { border-color: color-mix(in srgb, var(--ax-violet) 30%, var(--ax-line)); }
 /* The group's title is a real heading now, wrapped around the disclosure
    button so a reader moving by heading finds the groups that organise the tab.
    It carries a heading's default margins and size, and it should not: the
@@ -2538,7 +2570,10 @@ html[data-theme="dark"] .ax-page .peak-hero,
     display: flex;
     flex-direction: column;
     gap: var(--ax-gap);
-    padding: var(--space-2) 0 var(--space-4);
+    /* Only the space under the heading. The card's own padding is the rest of
+       it now, where this used to be drawing the bottom margin of a row that
+       had no edge of its own. */
+    padding: var(--space-3) 0 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

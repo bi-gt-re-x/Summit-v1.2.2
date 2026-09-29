@@ -452,18 +452,33 @@ export function InsightsTab({
           </PanelGroup>
         )}
 
-        {/* The growth page's Focus chapter. The groups above count what you
-            repeat; this is whether you can execute it reliably — the planned-
-            against-finished grid, the focus scores, the recovery after a miss.
-            Same question one layer down, which is why it is the last thing
-            opened rather than the last thing scrolled past. */}
+        {/* The growth page's Focus chapter, three panels lighter.
+
+            It draws eight, and on this tab three of them were answers this
+            page had already given: its calendar is `HabitCalendarPanel`, its
+            habit-stability list is `HabitConsistencyPanel`, and its
+            consistency trail is `TimelinePanel` — all three directly above
+            under "Holding or slipping", at a different size and over a
+            different window. A reader opened one heading and met the same
+            calendar twice.
+
+            What is left is what only this chapter has: the scores, the
+            planned-against-finished grid, focus depth, and the recovery after
+            a miss. See `FocusPanel` for why it is an opt-out rather than a
+            split — the Growth page still wants all eight. */}
         {habitsReady && (
           <PanelGroup
             title="Can you execute it reliably"
-            note="Planned against finished, focus scores, and recovery after a miss"
+            note="Planned against finished, focus depth, and recovery after a miss"
           >
             <div className="gr-scope">
-              <FocusChapter all={all} tasks={tasks} subjects={subjects} streak={streak} />
+              <FocusChapter
+                all={all}
+                tasks={tasks}
+                subjects={subjects}
+                streak={streak}
+                omit={['calendar', 'stability', 'trail']}
+              />
             </div>
           </PanelGroup>
         )}

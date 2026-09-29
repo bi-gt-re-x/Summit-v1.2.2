@@ -15,6 +15,7 @@ import { whatChanged, CHANGE_WINDOW, type Change } from './changed';
 import type { Diagnosis } from './diagnosis';
 import type { Win } from './insight';
 import type { Pattern } from './patterns';
+import type { SkillRow } from './skillScore';
 import type { GrowthDay, Task } from '@/types';
 
 /** A day carrying whatever the rule under test reads. */
@@ -67,15 +68,26 @@ describe('difficulty rising', () => {
     expect(found?.text).toContain('86%');
   });
 
-  it('says nothing when the work got harder and execution collapsed', () => {
+  it('refuses to call it getting stronger when execution collapsed', () => {
     /* The interesting negative. Difficulty is up by a fifth, which is the rule's
        trigger, and execution has fallen by more than a rounding — so this is not
-       "getting stronger", whatever the first half of it looks like. */
+       "getting stronger", whatever the first half of it looks like.
+
+       It used to return nothing at all here, and that was the gap `qualityMoved`
+       fills: a reader whose work got harder *and* went markedly worse was told
+       neither thing, because the only rule watching execution was the one that
+       needed it to hold. The gain is still refused; the collapse is now said
+       out loud, which is the whole point of the section. */
     const days = [
       ...run(CHANGE_WINDOW, { avg_difficulty: 3.0, avg_execution: 4.4 }),
       ...run(CHANGE_WINDOW, { avg_difficulty: 3.6, avg_execution: 3.1 }),
     ];
-    expect(whatChanged({ days, finished: [], ...EMPTY })).toEqual([]);
+    const found = whatChanged({ days, finished: [], ...EMPTY });
+    expect(found.some((row) => row.id === 'change-difficulty-up')).toBe(false);
+
+    const quality = found.find((row) => row.id === 'change-quality');
+    expect(quality?.kind).toBe('problem');
+    expect(quality?.move).toBe('4.4 → 3.1');
   });
 
   it('says nothing when difficulty barely moved', () => {
@@ -187,5 +199,198 @@ describe('the order', () => {
 
   it('is empty on an account with nothing to compare', () => {
     expect(whatChanged({ days: run(5), finished: [], ...EMPTY })).toEqual([]);
+  });
+});
+
+/* --------------------------------------------------------------------------
+   The five measures added after the section was found to be four views of the
+   same XP. Each is pinned on the movement it claims, on the floor that stops
+   it claiming one, and — where it can go either way — on the direction landing
+   it in the right lane.
+   -------------------------------------------------------------------------- */
+
+const skill = (subject: string, score: number, over: Partial<SkillRow> = {}): SkillRow =>
+  ({ subject, score, band: 'Competent', confidence: 0.8, rated: 20, finished: 30, ...over }) as
+    unknown as SkillRow;
+
+const dated = (id: string, due: string, status = 'todo'): Task =>
+  ({ id, title: 'T', status, due_date: due }) as unknown as Task;
+
+describe('quality, as its own card', () => {
+  it('names a rise in how well the work goes, out of five', () => {
+    const days = [
+      ...run(CHANGE_WINDOW, { avg_execution: 3.2 }),
+      ...run(CHANGE_WINDOW, { avg_execution: 4.1 }),
+    ];
+    const found = whatChanged({ days, finished: [], ...EMPTY });
+    const quality = found.find((row) => row.id === 'change-quality');
+    expect(quality?.kind).toBe('gain');
+    expect(quality?.move).toBe('3.2 → 4.1');
+    // The reader answered on a five-point scale; the card says so.
+    expect(quality?.text).toContain('out of 5');
+  });
+
+  it('says nothing on a movement inside the noise', () => {
+    const days = [
+      ...run(CHANGE_WINDOW, { avg_execution: 3.9 }),
+      ...run(CHANGE_WINDOW, { avg_execution: 4.0 }),
+    ];
+    expect(whatChanged({ days, finished: [], ...EMPTY }).some((r) => r.id === 'change-quality'))
+      .toBe(false);
+  });
+
+  it('refuses when too little was rated either side', () => {
+    const days = [
+      ...run(CHANGE_WINDOW, { avg_execution: 3.0, rated_tasks: 0 }),
+      ...run(CHANGE_WINDOW, { avg_execution: 4.4, rated_tasks: 0 }),
+    ];
+    expect(whatChanged({ days, finished: [], ...EMPTY }).some((r) => r.id === 'change-quality'))
+      .toBe(false);
+  });
+});
+
+describe('efficiency, in the app’s own currency', () => {
+  it('reads XP against the hours it took', () => {
+    const days = [
+      ...run(CHANGE_WINDOW, { xp_earned: 60, focus_minutes: 60 }),
+      ...run(CHANGE_WINDOW, { xp_earned: 120, focus_minutes: 60 }),
+    ];
+    const found = whatChanged({ days, finished: [], ...EMPTY });
+    const rate = found.find((row) => row.id === 'change-efficiency');
+    expect(rate?.kind).toBe('gain');
+    expect(rate?.move).toBe('60 → 120 XP/h');
+  });
+
+  it('calls a fall a problem rather than a gain', () => {
+    const days = [
+      ...run(CHANGE_WINDOW, { xp_earned: 150, focus_minutes: 60 }),
+      ...run(CHANGE_WINDOW, { xp_earned: 60, focus_minutes: 60 }),
+    ];
+    const rate = whatChanged({ days, finished: [], ...EMPTY })
+      .find((row) => row.id === 'change-efficiency');
+    expect(rate?.kind).toBe('problem');
+  });
+
+  it('will not divide by an afternoon', () => {
+    const days = [
+      ...run(CHANGE_WINDOW, { xp_earned: 150, focus_minutes: 0 }),
+      ...run(CHANGE_WINDOW, { xp_earned: 60, focus_minutes: 0 }),
+    ];
+    expect(whatChanged({ days, finished: [], ...EMPTY }).some((r) => r.id === 'change-efficiency'))
+      .toBe(false);
+  });
+});
+
+describe('subjects, by share rather than by total', () => {
+  const days = run(CHANGE_WINDOW * 2);
+
+  it('names the one that took a bigger share of the work', () => {
+    const found = whatChanged({
+      days, finished: [], ...EMPTY,
+      subjects: [
+        { key: 'math', name: 'Mathematics', now: 700, before: 200 },
+        { key: 'cs', name: 'Computer Science', now: 300, before: 800 },
+      ],
+    });
+    expect(found.find((row) => row.id === 'change-subject-math')?.kind).toBe('gain');
+    expect(found.find((row) => row.id === 'change-subject-cs')?.kind).toBe('problem');
+  });
+
+  it('ignores a month where everything simply grew', () => {
+    // Both doubled, so the balance is identical and nothing changed about what
+    // this reader works on — which is the question the card asks.
+    const found = whatChanged({
+      days, finished: [], ...EMPTY,
+      subjects: [
+        { key: 'math', name: 'Mathematics', now: 400, before: 200 },
+        { key: 'cs', name: 'Computer Science', now: 600, before: 300 },
+      ],
+    });
+    expect(found.some((row) => row.id.startsWith('change-subject-'))).toBe(false);
+  });
+});
+
+describe('the skill score, which moved silently before', () => {
+  const days = run(CHANGE_WINDOW * 2);
+  const nameOf = (id: string) => (id === 'math' ? 'Mathematics' : id);
+
+  it('names the subject whose level moved, and prints both readings', () => {
+    const found = whatChanged({
+      days, finished: [], ...EMPTY, nameOf,
+      skillsNow: [skill('math', 71)],
+      skillsBefore: [skill('math', 58)],
+    });
+    const row = found.find((entry) => entry.id === 'change-skill-math');
+    expect(row?.kind).toBe('gain');
+    expect(row?.move).toBe('58 → 71');
+    expect(row?.text).toContain('Mathematics');
+  });
+
+  it('drops a reading the score itself does not trust', () => {
+    const found = whatChanged({
+      days, finished: [], ...EMPTY, nameOf,
+      skillsNow: [skill('math', 71, { confidence: 0.1 })],
+      skillsBefore: [skill('math', 58, { confidence: 0.1 })],
+    });
+    expect(found.some((row) => row.id === 'change-skill-math')).toBe(false);
+  });
+});
+
+describe('what is sitting overdue', () => {
+  const days = run(CHANGE_WINDOW * 2);
+
+  it('counts unfinished dated work and how long the oldest has waited', () => {
+    const found = whatChanged({
+      days, finished: [], ...EMPTY, todayIso: '2026-03-10',
+      open: [
+        dated('a', '2026-03-01'),
+        dated('b', '2026-03-05'),
+        dated('c', '2026-03-09'),
+      ],
+    });
+    const row = found.find((entry) => entry.id === 'change-overdue');
+    expect(row?.kind).toBe('problem');
+    expect(row?.text).toContain('3 tasks');
+    expect(row?.text).toContain('9 days');
+  });
+
+  it('does not call finished work late', () => {
+    const found = whatChanged({
+      days, finished: [], ...EMPTY, todayIso: '2026-03-10',
+      open: [
+        dated('a', '2026-03-01', 'done'),
+        dated('b', '2026-03-05', 'done'),
+        dated('c', '2026-03-09', 'done'),
+      ],
+    });
+    expect(found.some((row) => row.id === 'change-overdue')).toBe(false);
+  });
+
+  it('does not call an undated task late', () => {
+    const found = whatChanged({
+      days, finished: [], ...EMPTY, todayIso: '2026-03-10',
+      open: [
+        { id: 'a', title: 'T', status: 'todo' } as unknown as Task,
+        { id: 'b', title: 'T', status: 'todo' } as unknown as Task,
+        { id: 'c', title: 'T', status: 'todo' } as unknown as Task,
+      ],
+    });
+    expect(found.some((row) => row.id === 'change-overdue')).toBe(false);
+  });
+});
+
+describe('one card per measure', () => {
+  it('draws one habit streak, not every habit that has one', () => {
+    /* The bug this pins, as it appeared on a real account: "Gym: 267 weeks in
+       a row" and "Lift: 267 weeks in a row", one above the other, two of the
+       three cards the section had room for. */
+    const streaks: Win[] = [
+      { id: 'win-habit-Gym', text: 'Gym: 267 weeks in a row', figure: '100% consistent', tone: 'green' },
+      { id: 'win-habit-Lift', text: 'Lift: 267 weeks in a row', figure: '100% consistent', tone: 'green' },
+    ];
+    const found = whatChanged({
+      days: run(CHANGE_WINDOW * 2), finished: [], ...EMPTY, wins: streaks,
+    });
+    expect(found.filter((row) => row.family === 'habit-streak')).toHaveLength(1);
   });
 });

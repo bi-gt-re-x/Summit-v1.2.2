@@ -26,7 +26,7 @@
  * again they are five reads of the day series, not a lost renderer.
  */
 export { FocusChapter } from './FocusChapter';
-export type { FocusChapterProps } from './FocusChapter';
+export type { FocusChapterProps, FocusPanel } from './FocusChapter';
 export { SkillsChapter } from './SkillsChapter';
 export type { SkillsChapterProps } from './SkillsChapter';
 /** What the chapters share — see the note at the top of GrowthPanels. */
