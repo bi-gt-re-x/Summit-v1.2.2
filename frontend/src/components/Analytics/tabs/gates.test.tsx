@@ -19,7 +19,6 @@
  */
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { HabitsTab } from './HabitsTab';
 import { InsightsTab } from './InsightsTab';
 import { RecommendationsTab } from './RecommendationsTab';
 import { SubjectsTab } from './SubjectsTab';
@@ -34,14 +33,14 @@ import { days, task } from '@/test/factories';
 
 describe('Habits', () => {
   it('is still building one day short of the record it needs', () => {
-    draw(<HabitsTab model={fakeModel({ historyDays: NEED_DAYS.habits - 1 })} subjects={subjects} />);
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.habits - 1 })} subjects={subjects} />);
     expect(screen.getByText(whyFor(NEED_DAYS.habits))).toBeInTheDocument();
   });
 
   it('is still building on the day it unlocks, when nothing repeats yet', () => {
     // Two conditions, not one: enough record *and* a habit found in it. The
     // same panel covers both, and says which it is waiting on.
-    draw(<HabitsTab model={fakeModel({ historyDays: NEED_DAYS.habits, habits: [] })} subjects={subjects} />);
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.habits, habits: [] })} subjects={subjects} />);
     expect(screen.getByText(/Nothing repeats often enough yet/i)).toBeInTheDocument();
   });
 
@@ -60,7 +59,7 @@ describe('Habits', () => {
     expect(habits.length).toBeGreaterThan(0); // the fixture is doing its job
 
     draw(
-      <HabitsTab
+      <InsightsTab
         model={fakeModel({
           historyDays: NEED_DAYS.habits,
           habits,
@@ -91,6 +90,7 @@ describe('what a tab says while it is still building', () => {
     draw(
       <InsightsTab
         model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding] })}
+        subjects={subjects}
       />,
     );
     expect(screen.getByText(finding.text)).toBeInTheDocument();
@@ -99,18 +99,27 @@ describe('what a tab says while it is still building', () => {
   });
 
   it('shows nothing of the sort when nothing clears its floor', () => {
-    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [] })} />);
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [] })} subjects={subjects} />);
     expect(screen.queryByText(/Confidence:/)).not.toBeInTheDocument();
   });
 
-  it('still refuses the tab itself', () => {
+  it('still refuses the findings themselves', () => {
     draw(
       <InsightsTab
         model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding] })}
+        subjects={subjects}
       />,
     );
-    // The finding is not the tab opening.
-    expect(screen.getByText(whyFor(NEED_DAYS.insights))).toBeInTheDocument();
+    /* An early observation is not the tab opening. The gated half is the one
+       that compares two stretches, and a day short of the record for that it
+       is still shut — which is what its three groups being absent means.
+
+       It is no longer the *building card* that pins this. The merged tab
+       carries one of those on the earlier of its two gates, so by twenty-seven
+       days it is drawing habits and the card is rightly gone. What the finding
+       must not do is unlock the half it is standing in for. */
+    expect(screen.queryByRole('button', { name: /What is true now/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Why it happens/i })).not.toBeInTheDocument();
   });
 });
 
@@ -132,6 +141,7 @@ describe('a gated tab still says what it can', () => {
     draw(
       <InsightsTab
         model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding, second] })}
+        subjects={subjects}
       />,
     );
     expect(screen.getByText(finding.text)).toBeInTheDocument();
@@ -139,40 +149,74 @@ describe('a gated tab still says what it can', () => {
   });
 
   it('Insights stays silent when nothing clears its floor', () => {
-    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [] })} />);
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [] })} subjects={subjects} />);
     expect(screen.queryByText(/What is already true/)).not.toBeInTheDocument();
   });
 
   it('Habits shows the counts a habit is made of', () => {
-    draw(<HabitsTab model={fakeModel({ historyDays: NEED_DAYS.habits - 1 })} subjects={subjects} />);
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.habits - 1 })} subjects={subjects} />);
     expect(screen.getByText('What is already true')).toBeInTheDocument();
   });
 
-  it('neither of them opens the tab itself', () => {
+  it('neither of them opens the gated half', () => {
     draw(
       <InsightsTab
         model={fakeModel({ historyDays: NEED_DAYS.insights - 1, observed: [finding] })}
+        subjects={subjects}
       />,
     );
-    expect(screen.getByText(whyFor(NEED_DAYS.insights))).toBeInTheDocument();
+    expect(screen.getByText(finding.text)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Why it happens/i })).not.toBeInTheDocument();
   });
 
   it('the day-one section goes away once the tab opens', () => {
-    draw(<HabitsTab model={fakeModel({ historyDays: 400, habits: [] })} subjects={subjects} />);
+    draw(<InsightsTab model={fakeModel({ historyDays: 400, habits: [] })} subjects={subjects} />);
     expect(screen.queryByText('What is already true')).not.toBeInTheDocument();
   });
 });
 
-describe('Insights', () => {
-  it('is still building one day short', () => {
-    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights - 1 })} />);
-    expect(screen.getByText(whyFor(NEED_DAYS.insights))).toBeInTheDocument();
+describe('Insights — the two gates on one tab', () => {
+  /* The merged tab has two thresholds and they are a week apart: habits need
+     twenty-one days to say what repeats, findings need twenty-eight to compare
+     two stretches. That is the whole reason the merge did not unify them —
+     between the two the tab is a real page rather than a notice, which is what
+     these three pin. */
+
+  it('is one building card on the earlier gate, not two on both', () => {
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.habits - 1 })} subjects={subjects} />);
+    expect(screen.getAllByText(whyFor(NEED_DAYS.habits))).toHaveLength(1);
+    expect(screen.queryByText(whyFor(NEED_DAYS.insights))).not.toBeInTheDocument();
   });
 
-  it('opens on the day it unlocks — record alone, no second condition', () => {
-    // Unlike Habits. An explanation of a quiet fortnight is still an
+  it('draws the habits half between the two gates, with no card over it', () => {
+    const repeating = Array.from({ length: 8 }, (_, week) =>
+      task({
+        title: 'Revision',
+        status: 'done',
+        completed_at: `2026-0${week < 4 ? 6 : 7}-${String(1 + (week % 4) * 7).padStart(2, '0')}T18:00:00`,
+      }),
+    );
+    const habits = buildHabits(repeating, nameOf, '2026-06-01', '2026-07-31');
+
+    draw(
+      <InsightsTab
+        model={fakeModel({
+          historyDays: NEED_DAYS.insights - 1,
+          habits,
+          summary: habitSummary(habits, []),
+        })}
+        subjects={subjects}
+      />,
+    );
+    expect(screen.getByRole('button', { name: /Your habits/i })).toBeInTheDocument();
+    expect(screen.queryByText(whyFor(NEED_DAYS.habits))).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Why it happens/i })).not.toBeInTheDocument();
+  });
+
+  it('opens the second half on the day it unlocks — record alone, no second condition', () => {
+    // Unlike the habits half. An explanation of a quiet fortnight is still an
     // explanation, so there is nothing else to wait for.
-    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights })} />);
+    draw(<InsightsTab model={fakeModel({ historyDays: NEED_DAYS.insights })} subjects={subjects} />);
     expect(screen.queryByText(whyFor(NEED_DAYS.insights))).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /What is true now/i })).toBeInTheDocument();
   });

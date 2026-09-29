@@ -114,7 +114,6 @@ import {
   Controls,
   GoalsTab,
   habitLead,
-  HabitsTab,
   Header,
   InsightsTab,
   OverviewTab,
@@ -126,7 +125,7 @@ import {
   TabOpening,
   useAnalyticsData,
   useAnalyticsModel,
-  VIEWS,
+  viewByKey,
   ViewTabs,
   NEED_DAYS,
   StageReached,
@@ -226,7 +225,9 @@ export default function Analytics() {
     // visit, and sending them to their opening tab would drop the request.
     if (askedSetup || view.key !== 'overview') return;
     if (prefs.analytics_home_tab === 'overview') return;
-    const target = VIEWS.find((entry) => entry.key === prefs.analytics_home_tab);
+    /* `viewByKey` rather than a find over VIEWS: an account that chose Habits
+       has that word stored, and Habits is Insights now. See `MOVED_KEYS`. */
+    const target = viewByKey(prefs.analytics_home_tab);
     if (target) navigate(target.path, { replace: true });
   }, [askedSetup, navigate, prefs.analytics_home_tab, ready, view.key]);
   /* The page reads a dozen of the model's eighty figures — the gates, the
@@ -555,12 +556,18 @@ export default function Analytics() {
             )}
           </TabOpening>
         ) : null;
-      case 'habits':
-        return waitFor('habits') === 0 && habits.length > 0 ? (
-          <TabOpening>{habitLead(summary, spanText)}</TabOpening>
-        ) : null;
       case 'insights':
-        return waitFor('insights') === 0 ? <TabOpening>{state.sentence}</TabOpening> : null;
+        /* Two openings for what is now one tab, and the later one leads.
+           `state.sentence` is a statement about the whole record and needs
+           twenty-eight days; `habitLead` names what repeats and needs
+           twenty-one. So between the two gates the habit line is the only
+           true thing available, and after them the state sentence is the
+           better one — it is what the tab's own first panel is about. */
+        if (waitFor('insights') === 0) return <TabOpening>{state.sentence}</TabOpening>;
+        if (waitFor('habits') === 0 && habits.length > 0) {
+          return <TabOpening>{habitLead(summary, spanText)}</TabOpening>;
+        }
+        return null;
       case 'recommendations':
         return advice.length > 0 ? (
           <TabOpening>
@@ -642,13 +649,14 @@ export default function Analytics() {
                 model.waitFor('recommendations') > 0
                   ? { have: model.historyDays, need: NEED_DAYS.recommendations }
                   : undefined,
-              habits:
+              /* The merged tab fills on the *earlier* of its two gates, which
+                 is the habits one: that is when it stops being a notice and
+                 starts being a page. Counting down to the insights threshold
+                 instead would leave the bar saying "7 days to go" over a tab
+                 that had been drawing habit cards for a week. */
+              insights:
                 model.waitFor('habits') > 0
                   ? { have: model.historyDays, need: NEED_DAYS.habits }
-                  : undefined,
-              insights:
-                model.waitFor('insights') > 0
-                  ? { have: model.historyDays, need: NEED_DAYS.insights }
                   : undefined,
             }}
           />
@@ -690,8 +698,7 @@ export default function Analytics() {
         )}
 
         {view.key === 'goals' && <GoalsTab model={model} />}
-        {view.key === 'habits' && <HabitsTab model={model} subjects={subjects} />}
-        {view.key === 'insights' && <InsightsTab model={model} />}
+        {view.key === 'insights' && <InsightsTab model={model} subjects={subjects} />}
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}
         {view.key === 'subjects' && (
           <SubjectsTab model={model} subjects={subjects} username={username} />

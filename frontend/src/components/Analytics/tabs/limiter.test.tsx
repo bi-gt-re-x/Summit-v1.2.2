@@ -18,7 +18,6 @@
  */
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { HabitsTab } from './HabitsTab';
 import { InsightsTab } from './InsightsTab';
 import { OverviewTab } from './OverviewTab';
 import { RecommendationsTab } from './RecommendationsTab';
@@ -97,7 +96,7 @@ describe('the tabs a reader opens to ask why', () => {
   });
 
   it('gives Insights the same card, and still never an instruction', () => {
-    draw(<InsightsTab model={fakeModel({ goalLimits: [AMC8] })} />);
+    draw(<InsightsTab model={fakeModel({ goalLimits: [AMC8] })} subjects={subjects} />);
 
     expect(screen.getByText(/You are improving, but/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Geometry skill tree/i })).toBeInTheDocument();
@@ -122,16 +121,26 @@ describe('the tabs with their own job', () => {
     expect(screen.queryByText(AMC8.because)).not.toBeInTheDocument();
   });
 
-  it('gives Habits one line too', () => {
+  /* Habits used to print this as a bare line — `LimiterLine`, no working and
+     no button — precisely because a card about goals would have turned a tab
+     about behaviour into a tab about goals. The merge retired that reasoning
+     along with the tab: the cards are on this page now, under "Why it
+     happens", where a limiter belongs, and a line a screen above them saying
+     less was the duplicate rather than the safeguard. */
+  it('gives Insights the card, and no line above it', () => {
     draw(
-      <HabitsTab
+      <InsightsTab
         model={fakeModel({ goalLimits: [AMC8], habits: HABITS })}
         subjects={subjects}
       />,
     );
 
-    expect(screen.getByText(/biggest limiter/)).toBeInTheDocument();
-    expect(screen.queryByText(AMC8.because)).not.toBeInTheDocument();
+    // The working is the card's — a line never had it.
+    expect(screen.getByText(AMC8.because)).toBeInTheDocument();
+    // And the goal is named once, not once by a line and again by the card a
+    // screen below it. Both spell the phrase, which is why counting is what
+    // catches the duplicate rather than looking for either one.
+    expect(screen.getAllByText(/biggest limiter/)).toHaveLength(1);
   });
 });
 

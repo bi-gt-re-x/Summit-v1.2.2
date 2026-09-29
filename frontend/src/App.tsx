@@ -244,7 +244,8 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/goals" element={<Goals />} />
-              {/* One page, seven tabs, seven URLs. The analytics page reads the
+              {/* One page, six tabs, seven URLs — `/habits` outlived its tab and
+                  still resolves, see `viewFor`. The analytics page reads the
                   pathname to decide which tab opens (VIEWS in
                   components/Analytics/Header), so the rail, the back button and
                   a pasted link all agree about what is showing — none of which

@@ -1,5 +1,5 @@
 /**
- * Analytics — the Growth Score, the five measures under it, and the seven tabs.
+ * Analytics — the Growth Score, the five measures under it, and the six tabs.
  *
  * The one section on this page with no home-*.js behind it: the analytics page
  * post-dates the landing page, so there was nothing to port. It is written to
@@ -30,8 +30,8 @@
  * chunk. `score` imports nothing but types, so the landing bundle gains an
  * arithmetic function and no components.
  *
- * The five names and the seven tabs are the real ones — `backend/tracking/analytics.py`
- * scores those five metrics, and `pages/Analytics.tsx` has those seven tabs in
+ * The five names and the six tabs are the real ones — `backend/tracking/analytics.py`
+ * scores those five metrics, and `pages/Analytics.tsx` has those six tabs in
  * that order. A tour of features the app does not have is worse than no tour.
  *
  * ## The motion
@@ -160,7 +160,6 @@ const TABS = [
   { label: 'Recommendations', to: '/recommendations' },
   { label: 'Overview', to: '/analytics' },
   { label: 'Goals', to: '/analytics/goals' },
-  { label: 'Habits', to: '/habits' },
   { label: 'Insights', to: '/insights' },
   { label: 'Subjects', to: '/subjects' },
   { label: 'Growth', to: '/analytics/growth' },

@@ -16,7 +16,7 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { InsightsTab } from './InsightsTab';
-import { draw, fakeModel } from './fixtures';
+import { draw, fakeModel, subjects } from './fixtures';
 import { analyticalScore } from '@/utils/analyticalScore';
 import type { Change } from '@/utils/changed';
 import { subjectFocus } from '@/utils/subjectFocus';
@@ -110,7 +110,7 @@ function positionOf(node: Element): number {
 
 describe('the opening', () => {
   it('names the four metrics a reader asked for', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     /* Scoped to the meter's own label: "Efficiency" also appears on the
        weakness tile below, and an unscoped query would pass on that alone. */
     ['Performance', 'Consistency', 'Efficiency', 'Quality'].forEach((label) => {
@@ -119,7 +119,7 @@ describe('the opening', () => {
   });
 
   it('calls productivity Performance and still prints its own number', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     const meter = screen.getByRole('meter', { name: /Performance/ });
     expect(meter).toHaveAttribute('aria-valuenow', '82');
     // The measurement behind the score, not just the score.
@@ -127,12 +127,12 @@ describe('the opening', () => {
   });
 
   it('leaves focus to the Overview tab', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.queryByRole('meter', { name: /Focus/ })).not.toBeInTheDocument();
   });
 
   it('shows the streak, the week and the two findings', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getByText('Current streak')).toBeInTheDocument();
     expect(screen.getByText('Weekly change')).toBeInTheDocument();
     expect(screen.getByText('Biggest improvement')).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe('the opening', () => {
   });
 
   it('drops the weekly tile rather than drawing a dash for it', () => {
-    draw(<InsightsTab model={model({ weekChange: null })} />);
+    draw(<InsightsTab model={model({ weekChange: null })} subjects={subjects} />);
     expect(screen.queryByText('Weekly change')).not.toBeInTheDocument();
     expect(screen.getByText('Current streak')).toBeInTheDocument();
   });
@@ -151,7 +151,7 @@ describe('the opening', () => {
     /* They are still on the tab — in the group about when and what you work on
        — and the assertion is that they are *below* what changed rather than
        above it. */
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     const changed = screen.getByText('What changed');
     const tiles = screen.getByText('Strongest day');
     expect(positionOf(changed)).toBeLessThan(positionOf(tiles));
@@ -160,7 +160,7 @@ describe('the opening', () => {
 
 describe('what changed', () => {
   it('draws a card with its kind, its movement and its sentence', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getByText('Getting stronger')).toBeInTheDocument();
     expect(screen.getByText('3.2 → 3.8')).toBeInTheDocument();
     expect(screen.getByText('The work you take on has got harder.')).toBeInTheDocument();
@@ -176,6 +176,7 @@ describe('what changed', () => {
             change({ id: 'c', kind: 'pattern', text: 'You rate your work higher before 5pm.', strength: 'likely' }),
           ],
         })}
+        subjects={subjects}
       />,
     );
     expect(screen.getByText('Getting stronger')).toBeInTheDocument();
@@ -186,12 +187,12 @@ describe('what changed', () => {
   });
 
   it('says so plainly when nothing has moved', () => {
-    draw(<InsightsTab model={model({ changes: [] })} />);
+    draw(<InsightsTab model={model({ changes: [] })} subjects={subjects} />);
     expect(screen.getByText(/Nothing has moved far enough/)).toBeInTheDocument();
   });
 
   it('sits above the three evidence groups', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     const changed = screen.getByText('What changed');
     const first = screen.getByText('What is true now');
     expect(positionOf(changed)).toBeLessThan(positionOf(first));
@@ -200,7 +201,7 @@ describe('what changed', () => {
 
 describe('subject insights', () => {
   it('gives each subject its four figures', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getByText('Subject insights')).toBeInTheDocument();
     ['Performance', 'Difficulty', 'Consistency', 'Trend'].forEach((label) => {
       expect(screen.getByText(label, { selector: '.ax-subject-figure dt' })).toBeInTheDocument();
@@ -209,7 +210,7 @@ describe('subject insights', () => {
   });
 
   it('draws a bar per branch of the subject tree, with a way in', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getByRole('meter', { name: /Algebra 91%/ })).toBeInTheDocument();
     expect(screen.getByRole('meter', { name: /Geometry 60%/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Geometry' })).toHaveAttribute(
@@ -219,7 +220,7 @@ describe('subject insights', () => {
   });
 
   it('recommends the largest gap and links into it', () => {
-    draw(<InsightsTab model={model()} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getByText('Recommended focus')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Open the Geometry branch/ })).toHaveAttribute(
       'href',
@@ -227,17 +228,24 @@ describe('subject insights', () => {
     );
   });
 
-  it('sits above the evidence groups and below what changed', () => {
-    draw(<InsightsTab model={model()} />);
+  /* It used to sit above the evidence groups, as a section of its own. The
+     merge moved it inside one: `SubjectInsights`, `SkillColdPanel` and
+     `SkillFindingsPanel` were three separate sections across the two tabs and
+     all three are about which subject is doing what, so they are one group
+     now — which necessarily puts this below the groups rather than above
+     them. What has not changed is that it comes after "what changed": a claim
+     about a subject is read against the movement that prompted it. */
+  it('sits inside the subjects group, below the evidence and after what changed', () => {
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     const changed = positionOf(screen.getByText('What changed'));
-    const subjects = positionOf(screen.getByText('Subject insights'));
     const groups = positionOf(screen.getByText('What is true now'));
-    expect(changed).toBeLessThan(subjects);
-    expect(subjects).toBeLessThan(groups);
+    const subjectsAt = positionOf(screen.getByText('Subject insights'));
+    expect(changed).toBeLessThan(groups);
+    expect(groups).toBeLessThan(subjectsAt);
   });
 
   it('says what it needs when no subject is scored', () => {
-    draw(<InsightsTab model={model({ focus: [] })} />);
+    draw(<InsightsTab model={model({ focus: [] })} subjects={subjects} />);
     expect(screen.getByText(/Rate a few finished tasks/)).toBeInTheDocument();
   });
 });

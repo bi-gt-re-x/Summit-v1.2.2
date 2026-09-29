@@ -42,7 +42,7 @@ export type { PatternsProps as DiscoveredPatternsProps } from './Patterns';
 
 export { scoreMovement } from './Header';
 export type { ScoreMovement, ScoreReading } from './Header';
-export { Header, ViewTabs, Controls, TabOpening, VIEWS, viewFor } from './Header';
+export { Header, ViewTabs, Controls, TabOpening, VIEWS, viewFor, viewByKey } from './Header';
 export type { HeaderProps, ViewTabsProps, ControlsProps, View, ViewKey } from './Header';
 
 export {
@@ -203,7 +203,6 @@ export type { AnalyticsData } from './useAnalyticsData';
 /** The six tab bodies. Each lays out what the model already worked out. */
 export { OverviewTab } from './tabs/OverviewTab';
 export { GoalsTab } from './tabs/GoalsTab';
-export { HabitsTab } from './tabs/HabitsTab';
 export { InsightsTab } from './tabs/InsightsTab';
 export { RecommendationsTab } from './tabs/RecommendationsTab';
 export { GrowthTab } from './tabs/GrowthTab';

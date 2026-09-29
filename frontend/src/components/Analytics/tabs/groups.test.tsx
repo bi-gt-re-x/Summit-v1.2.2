@@ -17,11 +17,11 @@
  * is an editorial call that will keep changing; that the reader can open and
  * shut it is the contract.
  */
+import { InsightsTab } from './InsightsTab';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { GoalsTab } from './GoalsTab';
-import { HabitsTab } from './HabitsTab';
 import { OverviewTab } from './OverviewTab';
 import { draw, fakeData, fakeModel, matureOverview, nameOf, subjects } from './fixtures';
 import { NEED_DAYS } from '../useAnalyticsModel';
@@ -136,15 +136,19 @@ describe('Habits', () => {
   }
 
   it('opens on the habits themselves and folds the three layers under them', () => {
-    draw(<HabitsTab model={withHabits()} subjects={subjects} />);
+    draw(<InsightsTab model={withHabits()} subjects={subjects} />);
 
     const yours = groupNamed(/Your habits/);
     expect(yours).toHaveAttribute('aria-expanded', 'true');
     expect(bodyOf(yours)).not.toHaveAttribute('inert');
 
-    // The three that answer a question the reader only has once they have read
-    // the first one.
-    [/Every day you worked/, /Holding or slipping/, /Can you execute it reliably/].forEach(
+    /* The rest answer a question the reader only has once they have read the
+       first one. "Every day you worked" is not among them any more: the
+       calendar moved inside "Holding or slipping" when the two tabs merged,
+       because a calendar and a consistency score answer the same question —
+       is this habit keeping its shape — and a reader wanting that had to open
+       two headings to get it. */
+    [/Holding or slipping/, /Subjects, and what has been left alone/, /Can you execute it reliably/].forEach(
       (name) => {
         const head = groupNamed(name);
         expect(head).toHaveAttribute('aria-expanded', 'false');
@@ -154,7 +158,7 @@ describe('Habits', () => {
   });
 
   it('opens the embedded focus chapter on request', async () => {
-    draw(<HabitsTab model={withHabits()} subjects={subjects} />);
+    draw(<InsightsTab model={withHabits()} subjects={subjects} />);
     const head = groupNamed(/Can you execute it reliably/);
     await userEvent.click(head);
     expect(head).toHaveAttribute('aria-expanded', 'true');
@@ -164,7 +168,7 @@ describe('Habits', () => {
   it('keeps the two group titles that used to be section headings', () => {
     // "Your habits" and "Can you execute it reliably" were <h2 class="ax-band">
     // before. A reader scanning for either should still find it.
-    draw(<HabitsTab model={withHabits()} subjects={subjects} />);
+    draw(<InsightsTab model={withHabits()} subjects={subjects} />);
     expect(screen.getByRole('heading', { name: /Your habits/ })).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: /Can you execute it reliably/ }),

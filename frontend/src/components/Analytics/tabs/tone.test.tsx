@@ -16,10 +16,11 @@
  */
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { InsightsTab } from './InsightsTab';
 import { describe, expect, it } from 'vitest';
 import type { ReactElement } from 'react';
 import { GoalsTab } from './GoalsTab';
-import { HabitsTab } from './HabitsTab';
+import { fakeModel } from './fixtures';
 import { DETAIL_RULES, TONE_RULES } from '@/utils/analyticsPrefs';
 import { summaryFigures } from '@/utils/growthSummary';
 import { habitSummary } from '@/utils/habits';
@@ -57,8 +58,14 @@ const habit = (name: string, over: Partial<Habit> = {}): Habit =>
 const ANCHOR = habit('Morning pages', { consistency: 91 });
 const SLIPPING = habit('Evening review', { consistency: 40, trend: -32 });
 
+/* Built on `fakeModel` rather than hand-rolled, which it was not when Habits
+   was its own tab: that tab read eight fields and a partial object cast to
+   `AnalyticsModel` was honest enough. The merged tab reads both halves of the
+   model, so a partial one now renders the insights half against fields that
+   are not there. `fakeModel` supplies the lot; everything below is still the
+   part these cases are actually about. */
 function habitsModel(tone: keyof typeof TONE_RULES): AnalyticsModel {
-  return {
+  return fakeModel({
     historyDays: 400,
     waitFor: () => 0,
     all: [], tasks: [], streak: 0, toIso: '2026-08-01', spanText: 'the last 90 days',
@@ -82,7 +89,7 @@ function habitsModel(tone: keyof typeof TONE_RULES): AnalyticsModel {
        render here. ./detail.test.tsx is the other half. */
     detail: DETAIL_RULES.standard,
     figures: summaryFigures({ current: [], previous: [] }),
-  } as unknown as AnalyticsModel;
+  } as unknown as Partial<AnalyticsModel>);
 }
 
 const EMPTY_SET: GoalsOverview = {
@@ -116,7 +123,7 @@ describe('Habits reads the harshness setting', () => {
   it('draws as many patterns as the tone allows, and no more', () => {
     for (const tone of ['gentle', 'balanced', 'harsh'] as const) {
       const { container, unmount } = draw(
-        <HabitsTab model={habitsModel(tone)} subjects={subjects} />,
+        <InsightsTab model={habitsModel(tone)} subjects={subjects} />,
       );
       /* The rows, not their text: a pattern is drawn as an `<em>` frequency
          beside a sentence, so matching on the words would be matching on the
@@ -129,7 +136,7 @@ describe('Habits reads the harshness setting', () => {
 
   it('names what is holding before what is slipping only when asked to', () => {
     // Gentle leads with strength: the anchor is named, and before the slip.
-    const gentle = draw(<HabitsTab model={habitsModel('gentle')} subjects={subjects} />);
+    const gentle = draw(<InsightsTab model={habitsModel('gentle')} subjects={subjects} />);
     const gentleText = document.body.textContent ?? '';
     expect(gentleText).toContain('is holding at');
     expect(gentleText.indexOf('Morning pages is holding'))
@@ -137,7 +144,7 @@ describe('Habits reads the harshness setting', () => {
     gentle.unmount();
 
     // Blunt states the slip and does not soften it with the anchor.
-    draw(<HabitsTab model={habitsModel('harsh')} subjects={subjects} />);
+    draw(<InsightsTab model={habitsModel('harsh')} subjects={subjects} />);
     const harshText = document.body.textContent ?? '';
     expect(harshText).toContain('Evening review');
     expect(harshText).not.toContain('is holding at');
@@ -145,7 +152,7 @@ describe('Habits reads the harshness setting', () => {
 
   it('counts the same habits at every setting', () => {
     const seen = (['gentle', 'harsh'] as const).map((tone) => {
-      const { unmount } = draw(<HabitsTab model={habitsModel(tone)} subjects={subjects} />);
+      const { unmount } = draw(<InsightsTab model={habitsModel(tone)} subjects={subjects} />);
       const text = document.body.textContent ?? '';
       unmount();
       return text.includes('64%');

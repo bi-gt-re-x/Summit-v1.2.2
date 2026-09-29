@@ -22,7 +22,6 @@ export type ViewKey =
   | 'recommendations'
   | 'overview'
   | 'goals'
-  | 'habits'
   | 'insights'
   | 'subjects'
   | 'growth';
@@ -64,7 +63,7 @@ export interface View {
 }
 
 /**
- * The seven views, in the order they are meant to be read.
+ * The six views, in the order they are meant to be read.
  *
  * **Recommendations leads, and that is a change from how this page was built.**
  * The old order was an editorial sequence — the long view, then the direction,
@@ -75,24 +74,31 @@ export interface View {
  * who opens on it gets something to do. The sequence still exists for anyone
  * who wants it, and every tab still hands off to the next.
  *
- * The three tabs in the middle have deliberately sharp boundaries, because
- * three tabs that all show cards of numbers are one tab with a broken picker:
+ * The two tabs in the middle have deliberately sharp boundaries, because tabs
+ * that all show cards of numbers are one tab with a broken picker:
  *
- * - **Habits — what I do.** Counts of recurring behaviour. Visual, historical.
- *   Never says why.
- * - **Insights — why and how I do it.** Two counts put together and what the
- *   connection looks like, with the evidence graded. Never says what to do.
+ * - **Insights — what I do, and why it works.** Counts of recurring behaviour,
+ *   and the conditions the better work shows up under, with the evidence
+ *   graded. Never says what to do.
  * - **Recommendations — how I improve.** Instructions with a number and the
  *   arithmetic behind it attached. Never re-states a finding as news.
+ *
+ * There were three. Habits held the first half of that first line and Insights
+ * the second, and the boundary between them was the one on this list nobody
+ * could hold: a tendency and the condition it holds under are the same subject
+ * from two sides, so every per-habit effect had to be argued into one tab or
+ * the other. They are one tab, and the line above is the rule it keeps. See
+ * tabs/InsightsTab for what the merge actually merged.
  *
  * **Subjects and Records came from the growth page**, which no longer exists as
  * a page of its own. It carried five tabs drawn from the same fetch as this one
  * and overlapping it in four places — its own heatmap, its own milestones, its
  * own donut, its own insight list, each a lower-resolution copy of a panel that
  * is on one of these tabs already. Its Overview dissolved into this one's; its
- * Long Term chapter went to Trends and its Focus chapter to Habits, which is
+ * Long Term chapter went to Trends and its Focus chapter to Insights, which is
  * where each of them was answering the same question at higher resolution. Ten
- * tabs across two pages, one rail entry apiece, became seven here.
+ * tabs across two pages, one rail entry apiece, became seven here — and six
+ * once Habits and Insights turned out to be one argument.
  *
  * Each is a route rather than local state so that the rail, the browser's back
  * button and a pasted link all agree about which tab is open.
@@ -126,18 +132,17 @@ export const VIEWS: View[] = [
     tone: 'blue',
   },
   {
-    key: 'habits',
-    label: 'Habits',
-    path: '/habits',
-    purpose: 'What you do — the routines, streaks and rhythms in your own record.',
-    title: 'Habits',
-    tone: 'teal',
-  },
-  {
+    /* Habits and Insights, which were two tabs and one argument: what you
+       repeat, and what repeating it is worth. A reader who opened both twice
+       concluded one was redundant, because a tendency and the condition it
+       holds under are the same subject seen from two sides. See the note at
+       the top of tabs/InsightsTab for what the merge actually merged.
+
+       `/habits` still resolves here — see `viewFor`. */
     key: 'insights',
     label: 'Insights',
     path: '/insights',
-    purpose: 'Why and how you work — what conditions your better work shows up under.',
+    purpose: 'What you do and why it works — the routines in your record, and what your better work shows up alongside.',
     title: 'Insights',
     tone: 'indigo',
   },
@@ -176,8 +181,38 @@ export const VIEWS: View[] = [
   },
 ];
 
+/**
+ * Paths that no longer have a tab of their own.
+ *
+ * `/habits` was the seventh tab until Habits and Insights became one. It is
+ * kept rather than dropped because the fallback below is `VIEWS[0]` —
+ * Recommendations — so an old bookmark, a link in a sent e-mail or the
+ * browser's own history would not 404, it would quietly land somewhere else
+ * and look like the reader had mis-clicked.
+ */
+const MOVED: Record<string, ViewKey> = { '/habits': 'insights' };
+
+/**
+ * Tab *keys* that no longer have a tab, for the same reason and one layer up.
+ *
+ * `analytics_home_tab` is a stored preference, so an account that chose Habits
+ * as its landing tab has the word "habits" written down on the server. Without
+ * this the lookup that reads it simply finds nothing and the reader lands on
+ * Overview — no error, no migration, just a setting that quietly stopped
+ * working for exactly the people who bothered to change it.
+ */
+const MOVED_KEYS: Record<string, ViewKey> = { habits: 'insights' };
+
 export function viewFor(pathname: string): View {
+  const moved = MOVED[pathname];
+  if (moved) return VIEWS.find((view) => view.key === moved) ?? VIEWS[0]!;
   return VIEWS.find((view) => view.path === pathname) ?? VIEWS[0]!;
+}
+
+/** The view a stored tab key names now, or `undefined` if it names nothing. */
+export function viewByKey(key: string): View | undefined {
+  const wanted = MOVED_KEYS[key] ?? key;
+  return VIEWS.find((view) => view.key === wanted);
 }
 
 export interface ViewTabsProps {
@@ -196,7 +231,7 @@ export interface ViewTabsProps {
 }
 
 /**
- * The seven major tabs — the page's only tab bar.
+ * The six major tabs — the page's only tab bar.
  *
  * A line of prose under the bar used to say what the open tab was for. That was
  * removed because it read as a paragraph of explanation sitting above every
@@ -470,7 +505,7 @@ export function Controls({
  * at the top that tells you where you stand* — was not learnable, because it
  * was true a third of the time and never twice in the same place.
  *
- * One component, one slot, filled by all seven. The sentences are not new: each
+ * One component, one slot, filled by all six. The sentences are not new: each
  * was already being assembled on its own tab from that tab's own figures. What
  * changed is that they moved into the same position, and the panels they came
  * from stopped printing them — so nothing is said twice.

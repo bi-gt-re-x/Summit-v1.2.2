@@ -1474,7 +1474,7 @@ export default function Settings() {
             id: 'analytics-home',
             label: 'Analytics opens on',
             hint:
-              'Which of the seven tabs you land on. Recommendations is the one that ends in a '
+              'Which of the six tabs you land on. Recommendations is the one that ends in a '
               + 'button; Overview is the long view.',
             control: (
               <select

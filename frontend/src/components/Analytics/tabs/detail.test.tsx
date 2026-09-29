@@ -24,7 +24,6 @@
  */
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { HabitsTab } from './HabitsTab';
 import { InsightsTab } from './InsightsTab';
 import { RecommendationsTab } from './RecommendationsTab';
 import { draw, fakeData, fakeModel, subjects } from './fixtures';
@@ -61,7 +60,7 @@ describe('Habits reads how much detail was asked for', () => {
   it('draws fewer habit cards on essentials than on everything', () => {
     const counts = (['essentials', 'standard', 'everything'] as const).map((level) => {
       const { container, unmount } = draw(
-        <HabitsTab model={habitsModel(level)} subjects={subjects} />,
+        <InsightsTab model={habitsModel(level)} subjects={subjects} />,
       );
       const drawn = container.querySelectorAll('.ax-habit').length;
       unmount();
@@ -78,7 +77,7 @@ describe('Habits reads how much detail was asked for', () => {
     // A tab called Habits that draws one card on an account with fourteen is
     // not a shorter page, it is a broken one.
     const { container } = draw(
-      <HabitsTab model={habitsModel('essentials')} subjects={subjects} />,
+      <InsightsTab model={habitsModel('essentials')} subjects={subjects} />,
     );
     expect(container.querySelectorAll('.ax-habit').length).toBeGreaterThanOrEqual(4);
   });
@@ -88,10 +87,17 @@ describe('Habits reads how much detail was asked for', () => {
     // detail setting that moved it would be the bug this whole design avoids.
     (['essentials', 'standard', 'everything'] as const).forEach((level) => {
       const { container, unmount } = draw(
-        <HabitsTab model={habitsModel(level)} subjects={subjects} />,
+        <InsightsTab model={habitsModel(level)} subjects={subjects} />,
       );
-      const tiles = container.querySelector('.ax-tiles') as HTMLElement;
-      expect(within(tiles).getByText(String(HABITS.length))).toBeInTheDocument();
+      /* The *habit* tiles, which are no longer the first `.ax-tiles` on the
+         page: the merged tab opens on `StateOverview`, whose own row of
+         metrics sits above them. Picked by the row that actually carries the
+         habit count rather than by position, so this keeps working wherever
+         the two rows end up relative to each other. */
+      const rows = [...container.querySelectorAll('.ax-tiles')] as HTMLElement[];
+      const tiles = rows.find((row) => within(row).queryByText(String(HABITS.length)));
+      expect(tiles).toBeDefined();
+      expect(within(tiles!).getByText(String(HABITS.length))).toBeInTheDocument();
       unmount();
     });
   });
@@ -99,14 +105,14 @@ describe('Habits reads how much detail was asked for', () => {
 
 describe('Habits states the hours behind the days', () => {
   it('puts the logged total under the days-worked rate', () => {
-    draw(<HabitsTab model={habitsModel('standard', 41.4)} subjects={subjects} />);
+    draw(<InsightsTab model={habitsModel('standard', 41.4)} subjects={subjects} />);
     expect(screen.getByText(/of this range · 41h logged/)).toBeInTheDocument();
   });
 
   it('says only what it knows when no sessions were logged', () => {
     // Nothing logged is not "0h logged" — it is an account that does not log,
     // and inventing a zero would read as a finding about a quiet month.
-    draw(<HabitsTab model={habitsModel('standard', 0)} subjects={subjects} />);
+    draw(<InsightsTab model={habitsModel('standard', 0)} subjects={subjects} />);
     expect(screen.getByText('of this range')).toBeInTheDocument();
     expect(screen.queryByText(/0h logged/)).not.toBeInTheDocument();
   });
@@ -134,7 +140,7 @@ describe('Insights reads the harshness setting it used to ignore', () => {
     // thing tone is ever allowed to move.
     const order = (tone: keyof typeof TONE_RULES) => {
       const { container, unmount } = draw(
-        <InsightsTab model={insightsModel({ toneRules: TONE_RULES[tone] })} />,
+        <InsightsTab model={insightsModel({ toneRules: TONE_RULES[tone] })} subjects={subjects} />,
       );
       const heads = [...container.querySelectorAll('.ax-panel-title')].map((h) => h.textContent);
       unmount();
@@ -157,6 +163,7 @@ describe('Insights reads the harshness setting it used to ignore', () => {
           toneRules: TONE_RULES.harsh, // 8 diagnoses
           detail: DETAIL_RULES.essentials, // 3 rows
         })}
+        subjects={subjects}
       />,
     );
     const why = container.querySelector('.ax-findings');

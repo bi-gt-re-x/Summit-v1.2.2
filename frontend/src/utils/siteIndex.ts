@@ -172,18 +172,17 @@ export const PLACES: Place[] = [
     keywords: 'pacing will it happen goal health what you have not aimed at',
   },
   {
-    id: 'analytics-habits',
-    name: 'Habits',
-    where: 'Analytics',
-    to: '/habits',
-    keywords: 'routines rhythms consistency streaks parts of day when you work',
-  },
-  {
+    /* Habits and Insights are one tab. Both sets of keywords are kept on it —
+       somebody searching "streaks" or "routines" is looking for something this
+       tab still draws, and a search index that forgets the old word for a
+       thing sends them nowhere. */
     id: 'analytics-insights',
     name: 'Insights',
     where: 'Analytics',
     to: '/insights',
-    keywords: 'why patterns conditions quality difficulty execution reasons',
+    keywords:
+      'why patterns conditions quality difficulty execution reasons '
+      + 'habits routines rhythms consistency streaks parts of day when you work',
   },
   {
     id: 'analytics-subjects',

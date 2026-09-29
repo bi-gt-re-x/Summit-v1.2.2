@@ -10,10 +10,15 @@
  * lines. Three greyed placeholders would be worse than the card this replaced,
  * and it is the kind of thing that only breaks when somebody makes the block
  * unconditional to simplify the JSX.
+ *
+ * The file keeps its name after the merge. Habits is not a tab any more, but
+ * the habit half of Insights is still a coherent thing to test on its own, and
+ * these cases are about that half and nothing else — ./insightsStory.test.tsx
+ * is the other one.
  */
+import { InsightsTab } from './InsightsTab';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { HabitsTab } from './HabitsTab';
 import { draw, fakeModel, nameOf, subjects } from './fixtures';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { buildHabits, habitSummary } from '@/utils/habits';
@@ -87,23 +92,23 @@ function model(withEffects = true) {
 
 describe('a habit card', () => {
   it('says how many this week and how that compares with last', () => {
-    draw(<HabitsTab model={model()} subjects={subjects} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getAllByText(/this week/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/2 from last week/).length).toBeGreaterThan(0);
   });
 
   it('names the condition the habit goes best under', () => {
-    draw(<HabitsTab model={model()} subjects={subjects} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getAllByText(/before 5pm/).length).toBeGreaterThan(0);
   });
 
   it('states what the habit is associated with, and on which measure', () => {
-    draw(<HabitsTab model={model()} subjects={subjects} />);
+    draw(<InsightsTab model={model()} subjects={subjects} />);
     expect(screen.getAllByText(/on how the work goes/).length).toBeGreaterThan(0);
   });
 
   it('draws none of it for a habit with nothing behind it', () => {
-    draw(<HabitsTab model={model(false)} subjects={subjects} />);
+    draw(<InsightsTab model={model(false)} subjects={subjects} />);
     expect(screen.queryByText(/on how the work goes/)).not.toBeInTheDocument();
     expect(screen.queryByText(/from last week/)).not.toBeInTheDocument();
     // The card itself is still there — this is the block, not the card.
