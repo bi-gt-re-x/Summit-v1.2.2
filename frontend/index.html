@@ -87,7 +87,19 @@
              defaults are already violet, and setting it would override them
              with what they already say. Same rule as SettingsProvider. */
           if (look.accent && look.accent !== 'violet') root.setAttribute('data-accent', look.accent);
-          if (look.skin) root.setAttribute('data-skin', look.skin);
+          if (look.skin) {
+            root.setAttribute('data-skin', look.skin);
+            /* And the base it is drawn against, which the cookie does not
+               know. A skin is a ground and an accent; every stylesheet in the
+               app still takes its ink, its lines and its chrome from
+               data-theme. Restoring the skin and leaving the cookie's theme
+               under it is a dark palette with light-theme ink on it — the
+               page with all its headings invisible. The same map is in
+               src/context/SettingsProvider (SKIN_BASE) and themeLook.test.ts
+               reads this file to keep the two honest. */
+            var base = { midnight: 'dark', sunset: 'dark', meadow: 'light', orchid: 'light' }[look.skin];
+            if (base) root.setAttribute('data-theme', base);
+          }
         } catch (err) { /* no memory; the page loads plain and corrects itself */ }
       })();
     </script>

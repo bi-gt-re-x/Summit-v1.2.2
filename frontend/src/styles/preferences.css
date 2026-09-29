@@ -156,6 +156,64 @@ html:root[data-skin] {
     --color-accent: var(--skin-accent);
 }
 
+/* ...and the other six, which it used to leave to `data-theme`.
+
+   Three tokens was the whole of a skin, and it worked for exactly as long as
+   the theme matched the base the skin was drawn against. When it did not —
+   Sunset on the light base — the grounds went dark and the *ink did not*:
+   `--color-ink` stayed #1f2733 and every heading on every page was near-black
+   on near-black. Not subtly: the page title, the verdict, the figures. What
+   stayed readable was the muted and faint inks, which are mid-greys and
+   survive either ground, so the page came back looking like one with all its
+   headings deleted. `--color-surface-2` was not overridden at all, so cards
+   drawn on it stayed white in the middle of it.
+
+   The base travels with the skin now. Two blocks, because each skin is
+   unambiguously one or the other, and the values are the ones tokens.css
+   already uses for that base — a skin changes the ground and the accent, and
+   was never meant to invent a new grey.
+
+   This is belt and braces, not the mechanism: context/SettingsProvider pins
+   the theme to the skin's base and the inline script in index.html does the
+   same before first paint. Both of those can only fail into a *readable*
+   page now, which is what the old arrangement could not do. */
+html:root[data-skin="midnight"],
+html:root[data-skin="sunset"] {
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow-md: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    --shadow-lg: 0 2px 6px rgba(0, 0, 0, .35), 0 20px 48px rgba(0, 0, 0, .45);
+
+    /* Mixed out of the skin's own surface rather than copied from tokens.css:
+       the second surface and the two lines are the shades a reader sees most
+       of, and a neutral grey hairline on Sunset's warm brown is the one part
+       of a skin that reads as not belonging to it. The mix percentages are
+       the steps tokens.css takes between #161b22, #1b212b and #263041. */
+    --color-surface-2: color-mix(in srgb, var(--skin-surface) 92%, #ffffff);
+    --color-line: color-mix(in srgb, var(--skin-surface) 82%, #ffffff);
+    --color-line-soft: color-mix(in srgb, var(--skin-surface) 90%, #ffffff);
+
+    --color-ink: #e6edf3;
+    --color-ink-muted: #8f9bb3;
+    --color-ink-faint: #6e7781;
+}
+
+html:root[data-skin="meadow"],
+html:root[data-skin="orchid"] {
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, .05);
+    --shadow-md: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .06);
+    --shadow-lg: 0 2px 6px rgba(16, 24, 40, .06), 0 20px 48px rgba(16, 24, 40, .16);
+
+    /* The light skins' surface is white, so the second surface and the lines
+       are mixed out of the *ground* instead — which is where their tint is. */
+    --color-surface-2: color-mix(in srgb, var(--skin-ground) 65%, #ffffff);
+    --color-line: color-mix(in srgb, var(--skin-ground) 55%, #c9ced8);
+    --color-line-soft: color-mix(in srgb, var(--skin-ground) 70%, #dfe3ea);
+
+    --color-ink: #1f2733;
+    --color-ink-muted: #6b7684;
+    --color-ink-faint: #98a1ae;
+}
+
 /* Every page's own name for "the accent", pointed at the chosen one.
    Listed rather than globbed because CSS cannot glob a custom property, and
    because the list being explicit is what makes it checkable: a page added

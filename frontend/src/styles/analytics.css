@@ -76,6 +76,12 @@
     font-family: var(--font-sans);
 }
 
+/* Every name below reads `var(--color-*)` rather than the literal that token
+   happens to hold. `--ax-text` was `#e6edf3`, which *is* dark's `--color-ink`,
+   so the two were the same colour and the difference never showed — until a
+   skin repointed the base underneath. A page token spelled as a literal is a
+   page that has quietly opted out of the palette, and it opts out silently,
+   because it looks right in the only two states anyone tests. */
 html[data-theme="dark"] .ax-page {
     --ax-bg: transparent;
     --ax-card: var(--color-surface);
@@ -83,7 +89,7 @@ html[data-theme="dark"] .ax-page {
     --ax-line: var(--color-line);
     --ax-line-soft: var(--color-line-soft);
 
-    --ax-text: #e6edf3;
+    --ax-text: var(--color-ink);
     --ax-muted: var(--color-ink-muted);
     --ax-faint: var(--color-ink-faint);
 
@@ -7186,7 +7192,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     --ax-gp-ground: #080b12;
     --ax-gp-card: #0f141d;
     --ax-gp-line: #1c2431;
-    --ax-gp-rule: #263041;
+    --ax-gp-rule: var(--color-line);
 
     --ax-card: var(--ax-gp-card);
     --ax-card-2: var(--color-surface-2);

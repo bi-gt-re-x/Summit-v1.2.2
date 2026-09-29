@@ -1822,3 +1822,137 @@
 }
 
 .sb-link > .ax-link { align-self: flex-start; font-size: var(--text-sm); }
+
+/* --- Arriving -------------------------------------------------------------
+   This page landed in one frame and every other page in the app does not.
+
+   It sits inside `.ax-page`, so it inherited analytics.css's arrival for
+   free — but that rule animates `.ax-panel` and the tiles, and the panels are
+   the *small* half of this page. The hero, the objective band, the three
+   counts, the observation, the crumbs, the folds and the link card are none
+   of them panels, so the page's whole spine appeared instantly and then a few
+   cards faded in inside it, which reads worse than no entrance at all.
+
+   The bands arrive instead, in document order. `ax-enter` and its curve are
+   analytics.css's own, spent rather than restated: this page is a guest in
+   that palette and it should be a guest in its timing too, so the two cannot
+   drift into two different ideas of how an analytics page arrives.
+
+   ## One entrance per element, and it has to be the outer one
+
+   A panel nested inside a band that is already fading would reach half
+   opacity behind a parent at half opacity and travel the ten pixels twice —
+   the failure styles/page-enter.css records about `.pg-stagger`. So every
+   panel on this page drops the inherited animation and the bands take it up.
+   The two rules are the same specificity (0,2,0) and the order below is what
+   settles them: a panel that *is* a band matches both and takes the second,
+   which is the one that animates. Anything deeper matches only the first. */
+.sb-page .ax-panel {
+    animation: none;
+}
+
+.sb-page > .ax-shell > * {
+    animation: ax-enter .42s cubic-bezier(.22, .68, .3, 1) backwards;
+}
+
+/* Six steps at 60ms, which is analytics.css's stagger exactly. Past the sixth
+   the delay stops growing: a band that deep opens below the fold, and waiting
+   longer only shows up as a gap on the way down. */
+.sb-page > .ax-shell > :nth-child(2) { animation-delay: 60ms; }
+.sb-page > .ax-shell > :nth-child(3) { animation-delay: 120ms; }
+.sb-page > .ax-shell > :nth-child(4) { animation-delay: 180ms; }
+.sb-page > .ax-shell > :nth-child(5) { animation-delay: 240ms; }
+.sb-page > .ax-shell > :nth-child(n + 6) { animation-delay: 300ms; }
+
+/* The three counts are peers, so the row hands the cascade on to its own
+   cards rather than arriving as one block — the same thing `.pg-stagger` does
+   on the pages that use the shared cascade. The row itself stops animating,
+   for the reason above. */
+.sb-page > .ax-shell > .sb-cards {
+    animation: none;
+}
+.sb-page > .ax-shell > .sb-cards > * {
+    animation: ax-enter .42s cubic-bezier(.22, .68, .3, 1) backwards;
+}
+.sb-page > .ax-shell > .sb-cards > :nth-child(1) { animation-delay: 180ms; }
+.sb-page > .ax-shell > .sb-cards > :nth-child(2) { animation-delay: 240ms; }
+.sb-page > .ax-shell > .sb-cards > :nth-child(n + 3) { animation-delay: 300ms; }
+
+/* --- Lifting --------------------------------------------------------------
+   The page's card surfaces answer the pointer. Two pixels and a deeper
+   shadow, which is the lift the rest of the app already uses — `.gx-card` on
+   Goals, `.stx-tile` on the skill tree, `.rc-best` on Records — rather than a
+   third amount invented here.
+
+   Only the surfaces that are *cards*: a thing with its own edge and its own
+   shadow, sitting in a row of its peers. Not the hero and not the objective
+   band, which are the page's two largest pieces and have nothing beside them
+   to lift away from — a full-width slab rising two pixels under the cursor
+   reads as the page twitching rather than as an object responding.
+
+   `will-change` is deliberately absent. It promotes a layer for the whole
+   life of the element to save one frame at the start of a hover, and there
+   are a dozen of these on screen.
+
+   The two `sx-` cards that take the same lift are in subject-state.css, which
+   owns that prefix — scripts/check_css.mjs fails the build for writing them
+   here, and it is right to: the hover belongs beside the card it lifts.
+
+   ## `backwards`, not `both`, and this is why a lift was possible at all
+
+   The arrival above fills `backwards`: it holds the *from* state through its
+   delay, so nothing flashes in before its turn, and then lets go. `both`
+   would also fill *forwards* — the element would keep the last keyframe,
+   `transform: none`, for the rest of its life — and an animation's fill beats
+   an ordinary declaration in the cascade, so `:hover { transform: … }` would
+   match, compute, and do nothing at all. That is not hypothetical: it is why
+   `.ax-panel`, which carries `ax-enter … both` in analytics.css, has never
+   had a hover anywhere in the app. The final keyframe is the element's
+   resting state anyway, so dropping the forwards half changes nothing on
+   screen and gives the property back. */
+.sb-card,
+.sb-key,
+.sb-fold {
+    transition: transform .16s cubic-bezier(.22, 1, .36, 1),
+                box-shadow .16s ease,
+                border-color .16s ease;
+}
+
+.sb-card:hover,
+.sb-key:hover,
+.sb-fold:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ax-shadow);
+}
+
+/* An open fold is a region of the page rather than a card in a stack, and a
+   region that rises when the pointer crosses it on the way to something
+   inside it is the page moving under the reader's hand. */
+.sb-fold.is-open:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Reduced motion takes the travel off and leaves the page whole: nothing
+   above is what makes anything visible, so there is nothing left hidden when
+   the animation is refused. The hover keeps its shadow, which is a state and
+   not a movement. */
+@media (prefers-reduced-motion: reduce) {
+    .sb-page .ax-panel,
+    .sb-page > .ax-shell > *,
+    .sb-page > .ax-shell > .sb-cards > * {
+        animation: none;
+    }
+
+    .sb-card,
+    .sb-key,
+    .sb-fold {
+        transition: box-shadow .16s ease, border-color .16s ease;
+    }
+
+    .sb-card:hover,
+    .sb-key:hover,
+    .sb-fold:hover {
+        transform: none;
+    }
+}

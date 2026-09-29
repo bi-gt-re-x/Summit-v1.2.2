@@ -25,6 +25,8 @@
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { LOOK_KEY, forgetLook, rememberLook, rememberedLook } from './themeLook';
+import { SKIN_BASE } from '@/context/SettingsProvider';
+import type { ThemeSkin } from '@/services/settings';
 
 afterEach(() => {
   window.localStorage.clear();
@@ -126,5 +128,38 @@ describe('the key, which is written down twice', () => {
     const html = readFileSync('frontend/index.html', 'utf8');
     expect(html).toContain("setAttribute('data-accent'");
     expect(html).toContain("setAttribute('data-skin'");
+  });
+});
+
+describe('the base a skin is drawn against, which is also written down twice', () => {
+  /**
+   * Restoring the skin and leaving the cookie's theme under it is what put a
+   * dark palette's grounds beneath light-theme ink: headings the colour of
+   * the card behind them, on every page, for the whole session. The inline
+   * script applies the base itself now — and it cannot import SKIN_BASE, for
+   * the same reason it cannot import LOOK_KEY.
+   */
+  it('is the same map in the inline script as in SettingsProvider', () => {
+    const html = readFileSync('frontend/index.html', 'utf8');
+    const literal = html.match(/var base = \{([^}]*)\}/)?.[1];
+    expect(literal).toBeDefined();
+
+    const inScript = Object.fromEntries(
+      literal!
+        .split(',')
+        .map((pair) => pair.split(':').map((half) => half.trim().replace(/'/g, '')))
+        .map(([skin, base]) => [skin, base]),
+    );
+
+    const named = Object.fromEntries(
+      Object.entries(SKIN_BASE).filter(([skin, base]) => skin && base),
+    );
+    expect(inScript).toEqual(named);
+  });
+
+  it('covers every skin the app offers, so none can restore onto the wrong base', () => {
+    const skins = Object.keys(SKIN_BASE).filter(Boolean);
+    expect(skins.length).toBeGreaterThan(0);
+    for (const skin of skins) expect(SKIN_BASE[skin as ThemeSkin]).toMatch(/^(light|dark)$/);
   });
 });

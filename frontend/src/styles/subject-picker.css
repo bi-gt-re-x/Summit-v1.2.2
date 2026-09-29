@@ -30,7 +30,7 @@
 }
 
 html[data-theme="dark"] .subject-picker {
-    --sp-ink: #e6edf3;
+    --sp-ink: var(--color-ink);
     --sp-ink-soft: var(--color-ink-muted);
     --sp-line: var(--color-line);
     --sp-surface: var(--color-surface);

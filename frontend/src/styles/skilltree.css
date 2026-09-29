@@ -58,7 +58,7 @@
 
     /* The four states. Every state-aware rule below reads `--state`, which one
        rule per status sets to one of these. */
-    --stx-locked: #98a1ae;
+    --stx-locked: var(--color-ink-faint);
     --stx-avail: #2f80ed;
     --stx-prog: #6c5ce7;
     --stx-done: #1f8a54;
@@ -83,7 +83,7 @@ html[data-theme="dark"] .stx-page {
     --stx-line-soft: var(--color-line-soft);
     --stx-wire: #2b3442;
 
-    --stx-text: #e6edf3;
+    --stx-text: var(--color-ink);
     --stx-muted: var(--color-ink-muted);
     --stx-faint: var(--color-ink-faint);
 
@@ -91,7 +91,7 @@ html[data-theme="dark"] .stx-page {
     --stx-blue: #4da3ff;
     --stx-green: #3fb950;
 
-    --stx-locked: #6e7781;
+    --stx-locked: var(--color-ink-faint);
     --stx-avail: #4da3ff;
     --stx-prog: #8b7cf8;
     --stx-done: #3fb950;
@@ -850,7 +850,7 @@ html[data-theme="dark"] .stx-page--lattice {
     --lat-line: var(--color-line);
     --lat-line-soft: var(--color-line-soft);
 
-    --lat-text: #e6edf3;
+    --lat-text: var(--color-ink);
     --lat-muted: var(--color-ink-muted);
     --lat-faint: var(--color-ink-faint);
 
@@ -860,7 +860,7 @@ html[data-theme="dark"] .stx-page--lattice {
     --lat-green-soft: #14301d;
     --lat-blue: #4da3ff;
     --lat-blue-soft: #12263f;
-    --lat-grey: #6e7781;
+    --lat-grey: var(--color-ink-faint);
     --lat-grey-soft: #1b222c;
     --lat-teal: #2dd4bf;
     --lat-teal-soft: #0f2e2b;

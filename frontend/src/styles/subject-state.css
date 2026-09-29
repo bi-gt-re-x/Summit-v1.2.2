@@ -566,3 +566,43 @@
     text-transform: uppercase;
     color: var(--ax-violet);
 }
+
+/* --- Lifting --------------------------------------------------------------
+   The two cards in this sheet that sit in a row of their peers — a step in Do
+   This Next, a rung in the standings — take the page's hover lift. Two pixels
+   and a deeper shadow, matching `.sb-card` and `.sb-key` in subject.css and
+   `.gx-card`, `.stx-tile` and `.rc-best` elsewhere in the app.
+
+   Here rather than beside those, because this sheet owns `sx-`: two
+   stylesheets writing one class is the collision scripts/check_css.mjs fails
+   the build over, and the rule belongs with the card either way. */
+.sx-step,
+.sx-standing {
+    transition: transform .16s cubic-bezier(.22, 1, .36, 1),
+                box-shadow .16s ease,
+                border-color .16s ease;
+}
+
+.sx-step:hover,
+.sx-standing:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ax-shadow);
+}
+
+/* A step that has already been recorded is not an invitation. */
+.sx-step.is-taken:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sx-step,
+    .sx-standing {
+        transition: box-shadow .16s ease, border-color .16s ease;
+    }
+
+    .sx-step:hover,
+    .sx-standing:hover {
+        transform: none;
+    }
+}

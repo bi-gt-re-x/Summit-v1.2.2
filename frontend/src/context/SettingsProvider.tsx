@@ -40,7 +40,16 @@ import type { Theme } from '@/types';
  * it — see THEMES in pages/Settings. This is only the half the provider needs,
  * kept here so applying a skin does not mean importing a page into a context.
  */
-const SKIN_BASE: Record<ThemeSkin, Theme | null> = {
+/**
+ * The base each skin is drawn against.
+ *
+ * Exported because it is written down twice: the inline script in
+ * frontend/index.html has to apply the same base before the first paint, and
+ * it cannot import from a module because it runs before any module is
+ * fetched. `themeLook.test.ts` reads that file and fails if the two maps stop
+ * agreeing — the duplication is load-bearing and, left unguarded, silent.
+ */
+export const SKIN_BASE: Record<ThemeSkin, Theme | null> = {
   '': null,
   midnight: 'dark',
   sunset: 'dark',
@@ -61,7 +70,7 @@ function prefsOf(all: Record<string, unknown>): Prefs {
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const { username, status } = useAuth();
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   /* Seeded from what this browser last saw, not from the built-in defaults.
  
      The inline script in index.html has already put `data-accent` and
@@ -151,10 +160,24 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     else root.removeAttribute('data-skin');
   }, [prefs.theme_skin]);
 
+  /* `theme` is a dependency, and that is the whole of the fix.
+
+     This ran on the skin alone, so it pinned the base once — when the skin
+     was chosen — and never again. The top bar's light/dark toggle then moved
+     the theme out from under it and nothing moved it back, in this session or
+     any later one: the choice is persisted, so every subsequent load restored
+     a dark skin on the light base and drew the page with its ink the colour
+     of its ground. Reading `theme` here means any drift, from the toggle or
+     from the device's own light/dark following, snaps back on the next
+     render.
+
+     `setTheme` is idempotent — it writes the same attribute, the same cookie
+     and the same preference — so re-asserting a base that is already correct
+     costs a no-op rather than a loop. */
   useEffect(() => {
     const base = SKIN_BASE[prefs.theme_skin];
-    if (base) setTheme(base);
-  }, [prefs.theme_skin, setTheme]);
+    if (base && base !== theme) setTheme(base);
+  }, [prefs.theme_skin, theme, setTheme]);
 
   /* Remember the look for the next load — see utils/themeLook.
  

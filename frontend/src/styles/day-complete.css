@@ -33,7 +33,7 @@ html[data-theme="dark"] .tk-day-backdrop {
     --dc-card-2: var(--color-surface-2);
     --dc-line: var(--color-line);
     --dc-line-soft: var(--color-line-soft);
-    --dc-text: #e6edf3;
+    --dc-text: var(--color-ink);
     --dc-muted: var(--color-ink-muted);
     --dc-faint: var(--color-ink-faint);
     --dc-violet: var(--color-accent);
