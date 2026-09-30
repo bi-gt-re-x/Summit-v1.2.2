@@ -429,3 +429,83 @@ describe('the chart', () => {
     expect(ends).toHaveLength(4);
   });
 });
+
+/* --------------------------------------------------------------------------
+   Skill growth, which is what the tab leads on now.
+
+   The five graded measures all read output — how much got done, how often,
+   how fast, how well it was rated — and an account can hold every one of them
+   steady for a term while climbing two bands in a subject. These pin that the
+   skill panels are above the strip rather than beside it, and that the tab
+   survives the state that used to take it down.
+   -------------------------------------------------------------------------- */
+describe('what the tab opens on', () => {
+  /** One finished, rated task a day, enough of them to earn a score. */
+  const ratedRun = (subject: string, count: number, lastIso: string) => {
+    const end = Date.parse(`${lastIso}T00:00:00Z`);
+    return Array.from({ length: count }, (_, i) => {
+      const at = new Date(end - (count - 1 - i) * 86400000).toISOString().slice(0, 10);
+      return {
+        id: `${subject}-${i}`,
+        title: 'T',
+        status: 'done',
+        subject,
+        difficulty: 4,
+        execution: 5,
+        completed_at: `${at}T18:00:00`,
+      };
+    });
+  };
+
+  const withWork = () =>
+    fakeModel({
+      nameOf: (id: string) => (id === 'math' ? 'Mathematics' : id),
+      tasks: ratedRun('math', 60, '2026-06-30') as never,
+      all: Array.from({ length: 90 }, (_, i) => ({
+        date: new Date(Date.parse('2026-06-30T00:00:00Z') - (89 - i) * 86400000)
+          .toISOString()
+          .slice(0, 10),
+        focus_minutes: 60,
+        xp_earned: 120,
+        rated_tasks: 1,
+        avg_difficulty: 4,
+        avg_execution: 5,
+      })) as never,
+    });
+
+  beforeEach(() => serve());
+
+  it('leads with skill growth, above the five graded measures', async () => {
+    draw(<GrowthTab model={withWork()} />);
+    const skill = await screen.findByText('Skill growth');
+    const time = screen.getByText('Time, and what it bought');
+    // `compareDocumentPosition` rather than a query order: the assertion is
+    // about the page, not about the order the queries ran in.
+    expect(skill.compareDocumentPosition(time) & Node.DOCUMENT_POSITION_FOLLOWING)
+      .toBeTruthy();
+  });
+
+  it('names the subject and prints where its level started and finished', async () => {
+    draw(<GrowthTab model={withWork()} />);
+    expect(await screen.findByText('Mathematics')).toBeInTheDocument();
+    // The pair, which is the whole claim — a closing figure alone is a
+    // standing, and the analytics page already gives that.
+    expect(document.querySelector('.sg-move strong')).not.toBeNull();
+  });
+
+  it('says where the branches went rather than inventing figures for them', async () => {
+    /* A page like this wants to print "Algebra 64 → 78" and Summit has no
+       evidence for it: a task carries a subject and nothing finer. The note is
+       the honest version of that, in the reader's terms. */
+    draw(<GrowthTab model={withWork()} />);
+    expect(await screen.findByText(/a finished task carries a subject and nothing finer/i))
+      .toBeInTheDocument();
+  });
+
+  it('draws rather than throwing when the series has not arrived', async () => {
+    // `new Date(NaN).toISOString()` throws, so an account with no last day
+    // used to take the whole tab down instead of drawing an empty panel.
+    draw(<GrowthTab model={fakeModel({ all: [] as never, tasks: [] as never })} />);
+    expect(await screen.findByText('Skill growth')).toBeInTheDocument();
+  });
+});
