@@ -283,6 +283,31 @@ def test_a_streak_with_work_on_it_is_not_at_risk(app, client):
     assert 'streak-risk:%s' % DAY not in _prints(_list(sign_in(app, 'busy')))
 
 
+def _risk(rows):
+    return next(row for row in rows if row['fingerprint'] == 'streak-risk:%s' % DAY)
+
+
+def test_the_warning_only_says_midnight_when_midnight_ends_the_run(app, client):
+    """A run with a grace day to spend survives an empty day, so says so."""
+    yesterday = (date.fromisoformat(DAY) - timedelta(days=1)).isoformat()
+    db.update_row('users', 'tester', {'current_streak': 12, 'last_task_date': yesterday},
+                  key='username')
+    covered = _risk(_list(client))
+    assert 'midnight' not in covered['body']
+    assert 'grace day covers it' in covered['body']
+    assert covered['tone'] == 'warn'
+
+    # The same run with its grace spent last week: midnight is the truth.
+    make_account('spent')
+    db.update_row('users', 'spent', {
+        'current_streak': 12, 'last_task_date': yesterday,
+        'streak_grace_day': (date.fromisoformat(DAY) - timedelta(days=7)).isoformat(),
+    }, key='username')
+    bare = _risk(_list(sign_in(app, 'spent')))
+    assert bare['body'] == 'Anything finished today keeps it. It resets at midnight.'
+    assert bare['tone'] == 'urgent'
+
+
 def test_a_goal_past_its_date_is_raised_once_a_day(client):
     db.insert_row('goals', {
         'id': 'g-late',

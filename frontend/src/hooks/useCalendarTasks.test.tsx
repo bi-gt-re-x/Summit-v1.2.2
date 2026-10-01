@@ -50,6 +50,8 @@ const DONE = {
   xp_required: 200,
   current_streak: 2,
   best_streak: 4,
+  last_task_date: null,
+  streak_grace_day: null,
   task_id: 'task-on-the-grid',
   completion_status: 'done' as const,
 };

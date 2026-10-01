@@ -17,6 +17,7 @@
 import type { ReactNode } from 'react';
 import { useCountUp, useSettings } from '@/hooks';
 import { format } from '@/utils';
+import { addDays, fromIsoDate, isoDate } from '@/utils/dates';
 import type { UseFocusSession } from '@/hooks/useFocusSession';
 import type { DaySummary, Typical } from './summary';
 import type { UserStats } from '@/types';
@@ -518,17 +519,69 @@ export function FocusCard({
 /** Sunday first, because `Date.getDay()` is. Rotated below if the week is not. */
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 
+/** What one day of the strip was to the run. */
+type RunMark = 'done' | 'forgiven';
+
+/**
+ * The days the current run covers, back from its last worked day.
+ *
+ * A streak of *n* is *n* worked days, but not always the *n* days up to today,
+ * and drawing it as if it were ticked days nobody worked twice over:
+ *
+ * - **Today may not be in it yet.** A run stays alive overnight, so a streak of
+ *   5 at breakfast is the five days *before* today. The walk starts from
+ *   `lastDay`, and today stays unticked until something is finished on it.
+ * - **A forgiven day is inside it but was not worked.** Once a run earns a
+ *   grace day (backend/tracking/xp.py, `_grace_available`), a 12-day streak
+ *   can span thirteen days. That day is marked `forgiven` and does not use up
+ *   one of the *n*.
+ *
+ * The grace day can also sit *after* `lastDay`: yesterday was missed, the
+ * backend already wrote down that it was covered, and nothing is finished yet
+ * today. It is marked as well, since it is part of the run still standing.
+ *
+ * Only the latest grace day is stored, so one spent further back in a long run
+ * would be drawn as worked — but grace comes back at most once a month, which
+ * is well outside the seven days this is asked about. `floor` stops the walk
+ * there. Without a `lastDay` (a reply that predates it) the run is read as
+ * ending today, which is what the strip always assumed.
+ */
+export function runMarks(
+  streak: number,
+  lastDay: string | null | undefined,
+  graceDay: string | null | undefined,
+  today: Date,
+  floor: Date,
+): Map<string, RunMark> {
+  const marks = new Map<string, RunMark>();
+  if (streak <= 0) return marks;
+
+  const todayIso = isoDate(today);
+  const anchor = lastDay && lastDay <= todayIso ? lastDay : todayIso;
+  if (graceDay && graceDay > anchor && graceDay <= todayIso) marks.set(graceDay, 'forgiven');
+
+  const stop = isoDate(floor);
+  let left = streak;
+  for (let day = fromIsoDate(anchor); left > 0; day = addDays(day, -1)) {
+    const iso = isoDate(day);
+    if (iso < stop) break;
+    if (iso === graceDay) {
+      marks.set(iso, 'forgiven');
+    } else {
+      marks.set(iso, 'done');
+      left -= 1;
+    }
+  }
+  return marks;
+}
+
 /**
  * This week, seven marks, read off the streak rather than off a history.
  *
- * There is no per-day record on this page — the card is given
- * `current_streak` and `best_streak` and nothing else — and fetching one for a
- * strip of seven dots would be a request per dashboard for a decoration. It
- * does not need one. A current streak of *n* is, by definition, the last *n*
- * days up to and including today; the backend decays a streak that went stale
- * overnight while answering, so a streak of 3 on screen means today and the
- * two days before it. That is enough to fill the week exactly, and it cannot
- * disagree with the figure above it, because it *is* the figure above it.
+ * There is no per-day record on this page, and fetching one for a strip of
+ * seven dots would be a request per dashboard for a decoration. It does not
+ * need one: the streak, the last day it was extended and the day its grace
+ * covered pin the run down exactly — see `runMarks` above.
  *
  * What it cannot show is a day worked before a break earlier in the same week.
  * A streak says nothing about what happened on the far side of the day that
@@ -540,10 +593,22 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
  * Friday shown as missed on a Tuesday is the app telling somebody they have
  * failed at a day that has not started.
  */
-function WeekDots({ streak, startsOn }: { streak: number; startsOn: WeekStart }) {
-  const today = new Date().getDay();
+function WeekDots({
+  streak,
+  lastDay,
+  graceDay,
+  startsOn,
+}: {
+  streak: number;
+  lastDay?: string | null;
+  graceDay?: string | null;
+  startsOn: WeekStart;
+}) {
+  const now = new Date();
+  const today = now.getDay();
   const order = startsOn === 'monday' ? [1, 2, 3, 4, 5, 6, 0] : [0, 1, 2, 3, 4, 5, 6];
   const here = order.indexOf(today);
+  const marks = runMarks(streak, lastDay, graceDay, now, addDays(now, -here));
 
   return (
     <ol className="dash-week" aria-label="This week">
@@ -553,17 +618,25 @@ function WeekDots({ streak, startsOn }: { streak: number; startsOn: WeekStart })
            to come. Counting with `getDay()` arithmetic instead would make
            "three days ago" and "four days ahead" the same number. */
         const back = here - at;
-        const done = back >= 0 && back < streak;
+        const mark = back >= 0 ? marks.get(isoDate(addDays(now, -back))) : undefined;
         const isToday = back === 0;
         return (
           <li
             key={weekday}
-            className={`dash-week-day${done ? ' is-done' : ''}${isToday ? ' is-today' : ''}`}
+            className={`dash-week-day${mark ? ` is-${mark}` : ''}${isToday ? ' is-today' : ''}`}
+            title={mark === 'forgiven' ? 'Missed — your grace day kept the streak' : undefined}
           >
             <span className="dash-week-dot" aria-hidden="true">
-              {done && (
+              {mark === 'done' && (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m6 12.5 4 4 8-9" />
+                </svg>
+              )}
+              {/* A dash, not a tick: the day is part of the run, but nobody
+                  worked it and the strip does not pretend otherwise. */}
+              {mark === 'forgiven' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round">
+                  <path d="M7 12h10" />
                 </svg>
               )}
             </span>
@@ -571,7 +644,13 @@ function WeekDots({ streak, startsOn }: { streak: number; startsOn: WeekStart })
             {/* The dot is a picture; this is what it says. Without it the
                 strip reads out as seven day names and nothing else. */}
             <span className="dash-week-say">
-              {back < 0 ? 'still to come' : done ? 'done' : 'not yet'}
+              {back < 0
+                ? 'still to come'
+                : mark === 'done'
+                  ? 'done'
+                  : mark === 'forgiven'
+                    ? 'missed, covered by your grace day'
+                    : 'not yet'}
             </span>
           </li>
         );
@@ -631,7 +710,12 @@ export function StreakCard({ stats }: { stats: UserStats }) {
               ? `${toBeat} ${toBeat === 1 ? 'day' : 'days'} to your best`
               : 'Your best run yet.'}
         </p>
-        <WeekDots streak={current} startsOn={prefs.week_starts_on} />
+        <WeekDots
+          streak={current}
+          lastDay={stats.last_task_date}
+          graceDay={stats.streak_grace_day}
+          startsOn={prefs.week_starts_on}
+        />
       </div>
       <StatPanel icon={ICON.trophy}>
         <span className="dash-stat-panel-text">

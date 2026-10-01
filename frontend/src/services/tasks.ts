@@ -231,6 +231,8 @@ export interface CompletionResult {
   xp_required: number;
   current_streak: number;
   best_streak: number;
+  last_task_date: string | null;
+  streak_grace_day: string | null;
   task_id: string;
   completion_status: 'done';
 }
@@ -260,6 +262,8 @@ export interface BatchCompletionResult {
   xp_required: number;
   current_streak: number;
   best_streak: number;
+  last_task_date: string | null;
+  streak_grace_day: string | null;
 }
 
 /** The most one request may carry; backend MAX_COMPLETE. */
@@ -285,6 +289,7 @@ export async function completeTasks(
     completed: [], already_done: [], not_found: [], failed: [],
     xp_earned: 0, new_xp: 0, new_level: 0, new_tasks_completed: 0,
     xp_required: 0, current_streak: 0, best_streak: 0,
+    last_task_date: null, streak_grace_day: null,
   };
   if (ids.length === 0) return { success: true, ...merged };
 
@@ -310,6 +315,8 @@ export async function completeTasks(
     merged.xp_required = result.xp_required;
     merged.current_streak = result.current_streak;
     merged.best_streak = result.best_streak;
+    merged.last_task_date = result.last_task_date;
+    merged.streak_grace_day = result.streak_grace_day;
     if (result.failed.length) break;
   }
   return { success: true, ...merged };

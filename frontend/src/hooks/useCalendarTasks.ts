@@ -170,6 +170,8 @@ export function useCalendarTasks(): UseCalendarTasks {
               tasks_completed: result.new_tasks_completed,
               current_streak: result.current_streak,
               best_streak: result.best_streak,
+              last_task_date: result.last_task_date,
+              streak_grace_day: result.streak_grace_day,
             },
             tasks: current.tasks.map((task) => {
               if (String(task.id) !== String(taskId)) return task;

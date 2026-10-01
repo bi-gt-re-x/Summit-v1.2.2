@@ -364,13 +364,21 @@ def _streak_candidates(user, facts, day):
     out = []
 
     if streak and not facts['finished_today']:
+        # "It resets at midnight" is only true when there is no grace day to
+        # catch it. Said to a run that would survive the night, it is a false
+        # alarm — and a warning that cries wolf is one people learn to swipe.
+        covered = xp_tracking.grace_covers_today(user, date.fromisoformat(day))
         out.append({
             'fingerprint': 'streak-risk:{}'.format(day),
             'channel': 'streak',
-            'tone': 'urgent',
+            'tone': 'warn' if covered else 'urgent',
             'for_day': day,
             'title': 'Your {}-day streak has nothing on it yet'.format(streak),
-            'body': 'Anything finished today keeps it. It resets at midnight.',
+            'body': ('Anything finished today adds to it. If today slips, your '
+                     'grace day covers it — the next one comes back {} days '
+                     'after.'.format(xp_tracking.GRACE_REFRESH_DAYS)
+                     if covered else
+                     'Anything finished today keeps it. It resets at midnight.'),
             'link': '/dashboard',
         })
 

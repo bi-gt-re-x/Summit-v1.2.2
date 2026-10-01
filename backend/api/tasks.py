@@ -577,7 +577,8 @@ def _complete(username, task_ids):
     streak = dict(user)
     xp_tracking.extend_streak(streak)
     account = {field: streak.get(field) for field in
-               ('current_streak', 'best_streak', 'last_task_date', 'day_state')}
+               ('current_streak', 'best_streak', 'last_task_date', 'day_state',
+                'streak_grace_day')}
 
     outcome = {'completed': [], 'already_done': [], 'not_found': [], 'failed': [],
                'account': user, 'stamp': now.isoformat()}
@@ -620,6 +621,10 @@ def _progress(account):
         'new_tasks_completed': account.get('tasks_completed', 0),
         'current_streak': account.get('current_streak', 0),
         'best_streak': account.get('best_streak', 0),
+        # What the dashboard's week strip draws the run from — see _stats_of in
+        # backend/api/dashboard.py.
+        'last_task_date': account.get('last_task_date'),
+        'streak_grace_day': account.get('streak_grace_day'),
     }
 
 

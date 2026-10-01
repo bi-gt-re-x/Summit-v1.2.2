@@ -39,6 +39,14 @@ export interface UserStats {
   current_streak: number;
   best_streak: number;
   charge: number;
+  /**
+   * The last day anything was finished, and the missed day the streak's grace
+   * last covered (ISO days). What the streak card's week strip is drawn from:
+   * the count alone cannot say whether today is in the run yet, or which day
+   * inside it was forgiven rather than worked.
+   */
+  last_task_date?: string | null;
+  streak_grace_day?: string | null;
 }
 
 // --------------------------------------------------------------------------

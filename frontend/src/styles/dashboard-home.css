@@ -371,6 +371,13 @@ body:has(.dash) .app-main {
     background: #E07A34;
     color: #fff;
 }
+/* A missed day the run's grace covered: in the run, so the streak's orange,
+   but hollow, because nobody worked it. */
+.dash-week-day.is-forgiven .dash-week-dot {
+    border-color: #E07A34;
+    background: #FDF1E8;
+    color: #E07A34;
+}
 /* Today, whether or not it has been earned yet: a ring around it, so the
    reader can find which of the seven they are standing on. */
 .dash-week-day.is-today .dash-week-dot {
@@ -1338,6 +1345,11 @@ html[data-theme="dark"] .dash-week-day.is-done .dash-week-dot {
     border-color: #e79f23;
     background: #e79f23;
     color: #1b1206;
+}
+html[data-theme="dark"] .dash-week-day.is-forgiven .dash-week-dot {
+    border-color: #e79f23;
+    background: rgba(231, 159, 35, 0.12);
+    color: #e79f23;
 }
 html[data-theme="dark"] .dash-week-day.is-today .dash-week-dot {
     box-shadow: 0 0 0 2px rgba(231, 159, 35, 0.3);

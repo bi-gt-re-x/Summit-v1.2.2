@@ -24,6 +24,7 @@ from datetime import date, timedelta
 
 import pytest
 
+from backend.database import connection as db
 from backend.tracking import xp
 
 
@@ -181,3 +182,74 @@ def test_an_account_that_has_never_finished_anything_is_left_alone():
     user = account(streak=0, last_seen_days_ago=0)
     user['last_task_date'] = None
     assert xp.refresh_streak(user) is False
+
+
+# --------------------------------------------------------------------------
+# Whether an empty today would be forgiven — what the warning asks
+# --------------------------------------------------------------------------
+def test_a_week_old_run_that_worked_yesterday_would_survive_an_empty_today():
+    user = account(streak=12, last_seen_days_ago=1)
+    assert xp.grace_covers_today(user, date.today()) is True
+
+
+def test_a_run_too_young_for_grace_would_not():
+    user = account(streak=xp.GRACE_EARNED_AT - 1, last_seen_days_ago=1)
+    assert xp.grace_covers_today(user, date.today()) is False
+
+
+def test_a_run_that_spent_its_grace_recently_would_not():
+    user = account(streak=20, last_seen_days_ago=1, grace=ago(10))
+    assert xp.grace_covers_today(user, date.today()) is False
+
+
+def test_a_run_already_leaning_on_grace_for_yesterday_would_not():
+    """Yesterday was the forgiven day, so an empty today is a second one."""
+    user = account(streak=12, last_seen_days_ago=2)
+    xp.refresh_streak(user)
+    assert user['current_streak'] == 12
+    assert xp.grace_covers_today(user, date.today()) is False
+
+
+def test_no_streak_has_nothing_to_cover():
+    user = account(streak=0, last_seen_days_ago=1)
+    assert xp.grace_covers_today(user, date.today()) is False
+
+
+# --------------------------------------------------------------------------
+# What a completion writes back
+# --------------------------------------------------------------------------
+def _tester():
+    return next(u for u in db.read_table('users') if u['username'] == 'tester')
+
+
+def _finish_one(client):
+    task = client.post('/api/tasks', json={'name': 'one', 'xp_reward': 10}).json()['task_id']
+    return client.post('/api/complete_task', json={'task_id': task}).json()
+
+
+def test_a_completion_that_spends_grace_saves_the_day_it_covered(client):
+    """Without a page load in between, nothing else would write it down."""
+    db.update_row('users', 'tester', {'current_streak': 12, 'last_task_date': ago(2),
+                                      'streak_grace_day': None}, key='username')
+    reply = _finish_one(client)
+
+    assert reply['current_streak'] == 13
+    assert reply['last_task_date'] == date.today().isoformat()
+    assert reply['streak_grace_day'] == ago(1)
+    assert _tester()['streak_grace_day'] == ago(1)
+
+
+def test_a_completion_that_starts_a_new_run_clears_the_old_runs_grace(client):
+    """Left behind, it would hold the next run's grace back for a month."""
+    db.update_row('users', 'tester', {'current_streak': 0, 'last_task_date': ago(5),
+                                      'streak_grace_day': ago(8)}, key='username')
+    _finish_one(client)
+    assert _tester().get('streak_grace_day') is None
+
+
+def test_the_stats_read_carries_the_days_the_strip_is_drawn_from(client):
+    db.update_row('users', 'tester', {'current_streak': 12, 'last_task_date': ago(1),
+                                      'streak_grace_day': ago(4)}, key='username')
+    stats = client.get('/api/stats').json()['stats']
+    assert stats['last_task_date'] == ago(1)
+    assert stats['streak_grace_day'] == ago(4)

@@ -1,13 +1,16 @@
 /**
  * The week strip on the Current Streak card.
  *
- * Seven marks, worked out from the streak rather than fetched — the card is
- * handed `current_streak` and `best_streak` and nothing else, and a request
- * per dashboard for a row of dots would be a request for a decoration. A
- * streak of *n* is the last *n* days up to and including today, so the strip
- * is the figure above it drawn sideways and the two cannot disagree.
+ * Seven marks, worked out from the streak rather than fetched — a request per
+ * dashboard for a row of dots would be a request for a decoration. The streak,
+ * the last day it was extended and the day its grace last covered are enough
+ * to place the run exactly (`runMarks` in StatCards.tsx).
  *
- * Three things are worth pinning and only one of them is the arithmetic.
+ * Those last two are recent. Before them the strip assumed a streak of *n* was
+ * the *n* days ending today, which ticked today before anything was finished
+ * on it and drew a forgiven day as a worked one. Both are pinned below.
+ *
+ * Three more things are worth pinning and only one of them is the arithmetic.
  *
  * The first is that a **day in the future is not a missed day**. A Friday
  * drawn as empty-and-failed on a Wednesday is the app telling somebody they
@@ -33,17 +36,18 @@ import { StatsContext } from '@/context/contexts';
 import { StreakCard } from './StatCards';
 import { stats as makeStats } from '@/test/factories';
 import type { Prefs } from '@/services/settings';
+import type { UserStats } from '@/types';
 
 /** A Thursday, so there are days on both sides of today inside the week. */
 const THURSDAY = new Date('2026-09-24T10:00:00');
 
-function draw(streak: number, prefs: Partial<Prefs> = {}) {
+function draw(streak: number, prefs: Partial<Prefs> = {}, days: Partial<UserStats> = {}) {
   return render(
     <MemoryRouter>
       <SettingsContext.Provider value={settingsValue({ prefs })}>
         <StatsContext.Provider value={statsValue()}>
           <StreakCard
-            stats={makeStats({ current_streak: streak, best_streak: 293 })}
+            stats={makeStats({ current_streak: streak, best_streak: 293, ...days })}
           />
         </StatsContext.Provider>
       </SettingsContext.Provider>
@@ -118,5 +122,57 @@ describe('the week strip', () => {
       'still to come', // Sat
       'still to come', // Sun
     ]);
+  });
+});
+
+describe('the week strip, placed by the days the run actually covers', () => {
+  const TUESDAY = '2026-09-22';
+  const WEDNESDAY = '2026-09-23';
+  const THURSDAY_ISO = '2026-09-24';
+  const forgiven = () =>
+    days()
+      .filter((day) => day.classList.contains('is-forgiven'))
+      .map((day) => day.querySelector('.dash-week-name')!.textContent);
+
+  it('does not tick today before anything is finished on it', () => {
+    // Three days in a row up to yesterday; Thursday is still open.
+    draw(3, {}, { last_task_date: WEDNESDAY });
+    expect(doneNames()).toEqual(['Mon', 'Tue', 'Wed']);
+  });
+
+  it('ticks today once something is', () => {
+    draw(3, {}, { last_task_date: THURSDAY_ISO });
+    expect(doneNames()).toEqual(['Tue', 'Wed', 'Thu']);
+  });
+
+  it('draws a forgiven day as forgiven, not worked, and reaches one further back for it', () => {
+    // Four worked days and Tuesday covered by grace: Sun (last week), Mon, Wed, Thu.
+    draw(4, {}, { last_task_date: THURSDAY_ISO, streak_grace_day: TUESDAY });
+    expect(doneNames()).toEqual(['Mon', 'Wed', 'Thu']);
+    expect(forgiven()).toEqual(['Tue']);
+    const tuesday = days()[1]!;
+    expect(tuesday.querySelector('.dash-week-say')).toHaveTextContent(
+      'missed, covered by your grace day',
+    );
+    expect(tuesday.querySelector('svg')).toBeInTheDocument();
+  });
+
+  it('shows yesterday as covered while today is still open', () => {
+    // Worked Tuesday, missed Wednesday (grace already written down), nothing yet today.
+    draw(9, {}, { last_task_date: TUESDAY, streak_grace_day: WEDNESDAY });
+    expect(doneNames()).toEqual(['Mon', 'Tue']);
+    expect(forgiven()).toEqual(['Wed']);
+  });
+
+  it('ignores a grace day left over from before the run began', () => {
+    draw(2, {}, { last_task_date: THURSDAY_ISO, streak_grace_day: '2026-09-21' });
+    expect(doneNames()).toEqual(['Wed', 'Thu']);
+    expect(forgiven()).toEqual([]);
+  });
+
+  it('marks nothing at all on a broken streak, grace day or not', () => {
+    draw(0, {}, { last_task_date: '2026-09-20', streak_grace_day: TUESDAY });
+    expect(done()).toHaveLength(0);
+    expect(forgiven()).toEqual([]);
   });
 });

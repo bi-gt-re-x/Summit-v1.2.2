@@ -305,6 +305,22 @@ def _grace_available(user, last_date, today):
     return (today - already).days >= GRACE_REFRESH_DAYS
 
 
+def grace_covers_today(user, today):
+    """Whether a day with nothing finished on it would be forgiven.
+
+    The question the streak warning has to answer before it says the run ends
+    at midnight: if today goes by empty, does tomorrow's first look find a
+    single missed day this run has grace for? That is `_grace_available` asked
+    from tomorrow. A run whose grace was already spent on yesterday fails the
+    one-missed-day test there, which is the right answer — two empty days in a
+    row are never forgiven.
+    """
+    last_date = parse_day(user.get('last_task_date'))
+    if last_date is None or not (user.get('current_streak') or 0):
+        return False
+    return _grace_available(user, last_date, today + timedelta(days=1))
+
+
 def refresh_streak(user):
     """Decay a stale streak so every page reads the same live value.
 
@@ -419,6 +435,7 @@ def award_task_completion(user, xp_reward):
                             'best_streak': user['best_streak'],
                             'last_task_date': user['last_task_date'],
                             'day_state': user['day_state'],
+                            'streak_grace_day': user.get('streak_grace_day'),
                         })
     # Read back rather than assumed: another completion may have landed between
     # this one's read and its write, and the level has to follow the total that

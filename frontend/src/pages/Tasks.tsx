@@ -368,6 +368,8 @@ export default function Tasks() {
             tasks_completed: result.new_tasks_completed,
             current_streak: result.current_streak,
             best_streak: result.best_streak,
+            last_task_date: result.last_task_date,
+            streak_grace_day: result.streak_grace_day,
           },
           tasks: current.tasks.map((entry) =>
             String(entry.id) === String(task.id)
@@ -429,6 +431,8 @@ export default function Tasks() {
             tasks_completed: result.new_tasks_completed,
             current_streak: result.current_streak,
             best_streak: result.best_streak,
+            last_task_date: result.last_task_date,
+            streak_grace_day: result.streak_grace_day,
           },
           tasks: current.tasks.map((entry) => {
             const at = stamps.get(String(entry.id));

@@ -65,7 +65,14 @@ class UpdateStats(BaseModel):
 
 
 def _stats_of(user):
-    """The six numbers every screen shows. The whole of the cheap half."""
+    """The six numbers every screen shows, and the two days the streak hangs on.
+
+    `last_task_date` and `streak_grace_day` are there for the week strip on the
+    dashboard's streak card. A streak of 12 does not say *which* twelve days:
+    nothing may have been finished yet today, and a run that was forgiven a
+    missed day covers thirteen. Drawn from the count alone, the strip ticked
+    days nobody worked.
+    """
     return {
         "level": user.get('level', 1),
         "xp": user.get('xp', 0),
@@ -73,6 +80,8 @@ def _stats_of(user):
         "current_streak": user.get('current_streak', 0),
         "best_streak": user.get('best_streak', 0),
         "charge": user.get('charge', 0),
+        "last_task_date": user.get('last_task_date'),
+        "streak_grace_day": user.get('streak_grace_day'),
     }
 
 
