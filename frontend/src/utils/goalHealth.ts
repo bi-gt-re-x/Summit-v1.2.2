@@ -125,10 +125,29 @@ const LABELS: Record<HealthState, string> = {
 
 const DAY = 86_400_000;
 
-function atMidnight(value: string): number | null {
+/**
+ * Local midnight of a day key, remembered.
+ *
+ * Every goal reading parses the completion date of every task it looks at, and
+ * a counter goal looks at *all* of them — so on a large account this was
+ * tens of thousands of `new Date(string)` calls per goal, per reading, for a
+ * few thousand distinct days. The answer for a given day never changes, so it
+ * is parsed once. Capped so a pathological caller cannot grow it without end;
+ * clearing it costs only the next few parses.
+ */
+const midnights = new Map<string, number | null>();
+const MIDNIGHTS_MAX = 20_000;
+
+export function atMidnight(value: string): number | null {
   if (!value) return null;
-  const time = new Date(`${String(value).slice(0, 10)}T00:00:00`).getTime();
-  return Number.isNaN(time) ? null : time;
+  const key = String(value).slice(0, 10);
+  const known = midnights.get(key);
+  if (known !== undefined) return known;
+  const time = new Date(`${key}T00:00:00`).getTime();
+  const result = Number.isNaN(time) ? null : time;
+  if (midnights.size >= MIDNIGHTS_MAX) midnights.clear();
+  midnights.set(key, result);
+  return result;
 }
 
 function clamp01(value: number): number {
@@ -181,6 +200,54 @@ function workDays(linked: Task[]): string[] {
  * `today` is passed in rather than read from the clock so the whole model is a
  * pure function of its inputs — which is what makes it checkable.
  */
+/** What `goalHealth` reads off the evidence, independent of the goal itself. */
+interface Evidence {
+  done: Task[];
+  days: string[];
+  recentTasks: number;
+  activeRecently: number;
+}
+
+/**
+ * The evidence half of a reading, remembered per task list and per day.
+ *
+ * Every counter goal — XP, streak, focus — takes the account's whole task list
+ * as its evidence (see `evidenceFor`), so on an account with five of them the
+ * same twenty thousand tasks were filtered, grouped into days and counted
+ * against the fortnight five times over, in each of the half-dozen places the
+ * analytics page asks for a goal's health. None of it depends on the goal; it
+ * depends on the list, which is the same array each time, and on the day. So
+ * it is worked out once per list per day. A goal with its own linked tasks
+ * gets a fresh array from the filter and simply misses the cache, which is
+ * what it did before.
+ */
+const evidenceCache = new WeakMap<Task[], Map<number, Evidence>>();
+
+function evidenceOn(linked: Task[], now: number): Evidence {
+  let byDay = evidenceCache.get(linked);
+  const known = byDay?.get(now);
+  if (known) return known;
+
+  const done = linked.filter((task) => task.status === 'done' && task.completed_at);
+  const days = workDays(done);
+  const recentTasks = done.filter((task) => {
+    const at = atMidnight(String(task.completed_at));
+    return at !== null && now - at < EVIDENCE_DAYS * DAY;
+  }).length;
+  const activeRecently = days.filter((day) => {
+    const at = atMidnight(day);
+    return at !== null && now - at < EVIDENCE_DAYS * DAY;
+  }).length;
+
+  const evidence = { done, days, recentTasks, activeRecently };
+  if (!byDay) {
+    byDay = new Map();
+    evidenceCache.set(linked, byDay);
+  }
+  byDay.set(now, evidence);
+  return evidence;
+}
+
 export function goalHealth(
   goal: Goal,
   tasks: Task[],
@@ -189,8 +256,6 @@ export function goalHealth(
   const numbers = goalNumbers(goal);
   const progress = clamp01(numbers.progress / 100);
   const linked = evidenceFor(goal, tasks);
-  const done = linked.filter((task) => task.status === 'done' && task.completed_at);
-  const days = workDays(done);
 
   /* `isoDate`, not `toISOString`, and the difference is a whole day.
 
@@ -206,6 +271,7 @@ export function goalHealth(
      `isoDate` builds the stamp from local parts. See `fromIsoDate` in
      utils/dates, which is the same trap in the other direction, written down. */
   const now = atMidnight(isoDate(today)) ?? today.getTime();
+  const { done, days, recentTasks, activeRecently } = evidenceOn(linked, now);
   const start = atMidnight(goal.start_date) ?? atMidnight(goal.created_at);
   const end = atMidnight(goal.deadline);
 
@@ -229,15 +295,6 @@ export function goalHealth(
   const recency =
     daysSinceWork === null ? 0 : clamp01(1 - daysSinceWork / EVIDENCE_DAYS);
 
-  const recentTasks = done.filter((task) => {
-    const at = atMidnight(String(task.completed_at));
-    return at !== null && now - at < EVIDENCE_DAYS * DAY;
-  }).length;
-
-  const activeRecently = days.filter((day) => {
-    const at = atMidnight(day);
-    return at !== null && now - at < EVIDENCE_DAYS * DAY;
-  }).length;
   const consistency = clamp01(activeRecently / EVIDENCE_DAYS);
 
   const milestones = goal.milestones ?? [];

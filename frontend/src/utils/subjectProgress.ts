@@ -117,6 +117,12 @@ export interface SubjectProgressInput {
   toIso: string;
   /** Today, for "overdue now" and goal health. */
   today?: Date;
+  /**
+   * This subject's tasks, already picked out, for a caller reading many
+   * subjects at once — filtering every task once per subject is the subjects
+   * times the tasks. Absent means "filter `tasks` here".
+   */
+  mine?: Task[];
 }
 
 export function subjectProgress({
@@ -126,8 +132,9 @@ export function subjectProgress({
   days,
   toIso,
   today = new Date(),
+  mine: given,
 }: SubjectProgressInput): SubjectProgress {
-  const mine = tasks.filter((task) => task.subject === subject);
+  const mine = given ?? tasks.filter((task) => task.subject === subject);
   const toMs = Date.parse(`${toIso}T00:00:00Z`);
   const shift = (n: number) => new Date(toMs - n * DAY).toISOString().slice(0, 10);
 

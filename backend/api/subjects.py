@@ -94,13 +94,7 @@ def usage(username: Optional[str]):
     """{subject_id: how many of this user's tasks carry it}."""
     if not username:
         return {}
-    counts = {}
-    for task in db.tasks_for(username):
-        subject_id = task.get('subject')
-        if not subject_id:
-            continue
-        counts[subject_id] = counts.get(subject_id, 0) + 1
-    return counts
+    return db.subject_usage(username)
 
 
 def _custom_entry(row, used):

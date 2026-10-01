@@ -1276,6 +1276,54 @@ def series_signature(user_id):
         con.close()
 
 
+def rollup_signature(user_id):
+    """A cheap reading of everything the daily rollup is built out of.
+
+    For `period_scores` in backend/tracking/analytics.py, which keeps the
+    rollup between calls the way `series` keeps its rows. Broader than
+    `series_signature` on purpose: the rollup reads more of each row — the XP
+    on every finished task, rated or not, how long it took and whether it made
+    its deadline, and the focus goal beside the focus seconds — and a field the
+    signature does not cover is an edit the cache would never notice.
+
+    Sums of each column rather than counts alone, for the reason
+    `series_signature` gives; `julianday` of the stamps so a task moved to
+    another day moves the signature even though no count changes.
+    """
+    con = connect()
+    try:
+        parts = []
+        for table, expression, clause in (
+            ('xp_events',
+             'COUNT(*) || "/" || COALESCE(SUM(amount), 0) || "/" '
+             '|| COALESCE(SUM(julianday(substr(COALESCE(timestamp, date), 1, 19))), 0) || "/" '
+             '|| COALESCE(SUM(tasks_completed), 0)',
+             '1'),
+            ('focus_days',
+             'COUNT(*) || "/" || COALESCE(SUM(seconds), 0) || "/" '
+             '|| COALESCE(SUM(goal_hours), 0) || "/" || COALESCE(SUM(julianday(date)), 0)',
+             '1'),
+            ('tasks',
+             'COUNT(*) || "/" || COALESCE(SUM(xp_value), 0) || "/" '
+             '|| COALESCE(SUM(julianday(substr(completed_at, 1, 19))), 0) || "/" '
+             '|| COALESCE(SUM(difficulty * 7 + execution), 0) || "/" '
+             '|| COALESCE(SUM(completion_seconds), 0) || "/" '
+             '|| COALESCE(SUM(CASE WHEN met_deadline THEN 1 WHEN met_deadline IS NULL THEN 0 ELSE 2 END), 0)',
+             "status = 'done'"),
+        ):
+            if not _schema(con, table):
+                parts.append('-')
+                continue
+            row = con.execute(
+                'SELECT {} AS sig FROM "{}" WHERE user_id = ? AND {}'.format(
+                    expression, table, clause),
+                (user_id,)).fetchone()
+            parts.append(str(row['sig'] if row else ''))
+        return ':'.join(parts)
+    finally:
+        con.close()
+
+
 def rated_days_for(user_id):
     """Per-day quality, difficulty and execution, aggregated by SQLite.
 
@@ -1796,6 +1844,28 @@ def save_task(task, username):
 # The day is passed in rather than computed here. Stored stamps are local ISO
 # text with no zone (see backend/tracking/xp.py), so "today" is the caller's
 # day, and the caller is the only one who knows it.
+
+
+def subject_usage(username):
+    """{subject_id: how many of this account's tasks carry it}, in SQL.
+
+    The subject catalogue sorts by this on every page, and it used to read and
+    decode every task the account owns to count one column — on a five-year
+    account, twenty thousand rows and most of 150 ms, for a few dozen numbers.
+    An aggregate on the indexed `user_id` returns just the numbers.
+    """
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return {}
+        rows = con.execute(
+            "SELECT subject, COUNT(*) AS n FROM tasks "
+            "WHERE user_id = ? AND subject IS NOT NULL AND subject != '' "
+            "GROUP BY subject",
+            (username,)).fetchall()
+        return {row['subject']: row['n'] for row in rows}
+    finally:
+        con.close()
 
 
 def task_alert_counts(username, day):

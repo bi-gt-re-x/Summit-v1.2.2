@@ -185,19 +185,27 @@ export function skillTrajectory({
      sorted once so each pass is a prefix rather than a filter over the whole
      thing — the cost is `points` × the tasks in the period, not `points` × the
      account. */
-  const sorted = [...done].sort((a, b) => a.completed_at!.localeCompare(b.completed_at!));
+  /* Plain comparison rather than `localeCompare`: these are ISO stamps, which
+     sort correctly as code points, and locale collation on twenty thousand of
+     them was a large share of this function's time for an identical order. */
+  const sorted = [...done].sort((a, b) =>
+    a.completed_at! < b.completed_at! ? -1 : a.completed_at! > b.completed_at! ? 1 : 0,
+  );
+  const sortedDays = sorted.map((task) => task.completed_at!.slice(0, 10));
   const sampled = samples(startMs, toMs, points);
   const dates = sampled.map(dayKey);
   const fromKey = dates[0]!;
   const readings = sampled.map((at) => {
     const key = dayKey(at);
-    let cut = sorted.length;
-    for (let i = 0; i < sorted.length; i += 1) {
-      if (sorted[i]!.completed_at!.slice(0, 10) > key) {
-        cut = i;
-        break;
-      }
+    // The first task finished after `key`, by binary search over the days.
+    let lo = 0;
+    let hi = sortedDays.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (sortedDays[mid]! > key) hi = mid;
+      else lo = mid + 1;
     }
+    const cut = lo;
     return new Map(skillScores(sorted.slice(0, cut), at).map((row) => [row.subject, row]));
   });
 

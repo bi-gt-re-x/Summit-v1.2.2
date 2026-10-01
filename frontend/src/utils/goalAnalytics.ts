@@ -21,8 +21,9 @@
  * figure with nothing behind it is worse than a smaller true one.
  */
 import { goalNumbers } from '@/components/Goals/numbers';
-import { evidenceFor, goalHealth, goalPace, type GoalHealth } from './goalHealth';
+import { atMidnight, evidenceFor, goalHealth, goalPace, type GoalHealth } from './goalHealth';
 import type { Goal, Milestone, Task } from '@/types';
+import { isoDate } from './dates';
 
 const DAY = 86_400_000;
 
@@ -60,15 +61,40 @@ export interface GoalReading {
  * `today` is a parameter for the same reason it is in goalHealth: the whole
  * file is then a pure function of its inputs and can be checked.
  */
+/**
+ * Readings remembered per evidence list and per day.
+ *
+ * A reading depends on the goal only through `evidenceFor`, and every counter
+ * goal's evidence is the same whole-account array — so five counter goals
+ * were five identical passes over every task, in each place the page asked.
+ * Keyed by the day rather than the instant: every window below is a whole
+ * number of days back from today, and a completion date is a midnight, so
+ * the answer cannot change until the date does.
+ */
+const readingCache = new WeakMap<Task[], Map<string, GoalReading>>();
+
 export function goalReading(goal: Goal, tasks: Task[], today: Date = new Date()): GoalReading {
   const linked = evidenceFor(goal, tasks);
+  const dayKey = isoDate(today);
+  const cached = readingCache.get(linked)?.get(dayKey);
+  // A copy, so a caller that adjusts its reading cannot reach the next one's.
+  if (cached) return { ...cached };
+  const reading = readEvidence(linked, today);
+  let byDay = readingCache.get(linked);
+  if (!byDay) {
+    byDay = new Map();
+    readingCache.set(linked, byDay);
+  }
+  byDay.set(dayKey, reading);
+  return { ...reading };
+}
+
+function readEvidence(linked: Task[], today: Date): GoalReading {
   const finished = linked.filter((task) => task.status === 'done' && task.completed_at);
   const now = today.getTime();
 
-  const at = (task: Task) => {
-    const time = new Date(`${String(task.completed_at).slice(0, 10)}T00:00:00`).getTime();
-    return Number.isNaN(time) ? null : time;
-  };
+  // The shared, remembered parse — see `atMidnight` in ./goalHealth.
+  const at = (task: Task) => atMidnight(String(task.completed_at));
 
   const inWindow = (task: Task, from: number, to: number) => {
     const time = at(task);

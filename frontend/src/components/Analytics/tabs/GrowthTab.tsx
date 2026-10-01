@@ -126,8 +126,8 @@ const PERIOD_DAYS: Record<PeriodKey, number | null> = {
   '7d': 7,
   '30d': 30,
   '90d': 90,
-  '180d': 180,
   '365d': 365,
+  '730d': 730,
   all: null,
 };
 
@@ -136,14 +136,15 @@ const PERIOD_TEXT: Record<PeriodKey, string> = {
   '7d': 'the last week',
   '30d': 'the last 30 days',
   '90d': 'the last 3 months',
-  '180d': 'the last 6 months',
   '365d': 'the last year',
+  '730d': 'the last 2 years',
   all: 'your whole record',
 };
 
 export function GrowthTab({ model }: { model: AnalyticsModel }) {
   const { all: dayRows, clock, detail, heatRows, nameOf, rhythmRate, skills, tasks, liveGoals } = model;
-  const { period, setPeriod, periods } = useGrowthPeriods();
+  /* The page's window picker drives the period — see ../useGrowthPeriods. */
+  const { period, setPeriod, periods } = useGrowthPeriods(model.span, model.chooseSpan);
   /* The reader's marked skill-tree problems, once for the tab: the subject
      cards read them for the tree tile and "Skills by level" reads them whole.
      `useStats` for the name, for the reason ../useGrowthPeriods gives. */

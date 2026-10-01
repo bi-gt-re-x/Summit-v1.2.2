@@ -35,7 +35,7 @@
  * unusable: four of the five metrics are meaningless over a single day, and
  * consistency over one day is either 0 or 100.
  */
-import { useCallback, useId, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { toneVar, type Tone } from './charts';
 
 export interface LineSeries {
@@ -122,6 +122,61 @@ function heightAt(value: number, height: number): number {
   return y / height;
 }
 
+/**
+ * The milestones, ready to draw without drawing over each other.
+ *
+ * Every caption is 132px wide and centred on its rule, so two marks on the
+ * same point — or a few points apart — printed their words on top of one
+ * another: four subjects crossing a band in the same week came out as one
+ * unreadable smear. Three rules stop that:
+ *
+ * - marks on the same point become one, its caption the first label and a
+ *   count of the rest, and every label in the glyph's tooltip;
+ * - a caption is only printed where it has room — a caption's width of chart
+ *   (`CAPTION_PX`, measured against the chart as drawn) from
+ *   the last one printed — and a crowded mark keeps its glyph and tooltip, so
+ *   nothing is lost, only not written out twice on top of itself;
+ * - a caption near either end is anchored to that end rather than centred, so
+ *   it never hangs off the chart.
+ */
+export interface PlacedMark extends LineMark {
+  show: boolean;
+  title: string;
+  edge: 'start' | 'middle' | 'end';
+}
+
+/** What a caption needs to itself, in pixels: its 132px width and a margin. */
+const CAPTION_PX = 140;
+
+/** The fallback share of the width, before the chart has been measured. */
+const MIN_GAP = 0.14;
+
+export function placeMarks(marks: LineMark[], count: number, minGap = MIN_GAP): PlacedMark[] {
+  const byPoint = new Map<number, LineMark[]>();
+  for (const mark of marks) {
+    const list = byPoint.get(mark.at);
+    if (list) list.push(mark);
+    else byPoint.set(mark.at, [mark]);
+  }
+  let lastShown = -Infinity;
+  return [...byPoint.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([at, group]) => {
+      const first = group[0]!;
+      const ratio = ratioAt(at, count);
+      const show = ratio - lastShown >= minGap;
+      if (show) lastShown = ratio;
+      return {
+        at,
+        glyph: first.glyph,
+        label: group.length === 1 ? first.label : `${first.label} +${group.length - 1} more`,
+        title: group.map((mark) => mark.label).join('\n'),
+        show,
+        edge: ratio < 0.12 ? 'start' : ratio > 0.88 ? 'end' : 'middle',
+      };
+    });
+}
+
 export function GrowthLine({
   series,
   dates,
@@ -131,6 +186,22 @@ export function GrowthLine({
 }: GrowthLineProps) {
   const count = dates.length;
   const box = useRef<HTMLDivElement | null>(null);
+  /* The chart's width as drawn, so "room for a caption" is room in pixels. A
+     fixed share of the width was right on a wide screen and let two captions
+     touch on a narrow one. */
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const node = box.current;
+    if (!node || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(([entry]) => setWidth(entry?.contentRect.width ?? 0));
+    observer.observe(node);
+    return () => observer.disconnect();
+    // Again once there is something drawn: the box only exists with points.
+  }, [count > 0]);
+  const placed = useMemo(
+    () => placeMarks(milestones, count, width > 0 ? CAPTION_PX / width : MIN_GAP),
+    [milestones, count, width],
+  );
   const [at, setAt] = useState<number | null>(null);
   const gradient = useId();
 
@@ -267,14 +338,16 @@ export function GrowthLine({
               rule is HTML for the same reason everything else here is: a dashed
               stroke in a non-uniformly scaled box comes out with dashes of two
               different lengths depending on which way it runs. */}
-          {milestones.map((mark) => (
+          {placed.map((mark) => (
             <div
               key={`${mark.at}-${mark.label}`}
-              className="ax-gp-mark"
+              className={`ax-gp-mark is-${mark.edge}`}
               style={{ left: `${ratioAt(mark.at, count) * 100}%` }}
             >
-              <span className="ax-gp-mark-glyph" aria-hidden="true">{mark.glyph}</span>
-              <span className="ax-gp-mark-label">{mark.label}</span>
+              <span className="ax-gp-mark-glyph" title={mark.title}>
+                {mark.glyph}
+              </span>
+              {mark.show && <span className="ax-gp-mark-label">{mark.label}</span>}
             </div>
           ))}
 

@@ -20,6 +20,7 @@
 import { useCallback, useState } from 'react';
 import { useApi, useStats } from '@/hooks';
 import { taskHistory } from '@/services/taskHistory';
+import { takeOrAsk } from './earlyReads';
 import {
   analytics as analyticsService,
   goals as goalsService,
@@ -87,7 +88,7 @@ export function useAnalyticsData() {
   const seriesCall = useCallback(
     () =>
       username
-        ? growthService.series(0)
+        ? takeOrAsk('series', () => growthService.series(0))
         : Promise.resolve({ success: false as const, message: 'Sign in to see your analytics.' }),
     [username],
   );
@@ -100,7 +101,7 @@ export function useAnalyticsData() {
   const ratingsCall = useCallback(
     () =>
       username
-        ? growthService.ratings()
+        ? takeOrAsk('ratings', () => growthService.ratings())
         : Promise.resolve({ success: false as const, message: 'Sign in to see your score.' }),
     [username],
   );
@@ -114,7 +115,7 @@ export function useAnalyticsData() {
   const standingCall = useCallback(
     () =>
       username
-        ? analyticsService.standing()
+        ? takeOrAsk('standing', () => analyticsService.standing())
         : Promise.resolve({ success: false as const, message: 'Sign in to see where you stand.' }),
     [username],
   );
@@ -127,7 +128,7 @@ export function useAnalyticsData() {
   const goalsCall = useCallback(
     () =>
       username
-        ? goalsService.getGoals()
+        ? takeOrAsk('goals', () => goalsService.getGoals())
         : Promise.resolve({ success: false as const, message: 'Sign in to see your goals.' }),
     [username],
   );
@@ -141,7 +142,7 @@ export function useAnalyticsData() {
   const baselineCall = useCallback(
     () =>
       username
-        ? analyticsService.baseline()
+        ? takeOrAsk('baseline', () => analyticsService.baseline())
         : Promise.resolve({ success: false as const, message: 'Sign in to set a baseline.' }),
     [username],
   );
@@ -153,7 +154,7 @@ export function useAnalyticsData() {
   const adoptedCall = useCallback(
     () =>
       username
-        ? analyticsService.adoptedAdvice()
+        ? takeOrAsk('adopted', () => analyticsService.adoptedAdvice())
         : Promise.resolve({ success: false as const, message: 'Sign in to see your changes.' }),
     [username],
   );
@@ -165,7 +166,7 @@ export function useAnalyticsData() {
   const gradedCall = useCallback(
     () =>
       username
-        ? analyticsService.metricHistories()
+        ? takeOrAsk('graded', () => analyticsService.metricHistories())
         : Promise.resolve({ success: false as const, message: 'Sign in to see your history.' }),
     [username],
   );
@@ -176,7 +177,7 @@ export function useAnalyticsData() {
   const historyCall = useCallback(
     () =>
       username
-        ? analyticsService.metricHistory('overall')
+        ? takeOrAsk('history:overall', () => analyticsService.metricHistory('overall'))
         : Promise.resolve({ success: false as const, message: 'Sign in to see your history.' }),
     [username],
   );

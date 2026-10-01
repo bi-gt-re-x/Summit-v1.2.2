@@ -20,6 +20,7 @@
  */
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { draw, fakeModel } from './fixtures';
 import type { GrowthPeriods, MetricScores, PeriodSide } from '@/services/analytics';
@@ -108,7 +109,7 @@ function payload(over: Partial<GrowthPeriods> = {}): GrowthPeriods {
       { key: '7d', label: 'Last 7 days', days: 7, overall: 60, previous: 55, change: 9.1, partial: false , spark: [50, 52, 51, 55, 58, 57, 60, 62, 61, 64, 66, 68] },
       { key: '30d', label: 'Last 30 days', days: 30, overall: 58, previous: 54, change: 7.4, partial: false , spark: [50, 52, 51, 55, 58, 57, 60, 62, 61, 64, 66, 68] },
       { key: '90d', label: 'Last 3 months', days: 90, overall: 55, previous: 57, change: -3.5, partial: false , spark: [50, 52, 51, 55, 58, 57, 60, 62, 61, 64, 66, 68] },
-      { key: '180d', label: 'Last 6 months', days: 180, overall: 54, previous: 54, change: 0, partial: false , spark: [50, 52, 51, 55, 58, 57, 60, 62, 61, 64, 66, 68] },
+      { key: '730d', label: 'Last 2 years', days: 730, overall: 54, previous: 54, change: 0, partial: false , spark: [50, 52, 51, 55, 58, 57, 60, 62, 61, 64, 66, 68] },
       { key: '365d', label: 'Last year', days: 365, overall: 52, previous: 48, change: 8.3, partial: false , spark: [50, 52, 51, 55, 58, 57, 60, 62, 61, 64, 66, 68] },
       { key: 'all', label: 'Since you started', days: 900, overall: 50, previous: null, change: null, partial: false , spark: [50, 52, 51, 55, 58, 57, 60, 62, 61, 64, 66, 68] },
     ],
@@ -171,6 +172,32 @@ describe('the period row', () => {
     const tabs = await screen.findByRole('group', { name: /Growth period/i });
     await userEvent.click(within(tabs).getByRole('button', { name: 'Week' }));
     expect(growthPeriods).toHaveBeenCalledWith('7d');
+  });
+
+  it('follows the page’s window picker', async () => {
+    /* The bug this pins: the picker at the top of the page scoped every tab
+       but this one, which kept a period of its own — so 1Y up there left
+       every Growth panel reading "the last 30 days". */
+    serve();
+    const { rerender } = draw(<GrowthTab model={fakeModel({ span: '1y' } as never)} />);
+    await screen.findByRole('group', { name: /Growth period/i });
+    expect(growthPeriods).toHaveBeenLastCalledWith('365d');
+
+    rerender(
+      <MemoryRouter>
+        <GrowthTab model={fakeModel({ span: '2y' } as never)} />
+      </MemoryRouter>,
+    );
+    await vi.waitFor(() => expect(growthPeriods).toHaveBeenLastCalledWith('730d'));
+  });
+
+  it('presses the page’s picker when its own period controls are used', async () => {
+    serve();
+    const chooseSpan = vi.fn();
+    draw(<GrowthTab model={fakeModel({ chooseSpan } as never)} />);
+    const tabs = await screen.findByRole('group', { name: /Growth period/i });
+    await userEvent.click(within(tabs).getByRole('button', { name: 'Year' }));
+    expect(chooseSpan).toHaveBeenCalledWith('1y');
   });
 
   it('falls back to points moved where there is no percentage of nothing', async () => {

@@ -921,6 +921,12 @@ def history(username, metric=None):
 # --------------------------------------------------------------------------
 #: The windows the Growth tab offers, as (key, label, days).
 #:
+#: The same six windows as the analytics page's own picker (WINDOWS in
+#: frontend/src/components/Analytics/data.ts) — 7 days, 30, 90, a year, two
+#: years, everything — because that picker drives this tab. There used to be a
+#: six-month window here and no two-year one, so the page's 2Y chip had no
+#: Growth equivalent and the tab simply ignored the picker.
+#:
 #: `None` days means "since the account was created". The rest are trailing
 #: windows ending today, and they are the row of buttons at the top of the tab
 #: rather than a set of calendar periods: "the last 30 days" is a question with
@@ -931,8 +937,8 @@ PERIODS = (
     ('7d', 'Last 7 days', 7),
     ('30d', 'Last 30 days', 30),
     ('90d', 'Last 3 months', 90),
-    ('180d', 'Last 6 months', 180),
     ('365d', 'Last year', 365),
+    ('730d', 'Last 2 years', 730),
     ('all', 'Since you started', None),
 )
 
@@ -997,6 +1003,39 @@ def _growth_pct(current, previous):
     return round((current - previous) / previous * 100, 1)
 
 
+#: The rollup `period_scores` last built, per account, with the signature of
+#: the record it was built from. See `_cached_rollup`.
+_ROLLUP_CACHE = {}
+_ROLLUP_CACHE_MAX = 64
+
+
+def _cached_rollup(username):
+    """The daily rollup, rebuilt only when the record under it has changed.
+
+    The Growth tab asks for a period every time the reader presses one, and
+    every request rebuilt the whole rollup — every task, ledger row and focus
+    day the account has, decoded and folded — to score a window of it. On a
+    five-year account that was most of 140 ms and 16 MB, for a rollup that is
+    identical between two clicks a second apart.
+
+    Guarded by `rollup_signature`, a handful of SQL aggregates over exactly the
+    columns the rollup reads, so an edit anywhere in them is a rebuild rather
+    than a stale score. Per process and in memory, for the reasons `series` in
+    backend/tracking/growth.py gives for the same pattern. Nothing that is
+    handed the rollup writes to it — `score_window` only reads — which is what
+    makes handing out the same one safe.
+    """
+    stamp = db.rollup_signature(username)
+    cached = _ROLLUP_CACHE.get(username)
+    if cached and cached[0] == stamp:
+        return cached[1]
+    rollup = _daily_rollup(username)
+    _ROLLUP_CACHE[username] = (stamp, rollup)
+    while len(_ROLLUP_CACHE) > _ROLLUP_CACHE_MAX:
+        _ROLLUP_CACHE.pop(next(iter(_ROLLUP_CACHE)))
+    return rollup
+
+
 def period_scores(username, period='30d', rollup=None, user=None, today=None):
     """The five metrics over one period, the one before it, and a line.
 
@@ -1013,7 +1052,7 @@ def period_scores(username, period='30d', rollup=None, user=None, today=None):
     today = today or date.today()
     created = created_date_for(user)
     daily_goal = user.get('daily_goal') or DEFAULT_DAILY_GOAL
-    rollup = _daily_rollup(username) if rollup is None else rollup
+    rollup = _cached_rollup(username) if rollup is None else rollup
 
     start, end, length = _period_bounds(period, today, created)
 

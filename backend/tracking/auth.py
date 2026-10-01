@@ -94,10 +94,16 @@ def created_date_for(user):
     is the creation timestamp in milliseconds. That way the day counter
     accumulates from the real creation date even for accounts that predate the
     created_at field.
+
+    A bare date is a created_at too. scripts/seed_stages.py writes them, and
+    without the last format here every one of those accounts fell through to
+    the id — which for a seeded id band is a timestamp in 2008 — so the growth
+    series walked nineteen years of empty days and shipped 1.5 MB of zeros on
+    every analytics visit.
     """
     raw = user.get('created_at')
     if raw:
-        for fmt in ('%Y-%m-%dT%H:%M:%S.%f', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S'):
+        for fmt in ('%Y-%m-%dT%H:%M:%S.%f', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d'):
             try:
                 return datetime.strptime(raw, fmt).date()
             except (ValueError, TypeError):

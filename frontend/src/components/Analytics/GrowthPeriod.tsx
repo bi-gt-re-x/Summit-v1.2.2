@@ -190,8 +190,8 @@ const SHORT: Record<PeriodKey, string> = {
   '7d': 'Week',
   '30d': 'Month',
   '90d': '3 Months',
-  '180d': '6 Months',
   '365d': 'Year',
+  '730d': '2 Years',
   all: 'All time',
 };
 

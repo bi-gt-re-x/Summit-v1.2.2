@@ -782,6 +782,23 @@ function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
         ))}
       </ul>
       <GrowthLine series={series} dates={dates} labels={dates.map(shortDate)} marks={marks} height={220} />
+
+      {/* Every crossing, written out. The chart only has room to caption the
+          ones that are not crowded (see `placeMarks` in ./GrowthLine); this is
+          where the rest are read, grouped by the day they happened. */}
+      {marks.length > 0 && (
+        <ul className="sg-crossings" aria-label="Band changes">
+          {[...new Set(marks.map((mark) => mark.at))].map((at) => (
+            <li key={at}>
+              <span className="sg-crossings-day">▲ {shortDate(dates[at] ?? '')}</span>
+              {marks
+                .filter((mark) => mark.at === at)
+                .map((mark) => mark.label)
+                .join(' · ')}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -807,12 +824,21 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
   const reads = useMemo(() => {
     const out = new Map<string, SubjectProgress>();
     if (!context) return out;
+    // Every task grouped by subject in one pass, so each subject reads its own.
+    const bySubject = new Map<string, Task[]>();
+    for (const task of context.tasks) {
+      const key = task.subject ?? '';
+      const list = bySubject.get(key);
+      if (list) list.push(task);
+      else bySubject.set(key, [task]);
+    }
     for (const track of tracks) {
       out.set(
         track.subject,
         subjectProgress({
           subject: track.subject,
           tasks: context.tasks,
+          mine: bySubject.get(track.subject) ?? [],
           goals: context.goals,
           days: context.windowDays,
           toIso: context.toIso,

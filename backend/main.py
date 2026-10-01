@@ -112,7 +112,12 @@ def create_app():
     # `minimum_size` is what keeps that from being a loss: below roughly a
     # kilobyte the gzip header and the CPU cost buy nothing, and most of this
     # API's replies are a success flag and a sentence.
-    app.add_middleware(GZipMiddleware, minimum_size=1024)
+    #
+    # Level 6 rather than Starlette's default of 9. On the largest response in
+    # the app — the analytics task list, 3.3 MB for a five-year account — 9
+    # took 94 ms of server time to save 6% over 6's 30 ms, and the server is
+    # answering eight other calls for the same page while it does.
+    app.add_middleware(GZipMiddleware, minimum_size=1024, compresslevel=6)
 
     # The Vite dev server is a separate origin during development and the
     # session cookie has to survive the hop. Nothing is cross-origin once the

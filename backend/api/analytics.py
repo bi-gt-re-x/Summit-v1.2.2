@@ -39,6 +39,7 @@ from datetime import date
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from backend.api.guard import current_username
@@ -205,7 +206,12 @@ def get_analytics_tasks(username: str = Depends(current_username)):
     # beside the rows rather than as a seventeenth column, because on a big
     # account nearly every row would carry a null for it. Nothing is matched
     # here — see backend/goal_matcher.
-    return ok(fields=fields, rows=rows, goal_links=goal_store.goal_links(username))
+    # A JSONResponse rather than the dict. Handed a dict, FastAPI first walks
+    # every value through `jsonable_encoder` — three hundred and fifty thousand
+    # of them on a five-year account, most of this endpoint's time — to turn
+    # plain strings and numbers into the plain strings and numbers they were.
+    # Everything here came straight out of SQLite as JSON-native types.
+    return JSONResponse(ok(fields=fields, rows=rows, goal_links=goal_store.goal_links(username)))
 
 
 @router.get('/api/standing')

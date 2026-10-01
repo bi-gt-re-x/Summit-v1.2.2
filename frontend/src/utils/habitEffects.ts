@@ -298,9 +298,20 @@ export function habitEffects({
   const beforeFrom = toIso ? start(13) : '';
   const beforeTo = toIso ? start(7) : '';
 
+  /* Each task's habit keys, worked out once. They were derived twice per task
+     per habit — once to find the habit's tasks and again to find everything
+     else — and a key is a title run through a stemmer, so on eighteen
+     thousand finished tasks and eight habits that was most of the cost of
+     this whole function. */
+  const keyed = finished.map((task) => ({ task, keys: keysFor(task) }));
+
   habits.forEach((habit) => {
-    const mine = finished.filter((task) => keysFor(task).includes(habit.key));
-    const others = finished.filter((task) => !keysFor(task).includes(habit.key));
+    const mine: Task[] = [];
+    const others: Task[] = [];
+    for (const { task, keys } of keyed) {
+      if (keys.includes(habit.key)) mine.push(task);
+      else others.push(task);
+    }
     const myDays = new Set(mine.map(dayOf));
 
     const week: HabitWeek | null = toIso

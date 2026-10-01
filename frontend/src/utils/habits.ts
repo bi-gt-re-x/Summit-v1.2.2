@@ -132,7 +132,10 @@ export interface Habit {
  * to be counted as the same thing.
  */
 export function stemOf(title: string): string {
-  return String(title || '')
+  const text = String(title || '');
+  const known = stems.get(text);
+  if (known !== undefined) return known;
+  const stem = text
     .toLowerCase()
     .replace(/[#№]/g, ' ')
     .replace(/\d+/g, ' ')
@@ -140,7 +143,21 @@ export function stemOf(title: string): string {
     .replace(/\b(part|pt|week|wk|day|no|number|session|round|vol|chapter|ch|unit)\b/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+  if (stems.size >= STEMS_MAX) stems.clear();
+  stems.set(text, stem);
+  return stem;
 }
+
+/**
+ * Stems remembered by title.
+ *
+ * Six regular-expression passes per call, and the habit readings call this for
+ * every task in the window on every pass — twenty thousand times on a large
+ * account, for a few thousand distinct titles. A title's stem never changes.
+ * Capped so an unusual account cannot grow it without end.
+ */
+const stems = new Map<string, string>();
+const STEMS_MAX = 50_000;
 
 /** Title Case, for a stem that is about to become a card heading. */
 function titleCase(text: string): string {
@@ -601,11 +618,27 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
 
   const hourOf = (task: Task) => Number(String(task.completed_at || '').slice(11, 13));
 
+  /* Each title's stem, worked out once. `stemOf` was called per task per habit
+     below and then again per task per *day* in the pairing pass — which on an
+     account of eighteen thousand finished tasks over five years was tens of
+     millions of calls and most of a second, every time the window moved. A
+     title's stem never changes, so it is a lookup after the first. */
+  const stems = new Map<string, string>();
+  const stem = (title: string) => {
+    let found = stems.get(title);
+    if (found === undefined) {
+      found = stemOf(title);
+      stems.set(title, found);
+    }
+    return found;
+  };
+
   // ---- when each habit tends to happen -----------------------------------
   habits.slice(0, 4).forEach((habit) => {
     const key = habit.name.trim().toLowerCase();
+    const habitStem = stem(habit.name);
     const mine = done.filter(
-      (task) => task.title.trim().toLowerCase() === key || stemOf(task.title) === stemOf(habit.name),
+      (task) => task.title.trim().toLowerCase() === key || stem(task.title) === habitStem,
     );
     if (mine.length < 5) return;
     const buckets = new Map<string, number>();
@@ -687,8 +720,19 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
 
   // ---- a second sitting ---------------------------------------------------
   const byDay = new Map<string, number[]>();
+  /* What was done each day, by stem — gathered in the same pass, for the
+     pairing below. It used to re-filter every finished task once per worked
+     day, which is the days times the tasks: the single most expensive line on
+     the analytics page. */
+  const stemsByDay = new Map<string, Set<string>>();
   done.forEach((task) => {
     const day = String(task.completed_at).slice(0, 10);
+    let names = stemsByDay.get(day);
+    if (!names) {
+      names = new Set();
+      stemsByDay.set(day, names);
+    }
+    names.add(stem(task.title));
     const hour = hourOf(task);
     if (Number.isNaN(hour)) return;
     const list = byDay.get(day) ?? [];
@@ -715,16 +759,13 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
   // ---- what follows what --------------------------------------------------
   if (habits.length >= 2) {
     const pairs = new Map<string, number>();
+    const top = habits.slice(0, 5).map((habit) => ({ habit, stem: stem(habit.name) }));
     byDay.forEach((_hours, day) => {
-      const names = new Set(
-        done
-          .filter((task) => String(task.completed_at).slice(0, 10) === day)
-          .map((task) => stemOf(task.title)),
-      );
-      habits.slice(0, 5).forEach((a) => {
-        habits.slice(0, 5).forEach((b) => {
+      const names = stemsByDay.get(day) ?? new Set<string>();
+      top.forEach(({ habit: a, stem: aStem }) => {
+        top.forEach(({ habit: b, stem: bStem }) => {
           if (a.id === b.id) return;
-          if (names.has(stemOf(a.name)) && names.has(stemOf(b.name))) {
+          if (names.has(aStem) && names.has(bStem)) {
             const key = [a.name, b.name].sort().join(' + ');
             pairs.set(key, (pairs.get(key) ?? 0) + 1);
           }

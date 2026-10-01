@@ -47,7 +47,9 @@ import { analyticsTasks, type AnalyticsTasksResult } from './analytics';
 import type { ApiResult } from '@/types';
 
 /** The one in flight or already answered, and whose it is. */
-let held: { username: string; promise: Promise<ApiResult<AnalyticsTasksResult>> } | null = null;
+/* `username` null is a read started by `primeTaskHistory` before the page knew
+   who was signed in; the first caller adopts it. */
+let held: { username: string | null; promise: Promise<ApiResult<AnalyticsTasksResult>> } | null = null;
 
 /**
  * The account's task history. One request however many callers there are.
@@ -59,6 +61,7 @@ let held: { username: string; promise: Promise<ApiResult<AnalyticsTasksResult>> 
  * from.
  */
 export function taskHistory(username: string): Promise<ApiResult<AnalyticsTasksResult>> {
+  if (held && held.username === null) held = { username, promise: held.promise };
   if (held && held.username === username) return held.promise;
 
   const promise = analyticsTasks().then((result) => {
@@ -77,6 +80,26 @@ export function taskHistory(username: string): Promise<ApiResult<AnalyticsTasksR
  * to call on every stats change: it drops a reference, and the refetch only
  * happens if somebody actually asks again.
  */
+/**
+ * Start the read before anybody has asked for it by name.
+ *
+ * For components/Analytics/earlyReads, which begins the analytics page's
+ * requests the moment its code loads — before the page knows who is signed in.
+ * The request is the session's either way, so the first `taskHistory(username)`
+ * adopts it rather than asking again. A no-op when a read is already held.
+ */
+export function primeTaskHistory(): void {
+  if (held) return;
+  const promise = analyticsTasks().then((result) => {
+    if (!result.success && held?.promise === promise) held = null;
+    return result;
+  });
+  promise.catch(() => {
+    if (held?.promise === promise) held = null;
+  });
+  held = { username: null, promise };
+}
+
 export function invalidate(): void {
   held = null;
 }

@@ -279,7 +279,7 @@ export function dropAdvice(id: string): Promise<ApiResult<AdoptedResult>> {
  * The windows the Growth tab offers. Mirrors `PERIODS` in
  * backend/tracking/analytics.py, which is where the day counts live.
  */
-export type PeriodKey = '7d' | '30d' | '90d' | '180d' | '365d' | 'all';
+export type PeriodKey = '7d' | '30d' | '90d' | '365d' | '730d' | 'all';
 
 /** The five graded measures, in the order the tab lists them. */
 export const PERIOD_METRICS = [

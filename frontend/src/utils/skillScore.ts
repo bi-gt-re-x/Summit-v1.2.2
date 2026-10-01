@@ -171,9 +171,26 @@ function isRated(task: Task): boolean {
   return d >= 1 && d <= 5 && e >= 1 && e <= 5;
 }
 
+/**
+ * A task's completion day, as local midnight, remembered per day.
+ *
+ * `skillScores` reads this four or five times per task, and the Growth tab
+ * scores the whole record at eight dates to draw a trajectory — so on an
+ * account of twenty thousand tasks it was close to a million `Date.parse`
+ * calls for a couple of thousand distinct days. A day's midnight never
+ * changes. Capped so it cannot grow without end; clearing costs a re-parse.
+ */
+const dayMs = new Map<string, number>();
+
 function dayOf(task: Task): number {
-  const at = Date.parse(`${String(task.completed_at ?? '').slice(0, 10)}T00:00:00`);
-  return Number.isNaN(at) ? 0 : at;
+  const key = String(task.completed_at ?? '').slice(0, 10);
+  const known = dayMs.get(key);
+  if (known !== undefined) return known;
+  const at = Date.parse(`${key}T00:00:00`);
+  const value = Number.isNaN(at) ? 0 : at;
+  if (dayMs.size >= 20_000) dayMs.clear();
+  dayMs.set(key, value);
+  return value;
 }
 
 /**
@@ -188,7 +205,10 @@ function dayOf(task: Task): number {
  */
 export function skillScores(tasks: Task[], today: Date = new Date()): SkillRow[] {
   const now = new Date(today.toDateString()).getTime();
-  const bySubject = new Map<string, Task[]>();
+  /* Each task paired with its day, worked out once. Everything below used to
+     call `dayOf` again — four or five times per task per pass — and the Growth
+     tab runs this pass eight times to draw a trajectory. */
+  const bySubject = new Map<string, Array<{ task: Task; at: number }>>();
 
   for (const task of tasks) {
     if (task.status !== 'done') continue;
@@ -197,21 +217,28 @@ export function skillScores(tasks: Task[], today: Date = new Date()): SkillRow[]
     const at = dayOf(task);
     if (!at) continue;
     const held = bySubject.get(subject);
-    if (held) held.push(task);
-    else bySubject.set(subject, [task]);
+    if (held) held.push({ task, at });
+    else bySubject.set(subject, [{ task, at }]);
   }
 
   const rows: SkillRow[] = [];
 
-  for (const [subject, done] of bySubject) {
-    const rated = done.filter(isRated);
-    if (rated.length === 0) continue;
+  for (const [subject, entries] of bySubject) {
+    const ratedEntries = entries.filter((entry) => isRated(entry.task));
+    if (ratedEntries.length === 0) continue;
+    const done = entries.map((entry) => entry.task);
+    const rated = ratedEntries.map((entry) => entry.task);
 
-    const days = done.map(dayOf);
-    const first = Math.min(...days);
-    const last = Math.max(...days);
+    let first = Infinity;
+    let last = -Infinity;
+    const weekSet = new Set<number>();
+    for (const { at } of entries) {
+      if (at < first) first = at;
+      if (at > last) last = at;
+      weekSet.add(Math.floor((now - at) / (7 * DAY)));
+    }
     const weeks = Math.max(1, Math.ceil((now - first) / (7 * DAY)) || 1);
-    const activeWeeks = new Set(days.map((at) => Math.floor((now - at) / (7 * DAY)))).size;
+    const activeWeeks = weekSet.size;
     const daysSince = Math.max(0, Math.round((now - last) / DAY));
 
     // --- Accuracy: recency-weighted mean execution ------------------------
@@ -219,8 +246,8 @@ export function skillScores(tasks: Task[], today: Date = new Date()): SkillRow[]
     let executionSum = 0;
     let difficultySum = 0;
     let flatExecution = 0;
-    for (const task of rated) {
-      const age = Math.max(0, (now - dayOf(task)) / DAY);
+    for (const { task, at } of ratedEntries) {
+      const age = Math.max(0, (now - at) / DAY);
       const weight = Math.pow(0.5, age / HALF_LIFE_DAYS);
       weightSum += weight;
       executionSum += Number(task.execution) * weight;
@@ -248,8 +275,8 @@ export function skillScores(tasks: Task[], today: Date = new Date()): SkillRow[]
         : null;
 
     // --- Recent form against the rest -------------------------------------
-    const recent = rated.filter((task) => now - dayOf(task) <= RECENT_DAYS * DAY);
-    const earlier = rated.filter((task) => now - dayOf(task) > RECENT_DAYS * DAY);
+    const recent = ratedEntries.filter((entry) => now - entry.at <= RECENT_DAYS * DAY).map((entry) => entry.task);
+    const earlier = ratedEntries.filter((entry) => now - entry.at > RECENT_DAYS * DAY).map((entry) => entry.task);
     const meanExecution = (rows_: Task[]) =>
       rows_.length ? rows_.reduce((sum, t) => sum + Number(t.execution), 0) / rows_.length : 0;
     const recentMean = meanExecution(recent);

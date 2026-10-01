@@ -51,7 +51,7 @@
  * recent window" below, which is the single most surprising thing in this file
  * and the comment to read before changing anything in it.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSettings } from '@/hooks';
 import {
   consistency,
@@ -141,30 +141,48 @@ const RADAR_SUBJECTS = 6;
 /** See the note on `waitFor` below for why these are three numbers and not one. */
 export const NEED_DAYS = { habits: 21, insights: 28, recommendations: 14 };
 
-export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
+/**
+ * What the model reads while the page is still waiting — the same empty list
+ * every time, so a memo keyed on it does not rerun between renders.
+ */
+const NOTHING: never[] = [];
+
+/**
+ * `hold` is true until every call the page waits for has answered.
+ *
+ * The page shows one spinner until then (pages/Analytics, `firstLoad`), but
+ * the model under it ran on every render regardless — and each of the nine
+ * calls landing is a render. So on an account of twenty thousand tasks the
+ * whole model, habit patterns and goal health and skill trajectories and all,
+ * was worked out five or six times over partial data that nobody was shown,
+ * and the reader waited for every pass. Held, the three roots everything else
+ * hangs off — the day series, the tasks and the goals — read as empty, every
+ * memo below runs over nothing in microseconds, and the real pass happens
+ * once, when the page is about to draw it.
+ */
+export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, hold = false) {
   const { stats, tasks: taskCall, series, ratings, goals, adopted, gradedLog, scoreLog } = data;
 
   /* Opens on the account's chosen period. Not kept in step with it after
      that: the control on this page is the reader changing their mind for one
      visit, and writing that back would make every glance a preference.
 
-     `ready` is what makes "opens on" true. The preferences are read near the
-     root and arrive a moment after this page mounts, so the initial state
-     below is the built-in default rather than the account's answer as often as
-     not — the page opened on a year for somebody who had chosen thirty days.
-     Following the preference until the reader touches the control fixes that
-     without going back on the paragraph above. */
-  const { prefs, ready, update } = useSettings();
-  const [span, setSpan] = useState<WindowKey>(prefs.analytics_window);
-  const spanChosen = useRef(false);
-  useEffect(() => {
-    if (ready && !spanChosen.current) setSpan(prefs.analytics_window);
-  }, [prefs.analytics_window, ready]);
-
-  const chooseSpan = useCallback((next: WindowKey) => {
-    spanChosen.current = true;
-    setSpan(next);
-  }, []);
+     The preferences arrive a moment after this page mounts, so a copy taken
+     at mount is the built-in default rather than the account's answer as
+     often as not — the page once opened on a year for somebody who had chosen
+     thirty days. Following the preference until the reader touches the
+     control fixes that without going back on the paragraph above, and the
+     page holds the model until the preferences are in (see `hold`), so the
+     first pass is already over the right window. */
+  const { prefs, update } = useSettings();
+  /* The reader's own pick, once they have made one; the preference until then.
+     Read straight through rather than copied into state by an effect: the
+     copy landed one render *after* the preferences did, so on every visit the
+     whole model was worked out for the default window and then again for the
+     account's — on a large account, a second of arithmetic thrown away. */
+  const [chosen, setChosen] = useState<WindowKey | null>(null);
+  const span: WindowKey = chosen ?? prefs.analytics_window;
+  const chooseSpan = useCallback((next: WindowKey) => setChosen(next), []);
 
   /*
    * The four analytics preferences the page reads, resolved once.
@@ -188,7 +206,10 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
   const [subject, setSubject] = useState('');
   const [category, setCategory] = useState('');
 
-  const all = useMemo(() => series.data?.growth_data ?? [], [series.data]);
+  const all = useMemo(
+    () => (hold ? NOTHING : series.data?.growth_data ?? NOTHING),
+    [hold, series.data],
+  );
   const slice = useMemo(() => sliceWindow(all, span), [all, span]);
   const option = windowOption(span);
   const spanText = spanLabel(slice.current);
@@ -196,7 +217,10 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
   /* The sixteen columns, not the whole row. Assignable to `Task`, which is why
      nothing downstream of here changed — see `AnalyticsTask` in
      services/analytics. */
-  const tasks: Task[] = useMemo(() => taskCall.data?.tasks ?? [], [taskCall.data]);
+  const tasks: Task[] = useMemo(
+    () => (hold ? NOTHING : taskCall.data?.tasks ?? NOTHING),
+    [hold, taskCall.data],
+  );
   const fromIso = slice.current[0]?.date ?? '';
   const toIso = slice.current[slice.current.length - 1]?.date ?? '';
   const wasFrom = slice.previous[0]?.date ?? '';
@@ -486,7 +510,10 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
 
   /* Declared here rather than down in the Goals block because `lens` below is
      its first reader, and the plan under that reads the lens. */
-  const liveGoals = useMemo(() => goals.data?.goals ?? [], [goals.data]);
+  const liveGoals = useMemo(
+    () => (hold ? NOTHING : goals.data?.goals ?? NOTHING),
+    [hold, goals.data],
+  );
 
   /**
    * Which reading of this record the reader's goals call for.
@@ -511,7 +538,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     () =>
       buildPlan({
         tasks,
-        goals: goals.data?.goals ?? [],
+        goals: liveGoals,
         days: recent.current,
         nameOf,
         budget,
@@ -521,7 +548,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex) {
     // `nudge` re-reads the plan against the clock: a task finished since the
     // page opened should leave it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [budget, goals.data, lens, nameOf, recent, stamp, tasks, nudge],
+    [budget, liveGoals, lens, nameOf, recent, stamp, tasks, nudge],
   );
 
   // ---- Habits -------------------------------------------------------------

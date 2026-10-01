@@ -27,16 +27,56 @@
  * and mirroring the other three in TypeScript would create a second scoring
  * implementation, which backend/tracking/analytics.py has one rule against.
  *
+ * ## The page's window picker drives it
+ *
+ * The time window at the top of the analytics page scopes every tab, and on
+ * this one it did nothing: the tab kept a period of its own, so pressing 1Y
+ * at the top left every Growth panel reading "the last 30 days". Now the
+ * picker *is* the period — the six windows are the same six on both sides
+ * (see PERIODS in backend/tracking/analytics.py) — and the tab's own period
+ * controls, the timeline's segmented row and the "Growth by period" cards,
+ * press the picker back. One period on the whole page, whichever control
+ * the reader used.
+ *
+ * The hook still holds the period itself rather than reading the picker
+ * straight through, so a pick on the tab answers at once and the picker
+ * catches up on the next render; and it follows the picker whenever the
+ * picker moves.
+ *
  * ## The period is not written back
  *
  * Same decision the window picker makes in useAnalyticsModel, for the same
  * reason: pressing a period is a reader changing their mind for one visit, and
  * saving it would turn every glance into a preference.
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useApi, useStats } from '@/hooks';
 import { analytics as analyticsService } from '@/services';
 import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
+import type { WindowKey } from './data';
+
+/** The page's window, as the period the Growth scores are asked for. */
+export const PERIOD_FOR_WINDOW: Record<WindowKey, PeriodKey> = {
+  '7d': '7d',
+  '30d': '30d',
+  '90d': '90d',
+  '1y': '365d',
+  '2y': '730d',
+  all: 'all',
+};
+
+/** And back, for the tab's own controls to press the picker. */
+export const WINDOW_FOR_PERIOD: Record<PeriodKey, WindowKey> = {
+  '7d': '7d',
+  '30d': '30d',
+  '90d': '90d',
+  '365d': '1y',
+  '730d': '2y',
+  all: 'all',
+};
+
+const periodFor = (span: string | undefined): PeriodKey =>
+  PERIOD_FOR_WINDOW[span as WindowKey] ?? DEFAULT_PERIOD;
 
 /**
  * Which period the tab opens on.
@@ -49,14 +89,28 @@ import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
  */
 export const DEFAULT_PERIOD: PeriodKey = '30d';
 
-export function useGrowthPeriods() {
+export function useGrowthPeriods(span?: WindowKey, chooseSpan?: (next: WindowKey) => void) {
   /* `useStats`, not `useUserData`. Both carry the name; only one of them
      charges the account's whole task list for it, and reaching for it here
      would have turned that request back on for the Growth tab alone — after
      the rest of this page had just stopped making it. The warning is in
      hooks/useUserData's own doc comment. */
   const { username } = useStats();
-  const [period, setPeriod] = useState<PeriodKey>(DEFAULT_PERIOD);
+  const [period, setLocal] = useState<PeriodKey>(() => periodFor(span));
+
+  // Follow the picker whenever it moves.
+  useEffect(() => {
+    if (span) setLocal(periodFor(span));
+  }, [span]);
+
+  // And press it when the tab's own controls are used.
+  const setPeriod = useCallback(
+    (next: PeriodKey) => {
+      setLocal(next);
+      chooseSpan?.(WINDOW_FOR_PERIOD[next]);
+    },
+    [chooseSpan],
+  );
 
   const call = useCallback(
     () =>

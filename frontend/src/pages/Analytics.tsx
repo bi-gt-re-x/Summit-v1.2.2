@@ -156,6 +156,12 @@ import '@/styles/analytics.css';
  * shipped and matched against every page in the app, not just this one.
  */
 import '@/styles/growth.css';
+import { startAnalyticsReads } from '@/components/Analytics/earlyReads';
+
+/* The page's reads begin the moment this module is evaluated — when the route
+   is first opened — rather than after the first commit. See
+   components/Analytics/earlyReads for why that gap was a third of a second. */
+startAnalyticsReads();
 
 
 export default function Analytics() {
@@ -186,7 +192,22 @@ export default function Analytics() {
    */
   const subjects = useSubjectIndex(username);
   const subjectsReady = useSubjectsReady(username);
-  const model = useAnalyticsModel(data, subjects);
+  const { prefs, ready, update } = useSettings();
+  /*
+   * Whether every call the first paint needs has answered. Asked here, before
+   * the model, because the model is told to hold until it is true — see `hold`
+   * in ./useAnalyticsModel. It is also what draws the spinner below ("Drawn
+   * once, with everything"), so the model starts work exactly when the
+   * spinner is about to go.
+   */
+  const waiting =
+    [
+      data.tasks, series, data.ratings, data.standing, data.goals,
+      baseline, data.adopted, data.gradedLog, data.scoreLog,
+    ].some((call) => call.loading)
+    || !ready
+    || !subjectsReady;
+  const model = useAnalyticsModel(data, subjects, waiting);
 
   /**
    * Which tab a bare visit lands on.
@@ -205,7 +226,6 @@ export default function Analytics() {
    * The same shape as FrontDoor's redirect for `home_page`, and for the same
    * reason: a redirect cannot be taken back.
    */
-  const { prefs, ready, update } = useSettings();
   /**
    * Whether the reader asked for the questions outright.
    *
@@ -467,11 +487,7 @@ export default function Analytics() {
    * counts as answered — the panel that needed it says so, and the rest of the
    * page is not held hostage to it.
    */
-  const firstLoad = [
-    data.tasks, series, data.ratings, data.standing, data.goals,
-    baseline, data.adopted, data.gradedLog, data.scoreLog,
-  ].some((call) => call.loading);
-  if (firstLoad || !ready || !subjectsReady) {
+  if (waiting) {
     return <Loading label="Reading your history" />;
   }
   if (!series.data) {

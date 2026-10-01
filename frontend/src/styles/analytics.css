@@ -7501,6 +7501,11 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     font-size: var(--text-sm);
     line-height: 1;
     color: var(--ax-muted);
+    /* The rule ignores the pointer so the readout underneath still works; the
+       glyph takes it back, because its tooltip is where a crowded mark's
+       caption went. */
+    pointer-events: auto;
+    cursor: default;
 }
 
 .ax-gp-mark-label {
@@ -9308,4 +9313,28 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 @media (max-width: 720px) {
     .sg-highlights { grid-template-columns: minmax(0, 1fr); }
     .sg-glance { justify-content: flex-start; }
+}
+
+/* A caption near either end of the line is anchored to that end rather than
+   centred on its rule, so it never hangs off the chart. See `placeMarks`. */
+.ax-gp-mark.is-start .ax-gp-mark-label { left: 0; transform: none; text-align: left; }
+.ax-gp-mark.is-end .ax-gp-mark-label { left: auto; right: 0; transform: none; text-align: right; }
+
+/* The band crossings under the ability chart, one line per day. */
+.sg-crossings {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: var(--text-xs);
+    color: var(--ax-muted);
+}
+.sg-crossings-day {
+    display: inline-block;
+    min-width: 64px;
+    margin-right: var(--space-2);
+    font-weight: 700;
+    color: var(--ax-text);
 }
