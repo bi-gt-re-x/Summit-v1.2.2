@@ -14,7 +14,7 @@
  * those same animated numbers, so the arc, the bar and the label they belong to
  * always agree mid-flight; nothing here is transitioned separately in CSS.
  */
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useCountUp, useSettings } from '@/hooks';
 import { format } from '@/utils';
 import { addDays, fromIsoDate, isoDate } from '@/utils/dates';
@@ -24,6 +24,7 @@ import type { UserStats } from '@/types';
 import type { WeekStart } from '@/services/settings';
 import { Badge, Card } from '@/components/ui';
 import { useMarkEgg } from '@/hooks/useMarkEgg';
+import { StreakFlame, flameLine, flameStage } from './StreakFlame';
 
 // --------------------------------------------------------------------------
 // The ring
@@ -103,6 +104,7 @@ function StatHead({
   title,
   tag,
   aside,
+  chipClass,
 }: {
   /** Which of the four tints the disc takes. */
   tone: 'today' | 'xp' | 'focus' | 'streak';
@@ -110,10 +112,15 @@ function StatHead({
   title: string;
   tag: string;
   aside?: ReactNode;
+  /** A further class on the disc — the streak's flame recolours it by stage. */
+  chipClass?: string;
 }) {
   return (
     <header className="dash-stat-head">
-      <span className={`dash-stat-chip dash-chip-${tone}`} aria-hidden="true">
+      <span
+        className={`dash-stat-chip dash-chip-${tone}${chipClass ? ` ${chipClass}` : ''}`}
+        aria-hidden="true"
+      >
         {icon}
       </span>
       <div className="dash-stat-heading">
@@ -181,11 +188,6 @@ const ICON = {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v5l3 2" />
-    </svg>
-  ),
-  flame: (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.1.2-2.2.5-3.3" />
     </svg>
   ),
   tick: (
@@ -784,13 +786,88 @@ export function StreakGuard({ stats }: { stats: UserStats }) {
  * streak that went stale overnight while answering — so a streak shown here is
  * one the backend still considers alive.
  */
-export function StreakCard({ stats }: { stats: UserStats }) {
+/** How long the flare after a streak goes up lasts. Matches the CSS. */
+const FLARE_MS = 1400;
+
+/**
+ * How long a rise waits before it is played, so an overlay raised by the
+ * same completion has had the chance to say it is up.
+ */
+const RISE_SETTLE_MS = 80;
+
+export function StreakCard({ stats, held = false }: {
+  stats: UserStats;
+  /**
+   * An overlay is over the page — the rating prompt, a level-up, a goal
+   * reached. A rise that lands meanwhile waits for it to close, figure and
+   * flame included, so the moment is played where it can be seen rather than
+   * behind a blur.
+   */
+  held?: boolean;
+}) {
   const current = Number(stats.current_streak) || 0;
   const best = Number(stats.best_streak) || 0;
 
+  /* The streak the card is showing, which trails `current` only while a rise
+     is being held back (see `held`). A fall is shown at once — there is
+     nothing to stage about a streak ending. */
+  const [display, setDisplay] = useState(current);
+  const heldRef = useRef(held);
+  heldRef.current = held;
+  useEffect(() => {
+    if (current < display) {
+      setDisplay(current);
+      return undefined;
+    }
+    if (current === display || held) return undefined;
+    const wait = window.setTimeout(() => {
+      if (!heldRef.current) setDisplay(current);
+    }, RISE_SETTLE_MS);
+    return () => window.clearTimeout(wait);
+  }, [current, display, held]);
+
+  /* The moment the streak goes up — the first task of the day, or the first
+     after a forgiven day or a vacation. Every later task that day leaves the
+     figure where it is, so "the figure went up" is exactly that moment, and
+     there is no separate signal to keep in step with it.
+
+     Only a rise counts, and only after the first render: arriving on the page
+     with a 12-day streak is not the streak being extended, and the count-up
+     beside it already refuses to animate that (hooks/useCountUp). A decay to
+     0 is not celebrated either. */
+  const seen = useRef(display);
+  const timer = useRef<number | null>(null);
+  const [flaring, setFlaring] = useState(false);
+  const [said, setSaid] = useState('');
+  useEffect(() => {
+    const before = seen.current;
+    seen.current = display;
+    if (display <= before) return;
+    const was = flameStage(before);
+    const now = flameStage(display);
+    setSaid(
+      now.key === was.key
+        ? `Streak extended to ${display} days.`
+        : `Streak extended to ${display} days. Your flame grew: ${now.label}.`,
+    );
+    setFlaring(true);
+    if (timer.current !== null) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => {
+      timer.current = null;
+      setFlaring(false);
+    }, FLARE_MS);
+  }, [display]);
+  useEffect(
+    () => () => {
+      if (timer.current !== null) window.clearTimeout(timer.current);
+    },
+    [],
+  );
+  const stage = flameStage(display);
+
   // Both counters run, but the word beside them is chosen from the real figure,
   // so a streak of 1 never reads "0 days" on its way up.
-  const shownCurrent = Math.round(useCountUp(current));
+  const shownCurrent = Math.round(useCountUp(display));
   const shownBest = Math.round(useCountUp(best));
 
   /* No percentage here, and that is not an omission. A streak is a count of
@@ -808,13 +885,18 @@ export function StreakCard({ stats }: { stats: UserStats }) {
     <Card className="dash-stat">
       <StatHead
         tone="streak"
-        icon={ICON.flame}
+        icon={<StreakFlame streak={display} flaring={flaring} />}
+        chipClass={`flame-chip flame-chip-${stage.heat}${flaring ? ' is-flaring' : ''}`}
         title="Current Streak"
-        tag="Consistency builds greatness."
+        tag={flameLine(display)}
       />
+      {/* What the flare says, for a reader who cannot see it. */}
+      <span className="dash-week-say" role="status" aria-live="polite">
+        {said}
+      </span>
       <div className="dash-stat-mid">
-        <p className="dash-big">
-          {shownCurrent} <span className="dash-big-unit">{current === 1 ? 'day' : 'days'}</span>
+        <p className={`dash-big${flaring ? ' is-bumping' : ''}`}>
+          {shownCurrent} <span className="dash-big-unit">{display === 1 ? 'day' : 'days'}</span>
         </p>
         {/* The line under the figure is where the target goes, because it is
             the only thing on this card the reader can act on. "Your best run

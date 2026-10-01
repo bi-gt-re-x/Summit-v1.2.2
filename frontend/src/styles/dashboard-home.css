@@ -1824,3 +1824,143 @@ html[data-theme="dark"] .dash .dash-stat {
             transparent 60%),
         var(--color-surface);
 }
+
+/* --------------------------------------------------------------------------
+   The streak's flame (components/Dashboard/StreakFlame.tsx)
+
+   Size first, then heat: a spark, a flame that grows to the largest the disc
+   holds, then red, yellow, blue and the colour of infinite temperature. The
+   stage is drawn with transitions — scale on the flame, colour on the disc —
+   so a run crossing a threshold is seen changing, not swapped. The flare is a
+   one-off animation on top, for the second after the streak goes up.
+   -------------------------------------------------------------------------- */
+.flame {
+    position: relative;
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+}
+.flame-svg { overflow: visible; }
+.flame-body,
+.flame-spark {
+    transform-box: view-box;
+    transform-origin: 12px 22px;
+    transition:
+        transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity 0.6s ease;
+}
+.flame-spark { transform-origin: 12px 11px; opacity: 0; transform: scale(0.4); }
+.flame-core { opacity: 0.55; transition: opacity 0.9s ease; }
+
+.flame-size-ember .flame-body  { transform: scale(0.55); opacity: 0.5; }
+.flame-size-spark .flame-body  { transform: scale(0.2); opacity: 0; }
+.flame-size-spark .flame-spark { transform: scale(1.3); opacity: 1; }
+.flame-size-small .flame-body  { transform: scale(0.62); }
+.flame-size-medium .flame-body { transform: scale(0.82); }
+.flame-size-large .flame-body  { transform: scale(1.12); }
+/* Hotter is paler at the heart. */
+.flame-heat-yellow .flame-core,
+.flame-heat-blue .flame-core     { opacity: 0.7; }
+.flame-heat-infinite .flame-core { opacity: 0.9; }
+
+/* Alive, once it is a flame: a slow flicker, from the base. */
+.flame-size-small .flame-svg,
+.flame-size-medium .flame-svg,
+.flame-size-large .flame-svg {
+    transform-origin: 50% 92%;
+    animation: flame-flicker 2.6s ease-in-out infinite alternate;
+}
+@keyframes flame-flicker {
+    0%   { transform: scale(1, 1) skewX(0deg); }
+    35%  { transform: scale(0.98, 1.04) skewX(-1.5deg); }
+    70%  { transform: scale(1.02, 0.98) skewX(1deg); }
+    100% { transform: scale(0.99, 1.03) skewX(-0.5deg); }
+}
+
+/* The disc takes the flame's heat. `flame` is the card's own orange, as
+   before; the rest are the stages past full size. */
+.dash-stat-chip.flame-chip {
+    transition: background-color 0.9s ease, color 0.9s ease, box-shadow 0.9s ease;
+}
+.dash-chip-streak.flame-chip-cold     { background: #F1F3F5; color: #9AA0A6; }
+.dash-chip-streak.flame-chip-red      { background: #FDE8E8; color: #E03131; }
+.dash-chip-streak.flame-chip-yellow   { background: #FFF5D1; color: #E9A800; }
+.dash-chip-streak.flame-chip-blue     { background: #E5EDFE; color: #2F6FED; }
+/* Infinite temperature: #94B1FF, the end of the black-body locus. Pale on a
+   pale disc would read as washed out, so it burns on a night sky instead. */
+.dash-chip-streak.flame-chip-infinite {
+    background: radial-gradient(circle at 50% 60%, #26305a 0%, #141a33 100%);
+    color: #94B1FF;
+    box-shadow: 0 0 14px rgba(148, 177, 255, 0.45);
+}
+.flame-heat-infinite .flame-svg { filter: drop-shadow(0 0 3px rgba(148, 177, 255, 0.9)); }
+
+html[data-theme="dark"] .dash-chip-streak.flame-chip-cold   { background: #1c2128; color: #6e7681; }
+html[data-theme="dark"] .dash-chip-streak.flame-chip-red    { background: #2d1416; color: #ff6b6b; }
+html[data-theme="dark"] .dash-chip-streak.flame-chip-yellow { background: #2b2410; color: #f5c518; }
+html[data-theme="dark"] .dash-chip-streak.flame-chip-blue   { background: #13213d; color: #5b9bff; }
+html[data-theme="dark"] .dash-chip-streak.flame-chip-infinite {
+    background: radial-gradient(circle at 50% 60%, #26305a 0%, #0d1122 100%);
+    color: #94B1FF;
+}
+
+/* The card's tint follows the flame, so the whole card warms with it. */
+.dash .dash-stat:has(.flame-chip-cold)     { --tone: #9AA0A6; }
+.dash .dash-stat:has(.flame-chip-red)      { --tone: #E03131; }
+.dash .dash-stat:has(.flame-chip-yellow)   { --tone: #E9A800; }
+.dash .dash-stat:has(.flame-chip-blue)     { --tone: #2F6FED; }
+.dash .dash-stat:has(.flame-chip-infinite) { --tone: #94B1FF; }
+
+/* The flare: the streak just went up. A burst and a settle on the flame, a
+   ring off the disc, embers lifting, and the figure beside it popping while
+   it counts. 1.4s in all — FLARE_MS in StatCards.tsx. */
+.flame.is-flaring { animation: flame-flare 1.1s cubic-bezier(0.3, 1.4, 0.5, 1); }
+@keyframes flame-flare {
+    0%   { transform: scale(1); }
+    22%  { transform: scale(1.5) translateY(-2px); }
+    50%  { transform: scale(0.9); }
+    72%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+.dash-stat-chip.flame-chip.is-flaring { animation: flame-ring 1.2s ease-out; }
+@keyframes flame-ring {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 55%, transparent); }
+    100% { box-shadow: 0 0 0 16px color-mix(in srgb, currentColor 0%, transparent); }
+}
+.flame-embers { position: absolute; inset: 0; pointer-events: none; }
+.flame-embers i {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    width: 4px;
+    height: 4px;
+    margin-left: -2px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    animation: flame-ember 1.2s ease-out forwards;
+}
+.flame-embers i:nth-child(1) { --dx: -9px; animation-delay: 0.05s; }
+.flame-embers i:nth-child(2) { --dx: 2px;  animation-delay: 0.18s; width: 3px; height: 3px; }
+.flame-embers i:nth-child(3) { --dx: 10px; animation-delay: 0.3s; }
+@keyframes flame-ember {
+    0%   { opacity: 0;   transform: translate(0, 0) scale(1); }
+    15%  { opacity: 1; }
+    100% { opacity: 0;   transform: translate(var(--dx), -26px) scale(0.3); }
+}
+.dash-big.is-bumping {
+    transform-origin: left center;
+    animation: dash-bump 0.9s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+@keyframes dash-bump {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.16); color: #E07A34; }
+    100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flame-body, .flame-spark, .flame-core, .dash-stat-chip.flame-chip { transition: none; }
+    .flame-svg, .flame.is-flaring, .dash-stat-chip.flame-chip.is-flaring,
+    .flame-embers i, .dash-big.is-bumping { animation: none; }
+    .flame-embers { display: none; }
+}

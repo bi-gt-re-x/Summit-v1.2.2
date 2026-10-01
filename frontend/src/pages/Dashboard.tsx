@@ -535,7 +535,10 @@ export default function Dashboard() {
           <TodayCard day={day} xpLeft={plan.xp} usual={usual} />
           <XpCard stats={data.stats} xpToday={day.xp} dailyGoal={dailyGoal} usual={usual} />
           <FocusCard session={session} usualHours={usualFocus} />
-          <StreakCard stats={data.stats} />
+          <StreakCard
+            stats={data.stats}
+            held={levelled !== null || news !== null || rating !== null}
+          />
         </div>
       )}
 
