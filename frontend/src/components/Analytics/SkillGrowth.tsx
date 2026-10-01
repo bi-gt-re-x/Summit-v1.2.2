@@ -24,8 +24,8 @@
  * the only sentence on this tab that answers its own name. So a promotion is
  * drawn as the row's loudest element and the points sit behind it.
  */
-import { useMemo } from 'react';
-import { Sparkline, toneVar, type Tone } from './charts';
+import { useCallback, useMemo, useState } from 'react';
+import { Heading, PanelGroup, Sparkline, toneVar, type Tone } from './charts';
 import { GrowthLine, type LineMark, type LineSeries } from './GrowthLine';
 import {
   IDLE_DAYS,
@@ -44,7 +44,12 @@ import { applyProgress, loadProgress } from '@/utils/skillProgress';
 import { loadSteps as loadPlans } from '@/utils/skillSteps';
 import { tallyGraph, type GraphNode } from '@/utils/skillGraph';
 import { bySkill, readLevel, type Attempt } from '@/utils/skillLevel';
-import { subjectProgress, subjectVerdict, type Rate } from '@/utils/subjectProgress';
+import {
+  subjectProgress,
+  subjectVerdict,
+  type Rate,
+  type SubjectProgress,
+} from '@/utils/subjectProgress';
 import type { Goal, Task } from '@/types';
 
 /**
@@ -191,38 +196,98 @@ const toneOf = (rate: Rate, good: number, warn: number) =>
  * well, whether it lands on time, whether it is hard enough, where they are on
  * the subject's skill tree, and whether the goals it serves are moving.
  */
-function SubjectCard({ track, context }: { track: SkillTrack; context?: SubjectContext }) {
+/** The band, or the band pair where it moved — the score, in words. */
+function BandChip({ track }: { track: SkillTrack }) {
   const rose = (track.delta ?? 0) > 0;
-  const read = useMemo(
-    () =>
-      context
-        ? subjectProgress({
-            subject: track.subject,
-            tasks: context.tasks,
-            goals: context.goals,
-            days: context.windowDays,
-            toIso: context.toIso,
-          })
-        : null,
-    [context, track.subject],
+  return track.promoted && track.bandThen ? (
+    <span className={`sg-band is-${rose ? 'up' : 'down'}`}>
+      {track.bandThen} → {track.band}
+    </span>
+  ) : (
+    <span className="sg-band is-held">{track.band}</span>
   );
-  const tree = useMemo(() => (context ? treeReading(track.subject, context) : null), [context, track.subject]);
+}
+
+/**
+ * Three rates small enough to sit in a closed card's head.
+ *
+ * A folded card that only showed a name would make the reader open every one
+ * of them to find the subject worth opening. These are the three a reader
+ * scans for — done, gone well, on time — plus the one alarm that cannot wait.
+ */
+function Glance({ read }: { read: SubjectProgress }) {
+  const bits = [
+    read.completion.rate !== null && `${read.completion.rate}% done`,
+    read.wentWell.rate !== null && `${read.wentWell.rate}% went well`,
+    read.onTime.rate !== null && `${read.onTime.rate}% on time`,
+  ].filter(Boolean) as string[];
+  return (
+    <span className="sg-glance">
+      {bits.length === 0 ? (
+        <span className="sg-glance-bit is-quiet">Nothing in this period</span>
+      ) : (
+        bits.map((bit) => (
+          <span key={bit} className="sg-glance-bit">
+            {bit}
+          </span>
+        ))
+      )}
+      {read.overdue > 0 && <span className="sg-glance-bit is-alert">{read.overdue} past due</span>}
+    </span>
+  );
+}
+
+/** The DOM id a subject's card carries, so the highlights can jump to it. */
+const cardId = (subject: string) => `sg-subject-${subject}`;
+
+function SubjectCard({
+  track,
+  context,
+  read,
+  open,
+  onToggle,
+}: {
+  track: SkillTrack;
+  context?: SubjectContext;
+  read: SubjectProgress | null;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  // Only worked out once the card is opened: it reads two browser stores and
+  // walks a whole tree, which twenty closed cards have no use for.
+  const tree = useMemo(
+    () => (context && open ? treeReading(track.subject, context) : null),
+    [context, open, track.subject],
+  );
 
   return (
-    <li className={`sg-row${track.promoted ? ' is-promoted' : ''}`}>
-      <div className="sg-row-head">
-        <span className="sg-name">{track.name}</span>
-        {/* The band pair, where it moved. The one place the score still
-            speaks, in words rather than points. */}
-        {track.promoted && track.bandThen ? (
-          <span className={`sg-band is-${rose ? 'up' : 'down'}`}>
-            {track.bandThen} → {track.band}
+    <li
+      id={cardId(track.subject)}
+      className={`ax-group sg-subject${open ? ' is-open' : ''}${track.promoted ? ' is-promoted' : ''}`}
+    >
+      {/* The same disclosure as `PanelGroup` — the heading wraps the button,
+          the whole head is the target, and the chevron sits in its circle —
+          so the cards fold the way every other group on this tab does. */}
+      <Heading>
+        <button
+          type="button"
+          className="ax-group-head sg-subject-head"
+          aria-expanded={open}
+          onClick={onToggle}
+        >
+          <span className="sg-subject-title">
+            <strong className="sg-name">{track.name}</strong>
+            <BandChip track={track} />
           </span>
-        ) : (
-          <span className="sg-band is-held">{track.band}</span>
-        )}
-      </div>
+          {read && <Glance read={read} />}
+          <span className="ax-group-toggle" aria-hidden="true">
+            <span className="ax-finding-mark" />
+          </span>
+        </button>
+      </Heading>
 
+      <div className="ax-group-body" inert={!open}>
+        <div className="sg-subject-body">
       {read && context && <p className="sg-verdict">{subjectVerdict(read, context.periodText)}</p>}
 
       {read && context && (
@@ -369,7 +434,100 @@ function SubjectCard({ track, context }: { track: SkillTrack; context?: SubjectC
           {read?.lastDone ? ` · last finished ${shortDate(read.lastDone)}` : ''}
         </p>
       </div>
+        </div>
+      </div>
     </li>
+  );
+}
+
+// --------------------------------------------------------------------------
+// Strongest, and growing fastest
+// --------------------------------------------------------------------------
+/**
+ * Two short lists over the cards: where the reader is strongest, and where
+ * they are growing fastest.
+ *
+ * They answer different questions and are deliberately not one ranking. The
+ * strongest subject is often the one that has stopped moving, and the one
+ * climbing fastest is often still near the bottom — a single list would
+ * always bury one of the two. Each entry opens and jumps to its card.
+ */
+function Highlights({
+  tracks,
+  reads,
+  periodText,
+  onJump,
+}: {
+  tracks: SkillTrack[];
+  reads: Map<string, SubjectProgress>;
+  periodText: string;
+  onJump: (subject: string) => void;
+}) {
+  const strongest = [...tracks].sort((a, b) => b.now - a.now).slice(0, 3);
+  const growing = tracks
+    .filter((track) => (track.delta ?? 0) > 0)
+    .sort((a, b) => (b.delta ?? 0) - (a.delta ?? 0))
+    .slice(0, 3);
+
+  const why = (track: SkillTrack) => {
+    const read = reads.get(track.subject);
+    return read?.wentWell.rate != null ? `${read.wentWell.rate}% of rated work went well` : null;
+  };
+
+  return (
+    <div className="sg-highlights">
+      <section className="sg-highlight is-strong">
+        <p className="sg-highlight-name">Strongest topics</p>
+        <p className="sg-highlight-note">Your highest levels right now</p>
+        <ol className="sg-highlight-list">
+          {strongest.map((track, at) => (
+            <li key={track.subject}>
+              <button type="button" className="sg-highlight-row" onClick={() => onJump(track.subject)}>
+                <span className="sg-highlight-rank">{at + 1}</span>
+                <span className="sg-highlight-text">
+                  <strong>{track.name}</strong>
+                  <span>
+                    {track.band}
+                    {why(track) ? ` · ${why(track)}` : ''}
+                  </span>
+                </span>
+                <span className="sg-highlight-go" aria-hidden="true">→</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="sg-highlight is-growing">
+        <p className="sg-highlight-name">Fastest growing topics</p>
+        <p className="sg-highlight-note">Furthest climbed over {periodText}</p>
+        {growing.length === 0 ? (
+          <p className="sg-highlight-empty">
+            No subject’s level rose over {periodText}. Rated work that goes well, on harder
+            tasks, is what lifts one.
+          </p>
+        ) : (
+          <ol className="sg-highlight-list">
+            {growing.map((track, at) => (
+              <li key={track.subject}>
+                <button type="button" className="sg-highlight-row" onClick={() => onJump(track.subject)}>
+                  <span className="sg-highlight-rank">{at + 1}</span>
+                  <span className="sg-highlight-text">
+                    <strong>{track.name}</strong>
+                    <span>
+                      {track.promoted && track.bandThen
+                        ? `${track.bandThen} → ${track.band}`
+                        : `Up ${track.delta} ${track.delta === 1 ? 'point' : 'points'}, still ${track.band}`}
+                    </span>
+                  </span>
+                  <span className="sg-highlight-go" aria-hidden="true">→</span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        )}
+      </section>
+    </div>
   );
 }
 
@@ -644,6 +802,47 @@ export interface SkillGrowthPanelProps {
 export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: SkillGrowthPanelProps) {
   const summary = useMemo(() => skillSummary(tracks), [tracks]);
 
+  /* Every subject's rates, once, for the cards and the highlights over them —
+     two readers of one figure should never compute it twice. */
+  const reads = useMemo(() => {
+    const out = new Map<string, SubjectProgress>();
+    if (!context) return out;
+    for (const track of tracks) {
+      out.set(
+        track.subject,
+        subjectProgress({
+          subject: track.subject,
+          tasks: context.tasks,
+          goals: context.goals,
+          days: context.windowDays,
+          toIso: context.toIso,
+        }),
+      );
+    }
+    return out;
+  }, [context, tracks]);
+
+  /* Which cards are open. Closed by default: twenty open cards is the wall
+     the folding exists to prevent, and each closed head still carries its
+     three rates. */
+  const [open, setOpen] = useState<Set<string>>(() => new Set());
+  const toggle = useCallback((subject: string) => {
+    setOpen((was) => {
+      const next = new Set(was);
+      if (next.has(subject)) next.delete(subject);
+      else next.add(subject);
+      return next;
+    });
+  }, []);
+  /* A highlight opens its card and brings it into view. After a frame, so the
+     card has started opening before it is scrolled to. */
+  const jump = useCallback((subject: string) => {
+    setOpen((was) => new Set(was).add(subject));
+    requestAnimationFrame(() =>
+      document.getElementById(cardId(subject))?.scrollIntoView?.({ behavior: 'smooth', block: 'start' }),
+    );
+  }, []);
+
   if (!tracks.length) {
     return (
       <p className="ax-empty">
@@ -655,6 +854,8 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
   }
 
   const since = tracks[0]?.dates[0] ? shortDate(tracks[0].dates[0]) : 'the start';
+  const shownTracks = tracks.slice(0, limit);
+  const allOpen = shownTracks.length > 0 && shownTracks.every((track) => open.has(track.subject));
 
   return (
     <>
@@ -662,18 +863,52 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
       <BandKey />
       <AbilityLine tracks={tracks} />
 
-      <h3 className="sg-chart-title">Subject by subject</h3>
-      <ul className="sg-rows">
-        {tracks.slice(0, limit).map((track) => (
-          <SubjectCard key={track.subject} track={track} context={context} />
-        ))}
-      </ul>
+      {/* The whole section folds, and so does every card in it. Open by
+          default — it is what the panel is for — but a reader who has read
+          it can put twenty cards away in one press. */}
+      <div className="sg-subjects">
+        <PanelGroup
+          title="Subject by subject"
+          note={`How the work in each subject is going — ${shownTracks.length} ${shownTracks.length === 1 ? 'subject' : 'subjects'}, ${periodText}`}
+          defaultOpen
+        >
+          {context && (
+            <Highlights tracks={tracks} reads={reads} periodText={periodText} onJump={jump} />
+          )}
 
-      <p className="ax-panel-note ax-panel-note-foot">
-        One row per subject, because a finished task carries a subject and
-        nothing finer. The branches inside a subject are in its skill tree,
-        where they are a route map rather than a score.
-      </p>
+          <div className="sg-subjects-bar">
+            <span>Open a subject for its completion, execution, deadlines, skill tree and goals.</span>
+            <button
+              type="button"
+              className="sg-subjects-all"
+              onClick={() =>
+                setOpen(allOpen ? new Set() : new Set(shownTracks.map((track) => track.subject)))
+              }
+            >
+              {allOpen ? 'Close all' : 'Open all'}
+            </button>
+          </div>
+
+          <ul className="sg-rows">
+            {shownTracks.map((track) => (
+              <SubjectCard
+                key={track.subject}
+                track={track}
+                context={context}
+                read={reads.get(track.subject) ?? null}
+                open={open.has(track.subject)}
+                onToggle={() => toggle(track.subject)}
+              />
+            ))}
+          </ul>
+
+          <p className="ax-panel-note ax-panel-note-foot">
+            One card per subject, because a finished task carries a subject and
+            nothing finer. The branches inside a subject are in its skill tree,
+            where they are a route map rather than a score.
+          </p>
+        </PanelGroup>
+      </div>
     </>
   );
 }

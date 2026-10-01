@@ -497,7 +497,8 @@ describe('what the tab opens on', () => {
 
   it('names the subject and prints where its level started and finished', async () => {
     draw(<GrowthTab model={withWork()} />);
-    const rows = (await screen.findByText('Subject by subject')).nextElementSibling!;
+    await screen.findByText('Subject by subject');
+    const rows = document.querySelector('.sg-rows')!;
     expect(rows.querySelector('.sg-name')?.textContent).toBe('Mathematics');
     // The pair, which is the whole claim — a closing figure alone is a
     // standing, and the analytics page already gives that.
@@ -525,16 +526,71 @@ describe('what the tab opens on', () => {
     /* The score is a figure about the record nobody can act on. The card opens
        on a sentence and six tiles a reader can do something about, and the
        score is its smallest line. */
+    const user = userEvent.setup();
     draw(<GrowthTab model={withWork()} />);
-    const rows = (await screen.findByText('Subject by subject')).nextElementSibling as HTMLElement;
-    const card = within(rows).getAllByRole('listitem')[0]!;
-    const labels = [...card.querySelectorAll('.sg-tile dt')].map((dt) => dt.textContent);
+    await screen.findByText('Subject by subject');
+    const card = document.querySelector('.sg-rows > li') as HTMLElement;
+    await user.click(within(card).getByRole('button', { name: /Mathematics/ }));
+
+    const tiles = card.querySelector('.sg-tiles') as HTMLElement;
+    const labels = [...tiles.querySelectorAll('.sg-tile dt')].map((dt) => dt.textContent);
     expect(labels).toEqual(['Completion', 'Execution', 'On time', 'Challenge', 'Skill tree', 'Goals']);
     // Thirty rated tasks in the last 30 days, every one a 5 for how it went.
-    expect(within(card).getByText('100% went well')).toBeInTheDocument();
-    expect(within(card).getByText(/30 of 30 rated 4–5 for how it went/)).toBeInTheDocument();
+    expect(within(tiles).getByText('100% went well')).toBeInTheDocument();
+    expect(within(tiles).getByText(/30 of 30 rated 4–5 for how it went/)).toBeInTheDocument();
     expect(card.querySelector('.sg-verdict')?.textContent).toMatch(/went well/);
-    expect(within(card).getByText('No active goal uses this subject.')).toBeInTheDocument();
+    expect(within(tiles).getByText('No active goal uses this subject.')).toBeInTheDocument();
+  });
+
+  it('folds every subject, closed, with its rates still on the head', async () => {
+    const user = userEvent.setup();
+    draw(<GrowthTab model={withWork()} />);
+    await screen.findByText('Subject by subject');
+    const card = document.querySelector('.sg-rows > li') as HTMLElement;
+    const head = within(card).getByRole('button', { name: /Mathematics/ });
+
+    // Closed by default, and closed means out of reach, not just out of sight.
+    expect(head).toHaveAttribute('aria-expanded', 'false');
+    expect(card.querySelector('.ax-group-body')).toHaveAttribute('inert');
+    // A folded card still says how the work is going.
+    expect(within(head).getByText('100% went well')).toBeInTheDocument();
+
+    await user.click(head);
+    expect(head).toHaveAttribute('aria-expanded', 'true');
+    expect(card.querySelector('.ax-group-body')).not.toHaveAttribute('inert');
+  });
+
+  it('folds the whole section too, open to begin with', async () => {
+    const user = userEvent.setup();
+    draw(<GrowthTab model={withWork()} />);
+    const section = (await screen.findByText('Subject by subject')).closest('button')!;
+    expect(section).toHaveAttribute('aria-expanded', 'true');
+    await user.click(section);
+    expect(section).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('opens every card at once, and closes them again', async () => {
+    const user = userEvent.setup();
+    draw(<GrowthTab model={withWork()} />);
+    await user.click(await screen.findByRole('button', { name: 'Open all' }));
+    const card = document.querySelector('.sg-rows > li') as HTMLElement;
+    expect(within(card).getByRole('button', { name: /Mathematics/ })).toHaveAttribute('aria-expanded', 'true');
+    await user.click(screen.getByRole('button', { name: 'Close all' }));
+    expect(within(card).getByRole('button', { name: /Mathematics/ })).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('leads the section with the strongest and fastest-growing subjects', async () => {
+    const user = userEvent.setup();
+    draw(<GrowthTab model={withWork()} />);
+    const strong = (await screen.findByText('Strongest topics')).closest('section')!;
+    expect(screen.getByText('Fastest growing topics')).toBeInTheDocument();
+    const entry = within(strong).getByRole('button', { name: /Mathematics/ });
+    expect(entry).toHaveTextContent(/went well/);
+
+    // An entry is a way to the card: pressing it opens that subject.
+    await user.click(entry);
+    const card = document.querySelector('.sg-rows > li') as HTMLElement;
+    expect(within(card).getByRole('button', { name: /Mathematics/ })).toHaveAttribute('aria-expanded', 'true');
   });
 
   it('draws ability over time, not hours', async () => {

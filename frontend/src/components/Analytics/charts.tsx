@@ -1005,7 +1005,7 @@ export interface PanelProps {
 const HeadingLevel = createContext(2);
 
 /** A heading at whatever depth the surrounding groups have reached. */
-function Heading({ className, children }: { className?: string; children: ReactNode }) {
+export function Heading({ className, children }: { className?: string; children: ReactNode }) {
   const level = useContext(HeadingLevel);
   // Capped at 6 because there is no h7; nothing here nests that far, and a tag
   // the browser does not know is worse than a heading one level too shallow.
