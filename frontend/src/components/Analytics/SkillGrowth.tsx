@@ -37,6 +37,15 @@ import {
   type TimeProgress,
 } from '@/utils/skillGrowth';
 import { SKILL_BANDS } from '@/utils/skillScore';
+import { Link } from 'react-router-dom';
+import { SUBJECT_TARGETS } from '@/skills/subjectMap';
+import { graphFromSubjectTree, subjectTreeById } from '@/skills/subjectTrees';
+import { applyProgress, loadProgress } from '@/utils/skillProgress';
+import { loadSteps as loadPlans } from '@/utils/skillSteps';
+import { tallyGraph, type GraphNode } from '@/utils/skillGraph';
+import { bySkill, readLevel, type Attempt } from '@/utils/skillLevel';
+import { subjectProgress, subjectVerdict, type Rate } from '@/utils/subjectProgress';
+import type { Goal, Task } from '@/types';
 
 /**
  * Which way the row reads.
@@ -53,15 +62,158 @@ function toneFor(track: SkillTrack): Tone {
   return 'violet';
 }
 
-function Row({ track }: { track: SkillTrack }) {
+/**
+ * What the page holds about the reader beyond the score, for the subject cards.
+ *
+ * Optional as a whole: without it a card falls back to the score alone, which
+ * is what every caller had before the cards learned to say anything else.
+ */
+export interface SubjectContext {
+  tasks: Task[];
+  goals: Goal[];
+  /** Days in the period, or null for the whole record. */
+  windowDays: number | null;
+  /** The period's last day, ISO. */
+  toIso: string;
+  periodText: string;
+  /** Marked skill-tree problems, for the tree tile's measured half. */
+  attempts: Attempt[];
+  username: string | null;
+}
+
+/** Where the reader is on a subject's skill tree, and what they measured on it. */
+interface TreeReading {
+  title: string;
+  done: number;
+  total: number;
+  /** The node this subject routes to, where it routes to one. */
+  focus: GraphNode | null;
+  next: GraphNode | null;
+  /** Steps of the tree with problems marked against them. */
+  practised: number;
+  /** The best measured level among them. */
+  best: number;
+}
+
+/**
+ * The subject's tree, with the reader's own practice applied — the same
+ * reading the skill tree page shows, so the two pages cannot disagree about
+ * where somebody is on it.
+ *
+ * Only for a subject the catalogue routes to a tree. `treeForSubject` falls
+ * back to a group's root for everything else, which is a guess that would put
+ * a confident wrong tree on the card.
+ */
+function treeReading(subject: string, context: SubjectContext): TreeReading | null {
+  const target = SUBJECT_TARGETS[subject];
+  if (!target) return null;
+  const tree = subjectTreeById(target.tree);
+  if (!tree) return null;
+
+  const graph = applyProgress(
+    graphFromSubjectTree(tree),
+    loadProgress(context.username),
+    loadPlans(context.username),
+  );
+  const tally = tallyGraph(graph);
+  const ids = new Set(graph.nodes.map((node) => node.id));
+  const groups = bySkill(context.attempts.filter((row) => ids.has(row.node_id)));
+  let best = 0;
+  for (const list of groups.values()) best = Math.max(best, readLevel(list).level);
+
+  return {
+    title: tree.title,
+    done: tally.complete,
+    total: tally.total,
+    focus: target.node ? graph.nodes.find((node) => node.id === target.node) ?? null : null,
+    next:
+      graph.nodes.find((node) => node.status === 'progress')
+      ?? graph.nodes.find((node) => node.status === 'available')
+      ?? null,
+    practised: groups.size,
+    best,
+  };
+}
+
+/** "↑ 12 pts on the period before", or the honest version of nothing. */
+function changeText(rate: Rate): { text: string; tone: 'up' | 'down' | 'flat' } | null {
+  if (rate.rate === null || rate.before === null) return null;
+  const moved = rate.rate - rate.before;
+  if (Math.abs(moved) < 3) return { text: `about the same as before (${rate.before}%)`, tone: 'flat' };
+  return {
+    text: `${moved > 0 ? '↑' : '↓'} from ${rate.before}% the period before`,
+    tone: moved > 0 ? 'up' : 'down',
+  };
+}
+
+function Tile({
+  label,
+  value,
+  detail,
+  change,
+  extra,
+  tone = 'plain',
+}: {
+  label: string;
+  value: React.ReactNode;
+  detail: React.ReactNode;
+  change?: { text: string; tone: 'up' | 'down' | 'flat' } | null;
+  extra?: React.ReactNode;
+  tone?: 'plain' | 'good' | 'warn' | 'quiet';
+}) {
+  return (
+    <div className={`sg-tile is-${tone}`}>
+      <dt>{label}</dt>
+      <dd>
+        <span className="sg-tile-value">{value}</span>
+        <span className="sg-tile-detail">{detail}</span>
+        {change && <span className={`sg-tile-change is-${change.tone}`}>{change.text}</span>}
+        {extra}
+      </dd>
+    </div>
+  );
+}
+
+/** A rate as the tile's headline, or a dash over nothing. */
+const shown = (rate: Rate, suffix = '') => (rate.rate === null ? '—' : `${rate.rate}%${suffix}`);
+
+/** Green at or above `good`, amber under `warn`. */
+const toneOf = (rate: Rate, good: number, warn: number) =>
+  rate.rate === null ? 'quiet' : rate.rate >= good ? 'good' : rate.rate < warn ? 'warn' : 'plain';
+
+/**
+ * One subject, as how the work in it is going.
+ *
+ * The score that used to be the row — "49 → 57", "106 rated tasks behind this"
+ * — is a figure about the record that a reader cannot act on, so it is now the
+ * card's smallest line. What leads is a sentence, then six tiles a reader can
+ * do something about: whether they finish what they plan, whether it goes
+ * well, whether it lands on time, whether it is hard enough, where they are on
+ * the subject's skill tree, and whether the goals it serves are moving.
+ */
+function SubjectCard({ track, context }: { track: SkillTrack; context?: SubjectContext }) {
   const rose = (track.delta ?? 0) > 0;
+  const read = useMemo(
+    () =>
+      context
+        ? subjectProgress({
+            subject: track.subject,
+            tasks: context.tasks,
+            goals: context.goals,
+            days: context.windowDays,
+            toIso: context.toIso,
+          })
+        : null,
+    [context, track.subject],
+  );
+  const tree = useMemo(() => (context ? treeReading(track.subject, context) : null), [context, track.subject]);
+
   return (
     <li className={`sg-row${track.promoted ? ' is-promoted' : ''}`}>
       <div className="sg-row-head">
         <span className="sg-name">{track.name}</span>
-        {/* The band pair, where it moved. A row that only prints the closing
-            band is printing a standing, which the analytics page already
-            gives — this tab owes the reader the pair. */}
+        {/* The band pair, where it moved. The one place the score still
+            speaks, in words rather than points. */}
         {track.promoted && track.bandThen ? (
           <span className={`sg-band is-${rose ? 'up' : 'down'}`}>
             {track.bandThen} → {track.band}
@@ -71,44 +223,157 @@ function Row({ track }: { track: SkillTrack }) {
         )}
       </div>
 
-      <div className="sg-row-figures">
-        <span className="sg-move">
-          {track.then === null ? (
-            /* Not a rise from zero. A subject the reader had rated nothing in
-               at the start of the period did not climb from nought, it
-               appeared — and "0 → 64" would be a claim about a month that
-               never happened. */
-            <>
-              <em className="sg-new">new this period</em> <strong>{track.now}</strong>
-            </>
-          ) : (
-            <>
-              <span className="sg-then">{track.then}</span>
-              <span className="sg-arrow" aria-hidden="true">→</span>
-              <strong>{track.now}</strong>
-            </>
-          )}
-        </span>
+      {read && context && <p className="sg-verdict">{subjectVerdict(read, context.periodText)}</p>}
 
-        {track.delta !== null && (
-          <span className={`sg-delta is-${rose ? 'up' : track.delta < 0 ? 'down' : 'flat'}`}>
-            {track.delta > 0 ? '+' : track.delta < 0 ? '−' : '±'}
-            {Math.abs(track.delta)}
-          </span>
-        )}
+      {read && context && (
+        <dl className="sg-tiles">
+          <Tile
+            label="Completion"
+            value={shown(read.completion)}
+            tone={toneOf(read.completion, 80, 50)}
+            detail={
+              read.completion.den > 0
+                ? `${read.completion.num} of ${read.completion.den} tasks you added were finished`
+                : 'No tasks added in this period'
+            }
+            change={changeText(read.completion)}
+          />
+          <Tile
+            label="Execution"
+            value={shown(read.wentWell, ' went well')}
+            tone={toneOf(read.wentWell, 70, 40)}
+            detail={
+              read.wentWell.den > 0
+                ? `${read.wentWell.num} of ${read.wentWell.den} rated 4–5 for how it went`
+                : 'Nothing rated in this period'
+            }
+            change={changeText(read.wentWell)}
+          />
+          <Tile
+            label="On time"
+            value={shown(read.onTime)}
+            tone={read.overdue > 0 ? 'warn' : toneOf(read.onTime, 80, 50)}
+            detail={
+              read.onTime.den > 0
+                ? `${read.onTime.num} of ${read.onTime.den} deadlines met`
+                : 'No deadlines on finished work'
+            }
+            change={changeText(read.onTime)}
+            extra={
+              read.overdue > 0 && (
+                <span className="sg-tile-alert">
+                  {read.overdue} {read.overdue === 1 ? 'task' : 'tasks'} past due now
+                </span>
+              )
+            }
+          />
+          <Tile
+            label="Challenge"
+            value={shown(read.hard, ' hard')}
+            tone="plain"
+            detail={
+              read.hard.den > 0
+                ? `${read.hard.num} of ${read.hard.den} rated 4–5 for difficulty`
+                : 'Nothing rated in this period'
+            }
+            /* Neutral either way: more hard work is not better on its own,
+               and less is not a failing — it is context for the two above. */
+            change={(() => {
+              const moved = changeText(read.hard);
+              return moved && { ...moved, tone: 'flat' as const };
+            })()}
+          />
+          <Tile
+            label="Skill tree"
+            tone={tree ? 'plain' : 'quiet'}
+            value={
+              tree
+                ? tree.focus
+                  ? `${Math.round(tree.focus.percent)}% of ${tree.focus.name}`
+                  : `${tree.done} of ${tree.total} skills`
+                : 'No tree'
+            }
+            detail={
+              tree ? (
+                <>
+                  {tree.next ? <>Up next: <b>{tree.next.name}</b>. </> : 'Every skill on it is done. '}
+                  {tree.practised > 0
+                    ? `${tree.practised} ${tree.practised === 1 ? 'step' : 'steps'} practised, best Level ${tree.best} of 5.`
+                    : 'No problems marked on it yet.'}
+                </>
+              ) : (
+                'This subject has no skill tree of its own.'
+              )
+            }
+            extra={
+              tree && (
+                <Link className="sg-tile-link" to={`/skill-trees?subject=${encodeURIComponent(track.subject)}`}>
+                  Open {tree.title} →
+                </Link>
+              )
+            }
+          />
+          <Tile
+            label="Goals"
+            tone={
+              read.goals[0]
+                ? read.goals[0].health.state === 'on-track'
+                  ? 'good'
+                  : read.goals[0].health.state === 'not-started'
+                    ? 'plain'
+                    : 'warn'
+                : 'quiet'
+            }
+            value={read.goals[0] ? read.goals[0].health.label : 'None'}
+            detail={
+              read.goals[0] ? (
+                <>
+                  <b>{read.goals[0].goal.title}</b> — {read.goals[0].progress}% done.{' '}
+                  {read.goals[0].health.reason}
+                  {read.goals.length > 1 && ` +${read.goals.length - 1} more`}
+                </>
+              ) : (
+                'No active goal uses this subject.'
+              )
+            }
+            extra={
+              !read.goals[0] && (
+                <Link className="sg-tile-link" to="/goals">
+                  Set one →
+                </Link>
+              )
+            }
+          />
+        </dl>
+      )}
 
+      {/* The score, last and small: what the band above was read from. */}
+      <div className="sg-row-foot">
         <span className="sg-spark" aria-hidden="true">
           <Sparkline values={track.spark} tone={toneFor(track)} />
         </span>
+        <p className="sg-basis">
+          Level score{' '}
+          <span className="sg-move">
+            {track.then === null ? (
+              <>new this period, <strong>{track.now}</strong></>
+            ) : (
+              <>
+                {track.then} → <strong>{track.now}</strong>
+                {track.delta !== null && track.delta !== 0 && ` (${signedScore(track.delta)})`}
+              </>
+            )}
+          </span>{' '}
+          out of 100, from {track.rated} rated {track.rated === 1 ? 'task' : 'tasks'}
+          {track.confidence < 0.5 ? ' — still a thin reading' : ''}
+          {read?.lastDone ? ` · last finished ${shortDate(read.lastDone)}` : ''}
+        </p>
       </div>
-
-      <p className="sg-basis">
-        {track.rated} rated {track.rated === 1 ? 'task' : 'tasks'} behind this
-        {track.confidence < 0.5 ? ' — still a thin reading' : ''}
-      </p>
     </li>
   );
 }
+
+const signedScore = (value: number) => (value > 0 ? `+${value}` : `−${Math.abs(value)}`);
 
 // --------------------------------------------------------------------------
 // The six headline figures
@@ -372,9 +637,11 @@ export interface SkillGrowthPanelProps {
   periodText: string;
   /** How many rows to draw, from the account's detail setting. */
   limit?: number;
+  /** Tasks, goals and tree practice, for the subject cards. See `SubjectContext`. */
+  context?: SubjectContext;
 }
 
-export function SkillGrowthPanel({ tracks, periodText, limit = 6 }: SkillGrowthPanelProps) {
+export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: SkillGrowthPanelProps) {
   const summary = useMemo(() => skillSummary(tracks), [tracks]);
 
   if (!tracks.length) {
@@ -398,7 +665,7 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6 }: SkillGrowthP
       <h3 className="sg-chart-title">Subject by subject</h3>
       <ul className="sg-rows">
         {tracks.slice(0, limit).map((track) => (
-          <Row key={track.subject} track={track} />
+          <SubjectCard key={track.subject} track={track} context={context} />
         ))}
       </ul>
 

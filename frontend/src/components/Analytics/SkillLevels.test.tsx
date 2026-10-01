@@ -13,19 +13,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Attempt } from '@/services/skillAttempts';
 
-vi.mock('@/hooks', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@/hooks')>()),
-  useStats: () => ({ username: 'tester', stats: null }),
-}));
-
 let reply: Attempt[] = [];
-vi.mock('@/services', async (importOriginal) => {
-  const real = await importOriginal<typeof import('@/services')>();
-  return {
-    ...real,
-    skillAttempts: { ...real.skillAttempts, list: vi.fn(async () => ({ success: true, attempts: reply })) },
-  };
-});
 
 vi.mock('@/services/skillSteps', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/services/skillSteps')>()),
@@ -61,7 +49,11 @@ function marks(weight: Attempt['weight'], count: number, right: number, daysAgo:
 function draw(windowDays: number | null = 30) {
   render(
     <MemoryRouter>
-      <SkillLevelsPanel windowDays={windowDays} periodText="the last 30 days" />
+      <SkillLevelsPanel
+        practice={{ attempts: reply, loading: false, error: null }}
+        windowDays={windowDays}
+        periodText="the last 30 days"
+      />
     </MemoryRouter>,
   );
 }

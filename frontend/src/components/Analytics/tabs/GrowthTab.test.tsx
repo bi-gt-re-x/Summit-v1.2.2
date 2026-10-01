@@ -521,6 +521,22 @@ describe('what the tab opens on', () => {
     expect(grid.textContent).toMatch(/average level went from \d+ to \d+ out of 100/);
   });
 
+  it('leads each subject with how the work is going, not the score', async () => {
+    /* The score is a figure about the record nobody can act on. The card opens
+       on a sentence and six tiles a reader can do something about, and the
+       score is its smallest line. */
+    draw(<GrowthTab model={withWork()} />);
+    const rows = (await screen.findByText('Subject by subject')).nextElementSibling as HTMLElement;
+    const card = within(rows).getAllByRole('listitem')[0]!;
+    const labels = [...card.querySelectorAll('.sg-tile dt')].map((dt) => dt.textContent);
+    expect(labels).toEqual(['Completion', 'Execution', 'On time', 'Challenge', 'Skill tree', 'Goals']);
+    // Thirty rated tasks in the last 30 days, every one a 5 for how it went.
+    expect(within(card).getByText('100% went well')).toBeInTheDocument();
+    expect(within(card).getByText(/30 of 30 rated 4–5 for how it went/)).toBeInTheDocument();
+    expect(card.querySelector('.sg-verdict')?.textContent).toMatch(/went well/);
+    expect(within(card).getByText('No active goal uses this subject.')).toBeInTheDocument();
+  });
+
   it('draws ability over time, not hours', async () => {
     draw(<GrowthTab model={withWork()} />);
     expect(await screen.findByText('Growth over time')).toBeInTheDocument();

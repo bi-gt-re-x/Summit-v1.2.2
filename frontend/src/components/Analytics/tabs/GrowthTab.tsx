@@ -63,6 +63,7 @@ import { SkillLevelsPanel } from '../SkillLevels';
 import { skillTrajectory, timeToProgress } from '@/utils/skillGrowth';
 import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
+import { useSkillAttempts, useStats } from '@/hooks';
 import type { PeriodKey } from '@/services/analytics';
 import { SkillShapePanel } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
@@ -141,8 +142,13 @@ const PERIOD_TEXT: Record<PeriodKey, string> = {
 };
 
 export function GrowthTab({ model }: { model: AnalyticsModel }) {
-  const { all: dayRows, clock, detail, heatRows, nameOf, rhythmRate, skills, tasks } = model;
+  const { all: dayRows, clock, detail, heatRows, nameOf, rhythmRate, skills, tasks, liveGoals } = model;
   const { period, setPeriod, periods } = useGrowthPeriods();
+  /* The reader's marked skill-tree problems, once for the tab: the subject
+     cards read them for the tree tile and "Skills by level" reads them whole.
+     `useStats` for the name, for the reason ../useGrowthPeriods gives. */
+  const { username } = useStats();
+  const practice = useSkillAttempts(username);
 
   /* `Record<PeriodKey, …>` is total, so the lookup cannot miss — the
      assertions are for TypeScript's index signature rather than for a case
@@ -184,6 +190,21 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
       return done !== undefined && done <= toIso && (from === '' || done >= from);
     });
   }, [tasks, toIso, windowDays]);
+
+  /* Everything the subject cards need beyond the score. One object, memoised,
+     so a card's own memos only rerun when the period or the record moves. */
+  const subjectContext = useMemo(
+    () => ({
+      tasks,
+      goals: liveGoals ?? [],
+      windowDays,
+      toIso,
+      periodText,
+      attempts: practice.attempts,
+      username,
+    }),
+    [tasks, liveGoals, windowDays, toIso, periodText, practice.attempts, username],
+  );
 
   const progress = useMemo(
     () => timeToProgress({ days: dayRows, finished: finishedInPeriod, tracks, windowDays }),
@@ -296,7 +317,12 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               title="Skill Growth"
               note={`Your abilities across subjects over time — ${periodText}`}
             >
-              <SkillGrowthPanel tracks={tracks} periodText={periodText} limit={detail.rows} />
+              <SkillGrowthPanel
+                tracks={tracks}
+                periodText={periodText}
+                limit={detail.rows}
+                context={subjectContext}
+              />
             </Panel>
           </section>
 
@@ -309,7 +335,12 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               title="Skills by level"
               note={`Each step of your skill trees, measured from problems you marked right or wrong — ${periodText}`}
             >
-              <SkillLevelsPanel windowDays={windowDays} periodText={periodText} limit={detail.rows} />
+              <SkillLevelsPanel
+                practice={practice}
+                windowDays={windowDays}
+                periodText={periodText}
+                limit={detail.rows}
+              />
             </Panel>
           </section>
 

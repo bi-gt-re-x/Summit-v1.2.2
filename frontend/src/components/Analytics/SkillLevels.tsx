@@ -13,17 +13,15 @@
  * a diary; this is a fact about what the reader can now do, and every figure
  * in it is counted from answers they gave.
  *
- * ## Its own request
+ * ## Where the rows come from
  *
- * The analytics page keeps its calls in one hook so a visit's cost is one file
- * to read. This panel is the exception, deliberately, for the same reason the
- * period scores are (../useGrowthPeriods): it is the only reader of these rows
- * on the page, and the skill tree page reads the same list through the same
- * hook.
+ * The Growth tab fetches them once and hands them in, because the subject
+ * cards above read the same list for their skill-tree tile. Two panels each
+ * asking would be the same request twice on every visit.
  */
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useSkillAttempts, useStats } from '@/hooks';
+import type { UseSkillAttempts } from '@/hooks';
 import { SUBJECT_TREES } from '@/skills/subjectTrees';
 import { loadSteps, type Programmes } from '@/services/skillSteps';
 import {
@@ -63,6 +61,8 @@ interface Row {
 }
 
 export interface SkillLevelsPanelProps {
+  /** The reader's marked problems — fetched once by the tab and shared. */
+  practice: Pick<UseSkillAttempts, 'attempts' | 'loading' | 'error'>;
   /** Days in the period, or null for the whole record. */
   windowDays: number | null;
   /** The period in words, for sentences. */
@@ -71,11 +71,8 @@ export interface SkillLevelsPanelProps {
   limit?: number;
 }
 
-export function SkillLevelsPanel({ windowDays, periodText, limit = 6 }: SkillLevelsPanelProps) {
-  /* `useStats` for the name, as ../useGrowthPeriods does and for its reason:
-     it is the call this page already makes. */
-  const { username } = useStats();
-  const { attempts, loading, error } = useSkillAttempts(username);
+export function SkillLevelsPanel({ practice, windowDays, periodText, limit = 6 }: SkillLevelsPanelProps) {
+  const { attempts, loading, error } = practice;
   const [titles, setTitles] = useState<Programmes>({});
   const [all, setAll] = useState(false);
 
