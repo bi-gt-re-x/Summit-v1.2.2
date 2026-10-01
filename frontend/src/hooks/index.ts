@@ -31,6 +31,8 @@ export type { FocusState, UseFocusSession } from './useFocusSession';
 export { subjectOf, useSubjectIndex, useSubjects, useSubjectsReady } from './useSubjects';
 export { useMediaQuery } from './useMediaQuery';
 export { useSettings } from './useSettings';
+export { useSkillAttempts } from './useSkillAttempts';
+export type { UseSkillAttempts } from './useSkillAttempts';
 export { useTheme } from './useTheme';
 export { useStats } from './useStats';
 export { useUserData } from './useUserData';

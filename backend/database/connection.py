@@ -519,6 +519,29 @@ ADDED_TABLES = ('''
 ''', '''
     CREATE INDEX IF NOT EXISTS skill_problems_step
         ON skill_problems (node_id, ordinal, slot)
+''', '''
+    -- What the reader got right and wrong, per skill. Mirrors
+    -- data/sql/skillattempts.sql, where the note on why it is batches lives.
+    CREATE TABLE IF NOT EXISTS skill_attempts (
+        id         TEXT    PRIMARY KEY,
+        user_id    TEXT    NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        node_id    TEXT    NOT NULL,
+        ordinal    INTEGER NOT NULL DEFAULT 0,
+        slot       INTEGER,
+        weight     TEXT    NOT NULL,
+        attempted  INTEGER NOT NULL DEFAULT 1,
+        correct    INTEGER NOT NULL DEFAULT 0,
+        source     TEXT    NOT NULL DEFAULT 'problem',
+        at         TEXT    NOT NULL,
+        CHECK (ordinal >= 0),
+        CHECK (weight IN ('warmup', 'core', 'stretch')),
+        CHECK (attempted >= 1),
+        CHECK (correct >= 0 AND correct <= attempted),
+        CHECK (source IN ('problem', 'log'))
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS skill_attempts_user_idx
+        ON skill_attempts (user_id, node_id, ordinal)
 ''')
 
 

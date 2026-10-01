@@ -765,6 +765,9 @@ ACCOUNT_TABLES = (
     # no longer exists — and their tombstones would go on suppressing the ones
     # the emptied account earns next.
     'notifications',
+    # What the account got right and wrong on each skill. The only per-skill
+    # evidence there is, so it goes out with an export and goes with a reset.
+    'skill_attempts',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the

@@ -87,7 +87,7 @@
  * A list with no rows, an XP line on a node worth zero: each is absent rather
  * than drawn as a dash. A panel of dashes reads as a form that failed to load.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { improvePlan } from '@/skills/improve';
 import { nearestBlocker, optionalIds } from '@/skills/route';
 import { groupOf, iconUrl } from '@/skills/subjectTrees';
@@ -118,8 +118,26 @@ import {
 } from '@/utils/problemSet';
 import { Icon } from '@/components/Icon';
 import { ProgressIndicator } from './ProgressIndicator';
+import { LevelCard, LevelChain, LevelChip, LogPractice, ProblemMark } from './SkillLevel';
+import { lastAt, readLevel, type Attempt, type SkillLevel, type Tier } from '@/utils/skillLevel';
+import type { NewAttempt } from '@/services/skillAttempts';
 
 const number = (value: number) => Math.round(value).toLocaleString();
+
+/**
+ * What the panel needs to measure a skill rather than describe it: the
+ * reader's attempts, and the two writes. One object rather than three props,
+ * because they are only ever present together — a panel that could read the
+ * level but not mark a problem would draw buttons that do nothing.
+ */
+export interface StepEvidence {
+  /** Every attempt the reader has. The panel picks out this node's. */
+  attempts: Attempt[];
+  /** Store one; the stored row, or null when it was refused. */
+  onAttempt: (attempt: NewAttempt) => Promise<Attempt | null>;
+  /** Take one back. */
+  onUndo: (id: string) => Promise<boolean>;
+}
 
 /** The skill's drawing, painted through the shared mask. */
 function Ico({ icon, className }: { icon?: string; className: string }) {
@@ -235,7 +253,7 @@ function asPractice(
  * answer for the same reason: it is the cheaper thing to spend first, and
  * offering both at once means nobody ever takes the cheaper one.
  */
-function Problem({ problem }: { problem: ProblemRow }) {
+function Problem({ problem, mark }: { problem: ProblemRow; mark?: React.ReactNode }) {
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
 
@@ -265,6 +283,9 @@ function Problem({ problem }: { problem: ProblemRow }) {
           {showAnswer ? 'Hide answer' : 'Show answer'}
         </button>
       </p>
+      {/* Marking is checking, and there is nothing to check against until the
+          answer is out — so the question only appears with it. */}
+      {showAnswer && mark}
     </div>
   );
 }
@@ -303,6 +324,7 @@ function StepWorkspace({
   problems,
   onBack,
   onBackToTree,
+  evidence,
 }: {
   step: PracticeStep;
   /** The written questions for this step, if any have been. */
@@ -312,7 +334,66 @@ function StepWorkspace({
   onBack: () => void;
   /** Out of the takeover entirely. */
   onBackToTree: () => void;
+  /**
+   * Marking and the level it feeds. Only for a written step: its ordinal is
+   * the server's and stays put, where a derived rung's is a position in a
+   * list that is allowed to change — and evidence filed under a number that
+   * moves would end up describing a different step.
+   */
+  evidence?: StepEvidence;
 }) {
+  /* Marks made on this visit, by problem, so a second press changes or takes
+     back the first rather than adding to it. Marks from earlier visits stay
+     what they were — they are history, and shown as "last time". */
+  const [mine, setMine] = useState<Record<number, Attempt>>({});
+  const [busy, setBusy] = useState<number | null>(null);
+  useEffect(() => setMine({}), [step.ordinal, node.id]);
+
+  const mark = async (slot: number, weight: Tier, right: boolean) => {
+    if (!evidence) return;
+    setBusy(slot);
+    try {
+      const before = mine[slot];
+      if (before && !(await evidence.onUndo(before.id))) return;
+      const made = await evidence.onAttempt({
+        node_id: node.id, ordinal: step.ordinal, slot, weight,
+        attempted: 1, correct: right ? 1 : 0, source: 'problem',
+      });
+      setMine((was) => {
+        const next = { ...was };
+        if (made) next[slot] = made;
+        else delete next[slot];
+        return next;
+      });
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const undo = async (slot: number) => {
+    const before = mine[slot];
+    if (!evidence || !before) return;
+    setBusy(slot);
+    try {
+      if (await evidence.onUndo(before.id)) {
+        setMine((was) => {
+          const next = { ...was };
+          delete next[slot];
+          return next;
+        });
+      }
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const stepAttempts = useMemo(
+    () => (evidence?.attempts ?? []).filter(
+      (row) => row.node_id === node.id && row.ordinal === step.ordinal,
+    ),
+    [evidence?.attempts, node.id, step.ordinal],
+  );
+
   /* Written problems where there are any, and the default ladder of empty
      slots where there are not. Both are grouped the same way, so everything
      below draws one shape — the only difference a reader sees is whether a
@@ -357,6 +438,10 @@ function StepWorkspace({
             a list of questions with no statement of what they are for. */}
         <p className="stx-work-brief">{step.mastery}</p>
 
+        {/* Where the reader stands on this step, above the problems that move
+            it — so a mark below is seen to change the card above. */}
+        {evidence && <LevelCard attempts={stepAttempts} />}
+
         {bands.map((band) => (
           <section key={band.weight} className={`stx-work-band is-${band.weight}`}>
             <h3 className="stx-work-band-name">
@@ -373,7 +458,20 @@ function StepWorkspace({
                     {slot.index}
                   </span>
                   {slot.problem ? (
-                    <Problem problem={slot.problem} />
+                    <Problem
+                      problem={slot.problem}
+                      mark={
+                        evidence && (
+                          <ProblemMark
+                            mine={mine[slot.index] ?? null}
+                            previous={lastAt(stepAttempts, node.id, step.ordinal, slot.index)}
+                            busy={busy === slot.index}
+                            onMark={(right) => mark(slot.index, band.weight, right)}
+                            onUndo={() => undo(slot.index)}
+                          />
+                        )
+                      }
+                    />
                   ) : (
                     <span className="stx-work-slot-text">
                       A {WEIGHT_LABEL[band.weight].toLowerCase()} problem for{' '}
@@ -398,6 +496,20 @@ function StepWorkspace({
             <dd>{step.pitfall}</dd>
           </div>
         </dl>
+
+        {evidence && (
+          <LogPractice
+            busy={busy !== null}
+            onLog={async (weight, attempted, correct) =>
+              Boolean(
+                await evidence.onAttempt({
+                  node_id: node.id, ordinal: step.ordinal, weight,
+                  attempted, correct, source: 'log',
+                }),
+              )
+            }
+          />
+        )}
       </div>
     </aside>
   );
@@ -432,8 +544,11 @@ function WrittenProgramme({
   at,
   onOpenChange,
   onWork,
+  levels,
 }: {
   steps: WrittenStep[];
+  /** Each step's measured level, by ordinal, where there is evidence to read. */
+  levels?: Record<number, SkillLevel>;
   /** Which step the reader is on, 0-based. Opens expanded. */
   at: number;
   /** Told when a step opens, so a parent can scroll or measure. Optional. */
@@ -491,7 +606,10 @@ function WrittenProgramme({
                 {step.ordinal}
               </span>
               <span className="stx-ws-lines">
-                <span className="stx-ws-title">{step.title}</span>
+                <span className="stx-ws-title">
+                  {step.title}
+                  {levels?.[step.ordinal] && <LevelChip read={levels[step.ordinal]!} />}
+                </span>
                 <span className="stx-ws-mastery">{step.mastery}</span>
                 <span className="stx-ws-try">
                   <b>Try:</b> {step.practice}
@@ -832,6 +950,11 @@ export interface LatticePanelProps {
    * of it is announced — see `is-wide` in styles/skilltree.css.
    */
   onExpand?: (open: boolean) => void;
+  /**
+   * The reader's marked problems and the writes that add to them. Absent
+   * leaves the panel as it was — describing the skill, not measuring it.
+   */
+  evidence?: StepEvidence;
 }
 
 export function LatticePanel({
@@ -850,6 +973,7 @@ export function LatticePanel({
   renamed = false,
   onResetName,
   onExpand,
+  evidence,
 }: LatticePanelProps) {
   // The step list opens over the whole panel rather than beside it, so this is
   // panel-wide state rather than the section's. Reset on every change of node:
@@ -885,6 +1009,25 @@ export function LatticePanel({
   // Leaving the page entirely — unmounting mid-expansion — has to put the grid
   // back too.
   useEffect(() => () => onExpand?.(false), [onExpand]);
+
+  /* This node's attempts, every step of it. Above the early return because it
+     is a hook, and harmless there: no node, no attempts. */
+  const nodeAttempts = useMemo(
+    () => (evidence?.attempts ?? []).filter((row) => row.node_id === node?.id),
+    [evidence?.attempts, node?.id],
+  );
+  /* Each written step's level, for the chip on its row. Only when there is
+     evidence to read — without it every row would say "Not started", which is
+     a claim about the reader the panel has no grounds for. */
+  const stepLevels = useMemo(() => {
+    if (!evidence || !written) return undefined;
+    return Object.fromEntries(
+      written.map((step) => [
+        step.ordinal,
+        readLevel(nodeAttempts.filter((row) => row.ordinal === step.ordinal)),
+      ]),
+    ) as Record<number, SkillLevel>;
+  }, [evidence, written, nodeAttempts]);
 
   if (!node) {
     return (
@@ -1043,14 +1186,18 @@ export function LatticePanel({
      the panel can be showing and the reader got to it deliberately, so nothing
      above it in this function may pre-empt it. */
   if (workingOn) {
+    /* The written step this is, matched on title as well as number: a rung of
+       the reader's own programme can share an ordinal with a written step and
+       be about something else entirely. Only a match gets problems — and only
+       a match can be marked, because its number is the server's and stays. */
+    const writtenStep = written?.find(
+      (one) => one.ordinal === workingOn.ordinal && one.title === workingOn.title,
+    );
     return (
       <StepWorkspace
         step={workingOn}
-        problems={
-          useWritten
-            ? written!.find((one) => one.ordinal === workingOn.ordinal)?.problems
-            : undefined
-        }
+        problems={writtenStep?.problems}
+        evidence={writtenStep ? evidence : undefined}
         node={node}
         // Back lands where they came from: the full list if it was open behind
         // this, the panel if the link was clicked from the three-step window.
@@ -1086,6 +1233,7 @@ export function LatticePanel({
             <WrittenProgramme
               steps={written!}
               at={at}
+              levels={stepLevels}
               onWork={(step) => setWorkingOn(step)}
             />
           </div>
@@ -1217,6 +1365,45 @@ export function LatticePanel({
           </div>
         </section>
 
+        {/* ---- 2b. Your level, measured ----
+            The figure above is the tree's own and the same on every account.
+            This one is read from problems the reader marked right or wrong,
+            per step — so it gets its own heading, and says so. */}
+        {evidence && (
+          <section className="stx-lp-truth is-mine is-measured">
+            <h3 className="stx-lp-truth-name">Your level, step by step</h3>
+            {written && written.length > 0 ? (
+              <LevelChain
+                steps={written.map((step) => ({ ordinal: step.ordinal, title: step.title }))}
+                attempts={nodeAttempts}
+                onOpen={(ordinal) => {
+                  const step = written.find((one) => one.ordinal === ordinal);
+                  if (step) setWorkingOn(step);
+                }}
+              />
+            ) : (
+              /* Nothing written for this node yet, so there are no steps to
+                 split it into and no problems to mark. Work done elsewhere
+                 can still be logged against the skill as a whole. */
+              <>
+                <LevelCard attempts={nodeAttempts.filter((row) => row.ordinal === 0)} />
+                <LogPractice
+                  busy={false}
+                  label="This skill has no written problems yet. Log problems you did elsewhere and your level is read from those."
+                  onLog={async (weight, attempted, correct) =>
+                    Boolean(
+                      await evidence.onAttempt({
+                        node_id: node.id, ordinal: 0, weight,
+                        attempted, correct, source: 'log',
+                      }),
+                    )
+                  }
+                />
+              </>
+            )}
+          </section>
+        )}
+
         {/* ---- 3. The curriculum ----
             What the subject says, which is the same on every account. The
             heading is doing real work: everything under it is authored and
@@ -1275,6 +1462,7 @@ export function LatticePanel({
             <WrittenProgramme
               steps={written!.slice(at, at + 3)}
               at={0}
+              levels={stepLevels}
               onWork={(step) => setWorkingOn(step)}
             />
           ) : (

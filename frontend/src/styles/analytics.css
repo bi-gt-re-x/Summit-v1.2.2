@@ -9009,3 +9009,96 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 @media (max-width: 720px) {
     .sg-spark { flex: 1 1 100%; max-width: none; margin-left: 0; }
 }
+
+/* ---- Skills by level ------------------------------------------------------
+   One step of a skill tree per row, measured from problems the reader marked.
+   `ax-lv-` beside the subject rows' `sg-`, and the same card shape, so the two
+   panels read as the same question at two grains. The level pair is the
+   row's loudest element because it is the sentence the panel exists for. */
+.ax-lv-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+.ax-lv-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--ax-line);
+    border-left: 3px solid var(--ax-line);
+    border-radius: var(--ax-radius);
+    background: var(--ax-card-2);
+}
+.ax-lv-row.is-up { border-left-color: var(--ax-good); }
+.ax-lv-row.is-down { border-left-color: var(--ax-amber); }
+.ax-lv-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+.ax-lv-title { margin: 0; font-size: var(--text-lg); font-weight: 700; color: var(--ax-text); }
+.ax-lv-where { margin: 2px 0 0; font-size: var(--text-xs); color: var(--ax-muted); }
+.ax-lv-levels {
+    margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-variant-numeric: tabular-nums;
+}
+.ax-lv-then { font-size: var(--text-lg); font-weight: 600; color: var(--ax-faint); }
+.ax-lv-arrow { color: var(--ax-faint); }
+.ax-lv-now { font-size: var(--text-2xl); font-weight: 800; color: var(--ax-text); letter-spacing: -.01em; }
+.ax-lv-row.is-up .ax-lv-now { color: var(--ax-good); }
+.ax-lv-of { font-size: var(--text-sm); color: var(--ax-muted); }
+.ax-lv-band { margin: 0; font-size: var(--text-sm); font-weight: 600; color: var(--ax-muted); }
+.ax-lv-facts {
+    display: grid;
+    /* Four facts: four across, or two by two — never three and one. */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin: 0;
+}
+.ax-lv-facts > div {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--ax-line-soft);
+    border-radius: var(--radius-sm);
+    background: var(--ax-card);
+}
+.ax-lv-facts dt {
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
+.ax-lv-facts dd {
+    margin: 2px 0 0;
+    font-size: var(--text-md);
+    font-weight: 700;
+    color: var(--ax-text);
+    font-variant-numeric: tabular-nums;
+}
+.ax-lv-facts dd small { display: block; font-size: var(--text-2xs); font-weight: 500; color: var(--ax-muted); }
+.ax-lv-more {
+    margin-top: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--ax-line);
+    border-radius: var(--radius-full);
+    background: var(--ax-card);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ax-text);
+    cursor: pointer;
+}
+.ax-lv-empty p { margin: 0 0 var(--space-2); font-size: var(--text-sm); line-height: 1.6; color: var(--ax-muted); }
+.ax-lv-empty a { color: var(--ax-violet); font-weight: 700; }
+@media (max-width: 720px) {
+    .ax-lv-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

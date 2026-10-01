@@ -31,8 +31,18 @@ vi.mock('@/hooks', async (importOriginal) => ({
 
 vi.mock('@/services', async (importOriginal) => {
   const real = await importOriginal<typeof import('@/services')>();
-  return { ...real, analytics: { ...real.analytics, growthPeriods: vi.fn() } };
+  return {
+    ...real,
+    analytics: { ...real.analytics, growthPeriods: vi.fn() },
+    // The skill-level panel's own request. Empty unless a test fills it.
+    skillAttempts: { ...real.skillAttempts, list: vi.fn(async () => ({ success: true, attempts: [] })) },
+  };
 });
+
+vi.mock('@/services/skillSteps', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/services/skillSteps')>()),
+  loadSteps: vi.fn(async () => ({})),
+}));
 
 const { analytics: analyticsService } = await import('@/services');
 const growthPeriods = vi.mocked(analyticsService.growthPeriods);

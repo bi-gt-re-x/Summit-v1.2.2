@@ -59,6 +59,7 @@ import {
 } from '../GrowthPeriod';
 import { Building } from '../Building';
 import { SkillGrowthPanel, TimeProgressPanel } from '../SkillGrowth';
+import { SkillLevelsPanel } from '../SkillLevels';
 import { skillTrajectory, timeToProgress } from '@/utils/skillGrowth';
 import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
@@ -296,6 +297,19 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               note={`Your abilities across subjects over time — ${periodText}`}
             >
               <SkillGrowthPanel tracks={tracks} periodText={periodText} limit={detail.rows} />
+            </Panel>
+          </section>
+
+          {/* The same question one level down: not Mathematics but Factor
+              Simple Quadratics, read from problems the reader marked right or
+              wrong on the skill tree. The subject panel above cannot go finer
+              than a subject, because that is all a task records. */}
+          <section className="ax-section">
+            <Panel
+              title="Skills by level"
+              note={`Each step of your skill trees, measured from problems you marked right or wrong — ${periodText}`}
+            >
+              <SkillLevelsPanel windowDays={windowDays} periodText={periodText} limit={detail.rows} />
             </Panel>
           </section>
 

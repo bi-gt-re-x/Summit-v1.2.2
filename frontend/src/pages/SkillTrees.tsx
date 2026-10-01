@@ -141,6 +141,7 @@ import {
   useDocumentTitle,
   useLatticeKeys,
   usePageEntrance,
+  useSkillAttempts,
   useSubjects,
 } from '@/hooks';
 import { iconForName } from '@/skills/iconMatch';
@@ -298,6 +299,15 @@ export default function SkillTrees() {
   useDocumentTitle('Skill Tree');
 
   const { username } = useAuth();
+  /* What the reader has got right and wrong, per skill — the evidence every
+     measured level on this page is read from. One request for the whole
+     account rather than per tree: a level is a reading of every row up to a
+     date, and the Growth tab asks for the same list. */
+  const practice = useSkillAttempts(username);
+  const evidence = useMemo(
+    () => ({ attempts: practice.attempts, onAttempt: practice.add, onUndo: practice.remove }),
+    [practice.attempts, practice.add, practice.remove],
+  );
   // The account's own catalogue, usage-ordered by the endpoint. Everything at
   // the top of this page is drawn from it: the five focus cards, the rail, and
   // half of what the search can find.
@@ -1140,6 +1150,7 @@ export default function SkillTrees() {
             renamed={Boolean(selected && names[selected.id])}
             onResetName={selected ? () => rename(selected.id, null) : undefined}
             onExpand={onExpand}
+            evidence={evidence}
             flash={flash && selected && flash.id === selected.id ? flash.gain : null}
             placeholder={
               <>
