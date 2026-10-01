@@ -42,7 +42,7 @@
  * and a zero would read as "you are bad at this" where the record says "you
  * never said how it went".
  */
-import { skillScores, type SkillBand, type SkillRow } from './skillScore';
+import { SKILL_BANDS, bandFor, skillScores, type SkillBand, type SkillRow } from './skillScore';
 import type { GrowthDay, Task } from '@/types';
 
 /** How many readings a sparkline is drawn from, the period's end included. */
@@ -80,6 +80,18 @@ export interface SkillTrack {
   rated: number;
   /** The score at each sample, oldest first, for the sparkline. */
   spark: number[];
+  /**
+   * The same samples before the gaps were filled: null where the subject had
+   * no score yet. The average line reads these, so a subject that appeared
+   * halfway through the period does not pull the start of it.
+   */
+  known: Array<number | null>;
+  /** The date of each sample, ISO, parallel to `spark`. */
+  dates: string[];
+  /** Rated tasks finished inside the period — what "worked on" means here. */
+  ratedInPeriod: number;
+  /** Days since anything was last finished in this subject, as of the period's end. */
+  daysSince: number | null;
 }
 
 /** Midnight UTC-ish, as a day key, for comparing against `completed_at`. */
@@ -174,7 +186,10 @@ export function skillTrajectory({
      thing — the cost is `points` × the tasks in the period, not `points` × the
      account. */
   const sorted = [...done].sort((a, b) => a.completed_at!.localeCompare(b.completed_at!));
-  const readings = samples(startMs, toMs, points).map((at) => {
+  const sampled = samples(startMs, toMs, points);
+  const dates = sampled.map(dayKey);
+  const fromKey = dates[0]!;
+  const readings = sampled.map((at) => {
     const key = dayKey(at);
     let cut = sorted.length;
     for (let i = 0; i < sorted.length; i += 1) {
@@ -207,6 +222,17 @@ export function skillTrajectory({
       confidence: row.confidence,
       rated: row.rated,
       spark: sparkFor(readings, subject),
+      known: readings.map((reading) => {
+        const score = reading.get(subject)?.score;
+        return score === undefined ? null : Math.round(score);
+      }),
+      dates,
+      ratedInPeriod: sorted.filter((task) => {
+        const on = task.completed_at!.slice(0, 10);
+        return task.subject === subject && on >= fromKey && on <= toIso
+          && Number(task.difficulty) > 0 && Number(task.execution) > 0;
+      }).length,
+      daysSince: row.daysSince,
     });
   }
 
@@ -214,6 +240,155 @@ export function skillTrajectory({
     const moved = Math.abs(b.delta ?? 0) - Math.abs(a.delta ?? 0);
     return moved !== 0 ? moved : b.now - a.now;
   });
+}
+
+// --------------------------------------------------------------------------
+// The headline figures
+// --------------------------------------------------------------------------
+/**
+ * Six figures over the trajectory, each carrying the evidence it came from.
+ *
+ * A bare "+18%" or "Needs attention: Geometry" is a number the reader has to
+ * take on trust, and that was the complaint about this tab. So every figure
+ * here comes back with what it was counted from — the subjects behind a count,
+ * the start and end behind a percentage, the reason behind a warning — and the
+ * panel prints both.
+ *
+ * "Skill" means subject throughout, because a subject is the finest thing a
+ * task records. See the note at the top of this file.
+ */
+export interface SkillSummary {
+  /** Every subject with a level. */
+  total: number;
+  /**
+   * Average level across the subjects that had one at the start, then and now.
+   *
+   * Only those subjects, so the comparison is like for like: a subject that
+   * appeared halfway through would otherwise drag the "then" average with a
+   * number it never had.
+   */
+  overall: { avgThen: number; avgNow: number; pct: number; points: number; subjects: number } | null;
+  /** Rose at all over the period. */
+  improved: SkillTrack[];
+  /** At Mastery (90+) now. */
+  mastered: SkillTrack[];
+  /** The nearest to Mastery, when nothing is there yet, and how far it has to go. */
+  closest: { track: SkillTrack; toGo: number } | null;
+  /** Below Mastery and with rated work inside the period. */
+  developing: SkillTrack[];
+  /** The largest rise, where anything rose. */
+  biggest: SkillTrack | null;
+  /** The subject most worth looking at, and why — see `attentionFor`. */
+  attention: { track: SkillTrack; reason: 'fell' | 'idle' | 'lowest' } | null;
+}
+
+/** How long without finishing anything before a subject counts as left alone. */
+export const IDLE_DAYS = 21;
+
+/**
+ * Which subject needs attention, and the reason, in the order that matters.
+ *
+ * A fall first, because a level that went down is the only thing on this panel
+ * that has already cost something. Then a subject left alone for three weeks,
+ * which has not fallen yet and will — retention and recent form both decay.
+ * Then simply the lowest level, which is the weakest claim and is only made
+ * when there is more than one subject to be lowest among.
+ */
+function attentionFor(tracks: SkillTrack[]): SkillSummary['attention'] {
+  const fell = tracks
+    .filter((track) => (track.delta ?? 0) < 0)
+    .sort((a, b) => (a.delta ?? 0) - (b.delta ?? 0))[0];
+  if (fell) return { track: fell, reason: 'fell' };
+
+  const idle = tracks
+    .filter((track) => (track.daysSince ?? 0) >= IDLE_DAYS)
+    .sort((a, b) => (b.daysSince ?? 0) - (a.daysSince ?? 0))[0];
+  if (idle) return { track: idle, reason: 'idle' };
+
+  if (tracks.length < 2) return null;
+  const lowest = [...tracks].sort((a, b) => a.now - b.now)[0]!;
+  return { track: lowest, reason: 'lowest' };
+}
+
+export function skillSummary(tracks: SkillTrack[]): SkillSummary {
+  const compared = tracks.filter((track) => track.then !== null);
+  const mean = (values: number[]) => values.reduce((sum, v) => sum + v, 0) / values.length;
+
+  let overall: SkillSummary['overall'] = null;
+  if (compared.length) {
+    const avgThen = mean(compared.map((track) => track.then!));
+    const avgNow = mean(compared.map((track) => track.now));
+    overall = {
+      avgThen: Math.round(avgThen),
+      avgNow: Math.round(avgNow),
+      /* Against a floor of one, so a start at zero is a large rise rather than
+         a division by nothing. The scores are shrunk toward 30, so a real
+         start at zero does not happen; the guard is for the arithmetic. */
+      pct: Math.round(((avgNow - avgThen) / Math.max(1, avgThen)) * 100),
+      points: Math.round(avgNow - avgThen),
+      subjects: compared.length,
+    };
+  }
+
+  const improved = tracks
+    .filter((track) => (track.delta ?? 0) > 0)
+    .sort((a, b) => (b.delta ?? 0) - (a.delta ?? 0));
+  const mastered = tracks.filter((track) => track.band === 'Mastery');
+  const below = tracks.filter((track) => track.band !== 'Mastery');
+  const nearest = [...below].sort((a, b) => b.now - a.now)[0];
+
+  return {
+    total: tracks.length,
+    overall,
+    improved,
+    mastered,
+    closest: mastered.length === 0 && nearest ? { track: nearest, toGo: 90 - nearest.now } : null,
+    developing: below
+      .filter((track) => track.ratedInPeriod > 0)
+      .sort((a, b) => b.ratedInPeriod - a.ratedInPeriod),
+    biggest: improved[0] ?? null,
+    attention: attentionFor(tracks),
+  };
+}
+
+/**
+ * The average level at each sample, for the line under the figures.
+ *
+ * Read from `known` rather than `spark`, so each point averages only the
+ * subjects that had a level on that date. A sample nobody had a level at yet
+ * takes the first real average, the same rule `sparkFor` uses for one subject.
+ */
+export function averageLine(tracks: SkillTrack[]): number[] {
+  const length = tracks[0]?.known.length ?? 0;
+  const raw = Array.from({ length }, (_, i) => {
+    const there = tracks.map((track) => track.known[i]).filter((v): v is number => v != null);
+    return there.length ? there.reduce((sum, v) => sum + v, 0) / there.length : null;
+  });
+  const first = raw.find((v) => v !== null) ?? 0;
+  let carried = first;
+  return raw.map((value) => {
+    if (value !== null) carried = value;
+    return Math.round(carried);
+  });
+}
+
+/**
+ * Every point at which a subject's line crossed up into a new band.
+ *
+ * These are the moments the panel exists to show — "Algebra reached Strong" —
+ * so they are drawn on the line where they happened rather than listed apart.
+ */
+export function bandCrossings(tracks: SkillTrack[]): Array<{ at: number; label: string }> {
+  const rank = (score: number) => SKILL_BANDS.findIndex((row) => row.band === bandFor(score));
+  const out: Array<{ at: number; label: string }> = [];
+  for (const track of tracks) {
+    for (let i = 1; i < track.spark.length; i += 1) {
+      if (rank(track.spark[i]!) > rank(track.spark[i - 1]!)) {
+        out.push({ at: i, label: `${track.name} reached ${bandFor(track.spark[i]!)}` });
+      }
+    }
+  }
+  return out.sort((a, b) => a.at - b.at);
 }
 
 // --------------------------------------------------------------------------

@@ -477,7 +477,7 @@ describe('what the tab opens on', () => {
 
   it('leads with skill growth, above the five graded measures', async () => {
     draw(<GrowthTab model={withWork()} />);
-    const skill = await screen.findByText('Skill growth');
+    const skill = await screen.findByText('Skill Growth');
     const time = screen.getByText('Time, and what it bought');
     // `compareDocumentPosition` rather than a query order: the assertion is
     // about the page, not about the order the queries ran in.
@@ -487,10 +487,34 @@ describe('what the tab opens on', () => {
 
   it('names the subject and prints where its level started and finished', async () => {
     draw(<GrowthTab model={withWork()} />);
-    expect(await screen.findByText('Mathematics')).toBeInTheDocument();
+    const rows = (await screen.findByText('Subject by subject')).nextElementSibling!;
+    expect(rows.querySelector('.sg-name')?.textContent).toBe('Mathematics');
     // The pair, which is the whole claim — a closing figure alone is a
     // standing, and the analytics page already gives that.
     expect(document.querySelector('.sg-move strong')).not.toBeNull();
+  });
+
+  it('opens on six figures, each saying what it was counted from', async () => {
+    /* A bare "+18%" is a number the reader has to take on trust. Every card
+       carries the sentence that makes it checkable. */
+    draw(<GrowthTab model={withWork()} />);
+    await screen.findByText('Subject by subject');
+    const grid = document.querySelector('.sg-stats')!;
+    const labels = [...grid.querySelectorAll('dt')].map((dt) => dt.textContent);
+    expect(labels).toEqual([
+      'Overall growth', 'Skills improved', 'Skills mastered',
+      'Currently developing', 'Biggest growth', 'Needs attention',
+    ]);
+    grid.querySelectorAll('.sg-stat-detail').forEach((detail) => {
+      expect(detail.textContent!.length).toBeGreaterThan(20);
+    });
+    expect(grid.textContent).toMatch(/average level went from \d+ to \d+ out of 100/);
+  });
+
+  it('draws ability over time, not hours', async () => {
+    draw(<GrowthTab model={withWork()} />);
+    expect(await screen.findByText('Growth over time')).toBeInTheDocument();
+    expect(screen.getByText(/measured from rated work — not hours studied/)).toBeInTheDocument();
   });
 
   it('says where the branches went rather than inventing figures for them', async () => {
@@ -506,6 +530,6 @@ describe('what the tab opens on', () => {
     // `new Date(NaN).toISOString()` throws, so an account with no last day
     // used to take the whole tab down instead of drawing an empty panel.
     draw(<GrowthTab model={fakeModel({ all: [] as never, tasks: [] as never })} />);
-    expect(await screen.findByText('Skill growth')).toBeInTheDocument();
+    expect(await screen.findByText('Skill Growth')).toBeInTheDocument();
   });
 });

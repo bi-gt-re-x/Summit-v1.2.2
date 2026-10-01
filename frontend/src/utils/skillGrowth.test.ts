@@ -19,7 +19,14 @@
  * where a plausible number would be worse than no number.
  */
 import { describe, expect, it } from 'vitest';
-import { skillTrajectory, timeToProgress, type SkillTrack } from './skillGrowth';
+import {
+  averageLine,
+  bandCrossings,
+  skillSummary,
+  skillTrajectory,
+  timeToProgress,
+  type SkillTrack,
+} from './skillGrowth';
 import { task } from '@/test/factories';
 import type { GrowthDay, Task } from '@/types';
 
@@ -157,6 +164,93 @@ describe('the trajectory', () => {
   it('says nothing without a date to measure to', () => {
     expect(skillTrajectory({ tasks: ratedRun('math', 40, TO), nameOf, days: 30, toIso: '' }))
       .toEqual([]);
+  });
+});
+
+describe('the headline figures', () => {
+  const track = (over: Partial<SkillTrack> = {}): SkillTrack => ({
+    subject: 'math', name: 'Mathematics', now: 60, then: 50, delta: 10,
+    band: 'Strong', bandThen: 'Competent', promoted: true,
+    confidence: 0.8, rated: 20, spark: [50, 55, 60], known: [50, 55, 60],
+    dates: ['2026-06-01', '2026-06-15', '2026-06-30'], ratedInPeriod: 8, daysSince: 1,
+    ...over,
+  });
+
+  it('measures overall growth only across subjects that had a start', () => {
+    const out = skillSummary([
+      track({ then: 40, now: 50, delta: 10 }),
+      track({ subject: 'cs', then: 60, now: 70, delta: 10 }),
+      // Appeared this period: no "then", so it cannot drag the average.
+      track({ subject: 'art', then: null, now: 20, delta: null }),
+    ]);
+    expect(out.overall).toEqual({ avgThen: 50, avgNow: 60, pct: 20, points: 10, subjects: 2 });
+  });
+
+  it('has no overall growth when nothing had a level at the start', () => {
+    expect(skillSummary([track({ then: null, delta: null })]).overall).toBeNull();
+  });
+
+  it('counts improved, mastered and developing, with the closest to mastery', () => {
+    const out = skillSummary([
+      track({ subject: 'a', now: 92, band: 'Mastery', delta: 4 }),
+      track({ subject: 'b', now: 78, band: 'Advanced', delta: -2, ratedInPeriod: 3 }),
+      track({ subject: 'c', now: 40, band: 'Competent', delta: 0, ratedInPeriod: 0 }),
+    ]);
+    expect(out.improved.map((t) => t.subject)).toEqual(['a']);
+    expect(out.mastered.map((t) => t.subject)).toEqual(['a']);
+    expect(out.closest).toBeNull();
+    // Below Mastery *and* worked on: c was left alone this period.
+    expect(out.developing.map((t) => t.subject)).toEqual(['b']);
+
+    const none = skillSummary([track({ now: 78, band: 'Advanced' })]);
+    expect(none.closest).toEqual({ track: expect.objectContaining({ now: 78 }), toGo: 12 });
+  });
+
+  it('picks the biggest rise, and nothing when nothing rose', () => {
+    const out = skillSummary([
+      track({ subject: 'a', delta: 3 }),
+      track({ subject: 'b', delta: 11 }),
+    ]);
+    expect(out.biggest?.subject).toBe('b');
+    expect(skillSummary([track({ delta: -1 })]).biggest).toBeNull();
+  });
+
+  it('flags a fall before a subject left alone, and that before the lowest', () => {
+    const fell = track({ subject: 'fell', delta: -6 });
+    const idle = track({ subject: 'idle', delta: 2, daysSince: 40 });
+    const low = track({ subject: 'low', delta: 1, now: 25 });
+    expect(skillSummary([fell, idle, low]).attention).toEqual({ track: fell, reason: 'fell' });
+    expect(skillSummary([idle, low]).attention).toEqual({ track: idle, reason: 'idle' });
+    expect(skillSummary([low, track()]).attention).toEqual({ track: low, reason: 'lowest' });
+    // One subject is not "the lowest" of anything.
+    expect(skillSummary([track()]).attention).toBeNull();
+  });
+
+  it('averages only the subjects that had a level on each date', () => {
+    const line = averageLine([
+      track({ known: [40, 50, 60] }),
+      track({ subject: 'cs', known: [null, null, 80] }),
+    ]);
+    expect(line).toEqual([40, 50, 70]);
+  });
+
+  it('marks the point a subject crossed up into a new band', () => {
+    // 58 is Competent, 61 is Strong.
+    expect(bandCrossings([track({ spark: [50, 58, 61] })]))
+      .toEqual([{ at: 2, label: 'Mathematics reached Strong' }]);
+  });
+
+  it('carries the period’s worked-on count and dates from the trajectory', () => {
+    const TO = '2026-06-30';
+    const [math] = skillTrajectory({
+      tasks: [...ratedRun('math', 40, '2026-05-01'), ...ratedRun('math', 5, TO)],
+      nameOf,
+      days: 30,
+      toIso: TO,
+    });
+    expect(math!.ratedInPeriod).toBe(5);
+    expect(math!.dates[math!.dates.length - 1]).toBe(TO);
+    expect(math!.known).toHaveLength(math!.spark.length);
   });
 });
 

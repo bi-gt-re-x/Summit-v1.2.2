@@ -292,8 +292,8 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               the tab. See utils/skillGrowth. */}
           <section className="ax-section">
             <Panel
-              title="Skill growth"
-              note={`Where each subject's level started and finished over ${periodText}`}
+              title="Skill Growth"
+              note={`Your abilities across subjects over time — ${periodText}`}
             >
               <SkillGrowthPanel tracks={tracks} periodText={periodText} limit={detail.rows} />
             </Panel>
