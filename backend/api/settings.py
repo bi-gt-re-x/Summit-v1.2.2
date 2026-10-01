@@ -51,6 +51,7 @@ exists, and the *next* write of the notes table fails its integrity check. So
 order, and the delete is the last step rather than the only one.
 """
 import re
+from datetime import date
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, Request
@@ -62,6 +63,7 @@ from backend.api.reply import fail, ok
 from backend.config.settings import THEME_COOKIE_MAX_AGE
 from backend.database import connection as db
 from backend.tracking import avatar as avatars
+from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['settings'])
@@ -566,6 +568,12 @@ def _shape(user):
         'level': int(user.get('level') or 1),
         'xp': int(user.get('xp') or 0),
         'avatar': '/static/' + avatars.avatar_path(avatars.avatar_for(user)),
+        # Vacation mode is a state of the streak rather than a preference, so
+        # it lives on the user row and is changed through /api/streak/vacation
+        # (backend/api/dashboard.py). It is shown here because Settings is
+        # where people look for it.
+        'streak_vacation': xp_tracking.current_vacation(user, date.today()),
+        'vacation_max_days': xp_tracking.VACATION_MAX_DAYS,
     }
 
 
@@ -777,6 +785,7 @@ FRESH = {
     'xp': 0, 'level': 1, 'tasks_completed': 0,
     'current_streak': 0, 'best_streak': 0,
     'last_task_date': None, 'day_state': None, 'charge': 0,
+    'streak_grace_day': None, 'streak_vacations': None,
 }
 
 

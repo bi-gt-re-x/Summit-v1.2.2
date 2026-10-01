@@ -278,14 +278,85 @@ GRACE_EARNED_AT = 7
 GRACE_REFRESH_DAYS = 30
 
 
+#: The longest one vacation may be, in days, counting both ends.
+#:
+#: Vacation mode exists for the week the reader *cannot* work — a trip, an
+#: exam period, being ill — not as a way to keep a number alive through a
+#: season of not doing anything. A month covers every real case; past that the
+#: honest thing is for the run to end and a new one to start on the way back.
+VACATION_MAX_DAYS = 30
+
+#: How long a finished vacation is kept once the run has moved past it.
+#:
+#: Only two readers need an old window: the gap check, which only looks after
+#: `last_task_date`, and the dashboard's week strip, which looks back seven days.
+VACATION_KEEP_DAYS = 7
+
+
+def vacations(user):
+    """The account's vacation windows as (first, last) dates, oldest first.
+
+    Stored on the user row as a JSON list of `[first, last]` ISO days, both
+    included. Anything that does not parse is skipped rather than trusted: a
+    window that cannot be read is not a reason to excuse a missed day.
+    """
+    out = []
+    for item in user.get('streak_vacations') or []:
+        if not isinstance(item, (list, tuple)) or len(item) != 2:
+            continue
+        first, last = parse_day(item[0]), parse_day(item[1])
+        if first and last and first <= last:
+            out.append((first, last))
+    return sorted(out)
+
+
+def on_vacation(user, day):
+    return any(first <= day <= last for first, last in vacations(user))
+
+
+def current_vacation(user, today):
+    """The window running today or the next one coming, or None."""
+    for first, last in vacations(user):
+        if last >= today:
+            return {'start': first.isoformat(), 'end': last.isoformat(),
+                    'active': first <= today}
+    return None
+
+
+def _missed(user, last_date, today):
+    """How many days between these two were missed, and which, if just one.
+
+    "Between" is strictly between: the day of the last task was worked, and
+    today is not over. A vacation day is not missed — that is the whole of
+    what vacation mode does — so the count skips them.
+
+    The day itself is only worked out when the count is one, since that is the
+    only case anybody asks which day it was. An account away for years is not
+    walked day by day: no set of windows can cover more than a few months, so a
+    gap past that is many missed days whatever the windows say.
+    """
+    gap = (today - last_date).days - 1
+    if gap <= 0:
+        return 0, None
+    windows = vacations(user)
+    if not windows or gap > 400:
+        return gap, (last_date + timedelta(days=1) if gap == 1 else None)
+    missed = [last_date + timedelta(days=step) for step in range(1, gap + 1)]
+    missed = [day for day in missed
+              if not any(first <= day <= last for first, last in windows)]
+    return len(missed), (missed[0] if len(missed) == 1 else None)
+
+
 def _grace_available(user, last_date, today):
     """Whether the single day missed between these two dates is forgiven.
 
     Three things have to hold. **Exactly one day was missed** — this forgives
     an off day, not a fortnight away, and two missed days is a broken streak by
-    any reading. **The streak had reached `GRACE_EARNED_AT`**, so the
-    forgiveness was earned. And **no grace day has been spent recently**,
-    which is what stops it becoming a standing licence.
+    any reading. Days on vacation do not count as missed, so a vacation and an
+    off day either side of it is still one missed day. **The streak had
+    reached `GRACE_EARNED_AT`**, so the forgiveness was earned. And **no grace
+    day has been spent recently**, which is what stops it becoming a standing
+    licence.
 
     The last of those has a wrinkle: the day already recorded may be *this*
     missed day, because `refresh_streak` records it on a page load and
@@ -293,12 +364,12 @@ def _grace_available(user, last_date, today):
     the same forgiveness being read twice, not a second one, so it is allowed
     — which is what makes both callers idempotent.
     """
-    if (today - last_date).days != 2:
+    count, missed = _missed(user, last_date, today)
+    if count != 1:
         return False
     if (user.get('current_streak') or 0) < GRACE_EARNED_AT:
         return False
 
-    missed = last_date + timedelta(days=1)
     already = parse_day(user.get('streak_grace_day'))
     if already is None or already == missed:
         return True
@@ -321,15 +392,50 @@ def grace_covers_today(user, today):
     return _grace_available(user, last_date, today + timedelta(days=1))
 
 
-def refresh_streak(user):
+def grace_back_on(grace_day):
+    """The first missed day a run that spent grace on `grace_day` is forgiven.
+
+    `_grace_available` asks on the day *after* a missed day, and wants
+    GRACE_REFRESH_DAYS between that and the last one spent — so the first day
+    that can be missed and forgiven again is one sooner than that.
+    """
+    return grace_day + timedelta(days=GRACE_REFRESH_DAYS - 1)
+
+
+def grace_status(user, today):
+    """Where the run stands with its grace day, for the streak card.
+
+    `locked` until the run reaches GRACE_EARNED_AT, with how many days are
+    left; `spent` while one used in the last month is still coming back, with
+    the day it does; `ready` otherwise. The same rules as `_grace_available`,
+    read forward: "if I missed today, would it be forgiven?"
+    """
+    streak = int(user.get('current_streak') or 0)
+    if streak < GRACE_EARNED_AT:
+        return {'state': 'locked', 'earned_at': GRACE_EARNED_AT,
+                'days_to_earn': GRACE_EARNED_AT - streak, 'back_on': None,
+                'last_used': None}
+    used = parse_day(user.get('streak_grace_day'))
+    back = grace_back_on(used) if used else None
+    state = 'spent' if back and today < back else 'ready'
+    return {'state': state, 'earned_at': GRACE_EARNED_AT, 'days_to_earn': 0,
+            'back_on': back.isoformat() if back and state == 'spent' else None,
+            'last_used': used.isoformat() if used else None}
+
+
+def refresh_streak(user, today=None):
     """Decay a stale streak so every page reads the same live value.
 
     A streak counts consecutive days with at least one completed task. It stays
-    alive while the last completed task was today or yesterday — and now also
-    across a single missed day, when the run had earned that. Two missed days,
-    or one that the account has no grace left for, ends it. best_streak is the
+    alive while the last completed task was today or yesterday — and across a
+    single missed day, when the run had earned that, and across any number of
+    days on vacation, which are not missed days at all. Two missed days, or one
+    that the account has no grace left for, ends it. best_streak is the
     all-time record and is never lowered. At the start of a new day day_state
     flips back to 'newday' so the next completion extends the streak.
+
+    `today` is for the notifications sweep, which asks this about the reader's
+    own day on a copy of the row. Everything else leaves it to the server.
 
     Returns True when the record changed, so the caller can persist it.
     """
@@ -337,40 +443,38 @@ def refresh_streak(user):
     if last_date is None:
         return False
 
-    today = date.today()
+    today = today or date.today()
     gap = (today - last_date).days
     changed = False
-    if gap >= 2:
+    if gap >= 1 and user.get('day_state') != 'newday':
+        # New day, streak not yet extended today.
+        user['day_state'] = 'newday'
+        changed = True
+
+    count, missed = _missed(user, last_date, today)
+    if count >= 1:
         if _grace_available(user, last_date, today):
             # One day missed, and this run had a grace day to spend. The
             # streak stands; the day it covered is written down so the rate in
             # GRACE_REFRESH_DAYS can be counted from it, and so that the same
             # day is not paid for twice.
-            missed = (last_date + timedelta(days=1)).isoformat()
-            if user.get('streak_grace_day') != missed:
-                user['streak_grace_day'] = missed
+            if user.get('streak_grace_day') != missed.isoformat():
+                user['streak_grace_day'] = missed.isoformat()
                 changed = True
         elif user.get('current_streak', 0) != 0:
             # Too long away, or nothing left to spend — the streak is broken.
             user['current_streak'] = 0
             changed = True
-        if user.get('day_state') != 'newday':
-            user['day_state'] = 'newday'
-            changed = True
-    elif gap == 1:
-        # New day, streak still alive but not yet extended today.
-        if user.get('day_state') != 'newday':
-            user['day_state'] = 'newday'
-            changed = True
     return changed
 
 
-def extend_streak(user):
+def extend_streak(user, today=None):
     """Count today's completion toward the streak.
 
     Another task the same day leaves it unchanged, the first task the next day
-    extends it by one, a single missed day the run had earned forgiveness for
-    also extends it, and anything longer restarts it at one.
+    extends it by one — as does the first after a vacation, or after a single
+    missed day the run had earned forgiveness for — and anything longer
+    restarts it at one.
 
     The grace is decided here rather than read off what `refresh_streak` left
     behind, because nothing guarantees a page load happened in between — a task
@@ -379,21 +483,22 @@ def extend_streak(user):
     Both ask `_grace_available`, and asking twice about one missed day is
     allowed, so the two agree however they are interleaved.
     """
-    today = date.today()
+    today = today or date.today()
     last_date = parse_day(user.get('last_task_date'))
     current = user.get('current_streak', 0) or 0
 
     if last_date is None:
         new_streak = 1
+    elif (today - last_date).days <= 0:
+        new_streak = max(current, 1)
     else:
-        gap = (today - last_date).days
-        if gap <= 0:
-            new_streak = max(current, 1)
-        elif gap == 1:
+        count, missed = _missed(user, last_date, today)
+        if count == 0:
+            # Yesterday, or nothing but vacation since.
             new_streak = current + 1
         elif _grace_available(user, last_date, today):
             new_streak = current + 1
-            user['streak_grace_day'] = (last_date + timedelta(days=1)).isoformat()
+            user['streak_grace_day'] = missed.isoformat()
         else:
             new_streak = 1
             # A run that ended takes its spent grace with it: the next one is
@@ -405,6 +510,90 @@ def extend_streak(user):
     user['last_task_date'] = today.isoformat()
     user['day_state'] = 'oldday'
     return new_streak
+
+
+# --------------------------------------------------------------------------
+# Vacation mode
+# --------------------------------------------------------------------------
+def plan_vacation(user, until, today=None):
+    """Put the streak on vacation from today to `until`, both included.
+
+    Returns an error string, or None having updated `user` in place (the caller
+    saves it). One vacation at a time: setting a new end while one is running
+    *moves its end* — the days already taken stay taken, so shortening a
+    vacation in its second week does not turn its first week into missed days.
+    One still to come is replaced. Finished ones are kept for the gap check
+    and the week strip until VACATION_KEEP_DAYS after the run has moved past
+    them, then dropped.
+    """
+    today = today or date.today()
+    until = parse_day(until)
+    if until is None:
+        return 'Pick the last day of the vacation.'
+    if until < today:
+        return 'A vacation has to end today or later.'
+
+    keep, running = [], None
+    for first, last in vacations(user):
+        if last < today:
+            keep.append((first, last))
+        elif first <= today:
+            running = (first, last)
+    start = running[0] if running else today
+    if (until - start).days + 1 > VACATION_MAX_DAYS:
+        return 'A vacation can be at most {} days long.'.format(VACATION_MAX_DAYS)
+
+    keep.append((start, until))
+    _store_vacations(user, keep, today)
+    return None
+
+
+def end_vacation(user, today=None):
+    """Back from vacation: today is an ordinary day again.
+
+    The running window is cut to yesterday, so the days already taken stay
+    covered; one that only started today, or has not started, is dropped.
+    Returns whether anything changed.
+    """
+    today = today or date.today()
+    keep, changed = [], False
+    for first, last in vacations(user):
+        if last < today:
+            keep.append((first, last))
+        elif first < today:
+            keep.append((first, today - timedelta(days=1)))
+            changed = True
+        else:
+            changed = True
+    if changed:
+        _store_vacations(user, keep, today)
+    return changed
+
+
+def _store_vacations(user, windows, today):
+    last_task = parse_day(user.get('last_task_date')) or today
+    horizon = min(last_task, today - timedelta(days=VACATION_KEEP_DAYS))
+    kept = [[first.isoformat(), last.isoformat()]
+            for first, last in sorted(windows) if last >= horizon]
+    user['streak_vacations'] = kept or None
+
+
+def streak_fields(user, today=None):
+    """Everything about the streak the frontend draws, in one place.
+
+    The stats read and both completion replies send this, so the streak card
+    reads the same thing whichever of them it last heard from.
+    """
+    today = today or date.today()
+    return {
+        'current_streak': user.get('current_streak', 0),
+        'best_streak': user.get('best_streak', 0),
+        'last_task_date': user.get('last_task_date'),
+        'streak_grace_day': user.get('streak_grace_day'),
+        'streak_vacations': [[a.isoformat(), b.isoformat()] for a, b in vacations(user)],
+        'grace': grace_status(user, today),
+        'vacation': current_vacation(user, today),
+    }
 
 
 def award_task_completion(user, xp_reward):

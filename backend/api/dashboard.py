@@ -65,23 +65,19 @@ class UpdateStats(BaseModel):
 
 
 def _stats_of(user):
-    """The six numbers every screen shows, and the two days the streak hangs on.
+    """The numbers every screen shows, and what the streak card draws.
 
-    `last_task_date` and `streak_grace_day` are there for the week strip on the
-    dashboard's streak card. A streak of 12 does not say *which* twelve days:
-    nothing may have been finished yet today, and a run that was forgiven a
-    missed day covers thirteen. Drawn from the count alone, the strip ticked
-    days nobody worked.
+    The streak half is `xp_tracking.streak_fields`: the days the run hangs on
+    (a streak of 12 does not say *which* twelve days — nothing may be finished
+    yet today, a forgiven day or a vacation stretches it), where its grace day
+    stands, and any vacation running or to come.
     """
     return {
         "level": user.get('level', 1),
         "xp": user.get('xp', 0),
         "tasks_completed": user.get('tasks_completed', 0),
-        "current_streak": user.get('current_streak', 0),
-        "best_streak": user.get('best_streak', 0),
         "charge": user.get('charge', 0),
-        "last_task_date": user.get('last_task_date'),
-        "streak_grace_day": user.get('streak_grace_day'),
+        **xp_tracking.streak_fields(user),
     }
 
 
@@ -100,6 +96,41 @@ def get_stats(username: str = Depends(current_username)):
     if xp_tracking.refresh_streak(user):
         db.save_user(user)
 
+    return ok(stats=_stats_of(user))
+
+
+class PlanVacation(BaseModel):
+    #: The last day of the vacation, ISO, included. It always starts today.
+    until: str = ''
+
+
+@router.post('/api/streak/vacation')
+def plan_vacation(body: PlanVacation, username: str = Depends(current_username)):
+    """Pause the streak from today to `until`, or move the end of the one running.
+
+    Replies with the stats block, so the streak card and the settings row both
+    redraw from the answer rather than from what the page asked for. The rules
+    — one at a time, at most VACATION_MAX_DAYS, days already taken stay taken —
+    are `xp_tracking.plan_vacation`'s.
+    """
+    users, user = load_user(username)
+    if not user:
+        return fail('User not found')
+    problem = xp_tracking.plan_vacation(user, body.until)
+    if problem:
+        return fail(problem)
+    db.save_user(user)
+    return ok(stats=_stats_of(user))
+
+
+@router.post('/api/streak/vacation/end')
+def finish_vacation(username: str = Depends(current_username)):
+    """Back early: today counts again. Days already taken stay covered."""
+    users, user = load_user(username)
+    if not user:
+        return fail('User not found')
+    if xp_tracking.end_vacation(user):
+        db.save_user(user)
     return ok(stats=_stats_of(user))
 
 

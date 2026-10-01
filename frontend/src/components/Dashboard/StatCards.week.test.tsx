@@ -175,4 +175,66 @@ describe('the week strip, placed by the days the run actually covers', () => {
     expect(done()).toHaveLength(0);
     expect(forgiven()).toEqual([]);
   });
+
+  it('draws a vacation as a pause: not worked, not missed, and not one of the run', () => {
+    // Worked Monday, away Tuesday and Wednesday, back today: a 2-day run, Sunday to Thursday.
+    draw(2, {}, {
+      last_task_date: THURSDAY_ISO,
+      streak_vacations: [['2026-09-22', '2026-09-23']],
+    });
+    expect(doneNames()).toEqual(['Mon', 'Thu']);
+    const away = days().filter((day) => day.classList.contains('is-vacation'));
+    expect(away.map((day) => day.querySelector('.dash-week-name')!.textContent)).toEqual(['Tue', 'Wed']);
+    expect(away[0]!.querySelector('.dash-week-say')).toHaveTextContent('on vacation');
+  });
+
+  it('marks today as away while the vacation is running and nothing is done', () => {
+    draw(5, {}, {
+      last_task_date: '2026-09-21',
+      streak_vacations: [['2026-09-22', '2026-09-27']],
+    });
+    expect(doneNames()).toEqual(['Mon']);
+    const away = days().filter((day) => day.classList.contains('is-vacation'));
+    expect(away.map((day) => day.querySelector('.dash-week-name')!.textContent))
+      .toEqual(['Tue', 'Wed', 'Thu']);
+  });
 });
+
+describe('what protects the run, beside the record', () => {
+  const guard = () => document.querySelector('.dash-guard');
+  const grace = (over: Partial<NonNullable<UserStats['grace']>>) => ({
+    state: 'ready' as const, earned_at: 7, days_to_earn: 0, back_on: null, last_used: null, ...over,
+  });
+
+  it('says a grace day is ready', () => {
+    draw(9, {}, { grace: grace({}) });
+    expect(guard()).toHaveClass('is-ready');
+    expect(guard()).toHaveTextContent('Grace day ready');
+  });
+
+  it('says when a spent one comes back, and what it covered', () => {
+    draw(20, {}, { grace: grace({ state: 'spent', back_on: '2026-10-21', last_used: '2026-09-22' }) });
+    expect(guard()).toHaveClass('is-spent');
+    expect(guard()!.querySelector('.dash-week-say')!.textContent).toMatch(/covered Tuesday.*ready from/);
+  });
+
+  it('counts down to the first one', () => {
+    draw(4, {}, { grace: grace({ state: 'locked', days_to_earn: 3 }) });
+    expect(guard()).toHaveTextContent('Grace day in 3 days');
+  });
+
+  it('says nothing over an empty streak', () => {
+    draw(0, {}, { grace: grace({ state: 'locked', days_to_earn: 7 }) });
+    expect(guard()).toBeNull();
+  });
+
+  it('puts a vacation first', () => {
+    draw(9, {}, {
+      grace: grace({}),
+      vacation: { start: '2026-09-23', end: '2026-09-27', active: true },
+    });
+    expect(guard()).toHaveClass('is-vacation');
+    expect(guard()).toHaveTextContent(/^Paused to/);
+  });
+});
+

@@ -520,7 +520,7 @@ export function FocusCard({
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 
 /** What one day of the strip was to the run. */
-type RunMark = 'done' | 'forgiven';
+type RunMark = 'done' | 'forgiven' | 'vacation';
 
 /**
  * The days the current run covers, back from its last worked day.
@@ -536,9 +536,19 @@ type RunMark = 'done' | 'forgiven';
  *   can span thirteen days. That day is marked `forgiven` and does not use up
  *   one of the *n*.
  *
- * The grace day can also sit *after* `lastDay`: yesterday was missed, the
- * backend already wrote down that it was covered, and nothing is finished yet
- * today. It is marked as well, since it is part of the run still standing.
+ * - **A vacation day is inside it and was not worked either.** Vacation mode
+ *   pauses the run rather than extending it, so those days are marked
+ *   `vacation` and do not use up one of the *n* either.
+ *
+ * The grace day and vacation days can also sit *after* `lastDay`: yesterday
+ * was missed and covered, or the reader is away right now, and nothing is
+ * finished yet today. They are marked as well, since they are part of the run
+ * still standing.
+ *
+ * One thing this cannot know is a day worked *during* a vacation — the
+ * backend counts it, but only the last worked day is sent. Every vacation day
+ * before `lastDay` is drawn as a vacation day, which errs towards claiming
+ * less, not more.
  *
  * Only the latest grace day is stored, so one spent further back in a long run
  * would be drawn as worked — but grace comes back at most once a month, which
@@ -552,13 +562,21 @@ export function runMarks(
   graceDay: string | null | undefined,
   today: Date,
   floor: Date,
+  vacations: readonly (readonly [string, string])[] = [],
 ): Map<string, RunMark> {
   const marks = new Map<string, RunMark>();
   if (streak <= 0) return marks;
 
+  const away = (iso: string) => vacations.some(([first, last]) => first <= iso && iso <= last);
   const todayIso = isoDate(today);
   const anchor = lastDay && lastDay <= todayIso ? lastDay : todayIso;
-  if (graceDay && graceDay > anchor && graceDay <= todayIso) marks.set(graceDay, 'forgiven');
+
+  /* After the last worked day: only what is keeping the run alive. */
+  for (let day = addDays(fromIsoDate(anchor), 1); isoDate(day) <= todayIso; day = addDays(day, 1)) {
+    const iso = isoDate(day);
+    if (away(iso)) marks.set(iso, 'vacation');
+    else if (iso === graceDay) marks.set(iso, 'forgiven');
+  }
 
   const stop = isoDate(floor);
   let left = streak;
@@ -567,6 +585,8 @@ export function runMarks(
     if (iso < stop) break;
     if (iso === graceDay) {
       marks.set(iso, 'forgiven');
+    } else if (iso !== anchor && away(iso)) {
+      marks.set(iso, 'vacation');
     } else {
       marks.set(iso, 'done');
       left -= 1;
@@ -597,18 +617,20 @@ function WeekDots({
   streak,
   lastDay,
   graceDay,
+  vacations,
   startsOn,
 }: {
   streak: number;
   lastDay?: string | null;
   graceDay?: string | null;
+  vacations?: readonly (readonly [string, string])[];
   startsOn: WeekStart;
 }) {
   const now = new Date();
   const today = now.getDay();
   const order = startsOn === 'monday' ? [1, 2, 3, 4, 5, 6, 0] : [0, 1, 2, 3, 4, 5, 6];
   const here = order.indexOf(today);
-  const marks = runMarks(streak, lastDay, graceDay, now, addDays(now, -here));
+  const marks = runMarks(streak, lastDay, graceDay, now, addDays(now, -here), vacations);
 
   return (
     <ol className="dash-week" aria-label="This week">
@@ -624,7 +646,13 @@ function WeekDots({
           <li
             key={weekday}
             className={`dash-week-day${mark ? ` is-${mark}` : ''}${isToday ? ' is-today' : ''}`}
-            title={mark === 'forgiven' ? 'Missed — your grace day kept the streak' : undefined}
+            title={
+              mark === 'forgiven'
+                ? 'Missed — your grace day kept the streak'
+                : mark === 'vacation'
+                  ? 'On vacation — the streak was paused'
+                  : undefined
+            }
           >
             <span className="dash-week-dot" aria-hidden="true">
               {mark === 'done' && (
@@ -639,6 +667,13 @@ function WeekDots({
                   <path d="M7 12h10" />
                 </svg>
               )}
+              {/* A sun: away, and the streak paused rather than broken. */}
+              {mark === 'vacation' && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round">
+                  <circle cx="12" cy="12" r="3.6" />
+                  <path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.4 1.4M16.6 16.6 18 18M6 18l1.4-1.4M16.6 7.4 18 6" />
+                </svg>
+              )}
             </span>
             <span className="dash-week-name">{DAY_NAMES[weekday]}</span>
             {/* The dot is a picture; this is what it says. Without it the
@@ -650,7 +685,9 @@ function WeekDots({
                   ? 'done'
                   : mark === 'forgiven'
                     ? 'missed, covered by your grace day'
-                    : 'not yet'}
+                    : mark === 'vacation'
+                      ? 'on vacation'
+                      : 'not yet'}
             </span>
           </li>
         );
@@ -659,6 +696,86 @@ function WeekDots({
   );
 }
 
+
+/** 'Oct 29' — the card is narrow and every date on it is within a month. */
+function shortDay(iso: string): string {
+  return fromIsoDate(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+/** 'Wednesday, October 29' — for the sentence a screen reader hears. */
+function longDay(iso: string): string {
+  return fromIsoDate(iso).toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+/**
+ * What protects the run, beside the record: a vacation, or the grace day.
+ *
+ * Both rules lived only in the backend, so a streak could be saved by a grace
+ * day nobody knew they had. This says where it stands in a few words, with
+ * the whole sentence for a screen reader and on hover: whether one is ready,
+ * when a spent one comes back, or how far off the first one is. A vacation
+ * outranks all three — while one is running or planned, that is the thing
+ * the reader set and wants to see confirmed.
+ *
+ * Nothing at all for a streak of 0. There is no run to protect, and "a grace
+ * day in 7 days" over an empty card reads as a chore.
+ */
+export function StreakGuard({ stats }: { stats: UserStats }) {
+  const streak = Number(stats.current_streak) || 0;
+  const { vacation, grace } = stats;
+
+  let tone: 'vacation' | 'ready' | 'spent' | 'locked';
+  let short: string;
+  let full: string;
+  if (vacation) {
+    tone = 'vacation';
+    short = vacation.active ? `Paused to ${shortDay(vacation.end)}` : `Away ${shortDay(vacation.start)}`;
+    full = vacation.active
+      ? `On vacation until ${longDay(vacation.end)}. Days away do not count against the streak.`
+      : `Vacation from ${longDay(vacation.start)} to ${longDay(vacation.end)}.`;
+  } else if (!grace || streak <= 0) {
+    return null;
+  } else if (grace.state === 'ready') {
+    tone = 'ready';
+    short = 'Grace day ready';
+    full = 'Grace day ready: miss a single day and the streak survives.';
+  } else if (grace.state === 'spent' && grace.back_on) {
+    tone = 'spent';
+    short = `Grace back ${shortDay(grace.back_on)}`;
+    full = `${grace.last_used ? `Your grace day covered ${longDay(grace.last_used)}. ` : ''}`
+      + `The next one is ready from ${longDay(grace.back_on)}.`;
+  } else {
+    tone = 'locked';
+    const days = grace.days_to_earn;
+    short = `Grace day in ${days} ${days === 1 ? 'day' : 'days'}`;
+    full = `At ${grace.earned_at} days the streak earns a grace day: one missed day it survives. `
+      + `${days} to go.`;
+  }
+
+  return (
+    <span className={`dash-guard is-${tone}`} title={full}>
+      <span className="dash-guard-ico" aria-hidden="true">
+        {tone === 'vacation' ? (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+          </svg>
+        ) : (
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 3 5 6v5.5c0 4.3 3 8 7 9.5 4-1.5 7-5.2 7-9.5V6z" />
+            {tone === 'ready' && <path d="m9 12 2.2 2.2L15.5 10" />}
+          </svg>
+        )}
+      </span>
+      <span aria-hidden="true">{short}</span>
+      <span className="dash-week-say">{full}</span>
+    </span>
+  );
+}
 
 /**
  * The streak, and a line of encouragement pitched at where it is.
@@ -714,6 +831,7 @@ export function StreakCard({ stats }: { stats: UserStats }) {
           streak={current}
           lastDay={stats.last_task_date}
           graceDay={stats.streak_grace_day}
+          vacations={stats.streak_vacations}
           startsOn={prefs.week_starts_on}
         />
       </div>
@@ -721,6 +839,7 @@ export function StreakCard({ stats }: { stats: UserStats }) {
         <span className="dash-stat-panel-text">
           Best Streak: {shownBest} {best === 1 ? 'day' : 'days'}
         </span>
+        <StreakGuard stats={stats} />
       </StatPanel>
     </Card>
   );

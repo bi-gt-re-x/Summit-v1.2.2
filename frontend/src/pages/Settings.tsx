@@ -76,7 +76,8 @@ import type {
   ThemeMode,
   ThemeSkin,
 } from '@/services/settings';
-import type { Theme } from '@/types';
+import type { Theme, UserStats } from '@/types';
+import { VacationMode } from '@/components/Settings/VacationMode';
 import '@/styles/settings.css';
 import { announceStatsChanged } from '@/utils/statsBus';
 
@@ -725,6 +726,24 @@ export default function Settings() {
     [savePref, saveSheet, setTheme],
   );
 
+  /**
+   * Vacation mode answered. The sheet holds its own copy of the window, and the
+   * rest of the app hears the way a completion is heard — the rail and the
+   * bell both re-read on it, and the bell is what stops warning about a
+   * streak that is on vacation.
+   */
+  const onVacation = useCallback(
+    (stats: UserStats, message: string) => {
+      mutate((current) => ({
+        ...current,
+        settings: { ...current.settings, streak_vacation: stats.vacation ?? null },
+      }));
+      announceStatsChanged();
+      flash(message);
+    },
+    [flash, mutate],
+  );
+
   /** Whether a built palette is running, and which — the accent row's answer. */
   const skinned = Boolean(prefs.theme_skin);
   const skinLabel =
@@ -1358,6 +1377,29 @@ export default function Settings() {
         ],
       },
       {
+        id: 'streak',
+        label: 'Streak',
+        group: 'Productivity',
+        items: [
+          {
+            id: 'vacation',
+            label: 'Vacation mode',
+            hint:
+              `Pause your streak while you are away, for up to ${sheet.vacation_max_days ?? 30} days. `
+              + 'Days on vacation do not break it or use up your grace day, and they do not add '
+              + 'to it either — the first task back counts as the next day. Anything you do '
+              + 'finish while away still counts.',
+            control: (
+              <VacationMode
+                vacation={sheet.streak_vacation ?? null}
+                maxDays={sheet.vacation_max_days ?? 30}
+                onChanged={onVacation}
+              />
+            ),
+          },
+        ],
+      },
+      {
         id: 'notifications',
         label: 'Notifications',
         group: 'Notifications',
@@ -1724,7 +1766,20 @@ export default function Settings() {
         })),
       },
     ];
-  }, [busy, name, pickTheme, pickThemeMode, prefs, savePref, saveSheet, sheet, skinLabel, skinned, theme]);
+  }, [
+    busy,
+    name,
+    onVacation,
+    pickTheme,
+    pickThemeMode,
+    prefs,
+    savePref,
+    saveSheet,
+    sheet,
+    skinLabel,
+    skinned,
+    theme,
+  ]);
 
   const current = useMemo(
     () => sections.find((entry) => entry.id === routeSection) ?? sections[0] ?? null,

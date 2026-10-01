@@ -498,3 +498,46 @@ html[data-theme="dark"] .st-page {
     .st-swatch:hover { transform: none; }
     .st-ask { animation: none; }
 }
+
+/* Vacation mode (components/Settings/VacationMode.tsx). Stacked and right-
+   aligned like every other control, since the row puts controls on the right;
+   it wraps to the left edge on a phone, where the row is one column. */
+.st-vacation {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+    min-width: 0;
+}
+.st-vacation-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2);
+}
+.st-vacation-field {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--st-muted);
+}
+.st-vacation-field .st-input.is-num { width: 5.5em; }
+.st-vacation .st-pick { white-space: nowrap; }
+.st-vacation-now {
+    margin: 0;
+    font-weight: 600;
+    color: #1F7A8C;
+}
+.st-vacation-through { margin: 0; font-size: var(--text-xs); }
+.st-vacation-problem {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: #C0392B;
+}
+html[data-theme="dark"] .st-vacation-now { color: #4fb3c4; }
+html[data-theme="dark"] .st-vacation-problem { color: #ff7b72; }
+@media (max-width: 720px) {
+    .st-vacation, .st-vacation-line { align-items: flex-start; justify-content: flex-start; }
+}

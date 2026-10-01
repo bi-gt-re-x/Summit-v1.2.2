@@ -619,12 +619,9 @@ def _progress(account):
         'new_level': levels['level'],
         'xp_required': levels['xp_required'],
         'new_tasks_completed': account.get('tasks_completed', 0),
-        'current_streak': account.get('current_streak', 0),
-        'best_streak': account.get('best_streak', 0),
-        # What the dashboard's week strip draws the run from — see _stats_of in
-        # backend/api/dashboard.py.
-        'last_task_date': account.get('last_task_date'),
-        'streak_grace_day': account.get('streak_grace_day'),
+        # The streak card's whole input, as the stats read sends it — see
+        # _stats_of in backend/api/dashboard.py.
+        **xp_tracking.streak_fields(account),
     }
 
 

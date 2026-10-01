@@ -47,6 +47,7 @@ JSON_COLUMNS = {
     ('calendar_documents', 'data'),
     ('skill_steps', 'checks'),
     ('skill_problems', 'checks'),
+    ('users', 'streak_vacations'),
 }
 
 # The JSON columns that hold a *scalar* — a word, a number, a flag — rather
@@ -150,6 +151,10 @@ ADDED_COLUMNS = (
     # that nothing resets. NULL on every account that predates it, which reads
     # as "no grace spent" — the honest answer, since there was none to spend.
     ('users', 'streak_grace_day', 'TEXT'),
+    # Vacation mode: the days the streak is paused for, as a JSON list of
+    # [first, last] ISO days (backend/tracking/xp.py, `plan_vacation`). NULL is
+    # "never been on one", which every reader takes as an empty list.
+    ('users', 'streak_vacations', 'TEXT'),
 
     # What a note is about, and which shelf it is on. Both empty on every note
     # written before the notes page could say either, which is the honest

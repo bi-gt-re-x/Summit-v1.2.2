@@ -303,10 +303,7 @@ export default function Dashboard() {
             xp: (Number(current.stats.xp) || 0) + (Number(result.xp_earned) || 0),
             level: result.new_level,
             tasks_completed: result.new_tasks_completed,
-            current_streak: result.current_streak,
-            best_streak: result.best_streak,
-            last_task_date: result.last_task_date,
-            streak_grace_day: result.streak_grace_day,
+            ...taskService.streakPatch(result),
           },
           tasks: current.tasks.map((entry) => {
             if (String(entry.id) !== String(task.id)) return entry;

@@ -11,7 +11,14 @@
  * Backend: backend/api/tasks.py, backend/api/dashboard.py.
  */
 import { del, get, post, put } from './api';
-import type { ApiResult, Task, UserStats } from '@/types';
+import type {
+  ApiResult,
+  GraceStatus,
+  StreakFields,
+  Task,
+  UserStats,
+  VacationWindow,
+} from '@/types';
 
 // --------------------------------------------------------------------------
 // Reading
@@ -233,6 +240,9 @@ export interface CompletionResult {
   best_streak: number;
   last_task_date: string | null;
   streak_grace_day: string | null;
+  streak_vacations?: [string, string][];
+  grace?: GraceStatus;
+  vacation?: VacationWindow | null;
   task_id: string;
   completion_status: 'done';
 }
@@ -264,6 +274,29 @@ export interface BatchCompletionResult {
   best_streak: number;
   last_task_date: string | null;
   streak_grace_day: string | null;
+  streak_vacations?: [string, string][];
+  grace?: GraceStatus;
+  vacation?: VacationWindow | null;
+}
+
+/**
+ * The streak half of a completion reply, as a patch for the stats a page holds.
+ *
+ * Every page that finishes a task folds this into its copy of the stats, so
+ * the streak card's figure, week strip and grace line all move together —
+ * a page that copied the count and not the rest would show a 13-day streak
+ * over a strip that still ended yesterday.
+ */
+export function streakPatch(result: StreakFields): StreakFields {
+  return {
+    current_streak: result.current_streak,
+    best_streak: result.best_streak,
+    last_task_date: result.last_task_date,
+    streak_grace_day: result.streak_grace_day,
+    streak_vacations: result.streak_vacations,
+    grace: result.grace,
+    vacation: result.vacation,
+  };
 }
 
 /** The most one request may carry; backend MAX_COMPLETE. */
@@ -315,8 +348,7 @@ export async function completeTasks(
     merged.xp_required = result.xp_required;
     merged.current_streak = result.current_streak;
     merged.best_streak = result.best_streak;
-    merged.last_task_date = result.last_task_date;
-    merged.streak_grace_day = result.streak_grace_day;
+    Object.assign(merged, streakPatch(result));
     if (result.failed.length) break;
   }
   return { success: true, ...merged };

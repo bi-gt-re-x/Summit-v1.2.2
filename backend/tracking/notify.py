@@ -359,37 +359,98 @@ def _goal_candidates(facts, day):
     return out
 
 
+def _long_day(day):
+    """'October 29' — no year, since every date these name is within a month."""
+    return '{:%B} {}'.format(day, day.day)
+
+
 def _streak_candidates(user, facts, day):
-    streak = int(user.get('current_streak') or 0)
+    """The streak's notifications, read off the streak as the reader's day leaves it.
+
+    `user` is the row as stored, which may be a night behind: the decay runs on
+    `/api/stats` (backend/api/dashboard.py), and nothing orders that call
+    before this one. So the streak is refreshed here on a copy, for `day`, and
+    never written — a run that ended overnight is not warned about, and a grace
+    day spent overnight is reported the first time anybody looks.
+    """
+    today = date.fromisoformat(day)
+    live = dict(user)
+    xp_tracking.refresh_streak(live, today)
+    streak = int(live.get('current_streak') or 0)
+    finished = facts['finished_today']
     out = []
 
-    if streak and not facts['finished_today']:
+    # Today's warning. Never on a vacation day — that is what the vacation is
+    # for — and worded for the first day back when one has just ended, so the
+    # reader gets one notification about it rather than two.
+    if streak and not finished and not xp_tracking.on_vacation(live, today):
         # "It resets at midnight" is only true when there is no grace day to
         # catch it. Said to a run that would survive the night, it is a false
         # alarm — and a warning that cries wolf is one people learn to swipe.
-        covered = xp_tracking.grace_covers_today(user, date.fromisoformat(day))
+        covered = xp_tracking.grace_covers_today(live, today)
+        keeps = ('If today slips, your grace day covers it.' if covered
+                 else 'It resets at midnight.')
+        back = [last for _, last in xp_tracking.vacations(live)
+                if last == today - timedelta(days=1)]
+        if back:
+            out.append({
+                'fingerprint': 'vacation-over:{}'.format(back[0].isoformat()),
+                'channel': 'streak',
+                'tone': 'info',
+                'for_day': day,
+                'title': 'Welcome back — your {}-day streak is live again'.format(streak),
+                'body': 'Your vacation ended yesterday. Anything finished today '
+                        'carries the run on. {}'.format(keeps),
+                'link': '/dashboard',
+            })
+        else:
+            out.append({
+                'fingerprint': 'streak-risk:{}'.format(day),
+                'channel': 'streak',
+                'tone': 'warn' if covered else 'urgent',
+                'for_day': day,
+                'title': 'Your {}-day streak has nothing on it yet'.format(streak),
+                'body': ('Anything finished today adds to it. {}'.format(keeps)
+                         if covered else
+                         'Anything finished today keeps it. {}'.format(keeps)),
+                'link': '/dashboard',
+            })
+
+    # The save itself. Raised once per forgiven day, from the morning after it
+    # (when the run is first seen to have survived) through the day after
+    # that, so somebody who did not open the app on the first morning still
+    # hears about it.
+    grace = xp_tracking.parse_day(live.get('streak_grace_day'))
+    if streak and grace and 1 <= (today - grace).days <= 2:
+        still_to_do = (today - grace).days == 1 and not finished
         out.append({
-            'fingerprint': 'streak-risk:{}'.format(day),
+            'fingerprint': 'grace-saved:{}'.format(grace.isoformat()),
             'channel': 'streak',
-            'tone': 'warn' if covered else 'urgent',
-            'for_day': day,
-            'title': 'Your {}-day streak has nothing on it yet'.format(streak),
-            'body': ('Anything finished today adds to it. If today slips, your '
-                     'grace day covers it — the next one comes back {} days '
-                     'after.'.format(xp_tracking.GRACE_REFRESH_DAYS)
-                     if covered else
-                     'Anything finished today keeps it. It resets at midnight.'),
+            'tone': 'good',
+            'title': 'Your grace day saved your {}-day streak'.format(streak),
+            'body': 'You missed {:%A}, and the run carried on.{} Your next grace '
+                    'day is ready from {}.'.format(
+                        grace,
+                        ' Finish something today to keep it going.' if still_to_do else '',
+                        _long_day(xp_tracking.grace_back_on(grace))),
             'link': '/dashboard',
         })
 
     if streak in STREAK_MILESTONES:
+        best = 'Your best is {}.'.format(
+            _count(int(live.get('best_streak') or streak), 'day'))
+        if streak == xp_tracking.GRACE_EARNED_AT:
+            # The day the grace day is earned. Saying so here, rather than in a
+            # notification of its own, is what makes it read as the reward for
+            # the week rather than as one more thing in the bell.
+            best += (' You have also earned a grace day: from now on, a single '
+                     'missed day will not end the run.')
         out.append({
             'fingerprint': 'streak-milestone:{}'.format(streak),
             'channel': 'streak',
             'tone': 'good',
             'title': '{} days in a row'.format(streak),
-            'body': 'Your best is {}.'.format(
-                _count(int(user.get('best_streak') or streak), 'day')),
+            'body': best,
             'link': '/dashboard',
         })
     return out
@@ -440,7 +501,8 @@ def _progress_candidates(user, facts):
 
 #: Which candidates are about a backlog rather than about now. The first sweep
 #: files these without showing them; see the note at the top.
-ONE_SHOT = ('level', 'badge', 'record', 'streak-milestone', 'goal-done')
+ONE_SHOT = ('level', 'badge', 'record', 'streak-milestone', 'goal-done',
+            'grace-saved')
 
 
 # --------------------------------------------------------------------------
@@ -495,6 +557,18 @@ def sweep(user, day, at=None, channels=CHANNELS):
                                     candidate['title'], candidate['body'])
 
     written = db.add_notifications(username, fresh)
+
+    # Today's streak warning, withdrawn once it stops being true: something
+    # was finished, or a vacation was started after it was raised. Left up, it
+    # would go on saying the run ends at midnight for the rest of a day on
+    # which it does not. Only the day-scoped streak rows — a grace day saved or
+    # a milestone stays true once it has happened.
+    if 'streak' in wanted:
+        standing = {c['fingerprint'] for c in candidates}
+        stale = [row['id'] for row in db.notifications_for(username, ['streak'])
+                 if row.get('for_day') == day and row['fingerprint'] not in standing]
+        if stale:
+            db.delete_notifications(username, stale)
 
     # The backlog, on the account's very first sweep: filed under its
     # fingerprint so it is never raised again, and never put on screen.

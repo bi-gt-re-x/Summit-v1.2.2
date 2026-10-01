@@ -12,7 +12,7 @@
  * the accent cannot write back a stale copy of every other preference.
  */
 import { get, post } from './api';
-import type { ApiResult } from '@/types';
+import type { ApiResult, UserStats, VacationWindow } from '@/types';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type Accent = 'violet' | 'blue' | 'green' | 'amber' | 'rose' | 'slate';
@@ -246,6 +246,12 @@ export interface Settings extends Prefs {
   level: number;
   xp: number;
   avatar: string;
+  /**
+   * Vacation mode. A state of the streak, kept on the user row and changed
+   * through `planVacation` / `endVacation` below rather than `saveSettings`.
+   */
+  streak_vacation?: VacationWindow | null;
+  vacation_max_days?: number;
 }
 
 /** What a save may carry. Anything left out is left alone. */
@@ -370,6 +376,20 @@ export function resetData(
   confirm?: string,
 ): Promise<ApiResult<ResetResult>> {
   return post<ResetResult>('/api/settings/reset', { scope, confirm });
+}
+
+/**
+ * Pause the streak from today through `until` (an ISO day, included), or move
+ * the end of the vacation already running. The reply is the account's stats,
+ * so the caller redraws from what the server decided.
+ */
+export function planVacation(until: string): Promise<ApiResult<{ stats: UserStats }>> {
+  return post<{ stats: UserStats }>('/api/streak/vacation', { until });
+}
+
+/** Back early. Days already taken stay covered; today counts again. */
+export function endVacation(): Promise<ApiResult<{ stats: UserStats }>> {
+  return post<{ stats: UserStats }>('/api/streak/vacation/end', {});
 }
 
 /** Where the browser should be pointed to download an export. */

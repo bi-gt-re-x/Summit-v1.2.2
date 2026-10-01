@@ -47,7 +47,47 @@ export interface UserStats {
    */
   last_task_date?: string | null;
   streak_grace_day?: string | null;
+  /** Vacation windows still worth knowing about, `[first, last]` ISO days. */
+  streak_vacations?: [string, string][];
+  /** Where the run stands with its grace day. See `grace_status` in xp.py. */
+  grace?: GraceStatus;
+  /** The vacation running today, or the next one coming. */
+  vacation?: VacationWindow | null;
 }
+
+/**
+ * The one missed day a run is forgiven, as the streak card reads it.
+ *
+ * `locked` until the run is `earned_at` days old; `spent` while one used in
+ * the last month is coming back on `back_on`; `ready` otherwise.
+ */
+export interface GraceStatus {
+  state: 'locked' | 'ready' | 'spent';
+  earned_at: number;
+  days_to_earn: number;
+  back_on: string | null;
+  last_used: string | null;
+}
+
+/** A vacation: the streak is paused from `start` to `end`, both included. */
+export interface VacationWindow {
+  start: string;
+  end: string;
+  /** Whether today is inside it, rather than it still being to come. */
+  active: boolean;
+}
+
+/** Every streak field the stats read and a completion reply both carry. */
+export type StreakFields = Pick<
+  UserStats,
+  | 'current_streak'
+  | 'best_streak'
+  | 'last_task_date'
+  | 'streak_grace_day'
+  | 'streak_vacations'
+  | 'grace'
+  | 'vacation'
+>;
 
 // --------------------------------------------------------------------------
 // Tasks

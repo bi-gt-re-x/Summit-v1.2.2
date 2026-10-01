@@ -308,6 +308,83 @@ def test_the_warning_only_says_midnight_when_midnight_ends_the_run(app, client):
     assert bare['tone'] == 'urgent'
 
 
+def _day(offset):
+    return (date.fromisoformat(DAY) + timedelta(days=offset)).isoformat()
+
+
+def _streak_rows(rows):
+    return {row['fingerprint']: row for row in rows if row['channel'] == 'streak'}
+
+
+def test_a_grace_day_that_saved_the_run_is_announced_once(app, client):
+    """Worked two days ago, missed yesterday, nothing yet today: saved, and said."""
+    # An account's first sweep files what is already true as read, so it runs
+    # on an ordinary day first.
+    db.update_row('users', 'tester', {'current_streak': 11, 'last_task_date': _day(-3)},
+                  key='username')
+    _list(client, day=_day(-2))
+    db.update_row('users', 'tester', {'current_streak': 12, 'last_task_date': _day(-2)},
+                  key='username')
+    rows = _streak_rows(_list(client))
+
+    # The row as stored was never refreshed by a page load — the sweep worked
+    # out the save on a copy, and found it.
+    saved = rows['grace-saved:%s' % _day(-1)]
+    assert saved['tone'] == 'good'
+    assert saved['title'] == 'Your grace day saved your 12-day streak'
+    assert 'You missed Monday' in saved['body']
+    assert 'Finish something today' in saved['body']
+    assert 'September 29' in saved['body']  # 31 Aug + 29: see grace_back_on
+    # And today's warning is honest about it: grace is spent, midnight is real.
+    assert rows['streak-risk:%s' % DAY]['body'].endswith('It resets at midnight.')
+
+    again = [row for row in _list(client) if row['fingerprint'] == 'grace-saved:%s' % _day(-1)]
+    assert len(again) == 1
+
+
+def test_a_run_that_ended_overnight_is_neither_warned_nor_congratulated(client):
+    db.update_row('users', 'tester', {'current_streak': 12, 'last_task_date': _day(-3)},
+                  key='username')
+    assert not _streak_rows(_list(client))
+
+
+def test_a_vacation_day_has_no_warning(client):
+    db.update_row('users', 'tester', {
+        'current_streak': 4, 'last_task_date': _day(-1),
+        'streak_vacations': [[DAY, _day(3)]]}, key='username')
+    assert 'streak-risk:%s' % DAY not in _prints(_list(client))
+
+
+def test_the_first_day_back_gets_a_welcome_instead_of_a_warning(client):
+    db.update_row('users', 'tester', {
+        'current_streak': 4, 'last_task_date': _day(-6),
+        'streak_vacations': [[_day(-5), _day(-1)]]}, key='username')
+    rows = _streak_rows(_list(client))
+    assert 'streak-risk:%s' % DAY not in rows
+    back = rows['vacation-over:%s' % _day(-1)]
+    assert back['title'] == 'Welcome back — your 4-day streak is live again'
+    assert back['body'].endswith('It resets at midnight.')
+
+
+def test_the_seventh_day_says_a_grace_day_was_earned(app, client):
+    db.update_row('users', 'tester', {'current_streak': 3, 'last_task_date': DAY},
+                  key='username')
+    _list(client)
+    db.update_row('users', 'tester', {'current_streak': 7, 'last_task_date': DAY},
+                  key='username')
+    milestone = _streak_rows(_list(client))['streak-milestone:7']
+    assert 'earned a grace day' in milestone['body']
+
+
+def test_the_warning_is_withdrawn_once_a_vacation_starts(client):
+    db.update_row('users', 'tester', {'current_streak': 4, 'last_task_date': _day(-1)},
+                  key='username')
+    assert 'streak-risk:%s' % DAY in _prints(_list(client))
+
+    db.update_row('users', 'tester', {'streak_vacations': [[DAY, _day(4)]]}, key='username')
+    assert 'streak-risk:%s' % DAY not in _prints(_list(client))
+
+
 def test_a_goal_past_its_date_is_raised_once_a_day(client):
     db.insert_row('goals', {
         'id': 'g-late',
