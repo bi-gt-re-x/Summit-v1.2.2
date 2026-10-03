@@ -51,7 +51,6 @@ import type { Diagnosis } from './diagnosis';
 import type { Strength } from './insight';
 import type { Win } from './insight';
 import type { Pattern } from './patterns';
-import type { SkillRow } from './skillScore';
 import { pctChange } from './recent';
 
 /** How long "lately" is, in days, and the length of the stretch it is compared with. */
@@ -235,9 +234,6 @@ const MIN_EFFICIENCY_MOVE = 12;
 /** Below this many points of share, a subject has not moved. */
 const MIN_SUBJECT_MOVE = 8;
 
-/** Below this, a skill score has not moved. */
-const MIN_SKILL_MOVE = 4;
-
 /** Fewer rated tasks than this either side and none of the ratings hold. */
 const MIN_RATED = 8;
 
@@ -383,59 +379,6 @@ function subjectMoved(rows: SubjectMove[]): Change[] {
   return [risen, fallen].filter(Boolean).map((row) => card(row!));
 }
 
-/**
- * Where the reader's measured level moved, by subject.
- *
- * The skill score is the one figure on the page that is about *the reader*
- * rather than about their output, and it moved silently: a subject could climb
- * a band over a month and nothing in this section would mention it.
- *
- * Both sides are scored from the same function over two stretches of the same
- * length, so the comparison is the score's own arithmetic rather than a second
- * idea of what a level is. Rows the score itself does not trust are dropped by
- * `confidence`, which is what that field is for.
- */
-function skillMoved(now: SkillRow[], before: SkillRow[], nameOf: (id: string) => string): Change[] {
-  if (!now.length || !before.length) return [];
-  const was = new Map(before.map((row) => [row.subject, row]));
-
-  const moved = now
-    .map((row) => {
-      const prior = was.get(row.subject);
-      if (!prior) return null;
-      // Both readings have to be worth reading. A score that has only just
-      // come off its prior is a score about the prior.
-      if (row.confidence < 0.3 || prior.confidence < 0.3) return null;
-      return { row, prior, points: row.score - prior.score };
-    })
-    .filter((entry): entry is { row: SkillRow; prior: SkillRow; points: number } => entry !== null)
-    .filter((entry) => Math.abs(entry.points) >= MIN_SKILL_MOVE)
-    .sort((a, b) => Math.abs(b.points) - Math.abs(a.points));
-
-  const best = moved.find((entry) => entry.points > 0);
-  const worst = moved.find((entry) => entry.points < 0);
-
-  const card = (entry: { row: SkillRow; prior: SkillRow; points: number }): Change => {
-    const up = entry.points > 0;
-    const name = nameOf(entry.row.subject);
-    const band = entry.row.band !== entry.prior.band ? ` — ${entry.prior.band} to ${entry.row.band}` : '';
-    return {
-      id: `change-skill-${entry.row.subject}`,
-      kind: up ? 'gain' : 'problem',
-      family: up ? 'skill-risen' : 'skill-fallen',
-      text: up
-        ? `Your level in ${name} has risen${band}, from ${Math.round(entry.prior.score)} to ${Math.round(entry.row.score)} out of 100.`
-        : `Your level in ${name} has fallen${band}, from ${Math.round(entry.prior.score)} to ${Math.round(entry.row.score)} out of 100.`,
-      move: `${Math.round(entry.prior.score)} → ${Math.round(entry.row.score)}`,
-      basis: `${entry.row.rated} rated tasks in ${name} this window, ${entry.prior.rated} before.`,
-      strength: entry.row.confidence >= 0.7 ? 'strong' : entry.row.confidence >= 0.5 ? 'likely' : 'weak',
-      weight: 28 + Math.abs(entry.points),
-    };
-  };
-
-  return [best, worst].filter(Boolean).map((entry) => card(entry!));
-}
-
 /** Below this many overdue tasks, a backlog is a couple of things you moved. */
 const MIN_OVERDUE = 3;
 
@@ -540,17 +483,13 @@ export interface ChangedInput {
   patterns: Pattern[];
   window?: number;
 
-  /* ---- The five below are optional, and a caller that omits one loses that
+  /* ---- The ones below are optional, and a caller that omits one loses that
      card and nothing else. They are optional because this function is called
      from tests and fixtures that predate them, and because each is a *source*
-     rather than a setting: an account with no rated work in a subject has no
-     skill movement to report, which is the same answer as not passing one. */
+     rather than a setting. */
 
   /** Every subject's XP this window and the one before, for the balance card. */
   subjects?: SubjectMove[];
-  /** Skill scores over this window and the one before, for the level card. */
-  skillsNow?: SkillRow[];
-  skillsBefore?: SkillRow[];
   /** Subject id to the name a reader recognises. */
   nameOf?: (id: string) => string;
   /** Every task, finished or not — the overdue card reads the unfinished half. */
@@ -574,9 +513,6 @@ export function whatChanged({
   patterns,
   window = CHANGE_WINDOW,
   subjects,
-  skillsNow,
-  skillsBefore,
-  nameOf,
   open,
   todayIso,
 }: ChangedInput): Change[] {
@@ -600,9 +536,6 @@ export function whatChanged({
     overdueBacklog(open ?? [], todayIso ?? ''),
   ];
   if (subjects?.length) more.push(...subjectMoved(subjects));
-  if (skillsNow?.length && skillsBefore?.length && nameOf) {
-    more.push(...skillMoved(skillsNow, skillsBefore, nameOf));
-  }
   more.forEach((row) => {
     if (!row) return;
     (row.kind === 'gain' ? gains : problems).push(row);

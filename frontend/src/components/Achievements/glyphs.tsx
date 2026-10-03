@@ -1,7 +1,7 @@
 /**
  * The badge wall's drawings — one per badge, and the tables that pick them.
  *
- * Lifted out of pages/Achievements.tsx when the art stopped being a handful of
+ * Lifted out of the badge wall (components/Achievements/BadgeWall.tsx) when the art stopped being a handful of
  * shapes. Inline rather than files under utils/icons/, for the reason
  * components/Analytics/glyphs.ts gives for doing the same: a closed set
  * belonging to one page, living in the shared icon folder, is how that folder

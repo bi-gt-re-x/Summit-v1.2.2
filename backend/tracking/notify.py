@@ -480,7 +480,7 @@ def _progress_candidates(user, facts):
             'tone': 'good',
             'title': 'Badge earned: {}'.format(badge.get('name') or badge['id']),
             'body': badge.get('description') or '',
-            'link': '/achievements',
+            'link': '/records/badges',
         })
 
     for record in facts['records']:

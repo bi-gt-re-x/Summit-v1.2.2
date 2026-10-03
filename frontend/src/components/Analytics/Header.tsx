@@ -91,7 +91,7 @@ export const VIEWS: View[] = [
     key: 'subjects',
     label: 'Subjects',
     path: '/subjects',
-    purpose: 'Your level in each subject, based on your tasks.',
+    purpose: 'Where the work went in each subject, and your skill levels from the problems you solved.',
     title: 'Subjects',
     tone: 'green',
   },

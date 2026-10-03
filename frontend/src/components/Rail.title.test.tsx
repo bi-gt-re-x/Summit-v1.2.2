@@ -1,12 +1,13 @@
 /**
- * The title in the rail's foot, and the menu that chooses it.
+ * The title in the rail's foot.
  *
  * This was Rail.egg.test.tsx, and most of it was about the hidden chain: ten
  * clicks on the title opened it, so the tests had to prove that the first
  * three did nothing, that the count ignored the light, and that the three dots
  * beside it were not a way in by accident. The door is on the dashboard now —
  * hooks/useQuoteEgg.ts, and components/Dashboard/DailyQuote.test.tsx — and the
- * title is only a title, so what is left here is the menu.
+ * title is only a title. It used to have a menu of every band reached to
+ * choose from; that went, and the rail names the band.
  *
  * The chain has not left entirely, and the two tests that keep it are the
  * point of the seam: the ADMIN ROOM at the end of it hands out a title, and
@@ -16,7 +17,7 @@
  * module. A test that derived them the same way the code does would agree with
  * a rename and let the prize go quiet.
  */
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Rail } from './Rail';
@@ -53,97 +54,23 @@ afterEach(() => {
   document.body.className = '';
 });
 
-describe('choosing a title', () => {
-  it('offers every band reached, best first, and never one ahead', async () => {
-    const user = userEvent.setup();
-    draw(); // level 12 — Beginner, Novice, Apprentice
-
-    await user.click(screen.getByRole('button', { name: 'Choose your title' }));
-    const menu = screen.getByRole('menu');
-    const names = within(menu)
-      .getAllByRole('menuitemradio')
-      .map((el) => el.textContent);
-
-    expect(names).toEqual([
-      'AutomaticApprentice',
-      'Apprentice',
-      'Novice',
-      'Beginner',
-    ]);
-    expect(within(menu).queryByText('Adept')).not.toBeInTheDocument();
-  });
-
-  it('prints the one that is picked, and remembers it', async () => {
-    const user = userEvent.setup();
+describe('the title', () => {
+  it('names the band the level has reached', () => {
     draw();
     expect(title()).toHaveTextContent('Apprentice');
-
-    await user.click(screen.getByRole('button', { name: 'Choose your title' }));
-    await user.click(screen.getByRole('menuitemradio', { name: 'Novice' }));
-
-    expect(title()).toHaveTextContent('Novice');
-    expect(localStorage.getItem('summitRankTitle:myles')).toBe('Novice');
-    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 
-  it('goes back to following the level, and stops storing a choice', async () => {
-    const user = userEvent.setup();
-    localStorage.setItem('summitRankTitle:myles', 'Beginner');
+  it('offers no menu of other titles', () => {
     draw();
-    expect(title()).toHaveTextContent('Beginner');
-
-    await user.click(screen.getByRole('button', { name: 'Choose your title' }));
-    await user.click(screen.getByRole('menuitemradio', { name: /Automatic/ }));
-
-    expect(title()).toHaveTextContent('Apprentice');
-    expect(localStorage.getItem('summitRankTitle:myles')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Choose your title' })).not.toBeInTheDocument();
   });
 
-  it('offers the title the hidden chain hands out, ahead of the bands', async () => {
-    const user = userEvent.setup();
-    localStorage.setItem('summitTitle:myles', 'Admin');
-    draw();
-
-    await user.click(screen.getByRole('button', { name: 'Choose your title' }));
-    const names = within(screen.getByRole('menu'))
-      .getAllByRole('menuitemradio')
-      .map((el) => el.textContent);
-
-    expect(names[1]).toBe('Admin');
-  });
-
-  it('wears the chain’s title, rather than filing it in the menu', () => {
+  it('wears the title the hidden chain hands out, once it is earned', () => {
     // What frontend/secret/hidden-engine.js writes when the ADMIN ROOM's
-    // button is pressed, spelled the way that script spells it. Both keys, and
-    // the second is the point: the room says TITLE EQUIPPED, so the rail has to
-    // have changed by the time the reader is looking at it again.
+    // button is pressed, spelled the way that script spells it.
     localStorage.setItem('summitTitle:myles', 'Admin');
-    localStorage.setItem('summitRankTitle:myles', 'Admin');
     draw();
-
     expect(title()).toHaveTextContent('Admin');
-  });
-
-  it('lets a worn secret title be traded back for a band', async () => {
-    // Equipped on arrival is a default, not a sentence.
-    const user = userEvent.setup();
-    localStorage.setItem('summitTitle:myles', 'Admin');
-    localStorage.setItem('summitRankTitle:myles', 'Admin');
-    draw();
-
-    await user.click(screen.getByRole('button', { name: 'Choose your title' }));
-    await user.click(screen.getByRole('menuitemradio', { name: 'Novice' }));
-
-    expect(title()).toHaveTextContent('Novice');
-    expect(localStorage.getItem('summitRankTitle:myles')).toBe('Novice');
-  });
-
-  it('falls back to the band when a chosen title is no longer held', () => {
-    // The secret title was picked and then cleared out of storage — by the
-    // engine, or by a browser wipe. The rail says what is true now.
-    localStorage.setItem('summitRankTitle:myles', 'Admin');
-    draw();
-    expect(title()).toHaveTextContent('Apprentice');
   });
 
   it('is not a way into the hidden chain any more', async () => {

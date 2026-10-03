@@ -3,7 +3,7 @@
  *
  * It was the arithmetic behind all four chapters, back when each of them was a
  * panel or two. Focus, Skills and Benchmarks are pages now, with a file each
- * (utils/growthSkills, growthBench; Focus has since gone); what stayed here is the
+ * (utils/growthBench; Focus and Skills have since gone); what stayed here is the
  * projection, the outlook and the milestone dates, plus the two date helpers
  * the other three import from it so that four chapters cannot end up spelling a
  * date three different ways.

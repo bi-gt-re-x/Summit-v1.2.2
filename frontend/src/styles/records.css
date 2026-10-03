@@ -1292,3 +1292,37 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     background: none;
     padding: 0 0 var(--space-10);
 }
+
+/* ---- The three tabs -----------------------------------------------------
+ * Personal bests, Growth and Badges — one page answering "how far have I
+ * come" three ways. The same segmented strip the Goals page uses, so a reader
+ * who has learned one has learned both. */
+.rc-views {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin: 0 0 var(--space-6);
+    padding: var(--space-1);
+    border: 1px solid var(--rc-line);
+    border-radius: var(--radius-md);
+    background: var(--rc-card-2);
+}
+.rc-view {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    color: var(--rc-muted);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s ease, color .15s ease;
+}
+.rc-view:hover { color: var(--rc-text); }
+.rc-view.is-on {
+    background: var(--rc-card);
+    color: var(--rc-text);
+    box-shadow: var(--shadow-sm);
+}
+
+/* The badge wall (components/Achievements/BadgeWall) was a page and brought a
+   page's padding with it; here it sits in this page's column. */
+.rc-badges.ac-page { padding: 0 0 var(--space-10); }

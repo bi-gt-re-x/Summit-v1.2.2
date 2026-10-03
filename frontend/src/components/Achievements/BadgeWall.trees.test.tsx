@@ -98,7 +98,7 @@ vi.mock('@/services', async (original) => {
   };
 });
 
-const Achievements = (await import('./Achievements')).default;
+const { BadgeWall: Achievements } = await import('./BadgeWall');
 
 async function show(badges: Badge[]) {
   payload = badges;

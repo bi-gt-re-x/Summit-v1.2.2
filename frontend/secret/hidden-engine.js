@@ -19,26 +19,15 @@
     /**
      * Bind a title to this account, and put it on.
      *
-     * Two keys, because the rail asks two separate questions. `summitTitle:<user>`
-     * is "has this account earned the secret title" — it is what puts the title
-     * in the rail's three-dot list at all, and what retires the chain (see
-     * frontend/src/utils/easterEgg.ts). `summitRankTitle:<user>` is "which of my
-     * titles am I wearing", the ordinary chooser's key (utils/rankTitle.ts).
-     *
-     * Writing only the first is what this room used to do, and it made the
-     * button a liar: it said TITLE EQUIPPED, the reader walked back to the
-     * dashboard, and the rail still said Apprentice. The title was merely
-     * *available* — two clicks deep in a menu nobody thinks to open on the way
-     * out of a secret room. Reaching the end of the chain is the equip.
-     *
-     * The band titles stay in that menu, so this is a default and not a
-     * sentence: anyone who preferred Grand Champion can go back to it.
+     * `summitTitle:<user>` is "has this account earned the secret title". It
+     * retires the chain (see frontend/src/utils/easterEgg.ts), and the rail
+     * wears whatever it holds in place of the level's band — reaching the end
+     * of the chain is the equip, with no menu to go through.
      */
     function wearTitle(name) {
         var v = String(name == null ? '' : name).trim().slice(0, 24) || 'Admin';
         try {
             localStorage.setItem('summitTitle:' + user(), v);
-            localStorage.setItem('summitRankTitle:' + user(), v);
         } catch (e) {}
         return v;
     }

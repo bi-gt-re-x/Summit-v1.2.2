@@ -97,6 +97,8 @@ import { ErrorState, Loading, PageHero } from '@/components';
 import { Glyph } from '@/components/Growth/GrowthPanels';
 import { RecordModal } from '@/components/Records/RecordModal';
 import { GrowthSection } from '@/components/Analytics/GrowthSection';
+import { BadgeWall } from '@/components/Achievements/BadgeWall';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   useApi,
   useCountUp,
@@ -651,8 +653,31 @@ function ChaseRow({ row }: { row: RecordChase }) {
 }
 
 // ---------------------------------------------------------------------------
+// The three tabs
+// ---------------------------------------------------------------------------
+type RecordsView = 'bests' | 'growth' | 'badges';
+
+/**
+ * One page, three answers to "how far have I come": the bests you logged, the
+ * graded measures over time, and the badge wall. Growth was a tab of the
+ * analytics page and the badges were a page of their own (/achievements); both
+ * redirect here. Each tab is its own URL, so the rail, the back button and a
+ * pasted link agree about which is open.
+ */
+const VIEWS: { key: RecordsView; label: string; path: string; title: string }[] = [
+  { key: 'bests', label: 'Personal bests', path: '/records', title: 'Records' },
+  { key: 'growth', label: 'Growth', path: '/records/growth', title: 'Growth' },
+  { key: 'badges', label: 'Badges', path: '/records/badges', title: 'Badges' },
+];
+
+function viewOf(pathname: string): RecordsView {
+  return VIEWS.find((view) => view.path === pathname)?.key ?? 'bests';
+}
+
+// ---------------------------------------------------------------------------
 export default function Records() {
-  useDocumentTitle('Records');
+  const view = viewOf(useLocation().pathname);
+  useDocumentTitle(VIEWS.find((one) => one.key === view)!.title);
 
   const account = useUserData();
   const { username } = account;
@@ -864,6 +889,7 @@ export default function Records() {
             ) : (
               <p className="rc-sub">Your best, and the day you hit it.</p>
             )}
+            {view === 'bests' && (
             <div className="rc-hero-tools">
               <button type="button" className="rc-btn is-primary" onClick={() => open('record')}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
@@ -878,11 +904,30 @@ export default function Records() {
                 Add milestone
               </button>
             </div>
+            )}
           </div>
           <div className="rc-hero-art" aria-hidden="true"><Icon name="trophy" /></div>
         </header>
       </PageHero>
 
+      <nav className="rc-views" aria-label="Records sections">
+        {VIEWS.map((one) => (
+          <NavLink
+            key={one.key}
+            to={one.path}
+            end
+            className={({ isActive }) => `rc-view${isActive ? ' is-on' : ''}`}
+          >
+            {one.label}
+          </NavLink>
+        ))}
+      </nav>
+
+      {view === 'growth' && <GrowthSection />}
+      {view === 'badges' && <BadgeWall />}
+
+      {view === 'bests' && (
+      <>
       {error && <p className="rc-error">{error}</p>}
 
       {/* ---- Four stories --------------------------------------------------
@@ -1261,10 +1306,8 @@ export default function Records() {
           </>
         )}
       </section>
-
-      {/* The analytics page's Growth tab, which asked the question this page
-          is for — how far the account has come — from the score's side. */}
-      <GrowthSection />
+      </>
+      )}
 
       <RecordModal
         open={modal.open}

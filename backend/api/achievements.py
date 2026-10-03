@@ -104,7 +104,7 @@ router = APIRouter(tags=['achievements'])
 #: focus and a lattice half filled in are both worth saying, and neither is a
 #: bigger version of the other. The page gives it a section of its own on top
 #: of the chip every heading gets — see `TreeWall` in
-#: frontend/src/pages/Achievements.tsx for why that one is worth the space.
+#: frontend/src/components/Achievements/BadgeWall.tsx for why that one is worth the space.
 #:
 #: Analytics is the graded report card: not how much was done, but how well it
 #: scored. It is last before Special because it is the only heading a reader

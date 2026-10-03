@@ -61,7 +61,6 @@ import type { LearningItem } from '../index';
 /** No earlier period to compare a subject against. Shared, so it is one object. */
 const EMPTY_PREVIOUS = new Map<string, number>();
 import type { AnalyticsData } from '../useAnalyticsData';
-import { SkillStandingRow } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function OverviewTab({
@@ -77,7 +76,6 @@ export function OverviewTab({
   const {
     breakdown,
     card,
-    skills,
     lens,
     nameOf,
     observed,
@@ -119,7 +117,6 @@ export function OverviewTab({
     logStyle,
     tone,
     insights,
-    previousBySubject,
   } = model;
   const { stats, baseline } = data;
   const aim = baseline.data?.baseline ?? null;
@@ -396,14 +393,6 @@ export function OverviewTab({
         />
       </section>
 
-      {/* Where the account stands as a learner, which the tiles above cannot
-          say: they are about volume and rate, and this is about how well the
-          work went. Four figures, because a reader who wanted the eight
-          subjects behind them would be on the Subjects tab. */}
-      <section id="skills" className="ax-section">
-        <SkillStandingRow rows={skills} nameOf={nameOf} />
-      </section>
-
       {/* The line on its own until the score has something to say. `ax-grid-
           trajectory` is 1.85fr to 1fr, so dropping the second child would
           leave the chart in two thirds of the row with a third of it empty —
@@ -545,17 +534,10 @@ export function OverviewTab({
           </PanelGroup>
         )}
 
-        {/* The two panels an account on 'everything' asked to have here rather
-            than a tab away. Both are already computed for the tabs that own them
-            — Subjects draws the split in full, Insights draws the findings — so
-            this costs no request and no second arithmetic, which is the only
-            reason repeating a panel is acceptable at all. */}
+        {/* What the record suggests, for an account on 'everything'. The
+            split by subject that sat beside it is on the Subjects tab. */}
         {detail.extras && (
-          <PanelGroup
-            title="Subjects and findings"
-            note="The split by subject, and what the record suggests"
-          >
-            <SubjectPanel rows={breakdown.rows} previous={previousBySubject} />
+          <PanelGroup title="Findings" note="What the record suggests">
             <InsightsPanel insights={insights} />
           </PanelGroup>
         )}

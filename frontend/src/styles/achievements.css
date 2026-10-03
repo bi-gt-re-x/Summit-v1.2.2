@@ -1,5 +1,5 @@
 /* ==========================================================================
-   achievements.css — the badge wall. See src/pages/Achievements.tsx.
+   achievements.css — the badge wall. See src/components/Achievements/BadgeWall.tsx.
 
    Four bands down the page, in the order the reader's questions arrive:
 
@@ -733,7 +733,7 @@ html[data-theme="dark"] .ac-mark-tick svg { color: #10151f; }
 
 /* ---------- The skill trees ----------------------------------------------
    The one heading with a section of its own. See `TreeWall` in
-   frontend/src/pages/Achievements.tsx for why it earns the space; this only
+   frontend/src/components/Achievements/BadgeWall.tsx for why it earns the space; this only
    has to make it read as part of the page rather than as a panel bolted on.
 
    It takes Mastery's own tone through `--t`, so the mark, the ladder bars and

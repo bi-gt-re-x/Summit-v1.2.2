@@ -496,7 +496,7 @@ export function MetricStrip({ data }: { data: GrowthPeriods }) {
             </>
           ) : (
             <>
-              Graded <strong>{now.grade}</strong> at {now.overall} out of 100. This period
+              Graded <strong>{now.grade}</strong> at a growth score of {(now.overall / 10).toFixed(1)} out of 10. This period
               reaches back to your first day, so there is nothing before it.
             </>
           )}
@@ -986,7 +986,7 @@ export function milestones(data: GrowthPeriods, limit = 6): Milestone[] {
       date: best.date,
       kind: 'best',
       headline: 'Best of the period',
-      detail: `Your overall score peaked at ${best.overall} out of 100.`,
+      detail: `Your growth score peaked at ${(best.overall / 10).toFixed(1)} out of 10.`,
     });
   }
 

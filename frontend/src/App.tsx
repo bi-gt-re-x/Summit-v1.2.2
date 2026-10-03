@@ -36,7 +36,6 @@ const Notes = lazy(() => import('@/pages/Notes'));
 const Timer = lazy(() => import('@/pages/Timer'));
 const Records = lazy(() => import('@/pages/Records'));
 const Settings = lazy(() => import('@/pages/Settings'));
-const Achievements = lazy(() => import('@/pages/Achievements'));
 const AboutUs = lazy(() => import('@/pages/AboutUs'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('@/pages/TermsOfService'));
@@ -261,8 +260,8 @@ export default function App() {
               <Route path="/habits" element={<Navigate to="/analytics" replace />} />
               <Route path="/analytics/goals" element={<Navigate to="/goals" replace />} />
               <Route path="/trends" element={<Navigate to="/goals" replace />} />
-              <Route path="/analytics/growth" element={<Navigate to="/records" replace />} />
-              <Route path="/analytics/records" element={<Navigate to="/records" replace />} />
+              <Route path="/analytics/growth" element={<Navigate to="/records/growth" replace />} />
+              <Route path="/analytics/records" element={<Navigate to="/records/growth" replace />} />
               {/* One subject, on its own — a page rather than an eighth tab.
                   There is one of these per subject the account follows, and a
                   tab bar whose shape depends on a wizard answer is a tab bar
@@ -285,10 +284,14 @@ export default function App() {
               <Route path="/skill-trees" element={<SkillTrees />} />
               <Route path="/notes" element={<Notes />} />
               <Route path="/timer" element={<Timer />} />
+              {/* One page, three tabs: personal bests, growth, and the badge
+                  wall that used to be /achievements. */}
               <Route path="/records" element={<Records />} />
+              <Route path="/records/growth" element={<Records />} />
+              <Route path="/records/badges" element={<Records />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/settings/:section" element={<Settings />} />
-              <Route path="/achievements" element={<Achievements />} />
+              <Route path="/achievements" element={<Navigate to="/records/badges" replace />} />
               <Route path="/growth-tree" element={<Navigate to="/skill-trees" replace />} />
               <Route path="/calendar" element={<CalendarHome />} />
               <Route path="/calendar/day" element={<CalendarDay />} />

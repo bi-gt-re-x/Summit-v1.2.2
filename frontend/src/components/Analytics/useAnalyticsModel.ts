@@ -94,7 +94,6 @@ import {
 } from '@/utils/insight';
 import { CHANGE_WINDOW, whatChanged } from '@/utils/changed';
 import { habitEffects } from '@/utils/habitEffects';
-import { subjectFocus } from '@/utils/subjectFocus';
 import { goalActions, goalNotes, goalsOverview } from '@/utils/goalAnalytics';
 import { goalLimiters } from '@/utils/goalLimiter';
 import { leadingLens } from '@/utils/goalLens';
@@ -108,9 +107,6 @@ import {
   suggestGoals,
 } from '@/utils/goalSuggest';
 import { goalWork, linkCoverage } from '@/utils/goalWork';
-import { skillScores } from '@/utils/skillScore';
-import { skillFindings } from '@/utils/skillFindings';
-import { skillAdvice } from '@/utils/skillAdvice';
 import {
   qualityBands,
   qualityGrid,
@@ -657,30 +653,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     [breakdown.rows, nameOf, previousBySubject],
   );
 
-  /**
-   * The skill score over each of the two windows, so the level can be read as
-   * a movement rather than only as a standing.
-   *
-   * `skills` above is the lifetime reading and stays that way — it is what the
-   * cold-subject and findings panels are about. These two are the same
-   * function over two equal stretches, which is what makes the difference
-   * between them the score's own arithmetic rather than a second idea of what
-   * a level is.
-   */
-  const skillWindows = useMemo(() => {
-    const between = (from: string, to: string) =>
-      from && to
-        ? tasks.filter((task) => {
-            const done = task.completed_at?.slice(0, 10);
-            return done !== undefined && done >= from && done <= to;
-          })
-        : [];
-    return {
-      now: skillScores(between(fromIso, toIso)),
-      before: skillScores(between(wasFrom, wasTo)),
-    };
-  }, [tasks, fromIso, toIso, wasFrom, wasTo]);
-
   const changes = useMemo(
     () =>
       whatChanged({
@@ -690,8 +662,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
         diagnoses,
         patterns: discovered,
         subjects: subjectMoves,
-        skillsNow: skillWindows.now,
-        skillsBefore: skillWindows.before,
         nameOf,
         /* Every task, not the finished half: the overdue card is about what is
            still owed, which is the one thing in this section that cannot be
@@ -700,7 +670,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
         todayIso: toIso,
       }),
     [
-      all, diagnoses, discovered, nameOf, patternFinished, skillWindows,
+      all, diagnoses, discovered, nameOf, patternFinished,
       subjectMoves, tasks, toIso, wins,
     ],
   );
@@ -812,39 +782,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   const goalWorkRows = useMemo(() => goalWork(liveGoals, tasks), [liveGoals, tasks]);
   const goalCoverage = useMemo(() => linkCoverage(tasks), [tasks]);
 
-  /* The skill model — see utils/skillScore. Over the whole record rather than
-     the chosen window, for the same reason the goal figures are: "how good am
-     I at this" is a question about everything the reader has done, and the
-     model already decays old work on its own rather than needing a window to
-     do it. */
-  const skills = useMemo(() => skillScores(tasks), [tasks]);
-
-  /**
-   * The subjects worth a paragraph, with their branches and the largest gap.
-   *
-   * Ordered by the skill model rather than by XP — the section is about how a
-   * subject is going, not how much of it there is — and it reads the window's
-   * own subject rows so the bars cannot describe a different period from the
-   * figures above them. `detail.rows` decides how many: a reader who asked for
-   * essentials gets their strongest subject rather than five.
-   */
-  const focus = useMemo(
-    () =>
-      subjectFocus({
-        skills,
-        rows: breakdown.rows,
-        previous: previousBySubject,
-        nameOf,
-        limit: Math.max(1, Math.min(4, detail.rows)),
-      }),
-    [breakdown.rows, detail.rows, nameOf, previousBySubject, skills],
-  );
-
-  const skillNotes = useMemo(
-     () => skillFindings(skills, nameOf, rules.headlines),
-     [skills, nameOf, rules.headlines],
-  );
-
   /**
    * The dozen words at the head of the tab.
    *
@@ -909,24 +846,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     ],
   );
 
-  /* The habit rules, plus the two the skill model adds.
-
-     Merged here rather than inside `recommendations` because that function
-     takes a window's shape and knows nothing about ratings per subject over
-     the whole record — and the skill rules need exactly that. Both sets go
-     through the same list, the same category filter and the same "Add to
-     tasks", so a reader meets one kind of suggestion rather than two.
-
-     Re-sorted on the way out by the same two keys `rank` uses. The skill rules
-     carry no XP figure and so land at the bottom, which is where a change
-     whose payoff is a better score rather than more of one belongs. */
-  const advice = useMemo(() => {
-    const extra = skillAdvice(skills, nameOf);
-    if (extra.length === 0) return habitAdvice;
-    return [...habitAdvice, ...extra].sort(
-      (a, b) => b.impact - a.impact || a.effort - b.effort,
-    );
-  }, [habitAdvice, nameOf, skills]);
+  const advice = habitAdvice;
 
   const banked = Number(all[all.length - 1]?.cumulative_xp) || 0;
   /* The same fortnight the advice came from, not the picker's window. Both
@@ -1150,9 +1070,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     goalEffort,
     goalWorkRows,
     goalCoverage,
-    skills,
-    skillNotes,
-    focus,
     goalCheckpoints,
     goalLead,
     namedSubjects,

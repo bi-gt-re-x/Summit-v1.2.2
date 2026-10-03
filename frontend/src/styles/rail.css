@@ -378,83 +378,6 @@
 }
 
 /* --- Choosing a title --------------------------------------------------- */
-/* Three dots, quiet until you go looking. It sits at the same weight as the
-   XP figures below rather than the title beside it: the title is the thing on
-   this plate, and a control that matched it would read as a second one. */
-.rail-rank-more {
-    flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border: 0;
-    border-radius: var(--radius-sm);
-    background: none;
-    color: #9297A3;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity .16s ease, background-color .16s ease, color .16s ease;
-}
-.rail-rank-more svg { width: 15px; height: 15px; }
-
-/* Shown on hover, on focus, and while its menu is open — but never hidden
-   from the keyboard, which cannot hover and would otherwise be tabbing to
-   something invisible. */
-.rail-rank:hover .rail-rank-more,
-.rail-rank-more:focus-visible,
-.rail-rank-more.is-open { opacity: 1; }
-.rail-rank-more:hover,
-.rail-rank-more.is-open { background: #EDEFF3; color: #2C302E; }
-
-.rail-title-scrim {
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    padding: 0;
-    border: 0;
-    background: none;
-    cursor: default;
-}
-
-/* Opens upward, because the plate it belongs to is at the foot of the rail
-   and a menu dropping from there would open off the bottom of the screen. */
-.rail-title-menu {
-    position: absolute;
-    z-index: 61;
-    bottom: calc(100% + 6px);
-    left: 8px;
-    right: 8px;
-    max-height: 46vh;
-    overflow-y: auto;
-    padding: var(--space-1);
-    border: 1px solid #E4E7EC;
-    border-radius: var(--radius-md);
-    background: #FFFFFF;
-    box-shadow: var(--shadow-lg);
-}
-
-.rail-title-opt {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-2);
-    width: 100%;
-    padding: var(--space-2) var(--space-2);
-    border: 0;
-    border-radius: var(--radius-md);
-    background: none;
-    font-size: var(--text-md);
-    font-weight: 600;
-    color: #2C302E;
-    text-align: left;
-    cursor: pointer;
-}
-.rail-title-opt small { font-size: var(--text-xs); font-weight: 600; color: #9297A3; }
-.rail-title-opt:hover { background: #F4F6F8; }
-.rail-title-opt.active { background: #EEF0FE; color: #4A4FC4; }
-.rail-title-opt.active small { color: #4A4FC4; }
 
 /* The collapsed rail's version of the title: the level's number alone, which
    is the part of "Grand Champion, level 53" that survives 54px. */
@@ -603,19 +526,6 @@ html[data-theme="dark"] .rail-toggle:focus-visible { outline-color: #7FB3FF; }
 html[data-theme="dark"] .rail-foot { border-top-color: #21262D; }
 html[data-theme="dark"] .rail-rank-title,
 html[data-theme="dark"] .rail-rank-num { color: #F0F2F5; }
-html[data-theme="dark"] .rail-rank-more { color: #8B949E; }
-html[data-theme="dark"] .rail-rank-more:hover,
-html[data-theme="dark"] .rail-rank-more.is-open { background: #21262D; color: #F0F2F5; }
-html[data-theme="dark"] .rail-title-menu {
-    border-color: #2A3038;
-    background: #161B22;
-    box-shadow: var(--shadow-lg);
-}
-html[data-theme="dark"] .rail-title-opt { color: #F0F2F5; }
-html[data-theme="dark"] .rail-title-opt small { color: #8B949E; }
-html[data-theme="dark"] .rail-title-opt:hover { background: #21262D; }
-html[data-theme="dark"] .rail-title-opt.active { background: #262B57; color: #B9BCFF; }
-html[data-theme="dark"] .rail-title-opt.active small { color: #B9BCFF; }
 html[data-theme="dark"] .rail-xp-row { color: #8B949E; }
 html[data-theme="dark"] .rail-xp-bar { background: #21262D; }
 

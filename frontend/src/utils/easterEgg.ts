@@ -130,9 +130,8 @@ export function markUnlockedToday(account: string): void {
  * It is the chain's terminator: once a title has been earned the clue has done
  * its job and the dashboard goes back to reading normally.
  *
- * That script writes a second key at the same moment — the rail's chosen
- * title, so the prize is worn and not merely offered. utils/rankTitle.ts owns
- * that one and explains it.
+ * The rail wears it in place of the level's band once it is here, so the
+ * prize is worn and not merely offered — see `title` in components/Rail.tsx.
  */
 export function earnedTitle(account: string): string | null {
   return carriedOver(`summitTitle:${account}`, `ascenTitle:${account}`);
@@ -149,9 +148,8 @@ export function earnedTitle(account: string): string | null {
  * the old name, and moving it across is what makes the fallback finite rather
  * than a branch this code carries for ever.
  *
- * Exported because utils/rankTitle.ts owns the second of the two keys and has
- * exactly the same problem; two copies of this would be two chances to get the
- * order of the arguments wrong.
+ * Exported so the next key with the same problem uses this rather than a
+ * second copy of it.
  */
 export function carriedOver(now: string, before: string): string | null {
   try {

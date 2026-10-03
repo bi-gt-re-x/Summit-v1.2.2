@@ -94,15 +94,21 @@ export const PLACES: Place[] = [
     name: 'Records',
     where: '',
     to: '/records',
-    keywords: 'personal best hall of fame high score achievements outside the app '
-      + 'growth year on year how far you have come milestones',
+    keywords: 'personal best hall of fame high score outside the app how far you have come milestones',
   },
   {
-    id: 'achievements',
-    name: 'Achievements',
-    where: '',
-    to: '/achievements',
-    keywords: 'badges trophies wall unlocks tiers titles',
+    id: 'records-growth',
+    name: 'Growth',
+    where: 'Records',
+    to: '/records/growth',
+    keywords: 'growth year on year period timeline graded measures movers',
+  },
+  {
+    id: 'records-badges',
+    name: 'Badges',
+    where: 'Records',
+    to: '/records/badges',
+    keywords: 'achievements badges trophies wall unlocks tiers titles',
   },
   {
     id: 'skill-trees',

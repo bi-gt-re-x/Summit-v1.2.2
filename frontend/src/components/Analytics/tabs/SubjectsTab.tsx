@@ -1,20 +1,19 @@
 /**
- * Subjects — mastery, and which of it anybody decided to aim at.
+ * Subjects — where the work went, how good you are at it, and what is left.
  *
- * The growth page's Skills chapter, which arrived whole and kept its own layout
- * inside `.gr-scope`. The line above it is this tab's only addition: which
- * subjects are being worked is the chapter's job, and which have a goal on them
- * is one sentence of context that earns its place only when the two lists
- * differ.
+ * XP by subject, skill levels read from the problems marked on the skill
+ * trees, and the tree behind each subject. One line above them says which of
+ * the worked subjects have a goal on them, when the two lists differ.
  */
 import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
-import { SkillsChapter } from '@/components/Growth';
 import { latticeFor } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
 import { OTHER_KEY } from '@/utils/subjectXp';
-import { SkillScorePanel } from '../SkillView';
-import { PanelGroup } from '../charts';
+import { SkillLevelsPanel } from '../SkillLevels';
+import { SubjectPanel } from '../Breakdown';
+import { useSkillAttempts } from '@/hooks';
+import { Panel } from '../charts';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
@@ -32,7 +31,9 @@ export function SubjectsTab({
   subjects,
   username = null,
 }: { model: AnalyticsModel; subjects: SubjectIndex; username?: string | null }) {
-  const { all, namedSubjects, tasks, breakdown, skills, nameOf } = model;
+  const { namedSubjects, breakdown, previousBySubject, detail } = model;
+  /* The reader's marked skill-tree problems, for "Skills by level". */
+  const practice = useSkillAttempts(username);
 
   /**
    * What there is to learn in each subject that got worked.
@@ -66,10 +67,6 @@ export function SubjectsTab({
 
   return (
     <>
-      {/* The two chapters that arrived whole. Each was a tab of the growth
-          page and neither had a counterpart here — mastery and achievement
-          are questions the five original tabs never asked. They keep their own
-          layout inside `.gr-scope`; see the stylesheet note at the top. */}
       {/* One line above the chapter. Which subjects are being worked is
           this tab's whole job; which of them anybody decided to aim at is
           one sentence of context on top of that, and it earns its place
@@ -96,12 +93,34 @@ export function SubjectsTab({
         </section>
       )}
 
-      <div className="ax-section gr-scope">
-        <SkillsChapter all={all} tasks={tasks} subjects={subjects} />
-      </div>
+      {/* Where the work went: XP by subject, against the window before. It was
+          on the Overview as well, which is the second place a reader would
+          have met it. */}
+      {breakdown && breakdown.rows.length > 0 && (
+        <section className="ax-section">
+          <SubjectPanel rows={breakdown.rows} previous={previousBySubject} />
+        </section>
+      )}
 
-      {/* What each of them opens. The chapter above says how much work went
-          where; this says what there is to learn in each, and gives the reader
+      {/* How good the reader is at each step, from problems they marked right
+          or wrong on the skill trees. The one skill measure the app keeps:
+          the subject score and the hundred-level mastery ladder were readings
+          of XP and ratings dressed as ability, and this is read from answers. */}
+      <section className="ax-section">
+        <Panel
+          title="Skills by level"
+          note="Each step of your skill trees, measured from problems you marked right or wrong"
+        >
+          <SkillLevelsPanel
+            practice={practice}
+            windowDays={null}
+            periodText="your whole record"
+            limit={detail.rows}
+          />
+        </Panel>
+      </section>
+
+      {/* What each of them opens: what there is to learn in each subject, and
           a way into it. */}
       {lattices.length > 0 && (
         <section className="ax-section ax-panel">
@@ -136,31 +155,6 @@ export function SubjectsTab({
               Open the skill trees
             </Link>
           </p>
-        </section>
-      )}
-
-      {/* Last on the tab, and shut.
-
-          It was first and open, which was the wrong call twice over. The
-          chapters above are what this tab has always been — where the work
-          went and what each subject opens — and a reader arriving at Subjects
-          is looking for those. The scored list is the deepest thing here and
-          the one that rewards being sought out: eight subjects at six parts
-          each is fifty-four rows of chart, which at the top of a tab is a wall
-          before the tab has said anything.
-
-          Shut rather than merely last, for the same reason. The group states
-          what is inside it in its own heading, so a reader who wants the
-          arithmetic opens it, and one who wants the chapters above scrolls
-          past two lines instead of past a wall. */}
-      {skills.length > 0 && (
-        <section className="ax-section">
-          <PanelGroup
-            title="Skill Level"
-            note="Every subject scored from your own ratings, with the working behind each."
-          >
-            <SkillScorePanel rows={skills} nameOf={nameOf} />
-          </PanelGroup>
         </section>
       )}
     </>

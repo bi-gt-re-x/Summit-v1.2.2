@@ -24,7 +24,6 @@ import { SETTLE } from '@/utils/followup';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { whyFor } from '../milestones';
 import type { AnalyticsData } from '../useAnalyticsData';
-import { SkillLimitPanel } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & { data: AnalyticsData }) {
@@ -38,10 +37,6 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
        or how they are ranked — see the note on `headlines` below, which is the
        same rule. */
     detail, reasons, rhythm,
-    /* The skill model's weakest part per subject. The one place in the app
-       allowed to turn a skill figure into something to do — see the note at
-       the top of utils/skillFindings. */
-    skills, nameOf,
   } = model;
 
   /**
@@ -97,14 +92,6 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
             setNudge((at) => at + 1);
           }}
         />
-      </section>
-
-      {/* What is capping each subject, between the plan and the diagnosis.
-          The plan above is about the next week's tasks; this is about the one
-          of six parts that is holding a skill down, which is a slower thing to
-          act on and belongs beside the reasons rather than beside the chores. */}
-      <section className="ax-section">
-        <SkillLimitPanel rows={skills} nameOf={nameOf} limit={headlines} />
       </section>
 
       {/* Then the diagnosis: what the fortnight means, before what to change
@@ -173,7 +160,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
             >
               <ul className="ax-goal-advice">
                 {goalAdvice.map((row) => (
-                  <li key={row.id} className={`is-${row.tone}`}>
+                  <li key={`${row.goalId}:${row.id}`} className={`is-${row.tone}`}>
                     {/* The goal first. It was last, under the instruction, and
                         two goals stalled for the same reason produced two rows
                         that both opened "Put one of its tasks on this week" —

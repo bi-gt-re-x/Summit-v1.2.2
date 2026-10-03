@@ -18,7 +18,6 @@
  * the design. One stroke weight, one size, `currentColor`, and the tone class
  * on the tile decides what colour that is.
  */
-import { useCountUp } from '@/hooks';
 
 // --------------------------------------------------------------------------
 // Icons
@@ -56,49 +55,5 @@ export function Glyph({ name, size = 15 }: { name: keyof typeof PATHS | string; 
     >
       <path d={PATHS[name] ?? PATHS.info!} />
     </svg>
-  );
-}
-
-/** The ⓘ beside a panel title, explaining what the panel is counting. */
-export function Hint({ text }: { text: string }) {
-  return (
-    <span className="gr-hint" title={text} aria-hidden="true">
-      <Glyph name="info" size={13} />
-    </span>
-  );
-}
-
-// --------------------------------------------------------------------------
-// A counting figure
-// --------------------------------------------------------------------------
-/**
- * A figure that arrives by counting up to itself.
- *
- * Its own component because `useCountUp` is a hook and the tiles are a `map` —
- * and because the tween has to be per figure: four values counting at once
- * from one shared clock would all land together whatever they started from.
- *
- * The hook counts from zero on first paint and tweens between values after
- * that, so this animates when the page arrives *and* when the range changes,
- * which are the two moments the number is genuinely different. It settles on
- * `Math.round`, so what is displayed is the figure itself and not a tween
- * artefact — see hooks/useCountUp for why the value handed in should already
- * be at display precision.
- */
-export function CountValue({
-  value,
-  className,
-  suffix = '',
-}: {
-  value: number;
-  className?: string;
-  suffix?: string;
-}) {
-  const shown = useCountUp(value);
-  return (
-    <strong className={className}>
-      {Math.round(shown).toLocaleString()}
-      {suffix}
-    </strong>
   );
 }

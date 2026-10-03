@@ -40,8 +40,7 @@
 --
 -- No level, no accuracy, no mastery. They are all functions of these rows and
 -- a date, which is what lets the page say what the level *was* on any past
--- day without a history table — the same reasoning utils/skillGrowth gives
--- for the subject score.
+-- day without a history table.
 CREATE TABLE IF NOT EXISTS skill_attempts (
     id         TEXT    PRIMARY KEY,
     user_id    TEXT    NOT NULL REFERENCES users (username) ON DELETE CASCADE,

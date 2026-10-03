@@ -418,15 +418,6 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
     gap: var(--space-4);
     align-items: stretch;
 }
-.gr-chart-panel { grid-column: span 2; overflow: hidden; }
-/* A chapter is a wide panel and four narrow ones over two rows of three: the
-   chart takes two columns and the last panel takes the two the third row of
-   the second row would otherwise leave empty. Without it every chapter ended
-   on a hole the width of a card. */
-.gr-span-2 { grid-column: span 2; }
-@media (max-width: 760px) {
-    .gr-span-2 { grid-column: span 1; }
-}
 
 /* Below three columns the pairings change — the summary sits beside the donut,
    the heatmap beside the milestones — so a ratio drawn for a third of a wide
@@ -434,11 +425,9 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
    `stretch` still keeps each pair level. */
 @media (max-width: 1080px) {
     .gr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .gr-chart-panel { grid-column: span 2; }
 }
 @media (max-width: 760px) {
     .gr-grid { grid-template-columns: minmax(0, 1fr); }
-    .gr-chart-panel { grid-column: span 1; }
 }
 
 /* ---- The panels themselves ---------------------------------------------- */
@@ -552,52 +541,12 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
 @keyframes grPop {
     from { opacity: 0; transform: translate(-50%, 50%) scale(.4); }
 }
-
-/* The plot, uncovered left to right. `backwards` rather than `both`: the clip
-   is wanted before and during the run and never after it, and an `inset(0 0 0
-   0)` left on the element makes it a containing block for nothing and a
-   stacking context for no reason. */
-.gr-lt-svg { animation: grWipe 1.15s cubic-bezier(.33, 1, .68, 1) backwards; }
-/* Behind the wipe that is uncovering them, not after it: the wipe reaches the
-   far edge at 1.15s, and a dot two thirds along lands at about .8s. */
-.gr-lt-dot { animation: grPop .32s cubic-bezier(.2, .7, .3, 1) both;
-    animation-delay: calc(.1s + (var(--i, 0) / var(--n, 1)) * 1.05s); }
 .gr-skill-fill { animation: grGrow .95s cubic-bezier(.22, 1, .36, 1) .1s both; }
 
 @media (prefers-reduced-motion: reduce) {
     .gr-lt-svg,
 .gr-lt-dot,
 .gr-skill-fill { animation: none; }
-}
-
-/* ---- The chapters --------------------------------------------------------
-   The five "isn't built yet" placeholder rules used to live here. Every tab is
-   a page of real panels now (components/Growth/*Chapter.tsx), and they are drawn
-   with the classes above rather than any of their own — the same card, tiles,
-   bar rows and lines the Overview uses, because they are the same page from a
-   different angle. What follows is the little the Overview had no need for.
-
-   The projected half of Long Term's curve. Lighter than the recorded line and
-   drawn at the accent rather than in it, so "this part is arithmetic" is
-   legible before the legend is read. */
-.gr-lt-line.tone-future { stroke: var(--tone-purple); opacity: .45; }
-.gr-lt-dot.tone-future { background: var(--tone-purple); opacity: .5; }
-.gr-lt-key.tone-future { background: var(--tone-purple); opacity: .5; }
-/* The canvas took what the row left rather than naming a height of its own —
-   the row is the fixed thing. It repainted on mount and on window resize, both
-   of which are when this box can change size, so the buffer never went stale
-   against it. The canvas and its renderer are gone; the sizing stays because
-   the row it belongs to is still drawn. */
-.gr-scope .gr-chart-panel canvas {
-    /* Basis 0, not auto: the buffer the renderer sets gives the element an
-       intrinsic height, and taking that as the basis makes it overshoot the
-       box by however much the last paint measured. */
-    flex: 1 1 0;
-    display: block;
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    margin-top: 0;
 }
 
 /* ---- Growth Summary: four tiles, then the curve -------------------------- */
@@ -674,67 +623,6 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
 .gr-seg-opt:hover { color: var(--ink); }
 .gr-seg-opt.is-active { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
 
-/* ---- Long Term Progress --------------------------------------------------
-   Four running totals over months. The axis is XP; the other three are scaled
-   to fit beside it and carry their own totals in the legend — see
-   `longTermProgress` for why, and the hint on the panel says so too. */
-.gr-lt-plot { flex: 1 1 auto; min-height: 0; display: flex; gap: var(--space-2); }
-.gr-lt-ticks {
-    flex: none; padding-bottom: var(--space-4);
-    display: flex; flex-direction: column; justify-content: space-between;
-    font-size: var(--text-2xs); color: var(--ink-faint); text-align: right;
-}
-.gr-lt-box { position: relative; flex: 1 1 auto; min-width: 0; }
-.gr-lt-svg { position: absolute; left: 0; right: 0; top: 0; bottom: 16px; width: 100%; height: calc(100% - 16px); }
-.gr-lt-grid { stroke: var(--inset-edge); stroke-width: 1; }
-/* Heavier than the 1.8 they were. Four lines crossing each other in a panel a
-   third of a row wide are told apart by weight as much as by hue, and at 1.8
-   the two that run close together read as one line with a shadow. */
-.gr-lt-line { fill: none; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
-.gr-lt-line.tone-xp { stroke: var(--tone-purple); }
-.gr-lt-line.tone-tasks { stroke: var(--tone-green); }
-.gr-lt-line.tone-focus { stroke: var(--tone-blue); }
-.gr-lt-line.tone-active { stroke: var(--tone-amber); }
-/* The dots are their own layer so they can stay round: the svg is stretched to
-   the box and a <circle> inside it would come out an ellipse. */
-.gr-lt-dots { position: absolute; left: 0; right: 0; top: 0; bottom: 16px; pointer-events: none; }
-/* A bucket, marked. The ring is the panel's own background rather than a
-   colour of its own, so a dot sitting on the line it belongs to still reads as
-   a dot and not as a thickening — which at 5px and no ring it did not. */
-.gr-lt-dot {
-    position: absolute; width: 5.5px; height: 5.5px; border-radius: var(--radius-full);
-    transform: translate(-50%, 50%);
-    box-shadow: 0 0 0 1.5px var(--panel-bg);
-}
-.gr-lt-dot.tone-xp { background: var(--tone-purple); }
-.gr-lt-dot.tone-tasks { background: var(--tone-green); }
-.gr-lt-dot.tone-focus { background: var(--tone-blue); }
-.gr-lt-dot.tone-active { background: var(--tone-amber); }
-.gr-lt-marks { position: absolute; left: 0; right: 0; bottom: 0; height: 16px; }
-.gr-lt-marks span {
-    position: absolute; top: 3px; transform: translateX(-50%);
-    font-size: var(--text-2xs); color: var(--ink-faint); white-space: nowrap;
-}
-/* The ends tuck in rather than centring on the axis they sit at: a label
-   centred on 0% or 100% hangs half its width outside the panel, which at a
-   narrow width is a horizontal scrollbar on the whole page. */
-.gr-lt-marks span:first-child { transform: none; }
-/* `.is-end` rather than `:last-child`: the long term chart only labels a bucket
-   where a month opens, so its final label is often not at the right edge and
-   tucking it in would drag it a full width off its own tick. */
-.gr-lt-marks span.is-end { transform: translateX(-100%); }
-.gr-lt-legend {
-    flex: none; list-style: none; margin: var(--space-3) 0 0; padding: 0;
-    display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4);
-}
-.gr-lt-legend li { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-2xs); }
-.gr-lt-key { width: 14px; height: 2.5px; border-radius: var(--radius-full); }
-.gr-lt-key.tone-xp { background: var(--tone-purple); }
-.gr-lt-key.tone-tasks { background: var(--tone-green); }
-.gr-lt-key.tone-focus { background: var(--tone-blue); }
-.gr-lt-key.tone-active { background: var(--tone-amber); }
-.gr-lt-name { color: var(--ink-quiet); }
-
 /* ---- Skills Progress -----------------------------------------------------
    Five named skills at a level each, laid out as one row apiece: the name, the
    level, the bar, the percentage. The four are a grid rather than a flex row so
@@ -789,34 +677,6 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
 /* Id-scoped for the same reason as .gr-empty above — see the note there. */
 .gr-scope .gr-insight-head { margin: 0; font-size: var(--text-sm); font-weight: 700; color: var(--ink); text-align: left; }
 .gr-scope .gr-insight-hint { margin: 2px 0 0; font-size: var(--text-xs); line-height: 1.4; color: var(--ink-quiet); text-align: left; }
-
-/* ==========================================================================
-   THE CHAPTERS
-
-   Overview is the page above. The four tabs beside it are pages of their own —
-   Long Term, Focus & Consistency, Skills & Subjects, Benchmarks — and
-   everything from here down dresses them.
-
-   They are deliberately built out of the same furniture: the same `.gr-panel`
-   card, the same tiles, the same bar rows, the same insight notes. What is new
-   below is only the shapes Overview has no use for — a hero row of four large
-   scores, a calendar of follow-through, a radar, a mastery track, a ladder —
-   and each of them borrows the page's own variables rather than naming a colour
-   of its own, so the dark theme at the foot of this file is a re-pointing of
-   five tones and not a second stylesheet.
-
-   The design language, stated once so the rules below can be read against it:
-   large section titles, one strong number per panel, elegant charts, subtle
-   gradients, rounded corners, plenty of whitespace, and hover states that move
-   a little rather than light up.
-   ========================================================================== */
-
-/* A panel that takes the whole row. The grid is three columns of unequal width
-   (see `.gr-grid`), so a hero row and a card wall have to say so explicitly —
-   `span 2` leaves a third of the page empty beside them. */
-.gr-span-3 { grid-column: span 3; }
-@media (max-width: 1080px) { .gr-span-3 { grid-column: span 2; } }
-@media (max-width: 760px)  { .gr-span-3 { grid-column: span 1; } }
 
 /* ---- The hero row --------------------------------------------------------
    The four figures a chapter opens on. Not the tile grid the panels use: a
@@ -918,190 +778,6 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
    `grGrow` animates width, so this one gets a keyframe of its own. */
 @keyframes grRise { from { height: 0; } }
 
-/* ---- Skill cards ---------------------------------------------------------
-   A wall of them, one per subject, each one a control: choosing a card is what
-   the growth curve, the radar and the mastery track below all follow. So they
-   are buttons, and they read as pressed when chosen rather than merely
-   outlined — three panels change under a click and the reader has to be able to
-   see which card did it. */
-.gr-skillcards {
-    flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin;
-    overscroll-behavior: contain;
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: var(--space-3);
-}
-.gr-skillcard {
-    position: relative; overflow: hidden;
-    display: flex; flex-direction: column; gap: var(--space-2);
-    padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); text-align: left;
-    background: var(--inset-bg); border: 1px solid var(--inset-edge);
-    font: inherit; cursor: pointer;
-    transition: transform .16s cubic-bezier(.22, 1, .36, 1), border-color .16s ease, box-shadow .16s ease;
-}
-.gr-skillcard:hover { transform: translateY(-2px); border-color: #d5d8e2; }
-.gr-skillcard.is-picked {
-    border-color: var(--accent);
-    background: var(--panel-bg);
-    box-shadow: 0 0 0 1px var(--accent), 0 10px 24px rgba(109, 79, 208, .14);
-}
-.gr-skillcard-top { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
-.gr-skillcard-ico {
-    flex: none; width: 24px; height: 24px; border-radius: var(--radius-md);
-    object-fit: contain;
-}
-.gr-skillcard-ico.is-glyph {
-    display: inline-flex; align-items: center; justify-content: center;
-    background: var(--accent-soft); color: var(--accent);
-}
-.gr-skillcard-name {
-    flex: 1 1 auto; min-width: 0; font-size: var(--text-sm); font-weight: 700; color: var(--ink);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-/* The band name. Bigger than it was: with twenty-one of them it is the thing a
-   reader recognises a subject by, where the old six-name ladder had every
-   subject reading "Master" by level eleven. `white-space: nowrap` because
-   "Grand Champion" and "Elite Ascendant" are two words and must not stack. */
-.gr-skillcard-rank {
-    flex: none; padding: var(--space-1) var(--space-2); border-radius: var(--radius-full);
-    background: var(--accent-soft); color: var(--accent);
-    font-size: var(--text-2xs); font-weight: 700; letter-spacing: .02em; text-transform: uppercase;
-    white-space: nowrap;
-}
-.gr-skillcard-level { display: flex; align-items: baseline; gap: var(--space-1); }
-.gr-skillcard-level strong {
-    font-size: var(--text-2xl); font-weight: 700; line-height: 1; color: var(--ink); letter-spacing: -0.02em;
-}
-.gr-skillcard-level span { font-size: var(--text-2xs); color: var(--ink-faint); }
-.gr-skillcard-track { height: 6px; border-radius: var(--radius-full); background: var(--panel-bg); border: 1px solid var(--inset-edge); overflow: hidden; }
-.gr-skillcard-fill {
-    display: block; height: 100%; border-radius: var(--radius-full);
-    background: linear-gradient(90deg, var(--tone-purple), var(--accent));
-    animation: grGrow .95s cubic-bezier(.22, 1, .36, 1) .1s both;
-}
-.gr-skillcard-foot,
-.gr-skillcard-meta {
-    display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
-    font-size: var(--text-2xs); color: var(--ink-quiet); white-space: nowrap;
-}
-.gr-skillcard-meta { color: var(--ink-faint); }
-.gr-skillcard-meta .is-up { color: var(--tone-green); font-weight: 700; }
-.gr-skillcard-meta .is-down { color: var(--tone-red); font-weight: 700; }
-.gr-skillcard-meta .is-quiet { font-style: italic; }
-
-/* A level reached, on the curve that reached it. */
-.gr-lt-dot.is-mile { background: var(--tone-amber); width: 7px; height: 7px; }
-.gr-lt-key.is-mile { background: var(--tone-amber); }
-.gr-lt-marks span { color: var(--ink-faint); }
-
-/* The wash under the level curve. `currentColor` on the path, so the gradient's
-   stops — which are defined against it — resolve to the accent here and to the
-   dark theme's accent there, without a second gradient. It is the one plot on
-   this page with a fill: the others are three or four lines crossing, where a
-   fill under any of them would hide the rest. */
-.gr-lt-area { fill: url(#grSkillWash); stroke: none; }
-.gr-lt-wash-top  { stop-color: var(--accent); stop-opacity: .34; }
-.gr-lt-wash-foot { stop-color: var(--accent); stop-opacity: 0; }
-/* A skill with too few points to draw gets a sentence instead of a line — the
-   illustrated climb that used to fill this box is gone. */
-.gr-plot-empty {
-    margin: var(--space-2) 0 0;
-    padding: var(--space-6) var(--space-4);
-    border: 1px dashed var(--inset-edge);
-    border-radius: var(--radius-md);
-    background: var(--inset-bg);
-    font-size: var(--text-xs); line-height: 1.55; color: var(--ink-faint);
-}
-
-/* ---- The radar -----------------------------------------------------------
-   The one chart on this page that cannot be stretched: a radar that is not
-   round is not a radar. Every other plot here fills its panel with
-   `preserveAspectRatio="none"`; this one keeps its square and centres. */
-.gr-radar { flex: none; display: block; width: 100%; max-width: 210px; margin: 2px auto var(--space-2); aspect-ratio: 1; }
-.gr-radar-ring { fill: none; stroke: var(--inset-edge); stroke-width: .6; }
-.gr-radar-spoke { stroke: var(--inset-edge); stroke-width: .5; }
-.gr-radar-area { fill: rgba(109, 79, 208, .22); stroke: var(--accent); stroke-width: 1.2; stroke-linejoin: round; }
-.gr-radar-dot { fill: var(--accent); }
-.gr-balance-list {
-    flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin;
-    overscroll-behavior: contain;
-    list-style: none; margin: 0; padding: 0;
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-4);
-}
-.gr-balance-list li { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); font-size: var(--text-2xs); }
-.gr-balance-name { color: var(--ink-quiet); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gr-balance-value { flex: none; font-weight: 700; color: var(--ink); }
-
-/* ---- The mastery track ---------------------------------------------------
-   The levels behind and ahead, down one rail. Locked rungs are subdued rather
-   than hidden: a ladder you cannot see the top of is not a ladder, and the
-   estimate on each one is what turns "2,400 XP away" into a date. */
-.gr-track {
-    flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin;
-    overscroll-behavior: contain;
-    list-style: none; margin: 0; padding: 0;
-    display: flex; flex-direction: column; gap: 2px;
-}
-.gr-track-node { position: relative; display: flex; gap: var(--space-3); padding: var(--space-2) 0 var(--space-2) 2px; }
-/* The rail between the marks. Drawn from each node down to the next, so the
-   last one has none — an unterminated line hanging off the bottom of a list
-   reads as content that was cut off. */
-.gr-track-node::before {
-    content: ''; position: absolute; left: 13px; top: 32px; bottom: -2px;
-    width: 2px; background: var(--inset-edge);
-}
-.gr-track-node:last-child::before { display: none; }
-.gr-track-node.is-done::before { background: var(--accent); opacity: .45; }
-.gr-track-mark {
-    flex: none; position: relative; z-index: 1;
-    width: 28px; height: 28px; border-radius: var(--radius-full);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: var(--text-xs); font-weight: 700;
-    background: var(--inset-bg); border: 1.5px solid var(--inset-edge); color: var(--ink-faint);
-}
-.gr-track-node.is-done .gr-track-mark { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.gr-track-node.is-current .gr-track-mark {
-    background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
-}
-.gr-track-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.gr-track-name { font-size: var(--text-sm); font-weight: 700; color: var(--ink); }
-.gr-track-sub { font-size: var(--text-2xs); color: var(--ink-faint); }
-.gr-track-rail { height: 5px; border-radius: var(--radius-full); background: var(--inset-edge); overflow: hidden; margin-top: var(--space-1); }
-.gr-track-fill { display: block; height: 100%; border-radius: var(--radius-full); background: var(--accent);
-    animation: grGrow .95s cubic-bezier(.22, 1, .36, 1) .1s both; }
-/* Subdued, not hidden. */
-.gr-track-node.is-locked { opacity: .55; }
-.gr-track-node.is-locked .gr-track-rail { display: none; }
-
-/* ---- Moving and waiting -------------------------------------------------- */
-.gr-movers {
-    flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: thin;
-    overscroll-behavior: contain;
-    display: flex; flex-direction: column; gap: var(--space-4);
-}
-.gr-movers-title {
-    margin: 0 0 var(--space-2); font-size: var(--text-2xs); font-weight: 700;
-    letter-spacing: .05em; text-transform: uppercase; color: var(--ink-faint);
-}
-.gr-movers-list { list-style: none; margin: 0; padding: 0; counter-reset: mover; display: flex; flex-direction: column; gap: var(--space-2); }
-.gr-movers-list li {
-    display: flex; align-items: baseline; gap: var(--space-2); min-width: 0;
-    font-size: var(--text-xs); counter-increment: mover;
-}
-.gr-movers-list li::before {
-    content: counter(mover); flex: none;
-    width: 17px; height: 17px; border-radius: var(--radius-sm);
-    display: inline-flex; align-items: center; justify-content: center;
-    background: var(--inset-bg); border: 1px solid var(--inset-edge);
-    font-size: var(--text-2xs); font-weight: 700; color: var(--ink-faint);
-    align-self: center;
-}
-.gr-movers-name {
-    flex: 1 1 auto; min-width: 0; color: var(--ink-soft);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.gr-movers-pct { flex: none; font-weight: 700; color: var(--ink-quiet); }
-.gr-movers-pct.is-up { color: var(--tone-green); }
-
 @media (prefers-reduced-motion: reduce) {
     .gr-wk-fill,
 .gr-habit-fill,
@@ -1162,8 +838,6 @@ html[data-theme="dark"] .gr-seg-opt { color: var(--ink-faint); }
 html[data-theme="dark"] .gr-seg-opt:hover { color: var(--ink); }
 html[data-theme="dark"] .gr-seg-opt.is-active { background: #232a33; color: var(--ink); box-shadow: none; }
 
-html[data-theme="dark"] .gr-lt-grid { stroke: #232a33; }
-
 /* ---- The chapters, dark -------------------------------------------------
    Most of the section above is already dark-correct: every rule in it reaches
    for the variables at the top of this file, and those are re-pointed once for
@@ -1188,12 +862,6 @@ html[data-theme="dark"] .gr-hero-grade.g-B { --g-ink: var(--tone-blue);  --g-bg:
 html[data-theme="dark"] .gr-hero-grade.g-C { --g-ink: var(--tone-amber); --g-bg: #2b2312; --g-edge: #43371b; }
 html[data-theme="dark"] .gr-hero-grade.g-D { --g-ink: #f0a35a; --g-bg: #2b1d12; --g-edge: #43301b; }
 html[data-theme="dark"] .gr-hero-grade.g-F { --g-ink: var(--tone-red);   --g-bg: #2d151c; --g-edge: var(--color-line); }
-
-html[data-theme="dark"] .gr-skillcard:hover { border-color: #39414f; }
-html[data-theme="dark"] .gr-skillcard.is-picked {
-    box-shadow: 0 0 0 1px var(--accent), 0 10px 26px rgba(0, 0, 0, .4);
-}
-html[data-theme="dark"] .gr-radar-area { fill: rgba(124, 92, 245, .26); }
 html[data-theme="dark"] .gr-mix-bar,
 html[data-theme="dark"] .gr-habit-track,
 html[data-theme="dark"] .gr-skillcard-track { background: #0b0f15; }

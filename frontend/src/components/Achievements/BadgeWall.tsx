@@ -1,5 +1,9 @@
 /**
- * The badge wall.
+ * The badge wall — the Badges tab of the Records page.
+ *
+ * It was a page of its own, Achievements, and it asked the question Records
+ * already asks: how far have I come. One page with three tabs now answers it,
+ * under one hero; this is the third tab.
  *
  * A wall of badges, arranged so that a reader meets them in the order the
  * questions arrive: how far am I, what did I just get, which kinds am I behind
@@ -69,9 +73,9 @@
  */
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
+import { ErrorState, Loading, RefreshButton } from '@/components';
 import { CATEGORY_GLYPH, GLYPH, glyphFor } from '@/components/Achievements/glyphs';
-import { useApi, useAuth, useDocumentTitle, usePageEntrance } from '@/hooks';
+import { useApi, useAuth, usePageEntrance } from '@/hooks';
 import { achievements as service } from '@/services';
 import { TREE_CATEGORY } from '@/services/achievements';
 import type { Badge } from '@/services/achievements';
@@ -494,9 +498,7 @@ function Ring({ share }: { share: number }) {
   );
 }
 
-export default function Achievements() {
-  useDocumentTitle('Achievements');
-
+export function BadgeWall() {
   // `useAuth`, not `useUserData`: this page wants a name to key its own
   // fetch on, and asking `useUserData` for one is what makes the app read the
   // account's entire task list. See hooks/useUserData.
@@ -600,29 +602,24 @@ export default function Achievements() {
   const share = total > 0 ? earned / total : 0;
 
   return (
-    <div className="ac-page">
-      <div className={`ac-shell page-shell${entering ? ' pg-enter' : ''}`}>
-        {/* Rose, which is this page and nothing else in the rail. */}
-        <PageHero variant="achievements" tone="rose">
-          <header className="ac-head">
-            <div>
-              <h1>Achievements</h1>
-              <p className="ac-quiet">Celebrate your progress. Every step forward counts.</p>
-            </div>
-            <div className="ac-head-tools">
-              <label className="ac-select">
-                <select value={filter} onChange={(event) => setFilter(event.target.value as Filter)}>
-                  {FILTERS.map((name) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <RefreshButton busy={refreshing} onRefresh={reload} />
-            </div>
-          </header>
-        </PageHero>
+    <div className="ac-page rc-badges">
+      <div className={`ac-shell${entering ? ' pg-enter' : ''}`}>
+        {/* The filter and the refresh, which sat in this wall's own hero when
+            it was a page. The Records hero is over it now. */}
+        <header className="ac-head">
+          <div className="ac-head-tools">
+            <label className="ac-select">
+              <select value={filter} onChange={(event) => setFilter(event.target.value as Filter)}>
+                {FILTERS.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <RefreshButton busy={refreshing} onRefresh={reload} />
+          </div>
+        </header>
 
         {error && <ErrorState message={error} onRetry={reload} />}
 

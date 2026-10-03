@@ -83,7 +83,7 @@ worth far more, so it was done first.
    showing the XP from before a completion.
 
 Callers moved off the heavy read: the rail, the top bar, `pages/Settings.tsx`
-and `pages/Achievements.tsx` (both held it to read a `username`; `useAuth` has
+and `components/Achievements/BadgeWall.tsx` (both held it to read a `username`; `useAuth` has
 one).
 
 ### What is left

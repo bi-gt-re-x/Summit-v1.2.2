@@ -68,7 +68,6 @@ const SKIP_FILES = new Set(['scripts/check_docs.mjs']);
 /** Files named in a comment that are deliberately not there any more. */
 const GONE = new Map([
   ['utils/skillTree', 'Task-derived skill trees. Nothing rendered them.'],
-  ['utils/growthChart.ts', 'The growth canvas renderer, kept for a component already gone.'],
   ['utils/trends', "The Trends tab's arithmetic, removed with the tab."],
 ]);
 

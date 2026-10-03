@@ -15,7 +15,6 @@ import { whatChanged, CHANGE_WINDOW, type Change } from './changed';
 import type { Diagnosis } from './diagnosis';
 import type { Win } from './insight';
 import type { Pattern } from './patterns';
-import type { SkillRow } from './skillScore';
 import type { GrowthDay, Task } from '@/types';
 
 /** A day carrying whatever the rule under test reads. */
@@ -209,10 +208,6 @@ describe('the order', () => {
    it in the right lane.
    -------------------------------------------------------------------------- */
 
-const skill = (subject: string, score: number, over: Partial<SkillRow> = {}): SkillRow =>
-  ({ subject, score, band: 'Competent', confidence: 0.8, rated: 20, finished: 30, ...over }) as
-    unknown as SkillRow;
-
 const dated = (id: string, due: string, status = 'todo'): Task =>
   ({ id, title: 'T', status, due_date: due }) as unknown as Task;
 
@@ -307,32 +302,6 @@ describe('subjects, by share rather than by total', () => {
       ],
     });
     expect(found.some((row) => row.id.startsWith('change-subject-'))).toBe(false);
-  });
-});
-
-describe('the skill score, which moved silently before', () => {
-  const days = run(CHANGE_WINDOW * 2);
-  const nameOf = (id: string) => (id === 'math' ? 'Mathematics' : id);
-
-  it('names the subject whose level moved, and prints both readings', () => {
-    const found = whatChanged({
-      days, finished: [], ...EMPTY, nameOf,
-      skillsNow: [skill('math', 71)],
-      skillsBefore: [skill('math', 58)],
-    });
-    const row = found.find((entry) => entry.id === 'change-skill-math');
-    expect(row?.kind).toBe('gain');
-    expect(row?.move).toBe('58 → 71');
-    expect(row?.text).toContain('Mathematics');
-  });
-
-  it('drops a reading the score itself does not trust', () => {
-    const found = whatChanged({
-      days, finished: [], ...EMPTY, nameOf,
-      skillsNow: [skill('math', 71, { confidence: 0.1 })],
-      skillsBefore: [skill('math', 58, { confidence: 0.1 })],
-    });
-    expect(found.some((row) => row.id === 'change-skill-math')).toBe(false);
   });
 });
 

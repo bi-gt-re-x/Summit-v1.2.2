@@ -50,9 +50,8 @@ import { useAuth, useMediaQuery, useSettings, useStats, useSubjectIndex } from '
 import { followedSubjects } from '@/utils/analyticsPrefs';
 import { useChainAccount } from '@/hooks/useChainAccount';
 import { format } from '@/utils';
-import { rankFor } from '@/utils/mastery';
+import { rankFor } from '@/utils/rank';
 import { earnedTitle } from '@/utils/easterEgg';
-import { AUTOMATIC, chooseTitle, chosenTitle, titlesFor } from '@/utils/rankTitle';
 import { STATS_CHANGED } from '@/utils/statsBus';
 import '@/styles/rail.css';
 
@@ -168,27 +167,16 @@ const TABS: Tab[] = [
   {
     // Points at Recommendations rather than the Overview, which is a change and
     // a deliberate one: the rail's job is to put a reader somewhere useful, and
-    // of the seven tabs it is the only one that ends in something to do. The
+    // of its tabs it is the only one that ends in something to do. The
     // Overview is one click along the bar for anyone who wants the totals.
     to: '/recommendations',
     // The page calls itself Advanced Analytics; the rail says Analytics. The
     // rail is a column of one-word destinations and the odd two-word one
     // wraps — the heading is where the full name belongs.
     label: 'Analytics',
-    // `/records` is gone from this list: it is the Records entry below now, and
-    // leaving it here would light Analytics up while the reader is on a page
-    // that has its own entry. The analytics tab of that name is
-    // `/analytics/records`, which is here in its place.
-    also: [
-      '/analytics',
-      '/analytics/records',
-      '/analytics/goals',
-      '/trends',
-      '/habits',
-      '/insights',
-      '/subjects',
-      '/growth',
-    ],
+    // The page's other two tabs. Every path a removed tab had redirects in
+    // App.tsx, so none of them can be the page the reader is on.
+    also: ['/analytics', '/subjects'],
     // The per-subject pages, which are one URL each and so cannot be listed.
     under: ['/analytics/subject/'],
     // The only entry in this table that unfolds. See `Tab.menu`.
@@ -279,22 +267,12 @@ const TABS: Tab[] = [
     ),
   },
   {
-    to: '/achievements',
-    label: 'Achievements',
-    icon: (
-      <svg {...stroke}>
-        <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z" />
-        <path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3" />
-      </svg>
-    ),
-  },
-  {
-    // Under Achievements, and beside it on purpose: both are the account
-    // looking back at itself. An achievement is a thing the app decided was
-    // worth marking; a record is the reader's own high score, which is theirs
-    // whether or not anything was awarded for it.
+    // The account looking back at itself: personal bests, growth over time,
+    // and the badge wall that was its own Achievements entry. Its three tabs
+    // are /records, /records/growth and /records/badges.
     to: '/records',
     label: 'Records',
+    under: ['/records/'],
     icon: (
       <svg {...stroke}>
         <path d="M4 20V9M9.5 20V4M15 20v-8M20.5 20v-5" />
@@ -424,32 +402,13 @@ export function Rail() {
   const [moreOpen, setMoreOpen] = useState(false);
   useEffect(() => setMoreOpen(false), [pathname]);
 
-  /* The title, and the three dots beside it. `picked` is held here rather than
-     read from storage on every render so that choosing one repaints the rail
-     immediately; utils/rankTitle is where it is written down. */
-  const [titlesOpen, setTitlesOpen] = useState(false);
-  const [picked, setPicked] = useState(() => chosenTitle(username ?? ''));
-  useEffect(() => setPicked(chosenTitle(username ?? '')), [username]);
-  useEffect(() => setTitlesOpen(false), [pathname]);
-
-  const pick = useCallback(
-    (name: string) => {
-      chooseTitle(username ?? '', name);
-      setPicked(name);
-      setTitlesOpen(false);
-    },
-    [username],
-  );
-
-  /* Every band reached, best first — and the secret title if the chain has
-     handed one out, which is a question about *this* account and so waits for
-     one. Empty until the account read lands, which is also when the whole
-     plate below appears. */
+  /* The title: the band the level has reached, or the one the hidden chain
+     hands out at the end once it has been earned (utils/easterEgg) — a prize
+     is worn, not offered. There used to be a menu of every band reached to
+     pick from; it was one more thing to choose that changed nothing. The
+     earned title is a question about *this* account, so it waits for one. */
   const account = useChainAccount();
-  const titles = level && account ? titlesFor(level.level, earnedTitle(account)) : [];
-  /* A pick the account can no longer justify falls back to the band. See
-     `titleShown` in utils/rankTitle for the case that causes. */
-  const title = picked && titles.includes(picked) ? picked : rank;
+  const title = (account && earnedTitle(account)) || rank;
 
   /* The title used to be the way into the hidden chain — ten clicks on it,
      from any page, because the rail is on all of them. The door is on the
@@ -671,68 +630,13 @@ export function Rail() {
                   it is a strip. "Grand Champion" in 54px of usable width is an
                   ellipsis, and an ellipsis is not a rank. */}
               <div className="rail-rank-head">
-                {/* No role, no tabIndex, no cursor: it is a label, and the
-                    three dots beside it are the control. */}
                 <span className="rail-rank-title" title={`${title} · Level ${level.level}`}>
                   {title}
                 </span>
-                <button
-                  type="button"
-                  className={`rail-rank-more${titlesOpen ? ' is-open' : ''}`}
-                  aria-label="Choose your title"
-                  aria-expanded={titlesOpen}
-                  aria-haspopup="menu"
-                  onClick={() => setTitlesOpen((was) => !was)}
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <circle cx="5" cy="12" r="1.7" />
-                    <circle cx="12" cy="12" r="1.7" />
-                    <circle cx="19" cy="12" r="1.7" />
-                  </svg>
-                </button>
               </div>
               <span className="rail-rank-num" aria-hidden="true">
                 {level.level}
               </span>
-
-              {titlesOpen && (
-                <>
-                  {/* Anywhere else closes it. A button rather than a document
-                      listener, for the same reason the More sheet uses one:
-                      the scrim is also what stops a stray click landing on the
-                      page behind a menu the reader has finished with. */}
-                  <button
-                    type="button"
-                    className="rail-title-scrim"
-                    aria-label="Close title menu"
-                    onClick={() => setTitlesOpen(false)}
-                  />
-                  <div className="rail-title-menu" role="menu">
-                    <button
-                      type="button"
-                      role="menuitemradio"
-                      aria-checked={picked === AUTOMATIC}
-                      className={`rail-title-opt${picked === AUTOMATIC ? ' active' : ''}`}
-                      onClick={() => pick(AUTOMATIC)}
-                    >
-                      <span>Automatic</span>
-                      <small>{rank}</small>
-                    </button>
-                    {titles.map((name) => (
-                      <button
-                        key={name}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={picked === name}
-                        className={`rail-title-opt${picked === name ? ' active' : ''}`}
-                        onClick={() => pick(name)}
-                      >
-                        <span>{name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
 
               <div className="rail-xp-row">
                 <span>Level {level.level}</span>

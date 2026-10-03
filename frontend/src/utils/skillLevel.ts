@@ -4,9 +4,8 @@
  * ## What this replaces, and why
  *
  * The skill tree's percentages are authored — identical on every account, a
- * route map rather than a measurement — and the subject score in
- * utils/skillScore cannot see below a subject because a task records nothing
- * finer. So "Factoring: Level 2 → Level 4" was not a sentence the app could
+ * route map rather than a measurement — and a task records nothing finer than
+ * its subject. So "Factoring: Level 2 → Level 4" was not a sentence the app could
  * write. The evidence it needed is the problems under each step, which are
  * graded warm-up, core and stretch and now record whether the reader got them
  * right (data/sql/skillattempts.sql). Everything below is arithmetic over
@@ -45,7 +44,6 @@
  *
  * `readLevel(attempts, asOf)` reads only rows from before `asOf`, so the level
  * a month ago is this file run against a shorter list — not a stored history.
- * The same argument utils/skillGrowth makes for the subject score.
  */
 import type { Attempt, Tier } from '@/services/skillAttempts';
 

@@ -143,7 +143,7 @@ def test_the_bell_announces_a_badge_earned_since_the_last_look(app):
 
     said = next(row for row in reply['notifications'] if row['fingerprint'] == 'badge:tasks-10')
     assert said['title'] == 'Badge earned: Warmed Up'
-    assert said['link'] == '/achievements'
+    assert said['link'] == '/records/badges'
 
 
 def test_the_bell_says_nothing_twice_about_one_badge(app):

@@ -57,7 +57,7 @@ describe('Overview', () => {
     // The rows that used to run flat under the trajectory.
     expect(groupNamed(/Quality/)).toBeInTheDocument();
     expect(groupNamed(/^Consistency/)).toBeInTheDocument();
-    expect(groupNamed(/Subjects and findings/)).toBeInTheDocument();
+    expect(groupNamed(/^Findings/)).toBeInTheDocument();
 
     // All shut on arrival: the tab's answer is the screen above them.
     groups().forEach((head) => {
