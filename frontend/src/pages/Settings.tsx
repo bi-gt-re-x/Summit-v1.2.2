@@ -1516,7 +1516,7 @@ export default function Settings() {
             id: 'analytics-home',
             label: 'Analytics opens on',
             hint:
-              'Which of the six tabs you land on. Recommendations is the one that ends in a '
+              'Which of the three tabs you land on. Recommendations is the one that ends in a '
               + 'button; Overview is the long view.',
             control: (
               <select
@@ -1530,7 +1530,7 @@ export default function Settings() {
                   )
                 }
               >
-                {/* The same seven the page's own tab bar draws, from the same
+                {/* The same tabs the page's own tab bar draws, from the same
                     list — a select here that had drifted from VIEWS would offer
                     a tab that no longer exists. */}
                 {VIEWS.map((view) => (
@@ -1598,23 +1598,6 @@ export default function Settings() {
                   { key: 'standard', label: DETAIL_LABEL.standard },
                   { key: 'everything', label: DETAIL_LABEL.everything },
                 ]}
-              />
-            ),
-          },
-          {
-            id: 'analytics-standing',
-            label: 'Rank me against other accounts',
-            hint:
-              'The percentile panel on the Overview. Off removes it; nothing else on the page '
-              + 'reads anybody else\'s record.',
-            control: (
-              <Toggle
-                on={prefs.analytics_standing}
-                busy={busy}
-                label="Rank me against other accounts"
-                onFlip={() =>
-                  void savePref({ analytics_standing: !prefs.analytics_standing }, 'Standing')
-                }
               />
             ),
           },

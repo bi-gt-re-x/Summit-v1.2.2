@@ -1,5 +1,10 @@
 /**
- * The Analytical Score — one number for the whole account, and its letter.
+ * The Growth Score — one number for the whole account, and its letter.
+ *
+ * Kept here out of a hundred, because the letter bands are, and shown
+ * everywhere out of ten. It used to be shown out of a hundred under its own
+ * name, the "Analytical Score", beside the Growth Score tile printing the same
+ * mean divided by ten: one calculation under two names on two scales.
  *
  * ## It is the report card, not a second opinion
  *

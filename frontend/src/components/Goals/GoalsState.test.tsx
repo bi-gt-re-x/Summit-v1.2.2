@@ -35,11 +35,9 @@ function day(offset: number): string {
 /**
  * A goal measured by a number, which is the shortest route to a fixed health.
  *
- * The two states this file needs are both early returns in `goalHealth` rather
- * than outcomes of its blend — past its date and not finished is always
- * off-track, and nothing recorded at all is always not-started — so the
- * fixtures below say what they mean without depending on four weights staying
- * where they are.
+ * The two states this file needs are both early returns in `goalHealth` — past
+ * its date and not finished is always behind, and nothing recorded at all is
+ * always not-started — so the fixtures below say what they mean.
  */
 function goal(over: Partial<Goal> = {}): Goal {
   return {
@@ -60,7 +58,7 @@ function goal(over: Partial<Goal> = {}): Goal {
   } as unknown as Goal;
 }
 
-/** Past its date and half done: off-track by the overdue branch, every time. */
+/** Past its date and half done: behind by the overdue rule, every time. */
 const overdue = (over: Partial<Goal> = {}) => goal({ deadline: day(-3), ...over });
 
 /** Nothing against it at all: not-started, which is not "needs attention". */
@@ -69,12 +67,8 @@ const untouched = (over: Partial<Goal> = {}) => goal({ current_value: 0, ...over
 /**
  * A goal that is genuinely fine, which takes more than a flag to build.
  *
- * Health is a blend of four signals and none of them can carry it alone, so a
- * goal has to be ahead of its pace *and* have been worked on to come out
- * green: 90% done at the halfway point of its window scores full marks on
- * pace and depth, and it still lands at-risk with no evidence behind it,
- * because a goal nobody has touched in a fortnight is not healthy however good
- * its numbers look. `evidence` is the other half and the two go together.
+ * Ahead of its pace and worked on recently: 90% done at the halfway point of
+ * its window, with `evidence` beside it so it is not read as gone quiet.
  */
 const healthy = (id: string) =>
   goal({ id, current_value: 90, start_date: day(-30), deadline: day(30) });

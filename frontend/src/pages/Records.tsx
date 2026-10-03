@@ -96,6 +96,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ErrorState, Loading, PageHero } from '@/components';
 import { Glyph } from '@/components/Growth/GrowthPanels';
 import { RecordModal } from '@/components/Records/RecordModal';
+import { GrowthSection } from '@/components/Analytics/GrowthSection';
 import {
   useApi,
   useCountUp,
@@ -1260,6 +1261,10 @@ export default function Records() {
           </>
         )}
       </section>
+
+      {/* The analytics page's Growth tab, which asked the question this page
+          is for — how far the account has come — from the score's side. */}
+      <GrowthSection />
 
       <RecordModal
         open={modal.open}

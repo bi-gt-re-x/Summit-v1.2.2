@@ -102,25 +102,24 @@ export function GoalTile({ goal, size = 18 }: { goal: Goal; size?: number }) {
 // --------------------------------------------------------------------------
 const HEALTH_LABEL: Record<HealthState, string> = {
   'on-track': 'On Track',
-  'at-risk': 'At Risk',
-  'off-track': 'Off Track',
+  behind: 'Behind',
   'not-started': 'Not Started',
 };
 
 /**
  * The health chip, with its reason on the hover.
  *
- * The reason is not decoration: "At Risk" on its own is a colour, and the
+ * The reason is not decoration: "Behind" on its own is a colour, and the
  * reader's next question is always the same one. The model that produced the
  * colour produces the sentence, and the sentence travels with it — on the card
- * it is a title, and in the detail view it is printed. See `reasonFor` in
+ * it is a title, and in the detail view it is printed. See `goalHealth` in
  * utils/goalHealth.
  */
 export function HealthChip({ health }: { health: GoalHealth }) {
   return (
     <span className={`gx-health is-${health.state}`} title={health.reason}>
       <i aria-hidden="true" />
-      {health.state === 'on-track' && health.score === 100 ? 'Complete' : HEALTH_LABEL[health.state]}
+      {health.label === 'Complete' ? 'Complete' : HEALTH_LABEL[health.state]}
     </span>
   );
 }
@@ -244,7 +243,7 @@ export function OverviewStrip({
   // a sentence counting through its own numbers is noise, not motion.
   const active = Math.round(useCountUp(view.active));
   const onTrack = Math.round(useCountUp(view.onTrack));
-  const atRisk = Math.round(useCountUp(view.atRisk));
+  const behind = Math.round(useCountUp(view.behind));
   const dueSoon = Math.round(useCountUp(view.dueSoon.length));
   // The ring beside this reading runs its own tween off the same figure — same
   // input, same duration, same first frame — so the two cannot drift apart.
@@ -300,14 +299,14 @@ export function OverviewStrip({
 
       <article className="gx-stat tone-amber">
         <header>
-          <span className="gx-stat-label">Goals At Risk</span>
+          <span className="gx-stat-label">Goals Behind</span>
           <span className="gx-stat-ico">
             <Icon path={STAT_ICONS.warn} />
           </span>
         </header>
-        <strong className="gx-stat-value">{atRisk}</strong>
+        <strong className="gx-stat-value">{behind}</strong>
         <span className="gx-stat-foot">
-          {view.offTrack ? `${view.offTrack} already off track` : 'none off track'}
+          {view.behind ? 'see the reason on each card' : 'none behind'}
         </span>
       </article>
 
@@ -558,7 +557,6 @@ export function SystemVerdict({
       <p className="gx-verdict-say">
         <i aria-hidden="true" />
         <strong>{view.label}</strong>
-        {view.state !== 'not-started' && <em>{view.score}</em>}
       </p>
       <p className="gx-verdict-counts">{parts.join(' · ')}</p>
     </div>
@@ -566,12 +564,12 @@ export function SystemVerdict({
 }
 
 /**
- * The four health states as one ring.
+ * The three health states as one ring.
  *
  * The only chart on the page, and it earns its place by answering the page's
  * own question — how much of what I am carrying is actually going to happen —
  * in a way five numbers in a row do not. A ring is right here for the reason
- * it is wrong almost everywhere else: four slices of one whole, all labelled,
+ * it is wrong almost everywhere else: three slices of one whole, all labelled,
  * all counted beside it.
  */
 export function HealthRing({
@@ -586,14 +584,13 @@ export function HealthRing({
   const view = goalsOverview(goals, tasks, today);
   const total = view.active || 1;
 
-  // Four fixed states, so four calls rather than a loop. Each arc is drawn from
+  // Three fixed states, so three calls rather than a loop. Each arc is drawn from
   // its own animated count and the offsets are accumulated from those same
   // numbers, so the ring stays a closed circle at every frame of the sweep
   // instead of opening gaps between slices that are still catching up.
   const slices = [
     { key: 'on-track', label: 'On Track', shown: useCountUp(view.onTrack) },
-    { key: 'at-risk', label: 'At Risk', shown: useCountUp(view.atRisk) },
-    { key: 'off-track', label: 'Off Track', shown: useCountUp(view.offTrack) },
+    { key: 'behind', label: 'Behind', shown: useCountUp(view.behind) },
     { key: 'not-started', label: 'Not Started', shown: useCountUp(view.notStarted) },
   ];
   const active = Math.round(useCountUp(view.active));
@@ -856,8 +853,7 @@ export function GoalsState({
   onAttention?: () => void;
 }) {
   const needs = goals.filter((goal) => {
-    const state = goalHealth(goal, tasks, today).state;
-    return state === 'at-risk' || state === 'off-track';
+    return goalHealth(goal, tasks, today).state === 'behind';
   }).length;
 
   if (goals.length === 0) {

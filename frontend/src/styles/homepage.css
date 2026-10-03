@@ -961,12 +961,6 @@ html[data-theme="dark"] .lp-trend.up { color: #4ade80; }
 
 .lp-ax-score { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .lp-ax-score .lp-card-top { width: 100%; }
-.lp-ax-rank {
-    color: var(--lp-accent);
-    background: color-mix(in srgb, var(--lp-accent) 12%, transparent);
-    border-color: color-mix(in srgb, var(--lp-accent) 32%, transparent);
-    font-weight: 700;
-}
 
 /* The dial. The glow behind it is a soft radial rather than a box-shadow so it
    sits under the ring's own colour instead of ringing the card. */

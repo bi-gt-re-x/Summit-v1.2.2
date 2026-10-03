@@ -197,7 +197,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   const rules = useMemo(() => toneRules(tone), [tone]);
   const detail = useMemo(() => detailRules(prefs.analytics_detail), [prefs.analytics_detail]);
   const logStyle = prefs.analytics_log_style;
-  const showStanding = prefs.analytics_standing;
   // Productivity rather than total XP, and weekly rather than daily. The pair
   // is one decision: the chart opens on a rate, and a rate at daily grain over
   // a year is scatter. See METRICS in components/Analytics/data.
@@ -858,7 +857,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     const leads = top !== undefined && breakdown.total > 0 && top.xp / breakdown.total >= 0.3;
     return goalHeadline({
       active: goalSet.active,
-      behind: goalSet.atRisk + goalSet.offTrack,
+      behind: goalSet.behind,
       completed: goalSet.completed,
       focusSubject: leads && top ? (top.name ?? top.label) : null,
       aimedShare: aimedShare ? aimedShare.share : null,
@@ -1039,7 +1038,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     toneRules: rules,
     detail,
     logStyle,
-    showStanding,
 
     // The gates
     historyDays,

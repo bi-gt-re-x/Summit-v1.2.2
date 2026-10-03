@@ -20,7 +20,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import type { ReactElement } from 'react';
 import { Analytics } from './Analytics';
-import { percentileLabel } from '@/components/Analytics/score';
 import { VIEWS } from '@/components/Analytics/Header';
 
 /**
@@ -62,13 +61,6 @@ describe('the landing page analytics panel', () => {
     bars.forEach((v) => expect(screen.getByText(String(v))).toBeInTheDocument());
     const mean = bars.reduce((a, b) => a + b, 0) / bars.length / 10;
     expect((8.28).toFixed(1)).toBe(mean.toFixed(1));
-  });
-
-  it('places the score with the real percentile model', () => {
-    render(<Analytics />);
-    const expected = percentileLabel(8.28);
-    expect(expected).toBe('Top 2.1%');
-    expect(screen.getByText(expected as string)).toBeInTheDocument();
   });
 
   /**

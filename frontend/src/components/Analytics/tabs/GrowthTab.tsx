@@ -41,7 +41,6 @@
 import { Link } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { Panel, PanelGroup, type Tone } from '../charts';
-import { ConsistencyPanel } from '../Breakdown';
 import { GrowthLine, type LineMark, type LineSeries } from '../GrowthLine';
 import { YearOnYear } from '../GrowthYears';
 import {
@@ -61,7 +60,6 @@ import { Building } from '../Building';
 import { SkillGrowthPanel, TimeProgressPanel } from '../SkillGrowth';
 import { SkillLevelsPanel } from '../SkillLevels';
 import { skillTrajectory, timeToProgress } from '@/utils/skillGrowth';
-import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
 import { useSkillAttempts, useStats } from '@/hooks';
 import type { PeriodKey } from '@/services/analytics';
@@ -142,7 +140,7 @@ const PERIOD_TEXT: Record<PeriodKey, string> = {
 };
 
 export function GrowthTab({ model }: { model: AnalyticsModel }) {
-  const { all: dayRows, clock, detail, heatRows, nameOf, rhythmRate, skills, tasks, liveGoals } = model;
+  const { all: dayRows, detail, nameOf, skills, tasks, liveGoals } = model;
   /* The page's window picker drives the period — see ../useGrowthPeriods. */
   const { period, setPeriod, periods } = useGrowthPeriods(model.span, model.chooseSpan);
   /* The reader's marked skill-tree problems, once for the tab: the subject
@@ -518,31 +516,6 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               </Panel>
             </PanelGroup>
 
-            {/* The same year of days the Overview draws, and deliberately the
-                same component rather than a second one: consistency is one of
-                the five scores above, and the panel that shows it as days is
-                where a reader goes to see *which* days. Always a year,
-                whatever period is selected — a heatmap of the last seven days
-                is seven squares. */}
-            <PanelGroup
-              title="When the work actually happens"
-              note="The shape of your day, from the hours you finish things in"
-            >
-              <WhenPanel clock={clock} />
-            </PanelGroup>
-
-            <PanelGroup
-              title="Every day of the last year"
-              note="The consistency score above, drawn as the days themselves"
-            >
-              <ConsistencyPanel
-                rate={rhythmRate.rate}
-                previousRate={rhythmRate.previousRate}
-                rows={heatRows}
-                compareLabel="the year before"
-              />
-            </PanelGroup>
-
             <PanelGroup
               title="The work itself, year by year"
               note="How hard it was and how well it went, as you rated it"
@@ -553,75 +526,5 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
         </>
       )}
     </>
-  );
-}
-
-// --------------------------------------------------------------------------
-// When the work happens
-// --------------------------------------------------------------------------
-/**
- * The hours the work lands in, and how concentrated they are.
- *
- * The one reading on this tab that is not a score, and it is here because it
- * answers the question the five scores raise and cannot settle: consistency
- * says how many days you turned up, and this says what turning up looks like.
- *
- * `coreWindow` is the *narrowest run of hours holding half the finished work*,
- * which is deliberately a different thing from a peak hour. A peak overstates
- * how concentrated a habit is — one unusual evening can own it — and a run
- * survives that and describes the shape of a day rather than a spike in it.
- * See utils/behaviour.
- *
- * Scoped to the page's recent window rather than to the selected period, and
- * that is a limitation stated rather than hidden: the model computes this once
- * over its own recent slice, and re-deriving it per period would mean a second
- * pass over the hour of every finished task that the model already holds. The
- * panel's note says which days it is describing.
- */
-function WhenPanel({ clock }: { clock: AnalyticsModel['clock'] }) {
-  const core = clock.coreWindow;
-
-  return (
-    <Panel
-      title="When you work"
-      note="Over your recent record, not the period above"
-      claim={
-        core
-          ? `Half of everything you finish lands between ${hourLabel(core.from)} and `
-            + `${hourLabel(core.to)}.`
-          : undefined
-      }
-    >
-      {core === null ? (
-        <p className="ax-empty">
-          This needs a few weeks of finished tasks.
-        </p>
-      ) : (
-        <ul className="ax-gy-notes">
-          <li>
-            <span>Your core hours</span>
-            <strong>
-              {hourLabel(core.from)} – {hourLabel(core.to)}
-            </strong>
-          </li>
-          <li>
-            <span>Share of finished work in them</span>
-            <strong>{Math.round(core.share)}%</strong>
-          </li>
-          {clock.peak && (
-            <li>
-              <span>Busiest single hour</span>
-              <strong>
-                {clock.peak.label} <em>{clock.peak.tasks} tasks</em>
-              </strong>
-            </li>
-          )}
-          <li>
-            <span>Finished after 10 PM or before 5 AM</span>
-            <strong>{Math.round(clock.lateShare)}%</strong>
-          </li>
-        </ul>
-      )}
-    </Panel>
   );
 }

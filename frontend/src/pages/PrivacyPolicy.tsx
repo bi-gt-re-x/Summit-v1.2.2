@@ -22,7 +22,7 @@
  *   e-mail and verification    backend/routes/auth.py, tracking/auth.py
  *   what is stored, and where  data/sql/*.sql, database/connection.py
  *   the model features         tracking/planner.py, tracking/subject_goal.py
- *   comparison between users   tracking/standing.py
+ *   comparison between users   none — nothing reads across accounts
  *   cookies                    main.py (session), routes/theme.py
  *   deletion                   the Reset and delete section of Settings
  *
@@ -156,13 +156,9 @@ export default function PrivacyPolicy() {
 
       <h2>5. Comparison With Other Users</h2>
       <p>
-        The &quot;Where You Stand&quot; panel places you against other accounts on this
-        install — how much XP you have earned, how consistent you have been, and so on.
-        This uses figures from other accounts to work out your rank, and figures from your
-        account to work out theirs. Nobody is ever shown another person&apos;s name, tasks,
-        goals or notes; the only thing anyone sees is their own position and the size of
-        the group. The comparison is not shown at all until enough accounts have a
-        comparable record for a rank to mean anything.
+        Summit does not rank you against other accounts. Every figure you are shown is
+        worked out from your own record, and nobody else&apos;s record is read to produce
+        it.
       </p>
 
       <h2>6. Data Retention and Deletion</h2>

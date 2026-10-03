@@ -933,11 +933,10 @@ SETTINGS = {
 
     'analytics_window': 'all',
     'analytics_setup_done': True,
-    'analytics_home_tab': 'growth',
+    'analytics_home_tab': 'overview',
     'analytics_log_style': 'both',
     'analytics_tone': 'harsh',
     'analytics_detail': 'everything',
-    'analytics_standing': True,
 
     'notifications_enabled': True,
     'notify_popups': True,

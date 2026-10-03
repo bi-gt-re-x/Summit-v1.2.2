@@ -36,18 +36,6 @@ export function toneVar(tone: string): string {
 }
 
 /**
- * A tone name from somewhere that does not know about `Tone`, made safe.
- *
- * The behavioural modules under utils/ carry a tone on every finding, and they
- * deliberately do not import from a component file to get the type — the
- * arithmetic has no business knowing what draws it. This is the one boundary
- * where the loose string becomes the narrow one.
- */
-export function asTone(name: string): Tone {
-  return (TONES as string[]).includes(name) ? (name as Tone) : 'violet';
-}
-
-/**
  * One point of a series, or `null` for "this series is not drawn here".
  *
  * A gap is not a zero. The compounding chart is two series over one x axis
@@ -1042,8 +1030,7 @@ export function Panel({
       {note && <p className="ax-panel-note">{note}</p>}
       {/* No wrapper around `children` when there is a claim: the claim is a
           sibling of the content, not a lid on it, and `.ax-panel`'s rules for
-          what may grow into the panel's slack — `.ax-heat`, `.ax-standing`,
-          `.ax-timeline` — are direct-child selectors that a wrapper would
+          what may grow into the panel's slack — `.ax-heat`, `.ax-timeline` — are direct-child selectors that a wrapper would
           have cut off from the content they are meant to size. */}
       {claim && <p className="ax-claim">{claim}</p>}
       {children}

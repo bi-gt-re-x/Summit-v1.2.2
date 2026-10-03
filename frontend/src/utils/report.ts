@@ -22,7 +22,7 @@
  *
  * ## What is in it, and in what order
  *
- *     The Analytical Score      one number and its letter, at the top
+ *     The Growth Score          one number and its letter, at the top
  *     Overview                  what the window holds, and which way it moved
  *     Subject growth            where the effort went and whether it worked
  *     Insights                  the conditions the good work happens under
@@ -49,7 +49,7 @@
  */
 import type { Advice } from './advice';
 import type { AnalyticalScore } from './analyticalScore';
-import { GRADE_MEANING, bandLabel, howItIsCalculated } from './analyticalScore';
+import { GRADE_MEANING, howItIsCalculated } from './analyticalScore';
 import type { SubjectQuality } from './behaviour';
 import type { Diagnosis } from './diagnosis';
 import type { NextAction } from './nextActions';
@@ -142,7 +142,7 @@ function scoreSection(input: ReportInput): string {
   const { score } = input;
   if (score.value === null || score.grade === null) {
     return [
-      heading('Analytical Score'),
+      heading('Growth Score'),
       '',
       wrap(
         'Not enough of a record to score yet. The score is the average of five measures and each one needs a few days behind it before it means anything.',
@@ -159,11 +159,11 @@ function scoreSection(input: ReportInput): string {
     .join('\n');
 
   return [
-    heading('Analytical Score'),
+    heading('Growth Score'),
     '',
-    `                    ${score.value} / 100        Grade ${score.grade}`,
+    `                    ${(score.value / 10).toFixed(1)} / 10        Grade ${score.grade}`,
     '',
-    wrap(`${score.grade} is ${GRADE_MEANING[score.grade]} — the ${bandLabel(score.grade)} band.`),
+    wrap(`${score.grade} is ${GRADE_MEANING[score.grade]}.`),
     '',
     wrap(howItIsCalculated(score)),
     '',
@@ -172,7 +172,7 @@ function scoreSection(input: ReportInput): string {
     parts,
     '',
     wrap(
-      'Each measure is scored out of 100 from your own record, and the score is their plain average — no weighting, so a point anywhere is worth the same as a point anywhere else. The grades run in tens (90 an A, 80 a B, and so on), with A+ for 96 to 99 and S reserved for a perfect 100 — which needs all five at full marks, not four strong ones carrying a weak fifth.',
+      'Each measure is scored out of 100 from your own record, and the score is their plain average — no weighting, so a point anywhere is worth the same as a point anywhere else. The score is that average out of 10, and the grades run in whole points (9.0 an A, 8.0 a B, and so on), with A+ for 9.6 to 9.9 and S reserved for a perfect 10 — which needs all five at full marks, not four strong ones carrying a weak fifth.',
     ),
   ].join('\n');
 }

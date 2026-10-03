@@ -33,7 +33,6 @@ import type {
   BaselineResult,
   MetricHistories,
   MetricHistory,
-  Standing,
 } from '@/services/analytics';
 import type { BaselineValues } from './Baseline';
 import type { Advice } from '@/utils/advice';
@@ -106,20 +105,6 @@ export function useAnalyticsData() {
     [username],
   );
   const ratings = useApi<Ratings>(ratingsCall, [username]);
-
-  // The fourth call, and the only one that reads anything but this account:
-  // "Where You Stand" ranks the reader against every other account with a
-  // comparable record, which is arithmetic the client cannot do and should not
-  // have the data for. Unscoped by the window picker on purpose — the panel
-  // asks where this account stands, not where it stood over a quarter.
-  const standingCall = useCallback(
-    () =>
-      username
-        ? takeOrAsk('standing', () => analyticsService.standing())
-        : Promise.resolve({ success: false as const, message: 'Sign in to see where you stand.' }),
-    [username],
-  );
-  const standing = useApi<Standing>(standingCall, [username]);
 
   // The goals, for the Records tab and nothing else. A goal is the only place
   // this account records a target somebody chose — every other benchmark on
@@ -282,10 +267,10 @@ export function useAnalyticsData() {
   /**
    * Re-read everything a visit can change.
    *
-   * Five of the eight, not all of them. Standing, the baseline and the graded
-   * log do not move because the reader pressed a button on this page — the
-   * first is other people's records, and the other two only change when this
-   * page itself writes them, which reloads them on its own above.
+   * Five of the seven, not all of them. The baseline and the graded log do
+   * not move because the reader pressed a button on this page — they only
+   * change when this page itself writes them, which reloads them on its own
+   * above.
    */
   const refresh = useCallback(() => {
     series.reload();
@@ -301,7 +286,6 @@ export function useAnalyticsData() {
     username,
     series,
     ratings,
-    standing,
     goals,
     baseline,
     adopted,

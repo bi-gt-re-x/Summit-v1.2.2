@@ -759,39 +759,6 @@
 .sb-charts > div { min-width: 0; }
 .sb-charts .sb-sub { margin-top: 0; }
 
-/* --- Where you stand in the tree ----------------------------------------
-   The one measured figure in the lattice panel, and the reason it is the
-   biggest thing in it: everything under it is authored, and a reader scanning
-   the panel should meet their own number before the curriculum's. */
-.sb-standing {
-    display: flex;
-    align-items: center;
-    gap: var(--space-6);
-    margin-bottom: var(--space-6);
-    padding-bottom: var(--space-6);
-    border-bottom: 1px solid var(--ax-line);
-}
-.sb-standing-pct {
-    font-size: var(--text-3xl); font-weight: 700; line-height: 1;
-    letter-spacing: -.02em;
-    color: var(--ax-violet);
-    font-variant-numeric: tabular-nums;
-}
-.sb-standing-main { flex: 1; min-width: 0; display: grid; gap: var(--space-2); }
-.sb-standing-bar {
-    display: block;
-    height: 8px;
-    border-radius: var(--radius-full);
-    background: var(--ax-line);
-    overflow: hidden;
-}
-.sb-standing-bar > span {
-    display: block; height: 100%;
-    border-radius: var(--radius-full);
-    background: linear-gradient(90deg, var(--ax-violet), var(--ax-blue));
-}
-.sb-standing-sub { font-size: var(--text-xs); color: var(--ax-muted); }
-
 .sb-tree {
     display: flex;
     align-items: flex-start;

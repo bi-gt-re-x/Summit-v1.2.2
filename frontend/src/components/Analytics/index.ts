@@ -24,14 +24,6 @@
  * of the score over time is the one that earns its place. `Summary` took the
  * slot, kept the derivation behind a disclosure, and left the bars behind.
  */
-/** The Goals tab, which replaced Trends. See ./GoalsView. */
-export {
-  PortfolioPanel as GoalPortfolioPanel,
-  PacePanel as GoalPacePanel,
-  NotesPanel as GoalNotesPanel,
-  SuggestPanel as GoalSuggestPanel,
-} from './GoalsView';
-
 export { Summary } from './Summary';
 export type { SummaryProps } from './Summary';
 export { NextActions } from './NextActions';
@@ -45,21 +37,8 @@ export type { ScoreMovement, ScoreReading } from './Header';
 export { Header, ViewTabs, Controls, TabOpening, VIEWS, viewFor, viewByKey } from './Header';
 export type { HeaderProps, ViewTabsProps, ControlsProps, View, ViewKey } from './Header';
 
-export {
-  HabitTiles,
-  HabitCard,
-  HabitCards,
-  HabitCalendarPanel,
-  PatternsPanel,
-  ConsistencyPanel as HabitConsistencyPanel,
-  TimelinePanel,
-  HabitOpening,
-  habitLead,
-} from './Habits';
-
 /* The Trends tab's four panels were exported from ./Trends, which is gone with
-   the tab — see ./GoalsView for what took its slot, and utils/trends went with
-   it since nothing else read it.
+   the tab, and utils/trends went with it since nothing else read it.
 
    `CompoundingPanel`, `MilestonePanel` and Growth's `LongTermChapter` are the
    three the removal left unrendered. They are still exported below and from
@@ -129,14 +108,8 @@ export { Tiles } from './Tiles';
 export type { TilesProps } from './Tiles';
 
 /** The panels drawn from the one optional thing in the app. See ./Quality. */
-export { DepthPicker, QualityPanel, QualityGridPanel, RatedTasksPanel, ReasonsPanel } from './Quality';
-export type {
-  DepthPickerProps,
-  QualityPanelProps,
-  QualityGridPanelProps,
-  ReasonsPanelProps,
-  RatedTasksPanelProps,
-} from './Quality';
+export { DepthPicker, QualityPanel, QualityGridPanel } from './Quality';
+export type { DepthPickerProps, QualityPanelProps, QualityGridPanelProps } from './Quality';
 
 export { Trajectory, ScorePanel } from './Trajectory';
 export type { TrajectoryProps, ScorePanelProps } from './Trajectory';
@@ -144,12 +117,8 @@ export type { TrajectoryProps, ScorePanelProps } from './Trajectory';
 export { SubjectPanel, ConsistencyPanel } from './Breakdown';
 export type { SubjectPanelProps, ConsistencyPanelProps } from './Breakdown';
 
-export {
-  StreaksPanel,
-  InsightsPanel,
-  StandingPanel,
-} from './Longterm';
-export type { StreaksPanelProps, StandingPanelProps } from './Longterm';
+export { StreaksPanel, InsightsPanel } from './Longterm';
+export type { StreaksPanelProps } from './Longterm';
 
 export {
   AreaChart,
@@ -161,13 +130,12 @@ export {
   Sparkline,
   Delta,
   TONES,
-  asTone,
   toneVar,
 } from './charts';
 export type { Tone, PanelProps, AreaSeries, Column, RadarAxis, ScatterProps } from './charts';
 
 /**
- * The Growth Score — its five factors, and where a score places.
+ * The Growth Score and its five factors.
  *
  * `SCORE_SCALE` used to be declared here on its own, back when the score was
  * one division of the backend's `overall`. It moved into ./score with the
@@ -177,10 +145,7 @@ export type { Tone, PanelProps, AreaSeries, Column, RadarAxis, ScatterProps } fr
 export {
   SCORE_SCALE,
   WEIGHT as SCORE_WEIGHT,
-  formatPercentile,
   growthScore,
-  percentileFor,
-  percentileLabel,
 } from './score';
 export type { GrowthScore, ScoreFactor } from './score';
 
@@ -202,8 +167,6 @@ export type { AnalyticsData } from './useAnalyticsData';
 
 /** The six tab bodies. Each lays out what the model already worked out. */
 export { OverviewTab } from './tabs/OverviewTab';
-export { GoalsTab } from './tabs/GoalsTab';
-export { InsightsTab } from './tabs/InsightsTab';
 export { RecommendationsTab } from './tabs/RecommendationsTab';
 export { GrowthTab } from './tabs/GrowthTab';
 export { SubjectsTab } from './tabs/SubjectsTab';

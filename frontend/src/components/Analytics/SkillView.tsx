@@ -26,7 +26,6 @@ import { useState } from 'react';
 import { Panel, Radar } from './charts';
 import { StatRow, type Stat } from './StatRow';
 import { PART_WEIGHTS, explainSkill, type SkillRow } from '@/utils/skillScore';
-import type { SkillFinding } from '@/utils/skillFindings';
 
 /** The band a score falls in, as the class that colours it. */
 const bandClass = (row: SkillRow) => `is-${row.band.toLowerCase()}`;
@@ -256,84 +255,6 @@ export function SkillShapePanel({
           ))}
         </ul>
       </div>
-    </Panel>
-  );
-}
-
-// --------------------------------------------------------------------------
-// Habits — what has gone cold
-// --------------------------------------------------------------------------
-export function SkillColdPanel({
-  rows,
-  nameOf,
-}: {
-  rows: SkillRow[];
-  nameOf: (id: string) => string;
-}) {
-  const cold = rows
-    .filter((row) => (row.daysSince ?? 0) >= 7)
-    .sort((a, b) => (b.daysSince ?? 0) - (a.daysSince ?? 0))
-    .slice(0, 6);
-
-  if (rows.length === 0) return <NoSkills title="What has gone quiet" />;
-  if (cold.length === 0) {
-    return (
-      <Panel title="What has gone quiet">
-        <p className="ax-empty">
-          Nothing has been left for a week. Every subject you have scored has had work in
-          it recently.
-        </p>
-      </Panel>
-    );
-  }
-
-  return (
-    <Panel title="What has gone quiet" note="Scored subjects with nothing finished lately">
-      <ul className="ax-skill-cold">
-        {cold.map((row) => (
-          <li key={row.subject}>
-            <span className="ax-skill-cold-name">{nameOf(row.subject)}</span>
-            <span className="ax-skill-cold-bar">
-              {/* Full at COLD_DAYS, which is where retention is spent. */}
-              <i style={{ width: `${Math.min(100, ((row.daysSince ?? 0) / 60) * 100)}%` }} />
-            </span>
-            <span className="ax-skill-cold-days">{row.daysSince}d</span>
-            <span className="ax-skill-cold-score">{row.score}</span>
-          </li>
-        ))}
-      </ul>
-      <p className="ax-muted ax-goal-foot">
-        Retention is 5% of a skill score and it is the part that moves on its own. A
-        subject left for two months has spent all of it.
-      </p>
-    </Panel>
-  );
-}
-
-// --------------------------------------------------------------------------
-// Insights — the sentences
-// --------------------------------------------------------------------------
-export function SkillFindingsPanel({ findings }: { findings: SkillFinding[] }) {
-  if (findings.length === 0) {
-    return (
-      <Panel title="What your skills say">
-        <p className="ax-empty">
-          Nothing stands out across your subjects — no slips, no ceilings and nothing left
-          to go cold. That is the common case and not a gap.
-        </p>
-      </Panel>
-    );
-  }
-
-  return (
-    <Panel title="What your skills say" note="Read off the scores, with the figures behind them">
-      <ul className="ax-skill-findings">
-        {findings.map((finding) => (
-          <li key={finding.id} className={`is-${finding.tone}`}>
-            {finding.text}
-          </li>
-        ))}
-      </ul>
     </Panel>
   );
 }

@@ -4,12 +4,7 @@ Most of the page is computed on the client from the growth series, which is why
 this module stayed a stub long after the page existed: one endpoint already
 carried everything a single account needs.
 
-`/api/standing` is the exception, and the reason is structural rather than a
-matter of taste. It is the one figure on the page that cannot be derived from
-the reader's own record at all — it needs every other account's, which the
-client has no business seeing. The rules live in backend/tracking/standing.py.
-
-`/api/baseline` is the other, and it is the opposite case: it is the one thing
+`/api/baseline` is the exception: it is the one thing
 on the page that is not derived from anything, because the account has to say
 it. Every other figure the analytics page draws needs weeks of record before it
 means anything, which left a new account with a page of countdowns and nothing
@@ -19,7 +14,7 @@ tabs from "come back in three weeks" into "here is what you said, here is what
 happened". It goes in `user_settings` — the key/value table that already exists
 for exactly this, a preference rather than a measurement — under BASELINE_KEY.
 
-`/api/adopted_advice` is the third, and it exists to answer the question the
+`/api/adopted_advice` is the second, and it exists to answer the question the
 Recommendations tab could not: *did the change work.* The tab would compute
 that closing your three-day gaps was worth four thousand XP a year, the reader
 would agree and press the button, and then nothing ever came back. A page built
@@ -47,7 +42,6 @@ from backend.api.reply import fail, ok
 from backend.database import connection as db
 from backend.goal_matcher import store as goal_store
 from backend.tracking import analytics as analytics_tracking
-from backend.tracking import standing as standing_tracking
 from backend.tracking import subject_brief
 from backend.tracking import goal_plan
 from backend.tracking import subject_goal
@@ -212,22 +206,6 @@ def get_analytics_tasks(username: str = Depends(current_username)):
     # plain strings and numbers into the plain strings and numbers they were.
     # Everything here came straight out of SQLite as JSON-native types.
     return JSONResponse(ok(fields=fields, rows=rows, goal_links=goal_store.goal_links(username)))
-
-
-@router.get('/api/standing')
-def get_standing(username: str = Depends(current_username)):
-    """Where this account places against the others, measure by measure.
-
-    Returns the placements, the size of the cohort behind them, and whether
-    that cohort was big enough to place against at all — see the module note in
-    tracking/standing.py for why the last of those is a field rather than an
-    assumption.
-    """
-
-    placement = standing_tracking.standing(username)
-    if placement is None:
-        return fail('User not found')
-    return ok(**placement)
 
 
 @router.get('/api/metric_history')

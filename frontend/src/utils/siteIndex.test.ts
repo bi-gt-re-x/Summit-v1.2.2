@@ -105,8 +105,8 @@ describe('findPlaces', () => {
       .toContain('/settings/appearance');
     expect(findPlaces('delete my account').map((place) => place.to))
       .toContain('/settings/danger');
-    expect(findPlaces('percentile').map((place) => place.to))
-      .toContain('/analytics/records');
+    expect(findPlaces('year on year').map((place) => place.to))
+      .toContain('/records');
   });
 
   it('finds the calendar views', () => {

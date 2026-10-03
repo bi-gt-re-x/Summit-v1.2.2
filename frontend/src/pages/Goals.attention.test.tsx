@@ -46,12 +46,10 @@ function goal(over: Partial<Goal> = {}): Goal {
   } as unknown as Goal;
 }
 
-/* Past its date and not finished — off-track by that branch alone, so these
-   fixtures do not depend on the four health weights staying where they are. */
+/* Past its date and not finished — behind by that rule alone. */
 const behind = (id: string, title: string) => goal({ id, title, deadline: day(-4) });
 
-/* Ahead of pace and worked on today. Both halves are needed: 90% at the
-   halfway point still reads at-risk with no evidence behind it. */
+/* Ahead of pace and worked on today. */
 const fine = (id: string, title: string) => goal({ id, title });
 
 const worked = (...ids: string[]): Task[] =>

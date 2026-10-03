@@ -21,7 +21,7 @@
  * nothing about what a node *means* — it is told a status and draws it, and it
  * is deliberately unable to say why anything is locked. "Which of these forty
  * nodes is the one you are working on" is a judgement about meaning, so it
- * lives here with the rest of the judgements (skills/improve, skills/standing)
+ * lives here with the rest of the judgements (skills/improve)
  * and the renderer stays generic.
  *
  * ## The three weights, and why only three

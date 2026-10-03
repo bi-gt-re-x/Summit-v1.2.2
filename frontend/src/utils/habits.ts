@@ -61,27 +61,6 @@ function daysBetween(fromIso: string, toIso: string): number {
 // --------------------------------------------------------------------------
 export type HabitStrength = 'strong' | 'developing' | 'inconsistent' | 'declining';
 
-export const STRENGTH_LABEL: Record<HabitStrength, string> = {
-  strong: 'Strong',
-  developing: 'Developing',
-  inconsistent: 'Inconsistent',
-  declining: 'Declining',
-};
-
-export const STRENGTH_TONE: Record<HabitStrength, string> = {
-  strong: 'green',
-  developing: 'blue',
-  inconsistent: 'amber',
-  declining: 'pink',
-};
-
-export const STRENGTH_NOTE: Record<HabitStrength, string> = {
-  strong: 'Turns up in most weeks and is not fading. These are the ones holding your totals up.',
-  developing: 'Appearing regularly but not yet every week — the habit exists, the routine does not.',
-  inconsistent: 'Real gaps between appearances. It happens when it happens rather than on a schedule.',
-  declining: 'Running well below its own earlier rate. Still alive, but on the way out unless something changes.',
-};
-
 export interface Habit {
   id: string;
   name: string;

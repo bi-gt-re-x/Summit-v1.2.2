@@ -15,6 +15,9 @@
  * (STREAK_MILESTONES in backend/tracking/notify.py), so the flame changes on
  * the days the app already calls special rather than on days of its own.
  *
+ * The stages have no names. The flame is a picture of the streak, not a second
+ * thing to track beside it, so the card says the streak and the flame shows it.
+ *
  * ## The moment
  *
  * `flaring` is set by the card for the second after the streak goes up. The
@@ -36,58 +39,25 @@ export interface FlameStage {
   from: number;
   size: FlameSize;
   heat: FlameHeat;
-  /** What the card calls it. */
-  label: string;
 }
 
 /** Every stage, in order. Each lasts until the next one's `from`. */
 export const FLAME_STAGES: readonly FlameStage[] = [
-  { key: 'none', from: 0, size: 'ember', heat: 'cold', label: 'No flame yet' },
-  { key: 'spark', from: 1, size: 'spark', heat: 'flame', label: 'A spark' },
-  { key: 'small', from: 3, size: 'small', heat: 'flame', label: 'Small flame' },
-  { key: 'medium', from: 7, size: 'medium', heat: 'flame', label: 'Growing flame' },
-  { key: 'full', from: 14, size: 'large', heat: 'flame', label: 'Full flame' },
-  { key: 'red', from: 30, size: 'large', heat: 'red', label: 'Red flame' },
-  { key: 'yellow', from: 50, size: 'large', heat: 'yellow', label: 'Yellow flame' },
-  { key: 'blue', from: 100, size: 'large', heat: 'blue', label: 'Blue flame' },
-  { key: 'infinite', from: 365, size: 'large', heat: 'infinite', label: 'Infinite temperature' },
+  { key: 'none', from: 0, size: 'ember', heat: 'cold' },
+  { key: 'spark', from: 1, size: 'spark', heat: 'flame' },
+  { key: 'small', from: 3, size: 'small', heat: 'flame' },
+  { key: 'medium', from: 7, size: 'medium', heat: 'flame' },
+  { key: 'full', from: 14, size: 'large', heat: 'flame' },
+  { key: 'red', from: 30, size: 'large', heat: 'red' },
+  { key: 'yellow', from: 50, size: 'large', heat: 'yellow' },
+  { key: 'blue', from: 100, size: 'large', heat: 'blue' },
+  { key: 'infinite', from: 365, size: 'large', heat: 'infinite' },
 ];
-
-/** What the next stage changes, in the words the card's tagline uses. */
-const NEXT_WORDS: Record<FlameStage['key'], string> = {
-  none: '',
-  spark: 'a spark',
-  small: 'a flame',
-  medium: 'it grows',
-  full: 'full size',
-  red: 'red',
-  yellow: 'yellow',
-  blue: 'blue',
-  infinite: 'infinite',
-};
 
 export function flameStage(streak: number): FlameStage {
   let stage = FLAME_STAGES[0]!;
   for (const candidate of FLAME_STAGES) if (streak >= candidate.from) stage = candidate;
   return stage;
-}
-
-export function nextFlameStage(streak: number): FlameStage | null {
-  return FLAME_STAGES.find((candidate) => candidate.from > streak) ?? null;
-}
-
-/**
- * The card's tagline: where the flame is and what it becomes next.
- *
- * "Red flame · yellow at 50 days". At the top there is no next, and the line
- * says so rather than inventing one.
- */
-export function flameLine(streak: number): string {
-  const stage = flameStage(streak);
-  const next = nextFlameStage(streak);
-  if (stage.key === 'none') return 'Finish a task to strike a spark.';
-  if (!next) return 'Infinite temperature — nothing burns hotter.';
-  return `${stage.label} · ${NEXT_WORDS[next.key]} at ${next.from} days`;
 }
 
 /** The shape alone. Coloured by the chip it sits in (`currentColor`). */

@@ -711,13 +711,12 @@ export default function Goals() {
    * yet is a goal nobody has begun, which is a different problem with a
    * different answer, and putting it here would fill the reader's one
    * "show me the problem" view with goals whose problem is that they have not
-   * happened. `goalHealth` says why each one is here; see `reasonFor` there.
+   * happened. `goalHealth` says why each one is here; see the reasons there.
    */
   const needsAttention = useMemo(
     () =>
       outcomes.filter((goal) => {
-        const state = goalHealth(goal, tasks).state;
-        return state === 'at-risk' || state === 'off-track';
+        return goalHealth(goal, tasks).state === 'behind';
       }),
     [outcomes, tasks],
   );
@@ -733,7 +732,7 @@ export default function Goals() {
   const [attention, setAttention] = useState(false);
 
   /* It clears itself when there is nothing left to show. Ticking the last
-     at-risk goal back into shape while filtered would otherwise leave an empty
+     behind goal back into shape while filtered would otherwise leave an empty
      tab under a header that had just stopped saying anything was wrong. */
   useEffect(() => {
     if (attention && needsAttention.length === 0) setAttention(false);

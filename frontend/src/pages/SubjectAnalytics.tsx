@@ -105,7 +105,6 @@ import { Reading } from '@/components/Subject/Reading';
 import { performance } from '@/components/Subject/performance';
 import { latticeFor, treeReading } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
-import { treeStanding } from '@/skills/standing';
 import { useApi, useAuth, useDocumentTitle, useSettings, useSubjectIndex } from '@/hooks';
 import { taskHistory } from '@/services/taskHistory';
 import {
@@ -459,36 +458,6 @@ export default function SubjectAnalytics() {
   );
 
   /**
-   * How far into this subject's lattice the account's own work has got.
-   *
-   * The panel below says what the tree *contains*, which is authored and the
-   * same for everybody. This is the half that is about the reader: XP filed
-   * under every subject that opens this tree, against what the tree is worth.
-   * See skills/standing, which is also what the Subjects tab and the Mastery
-   * badges read, so the three cannot disagree about the same account.
-   *
-   * Counted over every finished task rather than over the window this page is
-   * scoped to. Everything else here is a statement about the window and this
-   * is not, deliberately: a lattice is a curriculum rather than a quarter.
-   *
-   * Sibling subjects count. Algebra and Geometry open the Mathematics tree, so
-   * a reader on the Algebra page is told where *the tree* stands, not where
-   * their algebra tasks alone stand — the tree is the thing being measured.
-   */
-  const standing = useMemo(() => {
-    const xp = new Map<string, number>();
-    for (const task of tasks.data?.tasks ?? []) {
-      const key = task.subject ?? '';
-      if (task.status !== 'done' || !key) continue;
-      xp.set(key, (xp.get(key) ?? 0) + (Number(task.xp_value) || 0));
-    }
-    const rows = treeStanding([...xp].map(([key, total]) => ({ key, xp: total })));
-    return rows.find((tree) => tree.subjects.includes(subjectId))
-      ?? rows.find((tree) => tree.title === lattice?.title)
-      ?? null;
-  }, [lattice?.title, subjectId, tasks.data]);
-
-  /**
    * The checkpoints set against this subject, and the goal drafted from them.
    *
    * Checkpoints first, goal second, which is the order people actually work
@@ -786,12 +755,9 @@ export default function SubjectAnalytics() {
 
   const loop = useMemo(() => summarise(verdicts), [verdicts]);
 
-  /* What the standing in the tree says, as sentences rather than as counts.
+  /* What the tree says about the reader, as sentences rather than as counts.
      Null lattice means no tree for this subject and no panel to read. */
-  const treeRead = useMemo(
-    () => (lattice ? treeReading(lattice, standing) : null),
-    [lattice, standing],
-  );
+  const treeRead = useMemo(() => (lattice ? treeReading(lattice) : null), [lattice]);
 
   /* Asked once, so an install with no key draws no button at all — the same
      bargain the write-up keeps, for the same reason. */
@@ -2486,12 +2452,7 @@ export default function SubjectAnalytics() {
                 <Fold
                   title="Skill tree"
                   note="Where this sits in the curriculum."
-                  figures={
-                    standing
-                      ? [{ label: 'Of this tree', value: `${standing.percent}%` }]
-                      : []
-                  }
-                  lead={treeRead.standing}
+                  lead={treeRead.touched}
                 >
                   {/* The fold is the panel, and what is left inside it is the
                       reader's own two figures plus the way into the tree.
@@ -2507,20 +2468,6 @@ export default function SubjectAnalytics() {
                       account and actionable on none. `next` is the only line
                       that tells anybody to do anything, so it is the only one
                       that stayed. */}
-                  {standing && (
-                    <div className="sb-standing">
-                      <span className="sb-standing-pct">{standing.percent}%</span>
-                      <div className="sb-standing-main">
-                        <span className="sb-standing-bar" aria-hidden="true">
-                          <span style={{ width: `${standing.percent}%` }} />
-                        </span>
-                        <span className="sb-standing-sub">
-                          {standing.xp.toLocaleString()} of {standing.worth.toLocaleString()} XP
-                        </span>
-                      </div>
-                    </div>
-                  )}
-
                   {treeRead.next && <p className="sb-tree-read-next">{treeRead.next}</p>}
 
                   <div className="sb-tree">

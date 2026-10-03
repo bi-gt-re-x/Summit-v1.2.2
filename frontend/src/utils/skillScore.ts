@@ -7,8 +7,8 @@
  * cannot carry that and this file will not pretend otherwise. A task stores a
  * `subject` (`geometry`, `algebra`, one of a hundred); a subject routes to a
  * tree; the nodes inside that tree carry an authored `state` and `percent`
- * that are identical on every account. skills/standing.ts says it plainly:
- * "Neither is evidence about anybody." Spreading a subject's evidence across
+ * that are identical on every account — skills/subjectTrees.ts says so — so
+ * neither is evidence about anybody. Spreading a subject's evidence across
  * its nodes would produce exactly the decorative number this is meant to
  * replace, with a decimal point on it.
  *

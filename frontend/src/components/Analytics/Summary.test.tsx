@@ -2,7 +2,7 @@
  * The grade, and the rung above it.
  *
  * The panel's lead sentence is the largest thing on the analytics page and the
- * first thing read. It used to end at the letter's meaning — "62/100, two or
+ * first thing read. It used to end at the letter's meaning — "6.2/10, two or
  * three of the five are low" — which states where the reader is and offers
  * nowhere to go. Every other row on the panel links somewhere; this one graded
  * and stopped.
@@ -50,7 +50,6 @@ function show(overrides: Partial<SummaryProps> = {}) {
     movement: null,
     topAdvice: null,
     adviceCount: 0,
-    phase: null,
     goals: null,
     ...overrides,
   };
@@ -78,24 +77,23 @@ describe('the distance to the next grade', () => {
   it('is in the lead sentence', () => {
     // 62 is a D; C starts at 70.
     show({ score: scoreOf(62, 'D') });
-    expect(nextClause()).toMatch(/8 points to C/);
+    expect(nextClause()).toMatch(/0\.8 to C/);
   });
 
   it('counts from the band the letter came from', () => {
     // 88 is a B; A starts at 90.
     show({ score: scoreOf(88, 'B') });
-    expect(nextClause()).toMatch(/2 points to A/);
+    expect(nextClause()).toMatch(/0\.2 to A/);
   });
 
-  it('says "point" rather than "points" when there is one', () => {
+  it('says the distance on the ten-point scale the score is printed on', () => {
     show({ score: scoreOf(69, 'D') });
-    expect(nextClause()).toMatch(/1 point to C/);
-    expect(nextClause()).not.toMatch(/points/);
+    expect(nextClause()).toMatch(/0\.1 to C/);
   });
 
   it('is absent at the top, where there is no band above', () => {
     show({ score: scoreOf(100, 'S') });
-    expect(lead().textContent).not.toMatch(/points? to/);
+    expect(clauseCount()).toBe(0);
   });
 });
 
@@ -104,7 +102,7 @@ describe('and it does not depend on tone', () => {
      need of being shown a reachable next rung, and was the one not shown it. */
   it.each(['gentle', 'balanced', 'harsh'] as const)('is shown at %s tone', (tone) => {
     show({ score: scoreOf(62, 'D'), tone });
-    expect(nextClause()).toMatch(/8 points to C/);
+    expect(nextClause()).toMatch(/0\.8 to C/);
   });
 
   it.each(['gentle', 'balanced', 'harsh'] as const)('is shown once at %s tone', (tone) => {
@@ -114,7 +112,7 @@ describe('and it does not depend on tone', () => {
     expect(clauseCount()).toBe(1);
     // And specifically not back on the row it came off.
     const row = screen.getByText(/measure holding it back/i);
-    expect(row.textContent).not.toMatch(/points? to/);
+    expect(row.textContent).not.toMatch(/\d to [A-S]/);
   });
 
   it('leaves the weakest measure named in its own row', () => {
@@ -128,7 +126,7 @@ describe('and it does not depend on tone', () => {
 describe('what must not have changed', () => {
   it('still prints the score and what the letter means', () => {
     show({ score: scoreOf(62, 'D') });
-    expect(lead().textContent).toMatch(/62/);
+    expect(lead().textContent).toMatch(/6\.2\/10/);
     expect(lead().textContent).toMatch(/two or three of the five are low/i);
   });
 

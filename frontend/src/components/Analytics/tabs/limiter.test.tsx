@@ -2,29 +2,16 @@
  * The limiter, where it reaches the screen.
  *
  * `utils/goalLimiter.test` pins the arithmetic and the floors under it. This is
- * about the other half of the decision: five tabs print the same finding and
- * they print it at two different sizes, on purpose, and which tab gets which
- * size is a judgement that nothing but a test can hold.
- *
- * The rule, in one line: a tab a reader opens to ask *why* gets the card;
- * a tab with its own job gets one sentence. Insights and Recommendations are
- * the first kind. Overview, Habits and Subjects are the second, and a card on
- * any of them would quietly turn that tab into a fourth copy of the goals page
- * — which is exactly what four rows were deleted off the Overview for doing.
- *
- * The Subjects tab carries the one extra condition, and it is the one most
- * worth pinning because nothing about it is visible in the types: a limiter is
- * only drawn there when its subject is on the page under it.
+ * about the other half of the decision: where the finding is drawn. It is
+ * drawn once, as a card on Recommendations — the tab a reader opens to ask
+ * *why* — and nowhere else.
  */
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { InsightsTab } from './InsightsTab';
 import { OverviewTab } from './OverviewTab';
 import { RecommendationsTab } from './RecommendationsTab';
 import { SubjectsTab } from './SubjectsTab';
 import { draw, fakeData, fakeModel, matureOverview, subjects } from './fixtures';
-import { buildHabits } from '@/utils/habits';
-import { task } from '@/test/factories';
 import type { GoalLimiter } from '@/utils/goalLimiter';
 
 /** What `goalLimiter` produces for the goal the whole feature was written for. */
@@ -55,20 +42,6 @@ const COURSE: GoalLimiter = {
   basis: 'open',
 };
 
-/** Habits draws nothing at all without a habit in it. */
-const HABITS = buildHabits(
-  Array.from({ length: 8 }, (_, week) =>
-    task({
-      title: 'Revision',
-      status: 'done',
-      completed_at: `2026-0${week < 4 ? 6 : 7}-${String(1 + (week % 4) * 7).padStart(2, '0')}T18:00:00`,
-    }),
-  ),
-  (id: string) => id,
-  '2026-06-01',
-  '2026-07-31',
-);
-
 describe('the tabs a reader opens to ask why', () => {
   it('gives Recommendations the whole reading, ending in the way in', () => {
     draw(
@@ -95,18 +68,13 @@ describe('the tabs a reader opens to ask why', () => {
       .toHaveAttribute('href', '/skill-trees?subject=geometry&node=m.geometry');
   });
 
-  it('gives Insights the same card, and still never an instruction', () => {
-    draw(<InsightsTab model={fakeModel({ goalLimits: [AMC8] })} subjects={subjects} />);
-
-    expect(screen.getByText(/You are improving, but/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Geometry skill tree/i })).toBeInTheDocument();
-  });
 });
 
 describe('the tabs with their own job', () => {
-  it('gives the Overview one line, and only about the worst goal', () => {
-    // Two limiters in, one sentence out. The Overview's whole argument is that
-    // it is the shortest honest answer and hands the longer questions on.
+  /* The finding is drawn once, on Recommendations. It used to be repeated as a
+     line on the Overview and the Subjects tab as well, which put the same
+     goal in front of the reader three times. */
+  it('leaves it off the Overview', () => {
     draw(
       <OverviewTab
         model={{ ...matureOverview(), goalLimits: [AMC8, COURSE] }}
@@ -115,62 +83,22 @@ describe('the tabs with their own job', () => {
       />,
     );
 
-    expect(screen.getByText(/Get 24 on the AMC 8/)).toBeInTheDocument();
-    expect(screen.queryByText(/Finish the course/)).not.toBeInTheDocument();
-    // A line, not a card: no working, and no button.
-    expect(screen.queryByText(AMC8.because)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Get 24 on the AMC 8/)).not.toBeInTheDocument();
   });
 
-  /* Habits used to print this as a bare line — `LimiterLine`, no working and
-     no button — precisely because a card about goals would have turned a tab
-     about behaviour into a tab about goals. The merge retired that reasoning
-     along with the tab: the cards are on this page now, under "Why it
-     happens", where a limiter belongs, and a line a screen above them saying
-     less was the duplicate rather than the safeguard. */
-  it('gives Insights the card, and no line above it', () => {
-    draw(
-      <InsightsTab
-        model={fakeModel({ goalLimits: [AMC8], habits: HABITS })}
-        subjects={subjects}
-      />,
-    );
-
-    // The working is the card's — a line never had it.
-    expect(screen.getByText(AMC8.because)).toBeInTheDocument();
-    // And the goal is named once, not once by a line and again by the card a
-    // screen below it. Both spell the phrase, which is why counting is what
-    // catches the duplicate rather than looking for either one.
-    expect(screen.getAllByText(/biggest limiter/)).toHaveLength(1);
-  });
-});
-
-describe('the Subjects tab, where the subject has to be on the page', () => {
-  /** The breakdown the tab reads to decide which subjects this window shows. */
-  const worked = (...keys: string[]) => ({
-    rows: keys.map((key) => ({ key, label: key, name: key, xp: 500, share: 1, tasks: 4 })),
-  }) as never;
-
-  it('draws the limiter whose subject was worked in this window', () => {
+  it('leaves it off the Subjects tab, even for a subject on the page', () => {
     draw(
       <SubjectsTab
-        model={fakeModel({ goalLimits: [AMC8], breakdown: worked('geometry') })}
+        model={fakeModel({
+          goalLimits: [AMC8],
+          breakdown: {
+            rows: [{ key: 'geometry', label: 'geometry', name: 'geometry', xp: 500, share: 1, tasks: 4 }],
+          } as never,
+        })}
         subjects={subjects}
       />,
     );
 
-    expect(screen.getByText(/Get 24 on the AMC 8/)).toBeInTheDocument();
-  });
-
-  it('leaves out one about a subject this window has nothing to say about', () => {
-    // True, and belonging on the tab that is about goals rather than on the
-    // one that is about subjects.
-    draw(
-      <SubjectsTab
-        model={fakeModel({ goalLimits: [COURSE], breakdown: worked('geometry') })}
-        subjects={subjects}
-      />,
-    );
-
-    expect(screen.queryByText(/Finish the course/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Get 24 on the AMC 8/)).not.toBeInTheDocument();
   });
 });

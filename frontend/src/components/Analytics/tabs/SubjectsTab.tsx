@@ -12,9 +12,7 @@ import { useMemo } from 'react';
 import { SkillsChapter } from '@/components/Growth';
 import { latticeFor } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
-import { treeStanding } from '@/skills/standing';
 import { OTHER_KEY } from '@/utils/subjectXp';
-import { LimiterLine } from '../Limiter';
 import { SkillScorePanel } from '../SkillView';
 import { PanelGroup } from '../charts';
 import type { AnalyticsModel } from '../useAnalyticsModel';
@@ -34,26 +32,7 @@ export function SubjectsTab({
   subjects,
   username = null,
 }: { model: AnalyticsModel; subjects: SubjectIndex; username?: string | null }) {
-  const { all, goalLimits, namedSubjects, tasks, breakdown, skills, nameOf } = model;
-
-  /**
-   * The limiters whose subject is one this window actually shows.
-   *
-   * The tab's own rule, applied to a second kind of row: a sentence about a
-   * subject earns its place here only when the subject is on the page under
-   * it. A limiter on Chemistry, on a window where no chemistry was worked, is
-   * a finding about somewhere else — true, and belonging on the tab that is
-   * about goals rather than on the one that is about subjects.
-   *
-   * Which is also the whole of what "only where the subject has a goal" means
-   * in practice: `goalLimits` exists at all only for subjects some live goal's
-   * work is filed under, so the filter below is the second half of that test
-   * rather than a separate one.
-   */
-  const shown = useMemo(() => {
-    const worked = new Set((breakdown?.rows ?? []).map((row) => row.key));
-    return goalLimits.filter((row) => worked.has(row.subjectId));
-  }, [breakdown?.rows, goalLimits]);
+  const { all, namedSubjects, tasks, breakdown, skills, nameOf } = model;
 
   /**
    * What there is to learn in each subject that got worked.
@@ -85,42 +64,6 @@ export function SubjectsTab({
     [breakdown?.rows, subjects, username],
   );
 
-  /**
-   * How far into each lattice this account's own work has got.
-   *
-   * The list below says what each subject *opens* — the size of the tree and
-   * how many of its nodes the reader has marked practised. That is the
-   * curriculum's figure and a hand-kept one; neither is a reading of the
-   * record. This is the reading of the record: XP filed under the subjects
-   * that route to a tree, against what the tree is worth. See skills/standing,
-   * which explains why the nodes' own `percent` is not what is shown.
-   *
-   * Trees are grouped, so the five languages are one lattice rather than five
-   * subjects — which is the whole difference between this panel and the
-   * subject breakdown above it.
-   *
-   * Counted over **every** finished task rather than over `breakdown`, which is
-   * the window the page is scoped to. Everything else on this tab is a
-   * statement about the window, and this one is not, on purpose: a lattice is a
-   * curriculum rather than a month, and "23% of Web Development" measured over
-   * the last thirty days is not a fact about the reader's standing in it. The
-   * server counts the Mastery badges the same way, over the same lifetime, and
-   * a panel that quietly disagreed with the badge beside it would be worse than
-   * no panel.
-   */
-  const standing = useMemo(
-    () => {
-      const xp = new Map<string, number>();
-      for (const task of tasks) {
-        const key = task.subject ?? '';
-        if (task.status !== 'done' || !key || key === OTHER_KEY) continue;
-        xp.set(key, (xp.get(key) ?? 0) + (Number(task.xp_value) || 0));
-      }
-      return treeStanding([...xp].map(([key, total]) => ({ key, xp: total })));
-    },
-    [tasks],
-  );
-
   return (
     <>
       {/* The two chapters that arrived whole. Each was a tab of the growth
@@ -146,63 +89,16 @@ export function SubjectsTab({
                 aimed at {namedSubjects.named === 1 ? 'it' : 'them'}.
               </>
             )}{' '}
-            <Link to="/analytics/goals" className="ax-link">
+            <Link to="/goals" className="ax-link">
               See what is missing
             </Link>
           </p>
         </section>
       )}
 
-      {/* Under the line about how many subjects have a goal, and answering the
-          question it raises. That line says how many were aimed at; these say,
-          for the ones that were, what the aiming is running into. Lines rather
-          than cards for the reason the line above is a line: this tab is about
-          mastery, and the goal reading is context on it. */}
-      {shown.length > 0 && (
-        <section className="ax-section">
-          {shown.map((row) => (
-            <LimiterLine key={row.goalId} row={row} />
-          ))}
-        </section>
-      )}
-
       <div className="ax-section gr-scope">
         <SkillsChapter all={all} tasks={tasks} subjects={subjects} />
       </div>
-
-      {/* How far in the work has got. The panel below says what there is to
-          learn in each subject; this says how much of it this account's own
-          record covers, which is the one skill-tree figure on the page that is
-          about the reader rather than about the curriculum. */}
-      {standing.length > 0 && (
-        <section className="ax-section ax-panel">
-          <div className="ax-panel-head">
-            <div className="ax-panel-title">
-              <h2>How far into each tree</h2>
-            </div>
-          </div>
-          <p className="ax-panel-note">
-            Your all-time XP in each skill tree, out of the tree's total. Related subjects share one
-            tree (for example, all languages count toward Foreign Languages).
-          </p>
-          <ul className="ax-treedepth">
-            {standing.map((tree) => (
-              <li key={tree.id}>
-                {/* Titled as well as printed: "Algorithms & Data Structures"
-                    does not fit the column at any width worth giving it. */}
-                <span className="ax-treedepth-name" title={tree.title}>{tree.title}</span>
-                <span className="ax-treedepth-bar">
-                  <span style={{ width: `${tree.percent}%` }} />
-                </span>
-                <span className="ax-treedepth-pct">{tree.percent}%</span>
-                <span className="ax-treedepth-xp">
-                  {tree.xp.toLocaleString()} / {tree.worth.toLocaleString()} XP
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
 
       {/* What each of them opens. The chapter above says how much work went
           where; this says what there is to learn in each, and gives the reader

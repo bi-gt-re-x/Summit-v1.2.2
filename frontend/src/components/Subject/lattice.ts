@@ -124,10 +124,10 @@ export function latticeFor(
  * state back as the reader's ability — the rule this whole file exists to
  * hold, stated at the top.
  *
- * Two figures are the reader's own and they are the only two this reads from:
- * `practised`, which their own clicks wrote, and the XP standing, which is
- * counted off their finished work. Everything else in a sentence below is a
- * fact about the size or shape of the curriculum, and is phrased as one.
+ * One figure is the reader's own and it is the only one this reads from:
+ * `practised`, which their own clicks wrote. Everything else in a sentence
+ * below is a fact about the size or shape of the curriculum, and is phrased as
+ * one.
  *
  * So there is no "you are 12% masterful". There is "you have touched six of
  * forty-two skills on this branch", which is a true sentence about a person,
@@ -135,9 +135,7 @@ export function latticeFor(
  * tree.
  */
 export interface TreeReading {
-  /** Where they stand, as a sentence. Always present. */
-  standing: string;
-  /** What they have touched of it. Empty when the store has nothing. */
+  /** What they have touched of it, as a sentence. Always present. */
   touched: string;
   /** What the tree holds, and where this branch sits in it. */
   shape: string;
@@ -145,31 +143,13 @@ export interface TreeReading {
   next: string;
 }
 
-/** Under this share of a tree's XP, the reader is at the start of it. */
-const EARLY = 15;
-/** Over this share, the tree is mostly behind them. */
-const LATE = 70;
-
-export function treeReading(
-  lattice: Lattice,
-  standing: { percent: number; xp: number; worth: number; title: string } | null,
-): TreeReading {
+export function treeReading(lattice: Lattice): TreeReading {
   const untouched = Math.max(0, lattice.nodes - lattice.practised);
-
-  const standingLine = standing
-    ? standing.percent >= LATE
-      ? `You hold ${standing.percent}% of the XP that opens ${standing.title}. `
-        + 'Most of this tree is behind you.'
-      : standing.percent <= EARLY
-        ? `You hold ${standing.percent}% of the XP that opens ${standing.title}. `
-          + 'This is the start of it.'
-        : `You hold ${standing.percent}% of the XP that opens ${standing.title}.`
-    : `Nothing finished here has counted towards ${lattice.title} yet.`;
 
   const touched = lattice.practised > 0
     ? `You have practised ${lattice.practised} of its ${lattice.nodes} skills`
       + `${untouched > 0 ? `, and not opened ${untouched}` : ''}.`
-    : '';
+    : `You have not practised any of ${lattice.title}'s ${lattice.nodes} skills yet.`;
 
   const shape = lattice.branches.length > 0
     ? `${lattice.title} holds ${lattice.nodes} skills, ${lattice.core} of them core, `
@@ -190,5 +170,5 @@ export function treeReading(
     next = 'Every skill on this branch has been opened at least once.';
   }
 
-  return { standing: standingLine, touched, shape, next };
+  return { touched, shape, next };
 }

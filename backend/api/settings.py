@@ -380,10 +380,9 @@ FIELDS: Dict[str, Any] = {
     #: be announced again on a phone.
     'analytics_stage_seen': ('', _one_of('', 'new', 'early', 'weekly',
                                          'developing', 'full')),
-    #: Which tab the page opens on. The same seven keys as VIEWS in
+    #: Which tab the page opens on. The same keys as VIEWS in
     #: frontend/src/components/Analytics/Header.tsx.
-    'analytics_home_tab': ('overview', _one_of('recommendations', 'overview', 'goals',
-                                               'habits', 'insights', 'subjects', 'growth')),
+    'analytics_home_tab': ('overview', _one_of('recommendations', 'overview', 'subjects')),
     #: How the account records work, and therefore which figure leads the row
     #: of tiles: the tasks it finished, the hours it sat, or both.
     'analytics_log_style': ('both', _one_of('tasks', 'sessions', 'both')),
@@ -396,9 +395,6 @@ FIELDS: Dict[str, Any] = {
     #: answer, 'everything' adds the panels a reader has to visit another tab
     #: for.
     'analytics_detail':  ('standard', _one_of('essentials', 'standard', 'everything')),
-    #: Whether the page is allowed to rank this account against everybody
-    #: else. Off hides the percentile panel outright.
-    'analytics_standing': (True, _boolean),
     #: The subjects the account said it most wants to work on, by id, at most
     #: ANALYTICS_SUBJECTS_MAX of them. Empty is the honest default and a real
     #: state: an account that named none gets the one Analytics entry it has
@@ -516,8 +512,12 @@ def _inherited(username, key):
 #: about this release and not about the account's data, and because the write
 #: path above already refuses the old spelling — so this only ever has to hold
 #: for values stored before the rename.
+#:
+#: The Habits, Insights, Goals and Growth tabs were later cut outright, so an
+#: account that opened on any of them opens on the Overview.
 ALIASES = {
-    'analytics_home_tab': {'records': 'growth'},
+    'analytics_home_tab': {'records': 'overview', 'growth': 'overview', 'goals': 'overview',
+                           'habits': 'overview', 'insights': 'overview'},
 }
 
 

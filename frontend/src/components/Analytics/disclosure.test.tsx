@@ -17,7 +17,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { PanelGroup } from './charts';
-import { FindingCard } from '../Insights/Deep';
 
 function bodyOf(container: HTMLElement, selector: string): HTMLElement {
   const found = container.querySelector<HTMLElement>(selector);
@@ -62,24 +61,3 @@ describe('PanelGroup', () => {
   });
 });
 
-describe('FindingCard', () => {
-  it('is inert until the workings are asked for', () => {
-    const { container } = render(
-      <FindingCard
-        finding={{
-          id: 'f1',
-          headline: 'Mornings carry the week.',
-          detail: 'Sixty per cent of finished work lands before noon.',
-          tone: 'good',
-          strength: 'likely',
-        }}
-      />,
-    );
-
-    expect(bodyOf(container, '.ax-finding-body')).toHaveAttribute('inert');
-    expect(screen.getByRole('button', { name: /Mornings carry the week/ })).toHaveAttribute(
-      'aria-expanded',
-      'false',
-    );
-  });
-});

@@ -40,7 +40,6 @@ import {
   QualityGridPanel,
   QualityPanel,
   ScorePanel,
-  StandingPanel,
   StreaksPanel,
   SubjectPanel,
   Tiles,
@@ -52,7 +51,6 @@ import { partsOfDay } from '@/utils/habits';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
 import { Knows } from '../Knows';
-import { LimiterLine } from '../Limiter';
 import { LensLine } from '../Lens';
 import { throughLens } from '@/utils/goalLens';
 import { whatSummitKnows } from '@/utils/knows';
@@ -79,7 +77,6 @@ export function OverviewTab({
   const {
     breakdown,
     card,
-    goalLimits,
     skills,
     lens,
     nameOf,
@@ -115,18 +112,16 @@ export function OverviewTab({
     setMetric,
     slice,
     spanText,
-    /* What the account asked this page to be — see utils/analyticsPrefs. Four
+    /* What the account asked this page to be — see utils/analyticsPrefs. Three
        reads on this tab: which volume the tiles print, which panels are drawn
-       at all, whether the comparison against everybody else is allowed, and
-       how blunt the baseline's verdict is. */
+       at all, and how blunt the baseline's verdict is. */
     detail,
     logStyle,
-    showStanding,
     tone,
     insights,
     previousBySubject,
   } = model;
-  const { stats, baseline, standing } = data;
+  const { stats, baseline } = data;
   const aim = baseline.data?.baseline ?? null;
 
   /*
@@ -366,13 +361,11 @@ export function OverviewTab({
    */
   const { judgement, note } = stageShows(maturity.stage);
 
-  /* The three gated tabs, from their own `NEED_DAYS` rather than from a table
+  /* The gated tab, from its own `NEED_DAYS` rather than from a table
      here — one source for what each needs, so a threshold changed there shows
      up in this strip without anybody remembering to update it. */
   const learning: LearningItem[] = [
     { label: 'Recommendations', have: historyDays, need: NEED_DAYS.recommendations, href: '/recommendations' },
-    { label: 'Habits', have: historyDays, need: NEED_DAYS.habits, href: '/analytics/habits' },
-    { label: 'Insights', have: historyDays, need: NEED_DAYS.insights, href: '/insights' },
   ];
 
   return (
@@ -397,8 +390,6 @@ export function OverviewTab({
         <Tiles
           figures={figures}
           sparks={sparks}
-          score={score}
-          scoreSeries={scoreLine}
           compareLabel={compareLabel}
           logStyle={logStyle}
           scopedOut={subjectLabel}
@@ -438,9 +429,6 @@ export function OverviewTab({
           series={scoreLine}
           marks={scoreMarks}
           dates={scoreDates}
-          // The counted placement, so the badge here and the Growth Score row
-          // on "Where You Stand" are one figure rather than two that disagree.
-          percentile={standing.data?.rows.find((row) => row.key === 'score')?.percentile ?? null}
         />
         )}
       </section>
@@ -521,20 +509,12 @@ export function OverviewTab({
           </PanelGroup>
         )}
 
-        {/* Consistency and streaks are counts of this account's own days and
-            belong to `trends`. Standing is a placement against everybody else,
-            which is the most confident claim on the page — it waits. Three
-            columns with the third missing would leave a gap, so the grid
-            narrows with it. */}
+        {/* Consistency and streaks are counts of this account's own days. */}
         <PanelGroup
-          title="Consistency and standing"
-          note="How often you show up, and how that compares"
+          title="Consistency"
+          note="How often you show up, and how long you keep it going"
         >
-          <div
-            className={`ax-grid ${
-              judgement && showStanding ? 'ax-grid-three' : 'ax-grid-halves-even'
-            }`}
-          >
+          <div className="ax-grid ax-grid-halves-even">
             <ConsistencyPanel
               rate={rhythmRate.rate}
               previousRate={rhythmRate.previousRate}
@@ -546,13 +526,6 @@ export function OverviewTab({
               best={stats.stats?.best_streak ?? 0}
               bestMonth={rhythmRate.bestMonth}
             />
-            {/* Two conditions, and they refuse for different reasons. The stage
-                holds it back because a percentile is the most confident claim
-                the page makes and a fortnight is the floor for making it; the
-                preference holds it back because some readers do not want to be
-                ranked against strangers at all, which is a different question
-                and is theirs to answer. See `analytics_standing`. */}
-            {judgement && showStanding && <StandingPanel standing={standing.data ?? null} />}
           </div>
         </PanelGroup>
 
@@ -591,24 +564,7 @@ export function OverviewTab({
       {/* The profile. Same block as the early stages draw, further down a
           longer page: by here the reader has seen the window's readings and
           this is what they add up to about them. */}
-      {/* One line, and only the worst one.
-
-          The Overview's whole argument is that it is the shortest honest
-          answer to "how am I doing" and hands the longer questions to the tabs
-          built for them — see the note at the top of this file, and `WhereNext`
-          at the bottom. A goal reading belongs in that answer, because a
-          reader's own goals are what "how am I doing" is usually about; a
-          column of them would be this tab restating the Recommendations tab at
-          lower resolution, which is the exact thing four rows were deleted for
-          doing. So: the most concentrated one, in a sentence, with the way
-          in. */}
-      {goalLimits[0] && (
-        <section className="ax-section">
-          <LimiterLine row={goalLimits[0]} />
-        </section>
-      )}
-
-      {/* One line, for the same reason the limiter above it is one line: this
+      {/* One line: this
           tab is the shortest honest answer to "how am I doing" and hands the
           longer questions on. The full reading is on Recommendations. */}
       {lens && (
@@ -662,13 +618,9 @@ function WhereNext() {
     <section className="ax-section ax-next">
       <p>Where to go next</p>
       <div className="ax-next-row">
-        <Link to="/analytics/goals">
+        <Link to="/goals">
           <strong>Goals</strong>
           <span>Whether what you aimed at is going to happen</span>
-        </Link>
-        <Link to="/insights">
-          <strong>Insights</strong>
-          <span>Why your record looks like this, with the evidence</span>
         </Link>
         <Link to="/recommendations">
           <strong>Recommendations</strong>

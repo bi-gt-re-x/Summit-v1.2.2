@@ -587,8 +587,7 @@ button.gx-state-attn.is-on {
     background: currentColor;
 }
 .gx-page .gx-health.is-on-track    { color: var(--gx-good);  background: color-mix(in srgb, var(--gx-good) 13%, transparent); }
-.gx-page .gx-health.is-at-risk     { color: var(--gx-watch); background: color-mix(in srgb, var(--gx-watch) 15%, transparent); }
-.gx-page .gx-health.is-off-track   { color: var(--gx-bad);   background: color-mix(in srgb, var(--gx-bad) 13%, transparent); }
+.gx-page .gx-health.is-behind     { color: var(--gx-watch); background: color-mix(in srgb, var(--gx-watch) 15%, transparent); }
 .gx-page .gx-health.is-not-started { color: var(--gx-faint); background: var(--gx-card-2); border-color: var(--gx-line); }
 
 /* ---------- Progress ------------------------------------------------------ */
@@ -752,8 +751,7 @@ button.gx-state-attn.is-on {
     background: var(--gx-faint);
 }
 .gx-rest-dot.is-on-track { background: var(--gx-good); }
-.gx-rest-dot.is-at-risk { background: var(--gx-watch); }
-.gx-rest-dot.is-off-track { background: var(--gx-bad); }
+.gx-rest-dot.is-behind { background: var(--gx-watch); }
 .gx-rest-dot.is-not-started {
     background: none;
     border: 1.5px solid var(--gx-faint);
@@ -1143,8 +1141,7 @@ button.gx-state-attn.is-on {
 .gx-dist-ring circle { fill: none; stroke-width: 5; }
 .gx-dist-arc { stroke-linecap: butt; }
 .gx-dist-arc.is-on-track    { stroke: var(--gx-good); }
-.gx-dist-arc.is-at-risk     { stroke: var(--gx-watch); }
-.gx-dist-arc.is-off-track   { stroke: var(--gx-bad); }
+.gx-dist-arc.is-behind     { stroke: var(--gx-watch); }
 .gx-dist-arc.is-not-started { stroke: var(--gx-faint); }
 .gx-dist-centre {
     position: absolute;
@@ -1162,8 +1159,7 @@ button.gx-state-attn.is-on {
 .gx-dist-key li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: var(--space-2); font-size: var(--text-sm); }
 .gx-dist-key i { width: 9px; height: 9px; border-radius: 3px; }
 .gx-dist-key i.is-on-track    { background: var(--gx-good); }
-.gx-dist-key i.is-at-risk     { background: var(--gx-watch); }
-.gx-dist-key i.is-off-track   { background: var(--gx-bad); }
+.gx-dist-key i.is-behind     { background: var(--gx-watch); }
 .gx-dist-key i.is-not-started { background: var(--gx-faint); }
 .gx-dist-key span { color: var(--gx-muted); }
 .gx-dist-key strong { font-weight: 600; color: var(--gx-text); font-variant-numeric: tabular-nums; }
@@ -2998,13 +2994,9 @@ button.gx-state-attn.is-on {
     background: color-mix(in srgb, var(--gx-good) 16%, transparent);
     color: var(--gx-good);
 }
-.gx-pill.is-at-risk {
+.gx-pill.is-behind {
     background: color-mix(in srgb, var(--gx-watch) 18%, transparent);
     color: var(--gx-watch);
-}
-.gx-pill.is-off-track {
-    background: color-mix(in srgb, var(--gx-bad) 16%, transparent);
-    color: var(--gx-bad);
 }
 .gx-pill.is-not-started {
     background: var(--gx-card-2);
@@ -3090,8 +3082,7 @@ button.gx-state-attn.is-on {
 /* The same four colours as the ring's arcs and the rows' dots, so one fact is
    not three colour schemes. */
 .gx-verdict.is-on-track    .gx-verdict-say > i { background: var(--gx-good); }
-.gx-verdict.is-at-risk     .gx-verdict-say > i { background: var(--gx-watch); }
-.gx-verdict.is-off-track   .gx-verdict-say > i { background: var(--gx-bad); }
+.gx-verdict.is-behind     .gx-verdict-say > i { background: var(--gx-watch); }
 .gx-verdict.is-not-started .gx-verdict-say > i { background: var(--gx-faint); }
 
 .gx-health-list {
@@ -3133,8 +3124,7 @@ button.gx-state-attn.is-on {
 /* The same four colours the ring's arcs use, so a dot here and a slice there
    are read as the same fact rather than as two colour schemes. */
 .gx-health-row.is-on-track i { background: var(--gx-good); }
-.gx-health-row.is-at-risk i { background: var(--gx-watch); }
-.gx-health-row.is-off-track i { background: var(--gx-bad); }
+.gx-health-row.is-behind i { background: var(--gx-watch); }
 .gx-health-row.is-not-started i { background: var(--gx-faint); }
 
 .gx-health-name {
@@ -3162,48 +3152,15 @@ button.gx-state-attn.is-on {
     color: var(--gx-muted);
 }
 .gx-health-row.is-on-track .gx-health-score em { color: var(--gx-good); }
-.gx-health-row.is-at-risk .gx-health-score em { color: var(--gx-watch); }
-.gx-health-row.is-off-track .gx-health-score em { color: var(--gx-bad); }
+.gx-health-row.is-behind .gx-health-score em { color: var(--gx-watch); }
 
-/* The working under the score. Two columns where there is room, because
-   "helping" and "holding it back" are a pair and reading one without the other
-   is how a goal that is 80% fine reads as a disaster. Holding-back comes first
-   in the source, so on a narrow card — where they stack — the reader meets the
-   actionable half first. */
+/* The rule that decided the state, in one sentence under the row. */
 .gx-health-why {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: var(--space-2) var(--space-4);
     margin: 2px 0 var(--space-2);
-    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-6);
-}
-.gx-health-side h5 {
-    margin: 0 0 var(--space-1);
-    font-size: var(--text-2xs);
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-}
-.gx-health-side.is-bad h5 { color: var(--gx-bad); }
-.gx-health-side.is-good h5 { color: var(--gx-good); }
-.gx-health-side ul { list-style: none; margin: 0; padding: 0; }
-.gx-health-side li {
-    position: relative;
-    padding-left: var(--space-3);
+    padding: 0 var(--space-2) 0 var(--space-6);
     font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--gx-muted);
-}
-.gx-health-side li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: .62em;
-    width: 5px;
-    height: 1.5px;
-    border-radius: 1px;
-    background: currentColor;
-    opacity: .5;
 }
 
 /* A short card beside a tall one left a hole under it. Two things are needed,
@@ -3570,8 +3527,7 @@ button.gx-state-attn.is-on {
     line-height: 1.45;
     background: color-mix(in srgb, currentColor 8%, transparent);
 }
-.ag-why-here.is-at-risk { color: var(--gx-watch); }
-.ag-why-here.is-off-track { color: var(--gx-bad); }
+.ag-why-here.is-behind { color: var(--gx-watch); }
 .ag-why-here.is-not-started,
 .ag-why-here.is-on-track { color: var(--gx-muted); }
 

@@ -252,32 +252,17 @@ export default function App() {
                   a local useState could have managed. */}
               <Route path="/recommendations" element={<Analytics />} />
               <Route path="/analytics" element={<Analytics />} />
-              {/* The Goals tab. `/trends` was this slot and redirects rather
-                  than 404s, because it was a tab with its own URL for long
-                  enough to be bookmarked. */}
-              <Route path="/analytics/goals" element={<Analytics />} />
-              <Route path="/trends" element={<Navigate to="/analytics/goals" replace />} />
-              <Route path="/habits" element={<Analytics />} />
-              <Route path="/insights" element={<Analytics />} />
               <Route path="/subjects" element={<Analytics />} />
-              {/* The Growth tab. This slot was the analytics tab called
-                  Records, which asked where the last thirty days *stand* — the
-                  percentile, the goal pacing, the round numbers cleared. Two of
-                  those three are answered better elsewhere (the Goals tab, and
-                  the /records page), so the slot now holds the question none of
-                  them asks: how far the account has come over its whole life.
-                  See VIEWS in components/Analytics/Header.
-
-                  `/analytics/records` redirects rather than 404s, for the same
-                  reason `/trends` does below: it was a tab with its own URL for
-                  long enough to be bookmarked.
-
-                  Note that `/growth` — the old server-rendered path — still
-                  redirects to `/analytics` rather than here. That is deliberate
-                  and it is a wart: the short path and the tab named Growth are
-                  different destinations. It is left alone because `/growth` has
-                  meant "the analytics page" since the port, and quietly moving
-                  it would change where an existing link lands. */}
+              {/* Tabs that were cut. Each had its own URL for long enough to be
+                  bookmarked, so each redirects to where its content went:
+                  Insights to the Overview, Goals to the goals page, Growth to
+                  the Records page. See VIEWS in components/Analytics/Header. */}
+              <Route path="/insights" element={<Navigate to="/analytics" replace />} />
+              <Route path="/habits" element={<Navigate to="/analytics" replace />} />
+              <Route path="/analytics/goals" element={<Navigate to="/goals" replace />} />
+              <Route path="/trends" element={<Navigate to="/goals" replace />} />
+              <Route path="/analytics/growth" element={<Navigate to="/records" replace />} />
+              <Route path="/analytics/records" element={<Navigate to="/records" replace />} />
               {/* One subject, on its own — a page rather than an eighth tab.
                   There is one of these per subject the account follows, and a
                   tab bar whose shape depends on a wizard answer is a tab bar
@@ -286,15 +271,9 @@ export default function App() {
                   one a task carries, so the URL survives a rename. It is a
                   skeleton today — see the page. */}
               <Route path="/analytics/subject/:subjectId" element={<SubjectAnalytics />} />
-              <Route path="/analytics/growth" element={<Analytics />} />
-              <Route
-                path="/analytics/records"
-                element={<Navigate to="/analytics/growth" replace />}
-              />
               {/* The growth page was the other half of the original growth.js
-                  and had five tabs of its own, four of which are now tabs above
-                  and the fifth of which was a lower-resolution copy of the
-                  Overview. The path stays and redirects, because it is the one
+                  and had five tabs of its own, all of them folded into the
+                  analytics page or the Records page since. The path stays and redirects, because it is the one
                   the server-rendered app used and links to it exist. */}
               <Route path="/growth" element={<Navigate to="/analytics" replace />} />
               {/* The skill trees. `/growth-tree` was the placeholder's path and

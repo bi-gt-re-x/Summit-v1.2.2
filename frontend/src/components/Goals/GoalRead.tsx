@@ -41,7 +41,7 @@
 import { useState } from 'react';
 import { analytics as analyticsService } from '@/services';
 import { fmtGoalNumber, formatGoalDate, goalNumbers } from './numbers';
-import { goalHealth, goalPace, healthFactors } from '@/utils/goalHealth';
+import { goalHealth, goalPace } from '@/utils/goalHealth';
 import type { GoalPlan } from '@/services/analytics';
 import type { Goal, Task } from '@/types';
 import { countsToward } from '@/utils/goalLinks';
@@ -106,9 +106,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
            model is being asked to route around these, not to rediscover them —
            and a read that contradicted the health panel two sections up would
            be the drawer arguing with itself. */
-        levers: healthFactors(health)
-          .filter((one) => !one.good)
-          .map((one) => one.note),
+        levers: health.state === 'behind' ? [health.reason] : [],
         finished: done.length,
       });
 

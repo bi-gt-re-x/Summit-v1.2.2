@@ -51,14 +51,7 @@ export type AnalyticsWindow = '7d' | '30d' | '90d' | '1y' | '2y' | 'all';
  * dependency the wrong way round. The page assigns one to the other, so a key
  * added on one side and not the other fails to compile.
  */
-export type AnalyticsHomeTab =
-  | 'recommendations'
-  | 'overview'
-  | 'goals'
-  | 'habits'
-  | 'insights'
-  | 'subjects'
-  | 'growth';
+export type AnalyticsHomeTab = 'recommendations' | 'overview' | 'subjects';
 export type LogStyle = 'tasks' | 'sessions' | 'both';
 export type AnalyticsTone = 'gentle' | 'balanced' | 'harsh';
 export type AnalyticsDetail = 'essentials' | 'standard' | 'everything';
@@ -155,7 +148,6 @@ export interface Prefs {
   analytics_log_style: LogStyle;
   analytics_tone: AnalyticsTone;
   analytics_detail: AnalyticsDetail;
-  analytics_standing: boolean;
   /**
    * The subjects the account said it most wants to work on, by id — at most
    * `SUBJECTS_MAX` of them (utils/analyticsPrefs), in the order picked.
@@ -307,7 +299,6 @@ export const DEFAULTS: Prefs = {
   analytics_log_style: 'both',
   analytics_tone: 'balanced',
   analytics_detail: 'standard',
-  analytics_standing: true,
   analytics_subjects: [],
   analytics_subject_depth: {},
   analytics_ambitions: {},

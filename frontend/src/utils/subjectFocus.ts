@@ -22,9 +22,8 @@
  * would be a second opinion about the same tasks.
  *
  * What *is* new is the branch reading, and it is new because nothing else in the
- * app looks at a tree this way. `treeStanding` in skills/standing answers "how
- * far into each *tree* has this account got"; the question here is one layer
- * down — how far into each *branch of one tree*, where a branch is a node other
+ * app looks at a tree this way. The question here is how far into each
+ * *branch of one tree* this account has got, where a branch is a node other
  * catalogue subjects route into. `algebra` and `geometry` both route to the
  * mathematics tree and each names a node on it (see `SUBJECT_TARGETS`), so the
  * XP filed under those two subjects is the reader's own progress through those
@@ -33,7 +32,7 @@
  *
  * ## The same cap, and the same refusal
  *
- * Capped at 100 for the reason skills/standing gives: a serious mathematician's
+ * Capped at 100: a serious mathematician's
  * record is several times what the tree is worth, and a bar running off the end
  * would make "covering a branch" unreachable by covering it. A branch whose node
  * is worth nothing, or which the account has never worked, is left out rather

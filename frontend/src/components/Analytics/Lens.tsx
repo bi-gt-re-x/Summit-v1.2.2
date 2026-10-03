@@ -28,7 +28,7 @@ export function LensCard({ lens }: { lens: GoalLens }) {
 
       <p className="ax-lens-read">
         Because you are working toward{' '}
-        <Link to="/analytics/goals" className="ax-link">
+        <Link to="/goals" className="ax-link">
           {lens.goalTitle}
         </Link>
         , this page leads with what that goal actually turns on.

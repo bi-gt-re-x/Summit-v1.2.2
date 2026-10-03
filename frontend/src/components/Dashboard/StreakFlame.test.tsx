@@ -13,7 +13,7 @@ import { SettingsContext, StatsContext } from '@/context/contexts';
 import { settingsValue, statsValue } from '@/test/render';
 import { stats as makeStats } from '@/test/factories';
 import { StreakCard } from './StatCards';
-import { FLAME_STAGES, flameLine, flameStage } from './StreakFlame';
+import { FLAME_STAGES, flameStage } from './StreakFlame';
 
 describe('the stages', () => {
   it('starts as a spark, grows to full size, then gets hotter', () => {
@@ -31,14 +31,6 @@ describe('the stages', () => {
     [99, 'yellow'], [100, 'blue'], [364, 'blue'], [365, 'infinite'], [2000, 'infinite'],
   ])('a %i-day streak is %s', (days, key) => {
     expect(flameStage(days).key).toBe(key);
-  });
-
-  it('says what comes next, and at the top that nothing does', () => {
-    expect(flameLine(0)).toBe('Finish a task to strike a spark.');
-    expect(flameLine(1)).toBe('A spark · a flame at 3 days');
-    expect(flameLine(31)).toBe('Red flame · yellow at 50 days');
-    expect(flameLine(120)).toBe('Blue flame · infinite at 365 days');
-    expect(flameLine(400)).toMatch(/nothing burns hotter/);
   });
 });
 
@@ -98,7 +90,7 @@ describe('the moment the streak goes up', () => {
     settle();
     expect(chip()).toHaveClass('flame-chip-blue');
     expect(flame()).toHaveClass('flame-heat-blue');
-    expect(screen.getByRole('status')).toHaveTextContent('Your flame grew: Blue flame.');
+    expect(screen.getByRole('status')).toHaveTextContent('Streak extended to 100 days.');
   });
 
   it('grows from a spark into a flame', () => {
@@ -114,11 +106,6 @@ describe('the moment the streak goes up', () => {
     rerender(card(0));
     expect(flame()).not.toHaveClass('is-flaring');
     expect(chip()).toHaveClass('flame-chip-cold');
-  });
-
-  it('carries the stage in the tagline', () => {
-    render(card(31));
-    expect(screen.getByText('Red flame · yellow at 50 days')).toBeInTheDocument();
   });
 
   it('holds a rise back while an overlay is up, and plays it when it closes', () => {

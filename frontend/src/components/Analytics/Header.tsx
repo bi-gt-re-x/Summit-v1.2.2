@@ -18,13 +18,7 @@ import { WINDOWS, type WindowKey } from './data';
 // --------------------------------------------------------------------------
 // The major tabs
 // --------------------------------------------------------------------------
-export type ViewKey =
-  | 'recommendations'
-  | 'overview'
-  | 'goals'
-  | 'insights'
-  | 'subjects'
-  | 'growth';
+export type ViewKey = 'recommendations' | 'overview' | 'subjects';
 
 export interface View {
   key: ViewKey;
@@ -35,7 +29,7 @@ export interface View {
    * The one-line statement of what this tab is for and what it is not.
    *
    * Printed under the page title, so it is on screen for the tab that is open
-   * rather than only in a tooltip on the six that are not. Each view used to
+   * rather than only in a tooltip on the others. Each view used to
    * carry a second, shorter `blurb` for that slot — "Where you stand." against
    * "The long view: totals, trajectory and where the account stands" — two
    * sentences saying one thing at two lengths, and the longer, more useful one
@@ -46,9 +40,9 @@ export interface View {
   /**
    * The sky over this tab, and the range drawn under it.
    *
-   * Seven tabs share one page, one title row and one set of controls, so the
+   * The tabs share one page, one title row and one set of controls, so the
    * only thing that tells a reader the page changed when they pressed a tab is
-   * what is written in it — and on the three that all show cards of numbers,
+   * what is written in it — and on tabs that all show cards of numbers,
    * that is not much. A tab's colour changes the whole hero the moment it
    * opens, which makes the switch something you see rather than something you
    * verify by reading. See components/Hero.tsx for the eight, and
@@ -63,42 +57,15 @@ export interface View {
 }
 
 /**
- * The six views, in the order they are meant to be read.
+ * The three views, in the order they are meant to be read.
  *
- * **Recommendations leads, and that is a change from how this page was built.**
- * The old order was an editorial sequence — the long view, then the direction,
- * then what I do, then why, then what to change — which is the right order for
- * somebody with a year of record and the wrong one for everybody else. It put
- * the only tab that ends in a button five clicks from the rail, behind four
- * screens of description. A reader who never reaches it got a report; a reader
- * who opens on it gets something to do. The sequence still exists for anyone
- * who wants it, and every tab still hands off to the next.
+ * **Recommendations leads.** It is the only tab that ends in something to do,
+ * and a reader who opens on it gets that rather than a report.
  *
- * The two tabs in the middle have deliberately sharp boundaries, because tabs
- * that all show cards of numbers are one tab with a broken picker:
- *
- * - **Insights — what I do, and why it works.** Counts of recurring behaviour,
- *   and the conditions the better work shows up under, with the evidence
- *   graded. Never says what to do.
- * - **Recommendations — how I improve.** Instructions with a number and the
- *   arithmetic behind it attached. Never re-states a finding as news.
- *
- * There were three. Habits held the first half of that first line and Insights
- * the second, and the boundary between them was the one on this list nobody
- * could hold: a tendency and the condition it holds under are the same subject
- * from two sides, so every per-habit effect had to be argued into one tab or
- * the other. They are one tab, and the line above is the rule it keeps. See
- * tabs/InsightsTab for what the merge actually merged.
- *
- * **Subjects and Records came from the growth page**, which no longer exists as
- * a page of its own. It carried five tabs drawn from the same fetch as this one
- * and overlapping it in four places — its own heatmap, its own milestones, its
- * own donut, its own insight list, each a lower-resolution copy of a panel that
- * is on one of these tabs already. Its Overview dissolved into this one's; its
- * Long Term chapter went to Trends and its Focus chapter to Insights, which is
- * where each of them was answering the same question at higher resolution. Ten
- * tabs across two pages, one rail entry apiece, became seven here — and six
- * once Habits and Insights turned out to be one argument.
+ * There were six. Insights restated the Overview's panels at more length,
+ * Goals restated the goals page, and Growth asked the question the Records
+ * page is for — so Insights and Goals went, and Growth became a section of
+ * Records (see ./GrowthSection). Their old paths redirect in App.tsx.
  *
  * Each is a route rather than local state so that the rail, the browser's back
  * button and a pasted link all agree about which tab is open.
@@ -116,35 +83,9 @@ export const VIEWS: View[] = [
     key: 'overview',
     label: 'Overview',
     path: '/analytics',
-    purpose: 'The long view — totals, trajectory and where the account stands.',
+    purpose: 'The long view — totals, trajectory and your growth score.',
     title: 'Overview',
     tone: 'violet',
-  },
-  {
-    key: 'goals',
-    label: 'Goals',
-    // A level down from `/goals`, which is the goals page — the same split
-    // `/analytics/records` makes against `/records`. That page is where a goal
-    // is made, edited and worked; this tab is about the set of them.
-    path: '/analytics/goals',
-    purpose: 'Whether what you aimed at is going to happen, and what you have not aimed at.',
-    title: 'Goals',
-    tone: 'blue',
-  },
-  {
-    /* Habits and Insights, which were two tabs and one argument: what you
-       repeat, and what repeating it is worth. A reader who opened both twice
-       concluded one was redundant, because a tendency and the condition it
-       holds under are the same subject seen from two sides. See the note at
-       the top of tabs/InsightsTab for what the merge actually merged.
-
-       `/habits` still resolves here — see `viewFor`. */
-    key: 'insights',
-    label: 'Insights',
-    path: '/insights',
-    purpose: 'What you do and why it works — the routines in your record, and what your better work shows up alongside.',
-    title: 'Insights',
-    tone: 'indigo',
   },
   {
     key: 'subjects',
@@ -154,58 +95,24 @@ export const VIEWS: View[] = [
     title: 'Subjects',
     tone: 'green',
   },
-  {
-    key: 'growth',
-    label: 'Growth',
-    /*
-     * This slot was Records, and the question changed rather than the answer
-     * being rearranged.
-     *
-     * That tab asked where the last thirty days *stand* — a percentile against
-     * every other thirty, a pace on each dated goal, a ladder of round
-     * numbers. Two of those three had a better home already: goal pacing is
-     * the Goals tab's whole job, and the round numbers are what the /records
-     * page is for. Only the percentile was a statement about the account over
-     * time rather than about this month, and it came across to this tab.
-     *
-     * `/analytics/records` redirects here rather than 404ing, for the reason
-     * `/trends` redirects to `/analytics/goals`: it was a tab with its own URL
-     * for long enough to be bookmarked. Note that `/growth` — the old
-     * server-rendered path — still redirects to `/analytics`, so the short
-     * path and the tab named Growth are not the same destination.
-     */
-    path: '/analytics/growth',
-    purpose: 'How far you have actually come — every year side by side, and what changed.',
-    title: 'Growth',
-    tone: 'rose',
-  },
 ];
 
 /**
- * Paths that no longer have a tab of their own.
+ * Tab *keys* that no longer have a tab.
  *
- * `/habits` was the seventh tab until Habits and Insights became one. It is
- * kept rather than dropped because the fallback below is `VIEWS[0]` —
- * Recommendations — so an old bookmark, a link in a sent e-mail or the
- * browser's own history would not 404, it would quietly land somewhere else
- * and look like the reader had mis-clicked.
+ * `analytics_home_tab` is a stored preference, so an account that chose one of
+ * the removed tabs as its landing tab still has that word written down. They
+ * all land on the Overview rather than on nothing.
  */
-const MOVED: Record<string, ViewKey> = { '/habits': 'insights' };
-
-/**
- * Tab *keys* that no longer have a tab, for the same reason and one layer up.
- *
- * `analytics_home_tab` is a stored preference, so an account that chose Habits
- * as its landing tab has the word "habits" written down on the server. Without
- * this the lookup that reads it simply finds nothing and the reader lands on
- * Overview — no error, no migration, just a setting that quietly stopped
- * working for exactly the people who bothered to change it.
- */
-const MOVED_KEYS: Record<string, ViewKey> = { habits: 'insights' };
+const MOVED_KEYS: Record<string, ViewKey> = {
+  habits: 'overview',
+  insights: 'overview',
+  goals: 'overview',
+  growth: 'overview',
+  records: 'overview',
+};
 
 export function viewFor(pathname: string): View {
-  const moved = MOVED[pathname];
-  if (moved) return VIEWS.find((view) => view.key === moved) ?? VIEWS[0]!;
   return VIEWS.find((view) => view.path === pathname) ?? VIEWS[0]!;
 }
 
@@ -224,33 +131,33 @@ export interface ViewTabsProps {
    * Passed rather than computed here: `NEED_DAYS` and the account's active-day
    * count both live on the model, and a bar that worked them out again would
    * be a second answer to a question the tab underneath already answers.
-   * Absent for the four tabs that have no threshold, and absent entirely once
+   * Absent for the tabs that have no threshold, and absent entirely once
    * they have all opened.
    */
   filling?: Partial<Record<ViewKey, { have: number; need: number }>>;
 }
 
 /**
- * The six major tabs — the page's only tab bar.
+ * The major tabs — the page's only tab bar.
  *
  * A line of prose under the bar used to say what the open tab was for. That was
  * removed because it read as a paragraph of explanation sitting above every
  * screen forever, and the sentence became a `title` on each button — which put
- * it behind a hover, on the six tabs the reader is not looking at.
+ * it behind a hover, on the tabs the reader is not looking at.
  *
  * It is under the page title now: one sentence, for the tab that is actually
- * open, in a slot that already existed. The `title` stays, because on the other
- * six it is still the only thing that says where a label goes.
+ * open, in a slot that already existed. The `title` stays, because on the others
+ * it is still the only thing that says where a label goes.
  *
- * ## The three that are still filling
+ * ## The ones that are still filling
  *
  * Every tab is visible and clickable from the first day, which is the right
  * call — a bar that grows as an account ages teaches a reader that the product
  * is mostly unavailable to them, and hiding a tab is the surest way to make
  * sure nobody ever looks forward to it.
  *
- * But a tab that looks identical to the six beside it and then turns out to be
- * empty reads as a feature the reader does not have. So the three with a
+ * But a tab that looks identical to the ones beside it and then turns out to be
+ * empty reads as a feature the reader does not have. So the ones with a
  * threshold carry a hairline of how far along they are: no padlock, no count,
  * nothing to read — just enough for the bar to say *filling* rather than
  * *missing*, with the full explanation one click away where `Building` gives
@@ -505,7 +412,7 @@ export function Controls({
  * at the top that tells you where you stand* — was not learnable, because it
  * was true a third of the time and never twice in the same place.
  *
- * One component, one slot, filled by all six. The sentences are not new: each
+ * One component, one slot, filled by every tab. The sentences are not new: each
  * was already being assembled on its own tab from that tab's own figures. What
  * changed is that they moved into the same position, and the panels they came
  * from stopped printing them — so nothing is said twice.

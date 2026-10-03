@@ -1,5 +1,9 @@
 /**
- * The five figures across the top, each with its own days drawn under it.
+ * The figures across the top, each with its own days drawn under it.
+ *
+ * The Growth Score was one of them, and it is not any more: the summary above
+ * leads with it and the score panel below charts it, so a tile was the third
+ * copy of one number on one tab.
  *
  * They are the page's thesis in one row, and the order is the argument: how
  * much work a day, how often at all, how much each piece was worth — then the
@@ -26,9 +30,6 @@ import type { GrowthSummaryFigures, TileSeries } from '@/utils/growthSummary';
 export interface TilesProps {
   figures: GrowthSummaryFigures;
   sparks: TileSeries;
-  /** Out of 10, or null while the report card has not answered. */
-  score: number | null;
-  scoreSeries: number[];
   /** "vs previous 2 years" — the window's own words for its baseline. */
   compareLabel: string;
   /**
@@ -64,8 +65,6 @@ export interface TilesProps {
 export function Tiles({
   figures,
   sparks,
-  score,
-  scoreSeries,
   compareLabel,
   logStyle,
   scopedOut = null,
@@ -140,29 +139,16 @@ export function Tiles({
           },
         ]
       : []),
-    {
-      key: 'score',
-      glyph: 'sparkle',
-      label: 'Growth Score',
-      value: score === null ? '—' : score.toFixed(1),
-      unit: score === null ? undefined : '/10',
-      // The score has no recorded history to compare against — see SAMPLE in
-      // ./data. A tile with no baseline says so rather than inventing one.
-      delta: null,
-      series: scoreSeries,
-      tone: 'blue',
-      hint: 'The mean of productivity, quality, consistency, efficiency and focus.',
-    },
   ];
 
   return (
     <>
       <StatRow stats={stats} compare={compareLabel} />
       {scopedOut && (
-        /* Under the row rather than on each tile: it is one fact about all six,
-           and six copies of it would be louder than the figures. */
+        /* Under the row rather than on each tile: it is one fact about all of
+           them, and a copy on each would be louder than the figures. */
         <p className="ax-tiles-scope">
-          These six count <strong>every subject</strong> — XP and focus minutes are
+          These count <strong>every subject</strong> — XP and focus minutes are
           recorded per day, not per subject, so the filter on{' '}
           <strong>{scopedOut}</strong> cannot narrow them. The quality, subject and
           goal panels below it can, and do.

@@ -53,7 +53,6 @@ export function startAnalyticsReads(): void {
   primeTaskHistory();
   put('series', growthService.series(0));
   put('ratings', growthService.ratings());
-  put('standing', analyticsService.standing());
   put('goals', goalsService.getGoals());
   put('baseline', analyticsService.baseline());
   put('adopted', analyticsService.adoptedAdvice());

@@ -1,18 +1,11 @@
 /**
  * The limiter — a goal, the one thing most holding it up, and the way in.
  *
- * Two shapes of the same finding, because the five tabs that print it want it
- * at two different sizes.
- *
  * `LimiterCard` is the full reading: the goal named, the movement clause, the
  * subject carrying the shortfall, the share and the counts behind it, and the
- * two links. It belongs on the tabs a reader opens *to* ask why — Insights and
- * Recommendations.
- *
- * `LimiterLine` is one sentence and one link. It belongs where the finding is
- * context rather than the subject of the page: Overview, Habits and Subjects
- * each have their own job, and a titled card about goals on any of them would
- * quietly turn that tab into a fourth copy of the goals page.
+ * two links. It is drawn on the Recommendations tab and nowhere else — it used
+ * to be repeated as a one-line `LimiterLine` on three other tabs, which put the
+ * same finding in front of the reader four times.
  *
  * Neither computes anything. Every figure arrives from utils/goalLimiter, which
  * is where the arithmetic and the floors under it live.
@@ -44,7 +37,7 @@ export function LimiterCard({ row }: { row: GoalLimiter }) {
     <article className={`ax-limiter is-${row.direction}`}>
       <p className="ax-limiter-goal">
         <span>Goal</span>
-        <Link to="/analytics/goals" className="ax-link">
+        <Link to="/goals" className="ax-link">
           {row.goalTitle}
         </Link>
       </p>
@@ -95,18 +88,5 @@ export function LimiterCard({ row }: { row: GoalLimiter }) {
         </Link>
       </p>
     </article>
-  );
-}
-
-export function LimiterLine({ row }: { row: GoalLimiter }) {
-  return (
-    <p className="ax-goal-line">
-      <strong>{row.goalTitle}</strong> — {row.movement.toLowerCase()}, but{' '}
-      <strong>{row.subjectName}</strong> is the biggest limiter, at about {row.share}% of{' '}
-      {basisPhrase(row)}.{' '}
-      <Link to={row.treeHref} className="ax-link">
-        Open the {row.subjectName} skill tree
-      </Link>
-    </p>
   );
 }

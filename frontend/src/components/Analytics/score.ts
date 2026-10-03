@@ -1,5 +1,5 @@
 /**
- * The Growth Score: what it is made of, and where it sits among other accounts.
+ * The Growth Score: what it is made of.
  *
  * ## The score is the report card, restated
  *
@@ -19,19 +19,6 @@
  *
  * The five are equally weighted because the backend weights them equally. If a
  * weighting lands there, `WEIGHT` is the one line here that changes.
- *
- * ## The percentile is a model, and says so
- *
- * Nothing on the backend aggregates across accounts, so "top 8% of Summit users"
- * cannot be measured — it is *placed*, against a stated distribution of what
- * growth scores look like, and `percentileFor` is that placement. The
- * distribution is normal, centred on 5/10, with a spread chosen so that the two
- * ends of the 0-10 scale land on the two ends of the reportable range: a score
- * of 0 is top 99.9% and a perfect 10 is top 0.1%. Every score in between gets
- * its own band rather than one of five hardcoded tiers.
- *
- * This replaced a fixed "Top 12%" that was the same for every account and every
- * score, which is the one thing worse than a modelled figure: an unmodelled one.
  */
 import type { MetricName, Ratings } from '@/types';
 
@@ -126,81 +113,4 @@ export function growthScore(ratings: Ratings | null): GrowthScore {
 
   const total = factors.reduce((sum, factor) => sum + factor.contribution, 0);
   return { value: round1(total), factors };
-}
-
-// --------------------------------------------------------------------------
-// Where the score sits
-// --------------------------------------------------------------------------
-/** The middle of the modelled distribution — a score of 5.0 is top 50%. */
-const MEAN = 5;
-
-/**
- * The spread, in points of the ten-point scale.
- *
- * 3.09 standard deviations is the 99.9th percentile of a normal, so putting
- * that many between the centre and each end of the scale is what makes 0 read
- * "top 99.9%" and 10 read "top 0.1%" — the full reportable range, exactly
- * spanned, with no clamping doing the work at either end.
- */
-const SPREAD = MEAN / 3.09;
-
-/** Φ(z), by Abramowitz & Stegun 26.2.17 — good to about 7.5e-8. */
-function normalCdf(z: number): number {
-  const t = 1 / (1 + 0.2316419 * Math.abs(z));
-  const density = 0.3989422804014327 * Math.exp((-z * z) / 2);
-  const tail =
-    density *
-    t *
-    (0.31938153 +
-      t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));
-  return z > 0 ? 1 - tail : tail;
-}
-
-/**
- * The share of accounts a score is at or above, as "top N%".
- *
- * Continuous, so a score of 6.4 and a score of 6.6 are different bands rather
- * than both landing in a tier. Bounded to [0.1, 99.9]: claiming "top 0%" would
- * be claiming the reader is beyond every possible account, and "top 100%" is
- * not a compliment anybody has ever wanted to read.
- */
-export function percentileFor(score: number): number {
-  const share = (1 - normalCdf((score - MEAN) / SPREAD)) * 100;
-  return Math.min(99.9, Math.max(0.1, round1(share)));
-}
-
-/**
- * "8", "0.4", "99.9" — the figure as it is printed after the word "Top".
- *
- * A decimal at both ends and a whole number through the middle: the difference
- * between top 3.2% and top 3.8% is worth a reader's attention and the
- * difference between top 47% and top 48% is not. Both tails keep their decimal
- * because rounding them is how "top 99.9%" becomes the impossible "top 100%".
- */
-export function formatPercentile(percentile: number): string {
-  const value = Math.min(99.9, Math.max(0.1, percentile));
-  return value < 10 || value > 99 ? value.toFixed(1) : String(Math.round(value));
-}
-
-/**
- * A placement, said the way round that a reader will understand it.
- *
- * "Top 99%" is arithmetically what a percentile of 99 is, and it reads as
- * praise. It was on the focus row of the standing panel for an account with no
- * focus time at all — last of everybody, described in the same words as first.
- * Nobody misreads "Bottom 1%".
- *
- * The turn is at the median, so the phrasing follows which half somebody is
- * in rather than switching at some threshold of politeness. `percentile` is
- * the backend's, where a *low* number is a good one.
- */
-export function rankLabel(percentile: number): string {
-  if (percentile <= 50) return `Top ${formatPercentile(percentile)}%`;
-  return `Bottom ${formatPercentile(100 - percentile)}%`;
-}
-
-/** "Top 8% of Summit users" — the badge's whole line, in one place. */
-export function percentileLabel(score: number | null): string | null {
-  if (score === null) return null;
-  return `Top ${formatPercentile(percentileFor(score))}%`;
 }

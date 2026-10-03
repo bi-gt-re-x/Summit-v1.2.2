@@ -24,7 +24,7 @@ import type { UserStats } from '@/types';
 import type { WeekStart } from '@/services/settings';
 import { Badge, Card } from '@/components/ui';
 import { useMarkEgg } from '@/hooks/useMarkEgg';
-import { StreakFlame, flameLine, flameStage } from './StreakFlame';
+import { StreakFlame, flameStage } from './StreakFlame';
 
 // --------------------------------------------------------------------------
 // The ring
@@ -843,13 +843,7 @@ export function StreakCard({ stats, held = false }: {
     const before = seen.current;
     seen.current = display;
     if (display <= before) return;
-    const was = flameStage(before);
-    const now = flameStage(display);
-    setSaid(
-      now.key === was.key
-        ? `Streak extended to ${display} days.`
-        : `Streak extended to ${display} days. Your flame grew: ${now.label}.`,
-    );
+    setSaid(`Streak extended to ${display} days.`);
     setFlaring(true);
     if (timer.current !== null) window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => {
@@ -888,7 +882,7 @@ export function StreakCard({ stats, held = false }: {
         icon={<StreakFlame streak={display} flaring={flaring} />}
         chipClass={`flame-chip flame-chip-${stage.heat}${flaring ? ' is-flaring' : ''}`}
         title="Current Streak"
-        tag={flameLine(display)}
+        tag="Consistency builds greatness."
       />
       {/* What the flare says, for a reader who cannot see it. */}
       <span className="dash-week-say" role="status" aria-live="polite">

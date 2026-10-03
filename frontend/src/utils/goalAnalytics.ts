@@ -3,7 +3,7 @@
  *
  * The health model next door says *whether* a goal is going to happen. This
  * says *why it is going the way it is*, which is a different job and the one
- * the Goals page cannot do without: a chip that says "At Risk" and stops has
+ * the Goals page cannot do without: a chip that says "Behind" and stops has
  * told the reader something they mostly already felt.
  *
  * Everything here is counted off two things and nothing else: the tasks linked
@@ -21,7 +21,7 @@
  * figure with nothing behind it is worse than a smaller true one.
  */
 import { goalNumbers } from '@/components/Goals/numbers';
-import { atMidnight, evidenceFor, goalHealth, goalPace, type GoalHealth } from './goalHealth';
+import { atMidnight, evidenceFor, goalHealth, goalPace, type GoalHealth, type HealthState } from './goalHealth';
 import type { Goal, Milestone, Task } from '@/types';
 import { isoDate } from './dates';
 
@@ -370,8 +370,7 @@ function round(value: number): string {
 export interface GoalsOverview {
   active: number;
   onTrack: number;
-  atRisk: number;
-  offTrack: number;
+  behind: number;
   notStarted: number;
   /** Weighted mean progress across active goals, 0-100. */
   overall: number;
@@ -386,7 +385,7 @@ export function goalsOverview(
   today: Date = new Date(),
 ): GoalsOverview {
   const active = goals.filter((goal) => goal.status !== 'completed');
-  const counts = { 'on-track': 0, 'at-risk': 0, 'off-track': 0, 'not-started': 0 };
+  const counts: Record<HealthState, number> = { 'on-track': 0, behind: 0, 'not-started': 0 };
   let weighted = 0;
   let weight = 0;
 
@@ -409,8 +408,7 @@ export function goalsOverview(
   return {
     active: active.length,
     onTrack: counts['on-track'],
-    atRisk: counts['at-risk'],
-    offTrack: counts['off-track'],
+    behind: counts.behind,
     notStarted: counts['not-started'],
     overall: weight ? weighted / weight : 0,
     dueSoon: soon,

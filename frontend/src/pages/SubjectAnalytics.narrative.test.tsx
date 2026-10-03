@@ -373,7 +373,7 @@ describe('did your last advice work', () => {
 });
 
 describe('the skill tree', () => {
-  it('reads the standing back on the shut row rather than only counting it', async () => {
+  it('reads what has been practised back on the shut row', async () => {
     // The fold's lead is the reading. It used to be printed twice — once as
     // the lead and once under a "What this says" heading with three more
     // paragraphs of curriculum description beneath it.
@@ -381,7 +381,7 @@ describe('the skill tree', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
     const fold = screen.getByRole('button', { name: /Skill tree/ }).closest('section')!;
-    expect(within(fold).getByText(/of this tree/i)).toBeInTheDocument();
+    expect(within(fold).getByText(/practised/i)).toBeInTheDocument();
     expect(within(fold).queryByText('What this says')).not.toBeInTheDocument();
   });
 });

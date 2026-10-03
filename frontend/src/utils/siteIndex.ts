@@ -13,8 +13,8 @@
  * ## Why a list rather than a walk of the router
  *
  * `<Routes>` in App.tsx knows every path and nothing else: no name, no
- * synonyms, and no idea that `/analytics/records` is a tab called Records that
- * a reader might look for by typing "percentile". A search index needs the
+ * synonyms, and no idea that `/records` is where a reader typing "year on
+ * year" or "growth" should land. A search index needs the
  * words people actually type, and those exist nowhere but here.
  *
  * The cost is that this list is a mirror and can go stale. It degrades
@@ -94,7 +94,8 @@ export const PLACES: Place[] = [
     name: 'Records',
     where: '',
     to: '/records',
-    keywords: 'personal best hall of fame high score achievements outside the app',
+    keywords: 'personal best hall of fame high score achievements outside the app '
+      + 'growth year on year how far you have come milestones',
   },
   {
     id: 'achievements',
@@ -162,27 +163,7 @@ export const PLACES: Place[] = [
     name: 'Overview',
     where: 'Analytics',
     to: '/analytics',
-    keywords: 'totals trajectory standing long view summary',
-  },
-  {
-    id: 'analytics-goals',
-    name: 'Goals',
-    where: 'Analytics',
-    to: '/analytics/goals',
-    keywords: 'pacing will it happen goal health what you have not aimed at',
-  },
-  {
-    /* Habits and Insights are one tab. Both sets of keywords are kept on it —
-       somebody searching "streaks" or "routines" is looking for something this
-       tab still draws, and a search index that forgets the old word for a
-       thing sends them nowhere. */
-    id: 'analytics-insights',
-    name: 'Insights',
-    where: 'Analytics',
-    to: '/insights',
-    keywords:
-      'why patterns conditions quality difficulty execution reasons '
-      + 'habits routines rhythms consistency streaks parts of day when you work',
+    keywords: 'totals trajectory growth score long view summary',
   },
   {
     id: 'analytics-subjects',
@@ -190,13 +171,6 @@ export const PLACES: Place[] = [
     where: 'Analytics',
     to: '/subjects',
     keywords: 'per subject levels breakdown what you are getting good at',
-  },
-  {
-    id: 'analytics-records',
-    name: 'Records',
-    where: 'Analytics',
-    to: '/analytics/records',
-    keywords: 'percentile ranking standing round numbers last thirty days pacing',
   },
 
   // --- Settings, whose sections are its `:section` parameter. Mirrors the

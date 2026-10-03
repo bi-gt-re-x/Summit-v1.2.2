@@ -112,13 +112,9 @@ import { stageShows } from '@/utils/dataMaturity';
 import {
   AnalyticsSetup,
   Controls,
-  GoalsTab,
-  habitLead,
   Header,
-  InsightsTab,
   OverviewTab,
   RecommendationsTab,
-  GrowthTab,
   scoreMovement,
   SubjectsTab,
   Summary,
@@ -202,7 +198,7 @@ export default function Analytics() {
    */
   const waiting =
     [
-      data.tasks, series, data.ratings, data.standing, data.goals,
+      data.tasks, series, data.ratings, data.goals,
       baseline, data.adopted, data.gradedLog, data.scoreLog,
     ].some((call) => call.loading)
     || !ready
@@ -253,9 +249,9 @@ export default function Analytics() {
   /* The page reads a dozen of the model's eighty figures — the gates, the
      opening sentence and the export. Everything else goes to a tab whole. */
   const {
-    span, chooseSpan, option, spanText, subject, setSubject, subjectOptions, waitFor,
+    span, chooseSpan, option, spanText, subject, setSubject, subjectOptions,
     maturity, streak, analytical, hasReportCard, figures, insights, breakdown, banked, recentSubjects,
-    discovered, diagnoses, advice, plan, recorded, state, goalSet, habits, summary,
+    discovered, diagnoses, advice, plan, recorded, goalSet,
   } = model;
   // ---- The shell ----------------------------------------------------------
 
@@ -540,7 +536,6 @@ export default function Analytics() {
             tone={model.tone}
             topAdvice={advice[0]?.title ?? null}
             adviceCount={advice.length}
-            phase={waitFor('insights') === 0 ? state.phase : null}
             /* What it is read from, until "enough" is the honest answer. The
                score is the mean of five measures and it swings a long way on
                one good week at this length — a fact about the number rather
@@ -552,38 +547,11 @@ export default function Analytics() {
             }
             goals={
               goalSet.active > 0
-                ? { active: goalSet.active, behind: goalSet.atRisk + goalSet.offTrack }
+                ? { active: goalSet.active, behind: goalSet.behind }
                 : null
             }
           />
         );
-      case 'goals':
-        return goalSet.active > 0 ? (
-          <TabOpening tone={goalSet.atRisk + goalSet.offTrack > 0 ? 'down' : 'up'}>
-            <strong>{goalSet.active}</strong> {goalSet.active === 1 ? 'goal is' : 'goals are'}{' '}
-            live
-            {goalSet.atRisk + goalSet.offTrack > 0 ? (
-              <>
-                , and <strong>{goalSet.atRisk + goalSet.offTrack}</strong> of them{' '}
-                {goalSet.atRisk + goalSet.offTrack === 1 ? 'is' : 'are'} behind.
-              </>
-            ) : (
-              <>, and none of them is behind.</>
-            )}
-          </TabOpening>
-        ) : null;
-      case 'insights':
-        /* Two openings for what is now one tab, and the later one leads.
-           `state.sentence` is a statement about the whole record and needs
-           twenty-eight days; `habitLead` names what repeats and needs
-           twenty-one. So between the two gates the habit line is the only
-           true thing available, and after them the state sentence is the
-           better one — it is what the tab's own first panel is about. */
-        if (waitFor('insights') === 0) return <TabOpening>{state.sentence}</TabOpening>;
-        if (waitFor('habits') === 0 && habits.length > 0) {
-          return <TabOpening>{habitLead(summary, spanText)}</TabOpening>;
-        }
-        return null;
       case 'recommendations':
         return advice.length > 0 ? (
           <TabOpening>
@@ -599,12 +567,6 @@ export default function Analytics() {
             <strong>{breakdown.rows[0]!.label}</strong> is the furthest along.
           </TabOpening>
         ) : null;
-      case 'growth':
-        /* Nothing. This is the one tab whose opening line is the reading
-           itself — `growthArc`, drawn by the tab — and a streak count above it
-           would be a second, shorter, unrelated headline competing with the
-           sentence the whole page exists to state. */
-        return null;
       default:
         return null;
     }
@@ -653,7 +615,7 @@ export default function Analytics() {
             onExportData={model.slice.current.length > 0 ? exportData : undefined}
             dataName={seriesFilename(username ?? 'account', new Date())}
           />
-          {/* How far the three gated tabs are along, so the bar reads as
+          {/* How far the gated tab is along, so the bar reads as
               filling rather than as features the account does not have. From
               the model, which is the only place that knows both the
               thresholds and the active-day count — see `ViewTabs`. */}
@@ -664,15 +626,6 @@ export default function Analytics() {
               recommendations:
                 model.waitFor('recommendations') > 0
                   ? { have: model.historyDays, need: NEED_DAYS.recommendations }
-                  : undefined,
-              /* The merged tab fills on the *earlier* of its two gates, which
-                 is the habits one: that is when it stops being a notice and
-                 starts being a page. Counting down to the insights threshold
-                 instead would leave the bar saying "7 days to go" over a tab
-                 that had been drawing habit cards for a week. */
-              insights:
-                model.waitFor('habits') > 0
-                  ? { have: model.historyDays, need: NEED_DAYS.habits }
                   : undefined,
             }}
           />
@@ -713,13 +666,10 @@ export default function Analytics() {
           <OverviewTab model={model} data={data} onEditBaseline={() => setEditingSetup(true)} />
         )}
 
-        {view.key === 'goals' && <GoalsTab model={model} />}
-        {view.key === 'insights' && <InsightsTab model={model} subjects={subjects} />}
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}
         {view.key === 'subjects' && (
           <SubjectsTab model={model} subjects={subjects} username={username} />
         )}
-        {view.key === 'growth' && <GrowthTab model={model} />}
           </>
         )}
       </div>

@@ -213,7 +213,6 @@ export function matureOverview() {
     },
     detail: { quality: true, tallies: true, extras: true, rows: 12 },
     logStyle: 'tasks',
-    showStanding: true,
     /* From the real builder over an empty slice, for the reason ./fixtures
        gives: `Tiles` reads eight fields off this and a hand-written three
        fails on the fourth. */

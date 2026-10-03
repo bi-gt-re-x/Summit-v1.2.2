@@ -17,16 +17,11 @@
  * is an editorial call that will keep changing; that the reader can open and
  * shut it is the contract.
  */
-import { InsightsTab } from './InsightsTab';
-import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
-import { GoalsTab } from './GoalsTab';
 import { OverviewTab } from './OverviewTab';
-import { draw, fakeData, fakeModel, matureOverview, nameOf, subjects } from './fixtures';
+import { draw, fakeData, fakeModel, matureOverview } from './fixtures';
 import { NEED_DAYS } from '../useAnalyticsModel';
-import { buildHabits, habitSummary } from '@/utils/habits';
-import { task } from '@/test/factories';
 
 /**
  * The group heads, and only those.
@@ -61,7 +56,7 @@ describe('Overview', () => {
     );
     // The rows that used to run flat under the trajectory.
     expect(groupNamed(/Quality/)).toBeInTheDocument();
-    expect(groupNamed(/Consistency and standing/)).toBeInTheDocument();
+    expect(groupNamed(/^Consistency/)).toBeInTheDocument();
     expect(groupNamed(/Subjects and findings/)).toBeInTheDocument();
 
     // All shut on arrival: the tab's answer is the screen above them.
@@ -75,7 +70,7 @@ describe('Overview', () => {
     draw(
       <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
     );
-    const head = groupNamed(/Consistency and standing/);
+    const head = groupNamed(/^Consistency/);
 
     await userEvent.click(head);
     expect(head).toHaveAttribute('aria-expanded', 'true');
@@ -118,86 +113,3 @@ describe('Overview', () => {
   });
 });
 
-describe('Habits', () => {
-  function withHabits() {
-    const repeating = Array.from({ length: 8 }, (_, week) =>
-      task({
-        title: 'Revision',
-        status: 'done',
-        completed_at: `2026-0${week < 4 ? 6 : 7}-${String(1 + (week % 4) * 7).padStart(2, '0')}T18:00:00`,
-      }),
-    );
-    const habits = buildHabits(repeating, nameOf, '2026-06-01', '2026-07-31');
-    return fakeModel({
-      historyDays: NEED_DAYS.habits,
-      habits,
-      summary: habitSummary(habits, []),
-    });
-  }
-
-  it('opens on the habits themselves and folds the three layers under them', () => {
-    draw(<InsightsTab model={withHabits()} subjects={subjects} />);
-
-    const yours = groupNamed(/Your habits/);
-    expect(yours).toHaveAttribute('aria-expanded', 'true');
-    expect(bodyOf(yours)).not.toHaveAttribute('inert');
-
-    /* The rest answer a question the reader only has once they have read the
-       first one. "Every day you worked" is not among them any more: the
-       calendar moved inside "Holding or slipping" when the two tabs merged,
-       because a calendar and a consistency score answer the same question —
-       is this habit keeping its shape — and a reader wanting that had to open
-       two headings to get it. */
-    [/Holding or slipping/, /Subjects, and what has been left alone/, /Can you execute it reliably/].forEach(
-      (name) => {
-        const head = groupNamed(name);
-        expect(head).toHaveAttribute('aria-expanded', 'false');
-        expect(bodyOf(head)).toHaveAttribute('inert');
-      },
-    );
-  });
-
-  it('opens the embedded focus chapter on request', async () => {
-    draw(<InsightsTab model={withHabits()} subjects={subjects} />);
-    const head = groupNamed(/Can you execute it reliably/);
-    await userEvent.click(head);
-    expect(head).toHaveAttribute('aria-expanded', 'true');
-    expect(bodyOf(head)).not.toHaveAttribute('inert');
-  });
-
-  it('keeps the two group titles that used to be section headings', () => {
-    // "Your habits" and "Can you execute it reliably" were <h2 class="ax-band">
-    // before. A reader scanning for either should still find it.
-    draw(<InsightsTab model={withHabits()} subjects={subjects} />);
-    expect(screen.getByRole('heading', { name: /Your habits/ })).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: /Can you execute it reliably/ }),
-    ).toBeInTheDocument();
-  });
-});
-
-describe('Goals', () => {
-  it('folds the three rows under the pace map, all shut', () => {
-    draw(<GoalsTab model={fakeModel()} />);
-    [/What you have reached/, /Pace and notes/, /What to aim at next/].forEach((name) => {
-      const head = groupNamed(name);
-      expect(head).toHaveAttribute('aria-expanded', 'false');
-      expect(bodyOf(head)).toHaveAttribute('inert');
-    });
-  });
-
-  it('opens and shuts each of them independently', async () => {
-    draw(<GoalsTab model={fakeModel()} />);
-    const reached = groupNamed(/What you have reached/);
-    const pace = groupNamed(/Pace and notes/);
-
-    await userEvent.click(reached);
-    expect(reached).toHaveAttribute('aria-expanded', 'true');
-    // Opening one does not touch the others — these are not an accordion.
-    expect(pace).toHaveAttribute('aria-expanded', 'false');
-
-    await userEvent.click(pace);
-    expect(reached).toHaveAttribute('aria-expanded', 'true');
-    expect(pace).toHaveAttribute('aria-expanded', 'true');
-  });
-});

@@ -104,7 +104,7 @@ function goalsFor(subject: string, subjectTasks: Task[], goals: Goal[]): Goal[] 
   });
 }
 
-const TROUBLE: Record<string, number> = { 'off-track': 0, 'at-risk': 1, 'not-started': 2, 'on-track': 3 };
+const TROUBLE: Record<string, number> = { behind: 0, 'not-started': 1, 'on-track': 2 };
 
 export interface SubjectProgressInput {
   subject: string;
@@ -211,7 +211,7 @@ export function subjectVerdict(read: SubjectProgress, periodText: string): strin
   }
 
   let third = '';
-  const trouble = goals.find((entry) => entry.health.state === 'off-track' || entry.health.state === 'at-risk');
+  const trouble = goals.find((entry) => entry.health.state === 'behind');
   if (overdue > 0) third = `${overdue} ${overdue === 1 ? 'task is' : 'tasks are'} past due.`;
   else if (trouble) third = `“${trouble.goal.title}” is ${trouble.health.label.toLowerCase()}.`;
 

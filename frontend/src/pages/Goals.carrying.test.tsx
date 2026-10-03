@@ -143,7 +143,7 @@ describe('the goals that did not make the ladder', () => {
     show();
     const rows = within(await band()).getAllByRole('listitem');
 
-    expect(within(rows[0]!).getByText('Off Track')).toBeInTheDocument();
+    expect(within(rows[0]!).getByText('Behind')).toBeInTheDocument();
     expect(within(rows[1]!).getByText('On Track')).toBeInTheDocument();
   });
 

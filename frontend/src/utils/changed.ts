@@ -80,13 +80,6 @@ const HARD_FLOOR = 4;
 
 export type ChangeKind = 'gain' | 'problem' | 'pattern';
 
-/** The heading each kind of card wears. */
-export const CHANGE_TITLE: Record<ChangeKind, string> = {
-  gain: 'Getting stronger',
-  problem: 'Emerging problem',
-  pattern: 'Hidden pattern',
-};
-
 export interface Change {
   id: string;
   kind: ChangeKind;

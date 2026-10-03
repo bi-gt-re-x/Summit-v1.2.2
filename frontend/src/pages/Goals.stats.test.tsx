@@ -121,7 +121,7 @@ describe('the answer at the top of Stats', () => {
       .querySelectorAll('.gx-health-row');
 
     const needing = [...rows].filter(
-      (row) => row.classList.contains('is-at-risk') || row.classList.contains('is-off-track'),
+      (row) => row.classList.contains('is-behind'),
     );
     expect(needing).toHaveLength(1);
     /* Scoped to the verdict: the header's attention pill says the same thing,
@@ -151,28 +151,25 @@ describe('the answer at the top of Stats', () => {
 });
 
 describe('the per-goal diagnosis', () => {
-  /* It was one sentence — the weakest signal — which tells a reader their goal
-     is in trouble and leaves them guessing which of four things to change. */
-  it('names what is holding a goal back and what is helping it', async () => {
+  /* One sentence: the rule that put the goal where it is. */
+  it('names the rule that put a goal behind', async () => {
     await openStats();
 
     const row = [...document.querySelectorAll('.gx-health-row')].find((one) =>
       one.textContent?.includes('Learn to sight-read'),
     )!;
 
-    expect(within(row as HTMLElement).getByText('Holding it back')).toBeInTheDocument();
-    expect(row).toHaveTextContent(/points behind where the calendar says/);
-    expect(row).toHaveTextContent(/has ever been linked|Nothing done toward this/);
+    expect(row).toHaveTextContent(/points behind where the calendar says|Nothing done toward this|Its date passed/);
   });
 
-  it('prints the score the diagnosis explains', async () => {
+  it('prints the state the sentence explains', async () => {
     await openStats();
 
     const row = [...document.querySelectorAll('.gx-health-row')].find((one) =>
       one.textContent?.includes('Learn to sight-read'),
     )!;
 
-    expect(within(row as HTMLElement).getByText('Off Track')).toBeInTheDocument();
+    expect(within(row as HTMLElement).getByText('Behind')).toBeInTheDocument();
   });
 
   it('still opens the goal from the row', async () => {

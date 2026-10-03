@@ -76,8 +76,6 @@ export interface SummaryProps {
   topAdvice: string | null;
   /** How many there are in total, for the row's hand-off. */
   adviceCount: number;
-  /** The behavioural phase — "Building", "Dormant" — from `currentState`. */
-  phase: string | null;
   /** Live goals and how many of them are behind, or null when there are none. */
   goals: { active: number; behind: number } | null;
   /**
@@ -118,6 +116,17 @@ function toNextGrade(value: number): { points: number; grade: string } | null {
   return { points: above[0] - value, grade: above[1] };
 }
 
+/**
+ * A band from the report card's hundred-point table, said on the score's own
+ * ten-point scale: "80–89" becomes "8.0–8.9".
+ */
+function tenths(band: string): string {
+  return band
+    .split('–')
+    .map((end) => (Number(end) / 10).toFixed(1))
+    .join('–');
+}
+
 /** Five is the cap. See the note at the top for why, and `goals` for how. */
 const MAX_ROWS = 5;
 
@@ -134,7 +143,6 @@ export function Summary({
   movement,
   topAdvice,
   adviceCount,
-  phase,
   goals,
   basis = null,
   tone,
@@ -164,12 +172,12 @@ export function Summary({
       text:
         movement.direction === 'held' ? (
           <>
-            It has held at <strong>{movement.now}</strong> for <strong>{movement.days}</strong>{' '}
+            It has held at <strong>{(movement.now / 10).toFixed(1)}</strong> for <strong>{movement.days}</strong>{' '}
             days.
           </>
         ) : (
           <>
-            That is <strong>{movement.direction}</strong> from {movement.previous}
+            That is <strong>{movement.direction}</strong> from {movement.previous === null ? '' : (movement.previous / 10).toFixed(1)}
             {/* A comma, because the two figures are otherwise adjacent — "up
                 from 61 12 days ago" reads as one number twice. */}
             {movement.days === 1 ? ' yesterday' : <>, {movement.days} days ago</>}.
@@ -234,11 +242,6 @@ export function Summary({
     });
   }
 
-  /* Above the phase row, and that ordering is the whole of how the cap holds:
-     rows are pushed in the order they are worth reading and the list is cut at
-     five, so on an account with something to say about every one of them the
-     phase — the softest of the six — is what falls off. A goal behind its date
-     outranks a description of how the last three weeks have felt. */
   if (goals && goals.active > 0) {
     rows.push({
       key: 'goals',
@@ -255,21 +258,8 @@ export function Summary({
             {goals.active === 1 ? 'goal is' : 'goals are'} on track.
           </>
         ),
-      href: '/analytics/goals',
+      href: '/goals',
       label: 'See the goals',
-    });
-  }
-
-  if (phase) {
-    rows.push({
-      key: 'phase',
-      text: (
-        <>
-          You are working in a <strong>{phase.toLowerCase()}</strong> phase.
-        </>
-      ),
-      href: '/insights',
-      label: 'See why',
     });
   }
 
@@ -279,14 +269,14 @@ export function Summary({
   return (
     <section className={`ax-panel ax-summary ${gradeClass(grade)}`}>
       <div className="ax-summary-head">
-        <div className="ax-summary-grade" title={`${bandLabel(grade)} out of 100`}>
+        <div className="ax-summary-grade" title={`${tenths(bandLabel(grade))} out of 10`}>
           <span aria-hidden="true">{grade}</span>
           <span className="ax-sr">Grade {grade}</span>
         </div>
         {/* The letter, and then the next one up and what it costs.
 
             The sentence used to stop at the meaning, which made it a verdict
-            and nothing else: a reader shown "62/100 — two or three of the five
+            and nothing else: a reader shown "6.2/10 — two or three of the five
             are low" has been told where they stand and given nowhere to go.
             Every other line on this panel points somewhere; this one, the one
             printed largest and read first, did not.
@@ -298,18 +288,17 @@ export function Summary({
             band table the letter came from rather than a judgement, so there
             was never a reason to ration it by tone. */}
         <p className="ax-summary-lead">
-          Your analytical score is{' '}
+          Your growth score is{' '}
           <strong>
-            {value}
-            <em>/100</em>
+            {(value / 10).toFixed(1)}
+            <em>/10</em>
           </strong>{' '}
           — {GRADE_MEANING[grade].toLowerCase()}.
           {next && (
             <>
               {' '}
               <span className="ax-summary-next">
-                <strong>{next.points}</strong>{' '}
-                {next.points === 1 ? 'point' : 'points'} to {next.grade}.
+                <strong>{(next.points / 10).toFixed(1)}</strong> to {next.grade}.
               </span>
             </>
           )}
