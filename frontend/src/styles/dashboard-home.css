@@ -1,22 +1,4 @@
-/* ==========================================================================
-   dashboard-home.css — the dashboard's own layout and cards
 
-   Loaded alongside dashboard.css, which still dresses the pieces this page
-   shares with the rest of the app: the Focus panel, the Add Task dialog, the
-   level-up celebration, focus mode's colour scheme, and the dark theme for all
-   of those. What is here is only the page around them.
-
-   Every class in this file is prefixed `dash-`. The cards themselves are the
-   shared Card (components/ui, styles/ui.css), which is right in both themes
-   and every skin without a second rule here.
-
-   Palette, matching the rest of the app:
-       #2C302E  ink            #6C757D  muted ink
-       #A38A70  bronze accent  #EAEAEA  border
-       #22A06B  positive       #C0392B  urgent
-   Dark theme mirrors dashboard.css: #161b22 card, #30363d border,
-   #e6edf3 ink, #8b949e muted.
-   ========================================================================== */
 
 /* ==========================================================================
    PAGE SHELL
@@ -1212,20 +1194,6 @@ html.focus-mode .dash-main .focus-panel { order: -1; min-height: 0; }
 html.focus-mode .dash-main .dash-tasks { order: 1; min-height: 0; }
 
 /* ==========================================================================
-   FITTING THE SCREEN
-
-   Nothing here pins the page, and that is the point. `/dashboard` is left off
-   the PINNED list in src/App.tsx, so `body.pins-viewport` is never set on it
-   and the browser decides: on a screen tall enough to hold the whole page no
-   scrollbar appears, and on one that is not, the page scrolls. Pinning would
-   mean naming a viewport height to pin above, and a page pinned to a screen it
-   does not fit is not shortened — it is cut off.
-
-   The scrolling the layout *does* commit to is the one inside the task list,
-   and that comes from the row's definite height above, not from the page.
-   ========================================================================== */
-
-/* ==========================================================================
    NARROWER SCREENS
    ========================================================================== */
 @media (max-width: 1240px) {
@@ -1403,83 +1371,11 @@ html[data-theme="dark"] .dash-task-tag.tone-high { color: #ff9297; }
 html[data-theme="dark"] .dash-task-tag.tone-med  { color: #f4d47c; }
 html[data-theme="dark"] .dash-task-tag.tone-low  { color: #8b949e; }
 
-
 html[data-theme="dark"] .dash-xp-today strong,
 html[data-theme="dark"] .dash-xp-today svg,
 html[data-theme="dark"] .dash-activity-xp,
 html[data-theme="dark"] .dash-task-xp { color: #7ee0a6; }
 html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
-
-/* ---- "What now" ----------------------------------------------------------
-   One line, full width, between the figures and the list. Everything above it
-   is about the day so far and everything below is a list; this is the only
-   thing on the page about the next hour, which is why it is a band of its own
-   rather than a fourth thing inside a panel. See components/Dashboard/NextUp. */
-.dash-next {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-6);
-    border: 1px solid #EAEAEA;
-    border-radius: var(--radius-lg);
-    background: #FFFFFF;
-    box-shadow: var(--shadow-md);
-}
-/* A day with nothing left is the one state here that is good news. */
-.dash-next.is-clear { border-color: #CDE9D8; background: #F4FBF7; }
-
-.dash-next-ico {
-    flex: none;
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-md);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #F0F2F5;
-    color: #6C757D;
-}
-.dash-next.is-clear .dash-next-ico { background: #DFF3E8; color: #1F8A54; }
-.dash-next-ico svg {
-    width: 19px;
-    height: 19px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.1;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.dash-next-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.dash-next-label {
-    font-size: var(--text-2xs);
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: #9297A3;
-}
-.dash-next-name {
-    font-size: var(--text-lg);
-    font-weight: 700;
-    color: #2C302E;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* The facts, right-aligned and each a figure over its word. Only the true ones
-   are drawn — a day with no times has no span to report and says nothing
-   rather than "0h booked". */
-.dash-next-facts { flex: none; display: flex; align-items: center; gap: var(--space-6); }
-.dash-next-fact { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-.dash-next-fact em {
-    font-style: normal;
-    font-size: var(--text-lg);
-    font-weight: 700;
-    color: #2C302E;
-    white-space: nowrap;
-}
-.dash-next-fact small { font-size: var(--text-2xs); color: #9297A3; white-space: nowrap; }
 
 /* ---- What it is for ------------------------------------------------------ */
 .dash-goals-all {
@@ -1533,12 +1429,6 @@ html[data-theme="dark"] .dash-bar-green .dash-bar-fill { background: #2ea56f; }
 
 .dash-empty { margin: 0; font-size: var(--text-md); line-height: 1.6; color: #6C757D; }
 .dash-empty a { color: #6d5ae0; }
-
-/* ---- Dark ---------------------------------------------------------------- */
-html[data-theme="dark"] .dash-next { background: #161b22; border-color: #30363d; box-shadow: none; }
-html[data-theme="dark"] .dash-next.is-clear { background: #10201a; border-color: #1f4634; }
-html[data-theme="dark"] .dash-next-ico { background: #21262d; color: #8b949e; }
-html[data-theme="dark"] .dash-next.is-clear .dash-next-ico { background: #14301f; color: #3fb950; }
 html[data-theme="dark"] .dash-next-name,
 html[data-theme="dark"] .dash-next-fact em,
 html[data-theme="dark"] .dash-goal-name { color: #e6edf3; }
@@ -1553,13 +1443,6 @@ html[data-theme="dark"] .dash-goal-fill.is-late { background: #e0b062; }
 html[data-theme="dark"] .dash-goal-late { color: #f08b85; }
 html[data-theme="dark"] .dash-goals-all,
 html[data-theme="dark"] .dash-empty a { color: #9d8bff; }
-
-/* ---- Narrow -------------------------------------------------------------- */
-@media (max-width: 900px) {
-    /* The facts go before the name does: on a phone the answer to "what now"
-       is the name, and three figures beside it are what crowd it out. */
-    .dash-next-facts { display: none; }
-}
 
 /* ---- Direction on the stat cards ----------------------------------------
    Today held against the account's own average day — see `typicalDay` in
@@ -1650,47 +1533,6 @@ html[data-theme="dark"] .dash-move-all { color: #9d8bff; }
 }
 
 html[data-theme="dark"] .dash-week-vs-note { color: #6e7681; }
-
-
-/* ==========================================================================
-   THE CARDS, AS DRAWN
-   ==========================================================================
-
-   Worked against a mockup of this page, and it puts the surfaces back: the
-   previous pass took every band out of its box and divided the page with rules
-   instead. The drawing keeps the boxes and does the separating with them —
-   what it changes is what a box *is*.
-
-   Three things carry it, and they are the whole section:
-
-     1. **The four figures are tinted, each its own hue.** They already
-        declared one: every card's disc is `.dash-chip-today` / `-xp` /
-        `-focus` / `-streak`, four tints that existed only as a 34px circle.
-        The drawing spends that colour on the whole card — a wash at the top
-        left fading out before the middle — so the row reads as four different
-        things at a glance instead of four identical white rectangles
-        distinguished by their heading.
-     2. **Flatter and rounder.** 20px corners rather than 16, a border a
-        shade lighter than the app's, and the shadow almost gone. A tinted
-        card does not need a shadow to lift off the page; it is already a
-        different colour from it.
-     3. **The greeting stays out of a box**, which is the one thing the
-        previous pass had right and the drawing agrees with — the name and the
-        date sit directly on the page.
-
-   The page stays as wide as that pass left it. The drawing runs its cards very
-   nearly to the edge, and the 1370px cap this file used to carry was leaving a
-   band of ground down each side of a 1600px window.
-
-   ## Why the tint is keyed off `:has()`
-
-   The tone is a prop on `StatHead` (components/Dashboard/StatCards) and it
-   reaches the DOM only as the disc's class. Rather than pass the same word
-   twice — once for the disc, once for the card — each card reads the disc it
-   already contains. A tone can then never be changed on one and forgotten on
-   the other, which is the usual way a set like this drifts. The file already
-   leans on `:has()` for `body:has(.dash)` at the top.
- */
 
 /* ---- The page -------------------------------------------------------- */
 /* The drawing has no weather behind the greeting: the name sits on the page.
@@ -1813,17 +1655,6 @@ html[data-theme="dark"] .dash .dash-stat {
 /* The quote is a line of text, not a panel. Boxing it would make the page end
    on a card holding one sentence. */
 .dash > .quote-container { padding-top: var(--space-2); }
-
-/* ---- What is next, and the row under it -------------------------------- */
-.dash .dash-next { padding: var(--space-4) var(--space-5); }
-.dash .dash-next.is-clear {
-    border-color: color-mix(in srgb, #22A06B 22%, var(--dash-card-line));
-    background:
-        radial-gradient(90% 200% at 0% 0%,
-            color-mix(in srgb, #22A06B 7%, transparent) 0%,
-            transparent 60%),
-        var(--color-surface);
-}
 
 /* --------------------------------------------------------------------------
    The streak's flame (components/Dashboard/StreakFlame.tsx)

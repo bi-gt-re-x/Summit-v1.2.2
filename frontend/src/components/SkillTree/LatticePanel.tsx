@@ -119,7 +119,7 @@ import {
 import { Icon } from '@/components/Icon';
 import { ProgressIndicator } from './ProgressIndicator';
 import { LevelCard, LevelChain, LevelChip, LogPractice, ProblemMark } from './SkillLevel';
-import { lastAt, readLevel, type Attempt, type SkillLevel, type Tier } from '@/utils/skillLevel';
+import { lastAt, stepLevels as levelsOf, type Attempt, type Levels, type SkillLevel, type Tier } from '@/utils/skillLevel';
 import type { NewAttempt } from '@/services/skillAttempts';
 
 const number = (value: number) => Math.round(value).toLocaleString();
@@ -133,6 +133,8 @@ const number = (value: number) => Math.round(value).toLocaleString();
 export interface StepEvidence {
   /** Every attempt the reader has. The panel picks out this node's. */
   attempts: Attempt[];
+  /** Every step's level, read on the server from those attempts. */
+  levels: Levels;
   /** Store one; the stored row, or null when it was refused. */
   onAttempt: (attempt: NewAttempt) => Promise<Attempt | null>;
   /** Take one back. */
@@ -440,7 +442,7 @@ function StepWorkspace({
 
         {/* Where the reader stands on this step, above the problems that move
             it — so a mark below is seen to change the card above. */}
-        {evidence && <LevelCard attempts={stepAttempts} />}
+        {evidence && <LevelCard levels={levelsOf(evidence.levels, node.id, step.ordinal)} />}
 
         {bands.map((band) => (
           <section key={band.weight} className={`stx-work-band is-${band.weight}`}>
@@ -1010,24 +1012,15 @@ export function LatticePanel({
   // back too.
   useEffect(() => () => onExpand?.(false), [onExpand]);
 
-  /* This node's attempts, every step of it. Above the early return because it
-     is a hook, and harmless there: no node, no attempts. */
-  const nodeAttempts = useMemo(
-    () => (evidence?.attempts ?? []).filter((row) => row.node_id === node?.id),
-    [evidence?.attempts, node?.id],
-  );
   /* Each written step's level, for the chip on its row. Only when there is
      evidence to read — without it every row would say "Not started", which is
      a claim about the reader the panel has no grounds for. */
   const stepLevels = useMemo(() => {
-    if (!evidence || !written) return undefined;
+    if (!evidence || !written || !node) return undefined;
     return Object.fromEntries(
-      written.map((step) => [
-        step.ordinal,
-        readLevel(nodeAttempts.filter((row) => row.ordinal === step.ordinal)),
-      ]),
+      written.map((step) => [step.ordinal, levelsOf(evidence.levels, node.id, step.ordinal).now]),
     ) as Record<number, SkillLevel>;
-  }, [evidence, written, nodeAttempts]);
+  }, [evidence, written, node]);
 
   if (!node) {
     return (
@@ -1374,8 +1367,9 @@ export function LatticePanel({
             <h3 className="stx-lp-truth-name">Your level, step by step</h3>
             {written && written.length > 0 ? (
               <LevelChain
+                nodeId={node.id}
                 steps={written.map((step) => ({ ordinal: step.ordinal, title: step.title }))}
-                attempts={nodeAttempts}
+                levels={evidence.levels}
                 onOpen={(ordinal) => {
                   const step = written.find((one) => one.ordinal === ordinal);
                   if (step) setWorkingOn(step);
@@ -1386,7 +1380,7 @@ export function LatticePanel({
                  split it into and no problems to mark. Work done elsewhere
                  can still be logged against the skill as a whole. */
               <>
-                <LevelCard attempts={nodeAttempts.filter((row) => row.ordinal === 0)} />
+                <LevelCard levels={levelsOf(evidence.levels, node.id, 0)} />
                 <LogPractice
                   busy={false}
                   label="This skill has no written problems yet. Log problems you did elsewhere and your level is read from those."

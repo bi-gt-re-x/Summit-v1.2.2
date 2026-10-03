@@ -14,6 +14,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { LatticePanel } from './LatticePanel';
 import type { WrittenStep } from '@/services/skillSteps';
 import type { Attempt, NewAttempt } from '@/services/skillAttempts';
+import { NOTHING, skillKey, type Levels, type SkillLevel } from '@/utils/skillLevel';
 import type { GraphNode, SkillGraph } from '@/utils/skillGraph';
 
 function step(ordinal: number, title: string, withProblems = false): WrittenStep {
@@ -53,6 +54,33 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const localStamp = (d: Date) =>
   `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 
+/**
+ * What the server would answer for these rows, kept deliberately small.
+ *
+ * The level rule is backend/tracking/skill_level.py and is tested there. This
+ * stands in for its reply so the panel can be seen to draw whatever comes
+ * back: nothing answered is level 0, a cleared Hard log is level 4, anything
+ * else is level 1 — the only three cases these tests walk through.
+ */
+function serverLevels(attempts: Attempt[]): Levels {
+  const grouped = new Map<string, Attempt[]>();
+  for (const row of attempts) {
+    const key = skillKey(row.node_id, row.ordinal);
+    grouped.set(key, [...(grouped.get(key) ?? []), row]);
+  }
+  const out: Levels = {};
+  for (const [key, rows] of grouped) {
+    const attempted = rows.reduce((sum, row) => sum + row.attempted, 0);
+    const correct = rows.reduce((sum, row) => sum + row.correct, 0);
+    const hard = rows.some(
+      (row) => row.weight === 'stretch' && row.attempted >= 5 && row.correct / row.attempted >= 0.7,
+    );
+    const now: SkillLevel = { ...NOTHING, level: hard ? 4 : 1, attempted, correct, evidence: 'fair' };
+    out[key] = { now, before: NOTHING, attempted };
+  }
+  return out;
+}
+
 /** The panel over a real list of attempts, so a write shows up as it would on the page. */
 function Harness({
   written,
@@ -75,6 +103,7 @@ function Harness({
       written={written}
       evidence={{
         attempts,
+        levels: serverLevels(attempts),
         onAttempt: async (attempt) => {
           onAttempt(attempt);
           const made: Attempt = {

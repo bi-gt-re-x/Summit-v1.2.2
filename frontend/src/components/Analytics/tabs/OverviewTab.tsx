@@ -23,7 +23,6 @@
  * to pass is the one callback that opens a screen the page owns.
  */
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { PanelGroup } from '../charts';
 import {
   BaselinePanel,
@@ -324,8 +323,6 @@ export function OverviewTab({
         </section>
 
         <ActiveDayPrinciple />
-
-        <WhereNext />
       </>
     );
   }
@@ -564,51 +561,6 @@ export function OverviewTab({
           beside a countdown, so an account past the staged tabs has not seen
           it in months. See `ActiveDayPrinciple`. */}
       <ActiveDayPrinciple />
-
-      <WhereNext />
     </>
-  );
-}
-
-/**
- * Where the tab hands over.
-
-          This used to run four rows longer: a subject radar, a milestone list,
-          a year-on-year bar chart, the compounding projection and four
-          insights, all before the reader reached the bottom. Every one of them
-          exists in full on a tab built for it — the radar and the balance on
-          Insights, the milestones and the pace on Trends, the projection on
-          Trends, the findings on Insights — and the Overview was answering
-          "how am I doing" by restating all four other tabs at lower
-          resolution.
-
-          What is left is the shortest honest answer to that question: what
-          moved, then productivity, consistency and quality — how much a day,
-          how often, and how much each piece was worth — then their trajectory
-          and the score they roll up into. One screen, no scrolling past the
-          part you came for, and three links out to whichever of the four
-          questions you actually have.
- *
- * A component rather than a block inside the tab, because both arms of the
- * stage branch above end with it and two copies would drift. It is the same
- * three links on day two as on day two hundred: the tabs it points at are
- * where a reader goes with a question, and having little data is not a reason
- * to stop telling them where the questions are answered.
- */
-function WhereNext() {
-  return (
-    <section className="ax-section ax-next">
-      <p>Where to go next</p>
-      <div className="ax-next-row">
-        <Link to="/goals">
-          <strong>Goals</strong>
-          <span>Whether what you aimed at is going to happen</span>
-        </Link>
-        <Link to="/recommendations">
-          <strong>Recommendations</strong>
-          <span>What to change, ranked by what it is worth</span>
-        </Link>
-      </div>
-    </section>
   );
 }

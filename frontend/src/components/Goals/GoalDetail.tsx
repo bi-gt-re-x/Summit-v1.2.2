@@ -106,7 +106,7 @@ export interface GoalDetailProps {
 export function GoalDetail(props: GoalDetailProps) {
   const { goal, tasks, busy, planning = false } = props;
   const numbers = goalNumbers(goal);
-  const health = goalHealth(goal, tasks);
+  const health = goalHealth(goal);
   const reading = goalReading(goal, tasks);
   const pace = goalPace(goal);
   const stuck = bottleneckOf(goal, tasks);

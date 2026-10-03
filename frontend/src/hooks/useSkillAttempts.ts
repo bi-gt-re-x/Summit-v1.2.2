@@ -14,9 +14,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { skillAttempts } from '@/services';
 import type { Attempt, NewAttempt } from '@/services/skillAttempts';
+import type { Levels } from '@/utils/skillLevel';
 
 export interface UseSkillAttempts {
   attempts: Attempt[];
+  /** Every step's level, read on the server and kept current by `add` and
+      `remove`. See utils/skillLevel. */
+  levels: Levels;
   /** True until the first answer. */
   loading: boolean;
   /** The last failure, in the server's words, or null. */
@@ -29,12 +33,14 @@ export interface UseSkillAttempts {
 
 export function useSkillAttempts(username: string | null): UseSkillAttempts {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
+  const [levels, setLevels] = useState<Levels>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let live = true;
     setAttempts([]);
+    setLevels({});
     if (!username) {
       setLoading(false);
       return;
@@ -46,6 +52,7 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
         if (!live) return;
         if (result.success) {
           setAttempts(result.attempts);
+          setLevels(result.levels ?? {});
           setError(null);
         } else {
           setError(result.message ?? 'Could not load your practice.');
@@ -67,6 +74,7 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
       }
       setError(null);
       setAttempts((was) => [...was, result.attempt]);
+      setLevels((was) => ({ ...was, ...result.levels }));
       return result.attempt;
     } catch {
       setError('Could not reach the server.');
@@ -83,6 +91,11 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
       }
       setError(null);
       setAttempts((was) => was.filter((row) => row.id !== id));
+      setLevels((was) => {
+        const next = { ...was };
+        if (result.key) delete next[result.key];
+        return { ...next, ...result.levels };
+      });
       return true;
     } catch {
       setError('Could not reach the server.');
@@ -90,5 +103,5 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
     }
   }, []);
 
-  return { attempts, loading, error, add, remove };
+  return { attempts, levels, loading, error, add, remove };
 }

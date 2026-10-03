@@ -77,7 +77,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
     setFailed(null);
     const numbers = goalNumbers(goal);
     const pace = goalPace(goal);
-    const health = goalHealth(goal, tasks);
+    const health = goalHealth(goal);
 
     try {
       /* Every figure here is one the drawer already drew. Sending them rather

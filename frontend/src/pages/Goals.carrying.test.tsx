@@ -21,7 +21,7 @@
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/test/render';
-import { stats } from '@/test/factories';
+import { goalHealth as reading, stats } from '@/test/factories';
 import type { Goal, Task } from '@/types';
 
 function day(offset: number): string {
@@ -69,9 +69,15 @@ const sinking = goal('over-late', {
   current_value: 5,
   start_date: day(-50),
   deadline: day(10),
+  health: reading('behind', '84 points behind where the calendar says it should be, with 10 days left.'),
 });
 
-const fine = goal('over-fine', { title: 'Read 24 books', priority: 1, current_value: 62 });
+const fine = goal('over-fine', {
+  title: 'Read 24 books',
+  priority: 1,
+  current_value: 62,
+  health: reading('on-track', '62% done, and worked on 1 time in the last fortnight.'),
+});
 
 const GOALS: Goal[] = [...ladder, sinking, fine];
 

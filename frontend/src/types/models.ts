@@ -299,6 +299,36 @@ export interface Milestone {
   created_at: string;
 }
 
+/** Whether a goal is going to happen. Decided by backend/tracking/goal_health.py. */
+export type HealthState = 'on-track' | 'behind' | 'not-started';
+
+/** The figures a goal's health was read from. */
+export interface HealthSignals {
+  /** 0-1, how much of the goal is done. */
+  progress: number;
+  /** 0-1, how much of its time has gone. Null with no deadline. */
+  expected: number | null;
+  /** progress − expected, in points. Null with no deadline. */
+  ahead: number | null;
+  daysLeft: number | null;
+  daysTotal: number | null;
+  /** Days since the last linked task was finished. Null if never. */
+  daysSinceWork: number | null;
+  /** Linked tasks finished inside the last fortnight. */
+  recentTasks: number;
+  /** The goal's checkpoints, or null when it has none. */
+  checkpoints: { done: number; total: number } | null;
+}
+
+export interface GoalHealth {
+  state: HealthState;
+  /** "On Track", "Behind", "Not Started" — or "Complete" for a reached goal. */
+  label: string;
+  /** One line, for the card: which rule decided it. */
+  reason: string;
+  signals: HealthSignals;
+}
+
 export interface Goal {
   id: string;
   user_id: string;
@@ -334,6 +364,9 @@ export interface Goal {
   // ---- The outcome layer -------------------------------------------------
   /** How progress is read. Always present on a goal from the API. */
   measure: GoalMeasure;
+  /** Whether it is going to happen, read on the server. Absent on a goal made
+      in the page since the list was last fetched. See utils/goalHealth. */
+  health?: GoalHealth;
   category: GoalCategory;
   /** Why it matters — the second question the creation flow asks. */
   why: string;

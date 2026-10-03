@@ -24,6 +24,7 @@ import type { SettingsValue } from '@/context/contexts';
 import type { AnalyticsData } from './useAnalyticsData';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 import type { Subject } from '@/services/subjects';
+import { NO_PLAN } from '@/services/next';
 import {
   AFTER,
   BEFORE,
@@ -96,8 +97,12 @@ function seedData(): AnalyticsData {
     scoreLog: answered({ metric: 'overall', points: seedScoreLog() }),
     gradedLog: answered({ histories: {} }),
     adopted: answered({ adopted: [] }),
-    standing: answered(null),
     baseline: answered({ baseline: null }),
+    // The plan is decided on the server; see backend/tracking/next_actions.py.
+    next: answered({ plan: NO_PLAN, lens: null }),
+    setBudget: () => {},
+    setNudge: () => {},
+    nudge: 0,
     username: 'seed',
   } as unknown as AnalyticsData;
 }

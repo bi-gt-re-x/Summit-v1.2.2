@@ -107,7 +107,7 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     // `EMPTY` gives: a hand-written object falls out of step with the type the
     // moment a field is added to it.
     liveGoals: [],
-    goalSet: goalsOverview([], []),
+    goalSet: goalsOverview([]),
     goalPace: paceMap([], () => 'on-track'),
     goalEffort: effortAgainstPriority([], []),
     goalCheckpoints: checkpointsByMonth([]),

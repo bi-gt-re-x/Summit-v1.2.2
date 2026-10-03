@@ -4043,40 +4043,6 @@ html[data-theme="dark"] .ax-page .peak-hero,
     background: color-mix(in srgb, var(--ax-amber) 8%, transparent);
 }
 
-/* The hand-off at the bottom of the Overview. Deliberately plain: it is a
-   signpost, and a signpost that competes with the panels above it for
-   attention is a fourth thing to read rather than a way out. */
-.ax-next > p {
-    margin: 0 0 var(--space-2);
-    font-size: var(--text-2xs);
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--ax-faint);
-}
-.ax-next-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-3);
-}
-.ax-next-row a {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: var(--space-4) var(--space-4);
-    border: 1px solid var(--ax-line);
-    border-radius: var(--ax-radius);
-    background: var(--ax-card);
-    text-decoration: none;
-    transition: border-color .15s ease, transform .15s ease;
-}
-.ax-next-row a:hover {
-    border-color: color-mix(in srgb, var(--ax-violet) 50%, transparent);
-    transform: translateY(-1px);
-}
-.ax-next-row strong { font-size: var(--text-md); font-weight: 600; color: var(--ax-text); }
-.ax-next-row span { font-size: var(--text-xs); line-height: 1.5; color: var(--ax-muted); }
-
 /* The confirmation after a recommendation is taken. */
 .ax-adopted {
     margin: 0 0 var(--space-1);

@@ -17,7 +17,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/test/render';
-import { stats } from '@/test/factories';
+import { goalHealth as reading, stats } from '@/test/factories';
 import type { Goal, Task } from '@/types';
 
 /** `n` days from today as `YYYY-MM-DD`, from local parts rather than `toISOString`. */
@@ -47,10 +47,11 @@ function goal(over: Partial<Goal> = {}): Goal {
 }
 
 /* Past its date and not finished — behind by that rule alone. */
-const behind = (id: string, title: string) => goal({ id, title, deadline: day(-4) });
+const behind = (id: string, title: string) =>
+  goal({ id, title, deadline: day(-4), health: reading('behind', 'Its date passed 4 days ago and it is 90% done.') });
 
 /* Ahead of pace and worked on today. */
-const fine = (id: string, title: string) => goal({ id, title });
+const fine = (id: string, title: string) => goal({ id, title, health: reading('on-track') });
 
 const worked = (...ids: string[]): Task[] =>
   ids.map(

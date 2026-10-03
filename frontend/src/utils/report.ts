@@ -52,7 +52,7 @@ import type { AnalyticalScore } from './analyticalScore';
 import { GRADE_MEANING, howItIsCalculated } from './analyticalScore';
 import type { SubjectQuality } from './behaviour';
 import type { Diagnosis } from './diagnosis';
-import type { NextAction } from './nextActions';
+import type { NextAction } from '@/services/next';
 import type { Pattern } from './patterns';
 import type { GrowthSummaryFigures, Insight } from './growthSummary';
 import type { SubjectXpRow } from './subjectXp';

@@ -27,19 +27,17 @@ import {
   MAX_LEVEL,
   TIERS,
   TIER_NAME,
-  CLEAR_MIN,
-  CLEAR_RATE,
-  levelChange,
   nextStepText,
-  readLevel,
   sinceText,
+  stepLevels,
   type Attempt,
+  type Levels,
+  type StepLevels,
   type Level,
   type SkillLevel,
   type Tier,
 } from '@/utils/skillLevel';
 
-const DAY = 86_400_000;
 
 /** Five pips, filled to the level. Drawn and also said, never only drawn. */
 export function LevelPips({ level }: { level: Level }) {
@@ -68,22 +66,19 @@ const pct = (value: number | null) => (value === null ? '—' : `${value}%`);
 // One skill, in full
 // --------------------------------------------------------------------------
 export interface LevelCardProps {
-  /** This skill's attempts only. */
-  attempts: Attempt[];
-  /** How far back "before" is, in days. */
-  compareDays?: number;
+  /** This step's readings, from the server — now and thirty days ago. */
+  levels: StepLevels;
   /** Today, for tests. */
   now?: Date;
 }
 
-export function LevelCard({ attempts, compareDays = 30, now }: LevelCardProps) {
+/** How far back "before" is. The server reads it at the same distance —
+    COMPARE_DAYS in backend/tracking/skill_level.py. */
+const compareDays = 30;
+
+export function LevelCard({ levels, now }: LevelCardProps) {
   const today = useMemo(() => now ?? new Date(), [now]);
-  const change = useMemo(
-    // `now` only when a test pins it: the live card reads every recorded row.
-    () => levelChange(attempts, new Date(today.getTime() - compareDays * DAY), now ?? null),
-    [attempts, compareDays, today, now],
-  );
-  const { then, now: read } = change;
+  const { before: then, now: read } = levels;
   const moved = read.level - then.level;
 
   return (
@@ -200,7 +195,7 @@ function TierTable({ read }: { read: SkillLevel }) {
       <tbody>
         {TIERS.map((tier) => {
           const one = read.tiers[tier];
-          const done = one.attempted >= CLEAR_MIN && (one.rate ?? 0) >= CLEAR_RATE;
+          const done = one.cleared;
           return (
             <tr key={tier}>
               <th scope="row">{TIER_NAME[tier]}</th>
@@ -232,22 +227,20 @@ export interface ChainStep {
  * which step to work on next.
  */
 export function LevelChain({
+  nodeId,
   steps,
-  attempts,
+  levels,
   onOpen,
 }: {
+  nodeId: string;
   steps: ChainStep[];
-  /** The whole node's attempts; split by step here. */
-  attempts: Attempt[];
+  /** Every step's readings, from the server. */
+  levels: Levels;
   onOpen?: (ordinal: number) => void;
 }) {
   const reads = useMemo(
-    () =>
-      steps.map((step) => ({
-        step,
-        read: readLevel(attempts.filter((row) => row.ordinal === step.ordinal)),
-      })),
-    [steps, attempts],
+    () => steps.map((step) => ({ step, read: stepLevels(levels, nodeId, step.ordinal).now })),
+    [steps, levels, nodeId],
   );
   const started = reads.filter((entry) => entry.read.level > 0).length;
 

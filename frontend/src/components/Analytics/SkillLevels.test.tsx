@@ -11,9 +11,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Attempt } from '@/services/skillAttempts';
-
-let reply: Attempt[] = [];
+import { NOTHING, type Levels, type SkillLevel, type StepLevels } from '@/utils/skillLevel';
 
 vi.mock('@/services/skillSteps', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/services/skillSteps')>()),
@@ -27,65 +25,57 @@ vi.mock('@/services/skillSteps', async (importOriginal) => ({
 
 const { SkillLevelsPanel } = await import('./SkillLevels');
 
-const DAY = 86_400_000;
-const pad = (n: number) => String(n).padStart(2, '0');
-/** Local time `daysAgo` days back, as the server writes it. */
-function ago(daysAgo: number, minute = 0): string {
-  const d = new Date(Date.now() - daysAgo * DAY);
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T10:${pad(minute)}:00`;
+/** A step's readings, the way `/api/skill-attempts` sends them. The level rule
+    is backend/tracking/skill_level.py, tested there. */
+function step(level: SkillLevel['level'], attempted: number): StepLevels {
+  const now: SkillLevel = {
+    ...NOTHING,
+    level,
+    attempted,
+    correct: attempted - 1,
+    accuracy: 83,
+    hardest: level >= 4 ? 'stretch' : 'warmup',
+    mastery: level * 20,
+    lastAt: '2026-09-28T10:00:00',
+    evidence: 'solid',
+  };
+  return { now, before: NOTHING, attempted };
 }
 
-let seq = 0;
-function marks(weight: Attempt['weight'], count: number, right: number, daysAgo: number): Attempt[] {
-  return Array.from({ length: count }, (_, i) => {
-    seq += 1;
-    return {
-      id: String(seq), node_id: 'm.quadratics', ordinal: 3, slot: 1, weight,
-      attempted: 1, correct: i < right ? 1 : 0, source: 'problem' as const, at: ago(daysAgo, i),
-    };
-  });
-}
+let levels: Levels = {};
 
-function draw(windowDays: number | null = 30) {
+function draw() {
   render(
     <MemoryRouter>
       <SkillLevelsPanel
-        practice={{ attempts: reply, loading: false, error: null }}
-        windowDays={windowDays}
-        periodText="the last 30 days"
+        practice={{ attempts: [], levels, loading: false, error: null }}
+        periodText="your whole record"
       />
     </MemoryRouter>,
   );
 }
 
 beforeEach(() => {
-  reply = [];
+  levels = {};
 });
 
 describe('skills by level', () => {
-  it('prints the step, its level then and now, and what moved', async () => {
-    reply = [
-      // Before the period: Easy cleared, Medium tried — level 2.
-      ...marks('warmup', 6, 5, 60),
-      ...marks('core', 4, 2, 60),
-      // Inside it: Hard problems, mostly right — level 4.
-      ...marks('stretch', 6, 5, 5),
-    ];
+  it('prints the step, its level, and how far it has come from nothing', async () => {
+    levels = { 'm.quadratics#3': step(4, 16) };
     draw();
 
     expect(await screen.findByText('Factor Simple Quadratics')).toBeInTheDocument();
     expect(screen.getByText(/Quadratics · step 3 of 7/)).toBeInTheDocument();
-    expect(screen.getByText('Level 2')).toBeInTheDocument();
+    expect(screen.getByText('Level 0')).toBeInTheDocument();
     expect(screen.getByText('Level 4')).toBeInTheDocument();
-    expect(screen.getByText('Easy → Hard')).toBeInTheDocument();
-    expect(screen.getByText(/moved up a level/)).toBeInTheDocument();
-    expect(screen.getByText(/6 problems/)).toBeInTheDocument();
+    expect(screen.getByText('Not started → Hard')).toBeInTheDocument();
+    expect(screen.getByText(/16 problems/)).toBeInTheDocument();
   });
 
-  it('leaves out a skill nobody touched inside the period', async () => {
-    reply = marks('warmup', 6, 6, 90);
+  it('leaves out a step with nothing answered on it', async () => {
+    levels = { 'm.quadratics#3': step(0, 0) };
     draw();
-    expect(await screen.findByText(/No skill-tree problems marked in the last 30 days/))
+    expect(await screen.findByText(/No skill-tree problems marked in your whole record/))
       .toBeInTheDocument();
   });
 

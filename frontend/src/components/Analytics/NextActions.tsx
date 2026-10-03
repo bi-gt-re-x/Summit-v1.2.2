@@ -31,7 +31,7 @@
  */
 import { Link } from 'react-router-dom';
 import { Panel, PanelNote } from './charts';
-import { BUDGETS, type ActionKind, type NextAction, type Plan } from '@/utils/nextActions';
+import { BUDGETS, type ActionKind, type NextAction, type Plan } from '@/services/next';
 /* The same "1h 20m" the rest of the app prints. Insights carries a private
    copy of this called `hm`; this is the shared one. */
 import { minutes as hm } from '@/utils/format';

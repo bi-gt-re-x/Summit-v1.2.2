@@ -113,7 +113,6 @@ export function SubjectsTab({
         >
           <SkillLevelsPanel
             practice={practice}
-            windowDays={null}
             periodText="your whole record"
             limit={detail.rows}
           />

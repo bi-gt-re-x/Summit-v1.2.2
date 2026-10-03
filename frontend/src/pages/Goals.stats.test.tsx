@@ -18,7 +18,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/test/render';
-import { stats } from '@/test/factories';
+import { goalHealth as reading, stats } from '@/test/factories';
 import type { Goal, Task } from '@/types';
 
 function day(offset: number): string {
@@ -47,16 +47,16 @@ function goal(id: string, over: Partial<Goal> = {}): Goal {
   } as unknown as Goal;
 }
 
-/* Two ahead of pace and worked on, one badly behind with nothing against it.
-   Both halves matter: health is a blend and no single signal decides it. */
+/* Two on track, one badly behind — with the health the server attaches. */
 const GOALS: Goal[] = [
-  goal('fine-1', { title: 'Ship the parser' }),
-  goal('fine-2', { title: 'Read 24 books' }),
+  goal('fine-1', { title: 'Ship the parser', health: reading('on-track', '90% done, and worked on 10 times in the last fortnight.') }),
+  goal('fine-2', { title: 'Read 24 books', health: reading('on-track', '90% done, and worked on 10 times in the last fortnight.') }),
   goal('sunk', {
     title: 'Learn to sight-read',
     current_value: 3,
     start_date: day(-50),
     deadline: day(6),
+    health: reading('behind', '86 points behind where the calendar says it should be, with 6 days left.'),
   }),
 ];
 

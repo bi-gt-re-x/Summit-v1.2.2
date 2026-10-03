@@ -39,6 +39,7 @@ API_MODULES = (
     'notifications',
     'skillsteps',
     'skillattempts',
+    'next',
 )
 
 SHARED_MODULES = (

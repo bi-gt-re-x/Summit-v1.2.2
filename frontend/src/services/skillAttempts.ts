@@ -8,6 +8,7 @@
  */
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
+import type { Levels } from '@/utils/skillLevel';
 
 /** How a problem was graded. The page says Easy / Medium / Hard. */
 export type Tier = 'warmup' | 'core' | 'stretch';
@@ -39,14 +40,23 @@ export interface NewAttempt {
   source: 'problem' | 'log';
 }
 
-export function list(): Promise<ApiResult<{ attempts: Attempt[] }>> {
-  return get<{ attempts: Attempt[] }>('/api/skill-attempts');
+/** Every step's level, read on the server — see utils/skillLevel. */
+export type { Levels } from '@/utils/skillLevel';
+
+/** The rows, and every step's level read from them. */
+export function list(): Promise<ApiResult<{ attempts: Attempt[]; levels: Levels }>> {
+  return get<{ attempts: Attempt[]; levels: Levels }>('/api/skill-attempts');
 }
 
-export function add(attempt: NewAttempt): Promise<ApiResult<{ attempt: Attempt }>> {
-  return post<{ attempt: Attempt }>('/api/skill-attempts', { ...attempt });
+/** Store one; the answer carries the new level of the step it was on. */
+export function add(attempt: NewAttempt): Promise<ApiResult<{ attempt: Attempt; levels: Levels }>> {
+  return post<{ attempt: Attempt; levels: Levels }>('/api/skill-attempts', { ...attempt });
 }
 
-export function remove(id: string): Promise<ApiResult<{ id: string }>> {
-  return post<{ id: string }>('/api/skill-attempts/delete', { id });
+/** Take one back; `key` is its step, and `levels` that step's new reading (empty
+    when it was the step's last attempt). */
+export function remove(
+  id: string,
+): Promise<ApiResult<{ id: string; key: string; levels: Levels }>> {
+  return post<{ id: string; key: string; levels: Levels }>('/api/skill-attempts/delete', { id });
 }

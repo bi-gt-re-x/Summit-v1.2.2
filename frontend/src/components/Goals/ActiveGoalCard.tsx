@@ -231,7 +231,7 @@ export function ActiveGoalCard({
   const todayStart = new Date(new Date().toDateString()).getTime();
   const category = categoryOf(goal);
   const numbers = goalNumbers(goal);
-  const health = goalHealth(goal, tasks);
+  const health = goalHealth(goal);
   const stones = goal.milestones ?? [];
 
   const [menuOpen, setMenuOpen] = useState(false);

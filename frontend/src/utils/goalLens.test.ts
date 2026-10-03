@@ -21,131 +21,20 @@
  * miss every goal not written in English.
  */
 import { describe, expect, it } from 'vitest';
-import { goalLens, leadingLens, throughLens } from './goalLens';
-import type { Goal, Task } from '@/types';
+import { throughLens, type GoalLens } from './goalLens';
 
-function goal(over: Partial<Goal> = {}): Goal {
-  return {
-    id: 'g-1',
-    title: 'Get 24 on the AMC 8',
-    status: 'active',
-    measure: 'number',
-    unit: 'points',
-    target_number: 24,
-    current_value: 12,
-    progress: 50,
-    priority: 5,
-    subject_ids: 'mathematics',
-    start_date: '2026-07-01',
-    created_at: '2026-07-01T09:00:00',
-    deadline: '2026-11-01',
-    milestones: [],
-    ...over,
-  } as Goal;
-}
-
-/** Finished work pointed at the goal, carrying the reader's own difficulty. */
-function rated(id: string, difficulty: number, goalId = 'g-1'): Task {
-  return {
-    id,
-    title: 'Practice set',
-    subject: 'mathematics',
-    goal_id: goalId,
-    status: 'done',
-    priority: 'medium',
-    xp_value: 30,
-    difficulty,
-    execution: 3,
-    created_at: '2026-08-30T09:00:00',
-    completed_at: '2026-08-31T10:00:00',
-  } as Task;
-}
-
-const many = (difficulty: number, count = 10, goalId = 'g-1') =>
-  Array.from({ length: count }, (_, at) => rated(`t${goalId}${at}`, difficulty, goalId));
-
-describe('what a goal makes worth reading', () => {
-  it('reads ordinary work as a goal about getting it right', () => {
-    // The AMC 8 case: a lot of problems a competent reader can mostly do.
-    const lens = goalLens(goal(), many(2.5))!;
-
-    expect(lens.id).toBe('accuracy');
-    expect(lens.priorities[0]).toBe('quality');
-    expect(lens.because).toContain('2.5 out of 5');
-  });
-
-  it('reads hard work as a goal about depth', () => {
-    // The AIME case: the same shape of goal, fed much harder problems.
-    const lens = goalLens(goal({ title: 'Reach 7 on the AIME' }), many(4.6))!;
-
-    expect(lens.id).toBe('depth');
-    // Unbroken time leads, because that is what hard problems need.
-    expect(lens.priorities[0]).toBe('focus');
-  });
-
-  it('puts the same two goals under different lenses off the same record shape', () => {
-    // The whole claim of the module, in one assertion: nothing differs between
-    // these but the difficulty of the work, and the page reads differently.
-    const amc = goalLens(goal(), many(2.5))!;
-    const aime = goalLens(goal({ id: 'g-2', title: 'Reach 7 on the AIME' }), many(4.6, 10, 'g-2'))!;
-
-    expect(amc.id).not.toBe(aime.id);
-    expect(amc.priorities[0]).not.toBe(aime.priorities[0]);
-  });
-
-  it('does not read a title', () => {
-    // An AIME goal fed easy work is an accuracy goal, whatever it is called.
-    expect(goalLens(goal({ title: 'Reach 7 on the AIME' }), many(2))!.id).toBe('accuracy');
-  });
-
-  it('reads a streak goal as being about turning up', () => {
-    const lens = goalLens(goal({ measure: 'streak' }), [])!;
-    expect(lens.id).toBe('consistency');
-    expect(lens.priorities[0]).toBe('consistency');
-  });
-
-  it('reads a counter as being about the rate it fills at', () => {
-    const lens = goalLens(goal({ measure: 'xp' }), [])!;
-    expect(lens.id).toBe('volume');
-    expect(lens.priorities[0]).toBe('productivity');
-  });
-
-  it('says nothing about an outcome goal with too little rated work', () => {
-    // Three ratings is not a reading of how hard this goal is.
-    expect(goalLens(goal(), many(4.8, 3))).toBeNull();
-  });
-
-  it('ignores work that carries no difficulty at all', () => {
-    const unrated = many(3).map((task) => ({ ...task, difficulty: undefined }));
-    expect(goalLens(goal(), unrated)).toBeNull();
-  });
-
-  it('says nothing about a goal that is already done', () => {
-    expect(goalLens(goal({ status: 'completed' }), many(4.5))).toBeNull();
-  });
-
-  it('carries the count it was chosen on', () => {
-    const lens = goalLens(goal(), many(4.5, 12))!;
-    expect(lens.rated).toBe(12);
-    expect(lens.difficulty).toBeCloseTo(4.5);
-  });
-});
-
-describe('one lens for one page', () => {
-  it('follows the goal with the most work pointed at it', () => {
-    // Not the one marked most important: what somebody flagged and what they
-    // are actually doing are different facts, and this reads the record.
-    const busy = goal({ id: 'g-2', title: 'The one being worked', priority: 1 });
-    const idle = goal({ id: 'g-3', title: 'The one marked urgent', priority: 10 });
-    const tasks = [...many(4.6, 12, 'g-2'), ...many(2, 9, 'g-3')];
-
-    expect(leadingLens([idle, busy], tasks)!.goalTitle).toBe('The one being worked');
-  });
-
-  it('returns nothing when no goal has enough behind it', () => {
-    expect(leadingLens([goal()], many(4, 2))).toBeNull();
-    expect(leadingLens([], [])).toBeNull();
-  });
+/** A lens as the server sends it — see backend/tracking/next_actions.py. */
+const lens = (priorities: GoalLens['priorities']): GoalLens => ({
+  goalId: 'g-1',
+  goalTitle: 'Get 24 on the AMC 8',
+  id: 'accuracy',
+  label: 'Accuracy and control',
+  priorities,
+  watch: [],
+  because: '',
+  difficulty: 2.5,
+  rated: 10,
+  weights: {},
 });
 
 describe('reordering through it', () => {
@@ -157,8 +46,7 @@ describe('reordering through it', () => {
   ];
 
   it('leads with what the lens prioritises', () => {
-    const lens = goalLens(goal(), many(2.5))!;
-    const out = throughLens(rows, (row) => row.key, lens);
+    const out = throughLens(rows, (row) => row.key, lens(['quality', 'consistency', 'productivity', 'focus']));
     expect(out[0]!.key).toBe('quality');
   });
 
@@ -169,8 +57,7 @@ describe('reordering through it', () => {
   });
 
   it('does not drop or duplicate anything', () => {
-    const lens = goalLens(goal({ measure: 'streak' }), [])!;
-    const out = throughLens(rows, (row) => row.key, lens);
+    const out = throughLens(rows, (row) => row.key, lens(['consistency', 'focus', 'productivity', 'quality']));
     expect(out).toHaveLength(rows.length);
     expect(new Set(out.map((row) => row.key))).toEqual(new Set(rows.map((row) => row.key)));
   });

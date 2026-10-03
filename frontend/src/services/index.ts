@@ -17,6 +17,7 @@ export * as events from './events';
 export * as focus from './focus';
 export * as goals from './goals';
 export * as growth from './growth';
+export * as next from './next';
 export * as notes from './notes';
 export * as notifications from './notifications';
 export * as quote from './quote';

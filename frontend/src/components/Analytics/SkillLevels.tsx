@@ -28,14 +28,18 @@ import {
   LEVEL_NAME,
   MAX_LEVEL,
   TIER_NAME,
-  bySkill,
-  levelChange,
+  NOTHING,
   sinceText,
-  type Attempt,
-  type LevelChange,
+  type SkillLevel,
 } from '@/utils/skillLevel';
 
-const DAY = 86_400_000;
+/** Where a step started the period and where it stands, and how much was done.
+    Over the whole record the start is nothing answered at all. */
+interface LevelChange {
+  then: SkillLevel;
+  now: SkillLevel;
+  inPeriod: number;
+}
 
 /** Node id → its name and the tree it is drawn on, built once. */
 let nodeIndex: Map<string, { name: string; tree: string }> | null = null;
@@ -61,18 +65,17 @@ interface Row {
 }
 
 export interface SkillLevelsPanelProps {
-  /** The reader's marked problems — fetched once by the tab and shared. */
-  practice: Pick<UseSkillAttempts, 'attempts' | 'loading' | 'error'>;
-  /** Days in the period, or null for the whole record. */
-  windowDays: number | null;
-  /** The period in words, for sentences. */
+  /** The reader's marked problems and the levels read from them on the
+      server — fetched once by the tab and shared. */
+  practice: Pick<UseSkillAttempts, 'attempts' | 'levels' | 'loading' | 'error'>;
+  /** The period in words, for sentences. Always the whole record. */
   periodText: string;
   /** How many rows before "Show all". */
   limit?: number;
 }
 
-export function SkillLevelsPanel({ practice, windowDays, periodText, limit = 6 }: SkillLevelsPanelProps) {
-  const { attempts, loading, error } = practice;
+export function SkillLevelsPanel({ practice, periodText, limit = 6 }: SkillLevelsPanelProps) {
+  const { attempts, levels, loading, error } = practice;
   const [titles, setTitles] = useState<Programmes>({});
   const [all, setAll] = useState(false);
 
@@ -80,8 +83,14 @@ export function SkillLevelsPanel({ practice, windowDays, periodText, limit = 6 }
      tree draws — rather than being copied onto each attempt, so a step renamed
      by a regeneration is renamed here too. */
   const nodeIds = useMemo(
-    () => [...new Set(attempts.filter((row) => row.ordinal > 0).map((row) => row.node_id))],
-    [attempts],
+    () => [
+      ...new Set(
+        Object.keys(levels)
+          .filter((key) => !key.endsWith('#0'))
+          .map((key) => key.slice(0, key.lastIndexOf('#'))),
+      ),
+    ],
+    [levels],
   );
   useEffect(() => {
     if (!nodeIds.length) return;
@@ -93,12 +102,11 @@ export function SkillLevelsPanel({ practice, windowDays, periodText, limit = 6 }
   }, [nodeIds]);
 
   const rows = useMemo(() => {
-    const now = new Date();
-    const from = windowDays === null ? null : new Date(now.getTime() - windowDays * DAY);
     const out: Row[] = [];
-    for (const [key, list] of bySkill(attempts)) {
-      const first: Attempt = list[0]!;
-      const change = levelChange(list, from);
+    for (const [key, read] of Object.entries(levels)) {
+      const cut = key.lastIndexOf('#');
+      const first = { node_id: key.slice(0, cut), ordinal: Number(key.slice(cut + 1)) };
+      const change: LevelChange = { then: NOTHING, now: read.now, inPeriod: read.attempted };
       if (change.inPeriod === 0) continue;
       const info = nodeInfo(first.node_id);
       const steps = titles[first.node_id];
@@ -123,7 +131,7 @@ export function SkillLevelsPanel({ practice, windowDays, periodText, limit = 6 }
       if (climb !== 0) return climb;
       return b.change.inPeriod - a.change.inPeriod;
     });
-  }, [attempts, titles, windowDays]);
+  }, [levels, titles]);
 
   if (loading) return <p className="ax-empty">Reading your marked problems…</p>;
   if (error && !attempts.length) return <p className="ax-empty">{error}</p>;

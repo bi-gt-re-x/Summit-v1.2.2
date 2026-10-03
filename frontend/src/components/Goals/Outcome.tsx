@@ -228,14 +228,12 @@ const STAT_ICONS = {
  */
 export function OverviewStrip({
   goals,
-  tasks,
   today = new Date(),
 }: {
   goals: Goal[];
-  tasks: Task[];
   today?: Date;
 }) {
-  const view = goalsOverview(goals, tasks, today);
+  const view = goalsOverview(goals, today);
   const share = view.active ? Math.round((view.onTrack / view.active) * 100) : 0;
 
   // Counted to rather than replaced — see hooks/useCountUp.ts. The footers are
@@ -523,16 +521,8 @@ export function NextMilestones({
  * thing that acts on "needs attention"; a second button doing the same job
  * four sections apart is two places to learn for one action.
  */
-export function SystemVerdict({
-  goals,
-  tasks,
-  today,
-}: {
-  goals: Goal[];
-  tasks: Task[];
-  today?: Date;
-}) {
-  const view = systemHealth(goals, tasks, today);
+export function SystemVerdict({ goals }: { goals: Goal[] }) {
+  const view = systemHealth(goals);
 
   if (view.active === 0) {
     return (
@@ -572,16 +562,8 @@ export function SystemVerdict({
  * it is wrong almost everywhere else: three slices of one whole, all labelled,
  * all counted beside it.
  */
-export function HealthRing({
-  goals,
-  tasks,
-  today,
-}: {
-  goals: Goal[];
-  tasks: Task[];
-  today?: Date;
-}) {
-  const view = goalsOverview(goals, tasks, today);
+export function HealthRing({ goals, today }: { goals: Goal[]; today?: Date }) {
+  const view = goalsOverview(goals, today);
   const total = view.active || 1;
 
   // Three fixed states, so three calls rather than a loop. Each arc is drawn from
@@ -838,22 +820,18 @@ export function GoalsCta({ onNew }: { onNew: () => void }) {
  */
 export function GoalsState({
   goals,
-  tasks,
-  today = new Date(),
   on = false,
   onAttention,
 }: {
   /** The outcome goals — exactly the set the Active Goals tab draws. */
   goals: Goal[];
-  tasks: Task[];
-  today?: Date;
   /** Whether the attention filter is currently on. */
   on?: boolean;
   /** Toggle it. Absent, and the count is text rather than a button. */
   onAttention?: () => void;
 }) {
   const needs = goals.filter((goal) => {
-    return goalHealth(goal, tasks, today).state === 'behind';
+    return goalHealth(goal).state === 'behind';
   }).length;
 
   if (goals.length === 0) {

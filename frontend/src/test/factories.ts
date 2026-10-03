@@ -10,7 +10,7 @@
  * test overrides exactly what it cares about, so a default that changes cannot
  * quietly change what a test means.
  */
-import type { GrowthDay, Task, UserStats } from '@/types';
+import type { GoalHealth, GrowthDay, HealthSignals, HealthState, Task, UserStats } from '@/types';
 
 let counter = 0;
 
@@ -68,4 +68,35 @@ export function days(from: string, count: number, over: Partial<GrowthDay> = {})
       ...over,
     } as GrowthDay;
   });
+}
+
+/**
+ * A goal's health, the way `/api/get_goals` attaches it.
+ *
+ * The rule lives on the server now (backend/tracking/goal_health.py, with its
+ * own tests), so a page test states the reading it wants rather than building
+ * dates and tasks until the browser happens to compute it.
+ */
+export function goalHealth(
+  state: HealthState,
+  reason = '',
+  signals: Partial<HealthSignals> = {},
+): GoalHealth {
+  const label = { 'on-track': 'On Track', behind: 'Behind', 'not-started': 'Not Started' }[state];
+  return {
+    state,
+    label,
+    reason,
+    signals: {
+      progress: 0.5,
+      expected: null,
+      ahead: null,
+      daysLeft: null,
+      daysTotal: null,
+      daysSinceWork: null,
+      recentTasks: 0,
+      checkpoints: null,
+      ...signals,
+    },
+  };
 }

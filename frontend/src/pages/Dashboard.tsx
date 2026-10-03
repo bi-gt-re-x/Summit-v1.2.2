@@ -38,7 +38,6 @@ import {
   GoalsCard,
   LevelUp,
   NextMove,
-  NextUp,
   RecentActivity,
   StreakCard,
   TaskModal,
@@ -156,11 +155,6 @@ export default function Dashboard() {
      something to be measured against — see `typicalDay` in Dashboard/summary
      for why every calendar day counts and today does not. */
   const usual = useMemo(() => typicalDay(tasks, todayIso), [tasks, todayIso]);
-  const nowHour = useMemo(() => {
-    const hours = now.getHours() + now.getMinutes() / 60;
-    // The grid's day runs 6 AM to 5 AM — see `gridHour` in Dashboard/summary.
-    return hours < 6 ? hours + 24 : hours;
-  }, [now]);
 
   /**
    * Hours focused on an average day, from the record rather than the task list.
@@ -550,10 +544,11 @@ export default function Dashboard() {
       {/* The focus panel is a preference too, and hiding it widens the task
           list rather than leaving a hole where it was — see `.is-solo` in
           styles/dashboard-home.css. */}
-      {/* What now — the one line on this page that is about the next hour
-          rather than about the day so far. Above the task list because that is
-          the order the questions arrive in. */}
-      <NextUp plan={plan} now={nowHour} />
+      {/* What to do next — the top of the one list the app keeps, the same one
+          the Recommendations tab shows in full. Above the task list because
+          that is the order the questions arrive in. Asked again whenever a
+          task is finished, so a suggestion to finish it does not outlive it. */}
+      <NextMove username={username} refresh={`${day.done}:${tasks.length}`} />
 
       <div className={`dash-main${prefs.show_focus ? '' : ' is-solo'}`}>
         <TaskPanel
@@ -583,22 +578,6 @@ export default function Dashboard() {
           <GoalsCard goals={goals} />
           <RecentActivity entries={activity} />
         </div>
-      )}
-
-      {/* One line about what to change, under the row that reports. It goes
-          last of the page's own content because it is the only thing here the
-          reader has not already asked for — everything above answers a
-          question they came with. Drawn only when the record has something to
-          say; see components/Dashboard/NextMove. */}
-      {prefs.show_insights && (
-        <NextMove
-          tasks={tasks}
-          goals={goals}
-          todayIso={todayIso}
-          doneToday={day.done}
-          xpToday={day.xp}
-          nameOf={(id) => subjects.get(id)?.label ?? id}
-        />
       )}
 
       {prefs.show_quote && <DailyQuote />}

@@ -118,7 +118,7 @@ export function GoalTable({ goals, tasks, onOpen, onEdit, today = new Date() }: 
     () =>
       goals.map((goal) => {
         const numbers = goalNumbers(goal);
-        const health = goalHealth(goal, tasks, today);
+        const health = goalHealth(goal);
         const next = (goal.milestones ?? []).find((row) => row.status !== 'done');
         const deadline = goal.deadline
           ? Math.round(
@@ -278,7 +278,7 @@ export function HealthBreakdown({
     () =>
       goals
         .filter((goal) => goal.status !== 'completed')
-        .map((goal) => ({ goal, health: goalHealth(goal, tasks, today) }))
+        .map((goal) => ({ goal, health: goalHealth(goal) }))
         .sort(
           (a, b) =>
             (ORDER[a.health.state] ?? 9) - (ORDER[b.health.state] ?? 9) ||

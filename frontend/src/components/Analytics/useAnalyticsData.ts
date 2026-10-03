@@ -18,6 +18,8 @@
  * read it moves is what keeps that pairing from drifting.
  */
 import { useCallback, useState } from 'react';
+import { DEFAULT_BUDGET, type NextResult } from '@/services/next';
+import { next as nextService } from '@/services';
 import { useApi, useStats } from '@/hooks';
 import { taskHistory } from '@/services/taskHistory';
 import { takeOrAsk } from './earlyReads';
@@ -167,6 +169,21 @@ export function useAnalyticsData() {
     [username],
   );
   const scoreLog = useApi<MetricHistory>(historyCall, [username]);
+
+  // What to do next, for the minutes the reader picked. Decided on the server
+  // (backend/tracking/next_actions.py) — the same list the dashboard's top line
+  // reads — and asked again when the budget changes or the plan's own refresh
+  // is pressed, which re-reads it against the clock.
+  const [budget, setBudget] = useState<number>(DEFAULT_BUDGET);
+  const [nudge, setNudge] = useState(0);
+  const nextCall = useCallback(
+    () =>
+      username
+        ? nextService.nextActions(budget)
+        : Promise.resolve({ success: false as const, message: 'Sign in to see what to do next.' }),
+    [username, budget],
+  );
+  const next = useApi<NextResult>(nextCall, [username, budget, nudge]);
   // ---- Accepting a recommendation ----------------------------------------
   /**
    * Turn a recommendation into a task, and start the clock on measuring it.
@@ -278,7 +295,8 @@ export function useAnalyticsData() {
     ratings.reload();
     goals.reload();
     adopted.reload();
-  }, [adopted, goals, ratings, series, tasks]);
+    next.reload();
+  }, [adopted, goals, next, ratings, series, tasks]);
 
   return {
     stats,
@@ -291,6 +309,11 @@ export function useAnalyticsData() {
     adopted,
     gradedLog,
     scoreLog,
+    next,
+    budget,
+    setBudget,
+    nudge,
+    setNudge,
     refresh,
     adopt,
     adopting,

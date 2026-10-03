@@ -17,6 +17,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { goalHealth as reading } from '@/test/factories';
 import type { Goal, Task } from '@/types';
 
 const writeGoalPlan = vi.fn();
@@ -51,6 +52,10 @@ function goal(over: Partial<Goal> = {}): Goal {
     created_at: '2026-07-01T09:00:00',
     deadline: '2026-12-01',
     milestones: [],
+    // What the server attaches; the rule is tested in tests/test_goal_health.py.
+    health: reading('behind', '25 points behind where the calendar says it should be, with 59 days left.', {
+      progress: 0.4, expected: 0.65, ahead: -0.25, daysLeft: 59,
+    }),
     ...over,
   } as unknown as Goal;
 }

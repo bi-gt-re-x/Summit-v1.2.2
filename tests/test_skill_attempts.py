@@ -145,3 +145,26 @@ def test_it_goes_out_with_an_export(client):
     _mark(client)
     tables = client.get('/api/settings/export').json()['export']['tables']
     assert len(tables['skill_attempts']) == 1
+
+
+# ---------------------------------------------------------------------------
+# Levels, read here and sent with the rows (backend/tracking/skill_level.py)
+# ---------------------------------------------------------------------------
+def test_the_list_carries_every_steps_level(client):
+    _log(client)  # twelve Hard, nine right: Hard is cleared
+    reply = client.get('/api/skill-attempts').json()
+    step = reply['levels']['m.quadratics#3']
+    assert step['now']['level'] == 4
+    assert step['attempted'] == 12
+
+
+def test_a_write_comes_back_with_its_steps_new_level(client):
+    reply = _mark(client)
+    assert reply['levels']['m.quadratics#3']['now']['level'] == 1
+
+
+def test_taking_back_the_last_attempt_leaves_no_level(client):
+    made = _mark(client, ordinal=5)['attempt']
+    reply = client.post('/api/skill-attempts/delete', json={'id': made['id']}).json()
+    assert reply['key'] == 'm.quadratics#5'
+    assert reply['levels'] == {}

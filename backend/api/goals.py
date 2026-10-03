@@ -51,12 +51,17 @@ from backend.database import connection as db
 from backend.goal_matcher import metrics as goal_metrics
 from backend.goal_matcher import service as goal_matcher
 from backend.goal_matcher.queue import work as goal_queue
+from backend.goal_matcher import store as goal_store
 from backend.tracking import focus as focus_tracking
+from backend.tracking import goal_health
 from backend.tracking import planner
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['goals'])
+
+#: What goal health reads off a task. See backend/tracking/goal_health.py.
+HEALTH_TASK_FIELDS = ('id', 'status', 'completed_at', 'goal_id')
 
 # The four kinds of goal, and which pair of fields each one counts with.
 GOAL_FIELDS = {
@@ -871,6 +876,16 @@ def get_goals(username: str = Depends(current_username)):
         # front end never has to know that an old row leaves the column empty.
         goal['measure'] = _measure_of(goal)
         goal['milestones'] = _milestones_of(rows, goal.get('id'))
+
+    # Whether each goal is going to happen, worked out once here rather than
+    # by every screen that shows a goal. See backend/tracking/goal_health.py.
+    # Four columns of the task table and the matched links, not whole rows: on
+    # a large account this is twenty thousand tasks.
+    tasks = goal_store.with_goal_ids(
+        username, db.columns_for('tasks', username, HEALTH_TASK_FIELDS))
+    cache = {}
+    for goal in mine:
+        goal['health'] = goal_health.goal_health(goal, tasks, cache=cache)
 
     return ok(goals=mine, avg_xp_per_day=avg_xp_per_day)
 

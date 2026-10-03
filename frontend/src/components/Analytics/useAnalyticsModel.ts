@@ -96,7 +96,6 @@ import { CHANGE_WINDOW, whatChanged } from '@/utils/changed';
 import { habitEffects } from '@/utils/habitEffects';
 import { goalActions, goalNotes, goalsOverview } from '@/utils/goalAnalytics';
 import { goalLimiters } from '@/utils/goalLimiter';
-import { leadingLens } from '@/utils/goalLens';
 import { goalHealth } from '@/utils/goalHealth';
 import {
   checkpointsByMonth,
@@ -117,13 +116,13 @@ import {
   summariseReasons,
 } from '@/utils/ratings';
 import { outlook, recommendations } from '@/utils/advice';
-import { PATTERN_DAYS, RECENT_DAYS, daysUntilNextWeek, recentWindow, weekStamp } from '@/utils/recent';
+import { PATTERN_DAYS, RECENT_DAYS, daysUntilNextWeek, recentWindow } from '@/utils/recent';
 import { dataMaturity } from '@/utils/dataMaturity';
 import { detailRules, toneRules } from '@/utils/analyticsPrefs';
 import { diagnose, vitals } from '@/utils/diagnosis';
 import { analyticalScore } from '@/utils/analyticalScore';
 import { discoverPatterns } from '@/utils/patterns';
-import { DEFAULT_BUDGET, buildPlan } from '@/utils/nextActions';
+import { NO_PLAN } from '@/services/next';
 import { reviewAdopted, summarise } from '@/utils/followup';
 import type { AnalyticsData } from './useAnalyticsData';
 import type { SubjectIndex } from '@/hooks/useSubjects';
@@ -402,26 +401,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   const recent = useMemo(() => recentWindow(all, RECENT_DAYS), [all]);
   const patternWindow = useMemo(() => recentWindow(all, PATTERN_DAYS), [all]);
 
-  /**
-   * The week this advice belongs to, and the button that re-reads it.
-   *
-   * `stamp` is the ISO week. Anything keyed on it holds still for seven days
-   * and then moves on its own — which is the point: advice that reshuffles on
-   * every page load cannot be acted on, because the thing you decided to do
-   * this morning is gone by lunchtime.
-   *
-   * `nudge` is what the plan's own refresh button bumps, and it exists for the
-   * half of the problem a re-fetch does not solve. Re-fetching brings in tasks
-   * finished since the page opened, and the memos below recompute on their own
-   * when it lands. But the plan also reads the *clock* — what is overdue, what
-   * is due today, whether anything is logged yet — and none of that changes
-   * just because the data did. Bumping the nudge is what re-asks the clock.
-   *
-   * Neither is a re-roll. Within one week the same record gives the same
-   * answer, because the answer is derived rather than shuffled.
-   */
-  const [nudge, setNudge] = useState(0);
-  const stamp = useMemo(() => weekStamp(new Date()), []);
   const weekLeft = useMemo(() => daysUntilNextWeek(new Date()), []);
 
   /* Tasks finished inside the recent window, and inside the pattern window.
@@ -511,40 +490,17 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   );
 
   /**
-   * Which reading of this record the reader's goals call for.
+   * What to do next, and the goal lens it was ordered through.
    *
-   * The page has always printed its five metrics in one order on every
-   * account, which is a guess about what the reader came for — and the same
-   * guess whether they are trying to stop losing easy marks or trying to solve
-   * harder problems than they currently can. See utils/goalLens.
-   *
-   * Above `plan` because the plan reads it. Null on most accounts and on every
-   * young one, and the page then behaves exactly as it did.
-   *
-   * Not scoped by the window picker, deliberately, and for the reason the goal
-   * panels are not either: what somebody is aiming at does not change because
-   * they looked at thirty days instead of a year.
+   * Both come from the server (backend/tracking/next_actions.py) — the same
+   * list the dashboard's top line reads — fetched in ./useAnalyticsData, which
+   * also holds the minute budget and the refresh that re-reads it against the
+   * clock. Within one week the same record gives the same answer: the server
+   * breaks ties on the ISO week, so advice does not reshuffle on every visit.
    */
-  const lens = useMemo(() => leadingLens(liveGoals, tasks), [liveGoals, tasks]);
-
-  // ---- What to do next ----------------------------------------------------
-  const [budget, setBudget] = useState<number>(DEFAULT_BUDGET);
-  const plan = useMemo(
-    () =>
-      buildPlan({
-        tasks,
-        goals: liveGoals,
-        days: recent.current,
-        nameOf,
-        budget,
-        stamp,
-        lens,
-      }),
-    // `nudge` re-reads the plan against the clock: a task finished since the
-    // page opened should leave it.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [budget, liveGoals, lens, nameOf, recent, stamp, tasks, nudge],
-  );
+  const plan = data.next.data?.plan ?? NO_PLAN;
+  const lens = data.next.data?.lens ?? null;
+  const { setBudget, nudge, setNudge } = data;
 
   // ---- Habits -------------------------------------------------------------
   const habits = useMemo(
@@ -680,7 +636,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
      no request of its own — the same rule the rest of the page follows.
      `liveGoals` itself is declared above, beside `lens`, which is its first
      reader and runs before this block. */
-  const goalSet = useMemo(() => goalsOverview(liveGoals, tasks), [liveGoals, tasks]);
+  const goalSet = useMemo(() => goalsOverview(liveGoals), [liveGoals]);
   const goalRows = useMemo(() => goalNotes(liveGoals, tasks), [liveGoals, tasks]);
   const goalIdeas = useMemo(
     () =>
@@ -768,7 +724,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   /* The three charts. All arithmetic over `liveGoals` and `tasks`, both of
      which the page already had — no tab on this page fetches for itself. */
   const goalPace = useMemo(
-    () => paceMap(liveGoals, (goal) => goalHealth(goal, tasks).state),
+    () => paceMap(liveGoals, (goal) => goalHealth(goal).state),
     [liveGoals, tasks],
   );
   const goalEffort = useMemo(() => effortAgainstPriority(liveGoals, tasks), [liveGoals, tasks]);

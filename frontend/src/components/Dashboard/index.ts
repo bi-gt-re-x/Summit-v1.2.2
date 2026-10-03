@@ -24,8 +24,6 @@ export { LevelUp } from './LevelUp';
 export type { LevelUpProps } from './LevelUp';
 export { NextMove } from './NextMove';
 export type { NextMoveProps } from './NextMove';
-export { NextUp } from './NextUp';
-export type { NextUpProps } from './NextUp';
 export { TaskModal } from './TaskModal';
 export type { TaskModalProps } from './TaskModal';
 export { TaskPanel } from './TaskPanel';

@@ -716,7 +716,7 @@ export default function Goals() {
   const needsAttention = useMemo(
     () =>
       outcomes.filter((goal) => {
-        return goalHealth(goal, tasks).state === 'behind';
+        return goalHealth(goal).state === 'behind';
       }),
     [outcomes, tasks],
   );
@@ -798,7 +798,6 @@ export default function Goals() {
                   header control. See `GoalsState` in components/Goals/Outcome. */}
               <GoalsState
                 goals={outcomes}
-                tasks={tasks}
                 on={attention}
                 onAttention={() => {
                   /* The cards it filters are on the Active tab, so pressing it
@@ -961,7 +960,7 @@ export default function Goals() {
                 <ul className="gx-rest">
                   {outcomes.slice(LIST_GOALS).map((goal) => {
                     const numbers = goalNumbers(goal);
-                    const health = goalHealth(goal, tasks);
+                    const health = goalHealth(goal);
                     return (
                       <li key={goal.id}>
                         <button type="button" onClick={() => setOpenId(goal.id)}>
@@ -1064,7 +1063,7 @@ export default function Goals() {
                 which is the shape a page takes when it is built out of the
                 components that exist rather than from the question asked. */}
             <Band title="How this is going">
-              <SystemVerdict goals={list} tasks={tasks} />
+              <SystemVerdict goals={list} />
             </Band>
 
             <Band
@@ -1072,7 +1071,7 @@ export default function Goals() {
               hint="Counted off your goals"
             >
               <GoalStats goals={list} />
-              <OverviewStrip goals={list} tasks={tasks} />
+              <OverviewStrip goals={list} />
             </Band>
 
             <Band
@@ -1088,7 +1087,7 @@ export default function Goals() {
               </Band>
 
               <Band title="Goal Health" hint="Goal by goal, and why">
-                <HealthRing goals={list} tasks={tasks} />
+                <HealthRing goals={list} />
                 <HealthBreakdown
                   goals={outcomes}
                   tasks={tasks}

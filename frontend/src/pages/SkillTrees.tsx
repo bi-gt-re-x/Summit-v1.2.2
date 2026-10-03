@@ -126,7 +126,6 @@ import {
   LatticeNode,
   LatticePanel,
   ModeSwitch,
-  NextUp,
   ProgressIndicator,
   RouteStrip,
   SkillTree as SkillTreeCanvas,
@@ -305,8 +304,13 @@ export default function SkillTrees() {
      date, and the Growth tab asks for the same list. */
   const practice = useSkillAttempts(username);
   const evidence = useMemo(
-    () => ({ attempts: practice.attempts, onAttempt: practice.add, onUndo: practice.remove }),
-    [practice.attempts, practice.add, practice.remove],
+    () => ({
+      attempts: practice.attempts,
+      levels: practice.levels,
+      onAttempt: practice.add,
+      onUndo: practice.remove,
+    }),
+    [practice.attempts, practice.levels, practice.add, practice.remove],
   );
   // The account's own catalogue, usage-ordered by the endpoint. Everything at
   // the top of this page is drawn from it: the five focus cards, the rail, and
@@ -667,15 +671,6 @@ export default function SkillTrees() {
   const position = useMemo(
     () => (hereId ? focusOn(graph, hereId) : null),
     [graph, hereId],
-  );
-
-  /* What to do next, with where the reader already is left off it: "next up:
-     the node you are standing on" is not a next step. The *computed* standing
-     rather than the selection, so clicking around the tree does not keep
-     rewriting the list. */
-  const chances = useMemo(
-    () => opportunities(graph, standing ? new Set([...navIds, standing.id]) : navIds),
-    [graph, navIds, standing],
   );
 
   /* How far through its prerequisites each gated node is, so a locked tile can
@@ -1051,12 +1046,6 @@ export default function SkillTrees() {
               subset of it, and there is nothing to narrow to. */}
           <Figure label="Skill Level" value={skillLevel(totals)} icon="gem" tone="level" />
         </section>
-
-        {/* ---- what to do next ----
-            Above the route, because "where am I" is only worth answering as a
-            preamble to "so what now". Every figure on it is already on the
-            lattice as colour and lines; see skills/route. */}
-        <NextUp chances={chances} onOpen={open} />
 
         {/* ---- where the reader is, in one line ----
             Above the canvas rather than inside it, because it is the sentence

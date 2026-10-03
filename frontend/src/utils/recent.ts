@@ -36,9 +36,9 @@
  *
  * A week is the unit the app already thinks in — the streak, the weekly review,
  * the comparison the trends tab draws — and it is long enough to actually try
- * something. `weekStamp` names the current week; anything keyed on it holds
- * still for seven days and then moves, on its own, without a button being
- * pressed. The button exists too (`Refresh`), for the reader who wants a fresh
+ * something. The plan's tiebreak is keyed on the ISO week (on the server — see
+ * `week_stamp` in backend/tracking/next_actions.py), so it holds still for
+ * seven days and then moves, on its own, without a button being pressed. The button exists too (`Refresh`), for the reader who wants a fresh
  * read now, and it re-reads rather than re-rolls: the same week gives the same
  * answer, because the answer is derived, not shuffled.
  */
@@ -86,23 +86,6 @@ export function recentWindow(all: GrowthDay[], span: number = RECENT_DAYS): Rece
     fromIso: current[0]?.date ?? '',
     toIso: current[current.length - 1]?.date ?? '',
   };
-}
-
-/**
- * The week a date falls in, as a sortable stamp — `2026-W34`.
- *
- * ISO weeks: Monday starts the week and the year is whichever year owns the
- * Thursday, which is what stops the last days of December and the first of
- * January from landing in two different "week 1"s.
- */
-export function weekStamp(date: Date = new Date()): string {
-  const at = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  // Thursday of this week decides the year.
-  const day = at.getUTCDay() || 7;
-  at.setUTCDate(at.getUTCDate() + 4 - day);
-  const yearStart = new Date(Date.UTC(at.getUTCFullYear(), 0, 1));
-  const week = Math.ceil(((at.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
-  return `${at.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
 }
 
 /** Monday of the week `date` falls in, at local midnight. */

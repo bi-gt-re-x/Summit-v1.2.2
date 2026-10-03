@@ -264,7 +264,7 @@ export function goalActions(
   tasks: Task[],
   today: Date = new Date(),
 ): GoalAction[] {
-  const health = goalHealth(goal, tasks, today);
+  const health = goalHealth(goal);
   const reading = goalReading(goal, tasks, today);
   const pace = goalPace(goal, today);
   const numbers = goalNumbers(goal);
@@ -379,18 +379,14 @@ export interface GoalsOverview {
   completed: number;
 }
 
-export function goalsOverview(
-  goals: Goal[],
-  tasks: Task[],
-  today: Date = new Date(),
-): GoalsOverview {
+export function goalsOverview(goals: Goal[], today: Date = new Date()): GoalsOverview {
   const active = goals.filter((goal) => goal.status !== 'completed');
   const counts: Record<HealthState, number> = { 'on-track': 0, behind: 0, 'not-started': 0 };
   let weighted = 0;
   let weight = 0;
 
   active.forEach((goal) => {
-    counts[goalHealth(goal, tasks, today).state] += 1;
+    counts[goalHealth(goal).state] += 1;
     const w = Math.max(1, Math.min(10, Math.trunc(Number(goal.priority)) || 5));
     weighted += goalNumbers(goal).progress * w;
     weight += w;
@@ -442,7 +438,7 @@ export function goalNotes(
   const readings = active.map((goal) => ({
     goal,
     reading: goalReading(goal, tasks, today),
-    health: goalHealth(goal, tasks, today),
+    health: goalHealth(goal),
   }));
   const out: GoalNote[] = [];
 
