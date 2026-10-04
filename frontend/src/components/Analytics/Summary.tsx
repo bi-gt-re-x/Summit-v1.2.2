@@ -64,8 +64,6 @@ import {
   howItIsCalculated,
   type AnalyticalScore,
 } from '@/utils/analyticalScore';
-import { toneRules } from '@/utils/analyticsPrefs';
-import type { AnalyticsTone } from '@/services/settings';
 
 export interface SummaryProps {
   /** The score, its letter and its five parts. */
@@ -87,21 +85,6 @@ export interface SummaryProps {
    * beside it rather than in a tooltip. See utils/dataMaturity.
    */
   basis?: string | null;
-  /**
-   * How blunt the block is allowed to be about the five measures.
-   *
-   * It reorders one pair of rows, and that is now all it does. Everything
-   * stated is stated at every setting — the score, the letter, the distance to
-   * the next letter, the weakest measure and its figure — but a reader who
-   * asked for a gentle page is told what is carrying the score before what is
-   * holding it back. See utils/analyticsPrefs.
-   *
-   * It used to add a clause too: how far the weak measure was from the next
-   * grade, on the blunt page only. That is in the lead sentence now and every
-   * reader gets it, because a distance is arithmetic rather than a judgement
-   * and the gentle page is the one that needed it most.
-   */
-  tone?: AnalyticsTone;
 }
 
 /**
@@ -133,7 +116,7 @@ const MAX_ROWS = 5;
 interface Row {
   key: string;
   text: ReactNode;
-  /** The tab that shows the working. A hash is an anchor on this same tab. */
+  /** The page that shows the working. */
   href: string;
   label: string;
 }
@@ -145,10 +128,8 @@ export function Summary({
   adviceCount,
   goals,
   basis = null,
-  tone,
 }: SummaryProps) {
-  const { value, grade, weakest, strongest } = score;
-  const { leadWithStrength } = toneRules(tone);
+  const { value, grade } = score;
 
   /* No score is not a broken panel — it is a new account, and it deserves the
      same answer the banner gave it: what the score needs before it exists.
@@ -183,51 +164,17 @@ export function Summary({
             {movement.days === 1 ? ' yesterday' : <>, {movement.days} days ago</>}.
           </>
         ),
-      // Trends was this row's destination and is gone. The score over time is
-      // drawn by `ScorePanel` on this same tab, which is where the movement
-      // this row states can actually be looked at.
-      href: '#trajectory',
+      // The score over time is the Growth tab of Achievements, which is where
+      // the movement this row states can actually be looked at.
+      href: '/achievements/growth',
       label: 'See it over time',
     });
   }
 
-  /* On a gentle page, what is working comes first. Only when there is a real
-     gap between the two: five measures within a point of each other produce
-     "focus is carrying it at 61, focus is holding it back at 61", which is the
-     sentence pattern talking rather than the record. The same guard
-     `howItIsCalculated` applies, and for the same reason. */
-  const spread = strongest && weakest ? strongest.score - weakest.score : 0;
-  if (leadWithStrength && strongest && weakest && strongest.name !== weakest.name && spread >= 5) {
-    rows.push({
-      key: 'strongest',
-      text: (
-        <>
-          What is carrying it is <strong>{strongest.label.toLowerCase()}</strong>, at{' '}
-          <strong>{Math.round(strongest.score)}</strong> out of 100 — {strongest.raw}.
-        </>
-      ),
-      href: '#trajectory',
-      label: 'See all five',
-    });
-  }
-
-  if (weakest) {
-    /* How far the letter is from the next one used to be a clause here, and
-       only on the blunt page. It is in the lead sentence now, at every tone —
-       see the note there. This row is the measure alone again. */
-    rows.push({
-      key: 'weakest',
-      text: (
-        <>
-          The measure holding it back is <strong>{weakest.label.toLowerCase()}</strong>, at{' '}
-          <strong>{Math.round(weakest.score)}</strong> out of 100 — {weakest.raw}.
-        </>
-      ),
-      href: '#trajectory',
-      label: 'See all five',
-    });
-  }
-
+  /* The strongest and weakest of the five used to be two rows here. They are
+     "Biggest improvement" and "Needs attention" on the Growth tab of
+     Achievements, from the same figures, so the summary links there instead
+     of saying them twice. */
   if (topAdvice) {
     rows.push({
       key: 'advice',
@@ -310,20 +257,9 @@ export function Summary({
           {rows.slice(0, MAX_ROWS).map((row) => (
             <li key={row.key}>
               <p>{row.text}</p>
-              {/* A hash is an anchor on the tab that is already open; anything
-                  else is another tab, and `Link` keeps the router in charge of
-                  it. Two elements rather than one branch inside a `Link`,
-                  because a router link to "#trajectory" resolves against the
-                  route and navigates away from it. */}
-              {row.href.startsWith('#') ? (
-                <a className="ax-summary-more" href={row.href}>
-                  {row.label}
-                </a>
-              ) : (
-                <Link className="ax-summary-more" to={row.href}>
-                  {row.label}
-                </Link>
-              )}
+              <Link className="ax-summary-more" to={row.href}>
+                {row.label}
+              </Link>
             </li>
           ))}
         </ul>

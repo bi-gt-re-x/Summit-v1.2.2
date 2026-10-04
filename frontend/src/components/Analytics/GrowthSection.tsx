@@ -1,7 +1,7 @@
 /**
- * Growth, as a tab of the Records page.
+ * Growth, as a tab of the Achievements page.
  *
- * This was the analytics page's Growth tab. Records already answers "how far
+ * This was the analytics page's Growth tab. Achievements already answers "how far
  * have I come", so the period cards, the timeline and the milestones live
  * under it now rather than on a tab of their own beside others asking the same
  * question.

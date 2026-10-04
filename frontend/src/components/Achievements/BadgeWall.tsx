@@ -1,8 +1,8 @@
 /**
- * The badge wall — the Badges tab of the Records page.
+ * The badge wall — the Badges tab of the Achievements page.
  *
- * It was a page of its own, Achievements, and it asked the question Records
- * already asks: how far have I come. One page with three tabs now answers it,
+ * It was a page of its own and it asked the question the Records page already
+ * asked: how far have I come. The two are one page called Achievements now. One page with three tabs now answers it,
  * under one hero; this is the third tab.
  *
  * A wall of badges, arranged so that a reader meets them in the order the

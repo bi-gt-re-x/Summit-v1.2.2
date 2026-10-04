@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  CONSISTENCY_FLOOR,
   HEAVY_LOAD,
   LIGHT_LOAD,
   RECORD_FLOOR,
@@ -14,7 +13,6 @@ const base: KnowsInput = {
   finished: 40,
   activeDays: 10,
   spanDays: 90,
-  windowDays: 30,
   subjects: [
     { name: 'Mathematics', count: 20 },
     { name: 'Computer Science', count: 12 },
@@ -47,28 +45,11 @@ describe('workload', () => {
 });
 
 describe('consistency', () => {
-  it('counts worked days against every day in the window', () => {
-    expect(textOf('consistency')).toBe('You have worked on 10 of the last 30 days.');
-  });
-
-  it('needs a window worth describing', () => {
-    expect(keys({ windowDays: CONSISTENCY_FLOOR - 1 })).not.toContain('consistency');
-  });
-
-  it('stays quiet on a record with no worked days', () => {
-    expect(keys({ activeDays: 0 })).not.toContain('consistency');
-  });
-});
-
-describe('the two day-count lines do not say the same thing twice', () => {
-  it('drops consistency when the window covers the whole record', () => {
-    /* "using Summit for 30 days, worked on 10" over "worked on 10 of the last
-       30 days" is one sentence with two headings. */
-    expect(keys({ spanDays: 30, windowDays: 30 })).not.toContain('consistency');
-  });
-
-  it('keeps it when the window is a shorter, more recent slice', () => {
-    expect(keys({ spanDays: 90, windowDays: 30 })).toContain('consistency');
+  it('is never stated, because the tile already prints it', () => {
+    expect(keys()).not.toContain('consistency');
+    whatSummitKnows(base).forEach((fact) => {
+      expect(fact.text).not.toMatch(/worked on/);
+    });
   });
 });
 
@@ -138,14 +119,8 @@ describe('current focus', () => {
 });
 
 describe('record', () => {
-  it('says how long the account has been going and how much of it was worked', () => {
-    expect(textOf('record')).toBe('You have been using Summit for 90 days, and worked on 10 of them.');
-  });
-
-  it('says so differently when no day was missed', () => {
-    expect(textOf('record', { activeDays: 12, spanDays: 12 })).toBe(
-      'You have worked on every one of your 12 days with Summit.',
-    );
+  it('says how long the account has been going, and not how much was worked', () => {
+    expect(textOf('record')).toBe('You have been using Summit for 90 days.');
   });
 
   it('leads, because it is the length of the record the rest are rates of', () => {
@@ -168,7 +143,6 @@ describe('the section as a whole', () => {
         finished: 1,
         activeDays: 1,
         spanDays: 1,
-        windowDays: 1,
         subjects: [{ name: 'Mathematics', count: 1 }],
         recentTop: null,
       }),
@@ -212,7 +186,7 @@ describe('the advice turns on the figure', () => {
     const held = adviceOf('record', { activeDays: 90, spanDays: 90 });
     const patchy = adviceOf('record', { activeDays: 30, spanDays: 90 });
     expect(held).toMatch(/not your problem/i);
-    expect(patchy).toMatch(/60 days went by unworked/);
+    expect(patchy).toMatch(/patchy/);
   });
 
   it('reads a dominant subject and a scattered week differently', () => {

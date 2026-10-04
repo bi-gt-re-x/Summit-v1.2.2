@@ -1915,26 +1915,6 @@ body:has(.ax-page) .app-main {
     color: var(--ax-faint);
 }
 
-/* The score panel with fewer than two recorded readings. Sits where the chart
-   would be, at about the chart's height, so the panel does not jump when the
-   line arrives. */
-/* Stands in for the 130px score chart, and is that tall — an account on its
-   second reading should see the panel it already had, with a line in it. */
-.ax-score-nohistory {
-    display: grid;
-    place-items: center;
-    min-height: 130px;
-    margin: var(--space-2) 0 0;
-    padding: var(--space-4);
-    border: 1px dashed var(--ax-line);
-    border-radius: var(--radius-md);
-    background: var(--ax-card-2);
-    font-size: var(--text-sm);
-    line-height: 1.55;
-    text-align: center;
-    color: var(--ax-muted);
-}
-
 /* ---------- The hero -------------------------------------------------------
    The title row and the tab bar, in one card, over a range.
 
@@ -2338,8 +2318,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    squares, and a square stretched to fill a panel is no longer a square. It
    claims the height and centres inside it instead. */
 .ax-panel > .ax-insights,
-.ax-panel > .ax-timeline,
-.ax-panel > .ax-streaks {
+.ax-panel > .ax-timeline {
     flex: 1 1 auto;
     justify-content: space-evenly;
 }
@@ -2925,45 +2904,8 @@ html[data-theme="dark"] .ax-page .peak-hero,
     opacity: .42;
 }
 
-/* ---------- Growth score -------------------------------------------------- */
-.ax-score-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
-}
-.ax-score-head p { margin: 2px 0 var(--space-1); font-size: var(--text-xs); }
-
-.ax-score-value {
-    font-size: var(--text-3xl);
-    font-weight: 700;
-    letter-spacing: -.025em;
-}
-
-/* ---------- The score's five factors -------------------------------------- */
-/* One row per report-card metric: what it is, how far along it is, what it was
-   measured at, and what it puts into the ten. The contribution is on the right
-   because that is the column that adds up to the figure above the list. */
-.ax-factors {
-    list-style: none;
-    margin: var(--space-3) 0 var(--space-1);
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-}
-
-.ax-factor {
-    display: grid;
-    grid-template-columns: 66px minmax(0, 1fr) auto;
-    align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-2xs);
-}
-
-.ax-factor-label { color: var(--ax-text); font-weight: 600; }
-
+/* ---------- Factor bars -------------------------------------------------- */
+/* The track and fill under each quality reason. */
 .ax-factor-track {
     height: 5px;
     border-radius: var(--radius-full);
@@ -2977,25 +2919,6 @@ html[data-theme="dark"] .ax-page .peak-hero,
     background: var(--ax-violet);
     transform-origin: left;
     animation: ax-grow-x .55s cubic-bezier(.22, .68, .3, 1) .18s both;
-}
-
-.ax-factor-raw {
-    grid-column: 2;
-    grid-row: 2;
-    font-size: var(--text-2xs);
-    color: var(--ax-faint);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.ax-factor-score {
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    font-size: var(--text-xs);
-    font-weight: 600;
-    color: var(--ax-muted);
-    font-variant-numeric: tabular-nums;
 }
 
 @keyframes ax-grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
@@ -3269,33 +3192,6 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-figure .ax-muted { font-size: var(--text-2xs); }
 .ax-figure strong { font-size: var(--text-xl); font-weight: 700; letter-spacing: -.02em; }
-
-/* ---------- Streaks ------------------------------------------------------- */
-.ax-streaks {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-2);
-    margin-top: var(--space-2);
-}
-
-.ax-streak,
-.ax-best-month {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    text-align: center;
-    padding: var(--space-4) var(--space-2);
-    border-radius: var(--radius-md);
-    background: var(--ax-card-2);
-    border: 1px solid var(--ax-line);
-}
-.ax-best-month { margin-top: var(--space-2); }
-.ax-streak .ax-muted,
-.ax-best-month .ax-muted { font-size: var(--text-2xs); }
-.ax-streak strong { font-size: var(--text-lg); font-weight: 700; }
-.ax-best-month strong { font-size: var(--text-lg); font-weight: 700; }
-.ax-streak-icon { font-size: var(--text-xl); line-height: 1.2; }
 
 /* ---------- Insights ------------------------------------------------------ */
 .ax-insights {

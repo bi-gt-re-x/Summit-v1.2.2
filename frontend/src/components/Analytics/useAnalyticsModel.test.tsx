@@ -252,14 +252,6 @@ describe('the score', () => {
     // they are one calculation shown twice. Ten times one is the other.
     expect(result.current.analytical.value).toBeCloseTo(result.current.score! * 10, 0);
   });
-
-  it('draws its line from its own readings and nothing else', () => {
-    const { result } = drive();
-    expect(result.current.scoreLine).toHaveLength(seedScoreLog().length);
-    expect(result.current.scoreDates).toHaveLength(seedScoreLog().length);
-    // Recorded out of 100 and drawn out of 10.
-    expect(result.current.scoreLine[0]).toBeCloseTo(5.8, 5);
-  });
 });
 
 describe('the tasks', () => {

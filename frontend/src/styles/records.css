@@ -1,5 +1,5 @@
 /* ==========================================================================
-   records.css — the hall of fame. See src/pages/Records.tsx.
+   records.css — the hall of fame. See src/pages/Achievements.tsx.
 
    The page has two halves and the difference between them is drawn rather than
    only labelled: what you logged is cards and colour, because it is meant to
@@ -241,7 +241,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 
 /* ---------- The four stories ---------------------------------------------- */
 /* These were four counts and are now four things that happened — see the note
-   in Records.tsx. The shape changed with them: a count is one number and a
+   in Achievements.tsx. The shape changed with them: a count is one number and a
    story is a number with a subject, so the tile is taller and the line under
    the label names the record it came from. */
 .rc-tiles {
@@ -471,7 +471,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-best-label { margin-bottom: var(--space-2); font-size: var(--text-xs); color: var(--rc-faint); }
 /* ---------- The card's own evolution --------------------------------------
    The sparkline plots goodness rather than magnitude, so a record measured
-   downward still climbs — the reason is in Records.tsx, above `Spark`. Drawn
+   downward still climbs — the reason is in Achievements.tsx, above `Spark`. Drawn
    with preserveAspectRatio="none" because the shape is the message and the
    aspect is whatever the card is wide. */
 .rc-spark {
@@ -533,7 +533,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    These filtered a "Category records" section that listed the same bests a
    second time under their headings. The section is gone and the chips moved
    into the personal-bests header, which is what they were always filtering —
-   see Records.tsx. The grid of category cards went with it. */
+   see Achievements.tsx. The grid of category cards went with it. */
 .rc-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .rc-chip {
     padding: var(--space-2) var(--space-3);
@@ -880,13 +880,13 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    wraps onto a line of its own. */
 .rc-miles .rc-key-head {
     /* Caret, heading, count. The tick that used to sit between the first two
-       is gone with the claim it was making — see `GroupRow` in Records.tsx. */
+       is gone with the claim it was making — see `GroupRow` in Achievements.tsx. */
     grid-template-columns: 14px minmax(0, 1fr) auto;
     gap: var(--space-2);
 }
 /* The heading of a group, drawn as a heading. It carried a tick in the
    milestone column and read as an achievement of its own — see `GroupRow` in
-   Records.tsx. Uppercase and small: the things under it are the milestones,
+   Achievements.tsx. Uppercase and small: the things under it are the milestones,
    and this is the drawer they are in. */
 .rc-key-name {
     overflow: hidden;
@@ -939,7 +939,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-ev-line { fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 .rc-ev-dot { fill: var(--rc-card); stroke: currentColor; stroke-width: 2.5; }
 /* The best entry, which is not always the last one — see `Evolution` in
-   Records.tsx. Gold, because it is the same event the timeline and the dialog
+   Achievements.tsx. Gold, because it is the same event the timeline and the dialog
    draw in gold: this is where the record was set. */
 .rc-ev-dot.is-best {
     fill: var(--rc-gold);
@@ -966,7 +966,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 /* ---------- The history toolbar --------------------------------------------
    Search, category and order, on one strip above the timeline. This was a
    boxed panel of three labelled fields with a second copy of the timeline
-   under it, taking a full section of the page — see the note in Records.tsx.
+   under it, taking a full section of the page — see the note in Achievements.tsx.
    Necessary once there are a hundred entries, and not what anybody came here
    for, so it is a strip: no card, no field labels, and each control says what
    it is in its own text. */
@@ -1220,7 +1220,7 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
    I chase next", which is the Goals page's question asked on a page about
    where you have been, so it reads as a footnote to the section above it: no
    card of its own, a hairline between rows, and a track two pixels thinner
-   than the ones that carry real progress elsewhere. See Records.tsx. */
+   than the ones that carry real progress elsewhere. See Achievements.tsx. */
 .rc-chases.is-quiet { gap: 0; }
 .rc-chases.is-quiet .rc-chase {
     padding: var(--space-3) 2px;

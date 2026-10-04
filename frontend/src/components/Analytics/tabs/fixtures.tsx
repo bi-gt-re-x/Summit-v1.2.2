@@ -215,8 +215,6 @@ export function matureOverview() {
     rhythmRate: { rate: 0.5, previousRate: 0.4, bestMonth: null },
     card: { value: 8, factors: [] },
     score: 8,
-    scoreLine: [],
-    scoreMarks: [],
     heatRows: [],
     sparks: { xp: [], tasks: [], focusHours: [], consistency: [], quality: [] },
     ratingRows: [],

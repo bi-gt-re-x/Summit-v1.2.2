@@ -1284,7 +1284,7 @@ export default function Settings() {
       },
       {
         id: 'records',
-        label: 'Records',
+        label: 'Personal bests',
         group: 'Productivity',
         items: [
           {

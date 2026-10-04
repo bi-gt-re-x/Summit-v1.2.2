@@ -149,10 +149,7 @@ function BalanceReading({ balance }: { balance: BalanceShape }) {
 // Consistency
 // --------------------------------------------------------------------------
 export interface ConsistencyPanelProps {
-  rate: number;
-  previousRate: number | null;
   rows: HeatRow[];
-  compareLabel: string;
 }
 
 /**
@@ -162,24 +159,15 @@ export interface ConsistencyPanelProps {
  * case for the window and blanks any square outside it — so the rectangle is
  * the same rectangle whatever weekday the window opens on. That constancy is
  * why the panel can sit in a fixed-height row without the layout moving.
+ *
+ * No rate in the title line. The share of days worked is the Consistency tile
+ * at the top of the tab, and this used to print it a second time; the calendar
+ * is the part only this panel can show.
  */
-export function ConsistencyPanel({ rate, previousRate, rows, compareLabel }: ConsistencyPanelProps) {
-  const delta =
-    previousRate === null || previousRate === 0 ? null : Math.round(rate - previousRate);
-
+export function ConsistencyPanel({ rows }: ConsistencyPanelProps) {
   return (
     <Panel
       title="Consistency Over Time"
-      claim={
-        <>
-          You worked on <strong>{rate}%</strong> of days
-          {delta === null
-            ? '.'
-            : delta === 0
-              ? `, unchanged ${compareLabel}.`
-              : `, ${delta > 0 ? 'up' : 'down'} ${Math.abs(delta)} points ${compareLabel}.`}
-        </>
-      }
       footer={
         <PanelNote label="What moves this">
           The share of days with <strong>any</strong> work on them. A fifteen-minute day and a
@@ -208,7 +196,7 @@ export function ConsistencyPanel({ rate, previousRate, rows, compareLabel }: Con
               <span key={index}>{row.label.slice(0, 1)}</span>
             ))}
           </div>
-          <div className="ax-heat-grid" role="img" aria-label={`${rate}% of days worked`}>
+          <div className="ax-heat-grid" role="img" aria-label="Days worked, one square a day">
             {rows.map((row, index) => (
               <div className="ax-heat-week" key={index}>
                 {row.days.map((cell, cellIndex) => (

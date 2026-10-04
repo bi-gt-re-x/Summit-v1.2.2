@@ -34,9 +34,10 @@ GATED_PATHS = ('/dashboard', '/calendar', '/goals', '/growth', '/analytics',
                # goal, and banks more of them.
                '/timer',
                # Both read the account's own record: settings is what it has
-               # chosen, the badges are what it has earned. /achievements is
-               # the badge wall's old address and redirects to the Records tab.
-               '/settings', '/achievements', '/records/growth', '/records/badges',
+               # chosen, the badges are what it has earned. The /records paths
+               # are the Achievements page's old addresses and redirect to it.
+               '/settings', '/achievements', '/achievements/growth', '/achievements/badges',
+               '/records', '/records/growth', '/records/badges',
                # The calendar's three views are three URLs now, and each of
                # them shows the account's own week as plainly as /calendar did.
                '/calendar/day', '/calendar/week', '/calendar/month')

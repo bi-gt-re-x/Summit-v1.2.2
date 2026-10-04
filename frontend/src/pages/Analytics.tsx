@@ -516,10 +516,9 @@ export default function Analytics() {
            arithmetic over an empty record, and on day nine it is a verdict
            passed on somebody the app has barely met.
            
-           Suppressed for the same three stages that hold `ScorePanel` and
-           `StandingPanel` back on the tab itself, so the grade, its chart and
-           its percentile all arrive together rather than one of them turning
-           up a week before the other two. The tab's own opening below a
+           Suppressed for the same stages that hold the quality panels back on
+           the tab itself, so the grade does not turn up a week before the
+           readings it is graded on. The tab's own opening below a
            fortnight is `Collecting` or `StageNote`, which say the true thing
            instead. See utils/dataMaturity. */
         if (!stageShows(maturity.stage).judgement) return null;
@@ -531,9 +530,6 @@ export default function Analytics() {
           <Summary
             score={analytical}
             movement={scoreMovement(recorded)}
-            /* Reorders one pair of rows and adds one clause — see the prop's
-               own note. No figure in the block changes with it. */
-            tone={model.tone}
             topAdvice={advice[0]?.title ?? null}
             adviceCount={advice.length}
             /* What it is read from, until "enough" is the honest answer. The

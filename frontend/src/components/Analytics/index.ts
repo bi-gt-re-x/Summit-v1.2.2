@@ -10,18 +10,14 @@
  * The graded report card that used to be this page is gone. `GradeCard` and
  * `MetricRow` were kept for a while on the argument that they were the only
  * thing explaining how a score is arrived at — but nothing rendered them, and
- * that explanation had already moved to `ScoringDetails`, which the Trajectory
- * panel opens in place. Two files nobody could reach, justified by a job
- * something else was doing. `metrics.ts` stays for `gradeClass`, which
+ * that explanation lives on the Growth tab of Achievements now. Two files
+ * nobody could reach, justified by a job something else was doing. `metrics.ts` stays for `gradeClass`, which
  * `Summary` colours the letter with.
  *
  * `ScoreBanner` went the same way for the same reason. It opened the Overview
  * with the score, its letter, two paragraphs of derivation and five labelled
- * bars — and the bars were the same five measures `ScorePanel` draws a few
- * rows further down, on the same tab, from a second implementation of the same
- * arithmetic (`./score` scores them out of ten, `utils/analyticalScore` out of
- * a hundred). One row of bars is enough, and the one that sits with the chart
- * of the score over time is the one that earns its place. `Summary` took the
+ * bars — the same five measures the Growth tab of Achievements draws. One row
+ * of bars is enough, and it lives with the score over time. `Summary` took the
  * slot, kept the derivation behind a disclosure, and left the bars behind.
  */
 export { Summary } from './Summary';
@@ -111,14 +107,13 @@ export type { TilesProps } from './Tiles';
 export { DepthPicker, QualityPanel, QualityGridPanel } from './Quality';
 export type { DepthPickerProps, QualityPanelProps, QualityGridPanelProps } from './Quality';
 
-export { Trajectory, ScorePanel } from './Trajectory';
-export type { TrajectoryProps, ScorePanelProps } from './Trajectory';
+export { Trajectory } from './Trajectory';
+export type { TrajectoryProps } from './Trajectory';
 
 export { SubjectPanel, ConsistencyPanel } from './Breakdown';
 export type { SubjectPanelProps, ConsistencyPanelProps } from './Breakdown';
 
-export { StreaksPanel, InsightsPanel } from './Longterm';
-export type { StreaksPanelProps } from './Longterm';
+export { InsightsPanel } from './Longterm';
 
 export {
   AreaChart,
@@ -150,7 +145,6 @@ export {
 export type { GrowthScore, ScoreFactor } from './score';
 
 // The report card, no longer rendered. See the note at the top.
-export { ScoringDetails } from './ScoringDetails';
 export { gradeClass } from './metrics';
 
 /**

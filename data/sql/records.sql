@@ -1,6 +1,6 @@
 -- records — the account's hall of fame, in its own words.
 --
--- Built: backend/api/records.py serves it and frontend/src/pages/Records.tsx
+-- Built: backend/api/records.py serves it and frontend/src/pages/Achievements.tsx
 -- draws it.
 --
 -- ## Why this table exists at all

@@ -86,8 +86,6 @@ export interface KnowsInput {
    * in between were not held against them.
    */
   spanDays: number;
-  /** Every day in the window, worked or not. The consistency denominator. */
-  windowDays: number;
   /**
    * The subject split. `name` is what the reader called it, never an id.
    *
@@ -123,9 +121,6 @@ export const WORKLOAD_FLOOR = 2;
  */
 export const RECORD_FLOOR = 5;
 
-/** Below this the rate is a fortnight's mood rather than a habit. */
-export const CONSISTENCY_FLOOR = 7;
-
 /**
  * A share is only a finding when there was something to share it with. One
  * subject at 100% says nothing about the reader and everything about the fact
@@ -154,9 +149,6 @@ export const HELD_RATIO = 0.9;
 export const HEAVY_LOAD = 8;
 export const LIGHT_LOAD = 3;
 
-/** Turning up is handled at four days in five; below two in five it is not. */
-export const STEADY_RATE = 0.8;
-export const THIN_RATE = 0.4;
 
 /**
  * When one subject owns the account, and when none does.
@@ -171,20 +163,21 @@ export const DOMINANT_SHARE = 50;
 export const SCATTERED_SHARE = 25;
 
 export function whatSummitKnows(input: KnowsInput): Knowledge[] {
-  const { finished, activeDays, spanDays, windowDays, subjects, recentTop } = input;
+  const { finished, activeDays, spanDays, subjects, recentTop } = input;
   const found: Knowledge[] = [];
 
   /* First, because it frames every figure under it: the others are rates and
-     shares, and this is the length of the record they are rates of. */
+     shares, and this is the length of the record they are rates of.
+
+     The length only. How many of those days were worked is the consistency
+     tile's figure, and the page prints it there and nowhere else — the advice
+     below still turns on it, it just does not repeat it. */
   if (spanDays >= RECORD_FLOOR && activeDays > 0) {
     const held = activeDays / spanDays;
     found.push({
       key: 'record',
       heading: 'Record',
-      text:
-        activeDays >= spanDays
-          ? `You have worked on every one of your ${spanDays} days with Summit.`
-          : `You have been using Summit for ${spanDays} days, and worked on ${activeDays} of them.`,
+      text: `You have been using Summit for ${spanDays} days.`,
       /* An unbroken record is the one case where the useful advice is to stop
          protecting it: a reader who has not missed a day in three years is
          being held back by the safe day they take to keep the run alive, not
@@ -192,7 +185,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       advice:
         held >= HELD_RATIO
           ? 'Turning up is not your problem, so stop spending effort on it. Put a day into something hard enough that it might not go well.'
-          : `The record is patchy rather than short — ${spanDays - activeDays} days went by unworked. Pick the one day of the week you miss most and defend that day only.`,
+          : 'The record is patchy rather than short. Pick the one day of the week you miss most and defend that day only.',
     });
   }
 
@@ -211,28 +204,6 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
           : perDay < LIGHT_LOAD
             ? 'A short list is fine when it is the right list. Add one task you are not sure you can finish rather than three you are.'
             : 'That is a list you can actually finish, so leave the size alone. The gain left is in which tasks make it on.',
-    });
-  }
-
-  /* Dropped when the record line above has already said it. A window that
-     covers the whole record makes these the same sentence with two headings —
-     "using Summit for 95 days, and worked on 31 of them" over "you have worked
-     on 31 of the last 96 days" — which reads as the section padding itself
-     out. The consistency line earns its place only when the window is a
-     shorter, more recent slice than the record as a whole. */
-  const saidAlready = found.some((fact) => fact.key === 'record') && windowDays >= spanDays;
-
-  if (windowDays >= CONSISTENCY_FLOOR && activeDays > 0 && !saidAlready) {
-    found.push({
-      key: 'consistency',
-      heading: 'Consistency',
-      text: `You have worked on ${activeDays} of the last ${windowDays} days.`,
-      advice:
-        activeDays / windowDays >= STEADY_RATE
-          ? 'Showing up is handled. Stop counting days and start asking what is in them.'
-          : activeDays / windowDays < THIN_RATE
-            ? 'Most of that window went unrecorded, so an average is not the thing to chase. Fix three days of the week and let the rest fall where they fall.'
-            : 'One more day a week is the cheapest gain on this page — it costs a single session and moves every rate above.',
     });
   }
 

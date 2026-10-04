@@ -56,7 +56,6 @@ import { useSettings } from '@/hooks';
 import {
   consistency,
   sliceWindow,
-  pointLabel,
   spanLabel,
   windowOption,
   type Grain,
@@ -285,27 +284,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
    * hundred — so they cannot disagree. See utils/analyticalScore.
    */
   const analytical = useMemo(() => analyticalScore(ratings.data ?? null), [ratings.data]);
-  /**
-   * The score's line: its own recorded readings, and nothing else.
-   *
-   * This used to fall back to `scoreHistory` — a generated climb with the real
-   * score pinned on the last point — on the grounds that a panel titled "over
-   * time" with one point in it is worse than one with a shape. It is not. That
-   * curve was the last invented figure on the page, and it sat on the one tab
-   * that never wore a chip, which made it the least honest thing here rather
-   * than the most forgivable. An account with fewer than two readings gets no
-   * line and a sentence saying why; see `ScorePanel`.
-   */
+  /** The score's own recorded readings — what `scoreMovement` reads. */
   const recorded = scoreLog.data?.points ?? [];
-  const scoreLine = useMemo(() => recorded.map((point) => point.score / 10), [recorded]);
-  const scoreMarks = useMemo(
-    () => (recorded.length >= 2 ? ['First reading', '', '', 'Now'] : []),
-    [recorded],
-  );
-  /* When each reading was taken, for the chart's readout. `scoreMarks` cannot
-     serve: it is four labels for however many readings there are, two of them
-     deliberately blank. See `dates` on `ScorePanelProps`. */
-  const scoreDates = useMemo(() => recorded.map((point) => pointLabel(point.date)), [recorded]);
 
 
   const breakdown = useMemo(
@@ -961,9 +941,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
      *  a downloaded file full of dashes is worse than no file. */
     hasReportCard: ratings.data !== null,
     recorded,
-    scoreLine,
-    scoreDates,
-    scoreMarks,
     breakdown,
     previousBySubject,
 

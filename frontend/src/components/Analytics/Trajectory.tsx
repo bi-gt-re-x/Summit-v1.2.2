@@ -1,14 +1,11 @@
 /**
- * The big chart, and the score panel beside it.
+ * The big chart: the account's history, this period against the last.
  *
- * Two panels rather than one because they answer different questions: the
- * trajectory is the account's history and the score is where that history has
- * got it to. Both are the account's own arithmetic — the one thing on either
- * that is not is the score line's *shape*, which is generated because no
- * endpoint reads the score's history back yet, and the note under it says so.
+ * The growth score panel that sat beside it is gone. The score over time, its
+ * five parts and how it is worked out are the Growth tab of Achievements, and
+ * this row was the same answer a second time.
  */
-import { AreaChart, Delta, Panel, PanelNote, toneVar } from './charts';
-import { ScoringDetails } from './ScoringDetails';
+import { AreaChart, Panel, toneVar } from './charts';
 import {
   METRICS,
   axisMarks,
@@ -20,7 +17,6 @@ import {
   type Grain,
   type MetricKey,
 } from './data';
-import type { ScoreFactor } from './score';
 import { compact } from '@/utils/growthSummary';
 import type { GrowthDay } from '@/types';
 
@@ -156,120 +152,6 @@ export function Trajectory({
           </span>
         )}
       </div>
-    </Panel>
-  );
-}
-
-// --------------------------------------------------------------------------
-// Growth score
-// --------------------------------------------------------------------------
-export interface ScorePanelProps {
-  score: number | null;
-  /** The five metrics the score is the mean of. See ./score. */
-  factors: ScoreFactor[];
-  series: number[];
-  marks: string[];
-  /**
-   * When each reading was taken, one per point of `series`.
-   *
-   * Separate from `marks`, which is four labels for however many readings there
-   * are — "First reading", two blanks, "Now". That is the right x axis for a
-   * line whose points are irregular visits, and it is useless to a readout: a
-   * reader pointing at the fourth of nine readings is told the empty string.
-   */
-  dates: string[];
-}
-
-/**
- * The score and the five parts it is made of.
- *
- * The parts are on the panel rather than behind the "how it's calculated" link
- * because a single figure out of ten is not actionable: 6.5 says nothing about
- * *which* of the five is holding it there, and the reader's next question is
- * always which one to go and work on. Printed with the measured quantity beside
- * each — "22/30 days active", not "Consistency 73" — since the score is the
- * abstraction and the measurement is the thing they can change.
- */
-export function ScorePanel({
-  score,
-  factors,
-  series,
-  marks,
-  dates,
-}: ScorePanelProps) {
-  return (
-    <Panel
-      title="Growth Score Over Time"
-      /* `ScoringDetails` was written for this and then never mounted anywhere —
-         exported, documented, orphaned. It is the honest destination for this
-         footer, and opening it in place beats sending a reader to a page that
-         would only hold the same five paragraphs. */
-      footer={
-        <PanelNote label="How this is calculated">
-          <ScoringDetails />
-        </PanelNote>
-      }
-    >
-      <div className="ax-score-head">
-        <div>
-          <strong className="ax-score-value">
-            {score === null ? '—' : score.toFixed(1)}
-            <em className="ax-tile-unit">/10</em>
-          </strong>
-          <p className="ax-muted">Your current growth score</p>
-          <Delta value={null} suffix="" />
-        </div>
-      </div>
-
-      {factors.length > 0 && (
-        <ul className="ax-factors">
-          {factors.map((factor) => (
-            <li className="ax-factor" key={factor.name}>
-              <span className="ax-factor-label">{factor.label}</span>
-              <span className="ax-factor-track">
-                <i style={{ width: `${Math.max(0, Math.min(100, factor.score))}%` }} />
-              </span>
-              <span className="ax-factor-raw">{factor.raw}</span>
-              <span className="ax-factor-score">
-                +{factor.contribution.toFixed(1)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* Two readings or none. This panel used to draw a generated climb when
-          the account had no recorded history — a plausible curve with the real
-          score pinned on its last point, disclaimed in the sentence below. It
-          was the last invented figure on the page and it lived on the one tab
-          that never carried a Sample chip, which made it the easiest thing here
-          to mistake for a measurement. A panel titled "over time" with nothing
-          to draw now says that, which is shorter and true. */}
-      {series.length >= 2 ? (
-        <AreaChart
-          id="ax-score"
-          height={130}
-          label="Your growth score at each reading, out of ten"
-          readout={{
-            labels: dates,
-            names: ['Growth score'],
-            format: (value) => `${value.toFixed(1)} out of 10`,
-          }}
-          series={[{ values: series, tone: 'violet' }]}
-          ticks={['10', '8', '6', '4', '2', '0']}
-          marks={marks}
-        />
-      ) : (
-        <p className="ax-score-nohistory">
-          No trend yet. Your score is saved each time you open this page, and a trend needs at least
-          two.
-        </p>
-      )}
-
-      <p className="ax-panel-note ax-panel-note-foot">
-        The mean of the five report-card metrics, each worth up to 2.0 of the ten.
-        {series.length >= 2 && ' Each point is a reading taken when you opened this page.'}
-      </p>
     </Panel>
   );
 }

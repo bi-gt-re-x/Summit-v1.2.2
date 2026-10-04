@@ -1,5 +1,6 @@
 /**
- * The long view: where the pace leads and what it has already reached.
+ * The findings panel. The streaks panel that lived here went to Achievements,
+ * where the personal bests already held the longest streak.
  *
  * It used to open with a grouped-bar `ComparisonPanel` — "This period against
  * the last" — which was the same question the Trends tab's `ComparePanel`
@@ -11,49 +12,6 @@ import type { CSSProperties } from 'react';
 import { Panel } from './charts';
 import { GLYPHS, type GlyphName } from './glyphs';
 import type { Insight } from '@/utils/growthSummary';
-import { Icon } from '@/components/Icon';
-
-// --------------------------------------------------------------------------
-// Compounding
-// --------------------------------------------------------------------------
-// --------------------------------------------------------------------------
-// Streaks
-// --------------------------------------------------------------------------
-export interface StreaksPanelProps {
-  current: number;
-  best: number;
-  bestMonth: { label: string; rate: number } | null;
-}
-
-export function StreaksPanel({ current, best, bestMonth }: StreaksPanelProps) {
-  return (
-    <Panel title="Longest Streaks">
-      <div className="ax-streaks">
-        <div className="ax-streak">
-          <span className="ax-streak-icon" aria-hidden="true">
-            <Icon name="flame" />
-          </span>
-          <span className="ax-muted">Current Streak</span>
-          <strong>{current} days</strong>
-        </div>
-        <div className="ax-streak">
-          <span className="ax-streak-icon" aria-hidden="true">
-            <Icon name="trophy" />
-          </span>
-          <span className="ax-muted">Longest Streak</span>
-          <strong>{best} days</strong>
-        </div>
-      </div>
-      {bestMonth && (
-        <div className="ax-best-month">
-          <span className="ax-muted">Most Consistent Month</span>
-          <strong>{bestMonth.label}</strong>
-          <span className="ax-muted ax-small">{bestMonth.rate}% consistency</span>
-        </div>
-      )}
-    </Panel>
-  );
-}
 
 // --------------------------------------------------------------------------
 // Insights

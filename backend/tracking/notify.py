@@ -480,7 +480,7 @@ def _progress_candidates(user, facts):
             'tone': 'good',
             'title': 'Badge earned: {}'.format(badge.get('name') or badge['id']),
             'body': badge.get('description') or '',
-            'link': '/records/badges',
+            'link': '/achievements/badges',
         })
 
     for record in facts['records']:
@@ -494,7 +494,7 @@ def _progress_candidates(user, facts):
                 float(value or 0),
                 ' ' + record['unit'] if record.get('unit') else '',
                 ', on {}'.format(record['achieved_on']) if record.get('achieved_on') else ''),
-            'link': '/records',
+            'link': '/achievements',
         })
     return out
 

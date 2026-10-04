@@ -34,7 +34,7 @@ const SubjectAnalytics = lazy(() => import('@/pages/SubjectAnalytics'));
 const SkillTrees = lazy(() => import('@/pages/SkillTrees'));
 const Notes = lazy(() => import('@/pages/Notes'));
 const Timer = lazy(() => import('@/pages/Timer'));
-const Records = lazy(() => import('@/pages/Records'));
+const Achievements = lazy(() => import('@/pages/Achievements'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const AboutUs = lazy(() => import('@/pages/AboutUs'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
@@ -255,13 +255,13 @@ export default function App() {
               {/* Tabs that were cut. Each had its own URL for long enough to be
                   bookmarked, so each redirects to where its content went:
                   Insights to the Overview, Goals to the goals page, Growth to
-                  the Records page. See VIEWS in components/Analytics/Header. */}
+                  the Achievements page. See VIEWS in components/Analytics/Header. */}
               <Route path="/insights" element={<Navigate to="/analytics" replace />} />
               <Route path="/habits" element={<Navigate to="/analytics" replace />} />
               <Route path="/analytics/goals" element={<Navigate to="/goals" replace />} />
               <Route path="/trends" element={<Navigate to="/goals" replace />} />
-              <Route path="/analytics/growth" element={<Navigate to="/records/growth" replace />} />
-              <Route path="/analytics/records" element={<Navigate to="/records/growth" replace />} />
+              <Route path="/analytics/growth" element={<Navigate to="/achievements/growth" replace />} />
+              <Route path="/analytics/records" element={<Navigate to="/achievements/growth" replace />} />
               {/* One subject, on its own — a page rather than an eighth tab.
                   There is one of these per subject the account follows, and a
                   tab bar whose shape depends on a wizard answer is a tab bar
@@ -285,13 +285,16 @@ export default function App() {
               <Route path="/notes" element={<Notes />} />
               <Route path="/timer" element={<Timer />} />
               {/* One page, three tabs: personal bests, growth, and the badge
-                  wall that used to be /achievements. */}
-              <Route path="/records" element={<Records />} />
-              <Route path="/records/growth" element={<Records />} />
-              <Route path="/records/badges" element={<Records />} />
+                  wall. It was called Records until the badges' own name
+                  took over, so the /records paths redirect. */}
+              <Route path="/achievements" element={<Achievements />} />
+              <Route path="/achievements/growth" element={<Achievements />} />
+              <Route path="/achievements/badges" element={<Achievements />} />
+              <Route path="/records" element={<Navigate to="/achievements" replace />} />
+              <Route path="/records/growth" element={<Navigate to="/achievements/growth" replace />} />
+              <Route path="/records/badges" element={<Navigate to="/achievements/badges" replace />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/settings/:section" element={<Settings />} />
-              <Route path="/achievements" element={<Navigate to="/records/badges" replace />} />
               <Route path="/growth-tree" element={<Navigate to="/skill-trees" replace />} />
               <Route path="/calendar" element={<CalendarHome />} />
               <Route path="/calendar/day" element={<CalendarDay />} />

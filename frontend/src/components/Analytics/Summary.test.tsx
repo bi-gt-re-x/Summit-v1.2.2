@@ -97,29 +97,29 @@ describe('the distance to the next grade', () => {
   });
 });
 
-describe('and it does not depend on tone', () => {
-  /* The point of the change. A reader on the gentle page is the one most in
-     need of being shown a reachable next rung, and was the one not shown it. */
-  it.each(['gentle', 'balanced', 'harsh'] as const)('is shown at %s tone', (tone) => {
-    show({ score: scoreOf(62, 'D'), tone });
-    expect(nextClause()).toMatch(/0\.8 to C/);
-  });
-
-  it.each(['gentle', 'balanced', 'harsh'] as const)('is shown once at %s tone', (tone) => {
-    /* It moved out of the weakest row rather than being copied into the lead.
-       Printed in both places the panel says the same arithmetic twice. */
-    show({ score: scoreOf(62, 'D'), tone });
+describe('and the five measures stay on Achievements', () => {
+  it('is shown once', () => {
+    show({ score: scoreOf(62, 'D') });
     expect(clauseCount()).toBe(1);
-    // And specifically not back on the row it came off.
-    const row = screen.getByText(/measure holding it back/i);
-    expect(row.textContent).not.toMatch(/\d to [A-S]/);
   });
 
-  it('leaves the weakest measure named in its own row', () => {
-    show({ score: scoreOf(62, 'D'), tone: 'balanced' });
-    const row = screen.getByText(/measure holding it back/i);
-    expect(row.textContent).toMatch(/consistency/i);
-    expect(row.textContent).toMatch(/40/);
+  it('does not name the strongest or weakest measure', () => {
+    /* Those are "Biggest improvement" and "Needs attention" on the Growth
+       tab of Achievements. */
+    show({ score: scoreOf(62, 'D') });
+    expect(screen.queryByText(/measure holding it back/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/what is carrying it/i)).not.toBeInTheDocument();
+  });
+
+  it('sends "see it over time" to the Growth tab', () => {
+    show({
+      score: scoreOf(62, 'D'),
+      movement: { now: 62, previous: 60, days: 3, direction: 'up' },
+    });
+    expect(screen.getByRole('link', { name: 'See it over time' })).toHaveAttribute(
+      'href',
+      '/achievements/growth',
+    );
   });
 });
 

@@ -13,7 +13,7 @@
  * ## Why a list rather than a walk of the router
  *
  * `<Routes>` in App.tsx knows every path and nothing else: no name, no
- * synonyms, and no idea that `/records` is where a reader typing "year on
+ * synonyms, and no idea that `/achievements/growth` is where a reader typing "year on
  * year" or "growth" should land. A search index needs the
  * words people actually type, and those exist nowhere but here.
  *
@@ -90,24 +90,24 @@ export const PLACES: Place[] = [
     keywords: 'writing markdown notebook journal shelf',
   },
   {
-    id: 'records',
-    name: 'Records',
+    id: 'achievements',
+    name: 'Achievements',
     where: '',
-    to: '/records',
-    keywords: 'personal best hall of fame high score outside the app how far you have come milestones',
+    to: '/achievements',
+    keywords: 'records personal best hall of fame high score outside the app how far you have come milestones',
   },
   {
-    id: 'records-growth',
+    id: 'achievements-growth',
     name: 'Growth',
-    where: 'Records',
-    to: '/records/growth',
+    where: 'Achievements',
+    to: '/achievements/growth',
     keywords: 'growth year on year period timeline graded measures movers',
   },
   {
-    id: 'records-badges',
+    id: 'achievements-badges',
     name: 'Badges',
-    where: 'Records',
-    to: '/records/badges',
+    where: 'Achievements',
+    to: '/achievements/badges',
     keywords: 'achievements badges trophies wall unlocks tiers titles',
   },
   {

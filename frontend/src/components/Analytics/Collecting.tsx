@@ -109,9 +109,8 @@ export function AwayNotice({ maturity }: { maturity: Maturity }) {
         You have been away for <strong>{quietDays} days</strong>
       </p>
       <p className="ax-away-body">
-        Everything already on record is still here, and nothing has been reset —{' '}
-        <strong>{activeDays} days</strong> of your work are still behind these figures. The
-        windows below cover a stretch you were not working in, so most of them read as zero
+        Everything already on record is still here, and nothing has been reset — all of your
+        work is still behind these figures. The windows below cover a stretch you were not working in, so most of them read as zero
         until you start logging again.
       </p>
     </section>

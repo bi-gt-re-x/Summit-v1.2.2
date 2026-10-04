@@ -1,5 +1,9 @@
 /**
- * Records — the account's hall of fame.
+ * Achievements — the account's hall of fame: personal bests, growth, badges.
+ *
+ * This was two pages, Records and Achievements (the badge wall). They answered
+ * the same question, so they are one page under the name the badges had, and
+ * /records, /records/growth and /records/badges redirect here.
  *
  * ## The question this page answers
  *
@@ -660,14 +664,14 @@ type RecordsView = 'bests' | 'growth' | 'badges';
 /**
  * One page, three answers to "how far have I come": the bests you logged, the
  * graded measures over time, and the badge wall. Growth was a tab of the
- * analytics page and the badges were a page of their own (/achievements); both
+ * analytics page and this page was called Records; both old addresses
  * redirect here. Each tab is its own URL, so the rail, the back button and a
  * pasted link agree about which is open.
  */
 const VIEWS: { key: RecordsView; label: string; path: string; title: string }[] = [
-  { key: 'bests', label: 'Personal bests', path: '/records', title: 'Records' },
-  { key: 'growth', label: 'Growth', path: '/records/growth', title: 'Growth' },
-  { key: 'badges', label: 'Badges', path: '/records/badges', title: 'Badges' },
+  { key: 'bests', label: 'Personal bests', path: '/achievements', title: 'Achievements' },
+  { key: 'growth', label: 'Growth', path: '/achievements/growth', title: 'Growth' },
+  { key: 'badges', label: 'Badges', path: '/achievements/badges', title: 'Badges' },
 ];
 
 function viewOf(pathname: string): RecordsView {
@@ -675,7 +679,7 @@ function viewOf(pathname: string): RecordsView {
 }
 
 // ---------------------------------------------------------------------------
-export default function Records() {
+export default function Achievements() {
   const view = viewOf(useLocation().pathname);
   useDocumentTitle(VIEWS.find((one) => one.key === view)!.title);
 
@@ -868,7 +872,7 @@ export default function Records() {
       <PageHero variant="records" tone="violet" className="rc-top">
         <header className="rc-hero">
           <div className="rc-hero-text">
-            <h1 className="rc-title">Your Records</h1>
+            <h1 className="rc-title">Achievements</h1>
             {lead ? (
               <>
                 <p className="rc-sub is-thesis">Look how far you’ve come.</p>
@@ -887,7 +891,7 @@ export default function Records() {
                 </p>
               </>
             ) : (
-              <p className="rc-sub">Your best, and the day you hit it.</p>
+              <p className="rc-sub">Your bests, how far you have grown, and the badges you have earned.</p>
             )}
             {view === 'bests' && (
             <div className="rc-hero-tools">
@@ -910,7 +914,7 @@ export default function Records() {
         </header>
       </PageHero>
 
-      <nav className="rc-views" aria-label="Records sections">
+      <nav className="rc-views" aria-label="Achievements sections">
         {VIEWS.map((one) => (
           <NavLink
             key={one.key}

@@ -38,8 +38,6 @@ import {
   InsightsPanel,
   QualityGridPanel,
   QualityPanel,
-  ScorePanel,
-  StreaksPanel,
   SubjectPanel,
   Tiles,
   Trajectory,
@@ -51,7 +49,6 @@ import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
 import { Knows } from '../Knows';
 import { LensLine } from '../Lens';
-import { throughLens } from '@/utils/goalLens';
 import { whatSummitKnows } from '@/utils/knows';
 import { OTHER_KEY } from '@/utils/subjectXp';
 import { stageShows } from '@/utils/dataMaturity';
@@ -74,7 +71,6 @@ export function OverviewTab({
 }) {
   const {
     breakdown,
-    card,
     lens,
     nameOf,
     observed,
@@ -99,11 +95,6 @@ export function OverviewTab({
     ratingGrid,
     ratingRows,
     rhythm,
-    rhythmRate,
-    score,
-    scoreLine,
-    scoreMarks,
-    scoreDates,
     setDepth,
     setGrain,
     setMetric,
@@ -117,7 +108,7 @@ export function OverviewTab({
     tone,
     insights,
   } = model;
-  const { stats, baseline } = data;
+  const { baseline } = data;
   const aim = baseline.data?.baseline ?? null;
 
   /*
@@ -129,23 +120,6 @@ export function OverviewTab({
    * a long one gets four, without this file deciding which stage deserves a
    * profile.
    */
-  /**
-   * The five factors under the growth score, in the order this reader's goal
-   * makes useful.
-   *
-   * The score itself is untouched — same number, same contributions, same bars.
-   * What moves is which of the five is read first, and that is the one thing a
-   * lens is allowed to do. See utils/goalLens, and `LensLine` below, which is
-   * what stops this being a silent reordering.
-   *
-   * With no lens this is `card.factors` in the order the score built them, so
-   * an account with no goals sees exactly what it always did.
-   */
-  const scoreFactors = useMemo(
-    () => throughLens(card.factors, (factor) => factor.name, lens),
-    [card.factors, lens],
-  );
-
   const knows = useMemo(() => {
     /* The recent leader, for the "current focus" line. Fourteen days rather
        than the picker's window, because the point of the line is that it can
@@ -174,7 +148,6 @@ export function OverviewTab({
       finished: tasks.filter((task) => task.status === 'done').length,
       activeDays: maturity.activeDays,
       spanDays: maturity.spanDays,
-      windowDays: slice.current.length,
       subjects: breakdown.rows.map((row) => ({
         name: row.name ?? row.label,
         count: row.count,
@@ -184,7 +157,7 @@ export function OverviewTab({
       })),
       recentTop,
     });
-  }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, slice.current.length, tasks, toIso]);
+  }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, tasks, toIso]);
 
   /*
    * Day 0-7, in one path that gains panels rather than two that replace each
@@ -202,8 +175,8 @@ export function OverviewTab({
    *
    * What is dropped is exactly the set that needs a *second* period to mean
    * anything — `Tiles` prints a delta against the window before, `Trajectory`
-   * is a line, `ScorePanel` needs two readings, the quality panels need rated
-   * tasks, and `ConsistencyPanel` compares against a previous rate. What stays
+   * is a line, the quality panels need rated tasks, and `ConsistencyPanel` is
+   * a calendar with nothing on it yet. What stays
    * is what is already true: the counts, and where the work went.
    *
    * The tab is not replaced. It is the same file, the same sections and the
@@ -390,14 +363,9 @@ export function OverviewTab({
         />
       </section>
 
-      {/* The line on its own until the score has something to say. `ax-grid-
-          trajectory` is 1.85fr to 1fr, so dropping the second child would
-          leave the chart in two thirds of the row with a third of it empty —
-          the class comes off with the panel. */}
-      <section
-        id="trajectory"
-        className={`ax-section${judgement ? ' ax-grid ax-grid-trajectory' : ''}`}
-      >
+      {/* The growth score panel that sat beside this is the Growth tab of
+          Achievements now, so the line has the row to itself. */}
+      <section id="trajectory" className="ax-section">
         <Trajectory
           current={slice.current}
           previous={slice.previous}
@@ -408,15 +376,6 @@ export function OverviewTab({
           spanLabel={spanText}
           previousSpanLabel={previousSpanText}
         />
-        {judgement && (
-        <ScorePanel
-          score={score}
-          factors={scoreFactors}
-          series={scoreLine}
-          marks={scoreMarks}
-          dates={scoreDates}
-        />
-        )}
       </section>
 
       {/* The reader's own target, before the panels that measure against
@@ -495,24 +454,14 @@ export function OverviewTab({
           </PanelGroup>
         )}
 
-        {/* Consistency and streaks are counts of this account's own days. */}
+        {/* The calendar of days worked. The rate itself is the Consistency
+            tile above and is printed nowhere else on the page; the streaks
+            that sat beside this are personal bests on Achievements. */}
         <PanelGroup
           title="Consistency"
-          note="How often you show up, and how long you keep it going"
+          note="Which days you showed up"
         >
-          <div className="ax-grid ax-grid-halves-even">
-            <ConsistencyPanel
-              rate={rhythmRate.rate}
-              previousRate={rhythmRate.previousRate}
-              rows={heatRows}
-              compareLabel={compareLabel}
-            />
-            <StreaksPanel
-              current={stats.stats?.current_streak ?? 0}
-              best={stats.stats?.best_streak ?? 0}
-              bestMonth={rhythmRate.bestMonth}
-            />
-          </div>
+          <ConsistencyPanel rows={heatRows} />
         </PanelGroup>
 
         {/* The two tallies stay until Habits can do the stronger version of the

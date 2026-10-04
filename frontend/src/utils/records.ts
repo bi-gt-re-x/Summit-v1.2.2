@@ -328,7 +328,7 @@ const monthsBetween = (from: string, to: Date): number => {
  *
  * None of these read the growth history. Everything here comes out of rows the
  * account wrote, which is the same line the page draws between what you logged
- * and what Summit counted — see the note in pages/Records.tsx.
+ * and what Summit counted — see the note in pages/Achievements.tsx.
  */
 export function stories(bests: Best[], today: Date = new Date()): Story[] {
   const out: Story[] = [];

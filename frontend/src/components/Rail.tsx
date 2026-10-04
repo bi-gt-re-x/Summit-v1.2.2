@@ -268,11 +268,11 @@ const TABS: Tab[] = [
   },
   {
     // The account looking back at itself: personal bests, growth over time,
-    // and the badge wall that was its own Achievements entry. Its three tabs
-    // are /records, /records/growth and /records/badges.
-    to: '/records',
-    label: 'Records',
-    under: ['/records/'],
+    // and the badge wall. Its three tabs are /achievements,
+    // /achievements/growth and /achievements/badges.
+    to: '/achievements',
+    label: 'Achievements',
+    under: ['/achievements/'],
     icon: (
       <svg {...stroke}>
         <path d="M4 20V9M9.5 20V4M15 20v-8M20.5 20v-5" />

@@ -34,8 +34,8 @@ const PHONE = '(max-width: 640px)';
 
 /** The four the phone bar keeps, in the order the rail lists them. */
 const PHONE_TABS = ['Dashboard', 'Calendar', 'Tasks', 'Goals'];
-/** The six behind More. Records and Settings are the two that used to fall off. */
-const SHEET_TABS = ['Analytics', 'Skill Tree', 'Notes', 'Timer', 'Records', 'Settings'];
+/** The six behind More. Achievements and Settings are the two that used to fall off. */
+const SHEET_TABS = ['Analytics', 'Skill Tree', 'Notes', 'Timer', 'Achievements', 'Settings'];
 
 /**
  * The catalogue the rail joins the account's picks against.
@@ -303,7 +303,7 @@ describe('on a phone', () => {
         '/skill-trees',
         '/notes',
         '/timer',
-        '/records',
+        '/achievements',
         '/settings',
       ]),
     );
@@ -323,7 +323,7 @@ describe('on a phone', () => {
     act(() => media.set(PHONE, true));
     fireEvent.click(screen.getByRole('button', { name: /More/ }));
 
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Records' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Achievements' }));
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 
@@ -349,7 +349,7 @@ describe('on a phone', () => {
 
   it('lights More when the reader is on one of the pages behind it', () => {
     // Otherwise the bar answers "where am I" for four pages out of ten.
-    renderWithProviders(<Rail />, { route: '/records' });
+    renderWithProviders(<Rail />, { route: '/achievements' });
     act(() => media.set(PHONE, true));
 
     expect(screen.getByRole('button', { name: /More/ }).className).toContain('active');

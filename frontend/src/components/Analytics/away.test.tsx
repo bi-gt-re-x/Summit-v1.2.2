@@ -67,7 +67,9 @@ describe('the notice', () => {
   it('says the record is intact rather than that anything was lost', () => {
     draw(20, 47);
     expect(screen.getByText(/nothing has been reset/i)).toBeInTheDocument();
-    expect(screen.getByText('20 days')).toBeInTheDocument();
+    /* The count of days worked is the consistency tile's figure, printed
+       once on the page — not again here. */
+    expect(screen.queryByText('20 days')).not.toBeInTheDocument();
   });
 
   it('does not chide', () => {
