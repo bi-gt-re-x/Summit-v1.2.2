@@ -63,6 +63,7 @@ that *is* stored is the recommendation itself — see backend/api/subject_ai.py
 effectiveness can never be checked, and that check is the last item on the
 list above.
 """
+import re
 from typing import Any, Dict, List
 
 from backend.tracking import figures, planner
@@ -84,6 +85,9 @@ MAX_TOKENS = 16000
 DIAGNOSES = 3
 PRIORITIES = 4
 NEXT_STEPS = 3
+#: Bounds on the three fields that make a step an instruction rather than a
+#: category — `problems`, `pace` and `resource`. Lines, not paragraphs.
+STEP_FIELD = 140
 INSIGHTS = 4
 
 #: Evidence cards under the objective. Three, and the number is the point: the
@@ -280,6 +284,25 @@ This applies to all six kinds of session equally. A `review` names what is \
 being reviewed, a `timed_set` names what is in the set and at what pace, a \
 `concept` names the concept.
 
+EVERYTHING THEY HAVE DONE, SORTED
+
+<work_groups> is every finished task in the window, not a sample — grouped \
+by name, with the numbers in each name blanked so "MATHCOUNTS Sprint 1-10" \
+and "MATHCOUNTS Sprint 21-30" are one row. Each row says how many there \
+were, the titles they actually used, the average difficulty and execution \
+they filed, how long each took on average, how many went well (execution \
+4-5) and how many went badly (execution 1-2), the reasons they picked, and \
+when they last did one. The rows come sorted several ways — by how often, \
+by how badly they went, by how slow they were — so the material that is \
+not working and the material that has stopped teaching anything are both \
+at the top of a list.
+
+Use it to choose the material. The examples column says which ranges and \
+papers they have already done, so the next step can name the next range \
+rather than one they have finished. A group done often, filed easy and \
+rated 5 is work to stop; a group filed hard and rated 2 is the work that \
+needs a smaller, slower version of itself.
+
 WHERE THE LIMIT IS
 
 Titles and notes are what the reader typed. They are not measurements, and \
@@ -409,12 +432,36 @@ Keep this short — one or two. It is the ordering behind `next_steps` rather \
 than a section of its own, and the page draws the steps.
 
 `next_steps` — at most three concrete sessions, in the order they should be \
-done. Each has:
-  - `title`: what the session is, six words or fewer, naming the material. \
-Write the line somebody would put on a to-do list — "Make it a task" turns \
-this into a real task, under this subject, at this difficulty, and a task \
-called "Focused Easy Execution Practice" is one nobody will know how to \
-start.
+done. These are RECOMMENDATIONS, not insights: each one is an instruction a \
+person could start in the next minute without asking a single question. A \
+step that restates a finding ("Easy execution is low, so practise Easy \
+problems") is an insight wearing a verb, and it is the one thing this list \
+must never contain. "Easy algorithm drills, timed" fails too: which \
+algorithms, from where, how many, how fast? The standard is this:
+
+  title     "Easy MATHCOUNTS Sprint #1-10, 2 min each"
+  problems  "MATHCOUNTS 2021 School Sprint Round, problems 1-10"
+  pace      "2 minutes per problem, 20 minutes for the set, no calculator"
+  resource  "MATHCOUNTS past competitions, free at mathcounts.org"
+
+Each has:
+  - `title`: what the session is, ten words or fewer: the level, the \
+material, the range, the pace. Write the line somebody would put on a \
+to-do list — "Make it a task" turns this into a real task, under this \
+subject, at this difficulty, and a task called "Focused Easy Execution \
+Practice" is one nobody will know how to start.
+  - `problems`: exactly what to work — the source, the paper or set, and the \
+problem range or count. "AMC 10A 2019, problems 6-15". "Leetcode Easy \
+'Two Pointers' tag, first 5 unsolved". Name a range they have not already \
+done when <work_groups> shows which ones they have.
+  - `pace`: the time per problem, or for the set, and any condition on it — \
+"2 min per problem", "40 min for 25, no calculator", "untimed, then a \
+second pass at 3 min each".
+  - `resource`: where to get the material, named well enough to find it — \
+the publisher, site or book, and the edition or year when it matters. \
+When the record names no source, name a standard, widely available one for \
+the subject and level and say it is a suggestion. Never invent a source \
+that does not exist.
   - `focus`: the area from the vocabulary it is about, or the subject itself.
   - `type`: one of targeted_practice, mixed_practice, timed_set, review, \
 concept, project.
@@ -449,6 +496,13 @@ The findings and the insights are drawn as one list, in that order, so read \
 them as one: seven rows about the same three things is the page the reader \
 complains about. Say each thing once, in whichever of the two it belongs, \
 and write fewer rows rather than padding to the caps.
+
+IF RECOMMENDATIONS ARE ALREADY ON SCREEN
+
+<already_showing> lists the steps the reader is looking at right now. The \
+ones you write are added underneath them, so do not repeat or rephrase any \
+of them: pick different material, a different range, or the next thing up. \
+Three new steps that are the same three in other words is a wasted call.
 
 IF PREVIOUS RECOMMENDATIONS ARE PRESENT
 
@@ -547,6 +601,9 @@ SCHEMA = {
                 'type': 'object',
                 'properties': {
                     'title': {'type': 'string'},
+                    'problems': {'type': 'string'},
+                    'pace': {'type': 'string'},
+                    'resource': {'type': 'string'},
                     'focus': {'type': 'string'},
                     'type': {'type': 'string', 'enum': list(STEP_TYPES)},
                     'difficulty': {'type': 'integer'},
@@ -555,8 +612,9 @@ SCHEMA = {
                     'signal': {'type': 'string'},
                     'drills': {'type': 'array', 'items': {'type': 'string'}},
                 },
-                'required': ['title', 'focus', 'type', 'difficulty',
-                             'duration_minutes', 'reason', 'signal', 'drills'],
+                'required': ['title', 'problems', 'pace', 'resource', 'focus',
+                             'type', 'difficulty', 'duration_minutes',
+                             'reason', 'signal', 'drills'],
                 'additionalProperties': False,
             },
         },
@@ -885,6 +943,66 @@ def brief_from(state: Dict[str, Any]) -> str:
             lines.append('  ' + ' \u2014 '.join(said))
         parts.append(_section('recent_work', lines))
 
+    # ---- Everything they have done, grouped and sorted --------------------
+    # The sample above is the newest forty. This is every finished task in the
+    # window, grouped by name and counted by the page, so the material that
+    # has stopped teaching anything and the material that is going badly are
+    # both at the top of a list rather than somewhere in a sample.
+    groups = state.get('work_groups') or []
+    if groups:
+        lines = ['Every finished task in the window, grouped by name with the '
+                 'numbers blanked to #. Counted by the app. "well" is '
+                 'execution 4-5, "badly" is execution 1-2; averages are over '
+                 'the rated and timed tasks only.']
+        for entry in groups:
+            said = ['"{}"'.format(entry.get('name')),
+                    '{} done'.format(entry.get('count'))]
+            if entry.get('examples'):
+                said.append('e.g. ' + '; '.join(
+                    '"{}"'.format(title) for title in entry['examples']))
+            if entry.get('difficulty') is not None:
+                said.append('avg difficulty {}, avg execution {}'.format(
+                    entry.get('difficulty'), entry.get('execution')))
+            else:
+                said.append('not rated')
+            if entry.get('minutes') is not None:
+                said.append('avg {} min each'.format(entry['minutes']))
+            if entry.get('rated'):
+                said.append('{} went well, {} went badly'.format(
+                    entry.get('well', 0), entry.get('badly', 0)))
+            if entry.get('reasons'):
+                said.append('reasons: ' + ', '.join(entry['reasons']))
+            if entry.get('last'):
+                said.append('last {}'.format(entry['last']))
+            lines.append('  ' + ' \u2014 '.join(str(part) for part in said))
+
+        # The same rows, ordered three more ways, by name only — the figures
+        # are on the lines above and are not repeated.
+        def order(label, key, keep):
+            ranked = sorted((entry for entry in groups if keep(entry)), key=key)
+            if ranked:
+                lines.append('  {}: {}'.format(label, '; '.join(
+                    '"{}"'.format(entry.get('name')) for entry in ranked[:5])))
+        order('Went worst (lowest avg execution)',
+              lambda entry: entry.get('execution'),
+              lambda entry: entry.get('execution') is not None)
+        order('Went best (highest avg execution)',
+              lambda entry: -entry.get('execution'),
+              lambda entry: entry.get('execution') is not None)
+        order('Slowest (most minutes each)',
+              lambda entry: -entry.get('minutes'),
+              lambda entry: entry.get('minutes') is not None)
+        parts.append(_section('work_groups', lines))
+
+    showing = [str(title).strip() for title in (state.get('showing') or [])
+               if str(title).strip()]
+    if showing:
+        parts.append(_section('already_showing', [
+            'Steps already on the reader\'s screen. Yours are added under '
+            'these: do not repeat or rephrase them.',
+            *('  "{}"'.format(title) for title in showing),
+        ]))
+
     # ---- The curriculum's own words, and nothing more --------------------
     vocabulary = [str(entry).strip() for entry in (state.get('vocabulary') or [])
                   if str(entry).strip()]
@@ -965,6 +1083,215 @@ def _unit(value: Any) -> float:
     except (TypeError, ValueError):
         return 0.5
     return round(max(0.0, min(1.0, number)), 2)
+
+
+#: What a made-up source looks like. A step that says where to get its
+#: problems is only worth the line if the place exists; "University of XYZ" is
+#: the model filling a required field, and printing it would send somebody
+#: looking for a book that is not there.
+PLACEHOLDER_SOURCE = re.compile(
+    r'\b(xyz|abc university|example\.com|placeholder|tbd|lorem)\b'
+    r'|\[[^\]]*\]'
+    r'|^(a |any )?(standard |good |typical )?(textbook|online resources?|course notes'
+    r'|your (own )?(notes|textbook|course|teacher))\.?$',
+    re.IGNORECASE)
+
+
+def _real_source(text: str) -> str:
+    """The resource, or nothing when it is plainly a placeholder."""
+    return '' if PLACEHOLDER_SOURCE.search(text) else text
+
+
+def _steps(found: Dict[str, Any], counted) -> List[Dict[str, Any]]:
+    """`next_steps`, narrowed to what the page draws. See `_clean` for the rule
+    on which fields are held to the brief's figures and which are not."""
+    steps = []
+    for entry in (found.get('next_steps') or [])[:NEXT_STEPS]:
+        if not isinstance(entry, dict):
+            continue
+        title = str(entry.get('title') or '').strip()
+        if not title:
+            continue
+        kind = str(entry.get('type') or '').strip()
+        reason = str(entry.get('reason') or '').strip()
+        # A prediction about a figure, so it is held to the record the same way
+        # the reason is: a signal naming a number nobody counted is a test the
+        # reader cannot run.
+        signal = str(entry.get('signal') or '').strip()
+        if not counted(signal):
+            signal = ''
+        # The reason cites the record, so it is held to the record. The title
+        # and the drills are what to go and do, and a quantity in one of those
+        # is the model's job rather than a claim about the reader.
+        if not counted(reason):
+            reason = ''
+        steps.append({
+            'title': title,
+            # What to do, how fast and from where. Instructions rather than
+            # claims about the reader, so — like the title and the drills —
+            # they are not held to the brief's figures.
+            'problems': str(entry.get('problems') or '').strip()[:STEP_FIELD],
+            'pace': str(entry.get('pace') or '').strip()[:STEP_FIELD],
+            'resource': _real_source(str(entry.get('resource') or '').strip()[:STEP_FIELD]),
+            'focus': str(entry.get('focus') or '').strip(),
+            # An unknown type would break the counting the feedback loop is
+            # for, so it lands in the general bucket rather than in a new one.
+            'type': kind if kind in STEP_TYPES else 'targeted_practice',
+            'difficulty': _clamp(entry.get('difficulty'), *DIFFICULTY, fallback=3),
+            'minutes': _clamp(entry.get('duration_minutes'), *MINUTES, fallback=30),
+            'reason': reason,
+            'signal': signal,
+            'drills': [str(item).strip() for item in (entry.get('drills') or [])
+                       if str(item).strip()][:4],
+        })
+    return steps
+
+
+# ---------------------------------------------------------------------------
+# Recommendations alone
+# ---------------------------------------------------------------------------
+# The Recommendations panel's own call. The full reading above asks for seven
+# sections behind a four-thousand-token prompt, and Groq's free tier counts
+# prompt and answer together against 8,000 tokens a minute — so a reading of a
+# long record is refused before the model runs. This asks for the one thing the
+# panel draws, from the sections that bear on *what to do*, behind a prompt a
+# fifth the size: the recommendations are the better for it, and it fits.
+
+#: The brief sections a plan is written from. Not the dimensions, trends or
+#: relationships: those are what the record *is*, and the reading covers them.
+STEPS_SECTIONS = ('subject_profile', 'difficulty_analysis', 'time_analysis',
+                  'mistake_patterns', 'recent_work', 'work_groups',
+                  'already_showing', 'skill_vocabulary', 'goals',
+                  'previous_recommendations', 'recommendation_outcomes')
+
+#: How many of the newest tasks go up beside the groups. The groups already
+#: cover every task; this is only "what is being done this week".
+STEPS_RECENT = 15
+
+#: Room for the reasoning and three steps, and under Groq's ceiling with the
+#: prompt included.
+STEPS_MAX_TOKENS = 3000
+
+STEPS_SYSTEM = """\
+You plan the next three study sessions for one subject, for a study-tracking \
+app. Everything in the brief was counted from the reader's own tasks.
+
+Write RECOMMENDATIONS, not insights. Each one is an instruction a person \
+could start in the next minute without asking a question: exactly which \
+problems, from where, how many, how fast. "Easy algorithm drills, timed" is \
+a category and fails. "Focused Easy Execution Practice" fails. This is the \
+standard:
+
+  title     "Easy MATHCOUNTS Sprint #1-10, 2 min each"
+  problems  "MATHCOUNTS 2021 School Sprint Round, problems 1-10"
+  pace      "2 minutes per problem, 20 minutes for the set, no calculator"
+  resource  "MATHCOUNTS past competitions, free at mathcounts.org"
+
+HOW TO CHOOSE
+
+<work_groups> is every finished task, grouped by name with numbers blanked \
+to #, with how hard it was filed, how it went (execution 1-5), how long each \
+took, and the titles actually used. <recent_work> is the newest few. Use them \
+to pick the material:
+  - a group done often, filed easy and rated 4-5 has stopped teaching \
+anything: move them up from it, or stop it;
+  - a group filed hard and rated 1-2 needs a smaller, slower version of \
+itself — fewer problems, more time each, then the pace again;
+  - the slowest groups say where time goes;
+  - the examples say which ranges and papers are done, so name the NEXT \
+range rather than one they have finished.
+<difficulty_analysis> says where execution falls off; the level to work is \
+normally at or just below that point.
+
+Name real material: the competition, paper, year, round, chapter, problem \
+range or problem tag the record shows, or the standard next thing up from it \
+for this subject and level. When a title is the reader's own name for a set \
+("Analysis problem set", "Proof practice"), you do not know what is in it: \
+point at a real, public equivalent instead — a named textbook chapter, a \
+past paper, a problem archive. Every resource must be findable by its name \
+alone. Never a placeholder ("University of XYZ", "a standard textbook", \
+"online resources", "your course notes").
+
+<already_showing> is on the reader's screen. Yours go underneath, so do not \
+repeat or rephrase any of them. <previous_recommendations> and \
+<recommendation_outcomes> say what was advised before and whether it was \
+acted on; a plan nobody followed is usually too big.
+
+EACH STEP
+  - `title`: ten words or fewer, the way a person writes a to-do: source and \
+range first, then the pace — "Stewart Ch. 7 integrals #1-8, 8 min each", \
+"Putnam 2020 A1-A5, 10 min each". Not the session type, not "Targeted \
+Practice". It becomes a task on their list exactly as written.
+  - `problems`: the source and the exact range or count.
+  - `pace`: time per problem or for the set, and any condition.
+  - `resource`: where to get it — site, publisher or book, with the year or \
+edition when it matters.
+  - `focus`: the area of the subject it is about.
+  - `type`: one of targeted_practice, mixed_practice, timed_set, review, \
+concept, project.
+  - `difficulty`: 1-5 on the app's scale (1 Trivial, 2 Easy, 3 Fair, 4 Hard, \
+5 Brutal).
+  - `duration_minutes`: the whole sitting, 10-120.
+  - `reason`: one sentence quoting a figure from the brief that made you \
+choose this. Every number you write about the reader must appear in the \
+brief; do not compute new ones.
+  - `signal`: one sentence on what would show it is working, naming the \
+figure to watch and which way it should move.
+  - `drills`: two to four concrete things to do inside the session, each \
+specific to this material. "Review mistakes" and "self-rate after each" are \
+padding — cut them.
+
+Plain words, short sentences, no encouragement."""
+
+STEPS_SCHEMA = {
+    'type': 'object',
+    'properties': {'next_steps': SCHEMA['properties']['next_steps']},
+    'required': ['next_steps'],
+    'additionalProperties': False,
+}
+
+
+def steps_brief_from(state: Dict[str, Any]) -> str:
+    """The brief a plan is written from: the sections in STEPS_SECTIONS, with
+    only the newest STEPS_RECENT of the recent work."""
+    trimmed = {**state, 'recent_work': (state.get('recent_work') or [])[:STEPS_RECENT]}
+    full = brief_from(trimmed)
+    kept = [part for part in full.split('\n\n<')
+            if re.match(r'<?(\w+)>', part)
+            and re.match(r'<?(\w+)>', part).group(1) in STEPS_SECTIONS]
+    return '\n\n'.join(part if part.startswith('<') else '<' + part for part in kept)
+
+
+def plan(state: Dict[str, Any], model_id: str = '') -> List[Dict[str, Any]]:
+    """Three recommendations for this subject, and nothing else.
+
+    Raises `BriefUnavailable` for everything the page should say out loud, as
+    `read` does.
+    """
+    if not configured():
+        raise BriefUnavailable(NO_KEY)
+    if not str(state.get('subject') or '').strip():
+        raise BriefUnavailable('There is no subject to plan for.')
+
+    brief = steps_brief_from(state)
+    try:
+        text = planner.from_provider(
+            brief,
+            system=STEPS_SYSTEM,
+            schema=STEPS_SCHEMA,
+            instruction=('Plan the next three sessions for this subject from '
+                         'the sections below.'),
+            model_id=model_id or MODEL_DEFAULT,
+            max_tokens=STEPS_MAX_TOKENS,
+        )
+    except planner.PlannerUnavailable as exc:
+        raise BriefUnavailable(str(exc)) from exc
+
+    allowed = figures.allowed_from(brief)
+    steps = _steps(_object(text), lambda *texts: figures.all_clean(texts, allowed))
+    if not steps:
+        raise BriefUnavailable('The model sent back no sessions. Try again.')
+    return steps
 
 
 def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
@@ -1108,39 +1435,7 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             'reason': reason,
         })
 
-    steps = []
-    for entry in (found.get('next_steps') or [])[:NEXT_STEPS]:
-        if not isinstance(entry, dict):
-            continue
-        title = str(entry.get('title') or '').strip()
-        if not title:
-            continue
-        kind = str(entry.get('type') or '').strip()
-        reason = str(entry.get('reason') or '').strip()
-        # A prediction about a figure, so it is held to the record the same way
-        # the reason is: a signal naming a number nobody counted is a test the
-        # reader cannot run.
-        signal = str(entry.get('signal') or '').strip()
-        if not counted(signal):
-            signal = ''
-        # The reason cites the record, so it is held to the record. The title
-        # and the drills are what to go and do, and a quantity in one of those
-        # is the model's job rather than a claim about the reader.
-        if not counted(reason):
-            reason = ''
-        steps.append({
-            'title': title,
-            'focus': str(entry.get('focus') or '').strip(),
-            # An unknown type would break the counting the feedback loop is
-            # for, so it lands in the general bucket rather than in a new one.
-            'type': kind if kind in STEP_TYPES else 'targeted_practice',
-            'difficulty': _clamp(entry.get('difficulty'), *DIFFICULTY, fallback=3),
-            'minutes': _clamp(entry.get('duration_minutes'), *MINUTES, fallback=30),
-            'reason': reason,
-            'signal': signal,
-            'drills': [str(item).strip() for item in (entry.get('drills') or [])
-                       if str(item).strip()][:4],
-        })
+    steps = _steps(found, counted)
 
     insights = []
     for entry in (found.get('insights') or [])[:INSIGHTS]:

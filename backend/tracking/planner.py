@@ -356,6 +356,12 @@ class PlannerUnavailable(RuntimeError):
     """
 
 
+class RequestTooLarge(PlannerUnavailable):
+    """The provider refused the request for its size against a per-minute
+    allowance, before any model ran. Waiting does not help when the prompt
+    alone is near the allowance; another provider might. See `from_provider`."""
+
+
 # ---------------------------------------------------------------------------
 # Which provider
 # ---------------------------------------------------------------------------
@@ -847,7 +853,7 @@ def _from_openai_chat(url: str, token: str, model_id: str, label: str,
     # arrives when the allowance is nearly spent rather than when the prompt is
     # long — and "wait a minute" is the fix for it, not "write less".
     if response.status_code == 413:
-        raise PlannerUnavailable(
+        raise RequestTooLarge(
             'This {} key has used its tokens for the minute. Wait a minute and '
             'try again.'.format(label))
     if response.status_code >= 400:
@@ -942,7 +948,19 @@ def from_provider(brief: str, system: str = None, schema: dict = None,
     if not using:
         raise PlannerUnavailable(NO_KEY)
     if using == 'groq':
-        return _from_groq(brief, system, instruction, schema, max_tokens)
+        try:
+            return _from_groq(brief, system, instruction, schema, max_tokens)
+        except RequestTooLarge:
+            # Groq's free tier counts the prompt *and* the answer asked for
+            # against 8,000 tokens a minute, and a reading of a long record is
+            # over that before it starts — "wait a minute" can never fix it.
+            # When an Anthropic key is there too, the request goes there
+            # rather than failing; without one, the reader is told as before.
+            # Only when nothing named a provider: a reader who chose Groq on
+            # purpose is not moved to a paid one behind their back.
+            if (os.environ.get('MILESTONE_PROVIDER') or '').strip() or not _keyed('anthropic'):
+                raise
+            return from_anthropic(brief, system, schema, instruction, model_id, max_tokens)
     if using == 'grok':
         return _from_grok(brief, system, instruction, schema, max_tokens)
     if using == 'huggingface':

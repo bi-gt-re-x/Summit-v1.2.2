@@ -291,18 +291,6 @@ describe('the counted reasons, which stand in for a mistake taxonomy', () => {
     expect(model.struggles).toEqual([]);
   });
 
-  it('turns the commonest struggle into advice with its count attached', () => {
-    const tasks = Array.from({ length: 3 }, () =>
-      done({ difficulty: 3, execution: 1, reason: 'interrupted' }),
-    );
-    const model = subjectModel(tasks, 'maths', '30d', TODAY);
-    const found = model.advice.find((a) => a.id === 'reason-interrupted');
-
-    expect(found).toBeDefined();
-    // The number, not just the instruction. An instruction without one is a
-    // horoscope.
-    expect(found!.why).toContain('3');
-  });
 });
 
 describe('the run of recent readings', () => {
@@ -367,10 +355,9 @@ describe('recent work', () => {
   });
 });
 
-describe('what to do next', () => {
-  /* Four bands with a wide gap and a struggle reason, so there is always more
-     than one thing the page could say. What is being tested is the ordering
-     and the count, not whether any single card appears. */
+describe('which goals a subject reads', () => {
+  /* Four bands with a wide gap and a struggle reason: a record with enough
+     in it that the goal reading is the only thing varying. */
   const busy = () => [
     ...Array.from({ length: 4 }, () => done({ difficulty: 1, execution: 5 })),
     ...Array.from({ length: 4 }, () =>
@@ -378,72 +365,11 @@ describe('what to do next', () => {
     ),
   ];
 
-  it('never names two different measures as the lowest of the four', () => {
-    // The bug this replaced: one card per rate under 60, each captioned "the
-    // lowest of the four", two of them on screen at once. Not a wording
-    // problem — the page contradicting itself in the panel whose whole job is
-    // to be trusted.
-    const model = subjectModel(busy(), 'maths', '30d', TODAY);
-    const lowest = model.advice.filter((item) => item.id.startsWith('rate-'));
-
-    expect(lowest.length).toBeLessThanOrEqual(1);
-  });
-
-  it('names the lowest measure only when it is clearly the lowest', () => {
-    // Two rates a couple of points apart are not a weak spot, they are the low
-    // end of four numbers that are all fine.
-    const model = subjectModel(
-      [done({ difficulty: 3, execution: 3, due_date: TODAY, met_deadline: true })],
-      'maths',
-      '30d',
-      TODAY,
-    );
-    const named = model.advice.filter((item) => item.id.startsWith('rate-'));
-    for (const item of named) {
-      // Whatever it named, it has to be the measure that is actually lowest.
-      const lowest = [...model.rates]
-        .filter((r) => r.known)
-        .sort((a, b) => a.now - b.now)[0]!;
-      expect(item.id).toBe(`rate-${lowest.key}`);
-    }
-  });
-
-  it('leads with the goal rather than with an internal measure', () => {
-    // The whole ordering. "Quality is the measure holding the grade down" is a
-    // true sentence answering a question nobody asked; a goal is what the
-    // reader actually said they wanted.
-    const model = subjectModel(busy(), 'maths', '30d', TODAY, [
-      goal({ progress: 10, deadline: '2026-09-20' }),
-    ]);
-
-    expect(model.advice[0]!.id).toBe('goal-g1');
-    // And it carries its arithmetic, like every other card here.
-    expect(model.advice[0]!.why).toContain('%');
-  });
-
-  it('does not call a goal on course when it cannot be projected at all', () => {
-    // The failure this guards is quiet: a goal with no target number or no
-    // date produces a null drift, and a two-branch test would sort it into the
-    // good pile and print "on course" — a claim, off no evidence, in the panel
-    // that leads the page.
-    const model = subjectModel(busy(), 'maths', '30d', TODAY, [
-      goal({ measure: undefined as never, target_number: 0, deadline: '' }),
-    ]);
-    const led = model.advice.find((item) => item.id === 'goal-g1')!;
-
-    expect(led.title).not.toMatch(/on course/i);
-    // It asks for what is missing rather than reporting a state, which is the
-    // shorter and more useful of the two things it could say.
-    expect(led.title).toMatch(/give .* a target and a date/i);
-    expect(led.detail).toMatch(/needed to track pace/i);
-  });
-
   it('does not lead with a goal that belongs to another subject', () => {
     const model = subjectModel(busy(), 'maths', '30d', TODAY, [
       goal({ subject_ids: 'physics,chem' }),
     ]);
     expect(model.goals).toEqual([]);
-    expect(model.advice.every((item) => !item.id.startsWith('goal-'))).toBe(true);
   });
 
   it('reads a goal naming several subjects, not just a lone id', () => {
@@ -460,13 +386,6 @@ describe('what to do next', () => {
     expect(model.goals).toEqual([]);
   });
 
-  it('falls back to the record when nothing has been aimed at', () => {
-    // No goal is a real state and the commonest one. The page still has to
-    // rank something, and the widest band gap is the honest lead.
-    const model = subjectModel(busy(), 'maths', '30d', TODAY, []);
-    expect(model.advice[0]!.id).toBe('weakest-band');
-    expect(model.advice[0]!.weight).toBe('first');
-  });
 });
 
 describe('the goal, read against what this subject has put into it', () => {

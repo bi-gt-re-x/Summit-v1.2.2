@@ -434,3 +434,54 @@ class TestWhatIsSentToGrok:
         assert sent['url'] == planner.GROK_URL
         assert sent['schema'] == planner.STEPS_SCHEMA
 
+
+
+# ---------------------------------------------------------------------------
+# A request too large for Groq's free minute
+# ---------------------------------------------------------------------------
+# Groq counts prompt and answer together against 8,000 tokens a minute, so a
+# long prompt is refused with a 413 before any model runs, and waiting a minute
+# never fixes it. When an Anthropic key is configured too, the request goes
+# there instead — unless the reader named a provider on purpose.
+class TestTooLargeForGroq:
+    def _both_keys(self, monkeypatch):
+        monkeypatch.delenv('MILESTONE_PROVIDER', raising=False)
+        monkeypatch.delenv('HF_TOKEN', raising=False)
+        monkeypatch.delenv('HUGGINGFACE_API_KEY', raising=False)
+        monkeypatch.setenv('GROQ_API_KEY', 'gsk_test')
+        monkeypatch.setenv('ANTHROPIC_API_KEY', 'sk-ant-test')
+
+    def _refuse(self, *a, **k):
+        raise planner.RequestTooLarge('This Groq key has used its tokens for the minute.')
+
+    def test_it_goes_to_anthropic_instead(self, monkeypatch):
+        self._both_keys(monkeypatch)
+        monkeypatch.setattr(planner, '_from_groq', self._refuse)
+        monkeypatch.setattr(planner, 'from_anthropic', lambda *a, **k: '{"ok": true}')
+        assert planner.from_provider('brief', system='s', schema={}) == '{"ok": true}'
+
+    def test_it_stays_refused_without_an_anthropic_key(self, monkeypatch):
+        self._both_keys(monkeypatch)
+        monkeypatch.delenv('ANTHROPIC_API_KEY', raising=False)
+        monkeypatch.setattr(planner, '_from_groq', self._refuse)
+        with pytest.raises(planner.RequestTooLarge):
+            planner.from_provider('brief', system='s', schema={})
+
+    def test_a_reader_who_chose_groq_is_not_moved(self, monkeypatch):
+        self._both_keys(monkeypatch)
+        monkeypatch.setenv('MILESTONE_PROVIDER', 'groq')
+        monkeypatch.setattr(planner, '_from_groq', self._refuse)
+        monkeypatch.setattr(planner, 'from_anthropic', lambda *a, **k: pytest.fail('moved'))
+        with pytest.raises(planner.RequestTooLarge):
+            planner.from_provider('brief', system='s', schema={})
+
+    def test_a_rate_limit_is_not_a_size_problem(self, monkeypatch):
+        self._both_keys(monkeypatch)
+
+        def limited(*a, **k):
+            raise planner.PlannerUnavailable('Groq is rate-limiting this key.')
+
+        monkeypatch.setattr(planner, '_from_groq', limited)
+        monkeypatch.setattr(planner, 'from_anthropic', lambda *a, **k: pytest.fail('moved'))
+        with pytest.raises(planner.PlannerUnavailable):
+            planner.from_provider('brief', system='s', schema={})

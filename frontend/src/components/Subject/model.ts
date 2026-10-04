@@ -815,158 +815,6 @@ function goalsFor(
   }
 }
 
-/**
- * A recommendation, with the arithmetic that produced it attached.
- *
- * `why` is not a flourish. It is the rule the Recommendations tab is built on
- * — an instruction with a number behind it, and the number shown — and a
- * subject page that said "practise more geometry" without saying what made it
- * say so would be the horoscope this app is written against.
- */
-export interface Advice {
-  id: string;
-  title: string;
-  detail: string;
-  why: string;
-  weight: 'first' | 'second' | 'upkeep';
-}
-
-/**
- * What to do next, led by what the subject is *for*.
- *
- * ## The goal comes first, and that is the whole ordering
- *
- * A page that ranks advice by which internal measure is lowest is ranking by
- * its own arithmetic rather than by what the reader is trying to do. "Quality
- * is the measure holding the grade down" is a true sentence that answers a
- * question nobody asked; "your goal lands eleven days late at this rate" is
- * the same record read against the thing the reader actually said they wanted.
- * So an active goal on this subject leads, every time, and the measures are
- * read as *why* it is or is not going to land rather than as findings of their
- * own.
- *
- * With no goal set, the order falls back to what the record can still say:
- * the widest gap between difficulty bands, then the commonest thing that makes
- * a session go badly, then — once — the weakest of the four rates.
- *
- * ## Only one rate is ever named, and only if it is the lowest
- *
- * This used to push one card per rate under 60, each captioned "the lowest of
- * the four". Two of them could be on screen at once, both claiming to be the
- * lowest, which is not a wording problem: it is the page contradicting itself
- * in the panel whose entire job is to be trusted. There is one lowest measure,
- * it is named once, and the card says how far below the next one it actually
- * sits — which is the figure that decides whether it is worth acting on.
- */
-function adviceFrom(
-  bands: Band[],
-  struggles: Driver[],
-  rates: Rate[],
-  goals: SubjectGoal[],
-): Advice[] {
-  const out: Advice[] = [];
-
-  // The weakest band that has enough behind it to be a finding rather than a
-  // bad afternoon. Three is not a sample; it is the floor at which naming
-  // something stops being noise.
-  const measured = bands.filter((band) => band.holding !== null && band.done >= 3);
-  const weakest = [...measured].sort((a, b) => a.holding! - b.holding!)[0];
-  const strongest = [...measured].sort((a, b) => b.holding! - a.holding!)[0];
-  const top = struggles[0];
-
-  // ---- What the goal needs ------------------------------------------------
-  /* Three cases, not two, and the third is the one worth spelling out. A goal
-     with no target number or no date has no projection, and "on course" is a
-     claim — the same kind of claim as a rate of zero standing in for a rate
-     nobody measured. So an unprojectable goal says it is unprojectable and
-     says what would fix it, rather than being quietly sorted into the good
-     pile because `drift` failed to be a positive number. */
-  for (const goal of goals.slice(0, 2)) {
-    const rate =
-      goal.need !== null && goal.have !== null
-        ? `It needs ${goal.need.toFixed(1)} ${goal.unit} a day to arrive on time and has been `
-          + `moving at ${goal.have.toFixed(1)}.`
-        : `It is ${Math.round(goal.progress)}% of the way there.`;
-    const due = `Goal due ${goal.deadline || 'with no date set'}, ${Math.round(goal.progress)}% done`;
-
-    if (goal.drift === null) {
-      out.push({
-        id: `goal-${goal.id}`,
-        title: `Give "${goal.title}" a target and a date`,
-        detail: 'Both are needed to track pace.',
-        why: `${due}.`,
-        weight: 'second',
-      });
-    } else if (goal.drift > 0) {
-      out.push({
-        id: `goal-${goal.id}`,
-        title: `Work "${goal.title}": ${goal.drift} ${goal.drift === 1 ? 'day' : 'days'} late`,
-        detail: rate,
-        why: `${due}, projected ${goal.drift} days late.`,
-        weight: 'first',
-      });
-    } else {
-      out.push({
-        id: `goal-${goal.id}`,
-        title: `"${goal.title}" is on track`,
-        detail: rate,
-        why: `${due}, on track to finish on time.`,
-        weight: 'upkeep',
-      });
-    }
-  }
-
-  // ---- Where the work should go inside the subject ------------------------
-  if (weakest && strongest && weakest.level !== strongest.level) {
-    out.push({
-      id: 'weakest-band',
-      title: `Drill ${weakest.label.toLowerCase()} work`,
-      detail:
-        `${Math.round(weakest.holding!)}% here, compared with ${Math.round(strongest.holding!)}% on `
-        + `${strongest.label.toLowerCase()} work.`,
-      why:
-        `${weakest.done} ${weakest.done === 1 ? 'task' : 'tasks'} at ${weakest.label.toLowerCase()}, `
-        + `average execution ${(weakest.holding! / 20).toFixed(1)}/5.`,
-      weight: goals.length ? 'second' : 'first',
-    });
-  }
-
-  if (top) {
-    out.push({
-      id: `reason-${top.key}`,
-      title: `Fix "${top.label.toLowerCase()}" before the next session`,
-      detail:
-        `The cause of ${top.share}% of your bad sessions here.`,
-      why: `${top.count} of the rated tasks you struggled with ${top.phrase}.`,
-      weight: 'second',
-    });
-  }
-
-  // ---- The one measure worth naming --------------------------------------
-  /* Sorted, then the first — not filtered by a threshold and looped. There is
-     one lowest measure. The gap to the next one is what says whether it is a
-     real weak spot or just the low end of four numbers that are all fine, and
-     a measure that is lowest by two points is not worth a card. */
-  const ranked = [...rates].filter((entry) => entry.known).sort((a, b) => a.now - b.now);
-  const lowest = ranked[0];
-  const next = ranked[1];
-  if (lowest && lowest.now < 60 && (!next || next.now - lowest.now >= 5)) {
-    out.push({
-      id: `rate-${lowest.key}`,
-      title: `${lowest.label} is dragging the grade`,
-      detail:
-        `${Math.round(lowest.now)}%`
-        + (next
-          ? `, ${Math.round(next.now - lowest.now)} points below ${next.label.toLowerCase()}.`
-          : '.'),
-      why: lowest.note,
-      weight: 'upkeep',
-    });
-  }
-
-  return out;
-}
-
 // --------------------------------------------------------------------------
 // The whole page
 // --------------------------------------------------------------------------
@@ -1027,7 +875,6 @@ export interface SubjectModel {
   goalAimed: number | null;
   goals: SubjectGoal[];
 
-  advice: Advice[];
   insight: string | null;
 }
 
@@ -1210,7 +1057,6 @@ export function subjectModel(
      seven-day window is blind to — and it is the one worth having. */
   const everDone = mine.filter((task) => task.status === 'done' && task.completed_at);
   const subjectGoals = goalsFor(goals, subjectId, today, done, everDone, span);
-  const advice = adviceFrom(bands, struggles, rates, subjectGoals);
 
   /* The one sentence, in priority order: a goal that is going to miss, then
      the gap between bands, then the weakest rate, then the volume. Whichever
@@ -1268,7 +1114,6 @@ export function subjectModel(
     recent,
     goalAimed,
     goals: subjectGoals,
-    advice,
     insight,
   };
 }

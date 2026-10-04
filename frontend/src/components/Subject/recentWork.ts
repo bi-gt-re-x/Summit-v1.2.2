@@ -35,7 +35,7 @@
 import { qualityOf, reasonOf } from '@/utils/ratings';
 import { spanFor } from './model';
 import type { WindowKey } from '@/components/Analytics/data';
-import type { AnalyticsTask } from '@/services/analytics';
+import type { AnalyticsTask, WorkGroup } from '@/services/analytics';
 
 /**
  * How many rows go up.
@@ -128,6 +128,119 @@ export function recentWork(
         minutes:
           Number.isFinite(seconds) && seconds > 0 ? Math.round(seconds / 60) : null,
         reason: reasonOf(task.reason)?.reason.label ?? '',
+      };
+    });
+}
+
+// --------------------------------------------------------------------------
+// Everything, grouped by name
+// --------------------------------------------------------------------------
+/**
+ * How many name groups go up. The page sends the largest; a subject with more
+ * distinct kinds of task than this has a long tail of one-offs, and the model
+ * is better served by the material the reader keeps returning to.
+ */
+export const GROUPS = 25;
+
+/**
+ * A title with its numbers blanked, so ranges and years of the same material
+ * fold into one group: "MATHCOUNTS Sprint 21-30" and "MATHCOUNTS Sprint 1-10"
+ * are both "MATHCOUNTS Sprint #", and "AMC10 2019 #14" is "AMC10 #".
+ *
+ * A word with a letter in it is kept whole, so AMC8, AMC10 and AMC12 stay
+ * three groups — they are three different papers, not one with a number on
+ * it. Only the tokens that are nothing but numbers and punctuation become `#`.
+ */
+export function nameFamily(title: string): string {
+  const words = title
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => (/[A-Za-z]/.test(word) ? word : '#'));
+  return words.filter((word, at) => !(word === '#' && words[at - 1] === '#')).join(' ');
+}
+
+/** One decimal, or null over nothing. */
+function mean(values: number[]): number | null {
+  if (values.length === 0) return null;
+  return Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 10) / 10;
+}
+
+/**
+ * Every finished task in this subject's window, grouped by name and counted.
+ *
+ * The sample above is the newest forty, which says what the work is now. This
+ * is all of it, so the model can see which material has stopped teaching the
+ * reader anything (done often, filed easy, rated 5), which is going badly
+ * (filed hard, rated 2), which takes longest, and which ranges and papers are
+ * already done — the last of which is what lets a step name the *next* range
+ * rather than one the reader has finished.
+ *
+ * Largest groups first. The brief orders them again by how they went and how
+ * long they took; see `work_groups` in backend/tracking/subject_ai.py.
+ */
+export function workGroups(
+  all: AnalyticsTask[],
+  subjectId: string,
+  key: WindowKey,
+  today: string,
+  most: number = GROUPS,
+): WorkGroup[] {
+  const span = spanFor(key, today);
+  const groups = new Map<string, { name: string; rows: AnalyticsTask[] }>();
+
+  const finished = all
+    .filter(
+      (task) =>
+        task.subject === subjectId &&
+        task.status === 'done' &&
+        (task.title ?? '').trim() !== '' &&
+        within(dayOf(task.completed_at), span.from, span.to),
+    )
+    .sort((a, b) => dayOf(b.completed_at).localeCompare(dayOf(a.completed_at)));
+
+  for (const task of finished) {
+    const name = nameFamily(task.title ?? '');
+    const id = name.toLowerCase();
+    const group = groups.get(id) ?? { name, rows: [] };
+    group.rows.push(task);
+    groups.set(id, group);
+  }
+
+  return [...groups.values()]
+    .sort((a, b) => b.rows.length - a.rows.length)
+    .slice(0, Math.max(0, most))
+    .map(({ name, rows }) => {
+      const rated = rows.filter((task) => qualityOf(task as never) !== null);
+      const execution = rated.map((task) => levelOf(task.execution)).filter((v): v is number => v !== null);
+      const difficulty = rated.map((task) => levelOf(task.difficulty)).filter((v): v is number => v !== null);
+      const minutes = rows
+        .map((task) => Number(task.completion_seconds))
+        .filter((seconds) => Number.isFinite(seconds) && seconds > 0)
+        .map((seconds) => seconds / 60);
+
+      const reasons = new Map<string, number>();
+      for (const task of rows) {
+        const label = reasonOf(task.reason)?.reason.label;
+        if (label) reasons.set(label, (reasons.get(label) ?? 0) + 1);
+      }
+
+      const averageMinutes = mean(minutes);
+      return {
+        name,
+        count: rows.length,
+        examples: [...new Set(rows.map((task) => (task.title ?? '').trim()))].slice(0, 4),
+        rated: rated.length,
+        difficulty: mean(difficulty),
+        execution: mean(execution),
+        minutes: averageMinutes === null ? null : Math.round(averageMinutes),
+        well: execution.filter((value) => value >= 4).length,
+        badly: execution.filter((value) => value <= 2).length,
+        reasons: [...reasons]
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([label, count]) => `${label} ×${count}`),
+        last: dayOf(rows[0]?.completed_at),
       };
     });
 }

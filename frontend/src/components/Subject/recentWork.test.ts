@@ -8,7 +8,7 @@
  * model as a fact about the reader, and the model has no way to tell.
  */
 import { describe, expect, it } from 'vitest';
-import { SAMPLE, recentWork } from './recentWork';
+import { SAMPLE, nameFamily, recentWork, workGroups } from './recentWork';
 import type { AnalyticsTask } from '@/services/analytics';
 
 const TODAY = '2026-09-05';
@@ -160,3 +160,70 @@ describe('how much of it there is', () => {
     expect(recentWork([], 'maths', '30d', TODAY)).toEqual([]);
   });
 });
+
+describe('names, folded into groups', () => {
+  it('blanks the numbers so ranges of one set are one group', () => {
+    expect(nameFamily('MATHCOUNTS Sprint 21-30')).toBe('MATHCOUNTS Sprint #');
+    expect(nameFamily('MATHCOUNTS Sprint 1-10')).toBe('MATHCOUNTS Sprint #');
+    expect(nameFamily('AMC10 2019 #14')).toBe('AMC10 #');
+  });
+
+  it('keeps a word with a letter in it, so AMC8 and AMC10 stay apart', () => {
+    expect(nameFamily('AMC8 2020 #3')).not.toBe(nameFamily('AMC10 2020 #3'));
+  });
+});
+
+describe('every finished task, grouped by name', () => {
+  const groups = () =>
+    workGroups(
+      [
+        did({ title: 'MATHCOUNTS Sprint 1-10', completed_at: ago(3), difficulty: 2, execution: 5, completion_seconds: 600 }),
+        did({ title: 'MATHCOUNTS Sprint 21-30', completed_at: ago(1), difficulty: 2, execution: 4, completion_seconds: 1200 }),
+        did({ title: 'MATHCOUNTS Sprint 11-20', completed_at: ago(2), difficulty: 2, execution: 5 }),
+        did({ title: 'AMC10 2019 #14', completed_at: ago(2), difficulty: 4, execution: 1, reason: 'no-time' }),
+        did({ title: 'AMC10 2018 #9', completed_at: ago(4), difficulty: 4, execution: 2, reason: 'no-time' }),
+        did({ title: 'Chemistry notes', subject: 'chem', completed_at: ago(1) }),
+        did({ title: 'MATHCOUNTS Sprint 31-40', status: 'todo', completed_at: undefined }),
+        did({ title: 'MATHCOUNTS Sprint 41-50', completed_at: ago(200) }),
+      ],
+      'maths',
+      '30d',
+      TODAY,
+    );
+
+  it('folds the ranges together and puts the biggest group first', () => {
+    const [sprint, amc] = groups();
+    expect(sprint!.name).toBe('MATHCOUNTS Sprint #');
+    expect(sprint!.count).toBe(3);
+    expect(amc!.name).toBe('AMC10 #');
+    expect(amc!.count).toBe(2);
+  });
+
+  it('leaves out other subjects, unfinished work and work outside the window', () => {
+    const names = groups().map((group) => group.name);
+    expect(names).toEqual(['MATHCOUNTS Sprint #', 'AMC10 #']);
+    expect(groups()[0]!.examples).not.toContain('MATHCOUNTS Sprint 41-50');
+  });
+
+  it('lists the titles actually used, newest first, so the next range can be named', () => {
+    expect(groups()[0]!.examples).toEqual([
+      'MATHCOUNTS Sprint 21-30',
+      'MATHCOUNTS Sprint 11-20',
+      'MATHCOUNTS Sprint 1-10',
+    ]);
+  });
+
+  it('says how hard, how well, how long and how it went', () => {
+    const [sprint, amc] = groups();
+    expect(sprint!.difficulty).toBe(2);
+    expect(sprint!.execution).toBe(4.7);
+    // Only the two timed tasks: 10 and 20 minutes.
+    expect(sprint!.minutes).toBe(15);
+    expect(sprint!.well).toBe(3);
+    expect(amc!.badly).toBe(2);
+    expect(amc!.minutes).toBeNull();
+    expect(sprint!.last).toBe(ago(1));
+    expect(amc!.reasons).toEqual(['Ran out of time ×2']);
+  });
+});
+

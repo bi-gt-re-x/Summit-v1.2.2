@@ -89,7 +89,7 @@ const HEAT_WINDOW: Record<WindowKey, CalendarKey> = {
 import { gradeFor } from '@/utils/analyticalScore';
 import { spanFor, subjectModel, type SubjectGoal } from '@/components/Subject/model';
 import { subjectState } from '@/components/Subject/state';
-import { recentWork } from '@/components/Subject/recentWork';
+import { recentWork, workGroups } from '@/components/Subject/recentWork';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
 import { SubjectHeat } from '@/components/Subject/Heat';
@@ -116,14 +116,19 @@ import {
   subjectMilestones,
   subjectReadingAvailable,
   savedSubjectReading,
+  subjectRecommendations,
   suggestSubjectGoal,
+  takeRecommendation,
   writeGoalPlan,
   type GoalDraft,
   type GoalPlan,
+  type NextStep,
   type SubjectMilestone,
   type SubjectReading,
 } from '@/services/analytics';
 import { getGoals, updateGoal } from '@/services/goals';
+import { createTask } from '@/services/tasks';
+import { BATCH, MAX_STEPS, NextSteps } from '@/components/Subject/NextSteps';
 import { measureOf } from '@/components/Goals';
 import { format } from '@/utils';
 import { observations } from '@/utils/observations';
@@ -698,9 +703,17 @@ export default function SubjectAnalytics() {
    * keeps a step from offering itself twice inside one visit.
    */
   const [reading, setReading] = useState<SubjectReading | null>(null);
-  const [thinking, setThinking] = useState(false);
+  /* Which button is waiting on the model — the steps' or the record's —
+     so each says "…" on its own and an error lands beside the one pressed. */
+  const [asking, setAsking] = useState<'' | 'fresh' | 'more' | 'read'>('');
+  const thinking = asking !== '';
   const [readError, setReadError] = useState('');
+  const [errorFrom, setErrorFrom] = useState<'steps' | 'read'>('steps');
   const [canRead, setCanRead] = useState(false);
+  /* Recommendations already acted on, so a step does not offer twice, and the
+     one a button is busy on. */
+  const [taken, setTaken] = useState<Set<string>>(new Set());
+  const [stepBusy, setStepBusy] = useState('');
 
   /* ---- WHAT ARE YOU TRYING TO ACCOMPLISH -------------------------------
      The band the page opens on, and the facts that bear on it.
@@ -709,6 +722,9 @@ export default function SubjectAnalytics() {
      which is what lets the first section of the page exist before anybody has
      pressed anything — see components/Subject/objective for why that matters
      more here than anywhere else on the page. */
+  /** How many steps are on screen, 0 to MAX_STEPS. */
+  const shown = Math.min(reading?.next_steps.length ?? 0, MAX_STEPS);
+
   const objective = useMemo(
     () => objectiveFrom(state, perf, model.goals, ambition ?? null, today,
                         reading?.goal_read ?? null),
@@ -754,6 +770,21 @@ export default function SubjectAnalytics() {
      request is actually keyed on, and it is a string. */
   const subjectName = subject?.name ?? '';
 
+  /* Which recommendations here have been acted on before. Cheap, and read on
+     arrival, so a step taken on an earlier visit says so the moment a saved
+     batch is put back on screen. */
+  useEffect(() => {
+    if (!username || !subjectName) return;
+    let live = true;
+    void subjectRecommendations(subjectName).then((result) => {
+      if (!live || !result.success) return;
+      setTaken(new Set(result.recommendations.filter((row) => row.taken).map((row) => row.id)));
+    });
+    return () => {
+      live = false;
+    };
+  }, [subjectName, username]);
+
   /* Cleared with the window and the subject, then restored from the server if
      one was written for this exact pair.
 
@@ -781,91 +812,148 @@ export default function SubjectAnalytics() {
     };
   }, [span, spanLabel, subjectId, subjectName, username]);
 
-  const askForReading = useCallback(async () => {
+  /**
+   * Ask the model. `fresh` replaces the steps on screen with three new ones,
+   * `more` adds three under them (the server stops at six), and `read` is the
+   * record's own button, which wants the findings and leaves the steps alone.
+   */
+  const askForReading = useCallback(async (mode: 'fresh' | 'more' | 'read' = 'fresh') => {
     if (!subject) return;
-    setThinking(true);
+    setAsking(mode);
     setReadError('');
+    setErrorFrom(mode === 'read' ? 'read' : 'steps');
 
-    const result = await readSubject({
-      subject: subject.name,
-      span: WINDOWS.find((option) => option.key === span)?.label ?? '',
-      aim: ambition?.aim ?? '',
-      level: ambition?.level ?? '',
-      overall: state.overall,
-      finished: state.finished,
-      finished_before: state.finishedBefore,
-      rated: state.ratedCount,
-      active_days: state.activeDays,
-      dimensions: state.dimensions.map((entry) => ({
-        label: entry.label,
-        value: entry.value,
-        meaning: entry.meaning,
-        evidence: entry.evidence,
-      })),
-      curve: {
-        rungs: state.curve.rungs.map((rung) => ({
-          level: rung.level,
-          label: rung.label,
-          done: rung.done,
-          execution: rung.execution,
-          quality: rung.quality,
-          cleared: rung.cleared,
-          minutes: rung.minutes,
+    /* `finally`, because a request that throws — a server error, a dropped
+       connection — would otherwise leave the button saying "Planning…" for
+       good, with nothing to press. */
+    let result: Awaited<ReturnType<typeof readSubject>>;
+    try {
+      result = await readSubject({
+        subject: subject.name,
+        span: WINDOWS.find((option) => option.key === span)?.label ?? '',
+        aim: ambition?.aim ?? '',
+        level: ambition?.level ?? '',
+        overall: state.overall,
+        finished: state.finished,
+        finished_before: state.finishedBefore,
+        rated: state.ratedCount,
+        active_days: state.activeDays,
+        dimensions: state.dimensions.map((entry) => ({
+          label: entry.label,
+          value: entry.value,
+          meaning: entry.meaning,
+          evidence: entry.evidence,
         })),
-        best: state.curve.best,
-        threshold: state.curve.threshold,
-        drop: state.curve.drop,
-      },
-      time: { ...state.time },
-      momentum: { ...state.momentum },
-      mistakes: state.mistakes.map((entry) => ({
-        label: entry.label,
-        count: entry.count,
-        share: entry.share,
-      })),
-      /* Worked out here rather than by the model, because it is arithmetic and
-         arithmetic is the half of this page that is checkable. What goes over
-         the wire is conclusions rather than more figures — which measure is
-         carrying the shortfall, whether what goes wrong is about knowing the
-         work or about the sitting, where the difficulty filed and the result
-         disagree, and whether capability is running ahead of the score. A
-         model handed only the raw table restates it; handed these it has to
-         reason from them. See components/Subject/performance. */
-      performance: perf as unknown as Record<string, unknown>,
-      goals: model.goals.map((goal) => ({
-        title: goal.title,
-        progress: Math.round(goal.progress),
-        deadline: goal.deadline,
-        standing:
-          goal.drift === null
-            ? 'no projection'
-            : goal.drift > 0
-              ? `projected ${goal.drift} days late`
-              : 'projected on time or early',
-        levers: goal.levers.map((lever) => `${lever.title} — ${lever.fact}`),
-      })),
-      /* The curriculum's own words, and nothing more. These are the authored
-         tree's area names — identical on every account, carrying no
-         measurement of this reader — so the model has a vocabulary to
-         recommend in without having to invent one. The prompt is explicit
-         that naming an area is allowed and claiming a level in it is not. */
-      vocabulary: lattice
-        ? [lattice.title, ...lattice.branches.map((branch) => branch.title)]
-        : [],
-      /* The work itself, and the only thing going up that is not a
-         measurement. Everything above it describes the *shape* of the record
-         — execution is 47, the curve falls off at Hard — and a model given
-         only that writes the shape back as an instruction: "Focused Easy
-         Execution Practice. Solve 10 Easy problems." The titles are what make
-         it possible to say which Easy problems, and that the answer is to
-         stop doing them. See components/Subject/recentWork. */
-      recent_work: recentWork(tasks.data?.tasks ?? [], subjectId, span, today),
-    });
+        curve: {
+          rungs: state.curve.rungs.map((rung) => ({
+            level: rung.level,
+            label: rung.label,
+            done: rung.done,
+            execution: rung.execution,
+            quality: rung.quality,
+            cleared: rung.cleared,
+            minutes: rung.minutes,
+          })),
+          best: state.curve.best,
+          threshold: state.curve.threshold,
+          drop: state.curve.drop,
+        },
+        time: { ...state.time },
+        momentum: { ...state.momentum },
+        mistakes: state.mistakes.map((entry) => ({
+          label: entry.label,
+          count: entry.count,
+          share: entry.share,
+        })),
+        /* Worked out here rather than by the model, because it is arithmetic and
+           arithmetic is the half of this page that is checkable. What goes over
+           the wire is conclusions rather than more figures — which measure is
+           carrying the shortfall, whether what goes wrong is about knowing the
+           work or about the sitting, where the difficulty filed and the result
+           disagree, and whether capability is running ahead of the score. A
+           model handed only the raw table restates it; handed these it has to
+           reason from them. See components/Subject/performance. */
+        performance: perf as unknown as Record<string, unknown>,
+        goals: model.goals.map((goal) => ({
+          title: goal.title,
+          progress: Math.round(goal.progress),
+          deadline: goal.deadline,
+          standing:
+            goal.drift === null
+              ? 'no projection'
+              : goal.drift > 0
+                ? `projected ${goal.drift} days late`
+                : 'projected on time or early',
+          levers: goal.levers.map((lever) => `${lever.title} — ${lever.fact}`),
+        })),
+        /* The curriculum's own words, and nothing more. These are the authored
+           tree's area names — identical on every account, carrying no
+           measurement of this reader — so the model has a vocabulary to
+           recommend in without having to invent one. The prompt is explicit
+           that naming an area is allowed and claiming a level in it is not. */
+        vocabulary: lattice
+          ? [lattice.title, ...lattice.branches.map((branch) => branch.title)]
+          : [],
+        /* The work itself, and the only thing going up that is not a
+           measurement. Everything above it describes the *shape* of the record
+           — execution is 47, the curve falls off at Hard — and a model given
+           only that writes the shape back as an instruction: "Focused Easy
+           Execution Practice. Solve 10 Easy problems." The titles are what make
+           it possible to say which Easy problems, and that the answer is to
+           stop doing them. See components/Subject/recentWork. */
+        recent_work: recentWork(tasks.data?.tasks ?? [], subjectId, span, today),
+        /* Every finished task in the window, grouped by name, with how each
+           group went, how hard it was filed and how long it took — so a step
+           can name the material that is or is not working, and the next range
+           of it. */
+        work_groups: workGroups(tasks.data?.tasks ?? [], subjectId, span, today),
+        mode,
+      });
+    } catch {
+      result = { success: false, message: 'Could not reach the server. Try again.' } as typeof result;
+    } finally {
+      setAsking('');
+    }
 
-    setThinking(false);
     if (result.success) setReading(result.reading);
     else setReadError(result.message || 'Could not read this subject.');
-  }, [ambition, lattice, model.goals, span, state, subject]);
+  }, [ambition, lattice, model.goals, span, state, subject, subjectId, tasks.data, today]);
+
+  /** Record a step as acted on, however it was acted on. */
+  const record = useCallback(async (step: NextStep, taskId = '') => {
+    setStepBusy(step.id);
+    const result = await takeRecommendation(step.id, taskId);
+    setStepBusy('');
+    if (result.success) setTaken((was) => new Set(was).add(step.id));
+  }, []);
+
+  /**
+   * Turn a step into a real task, filed under this subject.
+   *
+   * That is what closes the loop: finishing an ordinary task raises the rating
+   * prompt, the rating is what the figures above are made of, and the next
+   * batch is therefore argued from evidence this one produced.
+   */
+  const makeTask = useCallback(
+    async (step: NextStep) => {
+      setStepBusy(step.id);
+      const made = await createTask({
+        name: step.title,
+        subject: subjectId,
+        priority: step.difficulty >= 4 ? 'high' : 'medium',
+      });
+      setStepBusy('');
+      if (!made.success) {
+        setErrorFrom('steps');
+        setReadError('Could not add that task. Try again.');
+        return;
+      }
+      await record(step, made.task_id);
+      // Re-read rather than patched: the new task changes a dozen figures.
+      tasks.reload();
+    },
+    [record, subjectId, tasks],
+  );
 
   /* The volume chart's own ceiling. A floor of 1 keeps a window with a single
      quiet period from producing a "0" top tick over a line that is not flat. */
@@ -1264,10 +1352,93 @@ export default function SubjectAnalytics() {
                 arguing with. The evidence is still on the page — it is the
                 Evidence tab, which is what that tab is. */}
 
-            {/* "Do this next" — the subject's ranked advice and the model's plan
-                for the next sessions — was here. What to do is said on the
-                Recommendations tab only; pick this subject in its Subject
-                filter to see it for this subject alone. */}
+            {/* ---- RECOMMENDATIONS ------------------------------------ */}
+            {/* Right above the calendar: what to do about this subject in
+                particular, which the Recommendations tab can only say across
+                every subject at once.
+
+                Model-written only. The app's own ranked advice used to lead
+                this panel and was cut: it could only ever say the shape of the
+                record back as an instruction. The model is handed every task
+                here, grouped by name with how each went, how hard it was and
+                how long it took, and has to say exactly which problems, at
+                what pace, from where. Three at a time; "Generate 3 more" adds
+                three under them, up to six. */}
+            <section className="ax-panel sb-panel" aria-label="Recommendations">
+              <div className="ax-panel-head">
+                <div className="ax-panel-title">
+                  <h2>Recommendations</h2>
+                </div>
+              </div>
+
+              {canRead ? (
+                <div className="sb-draft">
+                  {/* The invitation, and what it offers depends on what is on
+                      screen: a first three, three more under them, or — at six
+                      — a fresh start, because a longer list is a backlog. */}
+                  <div className="sx-ai-invite">
+                    <div>
+                      <strong>
+                        {shown === 0
+                          ? `Get ${BATCH} sessions planned with AI`
+                          : shown < MAX_STEPS
+                            ? `Done with these? Get ${BATCH} more`
+                            : `That is ${MAX_STEPS}, the most at once`}
+                      </strong>
+                      <p>
+                        {shown < MAX_STEPS
+                          ? `A model reads every task you have finished here — what it was, how hard, how it went and how long it took — and plans ${BATCH} exact sessions: which problems, how fast, and where to get them.`
+                          : `Act on some of these, or start over with a fresh ${BATCH}.`}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      className="ax-btn"
+                      onClick={() =>
+                        void askForReading(shown > 0 && shown < MAX_STEPS ? 'more' : 'fresh')
+                      }
+                      disabled={thinking}
+                    >
+                      {asking === 'fresh' || asking === 'more'
+                        ? 'Planning…'
+                        : shown === 0
+                          ? `Generate ${BATCH} with AI`
+                          : shown < MAX_STEPS
+                            ? `Generate ${BATCH} more`
+                            : `Start over with ${BATCH}`}
+                    </button>
+                  </div>
+
+                  {readError && errorFrom === 'steps' && (
+                    <p className="sx-ask-err" role="alert">
+                      {readError}
+                    </p>
+                  )}
+
+                  {shown > 0 && reading && (
+                    <div className="sb-draft-body">
+                      <p className="sx-batch-note">
+                        {shown} of {MAX_STEPS}, model-written from your tasks. Open one for the
+                        pace, where to get the material and why.
+                      </p>
+                      <NextSteps
+                        steps={reading.next_steps}
+                        taken={taken}
+                        busy={stepBusy}
+                        onMakeTask={(step) => void makeTask(step)}
+                        onDidIt={(step) => void record(step)}
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="ax-panel-note">
+                  Recommendations here are written by a model, and this install has no model
+                  key. Add one to .env and restart the server.
+                </p>
+              )}
+            </section>
+
 
             {/* ---- WHAT THE RECORD SAYS -------------------------------- */}
             {/* Two halves, and the section draws for the first one alone.
@@ -1308,14 +1479,14 @@ export default function SubjectAnalytics() {
                   <button
                     type="button"
                     className="ax-btn"
-                    onClick={() => void askForReading()}
+                    onClick={() => void askForReading('read')}
                     disabled={thinking}
                   >
-                    {thinking ? 'Reading…' : reading ? 'Read it again' : 'Read my record'}
+                    {asking === 'read' ? 'Reading…' : reading ? 'Read it again' : 'Read my record'}
                   </button>
                 </div>
               )}
-              {readError && (
+              {readError && errorFrom === 'read' && (
                 <p className="sx-ask-err" role="alert">
                   {readError}
                 </p>
@@ -1333,8 +1504,8 @@ export default function SubjectAnalytics() {
               )}
             </Panel>
 
-            {/* "Did your last advice work" followed up the steps above, which
-                are gone; the Recommendations tab follows up its own. */}
+            {/* "Did your last advice work" is not back: the Recommendations tab
+                follows up its own advice. */}
 
               </>
             )}

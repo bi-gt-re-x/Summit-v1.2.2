@@ -75,6 +75,17 @@ WORK = 40
 #: brief. Long enough for the sentence somebody actually writes in that box.
 NOTE = 200
 
+#: Name groups of the whole window's work, as the page counted them. Enough
+#: to cover an account's distinct kinds of task in one subject; past this the
+#: smallest groups are dropped by the page before they are sent.
+WORK_GROUPS = 25
+
+#: The most recommendations the panel holds at once. A batch is three, and
+#: "Generate 3 more" adds a second batch under the first; past six the
+#: reader is asked to act on some or start over, because a list longer than
+#: that is a backlog rather than a plan.
+MAX_STEPS = 6
+
 
 # --------------------------------------------------------------------------
 # What the page sends
@@ -154,6 +165,26 @@ class WorkRow(BaseModel):
     reason: str = ''
 
 
+class WorkGroup(BaseModel):
+    """Every finished task in the window sharing one name, counted by the page.
+
+    See `workGroups` in frontend/src/components/Subject/recentWork.ts for how
+    the names are folded together and what each figure is over.
+    """
+
+    name: str = ''
+    count: int = 0
+    examples: List[str] = []
+    rated: int = 0
+    difficulty: Optional[float] = None
+    execution: Optional[float] = None
+    minutes: Optional[int] = None
+    well: int = 0
+    badly: int = 0
+    reasons: List[str] = []
+    last: str = ''
+
+
 class SubjectStateBody(BaseModel):
     """The whole deterministic state, as the page computed it."""
 
@@ -187,6 +218,16 @@ class SubjectStateBody(BaseModel):
     #: reading that is not a measurement, and the only one that says what the
     #: work actually is. See `_work` and the note on it.
     recent_work: List[WorkRow] = []
+    #: Every finished task in the window, grouped by name and counted.
+    work_groups: List[WorkGroup] = []
+    #: What this call is for. `fresh` replaces the steps on screen with a new
+    #: three; `more` adds three under the ones already there, up to
+    #: `MAX_STEPS`; both ask for steps alone (`subject_ai.plan`). `read` is
+    #: the record's own button: the whole reading, leaving any steps on screen
+    #: exactly as they are, and filling them from the reading when there are
+    #: none. The default, so a caller that names no mode gets what it always
+    #: got.
+    mode: str = 'read'
 
 
 def _text(value, cap=TEXT):
@@ -244,6 +285,50 @@ def _work(username: str, rows: List[WorkRow]):
         }
         out.append(entry)
     return out
+
+
+def _group(entry: WorkGroup) -> dict:
+    """One name group, bounded. Absent figures stay absent rather than nought."""
+    def level(value):
+        return round(value, 1) if value is not None and 1 <= value <= 5 else None
+
+    return {
+        'name': _text(entry.name),
+        'count': max(0, entry.count),
+        'examples': [_text(title) for title in entry.examples[:4] if _text(title)],
+        'rated': max(0, entry.rated),
+        'difficulty': level(entry.difficulty),
+        'execution': level(entry.execution),
+        'minutes': entry.minutes if (entry.minutes or 0) > 0 else None,
+        'well': max(0, entry.well),
+        'badly': max(0, entry.badly),
+        'reasons': [_text(reason, 60) for reason in entry.reasons[:3] if _text(reason)],
+        'last': _text(entry.last, 10),
+    }
+
+
+#: What a reading holds when nothing has been read yet — the shape the page
+#: draws, empty, so a plan with no reading around it still draws.
+EMPTY_READING = {'diagnosis': [], 'priorities': [], 'next_steps': [], 'insights': []}
+
+
+def _saved_reading(username: str, subject: str) -> dict:
+    """The saved reading for this subject, or an empty one."""
+    row = next((row for row in db.rows_for('subject_readings', username)
+                if (row.get('subject') or '') == subject), None)
+    if not row:
+        return dict(EMPTY_READING)
+    try:
+        read = json.loads(row.get('body') or '')
+    except (TypeError, ValueError):
+        return dict(EMPTY_READING)
+    return {**EMPTY_READING, **read} if isinstance(read, dict) else dict(EMPTY_READING)
+
+
+def _saved_steps(username: str, subject: str) -> list:
+    """The steps on the reader's screen: the saved reading's, newest batch last."""
+    steps = _saved_reading(username, subject).get('next_steps')
+    return [step for step in (steps or []) if isinstance(step, dict)][:MAX_STEPS]
 
 
 # --------------------------------------------------------------------------
@@ -332,6 +417,12 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
     history = _history(username, subject)
     curve = body.curve
 
+    mode = body.mode if body.mode in ('fresh', 'more', 'read') else 'read'
+    on_screen = _saved_steps(username, subject) if mode in ('more', 'read') else []
+    if mode == 'more' and len(on_screen) >= MAX_STEPS:
+        return fail('Six is the most this holds at once. Act on some of these, '
+                    'or start over with a fresh three.')
+
     state = {
         'subject': subject,
         'span': _text(body.span),
@@ -366,6 +457,8 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         ],
         'vocabulary': [_text(item, 60) for item in body.vocabulary[:VOCABULARY]],
         'recent_work': _work(username, body.recent_work),
+        'work_groups': [_group(entry) for entry in body.work_groups[:WORK_GROUPS]
+                        if _text(entry.name)],
         'previous': [
             {'title': row.get('title'), 'type': row.get('kind'),
              'difficulty': row.get('difficulty'), 'minutes': row.get('minutes'),
@@ -373,17 +466,46 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
             for row in history[:6]
         ],
         'outcomes': _outcomes(history, execution_now),
+        'showing': [_text(step.get('title')) for step in on_screen],
     }
 
+    # The record's button asks for the whole reading. The Recommendations
+    # panel asks for steps alone, from a smaller brief, and keeps whatever
+    # reading is already saved around them — see `subject_ai.plan`.
     try:
-        read = subject_ai.read(state)
+        if mode == 'read':
+            read = subject_ai.read(state)
+        else:
+            read = {**_saved_reading(username, subject),
+                    'next_steps': subject_ai.plan(state)}
     except subject_ai.BriefUnavailable as exc:
         return fail(str(exc))
 
     # ---- Keep the recommendations, and only them -------------------------
     now = datetime.now().isoformat(timespec='seconds')
+    span = _text(body.span, 64)
+
+    # The record's own button wants findings, not a new plan: the steps on
+    # screen stay, and nothing is added to the ledger.
+    if mode == 'read' and on_screen:
+        read['next_steps'] = on_screen
+        _keep_reading(username, subject, read, now, span)
+        return ok(reading=read)
+
+    # A second batch goes under the first, without repeating a title already
+    # there, and never past MAX_STEPS.
+    seen = {str(step.get('title') or '').strip().lower() for step in on_screen}
+    room = MAX_STEPS - len(on_screen) if mode == 'more' else MAX_STEPS
+    fresh = []
+    for step in read.get('next_steps') or []:
+        key = step['title'].strip().lower()
+        if key in seen or len(fresh) >= min(room, subject_ai.NEXT_STEPS):
+            continue
+        seen.add(key)
+        fresh.append(step)
+
     kept = []
-    for at, step in enumerate(read.get('next_steps') or []):
+    for at, step in enumerate(fresh):
         row = {
             'id': 'r{}{}'.format(int(datetime.now().timestamp() * 1000), at),
             'user_id': username,
@@ -401,8 +523,8 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         db.insert_row('subject_recommendations', row)
         kept.append({**step, 'id': row['id']})
 
-    read['next_steps'] = kept
-    _keep_reading(username, subject, read, now, _text(body.span, 64))
+    read['next_steps'] = (on_screen + kept) if mode == 'more' else kept
+    _keep_reading(username, subject, read, now, span)
     return ok(reading=read)
 
 
@@ -436,14 +558,20 @@ def _keep_reading(username: str, subject: str, read: dict, when: str,
     except (TypeError, ValueError):
         return
 
-    row_id = 'sr{}'.format(sha1(
-        '{}|{}'.format(username, subject).encode('utf-8')).hexdigest()[:24])
     fields = {'user_id': username, 'subject': subject, 'span': span,
               'written_at': when, 'body': body}
-    if db.find_row('subject_readings', row_id, user_id=username):
-        db.update_row('subject_readings', row_id, fields, user_id=username)
-    else:
-        db.insert_row('subject_readings', {'id': row_id, **fields})
+    # Found by subject rather than by the id derived below: the table is one
+    # row per (user, subject), and an id hashed from the username stops
+    # matching the moment the account is renamed — after which an insert hits
+    # that constraint and the reading the model just wrote is lost.
+    existing = next((row for row in db.rows_for('subject_readings', username)
+                     if (row.get('subject') or '') == subject), None)
+    if existing:
+        db.update_row('subject_readings', existing['id'], fields, user_id=username)
+        return
+    row_id = 'sr{}'.format(sha1(
+        '{}|{}'.format(username, subject).encode('utf-8')).hexdigest()[:24])
+    db.insert_row('subject_readings', {'id': row_id, **fields})
 
 
 @router.get('/api/subject_reading_saved')

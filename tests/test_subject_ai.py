@@ -676,6 +676,7 @@ def _save(client, monkeypatch, subject='Algebra', span='the last 30 days'):
     """Ask for a reading with the model stubbed, so one gets stored."""
     monkeypatch.setattr(subject_ai, 'configured', lambda: True)
     monkeypatch.setattr(subject_ai, 'read', lambda *a, **k: dict(READING))
+    monkeypatch.setattr(subject_ai, 'plan', lambda *a, **k: list(READING['next_steps']))
     return client.post('/api/subject_reading',
                        json={'subject': subject, 'span': span}).json()
 
@@ -731,7 +732,8 @@ class TestAReadingSurvivesARefresh:
     def test_the_ledger_is_still_appended_to(self, client, monkeypatch):
         """The outcome loop depends on every recommendation staying on record."""
         _save(client, monkeypatch)
-        _save(client, monkeypatch)
+        client.post('/api/subject_reading',
+                    json={'subject': 'Algebra', 'span': 'x', 'mode': 'fresh'})
         listed = client.get('/api/subject_recommendations?subject=Algebra').json()
         assert len(listed['recommendations']) == 2
 
@@ -985,3 +987,252 @@ class TestAFindingSaysWhichWayItCuts:
 
     def test_the_model_is_told_not_to_file_good_news_as_a_problem(self):
         assert 'Not everything a record says is a problem.' in subject_ai.SYSTEM
+
+
+# ---------------------------------------------------------------------------
+# Batches of three, up to six
+# ---------------------------------------------------------------------------
+def _batch(*titles):
+    """A stubbed reading whose steps carry these titles."""
+    return {
+        **READING,
+        'next_steps': [
+            {'title': title, 'problems': 'Sprint #1-10', 'pace': '2 min each',
+             'resource': 'mathcounts.org', 'focus': 'Algebra', 'type': 'timed_set',
+             'difficulty': 2, 'minutes': 20, 'reason': '', 'signal': '', 'drills': []}
+            for title in titles
+        ],
+    }
+
+
+def _ask(client, monkeypatch, reading, mode):
+    monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+    seen = {}
+
+    def fake(state, *a, **k):
+        seen['state'] = state
+        return reading
+
+    def fake_plan(state, *a, **k):
+        seen['state'] = state
+        return list(reading['next_steps'])
+
+    monkeypatch.setattr(subject_ai, 'read', fake)
+    monkeypatch.setattr(subject_ai, 'plan', fake_plan)
+    body = client.post('/api/subject_reading',
+                       json={'subject': 'Algebra', 'span': 'x', 'mode': mode}).json()
+    return body, seen.get('state') or {}
+
+
+def _titles(body):
+    return [step['title'] for step in body['reading']['next_steps']]
+
+
+class TestMoreGoesUnderTheFirstBatch:
+    def test_a_fresh_ask_is_three(self, client, monkeypatch):
+        body, _ = _ask(client, monkeypatch, _batch('A', 'B', 'C', 'D'), 'fresh')
+        assert _titles(body) == ['A', 'B', 'C']
+
+    def test_more_adds_three_under_the_ones_on_screen(self, client, monkeypatch):
+        _ask(client, monkeypatch, _batch('A', 'B', 'C'), 'fresh')
+        body, _ = _ask(client, monkeypatch, _batch('D', 'E', 'F'), 'more')
+        assert _titles(body) == ['A', 'B', 'C', 'D', 'E', 'F']
+        # And it survives a refresh in that order.
+        saved = client.get('/api/subject_reading_saved?subject=Algebra').json()
+        assert [step['title'] for step in saved['reading']['next_steps']] == list('ABCDEF')
+
+    def test_more_never_repeats_a_title_already_on_screen(self, client, monkeypatch):
+        _ask(client, monkeypatch, _batch('A', 'B', 'C'), 'fresh')
+        body, _ = _ask(client, monkeypatch, _batch('a', 'D', 'E', 'F'), 'more')
+        assert _titles(body) == ['A', 'B', 'C', 'D', 'E', 'F']
+
+    def test_six_is_the_most(self, client, monkeypatch):
+        _ask(client, monkeypatch, _batch('A', 'B', 'C'), 'fresh')
+        _ask(client, monkeypatch, _batch('D', 'E', 'F'), 'more')
+        body, _ = _ask(client, monkeypatch, _batch('G', 'H', 'I'), 'more')
+        assert body['success'] is False
+        assert 'Six is the most' in body['message']
+
+    def test_the_model_is_told_what_is_already_showing(self, client, monkeypatch):
+        _ask(client, monkeypatch, _batch('A', 'B', 'C'), 'fresh')
+        _, state = _ask(client, monkeypatch, _batch('D', 'E', 'F'), 'more')
+        assert state['showing'] == ['A', 'B', 'C']
+        assert '<already_showing>' in subject_ai.brief_from(state)
+
+    def test_reading_the_record_leaves_the_steps_alone(self, client, monkeypatch):
+        _ask(client, monkeypatch, _batch('A', 'B', 'C'), 'fresh')
+        before = len(client.get('/api/subject_recommendations?subject=Algebra')
+                     .json()['recommendations'])
+        body, _ = _ask(client, monkeypatch, _batch('X', 'Y', 'Z'), 'read')
+        assert _titles(body) == ['A', 'B', 'C']
+        after = len(client.get('/api/subject_recommendations?subject=Algebra')
+                    .json()['recommendations'])
+        assert after == before
+
+    def test_starting_over_replaces_the_six(self, client, monkeypatch):
+        _ask(client, monkeypatch, _batch('A', 'B', 'C'), 'fresh')
+        _ask(client, monkeypatch, _batch('D', 'E', 'F'), 'more')
+        body, _ = _ask(client, monkeypatch, _batch('G', 'H', 'I'), 'fresh')
+        assert _titles(body) == ['G', 'H', 'I']
+
+
+# ---------------------------------------------------------------------------
+# Precise steps, from everything they have done
+# ---------------------------------------------------------------------------
+GROUPS = [
+    {'name': 'MATHCOUNTS Sprint #', 'count': 14,
+     'examples': ['MATHCOUNTS Sprint 1-10', 'MATHCOUNTS Sprint 21-30'],
+     'rated': 14, 'difficulty': 2.1, 'execution': 4.8, 'minutes': 18,
+     'well': 13, 'badly': 0, 'reasons': [], 'last': '2026-09-30'},
+    {'name': 'AMC10 #', 'count': 6, 'examples': ['AMC10 2019 #14'],
+     'rated': 6, 'difficulty': 4.0, 'execution': 1.9, 'minutes': 41,
+     'well': 0, 'badly': 5, 'reasons': ['Ran out of time ×4'], 'last': '2026-09-29'},
+]
+
+
+class TestPreciseStepsFromEverythingDone:
+    def test_every_group_reaches_the_model_with_its_figures(self):
+        brief = subject_ai.brief_from({**STATE, 'work_groups': GROUPS})
+        assert '<work_groups>' in brief
+        assert '"MATHCOUNTS Sprint #" — 14 done' in brief
+        assert '"MATHCOUNTS Sprint 21-30"' in brief
+        assert 'avg difficulty 4.0, avg execution 1.9' in brief
+        assert 'avg 41 min each' in brief
+        assert '0 went well, 5 went badly' in brief
+        assert 'Ran out of time ×4' in brief
+
+    def test_the_groups_come_sorted_by_how_they_went_and_how_long(self):
+        brief = subject_ai.brief_from({**STATE, 'work_groups': GROUPS})
+        assert 'Went worst (lowest avg execution): "AMC10 #"; "MATHCOUNTS Sprint #"' in brief
+        assert 'Went best (highest avg execution): "MATHCOUNTS Sprint #"' in brief
+        assert 'Slowest (most minutes each): "AMC10 #"' in brief
+
+    def test_the_endpoint_bounds_what_the_page_sends(self, client, monkeypatch):
+        many = [{**GROUPS[0], 'name': 'G{}'.format(n)} for n in range(40)]
+        many[0] = {**many[0], 'execution': 9, 'examples': ['x'] * 10}
+        monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+        seen = {}
+        monkeypatch.setattr(subject_ai, 'plan',
+                            lambda state, *a, **k: seen.setdefault('s', state) and [])
+        client.post('/api/subject_reading',
+                    json={'subject': 'Algebra', 'span': 'x', 'work_groups': many,
+                          'mode': 'fresh'})
+        groups = seen['s']['work_groups']
+        assert len(groups) == 25
+        assert groups[0]['execution'] is None   # 9 is not a 1-5 average
+        assert len(groups[0]['examples']) == 4
+
+    def test_a_step_says_what_to_work_how_fast_and_from_where(self):
+        assert 'problems' in subject_ai.SCHEMA['properties']['next_steps']['items']['required']
+        assert 'pace' in subject_ai.SCHEMA['properties']['next_steps']['items']['required']
+        assert 'resource' in subject_ai.SCHEMA['properties']['next_steps']['items']['required']
+        assert 'RECOMMENDATIONS, not insights' in subject_ai.SYSTEM
+        assert 'Easy MATHCOUNTS Sprint #1-10, 2 min each' in subject_ai.SYSTEM
+
+    def test_the_three_fields_survive_cleaning_even_with_numbers_in_them(self):
+        # "1-10" and "2 min" are instructions, not claims about the reader, so
+        # they are not held to the brief's figures the way a reason is.
+        cleaned = subject_ai._clean({
+            'next_steps': [{
+                'title': 'Easy MATHCOUNTS Sprint #1-10, 2 min each', 'focus': 'Algebra',
+                'problems': 'MATHCOUNTS 2021 School Sprint, problems 1-10',
+                'pace': '2 minutes per problem, no calculator',
+                'resource': 'MATHCOUNTS past competitions, mathcounts.org',
+                'type': 'timed_set', 'difficulty': 2, 'duration_minutes': 20,
+                'reason': '', 'signal': '', 'drills': [],
+            }],
+        }, brief='nothing counted here')
+        step = cleaned['next_steps'][0]
+        assert step['problems'] == 'MATHCOUNTS 2021 School Sprint, problems 1-10'
+        assert step['pace'] == '2 minutes per problem, no calculator'
+        assert step['resource'] == 'MATHCOUNTS past competitions, mathcounts.org'
+
+
+class TestRecommendationsAlone:
+    """The panel's own call: steps only, from a brief a fraction the size."""
+
+    def test_the_plan_brief_keeps_what_bears_on_what_to_do(self):
+        state = {**STATE, 'work_groups': GROUPS,
+                 'recent_work': [dict(WORK[0], note='') for _ in range(40)]}
+        brief = subject_ai.steps_brief_from(state)
+        assert '<work_groups>' in brief
+        assert '<relationships>' not in brief
+        assert '<dimensions>' not in brief
+        recent = brief.split('<recent_work>')[1].split('</recent_work>')[0]
+        assert recent.count('"MATHCOUNTS Sprint 21-30"') == subject_ai.STEPS_RECENT
+
+    def test_the_plan_asks_for_steps_alone_behind_the_short_prompt(self, monkeypatch):
+        import json as _json
+        monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+        sent = {}
+
+        def fake(brief, **kwargs):
+            sent.update(kwargs, brief=brief)
+            return _json.dumps({'next_steps': [{
+                'title': 'Easy MATHCOUNTS Sprint #31-40, 2 min each',
+                'problems': 'MATHCOUNTS 2021 School Sprint, 31-40', 'pace': '2 min each',
+                'resource': 'mathcounts.org', 'focus': 'Algebra', 'type': 'timed_set',
+                'difficulty': 2, 'duration_minutes': 20, 'reason': '', 'signal': '',
+                'drills': []}]})
+
+        monkeypatch.setattr(subject_ai.planner, 'from_provider', fake)
+        steps = subject_ai.plan({**STATE, 'work_groups': GROUPS})
+        assert sent['system'] is subject_ai.STEPS_SYSTEM
+        assert list(sent['schema']['properties']) == ['next_steps']
+        assert sent['max_tokens'] == subject_ai.STEPS_MAX_TOKENS
+        assert steps[0]['resource'] == 'mathcounts.org'
+
+    def test_the_short_prompt_fits_a_free_groq_minute_with_room_to_answer(self):
+        # Groq's free tier counts prompt and answer together against 8,000
+        # tokens a minute. ~4 characters a token is generous for English.
+        assert len(subject_ai.STEPS_SYSTEM) / 4 + subject_ai.STEPS_MAX_TOKENS < 5000
+
+    def test_no_steps_back_is_said_rather_than_drawn_empty(self, monkeypatch):
+        monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+        monkeypatch.setattr(subject_ai.planner, 'from_provider',
+                            lambda *a, **k: '{"next_steps": []}')
+        with pytest.raises(subject_ai.BriefUnavailable):
+            subject_ai.plan(STATE)
+
+
+def test_a_saved_reading_is_found_by_subject_not_by_a_derived_id(client, monkeypatch):
+    # The row id is hashed from the username, so a renamed account's row no
+    # longer matches it — and inserting a second row for the same subject
+    # breaks the one-per-subject constraint and loses the reading just made.
+    from backend.database import connection as db
+    _save(client, monkeypatch)
+    con = db.connect()
+    try:
+        con.execute("UPDATE subject_readings SET id = 'sr-from-an-old-name' "
+                    "WHERE user_id = 'tester' AND subject = 'Algebra'")
+        con.commit()
+    finally:
+        con.close()
+    body, _ = _ask(client, monkeypatch, _batch('A', 'B', 'C'), 'fresh')
+    assert body['success'] is True
+    saved = client.get('/api/subject_reading_saved?subject=Algebra').json()
+    assert [step['title'] for step in saved['reading']['next_steps']] == ['A', 'B', 'C']
+
+
+@pytest.mark.parametrize('made_up', [
+    'Analysis problem set, University of XYZ, 2023',
+    'a standard textbook',
+    'Online resources',
+    '[insert textbook here]',
+])
+def test_a_placeholder_source_is_left_blank_rather_than_printed(made_up):
+    cleaned = subject_ai._clean({'next_steps': [{
+        'title': 'Proof set', 'problems': 'problems 1-6', 'pace': '12 min each',
+        'resource': made_up, 'focus': 'Analysis', 'type': 'review',
+        'difficulty': 3, 'duration_minutes': 72, 'reason': '', 'signal': '',
+        'drills': []}]})
+    assert cleaned['next_steps'][0]['resource'] == ''
+
+
+def test_a_real_source_is_kept():
+    cleaned = subject_ai._clean({'next_steps': [{
+        'title': 'Stewart Ch. 7 integrals #1-8, 8 min each', 'problems': 'Ch. 7, 1-8',
+        'pace': '8 min each', 'resource': 'James Stewart, Calculus, 8th edition',
+        'focus': 'Calculus', 'type': 'targeted_practice', 'difficulty': 3,
+        'duration_minutes': 64, 'reason': '', 'signal': '', 'drills': []}]})
+    assert cleaned['next_steps'][0]['resource'] == 'James Stewart, Calculus, 8th edition'

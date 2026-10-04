@@ -464,6 +464,15 @@ export interface Priority {
 export interface NextStep {
   id: string;
   title: string;
+  /**
+   * What to work, how fast, and where to get it — the three fields that make
+   * a step an instruction rather than a category: "MATHCOUNTS 2021 School
+   * Sprint, problems 1-10", "2 min per problem", "mathcounts.org". Absent on
+   * steps written before they existed.
+   */
+  problems?: string;
+  pace?: string;
+  resource?: string;
   focus: string;
   type: StepType;
   /** 1-5, on Summit's own scale. */
@@ -662,6 +671,38 @@ export interface SubjectStatePayload {
     minutes: number | null;
     reason: string;
   }>;
+  /** Every finished task in the window, grouped by name and counted. See
+      `workGroups` in components/Subject/recentWork. */
+  work_groups?: WorkGroup[];
+  /**
+   * What the call is for. `fresh` replaces the steps on screen with three new
+   * ones; `more` adds three under them, up to six; `read` wants the findings
+   * and leaves the steps exactly as they are.
+   */
+  mode?: 'fresh' | 'more' | 'read';
+}
+
+/** Every finished task in a window sharing one name, as the brief prints it. */
+export interface WorkGroup {
+  /** The name with its numbers blanked to `#` — "MATHCOUNTS Sprint #". */
+  name: string;
+  count: number;
+  /** Up to four distinct titles as typed, newest first. */
+  examples: string[];
+  /** How many of them were rated on both rows. */
+  rated: number;
+  /** Averages over the rated ones, one decimal; null when none were rated. */
+  difficulty: number | null;
+  execution: number | null;
+  /** Average whole minutes over the timed ones; null when none were timed. */
+  minutes: number | null;
+  /** Rated 4-5 on execution, and 1-2. */
+  well: number;
+  badly: number;
+  /** The commonest reasons picked, as "Label ×n". */
+  reasons: string[];
+  /** ISO day the newest one was finished. */
+  last: string;
 }
 
 /** Whether the reading is available at all on this install. */
