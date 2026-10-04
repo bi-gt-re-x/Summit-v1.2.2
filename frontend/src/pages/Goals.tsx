@@ -43,6 +43,7 @@
  * are kept, not extended.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   ActiveGoalCard,
   Band,
@@ -135,6 +136,36 @@ export default function Goals() {
   const entering = usePageEntrance(!loading);
 
   const [openId, setOpenId] = useState<string | null>(null);
+
+  /**
+   * `?goal=<id>` opens that goal, for a link that came from somewhere else.
+   *
+   * The task board has had `?task=` for as long as the top bar has had a
+   * search, and a note that can link to a task and not to a goal is a note
+   * that has to explain which half of the app it is allowed to point at. This
+   * is the same idea with less work to do: a goal is a panel over this page
+   * rather than a row on a board, so there is no heading to open and no filter
+   * to widen — it either exists on the account or it does not.
+   *
+   * The parameter is cleared once it has been used. It is an instruction
+   * rather than a description of the view: leaving it in the address would
+   * reopen the panel every time the reader closed it.
+   */
+  const [params, setParams] = useSearchParams();
+  const wantedGoal = params.get('goal');
+
+  useEffect(() => {
+    if (!wantedGoal || !list.some((goal) => goal.id === wantedGoal)) return;
+    setOpenId(wantedGoal);
+    setParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.delete('goal');
+        return next;
+      },
+      { replace: true },
+    );
+  }, [list, setParams, wantedGoal]);
   const [wizardOpen, setWizardOpen] = useState(false);
   /** The wizard was opened by "Draft a goal", so it opens on the idea box. */
   const [draftFirst, setDraftFirst] = useState(false);

@@ -142,7 +142,21 @@
     overflow-y: auto;
     scrollbar-width: none;
 }
-.rail-links::-webkit-scrollbar { width: 0; }
+.rail-links::-webkit-scrollbar { width: 0; height: 0; display: none; }
+/* No scrollbar is drawn, so the edge with more beyond it fades instead —
+   components/Rail.tsx keeps `more-up` and `more-down` true to the scroll. */
+.rail-links.more-down {
+    -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 32px), transparent);
+            mask-image: linear-gradient(to bottom, #000 calc(100% - 32px), transparent);
+}
+.rail-links.more-up {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32px);
+            mask-image: linear-gradient(to bottom, transparent, #000 32px);
+}
+.rail-links.more-up.more-down {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+            mask-image: linear-gradient(to bottom, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+}
 
 .rail-link {
     display: flex;
@@ -590,6 +604,12 @@ html[data-theme="dark"] .rail-xp-bar { background: #21262D; }
         grid-auto-columns: 1fr;
         gap: 0;
         overflow: visible;
+    }
+    /* A tab bar does not scroll, so it has no edge to fade. */
+    .rail-links.more-up,
+    .rail-links.more-down {
+        -webkit-mask-image: none;
+                mask-image: none;
     }
     .rail-link {
         flex-direction: column;

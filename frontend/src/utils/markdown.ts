@@ -68,6 +68,29 @@ function _href(raw: string): string {
 }
 
 /**
+ * What a link points at: somewhere in this app, or the web.
+ *
+ * Derived from the path rather than written into the note, which is the whole
+ * reason the syntax did not have to change to get task and goal links. A note
+ * still says `[Revise integrals](/tasks?task=a1b2)` — ordinary Markdown that
+ * means something in any window that opens it — and the kind is read back off
+ * the route the same way the router reads it.
+ *
+ * `escape` has already run by the time this sees a target, so a second
+ * parameter arrives as `&amp;` rather than `&`. Both spellings are allowed
+ * for, because the alternative is a classifier that works today and stops the
+ * first time a link carries two parameters.
+ */
+export type LinkKind = 'task' | 'goal' | 'page' | 'external';
+
+export function linkKind(url: string): LinkKind {
+  if (/^(https?:\/\/|mailto:)/i.test(url)) return 'external';
+  if (/^\/tasks\?(?:[^#]*(?:&|&amp;))?task=/.test(url)) return 'task';
+  if (/^\/goals\?(?:[^#]*(?:&|&amp;))?goal=/.test(url)) return 'goal';
+  return 'page';
+}
+
+/**
  * The words a `{...}` may contain, and the one class each becomes.
  *
  * A fixed map rather than a pattern, because the value here is not the
@@ -98,6 +121,19 @@ const TOKENS: Record<string, string> = {
   s20: 'md-s-20', s24: 'md-s-24', s30: 'md-s-30', s36: 'md-s-36', s48: 'md-s-48',
   sm: 'md-s-14', lg: 'md-s-20', xl: 'md-s-30',
 };
+
+/**
+ * Class back to token, for the editor that has to write Markdown out of HTML.
+ *
+ * Built from `TOKENS` rather than typed twice: the two have to agree for a
+ * note to survive being opened, formatted and saved, and a second literal is
+ * the thing that eventually disagrees. Aliases collapse — `gray` and `grey`
+ * are one class, and it comes back as whichever name the table reaches last,
+ * which is the point at which the spelling stops mattering.
+ */
+export const TOKEN_OF_CLASS: Record<string, string> = Object.fromEntries(
+  Object.entries(TOKENS).map(([token, css]) => [css, token]),
+);
 
 /** The same, for a whole line: alignment is not a thing a span can be. */
 const BLOCK_TOKENS: Record<string, string> = {
@@ -143,6 +179,25 @@ function inline(text: string): string {
     return `${HOLD}${code.length - 1}${HOLD}`;
   });
 
+  /* A backslash takes the meaning off the character after it, and the
+     character is parked so that no rule below can see it. Without this there
+     is no way to write about the syntax in the syntax — and, more to the
+     point, no way for the editor to write a note back out: somebody who types
+     a literal `**` into the rich editor has to get `\*\*` in the note, or it
+     comes back as bold the next time the note is opened.
+
+     The entities are in the list because `escape` has already run: a `\>` is
+     `\&gt;` by the time it reaches here, and matching only the bare `>` would
+     leave the backslash on screen. */
+  const literal: string[] = [];
+  out = out.replace(
+    /\\(&(?:gt|lt|amp|quot);|[\\*_~=`[\]{}()#>+.!|-])/g,
+    (_whole, held: string) => {
+      literal.push(held);
+      return `${HOLD}L${literal.length - 1}${HOLD}`;
+    },
+  );
+
   out = out
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/__([^_]+)__/g, '<u>$1</u>')
@@ -155,13 +210,23 @@ function inline(text: string): string {
     })
     .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (whole, label: string, target: string) => {
       const href = _href(target);
-      return href
-        ? `<a href="${href}" target="_blank" rel="noreferrer noopener">${label}</a>`
-        : whole;
+      if (!href) return whole;
+      const kind = linkKind(href);
+      /* An address on the web leaves the app, so it opens away from it. A
+         route does not: `target="_blank"` on `/tasks` threw away the single
+         page the whole app is, reloading React to show a page it was already
+         holding. `data-nav` is what the notes page hands to the router; the
+         `href` stays real so the link can still be copied and middle-clicked. */
+      return kind === 'external'
+        ? `<a class="md-link is-external" href="${href}" target="_blank" rel="noreferrer noopener">${label}</a>`
+        : `<a class="md-link is-${kind}" href="${href}" data-nav="${href}">${label}</a>`;
     });
 
   const holder = new RegExp(`${HOLD}(\\d+)${HOLD}`, 'g');
-  return out.replace(holder, (_whole, index: string) => `<code>${code[Number(index)]}</code>`);
+  out = out.replace(holder, (_whole, index: string) => `<code>${code[Number(index)]}</code>`);
+
+  const held = new RegExp(`${HOLD}L(\\d+)${HOLD}`, 'g');
+  return out.replace(held, (_whole, index: string) => literal[Number(index)]!);
 }
 
 /**

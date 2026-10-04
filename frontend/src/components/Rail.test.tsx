@@ -216,6 +216,17 @@ describe('the Analytics entry, which is the one that unfolds', () => {
     expect(screen.getByRole('link', { name: 'Analytics' }).className).toContain('active');
   });
 
+  it.each(['/recommendations', '/analytics', '/subjects'])(
+    'lights Overall as well as Analytics on %s, a tab of the overall page',
+    async (route) => {
+      await withFollowed(['maths'], route);
+      fireEvent.click(screen.getByRole('button', { name: /show your subjects/i }));
+      expect(screen.getByRole('link', { name: 'Analytics' }).className).toContain('active');
+      expect(screen.getByRole('link', { name: 'Overall' }).className).toContain('active');
+      expect(screen.getByRole('link', { name: 'Mathematics' }).className).not.toContain('active');
+    },
+  );
+
   it('does not light Overall on a subject page, since /analytics is its prefix', async () => {
     await withFollowed(['maths'], '/analytics/subject/maths');
     expect(screen.getByRole('link', { name: 'Overall' }).className).not.toContain('active');
@@ -370,6 +381,80 @@ describe('on a phone', () => {
     act(() => media.set(PHONE, false));
     expect(screen.getByRole('link', { name: 'Settings' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /More/ })).not.toBeInTheDocument();
+  });
+});
+
+describe('a rail taller than the window', () => {
+  /**
+   * jsdom lays nothing out, so the scroll box's size and the current row's
+   * position are stubbed — on the prototype, because the rail measures on
+   * mount, before a test could reach the element itself. `rowAt` is where the
+   * active row sits in the unscrolled list; scrolling moves it up by
+   * `scroll.top`, and the setter clamps the way a browser does.
+   */
+  function layout(scrollHeight: number, clientHeight: number, rowAt = { top: 10, bottom: 40 }) {
+    const scroll = { top: 0 };
+    const isBox = (el: Element) => el.classList.contains('rail-links');
+    const isRow = (el: Element) => el.classList.contains('rail-link') && el.classList.contains('active');
+    vi.spyOn(Element.prototype, 'scrollHeight', 'get').mockImplementation(function (this: Element) {
+      return isBox(this) ? scrollHeight : 0;
+    });
+    vi.spyOn(Element.prototype, 'clientHeight', 'get').mockImplementation(function (this: Element) {
+      return isBox(this) ? clientHeight : 0;
+    });
+    vi.spyOn(Element.prototype, 'scrollTop', 'get').mockImplementation(function (this: Element) {
+      return isBox(this) ? scroll.top : 0;
+    });
+    vi.spyOn(Element.prototype, 'scrollTop', 'set').mockImplementation(function (this: Element, to: number) {
+      if (isBox(this)) scroll.top = Math.max(0, Math.min(to, scrollHeight - clientHeight));
+    });
+    vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+      if (isBox(this)) return { top: 0, bottom: clientHeight } as DOMRect;
+      if (isRow(this)) return { top: rowAt.top - scroll.top, bottom: rowAt.bottom - scroll.top } as DOMRect;
+      return { top: 0, bottom: 0 } as DOMRect;
+    });
+    return scroll;
+  }
+
+  const links = () => document.querySelector('.rail-links')!;
+
+  it('draws no fade when every destination fits', () => {
+    layout(300, 300);
+    renderWithProviders(<Rail />);
+    expect(links()).not.toHaveClass('more-up');
+    expect(links()).not.toHaveClass('more-down');
+  });
+
+  it('fades whichever edge has more beyond it, as the list scrolls', () => {
+    const scroll = layout(600, 300);
+    renderWithProviders(<Rail />);
+    expect(links()).toHaveClass('more-down');
+    expect(links()).not.toHaveClass('more-up');
+
+    scroll.top = 150;
+    fireEvent.scroll(links());
+    expect(links()).toHaveClass('more-up');
+    expect(links()).toHaveClass('more-down');
+
+    scroll.top = 300;
+    fireEvent.scroll(links());
+    expect(links()).toHaveClass('more-up');
+    expect(links()).not.toHaveClass('more-down');
+  });
+
+  it('scrolls the current page into view, clear of the fade, on a short window', () => {
+    // Settings is last in the list, so it is the row a short laptop hides.
+    const scroll = layout(600, 300, { top: 450, bottom: 480 });
+    renderWithProviders(<Rail />, { route: '/settings' });
+    // Its bottom lands 40px above the box's, past the 32px fade.
+    expect(scroll.top).toBe(480 - (300 - 40));
+    expect(links()).toHaveClass('more-up');
+  });
+
+  it('leaves the list where it is when the current page is already in view', () => {
+    const scroll = layout(600, 300, { top: 100, bottom: 130 });
+    renderWithProviders(<Rail />, { route: '/dashboard' });
+    expect(scroll.top).toBe(0);
   });
 });
 

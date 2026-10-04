@@ -132,9 +132,10 @@ html[data-theme="dark"] .nt-page {
        which is the right call for a workspace only if the workspace is the
        whole window — and it is not: the rail is beside it and the top bar is
        above it, so panels that run to the edge read as a page that overflowed
-       rather than one that fills. 95% is roughly a 40px gutter at 1600 and
-       still leaves the note column every pixel the index does not take. */
-    --shell-fluid: 95%;
+       rather than one that fills. The gutter is `.page-shell`'s flat 20px now
+       rather than a 95% share: a share grows with the window, so the band it
+       left widened exactly where there was most room to use. */
+    --shell-fluid: 100%;
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
@@ -183,10 +184,8 @@ html[data-theme="dark"] .nt-page {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: none; }
 }
-.nt-editor-body.is-beat-0 > .nt-preview,
-.nt-editor-body.is-beat-0 > .nt-body-input { animation: nt-swap-a .3s cubic-bezier(.22, 1, .36, 1) both; }
-.nt-editor-body.is-beat-1 > .nt-preview,
-.nt-editor-body.is-beat-1 > .nt-body-input { animation: nt-swap-b .3s cubic-bezier(.22, 1, .36, 1) both; }
+.nt-editor-body.is-beat-0 > .nt-rich { animation: nt-swap-a .3s cubic-bezier(.22, 1, .36, 1) both; }
+.nt-editor-body.is-beat-1 > .nt-rich { animation: nt-swap-b .3s cubic-bezier(.22, 1, .36, 1) both; }
 .nt-editor-body.is-beat-0 > .nt-meta { animation: nt-swap-a .3s cubic-bezier(.22, 1, .36, 1) .05s both; }
 .nt-editor-body.is-beat-1 > .nt-meta { animation: nt-swap-b .3s cubic-bezier(.22, 1, .36, 1) .05s both; }
 
@@ -826,20 +825,30 @@ html[data-theme="dark"] .nt-page {
     display: grid;
     grid-template-columns: minmax(0, 1fr) clamp(250px, 19%, 330px);
 }
-.nt-body-input {
-    min-height: 0;
-    padding: var(--space-5) var(--space-6);
-    border: 0;
-    background: transparent;
-    color: var(--nt-text);
-    font: inherit;
-    font-size: var(--text-md);
-    line-height: 1.75;
-    resize: none;
+/* ---------- The editable surface ------------------------------------------
+   One element holds the note and edits it. There is no second view to keep in
+   step and no syntax on screen: what is here is what `render` produced, and
+   what is stored is read back out of it. See components/Notes/RichEditor. */
+.nt-rich[contenteditable="true"] {
     outline: none;
-    overflow-y: auto;
+    /* A caret in a document with coloured spans in it has to stay findable,
+       so it takes the text colour rather than any span's. */
+    caret-color: var(--nt-text);
 }
-.nt-body-input::placeholder { color: var(--nt-faint); }
+.nt-rich[contenteditable="true"]:focus-visible {
+    box-shadow: inset 2px 0 0 color-mix(in srgb, var(--nt-accent-2) 45%, transparent);
+}
+/* The placeholder. A `contenteditable` never has one, and it is never truly
+   empty either — it holds the paragraph the caret is sitting in — so the page
+   says when the note has nothing in it and this draws the prompt. */
+.nt-rich.is-empty::before {
+    content: attr(data-placeholder);
+    display: block;
+    color: var(--nt-faint);
+    pointer-events: none;
+    height: 0;
+}
+.nt-rich.is-reading { cursor: default; }
 
 /* ---------- Write / Preview ----------------------------------------------- */
 .nt-mode {
@@ -873,51 +882,171 @@ html[data-theme="dark"] .nt-page {
    note is scanned by its headings before it is read, and they are the only
    thing here allowed to carry colour — a body in which four things are
    coloured has nothing emphasised. */
-.nt-preview {
+.nt-rich {
     min-height: 0;
     overflow-y: auto;
     padding: var(--space-5) var(--space-6) var(--space-8);
     font-size: var(--text-md);
     line-height: 1.75;
 }
-.nt-preview > :first-child { margin-top: 0; }
-.nt-preview h1, .nt-preview h2, .nt-preview h3 {
+.nt-rich > :first-child { margin-top: 0; }
+.nt-rich h1, .nt-rich h2, .nt-rich h3 {
     margin: var(--space-6) 0 var(--space-2);
     color: var(--nt-accent-2);
     font-weight: 700;
     line-height: 1.3;
     letter-spacing: -.01em;
 }
-.nt-preview h1 { font-size: var(--text-xl); }
-.nt-preview h2 { font-size: var(--text-lg); }
-.nt-preview h3 { font-size: var(--text-md); }
-.nt-preview h4 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: .05em; }
-.nt-preview p { margin: 0 0 var(--space-3); }
-.nt-preview ul, .nt-preview ol { margin: 0 0 var(--space-4); padding-left: var(--space-6); }
+.nt-rich h1 { font-size: var(--text-xl); }
+.nt-rich h2 { font-size: var(--text-lg); }
+.nt-rich h3 { font-size: var(--text-md); }
+.nt-rich h4 { font-size: var(--text-sm); text-transform: uppercase; letter-spacing: .05em; }
+.nt-rich p { margin: 0 0 var(--space-3); }
+.nt-rich ul, .nt-rich ol { margin: 0 0 var(--space-4); padding-left: var(--space-6); }
 /* A nested list is inside the item above it, not after it, so it loses the
    gap a top-level list gets and keeps the indent. */
-.nt-preview :is(ul, ol) :is(ul, ol) { margin: var(--space-1) 0 2px; }
-.nt-preview li { margin-bottom: var(--space-1); }
+.nt-rich :is(ul, ol) :is(ul, ol) { margin: var(--space-1) 0 2px; }
+.nt-rich li { margin-bottom: var(--space-1); }
 /* Three depths of bullet, which is as far as an outline usefully goes. */
-.nt-preview ul { list-style: disc; }
-.nt-preview ul ul { list-style: circle; }
-.nt-preview ul ul ul { list-style: square; }
-.nt-preview hr {
+.nt-rich ul { list-style: disc; }
+.nt-rich ul ul { list-style: circle; }
+.nt-rich ul ul ul { list-style: square; }
+.nt-rich hr {
     margin: var(--space-5) 0;
     border: 0;
     border-top: 1px solid var(--nt-line);
 }
-.nt-preview li::marker { color: var(--nt-faint); }
-.nt-preview a { color: var(--nt-accent-2); text-decoration: underline; text-underline-offset: 2px; }
-.nt-preview strong { font-weight: 700; }
-.nt-preview code {
+.nt-rich li::marker { color: var(--nt-faint); }
+/* ---------- Links ----------------------------------------------------------
+   An address on the web is underlined text, because that is what a link to
+   somewhere else has always looked like and a note is allowed to contain
+   prose. A link to a task, a goal or a page in this app is a pill instead:
+   it is not a citation, it is a way to get there, and it is worth being able
+   to see at a glance which words in a paragraph will move you. The glyph says
+   which of the three it is without the reader having to read the address. */
+.nt-rich a { color: var(--nt-accent-2); text-decoration: underline; text-underline-offset: 2px; }
+.nt-rich a.md-link.is-task,
+.nt-rich a.md-link.is-goal,
+.nt-rich a.md-link.is-page {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .3em;
+    padding: .05em .45em .1em;
+    border: 1px solid color-mix(in srgb, var(--md-pill) 30%, transparent);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--md-pill) 12%, transparent);
+    color: var(--md-pill);
+    font-weight: 600;
+    text-decoration: none;
+    /* The pill is one object: a line break through the middle of it would
+       read as two half-links with a gap where the border should be. */
+    white-space: nowrap;
+    transition: background .14s ease, border-color .14s ease;
+}
+.nt-rich a.md-link.is-task:hover,
+.nt-rich a.md-link.is-goal:hover,
+.nt-rich a.md-link.is-page:hover {
+    background: color-mix(in srgb, var(--md-pill) 20%, transparent);
+    border-color: color-mix(in srgb, var(--md-pill) 50%, transparent);
+}
+/* Before the label, drawn rather than fetched: three shapes that already mean
+   these three things elsewhere in the app — a check, a ring, a page. */
+.nt-rich a.md-link.is-task::before,
+.nt-rich a.md-link.is-goal::before,
+.nt-rich a.md-link.is-page::before {
+    font-size: .85em;
+    line-height: 1;
+    opacity: .85;
+}
+.nt-rich a.md-link.is-task { --md-pill: var(--nt-ink-blue); }
+.nt-rich a.md-link.is-task::before { content: "\2713"; }
+.nt-rich a.md-link.is-goal { --md-pill: var(--nt-ink-violet); }
+.nt-rich a.md-link.is-goal::before { content: "\25CE"; }
+.nt-rich a.md-link.is-page { --md-pill: var(--nt-ink-teal); }
+.nt-rich a.md-link.is-page::before { content: "\2197"; }
+/* Editable text with a pointer on it: the pill goes where it points, which is
+   the one place in this editor where a click does not place the caret. */
+.nt-rich[contenteditable="true"] a.md-link { cursor: pointer; }
+
+/* ---------- The link picker ------------------------------------------------
+   Wider than the other menus because the rows are titles somebody wrote, and a
+   task called "Revise integrals for Friday" truncated to "Revise integ…" is a
+   row nobody can choose between. */
+.nt-links {
+    width: min(340px, 78vw);
+    padding: var(--space-2);
+}
+.nt-link-search {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--nt-card-2);
+    color: var(--nt-muted);
+}
+.nt-link-search svg { width: 15px; height: 15px; flex: none; }
+.nt-link-search input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--nt-text);
+    font: inherit;
+    font-size: var(--text-sm);
+    outline: none;
+}
+.nt-link-search input::placeholder { color: var(--nt-faint); }
+.nt-link-rows { max-height: 46vh; overflow-y: auto; }
+.nt-link-rows h4 {
+    margin: var(--space-2) 0 2px;
+    padding: 0 var(--space-2);
+    color: var(--nt-faint);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+/* Scoped past `.nt-menu button` above, which is a flex row that spreads its
+   children to the edges. That is right for a one-line menu entry and wrong for
+   a three-column result: it pushed every title into the middle of the row, so
+   where a name started depended on how long it was. */
+.nt-links .nt-link-row {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-2);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--nt-text);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+}
+.nt-links .nt-link-row:hover,
+.nt-links .nt-link-row:focus-visible { background: var(--nt-card-2); outline: none; }
+.nt-link-ico { display: grid; place-items: center; color: var(--md-pill); }
+.nt-link-ico svg { width: 14px; height: 14px; }
+.nt-links .nt-link-row.is-task { --md-pill: var(--nt-ink-blue); }
+.nt-links .nt-link-row.is-goal { --md-pill: var(--nt-ink-violet); }
+.nt-links .nt-link-row.is-page { --md-pill: var(--nt-ink-teal); }
+.nt-link-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nt-link-note { color: var(--nt-faint); font-size: var(--text-xs); white-space: nowrap; }
+.nt-link-empty { padding: var(--space-4) var(--space-3); margin: 0; color: var(--nt-faint); font-size: var(--text-sm); }
+.nt-rich strong { font-weight: 700; }
+.nt-rich code {
     padding: 2px var(--space-2);
     border-radius: var(--radius-sm);
     background: var(--nt-card-2);
     font-family: var(--font-mono);
     font-size: .88em;
 }
-.nt-preview pre {
+.nt-rich pre {
     margin: 0 0 var(--space-4);
     padding: var(--space-3) var(--space-4);
     border: 1px solid var(--nt-line-soft);
@@ -930,14 +1059,14 @@ html[data-theme="dark"] .nt-page {
 }
 /* A rule down the side rather than a tinted box: a quote inside a note is an
    aside, and a filled panel makes it louder than the note it sits in. */
-.nt-preview blockquote {
+.nt-rich blockquote {
     margin: 0 0 var(--space-3);
     padding: 2px 0 2px var(--space-4);
     border-left: 3px solid color-mix(in srgb, var(--nt-accent-2) 55%, transparent);
     color: var(--nt-muted);
 }
 /* Checklists lose their bullet — the box is the marker. */
-.nt-preview li:has(.md-box) { list-style: none; margin-left: -20px; }
+.nt-rich li:has(.md-box) { list-style: none; margin-left: -20px; }
 .md-box {
     display: inline-block;
     width: 14px; height: 14px;
@@ -981,7 +1110,7 @@ html[data-theme="dark"] .nt-page {
 /* A wash rather than the colour itself: a highlighter that paints at full
    strength puts white text on yellow, and the text is the point. The padding
    is asymmetric on purpose so consecutive highlights do not merge into a bar. */
-.nt-preview :is(mark, span)[class*="md-b-"] {
+.nt-rich :is(mark, span)[class*="md-b-"] {
     padding: 1px var(--space-1);
     border-radius: var(--radius-sm);
     background: color-mix(in srgb, var(--md-wash) 30%, transparent);
@@ -1024,13 +1153,13 @@ html[data-theme="dark"] .nt-page {
 .md-s-48 { font-size: 48px; line-height: 1.15; }
 /* A run set larger than the line it sits in needs to be its own box to get the
    leading it asked for. */
-.nt-preview :is(.md-s-30, .md-s-36, .md-s-48) { display: inline-block; }
+.nt-rich :is(.md-s-30, .md-s-36, .md-s-48) { display: inline-block; }
 
 .md-a-left { text-align: left; }
 .md-a-center { text-align: center; }
 .md-a-right { text-align: right; }
 
-.nt-preview s { color: var(--nt-faint); }
+.nt-rich s { color: var(--nt-faint); }
 
 
 .nt-meta {
@@ -1322,7 +1451,7 @@ html[data-theme="dark"] .nt-page { color-scheme: dark; }
     .nt-list-panel,
     .nt-editor,
     .nt-item,
-    /* `:is()` and not the bare `.nt-editor-body > .nt-preview` this said at
+    /* `:is()` and not the bare `.nt-editor-body > .nt-rich` this said at
        first: the rules being cancelled are `.nt-editor-body.is-beat-0 > …`,
        which is one class more specific, and specificity settles this before
        source order gets a say. The weaker selector lost, `animation-fill-mode:
@@ -1330,7 +1459,7 @@ html[data-theme="dark"] .nt-page { color-scheme: dark; }
        reduced motion turned on was reading stayed at opacity 0. `:is()` takes
        the specificity of its most specific argument, which puts this level
        with them and lets it win on order. */
-    .nt-editor-body:is(.is-beat-0, .is-beat-1) > :is(.nt-preview, .nt-body-input, .nt-meta) {
+    .nt-editor-body:is(.is-beat-0, .is-beat-1) > :is(.nt-rich, .nt-body-input, .nt-meta) {
         animation: none;
         opacity: 1;
         transform: none;

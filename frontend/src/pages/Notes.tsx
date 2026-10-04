@@ -29,34 +29,51 @@
  * it — "Unsaved changes" is a state the old footer only expressed by whether a
  * button happened to be disabled.
  *
- * ## The toolbar writes Markdown
+ * ## The note is stored as Markdown and not edited as Markdown
  *
- * Not a rich-text engine. The body is a plain-text column in the database and
- * turning it into a document model is a migration, not a button — so the
- * toolbar does what a person would do by hand: wraps the selection in
- * asterisks, puts `## ` at the front of the line. That keeps the note readable
- * as itself, which is the property a notes table should not lose to a format
- * only this page can open.
+ * The body is a plain-text column and turning it into a document model would
+ * be a migration rather than a button, so a note is still Markdown: it reads
+ * as itself in the database and opens in any window that can show a string.
+ * That has not changed and is the constraint everything else here works
+ * around.
  *
- * That rule is what decided the shape of the colours, the highlighters, the
- * faces and the alignment when they arrived. Every one of them is a button
- * that writes something a person could have typed — `[urgent]{red}`,
- * `==this==`, `A title {center}` — and utils/markdown reads it back. Nothing
- * here holds formatting state, because there is nowhere to hold it: the note
- * is its text, and what you see in the write pane is the whole document.
+ * What changed is which of the two the writer looks at. This page used to edit
+ * its own source — a `<textarea>` holding the note exactly as stored — so
+ * writing a red heading meant reading `## [Revise integrals]{red}` while
+ * typing the words "Revise integrals". Every button on the toolbar wrote
+ * punctuation and the writer watched the punctuation appear. The one person
+ * with no use for the syntax was the one person made to look at it.
  *
- * This file used to claim that shape could not give a live toolbar — that
- * knowing what the caret is standing in would mean reading formatting out of a
- * `<textarea>`, which reports none. That was wrong, and worth writing down
- * because it is the kind of wrong that looks like a constraint: the textarea is
- * not the document. The text is, a span is `[...]{...}`, and the caret is an
- * offset into it. `tokensAt` reads it, so the font and size selectors show what
- * is under the caret and the two palette buttons wear the colour that is
- * actually there.
+ * So the editable surface renders now (components/Notes/RichEditor) and the
+ * Markdown is derived from it on every keystroke (utils/htmlToMarkdown). The
+ * toolbar acts on a range in a document rather than on offsets in a string —
+ * see components/Notes/editing — and `markdown.roundTrip.test.ts` is what says
+ * the loop is lossless, because a loop that runs on every keystroke and loses
+ * something loses it permanently.
  *
- * It matters more than a nicety. A control whose label never changes when you
- * use it is indistinguishable from one that does nothing — which is how the
- * font selector came to be reported as missing while it was on the screen.
+ * The shorthands still work. `## ` at the front of a line makes a heading, and
+ * is removed as it is recognised: that is the muscle memory of everybody who
+ * used the old editor, and since the size selector replaced the four heading
+ * buttons it is also the only way to reach one. See `autoformat`.
+ *
+ * ## A note can point at the rest of the app
+ *
+ * "See the integrals task" is a sentence, not a link — the reader still has to
+ * go and find it. So the link button offers this account's own tasks and goals
+ * and every page in the app, and writes an ordinary Markdown link to a route
+ * the router already serves: `[Revise integrals](/tasks?task=a1b2)`. The board
+ * reveals that row, widening its own filters if it has to; `?goal=` opens the
+ * goal's panel. Nothing invented a scheme of its own, so a note carrying a
+ * link is still a note anybody can read.
+ *
+ * ## Nothing here holds formatting state
+ *
+ * There is nowhere to hold it, and that is still true: the note is its text,
+ * and the font and size selectors read what the caret is standing in off the
+ * DOM rather than remembering what was last pressed. It matters more than a
+ * nicety — a control whose label never changes when you use it is
+ * indistinguishable from one that does nothing, which is how the font selector
+ * came to be reported as missing while it was on the screen.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -69,9 +86,25 @@ import {
   SubjectTags,
   subjectOf,
 } from '@/components/Notes/SubjectTags';
+import { RichEditor } from '@/components/Notes/RichEditor';
+import { LinkPicker, type Target } from '@/components/Notes/LinkPicker';
+import {
+  alignSelection,
+  blockSelection,
+  checklistSelection,
+  clearFamily,
+  codeSelection,
+  linkSelection,
+  listSelection,
+  markSelection,
+  marksAt,
+  ruleAt,
+  shiftSelection,
+  spanSelection,
+} from '@/components/Notes/editing';
 import type { Note } from '@/services/notes';
 import { isoDate } from '@/utils/dates';
-import { render } from '@/utils/markdown';
+import { toMarkdown } from '@/utils/htmlToMarkdown';
 import '@/styles/notes.css';
 import { Icon } from '@/components/Icon';
 
@@ -107,38 +140,6 @@ const asDraft = (note: Note): Draft => ({
  */
 export function subjectIds(value: string | undefined | null): string[] {
   return (value ?? '').split(',').map((id) => id.trim()).filter(Boolean);
-}
-
-/**
- * The tokens of the `[...]{...}` span the caret is sitting in, if it is in one.
- *
- * The font and size buttons used to be labels: "Font" and "14", whatever you
- * had picked and wherever the caret was. Press one, pick Lora, and the button
- * still said "Font" — which is indistinguishable from a control that does
- * nothing, and is what "the font selector is gone" turned out to mean.
- *
- * A `<textarea>` reports no formatting, and that is what the docstring at the
- * top of this file said made a live label impossible. It was wrong: the
- * textarea is not the document. The *text* is, and the text is right here — a
- * span is `[...]{...}` and the caret is an offset into it. So the label reads
- * what is actually under the caret rather than what was last pressed, and is
- * right after an undo, after clicking somewhere else, and on a note opened
- * fresh.
- *
- * Exported for its tests: it is the one piece of this page that is a pure
- * function of two arguments, and the one worth pinning down.
- */
-export function tokensAt(body: string, at: number): string[] {
-  const spans = /\[([^\]\n]+)\]\{([^}\n]*)\}/g;
-  let found: RegExpExecArray | null;
-  while ((found = spans.exec(body)) !== null) {
-    // Inside, not merely touching: a caret resting against the `[` belongs to
-    // the text before the span, which is what you are about to type into.
-    if (at > found.index && at < found.index + found[0].length) {
-      return found[2]!.trim().toLowerCase().split(/[\s,]+/).filter(Boolean);
-    }
-  }
-  return [];
 }
 
 /** How many body edits back the toolbar's undo can reach. */
@@ -189,30 +190,35 @@ const words = (body: string) => body.trim() ? body.trim().split(/\s+/).length : 
 /**
  * One button's effect on the text.
  *
- * `wrap` puts the same string either side of the selection — bold, italic,
- * code. `prefix` puts one at the front of every selected line — headings,
- * lists, quotes.
+ * These used to be edits to a string: `wrap` put two asterisks either side of
+ * the selection, `prefix` put `- ` at the front of a line. That was the right
+ * shape for an editor whose surface was the note's own source, and it is the
+ * wrong one for an editor that renders — the selection is a range in a
+ * document now, so a button names what it does to one and
+ * components/Notes/editing does it.
  *
- * Those two were once the whole vocabulary, and the comment here used to say
- * so. Colour, highlight, font and alignment do not fit either: a colour wraps
- * the selection in *different* strings, and an alignment belongs to the line
- * and has to survive being applied twice. So there are four kinds now:
+ *   `mark`   bold, italic, underline, strike
+ *   `block`  a heading, a quote, or back to a plain line
+ *   `list`   bulleted, numbered, lettered, roman
+ *   `check`  the same, with a box on each item
+ *   `align`  which side of the line the text sits on
+ *   `shift`  one level in or out
  *
- *   `span`    `[selection]{tokens}` — colour, highlight, face, size
- *   `attr`    a `{token}` at the end of the line — alignment
- *   `shift`   two spaces on or off the front — list depth
- *
- * All of them still write Markdown that reads as itself, which is the rule
- * that decides what may be added here. See utils/markdown for the vocabulary
- * and for why the token list is fixed.
+ * The note is still stored as Markdown and every one of these still comes back
+ * out as something a person could have typed — that rule did not move, it just
+ * applies to utils/htmlToMarkdown rather than to this file.
  */
-type Tool =
-  | { id: string; label: ReactNode; hint: string; wrap: string; text?: string }
-  | { id: string; label: ReactNode; hint: string; prefix: string; text?: string }
-  | { id: string; label: ReactNode; hint: string; text: string }
-  | { id: string; label: ReactNode; hint: string; span: string }
-  | { id: string; label: ReactNode; hint: string; attr: string }
-  | { id: string; label: ReactNode; hint: string; shift: 1 | -1 };
+type Action =
+  | { mark: 'bold' | 'italic' | 'underline' | 'strike' }
+  | { block: string }
+  | { list: true; ordered: boolean; type?: string }
+  | { check: true }
+  | { align: 'left' | 'center' | 'right' }
+  | { shift: boolean }
+  | { code: true }
+  | { rule: true };
+
+type Tool = { id: string; label: ReactNode; hint: string } & Action;
 
 /**
  * The eight buttons whose meaning is a shape rather than a character.
@@ -251,33 +257,32 @@ function Depth({ into }: { into: boolean }) {
 
 const TOOLS: Tool[][] = [
   [
-    { id: 'bold', label: 'B', hint: 'Bold', wrap: '**' },
-    { id: 'italic', label: 'I', hint: 'Italic', wrap: '*' },
-    { id: 'under', label: 'U', hint: 'Underline', wrap: '__' },
-    { id: 'strike', label: 'S', hint: 'Strikethrough', wrap: '~~' },
-    { id: 'mark', label: '▮', hint: 'Highlight', wrap: '==' },
+    { id: 'bold', label: 'B', hint: 'Bold', mark: 'bold' },
+    { id: 'italic', label: 'I', hint: 'Italic', mark: 'italic' },
+    { id: 'under', label: 'U', hint: 'Underline', mark: 'underline' },
+    { id: 'strike', label: 'S', hint: 'Strikethrough', mark: 'strike' },
   ],
   [
-    { id: 'bullet', label: '•', hint: 'Bulleted list', prefix: '- ' },
-    { id: 'number', label: '1.', hint: 'Numbered list', prefix: '1. ' },
-    { id: 'letter', label: 'a.', hint: 'Lettered list', prefix: 'a. ' },
-    { id: 'roman', label: 'i.', hint: 'Roman list', prefix: 'i. ' },
-    { id: 'todo', label: <Icon name="checklist" />, hint: 'Checklist', prefix: '- [ ] ' },
+    { id: 'bullet', label: '•', hint: 'Bulleted list', list: true, ordered: false },
+    { id: 'number', label: '1.', hint: 'Numbered list', list: true, ordered: true, type: '1' },
+    { id: 'letter', label: 'a.', hint: 'Lettered list', list: true, ordered: true, type: 'a' },
+    { id: 'roman', label: 'i.', hint: 'Roman list', list: true, ordered: true, type: 'i' },
+    { id: 'todo', label: <Icon name="checklist" />, hint: 'Checklist', check: true },
   ],
   [
-    { id: 'outdent', label: <Depth into={false} />, hint: 'Move out one level', shift: -1 },
-    { id: 'indent', label: <Depth into />, hint: 'Move in one level', shift: 1 },
+    { id: 'outdent', label: <Depth into={false} />, hint: 'Move out one level', shift: false },
+    { id: 'indent', label: <Depth into />, hint: 'Move in one level', shift: true },
   ],
   [
-    { id: 'left', label: <Lines at="left" />, hint: 'Align left', attr: 'left' },
-    { id: 'centre', label: <Lines at="center" />, hint: 'Centre', attr: 'center' },
-    { id: 'right', label: <Lines at="right" />, hint: 'Align right', attr: 'right' },
+    { id: 'left', label: <Lines at="left" />, hint: 'Align left', align: 'left' },
+    { id: 'centre', label: <Lines at="center" />, hint: 'Centre', align: 'center' },
+    { id: 'right', label: <Lines at="right" />, hint: 'Align right', align: 'right' },
   ],
   [
-    { id: 'quote', label: <Icon name="quote" />, hint: 'Quote', prefix: '> ' },
-    { id: 'code', label: '</>', hint: 'Code', wrap: '`' },
-    { id: 'rule', label: '—', hint: 'Divider', text: '\n---\n' },
-    { id: 'link', label: <Icon name="link" />, hint: 'Link', text: '[text](https://)' },
+    { id: 'quote', label: <Icon name="quote" />, hint: 'Quote', block: 'blockquote' },
+    { id: 'plain', label: <Icon name="scroll" />, hint: 'Plain line', block: 'p' },
+    { id: 'code', label: '</>', hint: 'Code', code: true },
+    { id: 'rule', label: '—', hint: 'Divider', rule: true },
   ],
 ];
 
@@ -385,8 +390,17 @@ export default function Notes() {
   const [filterOpen, setFilterOpen] = useState(false);
   /** Which toolbar palette is down: 'ink', 'mark', 'face', or none. */
   const [paletteOpen, setPaletteOpen] = useState<'ink' | 'mark' | 'face' | 'size' | null>(null);
-  /** Where the caret is, so the two selectors can say what is under it. */
+  /**
+   * Bumped whenever the caret may have moved, so the two selectors recompute.
+   *
+   * A counter rather than an offset. In a textarea the caret *was* a number
+   * and the selectors could be a function of it; in a rendered document the
+   * answer is on the ancestors of a live DOM range, which React cannot depend
+   * on. So this is the signal that the answer is stale rather than the answer.
+   */
   const [caret, setCaret] = useState(0);
+  /** Whether the link picker is down. */
+  const [linkOpen, setLinkOpen] = useState(false);
   const [filter, setFilter] = useState<Filter>({ kind: 'all' });
   /**
    * Whether the body is being written or read.
@@ -403,7 +417,7 @@ export default function Notes() {
   const tags = useMemo(() => subjectIds(draft.subject_ids), [draft.subject_ids]);
 
   const titleRef = useRef<HTMLInputElement>(null);
-  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
   /** Body edits, for the toolbar's undo and redo. See HISTORY. */
@@ -445,16 +459,17 @@ export default function Notes() {
      in the app does — a menu that only closes on its own button is one the
      reader has to aim at twice. */
   useEffect(() => {
-    if (!menuOpen && !tplOpen && !filterOpen && !paletteOpen) return;
+    if (!menuOpen && !tplOpen && !filterOpen && !paletteOpen && !linkOpen) return;
     const close = () => {
       setMenuOpen(false);
       setTplOpen(false);
       setFilterOpen(false);
       setPaletteOpen(null);
+      setLinkOpen(false);
     };
     window.addEventListener('click', close);
     return () => window.removeEventListener('click', close);
-  }, [filterOpen, menuOpen, paletteOpen, tplOpen]);
+  }, [filterOpen, linkOpen, menuOpen, paletteOpen, tplOpen]);
 
   /*
    * The list is the server's ordering, filtered. Not re-sorted here: the API
@@ -554,160 +569,131 @@ export default function Notes() {
   }, []);
 
   /**
+   * Read the editor back into the draft.
+   *
+   * Every button below changes the DOM and then calls this, rather than each
+   * one working out what the Markdown should become. There is exactly one
+   * description of how a rendered note turns back into text, it lives in
+   * utils/htmlToMarkdown, and a toolbar that also had an opinion about it
+   * would be the second thing that can disagree with the first.
+   */
+  const sync = useCallback(() => {
+    const host = bodyRef.current;
+    if (!host) return;
+    setBody(toMarkdown(host));
+    setCaret((beat) => beat + 1);
+  }, [setBody]);
+
+  /**
    * Run a toolbar button against the selection.
    *
-   * The caret is put back deliberately rather than left where the browser
-   * drops it: typing bold and then having to find your place again is worse
-   * than not having the button.
+   * A press in read mode goes back to write first and does nothing else:
+   * formatting text you cannot see is not a thing anybody means to do, and the
+   * selection it would act on is in the other view.
    */
   const apply = useCallback(
     (tool: Tool) => {
-      // Formatting the text you cannot see is not a thing anybody means to do,
-      // so a toolbar press in read mode goes back to write first.
       if (mode === 'read') {
         setMode('write');
         return;
       }
-      const field = bodyRef.current;
-      if (!field) return;
-      const from = field.selectionStart;
-      const to = field.selectionEnd;
-      const body = draft.body;
-      const picked = body.slice(from, to);
+      const host = bodyRef.current;
+      if (!host) return;
+      host.focus();
 
-      let next: string;
-      let caret: number;
-      /* Where the selection lands afterwards. Equal to `caret` for everything
-         that has no placeholder — which is what a collapsed caret is. */
-      let anchor: number | null = null;
+      if ('mark' in tool) markSelection(host, tool.mark);
+      else if ('block' in tool) blockSelection(host, tool.block);
+      else if ('list' in tool) listSelection(host, tool.ordered, tool.type);
+      else if ('check' in tool) checklistSelection(host);
+      else if ('align' in tool) alignSelection(host, tool.align);
+      else if ('shift' in tool) shiftSelection(host, tool.shift);
+      else if ('code' in tool) codeSelection(host);
+      else if ('rule' in tool) ruleAt(host);
 
-      /* Where the first selected line begins. Four of the five kinds work on
-         whole lines rather than on the selection, so they all start here — a
-         caret in the middle of a word still indents the line it is in. */
-      const lineStart = body.lastIndexOf('\n', from - 1) + 1;
-      /** Rewrite every line the selection touches. Returns, so `next` is provably set. */
-      const overLines = (change: (line: string) => string): [string, number] => {
-        const marked = body.slice(lineStart, to).split('\n').map(change).join('\n');
-        return [body.slice(0, lineStart) + marked + body.slice(to), lineStart + marked.length];
-      };
-
-      if ('prefix' in tool) {
-        [next, caret] = overLines((line) =>
-          line.startsWith(tool.prefix) ? line.slice(tool.prefix.length) : tool.prefix + line,
-        );
-      } else if ('shift' in tool) {
-        // Two spaces is one level, which is what the renderer counts.
-        [next, caret] = overLines((line) =>
-          tool.shift === 1 ? `  ${line}` : line.replace(/^ {1,2}|^\t/, ''),
-        );
-      } else if ('attr' in tool) {
-        /* An alignment is one per line, so an existing one is replaced rather
-           than appended — pressing centre and then right twice would otherwise
-           leave a line claiming both. Pressing the one already there takes it
-           off, the way the prefix buttons do. */
-        const had = new RegExp(`\\s*\\{\\s*${tool.attr}\\s*\\}\\s*$`);
-        const any = /\s*\{\s*(left|center|centre|right)\s*\}\s*$/;
-        [next, caret] = overLines((line) =>
-          had.test(line) ? line.replace(had, '') : `${line.replace(any, '')} {${tool.attr}}`,
-        );
-      } else if ('span' in tool) {
-        /* Pressing a font with nothing selected used to write `[sans]{sans}`:
-           the placeholder was the button's own hint, so the word the reader
-           got was the name of the thing they had pressed. It is "text" now,
-           and it arrives selected — the next keystroke replaces it, which is
-           what pressing a font before typing was meant to do. */
-        const inner = picked || tool.hint;
-        const written = `[${inner}]{${tool.span}}`;
-        next = body.slice(0, from) + written + body.slice(to);
-        caret = from + written.length;
-        if (!picked) {
-          anchor = from + 1;
-          caret = anchor + inner.length;
-        }
-      } else if ('text' in tool && !('wrap' in tool)) {
-        next = body.slice(0, from) + tool.text + body.slice(to);
-        caret = from + tool.text.length;
-      } else {
-        const inner = picked || tool.hint.toLowerCase();
-        next = body.slice(0, from) + tool.wrap + inner + tool.wrap + body.slice(to);
-        caret = from + tool.wrap.length + inner.length + tool.wrap.length;
-        if (!picked) {
-          anchor = from + tool.wrap.length;
-          caret = anchor + inner.length;
-        }
-      }
-
-      setBody(next);
-      requestAnimationFrame(() => {
-        field.focus();
-        field.setSelectionRange(anchor ?? caret, caret);
-      });
+      sync();
     },
-    [draft.body, mode, setBody],
+    [mode, sync],
+  );
+
+  /** A colour, a highlighter, a face or a size, onto whatever is selected. */
+  const applyToken = useCallback(
+    (token: string) => {
+      const host = bodyRef.current;
+      if (!host || mode === 'read') return;
+      host.focus();
+      spanSelection(host, token);
+      sync();
+    },
+    [mode, sync],
+  );
+
+  /**
+   * Put a link in, from whatever the picker was pointed at.
+   *
+   * The label is the thing's own name rather than the selection, because
+   * choosing "Revise integrals" from a list is a statement about what the link
+   * should say. With something selected, that wins — somebody who highlighted
+   * three words and then went looking for a task meant those three words to
+   * become the link.
+   */
+  const addLink = useCallback(
+    (target: Target) => {
+      const host = bodyRef.current;
+      if (!host) return;
+      setLinkOpen(false);
+      if (mode === 'read') {
+        setMode('write');
+        return;
+      }
+      host.focus();
+      const selected = window.getSelection()?.toString() ?? '';
+      linkSelection(host, target.href, selected || target.label);
+      sync();
+    },
+    [mode, sync],
   );
 
   /**
    * What the caret is standing in, as the two selectors show it.
    *
-   * Falls back to the note's own defaults rather than to a blank: text with no
-   * span on it *is* Inter at 14, so saying so is not a guess.
+   * Read off the ancestors of the selection rather than remembered. A control
+   * whose label never changes when you use it is indistinguishable from one
+   * that does nothing, which is how the font selector came to be reported as
+   * missing while it was on the screen. `caret` is a counter bumped on every
+   * keystroke, click and toolbar press — it is not a position any more, it is
+   * the signal that the answer may have moved.
    */
   const marks = useMemo(() => {
-    const tokens = tokensAt(draft.body, caret);
+    void caret;
+    const host = bodyRef.current;
+    const found = host
+      ? marksAt(host)
+      : { ink: null, mark: null, face: null, size: null };
     return {
-      face: FACES.find((entry) => tokens.includes(entry.token)) ?? FACES[0]!,
-      size: SIZES.find((value) => tokens.includes(`s${value}`)) ?? BASE_SIZE,
-      /* The two palette buttons wore a fixed spectrum because the caret's own
-         colour was thought to be unreadable. It is not — it is in the text. */
-      ink: INKS.find((name) => tokens.includes(name)) ?? null,
-      mark: INKS.find((name) => tokens.includes(`bg-${name}`)) ?? null,
+      face: FACES.find((entry) => entry.token === found.face) ?? FACES[0]!,
+      size: SIZES.find((value) => `s${value}` === found.size) ?? BASE_SIZE,
+      ink: found.ink,
+      mark: found.mark ? found.mark.replace(/^bg-/, '') : null,
     };
-  }, [caret, draft.body]);
+  }, [caret]);
 
   /**
    * Take the ink or the highlighter back off the selection.
    *
-   * Unwrapping is not the same job as wrapping and cannot be a `Tool`: the
-   * text to remove is whatever colour happens to be there, which the button
-   * does not know until it looks. So this reads the selection, drops the
-   * `{...}` that holds a token of the right family, and unwraps `==` for the
-   * highlighter's shorthand.
-   *
-   * It leaves a span alone when its tokens are of the other family, so taking
-   * the highlight off `[x]{red bg-blue}` leaves the red where it was.
+   * Not the inverse of a button and so not a `Tool`: what has to come off is
+   * whatever colour happens to be there, which the eraser does not know until
+   * it looks. It leaves the other family alone, so clearing the highlight on
+   * something red leaves the red.
    */
   const strip = useCallback(
     (family: 'ink' | 'mark') => {
-      const field = bodyRef.current;
-      if (!field || mode === 'read') return;
-      const from = field.selectionStart;
-      const to = field.selectionEnd;
-      const body = draft.body;
-      const wanted = family === 'ink' ? /^(?!bg-)/ : /^bg-/;
-
-      let picked = body.slice(from, to);
-      if (family === 'mark') picked = picked.replace(/==([^=]+)==/g, '$1');
-      picked = picked.replace(
-        /\[([^\]]+)\]\{([^}\n]*)\}/g,
-        (whole, label: string, raw: string) => {
-          const kept = raw
-            .trim()
-            .split(/[\s,]+/)
-            .filter(Boolean)
-            .filter((token) => !wanted.test(token));
-          if (kept.length === raw.trim().split(/[\s,]+/).filter(Boolean).length) return whole;
-          return kept.length > 0 ? `[${label}]{${kept.join(' ')}}` : label;
-        },
-      );
-
-      const next = body.slice(0, from) + picked + body.slice(to);
-      setBody(next);
-      requestAnimationFrame(() => {
-        field.focus();
-        field.setSelectionRange(from, from + picked.length);
-      });
+      const host = bodyRef.current;
+      if (!host || mode === 'read') return;
+      host.focus();
+      clearFamily(host, family);
+      sync();
     },
-    [draft.body, mode, setBody],
+    [mode, sync],
   );
 
   /**
@@ -1176,7 +1162,7 @@ export default function Notes() {
                           className={`nt-face is-${face.token}${face.token === marks.face.token ? ' is-on' : ''}`}
                           onClick={() => {
                             setPaletteOpen(null);
-                            apply({ id: face.token, label: '', hint: 'text', span: face.token });
+                            applyToken(face.token);
                           }}
                         >
                           <span>{face.label}</span>
@@ -1212,7 +1198,7 @@ export default function Notes() {
                           className={size === marks.size ? 'is-on' : undefined}
                           onClick={() => {
                             setPaletteOpen(null);
-                            apply({ id: `s${size}`, label: '', hint: 'text', span: `s${size}` });
+                            applyToken(`s${size}`);
                           }}
                         >
                           <span>{size}</span>
@@ -1290,7 +1276,7 @@ export default function Notes() {
                               aria-label={`${palette.hint}: ${ink}`}
                               onClick={() => {
                                 setPaletteOpen(null);
-                                apply({ id: token, label: '', hint: ink, span: token });
+                                applyToken(token);
                               }}
                             />
                           );
@@ -1313,6 +1299,31 @@ export default function Notes() {
                   </div>
                 ))}
 
+              </div>
+
+              <div className="nt-tool-group">
+                {/* The one tool that has to ask a question before it can act.
+                    It offers this account's own tasks and goals and every page
+                    in the app, because the address that would reach any of
+                    them is an id nobody has to hand — see LinkPicker. */}
+                <div className="nt-menu-wrap">
+                  <button
+                    type="button"
+                    className={`nt-tool${linkOpen ? ' is-on' : ''}`}
+                    title="Link"
+                    aria-label="Link"
+                    aria-expanded={linkOpen}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setLinkOpen((open) => !open);
+                    }}
+                  >
+                    <Icon name="link" />
+                  </button>
+                  {linkOpen && (
+                    <LinkPicker onPick={addLink} onClose={() => setLinkOpen(false)} />
+                  )}
+                </div>
               </div>
 
               <div className="nt-tool-group nt-tool-end">
@@ -1358,35 +1369,20 @@ export default function Notes() {
 
             {/* ---- The note, and what is true about it ---- */}
             <div className={`nt-editor-body is-beat-${beat % 2}`}>
-              {mode === 'read' ? (
-                /* The rendered note. `render` escapes before it formats and
-                   allows no tag it did not write itself — see
-                   utils/markdown.ts, which is where the reasoning for that
-                   lives rather than here. Double-click puts you back in the
-                   text, which is what a reader who spots a typo will try. */
-                <div
-                  className="nt-preview"
-                  onDoubleClick={() => setMode('write')}
-                  dangerouslySetInnerHTML={{ __html: render(draft.body) }}
-                />
-              ) : (
-                <textarea
-                  ref={bodyRef}
-                  className="nt-body-input"
-                  placeholder="Write it here. Nothing on this page is counted, graded or shown anywhere else."
-                  value={draft.body}
-                  maxLength={20000}
-                  onChange={(event) => {
-                    setBody(event.target.value);
-                    setCaret(event.target.selectionStart);
-                  }}
-                  /* Fires on every caret move and every selection change,
-                     which is exactly when the two selectors' labels can go
-                     stale. `onKeyUp` would miss a click and `onClick` would
-                     miss the arrow keys. */
-                  onSelect={(event) => setCaret(event.currentTarget.selectionStart)}
-                />
-              )}
+              {/* One surface, rendered, and editable unless the reader has
+                  asked to just look at it. The note's Markdown is derived from
+                  what is in here rather than typed into it — see
+                  components/Notes/RichEditor for why that is worth the trouble
+                  and utils/htmlToMarkdown for how it gets back. */}
+              <RichEditor
+                value={draft.body}
+                noteKey={`${draft.id}:${beat}`}
+                readOnly={mode === 'read'}
+                placeholder="Write it here. Nothing on this page is counted, graded or shown anywhere else."
+                onChange={setBody}
+                onCaret={() => setCaret((count) => count + 1)}
+                innerRef={bodyRef}
+              />
 
               <aside className="nt-meta">
                 {/* Both are real columns now — see data/sql/notes.sql. Tags are

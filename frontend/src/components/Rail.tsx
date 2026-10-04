@@ -44,7 +44,7 @@
  * to the top bar's account menu, which is also where the avatar picker went
  * when the plate that used to open it stopped existing.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth, useMediaQuery, useSettings, useStats, useSubjectIndex } from '@/hooks';
 import { followedSubjects } from '@/utils/analyticsPrefs';
@@ -396,6 +396,55 @@ export function Rail() {
     if (inSubjects) setMenuOpen(true);
   }, [inSubjects]);
 
+  /* The destinations scroll when the window is too short for them, with no
+     scrollbar drawn (styles/rail.css). Without one, nothing says there is
+     more, so the edge with more beyond it fades: `more-up` / `more-down` are
+     kept true to the scroll position, the window and the menu opening. And a
+     page whose row is out of view — Settings on a short laptop — is scrolled
+     to, so the rail still answers "where am I" without being asked. */
+  const linksRef = useRef<HTMLDivElement>(null);
+  const [more, setMore] = useState({ up: false, down: false });
+  /** Scroll the current page's row into view, clear of the fade, if it is not. */
+  const reveal = useCallback(() => {
+    const box = linksRef.current;
+    const here = box?.querySelector<HTMLElement>('.rail-sub-link.active')
+      ?? box?.querySelector<HTMLElement>('.rail-link.active');
+    if (!box || !here || box.scrollHeight <= box.clientHeight) return;
+    const frame = box.getBoundingClientRect();
+    const row = here.getBoundingClientRect();
+    // Past the 32px fade on that edge (styles/rail.css), so the row is seen
+    // whole rather than half-faded; the browser clamps it at either end.
+    const margin = 40;
+    if (row.top < frame.top + margin) box.scrollTop -= frame.top + margin - row.top;
+    else if (row.bottom > frame.bottom - margin) box.scrollTop += row.bottom - (frame.bottom - margin);
+  }, []);
+  useEffect(() => {
+    const box = linksRef.current;
+    if (!box) return undefined;
+    const measure = () => {
+      const up = box.scrollTop > 1;
+      const down = box.scrollTop + box.clientHeight < box.scrollHeight - 1;
+      setMore((was) => (was.up === up && was.down === down ? was : { up, down }));
+    };
+    /* A change of size is the window, the menu, or the foot arriving with the
+       account — which lands after the first paint and shortens this box, so
+       a row revealed before it would end up back under the fade. */
+    const resized = () => {
+      reveal();
+      measure();
+    };
+    resized();
+    box.addEventListener('scroll', measure, { passive: true });
+    const watch = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resized);
+    watch?.observe(box);
+    for (const child of Array.from(box.children)) watch?.observe(child);
+    return () => {
+      box.removeEventListener('scroll', measure);
+      watch?.disconnect();
+    };
+  }, [menuOpen, collapsed, followed.length, reveal]);
+  useEffect(reveal, [pathname, menuOpen, reveal]);
+
   /* Closed on arrival, and closed again the moment the reader lands
      somewhere — a sheet still open over the page it just navigated to is a
      sheet the reader has to dismiss to see what they asked for. */
@@ -462,7 +511,10 @@ export function Rail() {
         </button>
       </div>
 
-      <div className="rail-links">
+      <div
+        ref={linksRef}
+        className={`rail-links${more.up ? ' more-up' : ''}${more.down ? ' more-down' : ''}`}
+      >
         {shown.map((tab) => {
           /* The menu is drawn only where it can be read and only when it has
              something in it. Collapsed, the rail is a strip of icons with no
@@ -521,11 +573,21 @@ export function Rail() {
                       four subjects look like the whole of Analytics.
 
                       `end` because `/analytics` is a prefix of every subject
-                      path: without it this row would be lit on all of them. */}
+                      path: without it this row would be lit on all of them.
+
+                      And lit for every tab of the overall page, not only for
+                      `/analytics` itself. Recommendations, Goals, Insights and
+                      the rest are the same page on other URLs — the parent
+                      row above already says so through `onPage` — and with
+                      only `end` the reader on /recommendations saw Analytics
+                      lit and nothing under it, as if they were on no page in
+                      the menu at all. */}
                   <NavLink
                     to="/analytics"
                     end
-                    className={({ isActive }) => `rail-sub-link${isActive ? ' active' : ''}`}
+                    className={({ isActive }) =>
+                      `rail-sub-link${isActive || (onPage(tab, pathname) && !inSubjects) ? ' active' : ''}`
+                    }
                   >
                     Overall
                   </NavLink>

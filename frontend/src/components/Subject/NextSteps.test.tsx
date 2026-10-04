@@ -70,7 +70,7 @@ describe('a step that is only its title', () => {
 describe('opening a step', () => {
   it('opens and shuts from anywhere on the card, not only its head', () => {
     const { container } = draw([step(1), step(2)]);
-    const second = container.querySelectorAll<HTMLLIElement>('.sx-step')[1];
+    const second = container.querySelectorAll<HTMLLIElement>('.sx-step')[1]!;
     const fold = second.querySelector('details')!;
     expect(fold.open).toBe(false);
     fireEvent.click(second.querySelector('.sx-step-rank')!);

@@ -8,7 +8,7 @@
  * ones to look at first when something below starts failing.
  */
 import { describe, expect, it } from 'vitest';
-import { render } from './markdown';
+import { linkKind, render } from './markdown';
 
 describe('escaping', () => {
   it('escapes before any rule runs, so a note cannot emit tags', () => {
@@ -56,8 +56,10 @@ describe('attributed spans', () => {
   });
 
   it('does not read a link as a span, or a span as a link', () => {
-    expect(render('[a](https://b.example)')).toContain('<a href');
+    expect(render('[a](https://b.example)')).toContain('href="https://b.example"');
+    expect(render('[a](https://b.example)')).not.toContain('<span');
     expect(render('[a]{blue}')).toContain('<span class="md-c-blue">');
+    expect(render('[a]{blue}')).not.toContain('<a ');
   });
 });
 
@@ -137,5 +139,65 @@ describe('blocks', () => {
 
   it('closes a fence left open at the end of the note', () => {
     expect(render('```\nx')).toBe('<pre>\nx\n</pre>');
+  });
+});
+
+/**
+ * Where a link goes, and whether it leaves the app to get there.
+ *
+ * A route is not an address on the web and must not be opened like one:
+ * `target="_blank"` on `/tasks` reloads the whole single-page app to show a
+ * page it was already holding. `data-nav` is what the notes page hands to the
+ * router, and its absence is what tells the editor to leave a link alone.
+ */
+describe('links to places in this app', () => {
+  it('marks a task link, and keeps it in the app', () => {
+    const html = render('[Revise integrals](/tasks?task=a1b2)');
+    expect(html).toContain('class="md-link is-task"');
+    expect(html).toContain('data-nav="/tasks?task=a1b2"');
+    expect(html).not.toContain('target="_blank"');
+  });
+
+  it('marks a goal link', () => {
+    expect(render('[Finish it](/goals?goal=g9)')).toContain('class="md-link is-goal"');
+  });
+
+  it('calls any other route a page', () => {
+    expect(render('[Growth](/analytics/growth)')).toContain('class="md-link is-page"');
+  });
+
+  it('still sends an address on the web to its own tab', () => {
+    const html = render('[docs](https://example.com)');
+    expect(html).toContain('class="md-link is-external"');
+    expect(html).toContain('target="_blank"');
+    expect(html).not.toContain('data-nav');
+  });
+
+  it('reads a second parameter through the escaping that has already run', () => {
+    // `escape` turns `&` into `&amp;` before a link is ever looked at, so a
+    // classifier matching only the bare `&` works until a link carries two.
+    expect(linkKind('/tasks?view=all&amp;task=a1')).toBe('task');
+    expect(linkKind('/tasks?view=all&task=a1')).toBe('task');
+  });
+
+  it('is not fooled by a task id somewhere else in the address', () => {
+    expect(linkKind('/settings?note=task=1')).toBe('page');
+    expect(linkKind('https://example.com/tasks?task=1')).toBe('external');
+  });
+});
+
+describe('escapes', () => {
+  it('takes the meaning off the character after a backslash', () => {
+    expect(render('\\*\\*not bold\\*\\*')).toBe('<p>**not bold**</p>');
+    expect(render('\\# not a heading')).toBe('<p># not a heading</p>');
+    expect(render('1\\. not a list')).toBe('<p>1. not a list</p>');
+  });
+
+  it('handles the ones escape() has already turned into entities', () => {
+    expect(render('\\> not a quote')).toBe('<p>&gt; not a quote</p>');
+  });
+
+  it('leaves a backslash that is not escaping anything', () => {
+    expect(render('C:\\path')).toContain('C:\\path');
   });
 });
