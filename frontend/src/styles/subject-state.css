@@ -634,3 +634,58 @@
 @media (max-width: 640px) {
     .sx-ai-invite { flex-direction: column; align-items: stretch; }
 }
+
+/* The whole card opens and shuts the step, so it says so. */
+.sx-step { cursor: pointer; }
+
+/* Up to three links to the material, best first. */
+.sx-step-links {
+    margin: 2px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--space-2);
+    counter-reset: sx-link;
+}
+.sx-step-links li {
+    counter-increment: sx-link;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px var(--space-2);
+    min-width: 0;
+}
+.sx-step-links li::before {
+    content: counter(sx-link);
+    flex: none;
+    width: 1.25em;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ax-faint);
+}
+.sx-step-links a {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-weight: 600;
+    color: var(--ax-violet);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--ax-violet) 40%, transparent);
+    text-underline-offset: 2px;
+}
+.sx-step-links a:hover { text-decoration-color: currentColor; }
+.sx-step-links a:focus-visible {
+    outline: 2px solid var(--ax-violet);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+.sx-step-links small { font-size: var(--text-2xs); color: var(--ax-faint); }
+.sx-link-rank {
+    font-style: normal;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
+.sx-link-rank.is-best { color: var(--ax-violet); }
+.sx-link-rank.is-yours { color: var(--ax-green); }

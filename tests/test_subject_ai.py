@@ -1125,7 +1125,7 @@ class TestPreciseStepsFromEverythingDone:
     def test_a_step_says_what_to_work_how_fast_and_from_where(self):
         assert 'problems' in subject_ai.SCHEMA['properties']['next_steps']['items']['required']
         assert 'pace' in subject_ai.SCHEMA['properties']['next_steps']['items']['required']
-        assert 'resource' in subject_ai.SCHEMA['properties']['next_steps']['items']['required']
+        assert 'resources' in subject_ai.SCHEMA['properties']['next_steps']['items']['required']
         assert 'RECOMMENDATIONS, not insights' in subject_ai.SYSTEM
         assert 'Easy MATHCOUNTS Sprint #1-10, 2 min each' in subject_ai.SYSTEM
 
@@ -1236,3 +1236,164 @@ def test_a_real_source_is_kept():
         'focus': 'Calculus', 'type': 'targeted_practice', 'difficulty': 3,
         'duration_minutes': 64, 'reason': '', 'signal': '', 'drills': []}]})
     assert cleaned['next_steps'][0]['resource'] == 'James Stewart, Calculus, 8th edition'
+
+
+# ---------------------------------------------------------------------------
+# A step can be its title alone, and links to where the material is
+# ---------------------------------------------------------------------------
+def _one(**over):
+    entry = {'title': 'Practice Bach Concerto intonation', 'problems': '',
+             'pace': '', 'resources': [], 'focus': 'Violin', 'type': 'targeted_practice',
+             'difficulty': 3, 'duration_minutes': 0, 'reason': '', 'signal': '',
+             'drills': []}
+    entry.update(over)
+    return entry
+
+
+class TestBareSteps:
+    def test_a_title_alone_is_a_whole_step(self):
+        step = subject_ai._clean({'next_steps': [_one()]})['next_steps'][0]
+        assert step['title'] == 'Practice Bach Concerto intonation'
+        assert step['problems'] == '' and step['pace'] == ''
+        assert step['resources'] == []
+
+    @pytest.mark.parametrize('given', [0, None, '', -5, 'whenever'])
+    def test_no_time_is_left_absent_rather_than_defaulted(self, given):
+        step = subject_ai._clean({'next_steps': [_one(duration_minutes=given)]})['next_steps'][0]
+        assert step['minutes'] is None
+
+    def test_a_time_that_is_given_is_still_clamped(self):
+        steps = subject_ai._clean({'next_steps': [
+            _one(duration_minutes=400), _one(title='b', duration_minutes=3)]})['next_steps']
+        assert [step['minutes'] for step in steps] == [120, 10]
+
+    def test_both_prompts_say_a_title_alone_can_be_enough(self):
+        for prompt in (subject_ai.SYSTEM, subject_ai.STEPS_SYSTEM):
+            assert 'Practice Bach Concerto intonation' in prompt
+            assert '0 when no set time' in prompt
+
+    def test_a_history_line_with_no_time_does_not_print_none(self):
+        brief = subject_ai.brief_from({**STATE, 'previous': [
+            {'title': 'Bach intonation', 'type': 'targeted_practice',
+             'difficulty': 3, 'minutes': None, 'on': '2026-10-01'}]})
+        assert 'None min' not in brief
+        assert 'Bach intonation' in brief
+
+
+IMSLP = 'https://imslp.org/wiki/Violin_Concerto_in_A_minor,_BWV_1041_(Bach,_Johann_Sebastian)'
+
+
+class TestStepLinks:
+    def test_up_to_three_links_in_the_order_given(self):
+        step = subject_ai._clean({'next_steps': [_one(resources=[
+            {'name': 'IMSLP score', 'url': IMSLP},
+            {'name': 'Henle edition', 'url': 'https://www.henle.de/en/detail/?Title=Violin+Concerto+a+minor+BWV+1041_1041'},
+            {'name': 'Recording', 'url': 'https://www.youtube.com/watch?v=abc123'},
+            {'name': 'A fourth', 'url': 'https://example.org/four'},
+        ])]})['next_steps'][0]
+        assert [link['name'] for link in step['resources']] == [
+            'IMSLP score', 'Henle edition', 'Recording']
+        assert step['resources'][0]['url'] == IMSLP
+
+    @pytest.mark.parametrize('bad', [
+        'imslp.org', 'ftp://imslp.org/x', 'javascript:alert(1)',
+        'https://example.com/book', 'https://localhost/x', 'not a link', ''])
+    def test_a_link_that_is_not_one_is_dropped(self, bad):
+        step = subject_ai._clean({'next_steps': [_one(resources=[
+            {'name': 'x', 'url': bad}])]})['next_steps'][0]
+        assert step['resources'] == []
+
+    def test_the_same_page_twice_is_kept_once(self):
+        step = subject_ai._clean({'next_steps': [_one(resources=[
+            {'name': 'a', 'url': 'https://www.mathcounts.org/resources/'},
+            {'name': 'b', 'url': 'http://mathcounts.org/resources'},
+        ])]})['next_steps'][0]
+        assert [link['name'] for link in step['resources']] == ['a']
+
+    def test_a_link_with_no_usable_name_is_named_after_its_site(self):
+        step = subject_ai._clean({'next_steps': [_one(resources=[
+            {'name': 'a standard textbook', 'url': 'https://www.mathcounts.org/x'}])]})['next_steps'][0]
+        assert step['resources'][0]['name'] == 'mathcounts.org'
+
+    def test_a_link_the_reader_already_keeps_is_marked_theirs(self):
+        owned = {subject_ai._link_key(IMSLP)}
+        step = subject_ai._clean({'next_steps': [_one(resources=[
+            {'name': 'score', 'url': IMSLP.replace('https://', 'http://')},
+            {'name': 'other', 'url': 'https://www.henle.de/en/'}])]},
+            owned=owned)['next_steps'][0]
+        assert [link['yours'] for link in step['resources']] == [True, False]
+
+    def test_the_plan_marks_owned_links_from_the_state(self, monkeypatch):
+        import json as _json
+        monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+        monkeypatch.setattr(subject_ai.planner, 'from_provider', lambda *a, **k: _json.dumps(
+            {'next_steps': [_one(resources=[{'name': 'score', 'url': IMSLP}])]}))
+        steps = subject_ai.plan({**STATE, 'owned_resources': [
+            {'name': 'Bach score', 'url': IMSLP, 'from': 'task'}]})
+        assert steps[0]['resources'][0]['yours'] is True
+
+
+class TestOwnedResources:
+    def test_links_are_found_in_task_notes_notes_and_the_library(self):
+        found = subject_ai.owned_resources(
+            [{'title': 'Bach Concerto practice', 'description': f'Score: {IMSLP}.'}],
+            [{'title': 'Teacher links', 'body': 'Etudes: [Kreutzer 42](https://imslp.org/wiki/42_Etudes)'}],
+            [{'title': 'Suzuki Book 4', 'url': 'https://suzuki.example.org/book4'}])
+        by_url = {entry['url']: entry for entry in found}
+        # A bare link in a task's note is named after the task, and the full
+        # stop after it is not part of it.
+        assert by_url[IMSLP]['name'] == 'Bach Concerto practice'
+        assert by_url[IMSLP]['from'] == 'task'
+        # A Markdown link keeps its own text.
+        assert by_url['https://imslp.org/wiki/42_Etudes']['name'] == 'Kreutzer 42'
+        assert by_url['https://suzuki.example.org/book4']['from'] == 'library'
+
+    def test_the_same_page_is_listed_once_and_the_list_is_bounded(self):
+        tasks = [{'title': f'T{n}', 'description': f'https://site{n}.org/x {IMSLP}'}
+                 for n in range(20)]
+        found = subject_ai.owned_resources(tasks, [], [])
+        assert len(found) == subject_ai.OWNED
+        assert sum(entry['url'] == IMSLP for entry in found) == 1
+
+    def test_they_reach_the_plan_brief_with_their_urls(self):
+        brief = subject_ai.steps_brief_from({**STATE, 'owned_resources': [
+            {'name': 'Bach score', 'url': IMSLP, 'from': 'task'}]})
+        assert '<your_resources>' in brief
+        assert IMSLP in brief
+
+    def test_no_owned_links_means_no_section(self):
+        assert '<your_resources>' not in subject_ai.steps_brief_from(STATE)
+
+
+def test_the_endpoint_hands_the_plan_this_subjects_links_only(client, monkeypatch):
+    from backend.database import connection as db
+    db.insert_row('tasks', {'id': 'own-1', 'user_id': 'tester', 'title': 'Bach Concerto',
+                            'description': f'score {IMSLP}', 'subject': 'music',
+                            'status': 'done'})
+    db.insert_row('tasks', {'id': 'own-2', 'user_id': 'tester', 'title': 'Integrals',
+                            'description': 'https://tutorial.math.lamar.edu/',
+                            'subject': 'calculus', 'status': 'done'})
+    db.insert_row('notes', {'id': 'own-n', 'user_id': 'tester', 'title': 'Etudes',
+                            'body': 'https://imslp.org/wiki/42_Etudes',
+                            'subject_ids': 'music'})
+    monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+    seen = {}
+    monkeypatch.setattr(subject_ai, 'plan',
+                        lambda state, *a, **k: seen.setdefault('s', state) and [])
+    client.post('/api/subject_reading', json={
+        'subject': 'Music', 'subject_id': 'music', 'span': 'x', 'mode': 'fresh'})
+    urls = [entry['url'] for entry in seen['s']['owned_resources']]
+    assert IMSLP in urls
+    assert 'https://imslp.org/wiki/42_Etudes' in urls
+    assert 'https://tutorial.math.lamar.edu/' not in urls
+
+
+@pytest.mark.parametrize('text, url', [
+    (f'score ({IMSLP}).', IMSLP),
+    ('(see https://www.henle.de/en/)', 'https://www.henle.de/en/'),
+    ('[Lamar](https://tutorial.math.lamar.edu/Classes/CalcII/IntTechIntro.aspx)',
+     'https://tutorial.math.lamar.edu/Classes/CalcII/IntTechIntro.aspx'),
+])
+def test_a_link_is_cut_from_the_sentence_around_it(text, url):
+    found = subject_ai.owned_resources([{'title': 't', 'description': text}], [], [])
+    assert [entry['url'] for entry in found] == [url]

@@ -85,9 +85,15 @@ MAX_TOKENS = 16000
 DIAGNOSES = 3
 PRIORITIES = 4
 NEXT_STEPS = 3
-#: Bounds on the three fields that make a step an instruction rather than a
-#: category — `problems`, `pace` and `resource`. Lines, not paragraphs.
+#: Bounds on the fields that make a step an instruction rather than a
+#: category — `problems`, `pace` and each resource's name. Lines, not
+#: paragraphs.
 STEP_FIELD = 140
+#: Links under a step, best first. Three, because a fourth is never opened.
+RESOURCES = 3
+#: Links the reader already keeps that go into the brief. Enough to cover
+#: what one subject is studied from; more would be the prompt's largest part.
+OWNED = 8
 INSIGHTS = 4
 
 #: Evidence cards under the objective. Three, and the number is the point: the
@@ -437,31 +443,37 @@ person could start in the next minute without asking a single question. A \
 step that restates a finding ("Easy execution is low, so practise Easy \
 problems") is an insight wearing a verb, and it is the one thing this list \
 must never contain. "Easy algorithm drills, timed" fails too: which \
-algorithms, from where, how many, how fast? The standard is this:
+algorithms? Name the actual thing. A title alone can be a complete step — \
+"Practice Bach Concerto intonation" — so add problems, a pace and a time \
+only when they help, and leave them empty ("" or 0) when they do not. When \
+the material has problems, the standard is this:
 
-  title     "Easy MATHCOUNTS Sprint #1-10, 2 min each"
-  problems  "MATHCOUNTS 2021 School Sprint Round, problems 1-10"
-  pace      "2 minutes per problem, 20 minutes for the set, no calculator"
-  resource  "MATHCOUNTS past competitions, free at mathcounts.org"
+  title      "Easy MATHCOUNTS Sprint #1-10, 2 min each"
+  problems   "MATHCOUNTS 2021 School Sprint Round, problems 1-10"
+  pace       "2 minutes per problem, 20 minutes for the set, no calculator"
+  resources  [{"name": "MATHCOUNTS past competitions", \
+"url": "https://www.mathcounts.org/resources/past-competitions"}]
 
 Each has:
-  - `title`: what the session is, ten words or fewer: the level, the \
-material, the range, the pace. Write the line somebody would put on a \
+  - `title`: what the session is, ten words or fewer: the material, and the \
+range and pace when there are any. Write the line somebody would put on a \
 to-do list — "Make it a task" turns this into a real task, under this \
 subject, at this difficulty, and a task called "Focused Easy Execution \
 Practice" is one nobody will know how to start.
-  - `problems`: exactly what to work — the source, the paper or set, and the \
-problem range or count. "AMC 10A 2019, problems 6-15". "Leetcode Easy \
+  - `problems`: exactly what to work, or "" — the source, the paper or set, \
+and the problem range or count. "AMC 10A 2019, problems 6-15". "Leetcode Easy \
 'Two Pointers' tag, first 5 unsolved". Name a range they have not already \
 done when <work_groups> shows which ones they have.
-  - `pace`: the time per problem, or for the set, and any condition on it — \
+  - `pace`: the time per problem, or for the set, or "" — \
 "2 min per problem", "40 min for 25, no calculator", "untimed, then a \
 second pass at 3 min each".
-  - `resource`: where to get the material, named well enough to find it — \
-the publisher, site or book, and the edition or year when it matters. \
-When the record names no source, name a standard, widely available one for \
-the subject and level and say it is a suggestion. Never invent a source \
-that does not exist.
+  - `resources`: one to three links to where the material is, best first \
+— 1 the best, 3 the weakest. Use what the reader already has first: a \
+fitting link from <your_resources> is resource 1, and the task titles name \
+the pieces, books and papers they already work from. Each link is the direct \
+page (the score, the paper, the chapter, the set) on a site that really has \
+it; when unsure of a deep link, use that site's own page rather than \
+guessing. Never invent a source, a placeholder or a search page.
   - `focus`: the area from the vocabulary it is about, or the subject itself.
   - `type`: one of targeted_practice, mixed_practice, timed_set, review, \
 concept, project.
@@ -469,7 +481,8 @@ concept, project.
 4 Hard, 5 Brutal. Choose it against the difficulty curve you were given: the \
 level to work is normally the one at or just below where execution starts to \
 fall, not the one above it.
-  - `duration_minutes`: a real sitting, 10 to 120.
+  - `duration_minutes`: a real sitting, 10 to 120, or 0 when no set time \
+helps.
   - `reason`: one sentence, citing a figure from the brief. This is what makes \
 the recommendation checkable rather than a horoscope.
   - `signal`: what would tell the reader this is working, in one sentence. \
@@ -603,7 +616,18 @@ SCHEMA = {
                     'title': {'type': 'string'},
                     'problems': {'type': 'string'},
                     'pace': {'type': 'string'},
-                    'resource': {'type': 'string'},
+                    'resources': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'name': {'type': 'string'},
+                                'url': {'type': 'string'},
+                            },
+                            'required': ['name', 'url'],
+                            'additionalProperties': False,
+                        },
+                    },
                     'focus': {'type': 'string'},
                     'type': {'type': 'string', 'enum': list(STEP_TYPES)},
                     'difficulty': {'type': 'integer'},
@@ -612,7 +636,7 @@ SCHEMA = {
                     'signal': {'type': 'string'},
                     'drills': {'type': 'array', 'items': {'type': 'string'}},
                 },
-                'required': ['title', 'problems', 'pace', 'resource', 'focus',
+                'required': ['title', 'problems', 'pace', 'resources', 'focus',
                              'type', 'difficulty', 'duration_minutes',
                              'reason', 'signal', 'drills'],
                 'additionalProperties': False,
@@ -994,6 +1018,21 @@ def brief_from(state: Dict[str, Any]) -> str:
               lambda entry: entry.get('minutes') is not None)
         parts.append(_section('work_groups', lines))
 
+    # ---- What they already study from ------------------------------------
+    # Links found in this subject's task notes, notes and library. Material
+    # somebody already has is material they will open, so it goes first.
+    owned = [entry for entry in (state.get('owned_resources') or [])
+             if isinstance(entry, dict) and _link(entry.get('url'))][:OWNED]
+    if owned:
+        lines = ['Links the reader already keeps for this subject, from their '
+                 'own task notes, notes and library. When one fits a step, it '
+                 'is that step\'s first resource, with the URL exactly as '
+                 'written here.']
+        for entry in owned:
+            lines.append('  "{}" — {} (in a {})'.format(
+                entry.get('name'), entry.get('url'), entry.get('from') or 'note'))
+        parts.append(_section('your_resources', lines))
+
     showing = [str(title).strip() for title in (state.get('showing') or [])
                if str(title).strip()]
     if showing:
@@ -1033,9 +1072,10 @@ def brief_from(state: Dict[str, Any]) -> str:
     if previous:
         lines = []
         for entry in previous:
-            lines.append('  {} — {} at difficulty {}, {} min, given {}'.format(
+            lines.append('  {} — {} at difficulty {}, {}given {}'.format(
                 entry.get('title'), entry.get('type'), entry.get('difficulty'),
-                entry.get('minutes'), entry.get('on')))
+                '{} min, '.format(entry['minutes']) if entry.get('minutes') else '',
+                entry.get('on')))
         parts.append(_section('previous_recommendations', lines))
 
     outcomes = state.get('outcomes') or []
@@ -1102,9 +1142,149 @@ def _real_source(text: str) -> str:
     return '' if PLACEHOLDER_SOURCE.search(text) else text
 
 
-def _steps(found: Dict[str, Any], counted) -> List[Dict[str, Any]]:
+# ---------------------------------------------------------------------------
+# Links
+# ---------------------------------------------------------------------------
+# A step names where to get its material as up to three links, best first. A
+# name alone ("MATHCOUNTS past competitions") sends somebody to a search
+# engine; a link sends them to the page. The model is handed the links the
+# reader already keeps for the subject and told to put those first when they
+# fit, because the material somebody already owns is the material they will
+# actually open.
+
+#: A link in free text: a Markdown link, whose text is its name, or a bare URL.
+#: One level of balanced brackets is part of a URL — IMSLP and Wikipedia put
+#: them in page names — while an unbalanced one is the sentence around it.
+LINK_IN_TEXT = re.compile(
+    r'\[([^\]\n]{1,120})\]\((https?://(?:[^\s()]|\([^\s()]*\))+)\)'
+    r'|(https?://(?:[^\s<>()"\'\]\[]|\([^\s<>()"\']*\))+)',
+    re.IGNORECASE)
+
+
+def _link(value: Any) -> str:
+    """`value` as an http(s) link worth printing, or nothing.
+
+    Trailing sentence punctuation is shed, because a URL at the end of a note
+    usually carries the full stop after it.
+    """
+    from urllib.parse import urlparse
+    text = str(value or '').strip().rstrip('.,;:!?\'"')
+    if not text or len(text) > 500 or any(ch.isspace() for ch in text):
+        return ''
+    try:
+        parts = urlparse(text)
+    except ValueError:
+        return ''
+    host = (parts.hostname or '').lower()
+    if parts.scheme not in ('http', 'https') or '.' not in host:
+        return ''
+    if PLACEHOLDER_SOURCE.search(host):
+        return ''
+    return text
+
+
+def _link_key(url: str) -> str:
+    """What makes two links the same page: host without `www.`, and the path
+    without a trailing slash, ignoring case and scheme."""
+    from urllib.parse import urlparse
+    parts = urlparse(url)
+    host = (parts.hostname or '').lower()
+    host = host[4:] if host.startswith('www.') else host
+    path = parts.path.rstrip('/')
+    return (host + path + ('?' + parts.query if parts.query else '')).lower()
+
+
+def _host(url: str) -> str:
+    from urllib.parse import urlparse
+    host = (urlparse(url).hostname or '').lower()
+    return host[4:] if host.startswith('www.') else host
+
+
+def owned_resources(tasks: List[Dict[str, Any]], notes: List[Dict[str, Any]],
+                    library: List[Dict[str, Any]]) -> List[Dict[str, str]]:
+    """The links the reader already keeps for one subject, newest use first.
+
+    Each argument is already narrowed to the subject by the caller:
+    `tasks` is title and description, `notes` title and body, `library` title
+    and url. A link written in a task's note is named after the task, since
+    the task's name is what says what the link is for; a Markdown link keeps
+    its own text. The same page found twice is listed once.
+    """
+    found: List[Dict[str, str]] = []
+    seen = set()
+
+    def add(name: str, url: str, where: str) -> None:
+        url = _link(url)
+        if not url or len(found) >= OWNED:
+            return
+        key = _link_key(url)
+        if key in seen:
+            return
+        seen.add(key)
+        found.append({'name': (name.strip() or _host(url))[:STEP_FIELD],
+                      'url': url, 'from': where})
+
+    def scan(text: str, fallback: str, where: str) -> None:
+        for match in LINK_IN_TEXT.finditer(text or ''):
+            label, marked, bare = match.groups()
+            add(label or fallback, marked or bare, where)
+
+    for row in library:
+        add(str(row.get('title') or ''), row.get('url'), 'library')
+    for row in tasks:
+        scan(str(row.get('description') or ''), str(row.get('title') or ''), 'task')
+    for row in notes:
+        scan(str(row.get('body') or ''), str(row.get('title') or ''), 'note')
+    return found
+
+
+def _resources(entry: Dict[str, Any], owned: set) -> List[Dict[str, Any]]:
+    """A step's links, in the model's order (best first), at most RESOURCES.
+
+    A link that is not an http(s) URL, or points at a placeholder host, is
+    dropped rather than printed; one that is among the reader's own is marked
+    `yours`, which is what the page labels.
+    """
+    out: List[Dict[str, Any]] = []
+    seen = set()
+    for item in (entry.get('resources') or []):
+        if len(out) >= RESOURCES:
+            break
+        if not isinstance(item, dict):
+            continue
+        url = _link(item.get('url'))
+        if not url:
+            continue
+        key = _link_key(url)
+        if key in seen:
+            continue
+        seen.add(key)
+        name = _real_source(str(item.get('name') or '').strip()[:STEP_FIELD])
+        out.append({'name': name or _host(url), 'url': url, 'yours': key in owned})
+    return out
+
+
+def _minutes(value: Any):
+    """A recommended sitting, or None when the step names no time.
+
+    Not every session wants a clock — "Practice Bach Concerto intonation" is
+    a complete instruction — so nothing (or nought) from the model is left
+    absent rather than filled with a default the page would print as if
+    somebody had chosen it.
+    """
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        return None
+    return _clamp(number, *MINUTES, fallback=30) if number > 0 else None
+
+
+def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dict[str, Any]]:
     """`next_steps`, narrowed to what the page draws. See `_clean` for the rule
-    on which fields are held to the brief's figures and which are not."""
+    on which fields are held to the brief's figures and which are not.
+
+    `owned` is the `_link_key` of every link the reader already keeps, so a
+    step's link to one of them can say so."""
     steps = []
     for entry in (found.get('next_steps') or [])[:NEXT_STEPS]:
         if not isinstance(entry, dict):
@@ -1129,16 +1309,20 @@ def _steps(found: Dict[str, Any], counted) -> List[Dict[str, Any]]:
             'title': title,
             # What to do, how fast and from where. Instructions rather than
             # claims about the reader, so — like the title and the drills —
-            # they are not held to the brief's figures.
+            # they are not held to the brief's figures. All optional: a step
+            # can be its title alone ("Practice Bach Concerto intonation").
             'problems': str(entry.get('problems') or '').strip()[:STEP_FIELD],
             'pace': str(entry.get('pace') or '').strip()[:STEP_FIELD],
+            'resources': _resources(entry, owned),
+            # The single named source steps carried before `resources`; kept
+            # so an answer in the old shape still says where to look.
             'resource': _real_source(str(entry.get('resource') or '').strip()[:STEP_FIELD]),
             'focus': str(entry.get('focus') or '').strip(),
             # An unknown type would break the counting the feedback loop is
             # for, so it lands in the general bucket rather than in a new one.
             'type': kind if kind in STEP_TYPES else 'targeted_practice',
             'difficulty': _clamp(entry.get('difficulty'), *DIFFICULTY, fallback=3),
-            'minutes': _clamp(entry.get('duration_minutes'), *MINUTES, fallback=30),
+            'minutes': _minutes(entry.get('duration_minutes')),
             'reason': reason,
             'signal': signal,
             'drills': [str(item).strip() for item in (entry.get('drills') or [])
@@ -1161,7 +1345,7 @@ def _steps(found: Dict[str, Any], counted) -> List[Dict[str, Any]]:
 #: relationships: those are what the record *is*, and the reading covers them.
 STEPS_SECTIONS = ('subject_profile', 'difficulty_analysis', 'time_analysis',
                   'mistake_patterns', 'recent_work', 'work_groups',
-                  'already_showing', 'skill_vocabulary', 'goals',
+                  'your_resources', 'already_showing', 'skill_vocabulary', 'goals',
                   'previous_recommendations', 'recommendation_outcomes')
 
 #: How many of the newest tasks go up beside the groups. The groups already
@@ -1177,15 +1361,23 @@ You plan the next three study sessions for one subject, for a study-tracking \
 app. Everything in the brief was counted from the reader's own tasks.
 
 Write RECOMMENDATIONS, not insights. Each one is an instruction a person \
-could start in the next minute without asking a question: exactly which \
-problems, from where, how many, how fast. "Easy algorithm drills, timed" is \
-a category and fails. "Focused Easy Execution Practice" fails. This is the \
-standard:
+could start in the next minute without asking a question. It names the \
+actual thing to work on. "Easy algorithm drills, timed" is a category and \
+fails. "Focused Easy Execution Practice" fails. A title alone can be enough: \
+"Practice Bach Concerto intonation" is a complete step. Add problems, a \
+pace or a time only when they help; leave them empty ("" or 0) otherwise. \
+Two good steps:
 
-  title     "Easy MATHCOUNTS Sprint #1-10, 2 min each"
-  problems  "MATHCOUNTS 2021 School Sprint Round, problems 1-10"
-  pace      "2 minutes per problem, 20 minutes for the set, no calculator"
-  resource  "MATHCOUNTS past competitions, free at mathcounts.org"
+  title      "Easy MATHCOUNTS Sprint #1-10, 2 min each"
+  problems   "MATHCOUNTS 2021 School Sprint Round, problems 1-10"
+  pace       "2 minutes per problem, no calculator"
+  resources  [{"name": "MATHCOUNTS past competitions", \
+"url": "https://www.mathcounts.org/resources/past-competitions"}]
+
+  title      "Practice Bach Concerto intonation"
+  problems   ""   pace  ""   duration_minutes  0
+  resources  [{"name": "Bach Violin Concerto in A minor, IMSLP", \
+"url": "https://imslp.org/wiki/Violin_Concerto_in_A_minor,_BWV_1041_(Bach,_Johann_Sebastian)"}]
 
 HOW TO CHOOSE
 
@@ -1203,14 +1395,12 @@ range rather than one they have finished.
 <difficulty_analysis> says where execution falls off; the level to work is \
 normally at or just below that point.
 
-Name real material: the competition, paper, year, round, chapter, problem \
-range or problem tag the record shows, or the standard next thing up from it \
-for this subject and level. When a title is the reader's own name for a set \
-("Analysis problem set", "Proof practice"), you do not know what is in it: \
-point at a real, public equivalent instead — a named textbook chapter, a \
-past paper, a problem archive. Every resource must be findable by its name \
-alone. Never a placeholder ("University of XYZ", "a standard textbook", \
-"online resources", "your course notes").
+Name real material: the piece, competition, paper, year, chapter, problem \
+range or tag the record shows, or the standard next thing up from it. Use \
+what the reader already has first: <your_resources> are links they keep, \
+and the task titles name the pieces, books and papers they already work \
+from. When a title is only the reader's own label ("Proof practice"), point \
+at a real, public equivalent instead.
 
 <already_showing> is on the reader's screen. Yours go underneath, so do not \
 repeat or rephrase any of them. <previous_recommendations> and \
@@ -1218,20 +1408,24 @@ repeat or rephrase any of them. <previous_recommendations> and \
 acted on; a plan nobody followed is usually too big.
 
 EACH STEP
-  - `title`: ten words or fewer, the way a person writes a to-do: source and \
-range first, then the pace — "Stewart Ch. 7 integrals #1-8, 8 min each", \
-"Putnam 2020 A1-A5, 10 min each". Not the session type, not "Targeted \
-Practice". It becomes a task on their list exactly as written.
-  - `problems`: the source and the exact range or count.
-  - `pace`: time per problem or for the set, and any condition.
-  - `resource`: where to get it — site, publisher or book, with the year or \
-edition when it matters.
+  - `title`: ten words or fewer, the way a person writes a to-do — \
+"Stewart Ch. 7 integrals #1-8", "Practice Bach Concerto intonation". Not \
+the session type, not "Targeted Practice". It becomes a task as written.
+  - `problems`: the source and exact range or count, or "".
+  - `pace`: time per problem or for the set, or "".
+  - `resources`: one to three links to where the material is, best first — \
+1 the best, 3 the weakest. A link from <your_resources> that fits goes \
+first. Each is the direct page (the score, the paper, the chapter, the \
+problem set), on a site that really has it; when unsure of a deep link, \
+use the site's own page for it rather than guessing. Never a placeholder \
+or a search page.
   - `focus`: the area of the subject it is about.
   - `type`: one of targeted_practice, mixed_practice, timed_set, review, \
 concept, project.
   - `difficulty`: 1-5 on the app's scale (1 Trivial, 2 Easy, 3 Fair, 4 Hard, \
 5 Brutal).
-  - `duration_minutes`: the whole sitting, 10-120.
+  - `duration_minutes`: the whole sitting, 10-120, or 0 when no set time \
+helps.
   - `reason`: one sentence quoting a figure from the brief that made you \
 choose this. Every number you write about the reader must appear in the \
 brief; do not compute new ones.
@@ -1288,13 +1482,20 @@ def plan(state: Dict[str, Any], model_id: str = '') -> List[Dict[str, Any]]:
         raise BriefUnavailable(str(exc)) from exc
 
     allowed = figures.allowed_from(brief)
-    steps = _steps(_object(text), lambda *texts: figures.all_clean(texts, allowed))
+    steps = _steps(_object(text), lambda *texts: figures.all_clean(texts, allowed),
+                   _owned_keys(state))
     if not steps:
         raise BriefUnavailable('The model sent back no sessions. Try again.')
     return steps
 
 
-def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
+def _owned_keys(state: Dict[str, Any]) -> set:
+    return {_link_key(entry['url']) for entry in (state.get('owned_resources') or [])
+            if isinstance(entry, dict) and _link(entry.get('url'))}
+
+
+def _clean(found: Dict[str, Any], brief: str = '',
+           owned: set = frozenset()) -> Dict[str, Any]:
     """The answer, narrowed to the shape the page draws.
 
     Everything is bounded on the way out, and every list is cut to what the
@@ -1435,7 +1636,7 @@ def _clean(found: Dict[str, Any], brief: str = '') -> Dict[str, Any]:
             'reason': reason,
         })
 
-    steps = _steps(found, counted)
+    steps = _steps(found, counted, owned)
 
     insights = []
     for entry in (found.get('insights') or [])[:INSIGHTS]:
@@ -1515,4 +1716,4 @@ def read(state: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
         # already written for a reader rather than for a log.
         raise BriefUnavailable(str(exc)) from exc
 
-    return _clean(_object(text), brief)
+    return _clean(_object(text), brief, _owned_keys(state))

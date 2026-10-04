@@ -461,6 +461,13 @@ export interface Priority {
  * clamped by the server. `id` is the row it was stored as, which is what the
  * feedback loop is keyed on.
  */
+/** One link under a recommended session. */
+export interface StepResource {
+  name: string;
+  url: string;
+  yours?: boolean;
+}
+
 export interface NextStep {
   id: string;
   title: string;
@@ -472,12 +479,20 @@ export interface NextStep {
    */
   problems?: string;
   pace?: string;
+  /** The single named source steps carried before `resources`. */
   resource?: string;
+  /**
+   * Up to three links to the material, best first. `yours` marks a link the
+   * reader already keeps — in a task's note, a note or the library — which
+   * the model is told to put first when it fits. Absent on older steps.
+   */
+  resources?: StepResource[];
   focus: string;
   type: StepType;
   /** 1-5, on Summit's own scale. */
   difficulty: number;
-  minutes: number;
+  /** The suggested sitting, or null when the step names no time. */
+  minutes: number | null;
   reason: string;
   /**
    * What would say this worked, written when the advice was given.
@@ -603,6 +618,8 @@ export interface SubjectReading {
  */
 export interface SubjectStatePayload {
   subject: string;
+  /** The catalogue id, so the server can find the reader's own links for it. */
+  subject_id?: string;
   span: string;
   aim?: string;
   level?: string;

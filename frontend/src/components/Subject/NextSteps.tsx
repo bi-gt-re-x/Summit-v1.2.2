@@ -8,9 +8,14 @@
  * under the first, so the list grows down to six.
  *
  * A step is an instruction, not a finding. "Easy algorithm drills, timed" is
- * a category; "Easy MATHCOUNTS Sprint #1-10, 2 min each, from mathcounts.org"
- * is something a person can start, and the three fields `problems`, `pace`
- * and `resource` are what the model is made to fill to get there.
+ * a category; "Easy MATHCOUNTS Sprint #1-10, 2 min each" is something a person
+ * can start, and so is "Practice Bach Concerto intonation" — `problems`,
+ * `pace` and the minutes are filled when they help and left out when not.
+ * Inside, up to three links say where the material is, best first, with the
+ * ones the reader already keeps marked as theirs.
+ *
+ * The whole card is the dropdown's handle: a click anywhere on it that is not
+ * on a link or a button opens or shuts it.
  *
  * ## The loop, and why the buttons matter more than the prose
  *
@@ -35,7 +40,8 @@
  * chips rather than as counted figures. The `reason` under each is required to
  * cite a figure that *was* counted, which is what makes a step arguable.
  */
-import { STEP_WORDS, type NextStep } from '@/services/analytics';
+import type { MouseEvent } from 'react';
+import { STEP_WORDS, type NextStep, type StepResource } from '@/services/analytics';
 import { DIFFICULTY_WORDS } from '@/utils/ratings';
 
 /** How many steps make a batch. The model is asked for at most this many
@@ -45,6 +51,39 @@ export const BATCH = 3;
 /** The most the panel holds at once — two batches. Mirrors `MAX_STEPS` in
     backend/api/subject_ai.py, which enforces it. */
 export const MAX_STEPS = 6;
+
+/** What the three link slots are called, best first. */
+const RANK_WORDS = ['Best', 'Next best', 'Also'];
+
+/** The links worth drawing: http(s) only, whatever a saved reading holds. */
+export function stepLinks(step: NextStep): StepResource[] {
+  return (step.resources ?? [])
+    .filter((link) => /^https?:\/\//i.test(link.url ?? ''))
+    .slice(0, 3);
+}
+
+function siteOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * A click anywhere on a step's card opens or shuts it, not only on its head.
+ *
+ * The `summary` still does the toggling for itself (and for the keyboard), so
+ * a click there is left to it; links and buttons do their own thing; and a
+ * click that ends a text selection is somebody copying, not folding.
+ */
+function foldFromCard(event: MouseEvent<HTMLLIElement>) {
+  const target = event.target as HTMLElement;
+  if (target.closest('summary, a, button, input, select, textarea, label')) return;
+  if (window.getSelection()?.toString()) return;
+  const fold = event.currentTarget.querySelector('details');
+  if (fold) fold.open = !fold.open;
+}
 
 export interface NextStepsProps {
   steps: NextStep[];
@@ -64,8 +103,13 @@ export function NextSteps({ steps, taken, busy, onMakeTask, onDidIt }: NextSteps
       <ol className="sx-step-list">
         {batch.map((step, at) => {
           const done = taken.has(step.id);
+          const links = stepLinks(step);
           return (
-            <li key={step.id || step.title} className={`sx-step${done ? ' is-taken' : ''}`}>
+            <li
+              key={step.id || step.title}
+              className={`sx-step${done ? ' is-taken' : ''}`}
+              onClick={foldFromCard}
+            >
               <span className="sx-step-rank" aria-hidden="true">
                 {String(at + 1).padStart(2, '0')}
               </span>
@@ -92,19 +136,40 @@ export function NextSteps({ steps, taken, busy, onMakeTask, onDidIt }: NextSteps
                       <i>{step.difficulty}/5</i>
                     </span>
                     {step.pace && <span className="sx-chip is-pace">{step.pace}</span>}
-                    <span className="sx-chip">{step.minutes} min</span>
+                    {step.minutes ? <span className="sx-chip">{step.minutes} min</span> : null}
                     {step.focus && <span className="sx-chip is-focus">{step.focus}</span>}
                     {done && <span className="sx-chip">Done</span>}
                   </div>
                 </summary>
 
                 <div className="sx-step-inside">
-                  {step.resource && (
+                  {/* Up to three links, best first, the reader's own marked.
+                      A step from before links existed keeps its one named
+                      source as plain text. */}
+                  {links.length > 0 ? (
+                    <div className="sx-step-resource">
+                      <span>Where to get it</span>
+                      <ol className="sx-step-links">
+                        {links.map((link, n) => (
+                          <li key={link.url}>
+                            <a href={link.url} target="_blank" rel="noopener noreferrer">
+                              {link.name || siteOf(link.url)}
+                            </a>
+                            <small>{siteOf(link.url)}</small>
+                            <i className={`sx-link-rank${n === 0 ? ' is-best' : ''}`}>
+                              {RANK_WORDS[n]}
+                            </i>
+                            {link.yours && <i className="sx-link-rank is-yours">Yours</i>}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  ) : step.resource ? (
                     <p className="sx-step-resource">
                       <span>Where to get it</span>
                       {step.resource}
                     </p>
-                  )}
+                  ) : null}
 
                   {step.reason && <p className="sx-step-why">{step.reason}</p>}
 

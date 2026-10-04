@@ -189,6 +189,9 @@ class SubjectStateBody(BaseModel):
     """The whole deterministic state, as the page computed it."""
 
     subject: str = ''
+    #: The catalogue id ("music") beside the display name, for finding the
+    #: tasks, notes and library items filed under it. See `_owned`.
+    subject_id: str = ''
     span: str = ''
     aim: str = ''
     level: str = ''
@@ -305,6 +308,58 @@ def _group(entry: WorkGroup) -> dict:
         'reasons': [_text(reason, 60) for reason in entry.reasons[:3] if _text(reason)],
         'last': _text(entry.last, 10),
     }
+
+
+# --------------------------------------------------------------------------
+# What the reader already studies from
+# --------------------------------------------------------------------------
+def _owned(username: str, subject_id: str, subject: str) -> list:
+    """The links this account already keeps for the subject.
+
+    Read here rather than sent, for the reason `_work` gives: descriptions and
+    note bodies never go to the browser, and this is the one action that was
+    going to cost a model call anyway. Tasks are newest first, so a link from
+    this week's work outranks one from last year's. Picking the links out is
+    `subject_ai.owned_resources`.
+    """
+    wanted = {value.strip().lower() for value in
+              (subject_id, subject, subject.replace(' ', '_')) if value.strip()}
+    if not wanted:
+        return []
+
+    tasks = [row for row in db.columns_for(
+                 'tasks', username, ('id', 'subject', 'title', 'description'),
+                 order='rowid DESC')
+             if str(row.get('subject') or '').strip().lower() in wanted]
+    task_ids = {row.get('id') for row in tasks}
+
+    def filed_here(note):
+        ids = {part.strip().lower() for part in
+               str(note.get('subject_ids') or '').split(',') if part.strip()}
+        return bool(ids & wanted) or note.get('task_id') in task_ids
+
+    notes = [row for row in db.columns_for(
+                 'notes', username, ('title', 'body', 'subject_ids', 'task_id'),
+                 order='rowid DESC')
+             if filed_here(row)]
+
+    def tagged_here(item):
+        tags = item.get('tags')
+        if isinstance(tags, str):
+            try:
+                tags = json.loads(tags or '[]')
+            except ValueError:
+                tags = []
+        named = {str(tag).strip().lower() for tag in (tags or [])}
+        return not item.get('archived') and bool(named & wanted)
+
+    library = [row for row in db.rows_for('library_items', username)
+               if tagged_here(row)]
+
+    return subject_ai.owned_resources(
+        [row for row in tasks if 'http' in str(row.get('description') or '')],
+        [row for row in notes if 'http' in str(row.get('body') or '')],
+        library)
 
 
 #: What a reading holds when nothing has been read yet — the shape the page
@@ -467,6 +522,7 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         ],
         'outcomes': _outcomes(history, execution_now),
         'showing': [_text(step.get('title')) for step in on_screen],
+        'owned_resources': _owned(username, _text(body.subject_id), subject),
     }
 
     # The record's button asks for the whole reading. The Recommendations

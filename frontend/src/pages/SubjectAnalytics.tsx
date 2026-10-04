@@ -830,6 +830,7 @@ export default function SubjectAnalytics() {
     try {
       result = await readSubject({
         subject: subject.name,
+        subject_id: subjectId,
         span: WINDOWS.find((option) => option.key === span)?.label ?? '',
         aim: ambition?.aim ?? '',
         level: ambition?.level ?? '',
