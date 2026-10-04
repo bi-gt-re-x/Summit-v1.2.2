@@ -122,6 +122,19 @@ describe('AreaChart readout', () => {
     expect(container.querySelector('.ax-readout')).toBeNull();
   });
 
+  /* The whitespace under every analytics tab. The table used to carry
+     `.ax-sr` itself, and a table ignores `height: 1px` and `overflow` — it
+     laid out as tall as its rows at the chart's position, and the page
+     scrolled that far past its last card. A block box honours both, so the
+     table goes inside one. */
+  it('hides the table inside a box that can clip it, not by classing the table', () => {
+    drawChart();
+    const table = screen.getByRole('table', { name: 'Test chart' });
+    expect(table).not.toHaveClass('ax-sr');
+    expect(table.parentElement?.tagName).toBe('DIV');
+    expect(table.parentElement).toHaveClass('ax-sr');
+  });
+
   it('hides the drawing from the reader the table is for, and not otherwise', () => {
     const { container: withTable } = drawChart();
     expect(withTable.querySelector('.ax-chart-svg')).toHaveAttribute('aria-hidden', 'true');
@@ -166,5 +179,20 @@ describe('Radar', () => {
       />,
     );
     expect(screen.getByRole('img', { name: 'Five readings of Maths' })).toBeInTheDocument();
+  });
+});
+
+describe('visually hidden tables, anywhere in the app', () => {
+  /* The same trap, guarded for every file rather than one chart: a table
+     cannot be shrunk to a pixel by its own class, only by a box around it. */
+  it('never puts a visually-hidden class on a <table> itself', () => {
+    const files = import.meta.glob('../../**/*.tsx', { query: '?raw', import: 'default', eager: true });
+    // A glob that matched nothing would pass this vacuously.
+    expect(Object.keys(files).length).toBeGreaterThan(100);
+    const offenders = Object.entries(files)
+      .filter(([path]) => !path.includes('.test.'))
+      .filter(([, source]) => /<table\b[^>]*className=["{`][^>]*\b(ax-sr|sr-only|visually-hidden)\b/.test(String(source)))
+      .map(([path]) => path);
+    expect(offenders).toEqual([]);
   });
 });

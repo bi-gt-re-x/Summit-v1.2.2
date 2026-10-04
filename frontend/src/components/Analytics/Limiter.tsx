@@ -3,9 +3,11 @@
  *
  * `LimiterCard` is the full reading: the goal named, the movement clause, the
  * subject carrying the shortfall, the share and the counts behind it, and the
- * two links. It is drawn on the Recommendations tab and nowhere else — it used
- * to be repeated as a one-line `LimiterLine` on three other tabs, which put the
- * same finding in front of the reader four times.
+ * two links. It is drawn on the Recommendations tab, which a reader opens *to*
+ * ask why.
+ *
+ * `LimiterLine` is one sentence and one link, for the Subjects tab, where the
+ * finding is context on a subject rather than the subject of the page.
  *
  * Neither computes anything. Every figure arrives from utils/goalLimiter, which
  * is where the arithmetic and the floors under it live.
@@ -88,5 +90,18 @@ export function LimiterCard({ row }: { row: GoalLimiter }) {
         </Link>
       </p>
     </article>
+  );
+}
+
+export function LimiterLine({ row }: { row: GoalLimiter }) {
+  return (
+    <p className="ax-goal-line">
+      <strong>{row.goalTitle}</strong> — {row.movement.toLowerCase()}, but{' '}
+      <strong>{row.subjectName}</strong> is the biggest limiter, at about {row.share}% of{' '}
+      {basisPhrase(row)}.{' '}
+      <Link to={row.treeHref} className="ax-link">
+        Open the {row.subjectName} skill tree
+      </Link>
+    </p>
   );
 }

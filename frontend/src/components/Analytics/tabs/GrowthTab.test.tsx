@@ -478,3 +478,30 @@ describe('the chart', () => {
    skill panels are above the strip rather than beside it, and that the tab
    survives the state that used to take it down.
    -------------------------------------------------------------------------- */
+
+// --------------------------------------------------------------------------
+describe('the panels brought back from before the cuts', () => {
+  /* Skill growth, skill levels, what the time bought, the skill's shape, when
+     the work happens and the year of days — all removed in the complexity cut
+     and restored at the reader's request. */
+  it.each([
+    'Skill Growth',
+    'Skills by level',
+    'Time, and what it bought',
+    'When the work actually happens',
+    'Every day of the last year',
+  ])('draws %s', async (title) => {
+    serve();
+    draw(<GrowthTab model={fakeModel()} />);
+    expect(await screen.findByRole('heading', { name: new RegExp(title.replace(/[(),]/g, '.')) })).toBeInTheDocument();
+  });
+
+  it('opens on skill growth, ahead of the five graded measures', async () => {
+    serve();
+    draw(<GrowthTab model={fakeModel()} />);
+    const skill = await screen.findByRole('heading', { name: /^Skill Growth/ });
+    const timeline = screen.getByRole('heading', { name: /^Growth timeline/ });
+    // DOCUMENT_POSITION_FOLLOWING: the timeline comes after.
+    expect(skill.compareDocumentPosition(timeline) & 4).toBeTruthy();
+  });
+});

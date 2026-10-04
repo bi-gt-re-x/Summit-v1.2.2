@@ -9,6 +9,7 @@
  * Not a `.test.` file: it holds no cases, and naming it one would have vitest
  * collect it and report a file with nothing in it.
  */
+import { skillScores } from '@/utils/skillScore';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
@@ -113,6 +114,9 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     goalCheckpoints: checkpointsByMonth([]),
     goalWorkRows: goalWork([], []),
     goalCoverage: linkCoverage([]),
+    // The skill model, from the real constructor over an empty record — the
+    // same rule the goal fields above follow.
+    skills: skillScores([]),
     goalRows: [],
     /* No goals and no tasks, so no goal has a shortfall to attribute. A test
        that wants a limiter on a tab passes one in. */

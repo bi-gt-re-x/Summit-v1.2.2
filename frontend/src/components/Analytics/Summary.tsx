@@ -61,6 +61,7 @@ import {
   GRADE_BANDS,
   GRADE_MEANING,
   bandLabel,
+  gradeFor,
   howItIsCalculated,
   type AnalyticalScore,
 } from '@/utils/analyticalScore';
@@ -234,6 +235,37 @@ export function Summary({
           )}
         </p>
       </div>
+
+      {/* The five the score is the mean of, each with its own letter. The
+          headline says where the account stands; these say which of the five
+          put it there, so "B" is never a letter with nothing behind it. Same
+          ten-point scale as the headline, and the measured quantity behind
+          each — "2h 10m of a 6h goal" — is on hover rather than printed, which
+          keeps the card one row of five rather than a second table. */}
+      {score.parts.length > 0 && (
+        <ul className="ax-summary-parts" aria-label="The five measures">
+          {score.parts.map((part) => {
+            const letter = gradeFor(part.score);
+            return (
+              /* No hover on consistency: its measured quantity is the
+                 consistency rate, which this page prints once — on the
+                 Overview's tile. */
+              <li
+                key={part.name}
+                className={gradeClass(letter)}
+                title={part.name === 'consistency' ? undefined : part.raw}
+              >
+                <span className="ax-summary-part-name">{part.label}</span>
+                <span className="ax-summary-part-grade">{letter}</span>
+                <span className="ax-summary-part-score">
+                  {(part.score / 10).toFixed(1)}
+                  <em>/10</em>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
 
       {rows.length > 0 && (
         <ul className="ax-summary-rows">

@@ -717,35 +717,49 @@ export function AreaChart({
           a sighted reader gets from the tooltip — and the table carries the
           whole series, for a reader who wants the shape rather than one point
           of it. Both are `.ax-sr`: this is the same chart, said twice for two
-          ways of reading, not a second chart. */}
+          ways of reading, not a second chart.
+
+          The table is *inside* an `.ax-sr` box rather than carrying the class
+          itself, and that is the whitespace under every analytics tab. A table
+          does not honour `height: 1px` — a table's height is a minimum, and it
+          lays out as tall as its rows — and `overflow: hidden` does not apply
+          to one either; `clip` only stops it painting. So the class put an
+          invisible table as tall as the series at the chart's position, and
+          being absolutely positioned it still counted toward the page's
+          scrollable height: a year by week is 53 rows, about 1,150px, and the
+          page scrolled that far past its last card into nothing. A div does
+          honour both, so the table is clipped to its one pixel and the
+          document ends where the content does. */}
       {readout && (
         <>
           <div className="ax-sr" aria-live="polite">
             {spoken}
           </div>
-          <table className="ax-sr">
-            <caption>{label}</caption>
-            <thead>
-              <tr>
-                <th scope="col">Point</th>
-                {readout.names.map((name, index) => (
-                  <th scope="col" key={index}>
-                    {name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, index) => (
-                <tr key={index}>
-                  <th scope="row">{row.label}</th>
-                  {row.values.map((value, column) => (
-                    <td key={column}>{value === null ? 'No reading' : write(value)}</td>
+          <div className="ax-sr">
+            <table>
+              <caption>{label}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Point</th>
+                  {readout.names.map((name, index) => (
+                    <th scope="col" key={index}>
+                      {name}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rows.map((row, index) => (
+                  <tr key={index}>
+                    <th scope="row">{row.label}</th>
+                    {row.values.map((value, column) => (
+                      <td key={column}>{value === null ? 'No reading' : write(value)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

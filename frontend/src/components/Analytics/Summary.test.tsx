@@ -136,3 +136,59 @@ describe('what must not have changed', () => {
     expect(clauseCount()).toBe(0);
   });
 });
+
+describe('the five measures on the grade card', () => {
+  const FIVE: AnalyticalScore = {
+    value: 84,
+    grade: 'B',
+    parts: [
+      part('productivity', 'Productivity', 100),
+      part('quality', 'Quality', 76),
+      part('consistency', 'Consistency', 88),
+      part('efficiency', 'Efficiency', 78),
+      part('focus', 'Focus', 80),
+    ],
+    weakest: part('quality', 'Quality', 76),
+    strongest: part('productivity', 'Productivity', 100),
+  };
+
+  /** The rows of the measures list, as "name letter score" strings. */
+  function measures() {
+    return Array.from(
+      document.querySelectorAll('.ax-summary-parts li'),
+      (row) => row.textContent?.replace(/\s+/g, ' ').trim(),
+    );
+  }
+
+  it('lists all five, each with its own letter, on the headline\'s ten-point scale', () => {
+    show({ score: FIVE });
+    expect(screen.getByRole('list', { name: 'The five measures' })).toBeInTheDocument();
+    expect(measures()).toEqual([
+      'ProductivityS10.0/10',
+      'QualityC7.6/10',
+      'ConsistencyB8.8/10',
+      'EfficiencyC7.8/10',
+      'FocusB8.0/10',
+    ]);
+  });
+
+  it('colours each letter by its own grade, not the headline\'s', () => {
+    show({ score: FIVE });
+    const rows = document.querySelectorAll('.ax-summary-parts li');
+    expect(rows[0]).toHaveClass('grade-S');
+    expect(rows[1]).toHaveClass('grade-C');
+  });
+
+  it('puts the measured quantity on hover, except the consistency rate', () => {
+    // The consistency rate is printed once on the page, on the Overview tile.
+    show({ score: FIVE });
+    const rows = document.querySelectorAll('.ax-summary-parts li');
+    expect(rows[0]).toHaveAttribute('title', '100 of 100');
+    expect(rows[2]).not.toHaveAttribute('title');
+  });
+
+  it('draws no measures before there is a score', () => {
+    show({ score: scoreOf(null, null) });
+    expect(document.querySelector('.ax-summary-parts')).toBeNull();
+  });
+});

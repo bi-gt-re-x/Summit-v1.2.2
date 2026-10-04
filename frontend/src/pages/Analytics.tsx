@@ -680,7 +680,7 @@ export default function Analytics() {
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}
         {view.key === 'insights' && <InsightsTab model={model} subjects={subjects} />}
         {view.key === 'subjects' && (
-          <SubjectsTab model={model} username={username} />
+          <SubjectsTab model={model} subjects={subjects} username={username} />
         )}
         {view.key === 'growth' && <GrowthTab model={model} />}
           </>

@@ -2,6 +2,48 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-10-04 — The whitespace under the analytics tabs, found; Subjects and Growth whole again
+
+### The whitespace
+
+Every analytics tab could be scrolled past its last card into empty space, and
+how far depended on the window and the chart grain. The 2026-09-25 entry below
+blamed `.ax-page`'s `min-height: 100vh`; removing that was right but was not
+the cause, which is why the band came back.
+
+The cause was the line chart's screen-reader table (components/Analytics/
+charts.tsx). It carried `.ax-sr` — absolute, `height: 1px`, `overflow: hidden`
+— on the `<table>` itself. A table honours neither: its height is a minimum and
+it lays out as tall as its rows, and `overflow` does not apply to it; `clip`
+only stops it painting. So an invisible table as tall as the series sat at the
+chart's position, and being absolutely positioned it still counted toward the
+document's scrollable height. Measured on a seeded account at 1440×900, Overview
+at a year by week: content ended at 1,841px, the table at 2,090px, the document
+at 2,090px. A longer series is a taller table, which is why "All time" on a
+five-year account was the worst of it.
+
+The table now sits inside a `div.ax-sr`, which does clip it. Measured after, on
+all five tabs and every window from 7D to All Time, the document ends 40px —
+the page's own padding — under the last card. A test in charts.test.tsx scans
+every component for a visually-hidden class on a `<table>`, so the same trap
+fails the suite rather than the page.
+
+### Subjects and Growth
+
+The two tabs have their content from before the complexity cut back. Growth
+opens on Skill Growth again, with Skills by level, Time and what it bought, the
+shape of a skill, When the work actually happens and Every day of the last
+year. Subjects has the Skills & Subjects chapter, How far into each tree, What
+each subject opens, the per-goal limiter lines and the Skill Level list, and
+keeps XP by subject. Skill levels are still read on the server; the restored
+tree tile reads them from there rather than working them out again.
+
+### The grade card
+
+The Overview's grade card lists the five measures — Productivity, Quality,
+Consistency, Efficiency and Focus — each with its own letter and its score out
+of ten.
+
 ## 2026-09-26 — The subject page gets tabs, three counts and one list of insights
 
 Four changes, and the shape of the page after them is: what it comes to, what

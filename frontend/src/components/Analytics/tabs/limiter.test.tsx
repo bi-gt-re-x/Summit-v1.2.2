@@ -71,9 +71,8 @@ describe('the tabs a reader opens to ask why', () => {
 });
 
 describe('the tabs with their own job', () => {
-  /* The finding is drawn once, on Recommendations. It used to be repeated as a
-     line on the Overview and the Subjects tab as well, which put the same
-     goal in front of the reader three times. */
+  /* The full card is on Recommendations, and a one-line version on the
+     Subjects tab (below). The Overview has neither. */
   it('leaves it off the Overview', () => {
     draw(
       <OverviewTab
@@ -85,19 +84,21 @@ describe('the tabs with their own job', () => {
 
     expect(screen.queryByText(/Get 24 on the AMC 8/)).not.toBeInTheDocument();
   });
+});
 
-  it('leaves it off the Subjects tab, even for a subject on the page', () => {
-    draw(
-      <SubjectsTab
-        model={fakeModel({
-          goalLimits: [AMC8],
-          breakdown: {
-            rows: [{ key: 'geometry', label: 'geometry', name: 'geometry', xp: 500, share: 1, tasks: 4 }],
-          } as never,
-        })}
-      />,
-    );
+describe('the Subjects tab', () => {
+  /* One line per goal, and only where the subject holding it back is on the
+     page — the full card stays on Recommendations. */
+  const worked = (key: string) =>
+    ({ rows: [{ key, label: key, name: key, xp: 500, share: 1, tasks: 4 }] }) as never;
 
-    expect(screen.queryByText(/Get 24 on the AMC 8/)).not.toBeInTheDocument();
+  it('draws the limiter whose subject was worked in this window', () => {
+    draw(<SubjectsTab model={fakeModel({ goalLimits: [AMC8], breakdown: worked('geometry') })} />);
+    expect(screen.getByText(/Get 24 on the AMC 8/)).toBeInTheDocument();
+  });
+
+  it('leaves out one about a subject this window has nothing to say about', () => {
+    draw(<SubjectsTab model={fakeModel({ goalLimits: [COURSE], breakdown: worked('geometry') })} />);
+    expect(screen.queryByText(/Finish the course/)).not.toBeInTheDocument();
   });
 });
