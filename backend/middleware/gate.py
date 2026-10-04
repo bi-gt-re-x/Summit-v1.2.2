@@ -20,9 +20,10 @@ from starlette.responses import RedirectResponse
 from backend.tracking.auth import profile_complete, signed_in_user
 
 GATED_PATHS = ('/dashboard', '/calendar', '/goals', '/growth', '/analytics',
-               # The analytics page's other four tabs, each on its own URL and
-               # each read entirely off the account's own history.
-               '/trends', '/habits', '/insights', '/recommendations',
+               # The analytics page's other tabs, each on its own URL and each
+               # read entirely off the account's own history.
+               '/trends', '/habits', '/insights', '/recommendations', '/subjects',
+               '/analytics/growth',
                # The skill trees are the account's own finished tasks grouped
                # by subject, so there is nothing on the page for a visitor with
                # no account. The old placeholder path is gated with it because

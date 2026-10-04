@@ -27,19 +27,15 @@
  * different rules, or that turn over the week on different days, are two
  * readers' worth of confusion for no gain.
  *
- * ## Its own window, not the page's
+ * ## The page's window
  *
- * The page's picker runs 7D to All Time and scopes every figure above. This
- * does not follow it, for the reason the habits calendar gives: seven days is
- * seven squares and not a map, All Time on a three-year account is a decade
- * of them, and "what does my rhythm look like" is asked at whatever zoom the
- * reader wants regardless of what the rest of the page is scoped to. Keeping
- * them separate also means moving this does not silently rewrite the verdict
- * at the top of the page.
+ * It had its own picker beside the page's, which put two range controls on one
+ * page. It follows the page's now; a seven-day page draws the month calendar
+ * rather than a strip of seven squares (see `asCalendar` below).
  */
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { CSSProperties } from 'react';
-import { CALENDAR_WINDOWS, habitCalendar, habitDays, type CalendarKey } from '@/utils/habits';
+import { habitCalendar, habitDays, type CalendarKey } from '@/utils/habits';
 import type { AnalyticsTask } from '@/services/analytics';
 import type { Task } from '@/types/models';
 
@@ -64,8 +60,10 @@ export interface SubjectHeatProps {
   mine: AnalyticsTask[];
   /** Today, passed so the grid is a pure function of its inputs. */
   today: string;
-  /** For the sentence under the map. */
+  /** For the map's label. */
   subject: string;
+  /** The page's range. The map used to carry its own picker as well. */
+  window: CalendarKey;
 }
 
 /**
@@ -76,8 +74,7 @@ export interface SubjectHeatProps {
  * how many, which is the figure they would otherwise be estimating off the
  * fill. Both, because one of them is the answer and the other is the texture.
  */
-export function SubjectHeat({ mine, today, subject }: SubjectHeatProps) {
-  const [window, setWindow] = useState<CalendarKey>('90');
+export function SubjectHeat({ mine, today, subject, window }: SubjectHeatProps) {
 
   /* Unwindowed on the way in: `habitCalendar` cuts the range itself, and
      handing it a pre-cut list would make the map's window the page's. The
@@ -105,21 +102,17 @@ export function SubjectHeat({ mine, today, subject }: SubjectHeatProps) {
 
   /* Counted off the drawn grid rather than off `byDate`, so the sentence and
      the picture can never disagree about what the window holds. */
-  const { worked, covered, finished } = useMemo(() => {
+  const { worked, covered } = useMemo(() => {
     let workedDays = 0;
     let coveredDays = 0;
-    let done = 0;
     rows.forEach((row) => {
       row.days.forEach((cell) => {
         if (!cell.date) return;
         coveredDays += 1;
-        if (cell.count > 0) {
-          workedDays += 1;
-          done += cell.count;
-        }
+        if (cell.count > 0) workedDays += 1;
       });
     });
-    return { worked: workedDays, covered: coveredDays, finished: done };
+    return { worked: workedDays, covered: coveredDays };
   }, [rows]);
 
   if (!rows.length) return null;
@@ -134,29 +127,11 @@ export function SubjectHeat({ mine, today, subject }: SubjectHeatProps) {
       <div className="sb-heat-head">
         <div>
           <h3 className="sb-sub">How much you work on this</h3>
-          <p className="sb-heat-say">
-            {worked === 0 ? (
-              <>Nothing finished in {subject} in this window.</>
-            ) : (
-              <>
-                <strong>{worked}</strong> of {covered} days had work in {subject},{' '}
-                <strong>{finished}</strong> {finished === 1 ? 'task' : 'tasks'} in all.
-              </>
-            )}
-          </p>
-        </div>
-        <div className="ax-chips ax-chips-sm" role="group" aria-label="Heatmap window">
-          {CALENDAR_WINDOWS.map((option) => (
-            <button
-              key={option.key}
-              type="button"
-              className={`ax-chip${option.key === window ? ' is-on' : ''}`}
-              aria-pressed={option.key === window}
-              onClick={() => setWindow(option.key)}
-            >
-              {option.label}
-            </button>
-          ))}
+          {/* How many days had work used to be a sentence here. It is the
+              "Turning up" row under Over time on the Evidence tab. */}
+          {worked === 0 && (
+            <p className="sb-heat-say">Nothing finished in {subject} in this window.</p>
+          )}
         </div>
       </div>
 

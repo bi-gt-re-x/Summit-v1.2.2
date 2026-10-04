@@ -70,10 +70,6 @@ export interface SummaryProps {
   score: AnalyticalScore;
   /** What the score did, or null when there is nothing honest to compare to. */
   movement: ScoreMovement | null;
-  /** The highest-value recommendation's title, or null when there are none. */
-  topAdvice: string | null;
-  /** How many there are in total, for the row's hand-off. */
-  adviceCount: number;
   /** Live goals and how many of them are behind, or null when there are none. */
   goals: { active: number; behind: number } | null;
   /**
@@ -124,8 +120,6 @@ interface Row {
 export function Summary({
   score,
   movement,
-  topAdvice,
-  adviceCount,
   goals,
   basis = null,
 }: SummaryProps) {
@@ -164,30 +158,19 @@ export function Summary({
             {movement.days === 1 ? ' yesterday' : <>, {movement.days} days ago</>}.
           </>
         ),
-      // The score over time is the Growth tab of Achievements, which is where
-      // the movement this row states can actually be looked at.
-      href: '/achievements/growth',
+      // The score over time is the Growth tab, which is where the movement
+      // this row states can actually be looked at.
+      href: '/analytics/growth',
       label: 'See it over time',
     });
   }
 
   /* The strongest and weakest of the five used to be two rows here. They are
-     "Biggest improvement" and "Needs attention" on the Growth tab of
-     Achievements, from the same figures, so the summary links there instead
+     "Biggest improvement" and "Needs attention" on the Growth tab, from the
+     same figures, so the summary links there instead
      of saying them twice. */
-  if (topAdvice) {
-    rows.push({
-      key: 'advice',
-      text: (
-        <>
-          The change worth most right now is <strong>{topAdvice.toLowerCase()}</strong>
-          {adviceCount > 1 ? <>, one of {adviceCount} worth making</> : null}.
-        </>
-      ),
-      href: '/recommendations',
-      label: 'See what to change',
-    });
-  }
+  /* "The change worth most right now" was a row here. What to change is the
+     Recommendations tab's job and is said there only. */
 
   if (goals && goals.active > 0) {
     rows.push({

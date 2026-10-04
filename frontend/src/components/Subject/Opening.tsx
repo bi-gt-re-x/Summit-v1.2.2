@@ -66,12 +66,9 @@ export function ObjectiveBand({
         </p>
       )}
 
-      {objective.focus && (
-        <p className="so-band-focus">
-          <span className="so-band-focus-label">Current focus</span>
-          {objective.focus}
-        </p>
-      )}
+      {/* "Current focus" — close the biggest gap — was a line here. The gap is
+          named by the Focus area card above, and closing it is advice, which
+          is the Recommendations tab's. */}
 
       {/* The reader's own words, kept when the model has rewritten them above.
           The rewrite is a reading of what they wrote, and a page that replaces

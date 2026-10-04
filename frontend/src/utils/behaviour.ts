@@ -23,6 +23,7 @@ const num = (value: unknown) => Number(value) || 0;
 
 /** Sunday first, matching every other weekday list in the app. */
 export const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+export const WEEKDAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 // --------------------------------------------------------------------------
 // The week

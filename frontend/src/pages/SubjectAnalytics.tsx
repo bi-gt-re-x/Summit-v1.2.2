@@ -80,11 +80,16 @@ import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading, PageHero, type HeroTone } from '@/components';
 import { AreaChart, ObservationNote, Radar, Scatter } from '@/components/Analytics';
 import { WINDOWS, type WindowKey } from '@/components/Analytics/data';
+import type { CalendarKey } from '@/utils/habits';
+
+/** The work calendar follows the page's one range picker rather than its own. */
+const HEAT_WINDOW: Record<WindowKey, CalendarKey> = {
+  '7d': '7', '30d': '30', '90d': '90', '1y': '365', '2y': 'all', all: 'all',
+};
 import { gradeFor } from '@/utils/analyticalScore';
 import { spanFor, subjectModel, type SubjectGoal } from '@/components/Subject/model';
 import { subjectState } from '@/components/Subject/state';
 import { recentWork } from '@/components/Subject/recentWork';
-import { Curve } from '@/components/Subject/Curve';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
 import { SubjectHeat } from '@/components/Subject/Heat';
@@ -96,10 +101,7 @@ import {
   weekLoad,
   WEB_FLOOR,
 } from '@/components/Subject/graphs';
-import { NextSteps } from '@/components/Subject/NextSteps';
 import { ObjectiveBand } from '@/components/Subject/Opening';
-import { Verdicts } from '@/components/Subject/Verdicts';
-import { summarise, verdictsFrom } from '@/components/Subject/verdict';
 import { bottleneckFrom, objectiveFrom } from '@/components/Subject/objective';
 import { Reading } from '@/components/Subject/Reading';
 import { performance } from '@/components/Subject/performance';
@@ -114,20 +116,15 @@ import {
   subjectMilestones,
   subjectReadingAvailable,
   savedSubjectReading,
-  subjectRecommendations,
   suggestSubjectGoal,
-  takeRecommendation,
   writeGoalPlan,
   type GoalDraft,
   type GoalPlan,
-  type NextStep,
-  type PastRecommendation,
   type SubjectMilestone,
   type SubjectReading,
 } from '@/services/analytics';
 import { getGoals, updateGoal } from '@/services/goals';
 import { measureOf } from '@/components/Goals';
-import { createTask } from '@/services/tasks';
 import { format } from '@/utils';
 import { observations } from '@/utils/observations';
 import '@/styles/analytics.css';
@@ -704,12 +701,6 @@ export default function SubjectAnalytics() {
   const [thinking, setThinking] = useState(false);
   const [readError, setReadError] = useState('');
   const [canRead, setCanRead] = useState(false);
-  /* The rows, and no longer the aggregate by kind that came down beside them.
-     "Did your last advice work" is about a particular recommendation, and the
-     section draws three of those — see components/Subject/Verdicts. */
-  const [past, setPast] = useState<PastRecommendation[]>([]);
-  const [taken, setTaken] = useState<Set<string>>(new Set());
-  const [stepBusy, setStepBusy] = useState('');
 
   /* ---- WHAT ARE YOU TRYING TO ACCOMPLISH -------------------------------
      The band the page opens on, and the facts that bear on it.
@@ -739,22 +730,6 @@ export default function SubjectAnalytics() {
     [perf, reading, state],
   );
 
-  /* ---- DID THE ADVICE WORK --------------------------------------------
-     Execution as this page has it is the `after` half of every verdict, and
-     it is read off the dimension rather than recomputed — one derivation, so
-     the section cannot disagree with the panel it is quoting. */
-  const executionNow = useMemo(
-    () => state.dimensions.find((one) => one.key === 'execution')?.value ?? null,
-    [state.dimensions],
-  );
-
-  const verdicts = useMemo(
-    () => verdictsFrom(past, executionNow),
-    [executionNow, past],
-  );
-
-  const loop = useMemo(() => summarise(verdicts), [verdicts]);
-
   /* What the tree says about the reader, as sentences rather than as counts.
      Null lattice means no tree for this subject and no panel to read. */
   const treeRead = useMemo(() => (lattice ? treeReading(lattice) : null), [lattice]);
@@ -772,28 +747,12 @@ export default function SubjectAnalytics() {
     };
   }, [username]);
 
-  /* What has been recommended here before, and how each kind has gone. Read
-     on arrival rather than with the reading: it is cheap, it is the half of
-     the loop that is about the past, and it should be on screen before
-     anybody presses anything. */
   /* Keyed on the subject's *name* rather than on the subject object. The
      catalogue is a Map rebuilt whenever its source list changes, so depending
      on the object here would re-run this effect on any render that produced a
      new Map — which sets state, which renders again. The name is what the
      request is actually keyed on, and it is a string. */
   const subjectName = subject?.name ?? '';
-  useEffect(() => {
-    if (!username || !subjectName) return;
-    let live = true;
-    void subjectRecommendations(subjectName).then((result) => {
-      if (!live || !result.success) return;
-      setPast(result.recommendations);
-      setTaken(new Set(result.recommendations.filter((row) => row.taken).map((row) => row.id)));
-    });
-    return () => {
-      live = false;
-    };
-  }, [subjectName, username]);
 
   /* Cleared with the window and the subject, then restored from the server if
      one was written for this exact pair.
@@ -907,59 +866,6 @@ export default function SubjectAnalytics() {
     if (result.success) setReading(result.reading);
     else setReadError(result.message || 'Could not read this subject.');
   }, [ambition, lattice, model.goals, span, state, subject]);
-
-  /** Record a step as acted on, however it was acted on. */
-  const record = useCallback(async (step: NextStep, taskId = '') => {
-    setStepBusy(step.id);
-    const result = await takeRecommendation(step.id, taskId);
-    setStepBusy('');
-    if (!result.success) return;
-    setTaken((was) => new Set(was).add(step.id));
-    /* Kept in step locally rather than refetched: the outcome figure cannot
-       have moved — no execution has been recorded between the click and now —
-       and a request that can only return what is already on screen is a
-       request not worth making. */
-    setPast((was) =>
-      was.map((row) =>
-        row.id === step.id
-          ? { ...row, taken: true, taken_on: todayIso() }
-          : row,
-      ),
-    );
-  }, []);
-
-  /**
-   * Turn a step into a real task.
-   *
-   * A real one, in the ordinary system, filed under this subject — not a note
-   * to self. That is what closes the loop: finishing an ordinary task raises
-   * the rating prompt, the rating is what the dimensions above are made of,
-   * and the next reading is therefore argued from evidence this one produced.
-   * A recommendation that lives only on this page generates no data and can
-   * never be checked.
-   */
-  const makeTask = useCallback(
-    async (step: NextStep) => {
-      setStepBusy(step.id);
-      const made = await createTask({
-        name: step.title,
-        subject: subjectId,
-        priority: step.difficulty >= 4 ? 'high' : 'medium',
-      });
-      setStepBusy('');
-      if (!made.success) {
-        setReadError('Could not add that task. Try again.');
-        return;
-      }
-      await record(step, made.task_id);
-      // The record the page is drawn from has changed, so it is re-read
-      // rather than patched: the new task is open rather than finished, and
-      // guessing at how it lands in a dozen figures is how a page starts
-      // disagreeing with its own database.
-      tasks.reload();
-    },
-    [record, subjectId, tasks],
-  );
 
   /* The volume chart's own ceiling. A floor of 1 keeps a window with a single
      quiet period from producing a "0" top tick over a line that is not flat. */
@@ -1260,14 +1166,9 @@ export default function SubjectAnalytics() {
                       {state.momentum.change} pts across this window
                     </span>
                   )}
-                  {state.curve.threshold && (
-                    <span className="sx-badge">
-                      Falls off at {state.curve.threshold.label}
-                    </span>
-                  )}
-                  {state.time.hours > 0 && (
-                    <span className="sx-badge">{state.time.hours}h logged</span>
-                  )}
+                  {/* "Falls off at" and the hours logged were badges here too.
+                      They are the shut rows of the Difficulty and Time spent
+                      folds on the Evidence tab, and are said there only. */}
                   {/* No streak badge: the cards under this carry it. What is
                       left here is the two that are readings rather than
                       counts — which way it is going, and where it stops
@@ -1317,9 +1218,8 @@ export default function SubjectAnalytics() {
                     </span>
                   ))}
                 </nav>
-                <Link className="sb-path-open" to="/skill-trees">
-                  Open the tree →
-                </Link>
+                {/* No "Open the tree" here: the Skill tree fold on the
+                    Evidence tab is the one way in. */}
               </div>
             )}
 
@@ -1364,97 +1264,10 @@ export default function SubjectAnalytics() {
                 arguing with. The evidence is still on the page — it is the
                 Evidence tab, which is what that tab is. */}
 
-            {/* ---- WHAT SHOULD I DO NEXT ------------------------------- */}
-            {/* The section the rest of the page exists to produce, and it is
-                now fourth on the page rather than below two screens of
-                figures.
-
-                That move is the point of the restructure. The old order asked
-                the reader to read a dashboard, infer a problem from it, and
-                then find the advice — which is three jobs, two of which the
-                page is better at than they are. Goal, then what bears on it,
-                then the one thing in the way, then what to do about it. The
-                figures did not go anywhere; they are the working, and the
-                working goes under the answer.
-
-                Two halves, and the order is the argument. The app's own ranked
-                advice is first and is pure arithmetic — it is always there,
-                costs nothing, and is what the page says when nobody presses
-                anything. The model's steps are second, and they are the ones
-                that can name what a task at this difficulty in this subject
-                should actually contain, which no table here knows.
-
-                Which half is which is stated rather than left to be inferred:
-                a reader has to know what is counted before deciding what to
-                act on. */}
-            <section className="ax-panel sb-panel" aria-label="What to do next">
-              <div className="ax-panel-head">
-                <div className="ax-panel-title">
-                  <h2>Do this next</h2>
-                </div>
-              </div>
-
-              {model.advice.length > 0 && (
-                <>
-                  <p className="ax-panel-note">
-                    Ranked by what it is worth. Every figure is from your own tasks.
-                  </p>
-                  <ol className="sb-advice">
-                    {model.advice.map((item, at) => (
-                      <li key={item.id} className={`sb-advice-item is-${item.weight}`}>
-                        <span className="sb-advice-rank" aria-hidden="true">
-                          {at + 1}
-                        </span>
-                        <div>
-                          <strong>{item.title}</strong>
-                          <p>{item.detail}</p>
-                          <p className="sb-advice-why">
-                            <span>Why:</span> {item.why}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </>
-              )}
-
-              {canRead && (
-                <div className="sb-draft">
-                  <div className="sx-ask">
-                    <div>
-                      <strong>Plan the next sessions</strong>
-                      <p>A model reads the figures above. It adds no numbers of its own.</p>
-                    </div>
-                    <button
-                      type="button"
-                      className="ax-btn"
-                      onClick={() => void askForReading()}
-                      disabled={thinking}
-                    >
-                      {thinking ? 'Reading…' : reading ? 'Read it again' : 'Plan my next sessions'}
-                    </button>
-                  </div>
-
-                  {readError && (
-                    <p className="sx-ask-err" role="alert">
-                      {readError}
-                    </p>
-                  )}
-
-                  {reading && (
-                    <div className="sb-draft-body">
-                      <NextSteps
-                        steps={reading.next_steps}
-                        taken={taken}
-                        busy={stepBusy}
-                        onMakeTask={(step) => void makeTask(step)}
-                        onDidIt={(step) => void record(step)}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-            </section>
+            {/* "Do this next" — the subject's ranked advice and the model's plan
+                for the next sessions — was here. What to do is said on the
+                Recommendations tab only; pick this subject in its Subject
+                filter to see it for this subject alone. */}
 
             {/* ---- WHAT THE RECORD SAYS -------------------------------- */}
             {/* Two halves, and the section draws for the first one alone.
@@ -1480,7 +1293,33 @@ export default function SubjectAnalytics() {
               title="What the record says"
               note="Counted from your own tasks. The findings under the calendar are model-written."
             >
-              <SubjectHeat mine={mine} today={today} subject={subject.name} />
+              <SubjectHeat mine={mine} today={today} subject={subject.name} window={HEAT_WINDOW[span]} />
+
+              {/* The model's reading of the figures. It used to be asked for
+                  from "Plan my next sessions", whose plan was advice; the
+                  findings it also returns are a reading, so the button lives
+                  here and asks for those. */}
+              {canRead && (
+                <div className="sx-ask">
+                  <div>
+                    <strong>Read the record</strong>
+                    <p>A model reads the figures above. It adds no numbers of its own.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="ax-btn"
+                    onClick={() => void askForReading()}
+                    disabled={thinking}
+                  >
+                    {thinking ? 'Reading…' : reading ? 'Read it again' : 'Read my record'}
+                  </button>
+                </div>
+              )}
+              {readError && (
+                <p className="sx-ask-err" role="alert">
+                  {readError}
+                </p>
+              )}
 
               {reading && (reading.diagnosis.length > 0 || reading.insights.length > 0) && (
                 <div className="sb-record-read">
@@ -1494,17 +1333,8 @@ export default function SubjectAnalytics() {
               )}
             </Panel>
 
-            {/* ---- DID YOUR LAST ADVICE WORK --------------------------- */}
-            {/* The small section that makes the rest of the page worth
-                anything. Every section above it is the app talking; this is
-                the app being held to what it said — each recommendation, what
-                it predicted, and what the figures did afterwards.
-
-                It sits directly under the steps because the two are one
-                thing: a reader deciding whether to act on the advice above
-                should be able to see how the last lot went without going
-                looking for it. */}
-            <Verdicts verdicts={verdicts} summary={loop} />
+            {/* "Did your last advice work" followed up the steps above, which
+                are gone; the Recommendations tab follows up its own. */}
 
               </>
             )}
@@ -1537,19 +1367,9 @@ export default function SubjectAnalytics() {
                 title="Where you stand"
                 note="The score, and the seven measures under it."
                 defaultOpen
+                /* Overall and Finished were figures here as well; both are the
+                   ring at the top of the Overview tab. */
                 figures={[
-                  {
-                    label: 'Overall',
-                    value: state.overall === null ? '—' : String(state.overall),
-                    tone: band === 'high' || band === 'good'
-                      ? 'good'
-                      : band === 'fair'
-                        ? 'warn'
-                        : band === 'low'
-                          ? 'bad'
-                          : 'plain',
-                  },
-                  { label: 'Finished', value: String(model.finished) },
                   {
                     label: 'Standings',
                     value: `${reached}/${state.standings.length}`,
@@ -1667,15 +1487,8 @@ export default function SubjectAnalytics() {
                     ) : undefined
                   }
                 >
-                  {state.curve.rungs.some((rung) => rung.done > 0) && (
-                    <Panel
-                      title="Where it starts to go"
-                      note="Execution per level, and where it falls off."
-                    >
-                      <Curve curve={state.curve} />
-                    </Panel>
-                  )}
-
+                  {/* "Where it starts to go" charted execution per level, which
+                      is the "How it went" column of the table below. */}
                   {model.bands.some((band) => band.done > 0) && (
                     <Panel
                       title="How you do at each difficulty"
@@ -1735,15 +1548,10 @@ export default function SubjectAnalytics() {
                           </tbody>
                         </table>
                       </div>
-                      {/* Not "weakest: X at 41%. strongest: Y at 78%" — the
-                          table above is those two rows and marks the weak one
-                          itself. `model.insight` is the same pair with the
-                          conclusion attached, and it used to be printed two
-                          screens up under the Evidence heading, nowhere near
-                          the figures it is about. */}
-                      {model.insight && (
-                        <p className="ax-panel-note ax-panel-note-foot">{model.insight}</p>
-                      )}
+                      {/* The line under the table compared the best and worst
+                          level and said what to work on. The comparison is the
+                          verdict at the top of the Overview, and what to work
+                          on is the Recommendations tab. */}
                     </Panel>
                   )}
                 </Fold>
@@ -1754,21 +1562,10 @@ export default function SubjectAnalytics() {
                 <Fold
                   title="Over time"
                   note="Volume and quality, period by period."
-                  figures={[
-                    {
-                      label: 'Momentum',
-                      value: state.momentum.known
-                        ? `${(state.momentum.change ?? 0) > 0 ? '+' : ''}${state.momentum.change} pts`
-                        : '—',
-                      tone: state.momentum.direction === 'climbing'
-                        ? 'good'
-                        : state.momentum.direction === 'slipping'
-                          ? 'bad'
-                          : 'plain',
-                    },
-                    { label: 'vs before', value: `${model.finished}/${model.finishedBefore}` },
-                    { label: 'Busiest', value: busiest?.label ?? '—' },
-                  ]}
+                  /* Momentum is the badge at the top of the Overview tab, and
+                     this window against the one before is "Your progress"
+                     inside this fold, so the shut row names the busiest day. */
+                  figures={[{ label: 'Busiest', value: busiest?.label ?? '—' }]}
                   lead={
                     state.momentum.known ? (
                       <>
@@ -2071,22 +1868,9 @@ export default function SubjectAnalytics() {
                           </li>
                         ))}
                       </ul>
-                      {model.run.trend !== null && (
-                        <p className="ax-panel-note ax-panel-note-foot">
-                          <strong>Trend:</strong>{' '}
-                          {model.run.trend > 0
-                            ? `improving. The later half of this run averages ${model.run.trend} points above the earlier half.`
-                            : model.run.trend < 0
-                              ? `slipping. The later half averages ${Math.abs(model.run.trend)} points below the earlier half.`
-                              : 'flat. Both halves of this run average the same.'}
-                        </p>
-                      )}
-                      {model.goalAimed !== null && (
-                        <p className="ax-panel-note ax-panel-note-foot">
-                          <strong>{model.goalAimed}%</strong> of what you finished here was aimed
-                          at a goal.
-                        </p>
-                      )}
+                      {/* The trend is the figure on this fold's shut row, and the
+                          share aimed at a goal is the goal band on the
+                          Overview tab, so neither is a sentence here too. */}
                     </Panel>
                   )}
                 </Fold>

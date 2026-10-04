@@ -174,9 +174,9 @@ const TABS: Tab[] = [
     // rail is a column of one-word destinations and the odd two-word one
     // wraps — the heading is where the full name belongs.
     label: 'Analytics',
-    // The page's other two tabs. Every path a removed tab had redirects in
+    // The page's other tabs. Every path a removed tab had redirects in
     // App.tsx, so none of them can be the page the reader is on.
-    also: ['/analytics', '/subjects'],
+    also: ['/analytics', '/insights', '/habits', '/subjects', '/analytics/growth'],
     // The per-subject pages, which are one URL each and so cannot be listed.
     under: ['/analytics/subject/'],
     // The only entry in this table that unfolds. See `Tab.menu`.
@@ -268,8 +268,8 @@ const TABS: Tab[] = [
   },
   {
     // The account looking back at itself: personal bests, growth over time,
-    // and the badge wall. Its three tabs are /achievements,
-    // /achievements/growth and /achievements/badges.
+    // Personal bests and the badge wall: /achievements and
+    // /achievements/badges.
     to: '/achievements',
     label: 'Achievements',
     under: ['/achievements/'],

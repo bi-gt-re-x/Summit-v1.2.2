@@ -243,7 +243,7 @@ export default function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/goals" element={<Goals />} />
-              {/* One page, six tabs, seven URLs — `/habits` outlived its tab and
+              {/* One page, five tabs, six URLs — `/habits` outlived its tab and
                   still resolves, see `viewFor`. The analytics page reads the
                   pathname to decide which tab opens (VIEWS in
                   components/Analytics/Header), so the rail, the back button and
@@ -251,17 +251,16 @@ export default function App() {
                   a local useState could have managed. */}
               <Route path="/recommendations" element={<Analytics />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/insights" element={<Analytics />} />
+              <Route path="/habits" element={<Analytics />} />
               <Route path="/subjects" element={<Analytics />} />
-              {/* Tabs that were cut. Each had its own URL for long enough to be
-                  bookmarked, so each redirects to where its content went:
-                  Insights to the Overview, Goals to the goals page, Growth to
-                  the Achievements page. See VIEWS in components/Analytics/Header. */}
-              <Route path="/insights" element={<Navigate to="/analytics" replace />} />
-              <Route path="/habits" element={<Navigate to="/analytics" replace />} />
+              <Route path="/analytics/growth" element={<Analytics />} />
+              {/* Tabs that were cut, or moved. Each had its own URL for long
+                  enough to be bookmarked, so each redirects to where its
+                  content went. See VIEWS in components/Analytics/Header. */}
               <Route path="/analytics/goals" element={<Navigate to="/goals" replace />} />
               <Route path="/trends" element={<Navigate to="/goals" replace />} />
-              <Route path="/analytics/growth" element={<Navigate to="/achievements/growth" replace />} />
-              <Route path="/analytics/records" element={<Navigate to="/achievements/growth" replace />} />
+              <Route path="/analytics/records" element={<Navigate to="/analytics/growth" replace />} />
               {/* One subject, on its own — a page rather than an eighth tab.
                   There is one of these per subject the account follows, and a
                   tab bar whose shape depends on a wizard answer is a tab bar
@@ -284,14 +283,15 @@ export default function App() {
               <Route path="/skill-trees" element={<SkillTrees />} />
               <Route path="/notes" element={<Notes />} />
               <Route path="/timer" element={<Timer />} />
-              {/* One page, three tabs: personal bests, growth, and the badge
-                  wall. It was called Records until the badges' own name
-                  took over, so the /records paths redirect. */}
+              {/* One page, two tabs: personal bests and the badge wall. It was
+                  called Records until the badges' own name took over, so the
+                  /records paths redirect. Growth was a third tab here and is an
+                  analytics tab again. */}
               <Route path="/achievements" element={<Achievements />} />
-              <Route path="/achievements/growth" element={<Achievements />} />
               <Route path="/achievements/badges" element={<Achievements />} />
               <Route path="/records" element={<Navigate to="/achievements" replace />} />
-              <Route path="/records/growth" element={<Navigate to="/achievements/growth" replace />} />
+              <Route path="/records/growth" element={<Navigate to="/analytics/growth" replace />} />
+              <Route path="/achievements/growth" element={<Navigate to="/analytics/growth" replace />} />
               <Route path="/records/badges" element={<Navigate to="/achievements/badges" replace />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/settings/:section" element={<Settings />} />

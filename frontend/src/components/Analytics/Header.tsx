@@ -18,7 +18,7 @@ import { WINDOWS, type WindowKey } from './data';
 // --------------------------------------------------------------------------
 // The major tabs
 // --------------------------------------------------------------------------
-export type ViewKey = 'recommendations' | 'overview' | 'subjects';
+export type ViewKey = 'recommendations' | 'overview' | 'insights' | 'subjects' | 'growth';
 
 export interface View {
   key: ViewKey;
@@ -57,15 +57,17 @@ export interface View {
 }
 
 /**
- * The three views, in the order they are meant to be read.
+ * The five views, in the order they are meant to be read.
  *
  * **Recommendations leads.** It is the only tab that ends in something to do,
  * and a reader who opens on it gets that rather than a report.
  *
- * There were six. Insights restated the Overview's panels at more length,
- * Goals restated the goals page, and Growth asked the question the Records
- * page is for — so Insights and Goals went, and Growth became a section of
- * Records (see ./GrowthSection). Their old paths redirect in App.tsx.
+ * There were six. Goals restated the goals page and went. Insights and Growth
+ * went too for a day — Growth onto the Achievements page — and came back as
+ * tabs here, because they are readings of the record, not trophies. Anything
+ * they printed that another tab already prints stayed out.
+ *
+ * `/habits` still resolves to Insights — see `viewFor`.
  *
  * Each is a route rather than local state so that the rail, the browser's back
  * button and a pasted link all agree about which tab is open.
@@ -88,6 +90,17 @@ export const VIEWS: View[] = [
     tone: 'violet',
   },
   {
+    /* Habits and Insights, which were two tabs and one argument: what you
+       repeat, and what repeating it is worth. See the note at the top of
+       tabs/InsightsTab for what the merge actually merged. */
+    key: 'insights',
+    label: 'Insights',
+    path: '/insights',
+    purpose: 'What you do and why it works — the routines in your record, and what your better work shows up alongside.',
+    title: 'Insights',
+    tone: 'indigo',
+  },
+  {
     key: 'subjects',
     label: 'Subjects',
     path: '/subjects',
@@ -95,7 +108,22 @@ export const VIEWS: View[] = [
     title: 'Subjects',
     tone: 'green',
   },
+  {
+    key: 'growth',
+    label: 'Growth',
+    path: '/analytics/growth',
+    purpose: 'How far you have actually come — every year side by side, and what changed.',
+    title: 'Growth',
+    tone: 'rose',
+  },
 ];
+
+/**
+ * Paths that no longer have a tab of their own. `/habits` was a tab until
+ * Habits and Insights became one; kept so an old bookmark lands on the tab
+ * that took it over rather than on Recommendations.
+ */
+const MOVED: Record<string, ViewKey> = { '/habits': 'insights' };
 
 /**
  * Tab *keys* that no longer have a tab.
@@ -105,14 +133,14 @@ export const VIEWS: View[] = [
  * all land on the Overview rather than on nothing.
  */
 const MOVED_KEYS: Record<string, ViewKey> = {
-  habits: 'overview',
-  insights: 'overview',
+  habits: 'insights',
   goals: 'overview',
-  growth: 'overview',
-  records: 'overview',
+  records: 'growth',
 };
 
 export function viewFor(pathname: string): View {
+  const moved = MOVED[pathname];
+  if (moved) return VIEWS.find((view) => view.key === moved) ?? VIEWS[0]!;
   return VIEWS.find((view) => view.path === pathname) ?? VIEWS[0]!;
 }
 

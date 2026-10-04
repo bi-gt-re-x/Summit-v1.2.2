@@ -734,6 +734,10 @@ export function MoverPanel({
   })();
 
   const meta = METRIC_META[shown.metric];
+  /* The share of days worked is printed once on the analytics page — the
+     Overview's Consistency tile — so when consistency is the mover this names
+     it and says how it moved, without the figure. */
+  const quiet = shown.metric === 'consistency';
 
   return (
     <Panel
@@ -748,23 +752,33 @@ export function MoverPanel({
         />
         <p className="ax-gp-mover-name">{meta.label}</p>
         <span className={`ax-gp-mover-pill is-${fell ? kind : 'held'}`}>
-          {fell ? growthLabel(shown.change, shown.from, shown.to) : `${shown.to} / 100`}
+          {fell
+            ? growthLabel(shown.change, shown.from, shown.to)
+            : quiet
+              ? data.current.grades[shown.metric]
+              : `${shown.to} / 100`}
         </span>
       </div>
 
       <p className="ax-gp-mover-asks">
         {fell
-          ? `${kind === 'best' ? 'Up' : 'Down'} from ${shown.from} to ${shown.to} out of 100`
+          ? quiet
+            ? `${kind === 'best' ? 'Up' : 'Down'} ${Math.abs(shown.to - shown.from)} points`
+            : `${kind === 'best' ? 'Up' : 'Down'} from ${shown.from} to ${shown.to} out of 100`
           : kind === 'worst'
-            ? `No big drops. Your lowest measure is ${shown.to} out of 100, the easiest to raise`
-            : `No big gains. Your strongest measure is ${shown.to} out of 100`}
+            ? quiet
+              ? 'No big drops. Your lowest measure is this one'
+              : `No big drops. Your lowest measure is ${shown.to} out of 100`
+            : quiet
+              ? 'No big gains. Your strongest measure is this one'
+              : `No big gains. Your strongest measure is ${shown.to} out of 100`}
         {' '}— {meta.asks}.
       </p>
 
       {/* The quantities the score was computed from, so the claim can be
           checked rather than taken. See `partsOf`. */}
       <ul className="ax-gp-parts">
-        {then &&
+        {then && !quiet &&
           partsOf(shown.metric, now, then).map((part) => {
             const way = part.to > part.from ? 'up' : part.to < part.from ? 'down' : 'held';
             return (
@@ -847,6 +861,10 @@ export function ThenNow({ data }: { data: GrowthPeriods }) {
         const from = then ? then.parts[metric] : null;
         const way = from === null ? 'held' : direction(from, to);
         const meta = METRIC_META[metric];
+        /* Consistency keeps its letter, its change and its bar here, but not
+           its figure or its days-worked count: those are the Overview's
+           Consistency tile, printed once on the page. */
+        const quiet = metric === 'consistency';
 
         return (
           <li key={metric} className={`ax-gp-metric is-${way}`}>
@@ -857,13 +875,13 @@ export function ThenNow({ data }: { data: GrowthPeriods }) {
             </div>
 
             <p className="ax-gp-metric-scores">
-              {from !== null && (
+              {from !== null && !quiet && (
                 <>
                   <span className="ax-gp-was">{from}</span>
                   <span className="ax-gp-arrow" aria-hidden="true">→</span>
                 </>
               )}
-              <strong>{to}</strong>
+              {!quiet && <strong>{to}</strong>}
               {/* The letter, beside the number it is a band of rather than
                   instead of it. A grade alone hides a metric that climbed
                   eight points inside one band, which is most of what a month
@@ -896,6 +914,7 @@ export function ThenNow({ data }: { data: GrowthPeriods }) {
               />
             </span>
 
+            {!quiet && (
             <p className="ax-gp-metric-raw">
               {then ? (
                 <>
@@ -906,6 +925,7 @@ export function ThenNow({ data }: { data: GrowthPeriods }) {
                 measuredAs(metric, data.current)
               )}
             </p>
+            )}
           </li>
         );
       })}

@@ -17,6 +17,7 @@
  * is an editorial call that will keep changing; that the reader can open and
  * shut it is the contract.
  */
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { OverviewTab } from './OverviewTab';
@@ -57,7 +58,8 @@ describe('Overview', () => {
     // The rows that used to run flat under the trajectory.
     expect(groupNamed(/Quality/)).toBeInTheDocument();
     expect(groupNamed(/^Consistency/)).toBeInTheDocument();
-    expect(groupNamed(/^Findings/)).toBeInTheDocument();
+    // "Findings" went: every line in it was a figure another tab prints.
+    expect(screen.queryByRole('button', { name: /^Findings/ })).not.toBeInTheDocument();
 
     // All shut on arrival: the tab's answer is the screen above them.
     groups().forEach((head) => {
@@ -81,10 +83,10 @@ describe('Overview', () => {
     expect(bodyOf(head)).toHaveAttribute('inert');
   });
 
-  it('folds the stand-in tallies too, while Habits is still locked', () => {
-    // `When you work` is on the Overview only until the Habits tab can answer
-    // the same question properly — so it needs an account short of that gate,
-    // not the mature one the other cases use.
+  it('leaves the stand-in tallies to the Insights tab', () => {
+    // "When you work" sat here until habits could answer it. The Insights tab
+    // draws the same two tallies under "What is already true" while it waits,
+    // so the Overview no longer does.
     draw(
       <OverviewTab
         model={fakeModel({
@@ -96,9 +98,7 @@ describe('Overview', () => {
         onEditBaseline={() => {}}
       />,
     );
-    const head = groupNamed(/When you work/);
-    expect(head).toHaveAttribute('aria-expanded', 'false');
-    expect(bodyOf(head)).toHaveAttribute('inert');
+    expect(screen.queryByRole('button', { name: /When you work/ })).not.toBeInTheDocument();
   });
 
   it('leaves the trajectory out of every group, because Summary links to it', () => {

@@ -51,7 +51,7 @@ export type AnalyticsWindow = '7d' | '30d' | '90d' | '1y' | '2y' | 'all';
  * dependency the wrong way round. The page assigns one to the other, so a key
  * added on one side and not the other fails to compile.
  */
-export type AnalyticsHomeTab = 'recommendations' | 'overview' | 'subjects';
+export type AnalyticsHomeTab = 'recommendations' | 'overview' | 'insights' | 'subjects' | 'growth';
 export type LogStyle = 'tasks' | 'sessions' | 'both';
 export type AnalyticsTone = 'gentle' | 'balanced' | 'harsh';
 export type AnalyticsDetail = 'essentials' | 'standard' | 'everything';

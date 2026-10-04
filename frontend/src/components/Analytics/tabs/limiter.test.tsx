@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest';
 import { OverviewTab } from './OverviewTab';
 import { RecommendationsTab } from './RecommendationsTab';
 import { SubjectsTab } from './SubjectsTab';
-import { draw, fakeData, fakeModel, matureOverview, subjects } from './fixtures';
+import { draw, fakeData, fakeModel, matureOverview } from './fixtures';
 import type { GoalLimiter } from '@/utils/goalLimiter';
 
 /** What `goalLimiter` produces for the goal the whole feature was written for. */
@@ -95,7 +95,6 @@ describe('the tabs with their own job', () => {
             rows: [{ key: 'geometry', label: 'geometry', name: 'geometry', xp: 500, share: 1, tasks: 4 }],
           } as never,
         })}
-        subjects={subjects}
       />,
     );
 

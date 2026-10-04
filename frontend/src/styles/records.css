@@ -1283,19 +1283,9 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 /* A story tile's icon takes the tile's tone — see styles/tokens.css. */
 .rc-tile-ico { --icon-flame: currentColor; --icon-gold: currentColor; }
 
-/* ---- Growth -------------------------------------------------------------
- * The analytics page's Growth tab, as the last section of this page — see
- * components/Analytics/GrowthSection. On its own tab it painted its own ground;
- * here it sits on this page's, so it reads as one more section rather than as
- * a second page pasted under the first. */
-.rc-growth.ax-page:has(.ax-view-growth) {
-    background: none;
-    padding: 0 0 var(--space-10);
-}
-
-/* ---- The three tabs -----------------------------------------------------
- * Personal bests, Growth and Badges — one page answering "how far have I
- * come" three ways. The same segmented strip the Goals page uses, so a reader
+/* ---- The two tabs -------------------------------------------------------
+ * Personal bests and Badges — one page answering "how far have I come" two
+ * ways. The same segmented strip the Goals page uses, so a reader
  * who has learned one has learned both. */
 .rc-views {
     display: inline-flex;

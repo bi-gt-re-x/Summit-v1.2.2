@@ -111,6 +111,9 @@ import { ErrorState, Loading, PageHero } from '@/components';
 import { stageShows } from '@/utils/dataMaturity';
 import {
   AnalyticsSetup,
+  GrowthTab,
+  habitLead,
+  InsightsTab,
   Controls,
   Header,
   OverviewTab,
@@ -249,8 +252,8 @@ export default function Analytics() {
   /* The page reads a dozen of the model's eighty figures — the gates, the
      opening sentence and the export. Everything else goes to a tab whole. */
   const {
-    span, chooseSpan, option, spanText, subject, setSubject, subjectOptions,
-    maturity, streak, analytical, hasReportCard, figures, insights, breakdown, banked, recentSubjects,
+    span, chooseSpan, option, spanText, subject, setSubject, subjectOptions, waitFor,
+    habits, summary, maturity, streak, analytical, hasReportCard, figures, insights, breakdown, banked, recentSubjects,
     discovered, diagnoses, advice, plan, recorded, goalSet,
   } = model;
   // ---- The shell ----------------------------------------------------------
@@ -530,8 +533,6 @@ export default function Analytics() {
           <Summary
             score={analytical}
             movement={scoreMovement(recorded)}
-            topAdvice={advice[0]?.title ?? null}
-            adviceCount={advice.length}
             /* What it is read from, until "enough" is the honest answer. The
                score is the mean of five measures and it swings a long way on
                one good week at this length — a fact about the number rather
@@ -548,6 +549,14 @@ export default function Analytics() {
             }
           />
         );
+      case 'insights':
+        /* What repeats. `state.sentence` used to lead once the tab had
+           twenty-eight days, but it opens on the share of days worked, which
+           is the Overview's Consistency tile. */
+        if (waitFor('habits') === 0 && habits.length > 0) {
+          return <TabOpening>{habitLead(summary, spanText)}</TabOpening>;
+        }
+        return null;
       case 'recommendations':
         return advice.length > 0 ? (
           <TabOpening>
@@ -623,6 +632,12 @@ export default function Analytics() {
                 model.waitFor('recommendations') > 0
                   ? { have: model.historyDays, need: NEED_DAYS.recommendations }
                   : undefined,
+              /* Insights fills on the earlier of its two gates, the habits
+                 one: that is when it stops being a notice. */
+              insights:
+                model.waitFor('habits') > 0
+                  ? { have: model.historyDays, need: NEED_DAYS.habits }
+                  : undefined,
             }}
           />
           {/* Not during setup, for the same reason the tab body is not: a
@@ -663,9 +678,11 @@ export default function Analytics() {
         )}
 
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}
+        {view.key === 'insights' && <InsightsTab model={model} subjects={subjects} />}
         {view.key === 'subjects' && (
-          <SubjectsTab model={model} subjects={subjects} username={username} />
+          <SubjectsTab model={model} username={username} />
         )}
+        {view.key === 'growth' && <GrowthTab model={model} />}
           </>
         )}
       </div>

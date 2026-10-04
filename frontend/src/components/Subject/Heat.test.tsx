@@ -7,11 +7,11 @@
  * move and does not follow the page's, and that the sentence beside the map
  * cannot drift from what the map draws.
  */
-import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { cleanup, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { SubjectHeat } from './Heat';
 import type { AnalyticsTask } from '@/services/analytics';
+import type { CalendarKey } from '@/utils/habits';
 
 const TODAY = '2026-09-30';
 
@@ -39,30 +39,27 @@ function ago(days: number): string {
   return at.toISOString().slice(0, 10);
 }
 
-const show = (mine: AnalyticsTask[]) =>
-  render(<SubjectHeat mine={mine} today={TODAY} subject="Mathematics" />);
+const show = (mine: AnalyticsTask[], window: CalendarKey = '90') =>
+  render(<SubjectHeat mine={mine} today={TODAY} subject="Mathematics" window={window} />);
+const label = () => screen.getByRole('img').getAttribute('aria-label') ?? '';
 
 /** Every square with a day behind it, in the drawn grid. */
 const filled = () =>
   Array.from(document.querySelectorAll('.ax-heat-grid .ax-heat-cell:not(.is-blank)'));
 
 describe('what the squares count', () => {
-  it('says how many days had work and how much landed', () => {
+  it('labels the map with how many days had work', () => {
+    /* No sentence under the map any more — the count is the "Turning up"
+       row on the Evidence tab — but the map still says it to a screen reader. */
     show([did(ago(1)), did(ago(1)), did(ago(5))]);
 
-    const say = screen.getByText(/days had work in Mathematics/);
-    expect(say).toHaveTextContent('2 of');
-    expect(say).toHaveTextContent('3 tasks in all');
+    expect(screen.getByRole('img').getAttribute('aria-label')).toMatch(/^2 of \d+ days with work in Mathematics$/);
   });
 
   it('counts a day once however many tasks are on it', () => {
-    /* The map is about showing up; the shade is about how much. A day with
-       four tasks is one dark square, not four days. */
     show([did(ago(2)), did(ago(2)), did(ago(2)), did(ago(2))]);
 
-    const say = screen.getByText(/days had work in Mathematics/);
-    expect(say).toHaveTextContent('1 of');
-    expect(say).toHaveTextContent('4 tasks in all');
+    expect(screen.getByRole('img').getAttribute('aria-label')).toMatch(/^1 of /);
   });
 
   it('shades the busier day darker than the quieter one', () => {
@@ -107,7 +104,7 @@ describe('what stays out of it', () => {
        pages/SubjectAnalytics.narrative.test. */
     show([did(ago(1)), did(ago(2), { subject: 'code' })]);
 
-    expect(screen.getByText(/days had work in Mathematics/)).toHaveTextContent('2 of');
+    expect(label()).toMatch(/^2 of /);
   });
 
   it('counts only finished work', () => {
@@ -116,40 +113,33 @@ describe('what stays out of it', () => {
       did(ago(2), { status: 'todo', completed_at: undefined }),
     ]);
 
-    expect(screen.getByText(/days had work in Mathematics/)).toHaveTextContent('1 of');
+    expect(label()).toMatch(/^1 of /);
   });
 });
 
-describe('the window is the reader’s', () => {
-  it('opens on ninety days', () => {
+describe('the window is the page’s', () => {
+  it('draws more of the record when the page asks for a longer window', () => {
+    /* It used to carry its own picker beside the page's; one range control
+       per page now. */
+    show([did(ago(1)), did(ago(200))], '90');
+    expect(label()).toMatch(/^1 of /);
+    cleanup();
+    show([did(ago(1)), did(ago(200))], '365');
+    expect(label()).toMatch(/^2 of /);
+  });
+
+  it('has no picker of its own', () => {
     show([did(ago(1))]);
-
-    expect(screen.getByRole('button', { name: '90D' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.queryByRole('group', { name: 'Heatmap window' })).not.toBeInTheDocument();
   });
 
-  it('draws more of the record when a longer window is chosen', async () => {
-    /* The page's own picker scopes every figure above this. This one does
-       not follow it: seven days is seven squares and a year is a map, and
-       "what does my rhythm look like" is asked at whatever zoom the reader
-       wants. */
-    show([did(ago(1)), did(ago(200))]);
-
-    expect(screen.getByText(/days had work in Mathematics/)).toHaveTextContent('1 of');
-
-    await userEvent.click(screen.getByRole('button', { name: '1Y' }));
-
-    expect(screen.getByText(/days had work in Mathematics/)).toHaveTextContent('2 of');
-  });
-
-  it('turns into a month calendar under a month, and a map above one', async () => {
+  it('turns into a month calendar under a month, and a map above one', () => {
     /* Four columns of squares is a strip, and it reads as a rendering fault
        however well it is sized. Same cells, turned on their side. */
     show([did(ago(1))]);
-
-    const map = document.querySelector('.ax-heat-wide')!;
-    expect(map).not.toHaveClass('is-calendar');
-
-    await userEvent.click(screen.getByRole('button', { name: '7D' }));
+    expect(document.querySelector('.ax-heat-wide')).not.toHaveClass('is-calendar');
+    cleanup();
+    show([did(ago(1))], '7');
     expect(document.querySelector('.ax-heat-wide')).toHaveClass('is-calendar');
   });
 });
@@ -167,7 +157,5 @@ describe('the map can be read by something other than eyes', () => {
 
     const grid = screen.getByRole('img');
     expect(grid).toHaveAccessibleName(/days with work in Mathematics/);
-    expect(within(document.body).getByRole('group', { name: 'Heatmap window' }))
-      .toBeInTheDocument();
   });
 });

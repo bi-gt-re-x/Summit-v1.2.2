@@ -37,7 +37,6 @@ import {
   GoalReached,
   GoalsCard,
   LevelUp,
-  NextMove,
   RecentActivity,
   StreakCard,
   TaskModal,
@@ -544,11 +543,8 @@ export default function Dashboard() {
       {/* The focus panel is a preference too, and hiding it widens the task
           list rather than leaving a hole where it was — see `.is-solo` in
           styles/dashboard-home.css. */}
-      {/* What to do next — the top of the one list the app keeps, the same one
-          the Recommendations tab shows in full. Above the task list because
-          that is the order the questions arrive in. Asked again whenever a
-          task is finished, so a suggestion to finish it does not outlive it. */}
-      <NextMove username={username} refresh={`${day.done}:${tasks.length}`} />
+      {/* The "next" card that sat here was the top of the Recommendations
+          plan. What to do next is said on that tab only. */}
 
       <div className={`dash-main${prefs.show_focus ? '' : ' is-solo'}`}>
         <TaskPanel

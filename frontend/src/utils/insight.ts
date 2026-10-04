@@ -42,6 +42,12 @@ export const STRENGTH_TEXT: Record<Strength, string> = {
   weak: 'Weak evidence',
 };
 
+export const STRENGTH_HUE: Record<Strength, string> = {
+  strong: 'green',
+  likely: 'blue',
+  weak: 'amber',
+};
+
 /**
  * Pearson's r over paired observations, with the pairs counted.
  *
@@ -92,6 +98,23 @@ export interface Unlock {
   ready: boolean;
   /** What to say when it cannot. */
   message: string;
+}
+
+/**
+ * Whether a section has the history it needs, and what to say when it does not.
+ *
+ * Deliberately not an error state. The section is not broken; it is waiting,
+ * and telling somebody how many more days it needs is both true and the only
+ * useful thing to say — an empty panel with a shrug in it teaches nobody that
+ * the page gets better.
+ */
+export function unlock(have: number, need: number, what: string): Unlock {
+  if (have >= need) return { ready: true, message: '' };
+  const short = need - have;
+  return {
+    ready: false,
+    message: `Shows ${what} after ${short} more ${short === 1 ? 'day' : 'days'} of use.`,
+  };
 }
 
 // --------------------------------------------------------------------------

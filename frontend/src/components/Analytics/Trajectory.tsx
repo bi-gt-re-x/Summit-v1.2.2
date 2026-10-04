@@ -2,7 +2,7 @@
  * The big chart: the account's history, this period against the last.
  *
  * The growth score panel that sat beside it is gone. The score over time, its
- * five parts and how it is worked out are the Growth tab of Achievements, and
+ * five parts and how it is worked out are the Growth tab, and
  * this row was the same answer a second time.
  */
 import { AreaChart, Panel, toneVar } from './charts';

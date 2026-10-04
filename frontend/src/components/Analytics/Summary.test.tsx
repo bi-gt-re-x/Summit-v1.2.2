@@ -48,8 +48,6 @@ function show(overrides: Partial<SummaryProps> = {}) {
   const props: SummaryProps = {
     score: scoreOf(62, 'D'),
     movement: null,
-    topAdvice: null,
-    adviceCount: 0,
     goals: null,
     ...overrides,
   };
@@ -105,7 +103,7 @@ describe('and the five measures stay on Achievements', () => {
 
   it('does not name the strongest or weakest measure', () => {
     /* Those are "Biggest improvement" and "Needs attention" on the Growth
-       tab of Achievements. */
+       tab. */
     show({ score: scoreOf(62, 'D') });
     expect(screen.queryByText(/measure holding it back/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/what is carrying it/i)).not.toBeInTheDocument();
@@ -118,7 +116,7 @@ describe('and the five measures stay on Achievements', () => {
     });
     expect(screen.getByRole('link', { name: 'See it over time' })).toHaveAttribute(
       'href',
-      '/achievements/growth',
+      '/analytics/growth',
     );
   });
 });

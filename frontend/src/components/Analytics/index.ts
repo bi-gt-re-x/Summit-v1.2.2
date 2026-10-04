@@ -10,13 +10,13 @@
  * The graded report card that used to be this page is gone. `GradeCard` and
  * `MetricRow` were kept for a while on the argument that they were the only
  * thing explaining how a score is arrived at — but nothing rendered them, and
- * that explanation lives on the Growth tab of Achievements now. Two files
+ * that explanation lives on the Growth tab now. Two files
  * nobody could reach, justified by a job something else was doing. `metrics.ts` stays for `gradeClass`, which
  * `Summary` colours the letter with.
  *
  * `ScoreBanner` went the same way for the same reason. It opened the Overview
  * with the score, its letter, two paragraphs of derivation and five labelled
- * bars — the same five measures the Growth tab of Achievements draws. One row
+ * bars — the same five measures the Growth tab draws. One row
  * of bars is enough, and it lives with the score over time. `Summary` took the
  * slot, kept the derivation behind a disclosure, and left the bars behind.
  */
@@ -104,8 +104,25 @@ export { Tiles } from './Tiles';
 export type { TilesProps } from './Tiles';
 
 /** The panels drawn from the one optional thing in the app. See ./Quality. */
-export { DepthPicker, QualityPanel, QualityGridPanel } from './Quality';
-export type { DepthPickerProps, QualityPanelProps, QualityGridPanelProps } from './Quality';
+export { DepthPicker, QualityPanel, QualityGridPanel, RatedTasksPanel, ReasonsPanel } from './Quality';
+export type {
+  DepthPickerProps,
+  QualityPanelProps,
+  QualityGridPanelProps,
+  ReasonsPanelProps,
+  RatedTasksPanelProps,
+} from './Quality';
+
+export {
+  HabitTiles,
+  HabitCard,
+  HabitCards,
+  PatternsPanel,
+  ConsistencyPanel as HabitConsistencyPanel,
+  TimelinePanel,
+  HabitOpening,
+  habitLead,
+} from './Habits';
 
 export { Trajectory } from './Trajectory';
 export type { TrajectoryProps } from './Trajectory';
@@ -126,6 +143,7 @@ export {
   Delta,
   TONES,
   toneVar,
+  asTone,
 } from './charts';
 export type { Tone, PanelProps, AreaSeries, Column, RadarAxis, ScatterProps } from './charts';
 
@@ -163,4 +181,5 @@ export type { AnalyticsData } from './useAnalyticsData';
 export { OverviewTab } from './tabs/OverviewTab';
 export { RecommendationsTab } from './tabs/RecommendationsTab';
 export { GrowthTab } from './tabs/GrowthTab';
+export { InsightsTab } from './tabs/InsightsTab';
 export { SubjectsTab } from './tabs/SubjectsTab';

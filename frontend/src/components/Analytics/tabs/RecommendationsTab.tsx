@@ -19,6 +19,7 @@ import { NextActions } from '../NextActions';
 import { PanelGroup } from '../charts';
 import { LimiterCard } from '../Limiter';
 import { LensCard } from '../Lens';
+import { Knows, useKnows } from '../Knows';
 import { Building } from '../Building';
 import { SETTLE } from '@/utils/followup';
 import { NEED_DAYS } from '../useAnalyticsModel';
@@ -66,6 +67,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
   const headlines = toneRules?.headlines ?? 3;
   const diagnoses = shownDiagnoses ?? [];
   const { adopt, adopting, dropAdopted, dropping, justAdopted, refresh } = data;
+  const knows = useKnows(model);
 
   return (
     <>
@@ -267,6 +269,13 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           </section>
         </>
       )}
+
+      {/* Your coach's read: what Summit makes of the reader, each fact ending
+          in something to do. It was on the Overview; advice lives here. Each
+          fact carries its own floor, so this is empty on a brand new account. */}
+      <section className="ax-section">
+        <Knows facts={knows} />
+      </section>
     </>
   );
 }

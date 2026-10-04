@@ -1,5 +1,5 @@
 /**
- * Achievements — the account's hall of fame: personal bests, growth, badges.
+ * Achievements — the account's hall of fame: personal bests and badges.
  *
  * This was two pages, Records and Achievements (the badge wall). They answered
  * the same question, so they are one page under the name the badges had, and
@@ -100,7 +100,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ErrorState, Loading, PageHero } from '@/components';
 import { Glyph } from '@/components/Growth/GrowthPanels';
 import { RecordModal } from '@/components/Records/RecordModal';
-import { GrowthSection } from '@/components/Analytics/GrowthSection';
 import { BadgeWall } from '@/components/Achievements/BadgeWall';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -659,18 +658,16 @@ function ChaseRow({ row }: { row: RecordChase }) {
 // ---------------------------------------------------------------------------
 // The three tabs
 // ---------------------------------------------------------------------------
-type RecordsView = 'bests' | 'growth' | 'badges';
+type RecordsView = 'bests' | 'badges';
 
 /**
- * One page, three answers to "how far have I come": the bests you logged, the
- * graded measures over time, and the badge wall. Growth was a tab of the
- * analytics page and this page was called Records; both old addresses
- * redirect here. Each tab is its own URL, so the rail, the back button and a
+ * One page, two answers to "how far have I come": the bests you logged and
+ * the badge wall. This page was called Records, and its old addresses
+ * redirect here; its Growth tab went back to the analytics page. Each tab is its own URL, so the rail, the back button and a
  * pasted link agree about which is open.
  */
 const VIEWS: { key: RecordsView; label: string; path: string; title: string }[] = [
   { key: 'bests', label: 'Personal bests', path: '/achievements', title: 'Achievements' },
-  { key: 'growth', label: 'Growth', path: '/achievements/growth', title: 'Growth' },
   { key: 'badges', label: 'Badges', path: '/achievements/badges', title: 'Badges' },
 ];
 
@@ -927,7 +924,6 @@ export default function Achievements() {
         ))}
       </nav>
 
-      {view === 'growth' && <GrowthSection />}
       {view === 'badges' && <BadgeWall />}
 
       {view === 'bests' && (

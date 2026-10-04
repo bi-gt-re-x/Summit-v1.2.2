@@ -36,6 +36,18 @@ export function toneVar(tone: string): string {
 }
 
 /**
+ * A tone name from somewhere that does not know about `Tone`, made safe.
+ *
+ * The behavioural modules under utils/ carry a tone on every finding, and they
+ * deliberately do not import from a component file to get the type — the
+ * arithmetic has no business knowing what draws it. This is the one boundary
+ * where the loose string becomes the narrow one.
+ */
+export function asTone(name: string): Tone {
+  return (TONES as string[]).includes(name) ? (name as Tone) : 'violet';
+}
+
+/**
  * One point of a series, or `null` for "this series is not drawn here".
  *
  * A gap is not a zero. The compounding chart is two series over one x axis
@@ -930,7 +942,9 @@ export function Columns({
         .join(', ')}.`}
     >
       {columns.map((column) => (
-        <div className="ax-column" key={column.label}>
+        // `name` before `label`: a chart that blanks most of its labels (the
+        // hour-of-day one prints every third) would key every blank the same.
+        <div className="ax-column" key={column.name ?? column.label}>
           <span className="ax-column-value">{column.text}</span>
           <div className="ax-column-track">
             <div

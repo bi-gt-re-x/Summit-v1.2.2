@@ -22,7 +22,6 @@
  * the page held the figures; the model holds them now, so the only thing left
  * to pass is the one callback that opens a screen the page owns.
  */
-import { useMemo } from 'react';
 import { PanelGroup } from '../charts';
 import {
   BaselinePanel,
@@ -32,10 +31,7 @@ import {
   ConsistencyPanel,
   LearningStrip,
   StageNote,
-  FinishPanel,
-  WhenPanel,
   DepthPicker,
-  InsightsPanel,
   QualityGridPanel,
   QualityPanel,
   SubjectPanel,
@@ -44,13 +40,9 @@ import {
 } from '../index';
 import type { Stat } from '../StatRow';
 import { number as fmtNumber } from '@/utils/format';
-import { partsOfDay } from '@/utils/habits';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
-import { Knows } from '../Knows';
 import { LensLine } from '../Lens';
-import { whatSummitKnows } from '@/utils/knows';
-import { OTHER_KEY } from '@/utils/subjectXp';
 import { stageShows } from '@/utils/dataMaturity';
 import type { LearningItem } from '../index';
 
@@ -72,18 +64,14 @@ export function OverviewTab({
   const {
     breakdown,
     lens,
-    nameOf,
     observed,
     compareLabel,
     figures,
     subjectLabel,
-    fromIso,
     historyDays,
     maturity,
-    waitFor,
     streak,
     tasks,
-    toIso,
     grain,
     heatRows,
     sparks,
@@ -106,7 +94,6 @@ export function OverviewTab({
     detail,
     logStyle,
     tone,
-    insights,
   } = model;
   const { baseline } = data;
   const aim = baseline.data?.baseline ?? null;
@@ -120,44 +107,6 @@ export function OverviewTab({
    * a long one gets four, without this file deciding which stage deserves a
    * profile.
    */
-  const knows = useMemo(() => {
-    /* The recent leader, for the "current focus" line. Fourteen days rather
-       than the picker's window, because the point of the line is that it can
-       disagree with the all-time answer beside it — reading both off the same
-       range would make that impossible by construction. */
-    const cutoff = new Date(Date.parse(`${toIso}T00:00:00`) - 13 * 86_400_000)
-      .toISOString()
-      .slice(0, 10);
-    const lately = new Map<string, number>();
-    tasks.forEach((task) => {
-      if (task.status !== 'done' || !task.subject) return;
-      const day = (task.completed_at || '').slice(0, 10);
-      if (!day || day < cutoff || day > toIso) return;
-      lately.set(task.subject, (lately.get(task.subject) ?? 0) + 1);
-    });
-    let recentTop: string | null = null;
-    let most = 0;
-    lately.forEach((count, id) => {
-      if (count > most) {
-        most = count;
-        recentTop = nameOf(id);
-      }
-    });
-
-    return whatSummitKnows({
-      finished: tasks.filter((task) => task.status === 'done').length,
-      activeDays: maturity.activeDays,
-      spanDays: maturity.spanDays,
-      subjects: breakdown.rows.map((row) => ({
-        name: row.name ?? row.label,
-        count: row.count,
-        /* The tail bucket. It belongs in the total and cannot be the leader —
-           see `lumped` in utils/knows. */
-        lumped: row.key === OTHER_KEY,
-      })),
-      recentTop,
-    });
-  }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, tasks, toIso]);
 
   /*
    * Day 0-7, in one path that gains panels rather than two that replace each
@@ -268,17 +217,8 @@ export function OverviewTab({
           </section>
         )}
 
-        {/* Day 4-7. Two tallies and nothing inferred from them — see the note
-            at the top of Early for the line these sit on the safe side of.
-            They arrive here rather than on Habits because Habits is about what
-            repeats, and four days cannot say what repeats. */}
-        {maturity.stage === 'early' && (
-          <section className="ax-section ax-grid ax-grid-halves-even">
-            <WhenPanel parts={partsOfDay(tasks, fromIso, toIso)} days={maturity.activeDays} />
-            <FinishPanel tasks={tasks} days={maturity.activeDays} />
-          </section>
-        )}
-
+        {/* The two day-4-to-7 tallies (when you work, how sessions end) are
+            the Insights tab's "What is already true" now. */}
         {/* Where the work went. A share of a total is true on day one — it is
             a description of what is on record, not a claim about a trend — so
             this is the one panel from the mature tab that survives intact. */}
@@ -286,13 +226,6 @@ export function OverviewTab({
           {/* No `previous`: there is no earlier period to compare against, and
               an empty map is how this component is told so. */}
           <SubjectPanel rows={breakdown.rows} previous={EMPTY_PREVIOUS} />
-        </section>
-
-        {/* The profile, under the counts it is drawn from. Each fact carries
-            its own floor, so this is two sentences on a young account and
-            nothing at all on a brand new one. */}
-        <section className="ax-section">
-          <Knows facts={knows} />
         </section>
 
         <ActiveDayPrinciple />
@@ -363,8 +296,8 @@ export function OverviewTab({
         />
       </section>
 
-      {/* The growth score panel that sat beside this is the Growth tab of
-          Achievements now, so the line has the row to itself. */}
+      {/* The growth score panel that sat beside this is the Growth tab now,
+          so the line has the row to itself. */}
       <section id="trajectory" className="ax-section">
         <Trajectory
           current={slice.current}
@@ -464,47 +397,19 @@ export function OverviewTab({
           <ConsistencyPanel rows={heatRows} />
         </PanelGroup>
 
-        {/* The two tallies stay until Habits can do the stronger version of the
-            same question. Tied to that tab's own gate rather than to a stage, so
-            there is never a stretch where the page has stopped answering "when
-            do you work" and nothing else has started. */}
-        {waitFor('habits') > 0 && detail.tallies && (
-          <PanelGroup
-            title="When you work"
-            note="Time of day, and how your sessions end"
-          >
-            <div className="ax-grid ax-grid-halves-even">
-              <WhenPanel parts={partsOfDay(tasks, fromIso, toIso)} days={maturity.activeDays} />
-              <FinishPanel tasks={tasks} days={maturity.activeDays} />
-            </div>
-          </PanelGroup>
-        )}
-
-        {/* What the record suggests, for an account on 'everything'. The
-            split by subject that sat beside it is on the Subjects tab. */}
-        {detail.extras && (
-          <PanelGroup title="Findings" note="What the record suggests">
-            <InsightsPanel insights={insights} />
-          </PanelGroup>
-        )}
+        {/* "When you work" and "Findings" were here too. The first is the
+            Insights tab's opening while habits are still filling, and the
+            second is all figures other tabs print, with advice under them. */}
       </section>
 
-      {/* The profile. Same block as the early stages draw, further down a
-          longer page: by here the reader has seen the window's readings and
-          this is what they add up to about them. */}
-      {/* One line: this
-          tab is the shortest honest answer to "how am I doing" and hands the
-          longer questions on. The full reading is on Recommendations. */}
       {lens && (
         <section className="ax-section">
           <LensLine lens={lens} />
         </section>
       )}
 
-      <section className="ax-section">
-        <Knows facts={knows} />
-      </section>
-
+      {/* "Your coach's read" ended every fact in something to do, so it is on
+          Recommendations now. */}
       {/* The rule every "active days" figure above depends on, at the length
           it can be left on screen permanently. The full note only appears
           beside a countdown, so an account past the staged tabs has not seen

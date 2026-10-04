@@ -25,7 +25,7 @@ import { NEED_DAYS } from '../useAnalyticsModel';
 import { whyFor } from '../milestones';
 /* The model these are driven from — see ./fixtures, which gates.test.tsx used
    to hold and ./groups.test.tsx now needs too. */
-import { draw, fakeData, fakeModel, subjects } from './fixtures';
+import { draw, fakeData, fakeModel } from './fixtures';
 import { reviewAdopted, summarise } from '@/utils/followup';
 import { days } from '@/test/factories';
 
@@ -76,17 +76,17 @@ describe('Recommendations', () => {
 
 describe('Subjects', () => {
   it('says nothing about goals when no subject was worked', () => {
-    draw(<SubjectsTab model={fakeModel({ namedSubjects: { total: 0, named: 0 } })} subjects={subjects} />);
+    draw(<SubjectsTab model={fakeModel({ namedSubjects: { total: 0, named: 0 } })} />);
     expect(screen.queryByText(/has a goal aimed at it/i)).not.toBeInTheDocument();
   });
 
   it('names the gap when subjects were worked and none has a goal', () => {
-    draw(<SubjectsTab model={fakeModel({ namedSubjects: { total: 3, named: 0 } })} subjects={subjects} />);
+    draw(<SubjectsTab model={fakeModel({ namedSubjects: { total: 3, named: 0 } })} />);
     expect(screen.getByText(/None of the/i)).toBeInTheDocument();
   });
 
   it('counts the ones that do', () => {
-    draw(<SubjectsTab model={fakeModel({ namedSubjects: { total: 3, named: 2 } })} subjects={subjects} />);
+    draw(<SubjectsTab model={fakeModel({ namedSubjects: { total: 3, named: 2 } })} />);
     expect(screen.getByText(/have a goal/i)).toBeInTheDocument();
   });
 });

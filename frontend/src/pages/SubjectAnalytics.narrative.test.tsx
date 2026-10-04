@@ -225,7 +225,8 @@ describe('what the record says', () => {
     const said = panel('What the record says');
     expect(said.getByRole('heading', { name: 'How much you work on this' }))
       .toBeInTheDocument();
-    expect(said.getByRole('group', { name: 'Heatmap window' })).toBeInTheDocument();
+    // It follows the page's range picker; it has none of its own.
+    expect(said.queryByRole('group', { name: 'Heatmap window' })).not.toBeInTheDocument();
   });
 
   it('counts this subject and not the whole account', async () => {
@@ -244,13 +245,13 @@ describe('what the record says', () => {
     // The eight tasks of `ceilingRecord` sit on eight separate days; the two
     // history tasks land on days already in that run, so a page counting
     // them would still say eight days and ten tasks.
-    expect(panel('What the record says').getByText(/days had work in/))
-      .toHaveTextContent('8 tasks in all');
+    expect(panel('What the record says').getByRole('img').getAttribute('aria-label'))
+      .toMatch(/^8 of /);
   });
 });
 
 describe('the order of the page', () => {
-  it('puts what to do above the figures it was argued from', async () => {
+  it('puts where the subject stands above what it is for', async () => {
     await show();
 
     const order = Array.from(document.querySelectorAll('[aria-label]'))
@@ -258,7 +259,6 @@ describe('the order of the page', () => {
     const at = (label: string) => order.indexOf(label);
 
     expect(at('Where this subject stands')).toBeLessThan(at('What this subject is for'));
-    expect(at('What this subject is for')).toBeLessThan(at('What to do next'));
   });
 
   it('opens the three counts under the verdict, before anything is interpreted', async () => {
@@ -316,59 +316,15 @@ describe('the evidence is a tab', () => {
   });
 });
 
-describe('did your last advice work', () => {
-  const advised = (over: Record<string, unknown> = {}) => ({
-    id: 'r1',
-    title: 'Timed set at Fair',
-    focus: 'Algebra',
-    type: 'timed_set',
-    difficulty: 3,
-    minutes: 40,
-    reason: 'Execution falls at Hard.',
-    signal: 'Execution rises while the level you file stays the same.',
-    on: '2026-09-01',
-    taken: true,
-    taken_on: '2026-09-02',
-    was: 10,
-    task_id: '',
-    ...over,
-  });
-
-  it('does not draw before anything has ever been advised', async () => {
+describe('what to do is not this page\'s job', () => {
+  it('draws no advice, no session plan and no follow-up on it', async () => {
+    // All three are the Recommendations tab's. See the note where "Do this
+    // next" used to be in pages/SubjectAnalytics.
     await show();
+    expect(screen.queryByLabelText('What to do next')).not.toBeInTheDocument();
+    expect(screen.queryByText('Do this next')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Plan my next sessions/)).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Did your last advice work')).not.toBeInTheDocument();
-  });
-
-  it('states the outcome on the row, in one line', async () => {
-    await show({ past: [advised()] });
-
-    const loop = within(section('Did your last advice work'));
-    expect(loop.getByText('Timed set at Fair')).toBeInTheDocument();
-    expect(loop.getByText('acted on')).toBeInTheDocument();
-    expect(loop.getByText('Execution rose after it')).toBeInTheDocument();
-  });
-
-  it('keeps a recommendation nobody ran out of the verdict', async () => {
-    await show({ past: [advised({ taken: false, taken_on: '' })] });
-
-    const loop = within(section('Did your last advice work'));
-    expect(loop.getByText('Never acted on')).toBeInTheDocument();
-    expect(loop.getByText('not acted on')).toBeInTheDocument();
-    expect(loop.getByText('0 of 1 acted on')).toBeInTheDocument();
-  });
-
-  it('draws the last three and counts the rest', async () => {
-    // Six recommendations was a screen and a half of prose, most of it the
-    // same paragraph repeated. See components/Subject/Verdicts.
-    await show({
-      past: [1, 2, 3, 4, 5].map((n) => advised({ id: `r${n}`, title: `Advice ${n}` })),
-    });
-
-    const loop = within(section('Did your last advice work'));
-    expect(loop.getByText('Advice 1')).toBeInTheDocument();
-    expect(loop.getByText('Advice 3')).toBeInTheDocument();
-    expect(loop.queryByText('Advice 4')).not.toBeInTheDocument();
-    expect(loop.getByText('2 older ones not shown.')).toBeInTheDocument();
   });
 });
 

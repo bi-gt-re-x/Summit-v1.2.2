@@ -19,7 +19,7 @@
  */
 import type { CSSProperties, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Panel, PanelNote, toneVar } from './charts';
+import { Panel, PanelLink, PanelNote, toneVar } from './charts';
 import { GLYPHS, type GlyphName } from './glyphs';
 import {
   DIFFICULTY_WORDS,
@@ -27,8 +27,10 @@ import {
   QUALITY_MAX,
   type QualityBand,
   type QualityCell,
+  type RatedTask,
   type RatingFinding,
   type RatingSummary,
+  type ReasonSummary,
 } from '@/utils/ratings';
 import type { RatingDepth } from '@/services/settings';
 
@@ -366,4 +368,219 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
   );
 }
 
+// --------------------------------------------------------------------------
+// The rated tasks themselves
+// --------------------------------------------------------------------------
+export interface RatedTasksPanelProps {
+  rated: RatedTask[];
+  summary: RatingSummary;
+}
 
+/** How many rows the panel shows before it stops. */
+const SHOWN = 6;
+
+/**
+ * The best and worst rated tasks, by name.
+ *
+ * Every other panel here is an aggregate, and an aggregate cannot answer the
+ * question a reader actually has after seeing one — *which* tasks were those.
+ * The names are the only thing on this page that turns a finding back into
+ * something the reader remembers doing, which is what makes "your hardest work
+ * is going badly" act-on-able rather than merely true.
+ */
+export function RatedTasksPanel({ rated, summary }: RatedTasksPanelProps) {
+  if (summary.rated === 0) {
+    return (
+      <QualityEmpty
+        title="Your best and worst rated work"
+        shows="Which tasks scored highest and lowest."
+      />
+    );
+  }
+
+  const best = [...rated].sort((a, b) => b.quality - a.quality).slice(0, SHOWN);
+  const worst = [...rated]
+    .sort((a, b) => a.quality - b.quality)
+    .slice(0, SHOWN)
+    // A short list would otherwise print the same tasks in both columns.
+    .filter((task) => !best.some((entry) => entry.id === task.id));
+
+  const column = (title: string, rows: RatedTask[], tone: string) => (
+    <div className="ax-rated-col">
+      <h3 className="ax-rated-title">{title}</h3>
+      {rows.length === 0 ? (
+        <p className="ax-empty ax-empty-sm ax-small">
+          Not enough rated tasks yet for these to be a separate list.
+        </p>
+      ) : (
+        <ol className="ax-rated-list">
+          {rows.map((task) => (
+            <li key={task.id}>
+              <span className="ax-rated-score" style={{ color: toneVar(tone) }}>
+                {task.quality}
+              </span>
+              <span className="ax-rated-name" title={task.name}>
+                {task.name}
+              </span>
+              <span className="ax-muted ax-small">
+                {DIFFICULTY_WORDS[task.difficulty - 1]} · {EXECUTION_WORDS[task.execution - 1]}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+
+  return (
+    <Panel
+      title="Your best and worst rated work"
+      note={`Out of ${QUALITY_MAX}, rated on both rows`}
+      footer={<PanelLink to="/tasks">Open Tasks</PanelLink>}
+    >
+      <div className="ax-rated">
+        {column('Highest scoring', best, 'green')}
+        {column('Lowest scoring', worst, 'amber')}
+      </div>
+    </Panel>
+  );
+}
+
+// --------------------------------------------------------------------------
+// Why it went the way it did
+// --------------------------------------------------------------------------
+export interface ReasonsPanelProps {
+  reasons: ReasonSummary;
+  findings: RatingFinding[];
+  depth: RatingDepth;
+  span: string;
+}
+
+/**
+ * The third question, counted — the only panel on this page that says *why*.
+ *
+ * Everything else in this app answers "what happened": how much, how often,
+ * how well. This is the one input that carries a cause, and it exists only
+ * because the account asked to be asked for it (rating_depth 'reasons').
+ *
+ * **The two sides are never added together.** A bar chart of all twelve words
+ * would rank "could not focus" against "had a clear run at it" as if they were
+ * competing answers to one question. They are answers to two questions, put to
+ * two different sets of tasks — the ones that went badly and the ones that went
+ * well — so they are counted, shared and drawn apart, and each share is out of
+ * its own side.
+ *
+ * Only the words actually chosen are drawn. Six zeroes under a heading is not a
+ * finding about the reader, it is a list of things this build happens to offer.
+ */
+export function ReasonsPanel({ reasons, findings, depth, span }: ReasonsPanelProps) {
+  if (depth !== 'reasons' && reasons.answered === 0) return null;
+
+  if (reasons.answered === 0) {
+    return (
+      <Panel title="What made the difference">
+        <div className="ax-quality-empty">
+          <p>
+            <strong>No reasons given in this window.</strong> Which one thing made a task hard, or
+            made it go well.
+          </p>
+          <p className="ax-muted">
+            The question appears under the two star rows after you finish a task, and can be
+            skipped like they can. It is the only thing on this page that can say <em>why</em> a
+            window went the way it did rather than what it came to.
+          </p>
+          <Link to="/tasks" className="ax-btn">
+            Open Tasks
+          </Link>
+        </div>
+      </Panel>
+    );
+  }
+
+  const sides = [
+    {
+      key: 'struggle' as const,
+      title: 'When it went badly',
+      rows: reasons.struggle,
+      total: reasons.struggled,
+      tone: 'amber',
+    },
+    {
+      key: 'went-well' as const,
+      title: 'When it went well',
+      rows: reasons.wentWell,
+      total: reasons.succeeded,
+      tone: 'green',
+    },
+  ];
+
+  return (
+    <Panel
+      title="What made the difference"
+      note={`${reasons.answered} answered in ${span}`}
+      footer={
+        <PanelNote label="Why the two sides are counted apart">
+          Which six words you are offered follows the execution star: a task rated below 3 is asked
+          what made it hard, one rated 3 or better what made it go well. They are answers to two
+          different questions put to two different sets of tasks, so each share is out of its own
+          side and the two columns are never added together.
+        </PanelNote>
+      }
+    >
+      <div className="ax-reasons">
+        {sides.map((side) => (
+          <div className="ax-reasons-side" key={side.key}>
+            <h3 className="ax-reasons-title">
+              {side.title}
+              <span className="ax-muted">
+                {side.total} {side.total === 1 ? 'task' : 'tasks'}
+              </span>
+            </h3>
+
+            {side.rows.length === 0 ? (
+              <p className="ax-muted ax-reasons-none">Nothing on this side yet.</p>
+            ) : (
+              <ul className="ax-reasons-list">
+                {side.rows.map((row) => (
+                  <li key={row.key}>
+                    <span className="ax-reasons-label">{row.label}</span>
+                    <span className="ax-factor-track">
+                      <i
+                        style={{ width: `${row.share}%`, background: toneVar(side.tone) } as CSSProperties}
+                      />
+                    </span>
+                    <span className="ax-reasons-count">
+                      {row.count}
+                      <em className="ax-tile-unit">{row.share}%</em>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* The same rows the quality panel prints its findings in, from the same
+          three tones — one list style for "what this data supports saying",
+          wherever on the page it is being said. */}
+      {findings.length > 0 && (
+        <ul className="ax-insights">
+          {findings.map((finding) => (
+            <li key={finding.headline} className={`ax-insight ax-insight-${finding.tone}`}>
+              <span
+                className="ax-insight-icon"
+                style={{ '--ico': GLYPHS[FINDING_GLYPH[finding.tone]] } as CSSProperties}
+                aria-hidden="true"
+              />
+              <div>
+                <strong>{finding.headline}</strong>
+                <span className="ax-muted">{finding.hint}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
+  );
+}

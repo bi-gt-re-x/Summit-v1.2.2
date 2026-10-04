@@ -7,9 +7,10 @@
  * than at three different periods.
  */
 import type { CSSProperties } from 'react';
+import { Link } from 'react-router-dom';
 import { Panel, Radar, TONES, toneVar, type RadarAxis, PanelNote } from './charts';
 import { HEAT_WEEKDAYS, type HeatRow } from '@/utils/growthSummary';
-import type { SubjectXpRow } from '@/utils/subjectXp';
+import { OTHER_KEY, type SubjectXpRow } from '@/utils/subjectXp';
 import type { BalanceShape } from '@/utils/behaviour';
 
 /** `HEAT_WEEKDAYS` spelled out. Same order — Sunday first — or the rows lie. */
@@ -27,6 +28,11 @@ export interface SubjectPanelProps {
   previous: Map<string, number>;
   /** The concentration reading, where the tab has one. */
   balance?: BalanceShape;
+  /**
+   * Whether each subject's name opens its own page. On the Subjects tab, where
+   * the list of skill trees that used to carry those links went.
+   */
+  linked?: boolean;
 }
 
 /**
@@ -51,7 +57,7 @@ export interface SubjectPanelProps {
  * came across whole and sits under the legend. The duplicated half — a second
  * enumeration of the subjects — is what went.
  */
-export function SubjectPanel({ rows, previous, balance }: SubjectPanelProps) {
+export function SubjectPanel({ rows, previous, balance, linked = false }: SubjectPanelProps) {
   const peak = Math.max(...rows.map((row) => row.xp), 1);
   const axes: RadarAxis[] = rows.map((row) => ({
     label: row.label,
@@ -75,9 +81,19 @@ export function SubjectPanel({ rows, previous, balance }: SubjectPanelProps) {
                     className="ax-dot"
                     style={{ background: toneVar(TONES[index % TONES.length]!) }}
                   />
-                  <span className="ax-subject-name" title={row.name ?? row.label}>
-                    {row.label}
-                  </span>
+                  {linked && row.key !== OTHER_KEY ? (
+                    <Link
+                      className="ax-subject-name"
+                      title={row.name ?? row.label}
+                      to={`/analytics/subject/${encodeURIComponent(row.key)}`}
+                    >
+                      {row.label}
+                    </Link>
+                  ) : (
+                    <span className="ax-subject-name" title={row.name ?? row.label}>
+                      {row.label}
+                    </span>
+                  )}
                   <span className="ax-subject-xp">{Math.round(row.xp).toLocaleString()} XP</span>
                   {delta === null ? (
                     <span className="ax-delta ax-delta-none">new</span>

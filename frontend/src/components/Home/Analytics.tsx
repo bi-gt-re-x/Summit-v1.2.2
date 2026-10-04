@@ -152,7 +152,9 @@ const RING_END = round2(RING_LEN * (1 - SCORE / SCORE_SCALE));
 const TABS = [
   { label: 'Recommendations', to: '/recommendations' },
   { label: 'Overview', to: '/analytics' },
+  { label: 'Insights', to: '/insights' },
   { label: 'Subjects', to: '/subjects' },
+  { label: 'Growth', to: '/analytics/growth' },
 ] as const;
 
 /** Long enough to read as counting rather than snapping; the shapes' own time. */

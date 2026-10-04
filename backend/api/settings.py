@@ -382,7 +382,8 @@ FIELDS: Dict[str, Any] = {
                                          'developing', 'full')),
     #: Which tab the page opens on. The same keys as VIEWS in
     #: frontend/src/components/Analytics/Header.tsx.
-    'analytics_home_tab': ('overview', _one_of('recommendations', 'overview', 'subjects')),
+    'analytics_home_tab': ('overview', _one_of('recommendations', 'overview', 'insights', 'subjects',
+                                                   'growth')),
     #: How the account records work, and therefore which figure leads the row
     #: of tiles: the tasks it finished, the hours it sat, or both.
     'analytics_log_style': ('both', _one_of('tasks', 'sessions', 'both')),
@@ -516,8 +517,7 @@ def _inherited(username, key):
 #: The Habits, Insights, Goals and Growth tabs were later cut outright, so an
 #: account that opened on any of them opens on the Overview.
 ALIASES = {
-    'analytics_home_tab': {'records': 'overview', 'growth': 'overview', 'goals': 'overview',
-                           'habits': 'overview', 'insights': 'overview'},
+    'analytics_home_tab': {'records': 'growth', 'goals': 'overview', 'habits': 'insights'},
 }
 
 

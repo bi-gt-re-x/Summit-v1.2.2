@@ -13,7 +13,7 @@
  * ## Why a list rather than a walk of the router
  *
  * `<Routes>` in App.tsx knows every path and nothing else: no name, no
- * synonyms, and no idea that `/achievements/growth` is where a reader typing "year on
+ * synonyms, and no idea that `/analytics/growth` is where a reader typing "year on
  * year" or "growth" should land. A search index needs the
  * words people actually type, and those exist nowhere but here.
  *
@@ -97,13 +97,6 @@ export const PLACES: Place[] = [
     keywords: 'records personal best hall of fame high score outside the app how far you have come milestones',
   },
   {
-    id: 'achievements-growth',
-    name: 'Growth',
-    where: 'Achievements',
-    to: '/achievements/growth',
-    keywords: 'growth year on year period timeline graded measures movers',
-  },
-  {
     id: 'achievements-badges',
     name: 'Badges',
     where: 'Achievements',
@@ -148,7 +141,7 @@ export const PLACES: Place[] = [
     keywords: 'monthly grid overview dates events',
   },
 
-  // --- Analytics, which is seven tabs. Mirrors VIEWS in
+  // --- Analytics, which is five tabs. Mirrors VIEWS in
   //     components/Analytics/Header.tsx.
   {
     id: 'analytics',
@@ -172,11 +165,25 @@ export const PLACES: Place[] = [
     keywords: 'totals trajectory growth score long view summary',
   },
   {
+    id: 'analytics-insights',
+    name: 'Insights',
+    where: 'Analytics',
+    to: '/insights',
+    keywords: 'habits routines patterns why what changed when you work best holding slipping',
+  },
+  {
     id: 'analytics-subjects',
     name: 'Subjects',
     where: 'Analytics',
     to: '/subjects',
     keywords: 'per subject levels breakdown what you are getting good at',
+  },
+  {
+    id: 'analytics-growth',
+    name: 'Growth',
+    where: 'Analytics',
+    to: '/analytics/growth',
+    keywords: 'growth year on year period timeline graded measures movers how far',
   },
 
   // --- Settings, whose sections are its `:section` parameter. Mirrors the

@@ -1466,72 +1466,6 @@ html[data-theme="dark"] .dash-stat-usual    { color: #6e7681; }
 html[data-theme="dark"] .dash-week-vs.is-up   { color: #3fb950; }
 html[data-theme="dark"] .dash-week-vs.is-down { color: #f85149; }
 
-/* ---- What to change ------------------------------------------------------
-   One line, under the row that reports. Quieter than the "up next" strip at
-   the top of the page: that one is about the next hour and this one is about a
-   habit, so it does not compete with the panels between them for attention.
-   See components/Dashboard/NextMove. */
-.dash-move {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-6);
-    border: 1px solid #EAEAEA;
-    border-radius: var(--radius-lg);
-    background: #FAFBFC;
-}
-.dash-move-ico {
-    flex: none;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-md);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #EFEBFB;
-    color: #6d5ae0;
-}
-.dash-move-ico svg {
-    width: 18px;
-    height: 18px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.9;
-    stroke-linecap: round;
-}
-.dash-move-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.dash-move-label {
-    font-size: var(--text-2xs);
-    font-weight: 700;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: #9297A3;
-}
-.dash-move-title { font-size: var(--text-lg); font-weight: 700; color: #2C302E; }
-.dash-move-why { font-size: var(--text-sm); line-height: 1.5; color: #6C757D; }
-.dash-move-all {
-    flex: none;
-    align-self: center;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: #6d5ae0;
-    text-decoration: none;
-    white-space: nowrap;
-}
-.dash-move-all:hover { text-decoration: underline; }
-
-html[data-theme="dark"] .dash-move { background: #0f141b; border-color: #30363d; }
-html[data-theme="dark"] .dash-move-ico { background: #1b1733; color: #9d8bff; }
-html[data-theme="dark"] .dash-move-title { color: #e6edf3; }
-html[data-theme="dark"] .dash-move-label,
-html[data-theme="dark"] .dash-move-why { color: #8b949e; }
-html[data-theme="dark"] .dash-move-all { color: #9d8bff; }
-
-@media (max-width: 700px) {
-    .dash-move { flex-wrap: wrap; }
-    .dash-move-all { align-self: flex-start; margin-left: var(--space-12); }
-}
-
 html[data-theme="dark"] .dash-week-vs-note { color: #6e7681; }
 
 /* ---- The page -------------------------------------------------------- */
@@ -1556,8 +1490,7 @@ html[data-theme="dark"] .dash-week-vs-note { color: #6e7681; }
 .dash .dash-stat,
 .dash .dash-panel,
 .dash .focus-panel,
-.dash .dash-next,
-.dash .dash-move {
+.dash .dash-next {
     border-radius: var(--dash-card-radius);
     border: 1px solid var(--dash-card-line);
     box-shadow: var(--dash-card-shadow);
@@ -1637,20 +1570,6 @@ html[data-theme="dark"] .dash .dash-stat {
  * similar things apart) that it has no job to do here.
  */
 .dash .dash-insight { background: var(--color-surface); }
-
-/* "Worth changing" is advice rather than a reading, and the one card on the
-   page that ends in a link out. It takes the accent it already uses on its
-   disc, at the same 7%, so it reads as the page's own voice rather than as a
-   fifth figure. */
-.dash .dash-move {
-    background:
-        radial-gradient(90% 200% at 0% 0%,
-            color-mix(in srgb, var(--color-accent) 7%, transparent) 0%,
-            transparent 60%),
-        var(--color-surface);
-    border-color: color-mix(in srgb, var(--color-accent) 16%, var(--dash-card-line));
-    padding: var(--space-5) var(--space-6);
-}
 
 /* The quote is a line of text, not a panel. Boxing it would make the page end
    on a card holding one sentence. */

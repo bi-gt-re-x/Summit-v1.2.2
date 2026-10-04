@@ -309,73 +309,6 @@
 .sb-panel > .ax-panel-head { margin-bottom: var(--space-3); }
 .sb-panel > .ax-panel-note { margin-bottom: var(--space-6); }
 
-.sb-advice {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-}
-
-.sb-advice-item {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-5);
-    padding: var(--sb-pad) var(--sb-pad);
-    border: 1px solid var(--ax-line);
-    border-left-width: 3px;
-    border-radius: var(--radius-md);
-    background: var(--ax-card-2);
-    transition: border-color .14s ease, transform .14s ease;
-}
-
-/* A lift on hover, on a card that is not a link. It is not affordance — there
-   is nothing to click — it is feedback that the pointer is on one row of a
-   list where every row looks alike, which is where a reader loses their place.
-   Two pixels, and it stops for anyone who has asked motion to stop. */
-.sb-advice-item:hover { transform: translateY(-1px); }
-
-@media (prefers-reduced-motion: reduce) {
-    .sb-advice-item { transition: none; }
-    .sb-advice-item:hover { transform: none; }
-}
-
-/* Ranked by what it is worth, and the left edge says which is which without a
-   badge to read. */
-.sb-advice-item.is-first { border-left-color: var(--ax-pink); }
-.sb-advice-item.is-second { border-left-color: var(--ax-amber); }
-.sb-advice-item.is-upkeep { border-left-color: var(--ax-blue); }
-
-/* The rank, filled in its row's own colour rather than outlined in grey. The
-   left edge already carries that colour; a badge in a fourth neutral beside it
-   was one more thing on the card that meant nothing. */
-.sb-advice-rank {
-    display: grid;
-    place-items: center;
-    width: 25px;
-    height: 25px;
-    margin-top: 1px;
-    border-radius: 50%;
-    background: color-mix(in srgb, currentColor 14%, var(--ax-card));
-    font-size: var(--text-xs);
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-}
-
-.sb-advice-item.is-first .sb-advice-rank { color: var(--ax-pink); }
-.sb-advice-item.is-second .sb-advice-rank { color: var(--ax-amber); }
-.sb-advice-item.is-upkeep .sb-advice-rank { color: var(--ax-blue); }
-
-/* Bold and a size up: this is the instruction, and the sentence under it is
-   the qualifier. The page is read top-down and these are the second thing
-   on it. */
-.sb-advice-item strong { font-size: var(--text-lg); font-weight: 700; color: var(--ax-text); }
-.sb-advice-item p { margin: var(--space-1) 0 0; font-size: var(--text-sm); line-height: 1.55; color: var(--ax-muted); }
-
-.sb-advice-item .sb-advice-why { margin-top: var(--space-2); color: var(--ax-faint); }
-.sb-advice-why span { font-weight: 700; }
-
 /* --- Recent work -------------------------------------------------------- */
 .sb-recent {
     list-style: none;
@@ -456,7 +389,6 @@
     gap: var(--space-2);
 }
 .sb-goal-head strong { font-size: var(--text-md); font-weight: 600; color: var(--ax-text); flex: 1; }
-
 
 /* Late, early, or no projection. Amber rather than red for late: a goal that
    lands after its date is a thing to act on, not a failure, and the page has
@@ -1109,16 +1041,6 @@
    curriculum. Tinted so the distinction the wording makes is visible without
    reading the wording. */
 .sb-path-facts .is-yours strong { color: var(--ax-violet); }
-
-.sb-path-open {
-    margin-left: auto;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--ax-violet);
-    text-decoration: none;
-    white-space: nowrap;
-}
-.sb-path-open:hover { text-decoration: underline; }
 
 /* --- Where a subject forks ---------------------------------------------- */
 .sb-branches {

@@ -375,8 +375,10 @@ describe('then and now', () => {
     expect(panel.querySelectorAll('.ax-gp-metric')).toHaveLength(5);
     // The score is a position on a scale nobody designed; the quantity is what
     // actually happened, so both are on the row.
-    expect(within(panel).getAllByText(/22 of 30 days worked/).length).toBeGreaterThan(0);
     expect(within(panel).getAllByText(/11\.5 hrs of a 15\.0 hr goal/).length).toBeGreaterThan(0);
+    // Except consistency: its figure is the Overview's Consistency tile and is
+    // printed once on the page.
+    expect(within(panel).queryByText(/days worked/)).not.toBeInTheDocument();
   });
 
   it('says which basis a quality score came from rather than assuming ratings', async () => {
