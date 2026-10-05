@@ -518,7 +518,7 @@ html.focus-mode .fp-today {
     width: min(100%, 360px);
     padding: var(--space-6) var(--space-6) var(--space-5);
     border-radius: var(--radius-lg);
-    background: #fff;
+    background: var(--color-surface);
     text-align: center;
     box-shadow: 0 24px 70px rgba(16, 24, 40, .28), 0 0 0 1px rgba(16, 24, 40, .06);
     animation: goalfxIn .42s cubic-bezier(.22, 1.3, .38, 1) both;
@@ -674,7 +674,7 @@ html[data-theme="dark"] .goalfx-go:hover { background: #3b4967; }
 }
 
 .task-panel {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border: 1.5px solid #EAEAEA;
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -726,7 +726,7 @@ html[data-theme="dark"] .task-empty { color: #7a828c; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #FFFFFF;
+    background: var(--color-surface);
     padding: var(--space-4) var(--space-4);
     border: 2px solid #C4C4C4;
     border-radius: var(--radius-md);
@@ -873,7 +873,7 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
     height: 18px;
     border: 1.5px solid #A0A0A0;
     border-radius: var(--radius-sm);
-    background: #FFFFFF;
+    background: var(--color-surface);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1139,7 +1139,7 @@ body.easter-shake {
 }
 
 .dash .modal-content {
-    background-color: #FFFFFF;
+    background-color: var(--color-surface);
     margin: 10% auto;
     padding: var(--space-8);
     border: 1px solid #EAEAEA;
@@ -1333,7 +1333,7 @@ html[data-theme="dark"] .cal-suggest-bad .cal-suggest-link { color: #ff9297; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #FFFFFF;
+    background: var(--color-surface);
     padding: var(--space-4) var(--space-4);
     border: 2px solid #C4C4C4;
     transition: all 0.2s ease;
@@ -1352,7 +1352,7 @@ html[data-theme="dark"] .cal-suggest-bad .cal-suggest-link { color: #ff9297; }
     height: 20px;
     border: 2px solid #A38A70; /* Elegant muted gold/brown border */
     border-radius: var(--radius-sm);
-    background: #FFFFFF;
+    background: var(--color-surface);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -1386,7 +1386,7 @@ html[data-theme="dark"] .cal-suggest-bad .cal-suggest-link { color: #ff9297; }
     height: 20px;
     border: 2px solid #A38A70;
     border-radius: var(--radius-sm);
-    background: #FFFFFF;
+    background: var(--color-surface);
     color: transparent;
     cursor: pointer;
     display: flex;
@@ -1461,7 +1461,7 @@ html[data-theme="dark"] .add-task-btn {
     color: #0d1117;
 }
 html[data-theme="dark"] .add-task-btn:hover {
-    background: #ffffff;
+    background: var(--color-surface);
 }
 
 /* Add Task modal */

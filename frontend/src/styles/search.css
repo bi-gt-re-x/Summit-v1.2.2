@@ -29,7 +29,7 @@
     font-size: var(--text-md);
     flex: none;
 }
-.sf-input:focus { outline: none; border-color: #A38A70; background: #FFFFFF; }
+.sf-input:focus { outline: none; border-color: #A38A70; background: var(--color-surface); }
 
 .sf-empty {
     margin: var(--space-2) 2px 2px;
@@ -94,7 +94,7 @@
     place-items: center;
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-md);
-    background: #FFFFFF;
+    background: var(--color-surface);
     color: #6C757D;
     font-size: var(--text-xl);
     line-height: 1;

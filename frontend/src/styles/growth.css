@@ -31,7 +31,7 @@
 /* --- Left: Grade summary card --- */
 .grade-card {
     height: 100%;
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid #e7e9f0;
     border-top: 4px solid var(--grade-color, #c7a24e);   /* graded accent bar */
     border-radius: var(--radius-lg);
@@ -162,7 +162,7 @@
     padding: var(--space-4) var(--space-6);
     border: 1.5px solid #1c1c1c;
     border-radius: var(--radius-full);
-    background: #ffffff;
+    background: var(--color-surface);
     color: #A8845C;
     font-family: var(--font-sans);
     font-size: var(--text-lg);
@@ -601,7 +601,7 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
     white-space: nowrap;
 }
 .gr-seg-opt:hover { color: var(--ink); }
-.gr-seg-opt.is-active { background: #fff; color: var(--ink); box-shadow: var(--shadow-sm); }
+.gr-seg-opt.is-active { background: var(--color-surface); color: var(--ink); box-shadow: var(--shadow-sm); }
 
 /* ---- Long Term Progress --------------------------------------------------
    Four running totals over months. The axis is XP; the other three are scaled

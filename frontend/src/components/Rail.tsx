@@ -27,8 +27,8 @@
  * on, a collapsed rail would swing open and shut on every load.
  *
  * **Three sections, each folding under its heading.** Core is every page of
- * the app, with "Tasks" over the ones where work is done; Personal is the
- * account's own space; Team is where a shared one will go. A search box under
+ * the app; Personal is the reader's three spaces (pages/Space.tsx), each
+ * renamable; Team is where a shared one will go. A search box under
  * the mark opens the top bar's search (utils/searchBus), as does ⌘K. Which
  * sections are folded is kept per device (`SECTIONS_KEY`). None of this is
  * drawn on a phone, where the rail is a bottom bar.
@@ -51,9 +51,9 @@
  * to the top bar's account menu, which is also where the avatar picker went
  * when the plate that used to open it stopped existing.
  */
-import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { useAuth, useMediaQuery, useSettings, useStats, useSubjectIndex } from '@/hooks';
+import { useAuth, useMediaQuery, useSettings, useSpaces, useStats, useSubjectIndex } from '@/hooks';
 import { followedSubjects } from '@/utils/analyticsPrefs';
 import { useChainAccount } from '@/hooks/useChainAccount';
 import { format } from '@/utils';
@@ -124,9 +124,6 @@ interface Tab {
    * a tree that nine other entries pay for.
    */
   menu?: 'analytics';
-  /** A small capitalised label drawn above this entry — "Tasks" over the
-      pages where work is done, under the three that report on it. */
-  heading?: string;
   /**
    * Show this one in the phone's bottom bar.
    *
@@ -228,7 +225,6 @@ const TABS: Tab[] = [
     to: '/tasks',
     phone: true,
     label: 'Tasks',
-    heading: 'Tasks',
     icon: (
       <svg {...stroke}>
         <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
@@ -338,12 +334,11 @@ function onPage(tab: Tab, pathname: string): boolean {
   return Boolean(tab.under?.some((prefix) => pathname.startsWith(prefix)));
 }
 
-const PEOPLE = (
+/** A page with a folded corner: one of the reader's own spaces. */
+const SPACE_ICON = (
   <svg {...stroke}>
-    <circle cx="9" cy="8" r="3.5" />
-    <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
-    <circle cx="17" cy="9" r="2.5" />
-    <path d="M16 14.2a5 5 0 0 1 5.5 4.8" />
+    <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z" />
+    <path d="M14 3v6h6" />
   </svg>
 );
 
@@ -541,6 +536,9 @@ export function Rail() {
     });
   }, []);
   const isOpen = (id: SectionId) => collapsed || sections[id];
+
+  // The three Personal spaces' names, once there is an account to ask about.
+  const { spaces } = useSpaces(status === 'signed-in');
 
   /* The title: the band the level has reached, or the one the hidden chain
      hands out at the end once it has been earned (utils/easterEgg) — a prize
@@ -744,20 +742,23 @@ export function Rail() {
         ) : (
           <>
             <Section id="core" label="Core" open={isOpen('core')} onFold={fold}>
-              {TABS.map((tab) => (
-                <Fragment key={tab.to}>
-                  {tab.heading && <p className="rail-heading">{tab.heading}</p>}
-                  {renderTab(tab)}
-                </Fragment>
-              ))}
+              {TABS.map(renderTab)}
             </Section>
 
             <Section id="personal" label="Personal" open={isOpen('personal')} onFold={fold}>
-              {/* The account's own space. Notes are what is kept in it today. */}
-              <Link className="rail-link" to="/notes" title="General">
-                {PEOPLE}
-                <span>General</span>
-              </Link>
+              {/* Three pages of the reader's own, renamed and written in on
+                  the space page itself. See pages/Space.tsx. */}
+              {spaces.map((space) => (
+                <NavLink
+                  key={space.id}
+                  to={`/spaces/${space.id}`}
+                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
+                  title={space.name}
+                >
+                  {SPACE_ICON}
+                  <span>{space.name}</span>
+                </NavLink>
+              ))}
             </Section>
 
             <Section id="team" label="Team" open={isOpen('team')} onFold={fold}>

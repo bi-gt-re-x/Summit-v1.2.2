@@ -35,7 +35,7 @@ body:has(.rc-page) .app-main {
     --rc-bg: transparent;
     --rc-card: var(--color-surface);
     --rc-card-2: var(--color-surface-2);
-    --rc-raised: #ffffff;
+    --rc-raised: var(--color-surface);
     --rc-line: var(--color-line);
     --rc-line-soft: var(--color-line-soft);
 

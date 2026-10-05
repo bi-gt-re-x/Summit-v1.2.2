@@ -29,6 +29,7 @@ import { setMatchMedia } from '@/test/media';
 import { stats } from '@/test/factories';
 import userEvent from '@testing-library/user-event';
 import { OPEN_SEARCH } from '@/utils/searchBus';
+import { SPACES_CHANGED } from '@/services/spaces';
 import type { MediaControl } from '@/test/media';
 
 /** The same query as the component's, and as the @media block in rail.css. */
@@ -589,13 +590,15 @@ describe('Core, Personal and Team', () => {
       expect(within(core).getByRole('link', { name: label })).toBeInTheDocument();
     });
     const personal = screen.getByRole('region', { name: 'Personal' });
-    expect(within(personal).getByRole('link', { name: 'General' })).toBeInTheDocument();
+    ['Space 1', 'Space 2', 'Space 3'].forEach((name, at) => {
+      expect(within(personal).getByRole('link', { name })).toHaveAttribute('href', `/spaces/${at + 1}`);
+    });
     expect(within(screen.getByRole('region', { name: 'Team' })).getByText('No team yet')).toBeInTheDocument();
   });
 
-  it('labels the pages where work is done', () => {
-    renderWithProviders(<Rail />);
-    expect(screen.getByText('Tasks', { selector: '.rail-heading' })).toBeInTheDocument();
+  it('draws no label inside Core', () => {
+    const { container } = renderWithProviders(<Rail />);
+    expect(container.querySelector('.rail-heading')).toBeNull();
   });
 
   it('folds a section from its heading, and remembers it', async () => {
@@ -607,7 +610,7 @@ describe('Core, Personal and Team', () => {
     expect(head).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByRole('link', { name: 'Calendar' })).not.toBeInTheDocument();
     // Personal and Team are untouched.
-    expect(screen.getByRole('link', { name: 'General' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Space 1' })).toBeInTheDocument();
 
     first.unmount();
     renderWithProviders(<Rail />);
@@ -637,5 +640,18 @@ describe('Core, Personal and Team', () => {
     renderWithProviders(<Rail />);
     expect(screen.queryByRole('region', { name: 'Core' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Search or ask' })).not.toBeInTheDocument();
+  });
+});
+
+describe('the Personal spaces', () => {
+  it('shows a space under the name the reader gave it, as soon as it is saved', () => {
+    renderWithProviders(<Rail />);
+    act(() => {
+      window.dispatchEvent(new CustomEvent(SPACES_CHANGED, {
+        detail: { id: 2, name: 'Reading list', body: '' },
+      }));
+    });
+    expect(screen.getByRole('link', { name: 'Reading list' })).toHaveAttribute('href', '/spaces/2');
+    expect(screen.queryByRole('link', { name: 'Space 2' })).not.toBeInTheDocument();
   });
 });

@@ -64,6 +64,10 @@ SPA_ROUTES = (
     '/growth-tree',
     # Free-form notes. The one page whose contents the app does not score.
     '/notes',
+    # The three Personal spaces in the rail — a name and a page of text each.
+    '/spaces/1',
+    '/spaces/2',
+    '/spaces/3',
     # The focus timer with a pomodoro cycle over it. The session it runs is the
     # account's ordinary one — see src/pages/Timer.tsx.
     '/timer',

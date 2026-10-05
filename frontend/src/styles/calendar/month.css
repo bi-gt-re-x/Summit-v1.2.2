@@ -968,7 +968,7 @@ html[data-theme="dark"] .event-suggest-bad .event-suggest-link { color: #ff9297;
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #ffffff;
+    background: var(--color-surface);
 }
 html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
 .calendar-right .calendar-bottom-box,
@@ -1515,7 +1515,7 @@ html[data-theme="light"] #dailyTasks .daily-focus-input::placeholder { color: #8
 
 /* New mockup elements in light theme */
 html[data-theme="light"] .daily-focus-holder .daily-focus-input {
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid rgba(16, 24, 40, 0.14);
     color: #17181c;
 }
@@ -2295,7 +2295,7 @@ html[data-theme="dark"] .mv-analytics { background: transparent; }
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #ffffff;
+    background: var(--color-surface);
 }
 .mv-fig-ico svg {
     width: 17px;

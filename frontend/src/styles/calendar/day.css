@@ -7,7 +7,7 @@
 .day-header-actions { display: flex; align-items: center; gap: var(--space-2); }
 .day-action-btn {
     display: inline-flex; align-items: center; gap: var(--space-2);
-    border: 1px solid #e5e8ee; background: #fff; border-radius: var(--radius-md);
+    border: 1px solid #e5e8ee; background: var(--color-surface); border-radius: var(--radius-md);
     padding: var(--space-2) var(--space-4); font: inherit; font-size: var(--text-md); font-weight: 600;
     color: #2c302e; cursor: pointer; transition: background .15s ease, border-color .15s ease;
 }
@@ -277,7 +277,7 @@ html[data-theme="dark"] .day-mini-cell.has-done .day-mini-mark { border-color: #
 .day-next-icon {
     flex: none; width: 36px; height: 36px; border-radius: var(--radius-md);
     display: inline-flex; align-items: center; justify-content: center;
-    background: #fff; border: 1px solid #eef0f4;
+    background: var(--color-surface); border: 1px solid #eef0f4;
 }
 .day-next-icon .cal-ico { width: 18px; height: 18px; }
 .day-next-main { flex: 1 1 auto; min-width: 0; }

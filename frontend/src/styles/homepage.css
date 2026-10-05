@@ -136,7 +136,7 @@ html:has(.lp-header) { scroll-behavior: smooth; }
     font-size: var(--text-md);
     font-weight: 600;
     cursor: pointer;
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid #d7dce3;
     border-radius: var(--radius-md);
     color: #1f2733;
@@ -175,7 +175,7 @@ html:has(.lp-header) { scroll-behavior: smooth; }
     font-size: var(--text-md);
     font-weight: 600;
     cursor: pointer;
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid #d7dce3;
     border-radius: var(--radius-md);
     color: #1f2733;
@@ -224,7 +224,7 @@ html:has(.lp-header) { scroll-behavior: smooth; }
     font-weight: 600;
     color: #1f2733;
     text-decoration: none;
-    background: #ffffff;
+    background: var(--color-surface);
     border: 1px solid #d7dce3;
     border-radius: var(--radius-md);
     transition: all 0.2s ease;
@@ -388,7 +388,7 @@ html[data-theme="dark"] .auth-btn-primary {
 }
 
 html[data-theme="dark"] .auth-btn-primary:hover {
-    background: #ffffff;
+    background: var(--color-surface);
 }
 
 html[data-theme="dark"] #greetingText {

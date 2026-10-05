@@ -227,7 +227,7 @@
 
     box-sizing: border-box;
 
-    background: white;
+    background: var(--color-surface);
 
     cursor: pointer;
 
@@ -257,7 +257,7 @@
 
     color: #333;
 
-    background: white;
+    background: var(--color-surface);
 
     cursor: pointer;
 
@@ -518,7 +518,7 @@ html[data-theme="light"] .form-group input[type="time"],
 html[data-theme="light"] .time-select {
     border: 2px solid #c4a875;
     color: #2c2013;
-    background: #ffffff;
+    background: var(--color-surface);
 }
 html[data-theme="light"] .form-group input:focus,
 html[data-theme="light"] .time-select:focus {
@@ -648,7 +648,7 @@ html[data-theme="dark"] .calendar-container .modal-body::-webkit-scrollbar-thumb
 .wk-card-pop {
     position: fixed; z-index: 1200; min-width: 118px;
     display: flex; flex-direction: column; padding: var(--space-1) 0;
-    background: #fff; border: 1px solid #e3e6ee; border-radius: var(--radius-md);
+    background: var(--color-surface); border: 1px solid #e3e6ee; border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg); overflow: hidden;
 }
 .wk-card-pop .wk-dd-item {
@@ -714,7 +714,7 @@ html[data-theme="dark"] .wk-card-pop .wk-dd-del { color: #ff8a86; }
 .wk-overlap-close:hover { background: rgba(255,255,255,.34); }
 
 .wk-overlap-reveal {
-    background: #fff; color: #8f302e; border: none;
+    background: var(--color-surface); color: #8f302e; border: none;
     border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); cursor: pointer;
     font: inherit; font-size: var(--text-md); font-weight: 700; width: 100%;
 }

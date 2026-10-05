@@ -33,6 +33,7 @@ API_MODULES = (
     'quote',
     'subjects',
     'notes',
+    'spaces',
     'records',
     'settings',
     'achievements',

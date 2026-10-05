@@ -36,3 +36,4 @@ export type { UseSkillAttempts } from './useSkillAttempts';
 export { useTheme } from './useTheme';
 export { useStats } from './useStats';
 export { useUserData } from './useUserData';
+export { useSpaces } from './useSpaces';

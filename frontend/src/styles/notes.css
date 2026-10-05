@@ -40,7 +40,7 @@ body:has(.nt-page) .app-main {
     --nt-bg: transparent;
     --nt-card: var(--color-surface);
     --nt-card-2: var(--color-surface-2);
-    --nt-raised: #ffffff;
+    --nt-raised: var(--color-surface);
     --nt-line: var(--color-line);
     --nt-line-soft: var(--color-line-soft);
 

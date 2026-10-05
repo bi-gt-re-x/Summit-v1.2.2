@@ -806,8 +806,8 @@ html[data-theme="dark"] .stx-page {
    ========================================================================== */
 .stx-page--lattice {
     --lat-page: #f7f8fb;
-    --lat-panel: #ffffff;
-    --lat-field: #ffffff;
+    --lat-panel: var(--color-surface);
+    --lat-field: var(--color-surface);
     --lat-grid: #e9ecf3;
     --lat-line: var(--color-line);
     --lat-line-soft: var(--color-line-soft);

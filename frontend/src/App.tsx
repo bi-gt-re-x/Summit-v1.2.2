@@ -33,6 +33,7 @@ const Analytics = lazy(() => import('@/pages/Analytics'));
 const SubjectAnalytics = lazy(() => import('@/pages/SubjectAnalytics'));
 const SkillTrees = lazy(() => import('@/pages/SkillTrees'));
 const Notes = lazy(() => import('@/pages/Notes'));
+const Space = lazy(() => import('@/pages/Space'));
 const Timer = lazy(() => import('@/pages/Timer'));
 const Achievements = lazy(() => import('@/pages/Achievements'));
 const Settings = lazy(() => import('@/pages/Settings'));
@@ -282,6 +283,9 @@ export default function App() {
                   describe. */}
               <Route path="/skill-trees" element={<SkillTrees />} />
               <Route path="/notes" element={<Notes />} />
+              {/* The three Personal spaces in the rail. An id outside 1-3
+                  goes to the first. */}
+              <Route path="/spaces/:spaceId" element={<Space />} />
               <Route path="/timer" element={<Timer />} />
               {/* One page, two tabs: personal bests and the badge wall. It was
                   called Records until the badges' own name took over, so the

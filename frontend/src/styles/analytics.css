@@ -6118,7 +6118,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     --ax-gp-overall: #64748b;
 
     --ax-gp-ground: #eef1f6;
-    --ax-gp-card: #ffffff;
+    --ax-gp-card: var(--color-surface);
     --ax-gp-line: #dfe4ec;
     --ax-gp-rule: #cbd5e1;
 
