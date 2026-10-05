@@ -5350,7 +5350,28 @@
           "detail": "A letter beside a number means multiplication with the sign left out. Substitute with brackets around the value — 3(-1) - 2(0) — and the sign errors disappear. The same expression gives a different answer for every pair of values, which is the whole point of writing it with letters.",
           "proof": "7 the first time and -3 the second.",
           "pitfall": "Reading 3a as 'three then a' rather than as 3 multiplied by a.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate 3a - 2b when a = 5 and b = 4.",
+              "answer": "7."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is 3a - 2b when a = -1 and b = 0?",
+              "answer": "-3."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "If a = 2 and b = 3, what is the value of 3a - 2b and why can't you read 3a as the number 3 followed by a?",
+              "answer": "3a - 2b = 0; because 3a means 3 multiplied by a, not the digits 3 and a.",
+              "hint": "Remember that juxtaposition of a number and a letter denotes multiplication."
+            }
+          ]
         },
         {
           "title": "Collect Like Terms",
@@ -5359,7 +5380,28 @@
           "detail": "Two terms are alike only if their letters and powers match exactly. Underline each kind in a different colour on the first few, then add the coefficients and leave the letter part untouched. A lone number is its own kind and cannot join anything.",
           "proof": "3x + 10y - 4, and a^2 + 3a.",
           "pitfall": "Adding x and x^2 together because both involve x.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Simplify 4y - 2y.",
+              "answer": "2y."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Simplify 5x + 3y - 2x + 7y - 4.",
+              "answer": "3x + 10y - 4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Simplify 3x^2 + 2x - x^2 + 5.",
+              "answer": "2x^2 + 2x + 5.",
+              "hint": "Only combine terms that have the same exponent on the same variable."
+            }
+          ]
         },
         {
           "title": "Expand a Bracket",
@@ -5368,7 +5410,35 @@
           "detail": "Every term inside gets multiplied, and the sign in front of the bracket travels with the multiplier. Draw the arrows the first dozen times. When two expansions are subtracted, expand both fully before collecting anything.",
           "proof": "8x - 12, -10 + 2x, and x + 8.",
           "pitfall": "Multiplying only the first term inside the bracket and copying the rest across.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Expand 2(3x + 4).",
+              "answer": "6x + 8."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Expand -5(2 - x).",
+              "answer": "-10 + 5x."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Expand and simplify 4(2x - 1) - 3(x + 5).",
+              "answer": "5x - 19.",
+              "hint": "Distribute each term then combine like terms."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Expand and simplify -2(3x - 4) + 7(x + 2).",
+              "answer": "x + 22.",
+              "hint": "Watch the signs when distributing."
+            }
+          ]
         },
         {
           "title": "Factor Out a Common Term",
@@ -5377,7 +5447,35 @@
           "detail": "Find the highest number dividing every coefficient, and the lowest power of each letter appearing in every term. Take both out together. Expand your answer back to check — it must return the original exactly, not something close.",
           "proof": "6(2x + 3), 5a(a - 3), and 3x(2y + 3).",
           "pitfall": "Taking out a factor that only divides some of the terms.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Factor the greatest common factor from 8m + 12.",
+              "answer": "4(2m + 3)."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Factor the greatest common factor from 9p^2 - 6p.",
+              "answer": "3p(3p - 2)."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Factor the expression 14ab + 21a.",
+              "answer": "7a(2b + 3).",
+              "hint": "Find the largest factor common to both terms."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Factor 20x^2y + 30xy^2.",
+              "answer": "10xy(2x + 3y).",
+              "hint": "Factor out the highest power of each variable that appears in all terms."
+            }
+          ]
         },
         {
           "title": "Rearrange a Formula",
@@ -5395,7 +5493,41 @@
           "detail": "Write down what the letter means before anything else: 'let n be the number of tickets'. Translate the sentence clause by clause in the order it is written. Check the finished expression against a case you can count by hand.",
           "proof": "8n + 3, and n = 7.",
           "pitfall": "Defining the letter loosely, so 'tickets' means the count in one line and the cost in the next.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write an expression for the cost of n tickets at $8 each plus a $3 booking fee.",
+              "answer": "8n + 3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If each apple costs $2 and you buy a bags of apples, write the total cost expression.",
+              "answer": "2a."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "The total cost of n tickets is $59. Write an equation and solve for n.",
+              "answer": "n = 7."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A cinema charges a $5 booking fee plus $10 per ticket. If the total charge is $85, how many tickets were bought? Write the equation and solve.",
+              "answer": "n = 8.",
+              "hint": "Set up 5 + 10n = 85."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A school fundraiser sells bracelets for $4 each and collects a $20 donation. If they raised $156 total, how many bracelets were sold? Write the equation and find the number.",
+              "answer": "n = 34.",
+              "hint": "Equation: 4n + 20 = 156."
+            }
+          ]
         }
       ]
     },
@@ -5580,7 +5712,28 @@
           "detail": "When one choice does not restrict the next, the totals multiply. Draw two stages of a tree to see why: each of the 4 starters branches into all 6 mains. Add only when the choices are alternatives rather than stages.",
           "proof": "72, from 4 x 6 x 3.",
           "pitfall": "Adding the options instead of multiplying, giving 13.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A smoothie bar offers 2 fruit bases, 3 milk types, and 4 sweeteners. How many different smoothies can be made?",
+              "answer": "24."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A restaurant offers 5 appetizers, 7 main courses, and 2 desserts. How many distinct three‑course meals can be ordered?",
+              "answer": "70."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A combo includes choosing one of 3 sauces, one of 4 breads, and one of 5 cheeses. How many possible combos are there?",
+              "answer": "60.",
+              "hint": "Multiply the numbers of options for each choice."
+            }
+          ]
         },
         {
           "title": "Factorials and Arrangements",
@@ -5589,7 +5742,33 @@
           "detail": "The first position has n choices, the next n-1, and so on, which is n factorial. It grows brutally fast — 10 objects already give over three million arrangements — so a small answer to an arrangement question is usually a wrong one.",
           "proof": "120 and 24.",
           "pitfall": "Reaching for a formula when the question is a plain factorial.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many ways can 3 different keys be arranged on a hook?",
+              "answer": "6."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "In how many orders can 4 distinct cards be dealt face up?",
+              "answer": "24."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many possible orderings are there for 6 unique trophies on a shelf?",
+              "answer": "720."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A theater has 5 distinct seats in a row. In how many ways can 5 different audience members be seated?",
+              "answer": "120."
+            }
+          ]
         },
         {
           "title": "Order Matters: Permutations",
@@ -5598,7 +5777,41 @@
           "detail": "Pick r from n with order mattering: n! over (n-r)!. The test is whether swapping two chosen items gives a different outcome. Gold and silver swapped is a different podium, so order matters here.",
           "proof": "336, from 8 x 7 x 6.",
           "pitfall": "Dividing by 3 factorial, which would be right only if the medals were identical.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "From 3 runners, how many ways can gold and silver medals be awarded?",
+              "answer": "6."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "How many ordered pairs can be formed by choosing a president and a treasurer from 4 club members?",
+              "answer": "12."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "In a race with 9 participants, how many possible podium finishes (gold, silver, bronze) are there?",
+              "answer": "504."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "If among 8 runners, runner A cannot win gold, how many ways can gold, silver, and bronze be awarded?",
+              "answer": "294.",
+              "hint": "First choose gold excluding A, then continue multiplying."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Why is 8! / 3! not the correct count for awarding distinct gold, silver, and bronze medals to 8 runners?",
+              "answer": "Because the medals are distinct, you must count permutations, not combinations.",
+              "hint": "Consider that gold, silver, bronze are different."
+            }
+          ]
         },
         {
           "title": "Order Does Not: Combinations",
@@ -5607,7 +5820,41 @@
           "detail": "Combinations are permutations divided by the orderings of the chosen group: n! over r!(n-r)!. Ask the swap test again — two committee members swapped is the same committee, so divide. The two formulas differ by exactly that r! factor.",
           "proof": "56, from 8!/(3!5!).",
           "pitfall": "Using the permutation count, which counts the same committee six times over.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many ways are there to choose 2 people from a group of 5?",
+              "answer": "10."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "How many different 3‑person committees can be formed from 6 candidates?",
+              "answer": "20."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "How many ways can a committee of 4 be chosen from 10 people?",
+              "answer": "210."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Why does using the permutation formula 10P4 give a wrong count for choosing a 4‑person committee from 10 people?",
+              "answer": "Because permutations count order, each unordered committee is counted 4! = 24 times.",
+              "hint": "Think about what extra factor permutations introduce."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "If a committee must include Alice, how many ways can the remaining 2 members be chosen from the other 7 people?",
+              "answer": "21.",
+              "hint": "Fix Alice first, then choose 2 from the remaining 7."
+            }
+          ]
         },
         {
           "title": "Repetition Allowed",
@@ -5616,7 +5863,41 @@
           "detail": "With repetition the count is n to the power r, because every position has the full n choices. Without it the pool shrinks by one each time. Read the question for the word 'distinct' or 'different' before choosing.",
           "proof": "10000 and 5040.",
           "pitfall": "Applying a no-repeat formula to a question that never forbade repeats.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Count the 1‑digit codes that can be formed from the digits 0‑9 when repeats are allowed.",
+              "answer": "10."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "How many 2‑digit PINs can be created using the digits 0‑9 with repeats allowed?",
+              "answer": "100."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Count the 5‑digit PINs that can be formed from the digits 0‑9 when repeats are allowed.",
+              "answer": "100000."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "How many 4‑digit PINs can be formed from the digits 0‑9 with repeats allowed if the first digit cannot be zero?",
+              "answer": "9000.",
+              "hint": "Treat the first position separately (9 choices) and the remaining three positions (10 choices each)."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "In how many ways can you select 7 scoops of ice‑cream from 4 flavors when any flavor may be chosen more than once?",
+              "answer": "120.",
+              "hint": "Use stars‑and‑bars: choose 3 dividers among 10 positions."
+            }
+          ]
         },
         {
           "title": "Count the Complement",
@@ -5634,7 +5915,39 @@
           "detail": "Inclusion-exclusion: add the sets, subtract the intersection, because everyone in both was counted twice. Draw the two circles and label the three regions — 11, 7 and 8 here — and the arithmetic checks itself against the total.",
           "proof": "26, from 18 + 15 - 7.",
           "pitfall": "Adding the two groups and reporting 33, which exceeds the class.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a group of 10 people, 4 play piano and 3 play violin, with no one playing both. How many play at least one instrument?",
+              "answer": "7."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "In a club of 20 members, 12 like chess and 8 like checkers, with 5 liking both. How many like at least one game?",
+              "answer": "15."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Of 30 students, 18 take French and 15 take Spanish, and 7 take both. Count those taking at least one language.",
+              "answer": "26."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "In a survey of 50 people, 28 own a cat, 22 own a dog, and 10 own both. How many own at least one pet?",
+              "answer": "40."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A library has 40 books on history, 30 on science, and 12 are both history and science. How many books are on at least one of these subjects?",
+              "answer": "58."
+            }
+          ]
         },
         {
           "title": "Choose the Right Count",
@@ -5643,7 +5956,47 @@
           "detail": "Two questions decide it every time: does order matter, and is repetition allowed. Answer both in writing before picking a formula. Most errors here are not arithmetic — they are answering the wrong one of the four cases.",
           "proof": "Factorial, combination, and n to the power r: 720, 45 and 17576.",
           "pitfall": "Pattern-matching on the numbers in the question rather than on its structure.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What counting method counts the number of ways to arrange 5 distinct toys in a line?",
+              "answer": "Permutation."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What counting method counts the number of ways to choose 3 students from a class of 12?",
+              "answer": "Combination."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Name the counting method for picking 2 books out of 10 different books where order does not matter.",
+              "answer": "Combination."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Name the counting method for creating 3‑letter codes from the 26 letters of the alphabet when letters may be repeated.",
+              "answer": "Permutation with repetition."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Explain why the problem ‘How many ways can 6 people be seated around a circular table?’ requires a different counting method than ‘Seating 6 people in a row.’.",
+              "answer": "Because rotations are considered identical, we use circular permutations: (6‑1)! = 120, not 6! = 720.",
+              "hint": "Consider identical arrangements under rotation."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "A password must be 4 characters long, using the 10 digits, but no digit may appear more than once. Explain which counting method applies and why the simple n^r formula is not suitable.",
+              "answer": "We use permutations without repetition: 10·9·8·7 = 5040, because each choice reduces the available digits, so repetitions are not allowed.",
+              "hint": "Think about decreasing choices after each position."
+            }
+          ]
         }
       ]
     },
@@ -5666,7 +6019,28 @@
           "detail": "The first number is always the horizontal one. Quadrants are numbered anticlockwise from the top right. A point with a zero coordinate lies on an axis and belongs to no quadrant, which is worth saying rather than guessing at.",
           "proof": "Fourth, second, and on the positive y-axis between the first and second.",
           "pitfall": "Reading (3, -2) as three up and two across, which lands in the wrong quadrant.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What quadrant does the point (2, -3) lie in?",
+              "answer": "Fourth quadrant."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Plot the points (3, -2), (-4, 1) and (0, 5). State the quadrant for each point.",
+              "answer": "Fourth quadrant, second quadrant, on the positive y‑axis between the first and second quadrants."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "If a point is read as \"three up and two across\" instead of (3, -2), which quadrant would be incorrectly identified? Explain the error.",
+              "answer": "It would be placed in the first quadrant, but the correct point (3, -2) is in the fourth quadrant; the mistake is swapping the sign of the y‑coordinate.",
+              "hint": "Consider the sign of the y‑value when reading the ordered pair."
+            }
+          ]
         },
         {
           "title": "Distance Between Points",
@@ -5675,7 +6049,35 @@
           "detail": "The distance is Pythagoras on the horizontal and vertical gaps. Subtract in either order — the squaring removes the sign. Sketching the right triangle before computing makes an impossible answer obvious, because the distance must exceed either gap alone.",
           "proof": "5 and 5, both from 3-4-5 right triangles.",
           "pitfall": "Forgetting to square the differences, and subtracting the coordinates instead.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find the distance between (1, 1) and (4, 5).",
+              "answer": "5."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Find the distance between (-2, 3) and (1, -1).",
+              "answer": "5."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Find the distance between (0, 0) and (2, 3).",
+              "answer": "√13.",
+              "hint": "Square each coordinate difference, add them, then take the square root."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Find the distance between (-5, -2) and (3, 4).",
+              "answer": "10.",
+              "hint": "Compute the differences, square them (signs disappear), sum, and take the square root."
+            }
+          ]
         },
         {
           "title": "Midpoint of a Segment",
@@ -5684,7 +6086,35 @@
           "detail": "Average the x values and average the y values. Going backwards, the midpoint is as far from A as B is from the midpoint, so double the gap. Check by confirming your answer is the same distance from both ends.",
           "proof": "(5, 4), and B is (7, 9).",
           "pitfall": "Subtracting the coordinates rather than averaging them.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the midpoint of (0,0) and (4,6)?",
+              "answer": "(2, 3)."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Find the midpoint of (‑2, 5) and (6, ‑1).",
+              "answer": "(2, 2)."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Given points P(1, 4) and Q(7, ‑2), a student subtracts the coordinates to get (6,‑6) and claims this is the midpoint. Identify the error and give the correct midpoint.",
+              "answer": "The midpoint is ((1+7)/2, (4+‑2)/2) = (4, 1); the error was using subtraction instead of averaging.",
+              "hint": "Midpoint uses (x₁+x₂)/2, (y₁+y₂)/2."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Point A is (3, ‑5) and the midpoint of segment AB is (8, 2). Determine point B and explain why simply adding the coordinates of A and the midpoint is incorrect.",
+              "answer": "B = (13, 9); because midpoint = ((x_A+x_B)/2, (y_A+y_B)/2), so x_B = 2·8‑3 = 13 and y_B = 2·2‑(‑5) = 9.",
+              "hint": "Use the midpoint formula solved for the unknown endpoint."
+            }
+          ]
         },
         {
           "title": "Parallel and Perpendicular",
@@ -5693,7 +6123,35 @@
           "detail": "Parallel lines share a gradient. Perpendicular gradients multiply to -1, so one is the negative reciprocal of the other. Rearrange both equations into y = mx + c before comparing, or you are comparing coefficients that are not gradients.",
           "proof": "Parallel to the first, since both have gradient 3; perpendicular to the second, since 3 x -1/3 is -1.",
           "pitfall": "Taking the negative of a gradient as perpendicular without also inverting it.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Are the lines y = 2x + 3 and y = 2x – 5 parallel, perpendicular, or neither?",
+              "answer": "Parallel."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Do the lines y = –½x + 4 and y = 2x – 1 have a perpendicular relationship?",
+              "answer": "Perpendicular."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Line L₁ has gradient 4. Which of the following gradients would make a line perpendicular to L₁: –4, –¼, ¼, or 4? Explain the correct choice.",
+              "answer": "–¼; perpendicular gradients are negative reciprocals, so the gradient must be –1/4.",
+              "hint": "Recall the negative reciprocal rule."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Two lines have gradients m₁ = 3 and m₂ = –1/3. A student claims they are parallel because the numbers look similar. Identify the mistake and state the correct relationship.",
+              "answer": "They are perpendicular; the product 3 × (‑1/3) = –1, which is the condition for perpendicular lines.",
+              "hint": "Check the product of the gradients."
+            }
+          ]
         },
         {
           "title": "The Equation of a Circle",
@@ -5702,7 +6160,41 @@
           "detail": "The form is (x - h)^2 + (y - k)^2 = r^2. The signs inside flip, so (y + 3)^2 means k is -3. The right-hand side is the radius squared, which is why 25 gives a radius of 5.",
           "proof": "Centre (2, -3) and radius 5; the second is x^2 + (y - 4)^2 = 36.",
           "pitfall": "Reading the right-hand side as the radius rather than as its square.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the centre of the circle (x - 5)^2 + (y - 2)^2 = 9?",
+              "answer": "(5, 2)."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the radius of the circle x^2 + y^2 = 16?",
+              "answer": "4."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "State the centre and radius of (x + 1)^2 + (y - 4)^2 = 49.",
+              "answer": "Centre (-1, 4), radius 7."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Write the equation of the circle with centre (3, -2) and radius \\sqrt{13}.",
+              "answer": "(x - 3)^2 + (y + 2)^2 = 13.",
+              "hint": "Square the radius when forming the equation."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Given the equation (x - 2)^2 + (y + 3)^2 = 25, rewrite it in expanded form and identify any mistake if the right‑hand side were interpreted as the radius.",
+              "answer": "Expanded: x^2 - 4x + 4 + y^2 + 6y + 9 = 25; radius is \\sqrt{25}=5, not 25.",
+              "hint": "Remember the RHS is the square of the radius."
+            }
+          ]
         },
         {
           "title": "Where Two Graphs Meet",
@@ -5711,7 +6203,41 @@
           "detail": "Set the two expressions for y equal, collect everything on one side, and solve. Each solution for x gives a point, so substitute back into whichever equation is simpler. A quadratic and a line meet twice, once or not at all, and the discriminant says which.",
           "proof": "At (-1, 0) and (2, 3), from solving x^2 - x - 2 = 0.",
           "pitfall": "Solving for x and forgetting to compute the matching y, so the answer is not a point.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is y when x = 0 for the line y = x + 1?",
+              "answer": "1."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the y‑value on the parabola y = x^2 - 1 when x = 2?",
+              "answer": "3."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the intersection point(s) of y = x + 1 and y = x^2 - 1.",
+              "answer": "(-1, 0) and (2, 3)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve for the intersection of y = -x + 4 and y = x^2 - 4x + 3, and give the exact points.",
+              "answer": "((3+√13)/2, (5-√13)/2) and ((3-√13)/2, (5+√13)/2).",
+              "hint": "Set the two expressions equal and solve the resulting quadratic."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "The line y = 2x - 1 meets the parabola y = x^2 - 4 at two points. Find the points and state why forgetting to compute y would be an error.",
+              "answer": "Points are (3, 5) and (-1, -3); without the y‑coordinates you would not have the full intersection points.",
+              "hint": "First solve for x, then substitute back to get y."
+            }
+          ]
         },
         {
           "title": "Prove a Shape from Coordinates",
@@ -5720,7 +6246,49 @@
           "detail": "A drawing suggests; the arithmetic proves. Equal opposite sides give a parallelogram, and one right angle upgrades it to a rectangle. State which fact you are using for each claim rather than computing everything and hoping the conclusion follows.",
           "proof": "Opposite sides have equal length 4 and 3, and adjacent gradients are 0 and undefined, so the corners are right angles.",
           "pitfall": "Concluding from the drawing that the angles are right rather than showing it from the numbers.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the distance between (0,0) and (3,4)?",
+              "answer": "5."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the gradient of the line through (2,1) and (2,5)?",
+              "answer": "undefined."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Using the distance formula, find the length of the side between (0,0) and (4,0).",
+              "answer": "4.",
+              "hint": "Δx = 4, Δy = 0"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Show that the gradient of the line through (0,0) and (4,3) is 3/4.",
+              "answer": "3/4.",
+              "hint": "Gradient = Δy/Δx"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Prove that the quadrilateral with vertices (0,0), (4,0), (4,3), (0,3) is a rectangle by demonstrating both that opposite sides are equal in length and that adjacent sides are perpendicular using gradients.",
+              "answer": "Opposite sides: (0,0)-(4,0) length 4 and (4,3)-(0,3) length 4; (4,0)-(4,3) length 3 and (0,0)-(0,3) length 3. Gradients: horizontal sides have gradient 0, vertical sides have undefined gradient. Since a horizontal line is perpendicular to a vertical line, each corner is a right angle. With equal opposite sides and right angles, the shape is a rectangle.",
+              "hint": "Compute lengths of each side then the gradients of each side."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Given points A(0,0), B(4,0), C(4,3), D(0,3), prove that diagonal AC is equal in length to diagonal BD and use this to confirm the shape is a rectangle.",
+              "answer": "AC length = sqrt((4‑0)² + (3‑0)²) = 5; BD length = sqrt((0‑4)² + (3‑0)²) = 5. The diagonals are equal. Combined with the fact that one adjacent pair of sides (e.g., AB and BC) are perpendicular (gradient 0 and undefined), the quadrilateral satisfies the definition of a rectangle.",
+              "hint": "Find both diagonals using the distance formula."
+            }
+          ]
         }
       ]
     },
@@ -5903,7 +6471,35 @@
           "detail": "Multiplying adds the indices, dividing subtracts them, and a power of a power multiplies them. All three need the same base, so 2^3 x 3^2 combines into nothing. Expanding a small case by hand settles which rule applies.",
           "proof": "2^8, 3^2 and 5^6.",
           "pitfall": "Multiplying the indices when the powers are multiplied, so 2^3 x 2^5 becomes 2^15.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Simplify 2^2 x 2^3.",
+              "answer": "32."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Simplify (5^3)/(5^1).",
+              "answer": "25."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Simplify (3^2)^4.",
+              "answer": "6561.",
+              "hint": "Multiply the exponents."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Simplify 2^4 x 2^-2.",
+              "answer": "4.",
+              "hint": "Subtract the exponents when a negative exponent appears."
+            }
+          ]
         },
         {
           "title": "Zero and Negative Powers",
@@ -5912,7 +6508,35 @@
           "detail": "Anything non-zero to the power 0 is 1, which follows from dividing a power by itself. A negative index is a reciprocal, not a negative number. A negative index on a fraction flips it, then applies the positive power.",
           "proof": "1, 1/8 and 9/4.",
           "pitfall": "Reading 2^-3 as -8, treating the negative index as a negative answer.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate 5^0.",
+              "answer": "1."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Evaluate (3/4)^0.",
+              "answer": "1."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Evaluate 4^-2.",
+              "answer": "1/16.",
+              "hint": "Write as 1/(4^2)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Evaluate (2/5)^-3.",
+              "answer": "125/8.",
+              "hint": "Invert the fraction and raise to the positive exponent."
+            }
+          ]
         },
         {
           "title": "Fractional Powers",
@@ -5921,7 +6545,41 @@
           "detail": "The denominator of the index is the root and the numerator is the power. Take the root first so the numbers stay small: 16^(3/4) is the fourth root of 16, which is 2, then cubed to 8. The other order gives the same answer through far uglier arithmetic.",
           "proof": "3, 2 and 8.",
           "pitfall": "Taking the root of the whole thing after applying the power, which makes the arithmetic much harder than it needs to be.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Evaluate 4^(1/2).",
+              "answer": "2."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Evaluate 27^(1/3).",
+              "answer": "3."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Evaluate 16^(3/4).",
+              "answer": "8."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Evaluate 32^(2/5).",
+              "answer": "4.",
+              "hint": "Take the fifth root then square."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Evaluate 81^(3/4).",
+              "answer": "27.",
+              "hint": "First take the fourth root."
+            }
+          ]
         },
         {
           "title": "What a Logarithm Is",
@@ -5930,7 +6588,41 @@
           "detail": "A logarithm answers 'what power gives this'. So log base b of n is the exponent you raise b to in order to reach n. Reading every log question back as the exponential it came from is the fastest way to evaluate it.",
           "proof": "log base 2 of 32 is 5, and the second is 4.",
           "pitfall": "Losing track of which number is the base and which is the answer.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Rewrite 3^2 = 9 as a logarithm.",
+              "answer": "log_{3}9 = 2."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is log base 5 of 125?",
+              "answer": "3."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Rewrite 4^3 = 64 as a logarithm, then evaluate log base 2 of 16.",
+              "answer": "log_{4}64 = 3; log_{2}16 = 4."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Rewrite 9^2 = 81 as a logarithm, then express 81 as 3^k.",
+              "answer": "log_{9}81 = 2; 81 = 3^4.",
+              "hint": "First change to a log, then write 81 as a power of 3."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Rewrite 16 = 2^4 as a logarithm, then find log base 4 of 2.",
+              "answer": "log_{2}16 = 4; log_{4}2 = 1/2.",
+              "hint": "Remember the base is the number you raise to get the argument."
+            }
+          ]
         },
         {
           "title": "The Log Laws",
@@ -5939,7 +6631,39 @@
           "detail": "A product becomes a sum, a quotient becomes a difference, and a power comes out as a multiplier. There is no law for the log of a sum. Testing a law on small numbers — log 8 - log 2 against log 4 — is the check that catches the invented ones.",
           "proof": "log x + 2 log y, and log 4.",
           "pitfall": "Turning log(x + y) into log x + log y, which is not a law and is not true.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write log base 10 of 20 as a sum of logs of its prime factors.",
+              "answer": "2 log_{10}2 + log_{10}5."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Combine log base 10 of 50 minus log base 10 of 2 into a single logarithm.",
+              "answer": "log_{10}25."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Express log base 10 of (x y^2) as a sum of simpler logarithms.",
+              "answer": "log_{10}x + 2 log_{10}y."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Split log base 10 of (a^3 b / c^2) into separate logarithms.",
+              "answer": "3 log_{10}a + log_{10}b - 2 log_{10}c."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Combine log base 10 of 8 + log base 10 of 4 - 2 log base 10 of 2 into a single logarithm.",
+              "answer": "log_{10}8."
+            }
+          ]
         },
         {
           "title": "Solve With Logs",
@@ -5948,7 +6672,40 @@
           "detail": "Take the log of both sides, then bring the exponent down as a multiplier. The base does not matter as long as both sides use the same one. Substitute your answer back into the original to confirm it is close to 50.",
           "proof": "x = log 50 / log 3, which is 3.561.",
           "pitfall": "Dividing 50 by 3 because the 3 looks like a coefficient.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "If 2^x = 8, what is x?",
+              "answer": "3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Solve 10^x = 0.01.",
+              "answer": "-2."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Solve 3^x = 50, give the answer to three decimal places.",
+              "answer": "3.561."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve 5^{2x} = 125.",
+              "answer": "x = 1.5.",
+              "hint": "Rewrite 125 as 5^3."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Solve 2^{x+1} = 32 and explain why you cannot divide both sides by 2 directly.",
+              "answer": "x = 4; because the exponent, not a coefficient, must be handled using logarithms or rewriting."
+            }
+          ]
         },
         {
           "title": "Growth and Decay",
@@ -6144,7 +6901,35 @@
           "detail": "A function sends each input to exactly one output. On a graph that is the vertical line test: any vertical line may cross at most once. Two outputs for one input is the only thing that disqualifies a rule, so many-to-one is fine.",
           "proof": "Only y = x^2; the other two give two y values for a single x.",
           "pitfall": "Applying the vertical line test to the wrong axis and rejecting a perfectly good function.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does the equation y = 3x + 2 define y as a function of x?",
+              "answer": "Yes."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Is the graph consisting of the line y = x together with the isolated point (0,1) a function y(x)?",
+              "answer": "No."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Consider the relation defined by x^2 + y^2 = 4. Does it define y as a function of x? Explain why.",
+              "answer": "No, because for many x values there are two corresponding y values (positive and negative).",
+              "hint": "Try the vertical line test."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "The relation x = y^2 is given. Does it define y as a function of x? Explain the mistake if one applies the vertical line test to x.",
+              "answer": "No, because for a given x there are two y values (±√x); the vertical line test must be applied to vertical lines, not horizontal.",
+              "hint": "Remember which variable is independent."
+            }
+          ]
         },
         {
           "title": "Function Notation",
@@ -6153,7 +6938,35 @@
           "detail": "f(x) names a machine, and whatever sits in the bracket goes everywhere x appears. Substitute with brackets, then expand. Feeding in an expression rather than a number is the same operation and is where the notation starts earning its keep.",
           "proof": "29, -1, and 2a^2 + 4a - 1.",
           "pitfall": "Reading f(a + 1) as f(a) + 1, which is not what the notation says.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Given f(x)=2x^2-3, what is f(0)?",
+              "answer": "-3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Given f(x)=2x^2-3, compute f(2).",
+              "answer": "5."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Given f(x)=2x^2-3, find f(3x).",
+              "answer": "18x^2-3.",
+              "hint": "Replace x by 3x."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Given f(x)=2x^2-3, evaluate f(a+1).",
+              "answer": "2a^2+4a-1.",
+              "hint": "Do not split the parentheses."
+            }
+          ]
         },
         {
           "title": "Domain and Range",
@@ -6162,7 +6975,41 @@
           "detail": "Two things break a domain: dividing by zero and taking an even root of a negative. Find those first. The range is easier read off a sketch than reasoned about, so draw the graph before answering.",
           "proof": "f excludes x = 2 and never outputs 0; g needs x >= -3 and outputs values from 0 upwards.",
           "pitfall": "Giving the domain and stopping, when the range is the half people actually get wrong.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the domain of f(x)=1/(x-2)?",
+              "answer": "All real numbers except x=2."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the range of g(x)=√(x+3)?",
+              "answer": "All real numbers y ≥ 0."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "State the domain and range of h(x)=1/(x-2).",
+              "answer": "Domain: x≠2; Range: all real numbers y ≠ 0."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "For the function k(x)=√(x+3), give its domain and range, and explain why the range starts at 0.",
+              "answer": "Domain: x ≥ -3; Range: y ≥ 0, because square roots are never negative.",
+              "hint": "Consider the output of √."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "The function m(x)=√(9−x^2) is defined. Determine its domain and range.",
+              "answer": "Domain: -3 ≤ x ≤ 3; Range: 0 ≤ y ≤ 3.",
+              "hint": "Think of the semicircle of radius 3."
+            }
+          ]
         },
         {
           "title": "Read a Graph",
@@ -6171,7 +7018,41 @@
           "detail": "The y-intercept is the value at x = 0. The x-intercepts are the roots. For a parabola the vertex sits halfway between the roots, so average them and substitute back. Every one of these is a computation, and the sketch is the check.",
           "proof": "Intercepts at x = 1 and x = 3, y-intercept 3, vertex at (2, -1).",
           "pitfall": "Reading the vertex off the sketch by eye instead of computing it.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the y-intercept of y = x^2 - 4x + 3?",
+              "answer": "3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What are the x-intercepts of y = x^2 - 4x + 3?",
+              "answer": "x = 1 and x = 3."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the vertex of y = x^2 - 4x + 3.",
+              "answer": "(2, -1)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "For the parabola y = x^2 - 4x + 3, state the axis of symmetry and whether it opens upward or downward.",
+              "answer": "axis x = 2; opens upward.",
+              "hint": "Write the quadratic in vertex form to read the axis."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "If the graph of y = x^2 - 4x + 3 is reflected over the x‑axis, what are the new y‑intercept and vertex?",
+              "answer": "y‑intercept -3, vertex (2, 1).",
+              "hint": "Reflect the y‑coordinates of the original intercepts and vertex."
+            }
+          ]
         },
         {
           "title": "Compose Two Functions",
@@ -6180,7 +7061,40 @@
           "detail": "Work from the inside out: g acts on x, then f acts on that. The two orders give different answers in general, which is the point of the exercise. Write the inner result down before applying the outer function rather than doing both in your head.",
           "proof": "13, 16, and f(g(x)) = 2x + 3.",
           "pitfall": "Applying f first in f(g(x)), when the inner function always runs first.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "If f(x) = x + 3, what is f(5)?",
+              "answer": "8."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If g(x) = 2x, what is g(5)?",
+              "answer": "10."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "With f(x) = x + 3 and g(x) = 2x, find f(g(5)).",
+              "answer": "13."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Find the formula for (f∘g)(x) given f(x) = x + 3 and g(x) = 2x.",
+              "answer": "2x + 3.",
+              "hint": "Substitute g(x) into f(x)."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "With the same functions, compute g(f(5)).",
+              "answer": "16."
+            }
+          ]
         },
         {
           "title": "Find an Inverse",
@@ -6189,7 +7103,47 @@
           "detail": "Swap x and y, then solve for y. An inverse exists only when the function is one-to-one, which on a graph is the horizontal line test. Check by composing: f of its inverse must return x exactly.",
           "proof": "The inverse is (x + 5)/3; x^2 has none because 2 and -2 share an output.",
           "pitfall": "Confusing the inverse with the reciprocal, so the inverse of 3x is written as 1/(3x).",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is f^{-1}(x) for the linear function f(x)=2x+3?",
+              "answer": "(x-3)/2."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Evaluate the inverse of g(x)= -4x+7 at x=5.",
+              "answer": "0.5."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the inverse function of h(x)=3x-5.",
+              "answer": "(x+5)/3."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "State whether the function p(x)=x^2 has an inverse on the set of all real numbers, and explain why.",
+              "answer": "No, because it is not one-to-one; e.g., 2 and -2 give the same output."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Given f(x)=sqrt(x+1), find its inverse and state its domain.",
+              "answer": "f^{-1}(x)=x^2-1, domain x≥0.",
+              "hint": "Set y=√(x+1) and solve for x."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Explain why the function q(x)=x^3-2x is invertible over all reals, and write its inverse relation (not an explicit formula).",
+              "answer": "It is strictly increasing, so it has an inverse; the inverse is the unique real solution y of y^3-2y = x.",
+              "hint": "Consider monotonicity."
+            }
+          ]
         },
         {
           "title": "Transform a Graph",
@@ -6198,7 +7152,46 @@
           "detail": "Changes inside the bracket act on the input and move the graph the opposite way horizontally. Changes outside act on the output and move it the intuitive way vertically. A minus outside flips it top to bottom. Test one point to settle any doubt.",
           "proof": "Two right and one up; the second is the parabola flipped and lifted three.",
           "pitfall": "Shifting left for (x - 2) because of the minus sign, when the graph moves right.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the vertex of y = (x-2)^2?",
+              "answer": "(2,0)."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If y = x^2 is shifted up by 4 units, what is the new equation?",
+              "answer": "y = x^2 + 4."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Describe how the graph of y = (x-2)^2 + 1 differs from y = x^2.",
+              "answer": "It is shifted right 2 units and up 1 unit."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Write the equation of the parabola obtained by reflecting y = x^2 across the x‑axis and then shifting it up 3 units.",
+              "answer": "y = -x^2 + 3."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Sketch the graph of y = (x+3)^2 - 2 and list the sequence of transformations applied to y = x^2.",
+              "answer": "Shift left 3 units, then down 2 units.",
+              "hint": "Remember the sign inside the parentheses moves opposite to the sign."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Explain why the graph of y = -(x-1)^2 + 4 is a parabola opening downwards and locate its vertex.",
+              "answer": "The negative sign flips it, so it opens down; vertex at (1,4)."
+            }
+          ]
         }
       ]
     },
@@ -6221,7 +7214,28 @@
           "detail": "Angles on a straight line total 180, at a point 360, and in a triangle 180. Write the equation before touching the arithmetic, and say which rule you used. Re-read the question at the end — it usually wants the angles, not x.",
           "proof": "x = 36, so the angles are 108 and 72, and they sum to 180.",
           "pitfall": "Solving for x and giving that as the angle, when the angle was 3x.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Two angles on a straight line are 30° and 45°. Find the missing angle.",
+              "answer": "105°."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Two angles on a straight line are 3x° and 2x°. Find x and the measures of both angles.",
+              "answer": "x = 36°, angles are 108° and 72°."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Angles on a straight line are 4x° and (3x+20)°. Find x and verify the angles sum to 180°.",
+              "answer": "x = 22.857°, angles are 91.428° and 88.572° (which sum to 180°).",
+              "hint": "Set up the equation 4x + (3x+20) = 180."
+            }
+          ]
         },
         {
           "title": "Parallel Line Angles",
@@ -6239,7 +7253,35 @@
           "detail": "Equilateral gives three 60s. Isosceles gives two equal base angles opposite the two equal sides. Mark the equal sides on your own sketch before computing — which angles are equal follows from which sides are, and a misread diagram is the usual cause of a wrong answer here.",
           "proof": "Both are 70, since 180 - 40 leaves 140 to share equally.",
           "pitfall": "Splitting the wrong angle when the diagram is not drawn to scale.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A triangle has side lengths 5 cm, 5 cm, and 8 cm. What type of triangle is it by sides?",
+              "answer": "Isosceles."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "An isosceles triangle has an apex angle of 40°. What are the measures of the two base angles?",
+              "answer": "70° each."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In a triangle, two angles measure 30° and 45°. Find the third angle and classify the triangle by its angles.",
+              "answer": "Third angle = 105°, triangle is obtuse.",
+              "hint": "Angles in a triangle sum to 180°; an angle greater than 90° makes it obtuse."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A triangle has side lengths 7 cm, 7 cm, and 7 cm and one interior angle measuring 60°. Verify that the triangle is equilateral and determine the measures of the other two angles.",
+              "answer": "The triangle is equilateral; all angles are 60°, so the remaining angles are 60° each.",
+              "hint": "In an equilateral triangle all sides and all angles are equal."
+            }
+          ]
         },
         {
           "title": "Area and Perimeter",
@@ -6248,7 +7290,41 @@
           "detail": "Triangle area is half base times perpendicular height, and the height must meet the base at a right angle. Circle area is pi r squared; circumference is 2 pi r. For a compound shape, cut it into pieces you know and add, marking each piece on the sketch.",
           "proof": "42, and 78.5.",
           "pitfall": "Using the slant side as the height of a triangle instead of the perpendicular one.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the perimeter of a rectangle with length 8 and width 3?",
+              "answer": "22."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the area of a triangle with base 5 and height 4?",
+              "answer": "10."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the area of a triangle with base 12 and height 7.",
+              "answer": "42."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Find the area of a circle with radius 5, rounded to one decimal place.",
+              "answer": "78.5.",
+              "hint": "Use π≈3.14."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A shape consists of a rectangle 6 by 4 attached to a semicircle of radius 2 on one side. What is the total area, rounded to one decimal?",
+              "answer": "30.3.",
+              "hint": "Add rectangle area to half the area of a circle."
+            }
+          ]
         },
         {
           "title": "Pythagoras",
@@ -6257,7 +7333,35 @@
           "detail": "The square on the hypotenuse equals the sum of the squares on the other two. Finding the hypotenuse is an addition; finding a leg is a subtraction. Identify the hypotenuse first — it is always opposite the right angle and always the longest side.",
           "proof": "15, and 12.",
           "pitfall": "Adding the squares when finding a leg, where they should be subtracted.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find the length of the hypotenuse of a right triangle with legs 9 and 12.",
+              "answer": "15."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Find the missing leg of a right triangle where the hypotenuse is 13 and one leg is 5.",
+              "answer": "12."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Find the length of the hypotenuse of a right triangle with legs 8 and 15.",
+              "answer": "17.",
+              "hint": "Apply the Pythagorean theorem: c = √(a²+b²)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A ladder 20 ft long leans against a wall, touching the wall 12 ft above the ground. How far is the foot of the ladder from the wall?",
+              "answer": "16.",
+              "hint": "Use c² = a² + b² and solve for the missing side."
+            }
+          ]
         },
         {
           "title": "Prove It for Every Case",
@@ -6289,7 +7393,28 @@
           "detail": "The bar under the symbol means the endpoint counts. On a number line an open circle excludes it and a filled one includes it. When a question says 'at least' it is >=, and 'more than' is >.",
           "proof": "4 belongs to the second set only, because <= includes its endpoint and > does not.",
           "pitfall": "Treating < and <= as interchangeable, which loses or gains exactly one value.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Give one integer that satisfies x > 4.",
+              "answer": "5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "List three integers that satisfy x <= 4.",
+              "answer": "4, 2, -1."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is the number 4 included in the solution set of x > 4? Answer yes or no.",
+              "answer": "No.",
+              "hint": "Recall that > does not include its endpoint."
+            }
+          ]
         },
         {
           "title": "Solve Like an Equation",
@@ -6298,7 +7423,35 @@
           "detail": "Adding, subtracting, and multiplying or dividing by a positive all leave the direction alone. The answer is a set, so it is written as an inequality rather than as x = something. Test one value from inside your range and one from outside.",
           "proof": "x < 5, and x >= 7.",
           "pitfall": "Writing the answer as a single number rather than as a range.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve 2x < 6.",
+              "answer": "x < 3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Solve x + 5 > 9.",
+              "answer": "x > 4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Solve 4 - x <= 2 and give the solution as an inequality.",
+              "answer": "x >= 2.",
+              "hint": "Subtract 4 then divide by -1, remembering to flip the sign."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve 3(x - 2) > 9 and express the answer as a range.",
+              "answer": "x > 5.",
+              "hint": "Divide by 3 then add 2; no sign flip is needed."
+            }
+          ]
         },
         {
           "title": "Flip on a Negative",
@@ -6307,7 +7460,35 @@
           "detail": "Multiplying by a negative reflects the number line, so the order of every pair of values swaps. The safest habit is to move the variable term to whichever side keeps its coefficient positive, which avoids the flip entirely. Always test one value.",
           "proof": "x < -5, and x >= -3.",
           "pitfall": "Keeping the direction after dividing by a negative, which reverses the meaning of the answer.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve -x < 3.",
+              "answer": "x > -3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Solve -5 >= 2y.",
+              "answer": "y <= -2.5."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Solve -4x <= 8 and write the solution.",
+              "answer": "x >= -2.",
+              "hint": "Divide by -4 and flip the inequality sign."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve 7 - 2z > 1 and give the inequality for z.",
+              "answer": "z < 3.",
+              "hint": "Subtract 7 then divide by -2, flipping the sign."
+            }
+          ]
         },
         {
           "title": "Double Inequalities",
@@ -6316,7 +7497,35 @@
           "detail": "Whatever you do, do to all three parts at once. Subtract 1 from each, then divide each by 2. The result is a range with an excluded lower end and an included upper one, and the two endpoints keep the strictness they arrived with.",
           "proof": "-2 < x <= 4.",
           "pitfall": "Operating on only two of the three parts, which breaks the chain.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve -2 < x <= 4 and state the range of x.",
+              "answer": "-2 < x <= 4."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Solve 1 <= 3y - 2 < 7 and give the solution for y.",
+              "answer": "1 <= y < 3."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Solve -4 < -2x + 5 <= 2 and express the solution as an inequality.",
+              "answer": "3/2 <= x < 9/2.",
+              "hint": "Isolate the term with x, then divide by the negative coefficient and flip the inequality signs."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve 0 < 4 - 2t <= 6 and write the solution for t as a double inequality.",
+              "answer": "-1 <= t < 2.",
+              "hint": "Apply the same operation to all three parts; when dividing by -2, reverse the inequality signs."
+            }
+          ]
         },
         {
           "title": "Draw the Solution",
@@ -6325,7 +7534,28 @@
           "detail": "Rewrite the inequality so the variable is on the left before drawing anything — 5 > x is x < 5, and it shades left. Filled circle for <= and >=, open for < and >. The picture is the fastest way to check a compound answer.",
           "proof": "A filled circle at -1 shading right; open circles at -4 and 2 with the segment between them shaded.",
           "pitfall": "Shading the wrong side because the variable is written on the right of the symbol.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Mark the solution set for x \\le 3 on a number line, indicating the endpoint correctly.",
+              "answer": "Closed circle at 3 with shading to the left."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Draw the number line for -5 \\le x < 1, marking the endpoints correctly.",
+              "answer": "Closed circle at -5, open circle at 1, shading the segment between them."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Represent the solution set of -2x \\le 6 on a number line, marking the endpoint correctly.",
+              "answer": "Closed circle at -3 with shading to the right.",
+              "hint": "Solve the inequality first, remembering to flip the inequality sign when dividing by a negative number."
+            }
+          ]
         },
         {
           "title": "Inequalities from Words",
@@ -6334,7 +7564,40 @@
           "detail": "Define the letter, write the total, then decide which symbol the words demand. 'You have 25' is a ceiling, so it is <=. Finish by asking whether the context allows fractions — money often does, journeys and people do not.",
           "proof": "4 + 2m <= 25, so m <= 10.5, meaning 10 whole miles.",
           "pitfall": "Giving 10.5 as the answer when the quantity can only be a whole number.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A bus fare costs $2 per ride and you have $10. Write an inequality for the number of rides r you can take.",
+              "answer": "2r ≤ 10."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Each plant needs at least 0.5 m² of space and a garden can hold at most 15 m². Write an inequality for the number of plants n you can grow.",
+              "answer": "0.5n ≤ 15."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "A taxi charges a base fare of $4 plus $2 per mile. You have $25. Write an inequality for the miles m you can travel and solve it.",
+              "answer": "4 + 2m ≤ 25, so m ≤ 10.5 (maximum whole miles = 10)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "You start with 50 points in a game and lose 7 points each level. You must have at least 8 points to continue. Write an inequality for the number of levels L you can play and solve it.",
+              "answer": "50 - 7L ≥ 8, so -7L ≥ -42, which gives L ≤ 6.",
+              "hint": "Remember to flip the inequality when dividing by a negative."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "You have $30 to spend on books that cost $4 each. Write an inequality for the number of books k you can buy and give the greatest whole number of books possible.",
+              "answer": "4k ≤ 30, so k ≤ 7.5 (maximum whole books = 7)."
+            }
+          ]
         }
       ]
     },
@@ -6357,7 +7620,35 @@
           "detail": "Expand any brackets, gather the variable on one side and the numbers on the other, then divide. Write each line underneath the last rather than editing in place. Substitute your answer back into the original equation, not into a line of your own working.",
           "proof": "x = 6, and x = 3.",
           "pitfall": "Doing something to one side of the equation and forgetting the other.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve 2x + 3 = 7.",
+              "answer": "x = 2."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Solve 5 - x = 1.",
+              "answer": "x = 4."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Solve 3(x - 4) = 2x + 5.",
+              "answer": "x = 17.",
+              "hint": "Distribute first, then collect x terms on one side."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve (2x + 1) / 3 = x - 4.",
+              "answer": "x = 13.",
+              "hint": "Clear the fraction by multiplying both sides by 3."
+            }
+          ]
         },
         {
           "title": "Slope from Two Points",
@@ -6366,7 +7657,35 @@
           "detail": "Rise over run: the change in y divided by the change in x. Pick a first point and stay with it for both subtractions. A slope of 0 is horizontal; an undefined slope, where the run is zero, is vertical.",
           "proof": "2, and 0 for the horizontal one.",
           "pitfall": "Subtracting the coordinates in a different order on the top and the bottom, which flips the sign.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find the slope of the line through (0, 0) and (2, 2).",
+              "answer": "1."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Find the slope of the line through (1, 3) and (4, 3).",
+              "answer": "0."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Find the slope of the line through (-2, 5) and (3, -10).",
+              "answer": "-3.",
+              "hint": "Use (y2 - y1) / (x2 - x1) consistently."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Find the slope of the line through (7, -2) and (-3, 6).",
+              "answer": "-4/5.",
+              "hint": "Compute rise over run and simplify the fraction."
+            }
+          ]
         },
         {
           "title": "Read Slope and Intercept",
@@ -6375,7 +7694,35 @@
           "detail": "The form only works once y stands by itself with a coefficient of 1. Divide the whole equation through if it does not. Then m is whatever multiplies x and c is the constant, sign included.",
           "proof": "Slope -3 and intercept 5; the second becomes y = 2x + 5.",
           "pitfall": "Reading the coefficient of x before the equation is arranged with y alone on the left.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "State the slope of y = 4x - 7.",
+              "answer": "4."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "State the y‑intercept of y = 0.5x + 2.",
+              "answer": "2."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the slope and intercept of the line 3y - 6x = 12.",
+              "answer": "slope 2, intercept 4.",
+              "hint": "Isolate y first."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Convert -2x + 5y = 20 to y = mx + c form and give its slope and intercept.",
+              "answer": "slope 2/5, intercept 4.",
+              "hint": "Divide by the coefficient of y after moving the x term."
+            }
+          ]
         },
         {
           "title": "Write the Line",
@@ -6384,7 +7731,41 @@
           "detail": "Start from y - y1 = m(x - x1), substitute, then rearrange into y = mx + c. With two points, compute the slope first and then use either point — both give the same line, which is a useful check.",
           "proof": "y = 4x - 3, and y = 2x - 1.",
           "pitfall": "Stopping at the point-slope form without finishing the arithmetic.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the y‑value on the line with slope 4 that passes through (2,5) when x = 3?",
+              "answer": "9."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the slope of the line that passes through (0,-1) and (4,7)?",
+              "answer": "2."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the equation in slope‑intercept form of the line that passes through (2,5) with slope 4.",
+              "answer": "y = 4x - 3."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Using the points (0,-1) and (4,7), first find the slope, then write the equation in slope‑intercept form, and state the y‑intercept.",
+              "answer": "y = 2x - 1; y‑intercept = -1.",
+              "hint": "Find slope Δy/Δx then plug into y = mx + b to solve for b."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A line passes through (-2,3) and has slope 4. Write its equation in slope‑intercept form.",
+              "answer": "y = 4x + 11.",
+              "hint": "Use point‑slope form y - y₁ = m(x - x₁) then simplify."
+            }
+          ]
         },
         {
           "title": "Solve a Pair by Substitution",
@@ -6393,7 +7774,40 @@
           "detail": "Rearrange one equation so a letter stands alone, substitute that whole expression into the other, and solve the single-variable equation that results. Put the value back into the simplest equation to get the second letter. Check both equations, not one.",
           "proof": "x = 2 and y = 5, and both original equations hold.",
           "pitfall": "Finding x and stopping, when the question asked for the point.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "If y = 2x + 1, what is y when x = 0?",
+              "answer": "1."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Solve for x: 3x = 9.",
+              "answer": "3."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Solve the system y = 2x + 1 and 3x + y = 11. Give the ordered pair (x, y).",
+              "answer": "(2, 5)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve the system 2x - y = 4 and y = -3x + 9. Provide the solution as (x, y).",
+              "answer": "(13/5, 6/5).",
+              "hint": "Substitute the expression for y into the first equation."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Solve the system 4x + 2y = 14 and y = -x + 5. State the intersection point.",
+              "answer": "(2, 3)."
+            }
+          ]
         },
         {
           "title": "Solve a Pair by Elimination",
@@ -6402,7 +7816,40 @@
           "detail": "Line the equations up in columns. If a variable has equal and opposite coefficients, add; if they are equal and the same sign, subtract. Scale one or both equations first when neither matches. Elimination is quicker than substitution whenever nothing is already isolated.",
           "proof": "x = 3 and y = 3.5.",
           "pitfall": "Adding when the coefficients match in sign, so nothing actually cancels.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is 3x when x = 4?",
+              "answer": "12."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If 5y = 25, what is y?",
+              "answer": "5."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Solve the system 3x + 2y = 16 and 5x - 2y = 8. Give (x, y).",
+              "answer": "(3, 3.5)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Solve the system 4x + 3y = 24 and 2x - 3y = 0. Provide the solution (x, y).",
+              "answer": "(4, 8/3)."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Solve the system 7x - 4y = 10 and -14x + 9y = -5. State the ordered pair (x, y).",
+              "answer": "(10, 15).",
+              "hint": "Multiply the first equation to align coefficients then add."
+            }
+          ]
         }
       ]
     },
@@ -6746,7 +8193,41 @@
           "detail": "The highest power dominates once x is large, so it alone fixes both ends. Odd degree means the ends go opposite ways; a negative leading coefficient flips them. Degree caps the number of roots and the number of turning points at one less.",
           "proof": "Down on the right, up on the left, and at most 3 roots.",
           "pitfall": "Reading the end behaviour off the constant term rather than the leading one.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the end behaviour of y = 3x^4 as x → +∞?",
+              "answer": "y → +∞."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the end behaviour of y = -5x^2 as x → -∞?",
+              "answer": "y → -∞."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Describe the end behaviour of y = -2x^3 + 5x as x → +∞ and x → -∞, and state the maximum possible number of real roots.",
+              "answer": "As x→+∞, y→-∞; as x→-∞, y→+∞; at most 3 real roots."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Explain why the constant term does not influence the end behaviour of the polynomial y = 4x^5 - 7x + 9.",
+              "answer": "End behaviour is determined solely by the leading term 4x^5; lower-degree terms become negligible as |x| grows, so the constant 9 has no effect.",
+              "hint": "Consider the dominant term for large |x|."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "For y = -x^4 + 2x^3 - x + 1, state the end behaviour as x → ±∞ and the greatest number of real zeros it can have.",
+              "answer": "As x→±∞, y→-∞; at most 4 real zeros.",
+              "hint": "Focus on the leading term's degree and sign."
+            }
+          ]
         },
         {
           "title": "Rational Functions",
@@ -6755,7 +8236,47 @@
           "detail": "Factor both parts first. A factor cancelling top and bottom is a hole; one left in the denominator is a vertical asymptote. The horizontal behaviour comes from comparing degrees — equal degrees give the ratio of leading coefficients.",
           "proof": "A hole at x = 2, a vertical asymptote at x = -1, and y = 1 horizontally.",
           "pitfall": "Calling every zero of the denominator an asymptote, when a shared factor gives a hole.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find the vertical asymptote of y = 1/(x-3).",
+              "answer": "x = 3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Does y = (x-2)/(x-2) have a hole? If so, at what x?",
+              "answer": "Yes, at x = 2."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find all vertical asymptotes, horizontal asymptote, and holes of y = (x^2 - 4)/(x^2 - x - 2).",
+              "answer": "Hole at x = 2; vertical asymptote at x = -1; horizontal asymptote y = 1."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Determine the vertical asymptotes, horizontal asymptote, and any holes of y = (x^2 - 1)/(x^2 - x).",
+              "answer": "Hole at x = 1; vertical asymptote at x = 0; horizontal asymptote y = 1."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "For y = (x^2 - 6x + 9)/(x^2 - 5x + 6), identify holes and asymptotes, and explain why the factor (x-3) creates a hole rather than a vertical asymptote.",
+              "answer": "Hole at x = 3; vertical asymptote at x = 2; horizontal asymptote y = 1. The factor (x-3) cancels with the same factor in the denominator, removing the singularity and leaving a removable discontinuity (hole) instead of an asymptote.",
+              "hint": "Factor numerator and denominator first."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Find any slant (oblique) asymptote of y = (2x^2 + 3x - 5)/(x - 1) and state any holes.",
+              "answer": "Oblique asymptote y = 2x + 5; no holes.",
+              "hint": "Perform polynomial long division."
+            }
+          ]
         },
         {
           "title": "Exponentials and Logs Together",
@@ -6764,7 +8285,49 @@
           "detail": "Logs undo exponentials. Take logs of both sides to bring a variable exponent down; exponentiate to undo a log. Any log equation needs its answer checked against the domain, because the algebra will happily return a value that makes the argument negative.",
           "proof": "x = 3.322, and x = 26.",
           "pitfall": "Forgetting to check the log solution lies in the domain of the original expression.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve 2^x = 8.",
+              "answer": "x = 3."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is log base 10 of 1000?",
+              "answer": "3."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Solve 2^(x+1) = 40 to three decimal places.",
+              "answer": "x = 4.322.",
+              "hint": "Take log base 2 of both sides."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Solve log base 5 of (x - 1) = 2.",
+              "answer": "x = 26.",
+              "hint": "Rewrite as 5^2 = x - 1."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Solve 2^{log_5 (x)} = 8.",
+              "answer": "x = 125.",
+              "hint": "Set the exponent equal to 3 then exponentiate."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "If 3^{2x} = 5^{x+1}, find x to two decimal places.",
+              "answer": "x = 2.74.",
+              "hint": "Take natural logs and isolate x."
+            }
+          ]
         },
         {
           "title": "Trig Identities",
