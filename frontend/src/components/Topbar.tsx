@@ -42,6 +42,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NotificationPanel } from './Notifications';
 import { SearchPanel } from './Search';
+import { OPEN_SEARCH } from '@/utils/searchBus';
 import { useAuth, useNotifications, useSettings, useStats, useTheme } from '@/hooks';
 import { AVATARS, avatarPath } from '@/services/avatars';
 import { auth } from '@/services';
@@ -110,6 +111,25 @@ export function Topbar() {
 
   const [open, setOpen] = useState<'search' | 'alerts' | 'account' | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
+
+  /* The rail's search box and ⌘K (Ctrl+K off a Mac) open the same panel as
+     the magnifier here. The rail is a sibling rather than a child, so it asks
+     by event — see OPEN_SEARCH in components/Rail. */
+  useEffect(() => {
+    const openSearch = () => setOpen('search');
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setOpen((was) => (was === 'search' ? null : 'search'));
+      }
+    };
+    window.addEventListener(OPEN_SEARCH, openSearch);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener(OPEN_SEARCH, openSearch);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, []);
 
   // A click anywhere else closes whatever is open. One listener for all three
   // panels, because only one is ever open at a time.

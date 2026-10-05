@@ -564,6 +564,183 @@ html[data-theme="dark"] .rail-xp-bar { background: #21262D; }
     .rail-rank-num { display: block; }
 }
 
+/* ==========================================================================
+   Core, Personal, Team
+   ==========================================================================
+   The rail as one quiet panel: a soft grey ground, a search box under the
+   mark, the app's pages folded under "Core", and the reader's own space and
+   their team's under it. The current page is a neutral grey pill rather than
+   a tinted one, and the headings are small spaced capitals that fold what is
+   under them. Desktop only: the phone's bottom bar draws none of this. */
+.rail {
+    background: #F7F7F6;
+    border-right-color: #ECECEA;
+}
+
+.rail-brand { padding-bottom: var(--space-4); }
+.rail-toggle { width: 30px; height: 30px; color: #8C9096; }
+.rail-toggle svg { width: 20px; height: 20px; }
+
+.rail-search {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    margin: 0 0 var(--space-4);
+    padding: 9px var(--space-3) 9px var(--space-4);
+    border: 1px solid #E3E3E0;
+    border-radius: 10px;
+    background: #FFFFFF;
+    color: #8C9096;
+    font: inherit;
+    font-size: var(--text-base);
+    text-align: left;
+    cursor: text;
+    transition: border-color .12s ease, box-shadow .12s ease;
+}
+.rail-search:hover { border-color: #D3D3CF; }
+.rail-search:focus-visible { outline: 2px solid #2C302E; outline-offset: 1px; }
+.rail-search svg { width: 19px; height: 19px; flex: none; }
+.rail-search span { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rail-search kbd {
+    flex: none;
+    padding: 2px 7px;
+    border-radius: 6px;
+    background: #EEEEEC;
+    color: #7C8087;
+    font-family: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+}
+
+.rail-links { gap: var(--space-3); }
+
+.rail-section { display: flex; flex-direction: column; gap: 2px; }
+.rail-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--space-2) var(--space-4) var(--space-1);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: #8A8E95;
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.rail-section-head svg {
+    width: 15px;
+    height: 15px;
+    opacity: .5;
+    transition: transform .18s ease, opacity .12s ease;
+}
+.rail-section-head:hover { color: #2C302E; }
+.rail-section-head:hover svg { opacity: 1; }
+.rail-section-head:focus-visible { outline: 2px solid #2C302E; outline-offset: 1px; }
+.rail-section:not(.is-open) .rail-section-head svg { transform: rotate(-90deg); }
+.rail-section-body { display: flex; flex-direction: column; gap: 2px; }
+
+/* "Tasks" inside Core: the same spaced capitals, set lighter, as a divider
+   rather than a control. */
+.rail-heading {
+    margin: var(--space-4) 0 var(--space-1);
+    padding: 0 var(--space-4);
+    color: #A2A6AC;
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.rail-empty {
+    margin: 0;
+    padding: var(--space-2) var(--space-4);
+    color: #A2A6AC;
+    font-size: var(--text-sm);
+}
+
+.rail-link {
+    padding: 11px var(--space-4);
+    border-radius: 10px;
+    color: #2F3337;
+    font-size: var(--text-base);
+    font-weight: 500;
+}
+.rail-link svg { width: 21px; height: 21px; color: #5F646B; stroke-width: 1.7; }
+.rail-link:hover { background: #EFEFED; color: #1F2326; }
+.rail-link.active { background: #EBEBE9; color: #1F2326; }
+.rail-link.active svg { color: #3A3F45; }
+
+.rail-sub { border-left-color: #E2E2DF; }
+.rail-sub-link { color: #7C8087; font-weight: 400; font-size: var(--text-sm); }
+.rail-sub-link:hover { background: #EFEFED; }
+.rail-sub-link.active { background: #EBEBE9; font-weight: 600; }
+.rail-sub-link.active::before { background: #6C7178; }
+
+/* The foot: who is playing, how far, and how far to the next. */
+.rail-foot { padding-top: var(--space-4); border-top-color: #E8E8E5; }
+.rail-rank {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: var(--space-3);
+    align-items: center;
+    padding: 0 var(--space-2);
+}
+.rail-avatar {
+    grid-row: 1 / span 3;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #E9E9E7;
+    color: #8E9298;
+}
+.rail-avatar svg { width: 22px; height: 22px; }
+.rail-rank-title { font-size: var(--text-base); font-weight: 500; color: #1F2326; }
+.rail-rank-num { grid-column: 1 / -1; }
+.rail-xp-row { margin-top: 0; font-weight: 400; color: #8A8E95; }
+.rail-xp-bar { grid-column: 2; height: 4px; margin-top: var(--space-2); background: #E6E6E3; }
+.rail-xp-bar i { background: #A38A70; }
+
+/* Folded to icons: no headings, no words, and every section showing. */
+html.nav-collapsed .rail-search { justify-content: center; padding-inline: 0; }
+html.nav-collapsed .rail-search span,
+html.nav-collapsed .rail-search kbd,
+html.nav-collapsed .rail-section-head,
+html.nav-collapsed .rail-heading,
+html.nav-collapsed .rail-empty,
+html.nav-collapsed .rail-avatar { display: none; }
+html.nav-collapsed .rail-rank { display: block; padding-inline: var(--space-1); }
+
+html[data-theme="dark"] .rail { background: #14181E; }
+html[data-theme="dark"] .rail-search { background: #1B2027; border-color: #2B313A; color: #8B949E; }
+html[data-theme="dark"] .rail-search:hover { border-color: #3A414B; }
+html[data-theme="dark"] .rail-search kbd { background: #262C35; color: #8B949E; }
+html[data-theme="dark"] .rail-section-head { color: #7D8590; }
+html[data-theme="dark"] .rail-section-head:hover { color: #F0F2F5; }
+html[data-theme="dark"] .rail-heading,
+html[data-theme="dark"] .rail-empty { color: #6E7681; }
+html[data-theme="dark"] .rail-link { color: #C9D1D9; }
+html[data-theme="dark"] .rail-link svg { color: #8B949E; }
+html[data-theme="dark"] .rail-link:hover { background: #1F252D; color: #F0F2F5; }
+html[data-theme="dark"] .rail-link.active { background: #232A33; color: #F0F2F5; }
+html[data-theme="dark"] .rail-link.active svg { color: #E6EDF3; }
+html[data-theme="dark"] .rail-sub-link.active { background: #232A33; }
+html[data-theme="dark"] .rail-sub-link.active::before { background: #8B949E; }
+html[data-theme="dark"] .rail-avatar { background: #232A33; color: #8B949E; }
+html[data-theme="dark"] .rail-rank-title { color: #F0F2F5; }
+
+@media (prefers-reduced-motion: reduce) {
+    .rail-section-head svg, .rail-search { transition: none; }
+}
+
 /* Narrower than the icons and a page can both use, the rail lies down along the
    bottom — a strip of destinations, which is what a phone expects anyway. The
    page pays for it in padding-bottom instead of padding-left. */

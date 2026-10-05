@@ -27,6 +27,8 @@ import { renderWithProviders } from '@/test/render';
 import type { Subject } from '@/services/subjects';
 import { setMatchMedia } from '@/test/media';
 import { stats } from '@/test/factories';
+import userEvent from '@testing-library/user-event';
+import { OPEN_SEARCH } from '@/utils/searchBus';
 import type { MediaControl } from '@/test/media';
 
 /** The same query as the component's, and as the @media block in rail.css. */
@@ -576,5 +578,64 @@ describe('the foot', () => {
       window.dispatchEvent(new Event(STATS_CHANGED));
     });
     expect(reload).not.toHaveBeenCalled();
+  });
+});
+
+describe('Core, Personal and Team', () => {
+  it('puts every page under Core, and Personal and Team under it', () => {
+    renderWithProviders(<Rail />);
+    const core = screen.getByRole('region', { name: 'Core' });
+    [...PHONE_TABS, ...SHEET_TABS].forEach((label) => {
+      expect(within(core).getByRole('link', { name: label })).toBeInTheDocument();
+    });
+    const personal = screen.getByRole('region', { name: 'Personal' });
+    expect(within(personal).getByRole('link', { name: 'General' })).toBeInTheDocument();
+    expect(within(screen.getByRole('region', { name: 'Team' })).getByText('No team yet')).toBeInTheDocument();
+  });
+
+  it('labels the pages where work is done', () => {
+    renderWithProviders(<Rail />);
+    expect(screen.getByText('Tasks', { selector: '.rail-heading' })).toBeInTheDocument();
+  });
+
+  it('folds a section from its heading, and remembers it', async () => {
+    const user = userEvent.setup();
+    const first = renderWithProviders(<Rail />);
+    const head = screen.getByRole('button', { name: 'Core' });
+    expect(head).toHaveAttribute('aria-expanded', 'true');
+    await user.click(head);
+    expect(head).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('link', { name: 'Calendar' })).not.toBeInTheDocument();
+    // Personal and Team are untouched.
+    expect(screen.getByRole('link', { name: 'General' })).toBeInTheDocument();
+
+    first.unmount();
+    renderWithProviders(<Rail />);
+    expect(screen.getByRole('button', { name: 'Core' })).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('shows every section when folded to icons, where there are no headings to click', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Rail />);
+    await user.click(screen.getByRole('button', { name: 'Core' }));
+    await user.click(screen.getByRole('button', { name: 'Collapse navigation' }));
+    expect(screen.getByRole('link', { name: 'Calendar' })).toBeInTheDocument();
+  });
+
+  it('opens the search from the box under the mark', async () => {
+    const user = userEvent.setup();
+    const heard = vi.fn();
+    window.addEventListener(OPEN_SEARCH, heard);
+    renderWithProviders(<Rail />);
+    await user.click(screen.getByRole('button', { name: 'Search or ask' }));
+    expect(heard).toHaveBeenCalledTimes(1);
+    window.removeEventListener(OPEN_SEARCH, heard);
+  });
+
+  it('draws none of it on a phone, where the rail is a bar', () => {
+    media.set(PHONE, true);
+    renderWithProviders(<Rail />);
+    expect(screen.queryByRole('region', { name: 'Core' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Search or ask' })).not.toBeInTheDocument();
   });
 });

@@ -26,6 +26,13 @@
  * answer arrives a moment after the first paint, and without something to open
  * on, a collapsed rail would swing open and shut on every load.
  *
+ * **Three sections, each folding under its heading.** Core is every page of
+ * the app, with "Tasks" over the ones where work is done; Personal is the
+ * account's own space; Team is where a shared one will go. A search box under
+ * the mark opens the top bar's search (utils/searchBus), as does ⌘K. Which
+ * sections are folded is kept per device (`SECTIONS_KEY`). None of this is
+ * drawn on a phone, where the rail is a bottom bar.
+ *
  * The rank and XP in the foot are the one thing here that reads account data,
  * and it reads `/api/stats` — six integers — rather than the account's whole
  * task list, which is what it used to arrive attached to. The rail is mounted
@@ -44,7 +51,7 @@
  * to the top bar's account menu, which is also where the avatar picker went
  * when the plate that used to open it stopped existing.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth, useMediaQuery, useSettings, useStats, useSubjectIndex } from '@/hooks';
 import { followedSubjects } from '@/utils/analyticsPrefs';
@@ -53,9 +60,31 @@ import { format } from '@/utils';
 import { rankFor } from '@/utils/rank';
 import { earnedTitle } from '@/utils/easterEgg';
 import { STATS_CHANGED } from '@/utils/statsBus';
+import { openSearch } from '@/utils/searchBus';
 import '@/styles/rail.css';
 
 const COLLAPSE_KEY = 'topnavCollapsed';
+
+/** Which of the three sections are folded. Per device, like a scroll position:
+    a convenience of this screen rather than a preference of the account. */
+const SECTIONS_KEY = 'railSections';
+
+type SectionId = 'core' | 'personal' | 'team';
+
+const ALL_OPEN: Record<SectionId, boolean> = { core: true, personal: true, team: true };
+
+function readSections(): Record<SectionId, boolean> {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SECTIONS_KEY) ?? '{}') as Partial<Record<SectionId, unknown>>;
+    return {
+      core: saved.core !== false,
+      personal: saved.personal !== false,
+      team: saved.team !== false,
+    };
+  } catch {
+    return ALL_OPEN;
+  }
+}
 
 /**
  * Fired when a completion moves the XP total. Defined in utils/statsBus, which
@@ -95,6 +124,9 @@ interface Tab {
    * a tree that nine other entries pay for.
    */
   menu?: 'analytics';
+  /** A small capitalised label drawn above this entry — "Tasks" over the
+      pages where work is done, under the three that report on it. */
+  heading?: string;
   /**
    * Show this one in the phone's bottom bar.
    *
@@ -146,10 +178,8 @@ const TABS: Tab[] = [
     label: 'Dashboard',
     icon: (
       <svg {...stroke}>
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
+        <path d="M3 10.5 12 3l9 7.5" />
+        <path d="M5 9v11a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9" />
       </svg>
     ),
   },
@@ -198,6 +228,7 @@ const TABS: Tab[] = [
     to: '/tasks',
     phone: true,
     label: 'Tasks',
+    heading: 'Tasks',
     icon: (
       <svg {...stroke}>
         <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
@@ -305,6 +336,50 @@ function onPage(tab: Tab, pathname: string): boolean {
   if (tab.to === pathname) return true;
   if (tab.also?.includes(pathname)) return true;
   return Boolean(tab.under?.some((prefix) => pathname.startsWith(prefix)));
+}
+
+const PEOPLE = (
+  <svg {...stroke}>
+    <circle cx="9" cy="8" r="3.5" />
+    <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
+    <circle cx="17" cy="9" r="2.5" />
+    <path d="M16 14.2a5 5 0 0 1 5.5 4.8" />
+  </svg>
+);
+
+interface SectionProps {
+  id: SectionId;
+  label: string;
+  open: boolean;
+  onFold: (id: SectionId) => void;
+  children: ReactNode;
+}
+
+/** A heading that folds what is under it: Core, Personal, Team. */
+function Section({ id, label, open, onFold, children }: SectionProps) {
+  const body = `rail-section-${id}`;
+  return (
+    <section className={`rail-section${open ? ' is-open' : ''}`} aria-label={label}>
+      <button
+        type="button"
+        className="rail-section-head"
+        aria-expanded={open}
+        aria-controls={body}
+        onClick={() => onFold(id)}
+      >
+        <span>{label}</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}
+             strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="m8 10 4 4 4-4" />
+        </svg>
+      </button>
+      {open && (
+        <div className="rail-section-body" id={body}>
+          {children}
+        </div>
+      )}
+    </section>
+  );
 }
 
 export function Rail() {
@@ -451,6 +526,22 @@ export function Rail() {
   const [moreOpen, setMoreOpen] = useState(false);
   useEffect(() => setMoreOpen(false), [pathname]);
 
+  /* Core, Personal and Team each fold under their own heading. Folded as an
+     icon strip, the rail has no headings to click, so every section shows. */
+  const [sections, setSections] = useState(readSections);
+  const fold = useCallback((id: SectionId) => {
+    setSections((was) => {
+      const next = { ...was, [id]: !was[id] };
+      try {
+        localStorage.setItem(SECTIONS_KEY, JSON.stringify(next));
+      } catch {
+        /* private mode: folding still works for this visit */
+      }
+      return next;
+    });
+  }, []);
+  const isOpen = (id: SectionId) => collapsed || sections[id];
+
   /* The title: the band the level has reached, or the one the hidden chain
      hands out at the end once it has been earned (utils/easterEgg) — a prize
      is worn, not offered. There used to be a menu of every band reached to
@@ -464,58 +555,8 @@ export function Rail() {
      dashboard now, beside the quote it opens (hooks/useQuoteEgg.ts), so the
      title here is a title and nothing else. */
 
-  return (
-    <nav className="rail" aria-label="Main">
-      {/* Mark and wordmark are both the link home. The mark used to be a bare
-          span, because the easter egg counted clicks on it and had to cancel
-          the navigation to do so — a logo that quietly stopped going home in
-          dark mode. The egg's ten clicks live on a second copy of the mark at
-          the foot of the dashboard now (hooks/useQuoteEgg.ts), which is not a
-          link and has nothing to cancel, so this one is a link again and
-          behaves like one in both themes.
-
-          The mark is the file again, and that is the rebrand undoing a
-          workaround rather than adding one. It was inlined because the old
-          mark was a single near-black glyph: it needed `mix-blend-mode:
-          multiply` to sit on white and an `invert(1)` to survive the dark
-          rail, and inlining it was how those two hacks were replaced by a
-          `fill` the theme could change. The Summit mark is a blue mountain
-          that reads on both grounds and wants no help from either theme, so
-          there is no longer anything for an inline copy to do — and one
-          `<img>` is one mark instead of two paths in two files that have to go
-          on agreeing about the same geometry. See utils/images/logo.svg. */}
-      <div className="rail-brand">
-        <NavLink className="rail-brand-mark" to="/home" aria-label="Summit home">
-          <img src="/static/images/logo.svg" alt="" width={30} height={30} />
-        </NavLink>
-        <NavLink className="rail-brand-name" to="/home">
-          Summit
-        </NavLink>
-
-        {/* Three lines rather than the chevron it was. The chevron pointed at
-            the edge it folded into, which is the honest icon for a panel and
-            the wrong one for a rail that is never fully gone — it leaves a
-            strip of icons behind, and a reader who has seen it do that once
-            reads the lines as "the menu" and the chevron as "close". */}
-        <button
-          type="button"
-          className="rail-toggle"
-          aria-expanded={!collapsed}
-          aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
-          title={collapsed ? 'Expand navigation' : 'Collapse navigation'}
-          onClick={flip}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-          </svg>
-        </button>
-      </div>
-
-      <div
-        ref={linksRef}
-        className={`rail-links${more.up ? ' more-up' : ''}${more.down ? ' more-down' : ''}`}
-      >
-        {shown.map((tab) => {
+  /** One destination, with the Analytics menu under it when it has one. */
+  const renderTab = (tab: Tab) => {
           /* The menu is drawn only where it can be read and only when it has
              something in it. Collapsed, the rail is a strip of icons with no
              labels, so a list of subject names has nowhere to go; on a phone
@@ -623,7 +664,107 @@ export function Rail() {
               )}
             </div>
           );
-        })}
+  };
+
+  return (
+    <nav className="rail" aria-label="Main">
+      {/* Mark and wordmark are both the link home. The mark used to be a bare
+          span, because the easter egg counted clicks on it and had to cancel
+          the navigation to do so — a logo that quietly stopped going home in
+          dark mode. The egg's ten clicks live on a second copy of the mark at
+          the foot of the dashboard now (hooks/useQuoteEgg.ts), which is not a
+          link and has nothing to cancel, so this one is a link again and
+          behaves like one in both themes.
+
+          The mark is the file again, and that is the rebrand undoing a
+          workaround rather than adding one. It was inlined because the old
+          mark was a single near-black glyph: it needed `mix-blend-mode:
+          multiply` to sit on white and an `invert(1)` to survive the dark
+          rail, and inlining it was how those two hacks were replaced by a
+          `fill` the theme could change. The Summit mark is a blue mountain
+          that reads on both grounds and wants no help from either theme, so
+          there is no longer anything for an inline copy to do — and one
+          `<img>` is one mark instead of two paths in two files that have to go
+          on agreeing about the same geometry. See utils/images/logo.svg. */}
+      <div className="rail-brand">
+        <NavLink className="rail-brand-mark" to="/home" aria-label="Summit home">
+          <img src="/static/images/logo.svg" alt="" width={30} height={30} />
+        </NavLink>
+        <NavLink className="rail-brand-name" to="/home">
+          Summit
+        </NavLink>
+
+        {/* Three lines rather than the chevron it was. The chevron pointed at
+            the edge it folded into, which is the honest icon for a panel and
+            the wrong one for a rail that is never fully gone — it leaves a
+            strip of icons behind, and a reader who has seen it do that once
+            reads the lines as "the menu" and the chevron as "close". */}
+        <button
+          type="button"
+          className="rail-toggle"
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+          title={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+          onClick={flip}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinejoin="round">
+            <rect x="4" y="4" width="6.5" height="6.5" rx="1.5" />
+            <rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5" />
+            <rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5" />
+            <rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" />
+          </svg>
+        </button>
+      </div>
+
+      {/* The top bar's search, from where the eye already is. Opens the same
+          panel as the magnifier up there, and so does ⌘K. */}
+      {!phone && (
+        <button
+          type="button"
+          className="rail-search"
+          onClick={openSearch}
+          aria-label="Search or ask"
+          title="Search or ask (⌘K)"
+        >
+          <svg {...stroke}>
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <span>Search or ask</span>
+          <kbd>⌘K</kbd>
+        </button>
+      )}
+
+      <div
+        ref={linksRef}
+        className={`rail-links${more.up ? ' more-up' : ''}${more.down ? ' more-down' : ''}`}
+      >
+        {phone ? (
+          shown.map(renderTab)
+        ) : (
+          <>
+            <Section id="core" label="Core" open={isOpen('core')} onFold={fold}>
+              {TABS.map((tab) => (
+                <Fragment key={tab.to}>
+                  {tab.heading && <p className="rail-heading">{tab.heading}</p>}
+                  {renderTab(tab)}
+                </Fragment>
+              ))}
+            </Section>
+
+            <Section id="personal" label="Personal" open={isOpen('personal')} onFold={fold}>
+              {/* The account's own space. Notes are what is kept in it today. */}
+              <Link className="rail-link" to="/notes" title="General">
+                {PEOPLE}
+                <span>General</span>
+              </Link>
+            </Section>
+
+            <Section id="team" label="Team" open={isOpen('team')} onFold={fold}>
+              <p className="rail-empty">No team yet</p>
+            </Section>
+          </>
+        )}
 
         {/* The other six, on a phone. Lit when the reader is on one of them,
             so the bar still answers "where am I" for every page in the app
@@ -688,6 +829,12 @@ export function Rail() {
           level &&
           rank && (
             <div className="rail-rank">
+              <span className="rail-avatar" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <circle cx="12" cy="8.5" r="4" />
+                  <path d="M4 20.5c0-4.1 3.6-6.5 8-6.5s8 2.4 8 6.5Z" />
+                </svg>
+              </span>
               {/* The whole name when the rail is open, the level's number when
                   it is a strip. "Grand Champion" in 54px of usable width is an
                   ellipsis, and an ellipsis is not a rank. */}
