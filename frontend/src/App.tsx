@@ -200,16 +200,15 @@ export default function App() {
           property of the app, not a thing each screen opts into, and a screen
           written next week gets this one without anybody remembering.
           
-          The glow that follows the pointer stays off everywhere but the
-          landing page. The reasoning is on components/Ambient: a light that
-          chases the cursor suits a page being read and follows every trip to a
-          checkbox on a page being worked.
+          The landing page has none of it: it is a plain white page now
+          (styles/home-minimal.css), and the graph paper and the drifting
+          field were most of what made it busy.
           
           The timer is the one page that renders its own. While a sitting is
           running its field accelerates — `surge`, in the same component — and
           a second canvas behind the first would be a second rAF loop drawing
           something nobody can see. See pages/Timer.tsx. */}
-      {!ownsAmbient && <Ambient cursor={pathname === '/home'} />}
+      {!ownsAmbient && pathname !== '/home' && <Ambient />}
       {!landing && <Rail />}
       {/* Beside the rail rather than above it: the rail owns the full height
           and the bar starts at `--rail-w`. Outside the router with the rail,

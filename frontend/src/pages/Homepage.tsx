@@ -61,6 +61,7 @@ import { useSecretScripts } from '@/hooks/useSecretScripts';
 import type { Theme } from '@/types';
 import '@/styles/homepage.css';
 import '@/styles/home-motion.css';
+import '@/styles/home-minimal.css';
 
 /** The header's links: a section of this page each, in the order they come. */
 const SECTIONS = [

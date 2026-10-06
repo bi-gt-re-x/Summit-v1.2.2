@@ -1,0 +1,142 @@
+/* ==========================================================================
+   home-minimal.css — the landing page, quieter.
+
+   Loaded after styles/homepage.css and styles/home-motion.css, and changes
+   only how the page looks, never what is on it. The same sections, demos and
+   motion; less behind and around them:
+
+     - a plain white ground: no graph paper, no drifting dots, no colour wash
+       (App.tsx leaves <Ambient /> off this route);
+     - the hero as a clean white card — no mountain range, no green sky;
+     - every card white with one hairline rule and a barely-there shadow;
+     - icon tiles, chips and buttons in neutral greys and the page's ink, so
+       the only colour left is in the charts, where it means something;
+     - a header that spans the page with a rule under it.
+
+   Every rule is scoped under `.home-main`, `.lp-header` or `.footer`, so
+   nothing here reaches the app's own pages.
+   ========================================================================== */
+
+/* ---- The ground and the palette ----------------------------------------- */
+html:not([data-theme="dark"]) body:has(.home-main) { background: #FFFFFF; }
+html[data-theme="dark"] body:has(.home-main) { background: #0d1117; }
+
+.home-main {
+    --lp-border: #ECEEF2;
+    --lp-surface-2: #F7F8FA;
+    --lp-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 4px 14px -8px rgba(16, 24, 40, .08);
+    --lp-hero-bg: var(--lp-surface);
+    --lp-heading: #111418;
+    --lp-accent: #1F2328;
+}
+html[data-theme="dark"] .home-main {
+    --lp-border: #222A35;
+    --lp-surface-2: #131922;
+    --lp-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    --lp-hero-bg: var(--lp-surface);
+    --lp-heading: #F3F5F8;
+    --lp-accent: #E6EDF3;
+}
+
+/* ---- The header: full width, one rule under it --------------------------
+   The header sits in the app's centred column, so its ground and its rule
+   are drawn by a pseudo-element that bleeds to both edges of the window. */
+.lp-header {
+    max-width: 1180px;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+}
+.lp-header::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    background: color-mix(in srgb, #FFFFFF 86%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+            backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid #ECEEF2;
+}
+html[data-theme="dark"] .lp-header::before {
+    background: color-mix(in srgb, #0d1117 86%, transparent);
+    border-bottom-color: #222A35;
+}
+
+/* ---- The hero: a clean card --------------------------------------------- */
+.home-main .lp-hero-scene { display: none; }
+.home-main .lp-hero {
+    background: var(--lp-surface);
+    box-shadow: none;
+}
+.home-main .lp-hero-title { letter-spacing: -.03em; }
+.home-main .lp-hero-title em { color: #5B6270; }
+html[data-theme="dark"] .home-main .lp-hero-title em { color: #9AA4B2; }
+.home-main .lp-greet,
+.home-main .lp-kicker {
+    background: var(--lp-surface-2);
+    border: 1px solid var(--lp-border);
+    box-shadow: none;
+}
+
+/* ---- Cards: white, one hairline, almost no shadow ------------------------ */
+.home-main .lp-card,
+.home-main .lp-preview {
+    border-color: var(--lp-border);
+    box-shadow: var(--lp-shadow);
+}
+.home-main .lp-feature:hover,
+.home-main .lp-phi:hover,
+.home-main .lp-techitem:hover,
+.home-main .lp-metric:hover {
+    box-shadow: 0 2px 4px rgba(16, 24, 40, .04), 0 12px 28px -14px rgba(16, 24, 40, .16);
+}
+
+/* ---- Neutral icon tiles -------------------------------------------------- */
+.home-main .lp-ico-teal,
+.home-main .lp-ico-green,
+.home-main .lp-ico-gold,
+.home-main .lp-ico-purple {
+    background: var(--lp-surface-2);
+    color: #3A4049;
+    box-shadow: inset 0 0 0 1px var(--lp-border);
+}
+html[data-theme="dark"] .home-main .lp-ico-teal,
+html[data-theme="dark"] .home-main .lp-ico-green,
+html[data-theme="dark"] .home-main .lp-ico-gold,
+html[data-theme="dark"] .home-main .lp-ico-purple {
+    color: #C9D1D9;
+}
+
+/* ---- Buttons: solid ink, no glow ---------------------------------------- */
+/* Fixed ink rather than `--lp-accent`, which the account's accent
+   (styles/preferences.css) repoints — a light accent in dark mode left dark
+   text on a dark button. */
+.home-main .lp-btn-primary {
+    background: #1F2328;
+    color: #FFFFFF;
+    box-shadow: none;
+}
+html[data-theme="dark"] .home-main .lp-btn-primary { background: #E6EDF3; color: #0d1117; }
+.home-main .lp-btn-primary:hover { transform: translateY(-1px); opacity: .9; }
+.home-main .lp-btn-ghost { background: var(--lp-surface); }
+
+/* ---- Footer -------------------------------------------------------------- */
+html:not([data-theme="dark"]) body:has(.home-main) .footer {
+    background: #FFFFFF;
+    border-top: 1px solid #ECEEF2;
+}
+
+/* ---- The closing call: the same clean card as the hero ------------------- */
+.home-main .lp-final-scene { display: none; }
+.home-main .lp-final {
+    background: var(--lp-surface);
+    background-image: none;
+    border-color: var(--lp-border);
+    box-shadow: none;
+}
+/* The glow that lit up behind it as it scrolled in. */
+.home-main .lp-final::before { display: none; }
