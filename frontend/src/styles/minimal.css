@@ -63,6 +63,55 @@ body.has-rail .peak-eyebrow {
     color: var(--color-ink-faint);
 }
 
+/* ---- Outer containers: a heavier rule -------------------------------------
+   Every page's outermost boxes — the cards and panels a page is laid out in,
+   not the boxes inside them — draw their rule at 1.5px rather than 1px.
+   Found by measuring each page for bordered boxes with no bordered box
+   around them (2026-10-06). List items inside a container (a task row, a
+   calendar event) and chips keep their 1px. */
+body.has-rail .ui-card,
+body.has-rail .peak-hero,
+body.has-rail .tk-stat,
+body.has-rail .tk-side,
+body.has-rail .ag-card,
+body.has-rail .gx-cta,
+body.has-rail .ax-lens,
+body.has-rail .ax-panel,
+body.has-rail .ax-section,
+body.has-rail .ax-building-body,
+body.has-rail .ax-gp-overall,
+body.has-rail .ax-gp-metric-card,
+body.has-rail .ax-group,
+body.has-rail .ax-observe,
+body.has-rail .ax-tabs-major,
+body.has-rail .gr-hero-card,
+body.has-rail .gr-panel,
+body.has-rail .sx-hero,
+body.has-rail .sb-card,
+body.has-rail .sb-path,
+body.has-rail .sb-link,
+body.has-rail .so-band,
+body.has-rail .wk-panel,
+body.has-rail .mv-card,
+body.has-rail .mv-summary,
+body.has-rail .stx-setup,
+body.has-rail .nt-list-panel,
+body.has-rail .nt-editor,
+body.has-rail .pom-hero,
+body.has-rail .pom-panel,
+body.has-rail .rc-tile,
+body.has-rail .rc-card,
+body.has-rail .ac-band,
+body.has-rail .ac-recent-card,
+body.has-rail .ac-ladder,
+body.has-rail .ac-tile,
+body.has-rail .ac-foot,
+body.has-rail .st-card,
+body.has-rail .sp-members,
+body.has-rail .sp-body {
+    border-width: 1.5px;
+}
+
 /* ---- Cards: flat ----------------------------------------------------------
    The decorative washes, one page at a time. A card keeps its surface and its
    rule; only the colour laid over it goes. */
