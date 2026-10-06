@@ -64,9 +64,14 @@ export interface AmbientProps {
    * nothing else — see the note at the top of this file.
    */
   surge?: boolean;
+  /**
+   * The graph paper alone: the grid, without the wash or the particle canvas
+   * (so no loop runs). What every page but the custom spaces wears.
+   */
+  paper?: boolean;
 }
 
-export function Ambient({ cursor = false, surge = false }: AmbientProps) {
+export function Ambient({ cursor = false, surge = false, paper = false }: AmbientProps) {
   const { prefs } = useSettings();
   const on = prefs.show_ambient;
   const layer = useRef<HTMLDivElement>(null);
@@ -83,17 +88,17 @@ export function Ambient({ cursor = false, surge = false }: AmbientProps) {
   // `on` is a dependency for the same reason `cursor` is: turning the
   // background off has to stop the loop, not just stop drawing it.
   useEffect(() => {
-    if (reduced || !on) return;
+    if (reduced || !on || paper) return;
     return startParticles(canvas.current, surge);
-  }, [on, surge]);
+  }, [on, paper, surge]);
 
   // `cursor` is a dependency rather than a guard inside the effect, so turning
   // it off unbinds the pointer listeners instead of leaving them running over
   // an element that is no longer there.
   useEffect(() => {
-    if (reduced || !cursor || !on) return;
+    if (reduced || !cursor || !on || paper) return;
     return startCursorGlow(glow.current);
-  }, [cursor, on]);
+  }, [cursor, on, paper]);
 
   if (!on) return null;
 
@@ -103,10 +108,10 @@ export function Ambient({ cursor = false, surge = false }: AmbientProps) {
       ref={layer}
       aria-hidden="true"
     >
-      <div className="hm-gradient" />
+      {!paper && <div className="hm-gradient" />}
       <div className="hm-grid" />
-      <canvas className="hm-particles" ref={canvas} />
-      {cursor && <div className="hm-cursor" ref={glow} />}
+      {!paper && <canvas className="hm-particles" ref={canvas} />}
+      {cursor && !paper && <div className="hm-cursor" ref={glow} />}
     </div>
   );
 }

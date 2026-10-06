@@ -163,6 +163,9 @@ export default function App() {
   const landing = isLanding(pathname);
   /* See the note on <Ambient /> below. */
   const ownsAmbient = pathname === '/timer';
+  /* The Personal and Team spaces are the reader's own pages, and keep a plain
+     ground: no graph paper behind what they write. */
+  const custom = pathname.startsWith('/spaces/') || pathname.startsWith('/team/');
 
   /* `on-calendar` re-rules the background's graph paper to the calendar's own
      hour pitch while a calendar view is open — styles/ambient.css has the
@@ -200,15 +203,15 @@ export default function App() {
           property of the app, not a thing each screen opts into, and a screen
           written next week gets this one without anybody remembering.
           
-          The landing page has none of it: it is a plain white page now
-          (styles/home-minimal.css), and the graph paper and the drifting
-          field were most of what made it busy.
+          Every page wears the landing page's graph paper and nothing else of
+          the layer (`paper`): no wash, no drifting dots. The sign-in page
+          keeps the whole layer. The custom spaces have none — see `custom`.
           
           The timer is the one page that renders its own. While a sitting is
           running its field accelerates — `surge`, in the same component — and
           a second canvas behind the first would be a second rAF loop drawing
           something nobody can see. See pages/Timer.tsx. */}
-      {!ownsAmbient && pathname !== '/home' && <Ambient />}
+      {!ownsAmbient && !custom && <Ambient paper={pathname !== '/login'} />}
       {!landing && <Rail />}
       {/* Beside the rail rather than above it: the rail owns the full height
           and the bar starts at `--rail-w`. Outside the router with the rail,

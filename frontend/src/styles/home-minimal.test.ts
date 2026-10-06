@@ -20,8 +20,8 @@ describe('the quieter landing page', () => {
     expect(at('home-minimal.css')).toBeGreaterThan(at('home-motion.css'));
   });
 
-  it('has no graph paper or drifting field behind it', () => {
-    expect(app).toContain("pathname !== '/home' && <Ambient />");
+  it('has graph paper behind it, but no drifting field', () => {
+    expect(app).toContain("<Ambient paper={pathname !== '/login'} />");
   });
 
   it('takes the mountains and the washes off the hero and the closing call', () => {

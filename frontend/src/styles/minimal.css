@@ -7,7 +7,8 @@
    mountain range over every header, tinted gradient cards and gradient
    buttons. This sheet brings them to the rail's terms:
 
-     - a flat white ground, and no graph paper or drifting wash behind it;
+     - a flat white ground with the landing page's graph paper, and no
+       drifting wash or dots behind it;
      - headers (`PageHero`, components/Hero.tsx) as flat white cards with no
        sky and no range;
      - cards flat white with a thin rule, and shadows only on what floats;
@@ -29,7 +30,9 @@
 
 /* ---- The ground ---------------------------------------------------------- */
 html:not([data-theme="dark"]) body.has-rail { background: #FFFFFF; }
-body.has-rail .hm-ambient { display: none; }
+/* The graph paper stays; the wash and the drifting dots do not. */
+body.has-rail .hm-gradient,
+body.has-rail .hm-particles { display: none; }
 
 /* Shadows on what floats (menus, dialogs: --shadow-lg) and nowhere else. */
 body.has-rail {
