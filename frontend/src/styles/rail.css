@@ -646,12 +646,10 @@ html[data-theme="dark"] .rail-xp-bar { background: #21262D; }
 .rail-section:not(.is-open) .rail-section-head svg { transform: rotate(-90deg); }
 .rail-section-body { display: flex; flex-direction: column; gap: 2px; }
 
-.rail-empty {
-    margin: 0;
-    padding: var(--space-2) var(--space-4);
-    color: #A2A6AC;
-    font-size: var(--text-sm);
-}
+/* "Invite people" under the team spaces: a quieter row than a place. */
+.rail-link.rail-invite { color: #7C8087; }
+.rail-link.rail-invite svg { color: #9A9EA4; }
+html[data-theme="dark"] .rail-link.rail-invite { color: #8B949E; }
 
 .rail-link {
     padding: 11px var(--space-4);
@@ -702,7 +700,6 @@ html.nav-collapsed .rail-search { justify-content: center; padding-inline: 0; }
 html.nav-collapsed .rail-search span,
 html.nav-collapsed .rail-search kbd,
 html.nav-collapsed .rail-section-head,
-html.nav-collapsed .rail-empty,
 html.nav-collapsed .rail-avatar { display: none; }
 html.nav-collapsed .rail-rank { display: block; padding-inline: var(--space-1); }
 
@@ -712,7 +709,6 @@ html[data-theme="dark"] .rail-search:hover { border-color: #3A414B; }
 html[data-theme="dark"] .rail-search kbd { background: #262C35; color: #8B949E; }
 html[data-theme="dark"] .rail-section-head { color: #7D8590; }
 html[data-theme="dark"] .rail-section-head:hover { color: #F0F2F5; }
-html[data-theme="dark"] .rail-empty { color: #6E7681; }
 html[data-theme="dark"] .rail-link { color: #C9D1D9; }
 html[data-theme="dark"] .rail-link svg { color: #8B949E; }
 html[data-theme="dark"] .rail-link:hover { background: #1F252D; color: #F0F2F5; }

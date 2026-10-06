@@ -593,7 +593,14 @@ describe('Core, Personal and Team', () => {
     ['Space 1', 'Space 2', 'Space 3'].forEach((name, at) => {
       expect(within(personal).getByRole('link', { name })).toHaveAttribute('href', `/spaces/${at + 1}`);
     });
-    expect(within(screen.getByRole('region', { name: 'Team' })).getByText('No team yet')).toBeInTheDocument();
+    const team = screen.getByRole('region', { name: 'Team' });
+    ['Team Space 1', 'Team Space 2', 'Team Space 3'].forEach((name, at) => {
+      expect(within(team).getByRole('link', { name })).toHaveAttribute('href', `/team/${at + 1}`);
+    });
+    expect(within(team).getByRole('link', { name: 'Invite people' })).toHaveAttribute(
+      'href',
+      '/team/1?invite=1',
+    );
   });
 
   it('draws no label inside Core', () => {
@@ -648,10 +655,31 @@ describe('the Personal spaces', () => {
     renderWithProviders(<Rail />);
     act(() => {
       window.dispatchEvent(new CustomEvent(SPACES_CHANGED, {
-        detail: { id: 2, name: 'Reading list', body: '' },
+        detail: { kind: 'personal', space: { id: 2, name: 'Reading list', body: '' } },
       }));
     });
     expect(screen.getByRole('link', { name: 'Reading list' })).toHaveAttribute('href', '/spaces/2');
     expect(screen.queryByRole('link', { name: 'Space 2' })).not.toBeInTheDocument();
+  });
+});
+
+describe('the Team spaces', () => {
+  it('renames a team space without touching the personal one of the same number', () => {
+    renderWithProviders(<Rail />);
+    act(() => {
+      window.dispatchEvent(new CustomEvent(SPACES_CHANGED, {
+        detail: { kind: 'team', space: { id: 1, name: 'Study group', body: '', invites: [] } },
+      }));
+    });
+    expect(screen.getByRole('link', { name: 'Study group' })).toHaveAttribute('href', '/team/1');
+    expect(screen.getByRole('link', { name: 'Space 1' })).toBeInTheDocument();
+  });
+
+  it('invites to the team space that is open', () => {
+    renderWithProviders(<Rail />, { route: '/team/3' });
+    expect(screen.getByRole('link', { name: 'Invite people' })).toHaveAttribute(
+      'href',
+      '/team/3?invite=1',
+    );
   });
 });

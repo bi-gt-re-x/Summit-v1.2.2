@@ -31,8 +31,9 @@ GATED_PATHS = ('/dashboard', '/calendar', '/goals', '/growth', '/analytics',
                '/skill-trees', '/growth-tree',
                # Notes are the account's own writing and nobody else's.
                '/notes',
-               # The three Personal spaces, the same.
+               # The three Personal spaces and the three Team ones, the same.
                '/spaces/1', '/spaces/2', '/spaces/3',
+               '/team/1', '/team/2', '/team/3',
                # The timer shows the account's own focus hours against its own
                # goal, and banks more of them.
                '/timer',

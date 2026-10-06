@@ -285,7 +285,10 @@ export default function App() {
               <Route path="/notes" element={<Notes />} />
               {/* The three Personal spaces in the rail. An id outside 1-3
                   goes to the first. */}
-              <Route path="/spaces/:spaceId" element={<Space />} />
+              <Route path="/spaces/:spaceId" element={<Space key="personal" />} />
+              {/* The three Team spaces: the same page with a member list. Keyed
+                  apart so moving between the two kinds starts afresh. */}
+              <Route path="/team/:spaceId" element={<Space key="team" kind="team" />} />
               <Route path="/timer" element={<Timer />} />
               {/* One page, two tabs: personal bests and the badge wall. It was
                   called Records until the badges' own name took over, so the

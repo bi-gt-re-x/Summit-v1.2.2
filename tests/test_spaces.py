@@ -49,3 +49,54 @@ def test_the_pages_are_gated(anon):
     reply = anon.get('/spaces/1', follow_redirects=False)
     assert reply.status_code == 303
     assert '/login' in reply.headers['location']
+
+
+# ---- Team ------------------------------------------------------------------
+def test_three_team_spaces_start_named_empty_and_with_nobody_invited(client):
+    spaces = client.get('/api/team-spaces').json()['spaces']
+    assert [(s['id'], s['name'], s['body'], s['invites']) for s in spaces] == [
+        (1, 'Team Space 1', '', []), (2, 'Team Space 2', '', []), (3, 'Team Space 3', '', [])]
+
+
+def test_a_team_space_is_renamed_and_written_in_apart_from_personal(client):
+    client.post('/api/team-spaces/1', json={'name': 'Study group', 'body': 'Thursdays'})
+    team = client.get('/api/team-spaces').json()['spaces'][0]
+    assert (team['name'], team['body']) == ('Study group', 'Thursdays')
+    assert client.get('/api/spaces').json()['spaces'][0]['name'] == 'Space 1'
+
+
+def test_an_invite_is_kept_as_pending(client):
+    reply = client.post('/api/team-spaces/2/invite', json={'email': ' Ada@Example.com '}).json()
+    assert reply['success'] is True
+    assert reply['space']['invites'] == [{'email': 'ada@example.com', 'status': 'pending'}]
+    assert client.get('/api/team-spaces').json()['spaces'][1]['invites'][0]['email'] == 'ada@example.com'
+
+
+def test_an_invite_must_look_like_an_address_and_only_once(client):
+    assert client.post('/api/team-spaces/1/invite', json={'email': 'not an email'}).json()['success'] is False
+    client.post('/api/team-spaces/1/invite', json={'email': 'a@b.co'})
+    again = client.post('/api/team-spaces/1/invite', json={'email': 'A@B.co'}).json()
+    assert again['success'] is False and 'already' in again['message']
+
+
+def test_an_invite_can_be_taken_back(client):
+    client.post('/api/team-spaces/3/invite', json={'email': 'a@b.co'})
+    client.post('/api/team-spaces/3/invite', json={'email': 'c@d.co'})
+    reply = client.post('/api/team-spaces/3/uninvite', json={'email': 'a@b.co'}).json()
+    assert [item['email'] for item in reply['space']['invites']] == ['c@d.co']
+
+
+def test_renaming_keeps_the_invites(client):
+    client.post('/api/team-spaces/1/invite', json={'email': 'a@b.co'})
+    client.post('/api/team-spaces/1', json={'name': 'Lab'})
+    assert client.get('/api/team-spaces').json()['spaces'][0]['invites'][0]['email'] == 'a@b.co'
+
+
+def test_there_are_only_three_team_spaces(client):
+    assert client.post('/api/team-spaces/4', json={'name': 'x'}).json()['success'] is False
+    assert client.post('/api/team-spaces/4/invite', json={'email': 'a@b.co'}).json()['success'] is False
+
+
+def test_the_team_pages_are_gated(anon):
+    reply = anon.get('/team/2', follow_redirects=False)
+    assert reply.status_code == 303

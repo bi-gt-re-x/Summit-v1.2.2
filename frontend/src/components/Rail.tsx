@@ -28,7 +28,8 @@
  *
  * **Three sections, each folding under its heading.** Core is every page of
  * the app; Personal is the reader's three spaces (pages/Space.tsx), each
- * renamable; Team is where a shared one will go. A search box under
+ * renamable; Team is three more of the same, each with a member list whose
+ * invites are a placeholder for now. A search box under
  * the mark opens the top bar's search (utils/searchBus), as does ⌘K. Which
  * sections are folded is kept per device (`SECTIONS_KEY`). None of this is
  * drawn on a phone, where the rail is a bottom bar.
@@ -334,6 +335,25 @@ function onPage(tab: Tab, pathname: string): boolean {
   return Boolean(tab.under?.some((prefix) => pathname.startsWith(prefix)));
 }
 
+/** Two people: a space shared with a team. */
+const TEAM_ICON = (
+  <svg {...stroke}>
+    <circle cx="9" cy="8" r="3.5" />
+    <path d="M2.5 20a6.5 6.5 0 0 1 13 0" />
+    <circle cx="17" cy="9" r="2.5" />
+    <path d="M16 14.2a5 5 0 0 1 5.5 4.8" />
+  </svg>
+);
+
+/** A person with a plus: invite somebody. */
+const INVITE_ICON = (
+  <svg {...stroke}>
+    <circle cx="10" cy="8" r="3.5" />
+    <path d="M3.5 20a6.5 6.5 0 0 1 13 0" />
+    <path d="M19 8v6M16 11h6" />
+  </svg>
+);
+
 /** A page with a folded corner: one of the reader's own spaces. */
 const SPACE_ICON = (
   <svg {...stroke}>
@@ -537,8 +557,12 @@ export function Rail() {
   }, []);
   const isOpen = (id: SectionId) => collapsed || sections[id];
 
-  // The three Personal spaces' names, once there is an account to ask about.
+  // The three Personal spaces' names and the three Team ones, once there is
+  // an account to ask about.
   const { spaces } = useSpaces(status === 'signed-in');
+  const { spaces: teamSpaces } = useSpaces(status === 'signed-in', 'team');
+  /** The team space open now, so "Invite people" invites to that one. */
+  const teamHere = /^\/team\/([1-3])\b/.exec(pathname)?.[1];
 
   /* The title: the band the level has reached, or the one the hidden chain
      hands out at the end once it has been earned (utils/easterEgg) — a prize
@@ -762,7 +786,28 @@ export function Rail() {
             </Section>
 
             <Section id="team" label="Team" open={isOpen('team')} onFold={fold}>
-              <p className="rail-empty">No team yet</p>
+              {/* The same three-space shape as Personal, each with a member
+                  list on its page. Inviting is a placeholder: addresses are
+                  kept as pending and nothing is sent (components/Spaces). */}
+              {teamSpaces.map((space) => (
+                <NavLink
+                  key={space.id}
+                  to={`/team/${space.id}`}
+                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
+                  title={space.name}
+                >
+                  {TEAM_ICON}
+                  <span>{space.name}</span>
+                </NavLink>
+              ))}
+              <Link
+                className="rail-link rail-invite"
+                to={`/team/${teamHere ?? 1}?invite=1`}
+                title="Invite people"
+              >
+                {INVITE_ICON}
+                <span>Invite people</span>
+              </Link>
             </Section>
           </>
         )}

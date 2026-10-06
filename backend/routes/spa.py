@@ -68,6 +68,10 @@ SPA_ROUTES = (
     '/spaces/1',
     '/spaces/2',
     '/spaces/3',
+    # The three Team spaces: the same page, with a member list.
+    '/team/1',
+    '/team/2',
+    '/team/3',
     # The focus timer with a pomodoro cycle over it. The session it runs is the
     # account's ordinary one — see src/pages/Timer.tsx.
     '/timer',
