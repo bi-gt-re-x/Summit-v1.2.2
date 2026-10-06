@@ -1,13 +1,11 @@
 /**
  * How a mountain is drawn, as two functions and nothing else.
  *
- * This was private to components/Range.tsx, which grows the scenery every page
- * opens with. It is here because a second thing now draws mountains and means
- * something different by them: components/Home/RidgeChart.tsx plots a series as
- * a range, so the landing page's charts and the app's wallpaper are the same
- * rock. Two copies of the rounding rule below would be two chances for the
- * chart to stop looking like the scenery, and nobody would notice until both
- * were on screen at once.
+ * Drawn for components/Range.tsx, which grows the scenery behind a page
+ * header. It was split out of Range when the old landing page plotted its
+ * charts as ranges too, so the two would stay the same rock; the landing page
+ * draws plain charts now, and this stays a module of its own because it is the
+ * part of Range worth reading on its own.
  *
  * Nothing here knows about colour, layers, animation or data. It takes points
  * and returns a `d`.

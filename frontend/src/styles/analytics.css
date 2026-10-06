@@ -6,8 +6,7 @@
    generic names (.card, .stat-row, .theme-select), so a page that reaches for
    one of those inherits a look it did not ask for and has to override it in
    both themes. A private prefix means this file starts from the browser's
-   defaults and nothing else. See the note in styles/homepage.css for what the
-   alternative costs.
+   defaults and nothing else.
 
    Colour is a set of custom properties on `.ax-page`, redeclared once for
    dark. Nothing below the token block names a colour, so the two themes are

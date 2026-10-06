@@ -94,8 +94,8 @@ const FAMILIES = [
   },
   {
     name: 'landing',
-    why: 'The landing page, the motion layer that animates it, and the ambient field behind it.',
-    files: ['homepage.css', 'home-motion.css', 'ambient.css'],
+    why: 'The landing page and the ambient field behind the sign-in page.',
+    files: ['landing.css', 'ambient.css'],
   },
   {
     name: 'dashboard',
