@@ -47,9 +47,15 @@
     contain: layout paint style;
 }
 
-/* The landing page's bands used to be lifted here. The landing page has no
-   ambient layer now (App.tsx; styles/landing.css draws its own washes), so
-   there is nothing left for them to climb over. */
+/* The landing page's three bands.
+   
+   The `z-index` no longer has anything to climb over. The rule stays for the
+   `position`, which is the containing block a handful of absolutely-positioned
+   pieces inside these three are measured against — removing it would move
+   them, and that is a different change from this one. */
+.site-nav,
+.home-main,
+.footer { position: relative; z-index: 1; }
 
 /* --- the grid ---------------------------------------------------------- */
 /* Two repeating gradients crossed into squares. It materialises over a

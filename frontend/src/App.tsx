@@ -144,7 +144,7 @@ function pinsViewport(pathname: string): boolean {
  *
  * It is the one route a signed-out visitor is meant to read rather than work
  * in, and it carries its own header and its own Log In / Sign Up row — the ones
- * it had before React, which styles/landing.css dresses. The rail beside
+ * it had before React, which styles/homepage.css still dresses. The rail beside
  * that would be a second navigation for pages the reader cannot open yet.
  * The sign-in page (/login) is the same: a signed-out visitor's page, with the
  * mark in its own layout.
@@ -200,15 +200,16 @@ export default function App() {
           property of the app, not a thing each screen opts into, and a screen
           written next week gets this one without anybody remembering.
           
-          The landing page has none of it: it draws its own two soft washes
-          and nothing else (styles/landing.css), so the grid and the drifting
-          field would be a second background under the first.
+          The glow that follows the pointer stays off everywhere but the
+          landing page. The reasoning is on components/Ambient: a light that
+          chases the cursor suits a page being read and follows every trip to a
+          checkbox on a page being worked.
           
           The timer is the one page that renders its own. While a sitting is
           running its field accelerates — `surge`, in the same component — and
           a second canvas behind the first would be a second rAF loop drawing
           something nobody can see. See pages/Timer.tsx. */}
-      {!ownsAmbient && pathname !== '/home' && <Ambient />}
+      {!ownsAmbient && <Ambient cursor={pathname === '/home'} />}
       {!landing && <Rail />}
       {/* Beside the rail rather than above it: the rail owns the full height
           and the bar starts at `--rail-w`. Outside the router with the rail,
