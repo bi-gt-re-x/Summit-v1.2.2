@@ -284,6 +284,7 @@ function ThemeCard({
 }
 
 const ACCENTS: { key: Accent; label: string; swatch: string }[] = [
+  { key: 'graphite', label: 'Graphite', swatch: '#2C302E' },
   { key: 'violet', label: 'Violet', swatch: '#6d5ae0' },
   { key: 'blue', label: 'Blue', swatch: '#2f6fd0' },
   { key: 'green', label: 'Green', swatch: '#1f8a54' },

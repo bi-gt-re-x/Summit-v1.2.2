@@ -1,0 +1,50 @@
+/**
+ * Every signed-in page in the sidebar's look — styles/minimal.css.
+ *
+ * What is pinned is the handful of rules that make the look, each scoped to
+ * `body.has-rail` so the landing and sign-in pages keep their own, and the
+ * Graphite accent they lean on.
+ */
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+
+const read = (path: string): string => readFileSync(new URL(path, import.meta.url), 'utf8');
+const minimal = read('./minimal.css').replace(/\/\*[\s\S]*?\*\//g, '');
+const preferences = read('./preferences.css');
+const main = read('../main.tsx');
+
+/** Every selector in the sheet, one per alternative. */
+const selectors = [...minimal.matchAll(/([^{}]+)\{/g)]
+  .flatMap((match) => match[1]!.split(','))
+  .map((selector) => selector.trim())
+  .filter(Boolean);
+
+describe('the minimal layer', () => {
+  it('is loaded on every page', () => {
+    expect(main).toContain("import '@/styles/minimal.css';");
+  });
+
+  it('touches signed-in pages only', () => {
+    for (const selector of selectors) expect(selector).toMatch(/body\.has-rail/);
+  });
+
+  it('takes the graph paper and the drifting wash away', () => {
+    expect(minimal).toMatch(/body\.has-rail \.hm-ambient \{ display: none; \}/);
+  });
+
+  it('draws headers without their sky and mountains', () => {
+    expect(minimal).toMatch(/body\.has-rail \.peak-scene \{ display: none; \}/);
+    expect(minimal).toMatch(/body\.has-rail \.peak-hero \{[^}]*background-image: none/);
+  });
+
+  it('points a header\'s own colour at the accent', () => {
+    expect(minimal).toMatch(/--peak-a: var\(--pref-accent/);
+  });
+});
+
+describe('the Graphite accent', () => {
+  it('is the sidebar\'s charcoal, in both themes', () => {
+    expect(preferences).toMatch(/:root\[data-accent="graphite"\] \{ --pref-accent: #2C302E;/);
+    expect(preferences).toMatch(/html\[data-theme="dark"\]:root\[data-accent="graphite"\]/);
+  });
+});

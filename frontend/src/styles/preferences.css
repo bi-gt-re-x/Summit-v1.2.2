@@ -42,6 +42,9 @@
 :root[data-accent="amber"] { --pref-accent: #b8791f; --pref-accent-2: #e0b23c; }
 :root[data-accent="rose"]  { --pref-accent: #c0395f; --pref-accent-2: #f2778f; }
 :root[data-accent="slate"] { --pref-accent: #4a5568; --pref-accent-2: #8b97ab; }
+/* Graphite: the sidebar's charcoal. The default, so a page matches the rail
+   unless the reader picks a colour. */
+:root[data-accent="graphite"] { --pref-accent: #2C302E; --pref-accent-2: #6C7178; }
 
 /* Dark wants the lighter of the pair as its base, for the same reason every
    page's dark block lifts its own accent: a mid-tone that reads as colour on
@@ -51,6 +54,7 @@ html[data-theme="dark"]:root[data-accent="green"] { --pref-accent: #46c483; }
 html[data-theme="dark"]:root[data-accent="amber"] { --pref-accent: #e0b23c; }
 html[data-theme="dark"]:root[data-accent="rose"]  { --pref-accent: #f2778f; }
 html[data-theme="dark"]:root[data-accent="slate"] { --pref-accent: #8b97ab; }
+html[data-theme="dark"]:root[data-accent="graphite"] { --pref-accent: #9AA3AE; }
 
 /* ---------- Skins ---------------------------------------------------------
    Four whole palettes, against light and dark's two neutral grounds.

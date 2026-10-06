@@ -273,7 +273,9 @@ FIELDS: Dict[str, Any] = {
     #: page says so rather than leaving a dead control on screen. A palette
     #: that let you swap its accent out would not be a palette.
     'theme_skin':        ('', _one_of('', 'midnight', 'sunset', 'meadow', 'orchid')),
-    'accent':            ('violet', _one_of('violet', 'blue', 'green', 'amber', 'rose', 'slate')),
+    #: Graphite is the default: the sidebar's own charcoal, so the pages
+    #: match it unless the reader picks a colour.
+    'accent':            ('graphite', _one_of('graphite', 'violet', 'blue', 'green', 'amber', 'rose', 'slate')),
     'reduce_motion':     (False, _boolean),
     'show_ambient':      (True, _boolean),
     'nav_collapsed':     (False, _boolean),

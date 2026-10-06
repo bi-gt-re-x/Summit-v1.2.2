@@ -57,7 +57,8 @@ class TestTheSkinPreference:
 
     def test_the_accent_list_is_untouched(self):
         """A palette switches the accent picker off; it does not shorten it.
-        The six are still the six for anyone on light or dark."""
-        for name in ('violet', 'blue', 'green', 'amber', 'rose', 'slate'):
+        The seven are still the seven for anyone on light or dark, and the
+        default is Graphite, the sidebar's charcoal (styles/minimal.css)."""
+        for name in ('graphite', 'violet', 'blue', 'green', 'amber', 'rose', 'slate'):
             assert check('accent', name) == name
-        assert default('accent') == 'violet'
+        assert default('accent') == 'graphite'

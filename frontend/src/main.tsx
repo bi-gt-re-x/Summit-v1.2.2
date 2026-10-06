@@ -40,6 +40,7 @@ import '@/styles/page-enter.css';
 import '@/styles/preferences.css';
 import '@/styles/rail.css';
 import '@/styles/summit.css';
+import '@/styles/minimal.css';
 
 const container = document.getElementById('root');
 if (!container) {

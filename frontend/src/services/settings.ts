@@ -15,7 +15,7 @@ import { get, post } from './api';
 import type { ApiResult, UserStats, VacationWindow } from '@/types';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
-export type Accent = 'violet' | 'blue' | 'green' | 'amber' | 'rose' | 'slate';
+export type Accent = 'graphite' | 'violet' | 'blue' | 'green' | 'amber' | 'rose' | 'slate';
 /**
  * A whole built palette, or '' for plain light and dark.
  *
@@ -258,7 +258,7 @@ export interface SettingsEdit {
 export const DEFAULTS: Prefs = {
   theme_mode: 'system',
   theme_skin: '',
-  accent: 'violet',
+  accent: 'graphite',
   reduce_motion: false,
   show_ambient: true,
   nav_collapsed: false,
