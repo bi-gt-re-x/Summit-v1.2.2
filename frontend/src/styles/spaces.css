@@ -1,6 +1,6 @@
 /* One Personal space — pages/Space.tsx.
    A heading you can rename in place and a sheet to write on, in the same
-   beige the rail and every other container use. */
+   white the rail and every other container use. */
 .sp-page {
     box-sizing: border-box;
     min-height: calc(100vh - var(--topnav-h));
@@ -151,7 +151,7 @@ html[data-theme="dark"] .sp-body:focus { border-color: #3A414B; }
     font-weight: 600;
     cursor: pointer;
 }
-.sp-btn.is-primary { border-color: #2C302E; background: #2C302E; color: #F7F7F6; }
+.sp-btn.is-primary { border-color: #2C302E; background: #2C302E; color: #FFFFFF; }
 .sp-btn:disabled { opacity: .5; cursor: default; }
 .sp-invite-error { margin: 0; font-size: var(--text-sm); color: #B4432F; }
 

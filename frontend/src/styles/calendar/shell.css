@@ -256,7 +256,7 @@ body:has(.calendar-container) {
    below), so this is what shows behind the whole view, and the grey read as
    a tint over a view that is otherwise white cards and hairlines. Dark is the
    dashboard's dark ground. */
-html:not([data-theme="dark"]) body:has(.calendar-container) { background: #F7F7F6; }
+html:not([data-theme="dark"]) body:has(.calendar-container) { background: #ffffff; }
 html[data-theme="dark"] body:has(.calendar-container) { background: #0d1117; }
 
 /* The week view spends its width on the grid. 46px of card padding either side

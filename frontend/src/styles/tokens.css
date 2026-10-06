@@ -69,10 +69,11 @@
 
     /* ---------- Colour --------------------------------------------------- */
     --color-bg: #f4f6f8;
-    /* The sidebar's beige, for every card, panel and box the app draws on.
-       Insets sit one step deeper so they still read as set into it. */
-    --color-surface: #F7F7F6;
-    --color-surface-2: #EFEFEC;
+    /* Pure white for every card, panel and box the app draws on, the sidebar
+       included. Insets sit one cool step off it so they still read as set
+       into a card. */
+    --color-surface: #FFFFFF;
+    --color-surface-2: #f7f8fb;
     --color-line: #e6e9ef;
     --color-line-soft: #eef0f5;
     --color-ink: #1f2733;

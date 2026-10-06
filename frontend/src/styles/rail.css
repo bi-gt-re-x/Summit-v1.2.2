@@ -567,13 +567,13 @@ html[data-theme="dark"] .rail-xp-bar { background: #21262D; }
 /* ==========================================================================
    Core, Personal, Team
    ==========================================================================
-   The rail as one quiet panel: a soft grey ground, a search box under the
+   The rail as one quiet panel: a white ground, a search box under the
    mark, the app's pages folded under "Core", and the reader's own space and
    their team's under it. The current page is a neutral grey pill rather than
    a tinted one, and the headings are small spaced capitals that fold what is
    under them. Desktop only: the phone's bottom bar draws none of this. */
 .rail {
-    background: #F7F7F6;
+    background: #FFFFFF;
     border-right-color: #ECECEA;
 }
 

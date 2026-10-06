@@ -1,16 +1,16 @@
 /* ==========================================================================
    minimal.css — every app page in the sidebar's look.
 
-   The rail is a flat beige panel: one thin rule, neutral greys, charcoal for
+   The rail is a flat white panel: one thin rule, neutral greys, charcoal for
    what matters, no washes, no glow. The pages around it were a different
    app — a ruled backdrop with drifting colour behind every page, a sky and a
    mountain range over every header, tinted gradient cards and gradient
    buttons. This sheet brings them to the rail's terms:
 
-     - a flat, warm ground, and no graph paper or drifting wash behind it;
-     - headers (`PageHero`, components/Hero.tsx) as flat beige cards with no
+     - a flat white ground, and no graph paper or drifting wash behind it;
+     - headers (`PageHero`, components/Hero.tsx) as flat white cards with no
        sky and no range;
-     - cards flat beige with a thin rule, and shadows only on what floats;
+     - cards flat white with a thin rule, and shadows only on what floats;
      - gradient buttons and active tabs solid, in the page's accent — which
        is Graphite, the rail's charcoal, unless the reader picks a colour
        (styles/preferences.css, Settings › Appearance).
@@ -28,7 +28,7 @@
    ========================================================================== */
 
 /* ---- The ground ---------------------------------------------------------- */
-html:not([data-theme="dark"]) body.has-rail { background: #F1F1EF; }
+html:not([data-theme="dark"]) body.has-rail { background: #FFFFFF; }
 body.has-rail .hm-ambient { display: none; }
 
 /* Shadows on what floats (menus, dialogs: --shadow-lg) and nowhere else. */
