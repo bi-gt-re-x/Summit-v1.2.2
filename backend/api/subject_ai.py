@@ -43,6 +43,8 @@ from pydantic import BaseModel
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
+from backend.api.tasks import CreateTask, _create as create_task
+from backend.tracking import session_plan
 from backend.tracking import subject_ai
 from backend.tracking.auth import load_user
 
@@ -470,6 +472,8 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         None)
 
     history = _history(username, subject)
+    # So a planned session finished since the last visit counts as taken.
+    _sync(username, history)
     curve = body.curve
 
     mode = body.mode if body.mode in ('fresh', 'more', 'read') else 'read'
@@ -666,6 +670,47 @@ def saved_reading(subject: str = '', username: str = Depends(current_username)):
 # --------------------------------------------------------------------------
 # The loop
 # --------------------------------------------------------------------------
+def _sync(username: str, rows: list) -> dict:
+    """Each recommendation's state, read off the task it was planned as.
+
+    A step planned as a session is locked to that task. Finished, it counts as
+    taken (stamped here, if completion got there first); deleted, the link is
+    dropped and the step can be planned again; still open, it stays planned.
+    Read on every listing rather than hooked into each way a task can be
+    deleted, so no path can leave a step locked to a task that is gone.
+
+    Returns {id: {'state', 'task'}} where state is open, planned or done.
+    """
+    linked = [row for row in rows if row.get('task_id') and not row.get('taken_at')]
+    tasks = db.columns_by_ids('tasks', username, [row['task_id'] for row in linked],
+                              ('id', 'status', 'created_at', 'due_date',
+                               'completed_at', 'xp_value')) if linked else {}
+    out = {}
+    for row in rows:
+        if row.get('taken_at'):
+            out[row['id']] = {'state': 'done', 'task': None}
+            continue
+        task = tasks.get(row.get('task_id')) if row.get('task_id') else None
+        if row.get('task_id') and not task:
+            db.update_row('subject_recommendations', row['id'], {'task_id': None},
+                          user_id=username)
+            row['task_id'] = None
+        if not task:
+            out[row['id']] = {'state': 'open', 'task': None}
+        elif task.get('status') == 'done':
+            row['taken_at'] = (task.get('completed_at')
+                               or datetime.now().isoformat(timespec='seconds'))
+            db.update_row('subject_recommendations', row['id'],
+                          {'taken_at': row['taken_at']}, user_id=username)
+            out[row['id']] = {'state': 'done', 'task': None}
+        else:
+            out[row['id']] = {'state': 'planned', 'task': {
+                'id': task.get('id'), 'start': task.get('created_at') or '',
+                'end': task.get('due_date') or '',
+                'xp': task.get('xp_value') or 0}}
+    return out
+
+
 @router.get('/api/subject_recommendations')
 def list_recommendations(subject: str = '', username: str = Depends(current_username)):
     """What has been recommended for this subject, and how each kind has gone."""
@@ -675,6 +720,7 @@ def list_recommendations(subject: str = '', username: str = Depends(current_user
 
     name = _text(subject)
     rows = _history(username, name)
+    states = _sync(username, rows)
     return ok(
         recommendations=[
             {'id': row.get('id'), 'title': row.get('title'),
@@ -688,11 +734,83 @@ def list_recommendations(subject: str = '', username: str = Depends(current_user
              # for now and reads the two against each other — which is the
              # whole of "did this work", and it needs both ends or neither.
              'was': row.get('execution_at'),
-             'task_id': row.get('task_id')}
+             'task_id': row.get('task_id'),
+             'state': states[row['id']]['state'],
+             'task': states[row['id']]['task']}
             for row in rows
         ],
         outcomes=_outcomes(rows, None),
     )
+
+
+class PlanSession(BaseModel):
+    id: str = ''
+    #: The catalogue id the page is showing, for filing the task. Checked by
+    #: the task API's own `_subject`, so a stale one is dropped, not stored.
+    subject_id: str = ''
+
+
+@router.post('/api/subject_recommendation/plan')
+def plan_session(body: PlanSession, username: str = Depends(current_username)):
+    """Book one recommended session onto the calendar as a task.
+
+    The minutes, the XP and the slot are `session_plan`'s rules. The step is
+    then locked to the task: it cannot be planned a second time until that
+    task is deleted (and it opens again) or completed (and it counts as done).
+    """
+    _, user = load_user(username)
+    if not user:
+        return fail('User not found')
+
+    row = db.find_row('subject_recommendations', _text(body.id), user_id=username)
+    if not row:
+        return fail('That recommendation is no longer on record.')
+
+    state = _sync(username, [row])[row['id']]['state']
+    if state == 'planned':
+        return fail('This session is already planned. Complete or delete that task '
+                    'to plan another.')
+    if state == 'done':
+        return fail('This session is already done.')
+
+    minutes = session_plan.estimate_minutes(row.get('minutes'), row.get('difficulty'))
+    xp = session_plan.xp_for(minutes, row.get('difficulty'))
+    now = datetime.now()
+    busy = session_plan.busy_spans(
+        db.columns_for('tasks', username, ('show_on_calendar', 'created_at', 'due_date')),
+        db.calendar_document(username), now)
+    slot = session_plan.next_slot(minutes, busy, now)
+    if not slot:
+        return fail('There is no free {}-minute slot in the next two weeks.'.format(minutes))
+    start, end = slot
+
+    made = create_task(CreateTask(
+        name=row.get('title') or 'Practice session',
+        priority=session_plan.priority_for(xp),
+        xp_reward=xp,
+        due_date=end.isoformat(timespec='seconds'),
+        created_at=start.isoformat(timespec='seconds'),
+        show_on_calendar=True,
+        subject=_text(body.subject_id, 64) or None,
+    ), username)
+    task_id = made.get('task_id') if isinstance(made, dict) else None
+    if not task_id:
+        return fail('Could not add that session. Try again.')
+
+    # What to actually do, from the step as it was written, onto the task.
+    step = next((one for one in _saved_steps(username, row.get('subject') or '')
+                 if one.get('id') == row['id']), {})
+    note = ' · '.join(_text(step.get(key), 200) for key in ('problems', 'pace', 'resource')
+                      if _text(step.get(key)))
+    if note:
+        db.update_row('tasks', task_id, {'description': note}, user_id=username)
+
+    db.update_row('subject_recommendations', row['id'], {'task_id': task_id},
+                  user_id=username)
+    return ok(id=row['id'], task={'id': task_id,
+                                  'start': start.isoformat(timespec='seconds'),
+                                  'end': end.isoformat(timespec='seconds'),
+                                  'xp': xp}, minutes=minutes)
 
 
 class TakeRecommendation(BaseModel):

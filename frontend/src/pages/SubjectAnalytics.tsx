@@ -118,16 +118,18 @@ import {
   savedSubjectReading,
   subjectRecommendations,
   suggestSubjectGoal,
+  planSession,
   takeRecommendation,
   writeGoalPlan,
   type GoalDraft,
   type GoalPlan,
   type NextStep,
+  type PlannedSession,
+  type StepState,
   type SubjectMilestone,
   type SubjectReading,
 } from '@/services/analytics';
 import { getGoals, updateGoal } from '@/services/goals';
-import { createTask } from '@/services/tasks';
 import { BATCH, MAX_STEPS, NextSteps } from '@/components/Subject/NextSteps';
 import { measureOf } from '@/components/Goals';
 import { format } from '@/utils';
@@ -710,9 +712,11 @@ export default function SubjectAnalytics() {
   const [readError, setReadError] = useState('');
   const [errorFrom, setErrorFrom] = useState<'steps' | 'read'>('steps');
   const [canRead, setCanRead] = useState(false);
-  /* Recommendations already acted on, so a step does not offer twice, and the
-     one a button is busy on. */
-  const [taken, setTaken] = useState<Set<string>>(new Set());
+  /* Where each recommendation stands — open, planned as a task, or done — so a
+     step does not offer twice, and the one a button is busy on. */
+  const [stepState, setStepState] = useState<
+    Map<string, { state: StepState; task: PlannedSession | null }>
+  >(new Map());
   const [stepBusy, setStepBusy] = useState('');
 
   /* ---- WHAT ARE YOU TRYING TO ACCOMPLISH -------------------------------
@@ -770,47 +774,47 @@ export default function SubjectAnalytics() {
      request is actually keyed on, and it is a string. */
   const subjectName = subject?.name ?? '';
 
-  /* Which recommendations here have been acted on before. Cheap, and read on
-     arrival, so a step taken on an earlier visit says so the moment a saved
-     batch is put back on screen. */
+  /* Where each recommendation here stands. Cheap, and read on arrival and
+     whenever the tasks change, so a planned session that was finished or
+     deleted elsewhere unlocks (or counts as done) the moment the page sees it.
+     The server works the state out from the task itself. */
+  const tasksStamp = tasks.data;
   useEffect(() => {
     if (!username || !subjectName) return;
     let live = true;
     void subjectRecommendations(subjectName).then((result) => {
       if (!live || !result.success) return;
-      setTaken(new Set(result.recommendations.filter((row) => row.taken).map((row) => row.id)));
+      setStepState(new Map(result.recommendations.map((row) => [
+        row.id,
+        { state: row.state ?? (row.taken ? 'done' : 'open'), task: row.task ?? null },
+      ])));
     });
     return () => {
       live = false;
     };
-  }, [subjectName, username]);
+  }, [subjectName, username, tasksStamp]);
 
-  /* Cleared with the window and the subject, then restored from the server if
-     one was written for this exact pair.
+  /* Cleared with the subject, then restored from the server — one saved
+     reading per account and subject, whatever window it was written under.
 
-     Both halves of that are the same rule. A diagnosis argued from ninety
-     days, sitting over a page now showing seven, is a reading of figures that
-     are no longer on screen — so it is cleared when the window moves, and a
-     saved one is only put back when the window it was argued from is the one
-     being shown. The span is stored beside the reading for that comparison.
-
-     The restore is what stops a refresh throwing away a reading the reader
-     paid a call for. It used to live here and nowhere else. */
-  const spanLabel = WINDOWS.find((option) => option.key === span)?.label ?? '';
+     It used to be put back only when the window on screen matched the one it
+     was argued from, so a reader whose default window differed (or who
+     switched windows once) saw their recommendations disappear. The steps are
+     a plan for this subject, not a reading of one window's figures, and the
+     reader paid a call for them; they stay until replaced. */
   useEffect(() => {
     setReading(null);
     setReadError('');
-    if (!username || !subjectName || !spanLabel) return;
+    if (!username || !subjectName) return;
     let live = true;
     void savedSubjectReading(subjectName).then((result) => {
       if (!live || !result.success || !result.reading) return;
-      if (result.span && result.span !== spanLabel) return;
       setReading(result.reading);
     });
     return () => {
       live = false;
     };
-  }, [span, spanLabel, subjectId, subjectName, username]);
+  }, [subjectId, subjectName, username]);
 
   /**
    * Ask the model. `fresh` replaces the steps on screen with three new ones,
@@ -920,40 +924,40 @@ export default function SubjectAnalytics() {
     else setReadError(result.message || 'Could not read this subject.');
   }, [ambition, lattice, model.goals, span, state, subject, subjectId, tasks.data, today]);
 
-  /** Record a step as acted on, however it was acted on. */
-  const record = useCallback(async (step: NextStep, taskId = '') => {
+  /** Record a step as done without planning it — the work happened elsewhere. */
+  const record = useCallback(async (step: NextStep) => {
     setStepBusy(step.id);
-    const result = await takeRecommendation(step.id, taskId);
+    const result = await takeRecommendation(step.id);
     setStepBusy('');
-    if (result.success) setTaken((was) => new Set(was).add(step.id));
+    if (result.success) {
+      setStepState((was) => new Map(was).set(step.id, { state: 'done', task: null }));
+    }
   }, []);
 
   /**
-   * Turn a step into a real task, filed under this subject.
+   * Plan my next session: the server estimates the length and XP, books the
+   * next free calendar slot as a task filed under this subject, and locks the
+   * step to it until that task is completed (done) or deleted (open again).
    *
-   * That is what closes the loop: finishing an ordinary task raises the rating
-   * prompt, the rating is what the figures above are made of, and the next
-   * batch is therefore argued from evidence this one produced.
+   * Finishing the task raises the rating prompt, and the rating is what the
+   * next batch is argued from — that is the loop.
    */
-  const makeTask = useCallback(
+  const planStep = useCallback(
     async (step: NextStep) => {
       setStepBusy(step.id);
-      const made = await createTask({
-        name: step.title,
-        subject: subjectId,
-        priority: step.difficulty >= 4 ? 'high' : 'medium',
-      });
+      setReadError('');
+      const made = await planSession(step.id, subjectId);
       setStepBusy('');
       if (!made.success) {
         setErrorFrom('steps');
-        setReadError('Could not add that task. Try again.');
+        setReadError(made.message || 'Could not plan that session. Try again.');
         return;
       }
-      await record(step, made.task_id);
+      setStepState((was) => new Map(was).set(step.id, { state: 'planned', task: made.task }));
       // Re-read rather than patched: the new task changes a dozen figures.
       tasks.reload();
     },
-    [record, subjectId, tasks],
+    [subjectId, tasks],
   );
 
   /* The volume chart's own ceiling. A floor of 1 keeps a window with a single
@@ -1424,9 +1428,9 @@ export default function SubjectAnalytics() {
                       </p>
                       <NextSteps
                         steps={reading.next_steps}
-                        taken={taken}
+                        status={stepState}
                         busy={stepBusy}
-                        onMakeTask={(step) => void makeTask(step)}
+                        onPlan={(step) => void planStep(step)}
                         onDidIt={(step) => void record(step)}
                       />
                     </div>

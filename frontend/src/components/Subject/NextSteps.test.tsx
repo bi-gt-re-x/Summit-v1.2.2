@@ -24,7 +24,7 @@ const step = (n: number, over: Partial<NextStep> = {}): NextStep => ({
 
 function draw(steps: NextStep[]) {
   return render(
-    <NextSteps steps={steps} taken={new Set()} busy="" onMakeTask={() => {}} onDidIt={() => {}} />,
+    <NextSteps steps={steps} status={new Map()} busy="" onPlan={() => {}} onDidIt={() => {}} />,
   );
 }
 
@@ -82,14 +82,24 @@ describe('opening a step', () => {
   it('leaves the fold alone when a button inside is pressed', () => {
     const made: string[] = [];
     const { container } = render(
-      <NextSteps steps={[step(1)]} taken={new Set()} busy=""
-        onMakeTask={(s) => made.push(s.id)} onDidIt={() => {}} />,
+      <NextSteps steps={[step(1)]} status={new Map()} busy=""
+        onPlan={(s) => made.push(s.id)} onDidIt={() => {}} />,
     );
     const fold = container.querySelector('details')!;
     expect(fold.open).toBe(true);
-    fireEvent.click(screen.getByRole('button', { name: 'Make it a task' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Plan my next session' }));
     expect(made).toEqual(['r1']);
     expect(fold.open).toBe(true);
+  });
+
+  it('locks a planned step until its task is completed or deleted', () => {
+    const status = new Map([['r1', {
+      state: 'planned' as const,
+      task: { id: 't1', start: '2026-10-06T16:00:00', end: '2026-10-06T16:45:00', xp: 25 },
+    }]]);
+    render(<NextSteps steps={[step(1)]} status={status} busy="" onPlan={() => {}} onDidIt={() => {}} />);
+    expect(screen.queryByRole('button', { name: 'Plan my next session' })).toBeNull();
+    expect(screen.getByText(/Planned for .* · 25 XP/)).toBeInTheDocument();
   });
 
   it('leaves the fold alone when a link inside is followed', () => {

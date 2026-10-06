@@ -443,6 +443,11 @@
 
 .sx-chip.is-focus { color: var(--ax-text); }
 
+.sx-chip.is-planned {
+    border-color: color-mix(in srgb, var(--ax-blue) 40%, transparent);
+    color: var(--ax-blue);
+}
+
 .sx-chip.is-difficulty[data-level="1"],
 .sx-chip.is-difficulty[data-level="2"] {
     border-color: color-mix(in srgb, var(--ax-green) 40%, transparent);

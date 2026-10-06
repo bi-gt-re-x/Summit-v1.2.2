@@ -4,7 +4,7 @@
  * What it promises: it sits right above the calendar heatmap; it holds the
  * model's sessions and nothing else; they come three at a time, each a
  * dropdown that says exactly what to work, how fast and from where, with
- * "Make it a task" and "I did this" inside; "Generate 3 more" adds three under
+ * "Plan my next session" and "I did this" inside; "Generate 3 more" adds three under
  * the ones on screen, up to six; and every finished task, grouped by name, is
  * what the model is handed.
  */
@@ -70,7 +70,10 @@ const readSubject = vi.fn(async (payload: { mode?: string }) => {
   return { success: true, reading: { diagnosis: [], priorities: [], insights: [], next_steps: onScreen } };
 });
 const takeRecommendation = vi.fn(async (id: string) => ({ success: true, id }));
-const createTask = vi.fn(async () => ({ success: true, task_id: 't-new' }));
+const planSession = vi.fn(async (id: string, _subjectId: string) => ({
+  success: true, id, minutes: 45,
+  task: { id: 't-new', start: '2026-10-06T16:00:00', end: '2026-10-06T16:45:00', xp: 25 },
+}));
 
 vi.mock('@/services/analytics', async (original) => {
   const real = await original<Record<string, unknown>>();
@@ -85,11 +88,8 @@ vi.mock('@/services/analytics', async (original) => {
     subjectRecommendations: async () => ({ success: true, recommendations: [], outcomes: [] }),
     readSubject: (payload: { mode?: string }) => readSubject(payload),
     takeRecommendation: (id: string) => takeRecommendation(id),
+    planSession: (id: string, subjectId: string) => planSession(id, subjectId),
   };
-});
-vi.mock('@/services/tasks', async (original) => {
-  const real = await original<Record<string, unknown>>();
-  return { ...real, createTask: (...args: unknown[]) => createTask(...(args as [])) };
 });
 vi.mock('@/services/goals', async (original) => {
   const real = await original<Record<string, unknown>>();
@@ -137,7 +137,7 @@ beforeEach(() => {
   made = 0;
   readSubject.mockClear();
   takeRecommendation.mockClear();
-  createTask.mockClear();
+  planSession.mockClear();
 });
 
 describe('the subject Recommendations section', () => {
@@ -228,22 +228,21 @@ describe('the subject Recommendations section', () => {
     expect(within(section()).getByText('Session 1')).toBeInTheDocument();
   });
 
-  it('turns a step into a task filed under the subject, and records it', async () => {
+  it('plans a step as a session filed under the subject, and locks it', async () => {
     await show();
     await generate();
-    await userEvent.click(within(section()).getAllByRole('button', { name: 'Make it a task' })[0]!);
-    expect(createTask).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Session 1', subject: 'algebra', priority: 'high' }),
-    );
-    expect(takeRecommendation).toHaveBeenCalledWith('r1');
-    expect(await within(section()).findByText(/Recorded/)).toBeInTheDocument();
+    await userEvent.click(within(section()).getAllByRole('button', { name: 'Plan my next session' })[0]!);
+    expect(planSession).toHaveBeenCalledWith('r1', 'algebra');
+    expect(takeRecommendation).not.toHaveBeenCalled();
+    expect(await within(section()).findByText(/Planned for .* · 25 XP/)).toBeInTheDocument();
+    expect(within(section()).getAllByRole('button', { name: 'Plan my next session' })).toHaveLength(2);
   });
 
   it('records "I did this" without making a task', async () => {
     await show();
     await generate();
     await userEvent.click(within(section()).getAllByRole('button', { name: 'I did this' })[0]!);
-    expect(createTask).not.toHaveBeenCalled();
+    expect(planSession).not.toHaveBeenCalled();
     expect(takeRecommendation).toHaveBeenCalledWith('r1');
   });
 });

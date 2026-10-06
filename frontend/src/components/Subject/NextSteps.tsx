@@ -23,16 +23,19 @@
  *
  * Each step carries two controls:
  *
- *   **Make it a task** — writes a real task, filed under this subject, at the
- *   recommended difficulty. Finishing it produces a rating, which is the new
- *   data the next batch is argued from.
+ *   **Plan my next session** — books the step into the next free calendar
+ *   slot as a task filed under this subject, with an estimated length and XP
+ *   (backend/tracking/session_plan.py). The step is then locked to that task:
+ *   completing it marks the step done, deleting it opens the step again.
+ *   Finishing it produces a rating, which is the new data the next batch is
+ *   argued from.
  *
- *   **I did this** — records the step as taken without creating anything, for
+ *   **I did this** — records the step as done without creating anything, for
  *   the reader who did the work outside Summit.
  *
- * Either one stamps `taken_at` on the stored recommendation. Without that
- * stamp "this kind of session did not help" is indistinguishable from "this
- * kind of session was never tried".
+ * Done stamps `taken_at` on the stored recommendation. Without that stamp
+ * "this kind of session did not help" is indistinguishable from "this kind of
+ * session was never tried".
  *
  * ## What is a measurement and what is a suggestion
  *
@@ -41,7 +44,13 @@
  * cite a figure that *was* counted, which is what makes a step arguable.
  */
 import type { MouseEvent } from 'react';
-import { STEP_WORDS, type NextStep, type StepResource } from '@/services/analytics';
+import {
+  STEP_WORDS,
+  type NextStep,
+  type PlannedSession,
+  type StepResource,
+  type StepState,
+} from '@/services/analytics';
 import { DIFFICULTY_WORDS } from '@/utils/ratings';
 
 /** How many steps make a batch. The model is asked for at most this many
@@ -85,16 +94,29 @@ function foldFromCard(event: MouseEvent<HTMLLIElement>) {
   if (fold) fold.open = !fold.open;
 }
 
+/** "Tue 6 Oct, 4:00–4:45 PM" for a booked session's local ISO times. */
+export function sessionWhen(task: PlannedSession): string {
+  const start = new Date(task.start);
+  const end = new Date(task.end);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return '';
+  const day = start.toLocaleDateString(undefined, {
+    weekday: 'short', day: 'numeric', month: 'short',
+  });
+  const time = (date: Date) =>
+    date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  return `${day}, ${time(start)}–${time(end)}`;
+}
+
 export interface NextStepsProps {
   steps: NextStep[];
-  /** Ids already acted on, so a step does not offer twice. */
-  taken: Set<string>;
+  /** Where each step stands, by id. A step missing here is open. */
+  status: Map<string, { state: StepState; task: PlannedSession | null }>;
   busy: string;
-  onMakeTask: (step: NextStep) => void;
+  onPlan: (step: NextStep) => void;
   onDidIt: (step: NextStep) => void;
 }
 
-export function NextSteps({ steps, taken, busy, onMakeTask, onDidIt }: NextStepsProps) {
+export function NextSteps({ steps, status, busy, onPlan, onDidIt }: NextStepsProps) {
   const batch = steps.slice(0, MAX_STEPS);
   if (!batch.length) return null;
 
@@ -102,7 +124,9 @@ export function NextSteps({ steps, taken, busy, onMakeTask, onDidIt }: NextSteps
     <div className="sx-steps">
       <ol className="sx-step-list">
         {batch.map((step, at) => {
-          const done = taken.has(step.id);
+          const state = status.get(step.id)?.state ?? 'open';
+          const planned = state === 'planned' ? status.get(step.id)?.task ?? null : null;
+          const done = state === 'done';
           const links = stepLinks(step);
           return (
             <li
@@ -138,6 +162,7 @@ export function NextSteps({ steps, taken, busy, onMakeTask, onDidIt }: NextSteps
                     {step.pace && <span className="sx-chip is-pace">{step.pace}</span>}
                     {step.minutes ? <span className="sx-chip">{step.minutes} min</span> : null}
                     {step.focus && <span className="sx-chip is-focus">{step.focus}</span>}
+                    {planned && <span className="sx-chip is-planned">Planned</span>}
                     {done && <span className="sx-chip">Done</span>}
                   </div>
                 </summary>
@@ -193,15 +218,20 @@ export function NextSteps({ steps, taken, busy, onMakeTask, onDidIt }: NextSteps
                   <div className="sx-step-actions">
                     {done ? (
                       <span className="sx-step-done">Recorded. It counts toward what works</span>
+                    ) : planned ? (
+                      <span className="sx-step-done">
+                        Planned for {sessionWhen(planned)} · {planned.xp} XP. Complete or
+                        delete that task to plan another from this.
+                      </span>
                     ) : (
                       <>
                         <button
                           type="button"
                           className="sx-btn is-primary"
                           disabled={busy === step.id}
-                          onClick={() => onMakeTask(step)}
+                          onClick={() => onPlan(step)}
                         >
-                          {busy === step.id ? 'Adding…' : 'Make it a task'}
+                          {busy === step.id ? 'Planning…' : 'Plan my next session'}
                         </button>
                         <button
                           type="button"

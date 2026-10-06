@@ -773,6 +773,23 @@ export interface PastRecommendation {
    */
   was: number | null;
   task_id: string;
+  /**
+   * open: can be planned. planned: booked as a task that is still open, and
+   * locked until that task is completed or deleted. done: acted on.
+   */
+  state: StepState;
+  /** The booked task while `planned`, else null. */
+  task: PlannedSession | null;
+}
+
+export type StepState = 'open' | 'planned' | 'done';
+
+/** A recommended session booked onto the calendar. Times are local ISO. */
+export interface PlannedSession {
+  id: string;
+  start: string;
+  end: string;
+  xp: number;
 }
 
 /**
@@ -813,6 +830,21 @@ export function takeRecommendation(
   taskId = '',
 ): Promise<ApiResult<{ id: string }>> {
   return post<{ id: string }>('/api/subject_recommendation', { id, task_id: taskId });
+}
+
+/**
+ * Book one recommendation as a task in the next free calendar slot, with an
+ * estimated length and XP (backend/tracking/session_plan.py). Refused while
+ * the step is already planned or done.
+ */
+export function planSession(
+  id: string,
+  subjectId: string,
+): Promise<ApiResult<{ id: string; task: PlannedSession; minutes: number }>> {
+  return post<{ id: string; task: PlannedSession; minutes: number }>(
+    '/api/subject_recommendation/plan',
+    { id, subject_id: subjectId },
+  );
 }
 
 // --------------------------------------------------------------------------
