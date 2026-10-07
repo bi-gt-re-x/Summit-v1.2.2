@@ -75,7 +75,7 @@
  * figure surprised them. The evidence was never the problem; making somebody
  * scroll eight screens of it to leave was.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading, PageHero, type HeroTone } from '@/components';
 import { AreaChart, ObservationNote, Radar, Scatter } from '@/components/Analytics';
@@ -109,6 +109,9 @@ import { latticeFor, treeReading } from '@/components/Subject/lattice';
 import { loadProgress } from '@/utils/skillProgress';
 import { useApi, useAuth, useDocumentTitle, useSettings, useSubjectIndex } from '@/hooks';
 import { taskHistory } from '@/services/taskHistory';
+import { UserDataContext } from '@/context/contexts';
+import { announceStatsChanged } from '@/utils/statsBus';
+import { xpToPriority } from '@/utils/priority';
 import {
   saveSubjectMilestones,
   subjectBriefAvailable,
@@ -942,6 +945,9 @@ export default function SubjectAnalytics() {
    * Finishing the task raises the rating prompt, and the rating is what the
    * next batch is argued from — that is the loop.
    */
+  /* The app-wide task list, read without asking for it: `useUserData` would
+     start a megabytes-long read this page has no use for. */
+  const shared = useContext(UserDataContext);
   const planStep = useCallback(
     async (step: NextStep) => {
       setStepBusy(step.id);
@@ -954,10 +960,40 @@ export default function SubjectAnalytics() {
         return;
       }
       setStepState((was) => new Map(was).set(step.id, { state: 'planned', task: made.task }));
-      // Re-read rather than patched: the new task changes a dozen figures.
+      /* The Tasks page and the calendar share one task list, read once a
+         session (context/UserDataProvider), so the new task is written onto
+         it — otherwise neither shows the session until the page is reloaded.
+         A no-op when nothing has read the list yet: that first read has it. */
+      const booked = made.task;
+      shared?.mutate((current) =>
+        current.tasks.some((task) => String(task.id) === String(booked.id))
+          ? current
+          : {
+              ...current,
+              tasks: [
+                ...current.tasks,
+                {
+                  id: String(booked.id),
+                  title: step.title,
+                  description: '',
+                  priority: xpToPriority(booked.xp),
+                  status: 'todo',
+                  xp_value: booked.xp,
+                  created_at: booked.start,
+                  due_date: booked.end,
+                  show_on_calendar: true,
+                  ...(subjectId ? { subject: subjectId } : {}),
+                },
+              ],
+            },
+      );
+      // Drops the cached task history, which `tasks.reload` would otherwise
+      // hand back unchanged. Re-read rather than patched: the new task
+      // changes a dozen figures on this page.
+      announceStatsChanged();
       tasks.reload();
     },
-    [subjectId, tasks],
+    [shared, subjectId, tasks],
   );
 
   /* The volume chart's own ceiling. A floor of 1 keeps a window with a single

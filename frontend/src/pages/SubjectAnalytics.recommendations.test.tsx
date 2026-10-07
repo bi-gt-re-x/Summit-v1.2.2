@@ -70,10 +70,14 @@ const readSubject = vi.fn(async (payload: { mode?: string }) => {
   return { success: true, reading: { diagnosis: [], priorities: [], insights: [], next_steps: onScreen } };
 });
 const takeRecommendation = vi.fn(async (id: string) => ({ success: true, id }));
-const planSession = vi.fn(async (id: string, _subjectId: string) => ({
-  success: true, id, minutes: 45,
-  task: { id: 't-new', start: '2026-10-06T16:00:00', end: '2026-10-06T16:45:00', xp: 25 },
-}));
+const booked = { id: 't-new', start: '2026-10-06T16:00:00', end: '2026-10-06T16:45:00', xp: 25 };
+/* What the server has booked, so a re-read after planning answers "planned"
+   the way the real one does. */
+let planned: string[] = [];
+const planSession = vi.fn(async (id: string, _subjectId: string) => {
+  planned = [...planned, id];
+  return { success: true, id, minutes: 45, task: booked };
+});
 
 vi.mock('@/services/analytics', async (original) => {
   const real = await original<Record<string, unknown>>();
@@ -85,7 +89,11 @@ vi.mock('@/services/analytics', async (original) => {
     suggestSubjectGoal: async () => ({ success: true, draft: null }),
     subjectReadingAvailable: async () => ({ success: true, available: true }),
     savedSubjectReading: async () => ({ success: true, reading: null, written_at: '', span: '' }),
-    subjectRecommendations: async () => ({ success: true, recommendations: [], outcomes: [] }),
+    subjectRecommendations: async () => ({
+      success: true,
+      recommendations: planned.map((id) => ({ id, state: 'planned', task: booked })),
+      outcomes: [],
+    }),
     readSubject: (payload: { mode?: string }) => readSubject(payload),
     takeRecommendation: (id: string) => takeRecommendation(id),
     planSession: (id: string, subjectId: string) => planSession(id, subjectId),
@@ -134,6 +142,7 @@ async function generate() {
 
 beforeEach(() => {
   onScreen = [];
+  planned = [];
   made = 0;
   readSubject.mockClear();
   takeRecommendation.mockClear();
@@ -236,6 +245,32 @@ describe('the subject Recommendations section', () => {
     expect(takeRecommendation).not.toHaveBeenCalled();
     expect(await within(section()).findByText(/Planned for .* · 25 XP/)).toBeInTheDocument();
     expect(within(section()).getAllByRole('button', { name: 'Plan my next session' })).toHaveLength(2);
+  });
+
+  it('puts the planned session on the list the Tasks page and the calendar read', async () => {
+    tasks.length = 0;
+    tasks.push(...ceilingRecord());
+    const mutate = vi.fn();
+    renderWithProviders(<SubjectAnalytics />, {
+      route: '/analytics/subject/algebra',
+      auth: { username: 'alpha' },
+      userData: { mutate },
+    });
+    await act(async () => { await new Promise((r) => { setTimeout(r, 60); }); });
+    await generate();
+    await userEvent.click(within(section()).getAllByRole('button', { name: 'Plan my next session' })[0]!);
+    await within(section()).findByText(/Planned for .* · 25 XP/);
+
+    expect(mutate).toHaveBeenCalledTimes(1);
+    type Data = { stats: unknown; tasks: unknown[] };
+    const update = mutate.mock.calls[0]![0] as (data: Data) => Data;
+    const after = update({ stats: {}, tasks: [] });
+    expect(after.tasks).toEqual([expect.objectContaining({
+      id: 't-new', title: 'Session 1', status: 'todo', xp_value: 25, subject: 'algebra',
+      created_at: '2026-10-06T16:00:00', due_date: '2026-10-06T16:45:00', show_on_calendar: true,
+    })]);
+    // Already on the list (a re-read got there first): not added twice.
+    expect(update(after).tasks).toHaveLength(1);
   });
 
   it('records "I did this" without making a task', async () => {
