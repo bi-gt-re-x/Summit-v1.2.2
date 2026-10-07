@@ -5,8 +5,8 @@
    only how the page looks, never what is on it. The same sections, demos and
    motion; less behind and around them:
 
-     - a white ground ruled with graph paper, and no drifting dots or colour
-       wash (App.tsx mounts <Ambient paper /> here, as on every app page);
+     - a white ground with the original background over it: graph paper,
+       drifting dots, the colour wash and the pointer's glow (App.tsx);
      - the hero as a clean white card — no mountain range, no green sky;
      - every card white with one hairline rule and a barely-there shadow;
      - icon tiles, chips and buttons in neutral greys and the page's ink, so

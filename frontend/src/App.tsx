@@ -203,15 +203,16 @@ export default function App() {
           property of the app, not a thing each screen opts into, and a screen
           written next week gets this one without anybody remembering.
           
-          Every page wears the landing page's graph paper and nothing else of
-          the layer (`paper`): no wash, no drifting dots. The sign-in page
-          keeps the whole layer. The custom spaces have none — see `custom`.
+          Every page wears the whole layer — the graph paper, the slow wash and
+          the drifting dots — and the landing page adds the glow that follows
+          the pointer (see components/Ambient for why only there). The custom
+          spaces have none — see `custom`.
           
           The timer is the one page that renders its own. While a sitting is
           running its field accelerates — `surge`, in the same component — and
           a second canvas behind the first would be a second rAF loop drawing
           something nobody can see. See pages/Timer.tsx. */}
-      {!ownsAmbient && !custom && <Ambient paper={pathname !== '/login'} />}
+      {!ownsAmbient && !custom && <Ambient cursor={pathname === '/home'} />}
       {!landing && <Rail />}
       {/* Beside the rail rather than above it: the rail owns the full height
           and the bar starts at `--rail-w`. Outside the router with the rail,

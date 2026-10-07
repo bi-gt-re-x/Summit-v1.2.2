@@ -28,10 +28,8 @@ describe('the minimal layer', () => {
     for (const selector of selectors) expect(selector).toMatch(/body\.has-rail/);
   });
 
-  it('keeps the graph paper and takes the drifting wash and dots away', () => {
-    expect(minimal).not.toMatch(/\.hm-ambient \{ display: none; \}/);
-    expect(minimal).not.toMatch(/\.hm-grid \{ display: none; \}/);
-    expect(minimal).toMatch(/body\.has-rail \.hm-gradient,\s*body\.has-rail \.hm-particles \{ display: none; \}/);
+  it('leaves the graph paper, the wash and the drifting dots alone', () => {
+    expect(minimal).not.toMatch(/\.hm-(ambient|grid|gradient|particles)/);
   });
 
   it('draws headers without their sky and mountains', () => {
