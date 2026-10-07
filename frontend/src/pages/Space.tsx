@@ -1,19 +1,28 @@
 /**
- * One space: a name the reader can change and a page to write on.
+ * One space: a name the reader can change and a page to write on, in the
+ * manner of Notion.
  *
  * Reached from the rail's Personal section (`/spaces/1` to `/spaces/3`) and its
  * Team section (`/team/1` to `/team/3`). A team space has one thing more, a
  * member list with an invite box — a placeholder that keeps the addresses as
- * pending and sends nothing (components/Spaces/Members). The
- * name is the page's heading and is edited in place — click it, type, and it
- * is saved on Enter or when the field loses focus. The text saves itself a
- * moment after typing stops, and once more on the way out, so nothing typed is
- * lost to a navigation. Backend: backend/api/spaces.py.
+ * pending and sends nothing (components/Spaces/Members).
+ *
+ * The page can wear an icon and a cover (components/Spaces/Dress), and its
+ * name is the heading, edited in place — click it, type, and it is saved on
+ * Enter or when the field loses focus. Below it the page is blocks
+ * (components/Spaces/BlockEditor): headings, lists, to-dos, toggles, quotes,
+ * callouts, dividers and code, with a "/" menu, typing shortcuts and a handle
+ * to drag each block by. The page saves itself a moment after editing stops,
+ * and once more on the way out, so nothing is lost to a navigation. Backend:
+ * backend/api/spaces.py.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { useDocumentTitle, useSpaces } from '@/hooks';
 import { Members } from '@/components/Spaces/Members';
+import { BlockEditor } from '@/components/Spaces/BlockEditor';
+import { Cover, IconRow } from '@/components/Spaces/Dress';
+import { normalise, wordCount, type SpaceDoc } from '@/components/Spaces/blocks';
 import {
   SPACE_COUNT,
   SPACE_PATH,
@@ -23,7 +32,7 @@ import {
 } from '@/services/spaces';
 import '@/styles/spaces.css';
 
-/** How long typing has to stop before the text is saved. */
+/** How long editing has to stop before the page is saved. */
 export const SAVE_AFTER_MS = 700;
 
 type Status = 'idle' | 'saving' | 'saved' | 'failed';
@@ -46,27 +55,27 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
   const { spaces, ready } = useSpaces(valid, kind);
   const space = spaces.find((row) => row.id === id);
   const defaultName = (at: number) => nameFor(at, kind);
-  const save = (at: number, changes: { name?: string; body?: string }) =>
+  const save = (at: number, changes: { name?: string; doc?: SpaceDoc }) =>
     saveSpace(at, changes, kind);
   /** Which space the fields hold: the number alone is shared by both kinds. */
   const here = `${kind}:${id}`;
 
   const [name, setName] = useState('');
-  const [body, setBody] = useState('');
+  const [doc, setDoc] = useState<SpaceDoc>(() => normalise(null));
   const [status, setStatus] = useState<Status>('idle');
-  const pending = useRef<string | null>(null);
+  const pending = useRef<SpaceDoc | null>(null);
   const timer = useRef<number | undefined>(undefined);
 
   useDocumentTitle(space?.name ?? defaultName(id));
 
   /* Seeded once the account's copy lands, and again when the reader moves to
-     another space. Not on every change to `spaces`: a rename this page saved
+     another space. Not on every change to `spaces`: a save this page made
      comes back through it, and re-seeding would move the caret. */
   const [seeded, setSeeded] = useState<string | null>(null);
   useEffect(() => {
     if (!ready || !space || seeded === here) return;
     setName(space.name);
-    setBody(space.body);
+    setDoc(normalise(space.doc, space.body));
     setStatus('idle');
     setSeeded(here);
   }, [here, ready, seeded, space]);
@@ -76,20 +85,20 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
 
   const flush = useCallback(async () => {
     window.clearTimeout(timer.current);
-    const text = pending.current;
-    if (text === null) return;
+    const next = pending.current;
+    if (next === null) return;
     pending.current = null;
     setStatus('saving');
-    const result = await saveSpace(id, { body: text }, kind).catch(() => ({ success: false as const }));
+    const result = await saveSpace(id, { doc: next }, kind).catch(() => ({ success: false as const }));
     setStatus(result.success ? 'saved' : 'failed');
   }, [id, kind]);
 
   // Whatever is unsaved goes on the way out, to this space and not the next.
   useEffect(() => () => void flush(), [flush]);
 
-  const write = (text: string) => {
-    setBody(text);
-    pending.current = text;
+  const write = (next: SpaceDoc) => {
+    setDoc(next);
+    pending.current = next;
     setStatus('idle');
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => void flush(), SAVE_AFTER_MS);
@@ -106,10 +115,21 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
 
   if (!valid) return <Navigate to={`${SPACE_PATH[kind]}/1`} replace />;
 
+  const words = wordCount(doc.blocks);
+
   return (
     <main className="sp-page">
       <div className="sp-shell">
+        <Cover cover={doc.cover} disabled={!loaded} onCover={(cover) => write({ ...doc, cover })} />
+
         <header className="sp-head">
+          <IconRow
+            icon={doc.icon}
+            cover={doc.cover}
+            disabled={!loaded}
+            onIcon={(icon) => write({ ...doc, icon })}
+            onCover={(cover) => write({ ...doc, cover })}
+          />
           <p className="sp-eyebrow">{kind === 'team' ? 'Team' : 'Personal'}</p>
           <input
             className="sp-name"
@@ -135,15 +155,17 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
           </p>
         </header>
 
-        <textarea
-          className="sp-body"
-          aria-label={`What is in ${name || defaultName(id)}`}
-          placeholder="Write anything here: plans, lists, ideas. It saves as you type."
-          value={body}
-          disabled={!loaded}
-          onChange={(event) => write(event.target.value)}
-          onBlur={() => void flush()}
-        />
+        <div className="sp-body">
+          <BlockEditor
+            blocks={doc.blocks}
+            disabled={!loaded}
+            label={`What is in ${name || defaultName(id)}`}
+            onChange={(blocks) => write({ ...doc, blocks })}
+          />
+        </div>
+        <p className="sp-foot">
+          {words} {words === 1 ? 'word' : 'words'} · Type “/” for blocks · Drag ⋮⋮ to move
+        </p>
 
         {kind === 'team' && loaded && space && (
           <Members spaceId={id} invites={space.invites ?? []} />

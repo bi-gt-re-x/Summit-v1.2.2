@@ -1,14 +1,15 @@
 /**
- * One Personal space: a renamable heading and a page of text that saves itself.
+ * One space: a renamable heading and a page of blocks that saves itself.
+ * The editor's own keys and menus are tested in components/Spaces.
  */
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Space, { SAVE_AFTER_MS } from './Space';
 import { renderWithProviders } from '@/test/render';
 import * as service from '@/services/spaces';
 
-const STORED = [
+const STORED: Array<{ id: number; name: string; body: string; doc?: unknown }> = [
   { id: 1, name: 'Space 1', body: '' },
   { id: 2, name: 'Reading list', body: 'Godel, Escher, Bach' },
   { id: 3, name: 'Space 3', body: '' },
@@ -28,7 +29,7 @@ vi.mock('@/services/spaces', async (importOriginal) => {
       success: true as const,
       spaces: kind === 'team' ? TEAM : STORED,
     })),
-    save: vi.fn(async (id: number, changes: { name?: string; body?: string }, kind = 'personal') => ({
+    save: vi.fn(async (id: number, changes: { name?: string; body?: string; doc?: unknown }, kind = 'personal') => ({
       success: true as const,
       space: { ...(kind === 'team' ? TEAM : STORED)[id - 1]!, ...changes },
     })),
@@ -62,6 +63,14 @@ async function nameField() {
   return field as HTMLInputElement;
 }
 
+/** The first block's text field. */
+const firstBlock = () =>
+  within(screen.getByRole('group', { name: /What is in/ })).getAllByRole('textbox')[0] as HTMLTextAreaElement;
+
+/** What a save of the page carried as its blocks' words. */
+const savedText = (call: unknown[]) =>
+  ((call[1] as { doc: { blocks: Array<{ text: string }> } }).doc.blocks).map((one) => one.text);
+
 beforeEach(() => {
   vi.mocked(service.save).mockClear();
   vi.mocked(service.invite).mockClear();
@@ -72,7 +81,7 @@ describe('a space', () => {
   it('opens under its own name, with what was written in it', async () => {
     open(2);
     expect((await nameField()).value).toBe('Reading list');
-    expect(screen.getByRole('textbox', { name: /What is in/ })).toHaveValue('Godel, Escher, Bach');
+    expect(firstBlock()).toHaveValue('Godel, Escher, Bach');
   });
 
   it('is renamed by typing over its heading and pressing Enter', async () => {
@@ -105,23 +114,77 @@ describe('a space', () => {
     open(3);
     await nameField();
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    const text = screen.getByRole('textbox', { name: /What is in/ });
-    fireEvent.change(text, { target: { value: 'a' } });
-    fireEvent.change(text, { target: { value: 'ab' } });
+    fireEvent.change(firstBlock(), { target: { value: 'a', selectionStart: 1 } });
+    fireEvent.change(firstBlock(), { target: { value: 'ab', selectionStart: 2 } });
     expect(service.save).not.toHaveBeenCalled();
     await act(async () => {
       vi.advanceTimersByTime(SAVE_AFTER_MS + 10);
     });
     expect(service.save).toHaveBeenCalledTimes(1);
-    expect(service.save).toHaveBeenCalledWith(3, { body: 'ab' }, 'personal');
+    const call = vi.mocked(service.save).mock.calls[0]!;
+    expect(call[0]).toBe(3);
+    expect(call[2]).toBe('personal');
+    expect(savedText(call)).toEqual(['ab']);
   });
 
   it('saves what is unsaved on the way out', async () => {
     const view = open(3);
     await nameField();
-    fireEvent.change(screen.getByRole('textbox', { name: /What is in/ }), { target: { value: 'half a thought' } });
+    fireEvent.change(firstBlock(), { target: { value: 'half a thought' } });
     view.unmount();
-    expect(service.save).toHaveBeenCalledWith(3, { body: 'half a thought' }, 'personal');
+    expect(service.save).toHaveBeenCalledTimes(1);
+    expect(savedText(vi.mocked(service.save).mock.calls[0]!)).toEqual(['half a thought']);
+  });
+
+  it('reads a page written as plain text into blocks', async () => {
+    STORED[2] = { id: 3, name: 'Space 3', body: '# Plan\n- [x] read\n- write' };
+    open(3);
+    await nameField();
+    const fields = within(screen.getByRole('group', { name: /What is in/ })).getAllByRole('textbox');
+    expect(fields.map((field) => (field as HTMLTextAreaElement).value)).toEqual(['Plan', 'read', 'write']);
+    expect(screen.getByRole('textbox', { name: 'Heading 1' })).toHaveValue('Plan');
+    expect(screen.getByRole('checkbox', { name: 'Done: read' })).toBeChecked();
+    STORED[2] = { id: 3, name: 'Space 3', body: '' };
+  });
+
+  it('opens a page kept as blocks, with its icon and cover', async () => {
+    STORED[0] = {
+      id: 1, name: 'Space 1', body: '',
+      doc: { icon: '🎯', cover: 'ocean', blocks: [{ id: 'q', type: 'quote', text: 'Ship it' }] },
+    } as (typeof STORED)[number];
+    open(1);
+    await nameField();
+    expect(screen.getByRole('button', { name: 'Change icon' })).toHaveTextContent('🎯');
+    expect(screen.getByRole('img', { name: 'Ocean cover' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Quote' })).toHaveValue('Ship it');
+    STORED[0] = { id: 1, name: 'Space 1', body: '' };
+  });
+
+  it('adds an icon and a cover, and saves them with the page', async () => {
+    open(3);
+    await nameField();
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    fireEvent.click(screen.getByRole('button', { name: /Add icon/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Add cover/ }));
+    await act(async () => {
+      vi.advanceTimersByTime(SAVE_AFTER_MS + 10);
+    });
+    const doc = (vi.mocked(service.save).mock.calls[0]![1] as { doc: { icon: string; cover: string } }).doc;
+    expect(doc.icon).not.toBe('');
+    expect(doc.cover).not.toBe('');
+    expect(screen.getByRole('button', { name: 'Change icon' })).toHaveTextContent(doc.icon);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Change icon' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Icon 📚' }));
+    expect(screen.getByRole('button', { name: 'Change icon' })).toHaveTextContent('📚');
+    fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
+    expect(screen.queryByRole('img', { name: /cover/ })).not.toBeInTheDocument();
+  });
+
+  it('counts the words on the page', async () => {
+    open(2);
+    await nameField();
+    expect(screen.getByText(/3 words/)).toBeInTheDocument();
   });
 
   it('sends a space that does not exist to the first one', async () => {

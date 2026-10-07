@@ -2,7 +2,7 @@
  * The three Personal spaces and the three Team ones. Backend:
  * backend/api/spaces.py.
  *
- * A name and a page of text each, and on a team space a list of pending
+ * A name and a page of blocks each, and on a team space a list of pending
  * invites. The rail lists them and the space page edits them; `SPACES_CHANGED`
  * carries a rename from the page to the rail, which is mounted outside the
  * router and would otherwise keep the old name.
@@ -12,6 +12,9 @@
  */
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
+import type { SpaceDoc } from '@/components/Spaces/blocks';
+
+export type { SpaceDoc };
 
 export type SpaceKind = 'personal' | 'team';
 
@@ -23,7 +26,14 @@ export interface Invite {
 export interface Space {
   id: number;
   name: string;
+  /** The page as plain text. Written by the server from `doc` once there is one. */
   body: string;
+  /**
+   * The page as blocks, with its icon and cover (components/Spaces/blocks).
+   * Absent on a page never opened in the block editor; the editor reads
+   * `body` into blocks for that one.
+   */
+  doc?: SpaceDoc;
   /** Team spaces only. */
   invites?: Invite[];
 }
@@ -73,7 +83,7 @@ export function list(kind: SpaceKind = 'personal'): Promise<ApiResult<{ spaces: 
 
 export async function save(
   id: number,
-  changes: { name?: string; body?: string },
+  changes: { name?: string; body?: string; doc?: SpaceDoc },
   kind: SpaceKind = 'personal',
 ): Promise<ApiResult<{ space: Space }>> {
   return announce(kind, await post<{ space: Space }>(`${BASE[kind]}/${id}`, changes));

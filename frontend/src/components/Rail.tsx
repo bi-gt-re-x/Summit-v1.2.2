@@ -779,7 +779,8 @@ export function Rail() {
                   className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
                   title={space.name}
                 >
-                  {SPACE_ICON}
+                  {/* The page's own icon when it has one (pages/Space.tsx). */}
+                  {space.doc?.icon ? <i className="rail-emoji" aria-hidden="true">{space.doc.icon}</i> : SPACE_ICON}
                   <span>{space.name}</span>
                 </NavLink>
               ))}
@@ -796,7 +797,8 @@ export function Rail() {
                   className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
                   title={space.name}
                 >
-                  {TEAM_ICON}
+                  {/* The page's own icon when it has one (pages/Space.tsx). */}
+                  {space.doc?.icon ? <i className="rail-emoji" aria-hidden="true">{space.doc.icon}</i> : TEAM_ICON}
                   <span>{space.name}</span>
                 </NavLink>
               ))}

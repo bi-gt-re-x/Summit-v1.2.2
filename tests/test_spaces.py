@@ -100,3 +100,64 @@ def test_there_are_only_three_team_spaces(client):
 def test_the_team_pages_are_gated(anon):
     reply = anon.get('/team/2', follow_redirects=False)
     assert reply.status_code == 303
+
+
+# ---- The page as blocks -----------------------------------------------------
+PAGE = {
+    'icon': '📚',
+    'cover': 'ocean',
+    'blocks': [
+        {'id': 'a', 'type': 'h1', 'text': 'Reading'},
+        {'id': 'b', 'type': 'todo', 'text': 'GEB', 'checked': True},
+        {'id': 'c', 'type': 'todo', 'text': 'SICP', 'indent': 1},
+        {'id': 'd', 'type': 'toggle', 'text': 'Notes', 'collapsed': True},
+        {'id': 'e', 'type': 'divider', 'text': 'ignored'},
+        {'id': 'f', 'type': 'code', 'text': 'print(1)'},
+    ],
+}
+
+
+def test_a_page_is_kept_as_blocks_and_as_plain_text(client):
+    reply = client.post('/api/spaces/1', json={'doc': PAGE}).json()
+    assert reply['success'] is True
+    space = client.get('/api/spaces').json()['spaces'][0]
+    assert space['doc']['icon'] == '📚' and space['doc']['cover'] == 'ocean'
+    assert [b['type'] for b in space['doc']['blocks']] == ['h1', 'todo', 'todo', 'toggle', 'divider', 'code']
+    assert space['doc']['blocks'][1]['checked'] is True
+    assert space['doc']['blocks'][2]['indent'] == 1
+    assert space['doc']['blocks'][3]['collapsed'] is True
+    assert space['doc']['blocks'][4]['text'] == ''
+    assert space['body'] == '# Reading\n- [x] GEB\n  - [ ] SICP\n▸ Notes\n---\n```\nprint(1)\n```'
+
+
+def test_a_page_is_cleaned_before_it_is_kept(client):
+    doc = {
+        'icon': 'x' * 40,
+        'cover': 'neon',
+        'blocks': [
+            {'id': 'a', 'type': 'marquee', 'text': 'kept as text'},
+            {'id': 'a', 'type': 'text', 'text': 'y' * 20_000, 'indent': 99},
+            {'id': 'c', 'type': 'text', 'checked': True, 'collapsed': True},
+            'not a block',
+        ],
+    }
+    blocks = client.post('/api/spaces/2', json={'doc': doc}).json()['space']['doc']['blocks']
+    space = client.get('/api/spaces').json()['spaces'][1]['doc']
+    assert len(space['icon']) == 16 and space['cover'] == ''
+    assert blocks[0] == {'id': 'a', 'type': 'text', 'text': 'kept as text'}
+    assert blocks[1]['id'] != 'a' and blocks[1]['indent'] == 4 and len(blocks[1]['text']) == 10_000
+    assert blocks[2] == {'id': 'c', 'type': 'text', 'text': ''}
+    assert len(blocks) == 3
+
+
+def test_a_page_never_opened_as_blocks_has_no_doc(client):
+    client.post('/api/spaces/3', json={'body': 'plain'})
+    assert 'doc' not in client.get('/api/spaces').json()['spaces'][2]
+
+
+def test_a_team_page_is_blocks_too_and_keeps_its_invites(client):
+    client.post('/api/team-spaces/1/invite', json={'email': 'ada@example.com'})
+    client.post('/api/team-spaces/1', json={'doc': PAGE})
+    space = client.get('/api/team-spaces').json()['spaces'][0]
+    assert space['doc']['blocks'][0]['text'] == 'Reading'
+    assert space['invites'] == [{'email': 'ada@example.com', 'status': 'pending'}]

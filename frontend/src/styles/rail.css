@@ -852,3 +852,16 @@ html[data-theme="dark"] .rail-rank-title { color: #F0F2F5; }
        short with a strip taken out of it has nowhere to put a pinned page. */
     body.pins-viewport { height: auto; overflow: visible; }
 }
+
+/* A space's own icon in place of the page glyph: an emoji, sized to the
+   21px box every rail icon sits in. */
+.rail-emoji {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 21px;
+    height: 21px;
+    font-size: 17px;
+    font-style: normal;
+    line-height: 1;
+}
