@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Space, { SAVE_AFTER_MS } from './Space';
 import { renderWithProviders } from '@/test/render';
+import { textOf, typeInto } from '@/test/blockFields';
 import * as service from '@/services/spaces';
 
 const STORED: Array<{ id: number; name: string; body: string; doc?: unknown }> = [
@@ -65,7 +66,7 @@ async function nameField() {
 
 /** The first block's text field. */
 const firstBlock = () =>
-  within(screen.getByRole('group', { name: /What is in/ })).getAllByRole('textbox')[0] as HTMLTextAreaElement;
+  within(screen.getByRole('group', { name: /What is in/ })).getAllByRole('textbox')[0]!;
 
 /** What a save of the page carried as its blocks' words. */
 const savedText = (call: unknown[]) =>
@@ -81,7 +82,7 @@ describe('a space', () => {
   it('opens under its own name, with what was written in it', async () => {
     open(2);
     expect((await nameField()).value).toBe('Reading list');
-    expect(firstBlock()).toHaveValue('Godel, Escher, Bach');
+    expect(textOf(firstBlock())).toBe('Godel, Escher, Bach');
   });
 
   it('is renamed by typing over its heading and pressing Enter', async () => {
@@ -114,8 +115,8 @@ describe('a space', () => {
     open(3);
     await nameField();
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    fireEvent.change(firstBlock(), { target: { value: 'a', selectionStart: 1 } });
-    fireEvent.change(firstBlock(), { target: { value: 'ab', selectionStart: 2 } });
+    typeInto(firstBlock(), 'a');
+    typeInto(firstBlock(), 'ab');
     expect(service.save).not.toHaveBeenCalled();
     await act(async () => {
       vi.advanceTimersByTime(SAVE_AFTER_MS + 10);
@@ -130,7 +131,7 @@ describe('a space', () => {
   it('saves what is unsaved on the way out', async () => {
     const view = open(3);
     await nameField();
-    fireEvent.change(firstBlock(), { target: { value: 'half a thought' } });
+    typeInto(firstBlock(), 'half a thought');
     view.unmount();
     expect(service.save).toHaveBeenCalledTimes(1);
     expect(savedText(vi.mocked(service.save).mock.calls[0]!)).toEqual(['half a thought']);
@@ -141,8 +142,8 @@ describe('a space', () => {
     open(3);
     await nameField();
     const fields = within(screen.getByRole('group', { name: /What is in/ })).getAllByRole('textbox');
-    expect(fields.map((field) => (field as HTMLTextAreaElement).value)).toEqual(['Plan', 'read', 'write']);
-    expect(screen.getByRole('textbox', { name: 'Heading 1' })).toHaveValue('Plan');
+    expect(fields.map(textOf)).toEqual(['Plan', 'read', 'write']);
+    expect(screen.getByRole('textbox', { name: 'Heading 1' })).toHaveTextContent('Plan');
     expect(screen.getByRole('checkbox', { name: 'Done: read' })).toBeChecked();
     STORED[2] = { id: 3, name: 'Space 3', body: '' };
   });
@@ -156,7 +157,7 @@ describe('a space', () => {
     await nameField();
     expect(screen.getByRole('button', { name: 'Change icon' })).toHaveTextContent('🎯');
     expect(screen.getByRole('img', { name: 'Ocean cover' })).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: 'Quote' })).toHaveValue('Ship it');
+    expect(screen.getByRole('textbox', { name: 'Quote' })).toHaveTextContent('Ship it');
     STORED[0] = { id: 1, name: 'Space 1', body: '' };
   });
 

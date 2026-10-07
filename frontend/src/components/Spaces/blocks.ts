@@ -12,6 +12,8 @@
  * which checks every page it is sent against them.
  */
 
+import { escapeInline, plainOf } from './inline';
+
 export type BlockType =
   | 'text'
   | 'h1'
@@ -29,6 +31,10 @@ export type BlockType =
 export interface Block {
   id: string;
   type: BlockType;
+  /**
+   * The words, as inline Markdown — `**bold**` and `*italic*` (./inline) —
+   * except in a code block, where they are literal.
+   */
   text: string;
   /** 0 when absent. */
   indent?: number;
@@ -112,9 +118,17 @@ export function block(type: BlockType = 'text', text = '', extra: Partial<Block>
 
 export const indentOf = (one: Block): number => one.indent ?? 0;
 
-/** The same block as another kind, dropping what only the old kind meant. */
+/**
+ * The same block as another kind, dropping what only the old kind meant.
+ * Into code, the words lose their formatting; out of it, their stars are
+ * escaped, so a `**` in a snippet stays two stars rather than turning bold.
+ */
 export function retype(one: Block, type: BlockType): Block {
-  const next: Block = { id: one.id, type, text: type === 'divider' ? '' : one.text };
+  let text = one.text;
+  if (type === 'divider') text = '';
+  else if (type === 'code' && one.type !== 'code') text = plainOf(one.text);
+  else if (type !== 'code' && one.type === 'code') text = escapeInline(one.text);
+  const next: Block = { id: one.id, type, text };
   if (one.indent) next.indent = one.indent;
   if (type === 'todo' && one.type === 'todo' && one.checked) next.checked = true;
   return next;
@@ -279,8 +293,11 @@ export function span(blocks: Block[], at: number): number {
 /** Whether anything sits under the block at `at`. */
 export const hasChildren = (blocks: Block[], at: number): boolean => span(blocks, at) > at;
 
+/** A block's words as they read, without formatting marks. */
+export const visibleText = (one: Block): string => (one.type === 'code' ? one.text : plainOf(one.text));
+
 export function wordCount(blocks: Block[]): number {
-  return blocks.reduce((sum, one) => sum + (one.text.match(/\S+/g)?.length ?? 0), 0);
+  return blocks.reduce((sum, one) => sum + (visibleText(one).match(/\S+/g)?.length ?? 0), 0);
 }
 
 // --------------------------------------------------------------------------

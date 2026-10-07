@@ -16,9 +16,15 @@
  *   - Each block has a handle: drag it to move the block (and what is under
  *     it), or click it for Turn into, Duplicate, Move and Delete. The + beside
  *     it adds a block below and opens the slash menu there.
+ *   - Bold and italic inside a block: ⌘/Ctrl+B and ⌘/Ctrl+I, the B and I in
+ *     the bar that rises over a selection, or typing "**word**" / "*word*".
  *
- * Text only inside a block — no bold or links within a line. The rules are
- * in ./blocks, which has no React in it and is tested on its own.
+ * Every block but code is an editable rich-text field (`RichField`) whose
+ * words are stored as inline Markdown; code stays a plain textarea. Offsets
+ * here are always into the *visible* words — ./inline turns them into edits
+ * of the Markdown, and ./richDom into places in the field. The block rules
+ * are in ./blocks. None of the three has React in it, and each is tested on
+ * its own.
  */
 import {
   useCallback,
@@ -27,6 +33,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ClipboardEvent,
   type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
@@ -49,9 +56,24 @@ import {
   retype,
   shortcut,
   span,
+  visibleText,
+  fromBody,
   type Block,
   type BlockType,
 } from './blocks';
+import {
+  autoFormat,
+  hasMark,
+  joinInline,
+  plainOf,
+  setMark,
+  sliceInline,
+  spliceInline,
+  toHtml,
+  serialize,
+  type Mark,
+} from './inline';
+import { onEdgeLine, readDom, selectionIn, setSelection } from './richDom';
 
 /** What each empty kind says in grey. Text says it only when focused. */
 const PLACEHOLDER: Record<BlockType, string> = {
@@ -72,6 +94,15 @@ const PLACEHOLDER: Record<BlockType, string> = {
 const BULLETS = ['•', '◦', '▪'];
 
 type Caret = 'start' | 'end' | number;
+
+/** Code keeps its words literal; every other kind with words is rich text. */
+const isRich = (one: Block) => one.type !== 'code' && one.type !== 'divider';
+
+/** Where the selection is in a block's field, in visible offsets. */
+function selectionOf(node: HTMLElement, text: string): { start: number; end: number } {
+  if (node instanceof HTMLTextAreaElement) return { start: node.selectionStart, end: node.selectionEnd };
+  return selectionIn(node) ?? { start: text.length, end: text.length };
+}
 
 interface Slash {
   id: string;
@@ -111,8 +142,13 @@ export interface BlockEditorProps {
 }
 
 export function BlockEditor({ blocks, onChange, disabled = false, label }: BlockEditorProps) {
+  const root = useRef<HTMLDivElement | null>(null);
   const nodes = useRef(new Map<string, HTMLTextAreaElement | HTMLDivElement>());
-  const [focus, setFocus] = useState<{ id: string; at: Caret } | null>(null);
+  /* Where the caret (or, with `end`, the selection) goes after an edit. */
+  /* `release` turns a mark off for what is typed next, as after "**word**". */
+  const [focus, setFocus] = useState<{ id: string; at: Caret; end?: number; release?: Mark } | null>(null);
+  /* The bold / italic bar over a selection, placed inside the editor. */
+  const [bar, setBar] = useState<{ id: string; top: number; left: number } | null>(null);
   const [slash, setSlash] = useState<Slash | null>(null);
   const [menu, setMenu] = useState<string | null>(null);
   const [drag, setDrag] = useState<{ id: string; over: string | null; place: 'before' | 'after' } | null>(null);
@@ -128,10 +164,45 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
     node.focus();
     if (node instanceof HTMLTextAreaElement) {
       const at = focus.at === 'start' ? 0 : focus.at === 'end' ? node.value.length : focus.at;
-      node.setSelectionRange(at, at);
+      node.setSelectionRange(at, focus.end ?? at);
+    } else if (node.classList.contains('sp-rich')) {
+      const length = plainOf(blocks.find((one) => one.id === focus.id)?.text ?? '').length;
+      const at = focus.at === 'start' ? 0 : focus.at === 'end' ? length : focus.at;
+      setSelection(node, at, focus.end ?? at);
+      // A caret at the end of a bold word types bold; once "**word**" has
+      // closed it should not. The browser's own command flips the style for
+      // the next keystrokes without touching the text.
+      if (focus.release && document.queryCommandState?.(focus.release)) {
+        document.execCommand?.(focus.release);
+      }
     }
     setFocus(null);
   }, [focus, blocks]);
+
+  /* The bar follows the selection: up over it while some words in one block
+     are selected, gone otherwise. */
+  useEffect(() => {
+    const follow = () => {
+      const selection = document.getSelection();
+      const anchor = selection?.anchorNode;
+      const host = (anchor instanceof Element ? anchor : anchor?.parentElement)?.closest<HTMLElement>('.sp-rich');
+      if (!selection || selection.isCollapsed || !selection.rangeCount || !host || !root.current?.contains(host)) {
+        setBar(null);
+        return;
+      }
+      // Where the browser cannot measure a range, the block stands in for it.
+      const range = selection.getRangeAt(0);
+      const rect = typeof range.getBoundingClientRect === 'function' ? range.getBoundingClientRect() : host.getBoundingClientRect();
+      const box = root.current.getBoundingClientRect();
+      setBar({
+        id: host.dataset.block ?? '',
+        top: rect.top - box.top - 44,
+        left: Math.max(0, rect.left - box.left + rect.width / 2 - 40),
+      });
+    };
+    document.addEventListener('selectionchange', follow);
+    return () => document.removeEventListener('selectionchange', follow);
+  }, []);
 
   const at = useCallback((id: string) => blocks.findIndex((one) => one.id === id), [blocks]);
   const patch = (id: string, change: Partial<Block>) =>
@@ -171,8 +242,8 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
     const host = blocks[at(slash.id)];
     setSlash(null);
     if (!host) return;
-    const text = host.text.slice(0, slash.from) + host.text.slice(slash.from + 1 + slash.query.length);
-    if (text.trim() === '') {
+    const text = spliceInline(host.text, slash.from, slash.from + 1 + slash.query.length);
+    if (plainOf(text).trim() === '') {
       if (type === 'divider') {
         const after = block('text', '', host.indent ? { indent: host.indent } : {});
         onChange(blocks.flatMap((one) => (one.id === host.id ? [retype(host, 'divider'), after] : [one])));
@@ -190,26 +261,38 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
     setFocus({ id: (extra[0] ?? fresh).id, at: 'start' });
   };
 
+  /**
+   * A block's words changed in its field. `value` is the block's text as
+   * stored (Markdown, or literal in code) and `caret` a visible offset.
+   */
   const edit = (one: Block, value: string, caret: number) => {
+    if (!isRich(one)) {
+      patch(one.id, { text: value });
+      return;
+    }
+    const was = plainOf(one.text);
+    const now = plainOf(value);
+
     // The slash menu follows what is typed after the "/".
     if (slash && slash.id === one.id) {
-      const query = value.slice(slash.from + 1, caret);
-      if (value[slash.from] !== '/' || caret <= slash.from || /\s/.test(query) || query.length > 24) {
+      const query = now.slice(slash.from + 1, caret);
+      if (now[slash.from] !== '/' || caret <= slash.from || /\s/.test(query) || query.length > 24) {
         setSlash(null);
       } else if (query !== slash.query) {
         setSlash({ ...slash, query, index: 0 });
       }
     } else if (
-      value.length === one.text.length + 1 &&
-      value[caret - 1] === '/' &&
-      (caret === 1 || /\s/.test(value[caret - 2] ?? ''))
+      now.length === was.length + 1 &&
+      now[caret - 1] === '/' &&
+      (caret === 1 || /\s/.test(now[caret - 2] ?? ''))
     ) {
       setSlash({ id: one.id, from: caret - 1, query: '', index: 0 });
     }
 
-    if (one.type === 'text' && value.length > one.text.length) {
-      const hit = shortcut(value);
-      if (hit && caret === value.length - hit.text.length) {
+    if (now.length > was.length) {
+      const hit = one.type === 'text' ? shortcut(now) : null;
+      const cut = hit ? now.length - hit.text.length : -1;
+      if (hit && caret === cut) {
         setSlash(null);
         if (hit.type === 'divider') {
           const after = block('text', '', one.indent ? { indent: one.indent } : {});
@@ -217,18 +300,75 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
           setFocus({ id: after.id, at: 'start' });
           return;
         }
-        swap(one.id, { ...retype(one, hit.type), text: hit.text, ...hit.extra });
+        const text = hit.type === 'code' ? hit.text : sliceInline(value, cut);
+        swap(one.id, { ...retype(one, hit.type), text, ...hit.extra });
         setFocus({ id: one.id, at: 0 });
+        return;
+      }
+      // "**word**" and "*word*" turn into bold and italic as they close.
+      const formatted = autoFormat(value, caret);
+      if (formatted) {
+        patch(one.id, { text: formatted.text });
+        setFocus({ id: one.id, at: formatted.caret, release: formatted.mark });
         return;
       }
     }
     patch(one.id, { text: value });
   };
 
-  const key = (event: KeyboardEvent<HTMLTextAreaElement>, one: Block) => {
+  /**
+   * Bold or italic over the selection. With nothing selected, the browser's
+   * own command sets the style for what is typed next.
+   */
+  const mark = (id: string, which: Mark) => {
+    const node = nodes.current.get(id);
+    const one = blocks.find((row) => row.id === id);
+    if (!node || !one || !isRich(one)) return;
+    const { start, end } = selectionOf(node, plainOf(one.text));
+    if (start === end) {
+      document.execCommand?.(which);
+      return;
+    }
+    const on = !hasMark(one.text, start, end, which);
+    patch(id, { text: setMark(one.text, start, end, which, on) });
+    setFocus({ id, at: start, end });
+  };
+
+  /**
+   * Pasted words go in as plain text. Several lines become several blocks,
+   * read the way a page written as plain text is (so "- item" lines arrive
+   * as a list), with the rest of the block after the last of them.
+   */
+  const paste = (event: ClipboardEvent<HTMLElement>, one: Block) => {
+    if (!isRich(one)) return;
+    event.preventDefault();
+    const text = event.clipboardData.getData('text/plain').replace(/\r\n?/g, '\n');
+    if (!text) return;
+    const { start, end } = selectionOf(event.currentTarget, plainOf(one.text));
+    const lines = text.split('\n');
+    if (lines.length === 1) {
+      patch(one.id, { text: spliceInline(one.text, start, end, text) });
+      setFocus({ id: one.id, at: start + text.length });
+      return;
+    }
+    const head = spliceInline(sliceInline(one.text, 0, start), start, start, lines[0]!);
+    const more = fromBody(lines.slice(1).join('\n')).map((row) =>
+      one.indent ? { ...row, indent: Math.min(INDENT_MAX, indentOf(row) + one.indent) } : row,
+    );
+    const last = more[more.length - 1]!;
+    const caret = visibleText(last).length;
+    const tail = sliceInline(one.text, end);
+    more[more.length - 1] = last.type === 'code'
+      ? { ...last, text: last.text + plainOf(tail) }
+      : { ...last, text: joinInline(last.text, tail) };
+    onChange(insertAfter(blocks.map((row) => (row.id === one.id ? { ...row, text: head } : row)), one.id, more));
+    setFocus({ id: last.id, at: caret });
+  };
+
+  const key = (event: KeyboardEvent<HTMLElement>, one: Block) => {
     const field = event.currentTarget;
-    const start = field.selectionStart;
-    const end = field.selectionEnd;
+    const words = visibleText(one);
+    const { start, end } = selectionOf(field, words);
 
     if (slash && slash.id === one.id) {
       const options = matchKinds(slash.query);
@@ -253,6 +393,21 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
     if (event.nativeEvent.isComposing) return;
     const indent = indentOf(one);
 
+    if ((event.metaKey || event.ctrlKey) && !event.altKey && isRich(one) && ['b', 'i'].includes(event.key.toLowerCase())) {
+      event.preventDefault();
+      mark(one.id, event.key.toLowerCase() === 'b' ? 'bold' : 'italic');
+      return;
+    }
+
+    // A line break inside a rich block is written by hand: the browser's own
+    // would arrive as markup the field does not keep.
+    if (event.key === 'Enter' && event.shiftKey && isRich(one)) {
+      event.preventDefault();
+      patch(one.id, { text: spliceInline(one.text, start, end, '\n') });
+      setFocus({ id: one.id, at: start + 1 });
+      return;
+    }
+
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'd') {
       event.preventDefault();
       const made = duplicate(blocks, one.id);
@@ -270,7 +425,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
         return;
       }
       // An empty list item ends the list: out a level first, then to text.
-      if (LISTS.has(one.type) && one.text === '') {
+      if (LISTS.has(one.type) && words === '') {
         if (indent > 0) patch(one.id, { indent: indent - 1 });
         else swap(one.id, retype(one, 'text'));
         setFocus({ id: one.id, at: 'start' });
@@ -279,15 +434,15 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
       const carries: BlockType = ['bullet', 'numbered', 'todo'].includes(one.type) ? one.type : 'text';
       const depth = one.type === 'toggle' && !one.collapsed ? Math.min(INDENT_MAX, indent + 1) : indent;
       // At the very start of a block with words in it: a new one above.
-      if (start === 0 && end === 0 && one.text !== '') {
+      if (start === 0 && end === 0 && words !== '') {
         const fresh = block(carries, '', indent ? { indent } : {});
         const index = at(one.id);
         onChange([...blocks.slice(0, index), fresh, ...blocks.slice(index)]);
         setFocus({ id: one.id, at: 0 });
         return;
       }
-      const fresh = block(carries, one.text.slice(end), depth ? { indent: depth } : {});
-      const kept = blocks.map((row) => (row.id === one.id ? { ...row, text: one.text.slice(0, start) } : row));
+      const fresh = block(carries, sliceInline(one.text, end), depth ? { indent: depth } : {});
+      const kept = blocks.map((row) => (row.id === one.id ? { ...row, text: sliceInline(one.text, 0, start) } : row));
       onChange(insertAfter(kept, one.id, [fresh]));
       setFocus({ id: fresh.id, at: 0 });
       return;
@@ -314,11 +469,12 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
         setFocus({ id: one.id, at: 0 });
         return;
       }
-      const join = above.text.length;
+      const join = visibleText(above).length;
+      const joined = above.type === 'code' ? above.text + words : joinInline(above.text, one.text);
       onChange(
         blocks
           .filter((row) => row.id !== one.id)
-          .map((row) => (row.id === above.id ? { ...row, text: row.text + one.text } : row)),
+          .map((row) => (row.id === above.id ? { ...row, text: joined } : row)),
       );
       setFocus({ id: above.id, at: join });
       return;
@@ -336,7 +492,11 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
       return;
     }
 
-    if (event.key === 'ArrowUp' && start === end && !one.text.slice(0, start).includes('\n')) {
+    const edge = (which: 'first' | 'last') =>
+      field instanceof HTMLTextAreaElement
+        ? !(which === 'first' ? words.slice(0, start) : words.slice(end)).includes('\n')
+        : onEdgeLine(field, which, words, start);
+    if (event.key === 'ArrowUp' && start === end && edge('first')) {
       const above = neighbour(one.id, -1);
       if (above) {
         event.preventDefault();
@@ -344,7 +504,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
       }
       return;
     }
-    if (event.key === 'ArrowDown' && start === end && !one.text.slice(end).includes('\n')) {
+    if (event.key === 'ArrowDown' && start === end && edge('last')) {
       const below = neighbour(one.id, 1);
       if (below) {
         event.preventDefault();
@@ -376,7 +536,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
   const tail = () => {
     if (disabled) return;
     const last = blocks[blocks.length - 1]!;
-    if (last.type === 'text' && last.text === '' && !hidden.has(last.id)) {
+    if (last.type === 'text' && visibleText(last) === '' && !hidden.has(last.id)) {
       setFocus({ id: last.id, at: 'start' });
       return;
     }
@@ -389,6 +549,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
 
   return (
     <div
+      ref={root}
       className={`sp-editor${lone ? ' is-empty' : ''}${drag ? ' is-dragging' : ''}`}
       role="group"
       aria-label={label}
@@ -405,7 +566,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
             <input
               type="checkbox"
               className="sp-check"
-              aria-label={`Done: ${one.text || 'to-do'}`}
+              aria-label={`Done: ${plainOf(one.text) || 'to-do'}`}
               checked={Boolean(one.checked)}
               disabled={disabled}
               onChange={(event) => patch(one.id, { checked: event.target.checked })}
@@ -418,7 +579,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
               type="button"
               className="sp-caret"
               aria-expanded={!one.collapsed}
-              aria-label={`${one.collapsed ? 'Open' : 'Close'} ${one.text || 'toggle'}`}
+              aria-label={`${one.collapsed ? 'Open' : 'Close'} ${plainOf(one.text) || 'toggle'}`}
               disabled={disabled}
               onClick={() => patch(one.id, { collapsed: !one.collapsed })}
             >
@@ -501,20 +662,24 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
                 <hr />
               </div>
             ) : (
-              <Field
-                one={one}
-                disabled={disabled}
-                placeholder={lone ? "Write anything, or type '/' for commands" : PLACEHOLDER[one.type]}
-                register={(node) => {
-                  if (node) nodes.current.set(one.id, node);
-                  else nodes.current.delete(one.id);
-                }}
-                onEdit={(value, caret) => edit(one, value, caret)}
-                onKey={(event) => key(event, one)}
-                onBlur={() => {
-                  if (slash?.id === one.id) setSlash(null);
-                }}
-              />
+              (() => {
+                const props: FieldProps = {
+                  one,
+                  disabled,
+                  placeholder: lone ? "Write anything, or type '/' for commands" : PLACEHOLDER[one.type],
+                  register: (node) => {
+                    if (node) nodes.current.set(one.id, node);
+                    else nodes.current.delete(one.id);
+                  },
+                  onEdit: (value, caret) => edit(one, value, caret),
+                  onKey: (event) => key(event, one),
+                  onPaste: (event) => paste(event, one),
+                  onBlur: () => {
+                    if (slash?.id === one.id) setSlash(null);
+                  },
+                };
+                return isRich(one) ? <RichField {...props} /> : <Field {...props} />;
+              })()
             )}
 
             {one.type === 'toggle' && !one.collapsed && !hasChildren(blocks, index) && !disabled && (
@@ -564,6 +729,32 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
         );
       })}
       {!disabled && <button type="button" className="sp-tail" aria-label="Write at the end of the page" onClick={tail} />}
+      {/* Last, so it never takes the first block's place as :first-child. */}
+      {bar && !disabled && (() => {
+        const one = blocks.find((row) => row.id === bar.id);
+        const node = nodes.current.get(bar.id);
+        if (!one || !node) return null;
+        const { start, end } = selectionOf(node, plainOf(one.text));
+        return (
+          <div className="sp-inline-bar" role="toolbar" aria-label="Text style" style={{ top: bar.top, left: bar.left }}>
+            {(['bold', 'italic'] as const).map((which) => (
+              <button
+                key={which}
+                type="button"
+                className={`sp-inline-btn is-${which}`}
+                aria-label={which === 'bold' ? 'Bold' : 'Italic'}
+                title={which === 'bold' ? 'Bold · ⌘B' : 'Italic · ⌘I'}
+                aria-pressed={hasMark(one.text, start, end, which)}
+                // Keeps the selection: a click would otherwise clear it first.
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => mark(bar.id, which)}
+              >
+                {which === 'bold' ? 'B' : 'I'}
+              </button>
+            ))}
+          </div>
+        );
+      })()}
     </div>
   );
 }
@@ -575,13 +766,70 @@ interface FieldProps {
   one: Block;
   disabled: boolean;
   placeholder: string;
-  register: (node: HTMLTextAreaElement | null) => void;
+  register: (node: HTMLTextAreaElement | HTMLDivElement | null) => void;
+  /** The block's new text as stored, and the caret as a visible offset. */
   onEdit: (value: string, caret: number) => void;
-  onKey: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
+  onKey: (event: KeyboardEvent<HTMLElement>) => void;
+  onPaste: (event: ClipboardEvent<HTMLElement>) => void;
   onBlur: () => void;
 }
 
-/** A textarea that grows with what is in it, so a block is as tall as its words. */
+const labelOf = (one: Block) => BLOCK_KINDS.find((kind) => kind.type === one.type)?.label ?? 'Text';
+
+/**
+ * A block's words with their bold and italic showing, edited in place.
+ *
+ * The field owns its DOM while the reader types: each input is read back
+ * (./richDom) into Markdown and handed up, and the DOM is only rewritten when
+ * the text arriving from above is not the text the field last produced — an
+ * edit the editor made itself, like a split, a join or a new mark. Rewriting
+ * on every keystroke would throw the caret to the start each time.
+ */
+function RichField({ one, disabled, placeholder, register, onEdit, onKey, onPaste, onBlur }: FieldProps) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  /** The Markdown the DOM is showing right now. */
+  const shown = useRef<string | null>(null);
+
+  useLayoutEffect(() => {
+    const node = ref.current;
+    if (!node || shown.current === one.text) return;
+    node.innerHTML = toHtml(one.text);
+    shown.current = one.text;
+  }, [one.text]);
+
+  const input = () => {
+    const node = ref.current;
+    if (!node) return;
+    const text = serialize(readDom(node));
+    shown.current = text;
+    onEdit(text, selectionIn(node)?.start ?? plainOf(text).length);
+  };
+
+  return (
+    <div
+      ref={(node) => {
+        ref.current = node;
+        register(node);
+      }}
+      className={`sp-field sp-rich${one.text === '' ? ' is-blank' : ''}`}
+      data-block={one.id}
+      data-placeholder={placeholder}
+      role="textbox"
+      aria-multiline="true"
+      aria-label={labelOf(one)}
+      aria-disabled={disabled || undefined}
+      contentEditable={!disabled}
+      suppressContentEditableWarning
+      spellCheck
+      onInput={input}
+      onKeyDown={onKey}
+      onPaste={onPaste}
+      onBlur={onBlur}
+    />
+  );
+}
+
+/** A textarea that grows with what is in it, so a block is as tall as its words. Code only. */
 function Field({ one, disabled, placeholder, register, onEdit, onKey, onBlur }: FieldProps) {
   const ref = useRef<HTMLTextAreaElement | null>(null);
   const fit = useCallback(() => {
@@ -606,8 +854,8 @@ function Field({ one, disabled, placeholder, register, onEdit, onKey, onBlur }: 
       rows={1}
       value={one.text}
       placeholder={placeholder}
-      aria-label={BLOCK_KINDS.find((kind) => kind.type === one.type)?.label ?? 'Text'}
-      spellCheck={one.type !== 'code'}
+      aria-label={labelOf(one)}
+      spellCheck={false}
       disabled={disabled}
       onChange={(event) => onEdit(event.target.value, event.target.selectionStart)}
       onKeyDown={onKey}

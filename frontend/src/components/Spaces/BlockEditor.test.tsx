@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 import { BlockEditor } from './BlockEditor';
 import type { Block } from './blocks';
+import { placeCaret, pressAt, textOf, typeInto, type BlockField } from '@/test/blockFields';
 
 let latest: Block[] = [];
 
@@ -21,19 +22,12 @@ function Host({ start }: { start: Block[] }) {
 const page = (...blocks: Array<Partial<Block> & { text: string }>) =>
   render(<Host start={blocks.map((one, at) => ({ id: `b${at}`, type: 'text', ...one }))} />);
 
-const fields = () => within(screen.getByRole('group', { name: 'Page' })).getAllByRole('textbox') as HTMLTextAreaElement[];
+const fields = () => within(screen.getByRole('group', { name: 'Page' })).getAllByRole('textbox') as BlockField[];
 const kinds = () => latest.map((one) => one.type);
 const texts = () => latest.map((one) => one.text);
 
-/** Type into a field as if the caret were at the end of `value`. */
-const type = (field: HTMLTextAreaElement, value: string, caret = value.length) =>
-  fireEvent.change(field, { target: { value, selectionStart: caret, selectionEnd: caret } });
-
-/** Press a key with the caret at `at`. */
-function press(field: HTMLTextAreaElement, key: string, at: number, extra: Record<string, boolean> = {}) {
-  field.setSelectionRange(at, at);
-  fireEvent.keyDown(field, { key, ...extra });
-}
+const type = typeInto;
+const press = pressAt;
 
 describe('typing', () => {
   it('turns Markdown marks at the start of a block into that kind', () => {
@@ -139,7 +133,7 @@ describe('indent and toggles', () => {
     page({ type: 'toggle', text: 'Details' }, { text: 'inside', indent: 1 }, { text: 'after' });
     expect(fields()).toHaveLength(3);
     fireEvent.click(screen.getByRole('button', { name: 'Close Details' }));
-    expect(fields().map((field) => field.value)).toEqual(['Details', 'after']);
+    expect(fields().map(textOf)).toEqual(['Details', 'after']);
     fireEvent.click(screen.getByRole('button', { name: 'Open Details' }));
     expect(fields()).toHaveLength(3);
   });
@@ -190,5 +184,86 @@ describe('a block\'s handle', () => {
     page({ text: 'a' });
     fireEvent.click(screen.getByRole('button', { name: 'Write at the end of the page' }));
     expect(texts()).toEqual(['a', '']);
+  });
+});
+
+describe('bold and italic', () => {
+  it('bolds the selection with ⌘B, and takes it off again', () => {
+    page({ text: 'hello world' });
+    placeCaret(fields()[0]!, 0, 5);
+    fireEvent.keyDown(fields()[0]!, { key: 'b', metaKey: true });
+    expect(texts()).toEqual(['**hello** world']);
+    expect(fields()[0]!.querySelector('strong')).toHaveTextContent('hello');
+
+    placeCaret(fields()[0]!, 0, 5);
+    fireEvent.keyDown(fields()[0]!, { key: 'b', ctrlKey: true });
+    expect(texts()).toEqual(['hello world']);
+  });
+
+  it('italicises with ⌘I', () => {
+    page({ text: 'an aside' });
+    placeCaret(fields()[0]!, 3, 8);
+    fireEvent.keyDown(fields()[0]!, { key: 'i', metaKey: true });
+    expect(texts()).toEqual(['an *aside*']);
+    expect(fields()[0]!.querySelector('em')).toHaveTextContent('aside');
+  });
+
+  it('formats "**word**" and "*word*" as they are typed', () => {
+    page({ text: '' });
+    type(fields()[0]!, 'say **hi**');
+    expect(texts()).toEqual(['say **hi**']);
+    expect(textOf(fields()[0]!)).toBe('say hi');
+    // A field's whole text is set at once here, so the italic is typed on its own.
+    type(fields()[0]!, 'an *aside*');
+    expect(texts()).toEqual(['an *aside*']);
+  });
+
+  it('keeps a lone star as a star', () => {
+    page({ text: '' });
+    type(fields()[0]!, '5 * 3');
+    expect(texts()).toEqual(['5 \\* 3']);
+    expect(textOf(fields()[0]!)).toBe('5 * 3');
+  });
+
+  it('keeps the marks on each side when a block is split, and when two are joined', () => {
+    page({ text: '**bold** plain' });
+    press(fields()[0]!, 'Enter', 2);
+    expect(texts()).toEqual(['**bo**', '**ld** plain']);
+    press(fields()[1]!, 'Backspace', 0);
+    expect(texts()).toEqual(['**bold** plain']);
+  });
+
+  it('shows the bar over a selection, and its buttons apply the marks', () => {
+    page({ text: 'hello world' });
+    placeCaret(fields()[0]!, 6, 11);
+    fireEvent(document, new Event('selectionchange'));
+    const bar = screen.getByRole('toolbar', { name: 'Text style' });
+    expect(within(bar).getByRole('button', { name: 'Bold' })).toHaveAttribute('aria-pressed', 'false');
+    fireEvent.click(within(bar).getByRole('button', { name: 'Italic' }));
+    expect(texts()).toEqual(['hello *world*']);
+  });
+
+  it('drops formatting when a block becomes code, and keeps stars literal coming back', () => {
+    page({ text: '**x** *y*' });
+    fireEvent.click(screen.getAllByRole('button', { name: /Drag to move/ })[0]!);
+    fireEvent.click(screen.getByRole('menuitemradio', { name: /Code/ }));
+    expect(texts()).toEqual(['x y']);
+    typeInto(fields()[0]!, '**a**');
+    fireEvent.click(screen.getAllByRole('button', { name: /Drag to move/ })[0]!);
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'Text' }));
+    expect(textOf(fields()[0]!)).toBe('**a**');
+  });
+
+  it('pastes plain text, and several lines as several blocks', () => {
+    page({ text: 'ab' });
+    const paste = (text: string) =>
+      fireEvent.paste(fields()[0]!, { clipboardData: { getData: () => text } });
+    placeCaret(fields()[0]!, 1);
+    paste('X');
+    expect(texts()).toEqual(['aXb']);
+    placeCaret(fields()[0]!, 1);
+    paste('one\n- two\nthree');
+    expect(texts()).toEqual(['aone', 'two', 'threeXb']);
+    expect(kinds()).toEqual(['text', 'bullet', 'text']);
   });
 });

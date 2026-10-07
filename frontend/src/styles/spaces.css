@@ -64,7 +64,7 @@
 /* ==========================================================================
    The block editor — components/Spaces/BlockEditor.tsx
    ========================================================================== */
-.sp-editor { flex: 1 1 auto; display: flex; flex-direction: column; font-size: var(--text-lg); }
+.sp-editor { position: relative; flex: 1 1 auto; display: flex; flex-direction: column; font-size: var(--text-lg); }
 .sp-block {
     position: relative;
     display: flex;
@@ -136,6 +136,62 @@
 /* A text block says "Type '/'" only while the caret is in it. */
 .sp-editor:not(.is-empty) .sp-b-text > .sp-field:not(:focus)::placeholder { color: transparent; }
 .sp-field:disabled { cursor: default; }
+
+/* A rich block: an editable div, so its bold and italic show. Its line
+   breaks are "\n" in the text, kept by pre-wrap. */
+.sp-rich {
+    position: relative;
+    min-height: 1.6em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    cursor: text;
+}
+.sp-rich strong { font-weight: 700; }
+.sp-rich em { font-style: italic; }
+/* The grey words in an empty block, drawn behind the caret. */
+.sp-rich.is-blank::before {
+    content: attr(data-placeholder);
+    position: absolute;
+    inset: 3px 2px auto;
+    color: var(--color-ink-faint);
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sp-editor:not(.is-empty) .sp-b-text > .sp-rich.is-blank:not(:focus)::before { content: none; }
+.sp-rich[aria-disabled="true"] { cursor: default; }
+
+/* The bold / italic bar that rises over a selection. */
+.sp-inline-bar {
+    position: absolute;
+    z-index: 45;
+    display: flex;
+    gap: 2px;
+    padding: 4px;
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+}
+.sp-inline-btn {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+.sp-inline-btn.is-bold { font-weight: 800; }
+.sp-inline-btn.is-italic { font-style: italic; font-family: Georgia, 'Times New Roman', serif; font-size: 16px; }
+.sp-inline-btn:hover { background: var(--color-surface-2); }
+.sp-inline-btn[aria-pressed="true"] { color: var(--pref-accent, var(--color-accent)); background: var(--color-surface-2); }
 
 .sp-b-h1 { margin-top: .9em; }
 .sp-b-h2 { margin-top: .7em; }
