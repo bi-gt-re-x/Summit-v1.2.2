@@ -1,23 +1,13 @@
 /* ==========================================================================
-   minimal.css — every app page in the sidebar's look.
+   minimal.css — what is left of the sidebar's look on every app page.
 
-   The rail is a flat white panel: one thin rule, neutral greys, charcoal for
-   what matters, no washes, no glow. The pages around it were a different
-   app — a ruled backdrop with drifting colour behind every page, a sky and a
-   mountain range over every header, tinted gradient cards and gradient
-   buttons. This sheet brings them to the rail's terms:
-
-     - a white ground, with the original background over it: the graph
-       paper, the slow colour wash and the drifting dots;
-     - headers (`PageHero`, components/Hero.tsx) as flat white cards with no
-       sky and no range;
-     - cards flat white with a thin rule, and shadows only on what floats;
-     - gradient buttons and active tabs solid, in the page's accent — which
-       is Graphite, the rail's charcoal, unless the reader picks a colour
-       (styles/preferences.css, Settings › Appearance).
-
-   Progress bars, chart fills and fade masks keep their gradients: those are
-   data, not decoration.
+   This sheet once brought every page to the rail's flat terms: a white
+   ground, headers without their sky and mountain range, cards without their
+   washes, the dashboard's four colours in one grey, gradient buttons made
+   solid, and a charcoal (Graphite) default accent. All of that colour is
+   back the way it was before the sidebar redesign — each page's own tones,
+   its gradients and its shadows, and Violet as the default accent — and what
+   stays is the heavier rule on each page's outer containers.
 
    ## Why every selector starts `body.has-rail`
 
@@ -27,41 +17,6 @@
    matters because the pages' sheets are loaded with their routes, after this
    one, and would otherwise win on source order.
    ========================================================================== */
-
-/* ---- The ground ---------------------------------------------------------- */
-html:not([data-theme="dark"]) body.has-rail { background: #FFFFFF; }
-
-/* Shadows on what floats (menus, dialogs: --shadow-lg) and nowhere else. */
-body.has-rail {
-    --shadow-sm: none;
-    --shadow-md: 0 1px 2px rgba(16, 24, 40, .03);
-}
-
-/* The global accent follows the chosen one, so the few rules that read
-   `--color-accent` directly go charcoal with everything else. */
-:root[data-accent] body.has-rail { --color-accent: var(--pref-accent); }
-
-/* ---- Page headers -------------------------------------------------------- */
-body.has-rail .peak-hero {
-    min-height: 0;
-    border-color: var(--color-line);
-    background-image: none;
-    box-shadow: none;
-}
-body.has-rail .peak-scene { display: none; }
-/* A header's own colour (`--peak-a`, its section's tone) is what tints the
-   tabs, chips and icon inside it — the analytics tabs were orange on one tab
-   and green on the next. Here it is the accent, like everything else. */
-body.has-rail .peak-hero {
-    --peak-a: var(--pref-accent, var(--color-accent));
-    --peak-b: var(--pref-accent-2, var(--color-accent));
-    --peak-c: var(--pref-accent, var(--color-accent));
-}
-body.has-rail .peak-eyebrow {
-    padding: 0;
-    background: none;
-    color: var(--color-ink-faint);
-}
 
 /* ---- Outer containers: a heavier rule -------------------------------------
    Every page's outermost boxes — the cards and panels a page is laid out in,
@@ -110,97 +65,4 @@ body.has-rail .st-card,
 body.has-rail .sp-members,
 body.has-rail .sp-body {
     border-width: 1.5px;
-}
-
-/* ---- Cards: flat ----------------------------------------------------------
-   The decorative washes, one page at a time. A card keeps its surface and its
-   rule; only the colour laid over it goes. */
-body.has-rail .dash .dash-stat,
-body.has-rail .gx-head,
-body.has-rail .gx-stat,
-body.has-rail .gx-card,
-body.has-rail .gx-ladder,
-body.has-rail .ag-top,
-body.has-rail .ax-collect-head,
-body.has-rail .ax-reached-card,
-body.has-rail .ax-away,
-body.has-rail .ax-first,
-body.has-rail .ax-gy-verdict,
-body.has-rail .ax-gp-overall,
-body.has-rail .ac-recent-card,
-body.has-rail .sb-card,
-body.has-rail .sx-hero,
-body.has-rail .sx-step,
-body.has-rail .sx-step.is-taken,
-body.has-rail .sx-standing.is-reached,
-body.has-rail .pom-hero {
-    background-image: none;
-    background-color: var(--color-surface);
-    border-color: var(--color-line);
-    box-shadow: none;
-}
-
-/* The dashboard's four cards each wore a colour (`--tone`) on their rule,
-   their inset strip and their icon. One neutral grey for all four. */
-body.has-rail .dash .dash-stat { --tone: #6C7178; }
-body.has-rail .dash .dash-stat .dash-stat-panel {
-    background: var(--color-surface-2);
-    border-color: var(--color-line);
-}
-/* Their icons go grey like the rail's. The streak's flame keeps its colour:
-   cold, red, yellow and blue are the streak's state, not decoration. */
-body.has-rail .dash-stat-chip:not(.flame-chip) {
-    background: var(--color-surface-2);
-    color: #5F646B;
-}
-html[data-theme="dark"] body.has-rail .dash-stat-chip:not(.flame-chip) {
-    background: #232A33;
-    color: #C9D1D9;
-}
-/* An earned badge still reads as earned, one step deeper than an unearned
-   one rather than lit. */
-body.has-rail .ac-tile.is-earned {
-    background-image: none;
-    background-color: var(--color-surface-2);
-}
-/* Glows and sheens drawn as pseudo-elements. */
-body.has-rail .gx-card::before,
-body.has-rail .gr-hero-card::before,
-body.has-rail .ac-tile.is-earned.tier-4::after,
-body.has-rail .ac-tile.is-earned.tier-5::after {
-    display: none;
-}
-/* The numbered badge beside a recommended session. */
-body.has-rail .sx-step-rank,
-body.has-rail .sx-step.is-taken .sx-step-rank {
-    background: var(--color-surface-2);
-}
-
-/* ---- Buttons and chosen tabs: solid -------------------------------------- */
-body.has-rail .gx-cta,
-body.has-rail .gx-tab.is-on { background: var(--gx-violet); }
-body.has-rail .nt-new,
-body.has-rail .nt-new-more,
-body.has-rail .nt-save { background: var(--nt-accent); }
-body.has-rail .rc-btn.is-primary,
-body.has-rail .rc-best.is-fresh > button,
-body.has-rail .rc-chip.is-on {
-    background: var(--rc-accent);
-}
-body.has-rail .sx-btn.is-primary { background: var(--ax-violet); }
-body.has-rail .pom-btn.is-primary,
-body.has-rail .pom-start,
-body.has-rail .pom-round.is-primary {
-    background: var(--pom-violet);
-}
-/* And none of them glow. */
-body.has-rail .gx-cta,
-body.has-rail .nt-new,
-body.has-rail .nt-save,
-body.has-rail .rc-btn.is-primary,
-body.has-rail .sx-btn.is-primary,
-body.has-rail .pom-btn.is-primary,
-body.has-rail .pom-start,
-body.has-rail .pom-round.is-primary {
-    box-shadow: none;
 }

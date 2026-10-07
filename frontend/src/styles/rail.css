@@ -569,9 +569,10 @@ html[data-theme="dark"] .rail-xp-bar { background: #21262D; }
    ==========================================================================
    The rail as one quiet panel: a white ground, a search box under the
    mark, the app's pages folded under "Core", and the reader's own space and
-   their team's under it. The current page is a neutral grey pill rather than
-   a tinted one, and the headings are small spaced capitals that fold what is
-   under them. Desktop only: the phone's bottom bar draws none of this. */
+   their team's under it. The headings are small spaced capitals that fold
+   what is under them. The colours are the rail's from before this layout:
+   grey text, a cool grey hover, and the current page in a warm tint with a
+   gold icon. Desktop only: the phone's bottom bar draws none of this. */
 .rail {
     background: #FFFFFF;
     border-right-color: #ECECEA;
@@ -654,20 +655,20 @@ html[data-theme="dark"] .rail-link.rail-invite { color: #8B949E; }
 .rail-link {
     padding: 11px var(--space-4);
     border-radius: 10px;
-    color: #2F3337;
+    color: #6C757D;
     font-size: var(--text-lg);
     font-weight: 500;
 }
-.rail-link svg { width: 21px; height: 21px; color: #5F646B; stroke-width: 1.7; }
-.rail-link:hover { background: #EFEFED; color: #1F2326; }
-.rail-link.active { background: #EBEBE9; color: #1F2326; }
-.rail-link.active svg { color: #3A3F45; }
+.rail-link svg { width: 21px; height: 21px; stroke-width: 1.7; }
+.rail-link:hover { background: #F4F6F8; color: #2C302E; }
+.rail-link.active { background: #F1EDE7; color: #2C302E; }
+.rail-link.active svg { color: #A38A70; }
 
 .rail-sub { border-left-color: #E2E2DF; }
-.rail-sub-link { color: #7C8087; font-weight: 400; font-size: var(--text-sm); }
-.rail-sub-link:hover { background: #EFEFED; }
-.rail-sub-link.active { background: #EBEBE9; font-weight: 600; }
-.rail-sub-link.active::before { background: #6C7178; }
+.rail-sub-link { color: #7A828A; font-weight: 400; font-size: var(--text-sm); }
+.rail-sub-link:hover { background: #F4F6F8; color: #2C302E; }
+.rail-sub-link.active { background: #F6F4F1; color: #2C302E; font-weight: 700; }
+.rail-sub-link.active::before { background: #A38A70; }
 
 /* The foot: who is playing, how far, and how far to the next. */
 .rail-foot { padding-top: var(--space-4); border-top-color: #E8E8E5; }
@@ -709,13 +710,12 @@ html[data-theme="dark"] .rail-search:hover { border-color: #3A414B; }
 html[data-theme="dark"] .rail-search kbd { background: #262C35; color: #8B949E; }
 html[data-theme="dark"] .rail-section-head { color: #7D8590; }
 html[data-theme="dark"] .rail-section-head:hover { color: #F0F2F5; }
-html[data-theme="dark"] .rail-link { color: #C9D1D9; }
-html[data-theme="dark"] .rail-link svg { color: #8B949E; }
-html[data-theme="dark"] .rail-link:hover { background: #1F252D; color: #F0F2F5; }
-html[data-theme="dark"] .rail-link.active { background: #232A33; color: #F0F2F5; }
-html[data-theme="dark"] .rail-link.active svg { color: #E6EDF3; }
-html[data-theme="dark"] .rail-sub-link.active { background: #232A33; }
-html[data-theme="dark"] .rail-sub-link.active::before { background: #8B949E; }
+html[data-theme="dark"] .rail-link { color: #8B949E; }
+html[data-theme="dark"] .rail-link:hover { background: #21262D; color: #F0F2F5; }
+html[data-theme="dark"] .rail-link.active { background: #2A2118; color: #F0F2F5; }
+html[data-theme="dark"] .rail-link.active svg { color: #D8C3A5; }
+html[data-theme="dark"] .rail-sub-link.active { background: #1F242C; color: #F0F2F5; }
+html[data-theme="dark"] .rail-sub-link.active::before { background: #D8C3A5; }
 html[data-theme="dark"] .rail-avatar { background: #232A33; color: #8B949E; }
 html[data-theme="dark"] .rail-rank-title { color: #F0F2F5; }
 

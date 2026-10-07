@@ -258,7 +258,7 @@ export interface SettingsEdit {
 export const DEFAULTS: Prefs = {
   theme_mode: 'system',
   theme_skin: '',
-  accent: 'graphite',
+  accent: 'violet',
   reduce_motion: false,
   show_ambient: true,
   nav_collapsed: false,

@@ -42,8 +42,8 @@
 :root[data-accent="amber"] { --pref-accent: #b8791f; --pref-accent-2: #e0b23c; }
 :root[data-accent="rose"]  { --pref-accent: #c0395f; --pref-accent-2: #f2778f; }
 :root[data-accent="slate"] { --pref-accent: #4a5568; --pref-accent-2: #8b97ab; }
-/* Graphite: the sidebar's charcoal. The default, so a page matches the rail
-   unless the reader picks a colour. */
+/* Graphite: the sidebar's charcoal, for a reader who wants the pages to
+   match it. */
 :root[data-accent="graphite"] { --pref-accent: #2C302E; --pref-accent-2: #6C7178; }
 
 /* Dark wants the lighter of the pair as its base, for the same reason every

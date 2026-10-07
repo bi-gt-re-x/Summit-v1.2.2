@@ -284,13 +284,13 @@ function ThemeCard({
 }
 
 const ACCENTS: { key: Accent; label: string; swatch: string }[] = [
-  { key: 'graphite', label: 'Graphite', swatch: '#2C302E' },
   { key: 'violet', label: 'Violet', swatch: '#6d5ae0' },
   { key: 'blue', label: 'Blue', swatch: '#2f6fd0' },
   { key: 'green', label: 'Green', swatch: '#1f8a54' },
   { key: 'amber', label: 'Amber', swatch: '#b8791f' },
   { key: 'rose', label: 'Rose', swatch: '#c0395f' },
   { key: 'slate', label: 'Slate', swatch: '#4a5568' },
+  { key: 'graphite', label: 'Graphite', swatch: '#2C302E' },
 ];
 
 /** A row's control, and the words the search matches it on. */

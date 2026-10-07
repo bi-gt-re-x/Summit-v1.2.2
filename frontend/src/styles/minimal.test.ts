@@ -1,9 +1,10 @@
 /**
- * Every signed-in page in the sidebar's look — styles/minimal.css.
+ * What is left of the sidebar's look — styles/minimal.css.
  *
- * What is pinned is the handful of rules that make the look, each scoped to
- * `body.has-rail` so the landing and sign-in pages keep their own, and the
- * Graphite accent they lean on.
+ * Pinned: the heavier rule on each page's outer containers, scoped to
+ * `body.has-rail`, and that the sheet no longer takes any page's colour away
+ * — the headers, washes, gradients and accent are as they were before the
+ * sidebar redesign.
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -32,13 +33,12 @@ describe('the minimal layer', () => {
     expect(minimal).not.toMatch(/\.hm-(ambient|grid|gradient|particles)/);
   });
 
-  it('draws headers without their sky and mountains', () => {
-    expect(minimal).toMatch(/body\.has-rail \.peak-scene \{ display: none; \}/);
-    expect(minimal).toMatch(/body\.has-rail \.peak-hero \{[^}]*background-image: none/);
-  });
-
-  it('points a header\'s own colour at the accent', () => {
-    expect(minimal).toMatch(/--peak-a: var\(--pref-accent/);
+  it('leaves every page its own colour', () => {
+    expect(minimal).not.toMatch(/\.peak-scene/);
+    expect(minimal).not.toMatch(/--peak-a/);
+    expect(minimal).not.toMatch(/background/);
+    expect(minimal).not.toMatch(/--tone/);
+    expect(minimal).not.toMatch(/--color-accent/);
   });
 });
 
@@ -60,7 +60,7 @@ describe('outer containers', () => {
 });
 
 describe('the Graphite accent', () => {
-  it('is the sidebar\'s charcoal, in both themes', () => {
+  it('is still offered, the sidebar\'s charcoal in both themes', () => {
     expect(preferences).toMatch(/:root\[data-accent="graphite"\] \{ --pref-accent: #2C302E;/);
     expect(preferences).toMatch(/html\[data-theme="dark"\]:root\[data-accent="graphite"\]/);
   });
