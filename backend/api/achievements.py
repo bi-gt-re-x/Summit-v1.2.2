@@ -923,6 +923,22 @@ def check_earned(username, user, force=False):
 
 @router.get('/api/achievements')
 def list_achievements(username: str = Depends(current_username)):
+    """The wall as it stands on record — read only.
+
+    Every badge's progress is worked out, but nothing newly cleared is written
+    down: a GET never writes (tests/test_get_requests_do_not_write.py). The
+    page asks the POST below, which records anything earned first.
+    """
+    name = (username or '').strip()
+    _, user = load_user(name)
+    if not user:
+        return fail('Account not found')
+    return _wall(name, user, _figures(name, user))
+
+
+@router.post('/api/achievements')
+def check_achievements(username: str = Depends(current_username)):
+    """The wall, with anything newly earned written down first."""
     name = (username or '').strip()
     _, user = load_user(name)
     if not user:
@@ -933,6 +949,11 @@ def list_achievements(username: str = Depends(current_username)):
     # updates the signature, so the sweep that runs a second later finds
     # nothing left to do.
     figures, _fresh = check_earned(name, user, force=True)
+    return _wall(name, user, figures)
+
+
+def _wall(name, user, figures):
+    """Every badge, with its progress, for the page."""
     dates = {
         row.get('achievement_id'): row.get('earned_at')
         for row in db.rows_for('user_achievements', name)

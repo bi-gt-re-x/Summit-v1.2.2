@@ -679,7 +679,7 @@ def saved_reading(subject: str = '', username: str = Depends(current_username)):
 # --------------------------------------------------------------------------
 # The loop
 # --------------------------------------------------------------------------
-def _sync(username: str, rows: list) -> dict:
+def _sync(username: str, rows: list, persist: bool = True) -> dict:
     """Each recommendation's state, read off the task it was planned as.
 
     A step planned as a session is locked to that task. Finished, it counts as
@@ -689,6 +689,11 @@ def _sync(username: str, rows: list) -> dict:
     deleted, so no path can leave a step locked to a task that is gone.
 
     Returns {id: {'state', 'task'}} where state is open, planned or done.
+
+    `persist=False` works the same answer out without writing it down, for
+    the GETs: a GET never writes (tests/test_get_requests_do_not_write.py).
+    The next POST that reads these rows (a reading, a plan, a suggestion)
+    writes it.
     """
     linked = [row for row in rows if row.get('task_id') and not row.get('taken_at')]
     tasks = db.columns_by_ids('tasks', username, [row['task_id'] for row in linked],
@@ -701,16 +706,18 @@ def _sync(username: str, rows: list) -> dict:
             continue
         task = tasks.get(row.get('task_id')) if row.get('task_id') else None
         if row.get('task_id') and not task:
-            db.update_row('subject_recommendations', row['id'], {'task_id': None},
-                          user_id=username)
+            if persist:
+                db.update_row('subject_recommendations', row['id'], {'task_id': None},
+                              user_id=username)
             row['task_id'] = None
         if not task:
             out[row['id']] = {'state': 'open', 'task': None}
         elif task.get('status') == 'done':
             row['taken_at'] = (task.get('completed_at')
                                or datetime.now().isoformat(timespec='seconds'))
-            db.update_row('subject_recommendations', row['id'],
-                          {'taken_at': row['taken_at']}, user_id=username)
+            if persist:
+                db.update_row('subject_recommendations', row['id'],
+                              {'taken_at': row['taken_at']}, user_id=username)
             out[row['id']] = {'state': 'done', 'task': None}
         else:
             out[row['id']] = {'state': 'planned', 'task': {
@@ -729,7 +736,7 @@ def list_recommendations(subject: str = '', username: str = Depends(current_user
 
     name = _text(subject)
     rows = _history(username, name)
-    states = _sync(username, rows)
+    states = _sync(username, rows, persist=False)
     return ok(
         recommendations=[
             {'id': row.get('id'), 'title': row.get('title'),
@@ -892,7 +899,7 @@ def _steps_with_state(username: str, subject: str) -> list:
     steps = _saved_steps(username, subject)
     if subject == next_sessions.OVERALL:
         steps = [next_sessions.unbracket(step) for step in steps]
-    states = _sync(username, _history(username, subject))
+    states = _sync(username, _history(username, subject), persist=False)
     return [{**step, 'state': (states.get(step.get('id')) or {}).get('state', 'open'),
              'task': (states.get(step.get('id')) or {}).get('task')}
             for step in steps]

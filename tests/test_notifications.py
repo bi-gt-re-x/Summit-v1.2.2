@@ -41,7 +41,7 @@ def _task(username, title, due, status='todo'):
 
 
 def _list(client, day=DAY, at='09:00'):
-    reply = client.get('/api/notifications', params={'day': day, 'at': at}).json()
+    reply = client.post('/api/notifications', params={'day': day, 'at': at}).json()
     assert reply['success'], reply
     return reply['notifications']
 
@@ -189,7 +189,7 @@ def test_the_master_switch_stops_everything(overdue):
     assert _list(overdue)
     overdue.post('/api/settings', json={'values': {'notifications_enabled': False}})
 
-    reply = overdue.get('/api/notifications', params={'day': DAY}).json()
+    reply = overdue.post('/api/notifications', params={'day': DAY}).json()
     assert reply['success'] and reply['enabled'] is False
     assert reply['notifications'] == []
 
@@ -213,9 +213,9 @@ def test_a_channel_that_is_off_is_neither_written_nor_shown(client):
 
 
 def test_popups_are_reported_with_the_list(overdue):
-    assert overdue.get('/api/notifications', params={'day': DAY}).json()['popups'] is True
+    assert overdue.post('/api/notifications', params={'day': DAY}).json()['popups'] is True
     overdue.post('/api/settings', json={'values': {'notify_popups': False}})
-    assert overdue.get('/api/notifications', params={'day': DAY}).json()['popups'] is False
+    assert overdue.post('/api/notifications', params={'day': DAY}).json()['popups'] is False
 
 
 # --------------------------------------------------------------------------

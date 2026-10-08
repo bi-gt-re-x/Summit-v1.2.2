@@ -138,12 +138,16 @@ export function get<T>(path: string, query?: Query): Promise<ApiResult<T>> {
   return request<T>(path, { method: 'GET' }, query);
 }
 
-export function post<T>(path: string, body?: unknown): Promise<ApiResult<T>> {
-  return request<T>(path, {
-    method: 'POST',
-    headers: JSON_HEADERS,
-    body: JSON.stringify(body ?? {}),
-  });
+export function post<T>(path: string, body?: unknown, query?: Query): Promise<ApiResult<T>> {
+  return request<T>(
+    path,
+    {
+      method: 'POST',
+      headers: JSON_HEADERS,
+      body: JSON.stringify(body ?? {}),
+    },
+    query,
+  );
 }
 
 export function put<T>(path: string, body?: unknown): Promise<ApiResult<T>> {

@@ -50,7 +50,10 @@ export function getUserData(): Promise<ApiResult<UserData>> {
  * this is the read that makes every page agree on the streak.
  */
 export function getStats(): Promise<ApiResult<{ stats: UserStats }>> {
-  return get<{ stats: UserStats }>('/api/stats');
+  // A POST, because asking is also when a streak that went stale overnight is
+  // written down as broken (backend/api/dashboard.py). `GET /api/stats` gives
+  // the same numbers and writes nothing; no GET in the app writes.
+  return post<{ stats: UserStats }>('/api/stats');
 }
 
 /**

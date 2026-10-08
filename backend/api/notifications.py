@@ -107,9 +107,28 @@ def _switches(username):
 
 
 @router.get('/api/notifications')
-def list_notifications(day: str = '', at: str = '',
-                       user=Depends(current_user)):
+def list_notifications(user=Depends(current_user)):
+    """The account's live notifications, newest first — read only.
+
+    What is already on record and nothing more: no badges worked out and no
+    sweep, because a GET never writes (tests/test_get_requests_do_not_write.py).
+    The bell asks the POST below, which does both first.
+    """
+    username = user['username']
+    enabled, popups, channels = _switches(username)
+    if not enabled:
+        return ok(notifications=[], popups=False, enabled=False)
+    return ok(notifications=db.notifications_for(username, channels),
+              popups=popups, enabled=True)
+
+
+@router.post('/api/notifications')
+def sweep_notifications(day: str = '', at: str = '',
+                        user=Depends(current_user)):
     """The account's live notifications, newest first, swept first.
+
+    A POST because the sweep writes: it files whatever has become true since
+    the last one, and works out badges first. The bell polls this.
 
     `day` and `at` are the reader's own clock — the local ISO day and 'HH:MM'.
     Both are parameters rather than something computed here because stored

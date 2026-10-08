@@ -37,13 +37,22 @@ def get_growth_data(username: str = Depends(current_username), days: int = growt
 
 @router.get('/api/get_growth_ratings')
 def get_growth_ratings(username: str = Depends(current_username)):
-    """The five-metric graded report card.
+    """The five-metric graded report card — read only.
 
-    Computed in tracking/analytics.py, which also files the result into
-    metric_snapshots so the grades build up a history.
+    Nothing is filed: a GET never writes (tests/test_get_requests_do_not_write.py).
+    The page asks the POST below.
     """
+    ratings = analytics_tracking.ratings(username, record=False)
+    if ratings is None:
+        return fail('User not found')
+    return ok(**ratings)
 
-    ratings = analytics_tracking.ratings(username)
+
+@router.post('/api/get_growth_ratings')
+def file_growth_ratings(username: str = Depends(current_username)):
+    """The report card, with today's grades filed into metric_snapshots so
+    the grades build up a history (tracking/analytics.py)."""
+    ratings = analytics_tracking.ratings(username, record=True)
     if ratings is None:
         return fail('User not found')
     return ok(**ratings)

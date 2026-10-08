@@ -25,7 +25,7 @@
  * ✕ and the Clear all button, and it is the one thing a derived bell could
  * never do.
  */
-import { del, get, post } from './api';
+import { del, post } from './api';
 import type { ApiResult } from '@/types';
 
 /**
@@ -84,7 +84,9 @@ export interface NotificationList {
  *            block is simply not raised.
  */
 export function list(day: string, at: string): Promise<ApiResult<NotificationList>> {
-  return get<NotificationList>('/api/notifications', { day, at });
+  // A POST, because asking is also the sweep: it files whatever has become
+  // true since the last one (backend/api/notifications.py). No GET writes.
+  return post<NotificationList>('/api/notifications', {}, { day, at });
 }
 
 /** Stamp the ones that have been on screen, and optionally the lot as read. */

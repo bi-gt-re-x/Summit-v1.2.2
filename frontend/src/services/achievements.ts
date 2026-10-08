@@ -20,7 +20,7 @@
  * message. Read `hidden && !earned` to draw it as a secret rather than
  * inferring it from a zero threshold.
  */
-import { get } from './api';
+import { post } from './api';
 import type { ApiResult } from '@/types';
 
 /** Everything a badge can be measured on. See `METRIC_LABELS` on the server. */
@@ -113,5 +113,7 @@ export interface AchievementsResult {
 }
 
 export function getAchievements(): Promise<ApiResult<AchievementsResult>> {
-  return get<AchievementsResult>('/api/achievements');
+  // A POST, because opening the wall is also when anything newly earned is
+  // written down (backend/api/achievements.py). No GET writes.
+  return post<AchievementsResult>('/api/achievements');
 }

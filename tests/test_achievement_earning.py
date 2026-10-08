@@ -130,12 +130,12 @@ def test_the_bell_announces_a_badge_earned_since_the_last_look(app):
     """
     make_account('belle')
     client = sign_in(app, 'belle')
-    client.get('/api/notifications', params={'day': DAY, 'at': '09:00'})
+    client.post('/api/notifications', params={'day': DAY, 'at': '09:00'})
 
     for _ in range(10):
         _finish('belle')
 
-    reply = client.get('/api/notifications', params={'day': DAY, 'at': '09:05'}).json()
+    reply = client.post('/api/notifications', params={'day': DAY, 'at': '09:05'}).json()
     assert reply['success'], reply
 
     prints = {row['fingerprint'] for row in reply['notifications']}
@@ -151,13 +151,13 @@ def test_the_bell_says_nothing_twice_about_one_badge(app):
     fingerprint exists to prevent, and this is that rule for the new caller."""
     make_account('once')
     client = sign_in(app, 'once')
-    client.get('/api/notifications', params={'day': DAY, 'at': '09:00'})
+    client.post('/api/notifications', params={'day': DAY, 'at': '09:00'})
 
     for _ in range(10):
         _finish('once')
 
-    first = client.get('/api/notifications', params={'day': DAY, 'at': '09:05'}).json()
-    second = client.get('/api/notifications', params={'day': DAY, 'at': '09:06'}).json()
+    first = client.post('/api/notifications', params={'day': DAY, 'at': '09:05'}).json()
+    second = client.post('/api/notifications', params={'day': DAY, 'at': '09:06'}).json()
 
     badges = [row for row in second['notifications'] if row['fingerprint'].startswith('badge:')]
     assert len(badges) == len({row['fingerprint'] for row in badges})
@@ -304,10 +304,10 @@ def test_the_page_reads_each_table_once(app):
     to cost on top of counting the badges — shows up here as a two."""
     make_account('counted')
     _finish('counted')
-    achievements.list_achievements(username='counted')   # first visit does the earning
+    achievements.check_achievements(username='counted')   # first visit does the earning
 
     statements = _statements(
-        lambda: achievements.list_achievements(username='counted'))
+        lambda: achievements.check_achievements(username='counted'))
     # Row reads only. `badge_signature` asks each table for a COUNT and a SUM,
     # which is four scalars in one round trip and is the guard that stops the
     # sweep doing any of this — it is not the reading this test is about.

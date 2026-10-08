@@ -11,7 +11,7 @@
  *
  * Backend: backend/api/growth.py, backend/tracking/analytics.py.
  */
-import { get } from './api';
+import { get, post } from './api';
 import type { ApiResult, GrowthDay, Ratings } from '@/types';
 
 export interface GrowthSeries {
@@ -37,9 +37,13 @@ export function series(
   return get<GrowthSeries>('/api/get_growth_data', { days });
 }
 
-/** The five-metric graded report card. Files a snapshot as a side effect. */
+/**
+ * The five-metric graded report card, with today's grades filed as a dated
+ * snapshot — which is why it is a POST. `GET` on the same path reads the card
+ * without filing anything; no GET writes.
+ */
 export function ratings(): Promise<ApiResult<Ratings>> {
-  return get<Ratings>('/api/get_growth_ratings');
+  return post<Ratings>('/api/get_growth_ratings');
 }
 
 export interface XpSnapshot {

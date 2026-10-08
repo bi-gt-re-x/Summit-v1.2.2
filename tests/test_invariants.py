@@ -32,7 +32,7 @@ def finish_task(client, xp=10, name='task'):
 def test_the_earned_figure_counts_the_wall(client):
     """The headline, the ring and the category bars are one number."""
     finish_task(client)
-    body = client.get('/api/achievements').json()
+    body = client.post('/api/achievements').json()
 
     on_the_wall = sum(1 for badge in body['achievements'] if badge['earned'])
     in_categories = sum(category['earned'] for category in body['categories'])
@@ -57,14 +57,14 @@ def test_a_badge_the_catalogue_dropped_is_not_counted(client):
         'user_id': 'tester', 'achievement_id': 'retired-badge',
         'earned_at': '2026-01-01T00:00:00'})
 
-    body = client.get('/api/achievements').json()
+    body = client.post('/api/achievements').json()
     assert 'retired-badge' not in {b['id'] for b in body['achievements']}
     assert body['earned'] == sum(1 for b in body['achievements'] if b['earned'])
 
 
 def test_the_achievement_score_is_the_earned_badges(client):
     finish_task(client)
-    body = client.get('/api/achievements').json()
+    body = client.post('/api/achievements').json()
     assert body['achievement_xp'] == sum(
         b['xp_reward'] for b in body['achievements'] if b['earned'])
     assert body['total_xp'] == sum(b['xp_reward'] for b in body['achievements'])
@@ -72,7 +72,7 @@ def test_the_achievement_score_is_the_earned_badges(client):
 
 def test_a_hidden_badge_gives_nothing_away_until_it_is_earned(client):
     """Five of the hundred, and the page must not be able to leak them."""
-    body = client.get('/api/achievements').json()
+    body = client.post('/api/achievements').json()
     secret = [b for b in body['achievements'] if b['hidden'] and not b['earned']]
     assert len(secret) == len(wall.HIDDEN)
     for badge in secret:
@@ -92,13 +92,13 @@ def test_a_badge_stays_earned_after_the_figure_falls(client):
     `user_achievements` is what fixes the date — so nothing can un-earn it.
     """
     finish_task(client)
-    earned_first = {b['id'] for b in client.get('/api/achievements').json()['achievements']
+    earned_first = {b['id'] for b in client.post('/api/achievements').json()['achievements']
                     if b['earned']}
     user = db.find_row('users', db.rows_for('tasks', 'tester')[0]['user_id'],
                        key='username') or {}
     db.update_row('users', user['id'], {'current_streak': 0, 'tasks_completed': 0, 'xp': 0})
 
-    still = {b['id'] for b in client.get('/api/achievements').json()['achievements']
+    still = {b['id'] for b in client.post('/api/achievements').json()['achievements']
              if b['earned']}
     assert earned_first <= still
 
@@ -136,7 +136,7 @@ def test_reading_the_wall_never_awards_xp(client):
     finish_task(client, xp=10)
     before = db.find_row('users', 'tester', key='username')['xp']
     for _ in range(3):
-        client.get('/api/achievements')
+        client.post('/api/achievements')
     assert db.find_row('users', 'tester', key='username')['xp'] == before
 
 

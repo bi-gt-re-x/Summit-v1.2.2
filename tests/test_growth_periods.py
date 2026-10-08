@@ -59,7 +59,7 @@ def test_the_period_scorer_is_the_report_cards_scorer(client):
     for day in range(0, 40, 3):
         finish(client, xp=40, when=ago(day), difficulty=4, execution=4)
 
-    card = client.get('/api/get_growth_ratings').json()
+    card = client.post('/api/get_growth_ratings').json()
     scored = periods(client, '90d')
 
     assert scored['current']['overall'] == card['overall']['score']

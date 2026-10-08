@@ -11,7 +11,7 @@
  *
  * Backend: backend/api/goals.py.
  */
-import { get, post } from './api';
+import { post } from './api';
 import type { ApiResult, Goal, GoalCategory, GoalMeasure, GoalType, MilestoneStatus, MilestoneStep } from '@/types';
 
 export interface GoalsResult {
@@ -22,7 +22,9 @@ export interface GoalsResult {
 
 /** Every goal, with the self-tracking ones brought up to date first. */
 export function getGoals(): Promise<ApiResult<GoalsResult>> {
-  return get<GoalsResult>('/api/get_goals');
+  // A POST, because loading the goals is also when the streak and focus goals
+  // are brought up to date and saved (backend/api/goals.py). No GET writes.
+  return post<GoalsResult>('/api/get_goals');
 }
 
 export interface NewGoal {

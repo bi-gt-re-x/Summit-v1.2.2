@@ -671,7 +671,7 @@ def auto_apply_task_xp(body: AutoApplyTaskXp, username: str = Depends(current_us
 # --------------------------------------------------------------------------
 # Self-tracking goals
 # --------------------------------------------------------------------------
-def sync_streak_goals(username):
+def sync_streak_goals(username, goals=None, persist=True):
     """Keep every streak goal in lockstep with the account's live streak.
 
     A streak goal means "reach an N-day streak", so its current value should
@@ -679,16 +679,24 @@ def sync_streak_goals(username):
     up as it grows and back down to zero when it breaks. Completion follows the
     same number: completed once the streak reaches the target, active again if
     it falls back below.
+
+    `goals` are the rows to bring up to date (read here when not given), and
+    with `persist=False` nothing is written — the rows passed in are updated
+    in place and that is all, which is how `GET /api/get_goals` stays a read.
     """
     users, user = load_user(username)
     if not user:
         return
-    # Decay a stale streak first so goals follow the same live value everywhere.
-    if xp_tracking.refresh_streak(user):
+    # Decay a stale streak first so goals follow the same live value
+    # everywhere — on a copy when nothing may be written.
+    if not persist:
+        user = dict(user)
+    if xp_tracking.refresh_streak(user) and persist:
         db.save_user(user)
     current_streak = user.get('current_streak', 0) or 0
 
-    for goal in _goals_of(db.rows_for('goals', username), username, 'streak'):
+    rows = db.rows_for('goals', username) if goals is None else goals
+    for goal in _goals_of(rows, username, 'streak'):
         target = goal.get('target_streak', 0) or 0
         # Cap at the target so a completed goal reads "N / N Days".
         new_value = min(current_streak, target) if target else current_streak
@@ -696,20 +704,20 @@ def sync_streak_goals(username):
                   goal.get('progress'), goal.get('target_value'))
         goal['current_streak'] = new_value
         _recompute(goal)
-        if (goal.get('current_streak'), goal.get('status'),
-                goal.get('progress'), goal.get('target_value')) != before:
+        if persist and (goal.get('current_streak'), goal.get('status'),
+                        goal.get('progress'), goal.get('target_value')) != before:
             _save_goal(goal, username)
 
 
-def sync_focus_goals(username):
+def sync_focus_goals(username, goals=None, persist=True):
     """Advance focus goals from the tracked focus history.
 
     A focus goal's current value is the focus time accumulated since it was set
     — the account's lifetime tracked seconds minus the baseline recorded at
     creation — and it completes on its own the moment that reaches the target.
     """
-    pending = _goals_of(db.rows_for('goals', username), username, 'focus',
-                        unfinished=True)
+    rows = db.rows_for('goals', username) if goals is None else goals
+    pending = _goals_of(rows, username, 'focus', unfinished=True)
     if not pending:
         return
 
@@ -726,8 +734,8 @@ def sync_focus_goals(username):
                   goal.get('progress'), goal.get('target_value'))
         goal['current_focus'] = new_value
         _recompute(goal)
-        if (goal.get('current_focus'), goal.get('status'),
-                goal.get('progress'), goal.get('target_value')) != before:
+        if persist and (goal.get('current_focus'), goal.get('status'),
+                        goal.get('progress'), goal.get('target_value')) != before:
             _save_goal(goal, username)
 
 
@@ -858,18 +866,35 @@ def add_goal(body: AddGoal, username: str = Depends(current_username)):
 
 @router.get('/api/get_goals')
 def get_goals(username: str = Depends(current_username)):
+    """Every goal, with the self-tracking ones brought up to date — read only.
 
-    # Bring the self-tracking goals up to date before handing them over.
+    The streak and focus goals are worked out against the live streak and
+    focus time on the rows being sent, and not written down: a GET never
+    writes (tests/test_get_requests_do_not_write.py). The page asks the POST
+    below, which saves them.
+    """
+    mine = db.rows_for('goals', username)
+    sync_streak_goals(username, mine, persist=False)
+    sync_focus_goals(username, mine, persist=False)
+    return _goals_reply(username, mine)
+
+
+@router.post('/api/get_goals')
+def settle_goals(username: str = Depends(current_username)):
+    """Every goal, with the self-tracking ones brought up to date and saved."""
     sync_streak_goals(username)
     sync_focus_goals(username)
+    return _goals_reply(username, db.rows_for('goals', username))
 
+
+def _goals_reply(username, mine):
+    """The goals page's answer for these rows."""
     # Average XP per active day — the goals page's "IN PROGRESS" summary card.
     events = xp_tracking.events_for(username)
     total_xp = sum(e.get('amount', 0) or 0 for e in events)
     active_days = {day for day in (xp_tracking.event_day(e) for e in events) if day}
     avg_xp_per_day = round(total_xp / len(active_days)) if active_days else 0
 
-    mine = db.rows_for('goals', username)
     rows = db.rows_for('goal_milestones', username)
     for goal in mine:
         # Named `measure` on the way out whatever it is on the way in, so the

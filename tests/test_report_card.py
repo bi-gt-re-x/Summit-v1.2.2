@@ -32,7 +32,7 @@ def finish(client, xp=10, when=None, difficulty=None, execution=None, due=None):
 
 
 def card(client):
-    return client.get('/api/get_growth_ratings').json()
+    return client.post('/api/get_growth_ratings').json()
 
 
 # --------------------------------------------------------------------------
@@ -213,7 +213,7 @@ def test_a_top_band_snapshot_can_be_written(client):
 
     stored = analytics.history('tester', metric='overall')
     assert stored[-1]['grade'] == 'A+', stored[-1]
-    assert client.get('/api/get_growth_ratings').status_code == 200
+    assert client.post('/api/get_growth_ratings').status_code == 200
 
 
 # --------------------------------------------------------------------------
@@ -448,9 +448,9 @@ def test_reading_the_report_card_reads_each_table_once(client):
     """The endpoint as a whole: four reads and six writes, whatever is stored.
     A `SELECT *` creeping back onto it shows up as the column list changing."""
     finish(client, xp=40)
-    client.get('/api/get_growth_ratings')
+    client.post('/api/get_growth_ratings')
 
-    statements = _statements(lambda: client.get('/api/get_growth_ratings'))
+    statements = _statements(lambda: client.post('/api/get_growth_ratings'))
     reads = [sql for sql in statements if sql.startswith('SELECT')]
     for table in ('TASKS', 'XP_EVENTS', 'FOCUS_DAYS'):
         hits = [sql for sql in reads if 'FROM "{}"'.format(table) in sql]
