@@ -1437,6 +1437,19 @@ padding — cut them.
 
 Plain words, short sentences, no encouragement."""
 
+#: Added to STEPS_SYSTEM when the brief spans every subject (the dashboard's
+#: and the Recommendations tab's "All subjects"; backend/tracking/next_sessions).
+OVERALL_NOTE = """
+
+THIS BRIEF COVERS EVERY SUBJECT
+The work below is from all of the reader's subjects together, and each title \
+starts with its subject in brackets: "[Mathematics] Problem set #". Choose \
+the three sessions across them — usually from the subjects whose work is \
+going worst, or has stopped teaching anything, rather than three from the \
+one done most — and do not put the brackets in your titles. Set `focus` to \
+the subject's name exactly as the brackets write it, so the app can file the \
+session under that subject."""
+
 STEPS_SCHEMA = {
     'type': 'object',
     'properties': {'next_steps': SCHEMA['properties']['next_steps']},
@@ -1456,8 +1469,10 @@ def steps_brief_from(state: Dict[str, Any]) -> str:
     return '\n\n'.join(part if part.startswith('<') else '<' + part for part in kept)
 
 
-def plan(state: Dict[str, Any], model_id: str = '') -> List[Dict[str, Any]]:
-    """Three recommendations for this subject, and nothing else.
+def plan(state: Dict[str, Any], model_id: str = '',
+         overall: bool = False) -> List[Dict[str, Any]]:
+    """Three recommendations for this subject, and nothing else — or, with
+    `overall`, three across every subject in the brief (OVERALL_NOTE).
 
     Raises `BriefUnavailable` for everything the page should say out loud, as
     `read` does.
@@ -1471,9 +1486,11 @@ def plan(state: Dict[str, Any], model_id: str = '') -> List[Dict[str, Any]]:
     try:
         text = planner.from_provider(
             brief,
-            system=STEPS_SYSTEM,
+            system=STEPS_SYSTEM + (OVERALL_NOTE if overall else ''),
             schema=STEPS_SCHEMA,
-            instruction=('Plan the next three sessions for this subject from '
+            instruction=('Plan the next three sessions across these subjects '
+                         'from the sections below.' if overall else
+                         'Plan the next three sessions for this subject from '
                          'the sections below.'),
             model_id=model_id or MODEL_DEFAULT,
             max_tokens=STEPS_MAX_TOKENS,

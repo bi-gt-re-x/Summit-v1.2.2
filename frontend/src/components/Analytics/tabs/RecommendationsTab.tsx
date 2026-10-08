@@ -13,6 +13,7 @@
  * one thing this tab promised to come back and tell you.
  */
 import { Link } from 'react-router-dom';
+import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { AdviceCard, CategoryFilter, FollowupPanel, OutlookPanel } from '@/components/Recommendations';
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
@@ -223,14 +224,26 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
       )}
 
       {waitFor('recommendations') === 0 && advice.length > 0 && (
+        /* The projection alone, across the width. It used to share the row
+           with an opening panel restating the same figures in prose, which
+           left the chart — the thing the tab opens on — squeezed into half
+           a screen beside a column of text saying what it already showed. */
+        <section className="ax-section">
+          <OutlookPanel outlook={projection} />
+        </section>
+      )}
+
+      {/* Straight under the chart: three exact sessions to plan, for every
+          subject or one picked, where the cards below are changes to habits.
+          Drawn whether or not there is advice yet — it is read from finished
+          work, not from the weeks of history the cards wait for. See
+          components/NextSessions. */}
+      <section className="ax-section">
+        <NextSessionsPanel where="analytics" />
+      </section>
+
+      {waitFor('recommendations') === 0 && advice.length > 0 && (
         <>
-          {/* The projection alone, across the width. It used to share the row
-              with an opening panel restating the same figures in prose, which
-              left the chart — the thing the tab opens on — squeezed into half
-              a screen beside a column of text saying what it already showed. */}
-          <section className="ax-section">
-            <OutlookPanel outlook={projection} />
-          </section>
           {justAdopted && (
             <p className="ax-adopted" role="status">
               <strong>{justAdopted}</strong> is on your task list for tomorrow, and this tab will

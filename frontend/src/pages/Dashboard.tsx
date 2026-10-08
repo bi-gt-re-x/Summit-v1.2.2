@@ -77,6 +77,7 @@ import { isoStamp } from '@/utils/calendarGrid';
 import type { GoalNews, TaskTab } from '@/components/Dashboard';
 import type { NewTask } from '@/services/tasks';
 import type { Goal, Task } from '@/types';
+import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import '@/styles/dashboard.css';
 import '@/styles/dashboard-home.css';
 import { announceStatsChanged } from '@/utils/statsBus';
@@ -575,6 +576,11 @@ export default function Dashboard() {
           <RecentActivity entries={activity} />
         </div>
       )}
+
+      {/* Three sessions to plan next, for every subject or one chosen, above
+          the quote: the last thing on the page that asks something of the
+          reader. See components/NextSessions. */}
+      <NextSessionsPanel where="dashboard" />
 
       {prefs.show_quote && <DailyQuote />}
 

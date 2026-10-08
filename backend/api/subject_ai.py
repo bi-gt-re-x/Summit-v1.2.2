@@ -44,6 +44,9 @@ from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
 from backend.api.tasks import CreateTask, _create as create_task
+from backend.api import subjects as user_subjects
+from backend.config import subjects as subject_catalogue
+from backend.tracking import next_sessions
 from backend.tracking import session_plan
 from backend.tracking import subject_ai
 from backend.tracking.auth import load_user
@@ -564,8 +567,17 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         seen.add(key)
         fresh.append(step)
 
+    kept = _record(username, subject, fresh, now, execution_now)
+    read['next_steps'] = (on_screen + kept) if mode == 'more' else kept
+    _keep_reading(username, subject, read, now, span)
+    return ok(reading=read)
+
+
+def _record(username: str, subject: str, steps: list, now: str,
+            execution_now=None) -> list:
+    """Put new steps in the ledger, and hand them back with their ids."""
     kept = []
-    for at, step in enumerate(fresh):
+    for at, step in enumerate(steps):
         row = {
             'id': 'r{}{}'.format(int(datetime.now().timestamp() * 1000), at),
             'user_id': username,
@@ -582,10 +594,7 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         }
         db.insert_row('subject_recommendations', row)
         kept.append({**step, 'id': row['id']})
-
-    read['next_steps'] = (on_screen + kept) if mode == 'more' else kept
-    _keep_reading(username, subject, read, now, span)
-    return ok(reading=read)
+    return kept
 
 
 # --------------------------------------------------------------------------
@@ -784,6 +793,12 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
         return fail('There is no free {}-minute slot in the next two weeks.'.format(minutes))
     start, end = slot
 
+    # A session planned across every subject names its subject in `focus`
+    # (subject_ai.OVERALL_NOTE); file it there when the page had none to send.
+    subject_id = _text(body.subject_id, 64)
+    if not subject_id and row.get('subject') == next_sessions.OVERALL:
+        subject_id = next_sessions.subject_named(row.get('focus'), _subject_names(username)) or ''
+
     made = create_task(CreateTask(
         name=row.get('title') or 'Practice session',
         priority=session_plan.priority_for(xp),
@@ -791,7 +806,7 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
         due_date=end.isoformat(timespec='seconds'),
         created_at=start.isoformat(timespec='seconds'),
         show_on_calendar=True,
-        subject=_text(body.subject_id, 64) or None,
+        subject=subject_id or None,
     ), username)
     task_id = made.get('task_id') if isinstance(made, dict) else None
     if not task_id:
@@ -810,7 +825,7 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     return ok(id=row['id'], task={'id': task_id,
                                   'start': start.isoformat(timespec='seconds'),
                                   'end': end.isoformat(timespec='seconds'),
-                                  'xp': xp}, minutes=minutes)
+                                  'xp': xp, 'subject': subject_id}, minutes=minutes)
 
 
 class TakeRecommendation(BaseModel):
@@ -845,3 +860,107 @@ def take_recommendation(body: TakeRecommendation,
         'task_id': _text(body.task_id, 64),
     }, user_id=username)
     return ok(id=row_id)
+
+
+# --------------------------------------------------------------------------
+# Three next sessions, from the dashboard and the Recommendations tab
+# --------------------------------------------------------------------------
+# The subject page's panel, offered where there is no subject page behind it:
+# for any one subject, or across all of them ("All subjects"). The brief is
+# counted here from the tasks (backend/tracking/next_sessions) rather than
+# sent, because neither page has the figures the subject page sends. The
+# steps go in the same ledger and the same saved reading as the subject
+# page's, keyed by the subject's name — so three planned for Mathematics on
+# the dashboard are the three the Mathematics page shows, and planning and
+# "I did this" are the endpoints above.
+TASK_COLUMNS = ('id', 'title', 'description', 'status', 'subject', 'completed_at',
+                'completion_seconds', 'difficulty', 'execution', 'reason',
+                'created_at', 'due_date', 'show_on_calendar')
+
+
+def _subject_names(username: str) -> dict:
+    """Every subject this account can file under, id to name."""
+    names = {entry['id']: entry['name'] for entry in subject_catalogue.SUBJECTS}
+    for subject_id, row in user_subjects._rows(username).items():
+        if row.get('custom'):
+            names[subject_id] = row.get('name') or subject_id
+    return names
+
+
+def _steps_with_state(username: str, subject: str) -> list:
+    """The steps on screen for a subject, each with where it stands."""
+    steps = _saved_steps(username, subject)
+    states = _sync(username, _history(username, subject))
+    return [{**step, 'state': (states.get(step.get('id')) or {}).get('state', 'open'),
+             'task': (states.get(step.get('id')) or {}).get('task')}
+            for step in steps]
+
+
+@router.get('/api/next_sessions')
+def list_next_sessions(subject_id: str = '', username: str = Depends(current_username)):
+    """The sessions already suggested for a subject (or every subject, with no
+    id), the subjects there is work in to choose from, and whether a model is
+    there to suggest more."""
+    _, user = load_user(username)
+    if not user:
+        return fail('User not found')
+    names = _subject_names(username)
+    subject_id = _text(subject_id, 64)
+    if subject_id and subject_id not in names:
+        return fail('That subject is not one of yours.')
+    subject = names[subject_id] if subject_id else next_sessions.OVERALL
+    tasks = db.columns_for('tasks', username, ('status', 'title', 'subject', 'completed_at'))
+    return ok(subject=subject, subject_id=subject_id,
+              steps=_steps_with_state(username, subject),
+              subjects=next_sessions.subjects_in(tasks, names),
+              available=subject_ai.configured())
+
+
+class NextSessionsBody(BaseModel):
+    subject_id: str = ''
+
+
+@router.post('/api/next_sessions')
+def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(current_username)):
+    """Three new sessions for a subject, or across every subject, replacing the
+    ones on screen. Costs a model call."""
+    _, user = load_user(username)
+    if not user:
+        return fail('User not found')
+    names = _subject_names(username)
+    subject_id = _text(body.subject_id, 64)
+    if subject_id and subject_id not in names:
+        return fail('That subject is not one of yours.')
+    subject = names[subject_id] if subject_id else next_sessions.OVERALL
+
+    tasks = db.columns_for('tasks', username, TASK_COLUMNS)
+    state = next_sessions.state_for(tasks, subject_id or None, subject, names)
+    if not state['finished']:
+        return fail('There is no finished work {} in the last {} days to plan from yet.'.format(
+            'in ' + subject if subject_id else 'anywhere', next_sessions.WINDOW_DAYS))
+
+    history = _history(username, subject)
+    _sync(username, history)
+    state.update({
+        'previous': [
+            {'title': row.get('title'), 'type': row.get('kind'),
+             'difficulty': row.get('difficulty'), 'minutes': row.get('minutes'),
+             'on': (row.get('given_at') or '')[:10]}
+            for row in history[:6]
+        ],
+        'outcomes': _outcomes(history, None),
+        'showing': [],
+        'owned_resources': _owned(username, subject_id, subject) if subject_id else [],
+    })
+
+    try:
+        steps = subject_ai.plan(state, overall=not subject_id)
+    except subject_ai.BriefUnavailable as exc:
+        return fail(str(exc))
+
+    now = datetime.now().isoformat(timespec='seconds')
+    kept = _record(username, subject, steps[:subject_ai.NEXT_STEPS], now)
+    _keep_reading(username, subject, {**_saved_reading(username, subject), 'next_steps': kept},
+                  now, state['span'])
+    return ok(subject=subject, subject_id=subject_id,
+              steps=[{**step, 'state': 'open', 'task': None} for step in kept])

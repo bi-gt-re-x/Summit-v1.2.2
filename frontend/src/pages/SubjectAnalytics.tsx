@@ -111,7 +111,7 @@ import { useApi, useAuth, useDocumentTitle, useSettings, useSubjectIndex } from 
 import { taskHistory } from '@/services/taskHistory';
 import { UserDataContext } from '@/context/contexts';
 import { announceStatsChanged } from '@/utils/statsBus';
-import { xpToPriority } from '@/utils/priority';
+import { withPlannedTask } from '@/utils/plannedTask';
 import {
   saveSubjectMilestones,
   subjectBriefAvailable,
@@ -965,28 +965,7 @@ export default function SubjectAnalytics() {
          it — otherwise neither shows the session until the page is reloaded.
          A no-op when nothing has read the list yet: that first read has it. */
       const booked = made.task;
-      shared?.mutate((current) =>
-        current.tasks.some((task) => String(task.id) === String(booked.id))
-          ? current
-          : {
-              ...current,
-              tasks: [
-                ...current.tasks,
-                {
-                  id: String(booked.id),
-                  title: step.title,
-                  description: '',
-                  priority: xpToPriority(booked.xp),
-                  status: 'todo',
-                  xp_value: booked.xp,
-                  created_at: booked.start,
-                  due_date: booked.end,
-                  show_on_calendar: true,
-                  ...(subjectId ? { subject: subjectId } : {}),
-                },
-              ],
-            },
-      );
+      shared?.mutate((current) => withPlannedTask(current, booked, step.title, subjectId));
       // Drops the cached task history, which `tasks.reload` would otherwise
       // hand back unchanged. Re-read rather than patched: the new task
       // changes a dozen figures on this page.

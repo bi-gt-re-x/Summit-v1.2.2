@@ -1,0 +1,95 @@
+/* Three next sessions — components/NextSessions/NextSessions.tsx.
+   On the dashboard above the quote, and on the analytics Recommendations tab
+   under the projection chart. The steps inside are the subject page's own
+   (`.sx-step*` in subject-state.css), which read the analytics page's
+   `--ax-*` colours — so the panel sets them itself, and the list looks the
+   same wherever it is drawn. */
+.ns-panel {
+    --ax-card: var(--color-surface);
+    --ax-card-2: var(--color-surface-2);
+    --ax-line: var(--color-line);
+    --ax-line-soft: var(--color-line-soft);
+    --ax-text: var(--color-ink);
+    --ax-muted: var(--color-ink-muted);
+    --ax-faint: var(--color-ink-faint);
+    --ax-violet: var(--pref-accent, var(--color-accent));
+    --ax-blue: #2f80ed;
+    --ax-green: #27ae60;
+    --ax-amber: #e69500;
+    --ax-pink: #d6336c;
+    --ax-good: #1a7f4b;
+    --ax-bad: #c0392b;
+    --ax-gap: 16px;
+    --ax-shadow: var(--shadow-md);
+
+    box-sizing: border-box;
+    display: grid;
+    gap: var(--space-4);
+    width: 100%;
+    padding: var(--space-6);
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-sm);
+}
+html[data-theme="dark"] .ns-panel {
+    --ax-blue: #4da3ff;
+    --ax-green: #3fb950;
+    --ax-amber: #e3a008;
+    --ax-pink: #f778ba;
+    --ax-good: #3fb950;
+    --ax-bad: #f85149;
+}
+/* The dashboard lays its rows out with a gap of its own; this is one row. */
+.ns-on-dashboard { margin: 0 0 var(--space-6); }
+
+.ns-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
+.ns-title { flex: 1 1 320px; min-width: 0; }
+.ns-title h2 { margin: 0 0 var(--space-1); font-size: var(--text-xl); font-weight: 700; letter-spacing: -.01em; }
+.ns-title p { margin: 0; max-width: 62ch; font-size: var(--text-sm); color: var(--color-ink-muted); line-height: 1.5; }
+
+.ns-pick { display: grid; gap: 4px; flex: 0 0 auto; font-size: var(--text-xs); font-weight: 600; color: var(--color-ink-muted); }
+.ns-pick select {
+    min-width: 200px;
+    padding: 8px 32px 8px 12px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+.ns-pick select:focus-visible { outline: 2px solid var(--ax-violet); outline-offset: 1px; }
+
+.ns-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ns-btn {
+    padding: 9px var(--space-4);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+}
+.ns-btn:hover:not(:disabled) { border-color: var(--ax-violet); background: var(--color-surface-2); }
+.ns-btn.is-primary {
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--ax-violet), var(--ax-blue));
+    color: #fff;
+}
+.ns-btn.is-primary:hover:not(:disabled) { filter: brightness(1.05); background: linear-gradient(135deg, var(--ax-violet), var(--ax-blue)); }
+.ns-btn:disabled { opacity: .55; cursor: default; }
+.ns-btn:focus-visible { outline: 2px solid var(--ax-violet); outline-offset: 2px; }
+
+.ns-note { margin: 0; font-size: var(--text-sm); color: var(--color-ink-muted); }
+.ns-error { margin: 0; font-size: var(--text-sm); color: #B4432F; }
+html[data-theme="dark"] .ns-error { color: #F08C78; }
+
+@media (max-width: 640px) {
+    .ns-panel { padding: var(--space-4); }
+    .ns-pick, .ns-pick select { width: 100%; min-width: 0; }
+}

@@ -790,6 +790,8 @@ export interface PlannedSession {
   start: string;
   end: string;
   xp: number;
+  /** The subject the task was filed under, when it was filed under one. */
+  subject?: string;
 }
 
 /**
@@ -986,4 +988,46 @@ export function suggestSubjectGoal(
   findings: DraftFindings,
 ): Promise<ApiResult<{ draft: GoalDraft }>> {
   return post<{ draft: GoalDraft }>('/api/suggest_subject_goal', findings);
+}
+
+// --------------------------------------------------------------------------
+// Three next sessions, from the dashboard and the Recommendations tab
+// --------------------------------------------------------------------------
+/** A suggested session, with where it stands. */
+export interface SuggestedSession extends NextStep {
+  state: StepState;
+  task: PlannedSession | null;
+}
+
+/** A subject there is recent work in, for the picker. */
+export interface SessionSubject {
+  id: string;
+  name: string;
+  count: number;
+}
+
+export interface NextSessions {
+  /** "All subjects", or the subject's name. */
+  subject: string;
+  /** '' for every subject. */
+  subject_id: string;
+  steps: SuggestedSession[];
+}
+
+/**
+ * The sessions already suggested for a subject — or across every subject,
+ * with no id — the subjects to choose from, and whether a model is there to
+ * suggest more. Backend: `/api/next_sessions` in backend/api/subject_ai.py.
+ */
+export function nextSessions(
+  subjectId = '',
+): Promise<ApiResult<NextSessions & { subjects: SessionSubject[]; available: boolean }>> {
+  return get<NextSessions & { subjects: SessionSubject[]; available: boolean }>(
+    `/api/next_sessions${subjectId ? `?subject_id=${encodeURIComponent(subjectId)}` : ''}`,
+  );
+}
+
+/** Three new sessions in place of the ones on screen. Costs a model call. */
+export function suggestNextSessions(subjectId = ''): Promise<ApiResult<NextSessions>> {
+  return post<NextSessions>('/api/next_sessions', { subject_id: subjectId });
 }
