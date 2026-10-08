@@ -890,6 +890,8 @@ def _subject_names(username: str) -> dict:
 def _steps_with_state(username: str, subject: str) -> list:
     """The steps on screen for a subject, each with where it stands."""
     steps = _saved_steps(username, subject)
+    if subject == next_sessions.OVERALL:
+        steps = [next_sessions.unbracket(step) for step in steps]
     states = _sync(username, _history(username, subject))
     return [{**step, 'state': (states.get(step.get('id')) or {}).get('state', 'open'),
              'task': (states.get(step.get('id')) or {}).get('task')}
@@ -957,6 +959,8 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
         steps = subject_ai.plan(state, overall=not subject_id)
     except subject_ai.BriefUnavailable as exc:
         return fail(str(exc))
+    if not subject_id:
+        steps = [next_sessions.unbracket(step) for step in steps]
 
     now = datetime.now().isoformat(timespec='seconds')
     kept = _record(username, subject, steps[:subject_ai.NEXT_STEPS], now)

@@ -71,6 +71,16 @@ export function stepLinks(step: NextStep): StepResource[] {
     .slice(0, 3);
 }
 
+/**
+ * Whether a pace only says the session's length again — "30 minutes total"
+ * beside a "30 min" chip — so it is not drawn twice.
+ */
+export function paceRepeatsLength(pace: string, minutes: number | null | undefined): boolean {
+  const text = pace.trim().toLowerCase();
+  const only = /^(\d+)\s*(?:min|mins|minutes?)(?:\s+(?:total|in total|overall|for the set|for the session))?$/.exec(text);
+  return Boolean(only && minutes && Number(only[1]) === minutes);
+}
+
 function siteOf(url: string): string {
   try {
     return new URL(url).hostname.replace(/^www\./, '');
@@ -159,7 +169,9 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt }: NextStepsPro
                       {DIFFICULTY_WORDS[step.difficulty - 1] ?? `Level ${step.difficulty}`}
                       <i>{step.difficulty}/5</i>
                     </span>
-                    {step.pace && <span className="sx-chip is-pace">{step.pace}</span>}
+                    {step.pace && !paceRepeatsLength(step.pace, step.minutes) && (
+                      <span className="sx-chip is-pace">{step.pace}</span>
+                    )}
                     {step.minutes ? <span className="sx-chip">{step.minutes} min</span> : null}
                     {step.focus && <span className="sx-chip is-focus">{step.focus}</span>}
                     {planned && <span className="sx-chip is-planned">Planned</span>}
@@ -196,19 +208,24 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt }: NextStepsPro
                     </p>
                   ) : null}
 
-                  {step.reason && <p className="sx-step-why">{step.reason}</p>}
+                  {step.reason && (
+                    <p className="sx-step-why">
+                      <span>Why this one</span>
+                      {step.reason}
+                    </p>
+                  )}
 
                   {/* What would say this worked — the line that turns a
                       recommendation into something a reader can settle. */}
                   {step.signal && (
                     <p className="sx-step-signal">
-                      <span>Expected signal</span>
+                      <span>How you'll know it's working</span>
                       {step.signal}
                     </p>
                   )}
 
                   {step.drills.length > 0 && (
-                    <ul className="sx-step-drills">
+                    <ul className="sx-step-drills" aria-label="In the session">
                       {step.drills.map((drill) => (
                         <li key={drill}>{drill}</li>
                       ))}

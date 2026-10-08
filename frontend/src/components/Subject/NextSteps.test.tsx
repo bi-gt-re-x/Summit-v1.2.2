@@ -3,7 +3,7 @@
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { MAX_STEPS, NextSteps } from './NextSteps';
+import { MAX_STEPS, NextSteps, paceRepeatsLength } from './NextSteps';
 import type { NextStep } from '@/services/analytics';
 
 const step = (n: number, over: Partial<NextStep> = {}): NextStep => ({
@@ -143,5 +143,23 @@ describe('where to get it', () => {
   it('names a link after its site when it has no name', () => {
     draw([step(1, { resources: [{ name: '', url: 'https://www.mathcounts.org/x' }] })]);
     expect(screen.getByRole('link', { name: 'mathcounts.org' })).toBeInTheDocument();
+  });
+});
+
+describe('the words around a step', () => {
+  it('labels why it was chosen and how to tell it is working', () => {
+    draw([step(1, { reason: 'You rate these 3.8 out of 5.', signal: 'You rate them 4 or 5.' })]);
+    expect(screen.getByText('Why this one')).toBeInTheDocument();
+    expect(screen.getByText("How you'll know it's working")).toBeInTheDocument();
+  });
+
+  it('does not repeat the length as a pace', () => {
+    expect(paceRepeatsLength('30 minutes total', 30)).toBe(true);
+    expect(paceRepeatsLength('30 min', 30)).toBe(true);
+    expect(paceRepeatsLength('30 minutes total', 45)).toBe(false);
+    expect(paceRepeatsLength('5 minutes per problem', 60)).toBe(false);
+    draw([step(1, { pace: '30 minutes total', minutes: 30 })]);
+    expect(screen.queryByText('30 minutes total')).not.toBeInTheDocument();
+    expect(screen.getByText('30 min')).toBeInTheDocument();
   });
 });

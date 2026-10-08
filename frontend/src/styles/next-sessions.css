@@ -21,12 +21,16 @@
     --ax-bad: #c0392b;
     --ax-gap: 16px;
     --ax-shadow: var(--shadow-md);
+    /* The step cards' own padding, which the subject page sets for its
+       panels (subject.css). Unset, every card here had none: the title and
+       the number badge sat on the card's edge. */
+    --sb-pad: 20px;
 
     box-sizing: border-box;
     display: grid;
     gap: var(--space-4);
     width: 100%;
-    padding: var(--space-6);
+    padding: var(--space-6) var(--space-6) var(--space-6);
     border: 1.5px solid var(--color-line);
     border-radius: var(--radius-lg);
     background: var(--color-surface);
@@ -64,6 +68,10 @@ html[data-theme="dark"] .ns-panel {
 .ns-pick select:focus-visible { outline: 2px solid var(--ax-violet); outline-offset: 1px; }
 
 .ns-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* A little more air between the controls and the first card than between
+   the cards themselves. */
+.ns-panel .sx-steps { margin-top: var(--space-2); }
+.ns-panel .sx-step-list { gap: var(--space-4); }
 .ns-btn {
     padding: 9px var(--space-4);
     border: 1px solid var(--color-line);
@@ -90,6 +98,11 @@ html[data-theme="dark"] .ns-panel {
 html[data-theme="dark"] .ns-error { color: #F08C78; }
 
 @media (max-width: 640px) {
-    .ns-panel { padding: var(--space-4); }
+    .ns-panel { padding: var(--space-4); --sb-pad: 14px; }
+    .ns-panel .sx-step { grid-template-columns: 30px minmax(0, 1fr); gap: var(--space-3); }
     .ns-pick, .ns-pick select { width: 100%; min-width: 0; }
 }
+
+/* Inside an open card: a clear step between "where to get it", "why this
+   one", the signal and the drills, so each reads as its own part. */
+.ns-panel .sx-step-inside { gap: var(--space-4); }

@@ -156,7 +156,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   if (!username) return null;
 
   const heading = where === 'dashboard' ? 'Your next sessions' : 'Next sessions';
-  const scope = subjectId ? subjectName : 'every subject';
+  const scope = subjectId ? subjectName : 'all your subjects';
 
   return (
     <section className={`ns-panel ns-on-${where}`} aria-label={heading}>
@@ -164,8 +164,9 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         <div className="ns-title">
           <h2>{heading}</h2>
           <p>
-            {BATCH} exact sessions planned from your finished work in {scope}: what to do, how
-            hard, and how long. Plan one, or all {BATCH}, straight onto your calendar.
+            Three study sessions chosen from the work you have finished in {scope}, each with
+            what to do, how hard it is and how long it takes. Put one on your calendar, or all
+            three at once.
           </p>
         </div>
         <label className="ns-pick">
@@ -193,11 +194,11 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       ) : (
         <div className="ns-actions">
           <button type="button" className="ns-btn is-primary" onClick={() => void suggest()} disabled={working || loading}>
-            {asking ? 'Planning…' : steps.length ? `Suggest ${BATCH} new ones` : `Suggest ${BATCH} sessions`}
+            {asking ? 'Thinking…' : steps.length ? `Suggest ${BATCH} different ones` : `Suggest ${BATCH} sessions`}
           </button>
           {open.length > 0 && (
             <button type="button" className="ns-btn" onClick={() => void planAll()} disabled={working}>
-              {all ? 'Planning…' : open.length === BATCH ? `Plan all ${BATCH}` : `Plan the other ${open.length}`}
+              {all ? 'Adding to calendar…' : open.length === BATCH ? `Plan all ${BATCH}` : `Plan the other ${open.length}`}
             </button>
           )}
         </div>
@@ -222,7 +223,8 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       ) : (
         available !== false && (
           <p className="ns-note">
-            Nothing suggested {subjectId ? `for ${subjectName} ` : ''}yet.
+            Nothing suggested {subjectId ? `for ${subjectName} ` : ''}yet. Press Suggest {BATCH} sessions
+            and three will be picked from your recent work.
           </p>
         )
       )}

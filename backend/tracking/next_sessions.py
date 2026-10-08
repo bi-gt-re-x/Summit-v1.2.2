@@ -21,6 +21,7 @@ Across every subject, each title carries its subject in brackets, so the
 model can see which subject a group belongs to and say which one a session
 is for.
 """
+import re
 from collections import Counter
 from datetime import date, datetime, timedelta
 from typing import Dict, Iterable, List, Optional
@@ -258,3 +259,27 @@ def subject_named(text: str, names: Dict[str, str]) -> Optional[str]:
         if name.lower() in wanted:
             return subject_id
     return None
+
+
+#: A subject in brackets, the way the brief across every subject writes it.
+BRACKETED = re.compile(r'\[[^\]\n]{1,40}\]\s*')
+
+#: The step fields a reader sees as written.
+SHOWN = ('title', 'problems', 'pace', 'reason', 'signal')
+
+
+def unbracket(step: dict) -> dict:
+    """A step across every subject with the brief's "[Subject] " labels taken
+    out of what the reader sees, and its labels in plain words
+    (`subject_ai.reader_words`). The model is told not to copy either; this
+    is for when it does anyway, and for steps saved before it was told."""
+    from backend.tracking.subject_ai import reader_words
+
+    def plain(text: str) -> str:
+        return reader_words(BRACKETED.sub('', text).strip())
+
+    clean = {key: plain(value) if key in SHOWN and isinstance(value, str) else value
+             for key, value in step.items()}
+    if isinstance(step.get('drills'), list):
+        clean['drills'] = [plain(str(drill)) for drill in step['drills']]
+    return clean

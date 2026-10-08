@@ -469,7 +469,14 @@
     color: var(--ax-bad);
 }
 
-.sx-step-why { margin: 0; font-size: var(--text-sm); line-height: 1.55; color: var(--ax-muted); }
+.sx-step-why { margin: 0; display: grid; gap: 2px; font-size: var(--text-sm); line-height: 1.55; color: var(--ax-text); }
+.sx-step-why span {
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
 
 .sx-step-drills {
     margin: 0; padding: 0; list-style: none;

@@ -193,3 +193,29 @@ def test_each_account_has_its_own(client, stranger, monkeypatch):
     _stub(monkeypatch)
     client.post('/api/next_sessions', json={})
     assert stranger.get('/api/next_sessions').json()['steps'] == []
+
+
+def test_subjects_in_brackets_are_taken_out_of_what_the_reader_sees():
+    step = {'title': '[Mathematics] Stewart Ch. 7 #1-10', 'focus': '[Mathematics]',
+            'reason': 'Your [Mathematics] Math 55 lectures go well.', 'signal': '',
+            'drills': ['[Music] Scales in thirds'], 'difficulty': 3}
+    clean = ns.unbracket(step)
+    assert clean['title'] == 'Stewart Ch. 7 #1-10'
+    assert clean['reason'] == 'Your Math 55 lectures go well.'
+    assert clean['drills'] == ['Scales in thirds']
+    # `focus` is how the session is filed, so it is left as the model wrote it.
+    assert clean['focus'] == '[Mathematics]' and clean['difficulty'] == 3
+
+
+def test_the_plan_is_told_to_write_for_the_reader_not_the_brief():
+    assert 'never with a "#"' in subject_ai.STEPS_SYSTEM
+    assert 'never with a subject in brackets' in subject_ai.STEPS_SYSTEM
+    assert 'not "avg execution 3.8"' in subject_ai.STEPS_SYSTEM
+
+
+def test_the_briefs_labels_are_put_in_the_readers_words():
+    assert subject_ai.reader_words(
+        'Your long runs average execution is 3.5 out of 5') == 'Your long runs average rating is 3.5 out of 5'
+    assert subject_ai.reader_words('avg execution 3.8') == 'average rating 3.8'
+    assert subject_ai.reader_words('rises to ≥4') == 'rises to 4 or more'
+    assert subject_ai.reader_words('Executive summary') == 'Executive summary'

@@ -1279,6 +1279,27 @@ def _minutes(value: Any):
     return _clamp(number, *MINUTES, fallback=30) if number > 0 else None
 
 
+#: The brief's own labels, as a reader would say them. The prompt asks for
+#: plain words (STEPS_SYSTEM, "HOW THE WORDS READ"); a smaller model still
+#: writes "average execution 3.3" now and then, so the shown text is put into
+#: the reader's terms on the way out. Execution is the reader's own 1-5
+#: rating of how a task went, so "rating" is the word.
+READER_WORDS = (
+    (re.compile(r'\bavg\.?(?=\s)', re.IGNORECASE), 'average'),
+    (re.compile(r'\bexecution ratings?\b', re.IGNORECASE), 'rating'),
+    (re.compile(r'\bexecution\b', re.IGNORECASE), 'rating'),
+    (re.compile(r'≥\s*(\d+(?:\.\d+)?)'), r'\1 or more'),
+    (re.compile(r'≤\s*(\d+(?:\.\d+)?)'), r'\1 or less'),
+)
+
+
+def reader_words(text: str) -> str:
+    """Text a reader sees, with the brief's labels put in plain words."""
+    for pattern, plain in READER_WORDS:
+        text = pattern.sub(plain, text)
+    return text
+
+
 def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dict[str, Any]]:
     """`next_steps`, narrowed to what the page draws. See `_clean` for the rule
     on which fields are held to the brief's figures and which are not.
@@ -1323,9 +1344,9 @@ def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dic
             'type': kind if kind in STEP_TYPES else 'targeted_practice',
             'difficulty': _clamp(entry.get('difficulty'), *DIFFICULTY, fallback=3),
             'minutes': _minutes(entry.get('duration_minutes')),
-            'reason': reason,
-            'signal': signal,
-            'drills': [str(item).strip() for item in (entry.get('drills') or [])
+            'reason': reader_words(reason),
+            'signal': reader_words(signal),
+            'drills': [reader_words(str(item).strip()) for item in (entry.get('drills') or [])
                        if str(item).strip()][:4],
         })
     return steps
@@ -1412,13 +1433,15 @@ EACH STEP
 "Stewart Ch. 7 integrals #1-8", "Practice Bach Concerto intonation". Not \
 the session type, not "Targeted Practice". It becomes a task as written.
   - `problems`: the source and exact range or count, or "".
-  - `pace`: time per problem or for the set, or "".
+  - `pace`: the time per problem or per step — "4 min per problem". "" \
+when it would only repeat the session's length ("30 minutes total").
   - `resources`: one to three links to where the material is, best first — \
 1 the best, 3 the weakest. A link from <your_resources> that fits goes \
 first. Each is the direct page (the score, the paper, the chapter, the \
 problem set), on a site that really has it; when unsure of a deep link, \
 use the site's own page for it rather than guessing. Never a placeholder \
-or a search page.
+or a search page, and never an identifier you are not sure of — no made-up \
+arXiv numbers, ISBNs or problem numbers; name a paper by its title instead.
   - `focus`: the area of the subject it is about.
   - `type`: one of targeted_practice, mixed_practice, timed_set, review, \
 concept, project.
@@ -1426,14 +1449,34 @@ concept, project.
 5 Brutal).
   - `duration_minutes`: the whole sitting, 10-120, or 0 when no set time \
 helps.
-  - `reason`: one sentence quoting a figure from the brief that made you \
-choose this. Every number you write about the reader must appear in the \
-brief; do not compute new ones.
-  - `signal`: one sentence on what would show it is working, naming the \
-figure to watch and which way it should move.
+  - `reason`: one sentence, to the reader, on why this session and why now, \
+quoting a figure from the brief. Every number you write about the reader \
+must appear in the brief; do not compute new ones.
+  - `signal`: one sentence, to the reader, on what would show it is working \
+and which way it should move.
   - `drills`: two to four concrete things to do inside the session, each \
-specific to this material. "Review mistakes" and "self-rate after each" are \
-padding — cut them.
+specific to this material. "Solve each problem", "Check answers", "Review \
+mistakes" and "self-rate after each" are padding — cut them.
+
+HOW THE WORDS READ
+The reader sees `reason`, `signal` and `drills` as written, beside the \
+title. Write them the way a coach would say them out loud. The brief's own \
+labels are for you, not for them:
+  - Name work by its plain name: "your Math 55 lectures", not "Math # \
+lecture", never with a "#" for a number, never with a subject in brackets, \
+and never as a "group".
+  - Say what a figure means: "you rate them 3.8 out of 5 on average", not \
+"avg execution 3.8"; "33 done in 90 days", not "count 33".
+  - No symbols for words: "4 or higher", not "≥4".
+  - Never use the words "execution", "avg" or "group" in these three \
+fields. Execution is how the reader rated how a task went, out of 5: \
+write "you rate them 3.3 out of 5" or "they go well".
+  Bad:  Group "[Mathematics] Math # lecture" has avg execution 3.8 and is \
+done often, so move to the next range.
+  Good: You've done 33 Math 55 lectures and rate them 3.8 out of 5, so \
+they are comfortable — the next chapter will teach you more.
+  Bad:  Average execution on this set rises to ≥4.
+  Good: You rate these sessions 4 or 5 out of 5.
 
 Plain words, short sentences, no encouragement."""
 
