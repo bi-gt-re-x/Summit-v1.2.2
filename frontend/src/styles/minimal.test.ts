@@ -47,7 +47,7 @@ describe('outer containers', () => {
     const rule = minimal.match(/([^{}]*)\{\s*border-width: 1\.5px;\s*\}/);
     expect(rule).not.toBeNull();
     for (const card of ['.ui-card', '.peak-hero', '.tk-stat', '.ag-card', '.ax-panel', '.wk-panel',
-      '.mv-card', '.nt-editor', '.pom-panel', '.st-card', '.sp-members']) {
+      '.mv-card', '.nt-editor', '.pom-panel', '.st-card']) {
       expect(rule![1]).toContain(`body.has-rail ${card}`);
     }
   });
@@ -56,6 +56,12 @@ describe('outer containers', () => {
     const rule = minimal.match(/([^{}]*)\{\s*border-width: 1\.5px;\s*\}/)![1]!;
     expect(rule).not.toContain('.tk-row');
     expect(rule).not.toContain('.wk-event');
+  });
+
+  it('leave the spaces as open pages, with no box', () => {
+    const rule = minimal.match(/([^{}]*)\{\s*border-width: 1\.5px;\s*\}/)![1]!;
+    expect(rule).not.toContain('.sp-body');
+    expect(rule).not.toContain('.sp-members');
   });
 });
 

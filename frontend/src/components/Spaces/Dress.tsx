@@ -1,8 +1,8 @@
 /**
- * A space's icon and cover — the two things Notion lets a page wear above
- * its title. An icon is an emoji, shown big over the title and small beside
- * the space's name in the rail; a cover is one of eight gradients across the
- * top of the page. Both are optional, and both save with the page.
+ * A space's icon and cover — the two things Notion lets a page wear. An
+ * icon is an emoji, at the head of the title row and beside the space's name
+ * in the rail; a cover is one of eight gradients across the top of the page.
+ * Both are optional, and both save with the page.
  */
 import { useCallback, useState } from 'react';
 import { useDismiss } from './BlockEditor';
@@ -54,40 +54,25 @@ export function Cover({ cover, disabled, onCover }: Omit<DressProps, 'icon' | 'o
   );
 }
 
-/** The big icon over the title, and the "Add icon" / "Add cover" row when either is missing. */
-export function IconRow({ icon, cover, disabled, onIcon, onCover }: DressProps) {
-  const [picking, setPicking] = useState<'icon' | 'cover' | null>(null);
-  const close = useCallback(() => setPicking(null), []);
+/** The page's icon at the head of the title row; a click opens the picker. */
+export function PageIcon({ icon, disabled, onIcon }: Pick<DressProps, 'icon' | 'disabled' | 'onIcon'>) {
+  const [picking, setPicking] = useState(false);
+  const close = useCallback(() => setPicking(false), []);
+  if (!icon) return null;
   return (
-    <div className={`sp-dress${icon ? ' has-icon' : ''}${cover ? ' has-cover' : ''}`}>
-      {icon && (
-        <button
-          type="button"
-          className="sp-icon"
-          aria-label="Change icon"
-          aria-haspopup="dialog"
-          aria-expanded={picking === 'icon'}
-          disabled={disabled}
-          onClick={() => setPicking(picking === 'icon' ? null : 'icon')}
-        >
-          {icon}
-        </button>
-      )}
-      {!disabled && (!icon || !cover) && (
-        <div className="sp-dress-tools">
-          {!icon && (
-            <button type="button" className="sp-ghost" onClick={() => onIcon(random(ICONS))}>
-              <span aria-hidden="true">☺</span> Add icon
-            </button>
-          )}
-          {!cover && (
-            <button type="button" className="sp-ghost" onClick={() => onCover(random(COVERS))}>
-              <span aria-hidden="true">▭</span> Add cover
-            </button>
-          )}
-        </div>
-      )}
-      {picking === 'icon' && (
+    <div className="sp-icon-wrap">
+      <button
+        type="button"
+        className="sp-icon"
+        aria-label="Change icon"
+        aria-haspopup="dialog"
+        aria-expanded={picking}
+        disabled={disabled}
+        onClick={() => setPicking(!picking)}
+      >
+        {icon}
+      </button>
+      {picking && (
         <IconPicker
           current={icon}
           onPick={(next) => {
@@ -96,6 +81,25 @@ export function IconRow({ icon, cover, disabled, onIcon, onCover }: DressProps) 
           }}
           onClose={close}
         />
+      )}
+    </div>
+  );
+}
+
+/** "Add icon" and "Add cover", at the end of the title row, for whichever is missing. */
+export function DressTools({ icon, cover, disabled, onIcon, onCover }: DressProps) {
+  if (disabled || (icon && cover)) return null;
+  return (
+    <div className="sp-dress-tools">
+      {!icon && (
+        <button type="button" className="sp-ghost" onClick={() => onIcon(random(ICONS))}>
+          <span aria-hidden="true">☺</span> Add icon
+        </button>
+      )}
+      {!cover && (
+        <button type="button" className="sp-ghost" onClick={() => onCover(random(COVERS))}>
+          <span aria-hidden="true">▭</span> Add cover
+        </button>
       )}
     </div>
   );

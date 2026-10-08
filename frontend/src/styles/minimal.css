@@ -23,7 +23,8 @@
    not the boxes inside them — draw their rule at 1.5px rather than 1px.
    Found by measuring each page for bordered boxes with no bordered box
    around them (2026-10-06). List items inside a container (a task row, a
-   calendar event) and chips keep their 1px. */
+   calendar event) and chips keep their 1px. The Personal and Team spaces
+   are not on the list: they are open pages with no box to draw. */
 body.has-rail .ui-card,
 body.has-rail .peak-hero,
 body.has-rail .tk-stat,
@@ -61,8 +62,6 @@ body.has-rail .ac-recent-card,
 body.has-rail .ac-ladder,
 body.has-rail .ac-tile,
 body.has-rail .ac-foot,
-body.has-rail .st-card,
-body.has-rail .sp-members,
-body.has-rail .sp-body {
+body.has-rail .st-card {
     border-width: 1.5px;
 }

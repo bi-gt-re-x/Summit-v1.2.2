@@ -7,9 +7,12 @@
  * member list with an invite box — a placeholder that keeps the addresses as
  * pending and sends nothing (components/Spaces/Members).
  *
- * The page can wear an icon and a cover (components/Spaces/Dress), and its
- * name is the heading, edited in place — click it, type, and it is saved on
- * Enter or when the field loses focus. Below it the page is blocks
+ * The page fills the window: a cover across the top if it wears one
+ * (components/Spaces/Dress), then one row with its icon, its name (edited in
+ * place — click it, type, and it is saved on Enter or when the field loses
+ * focus), which kind of space it is, whether it has saved, and "Add icon" /
+ * "Add cover"; then the blocks, written straight on the page with no box
+ * around them. Below it the page is blocks
  * (components/Spaces/BlockEditor): headings, lists, to-dos, toggles, quotes,
  * callouts, dividers and code, with a "/" menu, typing shortcuts and a handle
  * to drag each block by. The page saves itself a moment after editing stops,
@@ -21,7 +24,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useDocumentTitle, useSpaces } from '@/hooks';
 import { Members } from '@/components/Spaces/Members';
 import { BlockEditor } from '@/components/Spaces/BlockEditor';
-import { Cover, IconRow } from '@/components/Spaces/Dress';
+import { Cover, DressTools, PageIcon } from '@/components/Spaces/Dress';
 import { normalise, wordCount, type SpaceDoc } from '@/components/Spaces/blocks';
 import {
   SPACE_COUNT,
@@ -119,18 +122,14 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
 
   return (
     <main className="sp-page">
-      <div className="sp-shell">
-        <Cover cover={doc.cover} disabled={!loaded} onCover={(cover) => write({ ...doc, cover })} />
+      {/* Edge to edge across the top, when the page wears one. */}
+      <Cover cover={doc.cover} disabled={!loaded} onCover={(cover) => write({ ...doc, cover })} />
 
+      <div className="sp-shell">
+        {/* One row: the icon, the name, which kind of space, whether it has
+            saved, and the two things a page can still be given. */}
         <header className="sp-head">
-          <IconRow
-            icon={doc.icon}
-            cover={doc.cover}
-            disabled={!loaded}
-            onIcon={(icon) => write({ ...doc, icon })}
-            onCover={(cover) => write({ ...doc, cover })}
-          />
-          <p className="sp-eyebrow">{kind === 'team' ? 'Team' : 'Personal'}</p>
+          <PageIcon icon={doc.icon} disabled={!loaded} onIcon={(icon) => write({ ...doc, icon })} />
           <input
             className="sp-name"
             aria-label="Space name"
@@ -150,11 +149,20 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
               }
             }}
           />
+          <span className="sp-eyebrow">{kind === 'team' ? 'Team' : 'Personal'}</span>
           <p className="sp-status" role="status" aria-live="polite">
             {STATUS_WORDS[status]}
           </p>
+          <DressTools
+            icon={doc.icon}
+            cover={doc.cover}
+            disabled={!loaded}
+            onIcon={(icon) => write({ ...doc, icon })}
+            onCover={(cover) => write({ ...doc, cover })}
+          />
         </header>
 
+        {/* No box around the page: the blocks are written straight on it. */}
         <div className="sp-body">
           <BlockEditor
             blocks={doc.blocks}
