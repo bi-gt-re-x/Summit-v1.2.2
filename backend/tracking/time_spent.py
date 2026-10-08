@@ -18,17 +18,19 @@ So nothing reads it directly for time spent; everything asks here:
   3. Otherwise nothing. A missing figure is left out of an average; a lead
      time counted as a duration poisons it.
 
-Mirrored by frontend/src/utils/timeSpent.ts, with tests on both sides.
+The browser's copy of the logic is frontend/src/utils/timeSpent.ts; both run
+the same cases (shared/cases/time_spent.json), and both caps come from
+shared/rules.json.
 """
 from datetime import datetime
 from typing import Optional
+from backend.config.shared import RULES
 
-#: A calendar block longer than this is a deadline, not a sitting.
-#: Mirrors LONGEST_BLOCK in frontend/src/utils/timeSpent.ts.
-LONGEST_BLOCK = 12 * 3600
+#: A calendar block longer than this (12 hours) is a deadline, not a sitting.
+LONGEST_BLOCK = RULES['time_spent']['longest_block_seconds']
 
-#: The longest a creation-to-finish gap is believed to be time spent.
-LONGEST_SITTING = 6 * 3600
+#: The longest (6 hours) a creation-to-finish gap is believed to be time spent.
+LONGEST_SITTING = RULES['time_spent']['longest_sitting_seconds']
 
 
 def _when(raw) -> Optional[datetime]:

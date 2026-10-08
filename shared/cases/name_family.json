@@ -1,0 +1,13 @@
+{
+  "_about": "A task title with its numbers blanked, so ranges of one material group together. Run by tests/test_shared_cases.py against backend/tracking/next_sessions.py `name_family` and by frontend/src/shared.cases.test.ts against `nameFamily` in frontend/src/components/Subject/recentWork.ts.",
+  "cases": [
+    { "title": "MATHCOUNTS Sprint 21-30", "family": "MATHCOUNTS Sprint #" },
+    { "title": "MATHCOUNTS Sprint 1-10", "family": "MATHCOUNTS Sprint #" },
+    { "title": "AMC10 2019 #14", "family": "AMC10 #" },
+    { "title": "AMC8 2020", "family": "AMC8 #" },
+    { "title": "Math 55 lecture", "family": "Math # lecture" },
+    { "title": "  Proof practice  ", "family": "Proof practice" },
+    { "title": "Chapter 3 4 5", "family": "Chapter #" },
+    { "title": "", "family": "" }
+  ]
+}

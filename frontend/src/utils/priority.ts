@@ -22,22 +22,18 @@
  * The top of the last band is the only closed end, and it is `MAX_TASK_XP`.
  */
 import type { TaskPriority } from '@/types';
+import { RULES } from '@/utils/sharedRules';
 
-/** The XP a task may be worth. The dialogs' sliders run between these. */
-export const MIN_TASK_XP = 10;
-export const MAX_TASK_XP = 250;
+/** The XP a task may be worth. The dialogs' sliders run between these.
+    From shared/rules.json, which the server reads too. */
+export const MIN_TASK_XP: number = RULES.task_xp.min;
+export const MAX_TASK_XP: number = RULES.task_xp.max;
+
+/** A band's name, as the cards print it ("Easy" … "Very Challenging"). */
+export type XpBand = string;
 
 /** The six bands, low to high, each named by the XP it starts at. */
-export const XP_BANDS = [
-  { from: 10, label: 'Easy' },
-  { from: 40, label: 'Light' },
-  { from: 80, label: 'Medium' },
-  { from: 120, label: 'Intermediate+' },
-  { from: 160, label: 'Hard' },
-  { from: 200, label: 'Very Challenging' },
-] as const;
-
-export type XpBand = (typeof XP_BANDS)[number]['label'];
+export const XP_BANDS: ReadonlyArray<{ from: number; label: XpBand }> = RULES.task_xp.bands;
 
 /**
  * Where the six bands fold onto the three the database stores.
@@ -48,8 +44,8 @@ export type XpBand = (typeof XP_BANDS)[number]['label'];
  * bands are the words a reader is shown, and each pair of them is one stored
  * priority. Nothing derives one from the other except here.
  */
-export const MEDIUM_FROM = 80;
-export const HARD_FROM = 160;
+export const MEDIUM_FROM: number = RULES.task_xp.medium_from;
+export const HARD_FROM: number = RULES.task_xp.hard_from;
 
 export function xpToPriority(xp: number): TaskPriority {
   if (xp >= HARD_FROM) return 'high';
@@ -59,7 +55,7 @@ export function xpToPriority(xp: number): TaskPriority {
 
 /** The band a number falls in. Anything under the floor reads as the floor. */
 export function xpToBand(xp: number): XpBand {
-  let found: XpBand = XP_BANDS[0].label;
+  let found: XpBand = XP_BANDS[0]!.label;
   for (const band of XP_BANDS) {
     if (xp >= band.from) found = band.label;
   }

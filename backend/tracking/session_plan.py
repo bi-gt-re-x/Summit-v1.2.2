@@ -25,21 +25,19 @@ stored.
 """
 from datetime import datetime, timedelta
 import math
+from backend.config.shared import RULES
 
 #: Minutes when the step gave none, by its 1-5 difficulty.
 MINUTES_BY_DIFFICULTY = {1: 20, 2: 30, 3: 45, 4: 60, 5: 75}
 MIN_MINUTES = 10
 MAX_MINUTES = 180
 
-#: The XP range every task dialog allows. Mirrors MIN_TASK_XP / MAX_TASK_XP
-#: in frontend/src/utils/priority.ts.
-MIN_XP = 10
-MAX_XP = 250
-
-#: Where XP folds onto the stored three-value priority. Mirrors MEDIUM_FROM /
-#: HARD_FROM in frontend/src/utils/priority.ts.
-MEDIUM_FROM = 80
-HARD_FROM = 160
+#: The XP range every task dialog allows, and where XP folds onto the stored
+#: three-value priority — shared/rules.json, which the browser reads too.
+MIN_XP = RULES['task_xp']['min']
+MAX_XP = RULES['task_xp']['max']
+MEDIUM_FROM = RULES['task_xp']['medium_from']
+HARD_FROM = RULES['task_xp']['hard_from']
 
 #: The hours a session may be booked into, local time.
 DAY_START = 8

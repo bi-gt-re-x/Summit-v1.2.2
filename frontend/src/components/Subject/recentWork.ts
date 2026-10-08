@@ -37,6 +37,7 @@ import { spanFor } from './model';
 import type { WindowKey } from '@/components/Analytics/data';
 import type { AnalyticsTask, WorkGroup } from '@/services/analytics';
 import { secondsSpent } from '@/utils/timeSpent';
+import { RULES } from '@/utils/sharedRules';
 
 /**
  * How many rows go up.
@@ -142,7 +143,7 @@ export function recentWork(
  * distinct kinds of task than this has a long tail of one-offs, and the model
  * is better served by the material the reader keeps returning to.
  */
-export const GROUPS = 25;
+export const GROUPS: number = RULES.recommendations.work_groups;
 
 /**
  * A title with its numbers blanked, so ranges and years of the same material

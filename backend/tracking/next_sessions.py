@@ -27,6 +27,7 @@ from datetime import date, timedelta
 from typing import Dict, Iterable, List, Optional
 
 from backend.tracking import time_spent
+from backend.config.shared import RULES
 
 #: What the recommendations are filed under when they span every subject.
 OVERALL = 'All subjects'
@@ -37,20 +38,13 @@ WINDOW_DAYS = 90
 #: The newest finished tasks the brief lists one by one.
 RECENT = 15
 
-#: Name groups, largest first. Mirrors GROUPS in recentWork.ts.
-GROUPS = 25
+#: Name groups, largest first — shared/rules.json, as the subject page's are.
+GROUPS = RULES['recommendations']['work_groups']
 
-#: The reasons a task went badly, as the rating prompt offers them. Mirrors
-#: REASONS['struggle'] in backend/api/tasks.py.
-STRUGGLES = {
-    'distracted': 'Distracted', 'unclear': 'Unclear what to do',
-    'underestimated': 'Underestimated it', 'no-time': 'Ran out of time',
-    'low-energy': 'Low energy', 'interrupted': 'Interrupted',
-}
-GOOD = {
-    'prepared': 'Prepared', 'deep-focus': 'Deep focus', 'momentum': 'Momentum',
-    'broken-down': 'Broken down', 'fresh': 'Fresh', 'familiar': 'Familiar',
-}
+#: The reasons a task went badly or well, by key, in the words the rating
+#: prompt shows the reader — shared/rules.json.
+STRUGGLES = {reason['key']: reason['label'] for reason in RULES['task_reasons']['struggle']}
+GOOD = {reason['key']: reason['label'] for reason in RULES['task_reasons']['went_well']}
 
 #: A task's own note, as much of it as goes to the model.
 NOTE = 160

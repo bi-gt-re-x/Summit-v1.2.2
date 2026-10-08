@@ -8,7 +8,7 @@ import { useCallback, useState } from 'react';
 import { useDismiss } from './BlockEditor';
 import { COVERS, ICONS } from './blocks';
 
-export const COVER_NAMES: Record<(typeof COVERS)[number], string> = {
+export const COVER_NAMES: Record<string, string> = {
   sunrise: 'Sunrise',
   ocean: 'Ocean',
   meadow: 'Meadow',

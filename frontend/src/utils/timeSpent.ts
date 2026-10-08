@@ -17,8 +17,11 @@
  *      been one sitting (LONGEST_SITTING).
  *   3. Otherwise null — left out of an average rather than poisoning it.
  *
- * Mirrors backend/tracking/time_spent.py; both have tests.
+ * The server's copy of the logic is backend/tracking/time_spent.py; both run
+ * the same cases (shared/cases/time_spent.json), and both caps come from
+ * shared/rules.json.
  */
+import { RULES } from '@/utils/sharedRules';
 
 /** The fields this reads, so analytics rows and full tasks both fit. */
 export interface TimedTask {
@@ -28,11 +31,11 @@ export interface TimedTask {
   completion_seconds?: unknown;
 }
 
-/** A calendar block longer than this is a deadline, not a sitting. */
-export const LONGEST_BLOCK = 12 * 3600;
+/** A calendar block longer than this (12 hours) is a deadline, not a sitting. */
+export const LONGEST_BLOCK: number = RULES.time_spent.longest_block_seconds;
 
-/** The longest a creation-to-finish gap is believed to be time spent. */
-export const LONGEST_SITTING = 6 * 3600;
+/** The longest (6 hours) a creation-to-finish gap is believed to be time spent. */
+export const LONGEST_SITTING: number = RULES.time_spent.longest_sitting_seconds;
 
 function placed(task: TimedTask): boolean {
   const flag = task.show_on_calendar;

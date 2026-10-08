@@ -66,6 +66,7 @@ list above.
 import re
 from typing import Any, Dict, List
 
+from backend.config.shared import RULES
 from backend.tracking import figures, planner
 from backend.tracking.subject_brief import BriefUnavailable, _object
 
@@ -84,7 +85,7 @@ MAX_TOKENS = 16000
 #: shape of the page rather than a safety limit.
 DIAGNOSES = 3
 PRIORITIES = 4
-NEXT_STEPS = 3
+NEXT_STEPS = RULES['recommendations']['batch']
 #: Bounds on the fields that make a step an instruction rather than a
 #: category — `problems`, `pace` and each resource's name. Lines, not
 #: paragraphs.
@@ -116,8 +117,7 @@ GOAL_EVIDENCE = 3
 #:     project      finish and ship one thing.
 #:     coverage     get through a body of material.
 #:     unstated     the reader has not said. The page asks rather than guesses.
-GOAL_KINDS = ('exam', 'competition', 'mastery', 'habit', 'project',
-              'coverage', 'unstated')
+GOAL_KINDS = tuple(RULES['recommendations']['goal_kinds'])
 
 #: Which way a piece of evidence cuts for the goal.
 EVIDENCE_DIRECTIONS = ('helps', 'hurts', 'watch')
@@ -136,8 +136,7 @@ DIFFICULTY = (1, 5)
 #: account — and a free-text `type` produces twelve spellings of "practice"
 #: and therefore no counts at all. Mirrors the same list in
 #: frontend/src/services/analytics.ts.
-STEP_TYPES = ('targeted_practice', 'mixed_practice', 'timed_set',
-              'review', 'concept', 'project')
+STEP_TYPES = tuple(RULES['recommendations']['step_types'])
 
 SYSTEM = """\
 You are the interpretation layer of a study-analytics system.

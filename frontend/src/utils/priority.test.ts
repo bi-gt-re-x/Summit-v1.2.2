@@ -95,7 +95,7 @@ describe('xpToPriority', () => {
 
 describe('the constants the sliders run between', () => {
   it('start and end on a band boundary', () => {
-    expect(MIN_TASK_XP).toBe(XP_BANDS[0].from);
+    expect(MIN_TASK_XP).toBe(XP_BANDS[0]!.from);
     expect(xpToBand(MAX_TASK_XP)).toBe(XP_BANDS.at(-1)!.label);
   });
 

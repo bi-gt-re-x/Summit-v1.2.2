@@ -42,6 +42,7 @@ from pydantic import BaseModel
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
+from backend.config.shared import RULES
 
 router = APIRouter(tags=['spaces'])
 
@@ -53,24 +54,22 @@ KINDS = {
 }
 
 #: How many of each. Fixed, and the rail draws exactly this many.
-COUNT = 3
+COUNT = RULES['spaces']['count']
 
 #: A name is a rail row, not a sentence.
-NAME_MAX = 40
+NAME_MAX = RULES['spaces']['name_max']
 
 #: A page of writing, generously, rather than an unbounded column.
-BODY_MAX = 50_000
+BODY_MAX = RULES['spaces']['body_max']
 
-#: What a page may hold. Mirrors BLOCK_KINDS, INDENT_MAX and COVERS in
-#: frontend/src/components/Spaces/blocks.ts.
-BLOCK_TYPES = ('text', 'h1', 'h2', 'h3', 'bullet', 'numbered', 'todo', 'toggle',
-               'quote', 'callout', 'divider', 'code')
-BLOCKS_MAX = 1000
-BLOCK_TEXT_MAX = 10_000
-INDENT_MAX = 4
-COVERS = ('sunrise', 'ocean', 'meadow', 'dusk', 'ember', 'forest', 'slate', 'sand')
-#: An emoji, which can be several code points (a flag, a skin tone, a family).
-ICON_MAX = 16
+#: What a page may hold — shared/rules.json, which the block editor reads too.
+#: The icon is an emoji, which can be several code points (a flag, a family).
+BLOCK_TYPES = tuple(RULES['spaces']['block_types'])
+BLOCKS_MAX = RULES['spaces']['blocks_max']
+BLOCK_TEXT_MAX = RULES['spaces']['block_text_max']
+INDENT_MAX = RULES['spaces']['indent_max']
+COVERS = tuple(RULES['spaces']['covers'])
+ICON_MAX = RULES['spaces']['icon_max']
 
 #: Each kind as a line of plain text, for `body`.
 TEXT_PREFIX = {'h1': '# ', 'h2': '## ', 'h3': '### ', 'bullet': '- ', 'numbered': '1. ',

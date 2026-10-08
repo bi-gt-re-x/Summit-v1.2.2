@@ -29,7 +29,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./frontend/src/*"]
+      "@/*": ["./frontend/src/*"],
+      "@shared/*": ["./shared/*"]
     }
   },
   "include": ["frontend/src", "vite.config.ts", "vitest.config.ts"]

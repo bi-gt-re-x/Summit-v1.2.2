@@ -1,0 +1,66 @@
+{
+  "_about": "Rules the browser and the server both apply, kept once. Read by backend/config/shared.py and imported in the browser as '@shared/rules.json'. Change a value here and both sides change; never copy one into code. shared/README.md says more.",
+
+  "task_xp": {
+    "min": 10,
+    "max": 250,
+    "medium_from": 80,
+    "hard_from": 160,
+    "bands": [
+      { "from": 10, "label": "Easy" },
+      { "from": 40, "label": "Light" },
+      { "from": 80, "label": "Medium" },
+      { "from": 120, "label": "Intermediate+" },
+      { "from": 160, "label": "Hard" },
+      { "from": 200, "label": "Very Challenging" }
+    ]
+  },
+
+  "grade_bands": [
+    [100, "S"], [96, "A+"], [90, "A"], [80, "B"], [70, "C"], [60, "D"], [0, "F"]
+  ],
+
+  "time_spent": {
+    "longest_block_seconds": 43200,
+    "longest_sitting_seconds": 21600
+  },
+
+  "task_reasons": {
+    "struggle": [
+      { "key": "distracted", "label": "Could not focus", "phrase": "could not focus" },
+      { "key": "unclear", "label": "Did not know where to start", "phrase": "was unclear where to start" },
+      { "key": "underestimated", "label": "Bigger than it looked", "phrase": "was bigger than it looked" },
+      { "key": "no-time", "label": "Ran out of time", "phrase": "ran out of time" },
+      { "key": "low-energy", "label": "Low energy", "phrase": "was done on low energy" },
+      { "key": "interrupted", "label": "Kept getting interrupted", "phrase": "kept getting interrupted" }
+    ],
+    "went_well": [
+      { "key": "prepared", "label": "Knew exactly what to do", "phrase": "was clear from the start" },
+      { "key": "deep-focus", "label": "Had a clear run at it", "phrase": "had a clear run at it" },
+      { "key": "momentum", "label": "Carried momentum in", "phrase": "carried momentum in" },
+      { "key": "broken-down", "label": "Broken into small steps", "phrase": "was broken into small steps" },
+      { "key": "fresh", "label": "Was fresh", "phrase": "was done fresh" },
+      { "key": "familiar", "label": "Had done one like it", "phrase": "was familiar work" }
+    ]
+  },
+
+  "recommendations": {
+    "batch": 3,
+    "max_steps": 6,
+    "work_groups": 25,
+    "step_types": ["targeted_practice", "mixed_practice", "timed_set", "review", "concept", "project"],
+    "goal_kinds": ["exam", "competition", "mastery", "habit", "project", "coverage", "unstated"]
+  },
+
+  "spaces": {
+    "count": 3,
+    "name_max": 40,
+    "body_max": 50000,
+    "blocks_max": 1000,
+    "block_text_max": 10000,
+    "indent_max": 4,
+    "icon_max": 16,
+    "block_types": ["text", "h1", "h2", "h3", "bullet", "numbered", "todo", "toggle", "quote", "callout", "divider", "code"],
+    "covers": ["sunrise", "ocean", "meadow", "dusk", "ember", "forest", "slate", "sand"]
+  }
+}

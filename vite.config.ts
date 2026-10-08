@@ -40,11 +40,18 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./frontend/src', import.meta.url)),
+      // Rules the server applies too, kept once (shared/README.md).
+      '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
     },
   },
   server: {
     port: 5090,
     strictPort: true,
+    // `root` is frontend/, and the dev server refuses files outside it unless
+    // told: shared/ is one level up.
+    fs: {
+      allow: [fileURLToPath(new URL('.', import.meta.url))],
+    },
     proxy: {
       '/api': api,
       '/static': api,

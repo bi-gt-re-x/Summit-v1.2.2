@@ -30,6 +30,7 @@ from backend.goal_matcher import service as goal_matcher
 from backend.goal_matcher import store as goal_store
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
+from backend.config.shared import RULES
 
 router = APIRouter(tags=['tasks'])
 
@@ -139,10 +140,8 @@ RATING_RANGE = (1, 5)
 #: asked what made it hard, one that went well is asked what made it go well.
 #: See components/Tasks/RatePrompt.
 REASONS = {
-    'struggle': ('distracted', 'unclear', 'underestimated',
-                 'no-time', 'low-energy', 'interrupted'),
-    'went-well': ('prepared', 'deep-focus', 'momentum',
-                  'broken-down', 'fresh', 'familiar'),
+    'struggle': tuple(reason['key'] for reason in RULES['task_reasons']['struggle']),
+    'went-well': tuple(reason['key'] for reason in RULES['task_reasons']['went_well']),
 }
 
 #: Every valid answer, flat. Which side a reason belongs to is recoverable from

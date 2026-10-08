@@ -42,6 +42,7 @@
  */
 import type { Grade, Ratings } from '@/types';
 import type { MetricName } from '@/types';
+import { RULES } from '@/utils/sharedRules';
 
 /**
  * The bands, high to low, as [floor, letter].
@@ -51,15 +52,8 @@ import type { MetricName } from '@/types';
  * below is the check that they still agree, and this table is the one line to
  * change on either side.
  */
-export const GRADE_BANDS: ReadonlyArray<readonly [number, Grade]> = [
-  [100, 'S'],
-  [96, 'A+'],
-  [90, 'A'],
-  [80, 'B'],
-  [70, 'C'],
-  [60, 'D'],
-  [0, 'F'],
-];
+export const GRADE_BANDS: ReadonlyArray<readonly [number, Grade]> =
+  RULES.grade_bands as unknown as ReadonlyArray<readonly [number, Grade]>;
 
 /**
  * What each letter means, in one phrase, for the places that explain it.

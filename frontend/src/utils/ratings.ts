@@ -34,6 +34,7 @@
  * busy to answer a dialog are often their best ones.
  */
 import type { Task } from '@/types';
+import { RULES } from '@/utils/sharedRules';
 
 /** The best a single task can score: 5 for difficulty times 5 for execution. */
 export const QUALITY_MAX = 25;
@@ -59,8 +60,9 @@ export const EXECUTION_WORDS = ['Poor', 'Patchy', 'Solid', 'Strong', 'Excellent'
  * asked what made it go well. The same list on both sides would ask somebody
  * who has just done something well what went wrong with it.
  *
- * The keys are what the database stores and must match ALL_REASONS in
- * backend/api/tasks.py. The words are only ever read here.
+ * Keys, labels and phrases all come from shared/rules.json, which the server
+ * reads too (the keys are what it stores; the labels go into the model's
+ * brief).
  */
 export interface Reason {
   key: string;
@@ -69,23 +71,9 @@ export interface Reason {
   phrase: string;
 }
 
-export const STRUGGLE_REASONS: Reason[] = [
-  { key: 'distracted', label: 'Could not focus', phrase: 'could not focus' },
-  { key: 'unclear', label: 'Did not know where to start', phrase: 'was unclear where to start' },
-  { key: 'underestimated', label: 'Bigger than it looked', phrase: 'was bigger than it looked' },
-  { key: 'no-time', label: 'Ran out of time', phrase: 'ran out of time' },
-  { key: 'low-energy', label: 'Low energy', phrase: 'was done on low energy' },
-  { key: 'interrupted', label: 'Kept getting interrupted', phrase: 'kept getting interrupted' },
-];
+export const STRUGGLE_REASONS: Reason[] = RULES.task_reasons.struggle;
 
-export const WENT_WELL_REASONS: Reason[] = [
-  { key: 'prepared', label: 'Knew exactly what to do', phrase: 'was clear from the start' },
-  { key: 'deep-focus', label: 'Had a clear run at it', phrase: 'had a clear run at it' },
-  { key: 'momentum', label: 'Carried momentum in', phrase: 'carried momentum in' },
-  { key: 'broken-down', label: 'Broken into small steps', phrase: 'was broken into small steps' },
-  { key: 'fresh', label: 'Was fresh', phrase: 'was done fresh' },
-  { key: 'familiar', label: 'Had done one like it', phrase: 'was familiar work' },
-];
+export const WENT_WELL_REASONS: Reason[] = RULES.task_reasons.went_well;
 
 export type ReasonSide = 'struggle' | 'went-well';
 

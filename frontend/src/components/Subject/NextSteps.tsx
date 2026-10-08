@@ -52,14 +52,15 @@ import {
   type StepState,
 } from '@/services/analytics';
 import { DIFFICULTY_WORDS } from '@/utils/ratings';
+import { RULES } from '@/utils/sharedRules';
 
 /** How many steps make a batch. The model is asked for at most this many
-    (backend/tracking/subject_ai.py) and the page never draws more. */
-export const BATCH = 3;
+    and the page never draws more. From shared/rules.json, as the server's is. */
+export const BATCH: number = RULES.recommendations.batch;
 
-/** The most the panel holds at once — two batches. Mirrors `MAX_STEPS` in
-    backend/api/subject_ai.py, which enforces it. */
-export const MAX_STEPS = 6;
+/** The most the panel holds at once — two batches. The server enforces the
+    same number, from the same file. */
+export const MAX_STEPS: number = RULES.recommendations.max_steps;
 
 /** What the three link slots are called, best first. */
 const RANK_WORDS = ['Best', 'Next best', 'Also'];

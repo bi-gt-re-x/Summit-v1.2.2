@@ -8,11 +8,12 @@
  * a collapsed toggle hides what is under it (`hiddenIds`) and how moving a
  * block takes what is under it along (`span`, `moveTo`).
  *
- * Mirrored by BLOCK_TYPES, INDENT_MAX and COVERS in backend/api/spaces.py,
- * which checks every page it is sent against them.
+ * The kinds, the deepest indent and the covers come from shared/rules.json,
+ * which backend/api/spaces.py checks every page it is sent against.
  */
 
 import { escapeInline, plainOf } from './inline';
+import { RULES } from '@/utils/sharedRules';
 
 export type BlockType =
   | 'text'
@@ -52,7 +53,7 @@ export interface SpaceDoc {
   blocks: Block[];
 }
 
-export const INDENT_MAX = 4;
+export const INDENT_MAX: number = RULES.spaces.indent_max;
 
 export interface BlockKind {
   type: BlockType;
@@ -96,7 +97,7 @@ export function matchKinds(query: string): BlockKind[] {
 export const LISTS: ReadonlySet<BlockType> = new Set(['bullet', 'numbered', 'todo', 'toggle']);
 
 /** A cover is one of these gradients, named for the stylesheet's classes. */
-export const COVERS = ['sunrise', 'ocean', 'meadow', 'dusk', 'ember', 'forest', 'slate', 'sand'] as const;
+export const COVERS: readonly string[] = RULES.spaces.covers;
 
 /** The icons on offer. Any emoji is stored; these are the ones the picker shows. */
 export const ICONS = [

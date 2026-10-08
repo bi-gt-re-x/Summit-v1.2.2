@@ -46,6 +46,7 @@ from backend.tracking import focus as focus_tracking
 from backend.tracking import time_spent
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import created_date_for, find_user
+from backend.config.shared import RULES
 
 METRICS = ('productivity', 'quality', 'consistency', 'efficiency', 'focus')
 
@@ -69,15 +70,7 @@ METRICS = ('productivity', 'quality', 'consistency', 'efficiency', 'focus')
 #:
 #: frontend/src/utils/analyticalScore.ts mirrors this table. If a band moves
 #: here it moves there, and `sameBandsAsBackend` is what notices if it does not.
-GRADE_BANDS = (
-    (100, 'S'),
-    (96, 'A+'),
-    (90, 'A'),
-    (80, 'B'),
-    (70, 'C'),
-    (60, 'D'),
-    (0, 'F'),
-)
+GRADE_BANDS = tuple((floor, letter) for floor, letter in RULES['grade_bands'])
 
 
 def grade_for_score(score):

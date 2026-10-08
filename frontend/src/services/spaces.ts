@@ -13,6 +13,7 @@
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
 import type { SpaceDoc } from '@/components/Spaces/blocks';
+import { RULES } from '@/utils/sharedRules';
 
 export type { SpaceDoc };
 
@@ -38,8 +39,8 @@ export interface Space {
   invites?: Invite[];
 }
 
-/** How many of each; fixed, and mirrored by `COUNT` on the server. */
-export const SPACE_COUNT = 3;
+/** How many of each; fixed. From shared/rules.json, as the server's is. */
+export const SPACE_COUNT: number = RULES.spaces.count;
 
 const BASE: Record<SpaceKind, string> = { personal: '/api/spaces', team: '/api/team-spaces' };
 

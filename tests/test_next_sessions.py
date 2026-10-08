@@ -36,7 +36,7 @@ class TestTheBrief:
         group = state['work_groups'][0]
         assert group['name'] == 'Proof set #' and group['count'] == 2
         assert group['well'] == 1 and group['badly'] == 1 and group['execution'] == 3.5
-        assert state['mistakes'] == [{'label': 'Unclear what to do', 'count': 1, 'share': 100}]
+        assert state['mistakes'] == [{'label': 'Did not know where to start', 'count': 1, 'share': 100}]
         assert [row['title'] for row in state['recent_work']] == ['Proof set 1', 'Proof set 2']
 
     def test_every_subject_puts_the_subject_in_front_of_each_title(self):

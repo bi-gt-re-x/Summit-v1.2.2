@@ -50,6 +50,7 @@ from backend.tracking import next_sessions
 from backend.tracking import session_plan
 from backend.tracking import subject_ai
 from backend.tracking.auth import load_user
+from backend.config.shared import RULES
 
 router = APIRouter()
 
@@ -89,7 +90,7 @@ WORK_GROUPS = 25
 #: "Generate 3 more" adds a second batch under the first; past six the
 #: reader is asked to act on some or start over, because a list longer than
 #: that is a backlog rather than a plan.
-MAX_STEPS = 6
+MAX_STEPS = RULES['recommendations']['max_steps']
 
 
 # --------------------------------------------------------------------------
