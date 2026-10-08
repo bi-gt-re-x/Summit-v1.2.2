@@ -1,26 +1,5 @@
-/* ==========================================================================
-   settings.css — account preferences. See src/pages/Settings.tsx.
-
-   Two columns on desktop: the section list on the left, the section itself on
-   the right. The nav is sticky, because the point of a nav is to be reachable
-   without scrolling back to it.
-
-   The page fills the window rather than sitting in a centred column. The
-   content half is capped instead — a row is a label and one small control, and
-   stretching that across 1900px puts the label and the thing it names at
-   opposite ends of the screen. So: full width, and the reading measure
-   protected where it actually matters.
-
-   Under 900px the two columns become one: the nav stacks above the content as
-   a scrolling row of chips, which is the same information without asking a
-   phone for a sidebar.
-   ========================================================================== */
-
-body:has(.st-page) > #root,
-body:has(.st-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .st-page {
     --st-card: var(--color-surface);

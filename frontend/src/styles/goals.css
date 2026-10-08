@@ -26,29 +26,8 @@
    rule paints with a variable, which is what makes the dark theme one block of
    overrides rather than a second copy of the file.
    ========================================================================== */
-/* The page has to be told to take the width, the same way records.css and
-   notes.css are told.
- *
- * `body` is a centred flex column (dashboard.css: `display: flex;
- * align-items: center`), so its child is *shrink-to-fit* rather than stretched
- * — and `.page-shell` is `width: min(97%, 100%)`, a percentage of that
- * shrink-to-fit box. The result is a page as wide as its own narrowest possible
- * content and no wider.
- *
- * Everything on this page ellipsises, so its min-content width is very nearly
- * nothing: measured at **112px** for a goal card in a 1280px window. It was
- * masked while the rail was here — the two-column grid could not go below the
- * rail's `clamp(300px, …)` — and the rail leaving is what took the floor out.
- *
- * `#root` *and* `.app-main`, because `<main>` is inside the React mount point
- * and `width: 100%` of a shrink-to-fit parent is the shrink-to-fit width;
- * naming only the inner one is why the same rule did nothing on Records for so
- * long. Scoped with `:has` so no other route is touched. */
-body:has(.gx-page) > #root,
-body:has(.gx-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .gx-page  {
     --gx-bg: transparent;

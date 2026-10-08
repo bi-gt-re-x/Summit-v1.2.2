@@ -902,13 +902,8 @@ html[data-theme="dark"] .stx-page--lattice {
 .stx-page--lattice .is-available { --state: var(--lat-violet); --state-soft: var(--lat-violet-soft); }
 .stx-page--lattice .is-locked { --state: var(--lat-grey); --state-soft: var(--lat-grey-soft); }
 
-/* ---- the page fills the width it is given -------------------------------
-   `body` lays its one child out centred with `align-items: center`, so #root is
-   shrink-to-fit and a page as narrow as this drawing used to pull the whole
-   column in around it. Stretching #root while this page is mounted is the one
-   line that fixes it, and `:has` keeps it scoped to this page. The rail and top
-   bar are already paid for by `body.has-rail`'s padding. */
-body:has(.stx-page--lattice) > #root { align-self: stretch; width: 100%; }
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .stx-page--lattice .stx-shell {
     --shell-max: 2200px;
@@ -3766,7 +3761,7 @@ html[data-theme="dark"] .stx-region {
 }
 
 .stx-ws-mark {
-    font-size: var(--text-base);
+    font-size: var(--text-md);
     font-weight: 400;
     line-height: 1.4;
     color: var(--lat-faint);

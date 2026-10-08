@@ -105,25 +105,8 @@ html[data-theme="dark"] .ax-page {
     --ax-shadow: var(--shadow-md);
 }
 
-/* body is a centred flex column (dashboard.css), so its child sizes to its
-   content rather than stretching, and this page never opted out — which is why
-   every tab arrived as an 800px strip in the middle of a 1440px window with a
-   third of the screen empty on the right. `--shell-fluid: 96%` below was taking
-   96% of that strip and doing exactly what it was told; the Subjects tab showed
-   it worst, because a row of four skill cards and a chart beside a radar is the
-   widest thing the page draws.
-
-   The child that shrinks is `#root`, not `<main>`: <main> is inside the React
-   mount point, and `width: 100%` of a shrink-to-fit parent is the shrink-to-fit
-   width, so naming only `.app-main` is a rule that does nothing. Goals, Notes,
-   Records, Settings and Achievements all hit this and are all fixed the same
-   way; see notes.css for the long version. Scoped with :has so no other route
-   is touched. */
-body:has(.ax-page) > #root,
-body:has(.ax-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .ax-shell {
     /* No ceiling and no proportional gutter — see `.page-shell`. The

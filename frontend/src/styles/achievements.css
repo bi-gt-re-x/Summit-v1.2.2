@@ -33,13 +33,8 @@
    records.css uses.
    ========================================================================== */
 
-/* body is a centred flex column (dashboard.css), so its child shrinks to its
-   content unless told otherwise. Same fix, and the same reason, as .rc-page. */
-body:has(.ac-page) > #root,
-body:has(.ac-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .ac-page {
     --ac-card: var(--color-surface);

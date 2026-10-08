@@ -11,11 +11,8 @@
    somebody finds the one they used last.
    ========================================================================== */
 
-body:has(.pom-page) > #root,
-body:has(.pom-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .pom-page {
     --pom-card: var(--color-surface);

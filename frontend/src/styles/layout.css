@@ -11,6 +11,22 @@
       480px  phone
    ========================================================================== */
 
+/* Every signed-in page fills the width beside the rail.
+ *
+ * `body` is a centred flex column (dashboard.css), so its one child, `#root`,
+ * shrinks to its content unless told otherwise — and `<main>` is inside
+ * `#root`, so `width: 100%` on it alone is 100% of the shrunk width. Eleven
+ * pages each carried their own copy of this rule, scoped to themselves with
+ * `body:has(.their-page)`, and each documented falling into the trap first.
+ * It is the default now, for every page with the rail: a page that wants a
+ * narrower column says so on its own container (`--shell-max`, below). The
+ * sign-in page, which has no rail, keeps its own (auth.css). */
+body.has-rail > #root,
+body.has-rail .app-main {
+    width: 100%;
+    min-width: 0;
+}
+
 /* Centered page container.
  *
  * **No ceiling, and a fixed gutter.** This was `min(95%, 1400px)`, and both

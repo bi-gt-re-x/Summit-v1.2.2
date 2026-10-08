@@ -1,30 +1,9 @@
 /* Three next sessions — components/NextSessions/NextSessions.tsx.
    On the dashboard above the quote, and on the analytics Recommendations tab
    under the projection chart. The steps inside are the subject page's own
-   (`.sx-step*` in subject-state.css), which read the analytics page's
-   `--ax-*` colours — so the panel sets them itself, and the list looks the
-   same wherever it is drawn. */
+   (`.sx-step*` in subject-state.css); the `--ax-*` palette they read is
+   global (tokens.css), so nothing has to be copied here. */
 .ns-panel {
-    --ax-card: var(--color-surface);
-    --ax-card-2: var(--color-surface-2);
-    --ax-line: var(--color-line);
-    --ax-line-soft: var(--color-line-soft);
-    --ax-text: var(--color-ink);
-    --ax-muted: var(--color-ink-muted);
-    --ax-faint: var(--color-ink-faint);
-    --ax-violet: var(--pref-accent, var(--color-accent));
-    --ax-blue: #2f80ed;
-    --ax-green: #27ae60;
-    --ax-amber: #e69500;
-    --ax-pink: #d6336c;
-    --ax-good: #1a7f4b;
-    --ax-bad: #c0392b;
-    --ax-gap: 16px;
-    --ax-shadow: var(--shadow-md);
-    /* The step cards' own padding, which the subject page sets for its
-       panels (subject.css). Unset, every card here had none: the title and
-       the number badge sat on the card's edge. */
-    --sb-pad: 20px;
 
     box-sizing: border-box;
     display: grid;
@@ -36,14 +15,6 @@
     background: var(--color-surface);
     color: var(--color-ink);
     box-shadow: var(--shadow-sm);
-}
-html[data-theme="dark"] .ns-panel {
-    --ax-blue: #4da3ff;
-    --ax-green: #3fb950;
-    --ax-amber: #e3a008;
-    --ax-pink: #f778ba;
-    --ax-good: #3fb950;
-    --ax-bad: #f85149;
 }
 /* The dashboard lays its rows out with a gap of its own; this is one row. */
 .ns-on-dashboard { margin: 0 0 var(--space-6); }

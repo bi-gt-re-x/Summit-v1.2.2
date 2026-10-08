@@ -13,23 +13,8 @@
    the theme at all.
    ========================================================================== */
 
-/* body is a centred flex column (dashboard.css), so its child sizes to its
-   content rather than stretching — which left this page in a ~880px column
-   with the rest of the window empty either side, and wrapped the four figures
-   onto two rows.
-
-   That child is `#root`, not `<main>`, and naming only `.app-main` is why this
-   rule did nothing for so long: <main> is inside the React mount point, and
-   `width: 100%` of a shrink-to-fit parent is the shrink-to-fit width. The
-   calendar hit the same trap and fixed it the same way — see
-   calendar/month.css. Both are named so the width passes down the pair rather
-   than stopping at the first one. Scoped with :has so no other route is
-   touched. */
-body:has(.rc-page) > #root,
-body:has(.rc-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .rc-page {
     --rc-bg: transparent;

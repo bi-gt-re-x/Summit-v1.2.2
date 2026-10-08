@@ -14,22 +14,8 @@
    loses the index the moment you scroll the writing.
    ========================================================================== */
 
-/* body is a centred flex column (dashboard.css), so its child sizes to its
-   content rather than stretching, and this page never opted out — which is why
-   a workspace built to fill the window arrived as a ~1050px strip with the
-   rest of the screen empty either side. `--shell-fluid: 98.5%` below was
-   taking 98.5% of that strip and doing exactly what it was told.
-
-   The child that shrinks is `#root`, not `<main>`: <main> is inside the React
-   mount point, and `width: 100%` of a shrink-to-fit parent is the shrink-to-fit
-   width, so naming only `.app-main` is a rule that does nothing. The calendar
-   and the records page both hit this; see calendar/month.css for the long
-   version. Scoped with :has so no other route is touched. */
-body:has(.nt-page) > #root,
-body:has(.nt-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .nt-page {
     /* Transparent, not a colour. The app paints its own backdrop behind every

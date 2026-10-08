@@ -42,7 +42,7 @@
     grid-template-columns: 168px minmax(0, 1fr);
     gap: var(--space-8);
     align-items: center;
-    padding: var(--sb-pad-lg) var(--sb-pad-lg);
+    padding: var(--sb-pad-lg, 32px) var(--sb-pad-lg, 32px);
     margin-top: var(--ax-gap);
     border: 1px solid var(--ax-line);
     border-radius: var(--radius-lg);
@@ -376,7 +376,7 @@
     display: grid;
     grid-template-columns: 34px minmax(0, 1fr);
     gap: var(--space-5);
-    padding: var(--sb-pad) var(--sb-pad);
+    padding: var(--sb-pad, 20px) var(--sb-pad, 20px);
     border: 1px solid var(--ax-line);
     border-radius: var(--radius-lg);
     background-color: var(--ax-card);

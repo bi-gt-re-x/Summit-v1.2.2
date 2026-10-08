@@ -4,22 +4,8 @@
    PAGE SHELL
    ========================================================================== */
 
-/* body is a centred flex column (dashboard.css), so its child sizes to its
-   content rather than stretching. The page wants the full width to centre
-   itself inside. Scoped with :has so no other route is touched.
- *
- * The child that shrinks is `#root`, not `<main>` — <main> is inside the React
- * mount point, and `width: 100%` of a shrink-to-fit parent is the shrink-to-fit
- * width. Naming only `.app-main` is a rule that does nothing, which is the same
- * trap goals.css, notes.css, records.css and analytics.css each document having
- * fallen into. It was hidden here until the page's `max-width` came off: the cap
- * was holding the width open, so the missing half of the rule never showed.
- * With the cap gone, #root collapsed to 1477 in a 1789px column. */
-body:has(.dash) > #root,
-body:has(.dash) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 
 .dash {
     width: 100%;
@@ -708,7 +694,7 @@ html:not(.focus-mode) .dash-main .focus-panel .fp-controls { margin-top: auto; }
     position: absolute;
     inset: -16px 0 auto;
     height: 1px;
-    background: var(--dc-line);
+    background: var(--dc-line, var(--color-line));
 }
 .dash-tasks .tk-day-all { position: relative; }
 /* The foot link keeps its distance from the button rather than from the list. */

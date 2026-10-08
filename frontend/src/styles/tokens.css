@@ -80,6 +80,32 @@
     --color-ink-muted: #6b7684;
     --color-ink-faint: #98a1ae;
     --color-accent: #6c5ce7;
+
+    /* ---------- The analytics palette, everywhere ------------------------- */
+    /* `--ax-*` were declared on `.ax-page` alone, so a component drawn with
+       them — the subject page's recommended sessions, which the dashboard and
+       the Recommendations tab also show — lost its colours and its spacing on
+       any other page, and each page that borrowed it had to copy the block.
+       Declared here, they hold wherever a component lands; `.ax-page` still
+       re-derives the surface ones for its own scope (analytics.css). The
+       violet follows the reader's chosen accent (preferences.css). */
+    --ax-card: var(--color-surface);
+    --ax-card-2: var(--color-surface-2);
+    --ax-line: var(--color-line);
+    --ax-line-soft: var(--color-line-soft);
+    --ax-text: var(--color-ink);
+    --ax-muted: var(--color-ink-muted);
+    --ax-faint: var(--color-ink-faint);
+    --ax-violet: var(--pref-accent, var(--color-accent));
+    --ax-blue: #2f80ed;
+    --ax-green: #27ae60;
+    --ax-amber: #e69500;
+    --ax-pink: #d6336c;
+    --ax-good: #1a7f4b;
+    --ax-bad: #c0392b;
+    --ax-radius: var(--radius-lg);
+    --ax-gap: 16px;
+    --ax-shadow: var(--shadow-md);
 }
 
 html[data-theme="dark"] {
@@ -96,6 +122,13 @@ html[data-theme="dark"] {
     --color-ink-muted: #8f9bb3;
     --color-ink-faint: #6e7781;
     --color-accent: #8b7cf0;
+
+    --ax-blue: #4da3ff;
+    --ax-green: #3fb950;
+    --ax-amber: #e3a008;
+    --ax-pink: #f778ba;
+    --ax-good: #3fb950;
+    --ax-bad: #f85149;
 }
 
 body {

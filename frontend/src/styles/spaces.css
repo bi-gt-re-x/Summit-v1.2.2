@@ -5,11 +5,8 @@
    "Add icon" / "Add cover", then the blocks written straight on the page.
    The left margin is wide enough for each block's + and handle to sit in it
    with the words lined up under the title. */
-body:has(.sp-page) > #root,
-body:has(.sp-page) .app-main {
-    width: 100%;
-    min-width: 0;
-}
+/* Fills the width beside the rail like every signed-in page — the default
+   in styles/layout.css, not a rule of this page's. */
 .sp-page {
     --sp-left: 76px;
     --sp-right: var(--space-10);
