@@ -352,3 +352,50 @@ describe('the context value', () => {
     ]);
   });
 });
+
+describe('a change to the tasks anywhere', () => {
+  /** A page that shows tasks, which can be left and come back to. */
+  function Page() {
+    const { data } = useUserData();
+    return <span>{`tasks:${data?.tasks.length ?? '…'}`}</span>;
+  }
+
+  function App({ showing }: { showing: boolean }) {
+    return (
+      <AuthContext.Provider value={auth('myles')}>
+        <StatsProvider>
+          <UserDataProvider>{showing ? <Page /> : <span>elsewhere</span>}</UserDataProvider>
+        </StatsProvider>
+      </AuthContext.Provider>
+    );
+  }
+
+  it('is read again when the next page that shows tasks opens', async () => {
+    getUserData.mockClear();
+    const view = render(<App showing />);
+    await screen.findByText('tasks:1');
+    expect(getUserData).toHaveBeenCalledTimes(1);
+
+    // Off to another page, where something books a task: the server marks
+    // the response and services/api announces it.
+    view.rerender(<App showing={false} />);
+    getUserData.mockResolvedValue({ success: true, ...DATA, tasks: [...DATA.tasks, task({ title: 'Booked' })] });
+    act(() => {
+      window.dispatchEvent(new Event('summit:tasks-written'));
+    });
+
+    view.rerender(<App showing />);
+    await screen.findByText('tasks:2');
+    expect(getUserData).toHaveBeenCalledTimes(2);
+  });
+
+  it('is not read again when nothing changed', async () => {
+    getUserData.mockClear();
+    const view = render(<App showing />);
+    await screen.findByText('tasks:1');
+    view.rerender(<App showing={false} />);
+    view.rerender(<App showing />);
+    await screen.findByText('tasks:1');
+    expect(getUserData).toHaveBeenCalledTimes(1);
+  });
+});

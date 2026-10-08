@@ -27,8 +27,10 @@ append-only and "the latest event" is the last row, not the largest id.
 The JSON files under data/backups/ are the JSON store this replaced, kept as a
 record of the last JSON-era state. They are not read or written.
 """
+import contextvars
 import json
 import os
+import re
 import sqlite3
 import threading
 from datetime import datetime
@@ -707,6 +709,38 @@ def _ensure_database():
         _built = True
 
 
+# --------------------------------------------------------------------------
+# Which tables a request wrote
+# --------------------------------------------------------------------------
+# The browser keeps copies of the task list (frontend/src/context/
+# UserDataProvider, services/taskHistory) and used to rely on every page that
+# changed a task remembering to say so. One that forgot — "Plan my next
+# session" — left Tasks and the calendar without the new task until a reload.
+#
+# So the database says it instead. Every connection reports the statements it
+# runs; a write is noted against the table it writes, in a set the request
+# opens (backend/middleware/writes.py), and a request that wrote `tasks` is
+# answered with a header the browser's one request function reads
+# (frontend/src/services/api.ts). Nothing has to remember, and a new endpoint
+# that writes tasks is covered the day it is written.
+WRITTEN: contextvars.ContextVar = contextvars.ContextVar('summit_tables_written', default=None)
+
+#: The table a writing statement writes to.
+WRITE = re.compile(
+    r'^\s*(?:INSERT(?:\s+OR\s+\w+)?\s+INTO|REPLACE\s+INTO|UPDATE(?:\s+OR\s+\w+)?|DELETE\s+FROM)'
+    r'\s+["`\[]?(\w+)', re.IGNORECASE)
+
+
+def _note_write(statement: str) -> None:
+    """A connection's trace callback: note the table a write touches."""
+    written = WRITTEN.get()
+    if written is None:
+        return
+    match = WRITE.match(statement)
+    if match:
+        written.add(match.group(1).lower())
+
+
 def connect():
     """A connection to the database, built if it isn't there yet.
 
@@ -720,6 +754,7 @@ def connect():
     con.execute('PRAGMA foreign_keys = ON')
     con.execute('PRAGMA journal_mode = WAL')
     con.execute('PRAGMA synchronous = NORMAL')
+    con.set_trace_callback(_note_write)
     return con
 
 

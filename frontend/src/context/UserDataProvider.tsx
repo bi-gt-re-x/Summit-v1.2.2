@@ -34,8 +34,11 @@
  * The gate latches on: once anything has asked, the read stays live for the
  * session. Otherwise navigating dashboard → analytics → dashboard would drop
  * the demand to zero and re-fetch megabytes on the way back, which is worse
- * than the problem being solved. Within a session this behaves exactly as the
- * unconditional version did — one read, kept.
+ * than the problem being solved.
+ *
+ * One read, kept — until the tasks change. The server marks every response
+ * from a request that wrote them, and the list is then read again the next
+ * time a page that shows tasks mounts. See `stale` below.
  *
  * ## What callers see
  *
@@ -58,13 +61,14 @@
  * with the numbers. It has to happen in exactly one place, and that place is
  * now the read every page makes rather than the one most pages skip.
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { UserDataContext } from './contexts';
 import { useApi } from '@/hooks/useApi';
 import { useStats } from '@/hooks/useStats';
 import { tasks } from '@/services';
 import type { UserData } from '@/services/tasks';
+import { TASKS_WRITTEN } from '@/utils/statsBus';
 
 export function UserDataProvider({ children }: { children: ReactNode }) {
   const { stats, username, mutate: writeStats, reload: reloadStats } = useStats();
@@ -76,7 +80,27 @@ export function UserDataProvider({ children }: { children: ReactNode }) {
    * above on why the gate latches rather than tracking a live count.
    */
   const [wanted, setWanted] = useState(false);
-  const want = useCallback(() => setWanted(true), []);
+  const wantedRef = useRef(false);
+  /*
+   * Whether the server's task list has changed since this one was read.
+   *
+   * Set by any write to the tasks — every response from a request that wrote
+   * them is marked (backend/middleware/writes.py) and services/api announces
+   * it — so no page has to remember to refresh this list after a change. The
+   * page that made the change has usually written it onto the list already
+   * (`mutate`), so nothing is re-read under it; the list is read again when
+   * the next page that shows tasks mounts, which is exactly the moment a
+   * stale list used to be shown ("Plan my next session" booked a task, and
+   * Tasks and the calendar went on without it until a reload).
+   */
+  const stale = useRef(false);
+  useEffect(() => {
+    const mark = () => {
+      stale.current = true;
+    };
+    window.addEventListener(TASKS_WRITTEN, mark);
+    return () => window.removeEventListener(TASKS_WRITTEN, mark);
+  }, []);
 
   const call = useCallback(
     () =>
@@ -97,6 +121,25 @@ export function UserDataProvider({ children }: { children: ReactNode }) {
     reload: reloadTasks,
     mutate: mutateTasks,
   } = useApi(call, [username], { enabled: wanted });
+
+  const reloadTasksRef = useRef(reloadTasks);
+  reloadTasksRef.current = reloadTasks;
+
+  /* A page that shows tasks has mounted: read the list the first time, and
+     again whenever the tasks have changed since it was read. */
+  const want = useCallback(() => {
+    if (!wantedRef.current) {
+      wantedRef.current = true;
+      // The first read is about to happen and will be current.
+      stale.current = false;
+      setWanted(true);
+      return;
+    }
+    if (stale.current) {
+      stale.current = false;
+      reloadTasksRef.current();
+    }
+  }, []);
 
   /*
    * The gate is demand only, deliberately — not `wanted && username`.
