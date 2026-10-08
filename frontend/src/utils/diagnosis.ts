@@ -48,6 +48,7 @@
 import type { GrowthDay, Task } from '@/types';
 import { isActiveDay } from './activeDay';
 import { RECENT_FLOOR, mean, pctChange } from './recent';
+import { secondsSpent } from '@/utils/timeSpent';
 
 /** Fewest finished tasks in a window before a per-task mean is worth taking. */
 const MIN_TASKS = 6;
@@ -148,7 +149,8 @@ export function vitals(days: GrowthDay[], tasks: Task[]): Vitals {
   const dueDone = due.filter((task) => task.status === 'done').length;
 
   const timed = finished
-    .map((task) => num(task.completion_seconds))
+    // Time spent, not `completion_seconds` raw — see utils/timeSpent.
+    .map((task) => secondsSpent(task) ?? 0)
     .filter((seconds) => seconds > 0);
 
   const rated = finished.filter(

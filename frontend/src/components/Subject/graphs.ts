@@ -38,6 +38,7 @@ import type { AnalyticsTask } from '@/services/analytics';
 import type { Column, RadarAxis } from '@/components/Analytics';
 import type { Band } from './model';
 import type { Dimension } from './state';
+import { secondsSpent } from '@/utils/timeSpent';
 
 /** Under this many points a cloud is not a cloud. */
 export const CLOUD_FLOOR = 6;
@@ -144,10 +145,12 @@ export interface EffortCloud {
  * cloud, and a point on the boundary of a cloud is not a misread figure.
  */
 export function effortPoints(done: AnalyticsTask[]): EffortCloud {
+  // Time spent, not `completion_seconds` raw — see utils/timeSpent. A
+  // five-day lead time on the x-axis was a "sitting" off the right edge.
   const pairs = done
-    .filter((task) => Number(task.completion_seconds) > 0 && Number(task.execution) > 0)
+    .filter((task) => secondsSpent(task) !== null && Number(task.execution) > 0)
     .map((task) => ({
-      minutes: Number(task.completion_seconds) / 60,
+      minutes: (secondsSpent(task) ?? 0) / 60,
       went: (Number(task.execution) - 1) / 4,
     }));
 

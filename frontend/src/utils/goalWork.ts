@@ -40,6 +40,7 @@
  */
 import { countsToward, goalIdsOf } from './goalLinks';
 import type { Goal, Task } from '@/types';
+import { secondsSpent } from '@/utils/timeSpent';
 
 /** One goal's record of work. */
 export interface GoalWorkRow {
@@ -82,8 +83,9 @@ function dayOf(task: Task): string {
 }
 
 function minutesOf(task: Task): number {
-  const seconds = Number(task.completion_seconds);
-  return Number.isFinite(seconds) && seconds > 0 ? seconds / 60 : 0;
+  // Time spent, not `completion_seconds` raw — see utils/timeSpent.
+  const seconds = secondsSpent(task);
+  return seconds === null ? 0 : seconds / 60;
 }
 
 /**

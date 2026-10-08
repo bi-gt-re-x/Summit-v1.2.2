@@ -36,6 +36,7 @@ import { qualityOf, reasonOf } from '@/utils/ratings';
 import { spanFor } from './model';
 import type { WindowKey } from '@/components/Analytics/data';
 import type { AnalyticsTask, WorkGroup } from '@/services/analytics';
+import { secondsSpent } from '@/utils/timeSpent';
 
 /**
  * How many rows go up.
@@ -114,7 +115,8 @@ export function recentWork(
     .sort((a, b) => dayOf(b.completed_at).localeCompare(dayOf(a.completed_at)))
     .slice(0, Math.max(0, most))
     .map((task) => {
-      const seconds = Number(task.completion_seconds);
+      // Time spent, not `completion_seconds` raw — see utils/timeSpent.
+      const seconds = secondsSpent(task) ?? 0;
       return {
         id: task.id,
         title: task.title ?? '',
@@ -215,8 +217,8 @@ export function workGroups(
       const execution = rated.map((task) => levelOf(task.execution)).filter((v): v is number => v !== null);
       const difficulty = rated.map((task) => levelOf(task.difficulty)).filter((v): v is number => v !== null);
       const minutes = rows
-        .map((task) => Number(task.completion_seconds))
-        .filter((seconds) => Number.isFinite(seconds) && seconds > 0)
+        .map((task) => secondsSpent(task))
+        .filter((seconds): seconds is number => seconds !== null)
         .map((seconds) => seconds / 60);
 
       const reasons = new Map<string, number>();

@@ -161,13 +161,23 @@ describe('effortPoints', () => {
     const cloud = effortPoints([
       timed(10, 2, 'a'), timed(12, 3, 'b'), timed(14, 3, 'c'),
       timed(16, 4, 'd'), timed(18, 4, 'e'), timed(20, 5, 'f'),
-      timed(600, 5, 'g'),
+      // Five hours: a long sitting, still believed as one (utils/timeSpent).
+      timed(300, 5, 'g'),
     ]);
 
-    expect(cloud.longest).toBeLessThan(600);
+    expect(cloud.longest).toBeLessThan(300);
     // The outlier is pinned to the right edge rather than left off.
     expect(cloud.points).toHaveLength(7);
     expect(Math.max(...cloud.points.map(([x]) => x))).toBe(1);
+  });
+
+  it('leaves out a lead time, which is not a sitting at all', () => {
+    const cloud = effortPoints([
+      timed(10, 2, 'a'), timed(12, 3, 'b'), timed(14, 3, 'c'),
+      timed(16, 4, 'd'), timed(18, 4, 'e'), timed(20, 5, 'f'),
+      timed(4 * 24 * 60, 5, 'g'),
+    ]);
+    expect(cloud.count).toBe(6);
   });
 
   it('ignores a task with time but no rating', () => {

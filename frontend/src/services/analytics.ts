@@ -82,6 +82,12 @@ export interface AnalyticsTask {
   created_at: string;
   completed_at?: string;
   due_date?: string;
+  /** With `created_at` and `due_date`, a calendar task's block — see utils/timeSpent. */
+  show_on_calendar?: boolean;
+  /**
+   * How long the task sat between being written down and being finished —
+   * NOT time spent. Read time spent through `secondsSpent` (utils/timeSpent).
+   */
   completion_seconds?: number;
   met_deadline?: boolean;
   difficulty?: number;

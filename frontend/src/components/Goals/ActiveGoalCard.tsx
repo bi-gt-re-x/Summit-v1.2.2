@@ -60,6 +60,7 @@ import {
   toggleStep,
 } from '@/utils/milestoneSteps';
 import type { Goal, Milestone, MilestoneStatus, MilestoneStep, Task } from '@/types';
+import { secondsSpent } from '@/utils/timeSpent';
 
 const DAY = 86_400_000;
 
@@ -413,7 +414,7 @@ export function ActiveGoalCard({
   const invested = useMemo(
     () =>
       mine.reduce(
-        (sum, task) => sum + (task.status === 'done' ? Number(task.completion_seconds) || 0 : 0),
+        (sum, task) => sum + (task.status === 'done' ? secondsSpent(task) ?? 0 : 0),
         0,
       ),
     [mine],

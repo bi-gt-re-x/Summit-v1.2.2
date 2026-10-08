@@ -58,6 +58,7 @@ import { DIFFICULTY_WORDS, qualityOf, reasonOf } from '@/utils/ratings';
 import { spanFor, type Span } from './model';
 import type { WindowKey } from '@/components/Analytics/data';
 import type { AnalyticsTask } from '@/services/analytics';
+import { secondsSpent } from '@/utils/timeSpent';
 
 // --------------------------------------------------------------------------
 // Small shared arithmetic
@@ -95,8 +96,9 @@ function rated(task: AnalyticsTask): boolean {
 
 /** Minutes a task took, or null when nothing was timed against it. */
 function minutesOf(task: AnalyticsTask): number | null {
-  const seconds = Number(task.completion_seconds);
-  return Number.isFinite(seconds) && seconds > 0 ? seconds / 60 : null;
+  // Time spent, not `completion_seconds` raw — see utils/timeSpent.
+  const seconds = secondsSpent(task);
+  return seconds === null ? null : seconds / 60;
 }
 
 // --------------------------------------------------------------------------

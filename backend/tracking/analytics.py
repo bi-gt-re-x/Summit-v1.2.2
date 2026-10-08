@@ -43,6 +43,7 @@ from datetime import date, timedelta
 
 from backend.database import connection as db
 from backend.tracking import focus as focus_tracking
+from backend.tracking import time_spent
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import created_date_for, find_user
 
@@ -367,9 +368,12 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
             row['difficulty_sum'] += int(task['difficulty'])
             row['execution_sum'] += int(task['execution'])
 
-        if isinstance(task.get('completion_seconds'), (int, float)):
+        # Time spent, not `completion_seconds` raw: that is how long the task
+        # sat on the list. See backend/tracking/time_spent.
+        spent = time_spent.seconds_spent(task)
+        if spent is not None:
             row['timed'] += 1
-            row['seconds_sum'] += task['completion_seconds']
+            row['seconds_sum'] += spent
         if 'met_deadline' in task:
             row['deadline_tracked'] += 1
             if task.get('met_deadline'):
@@ -682,8 +686,9 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
                 continue
             if not (lo_days <= (today - parsed).days <= hi_days):
                 continue
-            if isinstance(task.get('completion_seconds'), (int, float)):
-                secs.append(task['completion_seconds'])
+            spent = time_spent.seconds_spent(task)
+            if spent is not None:
+                secs.append(spent)
             if 'met_deadline' in task:
                 met.append(bool(task['met_deadline']))
         if not secs and not met:

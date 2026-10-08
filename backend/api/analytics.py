@@ -134,6 +134,9 @@ ANALYTICS_TASK_FIELDS = (
     'created_at',
     'completed_at',
     'due_date',
+    # With `created_at` and `due_date`, what says a task's time spent is its
+    # calendar block (frontend/src/utils/timeSpent.ts).
+    'show_on_calendar',
     'completion_seconds',
     'met_deadline',
     'difficulty',

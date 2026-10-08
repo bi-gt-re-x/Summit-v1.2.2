@@ -144,6 +144,10 @@ export interface Task {
   created_at: string;
   completed_at?: string;
   /** Creation to completion, recorded on completion. Feeds the efficiency metric. */
+  /**
+   * How long the task sat between being written down and being finished —
+   * NOT time spent. Read time spent through `secondsSpent` (utils/timeSpent).
+   */
   completion_seconds?: number;
   /** Whether it beat its deadline. Absent when it had none. */
   met_deadline?: boolean;

@@ -42,6 +42,7 @@ import time
 from datetime import date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 
+from backend.tracking import time_spent
 from backend.tracking.goal_health import evidence_for, js_round, measure_of
 
 BUDGETS = (15, 30, 45, 60, 90, 120)
@@ -200,7 +201,8 @@ def _links_to(task, goal_id):
 def typical_minutes(finished):
     """The median timed task, in minutes, between ten and sixty — or None with
     fewer than five timed."""
-    timed = sorted(s for s in (_num(task.get('completion_seconds')) for task in finished) if s > 0)
+    # Time spent, not `completion_seconds` raw — see backend/tracking/time_spent.
+    timed = sorted(s for s in (time_spent.seconds_spent(task) for task in finished) if s)
     if len(timed) < 5:
         return None
     minutes = js_round(timed[len(timed) // 2] / 60)

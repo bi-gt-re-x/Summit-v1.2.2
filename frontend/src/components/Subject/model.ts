@@ -61,6 +61,7 @@ import { goalPace } from '@/utils/goalHealth';
 import type { AnalyticsTask } from '@/services/analytics';
 import type { Goal } from '@/types';
 import { countsToward, isGoalWork } from '@/utils/goalLinks';
+import { secondsSpent } from '@/utils/timeSpent';
 
 // --------------------------------------------------------------------------
 // Days
@@ -233,12 +234,12 @@ function bandsOf(now: AnalyticsTask[], before: AnalyticsTask[]): Band[] {
   };
 
   const paceOf = (list: AnalyticsTask[], level: number): number | null => {
+    // Time spent, not `completion_seconds` raw — see utils/timeSpent.
     const timed = list.filter(
-      (task) =>
-        Math.round(Number(task.difficulty)) === level && Number(task.completion_seconds) > 0,
+      (task) => Math.round(Number(task.difficulty)) === level && secondsSpent(task) !== null,
     );
     if (!timed.length) return null;
-    return timed.reduce((sum, task) => sum + Number(task.completion_seconds), 0) / timed.length;
+    return timed.reduce((sum, task) => sum + (secondsSpent(task) ?? 0), 0) / timed.length;
   };
 
   return [1, 2, 3, 4, 5].map((level) => {
@@ -962,13 +963,13 @@ export function subjectModel(
   const finishedChange = change(done.length, before.length);
 
   const seconds = (list: AnalyticsTask[]) =>
-    list.reduce((sum, task) => sum + Math.max(0, Number(task.completion_seconds) || 0), 0);
+    list.reduce((sum, task) => sum + (secondsSpent(task) ?? 0), 0);
 
   const activeDays = (list: AnalyticsTask[]) =>
     new Set(list.map((task) => dayOf(task.completed_at)).filter(Boolean)).size;
 
   const meanPace = (list: AnalyticsTask[]) => {
-    const timed = list.filter((task) => Number(task.completion_seconds) > 0);
+    const timed = list.filter((task) => secondsSpent(task) !== null);
     return timed.length ? seconds(timed) / timed.length : 0;
   };
 
@@ -1044,7 +1045,7 @@ export function subjectModel(
       title: task.title,
       on: dayOf(task.completed_at),
       quality: qualityOf(task),
-      seconds: Number(task.completion_seconds) > 0 ? Number(task.completion_seconds) : null,
+      seconds: secondsSpent(task),
       verdict: verdictOf(task),
     }));
 

@@ -23,8 +23,10 @@ is for.
 """
 import re
 from collections import Counter
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from typing import Dict, Iterable, List, Optional
+
+from backend.tracking import time_spent
 
 #: What the recommendations are filed under when they span every subject.
 OVERALL = 'All subjects'
@@ -77,40 +79,9 @@ def _level(value) -> Optional[int]:
     return level if 1 <= level <= 5 else None
 
 
-#: The longest a single sitting is believed to last. Past this, a figure is
-#: a lead time rather than a duration.
-LONGEST_MINUTES = 6 * 60
-
-
-def _when(raw):
-    try:
-        return datetime.fromisoformat(str(raw).rstrip('Z'))
-    except (TypeError, ValueError):
-        return None
-
-
 def _minutes(task) -> Optional[int]:
-    """How long the task took, or None when nothing says.
-
-    The calendar block when it has one: a placed task's `created_at` is where
-    its block starts and `due_date` where it ends. Otherwise
-    `completion_seconds` — which is the time from creating the task to
-    finishing it, so it is only believed when it is short enough to have been
-    one sitting. Read raw, a task made on Monday and ticked off on Friday is
-    "5,760 minutes".
-    """
-    if task.get('show_on_calendar') in (True, 1, '1', 'true'):
-        start, end = _when(task.get('created_at')), _when(task.get('due_date'))
-        if start and end:
-            span = (end - start).total_seconds() / 60
-            if 0 < span <= LONGEST_MINUTES:
-                return round(span)
-    try:
-        seconds = float(task.get('completion_seconds') or 0)
-    except (TypeError, ValueError):
-        return None
-    minutes = seconds / 60
-    return round(minutes) if 0 < minutes <= LONGEST_MINUTES else None
+    """How long the task took — see backend/tracking/time_spent."""
+    return time_spent.minutes_spent(task)
 
 
 def _mean(values: List[float]) -> Optional[float]:

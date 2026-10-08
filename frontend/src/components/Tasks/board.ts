@@ -19,6 +19,7 @@ import { timeText } from '@/utils/clock';
 import type { Task, TaskPriority } from '@/types';
 import { isoDate } from '@/utils/dates';
 import { XP_BANDS, xpToBand, type XpBand } from '@/utils/priority';
+import { blockSeconds } from '@/utils/timeSpent';
 
 const DAY = 86_400_000;
 
@@ -745,20 +746,16 @@ export function trendPct(series: number[]): number | null {
  * its deadline that is three weeks, and a row printing "Est. 21d" beside it
  * would be stating a lead time as an estimate of the work.
  *
- * Undated tasks, tasks not on the calendar, and blocks longer than `MAX_BLOCK`
- * get nothing. The cap is what keeps a genuine deadline — created today, due
- * next month — from being read as a month-long sitting on the rare task that
+ * Undated tasks, tasks not on the calendar, and blocks longer than 12 hours
+ * (`LONGEST_BLOCK`) get nothing. The cap is what keeps a genuine deadline —
+ * created today, due next month — from being read as a month-long sitting on
+ * the rare task that
  * has `show_on_calendar` set without a real slot behind it.
  */
-const MAX_BLOCK = 12 * 3600;
-
 export function plannedSeconds(task: Task): number | null {
-  if (!task.show_on_calendar || !task.created_at || !task.due_date) return null;
-  const from = new Date(task.created_at).getTime();
-  const to = new Date(task.due_date).getTime();
-  if (Number.isNaN(from) || Number.isNaN(to)) return null;
-  const span = (to - from) / 1000;
-  return span > 0 && span <= MAX_BLOCK ? span : null;
+  // One rule for what a calendar block is, shared with everything that reads
+  // time spent — the cap is LONGEST_BLOCK there (utils/timeSpent).
+  return blockSeconds(task);
 }
 
 /** "1h 30m", "45m" — a span in the words a row prints it in. */
