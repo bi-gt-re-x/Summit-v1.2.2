@@ -89,6 +89,12 @@ export interface SettingsValue {
    * greeting — would otherwise have to ask for it separately.
    */
   displayName: string;
+  /**
+   * When the account was made, as the server wrote it, or '' before it is
+   * known. Carried for the same reason as `displayName`: it arrives in this
+   * response, and the starter rule (utils/starter) needs it on every page.
+   */
+  createdAt: string;
   /** False until the account's own answer has replaced the defaults. */
   ready: boolean;
   /** Write some preferences. Applied locally first, then persisted. */

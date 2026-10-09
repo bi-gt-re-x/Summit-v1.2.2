@@ -134,6 +134,14 @@ export interface Prefs {
    * defines the stretch of days it asks about.
    */
   catchup_seen_on: string;
+  /**
+   * Getting started — see utils/starter. Whether the tour has been shown,
+   * whether the starter days were ended early, and which advanced pages have
+   * been opened past their note.
+   */
+  welcome_seen: boolean;
+  starter_done: boolean;
+  features_open: string[];
   analytics_window: AnalyticsWindow;
   analytics_setup_done: boolean;
   /**
@@ -289,6 +297,12 @@ export const DEFAULTS: Prefs = {
      a week of unlogged days, it is one the prompt has never met. The first
      visit records the day and asks nothing. */
   catchup_seen_on: '',
+  /* False and empty are the brand-new account. An account made before the
+     starter existed is let through by its sign-up date, not by these — see
+     `STARTER_SINCE` in utils/starter. */
+  welcome_seen: false,
+  starter_done: false,
+  features_open: [],
   analytics_window: '1y',
   /* False is the first-run state, and it is what puts the question phase in
      front of the page. An account that already set a baseline is treated as

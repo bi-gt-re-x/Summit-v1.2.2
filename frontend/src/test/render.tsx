@@ -76,6 +76,9 @@ export function settingsValue(overrides: Options['settings'] = {}): SettingsValu
   return {
     dailyGoal: DEFAULT_DAILY_GOAL,
     displayName: 'Myles',
+    // Made before the starter existed, so every page is open — a test about
+    // getting started passes a recent date of its own (utils/starter).
+    createdAt: '2026-01-01T09:00:00',
     ready: true,
     update: vi.fn(async () => null),
     refresh: vi.fn(async () => {}),

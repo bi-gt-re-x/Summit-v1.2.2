@@ -28,14 +28,15 @@
  *
  * If one of those changes, this page changes with it. **It is a description of
  * the software, not legal advice** — anyone deploying this to real users
- * should have it reviewed, and should fill in the operator and contact details
- * in section 10, which this repository cannot know.
+ * should have it reviewed. The contact address in section 10 is
+ * utils/contact.ts.
  *
  * The card, the headings and the dark theme live in styles/content-page.css,
  * shared with About Us and the Terms of Service — all three were the same
  * page with different words in it.
  */
 import { useDocumentTitle, usePageEntrance } from '@/hooks';
+import { CONTACT_EMAIL } from '@/utils/contact';
 import '@/styles/content-page.css';
 
 export default function PrivacyPolicy() {
@@ -203,9 +204,8 @@ export default function PrivacyPolicy() {
       <h2>10. Contact</h2>
       <p>
         Questions about this policy, or a request to see or delete what is held about you,
-        go to whoever operates this installation of Summit — their contact details belong
-        here, and are the ones given where you signed up. For the software itself, reach
-        out through the project&apos;s repository.
+        go to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. A parent or guardian
+        asking about their child&apos;s account can use the same address.
       </p>
     </div>
   );

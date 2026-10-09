@@ -89,6 +89,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   /* The same default the API applies to an account that has never set one. */
   const [dailyGoal, setDailyGoal] = useState(DEFAULT_DAILY_GOAL);
   const [displayName, setDisplayName] = useState('');
+  const [createdAt, setCreatedAt] = useState('');
   /**
    * Who the values on screen belong to: a username, or null for signed out.
    *
@@ -113,6 +114,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       setPrefs(DEFAULTS);
       setDailyGoal(DEFAULT_DAILY_GOAL);
       setDisplayName('');
+      setCreatedAt('');
       // Signed out is a finished answer, not a pending one.
       setLoadedFor(null);
       return;
@@ -122,6 +124,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       setPrefs(prefsOf(result.settings as unknown as Record<string, unknown>));
       setDailyGoal(Number(result.settings.daily_goal) || DEFAULT_DAILY_GOAL);
       setDisplayName(String(result.settings.name || '').trim());
+      setCreatedAt(String(result.settings.created_at || ''));
     }
     // Marked loaded even when the read failed. The defaults are then the best
     // answer there is, and leaving `ready` false forever would hang every
@@ -273,8 +276,8 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   );
 
   const value = useMemo(
-    () => ({ prefs, dailyGoal, displayName, ready, update, refresh }),
-    [prefs, dailyGoal, displayName, ready, update, refresh],
+    () => ({ prefs, dailyGoal, displayName, createdAt, ready, update, refresh }),
+    [prefs, dailyGoal, displayName, createdAt, ready, update, refresh],
   );
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;

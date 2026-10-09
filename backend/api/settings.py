@@ -352,6 +352,21 @@ FIELDS: Dict[str, Any] = {
     #: `user_settings` is where an account's small facts already live.
     'catchup_seen_on':   ('', _iso_day),
 
+    # Getting started. A new account opens on three pages — the dashboard, the
+    # calendar and the timer — and meets the rest one at a time, each behind a
+    # note on what it is and why it can wait. All three keys are state rather
+    # than taste; frontend/src/utils/starter.ts is what reads them, and has the
+    # whole of the rule.
+    #: The short tour has been shown (components/Welcome.tsx).
+    'welcome_seen':      (False, _boolean),
+    #: The starter days were ended early from the rail or Settings, so every
+    #: page is listed even though the account is young.
+    'starter_done':      (False, _boolean),
+    #: The advanced pages opened past their note, by id. Unknown ids are kept
+    #: and ignored, like `analytics_subjects`: the list of advanced pages is
+    #: the frontend's, and it may grow.
+    'features_open':     ([], _id_list(24)),
+
     # Analytics.
     #
     # The first is where the page opens; the six below it are the answers to

@@ -82,6 +82,8 @@ import { VacationMode } from '@/components/Settings/VacationMode';
 import '@/styles/settings.css';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { settingsExit } from '@/utils/settingsExit';
+import { useStarter } from '@/hooks/useStarter';
+import { FEATURES, STARTER_LEVEL, STARTER_SINCE } from '@/utils/starter';
 
 const GOAL_MIN = 10;
 const GOAL_MAX = 2000;
@@ -575,6 +577,7 @@ export default function Settings() {
   // One `useAuth` for both. `username` came from `useUserData` and cost the
   // account's whole task list to read a string — see hooks/useUserData.
   const { username, signOut } = useAuth();
+  const starter = useStarter();
 
   const call = useCallback(
     () =>
@@ -968,6 +971,91 @@ export default function Settings() {
               </select>
             ),
           },
+        ],
+      },
+      {
+        // Getting started (utils/starter): which pages the sidebar lists while
+        // the account is new, and the way out of that early.
+        id: 'getting-started',
+        label: 'Getting started',
+        group: 'Account',
+        items: [
+          {
+            id: 'starter',
+            label: 'Advanced tools',
+            hint:
+              starter.stage === 'open'
+                ? 'Every tool is unlocked.'
+                : starter.stage === 'starter'
+                  ? `For your first days the sidebar shows Dashboard, Calendar and Timer. The rest appear in ${
+                      starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`
+                    }, or at level ${STARTER_LEVEL}. Locked tools open with a short note first.`
+                  : `${prefs.features_open.filter((id) => FEATURES.some((feature) => feature.id === id)).length} of ${
+                      FEATURES.length
+                    } advanced tools opened. The rest show a padlock and open with a short note first.`,
+            control:
+              starter.stage === 'open' ? (
+                new Date(sheet.created_at) >= new Date(`${STARTER_SINCE}T00:00:00`) ? (
+                  <button
+                    type="button"
+                    className="st-btn"
+                    disabled={busy}
+                    onClick={() =>
+                      void savePref({ starter_done: false, features_open: [], welcome_seen: false }, 'Beginner mode')
+                    }
+                  >
+                    Start over as a beginner
+                  </button>
+                ) : (
+                  <span className="st-fixed">All unlocked</span>
+                )
+              ) : (
+                <div className="st-links">
+                  {starter.stage === 'starter' && (
+                    <button
+                      type="button"
+                      className="st-btn"
+                      disabled={busy}
+                      onClick={() => void savePref({ starter_done: true }, 'Sidebar')}
+                    >
+                      Show all tools
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className="st-btn"
+                    disabled={busy}
+                    onClick={() =>
+                      void savePref(
+                        { starter_done: true, features_open: FEATURES.map((feature) => feature.id) },
+                        'Unlocks',
+                      )
+                    }
+                  >
+                    Unlock everything
+                  </button>
+                </div>
+              ),
+          },
+          ...(starter.stage === 'open'
+            ? []
+            : [
+                {
+                  id: 'tour',
+                  label: 'Welcome tour',
+                  hint: 'The short tour of the three starter pages a new account sees first.',
+                  control: (
+                    <button
+                      type="button"
+                      className="st-btn"
+                      disabled={busy}
+                      onClick={() => void savePref({ welcome_seen: false }, 'Tour')}
+                    >
+                      Show it again
+                    </button>
+                  ),
+                },
+              ]),
         ],
       },
       {
@@ -1764,6 +1852,8 @@ export default function Settings() {
     sheet,
     skinLabel,
     skinned,
+    starter.daysLeft,
+    starter.stage,
     theme,
   ]);
 

@@ -61,6 +61,9 @@ import { useNametag } from '@/hooks/useNametag';
 import { NametagText, TitleChoices } from '@/components/Nametag';
 import { STATS_CHANGED } from '@/utils/statsBus';
 import { openSearch } from '@/utils/searchBus';
+import { featureForPath } from '@/utils/starter';
+import { useStarter } from '@/hooks/useStarter';
+import '@/styles/starter.css';
 import '@/styles/rail.css';
 
 const COLLAPSE_KEY = 'topnavCollapsed';
@@ -364,6 +367,14 @@ const INVITE_ICON = (
   </svg>
 );
 
+/** A small padlock at the end of a locked row (utils/starter). */
+const LOCK_ICON = (
+  <svg {...stroke} className="rail-lock" aria-hidden="true">
+    <rect x="5" y="11" width="14" height="10" rx="2" />
+    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+  </svg>
+);
+
 /** A page with a folded corner: one of the reader's own spaces. */
 const SPACE_ICON = (
   <svg {...stroke}>
@@ -469,8 +480,31 @@ export function Rail() {
   /* Below the breakpoint the bar shows four tabs and a More sheet; above it,
      all ten in a column. See PHONE and the `phone` flag on Tab. */
   const phone = useMediaQuery(PHONE);
-  const shown = phone ? TABS.filter((tab) => tab.phone) : TABS;
-  const rest = phone ? TABS.filter((tab) => !tab.phone) : [];
+
+  /* Getting started (utils/starter). A new account's rail lists Dashboard,
+     Calendar and Timer, and one "More tools" row that unfolds the rest; after
+     its first days the rest are listed with a padlock. Either way a locked row
+     is still a link, and lands on the note in components/FeatureGate. */
+  const starter = useStarter();
+  const [peek, setPeek] = useState(false);
+  const lockedTab = (tab: Tab) => {
+    const feature = featureForPath(tab.to);
+    return feature ? starter.isLocked(feature.id) : false;
+  };
+  const starting = starter.stage === 'starter';
+  /** Left out of the column for now: a locked page, in the starter days, folded. */
+  const waiting = (tab: Tab) => starting && !peek && lockedTab(tab);
+  const spacesLocked = starter.isLocked('spaces');
+  const spacesWaiting = starting && !peek && spacesLocked;
+
+  /* On a phone in the starter days the bar is the three starter pages, and
+     everything else — Settings and the locked pages, marked — is in More. */
+  const shown = phone
+    ? starting
+      ? TABS.filter((tab) => !tab.foot && !lockedTab(tab))
+      : TABS.filter((tab) => tab.phone)
+    : TABS;
+  const rest = phone ? TABS.filter((tab) => !shown.includes(tab)) : [];
 
   /**
    * The subjects under Analytics, and whether the menu is open.
@@ -597,18 +631,21 @@ export function Rail() {
              and with nothing followed, a disclosure that opens onto a single
              row called "Overall" is a click that changes nothing. Each of
              those is the entry behaving as it always did. */
-          const menu = tab.menu === 'analytics' && followed.length > 0 && !collapsed && !phone;
+          const locked = lockedTab(tab);
+          // A locked page has no menu yet: its subjects are part of what waits.
+          const menu = tab.menu === 'analytics' && followed.length > 0 && !collapsed && !phone && !locked;
           const link = (
             <NavLink
               key={tab.to}
               to={tab.to}
               className={({ isActive }) =>
-                `rail-link${isActive || onPage(tab, pathname) ? ' active' : ''}`
+                `rail-link${isActive || onPage(tab, pathname) ? ' active' : ''}${locked ? ' is-locked' : ''}`
               }
-              title={tab.label}
+              title={locked ? `${tab.label} (advanced: opens with a short note first)` : tab.label}
             >
               {tab.icon}
               <span>{tab.label}</span>
+              {locked && LOCK_ICON}
             </NavLink>
           );
 
@@ -777,9 +814,35 @@ export function Rail() {
         ) : (
           <>
             <Section id="core" label="Core" open={isOpen('core')} onFold={fold}>
-              {TABS.filter((tab) => !tab.foot).map(renderTab)}
+              {TABS.filter((tab) => !tab.foot && !waiting(tab)).map(renderTab)}
+              {/* The starter days' one extra row: what else there is, and
+                  that it can be had now. Unfolding it lists the locked pages
+                  (and the spaces) with their padlocks. */}
+              {starting && (
+                <button
+                  type="button"
+                  className="rail-later"
+                  aria-expanded={peek}
+                  title={peek ? 'Hide the advanced tools' : 'Show the advanced tools'}
+                  onClick={() => setPeek((was) => !was)}
+                >
+                  {LOCK_ICON}
+                  <span>
+                    {peek ? 'Hide advanced tools' : 'More tools'}
+                    <small>
+                      {peek
+                        ? 'Each opens with a short note first'
+                        : `Unlock in ${starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`}, or open early`}
+                    </small>
+                  </span>
+                </button>
+              )}
             </Section>
 
+            {/* Both space sections wait with the other advanced pages in the
+                starter days, and carry a padlock after them until opened. */}
+            {!spacesWaiting && (
+              <>
             <Section id="personal" label="Personal" open={isOpen('personal')} onFold={fold}>
               {/* Three pages of the reader's own, renamed and written in on
                   the space page itself. See pages/Space.tsx. */}
@@ -787,12 +850,13 @@ export function Rail() {
                 <NavLink
                   key={space.id}
                   to={`/spaces/${space.id}`}
-                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
+                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}${spacesLocked ? ' is-locked' : ''}`}
                   title={space.name}
                 >
                   {/* The page's own icon when it has one (pages/Space.tsx). */}
                   {space.doc?.icon ? <i className="rail-emoji" aria-hidden="true">{space.doc.icon}</i> : SPACE_ICON}
                   <span>{space.name}</span>
+                  {spacesLocked && LOCK_ICON}
                 </NavLink>
               ))}
             </Section>
@@ -805,12 +869,13 @@ export function Rail() {
                 <NavLink
                   key={space.id}
                   to={`/team/${space.id}`}
-                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
+                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}${spacesLocked ? ' is-locked' : ''}`}
                   title={space.name}
                 >
                   {/* The page's own icon when it has one (pages/Space.tsx). */}
                   {space.doc?.icon ? <i className="rail-emoji" aria-hidden="true">{space.doc.icon}</i> : TEAM_ICON}
                   <span>{space.name}</span>
+                  {spacesLocked && LOCK_ICON}
                 </NavLink>
               ))}
               <Link
@@ -822,6 +887,8 @@ export function Rail() {
                 <span>Invite people</span>
               </Link>
             </Section>
+              </>
+            )}
           </>
         )}
 
@@ -865,12 +932,13 @@ export function Rail() {
                 to={tab.to}
                 role="menuitem"
                 className={({ isActive }) =>
-                  `rail-sheet-link${isActive || onPage(tab, pathname) ? ' active' : ''}`
+                  `rail-sheet-link${isActive || onPage(tab, pathname) ? ' active' : ''}${lockedTab(tab) ? ' is-locked' : ''}`
                 }
                 onClick={() => setMoreOpen(false)}
               >
                 {tab.icon}
                 <span>{tab.label}</span>
+                {lockedTab(tab) && LOCK_ICON}
               </NavLink>
             ))}
           </div>

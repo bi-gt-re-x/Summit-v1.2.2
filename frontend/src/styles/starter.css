@@ -1,0 +1,187 @@
+/* ==========================================================================
+   starter.css — getting started (utils/starter).
+
+   The note in front of a locked page (components/FeatureGate), the tour a
+   new account gets (components/Welcome), and the rail's lock marks and its
+   "More tools" row (components/Rail). Drawn from the shared tokens, so every
+   theme and skin paints them.
+   ========================================================================== */
+
+/* ---------- The note in front of a locked page --------------------------- */
+.gs-page {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: calc(100vh - var(--topnav-h, 0px));
+    display: grid;
+    /* One column no wider than the page, or a long line in the card widens
+       the track past a phone's screen. */
+    grid-template-columns: minmax(0, 1fr);
+    place-items: center;
+    padding: var(--space-8) var(--space-5);
+}
+.gs-card {
+    box-sizing: border-box;
+    width: min(100%, 560px);
+    min-width: 0;
+    padding: var(--space-8);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-ink);
+}
+.gs-badge {
+    display: grid; place-items: center;
+    width: 44px; height: 44px;
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-full, 999px);
+    background: color-mix(in srgb, var(--pref-accent, var(--color-accent)) 14%, transparent);
+    color: var(--pref-accent, var(--color-accent));
+}
+.gs-badge svg { width: 20px; height: 20px; }
+.gs-eyebrow {
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-2xs); font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--color-ink-faint);
+}
+.gs-card h1 { margin: 0 0 var(--space-3); font-size: var(--text-2xl); letter-spacing: -.02em; }
+.gs-what { margin: 0 0 var(--space-5); font-size: var(--text-md); line-height: 1.55; color: var(--color-ink); }
+.gs-why {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+}
+.gs-why strong { display: block; margin-bottom: var(--space-1); font-size: var(--text-sm); }
+.gs-why p { margin: 0; font-size: var(--text-sm); line-height: 1.55; color: var(--color-ink-muted); }
+.gs-when { margin: var(--space-4) 0 0; font-size: var(--text-sm); line-height: 1.5; color: var(--color-ink-muted); }
+.gs-bad { margin: var(--space-4) 0 0; font-size: var(--text-sm); color: #c0392b; }
+html[data-theme="dark"] .gs-bad { color: #f0736d; }
+.gs-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-6); }
+.gs-foot { margin: var(--space-4) 0 0; font-size: var(--text-xs); color: var(--color-ink-faint); }
+
+.gs-btn {
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit; font-size: var(--text-sm); font-weight: 600;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+.gs-btn:hover:not(:disabled) { border-color: var(--color-ink-faint); }
+.gs-btn:disabled { opacity: .6; cursor: default; }
+.gs-btn.is-primary {
+    border-color: var(--pref-accent, var(--color-accent));
+    background: var(--pref-accent, var(--color-accent));
+    color: #fff;
+}
+.gs-btn.is-primary:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--pref-accent, var(--color-accent)) 86%, #000);
+}
+.gs-btn:focus-visible { outline: 2px solid var(--pref-accent, var(--color-accent)); outline-offset: 2px; }
+
+/* ---------- The welcome tour --------------------------------------------- */
+.gs-tour-scrim {
+    position: fixed; inset: 0;
+    z-index: 1200;
+    display: grid; place-items: center;
+    padding: var(--space-4);
+    background: rgba(8, 12, 20, .45);
+    backdrop-filter: blur(3px);
+    animation: gs-in .2s ease;
+}
+.gs-tour-card {
+    position: relative;
+    width: min(100%, 460px);
+    padding: var(--space-8) var(--space-6) var(--space-6);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-lg);
+    color: var(--color-ink);
+    text-align: center;
+}
+.gs-tour-card h2 { margin: 0 0 var(--space-2); font-size: var(--text-xl); letter-spacing: -.01em; }
+.gs-tour-card p { margin: 0; font-size: var(--text-md); line-height: 1.6; color: var(--color-ink-muted); }
+.gs-tour-icon {
+    display: inline-grid; place-items: center;
+    width: 56px; height: 56px;
+    margin-bottom: var(--space-4);
+    border-radius: var(--radius-full, 999px);
+    background: color-mix(in srgb, var(--pref-accent, var(--color-accent)) 14%, transparent);
+    color: var(--pref-accent, var(--color-accent));
+}
+.gs-tour-icon svg { width: 26px; height: 26px; }
+.gs-tour-skip {
+    position: absolute; top: var(--space-3); right: var(--space-3);
+    padding: var(--space-1) var(--space-2);
+    border: 0; border-radius: var(--radius-sm);
+    background: none; color: var(--color-ink-faint);
+    font: inherit; font-size: var(--text-xs); font-weight: 600;
+    cursor: pointer;
+}
+.gs-tour-skip:hover { color: var(--color-ink); }
+.gs-tour-dots { display: flex; justify-content: center; gap: 6px; margin: var(--space-5) 0; }
+.gs-tour-dots i {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--color-line);
+    transition: width .2s ease, background .2s ease;
+}
+.gs-tour-dots i.is-on { width: 18px; border-radius: 3px; background: var(--pref-accent, var(--color-accent)); }
+.gs-tour-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-2); }
+
+@keyframes gs-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- The rail ----------------------------------------------------- */
+/* A locked page is listed, quieter, with a small padlock where the row ends.
+   Still a link: following it lands on the note above. */
+.rail-link.is-locked { opacity: .62; }
+.rail-link.is-locked:hover,
+.rail-link.is-locked.active { opacity: 1; }
+.rail-link .rail-lock {
+    margin-left: auto;
+    width: 13px !important; height: 13px !important;
+    flex: none;
+    opacity: .8;
+}
+.rail-sheet-link .rail-lock { width: 13px !important; height: 13px !important; opacity: .55; }
+.rail-sheet-link.is-locked { opacity: .75; }
+
+/* A strip of icons has no room for a second one on a row. */
+html.nav-collapsed .rail-link .rail-lock { display: none; }
+
+/* "More tools": the one row a starter account sees beyond its three pages. */
+.rail-later {
+    display: flex; align-items: center; gap: var(--space-3);
+    width: 100%;
+    margin-top: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--color-ink-muted);
+    font: inherit; font-size: var(--text-sm); text-align: left;
+    cursor: pointer;
+}
+.rail-later:hover { color: var(--color-ink); border-color: var(--color-ink-faint); }
+.rail-later svg { width: 18px; height: 18px; flex: none; }
+.rail-later span { flex: 1 1 auto; min-width: 0; }
+.rail-later small { display: block; font-size: var(--text-xs); color: var(--color-ink-faint); }
+html.nav-collapsed .rail-later { justify-content: center; padding-inline: 0; }
+html.nav-collapsed .rail-later span { display: none; }
+@media (max-width: 1100px) {
+    .rail-later { justify-content: center; padding-inline: 0; }
+    .rail-later span, .rail-link .rail-lock { display: none; }
+}
+
+@media (max-width: 640px) {
+    .gs-page { padding: var(--space-5) var(--space-4); }
+    .gs-card { padding: var(--space-6) var(--space-5); }
+    .gs-tour-card { padding: var(--space-8) var(--space-5) var(--space-5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gs-tour-scrim { animation: none; }
+    .gs-tour-dots i, .gs-btn { transition: none; }
+}

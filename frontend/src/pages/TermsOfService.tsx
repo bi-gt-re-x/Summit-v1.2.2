@@ -10,6 +10,7 @@
  */
 import { Link } from 'react-router-dom';
 import { useDocumentTitle, usePageEntrance } from '@/hooks';
+import { CONTACT_EMAIL } from '@/utils/contact';
 import '@/styles/content-page.css';
 
 export default function TermsOfService() {
@@ -103,8 +104,8 @@ export default function TermsOfService() {
 
       <h2>9. Contact</h2>
       <p>
-        Questions about these terms? Reach out through the project&apos;s repository or the
-        contact information provided where you obtained the app.
+        Questions about these terms? Email{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
       </p>
     </div>
   );
