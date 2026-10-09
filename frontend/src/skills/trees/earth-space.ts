@@ -17,7 +17,7 @@ export const EARTH_SPACE: SubjectTree = {
   parent: 'science',
   nodes: [
     { id: 'es.time', name: 'Deep Time', icon: 'deep-time', tier: 'foundation', core: true, state: open, percent: 15, xp: 1300,
-      desc: 'Getting used to spans where a millimetre a year builds a mountain range. Almost every argument against these subjects is really a failure to take four billion years seriously as a number.' },
+      desc: 'Getting used to spans where a millimeter a year builds a mountain range. Almost every argument against these subjects is really a failure to take four billion years seriously as a number.' },
     { id: 'es.rocks', name: 'Rocks & Minerals', icon: 'rock', tier: 'foundation', requires: ['es.time'], state: lock, percent: 0, xp: 1300,
       desc: 'Three families defined by how they formed: cooled, compressed or transformed. Identifying which one you are holding tells you what was happening where it was made.' },
     { id: 'es.layers', name: 'Inside the Earth', icon: 'earth-layers', tier: 'foundation', requires: ['es.rocks'], state: lock, percent: 0, xp: 1400,

@@ -134,7 +134,7 @@ function ChartThumb({ id }: { id: string }) {
  * to scroll past.
  */
 const TIPS: Record<number, string> = {
-  0: 'Name the finish line, not the effort — "Reach USACO Gold", not "practise more".',
+  0: 'Name the finish line, not the effort — "Reach USACO Gold", not "practice more".',
   // Not a tip so much as the reason the field is not optional. Somebody who
   // knows what the subject buys them picks the right one rather than the
   // nearest one.
@@ -451,7 +451,7 @@ export function NewGoalWizard({
                       value={idea}
                       autoFocus={focusIdea}
                       maxLength={200}
-                      placeholder="get good at competition maths this year"
+                      placeholder="get good at competition math this year"
                       disabled={drafting}
                       onChange={(event) => setIdea(event.target.value)}
                       onKeyDown={(event) => {

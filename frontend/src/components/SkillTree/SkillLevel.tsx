@@ -13,7 +13,7 @@
  *
  * - `LevelCard`     one skill in full — level, last month's level, mastery,
  *                   accuracy then and now, hardest difficulty solved, last
- *                   practised, consistency, and what the next level asks for
+ *                   practiced, consistency, and what the next level asks for
  * - `LevelChain`    a node's steps in order with each one's level, which is
  *                   the "Foundations → Factoring → …" view of a skill tree
  * - `ProblemMark`   Got it / Missed it under one problem
@@ -148,7 +148,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
           </dd>
         </div>
         <div>
-          <dt>Last practised</dt>
+          <dt>Last practiced</dt>
           <dd>
             {sinceText(read.lastAt, today)}
             <small>{read.lastAt ? read.lastAt.slice(0, 10) : 'not yet'}</small>
@@ -158,7 +158,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
           <dt>Consistency</dt>
           <dd>
             {read.activeDays} {read.activeDays === 1 ? 'day' : 'days'}
-            <small>practised in the last 4 weeks</small>
+            <small>practiced in the last 4 weeks</small>
           </dd>
         </div>
         <div>
@@ -248,8 +248,8 @@ export function LevelChain({
     <div className="slv-chain-wrap">
       <p className="slv-chain-sum">
         {started === 0
-          ? 'No step practised yet. Open one, try its problems, and mark each right or wrong — that is what your level is read from.'
-          : `${started} of ${steps.length} steps practised. Levels come from problems you marked right or wrong.`}
+          ? 'No step practiced yet. Open one, try its problems, and mark each right or wrong — that is what your level is read from.'
+          : `${started} of ${steps.length} steps practiced. Levels come from problems you marked right or wrong.`}
       </p>
       <ol className="slv-chain">
         {reads.map(({ step, read }) => (

@@ -139,7 +139,7 @@ export function chosenChart(goal: Goal): VisualId | null {
  * consistency comes first; a competition maths goal is bottlenecked on where the
  * marks go, so accuracy against difficulty comes first and the practice charts
  * are far down. Getting that backwards is how an app ends up telling somebody
- * preparing for the AMC that they practised for 47 minutes.
+ * preparing for the AMC that they practiced for 47 minutes.
  *
  * `scale` is not in any of them. It is checked before the list, because a goal
  * measured by a number has a number, and no arrangement of subjects changes

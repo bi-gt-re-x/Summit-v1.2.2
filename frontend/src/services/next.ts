@@ -28,7 +28,7 @@ export type ActionKind =
 export interface NextAction {
   id: string;
   kind: ActionKind;
-  /** The instruction: "Finish “Chapter 7”", "Practise Geometry". */
+  /** The instruction: "Finish “Chapter 7”", "Practice Geometry". */
   title: string;
   /** The reason, with the figure behind it. */
   because: string;

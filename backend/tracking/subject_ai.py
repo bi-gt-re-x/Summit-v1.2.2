@@ -155,7 +155,7 @@ percentage, not a count, not a duration, not a date.
 
 The exceptions are the two figures you are explicitly asked for: the \
 `difficulty` and `duration_minutes` on a next step. Those are your \
-recommendations, they are labelled as such on the page, and they are bounded.
+recommendations, they are labeled as such on the page, and they are bounded.
 
 A reader cannot tell a counted figure from an invented one by looking at it. \
 That is the whole reason this rule exists.
@@ -317,7 +317,7 @@ they are not a syllabus.
 not state how good they are at anything you read there — the same rule as \
 <skill_vocabulary>, and for the same reason. "Your Sprint-round work is at \
 72" is a number nobody counted.
-  - If the titles do not name any material — "Maths", "homework", "study" — \
+  - If the titles do not name any material — "Math", "homework", "study" — \
 then say so and pitch the step at the subject and difficulty instead. Do \
 not invent a competition, a textbook or a paper the record gives you no \
 reason to think they use. A confidently wrong syllabus is worse than a \
@@ -328,7 +328,7 @@ WHAT YOU DO KNOW THAT THE APP DOES NOT
 
 **The subject.** What work at a given difficulty in it usually involves, what \
 is worth drilling, what a named competition or syllabus contains, and what \
-somebody chasing the stated goal should be pointed at. Be specific. "Practise \
+somebody chasing the stated goal should be pointed at. Be specific. "Practice \
 more" says nothing; "twenty angle-chasing problems from past papers, then one \
 timed set" is an instruction.
 
@@ -389,8 +389,8 @@ strength. A `hurts` card the reader can act on beats a `helps` card that only \
 flatters.
 
 `bottleneck` — the one thing most in the way, and the most important field \
-you write. Everything else on the page is a measurement; this is a judgement, \
-and it is the judgement the reader came for. Four parts:
+you write. Everything else on the page is a measurement; this is a judgment, \
+and it is the judgment the reader came for. Four parts:
   - `name`: the bottleneck as a short noun phrase, six words or fewer. \
 "Reliable execution under time pressure", not "you should work on execution".
   - `evidence`: three or four counted lines that put it beyond argument. \
@@ -421,7 +421,7 @@ useful answer.
 Each also carries a `direction`, which is the same word `goal_evidence` uses \
 and means the same thing: `hurts` when the finding is in the reader's way, \
 `helps` when it is working for them, `watch` when it could go either way. \
-This is what the page colours the row by, so a finding that is plainly good \
+This is what the page colors the row by, so a finding that is plainly good \
 news — execution climbing, a level holding — must not be filed as `hurts` \
 merely because it appears in a list called diagnosis. Not everything a \
 record says is a problem.
@@ -439,7 +439,7 @@ than a section of its own, and the page draws the steps.
 `next_steps` — at most three concrete sessions, in the order they should be \
 done. These are RECOMMENDATIONS, not insights: each one is an instruction a \
 person could start in the next minute without asking a single question. A \
-step that restates a finding ("Easy execution is low, so practise Easy \
+step that restates a finding ("Easy execution is low, so practice Easy \
 problems") is an insight wearing a verb, and it is the one thing this list \
 must never contain. "Easy algorithm drills, timed" fails too: which \
 algorithms? Name the actual thing. A title alone can be a complete step — \
@@ -534,7 +534,7 @@ certainty you do not have.
 Write the way somebody who knows the subject would say it out loud. Short \
 sentences. Ordinary words. No em-dash asides, no "X, not Y" flourishes, and \
 no sentence that exists to land a point rather than say a thing. Never open \
-with "Your record shows" or close by summarising what you just said.
+with "Your record shows" or close by summarizing what you just said.
 """
 
 SCHEMA = {
@@ -1764,7 +1764,7 @@ def read(state: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
             system=SYSTEM,
             schema=SCHEMA,
             instruction=(
-                'Read this subject state. Diagnose, prioritise, and say what '
+                'Read this subject state. Diagnose, prioritize, and say what '
                 'to do next — using only the figures in the sections below.'),
             model_id=model_id or MODEL_DEFAULT,
             max_tokens=MAX_TOKENS,

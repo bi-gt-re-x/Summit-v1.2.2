@@ -93,7 +93,7 @@ export interface Interval {
    * What the account says it actually did, against `target`.
    *
    * A self-report, and the page labels it as one. Nothing in the app can count
-   * problems worked or scales practised, and the alternative to asking was to
+   * problems worked or scales practiced, and the alternative to asking was to
    * quietly substitute a number the app *can* count — tasks closed — for the
    * one the intention was about. That would be a different measurement wearing
    * this one's label.

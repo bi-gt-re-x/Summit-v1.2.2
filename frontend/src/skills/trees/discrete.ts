@@ -12,7 +12,7 @@ import { open, lock } from './types';
 export const DISCRETE: SubjectTree = {
   id: 'discrete',
   title: 'Discrete Mathematics',
-  blurb: 'Logic, sets, counting and proof — the maths that computing is written in.',
+  blurb: 'Logic, sets, counting and proof — the math that computing is written in.',
   parent: 'mathematics',
   nodes: [
     { id: 'di.logic', name: 'Propositional Logic', icon: 'logic', tier: 'foundation', core: true, state: open, percent: 20, xp: 1400,
@@ -20,7 +20,7 @@ export const DISCRETE: SubjectTree = {
     { id: 'di.implication', name: 'Implication', icon: 'implication', tier: 'foundation', requires: ['di.logic'], state: lock, percent: 0, xp: 1400,
       desc: 'If this, then that — and the fact that it is only false when the promise is broken. Its contrapositive is equivalent and its converse is not, which is the confusion behind an enormous number of wrong arguments.' },
     { id: 'di.sets', name: 'Sets', icon: 'sets', tier: 'foundation', core: true, requires: ['di.logic'], state: lock, percent: 0, xp: 1300,
-      desc: 'A collection with no order and no repeats, and the three operations on them. Union, intersection and difference mirror or, and and not exactly, which is not a coincidence.' },
+      desc: 'A collection with no order and no repeats, and the three operations on them. Union, intersection and difference mirror the logic words "or", "and" and "not" exactly, which is not a coincidence.' },
     { id: 'di.quant', name: 'Quantifiers', icon: 'quantifier', tier: 'beginner', requires: ['di.implication', 'di.sets'], state: lock, percent: 0, xp: 1600,
       desc: 'For all, and there exists. Their order changes the meaning completely, and negating a statement correctly means swapping each one and flipping the inside.' },
     { id: 'di.relations', name: 'Relations', icon: 'relation', tier: 'beginner', requires: ['di.sets'], state: lock, percent: 0, xp: 1500,
@@ -52,7 +52,7 @@ export const DISCRETE: SubjectTree = {
     { id: 'di.boolean', name: 'Boolean Algebra', icon: 'boolean', tier: 'expert', requires: ['di.contra'], state: lock, percent: 0, xp: 2200,
       desc: 'Logic as algebra, with laws you can factor and simplify by. It is how a circuit gets smaller and how a compiler decides that two conditions were the same condition.' },
     { id: 'di.automata', name: 'Automata & Languages', icon: 'automaton', tier: 'expert', requires: ['di.boolean', 'di.trees'], state: lock, percent: 0, xp: 2600,
-      desc: 'The simplest machines that can recognise patterns, and what each kind of machine cannot recognise at all. This is the theory a regular expression is a practical corner of.' },
+      desc: 'The simplest machines that can recognize patterns, and what each kind of machine cannot recognize at all. This is the theory a regular expression is a practical corner of.' },
     { id: 'di.complex', name: 'Computability & Complexity', icon: 'complexity', tier: 'mastery', requires: ['di.automata', 'di.number'], state: lock, percent: 0, xp: 3000,
       desc: 'What can be computed at all, and what can be computed in reasonable time. The halting problem and the open question about P and NP are both results about limits rather than about cleverness.' },
   ],

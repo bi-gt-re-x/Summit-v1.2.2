@@ -30,7 +30,7 @@ function draw(over: Partial<LatticeKeys> = {}) {
     onClear: vi.fn(),
     onHere: vi.fn(),
     onFit: vi.fn(),
-    onPractise: vi.fn(),
+    onPractice: vi.fn(),
     ...over,
   };
   const view = render(<Harness {...keys} />);
@@ -49,7 +49,7 @@ describe('the lattice shortcuts', () => {
     expect(keys.onClear).toHaveBeenCalledTimes(1);
     expect(keys.onHere).toHaveBeenCalledTimes(1);
     expect(keys.onFit).toHaveBeenCalledTimes(1);
-    expect(keys.onPractise).toHaveBeenCalledTimes(1);
+    expect(keys.onPractice).toHaveBeenCalledTimes(1);
   });
 
   it('takes the capital as well as the lower case', () => {
@@ -64,7 +64,7 @@ describe('the lattice shortcuts', () => {
 
     fireEvent.keyDown(field, { key: 'p' });
     fireEvent.keyDown(field, { key: 'r' });
-    expect(keys.onPractise).not.toHaveBeenCalled();
+    expect(keys.onPractice).not.toHaveBeenCalled();
     expect(keys.onFit).not.toHaveBeenCalled();
   });
 
@@ -84,7 +84,7 @@ describe('the lattice shortcuts', () => {
   });
 
   it('does nothing on P while nothing is selected', () => {
-    const keys = draw({ onPractise: undefined });
+    const keys = draw({ onPractice: undefined });
     fireEvent.keyDown(window, { key: 'p' });
     expect(keys.onClear).not.toHaveBeenCalled();
   });

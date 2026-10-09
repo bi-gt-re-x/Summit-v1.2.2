@@ -22,7 +22,7 @@ function step(ordinal: number, title: string, withProblems = false): WrittenStep
     ordinal,
     title,
     mastery: `Mastery of ${title}.`,
-    practice: `Practise ${title}.`,
+    practice: `Practice ${title}.`,
     detail: `How to ${title}.`,
     proof: `Proof for ${title}.`,
     pitfall: `Trap in ${title}.`,
@@ -39,7 +39,7 @@ function step(ordinal: number, title: string, withProblems = false): WrittenStep
 }
 
 const PROGRAMME = [
-  step(1, 'Recognise a Quadratic'),
+  step(1, 'Recognize a Quadratic'),
   step(2, 'Expand Binomials'),
   step(3, 'Factor Simple Quadratics', true),
 ];
@@ -145,9 +145,9 @@ describe('the chain of steps', () => {
     expect(screen.getByText('Your level, step by step')).toBeInTheDocument();
     const steps = document.querySelectorAll('.slv-chain-step');
     expect([...steps].map((li) => li.querySelector('.slv-chain-title')?.textContent)).toEqual([
-      'Recognise a Quadratic', 'Expand Binomials', 'Factor Simple Quadratics',
+      'Recognize a Quadratic', 'Expand Binomials', 'Factor Simple Quadratics',
     ]);
-    expect(screen.getByText(/No step practised yet/)).toBeInTheDocument();
+    expect(screen.getByText(/No step practiced yet/)).toBeInTheDocument();
   });
 
   it('is not drawn without evidence to read', () => {

@@ -45,9 +45,9 @@ export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile';
 const COPY: Record<AuthStep, [string, string]> = {
   choose: ['Welcome', 'Log in or create an account to continue.'],
   login: ['Log in', 'Good to see you again.'],
-  create: ['Create account', 'A name, an e-mail and a password is all it takes.'],
+  create: ['Create account', 'Just a name, an e-mail and a password.'],
   inbox: ['Check your inbox', 'One click and the account is yours.'],
-  profile: ['Complete profile', 'Three quick choices and you are in.'],
+  profile: ['Finish your profile', "Three quick picks and you're in."],
 };
 
 const GOALS = [

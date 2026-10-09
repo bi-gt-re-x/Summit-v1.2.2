@@ -61,7 +61,7 @@ export const programming = [
   node({
     id: 'programming.functions',
     name: 'Functions',
-    description: 'Naming a piece of behaviour, giving it inputs, and getting something back. The unit everything larger is built out of.',
+    description: 'Naming a piece of behavior, giving it inputs, and getting something back. The unit everything larger is built out of.',
     difficulty: 'beginner',
     xpReward: 70,
     prerequisites: after('programming.loops'),
@@ -142,7 +142,7 @@ export const programming = [
   node({
     id: 'programming.classes',
     name: 'Classes',
-    description: 'Bundling state with the behaviour that owns it, and knowing when not to.',
+    description: 'Bundling state with the behavior that owns it, and knowing when not to.',
     difficulty: 'intermediate',
     xpReward: 90,
     prerequisites: all('programming.functions', 'programming.dictionaries'),
@@ -154,7 +154,7 @@ export const programming = [
   node({
     id: 'programming.inheritance',
     name: 'Inheritance',
-    description: 'Extending a class, overriding behaviour, and why composition is usually the better answer.',
+    description: 'Extending a class, overriding behavior, and why composition is usually the better answer.',
     difficulty: 'intermediate',
     xpReward: 85,
     prerequisites: after('programming.classes'),
@@ -268,7 +268,7 @@ export const programming = [
   }),
   node({
     id: 'programming.json',
-    name: 'JSON and Serialisation',
+    name: 'JSON and Serialization',
     description: 'Turning structures into text and back, and what does not survive the trip.',
     difficulty: 'beginner',
     xpReward: 50,

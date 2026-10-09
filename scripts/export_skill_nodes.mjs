@@ -25,7 +25,7 @@
  * is 30% done" would write steps for a reader who does not exist.
  *
  * Navigation nodes are skipped. A diamond that opens the Calculus tree is a
- * doorway, not a skill, and there is nothing to practise about walking through
+ * doorway, not a skill, and there is nothing to practice about walking through
  * it.
  *
  * ## `--check` in the build

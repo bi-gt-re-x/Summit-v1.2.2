@@ -26,7 +26,7 @@
  * the reader is the one who typed that.
  *
  * Rows that name a real task carry a link to it. Rows that name a subject do
- * not, because there is no page that means "practise this for half an hour" —
+ * not, because there is no page that means "practice this for half an hour" —
  * and a link that goes somewhere unrelated is worse than no link.
  */
 import { Link } from 'react-router-dom';

@@ -49,7 +49,7 @@ export const NETWORKING: SubjectTree = {
     { id: 'net.tools', name: 'Diagnosing a Network', icon: 'trace', tier: 'advanced', core: true, requires: ['net.dns', 'net.firewall'], state: lock, percent: 0, xp: 2200,
       desc: 'Working down the layers with the standard tools until the failing one is named. The discipline is to ask which layer failed rather than which application, because the answer is almost never where the error appeared.' },
     { id: 'net.latency', name: 'Latency & Throughput', icon: 'latency', tier: 'advanced', requires: ['net.tcp', 'net.wifi'], state: lock, percent: 0, xp: 2100,
-      desc: 'How long one thing takes versus how much fits through per second, which are different problems with different fixes. Distance is a hard floor: nothing negotiates with the speed of light in fibre.' },
+      desc: 'How long one thing takes versus how much fits through per second, which are different problems with different fixes. Distance is a hard floor: nothing negotiates with the speed of light in fiber.' },
     { id: 'net.cdn', name: 'Content Delivery', icon: 'cdn', tier: 'expert', requires: ['net.lb', 'net.latency'], state: lock, percent: 0, xp: 2400,
       desc: 'Copies of your content held close to the people asking for it. Beating latency by shortening the distance is the only trick that works, and cache invalidation is what you trade for it.' },
     { id: 'net.design', name: 'Network Design', icon: 'network', tier: 'mastery', requires: ['net.cdn', 'net.vpn', 'net.tools'], state: lock, percent: 0, xp: 2900,

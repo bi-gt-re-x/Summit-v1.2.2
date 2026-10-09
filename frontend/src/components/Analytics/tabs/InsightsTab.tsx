@@ -263,7 +263,7 @@ export function InsightsTab({
             <div className="ax-hero">
               <RelationshipsPanel
                 relationships={links}
-                notice={unlock(slice.current.length, NEED_DAYS.insights, 'behavioural relationships')}
+                notice={unlock(slice.current.length, NEED_DAYS.insights, 'behavioral relationships')}
               />
             </div>
             {/* The only panel that answers *why* from what the reader said

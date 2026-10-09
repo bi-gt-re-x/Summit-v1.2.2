@@ -1196,9 +1196,10 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
    under the other anyway. A row cannot overlap itself. */
 #dailyTasks .card-foot {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-3);
+    gap: var(--space-2) var(--space-3);
     margin-top: var(--space-2);
     min-height: 26px;
 }
@@ -1209,8 +1210,11 @@ html[data-theme="light"] .calendar-day.selected::after { background: #33343a; }
     align-items: center;
     gap: var(--space-2);
     margin: 0;
-    min-width: 0;
+    flex: none;
 }
+/* When the times and Start don't fit on one row, Start drops to its own
+   row on the right instead of sliding over the times. */
+#dailyTasks .card-foot .dp-start { margin-left: auto; }
 /* A task's times, as text. The disabled `<input type="time">` they used to be
    drew the browser's own spinner chrome and clipped "07:30 AM" to "07:30 A"
    the moment the column narrowed. */
@@ -2783,9 +2787,14 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
 .mv-summary-lead { min-width: 0; }
 .mv-summary-figs { flex: 0 1 auto; min-width: 0; }
 .mv-fig-label { font-size: var(--text-xs); }
-/* A little more of the width to the month, which is what the view is for. */
-.mv-left { flex: 1 1 67%; }
-.mv-side { flex: 1 1 31%; min-width: 300px; }
+/* A little more of the width to the month, which is what the view is for.
+   Side by side only: below 1181px the columns stack, and this rule sitting
+   after the stacking one squeezed both to a share of the height again, so
+   the summary and the tiles were drawn over each other on a phone. */
+@media (min-width: 1181px) {
+    .mv-left { flex: 1 1 67%; }
+    .mv-side { flex: 1 1 31%; min-width: 300px; }
+}
 
 /* Holding the strip to one row at the widths it is actually read at.
  *
@@ -2800,3 +2809,19 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
 .mv-summary-figs { gap: clamp(9px, 1vw, 20px); }
 .mv-summary-fig { padding-left: clamp(9px, 1vw, 20px); }
 .mv-summary-title { font-size: var(--text-md); }
+/* ---- Phone: the four month figures as a 2 × 2 grid ----------------------
+   Last in the file on purpose: the width tweaks above are unconditional and
+   come after the 860px block, so they were winning there and the four
+   figures were crushed into one row, each number wider than its box. */
+@media (max-width: 860px) {
+    .mv-summary-figs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        flex: 1 1 100%;
+        width: 100%;
+        gap: var(--space-4) var(--space-3);
+        margin-left: 0;
+    }
+    .mv-summary-fig { padding-left: 0; border-left: none; }
+    .mv-fig-label, .mv-delta { white-space: normal; }
+}

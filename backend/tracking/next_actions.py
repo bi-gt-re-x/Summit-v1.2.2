@@ -11,7 +11,7 @@ The output is a plan, not a list:
 
     You have 45 minutes
     → Finish "Chapter 7 problem set"        due today            25 min
-    → Practise Geometry                     weakest rating       20 min
+    → Practice Geometry                     weakest rating       20 min
 
 ## Why it is a budget and not a ranking
 
@@ -356,7 +356,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
         if worst['execution'] < average - 0.3:
             found.append(_action(
                 id='weak-{}'.format(worst['subject']), kind='weak-subject',
-                title='Practise {}'.format(name_of(worst['subject'])),
+                title='Practice {}'.format(name_of(worst['subject'])),
                 because='You rate it {}/5, compared with {} for other subjects ({} rated tasks).'.format(
                     to_fixed(worst['execution']), to_fixed(average), worst['rated']),
                 minutes=PRACTICE_MINUTES, subject=worst['subject'],

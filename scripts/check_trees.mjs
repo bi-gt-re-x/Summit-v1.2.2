@@ -199,7 +199,7 @@ for (const tree of TREES) {
       else if (child.parent !== tree.id) {
         fail(at, `opens ${child.id}, whose parent is ${child.parent ?? 'nobody'} rather than ${tree.id}`);
       }
-      if (node.xp) fail(at, 'is a doorway and cannot be practised, so it must not carry XP');
+      if (node.xp) fail(at, 'is a doorway and cannot be practiced, so it must not carry XP');
     }
   }
 
@@ -249,7 +249,7 @@ for (const tree of TREES) {
   }
   const stranded = tree.nodes.filter((node) => !open.has(node.id));
   if (stranded.length > 0) {
-    fail(where, `unreachable however much is practised: ${stranded.map((n) => n.id).join(', ')}`);
+    fail(where, `unreachable however much is practiced: ${stranded.map((n) => n.id).join(', ')}`);
   }
 
   // ---- is it actually a lattice? ----

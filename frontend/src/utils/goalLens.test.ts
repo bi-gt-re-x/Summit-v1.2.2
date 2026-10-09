@@ -45,7 +45,7 @@ describe('reordering through it', () => {
     { key: 'focus' as const },
   ];
 
-  it('leads with what the lens prioritises', () => {
+  it('leads with what the lens prioritizes', () => {
     const out = throughLens(rows, (row) => row.key, lens(['quality', 'consistency', 'productivity', 'focus']));
     expect(out[0]!.key).toBe('quality');
   });

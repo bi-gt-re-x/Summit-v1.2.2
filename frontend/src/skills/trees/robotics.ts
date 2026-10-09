@@ -43,7 +43,7 @@ export const ROBOTICS: SubjectTree = {
     { id: 'ro.circuit', name: 'Wiring', icon: 'circuit', tier: 'beginner', requires: ['ro.power'], state: lock, percent: 0, xp: 1500,
       desc: 'Gauge, fusing, strain relief and connectors that survive being hit. A wiring job that works on the bench and fails on impact is the most expensive kind, because it fails intermittently at competition.' },
     { id: 'ro.cad', name: 'CAD', icon: 'form-3d', tier: 'beginner', core: true, requires: ['ro.mech'], state: lock, percent: 0, xp: 1600,
-      desc: 'Designing the thing before cutting it, and discovering the interference on a screen rather than in aluminium. A full-robot assembly is what tells you two subsystems want the same eight cubic inches.' },
+      desc: 'Designing the thing before cutting it, and discovering the interference on a screen rather than in aluminum. A full-robot assembly is what tells you two subsystems want the same eight cubic inches.' },
     { id: 'ro.materials', name: 'Materials & Fabrication', icon: 'materials', tier: 'beginner', requires: ['ro.cad'], state: lock, percent: 0, xp: 1600,
       desc: 'What each stock shape is good at, what your shop can actually cut, and the tolerances you can hold. Designing a part nobody on the team can make is a design failure rather than a manufacturing one.' },
     { id: 'ro.proto', name: 'Prototyping', icon: 'prototype', tier: 'intermediate', core: true, requires: ['ro.materials'], state: lock, percent: 0, xp: 1700,

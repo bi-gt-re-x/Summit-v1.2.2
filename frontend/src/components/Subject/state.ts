@@ -251,7 +251,7 @@ export interface DifficultyCurve {
    * one.
    *
    * Null when the curve does not fall away anywhere, which is a real answer
-   * with its own instruction — go up a level, rather than practise more.
+   * with its own instruction — go up a level, rather than practice more.
    */
   threshold: Rung | null;
   /**

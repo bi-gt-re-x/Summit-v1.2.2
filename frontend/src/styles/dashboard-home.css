@@ -505,6 +505,20 @@
     white-space: nowrap;
 }
 
+/* Four cards across a laptop screen leave this one about 185px inside, and
+   the ring, the rule and "Completed" need 240. A narrower card gets a
+   smaller ring and tighter gaps and drops the marks, so the counts stay
+   inside it instead of running off the right edge. */
+.dash-stat-today { container: dash-today / inline-size; }
+@container dash-today (max-width: 300px) {
+    .dash-today-body { gap: var(--space-3); }
+    .dash-ring { width: 80px; height: 80px; }
+    .dash-ring-pct { font-size: var(--text-xl); }
+    .dash-today-figures { padding-left: var(--space-3); }
+    .dash-figure { grid-template-columns: minmax(0, 1fr); }
+    .dash-figure-ico { display: none; }
+}
+
 /* ---- XP Overview -------------------------------------------------------- */
 .dash-xp-head {
     display: flex;
@@ -747,8 +761,9 @@ html:not(.focus-mode) .dash-main .focus-panel .fp-controls { margin-top: auto; }
 /* ---- Header: title, tabs, Add Task -------------------------------------- */
 .dash-panel-head {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3) var(--space-4);
     margin-bottom: var(--space-4);
 }
 .dash-panel-head .dash-panel-title { flex: none; }
@@ -782,6 +797,7 @@ html:not(.focus-mode) .dash-main .focus-panel .fp-controls { margin-top: auto; }
 
 .dash-add {
     flex: none;
+    margin-left: auto;
     border: none;
     background: #24282C;
     color: #FFFFFF;

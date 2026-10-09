@@ -275,7 +275,7 @@ const TOOLS: Tool[][] = [
   ],
   [
     { id: 'left', label: <Lines at="left" />, hint: 'Align left', align: 'left' },
-    { id: 'centre', label: <Lines at="center" />, hint: 'Centre', align: 'center' },
+    { id: 'centre', label: <Lines at="center" />, hint: 'Center', align: 'center' },
     { id: 'right', label: <Lines at="right" />, hint: 'Align right', align: 'right' },
   ],
   [
@@ -1235,7 +1235,7 @@ export default function Notes() {
                   buttons in a strip that already scrolls. */}
               <div className="nt-tool-group">
                 {([
-                  { key: 'ink', hint: 'Text colour', label: 'A' },
+                  { key: 'ink', hint: 'Text color', label: 'A' },
                   { key: 'mark', hint: 'Highlight', label: '▮' },
                 ] as const).map((palette) => (
                   <div className="nt-menu-wrap" key={palette.key}>
@@ -1272,8 +1272,8 @@ export default function Notes() {
                               type="button"
                               className={`nt-swatch is-${palette.key}`}
                               style={{ '--sw': `var(--nt-ink-${ink})` } as CSSProperties}
-                              title={ink}
-                              aria-label={`${palette.hint}: ${ink}`}
+                              title={ink === 'grey' ? 'gray' : ink}
+                              aria-label={`${palette.hint}: ${ink === 'grey' ? 'gray' : ink}`}
                               onClick={() => {
                                 setPaletteOpen(null);
                                 applyToken(token);

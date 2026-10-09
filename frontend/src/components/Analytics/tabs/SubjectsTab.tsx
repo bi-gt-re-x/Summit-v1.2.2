@@ -93,7 +93,7 @@ export function SubjectsTab({
    * How far into each lattice this account's own work has got.
    *
    * The list below says what each subject *opens* — the size of the tree and
-   * how many of its nodes the reader has marked practised. That is the
+   * how many of its nodes the reader has marked practiced. That is the
    * curriculum's figure and a hand-kept one; neither is a reading of the
    * record. This is the reading of the record: XP filed under the subjects
    * that route to a tree, against what the tree is worth. See skills/standing,
@@ -228,7 +228,7 @@ export function SubjectsTab({
           </div>
           <p className="ax-panel-note">
             Every subject has a skill tree behind it. The skill count is the tree's — somebody
-            wrote it — and the practised count is yours.
+            wrote it — and the practiced count is yours.
           </p>
           <ul className="ax-lattices">
             {lattices.map(({ row, lattice }) => (
@@ -239,8 +239,8 @@ export function SubjectsTab({
                   <span className="ax-lattice-facts">
                     {lattice.nodes} skills
                     {lattice.branches.length > 0 && <> · {lattice.branches.length} branches</>}
-                    {lattice.practised > 0 && (
-                      <b> · {lattice.practised} practised</b>
+                    {lattice.practiced > 0 && (
+                      <b> · {lattice.practiced} practiced</b>
                     )}
                   </span>
                 </Link>

@@ -16,7 +16,7 @@ export const BIOLOGY: SubjectTree = {
   parent: 'science',
   nodes: [
     { id: 'bi.life', name: 'What Life Is', icon: 'life', tier: 'foundation', core: true, state: open, percent: 20, xp: 1200,
-      desc: 'The shared properties of living things: organisation, metabolism, response, reproduction. The borderline cases are the interesting part, which is why a virus is still argued about.' },
+      desc: 'The shared properties of living things: organization, metabolism, response, reproduction. The borderline cases are the interesting part, which is why a virus is still argued about.' },
     { id: 'bi.cells', name: 'Cells', icon: 'cells', tier: 'foundation', core: true, requires: ['bi.life'], state: lock, percent: 0, xp: 1500,
       desc: 'The smallest unit that is alive, and the compartments inside it that do separate jobs. Every organism is one of these or a colony of them cooperating.' },
     { id: 'bi.membrane', name: 'Membranes & Transport', icon: 'membrane', tier: 'foundation', requires: ['bi.cells'], state: lock, percent: 0, xp: 1500,
@@ -48,7 +48,7 @@ export const BIOLOGY: SubjectTree = {
     { id: 'bi.homeo', name: 'Homeostasis', icon: 'homeostasis', tier: 'advanced', requires: ['bi.organs'], state: lock, percent: 0, xp: 2100,
       desc: 'Holding internal conditions steady while the outside moves, by negative feedback. Temperature, blood sugar and water balance are three instances of one control pattern.' },
     { id: 'bi.nervous', name: 'Nerves & Hormones', icon: 'neuron', tier: 'advanced', requires: ['bi.homeo'], state: lock, percent: 0, xp: 2200,
-      desc: 'Two signalling systems: one electrical and fast down a fixed wire, one chemical and slow but reaching everywhere. Which one a body uses for a job is decided by how quickly the answer is needed.' },
+      desc: 'Two signaling systems: one electrical and fast down a fixed wire, one chemical and slow but reaching everywhere. Which one a body uses for a job is decided by how quickly the answer is needed.' },
     { id: 'bi.immune', name: 'Immunity', icon: 'immune', tier: 'expert', requires: ['bi.nervous', 'bi.protein'], state: lock, percent: 0, xp: 2400,
       desc: 'Distinguishing self from not-self, and remembering an intruder well enough to answer faster next time. Vaccination is that memory installed without the illness that would normally create it.' },
     { id: 'bi.ecology', name: 'Ecology', icon: 'ecosystem', tier: 'advanced', requires: ['bi.photo', 'bi.taxonomy'], state: lock, percent: 0, xp: 2200,

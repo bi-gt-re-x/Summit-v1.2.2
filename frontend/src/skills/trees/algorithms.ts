@@ -52,6 +52,6 @@ export const ALGO: SubjectTree = {
     { id: 'a.graphs', name: 'Graphs', icon: 'graph-nodes', tier: 'advanced', requires: ['a.trees'], navTo: 'graphs', state: lock,
       desc: 'A subject of its own: traversal, shortest paths, spanning trees and flow, over networks of any shape.' },
     { id: 'a.contest', name: 'Competitive Programming', icon: 'race', tier: 'expert', requires: ['a.dp', 'a.greedy'], navTo: 'competitive-programming', state: lock,
-      desc: 'A subject of its own: USACO and Codeforces — recognising the shape, then writing it fast.' },
+      desc: 'A subject of its own: USACO and Codeforces — recognizing the shape, then writing it fast.' },
   ],
 };

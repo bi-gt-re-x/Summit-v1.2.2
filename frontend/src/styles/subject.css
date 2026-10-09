@@ -1699,6 +1699,16 @@
 
 .sb-link-list .ax-btn { flex: none; }
 
+/* On a phone the tag and the button took their full width first and the goal
+   name was left about 30px, one word to a line. The name gets the row; the
+   tag and button sit under it, button on the right. */
+@media (max-width: 600px) {
+    .sb-link-list li { flex-wrap: wrap; gap: var(--space-2) var(--space-3); padding: var(--space-3) var(--space-4); }
+    .sb-link-name { flex: 1 1 100%; }
+    .sb-link-subject { max-width: 60%; }
+    .sb-link-list .ax-btn { margin-left: auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .sb-link-body { transition: none; }
     .sb-link-toggle svg { transition: none; }

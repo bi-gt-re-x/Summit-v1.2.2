@@ -1507,7 +1507,7 @@ html[data-theme="dark"] .ax-page {
     color: var(--ax-faint);
     font-variant-numeric: tabular-nums;
 }
-/* The practised count is the reader's own; the rest of the line is the tree's. */
+/* The practiced count is the reader's own; the rest of the line is the tree's. */
 .ax-lattice-facts b { color: var(--ax-violet); font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) { .ax-lattice { transition: none; } }
@@ -7434,7 +7434,9 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 }
 
 @media (max-width: 720px) {
-    .sg-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    /* Two across while there is room. On a phone the card is about 220px
+       inside, two tiles left 72px each, and "Completion" ran past its tile. */
+    .sg-tiles { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 }
 
 /* ---- Skills by level ------------------------------------------------------
@@ -7575,12 +7577,15 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .sg-subject-head { flex-wrap: wrap; row-gap: var(--space-2); }
 .sg-subject-title {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-1) var(--space-3);
     min-width: 0;
     flex: 1 1 200px;
 }
-.sg-subject-title .sg-name { font-size: var(--text-lg); font-weight: 700; }
+/* The name keeps its width and the band drops under it when the row is
+   narrow. Shrinking the name let "Mathematics" run under its band pill. */
+.sg-subject-title .sg-name { font-size: var(--text-lg); font-weight: 700; flex: none; }
 .sg-glance {
     display: inline-flex;
     flex-wrap: wrap;
@@ -8322,4 +8327,17 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     margin-right: var(--space-2);
     font-weight: 700;
     color: var(--ax-text);
+}
+
+/* ---- Phone: the header's buttons and the range chips -------------------
+   At 390px the six range chips are 352px in a 315px row and could neither
+   wrap nor shrink, so "All Time" hung off the card's right edge. Tighter
+   padding fits all six in about 300px. And the
+   date, Export and CSV buttons squeezed their own labels onto two and three
+   lines instead of moving down a row. */
+@media (max-width: 600px) {
+    .ax-head-actions { flex-wrap: wrap; }
+    .ax-head-actions .ax-btn { white-space: nowrap; }
+    .ax-chips { max-width: 100%; }
+    .ax-chip { white-space: nowrap; padding-left: 10px; padding-right: 10px; }
 }

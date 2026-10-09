@@ -37,7 +37,7 @@ CLEAR_RATE = 0.7
 MASTER_MIN = 10
 MASTER_RATE = 0.85
 MASTER_DAYS = 2
-#: The window "days practised lately" is counted over.
+#: The window "days practiced lately" is counted over.
 CONSISTENCY_DAYS = 28
 #: How far back the "before" reading looks, in days.
 COMPARE_DAYS = 30

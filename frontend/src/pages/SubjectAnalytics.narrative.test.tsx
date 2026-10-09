@@ -107,7 +107,7 @@ vi.mock('@/hooks/useSubjects', async (original) => {
     useSubjectIndex: () => new Map([
       ['algebra', {
         id: 'algebra', name: 'Algebra', label: 'Algebra', icon: 'algebra',
-        group: 'Maths and science', custom: false,
+        group: 'Math and science', custom: false,
       }],
     ]),
   };
@@ -329,7 +329,7 @@ describe('what to do is not this page\'s job', () => {
 });
 
 describe('the skill tree', () => {
-  it('reads what has been practised back on the shut row', async () => {
+  it('reads what has been practiced back on the shut row', async () => {
     // The fold's lead is the reading. It used to be printed twice — once as
     // the lead and once under a "What this says" heading with three more
     // paragraphs of curriculum description beneath it.
@@ -337,7 +337,7 @@ describe('the skill tree', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
     const fold = screen.getByRole('button', { name: /Skill tree/ }).closest('section')!;
-    expect(within(fold).getByText(/practised/i)).toBeInTheDocument();
+    expect(within(fold).getByText(/practiced/i)).toBeInTheDocument();
     expect(within(fold).queryByText('What this says')).not.toBeInTheDocument();
   });
 });

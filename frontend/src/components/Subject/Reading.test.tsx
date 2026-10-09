@@ -75,7 +75,7 @@ describe('the two shapes become one list', () => {
 });
 
 describe('which way each row cuts', () => {
-  it('says the word as well as drawing the colour', () => {
+  it('says the word as well as drawing the color', () => {
     /* Colour is never the only carrier on this page. A reader scans the
        right-hand edge for "needs focus" and reads those rows. */
     render(
@@ -90,7 +90,7 @@ describe('which way each row cuts', () => {
     expect(screen.getByText('worth watching')).toBeInTheDocument();
   });
 
-  it('does not colour good news as a problem', () => {
+  it('does not color good news as a problem', () => {
     /* The failure this field exists to prevent: "execution is improving"
        arriving in a list called diagnosis and being drawn in red. */
     render(

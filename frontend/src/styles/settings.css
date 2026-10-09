@@ -243,6 +243,16 @@ html[data-theme="dark"] .st-page {
     max-width: 520px;
     margin-left: auto;
 }
+/* The theme cards don't fit the 232px control column: they stacked one per
+   row, eight cards tall, with the label floating halfway down beside them.
+   This row takes the full width instead, label on top and cards under it. */
+.st-row:has(> .st-row-control > .st-themes) {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-3);
+}
+.st-row-control:has(> .st-themes) { justify-content: flex-start; }
+.st-row-control > .st-themes { max-width: none; margin-left: 0; }
 .st-theme {
     display: flex;
     flex-direction: column;

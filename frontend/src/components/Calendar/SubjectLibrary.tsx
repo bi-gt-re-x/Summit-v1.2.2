@@ -76,7 +76,7 @@ function FamilyPicker({
   onClear: () => void;
 }) {
   return (
-    <div className="sl-picker" role="group" aria-label="Colour">
+    <div className="sl-picker" role="group" aria-label="Color">
       <div className="sl-swatches">
         {FAMILIES.map((family) => (
           <button
@@ -131,7 +131,7 @@ function SubjectRow({
           className="sl-dot"
           style={{ ['--sw' as string]: swatchColor(family) }}
           aria-expanded={open}
-          aria-label={`Colour for ${subject.name}`}
+          aria-label={`Color for ${subject.name}`}
           onClick={onToggle}
         />
         <button type="button" className="sl-name" onClick={onToggle} title={subject.name}>
@@ -315,13 +315,13 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
       </section>
 
       <section className="wk-panel sl-panel">
-        <h4 className="sl-section">The catalogue</h4>
+        <h4 className="sl-section">The catalog</h4>
         <input
           className="sl-search"
           type="search"
           value={query}
           placeholder="Find a subject…"
-          aria-label="Search the catalogue"
+          aria-label="Search the catalog"
           onChange={(event) => setQuery(event.target.value)}
         />
         {rest.length === 0 ? (
@@ -332,7 +332,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
       </section>
 
       <p className="sl-note">
-        Colours may shift slightly on busy weeks so subjects stay distinct.
+        Colors may shift slightly on busy weeks so subjects stay distinct.
       </p>
       {confirmDialog}
     </aside>

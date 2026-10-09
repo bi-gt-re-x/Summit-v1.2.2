@@ -669,7 +669,7 @@ const BADGE_GLYPH: Record<string, ReactNode> = {
   'focus-1000':   GLYPH.mountain,       // The Thousand
   'fdays-10':     GLYPH.mug,            // Showing Up
   'fdays-50':     GLYPH.bookmark,       // Fifty Sittings
-  'fdays-150':    GLYPH.ladder,         // Practised
+  'fdays-150':    GLYPH.ladder,         // Practiced
   'fdays-365':    GLYPH.tree,           // A Year of Focus
   'deep-3':       GLYPH.hourglass,      // Long Session
   'deep-6':       GLYPH.brain,          // Marathon Mind

@@ -214,7 +214,7 @@ function overviewSection(input: ReportInput): string {
   if (insights.length > 0) {
     lines.push('  What stands out:', '');
     insights.slice(0, 5).forEach((row) => {
-      lines.push(bullet(`${row.headline} ${row.hint}`), '');
+      lines.push(bullet(`${row.headline}${/[.!?]$/.test(row.headline) ? '' : '.'} ${row.hint}`), '');
     });
   }
 

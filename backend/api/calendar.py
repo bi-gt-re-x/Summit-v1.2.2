@@ -190,7 +190,7 @@ def add_event_color(body: AddEventColor,
                     username: str = Depends(current_username)):
     colors = event_tracking.add_color(body.color)
     if colors is None:
-        return fail('Invalid colour', status=400)
+        return fail('Invalid color', status=400)
     return ok(colors=colors)
 
 

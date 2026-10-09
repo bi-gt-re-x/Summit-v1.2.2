@@ -170,7 +170,7 @@ describe('Radar', () => {
   it('is announced as what it draws, not as what the other one draws', () => {
     render(
       <Radar
-        label="Five readings of Maths"
+        label="Five readings of Math"
         axes={[
           { label: 'a', value: 1 },
           { label: 'b', value: 0.5 },
@@ -178,7 +178,7 @@ describe('Radar', () => {
         ]}
       />,
     );
-    expect(screen.getByRole('img', { name: 'Five readings of Maths' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Five readings of Math' })).toBeInTheDocument();
   });
 });
 

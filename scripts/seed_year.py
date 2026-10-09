@@ -267,7 +267,7 @@ TODOS = [
     ('Flashcards — Spanish vocabulary',           'flashcards',       'low',    20),
     ('Read 20 pages of the set text',             'literature',       'medium', 30),
     ('Fix the failing USACO test case',           'computer_science', 'high',   45),
-    ('Practise the shifting passage slowly',      'music',            'medium', 30),
+    ('Practice the shifting passage slowly',      'music',            'medium', 30),
     ('Email the orchestra director about the audition', 'email',      'low',    15),
     ('Finish the physics lab data',               'physics',          'medium', 40),
     ('Memorise the polyatomic ions',              'chemistry',        'low',    25),

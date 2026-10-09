@@ -1,5 +1,5 @@
 /**
- * What the reader has actually put into a lattice node — the practising half of
+ * What the reader has actually put into a lattice node — the practicing half of
  * the skill tree.
  *
  * ## Why this is in the browser and not in the database
@@ -32,7 +32,7 @@
  * position — Variables mastered, Loops three-quarters done. That seed stays in
  * the data where it can be edited; this store holds the practice done on top of
  * it, and {@link applyProgress} adds the two together. So a reader who has
- * practised nothing has an empty store rather than a copy of the seed, and
+ * practiced nothing has an empty store rather than a copy of the seed, and
  * editing the seed later does not have to reconcile with what a browser saved.
  */
 import { keepKnownNodes, treeRevision } from '@/skills/subjectTrees';
@@ -40,7 +40,7 @@ import type { GraphNode, NodeStatus, SkillGraph } from './skillGraph';
 import { skillStore } from './skillStore';
 import { planPercent, type StepPlans } from './skillSteps';
 
-/** Node id → XP added by practising, on top of whatever the tree seeded. */
+/** Node id → XP added by practicing, on top of whatever the tree seeded. */
 export type SkillProgress = Record<string, number>;
 
 const progressStore = skillStore<SkillProgress>({
@@ -96,7 +96,7 @@ export function practiceGain(node: GraphNode): number {
  * position survives — several nodes are drawn available above prerequisites
  * that are only part-done, which is the picture the trees were written to show
  * — and finishing a prerequisite still opens what sits under it, which is the
- * whole point of practising. Deriving purely from prerequisites would relock
+ * whole point of practicing. Deriving purely from prerequisites would relock
  * half of every tree the moment this ran; ignoring them would mean nothing ever
  * opened.
  *
@@ -141,7 +141,7 @@ export function applyProgress(
   /*
    * Finished, by either route.
    *
-   * Practising a node to its full XP finishes it — that is the half that has to
+   * Practicing a node to its full XP finishes it — that is the half that has to
    * work. But a tree is also allowed to *say* a node is finished at less than
    * 100%, and several do: mastery is a judgement about a skill, and the last
    * tenth of a bar is often polish rather than the thing itself. Deriving

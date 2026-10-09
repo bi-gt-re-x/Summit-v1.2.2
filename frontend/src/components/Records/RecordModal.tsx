@@ -26,7 +26,7 @@
  * ## And why "which way is better" is asked here
  *
  * It is the one fact about a record that nothing can work out for you — a mile
- * time wants the smallest number and minutes practised wants the largest, and
+ * time wants the smallest number and minutes practiced wants the largest, and
  * they carry the same unit. So it is a control, sitting beside the figure it
  * describes, and it is asked once: adding to a record you already have takes
  * the answer from the last entry along with the category and the unit, because

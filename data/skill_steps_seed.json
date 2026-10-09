@@ -45,7 +45,7 @@
           "title": "Walk With a Loop",
           "mastery": "Visit every element of an array once, with and without its index.",
           "practice": "Sum [3, 1, 4, 1, 5, 9, 2, 6] with a loop, then print each value with its index.",
-          "detail": "Two loops to know: one over the values, and one over range(len(items)) when the position matters. Accumulate into a variable initialised to 0 before the loop, not inside it — initialising inside is the classic reason a sum comes back as the last element.",
+          "detail": "Two loops to know: one over the values, and one over range(len(items)) when the position matters. Accumulate into a variable initialized to 0 before the loop, not inside it — initializing inside is the classic reason a sum comes back as the last element.",
           "proof": "The sum prints 31, and the indexed loop prints 0:3 through 7:6.",
           "pitfall": "Resetting the accumulator inside the loop, which leaves you with the final value rather than the total.",
           "minutes": 15,
@@ -74,15 +74,15 @@
           "title": "Find the Largest",
           "mastery": "Scan an array once keeping the best value seen so far.",
           "practice": "Find the largest of [7, 2, 9, 4, 9, 1] in one pass, and report its first index.",
-          "detail": "Initialise best to the first element rather than to 0, or an array of negatives returns 0. Compare with a strict greater-than so the first of two equal maxima wins, which is why the answer to the index is 2 and not 4.",
+          "detail": "Initialize best to the first element rather than to 0, or an array of negatives returns 0. Compare with a strict greater-than so the first of two equal maxima wins, which is why the answer to the index is 2 and not 4.",
           "proof": "You get 9 at index 2.",
-          "pitfall": "Initialising best to 0, which breaks on [-5, -2, -9] by returning 0.",
+          "pitfall": "Initializing best to 0, which breaks on [-5, -2, -9] by returning 0.",
           "minutes": 15,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What does a max scan initialised to 0 return for [-5, -2, -9]?",
+              "prompt": "What does a max scan initialized to 0 return for [-5, -2, -9]?",
               "answer": "0, which is not in the array — the bug."
             },
             {
@@ -376,7 +376,7 @@
         },
         {
           "title": "Spot a Backtracking Problem",
-          "mastery": "Recognise problems whose answer is a sequence of choices.",
+          "mastery": "Recognize problems whose answer is a sequence of choices.",
           "practice": "Say which of these 3 suit backtracking: generating valid bracket strings, the shortest path in a grid, sudoku.",
           "detail": "Backtracking suits problems where an answer is built from choices and partial answers can be ruled out. Brackets and sudoku fit. A shortest path does not: it wants breadth-first search, because the first arrival is the shortest and there is nothing to retract.",
           "proof": "Brackets and sudoku yes, shortest path no, each with a reason.",
@@ -448,7 +448,7 @@
         },
         {
           "title": "Name the Common Orders",
-          "mastery": "Recognise constant, logarithmic, linear, n log n and quadratic growth.",
+          "mastery": "Recognize constant, logarithmic, linear, n log n and quadratic growth.",
           "practice": "Label these as O(1), O(log n), O(n) or O(n^2): array index, binary search, single loop, nested loop.",
           "detail": "Learn them by their shape: no loop is O(1); halving each step is O(log n); one pass is O(n); a pass inside a pass is O(n^2). Sorting by comparison sits at n log n. Say the label aloud with the reason, because the reason is what transfers to code you have not seen.",
           "proof": "Index O(1), binary search O(log n), single loop O(n), nested loop O(n^2).",
@@ -508,7 +508,7 @@
           "title": "Read Nested Loops",
           "mastery": "Work out the order of loops inside loops, including partial ones.",
           "practice": "Count the iterations when the inner loop runs from i + 1 to n, for n = 5, and give the order.",
-          "detail": "This triangular pattern totals n(n - 1)/2, which is 10 for n = 5 — half the full n^2 grid and still O(n^2), because the constant goes. Write out the pairs for n = 5 once; seeing 10 pairs makes the formula stop being something to memorise.",
+          "detail": "This triangular pattern totals n(n - 1)/2, which is 10 for n = 5 — half the full n^2 grid and still O(n^2), because the constant goes. Write out the pairs for n = 5 once; seeing 10 pairs makes the formula stop being something to memorize.",
           "proof": "10 iterations for n = 5, and O(n^2).",
           "pitfall": "Calling the triangular version O(n) because it is roughly half the work.",
           "minutes": 15,
@@ -1098,10 +1098,10 @@
           ]
         },
         {
-          "title": "Memoise Top Down",
+          "title": "Memoize Top Down",
           "mastery": "Cache a recursion's results so each subproblem is computed once.",
           "practice": "Add a cache to the stairs recursion and count how many distinct subproblems 30 stairs needs.",
-          "detail": "Check the cache, compute if absent, store before returning. Thirty stairs has 31 distinct subproblems, so the cached version does 31 units of work where the plain recursion does over a million. Top-down memoisation is dynamic programming with the recursion left in place.",
+          "detail": "Check the cache, compute if absent, store before returning. Thirty stairs has 31 distinct subproblems, so the cached version does 31 units of work where the plain recursion does over a million. Top-down memoization is dynamic programming with the recursion left in place.",
           "proof": "31 subproblems, and the answer 1,346,269 for 30 stairs.",
           "pitfall": "Caching after the recursive calls rather than before, so the cache is written but never read in time.",
           "minutes": 15,
@@ -1150,7 +1150,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Name 1 practical advantage of bottom up over memoised recursion.",
+              "prompt": "Name 1 practical advantage of bottom up over memoized recursion.",
               "answer": "No recursion depth limit."
             }
           ]
@@ -1190,7 +1190,7 @@
           "practice": "Count the paths from the top-left to the bottom-right of a 3-by-3 grid moving only right or down.",
           "detail": "Each cell is the sum of the cell above and the cell to its left, with the first row and column all 1. A 3-by-3 grid gives 6 paths. Fill the grid on paper once: seeing the numbers grow makes the recurrence obvious in a way the formula does not.",
           "proof": "6 paths across a 3-by-3 grid.",
-          "pitfall": "Initialising the first row and column to 0, which makes every cell 0.",
+          "pitfall": "Initializing the first row and column to 0, which makes every cell 0.",
           "minutes": 15,
           "problems": [
             {
@@ -1244,7 +1244,7 @@
         },
         {
           "title": "Solve the Knapsack",
-          "mastery": "Work a two-dimensional optimisation with a capacity limit.",
+          "mastery": "Work a two-dimensional optimization with a capacity limit.",
           "practice": "Fill the table for items of weight 1, 3, 4 and value 15, 20, 30 with a capacity of 4.",
           "detail": "Each entry is the better of skipping the item and taking it — value plus the best for the remaining capacity. The answer here is 35, from the weight-1 and weight-3 items, which beats the single weight-4 item worth 30. That comparison is where greedy by ratio goes wrong.",
           "proof": "The table's last entry is 35.",
@@ -1302,7 +1302,7 @@
         },
         {
           "title": "Spot the Overlap",
-          "mastery": "Recognise when a problem has repeated subproblems worth storing.",
+          "mastery": "Recognize when a problem has repeated subproblems worth storing.",
           "practice": "Say which of these 3 suit dynamic programming: Fibonacci, binary search, the longest increasing subsequence.",
           "detail": "Dynamic programming needs overlapping subproblems and an optimal answer built from optimal parts. Fibonacci and the longest increasing subsequence have both. Binary search has neither: each step discards half and nothing recurs, so there is nothing to cache.",
           "proof": "Fibonacci and the subsequence yes, binary search no, with reasons.",
@@ -1461,7 +1461,7 @@
         },
         {
           "title": "Sort First, Then Sweep",
-          "mastery": "Recognise the sort-then-scan shape most greedy solutions have.",
+          "mastery": "Recognize the sort-then-scan shape most greedy solutions have.",
           "practice": "Find the minimum number of platforms for trains arriving at 9, 9, 10 and leaving at 10, 11, 12.",
           "detail": "Sort the arrivals and the departures separately, then sweep both with 2 pointers, adding a platform on an arrival and freeing one on a departure. The peak count is the answer, which is 2 here. This shape — sort, then 1 linear pass — covers most greedy problems.",
           "proof": "2 platforms, reached at the peak of the sweep.",
@@ -2386,7 +2386,7 @@
           ]
         },
         {
-          "title": "Memoise the Repeats",
+          "title": "Memoize the Repeats",
           "mastery": "Cache recursive results so each subproblem is solved once.",
           "practice": "Add a cache to fib and compare the call count for fib(30) with and without it.",
           "detail": "Keep a map from input to result; check it before recursing and store after. The call count for fib(30) falls from over a million to about 31, which is the difference between exponential and linear. This is the whole of top-down dynamic programming.",
@@ -2403,7 +2403,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Roughly how many calls does memoised fib(30) make?",
+              "prompt": "Roughly how many calls does memoized fib(30) make?",
               "answer": "About 31 — one per distinct input."
             },
             {
@@ -2606,7 +2606,7 @@
           "title": "Count the Steps",
           "mastery": "State how many comparisons a binary search needs.",
           "practice": "Work out the maximum comparisons for 1000, 1,000,000 and 1,000,000,000 sorted items.",
-          "detail": "It is log2 of n rounded up: about 10, 20 and 30. Those 3 numbers are worth memorising, because they are the reason an index on a billion rows is fast and the reason a linear scan of the same data is not.",
+          "detail": "It is log2 of n rounded up: about 10, 20 and 30. Those 3 numbers are worth memorizing, because they are the reason an index on a billion rows is fast and the reason a linear scan of the same data is not.",
           "proof": "About 10, 20 and 30 comparisons.",
           "pitfall": "Assuming a thousandfold more data means a thousandfold more work, when it means 10 more comparisons.",
           "minutes": 15,
@@ -2982,9 +2982,9 @@
           "title": "Handle the Empty Answer",
           "mastery": "Return the right thing when no window qualifies.",
           "practice": "Run the shortest-run search on [1, 1, 1] with a target of 7 and return 0 rather than a length.",
-          "detail": "Initialise the best length to something impossible — infinity or n + 1 — and convert it to 0 at the end if it never improved. Initialising to 0 instead makes an unsatisfiable input look like a perfect answer, which is a bug that only appears on inputs nobody tests.",
+          "detail": "Initialize the best length to something impossible — infinity or n + 1 — and convert it to 0 at the end if it never improved. Initializing to 0 instead makes an unsatisfiable input look like a perfect answer, which is a bug that only appears on inputs nobody tests.",
           "proof": "The search returns 0 for [1, 1, 1] with target 7.",
-          "pitfall": "Initialising the best length to 0, so the impossible case reports success.",
+          "pitfall": "Initializing the best length to 0, so the impossible case reports success.",
           "minutes": 15,
           "problems": [
             {
@@ -2996,13 +2996,13 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "What do you initialise the best length to on an array of 3, and why?",
+              "prompt": "What do you initialize the best length to on an array of 3, and why?",
               "answer": "Infinity or n + 1, so an unimproved value is detectable."
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "What does initialising the best length to 0 make the impossible case look like?",
+              "prompt": "What does initializing the best length to 0 make the impossible case look like?",
               "answer": "A successful answer of length 0."
             }
           ]
@@ -3170,7 +3170,7 @@
           "title": "Know the n log n Floor",
           "mastery": "Say why no comparison sort can beat n log n in general.",
           "practice": "Work out how many orderings 4 elements have, and how many yes-or-no comparisons are needed to single one out.",
-          "detail": "Four elements have 4 factorial = 24 orderings, and each comparison at best halves the possibilities, so you need at least log2(24), about 5 comparisons. Generalised, log2(n factorial) is about n log n, which is the floor. Counting sorts beat it by not comparing at all.",
+          "detail": "Four elements have 4 factorial = 24 orderings, and each comparison at best halves the possibilities, so you need at least log2(24), about 5 comparisons. Generalized, log2(n factorial) is about n log n, which is the floor. Counting sorts beat it by not comparing at all.",
           "proof": "24 orderings and about 5 comparisons minimum.",
           "pitfall": "Quoting the floor as a law for all sorting, when counting and radix sorts are not comparison sorts.",
           "minutes": 15,
@@ -3228,7 +3228,7 @@
           "title": "Sort as a Preprocessing Step",
           "mastery": "Use a sort to make a later pass simple.",
           "practice": "Find the 2 closest values in [8, 3, 15, 1, 9] by sorting first, and give the pair.",
-          "detail": "Once sorted, the closest pair must be adjacent, so a single pass over 4 gaps finds it — O(n log n) total against O(n^2) for comparing all pairs. Recognising that a sort turns a quadratic problem linear is most of what sorting is for in practice.",
+          "detail": "Once sorted, the closest pair must be adjacent, so a single pass over 4 gaps finds it — O(n log n) total against O(n^2) for comparing all pairs. Recognizing that a sort turns a quadratic problem linear is most of what sorting is for in practice.",
           "proof": "The closest pair is 8 and 9, found in 1 pass after sorting.",
           "pitfall": "Comparing all 10 pairs when sorting first reduces it to 4 comparisons.",
           "minutes": 15,
@@ -3414,7 +3414,7 @@
         },
         {
           "title": "Two Stacks, One Queue",
-          "mastery": "Build first-in-first-out behaviour from 2 last-in-first-out structures.",
+          "mastery": "Build first-in-first-out behavior from 2 last-in-first-out structures.",
           "practice": "Implement a queue with 2 stacks, then enqueue 1, 2, 3 and dequeue once.",
           "detail": "Push arrivals onto stack A. To dequeue, if stack B is empty pour all of A into B — which reverses the order — then pop B. Each item moves at most twice, so the average cost is O(1) even though a single dequeue can be O(n).",
           "proof": "The first dequeue returns 1.",
@@ -3437,7 +3437,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "How many times does an item move between the 2 stacks?",
-              "answer": "At most twice, giving O(1) amortised cost."
+              "answer": "At most twice, giving O(1) amortized cost."
             }
           ]
         },
@@ -3575,7 +3575,7 @@
           "title": "Test for a Palindrome",
           "mastery": "Decide whether a string reads the same both ways.",
           "practice": "Test \"racecar\", \"Racecar\" and \"A man, a plan, a canal: Panama\" for palindromes.",
-          "detail": "Compare the string with its reverse, but normalise first: lower the case and strip anything that is not a letter or digit. The third example is a palindrome only after normalising, which is the whole point of including it.",
+          "detail": "Compare the string with its reverse, but normalize first: lower the case and strip anything that is not a letter or digit. The third example is a palindrome only after normalizing, which is the whole point of including it.",
           "proof": "All 3 report true once case and punctuation are stripped.",
           "pitfall": "Comparing raw strings, which calls \"Racecar\" not a palindrome because R and r differ.",
           "minutes": 15,
@@ -3589,7 +3589,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "What 2 normalisations does \"A man, a plan, a canal: Panama\" need?",
+              "prompt": "What 2 normalizations does \"A man, a plan, a canal: Panama\" need?",
               "answer": "Lower-casing, and stripping non-alphanumeric characters."
             },
             {
@@ -3604,7 +3604,7 @@
           "title": "Split and Join",
           "mastery": "Break a string into parts and rebuild it from them.",
           "practice": "Split \"one,two,,three\" on commas, count the parts, then join them with a hyphen.",
-          "detail": "Splitting on a delimiter keeps empty fields, so this gives 4 parts and not 3 — which is the behaviour that catches people parsing CSV by hand. Join is the inverse, called on the separator with the list as its argument.",
+          "detail": "Splitting on a delimiter keeps empty fields, so this gives 4 parts and not 3 — which is the behavior that catches people parsing CSV by hand. Join is the inverse, called on the separator with the list as its argument.",
           "proof": "You get 4 parts and \"one-two--three\".",
           "pitfall": "Assuming a split drops empty fields, so a 4-field line silently becomes 3.",
           "minutes": 15,
@@ -3847,7 +3847,7 @@
           ]
         },
         {
-          "title": "Recognise a Tree Problem",
+          "title": "Recognize a Tree Problem",
           "mastery": "Spot when data is a tree and which walk it wants.",
           "practice": "Say which walk suits each of these 3: an indented folder listing, the shallowest match, an expression tree.",
           "detail": "Indented output and expression evaluation are depth-first, because a node's result depends on its children. The shallowest match wants breadth-first, because the first match found is then the nearest. Getting this the wrong way round makes a correct algorithm slow rather than wrong.",
@@ -4311,7 +4311,7 @@
         },
         {
           "title": "Spot the Pattern",
-          "mastery": "Recognise when a problem admits a two-pointer solution.",
+          "mastery": "Recognize when a problem admits a two-pointer solution.",
           "practice": "Decide which of these 3 suit 2 pointers: pair sum on sorted data, longest substring, counting word frequencies.",
           "detail": "Two pointers want a linear structure and a rule that lets you move one index without revisiting what it passed. Sorted data or a contiguous stretch usually provides that. A frequency count has no such ordering, so it wants a map instead.",
           "proof": "The first 2 suit pointers; the frequency count wants a map.",
@@ -4492,7 +4492,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Which 2 optimisations together give nearly constant time?",
+              "prompt": "Which 2 optimizations together give nearly constant time?",
               "answer": "Union by size and path compression."
             }
           ]
@@ -5377,7 +5377,7 @@
           "title": "Collect Like Terms",
           "mastery": "Simplify an expression by combining only the terms of the same kind.",
           "practice": "Simplify 5x + 3y - 2x + 7y - 4, then simplify 2a^2 + 3a - a^2.",
-          "detail": "Two terms are alike only if their letters and powers match exactly. Underline each kind in a different colour on the first few, then add the coefficients and leave the letter part untouched. A lone number is its own kind and cannot join anything.",
+          "detail": "Two terms are alike only if their letters and powers match exactly. Underline each kind in a different color on the first few, then add the coefficients and leave the letter part untouched. A lone number is its own kind and cannot join anything.",
           "proof": "3x + 10y - 4, and a^2 + 3a.",
           "pitfall": "Adding x and x^2 together because both involve x.",
           "minutes": 15,
@@ -5443,7 +5443,7 @@
         {
           "title": "Factor Out a Common Term",
           "mastery": "Pull the largest shared factor out of every term in an expression.",
-          "practice": "Factorise 12x + 18, then 5a^2 - 15a, then 6xy + 9x.",
+          "practice": "Factorize 12x + 18, then 5a^2 - 15a, then 6xy + 9x.",
           "detail": "Find the highest number dividing every coefficient, and the lowest power of each letter appearing in every term. Take both out together. Expand your answer back to check — it must return the original exactly, not something close.",
           "proof": "6(2x + 3), 5a(a - 3), and 3x(2y + 3).",
           "pitfall": "Taking out a factor that only divides some of the terms.",
@@ -6016,7 +6016,7 @@
           "title": "Plot and Read Points",
           "mastery": "Place a coordinate pair on a grid and read one back without swapping the axes.",
           "practice": "Plot (3, -2), (-4, 1) and (0, 5), then name the quadrant each falls in.",
-          "detail": "The first number is always the horizontal one. Quadrants are numbered anticlockwise from the top right. A point with a zero coordinate lies on an axis and belongs to no quadrant, which is worth saying rather than guessing at.",
+          "detail": "The first number is always the horizontal one. Quadrants are numbered counterclockwise from the top right. A point with a zero coordinate lies on an axis and belongs to no quadrant, which is worth saying rather than guessing at.",
           "proof": "Fourth, second, and on the positive y-axis between the first and second.",
           "pitfall": "Reading (3, -2) as three up and two across, which lands in the wrong quadrant.",
           "minutes": 15,
@@ -6155,17 +6155,17 @@
         },
         {
           "title": "The Equation of a Circle",
-          "mastery": "Read the centre and radius from a circle's equation, and write one from them.",
-          "practice": "State the centre and radius of (x - 2)^2 + (y + 3)^2 = 25, then write the circle centred at (0, 4) with radius 6.",
+          "mastery": "Read the center and radius from a circle's equation, and write one from them.",
+          "practice": "State the center and radius of (x - 2)^2 + (y + 3)^2 = 25, then write the circle centered at (0, 4) with radius 6.",
           "detail": "The form is (x - h)^2 + (y - k)^2 = r^2. The signs inside flip, so (y + 3)^2 means k is -3. The right-hand side is the radius squared, which is why 25 gives a radius of 5.",
-          "proof": "Centre (2, -3) and radius 5; the second is x^2 + (y - 4)^2 = 36.",
+          "proof": "Center (2, -3) and radius 5; the second is x^2 + (y - 4)^2 = 36.",
           "pitfall": "Reading the right-hand side as the radius rather than as its square.",
           "minutes": 25,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the centre of the circle (x - 5)^2 + (y - 2)^2 = 9?",
+              "prompt": "What is the center of the circle (x - 5)^2 + (y - 2)^2 = 9?",
               "answer": "(5, 2)."
             },
             {
@@ -6177,13 +6177,13 @@
             {
               "slot": 3,
               "weight": "core",
-              "prompt": "State the centre and radius of (x + 1)^2 + (y - 4)^2 = 49.",
-              "answer": "Centre (-1, 4), radius 7."
+              "prompt": "State the center and radius of (x + 1)^2 + (y - 4)^2 = 49.",
+              "answer": "Center (-1, 4), radius 7."
             },
             {
               "slot": 4,
               "weight": "stretch",
-              "prompt": "Write the equation of the circle with centre (3, -2) and radius \\sqrt{13}.",
+              "prompt": "Write the equation of the circle with center (3, -2) and radius \\sqrt{13}.",
               "answer": "(x - 3)^2 + (y + 2)^2 = 13.",
               "hint": "Square the radius when forming the equation."
             },
@@ -6308,7 +6308,7 @@
           "title": "Three Ways to Write It",
           "mastery": "Convert freely between a fraction, a decimal and a percentage.",
           "practice": "Fill the row for 3/8, then for 0.45, then for 12%, giving all three forms each time.",
-          "detail": "A percentage is a fraction with a denominator of 100, so per cent to decimal is a division by 100 and the point moves two places left. Fraction to decimal is just the division the bar was always asking for. Build the table rather than memorising pairs.",
+          "detail": "A percentage is a fraction with a denominator of 100, so per cent to decimal is a division by 100 and the point moves two places left. Fraction to decimal is just the division the bar was always asking for. Build the table rather than memorizing pairs.",
           "proof": "3/8 = 0.375 = 37.5%; 0.45 = 9/20 = 45%; 12% = 0.12 = 3/25.",
           "pitfall": "Moving the decimal point the wrong way, turning 12% into 1.2 rather than 0.12.",
           "minutes": 15,
@@ -6793,7 +6793,7 @@
         {
           "title": "Multiply and Divide",
           "mastery": "Multiply fractions straight across, and divide by inverting the second one.",
-          "practice": "Compute 3/5 x 10/9 and 4/7 divided by 2/3, cancelling before you multiply.",
+          "practice": "Compute 3/5 x 10/9 and 4/7 divided by 2/3, canceling before you multiply.",
           "detail": "Multiplication needs no common denominator: tops together, bottoms together. Cancel any factor shared by a numerator and a denominator first, even across the two fractions, and the arithmetic stays small. Division is multiplication by the reciprocal, and only the divisor flips.",
           "proof": "2/3 and 6/7.",
           "pitfall": "Inverting the first fraction rather than the second when dividing.",
@@ -6808,7 +6808,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Compute 7/8 x 4/21, cancelling common factors before multiplying.",
+              "prompt": "Compute 7/8 x 4/21, canceling common factors before multiplying.",
               "answer": "1/6.",
               "hint": "The 4 cancels with the 8 and the 7 cancels with the 21."
             },
@@ -7013,7 +7013,7 @@
         },
         {
           "title": "Read a Graph",
-          "mastery": "Extract intercepts, turning points and behaviour from the picture of a function.",
+          "mastery": "Extract intercepts, turning points and behavior from the picture of a function.",
           "practice": "For y = x^2 - 4x + 3, find both x-intercepts, the y-intercept and the vertex.",
           "detail": "The y-intercept is the value at x = 0. The x-intercepts are the roots. For a parabola the vertex sits halfway between the roots, so average them and substitute back. Every one of these is a computation, and the sketch is the check.",
           "proof": "Intercepts at x = 1 and x = 3, y-intercept 3, vertex at (2, -1).",
@@ -7897,7 +7897,7 @@
         {
           "title": "Add and Subtract Signs",
           "mastery": "Handle a minus sign that sits next to another sign without guessing.",
-          "practice": "Work out 5 - (-3) and -4 + 7, then say which of the two signs cancelled.",
+          "practice": "Work out 5 - (-3) and -4 + 7, then say which of the two signs canceled.",
           "detail": "Subtracting a negative is adding. Rewrite every double sign as a single one before you compute anything: 5 - (-3) becomes 5 + 3. Addition of a negative is subtraction, so -4 + 7 is 7 - 4 with the sign of the larger magnitude.",
           "proof": "8 and 3; the double minus in the first became a plus.",
           "pitfall": "Reading -6 - 2 as -4 by treating the second minus as a subtraction of a negative.",
@@ -8115,7 +8115,7 @@
         },
         {
           "title": "Implied Brackets in Fractions",
-          "mastery": "Recognise that a fraction bar groups its whole numerator and denominator.",
+          "mastery": "Recognize that a fraction bar groups its whole numerator and denominator.",
           "practice": "Evaluate (8 + 4) / (3 + 1) and compare it with 8 + 4 / 3 + 1.",
           "detail": "A horizontal bar is a bracket you cannot see. The moment the expression goes on one line, those brackets have to be written. This is the single most common transcription error when copying working into a calculator, and it is silent.",
           "proof": "The first is 3; the second is about 10.33, because only the 4 is divided.",
@@ -8187,43 +8187,43 @@
       ],
       "steps": [
         {
-          "title": "Polynomial Behaviour",
-          "mastery": "Predict the shape and end behaviour of a polynomial from its leading term.",
+          "title": "Polynomial Behavior",
+          "mastery": "Predict the shape and end behavior of a polynomial from its leading term.",
           "practice": "Say what y = -2x^3 + 5x does as x goes to plus and minus infinity, and give its maximum number of roots.",
           "detail": "The highest power dominates once x is large, so it alone fixes both ends. Odd degree means the ends go opposite ways; a negative leading coefficient flips them. Degree caps the number of roots and the number of turning points at one less.",
           "proof": "Down on the right, up on the left, and at most 3 roots.",
-          "pitfall": "Reading the end behaviour off the constant term rather than the leading one.",
+          "pitfall": "Reading the end behavior off the constant term rather than the leading one.",
           "minutes": 25,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the end behaviour of y = 3x^4 as x → +∞?",
+              "prompt": "What is the end behavior of y = 3x^4 as x → +∞?",
               "answer": "y → +∞."
             },
             {
               "slot": 2,
               "weight": "warmup",
-              "prompt": "What is the end behaviour of y = -5x^2 as x → -∞?",
+              "prompt": "What is the end behavior of y = -5x^2 as x → -∞?",
               "answer": "y → -∞."
             },
             {
               "slot": 3,
               "weight": "core",
-              "prompt": "Describe the end behaviour of y = -2x^3 + 5x as x → +∞ and x → -∞, and state the maximum possible number of real roots.",
+              "prompt": "Describe the end behavior of y = -2x^3 + 5x as x → +∞ and x → -∞, and state the maximum possible number of real roots.",
               "answer": "As x→+∞, y→-∞; as x→-∞, y→+∞; at most 3 real roots."
             },
             {
               "slot": 4,
               "weight": "stretch",
-              "prompt": "Explain why the constant term does not influence the end behaviour of the polynomial y = 4x^5 - 7x + 9.",
-              "answer": "End behaviour is determined solely by the leading term 4x^5; lower-degree terms become negligible as |x| grows, so the constant 9 has no effect.",
+              "prompt": "Explain why the constant term does not influence the end behavior of the polynomial y = 4x^5 - 7x + 9.",
+              "answer": "End behavior is determined solely by the leading term 4x^5; lower-degree terms become negligible as |x| grows, so the constant 9 has no effect.",
               "hint": "Consider the dominant term for large |x|."
             },
             {
               "slot": 5,
               "weight": "stretch",
-              "prompt": "For y = -x^4 + 2x^3 - x + 1, state the end behaviour as x → ±∞ and the greatest number of real zeros it can have.",
+              "prompt": "For y = -x^4 + 2x^3 - x + 1, state the end behavior as x → ±∞ and the greatest number of real zeros it can have.",
               "answer": "As x→±∞, y→-∞; at most 4 real zeros.",
               "hint": "Focus on the leading term's degree and sign."
             }
@@ -8233,7 +8233,7 @@
           "title": "Rational Functions",
           "mastery": "Locate the asymptotes and holes of a rational function.",
           "practice": "Find every asymptote and hole of y = (x^2 - 4)/(x^2 - x - 2).",
-          "detail": "Factor both parts first. A factor cancelling top and bottom is a hole; one left in the denominator is a vertical asymptote. The horizontal behaviour comes from comparing degrees — equal degrees give the ratio of leading coefficients.",
+          "detail": "Factor both parts first. A factor canceling top and bottom is a hole; one left in the denominator is a vertical asymptote. The horizontal behavior comes from comparing degrees — equal degrees give the ratio of leading coefficients.",
           "proof": "A hole at x = 2, a vertical asymptote at x = -1, and y = 1 horizontally.",
           "pitfall": "Calling every zero of the denominator an asymptote, when a shared factor gives a hole.",
           "minutes": 30,
@@ -8390,11 +8390,11 @@
       "steps": [
         {
           "title": "Probability as a Fraction",
-          "mastery": "Express a probability as favourable outcomes over total outcomes.",
+          "mastery": "Express a probability as favorable outcomes over total outcomes.",
           "practice": "Find the probability of drawing a heart from a standard 52-card deck, and of drawing a face card.",
           "detail": "Count the whole sample space first and write it down, then count what counts as success. Every probability lands between 0 and 1, so a result outside that is an arithmetic error rather than a surprising finding.",
           "proof": "13/52 = 1/4, and 12/52 = 3/13.",
-          "pitfall": "Counting the favourable outcomes correctly and the total wrongly.",
+          "pitfall": "Counting the favorable outcomes correctly and the total wrongly.",
           "minutes": 15
         },
         {
@@ -8419,7 +8419,7 @@
           "title": "With and Without Replacement",
           "mastery": "Adjust the second probability when the first draw changes the pool.",
           "practice": "From 5 red and 3 blue counters, find P(two reds) with replacement and without.",
-          "detail": "With replacement the pool resets and the two draws are independent. Without, both numerator and denominator drop by one for the colour taken. Write the second fraction out fully rather than reusing the first.",
+          "detail": "With replacement the pool resets and the two draws are independent. Without, both numerator and denominator drop by one for the color taken. Write the second fraction out fully rather than reusing the first.",
           "proof": "25/64 with, and 5/14 without.",
           "pitfall": "Leaving the denominator at 8 on the second draw after removing a counter.",
           "minutes": 25
@@ -8428,7 +8428,7 @@
           "title": "Tree Diagrams",
           "mastery": "Lay out a two-stage experiment as a tree and read probabilities off it.",
           "practice": "Draw the tree for taking 2 sweets from a bag of 4 toffees and 6 mints, then find P(one of each).",
-          "detail": "Multiply along a branch, add across branches. Every set of branches leaving a node must total 1, which is the check that catches a mislabelled tree before you use it. A mixed outcome needs both orders added, not one.",
+          "detail": "Multiply along a branch, add across branches. Every set of branches leaving a node must total 1, which is the check that catches a mislabeled tree before you use it. A mixed outcome needs both orders added, not one.",
           "proof": "8/15, from the two mixed branches at 4/15 each.",
           "pitfall": "Finding one mixed branch and forgetting the other order.",
           "minutes": 25
@@ -8561,7 +8561,7 @@
       ],
       "steps": [
         {
-          "title": "Recognise a Quadratic",
+          "title": "Recognize a Quadratic",
           "mastery": "Identify whether an expression or equation is quadratic, and name a, b and c.",
           "practice": "Say which of 3x^2 - 7x + 2, x^3 + 1, 5x - 2 and 4 - 9x^2 are quadratic.",
           "detail": "A quadratic has a highest power of exactly 2 in one variable. Rewrite each one in the form ax^2 + bx + c before deciding, filling in zeros where a term is absent. For 4 - 9x^2 that is -9x^2 + 0x + 4, so a is -9, b is 0 and c is 4.",
@@ -8745,7 +8745,7 @@
           "practice": "For x^2 - 9x + 20 = 0, 3x^2 + 5x - 1 = 0 and x^2 + 4x - 6 = 0, name the best method for each and solve one.",
           "detail": "Try factoring first and abandon it after about twenty seconds. Complete the square when the question wants a vertex or when a is 1 and b is even. Use the formula when nothing factors neatly. Spending ten seconds choosing saves more than it costs.",
           "proof": "Factoring, the formula, and completing the square; x^2 - 9x + 20 factors to (x - 4)(x - 5).",
-          "pitfall": "Reaching for the formula every time, which turns a ten-second factorisation into two minutes of arithmetic.",
+          "pitfall": "Reaching for the formula every time, which turns a ten-second factorization into two minutes of arithmetic.",
           "minutes": 30,
           "problems": [
             {
@@ -8847,7 +8847,7 @@
         },
         {
           "title": "Where Series Appear",
-          "mastery": "Recognise a sequence or series inside a problem not stated as one.",
+          "mastery": "Recognize a sequence or series inside a problem not stated as one.",
           "practice": "A loan of 1000 grows 5% a year with no repayments. Write the balance after n years and find n when it passes 2000.",
           "detail": "Repeated proportional change is geometric; repeated fixed change is arithmetic. Decide which before writing anything. Compound interest, population growth and depreciation are all the same geometric sequence wearing different words.",
           "proof": "1000 x 1.05^n, which passes 2000 during year 15.",
@@ -8878,12 +8878,12 @@
           "minutes": 20
         },
         {
-          "title": "Spread, Not Just Centre",
+          "title": "Spread, Not Just Center",
           "mastery": "Measure how spread out a dataset is with range and interquartile range.",
           "practice": "For 2, 4, 4, 5, 9, 12, 15, find the range and the interquartile range.",
           "detail": "Range is max minus min and one outlier controls it. The IQR is the middle half — the upper quartile minus the lower — and ignores the tails, which is what makes it the honest one. Two sets can share a mean and share nothing else.",
           "proof": "Range 13, IQR 8, from quartiles at 4 and 12.",
-          "pitfall": "Reporting a centre with no spread, so two very different sets look identical.",
+          "pitfall": "Reporting a center with no spread, so two very different sets look identical.",
           "minutes": 25
         },
         {
@@ -8899,7 +8899,7 @@
           "title": "Standard Deviation",
           "mastery": "Compute a standard deviation and say what it means for the data.",
           "practice": "Find the standard deviation of 2, 4, 4, 4, 5, 5, 7, 9.",
-          "detail": "Subtract the mean from each value, square the differences, average those, then take the square root. The squaring is what stops the positives and negatives cancelling. The result is in the same units as the data, which the variance is not, and that is why it is the one quoted.",
+          "detail": "Subtract the mean from each value, square the differences, average those, then take the square root. The squaring is what stops the positives and negatives canceling. The result is in the same units as the data, which the variance is not, and that is why it is the one quoted.",
           "proof": "2, since the variance is 4.",
           "pitfall": "Forgetting the final square root and reporting the variance instead.",
           "minutes": 30
@@ -8949,9 +8949,9 @@
           "title": "The Three Ratios",
           "mastery": "State sine, cosine and tangent as ratios of sides in a right triangle.",
           "practice": "In a right triangle with opposite 3, adjacent 4 and hypotenuse 5, write sin, cos and tan of the angle.",
-          "detail": "Opposite and adjacent are named from the angle you are working with, and only the hypotenuse is fixed. Label the triangle from that angle every single time before writing a ratio. SOH CAH TOA is the mnemonic; the labelling is the skill.",
+          "detail": "Opposite and adjacent are named from the angle you are working with, and only the hypotenuse is fixed. Label the triangle from that angle every single time before writing a ratio. SOH CAH TOA is the mnemonic; the labeling is the skill.",
           "proof": "3/5, 4/5 and 3/4.",
-          "pitfall": "Labelling opposite and adjacent relative to the right angle rather than to the angle in question.",
+          "pitfall": "Labeling opposite and adjacent relative to the right angle rather than to the angle in question.",
           "minutes": 20
         },
         {
@@ -8976,9 +8976,9 @@
           "title": "Build the Unit Circle",
           "mastery": "Read sine and cosine off the unit circle for the standard angles.",
           "practice": "Give sin and cos of 0, 30, 45, 60 and 90 degrees without a table.",
-          "detail": "Cosine is the x coordinate of the point on the circle and sine is the y. Two triangles — 30-60-90 and 45-45-90 — generate every standard value, so draw those once and read the rest off them. Derived beats memorised because it comes back after a month away.",
+          "detail": "Cosine is the x coordinate of the point on the circle and sine is the y. Two triangles — 30-60-90 and 45-45-90 — generate every standard value, so draw those once and read the rest off them. Derived beats memorized because it comes back after a month away.",
           "proof": "Sine runs 0, 1/2, root2/2, root3/2, 1; cosine runs the same values backwards.",
-          "pitfall": "Memorising the table and losing it, rather than deriving it from two triangles.",
+          "pitfall": "Memorizing the table and losing it, rather than deriving it from two triangles.",
           "minutes": 30
         },
         {
@@ -9200,9 +9200,9 @@
           "title": "Play Them in Time",
           "mastery": "Change between chords cleanly at a steady tempo.",
           "practice": "Play C, F, G, C at 60 BPM, 1 chord per 2 beats, with no gap at the changes.",
-          "detail": "The difficulty is the change, not the chord, so practise the join: play the last beat of one chord and the first of the next, 8 times, before running the sequence. A gap at the change is the thing a listener notices and the player does not.",
+          "detail": "The difficulty is the change, not the chord, so practice the join: play the last beat of one chord and the first of the next, 8 times, before running the sequence. A gap at the change is the thing a listener notices and the player does not.",
           "proof": "4 chords in 8 beats at 60 with no audible gap between them.",
-          "pitfall": "Practising the 4 chords separately, which leaves every change unpractised.",
+          "pitfall": "Practicing the 4 chords separately, which leaves every change unpracticed.",
           "minutes": 15,
           "problems": [
             {
@@ -9356,11 +9356,11 @@
           ]
         },
         {
-          "title": "Harmonise Your Own Tune",
+          "title": "Harmonize Your Own Tune",
           "mastery": "Choose chords that support a melody you wrote.",
-          "practice": "Harmonise your 8-bar melody with no more than 5 chords, changing at most once per bar.",
+          "practice": "Harmonize your 8-bar melody with no more than 5 chords, changing at most once per bar.",
           "detail": "Fewer chords, changed less often, almost always sounds better than more: a chord per beat leaves no room for the melody to be the subject. Five chords across 8 bars is a reasonable ceiling for a first attempt, and the cadence is the 1 place worth spending an extra change.",
-          "proof": "8 bars harmonised with 5 chords or fewer.",
+          "proof": "8 bars harmonized with 5 chords or fewer.",
           "pitfall": "Changing chord on every beat, which buries the melody under harmony.",
           "minutes": 15,
           "problems": [
@@ -9762,7 +9762,7 @@
         },
         {
           "title": "Build the Interval Set",
-          "mastery": "Add intervals to your recognisable set one at a time.",
+          "mastery": "Add intervals to your recognizable set one at a time.",
           "practice": "Add a major third to your set of 2 and score 10 more, then decide whether to add a fourth.",
           "detail": "One at a time, scoring each round. Note the confusions by pair rather than only the total: mistaking a major third for a perfect fourth is a specific thing to drill, and it disappears from view if you only record 7 out of 10.",
           "proof": "A score out of 10 for the set of 3, with the confused pairs written down.",
@@ -9785,7 +9785,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why record the confused pair rather than just 7 out of 10?",
-              "answer": "The pair names what to practise; the total does not."
+              "answer": "The pair names what to practice; the total does not."
             }
           ]
         },
@@ -9911,7 +9911,7 @@
           "practice": "Record your scores for 3 exercise types each week and compare 4 weeks of figures.",
           "detail": "Ear training improves slowly and invisibly, which is why most people stop. Three numbers a week — intervals, chord quality, progressions — turns that into a line you can see. A score that has not moved in 4 weeks means the set is wrong, not that you cannot do it.",
           "proof": "4 weeks of 3 scores each, with any flat line identified.",
-          "pitfall": "Practising without scoring, which leaves no way to tell progress from familiarity.",
+          "pitfall": "Practicing without scoring, which leaves no way to tell progress from familiarity.",
           "minutes": 15,
           "problems": [
             {
@@ -9929,7 +9929,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Practising without a score across 4 weeks makes what impossible to tell?",
+              "prompt": "Practicing without a score across 4 weeks makes what impossible to tell?",
               "answer": "Progress from mere familiarity."
             }
           ]
@@ -10011,7 +10011,7 @@
           "mastery": "Tell a two-part form from a three-part one.",
           "practice": "Label 2 short pieces as AB or ABA and say what makes each what it is.",
           "detail": "Binary is a statement and a contrast; ternary adds a return, which changes how the piece feels far more than the extra section suggests. The return is what makes ternary sound resolved and binary sound like it stopped.",
-          "proof": "1 piece labelled AB and 1 ABA, with the return identified.",
+          "proof": "1 piece labeled AB and 1 ABA, with the return identified.",
           "pitfall": "Calling any 3-section piece ternary, when ABC is 3 sections and no return.",
           "minutes": 15,
           "problems": [
@@ -10024,7 +10024,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Is a piece in 3 sections labelled ABC ternary?",
+              "prompt": "Is a piece in 3 sections labeled ABC ternary?",
               "answer": "No — ternary needs the return, not just 3 sections."
             },
             {
@@ -10041,7 +10041,7 @@
           "practice": "Map a 3-minute song into verse, chorus and bridge, with a bar count for each section.",
           "detail": "The chorus repeats with the same words, the verse repeats with new ones, and the bridge appears once. Counting bars usually shows 8 or 16 per section and a chorus that arrives sooner than you remember — often inside the first 60 seconds.",
           "proof": "A map of the song with a bar count against every section.",
-          "pitfall": "Labelling by intensity rather than by repetition, which calls any loud section a chorus.",
+          "pitfall": "Labeling by intensity rather than by repetition, which calls any loud section a chorus.",
           "minutes": 15,
           "problems": [
             {
@@ -10154,7 +10154,7 @@
         {
           "title": "Build a Form Yourself",
           "mastery": "Write a short piece to a plan you chose in advance.",
-          "practice": "Plan 24 bars as ABA with 8 bars each, then write it and check the return is recognisable.",
+          "practice": "Plan 24 bars as ABA with 8 bars each, then write it and check the return is recognizable.",
           "detail": "Write the plan before the notes: 8 bars of A, 8 of contrasting B, then A again with 1 deliberate change. Deciding the architecture first is what stops a piece wandering, and the deliberate change in the return is what stops it being a repeat.",
           "proof": "24 bars in ABA with the return carrying 1 intentional change.",
           "pitfall": "Composing forwards until it feels finished, which usually produces 40 bars of A with no shape.",
@@ -10341,8 +10341,8 @@
         },
         {
           "title": "Write Four Parts",
-          "mastery": "Harmonise a melody in four voices with sensible spacing.",
-          "practice": "Harmonise a 4-note melody in 4 parts, keeping the upper 3 voices within an octave of each other.",
+          "mastery": "Harmonize a melody in four voices with sensible spacing.",
+          "practice": "Harmonize a 4-note melody in 4 parts, keeping the upper 3 voices within an octave of each other.",
           "detail": "The bass may sit low, but gaps between the upper 3 make the chord sound hollow. Double the root when a triad has to fill 4 voices, and avoid doubling the third, which thickens the chord's quality more than it needs.",
           "proof": "4 chords in 4 parts with the upper 3 voices inside an octave.",
           "pitfall": "Leaving a tenth between the 2 upper voices, which sounds like 2 separate textures.",
@@ -10369,7 +10369,7 @@
           ]
         },
         {
-          "title": "Analyse Eight Bars",
+          "title": "Analyze Eight Bars",
           "mastery": "Label the harmony of a passage in numerals.",
           "practice": "Take 8 bars of a chorale and write the numeral for each chord, marking any 2 inversions.",
           "detail": "Identify the bass note, then the chord above it, then the numeral and inversion. Working bass-first is faster and less error-prone than looking at the whole stack. The point of the labels is to see the pattern: most chorale phrases turn out to use 5 or 6 chords.",
@@ -10380,7 +10380,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Which note of a 4-note stack do you identify first when labelling it?",
+              "prompt": "Which note of a 4-note stack do you identify first when labeling it?",
               "answer": "The bass."
             },
             {
@@ -10400,7 +10400,7 @@
         {
           "title": "Hear Your Own Writing",
           "mastery": "Play back what you wrote and correct what the page hid.",
-          "practice": "Play your 4-part harmonisation of 4 chords and list 2 things you would change.",
+          "practice": "Play your 4-part harmonization of 4 chords and list 2 things you would change.",
           "detail": "Writing that looks correct often sounds thin, muddy or static, and only playing it reveals which. List 2 specific changes — a doubled third, a gap between voices, a bass that leapt — rather than a general impression, then make them and play it again.",
           "proof": "2 specific changes listed and applied, with the passage played before and after.",
           "pitfall": "Accepting writing that follows the rules without ever hearing it.",
@@ -10502,7 +10502,7 @@
           "title": "Improvise Over Two Chords",
           "mastery": "Change your note choices when the harmony changes.",
           "practice": "Improvise 8 bars over 2 bars each of C and F, landing on a chord tone at every change.",
-          "detail": "The change is the only moment that must be right: hit a note from the new chord on its first beat and the rest follows. Practise the changes alone — play only the first beat of each chord for 8 bars — before improvising through them.",
+          "detail": "The change is the only moment that must be right: hit a note from the new chord on its first beat and the rest follows. Practice the changes alone — play only the first beat of each chord for 8 bars — before improvising through them.",
           "proof": "4 chord changes, each met with a note belonging to the arriving chord.",
           "pitfall": "Playing a C scale through the F bars, which sounds fine until the B lands.",
           "minutes": 15,
@@ -10522,7 +10522,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "What do you practise before improvising through 4 changes?",
+              "prompt": "What do you practice before improvising through 4 changes?",
               "answer": "The first beat of each chord alone."
             }
           ]
@@ -10934,7 +10934,7 @@
         },
         {
           "title": "Second Inversion",
-          "mastery": "Produce and recognise a triad with its fifth in the bass.",
+          "mastery": "Produce and recognize a triad with its fifth in the bass.",
           "practice": "Write C major in second inversion, naming the 3 notes, and say which degree is lowest.",
           "detail": "Move E up too and you get G C E, with the fifth in the bass. A triad has 3 positions — root, first and second inversion — because it has 3 notes, and after 3 moves you are back where you started an octave up.",
           "proof": "G C E, with the fifth in the bass.",
@@ -11153,7 +11153,7 @@
           "title": "Learn the Sharp Order",
           "mastery": "Recite the order sharps and flats are always written in.",
           "practice": "Write the 7 sharps in order, then the 7 flats, and check the 2 lists are reverses.",
-          "detail": "Sharps: F C G D A E B. Flats: B E A D G C F. The order is fixed, so a key signature with 3 sharps always has F, C and G sharp — never some other 3. Knowing the order means you never have to memorise the signatures themselves.",
+          "detail": "Sharps: F C G D A E B. Flats: B E A D G C F. The order is fixed, so a key signature with 3 sharps always has F, C and G sharp — never some other 3. Knowing the order means you never have to memorize the signatures themselves.",
           "proof": "F C G D A E B and B E A D G C F, each the reverse of the other.",
           "pitfall": "Assuming 3 sharps could be any 3 notes, which makes every signature a separate thing to learn.",
           "minutes": 15,
@@ -11298,7 +11298,7 @@
           "title": "Transpose a Melody",
           "mastery": "Rewrite a tune in a new key keeping the intervals intact.",
           "practice": "Transpose a 4-bar melody from C major up to D major, 1 tone higher.",
-          "detail": "Move every note up by the same interval, then apply the new signature — 2 sharps for D. Work in degrees rather than letters: degree 3 stays degree 3, which is what keeps the tune recognisable. Check the highest and lowest notes are still playable afterwards.",
+          "detail": "Move every note up by the same interval, then apply the new signature — 2 sharps for D. Work in degrees rather than letters: degree 3 stays degree 3, which is what keeps the tune recognizable. Check the highest and lowest notes are still playable afterwards.",
           "proof": "The 4 bars in D major with 2 sharps, and every interval unchanged.",
           "pitfall": "Moving the notes without changing the signature, which keeps the letters right and the tune wrong.",
           "minutes": 15,
@@ -11488,7 +11488,7 @@
           "practice": "Hold a D drone and play the 7 notes of D Dorian over it for 60 seconds.",
           "detail": "A mode played as a scale sounds like the major scale it came from; played over a drone on its own tonic it does not. The drone supplies the context that makes D home, which is the whole mechanism, and 60 seconds is long enough for the ear to accept it.",
           "proof": "The 7 notes sound like D Dorian rather than like C major.",
-          "pitfall": "Practising modes as scales with no bass, which trains the fingers and not the ear.",
+          "pitfall": "Practicing modes as scales with no bass, which trains the fingers and not the ear.",
           "minutes": 15,
           "problems": [
             {
@@ -11512,12 +11512,12 @@
           ]
         },
         {
-          "title": "Harmonise a Mode",
+          "title": "Harmonize a Mode",
           "mastery": "Find the chords a mode produces on its own degrees.",
           "practice": "Build triads on degrees 1, 4 and 5 of D Dorian and name their qualities.",
           "detail": "D F A is minor, G B D is major, A C E is minor. The major chord on degree 4 is Dorian's signature — in a natural minor that chord is minor — so the raised sixth shows up in the harmony as well as the scale.",
           "proof": "Minor, major, minor on degrees 1, 4 and 5.",
-          "pitfall": "Harmonising a mode with its parent major key's chords, which loses what made the mode different.",
+          "pitfall": "Harmonizing a mode with its parent major key's chords, which loses what made the mode different.",
           "minutes": 15,
           "problems": [
             {
@@ -11703,9 +11703,9 @@
           "title": "Read Without Counting",
           "mastery": "Name a note on sight rather than working it out from a landmark.",
           "practice": "Name 20 random notes across both staves in under 60 seconds, checking each answer.",
-          "detail": "Use 3 or 4 landmarks — middle C, treble G on the second line, bass F on the fourth — and read neighbours as steps from them. Twenty notes in a minute is 3 seconds each, which is too fast to count up from the bottom line and slow enough to be reachable.",
+          "detail": "Use 3 or 4 landmarks — middle C, treble G on the second line, bass F on the fourth — and read neighbors as steps from them. Twenty notes in a minute is 3 seconds each, which is too fast to count up from the bottom line and slow enough to be reachable.",
           "proof": "20 correct names inside 60 seconds.",
-          "pitfall": "Practising in order rather than at random, which trains the sequence and not the recognition.",
+          "pitfall": "Practicing in order rather than at random, which trains the sequence and not the recognition.",
           "minutes": 15,
           "problems": [
             {
@@ -11774,10 +11774,10 @@
         {
           "title": "Know Your Recovery Points",
           "mastery": "Choose places in a piece you can restart from cleanly.",
-          "practice": "Mark 4 recovery points in a 32-bar piece and practise entering at each one cold.",
-          "detail": "When something goes wrong in performance you need the next place you can rejoin — usually a section start or a phrase beginning. Four across 32 bars is about right. Practise starting from each without a run-up, because that is how you will have to use them.",
+          "practice": "Mark 4 recovery points in a 32-bar piece and practice entering at each one cold.",
+          "detail": "When something goes wrong in performance you need the next place you can rejoin — usually a section start or a phrase beginning. Four across 32 bars is about right. Practice starting from each without a run-up, because that is how you will have to use them.",
           "proof": "4 marked points, each entered cleanly from cold.",
-          "pitfall": "Only ever practising from the beginning, which leaves no way back in after a slip.",
+          "pitfall": "Only ever practicing from the beginning, which leaves no way back in after a slip.",
           "minutes": 15,
           "problems": [
             {
@@ -11795,7 +11795,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Why practise entering each of the 4 cold rather than with a run-up?",
+              "prompt": "Why practice entering each of the 4 cold rather than with a run-up?",
               "answer": "That is how they will be used in performance."
             }
           ]
@@ -11804,9 +11804,9 @@
           "title": "Perform for One Person",
           "mastery": "Play for a listener and notice what changes.",
           "practice": "Play the piece for 1 person and write down 3 things that went differently from practice.",
-          "detail": "An audience of 1 produces most of the effect of an audience of 50, at a fraction of the cost. Expect the tempo to be faster and the dynamics flatter. Writing 3 specific differences gives you something to practise rather than a general anxiety.",
+          "detail": "An audience of 1 produces most of the effect of an audience of 50, at a fraction of the cost. Expect the tempo to be faster and the dynamics flatter. Writing 3 specific differences gives you something to practice rather than a general anxiety.",
           "proof": "3 written differences from your solo practice.",
-          "pitfall": "Waiting for a real performance to find out what changes, at which point it is too late to practise for it.",
+          "pitfall": "Waiting for a real performance to find out what changes, at which point it is too late to practice for it.",
           "minutes": 15,
           "problems": [
             {
@@ -11862,7 +11862,7 @@
           "title": "Handle the Slip",
           "mastery": "Continue past a visible mistake without breaking the performance.",
           "practice": "Perform the piece introducing 1 deliberate wrong note, and carry on as though nothing happened.",
-          "detail": "Audiences notice reactions far more than notes. Practising a deliberate slip removes the flinch, which is the thing that turns a missed note into a visible failure. Keep the face and the tempo steady and most listeners will not register it at all.",
+          "detail": "Audiences notice reactions far more than notes. Practicing a deliberate slip removes the flinch, which is the thing that turns a missed note into a visible failure. Keep the face and the tempo steady and most listeners will not register it at all.",
           "proof": "A performance with a known wrong note and no visible reaction to it.",
           "pitfall": "Grimacing or stopping, which tells the room about a note most of them missed.",
           "minutes": 15,
@@ -11922,7 +11922,7 @@
           "practice": "Write 5 things you will do in the hour before performing, in order, and use them twice.",
           "detail": "A routine removes decisions from an hour with no capacity for them: warm up, run 2 recovery points, breathe, check the instrument, wait. Nothing new on the day. Using it twice before it matters is what makes it familiar rather than another thing to remember.",
           "proof": "5 written items, used before 2 separate performances.",
-          "pitfall": "Practising something new in the hour before playing, which raises arousal and displaces what was ready.",
+          "pitfall": "Practicing something new in the hour before playing, which raises arousal and displaces what was ready.",
           "minutes": 15,
           "problems": [
             {
@@ -11934,7 +11934,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "May you practise 1 new passage in that hour?",
+              "prompt": "May you practice 1 new passage in that hour?",
               "answer": "No — nothing new on the day."
             },
             {
@@ -11999,7 +11999,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which is a plan: \"bar 17 fell apart at tempo\" or \"it went badly\"?",
-              "answer": "The first — it names what to practise."
+              "answer": "The first — it names what to practice."
             }
           ]
         },
@@ -12079,7 +12079,7 @@
           "title": "Resolve Five to One",
           "mastery": "Hear and play the strongest cadence in tonal music.",
           "practice": "Play G7 then C at 60 BPM, then play G7 alone and stop, and describe the difference.",
-          "detail": "The dominant seventh contains the note a semitone below the tonic's third, so it leans. Stopping on G7 leaves the phrase open, which is the clearest demonstration available that harmony creates expectation rather than just colour.",
+          "detail": "The dominant seventh contains the note a semitone below the tonic's third, so it leans. Stopping on G7 leaves the phrase open, which is the clearest demonstration available that harmony creates expectation rather than just color.",
           "proof": "The G7 to C version sounds finished and the G7 alone does not.",
           "pitfall": "Playing G major rather than G7, which resolves less strongly and blunts the point.",
           "minutes": 15,
@@ -12168,7 +12168,7 @@
           "practice": "Label these 4 endings: 5 to 1, 4 to 1, 1 to 5, and 5 to 6-minor.",
           "detail": "Perfect, plagal, imperfect and interrupted. The first 2 close, the third leaves the door open, the fourth substitutes a minor chord where the ear expected the tonic. Play all 4 in C major and label them by what they do rather than by the name.",
           "proof": "Perfect, plagal, imperfect and interrupted, each played in C major.",
-          "pitfall": "Labelling any ending on the tonic as perfect, when 4 to 1 is plagal.",
+          "pitfall": "Labeling any ending on the tonic as perfect, when 4 to 1 is plagal.",
           "minutes": 15,
           "problems": [
             {
@@ -12192,9 +12192,9 @@
           ]
         },
         {
-          "title": "Harmonise a Melody",
+          "title": "Harmonize a Melody",
           "mastery": "Choose chords that fit a given tune.",
-          "practice": "Harmonise an 8-note melody in C major using only C, F and G, 1 chord per 2 notes.",
+          "practice": "Harmonize an 8-note melody in C major using only C, F and G, 1 chord per 2 notes.",
           "detail": "For each pair of notes, pick the chord that contains them, preferring 1, 4 and 5 for the first attempt. Where 2 chords both fit, the choice is yours and the bass line decides it. Where none fits, the melody note is probably passing rather than structural.",
           "proof": "4 chords chosen, each containing the melody notes it sits under.",
           "pitfall": "Changing chord on every note, which produces harmony nobody can hear as movement.",
@@ -12513,7 +12513,7 @@
           "title": "Play Against the Beat",
           "mastery": "Place notes on the off-beat while the pulse stays on the beat.",
           "practice": "Clap only the ands of a bar of 4 at 70 BPM while tapping your foot on 1, 2, 3, 4.",
-          "detail": "The foot keeps the beat and the hands take the off-beats, which is harder than it sounds because the two want to synchronise. Start by clapping the and of beat 2 only, then add the others. Four claps against 4 taps, none of them together.",
+          "detail": "The foot keeps the beat and the hands take the off-beats, which is harder than it sounds because the two want to synchronize. Start by clapping the and of beat 2 only, then add the others. Four claps against 4 taps, none of them together.",
           "proof": "4 claps and 4 taps alternate, with no clap landing on a tap.",
           "pitfall": "Drifting until the claps land on the beat, at which point you are playing the pulse.",
           "minutes": 15,
@@ -12703,7 +12703,7 @@
           "practice": "Play a 1-octave major scale up and down with your right hand at 60 BPM, 1 note per beat.",
           "detail": "One note per click at 60 is slow enough that unevenness is audible. Listen for the join where the thumb passes under, which is where almost every scale develops a bump. Play it 4 times and only raise the tempo when all 4 are even.",
           "proof": "8 notes up and 8 down with no audible gap at the thumb crossing.",
-          "pitfall": "Raising the tempo before the crossing is even, which practises the bump faster.",
+          "pitfall": "Raising the tempo before the crossing is even, which practices the bump faster.",
           "minutes": 15,
           "problems": [
             {
@@ -12732,7 +12732,7 @@
           "practice": "Play a 2-octave major scale hands together at 50 BPM, 1 note per beat, then at 70.",
           "detail": "Hands together doubles the coordination problem at the crossings, because the 2 thumbs pass at different points. Start slower than the single-hand tempo, not faster. If one hand leads, play 4 bars of the passage where they diverge rather than restarting the whole scale.",
           "proof": "2 octaves up and down at 50 with the hands landing together, then the same at 70.",
-          "pitfall": "Restarting the whole scale each time the crossing goes wrong, which practises the opening most.",
+          "pitfall": "Restarting the whole scale each time the crossing goes wrong, which practices the opening most.",
           "minutes": 15,
           "problems": [
             {
@@ -12745,7 +12745,7 @@
               "slot": 2,
               "weight": "core",
               "prompt": "One hand leads at the crossing of a 2-octave scale. Restart or drill the crossing?",
-              "answer": "Drill the crossing — restarting practises the opening."
+              "answer": "Drill the crossing — restarting practices the opening."
             },
             {
               "slot": 3,
@@ -12802,7 +12802,7 @@
           "title": "Choose a Survivable Tempo",
           "mastery": "Pick a speed the whole passage can be played at without stopping.",
           "practice": "Set a tempo from the hardest bar, then play all 8 bars at it without stopping.",
-          "detail": "The tempo is decided by the worst bar, not the first: a passage played at 80 that collapses in bar 6 is slower overall than one played at 50 throughout. Practising this is mostly practising the humility to pick 50.",
+          "detail": "The tempo is decided by the worst bar, not the first: a passage played at 80 that collapses in bar 6 is slower overall than one played at 50 throughout. Practicing this is mostly practicing the humility to pick 50.",
           "proof": "8 bars played end to end with no stop, however slow.",
           "pitfall": "Choosing the tempo from the easy opening, which guarantees a breakdown later.",
           "minutes": 15,
@@ -12831,7 +12831,7 @@
           "title": "Keep Going After a Mistake",
           "mastery": "Continue in time when a note goes wrong.",
           "practice": "Play 8 bars deliberately missing 2 notes, and carry on without correcting either.",
-          "detail": "Stopping to fix a note is the habit that makes sight reading unusable in an ensemble, and practising it deliberately is the fastest cure. Miss the notes on purpose, keep the pulse, and note afterwards that the passage was still recognisable.",
+          "detail": "Stopping to fix a note is the habit that makes sight reading unusable in an ensemble, and practicing it deliberately is the fastest cure. Miss the notes on purpose, keep the pulse, and note afterwards that the passage was still recognizable.",
           "proof": "8 bars in time with 2 known misses and no correction.",
           "pitfall": "Going back to fix the wrong note, which loses the place and the pulse together.",
           "minutes": 15,
@@ -12852,7 +12852,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why miss 2 notes deliberately?",
-              "answer": "It practises continuing, which is the actual skill."
+              "answer": "It practices continuing, which is the actual skill."
             }
           ]
         },
@@ -13089,7 +13089,7 @@
           "title": "Demonstrate Newton's Third Law Pairs",
           "mastery": "Identify action‑reaction force pairs and state that they act on different bodies.",
           "practice": "When a 10 N hand pushes a wall, write the force the wall exerts on the hand.",
-          "detail": "Label the hand as object A and the wall as object B. The force from A on B is 10 N forward; the reaction is a 10 N force from B on A backward. Emphasize that the two forces never cancel because they act on different bodies. Sketch a free‑body diagram for each object to visualise the pair.",
+          "detail": "Label the hand as object A and the wall as object B. The force from A on B is 10 N forward; the reaction is a 10 N force from B on A backward. Emphasize that the two forces never cancel because they act on different bodies. Sketch a free‑body diagram for each object to visualize the pair.",
           "proof": "The wall exerts a 10 N force on the hand opposite to the hand’s push, satisfying the third law.",
           "pitfall": "Applying the reaction force to the same object that experiences the action force.",
           "minutes": 12,
@@ -13424,7 +13424,7 @@
               "slot": 2,
               "weight": "core",
               "prompt": "A question says \"evaluate, with reference to 2 examples\". Name the 2 things that must appear.",
-              "answer": "A judgement, and 2 named examples supporting it."
+              "answer": "A judgment, and 2 named examples supporting it."
             },
             {
               "slot": 3,
@@ -13713,7 +13713,7 @@
           "title": "Answer the Why Question",
           "mastery": "Say why a result follows, not only what the result is.",
           "practice": "State why dividing by a fraction multiplies by its reciprocal, in 3 sentences with 1 worked example.",
-          "detail": "The what is usually memorised and the why usually is not, so this is where an explanation breaks. Build from something you already accept — here, that dividing by 2 halves a quantity — and show the rule falling out of it. Finish with 1 example where the rule does the work.",
+          "detail": "The what is usually memorized and the why usually is not, so this is where an explanation breaks. Build from something you already accept — here, that dividing by 2 halves a quantity — and show the rule falling out of it. Finish with 1 example where the rule does the work.",
           "proof": "Somebody who accepted your first sentence would have to accept the rule by the third.",
           "pitfall": "Restating the rule in different words and calling it the reason.",
           "minutes": 15,
@@ -14019,7 +14019,7 @@
           "practice": "Split 4 chapters between 4 people and have each report back in 8 minutes with 3 questions for the others.",
           "detail": "This only works when the reporting is tested, otherwise the group ends up with 1 person's summary of material nobody else read. Each reporter brings 3 questions on their chapter, and the others have to answer them — which is what makes a lazy report obvious immediately.",
           "proof": "4 reports of 8 minutes, each followed by 3 questions the others answered.",
-          "pitfall": "Accepting 4 summaries with no questions, leaving everybody with 1 chapter and 3 rumours.",
+          "pitfall": "Accepting 4 summaries with no questions, leaving everybody with 1 chapter and 3 rumors.",
           "minutes": 15,
           "problems": [
             {
@@ -14088,7 +14088,7 @@
         {
           "title": "Mix Two Problem Types",
           "mastery": "Alternate between 2 kinds of problem instead of blocking one kind.",
-          "practice": "Work 12 problems alternating quadratic factorising and simultaneous equations, 1 of each in turn.",
+          "practice": "Work 12 problems alternating quadratic factorizing and simultaneous equations, 1 of each in turn.",
           "detail": "Blocked practice lets you reuse the last problem's method without deciding anything, which is why it feels easy and tests little. Alternating forces the choice of method to happen every time, which is the part you will need in an exam. Expect to get more wrong than in a blocked set.",
           "proof": "The 12 worked problems alternate type, and you can name the method each one needed.",
           "pitfall": "Sorting the sheet into 6 of one type and 6 of the other because it runs faster that way.",
@@ -14097,7 +14097,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Which is interleaved: (a) 6 factorising then 6 simultaneous, (b) factorising and simultaneous alternating 12 times?",
+              "prompt": "Which is interleaved: (a) 6 factorizing then 6 simultaneous, (b) factorizing and simultaneous alternating 12 times?",
               "answer": "(b). Only there does the method have to be chosen each time."
             },
             {
@@ -14109,7 +14109,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "State what a blocked set of 20 identical problems stops you practising.",
+              "prompt": "State what a blocked set of 20 identical problems stops you practicing.",
               "answer": "Deciding which method a problem needs, because the previous answer already settled it."
             }
           ]
@@ -14277,7 +14277,7 @@
           "title": "Keep One Summary Page",
           "mastery": "Retain a single page per subject worth reopening in a year.",
           "practice": "Reduce 1 finished subject to 1 page holding its 8 main results, and file it where you will find it.",
-          "detail": "After an exam most material is discarded and the subject becomes something you once did. One page changes that: 8 results, the 2 or 3 organising ideas, and nothing else. File the pages together by subject so the whole set is 1 folder rather than 6 notebooks.",
+          "detail": "After an exam most material is discarded and the subject becomes something you once did. One page changes that: 8 results, the 2 or 3 organizing ideas, and nothing else. File the pages together by subject so the whole set is 1 folder rather than 6 notebooks.",
           "proof": "1 page per subject, holding its main results, filed in 1 place.",
           "pitfall": "Keeping all 60 pages of notes, which is the same as keeping none because nobody reopens 60 pages.",
           "minutes": 15,
@@ -14292,7 +14292,7 @@
               "slot": 2,
               "weight": "core",
               "prompt": "What belongs on the 1 page besides the 8 results?",
-              "answer": "The 2 or 3 organising ideas, and nothing more."
+              "answer": "The 2 or 3 organizing ideas, and nothing more."
             },
             {
               "slot": 3,
@@ -14373,7 +14373,7 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 real use of basic statistics outside a course, doable in 30 minutes.",
-              "answer": "Summarising a dataset you care about — a mean, a spread and what they say."
+              "answer": "Summarizing a dataset you care about — a mean, a spread and what they say."
             },
             {
               "slot": 2,
@@ -14451,7 +14451,7 @@
           "title": "Notice What You Lost",
           "mastery": "Identify which parts of a subject decayed and which held.",
           "practice": "Compare a review score by section against your score 6 months ago and name the 2 weakest sections.",
-          "detail": "Decay is uneven: procedures you used stay, definitions you memorised go first, and anything you never derived goes fastest. Comparing by section rather than in total tells you which kind of material you lose, which changes how you learn the next subject.",
+          "detail": "Decay is uneven: procedures you used stay, definitions you memorized go first, and anything you never derived goes fastest. Comparing by section rather than in total tells you which kind of material you lose, which changes how you learn the next subject.",
           "proof": "A section-by-section comparison and the 2 weakest named.",
           "pitfall": "Comparing totals, which hides that 1 section carried all the loss.",
           "minutes": 15,
@@ -14459,8 +14459,8 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Which usually decays fastest: a procedure you used 40 times or a definition you memorised once?",
-              "answer": "The memorised definition."
+              "prompt": "Which usually decays fastest: a procedure you used 40 times or a definition you memorized once?",
+              "answer": "The memorized definition."
             },
             {
               "slot": 2,
@@ -14471,8 +14471,8 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A pattern of losing memorised definitions should change what about the next 8 topics?",
-              "answer": "More of it gets derived rather than memorised."
+              "prompt": "A pattern of losing memorized definitions should change what about the next 8 topics?",
+              "answer": "More of it gets derived rather than memorized."
             }
           ]
         },
@@ -14551,16 +14551,16 @@
         {
           "title": "First-Letter Mnemonics",
           "mastery": "Build a sentence whose initials recover an ordered list.",
-          "practice": "Make a mnemonic for the 7 colours of the spectrum in order: red, orange, yellow, green, blue, indigo, violet.",
-          "detail": "Take the initials — R O Y G B I V — and build a sentence whose words start with them in order. Make it concrete and slightly odd, because bland sentences do not stick. Test it by writing the 7 colours from the sentence alone an hour later.",
-          "proof": "The sentence returns all 7 colours in the right order an hour later.",
+          "practice": "Make a mnemonic for the 7 colors of the spectrum in order: red, orange, yellow, green, blue, indigo, violet.",
+          "detail": "Take the initials — R O Y G B I V — and build a sentence whose words start with them in order. Make it concrete and slightly odd, because bland sentences do not stick. Test it by writing the 7 colors from the sentence alone an hour later.",
+          "proof": "The sentence returns all 7 colors in the right order an hour later.",
           "pitfall": "Building a mnemonic with 2 words starting with the same letter, so the order goes ambiguous.",
           "minutes": 15,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Give the initials your mnemonic must cover for the spectrum's 7 colours in order.",
+              "prompt": "Give the initials your mnemonic must cover for the spectrum's 7 colors in order.",
               "answer": "R, O, Y, G, B, I, V."
             },
             {
@@ -14799,7 +14799,7 @@
           "mastery": "Tell an execution slip apart from something you did not know.",
           "practice": "Label each of your 5 logged errors S for slip or G for gap, and count the 2 totals.",
           "detail": "They need different fixes: a gap is studied, a slip is prevented by a check. Redo the problem immediately — if you now get it right without learning anything, it was a slip. Counting the 2 totals tells you whether to spend the week on content or on checking procedures.",
-          "proof": "5 labelled errors and 2 totals you can state.",
+          "proof": "5 labeled errors and 2 totals you can state.",
           "pitfall": "Calling a gap a slip because you understood the solution when you read it.",
           "minutes": 15,
           "problems": [
@@ -14915,7 +14915,7 @@
           "mastery": "Apply a mark scheme to your own work without giving yourself the benefit.",
           "practice": "Mark 3 of your worked answers against a published mark scheme, awarding only what is written on the page.",
           "detail": "Marking your own work generously is the fastest way to a nasty surprise. Award marks only for what is on the paper: no credit for what you meant, knew, or would have written with more time. Where you lose a mark for presentation rather than content, that is worth logging too.",
-          "proof": "3 scores from the mark scheme, with the lost marks itemised.",
+          "proof": "3 scores from the mark scheme, with the lost marks itemized.",
           "pitfall": "Awarding the method mark because you knew the method, when the page does not show it.",
           "minutes": 15,
           "problems": [
@@ -14928,7 +14928,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Why itemise the 4 lost marks rather than recording a total of 12 out of 16?",
+              "prompt": "Why itemize the 4 lost marks rather than recording a total of 12 out of 16?",
               "answer": "The items say what to fix; the total says only how it felt."
             },
             {
@@ -14988,14 +14988,14 @@
           "practice": "Sit 1 past paper in 90 minutes with no notes, no phone and no pauses, at a desk.",
           "detail": "Familiarity is what takes the edge off, and it only comes from the real thing: timer running, materials away, no stopping for a cup of tea. Do it at the time of day the exam falls if you can. The first one will feel worse than the exam did in your imagination, which is the point.",
           "proof": "1 completed paper, sat unbroken in 90 minutes with nothing to hand.",
-          "pitfall": "Pausing the timer for 5 minutes to look 1 thing up, which removes the condition being practised.",
+          "pitfall": "Pausing the timer for 5 minutes to look 1 thing up, which removes the condition being practiced.",
           "minutes": 15,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
               "prompt": "You pause the timer for 5 minutes during a 90-minute mock. What has been lost?",
-              "answer": "The time pressure, which was the condition being practised."
+              "answer": "The time pressure, which was the condition being practiced."
             },
             {
               "slot": 2,
@@ -15041,10 +15041,10 @@
           ]
         },
         {
-          "title": "Practise the First Five Minutes",
+          "title": "Practice the First Five Minutes",
           "mastery": "Rehearse the opening of a paper until it needs no decisions.",
           "practice": "Rehearse the same 5-minute opening 3 times: write your name, scan all questions, mark times, start question 1.",
-          "detail": "The worst nerves are in the first few minutes, so make those minutes a routine rather than a set of choices. The same 4 actions in the same order, practised 3 times, means the paper is under way before there is anything to panic about.",
+          "detail": "The worst nerves are in the first few minutes, so make those minutes a routine rather than a set of choices. The same 4 actions in the same order, practiced 3 times, means the paper is under way before there is anything to panic about.",
           "proof": "The same 4-action opening carried out 3 times in 5 minutes.",
           "pitfall": "Opening by reading question 1 closely, which means the paper's shape is still unknown 10 minutes in.",
           "minutes": 15,
@@ -15065,15 +15065,15 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why rehearse the opening 3 times rather than reading about it?",
-              "answer": "Under nerves a practised routine runs where a remembered intention does not."
+              "answer": "Under nerves a practiced routine runs where a remembered intention does not."
             }
           ]
         },
         {
           "title": "Slow the Breathing Down",
           "mastery": "Bring physical arousal down with a technique that works while seated.",
-          "practice": "Practise 6 cycles of 4 seconds in and 6 seconds out, seated, and take your pulse before and after.",
-          "detail": "A longer out-breath than in-breath reliably slows the heart, and 1 minute of it is enough to change the state. Practise it away from the exam so it is automatic. Taking the pulse before and after gives you evidence it works, which matters on the day you doubt it.",
+          "practice": "Practice 6 cycles of 4 seconds in and 6 seconds out, seated, and take your pulse before and after.",
+          "detail": "A longer out-breath than in-breath reliably slows the heart, and 1 minute of it is enough to change the state. Practice it away from the exam so it is automatic. Taking the pulse before and after gives you evidence it works, which matters on the day you doubt it.",
           "proof": "A pulse figure before and after 1 minute of the pattern.",
           "pitfall": "Trying it for the first time in the exam hall, where an unfamiliar technique is 1 more thing to worry about.",
           "minutes": 15,
@@ -15189,7 +15189,7 @@
           "title": "Sleep the Night Before",
           "mastery": "Protect the last night's sleep as part of the preparation.",
           "practice": "Set a finish time 2 hours before bed for 3 nights running and record what time you actually slept.",
-          "detail": "An hour of revision at midnight costs more than it adds, because recall and time management both degrade with lost sleep. Stop 2 hours before bed and do something undemanding. Practise it for 3 nights rather than only the night before, since a single early night rarely works on command.",
+          "detail": "An hour of revision at midnight costs more than it adds, because recall and time management both degrade with lost sleep. Stop 2 hours before bed and do something undemanding. Practice it for 3 nights rather than only the night before, since a single early night rarely works on command.",
           "proof": "3 recorded sleep times after a 2-hour wind-down.",
           "pitfall": "Revising until 1am the night before, which trades 2 marks of content for a worse morning.",
           "minutes": 15,
@@ -15197,7 +15197,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Why practise the wind-down for 3 nights rather than only the night before?",
+              "prompt": "Why practice the wind-down for 3 nights rather than only the night before?",
               "answer": "A single early night rarely works on command, so the pattern needs establishing."
             },
             {
@@ -15350,7 +15350,7 @@
           "practice": "Go through 1 set of notes and put a \"?\" beside every line you could not explain to somebody in 30 seconds.",
           "detail": "Do this the same day, while you still remember which lines you wrote confidently and which you copied. A question mark is a promise to come back, so each one needs either an answer or a deletion within the week — a page of unanswered marks is a page you have learned to skip.",
           "proof": "Every line on the page is either explainable or carries a \"?\".",
-          "pitfall": "Marking nothing because the notes look familiar, which confuses recognising your handwriting with understanding it.",
+          "pitfall": "Marking nothing because the notes look familiar, which confuses recognizing your handwriting with understanding it.",
           "minutes": 12,
           "problems": [
             {
@@ -15611,7 +15611,7 @@
           "title": "Write the Method First",
           "mastery": "Name the method a problem needs before any working is done.",
           "practice": "Write 1 line naming the method for 6 problems, without solving any of them.",
-          "detail": "Separating the choice from the execution trains the part exams actually test. For each problem write something like \"factorise, then set each bracket to 0\". Six of these takes 5 minutes and shows whether the difficulty is choosing or computing — which are 2 different things to practise.",
+          "detail": "Separating the choice from the execution trains the part exams actually test. For each problem write something like \"factorize, then set each bracket to 0\". Six of these takes 5 minutes and shows whether the difficulty is choosing or computing — which are 2 different things to practice.",
           "proof": "6 named methods, and you can say which of the 6 you were unsure about.",
           "pitfall": "Starting the algebra while writing the plan, which merges the 2 skills again.",
           "minutes": 15,
@@ -15620,7 +15620,7 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name the method for: solve x^2 - 5x + 6 = 0.",
-              "answer": "Factorise into (x - 2)(x - 3), then set each bracket to 0."
+              "answer": "Factorize into (x - 2)(x - 3), then set each bracket to 0."
             },
             {
               "slot": 2,
@@ -15728,7 +15728,7 @@
           "mastery": "Work a set under the clock at roughly exam pace.",
           "practice": "Work 10 routine problems in 20 minutes, marking the clock time beside each as you finish it.",
           "detail": "Pace is a separate skill from method, and the only way to find yours is to measure it. Writing the time beside each answer shows where you slowed: 1 problem eating 7 of the 20 minutes is the thing to study, and it is invisible if you only record the total.",
-          "proof": "10 answers with times beside them, totalling about 20 minutes.",
+          "proof": "10 answers with times beside them, totaling about 20 minutes.",
           "pitfall": "Stopping the clock to look something up, which makes the pace figure meaningless.",
           "minutes": 15,
           "problems": [
@@ -16002,7 +16002,7 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Split \"Describe the causes of the First World War\" into 2 markable cards.",
-              "answer": "Which alliance system bound Russia to Serbia? and What event of 1914 triggered the mobilisations?"
+              "answer": "Which alliance system bound Russia to Serbia? and What event of 1914 triggered the mobilizations?"
             },
             {
               "slot": 3,
@@ -16103,8 +16103,8 @@
           "title": "Retrieval on Paper Weekly",
           "mastery": "Produce a topic's whole content from a blank page once a week.",
           "practice": "Fill 1 blank page from memory on a topic you tested 6 days ago, then mark it against your notes.",
-          "detail": "A card tests a fact; a blank page tests whether the facts are connected, which is the thing exams ask for and decks quietly skip. Write for 10 minutes without stopping, then mark in a different colour: missing, wrong, and out of order all get their own marks.",
-          "proof": "The marked page shows what you have, and the gaps are in a different colour from the content.",
+          "detail": "A card tests a fact; a blank page tests whether the facts are connected, which is the thing exams ask for and decks quietly skip. Write for 10 minutes without stopping, then mark in a different color: missing, wrong, and out of order all get their own marks.",
+          "proof": "The marked page shows what you have, and the gaps are in a different color from the content.",
           "pitfall": "Rewriting your notes from memory in their original order, which tests the order rather than the material.",
           "minutes": 15,
           "problems": [
@@ -16123,7 +16123,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Why mark the page in a 2nd colour rather than correcting it in place?",
+              "prompt": "Why mark the page in a 2nd color rather than correcting it in place?",
               "answer": "So a later reader can see what was produced from memory and what was added afterwards."
             }
           ]
@@ -17159,7 +17159,7 @@
           "title": "Draw What Connects",
           "mastery": "Show the relationships in a topic as a diagram rather than a list.",
           "practice": "Draw 8 concepts from 1 topic as boxes and label every arrow between them with a verb.",
-          "detail": "Labelling the arrows is the part that does the work: \"causes\", \"is a case of\", \"is measured by\" are different relationships, and an unlabelled arrow hides which you meant. Eight boxes is enough for a topic and few enough to lay out. Arrows you cannot label are relationships you have not understood.",
+          "detail": "Labeling the arrows is the part that does the work: \"causes\", \"is a case of\", \"is measured by\" are different relationships, and an unlabeled arrow hides which you meant. Eight boxes is enough for a topic and few enough to lay out. Arrows you cannot label are relationships you have not understood.",
           "proof": "A diagram of 8 boxes where every arrow carries a verb.",
           "pitfall": "Drawing 20 boxes joined by bare lines, which records the vocabulary and none of the structure.",
           "minutes": 15,
@@ -17188,7 +17188,7 @@
           "title": "Hierarchy, Not a List",
           "mastery": "Arrange a topic's content by what contains what.",
           "practice": "Rearrange 15 flat bullet points into 3 groups with 2 levels of indentation.",
-          "detail": "A flat list of 15 says everything is equally important, which is never true. Find the 3 or 4 organising ideas, then put the rest underneath where they belong. The grouping is a claim about the subject and can be wrong, which is exactly why it is worth making.",
+          "detail": "A flat list of 15 says everything is equally important, which is never true. Find the 3 or 4 organizing ideas, then put the rest underneath where they belong. The grouping is a claim about the subject and can be wrong, which is exactly why it is worth making.",
           "proof": "15 points under 3 headings, and you can defend each placement.",
           "pitfall": "Grouping by where things appeared in the book rather than by what they belong to.",
           "minutes": 15,
@@ -17214,7 +17214,7 @@
           ]
         },
         {
-          "title": "Summarise From Memory",
+          "title": "Summarize From Memory",
           "mastery": "Produce the one-page summary without the notes open.",
           "practice": "Rebuild your 1-page summary from blank paper, then compare it against the original and mark 3 differences.",
           "detail": "Copying a summary teaches nothing; producing one is the whole exercise. Write it cold, then lay it beside the original. The differences fall into 2 kinds — things you forgot, and things you chose to leave off this time — and only the first kind is a gap.",
@@ -17275,7 +17275,7 @@
           "title": "Compress the Compression",
           "mastery": "Reduce a one-page summary to a card without losing what it recovers.",
           "practice": "Reduce 1 page of summary to 10 lines on a card, and check the card still recovers the page.",
-          "detail": "The second compression is where the organising ideas separate from the details: 10 lines can only hold structure, so anything that survives is load-bearing. Test by writing the page back from the card. What is missing from the rebuild goes back on the card, replacing something that was not needed.",
+          "detail": "The second compression is where the organizing ideas separate from the details: 10 lines can only hold structure, so anything that survives is load-bearing. Test by writing the page back from the card. What is missing from the rebuild goes back on the card, replacing something that was not needed.",
           "proof": "A 10-line card that lets you rebuild the page, tested once.",
           "pitfall": "Writing 10 lines of headings, which recovers the topics and none of the content.",
           "minutes": 15,
@@ -17301,7 +17301,7 @@
           ]
         },
         {
-          "title": "Summarise a Whole Course",
+          "title": "Summarize a Whole Course",
           "mastery": "Fit a term's material onto one sheet that shows how the parts relate.",
           "practice": "Put 8 topic cards onto 1 A3 sheet, with 6 arrows showing which topic a later one depends on.",
           "detail": "This is the map you revise from, and its value is the arrows rather than the boxes: seeing that topic 7 needs topic 3 tells you the order to revise in and which failures will cascade. Build it from the cards you already have, and leave room to add arrows as you notice them.",
@@ -17347,7 +17347,7 @@
           "title": "Sort Given From Derived",
           "mastery": "Separate what a subject asserts from what follows from it.",
           "practice": "Split 10 facts from 1 topic into 2 columns: given by definition, and derivable from the others.",
-          "detail": "Definitions have to be memorised; consequences do not, because they can be rebuilt. Sorting them tells you how much of a topic is genuinely arbitrary — usually far less than it feels. For each derived fact write the 1 line of reasoning that recovers it from the givens.",
+          "detail": "Definitions have to be memorized; consequences do not, because they can be rebuilt. Sorting them tells you how much of a topic is genuinely arbitrary — usually far less than it feels. For each derived fact write the 1 line of reasoning that recovers it from the givens.",
           "proof": "The derived column has a 1-line derivation beside each entry, and the given column has none.",
           "pitfall": "Filing something as given because you cannot derive it yet, which hides the reasoning you were about to learn.",
           "minutes": 15,
@@ -17367,7 +17367,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Why does sorting 10 facts this way reduce what has to be memorised?",
+              "prompt": "Why does sorting 10 facts this way reduce what has to be memorized?",
               "answer": "Anything derivable can be rebuilt from the few genuine definitions."
             }
           ]
@@ -17396,7 +17396,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Why is a 7-line derivation you can rebuild worth more than a formula you have memorised?",
+              "prompt": "Why is a 7-line derivation you can rebuild worth more than a formula you have memorized?",
               "answer": "It survives being forgotten: the result can be recovered from the reasoning."
             }
           ]
@@ -17426,7 +17426,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "You can do the worked example but not the same problem with new substances. State what you have.",
-              "answer": "The example memorised, not the method understood."
+              "answer": "The example memorized, not the method understood."
             }
           ]
         },
@@ -17463,7 +17463,7 @@
           "title": "Two Ways to the Answer",
           "mastery": "Reach one result by 2 independent routes and compare them.",
           "practice": "Find the area of a trapezium with parallel sides 6 and 10 and height 4 twice: by formula and by splitting it.",
-          "detail": "Two routes that agree are a check on the arithmetic and on the understanding at once, because a wrong idea rarely survives being approached from a second direction. Where they disagree, the disagreement localises the error faster than rechecking either route alone.",
+          "detail": "Two routes that agree are a check on the arithmetic and on the understanding at once, because a wrong idea rarely survives being approached from a second direction. Where they disagree, the disagreement localizes the error faster than rechecking either route alone.",
           "proof": "Both routes give 32, and you can say which parts of the split correspond to the formula's terms.",
           "pitfall": "Using the same method twice with different notation and calling it 2 routes.",
           "minutes": 15,
@@ -17478,7 +17478,7 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Split that trapezium into a 6-by-4 rectangle and a triangle. What are the 2 areas?",
-              "answer": "24 and 8, totalling 32."
+              "answer": "24 and 8, totaling 32."
             },
             {
               "slot": 3,
@@ -17489,12 +17489,12 @@
           ]
         },
         {
-          "title": "Spot What Must Be Memorised",
+          "title": "Spot What Must Be Memorized",
           "mastery": "Decide honestly which items no amount of reasoning will recover.",
           "practice": "List 5 items from 1 subject that cannot be derived, such as the symbol Na for sodium.",
           "detail": "Some things are arbitrary — names, symbols, dates, conventions — and reasoning about them is wasted effort. Getting this list short and correct means the memory techniques go where they earn, and everything not on the list is treated as reconstructible rather than learned by heart.",
           "proof": "5 genuinely arbitrary items, none of which anybody could derive.",
-          "pitfall": "Putting a derivable result on the list because memorising feels faster today.",
+          "pitfall": "Putting a derivable result on the list because memorizing feels faster today.",
           "minutes": 15,
           "problems": [
             {

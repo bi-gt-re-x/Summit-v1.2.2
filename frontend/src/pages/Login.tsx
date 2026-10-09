@@ -43,9 +43,9 @@ function safeNext(raw: string | null): string {
 const STEPS: AuthStep[] = ['choose', 'login', 'create', 'inbox', 'profile'];
 
 const POINTS: [IconName, string][] = [
-  ['check', 'Tasks, a calendar and a focus timer in one place'],
-  ['flame', 'Streaks and XP counted from the work you finish'],
-  ['chart', 'A growth score that shows its working'],
+  ['check', 'Tasks, calendar and focus timer in one app'],
+  ['flame', 'Earn XP and build a streak as you go'],
+  ['chart', 'A growth score that shows you the math'],
 ];
 
 export default function Login() {
@@ -118,10 +118,10 @@ export default function Login() {
         <Range variant="login" className="auth-range" />
         {home}
         <div className="auth-pitch">
-          <h1>Finish the work. Summit keeps the score.</h1>
+          <h1>Get it done. Watch it add up.</h1>
           <p>
-            A study tracker that does the arithmetic: every task you finish counts toward your
-            streak, your level and your growth score.
+            Every task you finish counts toward your streak, your level and your growth
+            score.
           </p>
           <ul className="auth-points">
             {POINTS.map(([icon, text]) => (
@@ -132,7 +132,7 @@ export default function Login() {
             ))}
           </ul>
         </div>
-        <p className="auth-aside-foot">Free, all of it · No card · One file you own</p>
+        <p className="auth-aside-foot">100% free · No credit card · Your data stays yours</p>
       </aside>
 
       <main className="auth-main">

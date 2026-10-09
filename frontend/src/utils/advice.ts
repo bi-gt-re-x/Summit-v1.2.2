@@ -466,7 +466,7 @@ export function recommendations(input: AdviceInput): Advice[] {
         id: `subject-weak:${worst.id}`,
         kind: 'quality',
         category: 'Subjects',
-        title: `Change how you practise ${worst.name}`,
+        title: `Change how you practice ${worst.name}`,
         because: `You rate ${worst.name} ${worst.execution!.toFixed(1)}/5, compared with ${elsewhere.toFixed(1)} for your other subjects.`,
         action: `Try a different method in your next ${worst.name} session, like worked examples before problems.`,
         evidence: `${worst.rated} rated ${worst.name} tasks at ${worst.execution!.toFixed(1)}/5, ${behind.toFixed(1)} below the ${others.length} other subject${others.length === 1 ? '' : 's'} you rated.`,

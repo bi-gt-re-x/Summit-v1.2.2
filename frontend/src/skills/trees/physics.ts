@@ -40,7 +40,7 @@ export const PHYSICS: SubjectTree = {
     { id: 'ph.laws', name: 'Laws of Thermodynamics', icon: 'entropy', tier: 'advanced', requires: ['ph.thermo'], state: lock, percent: 0, xp: 2200,
       desc: 'Energy is conserved, and disorder in a closed system does not decrease. The second law is what forbids perpetual motion and what gives time a direction at all.' },
     { id: 'ph.waves', name: 'Waves', icon: 'waves', tier: 'intermediate', requires: ['ph.momentum'], state: lock, percent: 0, xp: 1900,
-      desc: 'Energy travelling without matter travelling with it. Frequency, wavelength and speed are locked together, so a wave entering a new medium must change one of them.' },
+      desc: 'Energy traveling without matter traveling with it. Frequency, wavelength and speed are locked together, so a wave entering a new medium must change one of them.' },
     { id: 'ph.sound', name: 'Sound & Resonance', icon: 'sound', tier: 'advanced', requires: ['ph.waves'], state: lock, percent: 0, xp: 2000,
       desc: 'Pressure waves in a medium, and the frequencies at which a system prefers to vibrate. Resonance explains a wine glass shattering and a bridge closing for repairs.' },
     { id: 'ph.optics', name: 'Light & Optics', icon: 'optics', tier: 'advanced', requires: ['ph.waves'], state: lock, percent: 0, xp: 2100,

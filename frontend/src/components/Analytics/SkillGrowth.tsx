@@ -10,7 +10,7 @@
  *
  * A page like this wants to print "Algebra 64 → 78, Geometry 51 → 55", and
  * Summit cannot: a task carries a subject and nothing finer. The trees that do
- * name branches are authored, and what the reader has practised in them lives
+ * name branches are authored, and what the reader has practiced in them lives
  * unscored in their own browser. So the grain is the subject, the note under
  * the panel says so in the reader's own terms rather than leaving them to
  * wonder where the branches went, and the trees stay a route map beside the
@@ -96,7 +96,7 @@ interface TreeReading {
   focus: GraphNode | null;
   next: GraphNode | null;
   /** Steps of the tree with problems marked against them. */
-  practised: number;
+  practiced: number;
   /** The best measured level among them. */
   best: number;
 }
@@ -125,11 +125,11 @@ function treeReading(subject: string, context: SubjectContext): TreeReading | nu
   const ids = new Set(graph.nodes.map((node) => node.id));
   /* Steps of this tree with anything answered on them, and the best level
      among them. Keys are `node#ordinal` — see utils/skillLevel's `skillKey`. */
-  let practised = 0;
+  let practiced = 0;
   let best = 0;
   for (const [key, step] of Object.entries(context.levels)) {
     if (step.attempted === 0 || !ids.has(key.slice(0, key.lastIndexOf('#')))) continue;
-    practised += 1;
+    practiced += 1;
     best = Math.max(best, step.now.level);
   }
 
@@ -142,7 +142,7 @@ function treeReading(subject: string, context: SubjectContext): TreeReading | nu
       graph.nodes.find((node) => node.status === 'progress')
       ?? graph.nodes.find((node) => node.status === 'available')
       ?? null,
-    practised,
+    practiced,
     best,
   };
 }
@@ -369,8 +369,8 @@ function SubjectCard({
               tree ? (
                 <>
                   {tree.next ? <>Up next: <b>{tree.next.name}</b>. </> : 'Every skill on it is done. '}
-                  {tree.practised > 0
-                    ? `${tree.practised} ${tree.practised === 1 ? 'step' : 'steps'} practised, best Level ${tree.best} of 5.`
+                  {tree.practiced > 0
+                    ? `${tree.practiced} ${tree.practiced === 1 ? 'step' : 'steps'} practiced, best Level ${tree.best} of 5.`
                     : 'No problems marked on it yet.'}
                 </>
               ) : (
@@ -652,7 +652,7 @@ function Headline({ summary, since, periodText }: {
       <Stat label="Currently developing" tone="blue" value={developing.length}>
         {developing.length ? (
           <>
-            Below Mastery and practised during {periodText}:{' '}
+            Below Mastery and practiced during {periodText}:{' '}
             <strong>
               {names(developing, (t) => `${t.name} (${t.ratedInPeriod} rated ${t.ratedInPeriod === 1 ? 'task' : 'tasks'})`)}
             </strong>.
@@ -694,7 +694,7 @@ function Headline({ summary, since, periodText }: {
         ) : attention.reason === 'idle' ? (
           <>
             Nothing finished in it for <strong>{attention.track.daysSince} days</strong>. It is at{' '}
-            {attention.track.now} now, but a level fades when a subject isn’t practised.
+            {attention.track.now} now, but a level fades when a subject isn’t practiced.
           </>
         ) : (
           <>
@@ -1056,7 +1056,7 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
 
       <p className="ax-panel-note ax-panel-note-foot">
         Level is the skill score over the subjects you rated work in. Only
-        rises are counted: a slip in one subject cancelling a climb in another
+        rises are counted: a slip in one subject canceling a climb in another
         would report a term of work as nothing.
       </p>
     </>

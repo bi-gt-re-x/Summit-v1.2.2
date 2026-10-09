@@ -92,7 +92,7 @@ vi.mock('@/hooks/useSubjects', async (original) => {
     useSubjects: () => [],
     subjectOf: () => null,
     useSubjectIndex: () => new Map([
-      ['algebra', { id: 'algebra', name: 'Algebra', label: 'Algebra', icon: 'algebra', group: 'Maths and science', custom: false }],
+      ['algebra', { id: 'algebra', name: 'Algebra', label: 'Algebra', icon: 'algebra', group: 'Math and science', custom: false }],
     ]),
   };
 });

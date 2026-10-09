@@ -29,7 +29,7 @@
  * larger number as the better one everywhere, which is right for scores,
  * streaks and levels and wrong for a personal best measured in time — a
  * five-minute mile beats a six-minute one. Guessing from the unit does not
- * rescue it: "minutes practised" is a *bigger-is-better* duration and any rule
+ * rescue it: "minutes practiced" is a *bigger-is-better* duration and any rule
  * built on `unit === 'minutes'` gets that one backwards.
  *
  * So the row carries `comparison_direction` — see data/sql/records.sql — and

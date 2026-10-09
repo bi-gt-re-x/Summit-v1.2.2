@@ -74,7 +74,7 @@ describe('the list', () => {
     }
   });
 
-  it('gives every style its own colour and glyph', () => {
+  it('gives every style its own color and glyph', () => {
     // The grid is the only place all ten are seen together, and it is scanned
     // by colour before it is read. Two styles sharing a tint is two styles
     // nobody can tell apart at a glance.

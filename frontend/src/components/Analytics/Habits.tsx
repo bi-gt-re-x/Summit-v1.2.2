@@ -412,7 +412,7 @@ export function TimelinePanel({
 
   return (
     <Panel
-      title="Your behavioural history"
+      title="Your behavioral history"
       note="Where each started, where it is"
       claim={
         withPhases.length === 0 ? undefined : (

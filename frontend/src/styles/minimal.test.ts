@@ -33,7 +33,7 @@ describe('the minimal layer', () => {
     expect(minimal).not.toMatch(/\.hm-(ambient|grid|gradient|particles)/);
   });
 
-  it('leaves every page its own colour', () => {
+  it('leaves every page its own color', () => {
     expect(minimal).not.toMatch(/\.peak-scene/);
     expect(minimal).not.toMatch(/--peak-a/);
     expect(minimal).not.toMatch(/background/);

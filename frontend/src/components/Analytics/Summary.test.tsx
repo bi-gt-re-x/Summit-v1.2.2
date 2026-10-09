@@ -172,7 +172,7 @@ describe('the five measures on the grade card', () => {
     ]);
   });
 
-  it('colours each letter by its own grade, not the headline\'s', () => {
+  it('colors each letter by its own grade, not the headline\'s', () => {
     show({ score: FIVE });
     const rows = document.querySelectorAll('.ax-summary-parts li');
     expect(rows[0]).toHaveClass('grade-S');

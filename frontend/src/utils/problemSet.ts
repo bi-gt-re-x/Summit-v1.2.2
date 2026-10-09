@@ -1,7 +1,7 @@
 /**
  * The ladder of problems behind one step.
  *
- * A step says what to practise; this says in what order to meet it. The rule is
+ * A step says what to practice; this says in what order to meet it. The rule is
  * that a set opens light and gets heavier — the first third are warm-ups a
  * reader can finish before deciding whether they are in the mood, and the last
  * are the ones that actually settle whether they have the skill.

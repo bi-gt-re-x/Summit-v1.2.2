@@ -11,7 +11,7 @@
  * order than the sections they named. Overview is one continuous argument and
  * scrolls like one.
  */
-import type { CSSProperties, ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import type { HeroTone } from '@/components';
 import { WINDOWS, type WindowKey } from './data';
 
@@ -196,9 +196,23 @@ export interface ViewTabsProps {
  * to interpret.
  */
 export function ViewTabs({ active, onView, filling }: ViewTabsProps) {
+  // On a phone the bar scrolls sideways, and Insights, Subjects and Growth
+  // sit past its right edge. Bring the open tab into the bar so the reader
+  // can see where they are.
+  const bar = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const nav = bar.current;
+    const on = nav?.querySelector<HTMLElement>('.ax-tab.is-on');
+    if (!nav || !on || nav.scrollWidth <= nav.clientWidth) return;
+    const left = on.getBoundingClientRect().left - nav.getBoundingClientRect().left + nav.scrollLeft;
+    if (left < nav.scrollLeft || left + on.offsetWidth > nav.scrollLeft + nav.clientWidth) {
+      nav.scrollLeft = left - (nav.clientWidth - on.offsetWidth) / 2;
+    }
+  }, [active]);
+
   return (
     <div className="ax-views">
-      <nav className="ax-tabs ax-tabs-major" aria-label="Analytics sections">
+      <nav className="ax-tabs ax-tabs-major" aria-label="Analytics sections" ref={bar}>
         {VIEWS.map((view) => {
           const wait = filling?.[view.key];
           const part = wait && wait.need > 0 ? Math.min(1, wait.have / wait.need) : null;

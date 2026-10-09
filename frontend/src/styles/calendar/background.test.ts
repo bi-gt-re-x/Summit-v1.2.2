@@ -52,7 +52,7 @@ function property(body: string, name: 'background' | 'color'): string | null {
 /** WCAG relative luminance of a #rrggbb colour: 0 is black, 1 is white. */
 function luminance(colour: string): number {
   const hex = colour.match(/^#([0-9a-f]{6})\b/i)?.[1];
-  if (!hex) throw new Error(`expected a #rrggbb colour, got "${colour}"`);
+  if (!hex) throw new Error(`expected a #rrggbb color, got "${colour}"`);
   const [r, g, b] = [0, 2, 4]
     .map((at) => parseInt(hex.slice(at, at + 2), 16) / 255)
     .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
@@ -66,7 +66,7 @@ const PAGE =
 /** A rule that paints the whole app's page from a calendar sheet. */
 const EVERY_PAGE = /^html\[data-theme="(light|dark)"\]\s+body$|^body(\.[\w-]+)?$/;
 
-describe("the calendar's page colour", () => {
+describe("the calendar's page color", () => {
   it('is decided in a sheet every view loads', () => {
     for (const view of VIEWS) {
       expect(read(`../../pages/Calendar/${view}.tsx`), `${view} view`).toContain(

@@ -11,7 +11,7 @@
 import { describe, expect, it } from 'vitest';
 import { PLACES, findPlaces, score, scorePlace } from './siteIndex';
 
-describe('the catalogue', () => {
+describe('the catalog', () => {
   it('has a unique id for every place', () => {
     const ids = PLACES.map((place) => place.id);
     expect(new Set(ids).size).toBe(ids.length);

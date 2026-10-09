@@ -150,7 +150,7 @@ export function nextStepText(read: SkillLevel): string {
   return `Level ${next.level} needs ${want}. ${have}`;
 }
 
-/** "3 days ago", "today" — for "last practised". */
+/** "3 days ago", "today" — for "last practiced". */
 export function sinceText(iso: string | null, now: Date = new Date()): string {
   if (!iso) return 'never';
   const then = new Date(`${iso.slice(0, 10)}T00:00:00`).getTime();

@@ -281,7 +281,7 @@ describe('mutate', () => {
     expect(result.current.data).toMatchObject({ count: 5 });
   });
 
-  it('keeps a stable identity, so a memoised child is not re-rendered by it', async () => {
+  it('keeps a stable identity, so a memoized child is not re-rendered by it', async () => {
     const { result, rerender } = renderHook(() => useApi(async () => ok({ value: 1 })));
     await waitFor(() => expect(result.current.data).not.toBeNull());
 

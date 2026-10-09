@@ -332,7 +332,7 @@ export function calibration(curve: DifficultyCurve, time: TimeAnalysis): Calibra
  * on steadily harder material whose score has sat still is not stuck — their
  * ability is climbing and their *conversion* of it has stalled, and those two
  * situations want opposite instructions. Told apart, the advice is "stop
- * adding difficulty and practise under the real conditions"; conflated, it is
+ * adding difficulty and practice under the real conditions"; conflated, it is
  * "keep going", which is the advice that wastes the next month.
  *
  * `capability` is momentum: execution over the later half of the window

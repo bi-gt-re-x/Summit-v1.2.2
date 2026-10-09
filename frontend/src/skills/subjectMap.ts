@@ -53,7 +53,7 @@ export interface SubjectTarget {
  * only because something has to be last.
  */
 const GROUP_ROOT: Record<string, string> = {
-  'Maths and science': 'science',
+  'Math and science': 'science',
   Studying: 'study',
   'Language and humanities': 'language',
   Computing: 'coding',
@@ -72,7 +72,7 @@ const GROUP_ROOT: Record<string, string> = {
  * as by the script.
  */
 export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
-  // ---- Maths and science ----
+  // ---- Math and science ----
   mathematics: { tree: 'mathematics' },
   algebra: { tree: 'mathematics', node: 'm.algebra' },
   calculus: { tree: 'calculus' },

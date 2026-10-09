@@ -23,7 +23,7 @@ import type { Subject } from '@/services/subjects';
 type Suggest = NonNullable<NewGoalWizardProps['onSuggest']>;
 
 const SUBJECTS = [
-  { id: 'algebra', name: 'Algebra', label: 'Algebra', icon: 'algebra', group: 'Maths and science', custom: false },
+  { id: 'algebra', name: 'Algebra', label: 'Algebra', icon: 'algebra', group: 'Math and science', custom: false },
   { id: 'violin', name: 'Violin', label: 'Violin', icon: 'violin', group: 'Arts', custom: false },
 ] as unknown as Subject[];
 
@@ -100,7 +100,7 @@ describe('the subject on a new goal', () => {
 });
 
 describe('the model on the checkpoints step', () => {
-  const DRAFT = ['Grade 8 repertoire secure', 'Etudes at tempo', 'Concerto memorised',
+  const DRAFT = ['Grade 8 repertoire secure', 'Etudes at tempo', 'Concerto memorized',
     'Mock exam passed', 'ARCT performance passed'];
 
   async function toCheckpoints(onSuggest: Suggest) {
@@ -134,7 +134,7 @@ describe('the model on the checkpoints step', () => {
     expect(onSuggest).toHaveBeenCalledWith(
       expect.objectContaining({ title: 'Violin ARCT', why: 'Teach one day', deadline: expect.any(String) }),
     );
-    expect(await screen.findByText('Concerto memorised')).toBeInTheDocument();
+    expect(await screen.findByText('Concerto memorized')).toBeInTheDocument();
 
     await user.click(next());
     await user.click(screen.getByRole('button', { name: 'Create goal' }));

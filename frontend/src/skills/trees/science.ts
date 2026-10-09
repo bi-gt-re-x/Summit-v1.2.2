@@ -18,7 +18,7 @@ export const SCIENCE: SubjectTree = {
   id: 'science',
   title: 'Science',
   blurb: 'The method every branch shares, and the four places it forks.',
-  group: 'Maths and science',
+  group: 'Math and science',
   nodes: [
     { id: 'sc.method', name: 'The Method', icon: 'scientific-method', tier: 'foundation', core: true, state: done, percent: 100, xp: 1300,
       desc: 'Turning a question into something an experiment could actually settle, with a control and a prediction that could fail. The willingness to be wrong is the part that makes it work.' },

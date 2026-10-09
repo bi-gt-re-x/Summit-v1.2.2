@@ -87,7 +87,7 @@ export const GOALS: SkillGoal[] = [
     id: 'machine-learning',
     name: 'Learn machine learning',
     blurb:
-      'The honest route: the maths and the data handling before the models, and the models before the architectures.',
+      'The honest route: the math and the data handling before the models, and the models before the architectures.',
     category: 'AI / Machine Learning',
     targets: ['ml.transformers', 'ml.evaluation'],
     optional: ['ml.visualisation', 'ml.clustering'],

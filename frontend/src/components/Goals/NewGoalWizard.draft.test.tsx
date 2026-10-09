@@ -27,7 +27,7 @@ const subjects = [
 const DRAFTED: WholeGoalDraft = {
   goal: {
     title: 'Reach USACO Gold',
-    why: 'It is what the summer programmes ask for.',
+    why: 'It is what the summer programs ask for.',
     category: 'coding',
     deadline: '2027-04-01',
     milestones: ['Bronze unassisted', 'Silver DP unassisted', 'Gold reached'],
@@ -102,7 +102,7 @@ describe('what a draft fills in', () => {
     await pickSubject('Algebra');
     await userEvent.click(screen.getByRole('button', { name: /next/i }));
     expect(screen.getByLabelText(/why this one/i)).toHaveValue(
-      'It is what the summer programmes ask for.',
+      'It is what the summer programs ask for.',
     );
   });
 });

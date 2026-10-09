@@ -21,12 +21,12 @@ describe('latticeSubjects', () => {
     expect(latticeSubjects([catalogue, invented])).toEqual([catalogue]);
   });
 
-  it('keeps every catalogue subject, including ones the map has not named', () => {
+  it('keeps every catalog subject, including ones the map has not named', () => {
     const unnamed = { id: 'not-in-the-map-yet', custom: false };
     expect(latticeSubjects([catalogue, unnamed])).toHaveLength(2);
   });
 
-  it('preserves order, because the catalogue order is this account usage', () => {
+  it('preserves order, because the catalog order is this account usage', () => {
     const rows = [catalogue, invented, { id: 'physics', custom: false }];
     expect(latticeSubjects(rows).map((row) => row.id)).toEqual(['mathematics', 'physics']);
   });
@@ -37,7 +37,7 @@ describe('treeForSubject still forgives everything', () => {
     expect(treeForSubject('mathematics').tree).toBe('mathematics');
   });
 
-  it('falls back to the group root for a catalogue row it has not been told about', () => {
+  it('falls back to the group root for a catalog row it has not been told about', () => {
     // The behaviour latticeSubjects exists alongside rather than replaces.
     expect(TREE_IDS).toContain(treeForSubject('brand-new-subject', 'Computing').tree);
   });

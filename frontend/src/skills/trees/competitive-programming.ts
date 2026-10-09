@@ -31,11 +31,11 @@ import { open, lock } from './types';
 export const COMPETITIVE_PROGRAMMING: SubjectTree = {
   id: 'competitive-programming',
   title: 'Competitive Programming',
-  blurb: 'USACO and Codeforces — recognising the shape, then writing it fast.',
+  blurb: 'USACO and Codeforces — recognizing the shape, then writing it fast.',
   parent: 'algorithms',
   nodes: [
     { id: 'cp.io', name: 'Fast Input & Output', icon: 'input-stream', tier: 'foundation', core: true, state: open, percent: 15, xp: 1200,
-      desc: 'Reading a hundred thousand lines without the reading being the bottleneck, and printing without flushing every line. It is the one piece of boilerplate worth memorising, because it is the same in every problem you will ever solve.' },
+      desc: 'Reading a hundred thousand lines without the reading being the bottleneck, and printing without flushing every line. It is the one piece of boilerplate worth memorizing, because it is the same in every problem you will ever solve.' },
     { id: 'cp.bounds', name: 'Reading the Constraints', icon: 'gauge', tier: 'foundation', core: true, requires: ['cp.io'], state: lock, percent: 0, xp: 1300,
       desc: 'The bound on n is the problem telling you which complexity it will accept. Two hundred thousand rules out quadratic, twenty admits exponential, and reading that line first saves writing the wrong solution twice.' },
     { id: 'cp.brute', name: 'Complete Search', icon: 'searching', tier: 'foundation', requires: ['cp.bounds'], state: lock, percent: 0, xp: 1300,
@@ -55,7 +55,7 @@ export const COMPETITIVE_PROGRAMMING: SubjectTree = {
     { id: 'cp.dsu', name: 'Union-Find', icon: 'hierarchy', tier: 'intermediate', requires: ['cp.dfs'], state: lock, percent: 0, xp: 1800,
       desc: 'Keeping track of which things are in the same group, under merges, in almost constant time. Twenty lines that turn a class of connectivity problems into a single pass over the edges.' },
     { id: 'cp.silver', name: 'Silver', icon: 'silver', tier: 'intermediate', core: true, requires: ['cp.greedy', 'cp.dfs', 'cp.bsearch'], state: lock, percent: 0, xp: 2000,
-      desc: 'The division where recognising the shape becomes the whole game — a Silver problem is usually a graph, a sort, a prefix sum or a binary search in disguise. The plateau here is diagnostic, not technical.' },
+      desc: 'The division where recognizing the shape becomes the whole game — a Silver problem is usually a graph, a sort, a prefix sum or a binary search in disguise. The plateau here is diagnostic, not technical.' },
     { id: 'cp.dp1', name: 'Dynamic Programming', icon: 'dynamic-programming', tier: 'advanced', core: true, requires: ['cp.silver'], state: lock, percent: 0, xp: 2200,
       desc: 'Defining a state, a transition and a base case, then filling the table in an order where everything you need is already there. Naming the state precisely is ninety percent of it; the code is usually four lines.' },
     { id: 'cp.dijkstra', name: 'Weighted Shortest Paths', icon: 'path-route', tier: 'advanced', requires: ['cp.silver', 'cp.dsu'], state: lock, percent: 0, xp: 2100,

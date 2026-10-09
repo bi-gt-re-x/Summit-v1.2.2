@@ -68,7 +68,7 @@ async function toTheEnd(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('the analytics question phase', () => {
-  it('asks eight with a catalogue and six without', () => {
+  it('asks eight with a catalog and six without', () => {
     const { unmount } = render(
       <AnalyticsSetup subjects={SUBJECTS} prefs={PREFS} onSave={saver()} />,
     );
@@ -318,7 +318,7 @@ describe('the analytics question phase', () => {
     expect(onSave.mock.calls[0]![0].prefs.analytics_subject_depth).toEqual({});
   });
 
-  it('drops a subject that has left the catalogue since it was picked', async () => {
+  it('drops a subject that has left the catalog since it was picked', async () => {
     const user = userEvent.setup();
     const onSave = saver();
     render(

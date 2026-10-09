@@ -21,7 +21,7 @@
  * Three of the rules behind this fire on things going right. A page that only
  * ever reports problems is one the reader learns to dread, and "you moved up a
  * level of difficulty without losing quality" is the single most useful thing
- * the app can tell somebody — it is the difference between practising and
+ * the app can tell somebody — it is the difference between practicing and
  * improving, and no chart on this page shows it.
  *
  * ## Why there is a "watch this" line

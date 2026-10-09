@@ -252,7 +252,7 @@ describe('the verdict', () => {
     expect(notes[1]).toBe('held level');
   });
 
-  it('colours the block by which way the news runs', () => {
+  it('colors the block by which way the news runs', () => {
     // Execution up on easier work is not good news, however well the figure
     // reads on its own, and the block does not paint it as though it were.
     const flattered = [...rated(2024, 60, 4.2, 2.6), ...rated(2025, 60, 3, 3.6)];

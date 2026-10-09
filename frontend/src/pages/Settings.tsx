@@ -865,10 +865,10 @@ export default function Settings() {
           },
           {
             id: 'accent',
-            label: 'Accent colour',
+            label: 'Accent color',
             hint: skinned
-              ? `${skinLabel} brings its own colours. Switch to Light or Dark to choose one.`
-              : 'The colour Summit uses for progress, links and highlights.',
+              ? `${skinLabel} brings its own colors. Switch to Light or Dark to choose one.`
+              : 'The color Summit uses for progress, links and highlights.',
             control: (
               /* Left on screen and switched off rather than removed. The row
                  disappearing when a palette is picked would read as the app
@@ -878,7 +878,7 @@ export default function Settings() {
               <div
                 className={`st-swatches${skinned ? ' is-locked' : ''}`}
                 role="group"
-                aria-label="Accent colour"
+                aria-label="Accent color"
               >
                 {ACCENTS.map((accent) => (
                   <button
@@ -1309,7 +1309,7 @@ export default function Settings() {
             id: 'records-sort-what',
             label: 'What “improvement” orders by',
             hint: 'How far a record has come rather than how large it is — a score that went 18 to 25 above one logged once at 400.',
-            control: <span className="st-fixed">Distance travelled</span>,
+            control: <span className="st-fixed">Distance traveled</span>,
           },
         ],
       },

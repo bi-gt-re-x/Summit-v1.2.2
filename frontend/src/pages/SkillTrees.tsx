@@ -97,7 +97,7 @@
  * The tiles have always been buttons, so Tab and Enter worked; nothing else
  * did. The arrows now walk between tiles — spatially, because a reader
  * pressing → means *that one, over there* — and four page verbs have letters:
- * Esc clears, F frames where you are, R fits the tree, P practises. Every one
+ * Esc clears, F frames where you are, R fits the tree, P practices. Every one
  * of them is a control already on the page, which is the rule the set was
  * chosen by. See hooks/useLatticeKeys, and components/SkillTree/SubjectRail
  * for `/`.
@@ -819,7 +819,7 @@ export default function SkillTrees() {
       ? `Every skill in ${tree.title}, arranged the way the subject is built.`
       : mode === 'path'
         ? `${shown.nodes.length} of ${graph.nodes.length} skills: done, in progress and next up.`
-        : 'Coloured by your progress instead of difficulty.';
+        : 'Colored by your progress instead of difficulty.';
 
   /* The "+250 XP" that appears for a moment after a click. Held with its node
      id so switching selection mid-flash cannot show one node's gain on
@@ -871,7 +871,7 @@ export default function SkillTrees() {
   );
 
   /*
-   * Practising means one of two things, and which one depends on whether this
+   * Practicing means one of two things, and which one depends on whether this
    * account has written the node's programme.
    *
    * An untouched node is counted in XP, so a session adds XP. A node whose
@@ -880,7 +880,7 @@ export default function SkillTrees() {
    * would be adding to a figure that is no longer read, which is the same as
    * the button doing nothing.
    */
-  const practise = useCallback(
+  const startPractice = useCallback(
     (node: GraphNode) => {
       const plan = plans[node.id];
       if (plan) {
@@ -911,7 +911,7 @@ export default function SkillTrees() {
     onClear: () => (asked ? setAsked(null) : select(null)),
     onHere: () => hereId && frameOn([hereId]),
     onFit: () => frameOn(graph.nodes.map((node) => node.id)),
-    onPractise: selected ? () => practise(selected) : undefined,
+    onPractice: selected ? () => startPractice(selected) : undefined,
     onSearch: revealDrawer,
   });
 
@@ -1129,7 +1129,7 @@ export default function SkillTrees() {
             graph={graph}
             node={selected}
             onSelect={select}
-            onPractice={practise}
+            onPractice={startPractice}
             gain={selected ? practiceGain(selected) : 0}
             steps={selected ? plans[selected.id] ?? null : null}
             written={selected ? written[selected.id] ?? null : null}
@@ -1193,7 +1193,7 @@ export default function SkillTrees() {
             <kbd>↑</kbd>
             <kbd>↓</kbd>
             <kbd>←</kbd>
-            <kbd>→</kbd> move · <kbd>Enter</kbd> open · <kbd>P</kbd> practise · <kbd>F</kbd> frame
+            <kbd>→</kbd> move · <kbd>Enter</kbd> open · <kbd>P</kbd> practice · <kbd>F</kbd> frame
             where you are · <kbd>R</kbd> fit · <kbd>/</kbd> search · <kbd>Esc</kbd> clear
           </p>
         </footer>

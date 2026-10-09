@@ -161,7 +161,7 @@ describe('the Analytics entry, which is the one that unfolds', () => {
       .toHaveAttribute('href', '/analytics/subject/physics');
   });
 
-  it('draws the menu in the order the reader picked, not the catalogue order', async () => {
+  it('draws the menu in the order the reader picked, not the catalog order', async () => {
     await withFollowed(['physics', 'maths']);
     fireEvent.click(screen.getByRole('button', { name: /show your subjects/i }));
 
@@ -173,7 +173,7 @@ describe('the Analytics entry, which is the one that unfolds', () => {
     expect(named).toEqual(['/analytics/subject/physics', '/analytics/subject/maths']);
   });
 
-  it('drops a subject the catalogue no longer holds', async () => {
+  it('drops a subject the catalog no longer holds', async () => {
     // Nominated in the wizard, deleted from the library the week after. The
     // stored list still names it; a row for it would open a page about
     // nothing.
@@ -184,7 +184,7 @@ describe('the Analytics entry, which is the one that unfolds', () => {
     expect(screen.queryByRole('link', { name: /latin/i })).not.toBeInTheDocument();
   });
 
-  it('prints the full name, not the catalogue\'s abbreviation', async () => {
+  it('prints the full name, not the catalog\'s abbreviation', async () => {
     await withFollowed(['enviro']);
     fireEvent.click(screen.getByRole('button', { name: /show your subjects/i }));
 

@@ -85,7 +85,7 @@ You may not compute new ones, estimate, re-round, or introduce any figure \
 that is not there — not a percentage, not a count, not a rate, not a date.
 
 The exception, and it is the only one: `weeks` on each phase is yours. It is \
-a recommendation for how long that stage should run, it is labelled as one, \
+a recommendation for how long that stage should run, it is labeled as one, \
 and the phases together should fit roughly inside the days remaining that the \
 brief gives you.
 
@@ -109,7 +109,7 @@ standing should work on to move. That is knowledge about the world, not a \
 claim about the reader, and it is the reason a model is doing this at all. \
 Name the specific things: topics, question ranges, problem sets, pieces, \
 rating bands, sections of a syllabus. If the title names something you do not \
-recognise, say so in `route` and lay out a route from its own words instead \
+recognize, say so in `route` and lay out a route from its own words instead \
 of guessing at an institution.
 
 **What a plan looks like.** Phases that build on each other, in an order where \
@@ -144,7 +144,7 @@ reader came for a route, not a pep talk.
 Write the way somebody who knows the subject would say it out loud. Short \
 sentences. Ordinary words. No em-dash asides, no "X, not Y" flourishes, and \
 no sentence that exists to land a point rather than say a thing. Never open \
-with "Your record shows" or close by summarising what you just said.
+with "Your record shows" or close by summarizing what you just said.
 """
 
 SCHEMA = {

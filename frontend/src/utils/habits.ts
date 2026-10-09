@@ -762,9 +762,11 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
     const top = habits.slice(0, 5).map((habit) => ({ habit, stem: stem(habit.name) }));
     byDay.forEach((_hours, day) => {
       const names = stemsByDay.get(day) ?? new Set<string>();
-      top.forEach(({ habit: a, stem: aStem }) => {
-        top.forEach(({ habit: b, stem: bStem }) => {
-          if (a.id === b.id) return;
+      // Each pair once: (a, b) and (b, a) share a key, so visiting both
+      // counted every day twice and could claim more days than were worked.
+      top.forEach(({ habit: a, stem: aStem }, i) => {
+        top.forEach(({ habit: b, stem: bStem }, j) => {
+          if (j <= i) return;
           if (names.has(aStem) && names.has(bStem)) {
             const key = [a.name, b.name].sort().join(' + ');
             pairs.set(key, (pairs.get(key) ?? 0) + 1);
@@ -778,7 +780,7 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
       out.push({
         id: 'pairing',
         text: `${best[0].replace(' + ', ' and ')} happen on the same day`,
-        support: `${best[1]} days of ${workedDays.length}`,
+        support: `${best[1]} of ${workedDays.length} days`,
         frequency: wordFor(share),
         tone: 'pink',
       });

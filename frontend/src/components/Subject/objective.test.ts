@@ -260,7 +260,7 @@ describe('bottleneckFrom', () => {
     const neck = bottleneckFrom(stateWith({ curve: cliffCurve() }), perfWith());
 
     expect(neck?.name).toBe('Work at Hard');
-    expect(neck?.reading).toContain('Practise at Fair until it feels easy');
+    expect(neck?.reading).toContain('Practice at Fair until it feels easy');
     expect(neck?.ruled_out).toBe('Everything below Hard.');
     expect(neck?.evidence).toContain('a 24-point step between them');
   });

@@ -116,7 +116,7 @@ vi.mock('@/hooks/useSubjects', async (original) => {
     useSubjectIndex: () => new Map([
       ['algebra', {
         id: 'algebra', name: 'Algebra', label: 'Algebra', icon: 'algebra',
-        group: 'Maths and science', custom: false,
+        group: 'Math and science', custom: false,
       }],
     ]),
   };

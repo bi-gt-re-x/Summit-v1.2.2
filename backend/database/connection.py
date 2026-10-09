@@ -439,7 +439,7 @@ ADDED_TABLES = ('''
         PRIMARY KEY (user_id, ask_key)
     )
 ''', '''
-    -- The written practice programme for every node in the skill library.
+    -- The written practice program for every node in the skill library.
     -- Mirrors data/sql/skillsteps.sql, where the note on why these are stored
     -- rather than derived in the browser lives.
     --

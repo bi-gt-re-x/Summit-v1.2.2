@@ -61,7 +61,7 @@ export const chess = [
   node({
     id: 'chess.opening-principles',
     name: 'Opening Principles',
-    description: 'Centre, development, king safety — enough to reach a playable middlegame without memorising anything.',
+    description: 'Center, development, king safety — enough to reach a playable middlegame without memorizing anything.',
     difficulty: 'beginner',
     xpReward: 75,
     prerequisites: after('chess.rules'),
@@ -132,7 +132,7 @@ export const chess = [
   }),
   node({
     id: 'chess.analysis',
-    name: 'Analysing Your Own Games',
+    name: 'Analyzing Your Own Games',
     description: 'Finding where the game actually turned, before turning the engine on.',
     difficulty: 'advanced',
     xpReward: 175,

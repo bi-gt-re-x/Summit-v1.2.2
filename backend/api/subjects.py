@@ -179,11 +179,11 @@ def create(body: NewSubject, username: str = Depends(current_username)):
         return fail('That name has no letters or numbers in it')
 
     if catalogue.get(subject_id):
-        return fail('The catalogue already has that one')
+        return fail('The catalog already has that one')
 
     family = body.family
     if family is not None and family not in FAMILIES:
-        return fail('Unknown colour')
+        return fail('Unknown color')
 
     mine = db.rows_for('user_subjects', username)
     if any(r['subject_id'] == subject_id for r in mine):
@@ -209,7 +209,7 @@ def recolour(subject_id: str, body: Recolour,
 
     family = body.family
     if family is not None and family not in FAMILIES:
-        return fail('Unknown colour')
+        return fail('Unknown color')
 
     known = bool(catalogue.get(subject_id)) or subject_id in own_ids(username)
     if not known:

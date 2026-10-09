@@ -36,6 +36,7 @@
             padding: 18px;
         }
         .contact-card h3 { margin: 0 0 6px; font-size: 1em; }
+        h3 .ico { margin-right: 0.4em; }
         .contact-card p { margin: 0; font-size: 0.92em; color: #555; }
         .faq details {
             background: #f7f7f7;
@@ -58,15 +59,15 @@
         <h2>Get In Touch</h2>
         <div class="contact-options">
             <div class="contact-card">
-                <h3>📧 Email</h3>
+                <h3><span class="ico" aria-hidden="true">📧</span>Email</h3>
                 <p>Send questions, bug reports, or feedback to <a href="mailto:support@summit.app">support@summit.app</a>. We aim to reply within 2 business days.</p>
             </div>
             <div class="contact-card">
-                <h3>🐛 Bug Reports</h3>
+                <h3><span class="ico" aria-hidden="true">🐛</span>Bug Reports</h3>
                 <p>Found something broken? Open an issue on the project's repository with steps to reproduce — screenshots help a lot.</p>
             </div>
             <div class="contact-card">
-                <h3>💡 Feature Ideas</h3>
+                <h3><span class="ico" aria-hidden="true">💡</span>Feature Ideas</h3>
                 <p>Summit is shaped by its users. Tell us what would make your study sessions better.</p>
             </div>
         </div>
@@ -75,7 +76,7 @@
         <div class="faq">
             <details>
                 <summary>Where is my data stored?</summary>
-                <p>Everything lives locally — in your browser's local storage and in JSON files on the machine running the app. Nothing is uploaded to a cloud service. See our <a href="{{ url_for('privacypolicy.page') }}">Privacy Policy</a> for details.</p>
+                <p>Everything lives in one SQLite database on the server that runs Summit. Nothing is uploaded to a cloud service. See our <a href="{{ url_for('privacypolicy.page') }}">Privacy Policy</a> for details.</p>
             </details>
             <details>
                 <summary>I lost my streak — can it be restored?</summary>
@@ -87,7 +88,7 @@
             </details>
             <details>
                 <summary>Can I use Summit on multiple devices?</summary>
-                <p>Because data is stored locally, each device keeps its own progress. To move your data, copy the app's JSON data files to the new machine.</p>
+                <p>Yes. Your account lives on the server that runs Summit, so any device that can reach it sees the same progress. To move to a new server, copy the database file (data/summit.db).</p>
             </details>
             <details>
                 <summary>Does Summit cost anything?</summary>

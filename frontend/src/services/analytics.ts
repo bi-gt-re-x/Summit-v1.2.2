@@ -378,7 +378,7 @@ export interface BriefFindings {
   goals: Array<{ title: string; progress: number; deadline: string; drift: number | null }>;
 }
 
-/** One thing to practise, and the figure that says why. */
+/** One thing to practice, and the figure that says why. */
 export interface BriefPractice {
   title: string;
   /** A suggested sitting length. The one number the model supplies. */

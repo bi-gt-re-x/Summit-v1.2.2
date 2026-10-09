@@ -17,7 +17,7 @@
  * So this returns the two separately and names them as what they are:
  *
  *   `nodes`, `branches`, `core`, `categories`  — the shape of the curriculum
- *   `practised`                                — what the reader has done
+ *   `practiced`                                — what the reader has done
  *
  * Nothing here computes a percentage across the two. "You are 12% through
  * Mathematics" would need the seed's states to mean something about the
@@ -54,12 +54,12 @@ export interface Lattice {
   /** Of those, the ones marked as core. Also a fact about the curriculum. */
   core: number;
   /**
-   * Skills on this tree the reader has practised at least once.
+   * Skills on this tree the reader has practiced at least once.
    *
    * The one figure here that is about the reader. Read from the practice
    * store, which is per-account and written only by their own clicks.
    */
-  practised: number;
+  practiced: number;
   /** Whether this is a branch the reader chose, or the subject's own root. */
   chosen: boolean;
 }
@@ -100,7 +100,7 @@ export function latticeFor(
     branches,
     nodes: tree.nodes.length,
     core: tree.nodes.filter((node) => node.core).length,
-    practised: tree.nodes.filter((node) => (progress[node.id] ?? 0) > 0).length,
+    practiced: tree.nodes.filter((node) => (progress[node.id] ?? 0) > 0).length,
     chosen: Boolean(chosenTree),
   };
 }
@@ -125,7 +125,7 @@ export function latticeFor(
  * hold, stated at the top.
  *
  * One figure is the reader's own and it is the only one this reads from:
- * `practised`, which their own clicks wrote. Everything else in a sentence
+ * `practiced`, which their own clicks wrote. Everything else in a sentence
  * below is a fact about the size or shape of the curriculum, and is phrased as
  * one.
  *
@@ -144,12 +144,12 @@ export interface TreeReading {
 }
 
 export function treeReading(lattice: Lattice): TreeReading {
-  const untouched = Math.max(0, lattice.nodes - lattice.practised);
+  const untouched = Math.max(0, lattice.nodes - lattice.practiced);
 
-  const touched = lattice.practised > 0
-    ? `You have practised ${lattice.practised} of its ${lattice.nodes} skills`
+  const touched = lattice.practiced > 0
+    ? `You have practiced ${lattice.practiced} of its ${lattice.nodes} skills`
       + `${untouched > 0 ? `, and not opened ${untouched}` : ''}.`
-    : `You have not practised any of ${lattice.title}'s ${lattice.nodes} skills yet.`;
+    : `You have not practiced any of ${lattice.title}'s ${lattice.nodes} skills yet.`;
 
   const shape = lattice.branches.length > 0
     ? `${lattice.title} holds ${lattice.nodes} skills, ${lattice.core} of them core, `
@@ -166,7 +166,7 @@ export function treeReading(lattice: Lattice): TreeReading {
         + `nearest thing the curriculum has to a next page.`
       : `No branch has been chosen for this subject, so this is its root — `
         + `naming one in the analytics setup narrows what the tree offers.`;
-  } else if (untouched === 0 && lattice.practised > 0) {
+  } else if (untouched === 0 && lattice.practiced > 0) {
     next = 'Every skill on this branch has been opened at least once.';
   }
 

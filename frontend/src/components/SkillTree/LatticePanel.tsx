@@ -1138,7 +1138,7 @@ export function LatticePanel({
             blockers.length === 1 ? 'one thing' : 'those'
           } to finish before this opens.`
         : steps
-          ? `Step ${at + 1} of ${programme.steps.length} of your own programme.`
+          ? `Step ${at + 1} of ${programme.steps.length} of your own program.`
           : node.status === 'progress'
             ? `${Math.round(node.percent)}% of the way through.`
             : 'Open now — nothing is in the way of starting it.';

@@ -45,7 +45,7 @@ export const FINANCE: SubjectTree = {
       desc: 'A large, illiquid, borrowed-against, undiversified asset that people also live in. The leverage cuts both ways and the transaction costs make it a poor short-term holding.' },
     { id: 'fi.insurance', name: 'Insurance', icon: 'insurance', tier: 'advanced', requires: ['fi.emergency'], state: lock, percent: 0, xp: 1800,
       desc: 'Paying a small certain cost to avoid a rare catastrophic one. Insure what would be unrecoverable and self-insure what would merely be annoying.' },
-    { id: 'fi.behaviour', name: 'Behaviour', icon: 'discipline', tier: 'advanced', core: true, requires: ['fi.diversify'], state: lock, percent: 0, xp: 2200,
+    { id: 'fi.behaviour', name: 'Behavior', icon: 'discipline', tier: 'advanced', core: true, requires: ['fi.diversify'], state: lock, percent: 0, xp: 2200,
       desc: 'Not selling in a crash and not buying at a peak. Investor returns lag fund returns, and the gap is entirely this node rather than any question of selection.' },
     { id: 'fi.allocate', name: 'Asset Allocation', icon: 'allocation', tier: 'advanced', requires: ['fi.behaviour', 'fi.pension'], state: lock, percent: 0, xp: 2300,
       desc: 'The split between kinds of asset, which drives most of the variation in outcomes. Deciding it in advance is also the mechanism that makes rebalancing possible.' },

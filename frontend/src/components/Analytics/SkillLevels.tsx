@@ -158,7 +158,7 @@ export function SkillLevelsPanel({ practice, periodText, limit = 6 }: SkillLevel
   return (
     <>
       <p className="sg-lead">
-        <strong>{rows.length}</strong> {rows.length === 1 ? 'skill' : 'skills'} practised in{' '}
+        <strong>{rows.length}</strong> {rows.length === 1 ? 'skill' : 'skills'} practiced in{' '}
         {periodText}
         {climbed > 0 ? (
           <>
@@ -248,7 +248,7 @@ function SkillRow({ row }: { row: Row }) {
           <dt>This period</dt>
           <dd>
             {inPeriod} {inPeriod === 1 ? 'problem' : 'problems'}
-            <small>last practised {sinceText(now.lastAt)}</small>
+            <small>last practiced {sinceText(now.lastAt)}</small>
           </dd>
         </div>
       </dl>

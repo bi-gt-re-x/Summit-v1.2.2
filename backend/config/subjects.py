@@ -47,7 +47,7 @@ task points at it. Names and icons above it can be edited freely.
 # hundred in the same sequence it always was. That matters: catalogue order is
 # the picker's default offer, and it runs from study through work to home.
 _GROUPS = (
-    ('Maths and science', (
+    ('Math and science', (
         ('mathematics', 'Mathematics', 'Math', 'math'),
         ('algebra', 'Algebra', None, 'algebra'),
         ('calculus', 'Calculus', None, 'calculus'),
@@ -210,7 +210,7 @@ def is_valid(subject_id):
 # The two invariants the docstring promises, checked once at import rather
 # than trusted: a typo in the table above should fail loudly on startup, not
 # quietly ship a pill with no icon or a name too long for its row.
-assert len(SUBJECTS) == 100, 'the catalogue is a hundred subjects'
+assert len(SUBJECTS) == 100, 'the catalog is a hundred subjects'
 assert len(BY_ID) == 100, 'subject ids have to be unique'
 assert all(
     len(subject['label']) <= LABEL_LIMIT for subject in SUBJECTS

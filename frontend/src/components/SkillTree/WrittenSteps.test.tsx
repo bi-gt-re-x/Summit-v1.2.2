@@ -48,7 +48,7 @@ function written(over: Partial<WrittenStep> = {}, ordinal = 1): WrittenStep {
    is exactly the question these tests ask. */
 const PROGRAMME: WrittenStep[] = [
   written({
-    title: 'Recognise a Quadratic',
+    title: 'Recognize a Quadratic',
     mastery: 'Identify whether an expression is quadratic.',
     practice: 'Say which of 3x^2 - 7x + 2 and x^3 + 1 are quadratic.',
     detail: 'Rewrite each one as ax^2 + bx + c before deciding.',
@@ -131,7 +131,7 @@ describe('a written step, closed', () => {
     draw(PROGRAMME);
     // By role rather than by text: an open step names itself again inside its
     // target-problem slot, and the row is the thing being asserted about.
-    expect(row('Recognise a Quadratic')).toBeInTheDocument();
+    expect(row('Recognize a Quadratic')).toBeInTheDocument();
     expect(screen.getByText('Identify whether an expression is quadratic.')).toBeInTheDocument();
   });
 
@@ -208,7 +208,7 @@ describe('opening a step', () => {
     draw(PROGRAMME);
     await userEvent.click(row('Expand Binomials'));
     await userEvent.click(row('Factor Simple Quadratics'));
-    expect(row('Recognise a Quadratic')).toHaveAttribute('aria-expanded', 'true');
+    expect(row('Recognize a Quadratic')).toHaveAttribute('aria-expanded', 'true');
     expect(row('Expand Binomials')).toHaveAttribute('aria-expanded', 'true');
     expect(row('Factor Simple Quadratics')).toHaveAttribute('aria-expanded', 'true');
   });
@@ -222,13 +222,13 @@ describe('when nothing has been written for a node', () => {
     expect(screen.queryByText('Try:')).not.toBeInTheDocument();
   });
 
-  it('draws the written programme the moment there is one', () => {
+  it('draws the written program the moment there is one', () => {
     draw(PROGRAMME);
     expect(screen.getAllByText('Try:').length).toBeGreaterThan(0);
   });
 });
 
-describe('the whole programme', () => {
+describe('the whole program', () => {
   it('opens from the panel and lists every step', async () => {
     draw(PROGRAMME);
     await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
@@ -257,7 +257,7 @@ describe('the target problem', () => {
   it('names the step it belongs to while the problem itself is still a slot', () => {
     draw(PROGRAMME);
     const slot = screen.getByText(/will appear here/);
-    expect(slot).toHaveTextContent('Recognise a Quadratic');
+    expect(slot).toHaveTextContent('Recognize a Quadratic');
   });
 });
 
@@ -473,7 +473,7 @@ describe('a written problem', () => {
 
   it('still shows slots for a step nobody has written problems for', async () => {
     draw(withProblems());
-    await userEvent.click(workLinkFor('Recognise a Quadratic'));
+    await userEvent.click(workLinkFor('Recognize a Quadratic'));
     expect(screen.getAllByText(/will appear here/).length).toBeGreaterThan(0);
   });
 });

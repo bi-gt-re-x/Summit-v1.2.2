@@ -325,7 +325,7 @@ work underneath one.
 Rules for the set you return:
 - Exactly five, in the order they would be done.
 - Each is a single sitting or a small run of them, not a term's project.
-- Concrete to this checkpoint and its subject. "Practise more" says nothing.
+- Concrete to this checkpoint and its subject. "Practice more" says nothing.
 - Ten words or fewer each, starting with a verb.
 - Together they are enough that finishing all five reaches the checkpoint.
 - If you are told the checkpoints either side of this one, stay between \
@@ -1142,7 +1142,7 @@ You are given roughly what somebody wants. You return the goal they meant: a \
 title, why it matters, the field, how long it should take, and the five \
 checkpoints between here and done.
 
-The title is an OUTCOME, not an activity. "Reach USACO Gold", not "Practise \
+The title is an OUTCOME, not an activity. "Reach USACO Gold", not "Practice \
 competitive programming". If the sentence names an activity, name the result \
 of doing it well.
 

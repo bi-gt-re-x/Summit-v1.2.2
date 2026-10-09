@@ -40,7 +40,7 @@ export const HISTORY: SubjectTree = {
     { id: 'hi.war', name: 'War & Its Aftermath', icon: 'conflict', tier: 'intermediate', requires: ['hi.empire'], state: lock, percent: 0, xp: 1900,
       desc: 'Causes, conduct and the settlements that set up the next one. Battles are the least explanatory part; logistics, finance and what happened afterwards do most of the work.' },
     { id: 'hi.tech', name: 'Technology & Change', icon: 'invention', tier: 'advanced', requires: ['hi.economic'], state: lock, percent: 0, xp: 2000,
-      desc: 'Printing, steam, rail, antibiotics and the internet — inventions that reorganised what was possible. Adoption is usually slower and stranger than the invention story suggests.' },
+      desc: 'Printing, steam, rail, antibiotics and the internet — inventions that reorganized what was possible. Adoption is usually slower and stranger than the invention story suggests.' },
     { id: 'hi.global', name: 'Global Connections', icon: 'globe', tier: 'advanced', requires: ['hi.empire', 'hi.culture'], state: lock, percent: 0, xp: 2100,
       desc: 'Following goods, diseases, people and ideas across borders instead of inside them. Many national histories stop making sense the moment you look at the shipping.' },
     { id: 'hi.memory', name: 'Memory & Commemoration', icon: 'monument', tier: 'advanced', requires: ['hi.culture'], state: lock, percent: 0, xp: 2000,

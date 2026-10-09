@@ -170,7 +170,7 @@ CATALOGUE = (
     ('days-500',     'Half a Thousand Days',  'Do work on 500 separate days.',                    'active_days', 500,   5, 'Consistency'),
     ('goal-day-5',   'On Target',             'Hit your daily focus goal 5 times.',               'perfect_days', 5,    1, 'Consistency'),
     ('goal-day-25',  'Consistent Aim',        'Hit your daily focus goal 25 times.',              'perfect_days', 25,   2, 'Consistency'),
-    ('goal-day-100', 'Dead Centre',           'Hit your daily focus goal 100 times.',             'perfect_days', 100,  4, 'Consistency'),
+    ('goal-day-100', 'Dead Center',           'Hit your daily focus goal 100 times.',             'perfect_days', 100,  4, 'Consistency'),
     ('goal-day-250', 'Unerring',              'Hit your daily focus goal 250 times.',             'perfect_days', 250,  5, 'Consistency'),
     ('early-10',     'Early Bird',            'Finish 10 tasks before 8am.',                      'early',       10,    1, 'Consistency'),
     ('early-50',     'Dawn Patrol',           'Finish 50 tasks before 8am.',                      'early',       50,    3, 'Consistency'),
@@ -192,7 +192,7 @@ CATALOGUE = (
     ('focus-1000',   'The Thousand',          'Log 1,000 hours of focus.',                        'focus',       1000,  5, 'Learning'),
     ('fdays-10',     'Showing Up',            'Focus on 10 separate days.',                       'focus_days',  10,    1, 'Learning'),
     ('fdays-50',     'Fifty Sittings',        'Focus on 50 separate days.',                       'focus_days',  50,    2, 'Learning'),
-    ('fdays-150',    'Practised',             'Focus on 150 separate days.',                      'focus_days',  150,   3, 'Learning'),
+    ('fdays-150',    'Practiced',             'Focus on 150 separate days.',                      'focus_days',  150,   3, 'Learning'),
     ('fdays-365',    'A Year of Focus',       'Focus on 365 separate days.',                      'focus_days',  365,   5, 'Learning'),
     ('deep-3',       'Long Session',          'Focus for 3 hours in a single day.',               'focus_best',  3,     1, 'Learning'),
     ('deep-6',       'Marathon Mind',         'Focus for 6 hours in a single day.',               'focus_best',  6,     3, 'Learning'),
@@ -221,7 +221,7 @@ CATALOGUE = (
     # `trees_done` is the top of the depth ladder — a lattice actually covered,
     # which `tree_best` can only ever say once however many are finished.
     # `tree_groups` is breadth that means something: the nine catalogue fields
-    # (Maths and science, Computing, Creative…) rather than a count of
+    # (Math and science, Computing, Creative…) rather than a count of
     # lattices, so opening five languages is one field and not five. `tree_xp`
     # is every lattice's own capped standing added up, in whole trees' worth of
     # work, and it is the only figure here that keeps moving after a tree caps.

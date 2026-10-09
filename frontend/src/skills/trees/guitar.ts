@@ -24,7 +24,7 @@ export const GUITAR: SubjectTree = {
     { id: 'gt.chords', name: 'Open Chords', icon: 'chord-shape', tier: 'beginner', core: true, requires: ['gt.strings'], state: lock, percent: 0, xp: 1600,
       desc: 'The first handful of shapes, played cleanly with every string sounding. Getting one shape perfect teaches more than getting five approximately, because the standard is what you will unconsciously keep.' },
     { id: 'gt.change', name: 'Chord Changes', icon: 'chord-change', tier: 'beginner', requires: ['gt.chords'], state: lock, percent: 0, xp: 1700,
-      desc: 'Moving between shapes in time, which is a completely separate skill from forming them. Practise the change itself rather than the chords either side, and always with a beat running.' },
+      desc: 'Moving between shapes in time, which is a completely separate skill from forming them. Practice the change itself rather than the chords either side, and always with a beat running.' },
     { id: 'gt.strum', name: 'Strumming', icon: 'strum', tier: 'beginner', core: true, requires: ['gt.chords'], state: lock, percent: 0, xp: 1600,
       desc: 'The right hand keeping a constant motion and choosing which passes hit the strings. Keeping the arm moving through the gaps is what makes a pattern feel steady rather than stitched together.' },
     { id: 'gt.rhythm', name: 'Rhythm Guitar', icon: 'rhythm', tier: 'beginner', requires: ['gt.strum', 'gt.change'], state: lock, percent: 0, xp: 1800,

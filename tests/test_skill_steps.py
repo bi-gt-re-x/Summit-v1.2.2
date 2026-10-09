@@ -69,7 +69,7 @@ def test_a_good_step_passes():
 @pytest.mark.parametrize('practice', [
     'Do ten from memory.',
     'Work through some examples.',
-    'Practise until it feels easy.',
+    'Practice until it feels easy.',
     'Try a few of these on your own.',
 ])
 def test_a_practice_line_naming_nothing_is_rejected(practice):

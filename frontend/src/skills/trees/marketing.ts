@@ -19,7 +19,7 @@ export const MARKETING: SubjectTree = {
     { id: 'mk.audience', name: 'Audience', icon: 'audience', tier: 'foundation', requires: ['mk.problem'], state: lock, percent: 0, xp: 1500,
       desc: 'Who specifically, in enough detail to know where they already spend their attention. Everybody is not an audience; it is the phrase that precedes a campaign that reaches nobody.' },
     { id: 'mk.research', name: 'Customer Research', icon: 'interview', tier: 'foundation', requires: ['mk.audience'], state: lock, percent: 0, xp: 1600,
-      desc: 'Asking people about their behaviour rather than their intentions. What somebody did last month predicts far better than what they say they would do.' },
+      desc: 'Asking people about their behavior rather than their intentions. What somebody did last month predicts far better than what they say they would do.' },
     { id: 'mk.position', name: 'Positioning', icon: 'positioning', tier: 'beginner', core: true, requires: ['mk.research'], state: lock, percent: 0, xp: 1800,
       desc: 'The space you occupy in the mind of a buyer, relative to the alternatives, including doing nothing. Being second-best at everything loses to being clearly first for a narrower group.' },
     { id: 'mk.message', name: 'Messaging', icon: 'message', tier: 'beginner', requires: ['mk.position'], state: lock, percent: 0, xp: 1700,

@@ -78,7 +78,7 @@ vi.mock('@/hooks/useSubjects', async (original) => {
   const real = await original<Record<string, unknown>>();
   const entry = (id: string, name: string) => [
     id,
-    { id, name, label: name, icon: id, group: 'Maths and science', custom: false },
+    { id, name, label: name, icon: id, group: 'Math and science', custom: false },
   ];
   return {
     ...real,

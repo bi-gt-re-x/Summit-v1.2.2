@@ -36,7 +36,7 @@ export const ENDURANCE: SubjectTree = {
     { id: 'en.strength', name: 'Strength for Endurance', icon: 'barbell', tier: 'intermediate', requires: ['en.gait'], state: lock, percent: 0, xp: 1800,
       desc: 'Two sessions a week of heavy, low-rep lifting, which improves economy and resistance to injury. It does not make endurance athletes bulky, which is the fear that keeps most of them from doing it.' },
     { id: 'en.fuel', name: 'Fuelling', icon: 'fuel', tier: 'intermediate', requires: ['en.long'], state: lock, percent: 0, xp: 1800,
-      desc: 'Carbohydrate before and during anything long, practised in training rather than tried on the day. The gut is trainable, and race day is the worst possible place to discover it is not.' },
+      desc: 'Carbohydrate before and during anything long, practiced in training rather than tried on the day. The gut is trainable, and race day is the worst possible place to discover it is not.' },
     { id: 'en.heat', name: 'Heat, Cold & Altitude', icon: 'climate', tier: 'advanced', requires: ['en.fuel'], state: lock, percent: 0, xp: 1900,
       desc: 'How conditions change achievable pace and required fluid. Adjusting expectations for the weather is a skill; refusing to is how a good session becomes a bad week.' },
     { id: 'en.plan', name: 'Training Plans', icon: 'training-plan', tier: 'advanced', core: true, requires: ['en.threshold', 'en.volume'], state: lock, percent: 0, xp: 2200,

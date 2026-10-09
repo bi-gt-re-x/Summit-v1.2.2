@@ -89,7 +89,7 @@ describe('a dot that breaks into a run', () => {
     expect(d.fast).toBeLessThan(0.05);
   });
 
-  it('takes its colour on the way out and loses it on the way back', () => {
+  it('takes its color on the way out and loses it on the way back', () => {
     alwaysRuns();
     const d = dot();
     expect(d.blue).toBe(0);

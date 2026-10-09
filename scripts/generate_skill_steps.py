@@ -37,7 +37,7 @@ They run in that order because the cheap one is cheap.
 
 ## The steps are the half of it a reader does not sit down in front of
 
-A step says what to practise and the problem set is what the reader actually
+A step says what to practice and the problem set is what the reader actually
 works: see `build_problems`. Both are written here, because they are one
 judgement — the questions a step is owed depend on what the step asked for, and
 a second script briefed only on the step's title writes a set for a different
@@ -176,7 +176,7 @@ REVIEW_REASONING = planner.GROQ_REASONING
 # The prompts
 # ---------------------------------------------------------------------------
 # Written against one failure mode, and it is worth saying which: a model asked
-# for "practice steps" writes advice. Advice is the genre — "practise regularly,
+# for "practice steps" writes advice. Advice is the genre — "practice regularly,
 # focus on accuracy, review your mistakes" — and every sentence of it is true
 # and useless. The system prompt spends most of its words refusing that genre
 # and showing the alternative, because naming it is not enough; the example is
@@ -203,7 +203,7 @@ This is the shape, and it is not negotiable:
 THE ONE RULE: every practice line must name its object.
 
   NO   Do ten from memory.              names nothing
-  NO   Practise until it feels easy.    names nothing, and cannot be finished
+  NO   Practice until it feels easy.    names nothing, and cannot be finished
   NO   Work through some examples.      names nothing
   YES  Factor x^2 - 7x + 12.
   YES  Balance Fe + O2 -> Fe2O3.
@@ -334,7 +334,7 @@ For each step, decide PASS or FAIL. Fail it for any of these:
    run, the claim is false, or the terminology is misused. Check the arithmetic
    yourself — do not assume it is right because it looks confident.
 2. VAGUE. `practice` does not name a specific object to work on. "Do ten from
-   memory", "work through examples", "practise until comfortable". A step that
+   memory", "work through examples", "practice until comfortable". A step that
    cannot be started without first deciding what to work on has failed.
 3. OFF-TOPIC. The step is not about the skill it is filed under.
 4. MISPLACED. It is far above or below the stated level, or it comes before
@@ -408,7 +408,7 @@ REVIEW_SCHEMA = {
 # ---------------------------------------------------------------------------
 # The problems
 # ---------------------------------------------------------------------------
-# A step says what to practise. A problem set is what the reader actually sits
+# A step says what to practice. A problem set is what the reader actually sits
 # down in front of, and until this stage existed the panel drew the graded slots
 # from frontend/src/utils/problemSet with nothing in them — the shape of a set
 # with no set.
@@ -434,7 +434,7 @@ This is the shape:
 THE FIRST RULE: every prompt names its object, with the real numbers in it.
 
   NO   Try a harder factorisation.        names nothing
-  NO   Practise a few more of these.      names nothing, cannot be marked
+  NO   Practice a few more of these.      names nothing, cannot be marked
   YES  Factor x^2 + 2x - 15.
   YES  Balance C3H8 + O2 -> CO2 + H2O.
   YES  What does len("summit") return?

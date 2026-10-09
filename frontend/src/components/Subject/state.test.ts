@@ -74,7 +74,7 @@ describe('the difficulty curve', () => {
 
   it('finds no cliff when the curve does not fall away', () => {
     // A real answer with its own instruction — go up a level, rather than
-    // practise more — and one that a "lowest rung wins" rule would never give.
+    // practice more — and one that a "lowest rung wins" rule would never give.
     const curve = difficultyCurve([...rung(5, 2, 4), ...rung(5, 3, 4), ...rung(5, 4, 4)]);
     expect(curve.threshold).toBeNull();
     expect(curve.holds).toBeNull();

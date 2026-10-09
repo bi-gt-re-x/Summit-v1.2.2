@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS skill_steps (
     mastery      TEXT    NOT NULL,
 
     -- The Try: line — one concrete thing to go and do right now, with its
-    -- object stated. 'Factor x^2 - 7x + 12', not 'practise factoring'. Stored
+    -- object stated. 'Factor x^2 - 7x + 12', not 'practice factoring'. Stored
     -- without the 'Try:' label; the panel draws that.
     practice     TEXT    NOT NULL,
 

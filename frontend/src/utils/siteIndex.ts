@@ -214,7 +214,7 @@ export const PLACES: Place[] = [
     name: 'Appearance',
     where: 'Settings',
     to: '/settings/appearance',
-    keywords: 'theme dark mode light accent colour animation motion background rail collapsed',
+    keywords: 'theme dark mode light accent color colour animation motion background rail collapsed',
   },
   {
     id: 'settings-dashboard',

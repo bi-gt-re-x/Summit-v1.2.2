@@ -13,7 +13,7 @@
  *     Esc   put the canvas back — clear the selection, the trace, the filter
  *     F     frame where you are standing
  *     R     fit the whole tree
- *     P     practise the selected skill
+ *     P     practice the selected skill
  *     /     open the subject drawer and take the search field
  *
  * Every one of them is a control already on the page, which is the rule this
@@ -25,7 +25,7 @@
  * that only exists once you can see the field is a shortcut that works only
  * when it is not needed.
  *
- * ## Space is deliberately not "practise"
+ * ## Space is deliberately not "practice"
  *
  * Space on a focused button means *press this button*, everywhere, in every
  * browser, and the lattice is ninety focusable buttons. Rebinding it would
@@ -52,8 +52,8 @@ export interface LatticeKeys {
   onHere: () => void;
   /** R: fit the whole tree. */
   onFit: () => void;
-  /** P: practise the selected skill. Absent while nothing is selected. */
-  onPractise?: () => void;
+  /** P: practice the selected skill. Absent while nothing is selected. */
+  onPractice?: () => void;
   /** `/`: open the drawer and put the caret in the search field. */
   onSearch?: () => void;
   /** False while a dialog or an editor owns the keyboard. */
@@ -64,7 +64,7 @@ export function useLatticeKeys({
   onClear,
   onHere,
   onFit,
-  onPractise,
+  onPractice,
   onSearch,
   enabled = true,
 }: LatticeKeys): void {
@@ -82,7 +82,7 @@ export function useLatticeKeys({
       if (key === 'escape') onClear();
       else if (key === 'f') onHere();
       else if (key === 'r') onFit();
-      else if (key === 'p' && onPractise) onPractise();
+      else if (key === 'p' && onPractice) onPractice();
       /* Swallowed on the way through, or the slash it stands for arrives in
          the box it just opened. */
       else if (key === '/' && onSearch) onSearch();
@@ -93,5 +93,5 @@ export function useLatticeKeys({
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [enabled, onClear, onFit, onHere, onPractise, onSearch]);
+  }, [enabled, onClear, onFit, onHere, onPractice, onSearch]);
 }

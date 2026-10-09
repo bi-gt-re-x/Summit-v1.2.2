@@ -56,7 +56,7 @@ task moves.
 Be strict. Most tasks belong to no goal at all, and saying so is the right \
 answer: an empty list is expected and is never a failure. Do not choose a \
 goal because it is the same broad subject, or because both mention studying, \
-practising or revising. Choose it when doing the task is doing part of that \
+practicing or revising. Choose it when doing the task is doing part of that \
 goal.
 
 A task may count toward more than one goal. Answer with numbers only.\

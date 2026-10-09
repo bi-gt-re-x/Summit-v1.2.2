@@ -50,10 +50,10 @@ export const LINEAR_ALGEBRA: SubjectTree = {
     { id: 'la.diag', name: 'Diagonalisation', icon: 'diagonal', tier: 'expert', requires: ['la.eigen', 'la.ortho'], state: lock, percent: 0, xp: 2500,
       desc: 'Rewriting a transformation in its own eigenbasis so it becomes a diagonal matrix. Applying it a thousand times then costs one exponentiation rather than a thousand multiplications.' },
     { id: 'la.svd', name: 'Singular Value Decomposition', icon: 'svd', tier: 'expert', requires: ['la.diag', 'la.lsq'], state: lock, percent: 0, xp: 2800,
-      desc: 'Any matrix at all as a rotation, a stretch and another rotation. It is the most generally useful factorisation there is, and the machinery under low-rank approximation and dimensionality reduction.' },
+      desc: 'Any matrix at all as a rotation, a stretch and another rotation. It is the most generally useful factorization there is, and the machinery under low-rank approximation and dimensionality reduction.' },
     { id: 'la.numeric', name: 'Numerical Stability', icon: 'precision', tier: 'expert', requires: ['la.ortho'], state: lock, percent: 0, xp: 2400,
       desc: 'What happens to these methods in finite-precision arithmetic, where nearly-dependent columns amplify error enormously. Conditioning tells you when an answer computed correctly is still worthless.' },
     { id: 'la.applied', name: 'Applications', icon: 'apply', tier: 'mastery', requires: ['la.svd', 'la.numeric'], state: lock, percent: 0, xp: 3000,
-      desc: 'Graphics, search rankings, compression, quantum states and every neural network layer are the same handful of operations wearing different clothes. Recognising them is what the subject is for.' },
+      desc: 'Graphics, search rankings, compression, quantum states and every neural network layer are the same handful of operations wearing different clothes. Recognizing them is what the subject is for.' },
   ],
 };

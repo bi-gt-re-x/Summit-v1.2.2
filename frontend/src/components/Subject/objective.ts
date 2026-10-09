@@ -359,7 +359,7 @@ export function bottleneckFrom(
       ].filter(Boolean),
       reading:
         `You do well up to ${holds.label}, then drop off. `
-        + `Practise at ${holds.label} until it feels easy.`,
+        + `Practice at ${holds.label} until it feels easy.`,
       ruled_out: `Everything below ${cliff.label}.`,
       confidence: cliff.done >= 8 ? 0.65 : 0.45,
       source: 'counted',

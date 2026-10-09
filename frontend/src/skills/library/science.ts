@@ -83,7 +83,7 @@ export const science = [
   node({
     id: 'physics.electricity',
     name: 'Electricity and Circuits',
-    description: 'Charge, current, potential difference, and a circuit you can actually analyse.',
+    description: 'Charge, current, potential difference, and a circuit you can actually analyze.',
     difficulty: 'advanced',
     xpReward: 140,
     prerequisites: all('physics.energy', 'math.linear-equations'),
@@ -130,7 +130,7 @@ export const science = [
   }),
   node({
     id: 'science.data-analysis',
-    name: 'Analysing Experimental Data',
+    name: 'Analyzing Experimental Data',
     description: 'Fitting a line, quoting an uncertainty, and saying what the data does not show.',
     difficulty: 'advanced',
     xpReward: 155,

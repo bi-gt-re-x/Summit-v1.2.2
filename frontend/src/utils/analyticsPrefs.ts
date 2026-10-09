@@ -78,7 +78,7 @@ export const TONE_HINT: Record<AnalyticsTone, string> = {
   balanced:
     'A miss is a miss past 5%. Three changes at a time, and the weak measure is named first.',
   harsh:
-    'No rounding in your favour. Every shortfall is stated as one, every change the record '
+    'No rounding in your favor. Every shortfall is stated as one, every change the record '
     + 'supports is shown at once, and the sentence leads with what is worst.',
 };
 

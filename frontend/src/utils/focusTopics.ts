@@ -6,7 +6,7 @@
  * The rail under them offers all hundred subjects, which is the right number to
  * be able to reach and the wrong number to be shown first. Five is what fits
  * across the top as something to read rather than scan, and it is enough to
- * hold a term of work: two subjects being studied, one being practised, one for
+ * hold a term of work: two subjects being studied, one being practiced, one for
  * the job and one for the house.
  *
  * They start derived and become chosen. Until somebody picks, the five are the

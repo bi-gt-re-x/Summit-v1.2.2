@@ -64,7 +64,7 @@ const GRID = at({
 });
 
 describe('stepFrom', () => {
-  it('moves to the neighbour in that direction', () => {
+  it('moves to the neighbor in that direction', () => {
     expect(stepFrom(GRID, 'mid', 'right')?.node.id).toBe('right');
     expect(stepFrom(GRID, 'mid', 'left')?.node.id).toBe('left');
     expect(stepFrom(GRID, 'mid', 'down')?.node.id).toBe('under');

@@ -23,7 +23,7 @@ that its figures are its own.
 
 **The model is given the numbers and may not produce any others.** It writes
 prose over a supplied set of findings: it may quote them, order them, explain
-what they imply and say what to practise — and it may not compute, estimate,
+what they imply and say what to practice — and it may not compute, estimate,
 round differently, or invent a figure that was not handed to it. The system
 prompt says this three ways because it is the one failure that would matter:
 a made-up "you are 68% accurate in geometry" on this page is indistinguishable
@@ -84,7 +84,7 @@ You write the read-out for one subject on a study-analytics page.
 
 You are given a set of findings that the app has already computed from the \
 reader's own record. Your job is to turn them into two things: a short reading \
-of what they mean together, and what to practise next.
+of what they mean together, and what to practice next.
 
 THE ONE RULE THAT MATTERS
 
@@ -137,7 +137,7 @@ page. If the record is thin, say that plainly instead of overreading it.
 `practice` — what to work on next, most valuable first. This is where you are \
 allowed to know things the app does not: what a task at that difficulty in \
 that subject usually involves, and what specifically is worth drilling. Be \
-concrete to the subject. "Practise more" says nothing.
+concrete to the subject. "Practice more" says nothing.
 
 Each practice block has:
 - `title`: what to work on, six words or fewer.
@@ -163,7 +163,7 @@ The reader came for a read-out, not a report card comment.
 Write the way somebody who knows the subject would say it out loud. Short \
 sentences. Ordinary words. No em-dash asides, no "X, not Y" flourishes, and \
 no sentence that exists to land a point rather than say a thing. Never open \
-with "Your record shows" or close by summarising what you just said.
+with "Your record shows" or close by summarizing what you just said.
 """
 
 SCHEMA = {
@@ -386,7 +386,7 @@ def _clean(found: Dict[str, Any]) -> Dict[str, Any]:
 # The one thing this module does
 # ---------------------------------------------------------------------------
 def write(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
-    """A reading of these findings, and what to practise next.
+    """A reading of these findings, and what to practice next.
 
     Raises `BriefUnavailable` for everything the panel should say out loud —
     no key, a refused request, an unreadable answer. The caller turns that

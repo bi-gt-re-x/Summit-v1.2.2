@@ -137,8 +137,10 @@ body:has(.auth-page) .app-main {
 .auth-step { display: flex; flex-direction: column; gap: var(--space-4); }
 .auth-step[data-step="choose"] { gap: var(--space-6); padding-top: var(--space-2); }
 .auth-step.hidden { display: none; }
+.auth-step form { display: flex; flex-direction: column; gap: var(--space-2); }
 
 .auth-label {
+    display: block;
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--color-ink-muted);

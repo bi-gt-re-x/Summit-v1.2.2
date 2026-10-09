@@ -3,7 +3,7 @@
  *
  * The thing worth guarding here is the boundary the module exists for: the
  * tree is authored and its node states are illustrative, so the only figure
- * that describes the reader is the count of nodes they have practised. A
+ * that describes the reader is the count of nodes they have practiced. A
  * regression that quietly started reading the seed's states as progress would
  * look completely reasonable on screen — a filled bar, a plausible percentage
  * — and would be the page reporting a designer's guess as somebody's record.
@@ -20,9 +20,9 @@ const FORKED = SUBJECT_TREES.find((tree) =>
 
 describe('the lattice behind a subject', () => {
   it('routes a subject to its own tree', () => {
-    const lattice = latticeFor('mathematics', 'Maths and science', undefined, {});
+    const lattice = latticeFor('mathematics', 'Math and science', undefined, {});
     expect(lattice).not.toBeNull();
-    expect(lattice!.id).toBe(treeForSubject('mathematics', 'Maths and science').tree);
+    expect(lattice!.id).toBe(treeForSubject('mathematics', 'Math and science').tree);
     expect(lattice!.chosen).toBe(false);
   });
 
@@ -72,16 +72,16 @@ describe('the breadcrumb', () => {
 });
 
 describe('what is the curriculum and what is the reader', () => {
-  it('counts nothing as practised on an untouched store', () => {
+  it('counts nothing as practiced on an untouched store', () => {
     // The seed marks nodes done. None of that is this reader, and a lattice
     // that read those states would open on a page claiming work nobody did.
     const lattice = latticeFor('mathematics', undefined, undefined, {})!;
 
     expect(lattice.nodes).toBeGreaterThan(0);
-    expect(lattice.practised).toBe(0);
+    expect(lattice.practiced).toBe(0);
   });
 
-  it('counts only the nodes this account actually practised', () => {
+  it('counts only the nodes this account actually practiced', () => {
     const target = subjectTreeById(treeForSubject('mathematics', undefined).tree)!;
     const [first, second] = target.nodes;
 
@@ -92,8 +92,8 @@ describe('what is the curriculum and what is the reader', () => {
       'not-on-this-tree': 90,
     })!;
 
-    expect(lattice.practised).toBe(2);
-    expect(lattice.practised).toBeLessThanOrEqual(lattice.nodes);
+    expect(lattice.practiced).toBe(2);
+    expect(lattice.practiced).toBeLessThanOrEqual(lattice.nodes);
   });
 
   it('does not treat a zero in the store as practice', () => {
@@ -101,7 +101,7 @@ describe('what is the curriculum and what is the reader', () => {
     const lattice = latticeFor('mathematics', undefined, undefined, {
       [target.nodes[0]!.id]: 0,
     })!;
-    expect(lattice.practised).toBe(0);
+    expect(lattice.practiced).toBe(0);
   });
 });
 

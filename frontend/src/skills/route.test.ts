@@ -244,7 +244,7 @@ describe('spotlight', () => {
     expect(weights.get('systems')).toBe('dim');
   });
 
-  it('marks nothing as here, because a lens has no centre', () => {
+  it('marks nothing as here, because a lens has no center', () => {
     expect([...spotlight(ladder(), 'complete').values()]).not.toContain('here');
   });
 });

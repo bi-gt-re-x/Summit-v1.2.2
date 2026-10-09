@@ -458,7 +458,7 @@ function fromDiagnosis(row: Diagnosis): Change {
     id: `change-${row.id}`,
     kind: 'problem',
     family: row.id,
-    text: `${row.headline} ${row.detail}`,
+    text: `${row.headline}${/[.!?]$/.test(row.headline) ? '' : '.'} ${row.detail}`,
     weight: row.weight,
   };
 }

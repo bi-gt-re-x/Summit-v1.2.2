@@ -202,7 +202,7 @@
     {
       "id": "c.err",
       "name": "Error Handling",
-      "desc": "Deciding in advance what should happen when something fails — a missing file, bad input, a network that vanished. The hard judgement is which errors to handle where, and which should be allowed to stop the program loudly.",
+      "desc": "Deciding in advance what should happen when something fails — a missing file, bad input, a network that vanished. The hard judgment is which errors to handle where, and which should be allowed to stop the program loudly.",
       "tier": "intermediate",
       "core": false,
       "xp": 1600,
@@ -405,7 +405,7 @@
     {
       "id": "w.html",
       "name": "HTML",
-      "desc": "The structure of a page: what is a heading, a list, a button, a form. Choosing the tag that means the right thing is what gives you working keyboard support and screen-reader behaviour for free.",
+      "desc": "The structure of a page: what is a heading, a list, a button, a form. Choosing the tag that means the right thing is what gives you working keyboard support and screen-reader behavior for free.",
       "tier": "foundation",
       "core": true,
       "xp": 1400,
@@ -593,7 +593,7 @@
     {
       "id": "w.react",
       "name": "Components",
-      "desc": "Building an interface from small pieces that own their own markup, style and behaviour. The payoff is that you can reason about, test and reuse one piece without loading the whole page into your head.",
+      "desc": "Building an interface from small pieces that own their own markup, style and behavior. The payoff is that you can reason about, test and reuse one piece without loading the whole page into your head.",
       "tier": "intermediate",
       "core": true,
       "xp": 2400,
@@ -747,7 +747,7 @@
     {
       "id": "w.test",
       "name": "Testing the UI",
-      "desc": "Checking that a screen does what a person needs, driven the way a person drives it. Test behaviour rather than internals, or every refactor breaks a hundred tests that were describing the wrong thing.",
+      "desc": "Checking that a screen does what a person needs, driven the way a person drives it. Test behavior rather than internals, or every refactor breaks a hundred tests that were describing the wrong thing.",
       "tier": "advanced",
       "core": false,
       "xp": 1900,
@@ -2094,7 +2094,7 @@
     {
       "id": "net.latency",
       "name": "Latency & Throughput",
-      "desc": "How long one thing takes versus how much fits through per second, which are different problems with different fixes. Distance is a hard floor: nothing negotiates with the speed of light in fibre.",
+      "desc": "How long one thing takes versus how much fits through per second, which are different problems with different fixes. Distance is a hard floor: nothing negotiates with the speed of light in fiber.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -2251,7 +2251,7 @@
     },
     {
       "id": "ds.viz",
-      "name": "Visualisation",
+      "name": "Visualization",
       "desc": "Choosing the picture that shows the relationship rather than the one that looks impressive. A scatter plot answers a different question from a bar chart, and a chart that needs a paragraph to read is a chart that failed.",
       "tier": "beginner",
       "core": false,
@@ -2290,7 +2290,7 @@
     {
       "id": "ds.dist",
       "name": "Distributions",
-      "desc": "The shape the values take, and the handful of shapes that keep appearing. Recognising a long tail matters more than naming it: on a skewed distribution the average describes almost nobody.",
+      "desc": "The shape the values take, and the handful of shapes that keep appearing. Recognizing a long tail matters more than naming it: on a skewed distribution the average describes almost nobody.",
       "tier": "intermediate",
       "core": false,
       "xp": 1900,
@@ -2309,7 +2309,7 @@
     {
       "id": "ds.sample",
       "name": "Sampling & Bias",
-      "desc": "Who ended up in the data and who quietly did not. No amount of modelling recovers from a sample that never contained the people you are trying to say something about.",
+      "desc": "Who ended up in the data and who quietly did not. No amount of modeling recovers from a sample that never contained the people you are trying to say something about.",
       "tier": "intermediate",
       "core": true,
       "xp": 2000,
@@ -2400,7 +2400,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Visualisation",
+        "Visualization",
         "Descriptive Statistics"
       ],
       "recommends": []
@@ -2460,14 +2460,14 @@
       "group": "Computing",
       "requires": [
         "Distributions",
-        "Visualisation"
+        "Visualization"
       ],
       "recommends": []
     },
     {
       "id": "ds.exp",
       "name": "Experiments & A/B Tests",
-      "desc": "Making the comparison fair by deciding at random who gets what. Randomisation is what buys you the word \"caused\"; peeking at the result daily and stopping when it looks good sells it straight back.",
+      "desc": "Making the comparison fair by deciding at random who gets what. Randomization is what buys you the word \"caused\"; peeking at the result daily and stopping when it looks good sells it straight back.",
       "tier": "advanced",
       "core": false,
       "xp": 2300,
@@ -2518,7 +2518,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Visualisation",
+        "Visualization",
         "Experiments & A/B Tests"
       ],
       "recommends": []
@@ -2526,7 +2526,7 @@
     {
       "id": "ds.ethics",
       "name": "Data Ethics",
-      "desc": "Consent, privacy and the harm a model can do at scale to people who never agreed to be in it. Anonymised data is rarely as anonymous as it sounds, and aggregation is not a defence on its own.",
+      "desc": "Consent, privacy and the harm a model can do at scale to people who never agreed to be in it. Anonymized data is rarely as anonymous as it sounds, and aggregation is not a defense on its own.",
       "tier": "expert",
       "core": false,
       "xp": 2300,
@@ -2545,7 +2545,7 @@
     {
       "id": "ml.what",
       "name": "What Learning Is",
-      "desc": "Fitting a function to examples so it works on new ones, instead of writing the rule by hand. The whole field is that one trade: enough flexibility to capture the pattern, little enough to not memorise the noise.",
+      "desc": "Fitting a function to examples so it works on new ones, instead of writing the rule by hand. The whole field is that one trade: enough flexibility to capture the pattern, little enough to not memorize the noise.",
       "tier": "foundation",
       "core": true,
       "xp": 1400,
@@ -2682,8 +2682,8 @@
     },
     {
       "id": "ml.regular",
-      "name": "Regularisation",
-      "desc": "Penalising complexity so the fit prefers the simpler explanation. One flavour shrinks weights toward zero and another sets them exactly there, which is why the second doubles as feature selection.",
+      "name": "Regularization",
+      "desc": "Penalizing complexity so the fit prefers the simpler explanation. One flavor shrinks weights toward zero and another sets them exactly there, which is why the second doubles as feature selection.",
       "tier": "intermediate",
       "core": false,
       "xp": 1900,
@@ -2797,7 +2797,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Regularisation"
+        "Regularization"
       ],
       "recommends": []
     },
@@ -3097,7 +3097,7 @@
     },
     {
       "id": "db.normal",
-      "name": "Normalisation",
+      "name": "Normalization",
       "desc": "Splitting tables so each fact is stored exactly once. Third normal form is far enough for almost everything, and knowing the rules is what lets you break them deliberately later rather than by accident.",
       "tier": "intermediate",
       "core": true,
@@ -3168,7 +3168,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Normalisation"
+        "Normalization"
       ],
       "recommends": []
     },
@@ -3251,7 +3251,7 @@
     {
       "id": "db.nosql",
       "name": "Document & Key-Value Stores",
-      "desc": "Stores that drop the fixed schema in exchange for flexibility and easy horizontal growth. They do not remove the modelling work, they move it into your application, where nothing checks it for you.",
+      "desc": "Stores that drop the fixed schema in exchange for flexibility and easy horizontal growth. They do not remove the modeling work, they move it into your application, where nothing checks it for you.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -3263,7 +3263,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Normalisation"
+        "Normalization"
       ],
       "recommends": []
     },
@@ -3347,7 +3347,7 @@
     },
     {
       "id": "cy.model",
-      "name": "Threat Modelling",
+      "name": "Threat Modeling",
       "desc": "Asking who would attack this, what they want, and where the soft edge is — before writing defences. Security spending without a threat model reliably buys the wrong thing, thoroughly.",
       "tier": "foundation",
       "core": true,
@@ -3377,7 +3377,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Threat Modelling"
+        "Threat Modeling"
       ],
       "recommends": []
     },
@@ -3402,7 +3402,7 @@
     },
     {
       "id": "cy.authz",
-      "name": "Authorisation",
+      "name": "Authorization",
       "desc": "Deciding what an identified person is allowed to do, checked on every request rather than once at login. Least privilege is the rule: the account that only reads cannot be used to delete.",
       "tier": "beginner",
       "core": true,
@@ -3473,7 +3473,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Authorisation"
+        "Authorization"
       ],
       "recommends": []
     },
@@ -3530,7 +3530,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Authorisation"
+        "Authorization"
       ],
       "recommends": []
     },
@@ -3587,14 +3587,14 @@
       ],
       "group": "Computing",
       "requires": [
-        "Threat Modelling"
+        "Threat Modeling"
       ],
       "recommends": []
     },
     {
       "id": "cy.malware",
       "name": "Malware & Endpoints",
-      "desc": "How hostile code arrives on a machine, persists, and is spotted. Most of the defence is unglamorous: patch quickly, do not run as administrator, and log enough to reconstruct what happened.",
+      "desc": "How hostile code arrives on a machine, persists, and is spotted. Most of the defense is unglamorous: patch quickly, do not run as administrator, and log enough to reconstruct what happened.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -3614,7 +3614,7 @@
     {
       "id": "cy.supply",
       "name": "Dependencies & Supply Chain",
-      "desc": "Every package you install is code you are running with your privileges. Pinning versions, reviewing what updates, and knowing what you actually depend on is the whole of the practical defence.",
+      "desc": "Every package you install is code you are running with your privileges. Pinning versions, reviewing what updates, and knowing what you actually depend on is the whole of the practical defense.",
       "tier": "advanced",
       "core": false,
       "xp": 2200,
@@ -3652,7 +3652,7 @@
     },
     {
       "id": "cy.law",
-      "name": "Authorisation to Test",
+      "name": "Authorization to Test",
       "desc": "Written permission, an agreed scope and a defined window — the difference between security work and a crime. Everything below this node assumes a system you have been asked in writing to attack.",
       "tier": "advanced",
       "core": true,
@@ -3684,7 +3684,7 @@
       ],
       "group": "Computing",
       "requires": [
-        "Authorisation to Test",
+        "Authorization to Test",
         "Injection",
         "Cross-Site Scripting"
       ],
@@ -3730,8 +3730,8 @@
     },
     {
       "id": "cy.program",
-      "name": "Security Programmes",
-      "desc": "Turning all of it into something an organisation does continuously: reviews, training, patch cycles and measured risk. Security as a permanent practice rather than an audit that happens once a year.",
+      "name": "Security Programs",
+      "desc": "Turning all of it into something an organization does continuously: reviews, training, patch cycles and measured risk. Security as a permanent practice rather than an audit that happens once a year.",
       "tier": "mastery",
       "core": false,
       "xp": 3000,
@@ -3751,7 +3751,7 @@
     {
       "id": "cp.io",
       "name": "Fast Input & Output",
-      "desc": "Reading a hundred thousand lines without the reading being the bottleneck, and printing without flushing every line. It is the one piece of boilerplate worth memorising, because it is the same in every problem you will ever solve.",
+      "desc": "Reading a hundred thousand lines without the reading being the bottleneck, and printing without flushing every line. It is the one piece of boilerplate worth memorizing, because it is the same in every problem you will ever solve.",
       "tier": "foundation",
       "core": true,
       "xp": 1200,
@@ -3950,7 +3950,7 @@
     {
       "id": "cp.silver",
       "name": "Silver",
-      "desc": "The division where recognising the shape becomes the whole game — a Silver problem is usually a graph, a sort, a prefix sum or a binary search in disguise. The plateau here is diagnostic, not technical.",
+      "desc": "The division where recognizing the shape becomes the whole game — a Silver problem is usually a graph, a sort, a prefix sum or a binary search in disguise. The plateau here is diagnostic, not technical.",
       "tier": "intermediate",
       "core": true,
       "xp": 2000,
@@ -4253,7 +4253,7 @@
     {
       "id": "ro.cad",
       "name": "CAD",
-      "desc": "Designing the thing before cutting it, and discovering the interference on a screen rather than in aluminium. A full-robot assembly is what tells you two subsystems want the same eight cubic inches.",
+      "desc": "Designing the thing before cutting it, and discovering the interference on a screen rather than in aluminum. A full-robot assembly is what tells you two subsystems want the same eight cubic inches.",
       "tier": "beginner",
       "core": true,
       "xp": 1600,
@@ -4536,7 +4536,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -4552,7 +4552,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Arithmetic"
       ],
@@ -4570,7 +4570,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Arithmetic"
       ],
@@ -4588,7 +4588,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Fractions"
       ],
@@ -4606,7 +4606,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Order of Operations"
       ],
@@ -4624,7 +4624,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Fractions",
         "Negative Numbers"
@@ -4643,7 +4643,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Algebra"
       ],
@@ -4661,7 +4661,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Linear Equations"
       ],
@@ -4679,7 +4679,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Arithmetic"
       ],
@@ -4697,7 +4697,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Geometry",
         "Linear Equations"
@@ -4716,7 +4716,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Linear Equations"
       ],
@@ -4734,7 +4734,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Quadratics"
       ],
@@ -4752,7 +4752,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Functions"
       ],
@@ -4761,7 +4761,7 @@
     {
       "id": "m.trig",
       "name": "Trigonometry",
-      "desc": "Ratios in a right triangle that turn out to describe every wave. Derive the unit circle once rather than memorising the table and the identities stop being arbitrary.",
+      "desc": "Ratios in a right triangle that turn out to describe every wave. Derive the unit circle once rather than memorizing the table and the identities stop being arbitrary.",
       "tier": "intermediate",
       "core": false,
       "xp": 2200,
@@ -4770,7 +4770,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Coordinate Geometry",
         "Functions"
@@ -4789,7 +4789,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Decimals & Percents"
       ],
@@ -4807,7 +4807,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Algebra"
       ],
@@ -4825,7 +4825,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Statistics",
         "Counting & Combinatorics"
@@ -4846,7 +4846,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Exponents & Logarithms"
       ],
@@ -4864,7 +4864,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Geometry",
         "Algebra"
@@ -4883,7 +4883,7 @@
       "treePath": [
         "Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Trigonometry",
         "Exponents & Logarithms"
@@ -4903,7 +4903,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -4920,7 +4920,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Limits"
       ],
@@ -4939,7 +4939,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Continuity"
       ],
@@ -4958,7 +4958,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Derivatives"
       ],
@@ -4977,7 +4977,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Differentiation Rules"
       ],
@@ -4986,7 +4986,7 @@
     {
       "id": "k.optim",
       "name": "Optimization",
-      "desc": "Finding the largest or smallest value something can take, by looking where the derivative is zero. The modelling is the hard half; the calculus is usually two lines.",
+      "desc": "Finding the largest or smallest value something can take, by looking where the derivative is zero. The modeling is the hard half; the calculus is usually two lines.",
       "tier": "expert",
       "core": false,
       "xp": 2300,
@@ -4996,7 +4996,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Differentiation Rules"
       ],
@@ -5015,7 +5015,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Implicit Differentiation"
       ],
@@ -5034,7 +5034,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Derivatives"
       ],
@@ -5053,7 +5053,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Integrals"
       ],
@@ -5062,7 +5062,7 @@
     {
       "id": "k.techniques",
       "name": "Integration Techniques",
-      "desc": "Substitution, parts and partial fractions — the toolkit for integrals that do not yield directly. Recognising which to reach for is pattern matching that only practice builds.",
+      "desc": "Substitution, parts and partial fractions — the toolkit for integrals that do not yield directly. Recognizing which to reach for is pattern matching that only practice builds.",
       "tier": "expert",
       "core": false,
       "xp": 2600,
@@ -5072,7 +5072,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Fundamental Theorem"
       ],
@@ -5091,7 +5091,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Integration Techniques"
       ],
@@ -5110,7 +5110,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Integration Techniques"
       ],
@@ -5119,7 +5119,7 @@
     {
       "id": "k.taylor",
       "name": "Taylor Series",
-      "desc": "Approximating any well-behaved function by a polynomial built from its derivatives. This is how a calculator computes sine, and why the approximation gets worse away from the centre.",
+      "desc": "Approximating any well-behaved function by a polynomial built from its derivatives. This is how a calculator computes sine, and why the approximation gets worse away from the center.",
       "tier": "mastery",
       "core": false,
       "xp": 2900,
@@ -5129,7 +5129,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Series"
       ],
@@ -5148,7 +5148,7 @@
         "Mathematics",
         "Calculus"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Areas & Volumes",
         "Taylor Series"
@@ -5168,14 +5168,14 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
     {
       "id": "st.centre",
-      "name": "Centre & Spread",
-      "desc": "Mean, median and mode, then the range, quartiles and standard deviation around them. A centre quoted without a spread is half a description and usually the more flattering half.",
+      "name": "Center & Spread",
+      "desc": "Mean, median and mode, then the range, quartiles and standard deviation around them. A center quoted without a spread is half a description and usually the more flattering half.",
       "tier": "foundation",
       "core": false,
       "xp": 1300,
@@ -5185,7 +5185,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Kinds of Data"
       ],
@@ -5204,7 +5204,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Kinds of Data"
       ],
@@ -5223,9 +5223,9 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
-        "Centre & Spread",
+        "Center & Spread",
         "Reading Charts"
       ],
       "recommends": []
@@ -5243,7 +5243,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Kinds of Data"
       ],
@@ -5262,7 +5262,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Probability"
       ],
@@ -5281,7 +5281,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Conditional Probability"
       ],
@@ -5290,7 +5290,7 @@
     {
       "id": "st.normal",
       "name": "The Normal Distribution",
-      "desc": "The bell curve, and why so many measurements land on it. Standardising to how many deviations from the mean a value is turns every normal question into the same question.",
+      "desc": "The bell curve, and why so many measurements land on it. Standardizing to how many deviations from the mean a value is turns every normal question into the same question.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -5300,7 +5300,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Distributions"
       ],
@@ -5309,7 +5309,7 @@
     {
       "id": "st.sample",
       "name": "Sampling",
-      "desc": "Learning about a population from a part of it, and the ways a part can fail to represent the whole. Random selection is not a formality; it is the entire licence for what follows.",
+      "desc": "Learning about a population from a part of it, and the ways a part can fail to represent the whole. Random selection is not a formality; it is the entire license for what follows.",
       "tier": "intermediate",
       "core": true,
       "xp": 1900,
@@ -5319,7 +5319,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Distributions"
       ],
@@ -5338,7 +5338,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Sampling",
         "The Normal Distribution"
@@ -5358,7 +5358,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Sampling Distributions"
       ],
@@ -5377,7 +5377,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Sampling Distributions"
       ],
@@ -5396,7 +5396,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Hypothesis Tests"
       ],
@@ -5415,7 +5415,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Hypothesis Tests"
       ],
@@ -5434,7 +5434,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Confidence Intervals"
       ],
@@ -5443,7 +5443,7 @@
     {
       "id": "st.multi",
       "name": "Multiple Comparisons",
-      "desc": "Test twenty things at the usual threshold and one comes up significant by luck alone. Deciding what you will test before looking is the only defence that fully works.",
+      "desc": "Test twenty things at the usual threshold and one comes up significant by luck alone. Deciding what you will test before looking is the only defense that fully works.",
       "tier": "expert",
       "core": false,
       "xp": 2300,
@@ -5453,7 +5453,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Errors & Power"
       ],
@@ -5462,7 +5462,7 @@
     {
       "id": "st.causal",
       "name": "Causal Inference",
-      "desc": "What it takes to say one thing caused another rather than moved with it. Randomisation earns it outright; without it, you are arguing that you controlled for everything that matters, and you probably did not.",
+      "desc": "What it takes to say one thing caused another rather than moved with it. Randomization earns it outright; without it, you are arguing that you controlled for everything that matters, and you probably did not.",
       "tier": "expert",
       "core": true,
       "xp": 2600,
@@ -5472,7 +5472,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Regression",
         "Bayes Theorem"
@@ -5492,7 +5492,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Bayes Theorem",
         "Confidence Intervals"
@@ -5512,7 +5512,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Multiple Comparisons"
       ],
@@ -5531,7 +5531,7 @@
         "Mathematics",
         "Statistics & Probability"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Causal Inference",
         "Non-Parametric Methods",
@@ -5552,7 +5552,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -5569,7 +5569,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Vectors"
       ],
@@ -5588,7 +5588,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Vector Arithmetic"
       ],
@@ -5607,7 +5607,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Vector Arithmetic"
       ],
@@ -5626,7 +5626,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Span & Independence"
       ],
@@ -5645,7 +5645,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Dot Product"
       ],
@@ -5664,7 +5664,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Matrices",
         "Basis & Dimension"
@@ -5684,7 +5684,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Linear Transformations"
       ],
@@ -5703,7 +5703,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Matrices"
       ],
@@ -5722,7 +5722,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Composition",
         "Systems of Equations"
@@ -5742,7 +5742,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Linear Transformations"
       ],
@@ -5761,7 +5761,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Inverses",
         "Determinant"
@@ -5781,7 +5781,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Dot Product",
         "Basis & Dimension"
@@ -5801,7 +5801,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Projections"
       ],
@@ -5820,7 +5820,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Projections",
         "Rank & Null Space"
@@ -5840,7 +5840,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Determinant",
         "Rank & Null Space"
@@ -5860,7 +5860,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Eigenvectors & Eigenvalues",
         "Orthogonality"
@@ -5870,7 +5870,7 @@
     {
       "id": "la.svd",
       "name": "Singular Value Decomposition",
-      "desc": "Any matrix at all as a rotation, a stretch and another rotation. It is the most generally useful factorisation there is, and the machinery under low-rank approximation and dimensionality reduction.",
+      "desc": "Any matrix at all as a rotation, a stretch and another rotation. It is the most generally useful factorization there is, and the machinery under low-rank approximation and dimensionality reduction.",
       "tier": "expert",
       "core": false,
       "xp": 2800,
@@ -5880,7 +5880,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Diagonalisation",
         "Least Squares"
@@ -5900,7 +5900,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Orthogonality"
       ],
@@ -5909,7 +5909,7 @@
     {
       "id": "la.applied",
       "name": "Applications",
-      "desc": "Graphics, search rankings, compression, quantum states and every neural network layer are the same handful of operations wearing different clothes. Recognising them is what the subject is for.",
+      "desc": "Graphics, search rankings, compression, quantum states and every neural network layer are the same handful of operations wearing different clothes. Recognizing them is what the subject is for.",
       "tier": "mastery",
       "core": false,
       "xp": 3000,
@@ -5919,7 +5919,7 @@
         "Mathematics",
         "Linear Algebra"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Singular Value Decomposition",
         "Numerical Stability"
@@ -5939,7 +5939,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -5956,7 +5956,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Propositional Logic"
       ],
@@ -5965,7 +5965,7 @@
     {
       "id": "di.sets",
       "name": "Sets",
-      "desc": "A collection with no order and no repeats, and the three operations on them. Union, intersection and difference mirror or, and and not exactly, which is not a coincidence.",
+      "desc": "A collection with no order and no repeats, and the three operations on them. Union, intersection and difference mirror the logic words \"or\", \"and\" and \"not\" exactly, which is not a coincidence.",
       "tier": "foundation",
       "core": true,
       "xp": 1300,
@@ -5975,7 +5975,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Propositional Logic"
       ],
@@ -5994,7 +5994,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Implication",
         "Sets"
@@ -6014,7 +6014,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Sets"
       ],
@@ -6033,7 +6033,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Relations"
       ],
@@ -6052,7 +6052,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Sets"
       ],
@@ -6071,7 +6071,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Counting"
       ],
@@ -6090,7 +6090,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Counting"
       ],
@@ -6109,7 +6109,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Quantifiers"
       ],
@@ -6128,7 +6128,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Direct Proof"
       ],
@@ -6147,7 +6147,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Direct Proof"
       ],
@@ -6166,7 +6166,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Induction"
       ],
@@ -6185,7 +6185,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Relations"
       ],
@@ -6204,7 +6204,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Graph Theory",
         "Permutations & Combinations"
@@ -6224,7 +6224,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Induction"
       ],
@@ -6243,7 +6243,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Modular Arithmetic"
       ],
@@ -6262,7 +6262,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Contradiction & Contrapositive"
       ],
@@ -6271,7 +6271,7 @@
     {
       "id": "di.automata",
       "name": "Automata & Languages",
-      "desc": "The simplest machines that can recognise patterns, and what each kind of machine cannot recognise at all. This is the theory a regular expression is a practical corner of.",
+      "desc": "The simplest machines that can recognize patterns, and what each kind of machine cannot recognize at all. This is the theory a regular expression is a practical corner of.",
       "tier": "expert",
       "core": false,
       "xp": 2600,
@@ -6281,7 +6281,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Boolean Algebra",
         "Trees & Counting Structures"
@@ -6301,7 +6301,7 @@
         "Mathematics",
         "Discrete Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Automata & Languages",
         "Number Theory"
@@ -6311,7 +6311,7 @@
     {
       "id": "cm.arith",
       "name": "Mental Arithmetic",
-      "desc": "Fast, accurate calculation without reaching for anything — squares to thirty, common factorisations, fraction sense. It buys back the minutes that the last five problems on a paper actually need.",
+      "desc": "Fast, accurate calculation without reaching for anything — squares to thirty, common factorizations, fraction sense. It buys back the minutes that the last five problems on a paper actually need.",
       "tier": "foundation",
       "core": true,
       "xp": 1200,
@@ -6321,7 +6321,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -6338,7 +6338,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Mental Arithmetic"
       ],
@@ -6357,7 +6357,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Mental Arithmetic"
       ],
@@ -6376,7 +6376,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Mental Arithmetic"
       ],
@@ -6395,7 +6395,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Algebraic Manipulation"
       ],
@@ -6414,7 +6414,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Mental Arithmetic"
       ],
@@ -6423,7 +6423,7 @@
     {
       "id": "cm.prob",
       "name": "Probability",
-      "desc": "Counting the favourable cases over counting all of them, once you are sure both counts describe the same sample space. Almost every wrong answer here is a right count of the wrong space.",
+      "desc": "Counting the favorable cases over counting all of them, once you are sure both counts describe the same sample space. Almost every wrong answer here is a right count of the wrong space.",
       "tier": "beginner",
       "core": false,
       "xp": 1600,
@@ -6433,7 +6433,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Counting"
       ],
@@ -6442,7 +6442,7 @@
     {
       "id": "cm.seq",
       "name": "Sequences & Series",
-      "desc": "Arithmetic and geometric progressions, and the telescoping trick that collapses a sum nobody wants to compute. Recognising which kind you are looking at is most of the work.",
+      "desc": "Arithmetic and geometric progressions, and the telescoping trick that collapses a sum nobody wants to compute. Recognizing which kind you are looking at is most of the work.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -6452,7 +6452,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Algebraic Manipulation"
       ],
@@ -6471,7 +6471,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Algebraic Manipulation"
       ],
@@ -6490,7 +6490,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Counting"
       ],
@@ -6509,7 +6509,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Angle Chasing"
       ],
@@ -6528,7 +6528,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Angle Chasing",
         "Algebraic Manipulation"
@@ -6548,7 +6548,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Sequences & Series"
       ],
@@ -6567,7 +6567,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Polynomials"
       ],
@@ -6586,7 +6586,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Modular Arithmetic",
         "Polynomials"
@@ -6606,7 +6606,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Pigeonhole & Extremal"
       ],
@@ -6625,7 +6625,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Sequences & Series",
         "Counting"
@@ -6645,7 +6645,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Contest Timing",
         "Recursion & Telescoping",
@@ -6666,7 +6666,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Invariants & Monovariants",
         "Inequalities"
@@ -6686,7 +6686,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Olympiad Proof Writing"
       ],
@@ -6705,7 +6705,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Power of a Point",
         "Invariants & Monovariants"
@@ -6725,7 +6725,7 @@
         "Mathematics",
         "Competition Mathematics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Functional Equations",
         "Combinatorial Geometry",
@@ -6746,7 +6746,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -6762,7 +6762,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Method"
       ],
@@ -6780,7 +6780,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Method"
       ],
@@ -6798,7 +6798,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Units & Dimensions"
       ],
@@ -6816,7 +6816,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Measurement"
       ],
@@ -6834,7 +6834,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Measurement"
       ],
@@ -6852,7 +6852,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Asking a Testable Question"
       ],
@@ -6870,7 +6870,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Variables & Controls"
       ],
@@ -6888,7 +6888,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Laboratory Practice"
       ],
@@ -6906,7 +6906,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Uncertainty & Error",
         "Data & Graphs"
@@ -6925,7 +6925,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Units & Dimensions"
       ],
@@ -6943,7 +6943,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Models"
       ],
@@ -6961,7 +6961,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Statistics for Science"
       ],
@@ -6979,7 +6979,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Recording Results",
         "Weighing Evidence"
@@ -6998,7 +6998,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Reproducibility"
       ],
@@ -7016,7 +7016,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Scientific Writing"
       ],
@@ -7034,7 +7034,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Recording Results"
       ],
@@ -7052,7 +7052,7 @@
       "treePath": [
         "Science"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Reading & Reviewing Papers",
         "Research Ethics"
@@ -7072,7 +7072,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -7089,7 +7089,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Kinematics"
       ],
@@ -7108,7 +7108,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Vectors in Physics"
       ],
@@ -7127,7 +7127,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Newton Laws"
       ],
@@ -7146,7 +7146,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Free-Body Diagrams"
       ],
@@ -7165,7 +7165,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Free-Body Diagrams"
       ],
@@ -7184,7 +7184,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Newton Laws"
       ],
@@ -7203,7 +7203,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Momentum",
         "Friction & Circular Motion"
@@ -7223,7 +7223,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Work & Energy"
       ],
@@ -7242,7 +7242,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Work & Energy"
       ],
@@ -7261,7 +7261,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Work & Energy"
       ],
@@ -7280,7 +7280,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Heat & Temperature"
       ],
@@ -7289,7 +7289,7 @@
     {
       "id": "ph.waves",
       "name": "Waves",
-      "desc": "Energy travelling without matter travelling with it. Frequency, wavelength and speed are locked together, so a wave entering a new medium must change one of them.",
+      "desc": "Energy traveling without matter traveling with it. Frequency, wavelength and speed are locked together, so a wave entering a new medium must change one of them.",
       "tier": "intermediate",
       "core": false,
       "xp": 1900,
@@ -7299,7 +7299,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Momentum"
       ],
@@ -7318,7 +7318,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Waves"
       ],
@@ -7337,7 +7337,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Waves"
       ],
@@ -7356,7 +7356,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Gravitation"
       ],
@@ -7375,7 +7375,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Electric Fields"
       ],
@@ -7394,7 +7394,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Circuits"
       ],
@@ -7413,7 +7413,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Magnetism",
         "Light & Optics"
@@ -7433,7 +7433,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Electromagnetic Waves",
         "Laws of Thermodynamics"
@@ -7453,7 +7453,7 @@
         "Science",
         "Physics"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Electromagnetic Waves"
       ],
@@ -7472,7 +7472,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -7489,7 +7489,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "States of Matter"
       ],
@@ -7498,7 +7498,7 @@
     {
       "id": "ch.periodic",
       "name": "The Periodic Table",
-      "desc": "The elements arranged so that a column shares behaviour. It is a prediction machine rather than a reference list: position tells you reactivity, size and what charge an atom is likely to take.",
+      "desc": "The elements arranged so that a column shares behavior. It is a prediction machine rather than a reference list: position tells you reactivity, size and what charge an atom is likely to take.",
       "tier": "foundation",
       "core": false,
       "xp": 1500,
@@ -7508,7 +7508,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Atoms & Elements"
       ],
@@ -7527,7 +7527,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Periodic Table"
       ],
@@ -7546,7 +7546,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Electron Configuration"
       ],
@@ -7565,7 +7565,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Bonding"
       ],
@@ -7584,7 +7584,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Atoms & Elements"
       ],
@@ -7603,7 +7603,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Mole",
         "Molecular Shape"
@@ -7623,7 +7623,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Formulae & Equations"
       ],
@@ -7642,7 +7642,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Stoichiometry"
       ],
@@ -7651,7 +7651,7 @@
     {
       "id": "ch.reactions",
       "name": "Reaction Types",
-      "desc": "The handful of patterns most reactions fall into — combination, decomposition, displacement, combustion. Recognising the pattern lets you predict products you have never been taught.",
+      "desc": "The handful of patterns most reactions fall into — combination, decomposition, displacement, combustion. Recognizing the pattern lets you predict products you have never been taught.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -7661,7 +7661,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Formulae & Equations"
       ],
@@ -7680,7 +7680,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Reaction Types"
       ],
@@ -7699,7 +7699,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Energy in Reactions",
         "Solutions & Concentration"
@@ -7719,7 +7719,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Reaction Rates"
       ],
@@ -7738,7 +7738,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Equilibrium"
       ],
@@ -7757,7 +7757,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Energy in Reactions"
       ],
@@ -7776,7 +7776,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Oxidation & Reduction",
         "Acids & Bases"
@@ -7786,7 +7786,7 @@
     {
       "id": "ch.organic",
       "name": "Organic Chemistry",
-      "desc": "The chemistry of carbon, which bonds four ways and to itself indefinitely. Functional groups are the vocabulary: learn what each one does and a million compounds become a few dozen behaviours.",
+      "desc": "The chemistry of carbon, which bonds four ways and to itself indefinitely. Functional groups are the vocabulary: learn what each one does and a million compounds become a few dozen behaviors.",
       "tier": "expert",
       "core": true,
       "xp": 2600,
@@ -7796,7 +7796,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Molecular Shape",
         "Reaction Types"
@@ -7816,7 +7816,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Solutions & Concentration"
       ],
@@ -7835,7 +7835,7 @@
         "Science",
         "Chemistry"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Laboratory Practice",
         "Organic Chemistry",
@@ -7846,7 +7846,7 @@
     {
       "id": "bi.life",
       "name": "What Life Is",
-      "desc": "The shared properties of living things: organisation, metabolism, response, reproduction. The borderline cases are the interesting part, which is why a virus is still argued about.",
+      "desc": "The shared properties of living things: organization, metabolism, response, reproduction. The borderline cases are the interesting part, which is why a virus is still argued about.",
       "tier": "foundation",
       "core": true,
       "xp": 1200,
@@ -7856,7 +7856,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -7873,7 +7873,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "What Life Is"
       ],
@@ -7892,7 +7892,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Cells"
       ],
@@ -7911,7 +7911,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Cells"
       ],
@@ -7930,7 +7930,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Biological Molecules"
       ],
@@ -7949,7 +7949,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Enzymes",
         "Membranes & Transport"
@@ -7969,7 +7969,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Enzymes"
       ],
@@ -7988,7 +7988,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Biological Molecules"
       ],
@@ -8007,7 +8007,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "DNA"
       ],
@@ -8026,7 +8026,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "DNA"
       ],
@@ -8045,7 +8045,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Cell Division"
       ],
@@ -8064,7 +8064,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Genetics",
         "Protein Synthesis"
@@ -8084,7 +8084,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Mutation & Variation"
       ],
@@ -8103,7 +8103,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Evolution"
       ],
@@ -8122,7 +8122,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Respiration"
       ],
@@ -8141,7 +8141,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Organ Systems"
       ],
@@ -8150,7 +8150,7 @@
     {
       "id": "bi.nervous",
       "name": "Nerves & Hormones",
-      "desc": "Two signalling systems: one electrical and fast down a fixed wire, one chemical and slow but reaching everywhere. Which one a body uses for a job is decided by how quickly the answer is needed.",
+      "desc": "Two signaling systems: one electrical and fast down a fixed wire, one chemical and slow but reaching everywhere. Which one a body uses for a job is decided by how quickly the answer is needed.",
       "tier": "advanced",
       "core": false,
       "xp": 2200,
@@ -8160,7 +8160,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Homeostasis"
       ],
@@ -8179,7 +8179,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Nerves & Hormones",
         "Protein Synthesis"
@@ -8199,7 +8199,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Photosynthesis",
         "Classification"
@@ -8219,7 +8219,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Ecology"
       ],
@@ -8238,7 +8238,7 @@
         "Science",
         "Biology"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Immunity",
         "Populations"
@@ -8248,7 +8248,7 @@
     {
       "id": "es.time",
       "name": "Deep Time",
-      "desc": "Getting used to spans where a millimetre a year builds a mountain range. Almost every argument against these subjects is really a failure to take four billion years seriously as a number.",
+      "desc": "Getting used to spans where a millimeter a year builds a mountain range. Almost every argument against these subjects is really a failure to take four billion years seriously as a number.",
       "tier": "foundation",
       "core": true,
       "xp": 1300,
@@ -8258,7 +8258,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -8275,7 +8275,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Deep Time"
       ],
@@ -8294,7 +8294,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Rocks & Minerals"
       ],
@@ -8313,7 +8313,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Inside the Earth"
       ],
@@ -8332,7 +8332,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Plate Tectonics"
       ],
@@ -8351,7 +8351,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Rocks & Minerals"
       ],
@@ -8370,7 +8370,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Deep Time"
       ],
@@ -8389,7 +8389,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Weather"
       ],
@@ -8408,7 +8408,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Atmosphere"
       ],
@@ -8427,7 +8427,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Oceans & Currents",
         "Reading the Record"
@@ -8447,7 +8447,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Earth Cycles"
       ],
@@ -8466,7 +8466,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Earthquakes & Volcanoes",
         "Earth Cycles"
@@ -8486,7 +8486,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Deep Time"
       ],
@@ -8505,7 +8505,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Sky"
       ],
@@ -8524,7 +8524,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Solar System"
       ],
@@ -8543,7 +8543,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The Solar System"
       ],
@@ -8562,7 +8562,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Light from Space"
       ],
@@ -8581,7 +8581,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Stars"
       ],
@@ -8600,7 +8600,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Galaxies",
         "Orbits & Gravity"
@@ -8620,7 +8620,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Light from Space",
         "Resources & Hazards"
@@ -8640,7 +8640,7 @@
         "Science",
         "Earth & Space"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Climate",
         "Observation & Instruments"
@@ -8660,7 +8660,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [],
       "recommends": []
     },
@@ -8677,7 +8677,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Reading the Question"
       ],
@@ -8696,7 +8696,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Units & Estimation"
       ],
@@ -8715,7 +8715,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Units & Estimation"
       ],
@@ -8734,7 +8734,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Units & Estimation"
       ],
@@ -8753,7 +8753,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Reading the Question"
       ],
@@ -8772,7 +8772,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Free-Body Diagrams"
       ],
@@ -8791,7 +8791,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Kinematics & Dynamics"
       ],
@@ -8810,7 +8810,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Stoichiometry"
       ],
@@ -8819,7 +8819,7 @@
     {
       "id": "os.redox",
       "name": "Redox & Electrochemistry",
-      "desc": "Tracking electrons through a reaction and the voltage that transfer is worth. Balancing a half-reaction in acid is mechanical, heavily examined, and dropped by people who never practised it under time.",
+      "desc": "Tracking electrons through a reaction and the voltage that transfer is worth. Balancing a half-reaction in acid is mechanical, heavily examined, and dropped by people who never practiced it under time.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -8829,7 +8829,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Stoichiometry"
       ],
@@ -8848,7 +8848,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Cell Biology"
       ],
@@ -8867,7 +8867,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Cell Biology"
       ],
@@ -8886,7 +8886,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Energy & Momentum",
         "Uncertainty"
@@ -8906,7 +8906,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Energy & Momentum",
         "Chemical Equilibrium"
@@ -8926,7 +8926,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Genetics"
       ],
@@ -8945,7 +8945,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Uncertainty"
       ],
@@ -8964,7 +8964,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "The F=ma Exam"
       ],
@@ -8983,7 +8983,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Thermodynamics",
         "Redox & Electrochemistry"
@@ -9003,7 +9003,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Ecology & Evolution",
         "Physiology"
@@ -9013,7 +9013,7 @@
     {
       "id": "os.quantum",
       "name": "Modern Physics",
-      "desc": "Relativity and quantisation, where the classical answer is confidently wrong. It appears late in the selection ladder and rewards understanding the postulates over memorising the results.",
+      "desc": "Relativity and quantization, where the classical answer is confidently wrong. It appears late in the selection ladder and rewards understanding the postulates over memorizing the results.",
       "tier": "expert",
       "core": false,
       "xp": 2700,
@@ -9023,7 +9023,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Electricity & Magnetism",
         "Thermodynamics"
@@ -9043,7 +9043,7 @@
         "Science",
         "Science Olympiad"
       ],
-      "group": "Maths and science",
+      "group": "Math and science",
       "requires": [
         "Modern Physics",
         "Chemistry Olympiad",
@@ -9071,7 +9071,7 @@
     {
       "id": "ln.vocab",
       "name": "Vocabulary",
-      "desc": "Words known well enough to use, not merely to recognise. Learning them inside a sentence you met them in beats a list, because the connotation is most of what a word actually carries.",
+      "desc": "Words known well enough to use, not merely to recognize. Learning them inside a sentence you met them in beats a list, because the connotation is most of what a word actually carries.",
       "tier": "foundation",
       "core": true,
       "xp": 1300,
@@ -9089,7 +9089,7 @@
     {
       "id": "ln.spelling",
       "name": "Spelling & Sound",
-      "desc": "The patterns behind English spelling, which is far more regular than its reputation once you know where the borrowings came from. Knowing the pattern beats memorising the exception.",
+      "desc": "The patterns behind English spelling, which is far more regular than its reputation once you know where the borrowings came from. Knowing the pattern beats memorizing the exception.",
       "tier": "foundation",
       "core": false,
       "xp": 1000,
@@ -9196,7 +9196,7 @@
     },
     {
       "id": "ln.summary",
-      "name": "Summarising",
+      "name": "Summarizing",
       "desc": "Saying in three sentences what took three pages, without smuggling in your own view. It is the most reliable test of whether something was actually understood.",
       "tier": "beginner",
       "core": false,
@@ -9226,7 +9226,7 @@
       ],
       "group": "Language and humanities",
       "requires": [
-        "Summarising"
+        "Summarizing"
       ],
       "recommends": []
     },
@@ -9244,14 +9244,14 @@
       ],
       "group": "Language and humanities",
       "requires": [
-        "Summarising"
+        "Summarizing"
       ],
       "recommends": []
     },
     {
       "id": "ln.argument",
       "name": "Argument",
-      "desc": "A claim, reasons and the evidence under them, arranged so a sceptical reader follows. Anticipating the strongest objection rather than the weakest is what separates persuasion from assertion.",
+      "desc": "A claim, reasons and the evidence under them, arranged so a skeptical reader follows. Anticipating the strongest objection rather than the weakest is what separates persuasion from assertion.",
       "tier": "intermediate",
       "core": false,
       "xp": 1900,
@@ -9816,7 +9816,7 @@
     {
       "id": "lit.plot",
       "name": "Plot & Structure",
-      "desc": "What happens, in what order, and why that order. Noticing where a book withholds information is the first step from summarising a story to reading one.",
+      "desc": "What happens, in what order, and why that order. Noticing where a book withholds information is the first step from summarizing a story to reading one.",
       "tier": "foundation",
       "core": false,
       "xp": 1400,
@@ -9854,7 +9854,7 @@
     {
       "id": "lit.pov",
       "name": "Narrator & Point of View",
-      "desc": "Who is telling this, how much they know, and whether they can be trusted. Recognising an unreliable narrator changes everything a book appeared to be saying.",
+      "desc": "Who is telling this, how much they know, and whether they can be trusted. Recognizing an unreliable narrator changes everything a book appeared to be saying.",
       "tier": "beginner",
       "core": true,
       "xp": 1700,
@@ -11114,7 +11114,7 @@
     {
       "id": "hi.tech",
       "name": "Technology & Change",
-      "desc": "Printing, steam, rail, antibiotics and the internet — inventions that reorganised what was possible. Adoption is usually slower and stranger than the invention story suggests.",
+      "desc": "Printing, steam, rail, antibiotics and the internet — inventions that reorganized what was possible. Adoption is usually slower and stranger than the invention story suggests.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -11287,7 +11287,7 @@
     {
       "id": "phi.logic",
       "name": "Formal Logic",
-      "desc": "Rules of inference that hold regardless of subject matter. Symbolising an argument strips the rhetoric off it and shows what was actually being claimed.",
+      "desc": "Rules of inference that hold regardless of subject matter. Symbolizing an argument strips the rhetoric off it and shows what was actually being claimed.",
       "tier": "foundation",
       "core": false,
       "xp": 1600,
@@ -11496,7 +11496,7 @@
     {
       "id": "phi.aesthetics",
       "name": "Aesthetics",
-      "desc": "What art is, and whether a judgement of beauty claims anything beyond a preference. The interesting cases are the ones where taste feels like it should be arguable.",
+      "desc": "What art is, and whether a judgment of beauty claims anything beyond a preference. The interesting cases are the ones where taste feels like it should be arguable.",
       "tier": "advanced",
       "core": false,
       "xp": 1900,
@@ -11746,8 +11746,8 @@
     },
     {
       "id": "psy.brain",
-      "name": "Brain & Behaviour",
-      "desc": "Which structures do what, and the limits of inferring a mental process from a bright patch on a scan. Localisation is real and far less tidy than popular accounts suggest.",
+      "name": "Brain & Behavior",
+      "desc": "Which structures do what, and the limits of inferring a mental process from a bright patch on a scan. Localization is real and far less tidy than popular accounts suggest.",
       "tier": "beginner",
       "core": false,
       "xp": 1800,
@@ -11778,7 +11778,7 @@
       ],
       "group": "Language and humanities",
       "requires": [
-        "Brain & Behaviour"
+        "Brain & Behavior"
       ],
       "recommends": []
     },
@@ -11823,7 +11823,7 @@
     {
       "id": "psy.learning",
       "name": "Learning",
-      "desc": "Conditioning, reinforcement and how practice changes behaviour. Spacing and retrieval beat repetition and rereading, which is one of the best-replicated results in the field.",
+      "desc": "Conditioning, reinforcement and how practice changes behavior. Spacing and retrieval beat repetition and rereading, which is one of the best-replicated results in the field.",
       "tier": "intermediate",
       "core": false,
       "xp": 1900,
@@ -11842,7 +11842,7 @@
     {
       "id": "psy.cognition",
       "name": "Thinking & Reasoning",
-      "desc": "Problem solving, judgement and the shortcuts that usually work. Biases are not stupidity; they are heuristics being applied outside the conditions they were good for.",
+      "desc": "Problem solving, judgment and the shortcuts that usually work. Biases are not stupidity; they are heuristics being applied outside the conditions they were good for.",
       "tier": "intermediate",
       "core": false,
       "xp": 2000,
@@ -12227,7 +12227,7 @@
     {
       "id": "db.fallacy",
       "name": "Spotting Fallacies",
-      "desc": "Recognising the move rather than merely disliking the conclusion — correlation offered as cause, a burden quietly shifted, a term redefined mid-round. Naming it is worth less than showing what it lets the opponent skip.",
+      "desc": "Recognizing the move rather than merely disliking the conclusion — correlation offered as cause, a burden quietly shifted, a term redefined mid-round. Naming it is worth less than showing what it lets the opponent skip.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -12324,7 +12324,7 @@
     {
       "id": "db.policy",
       "name": "Policy Rounds",
-      "desc": "Plans, disadvantages, counterplans and solvency, at speed and at volume of evidence. The research burden is unlike any other event, and organisation of the files is a real competitive advantage rather than tidiness.",
+      "desc": "Plans, disadvantages, counterplans and solvency, at speed and at volume of evidence. The research burden is unlike any other event, and organization of the files is a real competitive advantage rather than tidiness.",
       "tier": "expert",
       "core": false,
       "xp": 2600,
@@ -12400,7 +12400,7 @@
     {
       "id": "bu.track",
       "name": "Tracking Spending",
-      "desc": "Recording where it actually went rather than where you assumed. Two months of honest records changes more behaviour than any amount of resolve.",
+      "desc": "Recording where it actually went rather than where you assumed. Two months of honest records changes more behavior than any amount of resolve.",
       "tier": "foundation",
       "core": false,
       "xp": 1200,
@@ -12454,7 +12454,7 @@
     {
       "id": "bu.credit",
       "name": "Credit",
-      "desc": "How lenders decide what you can borrow and at what price. Boring habits build it, and the score is a summary of your record rather than a judgement about you.",
+      "desc": "How lenders decide what you can borrow and at what price. Boring habits build it, and the score is a summary of your record rather than a judgment about you.",
       "tier": "beginner",
       "core": false,
       "xp": 1400,
@@ -12993,7 +12993,7 @@
     },
     {
       "id": "fi.behaviour",
-      "name": "Behaviour",
+      "name": "Behavior",
       "desc": "Not selling in a crash and not buying at a peak. Investor returns lag fund returns, and the gap is entirely this node rather than any question of selection.",
       "tier": "advanced",
       "core": true,
@@ -13025,7 +13025,7 @@
       ],
       "group": "Business and money",
       "requires": [
-        "Behaviour",
+        "Behavior",
         "Pensions & Retirement"
       ],
       "recommends": []
@@ -13109,7 +13109,7 @@
     {
       "id": "ec.opportunity",
       "name": "Opportunity Cost",
-      "desc": "The value of the best thing you did not do. It is the concept that changes how decisions are made once it is genuinely internalised, and the one most often quoted without being used.",
+      "desc": "The value of the best thing you did not do. It is the concept that changes how decisions are made once it is genuinely internalized, and the one most often quoted without being used.",
       "tier": "foundation",
       "core": false,
       "xp": 1400,
@@ -13222,7 +13222,7 @@
     },
     {
       "id": "ec.behavioural",
-      "name": "Behavioural Economics",
+      "name": "Behavioral Economics",
       "desc": "What people actually do, as opposed to what a perfectly rational agent would. Losses looming larger than equivalent gains is the finding with the widest reach.",
       "tier": "intermediate",
       "core": false,
@@ -13254,7 +13254,7 @@
       ],
       "group": "Business and money",
       "requires": [
-        "Behavioural Economics"
+        "Behavioral Economics"
       ],
       "recommends": []
     },
@@ -13528,7 +13528,7 @@
     {
       "id": "mk.research",
       "name": "Customer Research",
-      "desc": "Asking people about their behaviour rather than their intentions. What somebody did last month predicts far better than what they say they would do.",
+      "desc": "Asking people about their behavior rather than their intentions. What somebody did last month predicts far better than what they say they would do.",
       "tier": "foundation",
       "core": false,
       "xp": 1600,
@@ -13930,7 +13930,7 @@
     {
       "id": "mg.oneones",
       "name": "One to Ones",
-      "desc": "A regular, protected conversation that belongs to the other person. Cancelling it repeatedly says more about your priorities than anything you would say in it.",
+      "desc": "A regular, protected conversation that belongs to the other person. Canceling it repeatedly says more about your priorities than anything you would say in it.",
       "tier": "beginner",
       "core": true,
       "xp": 1700,
@@ -13987,7 +13987,7 @@
     {
       "id": "mg.prioritise",
       "name": "Prioritising",
-      "desc": "Deciding what the team will not do this quarter. A list where everything is important is a list that has not been prioritised, whatever order it is in.",
+      "desc": "Deciding what the team will not do this quarter. A list where everything is important is a list that has not been prioritized, whatever order it is in.",
       "tier": "beginner",
       "core": false,
       "xp": 1700,
@@ -14197,7 +14197,7 @@
     {
       "id": "mg.metrics",
       "name": "Measuring a Team",
-      "desc": "Choosing indicators that do not distort behaviour when people know they are being measured. Any single number will be gamed eventually, including by well-intentioned people.",
+      "desc": "Choosing indicators that do not distort behavior when people know they are being measured. Any single number will be gamed eventually, including by well-intentioned people.",
       "tier": "expert",
       "core": false,
       "xp": 2400,
@@ -14417,7 +14417,7 @@
     {
       "id": "pd.habits",
       "name": "Habits",
-      "desc": "Behaviour that no longer requires a decision, built with a cue, a small action and a consistent time. Starting far too small is what makes one stick.",
+      "desc": "Behavior that no longer requires a decision, built with a cue, a small action and a consistent time. Starting far too small is what makes one stick.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -14543,7 +14543,7 @@
     {
       "id": "pd.tools",
       "name": "Tools",
-      "desc": "The smallest set of tools that supports the habits. Reorganising the system is itself a satisfying form of procrastination, and switching apps has never once been the problem.",
+      "desc": "The smallest set of tools that supports the habits. Reorganizing the system is itself a satisfying form of procrastination, and switching apps has never once been the problem.",
       "tier": "advanced",
       "core": false,
       "xp": 1600,
@@ -15111,8 +15111,8 @@
     },
     {
       "id": "sy.understand",
-      "name": "Understanding vs Memorising",
-      "desc": "Knowing why something follows, so it can be reconstructed rather than recalled. Some things genuinely must be memorised, and knowing which is a decision worth making explicitly.",
+      "name": "Understanding vs Memorizing",
+      "desc": "Knowing why something follows, so it can be reconstructed rather than recalled. Some things genuinely must be memorized, and knowing which is a decision worth making explicitly.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -15181,13 +15181,13 @@
       ],
       "group": "Work",
       "requires": [
-        "Understanding vs Memorising"
+        "Understanding vs Memorizing"
       ],
       "recommends": []
     },
     {
       "id": "sy.summarise",
-      "name": "Summarising & Mapping",
+      "name": "Summarizing & Mapping",
       "desc": "Compressing a topic onto one page and drawing what connects to what. The compression is where the learning happens; the page afterwards is mostly a souvenir.",
       "tier": "intermediate",
       "core": false,
@@ -15257,7 +15257,7 @@
       ],
       "group": "Work",
       "requires": [
-        "Summarising & Mapping"
+        "Summarizing & Mapping"
       ],
       "recommends": []
     },
@@ -15303,7 +15303,7 @@
     {
       "id": "sy.nerves",
       "name": "Exam Nerves",
-      "desc": "Practising under timed conditions so the state is familiar, and having a plan for going blank. Preparation reduces anxiety far more effectively than reassurance does.",
+      "desc": "Practicing under timed conditions so the state is familiar, and having a plan for going blank. Preparation reduces anxiety far more effectively than reassurance does.",
       "tier": "expert",
       "core": false,
       "xp": 2100,
@@ -15794,7 +15794,7 @@
     {
       "id": "ar.value",
       "name": "Value & Light",
-      "desc": "Light and dark, which do far more work than colour does. Squinting collapses a scene into a few values, and a picture that works in those will work in anything.",
+      "desc": "Light and dark, which do far more work than color does. Squinting collapses a scene into a few values, and a picture that works in those will work in anything.",
       "tier": "beginner",
       "core": true,
       "xp": 1600,
@@ -15865,8 +15865,8 @@
     },
     {
       "id": "ar.colour",
-      "name": "Colour",
-      "desc": "Hue, saturation and value as three separate dials. Nearly every muddy result is a saturation problem, and nearly every flat one is a value problem wearing colour.",
+      "name": "Color",
+      "desc": "Hue, saturation and value as three separate dials. Nearly every muddy result is a saturation problem, and nearly every flat one is a value problem wearing color.",
       "tier": "intermediate",
       "core": true,
       "xp": 1900,
@@ -15939,7 +15939,7 @@
     {
       "id": "ar.space",
       "name": "Depth & Atmosphere",
-      "desc": "Contrast, detail and colour dropping off with distance. It is the difference between a scene that has air in it and a set of objects at different sizes.",
+      "desc": "Contrast, detail and color dropping off with distance. It is the difference between a scene that has air in it and a set of objects at different sizes.",
       "tier": "intermediate",
       "core": false,
       "xp": 1900,
@@ -15951,14 +15951,14 @@
       "group": "Creative",
       "requires": [
         "Perspective",
-        "Colour"
+        "Color"
       ],
       "recommends": []
     },
     {
       "id": "ar.style",
-      "name": "Stylisation",
-      "desc": "Choosing what to exaggerate and what to leave out. Convincing stylisation is a deliberate departure from something understood, which is why it comes after the observational nodes.",
+      "name": "Stylization",
+      "desc": "Choosing what to exaggerate and what to leave out. Convincing stylization is a deliberate departure from something understood, which is why it comes after the observational nodes.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -16012,7 +16012,7 @@
     {
       "id": "ar.process",
       "name": "Sketch to Finish",
-      "desc": "Thumbnails, then a value study, then colour, then detail. Working in that order means the expensive mistakes are found while they cost minutes.",
+      "desc": "Thumbnails, then a value study, then color, then detail. Working in that order means the expensive mistakes are found while they cost minutes.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -16043,7 +16043,7 @@
       "group": "Creative",
       "requires": [
         "Sketch to Finish",
-        "Stylisation"
+        "Stylization"
       ],
       "recommends": []
     },
@@ -16296,7 +16296,7 @@
     {
       "id": "dr.paintbasics",
       "name": "Paint Handling",
-      "desc": "Mixing, loading a brush and laying down an edge you meant. Most early painting problems are consistency and brush pressure rather than colour choice.",
+      "desc": "Mixing, loading a brush and laying down an edge you meant. Most early painting problems are consistency and brush pressure rather than color choice.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -16314,8 +16314,8 @@
     },
     {
       "id": "dr.colourmix",
-      "name": "Colour Mixing",
-      "desc": "Getting a specific colour from a limited palette, and keeping it clean. A restricted palette produces more harmonious work than a full set, and teaches faster.",
+      "name": "Color Mixing",
+      "desc": "Getting a specific color from a limited palette, and keeping it clean. A restricted palette produces more harmonious work than a full set, and teaches faster.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -16346,7 +16346,7 @@
       ],
       "group": "Creative",
       "requires": [
-        "Colour Mixing",
+        "Color Mixing",
         "Environments"
       ],
       "recommends": []
@@ -16366,7 +16366,7 @@
       ],
       "group": "Creative",
       "requires": [
-        "Colour Mixing"
+        "Color Mixing"
       ],
       "recommends": []
     },
@@ -16450,7 +16450,7 @@
     {
       "id": "dz.hierarchy",
       "name": "Visual Hierarchy",
-      "desc": "Deciding what somebody sees first, second and third, and making the page say so. Size, weight and space do the work; if everything is emphasised, nothing is.",
+      "desc": "Deciding what somebody sees first, second and third, and making the page say so. Size, weight and space do the work; if everything is emphasized, nothing is.",
       "tier": "foundation",
       "core": false,
       "xp": 1600,
@@ -16525,8 +16525,8 @@
     },
     {
       "id": "dz.colour",
-      "name": "Colour in Design",
-      "desc": "A small palette used consistently, with contrast that survives a bad screen. Colour as the only carrier of meaning fails for a tenth of readers, which is why it never carries meaning alone.",
+      "name": "Color in Design",
+      "desc": "A small palette used consistently, with contrast that survives a bad screen. Color as the only carrier of meaning fails for a tenth of readers, which is why it never carries meaning alone.",
       "tier": "beginner",
       "core": false,
       "xp": 1700,
@@ -16557,7 +16557,7 @@
       ],
       "group": "Creative",
       "requires": [
-        "Colour in Design"
+        "Color in Design"
       ],
       "recommends": []
     },
@@ -16680,7 +16680,7 @@
     {
       "id": "dz.wire",
       "name": "Wireframing",
-      "desc": "Rough structure before any styling, so the conversation is about arrangement rather than colour. Deliberately ugly, because polish invites feedback about the wrong thing.",
+      "desc": "Rough structure before any styling, so the conversation is about arrangement rather than color. Deliberately ugly, because polish invites feedback about the wrong thing.",
       "tier": "advanced",
       "core": false,
       "xp": 1800,
@@ -16817,7 +16817,7 @@
     {
       "id": "pt.light",
       "name": "Seeing Light",
-      "desc": "Noticing direction, quality and colour before raising a camera. Photography is a subject about light that happens to involve a machine, and this is the node that decides everything else.",
+      "desc": "Noticing direction, quality and color before raising a camera. Photography is a subject about light that happens to involve a machine, and this is the node that decides everything else.",
       "tier": "foundation",
       "core": true,
       "xp": 1400,
@@ -16966,7 +16966,7 @@
     },
     {
       "id": "pt.colour",
-      "name": "Colour & White Balance",
+      "name": "Color & White Balance",
       "desc": "Telling the camera what white is, because light is rarely neutral. Getting it right in the file makes every later adjustment easier and more convincing.",
       "tier": "intermediate",
       "core": false,
@@ -16998,7 +16998,7 @@
       ],
       "group": "Creative",
       "requires": [
-        "Colour & White Balance"
+        "Color & White Balance"
       ],
       "recommends": []
     },
@@ -17120,7 +17120,7 @@
     {
       "id": "pt.edit",
       "name": "Editing",
-      "desc": "Adjusting exposure, contrast and colour to finish what the file started. Restraint is the skill; the strongest edits are usually local and small.",
+      "desc": "Adjusting exposure, contrast and color to finish what the file started. Restraint is the skill; the strongest edits are usually local and small.",
       "tier": "advanced",
       "core": true,
       "xp": 2100,
@@ -17179,7 +17179,7 @@
     {
       "id": "pt.print",
       "name": "Output & Print",
-      "desc": "Getting an image out of a screen and onto paper or a wall at the right size. Colour management and print size change what an image is, and a photograph is not finished until it exists somewhere.",
+      "desc": "Getting an image out of a screen and onto paper or a wall at the right size. Color management and print size change what an image is, and a photograph is not finished until it exists somewhere.",
       "tier": "mastery",
       "core": false,
       "xp": 2800,
@@ -17350,7 +17350,7 @@
     {
       "id": "fm.light",
       "name": "Lighting",
-      "desc": "Shaping a scene with key, fill and separation. Where the shadows fall does more for mood than the colour of anything, and one flag is often worth two more lights.",
+      "desc": "Shaping a scene with key, fill and separation. Where the shadows fall does more for mood than the color of anything, and one flag is often worth two more lights.",
       "tier": "intermediate",
       "core": true,
       "xp": 2000,
@@ -17483,7 +17483,7 @@
     },
     {
       "id": "fm.colour",
-      "name": "Colour Grading",
+      "name": "Color Grading",
       "desc": "Matching shots to each other first, then giving the whole thing a look. Consistency across a scene matters far more than any stylistic grade laid over it.",
       "tier": "advanced",
       "core": false,
@@ -17556,7 +17556,7 @@
       "group": "Creative",
       "requires": [
         "Planning a Shoot",
-        "Colour Grading",
+        "Color Grading",
         "Sound Design & Mix"
       ],
       "recommends": []
@@ -17655,7 +17655,7 @@
     {
       "id": "mu.scales",
       "name": "Scales",
-      "desc": "The ordered set of pitches a piece draws from, and the pattern of steps that defines each type. Practising them is partly theory and partly the most efficient technique exercise there is.",
+      "desc": "The ordered set of pitches a piece draws from, and the pattern of steps that defines each type. Practicing them is partly theory and partly the most efficient technique exercise there is.",
       "tier": "beginner",
       "core": false,
       "xp": 1700,
@@ -17673,7 +17673,7 @@
     {
       "id": "mu.intervals",
       "name": "Intervals",
-      "desc": "The distance between two pitches, named by size and quality. Attaching each one to a song you already know is the trick that makes them recognisable by ear rather than by counting.",
+      "desc": "The distance between two pitches, named by size and quality. Attaching each one to a song you already know is the trick that makes them recognizable by ear rather than by counting.",
       "tier": "beginner",
       "core": false,
       "xp": 1600,
@@ -17804,7 +17804,7 @@
     {
       "id": "mu.modes",
       "name": "Modes",
-      "desc": "The same seven notes started from a different degree, giving seven distinct colours. Hearing dorian as its own thing rather than as a displaced major scale is the point.",
+      "desc": "The same seven notes started from a different degree, giving seven distinct colors. Hearing dorian as its own thing rather than as a displaced major scale is the point.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -17989,7 +17989,7 @@
     {
       "id": "gt.change",
       "name": "Chord Changes",
-      "desc": "Moving between shapes in time, which is a completely separate skill from forming them. Practise the change itself rather than the chords either side, and always with a beat running.",
+      "desc": "Moving between shapes in time, which is a completely separate skill from forming them. Practice the change itself rather than the chords either side, and always with a beat running.",
       "tier": "beginner",
       "core": false,
       "xp": 1700,
@@ -18410,7 +18410,7 @@
     {
       "id": "pn.hands",
       "name": "Hands Together",
-      "desc": "Two independent parts at once, which is the first genuinely difficult thing the instrument asks. Practising each hand until it is automatic, then joining them slowly, is the only route that reliably works.",
+      "desc": "Two independent parts at once, which is the first genuinely difficult thing the instrument asks. Practicing each hand until it is automatic, then joining them slowly, is the only route that reliably works.",
       "tier": "beginner",
       "core": true,
       "xp": 1900,
@@ -18562,7 +18562,7 @@
     {
       "id": "pn.harmony",
       "name": "Harmony at the Keyboard",
-      "desc": "Seeing the chords inside written music instead of a wall of individual notes. It cuts memorising time dramatically and is what makes playing from a chord chart possible at all.",
+      "desc": "Seeing the chords inside written music instead of a wall of individual notes. It cuts memorizing time dramatically and is what makes playing from a chord chart possible at all.",
       "tier": "advanced",
       "core": false,
       "xp": 2200,
@@ -18581,7 +18581,7 @@
     },
     {
       "id": "pn.memory",
-      "name": "Memorising",
+      "name": "Memorizing",
       "desc": "Holding a piece by structure, harmony and muscle memory at once. Memory that is only in the fingers fails in public, which is why the other two have to be deliberate.",
       "tier": "advanced",
       "core": false,
@@ -18601,7 +18601,7 @@
     {
       "id": "pn.style",
       "name": "Period & Style",
-      "desc": "Baroque, classical and romantic music asking for different touch, pedalling and freedom with the beat. Playing everything the same way is the most common thing that makes an accurate performance sound wrong.",
+      "desc": "Baroque, classical and romantic music asking for different touch, pedaling and freedom with the beat. Playing everything the same way is the most common thing that makes an accurate performance sound wrong.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -18671,7 +18671,7 @@
       ],
       "group": "Creative",
       "requires": [
-        "Memorising"
+        "Memorizing"
       ],
       "recommends": []
     },
@@ -19137,7 +19137,7 @@
     {
       "id": "pr.grid",
       "name": "Tempo & Grid",
-      "desc": "Setting a tempo and placing everything against the bar. Quantising fixes timing and flattens feel at the same time, so how much to apply is a musical decision rather than a technical one.",
+      "desc": "Setting a tempo and placing everything against the bar. Quantizing fixes timing and flattens feel at the same time, so how much to apply is a musical decision rather than a technical one.",
       "tier": "foundation",
       "core": false,
       "xp": 1300,
@@ -19213,7 +19213,7 @@
     {
       "id": "pr.sound",
       "name": "Sound Selection",
-      "desc": "Choosing sounds that leave room for each other. Half of what people try to fix with equalisation is a choice of two sounds that occupy exactly the same territory.",
+      "desc": "Choosing sounds that leave room for each other. Half of what people try to fix with equalization is a choice of two sounds that occupy exactly the same territory.",
       "tier": "beginner",
       "core": false,
       "xp": 1600,
@@ -19327,7 +19327,7 @@
     },
     {
       "id": "pr.eq",
-      "name": "Equalisation",
+      "name": "Equalization",
       "desc": "Turning frequency ranges up and down so parts stop competing. Cutting what is not needed goes further than boosting what you want, and both are done in the context of the whole mix.",
       "tier": "advanced",
       "core": false,
@@ -19359,7 +19359,7 @@
       ],
       "group": "Creative",
       "requires": [
-        "Equalisation"
+        "Equalization"
       ],
       "recommends": []
     },
@@ -19498,7 +19498,7 @@
     {
       "id": "pf.practice",
       "name": "Deliberate Practice",
-      "desc": "Isolating the bar that fails, slowing it until it never fails, and only then speeding it up. Playing a piece through from the top is performing, not practising, and an hour of it improves almost nothing.",
+      "desc": "Isolating the bar that fails, slowing it until it never fails, and only then speeding it up. Playing a piece through from the top is performing, not practicing, and an hour of it improves almost nothing.",
       "tier": "foundation",
       "core": true,
       "xp": 1500,
@@ -19652,7 +19652,7 @@
     {
       "id": "pf.rep",
       "name": "Building Repertoire",
-      "desc": "A set of pieces at performance standard, kept there, covering the periods a syllabus asks for. Learning a programme from scratch for each competition is why players plateau — nothing ever gets past merely secure.",
+      "desc": "A set of pieces at performance standard, kept there, covering the periods a syllabus asks for. Learning a program from scratch for each competition is why players plateau — nothing ever gets past merely secure.",
       "tier": "intermediate",
       "core": true,
       "xp": 1900,
@@ -19749,7 +19749,7 @@
     {
       "id": "pf.recital",
       "name": "The Recital",
-      "desc": "A programme, in order, without stopping, in front of people who came to listen. Recovering from a slip inaudibly is worth more here than any single difficult passage, because the audience only notices the stopping.",
+      "desc": "A program, in order, without stopping, in front of people who came to listen. Recovering from a slip inaudibly is worth more here than any single difficult passage, because the audience only notices the stopping.",
       "tier": "advanced",
       "core": false,
       "xp": 2300,
@@ -20230,7 +20230,7 @@
     {
       "id": "sr.pull",
       "name": "Pulling",
-      "desc": "Rows and chin-ups, which most programmes under-do relative to pressing. Balancing the two is what keeps shoulders healthy over years rather than months.",
+      "desc": "Rows and chin-ups, which most programs under-do relative to pressing. Balancing the two is what keeps shoulders healthy over years rather than months.",
       "tier": "beginner",
       "core": false,
       "xp": 1700,
@@ -20404,7 +20404,7 @@
     {
       "id": "sr.hyper",
       "name": "Training for Size",
-      "desc": "Volume near failure with enough food to build on. Muscle grows on a timescale of months, and expecting to see it weekly is what makes people abandon working programmes.",
+      "desc": "Volume near failure with enough food to build on. Muscle grows on a timescale of months, and expecting to see it weekly is what makes people abandon working programs.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -20691,7 +20691,7 @@
     {
       "id": "en.fuel",
       "name": "Fuelling",
-      "desc": "Carbohydrate before and during anything long, practised in training rather than tried on the day. The gut is trainable, and race day is the worst possible place to discover it is not.",
+      "desc": "Carbohydrate before and during anything long, practiced in training rather than tried on the day. The gut is trainable, and race day is the worst possible place to discover it is not.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -20977,7 +20977,7 @@
     },
     {
       "id": "nu.fibre",
-      "name": "Fibre & Gut",
+      "name": "Fiber & Gut",
       "desc": "The part that is not absorbed, which regulates digestion and feeds the bacteria doing the work. Most people eat about half of what is recommended, and increasing it suddenly is uncomfortable.",
       "tier": "beginner",
       "core": false,
@@ -21009,7 +21009,7 @@
       ],
       "group": "Health and fitness",
       "requires": [
-        "Fibre & Gut"
+        "Fiber & Gut"
       ],
       "recommends": []
     },
@@ -21035,7 +21035,7 @@
     {
       "id": "nu.hunger",
       "name": "Hunger & Satiety",
-      "desc": "Why some meals hold and others do not: protein, fibre, volume and how processed something is. Managing appetite is what makes any energy target sustainable rather than a fight.",
+      "desc": "Why some meals hold and others do not: protein, fiber, volume and how processed something is. Managing appetite is what makes any energy target sustainable rather than a fight.",
       "tier": "intermediate",
       "core": true,
       "xp": 1900,
@@ -21048,7 +21048,7 @@
       "group": "Health and fitness",
       "requires": [
         "Protein",
-        "Fibre & Gut"
+        "Fiber & Gut"
       ],
       "recommends": []
     },
@@ -21248,7 +21248,7 @@
     {
       "id": "nu.relationship",
       "name": "A Sustainable Relationship with Food",
-      "desc": "Eating well without it occupying the day, and recognising when tracking has stopped helping. Any approach that cannot survive a holiday or a bad week is not the approach.",
+      "desc": "Eating well without it occupying the day, and recognizing when tracking has stopped helping. Any approach that cannot survive a holiday or a bad week is not the approach.",
       "tier": "mastery",
       "core": false,
       "xp": 2900,
@@ -21495,7 +21495,7 @@
     {
       "id": "mi.thoughts",
       "name": "Working with Thoughts",
-      "desc": "Noticing a thought as a thought rather than as a report on reality. Catastrophising and mind reading are patterns rather than insights, and naming them takes most of their force.",
+      "desc": "Noticing a thought as a thought rather than as a report on reality. Catastrophizing and mind reading are patterns rather than insights, and naming them takes most of their force.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -21570,7 +21570,7 @@
     },
     {
       "id": "mi.burnout",
-      "name": "Recognising Burnout",
+      "name": "Recognizing Burnout",
       "desc": "Exhaustion, cynicism and a sense of ineffectiveness together. It is a state produced by conditions rather than a personal failure, and rest alone does not fix conditions.",
       "tier": "advanced",
       "core": true,
@@ -21603,7 +21603,7 @@
       ],
       "group": "Health and fitness",
       "requires": [
-        "Recognising Burnout"
+        "Recognizing Burnout"
       ],
       "recommends": []
     },
@@ -22011,7 +22011,7 @@
     {
       "id": "ck.heat",
       "name": "Heat Control",
-      "desc": "Knowing when a pan is hot enough, and that most home cooking happens too cool and too crowded. Browning needs space and real heat, and it is where most of the flavour comes from.",
+      "desc": "Knowing when a pan is hot enough, and that most home cooking happens too cool and too crowded. Browning needs space and real heat, and it is where most of the flavor comes from.",
       "tier": "foundation",
       "core": true,
       "xp": 1600,
@@ -22049,7 +22049,7 @@
     {
       "id": "ck.acid",
       "name": "Acid, Fat & Balance",
-      "desc": "Something sharp to lift richness, and enough fat to carry flavour. A dish that tastes heavy or dull is usually one squeeze of lemon or a spoon of vinegar from being finished.",
+      "desc": "Something sharp to lift richness, and enough fat to carry flavor. A dish that tastes heavy or dull is usually one squeeze of lemon or a spoon of vinegar from being finished.",
       "tier": "beginner",
       "core": false,
       "xp": 1700,
@@ -22545,7 +22545,7 @@
     {
       "id": "tr.customs",
       "name": "Local Customs",
-      "desc": "Dress, greetings, queueing, tipping and what is rude. Ten minutes of reading beforehand prevents most of the ways visitors cause offence without noticing.",
+      "desc": "Dress, greetings, queueing, tipping and what is rude. Ten minutes of reading beforehand prevents most of the ways visitors cause offense without noticing.",
       "tier": "intermediate",
       "core": true,
       "xp": 1700,
@@ -22601,7 +22601,7 @@
     },
     {
       "id": "tr.solo",
-      "name": "Travelling Alone",
+      "name": "Traveling Alone",
       "desc": "Complete freedom and nobody to share the decisions or the dull evenings. Hostels, walking tours and eating at the bar are the standard ways of not spending a fortnight silent.",
       "tier": "advanced",
       "core": false,
@@ -22620,7 +22620,7 @@
     },
     {
       "id": "tr.group",
-      "name": "Travelling with Others",
+      "name": "Traveling with Others",
       "desc": "Agreeing beforehand on money, pace and time apart. Almost every travel argument is one of those three, and all three are easier to settle at home.",
       "tier": "advanced",
       "core": false,
@@ -22677,7 +22677,7 @@
     },
     {
       "id": "tr.impact",
-      "name": "Travelling Responsibly",
+      "name": "Traveling Responsibly",
       "desc": "Where the money goes, what the trip costs in emissions, and what pressure it puts on the place. Fewer, longer trips and local spending are the two levers that matter most.",
       "tier": "expert",
       "core": false,
@@ -22691,7 +22691,7 @@
       "group": "Life and home",
       "requires": [
         "Slow Travel",
-        "Travelling with Others"
+        "Traveling with Others"
       ],
       "recommends": []
     },
@@ -22710,7 +22710,7 @@
       ],
       "group": "Life and home",
       "requires": [
-        "Travelling Alone",
+        "Traveling Alone",
         "Working Away"
       ],
       "recommends": []
@@ -22731,7 +22731,7 @@
       "group": "Life and home",
       "requires": [
         "When It Goes Wrong",
-        "Travelling Responsibly"
+        "Traveling Responsibly"
       ],
       "recommends": []
     }

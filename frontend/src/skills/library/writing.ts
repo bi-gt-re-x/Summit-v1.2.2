@@ -47,7 +47,7 @@ export const writing = [
   node({
     id: 'writing.editing',
     name: 'Editing Your Own Work',
-    description: 'Reading what is on the page instead of what you meant, and deleting your favourite sentence.',
+    description: 'Reading what is on the page instead of what you meant, and deleting your favorite sentence.',
     difficulty: 'intermediate',
     xpReward: 115,
     prerequisites: after('writing.clarity'),

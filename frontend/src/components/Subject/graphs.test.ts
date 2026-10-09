@@ -61,7 +61,7 @@ describe('dimensionAxes', () => {
     expect(axes).toEqual([{ label: 'Execution', value: 0.8 }]);
   });
 
-  it('drops momentum, which is the one axis centred on 50', () => {
+  it('drops momentum, which is the one axis centered on 50', () => {
     // A radar compares its axes against each other, and it can only do that
     // while they all mean the same kind of thing. Momentum means change.
     const axes = dimensionAxes([

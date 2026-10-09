@@ -46,7 +46,7 @@ function caretIn(text: string): void {
   window.getSelection()!.collapseToStart();
 }
 
-describe('colour, highlighter, face and size', () => {
+describe('color, highlighter, face and size', () => {
   it('wraps the selection in the class the token names', () => {
     root.innerHTML = '<p>keep this bit</p>';
     select('this');
@@ -55,7 +55,7 @@ describe('colour, highlighter, face and size', () => {
     expect(toMarkdown(root)).toBe('keep [this]{red} bit');
   });
 
-  it('replaces a colour rather than stacking a second one', () => {
+  it('replaces a color rather than stacking a second one', () => {
     root.innerHTML = '<p><span class="md-c-red">urgent</span></p>';
     select('urgent');
     spanSelection(root, 'blue');

@@ -44,7 +44,7 @@ KINDS = ('record', 'milestone')
 
 #: Which end of a record's range is the good end. A score wants 'higher', a
 #: mile time wants 'lower'. Stored rather than guessed from the unit, because
-#: "minutes practised" is a bigger-is-better duration and any rule built on the
+#: "minutes practiced" is a bigger-is-better duration and any rule built on the
 #: unit gets that one backwards — see data/sql/records.sql.
 DIRECTIONS = ('higher', 'lower')
 

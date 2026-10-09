@@ -32,7 +32,7 @@
  * Geometry 51 → 55", and Summit has no evidence for either: a task carries a
  * subject and nothing finer. The skill trees do name branches, but their node
  * states are authored rather than measured — `utils/skillProgress` holds what
- * the reader has practised and it lives in their own browser, unscored. So the
+ * the reader has practiced and it lives in their own browser, unscored. So the
  * grain here is the subject, which is the finest grain the record supports,
  * and the trees stay where they are: a route map beside the evidence rather
  * than a second set of figures pretending to be it. See the note at the top of

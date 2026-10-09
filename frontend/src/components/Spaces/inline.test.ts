@@ -62,7 +62,7 @@ describe('writing Markdown', () => {
     expect(plainOf(escapeInline('**x**'))).toBe('**x**');
   });
 
-  it('merges neighbours with the same marks', () => {
+  it('merges neighbors with the same marks', () => {
     expect(serialize([{ text: 'a', bold: true }, { text: 'b', bold: true }])).toBe('**ab**');
   });
 });

@@ -444,7 +444,7 @@ export default function SubjectAnalytics() {
 
 
   /**
-   * The lattice this subject opens on, and what the reader has practised of it.
+   * The lattice this subject opens on, and what the reader has practiced of it.
    *
    * Read from the practice store rather than fetched — it is local to the
    * browser (utils/skillProgress), so this costs no request. Recomputed when
@@ -588,7 +588,7 @@ export default function SubjectAnalytics() {
    * ## Why this is a second model call and not part of the write-up
    *
    * The write-up below is about the *subject*: how it is going, and what to
-   * practise. This is about one goal, and a reader with two goals on a subject
+   * practice. This is about one goal, and a reader with two goals on a subject
    * gets two different plans — which is the whole point, and is not something
    * one panel about the subject can do.
    *
@@ -1173,7 +1173,7 @@ export default function SubjectAnalytics() {
           <Loading label="Reading your record" />
         ) : !subject ? (
           <p className="ax-opening is-flat">
-            No subject with that id is in your catalogue. It may have been deleted since you
+            No subject with that id is in your catalog. It may have been deleted since you
             picked it. You can pick the subjects you follow again in{' '}
             <Link className="ax-link" to="/analytics?setup">the analytics setup</Link>.
           </p>

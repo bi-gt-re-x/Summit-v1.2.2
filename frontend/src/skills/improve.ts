@@ -39,7 +39,7 @@
  * what to do, how you will know it worked, how it usually goes wrong, and what
  * it costs. `improvePlan` produces all four at once for that reason. Computed
  * separately they drift, and the drift is always the same shape: a locked node
- * told to go and practise the thing it has just said is locked.
+ * told to go and practice the thing it has just said is locked.
  *
  * ## Most of it is derived, and that is the design
  *
@@ -230,7 +230,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Binary search on an answer rather than on an array.',
   ],
   'a.dp': [
-    'Solve one problem recursively, then add memoisation, then make it a table.',
+    'Solve one problem recursively, then add memoization, then make it a table.',
     'Write the recurrence in words before writing any code.',
     'Do the classic three: fibonacci, coin change, longest common subsequence.',
   ],
@@ -346,7 +346,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Explain domain and range for a function that has limits on both.',
   ],
   'm.trig': [
-    'Derive the unit circle rather than memorising it.',
+    'Derive the unit circle rather than memorizing it.',
     'Prove one identity from another.',
     'Solve a triangle with the sine and the cosine rule.',
   ],
@@ -404,7 +404,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Differentiate something implicitly.',
   ],
   'k.optim': [
-    'Solve one real maximisation problem end to end, units and all.',
+    'Solve one real maximization problem end to end, units and all.',
     'Check second derivatives rather than assuming.',
     'Handle a problem where the answer is at an endpoint.',
   ],
@@ -836,7 +836,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   ],
   'mu.dynamics': [
     'Play one phrase at three different volumes on purpose.',
-    'Practise the same passage staccato and legato.',
+    'Practice the same passage staccato and legato.',
     'Find every dynamic marking in a piece before playing it.',
   ],
   'mu.inversions': [
@@ -855,9 +855,9 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Name what one note changed between two modes.',
   ],
   'mu.harmony': [
-    'Harmonise a simple melody in four parts.',
+    'Harmonize a simple melody in four parts.',
     'Find and fix parallel fifths in your own writing.',
-    'Analyse eight bars and label every chord.',
+    'Analyze eight bars and label every chord.',
   ],
   'mu.form': [
     'Map the structure of three pieces you know well by ear.',
@@ -876,7 +876,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   ],
   'mu.performance': [
     'Play one piece for another person, all the way through.',
-    'Practise recovering from a mistake without stopping.',
+    'Practice recovering from a mistake without stopping.',
     'Record a performance and watch it back.',
   ],
   'sc.units': [
@@ -1099,7 +1099,7 @@ const LADDER: Rung[] = [
     line: () => 'Push one example until it breaks. Write down the point where it turned.',
     by: {
       Computing: () => 'Run it on the empty case, then on one a thousand times bigger than you expect.',
-      'Maths and science': () => 'Take the numbers to zero, to negative and to very large. See which breaks it.',
+      'Math and science': () => 'Take the numbers to zero, to negative and to very large. See which breaks it.',
       'Health and fitness': () => 'Take the load up until form goes. Note the number, then back off one step.',
       'Life and home': () => 'Do it when the timing is bad, and see what you drop first.',
       Creative: () => 'Take one piece too far on purpose and find where it stopped working.',
@@ -1228,7 +1228,7 @@ function inline(name: string): string {
 /** What finishing looks like, per domain. */
 const PROOF: Record<string, (name: string) => string> = {
   Computing: (name) => `You can read someone else's ${name} and say why they wrote it that way.`,
-  'Maths and science': (name) => `You spot a wrong answer involving ${name} before you finish the working.`,
+  'Math and science': (name) => `You spot a wrong answer involving ${name} before you finish the working.`,
   'Language and humanities': (name) => `You notice ${name} done badly, and can say what would fix it.`,
   Creative: (name) => `You choose ${name} for a reason you can state.`,
   'Health and fitness': () => 'It holds on a bad day, not just a good one.',
@@ -1237,12 +1237,12 @@ const PROOF: Record<string, (name: string) => string> = {
   'Life and home': () => 'No longer a project — just something you do.',
 };
 
-const PROOF_DEFAULT = (name: string) => `You reach for ${name} unprompted, on a problem nobody labelled.`;
+const PROOF_DEFAULT = (name: string) => `You reach for ${name} unprompted, on a problem nobody labeled.`;
 
 /** The trap at each rung of the ladder. */
 const TIER_PITFALL: Record<Difficulty, (name: string) => string> = {
   foundation: () => 'Only works with the example in front of you.',
-  beginner: () => 'Recognising it and calling that knowing it.',
+  beginner: () => 'Recognizing it and calling that knowing it.',
   intermediate: () => 'Works in exercises and never leaves them.',
   advanced: (name) => `Reaching for ${name} where something simpler was right.`,
   expert: (name) => `Fluent enough at ${name} to stop seeing its assumptions.`,

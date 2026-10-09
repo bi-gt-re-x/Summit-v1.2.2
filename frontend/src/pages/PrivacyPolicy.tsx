@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
       <p>
         Your browser also keeps two cookies: a signed session cookie that says you are
         signed in, and a cookie remembering your chosen theme. The session cookie is the
-        whole of your authorisation, which is why it is marked Secure and HttpOnly and
+        whole of your authorization, which is why it is marked Secure and HttpOnly and
         cannot be read by scripts on the page.
       </p>
 
