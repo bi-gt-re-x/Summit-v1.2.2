@@ -476,3 +476,20 @@ body:has(.calendar-container) *::-webkit-scrollbar {
    first column. It is set on the container rather than on the grid wrapper so
    the Day view, which has no wrapper, inherits it too. */
 .calendar-container { --wk-gutter: 82px; }
+
+/* ---------- Phones -----------------------------------------------------------
+   The calendar's padding was three layers deep on a phone — the body's 14px,
+   the container's 20px and the card's 24px — which left the week 271px of a
+   375px screen. One thin gutter instead, the card grows to its content (the
+   page scrolls, not the card), and the view switcher sits in the flow above
+   the view rather than floating over the date beside it. */
+@media (max-width: 640px) {
+    html .calendar-container { padding: var(--space-3) 0 var(--space-4); height: auto; }
+    html .calendar-card {
+        height: auto; max-height: none; overflow: visible;
+        padding: var(--space-4) var(--space-3);
+    }
+    html .calendar-topbar {
+        position: static; margin: 0 0 var(--space-3); align-self: flex-start;
+    }
+}

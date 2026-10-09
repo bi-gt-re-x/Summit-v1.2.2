@@ -27,6 +27,12 @@ body.has-rail .app-main {
     min-width: 0;
 }
 
+/* Never wider than the window, on any page. The pages without the rail (the
+   landing page, sign-in) leave #root to size itself as a flex item, and one
+   unbreakable line inside it was enough to make it 26px wider than a phone's
+   screen and the whole page scroll sideways. */
+#root { max-width: 100%; }
+
 /* Centered page container.
  *
  * **No ceiling, and a fixed gutter.** This was `min(95%, 1400px)`, and both
@@ -108,4 +114,16 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #434c5a; b
     background: currentColor;
     -webkit-mask: var(--ico) center / contain no-repeat;
     mask: var(--ico) center / contain no-repeat;
+}
+
+/* iOS zooms the whole page in when a field under 16px is focused, and does
+   not zoom back out — so on an iPhone every search box, task title and
+   settings input here (most are 14px) left the reader looking at a page
+   blown up past the edges of the screen. 16px is the size that stops it.
+   Scoped to iOS (the only engine with -webkit-touch-callout) and to phone
+   widths, so nothing changes anywhere this was never a problem. */
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 640px) {
+        input, select, textarea { font-size: 16px !important; }
+    }
 }

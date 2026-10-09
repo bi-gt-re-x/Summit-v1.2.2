@@ -1000,3 +1000,12 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
     .tk-field-subject { grid-column: auto; }
     .tk-composer-main { flex-wrap: wrap; }
 }
+
+/* ---------- Phones -------------------------------------------------------- */
+/* The heading and its four tools shared one row, so "New Task" broke over two
+   lines beside a squeezed title. The tools take their own row under it. */
+@media (max-width: 640px) {
+    .tk-head { flex-wrap: wrap; row-gap: var(--space-3); }
+    .tk-head-tools { flex: 1 1 100%; }
+    .tk-new { white-space: nowrap; }
+}

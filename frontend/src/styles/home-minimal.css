@@ -140,3 +140,10 @@ html:not([data-theme="dark"]) body:has(.home-main) .footer {
 }
 /* The glow that lit up behind it as it scrolled in. */
 .home-main .lp-final::before { display: none; }
+
+/* The feature cards slide in from either side as they are scrolled to, and
+   until they have, the ones further down sit partly past the window's edge —
+   enough to make the whole page scroll sideways on a phone or a tablet.
+   `clip` rather than `hidden`: it trims the overflow without making this a
+   scroll container, so the sticky header inside it keeps sticking. */
+.home-main { overflow-x: clip; }

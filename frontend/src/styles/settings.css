@@ -488,6 +488,15 @@ html[data-theme="dark"] .st-page {
     .st-card { max-width: none; }
 }
 
+/* On a phone the groups' chip rows were each their own sideways scroller,
+   five strips of chips stacked on top of each other. One wrapping set of
+   chips under the search instead: every section is visible at once. */
+@media (max-width: 640px) {
+    .st-nav { flex-direction: row; flex-wrap: wrap; gap: var(--space-2); }
+    .st-search { flex: 1 1 100%; }
+    .st-nav-group { display: contents; }
+}
+
 @media (max-width: 560px) {
     .st-page { padding: 64px var(--space-4) var(--space-12); }
     .st-row { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }

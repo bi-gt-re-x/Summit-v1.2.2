@@ -8341,3 +8341,16 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     .ax-chips { max-width: 100%; }
     .ax-chip { white-space: nowrap; padding-left: 10px; padding-right: 10px; }
 }
+
+/* ---------- Phones -------------------------------------------------------- */
+/* A panel's heading and its controls (the window picker, the export) share
+   one row that did not wrap, so on a phone the picker was pushed past the
+   screen's edge and the page scrolled sideways. They stack instead. */
+@media (max-width: 640px) {
+    .ax-panel-head { flex-wrap: wrap; row-gap: var(--space-2); }
+    .ax-panel-aside { flex: 1 1 100%; min-width: 0; justify-content: flex-start; }
+    .ax-select-wrap, .ax-select { max-width: 100%; }
+    /* The six window chips (7D … All Time) are one row that does not wrap;
+       on the narrowest phones it wraps rather than running off the edge. */
+    .ax-chips { flex-wrap: wrap; row-gap: var(--space-1); }
+}

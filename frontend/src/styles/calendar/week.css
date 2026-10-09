@@ -1258,3 +1258,21 @@ html[data-theme="dark"] .wk-focus-chip.is-empty { color: #6b7280; }
 /* The week's date sits in the column beside the sidebar toggle; with the
    selector opposite it, the extra left indent is no longer what centres it. */
 #weekView .wk-headmain { padding-left: 0; }
+
+/* ---------- Phones -----------------------------------------------------------
+   Seven days have to fit in about 340px. The hour labels give up most of their
+   82px, the header's tools wrap under the date instead of pushing past the
+   screen edge, and the day headings stack their name over their date. */
+@media (max-width: 640px) {
+    html .calendar-container { --wk-gutter: 46px; }
+    /* The labels sat 42px in from the gutter's right edge, which is the whole
+       of a phone's gutter; they go to its left edge, and the now-badge, drawn
+       over them, covers one only while it is the current hour. */
+    html .wk-timelabel span { right: auto; left: 0; white-space: nowrap; font-size: 10px; }
+    html .wk-header { flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-4); }
+    html .wk-headmain { flex: 1 1 100%; justify-content: space-between; }
+    html .wk-headtools { flex: 1 1 100%; flex-wrap: wrap; justify-content: space-between; }
+    html .wk-headtools .view-toggle { flex: 1 1 auto; }
+    html .wk-dayhead-row { font-size: var(--text-2xs, 11px); }
+    html .wk-scroll { max-height: 68vh; }
+}

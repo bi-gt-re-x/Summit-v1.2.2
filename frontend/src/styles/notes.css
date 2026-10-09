@@ -1463,3 +1463,11 @@ html[data-theme="dark"] .nt-page { color-scheme: dark; }
         transform: none;
     }
 }
+
+/* ---------- Phones -------------------------------------------------------- */
+/* The search box shared its row with New Note and was cut to "Searc". It
+   takes the whole row on a phone. */
+@media (max-width: 640px) {
+    .nt-search-wrap { flex: 1 1 100%; }
+    .nt-search { width: 100%; }
+}

@@ -1199,3 +1199,11 @@ html[data-theme="dark"] .sp-item.is-lifted { box-shadow: 0 0 0 2px var(--pref-ac
     .sp-drawn-tools,
     .sp-tall { opacity: 1; }
 }
+
+/* ---------- Phones -------------------------------------------------------- */
+/* "Add icon", "Add cover" and "Background" on one row ran past the edge of
+   the narrowest phones; they wrap instead. */
+@media (max-width: 640px) {
+    .sp-head { flex-wrap: wrap; }
+    .sp-dress-tools { flex: 1 1 100%; min-width: 0; flex-wrap: wrap; row-gap: var(--space-1); }
+}

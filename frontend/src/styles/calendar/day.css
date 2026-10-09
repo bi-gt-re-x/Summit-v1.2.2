@@ -501,3 +501,16 @@ html[data-theme="dark"] .day-band-note strong { color: #e6e9f0; }
 /* The planned figure beside the focus reading, which was left at the grey it
    was given for white — see the note on the same omission in week.css. */
 html[data-theme="dark"] .day-focus-time { color: #8b95a3; }
+
+/* ---------- Phones -----------------------------------------------------------
+   The timeline and the sidebar shared one fixed-height card, so each got
+   250px — two hours of day. On a phone the card grows instead: the timeline
+   takes most of the screen and scrolls on its own, and the sidebar follows
+   underneath at its natural height. */
+@media (max-width: 640px) {
+    html .day-layout { grid-template-rows: auto auto; gap: var(--space-4); }
+    html .day-gridpane { min-height: 0; }
+    html .day-scroll { max-height: 68vh; min-height: 420px; }
+    html .day-sidebar { overflow: visible; }
+    html .day-header .wk-titlegroup { flex: 1 1 auto; min-width: 0; }
+}
