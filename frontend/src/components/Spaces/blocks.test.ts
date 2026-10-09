@@ -57,8 +57,19 @@ describe('typing shortcuts', () => {
 });
 
 describe('the slash menu', () => {
-  it('offers every kind before anything is typed', () => {
-    expect(matchKinds('')).toHaveLength(12);
+  it('offers every kind before anything is typed, with one entry per chart', () => {
+    const all = matchKinds('');
+    expect(all.filter((kind) => kind.type !== 'chart')).toHaveLength(12);
+    expect(all.filter((kind) => kind.type === 'chart').map((kind) => kind.chart)).toEqual(['bar', 'line', 'area', 'pie', 'donut']);
+  });
+
+  it('puts a name that starts with what was typed first', () => {
+    expect(matchKinds('line').map((kind) => kind.label)).toEqual(['Line chart', 'Divider']);
+  });
+
+  it('finds a chart by its kind', () => {
+    expect(matchKinds('pie').map((kind) => kind.chart)).toEqual(['pie']);
+    expect(matchKinds('chart')).toHaveLength(5);
   });
 
   it('filters by name and by the words people type', () => {

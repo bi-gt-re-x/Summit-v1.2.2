@@ -9,7 +9,10 @@ and fills them in.
 The space page is a block editor in the manner of Notion
 (frontend/src/components/Spaces/BlockEditor.tsx): an icon, a cover, and a
 list of blocks — text, three heading sizes, bulleted, numbered and to-do
-lists, toggles, quotes, callouts, dividers and code — each with an indent.
+lists, toggles, quotes, callouts, dividers, code and charts — each with an
+indent. A top-level block may also carry a place on the page's grid (`x`,
+`y`, `w`: column, row, width in columns) once it has been dragged, and a
+chart carries its kind, its scale and its points.
 That list is `doc`, checked here block by block against the kinds the editor
 knows. `body` stays as the page in plain text, written from the blocks on
 every save, so anything that only wants the words still has them, and a page
@@ -70,6 +73,8 @@ BLOCK_TEXT_MAX = RULES['spaces']['block_text_max']
 INDENT_MAX = RULES['spaces']['indent_max']
 COVERS = tuple(RULES['spaces']['covers'])
 ICON_MAX = RULES['spaces']['icon_max']
+GRID = RULES['spaces']['grid']
+CHART = RULES['spaces']['chart']
 
 #: Each kind as a line of plain text, for `body`.
 TEXT_PREFIX = {'h1': '# ', 'h2': '## ', 'h3': '### ', 'bullet': '- ', 'numbered': '1. ',
@@ -99,6 +104,51 @@ class Invite(BaseModel):
 
 def _default_name(kind: str, at: int) -> str:
     return KINDS[kind]['name'].format(at)
+
+
+def _whole(value) -> Optional[int]:
+    """An int, or None — never a bool, a float with a fraction, or a string."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    return int(value) if float(value).is_integer() else None
+
+
+def _clean_place(item: dict) -> dict:
+    """The block's grid place, when it is a whole, in-bounds one; else nothing."""
+    x, y, w = _whole(item.get('x')), _whole(item.get('y')), _whole(item.get('w'))
+    if None in (x, y, w):
+        return {}
+    if x < 0 or w < 1 or x + w > GRID['cols'] or not 0 <= y <= GRID['y_max']:
+        return {}
+    return {'x': x, 'y': y, 'w': w}
+
+
+def _number(value, low: float, high: float, default: float) -> float:
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or value != value:
+        return default
+    value = max(low, min(high, float(value)))
+    return int(value) if value.is_integer() else round(value, 6)
+
+
+def _clean_chart(raw) -> dict:
+    """A chart as the editor may store it: a known kind, a scale, 1–12 points."""
+    raw = raw if isinstance(raw, dict) else {}
+    kind = raw.get('kind') if raw.get('kind') in CHART['kinds'] else 'bar'
+    top = _number(raw.get('max'), 0, CHART['value_max'], CHART['scale_default']) or CHART['scale_default']
+    points = []
+    for at, point in enumerate(raw.get('points') if isinstance(raw.get('points'), list) else []):
+        if len(points) >= CHART['points_max']:
+            break
+        if not isinstance(point, dict):
+            continue
+        label = point.get('label')
+        points.append({
+            'label': (label if isinstance(label, str) else 'Item {}'.format(at + 1))[:CHART['label_max']],
+            'value': _number(point.get('value'), 0, CHART['value_max'], 0),
+        })
+    if not points:
+        points = [{'label': 'Item 1', 'value': 0}]
+    return {'kind': kind, 'max': top, 'points': points}
 
 
 def _clean_doc(raw) -> Optional[dict]:
@@ -132,6 +182,12 @@ def _clean_doc(raw) -> Optional[dict]:
             block['checked'] = True
         if kind == 'toggle' and item.get('collapsed') is True:
             block['collapsed'] = True
+        if kind == 'chart':
+            block['chart'] = _clean_chart(item.get('chart'))
+        # Only a block at the left edge has a place of its own; one indented
+        # under another rides inside it.
+        if not indent:
+            block.update(_clean_place(item))
         blocks.append(block)
     icon = str(raw.get('icon') or '').strip()[:ICON_MAX]
     cover = raw.get('cover') if raw.get('cover') in COVERS else ''
@@ -150,6 +206,11 @@ def _doc_text(doc: dict) -> str:
             lines.append(pad + '```\n' + text + '\n' + pad + '```')
         elif kind == 'todo':
             lines.append(pad + ('- [x] ' if block.get('checked') else '- [ ] ') + text)
+        elif kind == 'chart':
+            chart = block['chart']
+            name = '{} chart'.format(chart['kind'].capitalize())
+            values = ', '.join('{} {}'.format(p['label'], p['value']) for p in chart['points'])
+            lines.append(pad + '[{}{}] {}'.format(name, ': ' + text if text else '', values))
         else:
             lines.append(pad + TEXT_PREFIX.get(kind, '') + text)
     return '\n'.join(lines)

@@ -13,9 +13,13 @@
  *     turns a block back into text and then joins it to the one above.
  *   - Tab and Shift+Tab indent; a toggle hides what sits deeper under it.
  *   - Up and Down cross from block to block; ⌘/Ctrl+D duplicates.
- *   - Each block has a handle: drag it to move the block (and what is under
- *     it), or click it for Turn into, Duplicate, Move and Delete. The + beside
- *     it adds a block below and opens the slash menu there.
+ *   - Each block has a handle: drag it anywhere on the page and it snaps to
+ *     the grid (./canvas), or click it for Turn into, Width, Duplicate, Move
+ *     and Delete. With the handle focused, arrow keys nudge it a cell at a
+ *     time. The right edge of an item drags to make it wider or narrower. The
+ *     + beside the handle adds a block below and opens the slash menu there.
+ *   - Charts (./ChartBlock) come from the slash menu: bar, line, area, pie and
+ *     donut, with their values set by dragging.
  *   - Bold and italic inside a block: ⌘/Ctrl+B and ⌘/Ctrl+I, the B and I in
  *     the bar that rises over a selection, or typing "**word**" / "*word*".
  *
@@ -36,11 +40,15 @@ import {
   type ClipboardEvent,
   type CSSProperties,
   type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
 import {
   BLOCK_KINDS,
+  TURN_KINDS,
   INDENT_MAX,
+  chartBlock,
+  cleanPlace,
   LISTS,
   block,
   duplicate,
@@ -49,7 +57,6 @@ import {
   indentOf,
   matchKinds,
   moveDown,
-  moveTo,
   moveUp,
   numberOf,
   remove,
@@ -59,8 +66,27 @@ import {
   visibleText,
   fromBody,
   type Block,
+  type BlockKind,
   type BlockType,
 } from './blocks';
+import {
+  COLS,
+  NARROW_PX,
+  ROW_PX,
+  anyPinned,
+  bottomOf,
+  clampPlace,
+  dropAt,
+  layout,
+  resizeTo,
+  rowsFor,
+  snap,
+  strip,
+  swapPlaces,
+  type Item,
+  type Place,
+} from './canvas';
+import { ChartBlock } from './ChartBlock';
 import {
   autoFormat,
   hasMark,
@@ -89,6 +115,7 @@ const PLACEHOLDER: Record<BlockType, string> = {
   callout: 'Callout',
   divider: '',
   code: 'Code',
+  chart: '',
 };
 
 const BULLETS = ['•', '◦', '▪'];
@@ -96,7 +123,27 @@ const BULLETS = ['•', '◦', '▪'];
 type Caret = 'start' | 'end' | number;
 
 /** Code keeps its words literal; every other kind with words is rich text. */
-const isRich = (one: Block) => one.type !== 'code' && one.type !== 'divider';
+const isRich = (one: Block) => one.type !== 'code' && one.type !== 'divider' && one.type !== 'chart';
+
+/** How far a pointer must travel on a handle before a press becomes a drag. */
+const DRAG_FROM_PX = 4;
+
+/**
+ * An item being moved or resized. `base` is the page with everything pinned
+ * where it was drawn when the drag began, and `items` how it was drawn then.
+ */
+interface Lift {
+  id: string;
+  mode: 'move' | 'size';
+  base: Block[];
+  items: Item[];
+  place: Place;
+  /** Pointer to the item's top-left corner, in pixels, when it was picked up. */
+  grab: { dx: number; dy: number };
+}
+
+/** A grid place in words, for the badge on a dragged item and for screen readers. */
+const placeWords = (place: Place) => `Column ${place.x + 1}, row ${place.y + 1}, ${place.w} of ${COLS} wide`;
 
 /** Where the selection is in a block's field, in visible offsets. */
 function selectionOf(node: HTMLElement, text: string): { start: number; end: number } {
@@ -141,9 +188,28 @@ export interface BlockEditorProps {
   label: string;
 }
 
-export function BlockEditor({ blocks, onChange, disabled = false, label }: BlockEditorProps) {
+export function BlockEditor({ blocks: given, onChange: emit, disabled = false, label }: BlockEditorProps) {
+  /* Blocks inside another keep no grid place: dropping one there, or Tab,
+     strips it on the way out. */
+  const onChange = (list: Block[]) => emit(strip(list));
   const root = useRef<HTMLDivElement | null>(null);
+  const canvas = useRef<HTMLDivElement | null>(null);
   const nodes = useRef(new Map<string, HTMLTextAreaElement | HTMLDivElement>());
+  const itemNodes = useRef(new Map<string, HTMLDivElement>());
+  /* Each item's height in rows, measured off the page after every render. */
+  const [heights, setHeights] = useState<ReadonlyMap<string, number>>(() => new Map());
+  const [narrow, setNarrow] = useState(false);
+  const [lift, setLift] = useState<Lift | null>(null);
+  /* A press on a handle that turned into a drag is not also a click. */
+  const dragged = useRef(false);
+
+  /* While something is dragged, the page shows where it would land. */
+  const blocks = useMemo(() => {
+    if (!lift) return given;
+    return lift.mode === 'move'
+      ? dropAt(lift.base, lift.items, lift.id, lift.place)
+      : resizeTo(lift.base, lift.items, lift.id, lift.place.w);
+  }, [given, lift]);
   /* Where the caret (or, with `end`, the selection) goes after an edit. */
   /* `release` turns a mark off for what is typed next, as after "**word**". */
   const [focus, setFocus] = useState<{ id: string; at: Caret; end?: number; release?: Mark } | null>(null);
@@ -151,10 +217,115 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
   const [bar, setBar] = useState<{ id: string; top: number; left: number } | null>(null);
   const [slash, setSlash] = useState<Slash | null>(null);
   const [menu, setMenu] = useState<string | null>(null);
-  const [drag, setDrag] = useState<{ id: string; over: string | null; place: 'before' | 'after' } | null>(null);
 
   const hidden = useMemo(() => hiddenIds(blocks), [blocks]);
   const visible = useMemo(() => blocks.filter((one) => !hidden.has(one.id)), [blocks, hidden]);
+
+  const items = useMemo(
+    () => layout(blocks, heights, { narrow, hold: lift?.mode === 'move' ? { id: lift.id, place: lift.place } : undefined }),
+    [blocks, heights, narrow, lift],
+  );
+  const itemOf = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
+
+  /* Heights come off the page after it is drawn, before it is painted, so an
+     item that grew pushes what is under it down in the same frame. */
+  const measure = useCallback(() => {
+    let changed = false;
+    const next = new Map<string, number>();
+    itemNodes.current.forEach((node, id) => {
+      const rows = rowsFor(node.offsetHeight);
+      next.set(id, rows);
+      if (heights.get(id) !== rows) changed = true;
+    });
+    if (changed || next.size !== heights.size) setHeights(next);
+    const width = canvas.current?.clientWidth ?? 0;
+    const thin = width > 0 && width < NARROW_PX;
+    if (thin !== narrow) setNarrow(thin);
+  }, [heights, narrow]);
+  useLayoutEffect(measure);
+
+  /* Words wrapping differently after a resize, a font loading, an image:
+     anything that changes an item's height without a render. */
+  const measureRef = useRef(measure);
+  measureRef.current = measure;
+  useEffect(() => {
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const watch = new ResizeObserver(() => measureRef.current());
+    if (canvas.current) watch.observe(canvas.current);
+    itemNodes.current.forEach((node) => watch.observe(node));
+    return () => watch.disconnect();
+  }, [items.length]);
+
+  /** Pick an item up by its handle (or its right edge, to resize it). */
+  const pickUp = (event: ReactPointerEvent<HTMLElement>, id: string, mode: Lift['mode']) => {
+    if (disabled || narrow || event.button !== 0) return;
+    const box = canvas.current?.getBoundingClientRect();
+    if (!box) return;
+    // No text selection starting under the pointer as it sweeps the page.
+    event.preventDefault();
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const at = given.findIndex((one) => one.id === id);
+    const host = items.find((item) => at >= item.start && at <= item.end);
+    if (!host) return;
+    const columnPx = box.width / COLS;
+    // A block inside another is picked up as an item of its own, from its row.
+    const rowTop = event.currentTarget.closest('.sp-block')?.getBoundingClientRect().top;
+    const from: Place = host.id === id || rowTop === undefined
+      ? { x: host.x, y: host.y, w: host.w }
+      : { x: host.x, w: host.w, y: Math.max(0, Math.round((rowTop - box.top) / ROW_PX)) };
+    const grab = { dx: startX - (box.left + from.x * columnPx), dy: startY - (box.top + from.y * ROW_PX) };
+    let started = false;
+    dragged.current = false;
+
+    const move = (moved: PointerEvent) => {
+      if (!started) {
+        if (Math.hypot(moved.clientX - startX, moved.clientY - startY) < DRAG_FROM_PX) return;
+        started = true;
+        dragged.current = true;
+        setMenu(null);
+        setLift({ id, mode, base: given, items, place: from, grab });
+      }
+      const now = canvas.current?.getBoundingClientRect() ?? box;
+      const column = now.width / COLS;
+      if (mode === 'move') {
+        const place = snap(moved.clientX - now.left - grab.dx, moved.clientY - now.top - grab.dy, column, from.w);
+        setLift((was) => (was && (was.place.x !== place.x || was.place.y !== place.y) ? { ...was, place } : was));
+      } else {
+        const w = clampPlace({ ...from, w: Math.round((moved.clientX - now.left) / column) - from.x }).w;
+        setLift((was) => (was && was.place.w !== w ? { ...was, place: { ...from, w } } : was));
+      }
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+      if (!started) return;
+      setLift((was) => {
+        if (was) {
+          const moved = was.mode === 'move'
+            ? dropAt(was.base, was.items, was.id, was.place)
+            : resizeTo(was.base, was.items, was.id, was.place.w);
+          onChange(moved);
+        }
+        return null;
+      });
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+  };
+
+  /** Arrow keys on a focused handle: one column across, or four rows up or down. */
+  const nudge = (event: KeyboardEvent<HTMLElement>, id: string) => {
+    if (disabled || narrow) return;
+    const steps: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -4], ArrowDown: [0, 4] };
+    const step = steps[event.key];
+    const host = itemOf.get(id);
+    if (!step || !host) return;
+    event.preventDefault();
+    onChange(dropAt(given, items, id, { x: host.x + step[0], y: Math.max(0, host.y + step[1]), w: host.w }));
+  };
 
   /* The caret goes where an edit says, once the edit is on screen. */
   useLayoutEffect(() => {
@@ -237,12 +408,28 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
   };
 
   /** Take a kind from the slash menu. */
-  const choose = (type: BlockType) => {
+  const choose = (kind: BlockKind) => {
+    const type = kind.type;
     if (!slash) return;
     const host = blocks[at(slash.id)];
     setSlash(null);
     if (!host) return;
     const text = spliceInline(host.text, slash.from, slash.from + 1 + slash.query.length);
+    if (type === 'chart') {
+      // A chart takes the block's place when it is empty, and goes under it
+      // when it is not. Either way a line to write on follows it.
+      const indent = host.indent ? { indent: host.indent } : {};
+      const empty = plainOf(text).trim() === '';
+      const made = { ...chartBlock(kind.chart ?? 'bar', indent), ...(empty ? { id: host.id, ...cleanPlace(host) } : {}) };
+      const after = block('text', '', indent);
+      onChange(
+        empty
+          ? blocks.flatMap((one) => (one.id === host.id ? [made, after] : [one]))
+          : insertAfter(blocks.map((one) => (one.id === host.id ? { ...one, text } : one)), host.id, [made, after]),
+      );
+      setFocus({ id: made.id, at: 'start' });
+      return;
+    }
     if (plainOf(text).trim() === '') {
       if (type === 'divider') {
         const after = block('text', '', host.indent ? { indent: host.indent } : {});
@@ -381,7 +568,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
       }
       if ((event.key === 'Enter' || event.key === 'Tab') && options.length) {
         event.preventDefault();
-        choose(options[Math.min(slash.index, options.length - 1)]!.type);
+        choose(options[Math.min(slash.index, options.length - 1)]!);
         return;
       }
       if (event.key === 'Escape') {
@@ -469,6 +656,12 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
         setFocus({ id: one.id, at: 0 });
         return;
       }
+      // A chart is not joined into: Backspace steps onto it, and a second
+      // Backspace there takes it out.
+      if (above.type === 'chart') {
+        setFocus({ id: above.id, at: 'start' });
+        return;
+      }
       const join = visibleText(above).length;
       const joined = above.type === 'code' ? above.text + words : joinInline(above.text, one.text);
       onChange(
@@ -513,7 +706,7 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
     }
   };
 
-  /** Keys on a divider, which has no text to put a caret in. */
+  /** Keys on a divider or a chart, which have no text to put a caret in. */
   const dividerKey = (event: KeyboardEvent<HTMLDivElement>, one: Block) => {
     if (event.key === 'Backspace' || event.key === 'Delete') {
       event.preventDefault();
@@ -540,24 +733,21 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
       setFocus({ id: last.id, at: 'start' });
       return;
     }
-    const fresh = block();
+    // Once things have been placed, the end of the page is under all of
+    // them and full width, not under whichever item happens to be last.
+    const fresh = anyPinned(blocks) ? block('text', '', { x: 0, w: COLS, y: bottomOf(items) }) : block();
     onChange([...blocks, fresh]);
     setFocus({ id: fresh.id, at: 'start' });
   };
 
   const lone = blocks.length === 1 && blocks[0]!.type === 'text' && blocks[0]!.text === '';
 
-  return (
-    <div
-      ref={root}
-      className={`sp-editor${lone ? ' is-empty' : ''}${drag ? ' is-dragging' : ''}`}
-      role="group"
-      aria-label={label}
-    >
-      {visible.map((one) => {
+  const pinned = anyPinned(blocks);
+
+  /** One block's row: its handles, its marker, its field and its menus. */
+  const row = (one: Block) => {
         const index = at(one.id);
         const indent = indentOf(one);
-        const dropping = drag && drag.over === one.id && drag.id !== one.id ? ` is-drop-${drag.place}` : '';
         let marker: ReactNode = null;
         if (one.type === 'bullet') marker = <span className="sp-marker">{BULLETS[indent % BULLETS.length]}</span>;
         if (one.type === 'numbered') marker = <span className="sp-marker sp-number">{numberOf(blocks, index)}.</span>;
@@ -592,21 +782,8 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
         return (
           <div
             key={one.id}
-            className={`sp-block sp-b-${one.type}${one.checked ? ' is-checked' : ''}${dropping}`}
+            className={`sp-block sp-b-${one.type}${one.checked ? ' is-checked' : ''}`}
             style={{ '--indent': indent } as CSSProperties}
-            onDragOver={(event) => {
-              if (!drag) return;
-              event.preventDefault();
-              const box = event.currentTarget.getBoundingClientRect();
-              const place = event.clientY < box.top + box.height / 2 ? 'before' : 'after';
-              if (drag.over !== one.id || drag.place !== place) setDrag({ ...drag, over: one.id, place });
-            }}
-            onDrop={(event) => {
-              if (!drag) return;
-              event.preventDefault();
-              onChange(moveTo(blocks, drag.id, one.id, drag.place));
-              setDrag(null);
-            }}
           >
             {!disabled && (
               <div className="sp-gutter">
@@ -622,21 +799,19 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
                 <button
                   type="button"
                   className="sp-grip"
-                  draggable
                   aria-label="Drag to move, or click for options"
-                  title="Drag to move · Click for options"
+                  title={narrow ? 'Click for options' : 'Drag anywhere to move · Arrow keys nudge · Click for options'}
                   aria-haspopup="menu"
                   aria-expanded={menu === one.id}
-                  onClick={() => setMenu(menu === one.id ? null : one.id)}
-                  onDragStart={(event) => {
-                    event.dataTransfer.effectAllowed = 'move';
-                    event.dataTransfer.setData('text/plain', one.id);
-                    const row = event.currentTarget.closest('.sp-block');
-                    if (row) event.dataTransfer.setDragImage(row, 20, 16);
-                    setMenu(null);
-                    setDrag({ id: one.id, over: null, place: 'after' });
+                  onClick={() => {
+                    if (dragged.current) {
+                      dragged.current = false;
+                      return;
+                    }
+                    setMenu(menu === one.id ? null : one.id);
                   }}
-                  onDragEnd={() => setDrag(null)}
+                  onPointerDown={(event) => pickUp(event, one.id, 'move')}
+                  onKeyDown={(event) => nudge(event, one.id)}
                 >
                   <svg viewBox="0 0 10 16" aria-hidden="true">
                     {[3, 8, 13].flatMap((y) => [2.5, 7.5].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r="1.3" fill="currentColor" />))}
@@ -647,7 +822,18 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
 
             {marker}
 
-            {one.type === 'divider' ? (
+            {one.type === 'chart' ? (
+              <ChartBlock
+                one={one}
+                disabled={disabled}
+                register={(node) => {
+                  if (node) nodes.current.set(one.id, node);
+                  else nodes.current.delete(one.id);
+                }}
+                onChange={(change) => patch(one.id, change)}
+                onKey={(event) => dividerKey(event, one)}
+              />
+            ) : one.type === 'divider' ? (
               <div
                 className="sp-divider"
                 role="separator"
@@ -692,6 +878,11 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
             {menu === one.id && (
               <BlockMenu
                 one={one}
+                width={!narrow && itemOf.has(one.id) ? itemOf.get(one.id)!.w : null}
+                onWidth={(w) => {
+                  setMenu(null);
+                  onChange(resizeTo(blocks, items, one.id, w));
+                }}
                 onClose={() => setMenu(null)}
                 onTurn={(type) => {
                   setMenu(null);
@@ -711,11 +902,14 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
                 }}
                 onUp={() => {
                   setMenu(null);
-                  onChange(moveUp(blocks, one.id));
+                  // On a page where things have been placed, up means the
+                  // spot of the item before it; on a page of plain flow, the
+                  // line above.
+                  onChange(pinned && itemOf.has(one.id) ? swapPlaces(blocks, items, one.id, -1) : moveUp(blocks, one.id));
                 }}
                 onDown={() => {
                   setMenu(null);
-                  onChange(moveDown(blocks, one.id));
+                  onChange(pinned && itemOf.has(one.id) ? swapPlaces(blocks, items, one.id, 1) : moveDown(blocks, one.id));
                 }}
                 onDelete={() => {
                   setMenu(null);
@@ -727,7 +921,76 @@ export function BlockEditor({ blocks, onChange, disabled = false, label }: Block
             )}
           </div>
         );
-      })}
+  };
+
+  /* While dragging, room below the last item to drop something further down. */
+  const height = (bottomOf(items) + (lift?.mode === 'move' ? 24 : 0)) * ROW_PX;
+
+  return (
+    <div
+      ref={root}
+      className={`sp-editor${lone ? ' is-empty' : ''}${lift ? ' is-dragging' : ''}${narrow ? ' is-narrow' : ''}`}
+      role="group"
+      aria-label={label}
+    >
+      <div
+        ref={canvas}
+        className={`sp-canvas${lift ? ' is-lifting' : ''}`}
+        style={{ height, '--cols': COLS, '--row': `${ROW_PX}px` } as CSSProperties}
+      >
+        {items.map((item) => {
+          const rows = blocks.slice(item.start, item.end + 1).filter((one) => !hidden.has(one.id));
+          const lifted = lift?.id === item.id;
+          const style = {
+            left: `${(item.x / COLS) * 100}%`,
+            width: item.x + item.w < COLS ? `calc(${(item.w / COLS) * 100}% - var(--sp-gutter-x))` : `${(item.w / COLS) * 100}%`,
+            top: `${item.y * ROW_PX}px`,
+          } as CSSProperties;
+          return (
+            <div
+              key={item.id}
+              ref={(node) => {
+                if (node) itemNodes.current.set(item.id, node);
+                else itemNodes.current.delete(item.id);
+              }}
+              className={`sp-item${lifted ? ` is-lifted is-${lift!.mode}` : ''}${item.pinned ? ' is-pinned' : ''}`}
+              style={style}
+              data-place={`${item.x},${item.y},${item.w}`}
+            >
+              {rows.map(row)}
+              {lifted && (
+                <span className="sp-lift-badge" aria-hidden="true">
+                  {lift!.mode === 'move' ? `Col ${item.x + 1} · Row ${item.y + 1}` : `${item.w} of ${COLS} columns`}
+                </span>
+              )}
+              {!disabled && !narrow && (
+                <span
+                  className="sp-resize"
+                  role="slider"
+                  tabIndex={0}
+                  aria-label="Width in columns"
+                  aria-orientation="horizontal"
+                  aria-valuemin={1}
+                  aria-valuemax={COLS - item.x}
+                  aria-valuenow={item.w}
+                  aria-valuetext={placeWords(item)}
+                  title="Drag to change the width"
+                  onPointerDown={(event) => {
+                    event.stopPropagation();
+                    pickUp(event, item.id, 'size');
+                  }}
+                  onKeyDown={(event) => {
+                    const step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+                    if (!step) return;
+                    event.preventDefault();
+                    onChange(resizeTo(blocks, items, item.id, item.w + step));
+                  }}
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
       {!disabled && <button type="button" className="sp-tail" aria-label="Write at the end of the page" onClick={tail} />}
       {/* Last, so it never takes the first block's place as :first-child. */}
       {bar && !disabled && (() => {
@@ -875,7 +1138,7 @@ function SlashMenu({
 }: {
   query: string;
   index: number;
-  onPick: (type: BlockType) => void;
+  onPick: (kind: BlockKind) => void;
   onHover: (index: number) => void;
 }) {
   const options = matchKinds(query);
@@ -889,14 +1152,14 @@ function SlashMenu({
       {options.length === 0 && <p className="sp-pop-none">No results</p>}
       {options.map((kind, i) => (
         <div
-          key={kind.type}
+          key={`${kind.type}-${kind.chart ?? ''}`}
           role="option"
           aria-selected={i === Math.min(index, options.length - 1)}
           className="sp-pop-item"
           // Keeps the caret in the block while the menu is clicked.
           onMouseDown={(event) => event.preventDefault()}
           onMouseEnter={() => onHover(i)}
-          onClick={() => onPick(kind.type)}
+          onClick={() => onPick(kind)}
         >
           <span className="sp-pop-glyph" aria-hidden="true">{kind.glyph}</span>
           <span className="sp-pop-words">
@@ -909,8 +1172,18 @@ function SlashMenu({
   );
 }
 
+/** The widths the block menu offers, as columns of the grid. */
+const WIDTHS: Array<{ label: string; cols: number }> = [
+  { label: 'Full', cols: COLS },
+  { label: '2/3', cols: Math.round((COLS * 2) / 3) },
+  { label: '1/2', cols: COLS / 2 },
+  { label: '1/3', cols: Math.round(COLS / 3) },
+];
+
 function BlockMenu({
   one,
+  width,
+  onWidth,
   onClose,
   onTurn,
   onDuplicate,
@@ -919,6 +1192,9 @@ function BlockMenu({
   onDelete,
 }: {
   one: Block;
+  /** The item's width in columns, or null when it has none of its own to set. */
+  width: number | null;
+  onWidth: (cols: number) => void;
   onClose: () => void;
   onTurn: (type: BlockType) => void;
   onDuplicate: () => void;
@@ -941,9 +1217,28 @@ function BlockMenu({
       <button type="button" role="menuitem" className="sp-pop-item is-danger" onClick={onDelete}>
         <span className="sp-pop-label">Delete</span>
       </button>
-      <p className="sp-pop-head">Turn into</p>
-      <div className="sp-turn">
-        {BLOCK_KINDS.map((kind) => (
+      {width !== null && (
+        <>
+          <p className="sp-pop-head">Width</p>
+          <div className="sp-widths" role="group" aria-label="Width">
+            {WIDTHS.map((option) => (
+              <button
+                key={option.label}
+                type="button"
+                role="menuitemradio"
+                aria-checked={width === option.cols}
+                className="sp-width"
+                onClick={() => onWidth(option.cols)}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+      {one.type !== 'chart' && <p className="sp-pop-head">Turn into</p>}
+      <div className="sp-turn" hidden={one.type === 'chart'}>
+        {TURN_KINDS.map((kind) => (
           <button
             key={kind.type}
             type="button"

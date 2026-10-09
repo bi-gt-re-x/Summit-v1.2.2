@@ -150,6 +150,53 @@ def test_a_page_is_cleaned_before_it_is_kept(client):
     assert len(blocks) == 3
 
 
+def test_a_chart_keeps_its_kind_scale_and_points_and_reads_as_text(client):
+    doc = {'blocks': [
+        {'id': 'c', 'type': 'chart', 'text': 'Hours', 'chart': {
+            'kind': 'donut', 'max': 40,
+            'points': [{'label': 'Mon', 'value': 3.5}, {'label': 'Tue', 'value': 6}],
+        }},
+    ]}
+    space = client.post('/api/spaces/1', json={'doc': doc}).json()['space']
+    assert space['doc']['blocks'][0]['chart'] == {
+        'kind': 'donut', 'max': 40, 'points': [{'label': 'Mon', 'value': 3.5}, {'label': 'Tue', 'value': 6}],
+    }
+    assert space['body'] == '[Donut chart: Hours] Mon 3.5, Tue 6'
+
+
+def test_a_chart_is_cleaned_before_it_is_kept(client):
+    doc = {'blocks': [
+        {'id': 'c', 'type': 'chart', 'chart': {
+            'kind': 'radar', 'max': -1,
+            'points': [{'label': 'x' * 50, 'value': -4}, {'label': 3, 'value': True}, 'nope']
+            + [{'label': 'p', 'value': 1}] * 20,
+        }},
+        {'id': 'd', 'type': 'chart'},
+    ]}
+    blocks = client.post('/api/spaces/1', json={'doc': doc}).json()['space']['doc']['blocks']
+    chart = blocks[0]['chart']
+    assert chart['kind'] == 'bar' and chart['max'] == 100
+    assert chart['points'][0] == {'label': 'x' * 24, 'value': 0}
+    assert chart['points'][1] == {'label': 'Item 2', 'value': 0}
+    assert len(chart['points']) == 12
+    assert blocks[1]['chart'] == {'kind': 'bar', 'max': 100, 'points': [{'label': 'Item 1', 'value': 0}]}
+
+
+def test_a_block_keeps_its_place_on_the_grid_only_when_it_fits(client):
+    doc = {'blocks': [
+        {'id': 'a', 'type': 'text', 'text': 'half', 'x': 6, 'y': 12, 'w': 6},
+        {'id': 'b', 'type': 'text', 'text': 'inside', 'indent': 1, 'x': 0, 'y': 0, 'w': 4},
+        {'id': 'c', 'type': 'text', 'text': 'too wide', 'x': 8, 'y': 0, 'w': 6},
+        {'id': 'd', 'type': 'text', 'text': 'not whole', 'x': 1.5, 'y': 0, 'w': 2},
+        {'id': 'e', 'type': 'text', 'text': 'flag', 'x': True, 'y': 0, 'w': 2},
+        {'id': 'f', 'type': 'text', 'text': 'too low', 'x': 0, 'y': 999_999, 'w': 2},
+    ]}
+    blocks = client.post('/api/spaces/1', json={'doc': doc}).json()['space']['doc']['blocks']
+    assert (blocks[0]['x'], blocks[0]['y'], blocks[0]['w']) == (6, 12, 6)
+    for block in blocks[1:]:
+        assert 'x' not in block and 'y' not in block and 'w' not in block
+
+
 def test_a_page_never_opened_as_blocks_has_no_doc(client):
     client.post('/api/spaces/3', json={'body': 'plain'})
     assert 'doc' not in client.get('/api/spaces').json()['spaces'][2]

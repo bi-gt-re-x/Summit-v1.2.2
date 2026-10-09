@@ -10,6 +10,10 @@
  *
  * The kinds, the deepest indent and the covers come from shared/rules.json,
  * which backend/api/spaces.py checks every page it is sent against.
+ *
+ * Where a block sits on the page is ./canvas: a top-level block may carry a
+ * grid position (`x`, `y`, `w`). A chart is a block too, with its numbers in
+ * `chart` and its title in `text` (./chart).
  */
 
 import { escapeInline, plainOf } from './inline';
@@ -27,7 +31,22 @@ export type BlockType =
   | 'quote'
   | 'callout'
   | 'divider'
-  | 'code';
+  | 'code'
+  | 'chart';
+
+export type ChartKind = 'bar' | 'line' | 'area' | 'pie' | 'donut';
+
+export interface ChartPoint {
+  label: string;
+  value: number;
+}
+
+export interface ChartData {
+  kind: ChartKind;
+  /** The top of the value axis. Bars and points are dragged between 0 and this. */
+  max: number;
+  points: ChartPoint[];
+}
 
 export interface Block {
   id: string;
@@ -43,6 +62,16 @@ export interface Block {
   checked?: boolean;
   /** Toggles only: shut, so the blocks under it are hidden. */
   collapsed?: boolean;
+  /**
+   * Where a top-level block sits on the page grid (./canvas): column, row and
+   * width in columns. Absent until the block is first dragged; it then sits
+   * under the block before it, the way a page of text flows.
+   */
+  x?: number;
+  y?: number;
+  w?: number;
+  /** Charts only. */
+  chart?: ChartData;
 }
 
 export interface SpaceDoc {
@@ -63,6 +92,8 @@ export interface BlockKind {
   keys: string[];
   /** The small mark beside it in the menus. */
   glyph: string;
+  /** Chart entries in the slash menu: which chart it starts as. */
+  chart?: ChartKind;
 }
 
 /** Every kind, in the order the slash menu lists them. */
@@ -79,18 +110,43 @@ export const BLOCK_KINDS: BlockKind[] = [
   { type: 'callout', label: 'Callout', hint: 'Make writing stand out.', keys: ['note', 'tip', 'info', 'highlight'], glyph: '💡' },
   { type: 'divider', label: 'Divider', hint: 'Visually divide blocks.', keys: ['line', 'hr', 'separator', 'rule', '---'], glyph: '—' },
   { type: 'code', label: 'Code', hint: 'Capture a code snippet.', keys: ['snippet', 'pre', '```'], glyph: '</>' },
+  { type: 'chart', label: 'Chart', hint: 'Bars, lines or a pie you set by dragging.', keys: ['chart', 'graph', 'plot'], glyph: '▥' },
 ];
+
+/** The chart kinds the server keeps, in the order the chart's switcher shows them. */
+export const CHART_KINDS: readonly ChartKind[] = RULES.spaces.chart.kinds as ChartKind[];
+
+/** One slash-menu entry per chart kind, so "/pie" finds a pie straight away. */
+const CHART_ENTRIES: BlockKind[] = [
+  { type: 'chart', chart: 'bar', label: 'Bar chart', hint: 'Drag each bar to set its value.', keys: ['chart', 'bar', 'graph', 'column'], glyph: '▥' },
+  { type: 'chart', chart: 'line', label: 'Line chart', hint: 'Drag the points up and down.', keys: ['chart', 'line', 'graph', 'trend'], glyph: '⟋' },
+  { type: 'chart', chart: 'area', label: 'Area chart', hint: 'A line chart, filled in.', keys: ['chart', 'area', 'graph'], glyph: '◭' },
+  { type: 'chart', chart: 'pie', label: 'Pie chart', hint: 'Drag the edges between slices.', keys: ['chart', 'pie', 'share'], glyph: '◔' },
+  { type: 'chart', chart: 'donut', label: 'Donut chart', hint: 'A pie with a hole in it.', keys: ['chart', 'donut', 'doughnut', 'ring'], glyph: '◎' },
+];
+
+/** What the slash menu offers: every kind of block, with one entry per chart. */
+export const SLASH_KINDS: BlockKind[] = [
+  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart'),
+  ...CHART_ENTRIES,
+];
+
+/** What "Turn into" offers. A chart has no words to carry over, so it is not one. */
+export const TURN_KINDS: BlockKind[] = BLOCK_KINDS.filter((kind) => kind.type !== 'chart');
 
 /** The kinds the slash menu offers for what was typed after the slash. */
 export function matchKinds(query: string): BlockKind[] {
   const q = query.trim().toLowerCase();
-  if (!q) return BLOCK_KINDS;
-  return BLOCK_KINDS.filter(
+  if (!q) return SLASH_KINDS;
+  // A name that starts with what was typed comes first, so "/line" is the
+  // line chart before the divider that merely answers to "line".
+  const rank = (kind: BlockKind) => (kind.label.toLowerCase().startsWith(q) ? 0 : kind.type.startsWith(q) ? 1 : 2);
+  return SLASH_KINDS.filter(
     (kind) =>
       kind.label.toLowerCase().includes(q) ||
       kind.type.startsWith(q) ||
       kind.keys.some((key) => key.startsWith(q)),
-  );
+  ).sort((a, b) => rank(a) - rank(b));
 }
 
 /** List-like kinds: Enter carries them on, and Enter on an empty one ends the list. */
@@ -117,6 +173,53 @@ export function block(type: BlockType = 'text', text = '', extra: Partial<Block>
   return { id: newId(), type, text, ...extra };
 }
 
+const CHART = RULES.spaces.chart;
+
+/** A chart's numbers when it is first made: four items, scaled to 100. */
+export function defaultChart(kind: ChartKind = 'bar'): ChartData {
+  return {
+    kind,
+    max: CHART.scale_default,
+    points: [40, 65, 30, 80].map((value, at) => ({ label: `Item ${at + 1}`, value })),
+  };
+}
+
+/** A new chart block, ready to drag. */
+export function chartBlock(kind: ChartKind = 'bar', extra: Partial<Block> = {}): Block {
+  return block('chart', '', { chart: defaultChart(kind), ...extra });
+}
+
+/** A chart as stored, made safe to draw: a known kind, a sane scale, 1–12 points. */
+export function cleanChart(raw: unknown): ChartData {
+  const data = (raw && typeof raw === 'object' ? raw : {}) as Partial<ChartData>;
+  const kind = (CHART_KINDS as readonly string[]).includes(data.kind as string) ? (data.kind as ChartKind) : 'bar';
+  const maxRaw = Number(data.max);
+  const max = Number.isFinite(maxRaw) && maxRaw > 0 ? Math.min(CHART.value_max, maxRaw) : CHART.scale_default;
+  const points = (Array.isArray(data.points) ? data.points : [])
+    .filter((point) => point && typeof point === 'object')
+    .slice(0, CHART.points_max)
+    .map((point, at) => {
+      const value = Number(point.value);
+      return {
+        label: typeof point.label === 'string' ? point.label.slice(0, CHART.label_max) : `Item ${at + 1}`,
+        value: Number.isFinite(value) ? Math.max(0, Math.min(CHART.value_max, value)) : 0,
+      };
+    });
+  return { kind, max, points: points.length ? points : defaultChart(kind).points };
+}
+
+const GRID = RULES.spaces.grid;
+
+/** A stored grid position, or nothing when it is not a whole, in-bounds one. */
+export function cleanPlace(one: Partial<Block>): Pick<Block, 'x' | 'y' | 'w'> {
+  const x = Number(one.x);
+  const y = Number(one.y);
+  const w = Number(one.w);
+  if (![x, y, w].every(Number.isInteger)) return {};
+  if (x < 0 || w < 1 || x + w > GRID.cols || y < 0 || y > GRID.y_max) return {};
+  return { x, y, w };
+}
+
 export const indentOf = (one: Block): number => one.indent ?? 0;
 
 /**
@@ -132,6 +235,8 @@ export function retype(one: Block, type: BlockType): Block {
   const next: Block = { id: one.id, type, text };
   if (one.indent) next.indent = one.indent;
   if (type === 'todo' && one.type === 'todo' && one.checked) next.checked = true;
+  // A new kind, the same spot on the page.
+  Object.assign(next, cleanPlace(one));
   return next;
 }
 
@@ -242,6 +347,10 @@ export function normalise(doc: Partial<SpaceDoc> | null | undefined, body = ''):
           if (indent) next.indent = indent;
           if (type === 'todo' && one.checked) next.checked = true;
           if (type === 'toggle' && one.collapsed) next.collapsed = true;
+          if (type === 'chart') next.chart = cleanChart(one.chart);
+          // Only a block at the left edge has a place of its own; one indented
+          // under another rides inside it.
+          if (!indent) Object.assign(next, cleanPlace(one));
           return next;
         })
     : fromBody(body);
@@ -295,7 +404,7 @@ export function span(blocks: Block[], at: number): number {
 export const hasChildren = (blocks: Block[], at: number): boolean => span(blocks, at) > at;
 
 /** A block's words as they read, without formatting marks. */
-export const visibleText = (one: Block): string => (one.type === 'code' ? one.text : plainOf(one.text));
+export const visibleText = (one: Block): string => (one.type === 'code' || one.type === 'chart' ? one.text : plainOf(one.text));
 
 export function wordCount(blocks: Block[]): number {
   return blocks.reduce((sum, one) => sum + (visibleText(one).match(/\S+/g)?.length ?? 0), 0);
@@ -351,12 +460,18 @@ export function moveDown(blocks: Block[], id: string): Block[] {
   return next ? moveTo(blocks, id, next.id, 'after') : blocks;
 }
 
+const structuredCopy = (chart: ChartData): ChartData => ({ ...chart, points: chart.points.map((point) => ({ ...point })) });
+
 /** A copy of the block and what is under it, straight after the original. */
 export function duplicate(blocks: Block[], id: string): { blocks: Block[]; copy: string | null } {
   const at = blocks.findIndex((one) => one.id === id);
   if (at < 0) return { blocks, copy: null };
   const end = span(blocks, at);
-  const copies = blocks.slice(at, end + 1).map((one) => ({ ...one, id: newId() }));
+  // The copy flows in under the original rather than sitting on top of it.
+  const copies = blocks.slice(at, end + 1).map((one) => {
+    const { x: _x, y: _y, w: _w, ...rest } = one;
+    return { ...rest, id: newId(), ...(one.chart ? { chart: structuredCopy(one.chart) } : {}) };
+  });
   return {
     blocks: [...blocks.slice(0, end + 1), ...copies, ...blocks.slice(end + 1)],
     copy: copies[0]!.id,

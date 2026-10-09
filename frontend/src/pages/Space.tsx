@@ -14,8 +14,10 @@
  * "Add cover"; then the blocks, written straight on the page with no box
  * around them. Below it the page is blocks
  * (components/Spaces/BlockEditor): headings, lists, to-dos, toggles, quotes,
- * callouts, dividers and code, with a "/" menu, typing shortcuts and a handle
- * to drag each block by. The page saves itself a moment after editing stops,
+ * callouts, dividers, code and charts (bar, line, area, pie, donut, set by
+ * dragging), with a "/" menu and typing shortcuts. Every block can be dragged
+ * by its handle anywhere on a 12-column grid and snaps to it
+ * (components/Spaces/canvas). The page saves itself a moment after editing stops,
  * and once more on the way out, so nothing is lost to a navigation. Backend:
  * backend/api/spaces.py.
  */

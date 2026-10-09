@@ -6,7 +6,7 @@
  */
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BlockEditor } from './BlockEditor';
 import type { Block } from './blocks';
 import { placeCaret, pressAt, textOf, typeInto, type BlockField } from '@/test/blockFields';
@@ -265,5 +265,148 @@ describe('bold and italic', () => {
     paste('one\n- two\nthree');
     expect(texts()).toEqual(['aone', 'two', 'threeXb']);
     expect(kinds()).toEqual(['text', 'bullet', 'text']);
+  });
+});
+
+describe('charts', () => {
+  it('come from the slash menu as the kind picked, with a line to write on after', () => {
+    page({ text: '' });
+    type(fields()[0]!, '/');
+    type(fields()[0]!, '/pie');
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual([expect.stringContaining('Pie chart')]);
+    press(fields()[0]!, 'Enter', 4);
+    expect(kinds()).toEqual(['chart', 'text']);
+    expect(latest[0]!.chart!.kind).toBe('pie');
+    expect(screen.getByRole('figure', { name: 'Pie chart' })).toBeInTheDocument();
+  });
+
+  /** The page's own text fields, without a chart's title and item names. */
+  const writing = () => [...document.querySelectorAll<HTMLElement>('.sp-field')];
+
+  it('go under a block that already has words', () => {
+    page({ text: 'Hours' });
+    type(fields()[0]!, 'Hours ');
+    type(fields()[0]!, 'Hours /');
+    fireEvent.click(screen.getByRole('option', { name: /Bar chart/ }));
+    expect(kinds()).toEqual(['text', 'chart', 'text']);
+    expect(texts()[0]).toBe('Hours ');
+  });
+
+  it('are stepped onto by Backspace from the line under them, not joined', () => {
+    page({ text: '' });
+    type(fields()[0]!, '/');
+    type(fields()[0]!, '/line');
+    press(fields()[0]!, 'Enter', 5);
+    expect(kinds()).toEqual(['chart', 'text']);
+    press(writing()[0]!, 'Backspace', 0);
+    expect(kinds()).toEqual(['chart', 'text']);
+    expect(document.activeElement).toBe(screen.getByRole('figure', { name: 'Line chart' }));
+    fireEvent.keyDown(document.activeElement!, { key: 'Backspace' });
+    expect(kinds()).toEqual(['text']);
+  });
+
+  it('cannot be turned into another kind', () => {
+    page({ text: '' });
+    type(fields()[0]!, '/');
+    type(fields()[0]!, '/bar');
+    press(fields()[0]!, 'Enter', 4);
+    fireEvent.click(screen.getAllByRole('button', { name: /Drag to move/ })[0]!);
+    expect(within(screen.getByRole('menu')).queryAllByRole('menuitemradio', { name: /Quote/ })).toHaveLength(0);
+  });
+});
+
+describe('the page grid', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  /** The canvas drawn 1200px wide from the screen's corner: a column is 100px, a row 8px. */
+  const onScreen = () => {
+    const canvas = document.querySelector('.sp-canvas') as HTMLElement;
+    vi.spyOn(canvas, 'getBoundingClientRect').mockReturnValue({
+      left: 0, top: 0, width: 1200, height: 800, right: 1200, bottom: 800, x: 0, y: 0, toJSON: () => ({}),
+    });
+  };
+  const grips = () => screen.getAllByRole('button', { name: /Drag to move/ });
+  const placesOf = () => latest.map((one) => [one.id, one.x, one.y, one.w]);
+
+  it('flows a page nobody has dragged on, one block under another', () => {
+    page({ text: 'a' }, { text: 'b' });
+    const items = [...document.querySelectorAll<HTMLElement>('.sp-item')].map((item) => item.dataset.place);
+    expect(items).toEqual(['0,0,12', '0,1,12']);
+    expect(placesOf()).toEqual([['b0', undefined, undefined, undefined], ['b1', undefined, undefined, undefined]]);
+  });
+
+  it('drops a dragged block on the grid cell under the pointer, and pins the rest where they were', () => {
+    page({ text: 'a' }, { text: 'b' }, { text: 'c' });
+    onScreen();
+    fireEvent.pointerDown(grips()[0]!, { clientX: 0, clientY: 0, button: 0 });
+    fireEvent.pointerMove(window, { clientX: 20, clientY: 20 });
+    fireEvent.pointerMove(window, { clientX: 640, clientY: 83 });
+    expect(document.querySelector('.sp-lift-badge')?.textContent).toBe('Col 7 · Row 11');
+    expect(document.querySelector('.sp-canvas')).toHaveClass('is-lifting');
+    fireEvent.pointerUp(window);
+    expect(placesOf()).toEqual([
+      ['b1', 0, 1, 12],
+      ['b2', 0, 2, 12],
+      ['b0', 6, 10, 6],
+    ]);
+    expect(document.querySelector('.sp-canvas')).not.toHaveClass('is-lifting');
+  });
+
+  it('treats a press that did not move as a click, which opens the menu', () => {
+    page({ text: 'a' });
+    onScreen();
+    fireEvent.pointerDown(grips()[0]!, { clientX: 0, clientY: 0, button: 0 });
+    fireEvent.pointerMove(window, { clientX: 2, clientY: 1 });
+    fireEvent.pointerUp(window);
+    fireEvent.click(grips()[0]!);
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    expect(placesOf()).toEqual([['b0', undefined, undefined, undefined]]);
+  });
+
+  it('resizes a block by dragging its right edge, a column at a time', () => {
+    page({ text: 'a' }, { text: 'b' });
+    onScreen();
+    const edge = screen.getAllByRole('slider', { name: 'Width in columns' })[0]!;
+    fireEvent.pointerDown(edge, { clientX: 1200, clientY: 4, button: 0 });
+    fireEvent.pointerMove(window, { clientX: 820, clientY: 4 });
+    fireEvent.pointerUp(window);
+    expect(placesOf()[0]).toEqual(['b0', 0, 0, 8]);
+  });
+
+  it('sets a width from the menu', () => {
+    page({ text: 'a' }, { text: 'b' });
+    fireEvent.click(grips()[1]!);
+    fireEvent.click(screen.getByRole('menuitemradio', { name: '1/2' }));
+    expect(placesOf()).toEqual([['b0', 0, 0, 12], ['b1', 0, 1, 6]]);
+  });
+
+  it('nudges a focused handle with the arrow keys, and steps a width with them', () => {
+    page({ text: 'a' }, { text: 'b' });
+    fireEvent.click(grips()[1]!);
+    fireEvent.click(screen.getByRole('menuitemradio', { name: '1/3' }));
+    fireEvent.keyDown(grips()[1]!, { key: 'ArrowRight' });
+    fireEvent.keyDown(grips()[1]!, { key: 'ArrowDown' });
+    expect(placesOf()[1]).toEqual(['b1', 1, 5, 4]);
+    fireEvent.keyDown(screen.getAllByRole('slider', { name: 'Width in columns' })[1]!, { key: 'ArrowRight' });
+    expect(placesOf()[1]).toEqual(['b1', 1, 5, 5]);
+  });
+
+  it('moves an item up by taking the place of the one before it, once things are placed', () => {
+    page({ text: 'a', x: 0, y: 0, w: 6 }, { text: 'b', x: 6, y: 0, w: 6 });
+    fireEvent.click(grips()[1]!);
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Move up' }));
+    expect(placesOf()).toEqual([['b1', 0, 0, 6], ['b0', 6, 0, 6]]);
+  });
+
+  it('writes at the end under everything, full width, once things are placed', () => {
+    page({ text: 'a', x: 6, y: 0, w: 6 }, { text: 'b', x: 0, y: 3, w: 6 });
+    fireEvent.click(screen.getByRole('button', { name: 'Write at the end of the page' }));
+    expect(latest[2]).toMatchObject({ text: '', x: 0, y: 4, w: 12 });
+  });
+
+  it('keeps no place on a block indented under another', () => {
+    page({ text: 'a', x: 0, y: 0, w: 12 }, { text: 'b', x: 0, y: 1, w: 12 });
+    press(fields()[1]!, 'Tab', 0);
+    expect(latest[1]).toEqual({ id: 'b1', type: 'text', text: 'b', indent: 1 });
   });
 });

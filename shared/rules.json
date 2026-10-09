@@ -60,7 +60,16 @@
     "block_text_max": 10000,
     "indent_max": 4,
     "icon_max": 16,
-    "block_types": ["text", "h1", "h2", "h3", "bullet", "numbered", "todo", "toggle", "quote", "callout", "divider", "code"],
-    "covers": ["sunrise", "ocean", "meadow", "dusk", "ember", "forest", "slate", "sand"]
+    "block_types": ["text", "h1", "h2", "h3", "bullet", "numbered", "todo", "toggle", "quote", "callout", "divider", "code", "chart"],
+    "covers": ["sunrise", "ocean", "meadow", "dusk", "ember", "forest", "slate", "sand"],
+    "grid": { "cols": 12, "row_px": 8, "y_max": 5000 },
+    "chart": {
+      "kinds": ["bar", "line", "area", "pie", "donut"],
+      "points_min": 1,
+      "points_max": 12,
+      "label_max": 24,
+      "scale_default": 100,
+      "value_max": 1000000
+    }
   }
 }
