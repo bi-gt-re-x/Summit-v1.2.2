@@ -109,6 +109,31 @@ describe('three next sessions', () => {
     expect(analytics.suggestNextSessions).toHaveBeenCalledWith('mathematics');
   });
 
+  it('narrows every subject to the ones left on in the pill bar, and remembers it', async () => {
+    localStorage.clear();
+    show();
+    const pills = await screen.findByRole('group', { name: 'Subjects to include' });
+    const music = within(pills).getByRole('button', { name: /Music/ });
+    expect(music).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(music);
+    expect(music).toHaveAttribute('aria-pressed', 'false');
+    await suggest();
+    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', ['mathematics']);
+    expect(JSON.parse(localStorage.getItem('nsLeftOut:alpha') || '[]')).toEqual(['music']);
+
+    fireEvent.click(within(pills).getByRole('button', { name: /Mathematics/ }));
+    expect(screen.getByRole('button', { name: /Suggest 3/ })).toBeDisabled();
+    localStorage.clear();
+  });
+
+  it('has no pill bar once one subject is picked', async () => {
+    show();
+    const picker = await screen.findByRole('combobox', { name: 'Plan for' });
+    await screen.findByRole('group', { name: 'Subjects to include' });
+    fireEvent.change(picker, { target: { value: 'mathematics' } });
+    expect(screen.queryByRole('group', { name: 'Subjects to include' })).not.toBeInTheDocument();
+  });
+
   it('plans all three, one after another, onto the shared task list', async () => {
     const mutate = show();
     await suggest();

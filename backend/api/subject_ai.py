@@ -928,12 +928,15 @@ def list_next_sessions(subject_id: str = '', username: str = Depends(current_use
 
 class NextSessionsBody(BaseModel):
     subject_id: str = ''
+    #: Across every subject, the ones to plan from — the panel's pill bar.
+    #: Empty means all of them.
+    subjects: List[str] = []
 
 
 @router.post('/api/next_sessions')
 def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(current_username)):
-    """Three new sessions for a subject, or across every subject, replacing the
-    ones on screen. Costs a model call."""
+    """Three new sessions for a subject, or across every subject (or just the
+    ones in `subjects`), replacing the ones on screen. Costs a model call."""
     _, user = load_user(username)
     if not user:
         return fail('User not found')
@@ -942,12 +945,18 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
     if subject_id and subject_id not in names:
         return fail('That subject is not one of yours.')
     subject = names[subject_id] if subject_id else next_sessions.OVERALL
+    chosen = set() if subject_id else {_text(one, 64) for one in body.subjects[:64]} & set(names)
+    if body.subjects and not subject_id and not chosen:
+        return fail('None of those subjects are yours.')
 
     tasks = db.columns_for('tasks', username, TASK_COLUMNS)
+    if chosen:
+        tasks = [task for task in tasks if task.get('subject') in chosen]
     state = next_sessions.state_for(tasks, subject_id or None, subject, names)
     if not state['finished']:
         return fail('There is no finished work {} in the last {} days to plan from yet.'.format(
-            'in ' + subject if subject_id else 'anywhere', next_sessions.WINDOW_DAYS))
+            'in ' + subject if subject_id else
+            'in the subjects chosen' if chosen else 'anywhere', next_sessions.WINDOW_DAYS))
 
     history = _history(username, subject)
     _sync(username, history)

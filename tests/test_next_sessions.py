@@ -178,6 +178,28 @@ def test_planning_one_from_every_subject_files_it_under_the_subject_it_names(cli
     assert {step['state'] for step in client.get('/api/next_sessions').json()['steps']} == {'planned'}
 
 
+def test_the_pills_narrow_every_subject_to_the_ones_chosen(client, monkeypatch):
+    _seed()
+    seen = {}
+    _stub(monkeypatch, seen)
+    body = client.post('/api/next_sessions', json={'subjects': ['music']}).json()
+    assert body['success'] is True, body
+    assert seen['overall'] is True and seen['state']['finished'] == 1
+    assert [row['title'] for row in seen['state']['recent_work']] == ['[Music] Scales']
+    # Still the three across every subject: the same ones come back unnarrowed.
+    assert [step['id'] for step in client.get('/api/next_sessions').json()['steps']] == \
+        [step['id'] for step in body['steps']]
+
+
+def test_pills_with_no_work_or_not_yours_say_so(client, monkeypatch):
+    _seed()
+    _stub(monkeypatch)
+    nothing = client.post('/api/next_sessions', json={'subjects': ['chemistry']}).json()
+    assert nothing['success'] is False and 'subjects chosen' in nothing['message']
+    strange = client.post('/api/next_sessions', json={'subjects': ['own_nope']}).json()
+    assert strange['success'] is False
+
+
 def test_nothing_to_plan_from_says_so(client, monkeypatch):
     _stub(monkeypatch)
     body = client.post('/api/next_sessions', json={}).json()

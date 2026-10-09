@@ -1033,7 +1033,11 @@ export function nextSessions(
   );
 }
 
-/** Three new sessions in place of the ones on screen. Costs a model call. */
-export function suggestNextSessions(subjectId = ''): Promise<ApiResult<NextSessions>> {
-  return post<NextSessions>('/api/next_sessions', { subject_id: subjectId });
+/**
+ * Three new sessions in place of the ones on screen. Costs a model call.
+ * Across every subject, `subjects` narrows the plan to those ids; left out,
+ * it reads them all.
+ */
+export function suggestNextSessions(subjectId = '', subjects?: string[]): Promise<ApiResult<NextSessions>> {
+  return post<NextSessions>('/api/next_sessions', subjects ? { subject_id: subjectId, subjects } : { subject_id: subjectId });
 }

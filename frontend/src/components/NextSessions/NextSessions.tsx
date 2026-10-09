@@ -18,6 +18,10 @@
  *
  * A booked session is written onto the shared task list at once
  * (utils/plannedTask), so the Tasks page and the calendar show it.
+ *
+ * Across every subject, a pill bar picks which subjects the three are drawn
+ * from. It remembers the ones left out (in this browser, per account), so a
+ * subject that gains work later is in by default.
  */
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthContext, UserDataContext } from '@/context/contexts';
@@ -41,6 +45,27 @@ export interface NextSessionsPanelProps {
   where: 'dashboard' | 'analytics';
 }
 
+/** Where the subjects left out of "All subjects" are remembered. */
+const leftOutKey = (username: string) => `nsLeftOut:${username}`;
+
+function readLeftOut(username: string | null): Set<string> {
+  if (!username) return new Set();
+  try {
+    const saved: unknown = JSON.parse(localStorage.getItem(leftOutKey(username)) || '[]');
+    return new Set(Array.isArray(saved) ? saved.filter((id): id is string => typeof id === 'string') : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function writeLeftOut(username: string, ids: Set<string>) {
+  try {
+    localStorage.setItem(leftOutKey(username), JSON.stringify([...ids]));
+  } catch {
+    /* Private window or blocked storage: the choice lasts the visit. */
+  }
+}
+
 export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   /* Read without `useAuth`, which throws outside a provider: a page drawn
      with nobody signed in (or in a test of the page around it) simply has
@@ -49,6 +74,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   const shared = useContext(UserDataContext);
   const [subjectId, setSubjectId] = useState('');
   const [subjects, setSubjects] = useState<SessionSubject[]>([]);
+  const [leftOut, setLeftOut] = useState<Set<string>>(() => readLeftOut(username));
   const [steps, setSteps] = useState<SuggestedSession[]>([]);
   const [available, setAvailable] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,11 +116,26 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   );
   const open = steps.filter((step) => step.state === 'open');
   const subjectName = subjectId ? subjects.find((one) => one.id === subjectId)?.name ?? 'this subject' : '';
+  /** Across every subject, the ones the pills have on. */
+  const included = subjects.filter((one) => !leftOut.has(one.id));
+  const narrowed = !subjectId && included.length < subjects.length;
+
+  const toggle = (id: string) => {
+    setLeftOut((was) => {
+      const next = new Set(was);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      if (username) writeLeftOut(username, next);
+      return next;
+    });
+  };
 
   const suggest = async () => {
     setAsking(true);
     setError('');
-    const result = await suggestNextSessions(subjectId);
+    const result = narrowed
+      ? await suggestNextSessions('', included.map((one) => one.id))
+      : await suggestNextSessions(subjectId);
     setAsking(false);
     if (!result.success) {
       setError(result.message || 'Could not suggest sessions. Try again.');
@@ -156,7 +197,13 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   if (!username) return null;
 
   const heading = where === 'dashboard' ? 'Your next sessions' : 'Next sessions';
-  const scope = subjectId ? subjectName : 'all your subjects';
+  const scope = subjectId
+    ? subjectName
+    : narrowed
+      ? included.length === 1
+        ? included[0]!.name
+        : 'the subjects chosen below'
+      : 'all your subjects';
 
   return (
     <section className={`ns-panel ns-on-${where}`} aria-label={heading}>
@@ -186,6 +233,27 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         </label>
       </header>
 
+      {!subjectId && subjects.length > 1 && (
+        <div className="ns-pills" role="group" aria-label="Subjects to include">
+          {subjects.map((one) => {
+            const on = !leftOut.has(one.id);
+            return (
+              <button
+                key={one.id}
+                type="button"
+                className={`ns-pill${on ? ' is-on' : ''}`}
+                aria-pressed={on}
+                onClick={() => toggle(one.id)}
+                disabled={working}
+              >
+                <span className="ns-pill-mark" aria-hidden="true">{on ? '✓' : '+'}</span>
+                {one.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {available === false ? (
         <p className="ns-note">
           Suggesting sessions needs a model key. Add a free GROQ_API_KEY (or an ANTHROPIC_API_KEY)
@@ -193,7 +261,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         </p>
       ) : (
         <div className="ns-actions">
-          <button type="button" className="ns-btn is-primary" onClick={() => void suggest()} disabled={working || loading}>
+          <button type="button" className="ns-btn is-primary" onClick={() => void suggest()} disabled={working || loading || (!subjectId && subjects.length > 0 && !included.length)}>
             {asking ? 'Thinking…' : steps.length ? `Suggest ${BATCH} different ones` : `Suggest ${BATCH} sessions`}
           </button>
           {open.length > 0 && (

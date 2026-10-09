@@ -38,6 +38,35 @@
 }
 .ns-pick select:focus-visible { outline: 2px solid var(--ax-violet); outline-offset: 1px; }
 
+/* Across every subject: which subjects the three are drawn from. Each pill
+   is on or off on its own, so an off pill keeps its outline and a "+" — it
+   reads as "add this one", not as a choice that lost. */
+.ns-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ns-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px 6px 10px;
+    border: 1px dashed var(--color-line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-ink-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+}
+.ns-pill.is-on {
+    border: 1px solid var(--ax-violet);
+    background: color-mix(in srgb, var(--ax-violet) 12%, var(--color-surface));
+    color: var(--color-ink);
+}
+.ns-pill:hover:not(:disabled) { border-color: var(--ax-violet); }
+.ns-pill:disabled { opacity: .55; cursor: default; }
+.ns-pill:focus-visible { outline: 2px solid var(--ax-violet); outline-offset: 2px; }
+.ns-pill-mark { width: 1em; text-align: center; font-size: var(--text-xs); }
+.ns-pill.is-on .ns-pill-mark { color: var(--ax-violet); }
+
 .ns-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 /* A little more air between the controls and the first card than between
    the cards themselves. */
