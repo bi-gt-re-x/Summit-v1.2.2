@@ -57,10 +57,18 @@ describe('typing shortcuts', () => {
 });
 
 describe('the slash menu', () => {
-  it('offers every kind before anything is typed, with one entry per chart', () => {
+  it('offers every kind before anything is typed, with one entry per chart and per shape', () => {
     const all = matchKinds('');
-    expect(all.filter((kind) => kind.type !== 'chart')).toHaveLength(12);
+    expect(all.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape')).toHaveLength(13);
     expect(all.filter((kind) => kind.type === 'chart').map((kind) => kind.chart)).toEqual(['bar', 'line', 'area', 'pie', 'donut']);
+    expect(all.filter((kind) => kind.type === 'shape').map((kind) => kind.shape)).toEqual([
+      'rectangle', 'rounded', 'circle', 'triangle', 'diamond', 'star', 'hexagon', 'arrow',
+    ]);
+  });
+
+  it('finds a sticky note and a shape by name', () => {
+    expect(matchKinds('sticky').map((kind) => kind.type)).toEqual(['sticky']);
+    expect(matchKinds('star').map((kind) => kind.shape)).toEqual(['star']);
   });
 
   it('puts a name that starts with what was typed first', () => {

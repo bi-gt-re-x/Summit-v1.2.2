@@ -75,6 +75,17 @@ COVERS = tuple(RULES['spaces']['covers'])
 ICON_MAX = RULES['spaces']['icon_max']
 GRID = RULES['spaces']['grid']
 CHART = RULES['spaces']['chart']
+FILL_STYLES = tuple(RULES['spaces']['fill_styles'])
+SHAPES = tuple(RULES['spaces']['shapes'])
+TALL = RULES['spaces']['tall_rows']
+COVER_TEXT_MAX = RULES['spaces']['cover_text_max']
+COVER_ALIGNS = tuple(RULES['spaces']['cover_aligns'])
+HEX = re.compile(r'^#[0-9a-fA-F]{6}$')
+
+#: What a new sticky note and a new shape are filled with when nothing is said.
+DEFAULT_FILL = {'sticky': {'color': '#fde68a', 'style': 'solid'},
+                'shape': {'color': '#93c5fd', 'style': 'fade'}}
+DEFAULT_ROWS = {'sticky': 22, 'shape': 20}
 
 #: Each kind as a line of plain text, for `body`.
 TEXT_PREFIX = {'h1': '# ', 'h2': '## ', 'h3': '### ', 'bullet': '- ', 'numbered': '1. ',
@@ -128,6 +139,19 @@ def _number(value, low: float, high: float, default: float) -> float:
         return default
     value = max(low, min(high, float(value)))
     return int(value) if value.is_integer() else round(value, 6)
+
+
+def _hex(value) -> Optional[str]:
+    """A `#rrggbb` colour, lower-cased, or None."""
+    return value.lower() if isinstance(value, str) and HEX.match(value) else None
+
+
+def _clean_fill(raw) -> Optional[dict]:
+    """One colour and a fade style (frontend/src/components/Spaces/fill.ts), or None."""
+    if not isinstance(raw, dict) or not _hex(raw.get('color')):
+        return None
+    style = raw.get('style') if raw.get('style') in FILL_STYLES else 'solid'
+    return {'color': _hex(raw['color']), 'style': style}
 
 
 def _clean_chart(raw) -> dict:
@@ -184,14 +208,43 @@ def _clean_doc(raw) -> Optional[dict]:
             block['collapsed'] = True
         if kind == 'chart':
             block['chart'] = _clean_chart(item.get('chart'))
+        if _hex(item.get('color')):
+            block['color'] = _hex(item['color'])
+        if kind in ('sticky', 'shape'):
+            block['fill'] = _clean_fill(item.get('fill')) or dict(DEFAULT_FILL[kind])
+            rows = _whole(item.get('rows'))
+            block['rows'] = DEFAULT_ROWS[kind] if rows is None else max(TALL['min'], min(TALL['max'], rows))
+            if kind == 'shape':
+                block['shape'] = item.get('shape') if item.get('shape') in SHAPES else 'rectangle'
         # Only a block at the left edge has a place of its own; one indented
         # under another rides inside it.
         if not indent:
-            block.update(_clean_place(item))
+            place = _clean_place(item)
+            block.update(place)
+            # A flowing block may keep a width of its own (a note, a shape).
+            width = _whole(item.get('w'))
+            if 'x' not in item and width is not None and 1 <= width <= GRID['cols']:
+                block['w'] = width
         blocks.append(block)
     icon = str(raw.get('icon') or '').strip()[:ICON_MAX]
+    cover_fill = _clean_fill(raw.get('coverFill'))
     cover = raw.get('cover') if raw.get('cover') in COVERS else ''
-    return {'icon': icon, 'cover': cover, 'blocks': blocks}
+    if raw.get('cover') == 'custom' and cover_fill:
+        cover = 'custom'
+    doc = {'icon': icon, 'cover': cover, 'blocks': blocks}
+    if cover == 'custom':
+        doc['coverFill'] = cover_fill
+    text = raw.get('coverText')
+    if isinstance(text, str) and text.strip():
+        doc['coverText'] = text[:COVER_TEXT_MAX]
+    if _hex(raw.get('coverInk')):
+        doc['coverInk'] = _hex(raw['coverInk'])
+    if raw.get('coverAlign') in COVER_ALIGNS:
+        doc['coverAlign'] = raw['coverAlign']
+    background = _clean_fill(raw.get('background'))
+    if background:
+        doc['background'] = background
+    return doc
 
 
 def _doc_text(doc: dict) -> str:
@@ -206,6 +259,11 @@ def _doc_text(doc: dict) -> str:
             lines.append(pad + '```\n' + text + '\n' + pad + '```')
         elif kind == 'todo':
             lines.append(pad + ('- [x] ' if block.get('checked') else '- [ ] ') + text)
+        elif kind == 'sticky':
+            lines.append(pad + '🗒 ' + text)
+        elif kind == 'shape':
+            name = block['shape'].capitalize()
+            lines.append(pad + '[{}{}]'.format(name, ': ' + text if text else ''))
         elif kind == 'chart':
             chart = block['chart']
             name = '{} chart'.format(chart['kind'].capitalize())

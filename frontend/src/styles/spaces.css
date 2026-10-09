@@ -864,3 +864,338 @@ html[data-theme="dark"] .sp-chart {
     --sp-chart-7: #A3E635;
 }
 html[data-theme="dark"] .sp-item.is-lifted { box-shadow: 0 0 0 2px var(--pref-accent, var(--color-accent)), 0 12px 28px rgba(0, 0, 0, .5); }
+
+/* ==========================================================================
+   Colour — components/Spaces/ColorPicker.tsx and ./fill.ts
+   ========================================================================== */
+.sp-color-pop { width: 252px; padding: 10px 12px 12px; }
+.sp-color { display: flex; flex-direction: column; gap: 10px; }
+/* The classic square: the hue underneath, white across, black down. */
+.sp-color-square {
+    position: relative;
+    height: 150px;
+    border-radius: 8px;
+    background-image:
+        linear-gradient(to top, #000, transparent),
+        linear-gradient(to right, #fff, transparent);
+    cursor: crosshair;
+    touch-action: none;
+    outline: none;
+}
+.sp-color-square:focus-visible { box-shadow: 0 0 0 2px var(--pref-accent, var(--color-accent)); }
+.sp-color-knob,
+.sp-color-hue-knob {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .3);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+.sp-color-hue {
+    position: relative;
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+    cursor: ew-resize;
+    touch-action: none;
+    outline: none;
+}
+.sp-color-hue:focus-visible { box-shadow: 0 0 0 2px var(--pref-accent, var(--color-accent)); }
+.sp-color-hue-knob { top: 50%; }
+.sp-color-row { display: flex; align-items: center; gap: 8px; }
+.sp-color-preview { flex: none; width: 28px; height: 28px; border-radius: 6px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12); }
+.sp-color-hex {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 5px 8px;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: var(--text-sm);
+    text-transform: lowercase;
+}
+.sp-color-hex:focus { outline: none; border-color: var(--pref-accent, var(--color-accent)); }
+.sp-color-swatches { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.sp-color-swatch {
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12);
+    cursor: pointer;
+}
+.sp-color-swatch:hover { transform: scale(1.08); }
+.sp-color-swatch.is-on { box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-ink); }
+
+.sp-fill-picker { display: flex; flex-direction: column; gap: 8px; }
+.sp-fill-picker > .sp-pop-head { margin: 4px 0 0; }
+.sp-fill-styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.sp-fill-style {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 5px;
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    background: none;
+    color: var(--color-ink-muted);
+    font: inherit;
+    font-size: var(--text-xs);
+    cursor: pointer;
+}
+.sp-fill-style:hover { border-color: var(--color-ink-faint); }
+.sp-fill-style[aria-checked="true"] { border-color: var(--pref-accent, var(--color-accent)); color: var(--color-ink); font-weight: 650; }
+.sp-fill-chip { width: 100%; height: 26px; border-radius: 5px; }
+
+/* The one fade that moves: a slow drift through nearby hues. Still for anyone
+   who asks for less motion. */
+.sp-fill-flow { animation: sp-flow 14s ease-in-out infinite; }
+@keyframes sp-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sp-fill-flow { animation: none; }
+}
+
+/* ---- the cover's words, and its pickers ---- */
+.sp-cover-text {
+    position: absolute;
+    left: var(--sp-left, 96px);
+    right: var(--sp-right, 96px);
+    bottom: 28px;
+    margin: 0;
+    font-size: clamp(22px, 3.2vw, 38px);
+    font-weight: 750;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+.sp-cover-text.is-center { text-align: center; }
+.sp-cover-text.is-right { text-align: right; }
+.sp-cover-pop { right: 0; left: auto; top: calc(100% + 6px); width: 272px; }
+.sp-cover-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+    padding: 7px 9px;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-md);
+}
+.sp-cover-input:focus { outline: none; border-color: var(--pref-accent, var(--color-accent)); }
+.sp-cover-aligns { display: flex; gap: 4px; margin-bottom: 8px; }
+
+/* ---- the page's background ---- */
+.sp-bg-pop { right: 0; left: auto; top: calc(100% + 6px); }
+.sp-bg-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 2px;
+    border-radius: 50%;
+    vertical-align: -1px;
+    background: conic-gradient(#f87171, #fbbf24, #34d399, #60a5fa, #a78bfa, #f87171);
+}
+/* The theme's own ink, kept so the pickers and charts on a coloured page still
+   read as they do everywhere else. */
+.sp-page {
+    --sp-ink-0: var(--color-ink);
+    --sp-ink-1: var(--color-ink-muted);
+    --sp-ink-2: var(--color-ink-faint);
+    --sp-line-0: var(--color-line);
+}
+.sp-page.has-bg { min-height: calc(100vh - var(--topnav-h)); }
+.sp-page.is-dark-bg .sp-shell {
+    --color-ink: #f5f7fb;
+    --color-ink-muted: rgba(245, 247, 251, .8);
+    --color-ink-faint: rgba(245, 247, 251, .58);
+    --color-line: rgba(255, 255, 255, .22);
+}
+.sp-page.is-light-bg .sp-shell {
+    --color-ink: #1f2328;
+    --color-ink-muted: #4b5563;
+    --color-ink-faint: #6b7280;
+    --color-line: rgba(15, 23, 42, .14);
+}
+.sp-page.has-bg .sp-pop,
+.sp-page.has-bg .sp-chart,
+.sp-page.has-bg .sp-members {
+    --color-ink: var(--sp-ink-0);
+    --color-ink-muted: var(--sp-ink-1);
+    --color-ink-faint: var(--sp-ink-2);
+    --color-line: var(--sp-line-0);
+}
+
+/* ---- text colour in the block menu ---- */
+.sp-menu-color { display: flex; flex-direction: column; gap: 6px; padding: 0 8px 8px; }
+.sp-ink-dot { flex: none; width: 14px; height: 14px; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15); }
+
+/* ==========================================================================
+   Sticky notes and shapes — components/Spaces/Drawn.tsx
+   ========================================================================== */
+.sp-sticky,
+.sp-shape-block {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    box-sizing: border-box;
+    outline: none;
+}
+.sp-sticky {
+    display: flex;
+    padding: 18px 18px 22px;
+    border-radius: 3px 3px 3px 14px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .06), 0 10px 22px -10px rgba(15, 23, 42, .35);
+}
+/* The folded corner. */
+.sp-sticky::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 0 0 0 14px;
+    background: linear-gradient(45deg, rgba(0, 0, 0, .14) 0%, rgba(0, 0, 0, .06) 50%, transparent 50%);
+    pointer-events: none;
+}
+.sp-sticky:focus-visible,
+.sp-shape-block:focus-visible { box-shadow: 0 0 0 2px var(--pref-accent, var(--color-accent)); }
+.sp-sticky-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-family: 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', var(--font-sans), sans-serif;
+    font-size: var(--text-lg);
+    line-height: 1.45;
+    resize: none;
+    outline: none;
+}
+.sp-sticky-text::placeholder { color: currentColor; opacity: .5; }
+
+.sp-shape-block { display: grid; place-items: center; }
+.sp-shape { position: absolute; inset: 0; display: block; }
+.sp-shape-rectangle { border-radius: 4px; }
+.sp-shape-rounded { border-radius: 22px; }
+.sp-shape-circle { clip-path: ellipse(50% 50% at 50% 50%); }
+.sp-shape-triangle { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.sp-shape-diamond { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.sp-shape-star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.sp-shape-hexagon { clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); }
+.sp-shape-arrow { clip-path: polygon(0 30%, 60% 30%, 60% 0, 100% 50%, 60% 100%, 60% 70%, 0 70%); }
+.sp-shape-text {
+    position: relative;
+    width: 70%;
+    padding: 4px 6px;
+    border: 1px dashed transparent;
+    border-radius: 6px;
+    background: none;
+    font: inherit;
+    font-size: var(--text-lg);
+    font-weight: 650;
+    text-align: center;
+    outline: none;
+}
+.sp-shape-text:hover:not(:disabled),
+.sp-shape-text:focus { border-color: color-mix(in srgb, currentColor 45%, transparent); }
+.sp-shape-text::placeholder { color: currentColor; opacity: .5; }
+.sp-shape-text:placeholder-shown:not(:focus) { opacity: 0; }
+.sp-shape-block:hover .sp-shape-text:placeholder-shown { opacity: 1; }
+
+/* The bar on a note or a shape: Colour, Text, Shape. */
+.sp-drawn-tools {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 3;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity .12s ease;
+}
+.sp-sticky:hover > .sp-drawn-tools,
+.sp-shape-block:hover > .sp-drawn-tools,
+.sp-drawn-tools:focus-within,
+.sp-drawn-tools.is-open { opacity: 1; }
+.sp-drawn-tool {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border: 0;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, .92);
+    color: #1f2328;
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .18);
+    cursor: pointer;
+}
+.sp-drawn-tool:hover { background: #fff; }
+.sp-drawn-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15); }
+.sp-drawn-a { font-weight: 800; text-shadow: 0 0 1px rgba(0, 0, 0, .3); }
+.sp-drawn-tools .sp-color-pop { top: calc(100% + 6px); right: 0; left: auto; }
+.sp-shape-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.sp-shape-choice {
+    position: relative;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid var(--color-line);
+    border-radius: 8px;
+    background: none;
+    cursor: pointer;
+}
+.sp-shape-choice .sp-shape { inset: 9px; background: var(--color-ink-muted); }
+.sp-shape-choice[aria-checked="true"] { border-color: var(--pref-accent, var(--color-accent)); }
+.sp-shape-choice[aria-checked="true"] .sp-shape { background: var(--pref-accent, var(--color-accent)); }
+.sp-shape-pop { width: 220px; }
+
+/* The bottom edge: drag for height. */
+.sp-tall {
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+    z-index: 3;
+    width: 40px;
+    height: 12px;
+    transform: translateX(-50%);
+    cursor: ns-resize;
+    touch-action: none;
+    opacity: 0;
+    transition: opacity .12s ease;
+    outline: none;
+}
+.sp-tall::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 4px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-ink-faint);
+}
+.sp-sticky:hover > .sp-tall,
+.sp-shape-block:hover > .sp-tall,
+.sp-tall:focus-visible { opacity: 1; }
+.sp-tall:focus-visible::after { background: var(--pref-accent, var(--color-accent)); }
+
+@media (hover: none) {
+    .sp-drawn-tools,
+    .sp-tall { opacity: 1; }
+}

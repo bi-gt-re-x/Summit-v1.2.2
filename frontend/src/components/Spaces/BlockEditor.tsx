@@ -45,7 +45,10 @@ import {
 } from 'react';
 import {
   BLOCK_KINDS,
+  DRAWN,
   TURN_KINDS,
+  shapeBlock,
+  stickyBlock,
   INDENT_MAX,
   chartBlock,
   cleanPlace,
@@ -87,6 +90,9 @@ import {
   type Place,
 } from './canvas';
 import { ChartBlock } from './ChartBlock';
+import { ShapeBlock, StickyBlock } from './Drawn';
+import { ColorField } from './ColorPicker';
+import { useDismiss } from './useDismiss';
 import {
   autoFormat,
   hasMark,
@@ -116,6 +122,8 @@ const PLACEHOLDER: Record<BlockType, string> = {
   divider: '',
   code: 'Code',
   chart: '',
+  sticky: '',
+  shape: '',
 };
 
 const BULLETS = ['•', '◦', '▪'];
@@ -123,7 +131,7 @@ const BULLETS = ['•', '◦', '▪'];
 type Caret = 'start' | 'end' | number;
 
 /** Code keeps its words literal; every other kind with words is rich text. */
-const isRich = (one: Block) => one.type !== 'code' && one.type !== 'divider' && one.type !== 'chart';
+const isRich = (one: Block) => one.type !== 'code' && one.type !== 'divider' && !DRAWN.has(one.type);
 
 /** How far a pointer must travel on a handle before a press becomes a drag. */
 const DRAG_FROM_PX = 4;
@@ -157,27 +165,6 @@ interface Slash {
   from: number;
   query: string;
   index: number;
-}
-
-/** Shut on a click anywhere else, or Escape. */
-function useDismiss(open: boolean, close: () => void) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    if (!open) return undefined;
-    const down = (event: MouseEvent) => {
-      if (ref.current && !ref.current.contains(event.target as Node)) close();
-    };
-    const key = (event: globalThis.KeyboardEvent) => {
-      if (event.key === 'Escape') close();
-    };
-    document.addEventListener('mousedown', down);
-    document.addEventListener('keydown', key);
-    return () => {
-      document.removeEventListener('mousedown', down);
-      document.removeEventListener('keydown', key);
-    };
-  }, [open, close]);
-  return ref;
 }
 
 export interface BlockEditorProps {
@@ -415,13 +402,21 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
     setSlash(null);
     if (!host) return;
     const text = spliceInline(host.text, slash.from, slash.from + 1 + slash.query.length);
-    if (type === 'chart') {
-      // A chart takes the block's place when it is empty, and goes under it
-      // when it is not. Either way a line to write on follows it.
+    if (DRAWN.has(type)) {
+      // A chart, a note or a shape takes the block's place when it is empty,
+      // and goes under it when it is not. Either way a line to write on
+      // follows it, as wide as the line the slash was typed on.
       const indent = host.indent ? { indent: host.indent } : {};
       const empty = plainOf(text).trim() === '';
-      const made = { ...chartBlock(kind.chart ?? 'bar', indent), ...(empty ? { id: host.id, ...cleanPlace(host) } : {}) };
-      const after = block('text', '', indent);
+      const fresh = type === 'chart'
+        ? chartBlock(kind.chart ?? 'bar', indent)
+        : type === 'sticky'
+          ? stickyBlock(indent)
+          : shapeBlock(kind.shape ?? 'rectangle', indent);
+      const made = { ...fresh, ...(empty ? { id: host.id, ...cleanPlace(host) } : {}) };
+      // A note or a shape is narrower than the page; the line after it is not.
+      const wide = !host.indent && type !== 'chart' ? { w: itemOf.get(host.id)?.w ?? COLS } : {};
+      const after = block('text', '', { ...indent, ...wide });
       onChange(
         empty
           ? blocks.flatMap((one) => (one.id === host.id ? [made, after] : [one]))
@@ -822,7 +817,23 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
 
             {marker}
 
-            {one.type === 'chart' ? (
+            {one.type === 'sticky' || one.type === 'shape' ? (
+              (() => {
+                const Drawn = one.type === 'sticky' ? StickyBlock : ShapeBlock;
+                return (
+                  <Drawn
+                    one={one}
+                    disabled={disabled}
+                    register={(node) => {
+                      if (node) nodes.current.set(one.id, node);
+                      else nodes.current.delete(one.id);
+                    }}
+                    onChange={(change) => patch(one.id, change)}
+                    onKey={(event) => dividerKey(event, one)}
+                  />
+                );
+              })()
+            ) : one.type === 'chart' ? (
               <ChartBlock
                 one={one}
                 disabled={disabled}
@@ -883,6 +894,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
                   setMenu(null);
                   onChange(resizeTo(blocks, items, one.id, w));
                 }}
+                onColor={(color) => patch(one.id, { color })}
                 onClose={() => setMenu(null)}
                 onTurn={(type) => {
                   setMenu(null);
@@ -1075,6 +1087,7 @@ function RichField({ one, disabled, placeholder, register, onEdit, onKey, onPast
         register(node);
       }}
       className={`sp-field sp-rich${one.text === '' ? ' is-blank' : ''}`}
+      style={one.color ? { color: one.color } : undefined}
       data-block={one.id}
       data-placeholder={placeholder}
       role="textbox"
@@ -1152,7 +1165,7 @@ function SlashMenu({
       {options.length === 0 && <p className="sp-pop-none">No results</p>}
       {options.map((kind, i) => (
         <div
-          key={`${kind.type}-${kind.chart ?? ''}`}
+          key={`${kind.type}-${kind.chart ?? kind.shape ?? ''}`}
           role="option"
           aria-selected={i === Math.min(index, options.length - 1)}
           className="sp-pop-item"
@@ -1184,6 +1197,7 @@ function BlockMenu({
   one,
   width,
   onWidth,
+  onColor,
   onClose,
   onTurn,
   onDuplicate,
@@ -1195,6 +1209,8 @@ function BlockMenu({
   /** The item's width in columns, or null when it has none of its own to set. */
   width: number | null;
   onWidth: (cols: number) => void;
+  /** The words' colour, or undefined for the page's own. */
+  onColor: (color: string | undefined) => void;
   onClose: () => void;
   onTurn: (type: BlockType) => void;
   onDuplicate: () => void;
@@ -1203,6 +1219,7 @@ function BlockMenu({
   onDelete: () => void;
 }) {
   const ref = useDismiss(true, onClose);
+  const [inking, setInking] = useState(false);
   return (
     <div className="sp-pop sp-block-menu" role="menu" aria-label="Block options" ref={ref}>
       <button type="button" role="menuitem" className="sp-pop-item" onClick={onDuplicate}>
@@ -1236,8 +1253,26 @@ function BlockMenu({
           </div>
         </>
       )}
-      {one.type !== 'chart' && <p className="sp-pop-head">Turn into</p>}
-      <div className="sp-turn" hidden={one.type === 'chart'}>
+      {!DRAWN.has(one.type) && one.type !== 'divider' && (
+        <>
+          <p className="sp-pop-head">Text colour</p>
+          {inking ? (
+            <div className="sp-menu-color">
+              <ColorField value={one.color ?? '#1f2328'} label="Text colour" onChange={onColor} />
+              <button type="button" className="sp-ghost" onClick={() => { onColor(undefined); setInking(false); }}>
+                Default
+              </button>
+            </div>
+          ) : (
+            <button type="button" role="menuitem" className="sp-pop-item" onClick={() => setInking(true)}>
+              <span className="sp-ink-dot" style={{ background: one.color ?? 'var(--color-ink)' }} aria-hidden="true" />
+              <span className="sp-pop-label">{one.color ? one.color : 'Default'}</span>
+            </button>
+          )}
+        </>
+      )}
+      {!DRAWN.has(one.type) && <p className="sp-pop-head">Turn into</p>}
+      <div className="sp-turn" hidden={DRAWN.has(one.type)}>
         {TURN_KINDS.map((kind) => (
           <button
             key={kind.type}

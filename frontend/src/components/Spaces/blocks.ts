@@ -17,6 +17,7 @@
  */
 
 import { escapeInline, plainOf } from './inline';
+import { cleanFill, isHex, type Fill } from './fill';
 import { RULES } from '@/utils/sharedRules';
 
 export type BlockType =
@@ -32,7 +33,11 @@ export type BlockType =
   | 'callout'
   | 'divider'
   | 'code'
-  | 'chart';
+  | 'chart'
+  | 'sticky'
+  | 'shape';
+
+export type ShapeKind = 'rectangle' | 'rounded' | 'circle' | 'triangle' | 'diamond' | 'star' | 'hexagon' | 'arrow';
 
 export type ChartKind = 'bar' | 'line' | 'area' | 'pie' | 'donut';
 
@@ -72,13 +77,31 @@ export interface Block {
   w?: number;
   /** Charts only. */
   chart?: ChartData;
+  /** The words' colour, `#rrggbb`, on any block with words. Absent is the page's own ink. */
+  color?: string;
+  /** Sticky notes and shapes: what they are filled with (./fill). */
+  fill?: Fill;
+  /** Shapes only. */
+  shape?: ShapeKind;
+  /** Sticky notes and shapes: how tall, in grid rows (./canvas). */
+  rows?: number;
 }
+
+export type CoverAlign = 'left' | 'center' | 'right';
 
 export interface SpaceDoc {
   /** An emoji, or '' for none. */
   icon: string;
-  /** One of COVERS, or '' for none. */
+  /** One of COVERS, 'custom' for `coverFill`, or '' for none. */
   cover: string;
+  /** The cover's own colour and fade, when `cover` is 'custom'. */
+  coverFill?: Fill;
+  /** Words across the cover, in `coverInk`, placed by `coverAlign`. */
+  coverText?: string;
+  coverInk?: string;
+  coverAlign?: CoverAlign;
+  /** The page's own background, or nothing for the theme's. */
+  background?: Fill;
   blocks: Block[];
 }
 
@@ -94,6 +117,8 @@ export interface BlockKind {
   glyph: string;
   /** Chart entries in the slash menu: which chart it starts as. */
   chart?: ChartKind;
+  /** Shape entries in the slash menu: which shape it starts as. */
+  shape?: ShapeKind;
 }
 
 /** Every kind, in the order the slash menu lists them. */
@@ -111,6 +136,8 @@ export const BLOCK_KINDS: BlockKind[] = [
   { type: 'divider', label: 'Divider', hint: 'Visually divide blocks.', keys: ['line', 'hr', 'separator', 'rule', '---'], glyph: '—' },
   { type: 'code', label: 'Code', hint: 'Capture a code snippet.', keys: ['snippet', 'pre', '```'], glyph: '</>' },
   { type: 'chart', label: 'Chart', hint: 'Bars, lines or a pie you set by dragging.', keys: ['chart', 'graph', 'plot'], glyph: '▥' },
+  { type: 'sticky', label: 'Sticky note', hint: 'A post-it in any colour.', keys: ['sticky', 'note', 'postit', 'post-it'], glyph: '🗒' },
+  { type: 'shape', label: 'Shape', hint: 'A box, circle, star and more, in any colour.', keys: ['shape', 'box', 'rectangle'], glyph: '◆' },
 ];
 
 /** The chart kinds the server keeps, in the order the chart's switcher shows them. */
@@ -125,14 +152,45 @@ const CHART_ENTRIES: BlockKind[] = [
   { type: 'chart', chart: 'donut', label: 'Donut chart', hint: 'A pie with a hole in it.', keys: ['chart', 'donut', 'doughnut', 'ring'], glyph: '◎' },
 ];
 
-/** What the slash menu offers: every kind of block, with one entry per chart. */
+export const SHAPE_KINDS: readonly ShapeKind[] = RULES.spaces.shapes as ShapeKind[];
+
+export const SHAPE_LABEL: Record<ShapeKind, string> = {
+  rectangle: 'Rectangle',
+  rounded: 'Rounded box',
+  circle: 'Circle',
+  triangle: 'Triangle',
+  diamond: 'Diamond',
+  star: 'Star',
+  hexagon: 'Hexagon',
+  arrow: 'Arrow',
+};
+
+const SHAPE_GLYPH: Record<ShapeKind, string> = {
+  rectangle: '▬', rounded: '▢', circle: '●', triangle: '▲', diamond: '◆', star: '★', hexagon: '⬢', arrow: '➜',
+};
+
+/** One slash-menu entry per shape, so "/star" finds a star. */
+const SHAPE_ENTRIES: BlockKind[] = SHAPE_KINDS.map((shape) => ({
+  type: 'shape',
+  shape,
+  label: SHAPE_LABEL[shape],
+  hint: 'A shape in any colour.',
+  keys: ['shape', shape],
+  glyph: SHAPE_GLYPH[shape],
+}));
+
+/** What the slash menu offers: every kind of block, one entry per chart and per shape. */
 export const SLASH_KINDS: BlockKind[] = [
-  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart'),
+  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape'),
   ...CHART_ENTRIES,
+  ...SHAPE_ENTRIES,
 ];
 
-/** What "Turn into" offers. A chart has no words to carry over, so it is not one. */
-export const TURN_KINDS: BlockKind[] = BLOCK_KINDS.filter((kind) => kind.type !== 'chart');
+/** Kinds that are drawn rather than written: no Turn into, to or from. */
+export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape']);
+
+/** What "Turn into" offers: the kinds made of words. */
+export const TURN_KINDS: BlockKind[] = BLOCK_KINDS.filter((kind) => !DRAWN.has(kind.type));
 
 /** The kinds the slash menu offers for what was typed after the slash. */
 export function matchKinds(query: string): BlockKind[] {
@@ -209,6 +267,23 @@ export function cleanChart(raw: unknown): ChartData {
 }
 
 const GRID = RULES.spaces.grid;
+const TALL = RULES.spaces.tall_rows;
+
+/** A sticky note: yellow, a third of the page wide, about as tall as it is wide. */
+export function stickyBlock(extra: Partial<Block> = {}): Block {
+  return block('sticky', '', { fill: { color: '#fde68a', style: 'solid' }, rows: 22, w: 4, ...extra });
+}
+
+/** A shape: blue, a quarter of the page wide. */
+export function shapeBlock(shape: ShapeKind = 'rectangle', extra: Partial<Block> = {}): Block {
+  return block('shape', '', { shape, fill: { color: '#93c5fd', style: 'fade' }, rows: 20, w: 3, ...extra });
+}
+
+/** A height in rows, kept between the smallest and largest a drawn block may be. */
+export const cleanRows = (value: unknown, fallback: number): number => {
+  const n = Math.round(Number(value));
+  return Number.isFinite(n) ? Math.max(TALL.min, Math.min(TALL.max, n)) : fallback;
+};
 
 /** A stored grid position, or nothing when it is not a whole, in-bounds one. */
 export function cleanPlace(one: Partial<Block>): Pick<Block, 'x' | 'y' | 'w'> {
@@ -348,17 +423,33 @@ export function normalise(doc: Partial<SpaceDoc> | null | undefined, body = ''):
           if (type === 'todo' && one.checked) next.checked = true;
           if (type === 'toggle' && one.collapsed) next.collapsed = true;
           if (type === 'chart') next.chart = cleanChart(one.chart);
+          if (isHex(one.color)) next.color = one.color.toLowerCase();
+          if (type === 'sticky' || type === 'shape') {
+            next.fill = cleanFill(one.fill) ?? (type === 'sticky' ? { color: '#fde68a', style: 'solid' } : { color: '#93c5fd', style: 'fade' });
+            next.rows = cleanRows(one.rows, type === 'sticky' ? 22 : 20);
+            if (type === 'shape') next.shape = (SHAPE_KINDS as readonly string[]).includes(one.shape as string) ? one.shape : 'rectangle';
+          }
           // Only a block at the left edge has a place of its own; one indented
           // under another rides inside it.
           if (!indent) Object.assign(next, cleanPlace(one));
+          // A flowing block may still keep its own width.
+          if (!indent && one.x === undefined && Number.isInteger(one.w) && one.w! >= 1 && one.w! <= GRID.cols) next.w = one.w;
           return next;
         })
     : fromBody(body);
-  return {
+  const coverFill = cleanFill(doc?.coverFill);
+  const out: SpaceDoc = {
     icon: typeof doc?.icon === 'string' ? doc.icon : '',
-    cover: (COVERS as readonly string[]).includes(doc?.cover ?? '') ? doc!.cover! : '',
+    cover: (COVERS as readonly string[]).includes(doc?.cover ?? '') || (doc?.cover === 'custom' && coverFill) ? doc!.cover! : '',
     blocks: blocks.length ? blocks : [block()],
   };
+  if (out.cover === 'custom' && coverFill) out.coverFill = coverFill;
+  if (typeof doc?.coverText === 'string' && doc.coverText.trim()) out.coverText = doc.coverText.slice(0, RULES.spaces.cover_text_max);
+  if (isHex(doc?.coverInk)) out.coverInk = doc!.coverInk!.toLowerCase();
+  if ((RULES.spaces.cover_aligns as readonly string[]).includes(doc?.coverAlign ?? '')) out.coverAlign = doc!.coverAlign;
+  const background = cleanFill(doc?.background);
+  if (background) out.background = background;
+  return out;
 }
 
 // --------------------------------------------------------------------------
@@ -404,7 +495,8 @@ export function span(blocks: Block[], at: number): number {
 export const hasChildren = (blocks: Block[], at: number): boolean => span(blocks, at) > at;
 
 /** A block's words as they read, without formatting marks. */
-export const visibleText = (one: Block): string => (one.type === 'code' || one.type === 'chart' ? one.text : plainOf(one.text));
+export const visibleText = (one: Block): string =>
+  one.type === 'code' || DRAWN.has(one.type) ? one.text : plainOf(one.text);
 
 export function wordCount(blocks: Block[]): number {
   return blocks.reduce((sum, one) => sum + (visibleText(one).match(/\S+/g)?.length ?? 0), 0);
@@ -469,7 +561,8 @@ export function duplicate(blocks: Block[], id: string): { blocks: Block[]; copy:
   const end = span(blocks, at);
   // The copy flows in under the original rather than sitting on top of it.
   const copies = blocks.slice(at, end + 1).map((one) => {
-    const { x: _x, y: _y, w: _w, ...rest } = one;
+    // It keeps its width, so a copied note is still a note-sized note.
+    const { x: _x, y: _y, ...rest } = one;
     return { ...rest, id: newId(), ...(one.chart ? { chart: structuredCopy(one.chart) } : {}) };
   });
   return {

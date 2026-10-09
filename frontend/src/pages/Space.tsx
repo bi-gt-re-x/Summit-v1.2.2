@@ -28,6 +28,7 @@ import { Members } from '@/components/Spaces/Members';
 import { BlockEditor } from '@/components/Spaces/BlockEditor';
 import { Cover, DressTools, PageIcon } from '@/components/Spaces/Dress';
 import { normalise, wordCount, type SpaceDoc } from '@/components/Spaces/blocks';
+import { fillProps, isDark } from '@/components/Spaces/fill';
 import {
   SPACE_COUNT,
   SPACE_PATH,
@@ -121,11 +122,15 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
   if (!valid) return <Navigate to={`${SPACE_PATH[kind]}/1`} replace />;
 
   const words = wordCount(doc.blocks);
+  /* The page's own background, and which way its words go to stay readable
+     on it (styles/spaces.css, `.is-dark-bg` / `.is-light-bg`). */
+  const painted = doc.background ? fillProps(doc.background) : null;
+  const ground = doc.background ? (isDark(doc.background) ? ' has-bg is-dark-bg' : ' has-bg is-light-bg') : '';
 
   return (
-    <main className="sp-page">
+    <main className={`sp-page${ground}${painted?.className ? ` ${painted.className}` : ''}`} style={painted?.style}>
       {/* Edge to edge across the top, when the page wears one. */}
-      <Cover cover={doc.cover} disabled={!loaded} onCover={(cover) => write({ ...doc, cover })} />
+      <Cover doc={doc} disabled={!loaded} onDoc={(change) => write({ ...doc, ...change })} />
 
       <div className="sp-shell">
         {/* One row: the icon, the name, which kind of space, whether it has
@@ -161,6 +166,8 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
             disabled={!loaded}
             onIcon={(icon) => write({ ...doc, icon })}
             onCover={(cover) => write({ ...doc, cover })}
+            background={doc.background}
+            onBackground={(background) => write({ ...doc, background })}
           />
         </header>
 

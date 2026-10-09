@@ -112,10 +112,14 @@ export function layout(blocks: Block[], heights: ReadonlyMap<string, number>, op
     const root = blocks[group.start]!;
     const h = heights.get(group.id) ?? 1;
     const pinned = narrow ? null : pinnedPlace(root);
+    // A flowing block with a width of its own (a sticky note, a shape) keeps
+    // it; otherwise it is as wide as the block it follows. A place that is
+    // off the grid is dropped whole, width and all.
+    const own = !narrow && root.x === undefined && Number.isInteger(root.w) && root.w! >= 1 ? root.w! : null;
     const want: Place = pinned
       ?? (before && !narrow
-        ? { x: before.x, w: before.w, y: before.y + before.h }
-        : { x: 0, w: COLS, y: before ? before.y + before.h : 0 });
+        ? { x: before.x, w: Math.min(own ?? before.w, COLS - before.x), y: before.y + before.h }
+        : { x: 0, w: own ?? COLS, y: before ? before.y + before.h : 0 });
 
     // Down past anything already here, until it lands somewhere free.
     let y = want.y;

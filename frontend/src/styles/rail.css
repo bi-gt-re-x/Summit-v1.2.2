@@ -47,6 +47,12 @@
     border-right: 1px solid #EAEAEA;
     transition: width .22s ease;
 }
+/* A window too short for even the brand, the search and the foot: the whole
+   rail scrolls, so nothing is ever cut off behind the profile block. */
+@media (min-width: 641px) and (max-height: 560px) {
+    .rail { overflow-y: auto; }
+    .rail-links { flex: none; overflow: visible; }
+}
 
 /* --- Brand ------------------------------------------------------------- */
 /* Two elements, not one, and both of them link home: the mark and the
@@ -140,10 +146,28 @@
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
-    scrollbar-width: none;
+    overscroll-behavior: contain;
+    /* A thin bar that shows on hover, so it is plain there is more below and
+       there is something to drag. It was hidden outright, and a list that
+       scrolls with nothing to say so reads as a list that does not. */
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    scrollbar-gutter: stable;
+    margin-right: calc(-1 * var(--space-2));
+    padding-right: var(--space-1);
 }
-.rail-links::-webkit-scrollbar { width: 0; height: 0; display: none; }
-/* No scrollbar is drawn, so the edge with more beyond it fades instead —
+.rail-links:hover,
+.rail-links:focus-within { scrollbar-color: #C9CED6 transparent; }
+.rail-links::-webkit-scrollbar { width: 6px; }
+.rail-links::-webkit-scrollbar-track { background: transparent; }
+.rail-links::-webkit-scrollbar-thumb { border-radius: 3px; background: transparent; }
+.rail-links:hover::-webkit-scrollbar-thumb,
+.rail-links:focus-within::-webkit-scrollbar-thumb { background: #C9CED6; }
+html[data-theme="dark"] .rail-links:hover,
+html[data-theme="dark"] .rail-links:focus-within { scrollbar-color: #3A414B transparent; }
+html[data-theme="dark"] .rail-links:hover::-webkit-scrollbar-thumb,
+html[data-theme="dark"] .rail-links:focus-within::-webkit-scrollbar-thumb { background: #3A414B; }
+/* The edge with more beyond it also fades —
    components/Rail.tsx keeps `more-up` and `more-down` true to the scroll. */
 .rail-links.more-down {
     -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 32px), transparent);
