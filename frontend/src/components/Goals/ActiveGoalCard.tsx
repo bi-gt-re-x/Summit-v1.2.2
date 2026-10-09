@@ -593,6 +593,14 @@ export function ActiveGoalCard({
               </div>
             </>
           )}
+          <div className="ag-panel-foot">
+            <button type="button" className="ag-details" onClick={() => onOpen(goal)}>
+              View Details
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                <path d="M5 12h13M13 6l6 6-6 6" />
+              </svg>
+            </button>
+          </div>
         </section>
 
         <section className="ag-panel">
@@ -643,7 +651,12 @@ export function ActiveGoalCard({
                     {focus.note ? ` · ${focus.note}` : ''}
                   </span>
                 </div>
-                <span className="ag-focus-when">{monthYear(focus.target_date)}</span>
+                <span className="ag-focus-when">
+                  {monthYear(focus.target_date)}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M9 6l6 6-6 6" />
+                  </svg>
+                </span>
               </button>
 
               {picking && (
@@ -1074,13 +1087,41 @@ export function ActiveGoalCard({
               in the checklists they have not written. The compact row says so
               on the card, and it disappears on a goal with a complete plan
               rather than nagging. See ./SmartPlan. */}
-          <SmartPlan
-            goal={goal}
-            busy={drafting}
-            onRedraftStones={onRedraftStones}
-            onFillSteps={onFillSteps}
-            compact
-          />
+          {/* The model's offer and the goal's dates share the panel's last
+              row: what the plan could do next on the left, the facts about
+              the goal on the right. */}
+          <div className="ag-panel-foot ag-panel-foot-split">
+            <SmartPlan
+              goal={goal}
+              busy={drafting}
+              onRedraftStones={onRedraftStones}
+              onFillSteps={onFillSteps}
+              compact
+            />
+            <dl className="ag-facts">
+              <div>
+                <dt>Start date</dt>
+                <dd>{formatGoalDate(started) || '—'}</dd>
+              </div>
+              <div>
+                <dt>Target date</dt>
+                <dd className={overdue ? 'is-late' : undefined}>{formatGoalDate(goal.deadline) || '—'}</dd>
+              </div>
+              <div>
+                <dt>Time invested</dt>
+                {/* Off the clock finished tasks recorded, never estimated. A goal
+                    whose work was never timed says so rather than guessing. */}
+                <dd>{invested > 0 ? hoursMinutes(invested) : '—'}</dd>
+              </div>
+              <div>
+                <dt>Category</dt>
+                <dd>
+                  <span className="ag-dot" aria-hidden="true" />
+                  {category.label}
+                </dd>
+              </div>
+            </dl>
+          </div>
         </section>
       </div>
 
@@ -1102,39 +1143,6 @@ export function ActiveGoalCard({
         </div>
       )}
 
-      {/* ---- footer ---------------------------------------------------- */}
-      <footer className="ag-foot">
-        <button type="button" className="ag-details" onClick={() => onOpen(goal)}>
-          View Details
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-            <path d="M5 12h13M13 6l6 6-6 6" />
-          </svg>
-        </button>
-
-        <dl className="ag-facts">
-          <div>
-            <dt>Start date</dt>
-            <dd>{formatGoalDate(started) || '—'}</dd>
-          </div>
-          <div>
-            <dt>Target date</dt>
-            <dd className={overdue ? 'is-late' : undefined}>{formatGoalDate(goal.deadline) || '—'}</dd>
-          </div>
-          <div>
-            <dt>Time invested</dt>
-            {/* Off the clock finished tasks recorded, never estimated. A goal
-                whose work was never timed says so rather than guessing. */}
-            <dd>{invested > 0 ? hoursMinutes(invested) : '—'}</dd>
-          </div>
-          <div>
-            <dt>Category</dt>
-            <dd>
-              <span className="ag-dot" aria-hidden="true" />
-              {category.label}
-            </dd>
-          </div>
-        </dl>
-      </footer>
     </article>
   );
 }

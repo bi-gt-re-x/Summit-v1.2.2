@@ -89,17 +89,38 @@ function Heat({ context }: { context: VisualContext }) {
         <li />
         <li>S</li>
       </ul>
-      <div className="ag-heat-grid">
-        {cells.map((cell) => (
-          <i
-            key={cell.day}
-            className={`is-l${cell.level}`}
-            title={`${formatGoalDate(cell.day)} — ${cell.count} finished`}
-          />
-        ))}
+      {/* Four blocks of three weeks, each with its dates under it, so the
+          grid fills the panel and a reader can tell which weeks they are. */}
+      <div className="ag-heat-weeks">
+        {[0, 1, 2, 3].map((block) => {
+          const part = cells.slice(block * 21, block * 21 + 21);
+          if (!part.length) return null;
+          return (
+            <div className="ag-heat-block" key={block}>
+              <div className="ag-heat-grid">
+                {part.map((cell) => (
+                  <i
+                    key={cell.day}
+                    className={`is-l${cell.level}`}
+                    title={`${formatGoalDate(cell.day)} — ${cell.count} finished`}
+                  />
+                ))}
+              </div>
+              <span className="ag-heat-range">
+                {dayMonth(part[0]!.day)} – {dayMonth(part[part.length - 1]!.day)}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
+}
+
+/** "Oct 5" from "2026-10-05", read as a local date. */
+function dayMonth(day: string): string {
+  const [y, m, d] = day.split('-').map(Number);
+  return new Date(y!, (m ?? 1) - 1, d ?? 1).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
 // ---------------------------------------------------------------------------
@@ -242,12 +263,20 @@ function Roadmap({ goal, onOpen }: { goal: Goal; onOpen: () => void }) {
   const share = (stone: Milestone) =>
     stone.status === 'done' ? 100 : stone.status === 'active' ? 45 : 6;
 
+  /* The checkpoint being worked: the one marked active, or else the first not
+     yet reached. It gets the goal's colour, so the route shows where you are. */
+  const current = stones.find((stone) => stone.status === 'active') ?? stones.find((stone) => stone.status !== 'done');
+
   return (
     <ul className="ag-roadmap" style={{ '--rows': stones.length } as CSSProperties}>
       {stones.map((stone) => (
-        <li key={stone.id} className={`is-${stone.status}`}>
+        <li key={stone.id} className={`is-${stone.status}${stone === current ? ' is-current' : ''}`}>
           <button type="button" onClick={onOpen}>
-            <span className="ag-road-name">{stone.title}</span>
+            {/* Green when reached, the goal's colour for the one being worked,
+                hollow for the ones still ahead; a line joins them down the
+                left, so the list reads as a route rather than a table. */}
+            <span className="ag-road-dot" aria-hidden="true" />
+            <span className="ag-road-name" title={stone.title}>{stone.title}</span>
             <span className="ag-road-bar">
               <i style={{ width: `${share(stone)}%` }} />
             </span>
@@ -466,11 +495,20 @@ export function GoalVisual({ goal, context, pick, nameOf, onOpen, onChart }: Goa
         <p className="ag-empty">No checkpoints yet.</p>
       )}
 
-      <p className="ag-caption">{meta.caption}</p>
-      {/* Why this chart and not one of the others. It names the evidence, so a
+      {/* What the chart shows, and why this chart and not one of the others,
+          in one boxed note under it. The second line names the evidence, so a
           reader who wants a different chart can see what it would take — or,
           for a chart they chose, how to hand the choice back. */}
-      <p className="ag-why-chart">{pick.why}</p>
+      <div className="ag-note">
+        <svg className="ag-note-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 11v5M12 7.5v.01" />
+        </svg>
+        <div>
+          <p className="ag-caption">{meta.caption}</p>
+          <p className="ag-why-chart">{pick.why}</p>
+        </div>
+      </div>
     </>
   );
 }
