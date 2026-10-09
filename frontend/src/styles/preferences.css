@@ -105,35 +105,70 @@ html[data-theme="dark"]:root[data-accent="graphite"] { --pref-accent: #9AA3AE; }
     --skin-accent-2: #f08a84;
 }
 
+/* ## Each skin is a colour, not a grey with an accent
+
+   The first cut of these was dark's and light's own greys nudged a few points
+   — Midnight's ground was #080d1a against dark's #0d1117, Meadow's and
+   Orchid's cards were the same pure white as light's — so on screen a skin
+   read as "dark with a blue button" or "light with a pink one", and two of
+   them were hard to tell from their base at all. Now every band is pulled
+   well into the skin's hue: the ground, the cards, the side rail, and the
+   three inks, so even the body text leans warm on Sunset and cool on
+   Midnight. Contrast was checked against the cards and the ground for each:
+   ink 13.6–15.5:1, muted ink 5–8.8:1, accent 5–5.7:1 — at or above what
+   light and dark themselves manage.
+
+   The two dark skins' accents are a step deeper than they could be, on
+   purpose: buttons fill with the accent and put white words on it. Sunset's
+   was #ff8f52 and Midnight's #8c98ff, which held white at 2.3:1 and 2.6:1 —
+   a button whose label you squint at. At #e8743a and #7b86f2 they hold it at
+   3:1 and 3.2:1, dark's own accent's 3.4 being the bar, and still read as
+   text on their cards at better than 5:1. */
 :root[data-skin="midnight"],
 [data-skin-preview="midnight"] {
-    --skin-ground: #080d1a;
-    --skin-surface: #111a2e;
+    --skin-ground: #0b1230;
+    --skin-surface: #141d44;
+    --skin-rail: #0e163a;
+    --skin-ink: #e6eaff;
+    --skin-muted: #a0aad6;
+    --skin-faint: #7480b0;
     /* Periwinkle against a cyan-teal: the coolest pair here, and the only one
        whose two colours are both to the blue side of neutral. */
-    --skin-accent: #7f8dff;
+    --skin-accent: #7b86f2;
     --skin-accent-2: #3fd0c9;
 }
 :root[data-skin="sunset"],
 [data-skin-preview="sunset"] {
-    --skin-ground: #17100e;
-    --skin-surface: #241a17;
-    --skin-accent: #f28545;
-    --skin-accent-2: #e8b53e;
+    --skin-ground: #1d1210;
+    --skin-surface: #2d1c17;
+    --skin-rail: #241612;
+    --skin-ink: #fdeee6;
+    --skin-muted: #d4ab98;
+    --skin-faint: #a07c6d;
+    --skin-accent: #e8743a;
+    --skin-accent-2: #f2c14e;
 }
 :root[data-skin="meadow"],
 [data-skin-preview="meadow"] {
-    --skin-ground: #f1f6f0;
-    --skin-surface: #ffffff;
-    --skin-accent: #2b8a5a;
-    --skin-accent-2: #b8791f;
+    --skin-ground: #e2eedd;
+    --skin-surface: #f7fbf4;
+    --skin-rail: #edf5e9;
+    --skin-ink: #1c2a1f;
+    --skin-muted: #52695a;
+    --skin-faint: #7f9786;
+    --skin-accent: #23784d;
+    --skin-accent-2: #a86a14;
 }
 :root[data-skin="orchid"],
 [data-skin-preview="orchid"] {
-    --skin-ground: #fbf4f8;
-    --skin-surface: #ffffff;
-    --skin-accent: #b8397e;
-    --skin-accent-2: #47968c;
+    --skin-ground: #f5e4ee;
+    --skin-surface: #fff7fb;
+    --skin-rail: #fbedf4;
+    --skin-ink: #2d1a26;
+    --skin-muted: #7a566c;
+    --skin-faint: #a5859a;
+    --skin-accent: #b0306f;
+    --skin-accent-2: #3a8279;
 }
 
 /* The accent, through the same names the block above repoints.
@@ -192,13 +227,15 @@ html:root[data-skin="sunset"] {
        of, and a neutral grey hairline on Sunset's warm brown is the one part
        of a skin that reads as not belonging to it. The mix percentages are
        the steps tokens.css takes between #161b22, #1b212b and #263041. */
-    --color-surface-2: color-mix(in srgb, var(--skin-surface) 92%, #ffffff);
-    --color-line: color-mix(in srgb, var(--skin-surface) 82%, #ffffff);
-    --color-line-soft: color-mix(in srgb, var(--skin-surface) 90%, #ffffff);
+    --color-surface-2: color-mix(in srgb, var(--skin-surface) 90%, var(--skin-ink));
+    --color-line: color-mix(in srgb, var(--skin-surface) 80%, var(--skin-muted));
+    --color-line-soft: color-mix(in srgb, var(--skin-surface) 88%, var(--skin-muted));
 
-    --color-ink: #e6edf3;
-    --color-ink-muted: #8f9bb3;
-    --color-ink-faint: #6e7781;
+    /* The skin's own inks rather than dark's greys: grey type on navy or on
+       brown is the other half of what made a skin read as plain dark. */
+    --color-ink: var(--skin-ink);
+    --color-ink-muted: var(--skin-muted);
+    --color-ink-faint: var(--skin-faint);
 }
 
 html:root[data-skin="meadow"],
@@ -207,15 +244,315 @@ html:root[data-skin="orchid"] {
     --shadow-md: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 24px rgba(16, 24, 40, .06);
     --shadow-lg: 0 2px 6px rgba(16, 24, 40, .06), 0 20px 48px rgba(16, 24, 40, .16);
 
-    /* The light skins' surface is white, so the second surface and the lines
-       are mixed out of the *ground* instead — which is where their tint is. */
-    --color-surface-2: color-mix(in srgb, var(--skin-ground) 65%, #ffffff);
-    --color-line: color-mix(in srgb, var(--skin-ground) 55%, #c9ced8);
-    --color-line-soft: color-mix(in srgb, var(--skin-ground) 70%, #dfe3ea);
+    /* The light skins' cards are their palest shade, so the second surface
+       and the lines are mixed between it and the ground — which is where
+       their tint is strongest — and the lines lean toward the muted ink so
+       they show on a pale tint the way a grey hairline would not. */
+    --color-surface-2: color-mix(in srgb, var(--skin-ground) 55%, var(--skin-surface));
+    --color-line: color-mix(in srgb, var(--skin-ground) 70%, var(--skin-muted));
+    --color-line-soft: color-mix(in srgb, var(--skin-ground) 85%, var(--skin-muted));
 
-    --color-ink: #1f2733;
-    --color-ink-muted: #6b7684;
-    --color-ink-faint: #98a1ae;
+    --color-ink: var(--skin-ink);
+    --color-ink-muted: var(--skin-muted);
+    --color-ink-faint: var(--skin-faint);
+}
+
+/* ---------- What a skin reaches beyond the shared tokens ------------------
+   The shared tokens repaint every page that draws with them, and most do. A
+   handful of things were written with literal light or dark colours instead,
+   and on a skin those stayed exactly light or dark — the side rail most of
+   all, which is on screen on every page and was white with a tan highlight
+   (or #14181E) whatever the skin. Each is pointed at the skin here.
+
+   Specificity: `html:root[data-skin] …` is (0,2,1) plus the rest of the
+   selector, which beats both the plain rule and its `html[data-theme="dark"]`
+   twin (0,1,1 plus the same) without !important or sheet order. */
+
+/* The rail: its own shade of the skin, highlights in the accent. */
+html:root[data-skin] .rail {
+    background: var(--skin-rail);
+    border-right-color: var(--color-line);
+}
+html:root[data-skin] .rail-brand,
+html:root[data-skin] .rail-brand-name,
+html:root[data-skin] .rail-rank-title,
+html:root[data-skin] .rail-rank-num { color: var(--color-ink); }
+html:root[data-skin] .rail-link,
+html:root[data-skin] .rail-sub-link,
+html:root[data-skin] .rail-toggle,
+html:root[data-skin] .rail-disclose,
+html:root[data-skin] .rail-rank-more,
+html:root[data-skin] .rail-foot-settings,
+html:root[data-skin] .rail-xp-row,
+html:root[data-skin] .rail-link.rail-invite { color: var(--color-ink-muted); }
+html:root[data-skin] .rail-section-head { color: var(--color-ink-faint); }
+html:root[data-skin] .rail-section-head:hover { color: var(--color-ink); }
+html:root[data-skin] .rail-link:hover,
+html:root[data-skin] .rail-sub-link:hover,
+html:root[data-skin] .rail-toggle:hover,
+html:root[data-skin] .rail-disclose:hover,
+html:root[data-skin] .rail-rank-more:hover,
+html:root[data-skin] .rail-rank-more.is-open,
+html:root[data-skin] .rail-foot-settings:hover {
+    background: color-mix(in srgb, var(--skin-accent) 9%, transparent);
+    color: var(--color-ink);
+}
+html:root[data-skin] .rail-link.active,
+html:root[data-skin] .rail-sub-link.active,
+html:root[data-skin] .rail-foot-settings.active {
+    background: color-mix(in srgb, var(--skin-accent) 16%, transparent);
+    color: var(--color-ink);
+}
+html:root[data-skin] .rail-link.active svg,
+html:root[data-skin] .rail-foot-settings.active { color: var(--skin-accent); }
+html:root[data-skin] .rail-sub-link.active::before,
+html:root[data-skin] .rail-xp-bar i { background: var(--skin-accent); }
+html:root[data-skin] .rail-sub,
+html:root[data-skin] .rail-foot { border-color: var(--color-line); }
+html:root[data-skin] .rail-search {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+    color: var(--color-ink-muted);
+}
+html:root[data-skin] .rail-search:hover { border-color: var(--color-ink-faint); }
+html:root[data-skin] .rail-search kbd,
+html:root[data-skin] .rail-avatar,
+html:root[data-skin] .rail-xp-bar { background: var(--color-surface-2); color: var(--color-ink-muted); }
+html:root[data-skin] .rail-title-menu {
+    border-color: var(--color-line);
+    background: var(--color-surface);
+}
+html:root[data-skin] .rail-links:hover::-webkit-scrollbar-thumb,
+html:root[data-skin] .rail-links:focus-within::-webkit-scrollbar-thumb { background: var(--color-line); }
+html:root[data-skin] .rail-links:hover,
+html:root[data-skin] .rail-links:focus-within { scrollbar-color: var(--color-line) transparent; }
+
+/* The top bar and its two drop-downs. */
+html:root[data-skin] .topbar {
+    background: var(--color-bg);
+    border-bottom-color: var(--color-line);
+}
+html:root[data-skin] .topbar-btn,
+html:root[data-skin] .topbar-caret,
+html:root[data-skin] .topbar-empty,
+html:root[data-skin] .topbar-result-meta,
+html:root[data-skin] .topbar-account-head span,
+html:root[data-skin] .topbar-title-pick { color: var(--color-ink-muted); }
+html:root[data-skin] .topbar-account,
+html:root[data-skin] .topbar-results a,
+html:root[data-skin] .topbar-account-menu a { color: var(--color-ink); }
+html:root[data-skin] .topbar-btn:hover,
+html:root[data-skin] .topbar-account:hover,
+html:root[data-skin] .topbar-results a:hover,
+html:root[data-skin] .topbar-account-menu a:hover,
+html:root[data-skin] .topbar-signout:hover {
+    background: color-mix(in srgb, var(--skin-accent) 9%, transparent);
+    color: var(--color-ink);
+}
+html:root[data-skin] .topbar-btn.is-on,
+html:root[data-skin] .topbar-account.is-on {
+    background: color-mix(in srgb, var(--skin-accent) 16%, transparent);
+    color: var(--color-ink);
+}
+html:root[data-skin] .topbar-panel {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+}
+html:root[data-skin] .topbar-search-input,
+html:root[data-skin] .topbar-title-pick select {
+    background: var(--color-surface-2);
+    border-color: var(--color-line);
+    color: var(--color-ink);
+}
+html:root[data-skin] .topbar-search-input:focus { border-color: var(--skin-accent); background: var(--color-surface); }
+html:root[data-skin] .topbar-avatar,
+html:root[data-skin] .topbar-avatar-option { background: var(--color-surface-2); }
+html:root[data-skin] .topbar-avatar-option:hover { background: color-mix(in srgb, var(--skin-accent) 14%, var(--color-surface-2)); }
+html:root[data-skin] .topbar-avatar-option.is-current { outline-color: var(--skin-accent); }
+html:root[data-skin] .topbar-account-head,
+html:root[data-skin] .topbar-avatar-row,
+html:root[data-skin] .topbar-signout { border-color: var(--color-line); }
+html:root[data-skin] .topbar-dot.is-open { background: var(--skin-accent); }
+
+/* Search and notifications, which float over every page. */
+html:root[data-skin] .sf-row:hover,
+html:root[data-skin] .nf-row:hover,
+html:root[data-skin] .sf-step:hover:not(:disabled),
+html:root[data-skin] .nf-toast-close:hover { background: color-mix(in srgb, var(--skin-accent) 9%, transparent); }
+html:root[data-skin] .sf-input,
+html:root[data-skin] .sf-cursor,
+html:root[data-skin] .sf-key {
+    background: var(--color-surface-2);
+    border-color: var(--color-line);
+    color: var(--color-ink);
+}
+html:root[data-skin] .sf-input:focus { border-color: var(--skin-accent); }
+html:root[data-skin] .sf-step {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+    color: var(--color-ink-muted);
+}
+html:root[data-skin] .sf-step.is-next { border-color: var(--skin-accent); color: var(--skin-accent); }
+html:root[data-skin] .sf-step.is-next:hover:not(:disabled) { background: var(--skin-accent); color: var(--skin-surface); }
+html:root[data-skin] .sf-row,
+html:root[data-skin] .sf-empty strong,
+html:root[data-skin] .sf-at strong { color: var(--color-ink); }
+html:root[data-skin] .sf-empty,
+html:root[data-skin] .sf-group-head,
+html:root[data-skin] .sf-at em,
+html:root[data-skin] .sf-row-meta { color: var(--color-ink-muted); }
+html:root[data-skin] .nf-toast {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+}
+
+/* The loading and error screens. */
+html:root[data-skin] .page-state-files {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+}
+html:root[data-skin] .page-state-aside { border-top-color: var(--color-line); }
+
+/* About, Terms and Privacy, which paint their own body. */
+html:root[data-skin] body:has(.content-container) {
+    background: var(--color-bg);
+    color: var(--color-ink);
+}
+
+/* Small light-only greys: the refresh button, Growth's table head and its
+   segmented control, the calendar suggestion strip. Grey on a tinted page
+   is exactly the patch that gives a skin away. */
+html:root[data-skin] .refresh-btn:hover:not(:disabled),
+html:root[data-skin] .grade-table tbody tr:hover td,
+html:root[data-skin] .gr-seg { background: var(--color-surface-2); }
+
+/* The older dashboard's Add Task modal and its fields, which dark mode
+   painted with literal greys. */
+html:root[data-skin] .modal-content {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+    color: var(--color-ink);
+}
+html:root[data-skin] .modal-content h2,
+html:root[data-skin] .modal-content label { color: var(--color-ink) !important; }
+html:root[data-skin] #modalTaskName,
+html:root[data-skin] #taskModal .xp-input-field,
+html:root[data-skin] .due-date-input,
+html:root[data-skin] .dropdown-btn,
+html:root[data-skin] .timer-input-group input {
+    background: var(--color-surface-2);
+    border-color: var(--color-line);
+    color: var(--color-ink);
+}
+html:root[data-skin] .dropdown-content {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+    color: var(--color-ink);
+}
+html:root[data-skin] .modal-separator { background: var(--color-line); }
+html:root[data-skin] .add-task-btn { background: var(--skin-accent); color: var(--skin-surface); }
+html:root[data-skin] .add-task-btn:hover { background: color-mix(in srgb, var(--skin-accent) 85%, var(--skin-ink)); }
+
+/* The slow wash behind every page (styles/ambient.css). Its three fields
+   are indigo, green and amber, which is light's and dark's palette — on
+   Sunset an indigo glow over brown, on Meadow a second, different green.
+   On a skin they are the skin's own two colours and its ink. */
+html:root[data-skin] .hm-gradient {
+    background:
+        radial-gradient(38% 44% at 22% 28%, color-mix(in srgb, var(--skin-accent) 18%, transparent), transparent 70%),
+        radial-gradient(34% 40% at 78% 22%, color-mix(in srgb, var(--skin-accent-2) 13%, transparent), transparent 70%),
+        radial-gradient(42% 46% at 62% 84%, color-mix(in srgb, var(--skin-accent) 10%, transparent), transparent 70%);
+}
+html:root[data-skin] .hm-grid { color: color-mix(in srgb, var(--skin-muted) 5%, transparent); }
+
+/* Spaces' small buttons on a cover or a note. */
+html:root[data-skin] .sp-chip-btn:hover,
+html:root[data-skin] .sp-drawn-tool:hover { background: var(--color-surface); }
+html:root[data-skin] .sp-btn.is-primary {
+    border-color: var(--skin-accent);
+    background: var(--skin-accent);
+    color: var(--skin-surface);
+}
+
+/* The dashboard's home column and its controls. */
+html:root[data-skin] body:has(.home-main) { background: var(--color-bg); }
+html:root[data-skin] .dash-bar,
+html:root[data-skin] .dash-tabs,
+html:root[data-skin] .dash-goal-track,
+html:root[data-skin] .dash-ico-pulse { background: var(--color-surface-2); }
+html:root[data-skin] .dash-task:hover {
+    background: color-mix(in srgb, var(--skin-accent) 7%, var(--color-surface));
+    border-color: var(--color-line);
+}
+html:root[data-skin] .dash-guard.is-locked {
+    background: var(--color-surface);
+    border-color: var(--color-line);
+    color: var(--color-ink-muted);
+}
+
+/* Goals' cards are navy in dark by design — on Sunset that would be navy
+   panels on warm brown. On a skin they are the skin's own surface, still
+   tinted by each goal's tone the way the navy is. */
+html:root[data-skin] .gx-page .ag-card {
+    --ag-navy: var(--skin-surface);
+    --ag-panel: color-mix(in srgb, var(--skin-surface) 82%, var(--skin-ground));
+    --gx-text: var(--color-ink);
+    --gx-muted: var(--color-ink-muted);
+    --gx-faint: var(--color-ink-faint);
+    --gx-card: var(--skin-surface);
+}
+html:root[data-skin="meadow"] .gx-page .ag-card,
+html:root[data-skin="orchid"] .gx-page .ag-card { --ag-panel-line: var(--color-line); }
+
+/* Analytics' Growth view has a designed palette of its own, a few steps
+   darker (or cooler) than the page — near-black #080b12 in dark, which on
+   Midnight or Sunset was a neutral black hole in the middle of a coloured
+   app. On a skin it is the same few steps, taken from the skin. */
+html:root[data-skin] .ax-page:has(.ax-view-growth) {
+    --ax-gp-ground: var(--skin-ground);
+    --ax-gp-card: var(--color-surface);
+    --ax-gp-line: var(--color-line);
+    --ax-text: var(--color-ink);
+}
+html:root[data-skin="midnight"] .ax-page:has(.ax-view-growth),
+html:root[data-skin="sunset"] .ax-page:has(.ax-view-growth) {
+    --ax-gp-ground: color-mix(in srgb, var(--skin-ground) 80%, #000);
+}
+/* Achievements' inset wells. */
+html:root[data-skin] .ac-page { --ac-well: color-mix(in srgb, var(--skin-ground) 70%, var(--skin-surface)); }
+
+/* The skill tree's lattice keeps a ground and a panel of its own. */
+html:root[data-skin] .stx-page--lattice {
+    --lat-page: var(--color-bg);
+    --lat-panel: var(--color-surface);
+}
+
+/* Pages whose headings were written with a literal ink in one theme or the
+   other. The same list as the accent block below, for the same reason. */
+html:root[data-skin] .ac-page,
+html:root[data-skin] .nt-page,
+html:root[data-skin] .rc-page,
+html:root[data-skin] .st-page,
+html:root[data-skin] .tk-page,
+html:root[data-skin] .pom-page,
+html:root[data-skin] .ax-page,
+html:root[data-skin] .cu-backdrop,
+html:root[data-skin] .tk-rate-backdrop,
+html:root[data-skin] .tk-day-all,
+html:root[data-skin] .tk-day-backdrop {
+    --ac-text: var(--color-ink);
+    --nt-text: var(--color-ink);
+    --rc-text: var(--color-ink);
+    --st-text: var(--color-ink);
+    --tk-text: var(--color-ink);
+    --tk-card-2: var(--color-surface-2);
+    --pom-text: var(--color-ink);
+    --pom-card-2: var(--color-surface-2);
+    --ax-text: var(--color-ink);
+    --cu-ink: var(--color-ink);
+    --rt-ink: var(--color-ink);
+    --dc-text: var(--color-ink);
+    --dc-card-2: var(--color-surface-2);
 }
 
 /* Every page's own name for "the accent", pointed at the chosen one.
