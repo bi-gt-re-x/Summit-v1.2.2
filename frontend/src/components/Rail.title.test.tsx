@@ -100,6 +100,16 @@ describe('the nametag', () => {
   });
 });
 
+describe('Settings in the foot', () => {
+  it('is a gear beside the nametag, not a row in Core', () => {
+    draw();
+    const gear = screen.getByRole('link', { name: 'Settings' });
+    expect(gear).toHaveAttribute('href', '/settings');
+    expect(gear.closest('.rail-rank')).not.toBeNull();
+    expect(gear.closest('.rail-links')).toBeNull();
+  });
+});
+
 describe('choosing the title', () => {
   it('offers the bands reached, best first, and none ahead', async () => {
     const user = userEvent.setup();

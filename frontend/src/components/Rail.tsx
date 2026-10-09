@@ -138,6 +138,13 @@ interface Tab {
    * — analytics, records, the skill tree — are what a desk is for.
    */
   phone?: boolean;
+  /**
+   * Drawn in the foot rather than the list: a small icon to the right of the
+   * nametag. Settings is about the account the nametag names, and a gear
+   * beside the profile is where people look for it. On a phone the foot is
+   * not drawn, so it stays in the More sheet there.
+   */
+  foot?: boolean;
 }
 
 /**
@@ -159,6 +166,14 @@ const stroke = {
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
 };
+
+/** The gear, shared by the Settings entry and the foot's icon that draws it. */
+const SETTINGS_ICON = (
+  <svg {...stroke}>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+  </svg>
+);
 
 /**
  * The app's own pages. Home is not among them — the wordmark at the top is the
@@ -310,12 +325,8 @@ const TABS: Tab[] = [
   {
     to: '/settings',
     label: 'Settings',
-    icon: (
-      <svg {...stroke}>
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
-      </svg>
-    ),
+    foot: true,
+    icon: SETTINGS_ICON,
   },
 ];
 
@@ -766,7 +777,7 @@ export function Rail() {
         ) : (
           <>
             <Section id="core" label="Core" open={isOpen('core')} onFold={fold}>
-              {TABS.map(renderTab)}
+              {TABS.filter((tab) => !tab.foot).map(renderTab)}
             </Section>
 
             <Section id="personal" label="Personal" open={isOpen('personal')} onFold={fold}>
@@ -908,6 +919,19 @@ export function Rail() {
               <span className="rail-rank-num" aria-hidden="true">
                 {level.level}
               </span>
+              {/* Settings, as a gear on the right of the nametag rather than a
+                  row in Core — see `foot` on Tab. Not on a phone, where the
+                  foot is not drawn and Settings is in the More sheet. */}
+              {!phone && (
+                <NavLink
+                  to="/settings"
+                  className={({ isActive }) => `rail-foot-settings${isActive ? ' active' : ''}`}
+                  aria-label="Settings"
+                  title="Settings"
+                >
+                  {SETTINGS_ICON}
+                </NavLink>
+              )}
 
               {titlesOpen && (
                 <>

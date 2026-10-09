@@ -31,6 +31,10 @@
  * not be in: not mysterious, just broken. Both gates are gone, so the door
  * answers in whichever theme the reader is actually using.
  *
+ * It answers every time — already unlocked today, or the title already
+ * earned, ten more clicks open it again. Silence for either reason was
+ * indistinguishable from the door being broken.
+ *
  * The silence of the first three clicks is what hides it, and that is enough:
  * it is a count nobody arrives at by accident, and the mark gives no other
  * sign — no pointer cursor, no tooltip, no role.
@@ -41,7 +45,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useChainAccount } from '@/hooks/useChainAccount';
-import { EGG_UNLOCKED, earnedTitle, markUnlockedToday, unlockedToday } from '@/utils/easterEgg';
+import { EGG_UNLOCKED, markUnlockedToday } from '@/utils/easterEgg';
 
 /** Clicks to unlock. */
 const NEEDED = 10;
@@ -57,6 +61,19 @@ const SILENT = 3;
 
 /** How long a bounce and its shake run before the page is let still again. */
 const SHAKE = 340;
+
+/**
+ * How far from where the mark sat a click still counts, in px, once a run has
+ * started.
+ *
+ * The shake moves the whole page — 25px by the ninth click — and the mark is
+ * 18px across. The pointer does not move with it, so a reader clicking at an
+ * ordinary pace was clicking where the mark had just been: from the fourth
+ * click on, most of them landed on the card beside it and were not counted,
+ * and the count stalled short of ten. That was the "mountain does nothing"
+ * report. Past the largest shake plus the tilt, and no further.
+ */
+const REACH = 40;
 
 export interface UseMarkEgg {
   /** Put this on the mark. */
@@ -132,12 +149,21 @@ export function useMarkEgg(): UseMarkEgg {
     );
   }, []);
 
-  const onMarkClick = useCallback(() => {
-    /* Nothing to find: nobody is known yet, the clue is out for today, or the
-       chain has already paid out this account's title. Either way the mark is
-       just a logo. */
+  /** Where the mark sits when the page is still — taken on each click that
+      lands while nothing is shaking. */
+  const home = useRef<{ x: number; y: number } | null>(null);
+
+  /** One click of the ten, wherever it landed. */
+  const count = useCallback(() => {
+    /* Nobody is known yet, so there is no one to count for.
+
+       It used to stop here too when the clue was already out today or the
+       chain had paid out this account's title — and that read, from the
+       reader's side, as a door that had simply broken: ten clicks on the
+       mountain, nothing, no way to tell why. Every ten clicks open it now. A
+       second ten on the same day plays the reveal again, and an account that
+       already wears the title can walk the chain again. */
     if (account === null) return;
-    if (unlockedToday(account) || earnedTitle(account)) return;
 
     clicks.current += 1;
     if (clicks.current < NEEDED) {
@@ -154,6 +180,31 @@ export function useMarkEgg(): UseMarkEgg {
     markUnlockedToday(account);
     window.dispatchEvent(new CustomEvent(EGG_UNLOCKED));
   }, [account, shake]);
+
+  const onMarkClick = useCallback(() => {
+    const mark = markRef.current;
+    if (mark && !document.body.classList.contains('easter-wobble')) {
+      const box = mark.getBoundingClientRect();
+      home.current = { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+    }
+    count();
+  }, [count]);
+
+  /* The rest of a run: a click that misses the mark only because the page
+     has thrown it sideways still counts (see REACH). Only once a run has
+     begun — before the first click on the mark itself, a click near it is
+     just a click on the card. */
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      const at = home.current;
+      if (clicks.current === 0 || !at) return;
+      if (markRef.current && markRef.current.contains(event.target as Node)) return;
+      if (Math.hypot(event.clientX - at.x, event.clientY - at.y) > REACH) return;
+      count();
+    };
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
+  }, [count]);
 
   return { markRef, onMarkClick };
 }

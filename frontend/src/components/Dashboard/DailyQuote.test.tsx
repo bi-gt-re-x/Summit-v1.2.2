@@ -119,14 +119,27 @@ describe('the hidden quote', () => {
     expect(document.getElementById('dailyQuote')).not.toHaveClass('quote-slide-out');
   });
 
-  it('is retired once the chain has handed out a title', async () => {
+  it('still plays for an account that already wears the title', async () => {
     localStorage.setItem('summitTitle:myles', 'Admin');
     renderWithProviders(<DailyQuote />);
 
     await tenthClick();
     await act(() => vi.advanceTimersByTimeAsync(WHOLE_REVEAL));
 
-    expect(screen.queryByText(CLUE)).not.toBeInTheDocument();
+    expect(screen.getByText(CLUE)).toBeInTheDocument();
+  });
+
+  it('plays again when the clue is already out today', async () => {
+    localStorage.setItem(KEY, '1');
+    renderWithProviders(<DailyQuote />);
+    expect(screen.getByText(CLUE)).toBeInTheDocument();
+
+    await tenthClick();
+    expect(document.getElementById('dailyQuote')).toHaveClass('quote-slide-out');
+    await act(() => vi.advanceTimersByTimeAsync(600));
+    expect(document.body.className).toContain('easter-shake');
+    await act(() => vi.advanceTimersByTimeAsync(WHOLE_REVEAL));
+    expect(screen.getByText(CLUE)).toBeInTheDocument();
   });
 
   it('leaves nothing on the page when the dashboard is left mid-reveal', async () => {

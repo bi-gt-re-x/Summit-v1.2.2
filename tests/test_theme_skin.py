@@ -62,3 +62,36 @@ class TestTheSkinPreference:
         for name in ('graphite', 'violet', 'blue', 'green', 'amber', 'rose', 'slate'):
             assert check('accent', name) == name
         assert default('accent') == 'violet'
+
+
+class TestASaveDoesNotPutBackWhatItDidNotChange:
+    """The top bar's dark-mode switch sends /api/set_theme and /api/settings at
+    the same moment. The settings save used to write back the whole account
+    row it had read, so when it read before the theme landed it put the old
+    theme back — and on the next device the account came back light."""
+
+    def test_a_theme_written_in_between_survives(self, client, monkeypatch):
+        from backend.api import settings as api
+        from backend.database import connection as db
+
+        assert client.post('/api/set_theme', json={'theme': 'light'}).json()['success']
+        real = api.load_user
+
+        def read_then_theme_changes(username):
+            users, user = real(username)
+            # The other request lands between this one's read and its write.
+            client.post('/api/set_theme', json={'theme': 'dark'})
+            return users, user
+
+        monkeypatch.setattr(api, 'load_user', read_then_theme_changes)
+        body = client.post('/api/settings', json={'values': {'theme_mode': 'dark'}}).json()
+        assert body['success'] is True
+        stored = next(u for u in db.users() if u['username'] == 'tester')
+        assert stored['theme'] == 'dark'
+
+    def test_what_it_was_sent_is_still_written(self, client):
+        from backend.database import connection as db
+
+        client.post('/api/settings', json={'name': 'Myles', 'daily_goal': 150})
+        stored = next(u for u in db.users() if u['username'] == 'tester')
+        assert stored['name'] == 'Myles' and stored['daily_goal'] == 150

@@ -446,9 +446,9 @@ describe('a rail taller than the window', () => {
   });
 
   it('scrolls the current page into view, clear of the fade, on a short window', () => {
-    // Settings is last in the list, so it is the row a short laptop hides.
+    // Achievements is last in Core, so it is the row a short laptop hides.
     const scroll = layout(600, 300, { top: 450, bottom: 480 });
-    renderWithProviders(<Rail />, { route: '/settings' });
+    renderWithProviders(<Rail />, { route: '/achievements' });
     // Its bottom lands 40px above the box's, past the 32px fade.
     expect(scroll.top).toBe(480 - (300 - 40));
     expect(links()).toHaveClass('more-up');
@@ -583,12 +583,13 @@ describe('the foot', () => {
 });
 
 describe('Core, Personal and Team', () => {
-  it('puts every page under Core, and Personal and Team under it', () => {
+  it('puts every page but Settings under Core, and Personal and Team under it', () => {
     renderWithProviders(<Rail />);
     const core = screen.getByRole('region', { name: 'Core' });
-    [...PHONE_TABS, ...SHEET_TABS].forEach((label) => {
+    [...PHONE_TABS, ...SHEET_TABS.filter((label) => label !== 'Settings')].forEach((label) => {
       expect(within(core).getByRole('link', { name: label })).toBeInTheDocument();
     });
+    expect(within(core).queryByRole('link', { name: 'Settings' })).not.toBeInTheDocument();
     const personal = screen.getByRole('region', { name: 'Personal' });
     ['Space 1', 'Space 2', 'Space 3'].forEach((name, at) => {
       expect(within(personal).getByRole('link', { name })).toHaveAttribute('href', `/spaces/${at + 1}`);

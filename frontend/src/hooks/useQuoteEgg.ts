@@ -40,7 +40,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
 import { useChainAccount } from '@/hooks/useChainAccount';
-import { EGG_UNLOCKED, earnedTitle, unlockedToday } from '@/utils/easterEgg';
+import { EGG_UNLOCKED, unlockedToday } from '@/utils/easterEgg';
 
 /** What the day's quote is replaced by. The pentagon is on the landing page. */
 const CLUE = '"The pentagon is the key, find it" -Mysterious,,';
@@ -151,30 +151,31 @@ export function useQuoteEgg(): UseQuoteEgg {
      leave the line alone. No theatrics either way — the reveal plays once,
      from the tenth click below, and a reader coming back to the dashboard an
      hour later wants the clue sitting there rather than crashing in again.
-     The clue is retired for good once the chain has paid out its title.
 
-     Both of those questions are about an account, so neither can be asked
+     That question is about an account, so it cannot be asked
      until there is one. On a cold load the session check is still in flight
      when this first runs, and answering then means answering about the wrong
      person: a reader who found the clue an hour ago would get the ordinary
      quote back. `null` is hooks/useChainAccount.ts saying "not yet", and it is
      the account and not merely the status, so switching accounts inside one
-     session asks again for the new one. */
+     session asks again for the new one.
+
+     An earned title no longer retires the clue: the door opens for an account
+     that already wears one (hooks/useMarkEgg.ts), so the room has to as well. */
   const account = useChainAccount();
   useEffect(() => {
     if (account === null) return;
-    if (earnedTitle(account)) return;
     if (unlockedToday(account)) setClue(CLUE);
   }, [account]);
 
   /* The tenth click, from the mark in the Focus card's corner. Nothing is
      held over between the two: both are on the dashboard, so by the time this
      is sent the quote is already mounted and listening. The unlock is written
-     by the door before it announces itself, which is why this asks about the
-     title and not about the day — the day is the thing that just changed. */
+     by the door before it announces itself, so there is nothing left to ask:
+     every announcement plays the reveal, a second one the same day included. */
   useEffect(() => {
     const onUnlocked = () => {
-      if (account === null || earnedTitle(account)) return;
+      if (account === null) return;
       reveal();
     };
     window.addEventListener(EGG_UNLOCKED, onUnlocked);

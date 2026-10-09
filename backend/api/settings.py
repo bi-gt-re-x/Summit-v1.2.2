@@ -594,21 +594,26 @@ def update_settings(request: Request, body: UpdateSettings,
 
     sent = body.model_fields_set
     theme_changed = None
+    # Only the columns this request changes are written back. Saving the whole
+    # row wrote every column as it stood when it was read — and the top bar's
+    # dark-mode switch sends /api/set_theme and this request at the same
+    # moment, so this one put back the `theme` the other had just changed.
+    changes = {}
 
     if 'name' in sent:
-        user['name'] = (body.name or '').strip()[:NAME_MAX]
+        changes['name'] = (body.name or '').strip()[:NAME_MAX]
 
     if 'theme' in sent:
         if body.theme not in ('light', 'dark'):
             return fail("Theme must be 'light' or 'dark'.", status=400)
-        user['theme'] = body.theme
+        changes['theme'] = body.theme
         theme_changed = body.theme
 
     if 'daily_goal' in sent:
         goal = _whole(GOAL_MIN, GOAL_MAX)(body.daily_goal)
         if goal is None:
             return fail('Daily goal must be a number.', status=400)
-        user['daily_goal'] = goal
+        changes['daily_goal'] = goal
 
     for key, value in (body.values or {}).items():
         if key not in FIELDS:
@@ -622,7 +627,9 @@ def update_settings(request: Request, body: UpdateSettings,
             return fail('That is not a valid value for {}.'.format(key), status=400)
         db.set_user_setting(user['username'], key, checked)
 
-    db.save_user(user)
+    if changes:
+        user.update(changes)
+        db.save_user({'id': user['id'], **changes})
 
     payload = ok(settings=_shape(user))
     if theme_changed is None:

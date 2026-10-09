@@ -21,8 +21,8 @@
      *
      * Two keys, because the nametag asks two separate questions.
      * `summitTitle:<user>` is "has this account earned the secret title" — it
-     * puts the title in the nametag's list of titles at all, and it retires
-     * the chain (see frontend/src/utils/easterEgg.ts). `summitRankTitle:<user>`
+     * puts the title in the nametag's list of titles at all, and it lets the
+     * account straight into /engine (engine.js). `summitRankTitle:<user>`
      * is "which of my titles am I wearing", the chooser's key
      * (frontend/src/utils/rankTitle.ts).
      *

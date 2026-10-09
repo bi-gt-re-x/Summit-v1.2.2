@@ -23,10 +23,11 @@
  * 'Default'. After somebody reached it, the name was pinned to whoever that
  * was and never moved again — so the next person to sign in on that browser
  * was read as *them*: their day's unlock, and, fatally, their earned title.
- * A title retires the chain (`earnedTitle` below), so a second account found
- * the whole thing already over — ten clicks on the dashboard's mark doing
- * nothing, no unlock written, and the pentagon on the landing page inert
- * because it had no unlock to find. Dead, with no symptom to read.
+ * A title used to retire the chain, so a second account found the whole
+ * thing already over — ten clicks on the dashboard's mark doing nothing, no
+ * unlock written, and the pentagon on the landing page inert because it had no
+ * unlock to find. Dead, with no symptom to read. (A title no longer retires
+ * anything: see hooks/useMarkEgg.ts.)
  *
  * So `rememberAccount` writes it, from the session React already knows about,
  * on every load and every sign-in. The scripts go on reading the key they
@@ -127,11 +128,10 @@ export function markUnlockedToday(account: string): void {
  * The title handed out at the end of the chain, in the hidden ADMIN ROOM —
  * written by frontend/secret/hidden-engine.js.
  *
- * It is the chain's terminator: once a title has been earned the clue has done
- * its job and the dashboard goes back to reading normally.
- *
- * The rail wears it in place of the level's band once it is here, so the
- * prize is worn and not merely offered — see `title` in components/Rail.tsx.
+ * The nametag wears it in front of the name once it is here, so the prize is
+ * worn and not merely offered — see utils/rankTitle.ts. It does not close the
+ * chain: the door on the dashboard opens again for an account that already
+ * holds one (hooks/useMarkEgg.ts), and /engine lets it straight in.
  */
 export function earnedTitle(account: string): string | null {
   return carriedOver(`summitTitle:${account}`, `ascenTitle:${account}`);

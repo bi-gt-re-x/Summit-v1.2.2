@@ -735,7 +735,8 @@ html[data-theme="dark"] .rail-link.rail-invite { color: #8B949E; }
 .rail-foot { padding-top: var(--space-4); border-top-color: #E8E8E5; }
 .rail-rank {
     display: grid;
-    grid-template-columns: 44px minmax(0, 1fr);
+    /* Picture, nametag, and the Settings gear on the right. */
+    grid-template-columns: 44px minmax(0, 1fr) auto;
     column-gap: var(--space-3);
     align-items: center;
     padding: 0 var(--space-2);
@@ -748,11 +749,47 @@ html[data-theme="dark"] .rail-link.rail-invite { color: #8B949E; }
     object-fit: cover;
     background: #E9E9E7;
 }
-.rail-rank-title { font-size: var(--text-lg); font-weight: 500; color: #1F2326; }
+.rail-rank-title {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: #1F2326;
+    /* Title and name on up to two lines rather than one ellipsis: with the
+       gear beside it, "Grand Champion Myles" is wider than the plate, and an
+       ellipsis would cut the name — the half the reader is looking for. */
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow-wrap: anywhere;
+}
 .rail-rank-num { grid-column: 1 / -1; }
 .rail-xp-row { margin-top: 0; font-weight: 400; color: #8A8E95; }
 .rail-xp-bar { grid-column: 2; height: 4px; margin-top: var(--space-2); background: #E6E6E3; }
 .rail-xp-bar i { background: #A38A70; }
+
+/* Settings, as a small gear to the right of the nametag (`foot` on the Tab
+   in components/Rail.tsx). Quiet like the three dots, but always visible:
+   it is the only way to Settings on a desk apart from the account menu. */
+.rail-foot-settings {
+    grid-column: 3;
+    grid-row: 1 / span 3;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-md);
+    color: #8A8E95;
+    transition: background-color .16s ease, color .16s ease;
+}
+.rail-foot-settings svg { width: 18px; height: 18px; stroke-width: 1.8; }
+.rail-foot-settings:hover { background: #F4F6F8; color: #2C302E; }
+.rail-foot-settings.active { background: #F1EDE7; color: #A38A70; }
+.rail-foot-settings:focus-visible { outline: 2px solid #A38A70; outline-offset: 1px; }
+html.nav-collapsed .rail-foot-settings { margin: var(--space-2) auto 0; }
+html[data-theme="dark"] .rail-foot-settings { color: #8B949E; }
+html[data-theme="dark"] .rail-foot-settings:hover { background: #21262D; color: #F0F2F5; }
+html[data-theme="dark"] .rail-foot-settings.active { background: #2A2118; color: #D8C3A5; }
 
 /* Folded to icons: no headings, no words, and every section showing. */
 html.nav-collapsed .rail-search { justify-content: center; padding-inline: 0; }

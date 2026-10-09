@@ -27,7 +27,7 @@
  * hand. A test that derived the key the same way the code does would agree
  * with a rename and let the rest of the chain go quiet.
  */
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { FocusCard } from './StatCards';
 import { renderWithProviders } from '@/test/render';
@@ -181,14 +181,26 @@ describe('the mark on the Focus card', () => {
     expect(document.body.className).not.toContain('easter-wobble');
   });
 
-  it('opens once — the eleventh click is not a second announcement', () => {
+  it('counts again from one after it opens — the eleventh click is not a second announcement', () => {
     draw();
     click(10);
     expect(announced).toBe(1);
 
-    click(5);
+    click(3);
     expect(announced).toBe(1);
     expect(document.body.className).not.toContain('easter-wobble');
+  });
+
+  it('opens again for another ten on the same day', () => {
+    // It used to go silent once the clue was out, which from the reader's
+    // side is a door that has broken.
+    localStorage.setItem(KEY, '1');
+    draw();
+
+    click(4);
+    expect(mark()).toHaveClass('easter-pop');
+    click(6);
+    expect(announced).toBe(1);
   });
 
   it('opens in the light as readily as in the dark', () => {
@@ -207,17 +219,50 @@ describe('the mark on the Focus card', () => {
     expect(announced).toBe(1);
   });
 
-  it('is retired once the chain has handed out a title', () => {
-    localStorage.setItem('summitTitle:myles', 'Admin');
+  it('counts a click the shake made miss, close to where the mark sat', () => {
+    // The page shakes up to 25px and the mark is 18px wide, so at an ordinary
+    // pace most clicks from the fourth on landed beside it and the count
+    // stalled — the "mountain does nothing" report.
     draw();
+    vi.spyOn(mark(), 'getBoundingClientRect').mockReturnValue(
+      { left: 100, top: 100, width: 18, height: 18, right: 118, bottom: 118, x: 100, y: 100 } as DOMRect,
+    );
+    click(4);
+    const card = document.querySelector('.dash-stat-focus') as HTMLElement;
+    for (let i = 0; i < 6; i++) {
+      fireEvent.click(card, { clientX: 109 + 25, clientY: 109 - 12 });
+    }
+    expect(announced).toBe(1);
+  });
 
-    click(12);
+  it('does not count clicks elsewhere on the card, or before a run has begun', () => {
+    draw();
+    vi.spyOn(mark(), 'getBoundingClientRect').mockReturnValue(
+      { left: 100, top: 100, width: 18, height: 18, right: 118, bottom: 118, x: 100, y: 100 } as DOMRect,
+    );
+    const card = document.querySelector('.dash-stat-focus') as HTMLElement;
+    for (let i = 0; i < 12; i++) fireEvent.click(card, { clientX: 110, clientY: 110 });
+    expect(announced).toBe(0);
 
-    expect(localStorage.getItem(KEY)).toBeNull();
+    click(4);
+    for (let i = 0; i < 12; i++) fireEvent.click(card, { clientX: 400, clientY: 300 });
     expect(announced).toBe(0);
   });
 
-  it('is not retired by somebody else’s title', () => {
+  it('still opens for an account that already wears the title', () => {
+    // It was retired by the title, so anyone who had walked the chain once
+    // found the mountain dead the next time — the bug behind "the first step
+    // does not work".
+    localStorage.setItem('summitTitle:myles', 'Admin');
+    draw();
+
+    click(10);
+
+    expect(localStorage.getItem(KEY)).toBe('1');
+    expect(announced).toBe(1);
+  });
+
+  it('is not shut by somebody else’s title', () => {
     // The bug this guards: one account finishing the chain closed it for
     // everybody who signed in on that browser afterwards, and the only symptom
     // was a mark that did nothing and a pentagon that did nothing either.

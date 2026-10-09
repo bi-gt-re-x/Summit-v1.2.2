@@ -65,6 +65,11 @@ function prefsOf(all: Record<string, unknown>): Prefs {
   return out;
 }
 
+/** Whether this browser holds a light/dark choice — the cookie /api/set_theme writes. */
+function hasThemeCookie(): boolean {
+  return /(?:^|;\s*)theme=(light|dark)/.test(document.cookie);
+}
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const { username, status } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -227,16 +232,27 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
      and the account's stored colour still goes through the one place that
      writes it. */
   useEffect(() => {
+    /* Not until the account's own answer is in. Before it, `prefs` is the
+       built-in defaults — and the default is 'system' — so on every load this
+       followed the device for a moment, and following it *saves* (setTheme
+       writes the account and the cookie). An account that had chosen dark, on
+       a computer set to light, was switched back to light on each reload by a
+       preference it does not have. */
+    if (status === 'loading' || !ready) return;
     // A skin owns the base it is drawn against, so following the device over
     // it would put a dark palette's accents on light surfaces the moment the
     // sun came up.
     if (prefs.theme_mode !== 'system' || prefs.theme_skin) return;
+    /* Signed out, 'system' is only the default, not a choice — and a visitor
+       who picked light or dark on the landing page has a cookie that says
+       so. Following the device over it undid the pick on the next load. */
+    if (!username && hasThemeCookie()) return;
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const follow = () => setTheme(media.matches ? 'dark' : 'light');
     follow();
     media.addEventListener('change', follow);
     return () => media.removeEventListener('change', follow);
-  }, [prefs.theme_mode, setTheme]);
+  }, [status, ready, username, prefs.theme_mode, prefs.theme_skin, setTheme]);
 
   const update = useCallback(
     async (values: Partial<Prefs>): Promise<string | null> => {
