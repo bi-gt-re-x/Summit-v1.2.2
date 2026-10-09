@@ -282,7 +282,7 @@ export function Analytics() {
           </div>
 
           <p className="lp-ax-note">
-            The mean of the five measures beside it — add them up yourself.
+            The average of your five stats.
           </p>
 
           <div className="lp-ax-trend">
@@ -303,8 +303,8 @@ export function Analytics() {
 
         <div className="lp-card lp-ax-factors">
           <div className="lp-card-top">
-            <span className="lp-metric-label">What it is made of</span>
-            <span className="lp-pill-mini">A fifth each</span>
+            <span className="lp-metric-label">What goes into it</span>
+            <span className="lp-pill-mini">20% each</span>
           </div>
 
           <ul className="lp-ax-list">

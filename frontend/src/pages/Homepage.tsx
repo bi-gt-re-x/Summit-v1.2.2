@@ -228,8 +228,8 @@ export default function Homepage() {
               nothing to reach. */}
           <section className="lp-section lp-section-demo" id="see-it">
             <SectionHead
-              title="This is the app, not a screenshot"
-              blurb="Tick something off and watch the numbers move. It is the same dashboard component the signed-in page renders, running here in front of you."
+              title="Try it right here"
+              blurb="Check off a task and watch your XP climb. This is the real dashboard, live on the page."
             />
             <DashboardDemo />
           </section>
@@ -238,8 +238,8 @@ export default function Homepage() {
 
           <section className="lp-section">
             <SectionHead
-              title="One list, worked through"
-              blurb="Priorities, subjects and due dates on a single list. Check something off and the XP it earned lands on the bar — no second app to tell about it."
+              title="Check it off, get the XP"
+              blurb="Priorities, subjects and due dates all live on one list. Finish something and the XP goes straight to your bar."
             />
             {/* The workflow, played out: a task gets checked off, the list
                 closes over it, and the XP it earned lands on the bar. */}
@@ -249,24 +249,24 @@ export default function Homepage() {
 
           <section className="lp-section">
             <SectionHead
-              title="What the hours add up to"
-              blurb="Hours logged, completion rate and efficiency, by day or by week — counted over the days you actually worked, not the days that went past."
+              title="Know where your time goes"
+              blurb="Hours, completion rate and efficiency by day or by week. Only the days you actually worked count, so a day off won't drag your numbers down."
             />
             <Performance />
           </section>
 
           <section className="lp-section">
             <SectionHead
-              title="The calendar is the same list"
-              blurb="Drag a task onto a day and it is scheduled there. Move it back and the list has already changed — one task, two views of it, never two copies to keep in step."
+              title="Drag it onto your calendar"
+              blurb="Drop a task on a day to schedule it. Move it and your list updates too. Same task, so there's nothing to keep in sync."
             />
             <CalendarDemo />
           </section>
 
           <section className="lp-section">
             <SectionHead
-              title="Showing up, counted"
-              blurb="Every finished task earns XP toward the next level, and the streak counts consecutive days with at least one thing done. A run a week old survives one missed day a month — a bad Tuesday is not the end of it, and two in a row still are."
+              title="Keep the streak alive"
+              blurb="Every task you finish earns XP toward your next level. Your streak goes up each day you get at least one thing done. Once it's a week old you get one free miss a month, so one bad day won't wipe it out. Two in a row will, though."
             />
             <StreakLevel />
           </section>
@@ -279,8 +279,8 @@ export default function Homepage() {
               the streak and the calendar those are measured from. */}
           <section className="lp-section" id="analytics">
             <SectionHead
-              title="Analytics that end in a suggestion"
-              blurb="Five measures become one Growth Score, and the score becomes a ranked list of what to change next week. Every figure opens up to show the arithmetic behind it."
+              title="Stats that tell you what to do next"
+              blurb="Five stats make up your Growth Score, and Summit turns it into a short list of what to work on next week. Click any number to see the math behind it."
             />
             <Analytics />
           </section>

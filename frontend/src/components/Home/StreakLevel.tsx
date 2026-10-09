@@ -144,7 +144,7 @@ function StreakCard() {
 
   return (
     <div className="lp-card lp-streak" id="streakDemo" ref={card}>
-      <span className="lp-metric-label">Current Streak</span>
+      <span className="lp-metric-label">Current streak</span>
       <strong className="lp-streak-num">
         <span className="sk-flames" id="skFlames" ref={flames} />{' '}
         <span id="skNum" ref={num as React.RefObject<HTMLElement>}>
@@ -152,7 +152,7 @@ function StreakCard() {
         </span>{' '}
         Days
       </strong>
-      <span className="lp-metric-note">Streak counting</span>
+      <span className="lp-metric-note">and counting</span>
     </div>
   );
 }
@@ -216,7 +216,7 @@ function XpHistory() {
 
   return (
     <div className="lp-card lp-xphist" id="xpDemo" ref={card}>
-      <div className="lp-stats-head">XP History</div>
+      <div className="lp-stats-head">XP history</div>
       <div className="xp-track xp-armed" id="xpTrack" ref={track}>
         <span className="xp-line">
           <i />
@@ -258,7 +258,7 @@ function TrackingCard() {
   return (
     <div className="lp-card lp-track">
       <div className="lp-card-top">
-        <div className="lp-stats-head">Data Tracking &amp; Visualization</div>
+        <div className="lp-stats-head">Your week at a glance</div>
         <Trend value={12} suffix="%" />
       </div>
       <div className="lp-track-legend">

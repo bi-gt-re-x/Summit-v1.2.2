@@ -77,7 +77,7 @@ function FeaturedChart() {
     <div className="lp-card lp-perf-main">
       <div className="lp-card-top">
         <div>
-          <span className="lp-metric-label">Total Hours Worked</span>
+          <span className="lp-metric-label">Total hours worked</span>
           <strong className="lp-metric-num">
             312<small> hrs</small>
           </strong>
@@ -229,7 +229,7 @@ function Gauge() {
           </em>
         </div>
         <div>
-          <span className="lp-metric-label">Best Completion Rate</span>
+          <span className="lp-metric-label">Best completion rate</span>
           <span className="lp-metric-note">245 of 255 tasks on time</span>
         </div>
       </div>
@@ -243,8 +243,8 @@ function Gauge() {
           {LAST_GRADE}
         </span>
         <div>
-          <span className="lp-metric-label">Best Efficiency Ratio</span>
-          <span className="lp-metric-note">100% deadlines · avg 42 min/task</span>
+          <span className="lp-metric-label">Best efficiency</span>
+          <span className="lp-metric-note">Every deadline hit · 42 min per task</span>
         </div>
       </div>
     </>
@@ -258,7 +258,7 @@ export function Performance() {
       <div className="lp-perf-side">
         <div className="lp-card lp-metric">
           <div className="lp-card-top">
-            <span className="lp-metric-label">Daily Hours Logged</span>
+            <span className="lp-metric-label">Hours per day</span>
             <Trend value={11} suffix="%" />
           </div>
           <strong className="lp-metric-num">
