@@ -301,7 +301,12 @@ Backend
 
 Storage
 
-* SQLite (`data/summit.db`, built from `data/sql/`)
+* PostgreSQL when `DATABASE_URL` is set (see `.env.example`); the tables are
+  created on first start from the same schema as below
+* SQLite (`data/summit.db`, built from `data/sql/`) otherwise, and for the test
+  suite — `scripts/migrate_to_postgres.py` copies a SQLite file into Postgres
+* `SUMMIT_TEST_DATABASE_URL=postgresql://localhost/summit_test pytest` runs the
+  suite against a throwaway Postgres database instead
 
 Visualization
 

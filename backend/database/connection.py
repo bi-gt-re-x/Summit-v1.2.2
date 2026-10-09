@@ -35,7 +35,7 @@ import sqlite3
 import threading
 from datetime import datetime
 
-from backend.config.settings import DB_PATH, SCHEMA_FILES, SQL_DIR
+from backend.config.settings import DB_PATH, SCHEMA_FILES, SQL_DIR, database_url
 
 # Columns holding JSON. SQLite has no JSON type, so these are TEXT columns
 # that get decoded on the way out and encoded on the way in — what the JSONB
@@ -685,6 +685,47 @@ def _catch_up(path):
         con.close()
 
 
+def _ensure_postgres(url):
+    """Bring a Postgres database up to the shape the app expects.
+
+    The schema is not written out twice. A scratch SQLite database is built
+    from data/sql/*.sql and caught up exactly as a real one would be, and
+    `pg.mirror_schema` creates in Postgres whatever of it is missing — so the
+    seed files and the ADDED_* lists above stay the one description of the
+    tables, and a column added there reaches Postgres on the next start. An
+    empty Postgres database also gets the seed rows, the same as a fresh
+    SQLite file does. An advisory lock keeps two workers starting together
+    from both doing it.
+    """
+    import tempfile
+    import psycopg
+    from backend.database import pg
+
+    scratch_dir = tempfile.mkdtemp(prefix='summit-schema-')
+    scratch = os.path.join(scratch_dir, 'schema.db')
+    try:
+        _build(scratch)
+        _catch_up(scratch)
+        lite = sqlite3.connect(scratch)
+        try:
+            with psycopg.connect(url, autocommit=True) as raw:
+                raw.execute('SELECT pg_advisory_lock(52130)')
+                try:
+                    fresh = pg.is_empty(raw)
+                    _, tables, indexes = pg.mirror_schema(raw, lite)
+                    if fresh:
+                        pg.copy_rows(raw, lite, tables)
+                    pg.finish_schema(raw, tables, indexes)
+                finally:
+                    raw.execute('SELECT pg_advisory_unlock(52130)')
+        finally:
+            lite.close()
+    finally:
+        for name in os.listdir(scratch_dir):
+            os.remove(os.path.join(scratch_dir, name))
+        os.rmdir(scratch_dir)
+
+
 def _ensure_database():
     """Build the database the first time anything asks for it."""
     global _built
@@ -692,6 +733,13 @@ def _ensure_database():
         return
     with _build_lock:
         if _built:
+            return
+        url = database_url()
+        if url:
+            _forget_schemas()
+            _ensure_postgres(url)
+            _forget_schemas()
+            _built = True
             return
         directory = os.path.dirname(DB_PATH)
         if directory and not os.path.isdir(directory):
@@ -749,6 +797,12 @@ def connect():
     cheap, and WAL means a reader never blocks on the writer.
     """
     _ensure_database()
+    url = database_url()
+    if url:
+        # Postgres, through a connection that speaks sqlite3's interface — see
+        # backend/database/pg.py for what that covers.
+        from backend.database import pg
+        return pg.connect(url, trace=_note_write)
     con = sqlite3.connect(DB_PATH, timeout=10)
     con.row_factory = sqlite3.Row
     con.execute('PRAGMA foreign_keys = ON')
@@ -774,16 +828,56 @@ _schema_cache = {}
 
 def _forget_schemas():
     _schema_cache.clear()
+    _key_cache.clear()
+
+
+#: Postgres column types, as the SQLite declared types the rest of this module
+#: reasons about (`_decode`, `_encode`).
+_PG_DECLARED = {
+    'boolean': 'BOOLEAN',
+    'numeric': 'NUMERIC',
+    'bigint': 'INTEGER',
+    'integer': 'INTEGER',
+    'double precision': 'REAL',
+    'text': 'TEXT',
+}
+
+#: A table's primary key columns, per database. Postgres only — see
+#: `_pg_write_table`.
+_key_cache = {}
+
+
+def _primary_key(con, table):
+    key = (database_url(), table)
+    held = _key_cache.get(key)
+    if held is None:
+        held = [row[0] for row in con.execute(
+            'SELECT kcu.column_name FROM information_schema.table_constraints tc '
+            'JOIN information_schema.key_column_usage kcu '
+            '  ON kcu.constraint_name = tc.constraint_name AND kcu.table_schema = tc.table_schema '
+            "WHERE tc.table_schema = current_schema() AND tc.table_name = ? "
+            "AND tc.constraint_type = 'PRIMARY KEY' ORDER BY kcu.ordinal_position",
+            (table,)).fetchall()]
+        _key_cache[key] = held
+    return held
 
 
 def _schema(con, table):
     """[(name, declared type, nullable)] for a table, or [] if there isn't one."""
-    key = (DB_PATH, table)
+    url = database_url()
+    key = (url or DB_PATH, table)
     held = _schema_cache.get(key)
     if held is not None:
         return held
-    rows = con.execute('PRAGMA table_info("{}")'.format(table)).fetchall()
-    found = [(r['name'], (r['type'] or '').upper(), not r['notnull']) for r in rows]
+    if url:
+        rows = con.execute(
+            'SELECT column_name, data_type, is_nullable FROM information_schema.columns '
+            "WHERE table_schema = current_schema() AND table_name = ? AND column_name != 'rowid' "
+            'ORDER BY ordinal_position', (table,)).fetchall()
+        found = [(r[0], _PG_DECLARED.get(r[1], 'TEXT'), r[2] == 'YES') for r in rows]
+    else:
+        rows = con.execute('PRAGMA table_info("{}")'.format(table)).fetchall()
+        found = [(r['name'], (r['type'] or '').upper(), not r['notnull']) for r in rows]
     # A table that is not there yet is not cached: the next caller may be
     # asking after it has been created.
     if found:
@@ -820,6 +914,30 @@ def _encode(table, column, value):
         return json.dumps(value, sort_keys=True)
     if (table, column) in JSON_COLUMNS and value is not None:
         return json.dumps(value, sort_keys=True)
+    if isinstance(value, str) and database_url():
+        return _pg_text(table, column, value)
+    return value
+
+
+def _pg_text(table, column, value):
+    """A string bound for a Postgres column that is not text.
+
+    SQLite stores '' or 'n/a' in a NUMERIC column without complaint, and the
+    app reads such a value back as missing anyway. Postgres refuses the write,
+    so the same value is stored as what it reads as: NULL.
+    """
+    kinds = {name: kind for name, kind, _ in
+             _schema_cache.get((database_url(), table), ())}
+    kind = kinds.get(column)
+    if kind in ('NUMERIC', 'INTEGER', 'REAL'):
+        text = value.strip()
+        try:
+            float(text)
+        except ValueError:
+            return None
+        return text
+    if kind == 'BOOLEAN':
+        return value.strip().lower() in ('1', 'true', 't', 'yes', 'on')
     return value
 
 
@@ -892,6 +1010,10 @@ def write_table(table, rows, columns=None):
                     ', '.join('?' for _ in names)),
                 values))
 
+        if database_url():
+            _pg_write_table(con, table, fields, rows)
+            return
+
         # Has to be set before the transaction opens; inside one it does
         # nothing.
         con.execute('PRAGMA foreign_keys = OFF')
@@ -910,6 +1032,56 @@ def write_table(table, rows, columns=None):
             con.execute('PRAGMA foreign_keys = ON')
     finally:
         con.close()
+
+
+def _pg_write_table(con, table, fields, rows):
+    """`write_table` for Postgres: the same result, without switching keys off.
+
+    SQLite's version empties the table and refills it with foreign keys off,
+    so the ON DELETE CASCADE on every child table does not fire. Postgres has
+    no per-connection switch for that short of superuser, so instead the rows
+    that are no longer in the list are deleted (and their children with them,
+    which is what deleting a row means) and every other row is upserted on
+    its primary key. `rowid = excluded.rowid` renumbers each row as it is
+    written, so the table keeps the order of the list, as SQLite's does.
+    """
+    pk = _primary_key(con, table)
+    with con:
+        if not pk:
+            con.execute('DELETE FROM "{}"'.format(table))
+        else:
+            wanted = {tuple(str(row.get(k)) for k in pk) for row in rows}
+            gone = [key for key in (tuple(str(v) for v in record)
+                                    for record in con.execute('SELECT {} FROM "{}"'.format(
+                                        ', '.join('"{}"'.format(k) for k in pk), table)))
+                    if key not in wanted]
+            for at in range(0, len(gone), _IN_CHUNK):
+                chunk = gone[at:at + _IN_CHUNK]
+                if len(pk) == 1:
+                    con.execute('DELETE FROM "{}" WHERE "{}" IN ({})'.format(
+                        table, pk[0], ', '.join('?' for _ in chunk)), [key[0] for key in chunk])
+                else:
+                    tuple_marks = '({})'.format(', '.join('?' for _ in pk))
+                    con.execute('DELETE FROM "{}" WHERE ({}) IN ({})'.format(
+                        table, ', '.join('"{}"'.format(k) for k in pk),
+                        ', '.join(tuple_marks for _ in chunk)),
+                        [value for key in chunk for value in key])
+
+        grouped = {}
+        for row in rows:
+            present = tuple(name for name, nullable in fields if name in row or nullable)
+            grouped.setdefault(present, []).append(
+                [_encode(table, name, row.get(name)) for name in present])
+        for names, values in grouped.items():
+            sql = 'INSERT INTO "{}" ({}) VALUES ({})'.format(
+                table, ', '.join('"{}"'.format(n) for n in names),
+                ', '.join('?' for _ in names))
+            if pk:
+                setters = ['"{0}" = excluded."{0}"'.format(n) for n in names if n not in pk]
+                setters.append('rowid = excluded.rowid')
+                sql += ' ON CONFLICT ({}) DO UPDATE SET {}'.format(
+                    ', '.join('"{}"'.format(k) for k in pk), ', '.join(setters))
+            con.executemany(sql, values)
 
 
 # --------------------------------------------------------------------------
@@ -1295,12 +1467,12 @@ def series_signature(user_id):
     try:
         parts = []
         for table, expression, clause in (
-            ('xp_events', 'COUNT(*) || "/" || CAST(COALESCE(SUM(amount), 0) AS INTEGER)', '1'),
-            ('focus_days', 'COUNT(*) || "/" || CAST(COALESCE(SUM(seconds), 0) AS INTEGER)', '1'),
+            ('xp_events', 'COUNT(*) || \'/\' || CAST(COALESCE(SUM(amount), 0) AS INTEGER)', 'TRUE'),
+            ('focus_days', 'COUNT(*) || \'/\' || CAST(COALESCE(SUM(seconds), 0) AS INTEGER)', 'TRUE'),
             # Only the rated, finished rows reach the series, so only their
             # count and the sum of what they are rated matter here.
             ('tasks',
-             'COUNT(*) || "/" || CAST(COALESCE(SUM(difficulty * execution), 0) AS INTEGER)',
+             'COUNT(*) || \'/\' || CAST(COALESCE(SUM(difficulty * execution), 0) AS INTEGER)',
              "status = 'done' AND difficulty BETWEEN 1 AND 5 AND execution BETWEEN 1 AND 5"),
         ):
             if not _schema(con, table):
@@ -1335,19 +1507,19 @@ def rollup_signature(user_id):
         parts = []
         for table, expression, clause in (
             ('xp_events',
-             'COUNT(*) || "/" || COALESCE(SUM(amount), 0) || "/" '
-             '|| COALESCE(SUM(julianday(substr(COALESCE(timestamp, date), 1, 19))), 0) || "/" '
+             'COUNT(*) || \'/\' || COALESCE(SUM(amount), 0) || \'/\' '
+             '|| COALESCE(SUM(julianday(substr(COALESCE(timestamp, date), 1, 19))), 0) || \'/\' '
              '|| COALESCE(SUM(tasks_completed), 0)',
-             '1'),
+             'TRUE'),
             ('focus_days',
-             'COUNT(*) || "/" || COALESCE(SUM(seconds), 0) || "/" '
-             '|| COALESCE(SUM(goal_hours), 0) || "/" || COALESCE(SUM(julianday(date)), 0)',
-             '1'),
+             'COUNT(*) || \'/\' || COALESCE(SUM(seconds), 0) || \'/\' '
+             '|| COALESCE(SUM(goal_hours), 0) || \'/\' || COALESCE(SUM(julianday(date)), 0)',
+             'TRUE'),
             ('tasks',
-             'COUNT(*) || "/" || COALESCE(SUM(xp_value), 0) || "/" '
-             '|| COALESCE(SUM(julianday(substr(completed_at, 1, 19))), 0) || "/" '
-             '|| COALESCE(SUM(difficulty * 7 + execution), 0) || "/" '
-             '|| COALESCE(SUM(completion_seconds), 0) || "/" '
+             'COUNT(*) || \'/\' || COALESCE(SUM(xp_value), 0) || \'/\' '
+             '|| COALESCE(SUM(julianday(substr(completed_at, 1, 19))), 0) || \'/\' '
+             '|| COALESCE(SUM(difficulty * 7 + execution), 0) || \'/\' '
+             '|| COALESCE(SUM(completion_seconds), 0) || \'/\' '
              '|| COALESCE(SUM(CASE WHEN met_deadline THEN 1 WHEN met_deadline IS NULL THEN 0 ELSE 2 END), 0)',
              "status = 'done'"),
         ):
@@ -1535,9 +1707,13 @@ def new_id(table):
             if not _schema(con, table):
                 highest = 0
             else:
-                row = con.execute(
-                    'SELECT MAX(CAST(id AS INTEGER)) FROM "{}"'.format(table)
-                ).fetchone()
+                # Postgres refuses to cast an id that is not a number, where
+                # SQLite reads it as 0; only the numeric ones can be a floor.
+                query = ('SELECT MAX(CAST(id AS BIGINT)) FROM "{}" '
+                         "WHERE CAST(id AS TEXT) ~ '^[0-9]{{1,18}}$'"
+                         if database_url() else
+                         'SELECT MAX(CAST(id AS INTEGER)) FROM "{}"').format(table)
+                row = con.execute(query).fetchone()
                 highest = int(row[0] or 0)
         finally:
             con.close()
@@ -1637,8 +1813,9 @@ def complete_tasks(username, account_id, task_ids, stamp, day, derive, account, 
                 # and this is the ledger refusing a duplicate even if a
                 # future path were to forget that guard.
                 con.executemany(
-                    'INSERT OR IGNORE INTO xp_events (id, user_id, amount, reason, timestamp, '
-                    'date, tasks_completed, task_id) VALUES (?, ?, ?, ?, ?, ?, 1, ?)',
+                    'INSERT INTO xp_events (id, user_id, amount, reason, timestamp, '
+                    'date, tasks_completed, task_id) VALUES (?, ?, ?, ?, ?, ?, 1, ?) '
+                    'ON CONFLICT DO NOTHING',
                     [(event_id, username, xp, 'task_completion', stamp, day, task_id)
                      for event_id, (task_id, xp)
                      in zip(new_ids('xp_events', len(completed)), completed)])
@@ -1990,8 +2167,9 @@ def save_goal_ai_answer(username, key, goal_ids):
     try:
         with con:
             con.execute(
-                'INSERT OR REPLACE INTO goal_ai_answers (user_id, ask_key, goal_ids) '
-                'VALUES (?, ?, ?)', (username, key, ','.join(str(g) for g in goal_ids)))
+                'INSERT INTO goal_ai_answers (user_id, ask_key, goal_ids) '
+                'VALUES (?, ?, ?) ON CONFLICT (user_id, ask_key) '
+                'DO UPDATE SET goal_ids = excluded.goal_ids', (username, key, ','.join(str(g) for g in goal_ids)))
     finally:
         con.close()
 
@@ -2527,11 +2705,11 @@ def badge_signature(username):
         parts = []
         for table, clause, params in (
             ('tasks', "status = 'done'", ()),
-            ('notes', '1', ()),
-            ('records', '1', ()),
+            ('notes', 'TRUE', ()),
+            ('records', 'TRUE', ()),
             ('goals', "status = 'completed'", ()),
             ('calendar_events', 'completed', ()),
-            ('xp_events', '1', ()),
+            ('xp_events', 'TRUE', ()),
         ):
             if not _schema(con, table):
                 parts.append('-')
@@ -2611,7 +2789,7 @@ def add_notifications(username, rows):
                 }
                 names = [n for n in NOTIFICATION_COLUMNS if n in record]
                 cursor = con.execute(
-                    'INSERT OR IGNORE INTO notifications ({}) VALUES ({})'.format(
+                    'INSERT INTO notifications ({}) VALUES ({}) ON CONFLICT DO NOTHING'.format(
                         ', '.join('"{}"'.format(n) for n in names),
                         ', '.join('?' for _ in names)),
                     [record[n] for n in names])
@@ -2833,7 +3011,7 @@ def notification_facts(username, day, tomorrow, week_ago, fortnight_ago):
             facts['xp_best_day'] = con.execute(
                 'SELECT COALESCE(MAX(total), 0) AS n FROM ('
                 '  SELECT SUM(amount) AS total FROM xp_events '
-                '  WHERE user_id = ? AND date != ? GROUP BY date)',
+                '  WHERE user_id = ? AND date != ? GROUP BY date) AS days',
                 (username, day)).fetchone()['n'] or 0
             last = con.execute(
                 'SELECT MAX(date) AS d FROM xp_events WHERE user_id = ?',
@@ -2997,10 +3175,10 @@ def save_node_steps(node_id, rows):
                 if not isinstance(checks, str):
                     values['checks'] = json.dumps(list(checks))
                 columns = ', '.join('"{}"'.format(name) for name in SKILL_STEP_COLUMNS)
-                marks = ', '.join(':{}'.format(name) for name in SKILL_STEP_COLUMNS)
+                marks = ', '.join('?' for _ in SKILL_STEP_COLUMNS)
                 con.execute(
                     'INSERT INTO skill_steps ({}) VALUES ({})'.format(columns, marks),
-                    {name: values.get(name) for name in SKILL_STEP_COLUMNS})
+                    [values.get(name) for name in SKILL_STEP_COLUMNS])
         return len(rows)
     finally:
         con.close()
@@ -3016,16 +3194,16 @@ def log_step_audit(rows):
             con.executemany(
                 'INSERT INTO skill_step_audit '
                 '(run_id, node_id, ordinal, stage, outcome, reason, at) '
-                'VALUES (:run_id, :node_id, :ordinal, :stage, :outcome, :reason, :at)',
-                [{
-                    'run_id': row.get('run_id', ''),
-                    'node_id': row.get('node_id', ''),
-                    'ordinal': row.get('ordinal'),
-                    'stage': row.get('stage', 'store'),
-                    'outcome': row.get('outcome', 'pass'),
-                    'reason': (row.get('reason') or '')[:400],
-                    'at': row.get('at') or datetime.now().isoformat(timespec='seconds'),
-                } for row in rows])
+                'VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [(
+                    row.get('run_id', ''),
+                    row.get('node_id', ''),
+                    row.get('ordinal'),
+                    row.get('stage', 'store'),
+                    row.get('outcome', 'pass'),
+                    (row.get('reason') or '')[:400],
+                    row.get('at') or datetime.now().isoformat(timespec='seconds'),
+                ) for row in rows])
         return len(rows)
     finally:
         con.close()
@@ -3109,10 +3287,10 @@ def save_step_problems(node_id, ordinal, rows):
                 if not isinstance(checks, str):
                     values['checks'] = json.dumps(list(checks))
                 columns = ', '.join('"{}"'.format(n) for n in SKILL_PROBLEM_COLUMNS)
-                marks = ', '.join(':{}'.format(n) for n in SKILL_PROBLEM_COLUMNS)
+                marks = ', '.join('?' for _ in SKILL_PROBLEM_COLUMNS)
                 con.execute(
                     'INSERT INTO skill_problems ({}) VALUES ({})'.format(columns, marks),
-                    {n: values.get(n) for n in SKILL_PROBLEM_COLUMNS})
+                    [values.get(n) for n in SKILL_PROBLEM_COLUMNS])
         return len(rows)
     finally:
         con.close()
@@ -3127,7 +3305,7 @@ def skill_problem_coverage():
         return {
             row[0]: (row[1], row[2])
             for row in con.execute(
-                'SELECT tree_id, COUNT(DISTINCT node_id || ":" || ordinal), COUNT(*) '
+                'SELECT tree_id, COUNT(DISTINCT node_id || \':\' || ordinal), COUNT(*) '
                 'FROM skill_problems GROUP BY tree_id')
         }
     finally:

@@ -47,6 +47,12 @@ itsdangerous==2.2.0
 # the same code that wrote them — see backend/tracking/auth.py.
 werkzeug==3.1.8
 
+# PostgreSQL, when DATABASE_URL is set — backend/database/pg.py. The binary
+# wheel carries its own libpq, so nothing else needs installing; the pool keeps
+# connections open between requests rather than one handshake per query.
+psycopg[binary]==3.3.6
+psycopg-pool==3.3.3
+
 # Form parsing on the OAuth callback.
 python-multipart==0.0.20
 

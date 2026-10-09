@@ -61,6 +61,20 @@ os.environ['APP_BASE_URL'] = 'http://testserver'
 # this and reads the Set-Cookie header.
 os.environ['SUMMIT_INSECURE_COOKIES'] = '1'
 
+# SQLite unless asked otherwise. A developer's DATABASE_URL must never point
+# the suite at their real Postgres database; SUMMIT_TEST_DATABASE_URL names a
+# throwaway one to run the whole suite against Postgres instead, and its
+# schema is dropped and rebuilt for every test (see `fresh_db`).
+#
+# Set to '' rather than removed, and that difference is the whole safeguard:
+# `settings.load_dotenv` fills in only names that are *absent*, and importing
+# backend/run.py calls it, so a removed DATABASE_URL came straight back from
+# the developer's .env halfway through a run and every test after that wrote
+# into their real database. An empty one is present, so .env leaves it alone,
+# and `database_url()` reads '' as "use SQLite".
+_TEST_PG = os.environ.get('SUMMIT_TEST_DATABASE_URL', '').strip()
+os.environ['DATABASE_URL'] = _TEST_PG
+
 import pytest                                            # noqa: E402
 from fastapi.testclient import TestClient                # noqa: E402
 
@@ -117,6 +131,24 @@ def _no_model_keys(monkeypatch):
     monkeypatch.setattr(settings, 'load_dotenv', lambda path=None: None)
 
 
+#: What cannot run against Postgres, because it is *about* SQLite: these open
+#: the database file with sqlite3 to look at raw rows, or read SQLite's query
+#: planner to prove an index is used. Everything else runs on both.
+SQLITE_ONLY_FILES = {'test_goal_matcher_store.py', 'test_plan_backfill.py',
+                     'test_planner_end_to_end.py'}
+SQLITE_ONLY_TESTS = {'test_the_task_read_does_not_sort_every_row',
+                     'test_the_stale_query_uses_its_index'}
+
+
+def pytest_collection_modifyitems(config, items):
+    if not _TEST_PG:
+        return
+    skip = pytest.mark.skip(reason='reads the SQLite file or its query planner directly')
+    for item in items:
+        if item.fspath.basename in SQLITE_ONLY_FILES or item.name in SQLITE_ONLY_TESTS:
+            item.add_marker(skip)
+
+
 PASSWORD = 'not-a-real-password-1'
 
 
@@ -148,6 +180,11 @@ def fresh_db(tmp_path, monkeypatch):
     monkeypatch.setattr('backend.config.settings.DB_PATH', path, raising=False)
     monkeypatch.setattr(db, '_built', False)
     monkeypatch.setattr(db, '_last_id', {})
+    if _TEST_PG:
+        import psycopg
+        with psycopg.connect(_TEST_PG, autocommit=True) as wipe:
+            wipe.execute('DROP SCHEMA IF EXISTS public CASCADE')
+            wipe.execute('CREATE SCHEMA public')
     db._ensure_database()
     yield path
 

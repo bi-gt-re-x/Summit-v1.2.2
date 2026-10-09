@@ -67,6 +67,20 @@ SQL_DIR = os.path.join(DATA_DIR, 'sql')
 BACKUP_DIR = os.path.join(DATA_DIR, 'backups')
 DB_PATH = os.environ.get('SUMMIT_DB') or os.path.join(DATA_DIR, 'summit.db')
 
+
+def database_url():
+    """The PostgreSQL database to use, or '' to use SQLite at DB_PATH.
+
+    `DATABASE_URL=postgresql://user:pass@host:5432/summit` switches the whole
+    datastore to Postgres (backend/database/pg.py); unset, the app runs on the
+    SQLite file as it always has. Read on each call rather than at import, so
+    `load_dotenv()` in the entry point has had its chance to set it. The tests
+    clear it (tests/conftest.py) unless SUMMIT_TEST_DATABASE_URL asks for a
+    Postgres run.
+    """
+    url = os.environ.get('DATABASE_URL', '').strip()
+    return url if url.startswith(('postgres://', 'postgresql://')) else ''
+
 # The order data/sql/*.sql is executed in when building the database. It is
 # spelled out rather than sorted because a table has to exist before another
 # one can reference it: users first, then everything that hangs off a user.
