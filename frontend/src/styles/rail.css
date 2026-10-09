@@ -338,12 +338,9 @@
     .rail-sub-link { transition: none; }
 }
 
-/* --- The foot: the rank and the bar to the next one --------------------- */
-/* It held the dark-mode switch and an avatar-and-username plate. The switch is
-   in the top bar with the rest of the controls, and the plate is gone: it
-   showed the reader the name they had just typed to get in, over a picture,
-   above the level the bar below it was already drawing. What is left is the
-   one thing here that moves when you finish something. */
+/* --- The foot: the nametag and the bar to the next level ---------------- */
+/* The same nametag as the top bar's account button — the account's picture,
+   then "<title> <name>" (components/Nametag) — over the level and its bar. */
 .rail-foot {
     flex: none;
     display: flex;
@@ -392,6 +389,62 @@
 }
 
 /* --- Choosing a title --------------------------------------------------- */
+/* Three dots, quiet until you go looking. It sits at the same weight as the
+   XP figures below rather than the nametag beside it: the name is the thing
+   on this plate, and a control that matched it would read as a second one. */
+.rail-rank-more {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: #9297A3;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .16s ease, background-color .16s ease, color .16s ease;
+}
+.rail-rank-more svg { width: 15px; height: 15px; }
+
+/* Shown on hover, on focus, and while its menu is open — but never hidden
+   from the keyboard, which cannot hover and would otherwise be tabbing to
+   something invisible. */
+.rail-rank:hover .rail-rank-more,
+.rail-rank-more:focus-visible,
+.rail-rank-more.is-open { opacity: 1; }
+.rail-rank-more:hover,
+.rail-rank-more.is-open { background: #EDEFF3; color: #2C302E; }
+
+.rail-title-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: default;
+}
+
+/* Opens upward, because the plate it belongs to is at the foot of the rail
+   and a menu dropping from there would open off the bottom of the screen. */
+.rail-title-menu {
+    position: absolute;
+    z-index: 61;
+    bottom: calc(100% + 6px);
+    left: 8px;
+    right: 8px;
+    max-height: 46vh;
+    overflow-y: auto;
+    padding: var(--space-1);
+    border: 1px solid #E4E7EC;
+    border-radius: var(--radius-md);
+    background: #FFFFFF;
+    box-shadow: var(--shadow-lg);
+}
 
 /* The collapsed rail's version of the title: the level's number alone, which
    is the part of "Grand Champion, level 53" that survives 54px. */
@@ -540,6 +593,14 @@ html[data-theme="dark"] .rail-toggle:focus-visible { outline-color: #7FB3FF; }
 html[data-theme="dark"] .rail-foot { border-top-color: #21262D; }
 html[data-theme="dark"] .rail-rank-title,
 html[data-theme="dark"] .rail-rank-num { color: #F0F2F5; }
+html[data-theme="dark"] .rail-rank-more { color: #8B949E; }
+html[data-theme="dark"] .rail-rank-more:hover,
+html[data-theme="dark"] .rail-rank-more.is-open { background: #21262D; color: #F0F2F5; }
+html[data-theme="dark"] .rail-title-menu {
+    border-color: #2A3038;
+    background: #161B22;
+    box-shadow: var(--shadow-lg);
+}
 html[data-theme="dark"] .rail-xp-row { color: #8B949E; }
 html[data-theme="dark"] .rail-xp-bar { background: #21262D; }
 
@@ -681,15 +742,12 @@ html[data-theme="dark"] .rail-link.rail-invite { color: #8B949E; }
 }
 .rail-avatar {
     grid-row: 1 / span 3;
-    display: grid;
-    place-items: center;
     width: 44px;
     height: 44px;
     border-radius: 50%;
+    object-fit: cover;
     background: #E9E9E7;
-    color: #8E9298;
 }
-.rail-avatar svg { width: 22px; height: 22px; }
 .rail-rank-title { font-size: var(--text-lg); font-weight: 500; color: #1F2326; }
 .rail-rank-num { grid-column: 1 / -1; }
 .rail-xp-row { margin-top: 0; font-weight: 400; color: #8A8E95; }
@@ -716,7 +774,7 @@ html[data-theme="dark"] .rail-link.active { background: #2A2118; color: #F0F2F5;
 html[data-theme="dark"] .rail-link.active svg { color: #D8C3A5; }
 html[data-theme="dark"] .rail-sub-link.active { background: #1F242C; color: #F0F2F5; }
 html[data-theme="dark"] .rail-sub-link.active::before { background: #D8C3A5; }
-html[data-theme="dark"] .rail-avatar { background: #232A33; color: #8B949E; }
+html[data-theme="dark"] .rail-avatar { background: #232A33; }
 html[data-theme="dark"] .rail-rank-title { color: #F0F2F5; }
 
 @media (prefers-reduced-motion: reduce) {

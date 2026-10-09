@@ -34,16 +34,20 @@
  *   rail's foot until the foot became the rank and the XP bar, and it belongs
  *   with the rest of the app's controls anyway.
  *   **The account menu** is now the only one: who is signed in, the level, the
- *   fifty pictures, and the way out. It inherited the avatar picker from the
- *   rail, whose account plate is gone — a picker with no way to open it is a
- *   deleted feature with extra steps.
+ *   title in front of the name, the fifty pictures, and the way out.
+ *
+ * The account button is the nametag — picture, then "<title> <name>" — and it
+ * is the same one the rail's foot wears (hooks/useNametag), so the two
+ * corners of the screen never disagree about who is signed in.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NotificationPanel } from './Notifications';
+import { NametagText, TitleSelect } from './Nametag';
 import { SearchPanel } from './Search';
 import { OPEN_SEARCH } from '@/utils/searchBus';
 import { useAuth, useNotifications, useSettings, useStats, useTheme } from '@/hooks';
+import { useNametag } from '@/hooks/useNametag';
 import { AVATARS, avatarPath } from '@/services/avatars';
 import { auth } from '@/services';
 import { format } from '@/utils';
@@ -108,6 +112,7 @@ export function Topbar() {
   const { stats } = useStats();
 
   const level = stats ? format.levelForTotalXp(stats.xp) : null;
+  const tag = useNametag();
 
   const [open, setOpen] = useState<'search' | 'alerts' | 'account' | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -308,7 +313,7 @@ export function Topbar() {
             onClick={() => toggle('account')}
           >
             <img className="topbar-avatar" src={avatar} alt="" width={34} height={34} />
-            <span className="topbar-name">{displayName || username}</span>
+            <NametagText className="topbar-name" title={tag.title} name={tag.name} />
             <svg className="topbar-caret" {...stroke} strokeWidth={2.2}>
               <path d="m6 9 6 6 6-6" />
             </svg>
@@ -317,7 +322,9 @@ export function Topbar() {
           {open === 'account' && (
             <div className="topbar-panel topbar-account-menu" role="menu">
               <div className="topbar-account-head">
-                <strong>{displayName || username}</strong>
+                <strong>
+                  <NametagText title={tag.title} name={tag.name} />
+                </strong>
                 {/* The username, where it is an answer rather than a label:
                     the menu is where somebody checks which account they are
                     signed in to. Only shown when it differs from the name
@@ -330,6 +337,7 @@ export function Topbar() {
                   </span>
                 )}
               </div>
+              {tag.title && <TitleSelect tag={tag} className="topbar-title-pick" />}
               {/* All fifty in one scrolling line, as they were in the rail.
                   A wrapping grid would be ten rows deep and turn a menu into a
                   page; the row is the shape that fits a menu. */}

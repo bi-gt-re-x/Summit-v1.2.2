@@ -112,7 +112,35 @@
     flex: none;
     background: #F2F4F7;
 }
-.topbar-name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-name { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The title in the account menu: a select, because the menu is already open
+   and cannot open another over itself. The rail's foot has the same choice as
+   a menu off its three dots. */
+.topbar-title-pick {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: 0 var(--space-2) var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: #6C757D;
+}
+.topbar-title-pick select {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid #E4E7EC;
+    border-radius: var(--radius-md);
+    background: #FFFFFF;
+    color: #2C302E;
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+html[data-theme="dark"] .topbar-title-pick { color: #8B949E; }
+html[data-theme="dark"] .topbar-title-pick select { border-color: #30363D; background: #0D1117; color: #F0F2F5; }
 .topbar-caret { width: 15px; height: 15px; color: #9297A3; flex: none; }
 
 /* --- The panels ---------------------------------------------------------- */

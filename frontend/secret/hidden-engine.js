@@ -19,15 +19,23 @@
     /**
      * Bind a title to this account, and put it on.
      *
-     * `summitTitle:<user>` is "has this account earned the secret title". It
-     * retires the chain (see frontend/src/utils/easterEgg.ts), and the rail
-     * wears whatever it holds in place of the level's band — reaching the end
-     * of the chain is the equip, with no menu to go through.
+     * Two keys, because the nametag asks two separate questions.
+     * `summitTitle:<user>` is "has this account earned the secret title" — it
+     * puts the title in the nametag's list of titles at all, and it retires
+     * the chain (see frontend/src/utils/easterEgg.ts). `summitRankTitle:<user>`
+     * is "which of my titles am I wearing", the chooser's key
+     * (frontend/src/utils/rankTitle.ts).
+     *
+     * Writing only the first would leave a reader who had picked a band
+     * wearing the band: the button says TITLE EQUIPPED, and reaching the end of
+     * the chain is the equip. The bands stay in the chooser, so this is a
+     * default and not a sentence.
      */
     function wearTitle(name) {
         var v = String(name == null ? '' : name).trim().slice(0, 24) || 'Admin';
         try {
             localStorage.setItem('summitTitle:' + user(), v);
+            localStorage.setItem('summitRankTitle:' + user(), v);
         } catch (e) {}
         return v;
     }

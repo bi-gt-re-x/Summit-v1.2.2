@@ -44,22 +44,21 @@
  * listens. A custom event rather than shared state because that is the whole of
  * the dependency: one number, one direction, no reply.
  *
- * **The foot says what you are, not who you are.** It used to be an avatar and
- * a username — the name you already typed to get in, over a picture, above the
- * same level the bar below it was drawing. Now it is the rank the level earns
- * you and the bar that gets you to the next one, which is the only thing on
- * this screen that changes when you finish something. Who is signed in belongs
- * to the top bar's account menu, which is also where the avatar picker went
- * when the plate that used to open it stopped existing.
+ * **The foot is the nametag**, the same one the top bar's account button
+ * wears: the account's picture, then "<title> <name>", then the level and the
+ * bar to the next one. Both read hooks/useNametag, so the two corners cannot
+ * say different things about the same person. The three dots beside the name
+ * choose the title (utils/rankTitle); the avatar picker is in the top bar's
+ * account menu.
  */
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth, useMediaQuery, useSettings, useSpaces, useStats, useSubjectIndex } from '@/hooks';
 import { followedSubjects } from '@/utils/analyticsPrefs';
-import { useChainAccount } from '@/hooks/useChainAccount';
 import { format } from '@/utils';
 import { rankFor } from '@/utils/rank';
-import { earnedTitle } from '@/utils/easterEgg';
+import { useNametag } from '@/hooks/useNametag';
+import { NametagText, TitleChoices } from '@/components/Nametag';
 import { STATS_CHANGED } from '@/utils/statsBus';
 import { openSearch } from '@/utils/searchBus';
 import '@/styles/rail.css';
@@ -564,13 +563,14 @@ export function Rail() {
   /** The team space open now, so "Invite people" invites to that one. */
   const teamHere = /^\/team\/([1-3])\b/.exec(pathname)?.[1];
 
-  /* The title: the band the level has reached, or the one the hidden chain
-     hands out at the end once it has been earned (utils/easterEgg) — a prize
-     is worn, not offered. There used to be a menu of every band reached to
-     pick from; it was one more thing to choose that changed nothing. The
-     earned title is a question about *this* account, so it waits for one. */
-  const account = useChainAccount();
-  const title = (account && earnedTitle(account)) || rank;
+  /* The nametag — picture, title, name — shared with the top bar
+     (hooks/useNametag). The title is the band the level has reached, the one
+     the hidden chain hands out once it has been earned, or whichever of them
+     the reader has picked from the three dots. */
+  const tag = useNametag();
+  const title = tag.title ?? rank;
+  const [titlesOpen, setTitlesOpen] = useState(false);
+  useEffect(() => setTitlesOpen(false), [pathname]);
 
   /* The title used to be the way into the hidden chain — ten clicks on it,
      from any page, because the rail is on all of them. The door is on the
@@ -877,23 +877,55 @@ export function Rail() {
           level &&
           rank && (
             <div className="rail-rank">
-              <span className="rail-avatar" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <circle cx="12" cy="8.5" r="4" />
-                  <path d="M4 20.5c0-4.1 3.6-6.5 8-6.5s8 2.4 8 6.5Z" />
-                </svg>
-              </span>
-              {/* The whole name when the rail is open, the level's number when
-                  it is a strip. "Grand Champion" in 54px of usable width is an
-                  ellipsis, and an ellipsis is not a rank. */}
+              {/* The account's own picture, the one in the top bar. */}
+              <img className="rail-avatar" src={tag.avatar} alt="" width={44} height={44} />
+              {/* The whole nametag when the rail is open, the level's number
+                  when it is a strip. "Grand Champion Myles" in 54px of usable
+                  width is an ellipsis, and an ellipsis is not a name. */}
               <div className="rail-rank-head">
-                <span className="rail-rank-title" title={`${title} · Level ${level.level}`}>
-                  {title}
-                </span>
+                {/* No role, no tabIndex, no cursor: it is a label, and the
+                    three dots beside it are the control. */}
+                <NametagText
+                  className="rail-rank-title"
+                  title={title}
+                  name={tag.name}
+                />
+                <button
+                  type="button"
+                  className={`rail-rank-more${titlesOpen ? ' is-open' : ''}`}
+                  aria-label="Choose your title"
+                  aria-expanded={titlesOpen}
+                  aria-haspopup="menu"
+                  onClick={() => setTitlesOpen((was) => !was)}
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <circle cx="5" cy="12" r="1.7" />
+                    <circle cx="12" cy="12" r="1.7" />
+                    <circle cx="19" cy="12" r="1.7" />
+                  </svg>
+                </button>
               </div>
               <span className="rail-rank-num" aria-hidden="true">
                 {level.level}
               </span>
+
+              {titlesOpen && (
+                <>
+                  {/* Anywhere else closes it. A button rather than a document
+                      listener, for the same reason the More sheet uses one:
+                      the scrim is also what stops a stray click landing on the
+                      page behind a menu the reader has finished with. */}
+                  <button
+                    type="button"
+                    className="rail-title-scrim"
+                    aria-label="Close title menu"
+                    onClick={() => setTitlesOpen(false)}
+                  />
+                  <div className="rail-title-menu" role="menu" aria-label="Title">
+                    <TitleChoices tag={tag} onPicked={() => setTitlesOpen(false)} />
+                  </div>
+                </>
+              )}
 
               <div className="rail-xp-row">
                 <span>Level {level.level}</span>
