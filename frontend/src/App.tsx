@@ -24,6 +24,7 @@ import Dashboard from '@/pages/Dashboard';
 // chunk that is always already fetched.
 import Unbuilt, { PATHS as UNBUILT_PATHS } from '@/pages/Unbuilt';
 import type { Prefs } from '@/services/settings';
+import { rememberExit } from '@/utils/settingsExit';
 
 const Homepage = lazy(() => import('@/pages/Homepage'));
 const Login = lazy(() => import('@/pages/Login'));
@@ -153,6 +154,10 @@ function isLanding(pathname: string): boolean {
   return pathname === '/home' || pathname === '/login';
 }
 
+function isSettings(pathname: string): boolean {
+  return pathname === '/settings' || pathname.startsWith('/settings/');
+}
+
 export default function App() {
   const { pathname } = useLocation();
   usePinnedViewport(pinsViewport(pathname));
@@ -173,10 +178,24 @@ export default function App() {
      because what changes is a stylesheet's mind about one layer and not
      anything the component renders; `has-rail` beside it works the same way. */
   const onCalendar = pathname === '/calendar' || pathname.startsWith('/calendar/');
+  /* Settings takes the whole window: no rail, no top bar, and an arrow in its
+     own corner back to wherever the reader came from. `no-chrome` hides the
+     two and gives their room back (styles/rail.css) rather than unmounting
+     them, so neither is rebuilt on the way out. */
+  const bare = isSettings(pathname);
   useEffect(() => {
     document.body.classList.toggle('has-rail', !landing);
     return () => document.body.classList.add('has-rail');
   }, [landing]);
+  useEffect(() => {
+    document.body.classList.toggle('no-chrome', bare);
+    return () => document.body.classList.remove('no-chrome');
+  }, [bare]);
+  /* Where Settings' back arrow goes: the last page that was not Settings.
+     Moving between its sections pushes history, so "back" is not the way out. */
+  useEffect(() => {
+    if (!bare && !landing) rememberExit(pathname);
+  }, [bare, landing, pathname]);
   useEffect(() => {
     document.body.classList.toggle('on-calendar', onCalendar);
     return () => document.body.classList.remove('on-calendar');

@@ -1,5 +1,7 @@
-/* Fills the width beside the rail like every signed-in page — the default
-   in styles/layout.css, not a rule of this page's. */
+/* The whole window: App.tsx hides the rail and the top bar here (`no-chrome`,
+   styles/rail.css), and the arrow in the top-left corner is the way out. No
+   cards either — the sections sit straight on the page, divided by their
+   headings and the rules between rows. */
 
 .st-page {
     --st-card: var(--color-surface);
@@ -22,7 +24,8 @@
 
     box-sizing: border-box;
     width: 100%;
-    padding: var(--space-6) var(--space-6) var(--space-16);
+    /* Room at the top for the corner arrow, which is fixed and sits over it. */
+    padding: 72px var(--space-6) var(--space-16);
     color: var(--st-text);
     font-family: var(--font-sans);
 }
@@ -44,7 +47,13 @@ html[data-theme="dark"] .st-page {
     color-scheme: dark;
 }
 
-.st-shell { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+/* With nothing beside it the page would run the full width of a wide window,
+   and a label at one edge with its control at the other is hard to follow. */
+.st-shell {
+    display: flex; flex-direction: column; gap: var(--space-6);
+    width: 100%; max-width: 1080px; margin-inline: auto;
+    min-width: 0;
+}
 .st-quiet { color: var(--st-muted); }
 
 /* ---------- Head ---------------------------------------------------------- */
@@ -52,8 +61,24 @@ html[data-theme="dark"] .st-page {
     display: flex; align-items: flex-start; justify-content: space-between;
     gap: var(--space-4); flex-wrap: wrap;
 }
-.st-head h1 { margin: 0; font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.02em; }
+.st-head h1 { margin: 0; font-size: var(--text-3xl, 2rem); font-weight: 700; letter-spacing: -.02em; }
 .st-head p { margin: var(--space-1) 0 0; font-size: var(--text-md); }
+
+/* The way out, pinned to the window's top-left corner. */
+.st-exit {
+    position: fixed;
+    top: 16px; left: 16px;
+    z-index: 20;
+    display: grid; place-items: center;
+    width: 36px; height: 36px;
+    border-radius: var(--radius-full, 999px);
+    color: var(--st-muted);
+    background: color-mix(in srgb, var(--color-bg, transparent) 80%, transparent);
+    transition: background .14s ease, color .14s ease;
+}
+.st-exit:hover { background: var(--st-card-2); color: var(--st-text); }
+.st-exit:focus-visible { outline: 2px solid var(--st-violet); outline-offset: 2px; }
+.st-exit svg { width: 20px; height: 20px; }
 
 /* Holds its space whether or not it is saying anything, so a save does not
    move the heading beside it. */
@@ -119,25 +144,23 @@ html[data-theme="dark"] .st-page {
 .st-content { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
 .st-empty { margin: 0; padding: var(--space-6); font-size: var(--text-md); color: var(--st-muted); }
 
-/* ---------- Cards --------------------------------------------------------- */
+/* ---------- Sections ------------------------------------------------------ */
+/* Still called a card for the markup's sake, but there is no box: a heading
+   and its rows, straight on the page. */
 .st-card {
     display: flex; flex-direction: column;
-    /* Was 820px, "the reading measure". A settings row is a label at the left
-       and a control at the right, and that pattern reads fine at any width —
-       what does not is the description under the label, so the measure moved
-       onto that text (`.st-row-text` below) and off the card. The card fills
-       the column now. */
     width: 100%;
-    padding: var(--space-2) var(--space-6) var(--space-2);
-    border: 1px solid var(--st-line);
-    border-radius: var(--st-radius);
-    background: var(--st-card);
-    box-shadow: var(--st-shadow);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
 }
+.st-card + .st-card { margin-top: var(--space-6); }
 .st-card h2 {
-    margin: var(--space-4) 0 var(--space-1);
-    font-size: var(--text-2xs); font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
-    color: var(--st-faint);
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-lg); font-weight: 700; letter-spacing: -.01em;
+    color: var(--st-text);
 }
 
 /* ---------- One row ------------------------------------------------------- */
@@ -161,16 +184,13 @@ html[data-theme="dark"] .st-page {
 /* Anything that changes or removes data, kept apart from the rest of the card
    so a destructive control is never the next one down from a harmless one. */
 .st-risky {
-    /* Pulled out by exactly its own padding, so the rows inside keep the same
-       left and right edges as the rows above them. Without this the tinted box
-       insets its row and the page's control column stops being a line. */
-    margin: var(--space-2) -16px 2px;
-    padding: 0 var(--space-4);
-    border: 1px solid color-mix(in srgb, var(--st-bad) 28%, var(--st-line));
-    border-radius: var(--radius-md);
-    background: color-mix(in srgb, var(--st-bad) 4%, transparent);
+    /* No box, like the rest of the page: a red rule above the first of them
+       and red labels are enough to set them apart. */
+    margin-top: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--st-bad) 45%, var(--st-line));
 }
 .st-risky .st-row:first-child { border-top: 0; }
+.st-risky .st-label { color: var(--st-bad); }
 
 /* ---------- Controls ------------------------------------------------------ */
 .st-input {
@@ -469,7 +489,7 @@ html[data-theme="dark"] .st-page {
 }
 
 @media (max-width: 560px) {
-    .st-page { padding: var(--space-5) var(--space-4) var(--space-12); }
+    .st-page { padding: 64px var(--space-4) var(--space-12); }
     .st-row { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
     .st-row-control { justify-content: flex-start; }
     .st-fixed, .st-links, .st-swatches { text-align: left; justify-content: flex-start; }

@@ -55,7 +55,8 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ErrorState, Loading, PageHero } from '@/components';
+import { ArrowLeft } from 'lucide-react';
+import { ErrorState, Loading } from '@/components';
 import { GROUPS, SORTS } from '@/components/Tasks';
 import { useApi, useAuth, useDocumentTitle, usePageEntrance, useSettings, useTheme } from '@/hooks';
 import { settings as service } from '@/services';
@@ -80,6 +81,7 @@ import type { Theme, UserStats } from '@/types';
 import { VacationMode } from '@/components/Settings/VacationMode';
 import '@/styles/settings.css';
 import { announceStatsChanged } from '@/utils/statsBus';
+import { settingsExit } from '@/utils/settingsExit';
 
 const GOAL_MIN = 10;
 const GOAL_MAX = 2000;
@@ -1809,19 +1811,21 @@ export default function Settings() {
   return (
     <div className="st-page">
       <div className={`st-shell page-shell${entering ? ' pg-enter' : ''}`}>
-        {/* Slate, like Notes: the two pages that change things rather than
-            report them. */}
-        <PageHero variant="settings" tone="slate">
-          <header className="st-head">
-            <div>
-              <h1>Settings</h1>
-              <p className="st-quiet">What this account has chosen.</p>
-            </div>
-            <span className={`st-status${saved || failure ? ' is-on' : ''}`} role="status">
-              {failure ? <em className="st-bad">{failure}</em> : (saved ?? '')}
-            </span>
-          </header>
-        </PageHero>
+        {/* The whole window, with no rail or top bar (App.tsx, `no-chrome`):
+            the arrow in the corner is the way out, back to the page the reader
+            came from. */}
+        <header className="st-head">
+          <Link className="st-exit" to={settingsExit()} aria-label="Leave settings" title="Back">
+            <ArrowLeft aria-hidden="true" />
+          </Link>
+          <div className="st-head-text">
+            <h1>Settings</h1>
+            <p className="st-quiet">What this account has chosen.</p>
+          </div>
+          <span className={`st-status${saved || failure ? ' is-on' : ''}`} role="status">
+            {failure ? <em className="st-bad">{failure}</em> : (saved ?? '')}
+          </span>
+        </header>
 
         <div className="st-body">
           <nav className="st-nav" aria-label="Settings sections">

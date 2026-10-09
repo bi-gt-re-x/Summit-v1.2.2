@@ -545,6 +545,20 @@ html.nav-collapsed .rail-brand { flex-direction: column; gap: var(--space-2); pa
  * overflow hidden, and with the default content-box this padding would be added
  * to the 100vh and push the page's edge out of sight. Inside the border box it
  * does what it should — take the rail's width out of the space the page has. */
+/* A page that takes the whole window (Settings — App.tsx sets `no-chrome`):
+   the rail and the top bar stay mounted but hidden, and their sizes go to
+   zero, so every rule that reserves room for them reserves none. On body
+   rather than :root so it beats the narrow-window values set there. */
+body.no-chrome {
+    --rail-w: 0px;
+    --rail-h: 0px;
+    --topnav-h: 0px;
+}
+body.no-chrome .rail,
+body.no-chrome .rail-sheet,
+body.no-chrome .rail-sheet-scrim,
+body.no-chrome .topbar { display: none; }
+
 body.has-rail {
     box-sizing: border-box;
     padding-left: var(--rail-w);
