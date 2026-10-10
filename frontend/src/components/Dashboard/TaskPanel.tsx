@@ -144,7 +144,7 @@ export function TaskPanel({
           ))}
         </div>
 
-        <button type="button" className="dash-add" onClick={onAdd}>
+        <button type="button" className="dash-add" data-tour="add-task" onClick={onAdd}>
           + Add Task
         </button>
       </header>

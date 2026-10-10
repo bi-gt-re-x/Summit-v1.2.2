@@ -83,6 +83,7 @@ import '@/styles/settings.css';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { settingsExit } from '@/utils/settingsExit';
 import { useStarter } from '@/hooks/useStarter';
+import { replayTutorial } from '@/components/Tutorial/Tutorial';
 import { FEATURES, STARTER_LEVEL, STARTER_SINCE } from '@/utils/starter';
 
 const GOAL_MIN = 10;
@@ -1037,25 +1038,24 @@ export default function Settings() {
                 </div>
               ),
           },
-          ...(starter.stage === 'open'
-            ? []
-            : [
-                {
-                  id: 'tour',
-                  label: 'Welcome tour',
-                  hint: 'The short tour of the three starter pages a new account sees first.',
-                  control: (
-                    <button
-                      type="button"
-                      className="st-btn"
-                      disabled={busy}
-                      onClick={() => void savePref({ welcome_seen: false }, 'Tour')}
-                    >
-                      Show it again
-                    </button>
-                  ),
-                },
-              ]),
+          {
+            id: 'tour',
+            label: 'Tutorial',
+            hint: 'Mango walks you through the Dashboard, Calendar and Timer, then the rest of the tabs.',
+            control: (
+              <button
+                type="button"
+                className="st-btn"
+                disabled={busy}
+                onClick={() => {
+                  replayTutorial(username);
+                  void savePref({ welcome_seen: false }, 'Tutorial').then(() => navigate('/dashboard'));
+                }}
+              >
+                Show it again
+              </button>
+            ),
+          },
         ],
       },
       {
@@ -1499,11 +1499,11 @@ export default function Settings() {
            CHANNELS in backend/tracking/notify.py — so turning one off stops
            the rows being written instead of writing them and hiding them, and
            turning it back on starts from what is true then rather than
-           replaying a fortnight of backlog. */
+           replaying two weeks of backlog. */
         note:
-          'Nothing here is sent on a schedule. The app looks at your own record when you open '
-          + 'it and says what is true — so a quiet week is a quiet bell, and a notification you '
-          + 'delete stays deleted until the situation behind it is genuinely new.',
+          "Nothing here is sent on a schedule. The app checks your own record when you open it "
+          + "and tells you what's true. A quiet week means a quiet bell, and a notification you "
+          + 'delete stays gone until something new happens.',
         items: [
           {
             id: 'notify-master',

@@ -15,7 +15,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Ambient, AppBoundary, Loading, Rail, Toasts, Topbar, VerifyBanner } from '@/components';
 import { RequireAccount } from './RequireAccount';
 import { FeatureGate } from '@/components/FeatureGate';
-import { Welcome } from '@/components/Welcome';
+import { Tutorial } from '@/components/Tutorial/Tutorial';
 import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { useAuth, usePinnedViewport, useSettings } from '@/hooks';
 import { useChainAccount } from '@/hooks/useChainAccount';
@@ -249,8 +249,8 @@ export default function App() {
           here rather than by each page for the same reason the bar is — one
           strip for the app, not one per screen. See components/VerifyBanner. */}
       {!landing && <VerifyBanner />}
-      {/* The first-visit tour, over whatever page the new account landed on. */}
-      {!landing && <Welcome />}
+      {/* The guided tour, with Mango. See components/Tutorial. */}
+      {!landing && <Tutorial />}
       <main className="app-main">
         {/* Inside the shell, so a page that throws loses the page and not the
             rail, the top bar and the way back. Keyed on the path: navigating

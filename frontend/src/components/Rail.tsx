@@ -638,6 +638,7 @@ export function Rail() {
             <NavLink
               key={tab.to}
               to={tab.to}
+              data-tour={`rail-${tab.to.slice(1)}`}
               className={({ isActive }) =>
                 `rail-link${isActive || onPage(tab, pathname) ? ' active' : ''}${locked ? ' is-locked' : ''}`
               }
@@ -822,6 +823,7 @@ export function Rail() {
                 <button
                   type="button"
                   className="rail-later"
+                  data-tour="rail-more"
                   aria-expanded={peek}
                   title={peek ? 'Hide the advanced tools' : 'Show the advanced tools'}
                   onClick={() => setPeek((was) => !was)}
@@ -898,6 +900,7 @@ export function Rail() {
         {phone && (
           <button
             type="button"
+            data-tour="rail-more-phone"
             className={`rail-link rail-more${moreOpen ? ' is-open' : ''}${
               rest.some((tab) => onPage(tab, pathname)) ? ' active' : ''
             }`}
@@ -993,6 +996,7 @@ export function Rail() {
               {!phone && (
                 <NavLink
                   to="/settings"
+                  data-tour="rail-settings"
                   className={({ isActive }) => `rail-foot-settings${isActive ? ' active' : ''}`}
                   aria-label="Settings"
                   title="Settings"
