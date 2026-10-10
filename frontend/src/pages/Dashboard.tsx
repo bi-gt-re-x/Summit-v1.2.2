@@ -72,6 +72,8 @@ import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import { usePomodoro } from '@/hooks/usePomodoro';
 import { useHandover } from '@/hooks/useHandover';
 import { FocusSitting } from '@/components/Timer/FocusSitting';
+import { MangoPet } from '@/components/Tutorial/MangoPet';
+import { useTourShowing } from '@/components/Tutorial/Tutorial';
 import type { Counting } from '@/pages/Timer';
 import { currentStone } from '@/utils/goalStage';
 import { reduced } from '@/utils/homePlay';
@@ -180,6 +182,10 @@ export default function Dashboard() {
    * pages/Timer.tsx for why it has to match. */
   const sitting = pomodoro.running && pomodoro.phase === 'focus' && prefs.focus_dim;
   const swap = useHandover(sitting, reduced ? 0 : SITTING_MS);
+  /* Mango rests on the top card between tours, and steps aside while one runs
+     (it's the same Mango, and two on screen would be one too many). See
+     components/Tutorial/MangoPet and Settings, Mango. */
+  const touring = useTourShowing();
 
   /* The rest of what the sitting shows, read off what this page already has.
      Same order and length as the Timer page's "Up next". */
@@ -557,6 +563,7 @@ export default function Dashboard() {
 
   return (
     <div className={`dash${entering ? ' pg-enter' : ''}${swap.leaving ? ' is-going' : ''}`}>
+      {prefs.mango_rest && !touring && <MangoPet anchor=".dash-hero" energy={prefs.mango_energy} />}
 
       {/* The greeting slides away with the stat row while a focus session
           runs — see html.focus-mode in styles/dashboard-home.css, which folds

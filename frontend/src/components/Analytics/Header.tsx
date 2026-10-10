@@ -221,6 +221,7 @@ export function ViewTabs({ active, onView, filling }: ViewTabsProps) {
             <button
               key={view.key}
               type="button"
+              data-tour={`ax-tab-${view.key}`}
               className={`ax-tab${view.key === active ? ' is-on' : ''}${part === null ? '' : ' is-filling'}`}
               aria-current={view.key === active ? 'page' : undefined}
               onClick={() => onView(view)}

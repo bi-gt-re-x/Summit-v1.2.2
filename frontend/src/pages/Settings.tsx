@@ -968,6 +968,77 @@ export default function Settings() {
                 </div>
               ),
           },
+        ],
+      },
+      {
+        // Mango, the guide (components/Tutorial). The main tutorial, the page
+        // guides and the Mango that rests on the dashboard between them.
+        id: 'mango',
+        label: 'Mango',
+        group: 'Personalization',
+        items: [
+          {
+            id: 'mango-rest',
+            label: 'Mango on the dashboard',
+            hint: 'Mango sits on top of your dashboard between tours. Click it to say hi.',
+            control: (
+              <Toggle
+                on={prefs.mango_rest}
+                busy={busy}
+                label="Mango on the dashboard"
+                onFlip={() => void savePref({ mango_rest: !prefs.mango_rest }, 'Mango')}
+              />
+            ),
+          },
+          {
+            id: 'mango-energy',
+            label: 'How lively',
+            hint: 'Calm does something every so often. Lively moves around more. Still just sits there.',
+            control: (
+              <select
+                className="st-input"
+                value={prefs.mango_energy}
+                disabled={busy || !prefs.mango_rest}
+                onChange={(event) =>
+                  void savePref({ mango_energy: event.target.value as Prefs['mango_energy'] }, 'Mango')
+                }
+              >
+                <option value="calm">Calm</option>
+                <option value="lively">Lively</option>
+                <option value="still">Still</option>
+              </select>
+            ),
+          },
+          {
+            id: 'mango-tours',
+            label: 'Page guides',
+            hint: 'A short guide from Mango the first time you open each page.',
+            control: (
+              <Toggle
+                on={prefs.mango_tours}
+                busy={busy}
+                label="Page guides"
+                onFlip={() => void savePref({ mango_tours: !prefs.mango_tours }, 'Page guides')}
+              />
+            ),
+          },
+          {
+            id: 'mango-tours-again',
+            label: 'See the page guides again',
+            hint: prefs.tours_seen.length
+              ? `You've seen ${prefs.tours_seen.length} of them. Each page will show its guide again next time you open it.`
+              : "You haven't seen any yet. They show up the first time you open each page.",
+            control: (
+              <button
+                type="button"
+                className="st-btn"
+                disabled={busy || prefs.tours_seen.length === 0}
+                onClick={() => void savePref({ tours_seen: [], mango_tours: true }, 'Page guides')}
+              >
+                Show them again
+              </button>
+            ),
+          },
           {
             id: 'tour',
             label: 'Tutorial',

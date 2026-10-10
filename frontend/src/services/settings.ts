@@ -142,6 +142,11 @@ export interface Prefs {
   welcome_seen: boolean;
   starter_done: boolean;
   features_open: string[];
+  /** Mango: resting on the dashboard, page guides, how lively, guides seen. */
+  mango_rest: boolean;
+  mango_tours: boolean;
+  mango_energy: 'calm' | 'lively' | 'still';
+  tours_seen: string[];
   analytics_window: AnalyticsWindow;
   analytics_setup_done: boolean;
   /**
@@ -303,6 +308,10 @@ export const DEFAULTS: Prefs = {
   welcome_seen: false,
   starter_done: false,
   features_open: [],
+  mango_rest: true,
+  mango_tours: true,
+  mango_energy: 'calm',
+  tours_seen: [],
   analytics_window: '1y',
   /* False is the first-run state, and it is what puts the question phase in
      front of the page. An account that already set a baseline is treated as

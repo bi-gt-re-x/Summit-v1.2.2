@@ -367,6 +367,17 @@ FIELDS: Dict[str, Any] = {
     #: the frontend's, and it may grow.
     'features_open':     ([], _id_list(24)),
 
+    # Mango, the guide (frontend/src/components/Tutorial). Taste, not state,
+    # except `tours_seen`, which is the page guides already shown, by id.
+    #: Mango sits on the dashboard's top card between tutorials.
+    'mango_rest':        (True, _boolean),
+    #: The short guide each page gives the first time it is opened.
+    'mango_tours':       (True, _boolean),
+    #: How often the resting Mango does something. Calm is the default: it is
+    #: company on a page somebody works on, not a show.
+    'mango_energy':      ('calm', _one_of('calm', 'lively', 'still')),
+    'tours_seen':        ([], _id_list(32)),
+
     # Analytics.
     #
     # The first is where the page opens; the six below it are the answers to

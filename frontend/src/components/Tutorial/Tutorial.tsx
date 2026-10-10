@@ -31,7 +31,7 @@
  * step (`skipIfMissing`) or gets a plain card in the middle with a Next
  * button, and Skip tour is on every card.
  */
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -41,6 +41,8 @@ import { reduced } from '@/utils/homePlay';
 import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { Mango } from './Mango';
 import { STEPS, type Step, type TourContext } from './steps';
+import { PAGE_TOURS } from './pageTours';
+import { featureForPath } from '@/utils/starter';
 import '@/styles/tutorial.css';
 
 const STORE = 'summit:tour';
@@ -52,32 +54,55 @@ const POPUPS = '[role="dialog"], [aria-modal="true"], [role="menu"], [role="list
 /** How long a step waits for its target once its page has loaded. */
 const GRACE_MS = 900;
 
-interface Saved { user: string; at: number }
+interface Saved { user: string; tour?: string; at: number }
 
-function readSaved(user: string | null): number | null {
+/** The step a tour was left on, for this account, or null. */
+function readSaved(user: string | null, tour: string): number | null {
   if (!user) return null;
   try {
     const raw = window.localStorage.getItem(STORE);
     if (!raw) return null;
     const saved = JSON.parse(raw) as Saved;
-    return saved.user === user && Number.isInteger(saved.at) ? saved.at : null;
+    return saved.user === user && (saved.tour ?? 'welcome') === tour && Number.isInteger(saved.at)
+      ? saved.at
+      : null;
   } catch {
     return null;
   }
 }
 
-function writeSaved(user: string | null, at: number | null) {
+function writeSaved(user: string | null, tour: string, at: number | null) {
   try {
     if (!user || at === null) window.localStorage.removeItem(STORE);
-    else window.localStorage.setItem(STORE, JSON.stringify({ user, at }));
+    else window.localStorage.setItem(STORE, JSON.stringify({ user, tour, at }));
   } catch {
     /* private window: the tour still runs, it just won't survive a reload */
   }
 }
 
-/** Start the tour again from the top. Settings calls this. */
+/** Start the main tour again from the top. Settings calls this. */
 export function replayTutorial(user: string | null) {
-  writeSaved(user, 0);
+  writeSaved(user, 'welcome', 0);
+}
+
+/* Whether a tour is on screen, for the dashboard's resting Mango, which
+   steps aside while one runs. */
+let touring = false;
+const tourListeners = new Set<() => void>();
+function setTouring(on: boolean) {
+  if (touring === on) return;
+  touring = on;
+  tourListeners.forEach((listener) => listener());
+}
+export function useTourShowing(): boolean {
+  return useSyncExternalStore(
+    (listener) => {
+      tourListeners.add(listener);
+      return () => tourListeners.delete(listener);
+    },
+    () => touring,
+    () => false,
+  );
 }
 
 /** The first match for any of the selectors that is actually on screen. */
@@ -110,38 +135,86 @@ export function Tutorial() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const saved = readSaved(username);
-  const wanted = status === 'signed-in' && profileComplete && ready && starter.ready && !prefs.welcome_seen
-    && (starter.stage !== 'open' || saved !== null);
+  /* Which tour, if any. The main tutorial first, for a new account; then the
+     guide for the page on screen, the first time it's opened past its note. */
+  const mainSaved = readSaved(username, 'welcome');
+  const signedIn = status === 'signed-in' && profileComplete && ready && starter.ready;
+  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
+  const mainWanted = signedIn && !prefs.welcome_seen && (starter.stage !== 'open' || mainSaved !== null);
+  const feature = featureForPath(pathname);
+  const pageSteps = feature ? PAGE_TOURS[feature.id] : undefined;
+  const pageWanted = Boolean(
+    signedIn && feature && pageSteps && prefs.mango_tours
+      && !starter.isLocked(feature.id) && !prefs.tours_seen.includes(feature.id),
+  );
+  const tour: { id: string; steps: Step[] } | null =
+    mainWanted && !closed.has('welcome')
+      ? { id: 'welcome', steps: STEPS }
+      : pageWanted && feature && pageSteps && !closed.has(feature.id)
+        ? { id: feature.id, steps: pageSteps }
+        : null;
+  const tourId = tour?.id ?? null;
+  const steps = tour?.steps ?? STEPS;
 
-  const [at, setAt] = useState<number>(() => saved ?? 0);
-  const [closed, setClosed] = useState(false);
+  const [at, setAt] = useState<number>(() => mainSaved ?? 0);
+  const [atFor, setAtFor] = useState<string | null>(null);
+  // A different tour is up: pick up where it was left, or start it.
+  if (tourId !== atFor) {
+    setAtFor(tourId);
+    setAt(tourId ? readSaved(username, tourId) ?? 0 : 0);
+  }
+
   const sitting = useSittingShown();
-  const showing = wanted && !closed && at < STEPS.length && !sitting;
-  const step = STEPS[Math.min(at, STEPS.length - 1)]!;
+  const showing = tour !== null && atFor === tourId && !sitting && at < steps.length;
+  const step = steps[Math.min(at, steps.length - 1)]!;
+
+  useEffect(() => {
+    setTouring(showing);
+    return () => setTouring(false);
+  }, [showing]);
+
+  // Settings can hand the page guides back. Forget the ones closed this
+  // session that the account no longer counts as seen.
+  useEffect(() => {
+    setClosed((was) => {
+      const next = new Set([...was].filter((id) => id === 'welcome' || prefs.tours_seen.includes(id)));
+      return next.size === was.size ? was : next;
+    });
+  }, [prefs.tours_seen]);
 
   // A replay started from Settings after this component had already decided.
   useEffect(() => {
-    if (saved !== null && wanted) {
-      setClosed(false);
-      setAt(saved);
+    if (mainSaved !== null && mainWanted) {
+      setClosed((was) => {
+        const next = new Set(was);
+        next.delete('welcome');
+        return next;
+      });
+      if (tourId === 'welcome') setAt(mainSaved);
     }
     // Only when the account's flag flips, not on every step this tour writes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wanted]);
+  }, [mainWanted]);
 
   useEffect(() => {
-    if (showing) writeSaved(username, at);
-  }, [showing, username, at]);
+    if (showing && tourId) writeSaved(username, tourId, at);
+  }, [showing, username, tourId, at]);
 
   const end = useCallback((to?: string) => {
-    writeSaved(username, null);
-    setClosed(true);
-    void update({ welcome_seen: true });
+    if (!tourId) return;
+    writeSaved(username, tourId, null);
+    setClosed((was) => new Set(was).add(tourId));
+    if (tourId === 'welcome') void update({ welcome_seen: true });
+    else if (!prefs.tours_seen.includes(tourId)) void update({ tours_seen: [...prefs.tours_seen, tourId] });
     if (to) navigate(to);
-  }, [navigate, update, username]);
+  }, [navigate, update, username, tourId, prefs.tours_seen]);
 
   const advance = useCallback(() => setAt((was) => was + 1), []);
+
+  // Skipped past the last step (a missing target at the end): that's done too.
+  useEffect(() => {
+    if (tour && atFor === tourId && at >= steps.length) end();
+  }, [tour, atFor, tourId, at, steps.length, end]);
 
   // ---- Getting to the step's page ------------------------------------------
   useEffect(() => {
@@ -178,11 +251,13 @@ export function Tutorial() {
         // Bring it on screen the first time if any of it is cut off, and again
         // later if it's wholly gone (a page that finishes loading can reset
         // the scroll). A tall target that's partly showing is left alone.
-        const cut = r0.top < 0 || r0.bottom > vh;
-        const gone = r0.bottom < 40 || r0.top > vh - 40;
+        // The top bar is fixed, so anything under it is as good as off screen.
+        const top = document.querySelector('.topbar')?.getBoundingClientRect().bottom ?? 0;
+        const cut = r0.top < top || r0.bottom > vh;
+        const gone = r0.bottom < top + 40 || r0.top > vh - 40;
         if (((!seen && cut) || gone) && performance.now() - scrolledAt > 900) {
           scrolledAt = performance.now();
-          el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
+          el.scrollIntoView({ block: 'center', behavior: reduced || document.hidden ? 'auto' : 'smooth' });
         }
         seen = true;
         target.current = el;
@@ -307,6 +382,7 @@ export function Tutorial() {
     const el = card.current;
     const measure = () => setCardH(el.offsetHeight);
     measure();
+    if (typeof ResizeObserver === 'undefined') return undefined;
     const watcher = new ResizeObserver(measure);
     watcher.observe(el);
     return () => watcher.disconnect();
@@ -325,7 +401,7 @@ export function Tutorial() {
 
   const ctx: TourContext = { name: displayName || username || '', stage: starter.stage };
   const place = layout(hole, cardH, view.w, view.h);
-  const last = at === STEPS.length - 1;
+  const last = at === steps.length - 1;
 
   return createPortal(
     <div className={`tut-root${reduced ? ' is-still' : ''}`}>
@@ -357,7 +433,7 @@ export function Tutorial() {
         aria-describedby="tut-body"
         style={{ left: place.card.x, top: place.card.y, width: place.w }}
       >
-        <p className="tut-count">{at + 1} of {STEPS.length}</p>
+        <p className="tut-count">{at + 1} of {steps.length}</p>
         <h2 id="tut-title">{text(step.title, ctx)}</h2>
         <p id="tut-body" aria-live="polite">{text(step.body, ctx)}</p>
         {!needsNext && step.kind === 'click' && (
@@ -369,7 +445,7 @@ export function Tutorial() {
         <div className="tut-actions">
           {!last && (
             <button type="button" className="tut-skip" onClick={() => end()}>
-              Skip tour
+              {tourId === 'welcome' ? 'Skip tour' : 'Skip guide'}
             </button>
           )}
           {needsNext && (
@@ -377,7 +453,7 @@ export function Tutorial() {
               ref={nextButton}
               type="button"
               className="tut-next"
-              onClick={() => (last ? end('/dashboard') : advance())}
+              onClick={() => (last ? end(tourId === 'welcome' ? '/dashboard' : undefined) : advance())}
             >
               {step.next ?? 'Next'}
             </button>
