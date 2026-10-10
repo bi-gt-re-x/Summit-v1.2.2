@@ -74,7 +74,7 @@ export interface Adopted {
 /**
  * Days on the after side before a verdict is offered.
  *
- * A fortnight, which is the same floor `recommendations` applies before it will
+ * Two weeks, which is the same floor `recommendations` applies before it will
  * generate a rule at all. Anything shorter is one good week or one bad one, and
  * a page that called that a result would be doing the thing this whole file
  * exists to avoid.
@@ -87,7 +87,7 @@ export const SETTLE = 14;
  * Without a cap, a change adopted a year ago would be measured against the
  * whole year before it — a comparison that is technically equal-length and
  * practically meaningless, because it is asking whether last spring resembled
- * the spring before. Sixty days is long enough to see through a bad fortnight
+ * the spring before. Sixty days is long enough to see through a bad two weeks
  * and short enough to still be about the change.
  */
 export const MAX_SPAN = 60;
@@ -179,7 +179,7 @@ export interface Measure {
  * `rebalance` explicitly declines to say which way is better. Its whole point
  * is that concentration on one subject may be exactly right — "if it is
  * deliberate, protect it" — so a page that then scored the reader on having
- * reduced it would be contradicting its own advice a fortnight later. There is
+ * reduced it would be contradicting its own advice two weeks later. There is
  * no direction to measure because the rule refused to name one.
  *
  * Everything else here is measurable and is measured, including the two that

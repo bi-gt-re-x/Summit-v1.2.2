@@ -86,7 +86,7 @@ export function SkillStandingRow({
       label: 'Gone quiet',
       value: String(cold),
       tone: 'amber',
-      note: 'nothing finished in a fortnight',
+      note: 'nothing finished in two weeks',
     },
   ];
   return <StatRow stats={stats} />;

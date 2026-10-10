@@ -121,7 +121,7 @@ def seed(username=USERNAME, dry_run=False):
         task.pop('execution', None)
 
         # A stretch where the prompt simply stopped being answered. Real
-        # accounts have these — a busy fortnight, a month of not caring — and
+        # accounts have these — a busy two weeks, a month of not caring — and
         # they are what the charts' carry-forward exists to survive.
         if quiet_left > 0:
             quiet_left -= 1

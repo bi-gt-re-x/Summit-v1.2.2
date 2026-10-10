@@ -2935,7 +2935,7 @@ def prune_notifications(username, before_day):
         con.close()
 
 
-def notification_facts(username, day, tomorrow, week_ago, fortnight_ago):
+def notification_facts(username, day, tomorrow, week_ago, two_weeks_ago):
     """Everything the notification sweep needs, in one round trip.
 
     Same argument as `task_alert_counts` above, one size up: the sweep asks
@@ -2987,7 +2987,7 @@ def notification_facts(username, day, tomorrow, week_ago, fortnight_ago):
                 (username, 'done', day)).fetchone()['n'] or 0
 
             for key, since, until in (('done_this_week', week_ago, day),
-                                      ('done_last_week', fortnight_ago, week_ago)):
+                                      ('done_last_week', two_weeks_ago, week_ago)):
                 facts[key] = con.execute(
                     'SELECT COUNT(*) AS n FROM tasks WHERE user_id = ? '
                     'AND status = ? AND substr(completed_at, 1, 10) > ? '
@@ -3000,7 +3000,7 @@ def notification_facts(username, day, tomorrow, week_ago, fortnight_ago):
                 'WHERE user_id = ? AND date = ?',
                 (username, day)).fetchone()['n'] or 0
             for key, since, until in (('xp_this_week', week_ago, day),
-                                      ('xp_last_week', fortnight_ago, week_ago)):
+                                      ('xp_last_week', two_weeks_ago, week_ago)):
                 facts[key] = con.execute(
                     'SELECT COALESCE(SUM(amount), 0) AS n FROM xp_events '
                     'WHERE user_id = ? AND date > ? AND date <= ?',
@@ -3020,7 +3020,7 @@ def notification_facts(username, day, tomorrow, week_ago, fortnight_ago):
 
         if _schema(con, 'focus_days'):
             for key, since, until in (('focus_this_week', week_ago, day),
-                                      ('focus_last_week', fortnight_ago, week_ago)):
+                                      ('focus_last_week', two_weeks_ago, week_ago)):
                 facts[key] = con.execute(
                     'SELECT COALESCE(SUM(seconds), 0) AS n FROM focus_days '
                     'WHERE user_id = ? AND date > ? AND date <= ?',

@@ -41,7 +41,7 @@ export const TRAVEL: SubjectTree = {
     { id: 'tr.food', name: 'Eating Away', icon: 'street-food', tier: 'advanced', requires: ['tr.customs'], state: lock, percent: 0, xp: 1600,
       desc: 'Finding food where locals eat, and knowing what is worth being careful about. Busy stalls with high turnover are usually safer than quiet restaurants with laminated menus.' },
     { id: 'tr.solo', name: 'Traveling Alone', icon: 'solo', tier: 'advanced', requires: ['tr.safety'], state: lock, percent: 0, xp: 1900,
-      desc: 'Complete freedom and nobody to share the decisions or the dull evenings. Hostels, walking tours and eating at the bar are the standard ways of not spending a fortnight silent.' },
+      desc: 'Complete freedom and nobody to share the decisions or the dull evenings. Hostels, walking tours and eating at the bar are the standard ways of not spending two weeks silent.' },
     { id: 'tr.group', name: 'Traveling with Others', icon: 'group-travel', tier: 'advanced', requires: ['tr.customs'], state: lock, percent: 0, xp: 1900,
       desc: 'Agreeing beforehand on money, pace and time apart. Almost every travel argument is one of those three, and all three are easier to settle at home.' },
     { id: 'tr.slow', name: 'Slow Travel', icon: 'slow-travel', tier: 'advanced', requires: ['tr.food'], state: lock, percent: 0, xp: 2000,

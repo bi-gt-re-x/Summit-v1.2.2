@@ -475,7 +475,7 @@ const HABIT_TREND_DAYS = 30;
  * **The rate and the bar cover the whole account, not the last thirty days.**
  * A habit is a claim about months, and a thirty-day window makes it a claim
  * about the last one: a subject worked steadily for half a year and left alone
- * in July read as a dead habit, and a subject picked up a fortnight ago read as
+ * in July read as a dead habit, and a subject picked up two weeks ago read as
  * the reader's strongest. Counted from the account's first day, the bar is the
  * share of this account's whole life that has had this subject in it, which is
  * the thing the panel is called after. `spanDays` is how many days that is, and

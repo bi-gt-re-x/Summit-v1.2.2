@@ -42,7 +42,7 @@ export function metricHistory(
  *
  * The one thing on the analytics page that is stated rather than measured, and
  * the only reason a brand-new account has anything to do there. Everything else
- * the page draws needs a fortnight to three weeks of record first.
+ * the page draws needs two weeks to three weeks of record first.
  */
 export interface Baseline {
   /** Days a week they mean to work, 1-7. */
@@ -571,7 +571,7 @@ export interface GoalRead {
  * One thing about the record that matters *for this goal*.
  *
  * Not the highest figure and not the lowest — the one that would change the
- * reader's next fortnight. "Quality: 78" is not evidence; "your contest
+ * reader's next two weeks. "Quality: 78" is not evidence; "your contest
  * execution is improving, 24 to 30 across recent timed work" is. `relevance`
  * is what keeps it honest: a sentence equally true of any goal in any subject
  * is filler, and the server is told to cut the card rather than write it.

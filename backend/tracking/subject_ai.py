@@ -384,7 +384,7 @@ three short lines.
 sentence would be equally true for any goal in any subject, it is not \
 relevant, it is filler — cut the card and write a better one.
 
-Order them by what would change the reader's next fortnight, not by \
+Order them by what would change the reader's next two weeks, not by \
 strength. A `hurts` card the reader can act on beats a `helps` card that only \
 flatters.
 

@@ -263,7 +263,7 @@ def brief_from(findings: Dict[str, Any]) -> str:
         ('Grade', 'grade'),
         ('Tasks finished this period', 'finished'),
         ('Of those, pointed at this goal', 'aimed'),
-        ('Days in the last fortnight with work on it', 'recent_days'),
+        ('Days in the last two weeks with work on it', 'recent_days'),
     ):
         value = findings.get(key)
         if value not in (None, '', []):

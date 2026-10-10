@@ -357,7 +357,7 @@ FIELDS: Dict[str, Any] = {
     # note on what it is and why it can wait. All three keys are state rather
     # than taste; frontend/src/utils/starter.ts is what reads them, and has the
     # whole of the rule.
-    #: The short tour has been shown (components/Welcome.tsx).
+    #: The tutorial has been finished or skipped (components/Tutorial/Tutorial.tsx).
     'welcome_seen':      (False, _boolean),
     #: The starter days were ended early from the rail or Settings, so every
     #: page is listed even though the account is young.
@@ -464,7 +464,7 @@ FIELDS: Dict[str, Any] = {
     # written rather than hiding rows that were written anyway. That is the
     # difference between a preference and a filter, and it is why turning a
     # channel back on starts from what is true then instead of replaying a
-    # fortnight of backlog.
+    # two weeks of backlog.
     #: The master. Off means nothing is swept, nothing is raised, and the bell
     #: shows the account's own list as empty — the switches below are still
     #: honoured the moment it comes back on.

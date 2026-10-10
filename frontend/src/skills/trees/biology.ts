@@ -40,7 +40,7 @@ export const BIOLOGY: SubjectTree = {
     { id: 'bi.mutation', name: 'Mutation & Variation', icon: 'mutation', tier: 'advanced', requires: ['bi.genetics', 'bi.protein'], state: lock, percent: 0, xp: 2100,
       desc: 'Copying errors and damage, most of which do nothing and some of which change a protein. Variation is not a defect in the system; without it a population cannot respond to anything.' },
     { id: 'bi.evolution', name: 'Evolution', icon: 'evolution', tier: 'advanced', core: true, requires: ['bi.mutation'], state: lock, percent: 0, xp: 2400,
-      desc: 'Heritable variation plus differential survival, repeated. It requires no foresight and no goal, which is the part that is genuinely hard to hold onto while reading about adaptation.' },
+      desc: 'Heritable variation plus differential survival, repeated. It requires no foresight and no goal, which is the part that is hard to hold onto while reading about adaptation.' },
     { id: 'bi.taxonomy', name: 'Classification', icon: 'taxonomy', tier: 'advanced', requires: ['bi.evolution'], state: lock, percent: 0, xp: 1900,
       desc: 'Grouping organisms by shared ancestry rather than by resemblance. Convergence is why a dolphin and a shark look alike and sit nowhere near each other on the tree.' },
     { id: 'bi.organs', name: 'Organ Systems', icon: 'organs', tier: 'intermediate', requires: ['bi.respiration'], state: lock, percent: 0, xp: 1900,

@@ -32,7 +32,7 @@ export const PSYCHOLOGY: SubjectTree = {
     { id: 'psy.attention', name: 'Attention', icon: 'focus', tier: 'intermediate', requires: ['psy.perception'], state: lock, percent: 0, xp: 1800,
       desc: 'What gets processed out of everything arriving, and what does not. The reliable finding is that people miss far more than they believe they do, including in plain sight.' },
     { id: 'psy.memory', name: 'Memory', icon: 'memory', tier: 'intermediate', core: true, requires: ['psy.attention'], state: lock, percent: 0, xp: 2000,
-      desc: 'Encoding, storing and reconstructing — and it is genuinely reconstruction. Confident memories can be entirely false, which is a fact with consequences well outside the laboratory.' },
+      desc: 'Encoding, storing and reconstructing. And it really is reconstruction. Confident memories can be entirely false, which is a fact with consequences well outside the laboratory.' },
     { id: 'psy.learning', name: 'Learning', icon: 'learning', tier: 'intermediate', requires: ['psy.memory'], state: lock, percent: 0, xp: 1900,
       desc: 'Conditioning, reinforcement and how practice changes behavior. Spacing and retrieval beat repetition and rereading, which is one of the best-replicated results in the field.' },
     { id: 'psy.cognition', name: 'Thinking & Reasoning', icon: 'cognition', tier: 'intermediate', requires: ['psy.memory'], state: lock, percent: 0, xp: 2000,

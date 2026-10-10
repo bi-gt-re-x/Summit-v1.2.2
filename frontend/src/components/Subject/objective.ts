@@ -164,7 +164,7 @@ function daysUntil(deadline: string, today: string): number | null {
  * much of the work here is actually pointed at it. The last is the one a
  * reader almost never has: "you have done 46 things in this subject and four
  * of them were aimed at the thing you said you were doing" is the sentence
- * that changes a fortnight.
+ * that changes two weeks.
  */
 function marksFor(goal: SubjectGoal | null, today: string): ObjectiveMark[] {
   if (!goal) return [];
@@ -271,11 +271,11 @@ export interface NamedBottleneck extends Bottleneck {
  * These are not ranked by which figure is worst. They are ranked by how much
  * the naming *rules out*, because ruling something out is the half of this
  * section a reader cannot get anywhere else and it is what stops the next
- * fortnight being spent on the wrong thing.
+ * two weeks being spent on the wrong thing.
  *
  * So "capability is ahead of what lands" comes first: it is the one that says
  * plainly that harder material is not the move, and getting that call wrong
- * costs a fortnight of work at the wrong level in either direction. The
+ * costs two weeks of work at the wrong level in either direction. The
  * difficulty cliff comes before the composite gap for the same reason — it
  * names a rung, and a rung is something to go and do on Tuesday.
  *

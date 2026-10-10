@@ -318,7 +318,7 @@ export interface HealthSignals {
   daysTotal: number | null;
   /** Days since the last linked task was finished. Null if never. */
   daysSinceWork: number | null;
-  /** Linked tasks finished inside the last fortnight. */
+  /** Linked tasks finished inside the last two weeks. */
   recentTasks: number;
   /** The goal's checkpoints, or null when it has none. */
   checkpoints: { done: number; total: number } | null;

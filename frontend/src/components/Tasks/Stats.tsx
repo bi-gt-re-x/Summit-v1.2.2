@@ -1,5 +1,5 @@
 /**
- * The five figures across the top, each over its own fortnight.
+ * The five figures across the top, each over its own two weeks.
  *
  * A count on its own cannot tell a backlog that has been at fifty-six all month
  * from one that was at twenty a week ago, and those are opposite situations

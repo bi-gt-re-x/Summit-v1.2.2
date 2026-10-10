@@ -2,7 +2,7 @@
  * "What should I do next?" — the plan, and the time it has to fit in.
  *
  * The panel that opens the Recommendations tab, and the one thing on this page
- * that is about the next hour rather than the last fortnight. Everything else
+ * that is about the next hour rather than the last two weeks. Everything else
  * here reports; this decides.
  *
  * ## The budget is the interface
@@ -122,7 +122,7 @@ export function NextActions({
     <Panel
       title="What to do next"
       /* Just the arithmetic. It used to carry the whole provenance — "from
-         your goals, your deadlines and the last fortnight of your own record"
+         your goals, your deadlines and the last two weeks of your own record"
          — which is a sentence the reader needs once, not on every visit above
          a plan they came here to read. It is in the footer note instead. */
       note={

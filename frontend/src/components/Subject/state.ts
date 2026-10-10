@@ -554,7 +554,7 @@ export function standings(done: AnalyticsTask[], curve: DifficultyCurve): Standi
 
   // ---- Doing it again ----------------------------------------------------
   /* The longest run of consecutive rated tasks at Strong or better. A rate
-     would let a bad fortnight hide inside a good quarter; a run is the thing
+     would let a bad two weeks hide inside a good quarter; a run is the thing
      the achievement is actually about. */
   let run = 0;
   let best = 0;

@@ -331,7 +331,7 @@ def _spread_dates(count, deadline, today=None):
 
     With a deadline, the checkpoints divide the run-up to it evenly and the
     last one lands on the day itself — five checkpoints before a date twenty
-    weeks out are four weeks apart. Without one, they fall a fortnight apart
+    weeks out are four weeks apart. Without one, they fall two weeks apart
     from today, which is a pace rather than a promise and is the honest answer
     when the reader declined to give a date.
 

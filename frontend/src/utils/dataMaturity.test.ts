@@ -155,7 +155,7 @@ describe('what each stage draws', () => {
     });
   });
 
-  it('holds judgment back until a fortnight, and trends until a week', () => {
+  it('holds judgment back until two weeks, and trends until a week', () => {
     expect(stageShows('new')).toMatchObject({ trends: false, judgement: false });
     expect(stageShows('early')).toMatchObject({ trends: false, judgement: false });
     expect(stageShows('weekly')).toMatchObject({ trends: true, judgement: false });

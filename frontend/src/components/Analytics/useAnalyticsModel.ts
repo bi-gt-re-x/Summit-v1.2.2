@@ -374,9 +374,9 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
    * moved. What to do this week has to come from the weeks either side of it.
    *
    * So Next Actions, the diagnosis, the patterns and the recommendations all
-   * read a fixed recent window from utils/recent — a fortnight for the things
+   * read a fixed recent window from utils/recent — two weeks for the things
    * that say what to do, a month for the things that claim a pattern, because
-   * splitting a fortnight in two leaves a week on each side and a week is not
+   * splitting two weeks in two leaves a week on each side and a week is not
    * enough to tell a real difference from a good Tuesday.
    */
   const recent = useMemo(() => recentWindow(all, RECENT_DAYS), [all]);
@@ -405,7 +405,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   );
 
   /* The same behavioural shapes the picker-scoped tabs read, taken over the
-     fortnight instead. Recommendations reads these; Habits and Insights keep
+     two weeks instead. Recommendations reads these; Habits and Insights keep
      the picker-scoped ones above, because those tabs report rather than
      advise. */
   const recentWeek = useMemo(() => weekShape(recent.current), [recent]);
@@ -430,7 +430,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
 
   // ---- Growth diagnosis ---------------------------------------------------
   /**
-   * The fortnight against the one before it, as tensions rather than scores.
+   * The two weeks against the one before it, as tensions rather than scores.
    *
    * Both halves read the same task list so every comparison is like against
    * like, and both recompute on their own when a re-read brings new tasks in —
@@ -446,7 +446,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   /* How many of them the tab actually draws. `diagnoses` stays whole because
      the export writes all of them — a downloaded report is read once, at
      leisure, and is the wrong place to be protecting somebody from the third
-     tension in their own fortnight. The screen is where the cap belongs. */
+     tension in their own two weeks. The screen is where the cap belongs. */
   const shownDiagnoses = useMemo(
     () => diagnoses.slice(0, rules.diagnoses),
     [diagnoses, rules.diagnoses],
@@ -760,7 +760,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   const habitAdvice = useMemo(
     () =>
       recommendations({
-        // The fortnight, not the picker — see "The recent window" above.
+        // The two weeks, not the picker — see "The recent window" above.
         days: recent.current,
         week: recentWeek,
         clock: recentClock,
@@ -793,11 +793,11 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   const advice = habitAdvice;
 
   const banked = Number(all[all.length - 1]?.cumulative_xp) || 0;
-  /* The same fortnight the advice came from, not the picker's window. Both
+  /* The same two weeks the advice came from, not the picker's window. Both
      halves of this chart have to describe one stretch of time: the baseline is
      "XP a year at the pace you are going" and the gain is the impacts of the
      items below, each of which was already scaled to a year *from the
-     fortnight*. Feeding a 90-day baseline into a fortnight's gains draws a gap
+     two weeks*. Feeding a 90-day baseline into two weeks' gains draws a gap
      between two different accounts. */
   const projection = useMemo(
     () => outlook(recent.current, advice, banked),

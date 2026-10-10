@@ -414,7 +414,7 @@ export interface Typical {
   days: number;
 }
 
-/** The default window: a fortnight is two of every weekday. */
+/** The default window: two weeks is two of every weekday. */
 export const TYPICAL_DAYS = 14;
 
 export function typicalDay(

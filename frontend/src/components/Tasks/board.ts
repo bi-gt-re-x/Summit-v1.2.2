@@ -579,7 +579,7 @@ export function isFiltered(query: TaskQuery): boolean {
 // The sparkline under each stat card
 // --------------------------------------------------------------------------
 /**
- * The last fortnight of each headline figure, recomputed from the task list.
+ * The last two weeks of each headline figure, recomputed from the task list.
  *
  * **Nothing here is recorded history.** The account stores no daily snapshot of
  * how many tasks were open, so a card that wanted a trend had two options:

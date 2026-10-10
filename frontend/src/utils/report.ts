@@ -330,7 +330,7 @@ function recommendationSection(input: ReportInput): string {
   );
 
   if (diagnoses.length > 0) {
-    lines.push('  What the fortnight says:', '');
+    lines.push('  What the last two weeks say:', '');
     diagnoses.slice(0, 3).forEach((row) => {
       lines.push(bullet(row.headline));
       lines.push(wrap(row.detail, 78, '  '));

@@ -508,14 +508,14 @@ export interface SubjectGoal {
   /** Finished tasks in this subject in this window, for the share above. */
   ofFinished: number;
   /**
-   * Days in the last fortnight with a finished task here pointed at it.
+   * Days in the last two weeks with a finished task here pointed at it.
    *
-   * A fortnight rather than the page's window, and that is not a detail. As a
+   * Two weeks rather than the page's window, and that is not a detail. As a
    * share of a window this figure is unreadable: fifty-five days a year on one
    * goal in one subject is a lot of work and 15% of a year, so a cadence read
    * against the window would fire its lever on almost every account that
    * chose 1Y and on almost none that chose 7D — the reader's picker deciding
-   * whether they get told off. A fortnight is what "lately" means regardless
+   * whether they get told off. Two weeks is what "lately" means regardless
    * of what the rest of the page is showing.
    */
   recentDays: number;
@@ -554,7 +554,7 @@ export interface Lever {
 /**
  * The stretch "lately" means, for the cadence figure.
  *
- * The same fortnight `goalHealth` measures recency and consistency over
+ * The same two weeks `goalHealth` measures recency and consistency over
  * (utils/goalHealth), because two parts of the app disagreeing about how long
  * ago counts as recently is how a goal reads as neglected on one page and
  * active on the other.
@@ -752,7 +752,7 @@ function goalsFor(
       const numbers = goalNumbers(goal);
       const linked = done.filter((task) => countsToward(task, goal.id));
       /* Off every task in the subject rather than the window's, for the same
-         reason recency is: a seven-day window cannot see a fortnight. */
+         reason recency is: a seven-day window cannot see two weeks. */
       const since = shift(today, -(RECENT_DAYS - 1));
       const days = new Set(
         everDone

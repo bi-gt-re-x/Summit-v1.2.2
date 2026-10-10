@@ -53,6 +53,6 @@ export const LITERATURE: SubjectTree = {
     { id: 'lit.research', name: 'Literary Research', icon: 'research', tier: 'expert', requires: ['lit.essay', 'lit.canon'], state: lock, percent: 0, xp: 2500,
       desc: 'Finding what has already been argued, and locating the gap your reading fills. Knowing the existing scholarship is what turns an opinion into a contribution.' },
     { id: 'lit.own', name: 'Your Own Reading', icon: 'insight', tier: 'mastery', requires: ['lit.research', 'lit.translate', 'lit.drama'], state: lock, percent: 0, xp: 2900,
-      desc: 'An interpretation you can defend that is genuinely yours, held loosely enough to revise. That is the whole point of the apparatus, and it is easy to lose sight of behind the apparatus.' },
+      desc: 'An interpretation you can defend that is really yours, held loosely enough to revise. That is the whole point of the apparatus, and it is easy to lose sight of behind the apparatus.' },
   ],
 };

@@ -45,7 +45,7 @@ function revision(date: string, hour: number, execution: number): Task {
  * A record with a habit that repeats, and a split inside it worth reading:
  * twelve morning revisions rated 5, nine evening ones rated 3.
  *
- * The morning half sits in the last fortnight so the week counts have something
+ * The morning half sits in the last two weeks so the week counts have something
  * in them; the evening half is earlier.
  */
 function record(): { tasks: Task[]; days: GrowthDay[] } {

@@ -1,7 +1,7 @@
 """Goal health: three states, each decided by a rule a reader can check.
 
 Behind means past its date, more than ten points behind the calendar, or
-linked work that has gone quiet for a fortnight. Everything else that has
+linked work that has gone quiet for two weeks. Everything else that has
 started is on track. The sentence under the chip names the rule that fired,
 so these pin the sentence as well as the state.
 
@@ -48,7 +48,7 @@ def test_on_track_when_keeping_pace_and_worked():
     found = health(goal(), worked(3))
     assert found['state'] == 'on-track'
     assert found['label'] == 'On Track'
-    assert 'worked on 3 times in the last fortnight' in found['reason']
+    assert 'worked on 3 times in the last two weeks' in found['reason']
 
 
 def test_behind_when_trailing_the_calendar_by_more_than_ten_points():
@@ -67,7 +67,7 @@ def test_behind_once_its_date_has_passed():
     assert found['reason'] == 'Its date passed 2 days ago and it is 50% done.'
 
 
-def test_behind_when_linked_work_has_gone_quiet_for_a_fortnight():
+def test_behind_when_linked_work_has_gone_quiet_for_two_weeks():
     found = health(goal(), worked_on(20))
     assert found['state'] == 'behind'
     assert found['reason'] == 'Nothing done toward this in 20 days.'

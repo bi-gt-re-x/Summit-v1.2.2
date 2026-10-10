@@ -7,7 +7,7 @@
  * the timer had a record that the maturity gates could see and the consistency
  * tile beside them could not. Nothing about that shows up in a unit test of
  * either module on its own; it only appears when you ask both about the same
- * fortnight, which is what the agreement tests below do.
+ * two weeks, which is what the agreement tests below do.
  *
  * They are deliberately written against the real functions rather than against
  * `isActiveDay`, because a future edit that reintroduces a local `xp > 0` is
@@ -94,37 +94,37 @@ describe('everything that counts days worked agrees', () => {
   /* Fourteen days, all of them focus sessions and nothing else. Every figure
      below is some form of "how much of this window was worked", and before the
      definition was shared they answered 100% and 0%. */
-  const fortnight = focusOnly(14, 14);
+  const twoWeeks = focusOnly(14, 14);
 
-  it('the gate sees a full fortnight', () => {
-    expect(dataMaturity(fortnight).activeDays).toBe(14);
+  it('the gate sees a full two weeks', () => {
+    expect(dataMaturity(twoWeeks).activeDays).toBe(14);
   });
 
-  it('the consistency panel sees a full fortnight', () => {
-    expect(consistency({ current: fortnight, previous: [] }).rate).toBe(100);
-    expect(activeRate(fortnight)).toBe(100);
+  it('the consistency panel sees a full two weeks', () => {
+    expect(consistency({ current: twoWeeks, previous: [] }).rate).toBe(100);
+    expect(activeRate(twoWeeks)).toBe(100);
   });
 
-  it('the rhythm sees a full fortnight, and no gap in it', () => {
-    const rhythm = rhythmShape(fortnight);
+  it('the rhythm sees a full two weeks, and no gap in it', () => {
+    const rhythm = rhythmShape(twoWeeks);
     expect(Math.round(rhythm.activeRate)).toBe(100);
     // The gap rules price a recommendation off this. Counting XP here told
-    // somebody who sat down every day for a fortnight that they had taken a
+    // somebody who sat down every day for two weeks that they had taken a
     // fourteen-day break.
     expect(rhythm.gapCount).toBe(0);
     expect(rhythm.longestGap).toBeNull();
   });
 
-  it('the diagnosis sees a full fortnight', () => {
-    expect(vitals(fortnight, []).activeDays).toBe(14);
+  it('the diagnosis sees a full two weeks', () => {
+    expect(vitals(twoWeeks, []).activeDays).toBe(14);
   });
 
   it('the weekday profile sees every weekday as worked', () => {
-    const stats = weekdayProfile(fortnight);
+    const stats = weekdayProfile(twoWeeks);
     stats.forEach((stat) => expect(stat.activeRate).toBe(100));
   });
 
-  it('and they all agree about a fortnight that was not worked', () => {
+  it('and they all agree about two weeks that was not worked', () => {
     const idle = days('2026-01-01', 14);
     expect(dataMaturity(idle).activeDays).toBe(0);
     expect(consistency({ current: idle, previous: [] }).rate).toBe(0);

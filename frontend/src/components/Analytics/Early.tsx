@@ -49,7 +49,7 @@ export interface WhenPanelProps {
  * Not "your peak hour" and not a best. The tallest bar is visible without
  * being named, which is the right amount of claim for five days: a reader can
  * see that most of their work lands in the evening and is not being told that
- * evenings are when they work, which may well be untrue of their next fortnight.
+ * evenings are when they work, which may well be untrue of their next two weeks.
  */
 export function WhenPanel({ parts, days }: WhenPanelProps) {
   const total = parts.reduce((sum, part) => sum + part.count, 0);

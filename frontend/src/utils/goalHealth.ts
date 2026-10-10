@@ -12,7 +12,7 @@
  *
  *   on-track     nothing says otherwise
  *   behind       past its date, more than ten points behind the calendar, or
- *                linked work quiet for a fortnight
+ *                linked work quiet for two weeks
  *   not-started  nothing recorded against it yet — not a failure
  */
 import { goalNumbers } from '@/components/Goals/numbers';
@@ -104,7 +104,7 @@ export function tasksFor(goal: Goal, tasks: Task[]): Task[] {
  *
  * An outcome goal is the opposite case. Nothing feeds it automatically, so the
  * only thing that says work is happening is work someone pointed at it, and
- * counting the account's general activity there would let a busy fortnight on
+ * counting the account's general activity there would let a busy two weeks on
  * everything else make a neglected goal look healthy. That is the exact
  * failure this whole model exists to avoid.
  */

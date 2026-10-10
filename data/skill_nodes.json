@@ -1427,7 +1427,7 @@
     {
       "id": "g.flow",
       "name": "Network Flow",
-      "desc": "How much can be pushed through a capacitated network, and where the bottleneck is. The max-flow min-cut theorem tying those two together is one of the genuinely beautiful results in the subject.",
+      "desc": "How much can be pushed through a capacitated network, and where the bottleneck is. The max-flow min-cut theorem tying those two together is one of the most beautiful results in the subject.",
       "tier": "mastery",
       "core": false,
       "xp": 3000,
@@ -4387,7 +4387,7 @@
     {
       "id": "ro.control",
       "name": "Feedback Control",
-      "desc": "Closing the loop so a mechanism reaches a setpoint and stays there under load. PID is four lines and a fortnight of tuning, and understanding what each term answers for is what shortens the fortnight.",
+      "desc": "Closing the loop so a mechanism reaches a setpoint and stays there under load. PID is four lines and two weeks of tuning, and understanding what each term answers for is what shortens the two weeks.",
       "tier": "advanced",
       "core": true,
       "xp": 2200,
@@ -5100,7 +5100,7 @@
     {
       "id": "k.series",
       "name": "Series",
-      "desc": "Infinite sums, and the tests that decide whether one settles on a finite value. A rare place where the answer is genuinely yes or no and the reasoning is the whole content.",
+      "desc": "Infinite sums, and the tests that decide whether one settles on a finite value. A rare place where the answer is a clean yes or no and the reasoning is the whole content.",
       "tier": "mastery",
       "core": false,
       "xp": 2700,
@@ -8074,7 +8074,7 @@
     {
       "id": "bi.evolution",
       "name": "Evolution",
-      "desc": "Heritable variation plus differential survival, repeated. It requires no foresight and no goal, which is the part that is genuinely hard to hold onto while reading about adaptation.",
+      "desc": "Heritable variation plus differential survival, repeated. It requires no foresight and no goal, which is the part that is hard to hold onto while reading about adaptation.",
       "tier": "advanced",
       "core": true,
       "xp": 2400,
@@ -10159,7 +10159,7 @@
     {
       "id": "lit.own",
       "name": "Your Own Reading",
-      "desc": "An interpretation you can defend that is genuinely yours, held loosely enough to revise. That is the whole point of the apparatus, and it is easy to lose sight of behind the apparatus.",
+      "desc": "An interpretation you can defend that is really yours, held loosely enough to revise. That is the whole point of the apparatus, and it is easy to lose sight of behind the apparatus.",
       "tier": "mastery",
       "core": false,
       "xp": 2900,
@@ -11037,7 +11037,7 @@
     {
       "id": "hi.culture",
       "name": "Cultural History",
-      "desc": "Belief, ritual, art and what people found funny or shameful. It is the fastest route to the fact that the past was genuinely foreign rather than us in worse clothes.",
+      "desc": "Belief, ritual, art and what people found funny or shameful. It is the fastest route to the fact that the past was a foreign place rather than us in worse clothes.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -11804,7 +11804,7 @@
     {
       "id": "psy.memory",
       "name": "Memory",
-      "desc": "Encoding, storing and reconstructing — and it is genuinely reconstruction. Confident memories can be entirely false, which is a fact with consequences well outside the laboratory.",
+      "desc": "Encoding, storing and reconstructing. And it really is reconstruction. Confident memories can be entirely false, which is a fact with consequences well outside the laboratory.",
       "tier": "intermediate",
       "core": true,
       "xp": 2000,
@@ -13109,7 +13109,7 @@
     {
       "id": "ec.opportunity",
       "name": "Opportunity Cost",
-      "desc": "The value of the best thing you did not do. It is the concept that changes how decisions are made once it is genuinely internalized, and the one most often quoted without being used.",
+      "desc": "The value of the best thing you did not do. It is the concept that changes how decisions are made once it really sinks in, and the one most often quoted without being used.",
       "tier": "foundation",
       "core": false,
       "xp": 1400,
@@ -13318,7 +13318,7 @@
     {
       "id": "ec.money",
       "name": "Money & Banking",
-      "desc": "What money is, and the fact that most of it is created by commercial banks lending. That mechanism is the part that is genuinely surprising the first time.",
+      "desc": "What money is, and the fact that most of it is created by commercial banks lending. That mechanism is the part that surprises people the first time.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -14731,7 +14731,7 @@
     {
       "id": "fo.deep",
       "name": "Deep Work",
-      "desc": "Ninety minutes or more on something cognitively demanding, with nothing else touched. Almost all work that is genuinely difficult is produced in blocks like this and almost nobody schedules them.",
+      "desc": "Ninety minutes or more on something cognitively demanding, with nothing else touched. Almost all really hard work is produced in blocks like this and almost nobody schedules them.",
       "tier": "intermediate",
       "core": true,
       "xp": 2000,
@@ -14865,7 +14865,7 @@
     {
       "id": "fo.energy",
       "name": "Working with Energy",
-      "desc": "Putting the hardest work where your attention is best and admin where it is not. Most people have two or three genuinely sharp hours, and spend them on email.",
+      "desc": "Putting the hardest work where your attention is best and admin where it is not. Most people have two or three really sharp hours, and spend them on email.",
       "tier": "advanced",
       "core": false,
       "xp": 1900,
@@ -15112,7 +15112,7 @@
     {
       "id": "sy.understand",
       "name": "Understanding vs Memorizing",
-      "desc": "Knowing why something follows, so it can be reconstructed rather than recalled. Some things genuinely must be memorized, and knowing which is a decision worth making explicitly.",
+      "desc": "Knowing why something follows, so it can be reconstructed rather than recalled. Some things just have to be memorized, and knowing which is a decision worth making explicitly.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -17426,7 +17426,7 @@
     {
       "id": "fm.edit",
       "name": "Editing",
-      "desc": "Choosing what to show and for exactly how long. The film is genuinely made here, and the most common improvement is cutting in later and out earlier on every shot.",
+      "desc": "Choosing what to show and for exactly how long. This is where the film really gets made, and the most common improvement is cutting in later and out earlier on every shot.",
       "tier": "advanced",
       "core": true,
       "xp": 2200,
@@ -18410,7 +18410,7 @@
     {
       "id": "pn.hands",
       "name": "Hands Together",
-      "desc": "Two independent parts at once, which is the first genuinely difficult thing the instrument asks. Practicing each hand until it is automatic, then joining them slowly, is the only route that reliably works.",
+      "desc": "Two independent parts at once, which is the first really hard thing the instrument asks. Practicing each hand until it is automatic, then joining them slowly, is the only route that reliably works.",
       "tier": "beginner",
       "core": true,
       "xp": 1900,
@@ -18868,7 +18868,7 @@
     {
       "id": "vo.dynamics",
       "name": "Dynamics",
-      "desc": "Singing genuinely quietly without going breathy, and loudly without pushing. The quiet end is the harder one and the one that makes the loud end mean anything.",
+      "desc": "Singing really quietly without going breathy, and loudly without pushing. The quiet end is the harder one and the one that makes the loud end mean anything.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -20557,7 +20557,7 @@
     {
       "id": "en.zones",
       "name": "Effort Zones",
-      "desc": "Dividing effort into bands by heart rate, pace or feel. The value is not precision; it is keeping easy days genuinely easy so hard days can be hard.",
+      "desc": "Dividing effort into bands by heart rate, pace or feel. The value is not precision; it is keeping easy days actually easy so hard days can be hard.",
       "tier": "beginner",
       "core": true,
       "xp": 1700,
@@ -20865,7 +20865,7 @@
     {
       "id": "en.season",
       "name": "Seasons & Longevity",
-      "desc": "Building years rather than blocks, with off-seasons that are genuinely off. The athletes who improve for a decade are the ones who allowed themselves to be unfit for a few weeks each year.",
+      "desc": "Building years rather than blocks, with off-seasons that are really off. The athletes who improve for a decade are the ones who allowed themselves to be unfit for a few weeks each year.",
       "tier": "mastery",
       "core": false,
       "xp": 2900,
@@ -22602,7 +22602,7 @@
     {
       "id": "tr.solo",
       "name": "Traveling Alone",
-      "desc": "Complete freedom and nobody to share the decisions or the dull evenings. Hostels, walking tours and eating at the bar are the standard ways of not spending a fortnight silent.",
+      "desc": "Complete freedom and nobody to share the decisions or the dull evenings. Hostels, walking tours and eating at the bar are the standard ways of not spending two weeks silent.",
       "tier": "advanced",
       "core": false,
       "xp": 1900,

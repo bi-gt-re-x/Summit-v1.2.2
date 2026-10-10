@@ -488,7 +488,7 @@ export interface Marks {
  * property that makes them safe to show somebody who is tired.
  *
  * `run` breaks on an abandoned sitting rather than on a missed day for the
- * same reason — it is a run of *finishing what you started*, and a fortnight
+ * same reason — it is a run of *finishing what you started*, and two weeks
  * away does not undo the twelve before it.
  */
 export function marks(intervals: Interval[]): Marks {

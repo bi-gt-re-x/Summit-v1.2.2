@@ -249,7 +249,7 @@ function planFacts(goal: SubjectGoal): Array<{ label: string; value: string }> {
       ? `${goal.aimed} of ${goal.ofFinished} tasks`
       : 'nothing finished here',
   });
-  /* The fortnight is named in the value rather than the label, because it is
+  /* The two weeks is named in the value rather than the label, because it is
      the one figure here measured over something other than the page's window
      and a reader who missed that would read it as a share of the year. */
   facts.push({ label: 'Days worked', value: `${goal.recentDays} of last 14` });
@@ -1473,7 +1473,7 @@ export default function SubjectAnalytics() {
                 shaded by how much landed here, with its own window. It
                 answers the one question the rest of the page does not ask —
                 every figure above is about how the work *goes*, and none of
-                them about how much of it there is or when. A fortnight off
+                them about how much of it there is or when. Two weeks off
                 is a white band on this and is invisible everywhere else.
 
                 The model's findings follow when there are any, under their

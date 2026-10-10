@@ -523,7 +523,7 @@ export function recommendations(input: AdviceInput): Advice[] {
      inside the window; this catches one whose last session is far enough back
      that the window may not contain it at all. */
   /* Lifetime count, not the window's: a subject last touched five weeks ago
-     has nothing inside a fortnight to be missing from. See `lifetimeDone`. */
+     has nothing inside two weeks to be missing from. See `lifetimeDone`. */
   const dropped = subjects.rows
     .filter(
       (row) =>

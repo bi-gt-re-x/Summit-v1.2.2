@@ -111,7 +111,7 @@ worked it every day got the same page.
 
 So the section leads with a heatmap: one square a day, shaded by how much
 landed in this subject, with its own window — 7D, 30D, 90D, 1Y, All Time. The
-gaps are as legible as the dark squares, which is the point; a fortnight off
+gaps are as legible as the dark squares, which is the point; two weeks off
 is a white band and it is invisible everywhere else on the page.
 
 **It is the habits tab's calendar, filtered.** `habitDays` and `habitCalendar`

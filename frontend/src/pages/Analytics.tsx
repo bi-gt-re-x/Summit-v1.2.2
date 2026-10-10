@@ -513,7 +513,7 @@ export default function Analytics() {
   const opening = ((): React.ReactNode => {
     switch (view.key) {
       case 'overview':
-        /* Nothing until a fortnight of recorded work. `Summary` leads with a
+        /* Nothing until two weeks of recorded work. `Summary` leads with a
            score out of a hundred and a letter grade, and that is the most
            confident claim the page makes about a person — on day two it is
            arithmetic over an empty record, and on day nine it is a verdict
@@ -522,7 +522,7 @@ export default function Analytics() {
            Suppressed for the same stages that hold the quality panels back on
            the tab itself, so the grade does not turn up a week before the
            readings it is graded on. The tab's own opening below a
-           fortnight is `Collecting` or `StageNote`, which say the true thing
+           two weeks is `Collecting` or `StageNote`, which say the true thing
            instead. See utils/dataMaturity. */
         if (!stageShows(maturity.stage).judgement) return null;
         /* The one tab whose opening is a block rather than a line. Everything

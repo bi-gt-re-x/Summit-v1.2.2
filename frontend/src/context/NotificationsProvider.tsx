@@ -143,7 +143,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
    * The stamp goes up whether or not a pop-up is drawn. An account with the
    * on-screen half turned off has still had its chance to be told, and
    * stamping anyway is what stops turning the switch back on from replaying
-   * every notification of the last fortnight at once.
+   * every notification of the last two weeks at once.
    *
    * `stamped` is a ref rather than state because it guards an effect that
    * depends on the thing it would set: two polls landing while the first mark

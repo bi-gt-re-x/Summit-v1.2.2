@@ -12,7 +12,7 @@
  * wrong:
  *
  * - **A range is a slice of the tail.** "Last 30 days" is the last 30 rows,
- *   not the last 30 days that had something on them — a fortnight off is part
+ *   not the last 30 days that had something on them — two weeks off is part
  *   of the story a growth page is telling, and dropping empty days would make
  *   every gap invisible and every average flattering.
  * - **A comparison is against the slice before it, and only a whole one.** The
@@ -158,7 +158,7 @@ export interface TileSeries {
  * a sparkline of one is unreadable at 26 pixels high. Rolling it over a week
  * turns the same record into the thing the tile is actually claiming: whether
  * showing up is becoming more or less usual. The window is short enough that a
- * fortnight off still shows as a trough rather than a dip.
+ * two weeks off still shows as a trough rather than a dip.
  */
 function rollingRate(days: GrowthDay[], window = 7): number[] {
   return days.map((_, index) => {
@@ -234,7 +234,7 @@ export function summaryFigures(slice: RangeSlice): GrowthSummaryFigures {
   const perDayWas = before.length ? xpWas / before.length : 0;
 
   // Showing up, as a share of the window. Same rule as the rate above — over
-  // days in the range, not over days that had something on them, or a fortnight
+  // days in the range, not over days that had something on them, or two weeks
   // off would raise the figure it ought to lower.
   const rate = (days: GrowthDay[]) =>
     days.length
@@ -554,7 +554,7 @@ export interface GrowthTrend {
  *
  * The tiles say what the range came to; this says how it arrived, as the share
  * of the range's total banked by each day. A straight diagonal is an even
- * fortnight. A curve that hugs the floor and then leaps is a month where
+ * two weeks. A curve that hugs the floor and then leaps is a month where
  * nothing happened until the last week — which is the single most useful thing
  * a summary panel can tell someone, and the one thing four totals cannot.
  *
@@ -659,7 +659,7 @@ export function compact(value: number): string {
  * It used to be one per calendar month, which on a young account is three
  * points and two straight lines — a chart with nothing in it to read. Buckets
  * are a fixed number of days instead, chosen so any window lands near this
- * figure: about a fortnight each over a year, about four days each over six
+ * figure: about two weeks each over a year, about four days each over six
  * months of a new account. Twenty-six is what the panel has room for at a
  * third of a row — enough that the shape of a climb is visible, few enough
  * that the dots do not run into each other.

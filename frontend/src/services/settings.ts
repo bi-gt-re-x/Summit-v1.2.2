@@ -221,7 +221,7 @@ export interface Prefs {
    * Every one of them is read by the server's sweep rather than by the panel:
    * a channel that is off is not swept at all, so turning it off stops rows
    * being written instead of hiding rows that were written anyway. Turning it
-   * back on therefore starts from what is true then, not from a fortnight of
+   * back on therefore starts from what is true then, not from two weeks of
    * backlog. See backend/tracking/notify.py.
    */
   notifications_enabled: boolean;

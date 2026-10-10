@@ -16,13 +16,13 @@
  *
  * ## Two lengths, and why there are two
  *
- * A fortnight is the shortest span an average can be taken over without a
+ * Two weeks is the shortest span an average can be taken over without a
  * single good Saturday moving it, and it is short enough that the person it
  * describes is the person reading it. That is `RECENT_DAYS`, and it is what the
  * diagnosis and the next actions run on.
  *
  * Patterns need more. "Your accuracy is higher before 5pm" is a claim about two
- * groups of days, and splitting a fortnight in two leaves a week on each side —
+ * groups of days, and splitting two weeks in two leaves a week on each side —
  * which is not enough to tell a real difference from a good Tuesday. Those read
  * `PATTERN_DAYS`, a month, and still refuse to state a finding that thin
  * evidence would not carry.
@@ -44,7 +44,7 @@
  */
 import type { GrowthDay } from '@/types';
 
-/** The window advice is drawn from: a fortnight. */
+/** The window advice is drawn from: two weeks. */
 export const RECENT_DAYS = 14;
 
 /** The window pattern-finding is drawn from: about a month. */

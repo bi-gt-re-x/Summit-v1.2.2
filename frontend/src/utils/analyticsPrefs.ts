@@ -41,7 +41,7 @@ export interface ToneRules {
    *
    * A baseline is a stated intention rather than a contract, and 96% of a
    * five-day aim is five days in most weeks and four in one. Gentle gives that
-   * a fortnight's worth of slack, harsh gives it none.
+   * two weeks' worth of slack, harsh gives it none.
    */
   grace: number;
   /** Recommendations given a card of their own before the rest go in a list. */

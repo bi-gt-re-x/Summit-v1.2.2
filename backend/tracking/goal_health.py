@@ -4,7 +4,7 @@ Three answers, and only one of them is a judgement:
 
     on-track     nothing below says otherwise
     behind       past its date, more than ten points behind the calendar, or
-                 linked work that has gone quiet for a fortnight
+                 linked work that has gone quiet for two weeks
     not-started  nothing recorded against it yet — not a failure
 
 The line under the chip names the rule that decided it, so the reader can
@@ -218,6 +218,6 @@ def goal_health(goal, tasks, today=None, cache=None):
         return result('on-track', '{}% done with {}% of the time left — ahead of pace.'.format(
             pct, js_round((1 - (expected or 0)) * 100)))
     if recent_tasks > 0:
-        return result('on-track', '{}% done, and worked on {} in the last fortnight.'.format(
+        return result('on-track', '{}% done, and worked on {} in the last two weeks.'.format(
             pct, _plural(recent_tasks, 'time')))
     return result('on-track', '{}% done and keeping pace.'.format(pct))

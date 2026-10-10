@@ -511,7 +511,7 @@ export interface ScoreMovement {
  * existed and nothing ever read them back — see `/api/metric_history`.
  *
  * **The comparison is against the last *different* reading, not yesterday's.**
- * A score that has sat at 65 for a fortnight against yesterday's 65 produces
+ * A score that has sat at 65 for two weeks against yesterday's 65 produces
  * "no change" every single day, which is both true and useless; against the
  * last time it actually moved it produces "steady for twelve days", which is a
  * real statement about the account. Beyond `STALE_DAYS` there is nothing

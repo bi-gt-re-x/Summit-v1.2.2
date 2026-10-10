@@ -39,7 +39,7 @@ export const FILM: SubjectTree = {
     { id: 'fm.plan', name: 'Planning a Shoot', icon: 'storyboard', tier: 'intermediate', requires: ['fm.continuity'], state: lock, percent: 0, xp: 1800,
       desc: 'Shot lists, storyboards and a schedule that acknowledges how long lighting takes. Planning is what buys the time to be creative when something inevitably goes wrong.' },
     { id: 'fm.edit', name: 'Editing', icon: 'timeline-edit', tier: 'advanced', core: true, requires: ['fm.coverage', 'fm.sound'], state: lock, percent: 0, xp: 2200,
-      desc: 'Choosing what to show and for exactly how long. The film is genuinely made here, and the most common improvement is cutting in later and out earlier on every shot.' },
+      desc: 'Choosing what to show and for exactly how long. This is where the film really gets made, and the most common improvement is cutting in later and out earlier on every shot.' },
     { id: 'fm.rhythm', name: 'Pacing & Rhythm', icon: 'pacing', tier: 'advanced', requires: ['fm.edit'], state: lock, percent: 0, xp: 2100,
       desc: 'How fast the film feels, which is about information rather than shot length. A scene drags when the audience already knows what it is being told.' },
     { id: 'fm.transitions', name: 'Transitions', icon: 'transition', tier: 'advanced', requires: ['fm.rhythm'], state: lock, percent: 0, xp: 1900,

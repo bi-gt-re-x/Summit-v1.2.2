@@ -97,7 +97,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         />
       </section>
 
-      {/* Then the diagnosis: what the fortnight means, before what to change
+      {/* Then the diagnosis: what the two weeks means, before what to change
           about it. A reader who understands why the numbers are moving reads
           the recommendations below as reasons rather than as chores. */}
       <section className="ax-section">

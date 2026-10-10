@@ -93,7 +93,7 @@ export function ActiveDayPrinciple() {
  *
  * ## Why it is not a nag
  *
- * `DORMANT_AFTER` is a fortnight precisely so this cannot fire on a holiday,
+ * `DORMANT_AFTER` is two weeks precisely so this cannot fire on a holiday,
  * and the wording is careful to describe rather than chide: there is no
  * "you have not worked since", no streak language, and no exhortation. A
  * reader who took two months off for a reason of their own does not need the

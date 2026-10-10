@@ -42,7 +42,7 @@ export interface GoalReading {
   /** Tasks finished toward it in the recent window, and the one before. */
   now: number;
   before: number;
-  /** Days out of the last fortnight with work on it. */
+  /** Days out of the last two weeks with work on it. */
   activeDays: number;
   /** Every linked task, and the finished ones. */
   linked: number;
@@ -348,7 +348,7 @@ export function goalActions(
   if (out.length === 0 && health.state === 'on-track' && reading.now > 0) {
     out.push({
       id: 'keep',
-      because: `${reading.now} task${reading.now === 1 ? '' : 's'} finished toward this in the last fortnight, across ${reading.activeDays} day${reading.activeDays === 1 ? '' : 's'}.`,
+      because: `${reading.now} task${reading.now === 1 ? '' : 's'} finished toward this in the last two weeks, across ${reading.activeDays} day${reading.activeDays === 1 ? '' : 's'}.`,
       title: 'Nothing to change — keep going',
       effect: null,
       tone: 'good',
@@ -374,7 +374,7 @@ export interface GoalsOverview {
   notStarted: number;
   /** Weighted mean progress across active goals, 0-100. */
   overall: number;
-  /** Active goals with a date inside the next fortnight, soonest first. */
+  /** Active goals with a date inside the next two weeks, soonest first. */
   dueSoon: Goal[];
   completed: number;
 }
@@ -447,7 +447,7 @@ export function goalNotes(
     out.push({
       tone: 'good',
       goalId: strongest.goal.id,
-      headline: `Strongest this fortnight: ${strongest.goal.title}`,
+      headline: `Strongest in the last two weeks: ${strongest.goal.title}`,
       hint: `${strongest.reading.now} task${strongest.reading.now === 1 ? '' : 's'} across ${strongest.reading.activeDays} day${strongest.reading.activeDays === 1 ? '' : 's'}`,
     });
   }

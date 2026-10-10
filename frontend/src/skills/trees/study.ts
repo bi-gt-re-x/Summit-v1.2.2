@@ -30,7 +30,7 @@ export const STUDY: SubjectTree = {
     { id: 'sy.explain', name: 'Explaining It', icon: 'explain', tier: 'beginner', requires: ['sy.retrieval'], state: lock, percent: 0, xp: 1700,
       desc: 'Teaching the material to somebody, or to an empty room. The point where the explanation stalls is precisely the gap that rereading would have hidden.' },
     { id: 'sy.understand', name: 'Understanding vs Memorizing', icon: 'understanding', tier: 'intermediate', requires: ['sy.explain'], state: lock, percent: 0, xp: 1800,
-      desc: 'Knowing why something follows, so it can be reconstructed rather than recalled. Some things genuinely must be memorized, and knowing which is a decision worth making explicitly.' },
+      desc: 'Knowing why something follows, so it can be reconstructed rather than recalled. Some things just have to be memorized, and knowing which is a decision worth making explicitly.' },
     { id: 'sy.problems', name: 'Practice Problems', icon: 'problem-set', tier: 'intermediate', requires: ['sy.interleave'], state: lock, percent: 0, xp: 1900,
       desc: 'Working problems without the solution visible, then checking. Reading a worked solution and nodding is the most reliable way to be surprised in an exam.' },
     { id: 'sy.mistakes', name: 'Learning from Mistakes', icon: 'error-log', tier: 'intermediate', core: true, requires: ['sy.problems'], state: lock, percent: 0, xp: 1900,

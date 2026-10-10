@@ -53,7 +53,7 @@ MAX_TOKENS = 16000
 
 #: What a drafted goal is allowed to ask for. Bounds rather than validation for
 #: its own sake: these become a real goal through /api/add_goal, and a target of
-#: nought or a two-year horizon drafted from a fortnight of record is a goal
+#: nought or a two-year horizon drafted from two weeks of record is a goal
 #: that will be abandoned rather than missed.
 TARGET = (1, 100000)
 WEEKS = (1, 104)

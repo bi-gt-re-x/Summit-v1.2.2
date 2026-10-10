@@ -52,7 +52,7 @@ Each candidate declares a channel, and Settings has a switch per channel plus a
 master one — see FIELDS in backend/api/settings.py. A channel that is off is
 never swept, so turning one off does not just hide its notifications; it stops
 writing them, and turning it back on starts from the situations that are true
-then rather than replaying a fortnight.
+then rather than replaying two weeks.
 """
 from datetime import date, timedelta
 
@@ -260,7 +260,7 @@ def _analytics_candidates(facts, day):
     # One digest per ISO week, on whichever day the account first turns up in
     # it. A week is the shortest window where a change means anything.
     #
-    # Only when there is something in either week to report. A fortnight of
+    # Only when there is something in either week to report. Two weeks of
     # zeroes is not a summary of anything, and telling a brand new account that
     # it finished no tasks and earned no XP is the app's first sentence to
     # somebody who has not had a chance to do either.

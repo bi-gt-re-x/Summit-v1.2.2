@@ -33,7 +33,7 @@ describe('when it fires', () => {
   });
 
   it('fires once for a climb that crossed two thresholds', () => {
-    // Someone who worked through a fortnight without opening the page.
+    // Someone who worked through two weeks without opening the page.
     expect(climbed('early', 'full')).toBe(true);
   });
 

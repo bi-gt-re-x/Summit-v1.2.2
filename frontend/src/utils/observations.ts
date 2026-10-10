@@ -6,7 +6,7 @@
  * The early stages of the analytics page were built to a strict rule: count,
  * never infer. That rule is right, and it is the reason the figures on this
  * product are worth reading — but taken to the end it means an account spends
- * its first fortnight being handed totals and never once being told anything.
+ * its first two weeks being handed totals and never once being told anything.
  * A reader does not experience "no unsupported claims" as integrity. They
  * experience it as a product that has nothing to say about them.
  *

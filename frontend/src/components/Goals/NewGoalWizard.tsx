@@ -686,7 +686,7 @@ export function NewGoalWizard({
                 <p className="gx-hint">
                   {deadline
                     ? `Spread evenly between today and ${deadline}. Move any from the goal's timeline.`
-                    : 'A fortnight apart from today. Move any from the goal\u2019s timeline.'}
+                    : 'Two weeks apart from today. Move any from the goal\u2019s timeline.'}
                 </p>
               )}
               <ol className="gx-draft-list">

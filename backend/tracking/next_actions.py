@@ -25,7 +25,7 @@ then packed into the minutes, and anything that does not fit waits in `more`.
 Nine of them, each reading the record rather than a setting: overdue work, work
 due today, a goal behind its schedule, the subject whose work is rated worst, a
 batch of badly rated recent work, a subject dropped after steady work, a task
-sitting undated for a fortnight, a subject on a run of days, and a day with
+sitting undated for two weeks, a subject on a run of days, and a day with
 nothing on it yet. Each sets a weight; the ordering is the weights, tilted by
 the lens of the goal the reader is putting most work into.
 

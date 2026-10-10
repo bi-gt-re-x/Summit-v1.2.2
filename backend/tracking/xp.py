@@ -351,7 +351,7 @@ def _grace_available(user, last_date, today):
     """Whether the single day missed between these two dates is forgiven.
 
     Three things have to hold. **Exactly one day was missed** — this forgives
-    an off day, not a fortnight away, and two missed days is a broken streak by
+    an off day, not two weeks away, and two missed days is a broken streak by
     any reading. Days on vacation do not count as missed, so a vacation and an
     off day either side of it is still one missed day. **The streak had
     reached `GRACE_EARNED_AT`**, so the forgiveness was earned. And **no grace

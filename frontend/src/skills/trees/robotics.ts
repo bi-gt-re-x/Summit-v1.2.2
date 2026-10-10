@@ -57,7 +57,7 @@ export const ROBOTICS: SubjectTree = {
     { id: 'ro.docs', name: 'Engineering Notebook', icon: 'lab-notebook', tier: 'intermediate', requires: ['ro.proto'], state: lock, percent: 0, xp: 1600,
       desc: 'Recording what was tried, what it measured and why the decision went the way it did — as you go, not the week before judging. It is separately awarded, and it is the only thing that survives a graduating team.' },
     { id: 'ro.control', name: 'Feedback Control', icon: 'control-var', tier: 'advanced', core: true, requires: ['ro.sensors', 'ro.code'], state: lock, percent: 0, xp: 2200,
-      desc: 'Closing the loop so a mechanism reaches a setpoint and stays there under load. PID is four lines and a fortnight of tuning, and understanding what each term answers for is what shortens the fortnight.' },
+      desc: 'Closing the loop so a mechanism reaches a setpoint and stays there under load. PID is four lines and two weeks of tuning, and understanding what each term answers for is what shortens the two weeks.' },
     { id: 'ro.auto', name: 'Autonomous Routines', icon: 'loops', tier: 'advanced', requires: ['ro.control', 'ro.drive'], state: lock, percent: 0, xp: 2300,
       desc: 'Fifteen seconds with no driver, where dead reckoning drifts and the field is never quite where the drawing said. A short routine that works every time outscores an ambitious one that works at home.' },
     { id: 'ro.vision', name: 'Computer Vision', icon: 'camera', tier: 'advanced', requires: ['ro.code'], state: lock, percent: 0, xp: 2300,

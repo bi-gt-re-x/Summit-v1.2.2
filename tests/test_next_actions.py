@@ -144,7 +144,7 @@ def test_a_goal_behind_its_schedule_names_its_next_task():
     assert item['because'] == '10 days left, 66% behind schedule.'
 
 
-def test_an_undated_task_sitting_a_fortnight_is_do_or_drop():
+def test_an_undated_task_sitting_two_weeks_is_do_or_drop():
     item = first(plan([task(title='Tidy notes', created_at=iso(20) + 'T09:00:00')], budget=120), 'stale')
     assert item['title'] == 'Do or drop “Tidy notes”'
     assert 'On your list for 20 days' in item['because']

@@ -14,7 +14,7 @@
  *     sittings and days worked stated neither a total nor a scale.
  *   * **what gets typed after a task** — the reasons, which reached Insights
  *     and stopped there, while the Recommendations tab printed a sentence about
- *     rounding errors on a fortnight the reader had annotated nine times.
+ *     rounding errors on two weeks the reader had annotated nine times.
  *
  * The line is the one utils/analyticsPrefs draws for tone, and it holds for
  * these too: **none of them is arithmetic.** Detail caps how many rows of
@@ -49,7 +49,7 @@ describe('Recommendations reads what you type after a task', () => {
     );
     expect(screen.getByText(/You reported/)).toBeInTheDocument();
     expect(screen.getByText('distracted')).toBeInTheDocument();
-    expect(screen.getByText(/after 9 tasks this fortnight/)).toBeInTheDocument();
+    expect(screen.getByText(/after 9 tasks in the last two weeks/)).toBeInTheDocument();
   });
 
   it('says nothing extra when the reader answers that question about nothing', () => {

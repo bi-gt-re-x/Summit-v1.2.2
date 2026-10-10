@@ -380,7 +380,7 @@ export function bucketed(
   let inBucket = 0;
   let count = 0;
   // A weighted metric's last drawn value, carried across buckets that had no
-  // readings at all. Without it a fortnight with nothing rated puts a hole in
+  // readings at all. Without it two weeks with nothing rated puts a hole in
   // the middle of the line, and a hole reads as a crash rather than a silence.
   let held = 0;
 

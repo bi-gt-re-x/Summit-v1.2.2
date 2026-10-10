@@ -33,7 +33,7 @@ export const VOICE: SubjectTree = {
     { id: 'vo.support', name: 'Sustain & Control', icon: 'sustain', tier: 'intermediate', requires: ['vo.registers', 'vo.breath'], state: lock, percent: 0, xp: 1800,
       desc: 'Holding a note steady at any volume, and ending it deliberately. A note that sags in pitch as it fades is a breath running out, not an ear failing.' },
     { id: 'vo.dynamics', name: 'Dynamics', icon: 'dynamics', tier: 'intermediate', requires: ['vo.support'], state: lock, percent: 0, xp: 1800,
-      desc: 'Singing genuinely quietly without going breathy, and loudly without pushing. The quiet end is the harder one and the one that makes the loud end mean anything.' },
+      desc: 'Singing really quietly without going breathy, and loudly without pushing. The quiet end is the harder one and the one that makes the loud end mean anything.' },
     { id: 'vo.rhythm', name: 'Rhythm & Timing', icon: 'rhythm', tier: 'intermediate', requires: ['vo.vowels'], state: lock, percent: 0, xp: 1700,
       desc: 'Landing exactly where the beat is, including when the phrase starts before it. Singers drift more than instrumentalists because breath takes time and nobody plans for it.' },
     { id: 'vo.ear', name: 'Ear Training for Singers', icon: 'ear-training', tier: 'advanced', requires: ['vo.pitch', 'vo.rhythm'], state: lock, percent: 0, xp: 2100,

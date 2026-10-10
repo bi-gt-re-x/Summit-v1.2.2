@@ -27,7 +27,7 @@
  * ## Why there is a "watch this" line
  *
  * An action with no measure attached is a suggestion. With one, it is an
- * experiment the reader can settle in a fortnight against a figure this page
+ * experiment the reader can settle in two weeks against a figure this page
  * already draws. That line is what makes the next visit worth making.
  */
 import { Panel } from './charts';
@@ -73,7 +73,7 @@ export function DiagnosisCards({ items }: { items: Diagnosis[] }) {
 /**
  * The empty state, which is a real finding rather than a placeholder.
  *
- * An account whose fortnight looks like the fortnight before it genuinely has
+ * An account whose two weeks looks like the two weeks before it genuinely has
  * no tension to report, and saying so is more useful than relaxing a threshold
  * until something fires.
  */
@@ -88,7 +88,7 @@ export function DiagnosisEmpty({
    *
    * The counts found nothing to report; what the reader typed is a separate
    * record and is not nothing. An account that logged "distracted" after nine
-   * tasks has told this page something specific about a fortnight the
+   * tasks has told this page something specific about two weeks the
    * arithmetic just called unremarkable — and this panel was throwing it away
    * to print a sentence about rounding errors. Null when the account has that
    * question switched off, or has answered it about nothing.
@@ -99,8 +99,8 @@ export function DiagnosisEmpty({
     <Panel title="Growth diagnosis" className="ax-diag-empty">
       <p className="ax-empty">
         {enoughRecord
-          ? 'No big changes from the fortnight before. Your pace, ratings and spread are steady.'
-          : 'This compares the last two fortnights, so it needs about a month of history. It will fill in as you go.'}
+          ? 'No big changes from the two weeks before. Your pace, ratings and spread are steady.'
+          : 'This compares the last four weeks, so it needs about a month of history. It will fill in as you go.'}
       </p>
       {/* Their own words, under the arithmetic's silence. Stated as a count
           rather than as a cause: this is what was reported, and how often —
@@ -108,7 +108,7 @@ export function DiagnosisEmpty({
       {reported && (
         <p className="ax-empty">
           You reported <strong>{reported.phrase}</strong> after{' '}
-          {reported.count} {reported.count === 1 ? 'task' : 'tasks'} this fortnight.
+          {reported.count} {reported.count === 1 ? 'task' : 'tasks'} in the last two weeks.
         </p>
       )}
     </Panel>

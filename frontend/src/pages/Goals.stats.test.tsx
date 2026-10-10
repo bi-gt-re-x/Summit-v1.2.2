@@ -49,8 +49,8 @@ function goal(id: string, over: Partial<Goal> = {}): Goal {
 
 /* Two on track, one badly behind — with the health the server attaches. */
 const GOALS: Goal[] = [
-  goal('fine-1', { title: 'Ship the parser', health: reading('on-track', '90% done, and worked on 10 times in the last fortnight.') }),
-  goal('fine-2', { title: 'Read 24 books', health: reading('on-track', '90% done, and worked on 10 times in the last fortnight.') }),
+  goal('fine-1', { title: 'Ship the parser', health: reading('on-track', '90% done, and worked on 10 times in the last two weeks.') }),
+  goal('fine-2', { title: 'Read 24 books', health: reading('on-track', '90% done, and worked on 10 times in the last two weeks.') }),
   goal('sunk', {
     title: 'Learn to sight-read',
     current_value: 3,

@@ -159,7 +159,7 @@ CATALOGUE = (
     # ---- Consistency: turning up, and keeping turning up ----------------
     ('streak-3',     'Three in a Row',        'Hold a 3-day streak.',                             'streak',      3,     1, 'Consistency'),
     ('streak-7',     'Week Warrior',          'Hold a 7-day streak.',                             'streak',      7,     1, 'Consistency'),
-    ('streak-14',    'Fortnight',             'Hold a 14-day streak.',                            'streak',      14,    2, 'Consistency'),
+    ('streak-14',    'Two Weeks Strong',      'Hold a 14-day streak.',                            'streak',      14,    2, 'Consistency'),
     ('streak-30',    'Unstoppable',           'Hold a 30-day streak.',                            'streak',      30,    2, 'Consistency'),
     ('streak-60',    'Two Months Deep',       'Hold a 60-day streak.',                            'streak',      60,    3, 'Consistency'),
     ('streak-100',   'Hundred Days',          'Hold a 100-day streak.',                           'streak',      100,   4, 'Consistency'),

@@ -30,6 +30,6 @@ export const GRAPHS: SubjectTree = {
     { id: 'g.bipartite', name: 'Bipartite Matching', icon: 'puzzle', tier: 'expert', requires: ['g.components'], state: lock, percent: 0, xp: 2500,
       desc: 'Pairing two sets so as many pairs as possible are matched. Scheduling, assignment and rota problems are usually this in disguise.' },
     { id: 'g.flow', name: 'Network Flow', icon: 'flow', tier: 'mastery', requires: ['g.topo', 'g.mst', 'g.bipartite'], state: lock, percent: 0, xp: 3000,
-      desc: 'How much can be pushed through a capacitated network, and where the bottleneck is. The max-flow min-cut theorem tying those two together is one of the genuinely beautiful results in the subject.' },
+      desc: 'How much can be pushed through a capacitated network, and where the bottleneck is. The max-flow min-cut theorem tying those two together is one of the most beautiful results in the subject.' },
   ],
 };

@@ -196,7 +196,7 @@ export default function Dashboard() {
    * Hours focused on an average day, from the record rather than the task list.
    *
    * The one figure on this page that cannot be counted off the tasks — focus is
-   * its own table — so it is its own read, over the same fortnight `typicalDay`
+   * its own table — so it is its own read, over the same two weeks `typicalDay`
    * uses. Null until it lands, and the card simply does not draw the line
    * until then rather than showing a zero it would have to take back.
    */

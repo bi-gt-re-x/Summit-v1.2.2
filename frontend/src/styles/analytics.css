@@ -4308,7 +4308,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    What to do next — the plan, and the budget it fits into
    ==========================================================================
    The panel that opens Recommendations. Everything else on this page reports
-   on a fortnight that has already happened; this one is about the next hour,
+   on two weeks that has already happened; this one is about the next hour,
    and it is laid out to be read standing up: a tag saying why, the action, the
    reason underneath in the reader's own figures, and the minutes on the right
    where the eye can add them up. */
@@ -4534,7 +4534,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 
 /* What settles the experiment. An action with no measure attached is a
-   suggestion; with one it is something the next fortnight can answer. */
+   suggestion; with one it is something the next two weeks can answer. */
 .ax-diag-watch {
     margin: 0;
     font-size: var(--text-xs);
@@ -6461,7 +6461,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
    The two column headings carry the dates, so every "68 -> 82" below them is
    anchored to a pair of real windows rather than to the words "then" and
    "now". Without them the panel states fifteen numbers and never says which
-   fortnight any of them belongs to. */
+   two weeks any of them belongs to. */
 .ax-gp-when {
     display: flex;
     align-items: baseline;
@@ -7074,7 +7074,7 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 .ax-skill-cold li { display: grid; grid-template-columns: minmax(0, 1fr) 90px 42px 34px; align-items: center; gap: var(--space-2); font-size: var(--text-sm); }
 .ax-skill-cold-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ax-text); }
 .ax-skill-cold-bar { height: 5px; border-radius: var(--radius-full); background: var(--ax-line); overflow: hidden; }
-/* Amber and not red. A subject left for a fortnight is a fact about a week,
+/* Amber and not red. A subject left for two weeks is a fact about a week,
    not a failure — the page states it and does not scold. */
 .ax-skill-cold-bar i { display: block; height: 100%; border-radius: inherit; background: var(--ax-amber); }
 .ax-skill-cold-days { text-align: right; font-variant-numeric: tabular-nums; color: var(--ax-muted); font-size: var(--text-2xs); }

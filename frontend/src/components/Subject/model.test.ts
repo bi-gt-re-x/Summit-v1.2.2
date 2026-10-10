@@ -610,7 +610,7 @@ describe('the chart series', () => {
   });
 
   it('leaves a period with nothing rated as null rather than as zero quality', () => {
-    // Drawing it as zero would invent a bad fortnight out of a quiet one.
+    // Drawing it as zero would invent a bad two weeks out of a quiet one.
     const tasks = [
       done({ completed_at: ago(1), difficulty: 4, execution: 4 }),
       done({ completed_at: ago(2) }),

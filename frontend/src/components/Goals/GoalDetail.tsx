@@ -428,8 +428,8 @@ export function GoalDetail(props: GoalDetailProps) {
               </strong>
               <span className="gx-quiet">
                 {reading.change === null
-                  ? `${reading.now} finished in the last fortnight`
-                  : `${reading.now} this fortnight against ${reading.before} before`}
+                  ? `${reading.now} finished in the last two weeks`
+                  : `${reading.now} in the last two weeks against ${reading.before} before`}
               </span>
             </div>
             <div>

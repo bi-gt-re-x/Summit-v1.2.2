@@ -374,7 +374,7 @@ export function opportunities(
  * The lattice has four states and they answer one question — *can I start
  * this* — which leaves a second question unasked: *does anything depend on my
  * finishing it*. Those come apart. A skill can be wide open and lead nowhere,
- * and a reader deciding what to spend a fortnight on feels very differently
+ * and a reader deciding what to spend two weeks on feels very differently
  * about that than about the node three others are stacked behind.
  *
  * Both halves of the test matter:

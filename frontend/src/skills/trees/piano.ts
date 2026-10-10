@@ -26,7 +26,7 @@ export const PIANO: SubjectTree = {
     { id: 'pn.readbass', name: 'Reading the Bass Staff', icon: 'bass-clef', tier: 'beginner', requires: ['pn.readtreble'], state: lock, percent: 0, xp: 1500,
       desc: 'The second stave, with different lines meaning different notes. Learning it thoroughly rather than by relating everything to the treble is what stops the left hand lagging for years.' },
     { id: 'pn.hands', name: 'Hands Together', icon: 'two-hands', tier: 'beginner', core: true, requires: ['pn.fingering'], state: lock, percent: 0, xp: 1900,
-      desc: 'Two independent parts at once, which is the first genuinely difficult thing the instrument asks. Practicing each hand until it is automatic, then joining them slowly, is the only route that reliably works.' },
+      desc: 'Two independent parts at once, which is the first really hard thing the instrument asks. Practicing each hand until it is automatic, then joining them slowly, is the only route that reliably works.' },
     { id: 'pn.scales', name: 'Scales & Arpeggios', icon: 'scales', tier: 'beginner', requires: ['pn.hands'], state: lock, percent: 0, xp: 1700,
       desc: 'The standard patterns, with the thumb passing under smoothly. Boring, and they are where evenness and finger independence actually come from.' },
     { id: 'pn.chords', name: 'Chords & Voicings', icon: 'chords', tier: 'intermediate', core: true, requires: ['pn.hands'], state: lock, percent: 0, xp: 1900,

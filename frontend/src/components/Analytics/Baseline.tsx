@@ -3,7 +3,7 @@
  *
  * A baseline is the part of this page that does not need history, because the
  * account states it rather than the page measuring it. Every other panel here
- * needs weeks of record before it means anything — a fortnight for a
+ * needs weeks of record before it means anything — two weeks for a
  * recommendation, three for a habit or a trend, four for an explanation. That
  * is correct and it is not negotiable: the analysis is only worth reading
  * because it refuses to speak early. But it left a new reader with a page of

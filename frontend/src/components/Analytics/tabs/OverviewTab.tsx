@@ -206,7 +206,7 @@ export function OverviewTab({
 
         {/* The one inference allowed this early, and only once it is earned.
             Everything else at this stage is a tally, which is the right
-            default and also the reason an account can spend a fortnight being
+            default and also the reason an account can spend two weeks being
             handed totals and never once told anything about itself. The
             restraint is in utils/observations — a floor, an effect size, and a
             tier that has to be earned on both — so this renders nothing at all
@@ -250,7 +250,7 @@ export function OverviewTab({
    *
    * `judgement` holds back the ones that grade the *person*: the score, its
    * letter, the percentile against everybody else, the quality readings. A
-   * fortnight is the floor for those, because being told you are a C-minus on
+   * two weeks is the floor for those, because being told you are a C-minus on
    * your ninth day is a claim about somebody the app has barely met.
    *
    * Read from `stageShows` rather than spelled out here. The page's opening

@@ -22,7 +22,7 @@ export const ENDURANCE: SubjectTree = {
     { id: 'en.breath', name: 'Breathing', icon: 'breath', tier: 'foundation', requires: ['en.gait'], state: lock, percent: 0, xp: 1300,
       desc: 'Rhythmic, relaxed and matched to effort. It is also the most reliable everyday gauge of how hard a session actually is, long before any device tells you.' },
     { id: 'en.zones', name: 'Effort Zones', icon: 'zones', tier: 'beginner', core: true, requires: ['en.breath'], state: lock, percent: 0, xp: 1700,
-      desc: 'Dividing effort into bands by heart rate, pace or feel. The value is not precision; it is keeping easy days genuinely easy so hard days can be hard.' },
+      desc: 'Dividing effort into bands by heart rate, pace or feel. The value is not precision; it is keeping easy days actually easy so hard days can be hard.' },
     { id: 'en.long', name: 'The Long Session', icon: 'long-run', tier: 'beginner', requires: ['en.zones'], state: lock, percent: 0, xp: 1800,
       desc: 'One session a week that goes further than the others, built up gradually. It teaches the body to use fat for fuel and teaches you what happens after ninety minutes.' },
     { id: 'en.volume', name: 'Weekly Volume', icon: 'volume', tier: 'beginner', requires: ['en.long'], state: lock, percent: 0, xp: 1700,
@@ -54,6 +54,6 @@ export const ENDURANCE: SubjectTree = {
     { id: 'en.crosstrain', name: 'Cross-Training', icon: 'cross-train', tier: 'expert', requires: ['en.injury'], state: lock, percent: 0, xp: 2100,
       desc: 'Swimming, cycling or rowing to keep the engine while a joint recovers. It is what turns an injury from a lost season into a lost month.' },
     { id: 'en.season', name: 'Seasons & Longevity', icon: 'longevity', tier: 'mastery', requires: ['en.race', 'en.crosstrain'], state: lock, percent: 0, xp: 2900,
-      desc: 'Building years rather than blocks, with off-seasons that are genuinely off. The athletes who improve for a decade are the ones who allowed themselves to be unfit for a few weeks each year.' },
+      desc: 'Building years rather than blocks, with off-seasons that are really off. The athletes who improve for a decade are the ones who allowed themselves to be unfit for a few weeks each year.' },
   ],
 };

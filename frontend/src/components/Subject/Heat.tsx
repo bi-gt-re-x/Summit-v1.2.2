@@ -12,7 +12,7 @@
  *
  * A calendar of squares answers that in one look, and it is the one shape
  * that answers it without a sentence: the gaps are as legible as the dark
- * squares, and a fortnight off is a white band nobody has to be told about.
+ * squares, and two weeks off is a white band nobody has to be told about.
  *
  * ## It is the same calendar the habits tab draws
  *
@@ -87,7 +87,7 @@ export function SubjectHeat({ mine, today, subject, window }: SubjectHeatProps) 
 
   /* How far back All Time is allowed to go. `habitCalendar` caps it at three
      years anyway; this keeps a young account from drawing two blank years
-     around a fortnight of squares. */
+     around two weeks of squares. */
   const accountDays = useMemo(() => {
     const first = [...byDate.keys()].sort()[0];
     if (!first) return 30;

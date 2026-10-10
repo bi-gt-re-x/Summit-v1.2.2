@@ -76,7 +76,7 @@ export function benchHero(all: GrowthDay[]): BenchHero {
   // closing one — a comparison that shares days with itself flatters whichever
   // end the shared days fell in. On an account younger than two months both
   // windows shrink to half its life, so the figure appears from about a
-  // fortnight in rather than waiting for the sixtieth day.
+  // two weeks in rather than waiting for the sixtieth day.
   const baselineDays = Math.min(WINDOW_DAYS, Math.floor(all.length / 2));
   const baseline = sumOver(all.slice(0, baselineDays), xp);
   // Scaled to the same length as the window it is compared against, or a short

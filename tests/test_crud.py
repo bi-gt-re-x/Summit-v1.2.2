@@ -404,7 +404,7 @@ def test_a_connected_goal_outlives_the_subject_being_unfollowed(client):
 
     Unfollowing a subject takes it out of the rail; it does not mean the reader
     has changed their mind about which goal that subject is about. They follow
-    it again a fortnight later and the connection is still there — which is
+    it again two weeks later and the connection is still there — which is
     only true while the validator refuses to cross-check the two answers.
     """
     client.post('/api/settings', json={'values': {

@@ -636,7 +636,7 @@ const BADGE_GLYPH: Record<string, ReactNode> = {
   // ---- Consistency ---------------------------------------------------
   'streak-3':     GLYPH.spark,          // Three in a Row
   'streak-7':     GLYPH.flame,          // Week Warrior
-  'streak-14':    GLYPH.torch,          // Fortnight
+  'streak-14':    GLYPH.torch,          // Two Weeks Strong
   'streak-30':    GLYPH.bonfire,        // Unstoppable
   'streak-60':    GLYPH.comet,          // Two Months Deep
   'streak-100':   GLYPH.sun,            // Hundred Days

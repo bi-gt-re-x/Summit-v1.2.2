@@ -226,7 +226,7 @@ def test_every_period_is_summarised_so_the_row_costs_no_extra_call(client):
 def test_an_unknown_period_falls_back_rather_than_failing(client):
     """A stale bookmark or a typed URL is not a 500."""
     finish(client, xp=50)
-    assert periods(client, 'fortnight')['period'] == '30d'
+    assert periods(client, 'two weeks')['period'] == '30d'
 
 
 def test_the_periods_need_a_session(anon):

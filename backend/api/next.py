@@ -27,7 +27,7 @@ TASK_FIELDS = ('id', 'title', 'status', 'subject', 'priority', 'due_date', 'crea
                'completed_at', 'execution', 'difficulty', 'xp_value', 'completion_seconds',
                'milestone_id', 'goal_id')
 
-#: The fortnight the streak rule reads: today, and the run before it.
+#: The two weeks the streak rule reads: today, and the run before it.
 RECENT_DAYS = 14
 
 

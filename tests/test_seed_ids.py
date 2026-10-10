@@ -7,7 +7,7 @@ could not: `base` was `int(SEED_ID_LOW)` flat, so every run wrote ids from
 account died on its first row with `UNIQUE constraint failed: tasks.id`.
 
 Only the id arithmetic is tested here. What the week contains is a judgement
-about what a rigorous fortnight looks like and not something to pin.
+about what a rigorous two weeks looks like and not something to pin.
 """
 import os
 import sys

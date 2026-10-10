@@ -39,7 +39,7 @@ const VALUES = [
   },
   {
     title: 'Rewarding productivity',
-    body: 'XP, levels and grades make finishing work feel genuinely good.',
+    body: 'XP, levels and grades make finishing work feel good.',
   },
   {
     title: 'Simplicity first',

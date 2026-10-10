@@ -412,7 +412,7 @@ def adopt_advice(body: AdoptAdvice, username: str = Depends(current_username)):
     Dated today rather than tomorrow, even though the task this creates is due
     tomorrow: the decision is what is being recorded here, and the comparison
     that follows wants the day the reader changed their mind about how they
-    work. A day either way is inside the noise of a fortnight-long window
+    work. A day either way is inside the noise of a two-week window
     anyway, and "the day I pressed the button" is the one a reader can
     remember.
     """

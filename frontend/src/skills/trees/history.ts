@@ -32,7 +32,7 @@ export const HISTORY: SubjectTree = {
     { id: 'hi.economic', name: 'Economic History', icon: 'trade', tier: 'intermediate', requires: ['hi.social'], state: lock, percent: 0, xp: 1900,
       desc: 'Trade, prices, harvests and who owned the land. Long series of dull numbers explain more political upheaval than most political documents do.' },
     { id: 'hi.culture', name: 'Cultural History', icon: 'culture', tier: 'intermediate', requires: ['hi.social'], state: lock, percent: 0, xp: 1800,
-      desc: 'Belief, ritual, art and what people found funny or shameful. It is the fastest route to the fact that the past was genuinely foreign rather than us in worse clothes.' },
+      desc: 'Belief, ritual, art and what people found funny or shameful. It is the fastest route to the fact that the past was a foreign place rather than us in worse clothes.' },
     { id: 'hi.empire', name: 'Empires & Encounter', icon: 'empire', tier: 'intermediate', requires: ['hi.political', 'hi.economic'], state: lock, percent: 0, xp: 2000,
       desc: 'Expansion, conquest and what happened where two societies met. The sources are overwhelmingly from one side, and reading against them is a technique in itself.' },
     { id: 'hi.revolution', name: 'Revolutions', icon: 'revolution', tier: 'intermediate', requires: ['hi.political'], state: lock, percent: 0, xp: 1900,

@@ -232,7 +232,7 @@ describe('the dimensions', () => {
 
 describe('standings', () => {
   it('counts a run rather than a rate', () => {
-    /* A rate lets a bad fortnight hide inside a good quarter. The achievement
+    /* A rate lets a bad two weeks hide inside a good quarter. The achievement
        is about doing it again, so the measure is the longest run. */
     const state = subjectState(
       [

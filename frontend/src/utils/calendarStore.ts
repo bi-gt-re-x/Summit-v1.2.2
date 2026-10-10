@@ -192,7 +192,7 @@ const RECURRENCE_MONTHS = 12;
  * **A repeat starts the day after it is asked for, and it used to start weeks
  * before.** Both branches began at the *first of the base month* rather than at
  * the base date, so "every Monday", set up on Thursday 20 August, wrote the
- * Mondays of the 3rd, the 10th and the 17th — three blocks into a fortnight the
+ * Mondays of the 3rd, the 10th and the 17th — three blocks into two weeks the
  * reader had already lived through — and "the 5th of every month" put one on
  * the 5th of August. Nothing on a calendar should appear in the past because of
  * something set up today, and the two were also inconsistent with the task

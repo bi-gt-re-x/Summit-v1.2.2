@@ -76,7 +76,7 @@ const fine = goal('over-fine', {
   title: 'Read 24 books',
   priority: 1,
   current_value: 62,
-  health: reading('on-track', '62% done, and worked on 1 time in the last fortnight.'),
+  health: reading('on-track', '62% done, and worked on 1 time in the last two weeks.'),
 });
 
 const GOALS: Goal[] = [...ladder, sinking, fine];

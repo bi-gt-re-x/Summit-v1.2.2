@@ -21,7 +21,7 @@
  * **A thin record produces no finding at all.** Each function has a floor and
  * returns nothing below it. `unlock` turns that into the sentence the tab shows
  * instead — "keep using Summit for 9 more days" beats a confident claim drawn
- * from a fortnight, which is the failure mode this whole file is arranged
+ * from two weeks, which is the failure mode this whole file is arranged
  * against.
  */
 import type { GrowthDay, Task } from '@/types';

@@ -23,7 +23,7 @@
  * ## Stages, and why they are floors rather than ranges
  *
  * Five, and a stage is simply the highest floor an account has reached. That
- * shape matters: a reader who works nine days in a fortnight and then stops
+ * shape matters: a reader who works nine days in two weeks and then stops
  * for a month does not fall back to `early`, because nothing they learned
  * about themselves became untrue. Data does not expire, so stages do not
  * either — the only direction is up.
@@ -202,7 +202,7 @@ export interface Maturity {
 /**
  * Days of quiet before the page says so.
  *
- * A fortnight. Under it there is nothing to remark on — people take a week
+ * Two weeks. Under it there is nothing to remark on — people take a week
  * off, and a page that says "you have been away for 4 days" to somebody who
  * took a long weekend is nagging rather than orienting. Past it the window a
  * reader lands on is mostly empty, and the absence is the most useful thing
@@ -237,7 +237,7 @@ export function dataMaturity(days: GrowthDay[]): Maturity {
   const toNext = next ? Math.max(0, STAGE_FLOOR[next] - activeDays) : null;
 
   /* Through the current stage, not through the whole ladder. A bar that
-     measures the distance to `full` sits almost empty for a fortnight and
+     measures the distance to `full` sits almost empty for two weeks and
      tells a reader on day six that they have barely begun, which is both
      discouraging and false — they are one day from the next thing opening. */
   const floor = STAGE_FLOOR[stage];

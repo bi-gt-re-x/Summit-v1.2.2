@@ -15,7 +15,7 @@
  *
  * **This is the one file on the page that states something that has not
  * happened.** The projections are a straight line drawn at a measured pace and
- * nothing more: no seasonality, no decay, no belief that a good fortnight
+ * nothing more: no seasonality, no decay, no belief that a good two weeks
  * continues. The panel says which pace it used and over how many days, because
  * a forecast whose assumption is hidden is a claim rather than an estimate.
  */

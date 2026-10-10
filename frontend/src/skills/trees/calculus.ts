@@ -30,7 +30,7 @@ export const CALCULUS: SubjectTree = {
     { id: 'k.applications', name: 'Areas & Volumes', icon: 'geometry', tier: 'expert', requires: ['k.techniques'], state: lock, percent: 0, xp: 2400,
       desc: 'Using integration for the area between curves and the volume of a solid of revolution. Sketch the region and the representative slice first; the integral then writes itself.' },
     { id: 'k.series', name: 'Series', icon: 'series', tier: 'mastery', requires: ['k.techniques'], state: lock, percent: 0, xp: 2700,
-      desc: 'Infinite sums, and the tests that decide whether one settles on a finite value. A rare place where the answer is genuinely yes or no and the reasoning is the whole content.' },
+      desc: 'Infinite sums, and the tests that decide whether one settles on a finite value. A rare place where the answer is a clean yes or no and the reasoning is the whole content.' },
     { id: 'k.taylor', name: 'Taylor Series', icon: 'spark', tier: 'mastery', requires: ['k.series'], state: lock, percent: 0, xp: 2900,
       desc: 'Approximating any well-behaved function by a polynomial built from its derivatives. This is how a calculator computes sine, and why the approximation gets worse away from the center.' },
     { id: 'k.diffeq', name: 'Differential Equations', icon: 'physics', tier: 'mastery', requires: ['k.applications', 'k.taylor'], state: lock, percent: 0, xp: 3000,

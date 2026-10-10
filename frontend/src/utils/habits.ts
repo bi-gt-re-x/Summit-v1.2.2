@@ -605,7 +605,7 @@ const wordFor = (share: number): HabitPattern['frequency'] =>
  * A pattern needs a floor of observations before it is stated at all — five
  * for a per-habit tendency, twenty days for anything about the week. Below
  * that the tab says how much more data it needs rather than inventing a
- * tendency out of a fortnight.
+ * tendency out of two weeks.
  */
 export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, toIso: string): HabitPattern[] {
   const out: HabitPattern[] = [];

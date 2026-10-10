@@ -996,7 +996,7 @@ export function ActiveGoalCard({
                It used to be one sentence pointing at the other panel — "the
                panel on the left is where they start" — and on most goals that
                was a pointer at nothing. The left panel only shows the button
-               when it has no chart to draw, so a number goal with a fortnight
+               when it has no chart to draw, so a number goal with two weeks
                of work behind it got a chart there and this instruction here,
                and the thing it named did not exist on the card. */
             <>

@@ -166,7 +166,7 @@ export interface SparklineProps {
  * A tile's own days, with no axis and no scale.
  *
  * The tile states one figure for the whole window, which cannot tell a period
- * that climbed steadily from one that did everything in its last fortnight.
+ * that climbed steadily from one that did everything in its last two weeks.
  * This is the shape of the arriving, and it is deliberately unlabelled — a
  * sparkline that invites a reading off its y-axis has stopped being one.
  */

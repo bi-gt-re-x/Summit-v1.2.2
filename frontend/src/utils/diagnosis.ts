@@ -8,7 +8,7 @@
  *
  *     Your productivity is holding, but your efficiency is falling.
  *     You are finishing 92% of the work you set yourself, and each task is
- *     taking 18% longer than your fortnightly average.
+ *     taking 18% longer than your two-week average.
  *     → Cut the next three sittings to 40 minutes and stop on the timer.
  *
  * Three parts, and each is load-bearing. The **headline** names the tension in
@@ -22,7 +22,7 @@
  * is not, or two that are moving together in a way neither shows alone. A
  * single figure moving is a trend, and the Trends tab already draws it. The
  * value here is the relationship — "more work, worse ratings" is a finding
- * about how this fortnight is being spent that neither number states on its
+ * about how in the last two weeks is being spent that neither number states on its
  * own.
  *
  * ## The rules the rules follow
@@ -33,15 +33,15 @@
  * a confident sentence about four tasks.
  *
  * **Nothing is invented.** Every figure printed is a count or a mean of the
- * account's own record over `utils/recent`'s fortnight, compared against the
- * fortnight before it. No projections, no scores, no scaling to 100.
+ * account's own record over `utils/recent`'s two weeks, compared against the
+ * two weeks before it. No projections, no scores, no scaling to 100.
  *
  * **A good diagnosis is a diagnosis.** Three of the rules fire on things going
  * *right* — difficulty rising while execution holds is the clearest signal in
  * the whole app that somebody has actually levelled up, and a page that only
  * ever reports problems is one the reader learns to dread rather than open.
  *
- * **Silence is an answer.** An account whose fortnight looks like the one
+ * **Silence is an answer.** An account whose two weeks looks like the one
  * before it has no tension to report, and is told that rather than handed a
  * rule with the thresholds relaxed until something fired.
  */
@@ -116,7 +116,7 @@ const inRange = (iso: string | undefined, from: string, to: string) =>
  * The day series carries the per-day totals the backend already computes; the
  * tasks carry everything the day series cannot hold — what a task was rated,
  * how long it took, whether it had a deadline and beat it. Both are scoped to
- * the same dates so the two halves of a diagnosis describe the same fortnight.
+ * the same dates so the two halves of a diagnosis describe the same two weeks.
  */
 export function vitals(days: GrowthDay[], tasks: Task[]): Vitals {
   const from = days[0]?.date ?? '';
@@ -209,7 +209,7 @@ const moreLess = (pct: number, more = 'more', less = 'less') =>
   `${round(Math.abs(pct))}% ${pct >= 0 ? more : less}`;
 
 /**
- * Everything the fortnight supports saying, strongest first.
+ * Everything the two weeks supports saying, strongest first.
  *
  * `now` is the recent window and `before` the one immediately preceding it —
  * see `recentWindow` in utils/recent. Both are read from the same task list, so
@@ -374,8 +374,8 @@ export function diagnose(now: Vitals, before: Vitals): Diagnosis[] {
     push({
       id: 'steady',
       tone: 'good',
-      headline: 'Steady fortnight',
-      detail: `${now.finishedCount} tasks over ${now.activeDays} days at ${round(now.xpPerActiveDay)} XP a day, about the same as the fortnight before.`,
+      headline: 'Steady two weeks',
+      detail: `${now.finishedCount} tasks over ${now.activeDays} days at ${round(now.xpPerActiveDay)} XP a day, about the same as the two weeks before.`,
       action: 'Change one thing, like difficulty or a subject you have been avoiding, and keep the rest the same.',
       watch: 'The one thing you changed',
       weight: 40,

@@ -317,7 +317,7 @@ export function OverviewStrip({
         </header>
         <strong className="gx-stat-value">{dueSoon}</strong>
         <span className="gx-stat-foot">
-          {next ? `Next: ${formatGoalDate(next.deadline)}` : 'nothing in the next fortnight'}
+          {next ? `Next: ${formatGoalDate(next.deadline)}` : 'nothing in the next two weeks'}
         </span>
       </article>
     </div>
