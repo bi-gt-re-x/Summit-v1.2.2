@@ -176,6 +176,7 @@ import * as format from '@/utils/format';
 import '@/styles/timer.css';
 import { Icon, type IconName } from '@/components/Icon';
 import { FocusSitting } from '@/components/Timer/FocusSitting';
+import { daySummary } from '@/components/Dashboard/summary';
 
 const SETUP_KEY = 'pomodoro:setup';
 
@@ -1078,7 +1079,7 @@ export default function Timer() {
   const user = username || 'Default';
   const account = useUserData();
   const { stats } = useStats();
-  const { dailyGoal, displayName, prefs, ready, update: updatePrefs } = useSettings();
+  const { displayName, prefs, ready, update: updatePrefs } = useSettings();
   const session = useFocusSession(username);
   const pomodoro = usePomodoro(username, session);
 
@@ -1376,9 +1377,9 @@ export default function Timer() {
     await account.reload();
   }, [account, ticking]);
 
-  /** Tasks finished today, which is what the sitting's first bar counts. */
-  const tasksDoneToday = useMemo(() => tasks.filter((task) => task.status === 'done'
-    && (task.completed_at ?? '').slice(0, 10) === iso(today)).length, [tasks, today]);
+  /** Today's plate, which is what the sitting's first bar counts: the same
+      figures the dashboard's Today's Progress card draws. */
+  const plate = useMemo(() => daySummary(tasks, iso(today)), [tasks, today]);
 
   /* Drop the optimistic ids the reload has caught up with, so a long sitting
      does not accumulate a set of every task it ever ticked. */
@@ -1399,8 +1400,8 @@ export default function Timer() {
         percent={percent}
         remaining={remaining}
         onPause={pomodoro.pause}
-        tasksDone={tasksDoneToday}
-        tasksGoal={dailyGoal}
+        tasksDone={plate.done}
+        tasksTotal={plate.total}
         focused={session.focused}
         focusGoal={goalSeconds}
         upcoming={upcoming}

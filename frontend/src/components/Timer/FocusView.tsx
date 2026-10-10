@@ -36,11 +36,17 @@
  *
  * ## Two bars, because they are two different measures
  *
- * Tasks finished today against the account's daily goal, and focused time
- * against today's hours goal. They share a block and a heading but not a
+ * Tasks finished today against today's plate, and focused time against
+ * today's hours goal. They share a block and a heading but not a
  * track: one is counted in tasks and the other in minutes, and a single bar
  * blending them would be a number with no unit that neither halves could be
  * read back out of.
+ *
+ * The plate is the count the dashboard's Today's Progress card draws:
+ * finished today, plus open tasks due today, overdue or undated (`daySummary`
+ * in components/Dashboard/summary). The bar was measured against the Daily XP
+ * goal once, which put "0 of 100" under a list of three tasks. There is no
+ * daily task goal to measure against, so it is the day's own list.
  *
  * Both are *today*, not this sitting. A bar that reset at the top of every
  * sitting would spend most of the day near empty and would say nothing about
@@ -83,9 +89,10 @@ export interface FocusViewProps {
   remaining: number;
   /** Pause the sitting, which is also what leaves this view. */
   onPause: () => void;
-  /** Tasks finished today, and the account's daily goal. */
+  /** Tasks finished today, and today's plate: those plus the open ones due
+      today, overdue or undated. See `daySummary`. */
   tasksDone: number;
-  tasksGoal: number;
+  tasksTotal: number;
   /** Seconds focused today, and today's goal in seconds. */
   focused: number;
   focusGoal: number;
@@ -104,7 +111,7 @@ export interface FocusViewProps {
 
 export function FocusView({
   phase, percent, remaining, onPause,
-  tasksDone, tasksGoal, focused, focusGoal,
+  tasksDone, tasksTotal, focused, focusGoal,
   upcoming, onComplete, busy, done, goal, goalMinutes,
 }: FocusViewProps) {
   const gradient = useId();
@@ -139,7 +146,7 @@ export function FocusView({
 
   const r = 118;
   const c = 2 * Math.PI * r;
-  const taskPct = tasksGoal ? Math.min(100, Math.round((tasksDone / tasksGoal) * 100)) : 0;
+  const taskPct = tasksTotal ? Math.min(100, Math.round((tasksDone / tasksTotal) * 100)) : 0;
   const focusPct = focusGoal ? Math.min(100, Math.round((focused / focusGoal) * 100)) : 0;
   const goalNow = goal ? goal.now + goalMinutes : 0;
   const goalPct = goal && goal.target > 0
@@ -182,7 +189,7 @@ export function FocusView({
           <div className="pom-sit-bar">
             <span className="pom-sit-bar-head">
               <b>Tasks</b>
-              <i>{tasksDone} of {tasksGoal}</i>
+              <i>{tasksTotal ? `${tasksDone} of ${tasksTotal}` : 'Nothing due'}</i>
             </span>
             <span className="pom-sit-track-2">
               <span style={{ width: `${taskPct}%` }} />

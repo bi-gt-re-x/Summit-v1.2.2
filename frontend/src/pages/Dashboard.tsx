@@ -542,7 +542,7 @@ export default function Dashboard() {
         remaining={pomodoro.remaining}
         onPause={pomodoro.pause}
         tasksDone={day.done}
-        tasksGoal={dailyGoal}
+        tasksTotal={day.total}
         focused={session.focused}
         focusGoal={session.goalHours * 3600}
         upcoming={upcoming}
