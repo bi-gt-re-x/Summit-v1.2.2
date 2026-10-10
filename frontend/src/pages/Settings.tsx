@@ -83,6 +83,7 @@ import '@/styles/settings.css';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { settingsExit } from '@/utils/settingsExit';
 import { useStarter } from '@/hooks/useStarter';
+import { THEMES, ThemeCard } from '@/components/Settings/ThemePicker';
 import { replayTutorial } from '@/components/Tutorial/Tutorial';
 import { FEATURES, STARTER_LEVEL, STARTER_SINCE } from '@/utils/starter';
 
@@ -216,77 +217,6 @@ const NOTIFY_CHANNELS: {
   },
 ];
 
-
-/**
- * The six themes, in the order the grid draws them.
- *
- * Two bases and four palettes. Light and dark are the neutral grounds you then
- * pick an `Accent` on — they are unchanged by any of this, and an account on
- * one of them sees exactly what it saw before the other four existed. The
- * four skins are the other trade: a ground and an accent pair chosen together,
- * which is why picking one switches the accent row off rather than leaving a
- * control on screen that no longer does anything.
- *
- * No colours here. The swatch is painted from `--skin-*` in
- * styles/preferences.css, which is also where the rules that apply a skin read
- * them from — so a card cannot advertise a colour the theme does not use. All
- * this list carries is which base each one pins, and the words.
- */
-const THEMES: { skin: ThemeSkin; base: Theme; label: string; hint: string }[] = [
-  { skin: '', base: 'light', label: 'Light', hint: 'The neutral ground. Pick your own accent below.' },
-  { skin: '', base: 'dark', label: 'Dark', hint: 'The neutral ground. Pick your own accent below.' },
-  { skin: 'midnight', base: 'dark', label: 'Midnight', hint: 'Deep navy, periwinkle and cyan.' },
-  { skin: 'sunset', base: 'dark', label: 'Sunset', hint: 'Warm near-black, orange and gold.' },
-  { skin: 'meadow', base: 'light', label: 'Meadow', hint: 'Soft green ground, green and amber.' },
-  { skin: 'orchid', base: 'light', label: 'Orchid', hint: 'Pale blush, magenta and teal.' },
-];
-
-/**
- * One theme card: four bands of the theme's own colours, its name, and whether
- * it is the one running.
- *
- * The bands are `data-skin-preview`, not inline styles — the stylesheet owns
- * the palette and this reads it back. Light and dark have preview blocks of
- * their own there for the same reason, holding the values their sheets already
- * use.
- */
-function ThemeCard({
-  label,
-  hint,
-  preview,
-  on,
-  busy,
-  onPick,
-}: {
-  label: string;
-  hint: string;
-  preview: string;
-  on: boolean;
-  busy: boolean;
-  onPick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className={`st-theme${on ? ' is-on' : ''}`}
-      aria-pressed={on}
-      title={hint}
-      disabled={busy}
-      onClick={onPick}
-    >
-      <span className="st-theme-bands" data-skin-preview={preview} aria-hidden="true">
-        <i className="st-band-ground" />
-        <i className="st-band-surface" />
-        <i className="st-band-accent" />
-        <i className="st-band-accent-2" />
-      </span>
-      <span className="st-theme-foot">
-        <span className="st-theme-name">{label}</span>
-        {on && <span className="st-theme-live">Active</span>}
-      </span>
-    </button>
-  );
-}
 
 const ACCENTS: { key: Accent; label: string; swatch: string }[] = [
   { key: 'violet', label: 'Violet', swatch: '#6d5ae0' },

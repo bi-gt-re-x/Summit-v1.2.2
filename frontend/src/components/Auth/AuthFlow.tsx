@@ -39,6 +39,9 @@ import { useAuth, useTheme } from '@/hooks';
 import { auth as authService } from '@/services';
 import type { Theme } from '@/types';
 import { Icon } from '@/components/Icon';
+import { ThemePicker } from '@/components/Settings/ThemePicker';
+import { settings as settingsService } from '@/services';
+import type { ThemeSkin } from '@/services/settings';
 
 export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile';
 
@@ -54,11 +57,6 @@ const GOALS = [
   { value: 50, label: 'Light' },
   { value: 100, label: 'Steady' },
   { value: 200, label: 'Serious' },
-];
-
-const THEMES: { value: Theme; label: string }[] = [
-  { value: 'light', label: 'Light' },
-  { value: 'dark', label: 'Dark' },
 ];
 
 interface Message {
@@ -112,6 +110,8 @@ export function AuthFlow({
   /* Ticked before an account can be created — see the note by the box. */
   const [consented, setConsented] = useState(false);
   const [chosenTheme, setChosenTheme] = useState<Theme>('light');
+  /** One of the four palettes, or '' for plain light or dark. */
+  const [chosenSkin, setChosenSkin] = useState<ThemeSkin>('');
   const [chosenGoal, setChosenGoal] = useState(100);
   const [password, setPassword] = useState('');
 
@@ -281,6 +281,12 @@ export function AuthFlow({
         say(result.message || 'That did not work.');
         return;
       }
+      // The palette, and `theme_mode` pinned to the base so the device's own
+      // light or dark doesn't take over on the next load. The same pair
+      // Settings writes when a theme card is picked.
+      await settingsService
+        .saveSettings({ values: { theme_skin: chosenSkin, theme_mode: chosenTheme } })
+        .catch(() => undefined);
       await finish();
     } catch {
       say('Could not reach the server.');
@@ -500,24 +506,19 @@ export function AuthFlow({
             placeholder="Leave blank to keep the suggested one"
           />
 
-          <label className="auth-label">Select a theme</label>
-          <div className="auth-choices" id="themeChoices">
-            {THEMES.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={`auth-choice${chosenTheme === option.value ? ' is-on' : ''}`}
-                onClick={() => {
-                  setChosenTheme(option.value);
-                  // Show the choice immediately — it is the theme they are
-                  // picking, and seeing it is the point of picking it.
-                  setTheme(option.value);
-                }}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          <label className="auth-label">Pick a theme</label>
+          <ThemePicker
+            skin={chosenSkin}
+            theme={chosenTheme}
+            onPick={(skin, base) => {
+              setChosenSkin(skin);
+              setChosenTheme(base);
+              // Show it right away. Seeing it is the point of picking it.
+              setTheme(base);
+              if (skin) document.documentElement.setAttribute('data-skin', skin);
+              else document.documentElement.removeAttribute('data-skin');
+            }}
+          />
 
           <label className="auth-label">Choose a daily goal</label>
           <div className="auth-choices" id="goalChoices">

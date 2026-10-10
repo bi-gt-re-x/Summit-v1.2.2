@@ -29,8 +29,8 @@
  * **Three sections, each folding under its heading.** Core is every page of
  * the app; Personal is the reader's three spaces (pages/Space.tsx), each
  * renamable; Team is three more of the same, each with a member list whose
- * invites are a placeholder for now. A search box under
- * the mark opens the top bar's search (utils/searchBus), as does ⌘K. Which
+ * invites are a placeholder for now. Search lives in the top bar (and ⌘K),
+ * not here. Which
  * sections are folded is kept per device (`SECTIONS_KEY`). None of this is
  * drawn on a phone, where the rail is a bottom bar.
  *
@@ -60,7 +60,6 @@ import { rankFor } from '@/utils/rank';
 import { useNametag } from '@/hooks/useNametag';
 import { NametagText, TitleChoices } from '@/components/Nametag';
 import { STATS_CHANGED } from '@/utils/statsBus';
-import { openSearch } from '@/utils/searchBus';
 import { featureForPath } from '@/utils/starter';
 import { useStarter } from '@/hooks/useStarter';
 import '@/styles/starter.css';
@@ -786,25 +785,6 @@ export function Rail() {
           </svg>
         </button>
       </div>
-
-      {/* The top bar's search, from where the eye already is. Opens the same
-          panel as the magnifier up there, and so does ⌘K. */}
-      {!phone && (
-        <button
-          type="button"
-          className="rail-search"
-          onClick={openSearch}
-          aria-label="Search or ask"
-          title="Search or ask (⌘K)"
-        >
-          <svg {...stroke}>
-            <circle cx="11" cy="11" r="7" />
-            <path d="m20 20-3.5-3.5" />
-          </svg>
-          <span>Search or ask</span>
-          <kbd>⌘K</kbd>
-        </button>
-      )}
 
       <div
         ref={linksRef}

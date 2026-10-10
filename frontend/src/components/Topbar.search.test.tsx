@@ -1,6 +1,6 @@
 /**
  * The search panel opens from three places: the magnifier in the bar, the
- * rail's "Search or ask" box (by event, since the rail is a sibling), and ⌘K.
+ * search bus (utils/searchBus, which any part of the app can call), and ⌘K.
  */
 import { act, fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';

@@ -46,12 +46,12 @@ import { NotificationPanel } from './Notifications';
 import { NametagText, TitleSelect } from './Nametag';
 import { SearchPanel } from './Search';
 import { OPEN_SEARCH } from '@/utils/searchBus';
-import { useAuth, useNotifications, useSettings, useStats, useTheme } from '@/hooks';
+import { useAuth, useNotifications, useSettings, useStats } from '@/hooks';
+import { earnedTitle } from '@/utils/easterEgg';
 import { useNametag } from '@/hooks/useNametag';
 import { AVATARS, avatarPath } from '@/services/avatars';
 import { auth } from '@/services';
 import { format } from '@/utils';
-import type { Theme } from '@/types';
 import '@/styles/topbar.css';
 
 const stroke = {
@@ -73,39 +73,36 @@ export function Topbar() {
      `displayName`, so an account named "temu" with the username "Alpha" read
      as two people on one screen. One name on the surface; the username is in
      the menu below, which is where "which account am I in" belongs. */
-  const { displayName, update } = useSettings();
-  const { theme, setTheme } = useTheme();
+  const { displayName } = useSettings();
+  /* The engine button. Locked for everyone until the account has earned the
+     admin title in the hidden chain, and then it's a way back into the
+     engine room. See `openEngine` below and frontend/secret/engine.js. */
+  const [title, setTitle] = useState(() => (username ? earnedTitle(username) : null));
+  const [nope, setNope] = useState(false);
+  useEffect(() => {
+    const read = () => setTitle(username ? earnedTitle(username) : null);
+    read();
+    window.addEventListener('storage', read);
+    window.addEventListener('focus', read);
+    return () => {
+      window.removeEventListener('storage', read);
+      window.removeEventListener('focus', read);
+    };
+  }, [username]);
+  const openEngine = useCallback(() => {
+    if (!title || !username) {
+      setNope(true);
+      window.setTimeout(() => setNope(false), 450);
+      return;
+    }
+    try {
+      sessionStorage.setItem('summit:engine-pass', username);
+    } catch {
+      /* no session storage: the engine falls back to today's unlock */
+    }
+    window.location.assign('/engine');
+  }, [title, username]);
 
-  /**
-   * Light and dark, from the bar rather than from Settings — and recorded the
-   * same way Settings records it.
-   *
-   * This called `setTheme` alone, which applies the colour and writes the
-   * cookie and the account's `theme` but says nothing about *why*. Two
-   * preferences then talked over it on the next load:
-   *
-   * - `theme_mode` defaults to `'system'`, and SettingsProvider follows the
-   *   device whenever it is. So the toggle worked, persisted, and was
-   *   overwritten by the device's own setting the next time the page opened —
-   *   the theme appearing not to save at all, on a default account.
-   * - A skin pins the base it was drawn against, and re-pins it now, so under
-   *   Midnight or Sunset the toggle went back the moment it was pressed.
-   *
-   * Both are the reader's earlier instructions still being obeyed, so the fix
-   * is to update them rather than to stop them running: pressing this is a
-   * statement about light and dark, which is what `theme_mode` records and
-   * what clearing the skin means. It is the pair pages/Settings already
-   * writes for its own light and dark cards — see `pickMode` there — so the
-   * two controls now leave the account in the same state rather than in two
-   * states that disagree on the next load.
-   */
-  const chooseTheme = useCallback(
-    (next: Theme) => {
-      setTheme(next);
-      void update({ theme_mode: next, theme_skin: '' });
-    },
-    [setTheme, update],
-  );
   // Shared with the rail, which shows the same level under the avatar. Six
   // integers, read once for the session — this used to be the account's whole
   // task list, twice, because the bar and the rail each asked for it.
@@ -277,28 +274,26 @@ export function Topbar() {
           )}
         </div>
 
-        {/* ---- Dark mode ---- */}
-        {/* The only control here that opens nothing, so it is the only one that
-            does not sit in a `topbar-slot` — there is no panel to anchor. The
-            icon shows the theme you would be switching to, which is the one
-            question a reader has when they look at it. */}
+        {/* ---- The engine ---- */}
+        {/* A padlock for everyone, until the admin title is earned in the
+            hidden chain. Then it opens the engine room. Light and dark live in
+            Settings now. */}
         <button
           type="button"
-          className={`topbar-btn topbar-theme${theme === 'dark' ? ' is-dark' : ''}`}
-          role="switch"
-          aria-checked={theme === 'dark'}
-          aria-label="Dark mode"
-          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          onClick={() => chooseTheme((theme === 'dark' ? 'light' : 'dark') as Theme)}
+          className={`topbar-btn topbar-engine${title ? ' is-open' : ' is-locked'}${nope ? ' is-nope' : ''}`}
+          aria-label={title ? 'Open the engine' : 'Locked'}
+          title={title ? 'Engine' : 'Locked'}
+          onClick={openEngine}
         >
-          {theme === 'dark' ? (
+          {title ? (
             <svg {...stroke}>
-              <circle cx="12" cy="12" r="4.2" />
-              <path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" />
+              <circle cx="12" cy="12" r="3" />
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1" />
             </svg>
           ) : (
             <svg {...stroke}>
-              <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M8 11V7a4 4 0 0 1 8 0v4" />
             </svg>
           )}
         </button>

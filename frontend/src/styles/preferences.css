@@ -309,13 +309,6 @@ html:root[data-skin] .rail-sub-link.active::before,
 html:root[data-skin] .rail-xp-bar i { background: var(--skin-accent); }
 html:root[data-skin] .rail-sub,
 html:root[data-skin] .rail-foot { border-color: var(--color-line); }
-html:root[data-skin] .rail-search {
-    background: var(--color-surface);
-    border-color: var(--color-line);
-    color: var(--color-ink-muted);
-}
-html:root[data-skin] .rail-search:hover { border-color: var(--color-ink-faint); }
-html:root[data-skin] .rail-search kbd,
 html:root[data-skin] .rail-avatar,
 html:root[data-skin] .rail-xp-bar { background: var(--color-surface-2); color: var(--color-ink-muted); }
 html:root[data-skin] .rail-title-menu {

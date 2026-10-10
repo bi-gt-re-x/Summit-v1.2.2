@@ -74,15 +74,23 @@
     text-align: center;
 }
 
-/* --- Dark mode ----------------------------------------------------------- */
-/* Same 38px square as search and alerts — it is a control in the same row and
-   sizing it differently would only announce that it arrived later. `is-on`
-   would be wrong here: the other two light up while their panel is open, and
-   this one has no panel; a permanent tint on the button whenever dark mode is
-   on would read as "this menu is open" forever. The icon carries the state:
-   the moon takes the row's grey like the others, and the sun is the one thing
-   in this bar with a colour of its own. */
-.topbar-theme.is-dark svg { color: #E3B341; }
+/* --- The engine ---------------------------------------------------------- */
+/* Same 38px square as search and alerts. Locked, it's a quiet padlock that
+   gives a small shake when pressed. Once the admin title is earned it's a gear
+   in the engine room's amber. */
+.topbar-engine.is-locked { opacity: .55; cursor: not-allowed; }
+.topbar-engine.is-locked:hover { opacity: .8; }
+.topbar-engine.is-open svg { color: #E3B341; }
+.topbar-engine.is-open:hover svg { animation: topbarEngineSpin 1.6s linear infinite; }
+.topbar-engine.is-nope { animation: topbarEngineNope .4s ease; }
+@keyframes topbarEngineSpin { to { transform: rotate(360deg); } }
+@keyframes topbarEngineNope {
+    20%, 60% { transform: translateX(-3px); }
+    40%, 80% { transform: translateX(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .topbar-engine.is-open:hover svg, .topbar-engine.is-nope { animation: none; }
+}
 
 /* --- The account button ------------------------------------------------- */
 .topbar-account {

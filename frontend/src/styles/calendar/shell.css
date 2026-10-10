@@ -493,3 +493,16 @@ body:has(.calendar-container) *::-webkit-scrollbar {
         position: static; margin: 0 0 var(--space-3); align-self: flex-start;
     }
 }
+
+
+/* ---- Grid lines, for every view and every theme ----------------------------
+   Mixed from the theme's own ink rather than written as greys, so they show on
+   light, dark and all four skins alike. Hardcoded greys were three shades off
+   white (and three off near-black in dark), which is why the grid read as
+   empty space. Days are the structure and the strongest; hours are a ruler
+   behind them; the bottom edge closes the day. */
+:root {
+    --cal-grid-day: color-mix(in srgb, var(--color-ink) 17%, transparent);
+    --cal-grid-hour: color-mix(in srgb, var(--color-ink) 12%, transparent);
+    --cal-grid-edge: color-mix(in srgb, var(--color-ink) 28%, transparent);
+}

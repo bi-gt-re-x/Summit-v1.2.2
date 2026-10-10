@@ -140,7 +140,7 @@
 /* Single wide day column. Its separator sits on the page background
  * (#eef0f4 in the light theme) and was that exact colour, so it never
  * showed — see the note in week.css. The dark theme overrides it below. */
-.day-col { position: relative; border-left: 1px solid #c3ccd9; }
+.day-col { position: relative; border-left: 1px solid var(--cal-grid-day); }
 
 /* ---- Overview sidebar ---- */
 .day-sidebar { display: flex; flex-direction: column; gap: var(--space-4); min-height: 0; }
@@ -436,7 +436,6 @@ html[data-theme="dark"] .day-sidebar::-webkit-scrollbar-thumb:hover { background
 
 /* ---- Dark theme parity ---- */
 html[data-theme="dark"] .day-allday { border-color: #262c36; }
-html[data-theme="dark"] .day-col { border-color: #21262d; }
 html[data-theme="dark"] .day-action-btn { background: #161b22; border-color: #2b3242; color: #e6e9f0; }
 html[data-theme="dark"] .day-action-btn:hover { background: #1c222c; }
 html[data-theme="dark"] .day-action-btn.is-running { background: #d9534f; border-color: #d9534f; color: #fff; }

@@ -19,42 +19,34 @@
 
 /* ---- The dark-out --------------------------------------------------------- */
 
-/* With no target: the whole window.
+/* One SVG over the window, with holes cut by its mask for the target and any
+   open dialog (components/Tutorial/Tutorial.tsx). It takes no pointer events:
+   what keeps the dimmed part dead is a listener, not this layer, which is how
+   everything lit stays clickable even when it opens somewhere unexpected.
 
-   Neither this nor the hole fades in. An opacity animation on a layer this
-   big was seen to stall on its first frame in the desktop app's browser,
-   which left the page barely dimmed and the tour's whole point gone. */
+   No fade-in. An opacity animation on a layer this big was seen to stall on
+   its first frame in the desktop app's browser and leave the page barely
+   dimmed. */
 .tut-dim {
     position: fixed;
     inset: 0;
-    background: var(--tut-dim);
+    display: block;
+    fill: var(--tut-dim);
 }
 
-/* With one: a lit hole, and the shadow round it is the dark. */
-.tut-hole {
+/* The ring round the target. A step that wants a click pulses. */
+.tut-ring {
     position: fixed;
     border-radius: 14px;
-    box-shadow: 0 0 0 200vmax var(--tut-dim);
     outline: 3px solid var(--tut-ring);
-    outline-offset: 0;
-    transition: top .35s ease, left .35s ease, width .35s ease, height .35s ease;
 }
-/* A hole that wants clicking pulses, so it reads as "this one". */
-.tut-hole.is-open::after {
+.tut-ring.is-ask::after {
     content: "";
     position: absolute;
     inset: -3px;
     border-radius: inherit;
     border: 3px solid var(--tut-ring);
     animation: tutPulse 1.6s ease-out infinite;
-}
-
-/* The click catchers. Invisible, and the only part of the root that takes
-   the pointer apart from the card. */
-.tut-block {
-    position: fixed;
-    pointer-events: auto;
-    background: transparent;
 }
 
 /* ---- Mango ---------------------------------------------------------------- */
@@ -198,13 +190,12 @@
 
 /* ---- Reduced motion: Mango still points, it just doesn't hop. ------------- */
 .tut-root.is-still .tut-mango,
-.tut-root.is-still .tut-card,
-.tut-root.is-still .tut-hole { transition: none; }
+.tut-root.is-still .tut-card { transition: none; }
 .tut-root.is-still .tut-mango-hop,
 .tut-root.is-still .tut-mango-pupil,
-.tut-root.is-still .tut-hole.is-open::after,
+.tut-root.is-still .tut-ring.is-ask::after,
 .tut-root.is-still .tut-card { animation: none; }
 @media (prefers-reduced-motion: reduce) {
-    .tut-mango, .tut-card, .tut-hole, .tut-mango-arm, .tut-mango-pupil { transition: none; }
-    .tut-mango-hop, .tut-mango-pupil, .tut-hole.is-open::after, .tut-card { animation: none; }
+    .tut-mango, .tut-card, .tut-mango-arm, .tut-mango-pupil { transition: none; }
+    .tut-mango-hop, .tut-mango-pupil, .tut-ring.is-ask::after, .tut-card { animation: none; }
 }

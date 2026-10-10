@@ -28,7 +28,6 @@ import type { Subject } from '@/services/subjects';
 import { setMatchMedia } from '@/test/media';
 import { stats } from '@/test/factories';
 import userEvent from '@testing-library/user-event';
-import { OPEN_SEARCH } from '@/utils/searchBus';
 import { SPACES_CHANGED } from '@/services/spaces';
 import type { MediaControl } from '@/test/media';
 
@@ -633,14 +632,9 @@ describe('Core, Personal and Team', () => {
     expect(screen.getByRole('link', { name: 'Calendar' })).toBeInTheDocument();
   });
 
-  it('opens the search from the box under the mark', async () => {
-    const user = userEvent.setup();
-    const heard = vi.fn();
-    window.addEventListener(OPEN_SEARCH, heard);
+  it('has no search box: search is in the top bar', () => {
     renderWithProviders(<Rail />);
-    await user.click(screen.getByRole('button', { name: 'Search or ask' }));
-    expect(heard).toHaveBeenCalledTimes(1);
-    window.removeEventListener(OPEN_SEARCH, heard);
+    expect(screen.queryByRole('button', { name: 'Search or ask' })).not.toBeInTheDocument();
   });
 
   it('draws none of it on a phone, where the rail is a bar', () => {

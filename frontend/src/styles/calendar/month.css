@@ -1845,8 +1845,8 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 }
 .mv-cell {
     position: relative;
-    border-top: 1px solid var(--mv-line-soft);
-    border-left: 1px solid var(--mv-line-soft);
+    border-top: 1px solid var(--cal-grid-day);
+    border-left: 1px solid var(--cal-grid-day);
     padding: var(--space-2) var(--space-2) var(--space-3);
     display: flex;
     flex-direction: column;

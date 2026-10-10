@@ -44,6 +44,9 @@ class CreateTask(BaseModel):
     priority: str = 'medium'
     xp_reward: int = 0
     due_date: Optional[str] = None
+    #: Minutes, from the dashboard's Add Task timer. It was only ever accepted
+    #: on update, so a timer chosen when the task was made was dropped.
+    timer_duration: Optional[int] = None
     show_on_calendar: bool = True
     created_at: Optional[str] = None
     subject: Optional[str] = None
@@ -249,6 +252,7 @@ def _create(body: CreateTask, username: str):
         "status": "todo",
         "xp_value": body.xp_reward,
         "due_date": body.due_date,
+        "timer_duration": body.timer_duration if body.timer_duration and body.timer_duration > 0 else None,
         "show_on_calendar": body.show_on_calendar,
         # Honor a client-supplied created_at (the week calendar's drag-to-create
         # task uses it to place the block on the dragged slot); default to now.

@@ -958,6 +958,8 @@ html:not(.focus-mode) .dash-main .focus-panel .fp-controls { margin-top: auto; }
     white-space: nowrap;
 }
 .dash-task-nodue { font-style: italic; color: #9AA0A6; }
+.dash-task-timer { font-weight: 600; color: var(--pref-accent, var(--color-accent)); }
+.dash-task-timer.is-up { color: #C0392B; }
 .dash-task-xp { color: #22A06B; font-weight: 600; }
 
 /* ---- Completing: check, green, gone ------------------------------------- */

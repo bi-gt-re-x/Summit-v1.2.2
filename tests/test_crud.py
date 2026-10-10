@@ -31,6 +31,21 @@ def test_task_round_trip(client):
     assert db.find_row('tasks', task_id) is None
 
 
+def test_a_timer_chosen_when_the_task_is_made_is_kept(client):
+    made = client.post('/api/tasks', json={
+        'name': 'read for a bit', 'xp_reward': 10, 'timer_duration': 90,
+    }).json()
+    assert made['success']
+    row = db.find_row('tasks', made['task_id'], user_id='tester')
+    assert int(row['timer_duration']) == 90
+
+
+def test_no_timer_is_stored_as_none(client):
+    made = client.post('/api/tasks', json={'name': 'no clock', 'xp_reward': 10}).json()
+    row = db.find_row('tasks', made['task_id'], user_id='tester')
+    assert row.get('timer_duration') is None
+
+
 def test_completing_a_task_records_the_timing(client):
     """`completion_seconds` and `met_deadline` are what efficiency reads."""
     made = client.post('/api/tasks', json={

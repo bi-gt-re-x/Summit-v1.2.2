@@ -21,17 +21,29 @@
         catch (e) { return false; }
     }
 
+    /* The one way in that skips the chain: the engine button in the app's top
+     * bar, which only works for an account that has earned the title. It
+     * leaves a pass for this account in this tab's sessionStorage, so typing
+     * /engine into a new tab still goes through the chain like it always did.
+     * See components/Topbar.tsx. */
+    function viaShortcut() {
+        try {
+            if (sessionStorage.getItem('summit:engine-pass') !== user()) return false;
+            return !!(localStorage.getItem('summitTitle:' + user()) || localStorage.getItem('ascenTitle:' + user()));
+        } catch (e) { return false; }
+    }
+
     function ready(fn) {
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
         else fn();
     }
 
     ready(function () {
-        // The engine is a secret — reachable once today's unlock is written,
-        // by the dashboard's mountain or by answering the riddle. A title
-        // earned on an earlier day is no way in: it used to be, and an admin
-        // could type /engine and skip the whole chain.
-        if (!unlocked()) { window.location.replace('/home'); return; }
+        // The engine is a secret: reachable once today's unlock is written,
+        // by the dashboard's mountain or by answering the riddle. A title on
+        // its own is no way in (typing /engine skips nothing); a title holder
+        // gets the top bar's engine button, which is `viaShortcut`.
+        if (!unlocked() && !viaShortcut()) { window.location.replace('/home'); return; }
         buildEngine();
     });
 

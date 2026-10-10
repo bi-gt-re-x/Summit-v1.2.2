@@ -16,12 +16,16 @@
  *
  * ## The dark-out
  *
- * A lit hole over the target, and blockers over the rest of the window that
- * swallow every click. On a `next` step the blocker covers the hole too, so
- * the page is something to look at. On `click` and `inside` steps the hole is
- * open, and that is the only part of the page that works. The blockers are
- * placed every frame from the target's live rectangle, so they follow it
- * through scrolling, resizing and layout shifts.
+ * A mask over the window with holes in it: one over the target, and one over
+ * any dialog or menu that opens while the step is up (the calendar's Event or
+ * Task chooser, a date picker panel). Everything lit works, on every kind of
+ * step. Everything dimmed is dead: a capture-phase listener on the window
+ * swallows presses that land outside the lit elements and the card, before
+ * the page ever hears them. Filtering by element rather than by screen
+ * position is what lets a dialog that opens somewhere else stay usable.
+ *
+ * A focus session's full screen (components/Timer/FocusSitting) pauses the
+ * tour: it hides until the session is paused, then picks up where it was.
  *
  * Nothing is ever a dead end. A target that never shows up either skips its
  * step (`skipIfMissing`) or gets a plain card in the middle with a Next
@@ -34,6 +38,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSettings } from '@/hooks/useSettings';
 import { useStarter } from '@/hooks/useStarter';
 import { reduced } from '@/utils/homePlay';
+import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { Mango } from './Mango';
 import { STEPS, type Step, type TourContext } from './steps';
 import '@/styles/tutorial.css';
@@ -41,6 +46,9 @@ import '@/styles/tutorial.css';
 const STORE = 'summit:tour';
 /** Room around a lit target. */
 const PAD = 8;
+/** Things that open over the page and should stay usable when they do. */
+const POPUPS = '[role="dialog"], [aria-modal="true"], [role="menu"], [role="listbox"], .modal-content';
+
 /** How long a step waits for its target once its page has loaded. */
 const GRACE_MS = 900;
 
@@ -108,7 +116,8 @@ export function Tutorial() {
 
   const [at, setAt] = useState<number>(() => saved ?? 0);
   const [closed, setClosed] = useState(false);
-  const showing = wanted && !closed && at < STEPS.length;
+  const sitting = useSittingShown();
+  const showing = wanted && !closed && at < STEPS.length && !sitting;
   const step = STEPS[Math.min(at, STEPS.length - 1)]!;
 
   // A replay started from Settings after this component had already decided.
@@ -158,18 +167,24 @@ export function Tutorial() {
     let frame = 0;
     let seen = false;
     let settledAt: number | null = null;
+    let scrolledAt = -Infinity;
 
     const tick = () => {
       frame = requestAnimationFrame(tick);
       const el = findTarget(step.target);
       if (el) {
-        if (!seen) {
-          seen = true;
-          const r = el.getBoundingClientRect();
-          if (r.top < 0 || r.bottom > window.innerHeight) {
-            el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
-          }
+        const r0 = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // Bring it on screen the first time if any of it is cut off, and again
+        // later if it's wholly gone (a page that finishes loading can reset
+        // the scroll). A tall target that's partly showing is left alone.
+        const cut = r0.top < 0 || r0.bottom > vh;
+        const gone = r0.bottom < 40 || r0.top > vh - 40;
+        if (((!seen && cut) || gone) && performance.now() - scrolledAt > 900) {
+          scrolledAt = performance.now();
+          el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
         }
+        seen = true;
         target.current = el;
         setMissing(false);
         const r = el.getBoundingClientRect();
@@ -204,7 +219,7 @@ export function Tutorial() {
       }
       setMissing(true);
     };
-    frame = requestAnimationFrame(tick);
+    tick();
     return () => cancelAnimationFrame(frame);
   }, [showing, at, step, advance]);
 
@@ -213,6 +228,62 @@ export function Tutorial() {
     const resize = () => setView({ w: window.innerWidth, h: window.innerHeight });
     window.addEventListener('resize', resize);
     return () => window.removeEventListener('resize', resize);
+  }, [showing]);
+
+  // ---- Dialogs that open over the page --------------------------------------
+  const [extra, setExtra] = useState<Box[]>([]);
+  const popups = useRef<HTMLElement[]>([]);
+  useEffect(() => {
+    if (!showing) return undefined;
+    let frame = 0;
+    const tick = () => {
+      frame = requestAnimationFrame(tick);
+      const found: HTMLElement[] = [];
+      for (const el of Array.from(document.querySelectorAll<HTMLElement>(POPUPS))) {
+        if (el.closest('.tut-root')) continue;
+        if (target.current && (target.current.contains(el) || el.contains(target.current))) continue;
+        if (found.some((other) => other.contains(el))) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) found.push(el);
+      }
+      popups.current = found;
+      const boxes = found.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { top: Math.round(r.top - 4), left: Math.round(r.left - 4), width: Math.round(r.width + 8), height: Math.round(r.height + 8) };
+      });
+      setExtra((was) => (was.length === boxes.length && was.every((b, i) => same(b, boxes[i]!)) ? was : boxes));
+    };
+    tick();
+    return () => cancelAnimationFrame(frame);
+  }, [showing]);
+
+  // ---- Keeping the dimmed page dead ------------------------------------------
+  useEffect(() => {
+    if (!showing) return undefined;
+    const lit = (node: EventTarget | null) => {
+      if (!(node instanceof Node)) return true;
+      const el = node instanceof Element ? node : node.parentElement;
+      if (el?.closest('.tut-root')) return true;
+      if (target.current?.contains(node)) return true;
+      return popups.current.some((popup) => popup.contains(node));
+    };
+    const stop = (event: Event) => {
+      if (lit(event.target)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    };
+    // Enter and Space on something dimmed that still has focus would press it.
+    const keys = (event: KeyboardEvent) => {
+      if ((event.key === 'Enter' || event.key === ' ') && !lit(document.activeElement)) stop(event);
+    };
+    const kinds = ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'dblclick', 'auxclick', 'contextmenu', 'touchstart', 'touchend'];
+    kinds.forEach((kind) => window.addEventListener(kind, stop, { capture: true, passive: false }));
+    window.addEventListener('keydown', keys, true);
+    return () => {
+      kinds.forEach((kind) => window.removeEventListener(kind, stop, { capture: true }));
+      window.removeEventListener('keydown', keys, true);
+    };
   }, [showing]);
 
   // ---- Clicking the target --------------------------------------------------
@@ -255,29 +326,24 @@ export function Tutorial() {
   const ctx: TourContext = { name: displayName || username || '', stage: starter.stage };
   const place = layout(hole, cardH, view.w, view.h);
   const last = at === STEPS.length - 1;
-  const open = hole && step.kind !== 'next' ? hole : null;
 
   return createPortal(
     <div className={`tut-root${reduced ? ' is-still' : ''}`}>
-      {/* The dark-out, with a hole where the target is. */}
-      {hole ? (
-        <div className={`tut-hole${open ? ' is-open' : ''}`} style={hole} aria-hidden="true" />
-      ) : (
-        <div className="tut-dim" aria-hidden="true" />
-      )}
-
-      {/* What stops stray clicks. Four pieces round an open hole, or one over
-          everything. */}
-      {open ? (
-        <>
-          <div className="tut-block" style={{ top: 0, left: 0, right: 0, height: Math.max(0, open.top) }} />
-          <div className="tut-block" style={{ top: open.top + open.height, left: 0, right: 0, bottom: 0 }} />
-          <div className="tut-block" style={{ top: open.top, left: 0, width: Math.max(0, open.left), height: open.height }} />
-          <div className="tut-block" style={{ top: open.top, left: open.left + open.width, right: 0, height: open.height }} />
-        </>
-      ) : (
-        <div className="tut-block" style={{ inset: 0 }} />
-      )}
+      {/* The dark-out: one dim layer with a hole for the target and one for
+          each dialog that's open. Purely visual; the listener above is what
+          keeps the dimmed part from being clicked. */}
+      <svg className="tut-dim" width={view.w} height={view.h} aria-hidden="true">
+        <defs>
+          <mask id="tut-mask" maskUnits="userSpaceOnUse" x="0" y="0" width={view.w} height={view.h}>
+            <rect x="0" y="0" width={view.w} height={view.h} fill="#fff" />
+            {[...(hole ? [hole] : []), ...extra].map((h, i) => (
+              <rect key={i} x={h.left} y={h.top} width={h.width} height={h.height} rx="14" fill="#000" />
+            ))}
+          </mask>
+        </defs>
+        <rect x="0" y="0" width={view.w} height={view.h} mask="url(#tut-mask)" />
+      </svg>
+      {hole && <div className={`tut-ring${step.kind === 'next' ? '' : ' is-ask'}`} style={hole} aria-hidden="true" />}
 
       <div className="tut-mango" style={{ left: place.mango.x, top: place.mango.y, width: place.m, height: place.m * 1.1 }}>
         <Mango angle={place.angle} hop={`${at}`} />

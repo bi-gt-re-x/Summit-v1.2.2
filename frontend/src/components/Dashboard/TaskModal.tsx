@@ -54,6 +54,14 @@ const MINUTES = Array.from({ length: 60 }, (_, i) =>
   String(i).padStart(2, '0'),
 );
 
+/** "1h 30m", "45m", "2h". */
+export function timerText(totalMinutes: number): string {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  if (h && m) return `${h}h ${m}m`;
+  return h ? `${h}h` : `${m}m`;
+}
+
 export function TaskModal({
   open,
   busy = false,
@@ -116,7 +124,9 @@ export function TaskModal({
    */
   function dueDate(): string | null {
     if (panel !== 'due' || !date) return null;
-    if (!hour || !minute || !ampm) return `${date}T00:00`;
+    // No time picked means "by the end of that day". Midnight at the start of
+    // it made the task overdue the moment the day began.
+    if (!hour || !minute || !ampm) return `${date}T23:59`;
     let h = parseInt(hour, 10) % 12;
     if (ampm === 'PM') h += 12;
     return `${date}T${String(h).padStart(2, '0')}:${minute}`;
@@ -269,16 +279,8 @@ export function TaskModal({
             {panel === 'timer' && (
               <div id="timerDropdown" className="dropdown-content">
                 <div className="timer-section">
-                  <label
-                    style={{
-                      fontSize: '13px',
-                      fontWeight: 500,
-                      color: '#6C757D',
-                    }}
-                  >
-                    Timer Duration:
-                  </label>
-                  <div className="timer-inputs" style={{ marginTop: '8px' }}>
+                  <p className="timer-title">How long do you want for it?</p>
+                  <div className="timer-inputs">
                     <div className="timer-input-group">
                       <label htmlFor="timerHours">Hours</label>
                       <input
@@ -287,30 +289,22 @@ export function TaskModal({
                         min={0}
                         max={12}
                         value={hours}
-                        style={{ accentColor: '#2C302E' }}
                         onChange={(e) => setHours(Number(e.target.value))}
                       />
-                      <input
-                        type="number"
-                        id="timerHoursInput"
-                        className="xp-input-field"
-                        style={{
-                          width: '55px',
-                          padding: '4px',
-                          fontSize: '12px',
-                        }}
-                        min={0}
-                        max={12}
-                        value={hours}
-                        onChange={(e) =>
-                          setHours(
-                            Math.max(
-                              0,
-                              Math.min(12, Number(e.target.value) || 0),
-                            ),
-                          )
-                        }
-                      />
+                      <span className="timer-number">
+                        <input
+                          type="number"
+                          id="timerHoursInput"
+                          aria-label="Hours"
+                          min={0}
+                          max={12}
+                          value={hours}
+                          onChange={(e) =>
+                            setHours(Math.max(0, Math.min(12, Number(e.target.value) || 0)))
+                          }
+                        />
+                        <i>h</i>
+                      </span>
                     </div>
                     <div className="timer-input-group">
                       <label htmlFor="timerMinutes">Minutes</label>
@@ -318,34 +312,32 @@ export function TaskModal({
                         type="range"
                         id="timerMinutes"
                         min={0}
-                        max={60}
+                        max={59}
+                        step={5}
                         value={minutes}
-                        style={{ accentColor: '#2C302E' }}
                         onChange={(e) => setMinutes(Number(e.target.value))}
                       />
-                      <input
-                        type="number"
-                        id="timerMinutesInput"
-                        className="xp-input-field"
-                        style={{
-                          width: '55px',
-                          padding: '4px',
-                          fontSize: '12px',
-                        }}
-                        min={0}
-                        max={60}
-                        value={minutes}
-                        onChange={(e) =>
-                          setMinutes(
-                            Math.max(
-                              0,
-                              Math.min(60, Number(e.target.value) || 0),
-                            ),
-                          )
-                        }
-                      />
+                      <span className="timer-number">
+                        <input
+                          type="number"
+                          id="timerMinutesInput"
+                          aria-label="Minutes"
+                          min={0}
+                          max={59}
+                          value={minutes}
+                          onChange={(e) =>
+                            setMinutes(Math.max(0, Math.min(59, Number(e.target.value) || 0)))
+                          }
+                        />
+                        <i>m</i>
+                      </span>
                     </div>
                   </div>
+                  <p className="timer-total" aria-live="polite">
+                    {hours * 60 + minutes > 0
+                      ? `The clock starts when you add it: ${timerText(hours * 60 + minutes)}.`
+                      : 'Pick at least a few minutes.'}
+                  </p>
                 </div>
               </div>
             )}
@@ -370,7 +362,7 @@ export function TaskModal({
                         marginBottom: '4px',
                       }}
                     >
-                      Select Due Date:
+                      Due date (leave the time blank for the end of the day)
                     </label>
                     <input
                       type="date"

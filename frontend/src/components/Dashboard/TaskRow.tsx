@@ -31,6 +31,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { priorityMeta } from './summary';
 import { iconUrl, type Subject } from '@/services/subjects';
 import type { Task } from '@/types';
+import { useNow } from '@/hooks/useNow';
+import { timerText } from './TaskModal';
 
 /** How long the ✓ shows before the row starts leaving. */
 const CHECK_MS = 220;
@@ -52,6 +54,23 @@ function dueLabel(due: Date): string {
   const day = due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   const time = timeText(due);
   return `${day}, ${time}`;
+}
+
+/**
+ * What's left on a task's timer, counting down from when it was made.
+ *
+ * Its own component so only rows with a timer tick. Past the end it says so
+ * and leaves the task alone: running out of time is worth knowing, not a
+ * reason to take a task off somebody's list.
+ */
+function TimerLeft({ task }: { task: Task }) {
+  const now = useNow(30_000);
+  const start = task.created_at ? new Date(task.created_at).getTime() : NaN;
+  const total = Number(task.timer_duration) || 0;
+  if (!Number.isFinite(start) || total <= 0) return <span className="dash-task-nodue">No due date</span>;
+  const left = Math.ceil((start + total * 60_000 - now.getTime()) / 60_000);
+  if (left <= 0) return <span className="dash-task-timer is-up">Time's up</span>;
+  return <span className="dash-task-timer">{timerText(left)} left</span>;
 }
 
 export function TaskRow({
@@ -143,6 +162,8 @@ export function TaskRow({
           <span className="dash-task-xp">+{Number(task.xp_value) || 0} XP</span>
         ) : due ? (
           `Due: ${dueLabel(due)}`
+        ) : Number(task.timer_duration) > 0 ? (
+          <TimerLeft task={task} />
         ) : (
           <span className="dash-task-nodue">No due date</span>
         )}

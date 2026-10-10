@@ -218,7 +218,7 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
  * and sixty horizontals are only a ruler behind it. */
 .wk-daycol {
     position: relative;
-    border-left: 1px solid #f1f2f4;
+    border-left: 1px solid var(--cal-grid-day);
     /* A column is a container, so a block in it can be asked how much room it
        actually has rather than how wide the window is. Seven columns of a week
        and the Day view's single one are the same element at wildly different
@@ -242,7 +242,7 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
 .wk-daycol.today { background: rgba(59, 130, 246, .045); }
 html[data-theme="dark"] .wk-daycol.today { background: rgba(127, 156, 255, .06); }
 
-.wk-hourline { position: absolute; left: 0; right: 0; border-top: 1px dashed #eceef1; }
+.wk-hourline { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--cal-grid-hour); }
 /* The floor of the window, under the last hour.
  *
  * The grid used to simply stop: the 5 AM row had a line above it and nothing
@@ -252,7 +252,7 @@ html[data-theme="dark"] .wk-daycol.today { background: rgba(127, 156, 255, .06);
  *
  * Pulled up by its own width so it lands inside the column rather than two
  * pixels past the bottom of the scroller, where it would be clipped away. */
-.wk-hourline.is-last { border-top-width: 2px; border-top-style: solid; border-color: #d5d9e0; margin-top: -2px; }
+.wk-hourline.is-last { border-top-width: 2px; border-top-style: solid; border-color: var(--cal-grid-edge); margin-top: -2px; }
 
 /* "Now" indicator: a red line across the whole week grid at the current time,
    with a matching red time badge on the left (time-label) edge. Drawn by the
@@ -834,9 +834,6 @@ html[data-theme="dark"] .wk-progress { background: #262c36; }
 
 
 html[data-theme="dark"] .wk-allday-row { border-color: #262c36; }
-html[data-theme="dark"] .wk-daycol { border-color: #21262d; }
-html[data-theme="dark"] .wk-hourline { border-color: #1b2029; }
-html[data-theme="dark"] .wk-hourline.is-last { border-color: #303845; }
 /* The gap the badge holds around itself is the surface it sits on, whatever
    that surface is — white in the light theme, the card in this one. */
 html[data-theme="dark"] .wk-nowlabel { box-shadow: 0 0 0 3px #0f141b; }
