@@ -206,7 +206,14 @@
    Sits on the top edge of the dashboard's first card. Feet on the edge, so
    the perch is a zero-height strip along it and Mango hangs above it. Every
    move here is slow and small on purpose: it's company, not a show.
+
+   It covers nothing. `.dash.has-mango` pushes the card down to leave a clear
+   strip as tall as Mango (and its hop) above it, so nothing above the card
+   (the e-mail banner, the top bar) sits where Mango does. The strip is kept
+   while a tour runs too, so the page doesn't jump when Mango steps aside.
+   What Mango says and the bubbles it blows stay inside that strip.
    ========================================================================== */
+.dash.has-mango > .dash-hero { margin-top: 56px; }
 .mango-perch {
     position: absolute;
     height: 0;
@@ -215,7 +222,7 @@
 }
 .mango-pet {
     position: absolute;
-    bottom: -3px;
+    bottom: 0;
     left: 12px;
     padding: 0;
     border: 0;
@@ -257,8 +264,8 @@
 .mango-pet.is-sleep .tut-leaf { transform-origin: 56px 6px; transform: rotate(14deg); transition: transform .8s ease; }
 .mango-zz {
     position: absolute;
-    top: -6px;
-    right: -8px;
+    top: 6px;
+    right: -10px;
     font: 700 11px/1 var(--font-sans);
     color: var(--color-ink-muted);
     pointer-events: none;
@@ -291,12 +298,12 @@
     pointer-events: none;
     animation: mpBubble 2.6s ease-out forwards;
 }
-/* What it says when clicked. */
+/* What it says when clicked: beside Mango, inside the strip, never above it.
+   To the left by default; to the right when Mango is near the left end. */
 .mango-say {
     position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 8px;
+    right: calc(100% + 10px);
     padding: 6px 10px;
     border: 1px solid var(--color-line);
     border-radius: 12px;
@@ -308,19 +315,21 @@
     pointer-events: none;
     animation: mpSay .25s ease-out;
 }
+.mango-say.is-right { right: auto; left: calc(100% + 10px); }
 .mango-say::after {
     content: "";
     position: absolute;
-    top: 100%;
-    left: 50%;
+    top: 50%;
+    right: -5px;
     width: 8px;
     height: 8px;
-    margin: -4px 0 0 -4px;
+    margin-top: -4px;
+    border-top: 1px solid var(--color-line);
     border-right: 1px solid var(--color-line);
-    border-bottom: 1px solid var(--color-line);
     background: var(--color-surface);
     transform: rotate(45deg);
 }
+.mango-say.is-right::after { right: auto; left: -5px; transform: rotate(-135deg); }
 
 @keyframes mpBreathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, .985); } }
 @keyframes mpSnore { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.04, .96); } }
@@ -329,14 +338,14 @@
 @keyframes mpJump {
     0%   { transform: translateY(0) scale(1, 1); }
     18%  { transform: translateY(0) scale(1.1, .86); }
-    50%  { transform: translateY(-26px) scale(.94, 1.08); }
+    50%  { transform: translateY(-14px) scale(.94, 1.08); }
     80%  { transform: translateY(0) scale(1.1, .9); }
     100% { transform: translateY(0) scale(1, 1); }
 }
 @keyframes mpJumpLeft {
     0%   { transform: scaleX(-1) translateY(0); }
     18%  { transform: scaleX(-1.1) scaleY(.86); }
-    50%  { transform: scaleX(-.94) scaleY(1.08) translateY(-26px); }
+    50%  { transform: scaleX(-.94) scaleY(1.08) translateY(-14px); }
     80%  { transform: scaleX(-1.1) scaleY(.9); }
     100% { transform: scaleX(-1) translateY(0); }
 }
@@ -351,21 +360,21 @@
 }
 @keyframes mpSpin {
     0%   { transform: translateY(0) rotate(0); }
-    50%  { transform: translateY(-14px) rotate(180deg); }
+    50%  { transform: translateY(-10px) rotate(180deg); }
     100% { transform: translateY(0) rotate(360deg); }
 }
 @keyframes mpZ {
     0%   { opacity: 0; transform: translate(0, 0) scale(.6); }
     20%  { opacity: .9; }
-    100% { opacity: 0; transform: translate(10px, -22px) scale(1.1); }
+    100% { opacity: 0; transform: translate(10px, -12px) scale(1.1); }
 }
 @keyframes mpBubble {
     0%   { opacity: 0; transform: translate(-50%, 0) scale(.3); }
     15%  { opacity: 1; }
-    80%  { opacity: 1; transform: translate(-50%, -34px) scale(1.6); }
-    100% { opacity: 0; transform: translate(-50%, -40px) scale(2.2); }
+    80%  { opacity: 1; transform: translate(-50%, -20px) scale(1.5); }
+    100% { opacity: 0; transform: translate(-50%, -24px) scale(1.9); }
 }
-@keyframes mpSay { from { opacity: 0; transform: translate(-50%, 4px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes mpSay { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
     .mango-pet, .mango-pet * { animation: none !important; transition: none !important; }

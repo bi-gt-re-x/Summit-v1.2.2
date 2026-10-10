@@ -562,7 +562,11 @@ export default function Dashboard() {
   }
 
   return (
-    <div className={`dash${entering ? ' pg-enter' : ''}${swap.leaving ? ' is-going' : ''}`}>
+    <div
+      className={`dash${entering ? ' pg-enter' : ''}${swap.leaving ? ' is-going' : ''}${
+        prefs.mango_rest ? ' has-mango' : ''
+      }`}
+    >
       {prefs.mango_rest && !touring && <MangoPet anchor=".dash-hero" energy={prefs.mango_energy} />}
 
       {/* The greeting slides away with the stat row while a focus session

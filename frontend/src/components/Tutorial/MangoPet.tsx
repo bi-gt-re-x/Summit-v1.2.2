@@ -233,7 +233,7 @@ export function MangoPet({ anchor, energy }: MangoPetProps) {
           </span>
         )}
         {act === 'bubble' && <span className="mango-bubble" aria-hidden="true" />}
-        {line && <span className="mango-say" role="status">{line}</span>}
+        {line && <span className={`mango-say${x < 200 ? ' is-right' : ''}`} role="status">{line}</span>}
       </button>
     </div>
   );
