@@ -1435,7 +1435,7 @@ export default function Settings() {
           {
             id: 'focus-dim',
             label: 'Clear the page while focusing',
-            hint: 'A running session folds the greeting, the figures and the quote away and leaves the work.',
+            hint: "Start Focus on the dashboard opens the timer's focus screen. Off, the timer just runs in the Focus panel.",
             control: (
               <Toggle
                 on={prefs.focus_dim}

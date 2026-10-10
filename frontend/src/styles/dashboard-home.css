@@ -1195,6 +1195,20 @@ html.focus-mode .dash-tasks { max-height: none; }
 html.focus-mode .dash-main .focus-panel { order: -1; min-height: 0; }
 html.focus-mode .dash-main .dash-tasks { order: 1; min-height: 0; }
 
+/* On its way into a sitting. Start Focus swaps this page for the Timer's
+   sitting screen (components/Timer/FocusSitting), and the page fades for the
+   200ms pages/Dashboard.tsx holds it (`SITTING_MS`) rather than cutting. The
+   same ease-in as `pomPageOut` in styles/timer.css, for the reason given
+   there. Reduced motion never gets here: the handover is 0 then. */
+@keyframes dashOut {
+    from { opacity: 1; transform: none; }
+    to   { opacity: 0; transform: translateY(6px); }
+}
+.dash.is-going > * {
+    animation: dashOut .2s cubic-bezier(.4, 0, 1, 1) forwards;
+    pointer-events: none;
+}
+
 /* ==========================================================================
    NARROWER SCREENS
    ========================================================================== */

@@ -175,7 +175,7 @@ import type { Goal, Milestone, Task } from '@/types';
 import * as format from '@/utils/format';
 import '@/styles/timer.css';
 import { Icon, type IconName } from '@/components/Icon';
-import { FocusView } from '@/components/Timer/FocusView';
+import { FocusSitting } from '@/components/Timer/FocusSitting';
 
 const SETUP_KEY = 'pomodoro:setup';
 
@@ -1393,26 +1393,23 @@ export default function Timer() {
 
   if (swap.shown) {
     return (
-      <div className={`pom-page pom-page--sitting${swap.leaving ? ' is-going' : ''}`}>
-        <Ambient cursor surge />
-        <div className="pom-sit-scrim" aria-hidden="true" />
-        <FocusView
-          phase={phase}
-          percent={percent}
-          remaining={remaining}
-          onPause={pomodoro.pause}
-          tasksDone={tasksDoneToday}
-          tasksGoal={dailyGoal}
-          focused={session.focused}
-          focusGoal={goalSeconds}
-          upcoming={upcoming}
-          onComplete={(task) => void finishTask(task)}
-          busy={ticking}
-          done={ticked}
-          goal={counting[0] ?? null}
-          goalMinutes={Math.round(session.focused / 60)}
-        />
-      </div>
+      <FocusSitting
+        leaving={swap.leaving}
+        phase={phase}
+        percent={percent}
+        remaining={remaining}
+        onPause={pomodoro.pause}
+        tasksDone={tasksDoneToday}
+        tasksGoal={dailyGoal}
+        focused={session.focused}
+        focusGoal={goalSeconds}
+        upcoming={upcoming}
+        onComplete={(task) => void finishTask(task)}
+        busy={ticking}
+        done={ticked}
+        goal={counting[0] ?? null}
+        goalMinutes={Math.round(session.focused / 60)}
+      />
     );
   }
 

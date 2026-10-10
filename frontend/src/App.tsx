@@ -16,6 +16,7 @@ import { Ambient, AppBoundary, Loading, Rail, Toasts, Topbar, VerifyBanner } fro
 import { RequireAccount } from './RequireAccount';
 import { FeatureGate } from '@/components/FeatureGate';
 import { Welcome } from '@/components/Welcome';
+import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { useAuth, usePinnedViewport, useSettings } from '@/hooks';
 import { useChainAccount } from '@/hooks/useChainAccount';
 import { useVoid } from '@/hooks/useVoid';
@@ -169,7 +170,8 @@ export default function App() {
   // full width back.
   const landing = isLanding(pathname);
   /* See the note on <Ambient /> below. */
-  const ownsAmbient = pathname === '/timer';
+  const sitting = useSittingShown();
+  const ownsAmbient = pathname === '/timer' || sitting;
   /* The Personal and Team spaces are the reader's own pages, and keep a plain
      ground: no graph paper behind what they write. */
   const custom = pathname.startsWith('/spaces/') || pathname.startsWith('/team/');
@@ -232,7 +234,8 @@ export default function App() {
           The timer is the one page that renders its own. While a sitting is
           running its field accelerates — `surge`, in the same component — and
           a second canvas behind the first would be a second rAF loop drawing
-          something nobody can see. See pages/Timer.tsx. */}
+          something nobody can see. See pages/Timer.tsx. The dashboard shows
+          the same sitting, and `sitting` stands this one down for it too. */}
       {!ownsAmbient && !custom && <Ambient cursor={pathname === '/home'} />}
       {!landing && <Rail />}
       {/* Beside the rail rather than above it: the rail owns the full height

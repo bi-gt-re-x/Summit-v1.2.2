@@ -70,6 +70,11 @@ import {
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import { usePomodoro } from '@/hooks/usePomodoro';
+import { useHandover } from '@/hooks/useHandover';
+import { FocusSitting } from '@/components/Timer/FocusSitting';
+import type { Counting } from '@/pages/Timer';
+import { currentStone } from '@/utils/goalStage';
+import { reduced } from '@/utils/homePlay';
 import { focus as focusService, goals as goalService, tasks as taskService } from '@/services';
 import { weekStartDay } from '@/services/settings';
 import { dates, format } from '@/utils';
@@ -81,6 +86,9 @@ import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import '@/styles/dashboard.css';
 import '@/styles/dashboard-home.css';
 import { announceStatsChanged } from '@/utils/statsBus';
+
+/** How long the page and the sitting take to hand over. See `sitting` below. */
+const SITTING_MS = 200;
 
 export default function Dashboard() {
   const { data, error, loading, refreshing, reload, mutate, username } = useUserData();
@@ -156,6 +164,34 @@ export default function Dashboard() {
      for why every calendar day counts and today does not. */
   const usual = useMemo(() => typicalDay(tasks, todayIso), [tasks, todayIso]);
 
+  /* ---- The sitting --------------------------------------------------------
+   *
+   * Start Focus here opens the same screen it opens on the Timer page:
+   * components/Timer/FocusSitting, the clock and today's work over a tinted
+   * window. Pausing brings the dashboard back, and so does Escape, which
+   * pauses. A break brings it back on its own, the way it does there.
+   *
+   * Only when "Clear the page while focusing" is on (Settings, Focus). Turned
+   * off, the timer runs in the Focus panel and the page stays put, which is
+   * what that switch has always promised.
+   *
+   * `SITTING_MS` is the length of `pomSitOut` in styles/timer.css and of
+   * `dashOut` in styles/dashboard-home.css; see the same handover on
+   * pages/Timer.tsx for why it has to match. */
+  const sitting = pomodoro.running && pomodoro.phase === 'focus' && prefs.focus_dim;
+  const swap = useHandover(sitting, reduced ? 0 : SITTING_MS);
+
+  /* The rest of what the sitting shows, read off what this page already has.
+     Same order and length as the Timer page's "Up next". */
+  const upcoming = useMemo(() => tasks
+    .filter((task) => task.status !== 'done')
+    .sort((a, b) => (a.due_date ?? '9').localeCompare(b.due_date ?? '9'))
+    .slice(0, 5), [tasks]);
+  const ticking = useMemo<ReadonlySet<string>>(
+    () => new Set(busyId ? [busyId] : []),
+    [busyId],
+  );
+
   /**
    * Hours focused on an average day, from the record rather than the task list.
    *
@@ -207,6 +243,24 @@ export default function Dashboard() {
       live = false;
     };
   }, [username]);
+
+  /* The first goal measured in focus time, which the sitting shows moving
+     with the clock. The same pick the Timer page makes. */
+  const counting = useMemo<Counting | null>(() => {
+    const goal = goals.find((row) => row.status === 'active'
+      && row.measure === 'focus' && row.target_focus > 0);
+    if (!goal) return null;
+    return {
+      goal,
+      now: goal.current_focus,
+      target: goal.target_focus,
+      next: currentStone(goal),
+      subjects: (goal.subject_ids || '')
+        .split(',')
+        .map((id) => subjects.get(id.trim())?.name)
+        .filter((name): name is string => Boolean(name)),
+    };
+  }, [goals, subjects]);
 
   // ---- Reaching a goal ----------------------------------------------------
   /* The two figures the dashboard already draws against a target, watched for
@@ -479,8 +533,30 @@ export default function Dashboard() {
   if (loading && !data) return <Loading label="Loading your dashboard" />;
   if (!data) return <ErrorState message={error ?? 'No data came back.'} onRetry={reload} />;
 
+  if (swap.shown) {
+    return (
+      <FocusSitting
+        leaving={swap.leaving}
+        phase={pomodoro.phase}
+        percent={pomodoro.percent}
+        remaining={pomodoro.remaining}
+        onPause={pomodoro.pause}
+        tasksDone={day.done}
+        tasksGoal={dailyGoal}
+        focused={session.focused}
+        focusGoal={session.goalHours * 3600}
+        upcoming={upcoming}
+        onComplete={(task) => void complete(task)}
+        busy={busyId !== null}
+        done={ticking}
+        goal={counting}
+        goalMinutes={Math.round(session.focused / 60)}
+      />
+    );
+  }
+
   return (
-    <div className={`dash${entering ? ' pg-enter' : ''}`}>
+    <div className={`dash${entering ? ' pg-enter' : ''}${swap.leaving ? ' is-going' : ''}`}>
 
       {/* The greeting slides away with the stat row while a focus session
           runs — see html.focus-mode in styles/dashboard-home.css, which folds
