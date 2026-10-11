@@ -124,6 +124,8 @@ export function InsightsTab({
           sees what the whole tab will become, not half of it. */}
       {(waitFor('habits') > 0 || habits.length === 0) && (
         <Building
+          credit={model.maturity.credit ?? 0}
+          headStart={model.headStart}
           title="Insights"
           remaining={waitFor('habits')}
           need={NEED_DAYS.habits}

@@ -501,3 +501,7 @@ html[data-theme="dark"] .st-vacation-problem { color: #ff7b72; }
 @media (max-width: 720px) {
     .st-vacation, .st-vacation-line { align-items: flex-start; justify-content: flex-start; }
 }
+
+/* A row whose control needs the width: the label on top, the control under it. */
+.st-row.is-wide { grid-template-columns: minmax(0, 1fr); align-items: start; gap: var(--space-3); }
+.st-row.is-wide .st-row-control { display: block; }

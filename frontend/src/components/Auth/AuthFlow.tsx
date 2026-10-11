@@ -39,18 +39,20 @@ import { useAuth, useTheme } from '@/hooks';
 import { auth as authService } from '@/services';
 import type { Theme } from '@/types';
 import { Icon } from '@/components/Icon';
+import { AboutYou } from '@/components/AboutYou';
 import { ThemePicker } from '@/components/Settings/ThemePicker';
 import { settings as settingsService } from '@/services';
 import type { ThemeSkin } from '@/services/settings';
 
-export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile';
+export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile' | 'about';
 
 const COPY: Record<AuthStep, [string, string]> = {
   choose: ['Welcome', 'Log in or create an account to continue.'],
   login: ['Log in', 'Good to see you again.'],
   create: ['Create account', 'Just a name, an e-mail and a password.'],
   inbox: ['Check your inbox', 'One click and the account is yours.'],
-  profile: ['Finish your profile', "Three quick picks and you're in."],
+  profile: ['Finish your profile', 'Three quick picks, then one last step.'],
+  about: ['About you', 'Last step. Tell us where you are and where you want to go.'],
 };
 
 const GOALS = [
@@ -287,7 +289,9 @@ export function AuthFlow({
       await settingsService
         .saveSettings({ values: { theme_skin: chosenSkin, theme_mode: chosenTheme } })
         .catch(() => undefined);
-      await finish();
+      /* One step left: About you. Its answers set up Analytics and the model
+         prompts, so it comes before the app rather than after it. */
+      go('about');
     } catch {
       say('Could not reach the server.');
     }
@@ -536,9 +540,20 @@ export function AuthFlow({
           </div>
 
           <button type="submit" className="auth-primary">
-            Go to Dashboard
+            Next
           </button>
         </form>
+      </section>
+
+      {/* About you — the last step. See components/AboutYou. */}
+      <section className={`auth-step${step === 'about' ? '' : ' hidden'}`} data-step="about">
+        {step === 'about' && (
+          <AboutYou
+            submitLabel="Save and go to Dashboard"
+            onDone={() => void finish()}
+            onSkip={() => void finish()}
+          />
+        )}
       </section>
 
       <p

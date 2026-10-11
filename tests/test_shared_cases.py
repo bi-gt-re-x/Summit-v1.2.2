@@ -14,7 +14,7 @@ import pytest
 
 from backend.api import spaces, tasks
 from backend.config.shared import PATH, RULES
-from backend.tracking import analytics, next_sessions, session_plan, subject_ai, time_spent
+from backend.tracking import analytics, background, next_sessions, session_plan, subject_ai, time_spent
 
 CASES = os.path.join(os.path.dirname(PATH), 'cases')
 
@@ -32,6 +32,13 @@ def test_time_spent(case):
 @pytest.mark.parametrize('case', _cases('name_family'), ids=lambda case: case['title'] or 'empty')
 def test_name_family(case):
     assert next_sessions.name_family(case['title']) == case['family']
+
+
+@pytest.mark.parametrize('case', _cases('background_detail'), ids=lambda case: case['why'])
+def test_background_detail(case):
+    found = background.detail(case['answers'])
+    assert (found['words'], found['answered'], found['level'], found['head_start']) == (
+        case['words'], case['answered'], case['level'], case['head_start'])
 
 
 def test_the_server_reads_its_values_from_the_shared_file():

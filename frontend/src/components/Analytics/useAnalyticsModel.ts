@@ -117,7 +117,7 @@ import {
 } from '@/utils/ratings';
 import { outlook, recommendations } from '@/utils/advice';
 import { PATTERN_DAYS, RECENT_DAYS, daysUntilNextWeek, recentWindow } from '@/utils/recent';
-import { dataMaturity } from '@/utils/dataMaturity';
+import { dataMaturity, realDaysTo } from '@/utils/dataMaturity';
 import { detailRules, toneRules } from '@/utils/analyticsPrefs';
 import { diagnose, vitals } from '@/utils/diagnosis';
 import { analyticalScore } from '@/utils/analyticalScore';
@@ -861,7 +861,11 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
    * telling somebody with four months of data that they need eleven more days
    * because they happened to be looking at a week.
    */
-  const maturity = useMemo(() => dataMaturity(all), [all]);
+  /* What the account said about itself at sign-up, and the head start its
+     detail earns. See utils/background and backend/tracking/background.py. */
+  const background = data.background.data ?? null;
+  const headStart = background?.detail.head_start ?? 0;
+  const maturity = useMemo(() => dataMaturity(all, headStart), [all, headStart]);
 
   /**
    * The figure every gate on this page reads.
@@ -878,7 +882,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
    * direction: the gates exist because a slope through four points is not a
    * trend, and four points do not become a trend by being spread over a month.
    */
-  const historyDays = maturity.activeDays;
+  const historyDays = maturity.activeDays + (maturity.credit ?? 0);
 
   /**
    * Days still needed for a tab, or 0 once the record is long enough.
@@ -889,8 +893,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
    * day from here were a working one is a promise to break.
    */
   const waitFor = useCallback(
-    (key: keyof typeof NEED_DAYS) => Math.max(0, NEED_DAYS[key] - historyDays),
-    [historyDays],
+    (key: keyof typeof NEED_DAYS) => realDaysTo(NEED_DAYS[key], maturity.activeDays, headStart),
+    [headStart, maturity.activeDays],
   );
 
   /** The streak, which three of the chapters read and none of them fetch. */
@@ -907,6 +911,9 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     historyDays,
     maturity,
     waitFor,
+    // What the account said about itself, and the days it counts for
+    background,
+    headStart,
     streak,
 
     // The window, and the controls that move it

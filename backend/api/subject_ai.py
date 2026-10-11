@@ -49,6 +49,8 @@ from backend.config import subjects as subject_catalogue
 from backend.tracking import next_sessions
 from backend.tracking import session_plan
 from backend.tracking import subject_ai
+from backend.tracking import background as about_you
+from backend.api import background as background_api
 from backend.tracking.auth import load_user
 from backend.config.shared import RULES
 
@@ -531,6 +533,7 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         'outcomes': _outcomes(history, execution_now),
         'showing': [_text(step.get('title')) for step in on_screen],
         'owned_resources': _owned(username, _text(body.subject_id), subject),
+        'background': _background(username, _text(body.subject_id) or None),
     }
 
     # The record's button asks for the whole reading. The Recommendations
@@ -886,6 +889,14 @@ TASK_COLUMNS = ('id', 'title', 'description', 'status', 'subject', 'completed_at
                 'created_at', 'due_date', 'show_on_calendar')
 
 
+def _background(username: str, subject_id: Optional[str], names: Optional[dict] = None) -> list:
+    """What the account said about itself at sign-up, as lines for the brief —
+    the facts about this subject first, others about different subjects left
+    out. See backend/tracking/background.py."""
+    return about_you.brief_lines(background_api.facts_for(username), subject_id,
+                                 names if names is not None else _subject_names(username))
+
+
 def _subject_names(username: str) -> dict:
     """Every subject this account can file under, id to name."""
     names = {entry['id']: entry['name'] for entry in subject_catalogue.SUBJECTS}
@@ -970,6 +981,7 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
         'outcomes': _outcomes(history, None),
         'showing': [],
         'owned_resources': _owned(username, subject_id, subject) if subject_id else [],
+        'background': _background(username, subject_id or None, names),
     })
 
     try:

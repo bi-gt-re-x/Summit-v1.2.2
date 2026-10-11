@@ -55,6 +55,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { AboutYouSettings } from '@/components/AboutYou';
 import { ArrowLeft } from 'lucide-react';
 import { ErrorState, Loading } from '@/components';
 import { GROUPS, SORTS } from '@/components/Tasks';
@@ -236,6 +237,8 @@ interface Item {
   control: React.ReactNode;
   /** Set on rows that change or remove data. Drawn apart, at the end. */
   danger?: boolean;
+  /** The control takes the row's full width, under the label. */
+  wide?: boolean;
 }
 
 interface Section {
@@ -901,6 +904,21 @@ export default function Settings() {
                 ))}
               </select>
             ),
+          },
+        ],
+      },
+      {
+        // About you: the last step of sign-up, editable. See components/AboutYou.
+        id: 'about',
+        label: 'About you',
+        group: 'Account',
+        items: [
+          {
+            id: 'about-you',
+            label: 'Who you are and where you want to go',
+            hint: 'Analytics, your study plans and your recommendations read this. More detail means better answers, and Analytics opens sooner.',
+            control: <AboutYouSettings />,
+            wide: true,
           },
         ],
       },
@@ -1963,7 +1981,7 @@ export default function Settings() {
                   <h2>{entry.label}</h2>
                   {entry.note && <p className="st-note">{entry.note}</p>}
                   {plain.map((item) => (
-                    <div className="st-row" key={item.id}>
+                    <div className={`st-row${item.wide ? ' is-wide' : ''}`} key={item.id}>
                       <div className="st-row-text">
                         <span className="st-label">{item.label}</span>
                         <span className="st-quiet">{item.hint}</span>

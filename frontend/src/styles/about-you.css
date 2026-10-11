@@ -1,0 +1,91 @@
+/* About you: the last step of sign-up, and its section in Settings.
+   See components/AboutYou. */
+.ay { display: flex; flex-direction: column; gap: var(--space-3); }
+
+/* The line the reader must not miss. Big, bold and in the accent, on a tint,
+   so it reads as the point of the screen rather than as a caption. */
+.ay-important {
+    margin: 0;
+    padding: var(--space-4);
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-ink);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -.01em;
+}
+.ay-why { margin: 0 0 var(--space-2); font-size: var(--text-sm); line-height: 1.55; color: var(--color-ink-muted); }
+
+.ay-field { display: flex; flex-direction: column; gap: 4px; }
+.ay-label { font-size: var(--text-md); font-weight: 700; color: var(--color-ink); }
+.ay-hint { margin: 0; font-size: var(--text-xs); line-height: 1.45; color: var(--color-ink-muted); }
+.ay-input {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 76px;
+    padding: var(--space-2) var(--space-3);
+    resize: vertical;
+    font: inherit;
+    font-size: var(--text-md);
+    line-height: 1.5;
+    color: var(--color-ink);
+    background: var(--color-surface-2);
+    border: 1.5px solid var(--color-line);
+    border-radius: var(--radius-md);
+    outline: none;
+}
+.ay-input:focus { border-color: var(--color-accent); background: var(--color-surface); }
+.ay-input::placeholder { color: var(--color-ink-faint); }
+
+.ay-meter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: var(--space-1);
+    padding: var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+}
+.ay-meter-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.ay-meter-bar i { height: 6px; border-radius: 3px; background: var(--color-line); transition: background .2s ease; }
+.ay-meter-bar i.is-on { background: var(--color-accent); }
+.ay-meter.is-detailed .ay-meter-bar i.is-on { background: var(--color-success, #27ae60); }
+.ay-meter-text { margin: 0; font-size: var(--text-sm); color: var(--color-ink); }
+.ay-meter-next { margin: 0; font-size: var(--text-xs); color: var(--color-ink-muted); }
+.ay-meter-next:empty { display: none; }
+
+.ay-error { margin: 0; font-size: var(--text-sm); color: var(--color-danger, #c0392b); }
+
+.ay-primary {
+    width: 100%;
+    margin-top: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border: 1.5px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-accent);
+    color: #fff;
+    font: inherit;
+    font-size: var(--text-md);
+    font-weight: 600;
+    cursor: pointer;
+}
+.ay-primary:hover { background: color-mix(in srgb, var(--color-accent) 86%, #000); }
+.ay-primary:disabled { opacity: .7; cursor: default; }
+.ay-skip {
+    align-self: center;
+    padding: var(--space-1) var(--space-2);
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+    cursor: pointer;
+}
+.ay-skip:hover { color: var(--color-accent); text-decoration: underline; }
+
+.ay-settings { display: flex; flex-direction: column; gap: var(--space-3); width: 100%; }
+.ay-settings .ay-primary { width: auto; align-self: flex-start; padding-inline: var(--space-6); }
+.ay-saved { margin: 0; font-size: var(--text-sm); color: var(--color-ink-muted); }

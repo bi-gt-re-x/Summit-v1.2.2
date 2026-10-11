@@ -275,6 +275,8 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
          a meter reading "0 / 1" and told somebody whose request had errored
          that they needed one more day of work. See ../Building. */
       <Building
+        credit={model.maturity.credit ?? 0}
+        headStart={model.headStart}
         title="Growth"
         kind="problem"
         headline="Summit could not load your graded record."

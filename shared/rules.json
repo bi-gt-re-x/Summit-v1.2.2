@@ -76,5 +76,18 @@
       "scale_default": 100,
       "value_max": 1000000
     }
+  },
+
+  "background": {
+    "_about": "The 'About you' answers from the last step of sign-up. How detailed they are decides the head start Analytics gives the account: days counted toward its unlock waits. A level needs at least `words` words in all and `answered` questions with `answered_words` or more; the first level that fits wins. backend/tracking/background.py and frontend/src/utils/background.ts both read this; shared/cases/background_detail.json pins them.",
+    "questions": ["describe", "doing", "done", "improve"],
+    "answered_words": 5,
+    "max_chars": 2000,
+    "levels": [
+      { "key": "detailed", "label": "Very detailed", "words": 150, "answered": 4, "head_start": 7 },
+      { "key": "good", "label": "Detailed", "words": 70, "answered": 3, "head_start": 4 },
+      { "key": "brief", "label": "Brief", "words": 20, "answered": 1, "head_start": 2 },
+      { "key": "none", "label": "Not filled in yet", "words": 0, "answered": 0, "head_start": 0 }
+    ]
   }
 }

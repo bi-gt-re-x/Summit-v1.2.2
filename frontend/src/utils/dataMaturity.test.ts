@@ -7,7 +7,7 @@
  * weeks of record. Everything else pins the ladder's shape.
  */
 import { describe, expect, it } from 'vitest';
-import { dataMaturity, isActiveDay, stageFor, stageShows, STAGE_FLOOR, STAGES } from './dataMaturity';
+import { dataMaturity, isActiveDay, realDaysTo, stageFor, stageShows, STAGE_FLOOR, STAGES } from './dataMaturity';
 import type { GrowthDay } from '@/types';
 
 /** A row of the series. Zero on every measure unless the test says otherwise. */
@@ -194,5 +194,35 @@ describe('the hand-off to the gated tabs', () => {
         STAGE_FLOOR.full,
       );
     });
+  });
+});
+
+
+describe('the head start from the About you answers', () => {
+  it('counts for no more days than are actually recorded', () => {
+    expect(dataMaturity(series(10, 0), 7).credit).toBe(0);
+    expect(dataMaturity(series(10, 0), 7).stage).toBe('new');
+    expect(dataMaturity(series(10, 3), 7).credit).toBe(3);
+    expect(dataMaturity(series(20, 10), 7).credit).toBe(7);
+  });
+
+  it('moves the stage on by what it counts for', () => {
+    // 4 recorded + 4 counted = 8, past the weekly floor of 7.
+    expect(dataMaturity(series(10, 4)).stage).toBe('early');
+    expect(dataMaturity(series(10, 4), 7).stage).toBe('weekly');
+  });
+
+  it('says how many real days are left, with each one counting twice while it lasts', () => {
+    expect(realDaysTo(14, 0, 0)).toBe(14);
+    expect(realDaysTo(14, 4, 7)).toBe(3);
+    expect(realDaysTo(14, 0, 7)).toBe(7);
+    expect(realDaysTo(28, 0, 7)).toBe(21);
+    expect(realDaysTo(14, 20, 7)).toBe(0);
+  });
+
+  it('leaves an account without answers exactly where it was', () => {
+    const plain = dataMaturity(series(30, 12));
+    const none = dataMaturity(series(30, 12), 0);
+    expect({ ...none, credit: undefined }).toEqual({ ...plain, credit: undefined });
   });
 });

@@ -12,6 +12,8 @@
 import { describe, expect, it } from 'vitest';
 import timeSpentCases from '@shared/cases/time_spent.json';
 import nameFamilyCases from '@shared/cases/name_family.json';
+import backgroundCases from '@shared/cases/background_detail.json';
+import { backgroundDetail } from '@/utils/background';
 import { secondsSpent, type TimedTask } from '@/utils/timeSpent';
 import { nameFamily } from '@/components/Subject/recentWork';
 import { RULES } from '@/utils/sharedRules';
@@ -30,6 +32,15 @@ describe('time spent, as the server works it out', () => {
 describe('a title family, as the server works it out', () => {
   it.each(nameFamilyCases.cases.map((one) => [one.title || 'empty', one] as const))('%s', (_title, one) => {
     expect(nameFamily(one.title)).toBe(one.family);
+  });
+});
+
+describe('how detailed the About you answers are, as the server works it out', () => {
+  it.each(backgroundCases.cases.map((one) => [one.why, one] as const))('%s', (_why, one) => {
+    const found = backgroundDetail(one.answers as Record<string, string>);
+    expect([found.words, found.answered, found.level, found.head_start]).toEqual([
+      one.words, one.answered, one.level, one.head_start,
+    ]);
   });
 });
 

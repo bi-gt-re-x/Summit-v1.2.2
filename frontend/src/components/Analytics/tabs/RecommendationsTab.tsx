@@ -137,6 +137,8 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         </section>
       ) : (
         <Building
+          credit={model.maturity.credit ?? 0}
+          headStart={model.headStart}
           title="Recommendations"
           remaining={waitFor('recommendations')}
           need={NEED_DAYS.recommendations}

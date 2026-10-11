@@ -98,6 +98,8 @@ function seedData(): AnalyticsData {
     gradedLog: answered({ histories: {} }),
     adopted: answered({ adopted: [] }),
     baseline: answered({ baseline: null }),
+    // No About you answers: no head start, so every gate reads the record alone.
+    background: answered(null),
     // The plan is decided on the server; see backend/tracking/next_actions.py.
     next: answered({ plan: NO_PLAN, lens: null }),
     setBudget: () => {},

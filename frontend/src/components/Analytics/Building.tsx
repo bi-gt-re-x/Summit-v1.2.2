@@ -76,6 +76,12 @@ export interface BuildingProps {
   remaining?: number;
   /** How many days this tab needs in total — printed as the bar's end. */
   need?: number;
+  /**
+   * Of `have`, the days counted from the About you answers at sign-up, and the
+   * most those answers can count for. See `credit` in utils/dataMaturity.
+   */
+  credit?: number;
+  headStart?: number;
   /** How many the account has. */
   have?: number;
   /**
@@ -154,6 +160,8 @@ export function Building({
   remaining = 0,
   need = 0,
   have = 0,
+  credit = 0,
+  headStart = 0,
   spanDays = 0,
   headline,
   promise,
@@ -249,6 +257,19 @@ export function Building({
           {remaining === 1 ? 'One more day' : `${remaining} more days`} with work on{' '}
           {remaining === 1 ? 'it' : 'them'}, whenever you do them.
         </p>
+        {/* The head start from the About you answers. Each day recorded also
+            counts one of its days until it is spent, which is why the count
+            above and the days left do not add up to the total. */}
+        {headStart > 0 && (
+          <p className="ax-building-credit">
+            {credit > 0
+              ? `${credit} of these ${credit === 1 ? 'day comes' : 'days come'} from what you told us at sign-up.`
+              : 'What you told us at sign-up gives you a head start.'}{' '}
+            {credit < headStart
+              ? `Until ${headStart} have counted, each day you record counts twice.`
+              : 'That head start is fully used now.'}
+          </p>
+        )}
         {/* What "with work on them" means, spelled out. The count above is the
             only number on this screen and a reader has no way to check it
             against their own week without the rule. See ./Collecting. */}

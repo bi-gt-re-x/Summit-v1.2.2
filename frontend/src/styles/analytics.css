@@ -8501,3 +8501,48 @@ div.ax-opening > p { flex: 1; min-width: 0; margin: 0; line-height: 1.5; }
     .ax-outlook-sources li { grid-template-columns: minmax(0, 1fr) auto; }
     .ax-outlook-bar { grid-column: 1 / -1; grid-row: 2; }
 }
+
+/* ---- What you told us (components/Analytics/WhatYouToldUs) --------------- */
+.ax-told-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-3);
+}
+.ax-told-title {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm) !important;
+    font-weight: 700;
+    color: var(--ax-muted);
+}
+.ax-told-group ul { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ax-told-group li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px var(--space-2);
+    padding-left: var(--space-3);
+    border-left: 2px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ax-text);
+}
+.ax-told-subject {
+    padding: 0 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    color: var(--color-accent);
+    font-size: var(--text-xs);
+    font-style: normal;
+    font-weight: 600;
+}
+.ax-told.is-empty { padding: var(--space-4) var(--space-5); }
+.ax-told-ask { margin: 0; font-size: var(--text-md); line-height: 1.55; color: var(--ax-text); }
+
+/* The head start line on a waiting tab. See `credit` on components/Analytics/Building. */
+.ax-building-credit {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--color-accent);
+}

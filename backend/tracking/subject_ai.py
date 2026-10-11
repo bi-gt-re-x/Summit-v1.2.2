@@ -1053,6 +1053,12 @@ def brief_from(state: Dict[str, Any]) -> str:
             '  ' + ', '.join(vocabulary),
         ]))
 
+    # ---- Who they are, in their own words ------------------------------
+    # From the "About you" step at sign-up (backend/tracking/background.py):
+    # what they have done, what they do, and what they want. Background, not
+    # record — it says where to pitch a session, not what the work showed.
+    parts.append(_section('about_the_reader', list(state.get('background') or [])))
+
     # ---- What it is all for ----------------------------------------------
     goals = state.get('goals') or []
     if goals:
@@ -1363,7 +1369,7 @@ def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dic
 
 #: The brief sections a plan is written from. Not the dimensions, trends or
 #: relationships: those are what the record *is*, and the reading covers them.
-STEPS_SECTIONS = ('subject_profile', 'difficulty_analysis', 'time_analysis',
+STEPS_SECTIONS = ('subject_profile', 'about_the_reader', 'difficulty_analysis', 'time_analysis',
                   'mistake_patterns', 'recent_work', 'work_groups',
                   'your_resources', 'already_showing', 'skill_vocabulary', 'goals',
                   'previous_recommendations', 'recommendation_outcomes')

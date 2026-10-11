@@ -40,7 +40,7 @@ function safeNext(raw: string | null): string {
   return raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
 }
 
-const STEPS: AuthStep[] = ['choose', 'login', 'create', 'inbox', 'profile'];
+const STEPS: AuthStep[] = ['choose', 'login', 'create', 'inbox', 'profile', 'about'];
 
 const POINTS: [IconName, string][] = [
   ['check', 'Tasks, calendar and focus timer in one app'],

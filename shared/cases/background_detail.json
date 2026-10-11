@@ -1,0 +1,13 @@
+{
+  "_about": "How detailed the 'About you' answers are, and the head start that earns. Run by tests/test_shared_cases.py against backend/tracking/background.py `detail` and by frontend/src/shared.cases.test.ts against `backgroundDetail` in frontend/src/utils/background.ts.",
+  "cases": [
+    { "why": "nothing", "answers": {}, "words": 0, "answered": 0, "level": "none", "head_start": 0 },
+    { "why": "punctuation is not words", "answers": { "describe": "- - ... !!" }, "words": 0, "answered": 0, "level": "none", "head_start": 0 },
+    { "why": "one short line", "answers": { "describe": "I'm in 10th grade." }, "words": 4, "answered": 0, "level": "none", "head_start": 0 },
+    { "why": "twenty words in one answer", "answers": { "doing": "I study math and computer science most days after school and play violin on weekends for about two hours each" }, "words": 20, "answered": 1, "level": "brief", "head_start": 2 },
+    { "why": "enough words but only two answered", "answers": { "describe": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w", "doing": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w" }, "words": 80, "answered": 2, "level": "brief", "head_start": 2 },
+    { "why": "three answered, seventy words", "answers": { "describe": "w w w w w w w w w w w w w w w w w w w w w w w w w", "doing": "w w w w w w w w w w w w w w w w w w w w w w w w w", "done": "w w w w w w w w w w w w w w w w w w w w" }, "words": 70, "answered": 3, "level": "good", "head_start": 4 },
+    { "why": "all four, long", "answers": { "describe": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w", "doing": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w", "done": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w", "improve": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w" }, "words": 160, "answered": 4, "level": "detailed", "head_start": 7 },
+    { "why": "long but one question skipped", "answers": { "describe": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w", "doing": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w", "done": "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w" }, "words": 180, "answered": 3, "level": "good", "head_start": 4 }
+  ]
+}

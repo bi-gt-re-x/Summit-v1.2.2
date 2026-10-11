@@ -21,6 +21,8 @@ import { useCallback, useState } from 'react';
 import { DEFAULT_BUDGET, type NextResult } from '@/services/next';
 import { next as nextService } from '@/services';
 import { useApi, useStats } from '@/hooks';
+import * as backgroundService from '@/services/background';
+import type { Background } from '@/services/background';
 import { taskHistory } from '@/services/taskHistory';
 import { takeOrAsk } from './earlyReads';
 import {
@@ -170,6 +172,18 @@ export function useAnalyticsData() {
   );
   const scoreLog = useApi<MetricHistory>(historyCall, [username]);
 
+  // What the account said about itself at the end of sign-up: the answers,
+  // the facts filed from them, and the head start their detail earns on this
+  // page's waits. See backend/api/background.py.
+  const backgroundCall = useCallback(
+    () =>
+      username
+        ? backgroundService.read()
+        : Promise.resolve({ success: false as const, message: 'Sign in to see this.' }),
+    [username],
+  );
+  const background = useApi<Background>(backgroundCall, [username]);
+
   // What to do next, for the minutes the reader picked. Decided on the server
   // (backend/tracking/next_actions.py) — the same list the dashboard's top line
   // reads — and asked again when the budget changes or the plan's own refresh
@@ -309,6 +323,7 @@ export function useAnalyticsData() {
     adopted,
     gradedLog,
     scoreLog,
+    background,
     next,
     budget,
     setBudget,

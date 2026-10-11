@@ -41,6 +41,7 @@ API_MODULES = (
     'skillsteps',
     'skillattempts',
     'next',
+    'background',
 )
 
 SHARED_MODULES = (

@@ -809,6 +809,9 @@ ACCOUNT_TABLES = (
     # What the account got right and wrong on each skill. The only per-skill
     # evidence there is, so it goes out with an export and goes with a reset.
     'skill_attempts',
+    # What the account said about itself at sign-up, and the facts kept from
+    # it. Its own words, so they go out with an export and go with a reset.
+    'user_background', 'user_facts',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the

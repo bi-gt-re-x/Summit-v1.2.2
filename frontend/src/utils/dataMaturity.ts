@@ -197,6 +197,16 @@ export interface Maturity {
    * as the analytics having broken rather than as the reader having been away.
    */
   quietDays: number;
+  /**
+   * Days counted toward the stages from what the account said about itself
+   * at sign-up (utils/background), on top of `activeDays`.
+   *
+   * Never more than `activeDays`: a description of where somebody stands is
+   * context the first weeks cannot give, but it is not a record, so it can at
+   * most halve a wait and never open a stage on its own. Absent on a maturity
+   * built without one, which reads as 0.
+   */
+  credit?: number;
 }
 
 /**
@@ -227,14 +237,20 @@ function daysBetween(from: string, to: string): number {
   return Math.max(0, Math.round((end - start) / 86_400_000));
 }
 
-export function dataMaturity(days: GrowthDay[]): Maturity {
+export function dataMaturity(days: GrowthDay[], headStart = 0): Maturity {
   const active = days.filter(isActiveDay);
   const activeDays = countActiveDays(days);
-  const stage = stageFor(activeDays);
+  /* The head start counts for at most as many days as are actually recorded.
+     See `credit` on Maturity. */
+  const credit = Math.max(0, Math.min(headStart, activeDays));
+  const counted = activeDays + credit;
+  const stage = stageFor(counted);
 
   const at = STAGES.indexOf(stage);
   const next = at < STAGES.length - 1 ? STAGES[at + 1]! : null;
-  const toNext = next ? Math.max(0, STAGE_FLOOR[next] - activeDays) : null;
+  /* Real days still to record. Each one also earns a day of head start until
+     the head start runs out, which is why the gap is halved while it lasts. */
+  const toNext = next ? realDaysTo(STAGE_FLOOR[next], activeDays, headStart) : null;
 
   /* Through the current stage, not through the whole ladder. A bar that
      measures the distance to `full` sits almost empty for two weeks and
@@ -242,7 +258,7 @@ export function dataMaturity(days: GrowthDay[]): Maturity {
      discouraging and false — they are one day from the next thing opening. */
   const floor = STAGE_FLOOR[stage];
   const ceiling = next ? STAGE_FLOOR[next] : floor;
-  const progress = next && ceiling > floor ? (activeDays - floor) / (ceiling - floor) : 1;
+  const progress = next && ceiling > floor ? (counted - floor) / (ceiling - floor) : 1;
 
   const first = active[0]?.date ?? null;
   const lastRow = days[days.length - 1]?.date ?? null;
@@ -260,5 +276,17 @@ export function dataMaturity(days: GrowthDay[]): Maturity {
        a pure function of its input — the series runs to today, which is what
        makes the two the same number in practice. */
     quietDays: lastActive && lastRow ? daysBetween(lastActive, lastRow) : 0,
+    credit,
   };
+}
+
+/**
+ * Real active days still needed to count `target`, when each day recorded
+ * also earns a day of head start until `headStart` is spent.
+ */
+export function realDaysTo(target: number, activeDays: number, headStart = 0): number {
+  for (let more = 0; ; more += 1) {
+    const days = activeDays + more;
+    if (days + Math.min(headStart, days) >= target) return more;
+  }
 }

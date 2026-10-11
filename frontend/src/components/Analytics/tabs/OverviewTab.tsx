@@ -50,6 +50,7 @@ import type { LearningItem } from '../index';
 const EMPTY_PREVIOUS = new Map<string, number>();
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
+import { WhatYouToldUs } from '../WhatYouToldUs';
 
 export function OverviewTab({
   model,
@@ -62,6 +63,9 @@ export function OverviewTab({
   onEditBaseline: () => void;
 }) {
   const {
+    background,
+    nameOf,
+    waitFor,
     breakdown,
     lens,
     observed,
@@ -202,6 +206,12 @@ export function OverviewTab({
 
         <section id="overview" className="ax-section">
           <Collecting maturity={maturity} stats={basics} />
+        </section>
+
+        {/* What the account said about itself at sign-up, and what it counts
+            for while the record is short. */}
+        <section className="ax-section">
+          <WhatYouToldUs background={background} credit={maturity.credit ?? 0} waiting nameOf={nameOf} />
         </section>
 
         {/* The one inference allowed this early, and only once it is earned.
@@ -414,6 +424,19 @@ export function OverviewTab({
           it can be left on screen permanently. The full note only appears
           beside a countdown, so an account past the staged tabs has not seen
           it in months. See `ActiveDayPrinciple`. */}
+      {/* What the account said at sign-up. Last here: by now the record says
+          more than the answers do, but they stay in view and editable. */}
+      {background && background.facts.length > 0 && (
+        <section className="ax-section">
+          <WhatYouToldUs
+            background={background}
+            credit={maturity.credit ?? 0}
+            waiting={waitFor('recommendations') > 0 || waitFor('insights') > 0}
+            nameOf={nameOf}
+          />
+        </section>
+      )}
+
       <ActiveDayPrinciple />
     </>
   );
