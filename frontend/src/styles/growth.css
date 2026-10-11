@@ -1802,3 +1802,14 @@ html[data-theme="dark"] .gr-heat-cell.is-blank {
     background: transparent;
     border-color: #2b3242;
 }
+
+/* A full-width row inside a chapter's grid, for content another tab hands it
+   (see `afterTrack` on components/Growth/SkillsChapter). Its sections stack
+   with the page's own section gap. */
+.gr-span-all {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+}

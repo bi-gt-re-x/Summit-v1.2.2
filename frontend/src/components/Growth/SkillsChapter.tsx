@@ -21,7 +21,7 @@
  *
  * Everything is in utils/growthSkills; this file turns it into shapes.
  */
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import type { Subject } from '@/services/subjects';
 import type { GrowthDay, Task } from '@/types';
 import { iconUrl } from '@/services/subjects';
@@ -46,9 +46,15 @@ export interface SkillsChapterProps {
   all: GrowthDay[];
   tasks: Task[];
   subjects: Map<string, Subject>;
+  /**
+   * Drawn as a full-width row under the mastery track's row. The Subjects
+   * tab puts its goal lines and the XP-by-subject panel here. With no skills
+   * yet it follows the empty chapter instead, so it is never lost.
+   */
+  afterTrack?: ReactNode;
 }
 
-export function SkillsChapter({ all, tasks, subjects }: SkillsChapterProps) {
+export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapterProps) {
   const today = all[all.length - 1]?.date ?? '';
 
   const cards = useMemo(() => skillCards(tasks, subjects, today), [subjects, tasks, today]);
@@ -72,16 +78,21 @@ export function SkillsChapter({ all, tasks, subjects }: SkillsChapterProps) {
   const track = useMemo(() => (chosen ? masteryTrack(chosen) : []), [chosen]);
   const moving = useMemo(() => movers(cards), [cards]);
 
+  const slot = afterTrack ? <div className="gr-span-all gr-slot">{afterTrack}</div> : null;
+
   if (cards.length === 0) {
     return (
-      <EmptyChapter
-        title="Skills & Subjects"
-        message={
-          unfiled.count > 0
-            ? `${unfiled.count} finished tasks have no subject. Add subjects to your tasks to see skills here.`
-            : 'No finished tasks have a subject yet.'
-        }
-      />
+      <>
+        <EmptyChapter
+          title="Skills & Subjects"
+          message={
+            unfiled.count > 0
+              ? `${unfiled.count} finished tasks have no subject. Add subjects to your tasks to see skills here.`
+              : 'No finished tasks have a subject yet.'
+          }
+        />
+        {slot}
+      </>
     );
   }
 
@@ -393,6 +404,10 @@ export function SkillsChapter({ all, tasks, subjects }: SkillsChapterProps) {
           </div>
         </div>
       </section>
+
+      {/* Under the row the mastery track shares with "Moving and waiting", so
+          the grid keeps both rows full. */}
+      {slot}
 
       {/* --- What this page can and cannot see ------------------------------ */}
       <section className="gr-panel gr-span-3">

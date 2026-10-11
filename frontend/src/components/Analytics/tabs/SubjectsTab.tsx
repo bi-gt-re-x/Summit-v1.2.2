@@ -125,13 +125,11 @@ export function SubjectsTab({
     [tasks],
   );
 
-  return (
+  const hasGoalsAndGrowth =
+    namedSubjects.total > 0 || shown.length > 0 || Boolean(breakdown && breakdown.rows.length > 0);
+  const goalsAndGrowth = hasGoalsAndGrowth ? (
     <>
-      {/* The two chapters that arrived whole. Each was a tab of the growth
-          page and neither had a counterpart here — mastery and achievement
-          are questions the five original tabs never asked. They keep their own
-          layout inside `.gr-scope`; see the stylesheet note at the top. */}
-      {/* One line above the chapter. Which subjects are being worked is
+      {/* One line above the subject panel. Which subjects are being worked is
           this tab's whole job; which of them anybody decided to aim at is
           one sentence of context on top of that, and it earns its place
           only when the two lists differ. */}
@@ -177,9 +175,19 @@ export function SubjectsTab({
           <SubjectPanel rows={breakdown.rows} previous={previousBySubject} linked />
         </section>
       )}
+    </>
+  ) : null;
 
+  return (
+    <>
+      {/* The two chapters that arrived whole. Each was a tab of the growth
+          page and neither had a counterpart here — mastery and achievement
+          are questions the five original tabs never asked. They keep their own
+          layout inside `.gr-scope`; see the stylesheet note at the top. */}
+      {/* The goal lines and where the XP went sit under the mastery track,
+          inside the chapter, so the skills lead the tab. */}
       <div className="ax-section gr-scope">
-        <SkillsChapter all={all} tasks={tasks} subjects={subjects} />
+        <SkillsChapter all={all} tasks={tasks} subjects={subjects} afterTrack={goalsAndGrowth} />
       </div>
 
       {/* How far in the work has got. The panel below says what there is to
