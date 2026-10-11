@@ -23,7 +23,10 @@ export type ActionKind =
   | 'review'
   | 'stale'
   | 'momentum'
-  | 'streak';
+  | 'streak'
+  | 'slipping'
+  | 'goal-quiet'
+  | 'xp';
 
 export interface NextAction {
   id: string;

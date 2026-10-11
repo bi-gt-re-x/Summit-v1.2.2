@@ -148,6 +148,7 @@ describe('the order', () => {
     detail: 'Two readings disagree.',
     action: 'Do a thing.',
     watch: 'Watch a thing.',
+    points: [],
     weight,
   });
   const pattern = (id: string): Pattern => ({

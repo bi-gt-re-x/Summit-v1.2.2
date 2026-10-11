@@ -17,13 +17,11 @@ import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { AdviceCard, CategoryFilter, FollowupPanel, OutlookPanel } from '@/components/Recommendations';
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
-import { Panel, PanelGroup } from '../charts';
+import { Panel } from '../charts';
 import { XpPulse } from '../XpPulse';
-import { LimiterCard } from '../Limiter';
 import { LensCard } from '../Lens';
 import { Knows, useKnows } from '../Knows';
 import { Building } from '../Building';
-import { SETTLE } from '@/utils/followup';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { whyFor } from '../milestones';
 import type { AnalyticsData } from '../useAnalyticsData';
@@ -31,8 +29,8 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & { data: AnalyticsData }) {
   const {
-    adoptedIds, advice, all, category, goalAdvice, goalLimits, historyDays, lens, maturity, observed, plan, projection, recent, reviewSummary,
-    reviews, setBudget, setCategory, setNudge, shown, slice, shownDiagnoses, toneRules, waitFor, weekLeft,
+    adoptedIds, advice, all, category, historyDays, liveGoals, lens, maturity, observed, plan, projection, recent, reviewSummary,
+    reviews, setBudget, setCategory, setNudge, shown, slice, shownDiagnoses, toneRules, waitFor,
     /* The three inputs this tab was not reading. `rhythm` carries the reader's
        typical sitting, drawn from their logged focus time; `reasons` is what
        they type after a task; `detail` is how much supporting evidence they
@@ -68,56 +66,10 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
    */
   const headlines = toneRules?.headlines ?? 3;
   const diagnoses = shownDiagnoses ?? [];
-  const { adopt, adopting, dropAdopted, dropping, justAdopted, refresh } = data;
+  const { dropAdopted, dropping, refresh } = data;
   const knows = useKnows(model);
 
   const ready = waitFor('recommendations') === 0 && advice.length > 0;
-
-  /* The goals' own rows: why each is moving the way it is, and the goals that
-     need attention. With the changes on screen they sit under the cards in the
-     same panel; while the changes are still building they keep a panel of
-     their own. */
-  const goalRows = (goalLimits.length > 0 || goalAdvice.length > 0) && (
-    <>
-      {goalLimits.length > 0 && (
-        <PanelGroup
-          title="Why your goals are moving the way they are"
-          note="The subject holding each goal back the most."
-        >
-          <div className="ax-limiters">
-            {goalLimits.slice(0, headlines).map((row) => (
-              <LimiterCard key={row.goalId} row={row} />
-            ))}
-          </div>
-        </PanelGroup>
-      )}
-
-      {/* The goals' own advice, kept separate from the ranked cards rather
-          than merged into them. `advice` is ranked by XP a year and these are
-          not comparable to that — a goal drifting past its date is not worth
-          "1,200 XP", it is worth the goal. */}
-      {goalAdvice.length > 0 && (
-        <PanelGroup
-          title="From your goals"
-          note="Goals that need attention. Goals on track are not listed."
-        >
-          <ul className="ax-goal-advice">
-            {goalAdvice.map((row) => (
-              <li key={`${row.goalId}:${row.id}`} className={`is-${row.tone}`}>
-                {/* The goal first, so two goals stalled for the same reason
-                    don't open with the same two lines. */}
-                <Link to="/goals" className="ax-goal-advice-goal">
-                  {row.goalTitle}
-                </Link>
-                <strong>{row.title}</strong>
-                <span className="ax-muted">{row.because}</span>
-              </li>
-            ))}
-          </ul>
-        </PanelGroup>
-      )}
-    </>
-  );
 
   return (
     <>
@@ -138,7 +90,6 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         <NextActions
           plan={plan}
           onBudget={setBudget}
-          weekLeft={weekLeft}
           typicalSession={rhythm.typicalSession}
           /* Both halves: `refresh` re-reads the account so a task finished
              elsewhere leaves the plan, and the nudge re-asks the clock so
@@ -161,22 +112,15 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         )}
       </section>
 
-      {/* The ranked changes, and the goals that need attention, in one panel.
-          The opening line's chevron lands here. */}
+      {/* The ranked changes. The opening line's chevron lands here. */}
       {ready ? (
         <section className="ax-section" id="ax-changes">
           <Panel
-            title="Your goals"
-            note="The changes worth making, best first, and the goals that need attention. Goals on track are not listed."
+            title="Changes Worth Making"
+            note="Ranked by how much XP each would add over a year. Open one for why, what to do, and the numbers."
             className="ax-changes"
             aside={<CategoryFilter items={advice} chosen={category} onChoose={setCategory} />}
           >
-            {justAdopted && (
-              <p className="ax-adopted" role="status">
-                <strong>{justAdopted}</strong> is on your task list for tomorrow, and this tab will
-                tell you in {SETTLE} days whether it moved. <Link to="/tasks">Open Tasks</Link>
-              </p>
-            )}
             {shown.length > 0 && (
               <div className="ax-grid ax-grid-three">
                 {shown.slice(0, headlines).map((item, index) => (
@@ -184,46 +128,36 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
                     key={item.id}
                     item={item}
                     rank={index + 1}
-                    onAdopt={adopt}
-                    adopting={adopting}
                     adopted={adoptedIds.has(item.id)}
                   />
                 ))}
               </div>
             )}
-            {goalRows && <div className="ax-goal-groups">{goalRows}</div>}
           </Panel>
         </section>
       ) : (
-        <>
-          {goalRows && (
-            <section className="ax-section">
-              <div className="ax-panel ax-goal-groups">{goalRows}</div>
-            </section>
-          )}
-          <Building
-            title="Recommendations"
-            remaining={waitFor('recommendations')}
-            need={NEED_DAYS.recommendations}
-            have={historyDays}
-            promise={whyFor(NEED_DAYS.recommendations)}
-            observation={observed[0] ?? null}
-            spanDays={maturity.spanDays}
-            asksLead="Summit will work out what to change, and what it is worth:"
-            asks={[
-              'Which single change would buy you the most?',
-              'What is that worth, in your own figures?',
-              'How hard would it actually be?',
-              'Did the last change you made work?',
-            ]}
-            emptyMessage="No long gaps, no dead weekend, no late shift worth moving. Nothing to fix."
-            action={
-              <Link to="/analytics" className="ax-btn">
-                See totals
-              </Link>
-            }
-          />
-        </>
+        <Building
+          title="Recommendations"
+          remaining={waitFor('recommendations')}
+          need={NEED_DAYS.recommendations}
+          have={historyDays}
+          promise={whyFor(NEED_DAYS.recommendations)}
+          observation={observed[0] ?? null}
+          spanDays={maturity.spanDays}
+          asksLead="Summit will work out what to change, and what it is worth:"
+          asks={[
+            'Which single change would buy you the most?',
+            'What is that worth, in your own figures?',
+            'How hard would it actually be?',
+            'Did the last change you made work?',
+          ]}
+          emptyMessage="No long gaps, no dead weekend, no late shift worth moving. Nothing to fix."
+          action={
+            <Link to="/analytics" className="ax-btn">
+              See totals
+            </Link>
+          }
+        />
       )}
 
       <section className="ax-section">
@@ -240,7 +174,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
 
       {ready && (
         <section className="ax-section">
-          <OutlookPanel outlook={projection} />
+          <OutlookPanel outlook={projection} advice={advice} goals={liveGoals} />
         </section>
       )}
 

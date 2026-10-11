@@ -439,8 +439,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   const nowVitals = useMemo(() => vitals(recent.current, tasks), [recent, tasks]);
   const beforeVitals = useMemo(() => vitals(recent.previous, tasks), [recent, tasks]);
   const diagnoses = useMemo(
-    () => diagnose(nowVitals, beforeVitals),
-    [beforeVitals, nowVitals],
+    () => diagnose(nowVitals, beforeVitals, nameOf),
+    [beforeVitals, nameOf, nowVitals],
   );
 
   /* How many of them the tab actually draws. `diagnoses` stays whole because

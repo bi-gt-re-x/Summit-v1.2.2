@@ -11,7 +11,7 @@
  * are one place.
  */
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AreaChart, Panel, toneVar } from '@/components/Analytics';
 import {
   PRIORITY_LABEL,
@@ -21,6 +21,9 @@ import {
   type Outlook,
 } from '@/utils/advice';
 import { compact } from '@/utils/growthSummary';
+import { levelForTotalXp } from '@/utils/format';
+import { monthFrom, outlookMilestones, sooner } from '@/utils/outlookMilestones';
+import type { Goal } from '@/types';
 
 /*
  * Five series colours and six kinds, so `load` takes `--ax-bad` rather than a
@@ -73,16 +76,10 @@ const KIND_TONE: Record<Advice['kind'], string> = {
 export function AdviceCard({
   item,
   rank,
-  onAdopt,
-  adopting,
   adopted,
 }: {
   item: Advice;
   rank: number;
-  /** Makes the task and starts the clock on measuring it. See the button. */
-  onAdopt: (item: Advice) => Promise<boolean>;
-  /** The id currently being written, so only its own button shows the wait. */
-  adopting: string | null;
   /**
    * Whether this one is already being tracked.
    *
@@ -94,10 +91,9 @@ export function AdviceCard({
 }) {
   const tone = KIND_TONE[item.kind];
   const chosen = adopted;
-  const busy = adopting === item.id;
   /* Shut by default: the rank, the change, what it is worth and how hard it
      is are enough to choose between three cards side by side. The finding, the
-     instruction, the numbers and the button open under the chevron. */
+     instruction and the numbers open under the chevron. */
   const [open, setOpen] = useState(false);
 
   return (
@@ -166,30 +162,9 @@ export function AdviceCard({
               <span>{item.evidence}</span>
               <span>{item.workings}</span>
             </details>
-            {/* **This makes a task and starts a measurement.** It used to set a
-                flag in localStorage and nothing else: the page would compute that a
-                change was worth five thousand XP a year, the reader would agree
-                with it, press the button — and then have to go and act on it
-                somewhere else, from memory, with nothing ever coming back to say
-                whether it had worked. A recommendation that cannot be accepted is
-                an essay; one that is never checked is a guess.
-
-                Once adopted the button stops being a control. Untracking happens on
-                the follow-up panel, where the thing being given up is visible —
-                here it would sit under a card the reader is reading for the first
-                time, one slip away from discarding three weeks of comparison. */}
-            {chosen ? (
-              <span className="ax-try is-on">✓ Tracking</span>
-            ) : (
-              <button
-                type="button"
-                className="ax-try"
-                disabled={busy}
-                onClick={() => void onAdopt(item)}
-              >
-                {busy ? 'Adding…' : 'Add to tasks'}
-              </button>
-            )}
+            {/* Changes adopted before the Add to tasks button was taken off
+                still say so; What happened after reports on them. */}
+            {chosen && <span className="ax-try is-on">✓ Tracking</span>}
           </footer>
         </div>
       )}
@@ -236,50 +211,121 @@ export function CategoryFilter({
   );
 }
 
-export function OutlookPanel({ outlook }: { outlook: Outlook }) {
-  const peak = Math.max(...outlook.improvedLine, 1);
+/** "Now", "In 3 months", "In 1 year", "In 1 year 6 months" for the 21 quarterly points. */
+const QUARTERS = Array.from({ length: 21 }, (_, step) => {
+  if (step === 0) return 'Now';
+  const years = Math.floor(step / 4);
+  const months = (step % 4) * 3;
+  const y = years ? `${years} year${years === 1 ? '' : 's'}` : '';
+  const m = months ? `${months} months` : '';
+  return `In ${[y, m].filter(Boolean).join(' ')}`;
+});
+
+/** A total XP as a level with its fraction, so the line climbs smoothly. */
+const asLevel = (xp: number) => {
+  const at = levelForTotalXp(xp);
+  return at.level + at.percent / 100;
+};
+
+export function OutlookPanel({
+  outlook,
+  advice,
+  goals,
+}: {
+  outlook: Outlook;
+  advice: Advice[];
+  goals: Goal[];
+}) {
+  /* Total XP or level. Level is the number the rest of the app shows, and a
+     line of XP in the hundreds of thousands says less about a year than
+     "Level 47 instead of 41". */
+  const [view, setView] = useState<'xp' | 'level'>('xp');
+  const banked = outlook.currentLine[0] ?? 0;
+  const gain = outlook.improved - outlook.current;
+
+  const improvedLine = view === 'xp' ? outlook.improvedLine : outlook.improvedLine.map(asLevel);
+  const currentLine = view === 'xp' ? outlook.currentLine : outlook.currentLine.map(asLevel);
+  const peak = Math.max(...improvedLine, 1);
   const ticks: string[] = [];
-  for (let step = 4; step >= 0; step--) ticks.push(compact((peak / 4) * step));
+  for (let step = 4; step >= 0; step--) {
+    const value = (peak / 4) * step;
+    ticks.push(view === 'xp' ? compact(value) : `L${Math.round(value)}`);
+  }
+  const write = view === 'xp'
+    ? (value: number) => `${compact(value)} XP`
+    : (value: number) => `Level ${Math.floor(value)}`;
+
+  const milestones = useMemo(
+    () => outlookMilestones({ banked, current: outlook.current, improved: outlook.improved, goals }),
+    [banked, goals, outlook.current, outlook.improved],
+  );
+
+  /* Where the gap between the lines comes from: each change's share of it. */
+  const sources = advice
+    .filter((item) => item.impact > 0)
+    .sort((a, b) => b.impact - a.impact)
+    .slice(0, 5);
+
+  const levelNow = levelForTotalXp(banked).level;
+  const levelAt = (line: number[]) => levelForTotalXp(line[line.length - 1] ?? banked).level;
 
   return (
-    /* No note: it read "Your pace now, and with every change made", which is
-       what the three figures immediately below it already say, in the same
-       words, with the numbers attached. */
-    <Panel title="Five years, both ways">
+    <Panel
+      title="Five years, both ways"
+      note={`Where you'll be at today's pace, and with every change above made. You're Level ${levelNow} with ${compact(banked)} XP banked.`}
+      className="ax-outlook"
+      aside={
+        <div className="ax-outlook-view" role="group" aria-label="Show the chart in">
+          {(['xp', 'level'] as const).map((key) => (
+            <button
+              key={key}
+              type="button"
+              className={`ax-plan-budget-btn${view === key ? ' is-on' : ''}`}
+              aria-pressed={view === key}
+              onClick={() => setView(key)}
+            >
+              {key === 'xp' ? 'Total XP' : 'Level'}
+            </button>
+          ))}
+        </div>
+      }
+    >
       <div className="ax-figures">
         <div className="ax-figure">
           <span className="ax-muted">At today&rsquo;s pace</span>
           <strong>{compact(outlook.current)}</strong>
-          <span className="ax-muted ax-small">XP a year</span>
+          <span className="ax-muted ax-small">XP a year · Level {levelAt(outlook.currentLine)} in 5 years</span>
         </div>
         <div className="ax-figure">
           <span className="ax-muted">With the changes</span>
           <strong>{compact(outlook.improved)}</strong>
-          <span className="ax-muted ax-small">XP a year</span>
+          <span className="ax-muted ax-small">XP a year · Level {levelAt(outlook.improvedLine)} in 5 years</span>
         </div>
         <div className="ax-figure">
           <span className="ax-muted">Difference</span>
-          <strong>+{compact(outlook.improved - outlook.current)}</strong>
-          <span className="ax-muted ax-small">XP a year</span>
+          <strong>+{compact(gain)}</strong>
+          <span className="ax-muted ax-small">
+            XP a year · {levelAt(outlook.improvedLine) - levelAt(outlook.currentLine)} more levels
+          </span>
         </div>
       </div>
 
       <AreaChart
         id="ax-outlook"
         height={180}
-        label="Banked XP over the next five years, at today's pace and with the changes made"
-        /* Six points and six marks, and they are the same six — this is the one
-           chart on the page whose axis labels already name every point it
-           carries, because the x axis is five round years rather than a
-           sampling of days. */
+        label={
+          view === 'xp'
+            ? "Banked XP over the next five years, at today's pace and with the changes made"
+            : "Your level over the next five years, at today's pace and with the changes made"
+        }
         readout={{
-          labels: ['Now', 'In 1 year', 'In 2 years', 'In 3 years', 'In 4 years', 'In 5 years'],
+          labels: QUARTERS,
           names: ['With the changes', "At today's pace"],
-          format: (value) => `${compact(value)} XP`,
+          format: write,
         }}
         series={[
-          { values: outlook.improvedLine, tone: 'green' },
-          { values: outlook.currentLine, tone: 'violet', muted: true },
+          { values: improvedLine, tone: 'green' },
+          { values: currentLine, tone: 'violet', muted: true },
         ]}
         ticks={ticks}
         marks={['Now', '1 yr', '2 yr', '3 yr', '4 yr', '5 yr']}
@@ -296,10 +342,72 @@ export function OutlookPanel({ outlook }: { outlook: Outlook }) {
         </span>
       </div>
 
+      {/* The dates the two paces give for things worth reaching. */}
+      {milestones.length > 0 && (
+        <div className="ax-outlook-block">
+          <h3 className="ax-outlook-sub">When you&rsquo;d get there</h3>
+          <table className="ax-outlook-table">
+            <thead>
+              <tr>
+                <th scope="col">Milestone</th>
+                <th scope="col">At today&rsquo;s pace</th>
+                <th scope="col">With the changes</th>
+                <th scope="col">Difference</th>
+              </tr>
+            </thead>
+            <tbody>
+              {milestones.map((row) => (
+                <tr key={row.id}>
+                  <th scope="row">
+                    <span className="ax-outlook-name">{row.label}</span>
+                    <span className="ax-muted ax-small">
+                      {compact(row.needed)} XP to go
+                      {row.deadline ? ` · due ${monthFrom(Math.round((Date.parse(row.deadline) - Date.now()) / 86_400_000))}` : ''}
+                    </span>
+                  </th>
+                  <td data-label="At today's pace">{row.atPace === null ? 'Over 10 years' : monthFrom(row.atPace)}</td>
+                  <td data-label="With the changes" className="is-better">{row.withChanges === null ? 'Over 10 years' : monthFrom(row.withChanges)}</td>
+                  <td data-label="Difference" className="ax-muted">
+                    {row.withChanges === null
+                      ? '–'
+                      : row.atPace === null
+                        ? 'Within reach'
+                        : sooner(row.atPace - row.withChanges)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Which change is worth what share of the gap. */}
+      {sources.length > 0 && gain > 0 && (
+        <div className="ax-outlook-block">
+          <h3 className="ax-outlook-sub">Where the extra comes from</h3>
+          <ul className="ax-outlook-sources">
+            {sources.map((item) => {
+              const share = Math.round((item.impact / gain) * 100);
+              return (
+                <li key={item.id}>
+                  <span className="ax-outlook-source-name">{item.title}</span>
+                  <span className="ax-outlook-bar" aria-hidden="true">
+                    <i style={{ width: `${Math.max(2, share)}%` }} />
+                  </span>
+                  <span className="ax-outlook-source-value">
+                    +{compact(item.impact)} <span className="ax-muted">({share}%)</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
       <p className="ax-prose">
-        Both lines start from what you have banked. The gap is the claim.
+        Both lines start from what you have banked. Each change&rsquo;s figure is worked out from
+        your last two weeks; open its card for the numbers.
       </p>
     </Panel>
   );
 }
-

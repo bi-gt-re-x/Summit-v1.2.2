@@ -334,6 +334,7 @@ function recommendationSection(input: ReportInput): string {
     diagnoses.slice(0, 3).forEach((row) => {
       lines.push(bullet(row.headline));
       lines.push(wrap(row.detail, 78, '  '));
+      row.points.forEach((point) => lines.push(wrap(`- ${point}`, 78, '  ')));
       lines.push(wrap(`Do: ${row.action}`, 78, '  '));
       lines.push(wrap(`Watch: ${row.watch}`, 78, '  '));
       lines.push('');

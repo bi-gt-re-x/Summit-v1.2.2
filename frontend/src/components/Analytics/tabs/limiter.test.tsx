@@ -2,9 +2,9 @@
  * The limiter, where it reaches the screen.
  *
  * `utils/goalLimiter.test` pins the arithmetic and the floors under it. This is
- * about the other half of the decision: where the finding is drawn. It is
- * drawn once, as a card on Recommendations — the tab a reader opens to ask
- * *why* — and nowhere else.
+ * about the other half of the decision: where the finding is drawn. It is a
+ * line on the Subjects tab, beside the subject it names, and nowhere else:
+ * the card Recommendations carried was taken off with that tab's goal rows.
  */
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
@@ -42,8 +42,8 @@ const COURSE: GoalLimiter = {
   basis: 'open',
 };
 
-describe('the tabs a reader opens to ask why', () => {
-  it('gives Recommendations the whole reading, ending in the way in', () => {
+describe('Recommendations', () => {
+  it('no longer carries the goal rows', () => {
     draw(
       <RecommendationsTab
         model={fakeModel({ goalLimits: [AMC8] })}
@@ -51,28 +51,13 @@ describe('the tabs a reader opens to ask why', () => {
       />,
     );
 
-    // The sentence, in the three parts it is built from: what the goal is,
-    // which way it is going, and what is holding it up.
-    expect(screen.getByText('Get 24 on the AMC 8')).toBeInTheDocument();
-    expect(screen.getByText(/You are improving, but/)).toBeInTheDocument();
-    // The share and the noun it is a share of, in one read: "60%" alone is
-    // the number this whole file exists to stop being printed on its own.
-    expect(document.querySelector('.ax-limiter-share')!.textContent)
-      .toContain('about 60% of the work on this goal that went badly');
-    // The working, under the claim rather than instead of it.
-    expect(screen.getByText(AMC8.because)).toBeInTheDocument();
-
-    // And the promise the whole finding rests on: naming geometry and then
-    // leaving the reader to find it is most of a broken one.
-    expect(screen.getByRole('link', { name: /Geometry skill tree/i }))
-      .toHaveAttribute('href', '/skill-trees?subject=geometry&node=m.geometry');
+    expect(screen.queryByText(/Get 24 on the AMC 8/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Why your goals are moving/)).not.toBeInTheDocument();
   });
-
 });
 
 describe('the tabs with their own job', () => {
-  /* The full card is on Recommendations, and a one-line version on the
-     Subjects tab (below). The Overview has neither. */
+  /* A one-line version on the Subjects tab (below). The Overview has none. */
   it('leaves it off the Overview', () => {
     draw(
       <OverviewTab
@@ -88,7 +73,7 @@ describe('the tabs with their own job', () => {
 
 describe('the Subjects tab', () => {
   /* One line per goal, and only where the subject holding it back is on the
-     page — the full card stays on Recommendations. */
+     page. */
   const worked = (key: string) =>
     ({ rows: [{ key, label: key, name: key, xp: 500, share: 1, tasks: 4 }] }) as never;
 

@@ -99,6 +99,14 @@ export function DiagnosisCards({ items }: { items: Diagnosis[] }) {
               <p className="ax-diag-detail">{item.detail}</p>
             </div>
           </header>
+          {/* The specifics: which subject, which day, which task. */}
+          {item.points.length > 0 && (
+            <ul className="ax-diag-points">
+              {item.points.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          )}
           <div className="ax-diag-action">
             <span className="ax-diag-arrow" aria-hidden="true">
               →

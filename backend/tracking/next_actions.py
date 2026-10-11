@@ -68,6 +68,24 @@ MOMENTUM_DAYS = 3
 REVIEW_MAX = 5
 #: How far back "recent" reaches for low-rated work.
 RECENT_DAYS = 14
+# Ratings for the weakest subject are read from this far back, not from all
+# time: a subject rated badly a year ago and fine since is not weak any more,
+# and reading every rating ever made named the same subject every single day.
+RATING_DAYS = 45
+# Rated tasks a subject needs inside RATING_DAYS to be called weak.
+RATED_FLOOR = 3
+# A subject earning this much less than in the two weeks before is slipping.
+SLIP = 0.4
+# Tasks a subject needs in the two weeks before to be called slipping.
+SLIP_FLOOR = 3
+# A live goal with nothing finished toward it for this long has gone quiet.
+QUIET_DAYS = 10
+# This week's XP this far under the usual pace is worth a row.
+PACE_GAP = 0.25
+# How far the soft suggestions are shuffled each day, in weight. Enough to
+# swap two of similar weight, never enough to lift one over an overdue task.
+JITTER = 24
+SOFT = ('weak-subject', 'slipping', 'neglected', 'goal-quiet', 'momentum', 'xp', 'stale', 'review')
 
 #: A lens needs this many rated tasks before it reads a goal by difficulty.
 MIN_RATED = 8
@@ -156,9 +174,21 @@ def seeded(key):
 
 
 def week_stamp(day):
-    """The ISO week, `2026-W40`. The plan's tiebreak holds still for a week."""
+    """The ISO week, `2026-W40`."""
     year, week, _ = day.isocalendar()
     return '{}-W{:02d}'.format(year, week)
+
+
+def day_stamp(day):
+    """The date. The plan's shuffle of its softer rows holds for a day, so a
+    reload gives the same plan and tomorrow gives a different mix."""
+    return day.isoformat()
+
+
+def _short(value):
+    """`Oct 3` for an ISO date or timestamp."""
+    at = _midnight(value)
+    return '{} {}'.format(at.strftime('%b'), at.day) if at else ''
 
 
 def _midnight(value):
@@ -265,7 +295,7 @@ def _action(**fields):
             ('id', 'kind', 'title', 'because', 'minutes', 'weight')}
 
 
-def gather(tasks, goals, days, name_of, now, stamp, lens=None):
+def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, best_streak=None):
     """Every suggestion the record supports, best first, one per task or subject."""
     found = []
     today = now.date()
@@ -274,6 +304,10 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
     open_tasks = [task for task in tasks if task.get('status') != 'done']
     finished = [task for task in tasks if task.get('status') == 'done']
     slot = typical_minutes(finished) or FALLBACK_TASK_MINUTES
+    # Subjects already worked today. A row telling you to practice something
+    # you finished a task in this morning is the plan repeating itself.
+    worked_today = {task.get('subject') for task in finished
+                    if task.get('subject') and str(task.get('completed_at') or '')[:10] == today_iso}
 
     def due_day(task):
         return str(task.get('due_date') or '')[:10]
@@ -338,6 +372,40 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
             minutes=slot, taskId=linked.get('id') if linked else None, goalId=goal.get('id'),
             weight=800 - index * 20 + min(gap, 40)))
 
+    # A live goal nothing has been finished toward lately, whatever its date.
+    # The rule above only reaches goals inside 45 days of a deadline, so a
+    # long goal could go a month untouched without the plan saying so.
+    behind_ids = {goal.get('id') for goal, _, _ in behind[:2]}
+    quiet = []
+    for goal in goals:
+        if goal.get('status') != 'active' or goal.get('id') in behind_ids:
+            continue
+        linked_done = [task for task in finished if _links_to(task, goal.get('id'))]
+        ages = [age for age in (_days_ago(task.get('completed_at'), now) for task in linked_done)
+                if age is not None]
+        since = min(ages) if ages else _days_ago(goal.get('start_date') or goal.get('created_at'), now)
+        if since is None or since < QUIET_DAYS:
+            continue
+        stones = sorted((row for row in (goal.get('milestones') or []) if row.get('status') != 'done'),
+                        key=lambda row: _num(row.get('position')))
+        stone = stones[0] if stones else None
+        linked = next((task for task in open_tasks
+                       if _links_to(task, goal.get('id'))
+                       or (stone and task.get('milestone_id') == stone.get('id'))), None)
+        quiet.append((goal, since, linked, stone))
+    quiet.sort(key=lambda row: (-_num(row[0].get('priority')), -row[1]))
+    for index, (goal, since, linked, stone) in enumerate(quiet[:1]):
+        title = goal.get('title')
+        found.append(_action(
+            id='quiet-{}'.format(goal.get('id')), kind='goal-quiet',
+            title=('Finish “{}” for {}'.format(linked.get('title'), title) if linked
+                   else 'Start “{}” for {}'.format(stone.get('title'), title) if stone
+                   else 'Plan the next step for {}'.format(title)),
+            because='Nothing finished toward it in {} days. It is at {}%.'.format(
+                since, js_round(_num(goal.get('progress')))),
+            minutes=slot, taskId=linked.get('id') if linked else None, goalId=goal.get('id'),
+            weight=580 + min(since, 30)))
+
     by_subject = {}
     for task in finished:
         if task.get('subject'):
@@ -345,22 +413,60 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
 
     ratings = []
     for subject, rows in by_subject.items():
-        rated = [task for task in rows if _num(task.get('execution')) > 0]
-        if len(rows) >= SUBJECT_FLOOR and rated:
-            ratings.append({'subject': subject, 'rated': len(rated),
-                            'execution': sum(_num(task.get('execution')) for task in rated) / len(rated)})
+        recent = [task for task in rows if _num(task.get('execution')) > 0
+                  and (_days_ago(task.get('completed_at'), now) or 0) <= RATING_DAYS]
+        if len(rows) >= SUBJECT_FLOOR and len(recent) >= RATED_FLOOR:
+            ratings.append({'subject': subject, 'rated': recent,
+                            'execution': sum(_num(task.get('execution')) for task in recent) / len(recent)})
     if len(ratings) >= 2:
         ratings.sort(key=lambda row: row['execution'])
-        worst = ratings[0]
         average = sum(row['execution'] for row in ratings) / len(ratings)
-        if worst['execution'] < average - 0.3:
+        worst = next((row for row in ratings if row['subject'] not in worked_today), None)
+        if worst and worst['execution'] < average - 0.3:
+            lowest = min(worst['rated'], key=lambda task: (_num(task.get('execution')),
+                                                           str(task.get('completed_at') or '')))
             found.append(_action(
                 id='weak-{}'.format(worst['subject']), kind='weak-subject',
                 title='Practice {}'.format(name_of(worst['subject'])),
-                because='You rate it {}/5, compared with {} for other subjects ({} rated tasks).'.format(
-                    to_fixed(worst['execution']), to_fixed(average), worst['rated']),
+                because=('Your last {} rated {} tasks average {}/5, against {} for your other subjects. '
+                         'The lowest was “{}” ({}/5, {}): redo it or one like it, slower.').format(
+                    len(worst['rated']), name_of(worst['subject']), to_fixed(worst['execution']),
+                    to_fixed(average), lowest.get('title'), js_round(_num(lowest.get('execution'))),
+                    _short(lowest.get('completed_at'))),
                 minutes=PRACTICE_MINUTES, subject=worst['subject'],
                 weight=620 + (average - worst['execution']) * 40))
+
+    # A subject still alive but earning far less than it was. `neglected`
+    # below is the subject that stopped; this is the one that is fading.
+    def xp_between(rows, newest, oldest):
+        picked = [task for task in rows
+                  if (lambda age: age is not None and newest <= age < oldest)(
+                      _days_ago(task.get('completed_at'), now))]
+        return len(picked), sum(_num(task.get('xp_value')) for task in picked)
+
+    slipping = []
+    for subject, rows in by_subject.items():
+        if subject in worked_today:
+            continue
+        count_now, xp_now = xp_between(rows, 0, RECENT_DAYS)
+        count_before, xp_before = xp_between(rows, RECENT_DAYS, RECENT_DAYS * 2)
+        if count_now == 0 or count_before < SLIP_FLOOR or xp_before <= 0:
+            continue
+        drop = 1 - xp_now / xp_before
+        if drop >= SLIP:
+            slipping.append((subject, xp_now, xp_before, count_now, count_before, drop))
+    slipping.sort(key=lambda row: -row[5])
+    if slipping:
+        subject, xp_now, xp_before, count_now, count_before, drop = slipping[0]
+        found.append(_action(
+            id='slipping-{}'.format(subject), kind='slipping',
+            title='Catch up on {}'.format(name_of(subject)),
+            because=('{} XP from {} task{} in the last two weeks, down from {} XP from {} the two weeks '
+                     'before. {}').format(
+                js_round(xp_now), count_now, '' if count_now == 1 else 's', js_round(xp_before),
+                count_before, 'Your biggest drop of any subject.' if len(slipping) > 1
+                else 'One session this week stops the slide.'),
+            minutes=PRACTICE_MINUTES, subject=subject, weight=600 + min(drop, 1) * 40))
 
     poor = []
     for task in finished:
@@ -415,6 +521,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
 
     runs = []
     for subject, rows in by_subject.items():
+        if subject in worked_today:
+            continue
         done = {str(task.get('completed_at'))[:10] for task in rows if task.get('completed_at')}
         cursor = today if today_iso in done else today - timedelta(days=1)
         run = 0
@@ -434,7 +542,38 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
             minutes=min(PRACTICE_MINUTES, max(MIN_SLOT, slot)), subject=subject,
             weight=400 + min(run, 20) * 4))
 
+    # XP: today against the daily goal, or else this week against the usual.
+    xp_sizes = sorted(_num(task.get('xp_value')) for task in finished if _num(task.get('xp_value')) > 0)
+    usual_xp = xp_sizes[len(xp_sizes) // 2] if xp_sizes else 0
     last = days[-1] if days else None
+    today_xp = _num(last.get('xp_earned')) if last and last.get('date') == today_iso else 0
+    goal_xp = _num(daily_goal)
+    if goal_xp > 0 and 0 < today_xp < goal_xp:
+        short = goal_xp - today_xp
+        needed = max(1, -(-short // usual_xp)) if usual_xp else 1
+        found.append(_action(
+            id='xp-today', kind='xp',
+            title='Earn {} more XP today'.format(js_round(short)),
+            because='You are at {} of your {} XP daily goal. {}'.format(
+                js_round(today_xp), js_round(goal_xp),
+                'About {} of your usual tasks closes it.'.format(int(needed)) if usual_xp else
+                'One more task gets you most of the way.'),
+            minutes=min(60, max(MIN_SLOT, int(needed) * slot)), weight=500))
+    elif len(days) >= 14:
+        week = days[-7:]
+        earlier = days[:-7]
+        per_day = sum(_num(day.get('xp_earned')) for day in earlier) / len(earlier) if earlier else 0
+        this_week = sum(_num(day.get('xp_earned')) for day in week)
+        usual = per_day * len(week)
+        if usual > 0 and this_week < usual * (1 - PACE_GAP):
+            top = max(by_subject.items(), key=lambda row: len(row[1]))[0] if by_subject else None
+            found.append(_action(
+                id='xp-pace', kind='xp',
+                title='Make up this week’s XP' + (' with {}'.format(name_of(top)) if top else ''),
+                because='{} XP in the last 7 days, against your usual {} for a week. {} XP behind.'.format(
+                    js_round(this_week), js_round(usual), js_round(usual - this_week)),
+                minutes=min(60, max(PRACTICE_MINUTES, slot)), subject=top, weight=470))
+
     if (last and last.get('date') == today_iso and _num(last.get('tasks_completed')) == 0
             and _num(last.get('xp_earned')) == 0):
         size = lambda task: _num(task.get('xp_value'))  # noqa: E731
@@ -448,21 +587,28 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
         found.append(_action(
             id='streak', kind='streak',
             title='Close “{}”'.format(quickest.get('title')) if quickest else 'Close one small task',
-            because=('{} days running, and nothing finished today. One task carries it.'.format(run)
-                     if run >= 2 else 'Nothing done today yet. One task keeps your streak going.'),
+            because=(('{} days running, and nothing finished today. One task carries it.'.format(run)
+                      if run >= 2 else 'Nothing done today yet. One task keeps your streak going.')
+                     + (' Your best is {} days, {} to go.'.format(js_round(_num(best_streak)),
+                                                                   js_round(_num(best_streak) - run))
+                        if run >= 2 and _num(best_streak) > run else
+                        ' Today makes it your longest yet.' if run >= 2 and _num(best_streak) == run else '')),
             minutes=MIN_SLOT, taskId=quickest.get('id') if quickest else None,
             subject=(quickest.get('subject') or None) if quickest else None, weight=380))
 
     weights = (lens or {}).get('weights') or {}
-    found.sort(key=lambda item: (-(item['weight'] * weights.get(item['kind'], 1)),
-                                 seeded(stamp + str(item['id']))))
+
+    def rank(item):
+        shuffle = (seeded(stamp + '~' + str(item['id'])) - 0.5) * JITTER if item['kind'] in SOFT else 0
+        return (-(item['weight'] * weights.get(item['kind'], 1) + shuffle), seeded(stamp + str(item['id'])))
+    found.sort(key=rank)
     seen_task, seen_subject, out = set(), set(), []
     for item in found:
         if item.get('taskId') is not None:
             if item['taskId'] in seen_task:
                 continue
             seen_task.add(item['taskId'])
-        if item.get('subject') and item['kind'] in ('weak-subject', 'neglected'):
+        if item.get('subject') and item['kind'] in ('weak-subject', 'neglected', 'slipping'):
             if item['subject'] in seen_subject:
                 continue
             seen_subject.add(item['subject'])
@@ -470,12 +616,13 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None):
     return out
 
 
-def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=None):
+def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=None,
+               daily_goal=None, best_streak=None):
     """The candidates packed into `budget` minutes, and what did not fit."""
     now = now or datetime.now()
-    stamp = stamp if stamp is not None else week_stamp(now.date())
+    stamp = stamp if stamp is not None else day_stamp(now.date())
     actions, more, left = [], [], budget
-    candidates = gather(tasks, goals, days, name_of, now, stamp, lens)
+    candidates = gather(tasks, goals, days, name_of, now, stamp, lens, daily_goal, best_streak)
     for item in candidates:
         if item['minutes'] <= left:
             actions.append(item)

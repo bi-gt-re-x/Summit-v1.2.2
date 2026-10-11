@@ -28,7 +28,8 @@ TASK_FIELDS = ('id', 'title', 'status', 'subject', 'priority', 'due_date', 'crea
                'milestone_id', 'goal_id')
 
 #: The two weeks the streak rule reads: today, and the run before it.
-RECENT_DAYS = 14
+# Four weeks, so this fortnight can be read against the one before it.
+RECENT_DAYS = 28
 
 
 def _name_of(username):
@@ -67,5 +68,6 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
 
     lens = next_actions.leading_lens(goals, tasks)
     plan = next_actions.build_plan(tasks, goals, days, _name_of(username), budget,
-                                   now=datetime.now(), lens=lens)
+                                   now=datetime.now(), lens=lens,
+                                   daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'))
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))

@@ -47,6 +47,9 @@ const KIND_LABEL: Record<ActionKind, string> = {
   stale: 'Stale',
   momentum: 'On a run',
   streak: 'Streak',
+  slipping: 'Slipping',
+  'goal-quiet': 'Goal',
+  xp: 'XP',
 };
 
 const KIND_TONE: Record<ActionKind, string> = {
@@ -61,6 +64,9 @@ const KIND_TONE: Record<ActionKind, string> = {
      row that does not wear a warning colour. */
   momentum: 'violet',
   streak: 'green',
+  slipping: 'amber',
+  'goal-quiet': 'violet',
+  xp: 'blue',
 };
 
 function ActionRow({ item }: { item: NextAction }) {
@@ -89,8 +95,6 @@ function ActionRow({ item }: { item: NextAction }) {
 export interface NextActionsProps {
   plan: Plan;
   onBudget: (minutes: number) => void;
-  /** Days until this week's advice is replaced. */
-  weekLeft: number;
   /**
    * The reader's typical sitting, in minutes, from their logged focus time.
    *
@@ -107,7 +111,6 @@ export interface NextActionsProps {
 export function NextActions({
   plan,
   onBudget,
-  weekLeft,
   onRefresh,
   typicalSession,
 }: NextActionsProps) {
@@ -149,20 +152,23 @@ export function NextActions({
       footer={
         <PanelNote label="How this is chosen">
           <p>
-            In order: overdue tasks, tasks due today, the goal furthest behind, your lowest-rated
-            subject, low-rated tasks you haven't revisited, a subject you've stopped, old undated
-            tasks, the subject you're on the longest run with, and your streak if nothing is done
-            today.
+            In order: overdue tasks, tasks due today, the goal furthest behind its date, the
+            subject your recent work is rated lowest in (naming the task to redo), a subject that is
+            earning far less than it did two weeks ago, a goal nothing has been finished toward in
+            ten days, low-rated tasks you haven't revisited, a subject you've stopped, your XP
+            against your daily goal or your usual week, old undated tasks, the subject you're on the
+            longest run with, and your streak if nothing is done today.
           </p>
           <p>
-            The streak comes last on purpose, so the real work comes first. If a row is shorter
-            than the time it needs, it is the last one in the plan and says how long it really
-            takes — you don't have to finish something to have started it.
+            A subject you've already worked on today isn't suggested again, and the softer
+            suggestions are shuffled a little each day, so the plan changes as you do. Overdue and
+            due work always comes first. If a row is shorter than the time it needs, it's the last
+            one in the plan and says how long it really takes. You don't have to finish something to
+            have started it.
           </p>
           <p>
             Minutes are based on how long your finished tasks usually take. The list updates when
-            you finish something and resets weekly: {weekLeft}{' '}
-            {weekLeft === 1 ? 'day' : 'days'} until the next one.
+            you finish something.
           </p>
         </PanelNote>
       }

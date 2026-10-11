@@ -84,9 +84,13 @@ def run(days):
 
 
 def test_momentum_fires_on_a_live_run_and_names_its_length():
-    item = first(plan(run([0, 1, 2, 3]) + run([9]), days=series([0])), 'momentum')
+    item = first(plan(run([1, 2, 3, 4]) + run([9]), days=series([1])), 'momentum')
     assert '4 days running' in item['because']
     assert item['subject'] == 'violin'
+
+
+def test_momentum_is_quiet_once_today_has_fed_the_run():
+    assert 'momentum' not in kinds(everything(plan(run([0, 1, 2, 3]), days=series([0]))))
 
 
 def test_momentum_counts_a_run_not_fed_yet_today():
@@ -98,8 +102,8 @@ def test_momentum_ignores_a_run_that_is_over():
 
 
 def test_momentum_is_outranked_by_everything_going_wrong():
-    order = kinds(plan(run([0, 1, 2, 3]) + [task(title='Late essay', due_date=iso(4))],
-                       days=series([0]), budget=120)['actions'])
+    order = kinds(plan(run([1, 2, 3, 4]) + [task(title='Late essay', due_date=iso(4))],
+                       days=series([1]), budget=120)['actions'])
     assert order.index('overdue') < order.index('momentum')
 
 
@@ -261,3 +265,70 @@ def test_top_is_the_best_suggestion_even_when_it_does_not_fit():
                  for _ in range(5)]
     found = plan(long_ones + [task(title='Late essay', due_date=iso(3))], budget=15)
     assert found['top']['title'] == 'Finish “Late essay”'
+
+
+# ---- Not the same plan every day -------------------------------------------
+def test_the_weak_subject_reads_recent_ratings_and_names_the_worst_task():
+    rows = ([done('maths', back, execution=4) for back in (2, 3, 4, 5, 6)]
+            + [done('essays', back, execution=2) for back in (3, 5, 7, 9)]
+            + [done('essays', 200, execution=5)])
+    rows[-2]['title'] = 'Compare two poems'
+    item = first(plan(rows), 'weak-subject')
+    assert item['subject'] == 'essays'
+    assert 'last 4 rated essays tasks' in item['because']
+    assert '“Compare two poems”' in item['because']
+
+
+def test_a_subject_rated_badly_long_ago_is_not_weak_now():
+    rows = ([done('maths', back, execution=4) for back in (2, 3, 4, 5, 6)]
+            + [done('essays', back, execution=2) for back in (100, 110, 120, 130, 140)])
+    assert first(plan(rows), 'weak-subject') is None
+
+
+def test_a_subject_worked_today_is_not_suggested_again():
+    rows = ([done('maths', back, execution=4) for back in (2, 3, 4, 5, 6)]
+            + [done('essays', back, execution=2) for back in (0, 5, 7, 9)])
+    assert first(plan(rows), 'weak-subject') is None
+
+
+def test_a_fading_subject_is_slipping():
+    rows = ([done('chemistry', back) for back in (16, 18, 20, 22, 24)]
+            + [done('chemistry', 3)])
+    item = first(plan(rows), 'slipping')
+    assert item['title'] == 'Catch up on chemistry'
+    assert '50 XP from 1 task in the last two weeks, down from 250 XP from 5' in item['because']
+
+
+def test_a_goal_with_nothing_finished_lately_is_named():
+    goal = {'id': 'g1', 'title': 'Learn Spanish', 'status': 'active', 'progress': 30,
+            'created_at': iso(60), 'milestones': []}
+    rows = [task(title='Old lesson', status='done', goal_id='g1', completed_at=iso(15) + 'T10:00:00'),
+            task(title='Lesson 9', goal_id='g1')]
+    item = first(plan(rows, goals=[goal]), 'goal-quiet')
+    assert item['title'] == 'Finish “Lesson 9” for Learn Spanish'
+    assert '15 days' in item['because'] and '30%' in item['because']
+
+
+def test_the_daily_goal_says_how_far_off_it_is():
+    days = series([0])
+    found = build_plan([done('maths', 3)], [], days, lambda one: one, 45, now=NOW,
+                       stamp='2026-W39', daily_goal=200)
+    item = first(found, 'xp')
+    assert item['title'] == 'Earn 140 more XP today'
+    assert 'You are at 60 of your 200 XP daily goal' in item['because']
+
+
+def test_a_slow_week_is_called_out_without_a_daily_goal():
+    days = series(list(range(7, 28)), span=28)
+    item = first(plan([done('maths', 9)], days=days), 'xp')
+    assert '0 XP in the last 7 days' in item['because']
+
+
+def test_the_shuffle_changes_by_day_but_never_lifts_soft_rows_over_overdue_work():
+    rows = ([done('maths', back, execution=4) for back in (2, 3, 4, 5, 6)]
+            + [done('essays', back, execution=2) for back in (3, 5, 7, 9)]
+            + [task(title='Late essay', due_date=iso(2))])
+    for day in range(10):
+        found = build_plan(rows, [], series([]), lambda one: one, 120, now=NOW,
+                           stamp='2026-09-{:02d}'.format(day + 1))
+        assert found['actions'][0]['kind'] == 'overdue'
