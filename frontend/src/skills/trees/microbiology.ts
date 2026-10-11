@@ -1,0 +1,50 @@
+/**
+ * Microbiology, a branch of Biology.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const MICROBIOLOGY: SubjectTree = {
+  id: 'microbiology',
+  title: 'Microbiology',
+  blurb: 'Bacteria, viruses and the tiny life all around you.',
+  parent: 'biology',
+  nodes: [
+    { id: 'mb.world', name: 'The Microbial World', icon: 'microscope', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Bacteria, archaea, fungi, protists and viruses, and how small they are. Most of them are harmless, and plenty are useful.' },
+    { id: 'mb.scope', name: 'Using a Microscope', icon: 'magnifier', tier: 'foundation', requires: ['mb.world'], state: lock, percent: 0, xp: 1200,
+      desc: 'Focusing, staining and making a wet mount. Most bad lab drawings come from rushing the focus.' },
+    { id: 'mb.bacteria', name: 'Bacterial Cells', icon: 'cells', tier: 'beginner', core: true, requires: ['mb.world'], state: lock, percent: 0, xp: 1600,
+      desc: 'No nucleus, a cell wall and DNA in a loop. Shape and wall type tell you a lot about a microbe.' },
+    { id: 'mb.gram', name: 'Gram Staining', icon: 'palette', tier: 'beginner', requires: ['mb.bacteria', 'mb.scope'], state: lock, percent: 0, xp: 1700,
+      desc: "Purple or pink tells you about the cell wall. It's still the first test in a hospital lab." },
+    { id: 'mb.aseptic', name: 'Aseptic Technique', icon: 'sanitise', tier: 'beginner', requires: ['mb.scope'], state: lock, percent: 0, xp: 1400,
+      desc: 'Working without contaminating your sample or yourself. Flame the loop, keep lids close and label everything.' },
+    { id: 'mb.culture', name: 'Growing Cultures', icon: 'growth-curve', tier: 'intermediate', requires: ['mb.aseptic'], state: lock, percent: 0, xp: 1800,
+      desc: 'Agar plates, streaking for single colonies and incubation. One clean colony is the starting point of most experiments.' },
+    { id: 'mb.growth', name: 'Microbial Growth', icon: 'population', tier: 'intermediate', requires: ['mb.culture'], state: lock, percent: 0, xp: 1900,
+      desc: 'Lag, log, stationary and death phases. Bacteria can double in twenty minutes, which is why food safety rules exist.' },
+    { id: 'mb.metabolism', name: 'Microbial Metabolism', icon: 'respiration', tier: 'intermediate', requires: ['mb.bacteria'], state: lock, percent: 0, xp: 2000,
+      desc: 'Some microbes need oxygen, some hate it and some ferment. Bread, yogurt and cheese all depend on this.' },
+    { id: 'mb.genetics', name: 'Bacterial Genetics', icon: 'dna', tier: 'intermediate', requires: ['mb.bacteria'], state: lock, percent: 0, xp: 1700,
+      desc: 'Plasmids and how bacteria swap genes. Sharing genes sideways is how resistance spreads so fast.' },
+    { id: 'mb.viruses', name: 'Viruses', icon: 'mutation', tier: 'intermediate', core: true, requires: ['mb.world'], state: lock, percent: 0, xp: 1800,
+      desc: "Genetic material in a protein coat that needs a host to copy itself. They're the reason flu shots change every year." },
+    { id: 'mb.fungi', name: 'Fungi & Protists', icon: 'garden', tier: 'beginner', requires: ['mb.world'], state: lock, percent: 0, xp: 1600,
+      desc: 'Yeasts, molds and single-celled eukaryotes. Some make bread rise, and one kind causes malaria.' },
+    { id: 'mb.control', name: 'Controlling Microbes', icon: 'shield', tier: 'advanced', requires: ['mb.growth'], state: lock, percent: 0, xp: 2300,
+      desc: 'Heat, disinfectants and antiseptics, and which one to use when. Sterile and clean mean very different things.' },
+    { id: 'mb.antibiotics', name: 'Antibiotics & Resistance', icon: 'supplement', tier: 'advanced', core: true, requires: ['mb.control', 'mb.genetics'], state: lock, percent: 0, xp: 2000,
+      desc: 'How drugs target bacteria and how bacteria fight back. Finishing the full course of pills matters for a reason.' },
+    { id: 'mb.immune', name: 'Microbes & Immunity', icon: 'immune', tier: 'advanced', requires: ['mb.viruses'], state: lock, percent: 0, xp: 2100,
+      desc: 'How your body spots invaders and remembers them. Vaccines work by giving the immune system a safe practice run.' },
+    { id: 'mb.disease', name: 'Infectious Disease', icon: 'warning', tier: 'expert', requires: ['mb.immune', 'mb.antibiotics'], state: lock, percent: 0, xp: 2500,
+      desc: "How germs spread, cause harm and get diagnosed. Koch's postulates are the classic test for proving a microbe causes a disease." },
+    { id: 'mb.epi', name: 'Epidemiology', icon: 'analytics', tier: 'expert', requires: ['mb.disease'], state: lock, percent: 0, xp: 2600,
+      desc: 'Tracking outbreaks with data. Learn R0, contact tracing and why case counts lag behind reality.' },
+    { id: 'mb.ecology', name: 'Microbes in the Environment', icon: 'recycle', tier: 'expert', requires: ['mb.metabolism'], state: lock, percent: 0, xp: 2300,
+      desc: 'Nitrogen fixing, decomposition and the gut microbiome. The planet quietly runs on microbes.' },
+    { id: 'mb.biotech', name: 'Microbes in Biotech', icon: 'gene-edit', tier: 'mastery', requires: ['mb.genetics', 'mb.culture'], state: lock, percent: 0, xp: 2700,
+      desc: 'Using bacteria to make insulin, enzymes and vaccines. Most biotech starts with a microbe doing the work.' },
+  ],
+};

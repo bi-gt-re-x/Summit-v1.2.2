@@ -55,5 +55,7 @@ export const DESIGN: SubjectTree = {
       desc: 'Presenting work against the brief and changing it in response. Defending every decision is as unproductive as accepting every note, and the brief is what settles which is which.' },
     { id: 'dz.craft', name: 'Craft', icon: 'craft', tier: 'mastery', requires: ['dz.critique', 'dz.motion'], state: lock, percent: 0, xp: 2900,
       desc: 'The last ten percent nobody consciously notices and everybody feels: consistent spacing, considered edge cases, empty states that say something useful. It is what separates competent from finished.' },
+    { id: 'dz.cad', name: '3D Modeling & CAD', icon: 'form-3d', tier: 'intermediate', requires: ['dz.grid'], navTo: 'cad', state: lock,
+      desc: 'Its own tree: sketches, extrudes, assemblies, 3D printing and rendering in Blender.' },
   ],
 };

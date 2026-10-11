@@ -1,0 +1,50 @@
+/**
+ * Entrepreneurship, a branch of Business & Money.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const ENTREPRENEURSHIP: SubjectTree = {
+  id: 'entrepreneurship',
+  title: 'Entrepreneurship',
+  blurb: 'Starting something of your own, even in high school.',
+  parent: 'business',
+  nodes: [
+    { id: 'ent.problem', name: 'Finding a Problem', icon: 'question', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Starting with something people really struggle with. Good businesses solve real problems people will pay to fix.' },
+    { id: 'ent.customers', name: 'Talking to Customers', icon: 'customer', tier: 'foundation', requires: ['ent.problem'], state: lock, percent: 0, xp: 1200,
+      desc: 'Asking people about their problems before you build anything. Listen way more than you pitch.' },
+    { id: 'ent.money', name: 'Money Basics', icon: 'piggy-bank', tier: 'beginner', requires: ['ent.problem'], state: lock, percent: 0, xp: 1600,
+      desc: 'Revenue, costs and profit. Know how much each sale actually puts in your pocket.' },
+    { id: 'ent.test', name: 'Testing an Idea', icon: 'experiment', tier: 'beginner', requires: ['ent.customers'], state: lock, percent: 0, xp: 1700,
+      desc: 'Cheap tests like a sign-up page or a pre-sale. Find out if people will pay before you build.' },
+    { id: 'ent.mvp', name: 'A Simple First Version', icon: 'prototype', tier: 'beginner', core: true, requires: ['ent.test'], state: lock, percent: 0, xp: 1400,
+      desc: 'The smallest product that solves the problem. Ship it fast, then make it better.' },
+    { id: 'ent.pricing', name: 'Pricing', icon: 'price-tag', tier: 'intermediate', requires: ['ent.money', 'ent.mvp'], state: lock, percent: 0, xp: 1800,
+      desc: 'Charging what it is worth to the customer. Most first-time founders charge too little.' },
+    { id: 'ent.brand', name: 'Brand & Name', icon: 'brand', tier: 'intermediate', requires: ['ent.mvp'], state: lock, percent: 0, xp: 1900,
+      desc: 'A name, a logo and a message people remember. Simple and clear wins over clever every time.' },
+    { id: 'ent.market', name: 'Getting the Word Out', icon: 'marketing', tier: 'intermediate', core: true, requires: ['ent.brand'], state: lock, percent: 0, xp: 2000,
+      desc: 'Social media, word of mouth and flyers. Go where your customers already hang out.' },
+    { id: 'ent.sales', name: 'Selling', icon: 'handshake', tier: 'intermediate', requires: ['ent.market'], state: lock, percent: 0, xp: 1700,
+      desc: 'Asking for the sale and handling a no. Every no teaches you something about the pitch.' },
+    { id: 'ent.ops', name: 'Running Operations', icon: 'process', tier: 'advanced', requires: ['ent.sales'], state: lock, percent: 0, xp: 2100,
+      desc: 'Making, delivering and supporting your product reliably. Good systems free up your time.' },
+    { id: 'ent.legal', name: 'Legal Basics', icon: 'contract', tier: 'advanced', requires: ['ent.pricing'], state: lock, percent: 0, xp: 2200,
+      desc: 'Permits, taxes and when a parent needs to sign. Minors have extra rules, so check yours early.' },
+    { id: 'ent.team', name: 'Building a Team', icon: 'network-people', tier: 'advanced', requires: ['ent.ops'], state: lock, percent: 0, xp: 2300,
+      desc: 'Finding co-founders and helpers who fill your gaps. Agree on roles and splits early.' },
+    { id: 'ent.pitch', name: 'Pitching', icon: 'presenting', tier: 'advanced', requires: ['ent.market', 'ent.money'], state: lock, percent: 0, xp: 2000,
+      desc: 'Telling your story in two minutes to judges or investors. Problem, solution, traction and the ask.' },
+    { id: 'ent.metrics', name: 'Tracking Growth', icon: 'kpi', tier: 'expert', requires: ['ent.ops', 'ent.pricing'], state: lock, percent: 0, xp: 2400,
+      desc: 'Customers, revenue and repeat buyers. Pick a few numbers and check them every week.' },
+    { id: 'ent.comps', name: 'Pitch Competitions', icon: 'trophy', tier: 'expert', requires: ['ent.pitch'], state: lock, percent: 0, xp: 2500,
+      desc: 'DECA, FBLA and youth startup contests. They are great for feedback, connections and prize money.' },
+    { id: 'ent.funding', name: 'Funding', icon: 'fund', tier: 'expert', requires: ['ent.pitch', 'ent.legal'], state: lock, percent: 0, xp: 2600,
+      desc: "Bootstrapping, grants and investors. Most student businesses don't need outside money at all." },
+    { id: 'ent.pivot', name: 'Pivoting', icon: 'switch-cost', tier: 'mastery', requires: ['ent.metrics'], state: lock, percent: 0, xp: 2600,
+      desc: 'Changing direction when the data says so. Lots of big companies started out as something else.' },
+    { id: 'ent.scale', name: 'Scaling Up', icon: 'rocket', tier: 'mastery', requires: ['ent.pivot', 'ent.team', 'ent.funding', 'ent.comps'], state: lock, percent: 0, xp: 2700,
+      desc: "Growing beyond what you can do yourself. Hire, delegate and build systems that don't need you." },
+  ],
+};

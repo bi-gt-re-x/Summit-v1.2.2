@@ -55,5 +55,11 @@ export const CAREER: SubjectTree = {
       desc: 'Moving to different work by finding the overlap and building the missing piece publicly. Sideways moves inside a place you are known are usually the cheapest route.' },
     { id: 'ca.direction', name: 'Deciding What You Want', icon: 'compass', tier: 'mastery', requires: ['ca.transition'], state: lock, percent: 0, xp: 2800,
       desc: 'Working out what you actually want from work — the conditions, not the title. It is the question this whole tree is in service of and the one most easily deferred indefinitely.' },
+    { id: 'ca.job', name: 'Part-Time Job', icon: 'employment', tier: 'foundation', requires: ['ca.reliable'], navTo: 'part-time-job', state: lock,
+      desc: 'Its own tree: getting hired, your first paycheck, customer service and balancing school.' },
+    { id: 'ca.intern', name: 'Internships', icon: 'onboard', tier: 'intermediate', requires: ['ca.visible'], navTo: 'internships', state: lock,
+      desc: 'Its own tree: finding and landing an internship, doing great work and the offer after.' },
+    { id: 'ca.lead', name: 'Leadership', icon: 'leadership', tier: 'intermediate', requires: ['ca.present'], navTo: 'leadership', state: lock,
+      desc: 'Its own tree: running meetings, delegating, handling conflict and growing the next leaders.' },
   ],
 };

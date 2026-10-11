@@ -1,0 +1,50 @@
+/**
+ * Pre-Med, a branch of School & College.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const PRE_MED: SubjectTree = {
+  id: 'pre-med',
+  title: 'Pre-Med',
+  blurb: 'The long road to medical school, one step at a time.',
+  parent: 'school',
+  nodes: [
+    { id: 'pm.why', name: 'Why Medicine', icon: 'question', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Being honest about why you want to be a doctor. Shadowing early helps you find out before you spend years on it.' },
+    { id: 'pm.paths', name: 'Health Careers', icon: 'path-route', tier: 'foundation', requires: ['pm.why'], state: lock, percent: 0, xp: 1200,
+      desc: 'Doctor, PA, nurse, pharmacist, dentist and more. Each path has different training, cost and lifestyle.' },
+    { id: 'pm.hs', name: 'High School Prep', icon: 'study', tier: 'beginner', requires: ['pm.why'], state: lock, percent: 0, xp: 1600,
+      desc: "Strong biology, chemistry and math, plus volunteering in a health setting. You're building habits you'll need in college." },
+    { id: 'pm.shadow', name: 'Shadowing', icon: 'observe', tier: 'beginner', requires: ['pm.paths'], state: lock, percent: 0, xp: 1700,
+      desc: 'Following doctors around to see the real job. Aim for a few different specialties.' },
+    { id: 'pm.prereqs', name: 'Pre-Med Prereqs', icon: 'checklist', tier: 'beginner', core: true, requires: ['pm.hs'], state: lock, percent: 0, xp: 1400,
+      desc: "Bio, general chem, orgo, physics, biochem, stats and English. Map out when you'll take each one in your first semester." },
+    { id: 'pm.gpa', name: 'Science GPA', icon: 'gauge', tier: 'intermediate', requires: ['pm.prereqs'], state: lock, percent: 0, xp: 1800,
+      desc: 'Med schools look at your science grades on their own. Protect them with good study habits from day one.' },
+    { id: 'pm.clinical', name: 'Clinical Experience', icon: 'immune', tier: 'intermediate', core: true, requires: ['pm.shadow'], state: lock, percent: 0, xp: 1900,
+      desc: "Hands-on time with patients as an EMT, scribe, CNA or volunteer. Schools want to see you've been around sick people and still want this." },
+    { id: 'pm.service', name: 'Community Service', icon: 'compassion', tier: 'intermediate', requires: ['pm.clinical'], state: lock, percent: 0, xp: 2000,
+      desc: "Helping people outside of hospitals. It shows you care about people even when nobody's checking." },
+    { id: 'pm.research', name: 'Research', icon: 'microscope', tier: 'intermediate', requires: ['pm.prereqs'], state: lock, percent: 0, xp: 1700,
+      desc: "Working in a lab or on a project. It helps a lot at research-heavy schools, even where it isn't required." },
+    { id: 'pm.mcat', name: 'The MCAT', icon: 'exam', tier: 'advanced', core: true, requires: ['pm.gpa'], state: lock, percent: 0, xp: 2100,
+      desc: 'A long exam on bio, chem, physics, psych and reading. Most people study for three to six months.' },
+    { id: 'pm.cars', name: 'MCAT Reading (CARS)', icon: 'reading', tier: 'advanced', requires: ['pm.mcat'], state: lock, percent: 0, xp: 2200,
+      desc: 'Reading dense passages and reasoning about them. Reading hard articles every day is the best prep.' },
+    { id: 'pm.lead', name: 'Leadership & Teamwork', icon: 'leadership', tier: 'advanced', requires: ['pm.service'], state: lock, percent: 0, xp: 2300,
+      desc: 'Leading a club, team or project. Medicine is teamwork, and schools want proof you can do it.' },
+    { id: 'pm.letters', name: 'Letters of Rec', icon: 'testimony', tier: 'advanced', requires: ['pm.research', 'pm.clinical'], state: lock, percent: 0, xp: 2000,
+      desc: "Strong letters from science professors and people who've seen you work. Build those relationships early." },
+    { id: 'pm.setbacks', name: 'Handling Setbacks', icon: 'recovery', tier: 'expert', requires: ['pm.gpa'], state: lock, percent: 0, xp: 2400,
+      desc: "A bad grade or a rejection doesn't end the path. Lots of doctors applied twice or took extra years." },
+    { id: 'pm.amcas', name: 'Applying (AMCAS)', icon: 'apply', tier: 'expert', requires: ['pm.cars', 'pm.letters', 'pm.lead'], state: lock, percent: 0, xp: 2500,
+      desc: 'The primary application, your personal statement and the activity list. Submit early in June, since schools review as apps come in.' },
+    { id: 'pm.secondaries', name: 'Secondary Essays', icon: 'essay', tier: 'expert', requires: ['pm.amcas'], state: lock, percent: 0, xp: 2600,
+      desc: 'School-specific essays that come right after. Prewrite common prompts so you can turn them around fast.' },
+    { id: 'pm.interview', name: 'Med School Interviews', icon: 'interview', tier: 'expert', requires: ['pm.secondaries'], state: lock, percent: 0, xp: 2300,
+      desc: 'Traditional and MMI formats. Practice ethical scenarios and talking about your own experiences.' },
+    { id: 'pm.in', name: 'Getting In', icon: 'graduation', tier: 'mastery', requires: ['pm.interview', 'pm.setbacks'], state: lock, percent: 0, xp: 2700,
+      desc: "Acceptances, waitlists and choosing the school that fits. Then the real training starts, and it's a long one." },
+  ],
+};

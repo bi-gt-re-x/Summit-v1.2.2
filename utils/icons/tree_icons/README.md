@@ -1,6 +1,6 @@
 # tree_icons
 
-The skill tree's own icons — 877 of them — kept apart from the 134 drawings in
+The skill tree's own icons — 883 of them — kept apart from the 175 drawings in
 `utils/icons/` above it. Those are the calendar's vocabulary — *gym*, *coffee*,
 *birthday* — guessed from the name of a block a person typed. These are a curriculum's
 vocabulary: *recursion*, *hash-map*, *integrals*, *ear-training*. A skill tree
@@ -36,7 +36,7 @@ colour decision.
 
 ## What is in here
 
-877 drawings, one per idea rather than one per node: a node names its icon by
+883 drawings, one per idea rather than one per node: a node names its icon by
 filename without the extension, and two nodes on different trees are welcome to
 name the same one where they mean the same thing. Broadly:
 

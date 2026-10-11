@@ -68,5 +68,7 @@ export const DEBATE: SubjectTree = {
       desc: 'Adjusting speed, jargon and what you go for based on the paradigm in front of you. Running a technical round in front of a lay judge is a strategy error that no amount of argument quality recovers from.' },
     { id: 'db.tournament', name: 'The Tournament', icon: 'trophy', tier: 'mastery', requires: ['db.adapt', 'db.policy', 'db.ethics'], state: lock, percent: 0, xp: 3200,
       desc: 'Six preliminary rounds in a day, both sides of a resolution you may not agree with, against cases you have never seen. Everything below converges here, and stamina turns out to be a competitive skill in its own right.' },
+    { id: 'db.mun', name: 'Model UN', icon: 'globe', tier: 'intermediate', requires: ['db.research'], navTo: 'model-un', state: lock,
+      desc: 'Its own tree: position papers, caucusing, blocs, resolutions and crisis committees.' },
   ],
 };

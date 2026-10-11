@@ -53,5 +53,13 @@ export const MUSIC: SubjectTree = {
       desc: 'A subject of its own: turning parts into a record — arrangement, sound, and the mix coming last.' },
     { id: 'mu.stage', name: 'Performance & Auditions', icon: 'audience', tier: 'advanced', requires: ['mu.performance', 'mu.sightread'], navTo: 'performance', state: lock,
       desc: 'A subject of its own: recitals, juries and competitions — playing it once, in front of people.' },
+    { id: 'mu.violin', name: 'Violin', icon: 'violin', tier: 'beginner', requires: ['mu.notes'], navTo: 'violin', state: lock,
+      desc: 'Its own tree: holding the bow, playing in tune, shifting, vibrato and auditions.' },
+    { id: 'mu.drums', name: 'Drums', icon: 'drum', tier: 'beginner', requires: ['mu.rhythm'], navTo: 'drums', state: lock,
+      desc: 'Its own tree: rudiments, grooves, fills, reading charts and holding down the beat in a band.' },
+    { id: 'mu.theory', name: 'Music Theory', icon: 'key-signature', tier: 'intermediate', requires: ['mu.scales'], navTo: 'music-theory', state: lock,
+      desc: 'Its own tree: scales, chords, voice leading, ear training and the AP Music Theory exam.' },
+    { id: 'mu.band', name: 'Band & Orchestra', icon: 'music-note', tier: 'advanced', requires: ['mu.sightread'], navTo: 'band', state: lock,
+      desc: 'Its own tree: reading your part, blending in, section playing, chair tests and concerts.' },
   ],
 };

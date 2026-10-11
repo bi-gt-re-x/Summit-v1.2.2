@@ -1,0 +1,50 @@
+/**
+ * Extracurriculars, a branch of School & College.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const EXTRACURRICULARS: SubjectTree = {
+  id: 'extracurriculars',
+  title: 'Extracurriculars',
+  blurb: 'Clubs, teams and service that add up to something.',
+  parent: 'school',
+  nodes: [
+    { id: 'xc.explore', name: 'Trying Things', icon: 'compass', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Joining a few clubs, teams or programs to see what clicks. Freshman year is for sampling.' },
+    { id: 'xc.pick', name: 'Picking Your Focus', icon: 'focus-lens', tier: 'foundation', requires: ['xc.explore'], state: lock, percent: 0, xp: 1200,
+      desc: "Dropping what you don't care about to go deep on what you do. Two or three real commitments beat ten names on a list." },
+    { id: 'xc.service', name: 'Volunteering', icon: 'compassion', tier: 'beginner', requires: ['xc.explore'], state: lock, percent: 0, xp: 1600,
+      desc: 'Service hours that actually help someone. Pick one cause you care about and stick with it for years.' },
+    { id: 'xc.summer', name: 'Summer Programs', icon: 'travel', tier: 'beginner', requires: ['xc.explore'], state: lock, percent: 0, xp: 1700,
+      desc: 'Camps, courses, jobs and research over the summer. Free and local options count just as much as pricey ones.' },
+    { id: 'xc.time', name: 'Fitting It In', icon: 'calendar-block', tier: 'beginner', requires: ['xc.pick'], state: lock, percent: 0, xp: 1400,
+      desc: 'Balancing practices and meetings with school. Put every commitment in one calendar so you can see the whole week.' },
+    { id: 'xc.commit', name: 'Showing Up Every Week', icon: 'streak', tier: 'beginner', core: true, requires: ['xc.pick'], state: lock, percent: 0, xp: 1500,
+      desc: 'Steady effort over years, even in the boring weeks. Colleges and employers notice long-term commitment.' },
+    { id: 'xc.role', name: 'Taking on a Role', icon: 'skill-up', tier: 'intermediate', requires: ['xc.commit'], state: lock, percent: 0, xp: 1900,
+      desc: "Volunteering for the jobs nobody wants, like treasurer, setup or social media. That's how you earn trust and bigger roles." },
+    { id: 'xc.impact', name: 'Showing Impact', icon: 'analytics', tier: 'intermediate', requires: ['xc.service'], state: lock, percent: 0, xp: 2000,
+      desc: 'Counting what changed, like money raised, people helped or events run. Numbers make your work concrete.' },
+    { id: 'xc.comps', name: 'Competitions', icon: 'trophy', tier: 'intermediate', requires: ['xc.commit'], state: lock, percent: 0, xp: 1700,
+      desc: 'Contests, tournaments and showcases. They give you deadlines, feedback and something to aim for.' },
+    { id: 'xc.jobs', name: 'Jobs & Family Duties', icon: 'employment', tier: 'intermediate', requires: ['xc.time'], state: lock, percent: 0, xp: 1800,
+      desc: 'Working or caring for siblings counts as an activity. Colleges really do want to know about it.' },
+    { id: 'xc.lead', name: 'Leading a Club', icon: 'leadership', tier: 'intermediate', core: true, requires: ['xc.role'], state: lock, percent: 0, xp: 1900,
+      desc: 'Running meetings, setting goals and keeping members coming back. Leading is about making the group better.' },
+    { id: 'xc.start', name: 'Starting Something', icon: 'rocket', tier: 'advanced', requires: ['xc.lead'], state: lock, percent: 0, xp: 2300,
+      desc: 'Founding a club, project or event. Start small, find two co-founders and solve a real need.' },
+    { id: 'xc.awards', name: 'Awards & Honors', icon: 'gold', tier: 'advanced', requires: ['xc.comps'], state: lock, percent: 0, xp: 2000,
+      desc: 'Recognition that shows the level you reached. Apply for awards, since plenty go unclaimed.' },
+    { id: 'xc.mentor', name: 'Finding Mentors', icon: 'coaching', tier: 'advanced', requires: ['xc.lead'], state: lock, percent: 0, xp: 2100,
+      desc: 'Advisors, coaches and older students who can guide you. Ask specific questions and follow up.' },
+    { id: 'xc.handoff', name: 'Handing Off', icon: 'transfer', tier: 'advanced', requires: ['xc.lead'], state: lock, percent: 0, xp: 2200,
+      desc: 'Training the next leaders before you graduate. A club that keeps going after you leave is real impact.' },
+    { id: 'xc.story', name: 'Telling the Story', icon: 'narrative', tier: 'expert', requires: ['xc.impact', 'xc.awards'], state: lock, percent: 0, xp: 2600,
+      desc: 'Turning your activities into a clear story for apps and interviews. Show what you did, what changed and what you learned.' },
+    { id: 'xc.resume', name: 'Activities Resume', icon: 'resume', tier: 'expert', requires: ['xc.story', 'xc.jobs', 'xc.summer'], state: lock, percent: 0, xp: 2300,
+      desc: 'A one-page summary of everything you do. Update it every semester so nothing gets forgotten.' },
+    { id: 'xc.legacy', name: 'Something That Lasts', icon: 'monument', tier: 'mastery', requires: ['xc.handoff', 'xc.start'], state: lock, percent: 0, xp: 2700,
+      desc: "A project, club or tradition that keeps going after you're gone. It's the best proof you made a difference." },
+  ],
+};

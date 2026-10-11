@@ -70,5 +70,7 @@ export const ROBOTICS: SubjectTree = {
       desc: 'Diagnosing and fixing between matches, with six minutes and a queue. Spare parts made during build season and a robot designed to be taken apart are what turn a broken gearbox into a missed match rather than a lost event.' },
     { id: 'ro.comp', name: 'Competition Season', icon: 'trophy', tier: 'mastery', requires: ['ro.auto', 'ro.vision', 'ro.scout', 'ro.pit', 'ro.docs'], state: lock, percent: 0, xp: 3200,
       desc: 'Six weeks to a bag date and then an event that tests all of it at once. The robot that wins is rarely the most capable one on the field — it is the one that played every match it was scheduled for.' },
+    { id: 'ro.electronics', name: 'Electronics', icon: 'circuit', tier: 'beginner', requires: ['ro.circuit'], navTo: 'electronics', state: lock,
+      desc: "Its own tree: Ohm's law, breadboards, soldering, Arduino and designing a circuit board." },
   ],
 };

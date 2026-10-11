@@ -49,5 +49,7 @@ export const WEB: SubjectTree = {
       desc: 'Getting it onto a machine that is not yours and keeping it running. The goal is that shipping is boring: one command, repeatable, and reversible when it goes wrong.' },
     { id: 'w.security', name: 'Web Security', icon: 'security', tier: 'expert', requires: ['w.auth', 'w.test'], state: lock, percent: 0, xp: 2600,
       desc: 'The handful of attacks every web app faces — injected scripts, forged requests, leaked tokens — and the specific habits that prevent each. Assume every byte from the browser is hostile until proven otherwise.' },
+    { id: 'w.apps', name: 'App Development', icon: 'tablet', tier: 'advanced', requires: ['w.react'], navTo: 'app-dev', state: lock,
+      desc: 'Its own tree: building, testing and releasing phone apps that people keep on their home screen.' },
   ],
 };

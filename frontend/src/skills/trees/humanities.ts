@@ -60,5 +60,7 @@ export const HUMANITIES: SubjectTree = {
       desc: 'A subject of its own: how minds actually behave, measured carefully rather than assumed from introspection.' },
     { id: 'hu.debate', name: 'Competitive Debate', icon: 'debate', tier: 'advanced', requires: ['hu.argue', 'hu.evidence'], navTo: 'debate', state: lock,
       desc: 'A subject of its own: policy, LD and public forum — winning arguments, then winning rounds.' },
+    { id: 'hu.civics', name: 'Civics & Government', icon: 'social-contract', tier: 'advanced', requires: ['hu.power'], navTo: 'civics', state: lock,
+      desc: 'Its own tree: the Constitution, the three branches, landmark cases and getting involved.' },
   ],
 };

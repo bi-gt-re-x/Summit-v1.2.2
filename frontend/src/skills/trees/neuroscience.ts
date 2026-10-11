@@ -1,0 +1,50 @@
+/**
+ * Neuroscience, a branch of Biology.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const NEUROSCIENCE: SubjectTree = {
+  id: 'neuroscience',
+  title: 'Neuroscience',
+  blurb: 'How the brain and nerves turn signals into thought.',
+  parent: 'biology',
+  nodes: [
+    { id: 'ns.neuron', name: 'The Neuron', icon: 'neuron', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Dendrites, cell body, axon and terminals. Every thought and movement runs on this one cell type.' },
+    { id: 'ns.regions', name: 'Brain Regions', icon: 'brain', tier: 'foundation', requires: ['ns.neuron'], state: lock, percent: 0, xp: 1200,
+      desc: 'Lobes, the brainstem, the cerebellum and the limbic system. Learn the map first, and the details hang on it later.' },
+    { id: 'ns.potential', name: 'Action Potentials', icon: 'spark', tier: 'beginner', core: true, requires: ['ns.neuron'], state: lock, percent: 0, xp: 1600,
+      desc: "How a neuron fires using sodium and potassium. It's all or nothing, and the graph is a favorite test question." },
+    { id: 'ns.synapse', name: 'Synapses', icon: 'connected-components', tier: 'beginner', requires: ['ns.potential'], state: lock, percent: 0, xp: 1700,
+      desc: 'Where one neuron talks to the next with chemicals. Most drugs do their work right here.' },
+    { id: 'ns.spinal', name: 'Spinal Cord & Reflexes', icon: 'hierarchy', tier: 'beginner', requires: ['ns.regions'], state: lock, percent: 0, xp: 1400,
+      desc: 'The highway between brain and body, and reflexes that skip the brain entirely. Pulling your hand off a hot stove is a reflex arc.' },
+    { id: 'ns.transmitters', name: 'Neurotransmitters', icon: 'molecule', tier: 'intermediate', requires: ['ns.synapse'], state: lock, percent: 0, xp: 1800,
+      desc: 'Dopamine, serotonin, GABA and glutamate, and what each tends to do. Real brains are messier than the simple labels.' },
+    { id: 'ns.senses', name: 'Senses', icon: 'perception', tier: 'intermediate', requires: ['ns.regions', 'ns.potential'], state: lock, percent: 0, xp: 1900,
+      desc: 'How eyes, ears, skin, nose and tongue turn the world into signals. Your brain fills in a lot of what you think you see.' },
+    { id: 'ns.vision', name: 'Vision', icon: 'vision', tier: 'intermediate', requires: ['ns.senses'], state: lock, percent: 0, xp: 2000,
+      desc: 'Rods, cones and the path from retina to the back of the brain. Optical illusions show the shortcuts your visual system takes.' },
+    { id: 'ns.motor', name: 'Movement', icon: 'motion', tier: 'intermediate', requires: ['ns.spinal'], state: lock, percent: 0, xp: 1700,
+      desc: 'The motor cortex, cerebellum and basal ganglia working together. Smooth movement takes constant correction.' },
+    { id: 'ns.plasticity', name: 'Neuroplasticity', icon: 'skill-up', tier: 'advanced', core: true, requires: ['ns.transmitters'], state: lock, percent: 0, xp: 2100,
+      desc: "The brain rewiring itself every time you use it. It's the science behind why practice works." },
+    { id: 'ns.memory', name: 'Memory', icon: 'memory', tier: 'advanced', requires: ['ns.plasticity'], state: lock, percent: 0, xp: 2200,
+      desc: 'How the hippocampus helps store memories and why sleep locks them in. Pulling things from memory makes them stick better than rereading.' },
+    { id: 'ns.sleep', name: 'Sleep & the Brain', icon: 'sleep', tier: 'advanced', requires: ['ns.memory'], state: lock, percent: 0, xp: 2300,
+      desc: "Sleep stages and what the brain does in each. All-nighters before tests work against you, and here's the biology why." },
+    { id: 'ns.emotion', name: 'Emotion & Stress', icon: 'emotion', tier: 'advanced', requires: ['ns.transmitters', 'ns.regions'], state: lock, percent: 0, xp: 2000,
+      desc: 'The amygdala, stress hormones and fight or flight. A little stress sharpens you, and a lot shuts thinking down.' },
+    { id: 'ns.teen', name: 'The Teen Brain', icon: 'development', tier: 'advanced', requires: ['ns.plasticity'], state: lock, percent: 0, xp: 2100,
+      desc: 'The brain keeps building into your mid-twenties, and the planning parts finish last. It explains a lot about being a teenager.' },
+    { id: 'ns.methods', name: 'Studying the Brain', icon: 'scrutiny', tier: 'expert', requires: ['ns.vision', 'ns.motor'], state: lock, percent: 0, xp: 2500,
+      desc: "EEG, fMRI and lesion studies, and what each can and can't show. Brain scans are easy to over-read." },
+    { id: 'ns.disorders', name: 'Brain Disorders', icon: 'warning', tier: 'expert', requires: ['ns.emotion', 'ns.motor'], state: lock, percent: 0, xp: 2600,
+      desc: "Alzheimer's, Parkinson's, depression and epilepsy at a basic level. Each one teaches something about how a healthy brain works." },
+    { id: 'ns.drugs', name: 'Drugs & the Brain', icon: 'supplement', tier: 'expert', requires: ['ns.transmitters'], state: lock, percent: 0, xp: 2300,
+      desc: 'Caffeine, alcohol, nicotine and medications at the synapse. Addiction is what happens when the reward system gets hijacked.' },
+    { id: 'ns.research', name: 'Reading Neuro Research', icon: 'peer-review', tier: 'mastery', requires: ['ns.methods', 'ns.disorders'], state: lock, percent: 0, xp: 2700,
+      desc: 'Picking apart how a study was designed and what it claims. Headlines about brain science are often way bigger than the results.' },
+  ],
+};

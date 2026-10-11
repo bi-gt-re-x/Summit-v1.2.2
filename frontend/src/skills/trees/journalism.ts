@@ -1,0 +1,50 @@
+/**
+ * Journalism, a branch of Writing.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const JOURNALISM: SubjectTree = {
+  id: 'journalism',
+  title: 'Journalism',
+  blurb: 'Reporting the truth clearly, from the school paper up.',
+  parent: 'writing',
+  nodes: [
+    { id: 'jo.news', name: 'What Makes News', icon: 'media', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Timely, local, important or unusual. Ask why your readers should care right now.' },
+    { id: 'jo.ethics', name: 'Journalism Ethics', icon: 'ethics', tier: 'foundation', requires: ['jo.news'], state: lock, percent: 0, xp: 1200,
+      desc: 'Accuracy, fairness and independence. Get it right before you worry about getting it first.' },
+    { id: 'jo.lede', name: 'The Lede', icon: 'opening', tier: 'beginner', core: true, requires: ['jo.news'], state: lock, percent: 0, xp: 1600,
+      desc: 'The first sentence that pulls readers in. Lead with the most important or most interesting fact.' },
+    { id: 'jo.interview', name: 'Interviewing', icon: 'interview', tier: 'beginner', core: true, requires: ['jo.news'], state: lock, percent: 0, xp: 1700,
+      desc: 'Asking open questions and listening for the follow-up. The best quotes come after the planned questions run out.' },
+    { id: 'jo.notes', name: 'Notes & Recording', icon: 'notes', tier: 'beginner', requires: ['jo.interview'], state: lock, percent: 0, xp: 1400,
+      desc: 'Getting quotes exactly right. Record with permission and double-check every name.' },
+    { id: 'jo.pyramid', name: 'Inverted Pyramid', icon: 'hierarchy', tier: 'beginner', requires: ['jo.lede'], state: lock, percent: 0, xp: 1500,
+      desc: 'The most important info first and the details after. Readers can stop anytime and still get the story.' },
+    { id: 'jo.style', name: 'AP Style', icon: 'style', tier: 'intermediate', requires: ['jo.pyramid'], state: lock, percent: 0, xp: 1900,
+      desc: 'Rules for numbers, titles, dates and abbreviations. Consistency makes a paper look professional.' },
+    { id: 'jo.sources', name: 'Sources & Verification', icon: 'source-doc', tier: 'intermediate', requires: ['jo.interview', 'jo.ethics'], state: lock, percent: 0, xp: 2000,
+      desc: 'Confirming facts with more than one source. Anonymous sources need a really good reason.' },
+    { id: 'jo.sports', name: 'Sports Writing', icon: 'race', tier: 'intermediate', requires: ['jo.pyramid'], state: lock, percent: 0, xp: 1700,
+      desc: 'Game recaps, previews and athlete profiles. Find the one moment that decided the game.' },
+    { id: 'jo.stories', name: 'Writing News Stories', icon: 'print', tier: 'intermediate', requires: ['jo.style', 'jo.notes'], state: lock, percent: 0, xp: 1800,
+      desc: 'Straight reporting on events, meetings and decisions. Keep your opinion out of it.' },
+    { id: 'jo.feature', name: 'Feature Stories', icon: 'narrative', tier: 'advanced', requires: ['jo.stories'], state: lock, percent: 0, xp: 2200,
+      desc: 'Longer stories about people and trends. Use scenes and details like fiction, and make sure every fact is true.' },
+    { id: 'jo.opinion', name: 'Opinion & Editorials', icon: 'argument', tier: 'advanced', requires: ['jo.stories'], state: lock, percent: 0, xp: 2300,
+      desc: "Taking a clear stand and backing it with evidence. Respect the other side's best argument." },
+    { id: 'jo.photo', name: 'Photos & Captions', icon: 'camera', tier: 'advanced', requires: ['jo.sources'], state: lock, percent: 0, xp: 2000,
+      desc: 'Pictures that tell the story and captions that name everyone. A good photo can carry a whole page.' },
+    { id: 'jo.edit', name: 'Editing & Fact-Checking', icon: 'edit-pen', tier: 'advanced', core: true, requires: ['jo.feature', 'jo.opinion'], state: lock, percent: 0, xp: 2100,
+      desc: "Cutting, checking every name and number and writing headlines. Editors protect the paper's reputation." },
+    { id: 'jo.law', name: 'Press Law', icon: 'balance-scale', tier: 'expert', requires: ['jo.edit'], state: lock, percent: 0, xp: 2500,
+      desc: 'Libel, privacy and student press rights. Know what you can publish and how to defend it.' },
+    { id: 'jo.digital', name: 'Digital & Social', icon: 'social-media', tier: 'expert', requires: ['jo.photo', 'jo.edit'], state: lock, percent: 0, xp: 2600,
+      desc: 'Web stories, newsletters and social posts. Headlines and visuals matter even more online.' },
+    { id: 'jo.invest', name: 'Investigative Reporting', icon: 'magnifier', tier: 'expert', requires: ['jo.sources', 'jo.law'], state: lock, percent: 0, xp: 2300,
+      desc: "Digging into records and asking hard questions over weeks. It's slow, and it's what holds powerful people to account." },
+    { id: 'jo.editor', name: 'Running a Publication', icon: 'management', tier: 'mastery', requires: ['jo.invest', 'jo.digital', 'jo.sports'], state: lock, percent: 0, xp: 2700,
+      desc: 'Leading a staff, planning issues and hitting deadlines. Student editors learn real management fast.' },
+  ],
+};

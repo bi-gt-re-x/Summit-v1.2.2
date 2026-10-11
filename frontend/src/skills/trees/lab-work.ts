@@ -1,0 +1,50 @@
+/**
+ * Lab Work, a branch of Science.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const LAB_WORK: SubjectTree = {
+  id: 'lab-work',
+  title: 'Lab Work',
+  blurb: 'Doing labs safely, carefully and writing them up well.',
+  parent: 'science',
+  nodes: [
+    { id: 'lb.safety', name: 'Lab Safety', icon: 'safety', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Goggles, gloves, closed shoes and knowing where the eyewash is. Read the safety sheet before you open the bottle.' },
+    { id: 'lb.glass', name: 'Glassware & Equipment', icon: 'lab', tier: 'foundation', requires: ['lb.safety'], state: lock, percent: 0, xp: 1200,
+      desc: 'Beakers, cylinders, pipettes and burettes, and what each is good for. A beaker holds liquid. A cylinder or pipette is what you trust for volume.' },
+    { id: 'lb.readings', name: 'Precise Readings', icon: 'precision', tier: 'beginner', requires: ['lb.glass'], state: lock, percent: 0, xp: 1600,
+      desc: 'Reading a meniscus at eye level and recording every certain digit plus one. Sig figs start right here.' },
+    { id: 'lb.units', name: 'Units & Sig Figs', icon: 'units', tier: 'beginner', requires: ['lb.readings'], state: lock, percent: 0, xp: 1700,
+      desc: 'Converting units and keeping the right number of significant figures. Lose the units and you lose points.' },
+    { id: 'lb.notebook', name: 'Lab Notebook', icon: 'lab-notebook', tier: 'beginner', core: true, requires: ['lb.safety'], state: lock, percent: 0, xp: 1400,
+      desc: 'Writing down what you did as you did it, in pen. Someone else should be able to repeat your work from it.' },
+    { id: 'lb.procedure', name: 'Following a Procedure', icon: 'checklist', tier: 'beginner', requires: ['lb.notebook'], state: lock, percent: 0, xp: 1500,
+      desc: 'Reading the whole thing before starting and prepping everything first. Most lab disasters come from improvising halfway through.' },
+    { id: 'lb.variables', name: 'Variables & Controls', icon: 'control-var', tier: 'intermediate', core: true, requires: ['lb.procedure'], state: lock, percent: 0, xp: 1900,
+      desc: "Changing one thing at a time and keeping the rest the same. Without a control group, you can't say what caused what." },
+    { id: 'lb.data', name: 'Data Tables', icon: 'table', tier: 'intermediate', requires: ['lb.units', 'lb.variables'], state: lock, percent: 0, xp: 2000,
+      desc: 'Organizing raw data with units in the headers. A clean table makes the graph and the analysis easy.' },
+    { id: 'lb.graphs', name: 'Graphing Results', icon: 'chart-bars', tier: 'intermediate', requires: ['lb.data'], state: lock, percent: 0, xp: 1700,
+      desc: 'Picking the right graph, labeling axes and drawing a best-fit line. The independent variable goes on the x-axis.' },
+    { id: 'lb.hypothesis', name: 'Writing a Hypothesis', icon: 'hypothesis', tier: 'intermediate', requires: ['lb.variables'], state: lock, percent: 0, xp: 1800,
+      desc: "An if-then statement you can actually test. It should predict a direction, and it's fine if the data proves it wrong." },
+    { id: 'lb.error', name: 'Error & Uncertainty', icon: 'error-bars', tier: 'advanced', core: true, requires: ['lb.graphs'], state: lock, percent: 0, xp: 2200,
+      desc: "Random error, systematic error and percent error. Blaming human error without saying what went wrong doesn't count." },
+    { id: 'lb.stats', name: 'Basic Lab Stats', icon: 'average', tier: 'advanced', requires: ['lb.error'], state: lock, percent: 0, xp: 2300,
+      desc: 'Averages, ranges and standard deviation for repeated trials. More trials make your result easier to believe.' },
+    { id: 'lb.report', name: 'Lab Reports', icon: 'report', tier: 'advanced', core: true, requires: ['lb.stats', 'lb.hypothesis'], state: lock, percent: 0, xp: 2000,
+      desc: 'Intro, methods, results and discussion. Results say what happened. The discussion says what it means.' },
+    { id: 'lb.conclusion', name: 'Conclusions That Hold Up', icon: 'evidence', tier: 'advanced', requires: ['lb.report'], state: lock, percent: 0, xp: 2100,
+      desc: 'Claim, evidence and reasoning tied to your data. Admit the limits of what one experiment can show.' },
+    { id: 'lb.design', name: 'Designing Your Own Lab', icon: 'study-design', tier: 'expert', requires: ['lb.conclusion'], state: lock, percent: 0, xp: 2500,
+      desc: 'Writing a procedure from a question instead of following one. This is what AP labs and science fairs expect.' },
+    { id: 'lb.techniques', name: 'Core Techniques', icon: 'titration', tier: 'expert', requires: ['lb.readings', 'lb.procedure'], state: lock, percent: 0, xp: 2600,
+      desc: 'Titration, filtration, dilution and microscopy done cleanly. Clean technique means less error to explain later.' },
+    { id: 'lb.peer', name: "Reviewing Others' Reports", icon: 'peer-review', tier: 'expert', requires: ['lb.report'], state: lock, percent: 0, xp: 2300,
+      desc: "Reading a classmate's report like a teacher would. Spotting gaps in someone else's work sharpens your own." },
+    { id: 'lb.independent', name: 'Independent Research', icon: 'research', tier: 'mastery', requires: ['lb.design', 'lb.techniques'], state: lock, percent: 0, xp: 2700,
+      desc: "Running a project start to finish with less help. It's the step between school labs and real research." },
+  ],
+};

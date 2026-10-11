@@ -198,17 +198,26 @@ export const SUBJECT_FAMILY: Record<string, Family> = {
   // Maths — indigo is the academic family.
   mathematics: 'indigo', algebra: 'indigo', calculus: 'indigo',
   geometry: 'indigo', statistics: 'indigo',
+  trigonometry: 'indigo', precalculus: 'indigo', differential_equations: 'indigo',
 
   // Science — teal.
   physics: 'teal', chemistry: 'teal', biology: 'teal', anatomy: 'teal',
   genetics: 'teal', astronomy: 'teal', geology: 'teal', ecology: 'teal',
   science: 'teal',
+  organic_chemistry: 'teal', biochemistry: 'teal', microbiology: 'teal',
+  neuroscience: 'teal', environmental_science: 'teal', forensic_science: 'teal',
+  lab_work: 'teal', science_fair: 'teal',
 
   // Studying is learning and research — cyan. Exams are a deadline; they are
   // the one part of studying that is red, because that is what they are.
   homework: 'cyan', revision: 'cyan', lectures: 'cyan', research: 'cyan',
   thesis: 'cyan', coursework: 'cyan', tutoring: 'cyan', study_group: 'cyan',
   flashcards: 'cyan', reading: 'cyan',
+  school: 'cyan', note_taking: 'cyan', test_prep: 'cyan', ai_tools: 'cyan',
+  pre_med: 'cyan',
+  // Applications are a big project with hard dates, money forms are admin,
+  // and clubs and teams are the personal side of school.
+  college_apps: 'orange', financial_aid: 'brown', extracurriculars: 'yellow',
   exams: 'red',
 
   // Language and humanities — indigo, the academic family.
@@ -218,12 +227,17 @@ export const SUBJECT_FAMILY: Record<string, Family> = {
   mandarin: 'indigo', history: 'indigo', geography: 'indigo',
   philosophy: 'indigo', psychology: 'indigo', sociology: 'indigo',
   politics: 'indigo',
+  latin: 'indigo', sign_language: 'indigo', essays: 'indigo', journalism: 'indigo',
+  public_speaking: 'indigo', civics: 'indigo', model_un: 'indigo',
+  creative_writing: 'purple', poetry: 'purple',
 
   // Computing — blue.
   programming: 'blue', computer_science: 'blue', web_design: 'blue',
   data_science: 'blue', machine_learning: 'blue', cybersecurity: 'blue',
   databases: 'blue', networking: 'blue', robotics: 'blue',
   engineering: 'blue',
+  python: 'blue', java: 'blue', game_dev: 'blue', app_dev: 'blue',
+  electronics: 'blue', spreadsheets: 'blue',
 
   // Business and money. Economics is a subject; the rest is admin, and admin
   // is life rather than study.
@@ -231,22 +245,27 @@ export const SUBJECT_FAMILY: Record<string, Family> = {
   business: 'orange', marketing: 'orange',
   accounting: 'brown', finance: 'brown', budgeting: 'brown',
   investing: 'brown', taxes: 'brown',
+  entrepreneurship: 'orange',
 
   // Work — orange is the family for a project somebody is being paid for.
   management: 'orange', work: 'orange', planning: 'yellow',
   meetings: 'rose', presenting: 'orange', reports: 'orange',
   interviews: 'rose', job_search: 'orange',
   email: 'gray', calls: 'gray', admin: 'gray',
+  part_time_job: 'orange', internships: 'orange', leadership: 'orange',
 
   // Creative — purple.
   art: 'purple', drawing: 'purple', design: 'purple', photography: 'purple',
   music: 'purple', guitar: 'purple', piano: 'purple', singing: 'purple',
   dance: 'purple', film: 'purple',
+  violin: 'purple', drums: 'purple', band: 'purple', music_theory: 'purple',
+  theater: 'purple', art_history: 'purple', cad: 'purple',
 
   // Health and fitness — green.
   gym: 'green', running: 'green', cycling: 'green', swimming: 'green',
   yoga: 'green', meditation: 'green', nutrition: 'green', sleep: 'green',
   therapy: 'green', health: 'green',
+  basketball: 'green', soccer: 'green', stress: 'green',
 
   // Life and home — brown for the chores, rose for the people, yellow for
   // the things somebody does for themselves.
@@ -254,6 +273,7 @@ export const SUBJECT_FAMILY: Record<string, Family> = {
   errands: 'brown',
   family: 'rose', friends: 'rose',
   travel: 'yellow', journaling: 'yellow',
+  driving: 'yellow', chess: 'yellow',
 };
 
 /**

@@ -59,5 +59,7 @@ export const BUSINESS: SubjectTree = {
       desc: 'A subject of its own: finding the people this is for, and giving them a reason to choose it.' },
     { id: 'bu.manage', name: 'Management', icon: 'management', tier: 'expert', requires: ['bu.strategy'], navTo: 'management', state: lock,
       desc: 'A subject of its own: getting work done through other people without becoming the bottleneck.' },
+    { id: 'bu.startup', name: 'Entrepreneurship', icon: 'rocket', tier: 'intermediate', requires: ['bu.model'], navTo: 'entrepreneurship', state: lock,
+      desc: 'Its own tree: finding a problem, testing ideas, selling, pitching and growing a business.' },
   ],
 };

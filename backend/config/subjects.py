@@ -1,4 +1,4 @@
-"""The subject catalogue — the hundred things a task is usually *about*.
+"""The subject catalogue — the 150 things a task is usually *about*.
 
 A task has always had a name, a priority and an XP value, and nothing that
 says what kind of work it is. "Finish essay" and "Leg day" are the same shape
@@ -9,8 +9,11 @@ thing.
 
 Three rules the list follows, and they are the reason it is a list at all:
 
-**One hundred, and the common ones.** Not an ontology — the subjects a student
-or a working adult actually files a task under. They are grouped below in the
+**150, and the common ones.** Not an ontology — the subjects a student or a
+working adult actually files a task under. It was a hundred until 2026-10-11,
+when fifty more were added for students: the classes they take (Trig, Orgo,
+AP Gov), the things school asks of them (test prep, college apps, financial
+aid) and the clubs and sports they fill their weeks with. They are grouped below in the
 order the picker offers them to someone who has never chosen one, so the
 groups double as the default ordering.
 
@@ -44,7 +47,7 @@ task points at it. Names and icons above it can be edited freely.
 # the same nine names in two places — free to write and certain to drift.
 #
 # Flattening below preserves the order exactly, so `SUBJECTS` is the same
-# hundred in the same sequence it always was. That matters: catalogue order is
+# 150 in the same sequence it always was. That matters: catalogue order is
 # the picker's default offer, and it runs from study through work to home.
 _GROUPS = (
     ('Math and science', (
@@ -62,6 +65,17 @@ _GROUPS = (
         ('geology', 'Geology', None, 'geology'),
         ('ecology', 'Ecology', None, 'ecology'),
         ('science', 'Science', None, 'science'),
+        ('trigonometry', 'Trigonometry', 'Trig', 'trigonometry'),
+        ('precalculus', 'Precalculus', 'Precalc', 'precalculus'),
+        ('differential_equations', 'Differential Equations', 'Diff Eq', 'diffeq'),
+        ('organic_chemistry', 'Organic Chemistry', 'Orgo', 'benzene'),
+        ('biochemistry', 'Biochemistry', 'Biochem', 'enzyme'),
+        ('microbiology', 'Microbiology', 'Microbio', 'microscope'),
+        ('neuroscience', 'Neuroscience', 'Neuro', 'neuron'),
+        ('environmental_science', 'Environmental Science', 'Env Sci', 'recycle'),
+        ('forensic_science', 'Forensic Science', 'Forensic', 'forensics'),
+        ('lab_work', 'Lab Work', None, 'lab'),
+        ('science_fair', 'Science Fair', 'Sci Fair', 'experiment'),
     )),
     ('Studying', (
         ('homework', 'Homework', None, 'homework'),
@@ -74,6 +88,14 @@ _GROUPS = (
         ('tutoring', 'Tutoring', None, 'tutoring'),
         ('study_group', 'Study Group', 'Group', 'studygroup'),
         ('flashcards', 'Flashcards', 'Cards', 'flashcards'),
+        ('school', 'School', None, 'backpack'),
+        ('note_taking', 'Note-Taking', 'Notes', 'notes'),
+        ('test_prep', 'Test Prep', 'TestPrep', 'testprep'),
+        ('college_apps', 'College Applications', 'College', 'graduation'),
+        ('financial_aid', 'Financial Aid', 'Fin Aid', 'piggy-bank'),
+        ('extracurriculars', 'Extracurriculars', 'ECs', 'star'),
+        ('pre_med', 'Pre-Med', None, 'doctor'),
+        ('ai_tools', 'AI Tools', None, 'spark'),
     )),
     ('Language and humanities', (
         ('english', 'English', None, 'english'),
@@ -92,6 +114,15 @@ _GROUPS = (
         ('psychology', 'Psychology', 'Psych', 'psychology'),
         ('sociology', 'Sociology', 'Sociol', 'sociology'),
         ('politics', 'Politics', None, 'politics'),
+        ('latin', 'Latin', None, 'monument'),
+        ('sign_language', 'Sign Language', 'ASL', 'hands'),
+        ('essays', 'Essays', None, 'essay'),
+        ('creative_writing', 'Creative Writing', 'Creative', 'story'),
+        ('poetry', 'Poetry', None, 'poem'),
+        ('journalism', 'Journalism', 'Journo', 'newspaper'),
+        ('public_speaking', 'Public Speaking', 'Speaking', 'speaking'),
+        ('civics', 'Civics', None, 'civics'),
+        ('model_un', 'Model UN', None, 'globe'),
     )),
     ('Computing', (
         ('programming', 'Programming', 'Coding', 'code'),
@@ -104,6 +135,12 @@ _GROUPS = (
         ('networking', 'Networking', 'Network', 'network'),
         ('robotics', 'Robotics', None, 'robotics'),
         ('engineering', 'Engineering', 'Eng', 'engineering'),
+        ('python', 'Python', None, 'code'),
+        ('java', 'Java', None, 'code'),
+        ('game_dev', 'Game Development', 'Game Dev', 'game'),
+        ('app_dev', 'App Development', 'App Dev', 'phone'),
+        ('electronics', 'Electronics', 'Circuits', 'circuit'),
+        ('spreadsheets', 'Spreadsheets', 'Sheets', 'spreadsheet'),
     )),
     ('Business and money', (
         ('economics', 'Economics', 'Econ', 'economics'),
@@ -116,6 +153,7 @@ _GROUPS = (
         ('taxes', 'Taxes', None, 'tax'),
         ('law', 'Law', None, 'law'),
         ('management', 'Management', 'Manage', 'management'),
+        ('entrepreneurship', 'Entrepreneurship', 'Startup', 'rocket'),
     )),
     ('Work', (
         ('work', 'Work', None, 'work'),
@@ -128,6 +166,9 @@ _GROUPS = (
         ('reports', 'Reports', None, 'report'),
         ('interviews', 'Interviews', 'Intervw', 'interview'),
         ('job_search', 'Job Search', 'Jobs', 'jobsearch'),
+        ('part_time_job', 'Part-Time Job', 'Job', 'job'),
+        ('internships', 'Internships', 'Intern', 'internship'),
+        ('leadership', 'Leadership', 'Leader', 'leadership'),
     )),
     ('Creative', (
         ('art', 'Art', None, 'art'),
@@ -140,6 +181,13 @@ _GROUPS = (
         ('singing', 'Singing', None, 'singing'),
         ('dance', 'Dance', None, 'dance'),
         ('film', 'Film', None, 'film'),
+        ('violin', 'Violin', None, 'violin'),
+        ('drums', 'Drums', None, 'drum'),
+        ('band', 'Band & Orchestra', 'Band', 'band'),
+        ('music_theory', 'Music Theory', 'Theory', 'theory'),
+        ('theater', 'Theater', None, 'theater'),
+        ('art_history', 'Art History', 'Art Hist', 'museum'),
+        ('cad', '3D Modeling & CAD', '3D & CAD', 'cad'),
     )),
     ('Health and fitness', (
         ('gym', 'Gym', None, 'gym'),
@@ -152,6 +200,9 @@ _GROUPS = (
         ('sleep', 'Sleep', None, 'sleep'),
         ('therapy', 'Therapy', None, 'therapy'),
         ('health', 'Health', None, 'health'),
+        ('basketball', 'Basketball', 'Hoops', 'basketball'),
+        ('soccer', 'Soccer', None, 'soccer'),
+        ('stress', 'Stress', None, 'stress'),
     )),
     ('Life and home', (
         ('chores', 'Chores', None, 'cleaning'),
@@ -164,6 +215,8 @@ _GROUPS = (
         ('travel', 'Travel', None, 'travel'),
         ('reading', 'Reading', None, 'reading'),
         ('journaling', 'Journaling', 'Journal', 'journal'),
+        ('driving', 'Driving', None, 'car'),
+        ('chess', 'Chess', None, 'chess'),
     )),
 )
 
@@ -210,8 +263,8 @@ def is_valid(subject_id):
 # The two invariants the docstring promises, checked once at import rather
 # than trusted: a typo in the table above should fail loudly on startup, not
 # quietly ship a pill with no icon or a name too long for its row.
-assert len(SUBJECTS) == 100, 'the catalog is a hundred subjects'
-assert len(BY_ID) == 100, 'subject ids have to be unique'
+assert len(SUBJECTS) == 150, 'the catalog is 150 subjects'
+assert len(BY_ID) == 150, 'subject ids have to be unique'
 assert all(
     len(subject['label']) <= LABEL_LIMIT for subject in SUBJECTS
 ), 'every name longer than eight characters needs an abbreviation'

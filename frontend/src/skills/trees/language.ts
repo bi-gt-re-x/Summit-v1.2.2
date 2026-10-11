@@ -59,5 +59,7 @@ export const LANGUAGE: SubjectTree = {
       desc: 'A subject of its own: reading fiction and poetry closely, and the traditions they answer.' },
     { id: 'ln.foreign', name: 'Foreign Languages', icon: 'translate', tier: 'intermediate', requires: ['ln.parts'], navTo: 'foreign-language', state: lock,
       desc: 'A subject of its own: learning to understand and be understood in a language you were not raised in.' },
+    { id: 'ln.speech', name: 'Public Speaking', icon: 'speaking', tier: 'intermediate', requires: ['ln.speak'], navTo: 'public-speaking', state: lock,
+      desc: 'Its own tree: beating nerves, structuring a talk, slides, Q&A and speech contests.' },
   ],
 };

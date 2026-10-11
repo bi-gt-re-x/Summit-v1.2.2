@@ -1,0 +1,50 @@
+/**
+ * Science Fair, a branch of Science.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const SCIENCE_FAIR: SubjectTree = {
+  id: 'science-fair',
+  title: 'Science Fair',
+  blurb: 'From a question you care about to a board judges remember.',
+  parent: 'science',
+  nodes: [
+    { id: 'sf.question', name: 'Finding a Question', icon: 'question', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: "Starting from something you're curious about and narrowing it down. A small question you can test beats a huge vague one." },
+    { id: 'sf.background', name: 'Background Research', icon: 'library', tier: 'foundation', requires: ['sf.question'], state: lock, percent: 0, xp: 1200,
+      desc: "Reading what's already known so you don't repeat it. Keep a list of sources from day one." },
+    { id: 'sf.timeline', name: 'Project Timeline', icon: 'timeline', tier: 'beginner', requires: ['sf.question'], state: lock, percent: 0, xp: 1600,
+      desc: 'Working backwards from the fair date. Leave two extra weeks, because experiments fail.' },
+    { id: 'sf.hypothesis', name: 'Hypothesis', icon: 'hypothesis', tier: 'beginner', requires: ['sf.background'], state: lock, percent: 0, xp: 1700,
+      desc: 'A clear prediction with a reason behind it. Judges look for a hypothesis you can actually test.' },
+    { id: 'sf.variables', name: 'Variables & Controls', icon: 'control-var', tier: 'beginner', core: true, requires: ['sf.hypothesis'], state: lock, percent: 0, xp: 1400,
+      desc: 'One thing you change, one result you track and everything else held steady. Write the list before buying any supplies.' },
+    { id: 'sf.materials', name: 'Materials & Budget', icon: 'toolbox', tier: 'beginner', requires: ['sf.variables'], state: lock, percent: 0, xp: 1500,
+      desc: 'Gathering what you need without spending a fortune. Many great projects use stuff from home or school.' },
+    { id: 'sf.approval', name: 'Safety & Approval', icon: 'safety', tier: 'intermediate', requires: ['sf.materials'], state: lock, percent: 0, xp: 1900,
+      desc: 'Forms for anything with people, animals or chemicals. Some fairs reject projects that skip approval, so check early.' },
+    { id: 'sf.experiment', name: 'Running the Experiment', icon: 'experiment', tier: 'intermediate', core: true, requires: ['sf.approval', 'sf.timeline'], state: lock, percent: 0, xp: 2000,
+      desc: 'Doing enough trials and recording everything. Write down surprises too, since they often become the best part.' },
+    { id: 'sf.notebook', name: 'Project Notebook', icon: 'lab-notebook', tier: 'intermediate', requires: ['sf.experiment'], state: lock, percent: 0, xp: 1700,
+      desc: 'A dated log of every step, idea and mistake. Judges often ask to see it, so keep it neat.' },
+    { id: 'sf.analysis', name: 'Analyzing Data', icon: 'analytics', tier: 'advanced', requires: ['sf.notebook'], state: lock, percent: 0, xp: 2100,
+      desc: "Averages, graphs and maybe a simple statistical test. Let the data tell its story, even if it's not the one you hoped for." },
+    { id: 'sf.conclusion', name: 'Conclusion', icon: 'evidence', tier: 'advanced', requires: ['sf.analysis'], state: lock, percent: 0, xp: 2200,
+      desc: "Answering your question and saying how sure you are. Include what you'd change next time." },
+    { id: 'sf.abstract', name: 'Writing the Abstract', icon: 'summary', tier: 'advanced', requires: ['sf.conclusion'], state: lock, percent: 0, xp: 2300,
+      desc: "Your whole project in about 250 words. Write it last, and cut every word that isn't pulling its weight." },
+    { id: 'sf.board', name: 'The Display Board', icon: 'layout', tier: 'advanced', core: true, requires: ['sf.conclusion'], state: lock, percent: 0, xp: 2000,
+      desc: 'A layout people can read from a few feet away. Use a big title, clear graphs and short text.' },
+    { id: 'sf.pitch', name: 'Your Pitch', icon: 'presenting', tier: 'expert', requires: ['sf.board'], state: lock, percent: 0, xp: 2400,
+      desc: 'A two-minute talk that walks a judge through the project. Practice it out loud until it sounds natural.' },
+    { id: 'sf.judges', name: 'Answering Judges', icon: 'question', tier: 'expert', requires: ['sf.pitch'], state: lock, percent: 0, xp: 2500,
+      desc: "Handling questions you didn't expect. Saying you don't know, then how you'd find out, is a strong answer." },
+    { id: 'sf.paper', name: 'Research Paper', icon: 'paper', tier: 'expert', requires: ['sf.abstract'], state: lock, percent: 0, xp: 2600,
+      desc: "A full write-up for higher-level fairs. It's longer than a lab report and needs real citations." },
+    { id: 'sf.regionals', name: 'Regionals & State', icon: 'trophy', tier: 'expert', requires: ['sf.judges', 'sf.paper'], state: lock, percent: 0, xp: 2300,
+      desc: "Moving up and polishing the project between rounds. Use judges' feedback to fix weak spots." },
+    { id: 'sf.isef', name: 'ISEF & Beyond', icon: 'graduation', tier: 'mastery', requires: ['sf.regionals'], state: lock, percent: 0, xp: 2700,
+      desc: 'Competing at the international level and turning the project into a research path. Some students publish or win scholarships from here.' },
+  ],
+};

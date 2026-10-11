@@ -55,5 +55,9 @@ export const STUDY: SubjectTree = {
       desc: 'Occasional review after the exam, which is what separates a subject you studied from one you know. Almost all of it goes within months otherwise, whatever the grade said.' },
     { id: 'sy.self', name: 'Teaching Yourself', icon: 'autodidact', tier: 'mastery', requires: ['sy.longterm', 'sy.group'], state: lock, percent: 0, xp: 2800,
       desc: 'Learning something with no course, no deadline and nobody checking. It needs every skill in this tree at once, and it is the one that keeps working for the rest of your life.' },
+    { id: 'sy.notesx', name: 'Note-Taking (Full Course)', icon: 'notes', tier: 'beginner', requires: ['sy.notes'], navTo: 'note-taking', state: lock,
+      desc: 'Its own tree: Cornell notes, outlines, mind maps and turning notes into study sheets.' },
+    { id: 'sy.ai', name: 'AI Tools', icon: 'spark', tier: 'beginner', requires: ['sy.explain'], navTo: 'ai-tools', state: lock,
+      desc: 'Its own tree: using AI to explain, quiz and give feedback while keeping your work your own.' },
   ],
 };

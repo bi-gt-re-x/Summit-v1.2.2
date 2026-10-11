@@ -1,0 +1,50 @@
+/**
+ * Game Development, a branch of Coding.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const GAME_DEV: SubjectTree = {
+  id: 'game-dev',
+  title: 'Game Development',
+  blurb: 'Making games people actually want to play.',
+  parent: 'coding',
+  nodes: [
+    { id: 'gd.idea', name: 'Game Ideas', icon: 'idea', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Small ideas you can actually finish. Start with a clone of a simple classic like Pong or Snake.' },
+    { id: 'gd.engine', name: 'Picking an Engine', icon: 'toolbox', tier: 'foundation', requires: ['gd.idea'], state: lock, percent: 0, xp: 1200,
+      desc: 'Scratch, Godot, Unity, GameMaker or Roblox Studio. Pick one and stick with it for your first few games.' },
+    { id: 'gd.jam', name: 'Game Jams', icon: 'timer', tier: 'beginner', requires: ['gd.idea'], state: lock, percent: 0, xp: 1600,
+      desc: 'Making a whole game in 48 hours. Jams teach you to cut scope fast, and they are a blast.' },
+    { id: 'gd.loop', name: 'The Game Loop', icon: 'loops', tier: 'beginner', core: true, requires: ['gd.engine'], state: lock, percent: 0, xp: 1700,
+      desc: 'Input, update, draw and repeat, many times a second. Every game ever made runs on this loop.' },
+    { id: 'gd.sprites', name: 'Sprites & Art', icon: 'drawing', tier: 'beginner', requires: ['gd.engine'], state: lock, percent: 0, xp: 1400,
+      desc: 'Images, sprite sheets and simple pixel art. Placeholder boxes are totally fine while you build.' },
+    { id: 'gd.input', name: 'Player Input', icon: 'input-stream', tier: 'beginner', requires: ['gd.loop'], state: lock, percent: 0, xp: 1500,
+      desc: 'Keyboard, mouse, controller and touch. Responsive controls are what make a game feel good.' },
+    { id: 'gd.physics', name: 'Movement & Physics', icon: 'kinematics', tier: 'intermediate', requires: ['gd.input'], state: lock, percent: 0, xp: 1900,
+      desc: 'Velocity, gravity and jumping. Game physics is about how it feels more than how real it is.' },
+    { id: 'gd.collision', name: 'Collisions', icon: 'shapes', tier: 'intermediate', requires: ['gd.physics'], state: lock, percent: 0, xp: 2000,
+      desc: "Detecting when things touch and what happens next. Hitboxes don't have to match the art." },
+    { id: 'gd.sound', name: 'Sound & Music', icon: 'sound', tier: 'intermediate', requires: ['gd.loop'], state: lock, percent: 0, xp: 1700,
+      desc: 'Sound effects and background music. Good sound makes every action feel more powerful.' },
+    { id: 'gd.ui', name: 'Menus & HUD', icon: 'layout', tier: 'intermediate', requires: ['gd.sprites'], state: lock, percent: 0, xp: 1800,
+      desc: "Health bars, scores, pause screens and menus. Players should always know what's going on." },
+    { id: 'gd.levels', name: 'Level Design', icon: 'map', tier: 'intermediate', core: true, requires: ['gd.collision', 'gd.sprites'], state: lock, percent: 0, xp: 1900,
+      desc: 'Teaching the player without using words. Introduce one idea, test it, then twist it.' },
+    { id: 'gd.states', name: 'Game States', icon: 'flow', tier: 'advanced', requires: ['gd.levels', 'gd.ui'], state: lock, percent: 0, xp: 2300,
+      desc: 'Title screen, playing, paused and game over. Managing states keeps your code from turning into spaghetti.' },
+    { id: 'gd.enemies', name: 'Enemies & AI', icon: 'automaton', tier: 'advanced', requires: ['gd.collision'], state: lock, percent: 0, xp: 2000,
+      desc: 'Patrols, chasing and simple decision rules. Fun enemies are predictable enough to learn.' },
+    { id: 'gd.feel', name: 'Game Feel', icon: 'spark', tier: 'advanced', requires: ['gd.sound', 'gd.physics'], state: lock, percent: 0, xp: 2100,
+      desc: 'Screen shake, particles and little bounces. Small effects make a game feel alive.' },
+    { id: 'gd.playtest', name: 'Playtesting', icon: 'user-research', tier: 'expert', core: true, requires: ['gd.states', 'gd.enemies'], state: lock, percent: 0, xp: 2500,
+      desc: 'Watching people play without helping them. Wherever they get stuck becomes your to-do list.' },
+    { id: 'gd.polish', name: 'Polish & Bugs', icon: 'debugging', tier: 'expert', requires: ['gd.playtest', 'gd.feel'], state: lock, percent: 0, xp: 2600,
+      desc: 'Fixing bugs and smoothing out rough edges. The last 10 percent takes half the time.' },
+    { id: 'gd.ship', name: 'Publishing a Game', icon: 'publish', tier: 'mastery', requires: ['gd.polish'], state: lock, percent: 0, xp: 2600,
+      desc: 'Releasing on itch.io, Steam or an app store. A finished small game is worth more than an unfinished big one.' },
+    { id: 'gd.portfolio', name: 'Game Portfolio', icon: 'portfolio', tier: 'mastery', requires: ['gd.ship', 'gd.jam'], state: lock, percent: 0, xp: 2700,
+      desc: 'A collection of finished games for school or job applications. Show what you made and what you learned.' },
+  ],
+};

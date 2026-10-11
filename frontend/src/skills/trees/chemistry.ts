@@ -54,5 +54,7 @@ export const CHEMISTRY: SubjectTree = {
       desc: 'Measuring, titrating, purifying and recording it so somebody else could repeat it. Technique is where the uncertainty in a result actually comes from, long before the arithmetic.' },
     { id: 'ch.analysis', name: 'Analytical Chemistry', icon: 'spectrum', tier: 'mastery', requires: ['ch.lab', 'ch.organic', 'ch.electro'], state: lock, percent: 0, xp: 3000,
       desc: 'Working out what a sample actually contains, by spectroscopy, chromatography and titration. Identification and quantification are separate problems, and most real questions need both answered.' },
+    { id: 'ch.orgox', name: 'Organic Chemistry (Full Course)', icon: 'benzene', tier: 'expert', requires: ['ch.organic'], navTo: 'organic-chemistry', state: lock,
+      desc: 'Its own tree: functional groups, stereochemistry, mechanisms and synthesis, the full two semesters.' },
   ],
 };

@@ -1,0 +1,50 @@
+/**
+ * Biochemistry, a branch of Biology.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const BIOCHEMISTRY: SubjectTree = {
+  id: 'biochemistry',
+  title: 'Biochemistry',
+  blurb: 'The chemistry that keeps cells alive.',
+  parent: 'biology',
+  nodes: [
+    { id: 'bc.water', name: 'Water & pH', icon: 'water', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Why water is such a good solvent and how pH and buffers keep cells working. Everything in a cell happens in water, so start here.' },
+    { id: 'bc.bonds', name: 'Bonds That Matter', icon: 'bond', tier: 'foundation', requires: ['bc.water'], state: lock, percent: 0, xp: 1200,
+      desc: 'Covalent bonds, hydrogen bonds and the weak forces that fold molecules. Weak bonds are the ones that make life flexible.' },
+    { id: 'bc.amino', name: 'Amino Acids', icon: 'protein', tier: 'beginner', core: true, requires: ['bc.bonds'], state: lock, percent: 0, xp: 1600,
+      desc: 'The twenty building blocks of proteins and their side chains. Group them by charge and polarity instead of memorizing a list.' },
+    { id: 'bc.protein', name: 'Protein Structure', icon: 'layers', tier: 'beginner', requires: ['bc.amino'], state: lock, percent: 0, xp: 1700,
+      desc: 'Primary through quaternary structure. Shape decides function, and one wrong amino acid can wreck the shape.' },
+    { id: 'bc.enzymes', name: 'Enzymes', icon: 'enzyme', tier: 'intermediate', core: true, requires: ['bc.protein'], state: lock, percent: 0, xp: 1700,
+      desc: 'Proteins that speed up reactions. Learn active sites, substrates and what heat and pH do to them.' },
+    { id: 'bc.kinetics', name: 'Enzyme Kinetics', icon: 'rate', tier: 'intermediate', requires: ['bc.enzymes'], state: lock, percent: 0, xp: 1800,
+      desc: 'Michaelis-Menten, Km, Vmax and the Lineweaver-Burk plot. Know exactly what each kind of inhibitor does to the graph.' },
+    { id: 'bc.carbs', name: 'Carbohydrates', icon: 'bread', tier: 'beginner', requires: ['bc.bonds'], state: lock, percent: 0, xp: 1600,
+      desc: 'Sugars, starches and fiber, and how glucose links into chains. Cells burn them, store them and use them as name tags.' },
+    { id: 'bc.lipids', name: 'Lipids & Membranes', icon: 'membrane', tier: 'beginner', requires: ['bc.bonds'], state: lock, percent: 0, xp: 1700,
+      desc: 'Fats, phospholipids and cholesterol. Membranes form on their own because of how lipids treat water.' },
+    { id: 'bc.nucleic', name: 'Nucleic Acids', icon: 'dna', tier: 'intermediate', requires: ['bc.bonds'], state: lock, percent: 0, xp: 1700,
+      desc: 'DNA and RNA as molecules, with their bases, pairing and backbone. The chemistry explains why DNA lasts and RNA is short-lived.' },
+    { id: 'bc.atp', name: 'Energy & ATP', icon: 'battery', tier: 'intermediate', requires: ['bc.enzymes', 'bc.carbs'], state: lock, percent: 0, xp: 1800,
+      desc: 'How cells store and spend energy with ATP. Coupled reactions are the trick that lets uphill reactions happen.' },
+    { id: 'bc.glycolysis', name: 'Glycolysis', icon: 'flow', tier: 'advanced', core: true, requires: ['bc.atp'], state: lock, percent: 0, xp: 2200,
+      desc: 'The first steps in breaking down glucose. Know the inputs, the outputs and the steps that get regulated.' },
+    { id: 'bc.krebs', name: 'The Krebs Cycle', icon: 'cycle', tier: 'advanced', requires: ['bc.glycolysis'], state: lock, percent: 0, xp: 2300,
+      desc: 'Where carbon from food leaves as CO2. Track the carriers that pick up electrons more than every single intermediate.' },
+    { id: 'bc.etc', name: 'Electron Transport', icon: 'transport', tier: 'advanced', requires: ['bc.krebs', 'bc.lipids'], state: lock, percent: 0, xp: 2000,
+      desc: 'The chain in the mitochondria that makes most of your ATP. A proton gradient across a membrane drives the whole thing.' },
+    { id: 'bc.photo', name: 'Photosynthesis Chemistry', icon: 'photosynthesis', tier: 'advanced', requires: ['bc.etc'], state: lock, percent: 0, xp: 2100,
+      desc: "The light reactions and the Calvin cycle at the molecular level. It's a lot like the electron transport chain run backwards." },
+    { id: 'bc.regulation', name: 'Metabolic Regulation', icon: 'gauge', tier: 'expert', requires: ['bc.kinetics', 'bc.glycolysis'], state: lock, percent: 0, xp: 2500,
+      desc: 'How hormones and feedback turn pathways up and down. Insulin and glucagon are the classic pair to know cold.' },
+    { id: 'bc.signaling', name: 'Cell Signaling', icon: 'message', tier: 'expert', requires: ['bc.regulation'], state: lock, percent: 0, xp: 2600,
+      desc: 'Receptors, second messengers and cascades. One signal outside the cell can flip thousands of switches inside.' },
+    { id: 'bc.methods', name: 'Biochem Lab Methods', icon: 'lab', tier: 'expert', requires: ['bc.kinetics'], state: lock, percent: 0, xp: 2300,
+      desc: 'Gels, assays and spectrophotometry. Knowing how the data gets made helps you read the graphs in a paper.' },
+    { id: 'bc.disease', name: 'Biochem of Disease', icon: 'warning', tier: 'mastery', requires: ['bc.signaling', 'bc.nucleic'], state: lock, percent: 0, xp: 2700,
+      desc: 'Diabetes, sickle cell and other conditions explained at the molecular level. This is where biochem starts to feel like medicine.' },
+  ],
+};

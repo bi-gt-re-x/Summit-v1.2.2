@@ -55,5 +55,7 @@ export const MINDFULNESS: SubjectTree = {
       desc: 'Treating yourself roughly as you would a friend in the same position. It correlates with more follow-through rather than less, which is the opposite of what people fear about it.' },
     { id: 'mi.practice', name: 'A Practice That Lasts', icon: 'longevity', tier: 'mastery', requires: ['mi.compassion', 'mi.help', 'mi.nature'], state: lock, percent: 0, xp: 2800,
       desc: 'Something small and daily that survives a bad month. The version that continues at five minutes beats the ambitious one that stops when life gets busy, which is exactly when it was needed.' },
+    { id: 'mi.stressx', name: 'Stress', icon: 'stress', tier: 'intermediate', requires: ['mi.stress'], navTo: 'stress', state: lock,
+      desc: 'Its own tree: calming down fast, test anxiety, spiral thoughts and knowing when to get help.' },
   ],
 };

@@ -1,0 +1,50 @@
+/**
+ * Test Prep, a branch of School & College.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const TEST_PREP: SubjectTree = {
+  id: 'test-prep',
+  title: 'Test Prep',
+  blurb: 'SAT, ACT and AP exams, one practice test at a time.',
+  parent: 'school',
+  nodes: [
+    { id: 'tp.diag', name: 'Diagnostic Test', icon: 'gauge', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'A full practice test under real conditions before you study anything. Your score shows you where to spend your time.' },
+    { id: 'tp.format', name: 'Know the Format', icon: 'checklist', tier: 'foundation', requires: ['tp.diag'], state: lock, percent: 0, xp: 1200,
+      desc: 'Sections, timing, question types and how scoring works. Surprises on test day cost points you already earned.' },
+    { id: 'tp.plan', name: 'Study Plan', icon: 'study-plan', tier: 'beginner', core: true, requires: ['tp.diag'], state: lock, percent: 0, xp: 1600,
+      desc: 'Weekly goals working back from test day. Short daily sessions beat a few giant cram days.' },
+    { id: 'tp.errorlog', name: 'Mistake Log', icon: 'error-log', tier: 'beginner', requires: ['tp.plan'], state: lock, percent: 0, xp: 1700,
+      desc: 'Every missed question with the reason you missed it. Patterns in this log are your fastest score gains.' },
+    { id: 'tp.reading', name: 'Reading Section', icon: 'reading', tier: 'beginner', requires: ['tp.format'], state: lock, percent: 0, xp: 1400,
+      desc: 'Finding the main idea and backing answers with the passage. Every right answer has proof in the text.' },
+    { id: 'tp.grammar', name: 'Grammar Rules', icon: 'grammar', tier: 'beginner', requires: ['tp.format'], state: lock, percent: 0, xp: 1500,
+      desc: 'Commas, agreement, modifiers and concise wording. There are only about a dozen rules, and they repeat on every test.' },
+    { id: 'tp.mathcore', name: 'Core Test Math', icon: 'algebra-x', tier: 'beginner', requires: ['tp.format'], state: lock, percent: 0, xp: 1600,
+      desc: 'Linear equations, ratios, percents and functions. Most of the math section is algebra done quickly and carefully.' },
+    { id: 'tp.advmath', name: 'Harder Math Topics', icon: 'parabola', tier: 'intermediate', requires: ['tp.mathcore'], state: lock, percent: 0, xp: 2000,
+      desc: "Quadratics, exponentials, geometry and trig basics. Learn these after the core, since they're fewer questions." },
+    { id: 'tp.calculator', name: 'Calculator Strategy', icon: 'arithmetic', tier: 'intermediate', requires: ['tp.mathcore'], state: lock, percent: 0, xp: 1700,
+      desc: 'When the calculator or Desmos saves time and when it slows you down. Graphing an equation can beat solving it by hand.' },
+    { id: 'tp.words', name: 'Words in Context', icon: 'vocabulary', tier: 'intermediate', requires: ['tp.reading'], state: lock, percent: 0, xp: 1800,
+      desc: 'Picking the word that fits the sentence. Context clues matter more than memorizing fancy words.' },
+    { id: 'tp.pacing', name: 'Pacing', icon: 'pacing', tier: 'intermediate', core: true, requires: ['tp.errorlog'], state: lock, percent: 0, xp: 1900,
+      desc: "Moving on from hard questions and coming back later. Every question is worth the same, so don't let one eat five minutes." },
+    { id: 'tp.guessing', name: 'Smart Guessing', icon: 'probability', tier: 'advanced', requires: ['tp.pacing'], state: lock, percent: 0, xp: 2300,
+      desc: 'Crossing off wrong choices and never leaving a blank. Two eliminations make a guess a lot better than random.' },
+    { id: 'tp.full', name: 'Full Practice Tests', icon: 'problem-set', tier: 'advanced', core: true, requires: ['tp.pacing', 'tp.advmath', 'tp.grammar'], state: lock, percent: 0, xp: 2000,
+      desc: 'Timed, full-length tests on a schedule. Build stamina so the last section feels like the first.' },
+    { id: 'tp.review', name: 'Reviewing Practice Tests', icon: 'magnifier', tier: 'advanced', requires: ['tp.full'], state: lock, percent: 0, xp: 2100,
+      desc: "Spending as long reviewing a test as taking it. That's where the points come from." },
+    { id: 'tp.ap', name: 'AP Exams', icon: 'exam', tier: 'expert', requires: ['tp.plan'], state: lock, percent: 0, xp: 2500,
+      desc: 'Content review plus free-response practice with real scoring guidelines. Learn how points get awarded and write to earn them.' },
+    { id: 'tp.nerves', name: 'Test Anxiety', icon: 'calm', tier: 'expert', requires: ['tp.full'], state: lock, percent: 0, xp: 2600,
+      desc: 'Breathing, routines and practicing in test conditions. Some nerves help, and panic is something you can train down.' },
+    { id: 'tp.day', name: 'Test Day', icon: 'flag', tier: 'expert', requires: ['tp.nerves'], state: lock, percent: 0, xp: 2300,
+      desc: 'Sleep, food, ID, admission ticket and an early start. Pack the night before so the morning is boring.' },
+    { id: 'tp.retake', name: 'Retakes & Superscoring', icon: 'cycle', tier: 'mastery', requires: ['tp.review', 'tp.day'], state: lock, percent: 0, xp: 2700,
+      desc: 'Deciding when to retest and how colleges combine scores. A second try after focused review often jumps the score.' },
+  ],
+};

@@ -54,5 +54,7 @@ export const LITERATURE: SubjectTree = {
       desc: 'Finding what has already been argued, and locating the gap your reading fills. Knowing the existing scholarship is what turns an opinion into a contribution.' },
     { id: 'lit.own', name: 'Your Own Reading', icon: 'insight', tier: 'mastery', requires: ['lit.research', 'lit.translate', 'lit.drama'], state: lock, percent: 0, xp: 2900,
       desc: 'An interpretation you can defend that is really yours, held loosely enough to revise. That is the whole point of the apparatus, and it is easy to lose sight of behind the apparatus.' },
+    { id: 'lit.poems', name: 'Poetry (Full Course)', icon: 'poem', tier: 'intermediate', requires: ['lit.poetry'], navTo: 'poetry', state: lock,
+      desc: 'Its own tree: sound, line breaks, forms, analysis and writing and performing your own poems.' },
   ],
 };

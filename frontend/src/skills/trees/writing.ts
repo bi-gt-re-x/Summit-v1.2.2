@@ -57,5 +57,11 @@ export const WRITING: SubjectTree = {
       desc: 'Writing that could not be by anybody else. It comes from imitating deliberately until the imitations stop fitting, rather than from trying to be original at the start.' },
     { id: 'wr.publish', name: 'Publishing', icon: 'publish', tier: 'mastery', requires: ['wr.long', 'wr.voice', 'wr.email'], state: lock, percent: 0, xp: 2900,
       desc: 'Submitting, being rejected, and sending it out again the same week. The manuscript is half the work; the other half is the unglamorous business of putting it in front of people.' },
+    { id: 'wr.essays', name: 'Essays (Full Course)', icon: 'essay', tier: 'intermediate', requires: ['wr.essay'], navTo: 'essays', state: lock,
+      desc: 'Its own tree: theses, evidence, analysis and timed essays for English, history and AP classes.' },
+    { id: 'wr.journal', name: 'Journalism', icon: 'print', tier: 'intermediate', requires: ['wr.clarity'], navTo: 'journalism', state: lock,
+      desc: 'Its own tree: interviewing, ledes, news and feature writing, editing and press law.' },
+    { id: 'wr.creativex', name: 'Creative Writing', icon: 'story-arc', tier: 'advanced', requires: ['wr.story'], navTo: 'creative-writing', state: lock,
+      desc: 'Its own tree: characters, scenes, short stories, workshops and sending your work out.' },
   ],
 };

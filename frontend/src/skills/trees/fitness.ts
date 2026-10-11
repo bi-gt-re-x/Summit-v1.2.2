@@ -55,5 +55,9 @@ export const FITNESS: SubjectTree = {
       desc: 'A subject of its own: what food actually does, and how to read a claim about it past the marketing.' },
     { id: 'ft.mind', name: 'Mind & Recovery', icon: 'meditation', tier: 'intermediate', requires: ['ft.sleep'], navTo: 'mindfulness', state: lock,
       desc: 'A subject of its own: stress, attention and the practices that make rest deliberate.' },
+    { id: 'ft.basketball', name: 'Basketball', icon: 'basketball', tier: 'beginner', requires: ['ft.form'], navTo: 'basketball', state: lock,
+      desc: 'Its own tree: handles, shooting form, defense, basketball IQ and making varsity.' },
+    { id: 'ft.soccer', name: 'Soccer', icon: 'soccer', tier: 'beginner', requires: ['ft.form'], navTo: 'soccer', state: lock,
+      desc: 'Its own tree: first touch, passing, positioning, tactics and club and college soccer.' },
   ],
 };

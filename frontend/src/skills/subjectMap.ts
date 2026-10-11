@@ -3,16 +3,16 @@
  *
  * ## Why this exists
  *
- * The subject catalogue in backend/config/subjects.py is a hundred fixed rows —
+ * The subject catalogue in backend/config/subjects.py is 150 fixed rows —
  * the things this app lets somebody say a task is *about*. The trees in
- * skills/trees are fifty-five lattices — the things it can teach. They are
+ * skills/trees are a hundred and eleven lattices — the things it can teach. They are
  * deliberately not the same list: "Laundry" is a real subject to file a task
  * under and is not a subject with a progression, and "Machine Learning" is a
  * whole lattice that no catalogue row is going to be big enough for.
  *
  * This is the join. Every catalogue subject names the tree it opens, and where
  * the tree has an obvious landing place, the node it should open on. That is
- * what lets the skill tree page offer all hundred subjects the reader already
+ * what lets the skill tree page offer all 150 subjects the reader already
  * uses on their tasks, rather than eleven names they have never seen.
  *
  * ## Many subjects to one tree, never the reverse
@@ -65,7 +65,7 @@ const GROUP_ROOT: Record<string, string> = {
 };
 
 /**
- * Subject id → where it opens. All hundred of them.
+ * Subject id → where it opens. All 150 of them.
  *
  * Kept in catalogue order and grouped by the catalogue's own groups, so this
  * file can be read beside backend/config/subjects.py and checked by eye as well
@@ -87,6 +87,17 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   geology: { tree: 'earth-space', node: 'es.rocks' },
   ecology: { tree: 'biology', node: 'bi.ecology' },
   science: { tree: 'science' },
+  trigonometry: { tree: 'trigonometry' },
+  precalculus: { tree: 'precalculus' },
+  differential_equations: { tree: 'differential-equations' },
+  organic_chemistry: { tree: 'organic-chemistry' },
+  biochemistry: { tree: 'biochemistry' },
+  microbiology: { tree: 'microbiology' },
+  neuroscience: { tree: 'neuroscience' },
+  environmental_science: { tree: 'environmental-science' },
+  forensic_science: { tree: 'forensic-science' },
+  lab_work: { tree: 'lab-work' },
+  science_fair: { tree: 'science-fair' },
 
   // ---- Studying ----
   homework: { tree: 'study', node: 'sy.plan' },
@@ -99,6 +110,14 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   tutoring: { tree: 'study', node: 'sy.explain' },
   study_group: { tree: 'study', node: 'sy.group' },
   flashcards: { tree: 'study', node: 'sy.spacing' },
+  school: { tree: 'school' },
+  note_taking: { tree: 'note-taking' },
+  test_prep: { tree: 'test-prep' },
+  college_apps: { tree: 'college-apps' },
+  financial_aid: { tree: 'financial-aid' },
+  extracurriculars: { tree: 'extracurriculars' },
+  pre_med: { tree: 'pre-med' },
+  ai_tools: { tree: 'ai-tools' },
 
   // ---- Language and humanities ----
   english: { tree: 'language' },
@@ -117,6 +136,15 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   psychology: { tree: 'psychology' },
   sociology: { tree: 'humanities', node: 'hu.people' },
   politics: { tree: 'humanities', node: 'hu.power' },
+  latin: { tree: 'latin' },
+  sign_language: { tree: 'sign-language' },
+  essays: { tree: 'essays' },
+  creative_writing: { tree: 'creative-writing' },
+  poetry: { tree: 'poetry' },
+  journalism: { tree: 'journalism' },
+  public_speaking: { tree: 'public-speaking' },
+  civics: { tree: 'civics' },
+  model_un: { tree: 'model-un' },
 
   // ---- Computing ----
   programming: { tree: 'coding' },
@@ -132,6 +160,12 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
      under Robotics is doing. It has its own lattice now. */
   robotics: { tree: 'robotics', node: 'ro.mech' },
   engineering: { tree: 'physics', node: 'ph.fbd' },
+  python: { tree: 'python' },
+  java: { tree: 'java' },
+  game_dev: { tree: 'game-dev' },
+  app_dev: { tree: 'app-dev' },
+  electronics: { tree: 'electronics' },
+  spreadsheets: { tree: 'spreadsheets' },
 
   // ---- Business and money ----
   economics: { tree: 'economics' },
@@ -144,6 +178,7 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   taxes: { tree: 'business', node: 'bu.tax' },
   law: { tree: 'business', node: 'bu.legal' },
   management: { tree: 'management' },
+  entrepreneurship: { tree: 'entrepreneurship' },
 
   // ---- Work ----
   work: { tree: 'career' },
@@ -156,6 +191,9 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   reports: { tree: 'writing', node: 'wr.report' },
   interviews: { tree: 'career', node: 'ca.interview' },
   job_search: { tree: 'career', node: 'ca.search' },
+  part_time_job: { tree: 'part-time-job' },
+  internships: { tree: 'internships' },
+  leadership: { tree: 'leadership' },
 
   // ---- Creative ----
   art: { tree: 'art' },
@@ -168,6 +206,13 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   singing: { tree: 'voice' },
   dance: { tree: 'fitness', node: 'ft.mobility' },
   film: { tree: 'film' },
+  violin: { tree: 'violin' },
+  drums: { tree: 'drums' },
+  band: { tree: 'band' },
+  music_theory: { tree: 'music-theory' },
+  theater: { tree: 'theater' },
+  art_history: { tree: 'art-history' },
+  cad: { tree: 'cad' },
 
   // ---- Health and fitness ----
   gym: { tree: 'strength' },
@@ -180,6 +225,9 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   sleep: { tree: 'mindfulness', node: 'mi.sleep' },
   therapy: { tree: 'mindfulness', node: 'mi.help' },
   health: { tree: 'fitness' },
+  basketball: { tree: 'basketball' },
+  soccer: { tree: 'soccer' },
+  stress: { tree: 'stress' },
 
   // ---- Life and home ----
   chores: { tree: 'life', node: 'lf.clean' },
@@ -192,6 +240,8 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   travel: { tree: 'travel' },
   reading: { tree: 'language', node: 'ln.read' },
   journaling: { tree: 'mindfulness', node: 'mi.journal' },
+  driving: { tree: 'driving' },
+  chess: { tree: 'chess' },
 };
 
 /**

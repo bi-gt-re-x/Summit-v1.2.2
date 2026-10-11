@@ -57,5 +57,9 @@ export const MATH: SubjectTree = {
       desc: 'A subject of its own: logic, sets, counting and proof — the math computing is written in.' },
     { id: 'm.compmath', name: 'Competition Mathematics', icon: 'trophy', tier: 'expert', requires: ['m.proof', 'm.combinatorics'], navTo: 'competition-math', state: lock,
       desc: 'A subject of its own: AMC, AIME and olympiad — choosing the method, against a clock.' },
+    { id: 'm.trigx', name: 'Trigonometry (Full Course)', icon: 'trigonometry', tier: 'advanced', requires: ['m.trig'], navTo: 'trigonometry', state: lock,
+      desc: 'Its own tree: right triangles, the unit circle, identities and the laws that solve any triangle.' },
+    { id: 'm.precalcx', name: 'Precalculus (Full Course)', icon: 'precalculus', tier: 'expert', requires: ['m.precalc'], navTo: 'precalculus', state: lock,
+      desc: 'Its own tree: polynomials, logs, trig functions and conics, all the way to being calc-ready.' },
   ],
 };

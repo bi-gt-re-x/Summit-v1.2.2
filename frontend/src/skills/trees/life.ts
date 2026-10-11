@@ -56,5 +56,9 @@ export const LIFE: SubjectTree = {
       desc: 'A subject of its own: feeding yourself well, most days, without it taking an evening.' },
     { id: 'lf.travel', name: 'Travel', icon: 'travel', tier: 'advanced', requires: ['lf.occasions'], navTo: 'travel', state: lock,
       desc: 'A subject of its own: planning, packing and going somewhere without the trip needing recovery.' },
+    { id: 'lf.driving', name: 'Driving', icon: 'car', tier: 'intermediate', requires: ['lf.admin'], navTo: 'driving', state: lock,
+      desc: "Its own tree: your learner's permit, road skills, the road test and staying safe." },
+    { id: 'lf.chess', name: 'Chess', icon: 'rook', tier: 'beginner', requires: ['lf.routine'], navTo: 'chess', state: lock,
+      desc: 'Its own tree: tactics, openings, endgames, calculation and playing in real tournaments.' },
   ],
 };

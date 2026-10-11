@@ -57,5 +57,7 @@ export const DATA_SCIENCE: SubjectTree = {
       desc: 'Consent, privacy and the harm a model can do at scale to people who never agreed to be in it. Anonymized data is rarely as anonymous as it sounds, and aggregation is not a defense on its own.' },
     { id: 'ds.ml', name: 'Machine Learning', icon: 'neural-net', tier: 'advanced', requires: ['ds.features'], navTo: 'machine-learning', state: lock,
       desc: 'A subject of its own: teaching a program the rule from examples rather than writing the rule yourself.' },
+    { id: 'ds.sheets', name: 'Spreadsheets', icon: 'grid', tier: 'beginner', requires: ['ds.tables'], navTo: 'spreadsheets', state: lock,
+      desc: 'Its own tree: formulas, lookups, pivot tables and dashboards in Excel and Google Sheets.' },
   ],
 };

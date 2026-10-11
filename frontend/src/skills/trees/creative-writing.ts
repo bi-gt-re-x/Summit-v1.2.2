@@ -1,0 +1,50 @@
+/**
+ * Creative Writing, a branch of Writing.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const CREATIVE_WRITING: SubjectTree = {
+  id: 'creative-writing',
+  title: 'Creative Writing',
+  blurb: 'Stories, scenes and characters worth reading.',
+  parent: 'writing',
+  nodes: [
+    { id: 'cw.habit', name: 'Writing Often', icon: 'notebook', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'A little every day, even when it comes out bad. Volume is how you get better, so lower the bar and show up.' },
+    { id: 'cw.read', name: 'Reading Like a Writer', icon: 'reading', tier: 'foundation', requires: ['cw.habit'], state: lock, percent: 0, xp: 1200,
+      desc: 'Noticing how authors open, pace and end their scenes. Borrow their tricks and make them yours.' },
+    { id: 'cw.ideas', name: 'Getting Ideas', icon: 'idea', tier: 'beginner', requires: ['cw.habit'], state: lock, percent: 0, xp: 1600,
+      desc: 'Prompts, what-ifs and stuff that happened to you. Write ideas down the second you have them.' },
+    { id: 'cw.detail', name: 'Show With Details', icon: 'imagery', tier: 'beginner', requires: ['cw.read'], state: lock, percent: 0, xp: 1700,
+      desc: 'Specific, concrete details instead of summary. One sharp detail does more than a paragraph of description.' },
+    { id: 'cw.character', name: 'Characters', icon: 'character', tier: 'beginner', core: true, requires: ['cw.ideas'], state: lock, percent: 0, xp: 1400,
+      desc: "People who want something and can't easily get it. Want plus obstacle is where every story starts." },
+    { id: 'cw.dialogue', name: 'Dialogue', icon: 'conversation', tier: 'intermediate', requires: ['cw.character'], state: lock, percent: 0, xp: 1800,
+      desc: 'Talk that sounds real and moves the story forward. Cut the hellos and get to the point.' },
+    { id: 'cw.pov', name: 'Point of View', icon: 'viewpoint', tier: 'intermediate', requires: ['cw.character'], state: lock, percent: 0, xp: 1900,
+      desc: 'First person, close third or something stranger. Pick the one that gives you the best secrets to keep.' },
+    { id: 'cw.plot', name: 'Plot & Structure', icon: 'story-arc', tier: 'intermediate', core: true, requires: ['cw.character'], state: lock, percent: 0, xp: 2000,
+      desc: 'A beginning, rising tension, a turn and an ending. Every scene should change something.' },
+    { id: 'cw.scene', name: 'Writing Scenes', icon: 'scene', tier: 'intermediate', requires: ['cw.plot', 'cw.dialogue'], state: lock, percent: 0, xp: 1700,
+      desc: "A scene has a goal, a conflict and an outcome. If nothing changes, it's probably a summary." },
+    { id: 'cw.setting', name: 'Setting & World', icon: 'landscape', tier: 'intermediate', requires: ['cw.detail'], state: lock, percent: 0, xp: 1800,
+      desc: 'Places that feel lived in. Use all five senses, and stick to what the character would notice.' },
+    { id: 'cw.voice', name: 'Voice', icon: 'voice-print', tier: 'advanced', requires: ['cw.pov'], state: lock, percent: 0, xp: 2200,
+      desc: 'The sound that makes your writing yours. It shows up when you stop trying to sound like a writer.' },
+    { id: 'cw.flash', name: 'Flash Fiction', icon: 'flash', tier: 'advanced', requires: ['cw.scene'], state: lock, percent: 0, xp: 2300,
+      desc: 'Complete stories in under 1,000 words. Great practice for cutting and for nailing endings.' },
+    { id: 'cw.short', name: 'Short Stories', icon: 'book', tier: 'advanced', core: true, requires: ['cw.scene', 'cw.setting'], state: lock, percent: 0, xp: 2000,
+      desc: 'A full story with an arc in a few thousand words. Most writers learn the craft right here.' },
+    { id: 'cw.revise', name: 'Revising Fiction', icon: 'revise', tier: 'advanced', requires: ['cw.short'], state: lock, percent: 0, xp: 2100,
+      desc: 'Big changes first, like plot, character and structure. Polishing sentences comes last, once the story works.' },
+    { id: 'cw.workshop', name: 'Workshopping', icon: 'critique', tier: 'expert', requires: ['cw.revise', 'cw.voice'], state: lock, percent: 0, xp: 2500,
+      desc: 'Giving and taking feedback in a group. Pay the most attention to notes that several readers agree on.' },
+    { id: 'cw.genre', name: 'Genre Writing', icon: 'genre', tier: 'expert', requires: ['cw.short'], state: lock, percent: 0, xp: 2600,
+      desc: 'Fantasy, sci-fi, mystery and horror each have rules readers expect. Know them before you break them.' },
+    { id: 'cw.submit', name: 'Submitting Your Work', icon: 'publish', tier: 'expert', requires: ['cw.workshop', 'cw.flash'], state: lock, percent: 0, xp: 2300,
+      desc: 'Literary magazines, contests and the Scholastic Awards. Rejections are normal, so keep a list and keep sending.' },
+    { id: 'cw.long', name: 'A Longer Project', icon: 'manuscript', tier: 'mastery', requires: ['cw.genre', 'cw.workshop'], state: lock, percent: 0, xp: 2700,
+      desc: 'A novella, novel or story collection. Finishing a long draft teaches you things nothing else can.' },
+  ],
+};

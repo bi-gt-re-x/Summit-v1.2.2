@@ -1,0 +1,50 @@
+/**
+ * Forensic Science, a branch of Science.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const FORENSIC_SCIENCE: SubjectTree = {
+  id: 'forensic-science',
+  title: 'Forensic Science',
+  blurb: 'Using science to work out what happened.',
+  parent: 'science',
+  nodes: [
+    { id: 'fs.scene', name: 'Crime Scene Basics', icon: 'magnifier', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Securing the scene, walking through it and touching nothing. One careless step can ruin the evidence.' },
+    { id: 'fs.document', name: 'Documenting the Scene', icon: 'notebook', tier: 'foundation', requires: ['fs.scene'], state: lock, percent: 0, xp: 1200,
+      desc: "Photos, sketches and notes before anything gets moved. If it isn't written down, it didn't happen." },
+    { id: 'fs.custody', name: 'Chain of Custody', icon: 'contract', tier: 'beginner', requires: ['fs.document'], state: lock, percent: 0, xp: 1600,
+      desc: 'A record of everyone who handled each piece of evidence. A broken chain can get evidence thrown out of court.' },
+    { id: 'fs.prints', name: 'Fingerprints', icon: 'hands', tier: 'beginner', core: true, requires: ['fs.scene'], state: lock, percent: 0, xp: 1700,
+      desc: 'Loops, whorls and arches, and how prints get lifted. No two people share the same prints, even identical twins.' },
+    { id: 'fs.trace', name: 'Trace Evidence', icon: 'microscope', tier: 'beginner', requires: ['fs.scene'], state: lock, percent: 0, xp: 1400,
+      desc: 'Hair, fibers, glass and soil. Tiny bits move between people and places whenever they touch.' },
+    { id: 'fs.blood', name: 'Blood Spatter', icon: 'trace', tier: 'intermediate', requires: ['fs.prints'], state: lock, percent: 0, xp: 1800,
+      desc: "Reading the shape and angle of drops to rebuild what happened. It's trig and physics, which surprises most students." },
+    { id: 'fs.dna', name: 'DNA Profiling', icon: 'dna', tier: 'intermediate', core: true, requires: ['fs.trace'], state: lock, percent: 0, xp: 1900,
+      desc: "Comparing DNA from a scene to a suspect. It's powerful, and contamination is its biggest weakness." },
+    { id: 'fs.tox', name: 'Toxicology', icon: 'chem-equation', tier: 'intermediate', requires: ['fs.trace'], state: lock, percent: 0, xp: 2000,
+      desc: 'Testing for drugs and poisons in the body. Dose and timing decide whether something is harmful.' },
+    { id: 'fs.chem', name: 'Forensic Chemistry', icon: 'titration', tier: 'intermediate', requires: ['fs.trace'], state: lock, percent: 0, xp: 1700,
+      desc: 'Chromatography and other tests to identify unknown substances. Ink, drugs and paint can all be matched this way.' },
+    { id: 'fs.bones', name: 'Forensic Anthropology', icon: 'organs', tier: 'advanced', requires: ['fs.dna'], state: lock, percent: 0, xp: 2100,
+      desc: 'What a skeleton can tell you about age, sex and height. Bones also hold clues about injuries and cause of death.' },
+    { id: 'fs.tod', name: 'Time of Death', icon: 'timer', tier: 'advanced', requires: ['fs.tox', 'fs.bones'], state: lock, percent: 0, xp: 2200,
+      desc: 'Body temperature, rigor mortis and insects as clocks. Each method gives a range, so combine them.' },
+    { id: 'fs.docs', name: 'Questioned Documents', icon: 'source-doc', tier: 'advanced', requires: ['fs.chem'], state: lock, percent: 0, xp: 2300,
+      desc: 'Handwriting, ink and paper analysis to spot forgeries. Small habits in handwriting are hard to fake.' },
+    { id: 'fs.digital', name: 'Digital Forensics', icon: 'filesystem', tier: 'advanced', requires: ['fs.custody'], state: lock, percent: 0, xp: 2000,
+      desc: 'Recovering data from phones and computers. Deleted files are usually still sitting there.' },
+    { id: 'fs.ballistics', name: 'Firearms & Ballistics', icon: 'target', tier: 'expert', requires: ['fs.blood'], state: lock, percent: 0, xp: 2400,
+      desc: "Matching bullets to guns and reading trajectories. It's careful comparison work under a microscope." },
+    { id: 'fs.odds', name: 'Evidence & Probability', icon: 'probability', tier: 'expert', requires: ['fs.dna', 'fs.prints'], state: lock, percent: 0, xp: 2500,
+      desc: 'What a match really means and how likely a coincidence is. Misreading these numbers has sent innocent people to prison.' },
+    { id: 'fs.court', name: 'Expert Testimony', icon: 'testimony', tier: 'expert', requires: ['fs.odds', 'fs.custody'], state: lock, percent: 0, xp: 2600,
+      desc: 'Explaining science to a jury in plain words. Being clear and honest about limits matters more than sounding smart.' },
+    { id: 'fs.justice', name: 'Forensics & Justice', icon: 'balance-scale', tier: 'expert', requires: ['fs.court'], state: lock, percent: 0, xp: 2300,
+      desc: 'Wrongful convictions, junk science and reform. Good forensics protects the innocent as much as it catches the guilty.' },
+    { id: 'fs.case', name: 'Solving a Mock Case', icon: 'puzzle', tier: 'mastery', requires: ['fs.justice', 'fs.tod', 'fs.digital'], state: lock, percent: 0, xp: 2700,
+      desc: 'Putting every skill together on one full scenario. Build the timeline, test each theory and write up what the evidence supports.' },
+  ],
+};

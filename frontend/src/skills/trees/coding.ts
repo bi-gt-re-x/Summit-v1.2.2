@@ -65,5 +65,11 @@ export const CODING: SubjectTree = {
       desc: 'A subject of its own: what breaks, why it breaks, and the habits that stop it breaking here.' },
     { id: 'c.robotics', name: 'Competitive Robotics', icon: 'automation', tier: 'advanced', requires: ['c.oop', 'c.debug'], navTo: 'robotics', state: lock,
       desc: 'A subject of its own: FRC and VEX — build season, and the robot that never stops working.' },
+    { id: 'c.python', name: 'Python', icon: 'syntax', tier: 'beginner', requires: ['c.vars'], navTo: 'python', state: lock,
+      desc: 'Its own tree: the language most students learn first, from setup to projects and contests.' },
+    { id: 'c.java', name: 'Java', icon: 'objects', tier: 'intermediate', requires: ['c.oop'], navTo: 'java', state: lock,
+      desc: 'Its own tree: classes, arrays, inheritance and everything on AP Computer Science A.' },
+    { id: 'c.games', name: 'Game Development', icon: 'spark', tier: 'beginner', requires: ['c.loops'], navTo: 'game-dev', state: lock,
+      desc: 'Its own tree: the game loop, physics, level design, playtesting and shipping a game.' },
   ],
 };

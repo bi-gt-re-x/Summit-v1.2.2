@@ -4,7 +4,7 @@
  * ## Why this is a folder rather than a file
  *
  * It was one file, and one file was right while there were nine trees. There are
- * sixty-one, which is several thousand lines of authored description, and a
+ * a hundred and eleven, which is many thousands of lines of authored description, and a
  * single file that size cannot be reviewed a subject at a time — a change to the
  * Guitar tree and a change to the Chemistry tree land in the same hunk of the
  * same diff. One file per tree keeps a subject to a subject, the way
@@ -36,100 +36,160 @@ import type { SubjectTree } from './types';
 
 import { CODING } from './coding';
 import { WEB } from './web';
+import { APP_DEV } from './app-dev';
 import { ALGO } from './algorithms';
+import { PYTHON } from './python';
+import { JAVA } from './java';
+import { GAME_DEV } from './game-dev';
 import { GRAPHS } from './graphs';
 import { SYSTEMS } from './systems';
 import { NETWORKING } from './networking';
 import { DATA_SCIENCE } from './data-science';
 import { MACHINE_LEARNING } from './machine-learning';
+import { SPREADSHEETS } from './spreadsheets';
 import { DATABASES } from './databases';
 import { CYBERSECURITY } from './cybersecurity';
 
 import { MATH } from './mathematics';
 import { CALCULUS } from './calculus';
+import { DIFF_EQ } from './differential-equations';
 import { STATISTICS } from './statistics';
 import { LINEAR_ALGEBRA } from './linear-algebra';
 import { DISCRETE } from './discrete';
+import { TRIGONOMETRY } from './trigonometry';
+import { PRECALCULUS } from './precalculus';
 
 import { SCIENCE } from './science';
 import { PHYSICS } from './physics';
 import { CHEMISTRY } from './chemistry';
+import { ENVIRONMENTAL_SCIENCE } from './environmental-science';
+import { FORENSIC_SCIENCE } from './forensic-science';
+import { LAB_WORK } from './lab-work';
+import { SCIENCE_FAIR } from './science-fair';
+import { ORGANIC_CHEMISTRY } from './organic-chemistry';
 import { BIOLOGY } from './biology';
+import { BIOCHEMISTRY } from './biochemistry';
+import { MICROBIOLOGY } from './microbiology';
+import { NEUROSCIENCE } from './neuroscience';
 import { EARTH_SPACE } from './earth-space';
+
+import { SCHOOL } from './school';
+import { TEST_PREP } from './test-prep';
+import { COLLEGE_APPS } from './college-apps';
+import { EXTRACURRICULARS } from './extracurriculars';
+import { PRE_MED } from './pre-med';
+import { FINANCIAL_AID } from './financial-aid';
 
 import { LANGUAGE } from './language';
 import { WRITING } from './writing';
+import { PUBLIC_SPEAKING } from './public-speaking';
+import { CREATIVE_WRITING } from './creative-writing';
+import { JOURNALISM } from './journalism';
+import { ESSAYS } from './essays';
 import { LITERATURE } from './literature';
+import { POETRY } from './poetry';
 import { FOREIGN_LANGUAGE } from './foreign-language';
+import { LATIN } from './latin';
+import { SIGN_LANGUAGE } from './sign-language';
 
 import { HUMANITIES } from './humanities';
 import { HISTORY } from './history';
 import { PHILOSOPHY } from './philosophy';
 import { PSYCHOLOGY } from './psychology';
+import { CIVICS } from './civics';
 
 import { BUSINESS } from './business';
 import { FINANCE } from './finance';
 import { ECONOMICS } from './economics';
 import { MARKETING } from './marketing';
 import { MANAGEMENT } from './management';
+import { ENTREPRENEURSHIP } from './entrepreneurship';
 
 import { PRODUCTIVITY } from './productivity';
 import { FOCUS } from './focus';
 import { STUDY } from './study';
+import { NOTE_TAKING } from './note-taking';
+import { AI_TOOLS } from './ai-tools';
 import { CAREER } from './career';
+import { PART_TIME_JOB } from './part-time-job';
+import { INTERNSHIPS } from './internships';
+import { LEADERSHIP } from './leadership';
 
 import { ART } from './art';
 import { DRAWING } from './drawing';
 import { DESIGN } from './design';
+import { CAD } from './cad';
 import { PHOTOGRAPHY } from './photography';
 import { FILM } from './film';
+import { THEATER } from './theater';
+import { ART_HISTORY } from './art-history';
 
 import { MUSIC } from './music';
 import { GUITAR } from './guitar';
 import { PIANO } from './piano';
 import { VOICE } from './voice';
 import { PRODUCTION } from './production';
+import { VIOLIN } from './violin';
+import { DRUMS } from './drums';
+import { BAND } from './band';
+import { MUSIC_THEORY } from './music-theory';
 
 import { FITNESS } from './fitness';
 import { STRENGTH } from './strength';
 import { ENDURANCE } from './endurance';
 import { NUTRITION } from './nutrition';
 import { MINDFULNESS } from './mindfulness';
+import { STRESS } from './stress';
+import { BASKETBALL } from './basketball';
+import { SOCCER } from './soccer';
 
 import { COMPETITIVE_PROGRAMMING } from './competitive-programming';
 import { ROBOTICS } from './robotics';
+import { ELECTRONICS } from './electronics';
 import { COMPETITION_MATH } from './competition-math';
 import { OLYMPIAD_SCIENCE } from './olympiad-science';
 import { DEBATE } from './debate';
+import { MODEL_UN } from './model-un';
 import { PERFORMANCE } from './performance';
 
 import { LIFE } from './life';
 import { COOKING } from './cooking';
 import { TRAVEL } from './travel';
+import { DRIVING } from './driving';
+import { CHESS } from './chess';
 
 /** Every tree, roots first within each subject and children after them. */
 export const TREES: readonly SubjectTree[] = [
   // Computing
-  CODING, WEB, ALGO, GRAPHS, SYSTEMS, NETWORKING,
-  DATA_SCIENCE, MACHINE_LEARNING, DATABASES, CYBERSECURITY,
-  COMPETITIVE_PROGRAMMING, ROBOTICS,
+  CODING, WEB, APP_DEV, ALGO, GRAPHS, SYSTEMS, NETWORKING,
+  DATA_SCIENCE, MACHINE_LEARNING, SPREADSHEETS, DATABASES, CYBERSECURITY,
+  COMPETITIVE_PROGRAMMING, ROBOTICS, ELECTRONICS, PYTHON, JAVA, GAME_DEV,
   // Math and science
-  MATH, CALCULUS, STATISTICS, LINEAR_ALGEBRA, DISCRETE, COMPETITION_MATH,
-  SCIENCE, PHYSICS, CHEMISTRY, BIOLOGY, EARTH_SPACE, OLYMPIAD_SCIENCE,
+  MATH, CALCULUS, DIFF_EQ, STATISTICS, LINEAR_ALGEBRA, DISCRETE,
+  COMPETITION_MATH, TRIGONOMETRY, PRECALCULUS,
+  SCIENCE, PHYSICS, CHEMISTRY, ORGANIC_CHEMISTRY, BIOLOGY, BIOCHEMISTRY,
+  MICROBIOLOGY, NEUROSCIENCE, EARTH_SPACE, OLYMPIAD_SCIENCE,
+  ENVIRONMENTAL_SCIENCE, FORENSIC_SCIENCE, LAB_WORK, SCIENCE_FAIR,
+  // Studying
+  SCHOOL, TEST_PREP, COLLEGE_APPS, EXTRACURRICULARS, PRE_MED, FINANCIAL_AID,
   // Language and humanities
-  LANGUAGE, WRITING, LITERATURE, FOREIGN_LANGUAGE,
-  HUMANITIES, HISTORY, PHILOSOPHY, PSYCHOLOGY, DEBATE,
+  LANGUAGE, WRITING, CREATIVE_WRITING, JOURNALISM, ESSAYS, LITERATURE, POETRY,
+  FOREIGN_LANGUAGE, PUBLIC_SPEAKING, LATIN, SIGN_LANGUAGE,
+  HUMANITIES, HISTORY, PHILOSOPHY, PSYCHOLOGY, DEBATE, MODEL_UN, CIVICS,
   // Business and money
-  BUSINESS, FINANCE, ECONOMICS, MARKETING, MANAGEMENT,
+  BUSINESS, FINANCE, ECONOMICS, MARKETING, MANAGEMENT, ENTREPRENEURSHIP,
   // Work and studying
-  PRODUCTIVITY, FOCUS, STUDY, CAREER,
+  PRODUCTIVITY, FOCUS, STUDY, NOTE_TAKING, AI_TOOLS, CAREER, PART_TIME_JOB,
+  INTERNSHIPS, LEADERSHIP,
   // Creative
-  ART, DRAWING, DESIGN, PHOTOGRAPHY, FILM,
-  MUSIC, GUITAR, PIANO, VOICE, PRODUCTION, PERFORMANCE,
+  ART, DRAWING, DESIGN, CAD, PHOTOGRAPHY, FILM, THEATER, ART_HISTORY,
+  MUSIC, GUITAR, PIANO, VOICE, PRODUCTION, PERFORMANCE, VIOLIN, DRUMS, BAND,
+  MUSIC_THEORY,
   // Health and fitness
-  FITNESS, STRENGTH, ENDURANCE, NUTRITION, MINDFULNESS,
+  FITNESS, STRENGTH, ENDURANCE, NUTRITION, MINDFULNESS, STRESS, BASKETBALL,
+  SOCCER,
   // Life and home
-  LIFE, COOKING, TRAVEL,
+  LIFE, COOKING, TRAVEL, DRIVING, CHESS,
 ];
 
 /** The tree the page opens on. Always defined, so nothing has to handle an

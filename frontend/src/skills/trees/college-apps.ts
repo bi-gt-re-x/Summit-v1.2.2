@@ -1,0 +1,50 @@
+/**
+ * College Applications, a branch of School & College.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const COLLEGE_APPS: SubjectTree = {
+  id: 'college-apps',
+  title: 'College Applications',
+  blurb: 'From a first list to a deposit, one deadline at a time.',
+  parent: 'school',
+  nodes: [
+    { id: 'col.list', name: 'Building a College List', icon: 'checklist', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: "Reach, target and likely schools that fit what you want. A good list has schools you'd be happy to attend at every level." },
+    { id: 'col.research', name: 'Researching Schools', icon: 'search-engine', tier: 'foundation', requires: ['col.list'], state: lock, percent: 0, xp: 1200,
+      desc: 'Majors, size, location, cost and culture. Visit or take virtual tours, and talk to current students.' },
+    { id: 'col.brainstorm', name: 'Brainstorming Your Story', icon: 'idea', tier: 'beginner', requires: ['col.list'], state: lock, percent: 0, xp: 1600,
+      desc: 'Listing values, moments and objects that matter to you. Your best topic is often something ordinary seen in a new way.' },
+    { id: 'col.timeline', name: 'Application Timeline', icon: 'timeline', tier: 'beginner', requires: ['col.list'], state: lock, percent: 0, xp: 1700,
+      desc: 'Early decision, early action and regular deadlines. Put every date in your calendar by the end of junior summer.' },
+    { id: 'col.common', name: 'The Common App', icon: 'apply', tier: 'beginner', requires: ['col.timeline'], state: lock, percent: 0, xp: 1400,
+      desc: 'Activities, honors, family info and where each part goes. Fill in the easy sections early so fall is for writing.' },
+    { id: 'col.activities', name: 'Activities List', icon: 'star', tier: 'beginner', requires: ['col.common'], state: lock, percent: 0, xp: 1500,
+      desc: 'Ten slots with 150 characters each. Use strong verbs and numbers to show what you actually did.' },
+    { id: 'col.essay', name: 'Personal Statement', icon: 'essay', tier: 'intermediate', core: true, requires: ['col.common', 'col.brainstorm'], state: lock, percent: 0, xp: 1900,
+      desc: 'A 650-word story only you could write. Small moments told well beat big dramatic topics.' },
+    { id: 'col.supplements', name: 'Supplemental Essays', icon: 'paragraph', tier: 'intermediate', requires: ['col.essay'], state: lock, percent: 0, xp: 2000,
+      desc: "Why this college, why this major and short answers. Name specific classes, clubs or professors you'd connect with." },
+    { id: 'col.recs', name: 'Recommendations', icon: 'testimony', tier: 'intermediate', requires: ['col.timeline'], state: lock, percent: 0, xp: 1700,
+      desc: 'Asking two teachers and your counselor early. Give them a brag sheet so they can write specifics.' },
+    { id: 'col.scores', name: 'Scores & Test-Optional', icon: 'gauge', tier: 'intermediate', requires: ['col.timeline'], state: lock, percent: 0, xp: 1800,
+      desc: "Deciding whether to send your scores. Compare yours to each school's middle 50 percent." },
+    { id: 'col.interview', name: 'College Interviews', icon: 'interview', tier: 'advanced', requires: ['col.supplements'], state: lock, percent: 0, xp: 2200,
+      desc: 'Talking with an alum or admissions officer. Prepare a few stories and some real questions about the school.' },
+    { id: 'col.portfolio', name: 'Portfolios & Extras', icon: 'portfolio', tier: 'advanced', requires: ['col.activities'], state: lock, percent: 0, xp: 2300,
+      desc: 'Art, music, research or writing samples where schools accept them. Only send extras that are strong.' },
+    { id: 'col.edit', name: 'Editing Your Essays', icon: 'edit-pen', tier: 'advanced', core: true, requires: ['col.supplements'], state: lock, percent: 0, xp: 2000,
+      desc: 'Cutting, tightening and reading aloud. Pick one or two readers you trust, since ten readers just means ten opinions.' },
+    { id: 'col.submit', name: 'Submitting', icon: 'publish', tier: 'expert', requires: ['col.edit', 'col.recs', 'col.scores'], state: lock, percent: 0, xp: 2400,
+      desc: 'Checking every section, paying fees or getting waivers and hitting submit. Go a few days early in case the site crashes.' },
+    { id: 'col.decisions', name: 'Decisions & Waitlists', icon: 'decision', tier: 'expert', requires: ['col.submit'], state: lock, percent: 0, xp: 2500,
+      desc: 'Reading acceptances, rejections and waitlists calmly. A letter of continued interest can help on the waitlist.' },
+    { id: 'col.compare', name: 'Comparing Offers', icon: 'compare', tier: 'expert', requires: ['col.decisions'], state: lock, percent: 0, xp: 2600,
+      desc: 'Putting aid packages side by side and visiting admitted student days. The cheapest good fit is often the smartest choice.' },
+    { id: 'col.commit', name: 'Committing', icon: 'flag', tier: 'mastery', requires: ['col.compare', 'col.interview', 'col.portfolio'], state: lock, percent: 0, xp: 2600,
+      desc: 'Sending your deposit by May 1 and closing out the rest. Thank the people who helped you get there.' },
+    { id: 'col.paths', name: 'Gap Years & Transfers', icon: 'route', tier: 'mastery', requires: ['col.compare'], state: lock, percent: 0, xp: 2700,
+      desc: 'Other paths that work out fine. Plenty of people take a year off or transfer and end up exactly where they want.' },
+  ],
+};

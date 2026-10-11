@@ -57,5 +57,9 @@ export const ART: SubjectTree = {
       desc: 'A subject of its own: light, exposure and the frame, with a machine doing the rendering.' },
     { id: 'ar.film', name: 'Film & Video', icon: 'film', tier: 'advanced', requires: ['ar.space'], navTo: 'film', state: lock,
       desc: 'A subject of its own: images in sequence, with time and sound doing half of the work.' },
+    { id: 'ar.theater', name: 'Theater', icon: 'theatre', tier: 'beginner', requires: ['ar.see'], navTo: 'theater', state: lock,
+      desc: 'Its own tree: voice, script analysis, blocking, auditions, tech and opening night.' },
+    { id: 'ar.history', name: 'Art History', icon: 'museum', tier: 'advanced', requires: ['ar.critique'], navTo: 'art-history', state: lock,
+      desc: 'Its own tree: looking closely, art across eras and cultures, and AP Art History essays.' },
   ],
 };

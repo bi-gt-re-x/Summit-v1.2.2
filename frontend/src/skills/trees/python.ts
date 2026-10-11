@@ -1,0 +1,50 @@
+/**
+ * Python, a branch of Coding.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const PYTHON: SubjectTree = {
+  id: 'python',
+  title: 'Python',
+  blurb: 'The first language most students learn, start to finish.',
+  parent: 'coding',
+  nodes: [
+    { id: 'py.setup', name: 'Setting Up Python', icon: 'terminal', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Installing Python, picking an editor and running your first file. Getting set up is half the battle for beginners.' },
+    { id: 'py.basics', name: 'Variables & Types', icon: 'variables', tier: 'foundation', requires: ['py.setup'], state: lock, percent: 0, xp: 1200,
+      desc: 'Numbers, strings, booleans and how Python decides what type a value is. Loose typing is easy at first and tricky later.' },
+    { id: 'py.io', name: 'Input & Print', icon: 'input-stream', tier: 'beginner', requires: ['py.basics'], state: lock, percent: 0, xp: 1600,
+      desc: 'Getting input from the user and printing results. f-strings make your output clean and readable.' },
+    { id: 'py.control', name: 'If Statements & Loops', icon: 'loops', tier: 'beginner', core: true, requires: ['py.basics'], state: lock, percent: 0, xp: 1700,
+      desc: "if, elif, else, for and while. Python's indentation is the structure, so be careful with your spaces." },
+    { id: 'py.funcs', name: 'Functions', icon: 'functions', tier: 'beginner', core: true, requires: ['py.control'], state: lock, percent: 0, xp: 1400,
+      desc: 'def, parameters, return values and scope. Small functions make your code way easier to fix.' },
+    { id: 'py.lists', name: 'Lists & Tuples', icon: 'arrays', tier: 'beginner', requires: ['py.control'], state: lock, percent: 0, xp: 1500,
+      desc: 'Ordered collections and slicing. Most beginner programs live inside a list or two.' },
+    { id: 'py.dicts', name: 'Dictionaries & Sets', icon: 'hash-map', tier: 'intermediate', requires: ['py.lists'], state: lock, percent: 0, xp: 1900,
+      desc: "Key-value lookups and collections of unique items. Dictionaries are Python's most useful tool." },
+    { id: 'py.strings', name: 'String Tricks', icon: 'syntax', tier: 'intermediate', requires: ['py.lists'], state: lock, percent: 0, xp: 2000,
+      desc: 'Split, join, strip and format. Working with text is half of real Python work, so learn these by heart.' },
+    { id: 'py.comp', name: 'Comprehensions', icon: 'compress', tier: 'intermediate', requires: ['py.dicts', 'py.funcs'], state: lock, percent: 0, xp: 1700,
+      desc: 'Building lists and dicts in one line. They read great when short and turn painful when long.' },
+    { id: 'py.errors', name: 'Errors & Exceptions', icon: 'debugging', tier: 'intermediate', requires: ['py.funcs'], state: lock, percent: 0, xp: 1800,
+      desc: 'Reading tracebacks and using try and except. The last line of a traceback is the most useful one.' },
+    { id: 'py.files', name: 'Files', icon: 'filesystem', tier: 'intermediate', requires: ['py.errors'], state: lock, percent: 0, xp: 1900,
+      desc: 'Reading and writing text and CSV files. A with block closes the file for you, even when something breaks.' },
+    { id: 'py.modules', name: 'Modules & pip', icon: 'package', tier: 'advanced', requires: ['py.files'], state: lock, percent: 0, xp: 2300,
+      desc: 'Importing the standard library and installing packages. Virtual environments keep each project separate.' },
+    { id: 'py.oop', name: 'Classes & Objects', icon: 'objects', tier: 'advanced', core: true, requires: ['py.comp'], state: lock, percent: 0, xp: 2000,
+      desc: 'Bundling data and behavior together. Get comfy with simple classes before you touch inheritance.' },
+    { id: 'py.debug', name: 'Debugging', icon: 'trace', tier: 'advanced', requires: ['py.errors'], state: lock, percent: 0, xp: 2100,
+      desc: 'Print statements, the debugger and explaining your code out loud. Find where what you expected and what happened split.' },
+    { id: 'py.libs', name: 'Popular Libraries', icon: 'library', tier: 'expert', requires: ['py.modules'], state: lock, percent: 0, xp: 2500,
+      desc: 'requests, pandas, matplotlib and more. Libraries let you build real projects fast.' },
+    { id: 'py.testing', name: 'Testing With pytest', icon: 'coverage', tier: 'expert', requires: ['py.oop', 'py.debug'], state: lock, percent: 0, xp: 2600,
+      desc: 'Writing tests that check your code for you. Tests make changes a lot less scary.' },
+    { id: 'py.project', name: 'Projects', icon: 'project', tier: 'expert', requires: ['py.libs', 'py.strings', 'py.io'], state: lock, percent: 0, xp: 2300,
+      desc: 'Games, bots, scrapers and data tools. Building something you care about is the fastest way to learn.' },
+    { id: 'py.contest', name: 'Python for Contests', icon: 'race', tier: 'mastery', requires: ['py.testing', 'py.project'], state: lock, percent: 0, xp: 2700,
+      desc: 'Fast input, smart algorithms and USACO problems. Python runs slower, so the algorithm matters even more.' },
+  ],
+};

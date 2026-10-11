@@ -56,5 +56,9 @@ export const FOREIGN_LANGUAGE: SubjectTree = {
       desc: 'Carrying meaning across rather than words, and deciding what to lose. Being fluent in both languages is a prerequisite and nowhere near sufficient.' },
     { id: 'fl.maintain', name: 'Maintenance', icon: 'maintain', tier: 'mastery', requires: ['fl.fluency'], state: lock, percent: 0, xp: 2800,
       desc: 'Keeping a language you stopped studying. Without regular contact it fades faster than anything else you have learned, and reading twenty minutes a week holds most of it.' },
+    { id: 'fl.latin', name: 'Latin', icon: 'monument', tier: 'intermediate', requires: ['fl.grammar'], navTo: 'latin', state: lock,
+      desc: 'Its own tree: cases, declensions and translation, from your first noun to reading Vergil.' },
+    { id: 'fl.asl', name: 'Sign Language', icon: 'hands', tier: 'beginner', requires: ['fl.sounds'], navTo: 'sign-language', state: lock,
+      desc: 'Its own tree: fingerspelling, facial grammar, classifiers and real conversations in ASL.' },
   ],
 };

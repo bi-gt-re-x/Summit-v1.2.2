@@ -57,5 +57,11 @@ export const BIOLOGY: SubjectTree = {
       desc: 'Growth, limits and the interactions that hold numbers where they are. Exponential growth meeting a ceiling is the model behind conservation, epidemics and pest control alike.' },
     { id: 'bi.biotech', name: 'Biotechnology', icon: 'gene-edit', tier: 'mastery', requires: ['bi.immune', 'bi.population'], state: lock, percent: 0, xp: 3000,
       desc: 'Reading, editing and building with the same molecules. The techniques are now routine enough that the interesting constraints are ethical and ecological rather than technical.' },
+    { id: 'bi.biochem', name: 'Biochemistry', icon: 'enzyme', tier: 'intermediate', requires: ['bi.enzymes'], navTo: 'biochemistry', state: lock,
+      desc: 'Its own tree: proteins, enzymes and the pathways that turn food into energy inside a cell.' },
+    { id: 'bi.micro', name: 'Microbiology', icon: 'microscope', tier: 'intermediate', requires: ['bi.cells'], navTo: 'microbiology', state: lock,
+      desc: 'Its own tree: bacteria, viruses, culturing, antibiotics and how infections spread.' },
+    { id: 'bi.neuro', name: 'Neuroscience', icon: 'neuron', tier: 'advanced', requires: ['bi.nervous'], navTo: 'neuroscience', state: lock,
+      desc: 'Its own tree: neurons, synapses, brain regions, memory and how the brain changes with practice.' },
   ],
 };

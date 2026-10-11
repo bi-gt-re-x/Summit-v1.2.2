@@ -66,5 +66,13 @@ export const SCIENCE: SubjectTree = {
       desc: 'A subject of its own: rocks, weather, oceans and everything past the atmosphere.' },
     { id: 'sc.olympiad', name: 'Science Olympiad', icon: 'trophy', tier: 'expert', requires: ['sc.evidence', 'sc.stats'], navTo: 'olympiad-science', state: lock,
       desc: 'A subject of its own: F=ma, USNCO and USABO — selection exams and what separates them.' },
+    { id: 'sc.labx', name: 'Lab Work', icon: 'lab', tier: 'beginner', requires: ['sc.lab'], navTo: 'lab-work', state: lock,
+      desc: 'Its own tree: lab safety, careful readings, error and writing lab reports teachers love to grade.' },
+    { id: 'sc.fair', name: 'Science Fair', icon: 'experiment', tier: 'intermediate', requires: ['sc.question'], navTo: 'science-fair', state: lock,
+      desc: 'Its own tree: from finding a question to a display board, judging and regionals.' },
+    { id: 'sc.enviro', name: 'Environmental Science', icon: 'recycle', tier: 'intermediate', requires: ['sc.data'], navTo: 'environmental-science', state: lock,
+      desc: 'Its own tree: ecosystems, energy, pollution and climate, laid out along the APES units.' },
+    { id: 'sc.forensic', name: 'Forensic Science', icon: 'forensics', tier: 'advanced', requires: ['sc.evidence'], navTo: 'forensic-science', state: lock,
+      desc: 'Its own tree: crime scenes, fingerprints, DNA, toxicology and explaining evidence in court.' },
   ],
 };

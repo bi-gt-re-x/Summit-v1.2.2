@@ -35,5 +35,7 @@ export const CALCULUS: SubjectTree = {
       desc: 'Approximating any well-behaved function by a polynomial built from its derivatives. This is how a calculator computes sine, and why the approximation gets worse away from the center.' },
     { id: 'k.diffeq', name: 'Differential Equations', icon: 'physics', tier: 'mastery', requires: ['k.applications', 'k.taylor'], state: lock, percent: 0, xp: 3000,
       desc: 'Equations relating a quantity to its own rate of change, which is how nearly every physical law is written. Solving one means finding a whole function rather than a number.' },
+    { id: 'k.diffeqx', name: 'Differential Equations (Full Course)', icon: 'growth-curve', tier: 'mastery', requires: ['k.diffeq'], navTo: 'differential-equations', state: lock,
+      desc: 'Its own tree: slope fields, separable and linear equations, springs, systems and Laplace transforms.' },
   ],
 };
