@@ -168,6 +168,20 @@ def test_the_banner_can_ask_for_the_mail_again(app):
     assert _row(SIGNUP['email'])['verify_token'] != before
 
 
+def test_a_dev_server_says_it_sent_nothing(app, monkeypatch):
+    """With no mail set up a dev server hands the link back instead of sending
+    it, and the reply says so rather than "Sent again" (found walking the flow,
+    2026-10-11)."""
+    from backend.config import settings
+    monkeypatch.setattr(settings, 'dev_mode', lambda: True)
+    client = TestClient(app)
+    client.post('/api/auth/signup', json=SIGNUP)
+    reply = client.post('/api/auth/resend', json={}).json()
+    assert reply['dev_link'], reply
+    assert not reply['message'].startswith('Sent again'), reply
+    assert 'nothing was sent' in reply['message']
+
+
 def test_the_link_still_confirms_the_address(app):
     """The banner has to have an end. This is it."""
     client = TestClient(app)

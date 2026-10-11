@@ -337,6 +337,11 @@ export default function Analytics() {
    * first-run case.
    */
   const [editingSetup, setEditingSetup] = useState<boolean | null>(null);
+  /* A `?setup` link followed while this page is already open asks again, even
+     if the questions were closed earlier in the visit. */
+  useEffect(() => {
+    if (askedSetup) setEditingSetup(null);
+  }, [askedSetup]);
   const aim = baseline.data?.baseline ?? null;
 
   /**
@@ -354,6 +359,13 @@ export default function Analytics() {
    * preferences all have defaults that are already in force, so losing them
    * costs the reader a trip to settings rather than the page.
    */
+  /* Closing the questions, saved or not. A `?setup` that opened them comes off
+     the address too, or a reload would open them again. */
+  const closeSetup = useCallback(() => {
+    setEditingSetup(false);
+    if (askedSetup) navigate(location.pathname, { replace: true });
+  }, [askedSetup, location.pathname, navigate]);
+
   const saveSetup = useCallback(
     async (answers: SetupAnswers) => {
       const saved = await data.saveBaseline(answers.baseline);
@@ -373,10 +385,10 @@ export default function Analytics() {
           ),
         ),
       );
-      setEditingSetup(false);
+      closeSetup();
       return true;
     },
-    [data, update],
+    [closeSetup, data, update],
   );
 
 
@@ -439,12 +451,12 @@ export default function Analytics() {
    * they were trying to reach.
    */
   const skipSetup = useCallback(() => {
-    setEditingSetup(false);
+    closeSetup();
     /* Only when it is not already set. An account reopening the screen from
        the baseline panel is pressing Cancel, not skipping, and has answered
        this long ago. */
     if (!prefs.analytics_setup_done) void update({ analytics_setup_done: true });
-  }, [prefs.analytics_setup_done, update]);
+  }, [closeSetup, prefs.analytics_setup_done, update]);
 
   /**
    * Whether the setup screen takes the page over.

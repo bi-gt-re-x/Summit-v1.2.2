@@ -272,9 +272,12 @@ def resend(request: Request, body: Resend):
     db.save_user(user)
     sent, link = auth.send_verification(user, request)
     reply = _verification_reply(sent, link)
+    # A dev server with no mail set up sends nothing and hands the link back,
+    # so it says that rather than claiming a mail went out.
     return ok(**reply, message=(
-        'Sent again to {}.'.format(user.get('email'))
-        if reply['sent'] or reply['dev_link']
+        'Sent again to {}.'.format(user.get('email')) if reply['sent']
+        else 'E-mail is not set up on this server, so nothing was sent. Use the link below.'
+        if reply['dev_link']
         else 'That still did not send. Try again in a few minutes.'))
 
 

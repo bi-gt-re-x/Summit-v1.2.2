@@ -42,6 +42,16 @@ function safeNext(raw: string | null): string {
 
 const STEPS: AuthStep[] = ['choose', 'login', 'create', 'inbox', 'profile', 'about'];
 
+/** The tab's title on each panel, so it says where in the flow the reader is. */
+const TITLES: Record<AuthStep, string> = {
+  choose: 'Welcome',
+  login: 'Log in',
+  create: 'Create account',
+  inbox: 'Check your inbox',
+  profile: 'Finish your profile',
+  about: 'About you',
+};
+
 const POINTS: [IconName, string][] = [
   ['check', 'Tasks, calendar and focus timer in one app'],
   ['flame', 'Earn XP and build a streak as you go'],
@@ -55,10 +65,14 @@ export default function Login() {
   // Any panel the flow itself can move to, since it writes each one back here;
   // anything else — or nothing — is the log-in panel.
   const wanted = params.get('auth') as AuthStep | null;
-  const step: AuthStep = wanted && STEPS.includes(wanted) ? wanted : 'login';
+  /* The profile and About you panels save to the signed-in account, so a
+     signed-out visitor who lands on one (an old tab, a shared link) is asked
+     to log in first rather than shown a form that cannot save. */
+  const needsAccount = (wanted === 'profile' || wanted === 'about') && status === 'signed-out';
+  const step: AuthStep = wanted && STEPS.includes(wanted) && !needsAccount ? wanted : 'login';
   const next = safeNext(params.get('next'));
 
-  useDocumentTitle(step === 'create' ? 'Create account' : 'Log in');
+  useDocumentTitle(TITLES[step]);
 
   const setStep = useCallback(
     (to: AuthStep) => {
@@ -100,8 +114,11 @@ export default function Login() {
 
   if (status === 'loading') return <Loading label="Checking your account" />;
   // Already in: straight on. The profile panel is the one thing a signed-in
-  // account can still owe, and the inbox poll finishes by itself.
-  if (status === 'signed-in' && profileComplete && step !== 'inbox') {
+  // account can still owe, and the inbox poll finishes by itself. About you
+  // comes after the profile is complete, so it is left alone too: without
+  // this, a reload (or anything refreshing the account) on that step skipped
+  // it and dropped the reader on the dashboard.
+  if (status === 'signed-in' && profileComplete && step !== 'inbox' && step !== 'about') {
     return <Navigate to={next} replace />;
   }
 

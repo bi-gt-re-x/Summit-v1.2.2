@@ -132,6 +132,15 @@ export function AuthFlow({
     [onStep],
   );
 
+  /** On to the profile panel, once the app knows the account is signed in.
+   *  The server signs in on sign-up, on a login and on the verify link, but
+   *  the app's own record of it only changes on a refresh — and the login page
+   *  sends a signed-out visitor on the profile panel to log in instead. */
+  const toProfile = useCallback(async () => {
+    await refresh();
+    go('profile');
+  }, [go, refresh]);
+
   /** The flow is over: the account is real and signed in. */
   const finish = useCallback(async () => {
     await refresh();
@@ -169,20 +178,20 @@ export function AuthFlow({
           if (!result.success || !result.verified) return;
           clearInterval(timer);
           if (result.profile_complete) void finish();
-          else go('profile');
+          else void toProfile();
         })
         .catch(() => {
           // Keep waiting.
         });
     }, 3000);
     return () => clearInterval(timer);
-  }, [step, finish, go]);
+  }, [step, finish, toProfile]);
 
   // The first field of whichever panel is showing takes focus.
   useEffect(() => {
     const timer = setTimeout(() => {
       card.current
-        ?.querySelector<HTMLElement>('.auth-step:not(.hidden) input, .auth-step:not(.hidden) button')
+        ?.querySelector<HTMLElement>('.auth-step:not(.hidden) input, .auth-step:not(.hidden) textarea, .auth-step:not(.hidden) button')
         ?.focus();
     }, 60);
     return () => clearTimeout(timer);
@@ -213,7 +222,7 @@ export function AuthFlow({
       setPendingEmail(result.email ?? '');
       setTheme(result.user.theme || 'light');
       if (!result.profile_complete) {
-        go('profile');
+        await toProfile();
         return;
       }
       await finish();
@@ -250,7 +259,7 @@ export function AuthFlow({
          inbox panel is still here and still reachable, from the banner's
          "check your inbox" and from a reader who signed out before
          confirming. */
-      go('profile');
+      await toProfile();
     } catch {
       say('Could not reach the server.');
     }
