@@ -17,7 +17,8 @@ import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { AdviceCard, CategoryFilter, FollowupPanel, OutlookPanel } from '@/components/Recommendations';
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
-import { PanelGroup } from '../charts';
+import { Panel, PanelGroup } from '../charts';
+import { XpPulse } from '../XpPulse';
 import { LimiterCard } from '../Limiter';
 import { LensCard } from '../Lens';
 import { Knows, useKnows } from '../Knows';
@@ -30,8 +31,8 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & { data: AnalyticsData }) {
   const {
-    adoptedIds, advice, category, goalAdvice, goalLimits, historyDays, lens, maturity, observed, plan, projection, recent, reviewSummary,
-    reviews, setBudget, setCategory, setNudge, shown, shownDiagnoses, toneRules, waitFor, weekLeft,
+    adoptedIds, advice, all, category, goalAdvice, goalLimits, historyDays, lens, maturity, observed, plan, projection, recent, reviewSummary,
+    reviews, setBudget, setCategory, setNudge, shown, slice, shownDiagnoses, toneRules, waitFor, weekLeft,
     /* The three inputs this tab was not reading. `rhythm` carries the reader's
        typical sitting, drawn from their logged focus time; `reasons` is what
        they type after a task; `detail` is how much supporting evidence they
@@ -70,14 +71,66 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
   const { adopt, adopting, dropAdopted, dropping, justAdopted, refresh } = data;
   const knows = useKnows(model);
 
+  const ready = waitFor('recommendations') === 0 && advice.length > 0;
+
+  /* The goals' own rows: why each is moving the way it is, and the goals that
+     need attention. With the changes on screen they sit under the cards in the
+     same panel; while the changes are still building they keep a panel of
+     their own. */
+  const goalRows = (goalLimits.length > 0 || goalAdvice.length > 0) && (
+    <>
+      {goalLimits.length > 0 && (
+        <PanelGroup
+          title="Why your goals are moving the way they are"
+          note="The subject holding each goal back the most."
+        >
+          <div className="ax-limiters">
+            {goalLimits.slice(0, headlines).map((row) => (
+              <LimiterCard key={row.goalId} row={row} />
+            ))}
+          </div>
+        </PanelGroup>
+      )}
+
+      {/* The goals' own advice, kept separate from the ranked cards rather
+          than merged into them. `advice` is ranked by XP a year and these are
+          not comparable to that — a goal drifting past its date is not worth
+          "1,200 XP", it is worth the goal. */}
+      {goalAdvice.length > 0 && (
+        <PanelGroup
+          title="From your goals"
+          note="Goals that need attention. Goals on track are not listed."
+        >
+          <ul className="ax-goal-advice">
+            {goalAdvice.map((row) => (
+              <li key={`${row.goalId}:${row.id}`} className={`is-${row.tone}`}>
+                {/* The goal first, so two goals stalled for the same reason
+                    don't open with the same two lines. */}
+                <Link to="/goals" className="ax-goal-advice-goal">
+                  {row.goalTitle}
+                </Link>
+                <strong>{row.title}</strong>
+                <span className="ax-muted">{row.because}</span>
+              </li>
+            ))}
+          </ul>
+        </PanelGroup>
+      )}
+    </>
+  );
+
   return (
     <>
       {/* Above the plan, because it is the reason the plan is in this order.
           A reader who meets the ranking first and the explanation second has
-          already decided the ranking is arbitrary. */}
-      {lens && (
+          already decided the ranking is arbitrary. The XP card beside it is
+          the figure the lens is about. */}
+      {(lens || all.length > 0) && (
         <section className="ax-section">
-          <LensCard lens={lens} />
+          <div className={`ax-panel ax-rec-top${lens ? '' : ' is-solo'}`}>
+            {lens && <LensCard lens={lens} />}
+            <XpPulse all={all} current={slice.current} />
+          </div>
         </section>
       )}
 
@@ -108,163 +161,22 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         )}
       </section>
 
-      {/* Why each goal is or is not moving, before what to do about it.
-
-          This sits above the goals' own advice rather than inside it, and the
-          two are different kinds of sentence. `goalAdvice` is an instruction
-          drawn from a goal's pace and its silences; a limiter names the
-          *subject* carrying the shortfall, which is the one reading on this
-          page a reader can act on without first deciding where to start. So it
-          ends in a way in rather than in a link back to the goals page.
-
-          Capped by the tone setting, same as the cards below: this is a
-          diagnosis and how many of those a reader meets at once is exactly
-          what that setting is about. See utils/analyticsPrefs. */}
-      {/* Both groups inside one panel, and that is the fix the last two
-          attempts at this missed.
-
-          They were bare: a heading, a note and a chevron on the page's own
-          background, with a hairline over each. Every other thing on this tab
-          is a card. Shut, they were four lines of text floating in a field
-          with no edge anywhere near them — which reads as a page that failed
-          to load its middle, and which no amount of adjusting the gap below
-          them could fix, because the gap was never the problem. It measures
-          24px. The problem was that nothing said where the region ended.
-
-          A panel says it. Shut, this is a closed card with two rows in it;
-          open, it is a card with its contents inside. The space below is the
-          same 24px it always was and now reads as the space between two
-          cards, which is what it is. */}
-      {(goalLimits.length > 0 || goalAdvice.length > 0) && (
-        <section className="ax-section">
-          <div className="ax-panel ax-goal-groups">
-          {goalLimits.length > 0 && (
-            <PanelGroup
-              title="Why your goals are moving the way they are"
-              note="The subject holding each goal back the most."
-            >
-              <div className="ax-limiters">
-                {goalLimits.slice(0, headlines).map((row) => (
-                  <LimiterCard key={row.goalId} row={row} />
-                ))}
-              </div>
-            </PanelGroup>
-          )}
-
-          {/* The goals' own advice, kept separate from the ranked list below
-              rather than merged into it. `advice` is ranked by XP a year and
-              these are not comparable to that — a goal drifting past its date
-              is not worth "1,200 XP", it is worth the goal. Two rows at most:
-              this is a pointer to the goals page, not a second copy of it. */}
-          {goalAdvice.length > 0 && (
-            <PanelGroup
-              title="From your goals"
-              note="Goals that need attention. Goals on track are not listed."
-            >
-              <ul className="ax-goal-advice">
-                {goalAdvice.map((row) => (
-                  <li key={`${row.goalId}:${row.id}`} className={`is-${row.tone}`}>
-                    {/* The goal first. It was last, under the instruction, and
-                        two goals stalled for the same reason produced two rows
-                        that both opened "Put one of its tasks on this week" —
-                        identical for their first two lines, with the only
-                        thing telling them apart at the bottom in grey. The
-                        name identifies the row; the instruction is what to do
-                        about it, and reads as an instruction once you know
-                        which goal it is about. */}
-                    <Link to="/goals" className="ax-goal-advice-goal">
-                      {row.goalTitle}
-                    </Link>
-                    <strong>{row.title}</strong>
-                    <span className="ax-muted">{row.because}</span>
-                  </li>
-                ))}
-              </ul>
-            </PanelGroup>
-          )}
-          </div>
-        </section>
-      )}
-
-      <section className="ax-section">
-        {/* What happened to changes already adopted is evidence, not diagnosis,
-            so the list follows the detail setting rather than the tone one. It
-            is ordered by the model. */}
-        <FollowupPanel
-          reviews={reviews.slice(0, detail.rows)}
-          summary={reviewSummary}
-          onDrop={dropAdopted}
-          dropping={dropping}
-        />
-      </section>
-
-      {(waitFor('recommendations') > 0 || advice.length === 0) && (
-        <Building
-          title="Recommendations"
-          remaining={waitFor('recommendations')}
-          need={NEED_DAYS.recommendations}
-          have={historyDays}
-          promise={whyFor(NEED_DAYS.recommendations)}
-          observation={observed[0] ?? null}
-          spanDays={maturity.spanDays}
-          asksLead="Summit will work out what to change, and what it is worth:"
-          asks={[
-            'Which single change would buy you the most?',
-            'What is that worth, in your own figures?',
-            'How hard would it actually be?',
-            'Did the last change you made work?',
-          ]}
-          emptyMessage="No long gaps, no dead weekend, no late shift worth moving. Nothing to fix."
-          action={
-            <Link to="/analytics" className="ax-btn">
-              See totals
-            </Link>
-          }
-        />
-      )}
-
-      {waitFor('recommendations') === 0 && advice.length > 0 && (
-        /* The projection alone, across the width. It used to share the row
-           with an opening panel restating the same figures in prose, which
-           left the chart — the thing the tab opens on — squeezed into half
-           a screen beside a column of text saying what it already showed. */
-        <section className="ax-section">
-          <OutlookPanel outlook={projection} />
-        </section>
-      )}
-
-      {/* Straight under the chart: three exact sessions to plan, for every
-          subject or one picked, where the cards below are changes to habits.
-          Drawn whether or not there is advice yet — it is read from finished
-          work, not from the weeks of history the cards wait for. See
-          components/NextSessions. */}
-      <section className="ax-section">
-        <NextSessionsPanel where="analytics" />
-      </section>
-
-      {waitFor('recommendations') === 0 && advice.length > 0 && (
-        <>
-          {justAdopted && (
-            <p className="ax-adopted" role="status">
-              <strong>{justAdopted}</strong> is on your task list for tomorrow, and this tab will
-              tell you in {SETTLE} days whether it moved. <Link to="/tasks">Open Tasks</Link>
-            </p>
-          )}
-          <section className="ax-section">
-            {/* What this tab is, said once above the cards.
-                Each card names the finding behind it, but the cards are a grid
-                of them and the shape they share — measured, then understood,
-                then acted on, then measured again — is only visible from
-                above. Without it a reader has a list of tips; with it they
-                have the output of the rest of the page. */}
-            <p className="ax-loop">
-              <span className="ax-loop-step">You work</span>
-              <span className="ax-loop-step">Summit measures</span>
-              <span className="ax-loop-step is-here">It notices something</span>
-              <span className="ax-loop-step is-here">You get a change to try</span>
-              <span className="ax-loop-back">and the next reading says whether it worked</span>
-            </p>
-            <CategoryFilter items={advice} chosen={category} onChoose={setCategory} />
+      {/* The ranked changes, and the goals that need attention, in one panel.
+          The opening line's chevron lands here. */}
+      {ready ? (
+        <section className="ax-section" id="ax-changes">
+          <Panel
+            title="Your goals"
+            note="The changes worth making, best first, and the goals that need attention. Goals on track are not listed."
+            className="ax-changes"
+            aside={<CategoryFilter items={advice} chosen={category} onChoose={setCategory} />}
+          >
+            {justAdopted && (
+              <p className="ax-adopted" role="status">
+                <strong>{justAdopted}</strong> is on your task list for tomorrow, and this tab will
+                tell you in {SETTLE} days whether it moved. <Link to="/tasks">Open Tasks</Link>
+              </p>
+            )}
             {shown.length > 0 && (
               <div className="ax-grid ax-grid-three">
                 {shown.slice(0, headlines).map((item, index) => (
@@ -279,13 +191,70 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
                 ))}
               </div>
             )}
-          </section>
+            {goalRows && <div className="ax-goal-groups">{goalRows}</div>}
+          </Panel>
+        </section>
+      ) : (
+        <>
+          {goalRows && (
+            <section className="ax-section">
+              <div className="ax-panel ax-goal-groups">{goalRows}</div>
+            </section>
+          )}
+          <Building
+            title="Recommendations"
+            remaining={waitFor('recommendations')}
+            need={NEED_DAYS.recommendations}
+            have={historyDays}
+            promise={whyFor(NEED_DAYS.recommendations)}
+            observation={observed[0] ?? null}
+            spanDays={maturity.spanDays}
+            asksLead="Summit will work out what to change, and what it is worth:"
+            asks={[
+              'Which single change would buy you the most?',
+              'What is that worth, in your own figures?',
+              'How hard would it actually be?',
+              'Did the last change you made work?',
+            ]}
+            emptyMessage="No long gaps, no dead weekend, no late shift worth moving. Nothing to fix."
+            action={
+              <Link to="/analytics" className="ax-btn">
+                See totals
+              </Link>
+            }
+          />
         </>
       )}
 
+      <section className="ax-section">
+        {/* What happened to changes already adopted is evidence, not diagnosis,
+            so the list follows the detail setting rather than the tone one. It
+            is ordered by the model. */}
+        <FollowupPanel
+          reviews={reviews.slice(0, detail.rows)}
+          summary={reviewSummary}
+          onDrop={dropAdopted}
+          dropping={dropping}
+        />
+      </section>
+
+      {ready && (
+        <section className="ax-section">
+          <OutlookPanel outlook={projection} />
+        </section>
+      )}
+
+      {/* Three exact sessions to plan, for every subject or one picked, where
+          the cards above are changes to habits. Drawn whether or not there is
+          advice yet — it is read from finished work, not from the weeks of
+          history the cards wait for. See components/NextSessions. */}
+      <section className="ax-section">
+        <NextSessionsPanel where="analytics" />
+      </section>
+
       {/* Your coach's read: what Summit makes of the reader, each fact ending
-          in something to do. It was on the Overview; advice lives here. Each
-          fact carries its own floor, so this is empty on a brand new account. */}
+          in something to do. Each fact carries its own floor, so this is empty
+          on a brand new account. */}
       <section className="ax-section">
         <Knows facts={knows} />
       </section>

@@ -30,6 +30,7 @@
  * experiment the reader can settle in two weeks against a figure this page
  * already draws. That line is what makes the next visit worth making.
  */
+import type { ReactElement } from 'react';
 import { Panel } from './charts';
 import type { Diagnosis, DiagnosisTone } from '@/utils/diagnosis';
 
@@ -45,6 +46,42 @@ const TONE_CLASS: Record<DiagnosisTone, string> = {
   warning: 'is-warning',
 };
 
+/* One mark per tone, drawn in the tone's colour by `.ax-diag-icon`: a tick for
+   going well, a bulb for mixed signals, a target for what needs attention. */
+const ICON_PROPS = {
+  width: 30,
+  height: 30,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.8,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+} as const;
+
+const TONE_ICON: Record<DiagnosisTone, ReactElement> = {
+  good: (
+    <svg {...ICON_PROPS}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8 12.5 2.6 2.5L16 9.5" />
+    </svg>
+  ),
+  tension: (
+    <svg {...ICON_PROPS}>
+      <path d="M9 18h6M10 21h4" />
+      <path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3Z" />
+    </svg>
+  ),
+  warning: (
+    <svg {...ICON_PROPS}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+      <path d="m16 8 4-4M17 4h3v3" />
+    </svg>
+  ),
+};
+
 export function DiagnosisCards({ items }: { items: Diagnosis[] }) {
   if (items.length === 0) return null;
 
@@ -52,9 +89,16 @@ export function DiagnosisCards({ items }: { items: Diagnosis[] }) {
     <div className="ax-diag-grid">
       {items.map((item) => (
         <article key={item.id} className={`ax-panel ax-diag ${TONE_CLASS[item.tone]}`}>
-          <span className="ax-diag-tone">{TONE_LABEL[item.tone]}</span>
-          <h3 className="ax-diag-head">{item.headline}</h3>
-          <p className="ax-diag-detail">{item.detail}</p>
+          <header className="ax-diag-top">
+            <span className="ax-diag-icon" aria-hidden="true">
+              {TONE_ICON[item.tone]}
+            </span>
+            <div>
+              <span className="ax-diag-tone">{TONE_LABEL[item.tone]}</span>
+              <h3 className="ax-diag-head">{item.headline}</h3>
+              <p className="ax-diag-detail">{item.detail}</p>
+            </div>
+          </header>
           <div className="ax-diag-action">
             <span className="ax-diag-arrow" aria-hidden="true">
               →

@@ -125,9 +125,11 @@ export interface NextStepsProps {
   busy: string;
   onPlan: (step: NextStep) => void;
   onDidIt: (step: NextStep) => void;
+  /** Whether the first step starts open. Off where the steps sit side by side. */
+  firstOpen?: boolean;
 }
 
-export function NextSteps({ steps, status, busy, onPlan, onDidIt }: NextStepsProps) {
+export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = true }: NextStepsProps) {
   const batch = steps.slice(0, MAX_STEPS);
   if (!batch.length) return null;
 
@@ -149,7 +151,7 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt }: NextStepsPro
                 {String(at + 1).padStart(2, '0')}
               </span>
 
-              <details className="sx-step-body sx-step-fold" open={at === 0 && !done}>
+              <details className="sx-step-body sx-step-fold" open={firstOpen && at === 0 && !done}>
                 <summary>
                   <div className="sx-step-head">
                     <strong>{step.title}</strong>

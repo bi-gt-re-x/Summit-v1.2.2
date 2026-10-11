@@ -469,13 +469,31 @@ export function Controls({
  */
 export function TabOpening({
   tone = 'flat',
+  onMore,
   children,
 }: {
   tone?: 'up' | 'down' | 'flat';
+  /** When set, a chevron at the end takes the reader to what the line is about. */
+  onMore?: () => void;
   children?: ReactNode;
 }) {
   if (!children) return null;
-  return <p className={`ax-opening is-${tone}`}>{children}</p>;
+  return (
+    <div className={`ax-opening is-${tone}`}>
+      <span className="ax-opening-icon" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 18h6M10 21h4" />
+          <path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3Z" />
+        </svg>
+      </span>
+      <p>{children}</p>
+      {onMore && (
+        <button type="button" className="ax-opening-more" onClick={onMore} aria-label="Go to the changes">
+          <span className="ax-finding-mark" aria-hidden="true" />
+        </button>
+      )}
+    </div>
+  );
 }
 
 // --------------------------------------------------------------------------

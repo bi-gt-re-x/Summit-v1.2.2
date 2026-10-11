@@ -287,6 +287,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
           busy={busy}
           onPlan={(step) => void planOne(step)}
           onDidIt={(step) => void didIt(step)}
+          firstOpen={where !== 'analytics'}
         />
       ) : (
         available !== false && (

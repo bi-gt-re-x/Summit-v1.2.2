@@ -11,6 +11,7 @@
  * are one place.
  */
 
+import { useState } from 'react';
 import { AreaChart, Panel, toneVar } from '@/components/Analytics';
 import {
   PRIORITY_LABEL,
@@ -94,10 +95,14 @@ export function AdviceCard({
   const tone = KIND_TONE[item.kind];
   const chosen = adopted;
   const busy = adopting === item.id;
+  /* Shut by default: the rank, the change, what it is worth and how hard it
+     is are enough to choose between three cards side by side. The finding, the
+     instruction, the numbers and the button open under the chevron. */
+  const [open, setOpen] = useState(false);
 
   return (
-    <article className={`ax-panel ax-advice${chosen ? ' is-trying' : ''}`}>
-      <header className="ax-advice-head">
+    <article className={`ax-panel ax-advice${chosen ? ' is-trying' : ''}${open ? ' is-open' : ''}`}>
+      <header className="ax-advice-head" onClick={() => setOpen(!open)}>
         <span className="ax-advice-rank" style={{ background: toneVar(tone) }}>
           {rank}
         </span>
@@ -111,84 +116,83 @@ export function AdviceCard({
           </span>
           <h2>{item.title}</h2>
         </div>
+        <button
+          type="button"
+          className="ax-advice-toggle"
+          aria-expanded={open}
+          aria-label={`${open ? 'Hide' : 'Show'} why and what to do`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setOpen(!open);
+          }}
+        >
+          <span className="ax-finding-mark" aria-hidden="true" />
+        </button>
+      </header>
+
+      <div className="ax-advice-meta">
+        <div className="ax-advice-chips">
+          <span
+            className="ax-advice-priority"
+            style={{ color: toneVar(PRIORITY_TONE[item.priority]), borderColor: toneVar(PRIORITY_TONE[item.priority]) }}
+          >
+            {PRIORITY_LABEL[item.priority]}
+          </span>
+          {/* One reading of effort, not two. The five dots beside this said
+              exactly what the word says, in a scale nobody had been shown the
+              key to — and being decorative they were aria-hidden, so the word is
+              also the only one of the pair a screen reader ever had. */}
+          <span className="ax-advice-chip">{difficultyLabel(item.effort)}</span>
+          {chosen && !open && <span className="ax-advice-chip is-tracking">✓ Tracking</span>}
+        </div>
         {item.impact > 0 && (
           <span className="ax-advice-impact">
             <strong>+{compact(item.impact)}</strong>
             <span className="ax-muted ax-small">XP / year</span>
           </span>
         )}
-      </header>
-
-      <div className="ax-advice-chips">
-        <span
-          className="ax-advice-priority"
-          style={{ color: toneVar(PRIORITY_TONE[item.priority]), borderColor: toneVar(PRIORITY_TONE[item.priority]) }}
-        >
-          {PRIORITY_LABEL[item.priority]}
-        </span>
-        {/* One reading of effort, not two. The five dots beside this said
-            exactly what the word says, in a scale nobody had been shown the
-            key to — and being decorative they were aria-hidden, so the word is
-            also the only one of the pair a screen reader ever had. */}
-        <span className="ax-advice-chip">{difficultyLabel(item.effort)}</span>
       </div>
 
-      {/* The finding, then the instruction, each named.
+      {open && (
+        <div className="ax-advice-more">
+          <p className="ax-advice-label">Why</p>
+          <p className="ax-advice-why">{item.because}</p>
+          <p className="ax-advice-label">What to do</p>
+          <p className="ax-advice-do">{item.action}</p>
 
-          This card ran three tagged paragraphs once — Why, Try, Expect — and
-          the labels came off because a reader looking for the instruction had
-          to find it among two others and read past a label to reach it. Expect
-          stayed gone: it was the title and the XP figure saying it a third
-          time.
+          <footer className="ax-advice-foot">
+            <details className="ax-advice-evidence">
+              <summary>Show the numbers</summary>
+              <span>{item.evidence}</span>
+              <span>{item.workings}</span>
+            </details>
+            {/* **This makes a task and starts a measurement.** It used to set a
+                flag in localStorage and nothing else: the page would compute that a
+                change was worth five thousand XP a year, the reader would agree
+                with it, press the button — and then have to go and act on it
+                somewhere else, from memory, with nothing ever coming back to say
+                whether it had worked. A recommendation that cannot be accepted is
+                an essay; one that is never checked is a guess.
 
-          Two of them are back, for a reason the old arrangement did not have.
-          Unlabelled, `because` read as justification prose — the sort of
-          sentence any productivity app prints under any tip — and a reader had
-          no way to tell it was a finding *from their own record*. That is the
-          only thing making this page different from a list of study advice,
-          and it was the one thing the card did not say.
-
-          So the order is the causal one and both halves are named: what was
-          noticed, then what to do about it. The instruction stays the card's
-          own text and the finding stays quieter, which is what keeps the
-          original objection answered — the eyebrow is a two-word label above a
-          small line, not a paragraph competing with the action. */}
-      <p className="ax-advice-label">Why</p>
-      <p className="ax-advice-why">{item.because}</p>
-      <p className="ax-advice-label">What to do</p>
-      <p className="ax-advice-do">{item.action}</p>
-
-      <footer className="ax-advice-foot">
-        <details className="ax-advice-evidence">
-          <summary>Show the numbers</summary>
-          <span>{item.evidence}</span>
-          <span>{item.workings}</span>
-        </details>
-        {/* **This makes a task and starts a measurement.** It used to set a
-            flag in localStorage and nothing else: the page would compute that a
-            change was worth five thousand XP a year, the reader would agree
-            with it, press the button — and then have to go and act on it
-            somewhere else, from memory, with nothing ever coming back to say
-            whether it had worked. A recommendation that cannot be accepted is
-            an essay; one that is never checked is a guess.
-
-            Once adopted the button stops being a control. Untracking happens on
-            the follow-up panel, where the thing being given up is visible —
-            here it would sit under a card the reader is reading for the first
-            time, one slip away from discarding three weeks of comparison. */}
-        {chosen ? (
-          <span className="ax-try is-on">✓ Tracking</span>
-        ) : (
-          <button
-            type="button"
-            className="ax-try"
-            disabled={busy}
-            onClick={() => void onAdopt(item)}
-          >
-            {busy ? 'Adding…' : 'Add to tasks'}
-          </button>
-        )}
-      </footer>
+                Once adopted the button stops being a control. Untracking happens on
+                the follow-up panel, where the thing being given up is visible —
+                here it would sit under a card the reader is reading for the first
+                time, one slip away from discarding three weeks of comparison. */}
+            {chosen ? (
+              <span className="ax-try is-on">✓ Tracking</span>
+            ) : (
+              <button
+                type="button"
+                className="ax-try"
+                disabled={busy}
+                onClick={() => void onAdopt(item)}
+              >
+                {busy ? 'Adding…' : 'Add to tasks'}
+              </button>
+            )}
+          </footer>
+        </div>
+      )}
     </article>
   );
 }
@@ -215,34 +219,23 @@ export function CategoryFilter({
   const present = [...new Set(items.map((item) => item.category))];
   if (present.length < 2) return null;
 
+  /* A dropdown in the panel's corner rather than a row of chips over the
+     cards, so the cards start right under the heading. */
   return (
-    <div className="ax-chips ax-chips-inline" role="group" aria-label="Category">
-      <button
-        type="button"
-        className={`ax-chip${chosen === '' ? ' is-on' : ''}`}
-        aria-pressed={chosen === ''}
-        onClick={() => onChoose('')}
-      >
-        Everything ({items.length})
-      </button>
-      {present.map((category) => (
-        <button
-          key={category}
-          type="button"
-          className={`ax-chip${chosen === category ? ' is-on' : ''}`}
-          aria-pressed={chosen === category}
-          onClick={() => onChoose(category)}
-        >
-          {category} ({items.filter((item) => item.category === category).length})
-        </button>
-      ))}
-    </div>
+    <label className="ax-category-pick">
+      <span>Show</span>
+      <select value={chosen} onChange={(event) => onChoose(event.target.value)}>
+        <option value="">Everything ({items.length})</option>
+        {present.map((category) => (
+          <option key={category} value={category}>
+            {category} ({items.filter((item) => item.category === category).length})
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
-// --------------------------------------------------------------------------
-// The projection
-// --------------------------------------------------------------------------
 export function OutlookPanel({ outlook }: { outlook: Outlook }) {
   const peak = Math.max(...outlook.improvedLine, 1);
   const ticks: string[] = [];

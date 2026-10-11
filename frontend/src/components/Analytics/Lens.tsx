@@ -23,7 +23,7 @@ export function LensCard({ lens }: { lens: GoalLens }) {
     <article className={`ax-lens is-${lens.id}`}>
       <p className="ax-lens-head">
         <span>Reading this through</span>
-        <strong>{lens.label}</strong>
+        <strong className="ax-lens-badge">{lens.label}</strong>
       </p>
 
       <p className="ax-lens-read">
