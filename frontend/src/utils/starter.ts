@@ -88,8 +88,8 @@ export const FEATURES: Feature[] = [
     name: 'Skill Tree',
     to: '/skill-trees',
     paths: ['/skill-trees', '/growth-tree'],
-    what: 'A map of a subject as connected skills, with problems to practise and levels to earn.',
-    why: 'It is a big graph with categories, modes and practice sets. Worth the time, but not on day one.',
+    what: 'Every class you take, mapped out skill by skill, with problems to practice and levels to earn.',
+    why: "It's a big map with 150 subjects and practice sets. Worth the time, just not on day one.",
   },
   {
     id: 'notes',

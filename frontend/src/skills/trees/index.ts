@@ -34,22 +34,6 @@
  */
 import type { SubjectTree } from './types';
 
-import { CODING } from './coding';
-import { WEB } from './web';
-import { APP_DEV } from './app-dev';
-import { ALGO } from './algorithms';
-import { PYTHON } from './python';
-import { JAVA } from './java';
-import { GAME_DEV } from './game-dev';
-import { GRAPHS } from './graphs';
-import { SYSTEMS } from './systems';
-import { NETWORKING } from './networking';
-import { DATA_SCIENCE } from './data-science';
-import { MACHINE_LEARNING } from './machine-learning';
-import { SPREADSHEETS } from './spreadsheets';
-import { DATABASES } from './databases';
-import { CYBERSECURITY } from './cybersecurity';
-
 import { MATH } from './mathematics';
 import { CALCULUS } from './calculus';
 import { DIFF_EQ } from './differential-equations';
@@ -74,6 +58,9 @@ import { NEUROSCIENCE } from './neuroscience';
 import { EARTH_SPACE } from './earth-space';
 
 import { SCHOOL } from './school';
+import { STUDY } from './study';
+import { NOTE_TAKING } from './note-taking';
+import { AI_TOOLS } from './ai-tools';
 import { TEST_PREP } from './test-prep';
 import { COLLEGE_APPS } from './college-apps';
 import { EXTRACURRICULARS } from './extracurriculars';
@@ -98,6 +85,22 @@ import { PHILOSOPHY } from './philosophy';
 import { PSYCHOLOGY } from './psychology';
 import { CIVICS } from './civics';
 
+import { CODING } from './coding';
+import { WEB } from './web';
+import { APP_DEV } from './app-dev';
+import { ALGO } from './algorithms';
+import { PYTHON } from './python';
+import { JAVA } from './java';
+import { GAME_DEV } from './game-dev';
+import { GRAPHS } from './graphs';
+import { SYSTEMS } from './systems';
+import { NETWORKING } from './networking';
+import { DATA_SCIENCE } from './data-science';
+import { MACHINE_LEARNING } from './machine-learning';
+import { SPREADSHEETS } from './spreadsheets';
+import { DATABASES } from './databases';
+import { CYBERSECURITY } from './cybersecurity';
+
 import { BUSINESS } from './business';
 import { FINANCE } from './finance';
 import { ECONOMICS } from './economics';
@@ -107,9 +110,6 @@ import { ENTREPRENEURSHIP } from './entrepreneurship';
 
 import { PRODUCTIVITY } from './productivity';
 import { FOCUS } from './focus';
-import { STUDY } from './study';
-import { NOTE_TAKING } from './note-taking';
-import { AI_TOOLS } from './ai-tools';
 import { CAREER } from './career';
 import { PART_TIME_JOB } from './part-time-job';
 import { INTERNSHIPS } from './internships';
@@ -160,10 +160,6 @@ import { CHESS } from './chess';
 
 /** Every tree, roots first within each subject and children after them. */
 export const TREES: readonly SubjectTree[] = [
-  // Computing
-  CODING, WEB, APP_DEV, ALGO, GRAPHS, SYSTEMS, NETWORKING,
-  DATA_SCIENCE, MACHINE_LEARNING, SPREADSHEETS, DATABASES, CYBERSECURITY,
-  COMPETITIVE_PROGRAMMING, ROBOTICS, ELECTRONICS, PYTHON, JAVA, GAME_DEV,
   // Math and science
   MATH, CALCULUS, DIFF_EQ, STATISTICS, LINEAR_ALGEBRA, DISCRETE,
   COMPETITION_MATH, TRIGONOMETRY, PRECALCULUS,
@@ -171,16 +167,20 @@ export const TREES: readonly SubjectTree[] = [
   MICROBIOLOGY, NEUROSCIENCE, EARTH_SPACE, OLYMPIAD_SCIENCE,
   ENVIRONMENTAL_SCIENCE, FORENSIC_SCIENCE, LAB_WORK, SCIENCE_FAIR,
   // Studying
-  SCHOOL, TEST_PREP, COLLEGE_APPS, EXTRACURRICULARS, PRE_MED, FINANCIAL_AID,
+  SCHOOL, STUDY, NOTE_TAKING, AI_TOOLS, TEST_PREP, COLLEGE_APPS,
+  EXTRACURRICULARS, PRE_MED, FINANCIAL_AID,
   // Language and humanities
   LANGUAGE, WRITING, CREATIVE_WRITING, JOURNALISM, ESSAYS, LITERATURE, POETRY,
   FOREIGN_LANGUAGE, PUBLIC_SPEAKING, LATIN, SIGN_LANGUAGE,
   HUMANITIES, HISTORY, PHILOSOPHY, PSYCHOLOGY, DEBATE, MODEL_UN, CIVICS,
+  // Computing
+  CODING, WEB, APP_DEV, ALGO, GRAPHS, SYSTEMS, NETWORKING,
+  DATA_SCIENCE, MACHINE_LEARNING, SPREADSHEETS, DATABASES, CYBERSECURITY,
+  COMPETITIVE_PROGRAMMING, ROBOTICS, ELECTRONICS, PYTHON, JAVA, GAME_DEV,
   // Business and money
   BUSINESS, FINANCE, ECONOMICS, MARKETING, MANAGEMENT, ENTREPRENEURSHIP,
-  // Work and studying
-  PRODUCTIVITY, FOCUS, STUDY, NOTE_TAKING, AI_TOOLS, CAREER, PART_TIME_JOB,
-  INTERNSHIPS, LEADERSHIP,
+  // Work
+  PRODUCTIVITY, FOCUS, CAREER, PART_TIME_JOB, INTERNSHIPS, LEADERSHIP,
   // Creative
   ART, DRAWING, DESIGN, CAD, PHOTOGRAPHY, FILM, THEATER, ART_HISTORY,
   MUSIC, GUITAR, PIANO, VOICE, PRODUCTION, PERFORMANCE, VIOLIN, DRUMS, BAND,
@@ -193,7 +193,8 @@ export const TREES: readonly SubjectTree[] = [
 ];
 
 /** The tree the page opens on. Always defined, so nothing has to handle an
- *  empty hierarchy. */
-export const DEFAULT_TREE: SubjectTree = CODING;
+ *  empty hierarchy. School & College, because Summit is built for students and
+ *  that is the one tree every student is already climbing. */
+export const DEFAULT_TREE: SubjectTree = SCHOOL;
 
 export type { SubjectNode, SubjectTree } from './types';

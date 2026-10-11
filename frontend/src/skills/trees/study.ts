@@ -1,5 +1,8 @@
 /**
- * Studying — a branch of Productivity.
+ * Studying, a branch of School & College.
+ *
+ * It sat under Productivity until 2026-10-11. Studying is the heart of being a
+ * student, so it moved to the Studying group's own root.
  *
  * Every node here has evidence behind it, and the tree is arranged to put the
  * techniques that work above the ones that feel productive. Rereading and
@@ -13,7 +16,7 @@ export const STUDY: SubjectTree = {
   id: 'study',
   title: 'Studying',
   blurb: 'Learning things deliberately, and still having them next year.',
-  parent: 'productivity',
+  parent: 'school',
   nodes: [
     { id: 'sy.plan', name: 'Planning Study', icon: 'study-plan', tier: 'foundation', core: true, state: open, percent: 20, xp: 1400,
       desc: 'Deciding what to study when, against the date it is needed. Working through material in the order it appears in a book is a plan by default rather than a decision.' },

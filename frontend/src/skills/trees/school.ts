@@ -47,6 +47,8 @@ export const SCHOOL: SubjectTree = {
       desc: 'Bigger classes, less structure and more freedom. The students who do best go to office hours and plan their weeks.' },
     { id: 'sch.own', name: 'Owning Your Education', icon: 'autodidact', tier: 'mastery', requires: ['sch.transition', 'sch.recs'], state: lock, percent: 0, xp: 2600,
       desc: 'Choosing what to learn and chasing it on your own. School hands you the tools, and you decide what to build.' },
+    { id: 'sch.study', name: 'Studying', icon: 'study', tier: 'beginner', requires: ['sch.homework'], navTo: 'study', state: lock,
+      desc: 'Its own tree: retrieval practice, spaced review, exam technique and keeping what you learn.' },
     { id: 'sch.testprep', name: 'Test Prep', icon: 'problem-set', tier: 'intermediate', requires: ['sch.tests'], navTo: 'test-prep', state: lock,
       desc: 'Its own tree: SAT, ACT and AP exam prep, from your first practice test to test day.' },
     { id: 'sch.college', name: 'College Applications', icon: 'apply', tier: 'advanced', requires: ['sch.courses'], navTo: 'college-apps', state: lock,

@@ -75,6 +75,20 @@ ABBREVIATIONS = {
     'lc': 'leetcode',
     'cf': 'codeforces',
     'ml': 'machine learning',
+    # The class names students shorten, added with the student subjects on
+    # 2026-10-11.
+    'trig': 'trigonometry',
+    'precalc': 'precalculus',
+    'orgo': 'organic chemistry',
+    'ochem': 'organic chemistry',
+    'biochem': 'biochemistry',
+    'microbio': 'microbiology',
+    'neuro': 'neuroscience',
+    'diffeq': 'differential equations',
+    'apes': 'environmental science',
+    'apush': 'us history',
+    'econ': 'economics',
+    'psych': 'psychology',
 }
 
 _APOSTROPHES = "'’‘`"

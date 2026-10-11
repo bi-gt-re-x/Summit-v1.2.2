@@ -55,8 +55,6 @@ export const PRODUCTIVITY: SubjectTree = {
       desc: 'Everything captured, reviewed regularly, and reliable enough that nothing is being remembered. That trust is the point of the whole tree: it is what makes it possible to work on one thing without the rest of it nagging.' },
     { id: 'pd.focus', name: 'Focus & Deep Work', icon: 'focus', tier: 'intermediate', requires: ['pd.start'], navTo: 'focus', state: lock,
       desc: 'A subject of its own: sustained attention, and defending it from everything designed to interrupt it.' },
-    { id: 'pd.study', name: 'Studying', icon: 'study', tier: 'intermediate', requires: ['pd.notes'], navTo: 'study', state: lock,
-      desc: 'A subject of its own: learning material deliberately, and remembering it past the exam.' },
     { id: 'pd.career', name: 'Work & Career', icon: 'career', tier: 'advanced', requires: ['pd.saying-no'], navTo: 'career', state: lock,
       desc: 'A subject of its own: the meetings, writing and decisions that make up a working week.' },
   ],
