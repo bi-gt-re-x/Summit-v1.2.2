@@ -2,6 +2,41 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-10-12 — The Goals guide sets a real goal; Analytics reads a new account early
+
+### Mango teaches goal setting by doing
+
+The Goals page guide used to point at buttons. Now it walks the reader
+through making a real goal: it waits on New Goal, then sits beside each of the
+wizard's six pages (name and subject, why, date, how you'll know, checkpoints,
+chart) and moves on when the reader presses the wizard's own Next. After
+Create goal it lights the new card and explains how ticks, the "is it done?"
+question and Analytics fit together. Still ten steps.
+
+Two engine additions make that work (components/Tutorial): an `inside` step
+can take `until`, a selector that ends the step as soon as it appears, and
+the wizard marks its page with `data-stage`. Every wizard step targets the
+whole wizard, so pressing Back doesn't count as done. And a waiting step's
+card has **Got it**, which tucks Mango into the corner when a dialog fills the
+window and leaves the card nowhere else to go; tapping Mango brings it back.
+
+### What your work says so far
+
+A new account's Analytics Overview has a panel of first reads, off a handful of
+activities: how cleanly focus sittings run (and where the first pause tends
+to land), what part of the day the work happens in, how many tasks got
+finished during a sitting, how long tasks wait between being added and done,
+due dates beaten, where the focus minutes went by task, how hard rated tasks
+went, and steps ticked across goals. It reads the focus sittings, which
+nothing else on Analytics used, alongside tasks and goals.
+
+Each read has a floor (three sittings, four activities, three tasks) and
+prints what it rests on ("from 4 sittings"). Nothing is predicted, explained
+or advised. Up to four show, strongest first, and before any clear their
+floor the panel says how many more tasks or sittings it needs. The logic is
+components/Analytics/reads.ts; the panel shows in the early and the full
+layouts.
+
 ## 2026-10-12 — A focus sitting owns the window; goals move with every step and end with a yes
 
 ### Nothing behind a sitting

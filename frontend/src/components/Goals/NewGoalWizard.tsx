@@ -401,6 +401,9 @@ export function NewGoalWizard({
         className="gx-wizard"
         role="dialog"
         aria-label="New goal"
+        /* Which page is showing, for the Goals guide: each of its wizard steps
+           moves on when the next page appears (`until` in Tutorial/steps). */
+        data-stage={step}
         onClick={(event) => event.stopPropagation()}
       >
         <header className="gx-wizard-head">

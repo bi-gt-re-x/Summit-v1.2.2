@@ -8568,3 +8568,36 @@ div.ax-opening > p { flex: 1; min-width: 0; margin: 0; line-height: 1.5; }
 .ax-gf-title { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ax-gf-when { color: var(--ax-faint); font-size: var(--text-xs); white-space: nowrap; text-align: right; }
 .ax-gf-took { grid-column: 1 / -1; color: var(--ax-muted); font-size: var(--text-sm); }
+
+/* ---- What your work says so far -------------------------------------------
+   components/Analytics/FirstReads. Up to four sentences, each with a small
+   label above and its sample below, in a grid that is two across when there
+   is room. */
+.ax-reads {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-3);
+    margin: 0; padding: 0;
+    list-style: none;
+}
+.ax-reads li {
+    display: grid; gap: var(--space-1); align-content: start;
+    padding: var(--space-4);
+    border: 1px solid var(--ax-line);
+    border-radius: var(--radius-md);
+    background: var(--ax-card-2, transparent);
+    animation: ax-read-in .4s ease both;
+}
+.ax-reads li:nth-child(2) { animation-delay: .06s; }
+.ax-reads li:nth-child(3) { animation-delay: .12s; }
+.ax-reads li:nth-child(4) { animation-delay: .18s; }
+.ax-reads-label {
+    color: var(--ax-violet);
+    font-size: var(--text-2xs); font-weight: 800;
+    letter-spacing: .08em; text-transform: uppercase;
+}
+.ax-reads p { margin: 0; font-size: var(--text-md); font-weight: 600; line-height: 1.45; }
+.ax-reads-basis { color: var(--ax-faint); font-size: var(--text-xs); }
+.ax-reads-empty { margin: 0; color: var(--ax-muted); font-size: var(--text-sm); }
+@keyframes ax-read-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ax-reads li { animation: none; } }

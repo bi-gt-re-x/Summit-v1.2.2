@@ -52,6 +52,8 @@ import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import { WhatYouToldUs } from '../WhatYouToldUs';
 import { GoalsFinished } from '../GoalsFinished';
+import { FirstReads } from '../FirstReads';
+import { useMemo } from 'react';
 
 export function OverviewTab({
   model,
@@ -102,6 +104,7 @@ export function OverviewTab({
   } = model;
   const { baseline } = data;
   const aim = baseline.data?.baseline ?? null;
+  const goalList = useMemo(() => data.goals.data?.goals ?? [], [data.goals.data]);
 
   /*
    * What the page has worked out about the reader, as opposed to about the
@@ -207,6 +210,12 @@ export function OverviewTab({
 
         <section id="overview" className="ax-section">
           <Collecting maturity={maturity} stats={basics} />
+        </section>
+
+        {/* The first reads: facts about the person, off a handful of tasks and
+            sittings, each wearing its sample. See ../reads. */}
+        <section className="ax-section">
+          <FirstReads tasks={tasks} goals={goalList} />
         </section>
 
         {/* A confirmed goal is a fact on day one: it does not wait for the
@@ -324,6 +333,13 @@ export function OverviewTab({
           spanLabel={spanText}
           previousSpanLabel={previousSpanText}
         />
+      </section>
+
+      {/* The quick reads off sittings, tasks and goals, beside the totals.
+          Past the first week they sit under the trend panels rather than
+          leading, but the sittings still feed nothing else on this tab. */}
+      <section className="ax-section">
+        <FirstReads tasks={tasks} goals={goalList} />
       </section>
 
       {/* Goals the reader confirmed done. Draws nothing until there is one. */}

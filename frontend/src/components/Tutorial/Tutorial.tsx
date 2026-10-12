@@ -244,6 +244,12 @@ export function Tutorial() {
 
     const tick = () => {
       frame = requestAnimationFrame(tick);
+      // The page the step was waiting for has arrived (the wizard's next page).
+      if (step.until && findTarget([step.until])) {
+        cancelAnimationFrame(frame);
+        advance();
+        return;
+      }
       const el = findTarget(step.target);
       if (el) {
         const r0 = el.getBoundingClientRect();
@@ -388,6 +394,13 @@ export function Tutorial() {
     return () => watcher.disconnect();
   }, [showing, at]);
 
+  /* Tucked away by "Got it" on a step that waits for the reader to use a
+     dialog. A dialog that fills the window leaves the card nowhere to go but
+     over the dialog, so the reader can send it to the corner and tap Mango to
+     bring it back. Every new step starts untucked. */
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => setTucked(false), [at]);
+
   const nextButton = useRef<HTMLButtonElement | null>(null);
   const hole = missing ? null : box;
   const lit = hole !== null;
@@ -421,10 +434,24 @@ export function Tutorial() {
       </svg>
       {hole && <div className={`tut-ring${step.kind === 'next' ? '' : ' is-ask'}`} style={hole} aria-hidden="true" />}
 
-      <div className="tut-mango" style={{ left: place.mango.x, top: place.mango.y, width: place.m, height: place.m * 1.1 }}>
-        <Mango angle={place.angle} hop={`${at}`} />
-      </div>
+      {tucked ? (
+        <button
+          type="button"
+          className="tut-mango is-tucked"
+          aria-label="Show Mango's tip again"
+          title="Show the tip again"
+          style={{ left: view.w - place.m - 16, top: view.h - place.m * 1.1 - 16, width: place.m, height: place.m * 1.1 }}
+          onClick={() => setTucked(false)}
+        >
+          <Mango angle={null} hop={`${at}-tucked`} />
+        </button>
+      ) : (
+        <div className="tut-mango" style={{ left: place.mango.x, top: place.mango.y, width: place.m, height: place.m * 1.1 }}>
+          <Mango angle={place.angle} hop={`${at}`} />
+        </div>
+      )}
 
+      {!tucked && (
       <div
         ref={card}
         className="tut-card"
@@ -437,15 +464,20 @@ export function Tutorial() {
         <h2 id="tut-title">{text(step.title, ctx)}</h2>
         <p id="tut-body" aria-live="polite">{text(step.body, ctx)}</p>
         {!needsNext && step.kind === 'click' && (
-          <p className="tut-hint">Click the lit-up button to keep going.</p>
+          <p className="tut-hint">{step.hint ?? 'Click the lit-up button to keep going.'}</p>
         )}
         {!needsNext && step.kind === 'inside' && (
-          <p className="tut-hint">I'll wait here until you're done.</p>
+          <p className="tut-hint">{step.hint ?? "I'll wait here until you're done."}</p>
         )}
         <div className="tut-actions">
           {!last && (
             <button type="button" className="tut-skip" onClick={() => end()}>
               {tourId === 'welcome' ? 'Skip tour' : 'Skip guide'}
+            </button>
+          )}
+          {!needsNext && step.kind === 'inside' && (
+            <button type="button" className="tut-tuck" onClick={() => setTucked(true)}>
+              Got it
             </button>
           )}
           {needsNext && (
@@ -460,6 +492,7 @@ export function Tutorial() {
           )}
         </div>
       </div>
+      )}
     </div>,
     document.body,
   );

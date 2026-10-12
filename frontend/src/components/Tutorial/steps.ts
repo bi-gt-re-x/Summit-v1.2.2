@@ -19,6 +19,11 @@
  *
  * `skipIfMissing` is for things only some accounts have: the timer's first-run
  * setup, the More tools row a new account gets, panels Settings can hide.
+ *
+ * `until` lets an `inside` step end before its dialog closes: the tour moves on
+ * the moment that selector is on screen. That is how one dialog with several
+ * pages — the goal wizard — gets a step per page, each moving on when the
+ * reader presses the dialog's own Next.
  */
 import type { Stage } from '@/utils/starter';
 import { STARTER_DAYS, STARTER_LEVEL } from '@/utils/starter';
@@ -43,6 +48,10 @@ export interface Step {
   skipIfMissing?: boolean;
   /** Label for the Next button, when "Next" isn't right. */
   next?: string;
+  /** For an `inside` step: move on as soon as this selector is on screen. */
+  until?: string;
+  /** The small line under an `inside` or `click` step, when the default isn't right. */
+  hint?: string;
 }
 
 const rail = (path: string) => [`[data-tour="rail-${path}"]`];
