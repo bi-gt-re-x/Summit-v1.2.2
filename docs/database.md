@@ -23,7 +23,7 @@ else in the codebase opens the database.
 | `tasks.sql` | `tasks` | every task, plus the timing recorded on completion |
 | `goals.sql` | `goals` | goals of all four types |
 | `growth.sql` | `xp_events` (+ the `growth_daily` view) | the XP ledger — append-only, one row per earning moment |
-| `focus.sql` | `focus_days`, `day_focus_notes` | each day's focus total, and the day's one-line note |
+| `focus.sql` | `focus_days`, `day_focus_notes`, `focus_sittings` | each day's focus total, the day's one-line note, and one row per focus sitting with the task it was for |
 | `events.sql` | `calendar_entries`, `calendar_events`, `event_colors` | tasks placed on a day, standalone calendar blocks, the palette in use |
 | `analytics.sql` | `metric_snapshots` | the graded report card, one row per user per day per metric |
 | `achievements.sql`, `history.sql`, `library.sql`, `notes.sql`, `settings.sql` | — | schema only: those features are not built |

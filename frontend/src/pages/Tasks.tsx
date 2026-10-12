@@ -75,7 +75,8 @@ import {
 import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import { measureOf } from '@/components/Goals';
 import { useDocumentTitle, usePageEntrance, useSettings, useSubjects, useUserData } from '@/hooks';
-import { goals as goalService, tasks as taskService } from '@/services';
+import { goals as goalService, notes as noteService, tasks as taskService } from '@/services';
+import { noteCountsByTask } from '@/utils/noteLinks';
 import type { NewTask } from '@/services/tasks';
 import type { Goal, Task } from '@/types';
 import { isoStamp } from '@/utils/calendarGrid';
@@ -164,6 +165,23 @@ export default function Tasks() {
     void goalService.getGoals().then((result) => {
       if (live && result.success) setGoals(result.goals ?? []);
     });
+    return () => {
+      live = false;
+    };
+  }, [username]);
+
+  /* How many notes are about each task, for the count on its row. Read once,
+     for the same reason the goals are: a failed read means rows show no
+     count, not a failed page. See utils/noteLinks for what "about" means. */
+  const [noteCounts, setNoteCounts] = useState<Map<string, number>>(new Map());
+  useEffect(() => {
+    if (!username) return;
+    let live = true;
+    noteService.list()
+      .then((result) => {
+        if (live && result.success) setNoteCounts(noteCountsByTask(result.notes ?? []));
+      })
+      .catch(() => {});
     return () => {
       live = false;
     };
@@ -1137,6 +1155,7 @@ export default function Tasks() {
                             goals={linkable}
                             onLink={link}
                             estimate={plannedSeconds(task)}
+                            notes={noteCounts.get(task.id) ?? 0}
                             selected={picked.has(task.id)}
                             starred={starred.has(task.id)}
                             busy={busyId === task.id || saving}

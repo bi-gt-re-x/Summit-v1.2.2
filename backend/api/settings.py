@@ -812,6 +812,9 @@ ACCOUNT_TABLES = (
     # What the account said about itself at sign-up, and the facts kept from
     # it. Its own words, so they go out with an export and go with a reset.
     'user_background', 'user_facts',
+    # Every focus sitting, with the task it was for. Hours are in focus_days;
+    # this is the account's own record of how they were spent.
+    'focus_sittings',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the

@@ -44,14 +44,13 @@
  * gets here, and the parameter is dropped once read so a reload does not
  * re-pick a task somebody has since changed.
  *
- * ## The rows live in this browser
+ * ## The rows are the account's
  *
- * The server keeps one focus total per day and no session boundary, so the
- * sittings, the task each was for and the recommendation all come from the
- * interval log in localStorage — hooks/useIntervals holds it,
- * components/Timer/intervals.ts is the arithmetic. Losing the log loses the
- * shape and not one minute of the work: the hours are the account's, on the
- * server, in the hero's "Focused today" card.
+ * The sittings, the task each was for and the recommendation all come from
+ * the interval log — hooks/useIntervals holds it and keeps it in step with
+ * `/api/focus/sittings`, components/Timer/intervals.ts is the arithmetic. So
+ * a second device sees the same sittings. The hours are a separate ledger,
+ * one total per day, in the hero's "Focused today" card.
  *
  * ## What the page fills in by itself
  *
@@ -93,7 +92,7 @@ import {
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import { usePomodoro, type PickedTask } from '@/hooks/usePomodoro';
-import { goals as goalService, tasks as taskService } from '@/services';
+import { goals as goalService, notes as noteService, tasks as taskService } from '@/services';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { reduced } from '@/utils/homePlay';
 import {
@@ -422,8 +421,8 @@ function TaskPicker({ tasks, picked, onPick, today }: {
 /**
  * Where today's sittings went, by task.
  *
- * Read off the interval log, so it is this browser's record — see the note at
- * the top of the page. Minutes are what the clock actually ran, cut-short
+ * Read off the interval log — see the note at the top of the page. Minutes
+ * are what the clock actually ran, cut-short
  * sittings included, because a sitting abandoned at minute nineteen was still
  * nineteen minutes on that task.
  */
@@ -529,14 +528,29 @@ function Replay({ sitting }: { sitting: Interval }) {
  * An execution bar appears only for a row that carries an answered intention.
  * The page no longer asks for one, but rows written before that still have
  * them, and dropping an answer somebody gave would be the cut doing harm.
+ *
+ * ## A line about it, while it is fresh
+ *
+ * The clock can say a sitting was fifty clean minutes and cannot say what
+ * got figured out in them. The box at the bottom takes that sentence and
+ * files it as a note tied to the sitting's task, its subject and its day, so
+ * it turns up on the task's row, the subject page and the Notes page without
+ * anybody filing anything. Optional, and one line by default: a form in front
+ * of the break would be taking the break.
  */
-function Outcome({ sitting, fed, onHide }: {
+function Outcome({ sitting, fed, onHide, onJot }: {
   sitting: Interval;
   /** What was closed while it ran, and what that counted toward. */
   fed: { tasks: Task[]; goals: string[] };
   onHide: () => void;
+  /** Save a note about the sitting. The new note's id, or null if it failed. */
+  onJot: (text: string) => Promise<string | null>;
 }) {
   const scored = execution(sitting);
+  const [text, setText] = useState('');
+  const [jotting, setJotting] = useState(false);
+  const [jotted, setJotted] = useState<string | null>(null);
+  const [jotFailed, setJotFailed] = useState(false);
   const about = sitting.taskTitle ?? sitting.intent;
   const said = verdict(sitting);
 
@@ -588,6 +602,39 @@ function Outcome({ sitting, fed, onHide }: {
         )}
       </div>
       {said && <p className="pom-outcome-verdict">{said}</p>}
+      {jotted ? (
+        <p className="pom-jot-done" role="status">
+          Saved to your notes. <Link className="pom-link" to={`/notes?note=${encodeURIComponent(jotted)}`}>Open it</Link>
+        </p>
+      ) : (
+        <form
+          className="pom-jot"
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (!text.trim() || jotting) return;
+            setJotting(true);
+            setJotFailed(false);
+            void onJot(text.trim()).then((id) => {
+              setJotting(false);
+              if (id) setJotted(id);
+              else setJotFailed(true);
+            });
+          }}
+        >
+          <label className="pom-jot-label" htmlFor="pom-jot-text">
+            Jot a note about this sitting
+          </label>
+          <div className="pom-jot-row">
+            <textarea id="pom-jot-text" className="pom-jot-text" rows={1} maxLength={2000}
+              placeholder={sitting.taskTitle ? `What clicked on ${sitting.taskTitle}?` : 'What clicked?'}
+              value={text} onChange={(event) => setText(event.target.value)} />
+            <button type="submit" className="pom-btn" disabled={!text.trim() || jotting}>
+              {jotting ? 'Saving…' : 'Save note'}
+            </button>
+          </div>
+          {jotFailed && <p className="pom-jot-error" role="alert">That didn&apos;t save. Try again in a moment.</p>}
+        </form>
+      )}
       <button type="button" className="pom-link pom-outcome-hide" onClick={onHide}>Hide</button>
     </section>
   );
@@ -762,6 +809,25 @@ export default function Timer() {
 
   const goalSeconds = session.goalHours * 3600;
 
+  /* A note about a sitting: tied to its task, the task's subject and its day,
+     so it shows up on the task row, the subject page and in Notes. Titled by
+     the task, since that is what somebody scanning their notes will look for. */
+  const jot = useCallback(async (row: Interval, text: string): Promise<string | null> => {
+    const task = row.taskId ? tasks.find((entry) => entry.id === row.taskId) : undefined;
+    try {
+      const result = await noteService.save({
+        title: row.taskTitle ?? 'Focus sitting',
+        body: text,
+        note_date: row.day,
+        task_id: task ? task.id : '',
+        subject_ids: task?.subject ?? '',
+      });
+      return result.success ? result.note.id : null;
+    } catch {
+      return null;
+    }
+  }, [tasks]);
+
   /* ---- The sitting --------------------------------------------------------
    *
    * A running focus phase *is* the collapsed view — there is no third piece of
@@ -903,9 +969,11 @@ export default function Timer() {
           {/* ---- What just happened ------------------------------------ */}
           {outcome && (
             <Outcome
+              key={outcome.id ?? outcome.at}
               sitting={outcome}
               fed={fed}
               onHide={() => setHiddenAt(outcome.at ?? null)}
+              onJot={(text) => jot(outcome, text)}
             />
           )}
 

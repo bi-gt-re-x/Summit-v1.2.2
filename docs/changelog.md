@@ -2,6 +2,47 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-10-12 — Sittings on the account, and notes the rest of the app can see
+
+### Sittings live on the server
+
+The Timer page's sittings used to live only in the browser that ran them, so
+a second device or a cleared cache started from nothing: no sittings panel, no
+recommendation, no task totals. They're now a table, `focus_sittings`
+(data/sql/focus.sql), behind `/api/focus/sittings` (backend/api/focus.py).
+
+The browser keeps its copy and draws from it first, and hooks/useIntervals
+keeps the two in step on every load by merging on a row id the browser makes
+when the sitting ends. Rows only the browser has go up, rows only the server
+has come down, and sending one twice adds nothing, so a sitting recorded
+offline reaches the server next visit and an old browser-only log moves up the
+first time. Rows from before ids existed are named from their own contents, so
+two tabs agree on them. The table is in the export and goes with a reset.
+
+### Notes, connected
+
+- The Subject page has a Notes fold: the newest notes tagged with the subject,
+  and "Write a note", which opens one already tagged. It shows even before any
+  tasks are filed under the subject.
+- A task row shows "2 notes" when notes are about it, by anchor or by a link in
+  the text (utils/noteLinks), and links to them. Its menu has "Write a note".
+- Notes can be reached by address: `?note=<id>`, `?task=<id>` (narrows the
+  list to that task and opens its newest note, or starts one named for it and
+  tagged with its subject), `?subject=<id>`, and `&new=1` to always start fresh.
+- A note tied to a task says so in its side panel and can be untied.
+  `/api/notes/save` now treats an absent anchor as "leave it", an empty one as
+  "clear it", and drops a task or goal that isn't the account's.
+- Notes save themselves 1.2s after the writing stops, when another note is
+  opened, and when the page is left. A save that lands mid-sentence keeps the
+  typing. A note started from a task or template isn't saved until somebody
+  writes in it.
+
+### A note about the sitting
+
+The strip after a focus sitting has a "Jot a note about this sitting" box. The
+note it saves is titled by the task and tied to the task, its subject and the
+day, so it turns up on the task row, the subject page and in Notes.
+
 ## 2026-10-12 — The timer runs on a task, and the page is four panels
 
 ### A sitting is for something

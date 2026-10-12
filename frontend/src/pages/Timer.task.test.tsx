@@ -25,10 +25,14 @@ vi.mock('@/hooks/useSubjects', () => ({
   subjectOf: () => null,
 }));
 
+const saveNote = vi.fn((..._args: unknown[]) =>
+  Promise.resolve({ success: true, note: { id: 'note-1' } }));
+
 vi.mock('@/services', async (original) => {
   const real = await original<Record<string, unknown>>();
   return {
     ...real,
+    notes: { ...(real.notes as object), save: (...args: unknown[]) => saveNote(...args) },
     focus: {
       ...(real.focus as object),
       history: () => Promise.resolve({ success: true, days: {} }),
@@ -44,7 +48,7 @@ vi.mock('@/services', async (original) => {
 
 import Timer from './Timer';
 
-const integrals = task({ id: 't-int', title: 'Revise integrals', due_date: '2026-01-01' });
+const integrals = task({ id: 't-int', title: 'Revise integrals', due_date: '2026-01-01', subject: 'maths' });
 const essay = task({ id: 't-essay', title: 'Draft the essay', due_date: '2026-01-02' });
 
 function today(): string {
@@ -201,5 +205,38 @@ describe('picks that change by themselves', () => {
 
     await picker();
     await waitFor(() => expect(within(workingOn()).getByText('No task')).toBeInTheDocument());
+  });
+});
+
+describe('a note about the sitting', () => {
+  it('files a line under the task, its subject and the day', async () => {
+    localStorage.setItem('pomodoro:intervals:myles', JSON.stringify([
+      row({ id: 's-1', at: Date.now() - 60_000, taskId: 't-int', taskTitle: 'Revise integrals' }),
+    ]));
+    show();
+    const strip = await screen.findByRole('region', { name: /your last sitting/i });
+    await userEvent.type(within(strip).getByLabelText(/jot a note/i), 'Substitution clicked once I drew it');
+    await userEvent.click(within(strip).getByRole('button', { name: /save note/i }));
+
+    expect(saveNote).toHaveBeenCalledWith({
+      title: 'Revise integrals',
+      body: 'Substitution clicked once I drew it',
+      note_date: today(),
+      task_id: 't-int',
+      subject_ids: 'maths',
+    });
+    expect(await within(strip).findByRole('link', { name: /open it/i }))
+      .toHaveAttribute('href', '/notes?note=note-1');
+  });
+
+  it('says so when the note does not save, and keeps what was typed', async () => {
+    saveNote.mockResolvedValueOnce({ success: false, message: 'nope' } as never);
+    localStorage.setItem('pomodoro:intervals:myles', JSON.stringify([row({ id: 's-1', at: Date.now() - 60_000 })]));
+    show();
+    const strip = await screen.findByRole('region', { name: /your last sitting/i });
+    await userEvent.type(within(strip).getByLabelText(/jot a note/i), 'A thought');
+    await userEvent.click(within(strip).getByRole('button', { name: /save note/i }));
+    expect(await within(strip).findByRole('alert')).toHaveTextContent(/didn't save/i);
+    expect(within(strip).getByLabelText(/jot a note/i)).toHaveValue('A thought');
   });
 });

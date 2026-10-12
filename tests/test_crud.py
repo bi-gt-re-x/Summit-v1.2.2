@@ -92,6 +92,30 @@ def test_note_round_trip(client):
     assert db.find_row('notes', note_id) is None
 
 
+def test_a_note_can_be_tied_to_a_task_and_untied_again(client, task):
+    """The task a note is about: set, left alone by an edit that does not
+    mention it, and cleared by one that sends it empty."""
+    made = client.post('/api/notes/save',
+                       json={'title': 'n', 'body': 'b', 'task_id': task}).json()['note']
+    assert made['task_id'] == task
+
+    client.post('/api/notes/save', json={'id': made['id'], 'title': 'n2', 'body': 'b'})
+    assert db.find_row('notes', made['id'], user_id='tester')['task_id'] == task
+
+    reply = client.post('/api/notes/save',
+                        json={'id': made['id'], 'title': 'n2', 'body': 'b', 'task_id': ''}).json()
+    assert 'task_id' not in reply['note']
+    assert 'task_id' not in db.find_row('notes', made['id'], user_id='tester')
+
+
+def test_a_note_will_not_point_at_someone_elses_task(client, stranger):
+    theirs = stranger.post('/api/tasks', json={'name': 'theirs', 'priority': 'low'}).json()['task_id']
+    note = client.post('/api/notes/save',
+                       json={'title': 'n', 'body': 'b', 'task_id': theirs}).json()
+    assert note['success']
+    assert 'task_id' not in note['note']
+
+
 def test_editing_a_note_that_is_gone_does_not_create_one(client):
     """A failed edit must not silently become a new note."""
     reply = client.post('/api/notes/save',

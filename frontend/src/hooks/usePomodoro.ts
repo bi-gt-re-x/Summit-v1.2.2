@@ -287,7 +287,7 @@ export interface UsePomodoro {
   goalHours: number;
   /** Times the phase now running has been paused. */
   pauses: number;
-  /** Every focus interval this browser has a record of, oldest first. */
+  /** The account's recent focus intervals, oldest first. */
   intervals: Interval[];
   /** What this sitting is for, in the account's own words. Empty when unset. */
   intent: string;

@@ -12,7 +12,9 @@
  * value is harmless too.
  *
  * Also here: the one-line note attached to a calendar day, which the Week, Day
- * and Month views all show — an edit in one view lands everywhere.
+ * and Month views all show — an edit in one view lands everywhere; and the
+ * sittings, one row per focus sitting with the task it was for, which
+ * hooks/useIntervals keeps in step with the browser's own copy.
  *
  * Backend: backend/api/focus.py, backend/api/calendar.py.
  */
@@ -24,6 +26,7 @@ import {
   MIN_GOAL_HOURS,
 } from './constants';
 import type { ApiResult, DayFocusNotes, FocusDay, FocusHistory } from '@/types';
+import type { Interval } from '@/components/Timer/intervals';
 
 /**
  * Mirror one day's focus total to the server.
@@ -100,4 +103,31 @@ export function setDayNote(
     date,
     text: text.trim().slice(0, 200),
   });
+}
+
+// --------------------------------------------------------------------------
+// The sittings
+// --------------------------------------------------------------------------
+/** The account's newest sittings, oldest first, in the browser's own shape. */
+export function sittings(): Promise<ApiResult<{ sittings: Interval[] }>> {
+  return get<{ sittings: Interval[] }>('/api/focus/sittings');
+}
+
+/**
+ * Send sittings the server may not have.
+ *
+ * Safe to repeat: rows are keyed by the id the browser gave them, so a retry
+ * adds nothing twice. A row the server holds is left alone except for its
+ * answer (`done`/`met`), which can arrive later than the row.
+ */
+export function saveSittings(rows: Interval[]): Promise<ApiResult<{ added: number }>> {
+  return post<{ added: number }>('/api/focus/sittings', { sittings: rows });
+}
+
+/** What came of one sitting's intention. */
+export function amendSitting(
+  id: string,
+  answer: { done?: number; met?: boolean },
+): Promise<ApiResult<{ id: string }>> {
+  return post<{ id: string }>('/api/focus/sittings/amend', { id, ...answer });
 }

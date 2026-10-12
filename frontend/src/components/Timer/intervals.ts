@@ -12,11 +12,9 @@
  * length rather than estimate one.
  *
  * So the page now keeps a record of intervals as they finish — one row per
- * focus phase, written by hooks/usePomodoro, held in the browser by
- * hooks/useIntervals. It is **per browser and not on the server**, which is a
- * real limitation and the reason nothing derived from it is presented as an
- * account-wide fact. A cleared cache loses the shape and loses none of the
- * hours.
+ * focus phase, written by hooks/usePomodoro, held by hooks/useIntervals and
+ * kept on the account (`/api/focus/sittings`), so a second device or a
+ * cleared cache reads the same record.
  *
  * ## Why a recommendation names a style rather than a number of minutes
  *
@@ -57,6 +55,15 @@ import { STYLES, styleFor } from '@/components/Timer/pomodoro';
  * the whole question this row exists to answer.
  */
 export interface Interval {
+  /**
+   * The row's own id, made by the browser that ran the sitting.
+   *
+   * Made client-side so a row written while offline and sent again later is
+   * the same row on the server rather than a second one. Optional only in the
+   * type: rows from before the log reached the server have none until
+   * hooks/useIntervals gives them one on load.
+   */
+  id?: string;
   /** ISO date the interval ran on, as `YYYY-MM-DD`. */
   day: string;
   styleId: string;

@@ -1165,6 +1165,17 @@ html[data-theme="dark"] .nt-page {
 }
 .nt-meta-value { margin: 0; font-size: var(--text-sm); line-height: 1.5; }
 .nt-meta-note { margin: var(--space-2) 0 0; font-size: var(--text-2xs); color: var(--nt-faint); }
+.nt-meta-task { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-sm); }
+.nt-meta-task a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: inherit; font-weight: 600; }
+.nt-meta-untie {
+    flex: none;
+    width: 22px; height: 22px;
+    border: 0; border-radius: var(--radius-full);
+    background: none; color: var(--nt-faint);
+    font: inherit; line-height: 1;
+    cursor: pointer;
+}
+.nt-meta-untie:hover { background: var(--nt-line, rgba(0, 0, 0, .06)); color: inherit; }
 
 /* ---------- Subject tags -------------------------------------------------
    A pill takes its two shades from the palette family the subject already

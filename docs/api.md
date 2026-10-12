@@ -107,6 +107,9 @@ All in `routes/auth.py`, except the theme (`routes/theme.py`).
 | --- | --- |
 | `POST /api/focus_sync` | Mirror a day's focus total (never lowers a recorded total) |
 | `GET /api/focus_history?username=&start=&end=` | `{iso: {seconds, goal_hours}}` |
+| `GET /api/focus/sittings` | The newest 120 focus sittings, oldest first, in the browser's `Interval` shape |
+| `POST /api/focus/sittings` | `{sittings: [...]}`; stores the ones not held yet, keyed by the browser's id (safe to resend) |
+| `POST /api/focus/sittings/amend` | `{id, done?, met?}`: what came of one sitting's intention |
 
 ## Growth — `api/growth.py`
 

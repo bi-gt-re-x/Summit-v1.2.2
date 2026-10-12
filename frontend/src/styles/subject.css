@@ -1072,6 +1072,36 @@
     font-variant-numeric: tabular-nums;
 }
 
+/* --- Notes tagged with the subject ----------------------------------------
+   Titles and a date, each a way into the editor. The fold's lead already says
+   which is newest, so the list does not need to mark it. */
+.sb-notes {
+    list-style: none;
+    margin: 0 0 var(--space-3);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.sb-notes li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+}
+.sb-notes li:hover { background: var(--ax-card-2); }
+.sb-notes a {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    color: inherit;
+    font-weight: 600;
+    text-decoration: none;
+}
+.sb-notes a:hover { text-decoration: underline; }
+.sb-notes span { color: var(--ax-faint); font-size: var(--text-xs); white-space: nowrap; }
+
 /* --- Checkpoints on a subject, and the goal they become -------------------
    Before a goal, not inside one. The list needs no target and no date, so it
    is a checklist rather than the goals page's row of numbers. */

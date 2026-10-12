@@ -49,10 +49,14 @@ class SaveNote(BaseModel):
     id: Optional[str] = None
     title: str = ''
     body: str = ''
-    #: The day this is about, "2026-08-16". Empty for a note about no day.
-    note_date: str = ''
-    task_id: str = ''
-    goal_id: str = ''
+    #: The day, task and goal this is about. Absent (None) leaves an edited
+    #: note's anchor as it was; '' clears it; anything else sets it. Three
+    #: states rather than two because a caller that never heard of an anchor
+    #: must not wipe it by omission, and one that means to clear it must be
+    #: able to.
+    note_date: Optional[str] = None
+    task_id: Optional[str] = None
+    goal_id: Optional[str] = None
     #: Catalogue subject ids, comma-separated. See `_subjects`.
     subject_ids: str = ''
     #: One of the catalogue's group names, or '' for unfiled.
@@ -129,17 +133,39 @@ def _subjects(raw):
     return ','.join(seen[:SUBJECT_MAX])
 
 
-def _clean(note: SaveNote):
+def _anchors(note: SaveNote, username, editing):
+    """The day, task and goal the note is about, as columns to write.
+
+    An empty anchor is stored as NULL rather than '', so `row.get('task_id')`
+    is falsy either way — see the note at the top of database/connection.py
+    about missing keys. On a create an empty one is simply left out; on an edit
+    it is written as None, which is how update_row clears a column.
+
+    A task or goal that is not this account's is dropped rather than stored:
+    the columns carry foreign keys, so a stray id would otherwise fail at the
+    database with an integrity error instead of at the door.
+    """
+    out = {}
+    for field, table in (('note_date', None), ('task_id', 'tasks'), ('goal_id', 'goals')):
+        raw = getattr(note, field)
+        if raw is None:
+            continue
+        value = raw.strip()[:NAME_MAX]
+        if value and table and not db.find_row(table, value, user_id=username):
+            value = ''
+        if value:
+            out[field] = value
+        elif editing:
+            out[field] = None
+    return out
+
+
+def _clean(note: SaveNote, username, editing=False):
     """The writable fields, trimmed and capped. Nothing else is stored."""
     return {
         'title': note.title.strip()[:TITLE_MAX],
         'body': note.body[:BODY_MAX],
-        # An empty anchor is stored as absent rather than as '', so the column
-        # is NULL and `row.get('task_id')` is falsy either way — see the note
-        # at the top of database/connection.py about missing keys.
-        **({'note_date': note.note_date.strip()} if note.note_date.strip() else {}),
-        **({'task_id': note.task_id.strip()} if note.task_id.strip() else {}),
-        **({'goal_id': note.goal_id.strip()} if note.goal_id.strip() else {}),
+        **_anchors(note, username, editing),
         # Written unconditionally rather than only when non-empty: unlike the
         # anchors above, clearing every tag off a note is a thing somebody
         # does on purpose, and an omitted key would silently keep the old ones.
@@ -170,7 +196,7 @@ def save_note(note: SaveNote, username: str = Depends(current_username)):
     if not _known(username):
         return fail('Sign in to save a note.')
 
-    fields = _clean(note)
+    fields = _clean(note, username, editing=bool(note.id))
     if not fields['title'] and not fields['body'].strip():
         return fail('A note needs a title or something written in it.')
 
@@ -179,6 +205,10 @@ def save_note(note: SaveNote, username: str = Depends(current_username)):
         if not row:
             return fail('That note does not exist.')
         row.update(fields)
+        # A cleared anchor is NULL in the table and so absent from a read row;
+        # the reply says the same thing a fresh read would.
+        for name in [name for name, value in fields.items() if value is None]:
+            row.pop(name, None)
         row['updated_at'] = _now()
         db.update_row('notes', row['id'],
                       {**fields, 'updated_at': row['updated_at']}, user_id=username)

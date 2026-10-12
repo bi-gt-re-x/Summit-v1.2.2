@@ -92,6 +92,7 @@ import { subjectState } from '@/components/Subject/state';
 import { recentWork, workGroups } from '@/components/Subject/recentWork';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
+import { SubjectNotes } from '@/components/Subject/SubjectNotes';
 import { SubjectHeat } from '@/components/Subject/Heat';
 import { SubjectCards } from '@/components/Subject/Cards';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
@@ -1180,10 +1181,18 @@ export default function SubjectAnalytics() {
         ) : !tasks.data ? (
           <ErrorState message={tasks.error ?? 'Could not read your tasks.'} onRetry={tasks.reload} />
         ) : !model.any ? (
-          <p className="ax-opening is-flat">
-            Nothing is filed under {subject.name} yet. File a few tasks and this page has
-            something to measure.
-          </p>
+          <>
+            <p className="ax-opening is-flat">
+              Nothing is filed under {subject.name} yet. File a few tasks and this page has
+              something to measure.
+            </p>
+            {/* Notes are not measured, so they do not wait for tasks: a
+                subject somebody has only written about still shows what
+                they wrote. */}
+            <div className="sb-folds">
+              <SubjectNotes subjectId={subjectId} name={subject.name} />
+            </div>
+          </>
         ) : (
           <>
             {/* The two halves of the page, and the window they are both
@@ -2421,6 +2430,9 @@ export default function SubjectAnalytics() {
                   </div>
                 )}
               </Fold>
+
+              {/* ---- Notes -------------------------------------------- */}
+              <SubjectNotes subjectId={subjectId} name={subject?.name ?? 'this subject'} />
 
               {/* ---- The lattice --------------------------------------- */}
               {lattice && treeRead && (

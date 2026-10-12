@@ -582,6 +582,45 @@ ADDED_TABLES = ('''
 ''', '''
     CREATE INDEX IF NOT EXISTS user_facts_user_idx
         ON user_facts (user_id, position)
+''', '''
+    -- One row per focus sitting. The DDL is data/sql/focus.sql's; see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS focus_sittings (
+        -- Made by the browser that ran the sitting, so a row written offline and
+        -- sent again later is the same row rather than a second one. Scoped to the
+        -- account by the key, so two accounts can never collide on one.
+        id          TEXT NOT NULL,
+        user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+
+        day         TEXT NOT NULL,
+        -- Epoch milliseconds the sitting ended. NULL for rows logged before the
+        -- browser kept it, which read as "some time that day".
+        at          INTEGER,
+        style_id    TEXT NOT NULL,
+        planned     INTEGER NOT NULL DEFAULT 0,
+        minutes     INTEGER NOT NULL DEFAULT 0,
+        pauses      INTEGER NOT NULL DEFAULT 0,
+        finished    BOOLEAN NOT NULL DEFAULT FALSE,
+        -- Minutes into the sitting at which it was paused, comma-separated.
+        breaks      TEXT NOT NULL DEFAULT '',
+
+        -- The task it was for. The title is copied, so a renamed or deleted task
+        -- still reads back as what it was called at the time.
+        task_id     TEXT,
+        task_title  TEXT,
+
+        -- The optional answers the sitting carried. See components/Timer/intervals.ts.
+        intent      TEXT,
+        target      NUMERIC,
+        done        NUMERIC,
+        met         BOOLEAN,
+        readiness   TEXT,
+        kind        TEXT,
+
+        PRIMARY KEY (user_id, id),
+        CHECK (minutes >= 0 AND planned >= 0 AND pauses >= 0)
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS focus_sittings_user_at ON focus_sittings (user_id, at)
 ''')
 
 

@@ -20,14 +20,29 @@
  * panel is empty until you find the right button has put a step in front of
  * the only thing it does.
  *
- * ## Saving is still explicit
+ * ## Saving is automatic
  *
- * The status pill reads like autosave and is not. Autosave is right for a
- * document you are living in and wrong for a panel that also holds a delete
- * button; the draft stays local until saved, and the list only moves once the
- * server has answered. What the pill does is stop the page being quiet about
- * it — "Unsaved changes" is a state the old footer only expressed by whether a
- * button happened to be disabled.
+ * A note saves itself a moment after the writing stops (`AUTOSAVE_MS`), when
+ * the reader opens another note, and when they leave the page. It used to
+ * wait for the Save button, on the argument that a panel holding a delete
+ * button should not write by itself; in practice the note that got lost was
+ * always the one somebody forgot to save, and delete still asks nothing of
+ * autosave. The button stays, for anybody who wants to be sure.
+ *
+ * Two things keep it honest. A reply that comes back while the reader is still
+ * typing takes only the new id from the server, never the text, so a save
+ * cannot undo the last few keystrokes. And a note being saved is not also
+ * being created again: no second save starts while one is out.
+ *
+ * ## A note knows what it is about
+ *
+ * The rest of the app reads notes now. The Subject page lists the notes
+ * tagged with it, a task row says how many notes are about that task, and the
+ * strip after a focus sitting can start one. They all come here by address:
+ * `?note=<id>` opens one, `?task=<id>` narrows the index to that task's notes
+ * and opens the newest (or starts one tied to it), `?subject=<id>` does the
+ * same for a subject, and `&new=1` starts a fresh one either way. The rules
+ * for "about" are in utils/noteLinks.
  *
  * ## The note is stored as Markdown and not edited as Markdown
  *
@@ -76,9 +91,11 @@
  * came to be reported as missing while it was on the screen.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import type { CSSProperties, ReactNode } from 'react';
 import { ErrorState, Loading, PageHero } from '@/components';
-import { useAuth, useDocumentTitle, usePageEntrance, useSubjects } from '@/hooks';
+import { useAuth, useDocumentTitle, usePageEntrance, useSubjects, useUserData } from '@/hooks';
+import { isAboutTask } from '@/utils/noteLinks';
 import { notes as noteService } from '@/services';
 import {
   NotebookPicker,
@@ -114,10 +131,15 @@ const BLANK = {
   title: '',
   body: '',
   note_date: '',
+  task_id: '',
+  goal_id: '',
   subject_ids: '',
   notebook: '',
   pinned: false,
 };
+
+/** How long after the last keystroke a note saves itself. */
+const AUTOSAVE_MS = 1200;
 
 type Draft = typeof BLANK;
 
@@ -126,6 +148,8 @@ const asDraft = (note: Note): Draft => ({
   title: note.title,
   body: note.body,
   note_date: note.note_date ?? '',
+  task_id: note.task_id ?? '',
+  goal_id: note.goal_id ?? '',
   subject_ids: note.subject_ids ?? '',
   notebook: note.notebook ?? '',
   pinned: Boolean(note.pinned),
@@ -370,8 +394,8 @@ const TEMPLATES: Array<{ id: string; label: string; hint: string; title: string;
   },
 ];
 
-/** How the index is narrowed. `subject` carries the id being filtered to. */
-type Filter = { kind: 'all' | 'pinned' | 'untagged' | 'subject'; id?: string };
+/** How the index is narrowed. `subject` and `task` carry the id being filtered to. */
+type Filter = { kind: 'all' | 'pinned' | 'untagged' | 'subject' | 'task'; id?: string };
 
 export default function Notes() {
   useDocumentTitle('Notes');
@@ -382,6 +406,9 @@ export default function Notes() {
   const [loading, setLoading] = useState(true);
   const [draft, setDraft] = useState<Draft>(BLANK);
   const [busy, setBusy] = useState(false);
+  /** An autosave is out. Separate from `busy`, which disables controls: a
+      save the reader did not ask for must not take the controls away. */
+  const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const [query, setQuery] = useState('');
@@ -485,6 +512,7 @@ export default function Notes() {
         if (filter.kind === 'pinned') return note.pinned;
         if (filter.kind === 'untagged') return subjectIds(note.subject_ids).length === 0;
         if (filter.kind === 'subject') return subjectIds(note.subject_ids).includes(filter.id ?? '');
+        if (filter.kind === 'task') return isAboutTask(note, filter.id ?? '');
         return true;
       })
       .filter(
@@ -504,6 +532,13 @@ export default function Notes() {
     return [...seen.entries()].sort((a, b) => b[1] - a[1]);
   }, [rows]);
 
+  const account = useUserData();
+  const tasks = account.data?.tasks;
+  const taskTitle = useCallback(
+    (id: string) => tasks?.find((task) => task.id === id)?.title ?? null,
+    [tasks],
+  );
+
   /** What the index's header calls the current view. */
   const scopeLabel =
     filter.kind === 'pinned'
@@ -512,7 +547,9 @@ export default function Notes() {
         ? 'Untagged'
         : filter.kind === 'subject'
           ? subjectOf(filter.id ?? '', catalogue)?.name ?? filter.id ?? 'Tagged'
-          : 'All Notes';
+          : filter.kind === 'task'
+            ? taskTitle(filter.id ?? '') ?? 'One task'
+            : 'All Notes';
 
   /** The index's two groups. Pinned notes are lifted out rather than marked. */
   const groups = useMemo(
@@ -523,19 +560,28 @@ export default function Notes() {
     [shown],
   );
 
+  /* What a new note started as. A note opened from a task arrives with the
+     task's name as its title, and that is not the reader having written
+     anything: it only counts as unsaved once it differs from this. */
+  const [origin, setOrigin] = useState<Draft>(BLANK);
+
   const dirty = useMemo(() => {
-    if (!draft.id) return draft.title.trim() !== '' || draft.body.trim() !== '';
+    if (!draft.id) {
+      const written = draft.title.trim() !== '' || draft.body.trim() !== '';
+      return written && JSON.stringify(draft) !== JSON.stringify(origin);
+    }
     const original = rows?.find((note) => note.id === draft.id);
     if (!original) return false;
     return (
       original.title !== draft.title ||
       original.body !== draft.body ||
       (original.note_date ?? '') !== draft.note_date ||
+      (original.task_id ?? '') !== draft.task_id ||
       (original.subject_ids ?? '') !== draft.subject_ids ||
       (original.notebook ?? '') !== draft.notebook ||
       Boolean(original.pinned) !== draft.pinned
     );
-  }, [draft, rows]);
+  }, [draft, origin, rows]);
 
   /** Every body change goes through here, so undo has something to hold. */
   const setBody = useCallback((next: string, remember = true) => {
@@ -720,7 +766,67 @@ export default function Notes() {
    */
   const [indexShut, setIndexShut] = useState(false);
 
+  /* The draft and whether it needs saving, as of the last render, for the
+     moments that leave it: opening another note, and leaving the page. */
+  const latest = useRef({ draft, dirty });
+  latest.current = { draft, dirty };
+
+  /** Send a draft to the server. The note it became, or null with the reason on screen. */
+  const persist = useCallback(async (sent: Draft): Promise<Note | null> => {
+    try {
+      const result = await noteService.save({
+        ...(sent.id ? { id: sent.id } : {}),
+        title: sent.title,
+        body: sent.body,
+        note_date: sent.note_date,
+        task_id: sent.task_id,
+        goal_id: sent.goal_id,
+        subject_ids: sent.subject_ids,
+        notebook: sent.notebook,
+        pinned: sent.pinned,
+      });
+      if (!result.success) {
+        setMessage(result.message);
+        return null;
+      }
+      return result.note;
+    } catch {
+      setMessage('Could not reach the server. Your note is still here.');
+      return null;
+    }
+  }, []);
+
+  /** Put a saved note at the top of the index without a second round trip. */
+  const keep = useCallback((note: Note) => {
+    setRows((current) => [note, ...(current ?? []).filter((row) => row.id !== note.id)]);
+  }, []);
+
+  /** Save the draft being left, if it has anything unsaved in it. */
+  const flush = useCallback(() => {
+    const { draft: leaving, dirty: changed } = latest.current;
+    if (!changed || (leaving.title.trim() === '' && leaving.body.trim() === '')) return;
+    void persist(leaving).then((note) => note && keep(note));
+  }, [keep, persist]);
+
+  // Leaving the page saves too. Without the state updates: the page is gone.
+  useEffect(() => () => {
+    const { draft: leaving, dirty: changed } = latest.current;
+    if (!changed || (leaving.title.trim() === '' && leaving.body.trim() === '')) return;
+    void noteService.save({
+      ...(leaving.id ? { id: leaving.id } : {}),
+      title: leaving.title,
+      body: leaving.body,
+      note_date: leaving.note_date,
+      task_id: leaving.task_id,
+      goal_id: leaving.goal_id,
+      subject_ids: leaving.subject_ids,
+      notebook: leaving.notebook,
+      pinned: leaving.pinned,
+    }).catch(() => {});
+  }, []);
+
   const open = useCallback((note: Note) => {
+    flush();
     swap();
     past.current = [];
     future.current = [];
@@ -728,58 +834,109 @@ export default function Notes() {
     setMessage(null);
     setSavedAt(null);
     setMode(note.body.trim() ? 'read' : 'write');
-  }, [swap]);
+  }, [flush, swap]);
 
   /** Open a new note with a template's text already in it. */
   const fromTemplate = useCallback((template: (typeof TEMPLATES)[number]) => {
+    flush();
     swap();
     past.current = [];
     future.current = [];
     setDraft({ ...BLANK, title: template.title, body: template.body });
+    // An untouched template is not a note yet. See `origin`.
+    setOrigin({ ...BLANK, title: template.title, body: template.body });
     setMessage(null);
     setSavedAt(null);
     setMode('write');
     setTplOpen(false);
     titleRef.current?.focus();
-  }, [swap]);
+  }, [flush, swap]);
 
-  const blank = useCallback(() => {
+  /** A new note, with whatever it is already known to be about. */
+  const start = useCallback((about: Partial<Draft> = {}) => {
+    flush();
     swap();
     past.current = [];
     future.current = [];
-    setDraft(BLANK);
+    setDraft({ ...BLANK, ...about });
+    setOrigin({ ...BLANK, ...about });
     setMessage(null);
     setSavedAt(null);
     setMode('write');
     titleRef.current?.focus();
-  }, [swap]);
+  }, [flush, swap]);
 
-  const submit = useCallback(async () => {
-    if (!username || busy) return;
+  const blank = useCallback(() => start(), [start]);
+
+  /**
+   * Save the draft. `quiet` is the autosave: it neither disables the controls
+   * nor complains about an empty note, which it never sends anyway.
+   */
+  const submit = useCallback(async (quiet = false) => {
+    if (!username || busy || saving) return;
     if (draft.title.trim() === '' && draft.body.trim() === '') {
-      setMessage('A note needs a title or something written in it.');
+      if (!quiet) setMessage('A note needs a title or something written in it.');
       return;
     }
-    setBusy(true);
-    const result = await noteService.save({
-      ...(draft.id ? { id: draft.id } : {}),
-      title: draft.title,
-      body: draft.body,
-      note_date: draft.note_date,
-      subject_ids: draft.subject_ids,
-      notebook: draft.notebook,
-      pinned: draft.pinned,
-    });
-    setBusy(false);
-    if (!result.success) {
-      setMessage(result.message);
-      return;
-    }
-    setDraft(asDraft(result.note));
+    const sent = draft;
+    (quiet ? setSaving : setBusy)(true);
+    const note = await persist(sent);
+    (quiet ? setSaving : setBusy)(false);
+    if (!note) return;
+    // Still the draft that was sent: take the server's copy. Typed on since:
+    // keep the typing and take only the id, or the save undoes it.
+    setDraft((current) => (current === sent ? asDraft(note) : { ...current, id: note.id }));
+    keep(note);
     setMessage(null);
     setSavedAt(Date.now());
-    await load();
-  }, [busy, draft, load, username]);
+  }, [busy, draft, keep, persist, saving, username]);
+
+  // The autosave. Re-armed by every change, so it fires once the writing stops.
+  useEffect(() => {
+    if (!dirty || busy || saving) return undefined;
+    if (draft.title.trim() === '' && draft.body.trim() === '') return undefined;
+    const timer = window.setTimeout(() => void submit(true), AUTOSAVE_MS);
+    return () => window.clearTimeout(timer);
+  }, [busy, dirty, draft, saving, submit]);
+
+  /* Arriving with an address: a note, a task or a subject. Read once the
+     notes are in (and, for a task, once the task list can name it), then
+     dropped from the address bar so a reload does not do it again. */
+  const [params, setParams] = useSearchParams();
+  const wantNote = params.get('note');
+  const wantTask = params.get('task');
+  const wantSubject = params.get('subject');
+  const fresh = params.get('new') === '1';
+  useEffect(() => {
+    if (!rows || (!wantNote && !wantTask && !wantSubject)) return;
+    if (wantTask && !tasks && account.loading) return;
+    if (wantNote) {
+      const found = rows.find((note) => note.id === wantNote);
+      if (found) open(found);
+    } else if (wantTask) {
+      setFilter({ kind: 'task', id: wantTask });
+      const task = tasks?.find((row) => row.id === wantTask);
+      const found = rows.find((note) => isAboutTask(note, wantTask));
+      if (found && !fresh) open(found);
+      else {
+        start({
+          task_id: task ? wantTask : '',
+          title: task?.title ?? '',
+          subject_ids: task?.subject ?? '',
+        });
+      }
+    } else if (wantSubject) {
+      setFilter({ kind: 'subject', id: wantSubject });
+      const found = rows.find((note) => subjectIds(note.subject_ids).includes(wantSubject));
+      if (found && !fresh) open(found);
+      else start({ subject_ids: wantSubject });
+    }
+    setParams((was) => {
+      const next = new URLSearchParams(was);
+      ['note', 'task', 'subject', 'new'].forEach((name) => next.delete(name));
+      return next;
+    }, { replace: true });
+  }, [account.loading, fresh, open, rows, setParams, start, tasks, wantNote, wantSubject, wantTask]);
 
   const discard = useCallback(async () => {
     if (!username || !draft.id || busy) return;
@@ -790,6 +947,9 @@ export default function Notes() {
       setMessage(result.message);
       return;
     }
+    // The note is gone: there is nothing to save on the way out of it, and
+    // saving it would only be told it does not exist.
+    latest.current = { draft: BLANK, dirty: false };
     blank();
     await load();
   }, [blank, busy, draft.id, load, username]);
@@ -803,10 +963,10 @@ export default function Notes() {
     return <ErrorState message={error ?? 'Could not read your notes.'} onRetry={load} />;
   }
 
-  const state = busy
+  const state = busy || saving
     ? { tone: 'busy', text: 'Saving…' }
     : dirty
-      ? { tone: 'dirty', text: 'Unsaved changes' }
+      ? { tone: 'dirty', text: 'Editing' }
       : savedAt
         ? { tone: 'saved', text: 'Saved just now' }
         : draft.id
@@ -969,7 +1129,9 @@ export default function Notes() {
                 <p className="nt-list-empty">
                   {rows.length === 0
                     ? 'Nothing written yet. The panel beside this one is a blank note.'
-                    : `No note matches “${query.trim()}”.`}
+                    : query.trim()
+                      ? `No note matches “${query.trim()}”.`
+                      : 'No notes here yet. The one beside this list will be the first.'}
                 </p>
               ) : (
                 groups.map((group) =>
@@ -1410,11 +1572,30 @@ export default function Notes() {
                   />
                 </section>
 
-                {/* The one anchor the page does offer. The table also holds
-                    task_id and goal_id, and both are reachable from the API —
-                    they are not here because a note is attached from the
-                    *task*, which is where somebody is standing when they want
-                    one. */}
+                {/* The task is set from the task (its row's "Write a note") or
+                    from a sitting on it, which is where somebody is standing
+                    when they want one, so it is shown and undone here rather
+                    than picked. */}
+                {draft.task_id && (
+                  <section className="nt-meta-sec">
+                    <h3>About a task</h3>
+                    <p className="nt-meta-task">
+                      <Link to={`/tasks?task=${encodeURIComponent(draft.task_id)}`}>
+                        {taskTitle(draft.task_id) ?? 'Open the task'}
+                      </Link>
+                      <button
+                        type="button"
+                        className="nt-meta-untie"
+                        aria-label="Untie this note from the task"
+                        title="Untie from the task"
+                        onClick={() => setDraft({ ...draft, task_id: '' })}
+                      >
+                        ×
+                      </button>
+                    </p>
+                  </section>
+                )}
+
                 <section className="nt-meta-sec">
                   <h3>About a day</h3>
                   <input

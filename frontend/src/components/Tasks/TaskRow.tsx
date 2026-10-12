@@ -24,6 +24,8 @@ export interface TaskRowProps {
   goals: Goal[];
   /** Seconds set aside for it on the calendar, or null when it has no block. */
   estimate: number | null;
+  /** How many notes are about it (utils/noteLinks). Zero draws nothing. */
+  notes?: number;
   selected: boolean;
   starred: boolean;
   busy: boolean;
@@ -60,6 +62,13 @@ const CAL = (
   </svg>
 );
 
+const NOTE = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 3h9l4 4v14H6z" />
+    <path d="M14 3v5h5M9 13h7M9 17h5" />
+  </svg>
+);
+
 const CLOCK = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
     <circle cx="12" cy="12" r="9" />
@@ -72,6 +81,7 @@ export function TaskRow({
   subject,
   goals,
   estimate,
+  notes = 0,
   selected,
   starred,
   busy,
@@ -193,6 +203,13 @@ export function TaskRow({
               {goal.title}
             </span>
           )}
+          {notes > 0 && (
+            <Link className="tk-notes-chip" to={`/notes?task=${encodeURIComponent(task.id)}`}
+              title={`Your notes about ${task.title}`}>
+              <i aria-hidden="true">{NOTE}</i>
+              {notes} {notes === 1 ? 'note' : 'notes'}
+            </Link>
+          )}
           {estimate !== null && (
             <span title="The block you set aside for this on the calendar">
               <i aria-hidden="true">{CLOCK}</i>
@@ -275,6 +292,9 @@ export function TaskRow({
                 Focus on this
               </Link>
             )}
+            <Link className="tk-menu-item is-link" to={`/notes?task=${encodeURIComponent(task.id)}&new=1`}>
+              Write a note
+            </Link>
             <button type="button" className="tk-menu-item" onClick={() => { setMenu(false); setEditing(true); }}>
               Rename
             </button>

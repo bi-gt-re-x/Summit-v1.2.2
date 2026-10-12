@@ -625,6 +625,14 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
    are the row saying what the work counts toward rather than what it is. */
 .tk-row-meta span.tk-goal-chip { color: var(--tk-violet); font-weight: 600; }
 .tk-goal-chip { max-width: 240px; }
+/* The notes about a task: a way into them, so a link rather than a label. */
+.tk-notes-chip {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-size: var(--text-xs); font-weight: 600;
+    color: var(--tk-muted);
+    text-decoration: none;
+}
+.tk-notes-chip:hover { color: var(--tk-text); text-decoration: underline; }
 .tk-goal-chip svg { flex: none; }
 .tk-row-meta i { display: grid; place-items: center; }
 .tk-row-meta svg { width: 13px; height: 13px; }

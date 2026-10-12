@@ -7,7 +7,9 @@ day in focus.sql — so the calendar's Weekly Focus Time panel, the growth chart
 and focus-type goals all read one number that survives a cleared browser.
 
 Also here: the one-line "Focus" note attached to a calendar day, which the
-Week, Day and Month views all show, so an edit in one view lands everywhere.
+Week, Day and Month views all show, so an edit in one view lands everywhere;
+and the sittings, one row per focus sitting with the task it was for, which
+used to live only in the browser that ran them.
 """
 from backend.database import connection as db
 from backend.tracking.auth import find_user
@@ -133,4 +135,101 @@ def set_day_note(username, day, text):
     if text:
         db.insert_row('day_focus_notes',
                       {'user_id': username, 'date': day, 'text': text})
+    return True
+
+
+# --------------------------------------------------------------------------
+# The sittings
+# --------------------------------------------------------------------------
+# One row per focus sitting, written by the browser as each one ends. The
+# client's own field names (camelCase, the shape of `Interval` in
+# frontend/src/components/Timer/intervals.ts) are what goes over the wire, so
+# the browser keeps one shape for its cache and its requests; the mapping to
+# columns lives here and nowhere else.
+
+#: How many sittings a read hands back: the newest, oldest first. The same cap
+#: the browser keeps (hooks/useIntervals), about two months of ordinary use.
+SITTINGS_KEPT = 120
+
+#: Client field → column, for the plain fields. `breaks` and `finished` are
+#: converted on their own.
+_SITTING_FIELDS = (
+    ('day', 'day'), ('at', 'at'), ('styleId', 'style_id'), ('planned', 'planned'),
+    ('minutes', 'minutes'), ('pauses', 'pauses'), ('taskId', 'task_id'),
+    ('taskTitle', 'task_title'), ('intent', 'intent'), ('target', 'target'),
+    ('done', 'done'), ('met', 'met'), ('readiness', 'readiness'), ('kind', 'kind'),
+)
+
+
+def _as_client(row):
+    """A stored row in the browser's shape. NULL columns are left out, as the
+    browser leaves out a field that was never set."""
+    out = {'id': row['id'], 'finished': bool(row.get('finished'))}
+    for field, column in _SITTING_FIELDS:
+        if row.get(column) is not None:
+            out[field] = row[column]
+    breaks = [int(part) for part in str(row.get('breaks') or '').split(',') if part.strip().isdigit()]
+    if breaks:
+        out['breaks'] = breaks
+    if 'met' in out:
+        out['met'] = bool(out['met'])
+    return out
+
+
+def sittings_for(username):
+    """The account's newest sittings, oldest first, in the browser's shape.
+    None if there is no such account."""
+    if not find_user(db.users(), username=username):
+        return None
+    rows = db.rows_for('focus_sittings', username)
+    # Sorted here rather than in SQL: a sitting with no `at` sorts first in
+    # SQLite and last in Postgres, and the order is the whole point of the list.
+    rows.sort(key=lambda row: float(row.get('at') or 0))
+    return [_as_client(row) for row in rows[-SITTINGS_KEPT:]]
+
+
+def save_sittings(username, sittings):
+    """Store sittings the browser has and the server does not. Returns how many
+    were new, or None if there is no such account.
+
+    A row the server already holds is not rewritten: a sitting is a fact about
+    something that already happened. The one exception is its answer — `done`
+    or `met` — which arrives after the row does and may have been given on a
+    device that was offline when the row first went up.
+    """
+    if not find_user(db.users(), username=username):
+        return None
+    added = 0
+    for sitting in sittings:
+        held = db.find_row('focus_sittings', sitting['id'], user_id=username)
+        if held is None:
+            row = {'id': sitting['id'], 'user_id': username,
+                   'finished': bool(sitting.get('finished')),
+                   'breaks': ','.join(str(at) for at in sitting.get('breaks') or [])}
+            for field, column in _SITTING_FIELDS:
+                if sitting.get(field) is not None:
+                    row[column] = sitting[field]
+            db.insert_row('focus_sittings', row, key='id')
+            added += 1
+            continue
+        answer = {column: sitting[field] for field, column in (('done', 'done'), ('met', 'met'))
+                  if sitting.get(field) is not None and held.get(column) is None}
+        if answer:
+            db.update_row('focus_sittings', sitting['id'], answer, user_id=username)
+    return added
+
+
+def amend_sitting(username, sitting_id, done=None, met=None):
+    """Record what came of one sitting's intention. False if there is no such
+    row on this account."""
+    held = db.find_row('focus_sittings', sitting_id, user_id=username)
+    if held is None:
+        return False
+    changes = {}
+    if done is not None:
+        changes['done'] = done
+    if met is not None:
+        changes['met'] = bool(met)
+    if changes:
+        db.update_row('focus_sittings', sitting_id, changes, user_id=username)
     return True
