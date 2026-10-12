@@ -15,6 +15,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   MIN_INTERVALS,
+  byTask,
   execution,
   focusScore,
   isStyleLength,
@@ -428,5 +429,34 @@ describe('pace', () => {
   it('says how far off the account is from its own normal', () => {
     expect(pace(2.24, 2)).toBe(12);
     expect(pace(1, 2)).toBe(-50);
+  });
+});
+
+describe('where a day went, by task', () => {
+  const int = { taskId: 't-1', taskTitle: 'Revise integrals' };
+
+  it('adds up each task and counts its sittings', () => {
+    expect(byTask([row(int), row({ ...int, minutes: 19, finished: false })], '2026-05-01')).toEqual([
+      { id: 't-1', title: 'Revise integrals', minutes: 44, sittings: 2 },
+    ]);
+  });
+
+  it('reads only the day asked for', () => {
+    expect(byTask([row({ ...int, day: '2026-04-30' })], '2026-05-01')).toEqual([]);
+  });
+
+  it('puts the untagged sittings last, however long', () => {
+    const groups = byTask([row({ minutes: 90 }), row(int)], '2026-05-01');
+    expect(groups.map((group) => group.id)).toEqual(['t-1', null]);
+  });
+
+  it('groups by id, so two tasks with one title stay apart', () => {
+    const groups = byTask([row(int), row({ ...int, taskId: 't-2' })], '2026-05-01');
+    expect(groups).toHaveLength(2);
+  });
+
+  it('labels a renamed task by its newest title', () => {
+    const groups = byTask([row(int), row({ ...int, taskTitle: 'Revise integration' })], '2026-05-01');
+    expect(groups[0]!.title).toBe('Revise integration');
   });
 });

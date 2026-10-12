@@ -136,6 +136,47 @@ export interface Interval {
    * suits drills.
    */
   kind?: Kind;
+  /**
+   * The task the sitting was for, when one was picked before it started.
+   *
+   * The title is copied onto the row rather than looked up later, so a task
+   * that is renamed, finished or deleted still reads back as what it was
+   * called at the time. The id is what groups rows: two tasks can share a
+   * title.
+   */
+  taskId?: string;
+  taskTitle?: string;
+}
+
+/** One task's share of a day's sittings. `id` is null for sittings with no task. */
+export interface TaskTime {
+  id: string | null;
+  title: string | null;
+  minutes: number;
+  sittings: number;
+}
+
+/**
+ * A day's sittings, grouped by the task each was for, most minutes first.
+ *
+ * Sittings with no task are one group of their own, always last, so the list
+ * reads as "where the time went" and then "the rest".
+ */
+export function byTask(log: Interval[], day: string): TaskTime[] {
+  const groups = new Map<string | null, TaskTime>();
+  log.filter((row) => row.day === day).forEach((row) => {
+    const id = row.taskId ?? null;
+    const group = groups.get(id) ?? { id, title: row.taskTitle ?? null, minutes: 0, sittings: 0 };
+    group.minutes += row.minutes;
+    group.sittings += 1;
+    // The newest title wins, in case the task was renamed during the day.
+    if (row.taskTitle) group.title = row.taskTitle;
+    groups.set(id, group);
+  });
+  return [...groups.values()].sort((a, b) => {
+    if ((a.id === null) !== (b.id === null)) return a.id === null ? 1 : -1;
+    return b.minutes - a.minutes;
+  });
 }
 
 /**

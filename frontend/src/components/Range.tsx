@@ -1,9 +1,9 @@
 /**
  * The mountain range that stands behind a page's opening card.
  *
- * This started on the focus page — see components/Timer/art.tsx, which still
- * owns the sunset behind the quote — and it is here because the range turned
- * out not to be about pomodoros. It is the app's one piece of scenery, and a
+ * This started on the focus page, beside a sunset that once sat behind the
+ * timer's quote, and it is here because the range turned out not to be about
+ * pomodoros. It is the app's one piece of scenery, and a
  * page that opens with it reads as somewhere you arrived rather than a screen
  * that appeared. Every page's hero now draws one; styles/summit.css is the
  * card it sits in.

@@ -78,10 +78,11 @@ describe('starting a sitting', () => {
 
     await start();
 
-    // The four panels a reader would otherwise be asked to make a decision in.
+    // The panels a reader would otherwise be asked to make a decision in.
     expect(screen.queryByText(/pick your focus/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/before you start/i)).not.toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /upcoming tasks/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /what are you working on/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /today's sittings/i })).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/intensity/i)).not.toBeInTheDocument();
   });
 

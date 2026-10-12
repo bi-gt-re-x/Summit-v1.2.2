@@ -1,5 +1,5 @@
 /**
- * The four things the page claims about a sitting after it ends.
+ * The three things the page claims about a sitting after it ends.
  *
  * Three of them are automatic, and that is exactly why they need pinning: the
  * reader is not asked to confirm any of it, so a wrong claim here is one
@@ -14,13 +14,10 @@
  * outside it: claiming that one would be the page taking credit for work done
  * over the break.
  *
- * **The kind** changes which reading leads and nothing else. The test for it is
- * that all three readings are still there.
- *
  * **The live goal line** only appears while work is actually running, and only
  * for a goal this page can move.
  */
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/test/render';
@@ -164,40 +161,6 @@ describe('what the sitting fed', () => {
     // A zero here would read as a judgement on a sitting that may have been
     // spent reading.
     expect(screen.queryByText(/finished while it ran/i)).not.toBeInTheDocument();
-  });
-});
-
-/** The kind chips, scoped: "Deep work" is also one of the ten method cards. */
-async function kinds() {
-  return within(await screen.findByRole('group', { name: /what kind of work/i }));
-}
-
-describe('the kind of work', () => {
-  it('can be tagged and untagged', async () => {
-    show();
-    const speed = (await kinds()).getByRole('button', { name: /speed run/i });
-    await userEvent.click(speed);
-    await waitFor(() => expect(speed).toHaveAttribute('aria-pressed', 'true'));
-
-    await userEvent.click(speed);
-    await waitFor(() => expect(speed).toHaveAttribute('aria-pressed', 'false'));
-  });
-
-  it('asks the record about that kind, and says so', async () => {
-    logged([
-      ...Array.from({ length: 6 }, () => sitting({
-        styleId: 'deep-work', planned: 50, minutes: 50, kind: 'deep', at: undefined,
-      })),
-      ...Array.from({ length: 3 }, () => sitting({
-        styleId: 'classic', planned: 25, minutes: 5, pauses: 4, finished: false, kind: 'deep',
-        at: undefined,
-      })),
-    ]);
-    show();
-
-    await userEvent.click((await kinds()).getByRole('button', { name: /deep work/i }));
-    await waitFor(() =>
-      expect(screen.getByText(/recommended focus · 50 min for deep work/i)).toBeInTheDocument());
   });
 });
 

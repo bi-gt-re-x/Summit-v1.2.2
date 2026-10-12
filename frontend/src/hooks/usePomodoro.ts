@@ -140,6 +140,21 @@ interface Stored {
    * that has not changed.
    */
   kind: Kind | null;
+  /**
+   * The task these sittings are for, when one has been picked.
+   *
+   * Carried across sittings and resets like the kind: an afternoon on one
+   * task is several pomodoros, and picking it again after every break would
+   * be busywork. Dropped with the day, and cleared by the Timer page once the
+   * task is finished and no focus phase is running.
+   */
+  task: PickedTask | null;
+}
+
+/** A task as the cycle remembers it: enough to label a row without a lookup. */
+export interface PickedTask {
+  id: string;
+  title: string;
 }
 
 /* The key itself lives in utils/pomodoroChoice, beside the reader that
@@ -154,6 +169,12 @@ function isReadiness(value: unknown): value is Readiness {
 
 function isKind(value: unknown): value is Kind {
   return KINDS.some((kind) => kind.id === value);
+}
+
+function isTask(value: unknown): value is PickedTask {
+  if (!value || typeof value !== 'object') return false;
+  const it = value as Partial<PickedTask>;
+  return typeof it.id === 'string' && typeof it.title === 'string';
 }
 
 function todayIso(): string {
@@ -184,6 +205,7 @@ function fresh(styleId: string, levelId = DEFAULT_LEVEL, keep?: Stored): Stored 
     readiness: keep?.readiness ?? null,
     breaks: [],
     kind: keep?.kind ?? null,
+    task: keep?.task ?? null,
   };
 }
 
@@ -223,6 +245,7 @@ function load(user: string): Stored {
         ? saved.breaks.filter((at): at is number => typeof at === 'number')
         : [],
       kind: saved.dayIso === today && isKind(saved.kind) ? saved.kind : null,
+      task: saved.dayIso === today && isTask(saved.task) ? saved.task : null,
     };
   } catch {
     // A private window, cleared site data, or a value from an older shape.
@@ -280,6 +303,10 @@ export interface UsePomodoro {
   kind: Kind | null;
   /** Tag it, or press the same one again to untag. */
   setKind: (kind: Kind | null) => void;
+  /** The task these sittings are for, or null for none. */
+  task: PickedTask | null;
+  /** Pick one, or null to clear. A sitting under way takes the new pick. */
+  setTask: (task: PickedTask | null) => void;
   /** Answer the newest row's intention. See `amend` in hooks/useIntervals. */
   report: (result: { done?: number; met?: boolean }) => void;
 }
@@ -348,6 +375,7 @@ export function usePomodoro(
         ...(from.readiness ? { readiness: from.readiness } : {}),
         ...(from.breaks.length ? { breaks: from.breaks } : {}),
         ...(from.kind ? { kind: from.kind } : {}),
+        ...(from.task ? { taskId: from.task.id, taskTitle: from.task.title } : {}),
       };
     },
     [],
@@ -387,6 +415,7 @@ export function usePomodoro(
       readiness: from.readiness,
       breaks: [],
       kind: from.kind,
+      task: from.task,
     };
 
     if (endsAt <= at) {
@@ -529,6 +558,13 @@ export function usePomodoro(
     [write],
   );
 
+  const setTask = useCallback(
+    (task: PickedTask | null) => {
+      write({ ...latest.current, task });
+    },
+    [write],
+  );
+
   const report = useCallback(
     (result: { done?: number; met?: boolean }) => {
       log.amend(result);
@@ -570,6 +606,8 @@ export function usePomodoro(
     setReadiness,
     kind: state.kind,
     setKind,
+    task: state.task,
+    setTask,
     report,
   };
 }

@@ -65,6 +65,7 @@ import { PHASE_LABEL, clock, type Phase } from '@/components/Timer/pomodoro';
 import { fmtHM } from '@/hooks/useFocusSession';
 import { quote as quoteService } from '@/services';
 import type { Counting } from '@/pages/Timer';
+import type { PickedTask } from '@/hooks/usePomodoro';
 import type { Task } from '@/types';
 
 /**
@@ -107,12 +108,14 @@ export interface FocusViewProps {
   goal: Counting | null;
   /** Minutes focused today, which is what this sitting is adding to it. */
   goalMinutes: number;
+  /** The task this sitting is for, or null when none was picked. */
+  task?: PickedTask | null;
 }
 
 export function FocusView({
   phase, percent, remaining, onPause,
   tasksDone, tasksTotal, focused, focusGoal,
-  upcoming, onComplete, busy, done, goal, goalMinutes,
+  upcoming, onComplete, busy, done, goal, goalMinutes, task = null,
 }: FocusViewProps) {
   const gradient = useId();
   const [line, setLine] = useState(PLACEHOLDER);
@@ -151,7 +154,10 @@ export function FocusView({
   const goalNow = goal ? goal.now + goalMinutes : 0;
   const goalPct = goal && goal.target > 0
     ? Math.min(100, Math.round((goalNow / goal.target) * 100)) : 0;
-  const left = upcoming.filter((task) => !done.has(task.id));
+  // The task in hand first, so finishing it is the nearest click.
+  const left = upcoming
+    .filter((row) => !done.has(row.id))
+    .sort((a, b) => Number(b.id === task?.id) - Number(a.id === task?.id));
 
   return (
     <div className={`pom-sit is-${phase}`}>
@@ -178,6 +184,11 @@ export function FocusView({
         <button type="button" className="pom-sit-pause" onClick={onPause}>
           <Icon name="pause" /> Pause
         </button>
+        {task && (
+          <p className="pom-sit-on">
+            Working on <b>{task.title}</b>
+          </p>
+        )}
         <p className="pom-sit-esc">
           <span className="pom-kbd">Esc</span> to come back
         </p>
@@ -224,11 +235,11 @@ export function FocusView({
           <h2 id="pom-sit-next">Up next</h2>
           {left.length ? (
             <ul className="pom-sit-tasks">
-              {left.map((task) => (
-                <li key={task.id}>
-                  <button type="button" onClick={() => onComplete(task)} disabled={busy}>
+              {left.map((row) => (
+                <li key={row.id} className={row.id === task?.id ? 'is-current' : undefined}>
+                  <button type="button" onClick={() => onComplete(row)} disabled={busy}>
                     <span className="pom-sit-check" aria-hidden="true" />
-                    <span className="pom-sit-task-title">{task.title}</span>
+                    <span className="pom-sit-task-title">{row.title}</span>
                   </button>
                 </li>
               ))}

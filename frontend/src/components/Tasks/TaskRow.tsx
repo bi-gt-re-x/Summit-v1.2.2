@@ -12,6 +12,7 @@
  * alternative is a dialog for the single most common edit there is.
  */
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { Goal, Task } from '@/types';
 import { dueLine, spellDuration } from './board';
 
@@ -267,6 +268,13 @@ export function TaskRow({
         )}
         {menu && !linking && (
           <div className="tk-menu-panel is-row">
+            {/* Opens the timer with this task picked, so the sittings that
+                follow are logged against it. See `?task=` in pages/Timer. */}
+            {!done && (
+              <Link className="tk-menu-item is-link" to={`/timer?task=${encodeURIComponent(task.id)}`}>
+                Focus on this
+              </Link>
+            )}
             <button type="button" className="tk-menu-item" onClick={() => { setMenu(false); setEditing(true); }}>
               Rename
             </button>

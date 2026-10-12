@@ -557,6 +557,7 @@ export default function Dashboard() {
         done={ticking}
         goal={counting}
         goalMinutes={Math.round(session.focused / 60)}
+        task={pomodoro.task}
       />
     );
   }

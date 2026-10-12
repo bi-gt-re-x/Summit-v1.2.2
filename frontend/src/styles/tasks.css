@@ -348,6 +348,7 @@ html[data-theme='dark'] .tk-page {
 }
 .tk-menu-item:hover { background: var(--tk-card-2); }
 .tk-menu-item.is-on { color: var(--tk-violet); font-weight: 600; }
+.tk-menu-item.is-link { text-decoration: none; }
 
 /* ---------- Menu choices -------------------------------------------------
    A tick slot that holds its width whether or not it is filled, so the labels

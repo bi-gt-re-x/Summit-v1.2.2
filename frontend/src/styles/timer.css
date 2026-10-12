@@ -144,7 +144,6 @@ html[data-theme="dark"] .pom-page {
     cursor: pointer;
 }
 .pom-link:hover { color: var(--pom-text); text-decoration: underline; }
-.pom-quiet { color: var(--pom-faint); font-size: var(--text-sm); }
 .pom-empty { margin: 0; color: var(--pom-muted); font-size: var(--text-md); }
 
 .pom-btn {
@@ -235,8 +234,8 @@ html[data-theme="dark"] .pom-page {
     /* The clock, and the three cards down the side. The column that held the
        method pickers, the recommendation, three optional questions and the
        Start button is gone — six unrelated decisions stacked in a card whose
-       job is to show a clock. They are their own panels below; see the Method
-       and Before You Start sections in pages/Timer.tsx.
+       job is to show a clock. The method is its own panel below, and the
+       questions are gone; see the header of pages/Timer.tsx.
 
        The clock leads and the rail is pinned to the end, with one flexible
        track between them holding the slack. Centring the clock — on the left
@@ -423,62 +422,6 @@ html[data-theme="dark"] .pom-page {
 .pom-rec-on { color: var(--pom-now); font-size: var(--text-xs); font-weight: 700; white-space: nowrap; }
 .pom-rec .pom-btn { white-space: nowrap; }
 
-/* Readiness: three buttons, one row.
-
-   Sized down from the method toggle it borrows its shape from. This is a
-   question the reader answers once and then ignores for the rest of the day,
-   and a control the size of the Start button would keep asking to be looked
-   at. */
-.pom-ready { margin-top: var(--space-4); }
-.pom-ready-label {
-    display: block;
-    margin-bottom: var(--space-2);
-    color: var(--pom-muted);
-    font-size: var(--text-xs); font-weight: 700;
-}
-.pom-ready-row { display: flex; gap: var(--space-2); }
-.pom-ready-row button {
-    flex: 1;
-    height: 34px;
-    border: 1px solid var(--pom-line);
-    border-radius: var(--radius-md);
-    background: var(--pom-card);
-    color: var(--pom-muted);
-    font: inherit; font-size: var(--text-xs); font-weight: 600;
-    cursor: pointer;
-    transition: color .15s ease, border-color .15s ease, background .15s ease;
-}
-.pom-ready-row button:hover { color: var(--pom-text); border-color: var(--pom-now); }
-.pom-ready-row button.is-on {
-    border-color: var(--pom-now);
-    background: color-mix(in srgb, var(--pom-now) 10%, transparent);
-    color: var(--pom-text);
-}
-
-/* The kinds: seven chips that wrap.
-
-   Smaller than the readiness row and allowed onto two lines, because there are
-   seven of them and they are the least important control in the column — a
-   sitting is perfectly well recorded without one. */
-.pom-kinds { margin-top: var(--space-4); }
-.pom-kind-row { display: flex; flex-wrap: wrap; gap: var(--space-1); }
-.pom-kind-row button {
-    padding: var(--space-1) var(--space-3);
-    border: 1px solid var(--pom-line);
-    border-radius: var(--radius-full);
-    background: var(--pom-card);
-    color: var(--pom-muted);
-    font: inherit; font-size: var(--text-2xs); font-weight: 600;
-    cursor: pointer;
-    transition: color .15s ease, border-color .15s ease, background .15s ease;
-}
-.pom-kind-row button:hover { color: var(--pom-text); border-color: var(--pom-now); }
-.pom-kind-row button.is-on {
-    border-color: var(--pom-now);
-    background: color-mix(in srgb, var(--pom-now) 10%, transparent);
-    color: var(--pom-text);
-}
-
 /* The replay: one sitting, along its own length.
 
    The marks sit *on* the bar rather than under it, so the eye reads one line
@@ -510,87 +453,6 @@ html[data-theme="dark"] .pom-page {
 .pom-outcome-fed { margin: 0; color: var(--pom-muted); font-size: var(--text-xs); }
 .pom-outcome-fed b { color: var(--pom-text); }
 
-/* The next move, when there is one. */
-.pom-move {
-    display: flex; align-items: flex-start; gap: var(--space-3);
-    margin-top: var(--space-4);
-    padding: var(--space-3);
-    border: 1px solid color-mix(in srgb, var(--pom-now) 30%, transparent);
-    border-radius: var(--radius-md);
-    background: color-mix(in srgb, var(--pom-now) 7%, transparent);
-}
-.pom-move-icon { display: inline-grid; place-items: center; color: var(--pom-now); }
-.pom-move-icon svg { width: 18px; height: 18px; }
-.pom-move-text { display: flex; flex-direction: column; gap: 2px; }
-.pom-move-text b { font-size: var(--text-sm); font-weight: 700; }
-.pom-move-text i { color: var(--pom-muted); font-size: var(--text-xs); font-style: normal; }
-
-/* The marks.
-
-   Three across on a wide page and stacked on a narrow one, each a figure with
-   a label over it and a line under saying what it was. The line is not
-   decoration: "1h 30m" as a personal best means nothing without "start to
-   finish, no pauses" to say what was being measured. */
-.pom-mark-row {
-    display: grid; gap: var(--space-4);
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    margin: 0;
-}
-.pom-mark { display: flex; flex-direction: column; gap: 3px; }
-.pom-mark dt { color: var(--pom-muted); font-size: var(--text-xs); font-weight: 700; }
-.pom-mark dd {
-    margin: 0;
-    font-size: var(--text-2xl); font-weight: 700;
-    font-variant-numeric: tabular-nums; letter-spacing: -.03em;
-}
-.pom-mark span { color: var(--pom-faint); font-size: var(--text-xs); line-height: 1.4; }
-.pom-marks-note {
-    margin: var(--space-4) 0 0;
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--pom-line);
-    color: var(--pom-muted);
-    font-size: var(--text-sm); line-height: 1.55;
-}
-
-/* The intention, under the recommendation.
-
-   Two fields on one row: the line, and the number it may or may not have. The
-   number is narrow on purpose — it is optional, and a box the same width as
-   the sentence beside it would read as a second required answer. */
-.pom-intent { margin-top: var(--space-3); }
-.pom-intent-label {
-    display: block;
-    margin-bottom: var(--space-2);
-    color: var(--pom-muted);
-    font-size: var(--text-xs); font-weight: 700;
-}
-.pom-intent-row { display: flex; gap: var(--space-2); }
-.pom-intent-input, .pom-intent-count {
-    min-width: 0;
-    height: 38px;
-    padding: 0 var(--space-3);
-    border: 1px solid var(--pom-line);
-    border-radius: var(--radius-md);
-    background: var(--pom-card);
-    color: var(--pom-text);
-    font: inherit; font-size: var(--text-sm);
-}
-.pom-intent-input { flex: 1; }
-.pom-intent-count { width: 72px; text-align: center; font-variant-numeric: tabular-nums; }
-.pom-intent-input:focus, .pom-intent-count:focus { outline: none; border-color: var(--pom-now); }
-.pom-intent.is-set {
-    display: flex; align-items: center; gap: var(--space-3);
-    padding: var(--space-3);
-    border: 1px solid var(--pom-line);
-    border-radius: var(--radius-md);
-    background: var(--pom-card-2);
-}
-.pom-intent-icon { display: inline-grid; place-items: center; color: var(--pom-now); }
-.pom-intent-icon svg { width: 16px; height: 16px; }
-.pom-intent-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
-.pom-intent-text b { font-size: var(--text-sm); font-weight: 700; }
-.pom-intent-text i { color: var(--pom-muted); font-size: var(--text-xs); font-style: normal; }
-
 /* What came of the last sitting.
 
    Above the hero, full width, because it is the most recent thing that
@@ -609,8 +471,6 @@ html[data-theme="dark"] .pom-page {
 .pom-outcome-head { display: flex; flex-direction: column; gap: 2px; min-width: 180px; flex: 1; }
 .pom-outcome-head b { color: var(--pom-muted); font-size: var(--text-xs); font-weight: 700; }
 .pom-outcome-head i { font-size: var(--text-md); font-style: normal; font-weight: 700; }
-.pom-outcome-answer { display: flex; align-items: center; gap: var(--space-2); }
-.pom-outcome-answer label { color: var(--pom-muted); font-size: var(--text-xs); font-weight: 600; }
 .pom-outcome-bars { display: grid; gap: var(--space-2); margin: 0; min-width: 240px; flex: 2; }
 .pom-outcome-bar dt { display: flex; justify-content: space-between; color: var(--pom-muted); font-size: var(--text-xs); }
 .pom-outcome-bar dt b { color: var(--pom-text); font-variant-numeric: tabular-nums; }
@@ -628,57 +488,7 @@ html[data-theme="dark"] .pom-page {
 }
 .pom-outcome-bar em { color: var(--pom-faint); font-size: var(--text-2xs); font-style: normal; }
 .pom-outcome-verdict { width: 100%; margin: 0; font-size: var(--text-sm); font-weight: 600; }
-
-/* The climb: what the time is for.
-
-   The chain is a list with a rule down the left and a dot per step, rather
-   than arrows between boxes: the steps are of very different lengths — a
-   subject, a goal title, a checkpoint — and a row of arrows sets them in a
-   line that has to be read across and then back. Down the page, in order, is
-   how the plan is actually shaped. */
-.pom-climb-body { display: grid; gap: var(--space-5); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.pom-climb-group h3 {
-    margin: 0 0 var(--space-3);
-    color: var(--pom-muted);
-    font-size: var(--text-xs); font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
-}
-.pom-chain { margin: 0 0 var(--space-4); padding: 0 0 0 var(--space-4); list-style: none; border-left: 2px solid var(--pom-line); }
-.pom-chain:last-child { margin-bottom: 0; }
-.pom-chain-step { position: relative; padding: var(--space-1) 0; font-size: var(--text-sm); }
-.pom-chain-step::before {
-    content: '';
-    position: absolute;
-    left: calc(var(--space-4) * -1 - 5px);
-    top: calc(var(--space-1) + 6px);
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--pom-line);
-}
-.pom-chain-step.is-goal { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); font-weight: 700; }
-.pom-chain-step.is-goal a { color: inherit; text-decoration: none; }
-.pom-chain-step.is-goal a:hover { text-decoration: underline; }
-.pom-chain-step.is-goal em { color: var(--pom-now); font-style: normal; font-variant-numeric: tabular-nums; }
-.pom-chain-step.is-goal::before { background: var(--pom-now); }
-.pom-chain-step.is-now { color: var(--pom-text); font-weight: 600; }
-.pom-chain-step.is-now::before { background: var(--pom-now); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pom-now) 22%, transparent); }
-.pom-chain-step.is-quiet { color: var(--pom-faint); font-size: var(--text-xs); }
-.pom-chain-why {
-    margin-top: var(--space-1);
-    color: var(--pom-muted);
-    font-size: var(--text-xs); font-style: italic; line-height: 1.5;
-}
-.pom-climb-fed { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); }
-.pom-climb-fed li {
-    display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-md);
-    background: var(--pom-card-2);
-    font-size: var(--text-sm);
-}
-.pom-climb-fed a { color: inherit; text-decoration: none; font-weight: 600; }
-.pom-climb-fed a:hover { text-decoration: underline; }
-.pom-climb-fed em { color: var(--pom-faint); font-size: var(--text-xs); font-style: normal; white-space: nowrap; }
+.pom-outcome-hide { margin-left: auto; }
 
 /* The three cards down the side */
 .pom-hero-side {
@@ -715,6 +525,12 @@ html[data-theme="dark"] .pom-page {
     grid-column: 2;
     color: var(--pom-faint); font-size: var(--text-xs); font-style: normal;
 }
+/* A task title, not a figure: smaller, and cut rather than wrapped. */
+.pom-side-card strong.pom-side-task {
+    min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: var(--text-md); font-variant-numeric: normal;
+}
 
 /* ---- Panels -------------------------------------------------------------- */
 .pom-panel {
@@ -745,30 +561,6 @@ html[data-theme="dark"] .pom-page {
     font-size: var(--text-xs);
 }
 
-/* The segmented control the range and the grain both use. */
-.pom-toggle {
-    display: inline-flex;
-    gap: 2px;
-    padding: var(--space-1);
-    border-radius: var(--radius-md);
-    background: var(--pom-card-2);
-}
-.pom-toggle button {
-    padding: var(--space-2) var(--space-3);
-    border: none;
-    border-radius: var(--radius-md);
-    background: none;
-    color: var(--pom-muted);
-    font: inherit; font-size: var(--text-xs); font-weight: 600;
-    cursor: pointer;
-    transition: background .15s ease, color .15s ease;
-}
-.pom-toggle button:hover { color: var(--pom-text); }
-.pom-toggle button.is-on {
-    background: var(--pom-card);
-    color: var(--pom-focus);
-    box-shadow: var(--shadow-sm);
-}
 /* Every panel on the page is a sibling in one column, and this is the space
    between them. It was var(--space-4) set per panel, which read as a stack of
    boxes touching; the page is a sequence of separate things and should look
@@ -780,146 +572,8 @@ html[data-theme="dark"] .pom-page {
 /* The two panels pulled out of the hero. */
 .pom-method .pom-picks { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .pom-method .pom-rec { margin-top: var(--space-5); }
-.pom-before-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--space-6) var(--space-5);
-    align-items: start;
-}
-/* Inside the grid each question owns its cell, so none of them needs the top
-   margin it carried when they were stacked one under another. */
-.pom-before-grid > .pom-ready,
-.pom-before-grid > .pom-kinds,
-.pom-before-grid > .pom-intent,
-.pom-before-grid > .pom-intent.is-set { margin-top: 0; }
-.pom-before-grid > .pom-intent.is-set { align-self: start; }
 
-/* Progress */
-.pom-progress {
-    display: grid;
-    grid-template-columns: 170px minmax(0, 1fr);
-    gap: var(--space-6);
-    align-items: center;
-}
-.pom-donut { position: relative; width: 158px; height: 158px; }
-.pom-donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.pom-donut-track { fill: none; stroke: var(--pom-line); stroke-width: 11; }
-.pom-donut-run {
-    fill: none;
-    stroke: var(--pom-focus);
-    stroke-width: 11;
-    stroke-linecap: round;
-    transition: stroke-dashoffset .4s ease;
-}
-.pom-donut-text {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 1px;
-}
-.pom-donut-text strong { font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.03em; }
-.pom-donut-text span { color: var(--pom-muted); font-size: var(--text-xs); }
-.pom-donut-text em {
-    color: var(--pom-faint); font-size: var(--text-2xs); font-style: normal;
-    font-variant-numeric: tabular-nums;
-}
-
-.pom-tiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--space-3);
-}
-.pom-tile {
-    display: flex; flex-direction: column; gap: 2px;
-    padding: var(--space-4) var(--space-4);
-    border: 1px solid var(--pom-line);
-    border-radius: var(--radius-lg);
-    background: var(--pom-card-2);
-}
-.pom-tile-icon {
-    display: grid; place-items: center;
-    width: 30px; height: 30px;
-    margin-bottom: var(--space-2);
-    border-radius: var(--radius-md);
-}
-.pom-tile-icon svg { width: 16px; height: 16px; }
-.pom-tile-label { color: var(--pom-muted); font-size: var(--text-xs); }
-.pom-tile-value {
-    font-size: var(--text-xl); font-weight: 700;
-    font-variant-numeric: tabular-nums; letter-spacing: -.02em;
-}
-.pom-tile-delta {
-    color: var(--pom-green);
-    font-size: var(--text-2xs); font-weight: 600;
-}
-.pom-tile-delta i { color: var(--pom-faint); font-style: normal; font-weight: 500; }
-.pom-tile-delta.is-down { color: var(--pom-rose); }
-.pom-tile-delta.is-flat { color: var(--pom-faint); font-weight: 500; }
-.pom-tile-icon { font-size: var(--text-md); }
-
-/* The week */
-/* The week's bars and the quote, side by side the way the design has them. */
-.pom-lower {
-    display: grid;
-    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-    gap: var(--space-4);
-    margin-top: var(--space-6);
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--pom-line);
-}
-.pom-week { min-width: 0; }
-.pom-week h3 {
-    margin: 0 0 var(--space-4);
-    color: var(--pom-muted);
-    font-size: var(--text-sm); font-weight: 600;
-}
-.pom-bars {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: var(--space-2);
-    height: 118px;
-}
-.pom-bar {
-    display: flex; flex-direction: column; justify-content: flex-end;
-    align-items: center; gap: var(--space-2);
-    height: 100%;
-}
-.pom-bar-fill {
-    width: 100%;
-    max-width: 42px;
-    min-height: 4px;
-    border-radius: var(--radius-md) var(--radius-md) var(--radius-sm) var(--radius-sm);
-    background: linear-gradient(180deg, var(--pom-focus), var(--pom-blue));
-    transition: height .4s ease;
-}
-.pom-bar-name { color: var(--pom-faint); font-size: var(--text-2xs); }
-
-/* ---- The ten ------------------------------------------------------------- */
-.pom-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
-    gap: var(--space-3);
-    margin: 0; padding: 0;
-    list-style: none;
-}
-.pom-card {
-    display: flex; flex-direction: column; gap: var(--space-2);
-    width: 100%; height: 100%;
-    padding: var(--space-4) var(--space-4) var(--space-3);
-    border: 1px solid color-mix(in srgb, var(--tone) 22%, var(--pom-line));
-    border-radius: var(--radius-lg);
-    background: color-mix(in srgb, var(--tone) 5%, var(--pom-card));
-    color: inherit;
-    font: inherit; text-align: left;
-    cursor: pointer;
-    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-}
-.pom-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--tone);
-    box-shadow: var(--pom-shadow);
-}
-.pom-card.is-on { border-color: var(--tone); box-shadow: inset 0 0 0 1.5px var(--tone); }
-
+/* ---- Tones --------------------------------------------------------------- */
 .pom-tone-green  { --tone: var(--pom-green); }
 .pom-tone-blue   { --tone: var(--pom-blue); }
 .pom-tone-purple { --tone: var(--pom-purple); }
@@ -931,58 +585,57 @@ html[data-theme="dark"] .pom-page {
 .pom-tone-cyan   { --tone: var(--pom-cyan); }
 .pom-tone-slate  { --tone: var(--pom-slate); }
 
-.pom-card-head { display: flex; align-items: center; gap: var(--space-2); }
-.pom-icon,
-.pom-tile-icon,
 .pom-side-icon {
     background: color-mix(in srgb, var(--tone) 15%, transparent);
     color: var(--tone);
 }
-.pom-icon {
-    display: grid; place-items: center;
-    width: 32px; height: 32px;
-    border-radius: var(--radius-md);
-}
-.pom-icon svg { width: 18px; height: 18px; }
-.pom-card-name { font-size: var(--text-lg); font-weight: 700; }
 
-.pom-nums { display: flex; align-items: baseline; gap: var(--space-4); }
-.pom-num { display: flex; align-items: baseline; gap: var(--space-1); }
-.pom-num b {
-    font-size: var(--text-xl); font-weight: 700;
-    font-variant-numeric: tabular-nums; letter-spacing: -.02em; line-height: 1;
-}
-.pom-num i { color: var(--pom-muted); font-size: var(--text-2xs); font-style: normal; }
-.pom-num.is-rest b { color: var(--pom-muted); font-weight: 600; font-size: var(--text-xl); }
-
-.pom-card-who { flex: 1; color: var(--pom-muted); font-size: var(--text-sm); line-height: 1.45; }
-.pom-card-foot { display: flex; gap: var(--space-2); padding-top: var(--space-2); }
-.pom-chip {
-    padding: 2px var(--space-2);
-    border-radius: var(--radius-full);
-    background: var(--pom-card-2);
-    color: var(--pom-faint);
-    font-size: var(--text-2xs); font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-.pom-chip.is-xp {
-    background: color-mix(in srgb, var(--tone) 14%, transparent);
-    color: var(--tone);
-}
-
-/* ---- Ratings ------------------------------------------------------------- */
+/* ---- The task picker ----------------------------------------------------- */
 .pom-tasks { margin: 0; padding: 0; list-style: none; }
-.pom-tasks li {
+.pom-tasks li { border-bottom: 1px solid var(--pom-line); }
+/* The whole row picks. A pick is a toggle, so the picked row stays marked
+   until it is pressed again or the task is finished. */
+.pom-task-pick {
     display: flex; align-items: center; gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2) var(--space-2);
+    border: none;
+    border-radius: var(--radius-md);
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.pom-task-pick:hover { background: color-mix(in srgb, var(--pom-focus) 7%, transparent); }
+.pom-task-pick.is-on { background: color-mix(in srgb, var(--pom-focus) 12%, transparent); }
+.pom-task-pick.is-on .pom-tasks-title { font-weight: 700; }
+/* A radio dot rather than a box: a box here would read as "mark done". */
+.pom-task-pick .pom-check { border-radius: 50%; }
+.pom-task-pick.is-on .pom-check {
+    border-color: var(--pom-focus);
+    background: var(--pom-focus);
+    box-shadow: inset 0 0 0 3px var(--pom-card);
+}
+
+/* ---- Today's sittings ---------------------------------------------------- */
+.pom-today-list { margin: 0; padding: 0; list-style: none; }
+.pom-today-list li {
+    display: flex; align-items: baseline; gap: var(--space-3);
     padding: var(--space-2) 0;
     border-bottom: 1px solid var(--pom-line);
 }
-.pom-tasks li:last-child { border-bottom: none; }
-.pom-tasks-dot {
-    width: 8px; height: 8px; flex-shrink: 0;
-    border-radius: 50%;
-    background: var(--pom-focus);
+.pom-today-list li:last-child { border-bottom: none; }
+.pom-today-list li.is-none .pom-today-title { color: var(--pom-muted); font-style: italic; }
+.pom-today-title {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: var(--text-md);
 }
+.pom-today-count { color: var(--pom-faint); font-size: var(--text-xs); white-space: nowrap; }
+.pom-today-time { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pom-tasks li:last-child { border-bottom: none; }
 .pom-tasks-title {
     flex: 1;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -997,11 +650,6 @@ html[data-theme="dark"] .pom-page {
     color: var(--tone, var(--pom-muted));
     font-size: var(--text-2xs); font-weight: 600;
     text-transform: capitalize;
-}
-.pom-tasks-xp {
-    color: var(--pom-faint);
-    font-size: var(--text-xs); font-weight: 600;
-    font-variant-numeric: tabular-nums;
 }
 
 /* ---- Narrow -------------------------------------------------------------- */
@@ -1020,7 +668,6 @@ html[data-theme="dark"] .pom-page {
 }
 @media (max-width: 820px) {
     .pom-hero-side { grid-template-columns: 1fr; }
-    .pom-progress { grid-template-columns: minmax(0, 1fr); justify-items: center; }
 }
 @media (max-width: 640px) {
     .pom-page { padding: var(--space-4) var(--space-4) var(--space-12); }
@@ -1032,74 +679,9 @@ html[data-theme="dark"] .pom-page {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .pom-ring-run, .pom-donut-run, .pom-bar-fill,
-    .pom-outcome-track > span, .pom-hero { transition: none; }
-    .pom-card:hover, .pom-choice:hover { transform: none; }
+    .pom-ring-run, .pom-outcome-track > span, .pom-hero { transition: none; }
+    .pom-choice:hover { transform: none; }
 }
-
-/* ---- The quote, over its own sky ----------------------------------------- */
-.pom-quote {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 178px;
-    margin: 0;
-    padding: var(--space-5);
-    border-radius: var(--radius-lg);
-    isolation: isolate;
-}
-.pom-art-scene {
-    position: absolute;
-    inset: 0;
-    width: 100%; height: 100%;
-    z-index: -1;
-    pointer-events: none;
-}
-/* The scene is bright at the horizon, so the text gets its own floor to sit
-   on rather than relying on the picture staying dark where the words are. */
-.pom-quote::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: linear-gradient(180deg, rgba(10, 8, 30, .10) 0%, rgba(10, 8, 30, .62) 72%);
-}
-.pom-quote blockquote {
-    margin: 0;
-    color: #fff;
-    font-size: var(--text-lg); font-weight: 600; line-height: 1.5;
-    text-shadow: 0 1px 12px rgba(0, 0, 0, .45);
-}
-.pom-quote figcaption {
-    margin-top: var(--space-2);
-    color: rgba(255, 255, 255, .78);
-    font-size: var(--text-xs); font-weight: 600;
-}
-
-/* ---- The line ------------------------------------------------------------ */
-.pom-line { width: 100%; height: auto; overflow: visible; }
-.pom-line-rule { stroke: var(--pom-line); stroke-width: 1; }
-.pom-line-tick { fill: var(--pom-faint); font-size: var(--text-2xs); font-weight: 600; }
-.pom-line-area { fill: url(#pom-line-fill); }
-/* The label on the best day. Dark in both themes, like every tooltip in the
-   app — it sits over the chart's own fill, not over the page. */
-.pom-line-tip rect { fill: #1f2740; }
-.pom-line-tip-day { fill: rgba(255, 255, 255, .72); font-size: var(--text-2xs); font-weight: 600; }
-.pom-line-tip-num { fill: #fff; font-size: var(--text-2xs); font-weight: 700; }
-.pom-line-run {
-    fill: none;
-    stroke: var(--pom-focus);
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-.pom-line-halo { fill: var(--pom-focus); opacity: .18; }
-.pom-line-dot { fill: var(--pom-focus); stroke: var(--pom-card); stroke-width: 2.5; }
-
-/* ---- The task list, with its chevrons ------------------------------------ */
-.pom-chev { width: 16px; height: 16px; color: var(--pom-faint); }
 
 .pom-check {
     width: 17px; height: 17px; flex-shrink: 0;
@@ -1112,14 +694,9 @@ html[data-theme="dark"] .pom-page {
     white-space: nowrap;
 }
 
-@media (max-width: 900px) {
-    .pom-lower { grid-template-columns: minmax(0, 1fr); }
-}
-
 /* The tinted tiles colour their icon from the tile's tone, flame or not —
    see the icon note in styles/tokens.css. */
 .pom-side-icon,
-.pom-tile-icon,
 .pom-pick-glyph { --icon-flame: currentColor; --icon-gold: currentColor; }
 
 /* ==========================================================================
@@ -1304,6 +881,13 @@ html[data-theme="dark"] .pom-sit-scrim {
     transition: background .15s ease, border-color .15s ease;
 }
 .pom-sit-pause:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .5); }
+.pom-sit-on {
+    max-width: 320px; margin: 0;
+    color: rgba(255, 255, 255, .7);
+    font-size: var(--text-sm); text-align: center;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pom-sit-on b { color: #fff; font-weight: 600; }
 .pom-sit-esc { margin: 0; color: rgba(255, 255, 255, .55); font-size: var(--text-xs); }
 .pom-kbd {
     padding: 1px 6px;
@@ -1384,6 +968,7 @@ html[data-theme="dark"] .pom-sit-scrim {
     border-color: var(--pom-now-2);
     background: color-mix(in srgb, var(--pom-now-2) 35%, transparent);
 }
+.pom-sit-tasks li.is-current button { background: rgba(255, 255, 255, .1); color: #fff; font-weight: 600; }
 .pom-sit-task-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pom-sit-empty { margin: 0; color: rgba(255, 255, 255, .55); font-size: var(--text-sm); }
 

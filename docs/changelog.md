@@ -2,6 +2,37 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-10-12 — The timer runs on a task, and the page is four panels
+
+### A sitting is for something
+
+The Timer page counted minutes with nothing attached to them. Now a "What Are
+You Working On?" panel lists the open tasks, and picking one holds it on the
+pomodoro cycle (hooks/usePomodoro). Each sitting row in the interval log gets
+the task's id and title, so a new "Today's Sittings" panel can say where the
+time went: "Revise integrals, 2 sittings, 50m". The pick carries across breaks
+and resets and is let go once the task is finished, never mid-sitting. The
+full-screen sitting shows it under the clock and lists it first in Up next,
+on the dashboard too.
+
+The task row's overflow menu has "Focus on this", which opens
+`/timer?task=<id>` with the task already picked.
+
+The rows still live in the browser (hooks/useIntervals). The server keeps
+day totals only, so moving the log to the server is its own change.
+
+### Eleven panels down to four
+
+The page is now the clock, the task picker, the method and today's sittings.
+Gone: Before You Start (readiness, kind of work, intention), Today's Climb,
+Your Best Sittings, Your Progress, Ten Ways to Divide an Hour, Focus Analytics,
+Upcoming Tasks, and the streak and level cards beside the clock. Most of that
+was the Dashboard's, Analytics' or Goals' own content; the rest asked for
+effort before every sitting and paid it back weeks later. The cards beside the
+clock are now the task in hand, pomodoros against the target, and hours
+against the day's goal. components/Timer/Styles.tsx and art.tsx had no users
+left and are deleted, along with about 460 lines of timer.css.
+
 ## 2026-10-04 — The whitespace under the analytics tabs, found; Subjects and Growth whole again
 
 ### The whitespace

@@ -68,6 +68,8 @@ function isInterval(row: unknown): row is Interval {
     && maybe(it.met, 'boolean')
     && maybe(it.readiness, 'string')
     && maybe(it.kind, 'string')
+    && maybe(it.taskId, 'string')
+    && maybe(it.taskTitle, 'string')
     && (it.breaks === undefined
       || (Array.isArray(it.breaks) && it.breaks.every((at) => typeof at === 'number')));
   return required && optional;
