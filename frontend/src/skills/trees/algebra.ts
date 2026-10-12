@@ -1,0 +1,50 @@
+/**
+ * Algebra, a branch of Mathematics.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const ALGEBRA: SubjectTree = {
+  id: 'algebra',
+  title: 'Algebra',
+  blurb: 'Algebra 1 and 2, from solving for x to functions of every shape.',
+  parent: 'mathematics',
+  nodes: [
+    { id: 'alg.expr', name: 'Expressions', icon: 'algebra-x', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Letters standing in for numbers, plus combining like terms. Get this smooth and every later equation gets shorter.' },
+    { id: 'alg.onestep', name: 'Solving Equations', icon: 'balance-scale', tier: 'foundation', core: true, requires: ['alg.expr'], state: lock, percent: 0, xp: 1200,
+      desc: 'Doing the same thing to both sides until x stands alone. Check your answer by plugging it back in, every time.' },
+    { id: 'alg.multistep', name: 'Multi-Step Equations', icon: 'equations', tier: 'beginner', requires: ['alg.onestep'], state: lock, percent: 0, xp: 1600,
+      desc: 'Distributing, clearing fractions and variables on both sides. Write one step per line so mistakes have nowhere to hide.' },
+    { id: 'alg.ineq', name: 'Inequalities', icon: 'compare', tier: 'beginner', requires: ['alg.multistep'], state: lock, percent: 0, xp: 1700,
+      desc: 'Solving with less-than and greater-than, then graphing on a number line. Flip the sign when you multiply or divide by a negative.' },
+    { id: 'alg.slope', name: 'Slope & Lines', icon: 'linear-equation', tier: 'beginner', core: true, requires: ['alg.multistep'], state: lock, percent: 0, xp: 1400,
+      desc: 'Rise over run, slope-intercept form and point-slope form. Read the slope as a rate, like dollars per hour, and word problems get easy.' },
+    { id: 'alg.systems', name: 'Systems of Equations', icon: 'matrices', tier: 'intermediate', requires: ['alg.slope'], state: lock, percent: 0, xp: 1800,
+      desc: 'Two equations, two unknowns, solved by graphing, substitution or elimination. Pick the method that makes the numbers nicest.' },
+    { id: 'alg.exponents', name: 'Exponent Rules', icon: 'skill-up', tier: 'intermediate', requires: ['alg.expr'], state: lock, percent: 0, xp: 1900,
+      desc: 'Multiplying powers, powers of powers and negative exponents. Most mistakes come from adding exponents that should be multiplied.' },
+    { id: 'alg.poly', name: 'Polynomials', icon: 'layers', tier: 'intermediate', requires: ['alg.exponents'], state: lock, percent: 0, xp: 2000,
+      desc: 'Adding, subtracting and multiplying polynomials. FOIL is just the distributive property done twice.' },
+    { id: 'alg.factor', name: 'Factoring', icon: 'puzzle', tier: 'intermediate', core: true, requires: ['alg.poly'], state: lock, percent: 0, xp: 1700,
+      desc: 'Pulling out common factors, trinomials and the difference of squares. Factoring is multiplying backwards, so check by multiplying out.' },
+    { id: 'alg.quad', name: 'Quadratic Equations', icon: 'parabola', tier: 'advanced', requires: ['alg.factor'], state: lock, percent: 0, xp: 2100,
+      desc: 'Solving by factoring, completing the square or the quadratic formula. The discriminant tells you how many answers to expect.' },
+    { id: 'alg.functions', name: 'Functions & Notation', icon: 'functions', tier: 'intermediate', requires: ['alg.slope'], state: lock, percent: 0, xp: 1900,
+      desc: 'f of x, domain, range and reading graphs. A function is a machine that gives one output for each input.' },
+    { id: 'alg.radicals', name: 'Radicals', icon: 'precision', tier: 'advanced', requires: ['alg.exponents'], state: lock, percent: 0, xp: 2300,
+      desc: 'Simplifying square roots and rationalizing denominators. Radicals are just fractional exponents wearing a hat.' },
+    { id: 'alg.rational', name: 'Rational Expressions', icon: 'fractions', tier: 'advanced', requires: ['alg.factor'], state: lock, percent: 0, xp: 2000,
+      desc: 'Fractions with polynomials in them. Factor everything first, then cancel, then watch for values that break the denominator.' },
+    { id: 'alg.expfun', name: 'Exponential Functions', icon: 'growth-curve', tier: 'advanced', requires: ['alg.functions', 'alg.exponents'], state: lock, percent: 0, xp: 2100,
+      desc: 'Growth and decay by a percent each step. Compound interest is the one example worth knowing cold.' },
+    { id: 'alg.logs', name: 'Logarithms', icon: 'logarithm', tier: 'expert', requires: ['alg.expfun'], state: lock, percent: 0, xp: 2500,
+      desc: 'The inverse of an exponential. Logs let you solve for a variable stuck up in an exponent.' },
+    { id: 'alg.complex', name: 'Complex Numbers', icon: 'spark', tier: 'expert', requires: ['alg.quad', 'alg.radicals'], state: lock, percent: 0, xp: 2600,
+      desc: 'The number i, where i squared is negative one. They show up when a quadratic has no real answers.' },
+    { id: 'alg.modeling', name: 'Modeling With Functions', icon: 'chart-bars', tier: 'expert', requires: ['alg.systems', 'alg.quad', 'alg.expfun'], state: lock, percent: 0, xp: 2300,
+      desc: 'Picking linear, quadratic or exponential to fit real data. The shape of the data tells you which one to try first.' },
+    { id: 'alg.final', name: 'Algebra 2 Final Review', icon: 'exam', tier: 'mastery', requires: ['alg.logs', 'alg.complex', 'alg.rational', 'alg.modeling'], state: lock, percent: 0, xp: 2700,
+      desc: 'Mixed problems where you have to choose the tool yourself. If you can do these, precalc will feel familiar.' },
+  ],
+};

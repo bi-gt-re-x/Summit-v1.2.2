@@ -1,0 +1,50 @@
+/**
+ * Geometry, a branch of Mathematics.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const GEOMETRY: SubjectTree = {
+  id: 'geometry',
+  title: 'Geometry',
+  blurb: 'Shapes, angles and proofs that hold for every case.',
+  parent: 'mathematics',
+  nodes: [
+    { id: 'geo.basics', name: 'Points, Lines & Planes', icon: 'shapes', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'The undefined terms and how geometry builds on them. Precise words matter here more than in any other math class.' },
+    { id: 'geo.angles', name: 'Angle Relationships', icon: 'compass', tier: 'foundation', core: true, requires: ['geo.basics'], state: lock, percent: 0, xp: 1200,
+      desc: 'Vertical, supplementary and complementary angles. Mark every angle you know on the diagram before doing anything else.' },
+    { id: 'geo.parallel', name: 'Parallel Lines', icon: 'grid', tier: 'beginner', requires: ['geo.angles'], state: lock, percent: 0, xp: 1600,
+      desc: 'Transversals and the angle pairs they make. Alternate interior angles are equal, and proofs lean on that a lot.' },
+    { id: 'geo.triangles', name: 'Triangle Basics', icon: 'triad', tier: 'beginner', requires: ['geo.angles'], state: lock, percent: 0, xp: 1700,
+      desc: 'The angle sum, exterior angles and the triangle inequality. Triangles are the building block for almost everything after.' },
+    { id: 'geo.logic', name: 'Logic & Reasoning', icon: 'logic', tier: 'beginner', requires: ['geo.basics'], state: lock, percent: 0, xp: 1400,
+      desc: 'If-then statements, converses and counterexamples. One counterexample is enough to sink a claim.' },
+    { id: 'geo.congruence', name: 'Congruent Triangles', icon: 'transform', tier: 'intermediate', core: true, requires: ['geo.triangles', 'geo.parallel'], state: lock, percent: 0, xp: 1800,
+      desc: "SSS, SAS, ASA, AAS and HL as proof shortcuts. Know which ones work and why SSA doesn't." },
+    { id: 'geo.proofs', name: 'Two-Column Proofs', icon: 'proof', tier: 'intermediate', core: true, requires: ['geo.congruence', 'geo.logic'], state: lock, percent: 0, xp: 1900,
+      desc: 'Statements on the left, reasons on the right. Start from what you are given, and work toward what you need with every step justified.' },
+    { id: 'geo.similar', name: 'Similar Triangles', icon: 'compare', tier: 'intermediate', requires: ['geo.congruence'], state: lock, percent: 0, xp: 2000,
+      desc: 'Same shape, different size, with proportional sides. Shadows and map scales are similar-triangle problems in disguise.' },
+    { id: 'geo.right', name: 'Right Triangles', icon: 'geometry', tier: 'intermediate', requires: ['geo.similar'], state: lock, percent: 0, xp: 1700,
+      desc: "The Pythagorean theorem and the special 30-60-90 and 45-45-90 triangles. Learn the special ones and you'll skip a lot of work." },
+    { id: 'geo.quads', name: 'Quadrilaterals', icon: 'shapes', tier: 'intermediate', requires: ['geo.parallel'], state: lock, percent: 0, xp: 1800,
+      desc: 'Parallelograms, rectangles, rhombuses, squares and trapezoids. Know which properties each one inherits from the one above it.' },
+    { id: 'geo.transform', name: 'Transformations', icon: 'rotation', tier: 'advanced', requires: ['geo.congruence'], state: lock, percent: 0, xp: 2200,
+      desc: 'Translations, reflections, rotations and dilations on the coordinate plane. Track one point at a time when they stack up.' },
+    { id: 'geo.circles', name: 'Circles', icon: 'orbit', tier: 'advanced', requires: ['geo.similar'], state: lock, percent: 0, xp: 2300,
+      desc: 'Arcs, chords, tangents and inscribed angles. An inscribed angle is half the arc it cuts off.' },
+    { id: 'geo.area', name: 'Area & Perimeter', icon: 'grid-time', tier: 'advanced', requires: ['geo.quads', 'geo.right'], state: lock, percent: 0, xp: 2000,
+      desc: 'Formulas for polygons and circles, and splitting odd shapes into easy ones. Write the formula before plugging in numbers.' },
+    { id: 'geo.volume', name: 'Surface Area & Volume', icon: 'form-3d', tier: 'advanced', requires: ['geo.area'], state: lock, percent: 0, xp: 2100,
+      desc: 'Prisms, cylinders, pyramids, cones and spheres. Pyramids and cones are one third of the matching prism or cylinder.' },
+    { id: 'geo.coord', name: 'Coordinate Geometry', icon: 'coordinate-plane', tier: 'expert', requires: ['geo.transform', 'geo.right'], state: lock, percent: 0, xp: 2500,
+      desc: 'Distance, midpoint and slope to prove things with algebra. It is often easier than a classic proof.' },
+    { id: 'geo.constructions', name: 'Constructions', icon: 'measure-art', tier: 'expert', requires: ['geo.circles'], state: lock, percent: 0, xp: 2600,
+      desc: 'Copying angles, bisecting and building shapes with only a compass and straightedge. It shows why the theorems are true.' },
+    { id: 'geo.trig', name: 'Intro to Trig', icon: 'trigonometry', tier: 'expert', requires: ['geo.right'], state: lock, percent: 0, xp: 2300,
+      desc: 'Sine, cosine and tangent in right triangles. This is the bridge into the full trigonometry course.' },
+    { id: 'geo.final', name: 'Geometry Final Review', icon: 'exam', tier: 'mastery', requires: ['geo.proofs', 'geo.volume', 'geo.coord', 'geo.constructions', 'geo.trig'], state: lock, percent: 0, xp: 2700,
+      desc: 'Mixed problems and proofs from the whole year. Draw a big, labeled diagram for every single problem.' },
+  ],
+};

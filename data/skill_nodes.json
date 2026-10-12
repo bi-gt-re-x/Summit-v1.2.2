@@ -632,6 +632,143 @@
       "recommends": []
     },
     {
+      "id": "k.curve",
+      "name": "Curve Sketching",
+      "desc": "Using the first and second derivatives to find where a graph rises, falls and bends. It's the most common free-response setup on the AP exam.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "calculus",
+      "treeTitle": "Calculus",
+      "treePath": [
+        "Mathematics",
+        "Calculus"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Differentiation Rules"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "k.linear",
+      "name": "Linear Approximation",
+      "desc": "Using the tangent line to estimate values near a point. Your calculator does a fancier version of this every time you press a button.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "calculus",
+      "treeTitle": "Calculus",
+      "treePath": [
+        "Mathematics",
+        "Calculus"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Differentiation Rules"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "k.lhopital",
+      "name": "L'Hopital's Rule",
+      "desc": "A shortcut for limits that come out as zero over zero or infinity over infinity. Check the form first, since using it anywhere else gives nonsense.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "calculus",
+      "treeTitle": "Calculus",
+      "treePath": [
+        "Mathematics",
+        "Calculus"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Differentiation Rules",
+        "Limits"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "k.mvt",
+      "name": "Mean Value Theorem",
+      "desc": "Somewhere between two points, the instant rate equals the average rate. It sounds obvious, and it quietly powers half the proofs in the course.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2600,
+      "tree": "calculus",
+      "treeTitle": "Calculus",
+      "treePath": [
+        "Mathematics",
+        "Calculus"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Continuity",
+        "Derivatives"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "k.motion",
+      "name": "Accumulation & Motion",
+      "desc": "Position, velocity and acceleration tied together by derivatives and integrals. Say the units of each answer out loud before you write it down.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "calculus",
+      "treeTitle": "Calculus",
+      "treePath": [
+        "Mathematics",
+        "Calculus"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Fundamental Theorem"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "k.parametric",
+      "name": "Parametric & Polar Calculus",
+      "desc": "Slopes, arc length and area for curves drawn by a parameter or an angle. This is BC-only territory, and it shows up every year.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2700,
+      "tree": "calculus",
+      "treeTitle": "Calculus",
+      "treePath": [
+        "Mathematics",
+        "Calculus"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Areas & Volumes"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "k.ap",
+      "name": "The AP Calculus Exam",
+      "desc": "Free-response technique, calculator rules and justifying answers in words. Graders want your reasoning, so practice writing it out in full.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2800,
+      "tree": "calculus",
+      "treeTitle": "Calculus",
+      "treePath": [
+        "Mathematics",
+        "Calculus"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Curve Sketching",
+        "Accumulation & Motion",
+        "Series"
+      ],
+      "recommends": []
+    },
+    {
       "id": "de.what",
       "name": "What a Diff Eq Is",
       "desc": "An equation that links a function to its own rate of change. The answer is a whole function, which takes some getting used to.",
@@ -3297,6 +3434,701 @@
       "recommends": []
     },
     {
+      "id": "alg.expr",
+      "name": "Expressions",
+      "desc": "Letters standing in for numbers, plus combining like terms. Get this smooth and every later equation gets shorter.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "alg.onestep",
+      "name": "Solving Equations",
+      "desc": "Doing the same thing to both sides until x stands alone. Check your answer by plugging it back in, every time.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1200,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Expressions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.multistep",
+      "name": "Multi-Step Equations",
+      "desc": "Distributing, clearing fractions and variables on both sides. Write one step per line so mistakes have nowhere to hide.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1600,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Solving Equations"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.ineq",
+      "name": "Inequalities",
+      "desc": "Solving with less-than and greater-than, then graphing on a number line. Flip the sign when you multiply or divide by a negative.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Multi-Step Equations"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.slope",
+      "name": "Slope & Lines",
+      "desc": "Rise over run, slope-intercept form and point-slope form. Read the slope as a rate, like dollars per hour, and word problems get easy.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1400,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Multi-Step Equations"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.systems",
+      "name": "Systems of Equations",
+      "desc": "Two equations, two unknowns, solved by graphing, substitution or elimination. Pick the method that makes the numbers nicest.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Slope & Lines"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.exponents",
+      "name": "Exponent Rules",
+      "desc": "Multiplying powers, powers of powers and negative exponents. Most mistakes come from adding exponents that should be multiplied.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Expressions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.poly",
+      "name": "Polynomials",
+      "desc": "Adding, subtracting and multiplying polynomials. FOIL is just the distributive property done twice.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Exponent Rules"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.factor",
+      "name": "Factoring",
+      "desc": "Pulling out common factors, trinomials and the difference of squares. Factoring is multiplying backwards, so check by multiplying out.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 1700,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Polynomials"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.quad",
+      "name": "Quadratic Equations",
+      "desc": "Solving by factoring, completing the square or the quadratic formula. The discriminant tells you how many answers to expect.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Factoring"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.functions",
+      "name": "Functions & Notation",
+      "desc": "f of x, domain, range and reading graphs. A function is a machine that gives one output for each input.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Slope & Lines"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.radicals",
+      "name": "Radicals",
+      "desc": "Simplifying square roots and rationalizing denominators. Radicals are just fractional exponents wearing a hat.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Exponent Rules"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.rational",
+      "name": "Rational Expressions",
+      "desc": "Fractions with polynomials in them. Factor everything first, then cancel, then watch for values that break the denominator.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Factoring"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.expfun",
+      "name": "Exponential Functions",
+      "desc": "Growth and decay by a percent each step. Compound interest is the one example worth knowing cold.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Functions & Notation",
+        "Exponent Rules"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.logs",
+      "name": "Logarithms",
+      "desc": "The inverse of an exponential. Logs let you solve for a variable stuck up in an exponent.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Exponential Functions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.complex",
+      "name": "Complex Numbers",
+      "desc": "The number i, where i squared is negative one. They show up when a quadratic has no real answers.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2600,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Quadratic Equations",
+        "Radicals"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.modeling",
+      "name": "Modeling With Functions",
+      "desc": "Picking linear, quadratic or exponential to fit real data. The shape of the data tells you which one to try first.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Systems of Equations",
+        "Quadratic Equations",
+        "Exponential Functions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "alg.final",
+      "name": "Algebra 2 Final Review",
+      "desc": "Mixed problems where you have to choose the tool yourself. If you can do these, precalc will feel familiar.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2700,
+      "tree": "algebra",
+      "treeTitle": "Algebra",
+      "treePath": [
+        "Mathematics",
+        "Algebra"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Logarithms",
+        "Complex Numbers",
+        "Rational Expressions",
+        "Modeling With Functions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.basics",
+      "name": "Points, Lines & Planes",
+      "desc": "The undefined terms and how geometry builds on them. Precise words matter here more than in any other math class.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "geo.angles",
+      "name": "Angle Relationships",
+      "desc": "Vertical, supplementary and complementary angles. Mark every angle you know on the diagram before doing anything else.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1200,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Points, Lines & Planes"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.parallel",
+      "name": "Parallel Lines",
+      "desc": "Transversals and the angle pairs they make. Alternate interior angles are equal, and proofs lean on that a lot.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1600,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Angle Relationships"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.triangles",
+      "name": "Triangle Basics",
+      "desc": "The angle sum, exterior angles and the triangle inequality. Triangles are the building block for almost everything after.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Angle Relationships"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.logic",
+      "name": "Logic & Reasoning",
+      "desc": "If-then statements, converses and counterexamples. One counterexample is enough to sink a claim.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Points, Lines & Planes"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.congruence",
+      "name": "Congruent Triangles",
+      "desc": "SSS, SAS, ASA, AAS and HL as proof shortcuts. Know which ones work and why SSA doesn't.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 1800,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Triangle Basics",
+        "Parallel Lines"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.proofs",
+      "name": "Two-Column Proofs",
+      "desc": "Statements on the left, reasons on the right. Start from what you are given, and work toward what you need with every step justified.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 1900,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Congruent Triangles",
+        "Logic & Reasoning"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.similar",
+      "name": "Similar Triangles",
+      "desc": "Same shape, different size, with proportional sides. Shadows and map scales are similar-triangle problems in disguise.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Congruent Triangles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.right",
+      "name": "Right Triangles",
+      "desc": "The Pythagorean theorem and the special 30-60-90 and 45-45-90 triangles. Learn the special ones and you'll skip a lot of work.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Similar Triangles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.quads",
+      "name": "Quadrilaterals",
+      "desc": "Parallelograms, rectangles, rhombuses, squares and trapezoids. Know which properties each one inherits from the one above it.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Parallel Lines"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.transform",
+      "name": "Transformations",
+      "desc": "Translations, reflections, rotations and dilations on the coordinate plane. Track one point at a time when they stack up.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Congruent Triangles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.circles",
+      "name": "Circles",
+      "desc": "Arcs, chords, tangents and inscribed angles. An inscribed angle is half the arc it cuts off.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Similar Triangles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.area",
+      "name": "Area & Perimeter",
+      "desc": "Formulas for polygons and circles, and splitting odd shapes into easy ones. Write the formula before plugging in numbers.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Quadrilaterals",
+        "Right Triangles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.volume",
+      "name": "Surface Area & Volume",
+      "desc": "Prisms, cylinders, pyramids, cones and spheres. Pyramids and cones are one third of the matching prism or cylinder.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Area & Perimeter"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.coord",
+      "name": "Coordinate Geometry",
+      "desc": "Distance, midpoint and slope to prove things with algebra. It is often easier than a classic proof.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Transformations",
+        "Right Triangles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.constructions",
+      "name": "Constructions",
+      "desc": "Copying angles, bisecting and building shapes with only a compass and straightedge. It shows why the theorems are true.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2600,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Circles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.trig",
+      "name": "Intro to Trig",
+      "desc": "Sine, cosine and tangent in right triangles. This is the bridge into the full trigonometry course.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Right Triangles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "geo.final",
+      "name": "Geometry Final Review",
+      "desc": "Mixed problems and proofs from the whole year. Draw a big, labeled diagram for every single problem.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2700,
+      "tree": "geometry",
+      "treeTitle": "Geometry",
+      "treePath": [
+        "Mathematics",
+        "Geometry"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Two-Column Proofs",
+        "Surface Area & Volume",
+        "Coordinate Geometry",
+        "Constructions",
+        "Intro to Trig"
+      ],
+      "recommends": []
+    },
+    {
       "id": "sc.method",
       "name": "The Method",
       "desc": "Turning a question into something an experiment could actually settle, with a control and a prediction that could fail. The willingness to be wrong is the part that makes it work.",
@@ -4018,6 +4850,329 @@
       "group": "Math and science",
       "requires": [
         "Electromagnetic Waves"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.process",
+      "name": "The Design Process",
+      "desc": "Define the problem, brainstorm, build, test and improve. Real engineering loops through it many times.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "eng.sketch",
+      "name": "Sketching Ideas",
+      "desc": "Quick drawings to think and explain. A rough sketch beats a perfect one that takes an hour.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1200,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Design Process"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.constraints",
+      "name": "Requirements & Constraints",
+      "desc": "Budget, size, weight, time and safety. Write them down before you design anything.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1600,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Design Process"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.units",
+      "name": "Units & Estimation",
+      "desc": "Keeping units straight and making rough estimates. A quick estimate catches answers that are off by a thousand.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Design Process"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.statics",
+      "name": "Forces & Statics",
+      "desc": "Free-body diagrams for things that stay still, like bridges and shelves. Every force has to balance.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1400,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Units & Estimation"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.materials",
+      "name": "Materials",
+      "desc": "Strength, stiffness and weight of wood, metal and plastic. The right material is often the cheapest fix.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Forces & Statics"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.cad",
+      "name": "CAD Modeling",
+      "desc": "Turning sketches into 3D models with real dimensions. Models let you test fit before cutting anything.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Sketching Ideas",
+        "Requirements & Constraints"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.prototype",
+      "name": "Prototyping",
+      "desc": "Cardboard, 3D prints and quick builds. Build cheap first so failures are cheap too.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "CAD Modeling"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.circuits",
+      "name": "Circuits Basics",
+      "desc": "Voltage, current and resistance with Ohm's law. Most projects end up needing a little electronics.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Units & Estimation"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.testing",
+      "name": "Testing & Data",
+      "desc": "Planning fair tests and recording results. Data beats opinions when picking between designs.",
+      "tier": "advanced",
+      "core": true,
+      "xp": 2100,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Prototyping"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.tradeoffs",
+      "name": "Trade-Offs & Decision Matrices",
+      "desc": "Scoring options against the requirements. Every design gives up something to get something else.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Testing & Data",
+        "Materials"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.mechanisms",
+      "name": "Mechanisms",
+      "desc": "Levers, gears, pulleys and linkages. Every simple machine trades force for distance.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Forces & Statics"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.safety",
+      "name": "Safety & Failure",
+      "desc": "Factors of safety and learning from famous failures. Engineers design for what can go wrong.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Trade-Offs & Decision Matrices"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.docs",
+      "name": "Engineering Notebook",
+      "desc": "Recording decisions, data and changes as you go. Judges and teams both rely on it.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Testing & Data"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.fields",
+      "name": "Fields of Engineering",
+      "desc": "Mechanical, electrical, civil, chemical, biomedical and software. Try small projects in a few before you pick.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Circuits Basics",
+        "Mechanisms"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eng.capstone",
+      "name": "A Capstone Project",
+      "desc": "Solving a real problem from start to finish. It makes a strong portfolio piece for college.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "engineering",
+      "treeTitle": "Engineering",
+      "treePath": [
+        "Science",
+        "Physics",
+        "Engineering"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Safety & Failure",
+        "Engineering Notebook",
+        "Fields of Engineering"
       ],
       "recommends": []
     },
@@ -6259,6 +7414,995 @@
       "recommends": []
     },
     {
+      "id": "an.terms",
+      "name": "Anatomical Terms",
+      "desc": "Directions, planes and body regions, like anterior and proximal. Learning the words first makes every later chapter faster.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "an.tissues",
+      "name": "Tissues",
+      "desc": "Epithelial, connective, muscle and nervous tissue. Every organ is built from these four.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1200,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Anatomical Terms"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.skin",
+      "name": "The Skin",
+      "desc": "Layers, glands and how skin heals. It's your biggest organ and your first line of defense.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1600,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Tissues"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.skeleton",
+      "name": "The Skeleton",
+      "desc": "The 206 bones, how bone grows and how joints move. Group bones by region instead of memorizing a flat list.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1700,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Tissues"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.muscles",
+      "name": "Muscles",
+      "desc": "How muscles contract, and the major muscles with their actions. Learn origin and insertion and the action makes sense.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Skeleton"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.nervous",
+      "name": "The Nervous System",
+      "desc": "Brain, spinal cord and nerves, and how signals travel. It ties every other system together.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 1800,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Tissues"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.senses",
+      "name": "Special Senses",
+      "desc": "Eyes, ears, taste and smell. Dissections make these click faster than any diagram.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Nervous System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.endocrine",
+      "name": "The Endocrine System",
+      "desc": "Glands and hormones that work slower than nerves but last longer. Feedback loops are the key idea.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Nervous System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.blood",
+      "name": "Blood",
+      "desc": "Red cells, white cells, platelets and blood types. Know why a type O donor can give to almost anyone.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Tissues"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.heart",
+      "name": "The Heart",
+      "desc": "Chambers, valves and the path blood takes. Trace one drop of blood all the way around, out loud.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Blood",
+        "Muscles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.vessels",
+      "name": "Blood Vessels",
+      "desc": "Arteries, veins and capillaries, and how blood pressure works. Arteries carry blood away from the heart, whatever its color.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Heart"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.lungs",
+      "name": "The Respiratory System",
+      "desc": "Airways, alveoli and how gases swap. Breathing rate is driven more by carbon dioxide than by oxygen.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Blood Vessels"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.digest",
+      "name": "The Digestive System",
+      "desc": "From mouth to colon, plus the liver and pancreas. Follow one meal through the whole path.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Tissues",
+        "The Endocrine System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.immune",
+      "name": "The Immune System",
+      "desc": "Barriers, white blood cells and antibodies. Vaccines train this system before the real threat shows up.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Blood"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.urinary",
+      "name": "The Urinary System",
+      "desc": "Kidneys filter blood and balance water and salts. A nephron is a tiny filter worth drawing from memory.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Blood Vessels"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.repro",
+      "name": "The Reproductive System",
+      "desc": "Anatomy, hormones and development. Treat it like any other system, with the same care for terms.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2600,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Endocrine System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.homeo",
+      "name": "Homeostasis",
+      "desc": "How the body keeps temperature, sugar and pH steady. Almost every test question comes back to this idea.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Respiratory System",
+        "The Digestive System",
+        "The Urinary System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "an.clinical",
+      "name": "Disease & Clinical Cases",
+      "desc": "Applying what you know to real cases, like diabetes or asthma. Great practice for HOSA, nursing and pre-med.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2700,
+      "tree": "anatomy",
+      "treeTitle": "Anatomy & Physiology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Anatomy & Physiology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Homeostasis",
+        "The Immune System",
+        "The Reproductive System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.dna",
+      "name": "DNA Structure",
+      "desc": "The double helix, base pairing and how DNA copies itself. A pairs with T and C pairs with G, every single time.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "gn.chromosomes",
+      "name": "Genes & Chromosomes",
+      "desc": "How DNA is packed into chromosomes and where genes sit on them. Humans have 23 pairs.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1200,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "DNA Structure"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.meiosis",
+      "name": "Meiosis",
+      "desc": "The cell division that makes eggs and sperm with half the chromosomes. Crossing over is where new combinations come from.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1600,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Genes & Chromosomes"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.mendel",
+      "name": "Mendel's Laws",
+      "desc": "Dominant and recessive traits, segregation and independent assortment. Mendel worked it all out with pea plants.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Meiosis"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.punnett",
+      "name": "Punnett Squares",
+      "desc": "Predicting the odds of a cross. They're probability tables, so treat them like one.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1400,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Mendel's Laws"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.dihybrid",
+      "name": "Dihybrid Crosses",
+      "desc": "Two traits at once, and the classic 9:3:3:1 ratio. Multiplying probabilities beats drawing a sixteen-box square.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Punnett Squares"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.nonmendel",
+      "name": "Beyond Simple Dominance",
+      "desc": "Incomplete dominance, codominance, multiple alleles and polygenic traits. Blood type is the go-to example.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Punnett Squares"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.sexlinked",
+      "name": "Sex-Linked Traits",
+      "desc": "Genes on the X chromosome, like color blindness. That is why some traits show up more in boys.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Punnett Squares"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.pedigree",
+      "name": "Pedigrees",
+      "desc": "Reading family trees to work out how a trait is inherited. Start with the clues that rule options out.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Sex-Linked Traits",
+        "Beyond Simple Dominance"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.expression",
+      "name": "Gene Expression",
+      "desc": "Transcription and translation, from DNA to RNA to protein. The codon chart is your decoder ring.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Genes & Chromosomes"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.regulation",
+      "name": "Gene Regulation",
+      "desc": "How cells turn genes on and off. Every cell has the same DNA, so regulation is why a skin cell is not a neuron.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Gene Expression"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.mutations",
+      "name": "Mutations",
+      "desc": "Point mutations, frameshifts and chromosome changes. Most are harmless, and a few cause disease or new traits.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Gene Expression"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.popgen",
+      "name": "Population Genetics",
+      "desc": "Hardy-Weinberg and how allele frequencies change. It connects genetics straight to evolution.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Dihybrid Crosses",
+        "Mutations"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.biotech",
+      "name": "Biotech Tools",
+      "desc": "PCR, gel electrophoresis and CRISPR. These are the tools behind DNA tests and gene therapy.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Gene Regulation"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.disorders",
+      "name": "Genetic Disorders",
+      "desc": "Cystic fibrosis, sickle cell, Down syndrome and more. Link each one to the kind of mutation behind it.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Pedigrees",
+        "Mutations"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gn.ethics",
+      "name": "Genetics & Ethics",
+      "desc": "Designer babies, genetic privacy and testing. Good answers weigh real benefits against real risks.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "genetics",
+      "treeTitle": "Genetics",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Genetics"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Biotech Tools",
+        "Genetic Disorders",
+        "Population Genetics"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.levels",
+      "name": "Levels of Ecology",
+      "desc": "Organism, population, community, ecosystem and biosphere. Know which level a question is asking about before you answer it.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "eco.biomes",
+      "name": "Biomes",
+      "desc": "Deserts, forests, tundra, grasslands and oceans. Temperature and rainfall decide which biome you get.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1200,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Levels of Ecology"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.energy",
+      "name": "Energy Flow",
+      "desc": "Producers, consumers and decomposers, and the ten percent rule. Energy flows through a system and leaks out as heat.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1600,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Levels of Ecology"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.webs",
+      "name": "Food Webs",
+      "desc": "Who eats whom, drawn as a web. Pull out one species and predict the ripple effects.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Energy Flow"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.cycles",
+      "name": "Nutrient Cycles",
+      "desc": "Carbon, nitrogen and water moving through living and nonliving things. Draw each cycle from memory.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Energy Flow"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.growth",
+      "name": "Population Growth",
+      "desc": "Exponential and logistic growth and carrying capacity. Real populations rarely grow without limits for long.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 1800,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Levels of Ecology"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.limits",
+      "name": "Limiting Factors",
+      "desc": "Food, space, predators and disease that hold populations in check. Some depend on density and some do not.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Population Growth"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.interactions",
+      "name": "Species Interactions",
+      "desc": "Predation, competition, mutualism and parasitism. Each one has a plus, minus or zero for each side.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Food Webs"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.niche",
+      "name": "Niches",
+      "desc": "The role a species plays and the resources it uses. Two species cannot share the exact same niche for long.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Species Interactions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.succession",
+      "name": "Succession",
+      "desc": "How communities rebuild after a fire or a new island forms. Pioneer species come first and change the place for the next ones.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Niches",
+        "Limiting Factors"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.diversity",
+      "name": "Biodiversity",
+      "desc": "Why more species usually means a sturdier ecosystem. Keystone species hold more weight than their numbers suggest.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Species Interactions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.field",
+      "name": "Field Sampling",
+      "desc": "Quadrats, transects and mark-recapture. You can estimate a whole population without counting every animal.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Population Growth"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.humans",
+      "name": "Human Impact",
+      "desc": "Habitat loss, invasive species, pollution and climate change. Link each threat to the ecological idea it breaks.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Biodiversity",
+        "Nutrient Cycles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.conservation",
+      "name": "Conservation",
+      "desc": "Protected areas, corridors and restoration. Saving habitat saves more species than saving one at a time.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Human Impact"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "eco.project",
+      "name": "An Ecology Project",
+      "desc": "Studying a real local habitat over time. Great for science fair, and the data is all yours.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2800,
+      "tree": "ecology",
+      "treeTitle": "Ecology",
+      "treePath": [
+        "Science",
+        "Biology",
+        "Ecology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Conservation",
+        "Field Sampling",
+        "Succession"
+      ],
+      "recommends": []
+    },
+    {
       "id": "es.time",
       "name": "Deep Time",
       "desc": "Getting used to spans where a millimeter a year builds a mountain range. Almost every argument against these subjects is really a failure to take four billion years seriously as a number.",
@@ -6657,6 +8801,651 @@
       "requires": [
         "Climate",
         "Observation & Instruments"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.sky",
+      "name": "Reading the Night Sky",
+      "desc": "Constellations, bright stars and how the sky turns overnight. Learn five constellations and the rest fall into place.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "ast.motion",
+      "name": "Sky Motions",
+      "desc": "Daily rotation, the seasons and why the stars shift through the year. Earth tilts, and that tilt does most of the work.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1200,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Reading the Night Sky"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.moon",
+      "name": "Moon Phases & Eclipses",
+      "desc": "Why the moon changes shape and when eclipses happen. Draw the sun, earth and moon from above and it clicks.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1600,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Sky Motions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.telescope",
+      "name": "Using a Telescope",
+      "desc": "Aperture, magnification and finding objects. Start with the moon, then Jupiter and Saturn.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Reading the Night Sky"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.gravity",
+      "name": "Gravity & Orbits",
+      "desc": "Kepler's laws and Newton's gravity. Orbits are just falling and missing, forever.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Sky Motions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.light",
+      "name": "Light & Spectra",
+      "desc": "How astronomers learn what stars are made of from their light alone. Each element leaves its own barcode.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 1800,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Using a Telescope"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.planets",
+      "name": "The Planets",
+      "desc": "Rocky planets, gas giants and ice giants, and what makes each one weird. Compare them by size, distance and atmosphere.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Gravity & Orbits"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.small",
+      "name": "Moons, Asteroids & Comets",
+      "desc": "The small bodies of the solar system. Some moons may hide oceans that could hold life.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Planets"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.sun",
+      "name": "The Sun",
+      "desc": "Fusion in the core, sunspots and solar flares. The sun is an average star that happens to be very close.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Light & Spectra"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.stars",
+      "name": "Star Properties",
+      "desc": "Brightness, temperature, size and the HR diagram. The HR diagram is the single most useful chart in astronomy.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Sun"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.lifecycle",
+      "name": "Lives of Stars",
+      "desc": "Nebulae, main sequence, red giants, white dwarfs and supernovae. A star's mass decides its whole story.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Star Properties"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.remnants",
+      "name": "Black Holes & Neutron Stars",
+      "desc": "What is left after the biggest stars die. Gravity gets so strong that light cannot escape a black hole.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2600,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Lives of Stars"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.galaxies",
+      "name": "Galaxies",
+      "desc": "Spirals, ellipticals and the Milky Way. There are more galaxies than anyone can count.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Lives of Stars"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.cosmo",
+      "name": "Cosmology",
+      "desc": "The Big Bang, the expanding universe and dark matter. Looking far away means looking back in time.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Galaxies",
+        "Black Holes & Neutron Stars"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.exoplanets",
+      "name": "Exoplanets",
+      "desc": "Planets around other stars, found by dips in starlight and wobbles. Thousands are known, and more turn up every month.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Light & Spectra",
+        "The Planets"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ast.observe",
+      "name": "Observing Projects",
+      "desc": "Logging observations, astrophotography and contests like the Science Olympiad astronomy event. Keep a sky journal.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "astronomy",
+      "treeTitle": "Astronomy",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Astronomy"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Cosmology",
+        "Exoplanets",
+        "Moon Phases & Eclipses"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.minerals",
+      "name": "Minerals",
+      "desc": "Identifying minerals by hardness, luster, streak and cleavage. A streak plate and a nail do a lot of the work.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "gl.rockcycle",
+      "name": "The Rock Cycle",
+      "desc": "Igneous, sedimentary and metamorphic rocks and how each turns into the others. There is no start or end to the cycle.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1200,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Minerals"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.igneous",
+      "name": "Igneous Rocks",
+      "desc": "Rocks cooled from magma or lava. Big crystals mean slow cooling deep underground.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1600,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Rock Cycle"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.sedimentary",
+      "name": "Sedimentary Rocks",
+      "desc": "Layers of sand, mud and shells pressed into rock over time. This is where fossils live.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Rock Cycle"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.metamorphic",
+      "name": "Metamorphic Rocks",
+      "desc": "Rocks changed by heat and pressure without melting. Marble used to be limestone.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Rock Cycle"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.interior",
+      "name": "Earth's Interior",
+      "desc": "Crust, mantle, outer core and inner core. Earthquake waves are how we know any of this.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1500,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "The Rock Cycle"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.plates",
+      "name": "Plate Tectonics",
+      "desc": "Plates moving apart, colliding and sliding past each other. Most mountains, volcanoes and quakes sit on plate edges.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 1900,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Earth's Interior"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.quakes",
+      "name": "Earthquakes",
+      "desc": "Faults, seismic waves and magnitude. Each step up the scale is about 32 times more energy.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Plate Tectonics"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.volcanoes",
+      "name": "Volcanoes",
+      "desc": "Shield, cinder cone and composite volcanoes. Thick, sticky magma makes the explosive ones.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Plate Tectonics",
+        "Igneous Rocks"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.weathering",
+      "name": "Weathering & Erosion",
+      "desc": "Water, ice, wind and gravity breaking rock down and moving it. Rivers carve canyons a grain at a time.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Sedimentary Rocks"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.fossils",
+      "name": "Fossils",
+      "desc": "How fossils form and what they tell us about past life. Most living things never become fossils at all.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Sedimentary Rocks"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.time",
+      "name": "Geologic Time",
+      "desc": "Eons, eras and periods, plus radiometric dating. Earth is about 4.6 billion years old, and people are a very recent arrival.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Fossils"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.maps",
+      "name": "Reading Geologic Maps",
+      "desc": "Topographic maps, contour lines and rock layers on a map. Close contour lines mean steep ground.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Weathering & Erosion",
+        "Plate Tectonics"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.resources",
+      "name": "Earth Resources",
+      "desc": "Ores, fossil fuels, groundwater and soil. Where they are depends on geology from millions of years ago.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Reading Geologic Maps"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.hazards",
+      "name": "Geologic Hazards",
+      "desc": "Landslides, tsunamis and sinkholes, and how communities prepare. Mapping risk saves lives.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Earthquakes",
+        "Volcanoes"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gl.field",
+      "name": "Field Geology",
+      "desc": "Reading the rocks on a real hike or road cut. A hand lens and a notebook are all you need to start.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "geology",
+      "treeTitle": "Geology",
+      "treePath": [
+        "Science",
+        "Earth & Space",
+        "Geology"
+      ],
+      "group": "Math and science",
+      "requires": [
+        "Earth Resources",
+        "Geologic Hazards",
+        "Geologic Time"
       ],
       "recommends": []
     },
@@ -17275,6 +20064,83 @@
       "recommends": []
     },
     {
+      "id": "db.prep",
+      "name": "Prep Time",
+      "desc": "Using the minutes before a speech to pick your best two arguments. Prep is where rounds get won, so practice it under the clock.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "debate",
+      "treeTitle": "Competitive Debate",
+      "treePath": [
+        "Humanities",
+        "Competitive Debate"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Case Building"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "db.pf",
+      "name": "Public Forum",
+      "desc": "Two-on-two debate on current events, judged by everyday people. Clear words and real-world impacts beat jargon in this format.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "debate",
+      "treeTitle": "Competitive Debate",
+      "treePath": [
+        "Humanities",
+        "Competitive Debate"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "The Rebuttal Speech"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "db.extemp",
+      "name": "Extemp & Speech Events",
+      "desc": "Short-prep speeches on current events and the other speech categories. Great cross-training, since they force fast structure.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "debate",
+      "treeTitle": "Competitive Debate",
+      "treePath": [
+        "Humanities",
+        "Competitive Debate"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Speaking Clearly",
+        "Research & Evidence"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "db.coach",
+      "name": "Coaching Novices",
+      "desc": "Teaching younger debaters to flow, refute and weigh. Explaining it to someone else sharpens your own rounds.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2600,
+      "tree": "debate",
+      "treeTitle": "Competitive Debate",
+      "treePath": [
+        "Humanities",
+        "Competitive Debate"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Reading the Judge"
+      ],
+      "recommends": []
+    },
+    {
       "id": "un.un",
       "name": "How the UN Works",
       "desc": "The General Assembly, Security Council and specialized agencies. Know what each body can and can't do.",
@@ -17937,6 +20803,583 @@
         "Local Government",
         "AP Gov Essays",
         "Economic Policy"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.maps",
+      "name": "Maps & Projections",
+      "desc": "Latitude, longitude and why every flat map stretches something. Greenland isn't really the size of Africa.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "gg.places",
+      "name": "Countries & Capitals",
+      "desc": "Knowing where places are. It makes every news story and history lesson easier to follow.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1200,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Maps & Projections"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.physical",
+      "name": "Landforms & Water",
+      "desc": "Mountains, rivers, plains and coasts. Rivers decided where most old cities got built.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1600,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Maps & Projections"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.climate",
+      "name": "Climate Zones",
+      "desc": "Why some places are hot, cold, wet or dry. Latitude, ocean currents and mountains explain most of it.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Landforms & Water"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.population",
+      "name": "Population",
+      "desc": "Where people live, how fast populations grow and population pyramids. The demographic transition model is a test favorite.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1400,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Countries & Capitals"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.migration",
+      "name": "Migration",
+      "desc": "Why people move, with push and pull factors. Most migrants move within their own country.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Population"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.culture",
+      "name": "Culture & Language",
+      "desc": "How languages, religions and customs spread. Ideas travel along trade routes just like goods do.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Countries & Capitals"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.urban",
+      "name": "Cities",
+      "desc": "How cities grow, their layouts and urban sprawl. Over half the world now lives in cities.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Migration"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.agriculture",
+      "name": "Agriculture & Land Use",
+      "desc": "Farming types, the Green Revolution and where food comes from. Climate and money both decide what grows where.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Climate Zones",
+        "Population"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.political",
+      "name": "Political Geography",
+      "desc": "Borders, states, nations and conflicts over territory. Many borders were drawn by people who never visited.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Culture & Language"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.economic",
+      "name": "Economic Development",
+      "desc": "Why some countries are richer than others, and how that changes. Measure development with more than one number.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Cities",
+        "Agriculture & Land Use"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.globalization",
+      "name": "Globalization",
+      "desc": "Trade, supply chains and connected cultures. Your phone has parts from dozens of countries.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Economic Development"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.environment",
+      "name": "People & Environment",
+      "desc": "How people change the land and how the land limits people. Deforestation and dams are classic case studies.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Globalization",
+        "Climate Zones"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.gis",
+      "name": "GIS & Data Maps",
+      "desc": "Making maps from data with layers. GIS is used everywhere from city planning to disaster response.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Maps & Projections",
+        "Economic Development"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "gg.aphg",
+      "name": "AP Human Geography",
+      "desc": "Models, vocabulary and free-response practice. Learn each model, then learn where it breaks down.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2800,
+      "tree": "geography",
+      "treeTitle": "Geography",
+      "treePath": [
+        "Humanities",
+        "Geography"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "People & Environment",
+        "GIS & Data Maps",
+        "Political Geography"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.imagination",
+      "name": "Sociological Imagination",
+      "desc": "Seeing how personal troubles connect to bigger social patterns. Unemployment for one person is a story, and for millions it is a trend.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "sog.theories",
+      "name": "Big Theories",
+      "desc": "Functionalism, conflict theory and symbolic interactionism. Each one is a lens, and each sees something the others miss.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1200,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Sociological Imagination"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.methods",
+      "name": "Research Methods",
+      "desc": "Surveys, interviews, observation and experiments. Every method trades depth for breadth somewhere.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1600,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Sociological Imagination"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.culture",
+      "name": "Culture",
+      "desc": "Norms, values, symbols and language. You notice your own culture most when you leave it.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Big Theories"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.socialization",
+      "name": "Socialization",
+      "desc": "How family, school, friends and media teach us who to be. It never really stops.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Culture"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.groups",
+      "name": "Groups & Networks",
+      "desc": "In-groups, out-groups and peer pressure. Even the size of a group changes how people act.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Socialization"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.deviance",
+      "name": "Deviance & Crime",
+      "desc": "Who decides what counts as breaking the rules. What is deviant changes from place to place and decade to decade.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Groups & Networks"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.stratification",
+      "name": "Social Class",
+      "desc": "Wealth, income, status and mobility. Where you start shapes where you are likely to end up.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 2000,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Big Theories"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.race",
+      "name": "Race & Ethnicity",
+      "desc": "How race is a social idea with real effects. Look at data on housing, schooling and health.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Social Class"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.gender",
+      "name": "Gender",
+      "desc": "How expectations about gender are learned and enforced. Compare them across cultures and over time.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Socialization"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.family",
+      "name": "Family",
+      "desc": "How families form and change. The typical family looks very different than it did fifty years ago.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Socialization"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.education",
+      "name": "Education",
+      "desc": "What schools teach on purpose, and what they teach without meaning to. Tracking and funding shape outcomes.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Social Class"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.institutions",
+      "name": "Religion, Economy & Politics",
+      "desc": "The big institutions that organize society. Each one sets rules most people follow without thinking.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Family",
+        "Education"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.change",
+      "name": "Social Change & Movements",
+      "desc": "How movements form, grow and win change. Steady organizing does more than a burst of outrage.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Race & Ethnicity",
+        "Gender",
+        "Religion, Economy & Politics"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sog.project",
+      "name": "A Sociology Study",
+      "desc": "Designing and running a small study of your own school or town. Protect the privacy of everyone you ask.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2800,
+      "tree": "sociology",
+      "treeTitle": "Sociology",
+      "treePath": [
+        "Humanities",
+        "Sociology"
+      ],
+      "group": "Language and humanities",
+      "requires": [
+        "Social Change & Movements",
+        "Research Methods",
+        "Deviance & Crime"
       ],
       "recommends": []
     },
@@ -19730,6 +23173,167 @@
       "recommends": []
     },
     {
+      "id": "g.weighted",
+      "name": "Weighted Graphs",
+      "desc": "Edges that carry a cost, like distance or time. Most real problems are weighted, and once they are, plain BFS stops finding the best path.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Representations"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "g.grid",
+      "name": "Grids as Graphs",
+      "desc": "A maze or a game board is a graph where each cell links to its neighbors. Seeing that turns a scary problem into a BFS you already know.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Breadth-First Search"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "g.zeroone",
+      "name": "0-1 BFS",
+      "desc": "Shortest paths when every edge costs zero or one, using a deque. Faster than Dijkstra for that special case and a favorite contest trick.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Breadth-First Search",
+        "Weighted Graphs"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "g.dsu",
+      "name": "Union-Find",
+      "desc": "A structure that merges groups and checks whether two items share one, in nearly constant time. It's the engine inside Kruskal's algorithm.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Connected Components"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "g.lca",
+      "name": "Trees & Ancestors",
+      "desc": "Rooted trees, depths, parents and the lowest common ancestor of two nodes. Binary lifting answers each ancestor question in log time.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Depth-First Search"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "g.floyd",
+      "name": "Floyd-Warshall",
+      "desc": "Shortest paths between every pair of nodes in three nested loops. Simple to write, and fine whenever the graph has a few hundred nodes.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Dijkstra's Algorithm"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "g.scc",
+      "name": "Strongly Connected Components",
+      "desc": "Groups of nodes in a directed graph that can all reach each other. Tarjan's and Kosaraju's algorithms both find them in linear time.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Topological Sort"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "g.euler",
+      "name": "Euler Paths",
+      "desc": "A walk that uses every edge exactly once. Counting degrees tells you if one exists before you start searching.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2600,
+      "tree": "graphs",
+      "treeTitle": "Graph Algorithms",
+      "treePath": [
+        "Coding",
+        "Algorithms & Data Structures",
+        "Graph Algorithms"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Cycle Detection"
+      ],
+      "recommends": []
+    },
+    {
       "id": "s.memory",
       "name": "Memory",
       "desc": "Where values actually live and what it costs to reach them. Once you can picture memory as one long addressable strip, a lot of otherwise arbitrary performance advice becomes obvious.",
@@ -20030,6 +23634,103 @@
       "requires": [
         "Caching",
         "Indexes & Query Plans"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "s.c",
+      "name": "C for Systems",
+      "desc": "Writing code where you manage memory yourself. C shows you what higher-level languages hide, which is why every systems course starts here.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "systems",
+      "treeTitle": "Systems",
+      "treePath": [
+        "Coding",
+        "Systems"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Memory"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "s.compile",
+      "name": "Compiling & Linking",
+      "desc": "How source code turns into machine code, and why linker errors look so strange. Knowing the steps makes build failures way less mysterious.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "systems",
+      "treeTitle": "Systems",
+      "treePath": [
+        "Coding",
+        "Systems"
+      ],
+      "group": "Computing",
+      "requires": [
+        "C for Systems"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "s.vm",
+      "name": "Virtual Memory",
+      "desc": "Every process gets its own pretend address space, mapped onto real memory in pages. Page faults and swapping explain a lot of slow programs.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "systems",
+      "treeTitle": "Systems",
+      "treePath": [
+        "Coding",
+        "Systems"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Stack & Heap",
+        "Processes"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "s.sched",
+      "name": "Scheduling",
+      "desc": "How the operating system decides which thread runs next. Fairness, priority and context switches all cost something.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "systems",
+      "treeTitle": "Systems",
+      "treePath": [
+        "Coding",
+        "Systems"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Threads"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "s.gdb",
+      "name": "Debugging With gdb",
+      "desc": "Stepping through code, reading the stack and catching a crash in the act. A debugger beats guessing with print statements every time.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "systems",
+      "treeTitle": "Systems",
+      "treePath": [
+        "Coding",
+        "Systems"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Pointers & References",
+        "C for Systems"
       ],
       "recommends": []
     },
@@ -23147,6 +26848,64 @@
         "Scouting & Data",
         "Pit & Repair",
         "Engineering Notebook"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ro.team",
+      "name": "Team Roles",
+      "desc": "Build, programming, design, outreach and the drive team. Knowing who owns what keeps a season from turning into chaos.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1100,
+      "tree": "robotics",
+      "treeTitle": "Competitive Robotics",
+      "treePath": [
+        "Coding",
+        "Competitive Robotics"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Shop Safety"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ro.driving",
+      "name": "Driver Practice",
+      "desc": "Hours driving the real robot through real match routines. Smooth, consistent drivers win more matches than fast ones.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "robotics",
+      "treeTitle": "Competitive Robotics",
+      "treePath": [
+        "Coding",
+        "Competitive Robotics"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Drivetrains"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "ro.outreach",
+      "name": "Outreach & Awards",
+      "desc": "Running demos, mentoring younger teams and telling your story to judges. Judged awards can matter as much as winning matches.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "robotics",
+      "treeTitle": "Competitive Robotics",
+      "treePath": [
+        "Coding",
+        "Competitive Robotics"
+      ],
+      "group": "Computing",
+      "requires": [
+        "Engineering Notebook",
+        "Team Roles"
       ],
       "recommends": []
     },
@@ -26728,6 +30487,621 @@
         "Building a Team",
         "Funding",
         "Pitch Competitions"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.why",
+      "name": "What Accounting Is For",
+      "desc": "Recording money so owners, banks and the government can trust the numbers. Every business decision leans on it.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "acc.equation",
+      "name": "The Accounting Equation",
+      "desc": "Assets equal liabilities plus equity, always. Every transaction keeps both sides in balance.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1200,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "What Accounting Is For"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.accounts",
+      "name": "Types of Accounts",
+      "desc": "Assets, liabilities, equity, revenue and expenses. Sort each one before you record anything.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1600,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "The Accounting Equation"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.debits",
+      "name": "Debits & Credits",
+      "desc": "Left side and right side, and which accounts each one grows. It's backwards from your bank app at first, then it clicks.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1700,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Types of Accounts"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.journal",
+      "name": "Journal Entries",
+      "desc": "Recording each transaction with a date, accounts and amounts. Debits always equal credits.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Debits & Credits"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.ledger",
+      "name": "The General Ledger",
+      "desc": "Posting entries into T-accounts and finding balances. It shows where every dollar sits.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Journal Entries"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.trial",
+      "name": "Trial Balance",
+      "desc": "Checking that total debits match total credits. A mismatch means something got posted wrong.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "The General Ledger"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.adjusting",
+      "name": "Adjusting Entries",
+      "desc": "Accruals, deferrals and depreciation at the end of a period. They match revenue and expenses to the right month.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Trial Balance"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.income",
+      "name": "Income Statement",
+      "desc": "Revenue minus expenses equals profit or loss. It shows how a business did over a stretch of time.",
+      "tier": "advanced",
+      "core": true,
+      "xp": 2000,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Adjusting Entries"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.balance",
+      "name": "Balance Sheet",
+      "desc": "What a business owns and owes on a single day. It always balances, because it's built to.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Adjusting Entries"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.cash",
+      "name": "Cash Flow Statement",
+      "desc": "Where cash actually came from and went. A profitable business can still run out of cash.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Income Statement",
+        "Balance Sheet"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.inventory",
+      "name": "Inventory",
+      "desc": "FIFO, LIFO and the cost of goods sold. The method you choose changes reported profit.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "The General Ledger"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.payroll",
+      "name": "Payroll",
+      "desc": "Wages, withholding and employer taxes. Your own paycheck stub makes a great example.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Adjusting Entries"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.ratios",
+      "name": "Financial Ratios",
+      "desc": "Margins, liquidity and debt ratios to compare businesses. One ratio alone can mislead, so use a few together.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Cash Flow Statement"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.software",
+      "name": "Accounting Software",
+      "desc": "QuickBooks, spreadsheets and how they automate the cycle. Knowing the manual steps makes the software make sense.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Trial Balance"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "acc.career",
+      "name": "Accounting Paths",
+      "desc": "Bookkeeping, CPA, auditing and FBLA accounting events. Strong accounting skills open doors in every business field.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "accounting",
+      "treeTitle": "Accounting",
+      "treePath": [
+        "Business & Money",
+        "Accounting"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Financial Ratios",
+        "Payroll",
+        "Inventory",
+        "Accounting Software"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.why",
+      "name": "What Law Does",
+      "desc": "Rules that keep order, settle fights and protect rights. Laws come from constitutions, legislatures, courts and agencies.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "law.types",
+      "name": "Civil vs Criminal Law",
+      "desc": "Criminal cases are the state against a person, and civil cases are disputes between people. The burden of proof differs a lot.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1200,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "What Law Does"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.courts",
+      "name": "The Court System",
+      "desc": "Trial courts, appeals courts and supreme courts, state and federal. Most cases never leave the state system.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1600,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Civil vs Criminal Law"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.rights",
+      "name": "Your Rights",
+      "desc": "Speech, search and seizure and the right to remain silent. Students have rights at school too, with some limits.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1700,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "What Law Does"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.process",
+      "name": "How a Case Moves",
+      "desc": "Arrest or filing, pretrial, trial and appeal. Most cases end in a plea deal or a settlement.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "The Court System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.contracts",
+      "name": "Contracts",
+      "desc": "Offer, acceptance and consideration. Minors can usually cancel contracts, with some exceptions.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Civil vs Criminal Law"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.torts",
+      "name": "Torts",
+      "desc": "Negligence, defamation and other harms you can sue over. Duty, breach, cause and damages is the checklist.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Civil vs Criminal Law"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.criminal",
+      "name": "Criminal Law",
+      "desc": "Elements of a crime, intent and defenses. Prosecutors must prove every element beyond a reasonable doubt.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "How a Case Moves",
+        "Your Rights"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.reading",
+      "name": "Reading Cases",
+      "desc": "Facts, issue, rule, analysis and conclusion. Briefing a case is how every law student starts.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "The Court System"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.reasoning",
+      "name": "Legal Reasoning",
+      "desc": "Applying rules to new facts and arguing from precedent. Good lawyers find the case that fits best.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Reading Cases"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.evidence",
+      "name": "Rules of Evidence",
+      "desc": "Relevance, hearsay and when to object. Knowing these rules is half of doing well in mock trial.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Criminal Law",
+        "Legal Reasoning"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.opening",
+      "name": "Openings & Closings",
+      "desc": "Telling the jury the story you will prove, then showing that you did. Plain words beat legal jargon.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Legal Reasoning"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.witnesses",
+      "name": "Direct & Cross",
+      "desc": "Open questions on direct and short leading ones on cross. Never ask a question on cross you do not know the answer to.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Rules of Evidence"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.mocktrial",
+      "name": "Mock Trial",
+      "desc": "Playing attorneys and witnesses in a full trial against another school. It is great for confidence and college apps.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Direct & Cross",
+        "Openings & Closings"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.justice",
+      "name": "Law & Justice",
+      "desc": "Wrongful convictions, sentencing and reform debates. Fair laws can still be applied unfairly.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Your Rights",
+        "Criminal Law"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "law.path",
+      "name": "Paths Into Law",
+      "desc": "Pre-law majors, the LSAT and jobs that use legal skills. Many people with law degrees never become trial lawyers.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "law",
+      "treeTitle": "Law",
+      "treePath": [
+        "Business & Money",
+        "Law"
+      ],
+      "group": "Business and money",
+      "requires": [
+        "Mock Trial",
+        "Law & Justice",
+        "Contracts",
+        "Torts"
       ],
       "recommends": []
     },
@@ -31684,6 +36058,315 @@
       "recommends": []
     },
     {
+      "id": "dn.warmup",
+      "name": "Warming Up",
+      "desc": "Raising your heart rate and loosening joints before you dance. It protects you and makes moves look smoother.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "dn.rhythm",
+      "name": "Rhythm & Counting",
+      "desc": "Counting in eights and hitting the beat. Most choreography is taught in counts, so this comes first.",
+      "tier": "foundation",
+      "core": false,
+      "xp": 1200,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Warming Up"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.posture",
+      "name": "Posture & Alignment",
+      "desc": "Stacked hips, engaged core and relaxed shoulders. Good alignment makes every move cleaner and safer.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1600,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Warming Up"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.flex",
+      "name": "Flexibility",
+      "desc": "Stretching after you warm up, a little every day. Forcing a split hurts more than it helps.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1700,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Warming Up"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.balance",
+      "name": "Balance & Turns",
+      "desc": "Spotting your head and finding your center. Start with single turns that land clean.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Posture & Alignment"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.across",
+      "name": "Across the Floor",
+      "desc": "Traveling steps, leaps and combinations. Use the whole studio space with confidence.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Rhythm & Counting",
+        "Posture & Alignment"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.styles",
+      "name": "Dance Styles",
+      "desc": "Ballet, jazz, hip-hop, contemporary and tap. Each style has its own technique and feel.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Rhythm & Counting"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.memory",
+      "name": "Learning Choreography",
+      "desc": "Picking up combos fast and remembering them. Break it into chunks and mark it with your hands.",
+      "tier": "intermediate",
+      "core": true,
+      "xp": 2000,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Across the Floor"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.musicality",
+      "name": "Musicality",
+      "desc": "Dancing to the music and lyrics, beyond hitting counts. Listen for the accents and the quiet parts.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2000,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Learning Choreography",
+        "Dance Styles"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.jumps",
+      "name": "Jumps & Leaps",
+      "desc": "Height, landing softly and pointed feet. Strong legs and a solid core make jumps look easy.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Flexibility",
+        "Balance & Turns"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.partner",
+      "name": "Partnering & Groups",
+      "desc": "Dancing in formations and with partners. Staying in sync takes trust and lots of rehearsal.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Learning Choreography"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.expression",
+      "name": "Performance & Expression",
+      "desc": "Using your face and your energy to tell a story. The audience feels what you feel.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Musicality"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.choreo",
+      "name": "Choreographing",
+      "desc": "Making your own pieces from an idea or a song. Start with eight counts and build out.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Performance & Expression",
+        "Partnering & Groups"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.injury",
+      "name": "Staying Healthy",
+      "desc": "Rest, strength work and listening to pain. Most dance injuries come from doing too much too soon.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Jumps & Leaps"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.competition",
+      "name": "Competitions & Auditions",
+      "desc": "Solos, team routines and audition classes. Clean technique beats harder tricks done sloppily.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Performance & Expression",
+        "Jumps & Leaps"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "dn.showcase",
+      "name": "Your Showcase",
+      "desc": "Putting a full piece on stage. Plan costumes, music and rehearsals backward from the date.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "dance",
+      "treeTitle": "Dance",
+      "treePath": [
+        "Art & Design",
+        "Dance"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Choreographing",
+        "Competitions & Auditions",
+        "Staying Healthy"
+      ],
+      "recommends": []
+    },
+    {
       "id": "mu.pulse",
       "name": "Pulse & Tempo",
       "desc": "Feeling a steady beat and holding it without drifting. Everything rhythmic sits on this, and playing with a metronome exposes immediately how steady you actually are.",
@@ -33693,7 +38376,7 @@
     },
     {
       "id": "pf.memory",
-      "name": "Memorisation",
+      "name": "Memorization",
       "desc": "Four memories, not one — muscular, aural, visual and structural — because adrenaline takes the muscular one first. A performer who can only start from the top has one memory and no way back in.",
       "tier": "intermediate",
       "core": true,
@@ -33766,7 +38449,7 @@
       "group": "Creative",
       "requires": [
         "Sight-Reading",
-        "Memorisation"
+        "Memorization"
       ],
       "recommends": []
     },
@@ -33823,7 +38506,7 @@
       ],
       "group": "Creative",
       "requires": [
-        "Memorisation",
+        "Memorization",
         "Recording Yourself"
       ],
       "recommends": []
@@ -33925,6 +38608,44 @@
         "Auditions",
         "Interpretation",
         "Ensemble Playing"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "pf.goals",
+      "name": "Practice Goals",
+      "desc": "One clear goal for each session, like clean shifts in bars twelve to sixteen. Vague practice gives vague results.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "performance",
+      "treeTitle": "Performance & Auditions",
+      "treePath": [
+        "Music",
+        "Performance & Auditions"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Deliberate Practice"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "pf.presence",
+      "name": "Stage Presence",
+      "desc": "Walking on, bowing and looking like you belong up there. Audiences decide a lot about you before the first note.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "performance",
+      "treeTitle": "Performance & Auditions",
+      "treePath": [
+        "Music",
+        "Performance & Auditions"
+      ],
+      "group": "Creative",
+      "requires": [
+        "Performance Nerves"
       ],
       "recommends": []
     },
@@ -36247,6 +40968,330 @@
       "requires": [
         "Racing",
         "Cross-Training"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.safety",
+      "name": "Water Safety",
+      "desc": "Floating, treading water and knowing your limits. Never swim alone, even if you are good.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1100,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [],
+      "recommends": []
+    },
+    {
+      "id": "sw.breathing",
+      "name": "Breathing",
+      "desc": "Exhaling underwater and breathing to the side. Most beginners hold their breath and tire out fast.",
+      "tier": "foundation",
+      "core": true,
+      "xp": 1200,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Water Safety"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.body",
+      "name": "Body Position",
+      "desc": "A long, flat body with your head down. Less drag means more speed for the same effort.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1600,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Breathing"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.free",
+      "name": "Freestyle",
+      "desc": "Long strokes, a steady kick and bilateral breathing. It is the stroke you will train the most.",
+      "tier": "beginner",
+      "core": true,
+      "xp": 1700,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Body Position"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.back",
+      "name": "Backstroke",
+      "desc": "Hips up, straight arms and counting strokes to the wall. Learn the flags so you never hit your head.",
+      "tier": "beginner",
+      "core": false,
+      "xp": 1400,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Body Position"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.breast",
+      "name": "Breaststroke",
+      "desc": "Pull, breathe, kick, glide, then repeat. Timing matters a lot more than strength in this stroke.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1800,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Freestyle"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.fly",
+      "name": "Butterfly",
+      "desc": "Two kicks per stroke and a rolling body. Build it with drills before swimming full lengths.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1900,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Freestyle",
+        "Backstroke"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.kick",
+      "name": "Kick Sets",
+      "desc": "Building leg strength with a kickboard and fins. A strong kick holds your body position late in races.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 2000,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Freestyle"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.starts",
+      "name": "Starts",
+      "desc": "Diving off the blocks with a fast reaction and clean entry. Practice in deep water only.",
+      "tier": "intermediate",
+      "core": false,
+      "xp": 1700,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Freestyle"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.turns",
+      "name": "Flip Turns & Walls",
+      "desc": "Flip turns and open turns that keep your speed. Races are often won on the walls.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2100,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Starts"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.underwater",
+      "name": "Underwaters",
+      "desc": "Strong dolphin kicks off every wall. They're often faster than swimming on the surface.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2200,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Flip Turns & Walls",
+        "Butterfly"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.pacing",
+      "name": "Pacing & Splits",
+      "desc": "Using the pace clock and holding even splits. Going out too fast is the classic mistake.",
+      "tier": "advanced",
+      "core": false,
+      "xp": 2300,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Kick Sets"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.im",
+      "name": "Individual Medley",
+      "desc": "All four strokes in one race. Smooth transitions matter just as much as each stroke.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2300,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Breaststroke",
+        "Butterfly",
+        "Underwaters"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.training",
+      "name": "Training Seasons",
+      "desc": "Base, build and taper phases. A good taper makes you feel fast right when it counts.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2400,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Pacing & Splits"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.dryland",
+      "name": "Dryland Training",
+      "desc": "Core, mobility and strength work out of the pool. It protects shoulders and adds power.",
+      "tier": "expert",
+      "core": false,
+      "xp": 2500,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Pacing & Splits"
+      ],
+      "recommends": []
+    },
+    {
+      "id": "sw.meets",
+      "name": "Swim Meets",
+      "desc": "Warm-ups, heat sheets and racing your best events. Chasing qualifying times keeps the season focused.",
+      "tier": "mastery",
+      "core": false,
+      "xp": 2900,
+      "tree": "swimming",
+      "treeTitle": "Swimming",
+      "treePath": [
+        "Health & Fitness",
+        "Endurance",
+        "Swimming"
+      ],
+      "group": "Health and fitness",
+      "requires": [
+        "Individual Medley",
+        "Training Seasons",
+        "Dryland Training"
       ],
       "recommends": []
     },

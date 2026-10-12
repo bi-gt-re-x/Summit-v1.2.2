@@ -58,5 +58,9 @@ export const EARTH_SPACE: SubjectTree = {
       desc: 'Telescopes, satellites, cores and seismographs — evidence gathered where an experiment is impossible. Every one of these subjects advances by finding a new thing to measure rather than a new thing to try.' },
     { id: 'es.system', name: 'Earth as a System', icon: 'earth-system', tier: 'mastery', requires: ['es.climate', 'es.observe'], state: lock, percent: 0, xp: 3000,
       desc: 'Rock, air, water and life as four coupled parts that have shaped each other for billions of years. Oxygen in the atmosphere is biological in origin, which is the clearest case of the coupling running both ways.' },
+    { id: 'es.geology', name: 'Geology', icon: 'volcano', tier: 'beginner', requires: ['es.rocks'], navTo: 'geology', state: lock,
+      desc: 'Its own tree: minerals, the rock cycle, plates, volcanoes, fossils and geologic time.' },
+    { id: 'es.astro', name: 'Astronomy', icon: 'telescope', tier: 'intermediate', requires: ['es.sky'], navTo: 'astronomy', state: lock,
+      desc: 'Its own tree: the night sky, telescopes, planets, the lives of stars, galaxies and cosmology.' },
   ],
 };

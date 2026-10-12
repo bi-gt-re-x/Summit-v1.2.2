@@ -63,5 +63,11 @@ export const BIOLOGY: SubjectTree = {
       desc: 'Its own tree: bacteria, viruses, culturing, antibiotics and how infections spread.' },
     { id: 'bi.neuro', name: 'Neuroscience', icon: 'neuron', tier: 'advanced', requires: ['bi.nervous'], navTo: 'neuroscience', state: lock,
       desc: 'Its own tree: neurons, synapses, brain regions, memory and how the brain changes with practice.' },
+    { id: 'bi.anatomy', name: 'Anatomy & Physiology', icon: 'organs', tier: 'intermediate', requires: ['bi.organs'], navTo: 'anatomy', state: lock,
+      desc: 'Its own tree: every body system from skin and bones to the heart, lungs and immune system.' },
+    { id: 'bi.geneticsx', name: 'Genetics (Full Course)', icon: 'dna', tier: 'advanced', requires: ['bi.genetics'], navTo: 'genetics', state: lock,
+      desc: 'Its own tree: Punnett squares, pedigrees, gene expression, mutations and biotech tools.' },
+    { id: 'bi.ecologyx', name: 'Ecology (Full Course)', icon: 'ecosystem', tier: 'advanced', requires: ['bi.ecology'], navTo: 'ecology', state: lock,
+      desc: 'Its own tree: food webs, populations, species interactions, succession and conservation.' },
   ],
 };

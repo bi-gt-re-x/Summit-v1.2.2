@@ -5,7 +5,7 @@
  *
  * The subject catalogue in backend/config/subjects.py is 150 fixed rows —
  * the things this app lets somebody say a task is *about*. The trees in
- * skills/trees are a hundred and eleven lattices — the things it can teach. They are
+ * skills/trees are a hundred and twenty-five lattices — the things it can teach. They are
  * deliberately not the same list: "Laundry" is a real subject to file a task
  * under and is not a subject with a progression, and "Machine Learning" is a
  * whole lattice that no catalogue row is going to be big enough for.
@@ -74,8 +74,8 @@ const GROUP_ROOT: Record<string, string> = {
 export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   // ---- Math and science ----
   mathematics: { tree: 'mathematics' },
-  algebra: { tree: 'mathematics', node: 'm.algebra' },
-  geometry: { tree: 'mathematics', node: 'm.geometry' },
+  algebra: { tree: 'algebra' },
+  geometry: { tree: 'geometry' },
   trigonometry: { tree: 'trigonometry' },
   precalculus: { tree: 'precalculus' },
   calculus: { tree: 'calculus' },
@@ -85,12 +85,12 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   biology: { tree: 'biology' },
   chemistry: { tree: 'chemistry' },
   physics: { tree: 'physics' },
-  anatomy: { tree: 'biology', node: 'bi.organs' },
-  genetics: { tree: 'biology', node: 'bi.genetics' },
-  ecology: { tree: 'biology', node: 'bi.ecology' },
+  anatomy: { tree: 'anatomy' },
+  genetics: { tree: 'genetics' },
+  ecology: { tree: 'ecology' },
   environmental_science: { tree: 'environmental-science' },
-  astronomy: { tree: 'earth-space', node: 'es.stars' },
-  geology: { tree: 'earth-space', node: 'es.rocks' },
+  astronomy: { tree: 'astronomy' },
+  geology: { tree: 'geology' },
   organic_chemistry: { tree: 'organic-chemistry' },
   biochemistry: { tree: 'biochemistry' },
   microbiology: { tree: 'microbiology' },
@@ -139,12 +139,12 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   sign_language: { tree: 'sign-language' },
   history: { tree: 'history' },
   civics: { tree: 'civics' },
-  politics: { tree: 'humanities', node: 'hu.power' },
-  geography: { tree: 'humanities', node: 'hu.place' },
+  politics: { tree: 'civics', node: 'cv.parties' },
+  geography: { tree: 'geography' },
   model_un: { tree: 'model-un' },
   philosophy: { tree: 'philosophy' },
   psychology: { tree: 'psychology' },
-  sociology: { tree: 'humanities', node: 'hu.people' },
+  sociology: { tree: 'sociology' },
 
   // ---- Computing ----
   programming: { tree: 'coding' },
@@ -165,7 +165,7 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
      under Robotics is doing. It has its own lattice now. */
   robotics: { tree: 'robotics', node: 'ro.mech' },
   electronics: { tree: 'electronics' },
-  engineering: { tree: 'physics', node: 'ph.fbd' },
+  engineering: { tree: 'engineering' },
 
   // ---- Business and money ----
   economics: { tree: 'economics' },
@@ -174,10 +174,10 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   entrepreneurship: { tree: 'entrepreneurship' },
   business: { tree: 'business' },
   marketing: { tree: 'marketing' },
-  accounting: { tree: 'business', node: 'bu.records' },
+  accounting: { tree: 'accounting' },
   investing: { tree: 'finance', node: 'fi.assets' },
   taxes: { tree: 'business', node: 'bu.tax' },
-  law: { tree: 'business', node: 'bu.legal' },
+  law: { tree: 'law' },
   management: { tree: 'management' },
 
   // ---- Work ----
@@ -212,14 +212,14 @@ export const SUBJECT_TARGETS: Record<string, SubjectTarget> = {
   violin: { tree: 'violin' },
   drums: { tree: 'drums' },
   singing: { tree: 'voice' },
-  dance: { tree: 'fitness', node: 'ft.mobility' },
+  dance: { tree: 'dance' },
 
   // ---- Health and fitness ----
   gym: { tree: 'strength' },
   running: { tree: 'endurance' },
   basketball: { tree: 'basketball' },
   soccer: { tree: 'soccer' },
-  swimming: { tree: 'endurance', node: 'en.gait' },
+  swimming: { tree: 'swimming' },
   cycling: { tree: 'endurance', node: 'en.crosstrain' },
   yoga: { tree: 'mindfulness', node: 'mi.yoga' },
   sleep: { tree: 'mindfulness', node: 'mi.sleep' },

@@ -61,5 +61,9 @@ export const BUSINESS: SubjectTree = {
       desc: 'A subject of its own: getting work done through other people without becoming the bottleneck.' },
     { id: 'bu.startup', name: 'Entrepreneurship', icon: 'rocket', tier: 'intermediate', requires: ['bu.model'], navTo: 'entrepreneurship', state: lock,
       desc: 'Its own tree: finding a problem, testing ideas, selling, pitching and growing a business.' },
+    { id: 'bu.accounting', name: 'Accounting', icon: 'ledger', tier: 'intermediate', requires: ['bu.records'], navTo: 'accounting', state: lock,
+      desc: 'Its own tree: debits and credits, journals, the three statements and financial ratios.' },
+    { id: 'bu.law', name: 'Law', icon: 'balance-scale', tier: 'advanced', requires: ['bu.legal'], navTo: 'law', state: lock,
+      desc: 'Its own tree: courts, your rights, contracts, criminal law, evidence and mock trial.' },
   ],
 };

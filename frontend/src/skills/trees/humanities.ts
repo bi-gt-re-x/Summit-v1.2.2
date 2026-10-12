@@ -62,5 +62,9 @@ export const HUMANITIES: SubjectTree = {
       desc: 'A subject of its own: policy, LD and public forum — winning arguments, then winning rounds.' },
     { id: 'hu.civics', name: 'Civics & Government', icon: 'social-contract', tier: 'advanced', requires: ['hu.power'], navTo: 'civics', state: lock,
       desc: 'Its own tree: the Constitution, the three branches, landmark cases and getting involved.' },
+    { id: 'hu.geography', name: 'Geography', icon: 'globe', tier: 'intermediate', requires: ['hu.place'], navTo: 'geography', state: lock,
+      desc: 'Its own tree: maps, climate, population, migration, cities and AP Human Geography.' },
+    { id: 'hu.sociology', name: 'Sociology', icon: 'network-people', tier: 'intermediate', requires: ['hu.people'], navTo: 'sociology', state: lock,
+      desc: 'Its own tree: culture, socialization, groups, class, race, gender and social change.' },
   ],
 };

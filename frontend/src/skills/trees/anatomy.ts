@@ -1,0 +1,50 @@
+/**
+ * Anatomy & Physiology, a branch of Biology.
+ */
+import type { SubjectTree } from './types';
+import { open, lock } from './types';
+
+export const ANATOMY: SubjectTree = {
+  id: 'anatomy',
+  title: 'Anatomy & Physiology',
+  blurb: 'How the body is built and how each system keeps you alive.',
+  parent: 'biology',
+  nodes: [
+    { id: 'an.terms', name: 'Anatomical Terms', icon: 'compass', tier: 'foundation', core: true, state: open, percent: 0, xp: 1100,
+      desc: 'Directions, planes and body regions, like anterior and proximal. Learning the words first makes every later chapter faster.' },
+    { id: 'an.tissues', name: 'Tissues', icon: 'cells', tier: 'foundation', core: true, requires: ['an.terms'], state: lock, percent: 0, xp: 1200,
+      desc: 'Epithelial, connective, muscle and nervous tissue. Every organ is built from these four.' },
+    { id: 'an.skin', name: 'The Skin', icon: 'layers', tier: 'beginner', requires: ['an.tissues'], state: lock, percent: 0, xp: 1600,
+      desc: "Layers, glands and how skin heals. It's your biggest organ and your first line of defense." },
+    { id: 'an.skeleton', name: 'The Skeleton', icon: 'hierarchy', tier: 'beginner', core: true, requires: ['an.tissues'], state: lock, percent: 0, xp: 1700,
+      desc: 'The 206 bones, how bone grows and how joints move. Group bones by region instead of memorizing a flat list.' },
+    { id: 'an.muscles', name: 'Muscles', icon: 'barbell', tier: 'beginner', requires: ['an.skeleton'], state: lock, percent: 0, xp: 1400,
+      desc: 'How muscles contract, and the major muscles with their actions. Learn origin and insertion and the action makes sense.' },
+    { id: 'an.nervous', name: 'The Nervous System', icon: 'neuron', tier: 'intermediate', core: true, requires: ['an.tissues'], state: lock, percent: 0, xp: 1800,
+      desc: 'Brain, spinal cord and nerves, and how signals travel. It ties every other system together.' },
+    { id: 'an.senses', name: 'Special Senses', icon: 'vision', tier: 'intermediate', requires: ['an.nervous'], state: lock, percent: 0, xp: 1900,
+      desc: 'Eyes, ears, taste and smell. Dissections make these click faster than any diagram.' },
+    { id: 'an.endocrine', name: 'The Endocrine System', icon: 'message', tier: 'intermediate', requires: ['an.nervous'], state: lock, percent: 0, xp: 2000,
+      desc: 'Glands and hormones that work slower than nerves but last longer. Feedback loops are the key idea.' },
+    { id: 'an.blood', name: 'Blood', icon: 'water', tier: 'intermediate', requires: ['an.tissues'], state: lock, percent: 0, xp: 1700,
+      desc: 'Red cells, white cells, platelets and blood types. Know why a type O donor can give to almost anyone.' },
+    { id: 'an.heart', name: 'The Heart', icon: 'organs', tier: 'advanced', requires: ['an.blood', 'an.muscles'], state: lock, percent: 0, xp: 2100,
+      desc: 'Chambers, valves and the path blood takes. Trace one drop of blood all the way around, out loud.' },
+    { id: 'an.vessels', name: 'Blood Vessels', icon: 'route', tier: 'advanced', requires: ['an.heart'], state: lock, percent: 0, xp: 2200,
+      desc: 'Arteries, veins and capillaries, and how blood pressure works. Arteries carry blood away from the heart, whatever its color.' },
+    { id: 'an.lungs', name: 'The Respiratory System', icon: 'breath', tier: 'advanced', requires: ['an.vessels'], state: lock, percent: 0, xp: 2300,
+      desc: 'Airways, alveoli and how gases swap. Breathing rate is driven more by carbon dioxide than by oxygen.' },
+    { id: 'an.digest', name: 'The Digestive System', icon: 'nutrition', tier: 'advanced', requires: ['an.tissues', 'an.endocrine'], state: lock, percent: 0, xp: 2000,
+      desc: 'From mouth to colon, plus the liver and pancreas. Follow one meal through the whole path.' },
+    { id: 'an.immune', name: 'The Immune System', icon: 'immune', tier: 'advanced', requires: ['an.blood'], state: lock, percent: 0, xp: 2100,
+      desc: 'Barriers, white blood cells and antibodies. Vaccines train this system before the real threat shows up.' },
+    { id: 'an.urinary', name: 'The Urinary System', icon: 'membrane', tier: 'expert', requires: ['an.vessels'], state: lock, percent: 0, xp: 2500,
+      desc: 'Kidneys filter blood and balance water and salts. A nephron is a tiny filter worth drawing from memory.' },
+    { id: 'an.repro', name: 'The Reproductive System', icon: 'dna', tier: 'expert', requires: ['an.endocrine'], state: lock, percent: 0, xp: 2600,
+      desc: 'Anatomy, hormones and development. Treat it like any other system, with the same care for terms.' },
+    { id: 'an.homeo', name: 'Homeostasis', icon: 'homeostasis', tier: 'expert', requires: ['an.lungs', 'an.digest', 'an.urinary'], state: lock, percent: 0, xp: 2300,
+      desc: 'How the body keeps temperature, sugar and pH steady. Almost every test question comes back to this idea.' },
+    { id: 'an.clinical', name: 'Disease & Clinical Cases', icon: 'warning', tier: 'mastery', requires: ['an.homeo', 'an.immune', 'an.repro'], state: lock, percent: 0, xp: 2700,
+      desc: 'Applying what you know to real cases, like diabetes or asthma. Great practice for HOSA, nursing and pre-med.' },
+  ],
+};

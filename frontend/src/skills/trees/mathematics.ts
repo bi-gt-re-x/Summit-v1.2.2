@@ -61,5 +61,9 @@ export const MATH: SubjectTree = {
       desc: 'Its own tree: right triangles, the unit circle, identities and the laws that solve any triangle.' },
     { id: 'm.precalcx', name: 'Precalculus (Full Course)', icon: 'precalculus', tier: 'expert', requires: ['m.precalc'], navTo: 'precalculus', state: lock,
       desc: 'Its own tree: polynomials, logs, trig functions and conics, all the way to being calc-ready.' },
+    { id: 'm.algebrax', name: 'Algebra (Full Course)', icon: 'algebra-x', tier: 'beginner', requires: ['m.algebra'], navTo: 'algebra', state: lock,
+      desc: 'Its own tree: equations, lines, systems, factoring, quadratics and logs, all of Algebra 1 and 2.' },
+    { id: 'm.geometryx', name: 'Geometry (Full Course)', icon: 'geometry', tier: 'intermediate', requires: ['m.geometry'], navTo: 'geometry', state: lock,
+      desc: 'Its own tree: angles, congruence, proofs, circles, area and volume, the whole school year.' },
   ],
 };

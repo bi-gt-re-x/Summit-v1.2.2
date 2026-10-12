@@ -61,5 +61,7 @@ export const ART: SubjectTree = {
       desc: 'Its own tree: voice, script analysis, blocking, auditions, tech and opening night.' },
     { id: 'ar.history', name: 'Art History', icon: 'museum', tier: 'advanced', requires: ['ar.critique'], navTo: 'art-history', state: lock,
       desc: 'Its own tree: looking closely, art across eras and cultures, and AP Art History essays.' },
+    { id: 'ar.dance', name: 'Dance', icon: 'gesture', tier: 'beginner', requires: ['ar.see'], navTo: 'dance', state: lock,
+      desc: 'Its own tree: rhythm, alignment, turns, choreography, staying healthy and performing.' },
   ],
 };

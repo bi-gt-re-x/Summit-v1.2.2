@@ -57,5 +57,7 @@ export const PHYSICS: SubjectTree = {
       desc: 'Energy arriving in lumps, particles behaving like waves, and outcomes that are probabilities rather than certainties. Strange, exactly right experimentally, and the basis of every semiconductor.' },
     { id: 'ph.relativity', name: 'Relativity', icon: 'spacetime', tier: 'mastery', requires: ['ph.em'], state: lock, percent: 0, xp: 3000,
       desc: 'What follows from the speed of light being the same for everybody: time and length stop being absolute. Every satellite fix you use corrects for it, which is as practical as a revolution gets.' },
+    { id: 'ph.engineering', name: 'Engineering', icon: 'invention', tier: 'beginner', requires: ['ph.fbd'], navTo: 'engineering', state: lock,
+      desc: 'Its own tree: the design process, statics, materials, prototyping, testing and a capstone build.' },
   ],
 };

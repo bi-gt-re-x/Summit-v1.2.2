@@ -45,7 +45,7 @@ export const PERFORMANCE: SubjectTree = {
       desc: 'Playing something in front of you for the first time without stopping. Examined directly in most auditions, and improved only by reading new material daily rather than by getting better at your pieces.' },
     { id: 'pf.ear', name: 'Ear Training', icon: 'ear-training', tier: 'beginner', requires: ['pf.practice'], state: lock, percent: 0, xp: 1600,
       desc: 'Hearing an interval, a chord or a wrong note and knowing what it was. It is what lets you correct pitch mid-phrase instead of finding out afterwards from a recording.' },
-    { id: 'pf.memory', name: 'Memorisation', icon: 'memory', tier: 'intermediate', core: true, requires: ['pf.practice'], state: lock, percent: 0, xp: 1800,
+    { id: 'pf.memory', name: 'Memorization', icon: 'memory', tier: 'intermediate', core: true, requires: ['pf.practice'], state: lock, percent: 0, xp: 1800,
       desc: 'Four memories, not one — muscular, aural, visual and structural — because adrenaline takes the muscular one first. A performer who can only start from the top has one memory and no way back in.' },
     { id: 'pf.phrase', name: 'Phrasing', icon: 'phrase', tier: 'intermediate', requires: ['pf.tone', 'pf.tempo'], state: lock, percent: 0, xp: 1800,
       desc: 'Deciding where a line is going and shaping it so a listener can hear the destination. Correct notes with no phrasing is the most common thing a jury describes as technically fine and unmemorable.' },
@@ -69,5 +69,9 @@ export const PERFORMANCE: SubjectTree = {
       desc: 'Two minutes, possibly behind a screen, possibly stopped partway through. Choosing an excerpt that shows what you do well, and opening in a way that survives the first four seconds, is a strategy problem rather than a musical one.' },
     { id: 'pf.competition', name: 'The Competition Stage', icon: 'trophy', tier: 'mastery', requires: ['pf.audition', 'pf.interp', 'pf.ensemble'], state: lock, percent: 0, xp: 3200,
       desc: 'Rounds, an unfamiliar instrument, a jury with a rubric, and one attempt. Everything below converges here because the stage tests preparation, memory, nerve and interpretation at the same time and gives no second run.' },
+    { id: 'pf.goals', name: 'Practice Goals', icon: 'target', tier: 'beginner', requires: ['pf.practice'], state: lock, percent: 0, xp: 1400,
+      desc: 'One clear goal for each session, like clean shifts in bars twelve to sixteen. Vague practice gives vague results.' },
+    { id: 'pf.presence', name: 'Stage Presence', icon: 'lighting', tier: 'advanced', requires: ['pf.nerves'], state: lock, percent: 0, xp: 2100,
+      desc: 'Walking on, bowing and looking like you belong up there. Audiences decide a lot about you before the first note.' },
   ],
 };

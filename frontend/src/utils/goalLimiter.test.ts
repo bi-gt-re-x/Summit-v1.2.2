@@ -201,12 +201,22 @@ describe('the way in', () => {
   it('opens the lattice that teaches the subject it named', () => {
     const row = goalLimiter(goal(), tasks, nameOf)!;
 
-    // Geometry is a node on the mathematics lattice rather than a tree of its
-    // own — see SUBJECT_TARGETS in skills/subjectMap — and the link has to
-    // carry the node or it lands the reader at the top of a tree the subject
-    // is nowhere near.
-    expect(row.treeHref).toBe('/skill-trees?subject=geometry&node=m.geometry');
+    // Geometry has had a tree of its own since 2026-10-11, so the link opens
+    // it at the top. See SUBJECT_TARGETS in skills/subjectMap.
+    expect(row.treeHref).toBe('/skill-trees?subject=geometry');
     expect(row.subjectHref).toBe('/analytics/subject/geometry');
+  });
+
+  it('carries the node for a subject that lives on part of a lattice', () => {
+    // Vocabulary is a node on the Language tree rather than a tree of its
+    // own, and the link has to carry the node or it lands the reader at the
+    // top of a tree the subject is nowhere near.
+    const words = [
+      badly('a', 'vocabulary'), badly('b', 'vocabulary'), badly('c', 'vocabulary'),
+      badly('d', 'grammar'),
+    ];
+    const row = goalLimiter(goal({ subject_ids: 'vocabulary,grammar' }), words, nameOf)!;
+    expect(row.treeHref).toBe('/skill-trees?subject=vocabulary&node=ln.vocab');
   });
 });
 

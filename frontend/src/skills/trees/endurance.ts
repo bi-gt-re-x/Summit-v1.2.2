@@ -55,5 +55,7 @@ export const ENDURANCE: SubjectTree = {
       desc: 'Swimming, cycling or rowing to keep the engine while a joint recovers. It is what turns an injury from a lost season into a lost month.' },
     { id: 'en.season', name: 'Seasons & Longevity', icon: 'longevity', tier: 'mastery', requires: ['en.race', 'en.crosstrain'], state: lock, percent: 0, xp: 2900,
       desc: 'Building years rather than blocks, with off-seasons that are really off. The athletes who improve for a decade are the ones who allowed themselves to be unfit for a few weeks each year.' },
+    { id: 'en.swimming', name: 'Swimming', icon: 'waves', tier: 'intermediate', requires: ['en.crosstrain'], navTo: 'swimming', state: lock,
+      desc: 'Its own tree: breathing, all four strokes, starts, turns, training seasons and swim meets.' },
   ],
 };
