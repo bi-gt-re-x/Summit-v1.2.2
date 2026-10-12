@@ -1,20 +1,16 @@
 /**
- * Finishing a goal from its card, which is now two steps rather than one.
+ * Finishing a goal from its card: asked, loudly, and answered in one press.
  *
- * The button used to read "Complete Goal?" and it used to be a filled green
- * bar the full width of the panel — the loudest thing on a card whose actual
- * primary action is View Details. A reader arriving at a goal is nearly always
- * reading it, and the one control with a consequence was the one shouting.
+ * It used to be a quiet "Mark complete" that opened a second confirmation, on
+ * the argument that the one control with a consequence should not shout. That
+ * was the wrong call for the moment it covers. By the time the card asks, the
+ * work is done: every checkpoint is ticked or the goal's own numbers say it
+ * is reached. The reader is being asked to say so, and that deserves the big
+ * button and the celebration that follows it (pages/Goals).
  *
- * It only ever appeared on a goal whose every checkpoint was already reached,
- * which is why it stays on the card rather than moving into the kebab: at that
- * moment the panel beside it says "Every checkpoint is behind you", and hiding
- * the control there would be a card telling the reader to do something and
- * then concealing how. What changed is the weight and the number of steps.
- *
- * So the property worth pinning is the one a rename alone would not give:
- * pressing the quiet button completes nothing. Nothing leaves the card until
- * the second press, and there is a way back from the first.
+ * So what is pinned: the question appears exactly when the goal is reached,
+ * both answers go to the page in one press, and it is not on screen before
+ * then or while a write is in flight.
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -70,7 +66,7 @@ function goal(over: Partial<Goal> = {}): Goal {
 }
 
 function show(over: Partial<ActiveGoalCardProps> = {}) {
-  const onCompleteGoal = vi.fn();
+  const onVerify = vi.fn();
   render(
     <ActiveGoalCard
       goal={goal()}
@@ -89,87 +85,65 @@ function show(over: Partial<ActiveGoalCardProps> = {}) {
       onFocusMilestone={vi.fn()}
       onMilestoneSteps={vi.fn()}
       onMilestoneStatus={vi.fn()}
-      onCompleteGoal={onCompleteGoal}
+      onVerify={onVerify}
       nameOf={(id) => id}
       {...over}
     />,
   );
-  return onCompleteGoal;
+  return onVerify;
 }
 
-describe('marking a goal complete', () => {
-  it('offers it quietly, and asks before doing anything', async () => {
-    const user = userEvent.setup();
-    const onCompleteGoal = show();
+const question = () => screen.getByRole('group', { name: /you reached it/i });
 
-    await user.click(screen.getByRole('button', { name: 'Mark complete' }));
-
-    // Asked, not done. This is the whole point of the change.
-    expect(onCompleteGoal).not.toHaveBeenCalled();
-    expect(screen.getByRole('group', { name: /Mark this goal complete/ })).toBeInTheDocument();
-  });
-
-  it('completes it on the second press', async () => {
-    const user = userEvent.setup();
-    const onCompleteGoal = show();
-
-    await user.click(screen.getByRole('button', { name: 'Mark complete' }));
-    const confirm = screen.getByRole('group', { name: /Mark this goal complete/ });
-    await user.click(
-      screen.getAllByRole('button', { name: 'Mark complete' }).find((b) => confirm.contains(b))!,
-    );
-
-    expect(onCompleteGoal).toHaveBeenCalledTimes(1);
-    expect(onCompleteGoal.mock.calls[0]![0].id).toBe('g-1');
-  });
-
-  it('has a way back that completes nothing', async () => {
-    const user = userEvent.setup();
-    const onCompleteGoal = show();
-
-    await user.click(screen.getByRole('button', { name: 'Mark complete' }));
-    await user.click(screen.getByRole('button', { name: 'Not yet' }));
-
-    expect(onCompleteGoal).not.toHaveBeenCalled();
-    // And the offer is back, rather than the card having spent it.
-    expect(screen.getByRole('button', { name: 'Mark complete' })).toBeInTheDocument();
-  });
-
-  /* It says what completing does, because "complete" is not self-evident on a
-     page where a goal is also a row in four other places. */
-  it('says where the goal goes, and that it is reversible', async () => {
-    const user = userEvent.setup();
+describe('asking whether a goal is done', () => {
+  it('asks once every checkpoint is reached', () => {
     show();
-
-    await user.click(screen.getByRole('button', { name: 'Mark complete' }));
-    const confirm = screen.getByRole('group', { name: /Mark this goal complete/ });
-
-    expect(confirm).toHaveTextContent('Qualify for AIME');
-    expect(confirm).toHaveTextContent(/Recently Completed/);
-    expect(confirm).toHaveTextContent(/reopen it by editing it/);
+    expect(question()).toHaveTextContent(/Is this goal done/);
   });
 
-  /* The question mark is gone from both. It read as the card asking the
-     reader something on sight, which is exactly what it should not do. */
-  it('does not ask the reader a question on sight', () => {
+  it('asks when the goal finished itself and is waiting on the answer', () => {
+    show({ goal: goal({ status: 'completed', needs_verify: true }) });
+    expect(question()).toBeInTheDocument();
+  });
+
+  it('takes yes in one press', async () => {
+    const user = userEvent.setup();
+    const onVerify = show();
+    await user.click(screen.getByRole('button', { name: /yes, it's done/i }));
+    expect(onVerify).toHaveBeenCalledTimes(1);
+    expect(onVerify.mock.calls[0]![0].id).toBe('g-1');
+    expect(onVerify.mock.calls[0]![1]).toBe(true);
+  });
+
+  it('takes not yet in one press', async () => {
+    const user = userEvent.setup();
+    const onVerify = show();
+    await user.click(screen.getByRole('button', { name: /not yet/i }));
+    expect(onVerify).toHaveBeenCalledWith(expect.objectContaining({ id: 'g-1' }), false);
+  });
+
+  it('says where the goal goes', () => {
     show();
-    expect(screen.queryByRole('button', { name: /Complete Goal\?/ })).not.toBeInTheDocument();
-    expect(screen.queryByText(/Complete Milestone\?/)).not.toBeInTheDocument();
+    expect(question()).toHaveTextContent(/finished goals and your Analytics/);
   });
 
   it('offers nothing while a write is already in flight', async () => {
     const user = userEvent.setup();
-    const onCompleteGoal = show({ busy: true });
-
-    const button = screen.getByRole('button', { name: 'Mark complete' });
+    const onVerify = show({ busy: true });
+    const button = screen.getByRole('button', { name: /yes, it's done/i });
     expect(button).toBeDisabled();
     await user.click(button);
-    expect(onCompleteGoal).not.toHaveBeenCalled();
+    expect(onVerify).not.toHaveBeenCalled();
   });
 
-  it('is not offered at all while a checkpoint is still open', () => {
+  it('is not asked while a checkpoint is still open', () => {
     show({ goal: goal({ milestones: [stone('a', 'done'), stone('b', 'todo')] }) });
-    expect(screen.queryByRole('button', { name: 'Mark complete' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: /you reached it/i })).not.toBeInTheDocument();
+  });
+
+  it('is not asked again once the reader has answered', () => {
+    show({ goal: goal({ status: 'completed', needs_verify: false, verified_at: '2026-10-12T10:00:00' }) });
+    expect(screen.queryByRole('group', { name: /you reached it/i })).not.toBeInTheDocument();
   });
 });
 

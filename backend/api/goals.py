@@ -445,6 +445,13 @@ def _clean_steps(value):
         # does exactly this on the way in, and a server that only stripped
         # would store a title the client had already shown differently.
         title = re.sub(r'\s+', ' ', str(entry.get('title') or '')).strip()[:STEP_MAX]
+        # The prompt an empty row is padded with, coming back. The page sends
+        # the whole checklist on every tick, padding included, and a prompt
+        # read as a title turned "Name what finishes it" into a step somebody
+        # had to finish. An unticked row reading exactly like a prompt is one;
+        # this also repairs the rows that were saved that way before.
+        if title in PLACEHOLDERS and not entry.get('done'):
+            title = ''
         step_id = str(entry.get('id') or '').strip() or _fresh_step_id(taken)
         if step_id in taken:
             step_id = _fresh_step_id(taken)
@@ -525,7 +532,12 @@ def _recompute(goal, milestones=None):
     The one place any of the three is written. Which truth depends on the
     measure: a counter reads its pair of columns, a number goal reads
     current_value against target_number, and a milestone goal counts the
-    checkpoints that are done.
+    checkpoints that are done, with each open one counting for the share of
+    its steps that are ticked (see `_stone_share`).
+
+    Finishing by arithmetic is not the end of it: the goal is flagged
+    `needs_verify` and the reader is asked whether it is really done — see
+    `_mark_reached` and `verify_goal`.
 
     Completion is derived with it rather than remembered, and that matters in
     both directions — a streak goal that breaks goes back to active, and a
@@ -534,6 +546,66 @@ def _recompute(goal, milestones=None):
     whatever status it was given, because a goal with no target cannot be
     finished by arithmetic and only the user can say it is done.
     """
+    was = goal.get('status')
+    _derive(goal, milestones)
+    _mark_reached(goal, was)
+    return goal
+
+
+#: The most an open checkpoint counts for, however many of its steps are
+#: ticked. Ticking every step is not reaching the checkpoint — the reader still
+#: closes it — and a goal that read 100% while not complete would be a figure
+#: arguing with its own status.
+OPEN_STONE_CAP = 0.9
+
+
+def _stone_share(row):
+    """How much of one checkpoint is done, from 0 to 1.
+
+    A reached checkpoint is all of it. An open one is the share of its named
+    steps that are ticked, capped at OPEN_STONE_CAP; placeholders are not work
+    anybody planned and do not count either way. This is what lets every step
+    move the goal's figure rather than only every checkpoint.
+    """
+    if row.get('status') == 'done':
+        return 1.0
+    named = [step for step in row.get('steps') or [] if not step.get('placeholder')]
+    if not named:
+        return 0.0
+    done = len([step for step in named if step.get('done')])
+    return min(OPEN_STONE_CAP, done / len(named))
+
+
+def _mark_reached(goal, was):
+    """Flag a goal that has just finished itself, so the reader is asked.
+
+    Only the moment of finishing sets it: a goal that was already complete
+    before this existed, or one the reader marked done themselves, is not
+    asked again. Anything that takes the goal back below its target clears
+    both the question and the old confirmation, so reaching it again asks
+    again.
+    """
+    if goal.get('status') == 'completed':
+        if was != 'completed' and not goal.get('verified_at'):
+            goal['needs_verify'] = True
+    else:
+        goal['needs_verify'] = False
+        goal['verified_at'] = None
+
+
+def _has_target(goal, milestones=None):
+    """Whether the goal's own numbers can say it is finished."""
+    measure = _measure_of(goal)
+    if measure == 'milestones':
+        return bool(milestones)
+    if measure == 'number':
+        return bool(float(goal.get('target_number') or 0))
+    _, target_field = GOAL_FIELDS[measure]
+    return bool(float(goal.get(target_field) or 0))
+
+
+def _derive(goal, milestones=None):
+    """Progress, target and status from the goal's measure. See `_recompute`."""
     measure = _measure_of(goal)
 
     if measure == 'milestones':
@@ -541,7 +613,7 @@ def _recompute(goal, milestones=None):
         total = len(rows)
         done = len([row for row in rows if row.get('status') == 'done'])
         goal['target_value'] = total
-        goal['progress'] = _progress(done, total)
+        goal['progress'] = round(100.0 * sum(_stone_share(row) for row in rows) / total, 1) if total else 0
         if total:
             goal['status'] = 'completed' if done >= total else 'active'
         return goal
@@ -952,6 +1024,103 @@ def update_goal(body: UpdateGoal, username: str = Depends(current_username)):
     # run: see backend/goal_matcher/service.py.
     goal_matcher.goal_changed(username, before, goal)
     return ok()
+
+
+class VerifyGoal(BaseModel):
+    id: str = ''
+    #: True: yes, it is done. False: not yet, take it back.
+    done: bool = True
+
+
+def _finished_record(goal, milestones, username):
+    """What a confirmed goal finished on, for activity_log and Analytics."""
+    started = goal.get('start_date') or goal.get('created_at') or ''
+    try:
+        days = max(0, (date.today() - date.fromisoformat(started[:10])).days)
+    except ValueError:
+        days = None
+    steps = [step for row in milestones for step in row.get('steps') or []
+             if not step.get('placeholder')]
+    tasks_done = len([task for task in db.tasks_for(username)
+                      if task.get('goal_id') == goal.get('id') and task.get('status') == 'done'])
+    return {
+        'title': goal.get('title') or '',
+        'measure': _measure_of(goal),
+        'category': goal.get('category') or 'other',
+        'progress': goal.get('progress') or 0,
+        'days': days,
+        'checkpoints': len(milestones),
+        'steps': len([step for step in steps if step.get('done')]),
+        'tasks': tasks_done,
+    }
+
+
+@router.post('/api/goals/verify')
+def verify_goal(body: VerifyGoal, username: str = Depends(current_username)):
+    """The reader's answer to "is this goal really done?".
+
+    **Yes** confirms it: the goal is completed, the question is cleared, and a
+    `goal_completed` row goes into activity_log with the figures it finished
+    on, which is what the Analytics page's finished-goals panel reads. A goal
+    with no target can be confirmed at any time — only the reader can finish
+    one of those. A goal with a target it has not reached cannot: that would be
+    a record of something that did not happen. Asking twice records once.
+
+    **Not yet** takes a checkpoint goal back: its most recently reached
+    checkpoint is reopened, which puts the goal below 100% and clears the
+    question until it is reached again. A number or counter goal has nothing to
+    reopen; the page sends the reader to its figures instead.
+    """
+    goal = db.find_row('goals', body.id, user_id=username)
+    if not goal:
+        return fail('Goal not found')
+    milestones = _milestones_of(db.rows_for('goal_milestones', username), goal['id'])
+
+    if not body.done:
+        if _measure_of(goal) != 'milestones' or not milestones:
+            return fail("Change the goal's figures to reopen it.")
+        reached = [row for row in milestones if row.get('status') == 'done']
+        if not reached:
+            return fail('Nothing to reopen.')
+        last = max(reached, key=lambda row: (row.get('completed_at') or '', row.get('position') or 0))
+        db.update_row('goal_milestones', last['id'],
+                      {'status': 'active', 'completed_at': None}, user_id=username)
+        goal = _recompute_goal(goal['id'], username)
+        return ok(goal=goal, reopened=last['id'])
+
+    if goal.get('verified_at') and goal.get('status') == 'completed' and not goal.get('needs_verify'):
+        return ok(goal=goal, record=None)
+    if _has_target(goal, milestones) and goal.get('status') != 'completed':
+        return fail('This goal has not reached its target yet.')
+
+    goal['status'] = 'completed'
+    goal['needs_verify'] = False
+    goal['verified_at'] = datetime.now().isoformat(timespec='seconds')
+    _save_goal(goal, username)
+    record = _finished_record(goal, milestones, username)
+    db.insert_row('activity_log', {
+        'user_id': username,
+        'kind': 'goal_completed',
+        'summary': record['title'],
+        'subject_id': goal['id'],
+        'subject_type': 'goal',
+        'detail': record,
+        'occurred_at': goal['verified_at'],
+    })
+    return ok(goal=goal, record=record)
+
+
+@router.get('/api/goals/completed')
+def completed_goals(username: str = Depends(current_username)):
+    """Every goal the reader has confirmed done, newest first, with the figures
+    it finished on. Read by the Analytics page."""
+    rows = [row for row in db.rows_for('activity_log', username) if row.get('kind') == 'goal_completed']
+    rows.sort(key=lambda row: row.get('occurred_at') or '', reverse=True)
+    return ok(goals=[{
+        'goal_id': row.get('subject_id'),
+        'at': row.get('occurred_at'),
+        **(row.get('detail') if isinstance(row.get('detail'), dict) else {}),
+    } for row in rows])
 
 
 @router.post('/api/delete_goal')

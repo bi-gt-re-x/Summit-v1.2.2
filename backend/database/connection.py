@@ -118,6 +118,12 @@ ADDED_COLUMNS = (
     ('goals', 'subject_ids', 'TEXT'),
     # Which chart the card draws; empty lets the page pick.
     ('goals', 'chart', 'TEXT'),
+    # A goal its own numbers have finished, waiting for the reader to confirm
+    # it, and when they did. Existing rows get NULL: a goal completed before
+    # this existed is not asked about again. See `verify_goal` in
+    # backend/api/goals.py.
+    ('goals', 'needs_verify', 'BOOLEAN'),
+    ('goals', 'verified_at', 'TEXT'),
 
     # Which goal and which checkpoint a task is execution for. Both nullable
     # and both meaningless to every task that already exists, which is the

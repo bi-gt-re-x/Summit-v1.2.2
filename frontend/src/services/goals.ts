@@ -11,7 +11,7 @@
  *
  * Backend: backend/api/goals.py.
  */
-import { post } from './api';
+import { get, post } from './api';
 import type { ApiResult, Goal, GoalCategory, GoalMeasure, GoalType, MilestoneStatus, MilestoneStep } from '@/types';
 
 export interface GoalsResult {
@@ -164,7 +164,11 @@ export function updateMilestone(
     steps?: MilestoneStep[];
   },
 ): Promise<ApiResult<Record<string, never>>> {
-  return post('/api/update_milestone', { id: milestoneId, ...edit });
+  // A placeholder row goes up empty. The server pads a short list with prompt
+  // wording ("Name the second"), and sent back as a title that wording would
+  // be stored as a step nobody wrote.
+  const steps = edit.steps?.map((step) => (step.placeholder ? { ...step, title: '' } : step));
+  return post('/api/update_milestone', { id: milestoneId, ...edit, ...(steps ? { steps } : {}) });
 }
 
 export function deleteMilestone(
@@ -306,4 +310,41 @@ export function applyTaskXp(
   xp: number,
 ): Promise<ApiResult<AppliedXp>> {
   return post<AppliedXp>('/api/auto_apply_task_xp', { xp });
+}
+
+// --------------------------------------------------------------------------
+// Confirming a goal done
+// --------------------------------------------------------------------------
+/** The figures a confirmed goal finished on, as Analytics reads them. */
+export interface FinishedGoal {
+  goal_id: string;
+  /** When it was confirmed, ISO. */
+  at: string;
+  title: string;
+  measure: string;
+  category: string;
+  progress: number;
+  /** Days from its start to its confirmation, or null without a start. */
+  days: number | null;
+  checkpoints: number;
+  steps: number;
+  tasks: number;
+}
+
+/**
+ * The answer to "is this goal really done?".
+ *
+ * Yes completes it and records it for Analytics; no takes a checkpoint goal
+ * back to its last open checkpoint. See `verify_goal` in backend/api/goals.py.
+ */
+export function verifyGoal(
+  goalId: string,
+  done: boolean,
+): Promise<ApiResult<{ goal: Goal; record?: Omit<FinishedGoal, 'goal_id' | 'at'> | null; reopened?: string }>> {
+  return post('/api/goals/verify', { id: goalId, done });
+}
+
+/** Every goal the reader has confirmed done, newest first. */
+export function finishedGoals(): Promise<ApiResult<{ goals: FinishedGoal[] }>> {
+  return get<{ goals: FinishedGoal[] }>('/api/goals/completed');
 }

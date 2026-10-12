@@ -736,11 +736,11 @@ html[data-theme="dark"] .pom-page {
 
 /* The tint.
 
-   Fixed and over everything, so the rail and the top bar dim with the page —
-   the sitting is a state the whole window is in, not a panel on it. It takes
-   no clicks, which is the part that matters: the shell underneath stays usable
-   for somebody who needs to leave, and the only thing this does is make
-   leaving feel like a decision rather than a reflex.
+   Fixed and over everything, so the top bar dims with the page — the sitting
+   is a state the whole window is in, not a panel on it. Nothing under it can
+   be used while it runs: the rail is hidden, the rest of the shell is inert,
+   and the tint itself takes the clicks. The way out is Pause or Escape, which
+   is one press and is on screen the whole time.
 
    Above the rail, which is `z-index: 900` in styles/rail.css, and that is the
    only reason these three numbers are as large as they are. Nothing between
@@ -758,7 +758,10 @@ html[data-theme="dark"] .pom-page {
     position: fixed;
     inset: 0;
     z-index: 940;
-    pointer-events: none;
+    /* It takes every click that is not on the sitting itself. The shell under
+       it is inert as well (App.tsx), which covers the keyboard; this covers a
+       stray click landing on a page that is not the one on screen. */
+    pointer-events: auto;
     background:
         radial-gradient(115% 85% at 42% 45%, rgba(26, 30, 58, .55) 0%, rgba(7, 9, 22, .94) 100%),
         rgba(9, 11, 26, .74);

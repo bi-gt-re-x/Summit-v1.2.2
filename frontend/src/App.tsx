@@ -204,6 +204,15 @@ export default function App() {
     document.body.classList.toggle('on-calendar', onCalendar);
     return () => document.body.classList.remove('on-calendar');
   }, [onCalendar]);
+  /* A focus sitting is on screen (the Timer page's or the dashboard's). The
+     rail is hidden and its width given back — styles/rail.css, `is-sitting` —
+     and the rest of the shell below is made inert, so nothing behind the
+     sitting can be clicked, tabbed to or read out while it runs. Pausing ends
+     the sitting and gives all of it back. */
+  useEffect(() => {
+    document.body.classList.toggle('is-sitting', sitting);
+    return () => document.body.classList.remove('is-sitting');
+  }, [sitting]);
 
   /* Whose hidden chain this is. Above the router so the name is right before
      any page mounts a script that reads it — see hooks/useChainAccount.ts. */
@@ -237,20 +246,36 @@ export default function App() {
           something nobody can see. See pages/Timer.tsx. The dashboard shows
           the same sitting, and `sitting` stands this one down for it too. */}
       {!ownsAmbient && !custom && <Ambient cursor={pathname === '/home'} />}
-      {!landing && <Rail />}
+      {!landing && (
+        <div className="app-chrome" inert={sitting}>
+          <Rail />
+        </div>
+      )}
       {/* Beside the rail rather than above it: the rail owns the full height
           and the bar starts at `--rail-w`. Outside the router with the rail,
           so neither is torn down and rebuilt on every navigation. The account
           read they both show is not theirs any more — it belongs to
           UserDataProvider above them, and happens once for the session. */}
-      {!landing && <Topbar />}
+      {!landing && (
+        <div className="app-chrome" inert={sitting}>
+          <Topbar />
+        </div>
+      )}
       {/* Under the bar and over the page, and only when there is something to
           ask: an account whose address is confirmed never sees it. It is drawn
           here rather than by each page for the same reason the bar is — one
           strip for the app, not one per screen. See components/VerifyBanner. */}
-      {!landing && <VerifyBanner />}
+      {!landing && (
+        <div className="app-chrome" inert={sitting}>
+          <VerifyBanner />
+        </div>
+      )}
       {/* The guided tour, with Mango. See components/Tutorial. */}
-      {!landing && <Tutorial />}
+      {!landing && (
+        <div className="app-chrome" inert={sitting}>
+          <Tutorial />
+        </div>
+      )}
       <main className="app-main">
         {/* Inside the shell, so a page that throws loses the page and not the
             rail, the top bar and the way back. Keyed on the path: navigating

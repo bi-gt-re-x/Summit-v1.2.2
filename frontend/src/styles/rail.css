@@ -559,6 +559,23 @@ body.no-chrome .rail-sheet,
 body.no-chrome .rail-sheet-scrim,
 body.no-chrome .topbar { display: none; }
 
+/* The wrappers App.tsx puts round the rail, the top bar, the banner and the
+   tour so a focus sitting can make them inert. They take no box of their own:
+   each child keeps the positioning it had before it was wrapped. */
+.app-chrome { display: contents; }
+
+/* A focus sitting is on screen (App.tsx sets `is-sitting`). The rail goes
+   and gives its width back, so the sitting is centred in the window rather
+   than in the column beside a rail nobody may use. The top bar stays, dimmed
+   under the sitting's tint and inert. */
+body.is-sitting {
+    --rail-w: 0px;
+    --rail-h: 0px;
+}
+body.is-sitting .rail,
+body.is-sitting .rail-sheet,
+body.is-sitting .rail-sheet-scrim { display: none; }
+
 body.has-rail {
     box-sizing: border-box;
     padding-left: var(--rail-w);

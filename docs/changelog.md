@@ -2,6 +2,47 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-10-12 — A focus sitting owns the window; goals move with every step and end with a yes
+
+### Nothing behind a sitting
+
+While a focus sitting is on screen (Timer or Dashboard), the sidebar is hidden
+and its width given back, and the top bar, the banner and the tour are made
+`inert`, so they can't be clicked, tabbed to or read out. The tint takes any
+stray click. Pause or Escape gives it all back. App.tsx sets `is-sitting` on
+the body; styles/rail.css hides the rail.
+
+### Every step moves the goal, on the spot
+
+A checkpoint goal's progress counts ticked steps now, not only reached
+checkpoints: an open checkpoint counts for the share of its named steps that
+are done, capped at 90% so a goal never reads 100% with a checkpoint still
+open (`_stone_share` in backend/api/goals.py, utils/goalProgress on the
+client, tests on both sides pin the same figures). Ticking a step, closing a
+checkpoint or reopening one changes the goal on the page before the server
+answers, so the ring, the counting-up percentage, the route bars and the
+window chart ease to their new values. The server's figures replace the
+page's when the last write of a burst lands.
+
+Also fixed on the way: the server pads a short checklist with prompt text
+("Name what finishes it"), and the page sent that back as a real step title on
+every tick. Placeholders now go up empty, and the server reads unticked prompt
+text as a placeholder, which repairs rows saved that way.
+
+### Finishing a goal asks, then celebrates
+
+A goal its own numbers finish is flagged `needs_verify` instead of quietly
+counting. Its card stays in the active list with a big "You reached it. Is
+this goal done?" panel. **Yes, it's done** opens a full-window celebration
+(burst, the goal's name, and the days, checkpoints, steps and tasks it took)
+and records a `goal_completed` row in activity_log. **Not yet** reopens a
+checkpoint goal's last checkpoint, or opens the editor for any other kind.
+The old quiet two-step "Mark complete" is gone.
+
+The record shows up on Analytics' Overview as **Goals finished**: how many,
+this year, typical time, and what each one took. The celebration links
+straight to it.
+
 ## 2026-10-12 — Sittings on the account, and notes the rest of the app can see
 
 ### Sittings live on the server

@@ -389,6 +389,13 @@ export interface Goal {
   chart?: string;
   /** In execution order. The API sends them with every goal. */
   milestones: Milestone[];
+  /**
+   * Reached by its own numbers and waiting for the reader to say it is really
+   * done. The card asks; see `verify_goal` in backend/api/goals.py.
+   */
+  needs_verify?: boolean;
+  /** When the reader confirmed it done, or absent. */
+  verified_at?: string;
 }
 
 // --------------------------------------------------------------------------

@@ -35,6 +35,7 @@ import {
   type VisualContext,
 } from '@/utils/goalVisuals';
 import type { Goal, Milestone } from '@/types';
+import { stoneShare } from '@/utils/goalProgress';
 
 const DAY = 86_400_000;
 
@@ -253,15 +254,17 @@ export function movement(goal: Goal, range: 'year' | 'all', today: number): numb
 // Roadmap and scale
 // ---------------------------------------------------------------------------
 /**
- * The checkpoints, each row's bar being its state rather than a figure.
+ * The checkpoints, each row's bar how much of it is done.
  *
- * A checkpoint has no percentage, so three lengths meaning three states is the
- * most a bar can honestly say here.
+ * A reached checkpoint is a full bar. An open one is the share of its named
+ * steps that are ticked — the same share the goal's own percentage counts it
+ * for (utils/goalProgress) — so ticking a step moves its row and the goal's
+ * figure together, and the bar eases to its new length (`.ag-road-bar i`).
+ * A sliver stays on an untouched row so the track still reads as one.
  */
 function Roadmap({ goal, onOpen }: { goal: Goal; onOpen: () => void }) {
   const stones = (goal.milestones ?? []).slice(0, 8);
-  const share = (stone: Milestone) =>
-    stone.status === 'done' ? 100 : stone.status === 'active' ? 45 : 6;
+  const share = (stone: Milestone) => Math.max(6, Math.round(stoneShare(stone) * 100));
 
   /* The checkpoint being worked: the one marked active, or else the first not
      yet reached. It gets the goal's colour, so the route shows where you are. */

@@ -74,7 +74,14 @@ CREATE TABLE IF NOT EXISTS goals (
     subject_ids             TEXT DEFAULT '',
     -- Which chart the goal card draws. Empty lets the page pick one from the
     -- goal's data; see frontend/src/utils/goalVisuals.ts.
-    chart                   TEXT DEFAULT ''
+    chart                   TEXT DEFAULT '',
+    -- Reached by its own arithmetic and waiting for the reader to say it is
+    -- really done. Set when the status turns 'completed' by itself, cleared
+    -- by the answer (backend/api/goals.py, `verify_goal`) or by reopening.
+    needs_verify            BOOLEAN DEFAULT FALSE,
+    -- When the reader confirmed it done. The record of it, with the figures
+    -- it finished on, is a `goal_completed` row in activity_log.
+    verified_at             TEXT
 );
 
 CREATE INDEX IF NOT EXISTS goals_user_status_idx ON goals (user_id, status);

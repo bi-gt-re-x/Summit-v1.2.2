@@ -51,6 +51,7 @@ const EMPTY_PREVIOUS = new Map<string, number>();
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import { WhatYouToldUs } from '../WhatYouToldUs';
+import { GoalsFinished } from '../GoalsFinished';
 
 export function OverviewTab({
   model,
@@ -208,6 +209,10 @@ export function OverviewTab({
           <Collecting maturity={maturity} stats={basics} />
         </section>
 
+        {/* A confirmed goal is a fact on day one: it does not wait for the
+            record to fill the way the tallies do. */}
+        <GoalsFinished />
+
         {/* What the account said about itself at sign-up, and what it counts
             for while the record is short. */}
         <section className="ax-section">
@@ -320,6 +325,9 @@ export function OverviewTab({
           previousSpanLabel={previousSpanText}
         />
       </section>
+
+      {/* Goals the reader confirmed done. Draws nothing until there is one. */}
+      <GoalsFinished />
 
       {/* The reader's own target, before the panels that measure against
           nothing. A total is not good or bad on its own — four days a week is

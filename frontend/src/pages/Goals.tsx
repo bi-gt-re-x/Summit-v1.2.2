@@ -42,7 +42,7 @@
  * when the last thing rendering them did. New goals are outcomes; the counters
  * are kept, not extended.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   ActiveGoalCard,
@@ -96,6 +96,8 @@ import { fromTitles, stepProgress } from '@/utils/milestoneSteps';
 import { ConfirmDialog } from '@/components/ui';
 import '@/styles/goals.css';
 import { announceStatsChanged } from '@/utils/statsBus';
+import { awaitingVerify, withStoneStatus, withSteps } from '@/utils/goalProgress';
+import { GoalCelebration, type Celebration } from '@/components/Goals/GoalCelebration';
 
 /** How often to re-read while a focus goal is running. */
 const FOCUS_POLL_MS = 30_000;
@@ -191,8 +193,14 @@ export default function Goals() {
   /** Bumped when a deadline passes, so the cards that just went overdue redraw. */
   const [, setTick] = useState(0);
 
+  /* Checklist and checkpoint writes still in flight. Those are drawn the
+     moment they are made (see `quietWrite`), and a re-read that lands while
+     one is still out would put the old figures back for a beat. */
+  const pendingWrites = useRef(0);
+
   const load = useCallback(
     async (quiet = false) => {
+      if (quiet && pendingWrites.current > 0) return;
       if (!username) {
         setLoading(false);
         setError('Sign in to see your goals.');
@@ -200,6 +208,7 @@ export default function Goals() {
       }
       if (!quiet) setLoading(true);
       const result = await goalService.getGoals();
+      if (quiet && pendingWrites.current > 0) return;
       if (result.success) {
         setList(result.goals ?? []);
         setError(null);
@@ -258,6 +267,41 @@ export default function Goals() {
     },
     [load],
   );
+
+  /**
+   * A write that has already been drawn.
+   *
+   * Ticking a step, closing a checkpoint, reopening one: the page changes the
+   * goal in place first (utils/goalProgress works out its new figures the way
+   * the server will), so the ring, the percentage and the route move on the
+   * click with their own transitions, and the save happens behind it. No
+   * `busy`: the controls stay live, so a run of ticks is a run of ticks. The
+   * re-read waits for the last write of a burst, and then the server's
+   * figures replace the page's — which agree with them.
+   */
+  const quietWrite = useCallback(
+    async (action: () => Promise<{ success: boolean; message?: string }>) => {
+      pendingWrites.current += 1;
+      let saved = false;
+      try {
+        const result = await action();
+        saved = result.success;
+        if (!result.success) setError(result.message ?? 'That did not save.');
+      } catch {
+        setError('That did not save. Check your connection.');
+      } finally {
+        pendingWrites.current -= 1;
+      }
+      if (pendingWrites.current === 0) await load(true);
+      return saved;
+    },
+    [load],
+  );
+
+  /** Change one goal on screen, before the server has heard about it. */
+  const patchGoal = useCallback((goalId: string, change: (goal: Goal) => Goal) => {
+    setList((goals) => goals.map((goal) => (goal.id === goalId ? change(goal) : goal)));
+  }, []);
 
   const tasks = useMemo(() => account.data?.tasks ?? [], [account.data]);
 
@@ -498,9 +542,10 @@ export default function Goals() {
   const setMilestoneStatus = useCallback(
     (milestone: Milestone, status: MilestoneStatus) => {
       if (!username) return;
-      void write(() => goalService.updateMilestone(milestone.id, { status }));
+      patchGoal(milestone.goal_id, (goal) => withStoneStatus(goal, milestone.id, status));
+      void quietWrite(() => goalService.updateMilestone(milestone.id, { status }));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
   );
 
   /**
@@ -521,31 +566,72 @@ export default function Goals() {
     [username, write],
   );
 
+  /** The celebration on screen, or null. See components/Goals/GoalCelebration. */
+  const [celebrating, setCelebrating] = useState<Celebration | null>(null);
+
   /**
-   * Call the goal itself finished.
+   * The reader's answer to "is this goal really done?".
    *
-   * Only offered once every checkpoint is reached, and it is a request rather
-   * than an assertion: the backend re-derives status from the goal's own truth
-   * on every write, so a milestone goal is already completed by the time this
-   * is reachable and this is the confirmation. What it genuinely decides is
-   * the goals with no target to measure against, which arithmetic cannot
-   * finish and only the reader can. See `_recompute` in backend/api/goals.py.
+   * Asked on the card the moment a goal reaches its target (and on a goal with
+   * no target once every checkpoint is behind it). **Yes** celebrates at once
+   * and moves the goal out of the active list; the server records it, with
+   * the figures it finished on, for the Analytics page, and those figures
+   * join the celebration when they arrive. **Not yet** on a checkpoint goal
+   * reopens its last checkpoint; on any other goal there is nothing to
+   * reopen, so the editor opens on its figures instead. See `verify_goal` in
+   * backend/api/goals.py.
    */
-  const completeGoal = useCallback(
-    (goal: Goal) => {
-      if (!username || goal.status === 'completed') return;
-      void write(() => goalService.updateGoal(goal.id, { status: 'completed' }));
+  const verifyGoal = useCallback(
+    async (goal: Goal, done: boolean) => {
+      if (!username) return;
+      const stones = goal.milestones ?? [];
+      if (!done) {
+        if (measureOf(goal) !== 'milestones' || !stones.some((stone) => stone.status === 'done')) {
+          setEditing(goal);
+          setModalOpen(true);
+          return;
+        }
+        const last = [...stones]
+          .filter((stone) => stone.status === 'done')
+          .sort((a, b) => (a.completed_at ?? '').localeCompare(b.completed_at ?? '') || a.position - b.position)
+          .at(-1)!;
+        patchGoal(goal.id, (row) => withStoneStatus(row, last.id, 'active'));
+        void quietWrite(() => goalService.verifyGoal(goal.id, false));
+        return;
+      }
+      patchGoal(goal.id, (row) => ({
+        ...row, status: 'completed', needs_verify: false, verified_at: new Date().toISOString(),
+      }));
+      setCelebrating({ goal, record: null });
+      pendingWrites.current += 1;
+      try {
+        const result = await goalService.verifyGoal(goal.id, true);
+        if (!result.success) {
+          setCelebrating(null);
+          setError(result.message ?? 'That goal could not be confirmed.');
+        } else if (result.record) {
+          setCelebrating((now) => (now && now.goal.id === goal.id ? { ...now, record: result.record ?? null } : now));
+        }
+      } catch {
+        setCelebrating(null);
+        setError('That goal could not be confirmed. Check your connection.');
+      } finally {
+        pendingWrites.current -= 1;
+      }
+      announceStatsChanged();
+      await load(true);
     },
-    [username, write],
+    [load, patchGoal, quietWrite, username],
   );
 
   /** The checkpoint's own checklist, written whole. See utils/milestoneSteps. */
   const setMilestoneSteps = useCallback(
     (milestone: Milestone, steps: MilestoneStep[]) => {
       if (!username) return;
-      void write(() => goalService.updateMilestone(milestone.id, { steps }));
+      patchGoal(milestone.goal_id, (goal) => withSteps(goal, milestone.id, steps));
+      void quietWrite(() => goalService.updateMilestone(milestone.id, { steps }));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
   );
 
   /** When a checkpoint is meant to be reached. Empty string clears it. */
@@ -717,7 +803,8 @@ export default function Goals() {
   const active = useMemo(
     () =>
       list
-        .filter((goal) => goal.status !== 'completed')
+        // A goal waiting on "is it really done?" stays here, where the question is.
+        .filter((goal) => goal.status !== 'completed' || awaitingVerify(goal))
         .sort((a, b) => {
           // Overdue first, then by how much it matters, then by how close the
           // date is — which is the order a reader would put them in themselves.
@@ -956,7 +1043,7 @@ export default function Goals() {
                     onFocusMilestone={focusMilestone}
                     onMilestoneSteps={setMilestoneSteps}
                     onMilestoneStatus={setMilestoneStatus}
-                    onCompleteGoal={completeGoal}
+                    onVerify={(entry, done) => void verifyGoal(entry, done)}
                     nameOf={subjectName}
                     onChart={setChart}
                   />
@@ -1160,13 +1247,17 @@ export default function Goals() {
             reveals it works from wherever you are. */}
         {showCompleted && (
           <Band title="Recently Completed" hint="Already behind you">
-            <RecentlyCompleted goals={list} />
+            <RecentlyCompleted goals={list.filter((goal) => !awaitingVerify(goal))} />
           </Band>
         )}
 
         <GoalsCta onNew={startGoal} />
         </div>
       </div>
+
+      {celebrating && (
+        <GoalCelebration celebration={celebrating} onClose={() => setCelebrating(null)} />
+      )}
 
 
       {open && (

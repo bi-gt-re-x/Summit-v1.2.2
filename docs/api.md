@@ -84,6 +84,8 @@ All in `routes/auth.py`, except the theme (`routes/theme.py`).
 | `POST /api/delete_goal` | Delete |
 | `POST /api/update_goal_progress` | Add to one counter by hand, capped at target |
 | `POST /api/auto_apply_task_xp` | Apply a completed task's XP to active XP goals |
+| `POST /api/goals/verify` | `{id, done}`: yes completes a reached goal and records it in `activity_log`; no reopens a checkpoint goal's last checkpoint |
+| `GET /api/goals/completed` | Every goal confirmed done, newest first, with the figures it finished on (Analytics' Goals finished panel) |
 
 ## Calendar — `api/calendar.py`
 

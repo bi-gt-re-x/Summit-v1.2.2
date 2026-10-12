@@ -73,7 +73,7 @@ function show(over: Partial<ActiveGoalCardProps> = {}) {
     onFocusMilestone: vi.fn(),
     onMilestoneSteps: vi.fn(),
     onMilestoneStatus: vi.fn(),
-    onCompleteGoal: vi.fn(),
+    onVerify: vi.fn(),
     nameOf: (id: string) => id,
     ...over,
   } satisfies ActiveGoalCardProps;

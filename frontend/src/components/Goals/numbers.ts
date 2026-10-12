@@ -7,6 +7,7 @@
  * second copy of "what counts as done" is how two parts of a page start
  * disagreeing.
  */
+import { stonesProgress } from '@/utils/goalProgress';
 import { GOAL_FIELDS } from '@/services/constants';
 import type { Goal, GoalMeasure, GoalType } from '@/types';
 
@@ -64,12 +65,9 @@ export function goalNumbers(goal: Goal): GoalNumbers {
   if (measure === 'milestones') {
     const rows = goal.milestones ?? [];
     const done = rows.filter((row) => row.status === 'done').length;
-    const progress =
-      goal.status === 'completed'
-        ? 100
-        : rows.length
-          ? (done / rows.length) * 100
-          : 0;
+    // Every ticked step counts, not only every reached checkpoint: the rule
+    // the server stores `progress` by, in utils/goalProgress.
+    const progress = goal.status === 'completed' ? 100 : stonesProgress(rows);
     return {
       measure,
       goalType: 'xp',
