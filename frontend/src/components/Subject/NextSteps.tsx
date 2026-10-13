@@ -200,6 +200,18 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
                               {RANK_WORDS[n]}
                             </i>
                             {link.yours && <i className="sx-link-rank is-yours">Yours</i>}
+                            {!link.yours && link.signup && (
+                              <i
+                                className="sx-link-rank is-free"
+                                title={
+                                  link.signup === 'none'
+                                    ? 'Free, and you can use it without an account'
+                                    : 'Free, with a quick account by email or Google'
+                                }
+                              >
+                                {link.signup === 'none' ? 'Free, no signup' : 'Free account'}
+                              </i>
+                            )}
                           </li>
                         ))}
                       </ol>

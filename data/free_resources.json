@@ -1,0 +1,7741 @@
+{
+ "version": 1,
+ "resources": [
+  {
+   "id": "mathematics:khan-academy-math",
+   "subject": "mathematics",
+   "name": "Khan Academy Math",
+   "url": "https://www.khanacademy.org/math",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and practice from arithmetic to calculus",
+   "keywords": [
+    "drills",
+    "exercises",
+    "math",
+    "practice"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "mathematics:mit-opencourseware-mathematics",
+   "subject": "mathematics",
+   "name": "MIT OpenCourseWare Mathematics",
+   "url": "https://ocw.mit.edu/search/?d=Mathematics",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Full MIT math courses with problem sets and solutions",
+   "keywords": [
+    "course",
+    "lecture",
+    "math 55",
+    "problem set"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "mathematics:putnam-archive-kiran-kedlaya",
+   "subject": "mathematics",
+   "name": "Putnam archive (Kiran Kedlaya)",
+   "url": "https://kskedlaya.org/putnam-archive/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Every Putnam paper with solutions",
+   "keywords": [
+    "putnam"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "mathematics:aops-wiki-contest-problems",
+   "subject": "mathematics",
+   "name": "AoPS Wiki contest problems",
+   "url": "https://artofproblemsolving.com/wiki/index.php/AoPS_Wiki:Competition_ratings",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Contest problems and solutions rated by difficulty",
+   "keywords": [
+    "aime",
+    "amc",
+    "competition",
+    "contest",
+    "mock contest",
+    "olympiad"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "mathematics:paul-s-online-math-notes",
+   "subject": "mathematics",
+   "name": "Paul's Online Math Notes",
+   "url": "https://tutorial.math.lamar.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Clear notes and practice problems for algebra through DEs",
+   "keywords": [
+    "calculus",
+    "drills",
+    "integration",
+    "notes",
+    "stewart"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "mathematics:book-of-proof",
+   "subject": "mathematics",
+   "name": "Book of Proof",
+   "url": "https://richardhammack.github.io/BookOfProof/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free textbook on writing proofs, with exercises",
+   "keywords": [
+    "proof"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "mathematics:3blue1brown-essence-of-linear-algebra",
+   "subject": "mathematics",
+   "name": "3Blue1Brown Essence of Linear Algebra",
+   "url": "https://www.3blue1brown.com/topics/linear-algebra",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Visual intuition for linear algebra",
+   "keywords": [
+    "linear algebra"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "mathematics:mit-18-06-linear-algebra",
+   "subject": "mathematics",
+   "name": "MIT 18.06 Linear Algebra",
+   "url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Gilbert Strang's lectures and problem sets",
+   "keywords": [
+    "exercises",
+    "linear algebra",
+    "strang"
+   ],
+   "ordinal": 8
+  },
+  {
+   "id": "mathematics:physics-maths-tutor",
+   "subject": "mathematics",
+   "name": "Physics & Maths Tutor",
+   "url": "https://www.physicsandmathstutor.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Past papers, mark schemes and topic questions",
+   "keywords": [
+    "a level",
+    "past paper",
+    "pure",
+    "pure maths"
+   ],
+   "ordinal": 9
+  },
+  {
+   "id": "mathematics:openstax-math-textbooks",
+   "subject": "mathematics",
+   "name": "OpenStax math textbooks",
+   "url": "https://openstax.org/subjects/math",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free textbooks from prealgebra to calculus",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 10
+  },
+  {
+   "id": "mathematics:desmos-graphing-calculator",
+   "subject": "mathematics",
+   "name": "Desmos graphing calculator",
+   "url": "https://www.desmos.com/calculator",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Graph anything and check answers visually",
+   "keywords": [
+    "check",
+    "function",
+    "graph"
+   ],
+   "ordinal": 11
+  },
+  {
+   "id": "algebra:khan-academy-algebra-1",
+   "subject": "algebra",
+   "name": "Khan Academy Algebra 1",
+   "url": "https://www.khanacademy.org/math/algebra",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and practice for linear equations through quadratics",
+   "keywords": [
+    "algebra",
+    "drills",
+    "equations",
+    "linear",
+    "quadratic"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "algebra:khan-academy-algebra-2",
+   "subject": "algebra",
+   "name": "Khan Academy Algebra 2",
+   "url": "https://www.khanacademy.org/math/algebra2",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Polynomials, exponentials, logs, sequences",
+   "keywords": [
+    "algebra 2",
+    "logarithm",
+    "polynomial"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "algebra:openstax-college-algebra",
+   "subject": "algebra",
+   "name": "OpenStax College Algebra",
+   "url": "https://openstax.org/details/books/college-algebra-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed College Algebra textbook online",
+   "keywords": [
+    "problem set",
+    "textbook"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "algebra:mit-18-06-linear-algebra",
+   "subject": "algebra",
+   "name": "MIT 18.06 Linear Algebra",
+   "url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Gilbert Strang's lectures and problem sets",
+   "keywords": [
+    "linear algebra",
+    "strang"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "algebra:abstract-algebra-theory-and-applications",
+   "subject": "algebra",
+   "name": "Abstract Algebra: Theory and Applications",
+   "url": "https://math.libretexts.org/Bookshelves/Abstract_and_Geometric_Algebra/Abstract_Algebra%3A_Theory_and_Applications_(Judson)",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Judson's free abstract algebra textbook with exercises",
+   "keywords": [
+    "abstract algebra",
+    "field",
+    "group",
+    "ring"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "algebra:aops-wiki-functional-equations",
+   "subject": "algebra",
+   "name": "AoPS Wiki: functional equations",
+   "url": "https://artofproblemsolving.com/wiki/index.php/Functional_equation",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Techniques and contest problems for functional equations",
+   "keywords": [
+    "functional equation",
+    "olympiad"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "algebra:paul-s-online-notes-algebra",
+   "subject": "algebra",
+   "name": "Paul's Online Notes: Algebra",
+   "url": "https://tutorial.math.lamar.edu/Classes/Alg/Alg.aspx",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Notes and practice problems for college algebra",
+   "keywords": [
+    "algebra",
+    "notes"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "geometry:khan-academy-geometry",
+   "subject": "geometry",
+   "name": "Khan Academy Geometry",
+   "url": "https://www.khanacademy.org/math/geometry",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and practice for high school geometry",
+   "keywords": [
+    "geometry",
+    "practice",
+    "proof",
+    "triangle"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "geometry:geogebra-geometry",
+   "subject": "geometry",
+   "name": "GeoGebra Geometry",
+   "url": "https://www.geogebra.org/geometry",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Draw constructions and test conjectures",
+   "keywords": [
+    "construction",
+    "diagram"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "geometry:aops-wiki-geometry",
+   "subject": "geometry",
+   "name": "AoPS Wiki: Geometry",
+   "url": "https://artofproblemsolving.com/wiki/index.php/Geometry",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Contest geometry topics and problems",
+   "keywords": [
+    "contest",
+    "olympiad"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "geometry:euclid-the-game",
+   "subject": "geometry",
+   "name": "Euclid: The Game",
+   "url": "https://www.euclidthegame.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Compass-and-straightedge construction puzzles",
+   "keywords": [
+    "construction"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "trigonometry:khan-academy-trigonometry",
+   "subject": "trigonometry",
+   "name": "Khan Academy Trigonometry",
+   "url": "https://www.khanacademy.org/math/trigonometry",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Unit circle, identities, trig equations",
+   "keywords": [
+    "identities",
+    "trig",
+    "unit circle"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "trigonometry:openstax-algebra-and-trigonometry",
+   "subject": "trigonometry",
+   "name": "OpenStax Algebra and Trigonometry",
+   "url": "https://openstax.org/details/books/algebra-and-trigonometry-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Algebra and Trigonometry textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "trigonometry:paul-s-algebra-trig-review",
+   "subject": "trigonometry",
+   "name": "Paul's Algebra/Trig Review",
+   "url": "https://tutorial.math.lamar.edu/Extras/AlgebraTrigReview/AlgebraTrigIntro.aspx",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Quick review of trig facts with problems",
+   "keywords": [
+    "review"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "trigonometry:desmos-graphing-calculator",
+   "subject": "trigonometry",
+   "name": "Desmos graphing calculator",
+   "url": "https://www.desmos.com/calculator",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Graph anything and check answers visually",
+   "keywords": [
+    "check",
+    "function",
+    "graph"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "precalculus:khan-academy-precalculus",
+   "subject": "precalculus",
+   "name": "Khan Academy Precalculus",
+   "url": "https://www.khanacademy.org/math/precalculus",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Functions, vectors, complex numbers, series",
+   "keywords": [
+    "functions",
+    "precalc",
+    "vectors"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "precalculus:openstax-precalculus",
+   "subject": "precalculus",
+   "name": "OpenStax Precalculus",
+   "url": "https://openstax.org/details/books/precalculus-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Precalculus textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "precalculus:desmos-graphing-calculator",
+   "subject": "precalculus",
+   "name": "Desmos graphing calculator",
+   "url": "https://www.desmos.com/calculator",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Graph anything and check answers visually",
+   "keywords": [
+    "check",
+    "function",
+    "graph"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "calculus:khan-academy-ap-calculus-bc",
+   "subject": "calculus",
+   "name": "Khan Academy AP Calculus BC",
+   "url": "https://www.khanacademy.org/math/ap-calculus-bc",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Every BC unit with practice",
+   "keywords": [
+    "ap calculus",
+    "bc",
+    "calculus",
+    "derivative",
+    "integral"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "calculus:paul-s-online-notes-calculus-i",
+   "subject": "calculus",
+   "name": "Paul's Online Notes: Calculus I",
+   "url": "https://tutorial.math.lamar.edu/Classes/CalcI/CalcI.aspx",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Notes and practice problems on limits, derivatives, integrals",
+   "keywords": [
+    "derivative",
+    "drills",
+    "integration",
+    "limits",
+    "stewart"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "calculus:mit-18-01sc-single-variable-calculus",
+   "subject": "calculus",
+   "name": "MIT 18.01SC Single Variable Calculus",
+   "url": "https://ocw.mit.edu/courses/18-01sc-single-variable-calculus-fall-2010/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lectures, problem sets and exams with solutions",
+   "keywords": [
+    "lecture",
+    "problem set"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "calculus:openstax-calculus-volume-1",
+   "subject": "calculus",
+   "name": "OpenStax Calculus Volume 1",
+   "url": "https://openstax.org/details/books/calculus-volume-1",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Calculus Volume 1 textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "calculus:3blue1brown-essence-of-calculus",
+   "subject": "calculus",
+   "name": "3Blue1Brown Essence of Calculus",
+   "url": "https://www.3blue1brown.com/topics/calculus",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Visual intuition for derivatives and integrals",
+   "keywords": [
+    "intuition"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "calculus:ap-calculus-bc-past-exam-questions",
+   "subject": "calculus",
+   "name": "AP Calculus BC past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-calculus-bc/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Calculus BC free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "calculus bc",
+    "frq"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "statistics:khan-academy-statistics-and-probability",
+   "subject": "statistics",
+   "name": "Khan Academy Statistics and Probability",
+   "url": "https://www.khanacademy.org/math/statistics-probability",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and practice through inference",
+   "keywords": [
+    "inference",
+    "probability",
+    "statistics"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "statistics:openintro-statistics",
+   "subject": "statistics",
+   "name": "OpenIntro Statistics",
+   "url": "https://www.openintro.org/book/os/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free intro statistics textbook with exercises",
+   "keywords": [
+    "exercises",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "statistics:an-introduction-to-statistical-learning",
+   "subject": "statistics",
+   "name": "An Introduction to Statistical Learning",
+   "url": "https://www.statlearning.com/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free ISLR book and labs",
+   "keywords": [
+    "lecture",
+    "regression",
+    "statistical learning"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "statistics:seeing-theory",
+   "subject": "statistics",
+   "name": "Seeing Theory",
+   "url": "https://seeing-theory.brown.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Visual intro to probability and statistics",
+   "keywords": [
+    "probability",
+    "visual"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "statistics:ap-statistics-past-exam-questions",
+   "subject": "statistics",
+   "name": "AP Statistics past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-statistics/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Statistics free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "frq",
+    "statistics"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "differential_equations:mit-18-03sc-differential-equations",
+   "subject": "differential_equations",
+   "name": "MIT 18.03SC Differential Equations",
+   "url": "https://ocw.mit.edu/courses/18-03sc-differential-equations-fall-2011/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lectures and problem sets with solutions",
+   "keywords": [
+    "lecture",
+    "ode",
+    "problem set"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "differential_equations:paul-s-online-notes-differential-equations",
+   "subject": "differential_equations",
+   "name": "Paul's Online Notes: Differential Equations",
+   "url": "https://tutorial.math.lamar.edu/Classes/DE/DE.aspx",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Notes and practice problems",
+   "keywords": [
+    "laplace",
+    "ode"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "differential_equations:khan-academy-differential-equations",
+   "subject": "differential_equations",
+   "name": "Khan Academy Differential Equations",
+   "url": "https://www.khanacademy.org/math/differential-equations",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "First and second order equations",
+   "keywords": [
+    "first order",
+    "second order"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "differential_equations:3blue1brown-differential-equations",
+   "subject": "differential_equations",
+   "name": "3Blue1Brown Differential Equations",
+   "url": "https://www.3blue1brown.com/topics/differential-equations",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Visual intuition for DEs",
+   "keywords": [
+    "intuition"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "science:khan-academy-science",
+   "subject": "science",
+   "name": "Khan Academy Science",
+   "url": "https://www.khanacademy.org/science",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Biology, chemistry, physics lessons and practice",
+   "keywords": [
+    "practice",
+    "science"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "science:phet-simulations",
+   "subject": "science",
+   "name": "PhET simulations",
+   "url": "https://phet.colorado.edu/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Interactive science simulations that run in the browser",
+   "keywords": [
+    "experiment",
+    "lab",
+    "simulation"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "science:ck-12-science",
+   "subject": "science",
+   "name": "CK-12 Science",
+   "url": "https://www.ck12.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free textbooks and practice for school science",
+   "keywords": [
+    "practice",
+    "textbook"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "science:crash-course",
+   "subject": "science",
+   "name": "Crash Course",
+   "url": "https://thecrashcourse.com/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Fast, clear video series across school subjects",
+   "keywords": [
+    "overview",
+    "review",
+    "video"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "biology:khan-academy-biology",
+   "subject": "biology",
+   "name": "Khan Academy Biology",
+   "url": "https://www.khanacademy.org/science/biology",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Cells to ecology, with practice",
+   "keywords": [
+    "biology",
+    "cells",
+    "practice"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "biology:openstax-biology",
+   "subject": "biology",
+   "name": "OpenStax Biology",
+   "url": "https://openstax.org/details/books/biology-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Biology textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "biology:ap-biology-past-exam-questions",
+   "subject": "biology",
+   "name": "AP Biology past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-biology/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Biology free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "biology",
+    "frq"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "biology:hhmi-biointeractive",
+   "subject": "biology",
+   "name": "HHMI BioInteractive",
+   "url": "https://www.biointeractive.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short films, data activities and case studies",
+   "keywords": [
+    "case study",
+    "data",
+    "video"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "chemistry:khan-academy-chemistry",
+   "subject": "chemistry",
+   "name": "Khan Academy Chemistry",
+   "url": "https://www.khanacademy.org/science/chemistry",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Atoms through equilibrium, with practice",
+   "keywords": [
+    "chemistry",
+    "equilibrium",
+    "practice"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "chemistry:openstax-chemistry",
+   "subject": "chemistry",
+   "name": "OpenStax Chemistry",
+   "url": "https://openstax.org/details/books/chemistry-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Chemistry textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "chemistry:chemguide",
+   "subject": "chemistry",
+   "name": "Chemguide",
+   "url": "https://www.chemguide.co.uk/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Clear A-level chemistry notes, mechanisms included",
+   "keywords": [
+    "mechanisms",
+    "organic",
+    "periodicity",
+    "revision",
+    "titration"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "chemistry:libretexts-chemistry",
+   "subject": "chemistry",
+   "name": "LibreTexts Chemistry",
+   "url": "https://chem.libretexts.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free open chemistry textbooks",
+   "keywords": [
+    "lab",
+    "organic",
+    "textbook"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "chemistry:ptable-interactive-periodic-table",
+   "subject": "chemistry",
+   "name": "Ptable interactive periodic table",
+   "url": "https://ptable.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Periodic table with trends, ions and properties",
+   "keywords": [
+    "ions",
+    "periodic",
+    "periodicity",
+    "polyatomic"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "chemistry:ap-chemistry-past-exam-questions",
+   "subject": "chemistry",
+   "name": "AP Chemistry past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-chemistry/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Chemistry free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "equilibrium",
+    "frq"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "chemistry:physics-maths-tutor-chemistry",
+   "subject": "chemistry",
+   "name": "Physics & Maths Tutor: Chemistry",
+   "url": "https://www.physicsandmathstutor.com/chemistry-revision/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Chemistry past papers and topic questions",
+   "keywords": [
+    "past paper",
+    "revision"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "chemistry:phet-simulations",
+   "subject": "chemistry",
+   "name": "PhET simulations",
+   "url": "https://phet.colorado.edu/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Interactive science simulations that run in the browser",
+   "keywords": [
+    "lab",
+    "simulation",
+    "titration"
+   ],
+   "ordinal": 8
+  },
+  {
+   "id": "physics:khan-academy-physics",
+   "subject": "physics",
+   "name": "Khan Academy Physics",
+   "url": "https://www.khanacademy.org/science/physics",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Mechanics through modern physics, with practice",
+   "keywords": [
+    "physics",
+    "practice",
+    "worked examples"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "physics:openstax-university-physics-volume-1",
+   "subject": "physics",
+   "name": "OpenStax University Physics Volume 1",
+   "url": "https://openstax.org/details/books/university-physics-volume-1",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed University Physics Volume 1 textbook online",
+   "keywords": [
+    "mechanics",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "physics:openstax-university-physics-volume-2",
+   "subject": "physics",
+   "name": "OpenStax University Physics Volume 2",
+   "url": "https://openstax.org/details/books/university-physics-volume-2",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed University Physics Volume 2 textbook online",
+   "keywords": [
+    "electricity",
+    "electromagnetism",
+    "magnetism"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "physics:mit-8-01-classical-mechanics",
+   "subject": "physics",
+   "name": "MIT 8.01 Classical Mechanics",
+   "url": "https://ocw.mit.edu/courses/8-01sc-classical-mechanics-fall-2016/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lectures and problem sets with solutions",
+   "keywords": [
+    "lecture",
+    "mechanics",
+    "problems"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "physics:mit-8-02-electricity-and-magnetism",
+   "subject": "physics",
+   "name": "MIT 8.02 Electricity and Magnetism",
+   "url": "https://ocw.mit.edu/courses/8-02-physics-ii-electricity-and-magnetism-spring-2007/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lectures and problem sets with solutions",
+   "keywords": [
+    "electromagnetism",
+    "reading"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "physics:hyperphysics",
+   "subject": "physics",
+   "name": "HyperPhysics",
+   "url": "http://hyperphysics.phy-astr.gsu.edu/hbase/index.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Concept maps for every physics topic",
+   "keywords": [
+    "concept",
+    "reference"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "physics:the-feynman-lectures-on-physics",
+   "subject": "physics",
+   "name": "The Feynman Lectures on Physics",
+   "url": "https://www.feynmanlectures.caltech.edu/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "All three volumes free online",
+   "keywords": [
+    "lecture",
+    "reading"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "physics:physics-maths-tutor-physics",
+   "subject": "physics",
+   "name": "Physics & Maths Tutor: Physics",
+   "url": "https://www.physicsandmathstutor.com/physics-revision/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Physics past papers and topic questions",
+   "keywords": [
+    "past paper",
+    "revision"
+   ],
+   "ordinal": 8
+  },
+  {
+   "id": "physics:ap-physics-c-mechanics-past-exam-questions",
+   "subject": "physics",
+   "name": "AP Physics C: Mechanics past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-physics-c-mechanics/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Physics C: Mechanics free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "ap physics",
+    "frq",
+    "rotation"
+   ],
+   "ordinal": 9
+  },
+  {
+   "id": "physics:phet-simulations",
+   "subject": "physics",
+   "name": "PhET simulations",
+   "url": "https://phet.colorado.edu/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Interactive science simulations that run in the browser",
+   "keywords": [
+    "data",
+    "lab",
+    "simulation"
+   ],
+   "ordinal": 10
+  },
+  {
+   "id": "anatomy:openstax-anatomy-and-physiology",
+   "subject": "anatomy",
+   "name": "OpenStax Anatomy and Physiology",
+   "url": "https://openstax.org/details/books/anatomy-and-physiology-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Anatomy and Physiology textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "anatomy:teachmeanatomy",
+   "subject": "anatomy",
+   "name": "TeachMeAnatomy",
+   "url": "https://teachmeanatomy.info/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Clear anatomy articles with diagrams",
+   "keywords": [
+    "anatomy",
+    "bone",
+    "muscle"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "anatomy:kenhub",
+   "subject": "anatomy",
+   "name": "Kenhub",
+   "url": "https://www.kenhub.com/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Anatomy quizzes and articles; free tier with email",
+   "keywords": [
+    "anatomy",
+    "quiz"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "anatomy:ankiweb-shared-decks",
+   "subject": "anatomy",
+   "name": "AnkiWeb shared decks",
+   "url": "https://ankiweb.net/shared/decks",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Ready-made flashcard decks for most subjects",
+   "keywords": [
+    "deck",
+    "flashcard",
+    "vocabulary"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "genetics:learn-genetics-university-of-utah",
+   "subject": "genetics",
+   "name": "Learn.Genetics (University of Utah)",
+   "url": "https://learn.genetics.utah.edu/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Interactive genetics lessons and virtual labs",
+   "keywords": [
+    "dna",
+    "genetics",
+    "inheritance"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "genetics:openstax-biology",
+   "subject": "genetics",
+   "name": "OpenStax Biology",
+   "url": "https://openstax.org/details/books/biology-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Biology textbook online",
+   "keywords": [
+    "genetics",
+    "mendel"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "genetics:nhgri-talking-glossary",
+   "subject": "genetics",
+   "name": "NHGRI Talking Glossary",
+   "url": "https://www.genome.gov/genetics-glossary",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short explanations of genetics terms",
+   "keywords": [
+    "glossary",
+    "terms"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "ecology:khan-academy-ecology",
+   "subject": "ecology",
+   "name": "Khan Academy Ecology",
+   "url": "https://www.khanacademy.org/science/biology/ecology",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Populations, communities, ecosystems",
+   "keywords": [
+    "ecology",
+    "population"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "ecology:openstax-biology",
+   "subject": "ecology",
+   "name": "OpenStax Biology",
+   "url": "https://openstax.org/details/books/biology-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Biology textbook online",
+   "keywords": [
+    "ecology",
+    "ecosystem"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "ecology:inaturalist",
+   "subject": "ecology",
+   "name": "iNaturalist",
+   "url": "https://www.inaturalist.org/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Identify and record species in the field",
+   "keywords": [
+    "field",
+    "species",
+    "survey"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "environmental_science:ap-environmental-science-past-exam-questions",
+   "subject": "environmental_science",
+   "name": "AP Environmental Science past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-environmental-science/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Environmental Science free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "apes",
+    "frq"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "environmental_science:nasa-climate",
+   "subject": "environmental_science",
+   "name": "NASA Climate",
+   "url": "https://science.nasa.gov/climate-change/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Evidence and data on climate change",
+   "keywords": [
+    "climate"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "environmental_science:our-world-in-data",
+   "subject": "environmental_science",
+   "name": "Our World in Data",
+   "url": "https://ourworldindata.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Charts and data on global problems",
+   "keywords": [
+    "chart",
+    "data",
+    "statistics"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "astronomy:openstax-astronomy",
+   "subject": "astronomy",
+   "name": "OpenStax Astronomy",
+   "url": "https://openstax.org/details/books/astronomy-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Astronomy textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "astronomy:stellarium-web",
+   "subject": "astronomy",
+   "name": "Stellarium Web",
+   "url": "https://stellarium-web.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Planetarium in the browser",
+   "keywords": [
+    "observing",
+    "sky",
+    "stars"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "astronomy:nasa-science",
+   "subject": "astronomy",
+   "name": "NASA Science",
+   "url": "https://science.nasa.gov/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Missions, images and explainers",
+   "keywords": [
+    "missions",
+    "planets"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "geology:physical-geology-open-textbook",
+   "subject": "geology",
+   "name": "Physical Geology (open textbook)",
+   "url": "https://opentextbc.ca/physicalgeology2ed/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free university geology textbook",
+   "keywords": [
+    "plates",
+    "rocks",
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "geology:usgs-educational-resources",
+   "subject": "geology",
+   "name": "USGS educational resources",
+   "url": "https://www.usgs.gov/educational-resources",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Maps, data and explainers from the USGS",
+   "keywords": [
+    "earthquake",
+    "maps"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "geology:mindat",
+   "subject": "geology",
+   "name": "Mindat",
+   "url": "https://www.mindat.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Mineral database with photos",
+   "keywords": [
+    "identify",
+    "mineral"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "organic_chemistry:master-organic-chemistry",
+   "subject": "organic_chemistry",
+   "name": "Master Organic Chemistry",
+   "url": "https://www.masterorganicchemistry.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Clear free articles on reactions and mechanisms",
+   "keywords": [
+    "mechanisms",
+    "organic",
+    "reaction"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "organic_chemistry:openstax-organic-chemistry",
+   "subject": "organic_chemistry",
+   "name": "OpenStax Organic Chemistry",
+   "url": "https://openstax.org/details/books/organic-chemistry",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Organic Chemistry textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "organic_chemistry:khan-academy-organic-chemistry",
+   "subject": "organic_chemistry",
+   "name": "Khan Academy Organic Chemistry",
+   "url": "https://www.khanacademy.org/science/organic-chemistry",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Videos and practice on mechanisms",
+   "keywords": [
+    "mechanisms",
+    "practice"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "organic_chemistry:chemguide-mechanisms",
+   "subject": "organic_chemistry",
+   "name": "Chemguide: mechanisms",
+   "url": "https://www.chemguide.co.uk/mechmenu.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Step-by-step mechanism notes",
+   "keywords": [
+    "mechanisms",
+    "organic mechanisms"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "biochemistry:khan-academy-macromolecules",
+   "subject": "biochemistry",
+   "name": "Khan Academy: macromolecules",
+   "url": "https://www.khanacademy.org/science/biology/macromolecules",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Proteins, lipids, nucleic acids",
+   "keywords": [
+    "enzyme",
+    "protein"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "biochemistry:libretexts-biochemistry",
+   "subject": "biochemistry",
+   "name": "LibreTexts Biochemistry",
+   "url": "https://bio.libretexts.org/Bookshelves/Biochemistry",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free biochemistry textbooks",
+   "keywords": [
+    "metabolism",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "biochemistry:pdb-101",
+   "subject": "biochemistry",
+   "name": "PDB-101",
+   "url": "https://pdb101.rcsb.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Molecule of the month and structure guides",
+   "keywords": [
+    "protein",
+    "structure"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "microbiology:openstax-microbiology",
+   "subject": "microbiology",
+   "name": "OpenStax Microbiology",
+   "url": "https://openstax.org/details/books/microbiology",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Microbiology textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "microbiology:libretexts-microbiology",
+   "subject": "microbiology",
+   "name": "LibreTexts Microbiology",
+   "url": "https://bio.libretexts.org/Bookshelves/Microbiology",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free microbiology textbooks and lab guides",
+   "keywords": [
+    "lab",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "neuroscience:neuroscience-online-uthealth",
+   "subject": "neuroscience",
+   "name": "Neuroscience Online (UTHealth)",
+   "url": "https://nba.uth.tmc.edu/neuroscience/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free open-access neuroscience textbook",
+   "keywords": [
+    "neuron",
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "neuroscience:mit-9-01-introduction-to-neuroscience",
+   "subject": "neuroscience",
+   "name": "MIT 9.01 Introduction to Neuroscience",
+   "url": "https://ocw.mit.edu/courses/9-01-introduction-to-neuroscience-fall-2007/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lecture notes and readings",
+   "keywords": [
+    "lecture"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "neuroscience:brainfacts-org",
+   "subject": "neuroscience",
+   "name": "BrainFacts.org",
+   "url": "https://www.brainfacts.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Explainers from the Society for Neuroscience",
+   "keywords": [
+    "brain"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "forensic_science:forensic-science-simplified",
+   "subject": "forensic_science",
+   "name": "Forensic Science Simplified",
+   "url": "https://www.forensicsciencesimplified.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Plain explanations of each forensic discipline",
+   "keywords": [
+    "dna",
+    "evidence",
+    "fingerprint"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "forensic_science:nist-forensic-science",
+   "subject": "forensic_science",
+   "name": "NIST Forensic Science",
+   "url": "https://www.nist.gov/forensic-science",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Standards and research from NIST",
+   "keywords": [
+    "standards"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "lab_work:unc-guide-to-scientific-reports",
+   "subject": "lab_work",
+   "name": "UNC guide to scientific reports",
+   "url": "https://writingcenter.unc.edu/tips-and-tools/scientific-reports/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to write each section of a lab report",
+   "keywords": [
+    "lab report",
+    "write-up",
+    "writeup"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "lab_work:phet-simulations",
+   "subject": "lab_work",
+   "name": "PhET simulations",
+   "url": "https://phet.colorado.edu/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Interactive science simulations that run in the browser",
+   "keywords": [
+    "experiment",
+    "lab",
+    "simulation"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "lab_work:google-sheets",
+   "subject": "lab_work",
+   "name": "Google Sheets",
+   "url": "https://sheets.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Spreadsheets in the browser; any Google account works",
+   "keywords": [
+    "data",
+    "graph",
+    "lab data"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "science_fair:science-buddies",
+   "subject": "science_fair",
+   "name": "Science Buddies",
+   "url": "https://www.sciencebuddies.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Project ideas and step-by-step guides",
+   "keywords": [
+    "experiment",
+    "idea",
+    "project"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "science_fair:regeneron-isef",
+   "subject": "science_fair",
+   "name": "Regeneron ISEF",
+   "url": "https://www.societyforscience.org/isef/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Rules and past projects for the top science fair",
+   "keywords": [
+    "isef",
+    "rules"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "school:khan-academy",
+   "subject": "school",
+   "name": "Khan Academy",
+   "url": "https://www.khanacademy.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Short lessons and practice questions with instant feedback",
+   "keywords": [
+    "homework",
+    "lesson",
+    "practice"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "school:ck-12",
+   "subject": "school",
+   "name": "CK-12",
+   "url": "https://www.ck12.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free textbooks and practice for school subjects",
+   "keywords": [
+    "practice",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "school:crash-course",
+   "subject": "school",
+   "name": "Crash Course",
+   "url": "https://thecrashcourse.com/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Fast, clear video series across school subjects",
+   "keywords": [
+    "overview",
+    "review",
+    "video"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "school:purdue-owl",
+   "subject": "school",
+   "name": "Purdue OWL",
+   "url": "https://owl.purdue.edu/owl/purdue_owl.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Writing guides: essays, citations, grammar, reports",
+   "keywords": [
+    "citation",
+    "draft",
+    "essay",
+    "writing"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "homework:khan-academy",
+   "subject": "homework",
+   "name": "Khan Academy",
+   "url": "https://www.khanacademy.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Short lessons and practice questions with instant feedback",
+   "keywords": [
+    "homework",
+    "lesson",
+    "practice"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "homework:wolfram-alpha",
+   "subject": "homework",
+   "name": "Wolfram|Alpha",
+   "url": "https://www.wolframalpha.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Checks calculations, integrals and equations",
+   "keywords": [
+    "check",
+    "equation",
+    "integral"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "homework:desmos-graphing-calculator",
+   "subject": "homework",
+   "name": "Desmos graphing calculator",
+   "url": "https://www.desmos.com/calculator",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Graph anything and check answers visually",
+   "keywords": [
+    "check",
+    "function",
+    "graph"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "homework:ap-calculus-bc-past-exam-questions",
+   "subject": "homework",
+   "name": "AP Calculus BC past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-calculus-bc/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Calculus BC free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap calculus",
+    "ap exam",
+    "calculus",
+    "frq"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "homework:ap-physics-c-mechanics-past-exam-questions",
+   "subject": "homework",
+   "name": "AP Physics C: Mechanics past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-physics-c-mechanics/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Physics C: Mechanics free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "ap physics",
+    "frq",
+    "rotation"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "homework:ap-statistics-past-exam-questions",
+   "subject": "homework",
+   "name": "AP Statistics past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-statistics/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Statistics free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "ap statistics",
+    "frq",
+    "inference"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "homework:ap-chemistry-past-exam-questions",
+   "subject": "homework",
+   "name": "AP Chemistry past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-chemistry/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Chemistry free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap chemistry",
+    "ap exam",
+    "equilibrium",
+    "frq"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "homework:ap-united-states-history-past-exam-questions",
+   "subject": "homework",
+   "name": "AP United States History past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-united-states-history/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP United States History free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "frq",
+    "us history"
+   ],
+   "ordinal": 8
+  },
+  {
+   "id": "homework:purdue-owl",
+   "subject": "homework",
+   "name": "Purdue OWL",
+   "url": "https://owl.purdue.edu/owl/purdue_owl.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Writing guides: essays, citations, grammar, reports",
+   "keywords": [
+    "composition",
+    "english",
+    "essay"
+   ],
+   "ordinal": 9
+  },
+  {
+   "id": "exams:aops-wiki-amc-problems-and-solutions",
+   "subject": "exams",
+   "name": "AoPS Wiki: AMC problems and solutions",
+   "url": "https://artofproblemsolving.com/wiki/index.php/AMC_Problems_and_Solutions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Every AMC paper with solutions",
+   "keywords": [
+    "aime",
+    "amc",
+    "contest",
+    "mock contest"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "exams:physics-maths-tutor",
+   "subject": "exams",
+   "name": "Physics & Maths Tutor",
+   "url": "https://www.physicsandmathstutor.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Past papers, mark schemes and topic questions",
+   "keywords": [
+    "a level",
+    "exam",
+    "gcse",
+    "past paper",
+    "revision"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "exams:ap-calculus-bc-past-exam-questions",
+   "subject": "exams",
+   "name": "AP Calculus BC past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-calculus-bc/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Calculus BC free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap calculus",
+    "ap exam",
+    "frq"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "exams:ap-physics-c-mechanics-past-exam-questions",
+   "subject": "exams",
+   "name": "AP Physics C: Mechanics past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-physics-c-mechanics/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Physics C: Mechanics free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "ap physics",
+    "frq"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "exams:ap-computer-science-a-past-exam-questions",
+   "subject": "exams",
+   "name": "AP Computer Science A past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-computer-science-a/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Computer Science A free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap computer science",
+    "ap exam",
+    "frq"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "exams:anki",
+   "subject": "exams",
+   "name": "Anki",
+   "url": "https://apps.ankiweb.net/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free spaced-repetition flashcards, no account needed on desktop",
+   "keywords": [
+    "flashcard",
+    "memorise",
+    "memorize",
+    "revision",
+    "vocabulary"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "test_prep:khan-academy-digital-sat",
+   "subject": "test_prep",
+   "name": "Khan Academy Digital SAT",
+   "url": "https://www.khanacademy.org/test-prep/digital-sat",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Official SAT practice by skill",
+   "keywords": [
+    "sat"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "test_prep:college-board-sat-practice-tests",
+   "subject": "test_prep",
+   "name": "College Board SAT practice tests",
+   "url": "https://satsuite.collegeboard.org/practice/practice-tests",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Full official SAT practice tests",
+   "keywords": [
+    "practice test",
+    "sat",
+    "timed"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "test_prep:act-free-test-prep",
+   "subject": "test_prep",
+   "name": "ACT free test prep",
+   "url": "https://www.act.org/content/act/en/products-and-services/the-act/test-preparation.html",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Official free ACT practice test",
+   "keywords": [
+    "act"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "test_prep:desmos-graphing-calculator",
+   "subject": "test_prep",
+   "name": "Desmos graphing calculator",
+   "url": "https://www.desmos.com/calculator",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Graph anything and check answers visually",
+   "keywords": [
+    "check",
+    "function",
+    "graph"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "revision:anki",
+   "subject": "revision",
+   "name": "Anki",
+   "url": "https://apps.ankiweb.net/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free spaced-repetition flashcards, no account needed on desktop",
+   "keywords": [
+    "flashcard",
+    "memorise",
+    "memorize",
+    "revision",
+    "vocabulary"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "revision:physics-maths-tutor",
+   "subject": "revision",
+   "name": "Physics & Maths Tutor",
+   "url": "https://www.physicsandmathstutor.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Past papers, mark schemes and topic questions",
+   "keywords": [
+    "a level",
+    "exam",
+    "gcse",
+    "past paper",
+    "revision"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "revision:khan-academy",
+   "subject": "revision",
+   "name": "Khan Academy",
+   "url": "https://www.khanacademy.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Short lessons and practice questions with instant feedback",
+   "keywords": [
+    "homework",
+    "lesson",
+    "practice"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "revision:seneca-learning",
+   "subject": "revision",
+   "name": "Seneca Learning",
+   "url": "https://senecalearning.com/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Free revision courses for GCSE and A level; quick signup",
+   "keywords": [
+    "a level",
+    "gcse",
+    "revision"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "flashcards:anki",
+   "subject": "flashcards",
+   "name": "Anki",
+   "url": "https://apps.ankiweb.net/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free spaced-repetition flashcards, no account needed on desktop",
+   "keywords": [
+    "flashcard",
+    "memorise",
+    "memorize",
+    "revision",
+    "vocabulary"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "flashcards:ankiweb-shared-decks",
+   "subject": "flashcards",
+   "name": "AnkiWeb shared decks",
+   "url": "https://ankiweb.net/shared/decks",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Ready-made flashcard decks for most subjects",
+   "keywords": [
+    "deck",
+    "spanish",
+    "vocabulary"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "flashcards:quizlet",
+   "subject": "flashcards",
+   "name": "Quizlet",
+   "url": "https://quizlet.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Flashcards and practice games; a free account takes a minute",
+   "keywords": [
+    "flashcard",
+    "quiz",
+    "vocabulary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "note_taking:cornell-note-taking-system",
+   "subject": "note_taking",
+   "name": "Cornell note-taking system",
+   "url": "https://lsc.cornell.edu/how-to-study/taking-notes/cornell-note-taking-system/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The Cornell method, explained by Cornell",
+   "keywords": [
+    "cornell",
+    "notes"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "note_taking:obsidian",
+   "subject": "note_taking",
+   "name": "Obsidian",
+   "url": "https://obsidian.md/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free notes app, no account needed",
+   "keywords": [
+    "linking",
+    "notes"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "note_taking:google-docs",
+   "subject": "note_taking",
+   "name": "Google Docs",
+   "url": "https://docs.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Write and share drafts; any Google account works",
+   "keywords": [
+    "draft",
+    "notes",
+    "write"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "lectures:mit-opencourseware",
+   "subject": "lectures",
+   "name": "MIT OpenCourseWare",
+   "url": "https://ocw.mit.edu/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Full MIT courses: lecture videos, notes, problem sets with solutions",
+   "keywords": [
+    "course",
+    "lecture",
+    "problem set"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "lectures:khan-academy",
+   "subject": "lectures",
+   "name": "Khan Academy",
+   "url": "https://www.khanacademy.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Short lessons and practice questions with instant feedback",
+   "keywords": [
+    "homework",
+    "lesson",
+    "practice"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "lectures:cornell-note-taking-system",
+   "subject": "lectures",
+   "name": "Cornell note-taking system",
+   "url": "https://lsc.cornell.edu/how-to-study/taking-notes/cornell-note-taking-system/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to take notes in a lecture",
+   "keywords": [
+    "notes",
+    "school day"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "lectures:coursera-audit-for-free",
+   "subject": "lectures",
+   "name": "Coursera (audit for free)",
+   "url": "https://www.coursera.org/",
+   "kind": "course",
+   "signup": "quick",
+   "good_for": "University courses you can audit free with an account",
+   "keywords": [
+    "course",
+    "lecture"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "coursework:khan-academy",
+   "subject": "coursework",
+   "name": "Khan Academy",
+   "url": "https://www.khanacademy.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Short lessons and practice questions with instant feedback",
+   "keywords": [
+    "homework",
+    "lesson",
+    "practice"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "coursework:purdue-owl",
+   "subject": "coursework",
+   "name": "Purdue OWL",
+   "url": "https://owl.purdue.edu/owl/purdue_owl.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Writing guides: essays, citations, grammar, reports",
+   "keywords": [
+    "citation",
+    "draft",
+    "essay",
+    "writing"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "coursework:google-docs",
+   "subject": "coursework",
+   "name": "Google Docs",
+   "url": "https://docs.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Write and share drafts; any Google account works",
+   "keywords": [
+    "draft",
+    "notes",
+    "write"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "study_group:aops-wiki-contest-problems",
+   "subject": "study_group",
+   "name": "AoPS Wiki contest problems",
+   "url": "https://artofproblemsolving.com/wiki/index.php/AMC_Problems_and_Solutions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Contest problems to split between a team",
+   "keywords": [
+    "contest",
+    "math team",
+    "relay"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "study_group:excalidraw",
+   "subject": "study_group",
+   "name": "Excalidraw",
+   "url": "https://excalidraw.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Shared whiteboard, no account needed",
+   "keywords": [
+    "diagram",
+    "group",
+    "whiteboard"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "study_group:google-meet",
+   "subject": "study_group",
+   "name": "Google Meet",
+   "url": "https://meet.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Video calls; any Google account works",
+   "keywords": [
+    "call",
+    "meeting",
+    "video"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "tutoring:khan-academy",
+   "subject": "tutoring",
+   "name": "Khan Academy",
+   "url": "https://www.khanacademy.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Short lessons and practice questions with instant feedback",
+   "keywords": [
+    "homework",
+    "lesson",
+    "practice"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "tutoring:paul-s-online-math-notes",
+   "subject": "tutoring",
+   "name": "Paul's Online Math Notes",
+   "url": "https://tutorial.math.lamar.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Worked examples to bring to a session",
+   "keywords": [
+    "calculus",
+    "proof"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "tutoring:math-stack-exchange",
+   "subject": "tutoring",
+   "name": "Math Stack Exchange",
+   "url": "https://math.stackexchange.com/",
+   "kind": "community",
+   "signup": "none",
+   "good_for": "Search answered math questions; posting needs a quick account",
+   "keywords": [
+    "proof",
+    "question"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "tutoring:wolfram-alpha",
+   "subject": "tutoring",
+   "name": "Wolfram|Alpha",
+   "url": "https://www.wolframalpha.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Checks calculations, integrals and equations",
+   "keywords": [
+    "check",
+    "equation",
+    "integral"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "research:arxiv",
+   "subject": "research",
+   "name": "arXiv",
+   "url": "https://arxiv.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free preprints of research papers",
+   "keywords": [
+    "paper",
+    "paper reading",
+    "reading group"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "research:google-scholar",
+   "subject": "research",
+   "name": "Google Scholar",
+   "url": "https://scholar.google.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Search papers and see who cites them",
+   "keywords": [
+    "citation",
+    "literature",
+    "paper"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "research:semantic-scholar",
+   "subject": "research",
+   "name": "Semantic Scholar",
+   "url": "https://www.semanticscholar.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Paper search with summaries and citation graphs",
+   "keywords": [
+    "literature",
+    "paper"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "research:connected-papers",
+   "subject": "research",
+   "name": "Connected Papers",
+   "url": "https://www.connectedpapers.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "See the papers around one paper as a graph",
+   "keywords": [
+    "literature",
+    "related"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "research:hugging-face-papers",
+   "subject": "research",
+   "name": "Hugging Face Papers",
+   "url": "https://huggingface.co/papers",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Daily ML papers, often with code",
+   "keywords": [
+    "code",
+    "replication"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "research:zotero",
+   "subject": "research",
+   "name": "Zotero",
+   "url": "https://www.zotero.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free reference manager, no account needed",
+   "keywords": [
+    "bibliography",
+    "citation",
+    "reference"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "thesis:overleaf",
+   "subject": "thesis",
+   "name": "Overleaf",
+   "url": "https://www.overleaf.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "LaTeX in the browser; free account by email or Google",
+   "keywords": [
+    "latex",
+    "thesis writing",
+    "writing block"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "thesis:zotero",
+   "subject": "thesis",
+   "name": "Zotero",
+   "url": "https://www.zotero.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free reference manager, no account needed",
+   "keywords": [
+    "bibliography",
+    "citation",
+    "reference"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "thesis:google-scholar",
+   "subject": "thesis",
+   "name": "Google Scholar",
+   "url": "https://scholar.google.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Search papers and see who cites them",
+   "keywords": [
+    "citation",
+    "literature",
+    "paper"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "thesis:unc-writing-center-handouts",
+   "subject": "thesis",
+   "name": "UNC Writing Center handouts",
+   "url": "https://writingcenter.unc.edu/tips-and-tools/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short handouts on every kind of academic writing",
+   "keywords": [
+    "draft",
+    "essay",
+    "redraft",
+    "thesis",
+    "writing"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "college_apps:bigfuture-college-board",
+   "subject": "college_apps",
+   "name": "BigFuture (College Board)",
+   "url": "https://bigfuture.collegeboard.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "College search and planning guides",
+   "keywords": [
+    "college list",
+    "college search"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "college_apps:college-scorecard",
+   "subject": "college_apps",
+   "name": "College Scorecard",
+   "url": "https://collegescorecard.ed.gov/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Costs and outcomes for every US college",
+   "keywords": [
+    "college list",
+    "cost"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "college_apps:college-essay-guy-blog",
+   "subject": "college_apps",
+   "name": "College Essay Guy blog",
+   "url": "https://www.collegeessayguy.com/blog",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free guides and examples for personal statements",
+   "keywords": [
+    "essay",
+    "personal statement",
+    "supplement"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "college_apps:common-app",
+   "subject": "college_apps",
+   "name": "Common App",
+   "url": "https://www.commonapp.org/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "The application itself; a free account by email",
+   "keywords": [
+    "application",
+    "common app"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "financial_aid:federal-student-aid-estimator",
+   "subject": "financial_aid",
+   "name": "Federal Student Aid Estimator",
+   "url": "https://studentaid.gov/aid-estimator/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Estimate federal aid without logging in",
+   "keywords": [
+    "aid",
+    "estimate",
+    "fafsa"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "financial_aid:college-navigator-net-price-info",
+   "subject": "financial_aid",
+   "name": "College Navigator net price info",
+   "url": "https://collegecost.ed.gov/net-price",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Find each college net price calculator",
+   "keywords": [
+    "cost",
+    "net price"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "financial_aid:fastweb-scholarship-search",
+   "subject": "financial_aid",
+   "name": "Fastweb scholarship search",
+   "url": "https://www.fastweb.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Free scholarship matching; quick signup",
+   "keywords": [
+    "scholarship"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "extracurriculars:science-olympiad",
+   "subject": "extracurriculars",
+   "name": "Science Olympiad",
+   "url": "https://www.soinc.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Events, rules and practice",
+   "keywords": [
+    "science olympiad"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "extracurriculars:volunteermatch",
+   "subject": "extracurriculars",
+   "name": "VolunteerMatch",
+   "url": "https://www.volunteermatch.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Find volunteering near you",
+   "keywords": [
+    "volunteer"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "pre_med:aamc-for-students",
+   "subject": "pre_med",
+   "name": "AAMC for students",
+   "url": "https://students-residents.aamc.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Official guidance on applying to medical school",
+   "keywords": [
+    "application",
+    "mcat"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "pre_med:khan-academy-mcat",
+   "subject": "pre_med",
+   "name": "Khan Academy MCAT",
+   "url": "https://www.khanacademy.org/test-prep/mcat",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free MCAT review videos and questions",
+   "keywords": [
+    "mcat"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "pre_med:openstax-anatomy-and-physiology",
+   "subject": "pre_med",
+   "name": "OpenStax Anatomy and Physiology",
+   "url": "https://openstax.org/details/books/anatomy-and-physiology-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Anatomy and Physiology textbook online",
+   "keywords": [
+    "anatomy"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "ai_tools:anthropic-prompt-engineering-guide",
+   "subject": "ai_tools",
+   "name": "Anthropic prompt engineering guide",
+   "url": "https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to write prompts that work",
+   "keywords": [
+    "claude",
+    "prompt"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "ai_tools:learn-prompting",
+   "subject": "ai_tools",
+   "name": "Learn Prompting",
+   "url": "https://learnprompting.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free prompt engineering course",
+   "keywords": [
+    "prompt"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "ai_tools:hugging-face-learn",
+   "subject": "ai_tools",
+   "name": "Hugging Face Learn",
+   "url": "https://huggingface.co/learn",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free courses on LLMs, agents and more",
+   "keywords": [
+    "agents",
+    "llm",
+    "model"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "english:purdue-owl",
+   "subject": "english",
+   "name": "Purdue OWL",
+   "url": "https://owl.purdue.edu/owl/purdue_owl.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Writing guides: essays, citations, grammar, reports",
+   "keywords": [
+    "citation",
+    "draft",
+    "essay",
+    "writing"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "english:khan-academy-grammar",
+   "subject": "english",
+   "name": "Khan Academy Grammar",
+   "url": "https://www.khanacademy.org/humanities/grammar",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Grammar lessons and practice",
+   "keywords": [
+    "grammar"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "english:sparknotes-literature-guides",
+   "subject": "english",
+   "name": "SparkNotes literature guides",
+   "url": "https://www.sparknotes.com/lit/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Summaries and analysis of set texts",
+   "keywords": [
+    "chapter",
+    "novel",
+    "play",
+    "set text",
+    "summary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "english:project-gutenberg",
+   "subject": "english",
+   "name": "Project Gutenberg",
+   "url": "https://www.gutenberg.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "70,000+ free ebooks of classic texts",
+   "keywords": [
+    "book",
+    "chapter",
+    "novel",
+    "read",
+    "set text"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "english:commonlit",
+   "subject": "english",
+   "name": "CommonLit",
+   "url": "https://www.commonlit.org/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Free reading passages with questions",
+   "keywords": [
+    "passage",
+    "reading"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "essays:purdue-owl-essay-writing",
+   "subject": "essays",
+   "name": "Purdue OWL essay writing",
+   "url": "https://owl.purdue.edu/owl/general_writing/academic_writing/essay_writing/index.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to plan and structure essays",
+   "keywords": [
+    "essay",
+    "plan",
+    "structure"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "essays:unc-writing-center-handouts",
+   "subject": "essays",
+   "name": "UNC Writing Center handouts",
+   "url": "https://writingcenter.unc.edu/tips-and-tools/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short handouts on every kind of academic writing",
+   "keywords": [
+    "draft",
+    "essay",
+    "redraft",
+    "thesis",
+    "writing"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "essays:hemingway-editor",
+   "subject": "essays",
+   "name": "Hemingway Editor",
+   "url": "https://hemingwayapp.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Paste a draft and see long sentences and passive voice",
+   "keywords": [
+    "draft",
+    "edit",
+    "redraft",
+    "writing"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "essays:languagetool",
+   "subject": "essays",
+   "name": "LanguageTool",
+   "url": "https://languagetool.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free grammar and spelling checker in the browser",
+   "keywords": [
+    "grammar",
+    "proofread",
+    "spelling"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "literature:project-gutenberg",
+   "subject": "literature",
+   "name": "Project Gutenberg",
+   "url": "https://www.gutenberg.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "70,000+ free ebooks of classic texts",
+   "keywords": [
+    "chapters",
+    "pages",
+    "read",
+    "set text"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "literature:litcharts",
+   "subject": "literature",
+   "name": "LitCharts",
+   "url": "https://www.litcharts.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Theme and quote guides for set texts",
+   "keywords": [
+    "close reading",
+    "quote",
+    "set text",
+    "theme"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "literature:sparknotes-literature-guides",
+   "subject": "literature",
+   "name": "SparkNotes literature guides",
+   "url": "https://www.sparknotes.com/lit/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Summaries and analysis of set texts",
+   "keywords": [
+    "chapter",
+    "novel",
+    "play",
+    "set text",
+    "summary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "literature:purdue-owl-writing-about-literature",
+   "subject": "literature",
+   "name": "Purdue OWL: writing about literature",
+   "url": "https://owl.purdue.edu/owl/subject_specific_writing/writing_in_literature/index.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Close reading and literary essays",
+   "keywords": [
+    "close reading",
+    "draft",
+    "essay",
+    "redraft"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "literature:poetry-foundation",
+   "subject": "literature",
+   "name": "Poetry Foundation",
+   "url": "https://www.poetryfoundation.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Poems and guides",
+   "keywords": [
+    "poem",
+    "poetry"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "writing:purdue-owl",
+   "subject": "writing",
+   "name": "Purdue OWL",
+   "url": "https://owl.purdue.edu/owl/purdue_owl.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Writing guides: essays, citations, grammar, reports",
+   "keywords": [
+    "citation",
+    "draft",
+    "essay",
+    "writing"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "writing:unc-writing-center-handouts",
+   "subject": "writing",
+   "name": "UNC Writing Center handouts",
+   "url": "https://writingcenter.unc.edu/tips-and-tools/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short handouts on every kind of academic writing",
+   "keywords": [
+    "draft",
+    "essay",
+    "redraft",
+    "thesis",
+    "writing"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "writing:hemingway-editor",
+   "subject": "writing",
+   "name": "Hemingway Editor",
+   "url": "https://hemingwayapp.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Paste a draft and see long sentences and passive voice",
+   "keywords": [
+    "draft",
+    "edit",
+    "redraft",
+    "writing"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "writing:google-docs",
+   "subject": "writing",
+   "name": "Google Docs",
+   "url": "https://docs.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Write and share drafts; any Google account works",
+   "keywords": [
+    "draft",
+    "notes",
+    "write"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "grammar:khan-academy-grammar",
+   "subject": "grammar",
+   "name": "Khan Academy Grammar",
+   "url": "https://www.khanacademy.org/humanities/grammar",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Grammar lessons and practice",
+   "keywords": [
+    "grammar",
+    "punctuation"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "grammar:purdue-owl-grammar",
+   "subject": "grammar",
+   "name": "Purdue OWL grammar",
+   "url": "https://owl.purdue.edu/owl/general_writing/grammar/index.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Grammar rules with examples",
+   "keywords": [
+    "grammar",
+    "rules"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "grammar:grammar-bytes",
+   "subject": "grammar",
+   "name": "Grammar Bytes",
+   "url": "https://chompchomp.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Grammar exercises with answers",
+   "keywords": [
+    "exercises"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "grammar:languagetool",
+   "subject": "grammar",
+   "name": "LanguageTool",
+   "url": "https://languagetool.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free grammar and spelling checker in the browser",
+   "keywords": [
+    "grammar",
+    "proofread",
+    "spelling"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "vocabulary:vocabulary-com",
+   "subject": "vocabulary",
+   "name": "Vocabulary.com",
+   "url": "https://www.vocabulary.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Adaptive vocabulary practice",
+   "keywords": [
+    "vocabulary",
+    "words"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "vocabulary:merriam-webster",
+   "subject": "vocabulary",
+   "name": "Merriam-Webster",
+   "url": "https://www.merriam-webster.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Dictionary with usage notes",
+   "keywords": [
+    "dictionary"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "vocabulary:anki",
+   "subject": "vocabulary",
+   "name": "Anki",
+   "url": "https://apps.ankiweb.net/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free spaced-repetition flashcards, no account needed on desktop",
+   "keywords": [
+    "flashcard",
+    "memorise",
+    "memorize",
+    "revision",
+    "vocabulary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "vocabulary:quizlet",
+   "subject": "vocabulary",
+   "name": "Quizlet",
+   "url": "https://quizlet.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Flashcards and practice games; a free account takes a minute",
+   "keywords": [
+    "flashcard",
+    "quiz",
+    "vocabulary"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "creative_writing:reedsy-writing-prompts",
+   "subject": "creative_writing",
+   "name": "Reedsy writing prompts",
+   "url": "https://blog.reedsy.com/creative-writing-prompts/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Fresh short-story prompts every week",
+   "keywords": [
+    "prompt",
+    "story"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "creative_writing:purdue-owl-creative-writing",
+   "subject": "creative_writing",
+   "name": "Purdue OWL creative writing",
+   "url": "https://owl.purdue.edu/owl/subject_specific_writing/creative_writing/index.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Craft guides for fiction and poetry",
+   "keywords": [
+    "craft",
+    "fiction"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "creative_writing:hemingway-editor",
+   "subject": "creative_writing",
+   "name": "Hemingway Editor",
+   "url": "https://hemingwayapp.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Paste a draft and see long sentences and passive voice",
+   "keywords": [
+    "draft",
+    "edit",
+    "redraft",
+    "writing"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "poetry:poetry-foundation",
+   "subject": "poetry",
+   "name": "Poetry Foundation",
+   "url": "https://www.poetryfoundation.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Poems and guides",
+   "keywords": [
+    "poem",
+    "poetry"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "poetry:poets-org",
+   "subject": "poetry",
+   "name": "Poets.org",
+   "url": "https://poets.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Poems, poets and a poem a day",
+   "keywords": [
+    "poem"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "journalism:purdue-owl-journalism",
+   "subject": "journalism",
+   "name": "Purdue OWL: journalism",
+   "url": "https://owl.purdue.edu/owl/subject_specific_writing/journalism_and_journalistic_writing/index.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "News writing and style basics",
+   "keywords": [
+    "article",
+    "lede",
+    "news"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "journalism:poynter",
+   "subject": "journalism",
+   "name": "Poynter",
+   "url": "https://www.poynter.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Journalism craft and ethics articles",
+   "keywords": [
+    "ethics",
+    "reporting"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "journalism:student-press-law-center",
+   "subject": "journalism",
+   "name": "Student Press Law Center",
+   "url": "https://splc.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Know your rights as a student journalist",
+   "keywords": [
+    "rights",
+    "school paper"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "public_speaking:ted-talks",
+   "subject": "public_speaking",
+   "name": "TED Talks",
+   "url": "https://www.ted.com/talks",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Thousands of short talks to watch as models",
+   "keywords": [
+    "speech",
+    "talk",
+    "watch"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "public_speaking:toastmasters-public-speaking-tips",
+   "subject": "public_speaking",
+   "name": "Toastmasters public speaking tips",
+   "url": "https://www.toastmasters.org/resources/public-speaking-tips",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short practical tips",
+   "keywords": [
+    "nerves",
+    "speech"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "public_speaking:yoodli",
+   "subject": "public_speaking",
+   "name": "Yoodli",
+   "url": "https://yoodli.ai/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Free AI speech coach; sign in with Google",
+   "keywords": [
+    "filler words",
+    "practice"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "spanish:language-transfer-spanish",
+   "subject": "spanish",
+   "name": "Language Transfer Spanish",
+   "url": "https://www.languagetransfer.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free audio course that teaches you to build sentences",
+   "keywords": [
+    "audio",
+    "grammar",
+    "listening",
+    "speaking"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "spanish:spanishdict",
+   "subject": "spanish",
+   "name": "SpanishDict",
+   "url": "https://www.spanishdict.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Dictionary, conjugations and grammar guides",
+   "keywords": [
+    "composition",
+    "conjugation",
+    "vocabulary"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "spanish:dreaming-spanish-youtube",
+   "subject": "spanish",
+   "name": "Dreaming Spanish (YouTube)",
+   "url": "https://www.youtube.com/@DreamingSpanish",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Comprehensible input videos by level",
+   "keywords": [
+    "listening",
+    "listening practice"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "spanish:forvo-pronunciation",
+   "subject": "spanish",
+   "name": "Forvo pronunciation",
+   "url": "https://forvo.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Native speakers pronouncing words",
+   "keywords": [
+    "pronunciation",
+    "speaking",
+    "speaking drill"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "spanish:ankiweb-shared-decks",
+   "subject": "spanish",
+   "name": "AnkiWeb shared decks",
+   "url": "https://ankiweb.net/shared/decks",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Ready-made flashcard decks for most subjects",
+   "keywords": [
+    "vocabulary",
+    "vocabulary review"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "spanish:duolingo",
+   "subject": "spanish",
+   "name": "Duolingo",
+   "url": "https://www.duolingo.com/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Short daily lessons; a free account takes a minute",
+   "keywords": [
+    "daily",
+    "lesson",
+    "streak"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "french:language-transfer-french",
+   "subject": "french",
+   "name": "Language Transfer French",
+   "url": "https://www.languagetransfer.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free audio course that teaches you to build sentences",
+   "keywords": [
+    "audio",
+    "grammar",
+    "listening",
+    "speaking"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "french:tv5monde-apprendre",
+   "subject": "french",
+   "name": "TV5Monde Apprendre",
+   "url": "https://apprendre.tv5monde.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Video exercises by level",
+   "keywords": [
+    "listening"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "french:wordreference",
+   "subject": "french",
+   "name": "WordReference",
+   "url": "https://www.wordreference.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Dictionary and forums",
+   "keywords": [
+    "vocabulary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "french:forvo-pronunciation",
+   "subject": "french",
+   "name": "Forvo pronunciation",
+   "url": "https://forvo.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Native speakers pronouncing words",
+   "keywords": [
+    "listen",
+    "pronunciation",
+    "speaking"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "french:duolingo",
+   "subject": "french",
+   "name": "Duolingo",
+   "url": "https://www.duolingo.com/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Short daily lessons; a free account takes a minute",
+   "keywords": [
+    "daily",
+    "lesson",
+    "streak"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "german:dw-learn-german",
+   "subject": "german",
+   "name": "DW Learn German",
+   "url": "https://learngerman.dw.com/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free full German course by level",
+   "keywords": [
+    "course",
+    "listening"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "german:language-transfer-german",
+   "subject": "german",
+   "name": "Language Transfer German",
+   "url": "https://www.languagetransfer.org/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free audio course that teaches you to build sentences",
+   "keywords": [
+    "audio",
+    "grammar",
+    "listening",
+    "speaking"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "german:leo-dictionary",
+   "subject": "german",
+   "name": "LEO dictionary",
+   "url": "https://dict.leo.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "German-English dictionary",
+   "keywords": [
+    "vocabulary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "german:duolingo",
+   "subject": "german",
+   "name": "Duolingo",
+   "url": "https://www.duolingo.com/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Short daily lessons; a free account takes a minute",
+   "keywords": [
+    "daily",
+    "lesson",
+    "streak"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "japanese:tofugu-learn-hiragana",
+   "subject": "japanese",
+   "name": "Tofugu: learn hiragana",
+   "url": "https://www.tofugu.com/japanese/learn-hiragana/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "The fastest way to learn kana",
+   "keywords": [
+    "hiragana",
+    "kana",
+    "katakana"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "japanese:jisho",
+   "subject": "japanese",
+   "name": "Jisho",
+   "url": "https://jisho.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Japanese dictionary with kanji lookups",
+   "keywords": [
+    "kanji",
+    "vocabulary"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "japanese:nhk-news-web-easy",
+   "subject": "japanese",
+   "name": "NHK News Web Easy",
+   "url": "https://www3.nhk.or.jp/news/easy/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Simple news articles with furigana",
+   "keywords": [
+    "reading"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "japanese:duolingo",
+   "subject": "japanese",
+   "name": "Duolingo",
+   "url": "https://www.duolingo.com/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Short daily lessons; a free account takes a minute",
+   "keywords": [
+    "daily",
+    "lesson",
+    "streak"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "mandarin:chinese-grammar-wiki",
+   "subject": "mandarin",
+   "name": "Chinese Grammar Wiki",
+   "url": "https://resources.allsetlearning.com/chinese/grammar/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Grammar points by level",
+   "keywords": [
+    "grammar"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "mandarin:mdbg-chinese-dictionary",
+   "subject": "mandarin",
+   "name": "MDBG Chinese dictionary",
+   "url": "https://www.mdbg.net/chinese/dictionary",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Dictionary with pinyin and stroke order",
+   "keywords": [
+    "characters",
+    "vocabulary"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "mandarin:pleco",
+   "subject": "mandarin",
+   "name": "Pleco",
+   "url": "https://www.pleco.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free dictionary app with flashcards",
+   "keywords": [
+    "dictionary",
+    "flashcards"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "mandarin:duolingo",
+   "subject": "mandarin",
+   "name": "Duolingo",
+   "url": "https://www.duolingo.com/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Short daily lessons; a free account takes a minute",
+   "keywords": [
+    "daily",
+    "lesson",
+    "streak"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "latin:dickinson-college-commentaries",
+   "subject": "latin",
+   "name": "Dickinson College Commentaries",
+   "url": "https://dcc.dickinson.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Annotated Latin texts with vocabulary",
+   "keywords": [
+    "reading",
+    "translation"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "latin:the-latin-library",
+   "subject": "latin",
+   "name": "The Latin Library",
+   "url": "https://www.thelatinlibrary.com/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Latin texts free online",
+   "keywords": [
+    "texts"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "latin:logeion",
+   "subject": "latin",
+   "name": "Logeion",
+   "url": "https://logeion.uchicago.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Latin and Greek dictionaries in one search",
+   "keywords": [
+    "dictionary",
+    "vocabulary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "sign_language:lifeprint-asl-university",
+   "subject": "sign_language",
+   "name": "Lifeprint ASL University",
+   "url": "https://www.lifeprint.com/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free ASL lessons from Dr. Bill Vicars",
+   "keywords": [
+    "asl",
+    "lesson"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "sign_language:handspeak",
+   "subject": "sign_language",
+   "name": "Handspeak",
+   "url": "https://www.handspeak.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "ASL dictionary with videos",
+   "keywords": [
+    "dictionary",
+    "signs"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "sign_language:signing-savvy",
+   "subject": "sign_language",
+   "name": "Signing Savvy",
+   "url": "https://www.signingsavvy.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "ASL sign video dictionary",
+   "keywords": [
+    "vocabulary"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "history:khan-academy-world-history",
+   "subject": "history",
+   "name": "Khan Academy World History",
+   "url": "https://www.khanacademy.org/humanities/world-history",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "World history videos and practice",
+   "keywords": [
+    "timeline",
+    "world history"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "history:khan-academy-us-history",
+   "subject": "history",
+   "name": "Khan Academy US History",
+   "url": "https://www.khanacademy.org/humanities/us-history",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "US history videos and practice",
+   "keywords": [
+    "timeline",
+    "us history"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "history:openstax-u-s-history",
+   "subject": "history",
+   "name": "OpenStax U.S. History",
+   "url": "https://openstax.org/details/books/us-history",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed U.S. History textbook online",
+   "keywords": [
+    "notes",
+    "reading"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "history:library-of-congress-primary-sources",
+   "subject": "history",
+   "name": "Library of Congress primary sources",
+   "url": "https://www.loc.gov/programs/teachers/getting-started-with-primary-sources/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to analyze a primary source, with sources",
+   "keywords": [
+    "primary source",
+    "source analysis"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "history:ap-united-states-history-past-exam-questions",
+   "subject": "history",
+   "name": "AP United States History past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-united-states-history/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP United States History free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "dbq",
+    "essay",
+    "essay plan",
+    "frq"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "history:crash-course",
+   "subject": "history",
+   "name": "Crash Course",
+   "url": "https://thecrashcourse.com/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Fast, clear video series across school subjects",
+   "keywords": [
+    "overview",
+    "review",
+    "video"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "civics:icivics",
+   "subject": "civics",
+   "name": "iCivics",
+   "url": "https://www.icivics.org/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Civics games and lessons",
+   "keywords": [
+    "government"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "civics:khan-academy-us-government",
+   "subject": "civics",
+   "name": "Khan Academy US Government",
+   "url": "https://www.khanacademy.org/humanities/us-government-and-civics",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "AP Gov lessons and practice",
+   "keywords": [
+    "constitution",
+    "government"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "civics:openstax-american-government",
+   "subject": "civics",
+   "name": "OpenStax American Government",
+   "url": "https://openstax.org/details/books/american-government-3e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed American Government textbook online",
+   "keywords": [
+    "textbook"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "politics:openstax-american-government",
+   "subject": "politics",
+   "name": "OpenStax American Government",
+   "url": "https://openstax.org/details/books/american-government-3e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed American Government textbook online",
+   "keywords": [
+    "government"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "politics:ballotpedia",
+   "subject": "politics",
+   "name": "Ballotpedia",
+   "url": "https://ballotpedia.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Neutral info on elections and policy",
+   "keywords": [
+    "election"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "politics:allsides",
+   "subject": "politics",
+   "name": "AllSides",
+   "url": "https://www.allsides.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "One story from left, center and right",
+   "keywords": [
+    "bias",
+    "news"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "geography:seterra-geography-quizzes",
+   "subject": "geography",
+   "name": "Seterra geography quizzes",
+   "url": "https://www.geoguessr.com/quiz/seterra",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Map quizzes for countries, capitals, flags",
+   "keywords": [
+    "capitals",
+    "countries",
+    "map"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "geography:cia-world-factbook",
+   "subject": "geography",
+   "name": "CIA World Factbook",
+   "url": "https://www.cia.gov/the-world-factbook/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Facts and maps for every country",
+   "keywords": [
+    "country",
+    "facts"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "geography:google-earth",
+   "subject": "geography",
+   "name": "Google Earth",
+   "url": "https://earth.google.com/web/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Explore the globe in the browser",
+   "keywords": [
+    "explore",
+    "map"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "model_un:best-delegate",
+   "subject": "model_un",
+   "name": "Best Delegate",
+   "url": "https://bestdelegate.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Guides to position papers, speeches and caucusing",
+   "keywords": [
+    "committee",
+    "position paper",
+    "speech"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "model_un:un-digital-library",
+   "subject": "model_un",
+   "name": "UN Digital Library",
+   "url": "https://digitallibrary.un.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Real UN resolutions and documents",
+   "keywords": [
+    "research",
+    "resolution"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "model_un:un-charter",
+   "subject": "model_un",
+   "name": "UN Charter",
+   "url": "https://www.un.org/en/about-us/un-charter",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The founding document",
+   "keywords": [
+    "charter"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "philosophy:stanford-encyclopedia-of-philosophy",
+   "subject": "philosophy",
+   "name": "Stanford Encyclopedia of Philosophy",
+   "url": "https://plato.stanford.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Expert entries on every major topic",
+   "keywords": [
+    "ethics",
+    "logic",
+    "reading"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "philosophy:internet-encyclopedia-of-philosophy",
+   "subject": "philosophy",
+   "name": "Internet Encyclopedia of Philosophy",
+   "url": "https://iep.utm.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Accessible peer-reviewed entries",
+   "keywords": [
+    "reading"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "philosophy:philosophy-bites",
+   "subject": "philosophy",
+   "name": "Philosophy Bites",
+   "url": "https://philosophybites.com/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Short podcast interviews with philosophers",
+   "keywords": [
+    "listen",
+    "podcast"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "psychology:openstax-psychology",
+   "subject": "psychology",
+   "name": "OpenStax Psychology",
+   "url": "https://openstax.org/details/books/psychology-2e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Psychology textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "psychology:simply-psychology",
+   "subject": "psychology",
+   "name": "Simply Psychology",
+   "url": "https://www.simplypsychology.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Clear summaries of theories and studies",
+   "keywords": [
+    "study",
+    "theory"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "psychology:ap-psychology-past-exam-questions",
+   "subject": "psychology",
+   "name": "AP Psychology past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-psychology/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Psychology free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "ap psychology",
+    "frq"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "sociology:openstax-introduction-to-sociology",
+   "subject": "sociology",
+   "name": "OpenStax Introduction to Sociology",
+   "url": "https://openstax.org/details/books/introduction-sociology-3e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Introduction to Sociology textbook online",
+   "keywords": [
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "sociology:pew-research-center",
+   "subject": "sociology",
+   "name": "Pew Research Center",
+   "url": "https://www.pewresearch.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Survey data on society",
+   "keywords": [
+    "data",
+    "survey"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "sociology:our-world-in-data",
+   "subject": "sociology",
+   "name": "Our World in Data",
+   "url": "https://ourworldindata.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Charts and data on global problems",
+   "keywords": [
+    "chart",
+    "data",
+    "statistics"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "programming:leetcode-problem-set",
+   "subject": "programming",
+   "name": "LeetCode problem set",
+   "url": "https://leetcode.com/problemset/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Coding problems by topic and difficulty; free account to submit",
+   "keywords": [
+    "easy",
+    "hard",
+    "interview",
+    "leetcode",
+    "medium",
+    "problem"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "programming:first-contributions",
+   "subject": "programming",
+   "name": "First Contributions",
+   "url": "https://github.com/firstcontributions/first-contributions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Make your first open source pull request step by step",
+   "keywords": [
+    "contribution",
+    "open source",
+    "pull request"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "programming:the-odin-project",
+   "subject": "programming",
+   "name": "The Odin Project",
+   "url": "https://www.theodinproject.com/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free full-stack curriculum built around projects",
+   "keywords": [
+    "project",
+    "react",
+    "web"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "programming:exercism",
+   "subject": "programming",
+   "name": "Exercism",
+   "url": "https://exercism.org/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Coding exercises with mentor feedback; free account by GitHub",
+   "keywords": [
+    "exercises",
+    "python"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "programming:official-python-tutorial",
+   "subject": "programming",
+   "name": "Official Python tutorial",
+   "url": "https://docs.python.org/3/tutorial/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The Python tutorial from python.org",
+   "keywords": [
+    "learning python",
+    "python"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "programming:freecodecamp",
+   "subject": "programming",
+   "name": "freeCodeCamp",
+   "url": "https://www.freecodecamp.org/learn",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free interactive coding curriculum in the browser",
+   "keywords": [
+    "course",
+    "javascript",
+    "learn",
+    "python",
+    "web"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "programming:mdn-web-docs",
+   "subject": "programming",
+   "name": "MDN Web Docs",
+   "url": "https://developer.mozilla.org/en-US/docs/Learn",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The reference and tutorials for HTML, CSS and JavaScript",
+   "keywords": [
+    "css",
+    "html",
+    "javascript",
+    "web"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "python:official-python-tutorial",
+   "subject": "python",
+   "name": "Official Python tutorial",
+   "url": "https://docs.python.org/3/tutorial/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The Python tutorial from python.org",
+   "keywords": [
+    "learning",
+    "python"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "python:automate-the-boring-stuff-with-python",
+   "subject": "python",
+   "name": "Automate the Boring Stuff with Python",
+   "url": "https://automatetheboringstuff.com/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free book of practical Python projects",
+   "keywords": [
+    "project",
+    "script"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "python:cs50p-harvard-python-course",
+   "subject": "python",
+   "name": "CS50P (Harvard Python course)",
+   "url": "https://cs50.harvard.edu/python/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free lectures and problem sets",
+   "keywords": [
+    "lecture",
+    "problem set"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "python:exercism-python-track",
+   "subject": "python",
+   "name": "Exercism Python track",
+   "url": "https://exercism.org/tracks/python",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Python exercises with feedback",
+   "keywords": [
+    "exercises"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "python:google-colab",
+   "subject": "python",
+   "name": "Google Colab",
+   "url": "https://colab.research.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Run Python notebooks with a free GPU; any Google account works",
+   "keywords": [
+    "gpu",
+    "notebook",
+    "python",
+    "training"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "java:dev-java-learn",
+   "subject": "java",
+   "name": "dev.java Learn",
+   "url": "https://dev.java/learn/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Oracle's official Java tutorials",
+   "keywords": [
+    "java",
+    "tutorial"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "java:codingbat-java",
+   "subject": "java",
+   "name": "CodingBat Java",
+   "url": "https://codingbat.com/java",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Short Java problems that run in the browser",
+   "keywords": [
+    "practice",
+    "problems"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "java:java-programming-mooc-helsinki",
+   "subject": "java",
+   "name": "Java Programming MOOC (Helsinki)",
+   "url": "https://java-programming.mooc.fi/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free university Java course",
+   "keywords": [
+    "course"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "java:ap-computer-science-a-past-exam-questions",
+   "subject": "java",
+   "name": "AP Computer Science A past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-computer-science-a/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Computer Science A free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap computer science",
+    "ap exam",
+    "csa",
+    "frq"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "computer_science:mit-6-006-introduction-to-algorithms",
+   "subject": "computer_science",
+   "name": "MIT 6.006 Introduction to Algorithms",
+   "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lectures, problem sets and exams with solutions",
+   "keywords": [
+    "algorithms",
+    "algorithms lecture",
+    "lecture",
+    "problem set"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "computer_science:jeff-erickson-s-algorithms-free-book",
+   "subject": "computer_science",
+   "name": "Jeff Erickson's Algorithms (free book)",
+   "url": "https://jeffe.cs.illinois.edu/teaching/algorithms/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "A full free algorithms textbook with exercises",
+   "keywords": [
+    "algorithms",
+    "algorithms problem set",
+    "clrs",
+    "exercises"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "computer_science:leetcode-problem-set",
+   "subject": "computer_science",
+   "name": "LeetCode problem set",
+   "url": "https://leetcode.com/problemset/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Coding problems by topic and difficulty; free account to submit",
+   "keywords": [
+    "interview",
+    "leetcode",
+    "leetcode session",
+    "problem"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "computer_science:usaco-guide",
+   "subject": "computer_science",
+   "name": "USACO Guide",
+   "url": "https://usaco.guide/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free competitive programming guide by division",
+   "keywords": [
+    "competitive programming",
+    "contest",
+    "usaco",
+    "usaco training"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "computer_science:cs50x",
+   "subject": "computer_science",
+   "name": "CS50x",
+   "url": "https://cs50.harvard.edu/x/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Harvard's intro CS course, free",
+   "keywords": [
+    "intro cs",
+    "intro cs lecture",
+    "lecture"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "computer_science:visualgo",
+   "subject": "computer_science",
+   "name": "VisuAlgo",
+   "url": "https://visualgo.net/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Animations of data structures and algorithms",
+   "keywords": [
+    "data structures",
+    "data structures revision",
+    "revision"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "computer_science:open-data-structures",
+   "subject": "computer_science",
+   "name": "Open Data Structures",
+   "url": "https://opendatastructures.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free data structures textbook",
+   "keywords": [
+    "data structures"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "computer_science:crafting-interpreters",
+   "subject": "computer_science",
+   "name": "Crafting Interpreters",
+   "url": "https://craftinginterpreters.com/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free book on building a parser and interpreter",
+   "keywords": [
+    "compiler",
+    "interpreter",
+    "parser",
+    "refactor the parser"
+   ],
+   "ordinal": 8
+  },
+  {
+   "id": "computer_science:codeforces-problemset",
+   "subject": "computer_science",
+   "name": "Codeforces problemset",
+   "url": "https://codeforces.com/problemset",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Rated contest problems; quick free account",
+   "keywords": [
+    "competitive programming",
+    "contest"
+   ],
+   "ordinal": 9
+  },
+  {
+   "id": "computer_science:github",
+   "subject": "computer_science",
+   "name": "GitHub",
+   "url": "https://github.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Host side projects; quick free account",
+   "keywords": [
+    "build",
+    "project",
+    "side project"
+   ],
+   "ordinal": 10
+  },
+  {
+   "id": "web_design:mdn-web-docs",
+   "subject": "web_design",
+   "name": "MDN Web Docs",
+   "url": "https://developer.mozilla.org/en-US/docs/Learn",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The reference and tutorials for HTML, CSS and JavaScript",
+   "keywords": [
+    "css",
+    "html",
+    "javascript",
+    "web"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "web_design:web-dev-learn",
+   "subject": "web_design",
+   "name": "web.dev Learn",
+   "url": "https://web.dev/learn",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free courses on CSS, accessibility and performance",
+   "keywords": [
+    "accessibility",
+    "css"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "web_design:codepen",
+   "subject": "web_design",
+   "name": "CodePen",
+   "url": "https://codepen.io/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Try HTML/CSS/JS instantly in the browser",
+   "keywords": [
+    "prototype"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "web_design:freecodecamp",
+   "subject": "web_design",
+   "name": "freeCodeCamp",
+   "url": "https://www.freecodecamp.org/learn",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free interactive coding curriculum in the browser",
+   "keywords": [
+    "course",
+    "javascript",
+    "learn",
+    "python",
+    "web"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "app_dev:android-basics-with-compose",
+   "subject": "app_dev",
+   "name": "Android Basics with Compose",
+   "url": "https://developer.android.com/courses/android-basics-compose/course",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Google's free Android course",
+   "keywords": [
+    "android",
+    "kotlin"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "app_dev:react-native-docs",
+   "subject": "app_dev",
+   "name": "React Native docs",
+   "url": "https://reactnative.dev/docs/getting-started",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Official getting-started guide",
+   "keywords": [
+    "react native"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "app_dev:expo-snack",
+   "subject": "app_dev",
+   "name": "Expo Snack",
+   "url": "https://snack.expo.dev/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Run React Native apps in the browser",
+   "keywords": [
+    "prototype",
+    "react native"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "app_dev:develop-in-swift-tutorials",
+   "subject": "app_dev",
+   "name": "Develop in Swift tutorials",
+   "url": "https://developer.apple.com/tutorials/develop-in-swift",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Apple's free SwiftUI tutorials",
+   "keywords": [
+    "ios",
+    "swift",
+    "swiftui"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "game_dev:godot-docs-getting-started",
+   "subject": "game_dev",
+   "name": "Godot docs: getting started",
+   "url": "https://docs.godotengine.org/en/stable/getting_started/introduction/index.html",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free engine with a step-by-step first game",
+   "keywords": [
+    "first game",
+    "godot"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "game_dev:scratch",
+   "subject": "game_dev",
+   "name": "Scratch",
+   "url": "https://scratch.mit.edu/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Make games with blocks in the browser",
+   "keywords": [
+    "scratch"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "game_dev:kenney-free-game-assets",
+   "subject": "game_dev",
+   "name": "Kenney free game assets",
+   "url": "https://kenney.nl/assets",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Public-domain sprites, sounds, models",
+   "keywords": [
+    "assets",
+    "sprites"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "game_dev:itch-io-game-jams",
+   "subject": "game_dev",
+   "name": "itch.io game jams",
+   "url": "https://itch.io/jams",
+   "kind": "community",
+   "signup": "quick",
+   "good_for": "Join a jam to ship a small game",
+   "keywords": [
+    "jam"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "data_science:kaggle-learn",
+   "subject": "data_science",
+   "name": "Kaggle Learn",
+   "url": "https://www.kaggle.com/learn",
+   "kind": "course",
+   "signup": "quick",
+   "good_for": "Short free courses with notebooks; quick account",
+   "keywords": [
+    "course",
+    "kaggle",
+    "pandas"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "data_science:kaggle-competitions",
+   "subject": "data_science",
+   "name": "Kaggle competitions",
+   "url": "https://www.kaggle.com/competitions",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Beginner competitions like Titanic",
+   "keywords": [
+    "competition",
+    "kaggle",
+    "kaggle notebook",
+    "kaggle weekend"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "data_science:python-data-science-handbook",
+   "subject": "data_science",
+   "name": "Python Data Science Handbook",
+   "url": "https://jakevdp.github.io/PythonDataScienceHandbook/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free book on NumPy, pandas, matplotlib, scikit-learn",
+   "keywords": [
+    "notebook",
+    "numpy",
+    "pandas"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "data_science:pandas-getting-started",
+   "subject": "data_science",
+   "name": "pandas getting started",
+   "url": "https://pandas.pydata.org/docs/getting_started/index.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Official pandas tutorials",
+   "keywords": [
+    "pandas"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "data_science:google-colab",
+   "subject": "data_science",
+   "name": "Google Colab",
+   "url": "https://colab.research.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Run Python notebooks with a free GPU; any Google account works",
+   "keywords": [
+    "gpu",
+    "notebook",
+    "python",
+    "training"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "spreadsheets:google-sheets",
+   "subject": "spreadsheets",
+   "name": "Google Sheets",
+   "url": "https://sheets.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Spreadsheets in the browser; any Google account works",
+   "keywords": [
+    "budget",
+    "data",
+    "spreadsheet",
+    "table"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "spreadsheets:exceljet",
+   "subject": "spreadsheets",
+   "name": "Exceljet",
+   "url": "https://exceljet.net/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Clear guides to every Excel function",
+   "keywords": [
+    "excel",
+    "formula",
+    "function"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "spreadsheets:excel-functions-microsoft",
+   "subject": "spreadsheets",
+   "name": "Excel functions (Microsoft)",
+   "url": "https://support.microsoft.com/en-us/office/excel-functions-alphabetical-b3944572-255d-4efb-bb96-c6d90033e188",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Every Excel function, alphabetical",
+   "keywords": [
+    "excel",
+    "formula"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "machine_learning:stanford-cs229",
+   "subject": "machine_learning",
+   "name": "Stanford CS229",
+   "url": "https://cs229.stanford.edu/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lecture notes for Stanford machine learning",
+   "keywords": [
+    "lecture",
+    "machine learning lecture",
+    "notes"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "machine_learning:neural-networks-zero-to-hero",
+   "subject": "machine_learning",
+   "name": "Neural Networks: Zero to Hero",
+   "url": "https://karpathy.ai/zero-to-hero.html",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Karpathy's build-it-from-scratch video course",
+   "keywords": [
+    "ml project",
+    "model debugging",
+    "training",
+    "training run"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "machine_learning:fast-ai-practical-deep-learning",
+   "subject": "machine_learning",
+   "name": "fast.ai Practical Deep Learning",
+   "url": "https://course.fast.ai/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free hands-on deep learning course",
+   "keywords": [
+    "deep learning",
+    "ml course",
+    "ml course exercises"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "machine_learning:dive-into-deep-learning",
+   "subject": "machine_learning",
+   "name": "Dive into Deep Learning",
+   "url": "https://d2l.ai/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free interactive deep learning book with code",
+   "keywords": [
+    "deep learning",
+    "exercises",
+    "ml lab"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "machine_learning:arxiv-cs-lg-recent",
+   "subject": "machine_learning",
+   "name": "arXiv cs.LG recent",
+   "url": "https://arxiv.org/list/cs.LG/recent",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "New machine learning papers",
+   "keywords": [
+    "ml paper reading",
+    "paper",
+    "paper reading"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "machine_learning:hugging-face-learn",
+   "subject": "machine_learning",
+   "name": "Hugging Face Learn",
+   "url": "https://huggingface.co/learn",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free courses on transformers and LLMs",
+   "keywords": [
+    "llm",
+    "transformers"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "machine_learning:google-machine-learning-crash-course",
+   "subject": "machine_learning",
+   "name": "Google Machine Learning Crash Course",
+   "url": "https://developers.google.com/machine-learning/crash-course",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free intro course with exercises",
+   "keywords": [
+    "basics",
+    "ml course"
+   ],
+   "ordinal": 7
+  },
+  {
+   "id": "machine_learning:google-colab",
+   "subject": "machine_learning",
+   "name": "Google Colab",
+   "url": "https://colab.research.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Run Python notebooks with a free GPU; any Google account works",
+   "keywords": [
+    "gpu",
+    "ml project training",
+    "notebook",
+    "training run"
+   ],
+   "ordinal": 8
+  },
+  {
+   "id": "cybersecurity:overthewire-bandit",
+   "subject": "cybersecurity",
+   "name": "OverTheWire Bandit",
+   "url": "https://overthewire.org/wargames/bandit/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Linux and security wargame, no signup",
+   "keywords": [
+    "ctf",
+    "linux",
+    "wargame"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "cybersecurity:picoctf",
+   "subject": "cybersecurity",
+   "name": "picoCTF",
+   "url": "https://picoctf.org/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Beginner capture-the-flag; free account",
+   "keywords": [
+    "ctf"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "cybersecurity:portswigger-web-security-academy",
+   "subject": "cybersecurity",
+   "name": "PortSwigger Web Security Academy",
+   "url": "https://portswigger.net/web-security",
+   "kind": "course",
+   "signup": "quick",
+   "good_for": "Free web security labs; free account",
+   "keywords": [
+    "sql injection",
+    "web security",
+    "xss"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "cybersecurity:owasp-top-ten",
+   "subject": "cybersecurity",
+   "name": "OWASP Top Ten",
+   "url": "https://owasp.org/www-project-top-ten/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The ten most common web risks",
+   "keywords": [
+    "owasp"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "databases:sqlbolt",
+   "subject": "databases",
+   "name": "SQLBolt",
+   "url": "https://sqlbolt.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Interactive SQL lessons in the browser",
+   "keywords": [
+    "query",
+    "sql"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "databases:sqlzoo",
+   "subject": "databases",
+   "name": "SQLZoo",
+   "url": "https://sqlzoo.net/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "SQL exercises with answers",
+   "keywords": [
+    "exercises",
+    "sql"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "databases:postgresql-tutorial",
+   "subject": "databases",
+   "name": "PostgreSQL tutorial",
+   "url": "https://www.postgresql.org/docs/current/tutorial.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Official Postgres tutorial",
+   "keywords": [
+    "postgres"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "databases:cmu-15-445-database-systems",
+   "subject": "databases",
+   "name": "CMU 15-445 Database Systems",
+   "url": "https://15445.courses.cs.cmu.edu/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lectures and projects on how databases work",
+   "keywords": [
+    "internals",
+    "lecture"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "databases:db-fiddle",
+   "subject": "databases",
+   "name": "DB Fiddle",
+   "url": "https://www.db-fiddle.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Run SQL in the browser",
+   "keywords": [
+    "practice",
+    "sql"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "networking:cloudflare-learning-center",
+   "subject": "networking",
+   "name": "Cloudflare Learning Center",
+   "url": "https://www.cloudflare.com/learning/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Plain explanations of DNS, TCP, HTTP",
+   "keywords": [
+    "dns",
+    "http",
+    "tcp"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "networking:beej-s-guide-to-network-programming",
+   "subject": "networking",
+   "name": "Beej's Guide to Network Programming",
+   "url": "https://beej.us/guide/bgnet/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free guide to sockets",
+   "keywords": [
+    "programming",
+    "sockets"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "networking:practical-networking",
+   "subject": "networking",
+   "name": "Practical Networking",
+   "url": "https://www.practicalnetworking.net/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free networking fundamentals series",
+   "keywords": [
+    "routing",
+    "subnetting"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "networking:wireshark",
+   "subject": "networking",
+   "name": "Wireshark",
+   "url": "https://www.wireshark.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free packet analyzer",
+   "keywords": [
+    "capture",
+    "packets"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "robotics:ros-2-tutorials",
+   "subject": "robotics",
+   "name": "ROS 2 tutorials",
+   "url": "https://docs.ros.org/en/rolling/Tutorials.html",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Official ROS 2 tutorials",
+   "keywords": [
+    "ros"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "robotics:modern-robotics-free-book",
+   "subject": "robotics",
+   "name": "Modern Robotics (free book)",
+   "url": "https://hades.mech.northwestern.edu/index.php/Modern_Robotics",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free textbook and videos",
+   "keywords": [
+    "kinematics",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "robotics:wokwi-simulator",
+   "subject": "robotics",
+   "name": "Wokwi simulator",
+   "url": "https://wokwi.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Simulate Arduino and ESP32 in the browser",
+   "keywords": [
+    "arduino",
+    "simulate"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "electronics:all-about-circuits-textbook",
+   "subject": "electronics",
+   "name": "All About Circuits textbook",
+   "url": "https://www.allaboutcircuits.com/textbook/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free electronics textbook",
+   "keywords": [
+    "circuits",
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "electronics:falstad-circuit-simulator",
+   "subject": "electronics",
+   "name": "Falstad circuit simulator",
+   "url": "https://www.falstad.com/circuit/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Simulate circuits in the browser",
+   "keywords": [
+    "circuit",
+    "simulate"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "electronics:sparkfun-tutorials",
+   "subject": "electronics",
+   "name": "SparkFun tutorials",
+   "url": "https://learn.sparkfun.com/tutorials",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Hands-on electronics tutorials",
+   "keywords": [
+    "arduino",
+    "soldering"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "electronics:wokwi-simulator",
+   "subject": "electronics",
+   "name": "Wokwi simulator",
+   "url": "https://wokwi.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Simulate Arduino and ESP32 in the browser",
+   "keywords": [
+    "arduino"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "engineering:mit-opencourseware",
+   "subject": "engineering",
+   "name": "MIT OpenCourseWare",
+   "url": "https://ocw.mit.edu/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Full MIT courses: lecture videos, notes, problem sets with solutions",
+   "keywords": [
+    "course",
+    "lecture",
+    "problem set"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "engineering:engineering-toolbox",
+   "subject": "engineering",
+   "name": "Engineering ToolBox",
+   "url": "https://www.engineeringtoolbox.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Engineering data and formulas",
+   "keywords": [
+    "data",
+    "formula"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "engineering:freecad",
+   "subject": "engineering",
+   "name": "FreeCAD",
+   "url": "https://www.freecad.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free open-source CAD",
+   "keywords": [
+    "cad",
+    "design"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "economics:khan-academy-economics",
+   "subject": "economics",
+   "name": "Khan Academy Economics",
+   "url": "https://www.khanacademy.org/economics-finance-domain",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Micro and macro lessons with practice",
+   "keywords": [
+    "macro",
+    "micro"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "economics:openstax-principles-of-economics",
+   "subject": "economics",
+   "name": "OpenStax Principles of Economics",
+   "url": "https://openstax.org/details/books/principles-economics-3e",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Principles of Economics textbook online",
+   "keywords": [
+    "chapter",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "economics:marginal-revolution-university",
+   "subject": "economics",
+   "name": "Marginal Revolution University",
+   "url": "https://mru.org/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Free short econ videos",
+   "keywords": [
+    "video"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "economics:fred-economic-data",
+   "subject": "economics",
+   "name": "FRED economic data",
+   "url": "https://fred.stlouisfed.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free economic data and charts",
+   "keywords": [
+    "chart",
+    "data"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "economics:ap-macroeconomics-past-exam-questions",
+   "subject": "economics",
+   "name": "AP Macroeconomics past exam questions",
+   "url": "https://apcentral.collegeboard.org/courses/ap-macroeconomics/exam/past-exam-questions",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Real AP Macroeconomics free-response questions with scoring guidelines",
+   "keywords": [
+    "ap",
+    "ap exam",
+    "frq",
+    "macro"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "finance:khan-academy-finance-and-capital-markets",
+   "subject": "finance",
+   "name": "Khan Academy finance and capital markets",
+   "url": "https://www.khanacademy.org/economics-finance-domain/core-finance",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Interest, stocks, bonds, accounting basics",
+   "keywords": [
+    "finance",
+    "stocks"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "finance:investopedia",
+   "subject": "finance",
+   "name": "Investopedia",
+   "url": "https://www.investopedia.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Definitions and explainers for finance terms",
+   "keywords": [
+    "definition",
+    "terms"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "finance:bogleheads-wiki",
+   "subject": "finance",
+   "name": "Bogleheads wiki",
+   "url": "https://www.bogleheads.org/wiki/Main_Page",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Plain guide to personal investing",
+   "keywords": [
+    "investing"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "budgeting:cfpb-consumer-tools",
+   "subject": "budgeting",
+   "name": "CFPB consumer tools",
+   "url": "https://www.consumerfinance.gov/consumer-tools/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free budgeting and money guides from the CFPB",
+   "keywords": [
+    "budget",
+    "money"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "budgeting:khan-academy-personal-finance",
+   "subject": "budgeting",
+   "name": "Khan Academy personal finance",
+   "url": "https://www.khanacademy.org/college-careers-more/personal-finance",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Budgeting, saving, credit",
+   "keywords": [
+    "budget",
+    "saving"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "budgeting:google-sheets",
+   "subject": "budgeting",
+   "name": "Google Sheets",
+   "url": "https://sheets.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Spreadsheets in the browser; any Google account works",
+   "keywords": [
+    "budget",
+    "data",
+    "spreadsheet",
+    "table"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "entrepreneurship:yc-startup-library",
+   "subject": "entrepreneurship",
+   "name": "YC Startup Library",
+   "url": "https://www.ycombinator.com/library",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free essays and videos from Y Combinator",
+   "keywords": [
+    "idea",
+    "startup"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "entrepreneurship:paul-graham-essays",
+   "subject": "entrepreneurship",
+   "name": "Paul Graham essays",
+   "url": "https://paulgraham.com/articles.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Essays on startups and ideas",
+   "keywords": [
+    "essay",
+    "startup"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "entrepreneurship:sba-learning-platform",
+   "subject": "entrepreneurship",
+   "name": "SBA Learning Platform",
+   "url": "https://www.sba.gov/sba-learning-platform",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free small business courses",
+   "keywords": [
+    "business plan"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "business:openstax-introduction-to-business",
+   "subject": "business",
+   "name": "OpenStax Introduction to Business",
+   "url": "https://openstax.org/details/books/introduction-business",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Introduction to Business textbook online",
+   "keywords": [
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "business:sba-learning-platform",
+   "subject": "business",
+   "name": "SBA Learning Platform",
+   "url": "https://www.sba.gov/sba-learning-platform",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free small business courses",
+   "keywords": [
+    "business plan"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "marketing:openstax-principles-of-marketing",
+   "subject": "marketing",
+   "name": "OpenStax Principles of Marketing",
+   "url": "https://openstax.org/details/books/principles-marketing",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Principles of Marketing textbook online",
+   "keywords": [
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "marketing:hubspot-academy",
+   "subject": "marketing",
+   "name": "HubSpot Academy",
+   "url": "https://academy.hubspot.com/",
+   "kind": "course",
+   "signup": "quick",
+   "good_for": "Free marketing courses; quick account",
+   "keywords": [
+    "content",
+    "course"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "marketing:canva",
+   "subject": "marketing",
+   "name": "Canva",
+   "url": "https://www.canva.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Design graphics fast; free account",
+   "keywords": [
+    "graphic",
+    "post"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "accounting:openstax-principles-of-accounting",
+   "subject": "accounting",
+   "name": "OpenStax Principles of Accounting",
+   "url": "https://openstax.org/details/books/principles-financial-accounting",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Principles of Accounting textbook online",
+   "keywords": [
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "accounting:accountingcoach",
+   "subject": "accounting",
+   "name": "AccountingCoach",
+   "url": "https://www.accountingcoach.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free explanations and quizzes",
+   "keywords": [
+    "debits",
+    "quiz"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "investing:bogleheads-wiki",
+   "subject": "investing",
+   "name": "Bogleheads wiki",
+   "url": "https://www.bogleheads.org/wiki/Main_Page",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Plain guide to long-term investing",
+   "keywords": [
+    "index fund"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "investing:investor-gov",
+   "subject": "investing",
+   "name": "Investor.gov",
+   "url": "https://www.investor.gov/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "The SEC's guide for investors",
+   "keywords": [
+    "basics"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "investing:sec-edgar-search",
+   "subject": "investing",
+   "name": "SEC EDGAR search",
+   "url": "https://www.sec.gov/edgar/search/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Company filings, free",
+   "keywords": [
+    "10-k",
+    "filings"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "taxes:irs-free-file",
+   "subject": "taxes",
+   "name": "IRS Free File",
+   "url": "https://www.irs.gov/filing/free-file-do-your-federal-taxes-for-free",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "File federal taxes free",
+   "keywords": [
+    "file",
+    "return"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "taxes:irs-understanding-taxes",
+   "subject": "taxes",
+   "name": "IRS Understanding Taxes",
+   "url": "https://apps.irs.gov/app/understandingTaxes/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free tax lessons for students",
+   "keywords": [
+    "lesson"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "taxes:vita-free-tax-help-locator",
+   "subject": "taxes",
+   "name": "VITA free tax help locator",
+   "url": "https://irs.treasury.gov/freetaxprep/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Find free in-person tax help",
+   "keywords": [
+    "help"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "law:cornell-lii",
+   "subject": "law",
+   "name": "Cornell LII",
+   "url": "https://www.law.cornell.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free US law and legal encyclopedia",
+   "keywords": [
+    "constitution",
+    "statute"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "law:oyez",
+   "subject": "law",
+   "name": "Oyez",
+   "url": "https://www.oyez.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Supreme Court cases with audio",
+   "keywords": [
+    "case",
+    "supreme court"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "law:justia",
+   "subject": "law",
+   "name": "Justia",
+   "url": "https://law.justia.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free case law and codes",
+   "keywords": [
+    "case law"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "management:openstax-principles-of-management",
+   "subject": "management",
+   "name": "OpenStax Principles of Management",
+   "url": "https://openstax.org/details/books/principles-management",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free, peer-reviewed Principles of Management textbook online",
+   "keywords": [
+    "textbook"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "management:atlassian-team-playbook",
+   "subject": "management",
+   "name": "Atlassian Team Playbook",
+   "url": "https://www.atlassian.com/team-playbook",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free step-by-step plays for meetings, planning and teams",
+   "keywords": [
+    "meeting",
+    "planning",
+    "retro",
+    "team"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "part_time_job:careeronestop",
+   "subject": "part_time_job",
+   "name": "CareerOneStop",
+   "url": "https://www.careeronestop.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Job search tools from the US Department of Labor",
+   "keywords": [
+    "job",
+    "resume"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "part_time_job:indeed",
+   "subject": "part_time_job",
+   "name": "Indeed",
+   "url": "https://www.indeed.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Job listings; quick account to apply",
+   "keywords": [
+    "apply",
+    "listings"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "internships:careeronestop",
+   "subject": "internships",
+   "name": "CareerOneStop",
+   "url": "https://www.careeronestop.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Job and internship search tools",
+   "keywords": [
+    "resume"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "internships:handshake",
+   "subject": "internships",
+   "name": "Handshake",
+   "url": "https://joinhandshake.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Internships for students; sign in with school email",
+   "keywords": [
+    "apply",
+    "internship"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "internships:linkedin-jobs",
+   "subject": "internships",
+   "name": "LinkedIn Jobs",
+   "url": "https://www.linkedin.com/jobs/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Internship listings; quick account",
+   "keywords": [
+    "apply"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "job_search:careeronestop",
+   "subject": "job_search",
+   "name": "CareerOneStop",
+   "url": "https://www.careeronestop.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Job search tools from the US Department of Labor",
+   "keywords": [
+    "job",
+    "resume"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "job_search:linkedin-jobs",
+   "subject": "job_search",
+   "name": "LinkedIn Jobs",
+   "url": "https://www.linkedin.com/jobs/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Job listings; quick account",
+   "keywords": [
+    "apply"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "job_search:indeed",
+   "subject": "job_search",
+   "name": "Indeed",
+   "url": "https://www.indeed.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Job listings; quick account",
+   "keywords": [
+    "apply"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "interviews:tech-interview-handbook",
+   "subject": "interviews",
+   "name": "Tech Interview Handbook",
+   "url": "https://www.techinterviewhandbook.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free guide to coding and behavioral interviews",
+   "keywords": [
+    "behavioral",
+    "coding interview"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "interviews:neetcode-150",
+   "subject": "interviews",
+   "name": "NeetCode 150",
+   "url": "https://neetcode.io/practice",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "The classic interview problem list with videos",
+   "keywords": [
+    "coding interview",
+    "leetcode"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "interviews:google-interview-warmup",
+   "subject": "interviews",
+   "name": "Google Interview Warmup",
+   "url": "https://grow.google/certificates/interview-warmup/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Practice answering interview questions out loud",
+   "keywords": [
+    "behavioral",
+    "practice"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "interviews:leetcode-problem-set",
+   "subject": "interviews",
+   "name": "LeetCode problem set",
+   "url": "https://leetcode.com/problemset/",
+   "kind": "practice",
+   "signup": "quick",
+   "good_for": "Coding problems by topic and difficulty; free account to submit",
+   "keywords": [
+    "easy",
+    "hard",
+    "interview",
+    "leetcode",
+    "medium",
+    "problem"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "leadership:atlassian-team-playbook",
+   "subject": "leadership",
+   "name": "Atlassian Team Playbook",
+   "url": "https://www.atlassian.com/team-playbook",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free step-by-step plays for meetings, planning and teams",
+   "keywords": [
+    "meeting",
+    "planning",
+    "retro",
+    "team"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "leadership:ted-leadership-talks",
+   "subject": "leadership",
+   "name": "TED: leadership talks",
+   "url": "https://www.ted.com/topics/leadership",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Talks on leading teams",
+   "keywords": [
+    "talk"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "presenting:google-slides",
+   "subject": "presenting",
+   "name": "Google Slides",
+   "url": "https://slides.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Build slides in the browser; any Google account works",
+   "keywords": [
+    "deck",
+    "presentation",
+    "slides"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "presenting:ted-talks",
+   "subject": "presenting",
+   "name": "TED Talks",
+   "url": "https://www.ted.com/talks",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Thousands of short talks to watch as models",
+   "keywords": [
+    "speech",
+    "talk",
+    "watch"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "presenting:toastmasters-public-speaking-tips",
+   "subject": "presenting",
+   "name": "Toastmasters public speaking tips",
+   "url": "https://www.toastmasters.org/resources/public-speaking-tips",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short practical tips",
+   "keywords": [
+    "rehearse",
+    "speech"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "planning:todoist-productivity-methods",
+   "subject": "planning",
+   "name": "Todoist productivity methods",
+   "url": "https://www.todoist.com/productivity-methods",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short guides to planning methods like the weekly review",
+   "keywords": [
+    "evening review",
+    "set the week",
+    "sunday reset",
+    "targets",
+    "week review",
+    "weekly review"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "planning:google-calendar",
+   "subject": "planning",
+   "name": "Google Calendar",
+   "url": "https://calendar.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Block time for the week; any Google account works",
+   "keywords": [
+    "calendar",
+    "schedule",
+    "timetable",
+    "week"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "planning:pomofocus",
+   "subject": "planning",
+   "name": "Pomofocus",
+   "url": "https://pomofocus.io/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A simple Pomodoro timer in the browser",
+   "keywords": [
+    "applications block",
+    "block",
+    "focus"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "work:pomofocus",
+   "subject": "work",
+   "name": "Pomofocus",
+   "url": "https://pomofocus.io/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A simple Pomodoro timer in the browser",
+   "keywords": [
+    "block",
+    "focus",
+    "session",
+    "timer"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "work:todoist-productivity-methods",
+   "subject": "work",
+   "name": "Todoist productivity methods",
+   "url": "https://www.todoist.com/productivity-methods",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short guides to planning methods like the weekly review",
+   "keywords": [
+    "plan",
+    "reset",
+    "review",
+    "targets",
+    "weekly review"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "work:atlassian-team-playbook",
+   "subject": "work",
+   "name": "Atlassian Team Playbook",
+   "url": "https://www.atlassian.com/team-playbook",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free step-by-step plays for meetings, planning and teams",
+   "keywords": [
+    "meeting",
+    "planning",
+    "retro",
+    "team"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "meetings:atlassian-team-playbook",
+   "subject": "meetings",
+   "name": "Atlassian Team Playbook",
+   "url": "https://www.atlassian.com/team-playbook",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free step-by-step plays for meetings, planning and teams",
+   "keywords": [
+    "meeting",
+    "planning",
+    "retro",
+    "team"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "meetings:google-meet",
+   "subject": "meetings",
+   "name": "Google Meet",
+   "url": "https://meet.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Video calls; any Google account works",
+   "keywords": [
+    "call",
+    "meeting",
+    "video"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "email:languagetool",
+   "subject": "email",
+   "name": "LanguageTool",
+   "url": "https://languagetool.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free grammar and spelling checker in the browser",
+   "keywords": [
+    "email",
+    "proofread"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "email:purdue-owl-email-etiquette",
+   "subject": "email",
+   "name": "Purdue OWL: email etiquette",
+   "url": "https://owl.purdue.edu/owl/general_writing/academic_writing/email_etiquette.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to write a clear professional email",
+   "keywords": [
+    "director",
+    "email",
+    "teacher"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "calls:google-meet",
+   "subject": "calls",
+   "name": "Google Meet",
+   "url": "https://meet.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Video calls; any Google account works",
+   "keywords": [
+    "call",
+    "meeting",
+    "video"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "calls:google-calendar",
+   "subject": "calls",
+   "name": "Google Calendar",
+   "url": "https://calendar.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Block time for the week; any Google account works",
+   "keywords": [
+    "calendar",
+    "schedule",
+    "timetable",
+    "week"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "admin:google-sheets",
+   "subject": "admin",
+   "name": "Google Sheets",
+   "url": "https://sheets.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Spreadsheets in the browser; any Google account works",
+   "keywords": [
+    "activity log",
+    "college list",
+    "log",
+    "upkeep"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "admin:google-calendar",
+   "subject": "admin",
+   "name": "Google Calendar",
+   "url": "https://calendar.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Block time for the week; any Google account works",
+   "keywords": [
+    "calendar",
+    "schedule",
+    "timetable",
+    "week"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "admin:todoist-productivity-methods",
+   "subject": "admin",
+   "name": "Todoist productivity methods",
+   "url": "https://www.todoist.com/productivity-methods",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Short guides to planning methods like the weekly review",
+   "keywords": [
+    "plan",
+    "reset",
+    "review",
+    "targets",
+    "weekly review"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "reports:purdue-owl",
+   "subject": "reports",
+   "name": "Purdue OWL",
+   "url": "https://owl.purdue.edu/owl/purdue_owl.html",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Writing guides: essays, citations, grammar, reports",
+   "keywords": [
+    "citation",
+    "draft",
+    "essay",
+    "writing"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "reports:google-docs",
+   "subject": "reports",
+   "name": "Google Docs",
+   "url": "https://docs.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Write and share drafts; any Google account works",
+   "keywords": [
+    "draft",
+    "notes",
+    "write"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "reports:overleaf",
+   "subject": "reports",
+   "name": "Overleaf",
+   "url": "https://www.overleaf.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "LaTeX in the browser; free account by email or Google",
+   "keywords": [
+    "latex",
+    "paper",
+    "thesis",
+    "writeup",
+    "writing"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "art:drawabox",
+   "subject": "art",
+   "name": "Drawabox",
+   "url": "https://drawabox.com/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free structured drawing fundamentals course",
+   "keywords": [
+    "drawing",
+    "fundamentals"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "art:line-of-action",
+   "subject": "art",
+   "name": "Line of Action",
+   "url": "https://line-of-action.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Timed gesture drawing references",
+   "keywords": [
+    "figure",
+    "gesture"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "art:krita",
+   "subject": "art",
+   "name": "Krita",
+   "url": "https://krita.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free digital painting app",
+   "keywords": [
+    "digital",
+    "painting"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "art:smarthistory",
+   "subject": "art",
+   "name": "Smarthistory",
+   "url": "https://smarthistory.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free art history essays and videos",
+   "keywords": [
+    "art history"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "drawing:drawabox",
+   "subject": "drawing",
+   "name": "Drawabox",
+   "url": "https://drawabox.com/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free structured drawing fundamentals course",
+   "keywords": [
+    "boxes",
+    "fundamentals",
+    "lines"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "drawing:line-of-action",
+   "subject": "drawing",
+   "name": "Line of Action",
+   "url": "https://line-of-action.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Timed gesture drawing references",
+   "keywords": [
+    "figure",
+    "gesture",
+    "pose"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "drawing:quickposes",
+   "subject": "drawing",
+   "name": "Quickposes",
+   "url": "https://quickposes.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Timed reference photos for practice",
+   "keywords": [
+    "gesture",
+    "hands"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "drawing:proko-youtube",
+   "subject": "drawing",
+   "name": "Proko (YouTube)",
+   "url": "https://www.youtube.com/@ProkoTV",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Free figure drawing and anatomy lessons",
+   "keywords": [
+    "anatomy",
+    "figure"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "design:figma",
+   "subject": "design",
+   "name": "Figma",
+   "url": "https://www.figma.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Free design tool; sign in with Google",
+   "keywords": [
+    "mockup",
+    "prototype",
+    "ui"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "design:laws-of-ux",
+   "subject": "design",
+   "name": "Laws of UX",
+   "url": "https://lawsofux.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Key UX principles with examples",
+   "keywords": [
+    "ux"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "design:google-fonts",
+   "subject": "design",
+   "name": "Google Fonts",
+   "url": "https://fonts.google.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free fonts",
+   "keywords": [
+    "font",
+    "typography"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "design:coolors",
+   "subject": "design",
+   "name": "Coolors",
+   "url": "https://coolors.co/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Make color palettes",
+   "keywords": [
+    "color",
+    "palette"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "photography:cambridge-in-colour-tutorials",
+   "subject": "photography",
+   "name": "Cambridge in Colour tutorials",
+   "url": "https://www.cambridgeincolour.com/tutorials.htm",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free photography tutorials from exposure to editing",
+   "keywords": [
+    "composition",
+    "exposure"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "photography:photopea",
+   "subject": "photography",
+   "name": "Photopea",
+   "url": "https://www.photopea.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Photo editor in the browser",
+   "keywords": [
+    "edit"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "photography:darktable",
+   "subject": "photography",
+   "name": "darktable",
+   "url": "https://www.darktable.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free RAW photo editor",
+   "keywords": [
+    "edit",
+    "raw"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "film:davinci-resolve",
+   "subject": "film",
+   "name": "DaVinci Resolve",
+   "url": "https://www.blackmagicdesign.com/products/davinciresolve",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free professional video editor",
+   "keywords": [
+    "cut",
+    "edit"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "film:studiobinder-blog",
+   "subject": "film",
+   "name": "StudioBinder blog",
+   "url": "https://www.studiobinder.com/blog/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free filmmaking guides and shot lists",
+   "keywords": [
+    "script",
+    "shot"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "film:internet-archive-feature-films",
+   "subject": "film",
+   "name": "Internet Archive feature films",
+   "url": "https://archive.org/details/feature_films",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Public-domain films to watch free",
+   "keywords": [
+    "downtime",
+    "film",
+    "watch"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "theater:folger-shakespeare",
+   "subject": "theater",
+   "name": "Folger Shakespeare",
+   "url": "https://www.folger.edu/explore/shakespeares-works/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Every Shakespeare play free online",
+   "keywords": [
+    "lines",
+    "script",
+    "shakespeare"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "theater:project-gutenberg",
+   "subject": "theater",
+   "name": "Project Gutenberg",
+   "url": "https://www.gutenberg.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "70,000+ free ebooks of classic texts",
+   "keywords": [
+    "play",
+    "script"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "art_history:smarthistory",
+   "subject": "art_history",
+   "name": "Smarthistory",
+   "url": "https://smarthistory.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free art history essays and videos",
+   "keywords": [
+    "art history",
+    "period"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "art_history:the-met-heilbrunn-timeline",
+   "subject": "art_history",
+   "name": "The Met Heilbrunn Timeline",
+   "url": "https://www.metmuseum.org/toah/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Essays and works by period and place",
+   "keywords": [
+    "period",
+    "timeline"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "art_history:google-arts-culture",
+   "subject": "art_history",
+   "name": "Google Arts & Culture",
+   "url": "https://artsandculture.google.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "High-res artworks from museums",
+   "keywords": [
+    "artwork"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "cad:onshape-free-plan",
+   "subject": "cad",
+   "name": "Onshape free plan",
+   "url": "https://www.onshape.com/en/products/free",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Pro CAD in the browser; free account",
+   "keywords": [
+    "assembly",
+    "cad",
+    "part"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "cad:tinkercad",
+   "subject": "cad",
+   "name": "Tinkercad",
+   "url": "https://www.tinkercad.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Easy 3D design; quick account",
+   "keywords": [
+    "3d",
+    "print"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "cad:freecad",
+   "subject": "cad",
+   "name": "FreeCAD",
+   "url": "https://www.freecad.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free open-source CAD, no account",
+   "keywords": [
+    "cad"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "music:imslp-sheet-music-library",
+   "subject": "music",
+   "name": "IMSLP sheet music library",
+   "url": "https://imslp.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free public-domain scores and parts",
+   "keywords": [
+    "concerto",
+    "excerpts",
+    "orchestra",
+    "orchestra rehearsal",
+    "piece",
+    "piece run-through",
+    "score"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "music:metronome-online",
+   "subject": "music",
+   "name": "Metronome Online",
+   "url": "https://www.metronomeonline.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A metronome in the browser for slow practice",
+   "keywords": [
+    "long violin practice",
+    "scales",
+    "shifting",
+    "slowly",
+    "violin practice"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "music:musictheory-net",
+   "subject": "music",
+   "name": "musictheory.net",
+   "url": "https://www.musictheory.net/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and ear/note trainers for theory",
+   "keywords": [
+    "ear",
+    "scales",
+    "scales and arpeggios",
+    "theory"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "music:tone-deaf-ear-training",
+   "subject": "music",
+   "name": "Tone Deaf? Ear training",
+   "url": "https://tonedear.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Free ear-training drills: intervals, chords, pitch",
+   "keywords": [
+    "ear",
+    "intervals",
+    "pitch"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "music:fiddlerman-violin-lessons",
+   "subject": "music",
+   "name": "Fiddlerman violin lessons",
+   "url": "https://fiddlerman.com/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Free violin lessons and technique videos",
+   "keywords": [
+    "bowing",
+    "shifting",
+    "violin",
+    "violin lesson"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "music_theory:musictheory-net",
+   "subject": "music_theory",
+   "name": "musictheory.net",
+   "url": "https://www.musictheory.net/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and ear/note trainers for theory",
+   "keywords": [
+    "chords",
+    "ear",
+    "intervals",
+    "key",
+    "scales",
+    "theory"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "music_theory:open-music-theory",
+   "subject": "music_theory",
+   "name": "Open Music Theory",
+   "url": "https://viva.pressbooks.pub/openmusictheory/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free college music theory textbook",
+   "keywords": [
+    "harmony",
+    "textbook"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "music_theory:teoria-com",
+   "subject": "music_theory",
+   "name": "teoria.com",
+   "url": "https://www.teoria.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Theory tutorials and ear training",
+   "keywords": [
+    "ear training"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "music_theory:tone-deaf-ear-training",
+   "subject": "music_theory",
+   "name": "Tone Deaf? Ear training",
+   "url": "https://tonedear.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Free ear-training drills: intervals, chords, pitch",
+   "keywords": [
+    "ear",
+    "intervals",
+    "pitch"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "band:imslp-sheet-music-library",
+   "subject": "band",
+   "name": "IMSLP sheet music library",
+   "url": "https://imslp.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free public-domain scores and parts",
+   "keywords": [
+    "concerto",
+    "etude",
+    "excerpt",
+    "orchestra",
+    "piece",
+    "score",
+    "sheet music",
+    "sonata"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "band:metronome-online",
+   "subject": "band",
+   "name": "Metronome Online",
+   "url": "https://www.metronomeonline.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A metronome in the browser for slow practice",
+   "keywords": [
+    "practice",
+    "run-through",
+    "scales",
+    "slow",
+    "tempo"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "band:musictheory-net",
+   "subject": "band",
+   "name": "musictheory.net",
+   "url": "https://www.musictheory.net/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and ear/note trainers for theory",
+   "keywords": [
+    "chords",
+    "ear",
+    "intervals",
+    "key",
+    "scales",
+    "theory"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "piano:imslp-sheet-music-library",
+   "subject": "piano",
+   "name": "IMSLP sheet music library",
+   "url": "https://imslp.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free public-domain scores and parts",
+   "keywords": [
+    "etude",
+    "piece",
+    "sonata"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "piano:metronome-online",
+   "subject": "piano",
+   "name": "Metronome Online",
+   "url": "https://www.metronomeonline.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A metronome in the browser for slow practice",
+   "keywords": [
+    "practice",
+    "run-through",
+    "scales",
+    "slow",
+    "tempo"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "piano:musictheory-net",
+   "subject": "piano",
+   "name": "musictheory.net",
+   "url": "https://www.musictheory.net/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and ear/note trainers for theory",
+   "keywords": [
+    "chords",
+    "ear",
+    "intervals",
+    "key",
+    "scales",
+    "theory"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "guitar:justinguitar",
+   "subject": "guitar",
+   "name": "JustinGuitar",
+   "url": "https://www.justinguitar.com/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free structured guitar course",
+   "keywords": [
+    "chords",
+    "lesson"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "guitar:ultimate-guitar-tabs",
+   "subject": "guitar",
+   "name": "Ultimate Guitar tabs",
+   "url": "https://www.ultimate-guitar.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Chords and tabs for songs",
+   "keywords": [
+    "song",
+    "tab"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "guitar:metronome-online",
+   "subject": "guitar",
+   "name": "Metronome Online",
+   "url": "https://www.metronomeonline.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A metronome in the browser for slow practice",
+   "keywords": [
+    "practice",
+    "run-through",
+    "scales",
+    "slow",
+    "tempo"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "violin:imslp-sheet-music-library",
+   "subject": "violin",
+   "name": "IMSLP sheet music library",
+   "url": "https://imslp.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free public-domain scores and parts",
+   "keywords": [
+    "concerto",
+    "etude",
+    "excerpt",
+    "orchestra",
+    "piece"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "violin:fiddlerman-violin-lessons",
+   "subject": "violin",
+   "name": "Fiddlerman violin lessons",
+   "url": "https://fiddlerman.com/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Free violin lessons and technique videos",
+   "keywords": [
+    "bowing",
+    "shifting",
+    "technique",
+    "violin lesson"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "violin:metronome-online",
+   "subject": "violin",
+   "name": "Metronome Online",
+   "url": "https://www.metronomeonline.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A metronome in the browser for slow practice",
+   "keywords": [
+    "practice",
+    "scales",
+    "slowly"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "violin:musictheory-net",
+   "subject": "violin",
+   "name": "musictheory.net",
+   "url": "https://www.musictheory.net/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and ear/note trainers for theory",
+   "keywords": [
+    "arpeggios",
+    "scales"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "drums:drumeo-beat",
+   "subject": "drums",
+   "name": "Drumeo Beat",
+   "url": "https://www.drumeo.com/beat/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free drum lessons and articles",
+   "keywords": [
+    "groove",
+    "rudiments"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "drums:metronome-online",
+   "subject": "drums",
+   "name": "Metronome Online",
+   "url": "https://www.metronomeonline.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "A metronome in the browser for slow practice",
+   "keywords": [
+    "practice",
+    "run-through",
+    "scales",
+    "slow",
+    "tempo"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "singing:tone-deaf-ear-training",
+   "subject": "singing",
+   "name": "Tone Deaf? Ear training",
+   "url": "https://tonedear.com/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Free ear-training drills: intervals, chords, pitch",
+   "keywords": [
+    "ear",
+    "intervals",
+    "pitch"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "singing:musictheory-net",
+   "subject": "singing",
+   "name": "musictheory.net",
+   "url": "https://www.musictheory.net/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Lessons and ear/note trainers for theory",
+   "keywords": [
+    "ear",
+    "sight singing"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "singing:imslp-sheet-music-library",
+   "subject": "singing",
+   "name": "IMSLP sheet music library",
+   "url": "https://imslp.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Free public-domain scores and parts",
+   "keywords": [
+    "aria",
+    "song",
+    "vocal score"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "dance:1million-dance-studio-youtube",
+   "subject": "dance",
+   "name": "1MILLION Dance Studio (YouTube)",
+   "url": "https://www.youtube.com/@1MILLIONDanceStudio",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Choreography videos to learn from",
+   "keywords": [
+    "choreography",
+    "routine"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "gym:the-fitness-wiki",
+   "subject": "gym",
+   "name": "The Fitness Wiki",
+   "url": "https://thefitness.wiki/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free beginner routines and FAQs",
+   "keywords": [
+    "lift",
+    "program",
+    "routine",
+    "strength"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "gym:exrx-exercise-directory",
+   "subject": "gym",
+   "name": "ExRx exercise directory",
+   "url": "https://exrx.net/Lists/Directory",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to do every exercise, by muscle",
+   "keywords": [
+    "conditioning",
+    "exercise",
+    "form"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "gym:stronger-by-science",
+   "subject": "gym",
+   "name": "Stronger by Science",
+   "url": "https://www.strongerbyscience.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Evidence-based strength articles",
+   "keywords": [
+    "hypertrophy",
+    "long lift session",
+    "strength"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "running:hal-higdon-training-plans",
+   "subject": "running",
+   "name": "Hal Higdon training plans",
+   "url": "https://www.halhigdon.com/training/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free 5K to marathon plans",
+   "keywords": [
+    "half marathon",
+    "long run",
+    "marathon",
+    "morning run",
+    "run",
+    "training"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "running:nhs-couch-to-5k",
+   "subject": "running",
+   "name": "NHS Couch to 5K",
+   "url": "https://www.nhs.uk/live-well/exercise/running-and-aerobic-exercises/get-running-with-couch-to-5k/",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free beginner running plan",
+   "keywords": [
+    "5k",
+    "beginner",
+    "couch to 5k"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "running:strava",
+   "subject": "running",
+   "name": "Strava",
+   "url": "https://www.strava.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Log runs; free account",
+   "keywords": [
+    "friends",
+    "log"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "basketball:breakthrough-basketball-drills",
+   "subject": "basketball",
+   "name": "Breakthrough Basketball drills",
+   "url": "https://www.breakthroughbasketball.com/drills/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Free drills by skill",
+   "keywords": [
+    "dribbling",
+    "drills",
+    "shooting"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "soccer:fifa-training-centre",
+   "subject": "soccer",
+   "name": "FIFA Training Centre",
+   "url": "https://www.fifatrainingcentre.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free sessions and drills from FIFA",
+   "keywords": [
+    "drills",
+    "session"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "swimming:effortless-swimming",
+   "subject": "swimming",
+   "name": "Effortless Swimming",
+   "url": "https://effortlessswimming.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free technique articles and drills",
+   "keywords": [
+    "drills",
+    "freestyle",
+    "technique"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "cycling:sheldon-brown",
+   "subject": "cycling",
+   "name": "Sheldon Brown",
+   "url": "https://www.sheldonbrown.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Classic free bike repair and riding guides",
+   "keywords": [
+    "maintenance",
+    "repair"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "cycling:park-tool-repair-help",
+   "subject": "cycling",
+   "name": "Park Tool repair help",
+   "url": "https://www.parktool.com/en-us/blog/repair-help",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Step-by-step bike repair",
+   "keywords": [
+    "repair"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "cycling:strava",
+   "subject": "cycling",
+   "name": "Strava",
+   "url": "https://www.strava.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Log rides; free account",
+   "keywords": [
+    "log",
+    "ride"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "yoga:yoga-with-adriene",
+   "subject": "yoga",
+   "name": "Yoga With Adriene",
+   "url": "https://yogawithadriene.com/",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Free yoga videos for every level",
+   "keywords": [
+    "flow",
+    "routine"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "yoga:yoga-journal-poses",
+   "subject": "yoga",
+   "name": "Yoga Journal poses",
+   "url": "https://www.yogajournal.com/poses/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How to do each pose",
+   "keywords": [
+    "pose"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "sleep:sleep-foundation",
+   "subject": "sleep",
+   "name": "Sleep Foundation",
+   "url": "https://www.sleepfoundation.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Evidence-based sleep guides",
+   "keywords": [
+    "bedtime",
+    "lights out",
+    "sleep hygiene"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "sleep:cdc-about-sleep",
+   "subject": "sleep",
+   "name": "CDC: about sleep",
+   "url": "https://www.cdc.gov/sleep/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "How much sleep you need and why",
+   "keywords": [
+    "sleep"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "stress:nhs-every-mind-matters",
+   "subject": "stress",
+   "name": "NHS Every Mind Matters",
+   "url": "https://www.nhs.uk/every-mind-matters/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free tools for stress and anxiety",
+   "keywords": [
+    "anxiety",
+    "stress"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "stress:ucla-mindful-guided-meditations",
+   "subject": "stress",
+   "name": "UCLA Mindful guided meditations",
+   "url": "https://www.uclahealth.org/uclamindful/guided-meditations",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Free guided meditations",
+   "keywords": [
+    "breathing",
+    "meditation"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "meditation:ucla-mindful-guided-meditations",
+   "subject": "meditation",
+   "name": "UCLA Mindful guided meditations",
+   "url": "https://www.uclahealth.org/uclamindful/guided-meditations",
+   "kind": "video",
+   "signup": "none",
+   "good_for": "Free guided meditations, 3 to 19 minutes",
+   "keywords": [
+    "guided",
+    "meditation",
+    "morning meditation"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "meditation:medito",
+   "subject": "meditation",
+   "name": "Medito",
+   "url": "https://meditofoundation.org/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free meditation app, no account needed",
+   "keywords": [
+    "long meditation",
+    "long meditation sit",
+    "timer"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "meditation:insight-timer",
+   "subject": "meditation",
+   "name": "Insight Timer",
+   "url": "https://insighttimer.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Free timer and guided sits; quick account",
+   "keywords": [
+    "long sit",
+    "timer"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "nutrition:nutrition-gov",
+   "subject": "nutrition",
+   "name": "Nutrition.gov",
+   "url": "https://www.nutrition.gov/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "USDA guide to healthy eating and meal planning",
+   "keywords": [
+    "meal",
+    "plan",
+    "protein"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "nutrition:cronometer",
+   "subject": "nutrition",
+   "name": "Cronometer",
+   "url": "https://cronometer.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Free nutrition tracker; quick account",
+   "keywords": [
+    "protein",
+    "track"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "therapy:therapist-aid",
+   "subject": "therapy",
+   "name": "Therapist Aid",
+   "url": "https://www.therapistaid.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free CBT worksheets and guides",
+   "keywords": [
+    "cbt",
+    "worksheet"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "therapy:nami",
+   "subject": "therapy",
+   "name": "NAMI",
+   "url": "https://www.nami.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Mental health info and support",
+   "keywords": [
+    "support"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "therapy:988-suicide-crisis-lifeline",
+   "subject": "therapy",
+   "name": "988 Suicide & Crisis Lifeline",
+   "url": "https://988lifeline.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Call or text 988, free and confidential",
+   "keywords": [
+    "crisis"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "health:nhs-live-well",
+   "subject": "health",
+   "name": "NHS Live Well",
+   "url": "https://www.nhs.uk/live-well/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Plain-English health guidance",
+   "keywords": [
+    "evening walk",
+    "habit",
+    "walk"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "health:medlineplus",
+   "subject": "health",
+   "name": "MedlinePlus",
+   "url": "https://medlineplus.gov/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Trusted health info from the NIH",
+   "keywords": [
+    "condition",
+    "medicine"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "chores:todoist-templates",
+   "subject": "chores",
+   "name": "Todoist templates",
+   "url": "https://www.todoist.com/templates",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free checklists for routines and packing",
+   "keywords": [
+    "checklist",
+    "chores",
+    "pack",
+    "routine"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "laundry:american-cleaning-institute-laundry-tips",
+   "subject": "laundry",
+   "name": "American Cleaning Institute laundry tips",
+   "url": "https://www.cleaninginstitute.org/cleaning-tips/clothes",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Care labels, stains and settings",
+   "keywords": [
+    "laundry",
+    "stain"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "cooking:budget-bytes",
+   "subject": "cooking",
+   "name": "Budget Bytes",
+   "url": "https://www.budgetbytes.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Cheap, tested recipes",
+   "keywords": [
+    "cooking",
+    "meal",
+    "proper meal"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "cooking:serious-eats",
+   "subject": "cooking",
+   "name": "Serious Eats",
+   "url": "https://www.seriouseats.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Technique-first recipes",
+   "keywords": [
+    "technique"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "cooking:bbc-good-food",
+   "subject": "cooking",
+   "name": "BBC Good Food",
+   "url": "https://www.bbcgoodfood.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Thousands of free recipes",
+   "keywords": [
+    "family",
+    "housemates",
+    "recipe"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "groceries:budget-bytes-meal-plans",
+   "subject": "groceries",
+   "name": "Budget Bytes meal plans",
+   "url": "https://www.budgetbytes.com/category/extra-bytes/budget-friendly-meal-prep/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Cheap meal plans with shopping lists",
+   "keywords": [
+    "list",
+    "meal prep"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "groceries:budget-bytes",
+   "subject": "groceries",
+   "name": "Budget Bytes",
+   "url": "https://www.budgetbytes.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Cheap, tested recipes",
+   "keywords": [
+    "cheap",
+    "recipe"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "errands:google-calendar",
+   "subject": "errands",
+   "name": "Google Calendar",
+   "url": "https://calendar.google.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Block time for the week; any Google account works",
+   "keywords": [
+    "calendar",
+    "schedule",
+    "timetable",
+    "week"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "errands:google-maps",
+   "subject": "errands",
+   "name": "Google Maps",
+   "url": "https://maps.google.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Plan routes for several stops",
+   "keywords": [
+    "route",
+    "stops"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "driving:driving-tests-org",
+   "subject": "driving",
+   "name": "Driving-Tests.org",
+   "url": "https://driving-tests.org/",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Free permit practice tests by state",
+   "keywords": [
+    "dmv",
+    "permit",
+    "practice test"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "family:greater-good-science-center",
+   "subject": "family",
+   "name": "Greater Good Science Center",
+   "url": "https://greatergood.berkeley.edu/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Research-backed articles on family life",
+   "keywords": [
+    "dinner",
+    "family"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "friends:alltrails",
+   "subject": "friends",
+   "name": "AllTrails",
+   "url": "https://www.alltrails.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Find hikes with reviews and maps",
+   "keywords": [
+    "hike",
+    "hike with friends"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "friends:mountain-project",
+   "subject": "friends",
+   "name": "Mountain Project",
+   "url": "https://www.mountainproject.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Climbing routes and gyms",
+   "keywords": [
+    "climbing",
+    "climbing with friends"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "friends:meetup",
+   "subject": "friends",
+   "name": "Meetup",
+   "url": "https://www.meetup.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Find local groups; quick account",
+   "keywords": [
+    "group",
+    "meet"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "travel:rome2rio",
+   "subject": "travel",
+   "name": "Rome2Rio",
+   "url": "https://www.rome2rio.com/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Every way to get between two places",
+   "keywords": [
+    "route",
+    "transport"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "travel:wikivoyage",
+   "subject": "travel",
+   "name": "Wikivoyage",
+   "url": "https://www.wikivoyage.org/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Free travel guides",
+   "keywords": [
+    "city",
+    "guide"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "travel:google-flights",
+   "subject": "travel",
+   "name": "Google Flights",
+   "url": "https://www.google.com/travel/flights",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Compare flight prices",
+   "keywords": [
+    "flight"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "travel:the-man-in-seat-61",
+   "subject": "travel",
+   "name": "The Man in Seat 61",
+   "url": "https://www.seat61.com/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Train travel guides worldwide",
+   "keywords": [
+    "train"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "reading:project-gutenberg",
+   "subject": "reading",
+   "name": "Project Gutenberg",
+   "url": "https://www.gutenberg.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "70,000+ free ebooks of classic texts",
+   "keywords": [
+    "book",
+    "chapter",
+    "novel",
+    "read",
+    "set text"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "reading:standard-ebooks",
+   "subject": "reading",
+   "name": "Standard Ebooks",
+   "url": "https://standardebooks.org/",
+   "kind": "book",
+   "signup": "none",
+   "good_for": "Beautifully formatted free classics",
+   "keywords": [
+    "classic",
+    "novel"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "reading:libby",
+   "subject": "reading",
+   "name": "Libby",
+   "url": "https://libbyapp.com/",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Borrow ebooks with a library card",
+   "keywords": [
+    "ebook",
+    "library"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "reading:codeforces-blog-editorials",
+   "subject": "reading",
+   "name": "Codeforces blog (editorials)",
+   "url": "https://codeforces.com/blog/entry/57282",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Competitive programming tutorials and editorials",
+   "keywords": [
+    "competitive programming",
+    "editorial"
+   ],
+   "ordinal": 4
+  },
+  {
+   "id": "reading:aops-wiki",
+   "subject": "reading",
+   "name": "AoPS Wiki",
+   "url": "https://artofproblemsolving.com/wiki/index.php/Main_Page",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Olympiad problems and write-ups",
+   "keywords": [
+    "aops",
+    "olympiad",
+    "write-up"
+   ],
+   "ordinal": 5
+  },
+  {
+   "id": "reading:sparknotes-literature-guides",
+   "subject": "reading",
+   "name": "SparkNotes literature guides",
+   "url": "https://www.sparknotes.com/lit/",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Summaries and analysis of set texts",
+   "keywords": [
+    "english set text",
+    "set text"
+   ],
+   "ordinal": 6
+  },
+  {
+   "id": "journaling:gratitude-journal-greater-good",
+   "subject": "journaling",
+   "name": "Gratitude journal (Greater Good)",
+   "url": "https://ggia.berkeley.edu/practice/gratitude_journal",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "A research-backed journaling practice",
+   "keywords": [
+    "gratitude",
+    "journal"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "journaling:obsidian-daily-notes",
+   "subject": "journaling",
+   "name": "Obsidian daily notes",
+   "url": "https://obsidian.md/",
+   "kind": "tool",
+   "signup": "none",
+   "good_for": "Free notes app with daily notes, no account",
+   "keywords": [
+    "daily",
+    "journalling",
+    "log the day"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "journaling:google-docs",
+   "subject": "journaling",
+   "name": "Google Docs",
+   "url": "https://docs.new",
+   "kind": "tool",
+   "signup": "quick",
+   "good_for": "Write and share drafts; any Google account works",
+   "keywords": [
+    "draft",
+    "notes",
+    "write"
+   ],
+   "ordinal": 3
+  },
+  {
+   "id": "chess:lichess-puzzles",
+   "subject": "chess",
+   "name": "Lichess puzzles",
+   "url": "https://lichess.org/training",
+   "kind": "practice",
+   "signup": "none",
+   "good_for": "Unlimited free tactics puzzles, no account",
+   "keywords": [
+    "puzzles",
+    "tactics"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "chess:lichess-practice",
+   "subject": "chess",
+   "name": "Lichess Practice",
+   "url": "https://lichess.org/practice",
+   "kind": "course",
+   "signup": "none",
+   "good_for": "Free lessons on checkmates and endgames",
+   "keywords": [
+    "checkmate",
+    "endgame"
+   ],
+   "ordinal": 2
+  },
+  {
+   "id": "chess:lichess-study",
+   "subject": "chess",
+   "name": "Lichess Study",
+   "url": "https://lichess.org/study",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Shared opening and endgame studies",
+   "keywords": [
+    "opening",
+    "study"
+   ],
+   "ordinal": 3
+  }
+ ]
+}

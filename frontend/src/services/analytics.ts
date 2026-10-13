@@ -472,6 +472,13 @@ export interface StepResource {
   name: string;
   url: string;
   yours?: boolean;
+  /**
+   * How much signing up it takes, set by the server's free-link check
+   * (backend/tracking/free_resources): 'none' to use it straight away,
+   * 'quick' for a free account by email or Google. Absent on readings
+   * saved before the check, which the server fills in as it serves them.
+   */
+  signup?: 'none' | 'quick';
 }
 
 export interface NextStep {

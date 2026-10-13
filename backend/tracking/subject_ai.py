@@ -468,11 +468,14 @@ done when <work_groups> shows which ones they have.
 second pass at 3 min each".
   - `resources`: one to three links to where the material is, best first \
 — 1 the best, 3 the weakest. Use what the reader already has first: a \
-fitting link from <your_resources> is resource 1, and the task titles name \
-the pieces, books and papers they already work from. Each link is the direct \
-page (the score, the paper, the chapter, the set) on a site that really has \
-it; when unsure of a deep link, use that site's own page rather than \
-guessing. Never invent a source, a placeholder or a search page.
+fitting link from <your_resources> is resource 1, then <free_resources>, \
+and the task titles name the pieces, books and papers they already work \
+from. Every link is free and quick to start: no paid book, course, \
+publisher or store page, and no account beyond a free one made in a minute \
+or two. Each link is the direct page (the score, the paper, the chapter, \
+the set) on a site that really has it; when unsure of a deep link, use that \
+site's own page rather than guessing. Never invent a source, a placeholder \
+or a search page.
   - `focus`: the area from the vocabulary it is about, or the subject itself.
   - `type`: one of targeted_practice, mixed_practice, timed_set, review, \
 concept, project.
@@ -1032,6 +1035,27 @@ def brief_from(state: Dict[str, Any]) -> str:
                 entry.get('name'), entry.get('url'), entry.get('from') or 'note'))
         parts.append(_section('your_resources', lines))
 
+    # ---- Free resources picked for the subject ---------------------------
+    # From the catalog in data/free_resources.json, sorted against the names
+    # of the reader's tasks (backend/tracking/free_resources). Free, and
+    # either no signup or a quick one, which is the rule for every link.
+    free = [entry for entry in (state.get('free_resources') or [])
+            if isinstance(entry, dict) and _link(entry.get('url'))]
+    if free:
+        lines = ['Free resources for this work, best fit to the reader\'s task names '
+                 'first. All free; "no signup" means usable straight away, "free '
+                 'account" means a quick one by email or Google. Prefer these, with '
+                 'the URL exactly as written.']
+        for entry in free:
+            fit = (' Fits {} of their tasks, like "{}".'.format(entry['matched'], entry['example'])
+                   if entry.get('matched') and entry.get('example') else '')
+            lines.append('  {}"{}" — {} ({}). {}.{}'.format(
+                '[{}] '.format(entry['subject']) if entry.get('subject') else '',
+                entry.get('name'), entry.get('url'),
+                'no signup' if entry.get('signup') == 'none' else 'free account, quick to make',
+                str(entry.get('good_for') or '').rstrip('.'), fit))
+        parts.append(_section('free_resources', lines))
+
     showing = [str(title).strip() for title in (state.get('showing') or [])
                if str(title).strip()]
     if showing:
@@ -1371,7 +1395,8 @@ def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dic
 #: relationships: those are what the record *is*, and the reading covers them.
 STEPS_SECTIONS = ('subject_profile', 'about_the_reader', 'difficulty_analysis', 'time_analysis',
                   'mistake_patterns', 'recent_work', 'work_groups',
-                  'your_resources', 'already_showing', 'skill_vocabulary', 'goals',
+                  'your_resources', 'free_resources', 'already_showing',
+                  'skill_vocabulary', 'goals',
                   'previous_recommendations', 'recommendation_outcomes')
 
 #: How many of the newest tasks go up beside the groups. The groups already
@@ -1424,9 +1449,20 @@ normally at or just below that point.
 Name real material: the piece, competition, paper, year, chapter, problem \
 range or tag the record shows, or the standard next thing up from it. Use \
 what the reader already has first: <your_resources> are links they keep, \
-and the task titles name the pieces, books and papers they already work \
-from. When a title is only the reader's own label ("Proof practice"), point \
-at a real, public equivalent instead.
+<free_resources> are free sites picked for the work their task names \
+describe, and the task titles name the pieces, books and papers they already \
+work from. When a title is only the reader's own label ("Proof practice"), \
+point at a real, free equivalent instead.
+
+FREE AND QUICK TO START
+Every link must be free to use, and need either no account or a free one \
+made in a minute or two by email or Google. Never a paid book, paid course, \
+publisher or store page, and never a site that needs an application, a long \
+setup or a card. In order: a fitting link from <your_resources>, then one \
+from <free_resources> (best fit to the reader's task names first; copy the \
+URL exactly), then any other free site you are sure of. When a task title \
+names a paid book the reader already works from, `problems` can still name \
+it, but the link goes to a free source of the same material.
 
 <already_showing> is on the reader's screen. Yours go underneath, so do not \
 repeat or rephrase any of them. <previous_recommendations> and \
@@ -1441,8 +1477,8 @@ the session type, not "Targeted Practice". It becomes a task as written.
   - `pace`: the time per problem or per step — "4 min per problem". "" \
 when it would only repeat the session's length ("30 minutes total").
   - `resources`: one to three links to where the material is, best first — \
-1 the best, 3 the weakest. A link from <your_resources> that fits goes \
-first. Each is the direct page (the score, the paper, the chapter, the \
+1 the best, 3 the weakest, all free (see above). A link from \
+<your_resources> that fits goes first, then <free_resources>. Each is the direct page (the score, the paper, the chapter, the \
 problem set), on a site that really has it; when unsure of a deep link, \
 use the site's own page for it rather than guessing. Never a placeholder \
 or a search page, and never an identifier you are not sure of — no made-up \

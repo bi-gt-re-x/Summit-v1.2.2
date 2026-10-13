@@ -46,6 +46,7 @@ from backend.database import connection as db
 from backend.api.tasks import CreateTask, _create as create_task
 from backend.api import subjects as user_subjects
 from backend.config import subjects as subject_catalogue
+from backend.tracking import free_resources
 from backend.tracking import next_sessions
 from backend.tracking import session_plan
 from backend.tracking import subject_ai
@@ -370,6 +371,55 @@ def _owned(username: str, subject_id: str, subject: str) -> list:
         library)
 
 
+# --------------------------------------------------------------------------
+# Free resources: sorted per account, and the only links a step may carry
+# --------------------------------------------------------------------------
+def _catalog_id(username: str, subject_id: str, subject: str,
+                names: Optional[dict] = None) -> str:
+    """The catalog's id for a subject, from the id the page sent or its name."""
+    covered = free_resources.by_subject()
+    if subject_id in covered:
+        return subject_id
+    return next_sessions.subject_named(subject, names or _subject_names(username)) or subject_id or ''
+
+
+def _free_brief(username: str, subject_ids: List[str], count: int,
+                names: Optional[dict] = None) -> list:
+    """Sort each subject's free resources against this account's task names,
+    store the order (`subject_resources`), and hand back the top few for the
+    brief. Writes, so POST paths only."""
+    free_resources.ensure_catalog(db)
+    stamp = datetime.now().isoformat(timespec='seconds')
+    out = []
+    for subject_id in subject_ids:
+        ranked = free_resources.sort_subject(db, username, subject_id, stamp)
+        out += free_resources.brief_entries(
+            ranked, count, subject=(names or {}).get(subject_id, '') if names else '')
+    return out
+
+
+def _guarded(username: str, steps: list, subject_id: str = '',
+             names: Optional[dict] = None) -> list:
+    """`steps` with free links only (backend/tracking/free_resources). Reads
+    only, so it's safe on a GET. A step across every subject finds its subject
+    from its `focus`."""
+    cache: Dict[str, list] = {}
+    lookup = names
+
+    def ranked_for(step):
+        nonlocal lookup
+        found = subject_id
+        if not found:
+            lookup = lookup or _subject_names(username)
+            found = next_sessions.subject_named(step.get('focus'), lookup) or ''
+        if found not in cache:
+            cache[found] = free_resources.sorted_for(db, username, found) if found else []
+        return cache[found]
+
+    return free_resources.guard([step for step in steps or [] if isinstance(step, dict)],
+                                ranked_for)
+
+
 #: What a reading holds when nothing has been read yet — the shape the page
 #: draws, empty, so a plan with no reading around it still draws.
 EMPTY_READING = {'diagnosis': [], 'priorities': [], 'next_steps': [], 'insights': []}
@@ -535,6 +585,9 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
         'owned_resources': _owned(username, _text(body.subject_id), subject),
         'background': _background(username, _text(body.subject_id) or None),
     }
+    catalog_id = _catalog_id(username, _text(body.subject_id, 64), subject)
+    state['free_resources'] = (_free_brief(username, [catalog_id], free_resources.BRIEF_COUNT)
+                               if catalog_id else [])
 
     # The record's button asks for the whole reading. The Recommendations
     # panel asks for steps alone, from a smaller brief, and keeps whatever
@@ -547,6 +600,10 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
                     'next_steps': subject_ai.plan(state)}
     except subject_ai.BriefUnavailable as exc:
         return fail(str(exc))
+
+    # Free links only, on the new steps and on the ones already showing.
+    read['next_steps'] = _guarded(username, read.get('next_steps') or [], catalog_id)
+    on_screen = _guarded(username, on_screen, catalog_id)
 
     # ---- Keep the recommendations, and only them -------------------------
     now = datetime.now().isoformat(timespec='seconds')
@@ -676,6 +733,11 @@ def saved_reading(subject: str = '', username: str = Depends(current_username)):
         # worth leaving in place long enough to be noticed.
         return ok(reading=None, written_at='', span='')
 
+    # Readings saved before links were checked get the same check on the way
+    # out, so an old plan pointing at a store page shows a free link instead.
+    if isinstance(read, dict) and read.get('next_steps'):
+        read['next_steps'] = _guarded(username, read['next_steps'],
+                                      _catalog_id(username, '', name))
     return ok(reading=read, written_at=row.get('written_at') or '',
               span=row.get('span') or '')
 
@@ -826,8 +888,17 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     # What to actually do, from the step as it was written, onto the task.
     step = next((one for one in _saved_steps(username, row.get('subject') or '')
                  if one.get('id') == row['id']), {})
-    note = ' · '.join(_text(step.get(key), 200) for key in ('problems', 'pace', 'resource')
-                      if _text(step.get(key)))
+    # The free link goes on the task too, so the session opens where the work is.
+    if step:
+        step = _guarded(username, [step],
+                        _catalog_id(username, subject_id, row.get('focus')
+                                    if row.get('subject') == next_sessions.OVERALL
+                                    else row.get('subject') or ''))[0]
+    link = next(iter(step.get('resources') or []), None)
+    where = '{}: {}'.format(_text(link.get('name'), 120), link['url']) if link else ''
+    note = ' · '.join(part for part in
+                      [_text(step.get(key), 200) for key in ('problems', 'pace')]
+                      + [where or _text(step.get('resource'), 200)] if part)
     if note:
         db.update_row('tasks', task_id, {'description': note}, user_id=username)
 
@@ -911,6 +982,9 @@ def _steps_with_state(username: str, subject: str) -> list:
     steps = _saved_steps(username, subject)
     if subject == next_sessions.OVERALL:
         steps = [next_sessions.unbracket(step) for step in steps]
+        steps = _guarded(username, steps)
+    else:
+        steps = _guarded(username, steps, _catalog_id(username, '', subject))
     states = _sync(username, _history(username, subject), persist=False)
     return [{**step, 'state': (states.get(step.get('id')) or {}).get('state', 'open'),
              'task': (states.get(step.get('id')) or {}).get('task')}
@@ -983,6 +1057,16 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
         'owned_resources': _owned(username, subject_id, subject) if subject_id else [],
         'background': _background(username, subject_id or None, names),
     })
+    # Free resources: this subject's, or the top two of each busiest subject.
+    if subject_id:
+        catalog_id = _catalog_id(username, subject_id, subject, names)
+        state['free_resources'] = (_free_brief(username, [catalog_id], free_resources.BRIEF_COUNT)
+                                   if catalog_id else [])
+    else:
+        busiest = [entry['id'] for entry in next_sessions.subjects_in(tasks, names, most=6)
+                   if entry['id'] in free_resources.by_subject()]
+        state['free_resources'] = _free_brief(username, busiest,
+                                              free_resources.BRIEF_COUNT_OVERALL, names)
 
     try:
         steps = subject_ai.plan(state, overall=not subject_id)
@@ -990,6 +1074,8 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
         return fail(str(exc))
     if not subject_id:
         steps = [next_sessions.unbracket(step) for step in steps]
+    steps = _guarded(username, steps, _catalog_id(username, subject_id, subject, names)
+                     if subject_id else '', names)
 
     now = datetime.now().isoformat(timespec='seconds')
     kept = _record(username, subject, steps[:subject_ai.NEXT_STEPS], now)

@@ -701,3 +701,4 @@
 }
 .sx-link-rank.is-best { color: var(--ax-violet); }
 .sx-link-rank.is-yours { color: var(--ax-green); }
+.sx-link-rank.is-free { color: var(--ax-faint); }

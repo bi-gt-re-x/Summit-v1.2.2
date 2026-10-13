@@ -627,6 +627,51 @@ ADDED_TABLES = ('''
     )
 ''', '''
     CREATE INDEX IF NOT EXISTS focus_sittings_user_at ON focus_sittings (user_id, at)
+''', '''
+    -- Free study resources, by subject: what session plans link to first.
+    -- Not account-scoped, like skill_steps: one catalog for every reader,
+    -- loaded from data/free_resources.json (backend/tracking/free_resources),
+    -- which is the committed copy.
+    --
+    -- Only free things are in it, and only things that are quick to start:
+    -- `signup` is 'none' (use it straight away) or 'quick' (a free account by
+    -- email or Google, a minute or two). Anything slower isn't listed.
+    CREATE TABLE IF NOT EXISTS free_resources (
+        id        TEXT    NOT NULL PRIMARY KEY,
+        subject   TEXT    NOT NULL,
+        name      TEXT    NOT NULL,
+        url       TEXT    NOT NULL,
+        kind      TEXT    NOT NULL,
+        signup    TEXT    NOT NULL,
+        good_for  TEXT    NOT NULL DEFAULT '',
+        -- JSON list of words and phrases matched against task names.
+        keywords  TEXT    NOT NULL DEFAULT '[]',
+        ordinal   INTEGER NOT NULL DEFAULT 1,
+        CHECK (signup IN ('none', 'quick')),
+        CHECK (url LIKE 'http%')
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS free_resources_subject ON free_resources (subject, ordinal)
+''', '''
+    -- Each account's free resources for a subject, sorted by how well they fit
+    -- the names of that account's tasks there: a subject full of "LeetCode
+    -- session" puts LeetCode first. Rewritten whole per subject whenever a
+    -- plan is made, so `place` is always 1..n with no gaps.
+    CREATE TABLE IF NOT EXISTS subject_resources (
+        user_id     TEXT    NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        subject     TEXT    NOT NULL,
+        resource_id TEXT    NOT NULL,
+        place       INTEGER NOT NULL,
+        -- How many of the subject's task names it matched, and a few of them.
+        matched     INTEGER NOT NULL DEFAULT 0,
+        titles      TEXT    NOT NULL DEFAULT '[]',
+        sorted_at   TEXT    NOT NULL,
+        PRIMARY KEY (user_id, subject, resource_id),
+        CHECK (place >= 1)
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS subject_resources_place
+        ON subject_resources (user_id, subject, place)
 ''')
 
 
@@ -3206,6 +3251,89 @@ def skill_steps_for(node_ids):
                 row = _step_row(record)
                 out.setdefault(row['node_id'], []).append(row)
         return out
+    finally:
+        con.close()
+
+
+FREE_RESOURCE_COLUMNS = ('id', 'subject', 'name', 'url', 'kind', 'signup',
+                         'good_for', 'keywords', 'ordinal')
+
+
+def free_resources():
+    """Every catalog row, by subject and then ordinal. Keywords decoded."""
+    con = connect()
+    try:
+        if not _schema(con, 'free_resources'):
+            return []
+        columns = ', '.join('"{}"'.format(name) for name in FREE_RESOURCE_COLUMNS)
+        out = []
+        for record in con.execute(
+                'SELECT {} FROM free_resources ORDER BY subject, ordinal'.format(columns)):
+            row = dict(zip(FREE_RESOURCE_COLUMNS, record))
+            try:
+                row['keywords'] = json.loads(row.get('keywords') or '[]')
+            except ValueError:
+                row['keywords'] = []
+            out.append(row)
+        return out
+    finally:
+        con.close()
+
+
+def save_free_resources(rows):
+    """Replace the whole catalog in one transaction, so no reader sees half."""
+    con = connect()
+    try:
+        with con:
+            con.execute('DELETE FROM free_resources')
+            columns = ', '.join('"{}"'.format(name) for name in FREE_RESOURCE_COLUMNS)
+            marks = ', '.join('?' for _ in FREE_RESOURCE_COLUMNS)
+            con.executemany(
+                'INSERT INTO free_resources ({}) VALUES ({})'.format(columns, marks),
+                [[json.dumps(row[name]) if name == 'keywords' else row[name]
+                  for name in FREE_RESOURCE_COLUMNS] for row in rows])
+        return len(rows)
+    finally:
+        con.close()
+
+
+def subject_resources_for(user_id, subject):
+    """One account's sorted resources for one subject: resource id, place,
+    matched count and sample titles, best first. Empty when never sorted."""
+    con = connect()
+    try:
+        if not _schema(con, 'subject_resources'):
+            return []
+        out = []
+        for record in con.execute(
+                'SELECT resource_id, place, matched, titles FROM subject_resources '
+                'WHERE user_id = ? AND subject = ? ORDER BY place', (user_id, subject)):
+            try:
+                titles = json.loads(record[3] or '[]')
+            except ValueError:
+                titles = []
+            out.append({'resource_id': record[0], 'place': record[1],
+                        'matched': record[2], 'titles': titles})
+        return out
+    finally:
+        con.close()
+
+
+def save_subject_resources(user_id, subject, rows, stamp):
+    """Replace one account's sorted list for one subject. `rows` are in order,
+    each with `id`, `matched` and `titles`."""
+    con = connect()
+    try:
+        with con:
+            con.execute('DELETE FROM subject_resources WHERE user_id = ? AND subject = ?',
+                        (user_id, subject))
+            con.executemany(
+                'INSERT INTO subject_resources (user_id, subject, resource_id, place, '
+                'matched, titles, sorted_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [(user_id, subject, row['id'], place, int(row.get('matched') or 0),
+                  json.dumps(list(row.get('titles') or [])[:3]), stamp)
+                 for place, row in enumerate(rows, start=1)])
+        return len(rows)
     finally:
         con.close()
 
