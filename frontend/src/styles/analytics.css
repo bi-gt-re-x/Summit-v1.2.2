@@ -6243,6 +6243,25 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 /* The plot needs room on the right for those pills. */
 .ax-gp-chart { padding-right: var(--space-6); }
 
+/* A zoomed axis: each tick sits on its own value, so the column is a box the
+   height of the plot with the numbers placed in it. */
+.ax-gp-y.is-placed { display: block; width: 2.25em; }
+.ax-gp-y.is-placed > div { position: relative; }
+.ax-gp-y.is-placed span { position: absolute; right: 0; transform: translateY(-50%); }
+
+/* A gridline's name, just above it at the left edge. */
+.ax-gp-band {
+    position: absolute;
+    left: var(--space-1);
+    transform: translateY(-110%);
+    padding: 0 var(--space-1);
+    border-radius: var(--radius-sm);
+    background: var(--ax-gp-card);
+    font-size: var(--text-2xs);
+    color: var(--ax-faint);
+    pointer-events: none;
+}
+
 /* ---------- Then and now, as two dated columns ----------------------------
    The two column headings carry the dates, so every "68 -> 82" below them is
    anchored to a pair of real windows rather than to the words "then" and
@@ -7163,6 +7182,9 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
 }
 .sg-legend li { display: inline-flex; align-items: center; gap: var(--space-2); }
 .sg-legend strong { color: var(--ax-text); font-variant-numeric: tabular-nums; }
+.sg-legend-delta { font-size: var(--text-2xs); font-weight: 700; font-variant-numeric: tabular-nums; }
+.sg-legend-delta.is-up { color: var(--ax-green); }
+.sg-legend-delta.is-down { color: var(--ax-amber); }
 .sg-swatch {
     width: 14px;
     height: 4px;

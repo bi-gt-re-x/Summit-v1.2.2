@@ -75,11 +75,28 @@ export interface GrowthLineProps {
   /** Milestones, drawn as a dashed rule with a caption above it. */
   marks?: LineMark[];
   height?: number;
+  /**
+   * The axis, where it shouldn't be 0 to 100. Off by default: a chart of five
+   * graded measures is read against the whole scale. The skill chart passes
+   * one because its lines live between 50 and 80, and on a 0 to 100 axis six
+   * years of real movement drew as four flat lines.
+   */
+  scale?: LineScale;
 }
 
-/** Scores are out of a hundred, so the axis is too. Never scaled to the data. */
-const SCALE = 100;
-const TICKS = ['100', '75', '50', '25', '0'];
+export interface LineScale {
+  min: number;
+  max: number;
+  /** Gridlines, each with its number and, optionally, a name drawn on it. */
+  ticks: Array<{ value: number; label: string; name?: string }>;
+}
+
+/** Scores are out of a hundred, so the axis is too, unless told otherwise. */
+const FULL: LineScale = {
+  min: 0,
+  max: 100,
+  ticks: [100, 75, 50, 25, 0].map((value) => ({ value, label: String(value) })),
+};
 
 /** The drawing's own units. The CSS decides how wide it actually is. */
 const WIDTH = 600;
@@ -87,26 +104,32 @@ const WIDTH = 600;
 /** Room above and below the extremes so a line at 100 is not clipped in half. */
 const PAD = 5;
 
-function pathFor(values: number[], height: number): string {
-  const steps = Math.max(1, values.length - 1);
+/** How far up the drawing a value sits, in its units, with `PAD` either side. */
+function yAt(value: number, height: number, scale: LineScale): number {
   const inner = height - PAD * 2;
+  const span = Math.max(1, scale.max - scale.min);
+  const share = (Math.max(scale.min, Math.min(scale.max, value)) - scale.min) / span;
+  return PAD + inner - share * inner;
+}
+
+function pathFor(values: number[], height: number, scale: LineScale): string {
+  const steps = Math.max(1, values.length - 1);
   return values
     .map((value, index) => {
       const x = (index / steps) * WIDTH;
-      const y = PAD + inner - (Math.max(0, Math.min(SCALE, value)) / SCALE) * inner;
+      const y = yAt(value, height, scale);
       return `${index === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
     })
     .join(' ');
 }
 
 /** The same points as zero-length subpaths, which a round cap draws as dots. */
-function dotsFor(values: number[], height: number): string {
+function dotsFor(values: number[], height: number, scale: LineScale): string {
   const steps = Math.max(1, values.length - 1);
-  const inner = height - PAD * 2;
   return values
     .map((value, index) => {
       const x = ((index / steps) * WIDTH).toFixed(2);
-      const y = (PAD + inner - (Math.max(0, Math.min(SCALE, value)) / SCALE) * inner).toFixed(2);
+      const y = yAt(value, height, scale).toFixed(2);
       return `M${x},${y}L${x},${y}`;
     })
     .join(' ');
@@ -116,10 +139,8 @@ function dotsFor(values: number[], height: number): string {
 const ratioAt = (index: number, count: number) => (count < 2 ? 0 : index / (count - 1));
 
 /** And how high up it sits, 0-1 from the top, matching `pathFor`. */
-function heightAt(value: number, height: number): number {
-  const inner = height - PAD * 2;
-  const y = PAD + inner - (Math.max(0, Math.min(SCALE, value)) / SCALE) * inner;
-  return y / height;
+function heightAt(value: number, height: number, scale: LineScale): number {
+  return yAt(value, height, scale) / height;
 }
 
 /**
@@ -183,6 +204,7 @@ export function GrowthLine({
   labels,
   marks: milestones = [],
   height = 260,
+  scale = FULL,
 }: GrowthLineProps) {
   const count = dates.length;
   const box = useRef<HTMLDivElement | null>(null);
@@ -237,11 +259,25 @@ export function GrowthLine({
 
   return (
     <div className="ax-gp-chart" style={{ '--ax-gp-h': `${height}px` } as CSSProperties}>
-      <div className="ax-gp-y" aria-hidden="true">
-        {TICKS.map((tick) => (
-          <span key={tick}>{tick}</span>
-        ))}
-      </div>
+      {scale === FULL ? (
+        <div className="ax-gp-y" aria-hidden="true">
+          {scale.ticks.map((tick) => (
+            <span key={tick.value}>{tick.label}</span>
+          ))}
+        </div>
+      ) : (
+        /* Placed by value rather than spaced evenly, because a zoomed axis's
+           ticks are wherever the bands fall. */
+        <div className="ax-gp-y is-placed" aria-hidden="true">
+          <div style={{ height }}>
+            {scale.ticks.map((tick) => (
+              <span key={tick.value} style={{ top: `${heightAt(tick.value, height, scale) * 100}%` }}>
+                {tick.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="ax-gp-plot">
         <div
@@ -276,8 +312,8 @@ export function GrowthLine({
               ))}
             </defs>
 
-            {TICKS.map((_, index) => {
-              const y = (index / (TICKS.length - 1)) * height;
+            {scale.ticks.map((tick, index) => {
+              const y = scale === FULL ? (index / (scale.ticks.length - 1)) * height : yAt(tick.value, height, scale);
               return (
                 <line
                   key={index}
@@ -299,7 +335,7 @@ export function GrowthLine({
                 <path
                   key={`${line.key}-fill`}
                   className="ax-gp-area"
-                  d={`${pathFor(line.values, height)} L${WIDTH},${height} L0,${height} Z`}
+                  d={`${pathFor(line.values, height, scale)} L${WIDTH},${height} L0,${height} Z`}
                   fill={`url(#${gradient}-${line.key})`}
                 />
               ))}
@@ -308,7 +344,7 @@ export function GrowthLine({
               <g key={line.key}>
                 <path
                   className={`ax-gp-line${line.key === 'overall' ? ' is-overall' : ''}`}
-                  d={pathFor(line.values, height)}
+                  d={pathFor(line.values, height, scale)}
                   fill="none"
                   stroke={(line.color ?? toneVar(line.tone))}
                   strokeWidth="2.25"
@@ -323,7 +359,7 @@ export function GrowthLine({
                     Same device as `dots` in ./charts. */}
                 <path
                   className="ax-gp-point"
-                  d={dotsFor(line.values, height)}
+                  d={dotsFor(line.values, height, scale)}
                   fill="none"
                   stroke={(line.color ?? toneVar(line.tone))}
                   strokeWidth="5"
@@ -333,6 +369,21 @@ export function GrowthLine({
               </g>
             ))}
           </svg>
+
+          {/* Names on the gridlines that have one: "Advanced" sitting on 75
+              says what the line is without a trip to the key. */}
+          {scale.ticks
+            .filter((tick) => tick.name)
+            .map((tick) => (
+              <span
+                key={`name-${tick.value}`}
+                className="ax-gp-band"
+                style={{ top: `${heightAt(tick.value, height, scale) * 100}%` }}
+                aria-hidden="true"
+              >
+                {tick.name}
+              </span>
+            ))}
 
           {/* Milestones, over the drawing and under the pointer readout. The
               rule is HTML for the same reason everything else here is: a dashed
@@ -361,7 +412,7 @@ export function GrowthLine({
                 key={line.key}
                 className="ax-gp-end"
                 style={{
-                  top: `${heightAt(line.values[count - 1] ?? 0, height) * 100}%`,
+                  top: `${heightAt(line.values[count - 1] ?? 0, height, scale) * 100}%`,
                   color: (line.color ?? toneVar(line.tone)),
                 }}
               >
@@ -383,7 +434,7 @@ export function GrowthLine({
                   key={line.key}
                   className="ax-gp-pin"
                   style={{
-                    top: `${heightAt(line.values[shown] ?? 0, height) * 100}%`,
+                    top: `${heightAt(line.values[shown] ?? 0, height, scale) * 100}%`,
                     background: (line.color ?? toneVar(line.tone)),
                   }}
                 />

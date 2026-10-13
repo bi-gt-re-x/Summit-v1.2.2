@@ -318,7 +318,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
           <section className="ax-section">
             <Panel
               title="Skill Growth"
-              note={`Your abilities across subjects over time — ${periodText}`}
+              note={`How your level in each subject moved over ${periodText}`}
             >
               <SkillGrowthPanel
                 tracks={tracks}

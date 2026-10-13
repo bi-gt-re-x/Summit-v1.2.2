@@ -146,6 +146,30 @@ describe('the trajectory', () => {
     expect(moved[0]).toBeGreaterThanOrEqual(moved[1]!);
   });
 
+  it('measures a whole record from where each subject first held steady', () => {
+    /* The bug this pins: on the whole record the first reading is the day of
+       the first task, when nothing has a level yet. Every subject came back
+       with no start, and the panel printed "New", "0 of 32" and a dash on a
+       six-year account whose chart was plainly climbing. */
+    const tasks = [
+      ...ratedRun('math', 200, TO, { difficulty: 3, execution: 3 }).slice(0, 100),
+      ...ratedRun('math', 100, TO, { difficulty: 5, execution: 5 }),
+    ];
+    const [math] = skillTrajectory({ tasks, nameOf, days: null, toIso: TO });
+    expect(math!.then).not.toBeNull();
+    expect(math!.delta).toBeGreaterThan(0);
+    expect(math!.thenOn).not.toBe(math!.dates[0]);
+    // Nothing before the steady reading is drawn as growth.
+    const at = math!.dates.indexOf(math!.thenOn!);
+    expect(new Set(math!.spark.slice(0, at + 1)).size).toBe(1);
+    expect(skillSummary([math!]).overall?.sameStart).toBe(false);
+  });
+
+  it('takes more readings across a long record', () => {
+    const [math] = skillTrajectory({ tasks: ratedRun('math', 800, TO), nameOf, days: null, toIso: TO });
+    expect(math!.spark).toHaveLength(12);
+  });
+
   it('leaves out a subject the score does not trust yet', () => {
     // Two rated tasks is a score that is still almost entirely its prior.
     const tracks = skillTrajectory({
@@ -169,7 +193,7 @@ describe('the trajectory', () => {
 
 describe('the headline figures', () => {
   const track = (over: Partial<SkillTrack> = {}): SkillTrack => ({
-    subject: 'math', name: 'Mathematics', now: 60, then: 50, delta: 10,
+    subject: 'math', name: 'Mathematics', now: 60, then: 50, delta: 10, thenOn: '2026-06-01',
     band: 'Strong', bandThen: 'Competent', promoted: true,
     confidence: 0.8, rated: 20, spark: [50, 55, 60], known: [50, 55, 60],
     dates: ['2026-06-01', '2026-06-15', '2026-06-30'], ratedInPeriod: 8, daysSince: 1,
@@ -183,7 +207,7 @@ describe('the headline figures', () => {
       // Appeared this period: no "then", so it cannot drag the average.
       track({ subject: 'art', then: null, now: 20, delta: null }),
     ]);
-    expect(out.overall).toEqual({ avgThen: 50, avgNow: 60, pct: 20, points: 10, subjects: 2 });
+    expect(out.overall).toEqual({ sameStart: true, avgThen: 50, avgNow: 60, pct: 20, points: 10, subjects: 2 });
   });
 
   it('has no overall growth when nothing had a level at the start', () => {
@@ -224,6 +248,20 @@ describe('the headline figures', () => {
     expect(skillSummary([low, track()]).attention).toEqual({ track: low, reason: 'lowest' });
     // One subject is not "the lowest" of anything.
     expect(skillSummary([track()]).attention).toBeNull();
+  });
+
+  it('leaves subjects dropped long ago out of "needs attention"', () => {
+    const dropped = track({ subject: 'geometry', delta: -1, daysSince: 1908 });
+    const slipping = track({ subject: 'prog', delta: -11, daysSince: 37 });
+    expect(skillSummary([dropped, slipping]).attention).toEqual({ track: slipping, reason: 'fell' });
+    expect(skillSummary([dropped, track({ subject: 'ok', delta: 2 })]).attention).toBeNull();
+  });
+
+  it('counts a band once, the first time it was reached', () => {
+    // Up to Advanced, back to Strong, up to Advanced again: one new band.
+    const out = skillSummary([track({ spark: [70, 76, 72, 77], dates: ['a', 'b', 'c', 'd'] })]);
+    expect(out.bandUps.map((up) => [up.at, up.band])).toEqual([[1, 'Advanced']]);
+    expect(out.strongPlus).toBe(1);
   });
 
   it('averages only the subjects that had a level on each date', () => {

@@ -26,7 +26,7 @@
  */
 import { useCallback, useMemo, useState } from 'react';
 import { Heading, PanelGroup, Sparkline, toneVar, type Tone } from './charts';
-import { GrowthLine, type LineMark, type LineSeries } from './GrowthLine';
+import { GrowthLine, type LineMark, type LineScale, type LineSeries } from './GrowthLine';
 import {
   IDLE_DAYS,
   averageLine,
@@ -585,19 +585,53 @@ function Stat({
   );
 }
 
+/** "Apr 2021" on a span of years, "Sep 13" on anything shorter. */
+function pointDate(iso: string, long: boolean): string {
+  if (!iso) return '';
+  const options: Intl.DateTimeFormatOptions = long
+    ? { month: 'short', year: 'numeric' }
+    : { month: 'short', day: 'numeric' };
+  return new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', options);
+}
+
+/** Whether a set of sample dates spans more than about a year. */
+function isLong(dates: string[]): boolean {
+  const first = dates[0];
+  const last = dates[dates.length - 1];
+  if (!first || !last) return false;
+  return (Date.parse(last) - Date.parse(first)) / 86_400_000 > 400;
+}
+
+/** "Mathematics, Meditation and 2 more", from plain names. */
+function nameList(list: string[]): string {
+  const shown = list.slice(0, 2);
+  const rest = list.length - shown.length;
+  return rest > 0 ? `${shown.join(', ')} and ${rest} more` : shown.join(' and ');
+}
+
 /**
  * The six figures, each with the sentence that says what it is counted from.
  *
  * That second line is the point of the card, not decoration under it. "+18%"
  * on its own is a number the reader has to trust; "your average level went
- * from 52 to 61 out of 100" is one they can check against the rows below.
+ * from 52 to 61 out of 100" is one they can check against the chart below.
+ *
+ * Every card has something to say on an account with any history. The old
+ * set printed "New", "0 of 32", "0", "32" and a dash on a six-year record,
+ * because nothing had a level on the record's first day; see
+ * STEADY_CONFIDENCE in utils/skillGrowth for the fix. And a card that could
+ * only ever read zero (Mastery, before anyone has it) now names the subject
+ * closest to it instead.
  */
-function Headline({ summary, since, periodText }: {
+function Headline({ summary, since, periodText, long }: {
   summary: SkillSummary;
   since: string;
   periodText: string;
+  long: boolean;
 }) {
-  const { overall, improved, mastered, closest, developing, biggest, attention, total } = summary;
+  const { overall, improved, mastered, closest, biggest, attention, total, bandUps, strongPlus } = summary;
+  const latestAt = bandUps.length ? bandUps[bandUps.length - 1]!.at : null;
+  const latest = bandUps.filter((up) => up.at === latestAt);
 
   return (
     <dl className="sg-stats">
@@ -606,15 +640,23 @@ function Headline({ summary, since, periodText }: {
         tone={overall && overall.points < 0 ? 'amber' : 'violet'}
         value={overall ? `${signed(overall.pct)}%` : 'New'}
       >
-        {overall ? (
+        {!overall ? (
+          <>Your subjects are still getting their first steady level. Keep rating finished tasks and this fills in.</>
+        ) : overall.sameStart ? (
           <>
             Your average level went from <strong>{overall.avgThen}</strong> to{' '}
-            <strong>{overall.avgNow}</strong> out of 100 ({signed(overall.points)} points) since{' '}
-            {since}, across the {overall.subjects === 1 ? 'one subject' : `${overall.subjects} subjects`}{' '}
-            you had a level in then.
+            <strong>{overall.avgNow}</strong> out of 100 ({signed(overall.points)}{' '}
+            {Math.abs(overall.points) === 1 ? 'point' : 'points'}) since {since}, across{' '}
+            {overall.subjects === 1 ? 'one subject' : `${overall.subjects} subjects`}.
           </>
         ) : (
-          <>Every subject got its first level during {periodText}, so there is no starting point to measure from yet.</>
+          <>
+            Your average level went from <strong>{overall.avgThen}</strong> to{' '}
+            <strong>{overall.avgNow}</strong> out of 100 ({signed(overall.points)}{' '}
+            {Math.abs(overall.points) === 1 ? 'point' : 'points'}) across{' '}
+            {overall.subjects === 1 ? 'one subject' : `${overall.subjects} subjects`}. Each one counts from
+            when its level first held steady.
+          </>
         )}
       </Stat>
 
@@ -626,49 +668,54 @@ function Headline({ summary, since, periodText }: {
         {improved.length ? (
           <>
             <strong>{names(improved, (t) => `${t.name} (${signed(t.delta ?? 0)})`)}</strong>{' '}
-            {improved.length === 1 ? 'has' : 'have'} a higher level than on {since}.
+            {improved.length === 1 ? 'is' : 'are'} higher than where {improved.length === 1 ? 'it' : 'they'} started.
           </>
         ) : (
-          <>No subject’s level rose over {periodText}.</>
+          <>No subject's level rose over {periodText}.</>
         )}
       </Stat>
 
-      <Stat label="Skills mastered" tone="violet" value={mastered.length}>
-        {mastered.length ? (
+      {mastered.length || !closest ? (
+        <Stat label="Skills mastered" tone="violet" value={mastered.length}>
+          {mastered.length ? (
+            <>
+              <strong>{names(mastered)}</strong> {mastered.length === 1 ? 'is' : 'are'} at Mastery,
+              a level of 90 or more out of 100.
+            </>
+          ) : (
+            <>Mastery is a level of 90 or more out of 100.</>
+          )}
+        </Stat>
+      ) : (
+        <Stat label="Closest to mastery" tone="violet" value={closest.track.name}>
+          At <strong>{closest.track.now}</strong>, so <strong>{closest.toGo}</strong>{' '}
+          {closest.toGo === 1 ? 'point' : 'points'} from Mastery at 90. It's your highest level right now.
+        </Stat>
+      )}
+
+      <Stat label="New bands reached" tone="blue" value={bandUps.length}>
+        {latest.length ? (
           <>
-            <strong>{names(mastered)}</strong> {mastered.length === 1 ? 'is' : 'are'} at Mastery —
-            a level of 90 or more out of 100.
-          </>
-        ) : closest ? (
-          <>
-            None at Mastery (90+) yet. The closest is <strong>{closest.track.name}</strong> at{' '}
-            {closest.track.now} — {closest.toGo} {closest.toGo === 1 ? 'point' : 'points'} to go.
+            Latest, {long ? 'in' : 'on'} {pointDate(latest[0]!.date, long)}:{' '}
+            <strong>{nameList(latest.map((up) => `${up.name} reached ${up.band}`))}</strong>.{' '}
+            {strongPlus} of your {total} subjects are Strong or better.
           </>
         ) : (
-          <>Mastery is a level of 90 or more out of 100.</>
+          <>
+            No subject moved up a band over {periodText}. {strongPlus} of your {total} subjects are
+            Strong or better.
+          </>
         )}
       </Stat>
 
-      <Stat label="Currently developing" tone="blue" value={developing.length}>
-        {developing.length ? (
-          <>
-            Below Mastery and practiced during {periodText}:{' '}
-            <strong>
-              {names(developing, (t) => `${t.name} (${t.ratedInPeriod} rated ${t.ratedInPeriod === 1 ? 'task' : 'tasks'})`)}
-            </strong>.
-          </>
-        ) : (
-          <>You haven’t rated any work below Mastery during {periodText}.</>
-        )}
-      </Stat>
-
-      <Stat label="Biggest growth" tone="green" value={biggest ? biggest.name : '—'}>
+      <Stat label="Biggest growth" tone="green" value={biggest ? biggest.name : 'None yet'}>
         {biggest ? (
           <>
             From <strong>{biggest.then}</strong> to <strong>{biggest.now}</strong> (
             {signed(biggest.delta ?? 0)} points)
+            {biggest.thenOn ? ` since ${pointDate(biggest.thenOn, long)}` : ''}
             {biggest.promoted && biggest.bandThen
-              ? `, moving up from ${biggest.bandThen} to ${biggest.band}.`
+              ? `, up from ${biggest.bandThen} to ${biggest.band}.`
               : `, still ${biggest.band}.`}
           </>
         ) : (
@@ -682,7 +729,7 @@ function Headline({ summary, since, periodText }: {
         value={attention ? attention.track.name : 'Nothing'}
       >
         {!attention ? (
-          <>No subject has slipped or been left alone.</>
+          <>Nothing you've worked on lately has slipped.</>
         ) : attention.reason === 'fell' ? (
           <>
             Slipped from <strong>{attention.track.then}</strong> to{' '}
@@ -693,13 +740,13 @@ function Headline({ summary, since, periodText }: {
           </>
         ) : attention.reason === 'idle' ? (
           <>
-            Nothing finished in it for <strong>{attention.track.daysSince} days</strong>. It is at{' '}
-            {attention.track.now} now, but a level fades when a subject isn’t practiced.
+            Nothing finished in it for <strong>{attention.track.daysSince} days</strong>. It's at{' '}
+            {attention.track.now} now, and a level fades when a subject isn't practiced.
           </>
         ) : (
           <>
-            Your lowest level, at <strong>{attention.track.now}</strong> ({attention.track.band}).
-            Finishing harder tasks there and rating how they went is what raises it.
+            Your lowest level among the subjects you're working on, at{' '}
+            <strong>{attention.track.now}</strong> ({attention.track.band}).
           </>
         )}
       </Stat>
@@ -711,11 +758,11 @@ function Headline({ summary, since, periodText }: {
 function BandKey() {
   return (
     <p className="sg-key">
-      <strong>What a level is:</strong> a score out of 100 for each subject, worked out from
-      how well your rated tasks went and how hard they were — not from time spent.{' '}
+      <strong>What a level is:</strong> a score out of 100 for each subject, from how well your
+      rated tasks went and how hard they were. Time spent doesn't count.{' '}
       {SKILL_BANDS.map((row, i) => (
         <span key={row.band} className="sg-key-band">
-          {row.band} {row.from}{i === SKILL_BANDS.length - 1 ? '+' : `–${row.to - 1}`}
+          {row.band} {row.from}{i === SKILL_BANDS.length - 1 ? '+' : `-${row.to - 1}`}
         </span>
       ))}
     </p>
@@ -725,21 +772,55 @@ function BandKey() {
 // --------------------------------------------------------------------------
 // The line under them
 // --------------------------------------------------------------------------
-/** The subjects the chart draws, in the order they are ranked above. */
+/** The subjects the chart draws: the four that grew most. */
 const LINE_TONES: Tone[] = ['blue', 'green', 'amber', 'pink'];
+
+/** The band edges, drawn as named gridlines where they fall inside the axis. */
+const BAND_EDGES = SKILL_BANDS.slice(1).map((row) => ({ value: row.from, name: row.band }));
+
+/**
+ * The axis, fitted to the lines rather than 0 to 100.
+ *
+ * Levels on a record of any length sit between about 50 and 80, and on a
+ * full-height axis a real climb from 52 to 71 drew as a ripple. So the axis
+ * runs from a little under the lowest point to a little over the highest, in
+ * fives, and its gridlines are the band edges inside that range, named, so a
+ * line crossing one reads as "reached Advanced" at a glance.
+ */
+export function fitScale(values: number[]): LineScale {
+  const lo = Math.max(0, Math.floor((Math.min(...values) - 4) / 5) * 5);
+  const hi = Math.min(100, Math.ceil((Math.max(...values) + 4) / 5) * 5);
+  const edges = BAND_EDGES.filter((edge) => edge.value > lo && edge.value < hi);
+  const near = (value: number) => edges.some((edge) => Math.abs(edge.value - value) < 4);
+  return {
+    min: lo,
+    max: hi,
+    ticks: [
+      ...(near(hi) ? [] : [{ value: hi, label: String(hi) }]),
+      ...[...edges].reverse().map((edge) => ({ value: edge.value, label: String(edge.value), name: edge.name })),
+      ...(near(lo) ? [] : [{ value: lo, label: String(lo) }]),
+    ],
+  };
+}
 
 /**
  * Demonstrated ability over the period, not hours.
  *
- * Every point is the level a subject *had* on that date — the same score,
- * worked out over only the tasks finished by then — so the line climbs when
- * rated work went well and does not move for time logged on its own. The
- * dashed line is the average across subjects; the four that moved furthest
- * are drawn beside it.
+ * Every point is the level a subject *had* on that date, worked out over only
+ * the tasks finished by then, so the line climbs when rated work went well and
+ * doesn't move for time logged on its own. The dashed line is the average
+ * across subjects; the four that grew most are drawn beside it, because the
+ * chart is there to show what moved, and the subjects sitting still at the top
+ * are already named in the cards above.
  */
 function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
   const dates = tracks[0]?.dates ?? [];
-  const drawn = useMemo(() => tracks.slice(0, LINE_TONES.length), [tracks]);
+  const long = isLong(dates);
+  const drawn = useMemo(() => {
+    const risers = tracks.filter((track) => (track.delta ?? 0) > 0).sort((a, b) => (b.delta ?? 0) - (a.delta ?? 0));
+    const rest = tracks.filter((track) => !risers.includes(track));
+    return [...risers, ...rest].slice(0, LINE_TONES.length);
+  }, [tracks]);
 
   const series: LineSeries[] = useMemo(
     () => [
@@ -760,6 +841,8 @@ function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
     [tracks, drawn],
   );
 
+  const scale = useMemo(() => fitScale(series.flatMap((line) => line.values)), [series]);
+
   const marks: LineMark[] = useMemo(
     () => bandCrossings(drawn).map((cross) => ({ ...cross, glyph: '▲' })),
     [drawn],
@@ -767,28 +850,44 @@ function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
 
   if (dates.length < 2) return null;
 
+  const deltaOf = (key: string) => drawn.find((track) => track.subject === key)?.delta ?? null;
+
   return (
     <div className="sg-chart">
       <h3 className="sg-chart-title">Growth over time</h3>
       <p className="sg-chart-note">
-        Your level in each subject on each date, measured from rated work — not hours studied.
-        It rises when hard work goes well, and slips when a subject is left alone.
-        {marks.length > 0 && ' ▲ marks the day a subject moved up a band.'}
+        Your level in the four subjects that grew most, and your average across all of them.
+        It rises when hard work goes well and slips when a subject is left alone. Time spent
+        doesn't move it.
+        {marks.length > 0 && ' ▲ marks the first time a subject reached a new band.'}
       </p>
       <ul className="sg-legend">
-        {series.map((line) => (
-          <li key={line.key}>
-            <span
-              className={`sg-swatch${line.key === 'overall' ? ' is-overall' : ''}`}
-              style={{ background: line.color ?? toneVar(line.tone) }}
-              aria-hidden="true"
-            />
-            {line.label}
-            <strong>{line.values[line.values.length - 1]}</strong>
-          </li>
-        ))}
+        {series.map((line) => {
+          const delta = deltaOf(line.key);
+          return (
+            <li key={line.key}>
+              <span
+                className={`sg-swatch${line.key === 'overall' ? ' is-overall' : ''}`}
+                style={{ background: line.color ?? toneVar(line.tone) }}
+                aria-hidden="true"
+              />
+              {line.label}
+              <strong>{line.values[line.values.length - 1]}</strong>
+              {delta !== null && delta !== 0 && (
+                <small className={`sg-legend-delta is-${delta > 0 ? 'up' : 'down'}`}>{signed(delta)}</small>
+              )}
+            </li>
+          );
+        })}
       </ul>
-      <GrowthLine series={series} dates={dates} labels={dates.map(shortDate)} marks={marks} height={220} />
+      <GrowthLine
+        series={series}
+        dates={dates}
+        labels={dates.map((date) => pointDate(date, long))}
+        marks={marks}
+        height={220}
+        scale={scale}
+      />
 
       {/* Every crossing, written out. The chart only has room to caption the
           ones that are not crowded (see `placeMarks` in ./GrowthLine); this is
@@ -797,7 +896,7 @@ function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
         <ul className="sg-crossings" aria-label="Band changes">
           {[...new Set(marks.map((mark) => mark.at))].map((at) => (
             <li key={at}>
-              <span className="sg-crossings-day">▲ {shortDate(dates[at] ?? '')}</span>
+              <span className="sg-crossings-day">▲ {pointDate(dates[at] ?? '', long)}</span>
               {marks
                 .filter((mark) => mark.at === at)
                 .map((mark) => mark.label)
@@ -886,13 +985,15 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
     );
   }
 
-  const since = tracks[0]?.dates[0] ? shortDate(tracks[0].dates[0]) : 'the start';
+  const firstDate = tracks[0]?.dates[0] ?? '';
+  const long = isLong(tracks[0]?.dates ?? []);
+  const since = firstDate ? pointDate(firstDate, long) : 'the start';
   const shownTracks = tracks.slice(0, limit);
   const allOpen = shownTracks.length > 0 && shownTracks.every((track) => open.has(track.subject));
 
   return (
     <>
-      <Headline summary={summary} since={since} periodText={periodText} />
+      <Headline summary={summary} since={since} periodText={periodText} long={long} />
       <BandKey />
       <AbilityLine tracks={tracks} />
 
@@ -902,7 +1003,7 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
       <div className="sg-subjects">
         <PanelGroup
           title="Subject by subject"
-          note={`How the work in each subject is going — ${shownTracks.length} ${shownTracks.length === 1 ? 'subject' : 'subjects'}, ${periodText}`}
+          note={`How the work in each subject is going: ${shownTracks.length} ${shownTracks.length === 1 ? 'subject' : 'subjects'}, ${periodText}`}
           defaultOpen
         >
           {context && (

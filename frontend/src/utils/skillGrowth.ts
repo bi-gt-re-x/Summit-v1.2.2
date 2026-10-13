@@ -55,6 +55,23 @@ export const TRACK_POINTS = 8;
  */
 const MIN_CONFIDENCE = 0.3;
 
+/**
+ * Where a subject's growth is measured from: the first reading with this much
+ * confidence behind it (about a dozen rated tasks).
+ *
+ * Below it the score is still mostly the prior, and the prior is 30. Measured
+ * from there, every subject on a long record "grew" forty points in its first
+ * month, which was the score settling rather than the reader getting better,
+ * and on the whole record it was worse: no subject had any confidence on the
+ * first day of it, so nothing had a start at all and every figure read zero.
+ * So growth runs from the first steady reading, and the line before it holds
+ * that reading rather than drawing the settling as progress.
+ */
+export const STEADY_CONFIDENCE = 0.75;
+
+/** Readings on a period longer than a year, which eight spread too thin. */
+export const LONG_TRACK_POINTS = 12;
+
 export interface SkillTrack {
   subject: string;
   /** The name a reader recognises. */
@@ -71,6 +88,8 @@ export interface SkillTrack {
   then: number | null;
   /** `now - then`, or null where there is no start to measure from. */
   delta: number | null;
+  /** The day `then` was read on, ISO, or null with no `then`. */
+  thenOn: string | null;
   band: SkillBand;
   bandThen: SkillBand | null;
   /** True where the band itself changed, which is the movement worth leading. */
@@ -112,8 +131,7 @@ const dayKey = (at: Date) => at.toISOString().slice(0, 10);
  * stood anywhere", which is true, and the earliest point stops depending on
  * what happened last week.
  */
-function sparkFor(readings: Map<string, SkillRow>[], subject: string): number[] {
-  const known = readings.map((reading) => reading.get(subject)?.score ?? null);
+function sparkFor(known: Array<number | null>): number[] {
   const firstKnown = known.find((score) => score !== null) ?? 0;
 
   let carried = firstKnown;
@@ -163,7 +181,7 @@ export function skillTrajectory({
   nameOf,
   days,
   toIso,
-  points = TRACK_POINTS,
+  points = days === null || days > 365 ? LONG_TRACK_POINTS : TRACK_POINTS,
 }: TrajectoryInput): SkillTrack[] {
   if (!toIso) return [];
   const toMs = Date.parse(`${toIso}T00:00:00Z`);
@@ -210,30 +228,35 @@ export function skillTrajectory({
   });
 
   const last = readings[readings.length - 1];
-  const first = readings[0];
-  if (!last || !first) return [];
+  if (!last) return [];
 
   const out: SkillTrack[] = [];
   for (const [subject, row] of last) {
     if (row.confidence < MIN_CONFIDENCE) continue;
-    const started = first.get(subject) ?? null;
-    const then = started && started.confidence >= MIN_CONFIDENCE ? started.score : null;
+    const rows = readings.map((reading) => reading.get(subject) ?? null);
+    /* The first steady reading, and nothing before it on the line: see
+       STEADY_CONFIDENCE. A subject that never got there keeps its early
+       readings, because they are all it has. */
+    const steadyAt = rows.findIndex((entry) => entry !== null && entry.confidence >= STEADY_CONFIDENCE);
+    const known = rows.map((entry, i) =>
+      entry === null || (steadyAt > 0 && i < steadyAt) ? null : Math.round(entry.score),
+    );
+    const base = steadyAt >= 0 && steadyAt < rows.length - 1 ? rows[steadyAt]! : null;
+    const then = base ? Math.round(base.score) : null;
     out.push({
       subject,
       name: nameOf(subject),
       now: Math.round(row.score),
-      then: then === null ? null : Math.round(then),
-      delta: then === null ? null : Math.round(row.score) - Math.round(then),
+      then,
+      delta: then === null ? null : Math.round(row.score) - then,
+      thenOn: base ? dates[steadyAt]! : null,
       band: row.band,
-      bandThen: started ? started.band : null,
-      promoted: Boolean(started) && started!.band !== row.band,
+      bandThen: base ? base.band : null,
+      promoted: Boolean(base) && base!.band !== row.band,
       confidence: row.confidence,
       rated: row.rated,
-      spark: sparkFor(readings, subject),
-      known: readings.map((reading) => {
-        const score = reading.get(subject)?.score;
-        return score === undefined ? null : Math.round(score);
-      }),
+      spark: sparkFor(known),
+      known,
       dates,
       ratedInPeriod: sorted.filter((task) => {
         const on = task.completed_at!.slice(0, 10);
@@ -275,7 +298,15 @@ export interface SkillSummary {
    * appeared halfway through would otherwise drag the "then" average with a
    * number it never had.
    */
-  overall: { avgThen: number; avgNow: number; pct: number; points: number; subjects: number } | null;
+  overall: {
+    avgThen: number;
+    avgNow: number;
+    pct: number;
+    points: number;
+    subjects: number;
+    /** True when every one of them was measured from the period's first day. */
+    sameStart: boolean;
+  } | null;
   /** Rose at all over the period. */
   improved: SkillTrack[];
   /** At Mastery (90+) now. */
@@ -288,10 +319,33 @@ export interface SkillSummary {
   biggest: SkillTrack | null;
   /** The subject most worth looking at, and why — see `attentionFor`. */
   attention: { track: SkillTrack; reason: 'fell' | 'idle' | 'lowest' } | null;
+  /** Every band a subject reached for the first time over the period, oldest first. */
+  bandUps: BandUp[];
+  /** Subjects at Strong (60) or better now. */
+  strongPlus: number;
+}
+
+export interface BandUp {
+  /** Index into the tracks' `dates`. */
+  at: number;
+  date: string;
+  subject: string;
+  name: string;
+  band: SkillBand;
 }
 
 /** How long without finishing anything before a subject counts as left alone. */
 export const IDLE_DAYS = 21;
+
+/**
+ * And how long before it's simply something the reader stopped doing.
+ *
+ * A subject nobody has touched in five years isn't one that needs attention.
+ * It's a choice, and leading the panel with "Geometry: nothing for 1,908 days"
+ * pointed at the one subject least likely to matter. Past this it's left out
+ * of the attention card altogether.
+ */
+export const DORMANT_DAYS = 180;
 
 /**
  * Which subject needs attention, and the reason, in the order that matters.
@@ -302,7 +356,8 @@ export const IDLE_DAYS = 21;
  * Then simply the lowest level, which is the weakest claim and is only made
  * when there is more than one subject to be lowest among.
  */
-function attentionFor(tracks: SkillTrack[]): SkillSummary['attention'] {
+function attentionFor(all: SkillTrack[]): SkillSummary['attention'] {
+  const tracks = all.filter((track) => (track.daysSince ?? 0) <= DORMANT_DAYS);
   const fell = tracks
     .filter((track) => (track.delta ?? 0) < 0)
     .sort((a, b) => (a.delta ?? 0) - (b.delta ?? 0))[0];
@@ -321,6 +376,7 @@ function attentionFor(tracks: SkillTrack[]): SkillSummary['attention'] {
 export function skillSummary(tracks: SkillTrack[]): SkillSummary {
   const compared = tracks.filter((track) => track.then !== null);
   const mean = (values: number[]) => values.reduce((sum, v) => sum + v, 0) / values.length;
+  const firstDay = tracks[0]?.dates[0] ?? null;
 
   let overall: SkillSummary['overall'] = null;
   if (compared.length) {
@@ -335,6 +391,7 @@ export function skillSummary(tracks: SkillTrack[]): SkillSummary {
       pct: Math.round(((avgNow - avgThen) / Math.max(1, avgThen)) * 100),
       points: Math.round(avgNow - avgThen),
       subjects: compared.length,
+      sameStart: compared.every((track) => track.thenOn === firstDay),
     };
   }
 
@@ -356,7 +413,39 @@ export function skillSummary(tracks: SkillTrack[]): SkillSummary {
       .sort((a, b) => b.ratedInPeriod - a.ratedInPeriod),
     biggest: improved[0] ?? null,
     attention: attentionFor(tracks),
+    bandUps: bandUpsOf(tracks),
+    strongPlus: tracks.filter((track) => track.now >= 60).length,
   };
+}
+
+const bandRank = (score: number) => SKILL_BANDS.findIndex((row) => row.band === bandFor(score));
+
+/**
+ * Every band a subject reached for the first time in the period, oldest first.
+ *
+ * Only the first time. A subject that wobbles across the line at 75 would
+ * otherwise "reach Advanced" four times, and the count would be measuring the
+ * wobble. A band it had already held earlier in the period isn't new either.
+ */
+function bandUpsOf(tracks: SkillTrack[]): BandUp[] {
+  const out: BandUp[] = [];
+  for (const track of tracks) {
+    let best = bandRank(track.spark[0] ?? 0);
+    for (let i = 1; i < track.spark.length; i += 1) {
+      const rank = bandRank(track.spark[i]!);
+      if (rank > best) {
+        best = rank;
+        out.push({
+          at: i,
+          date: track.dates[i] ?? '',
+          subject: track.subject,
+          name: track.name,
+          band: bandFor(track.spark[i]!),
+        });
+      }
+    }
+  }
+  return out.sort((a, b) => a.at - b.at || a.name.localeCompare(b.name));
 }
 
 /**
@@ -387,16 +476,7 @@ export function averageLine(tracks: SkillTrack[]): number[] {
  * so they are drawn on the line where they happened rather than listed apart.
  */
 export function bandCrossings(tracks: SkillTrack[]): Array<{ at: number; label: string }> {
-  const rank = (score: number) => SKILL_BANDS.findIndex((row) => row.band === bandFor(score));
-  const out: Array<{ at: number; label: string }> = [];
-  for (const track of tracks) {
-    for (let i = 1; i < track.spark.length; i += 1) {
-      if (rank(track.spark[i]!) > rank(track.spark[i - 1]!)) {
-        out.push({ at: i, label: `${track.name} reached ${bandFor(track.spark[i]!)}` });
-      }
-    }
-  }
-  return out.sort((a, b) => a.at - b.at);
+  return bandUpsOf(tracks).map((up) => ({ at: up.at, label: `${up.name} reached ${up.band}` }));
 }
 
 // --------------------------------------------------------------------------
