@@ -9,8 +9,9 @@ and fills them in.
 The space page is a block editor in the manner of Notion
 (frontend/src/components/Spaces/BlockEditor.tsx): an icon, a cover, and a
 list of blocks — text, three heading sizes, bulleted, numbered and to-do
-lists, toggles, quotes, callouts, dividers, code and charts — each with an
-indent. A top-level block may also carry a place on the page's grid (`x`,
+lists, toggles, quotes, callouts, dividers, code, charts, live data and
+containers — each with an indent. A container is a framed box: the blocks
+indented under it ride inside it wherever it is dragged. A top-level block may also carry a place on the page's grid (`x`,
 `y`, `w`: column, row, width in columns) once it has been dragged, and a
 chart carries its kind, its scale and its points.
 That list is `doc`, checked here block by block against the kinds the editor
@@ -116,8 +117,10 @@ TEXT_PREFIX = {'h1': '# ', 'h2': '## ', 'h3': '### ', 'bullet': '- ', 'numbered'
                'toggle': '▸ ', 'quote': '> ', 'callout': '💡 '}
 
 #: A live block in `body`, which has only words.
-LIVE_NAMES = {'goal': 'Goal progress', 'skills': 'Skill tree', 'productivity': 'Productivity',
-              'records': 'Records', 'calendar': 'Calendar', 'growth': 'Growth'}
+LIVE_NAMES = {'goal': 'Goal progress', 'goals': 'All goals', 'skills': 'Skill tree',
+              'productivity': 'Productivity', 'records': 'Records', 'record': 'Record history',
+              'calendar': 'Calendar', 'growth': 'Growth', 'heatmap': 'Activity heatmap',
+              'rhythm': 'Weekly rhythm', 'subjects': 'Subject mix'}
 
 #: Pending invites a team space will hold.
 INVITES_MAX = 20
@@ -238,6 +241,10 @@ def _clean_doc(raw) -> Optional[dict]:
             block['chart'] = _clean_chart(item.get('chart'))
         if kind == 'live':
             block['live'] = live.clean_config(item.get('live'))
+        if kind == 'container':
+            fill = _clean_fill(item.get('fill'))
+            if fill:
+                block['fill'] = fill
         if _hex(item.get('color')):
             block['color'] = _hex(item['color'])
         if kind in ('sticky', 'shape'):
@@ -294,6 +301,8 @@ def _doc_text(doc: dict) -> str:
         elif kind == 'shape':
             name = block['shape'].capitalize()
             lines.append(pad + '[{}{}]'.format(name, ': ' + text if text else ''))
+        elif kind == 'container':
+            lines.append(pad + '▣ ' + (text or 'Container'))
         elif kind == 'live':
             name = LIVE_NAMES[block['live']['source']]
             lines.append(pad + '[Live: {}{}]'.format(name, ', ' + text if text else ''))
@@ -454,6 +463,21 @@ def live_data(username, config, today=None):
     if source == 'goal':
         goal = live.pick_goal(_goals_now(username), config['goal'], today)
         return live.goal_view(goal, _tasks(username) if goal else [], today)
+    if source == 'goals':
+        return live.goals_view(_goals_now(username), config['status'], today)
+    if source == 'record':
+        return live.record_view(records_api._mine(username), config['name'], today)
+    if source == 'heatmap':
+        days = config['weeks'] * 7 + 7
+        series = (growth_tracking.series(username, days) or {}).get('growth_data') or []
+        return live.heatmap_view(series, config['weeks'], config['metric'], today)
+    if source == 'rhythm':
+        return live.rhythm_view(db.columns_for('tasks', username, LIVE_TASK_FIELDS),
+                                config['days'], config['metric'], today)
+    if source == 'subjects':
+        return live.subjects_view(db.columns_for('tasks', username, LIVE_TASK_FIELDS), config['days'],
+                                  config['metric'], today, lambda key: _subject_name(username, key),
+                                  live.LIVE['subjects_max'])
     if source == 'skills':
         nodes = skillsteps_api.catalogue()
         attempts = db.rows_for('skill_attempts', username)
@@ -464,7 +488,7 @@ def live_data(username, config, today=None):
     if source == 'productivity':
         days = max(config['weeks'] * 7, 28)
         series = (growth_tracking.series(username, days) or {}).get('growth_data') or []
-        return live.productivity_view(series, config['weeks'], _streak(username), today)
+        return live.productivity_view(series, config['weeks'], _streak(username), today, config['metric'])
     if source == 'records':
         return live.records_view(records_api._mine(username), config['category'], config['limit'])
     if source == 'calendar':
@@ -476,7 +500,7 @@ def live_data(username, config, today=None):
     tasks = db.columns_for('tasks', username, LIVE_TASK_FIELDS) if subject else []
     tree_nodes = [node for node in skillsteps_api.catalogue() if subject and node.get('tree') == subject]
     attempts = db.rows_for('skill_attempts', username) if tree_nodes else []
-    view = live.growth_view(subject, config['days'], tasks, series, attempts, tree_nodes, today)
+    view = live.growth_view(subject, config['days'], tasks, series, attempts, tree_nodes, today, config['metric'])
     view['name'] = _subject_name(username, subject)
     return view
 
@@ -492,12 +516,14 @@ def _subject_name(username, subject):
 @router.get('/api/spaces/live')
 def read_live(source: str = '', goal: str = '', tree: str = '', weeks: int = 0,
               category: str = '', limit: int = 0, days: int = 0, subject: str = '',
+              view: str = '', metric: str = '', status: str = '', name: str = '',
               username: str = Depends(current_username)):
     """What one live block shows right now. Read only, like every GET."""
     if source not in live.SOURCES:
         return fail('There is no live source called {}.'.format(source or 'that'))
     config = live.clean_config({'source': source, 'goal': goal, 'tree': tree, 'weeks': weeks,
-                                'category': category, 'limit': limit, 'days': days, 'subject': subject})
+                                'category': category, 'limit': limit, 'days': days, 'subject': subject,
+                                'view': view, 'metric': metric, 'status': status, 'name': name})
     return ok(config=config, data=live_data(username, config),
               revision=live.revisions(username)[source],
               at=datetime.now().isoformat(timespec='seconds'))
@@ -519,6 +545,7 @@ def live_options(username: str = Depends(current_username)):
                   for row in subjects],
         categories=sorted({row.get('category') or '' for row in records if row.get('kind', 'record') == 'record'} - {''},
                           key=str.lower),
+        records=live.record_names(records),
     )
 
 

@@ -37,16 +37,22 @@ def _done(client, task_id):
 # --------------------------------------------------------------------------
 def test_config_is_cleaned_to_what_each_source_takes():
     assert live.clean_config({'source': 'growth', 'subject': 'algebra', 'days': 90, 'junk': 1}) == {
-        'source': 'growth', 'subject': 'algebra', 'days': 90}
+        'source': 'growth', 'view': 'area', 'metric': 'xp', 'subject': 'algebra', 'days': 90}
+    # A style or a measure the source doesn't have falls back to its first.
+    assert live.clean_config({'source': 'growth', 'view': 'pie', 'metric': 'focus'})['view'] == 'area'
+    assert live.clean_config({'source': 'growth', 'view': 'cumulative', 'metric': 'tasks'})['metric'] == 'tasks'
     # A window that isn't offered falls back to the default one.
     assert live.clean_config({'source': 'growth', 'days': 45})['days'] == 30
     assert live.clean_config({'source': 'productivity', 'weeks': 'lots'})['weeks'] == 8
     assert live.clean_config({'source': 'calendar', 'days': 14})['days'] == 14
     assert live.clean_config({'source': 'records', 'limit': 99})['limit'] == 5
     # An unknown source keeps the block, pointed at the first source.
-    assert live.clean_config({'source': 'weather'}) == {'source': 'goal', 'goal': ''}
-    assert live.clean_config(None) == {'source': 'goal', 'goal': ''}
-    assert live.clean_config({'source': 'goal', 'goal': True}) == {'source': 'goal', 'goal': ''}
+    assert live.clean_config({'source': 'weather'}) == {'source': 'goal', 'view': 'card', 'goal': ''}
+    assert live.clean_config(None) == {'source': 'goal', 'view': 'card', 'goal': ''}
+    assert live.clean_config({'source': 'goal', 'goal': True}) == {'source': 'goal', 'view': 'card', 'goal': ''}
+    assert live.clean_config({'source': 'heatmap', 'weeks': 52, 'metric': 'focus'}) == {
+        'source': 'heatmap', 'view': 'grid', 'metric': 'focus', 'weeks': 52}
+    assert live.clean_config({'source': 'goals', 'status': 'everything'})['status'] == 'active'
 
 
 def test_a_page_keeps_a_live_block_and_no_data(client):
@@ -59,8 +65,9 @@ def test_a_page_keeps_a_live_block_and_no_data(client):
     space = client.post('/api/spaces/1', json={'doc': doc}).json()['space']
     blocks = space['doc']['blocks']
     assert blocks[1] == {'id': 'b', 'type': 'live', 'text': 'Score trend', 'x': 0, 'y': 0, 'w': 6,
-                         'live': {'source': 'growth', 'subject': 'competition-math', 'days': 90}}
-    assert blocks[2]['live'] == {'source': 'calendar', 'days': 7}
+                         'live': {'source': 'growth', 'view': 'area', 'metric': 'xp',
+                                  'subject': 'competition-math', 'days': 90}}
+    assert blocks[2]['live'] == {'source': 'calendar', 'view': 'list', 'days': 7}
     assert '[Live: Growth, Score trend]' in space['body']
     assert '[Live: Calendar]' in space['body']
     # And it reads back the same.
@@ -70,7 +77,7 @@ def test_a_page_keeps_a_live_block_and_no_data(client):
 def test_a_live_block_without_settings_still_saves(client):
     doc = {'blocks': [{'id': 'x', 'type': 'live', 'text': ''}]}
     blocks = client.post('/api/spaces/2', json={'doc': doc}).json()['space']['doc']['blocks']
-    assert blocks[0]['live'] == {'source': 'goal', 'goal': ''}
+    assert blocks[0]['live'] == {'source': 'goal', 'view': 'card', 'goal': ''}
 
 
 # --------------------------------------------------------------------------
@@ -286,7 +293,7 @@ def test_a_write_names_the_sources_it_moved_and_bumps_them(client, stranger):
     theirs = stranger.get('/api/spaces/live/revisions').json()['revisions']
 
     reply = client.post('/api/records/save', json={'kind': 'record', 'name': 'AMC 10', 'value': 90})
-    assert reply.headers.get('X-Summit-Live') == 'records'
+    assert reply.headers.get('X-Summit-Live') == 'records,record'
     after = client.get('/api/spaces/live/revisions').json()['revisions']
     assert after['records'] != revs['records']
     assert after['skills'] == revs['skills']
@@ -312,6 +319,139 @@ def test_saving_a_page_is_not_a_data_change(client):
 
 
 def test_sources_for_tables():
-    assert live.sources_for({'records'}) == ['records']
-    assert live.sources_for({'skill_attempts'}) == ['skills', 'growth']
+    assert live.sources_for({'records'}) == ['records', 'record']
+    assert live.sources_for({'skill_attempts'}) == ['growth', 'skills']
     assert live.sources_for({'user_settings', 'sessions'}) == []
+
+
+# --------------------------------------------------------------------------
+# The analytics added on top: pace, trends, heatmap, rhythm, subject mix
+# --------------------------------------------------------------------------
+def test_trend_and_rolling():
+    assert live.trend([2, 4, 6, 8]) == (2.0, 2.0)
+    assert live.trend([5]) == (0.0, 5)
+    assert live.rolling([3, 6, 9, 12], 2) == [3.0, 4.5, 7.5, 10.5]
+
+
+def test_goal_pace_projects_a_finish():
+    start = (TODAY - timedelta(days=9)).isoformat()
+    on_track = {'progress': 50, 'start_date': start, 'deadline': (TODAY + timedelta(days=20)).isoformat()}
+    read = live.pace(on_track, TODAY)
+    assert read['per_day'] == 5.0 and read['needed_per_day'] == 2.5 and read['on_pace'] is True
+    assert read['finish'] == (TODAY + timedelta(days=10)).isoformat() and read['margin_days'] == 10
+    behind = dict(on_track, deadline=(TODAY + timedelta(days=4)).isoformat())
+    assert live.pace(behind, TODAY)['on_pace'] is False
+    assert live.pace({'progress': 0, 'created_at': start}, TODAY)['finish'] is None
+    assert live.pace({'progress': 100, 'created_at': start}, TODAY)['on_pace'] is True
+
+
+def test_goals_board(client):
+    client.post('/api/add_goal', json={'title': 'B later', 'goal_type': 'tasks', 'target_tasks': 4,
+                                       'deadline': (TODAY + timedelta(days=30)).isoformat()})
+    client.post('/api/add_goal', json={'title': 'A sooner', 'goal_type': 'tasks', 'target_tasks': 4,
+                                       'deadline': (TODAY + timedelta(days=3)).isoformat()})
+    data = _live(client, source='goals')
+    assert [row['title'] for row in data['goals']] == ['A sooner', 'B later']
+    assert data['total'] == 2 and data['done'] == 0
+    assert 'per_day' in data['goals'][0]['pace']
+    assert _live(client, source='goals', status='done')['goals'] == []
+
+
+def test_record_history_marks_each_best(client):
+    for value, on in ((72, '2026-01-10'), (90, '2026-03-10'), (84, '2026-05-10'), (96, '2026-07-01')):
+        client.post('/api/records/save', json={'kind': 'record', 'name': 'AMC 10', 'value': value, 'target': 120,
+                                               'unit': 'points', 'achieved_on': on})
+    client.post('/api/records/save', json={'kind': 'record', 'name': 'Mile', 'value': 7, 'achieved_on': '2026-02-01'})
+    data = _live(client, source='record')
+    assert data['name'] == 'AMC 10' and data['names'] == ['AMC 10', 'Mile']
+    assert [row['best'] for row in data['history']] == [True, True, False, True]
+    assert [row['value'] for row in data['bests']] == [72, 90, 96]
+    assert data['improvement'] == 24 and data['improvement_pct'] == 33
+    assert data['average_gain'] == 8 and data['target'] == 120 and data['to_target'] == 50
+    assert _live(client, source='record', name='Mile')['best'] == 7
+    assert _live(client, source='record', name='Nope')['name'] == 'AMC 10'
+
+
+def test_record_view_with_nothing():
+    assert live.record_view([], '', TODAY) == {'empty': True}
+
+
+def test_heatmap_shades_by_quartile():
+    series = [{'date': (TODAY - timedelta(days=back)).isoformat(), 'xp_earned': value}
+              for back, value in ((0, 40), (1, 10), (2, 20), (3, 30), (10, 5))]
+    view = live.heatmap_view(series, 2, 'xp', TODAY)
+    assert date.fromisoformat(view['start']).weekday() == 0
+    assert view['days'][-1]['date'] == TODAY.isoformat()
+    levels = {d['date']: d['level'] for d in view['days'] if d['value']}
+    assert levels[TODAY.isoformat()] == 4
+    assert min(levels.values()) >= 1
+    assert view['current_run'] == 4 and view['longest_run'] == 4
+    assert view['busiest']['value'] == 40
+
+
+def test_rhythm_reads_the_clock(client):
+    rows = [{'status': 'done', 'completed_at': TODAY.isoformat() + 'T09:15:00', 'xp_value': 10},
+            {'status': 'done', 'completed_at': TODAY.isoformat() + 'T09:45:00', 'xp_value': 30},
+            {'status': 'done', 'completed_at': TODAY.isoformat() + 'T21:00:00', 'xp_value': 5},
+            {'status': 'todo', 'completed_at': None}]
+    view = live.rhythm_view(rows, 30, 'tasks', TODAY)
+    assert view['total'] == 3 and view['peak_hour'] == 9 and view['peak_day'] == TODAY.weekday()
+    assert view['parts'] == {'morning': 67, 'afternoon': 0, 'evening': 33, 'night': 0}
+    assert view['focus_score'] == 100
+    assert live.rhythm_view(rows, 30, 'xp', TODAY)['hour'][9] == 40
+    _done(client, _task(client, 'Late night set'))
+    assert _live(client, source='rhythm')['total'] == 1
+
+
+def test_subject_mix_and_balance(client):
+    for subject, xp in (('mathematics', 30), ('mathematics', 30), ('music', 20)):
+        _done(client, _task(client, 'Work', xp=xp, subject=subject))
+    data = _live(client, source='subjects', days=7)
+    assert [(row['name'], row['value']) for row in data['rows']] == [('Mathematics', 60), ('Music', 20)]
+    assert data['rows'][0]['share'] == 75.0 and data['subjects'] == 2
+    assert 0 < data['balance'] < 100
+    assert _live(client, source='subjects', days=7, metric='tasks')['rows'][0]['value'] == 2
+    one = live.subjects_view([{'status': 'done', 'subject': 'a', 'xp_value': 5, 'completed_at': TODAY.isoformat()}],
+                             7, 'xp', TODAY, str, 8)
+    assert one['balance'] == 0
+
+
+def test_productivity_trend_and_forecast():
+    series = [{'date': (TODAY - timedelta(days=7 * back)).isoformat(), 'xp_earned': 10 * (4 - back),
+               'tasks_completed': 1, 'focus_minutes': 0} for back in range(4)]
+    view = live.productivity_view(series, 4, 0, TODAY)
+    assert [week['value'] for week in view['weeks']] == [10, 20, 30, 40]
+    assert view['trend_per_week'] == 10 and view['forecast'] == 50
+    assert view['best_week']['value'] == 40
+    assert live.productivity_view(series, 4, 0, TODAY, 'tasks')['weeks'][-1]['value'] == 1
+
+
+def test_growth_cumulative_and_metric(client):
+    _done(client, _task(client, 'Proofs', xp=25, subject='mathematics'))
+    data = _live(client, source='growth', subject='mathematics', days=7, metric='tasks')
+    assert data['metric'] == 'tasks' and data['points'][-1]['value'] == 1 and data['points'][-1]['total'] == 1
+    assert data['peak']['value'] == 1
+
+
+def test_options_list_record_names(client):
+    client.post('/api/records/save', json={'kind': 'record', 'name': 'Mile', 'value': 7})
+    assert client.get('/api/spaces/live/options').json()['records'] == ['Mile']
+
+
+# --------------------------------------------------------------------------
+# Containers
+# --------------------------------------------------------------------------
+def test_a_container_keeps_its_fill_and_what_is_inside(client):
+    doc = {'blocks': [
+        {'id': 'c', 'type': 'container', 'text': 'This week', 'x': 6, 'y': 10, 'w': 6,
+         'fill': {'color': '#DBEAFE', 'style': 'fade'}},
+        {'id': 'in', 'type': 'live', 'text': '', 'indent': 1, 'live': {'source': 'calendar'}},
+        {'id': 'note', 'type': 'text', 'text': 'Mock test Friday', 'indent': 1, 'x': 0, 'y': 0, 'w': 3},
+    ]}
+    space = client.post('/api/spaces/1', json={'doc': doc}).json()['space']
+    blocks = space['doc']['blocks']
+    assert blocks[0] == {'id': 'c', 'type': 'container', 'text': 'This week', 'x': 6, 'y': 10, 'w': 6,
+                         'fill': {'color': '#dbeafe', 'style': 'fade'}}
+    # What's inside rides with it, so it keeps no place of its own.
+    assert blocks[2] == {'id': 'note', 'type': 'text', 'text': 'Mock test Friday', 'indent': 1}
+    assert space['body'].splitlines()[:3] == ['▣ This week', '  [Live: Calendar]', '  Mock test Friday']

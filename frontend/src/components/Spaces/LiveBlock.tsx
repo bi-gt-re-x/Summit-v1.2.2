@@ -9,36 +9,42 @@
  * looks at can be changed without making a new block; the arrow reads again
  * by hand.
  */
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Link, useInRouterContext } from 'react-router-dom';
 import type { Block } from './blocks';
 import {
   AHEAD,
+  GOAL_STATUS,
+  GROUP_LABEL,
+  HEAT_WEEKS,
   LIMIT_MAX,
-  LIVE_SOURCES,
+  LIVE_GROUPS,
+  METRICS,
+  METRIC_LABEL,
+  RHYTHM_DAYS,
   SOURCE_INFO,
+  VIEWS,
+  VIEW_LABEL,
   WEEKS,
   WINDOWS,
   agoFrom,
   cleanLive,
   defaultLive,
-  liveKey,
-  shortDate,
-  signed,
-  whenFrom,
+  readKey,
   type CalendarData,
   type GoalData,
   type GrowthData,
   type LiveConfig,
   type LiveData,
+  type LiveGroup,
   type LiveOptions,
   type LiveSource,
-  type NodeState,
-  type ProductivityData,
-  type RecordsData,
+  type Metric,
+  type RecordData,
   type SkillsData,
 } from './live';
 import { latestRevisions, watchLive } from './liveWatch';
+import { View } from './LiveViews';
 import { liveOptions, readLive } from '@/services/live';
 
 /** Read again on the next poll once a reading is this old, whatever the stamps say (a new day, say). */
@@ -55,7 +61,8 @@ interface Reading {
 
 /** What one config shows, kept fresh. */
 export function useLive(config: LiveConfig): Reading & { refresh: () => void } {
-  const key = liveKey(config);
+  // The style is how it's drawn, not what's read: switching it reads nothing.
+  const key = readKey(config);
   const [reading, setReading] = useState<Reading>({ data: null, source: null, error: null, loading: true, at: null });
   const revision = useRef<string | null>(null);
   const at = useRef<number>(0);
@@ -212,19 +219,29 @@ export function LiveBlock({ one, disabled, register, onChange, onKey }: LiveBloc
 
 const HOME: Record<LiveSource, string> = {
   goal: '/goals',
-  skills: '/skill-trees',
-  productivity: '/analytics',
+  goals: '/goals',
   records: '/achievements',
+  record: '/achievements',
   calendar: '/calendar',
+  productivity: '/analytics',
   growth: '/analytics/growth',
+  skills: '/skill-trees',
+  heatmap: '/analytics',
+  rhythm: '/analytics',
+  subjects: '/subjects',
 };
 const HOME_LABEL: Record<LiveSource, string> = {
   goal: 'Goals',
-  skills: 'Skill trees',
-  productivity: 'Analytics',
+  goals: 'Goals',
   records: 'Achievements',
+  record: 'Achievements',
   calendar: 'Calendar',
+  productivity: 'Analytics',
   growth: 'Growth',
+  skills: 'Skill trees',
+  heatmap: 'Analytics',
+  rhythm: 'Analytics',
+  subjects: 'Subjects',
 };
 
 /** A link inside the app, or a plain one where there is no router (a test). */
@@ -235,16 +252,34 @@ function Go({ to, children }: { to: string; children: ReactNode }) {
 /** What the block calls itself when the reader hasn't named it. */
 function titleOf(config: LiveConfig, data: LiveData | null): string {
   const label = SOURCE_INFO[config.source].label;
+  const metric = config.metric ? METRIC_LABEL[config.metric] : '';
   if (!data) return label;
-  if (config.source === 'goal' && !(data as GoalData).empty && 'goal' in data) return (data as GoalData).goal.title;
-  if (config.source === 'skills' && 'title' in data) return `${(data as SkillsData).title} skill tree`;
-  if (config.source === 'growth') {
-    const growth = data as GrowthData;
-    return `${growth.name || 'All subjects'}, last ${growth.days} days`;
+  switch (config.source) {
+    case 'goal':
+      return 'goal' in data ? (data as GoalData).goal.title : label;
+    case 'goals':
+      return config.status === 'done' ? 'Finished goals' : config.status === 'all' ? 'All goals' : 'Open goals';
+    case 'record':
+      return 'name' in data ? `${(data as RecordData).name} over time` : label;
+    case 'records':
+      return config.category ? `${config.category} records` : 'Personal bests';
+    case 'skills':
+      return 'title' in data ? `${(data as SkillsData).title} skill tree` : label;
+    case 'growth': {
+      const growth = data as GrowthData;
+      return `${growth.name || 'All subjects'}, last ${growth.days} days`;
+    }
+    case 'calendar':
+      return `Next ${(data as CalendarData).days} days`;
+    case 'productivity':
+      return `${metric} by week`;
+    case 'heatmap':
+      return `${metric}, last ${config.weeks} weeks`;
+    case 'rhythm':
+      return 'When the work gets done';
+    case 'subjects':
+      return `Subject mix, last ${config.days} days`;
   }
-  if (config.source === 'calendar') return `Next ${(data as CalendarData).days} days`;
-  if (config.source === 'records') return config.category ? `${config.category} records` : 'Personal bests';
-  return label;
 }
 
 // --------------------------------------------------------------------------
@@ -265,16 +300,26 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
   }, []);
 
   const set = (patch: Record<string, unknown>) => onChange(cleanLive({ ...config, ...patch }));
+  const metrics = METRICS[config.source];
   return (
     <div className="sp-live-settings" role="group" aria-label="Block settings">
       <label className="sp-live-field">
         Shows
         <select value={config.source} onChange={(event) => onChange(defaultLive(event.target.value as LiveSource))}>
-          {LIVE_SOURCES.map((source) => (
-            <option key={source} value={source}>{SOURCE_INFO[source].label}</option>
+          {(Object.keys(LIVE_GROUPS) as LiveGroup[]).map((group) => (
+            <optgroup key={group} label={GROUP_LABEL[group]}>
+              {LIVE_GROUPS[group].map((source) => (
+                <option key={source} value={source}>{SOURCE_INFO[source].label}</option>
+              ))}
+            </optgroup>
           ))}
         </select>
       </label>
+
+      <Words label="Style" value={config.view} choices={VIEWS[config.source]} name={(view) => VIEW_LABEL[view] ?? view} onPick={(view) => set({ view })} />
+      {metrics && config.metric && (
+        <Words label="Measure" value={config.metric} choices={metrics} name={(metric) => METRIC_LABEL[metric as Metric]} onPick={(metric) => set({ metric })} />
+      )}
 
       {config.source === 'goal' && (
         <label className="sp-live-field">
@@ -283,6 +328,20 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
             <option value="">Whichever is most urgent</option>
             {options?.goals.map((goal) => (
               <option key={goal.id} value={goal.id}>{goal.title}{goal.done ? ' (done)' : ''}</option>
+            ))}
+          </select>
+        </label>
+      )}
+      {config.source === 'goals' && (
+        <Words label="Goals" value={config.status} choices={GOAL_STATUS} name={(status) => ({ active: 'Open', all: 'All', done: 'Finished' })[status] ?? status} onPick={(status) => set({ status })} />
+      )}
+      {config.source === 'record' && (
+        <label className="sp-live-field">
+          Record
+          <select value={config.name} onChange={(event) => set({ name: event.target.value })}>
+            <option value="">The one logged most</option>
+            {options?.records.map((name) => (
+              <option key={name} value={name}>{name}</option>
             ))}
           </select>
         </label>
@@ -298,9 +357,10 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
           </select>
         </label>
       )}
-      {config.source === 'productivity' && (
-        <Choice label="Weeks" value={config.weeks} choices={WEEKS} onPick={(weeks) => set({ weeks })} />
-      )}
+      {config.source === 'productivity' && <Choice label="Weeks" value={config.weeks} choices={WEEKS} onPick={(weeks) => set({ weeks })} />}
+      {config.source === 'heatmap' && <Choice label="Weeks" value={config.weeks} choices={HEAT_WEEKS} onPick={(weeks) => set({ weeks })} />}
+      {config.source === 'rhythm' && <Choice label="Days" value={config.days} choices={RHYTHM_DAYS} onPick={(days) => set({ days })} />}
+      {config.source === 'subjects' && <Choice label="Days" value={config.days} choices={WINDOWS} onPick={(days) => set({ days })} />}
       {config.source === 'records' && (
         <>
           <label className="sp-live-field">
@@ -322,9 +382,7 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
           </label>
         </>
       )}
-      {config.source === 'calendar' && (
-        <Choice label="Days ahead" value={config.days} choices={AHEAD} onPick={(days) => set({ days })} />
-      )}
+      {config.source === 'calendar' && <Choice label="Days ahead" value={config.days} choices={AHEAD} onPick={(days) => set({ days })} />}
       {config.source === 'growth' && (
         <>
           <label className="sp-live-field">
@@ -344,313 +402,21 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
 }
 
 function Choice({ label, value, choices, onPick }: { label: string; value: number; choices: readonly number[]; onPick: (n: number) => void }) {
+  return <Words label={label} value={String(value)} choices={choices.map(String)} name={(n) => n} onPick={(n) => onPick(Number(n))} />;
+}
+
+/** A row of buttons, one per choice, the chosen one pressed. */
+function Words({ label, value, choices, name, onPick }: { label: string; value: string; choices: readonly string[]; name: (choice: string) => string; onPick: (choice: string) => void }) {
   return (
     <div className="sp-live-field">
       {label}
       <div className="sp-chart-kinds" role="radiogroup" aria-label={label}>
-        {choices.map((n) => (
-          <button key={n} type="button" role="radio" aria-checked={value === n} className="sp-chart-kind" onClick={() => onPick(n)}>
-            {n}
+        {choices.map((choice) => (
+          <button key={choice} type="button" role="radio" aria-checked={value === choice} className="sp-chart-kind" onClick={() => onPick(choice)}>
+            {name(choice)}
           </button>
         ))}
       </div>
-    </div>
-  );
-}
-
-// --------------------------------------------------------------------------
-// Views
-// --------------------------------------------------------------------------
-function View({ config, data }: { config: LiveConfig; data: LiveData }) {
-  switch (config.source) {
-    case 'goal':
-      return (data as GoalData).empty ? <p className="sp-live-note">No goal to show yet. Add one on the Goals page.</p> : <GoalView data={data as GoalData} />;
-    case 'skills':
-      return (data as SkillsData).empty ? <p className="sp-live-note">Pick a skill tree in settings.</p> : <SkillsView data={data as SkillsData} />;
-    case 'productivity':
-      return <ProductivityView data={data as ProductivityData} />;
-    case 'records':
-      return <RecordsView data={data as RecordsData} />;
-    case 'calendar':
-      return <CalendarView data={data as CalendarData} />;
-    case 'growth':
-      return <GrowthView data={data as GrowthData} />;
-  }
-}
-
-const num = (value: number): string =>
-  Number.isInteger(value) ? value.toLocaleString() : value.toLocaleString(undefined, { maximumFractionDigits: 2 });
-
-function Bar({ share, label }: { share: number; label: string }) {
-  const pct = Math.max(0, Math.min(100, share));
-  return (
-    <div className="sp-live-bar" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct)}>
-      <span style={{ width: `${pct}%` }} />
-    </div>
-  );
-}
-
-function Stat({ value, label, change }: { value: string; label: string; change?: number | null }) {
-  const sign = signed(change);
-  return (
-    <div className="sp-live-stat">
-      <strong>{value}</strong>
-      <span>{label}</span>
-      {sign && <em className={change! >= 0 ? 'is-up' : 'is-down'}>{sign}</em>}
-    </div>
-  );
-}
-
-function GoalView({ data }: { data: GoalData }) {
-  const { goal } = data;
-  const due = goal.deadline ? `Due ${shortDate(goal.deadline)} (${whenFrom(goal.deadline).toLowerCase()})` : 'No deadline';
-  return (
-    <div className="sp-live-goal">
-      <div className="sp-live-goal-top">
-        <strong className="sp-live-big">{Math.round(goal.progress)}%</strong>
-        <div className="sp-live-goal-words">
-          <span>{num(goal.current)} of {num(goal.target)} {goal.unit}</span>
-          <span className={goal.days_left !== null && goal.days_left < 0 && goal.status !== 'completed' ? 'is-late' : ''}>
-            {goal.status === 'completed' ? 'Done' : due}
-          </span>
-        </div>
-        {goal.health?.label && <span className={`sp-live-pill is-${goal.health.state ?? 'none'}`} title={goal.health.reason ?? undefined}>{goal.health.label}</span>}
-      </div>
-      <Bar share={goal.progress} label={`${goal.title} progress`} />
-      {data.next_milestone && (
-        <div className="sp-live-next">
-          <span className="sp-live-kicker">Next checkpoint</span>
-          <strong>{data.next_milestone.title}</strong>
-          <span>
-            {data.next_milestone.date ? `${shortDate(data.next_milestone.date)} · ` : ''}
-            {data.next_milestone.steps ? `${data.next_milestone.steps_done} of ${data.next_milestone.steps} steps` : 'No steps yet'}
-          </span>
-        </div>
-      )}
-      {data.milestones.length > 0 && (
-        <ol className="sp-live-stones" aria-label="Checkpoints">
-          {data.milestones.map((stone) => (
-            <li key={stone.id} className={`is-${stone.status}`} title={stone.title}>
-              <span className="sp-live-stone" aria-hidden="true" />
-              <span className="sp-live-sr">{stone.title}: {stone.status === 'done' ? 'done' : 'open'}</span>
-            </li>
-          ))}
-        </ol>
-      )}
-      <div>
-        <span className="sp-live-kicker">Recent work {data.done_this_week ? `· ${data.done_this_week} this week` : ''}</span>
-        {data.recent.length ? (
-          <ul className="sp-live-list">
-            {data.recent.slice(0, 3).map((row) => (
-              <li key={`${row.at}-${row.title}`}>
-                <span>{row.title}</span>
-                <span className="sp-live-muted">{whenFrom(row.at)}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="sp-live-note">Nothing linked to this goal yet.</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-const STATE_LABEL: Record<NodeState, string> = { done: 'Done', doing: 'In progress', next: 'Up next', locked: 'Locked' };
-
-function SkillsView({ data }: { data: SkillsData }) {
-  const by = (state: NodeState) => data.nodes.filter((node) => node.state === state);
-  const practiced = data.nodes.filter((node) => node.attempted > 0).sort((a, b) => b.attempted - a.attempted).slice(0, 6);
-  return (
-    <div className="sp-live-skills">
-      <div className="sp-live-stats">
-        <Stat value={`${data.done}/${data.total}`} label="skills done" />
-        <Stat value={String(data.doing)} label="in progress" />
-        <Stat value={data.accuracy === null ? '–' : `${data.accuracy}%`} label="accuracy" />
-      </div>
-      <Bar share={data.total ? (data.done / data.total) * 100 : 0} label={`${data.title} skills done`} />
-      <div className="sp-live-cols">
-        {(['done', 'doing', 'next'] as NodeState[]).map((state) => {
-          const nodes = by(state);
-          return (
-            <div key={state} className={`sp-live-col is-${state}`}>
-              <span className="sp-live-kicker">{STATE_LABEL[state]} · {nodes.length}</span>
-              <ul className="sp-live-nodes">
-                {nodes.slice(0, 5).map((node) => (
-                  <li key={node.id}>
-                    <span>{node.name}</span>
-                    {node.level > 0 && <span className="sp-live-muted">L{node.level}</span>}
-                  </li>
-                ))}
-                {nodes.length > 5 && <li className="sp-live-muted">+{nodes.length - 5} more</li>}
-                {nodes.length === 0 && <li className="sp-live-muted">None yet</li>}
-              </ul>
-            </div>
-          );
-        })}
-      </div>
-      {practiced.length > 0 && (
-        <div>
-          <span className="sp-live-kicker">Accuracy by topic</span>
-          <ul className="sp-live-acc">
-            {practiced.map((node) => (
-              <li key={node.id}>
-                <span className="sp-live-acc-name">{node.name}</span>
-                <Bar share={node.accuracy ?? 0} label={`${node.name} accuracy`} />
-                <span className="sp-live-acc-num">{node.accuracy === null ? '–' : `${node.accuracy}%`}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Columns({ values, labels, title }: { values: number[]; labels: string[]; title: string }) {
-  const top = Math.max(1, ...values);
-  return (
-    <div className="sp-live-cols-chart" role="img" aria-label={`${title}: ${values.map((v, i) => `${labels[i]} ${v}`).join(', ')}`}>
-      {values.map((value, i) => (
-        <div key={i} className="sp-live-colbar" style={{ '--h': `${(value / top) * 100}%`, '--c': `var(--sp-chart-${i === values.length - 1 ? 0 : 4})` } as CSSProperties}>
-          <span className="sp-live-colbar-num">{value ? num(value) : ''}</span>
-          <span className="sp-live-colbar-fill" />
-          <span className="sp-live-colbar-label">{labels[i]}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ProductivityView({ data }: { data: ProductivityData }) {
-  const thisWeek = data.weeks[data.weeks.length - 1];
-  return (
-    <div className="sp-live-prod">
-      <div className="sp-live-stats">
-        <Stat value={num(thisWeek?.xp ?? 0)} label="XP this week" change={data.change} />
-        <Stat value={String(thisWeek?.tasks ?? 0)} label="tasks this week" />
-        <Stat value={`${data.streak}`} label="day streak" />
-      </div>
-      <Columns
-        title="XP by week"
-        values={data.weeks.map((week) => week.xp)}
-        labels={data.weeks.map((week, i) => (i === data.weeks.length - 1 ? 'This wk' : shortDate(week.start).split(', ')[1] ?? ''))}
-      />
-      <div>
-        <span className="sp-live-kicker">Last 4 weeks · {data.consistency}% of days</span>
-        <div className="sp-live-days" role="img" aria-label={`Worked on ${data.active_days} of the last ${data.days.length} days`}>
-          {data.days.map((day) => (
-            <span key={day.date} className={day.active ? 'is-on' : ''} title={`${shortDate(day.date)}${day.active ? `: ${day.xp} XP` : ': nothing'}`} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** A small line through some values, no axes. */
-function Spark({ values, label }: { values: number[]; label: string }) {
-  if (values.length < 2) return null;
-  const lo = Math.min(...values);
-  const hi = Math.max(...values);
-  const span = hi - lo || 1;
-  const d = values.map((v, i) => `${i ? 'L' : 'M'} ${(i / (values.length - 1)) * 100} ${28 - ((v - lo) / span) * 24}`).join(' ');
-  return (
-    <svg className="sp-live-spark" viewBox="0 0 100 30" preserveAspectRatio="none" role="img" aria-label={label}>
-      <path d={d} vectorEffect="non-scaling-stroke" />
-    </svg>
-  );
-}
-
-function RecordsView({ data }: { data: RecordsData }) {
-  if (!data.bests.length) return <p className="sp-live-note">No records yet. Log one on the Achievements page.</p>;
-  return (
-    <ul className="sp-live-records">
-      {data.bests.map((row) => (
-        <li key={row.name}>
-          <div className="sp-live-rec-words">
-            <strong>{row.name}</strong>
-            <span className="sp-live-muted">
-              {row.best_on ? `Best on ${shortDate(row.best_on)}` : 'Best'}
-              {row.entries > 1 && row.improvement ? ` · ${row.improvement > 0 ? '+' : ''}${num(row.direction === 'lower' ? -row.improvement : row.improvement)} since first` : ''}
-            </span>
-          </div>
-          <Spark values={row.history.map((h) => h.value)} label={`${row.name} over time`} />
-          <span className="sp-live-rec-best">
-            {num(row.best)}
-            {row.unit && <small> {row.unit}</small>}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-const KIND_MARK: Record<CalendarData['items'][number]['kind'], string> = { task: '○', milestone: '◆', deadline: '⚑' };
-
-function CalendarView({ data }: { data: CalendarData }) {
-  if (!data.items.length) return <p className="sp-live-note">Nothing due in the next {data.days} days.</p>;
-  const groups = new Map<string, CalendarData['items']>();
-  for (const item of data.items) {
-    const key = item.overdue ? 'overdue' : item.date;
-    groups.set(key, [...(groups.get(key) ?? []), item]);
-  }
-  return (
-    <div className="sp-live-cal">
-      {[...groups.entries()].map(([key, items]) => (
-        <div key={key} className="sp-live-cal-day">
-          <span className={`sp-live-kicker${key === 'overdue' ? ' is-late' : ''}`}>
-            {key === 'overdue' ? 'Overdue' : `${whenFrom(key)} · ${shortDate(key)}`}
-          </span>
-          <ul className="sp-live-list">
-            {items.map((item) => (
-              <li key={`${item.kind}-${item.id}`} className={`is-${item.kind}`}>
-                <span>
-                  <span className="sp-live-mark" aria-hidden="true">{KIND_MARK[item.kind]}</span>
-                  {item.title}
-                  {item.goal && <span className="sp-live-muted"> · {item.goal}</span>}
-                  {item.kind === 'deadline' && <span className="sp-live-muted"> · goal deadline</span>}
-                </span>
-                <span className="sp-live-muted">{item.time ?? ''}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-      {data.total > data.items.length && <p className="sp-live-note">+{data.total - data.items.length} more</p>}
-    </div>
-  );
-}
-
-function GrowthView({ data }: { data: GrowthData }) {
-  const values = data.points.map((point) => point.xp);
-  const top = Math.max(1, ...values);
-  const line = values.map((v, i) => `${i ? 'L' : 'M'} ${(i / Math.max(1, values.length - 1)) * 100} ${38 - (v / top) * 34}`).join(' ');
-  return (
-    <div className="sp-live-growth">
-      <div className="sp-live-stats">
-        <Stat value={num(data.now.xp)} label="XP" change={data.change.xp} />
-        <Stat value={String(data.now.tasks)} label="tasks" change={data.change.tasks} />
-        <Stat value={String(data.now.active_days)} label="active days" change={data.change.active_days} />
-        {data.skills && data.skills.attempted > 0 && (
-          <Stat value={`${data.skills.accuracy}%`} label="accuracy" />
-        )}
-      </div>
-      <svg className="sp-live-area" viewBox="0 0 100 40" preserveAspectRatio="none" role="img"
-        aria-label={`XP ${data.step === 7 ? 'by week' : 'by day'} over the last ${data.days} days`}>
-        <path className="sp-live-area-fill" d={`${line} L 100 40 L 0 40 Z`} />
-        <path className="sp-live-area-line" d={line} vectorEffect="non-scaling-stroke" />
-      </svg>
-      <div className="sp-live-axis">
-        <span>{shortDate(data.start)}</span>
-        <span>Today</span>
-      </div>
-      <p className="sp-live-muted sp-live-small">
-        Compared with the {data.days} days before.
-        {data.skills && data.skills.attempted > 0
-          ? ` ${data.skills.attempted} practice problems answered.`
-          : ''}
-      </p>
     </div>
   );
 }

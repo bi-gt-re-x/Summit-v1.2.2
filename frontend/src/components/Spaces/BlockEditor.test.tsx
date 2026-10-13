@@ -410,3 +410,72 @@ describe('the page grid', () => {
     expect(latest[1]).toEqual({ id: 'b1', type: 'text', text: 'b', indent: 1 });
   });
 });
+
+describe('the slash menu sections', () => {
+  it('keeps Analytics and Goals & records folded until opened', () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ success: true, data: { empty: true }, revision: 'r', at: '' }))));
+    page({ text: '' });
+    type(fields()[0]!, '/');
+    const fold = screen.getByRole('option', { name: /Analytics/ });
+    expect(fold).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('option', { name: /Activity heatmap/ })).toBeNull();
+    expect(screen.getByRole('option', { name: /Goals & records/ })).toHaveAttribute('aria-expanded', 'false');
+
+    fireEvent.click(fold);
+    expect(screen.getByRole('option', { name: /Analytics/ })).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.click(screen.getByRole('option', { name: /Activity heatmap/ }));
+    expect(kinds()).toEqual(['live', 'text']);
+    expect(latest[0]!.live).toMatchObject({ source: 'heatmap', view: 'grid' });
+    vi.unstubAllGlobals();
+  });
+
+  it('opens a folded section from the keyboard', () => {
+    page({ text: '' });
+    type(fields()[0]!, '/');
+    // Analytics is the first row; the arrows can land on it.
+    const options = screen.getAllByRole('option');
+    const at = options.findIndex((option) => /Analytics/.test(option.textContent ?? ''));
+    for (let i = 0; i < at; i += 1) press(fields()[0]!, 'ArrowDown', 1);
+    expect(screen.getByRole('option', { name: /Analytics/ })).toHaveAttribute('aria-selected', 'true');
+    press(fields()[0]!, 'ArrowRight', 1);
+    expect(screen.getByRole('option', { name: /Analytics/ })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('option', { name: /Weekly rhythm/ })).toBeInTheDocument();
+  });
+
+  it('shows matches inside a folded section when something is typed', () => {
+    page({ text: '' });
+    type(fields()[0]!, '/');
+    type(fields()[0]!, '/rhythm');
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual([expect.stringContaining('Weekly rhythm')]);
+  });
+});
+
+describe('containers', () => {
+  it('come from the slash menu with a line inside and one after', () => {
+    page({ text: '' });
+    type(fields()[0]!, '/');
+    type(fields()[0]!, '/container');
+    press(fields()[0]!, 'Enter', 10);
+    expect(latest.map((one) => [one.type, one.indent ?? 0])).toEqual([['container', 0], ['text', 1], ['text', 0]]);
+    expect(screen.getByRole('textbox', { name: 'Container name' })).toBeInTheDocument();
+    expect(document.querySelector('.sp-item.is-container')).not.toBeNull();
+  });
+
+  it('add a block inside with the + on the box', () => {
+    render(<Host start={[{ id: 'box', type: 'container', text: 'Week' }]} />);
+    expect(screen.getByText(/Drag blocks in here/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Add a block inside' }));
+    expect(latest.map((one) => [one.id, one.type, one.indent ?? 0, one.text])).toEqual([
+      ['box', 'container', 0, 'Week'],
+      [latest[1]!.id, 'text', 1, '/'],
+    ]);
+    expect(screen.getByRole('listbox', { name: 'Block kinds' })).toBeInTheDocument();
+    expect(screen.queryByText(/Drag blocks in here/)).toBeNull();
+  });
+
+  it('are renamed in place', () => {
+    render(<Host start={[{ id: 'box', type: 'container', text: '' }]} />);
+    fireEvent.change(screen.getByRole('textbox', { name: 'Container name' }), { target: { value: 'This week' } });
+    expect(latest[0]!.text).toBe('This week');
+  });
+});

@@ -57,11 +57,13 @@ describe('typing shortcuts', () => {
 });
 
 describe('the slash menu', () => {
-  it('offers every kind before anything is typed, with one entry per chart, shape and live source', () => {
+  it('offers every kind before anything is typed, one entry per chart, shape and live source', () => {
     const all = matchKinds('');
-    expect(all.filter((kind) => !['chart', 'shape', 'live'].includes(kind.type))).toHaveLength(13);
+    expect(all.filter((kind) => !['chart', 'shape', 'live', 'container'].includes(kind.type))).toHaveLength(13);
+    expect(all.filter((kind) => kind.type === 'container')).toHaveLength(1);
     expect(all.filter((kind) => kind.type === 'live').map((kind) => kind.live)).toEqual([
-      'goal', 'skills', 'productivity', 'records', 'calendar', 'growth',
+      'productivity', 'growth', 'skills', 'heatmap', 'rhythm', 'subjects',
+      'goal', 'goals', 'records', 'record', 'calendar',
     ]);
     expect(all.filter((kind) => kind.type === 'chart').map((kind) => kind.chart)).toEqual(['bar', 'line', 'area', 'pie', 'donut']);
     expect(all.filter((kind) => kind.type === 'shape').map((kind) => kind.shape)).toEqual([
@@ -204,5 +206,31 @@ describe('changing the list', () => {
   it('drops what only the old kind meant when a block changes kind', () => {
     expect(retype(b('x', 'todo', 2, { checked: true }), 'h1')).toEqual({ id: 'x', type: 'h1', text: 'x', indent: 2 });
     expect(retype(b('x'), 'divider').text).toBe('');
+  });
+});
+
+describe('a container', () => {
+  const page = () => [
+    { id: 'box', type: 'container' as const, text: 'Week', x: 6, y: 0, w: 6 },
+    { id: 'in1', type: 'text' as const, text: 'one', indent: 1 },
+    { id: 'in2', type: 'live' as const, text: '', indent: 1 },
+    { id: 'after', type: 'text' as const, text: 'after' },
+  ];
+
+  it('comes back as itself, with its colour', () => {
+    const doc = normalise({ blocks: [{ id: 'c', type: 'container', text: 'Box', fill: { color: '#FF0000', style: 'fade' } }] });
+    expect(doc.blocks[0]).toEqual({ id: 'c', type: 'container', text: 'Box', fill: { color: '#ff0000', style: 'fade' } });
+  });
+
+  it('lets go of what was inside when it is deleted', () => {
+    const out = remove(page(), 'box');
+    expect(out.map((one) => [one.id, one.indent ?? 0])).toEqual([['in1', 0], ['in2', 0], ['after', 0]]);
+    // The first thing out takes the box's place.
+    expect(out[0]).toMatchObject({ x: 6, y: 0, w: 6 });
+  });
+
+  it('duplicates with everything in it', () => {
+    const { blocks } = duplicate(page(), 'box');
+    expect(blocks.map((one) => one.type)).toEqual(['container', 'text', 'live', 'container', 'text', 'live', 'text']);
   });
 });

@@ -19,7 +19,7 @@
 import { escapeInline, plainOf } from './inline';
 import { cleanFill, isHex, type Fill } from './fill';
 import { RULES } from '@/utils/sharedRules';
-import { LIVE_SOURCES, SOURCE_INFO, cleanLive, defaultLive, type LiveConfig, type LiveSource } from './live';
+import { GROUP_LABEL, LIVE_GROUPS, SOURCE_INFO, cleanLive, defaultLive, type LiveConfig, type LiveGroup, type LiveSource } from './live';
 
 export type BlockType =
   | 'text'
@@ -37,7 +37,8 @@ export type BlockType =
   | 'chart'
   | 'sticky'
   | 'shape'
-  | 'live';
+  | 'live'
+  | 'container';
 
 export type ShapeKind = 'rectangle' | 'rounded' | 'circle' | 'triangle' | 'diamond' | 'star' | 'hexagon' | 'arrow';
 
@@ -83,7 +84,7 @@ export interface Block {
   live?: LiveConfig;
   /** The words' colour, `#rrggbb`, on any block with words. Absent is the page's own ink. */
   color?: string;
-  /** Sticky notes and shapes: what they are filled with (./fill). */
+  /** Sticky notes, shapes and containers: what they are filled with (./fill). */
   fill?: Fill;
   /** Shapes only. */
   shape?: ShapeKind;
@@ -125,7 +126,25 @@ export interface BlockKind {
   shape?: ShapeKind;
   /** Live entries in the slash menu: which source it starts on. */
   live?: LiveSource;
+  /** Which section of the slash menu it sits in. Basic blocks when absent. */
+  group?: SlashGroup;
 }
+
+/** The slash menu's sections, in order. */
+export type SlashGroup = 'basic' | 'layout' | 'charts' | 'shapes' | LiveGroup;
+
+export const SLASH_GROUPS: readonly SlashGroup[] = ['analytics', 'goals', 'basic', 'layout', 'charts', 'shapes'];
+
+export const SLASH_GROUP_LABEL: Record<SlashGroup, string> = {
+  basic: 'Basic blocks',
+  layout: 'Layout',
+  charts: 'Charts you draw',
+  shapes: 'Shapes',
+  ...GROUP_LABEL,
+};
+
+/** Sections that fold into one row until opened: the live data ones. */
+export const FOLDED: ReadonlySet<SlashGroup> = new Set(['analytics', 'goals']);
 
 /** Every kind, in the order the slash menu lists them. */
 export const BLOCK_KINDS: BlockKind[] = [
@@ -145,19 +164,20 @@ export const BLOCK_KINDS: BlockKind[] = [
   { type: 'sticky', label: 'Sticky note', hint: 'A post-it in any colour.', keys: ['sticky', 'note', 'postit', 'post-it'], glyph: '🗒' },
   { type: 'shape', label: 'Shape', hint: 'A box, circle, star and more, in any colour.', keys: ['shape', 'box', 'rectangle'], glyph: '◆' },
   { type: 'live', label: 'Live data', hint: 'Your goals, skills or stats, kept up to date.', keys: ['live', 'data', 'dashboard', 'widget'], glyph: '◉' },
+  { type: 'container', label: 'Container', hint: 'A box to drag anywhere. Drop blocks in it.', keys: ['container', 'box', 'group', 'section', 'frame', 'panel', 'card'], glyph: '▣', group: 'layout' },
 ];
 
 /** The chart kinds the server keeps, in the order the chart's switcher shows them. */
 export const CHART_KINDS: readonly ChartKind[] = RULES.spaces.chart.kinds as ChartKind[];
 
 /** One slash-menu entry per chart kind, so "/pie" finds a pie straight away. */
-const CHART_ENTRIES: BlockKind[] = [
+const CHART_ENTRIES: BlockKind[] = ([
   { type: 'chart', chart: 'bar', label: 'Bar chart', hint: 'Drag each bar to set its value.', keys: ['chart', 'bar', 'graph', 'column'], glyph: '▥' },
   { type: 'chart', chart: 'line', label: 'Line chart', hint: 'Drag the points up and down.', keys: ['chart', 'line', 'graph', 'trend'], glyph: '⟋' },
   { type: 'chart', chart: 'area', label: 'Area chart', hint: 'A line chart, filled in.', keys: ['chart', 'area', 'graph'], glyph: '◭' },
   { type: 'chart', chart: 'pie', label: 'Pie chart', hint: 'Drag the edges between slices.', keys: ['chart', 'pie', 'share'], glyph: '◔' },
   { type: 'chart', chart: 'donut', label: 'Donut chart', hint: 'A pie with a hole in it.', keys: ['chart', 'donut', 'doughnut', 'ring'], glyph: '◎' },
-];
+] as BlockKind[]).map((kind) => ({ ...kind, group: 'charts' as const }));
 
 export const SHAPE_KINDS: readonly ShapeKind[] = RULES.spaces.shapes as ShapeKind[];
 
@@ -184,28 +204,32 @@ const SHAPE_ENTRIES: BlockKind[] = SHAPE_KINDS.map((shape) => ({
   hint: 'A shape in any colour.',
   keys: ['shape', shape],
   glyph: SHAPE_GLYPH[shape],
+  group: 'shapes',
 }));
 
 /** One slash-menu entry per live source, so "/goal" finds a goal's progress. */
-const LIVE_ENTRIES: BlockKind[] = LIVE_SOURCES.map((source) => ({
-  type: 'live',
-  live: source,
-  label: SOURCE_INFO[source].label,
-  hint: SOURCE_INFO[source].hint,
-  keys: ['live', 'data', ...SOURCE_INFO[source].keys],
-  glyph: SOURCE_INFO[source].glyph,
-}));
+const LIVE_ENTRIES: BlockKind[] = (Object.keys(LIVE_GROUPS) as LiveGroup[]).flatMap((group) =>
+  LIVE_GROUPS[group].map((source) => ({
+    type: 'live' as const,
+    live: source,
+    label: SOURCE_INFO[source].label,
+    hint: SOURCE_INFO[source].hint,
+    keys: ['live', 'data', group, ...SOURCE_INFO[source].keys],
+    glyph: SOURCE_INFO[source].glyph,
+    group,
+  })),
+);
 
 /** What the slash menu offers: every kind of block, one entry per chart, shape and live source. */
 export const SLASH_KINDS: BlockKind[] = [
-  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape' && kind.type !== 'live'),
+  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape' && kind.type !== 'live').map((kind) => ({ ...kind, group: kind.group ?? 'basic' })),
   ...CHART_ENTRIES,
   ...SHAPE_ENTRIES,
   ...LIVE_ENTRIES,
 ];
 
 /** Kinds that are drawn rather than written: no Turn into, to or from. */
-export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape', 'live']);
+export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape', 'live', 'container']);
 
 /** What "Turn into" offers: the kinds made of words. */
 export const TURN_KINDS: BlockKind[] = BLOCK_KINDS.filter((kind) => !DRAWN.has(kind.type));
@@ -224,6 +248,38 @@ export function matchKinds(query: string): BlockKind[] {
       kind.keys.some((key) => key.startsWith(q)),
   ).sort((a, b) => rank(a) - rank(b));
 }
+
+/** One row of the slash menu: a section's heading, or a kind to pick. */
+export type SlashRow =
+  | { row: 'head'; group: SlashGroup; label: string; open: boolean; count: number; folds: boolean }
+  | { row: 'kind'; kind: BlockKind };
+
+/**
+ * The slash menu as rows, in sections. With nothing typed, the folded
+ * sections (Analytics, Goals & records) show as one heading each, opened by
+ * picking it; `open` names the ones that are. With something typed, every
+ * section that has a match is shown open, so a search never hides its answer.
+ */
+export function slashRows(query: string, open: ReadonlySet<SlashGroup> = new Set()): SlashRow[] {
+  const typed = query.trim() !== '';
+  const kinds = matchKinds(query);
+  const rows: SlashRow[] = [];
+  const groups = typed
+    ? [...new Set(kinds.map((kind) => kind.group ?? 'basic'))]
+    : SLASH_GROUPS;
+  for (const group of groups) {
+    const mine = kinds.filter((kind) => (kind.group ?? 'basic') === group);
+    if (!mine.length) continue;
+    const folds = FOLDED.has(group) && !typed;
+    const shown = !folds || open.has(group);
+    rows.push({ row: 'head', group, label: SLASH_GROUP_LABEL[group], open: shown, count: mine.length, folds });
+    if (shown) rows.push(...mine.map((kind) => ({ row: 'kind' as const, kind })));
+  }
+  return rows;
+}
+
+/** Rows that can be landed on with the arrow keys: kinds, and the headings that fold. */
+export const pickable = (rows: SlashRow[]): SlashRow[] => rows.filter((row) => row.row === 'kind' || row.folds);
 
 /** List-like kinds: Enter carries them on, and Enter on an empty one ends the list. */
 export const LISTS: ReadonlySet<BlockType> = new Set(['bullet', 'numbered', 'todo', 'toggle']);
@@ -263,6 +319,11 @@ export function defaultChart(kind: ChartKind = 'bar'): ChartData {
 /** A new chart block, ready to drag. */
 export function chartBlock(kind: ChartKind = 'bar', extra: Partial<Block> = {}): Block {
   return block('chart', '', { chart: defaultChart(kind), ...extra });
+}
+
+/** A new container: an empty framed box the blocks indented under it ride in. */
+export function containerBlock(extra: Partial<Block> = {}): Block {
+  return block('container', '', extra);
 }
 
 /** A new live block, looking at `source` with its default settings. */
@@ -447,6 +508,10 @@ export function normalise(doc: Partial<SpaceDoc> | null | undefined, body = ''):
           if (type === 'toggle' && one.collapsed) next.collapsed = true;
           if (type === 'chart') next.chart = cleanChart(one.chart);
           if (type === 'live') next.live = cleanLive(one.live);
+          if (type === 'container') {
+            const fill = cleanFill(one.fill);
+            if (fill) next.fill = fill;
+          }
           if (isHex(one.color)) next.color = one.color.toLowerCase();
           if (type === 'sticky' || type === 'shape') {
             next.fill = cleanFill(one.fill) ?? (type === 'sticky' ? { color: '#fde68a', style: 'solid' } : { color: '#93c5fd', style: 'fade' });
@@ -608,6 +673,20 @@ export function duplicate(blocks: Block[], id: string): { blocks: Block[]; copy:
 export function remove(blocks: Block[], id: string): Block[] {
   const at = blocks.findIndex((one) => one.id === id);
   if (at < 0) return blocks;
+  // A container goes and what was in it stays, one level out, where the box was.
+  if (blocks[at]!.type === 'container') {
+    const end = span(blocks, at);
+    const box = blocks[at]!;
+    const freed = blocks.slice(at + 1, end + 1).map((one, i) => {
+      const indent = Math.max(0, (one.indent ?? 0) - 1);
+      const { indent: _indent, ...rest } = one;
+      const next: Block = indent ? { ...rest, indent } : rest;
+      // The first thing out takes the box's place on the page.
+      return i === 0 && !indent ? { ...next, ...cleanPlace(box) } : next;
+    });
+    const next = [...blocks.slice(0, at), ...freed, ...blocks.slice(end + 1)];
+    return next.length ? next : [block()];
+  }
   const end = blocks[at]!.type === 'toggle' ? span(blocks, at) : at;
   const next = [...blocks.slice(0, at), ...blocks.slice(end + 1)];
   return next.length ? next : [block()];

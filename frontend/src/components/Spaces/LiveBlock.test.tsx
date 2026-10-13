@@ -34,7 +34,7 @@ function stub() {
     if (url.includes('/api/spaces/live/revisions')) {
       body = { success: true, revisions: { records: server.revision } };
     } else if (url.includes('/api/spaces/live/options')) {
-      body = { success: true, goals: [{ id: 'g1', title: 'Make AIME', done: false }], trees: [], subjects: [], categories: [] };
+      body = { success: true, goals: [{ id: 'g1', title: 'Make AIME', done: false }], trees: [], subjects: [], categories: [], records: [] };
     } else if (url.includes('source=records')) {
       server.reads += 1;
       body = { success: true, config: {}, data: records(server.best), revision: server.revision, at: '2026-10-13T12:00:00' };
@@ -126,12 +126,16 @@ describe('a live block', () => {
     const goal = await screen.findByRole('combobox', { name: 'Goal' });
     await waitFor(() => expect(screen.getByRole('option', { name: 'Make AIME' })).toBeInTheDocument());
     fireEvent.change(goal, { target: { value: 'g1' } });
-    expect(latest.live).toEqual({ source: 'goal', goal: 'g1' });
+    expect(latest.live).toEqual({ source: 'goal', view: 'card', goal: 'g1' });
+    fireEvent.click(screen.getByRole('radio', { name: 'Ring' }));
+    expect(latest.live).toEqual({ source: 'goal', view: 'ring', goal: 'g1' });
 
     fireEvent.change(screen.getByRole('combobox', { name: 'Shows' }), { target: { value: 'growth' } });
-    expect(latest.live).toEqual({ source: 'growth', subject: '', days: 30 });
+    expect(latest.live).toEqual({ source: 'growth', view: 'area', metric: 'xp', subject: '', days: 30 });
     fireEvent.click(screen.getByRole('radio', { name: '90' }));
-    expect(latest.live).toEqual({ source: 'growth', subject: '', days: 90 });
+    fireEvent.click(screen.getByRole('radio', { name: 'Running total' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Tasks' }));
+    expect(latest.live).toEqual({ source: 'growth', view: 'cumulative', metric: 'tasks', subject: '', days: 90 });
     expect(latest.id).toBe('l');
   });
 
@@ -142,6 +146,16 @@ describe('a live block', () => {
     fireEvent.change(screen.getByRole('combobox', { name: 'Shows' }), { target: { value: 'goal' } });
     expect(screen.queryByText('AMC 10')).toBeNull();
     expect(await screen.findByText(/No goal to show yet/)).toBeInTheDocument();
+  });
+
+  it('draws a new style from what it already read', async () => {
+    render(<Host />);
+    await screen.findByText('90');
+    const reads = server.reads;
+    fireEvent.click(screen.getByRole('button', { name: 'Block settings' }));
+    fireEvent.click(screen.getByRole('radio', { name: 'Table' }));
+    expect(await screen.findByRole('table')).toBeInTheDocument();
+    expect(server.reads).toBe(reads);
   });
 
   it('keeps its settings shut on a page that cannot be edited', async () => {

@@ -43,6 +43,7 @@ import {
   type ClipboardEvent,
   type CSSProperties,
   type KeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
@@ -55,14 +56,16 @@ import {
   INDENT_MAX,
   chartBlock,
   cleanPlace,
+  containerBlock,
   liveBlock,
+  pickable,
+  slashRows,
   LISTS,
   block,
   duplicate,
   hasChildren,
   hiddenIds,
   indentOf,
-  matchKinds,
   moveDown,
   moveUp,
   numberOf,
@@ -75,6 +78,8 @@ import {
   type Block,
   type BlockKind,
   type BlockType,
+  type SlashGroup,
+  type SlashRow,
 } from './blocks';
 import {
   COLS,
@@ -83,7 +88,9 @@ import {
   anyPinned,
   bottomOf,
   clampPlace,
+  containerAt,
   dropAt,
+  dropInto,
   layout,
   resizeTo,
   rowsFor,
@@ -95,6 +102,7 @@ import {
 } from './canvas';
 import { ChartBlock } from './ChartBlock';
 import { LiveBlock } from './LiveBlock';
+import { CONTAINER_TINT, ContainerHead } from './Container';
 import { ShapeBlock, StickyBlock } from './Drawn';
 import { ColorField } from './ColorPicker';
 import { useDismiss } from './useDismiss';
@@ -128,6 +136,7 @@ const PLACEHOLDER: Record<BlockType, string> = {
   code: 'Code',
   chart: '',
   live: '',
+  container: '',
   sticky: '',
   shape: '',
 };
@@ -154,6 +163,8 @@ interface Lift {
   place: Place;
   /** Pointer to the item's top-left corner, in pixels, when it was picked up. */
   grab: { dx: number; dy: number };
+  /** The container it would drop into, when the pointer is over one. */
+  into?: string | null;
 }
 
 /** A grid place in words, for the badge on a dragged item and for screen readers. */
@@ -171,6 +182,8 @@ interface Slash {
   from: number;
   query: string;
   index: number;
+  /** The folded sections opened (Analytics, Goals & records). */
+  open: SlashGroup[];
 }
 
 export interface BlockEditorProps {
@@ -199,6 +212,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
   /* While something is dragged, the page shows where it would land. */
   const blocks = useMemo(() => {
     if (!lift) return given;
+    if (lift.mode === 'move' && lift.into) return dropInto(lift.base, lift.items, lift.id, lift.into);
     return lift.mode === 'move'
       ? dropAt(lift.base, lift.items, lift.id, lift.place)
       : resizeTo(lift.base, lift.items, lift.id, lift.place.w);
@@ -283,7 +297,13 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       const column = now.width / COLS;
       if (mode === 'move') {
         const place = snap(moved.clientX - now.left - grab.dx, moved.clientY - now.top - grab.dy, column, from.w);
-        setLift((was) => (was && (was.place.x !== place.x || was.place.y !== place.y) ? { ...was, place } : was));
+        // Over a container, the block goes in it rather than onto the grid.
+        // Read against the page as it was picked up, so the frame growing to
+        // take it doesn't move the target out from under the pointer.
+        const into = containerAt(given, items, moved.clientX - now.left, moved.clientY - now.top, column, id);
+        setLift((was) =>
+          was && (was.place.x !== place.x || was.place.y !== place.y || (was.into ?? null) !== into) ? { ...was, place, into } : was,
+        );
       } else {
         const w = clampPlace({ ...from, w: Math.round((moved.clientX - now.left) / column) - from.x }).w;
         setLift((was) => (was && was.place.w !== w ? { ...was, place: { ...from, w } } : was));
@@ -297,7 +317,9 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       setLift((was) => {
         if (was) {
           const moved = was.mode === 'move'
-            ? dropAt(was.base, was.items, was.id, was.place)
+            ? was.into
+              ? dropInto(was.base, was.items, was.id, was.into)
+              : dropAt(was.base, was.items, was.id, was.place)
             : resizeTo(was.base, was.items, was.id, was.place.w);
           onChange(moved);
         }
@@ -385,7 +407,8 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
   /** Add a block of `type` below `id` and put the caret in it. */
   const addBelow = (id: string, type: BlockType = 'text', openMenu = false) => {
     const host = blocks[at(id)]!;
-    const indent = host.type === 'toggle' && !host.collapsed ? Math.min(INDENT_MAX, indentOf(host) + 1) : indentOf(host);
+    const inside = (host.type === 'toggle' && !host.collapsed) || host.type === 'container';
+    const indent = inside ? Math.min(INDENT_MAX, indentOf(host) + 1) : indentOf(host);
     // With the menu, the "/" is typed for the reader, so the filter works as
     // if they had typed it.
     const menuToo = openMenu && type === 'text';
@@ -394,10 +417,37 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
     onChange(insertAfter(blocks, id, [fresh, ...extra]));
     if (menuToo) {
       setFocus({ id: fresh.id, at: 1 });
-      setSlash({ id: fresh.id, from: 0, query: '', index: 0 });
+      setSlash({ id: fresh.id, from: 0, query: '', index: 0, open: [] });
     } else {
       setFocus({ id: (extra[0] ?? fresh).id, at: 'start' });
     }
+  };
+
+  /** A new line at the bottom of a container, with the slash menu open on it. */
+  const addInside = (id: string) => {
+    const index = at(id);
+    const host = blocks[index];
+    if (!host) return;
+    const end = span(blocks, index);
+    const fresh = block('text', '/', { indent: Math.min(INDENT_MAX, indentOf(host) + 1) });
+    onChange([...blocks.slice(0, end + 1), fresh, ...blocks.slice(end + 1)]);
+    setFocus({ id: fresh.id, at: 1 });
+    setSlash({ id: fresh.id, from: 0, query: '', index: 0, open: [] });
+  };
+
+  /** Open or fold a section of the slash menu, keeping the caret where it is. */
+  const fold = (group: SlashGroup) => {
+    if (!slash) return;
+    const open = slash.open.includes(group) ? slash.open.filter((one) => one !== group) : [...slash.open, group];
+    const rows = pickable(slashRows(slash.query, new Set(open)));
+    const index = rows.findIndex((row) => row.row === 'head' && row.group === group);
+    setSlash({ ...slash, open, index: Math.max(0, index) });
+  };
+
+  /** Take a row of the slash menu: a kind is made, a folded heading opens. */
+  const pickRow = (row: SlashRow) => {
+    if (row.row === 'head') fold(row.group);
+    else choose(row.kind);
   };
 
   /** Take a kind from the slash menu. */
@@ -414,6 +464,19 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       // follows it, as wide as the line the slash was typed on.
       const indent = host.indent ? { indent: host.indent } : {};
       const empty = plainOf(text).trim() === '';
+      if (type === 'container') {
+        // A frame with a line inside to write on, and one after it outside.
+        const box = { ...containerBlock(indent), ...(empty ? { id: host.id, ...cleanPlace(host) } : {}) };
+        const inner = block('text', '', { indent: Math.min(INDENT_MAX, (host.indent ?? 0) + 1) });
+        const after = block('text', '', indent);
+        onChange(
+          empty
+            ? blocks.flatMap((one) => (one.id === host.id ? [box, inner, after] : [one]))
+            : insertAfter(blocks.map((one) => (one.id === host.id ? { ...one, text } : one)), host.id, [box, inner, after]),
+        );
+        setFocus({ id: inner.id, at: 'start' });
+        return;
+      }
       const fresh = type === 'chart'
         ? chartBlock(kind.chart ?? 'bar', indent)
         : type === 'live'
@@ -476,7 +539,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       now[caret - 1] === '/' &&
       (caret === 1 || /\s/.test(now[caret - 2] ?? ''))
     ) {
-      setSlash({ id: one.id, from: caret - 1, query: '', index: 0 });
+      setSlash({ id: one.id, from: caret - 1, query: '', index: 0, open: [] });
     }
 
     if (now.length > was.length) {
@@ -561,7 +624,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
     const { start, end } = selectionOf(field, words);
 
     if (slash && slash.id === one.id) {
-      const options = matchKinds(slash.query);
+      const options = pickable(slashRows(slash.query, new Set(slash.open)));
       if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
         const step = event.key === 'ArrowDown' ? 1 : -1;
@@ -569,9 +632,16 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
         setSlash({ ...slash, index: (slash.index + step + count) % count });
         return;
       }
-      if ((event.key === 'Enter' || event.key === 'Tab') && options.length) {
+      const here = options[Math.min(slash.index, options.length - 1)];
+      // Right opens a folded section, Left folds it again.
+      if (here?.row === 'head' && ((event.key === 'ArrowRight' && !here.open) || (event.key === 'ArrowLeft' && here.open))) {
         event.preventDefault();
-        choose(options[Math.min(slash.index, options.length - 1)]!);
+        fold(here.group);
+        return;
+      }
+      if ((event.key === 'Enter' || event.key === 'Tab') && here) {
+        event.preventDefault();
+        pickRow(here);
         return;
       }
       if (event.key === 'Escape') {
@@ -748,9 +818,11 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
   const pinned = anyPinned(blocks);
 
   /** One block's row: its handles, its marker, its field and its menus. */
-  const row = (one: Block) => {
+  const row = (one: Block, inBox = false) => {
         const index = at(one.id);
         const indent = indentOf(one);
+        // Inside a container the frame is the first level of indent.
+        const drawn = inBox ? Math.max(0, indent - 1) : indent;
         let marker: ReactNode = null;
         if (one.type === 'bullet') marker = <span className="sp-marker">{BULLETS[indent % BULLETS.length]}</span>;
         if (one.type === 'numbered') marker = <span className="sp-marker sp-number">{numberOf(blocks, index)}.</span>;
@@ -786,7 +858,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
           <div
             key={one.id}
             className={`sp-block sp-b-${one.type}${one.checked ? ' is-checked' : ''}`}
-            style={{ '--indent': indent } as CSSProperties}
+            style={{ '--indent': drawn } as CSSProperties}
           >
             {!disabled && (
               <div className="sp-gutter">
@@ -852,6 +924,19 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
                 onChange={(change) => patch(one.id, change)}
                 onKey={(event) => dividerKey(event, one)}
               />
+            ) : one.type === 'container' ? (
+              <ContainerHead
+                one={one}
+                disabled={disabled}
+                empty={span(blocks, index) === index}
+                register={(node) => {
+                  if (node) nodes.current.set(one.id, node);
+                  else nodes.current.delete(one.id);
+                }}
+                onChange={(change) => patch(one.id, change)}
+                onAdd={() => addInside(one.id)}
+                onKey={(event) => dividerKey(event, one)}
+              />
             ) : one.type === 'live' ? (
               <LiveBlock
                 one={one}
@@ -904,7 +989,9 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
               </button>
             )}
 
-            {slash?.id === one.id && <SlashMenu query={slash.query} index={slash.index} onPick={choose} onHover={(i) => setSlash({ ...slash, index: i })} />}
+            {slash?.id === one.id && (
+              <SlashMenu query={slash.query} index={slash.index} open={slash.open} onPick={pickRow} onHover={(i) => setSlash({ ...slash, index: i })} />
+            )}
             {menu === one.id && (
               <BlockMenu
                 one={one}
@@ -972,10 +1059,12 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
         {items.map((item) => {
           const rows = blocks.slice(item.start, item.end + 1).filter((one) => !hidden.has(one.id));
           const lifted = lift?.id === item.id;
+          const box = blocks[item.start]?.type === 'container' ? blocks[item.start]! : null;
           const style = {
             left: `${(item.x / COLS) * 100}%`,
             width: item.x + item.w < COLS ? `calc(${(item.w / COLS) * 100}% - var(--sp-gutter-x))` : `${(item.w / COLS) * 100}%`,
             top: `${item.y * ROW_PX}px`,
+            ...(box ? { '--box': box.fill?.color ?? CONTAINER_TINT } : {}),
           } as CSSProperties;
           return (
             <div
@@ -984,11 +1073,11 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
                 if (node) itemNodes.current.set(item.id, node);
                 else itemNodes.current.delete(item.id);
               }}
-              className={`sp-item${lifted ? ` is-lifted is-${lift!.mode}` : ''}${item.pinned ? ' is-pinned' : ''}`}
+              className={`sp-item${lifted ? ` is-lifted is-${lift!.mode}` : ''}${item.pinned ? ' is-pinned' : ''}${box ? ' is-container' : ''}${lift?.into === item.id ? ' is-drop-target' : ''}`}
               style={style}
               data-place={`${item.x},${item.y},${item.w}`}
             >
-              {rows.map(row)}
+              {rows.map((one) => row(one, box !== null))}
               {lifted && (
                 <span className="sp-lift-badge" aria-hidden="true">
                   {lift!.mode === 'move' ? `Col ${item.x + 1} · Row ${item.y + 1}` : `${item.w} of ${COLS} columns`}
@@ -1165,41 +1254,67 @@ function Field({ one, disabled, placeholder, register, onEdit, onKey, onBlur }: 
 function SlashMenu({
   query,
   index,
+  open,
   onPick,
   onHover,
 }: {
   query: string;
   index: number;
-  onPick: (kind: BlockKind) => void;
+  open: SlashGroup[];
+  onPick: (row: SlashRow) => void;
   onHover: (index: number) => void;
 }) {
-  const options = matchKinds(query);
+  const rows = slashRows(query, new Set(open));
+  const options = pickable(rows);
+  const chosen = options[Math.min(index, options.length - 1)];
   const list = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     list.current?.querySelector('[aria-selected="true"]')?.scrollIntoView?.({ block: 'nearest' });
-  }, [index]);
+  }, [index, open.length]);
   return (
     <div className="sp-pop sp-slash" role="listbox" aria-label="Block kinds" ref={list}>
-      <p className="sp-pop-head">{query ? `Blocks matching “${query}”` : 'Basic blocks'}</p>
+      {query && <p className="sp-pop-head">Blocks matching "{query}"</p>}
       {options.length === 0 && <p className="sp-pop-none">No results</p>}
-      {options.map((kind, i) => (
-        <div
-          key={`${kind.type}-${kind.chart ?? kind.shape ?? kind.live ?? ''}`}
-          role="option"
-          aria-selected={i === Math.min(index, options.length - 1)}
-          className="sp-pop-item"
+      {rows.map((row) => {
+        if (row.row === 'head' && !row.folds) {
+          return (
+            <p key={`head-${row.group}`} className="sp-pop-head">
+              {row.label}
+            </p>
+          );
+        }
+        const at = options.indexOf(row);
+        const selected = row === chosen;
+        const hover = {
+          role: 'option' as const,
+          'aria-selected': selected,
           // Keeps the caret in the block while the menu is clicked.
-          onMouseDown={(event) => event.preventDefault()}
-          onMouseEnter={() => onHover(i)}
-          onClick={() => onPick(kind)}
-        >
-          <span className="sp-pop-glyph" aria-hidden="true">{kind.glyph}</span>
-          <span className="sp-pop-words">
-            <span className="sp-pop-label">{kind.label}</span>
-            <span className="sp-pop-hint">{kind.hint}</span>
-          </span>
-        </div>
-      ))}
+          onMouseDown: (event: ReactMouseEvent) => event.preventDefault(),
+          onMouseEnter: () => onHover(at),
+          onClick: () => onPick(row),
+        };
+        if (row.row === 'head') {
+          return (
+            <div key={`fold-${row.group}`} {...hover} aria-expanded={row.open} className={`sp-pop-item sp-pop-fold${row.open ? ' is-open' : ''}`}>
+              <span className="sp-pop-glyph" aria-hidden="true">{row.open ? '▾' : '▸'}</span>
+              <span className="sp-pop-words">
+                <span className="sp-pop-label">{row.label}</span>
+                <span className="sp-pop-hint">{row.open ? 'Click to fold' : `${row.count} live blocks from your data`}</span>
+              </span>
+            </div>
+          );
+        }
+        const kind = row.kind;
+        return (
+          <div key={`${kind.type}-${kind.chart ?? kind.shape ?? kind.live ?? ''}`} {...hover} className={`sp-pop-item${kind.group && open.includes(kind.group) && !query ? ' is-inner' : ''}`}>
+            <span className="sp-pop-glyph" aria-hidden="true">{kind.glyph}</span>
+            <span className="sp-pop-words">
+              <span className="sp-pop-label">{kind.label}</span>
+              <span className="sp-pop-hint">{kind.hint}</span>
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }

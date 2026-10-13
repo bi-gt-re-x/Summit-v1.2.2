@@ -8,8 +8,11 @@ import { describe, expect, it } from 'vitest';
 import type { Block } from './blocks';
 import {
   COLS,
+  ROW_PX,
   bottomOf,
+  containerAt,
   dropAt,
+  dropInto,
   groups,
   layout,
   resizeTo,
@@ -194,5 +197,61 @@ describe('cleaning', () => {
 
   it('finds the bottom of the page', () => {
     expect(bottomOf(layout([b('a'), b('b')], tall({ a: 4, b: 7 })))).toBe(11);
+  });
+});
+
+describe('containers', () => {
+  const page = () => [
+    b('box', { type: 'container', x: 6, y: 0, w: 6 }),
+    b('inside', { indent: 1 }),
+    b('note', { x: 0, y: 0, w: 6 }),
+    b('list', { x: 0, y: 20, w: 6 }),
+    b('sub', { indent: 1 }),
+  ];
+  const heights = tall({ box: 10, note: 6, list: 6 });
+
+  it('take a dropped block in after what is already there, with what is under it', () => {
+    const blocks = page();
+    const next = dropInto(blocks, layout(blocks, heights), 'list', 'box');
+    expect(next.map((one) => [one.id, one.indent ?? 0, one.x])).toEqual([
+      ['note', 0, 0],
+      ['box', 0, 6],
+      ['inside', 1, undefined],
+      ['list', 1, undefined],
+      ['sub', 2, undefined],
+    ]);
+  });
+
+  it('move with everything in them', () => {
+    const blocks = page();
+    const next = dropAt(blocks, layout(blocks, heights), 'box', { x: 0, y: 40, w: 4 });
+    const at = next.findIndex((one) => one.id === 'box');
+    expect(next[at]).toMatchObject({ x: 0, y: 40, w: 4 });
+    expect(next[at + 1]).toMatchObject({ id: 'inside', indent: 1 });
+  });
+
+  it('let a block be dragged back out onto the page', () => {
+    const blocks = page();
+    const next = dropAt(blocks, layout(blocks, heights), 'inside', { x: 0, y: 60, w: 6 });
+    expect(next.find((one) => one.id === 'inside')).toMatchObject({ x: 0, y: 60, w: 6 });
+    expect(next.find((one) => one.id === 'inside')!.indent).toBeUndefined();
+  });
+
+  it("don't go inside each other, or themselves", () => {
+    const blocks = [...page(), b('other', { type: 'container', x: 0, y: 40, w: 6 })];
+    const items = layout(blocks, heights);
+    expect(dropInto(blocks, items, 'other', 'box')).toBe(blocks);
+    expect(dropInto(blocks, items, 'note', 'note')).toBe(blocks);
+    expect(dropInto(blocks, items, 'box', 'box')).toBe(blocks);
+  });
+
+  it('are found under a pointer by where they are drawn', () => {
+    const blocks = page();
+    const items = layout(blocks, heights);
+    const column = 50;
+    expect(containerAt(blocks, items, 7 * column, 3 * ROW_PX, column, 'note')).toBe('box');
+    expect(containerAt(blocks, items, 2 * column, 3 * ROW_PX, column, 'note')).toBeNull();
+    // Not the one being dragged.
+    expect(containerAt(blocks, items, 7 * column, 3 * ROW_PX, column, 'box')).toBeNull();
   });
 });

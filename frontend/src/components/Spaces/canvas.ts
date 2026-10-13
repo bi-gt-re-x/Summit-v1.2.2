@@ -23,7 +23,7 @@
  * does, then sorts the blocks into reading order (top to bottom, then left to
  * right). Keys, the plain-text copy and the slash menu all read that order.
  */
-import { cleanPlace, span, type Block } from './blocks';
+import { INDENT_MAX, cleanPlace, span, type Block } from './blocks';
 import { RULES } from '@/utils/sharedRules';
 
 export const COLS: number = RULES.spaces.grid.cols;
@@ -257,4 +257,44 @@ export function snap(left: number, top: number, columnPx: number, w: number): Pl
   const narrowest = Math.min(w, MIN_W);
   const x = Math.max(0, Math.min(COLS - narrowest, Math.round(columnPx > 0 ? left / columnPx : 0)));
   return clampPlace({ x, y: top / ROW_PX, w: Math.min(w, COLS - x) });
+}
+
+/**
+ * The page with one block (and whatever is inside it) dropped into a
+ * container, after what is already in it.
+ *
+ * A container is a top-level block of kind `container`; what is indented
+ * under it rides inside its frame. So dropping in is a list edit like every
+ * other: the moved run goes after the container's last block, one level
+ * deeper than the container, and loses its grid place. Containers don't go
+ * inside containers, and nothing goes inside itself.
+ */
+export function dropInto(blocks: Block[], items: Item[], id: string, containerId: string): Block[] {
+  const pinned = pinAll(blocks, items);
+  const from = pinned.findIndex((one) => one.id === id);
+  const box = pinned.findIndex((one) => one.id === containerId);
+  if (from < 0 || box < 0 || pinned[box]!.type !== 'container' || pinned[from]!.type === 'container') return blocks;
+  const end = span(pinned, from);
+  if (box >= from && box <= end) return blocks;
+  const shift = pinned[from]!.indent ?? 0;
+  const depth = (pinned[box]!.indent ?? 0) + 1;
+  const moving = pinned.slice(from, end + 1).map((one) => {
+    const { x: _x, y: _y, w: _w, indent: _indent, ...rest } = one;
+    return { ...rest, indent: Math.min(INDENT_MAX, (one.indent ?? 0) - shift + depth) } as Block;
+  });
+  const rest = [...pinned.slice(0, from), ...pinned.slice(end + 1)];
+  const at = rest.findIndex((one) => one.id === containerId);
+  const last = span(rest, at);
+  return sortByPlace([...rest.slice(0, last + 1), ...moving, ...rest.slice(last + 1)]);
+}
+
+/** The container a point on the canvas is over, by the items as drawn, or null. */
+export function containerAt(blocks: Block[], items: Item[], left: number, top: number, columnPx: number, skip: string): string | null {
+  for (const item of items) {
+    if (item.id === skip || blocks[item.start]?.type !== 'container') continue;
+    const x = item.x * columnPx;
+    const y = item.y * ROW_PX;
+    if (left >= x && left <= x + item.w * columnPx && top >= y && top <= y + item.h * ROW_PX) return item.id;
+  }
+  return null;
 }
