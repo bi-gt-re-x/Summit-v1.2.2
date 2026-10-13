@@ -916,6 +916,47 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
 .gr-skillcard-meta .is-down { color: var(--tone-red); font-weight: 700; }
 .gr-skillcard-meta .is-quiet { font-style: italic; }
 
+/* Sort and filter sit in the head beside the title, and wrap under it when
+   the row runs out of room. */
+.gr-skillcards-controls {
+    display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2);
+}
+.gr-panel-head:has(.gr-skillcards-controls) { flex-wrap: wrap; }
+
+/* Two weeks without work. Amber on the card's edge and in its meta line, so it
+   reads at a glance across the grid without shouting. */
+.gr-skillcard.is-cooling:not(.is-picked) { border-color: color-mix(in srgb, var(--tone-amber) 45%, var(--inset-edge)); }
+.gr-skillcard-cooling { color: var(--tone-amber); font-weight: 700; }
+
+/* Eight weeks of XP, this week on the right. */
+.gr-skillcard-trend {
+    display: flex; align-items: flex-end; gap: 3px; height: 22px;
+}
+.gr-skillcard-trend i {
+    flex: 1 1 0; min-height: 2px; border-radius: 2px;
+    background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.gr-skillcard-trend i:last-child { background: var(--accent); }
+.gr-skillcard-trend i.is-empty { background: var(--inset-edge); }
+
+/* The three insights for the picked card. */
+.gr-facts {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3);
+}
+@media (max-width: 760px) { .gr-facts { grid-template-columns: minmax(0, 1fr); } }
+.gr-fact {
+    display: flex; flex-direction: column; gap: var(--space-1);
+    padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg);
+    background: var(--inset-bg); border: 1px solid var(--inset-edge);
+    border-left: 3px solid var(--ink-faint);
+}
+.gr-fact.is-up { border-left-color: var(--tone-green); }
+.gr-fact.is-down { border-left-color: var(--tone-amber); }
+.gr-fact.is-note { border-left-color: var(--accent); }
+.gr-fact strong { font-size: var(--text-sm); color: var(--ink); }
+.gr-fact span { font-size: var(--text-xs); color: var(--ink-quiet); line-height: 1.45; }
+
 /* A level reached, on the curve that reached it. */
 .gr-lt-dot.is-mile { background: var(--tone-amber); width: 7px; height: 7px; }
 .gr-lt-key.is-mile { background: var(--tone-amber); }

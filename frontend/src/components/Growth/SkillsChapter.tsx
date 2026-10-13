@@ -21,7 +21,7 @@
  *
  * Everything is in utils/growthSkills; this file turns it into shapes.
  */
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import type { Subject } from '@/services/subjects';
 import type { GrowthDay, Task } from '@/types';
 import { iconUrl } from '@/services/subjects';
@@ -39,6 +39,18 @@ import {
 } from '@/utils/growthSkills';
 import { MAX_LEVEL, costOf } from '@/utils/mastery';
 import { longDate } from '@/utils/growthChapters';
+import {
+  CARD_FILTERS,
+  CARD_SORTS,
+  TREND_WEEKS,
+  filterCards,
+  isCooling,
+  sortCards,
+  subjectInsights,
+  weeklyTrends,
+  type CardFilter,
+  type CardSort,
+} from '@/utils/subjectInsights';
 import { EmptyChapter, HeroRow, Notes, PanelHead, Seg, W, H } from './ChapterParts';
 import { Glyph } from './GrowthPanels';
 
@@ -63,9 +75,42 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
 
   const [chosenKey, setChosen] = useState<string | null>(null);
   const [window, setWindow] = useState<CurveKey>('6m');
+  const [sortBy, setSortBy] = useState<CardSort>('xp');
+  const [filterBy, setFilterBy] = useState<CardFilter>('all');
 
+  const shown = useMemo(
+    () => sortCards(filterCards(cards, filterBy), sortBy),
+    [cards, filterBy, sortBy],
+  );
+  const trends = useMemo(() => weeklyTrends(tasks, today), [tasks, today]);
+
+  // A filter that hides the picked card moves the pick to the first one still
+  // showing, so the panels below never describe a card the reader can't see.
   const chosen: SkillCard | undefined =
-    cards.find((card) => card.key === chosenKey) ?? cards[0];
+    shown.find((card) => card.key === chosenKey) ??
+    shown[0] ??
+    cards.find((card) => card.key === chosenKey) ??
+    cards[0];
+
+  // Picking a card brings its insights up. With thirty cards the panel can sit
+  // a long way below the one clicked, so it scrolls just far enough to show it.
+  const insightsRef = useRef<HTMLElement>(null);
+  const pick = (key: string) => {
+    setChosen(key);
+    requestAnimationFrame(() => {
+      const panel = insightsRef.current;
+      if (!panel) return;
+      const box = panel.getBoundingClientRect();
+      if (box.top >= 0 && box.bottom <= globalThis.innerHeight) return;
+      const still = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      panel.scrollIntoView({ block: 'nearest', behavior: still ? 'auto' : 'smooth' });
+    });
+  };
+
+  const insights = useMemo(
+    () => (chosen ? subjectInsights(chosen, cards, tasks, today) : []),
+    [cards, chosen, tasks, today],
+  );
 
   const curve = useMemo(
     () => (chosen ? skillCurve(tasks, chosen.key, today, window) : null),
@@ -160,17 +205,31 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
         <PanelHead
           title="Skills"
           icon="spark"
-          hint="One card per subject you have worked in"
-          note={`${cards.length} in play · choose one to inspect`}
-        />
+          hint="One card per subject you've worked in. Pick one to see what the record shows about it."
+        >
+          <div className="gr-skillcards-controls">
+            <Seg value={filterBy} options={CARD_FILTERS} onChange={setFilterBy} label="Which subjects" />
+            <Seg value={sortBy} options={CARD_SORTS} onChange={setSortBy} label="Sort subjects by" />
+          </div>
+        </PanelHead>
+        {shown.length === 0 && (
+          <p className="gr-empty">
+            {filterBy === 'cooling'
+              ? `Nothing's cooling off. Every subject has had work in the last two weeks.`
+              : 'Every subject has gone two weeks or more without work.'}
+          </p>
+        )}
         <div className="gr-skillcards">
-          {cards.map((card) => (
+          {shown.map((card) => (
             <button
               type="button"
               key={card.key}
-              className={`gr-skillcard${card.key === chosen?.key ? ' is-picked' : ''}`}
-              onClick={() => setChosen(card.key)}
+              className={`gr-skillcard${card.key === chosen?.key ? ' is-picked' : ''}${
+                isCooling(card) ? ' is-cooling' : ''
+              }`}
+              onClick={() => pick(card.key)}
               aria-pressed={card.key === chosen?.key}
+              aria-controls="gr-skill-insights"
             >
               <div className="gr-skillcard-top">
                 {card.icon ? (
@@ -220,18 +279,49 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
                     {card.growth30 >= 0 ? '↑' : '↓'} {Math.abs(card.growth30)}% · 30d
                   </span>
                 )}
-                <span className="is-quiet">
-                  {card.daysSince === null
-                    ? 'never'
-                    : card.daysSince === 0
-                      ? 'today'
-                      : `${card.daysSince}d ago`}
-                </span>
+                {isCooling(card) ? (
+                  <span
+                    className="gr-skillcard-cooling"
+                    title={`Cooling off: nothing finished in ${card.daysSince} days`}
+                  >
+                    {card.daysSince}d quiet
+                  </span>
+                ) : (
+                  <span className="is-quiet">
+                    {card.daysSince === null
+                      ? 'never'
+                      : card.daysSince === 0
+                        ? 'today'
+                        : `${card.daysSince}d ago`}
+                  </span>
+                )}
               </div>
+
+              <Trend weeks={trends.get(card.key)} />
             </button>
           ))}
         </div>
       </section>
+
+      {/* --- What the record shows about the picked card ---------------------- */}
+      {chosen && (
+        <section
+          ref={insightsRef}
+          className="gr-panel gr-span-3"
+          id="gr-skill-insights"
+          aria-live="polite"
+        >
+          <PanelHead title={`${chosen.name}: what your record shows`} icon="bulb" />
+          <ol className="gr-facts">
+            {insights.map((insight) => (
+              <li key={insight.key} className={`gr-fact is-${insight.tone}`}>
+                <strong>{insight.head}</strong>
+                <span>{insight.detail}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       {/* --- One skill over time -------------------------------------------- */}
       <section className="gr-panel gr-span-2 gr-chart-panel">
@@ -445,6 +535,33 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
         />
       </section>
     </div>
+  );
+}
+
+// --------------------------------------------------------------------------
+// The weekly trend on each card
+// --------------------------------------------------------------------------
+/**
+ * XP a week over the last eight, as small bars with this week on the right.
+ * Bars rather than a line because weeks are separate buckets, and an empty
+ * week should read as a gap rather than as a dip between two points.
+ */
+function Trend({ weeks }: { weeks: number[] | undefined }) {
+  const values = weeks ?? new Array<number>(TREND_WEEKS).fill(0);
+  const peak = Math.max(...values, 1);
+  const label = `XP a week over the last ${TREND_WEEKS} weeks: ${values
+    .map((value) => Math.round(value))
+    .join(', ')}`;
+  return (
+    <span className="gr-skillcard-trend" role="img" aria-label={label} title={label}>
+      {values.map((value, index) => (
+        <i
+          key={index}
+          className={value > 0 ? undefined : 'is-empty'}
+          style={{ height: `${value > 0 ? Math.max(12, (value / peak) * 100) : 6}%` }}
+        />
+      ))}
+    </span>
   );
 }
 
