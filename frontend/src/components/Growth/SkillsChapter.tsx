@@ -42,6 +42,7 @@ import { longDate } from '@/utils/growthChapters';
 import {
   CARD_FILTERS,
   CARD_SORTS,
+  INSIGHTS_SHOWN,
   TREND_WEEKS,
   filterCards,
   isCooling,
@@ -50,6 +51,7 @@ import {
   weeklyTrends,
   type CardFilter,
   type CardSort,
+  type SubjectInsight,
 } from '@/utils/subjectInsights';
 import { EmptyChapter, HeroRow, Notes, PanelHead, Seg, W, H } from './ChapterParts';
 import { Glyph } from './GrowthPanels';
@@ -111,6 +113,11 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
     () => (chosen ? subjectInsights(chosen, cards, tasks, today) : []),
     [cards, chosen, tasks, today],
   );
+  // "Show more" belongs to one subject. Picking another starts it closed.
+  const [openFor, setOpenFor] = useState<string | null>(null);
+  const allInsights = !!chosen && openFor === chosen.key;
+  const setAllInsights = (next: (open: boolean) => boolean) =>
+    setOpenFor(next(allInsights) && chosen ? chosen.key : null);
 
   const curve = useMemo(
     () => (chosen ? skillCurve(tasks, chosen.key, today, window) : null),
@@ -313,13 +320,20 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
         >
           <PanelHead title={`${chosen.name}: what your record shows`} icon="bulb" />
           <ol className="gr-facts">
-            {insights.map((insight) => (
-              <li key={insight.key} className={`gr-fact is-${insight.tone}`}>
-                <strong>{insight.head}</strong>
-                <span>{insight.detail}</span>
-              </li>
+            {(allInsights ? insights : insights.slice(0, INSIGHTS_SHOWN)).map((insight) => (
+              <InsightCard key={insight.key} insight={insight} />
             ))}
           </ol>
+          {insights.length > INSIGHTS_SHOWN && (
+            <button
+              type="button"
+              className="gr-facts-more"
+              aria-expanded={allInsights}
+              onClick={() => setAllInsights((open) => !open)}
+            >
+              {allInsights ? 'Show fewer' : `Show ${insights.length - INSIGHTS_SHOWN} more`}
+            </button>
+          )}
         </section>
       )}
 
@@ -562,6 +576,56 @@ function Trend({ weeks }: { weeks: number[] | undefined }) {
         />
       ))}
     </span>
+  );
+}
+
+/**
+ * One insight: what happened, the numbers behind it, and a small chart when
+ * there's something to put side by side. Two bars read as a pair of rows; more
+ * than two (a week, the parts of a day) as columns.
+ */
+function InsightCard({ insight }: { insight: SubjectInsight }) {
+  const bars = insight.bars ?? [];
+  const peak = Math.max(...bars.map((bar) => bar.value), 0) || 1;
+  const columns = bars.length > 2;
+  return (
+    <li className={`gr-fact is-${insight.tone}`}>
+      <strong>{insight.head}</strong>
+      <p>{insight.detail}</p>
+      {bars.length > 0 && (
+        <div
+          className={`gr-fact-bars${columns ? ' is-columns' : ''}`}
+          role="img"
+          aria-label={bars.map((bar) => `${bar.label}: ${bar.text}`).join(', ')}
+        >
+          {bars.map((bar) => (
+            <div key={bar.label} className={`gr-fact-bar${bar.lit ? ' is-lit' : ''}`}>
+              <span className="gr-fact-bar-label">{bar.label}</span>
+              <span className="gr-fact-bar-track">
+                <i
+                  style={
+                    columns
+                      ? { height: `${Math.max(4, (bar.value / peak) * 100)}%` }
+                      : { width: `${Math.max(2, (bar.value / peak) * 100)}%` }
+                  }
+                />
+              </span>
+              <span className="gr-fact-bar-text">{bar.text}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {insight.figures.length > 0 && (
+        <dl className="gr-fact-figs">
+          {insight.figures.map((figure) => (
+            <div key={figure.label}>
+              <dt>{figure.label}</dt>
+              <dd title={figure.value}>{figure.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </li>
   );
 }
 

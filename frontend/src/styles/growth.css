@@ -939,14 +939,14 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
 .gr-skillcard-trend i:last-child { background: var(--accent); }
 .gr-skillcard-trend i.is-empty { background: var(--inset-edge); }
 
-/* The three insights for the picked card. */
+/* The insights for the picked card. */
 .gr-facts {
     list-style: none; margin: 0; padding: 0;
     display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3);
 }
 @media (max-width: 760px) { .gr-facts { grid-template-columns: minmax(0, 1fr); } }
 .gr-fact {
-    display: flex; flex-direction: column; gap: var(--space-1);
+    display: flex; flex-direction: column; gap: var(--space-2);
     padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg);
     background: var(--inset-bg); border: 1px solid var(--inset-edge);
     border-left: 3px solid var(--ink-faint);
@@ -955,7 +955,54 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
 .gr-fact.is-down { border-left-color: var(--tone-amber); }
 .gr-fact.is-note { border-left-color: var(--accent); }
 .gr-fact strong { font-size: var(--text-sm); color: var(--ink); }
-.gr-fact span { font-size: var(--text-xs); color: var(--ink-quiet); line-height: 1.45; }
+.gr-fact p { margin: 0; font-size: var(--text-xs); color: var(--ink-quiet); line-height: 1.5; }
+
+/* The little chart under an insight. Two bars are rows; more are columns. */
+.gr-fact-bars { display: flex; flex-direction: column; gap: 4px; }
+.gr-fact-bar {
+    display: grid; grid-template-columns: 7.5em minmax(0, 1fr) auto; align-items: center;
+    gap: var(--space-2); font-size: var(--text-2xs); color: var(--ink-faint);
+}
+.gr-fact-bar-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gr-fact-bar-track { height: 6px; border-radius: 3px; background: var(--inset-edge); overflow: hidden; }
+.gr-fact-bar-track i {
+    display: block; height: 100%; border-radius: 3px;
+    background: color-mix(in srgb, var(--ink-faint) 60%, transparent);
+}
+.gr-fact-bar.is-lit { color: var(--ink); }
+.gr-fact-bar.is-lit .gr-fact-bar-track i { background: var(--accent); }
+.gr-fact.is-up .gr-fact-bar.is-lit .gr-fact-bar-track i { background: var(--tone-green); }
+.gr-fact.is-down .gr-fact-bar.is-lit .gr-fact-bar-track i { background: var(--tone-amber); }
+.gr-fact-bar-text { font-variant-numeric: tabular-nums; text-align: right; }
+
+.gr-fact-bars.is-columns { flex-direction: row; align-items: stretch; gap: 6px; }
+.gr-fact-bars.is-columns .gr-fact-bar {
+    flex: 1 1 0; display: flex; flex-direction: column-reverse; align-items: center; gap: 2px;
+}  /* Reversed so the label sits under its column and the count on top. */
+.gr-fact-bars.is-columns .gr-fact-bar-track {
+    width: 100%; height: 34px; background: none; border-radius: 0;
+    display: flex; align-items: flex-end;
+}
+.gr-fact-bars.is-columns .gr-fact-bar-track i { width: 100%; border-radius: 2px 2px 0 0; }
+
+/* The figures behind it, two to a row. */
+.gr-fact-figs {
+    margin: auto 0 0; padding-top: var(--space-2); border-top: 1px solid var(--inset-edge);
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2) var(--space-3);
+}
+.gr-fact-figs div { min-width: 0; }
+.gr-fact-figs dt { font-size: var(--text-2xs); color: var(--ink-faint); }
+.gr-fact-figs dd {
+    margin: 0; font-size: var(--text-xs); font-weight: 600; color: var(--ink);
+    overflow-wrap: anywhere; overflow: hidden;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+}
+
+.gr-facts-more {
+    margin-top: var(--space-3); padding: 0; border: 0; background: none; cursor: pointer;
+    font: inherit; font-size: var(--text-xs); font-weight: 600; color: var(--accent);
+}
+.gr-facts-more:hover { text-decoration: underline; }
 
 /* A level reached, on the curve that reached it. */
 .gr-lt-dot.is-mile { background: var(--tone-amber); width: 7px; height: 7px; }

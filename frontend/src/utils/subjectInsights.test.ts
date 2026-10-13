@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { skillCards } from './growthSkills';
 import {
+  INSIGHTS_SHOWN,
   filterCards,
   isCooling,
   sortCards,
@@ -73,12 +74,60 @@ describe('weeklyTrends', () => {
 });
 
 describe('subjectInsights', () => {
-  it('always gives exactly three, even for a single task', () => {
+  it('always gives at least three, even for a single task', () => {
     for (const entry of cards) {
-      expect(subjectInsights(entry, cards, TASKS, TODAY)).toHaveLength(3);
+      expect(subjectInsights(entry, cards, TASKS, TODAY).length).toBeGreaterThanOrEqual(INSIGHTS_SHOWN);
     }
     const one = skillCards([done('art', TODAY)], subjects, TODAY);
-    expect(subjectInsights(one[0]!, one, [done('art', TODAY)], TODAY)).toHaveLength(3);
+    expect(subjectInsights(one[0]!, one, [done('art', TODAY)], TODAY).length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('names the last task and the longest break on a quiet subject', () => {
+    const quiet = [...TASKS.slice(6, 9), done('maths', '2026-09-10', 100, { title: 'Past paper 3' })];
+    const quietCards = skillCards(quiet, subjects, TODAY);
+    const [first] = subjectInsights(quietCards[0]!, quietCards, quiet, TODAY);
+    expect(first!.detail).toBe('Lately you came back every 4 days. The last break this long ended on Sep 10.');
+    expect(first!.figures).toContainEqual({ label: 'Last task', value: 'Past paper 3' });
+    expect(first!.figures.find((figure) => figure.label === 'Longest break')?.value).toBe('63 days, to Sep 10');
+  });
+
+  it('says why momentum moved: more days, more tasks, bigger ones', () => {
+    const momentum = subjectInsights(card('chem'), cards, TASKS, TODAY).find((entry) => entry.key === 'momentum')!;
+    // Aug 20 and Sep 1 at 20 XP before, four at 40 XP since.
+    expect(momentum.detail).toContain(
+      'You worked on it 4 days, up from 2. You finished 4 tasks against 2. Each task was worth more: 40 XP against 20.',
+    );
+    expect(momentum.figures[0]).toEqual({ label: 'Tasks', value: '4 (was 2)' });
+    expect(momentum.bars).toHaveLength(2);
+  });
+
+  it('reads "usual" from the latest breaks once the rhythm has changed', () => {
+    // Daily through August, then once a week.
+    const daily = Array.from({ length: 20 }, (_, index) => done('chem', `2026-08-${String(index + 1).padStart(2, '0')}`));
+    const weekly = ['2026-09-07', '2026-09-14', '2026-09-21', '2026-09-28', '2026-10-05', '2026-10-12'].map((day) =>
+      done('chem', day),
+    );
+    const shifted = [...daily, ...weekly];
+    const shiftedCards = skillCards(shifted, subjects, TODAY);
+    const rhythm = subjectInsights(shiftedCards[0]!, shiftedCards, shifted, TODAY).find((entry) => entry.key === 'rhythm')!;
+    expect(rhythm.head).toBe('Coming back less often');
+    expect(rhythm.detail).toBe(
+      "Lately it's every 7 days. Over your whole record it's every day. Your last 4 breaks here were 7, 7, 7 and 7 days.",
+    );
+  });
+
+  it('spots the task you keep repeating', () => {
+    const repeated = Array.from({ length: 10 }, (_, index) =>
+      done('chem', `2026-09-${String(index + 10).padStart(2, '0')}`, 20, {
+        title: index < 6 ? `Problem set #${index + 1}` : `Lab report ${index}`,
+      }),
+    );
+    const repeatCards = skillCards(repeated, subjects, TODAY);
+    const insight = subjectInsights(repeatCards[0]!, repeatCards, repeated, TODAY).find(
+      (entry) => entry.key === 'repeat',
+    );
+    expect(insight?.detail).toContain('makes up 6 of your 10 tasks here');
+    expect(insight?.figures[0]).toEqual({ label: '6 times', value: 'Problem set #6' });
   });
 
   it('leads with the silence on a subject that has gone quiet', () => {
@@ -106,7 +155,8 @@ describe('subjectInsights', () => {
   it('keeps visible copy free of em dashes', () => {
     for (const entry of cards) {
       for (const insight of subjectInsights(entry, cards, TASKS, TODAY)) {
-        expect(`${insight.head} ${insight.detail}`).not.toMatch(/[—–]/);
+        const figures = insight.figures.map((figure) => `${figure.label} ${figure.value}`).join(' ');
+        expect(`${insight.head} ${insight.detail} ${figures}`).not.toMatch(/[—–“”‘’]/);
       }
     }
   });
