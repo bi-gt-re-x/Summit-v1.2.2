@@ -60,7 +60,7 @@
     "block_text_max": 10000,
     "indent_max": 4,
     "icon_max": 16,
-    "block_types": ["text", "h1", "h2", "h3", "bullet", "numbered", "todo", "toggle", "quote", "callout", "divider", "code", "chart", "sticky", "shape"],
+    "block_types": ["text", "h1", "h2", "h3", "bullet", "numbered", "todo", "toggle", "quote", "callout", "divider", "code", "chart", "sticky", "shape", "live"],
     "covers": ["sunrise", "ocean", "meadow", "dusk", "ember", "forest", "slate", "sand"],
     "grid": { "cols": 12, "row_px": 8, "y_max": 5000 },
     "fill_styles": ["solid", "fade", "diagonal", "radial", "aurora", "flow"],
@@ -75,6 +75,17 @@
       "label_max": 24,
       "scale_default": 100,
       "value_max": 1000000
+    },
+    "live": {
+      "_about": "Live blocks: a space's page reading the account's own data. backend/tracking/live.py reads each source; frontend/src/components/Spaces/LiveBlock.tsx draws it. windows/weeks/ahead are the choices a block offers, in days or weeks. poll_ms is how often an open page asks whether anything changed.",
+      "sources": ["goal", "skills", "productivity", "records", "calendar", "growth"],
+      "windows": [7, 30, 90],
+      "weeks": [4, 8, 12],
+      "ahead": [7, 14, 30],
+      "limit_max": 12,
+      "ref_max": 80,
+      "calendar_max": 30,
+      "poll_ms": 8000
     }
   },
 

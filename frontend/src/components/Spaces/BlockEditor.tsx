@@ -20,6 +20,9 @@
  *     + beside the handle adds a block below and opens the slash menu there.
  *   - Charts (./ChartBlock) come from the slash menu: bar, line, area, pie and
  *     donut, with their values set by dragging.
+ *   - Live blocks (./LiveBlock) come from it too: a goal, a skill tree,
+ *     productivity, records, the calendar or a subject's growth, read from
+ *     the account and kept up to date while the page is open.
  *   - Bold and italic inside a block: ⌘/Ctrl+B and ⌘/Ctrl+I, the B and I in
  *     the bar that rises over a selection, or typing "**word**" / "*word*".
  *
@@ -52,6 +55,7 @@ import {
   INDENT_MAX,
   chartBlock,
   cleanPlace,
+  liveBlock,
   LISTS,
   block,
   duplicate,
@@ -90,6 +94,7 @@ import {
   type Place,
 } from './canvas';
 import { ChartBlock } from './ChartBlock';
+import { LiveBlock } from './LiveBlock';
 import { ShapeBlock, StickyBlock } from './Drawn';
 import { ColorField } from './ColorPicker';
 import { useDismiss } from './useDismiss';
@@ -122,6 +127,7 @@ const PLACEHOLDER: Record<BlockType, string> = {
   divider: '',
   code: 'Code',
   chart: '',
+  live: '',
   sticky: '',
   shape: '',
 };
@@ -410,12 +416,14 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       const empty = plainOf(text).trim() === '';
       const fresh = type === 'chart'
         ? chartBlock(kind.chart ?? 'bar', indent)
-        : type === 'sticky'
+        : type === 'live'
+          ? liveBlock(kind.live ?? 'goal', indent)
+          : type === 'sticky'
           ? stickyBlock(indent)
           : shapeBlock(kind.shape ?? 'rectangle', indent);
       const made = { ...fresh, ...(empty ? { id: host.id, ...cleanPlace(host) } : {}) };
       // A note or a shape is narrower than the page; the line after it is not.
-      const wide = !host.indent && type !== 'chart' ? { w: itemOf.get(host.id)?.w ?? COLS } : {};
+      const wide = !host.indent && type !== 'chart' && type !== 'live' ? { w: itemOf.get(host.id)?.w ?? COLS } : {};
       const after = block('text', '', { ...indent, ...wide });
       onChange(
         empty
@@ -651,9 +659,9 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
         setFocus({ id: one.id, at: 0 });
         return;
       }
-      // A chart is not joined into: Backspace steps onto it, and a second
-      // Backspace there takes it out.
-      if (above.type === 'chart') {
+      // A chart or a live block is not joined into: Backspace steps onto it,
+      // and a second Backspace there takes it out.
+      if (above.type === 'chart' || above.type === 'live') {
         setFocus({ id: above.id, at: 'start' });
         return;
       }
@@ -835,6 +843,17 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
               })()
             ) : one.type === 'chart' ? (
               <ChartBlock
+                one={one}
+                disabled={disabled}
+                register={(node) => {
+                  if (node) nodes.current.set(one.id, node);
+                  else nodes.current.delete(one.id);
+                }}
+                onChange={(change) => patch(one.id, change)}
+                onKey={(event) => dividerKey(event, one)}
+              />
+            ) : one.type === 'live' ? (
+              <LiveBlock
                 one={one}
                 disabled={disabled}
                 register={(node) => {
@@ -1165,7 +1184,7 @@ function SlashMenu({
       {options.length === 0 && <p className="sp-pop-none">No results</p>}
       {options.map((kind, i) => (
         <div
-          key={`${kind.type}-${kind.chart ?? kind.shape ?? ''}`}
+          key={`${kind.type}-${kind.chart ?? kind.shape ?? kind.live ?? ''}`}
           role="option"
           aria-selected={i === Math.min(index, options.length - 1)}
           className="sp-pop-item"

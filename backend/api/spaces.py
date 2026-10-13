@@ -20,6 +20,18 @@ written before blocks existed still opens: the editor reads its `body` into
 blocks when there is no `doc`. Not notes: a note is one of many, filed by day,
 task or goal; a space is one of three fixed places the reader comes back to.
 
+## Live blocks
+
+A `live` block holds no numbers of its own: it names a source (a goal, a skill
+tree, productivity, records, the calendar, a subject's growth) and a few
+settings, cleaned by `live.clean_config`, and the page asks for what that
+source says *now* every time it draws it. backend/tracking/live.py has the
+rules and the note on how an open page keeps up.
+
+    GET  /api/spaces/live                what one live block shows right now
+    GET  /api/spaces/live/options        what a live block can be pointed at
+    GET  /api/spaces/live/revisions      a stamp per source; a change means refresh
+
 A team space also has a member list. **Invites are a placeholder**: an address
 added is kept and shown as pending, and nothing is sent — there are no shared
 accounts yet for it to send anybody into. The list exists so the page has the
@@ -37,15 +49,27 @@ records do not earn a table — the same choice the analytics baseline made.
     POST /api/team-spaces/<n>/uninvite   take one back
 """
 import re
+from datetime import date, datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from backend.api import goals as goals_api
+from backend.api import records as records_api
+from backend.api import skillsteps as skillsteps_api
+from backend.api import subjects as subjects_api
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
 from backend.config.shared import RULES
+from backend.config import subjects as subjects_catalog
+from backend.goal_matcher import store as goal_store
+from backend.tracking import growth as growth_tracking
+from backend.tracking import live
+from backend.tracking import skill_level
+from backend.tracking import xp as xp_tracking
+from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['spaces'])
 
@@ -90,6 +114,10 @@ DEFAULT_ROWS = {'sticky': 22, 'shape': 20}
 #: Each kind as a line of plain text, for `body`.
 TEXT_PREFIX = {'h1': '# ', 'h2': '## ', 'h3': '### ', 'bullet': '- ', 'numbered': '1. ',
                'toggle': '▸ ', 'quote': '> ', 'callout': '💡 '}
+
+#: A live block in `body`, which has only words.
+LIVE_NAMES = {'goal': 'Goal progress', 'skills': 'Skill tree', 'productivity': 'Productivity',
+              'records': 'Records', 'calendar': 'Calendar', 'growth': 'Growth'}
 
 #: Pending invites a team space will hold.
 INVITES_MAX = 20
@@ -208,6 +236,8 @@ def _clean_doc(raw) -> Optional[dict]:
             block['collapsed'] = True
         if kind == 'chart':
             block['chart'] = _clean_chart(item.get('chart'))
+        if kind == 'live':
+            block['live'] = live.clean_config(item.get('live'))
         if _hex(item.get('color')):
             block['color'] = _hex(item['color'])
         if kind in ('sticky', 'shape'):
@@ -264,6 +294,9 @@ def _doc_text(doc: dict) -> str:
         elif kind == 'shape':
             name = block['shape'].capitalize()
             lines.append(pad + '[{}{}]'.format(name, ': ' + text if text else ''))
+        elif kind == 'live':
+            name = LIVE_NAMES[block['live']['source']]
+            lines.append(pad + '[Live: {}{}]'.format(name, ', ' + text if text else ''))
         elif kind == 'chart':
             chart = block['chart']
             name = '{} chart'.format(chart['kind'].capitalize())
@@ -379,3 +412,117 @@ def uninvite(space_id: int, body: Invite, username: str = Depends(current_userna
     space['invites'] = [item for item in space['invites'] if item['email'] != email]
     _store(username, 'team', spaces)
     return ok(space=space)
+
+
+# ---- Live blocks -----------------------------------------------------------
+#: The task columns the live readers need, and no more: on a large account the
+#: task list is twenty thousand rows.
+LIVE_TASK_FIELDS = ('id', 'title', 'status', 'subject', 'goal_id', 'xp_value',
+                    'due_date', 'completed_at')
+
+
+def _goals_now(username):
+    """Every goal as the goals page has it, without writing anything.
+
+    The same path as GET /api/get_goals: streak and focus goals brought up to
+    date on the rows in hand, then progress, checkpoints and health.
+    """
+    rows = db.rows_for('goals', username)
+    goals_api.sync_streak_goals(username, rows, persist=False)
+    goals_api.sync_focus_goals(username, rows, persist=False)
+    return goals_api._goals_reply(username, rows)['goals']
+
+
+def _tasks(username):
+    return goal_store.with_goal_ids(username, db.columns_for('tasks', username, LIVE_TASK_FIELDS))
+
+
+def _streak(username):
+    """The streak as the dashboard reads it, decayed on a copy so nothing is written."""
+    _, user = load_user(username)
+    if not user:
+        return 0
+    user = dict(user)
+    xp_tracking.refresh_streak(user)
+    return user.get('current_streak', 0) or 0
+
+
+def live_data(username, config, today=None):
+    """What one live block shows, read fresh. `config` is already clean."""
+    today = today or date.today()
+    source = config['source']
+    if source == 'goal':
+        goal = live.pick_goal(_goals_now(username), config['goal'], today)
+        return live.goal_view(goal, _tasks(username) if goal else [], today)
+    if source == 'skills':
+        nodes = skillsteps_api.catalogue()
+        attempts = db.rows_for('skill_attempts', username)
+        tree = live.pick_tree(nodes, attempts, config['tree'])
+        if not tree:
+            return {'empty': True}
+        return live.skills_view(nodes, attempts, tree, skill_level.read_level)
+    if source == 'productivity':
+        days = max(config['weeks'] * 7, 28)
+        series = (growth_tracking.series(username, days) or {}).get('growth_data') or []
+        return live.productivity_view(series, config['weeks'], _streak(username), today)
+    if source == 'records':
+        return live.records_view(records_api._mine(username), config['category'], config['limit'])
+    if source == 'calendar':
+        return live.calendar_view(db.columns_for('tasks', username, LIVE_TASK_FIELDS),
+                                  _goals_now(username), today, config['days'])
+    # growth
+    subject = config['subject']
+    series = [] if subject else (growth_tracking.series(username, config['days'] * 2) or {}).get('growth_data') or []
+    tasks = db.columns_for('tasks', username, LIVE_TASK_FIELDS) if subject else []
+    tree_nodes = [node for node in skillsteps_api.catalogue() if subject and node.get('tree') == subject]
+    attempts = db.rows_for('skill_attempts', username) if tree_nodes else []
+    view = live.growth_view(subject, config['days'], tasks, series, attempts, tree_nodes, today)
+    view['name'] = _subject_name(username, subject)
+    return view
+
+
+def _subject_name(username, subject):
+    """What a subject is called: the catalog's name, the account's own, or the id."""
+    if not subject:
+        return ''
+    row = subjects_catalog.BY_ID.get(subject) or subjects_api._rows(username).get(subject) or {}
+    return row.get('name') or subject
+
+
+@router.get('/api/spaces/live')
+def read_live(source: str = '', goal: str = '', tree: str = '', weeks: int = 0,
+              category: str = '', limit: int = 0, days: int = 0, subject: str = '',
+              username: str = Depends(current_username)):
+    """What one live block shows right now. Read only, like every GET."""
+    if source not in live.SOURCES:
+        return fail('There is no live source called {}.'.format(source or 'that'))
+    config = live.clean_config({'source': source, 'goal': goal, 'tree': tree, 'weeks': weeks,
+                                'category': category, 'limit': limit, 'days': days, 'subject': subject})
+    return ok(config=config, data=live_data(username, config),
+              revision=live.revisions(username)[source],
+              at=datetime.now().isoformat(timespec='seconds'))
+
+
+@router.get('/api/spaces/live/options')
+def live_options(username: str = Depends(current_username)):
+    """What a live block can be pointed at: goals, trees, subjects, categories."""
+    goals = db.rows_for('goals', username)
+    goals.sort(key=lambda goal: (goal.get('status') == 'completed', str(goal.get('title') or '').lower()))
+    subjects = subjects_api.subjects(username=username)['subjects']
+    subjects.sort(key=lambda row: -(row.get('used') or 0))
+    records = records_api._mine(username)
+    return ok(
+        goals=[{'id': str(goal.get('id')), 'title': goal.get('title') or '', 'done': goal.get('status') == 'completed'}
+               for goal in goals],
+        trees=live.trees_of(skillsteps_api.catalogue()),
+        subjects=[{'id': row['id'], 'name': row.get('name') or row['id'], 'used': row.get('used') or 0}
+                  for row in subjects],
+        categories=sorted({row.get('category') or '' for row in records if row.get('kind', 'record') == 'record'} - {''},
+                          key=str.lower),
+    )
+
+
+@router.get('/api/spaces/live/revisions')
+def live_revisions(username: str = Depends(current_username)):
+    """A stamp per source. An open page polls this; a stamp that moved means refresh."""
+    return ok(revisions=live.revisions(username))

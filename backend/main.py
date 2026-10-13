@@ -129,7 +129,7 @@ def create_app():
         allow_methods=['*'],
         allow_headers=['*'],
         # Read by frontend/src/services/api.ts; see backend/middleware/writes.py.
-        expose_headers=['X-Summit-Tasks-Changed'],
+        expose_headers=['X-Summit-Tasks-Changed', 'X-Summit-Live'],
     )
 
     routes.register(app)

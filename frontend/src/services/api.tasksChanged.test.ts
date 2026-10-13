@@ -5,7 +5,8 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { flushStatsChanged } from '@/utils/statsBus';
-import { TASKS_CHANGED_HEADER, get, post } from './api';
+import { onLiveChanged } from '@/utils/liveBus';
+import { LIVE_HEADER, TASKS_CHANGED_HEADER, get, post } from './api';
 
 function answer(headers: Record<string, string> = {}) {
   return vi.fn(async () => new Response(JSON.stringify({ success: true }), { headers }));
@@ -32,6 +33,26 @@ describe('a response that says the tasks changed', () => {
     window.addEventListener('summit:tasks-written', heard);
     await get('/api/tasks');
     window.removeEventListener('summit:tasks-written', heard);
+    expect(heard).not.toHaveBeenCalled();
+  });
+});
+
+describe('a response that says live data moved', () => {
+  it('names the sources to the live blocks', async () => {
+    vi.stubGlobal('fetch', answer({ [LIVE_HEADER]: 'goal,productivity' }));
+    const heard: string[][] = [];
+    const off = onLiveChanged((sources) => heard.push(sources));
+    await post('/api/complete_task', { task_id: 't1' });
+    off();
+    expect(heard).toEqual([['goal', 'productivity']]);
+  });
+
+  it('says nothing without the header', async () => {
+    vi.stubGlobal('fetch', answer());
+    const heard = vi.fn();
+    const off = onLiveChanged(heard);
+    await get('/api/spaces/live/revisions');
+    off();
     expect(heard).not.toHaveBeenCalled();
   });
 });

@@ -45,14 +45,21 @@
  * (`X-Summit-Tasks-Changed`, backend/middleware/writes.py), and this is where
  * it is read: the change is announced once (utils/statsBus), and the copies
  * refresh themselves off that. No caller has to remember.
+ *
+ * `X-Summit-Live` is the same idea for the live blocks on a space's page: it
+ * names which of their sources the request moved (utils/liveBus).
  */
 import { ApiError } from '@/types';
 import type { ApiResult } from '@/types';
+import { announceLiveChanged } from '@/utils/liveBus';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { API_BASE } from './constants';
 
 /** Set by the server on a response from a request that changed the task list. */
 export const TASKS_CHANGED_HEADER = 'X-Summit-Tasks-Changed';
+
+/** The live block sources a request changed, comma-separated (utils/liveBus). */
+export const LIVE_HEADER = 'X-Summit-Live';
 
 /**
  * What to do when the server says nobody is signed in.
@@ -115,6 +122,8 @@ async function request<T>(
   if (response.headers?.get?.(TASKS_CHANGED_HEADER)) {
     announceStatsChanged();
   }
+  const live = response.headers?.get?.(LIVE_HEADER);
+  if (live) announceLiveChanged(live.split(',').filter(Boolean));
 
   const body = await response.text();
   if (!body) {

@@ -19,6 +19,7 @@
 import { escapeInline, plainOf } from './inline';
 import { cleanFill, isHex, type Fill } from './fill';
 import { RULES } from '@/utils/sharedRules';
+import { LIVE_SOURCES, SOURCE_INFO, cleanLive, defaultLive, type LiveConfig, type LiveSource } from './live';
 
 export type BlockType =
   | 'text'
@@ -35,7 +36,8 @@ export type BlockType =
   | 'code'
   | 'chart'
   | 'sticky'
-  | 'shape';
+  | 'shape'
+  | 'live';
 
 export type ShapeKind = 'rectangle' | 'rounded' | 'circle' | 'triangle' | 'diamond' | 'star' | 'hexagon' | 'arrow';
 
@@ -77,6 +79,8 @@ export interface Block {
   w?: number;
   /** Charts only. */
   chart?: ChartData;
+  /** Live blocks only: where it looks (./live). What it shows is read, never stored. */
+  live?: LiveConfig;
   /** The words' colour, `#rrggbb`, on any block with words. Absent is the page's own ink. */
   color?: string;
   /** Sticky notes and shapes: what they are filled with (./fill). */
@@ -119,6 +123,8 @@ export interface BlockKind {
   chart?: ChartKind;
   /** Shape entries in the slash menu: which shape it starts as. */
   shape?: ShapeKind;
+  /** Live entries in the slash menu: which source it starts on. */
+  live?: LiveSource;
 }
 
 /** Every kind, in the order the slash menu lists them. */
@@ -138,6 +144,7 @@ export const BLOCK_KINDS: BlockKind[] = [
   { type: 'chart', label: 'Chart', hint: 'Bars, lines or a pie you set by dragging.', keys: ['chart', 'graph', 'plot'], glyph: '▥' },
   { type: 'sticky', label: 'Sticky note', hint: 'A post-it in any colour.', keys: ['sticky', 'note', 'postit', 'post-it'], glyph: '🗒' },
   { type: 'shape', label: 'Shape', hint: 'A box, circle, star and more, in any colour.', keys: ['shape', 'box', 'rectangle'], glyph: '◆' },
+  { type: 'live', label: 'Live data', hint: 'Your goals, skills or stats, kept up to date.', keys: ['live', 'data', 'dashboard', 'widget'], glyph: '◉' },
 ];
 
 /** The chart kinds the server keeps, in the order the chart's switcher shows them. */
@@ -179,15 +186,26 @@ const SHAPE_ENTRIES: BlockKind[] = SHAPE_KINDS.map((shape) => ({
   glyph: SHAPE_GLYPH[shape],
 }));
 
-/** What the slash menu offers: every kind of block, one entry per chart and per shape. */
+/** One slash-menu entry per live source, so "/goal" finds a goal's progress. */
+const LIVE_ENTRIES: BlockKind[] = LIVE_SOURCES.map((source) => ({
+  type: 'live',
+  live: source,
+  label: SOURCE_INFO[source].label,
+  hint: SOURCE_INFO[source].hint,
+  keys: ['live', 'data', ...SOURCE_INFO[source].keys],
+  glyph: SOURCE_INFO[source].glyph,
+}));
+
+/** What the slash menu offers: every kind of block, one entry per chart, shape and live source. */
 export const SLASH_KINDS: BlockKind[] = [
-  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape'),
+  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape' && kind.type !== 'live'),
   ...CHART_ENTRIES,
   ...SHAPE_ENTRIES,
+  ...LIVE_ENTRIES,
 ];
 
 /** Kinds that are drawn rather than written: no Turn into, to or from. */
-export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape']);
+export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape', 'live']);
 
 /** What "Turn into" offers: the kinds made of words. */
 export const TURN_KINDS: BlockKind[] = BLOCK_KINDS.filter((kind) => !DRAWN.has(kind.type));
@@ -245,6 +263,11 @@ export function defaultChart(kind: ChartKind = 'bar'): ChartData {
 /** A new chart block, ready to drag. */
 export function chartBlock(kind: ChartKind = 'bar', extra: Partial<Block> = {}): Block {
   return block('chart', '', { chart: defaultChart(kind), ...extra });
+}
+
+/** A new live block, looking at `source` with its default settings. */
+export function liveBlock(source: LiveSource = 'goal', extra: Partial<Block> = {}): Block {
+  return block('live', '', { live: defaultLive(source), ...extra });
 }
 
 /** A chart as stored, made safe to draw: a known kind, a sane scale, 1–12 points. */
@@ -423,6 +446,7 @@ export function normalise(doc: Partial<SpaceDoc> | null | undefined, body = ''):
           if (type === 'todo' && one.checked) next.checked = true;
           if (type === 'toggle' && one.collapsed) next.collapsed = true;
           if (type === 'chart') next.chart = cleanChart(one.chart);
+          if (type === 'live') next.live = cleanLive(one.live);
           if (isHex(one.color)) next.color = one.color.toLowerCase();
           if (type === 'sticky' || type === 'shape') {
             next.fill = cleanFill(one.fill) ?? (type === 'sticky' ? { color: '#fde68a', style: 'solid' } : { color: '#93c5fd', style: 'fade' });
@@ -563,7 +587,12 @@ export function duplicate(blocks: Block[], id: string): { blocks: Block[]; copy:
   const copies = blocks.slice(at, end + 1).map((one) => {
     // It keeps its width, so a copied note is still a note-sized note.
     const { x: _x, y: _y, ...rest } = one;
-    return { ...rest, id: newId(), ...(one.chart ? { chart: structuredCopy(one.chart) } : {}) };
+    return {
+      ...rest,
+      id: newId(),
+      ...(one.chart ? { chart: structuredCopy(one.chart) } : {}),
+      ...(one.live ? { live: { ...one.live } } : {}),
+    };
   });
   return {
     blocks: [...blocks.slice(0, end + 1), ...copies, ...blocks.slice(end + 1)],

@@ -57,9 +57,12 @@ describe('typing shortcuts', () => {
 });
 
 describe('the slash menu', () => {
-  it('offers every kind before anything is typed, with one entry per chart and per shape', () => {
+  it('offers every kind before anything is typed, with one entry per chart, shape and live source', () => {
     const all = matchKinds('');
-    expect(all.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape')).toHaveLength(13);
+    expect(all.filter((kind) => !['chart', 'shape', 'live'].includes(kind.type))).toHaveLength(13);
+    expect(all.filter((kind) => kind.type === 'live').map((kind) => kind.live)).toEqual([
+      'goal', 'skills', 'productivity', 'records', 'calendar', 'growth',
+    ]);
     expect(all.filter((kind) => kind.type === 'chart').map((kind) => kind.chart)).toEqual(['bar', 'line', 'area', 'pie', 'donut']);
     expect(all.filter((kind) => kind.type === 'shape').map((kind) => kind.shape)).toEqual([
       'rectangle', 'rounded', 'circle', 'triangle', 'diamond', 'star', 'hexagon', 'arrow',
