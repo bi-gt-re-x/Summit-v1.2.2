@@ -4753,7 +4753,28 @@
           "detail": "In Python, start with def hello(): then indent and write return 'Hello'. Ensure the return line is indented exactly one level. Save the file and run it to see the output.",
           "proof": "Calling hello() returns 'Hello'.",
           "pitfall": "Forgetting the parentheses after the function name when calling it.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Define a function named greet() that returns the string 'Hi'.",
+              "answer": "def greet():\n    return 'Hi'."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a function named hello() that returns the string 'Hello'.",
+              "answer": "def hello():\n    return 'Hello'."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Create a function named welcome() that returns the string 'Welcome' and then call it to get the result. What does welcome() return?",
+              "answer": "def welcome():\n    return 'Welcome'\n\nwelcome()  # returns 'Welcome'.",
+              "hint": "Think about what the function returns when called."
+            }
+          ]
         },
         {
           "title": "Add parameters and return",
@@ -4762,7 +4783,28 @@
           "detail": "Use def add(a, b): then indent and write return a + b. Test with print(add(3,5)). The function should output 8.",
           "proof": "Calling add(3, 5) returns 8.",
           "pitfall": "Using = instead of == in a return expression, or forgetting to return the sum.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a function add(a, b) that returns a + b. What does add(2, 3) return?",
+              "answer": "def add(a, b):\n    return a + b\n\nadd(2, 3)  # returns 5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Define a function add(a, b) that returns a + b. What is the result of add(10, 15)?",
+              "answer": "def add(a, b):\n    return a + b\n\nadd(10, 15)  # returns 25."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Create a function add(a, b) that returns a + b. If you mistakenly write return a = b, what error will Python raise?",
+              "answer": "SyntaxError: cannot assign to operator.",
+              "hint": "The error occurs because '=' is an assignment operator, not a comparison."
+            }
+          ]
         },
         {
           "title": "Call a function and print",
@@ -4771,7 +4813,28 @@
           "detail": "After the function definition, write print(hello()). Run the script; the console should show Hello. Verify no errors appear.",
           "proof": "The program prints Hello on the console.",
           "pitfall": "Printing the function object instead of its return value, e.g., print(hello) without parentheses.",
-          "minutes": 8
+          "minutes": 8,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Define a function hello() that returns 'Hello' and then print its result. What is printed?",
+              "answer": "def hello():\n    return 'Hello'\n\nprint(hello())  # prints Hello."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a function greet() that returns 'Hi' and then print the result of calling greet(). What appears on the console?",
+              "answer": "def greet():\n    return 'Hi'\n\nprint(greet())  # prints Hi."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Define a function shout() that returns 'Wow!'. If you write print(shout) instead of print(shout()), what will be displayed?",
+              "answer": "<function shout at 0x...>  # the function object, not its return value.",
+              "hint": "Remember to use parentheses to call the function."
+            }
+          ]
         },
         {
           "title": "Use function result in expression",
@@ -4780,7 +4843,28 @@
           "detail": "Define def double(x): return 2 * x. Then write result = double(7) + 3; print(result). Run to see 17.",
           "proof": "The program prints 17.",
           "pitfall": "Forgetting to assign the function call to a variable before adding, or mixing up order of operations.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a function double(x) that returns 2 * x. What is double(4)?",
+              "answer": "def double(x):\n    return 2 * x\n\ndouble(4)  # returns 8."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Define double(x) that returns 2 * x. Compute result = double(7) + 3 and print result. What is printed?",
+              "answer": "def double(x):\n    return 2 * x\n\nresult = double(7) + 3\nprint(result)  # prints 17."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Create double(x) that returns 2 * x. If you write result = double(5) + 2 * 3 without assigning double(5) to a variable first, what value is printed?",
+              "answer": "def double(x):\n    return 2 * x\n\nresult = double(5) + 2 * 3\nprint(result)  # prints 16.",
+              "hint": "Order of operations: double(5) is 10, then 10 + 6 = 16."
+            }
+          ]
         },
         {
           "title": "Multiple arguments and default",
@@ -4789,7 +4873,28 @@
           "detail": "Use def power(base, exponent=2): return base ** exponent. Then print(power(5)) and print(power(2,3)). Verify outputs 25 and 8.",
           "proof": "The program prints 25 and 8 on separate lines.",
           "pitfall": "Omitting the default argument when defining, causing a TypeError when called with one argument.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Define power(base, exponent=2) that returns base ** exponent. What does power(4) return?",
+              "answer": "def power(base, exponent=2):\n    return base ** exponent\n\npower(4)  # returns 16."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write power(base, exponent=2) and print power(3) and power(2,3). What are the outputs?",
+              "answer": "def power(base, exponent=2):\n    return base ** exponent\n\nprint(power(3))  # 9\nprint(power(2,3))  # 8."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Create power(base, exponent=2). If you forget the default value and call power(5), what error occurs?",
+              "answer": "TypeError: power() missing 1 required positional argument: 'exponent'.",
+              "hint": "The function expects two arguments if no default is provided."
+            }
+          ]
         },
         {
           "title": "Build a small program with functions",
@@ -4831,7 +4936,28 @@
           "detail": "Wrap the string variable with int(): age_int = int(age_str). Verify the conversion by printing type(age_int). If an error occurs, ensure the original input contains only digits.",
           "proof": "If age_str was \"27\", age_int will be the integer 27 and type(age_int) will be int.",
           "pitfall": "Calling int() on a non‑numeric string, which raises a ValueError and stops the program.",
-          "minutes": 8
+          "minutes": 8,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the result of int('5')?",
+              "answer": "5."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Given age_str = '27', what is age_int after age_int = int(age_str)?",
+              "answer": "27."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What exception is raised by int('abc')?",
+              "answer": "ValueError.",
+              "hint": "Non‑numeric string conversion."
+            }
+          ]
         },
         {
           "title": "Print formatted output",
@@ -4840,7 +4966,28 @@
           "detail": "Add 1 to age_int, assign to next_age, then use print(f\"You will be {next_age} next year.\"). The f‑string inserts the integer automatically. Try different ages to see the output change.",
           "proof": "If age_int was 29, the program prints: You will be 30 next year.",
           "pitfall": "Using string concatenation without converting the integer, which causes a TypeError.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write an f‑string that inserts the variable next_age into the sentence: You will be ___ next year.",
+              "answer": "f'You will be {next_age} next year.'."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "If age_int = 29, what does the program print after calculating next_age = age_int + 1 and executing print(f'You will be {next_age} next year.')?",
+              "answer": "You will be 30 next year."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the statement print('You will be ' + next_age + ' next year.') raise an error when next_age is an integer?",
+              "answer": "Because next_age must be converted to a string before concatenation.",
+              "hint": "Type mismatch between str and int."
+            }
+          ]
         },
         {
           "title": "Read from a file",
@@ -4858,7 +5005,28 @@
           "detail": "Use with open('result.txt','w') as f: f.write(f\"Current age: {age_int}, Next year: {next_age}\"). The with‑statement handles closing. Open result.txt afterwards to verify its contents.",
           "proof": "After execution, result.txt contains exactly: Current age: 29, Next year: 30 (assuming age_int was 29).",
           "pitfall": "Opening result.txt in read mode ('r') instead of write mode ('w'), which prevents writing and may raise an error.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What will be the content of result.txt after executing: with open('result.txt', 'w') as f: f.write('Hello')?",
+              "answer": "Hello."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write Python code that creates a string s = f'Age: {age}' and writes it to result.txt in write mode, overwriting any existing content.",
+              "answer": "with open('result.txt', 'w') as f:\n    s = f'Age: {age}'\n    f.write(s)."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Given age_int = 25, write Python code that creates the string f'Current age: {age_int}, Next year: {age_int+1}' and writes it to result.txt, ensuring the file is overwritten each time.",
+              "answer": "age_int = 25\nwith open('result.txt', 'w') as f:\n    f.write(f'Current age: {age_int}, Next year: {age_int+1}').",
+              "hint": "Use f-strings and open with 'w' mode."
+            }
+          ]
         }
       ]
     },
@@ -4882,7 +5050,28 @@
           "detail": "Recall that a for loop needs a start value, an end condition, and a step. Use the range syntax to generate 1 to 5 inclusive, and place a print statement inside the loop body. Run the code and verify the five lines appear.",
           "proof": "The program outputs each number on its own line: 1 2 3 4 5.",
           "pitfall": "Omitting the update expression causes the loop to run forever.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the initializer expression in the loop `for (int i = 1; i <= 5; i++) {}`?",
+              "answer": "int i = 1."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a for loop that prints the numbers 1 through 5, each on its own line.",
+              "answer": "for (int i = 1; i <= 5; i++) {\n    System.out.println(i);\n}."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Given the loop `for (int i = 0; i < 10; i += 2) {}`, identify the condition and the update expression.",
+              "answer": "Condition: i < 10\nUpdate: i += 2.",
+              "hint": "Think about what keeps the loop going and what changes each iteration."
+            }
+          ]
         },
         {
           "title": "Counting with While",
@@ -4891,7 +5080,28 @@
           "detail": "Initialize n before the loop, then use while n > 0: print n and subtract 1 inside the body. The condition is checked before each iteration, so the loop stops when n becomes 0. Verify the three numbers appear in descending order.",
           "proof": "The output is three lines: 3 2 1.",
           "pitfall": "Using > instead of >= in the condition skips the last value.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a while loop that prints the numbers 1, 2, and 3, each on its own line.",
+              "answer": "int n = 1;\nwhile (n <= 3) {\n    System.out.println(n);\n    n++;\n}."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a while loop that starts with n = 3, prints n, then decrements n until it reaches 0.",
+              "answer": "int n = 3;\nwhile (n > 0) {\n    System.out.println(n);\n    n--;\n}."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In a while loop that decrements n starting at 3, what condition should you use to ensure 0 is not printed?",
+              "answer": "n > 0.",
+              "hint": "The loop should stop before n becomes 0."
+            }
+          ]
         },
         {
           "title": "Iterating Over a List",
@@ -4951,7 +5161,28 @@
           "detail": "In Python, wrap text in single or double quotes. Use the assignment operator = to store it in a variable, then call print() with the variable name.",
           "proof": "The output is Data.",
           "pitfall": "Forgetting quotes, causing a NameError.",
-          "minutes": 5
+          "minutes": 5,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Create a variable named msg that holds the string \"Hello\" and print it.",
+              "answer": "Hello."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Assign the string \"Python\" to a variable named language and print it.",
+              "answer": "Python."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Create a variable named quote that stores the string \"To be or not to be\" and print it.",
+              "answer": "To be or not to be.",
+              "hint": "Remember to use quotes around the whole sentence."
+            }
+          ]
         },
         {
           "title": "Explore string indexing",
@@ -4969,7 +5200,28 @@
           "detail": "Use start:end syntax, where start is inclusive and end exclusive. For 'Instagram', start at index 5 and end at 9: s[5:9]. Store the result.",
           "proof": "sub equals 'gram'.",
           "pitfall": "Omitting the end index; forgetting that the end index is exclusive, leading to 'gra' instead of 'gram'.",
-          "minutes": 7
+          "minutes": 7,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Slice the substring 'gram' from the string 'Instagram' and assign it to a variable sub.",
+              "answer": "gram."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Slice the substring 'Python' from the string 'PyPyPython' and assign it to a variable part.",
+              "answer": "Python."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Slice the substring 'code' from the string 'decode' using slice notation and assign it to a variable snippet.",
+              "answer": "code.",
+              "hint": "Remember that the end index is exclusive."
+            }
+          ]
         },
         {
           "title": "Search within strings",
@@ -4987,7 +5239,28 @@
           "detail": "Call parts = s.split(',') to get ['red','green','blue']. Then use ';'.join(parts) to recombine. Print the result.",
           "proof": "The output is 'red;green;blue'.",
           "pitfall": "Using split without specifying the delimiter, which would split on whitespace instead of commas.",
-          "minutes": 8
+          "minutes": 8,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Split the sentence 'apple orange banana' on spaces into a list, then join the list with ',' and print the final string.",
+              "answer": "apple,orange,banana."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Split the sentence 'red,green,blue' on commas into a list, then join the list with ';' and print the final string.",
+              "answer": "red;green;blue."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Split the string 'one;two;three' on ';' into a list, then join the list with ',' and print the result.",
+              "answer": "one,two,three.",
+              "hint": "Specify the delimiter in split."
+            }
+          ]
         },
         {
           "title": "Manipulate whitespace and case",
@@ -4996,7 +5269,28 @@
           "detail": "First call s.strip() to remove spaces, then .upper() to change case: cleaned = s.strip().upper(). Print cleaned to verify.",
           "proof": "cleaned equals 'HELLO WORLD!'.",
           "pitfall": "Calling strip() after upper() will not remove spaces because upper() does not affect whitespace; order matters.",
-          "minutes": 6
+          "minutes": 6,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the result of `'  Test  '.strip()`?",
+              "answer": "Test."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Assign to cleaned the string `'  Example Text  '` after stripping spaces and converting to lowercase. What is cleaned?",
+              "answer": "example text."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Given `s = '  multiple   spaces  HERE  '`, write code to strip leading/trailing spaces, collapse multiple internal spaces to a single space, and convert to title case. What is the resulting string?",
+              "answer": "Multiple Spaces Here.",
+              "hint": "Use `split()` and `join()` to collapse spaces before `title()`."
+            }
+          ]
         }
       ]
     },
@@ -5020,7 +5314,28 @@
           "detail": "Look at each literal. Whole numbers without a decimal point are integers. Numbers with a decimal point are floats. Text surrounded by quotes is a string. Write the type next to each literal.",
           "proof": "42 is an integer, 3.14 is a float, \"hello\" is a string.",
           "pitfall": "Assuming numbers with a decimal are integers.",
-          "minutes": 5
+          "minutes": 5,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Identify the type of the literal 42.",
+              "answer": "int."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Identify the type of the literal 3.14.",
+              "answer": "float."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Identify the type of the literal \"hello\".",
+              "answer": "str.",
+              "hint": "Remember that text surrounded by quotes is a string."
+            }
+          ]
         },
         {
           "title": "Use typeof Operator",
@@ -5029,7 +5344,28 @@
           "detail": "Open a Python interpreter. Type the expressions exactly as shown. The built‑in type() function returns the class object representing the value's type. Record the printed representation for each.",
           "proof": "type(7) returns <class 'int'>, type(2.5) returns <class 'float'>, type('cat') returns <class 'str'>.",
           "pitfall": "Reading the output as the literal value instead of the class name.",
-          "minutes": 7
+          "minutes": 7,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does type(10) return in Python?",
+              "answer": "<class 'int'>."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does type(3.5) return in Python?",
+              "answer": "<class 'float'>."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does type([1, 2, 3]) return in Python?",
+              "answer": "<class 'list'>.",
+              "hint": "Think about the container type for a sequence of numbers."
+            }
+          ]
         },
         {
           "title": "Detect Invalid Operations",
@@ -5038,7 +5374,28 @@
           "detail": "Enter the expression \"5\" + 2 in a Python REPL. Python does not perform implicit numeric conversion for the + operator when one operand is a string. The interpreter stops with a TypeError. Note the exact wording of the error.",
           "proof": "Python raises TypeError: can only concatenate str (not \"int\") to str.",
           "pitfall": "Assuming Python will coerce the string to a number automatically.",
-          "minutes": 6
+          "minutes": 6,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What error occurs when adding 1 + \"a\" in Python?",
+              "answer": "TypeError."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What error occurs when multiplying \"2\" * 3.5 in Python?",
+              "answer": "TypeError."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What error occurs when comparing 5 < \"5\" in Python?",
+              "answer": "TypeError.",
+              "hint": "Mixed numeric and string comparisons are not allowed."
+            }
+          ]
         },
         {
           "title": "Convert Between Types",
@@ -5047,7 +5404,28 @@
           "detail": "Use int() to turn numeric text into an integer, then perform arithmetic. Use str() to turn a number into text before concatenation. Write the two expressions exactly and observe the results.",
           "proof": "int(\"123\") + 7 yields 130; str(9) + \" apples\" yields \"9 apples\".",
           "pitfall": "Forgetting to assign the conversion result before using it.",
-          "minutes": 8
+          "minutes": 8,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is int(\"7\") in Python?",
+              "answer": "7."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is str(12) + \"px\" in Python?",
+              "answer": "\"12px\"."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is float(\"3.14\") * 2 in Python?",
+              "answer": "6.28.",
+              "hint": "Convert the string to a float before multiplying."
+            }
+          ]
         },
         {
           "title": "Write Typed Functions",
@@ -5056,7 +5434,28 @@
           "detail": "Write the function exactly as shown. The annotation says n should be an int. When you pass a string, the multiplication inside the function attempts to multiply a string by a string, which Python rejects. Observe the TypeError message.",
           "proof": "Calling square('3') raises TypeError: can't multiply sequence by non-int of type 'str'.",
           "pitfall": "Calling the function with a value of the wrong type and assuming it will work.",
-          "minutes": 9
+          "minutes": 9,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What type annotation is given for the parameter n in the function definition def square(n: int) -> int: ... ?",
+              "answer": "int."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What value is returned by calling square(4) when the function is defined as def square(n: int) -> int: return n * n ?",
+              "answer": "16."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "When calling square('3') with the same definition, what exception is raised?",
+              "answer": "TypeError: can't multiply sequence by non-int of type 'str'.",
+              "hint": "Consider what happens when the * operator tries to multiply a string by an integer."
+            }
+          ]
         }
       ]
     },
@@ -5080,7 +5479,28 @@
           "detail": "In Python, write the variable name, then an equals sign, then the value. Use `print()` to display the variable. Ensure the value is a literal like a number or string.",
           "proof": "The program outputs `42`.",
           "pitfall": "Forgetting the equals sign or using `=` instead of `==` in comparisons.",
-          "minutes": 5
+          "minutes": 5,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does the variable `score` contain after executing `score = 42`?",
+              "answer": "42."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a line of Python code that creates a variable named `score` and assigns it the value 42, then write the line that prints `score`.",
+              "answer": "score = 42\nprint(score)."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "If you accidentally write `score == 42` instead of `score = 42` and then print `score`, what will be printed?",
+              "answer": "NameError (score is not defined).",
+              "hint": "Consider what == does in Python."
+            }
+          ]
         },
         {
           "title": "Change variable value",
@@ -5089,7 +5509,28 @@
           "detail": "Assign the initial value, then later write another assignment with the same variable name. The second assignment overwrites the first. Print after the change to verify.",
           "proof": "The program outputs `15`.",
           "pitfall": "Assuming the original value stays unchanged after reassignment.",
-          "minutes": 5
+          "minutes": 5,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the value of `counter` after executing `counter = 10`?",
+              "answer": "10."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write Python code that sets `counter` to 10, then changes it to 15, and prints the final value.",
+              "answer": "counter = 10\ncounter = 15\nprint(counter)."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "If you write `counter = 10` then later `counter + 5` without reassigning, what will `print(counter)` output?",
+              "answer": "10.",
+              "hint": "Remember that `counter + 5` does not change counter unless you assign."
+            }
+          ]
         },
         {
           "title": "Use variable in expression",
@@ -5098,7 +5539,28 @@
           "detail": "Write each assignment on its own line. Use `*` for multiplication and `+` for addition. Python follows standard precedence, so multiplication happens before addition.",
           "proof": "The program outputs `23`.",
           "pitfall": "Mixing up operator precedence or forgetting to use the variable names.",
-          "minutes": 7
+          "minutes": 7,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the value of `a` after `a = 7`?",
+              "answer": "7."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Given `a = 7` and `b = 3`, write the expression that computes `total = a * b + 2` and state the printed result.",
+              "answer": "23."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "If you change the expression to `total = a + b * 2` with the same a and b, what is the printed value?",
+              "answer": "13.",
+              "hint": "Recall operator precedence."
+            }
+          ]
         },
         {
           "title": "Use variable in condition",
@@ -5116,7 +5578,28 @@
           "detail": "Use `input()` to get text from the user, wrap it with `int()` to convert to an integer. Perform arithmetic with the variable, then `print()` the result.",
           "proof": "If the user enters `5`, the program prints `10`.",
           "pitfall": "Forgetting to convert input to int, leading to string concatenation.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What integer is printed when the user enters 5 for `num` in the described program?",
+              "answer": "10."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the two lines of Python code that read an integer from input into `num` and then print `num` multiplied by 2.",
+              "answer": "num = int(input('Enter a number: '))\nprint(num * 2)."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "If the conversion to int is omitted and the code is `num = input('Enter a number: ')\nprint(num * 2)`, what will be printed when the user types 5?",
+              "answer": "55.",
+              "hint": "String multiplication repeats the string."
+            }
+          ]
         }
       ]
     },
@@ -5140,7 +5623,28 @@
           "detail": "Look at the balanced equation. The left‑hand side contains the reactants; copy each formula exactly as it appears, including its coefficient. Then do the same for the right‑hand side. Verify that the total number of each element is the same on both sides. This step builds the mental map you will need for later calculations.",
           "proof": "You list Al, Cl₂ as reactants and AlCl₃ as product.",
           "pitfall": "Confusing coefficients with subscripts or omitting a species.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Identify the reactants in the equation Na + Cl₂ → NaCl.",
+              "answer": "Na, Cl₂."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Identify the reactants and products in the balanced equation 2 Mg + O₂ → 2 MgO.",
+              "answer": "Reactants: Mg, O₂; Products: MgO."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For the balanced equation 2 KNO₃ → 2 KNO₂ + O₂, list the reactants and products without coefficients.",
+              "answer": "Reactants: KNO₃; Products: KNO₂, O₂.",
+              "hint": "Pay attention to the direction of the arrow."
+            }
+          ]
         },
         {
           "title": "Convert Mass to Moles",
@@ -5484,7 +5988,42 @@
           "detail": "Whatever you do to one side, do to the other. Peel operations off the letter you want in reverse order: undo the addition before the multiplication. Substitute a number set back into both the original and your rearrangement — they must agree.",
           "proof": "a = (v - u) / t, and t = s / v.",
           "pitfall": "Moving a term across without reversing its operation, so a subtraction stays a subtraction.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve for a in the equation a + 3 = 9.",
+              "answer": "a = 6."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Rewrite the equation 5b - 2 = 13 to isolate b.",
+              "answer": "b = 3."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Make a the subject of v = u + at.",
+              "answer": "a = (v - u) / t.",
+              "hint": "Subtract u from both sides, then divide by t."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Make t the subject of s = vt, where s = 20 and v = 4.",
+              "answer": "t = 5.",
+              "hint": "Divide both sides by v."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Given the equation 3c + 7 = 2c - 5, rearrange to solve for c.",
+              "answer": "c = -12.",
+              "hint": "Move 2c to the left and 7 to the right, then simplify."
+            }
+          ]
         },
         {
           "title": "Turn Words into Algebra",
@@ -6714,7 +7253,48 @@
           "detail": "Repeated proportional change is a power, not a multiplication: the size is 200 x 1.08^n. Finding the year takes a log. Checking the first two years by hand confirms the multiplier before you trust the formula.",
           "proof": "About 432 after 10 years, and it passes 500 during year 12.",
           "pitfall": "Adding 8% of the original each year rather than compounding on the new total.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A colony of 150 bacteria grows 5% in one hour. What is its size after that hour?",
+              "answer": "157.5."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "A bank account has $500 and earns 3% interest each month, compounded monthly. What is the balance after 2 months? (Round to the nearest cent).",
+              "answer": "$530.45."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "A population of 200 grows 8% per year. What is its size after 10 years? (Round to the nearest whole number).",
+              "answer": "432.",
+              "hint": "Use the formula P(1+r)^t."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "A population of 200 grows 8% per year. In which year does the population first become at least 500?",
+              "answer": "12.",
+              "hint": "Solve 200(1.08)^n ≥ 500 for the smallest integer n."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A population starts at 200 and grows 8% per year for the first 5 years, then 5% per year thereafter. In which year does it first exceed 500? (Give the smallest integer year).",
+              "answer": "16.",
+              "hint": "First compute the size after 5 years, then apply 5% growth until it reaches 500."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Why does adding 8% of the original 200 each year give a later year than the correct compounding method for reaching 500?",
+              "answer": "Because simple addition treats growth as linear, underestimating the true exponential increase, so the population reaches 500 later."
+            }
+          ]
         }
       ]
     },
@@ -7244,7 +7824,35 @@
           "detail": "Corresponding angles are in matching corners and are equal. Alternate angles sit inside on opposite sides and are equal. Co-interior sit inside on the same side and total 180. Trace the F, Z and C shapes on the diagram before naming anything.",
           "proof": "Co-interior is 112, alternate is 68.",
           "pitfall": "Calling a co-interior pair equal, when they add to 180 rather than match.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the measure of the co‑interior angle when one interior angle formed by a transversal with parallel lines is 70°?",
+              "answer": "110°."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If a transversal creates a corresponding angle of 45° with a pair of parallel lines, what is the measure of the other corresponding angle?",
+              "answer": "45°."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A transversal cuts two parallel lines forming an interior angle of 68°. Find the co‑interior angle and the alternate interior angle on the opposite side of the transversal.",
+              "answer": "Co‑interior angle = 112°, alternate interior angle = 68°.",
+              "hint": "Co‑interior angles are supplementary; alternate interior angles are equal."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Given an interior angle of 120° created by a transversal with two parallel lines, determine the co‑interior angle and the corresponding angle on the other line.",
+              "answer": "Co‑interior angle = 60°, corresponding angle = 120°.",
+              "hint": "Co‑interior angles add to 180°, corresponding angles are equal."
+            }
+          ]
         },
         {
           "title": "Triangle Properties",
@@ -8336,7 +8944,47 @@
           "detail": "Start from the messier side and transform it into the other, one identity per line, naming the identity used. The Pythagorean identity does most of the work. Note the excluded values — the two sides agree only where the original is defined.",
           "proof": "1 - cos^2 x is sin^2 x, so the fraction is sin^2 x over sin x.",
           "pitfall": "Working on both sides at once, which proves the two are consistent rather than equal.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is sin^2(π/6) + cos^2(π/6)?",
+              "answer": "1."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is tan(π/4)?",
+              "answer": "1."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Verify that (1 - cos^2 x) / sin x equals sin x when x = π/3.",
+              "answer": "True."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Verify that sin(2x) equals 2 sin x cos x when x = π/6.",
+              "answer": "True."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Verify that (1 - cos 2x) / sin 2x equals tan x when x = π/8.",
+              "answer": "True.",
+              "hint": "Use the double‑angle formulas for sine and cosine."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Simplify (1 - tan^2 x) / (1 + tan^2 x) and express the result as a single trig function of 2x.",
+              "answer": "cos 2x.",
+              "hint": "Write tan x as sin x / cos x and use the Pythagorean identity."
+            }
+          ]
         },
         {
           "title": "Solve Trig Equations in Range",
@@ -8354,7 +9002,47 @@
           "detail": "Inside the bracket acts on the input and runs backwards; outside acts on the output and runs forwards. Order matters: stretch and reflect before translating vertically. Track one point through every stage as a check.",
           "proof": "Right 2, vertical stretch by 3, reflected in the x-axis, then up 1.",
           "pitfall": "Applying the vertical shift before the reflection, which moves it the wrong way.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the effect of replacing x by x-2 in y = f(x)?",
+              "answer": "Shift the graph right by 2 units."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What does multiplying the output by -3 do to the graph of y = f(x)?",
+              "answer": "It stretches the graph vertically by a factor of 3 and reflects it across the x‑axis."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Describe the sequence of transformations to obtain y = -3f(x-2)+1 from y = f(x).",
+              "answer": "Shift right 2, stretch vertically by 3, reflect across the x‑axis, then shift up 1."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "If the point (4,5) lies on y = f(x), what point lies on y = -3f(x-2)+1?",
+              "answer": "(6, -14)."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Given y = f(x) has a maximum at (2,7), where is the maximum of y = -3f(x-2)+1?",
+              "answer": "(4, -20).",
+              "hint": "Apply each transformation in the order: right shift, stretch, reflection, up shift."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Explain why applying a vertical shift before the reflection in y = -3f(x-2)+1 would give a different graph.",
+              "answer": "Because the reflection multiplies the entire output; shifting first changes the amount that is reflected, so the final y‑values differ.",
+              "hint": "Consider doing +1 then -3 versus -3 then +1."
+            }
+          ]
         },
         {
           "title": "Functions in Pieces",
@@ -8363,7 +9051,47 @@
           "detail": "Check which condition the input satisfies before substituting; only one branch applies. At a join, evaluate the limit from each side — equal means continuous, different means a jump. Draw open and closed circles on the sketch to show which piece owns the endpoint.",
           "proof": "1, 4 and 7; continuous, because both pieces approach 4.",
           "pitfall": "Using the wrong branch at the boundary, where the inequality decides which applies.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is f(0) for f(x)=x^2 when x<2 and 3x-2 otherwise?",
+              "answer": "0."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is f(5) for the same piecewise function?",
+              "answer": "13."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Compute f(1) for f(x)=x^2 (x<2) and 3x-2 (otherwise).",
+              "answer": "1."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Compute f(2) for the same function.",
+              "answer": "4."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Is the function continuous at x=2? Explain using limits.",
+              "answer": "Yes, because the left‑hand limit (x^2 → 4) equals the right‑hand limit (3x‑2 → 4) and both equal f(2).",
+              "hint": "Evaluate both pieces as x approaches 2 from each side."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "If the definition were changed to f(x)=x^2 for x≤2, would continuity at 2 change? Why or why not?",
+              "answer": "No, it would still be continuous because both pieces give the value 4 at x=2, so the limit and function value match.",
+              "hint": "Check the value at the boundary when the inequality includes equality."
+            }
+          ]
         },
         {
           "title": "Ready for Limits",
@@ -8372,7 +9100,48 @@
           "detail": "Factor and cancel to remove the problem factor. The simplified form agrees with the original everywhere except the removed point, which is exactly the distinction a limit is built on: what a function approaches need not be what it equals.",
           "proof": "It equals x + 3 everywhere except x = 3, and approaches 6.",
           "pitfall": "Concluding that the expression equals 6 at x = 3, where it is undefined.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is (4^2 - 9)/(4 - 3)?",
+              "answer": "7."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is (x^2 - 9)/(x - 3) when x = 5?",
+              "answer": "8."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Simplify (x^2 - 9)/(x - 3).",
+              "answer": "(x + 3).",
+              "hint": "Factor the numerator as a difference of squares."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Using the simplification, what does (x^2 - 9)/(x - 3) approach as x approaches 3?",
+              "answer": "6.",
+              "hint": "After cancelling, evaluate the simplified expression at x = 3."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Explain why (x^2 - 9)/(x - 3) is not equal to 6 at x = 3 even though its limit is 6.",
+              "answer": "Because the original expression is undefined at x = 3; the factor (x‑3) cancels leaving a hole, so the function has no value there."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Determine the limit of (x^3 - 27)/(x - 3) as x approaches 3, and explain any difference from the previous example.",
+              "answer": "Limit is 9; factor the numerator as (x‑3)(x^2+3x+9), cancel (x‑3) and evaluate at x=3 to get 9. The original expression is still undefined at 3, but the simplified form gives the limit.",
+              "hint": "Factor the numerator as a difference of cubes."
+            }
+          ]
         }
       ]
     },
@@ -8481,7 +9250,34 @@
           "detail": "A proof argues from things already agreed to the claim, with a reason at every step. Examples can only ever disprove: one counterexample kills a universal claim, and a thousand confirmations do not establish it. Hunt for the counterexample before trying to prove anything.",
           "proof": "9 is odd and not prime, so three examples establish nothing about all cases.",
           "pitfall": "Treating a run of confirming examples as evidence that a claim holds generally.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why does checking that 3, 5, and 7 are odd primes not prove that every odd integer greater than 1 is prime?",
+              "answer": "Because a proof must work for all cases, not just a few examples."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Why does verifying that 2, 4, and 6 are even not constitute a proof that all even numbers are even?",
+              "answer": "Because demonstrating a few instances does not establish a universal claim; the argument must cover every even number."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Identify the logical error in concluding that all odd numbers are prime because 3, 5, and 7 are prime, and give a counterexample.",
+              "answer": "The error is assuming that a few cases imply the universal claim; 9 is odd but not prime, disproving the statement.",
+              "hint": "Consider an odd number that is composite."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Explain why testing that the first ten prime numbers are odd does not prove that every prime greater than 2 is odd.",
+              "answer": "Testing only finitely many cases cannot establish a universal claim; a proof must work for any arbitrary prime, not just the first ten."
+            }
+          ]
         },
         {
           "title": "Direct Proof",
@@ -8490,7 +9286,39 @@
           "detail": "Write each object in its defining form with its own letter — 2m and 2n, not 2n twice. Manipulate until the conclusion's defining form appears. State which definition you used at the start and which you arrived at.",
           "proof": "2m + 2n = 2(m + n), which is 2 times an integer and so even.",
           "pitfall": "Writing the two evens as 2n and 2n, which proves it only when they are equal.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the parity of the integer 14?",
+              "answer": "Even."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Is the integer 27 even or odd?",
+              "answer": "Odd."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Prove that the sum of any two even integers, written as 2a and 2b, is even.",
+              "answer": "2a + 2b = 2(a + b), which is twice an integer, so the sum is even."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Prove that the sum of an even integer 2k and an odd integer 2m+1 is odd.",
+              "answer": "2k + (2m + 1) = 2(k + m) + 1, which is of the form 2n + 1, so the sum is odd."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Show that the product of any two even integers, written as 2p and 2q, is divisible by 4.",
+              "answer": "2p · 2q = 4pq, which is a multiple of 4, so the product is divisible by 4."
+            }
+          ]
         },
         {
           "title": "Find a Counterexample",
@@ -8499,7 +9327,39 @@
           "detail": "One case is enough, and it must be a genuine instance of the claim rather than an edge case the claim excluded. Try the boundaries first: zero, one, negatives, and the value that makes a term vanish or repeat.",
           "proof": "n = 41 gives 41 x 43, which is not prime.",
           "pitfall": "Testing only small n, where this particular claim holds for the first forty values.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is 1 a counterexample to the claim \"all natural numbers are greater than 1\"?",
+              "answer": "Yes."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Give a counterexample to the statement \"all perfect squares are odd\".",
+              "answer": "4, because 2² = 4 is even."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Disprove the claim: for every integer n, n² + n + 41 is prime.",
+              "answer": "Take n = 41; then 41² + 41 + 41 = 41·43, which is composite."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Find a counterexample to the claim \"all numbers of the form 2ⁿ − 1 are prime\".",
+              "answer": "n = 4 gives 2⁴ − 1 = 15, which is not prime."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Provide a counterexample to the statement \"the sum of any two prime numbers is prime\".",
+              "answer": "3 + 5 = 8, which is not prime."
+            }
+          ]
         },
         {
           "title": "Proof by Contradiction",
@@ -8789,7 +9649,28 @@
           "detail": "Check the differences first, then the ratios. A constant difference is arithmetic, a constant ratio geometric. Test your rule against every term given, not just the last two — many sequences agree for three terms and diverge on the fourth.",
           "proof": "19 and 23 by adding 4; 162 and 486 by multiplying by 3.",
           "pitfall": "Assuming a sequence is arithmetic because the first two gaps happen to match.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the next term of the sequence 5, 9, 13?",
+              "answer": "17."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Give the next two terms of the sequence 3, 7, 11, 15 and state the rule generating it.",
+              "answer": "19, 23; rule: add 4 each time."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Give the next two terms of the sequence 2, 6, 18, 54 and name the rule generating it.",
+              "answer": "162, 486; rule: multiply by 3 each term.",
+              "hint": "Watch for multiplication rather than addition"
+            }
+          ]
         },
         {
           "title": "The nth Term",
@@ -8798,7 +9679,35 @@
           "detail": "The coefficient of n is the common difference. Substitute n = 1 into that alone and compare with the real first term; the gap is the constant to add. Always test the formula on two known terms before using it on an unknown one.",
           "proof": "3n + 2, and the 50th term is 152.",
           "pitfall": "Writing 3n and forgetting the constant that fixes the first term.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the formula for the nth term of the sequence 2, 5, 8, 11.",
+              "answer": "a_n = 3n - 1."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Using the formula a_n = 3n - 1, what is the 10th term?",
+              "answer": "29."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Find the formula for the nth term of the sequence 5, 8, 11, 14 and then compute the 50th term.",
+              "answer": "a_n = 3n + 2; 50th term = 152.",
+              "hint": "Remember to include the constant term"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "What is wrong with the formula a_n = 3n for the sequence 5, 8, 11, 14?",
+              "answer": "It omits the constant +2, giving an incorrect first term.",
+              "hint": "Check the first term"
+            }
+          ]
         },
         {
           "title": "Arithmetic Series",
@@ -8807,7 +9716,41 @@
           "detail": "Pair the first with the last: each pair totals the same, and there are n/2 pairs. So the sum is n times the average of the first and last terms. Count the terms with (last - first)/difference + 1, and check that count separately.",
           "proof": "5050, and 3925 over 50 terms.",
           "pitfall": "Getting the number of terms wrong by one, which is the commonest error in the whole topic.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the sum of the first 4 whole numbers (0, 1, 2, 3)?",
+              "answer": "6."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the sum of the arithmetic sequence 2 + 5 + 8?",
+              "answer": "15."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the sum of the first 100 whole numbers (1 through 100).",
+              "answer": "5050."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Sum the arithmetic series 5 + 8 + 11 + … + 152.",
+              "answer": "3925.",
+              "hint": "Use n = ((last‑first)/d)+1 then S = n/2 (first+last)."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "If the common difference of an arithmetic series is 3 and the first term is 5, what is the smallest number of terms needed for the sum to exceed 4000?",
+              "answer": "51.",
+              "hint": "Set up S = n/2 (2a+(n‑1)d) > 4000 and test successive n."
+            }
+          ]
         },
         {
           "title": "Geometric Sequences",
@@ -8825,7 +9768,46 @@
           "detail": "An infinite geometric series converges only when the ratio is strictly between -1 and 1, and then sums to a/(1 - r). Check the ratio before reaching for the formula — used outside that range it returns a confident and meaningless number.",
           "proof": "The first sums to 2; the second grows without limit.",
           "pitfall": "Applying the infinite-sum formula when the ratio is 1 or greater.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the common ratio of the series 1 + 1/2 + 1/4 + 1/8 + … ?",
+              "answer": "1/2."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Does the series 2 + 4 + 8 + 16 + … converge?",
+              "answer": "No."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the sum of the infinite geometric series 1 + 1/2 + 1/4 + 1/8 + ….",
+              "answer": "2."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Determine whether the infinite series 3/4 + 3/8 + 3/16 + … converges, and if so, give its sum.",
+              "answer": "3/2."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "The series Σ_{n=0}^∞ (−1)^n (1/3)^n converges. What is its sum?",
+              "answer": "3/4.",
+              "hint": "Treat it as a geometric series with ratio r = -1/3."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Explain why the series Σ_{n=1}^∞ 1 diverges, even though the formula S = a/(1−r) would give 1/(1−1)=undefined.",
+              "answer": "Because the common ratio r = 1, the infinite‑sum formula only works for |r|<1; with r=1 the partial sums grow without bound, so the series diverges."
+            }
+          ]
         },
         {
           "title": "Recursive Definitions",
@@ -8834,7 +9816,41 @@
           "detail": "A recursive rule needs the previous term, so the terms come out in order and there is no shortcut to the hundredth. Tabulate n and a(n) in two columns and fill down. Some recursions have a closed form; most useful ones do not.",
           "proof": "2, 5, 14, 41, 122.",
           "pitfall": "Substituting n into the rule as though it were a closed formula.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "If a(1)=3 and a(n)=a(n-1)+2, what is a(4)?",
+              "answer": "9."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If a(1)=1 and a(n)=2a(n-1), what is a(5)?",
+              "answer": "16."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "For the recursive sequence a(1)=2 and a(n)=3a(n-1)-1, compute the first five terms.",
+              "answer": "2, 5, 14, 41, 122."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Given a(1)=5 and a(n)=a(n-1)+n^2, find a(6).",
+              "answer": "95.",
+              "hint": "Add successive squares to the previous term."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Given a(1)=4 and a(n)=2a(n-1)+n, find a(5).",
+              "answer": "105.",
+              "hint": "Iterate the rule carefully, keeping track of the n added each step."
+            }
+          ]
         },
         {
           "title": "Prove a Formula by Induction",
@@ -8875,7 +9891,35 @@
           "detail": "Mean is the total over the count, median the middle once ordered, mode the commonest. One extreme value moves the mean and leaves the median alone, which is why house prices are quoted as medians. Order the data first — an unordered median is the commonest slip.",
           "proof": "Mean 13, median 7, mode 7; the median, because 40 drags the mean above every other value.",
           "pitfall": "Quoting the mean on a skewed set, where it describes no member of it.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Compute the mean of the numbers 2, 4, 6.",
+              "answer": "4."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the median of the dataset 5, 9, 12, 15, 20?",
+              "answer": "12."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For the numbers 3, 7, 7, 8, 40, calculate the mean, median, and mode, and state which measure best describes the typical value of the set.",
+              "answer": "Mean 13, median 7, mode 7; the median best describes the typical value because the large outlier 40 skews the mean.",
+              "hint": "Consider how an extreme value affects each average."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Explain why quoting the mean of the dataset 2, 3, 4, 5, 50 would be misleading when describing a typical observation.",
+              "answer": "The mean is 12.8, which is far above most values; the dataset is heavily right‑skewed, so the mean does not represent a typical member.",
+              "hint": "Compare the mean to the majority of the numbers."
+            }
+          ]
         },
         {
           "title": "Spread, Not Just Center",
@@ -8884,7 +9928,41 @@
           "detail": "Range is max minus min and one outlier controls it. The IQR is the middle half — the upper quartile minus the lower — and ignores the tails, which is what makes it the honest one. Two sets can share a mean and share nothing else.",
           "proof": "Range 13, IQR 8, from quartiles at 4 and 12.",
           "pitfall": "Reporting a center with no spread, so two very different sets look identical.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find the range of the numbers 7 and 15.",
+              "answer": "8."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the range of the dataset 10, 14, 14, 20?",
+              "answer": "10."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "For the data 2, 4, 4, 5, 9, 12, 15, determine the range and the interquartile range.",
+              "answer": "Range 13; IQR 8 (Q1=4, Q3=12)."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Two datasets have the same range of 10 and the same IQR of 4, but one is {1,3,5,7,11} and the other is {21,23,25,27,31}. Explain why reporting only the range and IQR would hide their difference in typical values.",
+              "answer": "Both sets share identical spread measures, yet their medians are 5 and 25 respectively, so without a center measure the data appear identical though they represent different levels.",
+              "hint": "Think about the median of each set."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Calculate the interquartile range for the ordered data 3, 5, 7, 9, 11, 13, 15, 17.",
+              "answer": "Q1=6, Q3=14, IQR=8.",
+              "hint": "Use the median‑split method for even‑sized halves."
+            }
+          ]
         },
         {
           "title": "Read a Chart Honestly",
@@ -8893,7 +9971,41 @@
           "detail": "Check three things on any chart: where the axis starts, what the units are, and whether the scale is linear. A bar chart with a truncated axis is the commonest honest lie in print. Redraw it from zero and see how much of the effect survives.",
           "proof": "The last bar looks four times the first; truncating the axis exaggerates a 3% difference.",
           "pitfall": "Trusting the shape of a chart without reading the axis.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A bar chart shows values 50, 55, 60 with the y‑axis beginning at 45. Does the axis choice exaggerate the differences?",
+              "answer": "No, starting at 45 does not exaggerate; the bars are proportional to the actual differences."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "In a line graph the y‑axis is truncated at 90 instead of 0 while plotting values 92 and 95. What visual effect does this have?",
+              "answer": "It makes the small increase look large, exaggerating the difference."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "A bar chart displays values 98, 99 and 101 and its y‑axis starts at 97. What will a casual reader likely conclude, and why is that conclusion incorrect?",
+              "answer": "The reader may think the last bar is about four times taller than the first, suggesting a huge difference, but the axis truncation exaggerates a mere 3% increase."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A pie chart shows three categories with percentages 33%, 33%, and 34%, but the slices are drawn with slightly different radii. Explain why this visual can mislead even though the percentages sum to 100%.",
+              "answer": "Varying slice radii changes area perception, making one category appear larger than its true share, misleading the viewer despite correct percentages.",
+              "hint": "Consider how area is perceived versus angle."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Given a bar chart that starts its y‑axis at 495 and displays values 500, 505, and 510, propose a modification to the chart that would present the data more honestly.",
+              "answer": "Reset the y‑axis to start at 0 (or at least a lower value like 0) so the bars reflect the true relative differences, showing only a small increase.",
+              "hint": "Think about axis scaling."
+            }
+          ]
         },
         {
           "title": "Standard Deviation",
@@ -8902,7 +10014,49 @@
           "detail": "Subtract the mean from each value, square the differences, average those, then take the square root. The squaring is what stops the positives and negatives canceling. The result is in the same units as the data, which the variance is not, and that is why it is the one quoted.",
           "proof": "2, since the variance is 4.",
           "pitfall": "Forgetting the final square root and reporting the variance instead.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the standard deviation of the data set 2, 2, 2, 2, 2?",
+              "answer": "0."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Find the standard deviation of 1, 1, 2, 2, 3, 3.",
+              "answer": "0.816496580927726."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Compute the standard deviation of 2, 4, 4, 4, 5, 5, 7, 9.",
+              "answer": "2.",
+              "hint": "Use the population formula: sqrt(Σ(x-μ)² / n)."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "The weights (in kg) of four students are 55, 60, 65, 70. What is the standard deviation?",
+              "answer": "5.590169943749474.",
+              "hint": "First find the mean, then the squared deviations, average them, and take the square root."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A sample of five numbers has a mean of 10 and a sample standard deviation of 3. What is the sample variance?",
+              "answer": "9.",
+              "hint": "Variance is the square of the standard deviation."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "If every data point in a set is increased by 5, how does the standard deviation change?",
+              "answer": "It remains the same.",
+              "hint": "Adding a constant shifts all values but does not affect spread."
+            }
+          ]
         },
         {
           "title": "Correlation Is Not Cause",
@@ -8911,7 +10065,39 @@
           "detail": "A correlation coefficient runs from -1 to 1 and measures how closely points follow a line. It says nothing about direction of influence. Before claiming a cause, ask what third thing could move both, and whether the relationship could run the other way.",
           "proof": "Temperature. Hot weather raises both independently.",
           "pitfall": "Reading a strong correlation as evidence that one variable drives the other.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does a correlation coefficient of 0 indicate about the relationship between two variables?",
+              "answer": "No linear relationship."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If the correlation coefficient is -0.8, what is the direction of the relationship?",
+              "answer": "Strong negative (inverse) relationship."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "A scatter plot shows points tightly clustered along an upward‑sloping line. What does this suggest about the correlation?",
+              "answer": "Strong positive correlation."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Ice‑cream sales and drowning incidents have a correlation of 0.85. Name a plausible third variable that could cause both to increase.",
+              "answer": "Temperature (hot weather)."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A study finds a correlation of 0.7 between the number of fire trucks at a scene and property damage. Why is it incorrect to claim that more fire trucks cause more damage?",
+              "answer": "Fire trucks are dispatched to larger fires, which cause more damage; the correlation reflects fire size, not causation."
+            }
+          ]
         },
         {
           "title": "Sample and Bias",
@@ -8920,7 +10106,41 @@
           "detail": "Ask who could have been picked, who actually answered, and who was never in the frame. A biased sample of ten thousand is worse than a random sample of a hundred, because the size lends it false authority. Name the population the claim is about before judging the sample.",
           "proof": "Self-selection: only readers who felt strongly, and only that site's audience, ever answered.",
           "pitfall": "Treating a large sample as a representative one, when size does not fix bias.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a poll of 2,000 readers of the website, what kind of bias is illustrated?",
+              "answer": "Self‑selection bias."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "In that poll of 2,000 readers, which segment of the population is missing from the sample?",
+              "answer": "People who do not read the website (e.g., the general public)."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Can the 78 % support found among the 2,000 readers be used to claim that most adults in the country support the issue? Answer yes or no and give a brief justification.",
+              "answer": "No – the sample is not representative because it consists only of the site’s readers, introducing self‑selection bias."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Explain why increasing the sample size to 5,000 respondents does not remove the bias in the website poll.",
+              "answer": "A larger number of respondents still comes from the same self‑selected group; size does not correct the fact that only readers who feel strongly choose to respond.",
+              "hint": "Think about what changes and what stays the same when you add more of the same type of respondents."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "What additional information about the 2,000 respondents would you need to decide whether the 78 % result can be generalized to the whole country?",
+              "answer": "Demographic data (age, gender, location, education, political affiliation) and how those compare to the national population.",
+              "hint": "Consider characteristics that affect whether the sample mirrors the broader population."
+            }
+          ]
         },
         {
           "title": "Say What the Data Cannot",
@@ -8929,7 +10149,39 @@
           "detail": "A conclusion without its limits is a conclusion somebody will over-apply. Name the population, the time window and the thing you did not measure. 'More research is needed' is not a limit; 'this says nothing about anyone under 18' is.",
           "proof": "The second sentence names a specific unanswered question, such as which users, or over what period.",
           "pitfall": "Adding a vague disclaimer that does not name any particular limit.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A study reports that users are 40 % faster. What single fact does the data demonstrate?",
+              "answer": "The measured users completed the task 40 % faster than the comparison group."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "State one specific limitation of the claim that users are 40 % faster.",
+              "answer": "The claim does not specify which users (e.g., new vs. experienced) the speed increase applies to."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "For the claim “our users are 40 % faster”, write one sentence stating what the data shows and a second sentence naming a specific question the data cannot answer.",
+              "answer": "The data shows that the tested group of users performed the task 40 % faster than the baseline. However, the data cannot tell whether this speed increase holds for all user segments, such as new versus experienced users."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A report says “results are promising” without detail. Rewrite this disclaimer as a specific limitation related to sample size.",
+              "answer": "The results are promising, but the sample includes only 30 participants, so the findings may not generalize to the larger population."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Given a dataset of 100 users showing a 40 % speed increase, name one specific question this dataset cannot answer about the speed increase.",
+              "answer": "It cannot determine whether the speed increase persists over long‑term use."
+            }
+          ]
         }
       ]
     },
@@ -8952,7 +10204,34 @@
           "detail": "Opposite and adjacent are named from the angle you are working with, and only the hypotenuse is fixed. Label the triangle from that angle every single time before writing a ratio. SOH CAH TOA is the mnemonic; the labeling is the skill.",
           "proof": "3/5, 4/5 and 3/4.",
           "pitfall": "Labeling opposite and adjacent relative to the right angle rather than to the angle in question.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a right triangle with sides opposite 3, adjacent 4, and hypotenuse 5, what is the sine of the angle whose opposite side is 3?",
+              "answer": "3/5."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the cosine of the angle that has opposite side length 3 in a 3‑4‑5 right triangle?",
+              "answer": "4/5."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For the angle with opposite side 3 in the 3‑4‑5 triangle, give its tangent and name the two sides involved.",
+              "answer": "3/4 (opposite/adjacent).",
+              "hint": "Use opposite divided by adjacent."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "If you mistakenly treat the hypotenuse (length 5) as the opposite side for that angle, what sine value would you compute?",
+              "answer": "1."
+            }
+          ]
         },
         {
           "title": "Find a Missing Side",
@@ -8961,7 +10240,41 @@
           "detail": "Decide which two sides the question involves, pick the ratio that links them, then rearrange before substituting. Check the mode on the calculator once at the start of any trig session. A side longer than the hypotenuse is always an error.",
           "proof": "5.74, from 10 sin 35.",
           "pitfall": "Leaving the calculator in radians, which gives 10 sin 35 as about -4.28.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A right triangle has a 30° angle and a hypotenuse of 8. What is the length of the side opposite that angle, to two decimal places?",
+              "answer": "4.00."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "In a right triangle, one acute angle measures 45° and the side adjacent to it is 5. What is the length of the side opposite that angle, to two decimal places?",
+              "answer": "5.00."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "A right triangle has a 60° angle and a hypotenuse of 10. Find the side adjacent to that angle, to two decimal places.",
+              "answer": "5.00."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A right triangle has a 25° angle and a hypotenuse of 12. Find the side opposite that angle, to two decimal places. (Be careful to use degrees on your calculator.).",
+              "answer": "5.07.",
+              "hint": "Use sin(25°)"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A right triangle has a 70° angle and a side adjacent to that angle of length 9. Find the side opposite that angle, to two decimal places. (If you try to use the tangent ratio, you will need the opposite side first.).",
+              "answer": "24.73.",
+              "hint": "Use tan(70°)"
+            }
+          ]
         },
         {
           "title": "Find a Missing Angle",
@@ -8970,7 +10283,39 @@
           "detail": "Form the ratio from the two sides you have, then apply the inverse of the matching function. The answer must lie between 0 and 90 in a right triangle, which is the sanity check. Keep full precision until the final rounding.",
           "proof": "16.3 degrees, from arctan of 7/24.",
           "pitfall": "Using the ratio rather than its inverse, and getting a number that is not an angle.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a right triangle where the opposite side is 3 and the adjacent side is 4, what is tan of the acute angle?",
+              "answer": "3/4."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "If a right triangle has opposite side 5 and hypotenuse 13, what is sin of the acute angle opposite the side of length 5?",
+              "answer": "5/13."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "A right triangle has opposite side 7 and adjacent side 24. Find the acute angle to one decimal place.",
+              "answer": "16.3 degrees."
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A right triangle has adjacent side 12 and hypotenuse 13. Find the angle between the adjacent side and the hypotenuse, to one decimal place.",
+              "answer": "22.6 degrees."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Explain why arctan(7/24) yields an angle measurement while the fraction 7/24 is just a pure number.",
+              "answer": "Because arctan is an inverse trigonometric function that maps a dimensionless ratio to the unique angle whose tangent equals that ratio."
+            }
+          ]
         },
         {
           "title": "Build the Unit Circle",
@@ -8979,7 +10324,47 @@
           "detail": "Cosine is the x coordinate of the point on the circle and sine is the y. Two triangles — 30-60-90 and 45-45-90 — generate every standard value, so draw those once and read the rest off them. Derived beats memorized because it comes back after a month away.",
           "proof": "Sine runs 0, 1/2, root2/2, root3/2, 1; cosine runs the same values backwards.",
           "pitfall": "Memorizing the table and losing it, rather than deriving it from two triangles.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the sine of 0°?",
+              "answer": "0."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the cosine of 90°?",
+              "answer": "0."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "What is the sine of 30°?",
+              "answer": "1/2."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "What is the cosine of 60°?",
+              "answer": "1/2."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Derive sin 45° using the unit circle and give its exact value.",
+              "answer": "√2/2.",
+              "hint": "Draw an isosceles right triangle with legs of length 1 on the unit circle."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "On the unit circle, what are the coordinates of the point at 120°, and what are its sine and cosine values?",
+              "answer": "(-1/2, √3/2); cos 120° = -1/2, sin 120° = √3/2.",
+              "hint": "Use the reference angle 60° in quadrant II."
+            }
+          ]
         },
         {
           "title": "Beyond the First Quadrant",
@@ -8988,7 +10373,47 @@
           "detail": "Find the reference angle to the nearest part of the x-axis, evaluate there, then attach the sign from the quadrant. Sketch the circle and mark the quadrant before answering — the value and the sign are two separate decisions and mixing them is the whole difficulty.",
           "proof": "1/2, -root3/2 and -1.",
           "pitfall": "Taking the reference angle correctly and then forgetting the sign the quadrant demands.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the sign of sin 150°?",
+              "answer": "positive."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the sign of cos 210°?",
+              "answer": "negative."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "What is sin 150° exactly?",
+              "answer": "1/2."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "What is cos 210° exactly?",
+              "answer": "-√3/2."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Find tan 315° exactly using reference angles.",
+              "answer": "-1.",
+              "hint": "Reference angle is 45°; both sine and cosine are negative in quadrant IV."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Find sin 225° exactly and state its sign.",
+              "answer": "-√2/2; negative.",
+              "hint": "Reference angle is 45°; sine is negative in quadrant III."
+            }
+          ]
         },
         {
           "title": "Trig as a Wave",
@@ -8997,7 +10422,47 @@
           "detail": "A multiplier outside stretches the graph vertically and sets the amplitude. A multiplier inside squeezes it horizontally and divides the period. Plot the five key points of one cycle rather than sketching a freehand wave.",
           "proof": "The peak is at 2; one cycle of y = sin 2x spans 180 degrees.",
           "pitfall": "Swapping the two effects, so the coefficient inside the function is read as the amplitude.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the amplitude of y = sin x?",
+              "answer": "1."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is the period of y = cos x in degrees?",
+              "answer": "360."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "What is the amplitude of y = 3 sin x?",
+              "answer": "3."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "What is the period of y = sin(½ x) in degrees?",
+              "answer": "720."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "For y = 2 sin x, what is the y‑coordinate of its maximum point?",
+              "answer": "2.",
+              "hint": "Amplitude equals the coefficient outside the sine."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "How many degrees does one full cycle of y = sin(3x) cover?",
+              "answer": "120.",
+              "hint": "Period = 360 divided by the coefficient of x."
+            }
+          ]
         },
         {
           "title": "Solve a Trig Equation",
@@ -9006,7 +10471,47 @@
           "detail": "The inverse function returns one angle. Use the symmetry of the circle to find the others in range: for sine, the second is 180 minus the first. Sketch the wave and draw the horizontal line — the number of crossings is the number of answers you owe.",
           "proof": "x = 30 and x = 150.",
           "pitfall": "Giving only the calculator's answer and missing the second solution in range.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is sin 45°?",
+              "answer": "0.7071."
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "What is sin 60°?",
+              "answer": "0.8660."
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Solve sin x = √3/2 for x in [0°,360°]. List all solutions.",
+              "answer": "60° and 120°."
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Solve cos x = -0.5 for x in [0°,360°]. List all solutions.",
+              "answer": "120° and 240°."
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Solve sin(2x) = 0.5 for x in [0°,180°]. List all solutions.",
+              "answer": "15° and 75°.",
+              "hint": "First solve for 2x, then divide the angles by 2."
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "When solving sin x = 0.5 on [0°,360°], a calculator returns x = 30°. Explain why another solution exists and give it.",
+              "answer": "Because sine is positive in the second quadrant as well; the other solution is 150°.",
+              "hint": "Consider the symmetry of the unit circle about the vertical axis."
+            }
+          ]
         }
       ]
     },
@@ -13023,7 +14528,28 @@
           "detail": "Place the box on a frictionless surface. Write each force as a signed number along the east‑west axis (east positive, west negative). Add the numbers to get the net force. Verify the sign tells you the direction. This step builds the habit of treating forces as vectors before using Newton's laws.",
           "proof": "12 N − 8 N = 4 N east, which is the correct vector sum.",
           "pitfall": "Adding magnitudes without keeping track of direction, especially when forces oppose each other.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the net force on a 2 kg box pushed with 5 N east?",
+              "answer": "5 N east."
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Calculate the net force on a 3 kg box acted on by 10 N north and 4 N south.",
+              "answer": "6 N north."
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A 4 kg crate is pulled 7 N north and simultaneously pushed 9 N south. What is the magnitude and direction of the net force?",
+              "answer": "2 N south.",
+              "hint": "Treat opposite directions as opposite signs when adding the forces."
+            }
+          ]
         },
         {
           "title": "Apply Newton's First Law",
