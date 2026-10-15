@@ -176,6 +176,7 @@ import {
   tallyGraph,
   type GraphNode,
   type GraphTally,
+  type NodeStatus,
   type PlacedEdge,
 } from '@/utils/skillGraph';
 import { FOCUS_COUNT, loadFocus, resolveFocus, saveFocus } from '@/utils/focusTopics';
@@ -218,6 +219,14 @@ function Ico({ icon, className }: { icon: string; className: string }) {
  * Bands rather than a number, because "Advanced" answers the question a reader
  * is actually asking and "61%" is already printed two inches to the left.
  */
+/** What Progress mode colors a tile by, in the legend's order. */
+const PROGRESS_KEYS: [NodeStatus, string][] = [
+  ['complete', 'Mastered'],
+  ['progress', 'In progress'],
+  ['available', 'Open'],
+  ['locked', 'Locked'],
+];
+
 function skillLevel(tally: GraphTally): string {
   if (tally.total === 0) return 'Unstarted';
   const share = (tally.complete + tally.progress * 0.5) / tally.total;
@@ -427,7 +436,7 @@ export default function SkillTrees() {
      thing a filter meant. Declared with the graph rather than beside its first
      use, because four things below now need it. */
   const navIds = useMemo(() => new Set(nav.keys()), [nav]);
-  const totals = useMemo(() => tallyGraph(graph), [graph]);
+  const totals = useMemo(() => tallyGraph(graph, navIds), [graph, navIds]);
   const chain = useMemo(() => parentChain(tree.id), [tree.id]);
   // The three ways out of this tree, so walking the hierarchy never depends on
   // finding the right diamond on the canvas.
@@ -715,8 +724,8 @@ export default function SkillTrees() {
       if (!source) continue;
 
       const built = applyProgress(graphFromSubjectTree(source), progress, plans);
-      const tally = tallyGraph(built);
       const doors = new Set(navTargets(source).keys());
+      const tally = tallyGraph(built, doors);
       const [chance] = opportunities(built, doors);
 
       rows.set(id, {
@@ -814,12 +823,15 @@ export default function SkillTrees() {
   );
 
   /** What the canvas is showing, in the line under the switch. */
+  const onPath = shown.nodes.filter((node) => !navIds.has(node.id)).length;
   const say =
     mode === 'map'
       ? `Every skill in ${tree.title}, arranged the way the subject is built.`
       : mode === 'path'
-        ? `${shown.nodes.length} of ${graph.nodes.length} skills: done, in progress and next up.`
-        : 'Colored by your progress instead of difficulty.';
+        ? `${onPath} of ${totals.total} skills: what got you here, what you're on, and what opens next.`
+        : `${totals.complete} mastered, ${totals.progress} in progress, ${
+            totals.available ? `${totals.available} open, ` : ''
+          }${totals.locked} locked. Each tile fills as you go.`;
 
   /* The "+250 XP" that appears for a moment after a click. Held with its node
      id so switching selection mid-flash cannot show one node's gain on
@@ -1155,17 +1167,23 @@ export default function SkillTrees() {
         </div>
 
         {/* ---- legend ---- */}
-        {/* The tiles are coloured by difficulty, so that is what the legend has
-            to explain. Status is on every tile already, in the percentage badge
-            beside the tier and in the fill of a finished one. */}
+        {/* The legend explains whatever the tiles are colored by: difficulty
+            in Map and Path, where you stand in Progress. */}
         <footer className="stx-legend">
           <ul className="stx-legend-keys">
-            {DIFFICULTIES.map((tier) => (
-              <li key={tier}>
-                <i className={`stx-legend-dot tier-${tier}`} aria-hidden="true" />
-                {DIFFICULTY_LABEL[tier]}
-              </li>
-            ))}
+            {mode === 'progress'
+              ? PROGRESS_KEYS.map(([state, label]) => (
+                  <li key={state}>
+                    <i className={`stx-legend-dot state-${state}`} aria-hidden="true" />
+                    {label}
+                  </li>
+                ))
+              : DIFFICULTIES.map((tier) => (
+                  <li key={tier}>
+                    <i className={`stx-legend-dot tier-${tier}`} aria-hidden="true" />
+                    {DIFFICULTY_LABEL[tier]}
+                  </li>
+                ))}
             <li className="stx-legend-line">
               <svg viewBox="0 0 28 6" aria-hidden="true">
                 <path d="M1 3h26" />

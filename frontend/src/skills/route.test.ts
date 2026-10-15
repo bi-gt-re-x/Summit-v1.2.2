@@ -293,8 +293,17 @@ describe('pathOf', () => {
     const path = pathOf(ladder(), 'algebra');
 
     expect([...path].sort()).toEqual(
-      ['algebra', 'arith', 'fractions', 'linear', 'negatives', 'quad', 'stats', 'systems'].sort(),
+      ['algebra', 'arith', 'fractions', 'linear', 'negatives', 'stats', 'systems'].sort(),
     );
+  });
+
+  it('leaves out what is still locked behind two unfinished skills', () => {
+    // `quad` waits on `linear` and `systems`. Finishing `linear` alone does
+    // not open it, so it is not the next step on anybody's path.
+    expect(pathOf(ladder(), 'algebra').has('quad')).toBe(false);
+    // Once `systems` is done, finishing `linear` would open it.
+    const graph = ladder({ systems: { status: 'complete', percent: 100 } });
+    expect(pathOf(graph, 'algebra').has('quad')).toBe(true);
   });
 
   it('takes every ancestor, not just the longest chain', () => {

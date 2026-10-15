@@ -1501,6 +1501,11 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 }
 .stx-legend-keys li { display: flex; align-items: center; gap: var(--space-2); }
 .stx-legend-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--tone); }
+/* Progress mode's key: the same four colors `.mode-progress` paints tiles in. */
+.stx-legend-dot.state-complete { --tone: var(--lat-green); }
+.stx-legend-dot.state-progress { --tone: var(--lat-blue); }
+.stx-legend-dot.state-available { --tone: var(--lat-violet); }
+.stx-legend-dot.state-locked { --tone: var(--lat-grey); }
 .stx-legend-line svg {
     width: 28px; height: 6px;
     stroke: var(--lat-muted);
@@ -3029,6 +3034,14 @@ html[data-theme="dark"] .stx-mode.is-on { color: #0d1117; }
    this mode it is the one thing that must not take the state's colour — it
    would be a label reading "Advanced" in the green that means finished. */
 .stx-layout.mode-progress .stx-tile-tier { color: var(--lat-faint); }
+
+/* Each tile fills from the bottom by how far along it is, so the lattice reads
+   as one big progress bar: half a tile is half done, from any zoom level. */
+.stx-layout.mode-progress .stx-tile:not(.is-nav) .stx-tile-face {
+    background: linear-gradient(to top,
+        color-mix(in srgb, var(--tone) 42%, transparent) var(--pct, 0%),
+        var(--tone-soft) var(--pct, 0%));
+}
 
 /* ==========================================================================
    Mastered terrain

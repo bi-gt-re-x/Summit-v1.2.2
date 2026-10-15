@@ -481,10 +481,19 @@ export function pathOf(graph: SkillGraph, hereId: string | null): Set<string> {
   for (const id of front) keep.add(id);
 
   // One step, from a snapshot: adding to the set while walking it would let
-  // the horizon walk the rest of the tree.
+  // the horizon walk the rest of the tree. And only to what finishing that one
+  // node would actually open: a child still waiting on something else
+  // unfinished is "locked behind two or more", which the note above leaves
+  // out. Without this check every in-progress skill dragged in all of its
+  // children, and the math path came out at 21 of 29 tiles.
+  const finished = (id: string) => byId.get(id)?.status === 'complete';
   const from = hereId ? [hereId, ...front] : front;
   for (const id of from) {
-    for (const node of unlockedBy(graph, id)) keep.add(node.id);
+    for (const node of unlockedBy(graph, id)) {
+      if (node.requires.every((need) => need === id || finished(need) || !byId.has(need))) {
+        keep.add(node.id);
+      }
+    }
   }
 
   return keep;

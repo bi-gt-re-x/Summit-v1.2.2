@@ -118,6 +118,9 @@ export function LatticeNode({
     // Read by the mask rule in the stylesheet. A custom property rather than an
     // inline background, so the stylesheet keeps deciding how it is painted.
     ['--ico' as string]: `url(${iconUrl(node.icon)})`,
+    // How far along, for Progress mode's fill. See `.mode-progress` in the
+    // stylesheet; Map and Path ignore it.
+    ['--pct' as string]: `${nav ? 0 : Math.max(0, Math.min(100, Math.round(node.percent)))}%`,
   } as CSSProperties;
 
   return (

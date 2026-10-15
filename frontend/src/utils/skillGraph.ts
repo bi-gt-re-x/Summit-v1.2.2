@@ -611,7 +611,11 @@ export interface GraphTally {
   progress: number;
   available: number;
   locked: number;
-  /** Complete as a share of every node, 0-100. */
+  /**
+   * How far through the tree, 0-100: the mean of every skill's own percent, so
+   * a skill half done counts as half. Counting only finished ones read 14% on
+   * a tree with ten skills well under way.
+   */
   percent: number;
   /** XP on completed nodes. */
   xpEarned: number;
@@ -619,12 +623,20 @@ export interface GraphTally {
   xpTotal: number;
 }
 
-export function tallyGraph(graph: SkillGraph): GraphTally {
+/**
+ * The counts across the top of a tree. `skip` is the doorways (the diamonds
+ * that open another subject): they are not skills in this tree, and counting
+ * them made a math tree with 19 skills say 29.
+ */
+export function tallyGraph(graph: SkillGraph, skip?: ReadonlySet<string>): GraphTally {
+  const nodes = skip ? graph.nodes.filter((node) => !skip.has(node.id)) : graph.nodes;
   const count = (status: NodeStatus) =>
-    graph.nodes.filter((node) => node.status === status).length;
+    nodes.filter((node) => node.status === status).length;
 
-  const total = graph.nodes.length;
+  const total = nodes.length;
   const complete = count('complete');
+  const done = (node: GraphNode) =>
+    node.status === 'complete' ? 100 : Math.max(0, Math.min(100, Number(node.percent) || 0));
 
   return {
     total,
@@ -632,11 +644,11 @@ export function tallyGraph(graph: SkillGraph): GraphTally {
     progress: count('progress'),
     available: count('available'),
     locked: count('locked'),
-    percent: total > 0 ? (complete / total) * 100 : 0,
-    xpEarned: graph.nodes
+    percent: total > 0 ? nodes.reduce((sum, node) => sum + done(node), 0) / total : 0,
+    xpEarned: nodes
       .filter((node) => node.status === 'complete')
       .reduce((sum, node) => sum + node.xp, 0),
-    xpTotal: graph.nodes.reduce((sum, node) => sum + node.xp, 0),
+    xpTotal: nodes.reduce((sum, node) => sum + node.xp, 0),
   };
 }
 
