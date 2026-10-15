@@ -21,6 +21,19 @@
  * follows them: the one thing that made the difference, from a closed list of
  * six.
  *
+ * ## The two answers the plan can act on
+ *
+ * Stars are the reader grading themselves. Two things here are not, and they
+ * are what lets the plan say *what* went wrong instead of how much happened
+ * (backend/tracking/record.py):
+ *
+ *   - **How many did you get right?** Asked when the title names a count of
+ *     problems ("#1-10", "12 problems"), with that count filled in as the
+ *     total; any other task can add a score with one click.
+ *   - **What made it hard?** Asked whenever execution is rated 1 or 2, at
+ *     every depth but `none`. A rough session is the one moment the reason is
+ *     worth a tap, and it is the answer the plan turns into a fix.
+ *
  * **The third question depends on the second.** It cannot be asked until the
  * execution star is answered, because which six words are offered follows from
  * it — a task rated 1 is asked what made it hard, a task rated 4 what made it
@@ -40,7 +53,9 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import { reasonOf, reasonsFor } from '@/utils/ratings';
+import { problemCount } from '@/utils/problemCount';
 import type { RatingDepth } from '@/services/settings';
+import type { RatingAnswers } from '@/services/tasks';
 import '@/styles/rate-prompt.css';
 
 /** The five stars, and what each one means. Hover and focus print the word. */
@@ -60,7 +75,7 @@ export interface RatePromptProps {
    */
   depth?: RatingDepth;
   /** Sends whatever was answered. Only the answered parts are passed. */
-  onSubmit: (ratings: { difficulty?: number; execution?: number; reason?: string }) => void;
+  onSubmit: (ratings: RatingAnswers) => void;
   /** Dismissal, by any of its three routes. */
   onClose: () => void;
 }
@@ -181,17 +196,83 @@ function Reasons({
   );
 }
 
+/** A whole number from a field, or null when it is empty or not one. */
+function whole(text: string): number | null {
+  if (!/^\d{1,3}$/.test(text.trim())) return null;
+  return Number(text.trim());
+}
+
+/**
+ * "How many did you get right?" Two small number fields, `got` of `of`. Shown
+ * open when the title names a count, behind "Add a score" otherwise.
+ */
+function Score({
+  got,
+  of,
+  onGot,
+  onOf,
+}: {
+  got: string;
+  of: string;
+  onGot: (value: string) => void;
+  onOf: (value: string) => void;
+}) {
+  const total = whole(of);
+  const right = whole(got);
+  const wrong = right !== null && total !== null && right > total;
+  return (
+    <fieldset className="tk-rate-row">
+      <legend className="tk-rate-label">
+        How many did you get right?
+        <span>This is what tells the plan what to go back over.</span>
+      </legend>
+      <div className="tk-rate-score">
+        <input
+          type="number"
+          inputMode="numeric"
+          min={0}
+          max={total ?? 500}
+          aria-label="Number right"
+          value={got}
+          onChange={(event) => onGot(event.target.value)}
+        />
+        <span>of</span>
+        <input
+          type="number"
+          inputMode="numeric"
+          min={1}
+          max={500}
+          aria-label="Number of problems"
+          value={of}
+          onChange={(event) => onOf(event.target.value)}
+        />
+        {wrong && <span className="tk-rate-score-warn">That's more than there were.</span>}
+      </div>
+    </fieldset>
+  );
+}
+
 export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: RatePromptProps) {
   const [difficulty, setDifficulty] = useState(0);
   const [execution, setExecution] = useState(0);
   const [reason, setReason] = useState('');
+  const counted = problemCount(taskName);
+  const [scoring, setScoring] = useState(counted !== null);
+  const [got, setGot] = useState('');
+  const [of, setOf] = useState(counted !== null ? String(counted) : '');
+  const right = whole(got);
+  const total = whole(of);
+  const score = scoring && right !== null && total !== null && total >= 1 && right <= total
+    ? { score_got: right, score_of: total }
+    : null;
 
   /* Which six are on offer, or null while there is nothing to ask them about.
      The word already chosen has to belong to the list showing: rating a task 2
      and picking "ran out of time", then changing the star to 4, would otherwise
      save a struggle reason against work the reader has just called strong. */
   const side = execution === 0 ? null : execution >= 3 ? 'went-well' : 'struggle';
-  const asking = depth === 'reasons' ? side : null;
+  // Every depth asks why a task went badly; only 'reasons' asks why one went well.
+  const asking = depth === 'reasons' ? side : side === 'struggle' ? side : null;
   const chosen = asking && reasonOf(reason);
   const keeps = chosen && (asking === 'went-well') === (chosen.side === 'went-well');
 
@@ -212,10 +293,11 @@ export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: R
       ...(difficulty > 0 ? { difficulty } : {}),
       ...(execution > 0 ? { execution } : {}),
       ...(keeps ? { reason } : {}),
+      ...(score ?? {}),
     });
-  }, [difficulty, execution, keeps, onSubmit, reason]);
+  }, [difficulty, execution, keeps, onSubmit, reason, score]);
 
-  const answered = difficulty > 0 || execution > 0;
+  const answered = difficulty > 0 || execution > 0 || score !== null;
 
   return (
     <div
@@ -246,6 +328,14 @@ export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: R
           value={execution}
           onChange={setExecution}
         />
+
+        {scoring ? (
+          <Score got={got} of={of} onGot={setGot} onOf={setOf} />
+        ) : (
+          <button type="button" className="tk-rate-add-score" onClick={() => setScoring(true)}>
+            Add a score
+          </button>
+        )}
 
         {asking && (
           <Reasons

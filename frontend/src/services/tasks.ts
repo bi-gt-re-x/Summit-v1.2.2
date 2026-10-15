@@ -378,9 +378,21 @@ export interface TaskRating {
  * whose rating_depth is 'reasons'; the server drops a word it does not know
  * rather than failing the whole call over it.
  */
+/**
+ * What the rating prompt can send: the two stars, the reason, and the score
+ * ("how many did you get right?"). Every part is optional and independent.
+ */
+export interface RatingAnswers {
+  difficulty?: number;
+  execution?: number;
+  reason?: string;
+  score_got?: number;
+  score_of?: number;
+}
+
 export function rateTask(
   taskId: string,
-  ratings: { difficulty?: number; execution?: number; reason?: string },
+  ratings: RatingAnswers,
 ): Promise<ApiResult<TaskRating>> {
   return post<TaskRating>('/api/rate_task', {
     task_id: taskId,

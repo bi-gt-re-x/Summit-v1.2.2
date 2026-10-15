@@ -4,9 +4,11 @@ The dashboard shows its top item and the analytics page's Recommendations tab
 shows the plan in full, both from here, so the two cannot disagree. The rules
 are backend/tracking/next_actions.py.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from backend.api.goals import _measure_of, _milestones_of
 from backend.api.guard import current_username
@@ -14,8 +16,11 @@ from backend.api.reply import fail, ok
 from backend.config import subjects as catalogue
 from backend.database import connection as db
 from backend.goal_matcher import store as goal_store
+from backend.api.tasks import CreateTask, _create as create_task
 from backend.tracking import growth
 from backend.tracking import next_actions
+from backend.tracking import record
+from backend.tracking import session_plan
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['next'])
@@ -25,7 +30,7 @@ router = APIRouter(tags=['next'])
 #: of this endpoint's time.
 TASK_FIELDS = ('id', 'title', 'status', 'subject', 'priority', 'due_date', 'created_at',
                'completed_at', 'execution', 'difficulty', 'xp_value', 'completion_seconds',
-               'milestone_id', 'goal_id')
+               'milestone_id', 'goal_id', 'reason', 'score_got', 'score_of')
 
 #: The two weeks the streak rule reads: today, and the run before it.
 # Four weeks, so this fortnight can be read against the one before it.
@@ -46,6 +51,18 @@ def _name_of(username):
     return name_of
 
 
+def _record(username):
+    """The rows the rules read: tasks with their goal links, goals with their
+    measure and checkpoints."""
+    tasks = goal_store.with_goal_ids(username, db.columns_for('tasks', username, TASK_FIELDS))
+    goals = db.rows_for('goals', username)
+    stones = db.rows_for('goal_milestones', username)
+    for goal in goals:
+        goal['measure'] = _measure_of(goal)
+        goal['milestones'] = _milestones_of(stones, goal.get('id'))
+    return tasks, goals
+
+
 @router.get('/api/next_actions')
 def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
                      username: str = Depends(current_username)):
@@ -56,12 +73,7 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
         return fail('Sign in to see what to do next.')
     budget = max(5, min(240, int(budget or next_actions.DEFAULT_BUDGET)))
 
-    tasks = goal_store.with_goal_ids(username, db.columns_for('tasks', username, TASK_FIELDS))
-    goals = db.rows_for('goals', username)
-    stones = db.rows_for('goal_milestones', username)
-    for goal in goals:
-        goal['measure'] = _measure_of(goal)
-        goal['milestones'] = _milestones_of(stones, goal.get('id'))
+    tasks, goals = _record(username)
 
     series = growth.series(username, RECENT_DAYS) or {}
     days = series.get('growth_data') or []
@@ -71,3 +83,87 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
                                    now=datetime.now(), lens=lens,
                                    daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'))
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))
+
+
+class BookSessions(BaseModel):
+    goal_id: Optional[str] = None
+
+
+@router.post('/api/next_actions/book')
+def book_sessions(body: BookSessions, username: str = Depends(current_username)):
+    """Put the sittings a dated goal needs this week on the calendar.
+
+    The deadline row says "book 3 sessions"; this is the button. How many, how
+    long and what each is called are worked out again here from the record
+    (backend/tracking/record.py), not taken from the request, so a stale page
+    cannot book a week that is already done. One a day, each in the first free
+    slot of its day (session_plan.next_slot), linked to the goal and its
+    current checkpoint so the work counts toward it.
+    """
+    _, user = load_user((username or '').strip())
+    if not user:
+        return fail('Sign in to book sessions.')
+    tasks, goals = _record(username)
+    goal = next((row for row in goals if str(row.get('id')) == str(body.goal_id or '')), None)
+    if not goal or goal.get('status') != 'active':
+        return fail('That goal is not active any more.')
+
+    now = datetime.now()
+    read = record.read_goal(goal, tasks, now)
+    if not read['to_book']:
+        return fail('This week already has the sessions this goal needs.')
+
+    minutes = next_actions.SESSION_MINUTES
+    xp = session_plan.xp_for(minutes, 3)
+    title = read['next_step'] or read['checkpoint'] or '{}: practice'.format(goal.get('title') or 'Goal')
+    busy = session_plan.busy_spans(
+        db.columns_for('tasks', username, ('show_on_calendar', 'created_at', 'due_date')),
+        db.calendar_document(username), now)
+    booked, cursor = [], now
+    for _ in range(read['to_book']):
+        slot = session_plan.next_slot(minutes, busy, cursor)
+        if not slot:
+            break
+        start, end = slot
+        made = create_task(CreateTask(
+            name=title, priority=session_plan.priority_for(xp), xp_reward=xp,
+            due_date=end.isoformat(timespec='seconds'), created_at=start.isoformat(timespec='seconds'),
+            show_on_calendar=True, subject=(read['subjects'] or [None])[0],
+            goal_id=str(goal.get('id')), milestone_id=read['checkpoint_id'],
+        ), username)
+        task_id = made.get('task_id') if isinstance(made, dict) else None
+        if not task_id:
+            break
+        booked.append({'task_id': task_id, 'start': start.isoformat(timespec='minutes'),
+                       'end': end.isoformat(timespec='minutes')})
+        busy = sorted(busy + [(start, end)])
+        # The next one on a later day: three sittings in one afternoon is a
+        # cram, not a week.
+        cursor = (start + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    if not booked:
+        return fail('There is no free {}-minute slot in the next two weeks.'.format(minutes))
+    return ok(booked=booked, title=title, minutes=minutes)
+
+
+class ClearLeftovers(BaseModel):
+    task_ids: List[str] = []
+
+
+@router.post('/api/next_actions/clear')
+def clear_leftovers(body: ClearLeftovers, username: str = Depends(current_username)):
+    """Delete the leftover routines the triage row named.
+
+    Only ids that are still leftovers by the rule in
+    backend/tracking/record.py `leftovers` (open, past their date, and a title
+    written three or more times) are removed. Anything else in the request is
+    ignored, so a page holding an old list cannot delete a task that was
+    finished, moved, or never a routine.
+    """
+    _, user = load_user((username or '').strip())
+    if not user:
+        return fail('Sign in to clear tasks.')
+    tasks, _ = _record(username)
+    allowed = {str(task.get('id')) for task in record.leftovers(tasks, datetime.now().date())}
+    cleared = [task_id for task_id in dict.fromkeys(str(one) for one in body.task_ids)
+               if task_id in allowed and db.delete_row('tasks', task_id, user_id=username)]
+    return ok(cleared=cleared)

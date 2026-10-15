@@ -14,6 +14,8 @@ import timeSpentCases from '@shared/cases/time_spent.json';
 import nameFamilyCases from '@shared/cases/name_family.json';
 import backgroundCases from '@shared/cases/background_detail.json';
 import overdueCases from '@shared/cases/overdue.json';
+import problemCountCases from '@shared/cases/problem_count.json';
+import { problemCount } from '@/utils/problemCount';
 import { daysLate, lateXp } from '@/utils/overdue';
 import { backgroundDetail } from '@/utils/background';
 import { secondsSpent, type TimedTask } from '@/utils/timeSpent';
@@ -49,6 +51,12 @@ describe('how detailed the About you answers are, as the server works it out', (
 describe('what finishing late pays, as the server works it out', () => {
   it.each(overdueCases.cases.map((one) => [one.why, one] as const))('%s', (_why, one) => {
     expect([daysLate(one.due, one.at), lateXp(one.xp, one.due, one.at)]).toEqual([one.days, one.earned]);
+  });
+});
+
+describe('how many problems a title holds, as the server reads it', () => {
+  it.each(problemCountCases.cases.map((one) => [one.title || 'empty', one] as const))('%s', (_title, one) => {
+    expect(problemCount(one.title)).toBe(one.count);
   });
 });
 

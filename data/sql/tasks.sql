@@ -63,8 +63,10 @@ CREATE TABLE IF NOT EXISTS tasks (
     difficulty          INTEGER CHECK (difficulty BETWEEN 1 AND 5),
     execution           INTEGER CHECK (execution BETWEEN 1 AND 5),
 
-    -- The third question, asked only when the account has turned it on
-    -- (rating_depth 'reasons'): the one thing that made the difference. One of
+    -- The third question: the one thing that made the difference. Asked when
+    -- the account has turned it on (rating_depth 'reasons'), and whenever a
+    -- task is rated 1-2 for execution, because "why did that go badly" is the
+    -- answer the plan can act on (backend/tracking/record.py `stuck`). One of
     -- the twelve words in REASONS in backend/api/tasks.py — six for a task
     -- that went badly, six for one that went well — and which side it came
     -- from is recoverable from the word itself.
@@ -84,7 +86,15 @@ CREATE TABLE IF NOT EXISTS tasks (
     -- task_goal_matches (data/sql/goals.sql). No CHECK, for the reason the
     -- ratings above give; backend/goal_matcher narrows the values.
     goal_match_status   TEXT,
-    goal_match_version  INTEGER
+    goal_match_version  INTEGER,
+
+    -- "How many did you get right?": score_got of score_of, asked after a
+    -- task whose title names a count of problems ("#1-10", "12 problems") or
+    -- when the reader adds a score. Null when not asked. The one measure here
+    -- that is not the reader grading themselves, which is why the plan reads
+    -- it for what went wrong (backend/tracking/record.py `misses`).
+    score_got           INTEGER,
+    score_of            INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS tasks_user_status_idx ON tasks (user_id, status);

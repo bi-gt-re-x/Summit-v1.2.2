@@ -114,7 +114,7 @@ export interface UseCalendarTasks extends TaskPatch {
   /** How much to ask, straight from the account's preference. */
   ratingDepth: RatingDepth;
   /** Sends whatever was answered and writes it onto the list on screen. */
-  saveRating: (values: { difficulty?: number; execution?: number; reason?: string }) => void;
+  saveRating: (values: taskService.RatingAnswers) => void;
   /** Dismissal, by any of the dialog's three routes. */
   closeRating: () => void;
 }
@@ -224,7 +224,7 @@ export function useCalendarTasks(): UseCalendarTasks {
      written onto the list on screen rather than re-read — the same rule the
      completion above follows. */
   const saveRating = useCallback(
-    (values: { difficulty?: number; execution?: number; reason?: string }) => {
+    (values: taskService.RatingAnswers) => {
       const target = rating;
       setRating(null);
       if (!username || !target) return;

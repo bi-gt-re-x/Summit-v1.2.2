@@ -140,10 +140,22 @@ def test_never_plans_more_than_the_budget():
 
 # ---- The two rules the old tests did not reach --------------------------
 def test_a_goal_behind_its_schedule_names_its_next_task():
+    # The nearest dated goal is the deadline row now, and it still names the
+    # task already written down for it.
     goal = {'id': 'g', 'title': 'Pass the exam', 'status': 'active', 'progress': 10,
             'start_date': iso(30), 'deadline': iso(-10), 'milestones': []}
     linked = task(title='Past paper 3', goal_id='g')
-    item = first(plan([linked], [goal], budget=120), 'goal')
+    item = first(plan([linked], [goal], budget=120), 'deadline')
+    assert item['title'] == 'Finish “Past paper 3” for Pass the exam'
+    assert item['because'].startswith('10 days to Pass the exam. You’re 65% behind schedule.')
+
+
+def test_a_second_goal_behind_its_schedule_still_gets_the_goal_row():
+    near = {'id': 'n', 'title': 'Quiz', 'status': 'active', 'progress': 90,
+            'start_date': iso(30), 'deadline': iso(-3), 'milestones': []}
+    far = {'id': 'g', 'title': 'Pass the exam', 'status': 'active', 'progress': 10,
+           'start_date': iso(30), 'deadline': iso(-10), 'milestones': []}
+    item = first(plan([task(title='Past paper 3', goal_id='g')], [near, far], budget=120), 'goal')
     assert item['title'] == 'Finish “Past paper 3” for Pass the exam'
     assert item['because'] == '10 days left, 66% behind schedule.'
 
@@ -332,3 +344,140 @@ def test_the_shuffle_changes_by_day_but_never_lifts_soft_rows_over_overdue_work(
         found = build_plan(rows, [], series([]), lambda one: one, 120, now=NOW,
                            stamp='2026-09-{:02d}'.format(day + 1))
         assert found['actions'][0]['kind'] == 'overdue'
+
+
+# ---- Looking forward: the date, the list, the misses, the snag ----------
+def stone(**over):
+    row = {'id': 's1', 'title': 'Silver DP unassisted', 'status': 'pending', 'position': 0,
+           'steps': [{'id': 'a', 'title': 'Work through the knapsack chapter', 'done': True},
+                     {'id': 'b', 'title': 'Solve 5 USACO Silver DP problems', 'done': False}]}
+    row.update(over)
+    return row
+
+
+def contest(**over):
+    goal = {'id': 'usaco', 'title': 'USACO December', 'status': 'active', 'progress': 40,
+            'start_date': iso(20), 'deadline': iso(-47), 'subject_ids': 'computer_science',
+            'milestones': [stone()]}
+    goal.update(over)
+    return goal
+
+
+def test_the_nearest_dated_goal_leads_the_plan_even_seven_weeks_out():
+    # The old goal rule only looked 45 days ahead, so a contest 47 days out
+    # never reached the plan at all.
+    worked = [done('computer_science', 3), done('computer_science', 9)]
+    found = plan(worked + [task(title='Old thing', due_date=iso(2))], [contest()], budget=120)
+    top = found['top']
+    assert top['kind'] == 'deadline'
+    assert top['title'] == 'Book 3 computer_science sessions for USACO December'
+    assert top['because'] == ('47 days to USACO December. You’re on “Silver DP unassisted”, 1 of 2 steps '
+                              'done. You worked on it on 2 of the last 14 days. 3 more this week holds a '
+                              'pace of 3 a week.')
+    assert top['book'] == {'count': 3, 'minutes': 45, 'title': 'Solve 5 USACO Silver DP problems',
+                           'milestoneId': 's1'}
+
+
+def test_a_goal_past_four_months_does_not_lead():
+    assert first(plan([], [contest(deadline=iso(-150))]), 'deadline') is None
+
+
+def test_a_week_already_done_books_nothing_and_names_the_next_step():
+    # Sunday, with three sittings this week: the pace is met.
+    sunday = datetime(2026, 9, 27, 9, 0, 0)
+    worked = [task(status='done', subject='computer_science', completed_at='2026-09-{}T12:00:00'.format(day))
+              for day in (22, 24, 26)]
+    found = build_plan(worked, [contest(deadline='2026-11-13')], series([]), lambda one: one, 120,
+                       now=sunday, stamp='x')
+    top = found['top']
+    assert top['title'] == 'Do “Solve 5 USACO Silver DP problems” for USACO December'
+    assert 'book' not in top
+    assert 'You’ve done this week’s 3.' in top['because']
+
+
+def test_leftover_routines_become_one_row_and_leave_the_overdue_rule():
+    finished = [task(status='done', title='Lab {}'.format(at), completed_at=iso(at % 6 + 1) + 'T10:00:00')
+                for at in range(24)]
+    routines = [task(title='Morning meditation', due_date=iso(back)) for back in range(1, 13)]
+    real = task(title='Essay draft', due_date=iso(2), priority='high')
+    found = plan(finished + routines + [real], budget=120)
+    triage = first(found, 'triage')
+    assert triage['title'] == 'Clear 12 leftover routines'
+    assert sorted(triage['clear']) == sorted(row['id'] for row in routines)
+    assert '13 things are due now and you finish about 4 on a day you work.' in triage['because']
+    assert 'keep “Essay draft”' in triage['because']
+    overdue = [item for item in everything(found) if item['kind'] == 'overdue']
+    assert [item['title'] for item in overdue] == ['Finish “Essay draft”']
+
+
+def test_a_short_list_is_not_triaged():
+    finished = [task(status='done', title='Lab {}'.format(at), completed_at=iso(at % 6 + 1) + 'T10:00:00')
+                for at in range(24)]
+    routines = [task(title='Morning meditation', due_date=iso(back)) for back in range(1, 4)]
+    assert first(plan(finished + routines), 'triage') is None
+
+
+def scored(subject, back, got, of, title='Set', **over):
+    return task(status='done', subject=subject, title=title, score_got=got, score_of=of,
+                completed_at=iso(back) + 'T12:00:00', **over)
+
+
+def test_misses_name_the_sets_that_went_wrong():
+    rows = [scored('maths', 2, 3, 10, title='Quadratics #1-10'),
+            scored('maths', 4, 9, 10, title='Linear #1-10'),
+            scored('maths', 6, 5, 8, title='Factoring drill')]
+    item = first(plan(rows, budget=120), 'misses')
+    assert item['title'] == 'Go back over the 11 maths problems you missed'
+    assert item['because'] == ('You got 17 of your last 28 right (61%). Most misses were in '
+                               '“Quadratics #1-10” (3/10) and “Factoring drill” (5/8). Rework those '
+                               'before anything new.')
+
+
+def test_good_scores_and_old_scores_say_nothing():
+    good = [scored('maths', 2, 9, 10), scored('maths', 3, 10, 10)]
+    old = [scored('physics', 40, 1, 10), scored('physics', 41, 2, 10)]
+    assert first(plan(good + old), 'misses') is None
+
+
+def test_a_reason_picked_again_and_again_comes_back_with_its_fix():
+    rough = [task(status='done', subject='maths', execution=2, reason='unclear',
+                  completed_at=iso(back) + 'T12:00:00') for back in (1, 3, 5)]
+    rough.append(task(status='done', subject='maths', execution=1, reason='no-time',
+                      completed_at=iso(6) + 'T12:00:00'))
+    item = first(plan(rough, budget=120), 'stuck')
+    assert item['title'] == 'Next maths session: start with one worked example before you try one yourself'
+    assert item['because'] == 'You picked “Did not know where to start” on 3 of your last 4 rough sessions.'
+
+
+def test_a_near_date_leads_even_when_the_lens_leans_toward_overdue_work():
+    volume = {'id': 'volume', 'label': 'Throughput', 'weights': {'overdue': 1.4, 'goal': 1.2}}
+    late = [task(title='Long run', due_date=iso(7))]
+    found = plan(late, [contest()], budget=120, lens=volume)
+    assert found['top']['kind'] == 'deadline'
+
+
+def test_the_triage_row_keeps_real_work_not_todays_routines():
+    finished = [task(status='done', title='Lab {}'.format(at), completed_at=iso(at % 6 + 1) + 'T10:00:00')
+                for at in range(24)]
+    routines = [task(title='Morning meditation', due_date=iso(back)) for back in range(0, 13)]
+    real = task(title='Essay draft', due_date=iso(0))
+    triage = first(plan(finished + routines + [real], budget=120), 'triage')
+    assert triage['because'].endswith('Clear those and keep “Essay draft”.')
+
+
+def test_clearing_leftovers_comes_before_the_overdue_work_it_hides():
+    finished = [task(status='done', title='Lab {}'.format(at), completed_at=iso(at % 6 + 1) + 'T10:00:00')
+                for at in range(24)]
+    routines = [task(title='Morning meditation', due_date=iso(back)) for back in range(1, 13)]
+    real = task(title='Essay draft', due_date=iso(9))
+    volume = {'id': 'volume', 'label': 'Throughput', 'weights': {'overdue': 1.4}}
+    found = plan(finished + routines + [real], [contest()], budget=120, lens=volume)
+    assert kinds(found['actions'])[:3] == ['deadline', 'triage', 'overdue']
+
+
+def test_placeholder_steps_are_not_work():
+    padded = stone(steps=[{'id': 'a', 'title': 'Name the first piece of work', 'done': False},
+                          {'id': 'b', 'title': 'Name the second', 'done': False}])
+    top = plan([], [contest(milestones=[padded])], budget=120)['top']
+    assert top['book']['title'] == 'Silver DP unassisted'
+    assert 'You’re on “Silver DP unassisted”.' in top['because']

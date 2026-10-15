@@ -124,9 +124,13 @@ class RateTask(BaseModel):
     difficulty: Optional[int] = None
     #: How well it went, 1-5. Null means not answered.
     execution: Optional[int] = None
-    #: The one thing that made the difference, from REASONS below. Only asked
-    #: at rating_depth 'reasons'.
+    #: The one thing that made the difference, from REASONS below. Asked at
+    #: rating_depth 'reasons', and whenever execution is rated 1-2.
     reason: Optional[str] = None
+    #: "How many did you get right?" — got of of. Both or neither; see
+    #: backend/tracking/record.py for what reads them.
+    score_got: Optional[int] = None
+    score_of: Optional[int] = None
 
 
 #: What a star rating is allowed to be, both ends inclusive.
@@ -715,8 +719,12 @@ def rate_task(body: RateTask, username: str = Depends(current_username)):
     # one case: `reason: ""` is not an empty request, it is the answer being
     # taken back. Treating it as nothing to record made the clear below
     # unreachable.
-    if body.difficulty is None and body.execution is None and body.reason is None:
+    scored = body.score_got is not None or body.score_of is not None
+    if body.difficulty is None and body.execution is None and body.reason is None and not scored:
         return fail('Nothing to record.')
+    if scored and (body.score_got is None or body.score_of is None
+                   or not (1 <= body.score_of <= 500) or not (0 <= body.score_got <= body.score_of)):
+        return fail('A score is how many you got right out of how many there were.')
 
     for name, value in (('Difficulty', body.difficulty), ('Execution', body.execution)):
         if value is not None and not (RATING_RANGE[0] <= value <= RATING_RANGE[1]):
@@ -743,6 +751,10 @@ def rate_task(body: RateTask, username: str = Depends(current_username)):
         # — but it must not erase an answer that is already there, which is
         # what filing it as None would do.
 
+    if scored:
+        task['score_got'] = int(body.score_got)
+        task['score_of'] = int(body.score_of)
+
     db.save_task(task, username)
 
     return ok(
@@ -750,6 +762,8 @@ def rate_task(body: RateTask, username: str = Depends(current_username)):
         difficulty=task.get('difficulty'),
         execution=task.get('execution'),
         reason=task.get('reason'),
+        score_got=task.get('score_got'),
+        score_of=task.get('score_of'),
     )
 
 

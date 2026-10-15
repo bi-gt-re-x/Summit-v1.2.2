@@ -22,7 +22,13 @@ then packed into the minutes, and anything that does not fit waits in `more`.
 
 ## The rules
 
-Nine of them, each reading the record rather than a setting: overdue work, work
+The first four look forward, and they are why this is a plan rather than a
+report (see backend/tracking/record.py): the nearest dated goal and how many
+sittings this week its date asks for; a list too long to finish, with the
+leftover routines named so they can be cleared in one go; the problems got
+wrong lately; and the reason rough sessions keep going badly, with its fix.
+
+Then nine more, each reading the record rather than a setting: overdue work, work
 due today, a goal behind its schedule, the subject whose work is rated worst, a
 batch of badly rated recent work, a subject dropped after steady work, a task
 sitting undated for two weeks, a subject on a run of days, and a day with
@@ -42,7 +48,7 @@ import time
 from datetime import date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 
-from backend.tracking import time_spent
+from backend.tracking import record, time_spent
 from backend.tracking.goal_health import evidence_for, js_round, measure_of
 
 BUDGETS = (15, 30, 45, 60, 90, 120)
@@ -312,7 +318,68 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
     def due_day(task):
         return str(task.get('due_date') or '')[:10]
 
-    overdue = sorted((task for task in open_tasks if task.get('due_date') and due_day(task) < today_iso),
+    # ---- Looking forward: the date, the list, the misses, the snag --------
+    deadline = record.nearest_deadline(goals, tasks, now)
+    if deadline:
+        found.append(_deadline_row(deadline, name_of, slot))
+
+    # Routines left over from days already gone. They are not "your oldest
+    # open task": eight days of "Morning meditation" is one decision (clear
+    # them), and leaving them in the overdue rule put a week-old routine at
+    # the top of the plan.
+    left_over = record.leftovers(tasks, today)
+    left_ids = {task.get('id') for task in left_over}
+    due_now = [task for task in open_tasks if task.get('due_date') and due_day(task) <= today_iso]
+    per_day = record.finished_per_day(tasks, today)
+    if left_over and per_day and len(due_now) > max(per_day + 5, per_day * 1.5):
+        # What to keep is the real work: today's routines are not "kept", they
+        # are just today's routines.
+        routines = record.routine_titles(tasks)
+        keep = sorted((task for task in due_now if task.get('id') not in left_ids
+                       and record.title_key(task.get('title')) not in routines),
+                      key=lambda task: (task.get('priority') != 'high', str(task.get('due_date'))))
+        oldest = min(str(task.get('due_date'))[:10] for task in left_over)
+        found.append(_action(
+            id='triage', kind='triage',
+            title='Clear {} leftover routines'.format(len(left_over)),
+            because=('{} things are due now and you finish about {} on a day you work. {} of them '
+                     'are routines left over since {}. Clear those{}.').format(
+                len(due_now), per_day, len(left_over), _short(oldest),
+                ' and keep {}'.format(_and(['“{}”'.format(task.get('title')) for task in keep[:3]]))
+                if keep else ''),
+            minutes=5, clear=[task.get('id') for task in left_over[:500]], weight=1040))
+
+    for subject, row in sorted(record.misses(tasks, today).items(), key=lambda item: item[1]['share']):
+        if row['share'] >= record.SCORE_BAR or subject in worked_today:
+            continue
+        snag = record.stuck(tasks, today, subject)
+        worst = [one for one in row['sets'] if one[1] < one[2]][:2]
+        found.append(_action(
+            id='misses-{}'.format(subject), kind='misses',
+            title='Go back over the {} {} problems you missed'.format(row['of'] - row['got'], name_of(subject)),
+            because=('You got {} of your last {} right ({}%). Most misses were in {}. Rework those before '
+                     'anything new.{}').format(
+                row['got'], row['of'], js_round(row['share'] * 100),
+                _and(['“{}” ({}/{})'.format(*one) for one in worst]),
+                ' When it goes badly here you pick “{}”, so: {}.'.format(snag['label'], snag['fix'].lower())
+                if snag else ''),
+            minutes=PRACTICE_MINUTES, subject=subject,
+            weight=760 + (record.SCORE_BAR - row['share']) * 200))
+        break
+
+    snag = record.stuck(tasks, today)
+    if snag:
+        where = snag['subject']
+        found.append(_action(
+            id='stuck-{}'.format(snag['reason']), kind='stuck',
+            title=('Next {} session: {}'.format(name_of(where), snag['fix'][0].lower() + snag['fix'][1:])
+                   if where else snag['fix']),
+            because='You picked “{}” on {} of your last {} rough sessions.'.format(
+                snag['label'], snag['count'], snag['of']),
+            minutes=PRACTICE_MINUTES, subject=where, weight=740))
+
+    overdue = sorted((task for task in open_tasks if task.get('due_date') and due_day(task) < today_iso
+                      and task.get('id') not in left_ids),
                      key=lambda task: str(task.get('due_date')))
     for index, task in enumerate(overdue[:3]):
         late = _days_ago(task.get('due_date'), now) or 0
@@ -337,6 +404,9 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
     behind = []
     for goal in goals:
         if goal.get('status') != 'active' or not goal.get('deadline'):
+            continue
+        # The deadline row above already speaks for this one.
+        if deadline and goal.get('id') == deadline['goal'].get('id'):
             continue
         left = _days_ago(goal.get('deadline'), now)
         if left is None:
@@ -598,9 +668,18 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
 
     weights = (lens or {}).get('weights') or {}
 
+    # A date inside two months outranks whatever the lens leans toward, and so
+    # does clearing a list too long to finish (five minutes, and it makes every
+    # other row readable). The lens tilts the ordinary rows; it should not let a
+    # pile of overdue work push a contest seven weeks out off the top.
+    tilt = max([1] + list(weights.values()))
+
     def rank(item):
         shuffle = (seeded(stamp + '~' + str(item['id'])) - 0.5) * JITTER if item['kind'] in SOFT else 0
-        return (-(item['weight'] * weights.get(item['kind'], 1) + shuffle), seeded(stamp + str(item['id'])))
+        lean = tilt if (item['kind'] == 'triage' or item['kind'] == 'deadline'
+                        and item.get('daysLeft', DEADLINE_LEAD + 1) <= DEADLINE_LEAD) \
+            else weights.get(item['kind'], 1)
+        return (-(item['weight'] * lean + shuffle), seeded(stamp + str(item['id'])))
     found.sort(key=rank)
     seen_task, seen_subject, out = set(), set(), []
     for item in found:
@@ -608,12 +687,79 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             if item['taskId'] in seen_task:
                 continue
             seen_task.add(item['taskId'])
-        if item.get('subject') and item['kind'] in ('weak-subject', 'neglected', 'slipping'):
+        if item.get('subject') and item['kind'] in ('misses', 'weak-subject', 'neglected', 'slipping'):
             if item['subject'] in seen_subject:
                 continue
             seen_subject.add(item['subject'])
         out.append(item)
     return out
+
+
+def _and(parts):
+    """"a", "a and b", "a, b and c"."""
+    parts = [part for part in parts if part]
+    if len(parts) <= 1:
+        return ''.join(parts)
+    return '{} and {}'.format(', '.join(parts[:-1]), parts[-1])
+
+
+#: How long one sitting toward a dated goal is booked for.
+SESSION_MINUTES = 45
+#: Inside this many days, a dated goal leads the plan whatever the lens.
+DEADLINE_LEAD = 60
+
+
+def _deadline_row(read, name_of, slot):
+    """The plan's first line: the nearest date, and what this week owes it."""
+    goal = read['goal']
+    title = goal.get('title') or 'your goal'
+    left = read['days_left']
+    subject = read['subjects'][0] if read['subjects'] else None
+    when = 'Today is the day for {}.'.format(title) if left == 0 else \
+        '{} to {}.'.format('1 day' if left == 1 else '{} days'.format(left), title)
+    parts = [when]
+    if read['behind']:
+        parts.append('You’re {}% behind schedule.'.format(js_round(read['gap'])))
+    if read['checkpoint']:
+        parts.append('You’re on “{}”{}.'.format(
+            read['checkpoint'], ', {} of {} steps done'.format(read['steps_done'], read['steps'])
+            if read['steps'] else ''))
+    parts.append('You worked on it on {} of the last 14 days.'.format(read['fortnight_days']))
+    if read['cold']:
+        cold, age = read['cold'][0]
+        parts.append('{} has had {}.'.format(
+            name_of(cold), 'nothing yet' if age is None else 'nothing in {} days'.format(age)))
+    if read['to_book']:
+        parts.append(('{} more this week gets you to {} a week, the pace that catches up.'
+                      if read['behind'] else '{} more this week holds a pace of {} a week.').format(
+            read['to_book'], read['per_week']))
+    elif read['booked_days']:
+        parts.append('This week’s {} are done or on your calendar.'.format(read['per_week']))
+    else:
+        parts.append('You’ve done this week’s {}. Keep the next one short.'.format(read['per_week']))
+
+    sitting = read['next_step'] or read['checkpoint'] or '{}: practice'.format(title)
+    task = read['open_task']
+    if task:
+        heading = 'Finish “{}” for {}'.format(task.get('title'), title)
+    elif read['to_book']:
+        heading = 'Book {} {}session{} for {}'.format(
+            read['to_book'], '{} '.format(name_of(subject)) if subject else '',
+            '' if read['to_book'] == 1 else 's', title)
+    elif read['next_step']:
+        heading = 'Do “{}” for {}'.format(read['next_step'], title)
+    else:
+        heading = 'Keep going on {}'.format(title)
+    return _action(
+        id='deadline-{}'.format(goal.get('id')), kind='deadline', title=heading,
+        because=' '.join(parts), minutes=max(slot, PRACTICE_MINUTES),
+        goalId=goal.get('id'), subject=subject, daysLeft=left,
+        taskId=task.get('id') if task else read['next_step_task'],
+        book={'count': read['to_book'], 'minutes': SESSION_MINUTES, 'title': sitting,
+              'milestoneId': read['checkpoint_id']} if read['to_book'] else None,
+        # Nearer is heavier: four months out it sits just under overdue work,
+        # inside seven weeks it leads the plan.
+        weight=1100 - min(left, record.DEADLINE_DAYS))
 
 
 def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=None,

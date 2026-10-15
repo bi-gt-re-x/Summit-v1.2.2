@@ -14,7 +14,7 @@ import pytest
 
 from backend.api import spaces, tasks
 from backend.config.shared import PATH, RULES
-from backend.tracking import analytics, background, next_sessions, overdue, session_plan, subject_ai, time_spent
+from backend.tracking import analytics, background, next_sessions, overdue, record, session_plan, subject_ai, time_spent
 
 CASES = os.path.join(os.path.dirname(PATH), 'cases')
 
@@ -46,6 +46,16 @@ def test_background_detail(case):
 def test_overdue(case):
     assert overdue.days_late(case['due'], case['at']) == case['days']
     assert overdue.late_xp(case['xp'], case['due'], case['at']) == case['earned']
+
+
+
+@pytest.mark.parametrize('case', _cases('problem_count'), ids=lambda case: case['title'] or 'empty')
+def test_problem_count(case):
+    assert record.problem_count(case['title']) == case['count']
+
+
+def test_every_struggle_reason_has_a_fix():
+    assert all(row.get('fix') for row in RULES['task_reasons']['struggle'])
 
 
 def test_the_server_reads_its_values_from_the_shared_file():

@@ -29,15 +29,27 @@
  * not, because there is no page that means "practice this for half an hour" —
  * and a link that goes somewhere unrelated is worse than no link.
  */
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Panel, PanelNote } from './charts';
-import { BUDGETS, type ActionKind, type NextAction, type Plan } from '@/services/next';
+import {
+  BUDGETS,
+  bookSessions,
+  clearLeftovers,
+  type ActionKind,
+  type NextAction,
+  type Plan,
+} from '@/services/next';
 /* The same "1h 20m" the rest of the app prints. Insights carries a private
    copy of this called `hm`; this is the shared one. */
 import { minutes as hm } from '@/utils/format';
 
 /** The word beside each row, and the colour it carries. */
 const KIND_LABEL: Record<ActionKind, string> = {
+  deadline: 'Deadline',
+  triage: 'Your list',
+  misses: 'Missed',
+  stuck: 'Fix',
   overdue: 'Overdue',
   due: 'Due today',
   goal: 'Goal',
@@ -53,6 +65,10 @@ const KIND_LABEL: Record<ActionKind, string> = {
 };
 
 const KIND_TONE: Record<ActionKind, string> = {
+  deadline: 'violet',
+  triage: 'amber',
+  misses: 'pink',
+  stuck: 'blue',
   overdue: 'pink',
   due: 'amber',
   goal: 'violet',
@@ -69,7 +85,57 @@ const KIND_TONE: Record<ActionKind, string> = {
   xp: 'blue',
 };
 
-function ActionRow({ item }: { item: NextAction }) {
+/**
+ * The one thing a row can do for you, when it can do something: put a dated
+ * goal's sittings on the calendar, or clear a pile of leftover routines. Both
+ * ask the server, which works the answer out again from the record, and the
+ * plan is re-read afterwards so the row reflects what changed.
+ */
+function RowAction({ item, onDone }: { item: NextAction; onDone: () => void }) {
+  const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle');
+  const [note, setNote] = useState<string | null>(null);
+
+  const book = item.kind === 'deadline' && item.book && item.goalId ? item.book : null;
+  const clear = item.kind === 'triage' && item.clear?.length ? item.clear : null;
+  if (!book && !clear) return null;
+
+  const run = async () => {
+    if (clear && !window.confirm(`Delete ${clear.length} leftover routines? This can't be undone.`)) return;
+    setState('busy');
+    setNote(null);
+    const result = book ? await bookSessions(item.goalId as string) : await clearLeftovers(clear as string[]);
+    if (!result.success) {
+      setState('idle');
+      setNote(result.message ?? 'That didn’t work. Try again.');
+      return;
+    }
+    setState('done');
+    if (book && 'booked' in result) {
+      const count = result.booked.length;
+      setNote(`Booked ${count} ${count === 1 ? 'session' : 'sessions'}. They're on your calendar.`);
+    } else if ('cleared' in result) {
+      setNote(`Cleared ${result.cleared.length}.`);
+    }
+    onDone();
+  };
+
+  return (
+    <div className="ax-plan-act">
+      {state !== 'done' && (
+        <button type="button" className="ax-plan-act-btn" disabled={state === 'busy'} onClick={() => void run()}>
+          {state === 'busy'
+            ? 'Working…'
+            : book
+              ? `Book ${book.count === 1 ? 'it' : `these ${book.count}`}`
+              : 'Clear them'}
+        </button>
+      )}
+      {note && <span className="ax-plan-act-note">{note}</span>}
+    </div>
+  );
+}
+
+function ActionRow({ item, onDone }: { item: NextAction; onDone: () => void }) {
   return (
     <li className="ax-plan-row">
       <span className={`ax-plan-tag is-${KIND_TONE[item.kind]}`}>{KIND_LABEL[item.kind]}</span>
@@ -86,6 +152,7 @@ function ActionRow({ item }: { item: NextAction }) {
           )}
         </p>
         <p className="ax-plan-why">{item.because}</p>
+        <RowAction item={item} onDone={onDone} />
       </div>
       <span className="ax-plan-mins">{item.minutes}m</span>
     </li>
@@ -152,7 +219,12 @@ export function NextActions({
       footer={
         <PanelNote label="How this is chosen">
           <p>
-            In order: overdue tasks, tasks due today, the goal furthest behind its date, the
+            First, what's ahead: your nearest goal with a date in the next four months and how many
+            sessions this week it needs, a list too long to finish with its leftover routines named,
+            the problems you got wrong lately, and the reason your rough sessions keep going badly.
+          </p>
+          <p>
+            Then: overdue tasks, tasks due today, the goal furthest behind its date, the
             subject your recent work is rated lowest in (naming the task to redo), a subject that is
             earning far less than it did two weeks ago, a goal nothing has been finished toward in
             ten days, low-rated tasks you haven't revisited, a subject you've stopped, your XP
@@ -181,7 +253,7 @@ export function NextActions({
         <>
           <ul className="ax-plan-list">
             {actions.map((item) => (
-              <ActionRow key={item.id} item={item} />
+              <ActionRow key={item.id} item={item} onDone={onRefresh} />
             ))}
           </ul>
           {/* One line under the rule rather than three stacked ones. The spare
@@ -222,7 +294,7 @@ export function NextActions({
               </summary>
               <ul className="ax-plan-list">
                 {more.map((item) => (
-                  <ActionRow key={item.id} item={item} />
+                  <ActionRow key={item.id} item={item} onDone={onRefresh} />
                 ))}
               </ul>
             </details>

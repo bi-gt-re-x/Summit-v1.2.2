@@ -267,3 +267,40 @@ html[data-theme="dark"] .tk-rate-backdrop {
     .tk-rate-word { width: 100%; margin: var(--space-2) 0 0; }
     .tk-rate-stars { flex-wrap: wrap; }
 }
+
+/* ---------- How many did you get right ----------------------------------- */
+.tk-rate-score {
+    margin-top: var(--space-2);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--rt-ink-soft);
+}
+.tk-rate-score input {
+    width: 4.5em;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--rt-line);
+    border-radius: var(--radius-sm);
+    background: var(--rt-surface-soft);
+    color: var(--rt-ink);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+}
+.tk-rate-score input:focus-visible { outline: 2px solid var(--rt-accent); outline-offset: 1px; }
+.tk-rate-score-warn { color: #c0392b; font-weight: 600; }
+.tk-rate-add-score {
+    display: block;
+    width: auto;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--rt-accent);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+}
+.tk-rate-add-score:hover { text-decoration: underline; }

@@ -204,6 +204,13 @@ ADDED_COLUMNS = (
     # idempotency key. Existing rows get NULL: logged before anyone recorded
     # it, and outside the unique index below. See data/sql/growth.sql.
     ('xp_events', 'task_id', 'TEXT'),
+
+    # "How many did you get right?", asked after a task whose title names a
+    # count of problems. Existing rows get NULL: never asked. Read by
+    # backend/tracking/record.py, which is what lets the plan say which work
+    # went wrong instead of how much there was. See data/sql/tasks.sql.
+    ('tasks', 'score_got', 'INTEGER'),
+    ('tasks', 'score_of', 'INTEGER'),
 )
 
 # Indexes on columns that ADDED_COLUMNS supplies. Their own list, applied after

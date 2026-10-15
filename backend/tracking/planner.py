@@ -64,7 +64,7 @@ the plan; the account owns it.
 import json
 import os
 import re
-from typing import List
+from typing import List, Sequence
 
 # What the page draws, so what the model is asked for and what is enforced on
 # the way back.
@@ -282,6 +282,9 @@ Rules for the set you return:
 - If you are given a deadline, pitch them at what can be reached by it: the \
 five are spread evenly up to that date, so the first is a few weeks out, not \
 a term.
+- If you are told what they have already done, start from there. Do not \
+return a checkpoint their record shows they have passed, and aim the first \
+one at where their misses are.
 """
 
 # Said only to the open models. The Anthropic path constrains the shape with a
@@ -332,6 +335,9 @@ Rules for the set you return:
 them: nothing the one before already covers, nothing that belongs to the one \
 after.
 - If you are given a date, the five have to fit before it.
+- If you are told what they have already done, build on it: skip what their \
+record shows is done, and point the first step at the work they got wrong or \
+the reason their sessions go badly.
 """
 
 STEPS_SCHEMA = {
@@ -464,7 +470,7 @@ def _ask(goal: str, instruction: str = '') -> str:
 
 def _brief(title: str, why: str = '', description: str = '',
            category: str = '', unit: str = '', target: str = '',
-           deadline: str = '') -> str:
+           deadline: str = '', record: Sequence[str] = ()) -> str:
     """What the account has told us about the goal, as lines the model reads.
 
     Only the fields that were filled in. An empty "Why: " line is a line the
@@ -487,6 +493,13 @@ def _brief(title: str, why: str = '', description: str = '',
         lines.append('Target: {}{}'.format(target, ' {}'.format(unit) if unit else ''))
     if str(deadline or '').strip():
         lines.append('Deadline: {}'.format(str(deadline).strip()[:10]))
+    # What they have actually done, from backend/tracking/record.py
+    # `brief_lines`. Without it the brief was the goal's own words and nothing
+    # else, so a student at 442 and one at 1,900 were sent the same plan.
+    if record:
+        lines.append('')
+        lines.append('Their record so far:')
+        lines.extend('- {}'.format(line) for line in record)
     return '\n'.join(lines)
 
 
@@ -972,7 +985,7 @@ def from_provider(brief: str, system: str = None, schema: dict = None,
 # The one thing this module does
 # ---------------------------------------------------------------------------
 def suggest_milestones(title, why='', description='', category='',
-                       unit='', target='', deadline='') -> List[str]:
+                       unit='', target='', deadline='', record=()) -> List[str]:
     """Five checkpoint titles for this goal, in order.
 
     Raises `PlannerUnavailable` for anything the page should say out loud: no
@@ -987,7 +1000,7 @@ def suggest_milestones(title, why='', description='', category='',
     if not using:
         raise PlannerUnavailable(NO_KEY)
 
-    brief = _brief(title, why, description, category, unit, target, deadline)
+    brief = _brief(title, why, description, category, unit, target, deadline, record)
     if using == 'groq':
         text = _from_groq(brief, schema=SCHEMA)
     elif using == 'grok':
@@ -1006,7 +1019,8 @@ def suggest_milestones(title, why='', description='', category='',
 
 
 def suggest_steps(milestone, goal='', why='', description='', category='',
-                  unit='', target='', deadline='', before='', after='') -> List[str]:
+                  unit='', target='', deadline='', before='', after='',
+                  record=()) -> List[str]:
     """Five steps for one checkpoint, in the order they would be done.
 
     The goal is passed as well as the checkpoint because a checkpoint title is
@@ -1033,7 +1047,7 @@ def suggest_steps(milestone, goal='', why='', description='', category='',
         raise PlannerUnavailable(NO_KEY)
 
     brief = _brief(goal or milestone, why, description, category, unit, target,
-                   deadline)
+                   deadline, record)
     if goal.strip():
         brief += '\n\nCheckpoint to break down: {}'.format(milestone.strip())
         if str(before or '').strip():

@@ -47,6 +47,7 @@ from pydantic import BaseModel
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.config import settings
+from backend.config import subjects as subject_catalogue
 from backend.database import connection as db
 from backend.goal_matcher import metrics as goal_metrics
 from backend.goal_matcher import service as goal_matcher
@@ -55,6 +56,7 @@ from backend.goal_matcher import store as goal_store
 from backend.tracking import focus as focus_tracking
 from backend.tracking import goal_health
 from backend.tracking import planner
+from backend.tracking import record
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
 
@@ -1296,6 +1298,21 @@ def reorder_milestones(body: ReorderMilestones, username: str = Depends(current_
     return ok()
 
 
+def _record_lines(goal, username):
+    """What the account has done toward `goal`, as lines for the planner's
+    brief. See backend/tracking/record.py `brief_lines`."""
+    tasks = goal_store.with_goal_ids(username, db.columns_for('tasks', username, (
+        'id', 'title', 'status', 'subject', 'completed_at', 'execution', 'reason',
+        'score_got', 'score_of', 'goal_id', 'milestone_id')))
+    row = dict(goal, milestones=_milestones_of(db.rows_for('goal_milestones', username), goal.get('id')))
+    try:
+        return record.brief_lines(row, tasks, datetime.now(),
+                                  lambda key: (subject_catalogue.BY_ID.get(key) or {}).get('name', key))
+    except Exception as exc:  # noqa: BLE001 - a brief without the record is still a brief
+        print('[goals] could not read the record for the brief: {!r}'.format(exc))
+        return []
+
+
 @router.post('/api/suggest_milestones')
 def suggest_milestones(body: SuggestMilestones, username: str = Depends(current_username)):
     """Five checkpoint titles for a goal, from the model. Writes nothing.
@@ -1310,6 +1327,7 @@ def suggest_milestones(body: SuggestMilestones, username: str = Depends(current_
     why, description, category = body.why, body.description, body.category
     deadline = body.deadline
     unit = target = ''
+    lines = []
 
     if body.goal_id:
         goal = db.find_row('goals', body.goal_id, user_id=username)
@@ -1325,6 +1343,7 @@ def suggest_milestones(body: SuggestMilestones, username: str = Depends(current_
         unit = goal.get('unit') or ''
         if _measure_of(goal) == 'number' and goal.get('target_number'):
             target = str(goal.get('target_number'))
+        lines = _record_lines(goal, username)
 
     if not title:
         return fail('A goal title is required')
@@ -1332,7 +1351,7 @@ def suggest_milestones(body: SuggestMilestones, username: str = Depends(current_
     try:
         titles = planner.suggest_milestones(
             title, why=why, description=description, category=category,
-            unit=unit, target=target, deadline=deadline)
+            unit=unit, target=target, deadline=deadline, record=lines)
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
     return ok(milestones=titles)
@@ -1400,9 +1419,11 @@ def suggest_steps(body: SuggestSteps, username: str = Depends(current_username))
     # the thing it belongs to rather than in the abstract.
     goal_title = why = description = category = unit = target = ''
     deadline = before = after = ''
+    lines = []
     if goal_id:
         goal = db.find_row('goals', goal_id, user_id=username)
         if goal:
+            lines = _record_lines(goal, username)
             goal_title = goal.get('title') or ''
             why = goal.get('why') or ''
             description = goal.get('description') or ''
@@ -1430,7 +1451,7 @@ def suggest_steps(body: SuggestSteps, username: str = Depends(current_username))
         titles = planner.suggest_steps(
             title, goal=goal_title, why=why, description=description,
             category=category, unit=unit, target=target, deadline=deadline,
-            before=before, after=after)
+            before=before, after=after, record=lines)
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
     return ok(steps=titles)

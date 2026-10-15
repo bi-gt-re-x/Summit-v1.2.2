@@ -34,12 +34,12 @@
 
   "task_reasons": {
     "struggle": [
-      { "key": "distracted", "label": "Could not focus", "phrase": "could not focus" },
-      { "key": "unclear", "label": "Did not know where to start", "phrase": "was unclear where to start" },
-      { "key": "underestimated", "label": "Bigger than it looked", "phrase": "was bigger than it looked" },
-      { "key": "no-time", "label": "Ran out of time", "phrase": "ran out of time" },
-      { "key": "low-energy", "label": "Low energy", "phrase": "was done on low energy" },
-      { "key": "interrupted", "label": "Kept getting interrupted", "phrase": "kept getting interrupted" }
+      { "key": "distracted", "label": "Could not focus", "phrase": "could not focus", "fix": "Put your phone in another room and set a 25-minute timer before you start" },
+      { "key": "unclear", "label": "Did not know where to start", "phrase": "was unclear where to start", "fix": "Start with one worked example before you try one yourself" },
+      { "key": "underestimated", "label": "Bigger than it looked", "phrase": "was bigger than it looked", "fix": "Split it into 15-minute pieces and book only the first" },
+      { "key": "no-time", "label": "Ran out of time", "phrase": "ran out of time", "fix": "Book it earlier in the day, at half the size" },
+      { "key": "low-energy", "label": "Low energy", "phrase": "was done on low energy", "fix": "Do it at the time of day you're sharpest" },
+      { "key": "interrupted", "label": "Kept getting interrupted", "phrase": "kept getting interrupted", "fix": "Put it on the calendar as a block so the time is protected" }
     ],
     "went_well": [
       { "key": "prepared", "label": "Knew exactly what to do", "phrase": "was clear from the start" },

@@ -479,7 +479,7 @@ export default function Tasks() {
   const nextReview = useCallback(() => setReviews((queue) => queue.slice(1)), []);
 
   const saveRating = useCallback(
-    (values: { difficulty?: number; execution?: number; reason?: string }) => {
+    (values: taskService.RatingAnswers) => {
       const target = rating;
       nextReview();
       if (!username || !target) return;

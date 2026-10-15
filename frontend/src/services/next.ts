@@ -6,7 +6,7 @@
  * suggest different things. The rules are backend/tracking/next_actions.py;
  * this is the shape they arrive in.
  */
-import { get } from './api';
+import { get, post } from './api';
 import type { ApiResult } from '@/types';
 import type { GoalLens } from '@/utils/goalLens';
 
@@ -15,6 +15,10 @@ export const BUDGETS = [15, 30, 45, 60, 90, 120] as const;
 export const DEFAULT_BUDGET = 45;
 
 export type ActionKind =
+  | 'deadline'
+  | 'triage'
+  | 'misses'
+  | 'stuck'
   | 'overdue'
   | 'due'
   | 'goal'
@@ -41,6 +45,12 @@ export interface NextAction {
   goalId?: string;
   /** How the server ranked it. Not shown. */
   weight: number;
+  /** A deadline row's sittings for this week: what "Book these" puts on the calendar. */
+  book?: { count: number; minutes: number; title: string; milestoneId?: string | null };
+  /** A deadline row's days to its date. */
+  daysLeft?: number;
+  /** A triage row's leftover routines: what "Clear them" deletes. */
+  clear?: string[];
 }
 
 export interface Plan {
@@ -69,4 +79,23 @@ export const NO_PLAN: Plan = {
 
 export function nextActions(budget: number = DEFAULT_BUDGET): Promise<ApiResult<NextResult>> {
   return get<NextResult>(`/api/next_actions?budget=${encodeURIComponent(budget)}`);
+}
+
+export interface Booked {
+  booked: { task_id: string; start: string; end: string }[];
+  title: string;
+  minutes: number;
+}
+
+/**
+ * Book the sittings a dated goal needs this week, one a day. The server works
+ * the count out again from the record rather than trusting the page's.
+ */
+export function bookSessions(goalId: string): Promise<ApiResult<Booked>> {
+  return post<Booked>('/api/next_actions/book', { goal_id: goalId });
+}
+
+/** Delete the leftover routines a triage row named. Only real leftovers go. */
+export function clearLeftovers(taskIds: string[]): Promise<ApiResult<{ cleared: string[] }>> {
+  return post<{ cleared: string[] }>('/api/next_actions/clear', { task_ids: taskIds });
 }

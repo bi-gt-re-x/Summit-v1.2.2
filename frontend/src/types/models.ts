@@ -151,6 +151,9 @@ export interface Task {
   completion_seconds?: number;
   /** Whether it beat its deadline. Absent when it had none. */
   met_deadline?: boolean;
+  /** "How many did you get right?": score_got of score_of. Null when not asked. */
+  score_got?: number | null;
+  score_of?: number | null;
   /**
    * How hard it was and how well it went, 1-5 each, asked once on completion.
    *

@@ -1,0 +1,20 @@
+{
+  "_about": "How many problems a task's title says it holds. Run by tests/test_shared_cases.py against backend/tracking/record.py `problem_count` and by frontend/src/shared.cases.test.ts against `problemCount` in frontend/src/utils/problemCount.ts. A count means the rating prompt asks how many were right.",
+  "cases": [
+    { "title": "Stewart Calculus Ch. 7 #1-6", "count": 6 },
+    { "title": "AMC 10 #11–25", "count": 15 },
+    { "title": "Putnam 2025 A1-A5", "count": null },
+    { "title": "Problems 3-8 from the handout", "count": 6 },
+    { "title": "Q4 - 12 review", "count": 9 },
+    { "title": "10 problems on factoring", "count": 10 },
+    { "title": "5 DP problems", "count": 5 },
+    { "title": "20 Spanish vocab cards", "count": 20 },
+    { "title": "Do 12 practice questions", "count": 12 },
+    { "title": "Read chapter 4", "count": null },
+    { "title": "Run 5 km", "count": null },
+    { "title": "Page 1-500 skim", "count": null },
+    { "title": "#9-3 backwards", "count": null },
+    { "title": "300 problems in one go", "count": null },
+    { "title": "", "count": null }
+  ]
+}
