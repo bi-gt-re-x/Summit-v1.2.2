@@ -16,6 +16,13 @@
     ]
   },
 
+  "overdue": {
+    "_about": "What finishing a task after its due date costs. Each day late takes cut_per_day of the task's XP, down to floor (a share of the full XP, never less than 1 XP). A date with no time is due by the end of that day. Tasks finished before since keep the full XP they were paid. backend/api/tasks.py charges it; frontend/src/utils/overdue.ts shows it.",
+    "cut_per_day": 0.25,
+    "floor": 0.25,
+    "since": "2026-10-15"
+  },
+
   "grade_bands": [
     [100, "S"], [96, "A+"], [90, "A"], [80, "B"], [70, "C"], [60, "D"], [0, "F"]
   ],

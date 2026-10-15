@@ -423,6 +423,15 @@ describe('dayPlan', () => {
     expect(plan.spans).toEqual([]);
   });
 
+  it('counts an overdue task at the XP finishing it still pays', () => {
+    // Two days late keeps half (shared/rules.json `overdue`).
+    const plan = dayPlan(
+      [task({ id: '1', status: 'todo', due_date: '2026-10-18T09:00:00', xp_value: 40 })],
+      '2026-10-20',
+    );
+    expect(plan.xp).toBe(20);
+  });
+
   it('draws a finished task’s span but does not count it as left', () => {
     const plan = dayPlan(
       [task({

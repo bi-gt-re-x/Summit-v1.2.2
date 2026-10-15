@@ -313,3 +313,24 @@ def test_a_very_large_batch_completes_in_one_request(client, calls):
     assert len(reply['completed']) == tasks_api.MAX_COMPLETE
     assert calls == [tasks_api.COMPLETE_CHUNK] * (tasks_api.MAX_COMPLETE // tasks_api.COMPLETE_CHUNK)
     assert account()['xp'] == tasks_api.MAX_COMPLETE
+
+
+# ---------------------------------------------------------------------------
+# Late costs XP
+# ---------------------------------------------------------------------------
+def test_a_late_task_pays_less_and_the_ledger_and_account_agree(client):
+    from datetime import date, timedelta
+    on_time, late = make_tasks(client, 2, xp=100, prefix='due')
+    db.update_row('tasks', on_time, {'due_date': date.today().isoformat()}, user_id='tester')
+    db.update_row('tasks', late, {'due_date': (date.today() - timedelta(days=2)).isoformat()},
+                  user_id='tester')
+    before = account()
+
+    reply = complete(client, [on_time, late])
+
+    assert [row['xp_earned'] for row in reply['completed']] == [100, 50]
+    assert reply['xp_earned'] == 150
+    assert account()['xp'] - (before.get('xp') or 0) == 150
+    assert sorted(e['amount'] for e in ledger()) == [50, 100]
+    assert db.find_row('tasks', on_time, user_id='tester')['met_deadline'] in (True, 1)
+    assert db.find_row('tasks', late, user_id='tester')['met_deadline'] in (False, 0)

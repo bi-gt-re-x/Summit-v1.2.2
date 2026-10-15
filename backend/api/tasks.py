@@ -6,7 +6,8 @@ account forward. That moment is `/api/complete_task`, which in one pass:
 
   * stamps the task done and records how long it took and whether it beat its
     deadline (the growth report card's efficiency metric reads those);
-  * awards the XP, recalculates the level and extends the streak;
+  * awards the XP, less for every day it is late (backend/tracking/overdue.py),
+    recalculates the level and extends the streak;
   * writes a row to the XP ledger;
   * counts the completion toward the user's "complete N tasks" goals.
 
@@ -28,6 +29,7 @@ from backend.database import connection as db
 from backend.goal_matcher import metrics
 from backend.goal_matcher import service as goal_matcher
 from backend.goal_matcher import store as goal_store
+from backend.tracking import overdue
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
 from backend.config.shared import RULES
@@ -543,7 +545,11 @@ def _timing(now):
             out['completion_seconds'] = round(max(0, (now - created_dt).total_seconds()))
         due_dt = _parse_dt(row.get('due_date')) if row.get('due_date') else None
         if due_dt is not None:
-            out['met_deadline'] = now <= due_dt
+            # By the end of the day for a date with no time, so a task due
+            # today and finished today is on time.
+            out['met_deadline'] = overdue.days_late(row.get('due_date'), now) == 0
+        # Late costs XP: see backend/tracking/overdue.py.
+        out['xp_earned'] = overdue.late_xp(row.get('xp_value'), row.get('due_date'), now)
         return out
     return derive
 

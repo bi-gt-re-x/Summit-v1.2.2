@@ -13,6 +13,8 @@ import { describe, expect, it } from 'vitest';
 import timeSpentCases from '@shared/cases/time_spent.json';
 import nameFamilyCases from '@shared/cases/name_family.json';
 import backgroundCases from '@shared/cases/background_detail.json';
+import overdueCases from '@shared/cases/overdue.json';
+import { daysLate, lateXp } from '@/utils/overdue';
 import { backgroundDetail } from '@/utils/background';
 import { secondsSpent, type TimedTask } from '@/utils/timeSpent';
 import { nameFamily } from '@/components/Subject/recentWork';
@@ -41,6 +43,12 @@ describe('how detailed the About you answers are, as the server works it out', (
     expect([found.words, found.answered, found.level, found.head_start]).toEqual([
       one.words, one.answered, one.level, one.head_start,
     ]);
+  });
+});
+
+describe('what finishing late pays, as the server works it out', () => {
+  it.each(overdueCases.cases.map((one) => [one.why, one] as const))('%s', (_why, one) => {
+    expect([daysLate(one.due, one.at), lateXp(one.xp, one.due, one.at)]).toEqual([one.days, one.earned]);
   });
 });
 

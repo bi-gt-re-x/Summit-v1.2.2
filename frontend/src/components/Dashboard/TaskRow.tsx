@@ -33,6 +33,7 @@ import { iconUrl, type Subject } from '@/services/subjects';
 import type { Task } from '@/types';
 import { useNow } from '@/hooks/useNow';
 import { timerText } from './TaskModal';
+import { daysLate, earnedXp, isOverdue, lateXp } from '@/utils/overdue';
 
 /** How long the ✓ shows before the row starts leaving. */
 const CHECK_MS = 220;
@@ -49,11 +50,13 @@ export interface TaskRowProps {
   onComplete: (task: Task) => void;
 }
 
-/** "Jul 30, 2:30 PM" — the same shape the calendar prints a due time in. */
-function dueLabel(due: Date): string {
+/**
+ * "Jul 30, 2:30 PM" — the same shape the calendar prints a due time in. A date
+ * with no time is just the day: it is due by the end of it.
+ */
+function dueLabel(due: Date, dated: boolean): string {
   const day = due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  const time = timeText(due);
-  return `${day}, ${time}`;
+  return dated ? day : `${day}, ${timeText(due)}`;
 }
 
 /**
@@ -113,8 +116,17 @@ export function TaskRow({
     .join(' ');
 
   const priority = priorityMeta(task.priority);
-  const parsed = task.due_date ? new Date(task.due_date) : null;
+  // A bare "2026-10-15" parses as UTC midnight, which is the evening before
+  // anywhere west of Greenwich; read it as the local day it names.
+  const dated = Boolean(task.due_date) && !String(task.due_date).includes('T');
+  const parsed = task.due_date ? new Date(dated ? `${String(task.due_date).slice(0, 10)}T00:00:00` : task.due_date) : null;
   const due = parsed && !Number.isNaN(parsed.getTime()) ? parsed : null;
+  // Late costs XP (utils/overdue.ts), so an overdue row says so and says what
+  // finishing it now still pays.
+  const fullXp = Number(task.xp_value) || 0;
+  const overdue = !done && isOverdue(task);
+  const late = overdue ? daysLate(task.due_date) : 0;
+  const nowXp = overdue ? lateXp(fullXp, task.due_date) : fullXp;
 
   return (
     <li className={classes}>
@@ -138,9 +150,19 @@ export function TaskRow({
 
       <div className="dash-task-body">
         <span className="dash-task-name">{task.title || 'Untitled'}</span>
-        <span className={`dash-task-tag tone-${priority.tone}`}>
-          <span className="dash-task-dot" aria-hidden="true" />
-          {priority.label}
+        <span className="dash-task-meta">
+          <span className={`dash-task-tag tone-${priority.tone}`}>
+            <span className="dash-task-dot" aria-hidden="true" />
+            {priority.label}
+          </span>
+          {overdue && (
+            <span
+              className="dash-task-overdue"
+              title={`${late} ${late === 1 ? 'day' : 'days'} late. Finish it now for ${nowXp} of ${fullXp} XP.`}
+            >
+              Overdue · {nowXp} of {fullXp} XP
+            </span>
+          )}
         </span>
       </div>
 
@@ -159,9 +181,9 @@ export function TaskRow({
 
       <span className="dash-task-when">
         {done ? (
-          <span className="dash-task-xp">+{Number(task.xp_value) || 0} XP</span>
+          <span className="dash-task-xp">+{earnedXp(task)} XP</span>
         ) : due ? (
-          `Due: ${dueLabel(due)}`
+          <span className={overdue ? 'dash-task-late' : undefined}>Due: {dueLabel(due, dated)}</span>
         ) : Number(task.timer_duration) > 0 ? (
           <TimerLeft task={task} />
         ) : (

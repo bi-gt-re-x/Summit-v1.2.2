@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Goal, Task } from '@/types';
 import { dueLine, spellDuration } from './board';
+import { daysLate, earnedXp, isOverdue, lateXp } from '@/utils/overdue';
 
 export interface TaskRowProps {
   task: Task;
@@ -129,6 +130,12 @@ export function TaskRow({
   };
 
   const when = dueLine(task);
+  // Late costs XP (utils/overdue.ts): an open task shows what finishing it
+  // now would pay, a finished one what it did pay.
+  const fullXp = Number(task.xp_value) || 0;
+  const overdue = isOverdue(task);
+  const xp = done ? earnedXp(task) : overdue ? lateXp(fullXp, task.due_date) : fullXp;
+  const late = overdue ? daysLate(task.due_date) : 0;
 
   return (
     /* `data-task` is how the top bar's search finds this row on the page:
@@ -188,11 +195,19 @@ export function TaskRow({
             {task.priority[0]!.toUpperCase() + task.priority.slice(1)}
           </span>
           {subject && <span className="tk-tag is-subject">{subject}</span>}
+          {overdue && (
+            <span
+              className="tk-tag is-overdue"
+              title={`${late} ${late === 1 ? 'day' : 'days'} late. Finish it now for ${xp} of ${fullXp} XP.`}
+            >
+              Overdue
+            </span>
+          )}
         </div>
 
         <div className="tk-row-meta">
           {when && (
-            <span className={task.status !== 'done' && when.includes('late') ? 'is-late' : undefined}>
+            <span className={overdue ? 'is-late' : undefined}>
               <i aria-hidden="true">{CAL}</i>
               {when}
             </span>
@@ -219,7 +234,10 @@ export function TaskRow({
         </div>
       </div>
 
-      <span className="tk-xp">+{(Number(task.xp_value) || 0).toLocaleString()} XP</span>
+      <span className={`tk-xp${xp < fullXp ? ' is-cut' : ''}`}>
+        {xp < fullXp && <s aria-label={`was ${fullXp} XP`}>{fullXp.toLocaleString()}</s>}
+        +{xp.toLocaleString()} XP
+      </span>
 
       <button
         type="button"

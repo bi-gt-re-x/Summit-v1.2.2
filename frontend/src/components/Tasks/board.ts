@@ -18,6 +18,7 @@
 import { timeText } from '@/utils/clock';
 import type { Task, TaskPriority } from '@/types';
 import { isoDate } from '@/utils/dates';
+import { earnedXp, lateXp } from '@/utils/overdue';
 import { XP_BANDS, xpToBand, type XpBand } from '@/utils/priority';
 import { blockSeconds } from '@/utils/timeSpent';
 
@@ -524,7 +525,8 @@ export function taskCounts(tasks: Task[], today = new Date()): TaskCounts {
       dueInWeek += 1;
       if (task.status === 'done') closedInWeek += 1;
     }
-    const xp = Number(task.xp_value) || 0;
+    // What it pays, or paid: late costs XP (utils/overdue.ts).
+    const xp = task.status === 'done' ? earnedXp(task) : lateXp(task.xp_value, task.due_date, today);
     if (task.status === 'done') {
       counts.done += 1;
       if (String(task.completed_at ?? '').slice(0, 10) === stamp) counts.todayXp += xp;

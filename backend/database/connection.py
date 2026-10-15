@@ -1885,7 +1885,8 @@ def complete_tasks(username, account_id, task_ids, stamp, day, derive, account, 
     second finds nothing left to change and awards nothing.
 
     `derive(row)` gives the timing fields for one task (completion_seconds,
-    met_deadline — None leaves a field as it was). `account` is the streak
+    met_deadline — None leaves a field as it was) and `xp_earned`, what the
+    completion pays (the task's xp_value when absent). `account` is the streak
     fields to set, applied only if something was completed. `level_for(xp)`
     turns the new XP total into a level.
 
@@ -1926,7 +1927,7 @@ def complete_tasks(username, account_id, task_ids, stamp, day, derive, account, 
                      task_id, username)).rowcount
                 if changed:
                     row['status'] = 'done'
-                    completed.append((task_id, int(row.get('xp_value') or 0)))
+                    completed.append((task_id, int(timing.get('xp_earned', row.get('xp_value')) or 0)))
                 else:
                     already.append(task_id)
 

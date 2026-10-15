@@ -14,6 +14,7 @@
  * `toISOString()` is not allowed near a day key.
  */
 import { isCalendarPlaced } from '@/utils/calendarGrid';
+import { earnedXp, lateXp } from '@/utils/overdue';
 import type { Task, TaskPriority } from '@/types';
 import type { Spanned } from '@/utils/dayShape';
 
@@ -22,8 +23,15 @@ function dayOf(stamp: string | undefined): string {
   return (stamp || '').slice(0, 10);
 }
 
-function xpOf(task: Task): number {
-  return Number(task.xp_value) || 0;
+/**
+ * What a task pays, or paid: late costs XP (utils/overdue.ts). An open task is
+ * judged by the day, as `todayIso` begins, so the sums agree with which tasks
+ * the page calls overdue.
+ */
+function xpOf(task: Task, todayIso?: string): number {
+  if (task.status === 'done') return earnedXp(task);
+  if (!todayIso) return Number(task.xp_value) || 0;
+  return lateXp(task.xp_value, dayOf(task.due_date), `${todayIso}T00:00:00`);
 }
 
 // --------------------------------------------------------------------------
@@ -357,7 +365,7 @@ export function dayPlan(tasks: Task[], todayIso: string): DayPlan {
 
     if (task.status !== 'done') {
       left += 1;
-      xp += xpOf(task);
+      xp += xpOf(task, todayIso);
     }
 
     // Timed work only, and only where the time is actually today's.

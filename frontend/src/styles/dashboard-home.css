@@ -961,6 +961,18 @@ html:not(.focus-mode) .dash-main .focus-panel .fp-controls { margin-top: auto; }
 .dash-task-timer { font-weight: 600; color: var(--pref-accent, var(--color-accent)); }
 .dash-task-timer.is-up { color: #C0392B; }
 .dash-task-xp { color: #22A06B; font-weight: 600; }
+.dash-task-late { color: #C0392B; font-weight: 600; }
+/* Past its date, beside the priority: solid red so it reads first. */
+.dash-task-meta { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.dash-task-overdue {
+    padding: 1px var(--space-2);
+    border-radius: var(--radius-sm);
+    background: #C0392B;
+    color: #fff;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    white-space: nowrap;
+}
 
 /* ---- Completing: check, green, gone ------------------------------------- */
 .dash-task.is-checked {
@@ -1732,3 +1744,6 @@ html[data-theme="dark"] .dash-chip-streak.flame-chip-infinite {
     .flame-embers i, .dash-big.is-bumping { animation: none; }
     .flame-embers { display: none; }
 }
+
+html[data-theme="dark"] .dash-task-late { color: #ff7b72; }
+html[data-theme="dark"] .dash-task-overdue { background: #da3633; }

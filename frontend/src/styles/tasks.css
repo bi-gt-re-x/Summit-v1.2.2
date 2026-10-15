@@ -612,6 +612,8 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
 .tk-tag.is-high { color: var(--tk-red); background: color-mix(in srgb, var(--tk-red) 14%, transparent); }
 .tk-tag.is-medium { color: var(--tk-amber); background: color-mix(in srgb, var(--tk-amber) 15%, transparent); }
 .tk-tag.is-low { color: var(--tk-green); background: color-mix(in srgb, var(--tk-green) 14%, transparent); }
+/* Past its date: solid red so it reads before the title does. */
+.tk-tag.is-overdue { color: #fff; background: var(--tk-red); }
 .tk-tag.is-subject {
     color: var(--tk-muted);
     background: var(--tk-card-2);
@@ -643,6 +645,10 @@ html[data-motion="reduced"] .tk-row.is-found { animation: none; }
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
+
+/* Late: the full XP struck through, then what it pays now. */
+.tk-xp.is-cut { color: var(--tk-red); }
+.tk-xp s { margin-right: var(--space-1); color: var(--tk-faint); font-weight: 500; }
 
 .tk-star, .tk-more {
     display: grid; place-items: center;
