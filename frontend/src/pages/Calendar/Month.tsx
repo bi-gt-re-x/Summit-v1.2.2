@@ -441,7 +441,7 @@ export default function Month() {
   useCalendarKeys({ onStep: stepMonth, onToday: goToday, enabled: !actions.dialog });
 
   if (loading) return <Loading label="Loading your month" />;
-  if (!hasData) return <ErrorState message={error ?? 'No data came back.'} onRetry={refresh} />;
+  if (!hasData) return <ErrorState message={error ?? "Couldn't load your month. Try refreshing."} onRetry={refresh} />;
 
   return (
     <CalendarShell paneId="monthView" ownSwitcher>

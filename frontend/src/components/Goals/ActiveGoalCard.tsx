@@ -479,13 +479,13 @@ export function ActiveGoalCard({
         <div className="ag-top-text">
           <div className="ag-title-row">
             <h3 title={goal.title}>{goal.title}</h3>
-            {priority >= HIGH_PRIORITY && <span className="ag-badge">Primary Goal</span>}
+            {priority >= HIGH_PRIORITY && <span className="ag-badge">Main goal</span>}
           </div>
           {(goal.why || goal.description) && (
             <p className="ag-why">{goal.why || goal.description}</p>
           )}
           <ul className="ag-tags">
-            <li>{longTerm ? 'Long Term' : 'Short Term'}</li>
+            <li>{longTerm ? 'Long term' : 'Short term'}</li>
             <li className={priority >= HIGH_PRIORITY ? 'is-hot' : ''}>
               {priority >= HIGH_PRIORITY ? 'High' : priority >= 4 ? 'Medium' : 'Low'} Priority
             </li>
@@ -575,8 +575,8 @@ export function ActiveGoalCard({
             <strong id={`ag-verify-${goal.id}`}>You reached it. Is this goal done?</strong>
             <span>
               {stones.length > 0
-                ? 'Every checkpoint is ticked off. Say yes and it moves to your finished goals and your Analytics.'
-                : 'The numbers say so. Say yes and it moves to your finished goals and your Analytics.'}
+                ? 'Every checkpoint is done. Say yes and it moves to your finished goals.'
+                : 'You hit the target. Say yes and it moves to your finished goals.'}
             </span>
           </div>
           <div className="ag-verify-do">
@@ -623,7 +623,7 @@ export function ActiveGoalCard({
                 {onChart && <ChartMenu goal={goal} onChart={(chart) => onChart(goal, chart)} />}
               </header>
               <p className="ag-empty">
-                Break this into checkpoints and the percentage starts to mean something.
+                Add checkpoints so the percentage means something.
               </p>
               <div className="ag-empty-tools">
                 <AskModel label="Suggest checkpoints" busy={drafting} onAsk={askStones} primary />
@@ -635,7 +635,7 @@ export function ActiveGoalCard({
           )}
           <div className="ag-panel-foot">
             <button type="button" className="ag-details" onClick={() => onOpen(goal)}>
-              View Details
+              Details
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
                 <path d="M5 12h13M13 6l6 6-6 6" />
               </svg>
@@ -902,7 +902,7 @@ export function ActiveGoalCard({
                     autoFocus
                     value={stepDraft.text}
                     maxLength={120}
-                    placeholder="Name a small piece of work"
+                    placeholder="Name a small step"
                     onChange={(event) => setStepDraft({ ...stepDraft, text: event.target.value })}
                     onBlur={commitStep}
                     onKeyDown={(event) => {
@@ -944,7 +944,7 @@ export function ActiveGoalCard({
                     disabled={busy || focus.steps.length >= MAX_STEPS}
                     title={
                       focus.steps.length >= MAX_STEPS
-                        ? `A checkpoint needing more than ${MAX_STEPS} steps is two checkpoints`
+                        ? `More than ${MAX_STEPS} steps? Split it into two checkpoints.`
                         : undefined
                     }
                     onClick={() => setStepDraft({ index: -1, text: '' })}
@@ -1009,7 +1009,7 @@ export function ActiveGoalCard({
                     </ul>
                   ) : (
                     <p className="ag-quiet ag-found-none">
-                      No matching open tasks. Steps don't need a linked task.
+                      No matching open tasks. That's fine. Steps don't need one.
                     </p>
                   )}
                 </div>
@@ -1062,7 +1062,7 @@ export function ActiveGoalCard({
             </>
           ) : (
             <p className="ag-empty">
-              Every checkpoint is behind you. What's left is the goal itself.
+              Every checkpoint is done. Now finish the goal itself.
             </p>
           )}
 

@@ -24,9 +24,9 @@ import { isoDate } from '@/utils/dates';
 export type { GoalHealth, HealthSignals, HealthState } from '@/types';
 
 const LABELS: Record<HealthState, string> = {
-  'on-track': 'On Track',
+  'on-track': 'On track',
   behind: 'Behind',
-  'not-started': 'Not Started',
+  'not-started': 'Not started',
 };
 
 const DAY = 86_400_000;
@@ -41,7 +41,7 @@ const DAY = 86_400_000;
 const UNREAD: GoalHealth = {
   state: 'not-started',
   label: LABELS['not-started'],
-  reason: 'Nothing recorded against this yet.',
+  reason: 'No work logged for this yet.',
   signals: {
     progress: 0,
     expected: null,
@@ -152,6 +152,19 @@ export function goalPace(goal: Goal, today: Date = new Date()): GoalPace {
 
   if (remaining <= 0) {
     return { need, have, lands: new Date(now).toISOString().slice(0, 10), drift: null };
+  }
+
+  /* A streak is not an average. It grows by exactly one a day, so a one-day
+     streak on a goal set years ago is not 600,000 days behind. It lands the
+     day the missing days are worked, and no pace can beat one a day. */
+  if (numbers.measure === 'streak') {
+    const landing = new Date(now + remaining * DAY);
+    return {
+      need: null,
+      have: 1,
+      lands: landing.toISOString().slice(0, 10),
+      drift: end === null ? null : Math.round((landing.getTime() - end) / DAY),
+    };
   }
   if (have <= 0) return { need, have, lands: null, drift: null };
 

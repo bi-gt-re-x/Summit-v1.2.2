@@ -1039,7 +1039,7 @@ def brief_from(state: Dict[str, Any]) -> str:
 
     # ---- Free resources picked for the subject ---------------------------
     # From the catalog in data/free_resources.json, sorted against the names
-    # of the reader's tasks (backend/tracking/free_resources). Free, and
+    # of the reader's tasks (backend/tracking/free_resources.py). Free, and
     # either no signup or a quick one, which is the rule for every link.
     free = [entry for entry in (state.get('free_resources') or [])
             if isinstance(entry, dict) and _link(entry.get('url'))]
@@ -1525,7 +1525,7 @@ Plain words, short sentences, no encouragement."""
 STEPS_SYSTEM += STYLE
 
 #: Added to STEPS_SYSTEM when the brief spans every subject (the dashboard's
-#: and the Recommendations tab's "All subjects"; backend/tracking/next_sessions).
+#: and the Recommendations tab's "All subjects"; backend/tracking/next_sessions.py).
 OVERALL_NOTE = """
 
 THIS BRIEF COVERS EVERY SUBJECT

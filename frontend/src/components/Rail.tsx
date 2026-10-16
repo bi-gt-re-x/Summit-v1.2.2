@@ -641,7 +641,7 @@ export function Rail() {
               className={({ isActive }) =>
                 `rail-link${isActive || onPage(tab, pathname) ? ' active' : ''}${locked ? ' is-locked' : ''}`
               }
-              title={locked ? `${tab.label} (advanced: opens with a short note first)` : tab.label}
+              title={locked ? `${tab.label} (opens with a short note first)` : tab.label}
             >
               {tab.icon}
               <span>{tab.label}</span>
@@ -805,15 +805,15 @@ export function Rail() {
                   className="rail-later"
                   data-tour="rail-more"
                   aria-expanded={peek}
-                  title={peek ? 'Hide the advanced tools' : 'Show the advanced tools'}
+                  title={peek ? 'Hide more tools' : 'Show more tools'}
                   onClick={() => setPeek((was) => !was)}
                 >
                   {LOCK_ICON}
                   <span>
-                    {peek ? 'Hide advanced tools' : 'More tools'}
+                    {peek ? 'Hide tools' : 'More tools'}
                     <small>
                       {peek
-                        ? 'Each opens with a short note first'
+                        ? 'Each one opens with a short note'
                         : `Unlock in ${starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`}, or open early`}
                     </small>
                   </span>

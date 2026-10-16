@@ -34043,7 +34043,7 @@
     {
       "id": "dz.layout",
       "name": "Layout",
-      "desc": "Arranging everything into a whole that reads in the right order. The eye follows size, then contrast, then position, and a layout is a plan for that journey.",
+      "desc": "Arranging everything into a whole that reads in the right order. The eye follows size, then contrast, then position, and a good layout plans for that.",
       "tier": "intermediate",
       "core": true,
       "xp": 1900,

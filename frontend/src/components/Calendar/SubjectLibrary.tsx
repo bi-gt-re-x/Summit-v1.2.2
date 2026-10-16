@@ -233,7 +233,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
     async (subject: Subject) => {
       if (!username) return;
       const used = subject.used > 0
-        ? `${subject.used} task${subject.used === 1 ? '' : 's'} filed under it will keep the work but lose the subject.`
+        ? `${subject.used} task${subject.used === 1 ? '' : 's'} will keep their work but lose this subject.`
         : undefined;
       const sure = await confirm({
         title: `Delete "${subject.name}"?`,
@@ -265,9 +265,9 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
   );
 
   return (
-    <aside className="wk-sidebar sl-sidebar" id="wkSidebar" aria-label="Subject library">
+    <aside className="wk-sidebar sl-sidebar" id="wkSidebar" aria-label="Subjects">
       <div className="sl-head">
-        <h3 className="sl-title">Subject Library</h3>
+        <h3 className="sl-title">Subjects</h3>
         <button type="button" className="sl-back" onClick={onClose}>
           Done
         </button>
@@ -307,7 +307,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
 
         {mine.length === 0 ? (
           <p className="sl-empty">
-            Nothing yet. What you add here leads every subject picker.
+            Nothing yet. Subjects you add here show up first when you pick one.
           </p>
         ) : (
           <ul className="sl-list">{mine.map((subject) => row(subject, true))}</ul>
@@ -332,7 +332,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
       </section>
 
       <p className="sl-note">
-        Colors may shift slightly on busy weeks so subjects stay distinct.
+        Colors may shift a little on busy weeks so subjects stay easy to tell apart.
       </p>
       {confirmDialog}
     </aside>

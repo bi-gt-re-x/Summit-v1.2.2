@@ -383,7 +383,7 @@ export function SearchPanel({ onClose }: SearchPanelProps) {
             <button
               type="button"
               className="sf-step"
-              aria-label="Previous match (Up or Left arrow)"
+              aria-label="Previous match (Up or Left)"
               disabled={all.length < 2}
               onClick={() => step(-1)}
             >
@@ -399,7 +399,7 @@ export function SearchPanel({ onClose }: SearchPanelProps) {
             <button
               type="button"
               className="sf-step is-next"
-              aria-label="Next match (Down or Right arrow)"
+              aria-label="Next match (Down or Right)"
               disabled={all.length < 2}
               onClick={() => step(1)}
             >

@@ -47,7 +47,7 @@ const STATUS_WORDS: Record<Status, string> = {
   idle: '',
   saving: 'Saving…',
   saved: 'Saved',
-  failed: "Couldn't save. It will try again as you type.",
+  failed: "Couldn't save. We'll keep trying as you type.",
 };
 
 export interface SpaceProps {

@@ -23,7 +23,7 @@ describe('goalHeadline', () => {
 
   it('leads with the count and names the shortfall bluntly otherwise', () => {
     const blunt = goalHeadline({ ...base, leadWithStrength: false });
-    expect(blunt.startsWith('5 goals live')).toBe(true);
+    expect(blunt.startsWith('5 active goals')).toBe(true);
     expect(blunt).toContain('2 behind');
   });
 

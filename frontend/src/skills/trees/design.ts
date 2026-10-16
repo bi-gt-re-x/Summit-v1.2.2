@@ -30,7 +30,7 @@ export const DESIGN: SubjectTree = {
     { id: 'dz.contrast', name: 'Contrast & Legibility', icon: 'contrast', tier: 'beginner', requires: ['dz.colour'], state: lock, percent: 0, xp: 1600,
       desc: 'Text that stays readable in sunlight, at distance and for eyes that are not yours. There are measurable thresholds for it, and passing them is a floor rather than an aspiration.' },
     { id: 'dz.layout', name: 'Layout', icon: 'layout', tier: 'intermediate', core: true, requires: ['dz.grid', 'dz.type'], state: lock, percent: 0, xp: 1900,
-      desc: 'Arranging everything into a whole that reads in the right order. The eye follows size, then contrast, then position, and a layout is a plan for that journey.' },
+      desc: 'Arranging everything into a whole that reads in the right order. The eye follows size, then contrast, then position, and a good layout plans for that.' },
     { id: 'dz.imagery', name: 'Imagery & Icons', icon: 'iconography', tier: 'intermediate', requires: ['dz.layout'], state: lock, percent: 0, xp: 1700,
       desc: 'Pictures and symbols that carry meaning rather than fill space. An icon without a label is a guess for anybody who has not met it before.' },
     { id: 'dz.brand', name: 'Identity', icon: 'brand', tier: 'intermediate', requires: ['dz.imagery'], state: lock, percent: 0, xp: 1900,

@@ -311,13 +311,13 @@ export function Toolbar({
             <Choice
               on={query.horizon === 'week'}
               label="The next 7 days"
-              hint="Plus anything undated."
+              hint="Plus anything without a date."
               onPick={() => set({ horizon: 'week' })}
             />
             <Choice
               on={query.horizon === 'all'}
               label="Everything dated"
-              hint="However far out it goes."
+              hint="No matter how far out."
               onPick={() => set({ horizon: 'all' })}
             />
 
@@ -390,7 +390,7 @@ export function Toolbar({
                   set({ status: 'open', search: '', subjects: [], priorities: [], bands: [], horizon: 'week' })
                 }
               >
-                Clear every filter
+                Clear filters
               </button>
             )}
           </Menu>

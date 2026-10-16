@@ -138,7 +138,7 @@ export function TaskModal({
     >
       <div className="modal-content">
         <div className="modal-header">
-          <h3>{editing ? 'Edit Task' : 'Add new task'}</h3>
+          <h3>{editing ? 'Edit task' : 'Add new task'}</h3>
           <span className="close-btn" role="button" tabIndex={0} onClick={onClose}>
             ×
           </span>
@@ -146,12 +146,12 @@ export function TaskModal({
 
         <div className="modal-body">
           <div className="form-group">
-            <label htmlFor="taskName">Task Name:</label>
+            <label htmlFor="taskName">Task name</label>
             <input
               id="taskName"
               type="text"
               className={showErrors && missingName ? 'invalid-input' : ''}
-              placeholder="e.g., Finish essay"
+              placeholder='Like "Finish essay"'
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoFocus
@@ -160,14 +160,14 @@ export function TaskModal({
 
           <TimePicker
             id="taskStart"
-            label="Start Time:"
+            label="Start"
             value={startTime}
             onChange={setStartTime}
             invalid={showErrors && !startTime}
           />
           <TimePicker
             id="taskEnd"
-            label="End Time:"
+            label="End"
             value={endTime}
             onChange={setEndTime}
             invalid={showErrors && !endTime}
@@ -190,7 +190,7 @@ export function TaskModal({
 
           <div className="form-group">
             <label htmlFor="taskXpSlider">
-              XP Reward: <span className="xp-value">{xp}</span>
+              XP <span className="xp-value">{xp}</span>
             </label>
             <div className="xp-slider-row">
               <input
@@ -215,7 +215,7 @@ export function TaskModal({
 
           {editing && recurring && (
             <div className="form-group">
-              <label>Apply changes to:</label>
+              <label>Change</label>
               <div className="radio-group">
                 <label>
                   <input
@@ -258,7 +258,7 @@ export function TaskModal({
             Cancel
           </button>
           <button type="button" className="btn-confirm" onClick={save}>
-            {editing ? 'Save Changes' : 'Add Task'}
+            {editing ? 'Save' : 'Add task'}
           </button>
         </div>
       </div>

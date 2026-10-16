@@ -217,7 +217,7 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       id: 'exec-weekend',
       kind: 'context',
       text: `Your work goes ${pct(weekend.lift)} ${upDown(weekend.lift)} on weekends than weekdays.`,
-      basis: `${weekend.withCount} tasks at the weekend, ${weekend.withoutCount} in the week.`,
+      basis: `${weekend.withCount} tasks on weekends, ${weekend.withoutCount} on weekdays.`,
       lift: weekend.lift,
       strength: strengthFor(weekend.smaller, weekend.lift),
       soWhat:
@@ -347,7 +347,7 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
         basis: `${weekly.slice(-run - 1).reduce((sum, week) => sum + week.count, 0)} rated tasks across ${run + 1} weeks.`,
         lift: pctChange(last, first) ?? 0,
         strength: run >= 4 ? 'strong' : 'likely',
-        soWhat: 'Whatever you changed recently is working. Keep it up.',
+        soWhat: 'Whatever you changed recently is working. Keep doing it.',
         weight: 60 + run * 8,
       });
     }

@@ -112,7 +112,7 @@ async function show(rows: unknown[], theGoals: unknown[]) {
   /* The folds are the Evidence tab now, so every test in this file has
      to open it first. The page opens on the overview. */
   await act(async () => {
-    screen.getByRole('button', { name: 'Evidence' }).click();
+    screen.getByRole('button', { name: 'The numbers' }).click();
   });
 }
 

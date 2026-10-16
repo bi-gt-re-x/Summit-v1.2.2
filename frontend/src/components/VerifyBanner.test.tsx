@@ -32,7 +32,7 @@ const { auth: authService } = await import('@/services');
 const resend = vi.mocked(authService.resendVerification);
 
 /** The ask, as the reader sees it. */
-const ASK = /confirm your e-mail address/i;
+const ASK = /confirm your email/i;
 
 function show(auth: Partial<AuthValue> = {}) {
   return renderWithProviders(<VerifyBanner />, { auth });
@@ -58,7 +58,7 @@ describe('when it appears', () => {
        that only says "confirm your e-mail" reads as a warning that something
        is wrong, which is the impression the door used to give. */
     show({ emailVerified: false });
-    expect(screen.getByText(/everything works in the meantime/i)).toBeInTheDocument();
+    expect(screen.getByText(/everything works while you wait/i)).toBeInTheDocument();
   });
 
   it('says nothing to an account that has confirmed', () => {

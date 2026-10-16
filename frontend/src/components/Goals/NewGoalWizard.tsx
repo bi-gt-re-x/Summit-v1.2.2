@@ -140,7 +140,7 @@ const TIPS: Record<number, string> = {
   // nearest one.
   1: 'Why this matters to you.',
   2: "Add a date so we can tell you if you're on track.",
-  3: 'Use milestones for a finish line, or a number for something you count up.',
+  3: 'Use checkpoints for a finish line, or a number for something you count up.',
   4: 'Three to six works. Each one should be a stage you reach, like "Solve Silver problems".',
   5: 'Not sure? Leave it on Automatic. You can change it from the card any time.',
 };
@@ -552,7 +552,7 @@ export function NewGoalWizard({
                 rows={4}
                 autoFocus
                 value={why}
-                placeholder="What changes for you if this happens?"
+                placeholder="What changes for you if you get there?"
                 onChange={(event) => setWhy(event.target.value)}
               />
               <p className="gx-hint">
@@ -571,7 +571,7 @@ export function NewGoalWizard({
                 onChange={(event) => setDeadline(event.target.value)}
               />
               <p className="gx-hint">
-                Optional. With a date, the app can tell you whether you're on pace.
+                Optional. With a date, Summit can tell you if you're on pace.
               </p>
 
               <label htmlFor="gx-priority">How much does it matter? ({priority} / 10)</label>
@@ -618,7 +618,7 @@ export function NewGoalWizard({
               {measure === 'number' && (
                 <div className="gx-number-row">
                   <span>
-                    <label htmlFor="gx-cur">Where you're now</label>
+                    <label htmlFor="gx-cur">Where you are now</label>
                     <input
                       id="gx-cur"
                       type="number"

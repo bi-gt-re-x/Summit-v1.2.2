@@ -58,7 +58,7 @@ export function ModeSwitch({ mode, onMode, say }: ModeSwitchProps) {
       {/* A radio group rather than three buttons: these are three states of
           one setting, and a screen reader should meet them as a choice with
           one answer instead of as three unrelated controls. */}
-      <div className="stx-modes-set" role="radiogroup" aria-label="How to read this tree">
+      <div className="stx-modes-set" role="radiogroup" aria-label="How to view this tree">
         {TREE_MODES.map((one) => (
           <button
             key={one.id}

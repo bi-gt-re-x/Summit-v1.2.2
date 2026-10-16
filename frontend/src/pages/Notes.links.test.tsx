@@ -137,7 +137,7 @@ describe('saving by itself', () => {
   it('can be untied from its task', async () => {
     show('/notes?task=t-int');
     await screen.findByRole('heading', { name: /about a task/i });
-    await userEvent.click(screen.getByRole('button', { name: /untie this note/i }));
+    await userEvent.click(screen.getByRole('button', { name: /unlink this note/i }));
     expect(screen.queryByRole('heading', { name: /about a task/i })).not.toBeInTheDocument();
   });
 });

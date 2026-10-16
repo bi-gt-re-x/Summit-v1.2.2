@@ -273,13 +273,13 @@ export function qualityBands(rated: RatedTask[]): QualityBand[] {
   return [
     band(
       'Hard, done well',
-      'Difficulty 3+ and execution 3+. The work worth having a record of.',
+      'Difficulty 3+ and execution 3+. This is the work that counts most.',
       'green',
       count((task) => task.difficulty >= 3 && task.execution >= 3),
     ),
     band(
       'Hard, went badly',
-      'Difficulty 3+, execution below 3. Worth knowing what these had in common.',
+      'Difficulty 3+, execution below 3. Look for what these had in common.',
       'amber',
       count((task) => task.difficulty >= 3 && task.execution < 3),
     ),
@@ -321,7 +321,7 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
       {
         tone: 'note',
         headline: `${summary.rated} rated ${summary.rated === 1 ? 'task' : 'tasks'} in this window.`,
-        hint: `Findings need ${FLOOR}. Rating is optional.`,
+        hint: `Patterns show up after ${FLOOR}. Rating is optional.`,
       },
     ];
   }
@@ -534,7 +534,7 @@ export function reasonFindings(summary: ReasonSummary): RatingFinding[] {
       out.push({
         tone: 'note',
         headline: 'Your best and worst tasks have the same cause.',
-        hint: `Bad tasks ${worst.phrase}; good ones ${best.phrase}. Protect that condition.`,
+        hint: `When work goes badly, it ${worst.phrase}. When it goes well, it ${best.phrase}. Set that up before you start.`,
       });
     }
   }
@@ -543,7 +543,7 @@ export function reasonFindings(summary: ReasonSummary): RatingFinding[] {
     out.push({
       tone: 'note',
       headline: `${summary.answered} ${summary.answered === 1 ? 'reason' : 'reasons'} given so far.`,
-      hint: `Findings appear after ${REASON_FLOOR} answers.`,
+      hint: `Patterns show up after ${REASON_FLOOR} answers.`,
     });
   }
 

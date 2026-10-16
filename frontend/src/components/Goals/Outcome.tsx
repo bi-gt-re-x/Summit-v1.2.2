@@ -101,9 +101,9 @@ export function GoalTile({ goal, size = 18 }: { goal: Goal; size?: number }) {
 // The chip that says whether this is going to happen
 // --------------------------------------------------------------------------
 const HEALTH_LABEL: Record<HealthState, string> = {
-  'on-track': 'On Track',
+  'on-track': 'On track',
   behind: 'Behind',
-  'not-started': 'Not Started',
+  'not-started': 'Not started',
 };
 
 /**
@@ -266,7 +266,7 @@ export function OverviewStrip({
     <div className="gx-strip">
       <article className="gx-stat tone-violet">
         <header>
-          <span className="gx-stat-label">Active Goals</span>
+          <span className="gx-stat-label">Active goals</span>
         </header>
         <strong className="gx-stat-value">{active}</strong>
         <span className="gx-stat-foot">
@@ -277,7 +277,7 @@ export function OverviewStrip({
 
       <article className="gx-stat tone-indigo">
         <header>
-          <span className="gx-stat-label">Overall Progress</span>
+          <span className="gx-stat-label">Overall progress</span>
           <Ring pct={overallTarget} tone="indigo" />
         </header>
         <strong className="gx-stat-value">{overall}%</strong>
@@ -297,7 +297,7 @@ export function OverviewStrip({
 
       <article className="gx-stat tone-amber">
         <header>
-          <span className="gx-stat-label">Goals Behind</span>
+          <span className="gx-stat-label">Behind</span>
           <span className="gx-stat-ico">
             <Icon path={STAT_ICONS.warn} />
           </span>
@@ -310,7 +310,7 @@ export function OverviewStrip({
 
       <article className="gx-stat tone-blue">
         <header>
-          <span className="gx-stat-label">Upcoming Deadlines</span>
+          <span className="gx-stat-label">Due soon</span>
           <span className="gx-stat-ico">
             <Icon path={STAT_ICONS.calendar} />
           </span>
@@ -453,7 +453,7 @@ export function NextMilestones({
     .slice(0, limit);
 
   if (rows.length === 0) {
-    return <p className="gx-empty">No milestone is waiting. Every goal with checkpoints is done with them.</p>;
+    return <p className="gx-empty">No checkpoints waiting. They're all done.</p>;
   }
 
   return (
@@ -527,7 +527,7 @@ export function SystemVerdict({ goals }: { goals: Goal[] }) {
   if (view.active === 0) {
     return (
       <p className="gx-verdict-none">
-        No active goals, so there's nothing to read yet.
+        No active goals yet.
       </p>
     );
   }
@@ -543,7 +543,7 @@ export function SystemVerdict({ goals }: { goals: Goal[] }) {
 
   return (
     <div className={`gx-verdict is-${view.state}`}>
-      <span className="gx-verdict-label">Overall goal health</span>
+      <span className="gx-verdict-label">How your goals are doing</span>
       <p className="gx-verdict-say">
         <i aria-hidden="true" />
         <strong>{view.label}</strong>
@@ -571,9 +571,9 @@ export function HealthRing({ goals, today }: { goals: Goal[]; today?: Date }) {
   // numbers, so the ring stays a closed circle at every frame of the sweep
   // instead of opening gaps between slices that are still catching up.
   const slices = [
-    { key: 'on-track', label: 'On Track', shown: useCountUp(view.onTrack) },
+    { key: 'on-track', label: 'On track', shown: useCountUp(view.onTrack) },
     { key: 'behind', label: 'Behind', shown: useCountUp(view.behind) },
-    { key: 'not-started', label: 'Not Started', shown: useCountUp(view.notStarted) },
+    { key: 'not-started', label: 'Not started', shown: useCountUp(view.notStarted) },
   ];
   const active = Math.round(useCountUp(view.active));
 
@@ -603,7 +603,7 @@ export function HealthRing({ goals, today }: { goals: Goal[]; today?: Date }) {
         </svg>
         <span className="gx-dist-centre">
           <strong>{active}</strong>
-          <span>Active Goals</span>
+          <span>Active goals</span>
         </span>
       </div>
       <ul className="gx-dist-key">

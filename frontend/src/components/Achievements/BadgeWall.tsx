@@ -83,7 +83,7 @@ import '@/styles/achievements.css';
 
 /** The filter's options. "All" first, then the seven headings, server order. */
 const FILTERS = [
-  'All Achievements', 'Productivity', 'Consistency', 'Learning', 'Mastery',
+  'All badges', 'Productivity', 'Consistency', 'Learning', 'Mastery',
   'Milestones', 'Analytics', 'Special',
 ] as const;
 type Filter = (typeof FILTERS)[number];
@@ -267,7 +267,7 @@ function BadgeTile({ badge }: { badge: Badge }) {
             hidden tiles at +1,000 and one at +5,000 tells a reader exactly
             which of the five is the monster. */}
         {secret ? (
-          <span className="ac-xp" title="Withheld until it's earned">??? XP</span>
+          <span className="ac-xp" title="Hidden until you earn it">??? XP</span>
         ) : (
           <span
             className={`ac-xp${badge.earned ? ' is-earned' : ''}`}
@@ -370,7 +370,7 @@ function TreeWall({ badges }: { badges: Badge[] }) {
               {GLYPH.lattice}
             </svg>
           </span>
-          Skill Trees
+          Skill trees
         </h2>
         <span className="ac-quiet">
           {earned} / {badges.length} earned
@@ -413,7 +413,7 @@ function TreeWall({ badges }: { badges: Badge[] }) {
                    should be able to see that without counting tiles. */
                 <span className="ac-ladder-next is-done">
                   <strong>{ladder.rows[ladder.rows.length - 1]!.name}</strong>
-                  <span className="ac-quiet">Every rung on this one is yours.</span>
+                  <span className="ac-quiet">You got every level of this one.</span>
                 </span>
               )}
             </li>
@@ -510,14 +510,14 @@ export function BadgeWall() {
   );
   const { data, error, loading, refreshing, reload } = useApi(call, [username]);
 
-  const [filter, setFilter] = useState<Filter>('All Achievements');
+  const [filter, setFilter] = useState<Filter>('All badges');
   const [query, setQuery] = useState('');
 
   /* "View All" — clear both narrowings and go to the list. Scrolled rather
      than routed because the full list is already on this page. */
   const listRef = useRef<HTMLElement | null>(null);
   const showAll = useCallback(() => {
-    setFilter('All Achievements');
+    setFilter('All badges');
     setQuery('');
     listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
@@ -540,7 +540,7 @@ export function BadgeWall() {
   const shown = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return badges
-      .filter((badge) => filter === 'All Achievements' || badge.category === filter)
+      .filter((badge) => filter === 'All badges' || badge.category === filter)
       .filter(
         (badge) =>
           !needle ||
@@ -627,14 +627,14 @@ export function BadgeWall() {
         <section className="ac-band">
           <div className="ac-band-ring">
             <Ring share={share} />
-            <span className="ac-quiet">Overall Completion</span>
+            <span className="ac-quiet">Overall</span>
           </div>
 
           <Stat
             glyph={GLYPH.trophy}
             tone="gold"
             value={String(earned)}
-            label="Achievements Earned"
+            label="Badges earned"
             note={`/ ${total} total`}
           />
 
@@ -642,8 +642,8 @@ export function BadgeWall() {
             glyph={GLYPH.flame}
             tone="flame"
             value={String(data?.streak ?? 0)}
-            label="Day Streak"
-            note={(data?.streak ?? 0) > 0 ? 'Keep it going!' : 'Finish a task to start one'}
+            label="Day streak"
+            note={(data?.streak ?? 0) > 0 ? 'Keep it going.' : 'Finish a task to start one'}
           />
 
           {/* Not the account's XP, and it does not say it is. The badges are
@@ -655,8 +655,8 @@ export function BadgeWall() {
             glyph={GLYPH.sparkle}
             tone="violet"
             value={(data?.achievement_xp ?? 0).toLocaleString()}
-            label="Achievement Score"
-            note={`of ${(data?.total_xp ?? 0).toLocaleString()} on the wall`}
+            label="Badge score"
+            note={`of ${(data?.total_xp ?? 0).toLocaleString()} possible`}
           />
         </section>
 
@@ -669,7 +669,7 @@ export function BadgeWall() {
         {recent.length > 0 && (
           <section className="ac-section">
             <header className="ac-section-head">
-              <h2>Recently Earned</h2>
+              <h2>Recently earned</h2>
               {/* It goes somewhere: it clears the filter and the search and
                   puts the reader at the top of the full list, which is the only
                   honest "all" on a page whose list is already here. A link that
@@ -688,7 +688,7 @@ export function BadgeWall() {
 
         <section className="ac-section">
           <header className="ac-section-head">
-            <h2>Achievement Categories</h2>
+            <h2>Categories</h2>
           </header>
           <ul className="ac-cats">
             {(data?.categories ?? []).map((category) => (
@@ -700,7 +700,7 @@ export function BadgeWall() {
                 <button
                   type="button"
                   aria-pressed={filter === category.name}
-                  onClick={() => setFilter(filter === category.name ? 'All Achievements' : category.name)}
+                  onClick={() => setFilter(filter === category.name ? 'All badges' : category.name)}
                 >
                   <span className="ac-cat-head">
                     <span className="ac-cat-ico" aria-hidden="true">
@@ -735,7 +735,7 @@ export function BadgeWall() {
 
         <section className="ac-section" ref={listRef}>
           <header className="ac-section-head">
-            <h2>All Achievements</h2>
+            <h2>All badges</h2>
             <label className="ac-search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                 <circle cx="11" cy="11" r="7" />
@@ -770,7 +770,7 @@ export function BadgeWall() {
 
           {/* The honest version of "more coming soon". They are not coming;
               they are on the wall already and have not been found. */}
-          {hiddenLeft > 0 && filter === 'All Achievements' && !query && (
+          {hiddenLeft > 0 && filter === 'All badges' && !query && (
             <p className="ac-foot">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" aria-hidden="true">
                 <rect x="5" y="11" width="14" height="9" rx="2.5" />

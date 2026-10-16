@@ -90,13 +90,13 @@ function Tools({ one, fill, onChange, withShape }: { one: Block; fill: Fill; onC
       )}
 
       {pop === 'fill' && (
-        <ColorPop label={one.type === 'sticky' ? 'Note colour' : 'Shape colour'} onClose={close}>
-          <FillPicker value={fill} label={one.type === 'sticky' ? 'Note colour' : 'Shape colour'} onChange={(next) => onChange({ fill: next })} />
+        <ColorPop label={one.type === 'sticky' ? 'Note color' : 'Shape color'} onClose={close}>
+          <FillPicker value={fill} label={one.type === 'sticky' ? 'Note color' : 'Shape color'} onChange={(next) => onChange({ fill: next })} />
         </ColorPop>
       )}
       {pop === 'ink' && (
         <ColorPop
-          label="Text colour"
+          label="Text color"
           onClose={close}
           tools={
             <button type="button" className="sp-ghost" onClick={() => onChange({ color: undefined })}>
@@ -104,7 +104,7 @@ function Tools({ one, fill, onChange, withShape }: { one: Block; fill: Fill; onC
             </button>
           }
         >
-          <ColorField value={one.color ?? inkOn(fill)} label="Text colour" onChange={(color) => onChange({ color })} />
+          <ColorField value={one.color ?? inkOn(fill)} label="Text color" onChange={(color) => onChange({ color })} />
         </ColorPop>
       )}
       {pop === 'shape' && (

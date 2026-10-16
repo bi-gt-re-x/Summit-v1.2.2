@@ -243,7 +243,7 @@ describe('logging work from elsewhere', () => {
   it('falls back to the skill as a whole where nothing is written', async () => {
     const user = userEvent.setup();
     const { onAttempt } = draw(null);
-    expect(screen.getByText(/no written problems yet/)).toBeInTheDocument();
+    expect(screen.getByText(/no practice problems yet/)).toBeInTheDocument();
     await user.type(screen.getByLabelText('Problems attempted'), '5');
     await user.type(screen.getByLabelText('Problems right'), '5');
     await user.click(screen.getByRole('button', { name: 'Log' }));

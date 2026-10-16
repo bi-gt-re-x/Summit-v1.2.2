@@ -32,7 +32,7 @@ describe('the goal field', () => {
     const select = screen.getByRole('combobox', { name: /counts toward/i });
     expect(select).toHaveValue('');
     expect(
-      screen.getByRole<HTMLOptionElement>('option', { name: 'Work it out from the name' }).selected,
+      screen.getByRole<HTMLOptionElement>('option', { name: 'Guess from the name' }).selected,
     ).toBe(true);
   });
 

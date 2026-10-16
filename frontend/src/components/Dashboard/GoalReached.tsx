@@ -51,11 +51,11 @@ const COLOURS = ['#6366f1', '#22c55e', '#f59e0b', '#ec4899', '#38bdf8', '#a855f7
 const WORDS: Record<GoalKind, { title: string; line: (reached: string, target: string) => string }> = {
   xp: {
     title: 'Daily goal reached',
-    line: (reached, target) => `${reached} today, against a goal of ${target}.`,
+    line: (reached, target) => `${reached} today. Your goal was ${target}.`,
   },
   focus: {
     title: 'Focus goal reached',
-    line: (reached, target) => `${reached} focused today, against a goal of ${target}.`,
+    line: (reached, target) => `${reached} focused today. Your goal was ${target}.`,
   },
 };
 

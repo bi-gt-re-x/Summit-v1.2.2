@@ -110,7 +110,7 @@ async function show(badges: Badge[]) {
 }
 
 /** The section, so an assertion cannot pass on a match out in the wall. */
-const section = () => screen.getByText('Skill Trees').closest('section')!;
+const section = () => screen.getByText('Skill trees').closest('section')!;
 
 /* The ladder summaries alone.
    A badge that is next on its ladder is named twice inside the section — once
@@ -145,7 +145,7 @@ describe('the skill tree section', () => {
     // ladder, which reads as nothing done rather than as everything.
     await show(DONE);
 
-    expect(ladders().getByText(/Every rung on this one is yours/i)).toBeInTheDocument();
+    expect(ladders().getByText(/You got every level of this one/i)).toBeInTheDocument();
   });
 
   it('splits the badges into one row per ladder', async () => {
@@ -168,7 +168,7 @@ describe('the skill tree section', () => {
 
   it('draws nothing at all when no tree badge came back', async () => {
     await show([ELSEWHERE]);
-    expect(screen.queryByText('Skill Trees')).not.toBeInTheDocument();
+    expect(screen.queryByText('Skill trees')).not.toBeInTheDocument();
   });
 
   it('keeps its badges while the wall below is filtered to something else', async () => {

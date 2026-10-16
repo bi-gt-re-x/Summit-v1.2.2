@@ -81,8 +81,7 @@ export function Members({ spaceId, invites: initial }: MembersProps) {
         <span className="sp-preview">Preview</span>
       </div>
       <p className="sp-members-note">
-        Invites are a preview for now: addresses are saved here as pending, and no
-        e-mail is sent yet.
+        Invites are a preview for now. Emails are saved as pending, but nothing gets sent yet.
       </p>
 
       <ul className="sp-member-list">
@@ -116,7 +115,7 @@ export function Members({ spaceId, invites: initial }: MembersProps) {
           ref={field}
           type="email"
           className="sp-invite-field"
-          aria-label="E-mail to invite"
+          aria-label="Email to invite"
           placeholder="name@example.com"
           value={email}
           onChange={(event) => {
@@ -131,7 +130,7 @@ export function Members({ spaceId, invites: initial }: MembersProps) {
           type="button"
           className="sp-btn"
           disabled
-          title="Invite links are coming with shared accounts"
+          title="Invite links are coming soon"
         >
           Copy invite link
         </button>

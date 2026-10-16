@@ -213,7 +213,7 @@ const goals: Step[] = [
     target: ['.gx-head-tools .gx-btn.is-primary'],
     skipIfMissing: true,
     title: 'Start a new goal',
-    body: 'Click New Goal. I\'ll walk you through every page of it.',
+    body: "Click New goal. I'll walk you through every page of it.",
   },
   {
     id: 'gw-name',

@@ -64,7 +64,7 @@ describe('the lattice panel', () => {
   it('separates the three kinds of claim', () => {
     draw('algebra');
     expect(screen.getByRole('heading', { name: 'Your progress' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'The curriculum' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'What to learn' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Your next move' })).toBeInTheDocument();
   });
 
@@ -83,7 +83,7 @@ describe('the lattice panel', () => {
     // was the half that went unsaid.
     draw('algebra');
     expect(screen.getByText(/Open because all 2 of these are done/)).toBeInTheDocument();
-    const why = screen.getByLabelText('What this skill sits on');
+    const why = screen.getByLabelText('What you need first');
     expect(within(why).getByText('fractions')).toBeInTheDocument();
     expect(within(why).getByText('negatives')).toBeInTheDocument();
   });

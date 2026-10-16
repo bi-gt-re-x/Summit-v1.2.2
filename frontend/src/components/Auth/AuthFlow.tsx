@@ -49,10 +49,10 @@ export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile' | 'ab
 const COPY: Record<AuthStep, [string, string]> = {
   choose: ['Welcome', 'Log in or create an account to continue.'],
   login: ['Log in', 'Good to see you again.'],
-  create: ['Create account', 'Just a name, an e-mail and a password.'],
-  inbox: ['Check your inbox', 'One click and the account is yours.'],
-  profile: ['Finish your profile', 'Three quick picks, then one last step.'],
-  about: ['About you', "Last step. Tell us where you're and where you want to go."],
+  create: ['Create account', 'Just a name, an email and a password.'],
+  inbox: ['Check your inbox', "Click the link we sent and you're in."],
+  profile: ['Finish your profile', 'Three quick picks and one last step.'],
+  about: ['About you', 'Last step. Tell us where you are and where you want to go.'],
 };
 
 const GOALS = [
@@ -239,7 +239,7 @@ export function AuthFlow({
     if (!form.get('consent')) {
       // The button is disabled without it; this is for the Enter key and for
       // anything that submits the form without going through the button.
-      say('Tick the box to confirm your age and agree to the terms.');
+      say('Check the box to confirm your age and agree to the terms.');
       return;
     }
     say('Creating your account…', 'info');
@@ -333,10 +333,10 @@ export function AuthFlow({
       {/* Step 1 — the fork */}
       <section className={`auth-step${step === 'choose' ? '' : ' hidden'}`} data-step="choose">
         <button type="button" className="auth-primary" onClick={() => go('login')}>
-          Log In
+          Log in
         </button>
         <button type="button" className="auth-secondary" onClick={() => go('create')}>
-          Create Account
+          Create account
         </button>
         {googleBlock}
       </section>
@@ -345,7 +345,7 @@ export function AuthFlow({
       <section className={`auth-step${step === 'login' ? '' : ' hidden'}`} data-step="login">
         <form id="loginForm" noValidate onSubmit={(e) => void doLogin(e)}>
           <label className="auth-label" htmlFor="loginId">
-            E-mail or username
+            Email or username
           </label>
           <input
             className="auth-input"
@@ -367,7 +367,7 @@ export function AuthFlow({
             required
           />
           <button type="submit" className="auth-primary">
-            Log In
+            Log in
           </button>
         </form>
         {googleBlock}
@@ -461,7 +461,7 @@ export function AuthFlow({
             </span>
           </label>
           <button type="submit" className="auth-primary" disabled={!consented}>
-            Create Account
+            Create account
           </button>
         </form>
         <p className="auth-switch">
@@ -478,7 +478,7 @@ export function AuthFlow({
         <p className="auth-inbox-text">
           {mailFailed ? (
             <>
-              Your account is made, but the confirmation e-mail to{' '}
+              Your account is ready, but the confirmation email to{' '}
               <strong id="inboxEmail">{pendingEmail || 'your e-mail'}</strong> couldn't be sent. Try again in a moment.
             </>
           ) : (
@@ -495,7 +495,7 @@ export function AuthFlow({
         <div className="auth-devlink" hidden={!devLink}>
           <p>No mail server is set up yet, so here's the link:</p>
           <a id="devLink" href={devLink ?? '#'} className="auth-primary">
-            Verify Email
+            Verify email
           </a>
         </div>
         <button type="button" className="auth-link" onClick={() => void doResend()}>
@@ -515,7 +515,7 @@ export function AuthFlow({
             id="profileUsername"
             name="username"
             autoComplete="username"
-            placeholder="Leave blank to keep the suggested one"
+            placeholder="Leave it blank to keep this one"
           />
 
           <label className="auth-label">Pick a theme</label>

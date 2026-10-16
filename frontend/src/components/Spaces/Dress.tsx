@@ -139,14 +139,14 @@ function CoverTextPicker({ doc, ink, onDoc, onClose }: { doc: SpaceDoc; ink: str
         ))}
       </div>
       <div className="sp-pop-bar">
-        <span className="sp-pop-head">Text colour</span>
+        <span className="sp-pop-head">Text color</span>
         {doc.coverInk && (
           <button type="button" className="sp-ghost" onClick={() => onDoc({ coverInk: undefined })}>
             Auto
           </button>
         )}
       </div>
-      <ColorField value={ink} label="Cover text colour" onChange={(coverInk) => onDoc({ coverInk })} />
+      <ColorField value={ink} label="Cover text color" onChange={(coverInk) => onDoc({ coverInk })} />
     </ColorPop>
   );
 }
@@ -288,7 +288,7 @@ function CoverPicker({ doc, onDoc, onClose }: { doc: SpaceDoc; onDoc: CoverProps
       <p className="sp-pop-head">Your own</p>
       <FillPicker
         value={doc.coverFill ?? { ...coverFill(doc), style: 'diagonal' }}
-        label="Cover colour"
+        label="Cover color"
         onChange={(fill) => onDoc({ cover: 'custom', coverFill: fill })}
       />
     </ColorPop>

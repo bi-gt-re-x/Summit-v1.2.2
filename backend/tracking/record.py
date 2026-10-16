@@ -264,7 +264,7 @@ def read_goal(goal, tasks, now, left=None):
               and today <= (_day(task['due_date']) or date.min) <= sunday}
 
     # The prompts an empty checklist row is padded with ("Name the first piece
-    # of work") are not steps. Imported here, not at the top: backend/api/goals
+    # of work") are not steps. Imported here, not at the top: backend/api/goals.py
     # imports this module.
     from backend.api.goals import PLACEHOLDERS
     stones = _stones(goal)

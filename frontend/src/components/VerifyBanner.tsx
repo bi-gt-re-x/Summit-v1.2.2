@@ -105,8 +105,8 @@ export function VerifyBanner() {
       <p className="vb-text">
         {said ?? (
           <>
-            Confirm your e-mail address to keep this account recoverable.{' '}
-            <span className="vb-quiet">Everything works in the meantime.</span>
+            Confirm your email so you can get back in if you forget your password.{' '}
+            <span className="vb-quiet">Everything works while you wait.</span>
           </>
         )}
       </p>

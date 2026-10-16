@@ -56,9 +56,9 @@ QUIET_DAYS = 14
 EVIDENCE_DAYS = 14
 
 LABELS = {
-    'on-track': 'On Track',
+    'on-track': 'On track',
     'behind': 'Behind',
-    'not-started': 'Not Started',
+    'not-started': 'Not started',
 }
 
 

@@ -61,7 +61,7 @@ function Against({ now, was, unit }: { now: number; was?: number; unit?: string 
   return (
     <span
       className={`dash-week-vs${change > 0 ? ' is-up' : ' is-down'}`}
-      title={`${change > 0 ? 'Up' : 'Down'} ${Math.abs(change)}${unit ?? ''} on the same days last week`}
+      title={`${change > 0 ? 'Up' : 'Down'} ${Math.abs(change)}${unit ?? ''} vs. the same days last week`}
     >
       {change > 0 ? '+' : '−'}
       {Math.abs(change)}
@@ -93,10 +93,10 @@ export function WeeklyOverview({
      worth reporting against the one before it. A cell with nothing to compare
      to shows the figure alone rather than "up ∞%". */
   const figures = [
-    { value: format.number(total), label: 'Total Tasks', now: week.total, was: before?.total },
+    { value: format.number(total), label: 'Tasks', now: week.total, was: before?.total },
     { value: format.number(done), label: 'Completed', now: week.done, was: before?.done },
-    { value: `${Math.round(rate)}%`, label: 'Completion Rate', now: week.rate, was: before?.rate, unit: 'pt' },
-    { value: format.number(xp), label: 'XP Earned', now: week.xp, was: before?.xp },
+    { value: `${Math.round(rate)}%`, label: 'Done', now: week.rate, was: before?.rate, unit: 'pt' },
+    { value: format.number(xp), label: 'XP earned', now: week.xp, was: before?.xp },
   ];
 
   return (
@@ -107,7 +107,7 @@ export function WeeklyOverview({
             <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
           </svg>
         </span>
-        Weekly Overview
+        This week
       </h2>
 
       <dl className="dash-week-grid">
@@ -123,7 +123,7 @@ export function WeeklyOverview({
       {/* Said once for all four, and only when there is a comparison to
           explain. "the same days" is the honest part: three days of this week
           are held against three of last, never against seven. */}
-      {before && <p className="dash-week-vs-note">against the same days last week</p>}
+      {before && <p className="dash-week-vs-note">vs. the same days last week</p>}
 
       {/* A promise rather than a destination label.
           "View full analytics" names a page; it does not say why anybody would
@@ -136,7 +136,7 @@ export function WeeklyOverview({
         See what changed<span aria-hidden="true"> →</span>
       </Link>
       <p className="dash-panel-lede">
-        Trends, what you repeat, and what to change next.
+        Your trends and what to do next
       </p>
     </Card>
   );
@@ -163,7 +163,7 @@ export function RecentActivity({ entries }: { entries: Activity[] }) {
             <path d="M2 12h4l3 8 4-16 3 8h6" />
           </svg>
         </span>
-        Recent Activity
+        Recently done
       </h2>
 
       {entries.length === 0 ? (
@@ -189,7 +189,7 @@ export function RecentActivity({ entries }: { entries: Activity[] }) {
       )}
 
       <Link className="dash-panel-link" to="/history">
-        View all activity<span aria-hidden="true"> →</span>
+        See all<span aria-hidden="true"> →</span>
       </Link>
     </Card>
   );

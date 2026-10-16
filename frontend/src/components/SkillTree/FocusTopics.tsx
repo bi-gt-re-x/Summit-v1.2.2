@@ -157,7 +157,7 @@ export function FocusTopics({
       <header className="stx-focus-head">
         <h2>Your focus topics</h2>
         <p>
-          Five subjects to keep in front of you. Change any of them at any time
+          Your five go-to subjects. Change them anytime
           {onChooseAll && (
             <>
               , or{' '}
@@ -195,7 +195,7 @@ export function FocusTopics({
                 </span>
                 <span className="stx-focus-text">
                   <strong>{subject?.name ?? id}</strong>
-                  <em>{tree?.title ?? 'No lattice yet'}</em>
+                  <em>{tree?.title ?? 'No tree yet'}</em>
                 </span>
                 {stands && (
                   <span className="stx-focus-pct" aria-hidden="true">

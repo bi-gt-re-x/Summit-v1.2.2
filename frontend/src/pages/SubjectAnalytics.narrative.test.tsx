@@ -292,7 +292,7 @@ describe('the evidence is a tab', () => {
   it('shows the folds once the tab is chosen, and hides the overview', async () => {
     await show();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
+    await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
 
     expect(screen.getByRole('button', { name: /Where you stand/ })).toBeInTheDocument();
     expect(screen.queryByLabelText('How this subject is going')).not.toBeInTheDocument();
@@ -303,7 +303,7 @@ describe('the evidence is a tab', () => {
     // where the work falls off, so they open the one that surprised them
     // rather than all nine. See components/Subject/Fold.
     await show();
-    await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
+    await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
 
     const difficulty = screen.getByRole('button', { name: /Difficulty/ });
     expect(difficulty).toHaveAttribute('aria-expanded', 'false');
@@ -335,7 +335,7 @@ describe('the skill tree', () => {
     // paragraphs of curriculum description beneath it.
     await show();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
+    await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
     const fold = screen.getByRole('button', { name: /Skill tree/ }).closest('section')!;
     expect(within(fold).getByText(/practiced/i)).toBeInTheDocument();
     expect(within(fold).queryByText('What this says')).not.toBeInTheDocument();

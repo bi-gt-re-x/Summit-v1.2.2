@@ -126,7 +126,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
     <section className="gx-panel gx-read">
       <header className="gx-panel-head">
         <h3>Summit&apos;s take</h3>
-        {plan && <span className="gx-read-mark">Written by a model</span>}
+        {plan && <span className="gx-read-mark">Written by AI</span>}
       </header>
 
       {/* Not enough behind it. Said as a count of what would unlock it rather
@@ -136,14 +136,13 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
         <p className="gx-read-gate">
           <strong>Not enough to go on yet.</strong> Finish and link{' '}
           {short === 1 ? 'one more task' : `${short} more tasks`} to this goal and Summit can
-          read the pattern in them. Right now there {done.length === 1 ? 'is' : 'are'}{' '}
-          {done.length} . Too few to call it a pattern.
+          spot a pattern. You have {done.length} so far.
         </p>
       ) : !plan ? (
         <>
           <p className="gx-read-lead">
-            {done.length} finished tasks are linked to this goal. A read costs one model
-            call and stores nothing.
+            {done.length} finished tasks are linked to this goal. Ask AI what to do next. It
+            only takes a few seconds.
           </p>
           <button
             type="button"
@@ -151,7 +150,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
             disabled={thinking}
             onClick={() => void ask()}
           >
-            {thinking ? 'Working…' : 'Read this goal'}
+            {thinking ? 'Working…' : 'Get AI advice'}
           </button>
         </>
       ) : (
@@ -171,7 +170,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
 
           {plan.phases.length > 0 && (
             <div className="gx-read-block">
-              <h4>The route from here</h4>
+              <h4>The plan from here</h4>
               <ol className="gx-read-phases">
                 {plan.phases.map((phase, at) => (
                   <li key={at}>

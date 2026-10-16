@@ -139,7 +139,7 @@ export function MonthSummaryBar({
       </div>
 
       <div className="mv-summary-lead">
-        <span className="mv-summary-title">Month Progress</span>
+        <span className="mv-summary-title">This month</span>
         <span className="mv-summary-sub">
           {settled} of {scheduled} days completed
         </span>
@@ -154,7 +154,7 @@ export function MonthSummaryBar({
               : percent >= 60
                 ? 'Holding a good pace this month.'
                 : percent > 0
-                  ? "There's still month left to turn it around."
+                  ? "There's still time this month to turn it around."
                   : 'Nothing cleared yet this month.'}
           </span>
         )}
@@ -176,7 +176,7 @@ export function MonthSummaryBar({
               <path d="M13 3 5.5 13.5H11l-1 7.5 8-11H12.5z" />
             </svg>
           }
-          label="Total XP Earned"
+          label="XP earned"
           value={shownXp.toLocaleString()}
         >
           <Delta
@@ -193,7 +193,7 @@ export function MonthSummaryBar({
               <path d="M3.5 10h17M8 3.5v3M16 3.5v3" />
             </svg>
           }
-          label="Days Completed"
+          label="Days cleared"
           value={String(shownDays)}
         >
           {/* A count, so the delta is a count too — "8 more days", not "8%". */}
@@ -226,7 +226,7 @@ export function MonthSummaryBar({
               <path d="M13 3c.4 3-1.4 4.2-2.6 5.4C9 9.8 8 11 8 13a4 4 0 0 0 8 0c0-1.4-.6-2.4-1.2-3.2.2 1.4-.5 2.2-1.1 2.2-.8 0-1.2-.7-1.1-1.7.2-2.5-.2-5.5.4-7.3Z" />
             </svg>
           }
-          label="Current Streak"
+          label="Streak"
           value={`${streak} ${streak === 1 ? 'day' : 'days'}`}
         >
           <span className="mv-delta is-flat">Best: {bestStreak} days</span>

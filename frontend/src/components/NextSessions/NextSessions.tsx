@@ -10,7 +10,7 @@
  * which books them one after another into the next free calendar slots.
  *
  * The brief is counted on the server from the tasks
- * (backend/tracking/next_sessions), since neither page has the figures the
+ * (backend/tracking/next_sessions.py), since neither page has the figures the
  * subject page sends. The steps live in the same ledger as the subject
  * page's, so three suggested for Mathematics here are the three the
  * Mathematics page shows, and planning works the same way: the step is
@@ -260,11 +260,11 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       ) : (
         <div className="ns-actions">
           <button type="button" className="ns-btn is-primary" onClick={() => void suggest()} disabled={working || loading || (!subjectId && subjects.length > 0 && !included.length)}>
-            {asking ? 'Thinking…' : steps.length ? `Suggest ${BATCH} different ones` : `Suggest ${BATCH} sessions`}
+            {asking ? 'Loading…' : steps.length ? `Suggest ${BATCH} different ones` : `Suggest ${BATCH} sessions`}
           </button>
           {open.length > 0 && (
             <button type="button" className="ns-btn" onClick={() => void planAll()} disabled={working}>
-              {all ? 'Adding to calendar…' : open.length === BATCH ? `Plan all ${BATCH}` : `Plan the other ${open.length}`}
+              {all ? 'Adding…' : open.length === BATCH ? `Plan all ${BATCH}` : `Plan the other ${open.length}`}
             </button>
           )}
         </div>

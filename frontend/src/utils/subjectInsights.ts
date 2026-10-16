@@ -418,22 +418,22 @@ export function subjectInsights(
         why.push(`You worked on it ${plural(recent.days, 'day')}, ${recent.days > before.days ? 'up' : 'down'} from ${before.days}.`);
       }
       if (moved(recent.tasks, before.tasks, 0.15)) {
-        why.push(`You finished ${recent.tasks} tasks against ${before.tasks}.`);
+        why.push(`You finished ${recent.tasks} tasks, ${recent.tasks > before.tasks ? 'up' : 'down'} from ${before.tasks}.`);
       }
       if (moved(perRecent, perBefore, 0.15)) {
         why.push(
-          `Each task was worth ${perRecent > perBefore ? 'more' : 'less'}: ${Math.round(perRecent)} XP against ${Math.round(perBefore)}.`,
+          `Each task was worth ${perRecent > perBefore ? 'more' : 'less'}: ${Math.round(perRecent)} XP vs. ${Math.round(perBefore)}.`,
         );
       } else if (why.length) {
         why.push(`Task size held at about ${Math.round(perRecent)} XP.`);
       }
-      if (!why.length) why.push(`You finished ${recent.tasks} tasks against ${before.tasks}.`);
+      if (!why.length) why.push(`You finished ${recent.tasks} tasks, compared with ${before.tasks}.`);
     }
     add(30 + Math.min(50, Math.abs(card.growth30) / 2), {
       key: 'momentum',
       tone: up ? 'up' : 'down',
       head: `${up ? 'Up' : 'Down'} ${Math.abs(card.growth30)}% on last month`,
-      detail: `${xpText(card.xp30)} in the last 30 days, against ${xpText(card.xp30Before)} in the 30 before. ${why.join(' ')}`,
+      detail: `${xpText(card.xp30)} in the last 30 days vs. ${xpText(card.xp30Before)} in the 30 before. ${why.join(' ')}`,
       bars: [
         { label: 'Last 30 days', value: card.xp30, text: xpText(card.xp30), lit: true },
         { label: 'The 30 before', value: card.xp30Before, text: xpText(card.xp30Before) },
@@ -483,7 +483,7 @@ export function subjectInsights(
       key: 'ratings',
       tone: execGap > 0 ? 'up' : 'down',
       head: execGap > 0 ? 'It goes better than your other work' : 'It goes worse than your other work',
-      detail: `You rate how it went ${outOf5(execHere!)} out of 5 here, against ${outOf5(
+      detail: `You rate how it went ${outOf5(execHere!)} out of 5 here and ${outOf5(
         execElse!,
       )} everywhere else. That's across ${plural(ratedHere.length, 'rated task')}.`,
       bars: [
@@ -500,7 +500,7 @@ export function subjectInsights(
       key: 'ratings',
       tone: 'note',
       head: hardGap > 0 ? 'Harder than the rest' : 'Easier than the rest',
-      detail: `You rate it ${outOf5(hardHere!)} out of 5 for difficulty, against ${outOf5(
+      detail: `You rate it ${outOf5(hardHere!)} out of 5 for difficulty vs. ${outOf5(
         hardElse!,
       )} for your other work. How it went is ${
         Math.abs(execGap) < 0.2 ? 'about the same' : execGap > 0 ? 'a bit better here' : 'a bit worse here'
@@ -602,7 +602,7 @@ export function subjectInsights(
         key: 'size',
         tone: 'note',
         head: ratio > 1 ? 'Bigger tasks than usual' : 'Smaller tasks than usual',
-        detail: `${Math.round(card.perTask)} XP a task here, against ${Math.round(
+        detail: `${Math.round(card.perTask)} XP a task here vs. ${Math.round(
           elsewhere,
         )} across your other subjects. That's about ${
           ratio > 1 ? `${ratio.toFixed(1)} times the size` : `${Math.round(ratio * 100)}% of the size`
@@ -615,7 +615,7 @@ export function subjectInsights(
         key: 'size',
         tone: 'note',
         head: 'Tasks about your usual size',
-        detail: `${Math.round(card.perTask)} XP a task here, against ${Math.round(
+        detail: `${Math.round(card.perTask)} XP a task here vs. ${Math.round(
           elsewhere,
         )} across your other subjects.${biggest ? ` Your biggest here was worth ${xpText(xpOf(biggest))} on ${when(dayOf(biggest))}.` : ''}`,
         bars: sizeBars,
@@ -647,7 +647,7 @@ export function subjectInsights(
       head: `About ${minutesText(median(minutes))} a task`,
       detail: `That's from ${plural(timedHere.length, 'task')} here with a time on them. They earn ${Math.round(
         hereRate,
-      )} XP an hour${elseRate ? `, against ${Math.round(elseRate)} in the rest of your work` : ''}.`,
+      )} XP an hour${elseRate ? ` vs. ${Math.round(elseRate)} in the rest of your work` : ''}.`,
       ...(elseRate
         ? {
             bars: [

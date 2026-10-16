@@ -241,13 +241,13 @@ export function RecordModal({
                 onClick={() => setDraft((current) => ({ ...current, kind: option }))}
               >
                 {option === 'record' ? 'Record' : 'Milestone'}
-                <em>{option === 'record' ? 'A number you can beat' : 'A thing you did once'}</em>
+                <em>{option === 'record' ? 'A number you can beat' : 'Something you did once'}</em>
               </button>
             ))}
           </div>
 
           <label className="rc-field">
-            <span>What's it?</span>
+            <span>Name</span>
             <input
               list="rc-known-names"
               value={draft.name}
@@ -381,7 +381,7 @@ export function RecordModal({
 
           {!isMilestone && draft.value !== undefined && !Number.isNaN(typed) && (
             <p className={`rc-modal-preview${beats ? ' is-record' : ''}`}>
-              Will read as{' '}
+              Will show as{' '}
               <strong>{formatValue(typed, draft.unit ?? '', Number(draft.target) || 0)}</strong>
               {/* Said here rather than discovered on the page afterwards. It
                   is also the one place the direction is visibly doing

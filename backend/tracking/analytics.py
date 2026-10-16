@@ -362,7 +362,7 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
             row['execution_sum'] += int(task['execution'])
 
         # Time spent, not `completion_seconds` raw: that is how long the task
-        # sat on the list. See backend/tracking/time_spent.
+        # sat on the list. See backend/tracking/time_spent.py.
         spent = time_spent.seconds_spent(task)
         if spent is not None:
             row['timed'] += 1

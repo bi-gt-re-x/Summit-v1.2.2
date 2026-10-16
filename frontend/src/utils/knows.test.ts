@@ -240,7 +240,7 @@ describe('the advice turns on the figure', () => {
         { name: 'Computer Science', count: 10 },
       ],
     });
-    expect(middle).toMatch(/clear lead/i);
+    expect(middle).toMatch(/one subject leads/i);
     expect(middle).not.toMatch(/Over half|Nothing owns/);
   });
 });

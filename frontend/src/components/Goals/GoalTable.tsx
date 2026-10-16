@@ -49,9 +49,9 @@ const DAY = 86_400_000;
  * Completed went with them: it was a tab holding one band, and that band is a
  * button in the header that reveals it wherever you are. */
 export const TABS = [
-  { id: 'active', label: 'Active Goals' },
+  { id: 'active', label: 'Active' },
   { id: 'timeline', label: 'Timeline' },
-  { id: 'system', label: 'System Goals' },
+  { id: 'system', label: 'Counters' },
   { id: 'stats', label: 'Stats' },
 ] as const;
 
@@ -100,9 +100,9 @@ function lastActivity(goal: Goal, tasks: Task[], today: Date): string {
 }
 
 const HEALTH_LABEL: Record<string, string> = {
-  'on-track': 'On Track',
+  'on-track': 'On track',
   behind: 'Behind',
-  'not-started': 'Not Started',
+  'not-started': 'Not started',
 };
 
 export interface GoalTableProps {
@@ -145,8 +145,8 @@ export function GoalTable({ goals, tasks, onOpen, onEdit, today = new Date() }: 
             <th>Progress</th>
             <th>Health</th>
             <th>Target</th>
-            <th>Next milestone</th>
-            <th>Last activity</th>
+            <th>Next checkpoint</th>
+            <th>Last worked on</th>
             <th aria-label="Actions" />
           </tr>
         </thead>

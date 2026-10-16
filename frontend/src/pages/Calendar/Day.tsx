@@ -510,7 +510,7 @@ export default function Day() {
   });
 
   if (loading) return <Loading label="Loading your day" />;
-  if (!hasData) return <ErrorState message={error ?? 'No data came back.'} onRetry={refresh} />;
+  if (!hasData) return <ErrorState message={error ?? "Couldn't load your day. Try refreshing."} onRetry={refresh} />;
 
   return (
     <CalendarShell paneId="dayView">
@@ -544,7 +544,7 @@ export default function Day() {
           <button
             type="button"
             className="wk-today"
-            title="Today, and back to the hour it is (T)"
+            title="Today, at the current hour (T)"
             aria-keyshortcuts="T"
             onClick={goToday}
           >
@@ -588,8 +588,8 @@ export default function Day() {
                     className="day-allday-input"
                     placeholder={
                       index === 0
-                        ? "What's your main focus for this day?"
-                        : 'And also…'
+                        ? "What's your main focus today?"
+                        : 'Anything else?'
                     }
                     aria-label={
                       index === 0 ? 'Primary focus' : `Focus ${index + 1}`

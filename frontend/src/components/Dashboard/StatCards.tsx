@@ -241,7 +241,7 @@ export function TodayCard({
   xpLeft: number;
   usual: Typical;
 }) {
-  const caption = day.total === 0 ? 'Nothing due' : day.percent >= 60 ? 'On Track' : 'In Progress';
+  const caption = day.total === 0 ? 'Nothing due' : day.percent >= 60 ? 'On track' : 'In progress';
 
   const total = useCountUp(day.total);
   const done = useCountUp(day.done);
@@ -252,8 +252,8 @@ export function TodayCard({
       <StatHead
         tone="today"
         icon={ICON.tasks}
-        title="Today&apos;s Progress"
-        tag="Small steps. Big results."
+        title="Today"
+        tag="What's done and what's left"
       />
       <Trend now={day.done} usual={{ ...usual, value: usual.tasks }} />
       <div className="dash-stat-mid">
@@ -382,8 +382,8 @@ export function XpCard({
       <StatHead
         tone="xp"
         icon={ICON.star}
-        title="XP Overview"
-        tag="Level up your potential."
+        title="XP"
+        tag="Your level and today's goal"
       />
       <Trend now={xpToday} usual={{ ...usual, value: usual.xp }} />
       <div className="dash-stat-mid">
@@ -472,8 +472,8 @@ export function FocusCard({
       <StatHead
         tone="focus"
         icon={ICON.clock}
-        title="Focus Time"
-        tag="Distraction-free progress."
+        title="Focus"
+        tag="Time on the timer today"
         aside={
           <img
             className="dash-focus-mark"
@@ -494,7 +494,7 @@ export function FocusCard({
       </div>
       <StatPanel icon={ICON.smallClock}>
         <span className="dash-stat-panel-text">
-          Daily Goal: {session.goalHours.toFixed(1)} hrs
+          Goal: {session.goalHours.toFixed(1)} hrs
           {usualHours !== null && usualHours > 0 && (
             <span className="dash-stat-usual">· usually {usualHours.toFixed(1)}</span>
           )}
@@ -737,14 +737,14 @@ export function StreakGuard({ stats }: { stats: UserStats }) {
     tone = 'vacation';
     short = vacation.active ? `Paused to ${shortDay(vacation.end)}` : `Away ${shortDay(vacation.start)}`;
     full = vacation.active
-      ? `On vacation until ${longDay(vacation.end)}. Days away don't count against the streak.`
+      ? `On vacation until ${longDay(vacation.end)}. Days away won't break your streak.`
       : `Vacation from ${longDay(vacation.start)} to ${longDay(vacation.end)}.`;
   } else if (!grace || streak <= 0) {
     return null;
   } else if (grace.state === 'ready') {
     tone = 'ready';
     short = 'Grace day ready';
-    full = 'Grace day ready: miss a single day and the streak survives.';
+    full = 'Grace day ready. Miss one day and your streak is safe.';
   } else if (grace.state === 'spent' && grace.back_on) {
     tone = 'spent';
     short = `Grace back ${shortDay(grace.back_on)}`;
@@ -754,8 +754,7 @@ export function StreakGuard({ stats }: { stats: UserStats }) {
     tone = 'locked';
     const days = grace.days_to_earn;
     short = `Grace day in ${days} ${days === 1 ? 'day' : 'days'}`;
-    full = `At ${grace.earned_at} days the streak earns a grace day: one missed day it survives. `
-      + `${days} to go.`;
+    full = `At ${grace.earned_at} days you earn a grace day, so one missed day won't break it. ${days} to go.`;
   }
 
   return (
@@ -881,8 +880,8 @@ export function StreakCard({ stats, held = false }: {
         tone="streak"
         icon={<StreakFlame streak={display} flaring={flaring} />}
         chipClass={`flame-chip flame-chip-${stage.heat}${flaring ? ' is-flaring' : ''}`}
-        title="Current Streak"
-        tag="Consistency builds greatness."
+        title="Streak"
+        tag="Days in a row with work done"
       />
       {/* What the flare says, for a reader who cannot see it. */}
       <span className="dash-week-say" role="status" aria-live="polite">
@@ -898,7 +897,7 @@ export function StreakCard({ stats, held = false }: {
             nothing left to chase and saying so is the whole reward. */}
         <p className="dash-stat-sub">
           {current === 0
-            ? 'Keep it going!'
+            ? 'Keep it going.'
             : toBeat > 0
               ? `${toBeat} ${toBeat === 1 ? 'day' : 'days'} to your best`
               : 'Your best run yet.'}
@@ -913,7 +912,7 @@ export function StreakCard({ stats, held = false }: {
       </div>
       <StatPanel icon={ICON.trophy}>
         <span className="dash-stat-panel-text">
-          Best Streak: {shownBest} {best === 1 ? 'day' : 'days'}
+          Best: {shownBest} {best === 1 ? 'day' : 'days'}
         </span>
         <StreakGuard stats={stats} />
       </StatPanel>

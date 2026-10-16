@@ -183,20 +183,20 @@ export default function Homepage() {
             <div className="user-greeting">
               <span>Hello, {username}</span>
               <button type="button" className="logout-btn" onClick={() => void signOut()}>
-                Log Out
+                Log out
               </button>
             </div>
           ) : (
             <div className="auth-buttons">
               <button type="button" className="auth-btn" onClick={() => toLogin('login')}>
-                Log In
+                Log in
               </button>
               <button
                 type="button"
                 className="auth-btn auth-btn-primary"
                 onClick={() => toLogin('create')}
               >
-                Sign Up
+                Sign up
               </button>
             </div>
           )}
@@ -229,7 +229,7 @@ export default function Homepage() {
           <section className="lp-section lp-section-demo" id="see-it">
             <SectionHead
               title="Try it right here"
-              blurb="Check off a task and watch your XP climb. This is the real dashboard, live on the page."
+              blurb="Check off a task and watch your XP climb. This is the real dashboard, right on the page."
             />
             <DashboardDemo />
           </section>
@@ -266,7 +266,7 @@ export default function Homepage() {
           <section className="lp-section">
             <SectionHead
               title="Keep the streak alive"
-              blurb="Every task you finish earns XP toward your next level. Your streak goes up each day you get at least one thing done. Once it's a week old you get one free miss a month, so one bad day won't wipe it out. Two in a row will, though."
+              blurb="Every task you finish earns XP toward your next level. Your streak goes up each day you finish at least one thing. After a week, you get one free miss a month, so one bad day won't wipe it out. Two in a row will."
             />
             <StreakLevel />
           </section>
@@ -280,7 +280,7 @@ export default function Homepage() {
           <section className="lp-section" id="analytics">
             <SectionHead
               title="Stats that tell you what to do next"
-              blurb="Five stats make up your Growth Score, and Summit turns it into a short list of what to work on next week. Click any number to see how it works."
+              blurb="Five stats make up your growth score, and Summit turns it into a short list of what to work on next week. Click any number to see how it works."
             />
             <Analytics />
           </section>

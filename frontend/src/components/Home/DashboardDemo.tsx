@@ -241,7 +241,7 @@ export function DashboardDemo() {
               </span>
             </article>
             <article className="dd-card">
-              <span className="dd-label">Growth Rating</span>
+              <span className="dd-label">Growth rating</span>
               <span className="dd-grade" id="ddGrade" ref={grade}>
                 C
               </span>

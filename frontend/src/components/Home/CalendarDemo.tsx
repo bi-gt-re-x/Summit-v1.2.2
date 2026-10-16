@@ -349,7 +349,7 @@ export function CalendarDemo() {
     <div className="lp-card lp-calendar cal-armed" id="calDemo" ref={card} aria-hidden="true">
       <div className="lp-cal-topbar">
         <div className="lp-cal-title">
-          <span className="lp-cal-ico"><Icon name="calendar" /></span> This Week · July 2026
+          <span className="lp-cal-ico"><Icon name="calendar" /></span> This week · July 2026
         </div>
         <div className="lp-cal-legend">
           <span>

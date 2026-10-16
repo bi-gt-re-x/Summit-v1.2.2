@@ -371,9 +371,9 @@ const ASKS: Ask[] = [
   },
   {
     scope: 'content',
-    label: 'Erase everything you have made',
+    label: "Erase everything you've made",
     hint: 'Tasks, goals, notes, records, calendar and focus history. The account stays.',
-    title: 'Erase everything you have made?',
+    title: "Erase everything you've made?",
     action: 'Erase it all',
     loses: 'Tasks, goals, notes, records, calendar entries, focus history, subjects and your whole progression.',
     keeps: "Your account itself. You stay signed in and keep your settings. It's like day one, with your preferences.",
@@ -739,7 +739,7 @@ export default function Settings() {
           {
             id: 'since',
             label: 'Member since',
-            hint: 'The day this account was made.',
+            hint: 'When you joined.',
             control: <span className="st-fixed">{joined(sheet.created_at)}</span>,
           },
         ],
@@ -910,7 +910,7 @@ export default function Settings() {
         items: [
           {
             id: 'about-you',
-            label: "Who you're and where you want to go",
+            label: 'Who you are and where you want to go',
             hint: 'Analytics, your study plans and your recommendations read this. More detail means better answers, and Analytics opens sooner.',
             control: <AboutYouSettings />,
             wide: true,
@@ -1143,7 +1143,7 @@ export default function Settings() {
           {
             id: 'quote',
             label: 'Show the daily quote',
-            hint: 'The line at the foot of the dashboard.',
+            hint: 'The quote at the bottom of the dashboard.',
             control: (
               <Toggle
                 on={prefs.show_quote}
@@ -1381,7 +1381,7 @@ export default function Settings() {
           },
           {
             id: 'clock-what',
-            label: 'How a time is written',
+            label: 'Time format',
             hint: CLOCK_HINT[prefs.clock_format],
             control: <span className="st-fixed">{CLOCK_EXAMPLE[prefs.clock_format]}</span>,
           },
@@ -1411,9 +1411,9 @@ export default function Settings() {
           },
           {
             id: 'records-sort-what',
-            label: 'What "improvement" orders by',
+            label: 'How "most improved" is sorted',
             hint: 'Most improved first. A score that went from 18 to 25 ranks above one that was always 400.',
-            control: <span className="st-fixed">Distance traveled</span>,
+            control: <span className="st-fixed">Most improved</span>,
           },
         ],
       },
@@ -1676,13 +1676,13 @@ export default function Settings() {
           },
           {
             id: 'analytics-tone-what',
-            label: 'What that setting does',
+            label: 'What this changes',
             hint: TONE_HINT[prefs.analytics_tone],
             control: <span className="st-fixed">{TONE_LABEL[prefs.analytics_tone]}</span>,
           },
           {
             id: 'analytics-detail',
-            label: 'How much of the page is drawn',
+            label: 'How much Overview shows',
             hint: DETAIL_HINT[prefs.analytics_detail],
             control: (
               <Seg
@@ -1799,7 +1799,7 @@ export default function Settings() {
           {
             id: 'legal',
             label: 'Terms and privacy',
-            hint: 'What the app does with what it holds.',
+            hint: 'How your data is used.',
             /* The routes are the long spellings. /terms, /privacy and /about
                are not routed at all, so all three of these used to fall through
                to the catch-all and land on the home page. See App.tsx. */
@@ -1895,7 +1895,7 @@ export default function Settings() {
 
   if (loading) return <Loading label="Loading your settings" />;
   if (error && !sheet) return <ErrorState message={error} onRetry={reload} />;
-  if (!sheet) return <ErrorState message="No settings to show." onRetry={reload} />;
+  if (!sheet) return <ErrorState message="Couldn't load your settings. Try refreshing." onRetry={reload} />;
 
   const shown = results ?? (current ? [current] : []);
 
@@ -1911,7 +1911,7 @@ export default function Settings() {
           </Link>
           <div className="st-head-text">
             <h1>Settings</h1>
-            <p className="st-quiet">What this account has chosen.</p>
+            <p className="st-quiet">Your preferences</p>
           </div>
           <span className={`st-status${saved || failure ? ' is-on' : ''}`} role="status">
             {failure ? <em className="st-bad">{failure}</em> : (saved ?? '')}

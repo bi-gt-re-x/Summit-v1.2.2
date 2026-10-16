@@ -49,7 +49,7 @@ export function TreeFamily({ here, up, peers, into, onGo }: TreeFamilyProps) {
   if (!up && into.length === 0 && others.length === 0) return null;
 
   return (
-    <nav className="stx-family" aria-label="Where this lattice sits">
+    <nav className="stx-family" aria-label="Where this tree fits">
       {up && (
         <div className="stx-family-rung is-up">
           <button type="button" className="stx-family-chip" onClick={() => onGo(up.id)}>

@@ -179,7 +179,7 @@ export function RichEditor({
       aria-readonly={readOnly}
       data-placeholder={placeholder}
       spellCheck
-      title={readOnly ? undefined : 'Click a link to follow it. Hold Alt to put the caret in one.'}
+      title={readOnly ? undefined : 'Click a link to open it. Hold Alt to edit it instead.'}
       onInput={emit}
       onBlur={emit}
       onClick={onClick}

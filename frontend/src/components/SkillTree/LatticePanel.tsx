@@ -420,7 +420,7 @@ function StepWorkspace({
     <aside className={`stx-lp is-steps is-work tier-${node.difficulty}`}>
       <header className="stx-lp-steps-head">
         <button type="button" className="stx-lp-back" onClick={onBack}>
-          <span aria-hidden="true">←</span> Back to Steps
+          <span aria-hidden="true">←</span> Back to steps
         </button>
         <div>
           <h2>{step.title}</h2>
@@ -431,7 +431,7 @@ function StepWorkspace({
         {/* The second way out. A reader two levels deep should not have to
             climb back through a screen they are finished with. */}
         <button type="button" className="stx-lp-back is-far" onClick={onBackToTree}>
-          Back to Tree
+          Back to tree
         </button>
       </header>
 
@@ -673,7 +673,7 @@ function WrittenProgramme({
                     reader is not here for it — but a table that claims every
                     step was checked should be able to say what checked it. */}
                 <p className="stx-ws-verified" title={`Checks: ${step.verified.checks.join(', ')}`}>
-                  Verified by {step.verified.by} · {step.verified.checks.length} checks
+                  Checked before it was added
                 </p>
               </div>
             )}
@@ -863,7 +863,7 @@ function Programme({
                 className="stx-lp-step-field"
                 value={fresh}
                 maxLength={STEP_MAX}
-                placeholder="What to actually do…"
+                placeholder="What to do…"
                 autoFocus
                 onChange={(event) => setFresh(event.target.value)}
                 onKeyDown={(event) => {
@@ -1136,7 +1136,7 @@ export function LatticePanel({
       : blockers.length > 0
         ? `${blockers.length} ${blockers.length === 1 ? 'prerequisite' : 'prerequisites'} away. Finish ${blockers.length === 1 ? 'it' : 'them'} to open this.`
         : steps
-          ? `Step ${at + 1} of ${programme.steps.length} of your own program.`
+          ? `Step ${at + 1} of ${programme.steps.length} of your plan.`
           : node.status === 'progress'
             ? `${Math.round(node.percent)}% of the way through.`
             : 'Open now. Nothing in the way.';
@@ -1209,7 +1209,7 @@ export function LatticePanel({
       <aside className={`stx-lp is-steps tier-${node.difficulty}`}>
         <header className="stx-lp-steps-head">
           <button type="button" className="stx-lp-back" onClick={() => setAllSteps(false)}>
-            <span aria-hidden="true">←</span> Back to Tree
+            <span aria-hidden="true">←</span> Back to tree
           </button>
           <div>
             <h2>{node.name}</h2>
@@ -1296,7 +1296,7 @@ export function LatticePanel({
                 the two answer different questions and the first one a reader
                 asks is still "can I start this". */}
             {optionalIds(graph).has(node.id) && (
-              <span className="stx-lp-badge is-optional" title="Nothing on this tree waits on it">
+              <span className="stx-lp-badge is-optional" title="Nothing on this tree needs it first">
                 Optional
               </span>
             )}
@@ -1347,7 +1347,7 @@ export function LatticePanel({
             <ProgressIndicator percent={node.percent} shape="bar" />
             {node.need > 0 && (
               <p className="stx-lp-line stx-lp-xp">
-                <span>XP Earned</span>
+                <span>XP earned</span>
                 <b>
                   {number(node.have)} / {number(node.need)} XP
                 </b>
@@ -1381,7 +1381,7 @@ export function LatticePanel({
                 <LevelCard levels={levelsOf(evidence.levels, node.id, 0)} />
                 <LogPractice
                   busy={false}
-                  label="This skill has no written problems yet. Log problems you did elsewhere and your level is read from those."
+                  label="This skill has no practice problems yet. Log problems you did somewhere else and your level comes from those."
                   onLog={async (weight, attempted, correct) =>
                     Boolean(
                       await evidence.onAttempt({
@@ -1402,7 +1402,7 @@ export function LatticePanel({
             nothing under it is about the reader, which is the distinction the
             whole page is arranged around and had never been said out loud. */}
         <section className="stx-lp-truth is-authored">
-          <h3 className="stx-lp-truth-name">The curriculum</h3>
+          <h3 className="stx-lp-truth-name">What to learn</h3>
 
           {node.blurb && <p className="stx-lp-blurb">{node.blurb}</p>}
 
@@ -1415,7 +1415,7 @@ export function LatticePanel({
           {needs.length > 0 ? (
             <>
               <p className="stx-lp-why">{why}</p>
-              <ul className="stx-lp-needs" aria-label="What this skill sits on">
+              <ul className="stx-lp-needs" aria-label="What you need first">
                 {needs.map((need) => {
                   const done = need.status === 'complete';
                   return (

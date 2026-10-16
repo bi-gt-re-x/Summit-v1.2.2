@@ -81,7 +81,7 @@ export function GoalField({ goals, value, onChange, id, hint = false }: GoalFiel
         value={value}
         onChange={(event) => onChange(event.target.value)}
       >
-        <option value={MATCH_BY_NAME}>Work it out from the name</option>
+        <option value={MATCH_BY_NAME}>Guess from the name</option>
         {linkable.map((goal) => (
           <option key={goal.id} value={String(goal.id)}>
             {goal.title}

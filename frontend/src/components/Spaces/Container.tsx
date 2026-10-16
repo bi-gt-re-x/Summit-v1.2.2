@@ -50,7 +50,7 @@ export function ContainerHead({ one, disabled, empty, register, onChange, onAdd,
       />
       {!disabled && (
         <>
-          <button type="button" className="sp-live-btn" aria-label="Container colour" title="Colour" aria-expanded={pop} onClick={() => setPop((was) => !was)}>
+          <button type="button" className="sp-live-btn" aria-label="Container color" title="Colour" aria-expanded={pop} onClick={() => setPop((was) => !was)}>
             <span className="sp-box-dot" style={{ background: tint }} aria-hidden="true" />
           </button>
           <button type="button" className="sp-live-btn" aria-label="Add a block inside" title="Add a block inside" onClick={onAdd}>
@@ -60,7 +60,7 @@ export function ContainerHead({ one, disabled, empty, register, onChange, onAdd,
       )}
       {pop && (
         <ColorPop
-          label="Container colour"
+          label="Container color"
           onClose={() => setPop(false)}
           tools={
             <button type="button" className="sp-ghost" onClick={() => onChange({ fill: undefined })}>
@@ -68,7 +68,7 @@ export function ContainerHead({ one, disabled, empty, register, onChange, onAdd,
             </button>
           }
         >
-          <ColorField value={tint} label="Container colour" onChange={(color) => onChange({ fill: { color, style: 'solid' } })} />
+          <ColorField value={tint} label="Container color" onChange={(color) => onChange({ fill: { color, style: 'solid' } })} />
         </ColorPop>
       )}
       {empty && (

@@ -69,27 +69,27 @@ export interface VisualMeta {
 export const VISUALS: Record<VisualId, VisualMeta> = {
   progress: {
     title: 'Progress over time',
-    caption: 'Built from the days checkpoints were actually reached.',
+    caption: 'Based on the days you reached each checkpoint.',
   },
   scale: {
     title: 'Distance to target',
     caption: "Where you are, and what's left.",
   },
   difficulty: {
-    title: 'Difficulty against execution',
-    caption: 'How well it went at each difficulty, off the ratings you gave.',
+    title: 'Difficulty vs. how it went',
+    caption: 'How well tasks went at each difficulty, from your ratings.',
   },
   skills: {
     title: 'By subject',
-    caption: 'Where the work went, and how well it went there.',
+    caption: 'Where your work went and how well it went.',
   },
   heatmap: {
     title: 'Consistency',
-    caption: 'Which days carried work. Twelve weeks, most recent on the right.',
+    caption: 'Which days you worked. Last 12 weeks, newest on the right.',
   },
   volume: {
     title: 'Practice volume',
-    caption: 'When in the week the work actually happens.',
+    caption: 'Which days of the week you work.',
   },
   roadmap: {
     title: 'Roadmap',
@@ -257,7 +257,7 @@ const WHY: Record<VisualId, (context: VisualContext) => string> = {
     const marked = (ctx.goal.milestones ?? []).filter(
       (stone) => stone.status === 'done' && Boolean(stone.completed_at),
     ).length;
-    return `${marked} checkpoints were reached on a recorded date, so the run has a real shape.`;
+    return `${marked} checkpoints have a date, so the line shows real progress.`;
   },
 
   scale: (ctx) =>
@@ -281,8 +281,7 @@ const WHY: Record<VisualId, (context: VisualContext) => string> = {
   },
 
   volume: (ctx) =>
-    `${dated(ctx.done).length} finished tasks carry a date, which is enough to say when in the `
-    + 'week the work actually happens.',
+    `${dated(ctx.done).length} finished tasks have a date. That's enough to show which days you work.`,
 
   roadmap: (ctx) =>
     `${(ctx.goal.milestones ?? []).length} checkpoints are set, but there's not enough finished work to chart yet. So here's the plan.`,

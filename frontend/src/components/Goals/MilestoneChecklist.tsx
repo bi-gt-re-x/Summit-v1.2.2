@@ -93,7 +93,7 @@ export function MilestoneChecklist({ steps, busy, onChange, taskDue }: Milestone
           disabled={busy || steps.length >= MAX_STEPS}
           title={
             steps.length >= MAX_STEPS
-              ? `A checkpoint needing more than ${MAX_STEPS} steps is two checkpoints`
+              ? `More than ${MAX_STEPS} steps? Split it into two checkpoints.`
               : 'Add a step'
           }
           onClick={() => onChange(addStep(steps))}

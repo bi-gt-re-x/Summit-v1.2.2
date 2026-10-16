@@ -119,14 +119,14 @@ const show = () =>
 
 /** The band itself, found by its heading rather than by position. */
 async function band() {
-  const heading = await screen.findByRole('heading', { name: /Also carrying/ });
+  const heading = await screen.findByRole('heading', { name: /Also tracking/ });
   return heading.closest('section')!;
 }
 
 describe('the goals that did not make the ladder', () => {
   it('says how many there are in the heading', async () => {
     show();
-    expect(await screen.findByRole('heading', { name: 'Also carrying · 2 goals' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Also tracking · 2 goals' })).toBeInTheDocument();
   });
 
   it('holds exactly the goals past the cap', async () => {
@@ -150,7 +150,7 @@ describe('the goals that did not make the ladder', () => {
     const rows = within(await band()).getAllByRole('listitem');
 
     expect(within(rows[0]!).getByText('Behind')).toBeInTheDocument();
-    expect(within(rows[1]!).getByText('On Track')).toBeInTheDocument();
+    expect(within(rows[1]!).getByText('On track')).toBeInTheDocument();
   });
 
   /* Not a second card system. A row is one button; a card carries a chart, a
@@ -160,7 +160,7 @@ describe('the goals that did not make the ladder', () => {
     show();
     const shelf = await band();
 
-    expect(within(shelf).queryByRole('button', { name: /View Details/i })).not.toBeInTheDocument();
+    expect(within(shelf).queryByRole('button', { name: /^details$/i })).not.toBeInTheDocument();
     expect(within(shelf).queryByRole('heading', { name: 'Current checkpoint' })).not.toBeInTheDocument();
     // One control per row, and it opens the goal.
     expect(within(shelf).getAllByRole('button')).toHaveLength(2);
@@ -170,8 +170,8 @@ describe('the goals that did not make the ladder', () => {
      twelfth goals — and the ten above it are still drawn as cards. */
   it('leaves the ten on the ladder as cards', async () => {
     show();
-    await screen.findByRole('heading', { name: /Also carrying/ });
+    await screen.findByRole('heading', { name: /Also tracking/ });
 
-    expect(screen.getAllByRole('button', { name: /View Details/i })).toHaveLength(10);
+    expect(screen.getAllByRole('button', { name: /^details$/i })).toHaveLength(10);
   });
 });

@@ -40,12 +40,12 @@ export function RecurrencePicker({
   return (
     <>
       <div className="form-group">
-        <label>Recurrence Type:</label>
-        <p className="recurrence-note">Recurrence applies to the next 12 months</p>
+        <label>Repeat</label>
+        <p className="recurrence-note">Repeats for the next 12 months</p>
         <div className="radio-group">
           {(
             [
-              ['none', 'No recurrence'],
+              ['none', "Doesn't repeat"],
               ['weekly', 'Days of week'],
               ['monthly', 'Days of month'],
             ] as Array<[RecurrenceType, string]>
@@ -66,7 +66,7 @@ export function RecurrencePicker({
 
       {type === 'weekly' && (
         <div className={`form-group${invalid ? ' invalid-input' : ''}`}>
-          <label>Select Days of Week:</label>
+          <label>Which days of the week</label>
           <div className="checkbox-group">
             {WEEKDAYS.map((weekday, index) => (
               <label key={weekday}>
@@ -84,7 +84,7 @@ export function RecurrencePicker({
 
       {type === 'monthly' && (
         <div className={`form-group${invalid ? ' invalid-input' : ''}`}>
-          <label>Select Days of Month:</label>
+          <label>Which days of the month</label>
           {/* A number is not a weekday name. `is-numeric` packs the columns to
               the width of "31" instead of the width of "Wednesday", so
               thirty-one of them are four rows rather than eight. */}

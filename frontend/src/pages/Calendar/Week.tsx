@@ -107,7 +107,7 @@ function weekOf(date: Date, startsOn: 0 | 1): Date {
     now, which is what lets it be twenty-four-hour too. */
 function clockLabel(hhmm: string): string {
   const [hours, minutes] = hhmm.split(':').map(Number);
-  if (hours === undefined || Number.isNaN(hours) || minutes === undefined) return 'All Day';
+  if (hours === undefined || Number.isNaN(hours) || minutes === undefined) return 'All day';
   return hmText(hours, minutes);
 }
 
@@ -665,7 +665,7 @@ export default function Week() {
           <button
             type="button"
             className="wk-today"
-            title="This week, and back to the hour it is (T)"
+            title="This week, at the current hour (T)"
             aria-keyshortcuts="T"
             onClick={goToday}
           >

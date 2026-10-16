@@ -188,8 +188,8 @@ function executionGap(tasks: Observable[]): Observation | null {
     key: 'execution-gap',
     text:
       gap > 0
-        ? 'These feel harder than they go.'
-        : "These go worse than you'd expect for how hard they are.",
+        ? 'You rate these hard, but they go well.'
+        : "These go badly even though they aren't that hard.",
     support: `from ${plural(n, 'rated task')}: ${difficulty.toFixed(1)} for how hard, ${execution.toFixed(1)} for how well`,
     confidence: confidenceFor(n, strength),
     n,

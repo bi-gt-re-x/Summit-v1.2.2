@@ -537,7 +537,7 @@ export default function Dashboard() {
   const entering = usePageEntrance(Boolean(data));
 
   if (loading && !data) return <Loading label="Loading your dashboard" />;
-  if (!data) return <ErrorState message={error ?? 'No data came back.'} onRetry={reload} />;
+  if (!data) return <ErrorState message={error ?? "Couldn't load your dashboard. Try refreshing."} onRetry={reload} />;
 
   if (swap.shown) {
     return (

@@ -125,7 +125,7 @@ describe('the evidence gate', () => {
     show(linked(EVIDENCE));
 
     expect(screen.queryByText(/Not enough to go on yet/)).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Read this goal' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Get AI advice' })).toBeInTheDocument();
   });
 });
 
@@ -135,7 +135,7 @@ describe('asking for one', () => {
     writeGoalPlan.mockResolvedValue({ success: true, plan: PLAN });
     show(linked(EVIDENCE));
 
-    await user.click(screen.getByRole('button', { name: 'Read this goal' }));
+    await user.click(screen.getByRole('button', { name: 'Get AI advice' }));
 
     await waitFor(() => expect(writeGoalPlan).toHaveBeenCalledTimes(1));
     const sent = writeGoalPlan.mock.calls[0]![0];
@@ -154,7 +154,7 @@ describe('asking for one', () => {
     writeGoalPlan.mockResolvedValue({ success: true, plan: PLAN });
     show(linked(EVIDENCE));
 
-    await user.click(screen.getByRole('button', { name: 'Read this goal' }));
+    await user.click(screen.getByRole('button', { name: 'Get AI advice' }));
     await waitFor(() => expect(writeGoalPlan).toHaveBeenCalled());
 
     expect(writeGoalPlan.mock.calls[0]![0].levers.length).toBeGreaterThan(0);
@@ -165,7 +165,7 @@ describe('asking for one', () => {
     writeGoalPlan.mockResolvedValue({ success: true, plan: PLAN });
     show(linked(EVIDENCE));
 
-    await user.click(screen.getByRole('button', { name: 'Read this goal' }));
+    await user.click(screen.getByRole('button', { name: 'Get AI advice' }));
 
     expect(await screen.findByText(PLAN.route)).toBeInTheDocument();
     expect(screen.getByText(PLAN.week[0]!)).toBeInTheDocument();
@@ -179,9 +179,9 @@ describe('asking for one', () => {
     writeGoalPlan.mockResolvedValue({ success: true, plan: PLAN });
     show(linked(EVIDENCE));
 
-    await user.click(screen.getByRole('button', { name: 'Read this goal' }));
+    await user.click(screen.getByRole('button', { name: 'Get AI advice' }));
 
-    expect(await screen.findByText('Written by a model')).toBeInTheDocument();
+    expect(await screen.findByText('Written by AI')).toBeInTheDocument();
     expect(screen.getByText(/Written by AI from the numbers on this page/)).toBeInTheDocument();
   });
 
@@ -190,11 +190,11 @@ describe('asking for one', () => {
     writeGoalPlan.mockResolvedValue({ success: false, message: 'Reading a goal needs an Anthropic key.' });
     show(linked(EVIDENCE));
 
-    await user.click(screen.getByRole('button', { name: 'Read this goal' }));
+    await user.click(screen.getByRole('button', { name: 'Get AI advice' }));
 
     expect(await screen.findByText(/needs an Anthropic key/)).toBeInTheDocument();
     // And the offer is still there, because the failure may be fixable.
-    expect(screen.getByRole('button', { name: 'Read this goal' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Get AI advice' })).toBeInTheDocument();
   });
 
   /* The other failure shape — the call never completing — is handled by the

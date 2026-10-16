@@ -710,7 +710,7 @@ export default function Goals() {
           return;
         }
         if (!drafted.steps?.length) {
-          setError('The model returned no steps. Try again.');
+          setError("AI didn't return any steps. Try again.");
           return;
         }
         const saved = await goalService.updateMilestone(milestone.id, {
@@ -960,7 +960,7 @@ export default function Goals() {
                 </button>
               )}
               <button type="button" className="gx-btn is-primary" onClick={startGoal}>
-                {tab === 'system' ? '+ New System Goal' : '+ New Goal'}
+                {tab === 'system' ? '+ New counter' : '+ New goal'}
               </button>
             </div>
           </header>
@@ -1057,9 +1057,7 @@ export default function Goals() {
                 answer back on screen directly below the question. */}
             {!attention && outcomes.length > LIST_GOALS && (
               <Band
-                title={`Also carrying · ${outcomes.length - LIST_GOALS} ${
-                  outcomes.length - LIST_GOALS === 1 ? 'goal' : 'goals'
-                }`}
+                title={`Also tracking · ${outcomes.length - LIST_GOALS} ${outcomes.length - LIST_GOALS === 1 ? 'goal' : 'goals'}`}
                 hint="Still tracked, just not shown as cards"
               >
                 {/* Rows, not cards, and that is the whole point of the band:
@@ -1104,7 +1102,7 @@ export default function Goals() {
             widest view of the smallest thing, so it goes last. */}
         {on('timeline') && (
           <>
-            <Band title="Next Milestones" hint="What each goal is on now">
+            <Band title="Next checkpoints" hint="Where each goal is now">
               <NextMilestones goals={list} tasks={tasks} onOpen={(goal) => setOpenId(goal.id)} />
             </Band>
 
@@ -1136,8 +1134,8 @@ export default function Goals() {
             )}
 
             <Band
-              title="Milestone Calendar"
-              hint="Darker days carry more"
+              title="Checkpoint calendar"
+              hint="Darker days have more due"
             >
               <MilestoneCalendar goals={list} onOpen={(goal) => setOpenId(goal.id)} />
             </Band>
@@ -1154,7 +1152,7 @@ export default function Goals() {
             above it making the same point more briefly would be the page
             saying it twice and landing it neither time. */}
         {on('system') && (
-          <Band title="System Goals">
+          <Band title="Counters">
             <SystemGoals
               counters={counters}
               onEdit={(goal) => {
@@ -1185,7 +1183,7 @@ export default function Goals() {
 
             <Band
               title="Where you stand"
-              hint="Counted off your goals"
+              hint="From your goals"
             >
               <GoalStats goals={list} />
               <OverviewStrip goals={list} />
@@ -1199,11 +1197,11 @@ export default function Goals() {
             </Band>
 
             <div className="gx-two">
-              <Band title="Goal Insights" hint="From linked work only">
+              <Band title="Goal insights" hint="From linked tasks only">
                 <GoalInsights goals={list} tasks={tasks} onOpen={(goal) => setOpenId(goal.id)} />
               </Band>
 
-              <Band title="Goal Health" hint="Goal by goal, and why">
+              <Band title="Goal health" hint="Goal by goal, and why">
                 <HealthRing goals={list} />
                 <HealthBreakdown
                   goals={outcomes}
@@ -1215,7 +1213,7 @@ export default function Goals() {
 
             <Band
               title="Growth areas"
-              hint="Where the work you have left is, by subject"
+              hint="What's left, by subject"
             >
               <GrowthAreas
                 goals={outcomes}
@@ -1225,7 +1223,7 @@ export default function Goals() {
             </Band>
 
             <Band
-              title="All Goals"
+              title="All goals"
               hint="Same columns for every goal"
             >
               <GoalTable
@@ -1245,7 +1243,7 @@ export default function Goals() {
             Not a tab of its own: it is one band, and the header button that
             reveals it works from wherever you are. */}
         {showCompleted && (
-          <Band title="Recently Completed" hint="Already behind you">
+          <Band title="Recently finished" hint="Done">
             <RecentlyCompleted goals={list.filter((goal) => !awaitingVerify(goal))} />
           </Band>
         )}
@@ -1349,7 +1347,7 @@ export default function Goals() {
         open={pendingDelete !== null}
         danger
         title="Delete this goal?"
-        body="Its checkpoints are deleted too. Linked tasks are kept."
+        body="Its checkpoints go too. Linked tasks stay."
         confirmLabel="Delete"
         busy={busy}
         onCancel={() => setPendingDelete(null)}

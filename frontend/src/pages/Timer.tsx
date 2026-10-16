@@ -201,7 +201,7 @@ function Setup({ onPick, onSkip }: { onPick: (id: string) => void; onSkip: () =>
     return (
       <section className="pom-setup">
         <p className="pom-steps"><span className="is-on" /><span /></p>
-        <h2>How long can you sit?</h2>
+        <h2>How long can you focus?</h2>
         <div className="pom-choices">
           {SITTINGS.map((option) => (
             <button key={option.id} type="button" className="pom-choice"
@@ -298,7 +298,7 @@ function Recommend({ at, sittings, current, onUse }: {
         <span className="pom-rec-icon" aria-hidden="true"><Icon name="sparkles" /></span>
         {togo > 0
           ? `Suggested lengths show up after ${MIN_INTERVALS} sessions. ${togo} to go.`
-          : 'Run a couple of different lengths and this will recommend one.'}
+          : "Try a couple of different lengths and we'll suggest one."}
       </p>
     );
   }
@@ -318,7 +318,7 @@ function Recommend({ at, sittings, current, onUse }: {
         <i>
           {at.low === at.high
             ? `Your ${at.minutes}-minute sessions go best, out of ${at.sample} logged.`
-            : `You work best between ${at.low} and ${at.high} minutes, over ${at.sample} recorded.`}
+            : `You work best between ${at.low} and ${at.high} minutes, out of ${at.sample} logged.`}
         </i>
       </span>
       {current === at.styleId ? (
@@ -381,7 +381,7 @@ function TaskPicker({ tasks, picked, onPick, today }: {
     <section className="pom-panel pom-picker" aria-labelledby="pom-picker-head">
       <header className="pom-panel-head">
         <div className="pom-panel-title">
-          <h2 id="pom-picker-head"><Icon name="clipboard" /> What Are You Working On?</h2>
+          <h2 id="pom-picker-head"><Icon name="clipboard" /> What are you working on?</h2>
           <p>Pick a task and each session gets logged to it</p>
         </div>
         <Link className="pom-link" to="/tasks">All tasks</Link>
@@ -437,7 +437,7 @@ function TodaySittings({ rows }: { rows: TaskTime[] }) {
           <h2 id="pom-today-head"><Icon name="timer" /> Today&apos;s sessions</h2>
           <p>
             {sittings
-              ? `${fmtHM(minutes * 60)} across ${sittings} sitting${sittings === 1 ? '' : 's'}`
+              ? `${fmtHM(minutes * 60)} across ${sittings} session${sittings === 1 ? '' : 's'}`
               : 'Where your focus time went today'}
           </p>
         </div>
@@ -448,14 +448,14 @@ function TodaySittings({ rows }: { rows: TaskTime[] }) {
             <li key={row.id ?? 'none'} className={row.id ? undefined : 'is-none'}>
               <span className="pom-today-title">{row.title ?? 'No task picked'}</span>
               <span className="pom-today-count">
-                {row.sittings} sitting{row.sittings === 1 ? '' : 's'}
+                {row.sittings} session{row.sittings === 1 ? '' : 's'}
               </span>
               <strong className="pom-today-time">{fmtHM(row.minutes * 60)}</strong>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="pom-empty">No sessions yet today. Pick a task and press Start Focus.</p>
+        <p className="pom-empty">No sessions yet today. Pick a task and press Start focus.</p>
       )}
     </section>
   );
@@ -557,7 +557,7 @@ function Outcome({ sitting, fed, onHide, onJot }: {
   return (
     <section className="pom-outcome" aria-label="Your last session">
       <span className="pom-outcome-head">
-        <b>{sitting.minutes} min {about ? 'on' : 'sitting'}</b>
+        <b>{sitting.minutes} min {about ? 'on' : 'of focus'}</b>
         {about && <i>{about}</i>}
       </span>
       <dl className="pom-outcome-bars" aria-label="How that session went">
@@ -952,7 +952,7 @@ export default function Timer() {
         <span className="pom-head-sun" aria-hidden="true"><Icon name="sun" /></span>
         <div className="pom-head-text">
           <h1>{greeting(today.getHours())}, {displayName || username || 'there'}</h1>
-          <p>Focus today. Build the future you want.</p>
+          <p>Pick a task and start the clock.</p>
         </div>
         <span className="pom-date">
           <Icon name="calendar" />
@@ -991,7 +991,7 @@ export default function Timer() {
                   <span className="pom-ring-phase">{PHASE_LABEL[phase]}</span>
                   <span className="pom-ring-time">{clock(remaining)}</span>
                   <span className="pom-ring-sub">
-                    {phase === 'focus' ? 'Work Session' : 'Rest'}
+                    {phase === 'focus' ? 'Work session' : 'Rest'}
                   </span>
                 </div>
               </div>
@@ -999,7 +999,7 @@ export default function Timer() {
               <button type="button" className="pom-start"
                 onClick={running ? pomodoro.pause : pomodoro.start}>
                 <Icon name={running ? 'pause' : 'play'} />
-                {running ? 'Pause Focus' : 'Start Focus'}
+                {running ? 'Pause focus' : 'Start focus'}
               </button>
 
               {/* Reset and set-up-again only. The round play button that used
@@ -1029,19 +1029,19 @@ export default function Timer() {
             <div className="pom-hero-side">
               <div className="pom-side-card">
                 <span className="pom-side-icon pom-tone-violet" aria-hidden="true"><Icon name="clipboard" /></span>
-                <span className="pom-side-label">Working On</span>
+                <span className="pom-side-label">Working on</span>
                 <strong className="pom-side-task">{picked ? picked.title : 'No task'}</strong>
                 <em>{picked ? 'logged on each session' : 'pick one below'}</em>
               </div>
               <div className="pom-side-card">
                 <span className="pom-side-icon pom-tone-amber" aria-hidden="true"><Icon name="flame" /></span>
-                <span className="pom-side-label">Today&apos;s Focus</span>
+                <span className="pom-side-label">Today&apos;s focus</span>
                 <strong>{doneToday} / {level.target}</strong>
                 <em>pomodoros</em>
               </div>
               <div className="pom-side-card">
                 <span className="pom-side-icon pom-tone-blue" aria-hidden="true"><Icon name="clock" /></span>
-                <span className="pom-side-label">Focused Today</span>
+                <span className="pom-side-label">Focused today</span>
                 <strong>{fmtHM(session.focused)}</strong>
                 <em>of {fmtHM(goalSeconds)} goal</em>
               </div>
@@ -1081,7 +1081,7 @@ export default function Timer() {
                   <b>{style.name}</b>
                   <i>{style.focus} min work · {style.rest} min break</i>
                 </span>
-                <select value={style.id} aria-label="Pomodoro style"
+                <select value={style.id} aria-label="Timer style"
                   onChange={(e) => pomodoro.choose(e.target.value)}>
                   {STYLES.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
                 </select>

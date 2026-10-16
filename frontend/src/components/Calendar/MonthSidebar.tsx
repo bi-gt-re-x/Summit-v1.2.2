@@ -118,7 +118,7 @@ export function MonthSidebar({
       </section>
 
       <section className="mv-card">
-        <h3 className="mv-card-title">Monthly Insights</h3>
+        <h3 className="mv-card-title">This month</h3>
         <div className="mv-insight">
           <span className="mv-insight-ico" aria-hidden="true">
             <svg viewBox="0 0 24 24">

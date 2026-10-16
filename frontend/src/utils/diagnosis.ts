@@ -672,7 +672,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
       ],
       action: dropped
         ? `Change one thing: put one ${nameOf(dropped)} task back in this week, and keep the rest the same.`
-        : 'Change one thing, like difficulty or a subject you have been avoiding, and keep the rest the same.',
+        : "Change one thing, like difficulty or a subject you've been avoiding, and keep the rest the same.",
       watch: 'The one thing you changed',
       weight: 40,
     });

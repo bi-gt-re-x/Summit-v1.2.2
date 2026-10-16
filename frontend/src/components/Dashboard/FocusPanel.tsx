@@ -146,7 +146,7 @@ export function FocusPanel({ session, pomodoro }: FocusPanelProps) {
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             {running ? <path d="M8 5h3v14H8zm5 0h3v14h-3z" /> : <path d="M7 4.5v15l13-7.5z" />}
           </svg>
-          {running ? 'Pause Focus' : 'Start Focus'}
+          {running ? 'Pause focus' : 'Start focus'}
         </button>
 
         {/* Skip is here and stop is not. A pomodoro is ended by finishing it or

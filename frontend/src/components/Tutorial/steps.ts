@@ -92,7 +92,7 @@ export const STEPS: Step[] = [
     route: '/dashboard',
     target: ['[data-tour="add-task"]'],
     title: 'Add your first task',
-    body: "Click Add Task. Anything works, even something small like \"Read for 20 minutes.\"",
+    body: 'Click Add task. Anything works, even something small like "Read for 20 minutes."',
   },
   {
     id: 'task-form',
@@ -101,7 +101,7 @@ export const STEPS: Step[] = [
     target: ['#taskModal .modal-content'],
     skipIfMissing: true,
     title: 'Fill it in',
-    body: 'Give it a name and a due date, then click Confirm & Add Task at the bottom. The other fields are optional.',
+    body: 'Give it a name and a due date, then click Add task at the bottom. The other fields are optional.',
   },
   {
     id: 'task-list',
@@ -118,7 +118,7 @@ export const STEPS: Step[] = [
     target: ['.dash-main .focus-panel .fp-controls', '.dash-main .focus-panel'],
     skipIfMissing: true,
     title: 'A focus timer, right here',
-    body: 'Press Start Focus to work in timed blocks with short breaks. The screen clears so you can concentrate. Press Esc to come back.',
+    body: 'Press Start focus to work in timed blocks with short breaks. The screen clears so you can concentrate. Press Esc to come back.',
   },
 
   // ---- Calendar ------------------------------------------------------------
@@ -169,7 +169,7 @@ export const STEPS: Step[] = [
     route: '/timer',
     target: ['.pom-start'],
     title: 'Start a session',
-    body: 'When you sit down to work, press Start Focus. Every minute counts toward your daily focus goal.',
+    body: 'When you sit down to work, press Start focus. Every minute counts toward your daily focus goal.',
   },
   {
     id: 'timer-controls',

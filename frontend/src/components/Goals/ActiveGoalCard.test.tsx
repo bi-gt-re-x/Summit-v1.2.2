@@ -124,7 +124,7 @@ describe('asking whether a goal is done', () => {
 
   it('says where the goal goes', () => {
     show();
-    expect(question()).toHaveTextContent(/finished goals and your Analytics/);
+    expect(question()).toHaveTextContent(/moves to your finished goals/);
   });
 
   it('offers nothing while a write is already in flight', async () => {
@@ -295,7 +295,7 @@ describe('the basic graph', () => {
       onChart: vi.fn(),
     });
 
-    expect(screen.getByText(/50% of the time, 25% of the work/)).toBeInTheDocument();
+    expect(screen.getByText(/50% through the time and 25% through the work/)).toBeInTheDocument();
     expect(document.querySelector('.ag-scale-clock')).toHaveStyle({ left: '50%' });
   });
 
@@ -310,7 +310,7 @@ describe('the basic graph', () => {
       onChart: vi.fn(),
     });
 
-    expect(screen.getByText(/The target date has passed/)).toBeInTheDocument();
+    expect(screen.getByText(/The date has passed/)).toBeInTheDocument();
   });
 
   it('says nothing about a clock a goal does not have', () => {

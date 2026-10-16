@@ -18,7 +18,10 @@ leverage, robust, delve, crucial, journey, unlock and seamless. Never write
 "not X, but Y" or "X, not Y" slogans. Say the thing plainly.
 """
 
-_CURLY = str.maketrans({'\u2018': "'", '\u2019': "'", '\u201c': '"', '\u201d': '"'})
+# Curly quotes, and the hyphens a model sometimes swaps in for "-" inside a
+# word ("30\u2011minute"), which look the same but break search and copying.
+_CURLY = str.maketrans({'\u2018': "'", '\u2019': "'", '\u201c': '"', '\u201d': '"',
+                        '\u2010': '-', '\u2011': '-'})
 # "3–5" is a range, not a pause.
 _RANGE = re.compile('(?<=\\d)\\s*[\u2013\u2014]\\s*(?=\\d)')
 # A dash used as a pause in a sentence.

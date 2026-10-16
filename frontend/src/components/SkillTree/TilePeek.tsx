@@ -114,7 +114,7 @@ export function TilePeek({ read, rect, nav = false }: TilePeekProps) {
       </p>
 
       {nav ? (
-        <p className="stx-peek-nav">Opens a lattice of its own.</p>
+        <p className="stx-peek-nav">Opens its own tree.</p>
       ) : (
         <>
           {requires.length > 0 && (

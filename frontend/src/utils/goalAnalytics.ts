@@ -460,7 +460,7 @@ export function goalNotes(
       tone: 'watch',
       goalId: quiet.goal.id,
       headline: `Nothing on ${quiet.goal.title} for ${quiet.health.signals.daysSinceWork} days`,
-      hint: "You're not behind yet, but this is how goals stall. Do one thing for it today.",
+      hint: "You're not behind yet. Do one thing for it today.",
     });
   }
 

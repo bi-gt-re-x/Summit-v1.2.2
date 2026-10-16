@@ -96,7 +96,7 @@ export function MonthTools({ upcoming, goals, onAddTask, onAddEvent }: MonthTool
   return (
     <div className="mv-tools">
       <section className="mv-card mv-quickadd">
-        <h3 className="mv-card-title">Quick Add</h3>
+        <h3 className="mv-card-title">Quick add</h3>
         <div className="mv-quick-grid">
           <button type="button" className="mv-quick tone-task" onClick={onAddTask}>
             <span className="mv-quick-ico">{ICONS.task}</span>
@@ -120,7 +120,7 @@ export function MonthTools({ upcoming, goals, onAddTask, onAddEvent }: MonthTool
       </section>
 
       <section className="mv-card">
-        <h3 className="mv-card-title">Next Up</h3>
+        <h3 className="mv-card-title">Next up</h3>
         {upcoming.length === 0 ? (
           <p className="mv-empty">Nothing dated ahead of today.</p>
         ) : (
@@ -150,13 +150,13 @@ export function MonthTools({ upcoming, goals, onAddTask, onAddEvent }: MonthTool
 
       <section className="mv-card">
         <div className="mv-card-head">
-          <h3 className="mv-card-title">Goals Progress</h3>
+          <h3 className="mv-card-title">Goals</h3>
           <Link className="mv-card-link" to="/goals">
             View all
           </Link>
         </div>
         {live.length === 0 ? (
-          <p className="mv-empty">No goals running. The Goals page is where one starts.</p>
+          <p className="mv-empty">No goals yet. Start one on the Goals page.</p>
         ) : (
           <ul className="mv-goals">
             {live.map(({ goal, numbers }) => (

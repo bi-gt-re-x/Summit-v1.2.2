@@ -80,7 +80,7 @@ function Heat({ context }: { context: VisualContext }) {
   // Twelve columns of seven. Laid out down each column so a week reads
   // vertically, which is the arrangement everybody already knows.
   return (
-    <div className="ag-heat" role="img" aria-label="Days with finished work, last twelve weeks">
+    <div className="ag-heat" role="img" aria-label="Days you finished work, last 12 weeks">
       <ul className="ag-heat-days" aria-hidden="true">
         <li>M</li>
         <li />
@@ -371,8 +371,8 @@ function Scale({ goal }: { goal: Goal }) {
       {clock !== null && (
         <p className="ag-scale-pace">
           {clock > 100
-            ? `The target date has passed. ${done}% of the work is done.`
-            : `The mark is today: ${elapsed}% of the time, ${done}% of the work.`}
+            ? `The date has passed. ${done}% of the work is done.`
+            : `Today you're ${elapsed}% through the time and ${done}% through the work.`}
         </p>
       )}
     </div>
@@ -473,8 +473,8 @@ export function GoalVisual({ goal, context, pick, nameOf, onOpen, onChart }: Goa
             <label className="ag-range">
               <span className="gx-sr">Range</span>
               <select value={range} onChange={(event) => setRange(event.target.value as 'year' | 'all')}>
-                <option value="year">This Year</option>
-                <option value="all">All Time</option>
+                <option value="year">This year</option>
+                <option value="all">All time</option>
               </select>
             </label>
           )}

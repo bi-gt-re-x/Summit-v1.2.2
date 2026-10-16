@@ -408,7 +408,7 @@ def _free_brief(username: str, subject_ids: List[str], count: int,
 
 def _guarded(username: str, steps: list, subject_id: str = '',
              names: Optional[dict] = None) -> list:
-    """`steps` with free links only (backend/tracking/free_resources). Reads
+    """`steps` with free links only (backend/tracking/free_resources.py). Reads
     only, so it's safe on a GET. A step across every subject finds its subject
     from its `focus`."""
     cache: Dict[str, list] = {}
@@ -957,7 +957,7 @@ def take_recommendation(body: TakeRecommendation,
 # --------------------------------------------------------------------------
 # The subject page's panel, offered where there is no subject page behind it:
 # for any one subject, or across all of them ("All subjects"). The brief is
-# counted here from the tasks (backend/tracking/next_sessions) rather than
+# counted here from the tasks (backend/tracking/next_sessions.py) rather than
 # sent, because neither page has the figures the subject page sends. The
 # steps go in the same ledger and the same saved reading as the subject
 # page's, keyed by the subject's name — so three planned for Mathematics on

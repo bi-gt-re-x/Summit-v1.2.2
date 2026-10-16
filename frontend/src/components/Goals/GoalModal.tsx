@@ -48,10 +48,10 @@ const TARGETS: Record<
   { label: string; placeholder: string; min: string; step?: string }
 > = {
   xp: { label: 'Target XP', placeholder: 'e.g., 1000', min: '1' },
-  streak: { label: 'Target Streak (days)', placeholder: 'e.g., 30', min: '1' },
-  tasks: { label: 'Target Tasks', placeholder: 'e.g., 100', min: '1' },
+  streak: { label: 'Target streak (days)', placeholder: 'e.g., 30', min: '1' },
+  tasks: { label: 'Target tasks', placeholder: 'e.g., 100', min: '1' },
   focus: {
-    label: 'Target Focus Time (hours)',
+    label: 'Target focus time (hours)',
     placeholder: 'e.g., 10',
     min: '0.5',
     step: '0.5',
@@ -163,23 +163,23 @@ export function GoalModal({
         >
           ×
         </span>
-        <h2 id="modalTitle">{goal ? 'Edit Goal' : 'Add new goal'}</h2>
+        <h2 id="modalTitle">{goal ? 'Edit goal' : 'Add new goal'}</h2>
 
         <form onSubmit={submit}>
-          <label htmlFor="goalTitle">Goal Title</label>
+          <label htmlFor="goalTitle">Goal</label>
           <input
             type="text"
             id="goalTitle"
             className={invalid.title ? 'invalid-input' : ''}
-            placeholder="e.g., Complete 100 tasks"
+            placeholder='Like "Finish 100 tasks"'
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
 
-          <label htmlFor="goalDescription">Description (optional)</label>
+          <label htmlFor="goalDescription">Notes (optional)</label>
           <textarea
             id="goalDescription"
-            placeholder="Describe your goal..."
+            placeholder="Anything worth remembering"
             rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -187,16 +187,16 @@ export function GoalModal({
 
           <div className="gm-row">
             <div className="gm-col">
-              <label htmlFor="goalType">Goal Type</label>
+              <label htmlFor="goalType">Count by</label>
               <select
                 id="goalType"
                 value={type}
                 onChange={(e) => changeType(e.target.value as GoalType)}
               >
-                <option value="xp">XP Based</option>
-                <option value="streak">Streak Based</option>
-                <option value="tasks">Tasks Completed</option>
-                <option value="focus">Focus Time</option>
+                <option value="xp">XP</option>
+                <option value="streak">Streak</option>
+                <option value="tasks">Tasks done</option>
+                <option value="focus">Focus time</option>
               </select>
             </div>
             <div className="gm-col">
@@ -216,12 +216,12 @@ export function GoalModal({
 
           {type === 'focus' && (
             <p className="gm-hint" id="focusGoalHint">
-              <Icon name="timer" /> Fills in as you log focus time after the goal is set.
+              <Icon name="timer" /> Fills in as you log focus time from today on.
             </p>
           )}
 
           <label htmlFor="goalPriority" className="gm-priority-label">
-            Priority Rank <span className="gm-priority-val">{priority}</span>/10
+            Priority <span className="gm-priority-val">{priority}</span>/10
           </label>
           <input
             type="range"
@@ -233,7 +233,7 @@ export function GoalModal({
             onChange={(e) => setPriority(Number(e.target.value))}
           />
 
-          <label htmlFor="goalDeadline">Deadline (optional)</label>
+          <label htmlFor="goalDeadline">Due date (optional)</label>
           <input
             type="date"
             id="goalDeadline"
@@ -252,7 +252,7 @@ export function GoalModal({
             />
           </div>
           <p className="gm-hint">
-            Links this goal to a subject so its analytics page can track it.
+            Links this goal to a subject so that subject's page can track it.
           </p>
 
           <Button
@@ -264,7 +264,7 @@ export function GoalModal({
             id="saveGoalBtn"
             disabled={busy}
           >
-            {goal ? 'Save Changes' : 'Add Goal'}
+            {goal ? 'Save' : 'Add goal'}
           </Button>
         </form>
       </div>

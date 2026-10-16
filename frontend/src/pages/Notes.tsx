@@ -365,7 +365,7 @@ const TEMPLATES: Array<{ id: string; label: string; hint: string; title: string;
   {
     id: 'blank',
     label: 'Blank note',
-    hint: 'Nothing in it',
+    hint: 'Start from scratch',
     title: '',
     body: '',
   },
@@ -549,7 +549,7 @@ export default function Notes() {
           ? subjectOf(filter.id ?? '', catalogue)?.name ?? filter.id ?? 'Tagged'
           : filter.kind === 'task'
             ? taskTitle(filter.id ?? '') ?? 'One task'
-            : 'All Notes';
+            : 'All notes';
 
   /** The index's two groups. Pinned notes are lifted out rather than marked. */
   const groups = useMemo(
@@ -875,7 +875,7 @@ export default function Notes() {
   const submit = useCallback(async (quiet = false) => {
     if (!username || busy || saving) return;
     if (draft.title.trim() === '' && draft.body.trim() === '') {
-      if (!quiet) setMessage('A note needs a title or something written in it.');
+      if (!quiet) setMessage('Add a title or some text first.');
       return;
     }
     const sent = draft;
@@ -960,7 +960,7 @@ export default function Notes() {
 
   if (loading) return <Loading label="Loading your notes" />;
   if (rows === null) {
-    return <ErrorState message={error ?? "Couldn't read your notes."} onRetry={load} />;
+    return <ErrorState message={error ?? "Couldn't load your notes."} onRetry={load} />;
   }
 
   const state = busy || saving
@@ -983,7 +983,7 @@ export default function Notes() {
           <header className="nt-head">
             <div className="nt-head-titles">
               <h1>Notes</h1>
-              <p>Somewhere to think.</p>
+              <p>Notes, logs and anything else you write down.</p>
             </div>
 
             <div className="nt-head-tools">
@@ -1008,7 +1008,7 @@ export default function Notes() {
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
                     <path d="M12 5v14M5 12h14" strokeLinecap="round" />
                   </svg>
-                  New Note
+                  New note
                 </button>
                 <div className="nt-menu-wrap">
                   <button
@@ -1068,9 +1068,9 @@ export default function Notes() {
                 <button
                   type="button"
                   className={`nt-icon-btn${filter.kind !== 'all' ? ' is-on' : ''}`}
-                  aria-label="Filter the index"
+                  aria-label="Filter notes"
                   aria-expanded={filterOpen}
-                  title="Filter the index"
+                  title="Filter notes"
                   onClick={(event) => {
                     event.stopPropagation();
                     setFilterOpen((on) => !on);
@@ -1128,10 +1128,10 @@ export default function Notes() {
               {shown.length === 0 ? (
                 <p className="nt-list-empty">
                   {rows.length === 0
-                    ? 'Nothing written yet. The panel beside this one is a blank note.'
+                    ? 'No notes yet. Start typing in the blank note.'
                     : query.trim()
                       ? `No note matches "${query.trim()}".`
-                      : 'No notes here yet. The one beside this list will be the first.'}
+                      : 'No notes here yet. Start typing in the blank note.'}
                 </p>
               ) : (
                 groups.map((group) =>
@@ -1224,7 +1224,7 @@ export default function Notes() {
                   type="button"
                   className={`nt-icon-btn${draft.pinned ? ' is-on' : ''}`}
                   aria-pressed={draft.pinned}
-                  title={draft.pinned ? 'Pinned to the top of the index' : 'Pin to the top'}
+                  title={draft.pinned ? 'Pinned to the top' : 'Pin to the top'}
                   onClick={() => setDraft({ ...draft, pinned: !draft.pinned })}
                 >
                   <svg viewBox="0 0 24 24" fill={draft.pinned ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" aria-hidden="true">
@@ -1489,7 +1489,7 @@ export default function Notes() {
               </div>
 
               <div className="nt-tool-group nt-tool-end">
-                <div className="nt-mode" role="group" aria-label="Write or read">
+                <div className="nt-mode" role="group" aria-label="Edit or read">
                   <button
                     type="button"
                     className={mode === 'write' ? 'is-on' : ''}
@@ -1540,7 +1540,7 @@ export default function Notes() {
                 value={draft.body}
                 noteKey={`${draft.id}:${beat}`}
                 readOnly={mode === 'read'}
-                placeholder="Write it here. Nothing on this page is counted, graded or shown anywhere else."
+                placeholder="Write anything. Notes aren't graded or shared."
                 onChange={setBody}
                 onCaret={() => setCaret((count) => count + 1)}
                 innerRef={bodyRef}
@@ -1586,8 +1586,8 @@ export default function Notes() {
                       <button
                         type="button"
                         className="nt-meta-untie"
-                        aria-label="Untie this note from the task"
-                        title="Untie from the task"
+                        aria-label="Unlink this note from the task"
+                        title="Unlink"
                         onClick={() => setDraft({ ...draft, task_id: '' })}
                       >
                         ×

@@ -43,13 +43,13 @@ describe('execution gap', () => {
   it('reads execution above difficulty as underrating the result', () => {
     const found = observations(many(8, { difficulty: 2, execution: 5 }));
     const gap = found.find((o) => o.key === 'execution-gap');
-    expect(gap?.text).toContain('feel harder than they go');
+    expect(gap?.text).toContain('but they go well');
   });
 
   it('reads execution below difficulty the other way', () => {
     const found = observations(many(8, { difficulty: 5, execution: 2 }));
     const gap = found.find((o) => o.key === 'execution-gap');
-    expect(gap?.text).toContain("worse than you'd expect");
+    expect(gap?.text).toContain("aren't that hard");
   });
 
   it('stays quiet inside half a star', () => {

@@ -33,7 +33,7 @@ export const STYLE_LABEL: Record<FillStyle, string> = {
 };
 
 export const STYLE_HINT: Record<FillStyle, string> = {
-  solid: 'Just the colour.',
+  solid: 'Just the color.',
   fade: 'Lighter toward the bottom.',
   diagonal: 'The hue turns a little across it.',
   radial: 'A glow from the top corner.',

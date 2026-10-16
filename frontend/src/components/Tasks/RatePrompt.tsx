@@ -170,7 +170,7 @@ function Reasons({
     <fieldset className="tk-rate-row">
       <legend className="tk-rate-label">
         {side === 'went-well' ? 'What made it go well?' : 'What made it hard?'}
-        <span>The main one. Optional, like the stars.</span>
+        <span>Pick the main one. It's optional.</span>
       </legend>
 
       <div className="tk-rate-reasons">
@@ -224,7 +224,7 @@ function Score({
     <fieldset className="tk-rate-row">
       <legend className="tk-rate-label">
         How many did you get right?
-        <span>This is what tells the plan what to go back over.</span>
+        <span>This tells Summit what to go over with you.</span>
       </legend>
       <div className="tk-rate-score">
         <input
@@ -308,7 +308,7 @@ export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: R
     >
       <div className="tk-rate-popup" role="dialog" aria-modal="true" aria-labelledby="tk-rate-title">
         <h3 className="tk-rate-title" id="tk-rate-title">
-          Rate your performance on this task
+          How did it go?
         </h3>
         <p className="tk-rate-task" title={taskName}>
           {taskName}

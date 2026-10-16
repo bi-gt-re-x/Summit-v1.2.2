@@ -329,7 +329,7 @@ export interface HealthSignals {
 
 export interface GoalHealth {
   state: HealthState;
-  /** "On Track", "Behind", "Not Started" — or "Complete" for a reached goal. */
+  /** "On track", "Behind", "Not started" — or "Complete" for a reached goal. */
   label: string;
   /** One line, for the card: which rule decided it. */
   reason: string;

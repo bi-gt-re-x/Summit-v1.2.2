@@ -47,7 +47,7 @@ def health(one, tasks):
 def test_on_track_when_keeping_pace_and_worked():
     found = health(goal(), worked(3))
     assert found['state'] == 'on-track'
-    assert found['label'] == 'On Track'
+    assert found['label'] == 'On track'
     assert 'worked on 3 times in the last two weeks' in found['reason']
 
 
@@ -80,7 +80,7 @@ def test_not_called_quiet_when_nothing_was_ever_linked():
 def test_not_started_rather_than_failing_before_anything_is_recorded():
     found = health(goal(current_value=0), [])
     assert found['state'] == 'not-started'
-    assert found['label'] == 'Not Started'
+    assert found['label'] == 'Not started'
 
 
 def test_reached_goal_reads_complete():

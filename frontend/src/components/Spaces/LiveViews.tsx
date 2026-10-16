@@ -701,7 +701,7 @@ function HeatmapView({ view, metric, data }: { view: string; metric?: Metric; da
   const story = (
     <Insight>
       {data.busiest ? `Biggest day: ${shortDate(data.busiest.date)}, ${amount(data.busiest.value, metric)}.` : 'Nothing logged in this stretch yet.'}
-      {data.best_weekday !== null ? ` ${WEEKDAYS[data.best_weekday]}s carry the most.` : ''}
+      {data.best_weekday !== null ? `${WEEKDAYS[data.best_weekday]}s are your busiest.` : ''}
     </Insight>
   );
   if (view === 'strip') {
@@ -761,7 +761,7 @@ function RhythmView({ view, metric, data }: { view: string; metric?: Metric; dat
   const story = (
     <Insight>
       {`${parts[top]}% of it happens in the ${top}.`}
-      {data.focus_score >= 50 ? ' Most of the week rides on a few days.' : ' Work is spread fairly evenly across the week.'}
+      {data.focus_score >= 50 ? 'Most of your work happens on a few days.' : ' Work is spread fairly evenly across the week.'}
     </Insight>
   );
   if (view === 'hour') {

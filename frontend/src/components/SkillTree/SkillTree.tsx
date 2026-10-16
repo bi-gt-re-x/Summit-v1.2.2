@@ -668,7 +668,7 @@ export function SkillTree({
            is a scroll box a keyboard cannot move. */
         tabIndex={0}
         role="group"
-        aria-label="The lattice. Arrow keys move between skills."
+        aria-label="The skill map. Use the arrow keys to move between skills."
       >
         {bare ? (
           <div className="stx-canvas-empty">{empty}</div>

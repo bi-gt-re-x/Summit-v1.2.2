@@ -349,7 +349,7 @@ export default function Tasks() {
         if (!ok) reload();
         return ok;
       } catch (cause) {
-        setFailure(cause instanceof Error ? cause.message : "That didn't work.");
+        setFailure(cause instanceof Error ? cause.message : "Something went wrong. Try again.");
         reload();
         return false;
       } finally {
@@ -972,7 +972,7 @@ export default function Tasks() {
                 </span>
                 Tasks
               </h1>
-              <p className="tk-quiet">What's on your plate.</p>
+              <p className="tk-quiet">Everything you need to do.</p>
             </div>
             <div className="tk-head-tools">
               <button
@@ -984,7 +984,7 @@ export default function Tasks() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <path d="M12 5v14M5 12h14" />
                 </svg>
-                New Task
+                New task
                 <i className={`tk-new-caret${composing ? ' is-open' : ''}`} aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M6 9l6 6 6-6" />
@@ -997,7 +997,7 @@ export default function Tasks() {
                 <button
                   type="button"
                   className="tk-more is-page"
-                  aria-label="More for this page"
+                  aria-label="More options"
                   aria-expanded={pageMenu}
                   onClick={() => setPageMenu(!pageMenu)}
                 >
@@ -1115,8 +1115,8 @@ export default function Tasks() {
             {groups.length === 0 ? (
               <p className="tk-empty">
                 {list.length === 0
-                  ? 'Nothing here yet. Quick Add is the fastest way to change that.'
-                  : 'No task matches. Clear the filters to see the rest.'}
+                  ? 'No tasks yet. Use Quick add at the top to make one.'
+                  : 'No tasks match. Clear the filters to see the rest.'}
               </p>
             ) : (
               groups.map((group) => {

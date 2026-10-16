@@ -2,7 +2,7 @@
 -- Summit keeps from it.
 --
 -- Written by backend/api/background.py from the "About you" step at the end of
--- sign-up (frontend/src/components/Auth/AboutYou.tsx) and from Settings. Read
+-- sign-up (frontend/src/components/AboutYou/AboutYou.tsx) and from Settings. Read
 -- by Analytics, which shows the facts and gives a head start on its unlock
 -- waits, and by the model prompts in backend/tracking/subject_ai.py.
 --

@@ -30,9 +30,9 @@ export interface GoalNumbers {
 /** The label the goals page shows, which is not the short unit in GOAL_FIELDS. */
 const LABELS: Record<GoalType, string> = {
   xp: 'XP',
-  streak: 'Days',
-  tasks: 'Tasks',
-  focus: 'Focus',
+  streak: 'days',
+  tasks: 'tasks',
+  focus: 'focus',
 };
 
 /**
@@ -126,8 +126,8 @@ export function fmtGoalValue(value: number, goalType: GoalType): string {
   const total = Math.round(value);
   const h = Math.floor(total / 60);
   const m = total % 60;
-  if (h && m) return `${h}h ${m}m`;
-  if (h) return `${h}h`;
+  if (h && m) return `${h.toLocaleString()}h ${m}m`;
+  if (h) return `${h.toLocaleString()}h`;
   return `${m}m`;
 }
 

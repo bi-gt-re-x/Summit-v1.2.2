@@ -477,9 +477,9 @@ export function personalRecords(all: GrowthDay[], tasks: Task[], streak: number)
     record('day', 'Best day', bestXpDay.value, 'XP', 0, bestXpDay.on, 'spark'),
     record('week', 'Best week', week.value, 'XP', 0, week.on, 'trend'),
     record('tasks', 'Most tasks in a day', bestTasks.value, '', 0, bestTasks.on, 'check'),
-    record('focus', 'Deepest day', bestFocus.value / 60, 'hrs', 1, bestFocus.on, 'clock'),
+    record('focus', 'Most focus in a day', bestFocus.value / 60, 'hrs', 1, bestFocus.on, 'clock'),
     record('streak', 'Longest streak', best, 'days', 0, null, 'flame'),
-    record('heaviest', 'Heaviest single task', heaviest.value, 'XP', 0, heaviest.on, 'trophy'),
+    record('heaviest', 'Biggest task', heaviest.value, 'XP', 0, heaviest.on, 'trophy'),
     record('now', 'Streak right now', streak, 'days', 0, null, 'target'),
   ];
 }

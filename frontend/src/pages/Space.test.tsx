@@ -212,29 +212,29 @@ describe('a team space', () => {
     expect(screen.getByText('Owner')).toBeInTheDocument();
     expect(screen.getByText('ada@example.com')).toBeInTheDocument();
     expect(screen.getByText('Pending')).toBeInTheDocument();
-    expect(screen.getByText(/no e-mail is sent yet/)).toBeInTheDocument();
+    expect(screen.getByText(/nothing gets sent yet/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Copy invite link' })).toBeDisabled();
   });
 
   it('adds an invite to the list', async () => {
     open(2, '/team/2');
     await nameField();
-    fireEvent.change(screen.getByRole('textbox', { name: 'E-mail to invite' }), {
+    fireEvent.change(screen.getByRole('textbox', { name: 'Email to invite' }), {
       target: { value: 'grace@example.com' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Invite' }));
     expect(await screen.findByText('grace@example.com')).toBeInTheDocument();
     expect(service.invite).toHaveBeenCalledWith(2, 'grace@example.com');
-    expect(screen.getByRole('textbox', { name: 'E-mail to invite' })).toHaveValue('');
+    expect(screen.getByRole('textbox', { name: 'Email to invite' })).toHaveValue('');
   });
 
   it('says why an invite was refused', async () => {
     open(2, '/team/2');
     await nameField();
-    fireEvent.change(screen.getByRole('textbox', { name: 'E-mail to invite' }), {
+    fireEvent.change(screen.getByRole('textbox', { name: 'Email to invite' }), {
       target: { value: 'nobody' },
     });
-    fireEvent.submit(screen.getByRole('textbox', { name: 'E-mail to invite' }).closest('form')!);
+    fireEvent.submit(screen.getByRole('textbox', { name: 'Email to invite' }).closest('form')!);
     expect(await screen.findByRole('alert')).toHaveTextContent('does not look like an e-mail');
   });
 
@@ -249,7 +249,7 @@ describe('a team space', () => {
     open(1, '/team/1?invite=1');
     await nameField();
     await waitFor(() =>
-      expect(screen.getByRole('textbox', { name: 'E-mail to invite' })).toHaveFocus(),
+      expect(screen.getByRole('textbox', { name: 'Email to invite' })).toHaveFocus(),
     );
   });
 

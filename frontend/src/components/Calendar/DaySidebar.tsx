@@ -138,7 +138,7 @@ export function DaySidebar({
             />
           </span>
           <div className="day-focus-main">
-            <div className="day-focus-name">Deep Work</div>
+            <div className="day-focus-name">Deep work</div>
             <div className="day-focus-sub">{focus.focused}</div>
           </div>
           <div className="day-focus-time">{focus.goal}</div>
@@ -161,7 +161,7 @@ export function DaySidebar({
       {shape.next && (
         <section className="wk-panel day-next">
           <div className="day-panel-head">
-            <h3 className="wk-panel-title">{isToday ? 'Up next' : 'Starts the day'}</h3>
+            <h3 className="wk-panel-title">{isToday ? 'Up next' : 'First thing today'}</h3>
             <span className="day-next-when">
               {!isToday || shape.next.away === 0
                 ? hourLabel(shape.next.start)
@@ -299,9 +299,9 @@ export function DaySidebar({
 
       <section className="wk-panel">
         <div className="day-panel-head">
-          <h3 className="wk-panel-title">Tasks Left</h3>
+          <h3 className="wk-panel-title">Tasks left</h3>
           <span className="day-panel-link" role="button" tabIndex={0} onClick={onAddTask}>
-            + Add Task
+            + Add task
           </span>
         </div>
         <ul className="day-tasks-left">

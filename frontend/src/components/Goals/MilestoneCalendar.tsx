@@ -168,7 +168,7 @@ export function MilestoneCalendar({
   if (days.size === 0) {
     return (
       <p className="gx-empty">
-        No dated checkpoints yet. Date one on its rail above and it lands here.
+        No dated checkpoints yet. Give one a date above and it shows up here.
       </p>
     );
   }
@@ -285,7 +285,7 @@ export function MilestoneCalendar({
         </div>
       ) : (
         <p className="gx-cal-hint">
-          Pick a marked day to see what lands on it.
+          Pick a marked day to see what's due.
           {undated > 0 && ` ${undated} checkpoint${undated === 1 ? ' has' : 's have'} no date yet and
             ${undated === 1 ? 'is' : 'are'} not drawn here.`}
         </p>

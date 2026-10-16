@@ -194,7 +194,7 @@ describe('opening a step', () => {
     draw(PROGRAMME);
     await userEvent.click(row('Expand Binomials'));
     // One per open step: the step the reader is on is open already.
-    expect(screen.getAllByText(/Verified by rules\+authored/)).toHaveLength(2);
+    expect(screen.getAllByText(/Checked before it was added/)).toHaveLength(2);
   });
 
   it('closes again on a second click', async () => {
@@ -272,14 +272,14 @@ describe('taking the section over', () => {
   it('offers the way back by name rather than as a bare arrow', async () => {
     draw(PROGRAMME);
     await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
-    expect(screen.getByRole('button', { name: /Back to Tree/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Back to tree/ })).toBeInTheDocument();
   });
 
   it('puts the grid back when the reader goes back to the tree', async () => {
     const { onExpand } = draw(PROGRAMME);
     await userEvent.click(screen.getByRole('button', { name: /All 5 steps/ }));
     onExpand.mockClear();
-    await userEvent.click(screen.getByRole('button', { name: /Back to Tree/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Back to tree/ }));
     expect(onExpand).toHaveBeenLastCalledWith(false);
   });
 
@@ -333,7 +333,7 @@ describe('the problems screen', () => {
   it('goes back to the steps it came from', async () => {
     draw(PROGRAMME);
     await userEvent.click(workLink('Expand Binomials'));
-    await userEvent.click(screen.getByRole('button', { name: /Back to Steps/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Back to steps/ }));
     expect(screen.getByText('Your progress')).toBeInTheDocument();
   });
 
@@ -341,7 +341,7 @@ describe('the problems screen', () => {
     const { onExpand } = draw(PROGRAMME);
     await userEvent.click(workLink('Expand Binomials'));
     onExpand.mockClear();
-    await userEvent.click(screen.getByRole('button', { name: /Back to Tree/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Back to tree/ }));
     expect(onExpand).toHaveBeenLastCalledWith(false);
   });
 
@@ -388,7 +388,7 @@ describe('a node with nothing written for it', () => {
     const [first] = screen.getAllByRole('button', { name: /Problems for/ });
     await userEvent.click(first!);
     expect(screen.queryByText('Your progress')).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Back to Steps/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Back to steps/ })).toBeInTheDocument();
   });
 
   it('takes the section over, as the written path does', async () => {

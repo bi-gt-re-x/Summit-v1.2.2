@@ -389,7 +389,7 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
           <span className="rc-best-gain">↑ {gainText(best)} since first</span>
         ) : (
           <span className="rc-best-gain is-quiet">
-            {best.entries > 1 ? 'No gain yet' : 'First entry'}
+            {best.entries > 1 ? 'No change yet' : 'First entry'}
           </span>
         )}
 
@@ -515,7 +515,7 @@ function Evolution({ best }: { best: Best }) {
   if (points.length < 2) {
     return (
       <p className="rc-empty">
-        One entry so far. Log "{best.name}" again when you beat it and the line appears here.
+        One entry so far. Log "{best.name}" again when you beat it to see a line here.
       </p>
     );
   }
@@ -872,7 +872,7 @@ export default function Achievements() {
             <h1 className="rc-title">Achievements</h1>
             {lead ? (
               <>
-                <p className="rc-sub is-thesis">Look how far you've come.</p>
+                <p className="rc-sub is-thesis">Your records</p>
                 <p className="rc-lead">
                   <span className="rc-lead-span">
                     <span className="rc-lead-from">{formatValue(lead.first, lead.unit)}</span>
@@ -888,7 +888,7 @@ export default function Achievements() {
                 </p>
               </>
             ) : (
-              <p className="rc-sub">Your bests, how far you have grown, and the badges you have earned.</p>
+              <p className="rc-sub">Your personal bests, how much you've improved and the badges you've earned.</p>
             )}
             {view === 'bests' && (
             <div className="rc-hero-tools">
@@ -1268,7 +1268,7 @@ export default function Achievements() {
       <section className="rc-section rc-derived rc-card">
         <h2 className="rc-section-title is-card">
           <span className="rc-head-ico" aria-hidden="true"><Icon name="sparkles" /></span>
-          What Summit noticed
+          From your activity
         </h2>
         <p className="rc-note">
           Filled in from your activity automatically.

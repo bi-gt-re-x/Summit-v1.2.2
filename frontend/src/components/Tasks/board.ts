@@ -150,23 +150,23 @@ export type GroupKey = 'due' | 'priority' | 'band' | 'subject' | 'status' | 'non
 export const GROUPS: Array<{ key: GroupKey; label: string; hint: string }> = [
   { key: 'due', label: 'Due date', hint: 'Late, today, this week, later.' },
   { key: 'priority', label: 'Priority', hint: 'High, medium, low.' },
-  { key: 'band', label: 'Difficulty', hint: 'Easy through Very Challenging.' },
-  { key: 'subject', label: 'Subject', hint: 'What the work is about.' },
+  { key: 'band', label: 'Difficulty', hint: 'Easy to very challenging.' },
+  { key: 'subject', label: 'Subject', hint: "What it's for." },
   { key: 'status', label: 'Status', hint: 'Still open, or finished.' },
   { key: 'none', label: 'No headings', hint: 'One flat list.' },
 ];
 
 export const BUCKETS: Array<{ key: Bucket; label: string; hint: string }> = [
   { key: 'overdue', label: 'Overdue', hint: 'Past its date. Move it or finish it.' },
-  { key: 'today', label: 'Due Today', hint: 'Due before the day is out.' },
+  { key: 'today', label: 'Due today', hint: 'Due by the end of today.' },
   // Tomorrow is its own heading rather than the first day of "this week",
   // because it is the only future day a reader plans in the same breath as
   // today — everything past it is a week, not a day.
   { key: 'tomorrow', label: 'Tomorrow', hint: 'The next day up.' },
-  { key: 'soon', label: 'This Week', hint: 'The week in front of you.' },
-  { key: 'later', label: 'Later', hint: 'Dated, but not yet.' },
-  { key: 'none', label: 'No date', hint: 'Real work, just not scheduled.' },
-  { key: 'done', label: 'Completed', hint: 'Already behind you.' },
+  { key: 'soon', label: 'This week', hint: 'The next seven days.' },
+  { key: 'later', label: 'Later', hint: 'Further out.' },
+  { key: 'none', label: 'No date', hint: 'No date yet.' },
+  { key: 'done', label: 'Completed', hint: 'Done.' },
 ];
 
 /** Midnight local, as a number — the day a stamp falls on, not the instant. */
@@ -431,7 +431,7 @@ export function groupTasks(
   if (group === 'status') {
     return [
       { key: 'open', label: 'Open', hint: ordering },
-      { key: 'done', label: 'Completed', hint: 'Already behind you.' },
+      { key: 'done', label: 'Completed', hint: 'Done.' },
     ]
       .map((entry) => ({
         ...entry,
@@ -473,7 +473,7 @@ export function groupTasks(
 
   const groups = [...seen.values()];
   if (unfiled.length > 0) {
-    groups.push({ key: 'unfiled', label: 'No subject', hint: 'Real work, just not filed.', tasks: unfiled });
+    groups.push({ key: 'unfiled', label: 'No subject', hint: 'No subject yet.', tasks: unfiled });
   }
   return groups;
 }

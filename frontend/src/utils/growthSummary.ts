@@ -1050,8 +1050,8 @@ export function growthInsights(slice: RangeSlice): Insight[] {
         headline: `You're most productive on ${listOf(names)}.`,
         hint:
           names.length === 1
-            ? 'Guard that day.'
-            : 'Nice work. Keep it up.',
+            ? 'Keep that day clear for work.'
+            : 'Put your hardest tasks on those days.',
       });
     }
   }
@@ -1166,7 +1166,7 @@ export function growthInsights(slice: RangeSlice): Insight[] {
       headline: `Your longest streak here was ${longest} days.`,
       hint:
         longest >= 7
-          ? 'Keep it going.'
+          ? 'A week or more in a row. Try to beat it.'
           : 'Try working on back-to-back days.',
     });
   }

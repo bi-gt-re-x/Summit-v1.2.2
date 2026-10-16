@@ -52,7 +52,7 @@ export function LevelUp({ level, onDone }: LevelUpProps) {
       <div className="levelup-badge">
         {milestone && <div className="levelup-crown"><Icon name="crown" /></div>}
         <div className="levelup-title">
-          {milestone ? 'MILESTONE!' : 'LEVEL UP!'}
+          {milestone ? 'Milestone!' : 'Level up!'}
         </div>
         <div className="levelup-level">Level {level}</div>
       </div>

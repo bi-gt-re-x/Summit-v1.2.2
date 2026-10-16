@@ -87,10 +87,10 @@ export class ErrorBoundary extends Component<Props, State> {
     const root = this.props.variant === 'root';
     return (
       <div className={`page-state page-state-crash${root ? ' is-root' : ''}`} role="alert">
-        <h2>{root ? 'Summit hit a problem.' : 'This page hit a problem.'}</h2>
+        <h2>{root ? 'Something broke.' : 'This page broke.'}</h2>
         <p>
           {root
-            ? 'Something went wrong before the app finished loading. Reloading usually clears it.'
+            ? 'The app hit an error while loading. Reloading usually fixes it.'
             : 'The rest of the app is fine. Just this screen broke.'}
         </p>
 

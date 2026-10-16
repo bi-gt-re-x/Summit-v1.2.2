@@ -1389,10 +1389,10 @@ function BlockMenu({
       )}
       {!DRAWN.has(one.type) && one.type !== 'divider' && (
         <>
-          <p className="sp-pop-head">Text colour</p>
+          <p className="sp-pop-head">Text color</p>
           {inking ? (
             <div className="sp-menu-color">
-              <ColorField value={one.color ?? '#1f2328'} label="Text colour" onChange={onColor} />
+              <ColorField value={one.color ?? '#1f2328'} label="Text color" onChange={onColor} />
               <button type="button" className="sp-ghost" onClick={() => { onColor(undefined); setInking(false); }}>
                 Default
               </button>

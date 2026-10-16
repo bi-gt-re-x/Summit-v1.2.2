@@ -192,7 +192,7 @@ export function TaskModal({
             type="text"
             id="modalTaskName"
             className={invalid ? 'invalid-input' : ''}
-            placeholder="Task Name"
+            placeholder="Task name"
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -219,7 +219,7 @@ export function TaskModal({
             <label
               style={{ fontSize: '13px', fontWeight: 500, color: '#6C757D' }}
             >
-              XP Reward:{' '}
+              XP:{' '}
               <span id="xpValue" style={{ color: '#A38A70', fontWeight: 700 }}>
                 {xp}
               </span>
@@ -264,7 +264,7 @@ export function TaskModal({
                   setPanel((p) => (p === 'timer' ? 'none' : 'timer'))
                 }
               >
-                Task Timer <span className="dropdown-arrow">▼</span>
+                Timer <span className="dropdown-arrow">▼</span>
               </button>
               <span className="or-text">OR</span>
               <button
@@ -272,14 +272,14 @@ export function TaskModal({
                 className="dropdown-btn"
                 onClick={() => setPanel((p) => (p === 'due' ? 'none' : 'due'))}
               >
-                Due Date <span className="dropdown-arrow">▼</span>
+                Due date <span className="dropdown-arrow">▼</span>
               </button>
             </div>
 
             {panel === 'timer' && (
               <div id="timerDropdown" className="dropdown-content">
                 <div className="timer-section">
-                  <p className="timer-title">How long do you want for it?</p>
+                  <p className="timer-title">How long do you need?</p>
                   <div className="timer-inputs">
                     <div className="timer-input-group">
                       <label htmlFor="timerHours">Hours</label>
@@ -362,7 +362,7 @@ export function TaskModal({
                         marginBottom: '4px',
                       }}
                     >
-                      Due date (leave the time blank for the end of the day)
+                      Due date (no time means end of day)
                     </label>
                     <input
                       type="date"
@@ -425,7 +425,7 @@ export function TaskModal({
           </p>
 
           <Button type="submit" variant="primary" size="lg" block className="dash-modal-submit" disabled={busy}>
-            Confirm &amp; Add Task
+            Add task
           </Button>
         </form>
       </div>

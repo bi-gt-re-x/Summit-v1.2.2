@@ -82,7 +82,7 @@ export function goalHealth(
   reason = '',
   signals: Partial<HealthSignals> = {},
 ): GoalHealth {
-  const label = { 'on-track': 'On Track', behind: 'Behind', 'not-started': 'Not Started' }[state];
+  const label = { 'on-track': 'On track', behind: 'Behind', 'not-started': 'Not started' }[state];
   return {
     state,
     label,

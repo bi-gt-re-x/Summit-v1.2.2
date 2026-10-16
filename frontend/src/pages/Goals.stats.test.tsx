@@ -116,7 +116,7 @@ describe('the answer at the top of Stats', () => {
   it('agrees with the per-goal breakdown underneath it', async () => {
     await openStats();
 
-    const rows = screen.getByRole('heading', { name: 'Goal Health' })
+    const rows = screen.getByRole('heading', { name: 'Goal health' })
       .closest('section')!
       .querySelectorAll('.gx-health-row');
 

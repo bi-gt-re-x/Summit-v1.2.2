@@ -369,7 +369,7 @@ export function Topbar() {
                 Settings
               </Link>
               <button type="button" className="topbar-signout" onClick={() => void signOut()}>
-                Log Out
+                Log out
               </button>
             </div>
           )}

@@ -98,7 +98,7 @@ export function EdgeCard({ edge, from, to, at, onOpen, onClose }: EdgeCardProps)
         {gate ? (
           met ? (
             <>
-              <b>{to.name}</b> was gated behind <b>{from.name}</b>, and that's done. You've already walked this part of the route.
+              <b>{to.name}</b> needed <b>{from.name}</b>, and that's done. You've already walked this part of the route.
             </>
           ) : (
             <>
@@ -109,7 +109,7 @@ export function EdgeCard({ edge, from, to, at, onOpen, onClose }: EdgeCardProps)
           )
         ) : (
           <>
-            A suggestion rather than a gate. <b>{to.name}</b> is open whether or not you do{' '}
+            It's a suggestion. You don't have to. <b>{to.name}</b> is open whether or not you do{' '}
             <b>{from.name}</b> first. It's the easier way in. Nothing's waiting on it.
           </>
         )}

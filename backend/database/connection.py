@@ -637,7 +637,7 @@ ADDED_TABLES = ('''
 ''', '''
     -- Free study resources, by subject: what session plans link to first.
     -- Not account-scoped, like skill_steps: one catalog for every reader,
-    -- loaded from data/free_resources.json (backend/tracking/free_resources),
+    -- loaded from data/free_resources.json (backend/tracking/free_resources.py),
     -- which is the committed copy.
     --
     -- Only free things are in it, and only things that are quick to start:

@@ -24,14 +24,14 @@ type Act = 'sit' | 'look' | 'walk' | 'jump' | 'sleep' | 'wave' | 'stretch' | 'sp
 const SIZE = 46;
 
 const LINES = [
-  "You've got this.",
+  "Start with the smallest task.",
   'One task at a time.',
-  'Nice work today.',
-  "I'm rooting for you!",
+  'Water break?',
+  "Stand up and stretch.",
   'Take a sip of water.',
-  'Small steps still count.',
+  'Ten minutes still counts.',
   "Don't forget a break.",
-  'Keep that streak going!',
+  'One task keeps your streak.',
 ];
 
 /** How long each act lasts, in ms. Walk is worked out from the distance. */

@@ -639,7 +639,7 @@ export function nextMove(intervals: Interval[]): Move | null {
     );
     return {
       move: 'Set a smaller number on the next one.',
-      because: `Your last ${RUN} intentions came in at ${share}% of what you aimed for.`,
+      because: `Your last ${RUN} sessions hit ${share}% of what you aimed for.`,
     };
   }
 
@@ -652,7 +652,7 @@ export function nextMove(intervals: Interval[]): Move | null {
     if (now >= usual + 2 && now >= 2) {
       return {
         move: 'Take a break or try a shorter session next.',
-        because: `The last ${RUN} averaged ${now.toFixed(1)} pauses against your usual ${usual.toFixed(1)}.`,
+        because: `Your last ${RUN} averaged ${now.toFixed(1)} pauses. You usually have ${usual.toFixed(1)}.`,
       };
     }
   }
@@ -664,7 +664,7 @@ export function nextMove(intervals: Interval[]): Move | null {
     if (longer) {
       return {
         move: `You could go longer. ${longer.name} runs ${longer.focus} min.`,
-        because: `Your last ${RUN} at ${sameLength} min all ran clean through, unbroken.`,
+        because: `Your last ${RUN} at ${sameLength} min all ran start to finish.`,
       };
     }
   }

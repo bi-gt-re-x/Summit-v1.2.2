@@ -77,8 +77,8 @@ export const STRENGTH_TONE: Record<HabitStrength, string> = {
 
 export const STRENGTH_NOTE: Record<HabitStrength, string> = {
   strong: "Shows up most weeks and isn't fading. These keep your totals up.",
-  developing: "Shows up often, but not every week yet. It's not a routine yet.",
-  inconsistent: 'Big gaps between times. It happens when it happens.',
+  developing: "Shows up often, but not every week. Not a routine yet.",
+  inconsistent: 'Long gaps in between. No regular pattern yet.',
   declining: "Way down from before. It's still there, but it'll fade unless something changes.",
 };
 
@@ -447,7 +447,7 @@ export const CALENDAR_WINDOWS: Array<{ key: CalendarKey; label: string; days: nu
   { key: '30', label: '30D', days: 30 },
   { key: '90', label: '90D', days: 90 },
   { key: '365', label: '1Y', days: 365 },
-  { key: 'all', label: 'All Time', days: null },
+  { key: 'all', label: 'All time', days: null },
 ];
 
 export interface CalendarCell {

@@ -143,7 +143,7 @@ describe('what a session on a task leaves behind', () => {
     show();
 
     const sittings = await screen.findByRole('region', { name: /today's sessions/i });
-    await waitFor(() => expect(sittings).toHaveTextContent(/Revise integrals1 sitting25m/));
+    await waitFor(() => expect(sittings).toHaveTextContent(/Revise integrals1 session25m/));
 
     const stored = JSON.parse(localStorage.getItem('pomodoro:intervals:myles') ?? '[]') as Interval[];
     expect(stored.at(-1)).toMatchObject({ taskId: 't-int', taskTitle: 'Revise integrals' });
@@ -164,11 +164,11 @@ describe('what a session on a task leaves behind', () => {
     const sittings = await screen.findByRole('region', { name: /today's sessions/i });
     const items = within(sittings).getAllByRole('listitem').map((li) => li.textContent);
     expect(items).toEqual([
-      'Draft the essay2 sittings1h 5m',
-      'Revise integrals1 sitting50m',
-      'No task picked1 sitting25m',
+      'Draft the essay2 sessions1h 5m',
+      'Revise integrals1 session50m',
+      'No task picked1 session25m',
     ]);
-    expect(sittings).toHaveTextContent('2h 20m across 4 sittings');
+    expect(sittings).toHaveTextContent('2h 20m across 4 sessions');
   });
 
   it('says so when there are none yet today', async () => {

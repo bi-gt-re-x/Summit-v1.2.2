@@ -76,9 +76,9 @@ export const WEIGHT_LABEL: Record<ProblemWeight, string> = {
 };
 
 export const WEIGHT_BLURB: Record<ProblemWeight, string> = {
-  warmup: 'Short, and answerable straight from the step.',
-  core: 'The ordinary version of the skill, unaided.',
-  stretch: 'Harder than the step asked for. This is the one that proves it.',
+  warmup: 'Short. You can answer it straight from the step.',
+  core: 'The standard version, on your own.',
+  stretch: "Harder than the step. Get this right and you've got it.",
 };
 
 /** The fraction of a set that opens light. Rounded up, so it is a floor. */

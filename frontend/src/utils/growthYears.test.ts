@@ -198,7 +198,7 @@ describe('growthArc', () => {
     const tasks = [...rated(2024, 40, 2.5, 3.5), ...rated(2025, 40, 3.6, 3.5)];
     const arc = growthArc(growthYears(days, tasks));
     expect(arc.kind).toBe('harder');
-    expect(arc.sentence).toMatch(/Harder work, held steady/);
+    expect(arc.sentence).toMatch(/difficulty rose from/);
     expect(arc.headline).toBe('Harder work, held steady');
   });
 

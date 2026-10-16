@@ -135,7 +135,7 @@ export default function Login() {
         <Range variant="login" className="auth-range" />
         {home}
         <div className="auth-pitch">
-          <h1>Get it done. Watch it add up.</h1>
+          <h1>A to-do list that keeps score.</h1>
           <p>
             Every task you finish counts toward your streak, your level and your growth
             score.

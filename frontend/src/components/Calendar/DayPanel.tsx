@@ -189,7 +189,7 @@ export function DayPanel({
       <div className="calendar-bottom-section">
         <div className="calendar-bottom-box full-width">
           <div className="day-panel-head">
-            <h3>What You&apos;ll Do Today</h3>
+            <h3>Today&apos;s plan</h3>
             {/* The original only ever made an event by dragging a slot on the
                 week grid, which left the month view with no way to add one at
                 all. It has one now. */}
@@ -212,7 +212,7 @@ export function DayPanel({
               </span>
               <span className="dp-goal-main">
                 <span className="dp-goal-row">
-                  <span className="dp-goal-label">Daily Goal</span>
+                  <span className="dp-goal-label">Daily goal</span>
                   <span className="dp-goal-figs">
                     <strong>{earnedXp.toLocaleString()}</strong> / {goalXp.toLocaleString()} XP
                   </span>
@@ -241,7 +241,7 @@ export function DayPanel({
               ones they have always had. */}
           <ul id="dailyTasks">
             {entries.length === 0 && (
-              <li className="no-events-message">No Tasks or Events scheduled yet</li>
+              <li className="no-events-message">Nothing scheduled yet</li>
             )}
 
             {entries.map((entry) => {

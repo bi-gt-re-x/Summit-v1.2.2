@@ -99,7 +99,7 @@ export function StatCards({ counts, series }: StatCardsProps) {
       label: 'Open',
       hint:
         move === null
-          ? 'Everything still on your list'
+          ? "Everything that's still open"
           : `${move > 0 ? '+' : ''}${move}% from last week`,
       tone: 'violet',
       line: series.open,
@@ -107,7 +107,7 @@ export function StatCards({ counts, series }: StatCardsProps) {
     {
       key: 'today',
       value: counts.today,
-      label: 'Due Today',
+      label: 'Due today',
       hint:
         counts.todayHigh > 0
           ? `${counts.todayHigh} high priority`
@@ -121,7 +121,7 @@ export function StatCards({ counts, series }: StatCardsProps) {
       key: 'overdue',
       value: counts.overdue,
       label: 'Overdue',
-      hint: counts.overdue > 0 ? 'Get back on track' : 'Nothing past its date',
+      hint: counts.overdue > 0 ? 'Get back on track' : 'Nothing overdue',
       tone: 'red',
       line: series.overdue,
     },
@@ -129,7 +129,7 @@ export function StatCards({ counts, series }: StatCardsProps) {
       key: 'rate',
       value: counts.completionRate,
       suffix: '%',
-      label: 'Completion Rate',
+      label: 'Done this week',
       hint: 'This week',
       tone: 'green',
       line: series.completion,
@@ -137,7 +137,7 @@ export function StatCards({ counts, series }: StatCardsProps) {
     {
       key: 'xp',
       value: counts.openXp,
-      label: 'XP on the Table',
+      label: 'XP up for grabs',
       hint: 'Finish tasks to earn',
       tone: 'violet',
       line: series.openXp,

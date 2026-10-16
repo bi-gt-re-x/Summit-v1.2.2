@@ -185,7 +185,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       advice:
         held >= HELD_RATIO
           ? "You show up plenty. Now spend a day on something hard enough that it might not go well."
-          : 'Your days are hit and miss. Pick the day you skip most and guard just that one.',
+          : 'Your days are hit and miss. Pick the day you skip most and make sure you work that day.',
     });
   }
 
@@ -231,7 +231,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
           ? `Over half your work is ${top.name}. If that's the plan, great. If not, take an hour off it this week.`
           : share <= SCATTERED_SHARE && real.length >= 3
             ? `Your time is spread out. Your top subject is only ${share}% of it. If one matters most, give it more of your week.`
-            : `One clear lead, and nothing else gets crowded out. Keep the split and dig deeper into ${top.name}.`,
+            : `One subject leads, but the others still get time. Keep the split and go deeper on ${top.name}.`,
     });
   }
 

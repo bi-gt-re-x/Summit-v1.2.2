@@ -135,12 +135,10 @@ export function Hero({
         )}
 
         <h1 className="lp-hero-title">
-          Get it done. <em>Watch it add up.</em>
+          A to-do list <em>that keeps score.</em>
         </h1>
         <p className="lp-hero-sub hm-rise">
-          Tasks, a calendar and a focus timer in one app. Every task you finish earns
-          XP, keeps your streak going and bumps your growth score. Log it once and
-          you're done.
+          Tasks, a calendar and a focus timer in one app. Every task you finish earns XP, keeps your streak alive and moves your growth score. Log it once and you're done.
         </p>
         {/* Every call to action on this page is a pitch to a visitor who has no
             account yet. Someone already signed in has nothing left to be sold,
@@ -206,7 +204,7 @@ export function Hero({
         </div>
         <div className="lp-preview lp-preview-rating">
           <div className="lp-prev-head">
-            <span>Growth Rating</span>
+            <span>Growth rating</span>
           </div>
           <svg viewBox="0 0 120 120" className="lp-radar">
             <polygon
@@ -255,7 +253,7 @@ const FEATURES = [
     ico: 'lp-ico-green',
     glyph: 'sprout' as const,
     title: 'See how you\'re really doing',
-    body: 'Five stats add up to one growth score, and you can see exactly how each one is worked out.',
+    body: "Five stats make one growth score. Tap any of them to see how it's worked out.",
     bits: ['Streaks', 'Growth score', 'Records'],
     to: '/growth',
     label: 'Go to Growth',
@@ -455,7 +453,7 @@ const PHILOSOPHY = [
       </>
     ),
     title: 'Progress you can see',
-    body: 'Everything you finish turns into a number, and you can always check where that number came from.',
+    body: 'Everything you finish turns into a number, and you can always see where it came from.',
   },
   {
     ico: 'lp-ico-gold',
@@ -639,7 +637,7 @@ export function Pricing({
 const TECH = [
   { ico: 'lp-ico-teal', glyph: 'monitor' as const, title: 'Frontend', bits: ['React 19', 'TypeScript', 'Vite'] },
   { ico: 'lp-ico-green', glyph: 'wrench' as const, title: 'Backend', bits: ['Python', 'FastAPI', 'Uvicorn'] },
-  { ico: 'lp-ico-gold', glyph: 'database' as const, title: 'Database', bits: ['SQLite'] },
+  { ico: 'lp-ico-gold', glyph: 'database' as const, title: 'Database', bits: ['PostgreSQL', 'SQLite'] },
   { ico: 'lp-ico-purple', glyph: 'chart' as const, title: 'Visualization', bits: ['SVG', 'Canvas'] },
 ];
 
@@ -648,7 +646,7 @@ export function TechStack() {
     <section className="lp-section">
       <SectionHead
         title="Under the hood"
-        blurb="React up front, Python in back, and all your data in one SQLite file. Copy it to a USB stick and take it with you."
+        blurb="React up front, Python in back, and your data in a database on the server. You can export all of it from Settings anytime."
       />
       <div className="lp-tech" id="techGrid">
         <svg className="tech-wires" id="techWires" aria-hidden="true" />
@@ -720,7 +718,7 @@ export function FinalCta({
           one. It opens the same popup the hero's button does now. */}
       {signedIn ? (
         <Link to="/dashboard" className="lp-btn lp-btn-primary lp-btn-lg">
-          Go to Your Dashboard <span className="lp-arrow">→</span>
+          Go to your dashboard <span className="lp-arrow">→</span>
         </Link>
       ) : (
         <button type="button" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onGetStarted}>

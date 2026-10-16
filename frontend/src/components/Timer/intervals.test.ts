@@ -374,7 +374,7 @@ describe('the next move', () => {
   it('suggests going longer after a run of clean ones', () => {
     const move = nextMove(many(3, { styleId: 'classic', planned: 25, minutes: 25, pauses: 0 }))!;
     expect(move.move).toMatch(/longer/i);
-    expect(move.because).toMatch(/ran clean through/i);
+    expect(move.because).toMatch(/ran start to finish/i);
   });
 
   it('will not tell somebody to sit longer while they are under-delivering', () => {
@@ -394,7 +394,7 @@ describe('the next move', () => {
       ...many(3, { planned: 25, minutes: 25, pauses: 3 }),
     ])!;
     expect(move.move).toMatch(/break|shorter/i);
-    expect(move.because).toMatch(/against your usual/i);
+    expect(move.because).toMatch(/you usually have/i);
   });
 
   it('suggests a smaller number after a run of missed intentions', () => {

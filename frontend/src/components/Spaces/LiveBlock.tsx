@@ -176,7 +176,7 @@ export function LiveBlock({ one, disabled, register, onChange, onKey }: LiveBloc
           disabled={disabled}
           onChange={(event) => onChange({ text: event.target.value })}
         />
-        <span className="sp-live-badge" title="Updates on its own when your data changes">
+        <span className="sp-live-badge" title="Updates when your data changes">
           <span className="sp-live-dot" aria-hidden="true" />
           <span className="sp-live-badge-word">Live</span>
         </span>

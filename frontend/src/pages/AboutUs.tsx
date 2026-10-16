@@ -35,15 +35,15 @@ const VALUES = [
   },
   {
     title: 'Measurable progress',
-    body: 'Every action turns into a number you can see and improve.',
+    body: 'Everything you do turns into a number you can see and improve.',
   },
   {
-    title: 'Rewarding productivity',
+    title: 'Make it rewarding',
     body: 'XP, levels and grades make finishing work feel good.',
   },
   {
     title: 'Simplicity first',
-    body: 'No clutter. Just the few tools that actually move the needle.',
+    body: "No clutter. Just the tools you'll actually use.",
   },
 ];
 
@@ -65,10 +65,7 @@ export default function AboutUs() {
 
       <h2>Where it came from</h2>
       <p>
-        A student&apos;s answer to working hard all day and still wondering whether anything
-        got done. Spreadsheets were tedious and the big suites were bloated, so this is the
-        smaller thing: tasks, a calendar, focus sessions and goals, feeding streaks, XP and
-        a growth rating.
+        I kept working hard all day and still wondering if anything got done. Spreadsheets were a pain and the big apps were bloated. So I built something smaller: tasks, a calendar, focus sessions and goals that feed your streak, XP and growth score.
       </p>
 
       <h2>What it's built on</h2>

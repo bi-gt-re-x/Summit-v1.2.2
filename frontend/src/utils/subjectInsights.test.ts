@@ -95,7 +95,7 @@ describe('subjectInsights', () => {
     const momentum = subjectInsights(card('chem'), cards, TASKS, TODAY).find((entry) => entry.key === 'momentum')!;
     // Aug 20 and Sep 1 at 20 XP before, four at 40 XP since.
     expect(momentum.detail).toContain(
-      'You worked on it 4 days, up from 2. You finished 4 tasks against 2. Each task was worth more: 40 XP against 20.',
+      'You worked on it 4 days, up from 2. You finished 4 tasks, up from 2. Each task was worth more: 40 XP vs. 20.',
     );
     expect(momentum.figures[0]).toEqual({ label: 'Tasks', value: '4 (was 2)' });
     expect(momentum.bars).toHaveLength(2);

@@ -116,7 +116,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
         <span className="slv-bar" aria-hidden="true">
           <span style={{ width: `${read.mastery}%` }} />
         </span>
-        <p className="slv-hint">How far along the five levels, with credit for progress toward the next.</p>
+        <p className="slv-hint">Your level from 1 to 5, plus progress toward the next one.</p>
       </div>
 
       <dl className="slv-facts">
@@ -144,7 +144,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
               <span className="slv-then">{TIER_NAME[then.hardest]} → </span>
             )}
             {read.hardest ? TIER_NAME[read.hardest] : '-'}
-            <small>the hardest difficulty you have got right</small>
+            <small>the hardest level you've gotten right</small>
           </dd>
         </div>
         <div>
@@ -165,7 +165,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
           <dt>Confidence</dt>
           <dd>
             {EVIDENCE_TEXT[read.evidence]}
-            <small>how much this level stands on</small>
+            <small>how many problems this is based on</small>
           </dd>
         </div>
       </dl>
@@ -249,7 +249,7 @@ export function LevelChain({
       <p className="slv-chain-sum">
         {started === 0
           ? "No step practiced yet. Open one, try its problems and mark each right or wrong. Your level comes from that."
-          : `${started} of ${steps.length} steps practiced. Levels come from problems you marked right or wrong.`}
+          : `${started} of ${steps.length} steps practiced. Levels come from the problems you mark right or wrong.`}
       </p>
       <ol className="slv-chain">
         {reads.map(({ step, read }) => (

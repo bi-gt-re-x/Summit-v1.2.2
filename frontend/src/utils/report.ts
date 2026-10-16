@@ -295,7 +295,7 @@ function insightSection(input: ReportInput): string {
   if (patterns.length === 0) {
     lines.push(
       wrap(
-        `No patterns in the last ${patternDays} days. A pattern needs 6+ tasks on each side and a 10% gap. The bar is high so luck can't fake one.`,
+        `No patterns in the last ${patternDays} days. A pattern needs 6+ tasks on each side and a 10% gap. The bar is high so a lucky week won't count.`,
       ),
     );
     return lines.join('\n');
@@ -303,7 +303,7 @@ function insightSection(input: ReportInput): string {
 
   lines.push(
     wrap(
-      `Differences between two groups of your tasks over the last ${patternDays} days. These go together, but that doesn't prove a cause. Test them before you trust them.`,
+      `Differences between two groups of your tasks over the last ${patternDays} days. These go together, but that doesn't prove a cause. Try them out before you count on them.`,
     ),
     '',
   );
@@ -324,7 +324,7 @@ function recommendationSection(input: ReportInput): string {
 
   lines.push(
     wrap(
-      `From your last ${adviceDays} days, since this week's changes should come from recent work.`,
+      `From your last ${adviceDays} days, because what you change this week should be based on recent work.`,
     ),
     '',
   );
@@ -354,7 +354,7 @@ function recommendationSection(input: ReportInput): string {
   } else {
     lines.push(
       wrap(
-        'Nothing to change. No long gaps, no dead weekends and no subject falling behind. Nice.',
+        'Nothing to change. No long gaps, no dead weekends and no subject falling behind.',
       ),
       '',
     );

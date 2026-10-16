@@ -89,7 +89,7 @@ export function EventModal({
     >
       <div className="modal-content">
         <div className="modal-header">
-          <h3>{editing ? 'Edit Section' : 'Add new section'}</h3>
+          <h3>{editing ? 'Edit section' : 'Add new section'}</h3>
           <span className="close-btn" role="button" tabIndex={0} onClick={onClose}>
             ×
           </span>
@@ -97,12 +97,12 @@ export function EventModal({
 
         <div className="modal-body">
           <div className="form-group">
-            <label htmlFor="timeframeName">Timeframe Name:</label>
+            <label htmlFor="timeframeName">Name</label>
             <input
               id="timeframeName"
               type="text"
               className={showErrors && missingName ? 'invalid-input' : ''}
-              placeholder="e.g., Morning Workout"
+              placeholder='Like "Morning workout"'
               value={name}
               onChange={(event) => setName(event.target.value)}
               autoFocus
@@ -111,14 +111,14 @@ export function EventModal({
 
           <TimePicker
             id="start"
-            label="Start Time:"
+            label="Start"
             value={startTime}
             onChange={setStartTime}
             invalid={showErrors && (!startTime || badSpan)}
           />
           <TimePicker
             id="end"
-            label="End Time:"
+            label="End"
             value={endTime}
             onChange={setEndTime}
             invalid={showErrors && (!endTime || badSpan)}
@@ -127,7 +127,7 @@ export function EventModal({
           {editing
             ? recurring && (
                 <div className="form-group">
-                  <label>Apply changes to:</label>
+                  <label>Change</label>
                   <div className="radio-group">
                     <label>
                       <input
@@ -169,7 +169,7 @@ export function EventModal({
             Cancel
           </button>
           <button type="button" className="btn-confirm" onClick={save}>
-            {editing ? 'Save Changes' : 'Add Section'}
+            {editing ? 'Save' : 'Add section'}
           </button>
         </div>
       </div>

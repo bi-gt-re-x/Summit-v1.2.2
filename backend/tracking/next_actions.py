@@ -237,7 +237,7 @@ def _links_to(task, goal_id):
 def typical_minutes(finished):
     """The median timed task, in minutes, between ten and sixty — or None with
     fewer than five timed."""
-    # Time spent, not `completion_seconds` raw — see backend/tracking/time_spent.
+    # Time spent, not `completion_seconds` raw — see backend/tracking/time_spent.py.
     timed = sorted(s for s in (time_spent.seconds_spent(task) for task in finished) if s)
     if len(timed) < 5:
         return None

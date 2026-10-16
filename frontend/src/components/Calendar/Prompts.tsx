@@ -43,7 +43,7 @@ export function DeleteConfirm({
       title={`Delete ${kind}?`}
       description={
         repeats
-          ? `"${name}" lands on ${occurrences} days. This can't be undone.`
+          ? `"${name}" is on ${occurrences} days. This can't be undone.`
           : `Delete "${name}"? This can't be undone.`
       }
       actions={
@@ -167,7 +167,7 @@ export function ConflictDialog({
     <div className={`wk-overlap-backdrop${peeking ? ' is-peeking' : ''}`}>
       <div className="wk-overlap-popup" role="alertdialog" aria-modal={!peeking}>
         <span className="wk-overlap-msg">
-          Two things are booked over each other on <strong>{where}</strong>. Delete
+          Two things overlap on <strong>{where}</strong>. Delete
           one to continue:
         </span>
 

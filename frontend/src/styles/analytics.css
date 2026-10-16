@@ -3466,9 +3466,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
    the loud one and the finding is the quiet one under it. */
 
 /* "Why" / "What to do". One word above a line, not a
-   paragraph competing with it — see the note in
-   src/components/Recommendations/Panels.tsx for why the labels came back after
-   being deliberately removed. */
+   paragraph competing with it. */
 .ax-advice-label {
     margin: var(--space-3) 0 var(--space-1);
     font-size: var(--text-2xs);
@@ -3877,8 +3875,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
     color: var(--ax-muted);
 }
 
-/* The commitment. Local to the browser and honest about it — see `useTrying`
-   in components/Recommendations/Panels. */
+/* The commitment. Local to the browser and honest about it. */
 .ax-try {
     flex: none;
     height: 32px;

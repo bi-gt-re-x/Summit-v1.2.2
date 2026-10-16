@@ -428,7 +428,7 @@ export function GoalDetail(props: GoalDetailProps) {
               <span className="gx-quiet">
                 {reading.change === null
                   ? `${reading.now} finished in the last two weeks`
-                  : `${reading.now} in the last two weeks against ${reading.before} before`}
+                  : `${reading.now} in the last two weeks vs. ${reading.before} before`}
               </span>
             </div>
             <div>
@@ -439,7 +439,7 @@ export function GoalDetail(props: GoalDetailProps) {
               </span>
             </div>
             <div>
-              <span className="gx-quiet">Work recorded</span>
+              <span className="gx-quiet">Work done</span>
               <strong>{reading.finished}</strong>
               <span className="gx-quiet">
                 tasks finished{reading.xp > 0 ? `, ${reading.xp.toLocaleString()} XP` : ''}
@@ -456,7 +456,7 @@ export function GoalDetail(props: GoalDetailProps) {
                     ? 'no target date to compare'
                     : 'not moving yet'
                   : pace.drift > 0
-                    ? `about ${pace.drift} days after the date on it`
+                    ? `about ${pace.drift} days late`
                     : `about ${Math.abs(pace.drift)} days early`}
               </span>
             </div>
@@ -464,9 +464,9 @@ export function GoalDetail(props: GoalDetailProps) {
 
           {stuck && (
             <p className="gx-bottleneck">
-              <strong>Current bottleneck: {stuck.milestone.title}</strong>
+              <strong>What's in the way: {stuck.milestone.title}</strong>
               {stuck.waitingDays !== null
-                ? ` It has been the next checkpoint for ${stuck.waitingDays} days`
+                ? `You've been on this checkpoint for ${stuck.waitingDays} days`
                 : " It's the next checkpoint"}
               {stuck.tasks > 0
                 ? `, with ${stuck.done} of its ${stuck.tasks} tasks done.`
@@ -484,7 +484,7 @@ export function GoalDetail(props: GoalDetailProps) {
           )}
 
           <p className="gx-quiet gx-caveat">
-            Counted from the {linked.length} task{linked.length === 1 ? '' : 's'} linked to this goal.
+            Based on the {linked.length} task{linked.length === 1 ? '' : 's'} linked to this goal.
           </p>
         </section>
 
@@ -504,7 +504,7 @@ export function GoalDetail(props: GoalDetailProps) {
               ))}
             </ul>
             <p className="gx-quiet gx-caveat">
-              Nothing here changes on its own. Moving a target is your call.
+              Nothing changes on its own. You decide if the target moves.
             </p>
           </section>
         )}

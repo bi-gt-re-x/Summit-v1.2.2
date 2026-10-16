@@ -570,7 +570,7 @@ export function recommendations(input: AdviceInput): Advice[] {
       category: 'Burnout',
       title: 'Plan a light day',
       because: `You've worked ${load.longestRun} days in a row with no light day.`,
-      action: 'Pick one day a week to do the minimum. Your streak stays intact.',
+      action: 'Pick one day a week to do the minimum. It still counts for your streak.',
       evidence: `Longest run here: ${load.longestRun} days in a row.`,
       impact: 0,
       workings: "This one doesn't change your XP.",
@@ -601,7 +601,7 @@ export function recommendations(input: AdviceInput): Advice[] {
       id: 'execution-slipping',
       kind: 'quality',
       category: 'Execution',
-      title: 'Tasks are done, but not well',
+      title: 'Your tasks get done, but not well',
       because: `You rate your execution ${value.toFixed(1)}/5 on average.`,
       action: 'Give one task a full session instead of splitting the time.',
       evidence: `You rate how it went ${value.toFixed(1)}/5 on average, across ${quality.rated} tasks. Difficulty averages ${(quality.difficulty ?? 0).toFixed(1)}/5.`,
@@ -831,7 +831,7 @@ function fallbacks(
       category: 'Scheduling',
       title: `${quietest.label}s are your weakest day`,
       because: `You average ${Math.round(quietest.avgXp).toLocaleString()} XP on ${quietest.label}s and ${Math.round(busiest.avgXp).toLocaleString()} on ${busiest.label}s.`,
-      action: `Find what's eating your ${quietest.label}s and move your session to a free hour.`,
+      action: `Find what gets in the way on ${quietest.label}s and move your session to a free hour.`,
       evidence: `${quietest.label}s average ${Math.round(quietest.avgXp).toLocaleString()} XP. You work on ${Math.round(quietest.activeRate)}% of them.`,
       impact: Math.round(lift * 52),
       workings: `Half the gap to your best weekday, ${Math.round(lift).toLocaleString()} XP, on the
@@ -881,8 +881,8 @@ function fallbacks(
       category: behind ? 'Execution' : 'Quality',
       title: behind ? 'Focus on doing it well' : 'Take on harder tasks',
       because: behind
-        ? `How well it goes (${quality.execution.toFixed(1)}/5) is lower than how hard it is (${quality.difficulty.toFixed(1)}/5).`
-        : `How hard it is (${quality.difficulty.toFixed(1)}/5) is lower than how well it goes (${quality.execution.toFixed(1)}/5).`,
+        ? `Your tasks are hard (${quality.difficulty.toFixed(1)}/5) and aren't going well (${quality.execution.toFixed(1)}/5).`
+        : `Your tasks go well (${quality.execution.toFixed(1)}/5) but aren't very hard (${quality.difficulty.toFixed(1)}/5).`,
       action: behind
         ? 'Finish one task properly before starting the next.'
         : 'Add one harder task each week.',

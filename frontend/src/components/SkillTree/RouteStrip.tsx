@@ -49,7 +49,7 @@ export function RouteStrip({ focus, traced, onSelect, onClear }: RouteStripProps
   const last = route.length - 1;
 
   return (
-    <nav className={`stx-route${traced ? ' is-traced' : ''}`} aria-label="Your route through this branch">
+    <nav className={`stx-route${traced ? ' is-traced' : ''}`} aria-label="Your path through this branch">
       <span className="stx-route-label">
         {traced ? `Route here · ${route.length} skills` : 'Your route'}
       </span>

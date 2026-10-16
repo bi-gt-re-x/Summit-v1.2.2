@@ -105,8 +105,7 @@ export function FocusSetup({ subjects, suggested, onDone, onSkip }: FocusSetupPr
         <p className="stx-setup-eyebrow">Start here</p>
         <h1>Pick five subjects to focus on</h1>
         <p className="stx-setup-lead">
-          These five sit across the top of the page and take you straight back to what you're
-          working on. You can swap them anytime, and every other subject is one search away.
+          They sit at the top of the page so you can jump back to them fast. Swap them anytime. Every other subject is one search away.
         </p>
       </header>
 

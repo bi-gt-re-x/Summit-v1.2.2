@@ -158,7 +158,7 @@ export function CatchUp({ days, busy = false, failure = null, onSubmit, onClose 
           {days.length === 1 ? 'this day' : `any of these ${days.length} days`}?
         </h3>
         <p className="cu-lead">
-          Time you worked without the timer. It counts the same once it's in. Leave a day blank if you didn't work.
+          Add time you worked without the timer. It counts the same. Leave a day blank if you didn't work.
         </p>
 
         <ul className="cu-rows">

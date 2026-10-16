@@ -393,7 +393,7 @@ export function monthInsight(
   if (future) {
     return {
       headline: 'Nothing here yet.',
-      hint: 'Plan the days you know about. The rest will come.',
+      hint: 'Add the days you already know about.',
     };
   }
 
@@ -407,8 +407,8 @@ export function monthInsight(
   const dayGap = current.settled - previous.settled;
   if (dayGap > 0) {
     return {
-      headline: `Nice and steady! You finished ${dayGap} more ${dayGap === 1 ? 'day' : 'days'} than ${against}.`,
-      hint: 'Keep it rolling into next month.',
+      headline: `You finished ${dayGap} more ${dayGap === 1 ? 'day' : 'days'} than ${against}.`,
+      hint: 'Plan next month the same way.',
     };
   }
 
@@ -433,6 +433,6 @@ export function monthInsight(
     current.scheduled > 0 ? Math.round((current.settled / current.scheduled) * 100) : 0;
   return {
     headline: `You cleared every task on ${rate}% of your scheduled days.`,
-    hint: 'Steady is progress too. Keep it up.',
+    hint: 'Clearing one more day next month would raise it.',
   };
 }

@@ -175,7 +175,7 @@ function SubjectBreakdown({ breakdown }: { breakdown: SubjectXp }) {
 
   return (
     <section className="wk-panel">
-      <h3 className="wk-panel-title">XP by Subject</h3>
+      <h3 className="wk-panel-title">XP by subject</h3>
       {total === 0 ? (
         <p className="wk-empty">No XP earned this week yet.</p>
       ) : (
@@ -246,7 +246,7 @@ function PriorityChart({ priorities }: { priorities: PriorityRow[] }) {
 
   return (
     <section className="wk-panel">
-      <h3 className="wk-panel-title">Tasks by Priority</h3>
+      <h3 className="wk-panel-title">Tasks by priority</h3>
       {total === 0 ? (
         <p className="wk-empty">Nothing scheduled this week.</p>
       ) : (
@@ -324,7 +324,7 @@ function WeekFocusCard({
           aria-label="Weekly focus goal progress"
         />
       </div>
-      <p className="wk-focustime-sub">{percent}% Goal Progress</p>
+      <p className="wk-focustime-sub">{percent}% of goal</p>
 
       {anyFocus && (
         <>
@@ -369,7 +369,7 @@ function WeekFocusCard({
       )}
 
       <button type="button" className="wk-panel-link" onClick={onViewAnalytics}>
-        View Analytics<span aria-hidden="true"> →</span>
+        Open Analytics<span aria-hidden="true"> →</span>
       </button>
     </section>
   );
@@ -479,7 +479,7 @@ export function WeekSidebar({
           <path d="M8 4h3.5v16H8z" />
           <path d="m14.2 5.1 2.6-.7a1.5 1.5 0 0 1 1.8 1l3 11a1.5 1.5 0 0 1-1 1.9l-2.6.7Z" />
         </svg>
-        <span>Subject Library</span>
+        <span>Subjects</span>
       </button>
 
       {/* --- The month, with this week on it -------------------------------
@@ -541,7 +541,7 @@ export function WeekSidebar({
             <p className="wk-weekly-said">
               {total === 0
                 ? 'Nothing scheduled this week yet.'
-                : `${done} of ${total} finished, ${xp.toLocaleString()} XP banked.`}
+                : `${done} of ${total} finished, ${xp.toLocaleString()} XP earned.`}
             </p>
           </div>
         }
@@ -586,9 +586,9 @@ export function WeekSidebar({
       <section className="wk-panel">
         <h3 className="wk-panel-title"><Icon name="flame" /> Streaks</h3>
         <div className="wk-streak-num">
-          <Icon name="flame" /> {streak} Day Streak
+          <Icon name="flame" /> {streak}-day streak
         </div>
-        <div className="wk-streak-sub">Keep it up!</div>
+        <div className="wk-streak-sub">One task a day keeps it going.</div>
         <div className="wk-dots">
           {days.map((day, index) => (
             <span key={index} className="wk-dot-cell">

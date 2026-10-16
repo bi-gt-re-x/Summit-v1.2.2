@@ -103,7 +103,7 @@ describe('the hover card', () => {
 
   it('says a diamond is a doorway rather than counting its prerequisites', () => {
     draw('quad', { nav: true });
-    expect(screen.getByText('Opens a lattice of its own.')).toBeInTheDocument();
+    expect(screen.getByText('Opens its own tree.')).toBeInTheDocument();
     expect(screen.queryByText(/prerequisites done/)).not.toBeInTheDocument();
   });
 });

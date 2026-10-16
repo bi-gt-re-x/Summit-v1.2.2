@@ -53,18 +53,18 @@ export function FeatureGate() {
         <span className="gs-badge" aria-hidden="true">
           <Lock />
         </span>
-        <p className="gs-eyebrow">Advanced feature</p>
+        <p className="gs-eyebrow">Unlocks soon</p>
         <h1 id="gs-title">{feature.name}</h1>
         <p className="gs-what">{feature.what}</p>
 
         <div className="gs-why">
-          <strong>Why it waits</strong>
+          <strong>Why the wait?</strong>
           <p>{feature.why}</p>
         </div>
 
         {starter.stage === 'starter' && (
           <p className="gs-when">
-            Your first days start with Dashboard, Calendar and Timer. Everything else shows up in{' '}
+            Your first days start with Dashboard, Calendar and Timer, so it's not overwhelming. The rest shows up in{' '}
             {starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`}, or sooner if you reach level{' '}
             {STARTER_LEVEL}.
           </p>
@@ -81,7 +81,7 @@ export function FeatureGate() {
           </button>
         </div>
         <p className="gs-foot">
-          Opening it keeps it open. You can unlock everything at once in Settings, under Getting started.
+          Once you open it, it stays open. To unlock everything now, go to Settings, then Getting started.
         </p>
       </section>
     </div>

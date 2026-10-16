@@ -67,7 +67,7 @@ function FocusTimer({ username }: { username: string | null }) {
             <path d="M12 9v4l2.5 2M9 2h6" />
           </svg>
         </span>
-        <h2>Focus Timer</h2>
+        <h2>Focus timer</h2>
       </header>
 
       <div className="tk-dial">
@@ -134,13 +134,13 @@ function Upcoming({
             <path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z" />
           </svg>
         </span>
-        <h2>Upcoming Tasks</h2>
+        <h2>Coming up</h2>
         <button type="button" className="tk-side-all" onClick={onAll}>
           View all
         </button>
       </header>
       {tasks.length === 0 ? (
-        <p className="tk-side-empty">Nothing dated ahead of you.</p>
+        <p className="tk-side-empty">Nothing coming up.</p>
       ) : (
         <ul className="tk-next">
           {tasks.map((task) => (
@@ -173,14 +173,14 @@ function Streaks({ rows, onAll }: { rows: Streak[]; onAll: () => void }) {
             <path d="M12 3s5 4 5 8a5 5 0 0 1-10 0c0-1.5 1-3 1-3s.5 2 2 2c0-3 2-7 2-7z" />
           </svg>
         </span>
-        <h2>Task Streaks</h2>
+        <h2>Streaks</h2>
         <button type="button" className="tk-side-all" onClick={onAll}>
           View all
         </button>
       </header>
       {rows.length === 0 ? (
         <p className="tk-side-empty">
-          Nothing on a run yet. Two days together starts one.
+          No streaks yet. Two days in a row starts one.
         </p>
       ) : (
         <ul className="tk-streaks">
@@ -266,7 +266,7 @@ function QuickAdd({
             <path d="M13 2L4 14h6l-1 8 9-12h-6z" />
           </svg>
         </span>
-        <h2>Quick Add</h2>
+        <h2>Quick add</h2>
       </header>
 
       <input

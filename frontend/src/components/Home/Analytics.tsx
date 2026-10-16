@@ -238,7 +238,7 @@ export function Analytics() {
       <div className="lp-ax">
         <div className="lp-card lp-ax-score">
           <div className="lp-card-top">
-            <span className="lp-metric-label">Growth Score</span>
+            <span className="lp-metric-label">Growth score</span>
           </div>
 
           <div className="lp-ax-dial">

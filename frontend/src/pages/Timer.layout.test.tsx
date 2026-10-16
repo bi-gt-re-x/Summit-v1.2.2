@@ -72,7 +72,7 @@ describe('what the page is made of', () => {
     const panel = (await screen.findByRole('heading', { name: /pick your focus/i })).closest('section');
     expect(panel).not.toBeNull();
     expect(within(panel!).getByLabelText('Intensity')).toBeInTheDocument();
-    expect(within(panel!).getByLabelText('Pomodoro style')).toBeInTheDocument();
+    expect(within(panel!).getByLabelText('Timer style')).toBeInTheDocument();
   });
 
   it('gives the task picker its own panel', async () => {

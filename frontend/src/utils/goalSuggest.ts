@@ -102,7 +102,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
     out.push({
       id: `subject-${orphan.id}`,
       kind: 'subject',
-      title: `Aim a goal at ${orphan.label}`,
+      title: `Set a goal for ${orphan.label}`,
       because: `${Math.round(orphan.share * 100)}% of your recent work was ${orphan.label}, which has no goal.`,
     });
   }
@@ -131,7 +131,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
     out.push({
       id: 'streak',
       kind: 'streak',
-      title: `Put a streak goal behind your ${currentStreak} days`,
+      title: `Turn your ${currentStreak}-day streak into a goal`,
       because: `You're on a ${currentStreak}-day streak. A streak goal helps you keep it.`,
     });
   }
@@ -216,7 +216,7 @@ export function goalHeadline(input: {
   if (active === 0) {
     return completed > 0
       ? `No active goals. ${completed} finished. Time to set a new one?`
-      : 'No goals yet, so nothing on this page has a target to be read against.';
+      : "No goals yet. Set one to see how you're doing against it.";
   }
 
   const one = active === 1;
@@ -226,7 +226,7 @@ export function goalHeadline(input: {
   const head =
     leadWithStrength && behind > 0
       ? `${holding} of ${active} holding`
-      : `${active} ${one ? 'goal' : 'goals'} live`;
+      : `${active} active ${one ? 'goal' : 'goals'}`;
   const state =
     behind === 0
       ? one
