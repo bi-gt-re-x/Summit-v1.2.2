@@ -91,8 +91,8 @@ export function GoalField({ goals, value, onChange, id, hint = false }: GoalFiel
       {hint && (
         <small className="ui-goal-hint">
           {chosen
-            ? 'Counted toward this goal whatever it is called.'
-            : 'Linked if the name matches a goal, and left alone if it does not.'}
+            ? "Counts toward this goal, whatever it's called."
+            : "Linked if the name matches a goal. Left alone if it doesn't."}
         </small>
       )}
     </label>

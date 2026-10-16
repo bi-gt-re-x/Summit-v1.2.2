@@ -48,7 +48,7 @@ import type { RatingDepth } from '@/services/settings';
  * are the same arrangement — one preference, two places that own it.
  */
 export const DEPTHS: { key: RatingDepth; label: string; hint: string }[] = [
-  { key: 'none', label: 'Nothing', hint: 'Finishing a task asks nothing. Quality falls back to average XP per task.' },
+  { key: 'none', label: 'Nothing', hint: 'No questions after a task. Quality uses your average XP per task instead.' },
   { key: 'ratings', label: 'Ratings', hint: 'Rate difficulty and how well it went.' },
   { key: 'reasons', label: '+ Reasons', hint: 'Both ratings, plus what made the difference. Adds a reasons panel to Insights.' },
 ];
@@ -61,7 +61,7 @@ export interface DepthPickerProps {
 
 export function DepthPicker({ value, busy = false, onPick }: DepthPickerProps) {
   return (
-    <div className="ax-depth" role="group" aria-label="What to ask after a finished task">
+    <div className="ax-depth" role="group" aria-label="What to ask after you finish a task">
       {DEPTHS.map((depth) => (
         <button
           key={depth.key}
@@ -115,13 +115,13 @@ function QualityEmpty({
     <Panel title={title} aside={aside}>
       <div className="ax-quality-empty">
         <p>
-          <strong>{off ? 'The questions are switched off.' : 'Nothing rated in this window.'}</strong>{' '}
+          <strong>{off ? 'Ratings are off.' : 'Nothing rated in this window.'}</strong>{' '}
           {shows}
         </p>
         <p className="ax-muted">
           {off
-            ? 'Ratings are off, so there is nothing to show. Turn them on above to start.'
-            : 'You rate each task once, when you finish it. You can skip it.'}
+            ? "Turn them on above to fill this in."
+            : 'You rate a task once, right when you finish it. Skipping is fine.'}
         </p>
         {!off && (
           <Link to="/tasks" className="ax-btn">
@@ -193,13 +193,12 @@ export function QualityPanel({
       aside={aside}
       note={`${summary.rated} rated task${summary.rated === 1 ? '' : 's'} in ${span}`}
       footer={
-        <PanelNote label="What this measures">
-          Difficulty <strong>×</strong> execution, averaged over the tasks you rated. The product,
-          not the average — <strong>25</strong> is a brutal task done excellently, and there is no
-          other route to it.
-          <br />
-          <br />
-          Rating is optional. Skipped tasks are absent, not zero.
+        <PanelNote label="How this works">
+          <ul className="ax-tips">
+            <li><b>Hard times good:</b> Difficulty times how well it went, averaged over rated tasks.</li>
+            <li><b>Top score:</b> 25 means a brutal task done really well.</li>
+            <li><b>Skips are fine:</b> Tasks you didn't rate are left out. They don't count as zero.</li>
+          </ul>
         </PanelNote>
       }
     >
@@ -293,7 +292,7 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
   if (summary.rated === 0) {
     return (
       <QualityEmpty
-        title="Difficulty against execution"
+        title="How hard vs. how well"
         shows="Where your rated tasks land."
         depth={depth}
       />
@@ -304,7 +303,7 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
 
   return (
     <Panel
-      title="Difficulty against execution"
+      title="How hard vs. how well"
       note="Darker is more tasks"
       claim={
         summary.difficulty === null || summary.execution === null ? (
@@ -317,19 +316,19 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
             Across <strong>{summary.rated}</strong> rated{' '}
             {summary.rated === 1 ? 'task' : 'tasks'} you rate difficulty{' '}
             <strong>{summary.difficulty.toFixed(1)}</strong> and execution{' '}
-            <strong>{summary.execution.toFixed(1)}</strong> — the grid says whether that is one
-            habit or several.
+            <strong>{summary.execution.toFixed(1)}</strong>. The grid shows where they cluster.
           </>
         )
       }
       footer={
         <PanelNote label="How to read this">
-          Difficulty runs left to right, execution bottom to top. Bottom-right is hard work going
-          badly; top-right is hard work going well. Watch the <strong>top-left</strong> — easy work
-          done well, comfortable and no longer stretching you.
-          <br />
-          <br />
-          Only your {summary.rated} rated tasks appear.
+          <ul className="ax-tips">
+            <li><b>Left to right:</b> Easy to hard.</li>
+            <li><b>Bottom to top:</b> Went badly to went well.</li>
+            <li><b>Top right:</b> Hard work going well. That's the goal.</li>
+            <li><b>Top left:</b> Easy work done well. Comfy, but it won't stretch you.</li>
+            <li><b>Rated only:</b> Just your {summary.rated} rated tasks show up here.</li>
+          </ul>
         </PanelNote>
       }
     >
@@ -350,9 +349,7 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
                   '--fill': cell.count ? Math.max(0.18, cell.count / peak) : 0,
                 } as CSSProperties
               }
-              title={`${DIFFICULTY_WORDS[cell.difficulty - 1]} · ${
-                EXECUTION_WORDS[cell.execution - 1]
-              } — ${cell.count} ${cell.count === 1 ? 'task' : 'tasks'}, worth ${cell.quality}/${QUALITY_MAX}`}
+              title={`${DIFFICULTY_WORDS[cell.difficulty - 1]} · ${EXECUTION_WORDS[cell.execution - 1]}: ${cell.count} ${cell.count === 1 ? 'task' : 'tasks'}, worth ${cell.quality}/${QUALITY_MAX}`}
             >
               {cell.count > 0 ? cell.count : ''}
             </span>
@@ -393,7 +390,7 @@ export function RatedTasksPanel({ rated, summary }: RatedTasksPanelProps) {
     return (
       <QualityEmpty
         title="Your best and worst rated work"
-        shows="Which tasks scored highest and lowest."
+        shows="Your highest and lowest scoring tasks."
       />
     );
   }
@@ -410,7 +407,7 @@ export function RatedTasksPanel({ rated, summary }: RatedTasksPanelProps) {
       <h3 className="ax-rated-title">{title}</h3>
       {rows.length === 0 ? (
         <p className="ax-empty ax-empty-sm ax-small">
-          Not enough rated tasks yet for these to be a separate list.
+          Not enough rated tasks yet to split these out.
         </p>
       ) : (
         <ol className="ax-rated-list">
@@ -435,7 +432,7 @@ export function RatedTasksPanel({ rated, summary }: RatedTasksPanelProps) {
   return (
     <Panel
       title="Your best and worst rated work"
-      note={`Out of ${QUALITY_MAX}, rated on both rows`}
+      note={`Out of ${QUALITY_MAX}, rated both ways`}
       footer={<PanelLink to="/tasks">Open Tasks</PanelLink>}
     >
       <div className="ax-rated">
@@ -481,13 +478,11 @@ export function ReasonsPanel({ reasons, findings, depth, span }: ReasonsPanelPro
       <Panel title="What made the difference">
         <div className="ax-quality-empty">
           <p>
-            <strong>No reasons given in this window.</strong> Which one thing made a task hard, or
-            made it go well.
+            <strong>No reasons yet in this window.</strong> This shows what made tasks hard or easy.
           </p>
           <p className="ax-muted">
-            The question appears under the two star rows after you finish a task, and can be
-            skipped like they can. It is the only thing on this page that can say <em>why</em> a
-            window went the way it did rather than what it came to.
+            You'll see the question after you rate a task. Skip it anytime. It's the only part of
+            this page that tells you <em>why</em> things went the way they did.
           </p>
           <Link to="/tasks" className="ax-btn">
             Open Tasks
@@ -519,11 +514,12 @@ export function ReasonsPanel({ reasons, findings, depth, span }: ReasonsPanelPro
       title="What made the difference"
       note={`${reasons.answered} answered in ${span}`}
       footer={
-        <PanelNote label="Why the two sides are counted apart">
-          Which six words you are offered follows the execution star: a task rated below 3 is asked
-          what made it hard, one rated 3 or better what made it go well. They are answers to two
-          different questions put to two different sets of tasks, so each share is out of its own
-          side and the two columns are never added together.
+        <PanelNote label="Why there are two columns">
+          <ul className="ax-tips">
+            <li><b>Went badly:</b> Rate a task 1 or 2 and you're asked what made it hard.</li>
+            <li><b>Went well:</b> Rate it 3 or more and you're asked what helped.</li>
+            <li><b>Kept apart:</b> Each column adds up on its own, so the two never mix.</li>
+          </ul>
         </PanelNote>
       }
     >

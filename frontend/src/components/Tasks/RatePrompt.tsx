@@ -132,7 +132,7 @@ function Stars({ label, hint, words, value, onChange }: StarsProps) {
               />
               <span aria-hidden="true">★</span>
               <span className="tk-rate-sr">
-                {star} of {SCALE} — {words[index]}
+                {star} of {SCALE}: {words[index]}
               </span>
             </label>
           );

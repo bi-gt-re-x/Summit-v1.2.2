@@ -36,7 +36,7 @@ import type { Diagnosis, DiagnosisTone } from '@/utils/diagnosis';
 
 const TONE_LABEL: Record<DiagnosisTone, string> = {
   good: 'Going well',
-  tension: 'Mixed signals',
+  tension: 'Mixed',
   warning: 'Needs attention',
 };
 
@@ -148,11 +148,11 @@ export function DiagnosisEmpty({
   reported?: { phrase: string; count: number } | null;
 }) {
   return (
-    <Panel title="Growth diagnosis" className="ax-diag-empty">
+    <Panel title="What changed" className="ax-diag-empty">
       <p className="ax-empty">
         {enoughRecord
           ? 'No big changes from the two weeks before. Your pace, ratings and spread are steady.'
-          : 'This compares the last four weeks, so it needs about a month of history. It will fill in as you go.'}
+          : "This compares your last 4 weeks, so it needs about a month of work. It'll fill in as you go."}
       </p>
       {/* Their own words, under the arithmetic's silence. Stated as a count
           rather than as a cause: this is what was reported, and how often —

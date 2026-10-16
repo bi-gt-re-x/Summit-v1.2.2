@@ -18,7 +18,7 @@ export const PSYCHOLOGY: SubjectTree = {
     { id: 'psy.method', name: 'Research Methods', icon: 'scientific-method', tier: 'foundation', core: true, state: open, percent: 20, xp: 1500,
       desc: 'Experiments, observation and self-report, and what each can and cannot establish. Almost every disagreement in the field is really about whether the design supports the claim.' },
     { id: 'psy.measure', name: 'Measuring the Mind', icon: 'measurement', tier: 'foundation', requires: ['psy.method'], state: lock, percent: 0, xp: 1500,
-      desc: 'Turning something internal into a number: reaction times, scales, physiological signals. Validity is the whole question — whether the thing you measured is the thing you meant.' },
+      desc: 'Turning something internal into a number: reaction times, scales, physiological signals. Validity is the whole question. Whether the thing you measured is the thing you meant.' },
     { id: 'psy.stats', name: 'Statistics in Psychology', icon: 'statistics', tier: 'foundation', requires: ['psy.measure'], state: lock, percent: 0, xp: 1700,
       desc: 'Effect sizes, confidence and the difference between significant and important. A field studying small effects in noisy samples has to be unusually careful here, and historically was not.' },
     { id: 'psy.replication', name: 'Replication', icon: 'replicate', tier: 'beginner', core: true, requires: ['psy.stats'], state: lock, percent: 0, xp: 1800,

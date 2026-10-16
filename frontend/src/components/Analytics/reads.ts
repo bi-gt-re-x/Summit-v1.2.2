@@ -85,14 +85,14 @@ function cleanSittings(sittings: Interval[]): Read | null {
   if (sittings.length < FLOOR.sittings) return null;
   const unbroken = sittings.filter((row) => row.pauses === 0 && row.finished).length;
   const share = unbroken / sittings.length;
-  const basis = `from ${plural(sittings.length, 'sitting')}`;
+  const basis = `from ${plural(sittings.length, 'session')}`;
   if (share >= 0.5) {
     return {
       id: 'clean',
       label: 'Focus',
       text: unbroken === sittings.length
-        ? `All ${sittings.length} of your focus sittings ran start to finish without a pause.`
-        : `${unbroken} of your ${sittings.length} focus sittings ran start to finish without a pause.`,
+        ? `All ${sittings.length} of your focus sessions ran start to finish with no pause.`
+        : `${unbroken} of your ${sittings.length} focus sessions ran start to finish with no pause.`,
       basis,
       weight: sittings.length * (0.6 + share),
     };
@@ -102,7 +102,7 @@ function cleanSittings(sittings: Interval[]): Read | null {
   return {
     id: 'clean',
     label: 'Focus',
-    text: `${sittings.length - unbroken} of your ${sittings.length} sittings got paused or cut short.${when}`,
+    text: `${sittings.length - unbroken} of your ${sittings.length} sessions got paused or cut short.${when}`,
     basis,
     weight: sittings.length * (0.6 + (1 - share)),
   };
@@ -126,8 +126,8 @@ function timeOfDay(sittings: Interval[], tasks: Task[]): Read | null {
     id: 'time',
     label: 'Your hours',
     text: count === hours.length
-      ? `You do your work in the ${part}: all ${hours.length} of your sittings and finished tasks landed ${PART_SPAN[part]}.`
-      : `You do most of your work in the ${part}: ${count} of ${hours.length} sittings and finished tasks landed ${PART_SPAN[part]}.`,
+      ? `You work in the ${part}. All ${hours.length} of your sessions and tasks happened ${PART_SPAN[part]}.`
+      : `You do most of your work in the ${part}. ${count} of ${hours.length} sessions and tasks happened ${PART_SPAN[part]}.`,
     basis: `from ${hours.length} ${hours.length === 1 ? 'activity' : 'activities'}`,
     weight: hours.length * (count / hours.length),
   };
@@ -147,9 +147,9 @@ function finishedInFocus(sittings: Interval[], tasks: Task[]): Read | null {
     id: 'in-focus',
     label: 'Focus pays off',
     text: inside === done.length
-      ? `All ${done.length} of your finished tasks were wrapped up during a focus sitting.`
-      : `${inside} of your ${done.length} finished tasks were wrapped up during a focus sitting.`,
-    basis: `from ${plural(done.length, 'task')} and ${plural(timed.length, 'sitting')}`,
+      ? `All ${done.length} of your finished tasks got done during a focus session.`
+      : `${inside} of your ${done.length} finished tasks got done during a focus session.`,
+    basis: `from ${plural(done.length, 'task')} and ${plural(timed.length, 'session')}`,
     weight: done.length * (0.5 + inside / done.length),
   };
 }
@@ -205,7 +205,7 @@ function focusTarget(sittings: Interval[]): Read | null {
     id: 'focus-target',
     label: 'Where focus went',
     text: `Most of your focus went to ${top.title}: ${top.minutes} of ${total} minutes.`,
-    basis: `from ${plural(sittings.length, 'sitting')}`,
+    basis: `from ${plural(sittings.length, 'session')}`,
     weight: tagged.length * 1.1,
   };
 }
@@ -223,7 +223,7 @@ function rated(tasks: Task[]): Read | null {
       label: 'Hard tasks',
       text: hardAvg >= 3.5
         ? `Your hard tasks still went well: ${hardAvg.toFixed(1)} of 5 on the ${hard.length} you rated tough.`
-        : `Your hard tasks are where it gets rough: ${hardAvg.toFixed(1)} of 5 on the ${hard.length} you rated tough.`,
+        : `Hard tasks are where it gets rough: ${hardAvg.toFixed(1)} of 5 on the ${hard.length} you rated tough.`,
       basis: `from ${plural(rows.length, 'rated task')}`,
       weight: rows.length * 1.2,
     };

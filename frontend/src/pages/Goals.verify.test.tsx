@@ -127,7 +127,7 @@ describe('reaching the goal', () => {
 
     const dialog = await screen.findByRole('dialog', { name: 'Reach USACO Gold' });
     expect(dialog).toHaveTextContent(/goal complete/i);
-    expect(dialog).toHaveTextContent(/saving it to your record/i);
+    expect(dialog).toHaveTextContent(/Saving…/i);
     expect(verifyGoal).toHaveBeenCalledWith('g-1', true);
 
     served = [goal({ status: 'completed', needs_verify: false, verified_at: '2026-10-12T10:00:00', progress: 100 })];

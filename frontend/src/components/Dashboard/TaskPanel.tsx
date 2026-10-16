@@ -175,7 +175,7 @@ export function TaskPanel({
             empty="Nothing scheduled ahead."
           />
         ) : shown.length === 0 ? (
-          <p className="dash-task-empty">Nothing on today&rsquo;s plate.</p>
+          <p className="dash-task-empty">Nothing on today&apos;s plate.</p>
         ) : (
           <>
             <Section

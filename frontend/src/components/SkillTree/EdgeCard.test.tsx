@@ -63,7 +63,7 @@ describe('the edge card', () => {
   it('says a prerequisite is a gate', () => {
     draw('requires');
     expect(screen.getByText('Prerequisite')).toBeInTheDocument();
-    expect(screen.getByText(/will not open until/)).toBeInTheDocument();
+    expect(screen.getByText(/won't open until/)).toBeInTheDocument();
     // And where the blocker stands, which is the part that says how far off it is.
     expect(screen.getByText(/in progress at 60%/)).toBeInTheDocument();
   });
@@ -72,13 +72,13 @@ describe('the edge card', () => {
     draw('recommends');
     expect(screen.getByText('Recommended')).toBeInTheDocument();
     expect(screen.getByText(/open whether or not/)).toBeInTheDocument();
-    expect(screen.queryByText(/will not open until/)).toBeNull();
+    expect(screen.queryByText(/won't open until/)).toBeNull();
   });
 
   it('does not tell a reader a finished prerequisite is blocking them', () => {
     draw('requires', node('linear', 'Linear Equations', 'complete', 100));
-    expect(screen.queryByText(/will not open until/)).toBeNull();
-    expect(screen.getByText(/route you have already taken/)).toBeInTheDocument();
+    expect(screen.queryByText(/won't open until/)).toBeNull();
+    expect(screen.getByText(/already walked this part of the route/)).toBeInTheDocument();
   });
 
   it('is a way out at both ends', async () => {

@@ -185,7 +185,7 @@ export function TaskModal({
         >
           ×
         </span>
-        <h2>Add New Task</h2>
+        <h2>Add new task</h2>
 
         <form onSubmit={submit}>
           <input

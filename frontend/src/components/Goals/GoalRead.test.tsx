@@ -92,7 +92,7 @@ describe('the evidence gate', () => {
   it('refuses a read with nothing behind it, and says what would unlock it', () => {
     show(linked(1));
 
-    expect(screen.getByText(/Not enough evidence yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Not enough to go on yet/)).toBeInTheDocument();
     expect(screen.getByText(new RegExp(`${EVIDENCE - 1} more tasks`))).toBeInTheDocument();
     // And there is nothing to press, so the call cannot be made at all.
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
@@ -109,7 +109,7 @@ describe('the evidence gate', () => {
     const open = linked(EVIDENCE).map((task) => ({ ...task, status: 'todo', completed_at: undefined }));
     show(open as Task[]);
 
-    expect(screen.getByText(/Not enough evidence yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Not enough to go on yet/)).toBeInTheDocument();
   });
 
   /* An account can be busy every day and have done nothing about the goal it
@@ -118,13 +118,13 @@ describe('the evidence gate', () => {
     const elsewhere = linked(EVIDENCE).map((task) => ({ ...task, goal_id: 'other' }));
     show(elsewhere as Task[]);
 
-    expect(screen.getByText(/Not enough evidence yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Not enough to go on yet/)).toBeInTheDocument();
   });
 
   it('offers the read once there is enough', () => {
     show(linked(EVIDENCE));
 
-    expect(screen.queryByText(/Not enough evidence yet/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Not enough to go on yet/)).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Read this goal' })).toBeInTheDocument();
   });
 });
@@ -182,7 +182,7 @@ describe('asking for one', () => {
     await user.click(screen.getByRole('button', { name: 'Read this goal' }));
 
     expect(await screen.findByText('Written by a model')).toBeInTheDocument();
-    expect(screen.getByText(/this paragraph is a reading of them/)).toBeInTheDocument();
+    expect(screen.getByText(/Written by AI from the numbers on this page/)).toBeInTheDocument();
   });
 
   it('says what went wrong rather than nothing', async () => {

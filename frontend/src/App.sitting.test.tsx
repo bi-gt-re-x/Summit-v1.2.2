@@ -62,7 +62,7 @@ describe('the shell during a focus sitting', { timeout: 20000 }, () => {
     const chrome = container.querySelectorAll('.app-chrome');
     expect(chrome.length).toBeGreaterThan(0);
     chrome.forEach((wrapper) => expect(wrapper).toHaveAttribute('inert'));
-    // The sitting itself is not inside any of them.
+    // The session itself is not inside any of them.
     const pause = screen.getByRole('button', { name: /^pause$/i });
     chrome.forEach((wrapper) => expect(wrapper.contains(pause)).toBe(false));
   });

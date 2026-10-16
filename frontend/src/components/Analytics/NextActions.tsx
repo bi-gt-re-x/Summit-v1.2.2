@@ -106,7 +106,7 @@ function RowAction({ item, onDone }: { item: NextAction; onDone: () => void }) {
     const result = book ? await bookSessions(item.goalId as string) : await clearLeftovers(clear as string[]);
     if (!result.success) {
       setState('idle');
-      setNote(result.message ?? 'That didn’t work. Try again.');
+      setNote(result.message ?? "That didn't work. Try again.");
       return;
     }
     setState('done');
@@ -218,30 +218,26 @@ export function NextActions({
       }
       footer={
         <PanelNote label="How this is chosen">
-          <p>
-            First, what's ahead: your nearest goal with a date in the next four months and how many
-            sessions this week it needs, a list too long to finish with its leftover routines named,
-            the problems you got wrong lately, and the reason your rough sessions keep going badly.
-          </p>
-          <p>
-            Then: overdue tasks, tasks due today, the goal furthest behind its date, the
-            subject your recent work is rated lowest in (naming the task to redo), a subject that is
-            earning far less than it did two weeks ago, a goal nothing has been finished toward in
-            ten days, low-rated tasks you haven't revisited, a subject you've stopped, your XP
-            against your daily goal or your usual week, old undated tasks, the subject you're on the
-            longest run with, and your streak if nothing is done today.
-          </p>
-          <p>
-            A subject you've already worked on today isn't suggested again, and the softer
-            suggestions are shuffled a little each day, so the plan changes as you do. Overdue and
-            due work always comes first. If a row is shorter than the time it needs, it's the last
-            one in the plan and says how long it really takes. You don't have to finish something to
-            have started it.
-          </p>
-          <p>
-            Minutes are based on how long your finished tasks usually take. The list updates when
-            you finish something.
-          </p>
+          <p className="ax-tips-head">First up</p>
+          <ul className="ax-tips">
+            <li><b>Beat the deadline:</b> Your next goal date gets the sessions it needs this week.</li>
+            <li><b>Clear the pile:</b> Old routines you missed get one row, so you can clear them fast.</li>
+            <li><b>Fix your misses:</b> Problems you got wrong lately come back first.</li>
+            <li><b>Change your start:</b> If rough sessions keep going wrong the same way, you get a fix.</li>
+          </ul>
+          <p className="ax-tips-head">Then</p>
+          <ul className="ax-tips">
+            <li><b>Finish what's due:</b> Overdue tasks, then tasks due today.</li>
+            <li><b>Catch up:</b> Goals falling behind and subjects you've let slide.</li>
+            <li><b>Do or drop:</b> Old tasks with no due date.</li>
+            <li><b>Keep it going:</b> Your streak, if nothing's done today.</li>
+          </ul>
+          <p className="ax-tips-head">Good to know</p>
+          <ul className="ax-tips">
+            <li><b>No repeats:</b> A subject you worked on today won't show up again.</li>
+            <li><b>Real minutes:</b> Times come from how long your tasks usually take.</li>
+            <li><b>Just start:</b> If a row needs more time than you have, it's last. Starting still counts.</li>
+          </ul>
         </PanelNote>
       }
     >
@@ -271,7 +267,7 @@ export function NextActions({
                 than the packing giving up — the old "nothing shorter to add"
                 branch could no longer be reached. */}
             {spare >= 10 ? (
-              <p className="ax-plan-spare">{spare} min spare — nothing else worth suggesting</p>
+              <p className="ax-plan-spare">{spare} min spare. Nothing else to add.</p>
             ) : (
               <span />
             )}

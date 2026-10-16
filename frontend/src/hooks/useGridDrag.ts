@@ -183,7 +183,7 @@ function slotIsFree(col: HTMLElement, top: number, bottom: number, self?: HTMLEl
 }
 
 function label(top: number, bottom: number): string {
-  return `${hmLabel(minutesToHm(pxToClockMinutes(top)))} – ${hmLabel(
+  return `${hmLabel(minutesToHm(pxToClockMinutes(top)))} to ${hmLabel(
     minutesToHm(pxToClockMinutes(bottom)),
   )}`;
 }

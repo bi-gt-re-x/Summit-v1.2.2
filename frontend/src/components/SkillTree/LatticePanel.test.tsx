@@ -70,7 +70,7 @@ describe('the lattice panel', () => {
 
   it('says where the reader stands before it says a percentage', () => {
     draw('algebra');
-    expect(screen.getByText(/Open now — nothing is in the way/)).toBeInTheDocument();
+    expect(screen.getByText(/Open now. Nothing in the way/)).toBeInTheDocument();
   });
 
   it('counts what is in the way rather than printing a nought', () => {
@@ -90,7 +90,7 @@ describe('the lattice panel', () => {
 
   it('says so when a node sits on nothing', () => {
     draw('fractions');
-    expect(screen.getByText(/A foundation of this subject/)).toBeInTheDocument();
+    expect(screen.getByText(/A starting point/)).toBeInTheDocument();
   });
 
   it('tells a gate apart from a suggestion', () => {

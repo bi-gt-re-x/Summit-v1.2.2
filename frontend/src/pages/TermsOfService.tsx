@@ -26,80 +26,72 @@ export default function TermsOfService() {
       <p className="effective-date">Effective date: July 22, 2026</p>
 
       <p>
-        Welcome to Summit, a study and productivity tracker (&quot;the app&quot;, &quot;the
-        service&quot;). By using Summit, you agree to these terms. If you do not agree,
-        please do not use the app.
+        Welcome to Summit, a study and productivity tracker (&quot;the app&quot;). By using it, you
+        agree to these terms. If you don&apos;t agree, please don&apos;t use the app.
       </p>
 
-      <h2>1. The Service</h2>
+      <h2>1. What Summit is</h2>
       <p>
-        Summit provides tools for managing tasks, setting goals, scheduling work on a
-        calendar, running focus sessions, and tracking your progress through streaks, XP,
-        levels, and growth analytics. The service is provided free of charge — there are no
-        paid tiers, subscriptions, or in-app purchases.
+        Summit helps you manage tasks, set goals, plan your calendar, run focus sessions and
+        track your progress with streaks, XP, levels and analytics. It&apos;s free. No paid plans,
+        no subscriptions and no in-app purchases.
       </p>
 
-      <h2>2. Your Account and Data</h2>
+      <h2>2. Your account and data</h2>
       <ul>
         <li>
-          Your profile, tasks, goals, and progress data are stored locally on your device,
-          as described in our <Link to="/privacy-policy">Privacy Policy</Link>.
+          <strong>Where it lives:</strong> Your data is saved on the server that runs Summit. Our{' '}
+          <Link to="/privacy-policy">Privacy Policy</Link> has the details.
         </li>
         <li>
-          You are responsible for the content you enter into the app and for backing up your
-          data if you wish to keep it.
+          <strong>Your stuff, your call:</strong> You&apos;re responsible for what you put in the app.
+          Export a backup from Settings if you want to keep a copy.
         </li>
         <li>
-          Because data is stored locally, clearing your browser storage or deleting the
-          app&apos;s data files will permanently erase your progress.
+          <strong>Deleting is final:</strong> If you delete your account or reset your data,
+          it&apos;s gone for good.
         </li>
       </ul>
 
-      <h2>3. Acceptable Use</h2>
-      <p>You agree to use Summit only for lawful purposes. You may not:</p>
+      <h2>3. Play fair</h2>
+      <p>Use Summit for legal stuff only. Please don&apos;t:</p>
       <ul>
-        <li>Attempt to disrupt, overload, or interfere with the operation of the service.</li>
-        <li>
-          Attempt to gain unauthorized access to data belonging to other users of the same
-          installation.
-        </li>
-        <li>Use the app to store or distribute unlawful content.</li>
+        <li>Try to crash, overload or break the app.</li>
+        <li>Try to get into anyone else&apos;s account or data.</li>
+        <li>Store or share anything illegal.</li>
       </ul>
 
-      <h2>4. Intellectual Property</h2>
+      <h2>4. Who owns what</h2>
       <p>
-        The Summit name, design, and software are the property of the project&apos;s authors.
-        The content you create in the app — your tasks, goals, and notes — remains yours.
+        The Summit name, design and code belong to the people who made it. Everything you
+        create, like your tasks, goals and notes, belongs to you.
       </p>
 
-      <h2>5. Availability and Changes</h2>
+      <h2>5. Things may change</h2>
       <p>
-        Summit is under active development. Features may be added, changed, or removed at any
-        time without notice. We do not guarantee that the service will be uninterrupted or
-        error-free, or that your progress data (including XP, streaks, and levels) will
-        always be preserved across updates.
+        Summit is still being built. Features may be added, changed or removed without notice.
+        We can&apos;t promise it&apos;ll never go down or have bugs, or that your XP, streaks and
+        levels will always carry over after updates.
       </p>
 
-      <h2>6. Disclaimer of Warranties</h2>
+      <h2>6. No guarantees</h2>
       <p>
-        The service is provided &quot;as is&quot; and &quot;as available&quot;, without
-        warranties of any kind, express or implied, including fitness for a particular
-        purpose. Productivity statistics, growth ratings, and analytics are provided for
-        motivation and self-tracking only.
+        Summit is provided &quot;as is&quot; and &quot;as available,&quot; with no warranties of any
+        kind. Your stats, scores and analytics are there to motivate you and help you track
+        yourself. They aren&apos;t official grades of anything.
       </p>
 
-      <h2>7. Limitation of Liability</h2>
+      <h2>7. Limits on liability</h2>
       <p>
-        To the maximum extent permitted by law, the authors of Summit shall not be liable for
-        any indirect, incidental, or consequential damages arising from your use of the app,
-        including loss of data or loss of progress.
+        As far as the law allows, Summit&apos;s makers aren&apos;t responsible for indirect or
+        accidental damages from using the app, including lost data or lost progress.
       </p>
 
-      <h2>8. Changes to These Terms</h2>
+      <h2>8. Changes to these terms</h2>
       <p>
-        We may update these terms from time to time. The current version will always be
-        posted on this page with its effective date. Continued use of the app after changes
-        take effect constitutes acceptance of the revised terms.
+        We may update these terms now and then. The latest version will always be on this page
+        with its date. If you keep using Summit after a change, that means you accept the new
+        terms.
       </p>
 
       <h2>9. Contact</h2>

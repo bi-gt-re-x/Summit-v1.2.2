@@ -53,12 +53,12 @@ export function AboutYou({ initial, submitLabel, onDone, onSkip }: AboutYouProps
     try {
       const result = await backgroundService.save(answers);
       if (!result.success) {
-        setError(result.message || 'That did not save. Try again.');
+        setError(result.message || "That didn't save. Try again.");
         return;
       }
       onDone(result);
     } catch {
-      setError('Could not reach the server.');
+      setError("Couldn't reach the server.");
     } finally {
       setSaving(false);
     }

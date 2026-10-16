@@ -66,7 +66,7 @@ export function GoalsCard({ goals, limit = 2 }: GoalsCardProps) {
             <circle cx="12" cy="12" r="1" />
           </svg>
         </span>
-        What it is for
+        What it's for
         <Link className="dash-goals-all" to="/goals">
           All goals
         </Link>
@@ -74,7 +74,7 @@ export function GoalsCard({ goals, limit = 2 }: GoalsCardProps) {
 
       {live.length === 0 ? (
         <p className="dash-empty">
-          No goals running. <Link to="/goals">Set one</Link> and the day&rsquo;s work
+          No goals running. <Link to="/goals">Set one</Link> and the day&apos;s work
           starts adding up to something.
         </p>
       ) : (

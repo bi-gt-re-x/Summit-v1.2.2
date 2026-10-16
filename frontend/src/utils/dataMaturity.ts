@@ -95,9 +95,9 @@ export const STAGES: Stage[] = ['new', 'early', 'weekly', 'developing', 'full'];
 /** What each stage is called where a reader can see it. */
 export const STAGE_LABEL: Record<Stage, string> = {
   new: 'Getting started',
-  early: 'Early insight',
+  early: 'First look',
   weekly: 'Weekly trends',
-  developing: 'Developing profile',
+  developing: 'Filling in',
   full: 'Full analytics',
 };
 
@@ -121,7 +121,7 @@ export const STAGE_BRINGS: Record<Stage, string> = {
   early: 'Patterns',
   weekly: 'Trends',
   developing: 'Performance',
-  full: 'Deep insights',
+  full: 'Full picture',
 };
 
 /**

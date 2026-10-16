@@ -84,7 +84,7 @@ export const SOURCE_INFO: Record<LiveSource, SourceInfo> = {
   growth: { label: 'Growth', hint: 'A subject over 7, 30 or 90 days.', glyph: '↗', keys: ['growth', 'subject', 'trend', 'progress'] },
   skills: { label: 'Skill tree', hint: "What's done and what's next in a tree.", glyph: '⌥', keys: ['skill', 'tree', 'nodes', 'accuracy'] },
   heatmap: { label: 'Activity heatmap', hint: 'Every day of the last few months, shaded.', glyph: '▦', keys: ['heatmap', 'activity', 'calendar', 'days', 'contributions'] },
-  rhythm: { label: 'Weekly rhythm', hint: 'Which days and hours you get work done.', glyph: '◷', keys: ['rhythm', 'time', 'hour', 'weekday', 'when', 'pattern'] },
+  rhythm: { label: 'Your week', hint: 'Which days and hours you get work done.', glyph: '◷', keys: ['rhythm', 'time', 'hour', 'weekday', 'when', 'pattern'] },
   subjects: { label: 'Subject mix', hint: 'How your work splits between subjects.', glyph: '◔', keys: ['subjects', 'mix', 'split', 'balance', 'breakdown', 'share'] },
 };
 

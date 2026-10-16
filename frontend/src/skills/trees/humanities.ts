@@ -13,7 +13,7 @@ import { done, prog, open, lock } from './types';
 export const HUMANITIES: SubjectTree = {
   id: 'humanities',
   title: 'Humanities',
-  blurb: 'Evidence about people — partial, argued over, and worth getting right.',
+  blurb: 'Evidence about people. Partial, argued over, and worth getting right.',
   group: 'Language and humanities',
   nodes: [
     { id: 'hu.curious', name: 'Asking a Question', icon: 'question', tier: 'foundation', core: true, state: done, percent: 100, xp: 1200,
@@ -59,7 +59,7 @@ export const HUMANITIES: SubjectTree = {
     { id: 'hu.psychology', name: 'Psychology', icon: 'psychology', tier: 'advanced', requires: ['hu.people'], navTo: 'psychology', state: lock,
       desc: 'A subject of its own: how minds actually behave, measured carefully rather than assumed from introspection.' },
     { id: 'hu.debate', name: 'Competitive Debate', icon: 'debate', tier: 'advanced', requires: ['hu.argue', 'hu.evidence'], navTo: 'debate', state: lock,
-      desc: 'A subject of its own: policy, LD and public forum — winning arguments, then winning rounds.' },
+      desc: 'A subject of its own: policy, LD and public forum. Winning arguments, then winning rounds.' },
     { id: 'hu.civics', name: 'Civics & Government', icon: 'social-contract', tier: 'advanced', requires: ['hu.power'], navTo: 'civics', state: lock,
       desc: 'Its own tree: the Constitution, the three branches, landmark cases and getting involved.' },
     { id: 'hu.geography', name: 'Geography', icon: 'globe', tier: 'intermediate', requires: ['hu.place'], navTo: 'geography', state: lock,

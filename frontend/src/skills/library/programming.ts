@@ -258,7 +258,7 @@ export const programming = [
   node({
     id: 'programming.http',
     name: 'HTTP Basics',
-    description: 'Requests, responses, verbs and status codes — what actually travels between a client and a server.',
+    description: 'Requests, responses, verbs and status codes. What actually travels between a client and a server.',
     difficulty: 'beginner',
     xpReward: 65,
     subcategory: 'Web',

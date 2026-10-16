@@ -107,10 +107,10 @@ export interface GoalLimiter {
 
 /** Turns a direction into the clause the sentence opens with. */
 function movementOf(direction: Direction): string {
-  if (direction === 'accelerating') return 'You are improving';
-  if (direction === 'slowing') return 'You are slowing down';
+  if (direction === 'accelerating') return "You're improving";
+  if (direction === 'slowing') return "You're slowing down";
   if (direction === 'stalled') return 'Nothing has moved lately';
-  return 'You are holding steady';
+  return "You're holding steady";
 }
 
 /** The subject holding the largest share of a pile, when one clearly does. */
@@ -187,10 +187,8 @@ export function goalLimiter(
   const noun = lead.count === 1 ? 'task' : 'tasks';
   const because =
     pile.basis === 'rated'
-      ? `${lead.count} of the ${total} ${noun} you rated as going badly on this goal `
-        + `are filed under ${subjectName}.`
-      : `${lead.count} of the ${total} ${noun} still open against this goal `
-        + `${lead.count === 1 ? 'is' : 'are'} filed under ${subjectName}.`;
+      ? `${lead.count} of the ${total} ${noun} that went badly on this goal are in ${subjectName}.`
+      : `${lead.count} of the ${total} ${noun} still open for this goal ${lead.count === 1 ? 'is' : 'are'} in ${subjectName}.`;
 
   return {
     goalId: goal.id,

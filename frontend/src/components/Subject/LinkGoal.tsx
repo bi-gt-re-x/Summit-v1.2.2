@@ -84,28 +84,27 @@ export function LinkGoal({
      missing section is not. */
   if (linked.length === 0 && options.length === 0) {
     return (
-      <section className="sb-link" aria-label="Aim this subject at a goal">
+      <section className="sb-link" aria-label="Link a goal">
         <div className="sb-link-say">
-          <strong>Aim this subject at a goal</strong>
-          <p>You have no outcome goals yet. Counters do not count — they are fed by
-            every task on the account.</p>
+          <strong>Link a goal</strong>
+          <p>You don't have a goal with a finish line yet. Counter goals like XP or streaks don't work here.</p>
         </div>
-        <Link className="ax-link" to="/goals">Make one on the goals page →</Link>
+        <Link className="ax-link" to="/goals">Make one on the Goals page →</Link>
       </section>
     );
   }
 
   return (
-    <section className="sb-link" aria-label="Aim this subject at a goal">
+    <section className="sb-link" aria-label="Link a goal">
       <div className="sb-link-say">
         <strong>
           {linked.length === 0
-            ? 'Aim this subject at a goal'
-            : `Aimed at ${linked.length} of ${MAX_GOALS} goals`}
+            ? 'Link a goal'
+            : `Linked to ${linked.length} of ${MAX_GOALS} goals`}
         </strong>
         <p>
           {linked.length === 0
-            ? 'Pick one you already have. The page reads your record against it.'
+            ? 'Pick one you already have. This page tracks your work against it.'
             : room
               ? 'You can add one more.'
               : 'Remove one to swap it.'}
@@ -180,7 +179,7 @@ export function LinkGoal({
       )}
 
       <Link className="ax-link" to="/goals">
-        {options.length > 0 ? 'Or make a new one' : 'Make one on the goals page'} →
+        {options.length > 0 ? 'Or make a new one' : 'Make one on the Goals page'} →
       </Link>
     </section>
   );

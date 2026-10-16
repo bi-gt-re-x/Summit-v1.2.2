@@ -54,7 +54,7 @@ describe('AreaChart readout', () => {
     // The gap is stated rather than drawn as a zero — the whole reason
     // `AreaValue` allows null. A table that printed 0 here would assert a
     // reading that was never taken.
-    expect(within(rows[2]!).getAllByRole('cell')[1]).toHaveTextContent('No reading');
+    expect(within(rows[2]!).getAllByRole('cell')[1]).toHaveTextContent('No data');
     expect(within(rows[3]!).getAllByRole('cell')[1]).toHaveTextContent('15 XP');
   });
 
@@ -80,7 +80,7 @@ describe('AreaChart readout', () => {
 
     await user.keyboard('{ArrowRight}');
     expect(container.querySelector('[aria-live]')).toHaveTextContent(
-      'Tue. This period: 20 XP. Previous period: no reading',
+      'Tue. This period: 20 XP. Previous period: no data',
     );
   });
 

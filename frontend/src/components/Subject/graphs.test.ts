@@ -171,7 +171,7 @@ describe('effortPoints', () => {
     expect(Math.max(...cloud.points.map(([x]) => x))).toBe(1);
   });
 
-  it('leaves out a lead time, which is not a sitting at all', () => {
+  it('leaves out a lead time, which is not a session at all', () => {
     const cloud = effortPoints([
       timed(10, 2, 'a'), timed(12, 3, 'b'), timed(14, 3, 'c'),
       timed(16, 4, 'd'), timed(18, 4, 'e'), timed(20, 5, 'f'),

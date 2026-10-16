@@ -499,7 +499,7 @@ export default function Analytics() {
    * page is not held hostage to it.
    */
   if (waiting) {
-    return <Loading label="Reading your history" />;
+    return <Loading label="Loading your analytics" />;
   }
   if (!series.data) {
     return (
@@ -551,7 +551,7 @@ export default function Analytics() {
                than a hedge, so it sits beside it. */
             basis={
               stageShows(maturity.stage).note
-                ? `Read from ${maturity.activeDays} days of your work. It will settle as you record more.`
+                ? `Based on ${maturity.activeDays} days of work. It'll get sharper as you log more.`
                 : null
             }
             goals={

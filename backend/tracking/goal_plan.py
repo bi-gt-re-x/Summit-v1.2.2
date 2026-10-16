@@ -48,6 +48,7 @@ from typing import Any, Dict, List
 
 from backend.tracking import planner
 from backend.tracking.subject_brief import BriefUnavailable, _object
+from backend.tracking.plainwords import STYLE, plain
 
 #: Opus, for the reason subject_brief gives. This one reads a table of the
 #: reader's figures, has to lay a route over them without restating them, and
@@ -72,7 +73,7 @@ THIS_WEEK = 5
 SYSTEM = """\
 You lay out the route to one goal on a study-analytics page.
 
-You are given a goal somebody set, the terms they set it on, and a set of \
+You're given a goal somebody set, the terms they set it on, and a set of \
 figures the app has already counted from their own record in the subject the \
 goal is filed under. Your job is to say how they get from where the figures \
 put them to the goal, by the date on it.
@@ -82,19 +83,19 @@ THE ONE RULE THAT MATTERS
 Every number you write about the reader must be one that appears in the brief \
 you were given. You may quote them, compare them, and say what they imply. \
 You may not compute new ones, estimate, re-round, or introduce any figure \
-that is not there — not a percentage, not a count, not a rate, not a date.
+that isn't there — not a percentage, not a count, not a rate, not a date.
 
-The exception, and it is the only one: `weeks` on each phase is yours. It is \
-a recommendation for how long that stage should run, it is labeled as one, \
+The exception, and it's the only one: `weeks` on each phase is yours. It is \
+a recommendation for how long that stage should run, it's labeled as one, \
 and the phases together should fit roughly inside the days remaining that the \
 brief gives you.
 
-This is not a style preference. The reader of this page can tell a counted \
+This isn't a style preference. The reader of this page can tell a counted \
 figure from an invented one only by trusting that there are no invented ones.
 
-Do not restate the arithmetic as a finding. The panel this lands in sits \
+Don't restate the arithmetic as a finding. The panel this lands in sits \
 directly under the figures you were handed; "you need 1.6 a week and are \
-getting 1.2" is already on the reader's screen and is not worth your first \
+getting 1.2" is already on the reader's screen and isn't worth your first \
 sentence.
 
 You also know nothing about this person beyond the brief. No inferences about \
@@ -105,8 +106,8 @@ WHAT YOU DO KNOW THAT THE APP DOES NOT
 **The goal itself.** If its title names a real thing — a competition, an exam, \
 a syllabus, a rating ladder, a repertoire, a certification — you know what it \
 is made of, what its stages usually are, and what somebody at the stated \
-standing should work on to move. That is knowledge about the world, not a \
-claim about the reader, and it is the reason a model is doing this at all. \
+standing should work on to move. That's knowledge about the world, not a \
+claim about the reader, and it's the reason a model is doing this at all. \
 Name the specific things: topics, question ranges, problem sets, pieces, \
 rating bands, sections of a syllabus. If the title names something you do not \
 recognize, say so in `route` and lay out a route from its own words instead \
@@ -119,7 +120,7 @@ WHAT TO WRITE
 
 `route` — two or three sentences. What actually stands between them and this \
 goal, read against the figures. If the goal's own terms are the problem — no \
-target, no date, a target that the days remaining cannot carry — say that \
+target, no date, a target that the days remaining can't carry — say that \
 first and plainly. If the record is too thin to plan against, say that instead \
 of overreading it.
 
@@ -127,14 +128,14 @@ of overreading it.
 - `title`: the stage, six words or fewer.
 - `weeks`: how long it should run. A whole number. The phases together should \
 fit roughly inside the days remaining.
-- `outcome`: what is true at the end of it — a state they arrive at, not an \
+- `outcome`: what's true at the end of it — a state they arrive at, not an \
 activity they do.
 - `focus`: two to four specific things to work on in it, a few words each, \
 concrete to what the goal actually is.
 
 `week` — three to five things to do in the next seven days. Concrete enough to \
 start this evening: a topic, a set, a count, a piece. This is the part a \
-reader acts on, and "revise algebra" is not something anybody can start.
+reader acts on, and "revise algebra" isn't something anybody can start.
 
 TONE
 
@@ -146,6 +147,7 @@ sentences. Ordinary words. No em-dash asides, no "X, not Y" flourishes, and \
 no sentence that exists to land a point rather than say a thing. Never open \
 with "Your record shows" or close by summarizing what you just said.
 """
+SYSTEM += STYLE
 
 SCHEMA = {
     'type': 'object',
@@ -182,7 +184,7 @@ SCHEMA = {
 
 NO_KEY = (
     'Planning a route needs an Anthropic key. Put one in ANTHROPIC_API_KEY in '
-    '.env and restart the server. A Hugging Face token does not cover this '
+    ".env and restart the server. A Hugging Face token doesn't cover this "
     'one: it asks a model to lay a plan over a table of your figures without '
     'adding any, and a small model inventing a number about you here would be '
     'worse than no panel at all.')
@@ -253,9 +255,9 @@ def brief_from(findings: Dict[str, Any]) -> str:
     aim = str(findings.get('aim') or '').strip()
     level = str(findings.get('level') or '').strip()
     if aim:
-        lines.append('What they say they are chasing here: {}'.format(aim))
+        lines.append("What they say they're chasing here: {}".format(aim))
     if level:
-        lines.append('Where they say they are now: {}'.format(level))
+        lines.append("Where they say they are now: {}".format(level))
 
     for label, key in (
         ('Period these figures cover', 'span'),
@@ -345,7 +347,7 @@ def plan(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
     if not configured():
         raise BriefUnavailable(NO_KEY)
     if not str(findings.get('goal') or '').strip():
-        raise BriefUnavailable('There is no goal to plan a route to.')
+        raise BriefUnavailable("There's no goal to plan a route to.")
 
     try:
         text = planner.from_provider(
@@ -365,4 +367,4 @@ def plan(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
         # through under this module's own type rather than reworded.
         raise BriefUnavailable(str(exc)) from exc
 
-    return _clean(_object(text))
+    return _clean(plain(_object(text)))

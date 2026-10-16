@@ -136,18 +136,17 @@ export function SubjectsTab({
           <p className="ax-goal-line">
             {namedSubjects.named === 0 ? (
               <>
-                None of the <strong>{namedSubjects.total}</strong> subjects you worked in
-                this window has a goal aimed at it.
+                None of the <strong>{namedSubjects.total}</strong> subjects you worked on here
+                has a goal.
               </>
             ) : (
               <>
                 <strong>{namedSubjects.named}</strong> of the {namedSubjects.total} subjects
-                you worked in this window {namedSubjects.named === 1 ? 'has' : 'have'} a goal
-                aimed at {namedSubjects.named === 1 ? 'it' : 'them'}.
+                you worked on here {namedSubjects.named === 1 ? 'has' : 'have'} a goal.
               </>
             )}{' '}
             <Link to="/goals" className="ax-link">
-              See what is missing
+              Add a goal
             </Link>
           </p>
         </section>
@@ -200,8 +199,7 @@ export function SubjectsTab({
             </div>
           </div>
           <p className="ax-panel-note">
-            Your all-time XP in each skill tree, out of the tree's total. Related subjects share one
-            tree (for example, all languages count toward Foreign Languages).
+            Your all-time XP in each skill tree, out of its total. Related subjects share a tree. All languages count toward Foreign Languages, for example.
           </p>
           <ul className="ax-treedepth">
             {standing.map((tree) => (
@@ -233,8 +231,7 @@ export function SubjectsTab({
             </div>
           </div>
           <p className="ax-panel-note">
-            Every subject has a skill tree behind it. The skill count is the tree's — somebody
-            wrote it — and the practiced count is yours.
+            Every subject has a skill tree. You see how many skills it has and how many you've practiced.
           </p>
           <ul className="ax-lattices">
             {lattices.map(({ row, lattice }) => (
@@ -255,7 +252,7 @@ export function SubjectsTab({
           </ul>
           <p className="ax-panel-note ax-panel-note-foot">
             <Link to="/skill-trees" className="ax-link">
-              Open the skill trees
+              Open skill trees
             </Link>
           </p>
         </section>

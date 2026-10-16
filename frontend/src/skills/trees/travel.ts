@@ -15,7 +15,7 @@ export const TRAVEL: SubjectTree = {
   parent: 'life',
   nodes: [
     { id: 'tr.why', name: 'Deciding the Trip', icon: 'compass', tier: 'foundation', core: true, state: open, percent: 25, xp: 1300,
-      desc: 'What this trip is for — rest, seeing people, or seeing places — because those three want different plans. Trips that disappoint are usually ones asked to be all three at once.' },
+      desc: 'What this trip is for (rest, seeing people, or seeing places) because those three want different plans. Trips that disappoint are usually ones asked to be all three at once.' },
     { id: 'tr.budget', name: 'Budgeting a Trip', icon: 'budget', tier: 'foundation', requires: ['tr.why'], state: lock, percent: 0, xp: 1400,
       desc: 'Transport, beds, food and the daily spending that nobody counts. The last one is where budgets are broken, and estimating it per day beats hoping.' },
     { id: 'tr.docs', name: 'Documents', icon: 'passport', tier: 'foundation', requires: ['tr.why'], state: lock, percent: 0, xp: 1400,

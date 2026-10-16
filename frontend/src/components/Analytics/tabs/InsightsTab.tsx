@@ -132,15 +132,15 @@ export function InsightsTab({
           have={historyDays}
           promise={whyFor(NEED_DAYS.habits)}
           spanDays={maturity.spanDays}
-          asksLead="Summit will look for what repeats in your work, and what it is worth:"
+          asksLead="Once you have more days in, Insights shows you:"
           asks={[
-            'Which routines have actually stuck?',
-            'When do you perform best?',
-            'Is a habit holding, or quietly slipping?',
-            'Where does perceived difficulty differ from execution?',
-            'What changed between your last two stretches?',
+            'Which routines stuck?',
+            'When do you do your best work?',
+            'Which habits are slipping?',
+            'Which hard tasks go well, and which go badly?',
+            'What changed lately?',
           ]}
-          emptyMessage="Nothing repeats often enough yet to count as a habit."
+          emptyMessage="Nothing repeats often enough to be a habit yet."
           action={
             <Link to="/tasks" className="ax-btn">
               Open Tasks
@@ -163,8 +163,8 @@ export function InsightsTab({
       {(waitFor('habits') > 0 || (!insightsReady && observed.length > 0)) && (
         <section className="ax-section">
           <PanelGroup
-            title="What is already true"
-            note="Just the counts and what already clears its own floor. The rest needs more history."
+            title="What's already true"
+            note="Just the basics for now. The rest needs more days of work."
             defaultOpen
           >
             {/* The raw counts stop at the habits gate, because past it the
@@ -210,7 +210,7 @@ export function InsightsTab({
         {habitsReady && (
           <PanelGroup
             title="Your habits"
-            note="What each one is worth, not just how often it happens"
+            note="How often you keep each one and how it helps"
             defaultOpen
           >
             <HabitTiles summary={summary} span={spanText} />
@@ -240,20 +240,20 @@ export function InsightsTab({
             findings carried advice, which is the Recommendations tab. What is
             left is the one panel that names individual tasks. */}
         {insightsReady && (
-          <PanelGroup title="Your best and worst work" note="The tasks at either end of your ratings">
+          <PanelGroup title="Your best and worst work" note="Your highest and lowest rated tasks">
             <RatedTasksPanel rated={rated} summary={qualitySummary} />
           </PanelGroup>
         )}
 
         {insightsReady && (
-          <PanelGroup title="Why it happens" note="Conditions, correlations and causes">
+          <PanelGroup title="Why it happens" note="What lines up with your best work">
             {/* The discovered-patterns panel that opened this group printed
                 the same findings as the "Hidden pattern" cards in What changed,
                 with a "worth trying" line under each. */}
             <div className="ax-grid ax-grid-halves-even">
               <WhyPanel
                 findings={why.slice(0, findings)}
-                notice={unlock(slice.current.length, NEED_DAYS.insights, 'the “why” behind your last stretch')}
+                notice={unlock(slice.current.length, NEED_DAYS.insights, 'why your last stretch went the way it did')}
               />
               <HowPanel
                 findings={how.slice(0, findings)}
@@ -265,7 +265,7 @@ export function InsightsTab({
             <div className="ax-hero">
               <RelationshipsPanel
                 relationships={links}
-                notice={unlock(slice.current.length, NEED_DAYS.insights, 'behavioral relationships')}
+                notice={unlock(slice.current.length, NEED_DAYS.insights, 'what goes with what')}
               />
             </div>
             {/* The only panel that answers *why* from what the reader said
@@ -292,7 +292,7 @@ export function InsightsTab({
         {habitsReady && (
           <PanelGroup
             title="Holding or slipping"
-            note="How steady each habit is, and when each began"
+            note="How steady each habit is and when it started"
           >
             <div className="ax-grid ax-grid-halves-even">
               <HabitConsistencyPanel habits={habits} />
@@ -304,7 +304,7 @@ export function InsightsTab({
         {insightsReady && (
           <PanelGroup
             title="When and what you work on"
-            note="The hours and the days your work lands on"
+            note="The hours and days you work"
           >
             {/* The headline tiles here restated the two charts below, and the
                 subject web is the Subjects tab. */}
@@ -334,8 +334,8 @@ export function InsightsTab({
             split — the Growth page still wants all eight. */}
         {habitsReady && (
           <PanelGroup
-            title="Can you execute it reliably"
-            note="Planned against finished, focus depth, and recovery after a miss"
+            title="Do you follow through?"
+            note="What you planned vs. what you finished, and how you bounce back"
           >
             <div className="gr-scope">
               <FocusChapter

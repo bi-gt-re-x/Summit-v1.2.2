@@ -826,7 +826,7 @@ def goal_matcher_metrics(username: str = Depends(current_username)):
     way the verification link is (backend/routes/auth.py).
     """
     if not settings.dev_mode():
-        return fail('There is nothing here.', status=404)
+        return fail("There's nothing here.", status=404)
     return ok(metrics=goal_metrics.snapshot(), queued=goal_queue.pending())
 
 
@@ -846,7 +846,7 @@ def add_goal(body: AddGoal, username: str = Depends(current_username)):
         'streak': "Target streak is required for streak goals",
         'tasks': "Target tasks is required for task goals",
         'focus': "Target focus time is required for focus goals",
-        'number': "A target figure is required when you are measuring a number",
+        'number': "Add a target number for this goal",
     }
 
     # An unrecognised measure is the caller's goal_type, which is what every
@@ -1080,7 +1080,7 @@ def verify_goal(body: VerifyGoal, username: str = Depends(current_username)):
 
     if not body.done:
         if _measure_of(goal) != 'milestones' or not milestones:
-            return fail("Change the goal's figures to reopen it.")
+            return fail("Change the goal's numbers to reopen it.")
         reached = [row for row in milestones if row.get('status') == 'done']
         if not reached:
             return fail('Nothing to reopen.')
@@ -1093,7 +1093,7 @@ def verify_goal(body: VerifyGoal, username: str = Depends(current_username)):
     if goal.get('verified_at') and goal.get('status') == 'completed' and not goal.get('needs_verify'):
         return ok(goal=goal, record=None)
     if _has_target(goal, milestones) and goal.get('status') != 'completed':
-        return fail('This goal has not reached its target yet.')
+        return fail("This goal hasn't reached its target yet.")
 
     goal['status'] = 'completed'
     goal['needs_verify'] = False
@@ -1309,7 +1309,7 @@ def _record_lines(goal, username):
         return record.brief_lines(row, tasks, datetime.now(),
                                   lambda key: (subject_catalogue.BY_ID.get(key) or {}).get('name', key))
     except Exception as exc:  # noqa: BLE001 - a brief without the record is still a brief
-        print('[goals] could not read the record for the brief: {!r}'.format(exc))
+        print("[goals] couldn't read the record for the brief: {!r}".format(exc))
         return []
 
 
@@ -1375,9 +1375,9 @@ def draft_goal(body: DraftGoal, username: str = Depends(current_username)):
     """
     idea = (body.idea or '').strip()
     if not idea:
-        return fail('Say what you are trying to do and this will draft the rest.')
+        return fail("Say what you're trying to do and this will draft the rest.")
     if len(idea) > 500:
-        return fail('That is longer than this needs — a sentence is enough.')
+        return fail("That's too long. One sentence is plenty.")
 
     try:
         drafted = planner.draft_goal(idea)

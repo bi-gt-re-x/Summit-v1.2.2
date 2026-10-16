@@ -132,7 +132,7 @@ export function useAnalyticsData() {
     () =>
       username
         ? takeOrAsk('baseline', () => analyticsService.baseline())
-        : Promise.resolve({ success: false as const, message: 'Sign in to set a baseline.' }),
+        : Promise.resolve({ success: false as const, message: 'Sign in to set your targets.' }),
     [username],
   );
   const baseline = useApi<BaselineResult>(baselineCall, [username]);

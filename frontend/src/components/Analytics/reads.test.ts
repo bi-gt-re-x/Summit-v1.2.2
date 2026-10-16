@@ -49,8 +49,8 @@ describe('the reads', () => {
   it('reads how cleanly the sittings run, with the sample', () => {
     const reads = firstReads({ tasks: [], sittings: [sitting(9), sitting(10), sitting(11, { pauses: 1, breaks: [12] })], goals: [] });
     expect(read(reads, 'clean')).toMatchObject({
-      text: '2 of your 3 focus sittings ran start to finish without a pause.',
-      basis: 'from 3 sittings',
+      text: '2 of your 3 focus sessions ran start to finish with no pause.',
+      basis: 'from 3 sessions',
     });
   });
 
@@ -63,12 +63,12 @@ describe('the reads', () => {
     const afternoon = [13, 14, 15].map((hour) => sitting(hour));
     const reads = firstReads({ tasks: [task({ completed_at: iso(on(16)) })], sittings: afternoon, goals: [] });
     expect(read(reads, 'time')!.text).toBe(
-      'You do your work in the afternoon: all 4 of your sittings and finished tasks landed between noon and 5pm.');
+      'You work in the afternoon. All 4 of your sessions and tasks happened between noon and 5pm.');
     const spread = [6, 13, 18, 23].map((hour) => sitting(hour));
     expect(read(firstReads({ tasks: [], sittings: spread, goals: [] }), 'time')).toBeUndefined();
   });
 
-  it('counts tasks finished inside a sitting window only', () => {
+  it('counts tasks finished inside a session window only', () => {
     const sittings = [sitting(10), sitting(15)];
     const tasks = [
       task({ completed_at: iso(on(9, 50)) }), // inside the 9:35-10:00 sitting
@@ -76,7 +76,7 @@ describe('the reads', () => {
       task({ completed_at: iso(on(15, 10)) }), // in the break after
     ];
     expect(read(firstReads({ tasks, sittings, goals: [] }), 'in-focus')!.text)
-      .toBe('2 of your 3 finished tasks were wrapped up during a focus sitting.');
+      .toBe('2 of your 3 finished tasks got done during a focus session.');
   });
 
   it('reads how long tasks wait and how due dates go', () => {

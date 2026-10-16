@@ -49,7 +49,7 @@ const filled = () =>
 
 describe('what the squares count', () => {
   it('labels the map with how many days had work', () => {
-    /* No sentence under the map any more — the count is the "Turning up"
+    /* No sentence under the map any more — the count is the "Showing up"
        row on the Evidence tab — but the map still says it to a screen reader. */
     show([did(ago(1)), did(ago(1)), did(ago(5))]);
 

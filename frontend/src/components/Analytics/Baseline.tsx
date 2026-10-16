@@ -101,21 +101,21 @@ export function BaselinePanel({
       key: 'days',
       label: 'Days a week',
       actual: `${workedPerWeek}`,
-      target: `aimed ${aim.active_days}`,
+      target: `goal ${aim.active_days}`,
       pct: daysPct,
     },
     {
       key: 'session',
-      label: 'Sitting',
-      actual: typicalSession > 0 ? `${Math.round(typicalSession)} min` : '—',
-      target: `aimed ${aim.session_minutes}`,
+      label: 'Session',
+      actual: typicalSession > 0 ? `${Math.round(typicalSession)} min` : '-',
+      target: `goal ${aim.session_minutes}`,
       pct: sessionPct,
     },
   ];
 
   return (
     <Panel
-      title="Against your baseline"
+      title="Against your targets"
       note={span}
       aside={
         <button type="button" className="ax-baseline-edit" onClick={onEdit}>

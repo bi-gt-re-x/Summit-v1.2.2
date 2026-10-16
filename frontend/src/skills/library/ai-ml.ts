@@ -83,7 +83,7 @@ export const aiMl = [
   node({
     id: 'ml.data-cleaning',
     name: 'Data Cleaning',
-    description: 'Missing values, wrong types, duplicates and outliers — most of the actual work.',
+    description: 'Missing values, wrong types, duplicates and outliers. Most of the actual work.',
     difficulty: 'intermediate',
     xpReward: 120,
     prerequisites: all('ml.pandas', 'math.statistics'),
@@ -188,7 +188,7 @@ export const aiMl = [
   node({
     id: 'ml.neural-networks',
     name: 'Neural Networks',
-    description: 'Layers, weights and a non-linearity — and why stacking them buys anything at all.',
+    description: 'Layers, weights and a non-linearity. And why stacking them buys anything at all.',
     difficulty: 'expert',
     xpReward: 210,
     prerequisites: all('ml.gradient-descent', 'math.linear-algebra'),

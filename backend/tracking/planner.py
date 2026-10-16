@@ -64,6 +64,7 @@ the plan; the account owns it.
 import json
 import os
 import re
+from backend.tracking.plainwords import STYLE, plain
 from typing import List, Sequence
 
 # What the page draws, so what the model is asked for and what is enforced on
@@ -286,6 +287,7 @@ a term.
 return a checkpoint their record shows they have passed, and aim the first \
 one at where their misses are.
 """
+SYSTEM += STYLE
 
 # Said only to the open models. The Anthropic path constrains the shape with a
 # schema instead, and repeating it there costs tokens to no effect.
@@ -339,6 +341,7 @@ after.
 record shows is done, and point the first step at the work they got wrong or \
 the reason their sessions go badly.
 """
+SYSTEM_STEPS += STYLE
 
 STEPS_SCHEMA = {
     'type': 'object',
@@ -1010,7 +1013,7 @@ def suggest_milestones(title, why='', description='', category='',
     else:
         text = _from_anthropic(brief)
 
-    cleaned = [str(entry).strip() for entry in _titles(text) if str(entry).strip()]
+    cleaned = [plain(str(entry)).strip() for entry in _titles(text) if str(entry).strip()]
     if len(cleaned) < COUNT:
         raise PlannerUnavailable(
             'The model returned {} checkpoints instead of {}. Try again.'.format(
@@ -1069,7 +1072,7 @@ def suggest_steps(milestone, goal='', why='', description='', category='',
     else:
         text = _from_anthropic(brief, SYSTEM_STEPS, STEPS_SCHEMA, instruction)
 
-    cleaned = [str(entry).strip() for entry in _titles(text) if str(entry).strip()]
+    cleaned = [plain(str(entry)).strip() for entry in _titles(text) if str(entry).strip()]
     if len(cleaned) < STEP_COUNT:
         raise PlannerUnavailable(
             'The model returned {} steps instead of {}. Try again.'.format(
@@ -1180,6 +1183,7 @@ projects, personal, other.
 - If the sentence is vague, commit to the most common concrete reading of it \
 rather than returning something equally vague.
 """
+SYSTEM_GOAL += STYLE
 
 
 def _category(value) -> str:
@@ -1231,7 +1235,7 @@ def draft_goal(idea: str) -> dict:
     )
 
     try:
-        found = json.loads(_json_span(text))
+        found = plain(json.loads(_json_span(text)))
     except (json.JSONDecodeError, ValueError, TypeError) as exc:
         raise PlannerUnavailable(
             'The model\u2019s answer could not be read. Try again.') from exc

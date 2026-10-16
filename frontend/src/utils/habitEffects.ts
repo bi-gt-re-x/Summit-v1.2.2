@@ -172,7 +172,7 @@ function conditionFor(mine: Task[], focusByDay: Map<string, number>): HabitCondi
         band.label,
         inside,
         outside,
-        `${inside.length} of these tasks on days like that, ${outside.length} on other days.`,
+        `${inside.length} of these tasks on days like that, ${outside.length} on others.`,
       );
     });
   }
@@ -231,7 +231,7 @@ function effectFor(
       return {
         lift,
         measure: 'how the work goes',
-        basis: `${mineRated.length} rated tasks here against ${othersRated.length} elsewhere.`,
+        basis: `${mineRated.length} rated tasks here vs. ${othersRated.length} others.`,
         strength: strengthFor(Math.min(mineRated.length, othersRated.length), lift),
       };
     }
@@ -252,7 +252,7 @@ function effectFor(
   return {
     lift,
     measure: 'tasks finished a day',
-    basis: `${on.length} days with it against ${off.length} working days without.`,
+    basis: `${on.length} days with it vs. ${off.length} days without.`,
     strength: strengthFor(Math.min(on.length, off.length), lift),
   };
 }

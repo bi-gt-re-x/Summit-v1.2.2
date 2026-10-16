@@ -177,15 +177,15 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
     found.push({
       key: 'record',
       heading: 'Record',
-      text: `You have been using Summit for ${spanDays} days.`,
+      text: `You've used Summit for ${spanDays} days.`,
       /* An unbroken record is the one case where the useful advice is to stop
          protecting it: a reader who has not missed a day in three years is
          being held back by the safe day they take to keep the run alive, not
          by the run. */
       advice:
         held >= HELD_RATIO
-          ? 'Turning up is not your problem, so stop spending effort on it. Put a day into something hard enough that it might not go well.'
-          : 'The record is patchy rather than short. Pick the one day of the week you miss most and defend that day only.',
+          ? "You show up plenty. Now spend a day on something hard enough that it might not go well."
+          : 'Your days are hit and miss. Pick the day you skip most and guard just that one.',
     });
   }
 
@@ -200,10 +200,10 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       text: `You average ${perDay.toFixed(1)} tasks on the days you work.`,
       advice:
         perDay >= HEAVY_LOAD
-          ? 'That is a full list every time you sit down, which is how days end with the hard thing still on it. Cut the next one to three and put the hardest first.'
+          ? "That's a lot every time you sit down, so the hard stuff gets left. Cut your next list to three and do the hardest first."
           : perDay < LIGHT_LOAD
-            ? 'A short list is fine when it is the right list. Add one task you are not sure you can finish rather than three you are.'
-            : 'That is a list you can actually finish, so leave the size alone. The gain left is in which tasks make it on.',
+            ? "A short list is fine if it's the right one. Add one task you're not sure you can finish."
+            : "That's a list you can finish, so keep the size. Just make sure the right tasks make it on.",
     });
   }
 
@@ -222,16 +222,16 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
     found.push({
       key: 'subjects',
       heading: 'Subjects',
-      text: `${top.name} is ${share}% of your recorded work.`,
+      text: `${top.name} is ${share}% of your work.`,
       /* The scattered case needs three subjects, not two: a 50/50 split across
          two is a deliberate pair of interests, and calling that unfocused is
          the advice misreading its own figure. */
       advice:
         share >= DOMINANT_SHARE
-          ? `Over half of everything you do is ${top.name}. Hold that if it is the point, and if it is not, this is the week to take an hour back off it.`
+          ? `Over half your work is ${top.name}. If that's the plan, great. If not, take an hour off it this week.`
           : share <= SCATTERED_SHARE && real.length >= 3
-            ? `Nothing owns your time — your widest subject is still only ${share}% of it. If one of these matters more than the others, your week should be able to show which.`
-            : `A clear lead without crowding anything out. Leave the split alone and spend the attention inside ${top.name}.`,
+            ? `Your time is spread out. Your top subject is only ${share}% of it. If one matters most, give it more of your week.`
+            : `One clear lead, and nothing else gets crowded out. Keep the split and dig deeper into ${top.name}.`,
     });
   }
 
@@ -240,11 +240,11 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
     found.push({
       key: 'focus',
       heading: 'Current focus',
-      text: `Lately you have been working on ${recentTop} most.`,
+      text: `Lately you've worked on ${recentTop} the most.`,
       /* The only fact here that reports a *change*, so it is the only one whose
          advice can ask the reader a question they alone can answer: the figures
          cannot tell a deliberate switch from an avoided subject. */
-      advice: `You have moved off ${top.name} and onto ${recentTop}. If you chose that, let it run; if you did not, ${top.name} goes in tomorrow's first block.`,
+      advice: `You've moved from ${top.name} to ${recentTop}. If that's on purpose, keep going. If not, put ${top.name} first tomorrow.`,
     });
   }
 

@@ -66,17 +66,17 @@ function needsSteps(stone: NonNullable<Goal['milestones']>[number]): boolean {
  */
 export async function fillSteps(goalId: string): Promise<Omit<PlanResult, 'milestones'>> {
   const goal = await readGoal(goalId);
-  if (!goal) return { checklists: 0, problem: 'That goal could not be read back.' };
+  if (!goal) return { checklists: 0, problem: "That goal couldn't be read back." };
 
   const outcomes = await Promise.all(
     (goal.milestones ?? []).filter(needsSteps).map(async (stone): Promise<string | null> => {
       const drafted = await goalService.suggestSteps({ milestoneId: stone.id });
-      if (!drafted.success) return drafted.message ?? 'Those steps could not be drafted.';
+      if (!drafted.success) return drafted.message ?? "Those steps couldn't be drafted.";
       if (!drafted.steps?.length) return 'The model returned no steps. Try again.';
       const saved = await goalService.updateMilestone(stone.id, {
         steps: fromTitles(drafted.steps),
       });
-      return saved.success ? null : (saved.message ?? 'Those steps could not be saved.');
+      return saved.success ? null : (saved.message ?? "Those steps couldn't be saved.");
     }),
   );
 
@@ -93,7 +93,7 @@ export async function fillSteps(goalId: string): Promise<Omit<PlanResult, 'miles
  */
 export async function planGoal(goalId: string): Promise<PlanResult> {
   const goal = await readGoal(goalId);
-  if (!goal) return { milestones: 0, checklists: 0, problem: 'That goal could not be read back.' };
+  if (!goal) return { milestones: 0, checklists: 0, problem: "That goal couldn't be read back." };
   if (!['milestones', 'number'].includes(measureOf(goal))) {
     return { milestones: 0, checklists: 0, problem: null };
   }
@@ -107,7 +107,7 @@ export async function planGoal(goalId: string): Promise<PlanResult> {
     if (!drafted.milestones?.length) return { milestones: 0, checklists: 0, problem: null };
     const saved = await goalService.setMilestones(goalId, drafted.milestones);
     if (!saved.success) {
-      return { milestones: 0, checklists: 0, problem: saved.message ?? 'Those checkpoints could not be saved.' };
+      return { milestones: 0, checklists: 0, problem: saved.message ?? "Those checkpoints couldn't be saved." };
     }
     milestones = drafted.milestones.length;
   }

@@ -362,7 +362,7 @@ def test_the_first_day_back_gets_a_welcome_instead_of_a_warning(client):
     rows = _streak_rows(_list(client))
     assert 'streak-risk:%s' % DAY not in rows
     back = rows['vacation-over:%s' % _day(-1)]
-    assert back['title'] == 'Welcome back — your 4-day streak is live again'
+    assert back['title'] == 'Welcome back! Your 4-day streak is back on'
     assert back['body'].endswith('It resets at midnight.')
 
 

@@ -43,13 +43,13 @@ describe('execution gap', () => {
   it('reads execution above difficulty as underrating the result', () => {
     const found = observations(many(8, { difficulty: 2, execution: 5 }));
     const gap = found.find((o) => o.key === 'execution-gap');
-    expect(gap?.text).toContain('harder than your execution');
+    expect(gap?.text).toContain('feel harder than they go');
   });
 
   it('reads execution below difficulty the other way', () => {
     const found = observations(many(8, { difficulty: 5, execution: 2 }));
     const gap = found.find((o) => o.key === 'execution-gap');
-    expect(gap?.text).toContain('less smoothly');
+    expect(gap?.text).toContain("worse than you'd expect");
   });
 
   it('stays quiet inside half a star', () => {
@@ -120,9 +120,9 @@ describe('confidence', () => {
   });
 
   it('has a label for every tier', () => {
-    expect(CONFIDENCE_LABEL.low).toBe('Early observation');
-    expect(CONFIDENCE_LABEL.moderate).toBe('Pattern emerging');
-    expect(CONFIDENCE_LABEL.high).toBe('Established pattern');
+    expect(CONFIDENCE_LABEL.low).toBe('Early hint');
+    expect(CONFIDENCE_LABEL.moderate).toBe('Pattern forming');
+    expect(CONFIDENCE_LABEL.high).toBe('Clear pattern');
   });
 });
 

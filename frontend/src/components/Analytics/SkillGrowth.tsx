@@ -187,7 +187,7 @@ function Tile({
 }
 
 /** A rate as the tile's headline, or a dash over nothing. */
-const shown = (rate: Rate, suffix = '') => (rate.rate === null ? '—' : `${rate.rate}%${suffix}`);
+const shown = (rate: Rate, suffix = '') => (rate.rate === null ? '-' : `${rate.rate}%${suffix}`);
 
 /** Green at or above `good`, amber under `warn`. */
 const toneOf = (rate: Rate, good: number, warn: number) =>
@@ -316,7 +316,7 @@ function SubjectCard({
             tone={toneOf(read.wentWell, 70, 40)}
             detail={
               read.wentWell.den > 0
-                ? `${read.wentWell.num} of ${read.wentWell.den} rated 4–5 for how it went`
+                ? `${read.wentWell.num} of ${read.wentWell.den} rated 4-5 for how it went`
                 : 'Nothing rated in this period'
             }
             change={changeText(read.wentWell)}
@@ -345,7 +345,7 @@ function SubjectCard({
             tone="plain"
             detail={
               read.hard.den > 0
-                ? `${read.hard.num} of ${read.hard.den} rated 4–5 for difficulty`
+                ? `${read.hard.num} of ${read.hard.den} rated 4-5 for difficulty`
                 : 'Nothing rated in this period'
             }
             /* Neutral either way: more hard work is not better on its own,
@@ -400,7 +400,7 @@ function SubjectCard({
             detail={
               read.goals[0] ? (
                 <>
-                  <b>{read.goals[0].goal.title}</b> — {read.goals[0].progress}% done.{' '}
+                  <b>{read.goals[0].goal.title}</b>: {read.goals[0].progress}% done.{' '}
                   {read.goals[0].health.reason}
                   {read.goals.length > 1 && ` +${read.goals.length - 1} more`}
                 </>
@@ -437,7 +437,7 @@ function SubjectCard({
             )}
           </span>{' '}
           out of 100, from {track.rated} rated {track.rated === 1 ? 'task' : 'tasks'}
-          {track.confidence < 0.5 ? ' — still a thin reading' : ''}
+          {track.confidence < 0.5 ? '(not much data yet)' : ''}
           {read?.lastDone ? ` · last finished ${shortDate(read.lastDone)}` : ''}
         </p>
       </div>
@@ -510,7 +510,7 @@ function Highlights({
         <p className="sg-highlight-note">Furthest climbed over {periodText}</p>
         {growing.length === 0 ? (
           <p className="sg-highlight-empty">
-            No subject’s level rose over {periodText}. Rated work that goes well, on harder
+            No subject's level rose over {periodText}. Rated work that goes well, on harder
             tasks, is what lifts one.
           </p>
         ) : (
@@ -641,7 +641,7 @@ function Headline({ summary, since, periodText, long }: {
         value={overall ? `${signed(overall.pct)}%` : 'New'}
       >
         {!overall ? (
-          <>Your subjects are still getting their first steady level. Keep rating finished tasks and this fills in.</>
+          <>Your subjects are still getting their first level. Keep rating finished tasks to fill this in.</>
         ) : overall.sameStart ? (
           <>
             Your average level went from <strong>{overall.avgThen}</strong> to{' '}
@@ -735,13 +735,13 @@ function Headline({ summary, since, periodText, long }: {
             Slipped from <strong>{attention.track.then}</strong> to{' '}
             <strong>{attention.track.now}</strong> ({signed(attention.track.delta ?? 0)} points).{' '}
             {(attention.track.daysSince ?? 0) >= IDLE_DAYS
-              ? `Nothing finished in it for ${attention.track.daysSince} days, and levels fade without practice.`
-              : 'Recent work there has been rated lower, or been easier, than before.'}
+              ? `Nothing done in it for ${attention.track.daysSince} days. Levels fade without practice.`
+              : 'Your recent work there was rated lower or was easier than before.'}
           </>
         ) : attention.reason === 'idle' ? (
           <>
-            Nothing finished in it for <strong>{attention.track.daysSince} days</strong>. It's at{' '}
-            {attention.track.now} now, and a level fades when a subject isn't practiced.
+            Nothing done in it for <strong>{attention.track.daysSince} days</strong>. It's at{' '}
+            {attention.track.now} now. Levels fade without practice.
           </>
         ) : (
           <>
@@ -758,8 +758,7 @@ function Headline({ summary, since, periodText, long }: {
 function BandKey() {
   return (
     <p className="sg-key">
-      <strong>What a level is:</strong> a score out of 100 for each subject, from how well your
-      rated tasks went and how hard they were. Time spent doesn't count.{' '}
+      <strong>What a level is:</strong> A score out of 100 for each subject. It's based on how hard your rated tasks were and how well they went. Time spent doesn't count.{' '}
       {SKILL_BANDS.map((row, i) => (
         <span key={row.band} className="sg-key-band">
           {row.band} {row.from}{i === SKILL_BANDS.length - 1 ? '+' : `-${row.to - 1}`}
@@ -856,9 +855,7 @@ function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
     <div className="sg-chart">
       <h3 className="sg-chart-title">Growth over time</h3>
       <p className="sg-chart-note">
-        Your level in the four subjects that grew most, and your average across all of them.
-        It rises when hard work goes well and slips when a subject is left alone. Time spent
-        doesn't move it.
+        Your top 4 growing subjects, plus your average. Levels rise when hard work goes well. They slip when you leave a subject alone.
         {marks.length > 0 && ' ▲ marks the first time a subject reached a new band.'}
       </p>
       <ul className="sg-legend">
@@ -978,9 +975,7 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
   if (!tracks.length) {
     return (
       <p className="ax-empty">
-        No subject has enough rated work yet to have a level, so there is
-        nothing for {periodText} to have moved. Rate a few finished tasks and
-        this fills in.
+        No subject has enough rated work for a level yet, so there's nothing for {periodText} to show. Rate a few finished tasks to fill this in.
       </p>
     );
   }
@@ -1003,7 +998,7 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
       <div className="sg-subjects">
         <PanelGroup
           title="Subject by subject"
-          note={`How the work in each subject is going: ${shownTracks.length} ${shownTracks.length === 1 ? 'subject' : 'subjects'}, ${periodText}`}
+          note={`How each subject is going: ${shownTracks.length} ${shownTracks.length === 1 ? 'subject' : 'subjects'}, ${periodText}`}
           defaultOpen
         >
           {context && (
@@ -1011,7 +1006,7 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
           )}
 
           <div className="sg-subjects-bar">
-            <span>Open a subject for its completion, execution, deadlines, skill tree and goals.</span>
+            <span>Open a subject to see its tasks, ratings, deadlines, skill tree and goals.</span>
             <button
               type="button"
               className="sg-subjects-all"
@@ -1037,9 +1032,7 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
           </ul>
 
           <p className="ax-panel-note ax-panel-note-foot">
-            One card per subject, because a finished task carries a subject and
-            nothing finer. The branches inside a subject are in its skill tree,
-            where they are a route map rather than a score.
+            One card per subject. For the parts inside a subject, open its skill tree.
           </p>
         </PanelGroup>
       </div>
@@ -1078,8 +1071,7 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
   if (hours < 1 && finished === 0) {
     return (
       <p className="ax-empty">
-        No focus time and no finished work in {periodText}, so there is nothing
-        to weigh against anything.
+        No focus time and no finished work in {periodText}, so there's nothing to compare.
       </p>
     );
   }
@@ -1133,7 +1125,7 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
         <div className="sg-fact">
           <dt>Level gained</dt>
           <dd>
-            {pointsGained > 0 ? `+${pointsGained}` : '—'}
+            {pointsGained > 0 ? `+${pointsGained}` : '-'}
             <span className="sg-fact-against">
               {pointsPerTenHours !== null && pointsGained > 0
                 ? `${one(pointsPerTenHours)} points per 10 hours`
@@ -1145,10 +1137,10 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
         <div className="sg-fact">
           <dt>Rate</dt>
           <dd>
-            {perHour === null ? '—' : `${round(perHour)} XP/h`}
+            {perHour === null ? '-' : `${round(perHour)} XP/h`}
             <span className="sg-fact-against">
               {rateMove === null
-                ? 'no earlier period to read against'
+                ? 'no earlier period to compare'
                 : `${rateMove > 0 ? '↑' : rateMove < 0 ? '↓' : '→'} ${Math.abs(rateMove)}% on the period before`}
             </span>
           </dd>
@@ -1156,9 +1148,7 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
       </dl>
 
       <p className="ax-panel-note ax-panel-note-foot">
-        Level is the skill score over the subjects you rated work in. Only
-        rises are counted: a slip in one subject canceling a climb in another
-        would report a term of work as nothing.
+        Level is your skill score across subjects you rated. Only gains count here, so a drop in one subject can't wipe out a gain in another.
       </p>
     </>
   );

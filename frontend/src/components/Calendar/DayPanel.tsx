@@ -360,7 +360,7 @@ export function DayPanel({
                           <span className="task-times">
                             {clockLabel(entry.startTime)}
                             {entry.startTime && entry.endTime && (
-                              <span className="task-times-dash">–</span>
+                              <span className="task-times-dash">-</span>
                             )}
                             {clockLabel(entry.endTime)}
                           </span>

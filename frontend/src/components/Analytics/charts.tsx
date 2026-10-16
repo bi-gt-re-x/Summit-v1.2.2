@@ -425,7 +425,7 @@ export function AreaChart({
       : `${rows[active]!.label}. ${rows[active]!.values
           .map((value, index) =>
             value === null
-              ? `${readout!.names[index] ?? `Series ${index + 1}`}: no reading`
+              ? `${readout!.names[index] ?? `Series ${index + 1}`}: no data`
               : `${readout!.names[index] ?? `Series ${index + 1}`}: ${write(value)}`,
           )
           .join('. ')}`;
@@ -753,7 +753,7 @@ export function AreaChart({
                   <tr key={index}>
                     <th scope="row">{row.label}</th>
                     {row.values.map((value, column) => (
-                      <td key={column}>{value === null ? 'No reading' : write(value)}</td>
+                      <td key={column}>{value === null ? 'No data' : write(value)}</td>
                     ))}
                   </tr>
                 ))}
@@ -1259,9 +1259,7 @@ export function Scatter({ points, tone, xLabel, yLabel, trend }: ScatterProps) {
       <svg
         viewBox={`0 0 ${width} ${height}`}
         role="img"
-        aria-label={`${xLabel} against ${yLabel}. ${points.length} ${
-          points.length === 1 ? 'observation' : 'observations'
-        }${trend ? ', with a line of best fit' : ', with no line of fit drawn'}.`}
+        aria-label={`${xLabel} vs. ${yLabel}. ${points.length} ${points.length === 1 ? 'point' : 'points'}${trend ? ', with a trend line' : ''}.`}
       >
         {[0.25, 0.5, 0.75].map((ratio) => (
           <line

@@ -103,7 +103,7 @@ export function VacationMode({
             type="button"
             className="st-btn"
             disabled={busy}
-            onClick={() => void run(service.endVacation, () => 'Welcome back — today counts again')}
+            onClick={() => void run(service.endVacation, () => 'Welcome back! Today counts again.')}
           >
             End vacation
           </button>

@@ -12,7 +12,7 @@ import { open, lock } from './types';
 export const PRODUCTION: SubjectTree = {
   id: 'production',
   title: 'Music Production',
-  blurb: 'Turning parts into a record — arrangement, sound, and the mix last.',
+  blurb: 'Turning parts into a record. Arrangement, sound, and the mix last.',
   parent: 'music',
   nodes: [
     { id: 'pr.daw', name: 'The DAW', icon: 'daw', tier: 'foundation', core: true, state: open, percent: 20, xp: 1300,
@@ -34,7 +34,7 @@ export const PRODUCTION: SubjectTree = {
     { id: 'pr.synth', name: 'Synthesis', icon: 'synth', tier: 'intermediate', requires: ['pr.sound'], state: lock, percent: 0, xp: 2000,
       desc: 'Building a sound from oscillators, a filter and an envelope. Learning subtractive synthesis once makes every preset readable and every plugin less mysterious.' },
     { id: 'pr.sampling', name: 'Sampling', icon: 'sampler', tier: 'intermediate', requires: ['pr.sound'], state: lock, percent: 0, xp: 1900,
-      desc: 'Taking recorded audio and playing it as an instrument — chopped, stretched, reversed. The technical part is easy; clearing what you sample from a record is the part that ends projects.' },
+      desc: 'Taking recorded audio and playing it as an instrument. Chopped, stretched, reversed. The technical part is easy; clearing what you sample from a record is the part that ends projects.' },
     { id: 'pr.record', name: 'Recording', icon: 'microphone', tier: 'intermediate', requires: ['pr.audio'], state: lock, percent: 0, xp: 1900,
       desc: 'Getting a real performance in cleanly: gain staging, microphone placement and a room that is not fighting you. Everything gained here is free, and everything lost here is permanent.' },
     { id: 'pr.edit', name: 'Editing', icon: 'audio-edit', tier: 'intermediate', requires: ['pr.record'], state: lock, percent: 0, xp: 1800,

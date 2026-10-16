@@ -71,7 +71,7 @@ export default function AboutUs() {
         a growth rating.
       </p>
 
-      <h2>What it is built on</h2>
+      <h2>What it's built on</h2>
       <div className="values-grid">
         {VALUES.map((value) => (
           <div className="value-card" key={value.title}>
@@ -81,16 +81,14 @@ export default function AboutUs() {
         ))}
       </div>
 
-      <h2>How it is built</h2>
+      <h2>How it's built</h2>
       <p>
-        Python and FastAPI on the backend, React and TypeScript on the front, SQLite
-        underneath, and every chart drawn by hand in SVG. Your data stays on the machine
-        running the app. No accounts on distant servers, no subscriptions, no ads.
+        Python and FastAPI on the back end. React and TypeScript on the front. Every chart is hand-drawn in SVG. Your data stays on the machine running the app. No subscriptions. No ads.
       </p>
 
-      <h2>Where it is going</h2>
+      <h2>Where it's going</h2>
       <p>
-        Still being built, and tested the way it was written — in real study sessions.
+        Still being built, and tested in real study sessions.
       </p>
 
       <p>

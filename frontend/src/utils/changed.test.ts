@@ -203,7 +203,7 @@ describe('the order', () => {
 });
 
 /* --------------------------------------------------------------------------
-   The five measures added after the section was found to be four views of the
+   Your five scores added after the section was found to be four views of the
    same XP. Each is pinned on the movement it claims, on the floor that stops
    it claiming one, and — where it can go either way — on the direction landing
    it in the right lane.

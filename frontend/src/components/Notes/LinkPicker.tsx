@@ -189,7 +189,7 @@ export function LinkPicker({ onPick, onClose }: Props) {
       </label>
 
       <div className="nt-link-rows">
-        {loading && shown.length === 0 && <p className="nt-link-empty">Reading your work…</p>}
+        {loading && shown.length === 0 && <p className="nt-link-empty">Loading your work…</p>}
         {!loading && shown.length === 0 && (
           <p className="nt-link-empty">Nothing here by that name.</p>
         )}

@@ -65,9 +65,9 @@ export function SubjectPanel({ rows, previous, balance, linked = false }: Subjec
   }));
 
   return (
-    <Panel title="Subject Growth (XP Earned)" note="Where the XP actually goes">
+    <Panel title="XP by subject" note="Where your XP goes">
       {rows.length === 0 ? (
-        <p className="ax-empty">No finished tasks carry a subject in this window yet.</p>
+        <p className="ax-empty">None of your finished tasks in this window have a subject yet.</p>
       ) : (
         <div className="ax-subject">
           <Radar axes={axes} label="XP earned by subject" />
@@ -130,30 +130,29 @@ function BalanceReading({ balance }: { balance: BalanceShape }) {
         style={{ '--share': `${balance.concentration}%` } as CSSProperties}
       >
         <strong>{balance.concentration}%</strong>
-        <span className="ax-muted ax-small">on {balance.leader ?? '—'}</span>
+        <span className="ax-muted ax-small">on {balance.leader ?? '-'}</span>
       </div>
       <div>
         <p className="ax-prose">
           {balance.leader === null ? (
-            'No finished task carries a subject yet.'
+            'None of your finished tasks have a subject yet.'
           ) : balance.concentration >= 45 ? (
             <>
-              Nearly half your effort goes to <strong>{balance.leader}</strong>. That is depth, and
-              a single point of failure.
+              Nearly half your work goes to <strong>{balance.leader}</strong>. Great for depth.
+              Risky if it stalls.
             </>
           ) : (
             <>
-              <strong>{balance.leader}</strong> leads, but nothing dominates — your effort is
-              spread across <strong>{balance.carrying} subjects</strong>. Balanced, and a slower
-              route to depth.
+              <strong>{balance.leader}</strong> leads, but your work is spread across{' '}
+              <strong>{balance.carrying} subjects</strong>. Nicely balanced. Depth just takes
+              longer.
             </>
           )}
         </p>
         {balance.fading.length > 0 && (
           <p className="ax-prose">
-            <strong>{balance.fading.join(', ')}</strong> had real work early in this range and{' '}
-            {balance.fading.length === 1 ? 'has' : 'have'} had none since. A total would still
-            count it.
+            <strong>{balance.fading.join(', ')}</strong> got work early on and nothing since.
+            The total above still counts it.
           </p>
         )}
       </div>
@@ -183,11 +182,13 @@ export interface ConsistencyPanelProps {
 export function ConsistencyPanel({ rows }: ConsistencyPanelProps) {
   return (
     <Panel
-      title="Consistency Over Time"
+      title="Consistency over time"
       footer={
-        <PanelNote label="What moves this">
-          The share of days with <strong>any</strong> work on them. A fifteen-minute day and a
-          six-hour day count the same — this measures showing up, nothing else.
+        <PanelNote label="How this works">
+          <ul className="ax-tips">
+            <li><b>Any work counts:</b> A day with any work on it is a day worked.</li>
+            <li><b>Size doesn't matter:</b> 15 minutes counts the same as 6 hours.</li>
+          </ul>
         </PanelNote>
       }
     >

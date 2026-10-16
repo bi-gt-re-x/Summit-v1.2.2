@@ -136,7 +136,7 @@ const pct = (rate: number | null) => `${Math.round((rate ?? 0) * 100)}%`;
 export function nextStepText(read: SkillLevel): string {
   const next = read.next;
   if (!next) return 'Mastered. Keep it that way with a few Hard problems now and then.';
-  if (next.tier === null) return 'Answer any problem to start — mark it right or wrong.';
+  if (next.tier === null) return 'Answer any problem to start. Mark it right or wrong.';
 
   const name = TIER_NAME[next.tier];
   const want =
@@ -165,7 +165,7 @@ export function sinceText(iso: string | null, now: Date = new Date()): string {
 
 export const EVIDENCE_TEXT: Record<SkillLevel['evidence'], string> = {
   none: 'nothing yet',
-  thin: 'thin — a handful of problems',
+  thin: 'early: just a few problems',
   fair: 'fair',
   solid: 'solid',
 };

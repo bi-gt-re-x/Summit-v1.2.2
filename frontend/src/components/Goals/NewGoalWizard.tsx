@@ -134,14 +134,14 @@ function ChartThumb({ id }: { id: string }) {
  * to scroll past.
  */
 const TIPS: Record<number, string> = {
-  0: 'Name the finish line, not the effort — "Reach USACO Gold", not "practice more".',
+  0: 'Name the finish line. Like "Reach USACO Gold" instead of "practice more".',
   // Not a tip so much as the reason the field is not optional. Somebody who
   // knows what the subject buys them picks the right one rather than the
   // nearest one.
   1: 'Why this matters to you.',
-  2: 'Add a date so we can tell you if you’re on track.',
+  2: "Add a date so we can tell you if you're on track.",
   3: 'Use milestones for a finish line, or a number for something you count up.',
-  4: 'Three to six works. Each should be a state the goal reaches, not a task you do.',
+  4: 'Three to six works. Each one should be a stage you reach, like "Solve Silver problems".',
   5: 'Not sure? Leave it on Automatic. You can change it from the card any time.',
 };
 
@@ -326,7 +326,7 @@ export function NewGoalWizard({
       const result = await onDraft(idea.trim());
       if (mine !== asking.current) return;
       if (!result.goal) {
-        setSuggestProblem(result.problem ?? 'That could not be drafted. Try again.');
+        setSuggestProblem(result.problem ?? "That couldn't be drafted. Try again.");
         return;
       }
       const goal = result.goal;
@@ -471,7 +471,7 @@ export function NewGoalWizard({
                       disabled={!idea.trim()}
                       onAsk={() => void draftWhole()}
                       primary
-                      title="Fills in the title, the reason, the field, a target date and five checkpoints — all of it editable"
+                      title="Fills in a title, reason, field, date and five checkpoints. You can edit all of it."
                     />
                   </div>
                   {/* The two model calls share `suggestProblem`, and only
@@ -483,12 +483,12 @@ export function NewGoalWizard({
                     </p>
                   )}
                   <p className="gx-hint">
-                    Describe your goal and we’ll fill in the rest. You can edit everything.
+                    Describe your goal and we'll fill in the rest. You can edit everything.
                   </p>
                 </div>
               )}
 
-              <label htmlFor="gx-title">The outcome, not the activity</label>
+              <label htmlFor="gx-title">The result you want</label>
               <input
                 id="gx-title"
                 value={title}
@@ -497,7 +497,7 @@ export function NewGoalWizard({
                 onChange={(event) => setTitle(event.target.value)}
               />
               <p className="gx-hint">
-                Something you either reached or did not.
+                Something you either hit or didn't.
               </p>
 
               <label htmlFor="gx-desc">Anything worth remembering about it</label>
@@ -508,7 +508,7 @@ export function NewGoalWizard({
                 onChange={(event) => setDescription(event.target.value)}
               />
 
-              <label>What is it about?</label>
+              <label>What's it about?</label>
               <div className="gx-chips">
                 {CATEGORIES.map((entry) => (
                   <button
@@ -539,8 +539,7 @@ export function NewGoalWizard({
                 />
               </div>
               <p className="gx-hint">
-                Required. It is what lets that subject's page read your record against this
-                goal — without it the goal is a bar on this page and nothing anywhere else.
+                Required. It links this goal to that subject's page. Without it, the goal only shows up here.
               </p>
             </>
           )}
@@ -557,7 +556,7 @@ export function NewGoalWizard({
                 onChange={(event) => setWhy(event.target.value)}
               />
               <p className="gx-hint">
-                For you, not the app. Nothing is computed from it.
+                Just for you. Summit doesn't use it for anything.
               </p>
             </>
           )}
@@ -572,7 +571,7 @@ export function NewGoalWizard({
                 onChange={(event) => setDeadline(event.target.value)}
               />
               <p className="gx-hint">
-                Optional. With a date, the app can tell you whether you are on pace.
+                Optional. With a date, the app can tell you whether you're on pace.
               </p>
 
               <label htmlFor="gx-priority">How much does it matter? ({priority} / 10)</label>
@@ -585,7 +584,7 @@ export function NewGoalWizard({
                 onChange={(event) => setPriority(Number(event.target.value))}
               />
               <p className="gx-hint">
-                Weights it in the overall figure at the top of the page.
+                Counts more toward the total at the top of the page.
               </p>
             </>
           )}
@@ -601,8 +600,7 @@ export function NewGoalWizard({
                 >
                   <strong>By checkpoints</strong>
                   <span>
-                    There is no number. You get there by passing a handful of states — the next
-                    step is where you list them.
+                    There's no number. You get there by hitting a few checkpoints. You'll list them next.
                   </span>
                 </button>
                 <button
@@ -612,8 +610,7 @@ export function NewGoalWizard({
                 >
                   <strong>By a number</strong>
                   <span>
-                    A rating, a score, a count — something you will read off somewhere else and
-                    type in here.
+                    A rating, a score or a count. Something you'll check somewhere else and type in here.
                   </span>
                 </button>
               </div>
@@ -621,7 +618,7 @@ export function NewGoalWizard({
               {measure === 'number' && (
                 <div className="gx-number-row">
                   <span>
-                    <label htmlFor="gx-cur">Where you are now</label>
+                    <label htmlFor="gx-cur">Where you're now</label>
                     <input
                       id="gx-cur"
                       type="number"
@@ -650,14 +647,14 @@ export function NewGoalWizard({
                 </div>
               )}
               <p className="gx-hint">
-                You update the figure; the app does the pace arithmetic.
+                You update the number. Summit works out your pace.
               </p>
             </>
           )}
 
           {step === 4 && (
             <>
-              <label>The checkpoints, in the order you will hit them</label>
+              <label>Your checkpoints, in the order you'll hit them</label>
               {onSuggest && (
                 <div className="gx-ms-suggest">
                   <button
@@ -689,7 +686,7 @@ export function NewGoalWizard({
                 <p className="gx-hint">
                   {deadline
                     ? `Spread evenly between today and ${deadline}. Move any from the goal's timeline.`
-                    : 'Two weeks apart from today. Move any from the goal\u2019s timeline.'}
+                    : "Two weeks apart from today. Move any from the goal's timeline."}
                 </p>
               )}
               <ol className="gx-draft-list">
@@ -727,9 +724,7 @@ export function NewGoalWizard({
                 </button>
               </form>
               <p className="gx-hint">
-                A state the goal reaches, not a thing you do on a Tuesday. Leave it empty and the
-                model drafts them once the goal is made. Either way, each checkpoint then gets its
-                steps drafted.
+                A stage you reach, like "Solve Silver problems". Leave it empty and AI drafts them after the goal is made. Either way, each checkpoint gets its own steps.
               </p>
             </>
           )}

@@ -89,7 +89,7 @@ export function VerifyBanner() {
       setDevLink(result.success ? result.dev_link : null);
       setSaid(result.message || 'Sent.');
     } catch {
-      setSaid('Could not reach the server.');
+      setSaid("Couldn't reach the server.");
     } finally {
       setBusy(false);
     }

@@ -192,11 +192,11 @@ export interface Measure {
  */
 const UNMEASURED: Record<string, string> = {
   rebalance:
-    'No measure — this one asks whether the shape of your week is deliberate. Either answer can be right.',
+    'No score for this one. It just asks if your week looks the way you want.',
   'stretch-harder':
-    'No measure — difficulty is your own rating, and scoring you on it would be asking for the rating rather than the work.',
+    'No score for this one, since difficulty is your own rating.',
   'difficulty-is-the-half':
-    'No measure — difficulty is your own rating, and scoring you on it would be asking for the rating rather than the work.',
+    'No score for this one, since difficulty is your own rating.',
 };
 
 /** The bottom quarter of working days, averaged. What `raise-the-floor` is about. */
@@ -344,7 +344,7 @@ export function measureFor(id: string): Measure | null {
 
     case 'weekend':
       return {
-        label: 'Weekend against weekday',
+        label: 'Weekend vs. weekday',
         unit: '%',
         better: 'higher',
         noise: 8,
@@ -354,7 +354,7 @@ export function measureFor(id: string): Measure | null {
 
     case 'longer-sittings':
       return {
-        label: 'Typical sitting',
+        label: 'Usual session',
         unit: ' min',
         better: 'higher',
         noise: 5,
@@ -397,7 +397,7 @@ export function measureFor(id: string): Measure | null {
 
     case 'plan-a-light-day':
       return {
-        label: 'Longest run with no let-up',
+        label: 'Longest run with no break',
         unit: ' days',
         better: 'lower',
         noise: 2,
@@ -421,7 +421,7 @@ export function measureFor(id: string): Measure | null {
     case 'execution-slipping':
     case 'execution-is-the-half':
       return {
-        label: 'Execution you rated',
+        label: 'How well it went',
         unit: ' / 5',
         better: 'higher',
         noise: 0.3,
@@ -456,7 +456,7 @@ export function measureFor(id: string): Measure | null {
 
 /** The sentence shown for a rule that promised no number. */
 export function unmeasuredNote(id: string): string {
-  return UNMEASURED[id] ?? 'No measure — this one is not a claim about a number.';
+  return UNMEASURED[id] ?? "No score for this one. It isn't about a number.";
 }
 
 // --------------------------------------------------------------------------
@@ -607,7 +607,7 @@ export function reviewAdopted(input: ReviewInput): Review[] {
             ...base,
             outcome: 'thin',
             label: measure.label,
-            note: 'No earlier score to compare against.',
+            note: 'No earlier score to compare with.',
           };
         }
         return verdict(base, measure, reading.before, reading.after, {
@@ -636,7 +636,7 @@ export function reviewAdopted(input: ReviewInput): Review[] {
           ...base,
           outcome: 'thin',
           label: measure.label,
-          note: 'Not enough history from before this change.',
+          note: 'Not enough work from before this change.',
         };
       }
 
@@ -705,10 +705,10 @@ function verdict(
 
   const note =
     outcome === 'held'
-      ? `${measure.label} has not changed much.`
+      ? `${measure.label} hasn't changed much.`
       : outcome === 'improved'
-        ? `${measure.label} went ${direction} ${size}, as intended.`
-        : `${measure.label} went ${direction} ${size}, the opposite of what was intended.`;
+        ? `${measure.label} went ${direction} ${size}. It worked.`
+        : `${measure.label} went ${direction} ${size}, the wrong way.`;
 
   return { ...base, outcome, label: measure.label, unit: measure.unit, before, after, delta, pct, note, ...window };
 }
@@ -751,7 +751,7 @@ export function summarise(reviews: Review[]): ReviewSummary {
   } else if (judged === 0) {
     headline = waiting > 0
       ? `${waiting} change${waiting === 1 ? '' : 's'} too new to judge.`
-      : 'Nothing here can be measured yet.';
+      : 'Nothing here to check yet.';
   } else {
     headline = `${improved} of ${judged} worked.`;
   }

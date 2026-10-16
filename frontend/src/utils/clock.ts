@@ -106,7 +106,7 @@ export function hourText(hour: number): string {
 }
 
 /**
- * "7:40 – 8:40 AM" for a block's two ends, or "07:40 – 08:40".
+ * "7:40-8:40 AM" for a block's two ends, or "07:40-08:40".
  *
  * The meridiem is written once when both ends share it, which is how the design
  * writes a range and how anyone says one out loud. It matters more than it
@@ -115,7 +115,7 @@ export function hourText(hour: number): string {
  * the trick was invented for solved already.
  */
 export function rangeText(from: Date, to: Date): string {
-  if (current === '24h') return `${timeText(from)} – ${timeText(to)}`;
+  if (current === '24h') return `${timeText(from)}-${timeText(to)}`;
 
   const half = (date: Date) => (date.getHours() < 12 ? 'AM' : 'PM');
   // ":00" is dropped on the hour for the same reason the meridiem is shared:
@@ -126,6 +126,6 @@ export function rangeText(from: Date, to: Date): string {
     return minutes ? `${hour}:${String(minutes).padStart(2, '0')}` : `${hour}`;
   };
   return half(from) === half(to)
-    ? `${bare(from)} – ${bare(to)} ${half(to)}`
-    : `${bare(from)} ${half(from)} – ${bare(to)} ${half(to)}`;
+    ? `${bare(from)}-${bare(to)} ${half(to)}`
+    : `${bare(from)} ${half(from)}-${bare(to)} ${half(to)}`;
 }

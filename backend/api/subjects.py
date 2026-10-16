@@ -189,7 +189,7 @@ def create(body: NewSubject, username: str = Depends(current_username)):
     if any(r['subject_id'] == subject_id for r in mine):
         return fail('You already have a subject called that')
     if len([r for r in mine if r.get('custom')]) >= MAX_CUSTOM:
-        return fail('That is as many subjects as one account can add')
+        return fail("That's as many subjects as one account can add")
 
     added = db.insert_row('user_subjects', {
         'user_id': username,
@@ -249,7 +249,7 @@ def remove(subject_id: str, username: str = Depends(current_username)):
     into the record of work already done.
     """
     if subject_id not in own_ids(username):
-        return fail('That is not one of yours to delete')
+        return fail("That's not one of yours to delete")
 
     db.delete_row('user_subjects', subject_id, user_id=username, key='subject_id')
     return ok(subject_id=subject_id)
@@ -371,7 +371,7 @@ def set_subject_milestones(body: SubjectMilestones,
     cleaned = _clean_milestones(body.milestones or [])
     if cleaned:
         if subject not in everything and len(everything) >= MILESTONE_SUBJECTS:
-            return fail('That is as many subjects as can carry checkpoints.')
+            return fail("That's the most subjects that can have checkpoints.")
         everything[subject] = cleaned
     else:
         everything.pop(subject, None)

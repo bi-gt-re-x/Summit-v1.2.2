@@ -174,9 +174,7 @@ function checkText(
       field,
       hard: true,
       note:
-        `This looks like an instruction, not ${
-          field === 'aim' ? 'an aim' : 'a level'
-        }. Write what you are actually aiming for.`,
+        `This reads like an instruction. Write ${field === 'aim' ? 'the aim' : 'the level'} itself, in plain words.`,
     });
     return found;
   }
@@ -193,7 +191,7 @@ function checkText(
       field,
       hard: true,
       note:
-        `“${value}” has no words in it. Write a short phrase or leave it blank.`,
+        `"${value}" has no words in it. Write a short phrase or leave it blank.`,
     });
     return found;
   }
@@ -204,7 +202,7 @@ function checkText(
       field,
       hard: true,
       note:
-        `“${value}” doesn't look like words. Write your ${what} out, or clear the field.`,
+        `"${value}" doesn't look like words. Write your ${what} out or clear the field.`,
     });
     return found;
   }
@@ -215,7 +213,7 @@ function checkText(
       field,
       hard: false,
       note:
-        `This hits the ${AIM_MAX}-character limit and may be cut off. Shorten it.`,
+        `This hits the ${AIM_MAX}-character limit and might get cut off. Make it shorter.`,
     });
   }
 
@@ -237,9 +235,9 @@ function checkCheckpoints(subject: string, raw: string): AmbitionProblem[] {
       true,
       `${wordless.length === 1 ? 'One line has' : `${wordless.length} lines have`} `
         + `no words in ${wordless.length === 1 ? 'it' : 'them'} `
-        + `(${wordless.slice(0, 3).map((line) => `“${line}”`).join(', ')}). `
-        + 'A checkpoint is a stage you can tell you have reached; delete these '
-        + 'lines or write what they stand for.',
+        + `(${wordless.slice(0, 3).map((line) => `"${line}"`).join(', ')}).`
+        + "A checkpoint is a stage you can tell you've reached. Delete these"
+        + 'lines or write what they mean.',
     );
   }
 
@@ -247,10 +245,10 @@ function checkCheckpoints(subject: string, raw: string): AmbitionProblem[] {
   if (mashed.length > 0) {
     add(
       true,
-      `${mashed.length === 1 ? 'One line does' : `${mashed.length} lines do`} not read `
-        + `as words (${mashed.slice(0, 3).map((line) => `“${line}”`).join(', ')}). `
-        + 'These are shown back to you on the subject page and read by the model, '
-        + 'so write them out or drop them.',
+      `${mashed.length === 1 ? 'One line doesn\'t' : `${mashed.length} lines don't`} read`
+        + `as words (${mashed.slice(0, 3).map((line) => `"${line}"`).join(', ')}).`
+        + 'You see these on the subject page and Summit uses them for tips,'
+        + 'so write them out or delete them.',
     );
   }
 
@@ -258,9 +256,9 @@ function checkCheckpoints(subject: string, raw: string): AmbitionProblem[] {
     const lost = lines.length - CHECKPOINTS_MAX;
     add(
       false,
-      `${lines.length} checkpoints, and only the first ${CHECKPOINTS_MAX} are kept — `
-        + `${lost === 1 ? 'the last one' : `the last ${lost}`} will not be saved. `
-        + 'Cut it to twelve so the ones that matter are the ones that survive.',
+      `${lines.length} checkpoints, but only the first ${CHECKPOINTS_MAX} are kept.`
+        + `${lost === 1 ? 'the last one' : `the last ${lost}`} won't be saved. `
+        + 'Cut it to 12 so you keep the ones that matter.',
     );
   }
 
@@ -284,7 +282,7 @@ function checkCheckpoints(subject: string, raw: string): AmbitionProblem[] {
     add(
       false,
       `${repeated.size === 1 ? 'A checkpoint appears' : `${repeated.size} checkpoints appear`} `
-        + `twice (${[...repeated].slice(0, 3).map((line) => `“${line}”`).join(', ')}). `
+        + `twice (${[...repeated].slice(0, 3).map((line) => `"${line}"`).join(', ')}).`
         + 'Remove the duplicate.',
     );
   }

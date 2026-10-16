@@ -62,7 +62,7 @@ describe('ObjectiveBand', () => {
     );
 
     expect(screen.getByText('Competition')).toBeInTheDocument();
-    expect(screen.getByText(/under a clock/i)).toBeInTheDocument();
+    expect(screen.getByText(/under time pressure/i)).toBeInTheDocument();
   });
 
   it("keeps the reader's own sentence beside the model's rewrite of it", () => {

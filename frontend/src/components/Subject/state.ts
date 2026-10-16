@@ -546,7 +546,7 @@ export function standings(done: AnalyticsTask[], curve: DifficultyCurve): Standi
   out.push({
     id: 'breakthrough',
     title: 'Difficulty breakthrough',
-    detail: 'Ten tasks at Hard or above, landed at Strong or better.',
+    detail: '10 Hard or Brutal tasks rated Strong or better.',
     reached: hard >= 10,
     progress: pct((hard / 10) * 100),
     at: `${hard} of 10`,
@@ -566,8 +566,8 @@ export function standings(done: AnalyticsTask[], curve: DifficultyCurve): Standi
   }
   out.push({
     id: 'consistency',
-    title: 'Held the line',
-    detail: 'Twenty tasks in a row at Strong or better.',
+    title: 'Steady streak',
+    detail: '20 tasks in a row rated Strong or better.',
     reached: best >= 20,
     progress: pct((best / 20) * 100),
     at: `best run ${best}`,
@@ -578,7 +578,7 @@ export function standings(done: AnalyticsTask[], curve: DifficultyCurve): Standi
   out.push({
     id: 'range',
     title: 'Full range',
-    detail: 'Real work at four of the five difficulty levels.',
+    detail: 'Work at four of the five difficulty levels.',
     reached: levels >= 4,
     progress: pct((levels / 4) * 100),
     at: `${levels} of 5 levels`,
@@ -588,8 +588,8 @@ export function standings(done: AnalyticsTask[], curve: DifficultyCurve): Standi
   const analysis = timeAnalysis(done);
   out.push({
     id: 'efficiency',
-    title: 'Quick without cutting',
-    detail: 'Ten hard tasks under your usual time, still landed.',
+    title: 'Fast and solid',
+    detail: '10 hard tasks done faster than usual and still rated well.',
     reached: analysis.thorough === 0 ? false : analysis.rushed === 0 && hard >= 10,
     progress: pct((Math.max(0, hard - analysis.rushed) / 10) * 100),
     at: analysis.rushed > 0 ? `${analysis.rushed} rushed` : `${hard} clean`,
@@ -714,11 +714,11 @@ export function subjectState(
       label: 'Mastery',
       value: masteryOf(done),
       known: ratedTasks.length > 0,
-      meaning: 'How hard the work you take on is, on the five-level scale.',
+      meaning: 'How hard your work is, from 1 to 5.',
       evidence: ratedTasks.length
         ? [
             `${ratedTasks.length} rated ${ratedTasks.length === 1 ? 'task' : 'tasks'}`,
-            `mean difficulty ${(mean(ratedTasks.map((t) => Number(t.difficulty))) ?? 0).toFixed(1)} of 5`,
+            `average difficulty ${(mean(ratedTasks.map((t) => Number(t.difficulty))) ?? 0).toFixed(1)} of 5`,
             curve.ceiling ? `reaching ${curve.ceiling.label.toLowerCase()}` : '',
           ].filter(Boolean)
         : [],
@@ -729,11 +729,11 @@ export function subjectState(
       label: 'Execution',
       value: executionOf(done),
       known: ratedTasks.length > 0,
-      meaning: 'How it goes when you do it — the rating you gave yourself after.',
+      meaning: 'How well it went, by your own rating.',
       evidence: ratedTasks.length
         ? [
-            `mean ${(mean(ratedTasks.map((t) => Number(t.execution))) ?? 0).toFixed(1)} of 5`,
-            `${ratedTasks.filter((t) => Number(t.execution) >= LANDED).length} of ${ratedTasks.length} landed at Strong or better`,
+            `average ${(mean(ratedTasks.map((t) => Number(t.execution))) ?? 0).toFixed(1)} of 5`,
+            `${ratedTasks.filter((t) => Number(t.execution) >= LANDED).length} of ${ratedTasks.length} rated Strong or better`,
             curve.best ? `best at ${curve.best.label.toLowerCase()}` : '',
           ].filter(Boolean)
         : [],
@@ -744,11 +744,11 @@ export function subjectState(
       label: 'Quality',
       value: qualityRate(done),
       known: ratedTasks.length > 0,
-      meaning: 'Difficulty times execution, against the 25 that product tops out at.',
+      meaning: 'How hard times how well, out of 25.',
       evidence: ratedTasks.length
         ? [
             `${ratedTasks.length} rated ${ratedTasks.length === 1 ? 'task' : 'tasks'}`,
-            `mean product ${(mean(ratedTasks.map((t) => qualityOf(t as never) ?? 0)) ?? 0).toFixed(1)} of 25`,
+            `average ${(mean(ratedTasks.map((t) => qualityOf(t as never) ?? 0)) ?? 0).toFixed(1)} of 25`,
           ]
         : [],
       delta: delta(qualityRate(done), before.length ? qualityRate(before) : null),
@@ -758,17 +758,17 @@ export function subjectState(
       label: 'Efficiency',
       value: time.efficiency,
       known: time.known,
-      meaning: 'Time against your own usual for that difficulty, weighted by whether it held up.',
+      meaning: 'Your time vs. your usual for that difficulty, and whether it went well.',
       evidence: time.known
         ? [
             time.typical === null ? '' : `usually ${time.typical} min a task`,
             time.drift === null
               ? ''
               : time.drift < 0
-                ? `${Math.abs(time.drift)} min under your median`
-                : `${time.drift} min over your median`,
-            time.rushed > 0 ? `${time.rushed} finished fast and rated poorly` : '',
-            time.thorough > 0 ? `${time.thorough} took longer and landed` : '',
+                ? `${Math.abs(time.drift)} min faster than usual`
+                : `${time.drift} min slower than usual`,
+            time.rushed > 0 ? `${time.rushed} done fast and rated low` : '',
+            time.thorough > 0 ? `${time.thorough} took longer and went well` : '',
           ].filter(Boolean)
         : [],
       delta: null,
@@ -778,7 +778,7 @@ export function subjectState(
       label: 'Consistency',
       value: consistency,
       known: span.days > 0,
-      meaning: 'Days with work here, against the days in the window.',
+      meaning: 'Days you worked on it, out of the days in this window.',
       evidence: span.days > 0 ? [`${days.size} of ${span.days} days`] : [],
       delta: null,
     },
@@ -787,7 +787,7 @@ export function subjectState(
       label: 'Productivity',
       value: productivity,
       known: span.days > 0 && done.length > 0,
-      meaning: 'Finished tasks a week, against six.',
+      meaning: 'Tasks finished per week, out of 6.',
       evidence:
         span.days > 0
           ? [
@@ -809,10 +809,10 @@ export function subjectState(
          the momentum object, which is what the card prints. */
       value: momentum.known ? pct(50 + (momentum.change ?? 0) * 2) : null,
       known: momentum.known,
-      meaning: 'The later half of this window against the earlier half.',
+      meaning: 'The second half of this window vs. the first half.',
       evidence: momentum.known
         ? [
-            `${momentum.earlier}% → ${momentum.later}% execution`,
+            `${momentum.earlier}% → ${momentum.later}% went well`,
             `${(momentum.change ?? 0) > 0 ? '+' : ''}${momentum.change} points`,
           ]
         : [],

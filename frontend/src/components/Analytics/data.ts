@@ -46,12 +46,12 @@ export interface WindowOption {
  * behavioural tabs, two years and all time for the long view.
  */
 export const WINDOWS: WindowOption[] = [
-  { key: '7d', label: '7D', days: 7, compare: 'Previous 7 Days' },
-  { key: '30d', label: '30D', days: 30, compare: 'Previous 30 Days' },
-  { key: '90d', label: '90D', days: 90, compare: 'Previous 90 Days' },
-  { key: '1y', label: '1Y', days: 365, compare: 'Previous Year' },
-  { key: '2y', label: '2Y', days: 730, compare: 'Previous 2 Years' },
-  { key: 'all', label: 'All Time', days: null, compare: 'No earlier period' },
+  { key: '7d', label: '7D', days: 7, compare: 'Previous 7 days' },
+  { key: '30d', label: '30D', days: 30, compare: 'Previous 30 days' },
+  { key: '90d', label: '90D', days: 90, compare: 'Previous 90 days' },
+  { key: '1y', label: '1Y', days: 365, compare: 'Previous year' },
+  { key: '2y', label: '2Y', days: 730, compare: 'Previous 2 years' },
+  { key: 'all', label: 'All time', days: null, compare: 'No earlier period' },
 ];
 
 export function windowOption(key: WindowKey): WindowOption {
@@ -89,7 +89,7 @@ export function spanLabel(days: GrowthDay[]): string {
       day: 'numeric',
       year: 'numeric',
     });
-  return first === last ? at(first) : `${at(first)} – ${at(last)}`;
+  return first === last ? at(first) : `${at(first)} to ${at(last)}`;
 }
 
 /**
@@ -274,7 +274,7 @@ export const METRICS: MetricOption[] = [
   },
   {
     key: 'xp',
-    label: 'XP Earned (total)',
+    label: 'XP earned (total)',
     read: (day) => num(day.xp_earned),
     cumulative: true,
     format: (value) => `${compact(value)} XP`,
@@ -288,7 +288,7 @@ export const METRICS: MetricOption[] = [
   },
   {
     key: 'focus',
-    label: 'Focus Time (total)',
+    label: 'Focus time (total)',
     read: (day) => num(day.focus_minutes) / 60,
     cumulative: true,
     format: (value) => `${Math.round(value).toLocaleString()}h`,

@@ -267,10 +267,10 @@ CATALOGUE = (
     ('tgroup-9',     'Every Field',           'Reach skill trees in all 9 fields.',               'tree_groups', 9,     5, 'Mastery'),
 
     # And the total, which keeps going after every one of the above has capped.
-    ('treexp-1',     'A Tree’s Worth',        'Do a whole skill tree’s worth of work.',           'tree_xp',     1,     2, 'Mastery'),
-    ('treexp-3',     'Three Trees’ Worth',    'Do 3 skill trees’ worth of work.',                 'tree_xp',     3,     3, 'Mastery'),
-    ('treexp-8',     'Eight Trees’ Worth',    'Do 8 skill trees’ worth of work.',                 'tree_xp',     8,     4, 'Mastery'),
-    ('treexp-20',    'Twenty Trees’ Worth',   'Do 20 skill trees’ worth of work.',                'tree_xp',     20,    5, 'Mastery'),
+    ('treexp-1',     "A Tree's Worth",        "Do a whole skill tree's worth of work.",           'tree_xp',     1,     2, 'Mastery'),
+    ('treexp-3',     "Three Trees' Worth",    "Do 3 skill trees' worth of work.",                 'tree_xp',     3,     3, 'Mastery'),
+    ('treexp-8',     "Eight Trees' Worth",    "Do 8 skill trees' worth of work.",                 'tree_xp',     8,     4, 'Mastery'),
+    ('treexp-20',    "Twenty Trees' Worth",   "Do 20 skill trees' worth of work.",                'tree_xp',     20,    5, 'Mastery'),
 
     # ---- Milestones: the numbers the app counts in ----------------------
     ('xp-1000',      'Getting Going',         'Earn 1,000 XP.',                                   'xp',          1000,  1, 'Milestones'),

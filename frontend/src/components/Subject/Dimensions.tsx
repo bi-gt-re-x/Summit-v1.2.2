@@ -52,7 +52,7 @@ export function Ring({
         />
       </svg>
       <div className="sx-ring-text">
-        <strong>{value === null ? '—' : value}</strong>
+        <strong>{value === null ? '-' : value}</strong>
         <span className="sx-ring-label">{label}</span>
         {sub && <span className="sx-ring-sub">{sub}</span>}
       </div>
@@ -84,7 +84,7 @@ function Card({ entry }: { entry: Dimension }) {
         <span className="sx-metric-label">{entry.label}</span>
         <strong className="sx-metric-value">
           {!entry.known || entry.value === null
-            ? '—'
+            ? '-'
             : momentum
               ? `${(entry.delta ?? 0) > 0 ? '+' : ''}${entry.delta}`
               : entry.value}
@@ -102,7 +102,7 @@ function Card({ entry }: { entry: Dimension }) {
             {entry.delta > 0 ? '↑' : '↓'} {Math.abs(entry.delta)}
           </span>
         )}
-        {!entry.known && <span className="sx-metric-none">not measured yet</span>}
+        {!entry.known && <span className="sx-metric-none">no data yet</span>}
       </button>
 
       {open && (

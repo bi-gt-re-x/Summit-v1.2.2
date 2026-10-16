@@ -138,7 +138,7 @@ export function TaskModal({
     >
       <div className="modal-content">
         <div className="modal-header">
-          <h3>{editing ? 'Edit Task' : 'Add New Task'}</h3>
+          <h3>{editing ? 'Edit Task' : 'Add new task'}</h3>
           <span className="close-btn" role="button" tabIndex={0} onClick={onClose}>
             ×
           </span>

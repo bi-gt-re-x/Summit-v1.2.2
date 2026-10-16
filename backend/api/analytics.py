@@ -321,13 +321,13 @@ def set_baseline(body: SetBaseline, username: str = Depends(current_username)):
     """
 
     if body.active_days is None or body.session_minutes is None:
-        return fail('A baseline needs both how often and how long.')
+        return fail('Your targets need both how often and how long.')
 
     if not (ACTIVE_DAYS[0] <= body.active_days <= ACTIVE_DAYS[1]):
         return fail('Days a week must be between {} and {}.'.format(*ACTIVE_DAYS))
 
     if not (SESSION_MINUTES[0] <= body.session_minutes <= SESSION_MINUTES[1]):
-        return fail('A sitting must be between {} and {} minutes.'.format(*SESSION_MINUTES))
+        return fail('A session has to be between {} and {} minutes.'.format(*SESSION_MINUTES))
 
     _, user = load_user(username)
     if not user:
@@ -612,7 +612,7 @@ def write_subject_brief(body: SubjectBrief, username: str = Depends(current_user
 
     name = (body.subject or '').strip()[:BRIEF_TEXT]
     if not name:
-        return fail('There is no subject to write about.')
+        return fail("There's no subject to write about.")
 
     findings = {
         'subject': name,
@@ -699,7 +699,7 @@ def write_goal_plan(body: GoalPlanBrief, username: str = Depends(current_usernam
 
     title = (body.goal or '').strip()[:BRIEF_TEXT]
     if not title:
-        return fail('There is no goal to plan a route to.')
+        return fail("There's no goal to plan a route to.")
 
     findings = {
         'goal': title,
@@ -780,7 +780,7 @@ def suggest_subject_goal(body: SubjectGoalDraft, username: str = Depends(current
 
     name = (body.subject or '').strip()[:BRIEF_TEXT]
     if not name:
-        return fail('There is no subject to draft a goal for.')
+        return fail("There's no subject to draft a goal for.")
 
     try:
         drafted = subject_goal.draft({

@@ -60,7 +60,7 @@ export function LevelChip({ read }: { read: SkillLevel }) {
   );
 }
 
-const pct = (value: number | null) => (value === null ? '—' : `${value}%`);
+const pct = (value: number | null) => (value === null ? '-' : `${value}%`);
 
 // --------------------------------------------------------------------------
 // One skill, in full
@@ -143,7 +143,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
             {then.hardest && then.hardest !== read.hardest && (
               <span className="slv-then">{TIER_NAME[then.hardest]} → </span>
             )}
-            {read.hardest ? TIER_NAME[read.hardest] : '—'}
+            {read.hardest ? TIER_NAME[read.hardest] : '-'}
             <small>the hardest difficulty you have got right</small>
           </dd>
         </div>
@@ -183,7 +183,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
 function TierTable({ read }: { read: SkillLevel }) {
   return (
     <table className="slv-tiers">
-      <caption>By difficulty — your last 20 at each</caption>
+      <caption>By difficulty: your last 20 at each</caption>
       <thead>
         <tr>
           <th scope="col">Difficulty</th>
@@ -200,7 +200,7 @@ function TierTable({ read }: { read: SkillLevel }) {
             <tr key={tier}>
               <th scope="row">{TIER_NAME[tier]}</th>
               <td>{one.attempted}</td>
-              <td>{one.rate === null ? '—' : `${Math.round(one.rate * 100)}%`}</td>
+              <td>{one.rate === null ? '-' : `${Math.round(one.rate * 100)}%`}</td>
               <td className={done ? 'is-yes' : ''}>{done ? '✓ Yes' : 'Not yet'}</td>
             </tr>
           );
@@ -248,7 +248,7 @@ export function LevelChain({
     <div className="slv-chain-wrap">
       <p className="slv-chain-sum">
         {started === 0
-          ? 'No step practiced yet. Open one, try its problems, and mark each right or wrong — that is what your level is read from.'
+          ? "No step practiced yet. Open one, try its problems and mark each right or wrong. Your level comes from that."
           : `${started} of ${steps.length} steps practiced. Levels come from problems you marked right or wrong.`}
       </p>
       <ol className="slv-chain">
@@ -377,7 +377,7 @@ export function LogPractice({
     setProblem(null);
     const ok = await onLog(weight, tried, right);
     if (ok) {
-      setDone(`Logged ${tried} ${TIER_NAME[weight]} — ${right} right.`);
+      setDone(`Logged ${tried} ${TIER_NAME[weight]}. ${right} right.`);
       setAttempted('');
       setCorrect('');
     }

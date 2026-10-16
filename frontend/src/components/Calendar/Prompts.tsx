@@ -43,8 +43,8 @@ export function DeleteConfirm({
       title={`Delete ${kind}?`}
       description={
         repeats
-          ? `“${name}” lands on ${occurrences} days. This can’t be undone.`
-          : `Delete “${name}”? This can’t be undone.`
+          ? `"${name}" lands on ${occurrences} days. This can't be undone.`
+          : `Delete "${name}"? This can't be undone.`
       }
       actions={
         <>

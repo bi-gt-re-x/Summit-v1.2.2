@@ -71,13 +71,13 @@ export type ImproveEntry = string[] | { steps: string[]; proof?: string; pitfall
 export const IMPROVE: Record<string, ImproveEntry> = {
   // ---- Coding -----------------------------------------------------------
   'c.vars': [
-    'Name ten values in a program you already wrote — badly named ones count double.',
+    'Name ten values in a program you already wrote. Badly named ones count double.',
     'Predict what each variable holds at three points, then print them and check.',
     'Rewrite a function so no name is reused for two different meanings.',
   ],
   'c.types': [
     'Take a working program and write down the type of every value in it.',
-    'Deliberately add a number to a string and read the error properly.',
+    'Add a number to a string on purpose and read the error carefully.',
     'Convert between three type pairs by hand: text to number, number to text, anything to boolean.',
   ],
   'c.io': [
@@ -108,7 +108,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   'c.ds': [
     'Solve one problem with a list and again with a map; time both.',
     'Pick a structure for a real task and write one sentence on why not the others.',
-    'Nest two structures — a map of lists — and walk it.',
+    'Nest two structures (a map of lists) and walk through it.',
   ],
   'c.oop': [
     'Turn a group of loose functions and a dict into one class.',
@@ -117,7 +117,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   ],
   'c.git': [
     'Make ten commits with messages that say why rather than what.',
-    'Branch, make a change, and merge it back deliberately.',
+    'Branch, make a change and merge it back on purpose.',
     'Recover a change you deleted, without copying files by hand.',
   ],
   'c.err': [
@@ -128,7 +128,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
 
   // ---- Web --------------------------------------------------------------
   'w.html': [
-    'Rebuild a page you like using only semantic tags — no div unless nothing else fits.',
+    'Rebuild a page you like using only semantic tags. No div unless nothing else fits.',
     'Run a page through an accessibility checker and fix what it names.',
     'Write a form with labels that actually connect to their inputs.',
   ],
@@ -168,13 +168,13 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Paste a deep link into a fresh tab and confirm it lands right.',
   ],
   'w.apis': [
-    'Render real data, including while it is still loading.',
+    "Render real data, including while it's still loading.",
     'Handle an empty result differently from a failed one.',
     'Cancel a request that is no longer needed.',
   ],
   'w.auth': [
     'Sign in, reload, and stay signed in.',
-    'Make one route that a signed-out visitor cannot reach.',
+    "Make one route that a signed-out visitor can't reach.",
     'Sign out and confirm nothing sensitive survives it.',
   ],
   'w.deploy': [
@@ -217,12 +217,12 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   'a.trees': [
     'Walk one in all three orders and say what each is good for.',
     'Insert into and search a binary search tree.',
-    'Compute depth and check whether it is balanced.',
+    "Compute depth and check whether it's balanced.",
   ],
   'a.sorting': [
     'Implement one n² sort and one n log n sort.',
     'Sort by two keys at once.',
-    'Say when the built-in sort is the right answer — it usually is.',
+    'Say when the built-in sort is the right answer. It usually is.',
   ],
   'a.searching': [
     'Write it once with no off-by-one error; test the empty and single cases.',
@@ -248,7 +248,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   ],
   'g.bfs': [
     'Find the shortest path in an unweighted maze.',
-    'Track the path itself, not just the distance.',
+    'Track the path itself, plus the distance.',
     'Explain why a queue is what makes it level by level.',
   ],
   'g.dfs': [
@@ -257,14 +257,14 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Detect a cycle in a directed graph.',
   ],
   'g.topo': [
-    'Order a set of dependencies — this page lays itself out that way.',
+    'Order a set of dependencies. This page lays itself out that way.',
     'Detect the cycle that makes an order impossible.',
     'Do it once with DFS and once with in-degrees.',
   ],
   'g.dijkstra': [
     'Implement it with a priority queue.',
     'Show what breaks when an edge is negative.',
-    'Reconstruct the path, not just its length.',
+    'Rebuild the path itself, plus its length.',
   ],
   'g.mst': [
     "Implement Kruskal's with union-find.",
@@ -272,7 +272,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Use one on a real distance matrix.',
   ],
   'g.flow': [
-    'Implement Edmonds–Karp on a small network.',
+    'Implement Edmonds-Karp on a small network.',
     'Find the min cut that matches your max flow.',
     'Model one matching problem as a flow problem.',
   ],
@@ -367,7 +367,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   ],
   'la.matrix': {
     steps: [
-      'Multiply matrices by hand until it is boring — six or seven, no calculator.',
+      "Multiply matrices by hand until it's boring. Six or seven, no calculator.",
       'Work out why the inner dimensions have to match, rather than remembering that they do.',
       'Multiply the same pair in the other order and account for the difference.',
     ],
@@ -375,13 +375,13 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   },
   'la.systems': [
     'Solve one system three ways: substitution, elimination, and as a matrix.',
-    'Build a system with no solution and one with infinitely many, deliberately.',
+    'Build a system with no solution and one with infinitely many, on purpose.',
     'Say which of the three methods you would use on a system of eight, and why.',
   ],
   'la.det': {
     steps: [
       'Compute determinants for five 2x2 and three 3x3 matrices by hand.',
-      'Draw what the determinant is measuring for one 2x2 — the area it scales by.',
+      'Draw what the determinant means for one 2x2: the area it scales by.',
       'Find a matrix with determinant zero and say what it does to the plane.',
     ],
     pitfall: 'Treating it as a number you compute rather than as the thing that tells you whether the transformation can be undone.',
@@ -390,7 +390,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   // ---- Calculus ---------------------------------------------------------
   'k.limits': [
     'Evaluate five limits numerically, then algebraically, and compare.',
-    'Find one limit that does not exist and say why.',
+    "Find one limit that doesn't exist and say why.",
     'Explain continuity using a function that fails it.',
   ],
   'k.deriv': [
@@ -456,12 +456,12 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Transpose eight bars into a new key by hand.',
   ],
   'mu.ear': [
-    'Do five minutes of interval recognition daily — daily matters more than long.',
+    'Do five minutes of interval practice every day. Daily beats long.',
     'Transcribe one bar of a melody a day.',
     'Identify major and minor before anything else.',
   ],
   'mu.progressions': [
-    'Play I–V–vi–IV in four keys.',
+    'Play I-V-vi-IV in four keys.',
     'Find that progression in three songs you already own.',
     'Write eight bars using only diatonic chords.',
   ],
@@ -473,14 +473,14 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Find a study that confused correlation with cause.',
   ],
   'sc.measure': [
-    'Measure one thing five times and report the spread, not just the number.',
+    'Measure one thing five times and report the spread too.',
     'Carry units through a calculation and check they survive.',
     'Convert between three unit systems without a calculator.',
   ],
   'ph.fbd': [
     'Draw the diagram for five situations before writing a single equation.',
-    'Label every arrow with what is pushing what — no force without a source.',
-    'Find the one problem where you drew a force that is not really there.',
+    "Label every arrow with what's pushing what. Every force needs a source.",
+    "Find the one problem where you drew a force that isn't really there.",
     'Redo a problem you got wrong and check whether the diagram was the error.',
   ],
   'ch.formula': [
@@ -540,7 +540,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Split a function that needs a comment in the middle.',
   ],
   'c.modules': [
-    'Split a single-file program into three with deliberate boundaries.',
+    'Split a single-file program into three, with clear lines between them.',
     'Install a package and read the part of its docs you actually need.',
     'Make one thing private and see what breaks.',
   ],
@@ -551,7 +551,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   ],
   'c.test': [
     'Write a test that fails, then make it pass.',
-    'Test one edge case and one error path, not just the happy one.',
+    'Test one edge case and one error path, too.',
     'Break something on purpose and confirm a test catches it.',
   ],
   'c.refactor': [
@@ -572,7 +572,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   'c.design': [
     'Draw the pieces of a system and the arrows between them before coding.',
     'Find a dependency pointing the wrong way and turn it round.',
-    'Write down what each module is not allowed to know.',
+    "Write down what each module isn't allowed to know.",
   ],
   'w.responsive': [
     'Build one layout that works at 320px and 1600px with no media query.',
@@ -600,7 +600,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Pass a component as a prop instead of a boolean flag.',
   ],
   'w.build': [
-    'Read your build config line by line and delete what you cannot explain.',
+    "Read your build config line by line and delete what you can't explain.",
     'Look at what is actually in the output bundle.',
     'Break the build on purpose and read the error properly.',
   ],
@@ -612,15 +612,15 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   'w.perf': [
     'Measure a real page on a throttled connection.',
     'Find the largest thing being downloaded and make it smaller.',
-    'Defer something that is not needed for the first paint.',
+    "Defer something that isn't needed for the first paint.",
   ],
   'w.test': [
     'Write one test that clicks through a real flow.',
-    'Test what the user sees, not what the component stores.',
+    'Test what the user sees. Skip what the component stores.',
     'Change an implementation detail and confirm the test still passes.',
   ],
   'w.security': [
-    'Render untrusted text and confirm it cannot become script.',
+    "Render untrusted text and confirm it can't become script.",
     'Read about one real attack and check whether your app is open to it.',
     'Move one secret out of the client entirely.',
   ],
@@ -682,7 +682,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   'g.cycles': [
     'Detect a cycle in an undirected graph, then a directed one.',
     'Explain why the two need different methods.',
-    'Find the cycle itself, not just whether one exists.',
+    'Find the actual cycle, plus whether one exists.',
   ],
   'g.bellman': [
     'Implement it and compare its cost against Dijkstra.',
@@ -747,7 +747,7 @@ export const IMPROVE: Record<string, ImproveEntry> = {
   'm.decimals': [
     'Convert twenty values between fractions, decimals and percents.',
     'Compute a percentage increase and then reverse it.',
-    'Explain why a 50% rise then a 50% fall is not where you started.',
+    "Explain why a 50% rise then a 50% fall isn't where you started.",
   ],
   'm.negatives': [
     'Do thirty signed arithmetic questions and check each.',
@@ -885,8 +885,8 @@ export const IMPROVE: Record<string, ImproveEntry> = {
     'Catch one wrong answer purely from its units.',
   ],
   'sc.data': [
-    'Plot one dataset of your own and choose the axes deliberately.',
-    'Draw a line of best fit and say why it is justified.',
+    'Plot one dataset of your own and pick the axes on purpose.',
+    "Draw a line of best fit and say why it's justified.",
     'Find a published chart that misleads and say exactly how.',
   ],
   'ph.motion': [
@@ -1022,19 +1022,19 @@ const LADDER: Rung[] = [
     line: () => 'Do one from memory, with the answer covered.',
     by: {
       'Health and fitness': () => 'Do a set filmed from the side. Watch it back once.',
-      Computing: () => 'Write it from memory. Do not paste.',
-      'Language and humanities': () => 'Take a passage you admire and write it out from your notes, not from the page.',
+      Computing: () => "Write it from memory. Don't paste.",
+      'Language and humanities': () => "Take a passage you love and rewrite it from your notes. Don't look at the page.",
       Creative: () => 'Copy one piece from memory, then put yours beside the original.',
       'Life and home': () => 'Do it once with the instructions shut.',
       Work: () => 'Do it once from memory, without the notes.',
-      'Business and money': () => 'Do it once from memory, then check your figures.',
+      'Business and money': () => 'Do it once from memory, then check your numbers.',
     },
   },
   {
     line: () => 'Do three more unaided. Mark every one you had to look up.',
     by: {
       'Health and fitness': () => 'Three sets at a load you can hold form through.',
-      Creative: () => 'Three more, rough, in one sitting.',
+      Creative: () => 'Three more, rough, in one session.',
       Work: () => 'Do it three times this week. Mark the one you had to think hardest about.',
       'Life and home': () => 'Do it three more times with nothing open. Note what you forgot.',
       'Language and humanities': () => 'Write three more. Mark every one you had to check.',
@@ -1059,14 +1059,14 @@ const LADDER: Rung[] = [
       Creative: () => 'Ten quick ones. Keep none of them.',
       'Life and home': () => 'Do it three days running.',
       'Health and fitness': () => 'One set against the clock, same form. Note where it slipped.',
-      'Business and money': () => 'Run it over ten real figures of your own.',
+      'Business and money': () => 'Run it on ten real numbers of your own.',
       'Language and humanities': () => 'Ten short ones, timed. Note the one that took longest.',
     },
   },
   {
     line: (name) => `Write the method for ${name} in five lines, then use it on a new one without looking.`,
     by: {
-      'Health and fitness': () => 'Write the cues down — three, no more — then film a set and check you hit them.',
+      'Health and fitness': () => 'Write down three cues, no more. Then film a set and check you hit them.',
       Creative: () => 'Write down what you actually did, in five lines, so you can do it again.',
       'Life and home': (name) => `Write your own checklist for ${name}, five lines, then run it once.`,
       'Language and humanities': () => 'Write the rule down in five lines, then apply it to a new passage.',
@@ -1077,21 +1077,21 @@ const LADDER: Rung[] = [
     line: (name) => `Invent your own example of ${name}, do it, and check the answer holds.`,
     by: {
       Computing: () => 'Make up your own input, work out the answer by hand, then check the code agrees.',
-      'Health and fitness': (name) => `Set your own target for ${name} — load, reps or time — and hit exactly that.`,
-      'Life and home': () => 'Do it once for something real of your own, not a practice run.',
+      'Health and fitness': (name) => `Set your own target for ${name} (load, reps or time) and hit it exactly.`,
+      'Life and home': () => 'Do it once for something real of your own.',
       'Language and humanities': () => 'Write one of your own on a topic nobody set, then read it back cold.',
       Creative: (name) => `Make one small piece that is only about ${name}.`,
-      'Business and money': () => 'Run it on one real figure of your own and sanity-check the result.',
+      'Business and money': () => 'Run it on one real number of your own and sanity-check the result.',
       Work: (name) => `Use ${name} on one real thing on your list this week.`,
     },
   },
   {
     line: () => 'Change one thing about the problem and do it again.',
     by: {
-      'Health and fitness': () => 'Add one increment. Weight, distance or time — one.',
-      'Life and home': () => 'Do it again with one constraint you did not have.',
+      'Health and fitness': () => 'Add one increment. Weight, distance or time. Just one.',
+      'Life and home': () => "Do it again with one constraint you didn't have.",
       'Language and humanities': () => 'Make the same argument again for a reader who disagrees.',
-      Creative: () => 'Do it again with one thing changed — the light, the angle, the palette.',
+      Creative: () => 'Do it again with one thing changed: the light, the angle or the colors.',
       Work: () => 'Do it again when the constraints have moved: less time, or more on the list.',
     },
   },
@@ -1114,18 +1114,18 @@ const LADDER: Rung[] = [
     },
   },
   {
-    line: (name) => `Mix ${name} in with the skills either side of it, so you do not know which one is coming.`,
+    line: (name) => `Mix ${name} in with the skills either side of it, so you don't know which one is coming.`,
     by: {
       Computing: (name) => `Take on work where ${name} is only sometimes the right tool, and nobody tells you when.`,
-      'Health and fitness': () => 'Train it in a session where you have not fixed the order in advance.',
-      Creative: () => 'Work on three pieces at once, so you cannot settle into one.',
+      'Health and fitness': () => "Train it in a session where you haven't fixed the order in advance.",
+      Creative: () => "Work on three pieces at once, so you can't settle into one.",
       'Life and home': () => 'Do it inside an ordinary week rather than as its own task.',
     },
   },
   {
-    line: (name) => `Find the case where ${name} does not apply.`,
+    line: (name) => `Find the case where ${name} doesn't apply.`,
     by: {
-      'Health and fitness': (name) => `Name one goal ${name} will not get you, and what would.`,
+      'Health and fitness': (name) => `Name one goal ${name} won't get you, and what would.`,
       'Life and home': () => 'Name the situation where this is the wrong way to do it.',
     },
   },
@@ -1133,9 +1133,9 @@ const LADDER: Rung[] = [
     line: (name) => `Say when ${name} beats the other way of doing it, and when it does not.`,
   },
   {
-    line: (name) => `Use ${name} inside a bigger job, where it is not the point.`,
+    line: (name) => `Use ${name} inside a bigger job, as one small part.`,
     by: {
-      'Health and fitness': (name) => `Put ${name} in a full session, not a drill on its own.`,
+      'Health and fitness': (name) => `Put ${name} in a full session instead of a drill on its own.`,
     },
   },
   {
@@ -1157,7 +1157,7 @@ const LADDER: Rung[] = [
     line: () => 'Come back a month later and do one cold.',
   },
   {
-    line: (name) => `Hold ${name} to standard on work that is not practice.`,
+    line: (name) => `Hold ${name} to standard on work that isn't practice.`,
   },
 ];
 
@@ -1228,13 +1228,13 @@ function inline(name: string): string {
 /** What finishing looks like, per domain. */
 const PROOF: Record<string, (name: string) => string> = {
   Computing: (name) => `You can read someone else's ${name} and say why they wrote it that way.`,
-  'Math and science': (name) => `You spot a wrong answer involving ${name} before you finish the working.`,
+  'Math and science': (name) => `You spot a wrong answer with ${name} before you finish working it out.`,
   'Language and humanities': (name) => `You notice ${name} done badly, and can say what would fix it.`,
   Creative: (name) => `You choose ${name} for a reason you can state.`,
-  'Health and fitness': () => 'It holds on a bad day, not just a good one.',
+  'Health and fitness': () => 'It holds up on a bad day too.',
   'Business and money': (name) => `You can explain ${name} to someone who has to act on it.`,
-  Work: () => 'It survives a week you did not plan.',
-  'Life and home': () => 'No longer a project — just something you do.',
+  Work: () => "It survives a week you didn't plan.",
+  'Life and home': () => "It's not a project anymore. It's just something you do.",
 };
 
 const PROOF_DEFAULT = (name: string) => `You reach for ${name} unprompted, on a problem nobody labeled.`;
@@ -1256,7 +1256,7 @@ const TIER_EFFORT: Record<Difficulty, string> = {
   intermediate: 'A week or two of real use.',
   advanced: 'Several weeks. Expect to be wrong in public once.',
   expert: 'Months, mostly on work nobody set as an exercise.',
-  mastery: 'Open-ended. A standard you keep, not a box you tick.',
+  mastery: 'Open-ended. A standard you keep up for good.',
 };
 
 // ---------------------------------------------------------------------------
@@ -1362,7 +1362,7 @@ export function improveHeadline(node: GraphNode, blockers: GraphNode[]): string 
         : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]!}`;
     return `Finish ${list} first.`;
   }
-  if (node.status === 'complete') return 'Done. Keeping it is the work now.';
+  if (node.status === 'complete') return 'Done. Now just keep it up.';
   if (node.status === 'progress') return `${Math.round(node.percent)}% of the way.`;
   return 'Not started.';
 }
@@ -1390,7 +1390,7 @@ export function improvePlan(node: GraphNode, ctx: ImproveContext = {}): ImproveP
     pitfall: locked
       ? TIER_PITFALL[target.difficulty](inline(target.name))
       : node.status === 'complete'
-        ? `${node.name} fades quietly. You find out on the day you need it.`
+        ? `${node.name} fades if you don't use it. You find out the day you need it.`
         : stated?.pitfall ?? TIER_PITFALL[node.difficulty](name),
     effort: locked
       ? `${TIER_EFFORT[target.difficulty]} Then this one.`

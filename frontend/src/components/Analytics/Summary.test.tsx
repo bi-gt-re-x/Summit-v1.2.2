@@ -162,7 +162,7 @@ describe('the five measures on the grade card', () => {
 
   it('lists all five, each with its own letter, on the headline\'s ten-point scale', () => {
     show({ score: FIVE });
-    expect(screen.getByRole('list', { name: 'The five measures' })).toBeInTheDocument();
+    expect(screen.getByRole('list', { name: 'Your five scores' })).toBeInTheDocument();
     expect(measures()).toEqual([
       'ProductivityS10.0/10',
       'QualityC7.6/10',

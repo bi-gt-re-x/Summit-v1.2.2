@@ -396,7 +396,7 @@ export default function Dashboard() {
         return true;
       } catch (cause) {
         setFailure(
-          cause instanceof Error ? cause.message : 'Could not complete that task.',
+          cause instanceof Error ? cause.message : "Couldn't complete that task.",
         );
         reload();
         return false;
@@ -513,7 +513,7 @@ export default function Dashboard() {
           ],
         }));
       } catch (cause) {
-        setFailure(cause instanceof Error ? cause.message : 'Could not add that task.');
+        setFailure(cause instanceof Error ? cause.message : "Couldn't add that task.");
         reload();
       } finally {
         setSaving(false);

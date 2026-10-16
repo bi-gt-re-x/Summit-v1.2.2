@@ -152,7 +152,7 @@ beforeEach(() => {
 describe('the subject Recommendations section', () => {
   it('sits right above the calendar heatmap', async () => {
     await show();
-    const record = screen.getByRole('heading', { name: 'What the record says' });
+    const record = screen.getByRole('heading', { name: 'What your work shows' });
     // DOCUMENT_POSITION_FOLLOWING: the record section comes after.
     expect(section().compareDocumentPosition(record) & 4).toBeTruthy();
     // And no other section's heading sits between them.
@@ -220,7 +220,7 @@ describe('the subject Recommendations section', () => {
     await generate();
     await userEvent.click(within(section()).getByRole('button', { name: 'Generate 3 more' }));
     expect(within(section()).queryByRole('button', { name: 'Generate 3 more' })).not.toBeInTheDocument();
-    expect(within(section()).getByText(/That is 6, the most at once/)).toBeInTheDocument();
+    expect(within(section()).getByText(/That's 6, the max at once/)).toBeInTheDocument();
 
     await userEvent.click(within(section()).getByRole('button', { name: 'Start over with 3' }));
     expect(readSubject).toHaveBeenLastCalledWith(expect.objectContaining({ mode: 'fresh' }));
@@ -231,7 +231,7 @@ describe('the subject Recommendations section', () => {
   it('leaves the steps alone when the record is read again', async () => {
     await show();
     await generate();
-    await userEvent.click(screen.getByRole('button', { name: 'Read it again' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Summarize again' }));
     expect(readSubject).toHaveBeenLastCalledWith(expect.objectContaining({ mode: 'read' }));
     expect(section().querySelectorAll('.sx-step-fold')).toHaveLength(3);
     expect(within(section()).getByText('Session 1')).toBeInTheDocument();
@@ -289,7 +289,7 @@ describe('when the request itself fails', () => {
       throw new Error('500');
     });
     await generate();
-    expect(within(section()).getByRole('alert')).toHaveTextContent(/Could not reach the server/);
+    expect(within(section()).getByRole('alert')).toHaveTextContent(/Couldn't reach the server/);
     expect(within(section()).getByRole('button', { name: /Generate 3 with AI/ })).toBeEnabled();
   });
 });

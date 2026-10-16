@@ -163,7 +163,7 @@ export function GoalModal({
         >
           ×
         </span>
-        <h2 id="modalTitle">{goal ? 'Edit Goal' : 'Add New Goal'}</h2>
+        <h2 id="modalTitle">{goal ? 'Edit Goal' : 'Add new goal'}</h2>
 
         <form onSubmit={submit}>
           <label htmlFor="goalTitle">Goal Title</label>

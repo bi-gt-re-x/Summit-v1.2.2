@@ -136,7 +136,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
     return (
       <>
         <EmptyChapter
-          title="Skills & Subjects"
+          title="Skills and subjects"
           message={
             unfiled.count > 0
               ? `${unfiled.count} finished tasks have no subject. Add subjects to your tasks to see skills here.`
@@ -181,12 +181,12 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
               key: 'skills',
               label: 'Skills in play',
               value: cards.length,
-              foot: `${Math.round(lifetime).toLocaleString()} XP filed under a subject`,
+              foot: `${Math.round(lifetime).toLocaleString()} XP with a subject`,
               icon: 'target',
             },
             {
               key: 'deepest',
-              label: `Deepest — ${deepest.label}`,
+              label: `Deepest: ${deepest.label}`,
               value: deepest.level.exact,
               text: deepest.level.exact.toFixed(2),
               scale: `· ${deepest.rank}`,
@@ -196,11 +196,11 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
             {
               key: 'moving',
               label: moving.rising[0]
-                ? `Moving fastest — ${moving.rising[0].label}`
+                ? `Fastest: ${moving.rising[0].label}`
                 : 'Nothing to rank yet',
               value: moving.rising[0]?.pct ?? 0,
               suffix: '%',
-              foot: moving.rising[0]?.note ?? 'needs two months of history',
+              foot: moving.rising[0]?.note ?? 'needs two months of work',
               icon: 'trend',
             },
           ]}
@@ -212,7 +212,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
         <PanelHead
           title="Skills"
           icon="spark"
-          hint="One card per subject you've worked in. Pick one to see what the record shows about it."
+          hint="One card per subject you've worked on. Pick one to see how it's going."
         >
           <div className="gr-skillcards-controls">
             <Seg value={filterBy} options={CARD_FILTERS} onChange={setFilterBy} label="Which subjects" />
@@ -262,7 +262,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
                   4.37 is what they check it against. */}
               <div className="gr-skillcard-level">
                 <strong>{card.level.exact.toFixed(2)}</strong>
-                <span>Level · {card.level.band.from}–{card.level.band.to}</span>
+                <span>Level · {card.level.band.from}-{card.level.band.to}</span>
               </div>
 
               <span className="gr-skillcard-track">
@@ -318,7 +318,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
           id="gr-skill-insights"
           aria-live="polite"
         >
-          <PanelHead title={`${chosen.name}: what your record shows`} icon="bulb" />
+          <PanelHead title={`${chosen.name}: how it's going`} icon="bulb" />
           <ol className="gr-facts">
             {(allInsights ? insights : insights.slice(0, INSIGHTS_SHOWN)).map((insight) => (
               <InsightCard key={insight.key} insight={insight} />
@@ -340,11 +340,11 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
       {/* --- One skill over time -------------------------------------------- */}
       <section className="gr-panel gr-span-2 gr-chart-panel">
         <PanelHead
-          title={chosen ? `${chosen.name} — growth` : 'Growth'}
+          title={chosen ? `${chosen.name}: growth` : 'Growth'}
           hint={
             thin
               ? 'Not enough work here to draw a line yet.'
-              : 'Level over time. Each mark is a level reached'
+              : 'Level over time. Each mark is a new level.'
           }
         >
           <Seg
@@ -362,7 +362,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
         {thin ? (
           <p className="gr-plot-empty">
             {chosen?.label ?? 'This skill'} has {chosen?.tasks ?? 0} finished{' '}
-            {chosen?.tasks === 1 ? 'task' : 'tasks'} behind it. A line needs {CURVE_FLOOR}.
+            {chosen?.tasks === 1 ? 'task' : 'tasks'} so far. A line needs {CURVE_FLOOR}.
           </p>
         ) : (
           <LevelPlot curve={curve!} />
@@ -375,7 +375,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
                 <span className="gr-lt-name">
                   {curve!.levels[0]!.toFixed(2) ===
                   curve!.levels[curve!.levels.length - 1]!.toFixed(2)
-                    ? `Level ${curve!.levels[0]!.toFixed(2)} — level with where the window opened`
+                    ? `Level ${curve!.levels[0]!.toFixed(2)}, same as the start`
                     : `Level ${curve!.levels[0]!.toFixed(2)} → ${curve!.levels[
                         curve!.levels.length - 1
                       ]!.toFixed(2)}`}
@@ -400,7 +400,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
       <section className="gr-panel gr-balance">
         <PanelHead
           title="Balance"
-          hint="Five readings, each against your best subject"
+          hint="Five scores, each vs. your best subject"
           note={chosen?.label}
         />
         {balance.length === 0 ? (
@@ -423,13 +423,13 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
       {/* --- The ladder ahead ------------------------------------------------ */}
       <section className="gr-panel gr-span-2">
         <PanelHead
-          title={chosen ? `${chosen.label} — mastery track` : 'Mastery track'}
+          title={chosen ? `${chosen.label}: mastery track` : 'Mastery track'}
           icon="award"
-          hint="The levels behind and ahead, with what each costs"
+          hint="Levels behind you and ahead, with what each costs"
           note={
             chosen && chosen.xp30 > 0
               ? `${Math.round(chosen.xp30 / 30)} XP a day lately`
-              : 'no pace to project from'
+              : 'not enough recent work to guess'
           }
         />
         <ol className="gr-track">
@@ -450,7 +450,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
                           chosen?.level.toNext ?? 0,
                         ).toLocaleString()} XP to go`
                       : node.inDays === null
-                        ? `${Math.round(node.needs).toLocaleString()} XP · no pace to estimate from`
+                        ? `${Math.round(node.needs).toLocaleString()} XP · no recent pace yet`
                         : `${Math.round(node.needs).toLocaleString()} XP · about ${node.inDays} days away`}
                 </span>
                 <span className="gr-track-rail">
@@ -467,13 +467,13 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
         <PanelHead
           title="Moving and waiting"
           icon="trend"
-          hint="The last 30 days against the 30 before"
+          hint="Your last 30 days vs. the 30 before"
         />
         <div className="gr-movers">
           <div>
             <h3 className="gr-movers-title">Fastest growing</h3>
             {moving.rising.length === 0 ? (
-              <p className="gr-empty">Needs two months of history.</p>
+              <p className="gr-empty">Needs two months of work.</p>
             ) : (
               <ol className="gr-movers-list">
                 {moving.rising.map((row) => (
@@ -522,12 +522,12 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
               tone: 'note',
               icon: 'info',
               head: 'Each subject you work on becomes a skill.',
-              hint: `Levels run from 1 to ${MAX_LEVEL} and get harder as you go: level 1 costs ${costOf(1)} XP, level 99 costs ${costOf(99).toLocaleString()}. Separate from your account level.`,
+              hint: `Levels go from 1 to ${MAX_LEVEL} and get harder as you climb. Level 1 costs ${costOf(1)} XP. Level 99 costs ${costOf(99).toLocaleString()}. This is separate from your account level.`,
             },
             {
               tone: unfiled.xp > lifetime ? 'watch' : 'note',
               icon: unfiled.xp > lifetime ? 'alert' : 'info',
-              head: `${Math.round(unfiled.xp).toLocaleString()} XP is filed under no subject.`,
+              head: `${Math.round(unfiled.xp).toLocaleString()} XP has no subject.`,
               hint:
                 unfiled.count === 0
                   ? 'All your finished tasks have a subject.'
@@ -536,8 +536,8 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
             {
               tone: 'watch',
               icon: 'alert',
-              head: 'Skills have no prerequisites.',
-              hint: 'The levels above show your progress in each skill.',
+              head: 'Skills here have no prerequisites.',
+              hint: 'For the full map with prerequisites, open the skill trees.',
             },
             {
               tone: 'good',

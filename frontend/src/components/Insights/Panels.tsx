@@ -39,30 +39,30 @@ export function WeekPanel({ week }: { week: WeekShape }) {
                 : 'a wide margin'}
             </strong>
             . {week.spread > 1.6
-              ? 'A lopsided week. Lose that day and you lose the week.'
-              : 'An even week. No single day is load-bearing.'}
+              ? 'A lopsided week. Miss that day and the week suffers.'
+              : 'An even week. No one day does all the work.'}
           </>
         ) : (
-          'Not enough of the week worked to compare days yet.'
+          'Not enough days worked to compare yet.'
         )}
       </p>
       {week.weekendGap !== null && (
         <p className="ax-prose">
           {week.weekendGap <= -20 ? (
             <>
-              Weekends run <strong>{Math.abs(week.weekendGap)}% lighter</strong>. Two of every seven
-              days are close to unavailable — plan around it.
+              Weekends run <strong>{Math.abs(week.weekendGap)}% lighter</strong>. Plan your week
+              around that.
             </>
           ) : week.weekendGap >= 20 ? (
             <>
-              Weekends run <strong>{week.weekendGap}% heavier</strong>. You are catching up at the
-              end of the week rather than keeping pace through it.
+              Weekends run <strong>{week.weekendGap}% heavier</strong>. You're catching up at the
+              end of the week. Try spreading it out.
             </>
           ) : (
             <>
               Weekends and weekdays are within{' '}
-              <strong>{Math.abs(week.weekendGap)}%</strong> of each other. A flat week is what makes
-              long streaks possible.
+              <strong>{Math.abs(week.weekendGap)}%</strong> of each other. An even week makes long
+              streaks easy.
             </>
           )}
         </p>
@@ -91,16 +91,16 @@ export function ClockPanel({ clock }: { clock: ClockShape }) {
   }));
 
   return (
-    <Panel title="The clock you keep" note="Tasks finished, by hour">
+    <Panel title="When you finish things" note="Tasks finished, by hour">
       <Columns columns={columns} tone="blue" label="Tasks finished by hour of the day" />
       {/* The hours that hold half the work are a finding under "Why it
           happens" (`HowPanel`), so the chart does not say them again. */}
       {clock.lateShare > 0 && (
         <p className="ax-prose">
-          <strong>{clock.lateShare}%</strong> of your work lands after 10 PM or before 5 AM.{' '}
+          <strong>{clock.lateShare}%</strong> of your work happens after 10 PM or before 5 AM.{' '}
           {clock.lateShare >= 25
-            ? 'Late work is the first thing to go when you are tired or busy.'
-            : 'Occasional rather than structural.'}
+            ? "Late work is the first thing to go when you're tired or busy."
+            : "Just now and then, so it's fine."}
         </p>
       )}
     </Panel>

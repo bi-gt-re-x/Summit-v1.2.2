@@ -101,45 +101,45 @@ HARD = 3.5
 LENSES = {
     'accuracy': {
         'id': 'accuracy',
-        'label': 'Accuracy and control',
+        'label': 'Doing it well',
         'priorities': ['quality', 'consistency', 'efficiency', 'productivity', 'tasks', 'focus', 'xp'],
         'watch': [
-            'How well rated work goes, not how much of it there is',
-            'Subjects where execution drops below your own average',
-            'Whether the standard holds across days rather than peaking',
+            'How well your work goes',
+            'Subjects where your ratings dip below your average',
+            'Whether your good days keep coming',
         ],
         'weights': {'review': 1.5, 'weak-subject': 1.4, 'stale': 1.1, 'streak': 0.8},
     },
     'depth': {
         'id': 'depth',
-        'label': 'Depth and difficulty',
+        'label': 'Going deep',
         'priorities': ['focus', 'quality', 'productivity', 'tasks', 'consistency', 'efficiency', 'xp'],
         'watch': [
-            'Unbroken time, because hard work needs a long sitting',
-            'How the hardest work you rate actually goes',
-            'Whether one subject is going deep or several are going shallow',
+            'Long stretches of focus, since hard work needs them',
+            'How your hardest tasks go',
+            'Whether you go deep on one subject or spread thin',
         ],
         'weights': {'goal': 1.5, 'weak-subject': 1.2, 'neglected': 0.8, 'streak': 0.8},
     },
     'volume': {
         'id': 'volume',
-        'label': 'Throughput',
+        'label': 'Getting more done',
         'priorities': ['productivity', 'efficiency', 'tasks', 'xp', 'consistency', 'quality', 'focus'],
         'watch': [
-            'XP a day, and whether it is rising',
-            'How many tasks actually close rather than accumulate',
-            'What is sitting unfinished and dragging the rate down',
+            'Your XP a day, and if it\'s going up',
+            'How many tasks you finish vs. how many pile up',
+            'Old tasks slowing you down',
         ],
         'weights': {'overdue': 1.4, 'stale': 1.3, 'goal': 1.2, 'review': 0.8},
     },
     'consistency': {
         'id': 'consistency',
-        'label': 'Turning up',
+        'label': 'Showing up',
         'priorities': ['consistency', 'focus', 'productivity', 'tasks', 'quality', 'efficiency', 'xp'],
         'watch': [
-            'The share of days with anything on them',
-            'The length of the gaps, not the size of the good days',
-            'Whether the habit survives a bad week',
+            'How many days you do any work',
+            'How long your breaks get',
+            'Whether you bounce back after a bad week',
         ],
         'weights': {'streak': 1.5, 'neglected': 1.3, 'goal': 1.1, 'review': 0.9},
     },
@@ -264,18 +264,17 @@ def goal_lens(goal, tasks):
                     difficulty=mean, rated=len(rated))
 
     if measure in ('streak', 'focus'):
-        return wrap('consistency', '{} is measured in {}, so how often you turn up is the goal.'.format(
+        return wrap('consistency', '{} counts {}, so showing up is what matters.'.format(
             title, 'days in a row' if measure == 'streak' else 'time logged'))
     if measure in ('xp', 'tasks'):
-        return wrap('volume', '{} counts totals, so the rate it fills at is what moves it.'.format(title))
+        return wrap('volume', '{} counts totals, so how fast you add to it is what matters.'.format(title))
     if mean is None:
         return None
     if mean >= HARD:
-        return wrap('depth', 'Your {} rated tasks for this goal average {}/5 for difficulty, so focus '
-                             'on harder work, not more of it.'.format(len(rated), to_fixed(mean)))
-    return wrap('accuracy', 'The {} tasks you rated for this average {} out of 5 for difficulty, so '
-                            'what decides it is how reliably the ordinary work goes.'.format(
-                                len(rated), to_fixed(mean)))
+        return wrap('depth', 'Your {} rated tasks for this goal average {}/5 for difficulty. Go '
+                             'deeper on hard work before adding more.'.format(len(rated), to_fixed(mean)))
+    return wrap('accuracy', 'Your {} rated tasks for this average {}/5 for difficulty, so doing '
+                            'everyday work well is what matters.'.format(len(rated), to_fixed(mean)))
 
 
 def leading_lens(goals, tasks):
@@ -345,7 +344,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             because=('{} things are due now and you finish about {} on a day you work. {} of them '
                      'are routines left over since {}. Clear those{}.').format(
                 len(due_now), per_day, len(left_over), _short(oldest),
-                ' and keep {}'.format(_and(['“{}”'.format(task.get('title')) for task in keep[:3]]))
+                ' and keep {}'.format(_and(['"{}"'.format(task.get('title')) for task in keep[:3]]))
                 if keep else ''),
             minutes=5, clear=[task.get('id') for task in left_over[:500]], weight=1040))
 
@@ -360,8 +359,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             because=('You got {} of your last {} right ({}%). Most misses were in {}. Rework those before '
                      'anything new.{}').format(
                 row['got'], row['of'], js_round(row['share'] * 100),
-                _and(['“{}” ({}/{})'.format(*one) for one in worst]),
-                ' When it goes badly here you pick “{}”, so: {}.'.format(snag['label'], snag['fix'].lower())
+                _and(['"{}" ({}/{})'.format(*one) for one in worst]),
+                ' When it goes badly here you pick "{}", so: {}.'.format(snag['label'], snag['fix'].lower())
                 if snag else ''),
             minutes=PRACTICE_MINUTES, subject=subject,
             weight=760 + (record.SCORE_BAR - row['share']) * 200))
@@ -374,7 +373,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             id='stuck-{}'.format(snag['reason']), kind='stuck',
             title=('Next {} session: {}'.format(name_of(where), snag['fix'][0].lower() + snag['fix'][1:])
                    if where else snag['fix']),
-            because='You picked “{}” on {} of your last {} rough sessions.'.format(
+            because='You picked "{}" on {} of your last {} rough sessions.'.format(
                 snag['label'], snag['count'], snag['of']),
             minutes=PRACTICE_MINUTES, subject=where, weight=740))
 
@@ -385,8 +384,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         late = _days_ago(task.get('due_date'), now) or 0
         found.append(_action(
             id='overdue-{}'.format(task.get('id')), kind='overdue',
-            title='Finish “{}”'.format(task.get('title')),
-            because='Due {}. Your oldest open task.'.format(
+            title='Finish "{}"'.format(task.get('title')),
+            because='Due {}. It\'s your oldest open task.'.format(
                 'yesterday' if late == 1 else '{} days ago'.format(late)),
             minutes=slot, taskId=task.get('id'), subject=task.get('subject') or None,
             goalId=(goal_ids_of(task) or [None])[0],
@@ -396,7 +395,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
     for index, task in enumerate(due_today[:3]):
         found.append(_action(
             id='due-{}'.format(task.get('id')), kind='due',
-            title='Finish “{}”'.format(task.get('title')), because='Due today.',
+            title='Finish "{}"'.format(task.get('title')), because='Due today.',
             minutes=slot, taskId=task.get('id'), subject=task.get('subject') or None,
             goalId=(goal_ids_of(task) or [None])[0],
             weight=900 - index * 10 + (25 if task.get('priority') == 'high' else 0)))
@@ -434,8 +433,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         title = goal.get('title')
         found.append(_action(
             id='goal-{}'.format(goal.get('id')), kind='goal',
-            title=('Finish “{}” for {}'.format(linked.get('title'), title) if linked
-                   else 'Work on “{}” for {}'.format(stone.get('title'), title) if stone
+            title=('Finish "{}" for {}'.format(linked.get('title'), title) if linked
+                   else 'Work on "{}" for {}'.format(stone.get('title'), title) if stone
                    else 'Put an hour into {}'.format(title)),
             because='{} day{} left, {}% behind schedule.'.format(
                 remaining, '' if remaining == 1 else 's', js_round(gap)),
@@ -468,10 +467,10 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         title = goal.get('title')
         found.append(_action(
             id='quiet-{}'.format(goal.get('id')), kind='goal-quiet',
-            title=('Finish “{}” for {}'.format(linked.get('title'), title) if linked
-                   else 'Start “{}” for {}'.format(stone.get('title'), title) if stone
+            title=('Finish "{}" for {}'.format(linked.get('title'), title) if linked
+                   else 'Start "{}" for {}'.format(stone.get('title'), title) if stone
                    else 'Plan the next step for {}'.format(title)),
-            because='Nothing finished toward it in {} days. It is at {}%.'.format(
+            because="Nothing finished toward it in {} days. It's at {}%.".format(
                 since, js_round(_num(goal.get('progress')))),
             minutes=slot, taskId=linked.get('id') if linked else None, goalId=goal.get('id'),
             weight=580 + min(since, 30)))
@@ -499,7 +498,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
                 id='weak-{}'.format(worst['subject']), kind='weak-subject',
                 title='Practice {}'.format(name_of(worst['subject'])),
                 because=('Your last {} rated {} tasks average {}/5, against {} for your other subjects. '
-                         'The lowest was “{}” ({}/5, {}): redo it or one like it, slower.').format(
+                         'The lowest was "{}" ({}/5, {}): redo it or one like it, slower.').format(
                     len(worst['rated']), name_of(worst['subject']), to_fixed(worst['execution']),
                     to_fixed(average), lowest.get('title'), js_round(_num(lowest.get('execution'))),
                     _short(lowest.get('completed_at'))),
@@ -551,9 +550,9 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='review-poor', kind='review',
             title='Redo your {} latest low-rated tasks'.format(takeable),
-            because=('{} tasks rated 1–2/5 for execution in the last two weeks. Start with the newest {}.'
+            because=('{} tasks went badly (rated 1 or 2) in the last two weeks. Start with the newest {}.'
                      .format(len(poor), takeable) if len(poor) > takeable else
-                     '{} tasks rated 1–2/5 for execution in the last two weeks, none revisited yet.'
+                     '{} tasks went badly (rated 1 or 2) in the last two weeks. You haven\'t gone back to them yet.'
                      .format(len(poor))),
             minutes=min(30, max(MIN_SLOT, takeable * 6)), subject=subject,
             weight=560 + min(len(poor), 12) * 6))
@@ -584,7 +583,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         task, age = stale[0]
         found.append(_action(
             id='stale-{}'.format(task.get('id')), kind='stale',
-            title='Do or drop “{}”'.format(task.get('title')),
+            title='Do or drop "{}"'.format(task.get('title')),
             because='On your list for {} days with no due date. Do it this week or delete it.'.format(age),
             minutes=min(slot, 20), taskId=task.get('id'), subject=task.get('subject') or None,
             weight=420 + min(age, 30)))
@@ -607,7 +606,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='momentum-{}'.format(subject), kind='momentum',
             title='Keep {} going'.format(name_of(subject)),
-            because='{} days running. Your longest current run — the cheapest day to keep it is today.'
+            because='{} days in a row. Your best run going. Today is the easiest day to keep it.'
             .format(run),
             minutes=min(PRACTICE_MINUTES, max(MIN_SLOT, slot)), subject=subject,
             weight=400 + min(run, 20) * 4))
@@ -624,7 +623,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='xp-today', kind='xp',
             title='Earn {} more XP today'.format(js_round(short)),
-            because='You are at {} of your {} XP daily goal. {}'.format(
+            because="You're at {} of your {} XP daily goal. {}".format(
                 js_round(today_xp), js_round(goal_xp),
                 'About {} of your usual tasks closes it.'.format(int(needed)) if usual_xp else
                 'One more task gets you most of the way.'),
@@ -639,7 +638,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             top = max(by_subject.items(), key=lambda row: len(row[1]))[0] if by_subject else None
             found.append(_action(
                 id='xp-pace', kind='xp',
-                title='Make up this week’s XP' + (' with {}'.format(name_of(top)) if top else ''),
+                title="Make up this week's XP" + (' with {}'.format(name_of(top)) if top else ''),
                 because='{} XP in the last 7 days, against your usual {} for a week. {} XP behind.'.format(
                     js_round(this_week), js_round(usual), js_round(usual - this_week)),
                 minutes=min(60, max(PRACTICE_MINUTES, slot)), subject=top, weight=470))
@@ -656,8 +655,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             run += 1
         found.append(_action(
             id='streak', kind='streak',
-            title='Close “{}”'.format(quickest.get('title')) if quickest else 'Close one small task',
-            because=(('{} days running, and nothing finished today. One task carries it.'.format(run)
+            title='Close "{}"'.format(quickest.get('title')) if quickest else 'Close one small task',
+            because=(('{} days in a row, and nothing done today. One task keeps it going.'.format(run)
                       if run >= 2 else 'Nothing done today yet. One task keeps your streak going.')
                      + (' Your best is {} days, {} to go.'.format(js_round(_num(best_streak)),
                                                                    js_round(_num(best_streak) - run))
@@ -719,9 +718,9 @@ def _deadline_row(read, name_of, slot):
         '{} to {}.'.format('1 day' if left == 1 else '{} days'.format(left), title)
     parts = [when]
     if read['behind']:
-        parts.append('You’re {}% behind schedule.'.format(js_round(read['gap'])))
+        parts.append("You're {}% behind schedule.".format(js_round(read['gap'])))
     if read['checkpoint']:
-        parts.append('You’re on “{}”{}.'.format(
+        parts.append('You\'re on "{}"{}.'.format(
             read['checkpoint'], ', {} of {} steps done'.format(read['steps_done'], read['steps'])
             if read['steps'] else ''))
     parts.append('You worked on it on {} of the last 14 days.'.format(read['fortnight_days']))
@@ -734,20 +733,20 @@ def _deadline_row(read, name_of, slot):
                       if read['behind'] else '{} more this week holds a pace of {} a week.').format(
             read['to_book'], read['per_week']))
     elif read['booked_days']:
-        parts.append('This week’s {} are done or on your calendar.'.format(read['per_week']))
+        parts.append("This week's {} are done or on your calendar.".format(read['per_week']))
     else:
-        parts.append('You’ve done this week’s {}. Keep the next one short.'.format(read['per_week']))
+        parts.append("You've done this week's {}. Keep the next one short.".format(read['per_week']))
 
     sitting = read['next_step'] or read['checkpoint'] or '{}: practice'.format(title)
     task = read['open_task']
     if task:
-        heading = 'Finish “{}” for {}'.format(task.get('title'), title)
+        heading = 'Finish "{}" for {}'.format(task.get('title'), title)
     elif read['to_book']:
         heading = 'Book {} {}session{} for {}'.format(
             read['to_book'], '{} '.format(name_of(subject)) if subject else '',
             '' if read['to_book'] == 1 else 's', title)
     elif read['next_step']:
-        heading = 'Do “{}” for {}'.format(read['next_step'], title)
+        heading = 'Do "{}" for {}'.format(read['next_step'], title)
     else:
         heading = 'Keep going on {}'.format(title)
     return _action(
@@ -781,7 +780,7 @@ def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=N
     # because you do not have to finish a task to have started it.
     if left >= MIN_SLOT and more:
         first = more.pop(0)
-        actions.append(dict(first, minutes=left, because='{} Takes about {} min; this gets it started.'
+        actions.append(dict(first, minutes=left, because='{} It takes about {} min. Starting it still counts.'
                             .format(first['because'], first['minutes'])))
         left = 0
 

@@ -53,7 +53,7 @@ function Delta({
   suffix: string;
   against: string;
 }) {
-  if (value === null || value === 0) return <span className="mv-delta is-flat">— vs {against}</span>;
+  if (value === null || value === 0) return <span className="mv-delta is-flat">vs. {against}</span>;
   const up = value > 0;
   return (
     <span className={`mv-delta${up ? ' is-up' : ' is-down'}`}>
@@ -154,7 +154,7 @@ export function MonthSummaryBar({
               : percent >= 60
                 ? 'Holding a good pace this month.'
                 : percent > 0
-                  ? 'There is still month left to turn it around.'
+                  ? "There's still month left to turn it around."
                   : 'Nothing cleared yet this month.'}
           </span>
         )}
@@ -208,7 +208,7 @@ export function MonthSummaryBar({
               <circle cx="12" cy="12" r="1" />
             </svg>
           }
-          label="Avg Daily Goal"
+          label="Avg. daily goal"
           value={`${shownGoal}%`}
         >
           <Delta value={avgGoal - previous.avgGoal} suffix="%" against={previousName} />

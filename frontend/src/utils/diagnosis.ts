@@ -440,10 +440,10 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
       detail: `You're still finishing ${round(now.completionRate)}% of dated tasks, but the average task now takes ${round(now.minutesPerTask!)} min, up from ${round(before.minutesPerTask!)}.`,
       points: [
         slowed ? `${nameOf(slowed.id)} slowed the most: ${round(slowed.is)} min a task, up from ${round(slowed.was)}.` : '',
-        now.slowest ? `Your longest task was “${now.slowest.title}” at ${round(now.slowest.minutes)} min.` : '',
+        now.slowest ? `Your longest task was "${now.slowest.title}" at ${round(now.slowest.minutes)} min.` : '',
       ],
       action: now.slowest && now.slowest.minutes > before.minutesPerTask! * 1.5
-        ? `Split tasks like “${now.slowest.title}” into ${round(before.minutesPerTask!)}-minute pieces, and time the next three.`
+        ? `Split tasks like "${now.slowest.title}" into ${round(before.minutesPerTask!)}-minute pieces, and time the next three.`
         : `Time your next 3 sessions at ${round(before.minutesPerTask!)} min. If a task doesn't fit, split it.`,
       watch: 'Minutes per task',
       weight: 92,
@@ -466,10 +466,10 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
       detail: `You're doing ${moreLess(volume, 'more', 'fewer')} tasks a day, but your execution rating dropped from ${one(before.execution!)} to ${one(now.execution!)} (${now.ratedCount} rated tasks).`,
       points: [
         dropped ? `${nameOf(dropped.id)} dropped the most: ${one(dropped.was)} to ${one(dropped.is)}.` : '',
-        now.lowest ? `Lowest rated: “${now.lowest.title}” (${now.lowest.execution}/5, ${day(now.lowest.date)}).` : '',
+        now.lowest ? `Lowest rated: "${now.lowest.title}" (${now.lowest.execution}/5, ${day(now.lowest.date)}).` : '',
       ],
       action: now.lowest
-        ? `Redo “${now.lowest.title}” before adding anything new, and drop one task tomorrow to make room.`
+        ? `Redo "${now.lowest.title}" before adding anything new, and drop one task tomorrow to make room.`
         : 'Drop one task tomorrow and spend that time on the hardest one.',
       watch: `Execution rating back above ${one(before.execution!)}`,
       weight: 95,
@@ -491,7 +491,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
       detail: `Difficulty rose from ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 and your execution held at ${one(now.execution!)}.`,
       points: [
         climbed ? `Most of the climb was ${nameOf(climbed.id)}: ${one(climbed.was)} to ${one(climbed.is)} for difficulty.` : '',
-        `${now.ratedCount} rated tasks behind it.`,
+        `Based on ${now.ratedCount} rated tasks.`,
       ],
       action: climbed
         ? `Keep ${nameOf(climbed.id)} at this level for two more weeks before adding more.`

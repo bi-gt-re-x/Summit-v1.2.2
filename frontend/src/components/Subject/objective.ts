@@ -96,12 +96,12 @@ export const KIND_WORDS: Record<GoalKind, string> = {
  * can see that it was made rather than discovering it in the recommendations.
  */
 export const KIND_MEANS: Record<GoalKind, string> = {
-  exam: 'Progress is coverage and timing together.',
-  competition: 'Progress is reproducing what you can do, under a clock.',
-  mastery: 'Progress is the level of work you can land.',
-  habit: 'Progress is how often there is work here at all.',
-  project: 'Progress is the thing being finished.',
-  coverage: 'Progress is getting through the material.',
+  exam: 'Progress means covering it all in time.',
+  competition: 'Progress means doing it under time pressure.',
+  mastery: 'Progress means getting harder work right.',
+  habit: 'Progress means showing up often.',
+  project: 'Progress means getting it done.',
+  coverage: 'Progress means getting through the material.',
   unstated: '',
 };
 
@@ -127,22 +127,20 @@ function plural(count: number, word: string): string {
  */
 function countedFocus(state: SubjectState, perf: Performance): string {
   if (perf.divergence.known && perf.divergence.reading === 'capability-ahead') {
-    return 'Turn what you can already do into work that lands.';
+    return 'Turn what you know into work you get right.';
   }
   if (perf.families.known && perf.families.answered >= 6
       && perf.families.notConceptual >= 60) {
-    return 'Fix how the sittings go, not what is in them.';
+    return 'Fix how your sessions go first.';
   }
   if (state.curve.threshold) {
-    return `Make ${state.curve.threshold.label} land the way the levels below it do.`;
+    return `Get ${state.curve.threshold.label} work as solid as the easier levels.`;
   }
   if (perf.gap.known && perf.gap.largest) {
-    return `Close the ${perf.gap.largest.label.toLowerCase()} gap — it carries `
-      + `${plural(perf.gap.largest.points, 'point')} of the `
-      + `${plural(perf.gap.total, 'point')} you are short.`;
+    return `Close the ${perf.gap.largest.label.toLowerCase()} gap. It's ${plural(perf.gap.largest.points, 'point')} of the ${plural(perf.gap.total, 'point')} you're missing.`;
   }
   if (state.momentum.known && state.momentum.direction === 'slipping') {
-    return 'Get execution moving the right way again before adding anything.';
+    return 'Get your ratings back up before adding more.';
   }
   return '';
 }
@@ -193,7 +191,7 @@ function marksFor(goal: SubjectGoal | null, today: string): ObjectiveMark[] {
 
   if (goal.ofFinished > 0) {
     marks.push({
-      label: 'Work pointed here',
+      label: 'Tasks linked here',
       value: `${goal.aimed} of ${goal.ofFinished}`,
       // Not a judgement on the ratio. A subject whose goal is one of several
       // honest things to do in it is not failing by having other work in it,
@@ -309,19 +307,19 @@ export function bottleneckFrom(
      say, because it rules out the commonest wrong move. */
   if (divergence.known && divergence.reading === 'capability-ahead') {
     return {
-      name: 'Turning capability into work that lands',
+      name: 'Knowing it vs. getting it right',
       evidence: [
-        `execution ${(divergence.capability ?? 0) > 0 ? '+' : ''}${divergence.capability} points across the window`,
-        `quality ${(divergence.outcome ?? 0) > 0 ? '+' : ''}${divergence.outcome} points over the same run`,
+        `how well it went: ${(divergence.capability ?? 0) > 0 ? '+' : ''}${divergence.capability} points in this window`,
+        `quality: ${(divergence.outcome ?? 0) > 0 ? '+' : ''}${divergence.outcome} points over the same days`,
         enough
-          ? `${families.notConceptual}% of ${families.answered} named struggles were not conceptual`
-          : `${state.ratedCount} rated tasks behind the comparison`,
+          ? `${families.notConceptual}% of ${families.answered} struggles weren't about the material`
+          : `based on ${state.ratedCount} rated tasks`,
       ],
       reading:
-        'You are taking on more than you are finishing well. The fix is '
-        + 'repetition, not new material.',
+        "You're taking on more than you're finishing well. Repeat what you've learned before "
+        + "adding more.",
       ruled_out: enough && families.notConceptual >= 60
-        ? 'Harder material. Most of what goes wrong is not about knowing it.'
+        ? "Harder material. Most of what goes wrong isn't about the content."
         : '',
       confidence: enough ? 0.7 : 0.5,
       source: 'counted',
@@ -332,15 +330,15 @@ export function bottleneckFrom(
      problem rather than a level to work at. */
   if (enough && families.notConceptual >= 60) {
     return {
-      name: 'How the sittings go, not what is in them',
+      name: 'How your sessions go',
       evidence: [
-        `${families.notConceptual}% of named struggles were not conceptual`,
-        `out of ${families.answered} answered struggles`,
+        `${families.notConceptual}% of struggles weren't about the material`,
+        `out of ${families.answered} struggles you named`,
         families.leading ? `most common: ${families.leading.label}, ${families.leading.share}%` : '',
       ].filter(Boolean),
       reading:
-        'Problems come from how sessions go, not the material. '
-        + 'Change how you work before what you work on.',
+        'Your problems come from how sessions go. Change how you work before you change what you '
+        + 'study.',
       ruled_out: 'Adding difficulty. That would make it worse.',
       confidence: families.answered >= 12 ? 0.7 : 0.55,
       source: 'counted',
@@ -353,9 +351,9 @@ export function bottleneckFrom(
     return {
       name: `Work at ${cliff.label}`,
       evidence: [
-        `${cliff.label}: execution ${cliff.execution} over ${plural(cliff.done, 'rated task')}`,
-        `${holds.label}: execution ${holds.execution} over ${plural(holds.done, 'rated task')}`,
-        state.curve.drop !== null ? `a ${state.curve.drop}-point step between them` : '',
+        `${cliff.label}: rated ${cliff.execution} over ${plural(cliff.done, 'rated task')}`,
+        `${holds.label}: rated ${holds.execution} over ${plural(holds.done, 'rated task')}`,
+        state.curve.drop !== null ? `a ${state.curve.drop}-point drop between them` : '',
       ].filter(Boolean),
       reading:
         `You do well up to ${holds.label}, then drop off. `
@@ -370,13 +368,13 @@ export function bottleneckFrom(
      with a specific fix, which most composites are not. */
   if (calibration.known && calibration.rushed >= 3) {
     return {
-      name: 'Rushing rather than not knowing',
+      name: "You're rushing",
       evidence: [
-        `${plural(calibration.rushed, 'task')} came in under your own median for the level and rated 3 or below`,
+        `${plural(calibration.rushed, 'task')} went faster than usual and got rated 3 or lower`,
       ],
       reading:
-        'You are finishing quicker than usual and rating it badly. That is '
-        + 'pace, and pace does not improve with more to do.',
+        "You're finishing faster than usual and rating it low. Slow down. More work won't fix "
+        + "this.",
       ruled_out: 'More volume.',
       confidence: calibration.rushed >= 6 ? 0.6 : 0.45,
       source: 'counted',
@@ -396,15 +394,14 @@ export function bottleneckFrom(
     return {
       name: gap.largest.label,
       evidence: [
-        `${plural(gap.largest.points, 'point')} of the ${plural(gap.total, 'point')} you are short`,
+        `${plural(gap.largest.points, 'point')} of the ${plural(gap.total, 'point')} you're missing`,
         ...gap.parts
           .filter((part) => part.key !== gap.largest?.key && part.points > 0)
           .slice(0, 2)
           .map((part) => `${part.label}: ${plural(part.points, 'point')}`),
       ],
       reading:
-        `More of the shortfall sits here than anywhere else: `
-        + `${gap.parts.find((part) => part.key === gap.largest?.key)?.from ?? ''}.`,
+        `This is where you lose the most points: ${gap.parts.find((part) => part.key === gap.largest?.key)?.from ?? ''}.`,
       ruled_out: '',
       confidence: 0.45,
       source: 'counted',

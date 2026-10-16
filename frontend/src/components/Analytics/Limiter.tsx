@@ -16,15 +16,14 @@ import type { GoalLimiter } from '@/utils/goalLimiter';
 function basisPhrase(row: GoalLimiter): string {
   return row.basis === 'rated'
     ? 'the work on this goal that went badly'
-    : 'what is still open on this goal';
+    : "what's still open on this goal";
 }
 
 export function LimiterLine({ row }: { row: GoalLimiter }) {
   return (
     <p className="ax-goal-line">
-      <strong>{row.goalTitle}</strong> — {row.movement.toLowerCase()}, but{' '}
-      <strong>{row.subjectName}</strong> is the biggest limiter, at about {row.share}% of{' '}
-      {basisPhrase(row)}.{' '}
+      <strong>{row.goalTitle}</strong>: {row.movement.toLowerCase()}. <strong>{row.subjectName}</strong>{' '}
+      is holding it back the most. It's about {row.share}% of {basisPhrase(row)}.{' '}
       <Link to={row.treeHref} className="ax-link">
         Open the {row.subjectName} skill tree
       </Link>

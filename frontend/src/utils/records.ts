@@ -117,7 +117,7 @@ export function formatValue(value: number, unit: string, target = 0): string {
 
 /** "Aug 12, 2026", or "—" for a milestone that has not happened. */
 export function formatOn(iso: string): string {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const [year, month, day] = iso.split('-').map(Number);
   if (!year || !month || !day) return iso;
   // Built from parts, not `new Date(iso)`: a bare YYYY-MM-DD parses as UTC and

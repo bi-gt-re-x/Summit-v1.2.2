@@ -83,7 +83,7 @@ describe('what the page is made of', () => {
 
   it("gives today's sittings their own panel", async () => {
     show();
-    expect(await screen.findByRole('region', { name: /today's sittings/i })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: /today's sessions/i })).toBeInTheDocument();
   });
 
   it('keeps the method and the task list out of the timer panel', async () => {
@@ -108,7 +108,7 @@ describe('what the page is made of', () => {
 });
 
 describe('what the page is no longer made of', () => {
-  it('asks nothing before a sitting', async () => {
+  it('asks nothing before a session', async () => {
     show();
     await screen.findByRole('button', { name: /^start focus$/i });
     expect(screen.queryByRole('heading', { name: /before you start/i })).not.toBeInTheDocument();

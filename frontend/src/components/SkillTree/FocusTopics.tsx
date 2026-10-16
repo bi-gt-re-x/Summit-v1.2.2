@@ -155,7 +155,7 @@ export function FocusTopics({
   return (
     <section className="stx-focus" aria-label="Your focus topics" ref={wrap}>
       <header className="stx-focus-head">
-        <h2>Your Focus Topics</h2>
+        <h2>Your focus topics</h2>
         <p>
           Five subjects to keep in front of you. Change any of them at any time
           {onChooseAll && (

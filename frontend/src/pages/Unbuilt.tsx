@@ -44,27 +44,27 @@ const PAGES: Record<string, Unbuilt> = {
   '/focus': {
     name: 'Focus',
     description:
-      'The focus timer as a page rather than a dashboard panel, with the session history behind it.',
+      'The focus timer as its own page, with your session history.',
     files: [
-      'backend/api/focus.py — sync and history already exist',
-      'src/services/focus.ts — already wired',
-      'frontend/js/timer.js — the timer to port',
+      'backend/api/focus.py: sync and history already exist',
+      'src/services/focus.ts: already wired',
+      'frontend/js/timer.js: the timer to port',
     ],
   },
   '/library': {
     name: 'Library',
     description: 'Saved resources and reference material.',
     files: [
-      'backend/api/library.py — a stub',
-      'data/sql/library.sql — tables exist, schema only',
+      'backend/api/library.py: a stub',
+      'data/sql/library.sql: tables exist, schema only',
     ],
   },
   '/history': {
     name: 'History',
     description: 'A searchable record of everything already done.',
     files: [
-      'backend/api/history.py — a stub',
-      'data/sql/history.sql — tables exist, schema only',
+      'backend/api/history.py: a stub',
+      'data/sql/history.sql: tables exist, schema only',
     ],
   },
 };
@@ -80,7 +80,7 @@ export default function Unbuilt() {
   // this component exists to prevent.
   const page = PAGES[pathname] ?? {
     name: 'Not built',
-    description: 'This part of the app does not exist yet.',
+    description: "This part of the app doesn't exist yet.",
     files: [],
   };
 

@@ -12,7 +12,7 @@ import { open, lock } from './types';
 export const ENDURANCE: SubjectTree = {
   id: 'endurance',
   title: 'Endurance',
-  blurb: 'Building an engine — mostly slowly, occasionally very hard.',
+  blurb: 'Building an engine. Mostly slowly, occasionally very hard.',
   parent: 'fitness',
   nodes: [
     { id: 'en.base', name: 'Aerobic Base', icon: 'aerobic', tier: 'foundation', core: true, state: open, percent: 25, xp: 1500,

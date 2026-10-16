@@ -55,12 +55,12 @@ def kinds(items):
 def test_streak_prefers_an_undated_task():
     found = plan([task(title='Dated one', due_date=iso(-3), xp_value=10),
                   task(title='Undated one', xp_value=90)])
-    assert first(found, 'streak')['title'] == 'Close “Undated one”'
+    assert first(found, 'streak')['title'] == 'Close "Undated one"'
 
 
 def test_streak_falls_back_to_a_dated_task_rather_than_to_nobody():
     streak = first(plan([task(title='Dated one', due_date=iso(-3))]), 'streak')
-    assert streak['title'] == 'Close “Dated one”'
+    assert streak['title'] == 'Close "Dated one"'
     assert streak['taskId']
 
 
@@ -71,7 +71,7 @@ def test_streak_still_says_something_with_no_open_task():
 
 
 def test_streak_counts_the_run_it_asks_you_to_carry():
-    assert '3 days running' in first(plan([task()], days=series([1, 2, 3])), 'streak')['because']
+    assert '3 days in a row' in first(plan([task()], days=series([1, 2, 3])), 'streak')['because']
 
 
 def test_streak_does_not_appear_once_the_day_has_something_in_it():
@@ -85,7 +85,7 @@ def run(days):
 
 def test_momentum_fires_on_a_live_run_and_names_its_length():
     item = first(plan(run([1, 2, 3, 4]) + run([9]), days=series([1])), 'momentum')
-    assert '4 days running' in item['because']
+    assert '4 days in a row' in item['because']
     assert item['subject'] == 'violin'
 
 
@@ -94,7 +94,7 @@ def test_momentum_is_quiet_once_today_has_fed_the_run():
 
 
 def test_momentum_counts_a_run_not_fed_yet_today():
-    assert '3 days running' in first(plan(run([1, 2, 3]), days=series([1, 2, 3])), 'momentum')['because']
+    assert '3 days in a row' in first(plan(run([1, 2, 3]), days=series([1, 2, 3])), 'momentum')['because']
 
 
 def test_momentum_ignores_a_run_that_is_over():
@@ -113,7 +113,7 @@ def test_the_best_leftover_is_trimmed_into_the_time_that_remains():
                  + [done('latin', at + 1, 5) for at in range(6)]
                  + [task(title='Old thing', created_at=iso(40) + 'T09:00:00')], budget=45)
     assert (found['planned'], found['spare']) == (45, 0)
-    started = [item for item in found['actions'] if 'gets it started' in item['because']]
+    started = [item for item in found['actions'] if 'Starting it still counts' in item['because']]
     assert len(started) == 1
     assert found['actions'][-1] is started[0] or found['actions'][-1] == started[0]
 
@@ -122,7 +122,7 @@ def test_a_budget_shorter_than_anything_still_gets_an_answer():
     found = plan([task(title='Late essay', due_date=iso(4))], budget=15)
     assert len(found['actions']) == 1
     assert found['actions'][0]['minutes'] == 15
-    assert 'gets it started' in found['actions'][0]['because']
+    assert 'Starting it still counts' in found['actions'][0]['because']
 
 
 def test_the_remainder_is_left_alone_with_nothing_to_trim():
@@ -146,8 +146,8 @@ def test_a_goal_behind_its_schedule_names_its_next_task():
             'start_date': iso(30), 'deadline': iso(-10), 'milestones': []}
     linked = task(title='Past paper 3', goal_id='g')
     item = first(plan([linked], [goal], budget=120), 'deadline')
-    assert item['title'] == 'Finish “Past paper 3” for Pass the exam'
-    assert item['because'].startswith('10 days to Pass the exam. You’re 65% behind schedule.')
+    assert item['title'] == 'Finish "Past paper 3" for Pass the exam'
+    assert item['because'].startswith("10 days to Pass the exam. You're 65% behind schedule.")
 
 
 def test_a_second_goal_behind_its_schedule_still_gets_the_goal_row():
@@ -156,13 +156,13 @@ def test_a_second_goal_behind_its_schedule_still_gets_the_goal_row():
     far = {'id': 'g', 'title': 'Pass the exam', 'status': 'active', 'progress': 10,
            'start_date': iso(30), 'deadline': iso(-10), 'milestones': []}
     item = first(plan([task(title='Past paper 3', goal_id='g')], [near, far], budget=120), 'goal')
-    assert item['title'] == 'Finish “Past paper 3” for Pass the exam'
+    assert item['title'] == 'Finish "Past paper 3" for Pass the exam'
     assert item['because'] == '10 days left, 66% behind schedule.'
 
 
 def test_an_undated_task_sitting_two_weeks_is_do_or_drop():
     item = first(plan([task(title='Tidy notes', created_at=iso(20) + 'T09:00:00')], budget=120), 'stale')
-    assert item['title'] == 'Do or drop “Tidy notes”'
+    assert item['title'] == 'Do or drop "Tidy notes"'
     assert 'On your list for 20 days' in item['because']
 
 
@@ -220,7 +220,7 @@ def test_ordinary_work_is_a_goal_about_getting_it_right():
     lens = goal_lens(lens_goal(), many(2.5))
     assert lens['id'] == 'accuracy'
     assert lens['priorities'][0] == 'quality'
-    assert '2.5 out of 5' in lens['because']
+    assert '2.5/5' in lens['because']
 
 
 def test_hard_work_is_a_goal_about_depth():
@@ -276,7 +276,7 @@ def test_top_is_the_best_suggestion_even_when_it_does_not_fit():
     long_ones = [task(status='done', completion_seconds=60 * 60, completed_at=iso(1) + 'T09:00:00')
                  for _ in range(5)]
     found = plan(long_ones + [task(title='Late essay', due_date=iso(3))], budget=15)
-    assert found['top']['title'] == 'Finish “Late essay”'
+    assert found['top']['title'] == 'Finish "Late essay"'
 
 
 # ---- Not the same plan every day -------------------------------------------
@@ -288,7 +288,7 @@ def test_the_weak_subject_reads_recent_ratings_and_names_the_worst_task():
     item = first(plan(rows), 'weak-subject')
     assert item['subject'] == 'essays'
     assert 'last 4 rated essays tasks' in item['because']
-    assert '“Compare two poems”' in item['because']
+    assert '"Compare two poems"' in item['because']
 
 
 def test_a_subject_rated_badly_long_ago_is_not_weak_now():
@@ -317,7 +317,7 @@ def test_a_goal_with_nothing_finished_lately_is_named():
     rows = [task(title='Old lesson', status='done', goal_id='g1', completed_at=iso(15) + 'T10:00:00'),
             task(title='Lesson 9', goal_id='g1')]
     item = first(plan(rows, goals=[goal]), 'goal-quiet')
-    assert item['title'] == 'Finish “Lesson 9” for Learn Spanish'
+    assert item['title'] == 'Finish "Lesson 9" for Learn Spanish'
     assert '15 days' in item['because'] and '30%' in item['because']
 
 
@@ -327,7 +327,7 @@ def test_the_daily_goal_says_how_far_off_it_is():
                        stamp='2026-W39', daily_goal=200)
     item = first(found, 'xp')
     assert item['title'] == 'Earn 140 more XP today'
-    assert 'You are at 60 of your 200 XP daily goal' in item['because']
+    assert "You're at 60 of your 200 XP daily goal" in item['because']
 
 
 def test_a_slow_week_is_called_out_without_a_daily_goal():
@@ -371,7 +371,7 @@ def test_the_nearest_dated_goal_leads_the_plan_even_seven_weeks_out():
     top = found['top']
     assert top['kind'] == 'deadline'
     assert top['title'] == 'Book 3 computer_science sessions for USACO December'
-    assert top['because'] == ('47 days to USACO December. You’re on “Silver DP unassisted”, 1 of 2 steps '
+    assert top['because'] == ('47 days to USACO December. You\'re on "Silver DP unassisted", 1 of 2 steps '
                               'done. You worked on it on 2 of the last 14 days. 3 more this week holds a '
                               'pace of 3 a week.')
     assert top['book'] == {'count': 3, 'minutes': 45, 'title': 'Solve 5 USACO Silver DP problems',
@@ -390,9 +390,9 @@ def test_a_week_already_done_books_nothing_and_names_the_next_step():
     found = build_plan(worked, [contest(deadline='2026-11-13')], series([]), lambda one: one, 120,
                        now=sunday, stamp='x')
     top = found['top']
-    assert top['title'] == 'Do “Solve 5 USACO Silver DP problems” for USACO December'
+    assert top['title'] == 'Do "Solve 5 USACO Silver DP problems" for USACO December'
     assert 'book' not in top
-    assert 'You’ve done this week’s 3.' in top['because']
+    assert "You've done this week's 3." in top['because']
 
 
 def test_leftover_routines_become_one_row_and_leave_the_overdue_rule():
@@ -405,9 +405,9 @@ def test_leftover_routines_become_one_row_and_leave_the_overdue_rule():
     assert triage['title'] == 'Clear 12 leftover routines'
     assert sorted(triage['clear']) == sorted(row['id'] for row in routines)
     assert '13 things are due now and you finish about 4 on a day you work.' in triage['because']
-    assert 'keep “Essay draft”' in triage['because']
+    assert 'keep "Essay draft"' in triage['because']
     overdue = [item for item in everything(found) if item['kind'] == 'overdue']
-    assert [item['title'] for item in overdue] == ['Finish “Essay draft”']
+    assert [item['title'] for item in overdue] == ['Finish "Essay draft"']
 
 
 def test_a_short_list_is_not_triaged():
@@ -429,7 +429,7 @@ def test_misses_name_the_sets_that_went_wrong():
     item = first(plan(rows, budget=120), 'misses')
     assert item['title'] == 'Go back over the 11 maths problems you missed'
     assert item['because'] == ('You got 17 of your last 28 right (61%). Most misses were in '
-                               '“Quadratics #1-10” (3/10) and “Factoring drill” (5/8). Rework those '
+                               '"Quadratics #1-10" (3/10) and "Factoring drill" (5/8). Rework those '
                                'before anything new.')
 
 
@@ -446,7 +446,7 @@ def test_a_reason_picked_again_and_again_comes_back_with_its_fix():
                       completed_at=iso(6) + 'T12:00:00'))
     item = first(plan(rough, budget=120), 'stuck')
     assert item['title'] == 'Next maths session: start with one worked example before you try one yourself'
-    assert item['because'] == 'You picked “Did not know where to start” on 3 of your last 4 rough sessions.'
+    assert item['because'] == 'You picked "Did not know where to start" on 3 of your last 4 rough sessions.'
 
 
 def test_a_near_date_leads_even_when_the_lens_leans_toward_overdue_work():
@@ -462,7 +462,7 @@ def test_the_triage_row_keeps_real_work_not_todays_routines():
     routines = [task(title='Morning meditation', due_date=iso(back)) for back in range(0, 13)]
     real = task(title='Essay draft', due_date=iso(0))
     triage = first(plan(finished + routines + [real], budget=120), 'triage')
-    assert triage['because'].endswith('Clear those and keep “Essay draft”.')
+    assert triage['because'].endswith('Clear those and keep "Essay draft".')
 
 
 def test_clearing_leftovers_comes_before_the_overdue_work_it_hides():
@@ -480,4 +480,4 @@ def test_placeholder_steps_are_not_work():
                           {'id': 'b', 'title': 'Name the second', 'done': False}])
     top = plan([], [contest(milestones=[padded])], budget=120)['top']
     assert top['book']['title'] == 'Silver DP unassisted'
-    assert 'You’re on “Silver DP unassisted”.' in top['because']
+    assert 'You\'re on "Silver DP unassisted".' in top['because']

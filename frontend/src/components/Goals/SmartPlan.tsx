@@ -94,7 +94,7 @@ export function SmartPlan({
             busy={busy}
             onAsk={() => onRedraftStones(goal)}
             primary
-            title="Draft the whole plan — checkpoints and the steps under each, all editable"
+            title="Draft the whole plan: checkpoints and their steps. You can edit all of it."
           />
         ) : (
           <>
@@ -114,7 +114,7 @@ export function SmartPlan({
               label="Redraft checkpoints"
               busy={busy}
               onAsk={() => onRedraftStones(goal)}
-              title="Replace the whole checkpoint list with a fresh draft. You will be asked first."
+              title="Replace all checkpoints with a new draft. We'll ask first."
             />
           </>
         )}
@@ -125,8 +125,8 @@ export function SmartPlan({
           {stones.length === 0
             ? 'Five checkpoints with steps for each. You can edit or delete any of them.'
             : empty > 0
-              ? 'Only empty checkpoints get steps. Redrafting replaces everything (you’ll be asked first).'
-              : 'Every checkpoint has steps. Redrafting replaces everything (you’ll be asked first).'}
+              ? "Only empty checkpoints get steps. Redrafting replaces everything (you'll be asked first)."
+              : "Every checkpoint has steps. Redrafting replaces everything (you'll be asked first)."}
         </p>
       )}
     </div>

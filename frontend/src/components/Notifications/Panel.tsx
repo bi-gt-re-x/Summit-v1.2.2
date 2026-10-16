@@ -58,7 +58,7 @@ function Row({ item, onFollow, onRemove }: RowProps) {
       <button
         type="button"
         className="nf-drop"
-        aria-label={`Delete “${item.title}”`}
+        aria-label={`Delete "${item.title}"`}
         title="Delete"
         onClick={() => onRemove(item.id)}
       >

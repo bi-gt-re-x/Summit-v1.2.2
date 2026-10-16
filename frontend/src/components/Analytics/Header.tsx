@@ -77,7 +77,7 @@ export const VIEWS: View[] = [
     key: 'recommendations',
     label: 'Recommendations',
     path: '/recommendations',
-    purpose: 'What to change, ranked by what it would actually be worth.',
+    purpose: 'What to do next.',
     title: 'Recommendations',
     tone: 'amber',
   },
@@ -85,7 +85,7 @@ export const VIEWS: View[] = [
     key: 'overview',
     label: 'Overview',
     path: '/analytics',
-    purpose: 'The long view — totals, trajectory and your growth score.',
+    purpose: 'The big picture: totals, trends and your growth score.',
     title: 'Overview',
     tone: 'violet',
   },
@@ -96,7 +96,7 @@ export const VIEWS: View[] = [
     key: 'insights',
     label: 'Insights',
     path: '/insights',
-    purpose: 'What you do and why it works — the routines in your record, and what your better work shows up alongside.',
+    purpose: 'Your habits and what helps your best work.',
     title: 'Insights',
     tone: 'indigo',
   },
@@ -104,7 +104,7 @@ export const VIEWS: View[] = [
     key: 'subjects',
     label: 'Subjects',
     path: '/subjects',
-    purpose: 'Where the work went in each subject, and your skill levels from the problems you solved.',
+    purpose: 'Where your work went in each subject, and your skill levels.',
     title: 'Subjects',
     tone: 'green',
   },
@@ -112,7 +112,7 @@ export const VIEWS: View[] = [
     key: 'growth',
     label: 'Growth',
     path: '/analytics/growth',
-    purpose: 'How far you have actually come — every year side by side, and what changed.',
+    purpose: "How far you've come, year by year.",
     title: 'Growth',
     tone: 'rose',
   },
@@ -357,7 +357,7 @@ export function Header({
           className="ax-btn"
           onClick={() => save(onExport, exportName ?? 'summit-report.txt', 'text/plain')}
           disabled={!onExport}
-          title="Download a written report — your score, what the window holds, and what to change"
+          title="Download a report for this time window"
         >
           <span className="ax-btn-icon" aria-hidden="true" />
           Export report
@@ -370,7 +370,7 @@ export function Header({
           className="ax-btn ax-btn-quiet"
           onClick={() => save(onExportData, dataName ?? 'summit-data.csv', 'text/csv')}
           disabled={!onExportData}
-          title="Download the day-by-day rows this window's figures were calculated from, as a CSV"
+          title="Download the daily numbers for this window as a CSV"
         >
           Data (CSV)
         </button>
@@ -420,7 +420,7 @@ export function Controls({
       <label className="ax-select-wrap">
         <span className="ax-sr">Subject</span>
         <select className="ax-select" value={subject} onChange={(event) => onSubject(event.target.value)}>
-          <option value="">All Subjects</option>
+          <option value="">All subjects</option>
           {subjects.map((entry) => (
             <option key={entry.id} value={entry.id}>
               {entry.label}
@@ -488,7 +488,7 @@ export function TabOpening({
       </span>
       <p>{children}</p>
       {onMore && (
-        <button type="button" className="ax-opening-more" onClick={onMore} aria-label="Go to the changes">
+        <button type="button" className="ax-opening-more" onClick={onMore} aria-label="Jump down">
           <span className="ax-finding-mark" aria-hidden="true" />
         </button>
       )}

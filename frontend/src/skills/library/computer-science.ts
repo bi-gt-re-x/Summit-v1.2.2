@@ -212,7 +212,7 @@ export const computerScience = [
   node({
     id: 'algorithms.greedy',
     name: 'Greedy Algorithms',
-    description: 'Taking the locally best option, and the harder half — arguing that it is globally right.',
+    description: 'Taking the locally best option, and the harder half. Arguing that it is globally right.',
     difficulty: 'advanced',
     xpReward: 140,
     prerequisites: all('cs.sorting', 'cs.complexity'),

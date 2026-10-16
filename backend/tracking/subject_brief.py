@@ -58,6 +58,7 @@ import re
 from typing import Any, Dict, List
 
 from backend.tracking import planner
+from backend.tracking.plainwords import STYLE, plain
 
 #: Opus, and not the Sonnet the goals page uses.
 #:
@@ -165,6 +166,7 @@ sentences. Ordinary words. No em-dash asides, no "X, not Y" flourishes, and \
 no sentence that exists to land a point rather than say a thing. Never open \
 with "Your record shows" or close by summarizing what you just said.
 """
+SYSTEM += STYLE
 
 SCHEMA = {
     'type': 'object',
@@ -417,4 +419,4 @@ def write(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
         # passed through under this module's own type rather than reworded.
         raise BriefUnavailable(str(exc)) from exc
 
-    return _clean(_object(text))
+    return _clean(plain(_object(text)))

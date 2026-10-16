@@ -88,7 +88,7 @@ describe('the sentence under the chart', () => {
 
     expect(chosen?.id).toBe('roadmap');
     expect(chosen?.why).toContain('3 checkpoints');
-    expect(chosen?.why).toMatch(/not yet enough finished work/);
+    expect(chosen?.why).toMatch(/not enough finished work to chart yet/);
   });
 
   it('names the days behind a consistency grid', () => {
@@ -98,7 +98,7 @@ describe('the sentence under the chart', () => {
     );
 
     expect(chosen?.id).toBe('heatmap');
-    expect(chosen?.why).toContain('5 separate days');
+    expect(chosen?.why).toContain('5 different days');
   });
 
   it('names the subjects behind a by-subject split', () => {

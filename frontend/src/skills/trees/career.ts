@@ -12,7 +12,7 @@ import { open, lock } from './types';
 export const CAREER: SubjectTree = {
   id: 'career',
   title: 'Work & Career',
-  blurb: 'Being effective at work, and being seen to be — which are two skills.',
+  blurb: 'Being effective at work, and being seen to be. Which are two skills.',
   parent: 'productivity',
   nodes: [
     { id: 'ca.reliable', name: 'Reliability', icon: 'reliable', tier: 'foundation', core: true, state: open, percent: 25, xp: 1400,
@@ -54,7 +54,7 @@ export const CAREER: SubjectTree = {
     { id: 'ca.transition', name: 'Changing Direction', icon: 'career-change', tier: 'expert', requires: ['ca.skills', 'ca.negotiate'], state: lock, percent: 0, xp: 2400,
       desc: 'Moving to different work by finding the overlap and building the missing piece publicly. Sideways moves inside a place you are known are usually the cheapest route.' },
     { id: 'ca.direction', name: 'Deciding What You Want', icon: 'compass', tier: 'mastery', requires: ['ca.transition'], state: lock, percent: 0, xp: 2800,
-      desc: 'Working out what you actually want from work — the conditions, not the title. It is the question this whole tree is in service of and the one most easily deferred indefinitely.' },
+      desc: 'Working out what you actually want from work. The conditions, not the title. It is the question this whole tree is in service of and the one most easily deferred indefinitely.' },
     { id: 'ca.job', name: 'Part-Time Job', icon: 'employment', tier: 'foundation', requires: ['ca.reliable'], navTo: 'part-time-job', state: lock,
       desc: 'Its own tree: getting hired, your first paycheck, customer service and balancing school.' },
     { id: 'ca.intern', name: 'Internships', icon: 'onboard', tier: 'intermediate', requires: ['ca.visible'], navTo: 'internships', state: lock,

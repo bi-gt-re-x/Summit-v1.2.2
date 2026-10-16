@@ -37,7 +37,7 @@ describe('the Goals guide', () => {
     // Page one: nothing the guide waits on is showing yet.
     expect(waits.some((step) => showing(step.until!))).toBe(false);
 
-    await user.type(screen.getByLabelText(/the outcome, not the activity/i), 'Get 24 on the AMC 8');
+    await user.type(screen.getByLabelText(/the result you want/i), 'Get 24 on the AMC 8');
     await user.click(screen.getByRole('button', { name: /choose a subject/i }));
     await user.click(screen.getByRole('button', { name: 'Algebra' }));
 

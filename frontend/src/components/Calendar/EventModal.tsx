@@ -89,7 +89,7 @@ export function EventModal({
     >
       <div className="modal-content">
         <div className="modal-header">
-          <h3>{editing ? 'Edit Section' : 'Add New Section'}</h3>
+          <h3>{editing ? 'Edit Section' : 'Add new section'}</h3>
           <span className="close-btn" role="button" tabIndex={0} onClick={onClose}>
             ×
           </span>

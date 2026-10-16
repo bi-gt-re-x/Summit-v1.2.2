@@ -607,7 +607,7 @@ def _complete(username, task_ids):
                 _timing(now), account,
                 lambda total: xp_tracking.level_for_total_xp(total)['level'])
         except Exception as exc:  # noqa: BLE001 - report what failed; the rest stands
-            print('[tasks] could not complete {} tasks: {!r}'.format(len(part), exc))
+            print("[tasks] couldn't complete {} tasks: {!r}".format(len(part), exc))
             outcome['failed'].extend(ids[at:])
             break
         outcome['completed'].extend(done['completed'])
@@ -683,7 +683,7 @@ def complete_task(body: CompleteTask, username: str = Depends(current_username))
     if outcome['not_found']:
         return fail('Task not found')
     if outcome['failed']:
-        return fail('That did not save. Try again.')
+        return fail("That didn't save. Try again.")
 
     xp_reward = sum(xp for _, xp in outcome['completed'])
     return ok(

@@ -63,7 +63,7 @@ describe('the goal field', () => {
     expect(screen.getByText(/Linked if the name matches/)).toBeInTheDocument();
 
     rerender(<GoalField goals={[goal('g1')]} value="g1" onChange={vi.fn()} id="t" hint />);
-    expect(screen.getByText(/whatever it is called/)).toBeInTheDocument();
+    expect(screen.getByText(/whatever it's called/)).toBeInTheDocument();
   });
 });
 

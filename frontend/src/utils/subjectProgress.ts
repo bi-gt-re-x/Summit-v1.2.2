@@ -213,7 +213,7 @@ export function subjectVerdict(read: SubjectProgress, periodText: string): strin
   let third = '';
   const trouble = goals.find((entry) => entry.health.state === 'behind');
   if (overdue > 0) third = `${overdue} ${overdue === 1 ? 'task is' : 'tasks are'} past due.`;
-  else if (trouble) third = `“${trouble.goal.title}” is ${trouble.health.label.toLowerCase()}.`;
+  else if (trouble) third = `"${trouble.goal.title}" is ${trouble.health.label.toLowerCase()}.`;
 
   return `${first}${second ? `, and ${second}` : ''}.${third ? ` ${third}` : ''}`;
 }

@@ -137,7 +137,7 @@ const PERIOD_TEXT: Record<PeriodKey, string> = {
   '90d': 'the last 3 months',
   '365d': 'the last year',
   '730d': 'the last 2 years',
-  all: 'your whole record',
+  all: 'all your work',
 };
 
 export function GrowthTab({ model }: { model: AnalyticsModel }) {
@@ -278,14 +278,14 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
         headStart={model.headStart}
         title="Growth"
         kind="problem"
-        headline="Summit could not load your graded record."
-        promise="Nothing is missing from your history — this one request failed. Try again in a moment."
-        asksLead="When it loads, Growth answers:"
+        headline="Summit couldn't load your grades."
+        promise="Your history is safe. This just failed to load. Try again in a moment."
+        asksLead="When it loads, Growth shows you:"
         asks={[
-          'Which period did you actually do best in?',
-          'Which measure moved furthest, and why?',
-          'What changed underneath the score?',
-          'Where does this month sit in all of it?',
+          'Which period was your best?',
+          'Which score moved the most, and why?',
+          'What changed behind the score?',
+          'How does this month rank?',
         ]}
         action={
           <Link to="/analytics" className="ax-btn">
@@ -300,7 +300,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
     <>
       {!data && periods.loading && (
         <section className="ax-section">
-          <p className="ax-empty">Scoring your record…</p>
+          <p className="ax-empty">Loading your scores…</p>
         </section>
       )}
 
@@ -335,11 +335,11 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
           <section className="ax-section">
             <Panel
               title="Skills by level"
-              note="Each step of your skill trees, measured from problems you marked right or wrong"
+              note="Each skill tree step, based on problems you got right or wrong"
             >
               <SkillLevelsPanel
                 practice={practice}
-                periodText="your whole record"
+                periodText="all your work"
                 limit={detail.rows}
               />
             </Panel>
@@ -350,7 +350,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               those hours moved anything. */}
           <section className="ax-section">
             <Panel
-              title="Time, and what it bought"
+              title="Time vs. progress"
               note="Hours in, work out, and whether the level moved with them"
             >
               <TimeProgressPanel progress={progress} periodText={periodText} />
@@ -376,8 +376,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
             <Panel
               title="Growth timeline"
               note={
-                `Each point is scored over the ${data.trend_window} days behind it, so the `
-                + 'line is a moving average rather than a daily reading'
+                `Each point covers the ${data.trend_window} days before it, so the line is smooth instead of jumping day to day`
               }
               aside={
                 <PeriodTabs
@@ -438,8 +437,8 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               title="Then and now"
               note={
                 data.previous
-                  ? `${data.label} against the ${data.days} days before it`
-                  : 'Your whole record — there is nothing before it to compare against'
+                  ? `${data.label} vs. the ${data.days} days before`
+                  : "All your work. There's nothing earlier to compare with."
               }
             >
               <ThenNow data={data} />
@@ -465,15 +464,15 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
 
           <section className="ax-section">
             <Panel
-              title="What changed underneath"
-              note="Assembled from the same figures the scores were graded on"
+              title="What changed behind the scores"
+              note="From the same numbers your scores use"
             >
               {changes.length === 0 ? (
                 <p className="ax-empty">
                   {data.previous
-                    ? 'Nothing moved far enough to be worth calling a change.'
-                    : 'This period reaches back to the day you started, so there is nothing '
-                      + 'before it to have changed from.'}
+                    ? 'Nothing moved enough to call it a change.'
+                    : "This period starts on your first day, so there's nothing"
+                      + 'earlier to compare with.'}
                 </p>
               ) : (
                 <ul className="ax-gp-changes">
@@ -504,11 +503,11 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
           <section className="ax-section">
             <PanelGroup
               title="Your milestones"
-              note="The days the overall score crossed into a new grade"
+              note="Days your score hit a new grade"
             >
               <Panel
                 title="Milestones"
-                note="Found in the record rather than stored, so they cannot go out of date"
+                note="Worked out fresh each time, so they never go stale"
               >
                 <MilestoneFeed entries={feed} format={shortDate} />
               </Panel>
@@ -521,22 +520,22 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
                 whatever period is selected — a heatmap of the last seven days
                 is seven squares. */}
             <PanelGroup
-              title="When the work actually happens"
-              note="The shape of your day, from the hours you finish things in"
+              title="When you get work done"
+              note="Your day, by the hours you finish things"
             >
               <WhenPanel clock={clock} />
             </PanelGroup>
 
             <PanelGroup
               title="Every day of the last year"
-              note="Consistency, drawn as the days themselves"
+              note="One square for each day"
             >
               <ConsistencyPanel rows={heatRows} />
             </PanelGroup>
 
             <PanelGroup
-              title="The work itself, year by year"
-              note="How hard it was and how well it went, as you rated it"
+              title="Your work, year by year"
+              note="How hard it was and how well it went, by your ratings"
             >
               <YearOnYear model={model} />
             </PanelGroup>
@@ -575,11 +574,10 @@ function WhenPanel({ clock }: { clock: AnalyticsModel['clock'] }) {
   return (
     <Panel
       title="When you work"
-      note="Over your recent record, not the period above"
+      note="Based on your recent work"
       claim={
         core
-          ? `Half of everything you finish lands between ${hourLabel(core.from)} and `
-            + `${hourLabel(core.to)}.`
+          ? `Half your finished work happens between ${hourLabel(core.from)} and ${hourLabel(core.to)}.`
           : undefined
       }
     >
@@ -592,11 +590,11 @@ function WhenPanel({ clock }: { clock: AnalyticsModel['clock'] }) {
           <li>
             <span>Your core hours</span>
             <strong>
-              {hourLabel(core.from)} – {hourLabel(core.to)}
+              {hourLabel(core.from)} to {hourLabel(core.to)}
             </strong>
           </li>
           <li>
-            <span>Share of finished work in them</span>
+            <span>Share of your work in them</span>
             <strong>{Math.round(core.share)}%</strong>
           </li>
           {clock.peak && (

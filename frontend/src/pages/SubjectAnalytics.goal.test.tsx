@@ -117,7 +117,7 @@ async function show(rows: unknown[], theGoals: unknown[]) {
 }
 
 /** The panel, so an assertion cannot pass on a match somewhere else. */
-const panel = () => screen.getByText('What this subject is for').closest('section')!;
+const panel = () => screen.getByText('Your goals for this subject').closest('section')!;
 
 /** Recent enough to be inside every window the page offers. */
 const RECENT = ['2026-09-01', '2026-09-02', '2026-09-03'];
@@ -142,7 +142,7 @@ describe('the goal panel', () => {
     );
 
     const box = within(panel());
-    expect(box.getByText('Aimed at it')).toBeInTheDocument();
+    expect(box.getByText('Tasks linked')).toBeInTheDocument();
     expect(box.getByText('1 of 3 tasks')).toBeInTheDocument();
   });
 
@@ -165,8 +165,8 @@ describe('the goal panel', () => {
     const box = within(panel());
     // The bar carries both, so the label has to as well — a mark nobody can
     // read is not on the page for a screen reader at all.
-    expect(box.getByLabelText(/done, .* of its time gone/)).toBeInTheDocument();
-    expect(box.getByText(/the calendar is at \d+%/)).toBeInTheDocument();
+    expect(box.getByLabelText(/done, .* of the time used/)).toBeInTheDocument();
+    expect(box.getByText(/time used: \d+%/)).toBeInTheDocument();
   });
 
   it('asks for the terms rather than reporting a pace it cannot compute', async () => {
@@ -186,6 +186,6 @@ describe('the goal panel', () => {
     await show(RECENT.map((day, at) => did(`t${at}`, day)), [
       amc8({ subject_ids: 'chemistry' }),
     ]);
-    expect(screen.queryByText('What this subject is for')).not.toBeInTheDocument();
+    expect(screen.queryByText('Your goals for this subject')).not.toBeInTheDocument();
   });
 });

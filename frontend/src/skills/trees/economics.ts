@@ -33,7 +33,7 @@ export const ECONOMICS: SubjectTree = {
     { id: 'ec.game', name: 'Game Theory', icon: 'game-theory', tier: 'intermediate', requires: ['ec.behavioural'], state: lock, percent: 0, xp: 2000,
       desc: 'Decisions where the outcome depends on what somebody else decides. The prisoner dilemma is the standard example because individually sensible choices produce a jointly worse result.' },
     { id: 'ec.gdp', name: 'Measuring an Economy', icon: 'gdp', tier: 'intermediate', requires: ['ec.failure'], state: lock, percent: 0, xp: 1800,
-      desc: 'Output, income and expenditure as three routes to one total. What the headline figure excludes — unpaid work, depletion, distribution — is as informative as what it counts.' },
+      desc: 'Output, income and expenditure as three routes to one total. What the headline figure excludes (unpaid work, depletion, distribution) is as informative as what it counts.' },
     { id: 'ec.growth', name: 'Growth', icon: 'growth-curve', tier: 'intermediate', requires: ['ec.gdp'], state: lock, percent: 0, xp: 1900,
       desc: 'More output per person over time, driven mainly by productivity rather than by effort. Small differences in rate compound into enormous differences in living standards within a lifetime.' },
     { id: 'ec.unemployment', name: 'Employment', icon: 'employment', tier: 'intermediate', requires: ['ec.gdp'], state: lock, percent: 0, xp: 1800,

@@ -62,23 +62,17 @@ export function Patterns({ items, window: days }: PatternsProps) {
       className="ax-pat"
       footer={
         <PanelNote label="How patterns are found">
-          <p>
-            Each pattern compares two groups of your finished tasks, like before and after 5pm, or
-            weekdays and weekends. It only shows when both groups have at least 6 tasks and differ
-            by 10% or more.
-          </p>
-          <p>
-            That bar is high on purpose, to avoid showing patterns that are just chance.
-          </p>
-          <p>
-            A pattern is not proof of a cause. Treat "worth trying" as an experiment.
-          </p>
+          <ul className="ax-tips">
+            <li><b>Two groups:</b> Each one compares two sets of your tasks, like before and after 5pm.</li>
+            <li><b>High bar:</b> Both sets need 6+ tasks and a 10% gap, so luck can't fake it.</li>
+            <li><b>Just a hint:</b> A pattern doesn't prove a cause. Treat "Worth trying" as a test.</li>
+          </ul>
         </PanelNote>
       }
     >
       {items.length === 0 ? (
         <p className="ax-empty">
-          No patterns yet. Keep logging tasks and they will show up here.
+          No patterns yet. Keep logging tasks and they'll show up here.
         </p>
       ) : (
         <ul className="ax-pat-list">

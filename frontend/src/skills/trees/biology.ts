@@ -22,7 +22,7 @@ export const BIOLOGY: SubjectTree = {
     { id: 'bi.membrane', name: 'Membranes & Transport', icon: 'membrane', tier: 'foundation', requires: ['bi.cells'], state: lock, percent: 0, xp: 1500,
       desc: 'A boundary that decides what gets in and out, some of it for free and some at a cost. Osmosis is the case worth being fluent in, because it explains wilting, swelling and why saltwater dehydrates you.' },
     { id: 'bi.molecules', name: 'Biological Molecules', icon: 'biomolecule', tier: 'beginner', requires: ['bi.cells'], state: lock, percent: 0, xp: 1600,
-      desc: 'Carbohydrates, lipids, proteins and nucleic acids — four families doing nearly everything. Structure predicts function throughout, which is why a change to one amino acid can break an entire organism.' },
+      desc: 'Carbohydrates, lipids, proteins and nucleic acids. Four families doing nearly everything. Structure predicts function throughout, which is why a change to one amino acid can break an entire organism.' },
     { id: 'bi.enzymes', name: 'Enzymes', icon: 'enzyme', tier: 'beginner', requires: ['bi.molecules'], state: lock, percent: 0, xp: 1700,
       desc: 'Proteins that make a specific reaction fast enough to be useful at body temperature. Their shape is the whole mechanism, which is why heat and the wrong acidity destroy them permanently.' },
     { id: 'bi.respiration', name: 'Respiration', icon: 'respiration', tier: 'beginner', core: true, requires: ['bi.enzymes', 'bi.membrane'], state: lock, percent: 0, xp: 1800,

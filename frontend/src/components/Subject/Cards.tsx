@@ -93,7 +93,7 @@ export function SubjectCards({ total, totalBefore, streak, focus }: SubjectCards
               text: `${moved > 0 ? '+' : ''}${moved}%`,
               way: moved > 0 ? 'up' : moved < 0 ? 'down' : 'flat',
             },
-      note: moved === null ? 'filed here in this window' : 'against the window before',
+      note: moved === null ? 'in this window' : 'vs. the window before',
     },
     {
       key: 'streak',
@@ -102,7 +102,7 @@ export function SubjectCards({ total, totalBefore, streak, focus }: SubjectCards
       label: 'Current streak',
       value: String(streak),
       chip: null,
-      note: streak === 1 ? 'day running here' : 'days running here',
+      note: streak === 1 ? 'day in a row' : 'days in a row',
     },
     {
       key: 'focus',
@@ -115,8 +115,8 @@ export function SubjectCards({ total, totalBefore, streak, focus }: SubjectCards
       value: focus || 'Not yet',
       chip: null,
       note: focus
-        ? 'the one thing most in the way'
-        : 'the record cannot name one yet',
+        ? 'what holds you back most'
+        : "not enough work to tell yet",
     },
   ];
 

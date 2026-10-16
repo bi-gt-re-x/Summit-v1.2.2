@@ -65,7 +65,7 @@ export function AskModel({
          one thing a reader needs to know before pressing this is that nothing
          is final, and a sentence saying so at every door would be the same
          sentence three times on one screen. */
-      title={title ?? `${label} — a draft you can rename, retime or delete`}
+      title={title ?? `${label}: a draft you can rename, move or delete`}
     >
       <span className="gx-ai-mark" aria-hidden="true">
         <Spark />

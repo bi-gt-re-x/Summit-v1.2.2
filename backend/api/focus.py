@@ -227,7 +227,7 @@ def save_focus_sittings(body: SittingBatch, username: str = Depends(current_user
     an old build must not stop the rest of somebody's record going up.
     """
     if len(body.sittings) > MAX_SITTINGS_PER_POST:
-        return fail('Too many sittings in one request')
+        return fail('Too many sessions at once')
     clean = [row for row in (_clean_sitting(s) for s in body.sittings) if row]
     added = focus_tracking.save_sittings(username, clean)
     if added is None:
@@ -239,8 +239,8 @@ def save_focus_sittings(body: SittingBatch, username: str = Depends(current_user
 def amend_focus_sitting(body: SittingAnswer, username: str = Depends(current_username)):
     """Record what came of one sitting's intention."""
     if not ID_RE.match(body.id or ''):
-        return fail('Which sitting?')
+        return fail('Which session?')
     done = body.done if body.done is not None and body.done >= 0 else None
     if not focus_tracking.amend_sitting(username, body.id, done=done, met=body.met):
-        return fail('That sitting does not exist.')
+        return fail("That session doesn't exist.")
     return ok(id=body.id)

@@ -187,7 +187,7 @@ export function MilestoneCalendar({
           </button>
           <span className="gx-cal-span">
             {grids[0]!.anchor.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
-            {' – '}
+            {'-'}
             {grids[grids.length - 1]!.anchor.toLocaleDateString(undefined, {
               month: 'short',
               year: 'numeric',
@@ -244,9 +244,7 @@ export function MilestoneCalendar({
                   .join(' ');
 
                 const label = day
-                  ? `${dayLabel(iso)} — ${day.entries.length} checkpoint${
-                      day.entries.length === 1 ? '' : 's'
-                    }`
+                  ? `${dayLabel(iso)}: ${day.entries.length} checkpoint${day.entries.length === 1 ? '' : 's'}`
                   : dayLabel(iso);
 
                 return (

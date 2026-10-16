@@ -258,7 +258,7 @@ function TrackingCard() {
   return (
     <div className="lp-card lp-track">
       <div className="lp-card-top">
-        <div className="lp-stats-head">Your week at a glance</div>
+        <div className="lp-stats-head">Your week</div>
         <Trend value={12} suffix="%" />
       </div>
       <div className="lp-track-legend">

@@ -123,7 +123,7 @@ describe('the finish-the-day button', () => {
   it('says so when some of what it will complete is off screen', async () => {
     const { user } = setup({ hidden: 2 });
     await user.click(screen.getByRole('button', { name: /today/i }));
-    expect(screen.getByText('2 of these are not shown in the list.')).toBeInTheDocument();
+    expect(screen.getByText("2 of these aren't shown in the list.")).toBeInTheDocument();
   });
 
   it('keeps quiet when nothing is hidden', async () => {

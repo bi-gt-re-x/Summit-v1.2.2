@@ -33,7 +33,7 @@ export const FOREIGN_LANGUAGE: SubjectTree = {
     { id: 'fl.tenses', name: 'Tenses & Aspect', icon: 'tense', tier: 'intermediate', requires: ['fl.grammar'], state: lock, percent: 0, xp: 1900,
       desc: 'Talking about what happened, what will, and what was ongoing when something else interrupted. Languages divide time differently, and the divisions rarely map onto the ones you grew up with.' },
     { id: 'fl.cases', name: 'Cases & Agreement', icon: 'agreement', tier: 'intermediate', requires: ['fl.tenses'], state: lock, percent: 0, xp: 2000,
-      desc: 'How a language marks who did what to whom — endings, particles, or strict word order. Whichever system it uses, it is doing a job your first language does some other way.' },
+      desc: 'How a language marks who did what to whom. Endings, particles, or strict word order. Whichever system it uses, it is doing a job your first language does some other way.' },
     { id: 'fl.input', name: 'Comprehensible Input', icon: 'input-stream', tier: 'intermediate', core: true, requires: ['fl.listen', 'fl.read'], state: lock, percent: 0, xp: 2000,
       desc: 'Large amounts of material just above your level, understood mostly from context. This is where most real acquisition happens, and it does not feel like studying, which is why it gets skipped.' },
     { id: 'fl.srs', name: 'Spaced Review', icon: 'flashcards', tier: 'intermediate', requires: ['fl.core'], state: lock, percent: 0, xp: 1600,

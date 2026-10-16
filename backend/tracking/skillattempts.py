@@ -68,7 +68,7 @@ def clean_attempt(body, now=None):
     """
     node_id = str(body.get('node_id') or '').strip()
     if not NODE_ID.match(node_id):
-        return None, 'That is not a skill this app knows how to name.'
+        return None, "That's not a skill this app knows how to name."
 
     ordinal = _whole(body.get('ordinal', 0))
     if ordinal is None or not 0 <= ordinal <= ORDINAL_MAX:
@@ -100,7 +100,7 @@ def clean_attempt(body, now=None):
         if not 1 <= attempted <= LOG_MAX:
             return None, 'Log between 1 and {} problems at a time.'.format(LOG_MAX)
         if not 0 <= correct <= attempted:
-            return None, 'You cannot get more right than you attempted.'
+            return None, "You can't get more right than you attempted."
 
     stamp = (now or datetime.now()).isoformat(timespec='seconds')
     return {

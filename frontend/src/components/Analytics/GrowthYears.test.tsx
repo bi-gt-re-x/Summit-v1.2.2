@@ -63,20 +63,20 @@ describe('the gate', () => {
   it('refuses on a single year, however much is in it', () => {
     // A whole busy year is still one row, and one row is not a comparison.
     draw(<YearOnYear model={model(year(2025, { tasks: 5, xp: 50 }), rated(2025, 400, 3, 4))} />);
-    expect(screen.getByText(/need two calendar years of data/i)).toBeInTheDocument();
+    expect(screen.getByText(/needs two calendar years of work/i)).toBeInTheDocument();
     expect(document.querySelector('.ax-gy')).toBeNull();
   });
 
   it('does not count a year the account sat out toward the two', () => {
     const all = [...year(2024, { tasks: 2 }), ...year(2025)];
     draw(<YearOnYear model={model(all)} />);
-    expect(screen.getByText(/need two calendar years of data/i)).toBeInTheDocument();
+    expect(screen.getByText(/needs two calendar years of work/i)).toBeInTheDocument();
   });
 
   it('opens once two years have work in them', () => {
     const all = [...year(2024, { tasks: 2 }), ...year(2025, { tasks: 3 })];
     draw(<YearOnYear model={model(all)} />);
-    expect(screen.queryByText(/needs two years/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/needs two calendar years/i)).not.toBeInTheDocument();
     expect(document.querySelector('.ax-gy')).not.toBeNull();
   });
 });
@@ -107,7 +107,7 @@ describe('the table', () => {
     draw(<YearOnYear model={model(all)} />);
     const row = document.querySelectorAll('.ax-gy tbody tr')[1] as HTMLElement;
     const cells = [...row.querySelectorAll('td')].map((c) => c.textContent);
-    expect(cells.slice(-2)).toEqual(['—', '—']);
+    expect(cells.slice(-2)).toEqual(['-', '-']);
   });
 
   it('sets back a year the account was present for and did nothing in', () => {
@@ -127,7 +127,7 @@ describe('the headline', () => {
 
     const lead = document.querySelector('.ax-gy-lead') as HTMLElement;
     expect(lead).not.toBeNull();
-    expect(lead.textContent).toMatch(/with difficulty steady/);
+    expect(lead.textContent).toMatch(/Difficulty stayed at/);
     // Both figures, not just the flattering one.
     expect(lead.textContent).toMatch(/2\.8 to 3\.7/);
     expect(lead.textContent).toMatch(/3\.0/);
@@ -138,7 +138,7 @@ describe('the headline', () => {
     const tasks = [...rated(2024, 60, 4.2, 2.6), ...rated(2025, 60, 3, 3.6)];
     draw(<YearOnYear model={model(all, tasks)} />);
     expect(document.querySelector('.ax-gy-lead')!.textContent)
-      .toMatch(/Some of that rise is easier work/);
+      .toMatch(/Some of that is easier work/);
   });
 
   it('draws no headline at all when nothing is rated', () => {
@@ -189,14 +189,14 @@ describe('the ratings chart', () => {
     const thin = [...rated(2025, 40, 3, 3.7)];
     draw(<YearOnYear model={model(all, thin)} />);
     expect(document.querySelector('.ax-chart')).toBeNull();
-    expect(screen.getByText(/Two years with ratings on them draws this/)).toBeInTheDocument();
+    expect(screen.getByText(/This needs two years of ratings/)).toBeInTheDocument();
   });
 
   it('warns that the two lines are not a race', () => {
     // They share an axis because both are out of five, but they answer
     // different questions, so which sits higher means nothing.
     draw(<YearOnYear model={model(all, tasks)} />);
-    expect(screen.getByRole('button', { name: /Reading this/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /How to read this/ })).toBeInTheDocument();
   });
 });
 
@@ -204,7 +204,7 @@ describe('the standing panel', () => {
   it('keeps the percentile the Records tab was carrying', () => {
     const all = [...year(2024, { tasks: 2, xp: 20 }), ...year(2025, { tasks: 3, xp: 40 })];
     draw(<YearOnYear model={model(all)} />);
-    expect(screen.getByRole('heading', { name: /Where this month sits/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /How this month ranks/i })).toBeInTheDocument();
     expect(screen.getByText(/Your best 30/)).toBeInTheDocument();
   });
 
@@ -248,8 +248,8 @@ describe('the verdict', () => {
     // reader. `+0.0` printed as a gain would invite the opposite reading.
     draw(<YearOnYear model={model(all, better)} />);
     const notes = [...document.querySelectorAll('.ax-gy-move-note')].map((n) => n.textContent);
-    expect(notes[0]).toBe('+0.9 on the five-point scale');
-    expect(notes[1]).toBe('held level');
+    expect(notes[0]).toBe('+0.9 out of 5');
+    expect(notes[1]).toBe('no change');
   });
 
   it('colors the block by which way the news runs', () => {

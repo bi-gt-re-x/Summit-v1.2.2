@@ -190,7 +190,7 @@ describe('scoring an intention', () => {
 describe('what the page may still ask about', () => {
   const now = 1_780_000_000_000;
 
-  it('asks about a sitting that has just happened', () => {
+  it('asks about a session that has just happened', () => {
     expect(unanswered(row({ intent: 'Finish 15', target: 15, at: now - 60_000 }), now))
       .not.toBeNull();
   });
@@ -271,7 +271,7 @@ describe('the marks', () => {
     expect(best.run).toBe(0);
   });
 
-  it('counts only a sitting that ran clean through as unbroken', () => {
+  it('counts only a session that ran clean through as unbroken', () => {
     const best = marks([
       row({ planned: 90, minutes: 90, pauses: 2 }),
       row({ planned: 50, minutes: 50, pauses: 0 }),
@@ -415,7 +415,7 @@ describe('pace', () => {
     expect(tasksPerHour(1, 4 * 60)).toBeNull();
   });
 
-  it('reads tasks against focused time, not against the day', () => {
+  it('reads tasks vs. focused time, not against the day', () => {
     expect(tasksPerHour(2, 3600)).toBe(2);
     expect(tasksPerHour(2, 1800)).toBe(4);
   });

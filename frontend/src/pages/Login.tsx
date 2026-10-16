@@ -103,9 +103,9 @@ export default function Login() {
       verify === 'invalid'
         ? { text: 'That verification link has already been used or expired.', kind: 'error' as const }
         : oauth === 'unconfigured'
-          ? { text: 'Google sign-in is not configured on this server yet.', kind: 'error' as const }
+          ? { text: "Google sign-in isn't configured on this server yet.", kind: 'error' as const }
           : oauth
-            ? { text: 'Google sign-in did not complete. Try again.', kind: 'error' as const }
+            ? { text: "Google sign-in didn't complete. Try again.", kind: 'error' as const }
             : bounced
               ? { text: 'You need an account to open that page.', kind: 'info' as const }
               : null,

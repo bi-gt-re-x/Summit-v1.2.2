@@ -74,7 +74,7 @@ const PRIOR = 30;
 
 /** The shrinkage, in a clause a recommendation can drop into a sentence. */
 export const SUBJECT_RULE_FLOOR_NOTE =
-  'a score is held toward the middle until there are enough rated tasks behind it';
+  'scores stay near the middle until you have enough rated tasks';
 
 /** A task's weight halves this often, so the score follows current work. */
 const HALF_LIFE_DAYS = 45;
@@ -379,34 +379,34 @@ export function explainSkill(row: SkillRow, nameOf: (id: string) => string): Ski
   const name = nameOf(row.subject);
 
   const lifting =
-    `${best.label} is what is carrying ${name}: ` +
+    `${best.label} is your strength in ${name}:` +
     (best.key === 'accuracy' || best.key === 'recent'
-      ? `${row.avgExecution} out of 5 on execution across ${row.rated} rated ${row.rated === 1 ? 'task' : 'tasks'}.`
+      ? `${row.avgExecution} out of 5 for how it went, across ${row.rated} rated ${row.rated === 1 ? 'task' : 'tasks'}.`
       : best.key === 'difficulty'
-        ? `you are attempting work at ${row.avgDifficulty} out of 5 and landing it.`
+        ? `you're doing work rated ${row.avgDifficulty} out of 5 and getting it right.`
         : best.key === 'consistency'
-          ? `you have worked it in ${row.activeWeeks} of the last ${row.weeks} weeks.`
+          ? `you've worked on it in ${row.activeWeeks} of the last ${row.weeks} weeks.`
           : best.key === 'execution'
-            ? 'you finish what you start here by the date you set.'
-            : 'you have been in it recently.');
+            ? 'you finish things here by the date you set.'
+            : "you've worked on it recently.");
 
   const limiting =
     worst.value >= 70
-      ? `Nothing is holding it back much — the weakest of the six is ${worst.label.toLowerCase()} at ${Math.round(worst.value)}.`
-      : `${worst.label} is the limit: ` +
+      ? `Nothing's holding it back much. Your weakest part is ${worst.label.toLowerCase()} at ${Math.round(worst.value)}.`
+      : `${worst.label} is holding it back:` +
         (worst.key === 'difficulty'
           ? row.hardAccuracy !== null
-            ? `you are steady on the easier work and drop to ${row.hardAccuracy}% on the hardest third of it.`
-            : 'what you have attempted here has stayed on the easier end of the scale.'
+            ? `you're solid on easier work but drop to ${row.hardAccuracy}% on the hardest stuff.`
+            : "you've stuck to easier work here."
           : worst.key === 'consistency'
-            ? `${row.activeWeeks} active ${row.activeWeeks === 1 ? 'week' : 'weeks'} out of ${row.weeks} is not a habit yet.`
+            ? `${row.activeWeeks} active ${row.activeWeeks === 1 ? 'week' : 'weeks'} out of ${row.weeks} isn't a habit yet.`
             : worst.key === 'retention'
-              ? `it has been ${row.daysSince} days since you last touched it.`
+              ? `it's been ${row.daysSince} days since you worked on it.`
               : worst.key === 'recent'
-                ? 'your last month here has gone worse than your record before it.'
+                ? 'your last month here went worse than before.'
                 : worst.key === 'execution'
-                  ? 'work here tends to land after the date you set for it.'
-                  : `execution is averaging ${row.avgExecution} out of 5.`);
+                  ? 'work here tends to finish after the due date.'
+                  : `how it goes averages ${row.avgExecution} out of 5.`);
 
   const evidence: { label: string; value: string }[] = [
     { label: 'Rated tasks', value: String(row.rated) },
@@ -414,7 +414,7 @@ export function explainSkill(row: SkillRow, nameOf: (id: string) => string): Ski
     { label: 'Avg difficulty', value: `${row.avgDifficulty} / 5` },
   ];
   if (row.hardAccuracy !== null) {
-    evidence.push({ label: 'On the hardest third', value: `${row.hardAccuracy}%` });
+    evidence.push({ label: 'On the hardest work', value: `${row.hardAccuracy}%` });
   }
   evidence.push({
     label: 'Last worked',
@@ -429,7 +429,7 @@ export function explainSkill(row: SkillRow, nameOf: (id: string) => string): Ski
 
   const caveat =
     row.confidence < 0.75
-      ? `Held at ${row.score} rather than ${row.raw} because ${row.rated} rated ${row.rated === 1 ? 'task is' : 'tasks are'} not yet enough to be sure. The two converge as you rate more.`
+      ? `Shown as ${row.score} instead of ${row.raw} because ${row.rated} rated ${row.rated === 1 ? 'task isn\'t' : 'tasks aren\'t'} enough to be sure yet. Rate more and they'll match.`
       : null;
 
   return { lifting, limiting, evidence, caveat };

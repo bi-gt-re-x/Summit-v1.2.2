@@ -95,7 +95,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       if (!live) return;
       setLoading(false);
       if (!result.success) {
-        setError(result.message || 'Could not read the suggested sessions.');
+        setError(result.message || "Couldn't load your suggested sessions.");
         setSteps([]);
         return;
       }
@@ -138,7 +138,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       : await suggestNextSessions(subjectId);
     setAsking(false);
     if (!result.success) {
-      setError(result.message || 'Could not suggest sessions. Try again.');
+      setError(result.message || "Couldn't suggest sessions. Try again.");
       return;
     }
     setSteps(result.steps);
@@ -149,7 +149,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
     async (step: NextStep): Promise<boolean> => {
       const made = await planSession(step.id, subjectId);
       if (!made.success) {
-        setError(made.message || 'Could not plan that session. Try again.');
+        setError(made.message || "Couldn't plan that session. Try again.");
         return false;
       }
       setSteps((was) => was.map((row) => (row.id === step.id ? { ...row, state: 'planned', task: made.task } : row)));
@@ -211,9 +211,8 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         <div className="ns-title">
           <h2>{heading}</h2>
           <p>
-            Three study sessions chosen from the work you have finished in {scope}, each with
-            what to do, how hard it is and how long it takes. Put one on your calendar, or all
-            three at once.
+            Three study sessions based on your work in {scope}. Each one says what to do, how hard
+            it is and how long it takes. Add one to your calendar, or all three.
           </p>
         </div>
         <label className="ns-pick">
@@ -256,8 +255,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
 
       {available === false ? (
         <p className="ns-note">
-          Suggesting sessions needs a model key. Add a free GROQ_API_KEY (or an ANTHROPIC_API_KEY)
-          to .env and restart the server.
+          Suggestions need an AI key. Add a free GROQ_API_KEY or an ANTHROPIC_API_KEY to .env and restart the server.
         </p>
       ) : (
         <div className="ns-actions">
@@ -279,7 +277,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       )}
 
       {loading ? (
-        <p className="ns-note">Reading what has been suggested…</p>
+        <p className="ns-note">Loading suggestions…</p>
       ) : steps.length > 0 ? (
         <NextSteps
           steps={steps}
@@ -292,8 +290,7 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       ) : (
         available !== false && (
           <p className="ns-note">
-            Nothing suggested {subjectId ? `for ${subjectName} ` : ''}yet. Press Suggest {BATCH} sessions
-            and three will be picked from your recent work.
+            Nothing suggested {subjectId ? `for ${subjectName} ` : ''}yet. Press Suggest {BATCH} sessions and you'll get three based on your recent work.
           </p>
         )
       )}

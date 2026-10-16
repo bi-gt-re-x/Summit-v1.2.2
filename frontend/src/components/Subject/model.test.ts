@@ -28,7 +28,7 @@ function goal(over: Partial<Goal> = {}): Goal {
     start_date: '2026-08-01',
     created_at: '2026-08-01',
     // Without this `goalNumbers` reads it as a milestone goal with no
-    // milestones: target 0, and therefore no pace and no projection. Every
+    // milestones: target 0, and therefore no pace and no estimate yet. Every
     // test that wants a *projectable* goal needs it, and the one that wants
     // the opposite overrides it.
     measure: 'number',
@@ -100,7 +100,7 @@ describe('which tasks a subject page counts', () => {
     const model = subjectModel([done(), done({ completed_at: ago(400) })], 'maths', 'all', TODAY);
     expect(model.finished).toBe(2);
     expect(model.finishedBefore).toBe(0);
-    // Null rather than -100 or 0: there is nothing behind All Time to compare
+    // Null rather than -100 or 0: there is nothing behind All time to compare
     // it to, and a figure would be a claim about a period that does not exist.
     expect(model.growth.find((g) => g.key === 'volume')?.change).toBeNull();
   });

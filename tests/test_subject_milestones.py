@@ -154,7 +154,7 @@ def test_the_brief_says_plainly_when_there_are_no_checkpoints():
     know to do that if the brief says so.
     """
     brief = subject_goal.brief_from({'subject': 'Mathematics'})
-    assert 'has not written any checkpoints' in brief
+    assert "hasn't written any checkpoints" in brief
 
 
 def test_a_draft_is_bounded_to_what_add_goal_will_take():

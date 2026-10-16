@@ -46,8 +46,8 @@ import { DORMANT_AFTER, STAGES, STAGE_BRINGS, STAGE_LABEL, type Maturity } from 
 export function ActiveDayNote() {
   return (
     <p className="ax-active-note">
-      A day counts as soon as you {ACTIVE_DAY_MEANS} — any one of the three, however small. Days
-      you do none of them are not counted against you; they are simply not counted.
+      A day counts as soon as you {ACTIVE_DAY_MEANS}. Even a small one counts. Days off
+      are skipped. They never count against you.
     </p>
   );
 }
@@ -69,7 +69,7 @@ export function ActiveDayNote() {
 export function ActiveDayPrinciple() {
   return (
     <p className="ax-principle">
-      Analytics grow from the days you actually work, not from calendar days.
+      Analytics fill in as you work. Days off don't count.
     </p>
   );
 }
@@ -106,12 +106,11 @@ export function AwayNotice({ maturity }: { maturity: Maturity }) {
   return (
     <section className="ax-away">
       <p className="ax-away-head">
-        You have been away for <strong>{quietDays} days</strong>
+        You've been away for <strong>{quietDays} days</strong>
       </p>
       <p className="ax-away-body">
-        Everything already on record is still here, and nothing has been reset — all of your
-        work is still behind these figures. The windows below cover a stretch you were not working in, so most of them read as zero
-        until you start logging again.
+        Nothing's been reset. All your work is still here. The charts below cover the days
+        you were away, so most of them show zero until you start again.
       </p>
     </section>
   );
@@ -299,7 +298,7 @@ export function StageLadder({
 
   return (
     <section className="ax-ladder">
-      <p className="ax-ladder-head">Your analytics are developing</p>
+      <p className="ax-ladder-head">Your analytics are filling in</p>
 
       <ol
         className="ax-ladder-track"
@@ -451,20 +450,19 @@ export function Collecting({ maturity, stats }: CollectingProps) {
 
         <h2>
           {activeDays === 0
-            ? 'Summit has nothing to go on yet.'
-            : 'Summit is learning your work patterns.'}
+            ? 'Nothing to show yet.'
+            : 'Your analytics are filling in.'}
         </h2>
         <p className="ax-collect-lead">
           {activeDays === 0 ? (
             <>
-              Finish a task or start a focus session to begin filling this page.
+              Finish a task or start a focus session to get going.
             </>
           ) : (
             <>
               {activeDays === 1 ? 'One day' : `${activeDays} days`} of your work{' '}
               {activeDays === 1 ? 'is' : 'are'} on record
-              {spanDays > activeDays + 1 ? `, across ${spanDays} days` : ''}. The figures below
-              are exact counts. Trends, patterns and ratings appear as you log more.
+              {spanDays > activeDays + 1 ? `, across ${spanDays} days` : ''}. The numbers below are exact counts. Trends, patterns and ratings show up as you log more.
             </>
           )}
         </p>

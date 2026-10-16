@@ -152,7 +152,7 @@ function todayIso(): string {
 
 /** A signed percentage, with the arrow the spec's own tables use. */
 function Delta({ value, unit = '%' }: { value: number | null; unit?: string }) {
-  if (value === null) return <span className="sb-delta is-flat">—</span>;
+  if (value === null) return <span className="sb-delta is-flat">-</span>;
   if (value === 0) return <span className="sb-delta is-flat">→ no change</span>;
   return (
     <span className={`sb-delta ${value > 0 ? 'is-up' : 'is-down'}`}>
@@ -173,12 +173,12 @@ const TABS = [
   {
     key: 'overview' as const,
     label: 'Overview',
-    purpose: 'Where this subject stands, and what to do next.',
+    purpose: 'How this subject is going and what to do next.',
   },
   {
     key: 'evidence' as const,
-    label: 'Evidence',
-    purpose: 'The working: every figure the overview is argued from.',
+    label: 'The numbers',
+    purpose: 'All the numbers behind the overview.',
   },
 ];
 
@@ -245,10 +245,10 @@ function planFacts(goal: SubjectGoal): Array<{ label: string; value: string }> {
      goals page too; these say what *this subject* has put into it, which is
      the thing a page about one subject can answer and a goal card cannot. */
   facts.push({
-    label: 'Aimed at it',
+    label: 'Tasks linked',
     value: goal.ofFinished
       ? `${goal.aimed} of ${goal.ofFinished} tasks`
-      : 'nothing finished here',
+      : 'nothing done here yet',
   });
   /* The two weeks is named in the value rather than the label, because it is
      the one figure here measured over something other than the page's window
@@ -542,7 +542,7 @@ export default function SubjectAnalytics() {
     });
     setDrafting(false);
     if (result.success) setDraft(result.draft);
-    else setDraftError(result.message || 'Could not draft a goal.');
+    else setDraftError(result.message || "Couldn't draft a goal.");
   }, [ambition, milestones, model, subject]);
 
   /**
@@ -565,13 +565,13 @@ export default function SubjectAnalytics() {
       analytics_ambitions: {
         ...prefs.analytics_ambitions,
         [subjectId]: {
-          aim: `${draft.title} — ${draft.target} ${draft.unit} over ${draft.weeks} weeks`,
+          aim: `${draft.title}: ${draft.target} ${draft.unit} in ${draft.weeks} weeks`,
           level: prefs.analytics_ambitions[subjectId]?.level ?? '',
         },
       },
     });
     if (!saved) {
-      setDraftError('Could not keep that. Try again.');
+      setDraftError("Couldn't save that. Try again.");
       return;
     }
     if (draft.milestones.length > 0) {
@@ -646,7 +646,7 @@ export default function SubjectAnalytics() {
         // The app's own conclusions, in the words it wrote them in. Handing
         // over the sentences rather than the raw counts is what stops the
         // model re-deriving them and getting a different answer.
-        levers: goal.levers.map((lever) => `${lever.title} — ${lever.fact}`),
+        levers: goal.levers.map((lever) => `${lever.title}: ${lever.fact}`),
         aim: ambition?.aim ?? '',
         level: ambition?.level ?? '',
         span: WINDOWS.find((option) => option.key === span)?.label ?? '',
@@ -673,7 +673,7 @@ export default function SubjectAnalytics() {
       else {
         setPlanError((was) => ({
           ...was,
-          [goal.id]: result.message || 'Could not plan a route.',
+          [goal.id]: result.message || "Couldn't plan a route.",
         }));
       }
     },
@@ -889,11 +889,11 @@ export default function SubjectAnalytics() {
           deadline: goal.deadline,
           standing:
             goal.drift === null
-              ? 'no projection'
+              ? 'no estimate yet'
               : goal.drift > 0
-                ? `projected ${goal.drift} days late`
-                : 'projected on time or early',
-          levers: goal.levers.map((lever) => `${lever.title} — ${lever.fact}`),
+                ? `on pace to be ${goal.drift} days late`
+                : 'on pace to finish on time',
+          levers: goal.levers.map((lever) => `${lever.title}: ${lever.fact}`),
         })),
         /* The curriculum's own words, and nothing more. These are the authored
            tree's area names — identical on every account, carrying no
@@ -919,13 +919,13 @@ export default function SubjectAnalytics() {
         mode,
       });
     } catch {
-      result = { success: false, message: 'Could not reach the server. Try again.' } as typeof result;
+      result = { success: false, message: "Couldn't reach the server. Try again." } as typeof result;
     } finally {
       setAsking('');
     }
 
     if (result.success) setReading(result.reading);
-    else setReadError(result.message || 'Could not read this subject.');
+    else setReadError(result.message || "Couldn't load this subject.");
   }, [ambition, lattice, model.goals, span, state, subject, subjectId, tasks.data, today]);
 
   /** Record a step as done without planning it — the work happened elsewhere. */
@@ -957,7 +957,7 @@ export default function SubjectAnalytics() {
       setStepBusy('');
       if (!made.success) {
         setErrorFrom('steps');
-        setReadError(made.message || 'Could not plan that session. Try again.');
+        setReadError(made.message || "Couldn't plan that session. Try again.");
         return;
       }
       setStepState((was) => new Map(was).set(step.id, { state: 'planned', task: made.task }));
@@ -1080,7 +1080,7 @@ export default function SubjectAnalytics() {
       const result = await updateGoal(goalId, { subject_ids: ids.join(',') });
       setLinking('');
       if (!result.success) {
-        setLinkError(result.message || 'Could not change that goal.');
+        setLinkError(result.message || "Couldn't change that goal.");
         return;
       }
       goals.reload();
@@ -1156,7 +1156,7 @@ export default function SubjectAnalytics() {
               <h1>{subject ? subject.name : 'Subject'}</h1>
               <p className="ax-muted ax-head-purpose">
                 {subject
-                  ? 'How it is going, and what to do about it.'
+                  ? "How it's going and what to do next."
                   : 'This page is about one subject at a time.'}
               </p>
             </div>
@@ -1171,20 +1171,18 @@ export default function SubjectAnalytics() {
         </PageHero>
 
         {naming || tasks.loading ? (
-          <Loading label="Reading your record" />
+          <Loading label="Loading your work" />
         ) : !subject ? (
           <p className="ax-opening is-flat">
-            No subject with that id is in your catalog. It may have been deleted since you
-            picked it. You can pick the subjects you follow again in{' '}
+            We can't find that subject. It may have been deleted. You can pick your subjects again in{' '}
             <Link className="ax-link" to="/analytics?setup">the analytics setup</Link>.
           </p>
         ) : !tasks.data ? (
-          <ErrorState message={tasks.error ?? 'Could not read your tasks.'} onRetry={tasks.reload} />
+          <ErrorState message={tasks.error ?? "Couldn't load your tasks."} onRetry={tasks.reload} />
         ) : !model.any ? (
           <>
             <p className="ax-opening is-flat">
-              Nothing is filed under {subject.name} yet. File a few tasks and this page has
-              something to measure.
+              No tasks under {subject.name} yet. Add a few tasks to fill this page.
             </p>
             {/* Notes are not measured, so they do not wait for tasks: a
                 subject somebody has only written about still shows what
@@ -1254,7 +1252,7 @@ export default function SubjectAnalytics() {
                 fully. */}
             <section
               className="sx-hero"
-              aria-label="Where this subject stands"
+              aria-label="How this subject is going"
               data-band={band}
             >
               {/* The letter is derived from the figure the ring draws, not
@@ -1280,7 +1278,7 @@ export default function SubjectAnalytics() {
                           ? '↓'
                           : '→'}{' '}
                       {(state.momentum.change ?? 0) > 0 ? '+' : ''}
-                      {state.momentum.change} pts across this window
+                      {state.momentum.change} pts in this window
                     </span>
                   )}
                   {/* "Falls off at" and the hours logged were badges here too.
@@ -1325,7 +1323,7 @@ export default function SubjectAnalytics() {
                 the tree; crumbs and a way in, here. */}
             {lattice && (
               <div className="sb-path">
-                <nav className="sb-path-crumbs" aria-label="Where this subject sits">
+                <nav className="sb-path-crumbs" aria-label="Where this subject is">
                   {lattice.path.map((step, at) => (
                     <span key={step.id}>
                       {at > 0 && <i aria-hidden="true">›</i>}
@@ -1412,12 +1410,12 @@ export default function SubjectAnalytics() {
                           ? `Get ${BATCH} sessions planned with AI`
                           : shown < MAX_STEPS
                             ? `Done with these? Get ${BATCH} more`
-                            : `That is ${MAX_STEPS}, the most at once`}
+                            : `That's ${MAX_STEPS}, the max at once`}
                       </strong>
                       <p>
                         {shown < MAX_STEPS
-                          ? `A model reads every task you have finished here — what it was, how hard, how it went and how long it took — and plans ${BATCH} exact sessions: which problems, how fast, and where to get them.`
-                          : `Act on some of these, or start over with a fresh ${BATCH}.`}
+                          ? `AI looks at every task you've finished here and plans ${BATCH} sessions: which problems, how fast to go and where to find them.`
+                          : `Try a few of these, or start over with ${BATCH} new ones.`}
                       </p>
                     </div>
                     <button
@@ -1447,8 +1445,7 @@ export default function SubjectAnalytics() {
                   {shown > 0 && reading && (
                     <div className="sb-draft-body">
                       <p className="sx-batch-note">
-                        {shown} of {MAX_STEPS}, model-written from your tasks. Open one for the
-                        pace, where to get the material and why.
+                        {shown} of {MAX_STEPS}, written by AI from your tasks. Open one for the pace, where to find it and why.
                       </p>
                       <NextSteps
                         steps={reading.next_steps}
@@ -1462,8 +1459,7 @@ export default function SubjectAnalytics() {
                 </div>
               ) : (
                 <p className="ax-panel-note">
-                  Recommendations here are written by a model, and this install has no model
-                  key. Add one to .env and restart the server.
+                  These tips are written by AI, and no AI key is set up. Add one to .env and restart the server.
                 </p>
               )}
             </section>
@@ -1490,8 +1486,8 @@ export default function SubjectAnalytics() {
                 which is prose is the thing a reader has to know before
                 deciding what to act on. */}
             <Panel
-              title="What the record says"
-              note="Counted from your own tasks. The findings under the calendar are model-written."
+              title="What your work shows"
+              note="From your tasks. The notes under the calendar are written by AI."
             >
               <SubjectHeat mine={mine} today={today} subject={subject.name} window={HEAT_WINDOW[span]} />
 
@@ -1502,8 +1498,8 @@ export default function SubjectAnalytics() {
               {canRead && (
                 <div className="sx-ask">
                   <div>
-                    <strong>Read the record</strong>
-                    <p>A model reads the figures above. It adds no numbers of its own.</p>
+                    <strong>Get an AI summary</strong>
+                    <p>AI reads the numbers above. It doesn't add any of its own.</p>
                   </div>
                   <button
                     type="button"
@@ -1511,7 +1507,7 @@ export default function SubjectAnalytics() {
                     onClick={() => void askForReading('read')}
                     disabled={thinking}
                   >
-                    {asking === 'read' ? 'Reading…' : reading ? 'Read it again' : 'Read my record'}
+                    {asking === 'read' ? 'Working…' : reading ? 'Summarize again' : 'Summarize my work'}
                   </button>
                 </div>
               )}
@@ -1525,8 +1521,7 @@ export default function SubjectAnalytics() {
                 <div className="sb-record-read">
                   <h3 className="sb-sub">Key insights</h3>
                   <p className="sb-keys-note">
-                    Model-written from the figures above. The word on the right is which
-                    way each one cuts.
+                    Written by AI from the numbers above. The tag on the right says if it helps or hurts.
                   </p>
                   <Reading diagnosis={reading.diagnosis} insights={reading.insights} />
                 </div>
@@ -1556,7 +1551,7 @@ export default function SubjectAnalytics() {
             {tab === 'evidence' && (
               <>
             <p className="sb-detail-note sb-detail-lead">
-              The working behind the overview, counted from your own tasks.
+              The numbers behind the overview, from your tasks.
             </p>
 
             <div className="sb-folds">
@@ -1565,7 +1560,7 @@ export default function SubjectAnalytics() {
                   reader who opens nothing else would have wanted. */}
               <Fold
                 title="Where you stand"
-                note="The score, and the seven measures under it."
+                note="Your score and the seven parts that make it up."
                 defaultOpen
                 /* Overall and Finished were figures here as well; both are the
                    ring at the top of the Overview tab. */
@@ -1610,11 +1605,11 @@ export default function SubjectAnalytics() {
                     is which measure is the odd one out. */}
                 {axes.length >= WEB_FLOOR && (
                   <div className="sb-web">
-                    <h3 className="sb-sub">The shape of it</h3>
+                    <h3 className="sb-sub">Your strengths</h3>
                     <Radar
                       axes={axes}
                       tone="violet"
-                      label={`${subject.name} across ${axes.length} measures`}
+                      label={`${subject.name} across ${axes.length} areas`}
                     />
                   </div>
                 )}
@@ -1641,7 +1636,7 @@ export default function SubjectAnalytics() {
 
                 <Panel
                   title="Standings"
-                  note="Thresholds over the same record. Recounted every visit."
+                  note="Checked again every time you visit."
                 >
                   <ul className="sx-standings">
                     {state.standings.map((entry) => (
@@ -1670,7 +1665,7 @@ export default function SubjectAnalytics() {
                 || model.bands.some((entry) => entry.done > 0)) && (
                 <Fold
                   title="Difficulty"
-                  note="How each level goes, and how much work sits there."
+                  note="How each difficulty goes, and how much work is there."
                   figures={[
                     {
                       label: 'Falls off at',
@@ -1681,7 +1676,7 @@ export default function SubjectAnalytics() {
                   lead={
                     peakBand && peakBand.done > 0 ? (
                       <>
-                        Most of this subject sits at <b>{peakBand.label.toLowerCase()}</b> —{' '}
+                        Most of your work here is at <b>{peakBand.label.toLowerCase()}</b>:{' '}
                         {peakBand.done} of {model.finished} finished tasks.
                       </>
                     ) : undefined
@@ -1692,7 +1687,7 @@ export default function SubjectAnalytics() {
                   {model.bands.some((band) => band.done > 0) && (
                     <Panel
                       title="How you do at each difficulty"
-                      note="A star is the finest thing your tasks record."
+                      note="Based on your star ratings."
                     >
                       <div className="sb-table-wrap">
                         <table className="sb-table">
@@ -1730,7 +1725,7 @@ export default function SubjectAnalytics() {
                                   </td>
                                   <td>
                                     {band.seconds === null ? (
-                                      <span className="is-none">—</span>
+                                      <span className="is-none">-</span>
                                     ) : (
                                       <>
                                         {format.duration(Math.round(band.seconds))}
@@ -1761,11 +1756,11 @@ export default function SubjectAnalytics() {
               {model.series.any && (
                 <Fold
                   title="Over time"
-                  note="Volume and quality, period by period."
+                  note="How much you did and how well, over time."
                   /* Momentum is the badge at the top of the Overview tab, and
                      this window against the one before is "Your progress"
                      inside this fold, so the shut row names the busiest day. */
-                  figures={[{ label: 'Busiest', value: busiest?.label ?? '—' }]}
+                  figures={[{ label: 'Busiest', value: busiest?.label ?? '-' }]}
                   lead={
                     state.momentum.known ? (
                       <>
@@ -1777,15 +1772,15 @@ export default function SubjectAnalytics() {
                               ? 'slipping'
                               : 'flat'}
                         </b>{' '}
-                        across this window — {state.momentum.earlier} early, {state.momentum.later}{' '}
+                        in this window. {state.momentum.earlier} early, {state.momentum.later}{' '}
                         late.
                       </>
                     ) : undefined
                   }
                 >
                   <Panel
-                    title="Your trajectory"
-                    note="Volume, and the quality you rated it at."
+                    title="Your trend"
+                    note="How much you did and how you rated it."
                   >
                     {/* Side by side rather than stacked. They are the same
                         periods on the same dates, so the interesting reading is
@@ -1852,7 +1847,7 @@ export default function SubjectAnalytics() {
 
                   <Panel
                     title="Your progress"
-                    note="Against the window immediately before, same length."
+                    note="Compared with the same number of days before."
                   >
                     <ul className="sb-rows">
                       {model.growth.map((entry) => (
@@ -1871,7 +1866,7 @@ export default function SubjectAnalytics() {
               {state.time.known && (
                 <Fold
                   title="Time spent"
-                  note="Whether the minutes bought anything."
+                  note="Did the extra time help?"
                   figures={[
                     { label: 'Logged', value: `${state.time.hours}h` },
                     {
@@ -1884,49 +1879,49 @@ export default function SubjectAnalytics() {
                     cloud.correlation !== null ? (
                       <>
                         {cloud.correlation >= 0.3
-                          ? 'Longer sessions land better here'
+                          ? 'Longer sessions go better here'
                           : cloud.correlation <= -0.3
-                            ? 'Longer sessions land worse here'
-                            : 'Length and how it goes barely move together here'}{' '}
-                        — <b>r = {cloud.correlation}</b> over {cloud.count} timed, rated tasks.
+                            ? 'Longer sessions go worse here'
+                            : "Session length doesn't change much here"}{' '}
+                        (<b>r = {cloud.correlation}</b> over {cloud.count} timed, rated tasks).
                       </>
                     ) : undefined
                   }
                 >
                   <Panel
-                    title="What the time bought"
-                    note="Against your own usual pace. Summit never asks for an estimate."
+                    title="What your time got you"
+                    note="Compared with your usual pace. You don't have to guess how long things take."
                   >
                     <ul className="sb-rows">
                       <li className="sb-row">
                         <span className="sb-row-name">Usual task</span>
                         <strong>{state.time.typical} min</strong>
-                        <span className="sb-row-note">median across this window</span>
+                        <span className="sb-row-note">typical in this window</span>
                       </li>
                       <li className="sb-row">
-                        <span className="sb-row-name">Against that</span>
+                        <span className="sb-row-name">Compared with that</span>
                         <strong>
                           {state.time.drift === null
-                            ? '—'
+                            ? '-'
                             : state.time.drift < 0
-                              ? `${Math.abs(state.time.drift)} min under`
-                              : `${state.time.drift} min over`}
+                              ? `${Math.abs(state.time.drift)} min faster`
+                              : `${state.time.drift} min slower`}
                         </strong>
                         <span className="sb-row-note">
-                          {state.time.quicker}% of tasks came in quicker than usual
+                          {state.time.quicker}% of tasks went faster than usual
                         </span>
                       </li>
                       <li className="sb-row">
-                        <span className="sb-row-name">Finished fast, rated poorly</span>
+                        <span className="sb-row-name">Fast but rated low</span>
                         <strong>{state.time.rushed}</strong>
                         <span className="sb-row-note">
                           {state.time.rushed === 0
-                            ? 'none, so speed here is not costing quality'
-                            : 'quick, but rated badly for it'}
+                            ? "none, so speed isn't hurting quality"
+                            : 'fast but rated low'}
                         </span>
                       </li>
                       <li className="sb-row">
-                        <span className="sb-row-name">Took longer, landed it</span>
+                        <span className="sb-row-name">Took longer and went well</span>
                         <strong>{state.time.thorough}</strong>
                         <span className="sb-row-note">the extra time paid off</span>
                       </li>
@@ -1951,8 +1946,8 @@ export default function SubjectAnalytics() {
                         <figcaption>
                           One dot per timed, rated task.{' '}
                           {cloud.fit
-                            ? 'The line is the fit, drawn because the correlation carries it.'
-                            : 'No line: the correlation is too weak to carry one.'}
+                            ? 'The line shows the trend.'
+                            : 'No line. The link is too weak to show one.'}
                         </figcaption>
                       </figure>
                     </div>
@@ -1964,7 +1959,7 @@ export default function SubjectAnalytics() {
               {(model.struggles.length > 0 || model.wentWell.length > 0) && (
                 <Fold
                   title="Why it goes well or badly"
-                  note="From the reason you gave on each rated task."
+                  note="From the reasons you picked after each task."
                   figures={[
                     ...(topReason
                       ? [{ label: 'Goes wrong', value: topReason.label, tone: 'bad' as const }]
@@ -1976,7 +1971,7 @@ export default function SubjectAnalytics() {
                 >
                     <Panel
                       title="What makes it go badly, and well"
-                      note="From the reason on each rated task."
+                      note="From the reasons you picked after each task."
                     >
                       {model.struggles.length > 0 && (
                         <>
@@ -2025,7 +2020,7 @@ export default function SubjectAnalytics() {
                     {
                       label: 'Trend',
                       value: model.run.trend === null
-                        ? '—'
+                        ? '-'
                         : model.run.trend === 0
                           ? 'flat'
                           : `${model.run.trend > 0 ? '+' : ''}${model.run.trend} pts`,
@@ -2035,7 +2030,7 @@ export default function SubjectAnalytics() {
                           ? 'bad'
                           : 'plain',
                     },
-                    { label: 'Last worked', value: model.recent[0]?.on ?? '—' },
+                    { label: 'Last worked', value: model.recent[0]?.on ?? '-' },
                   ]}
                 >
                   {/* No strip of percentage dots above the list any more.
@@ -2080,7 +2075,7 @@ export default function SubjectAnalytics() {
               {leadGoal && (
                 <Fold
                   title="Goals"
-                  note="Every goal that names this subject."
+                  note="Every goal for this subject."
                   figures={[
                     {
                       label: model.goals.length === 1 ? 'Goal' : 'Goals',
@@ -2104,8 +2099,8 @@ export default function SubjectAnalytics() {
                   ]}
                 >
                   <Panel
-                    title="What this subject is for"
-                    note="What your record here says about reaching each one."
+                    title="Your goals for this subject"
+                    note="How close you are to each one."
                   >
                     <ul className="sb-goals">
                       {model.goals.map((goal) => (
@@ -2118,7 +2113,7 @@ export default function SubjectAnalytics() {
                               }`}
                             >
                               {goal.drift === null
-                                ? 'no projection yet'
+                                ? 'no estimate yet'
                                 : goal.drift > 0
                                   ? `${goal.drift} ${goal.drift === 1 ? 'day' : 'days'} late`
                                   : goal.drift < 0
@@ -2139,7 +2134,7 @@ export default function SubjectAnalytics() {
                               goal.expected === null
                                 ? `${Math.round(goal.progress)}% done`
                                 : `${Math.round(goal.progress)}% done, ${Math.round(goal.expected)}% `
-                                  + 'of its time gone'
+                                  + 'of the time used'
                             }
                           >
                             <span
@@ -2157,7 +2152,7 @@ export default function SubjectAnalytics() {
                           <p className="sb-goal-meta">
                             {Math.round(goal.progress)}% done
                             {goal.expected !== null && (
-                              <> · the calendar is at {Math.round(goal.expected)}%</>
+                              <> · time used: {Math.round(goal.expected)}%</>
                             )}
                             {goal.deadline && <> · due {goal.deadline}</>}
                           </p>
@@ -2195,10 +2190,9 @@ export default function SubjectAnalytics() {
                             <div className="sb-route">
                               <div className="sb-route-head">
                                 <div>
-                                  <strong>Plan the route to this</strong>
+                                  <strong>Plan the steps to get there</strong>
                                   <p>
-                                    A model lays out the stages between now and the date, from the
-                                    figures above and no others.
+                                    AI maps out the steps between now and your date, using only the numbers above.
                                   </p>
                                 </div>
                                 <button
@@ -2210,8 +2204,8 @@ export default function SubjectAnalytics() {
                                   {planning === goal.id
                                     ? 'Planning…'
                                     : plans[goal.id]
-                                      ? 'Plan it again'
-                                      : 'Plan the route'}
+                                      ? 'Plan again'
+                                      : 'Plan the steps'}
                                 </button>
                               </div>
 
@@ -2277,8 +2271,7 @@ export default function SubjectAnalytics() {
                           route was added, and stopped being true the moment it
                           was. The join is what the reader needs, and it is the
                           whole reason the route sits behind a dashed rule. */}
-                      Figures counted from your tasks here. Anything under "Plan the route"
-                      was written by a model from those figures.{' '}
+                      Numbers come from your tasks. Anything under "Plan the steps" is written by AI from them.{' '}
                       <Link className="ax-link" to="/goals">Your goals</Link>
                     </p>
                   </Panel>
@@ -2291,7 +2284,7 @@ export default function SubjectAnalytics() {
                   Checkpoints. */}
               <Fold
                 title="Checkpoints"
-                note="The stages you mean to reach, in order."
+                note="The steps you want to hit, in order."
                 figures={[
                   {
                     label: 'Cleared',
@@ -2307,7 +2300,7 @@ export default function SubjectAnalytics() {
                       Next up: <b>{nextCheck.title}</b>.
                     </>
                   ) : milestones.length > 0 ? (
-                    'Every checkpoint here is done. Add the next one.'
+                    'Every checkpoint is done. Add the next one.'
                   ) : undefined
                 }
               >
@@ -2356,7 +2349,7 @@ export default function SubjectAnalytics() {
                   <input
                     value={adding}
                     onChange={(event) => setAdding(event.target.value)}
-                    placeholder="A stage you mean to reach"
+                    placeholder="A step you want to hit"
                     aria-label="New checkpoint"
                     maxLength={120}
                   />
@@ -2371,8 +2364,7 @@ export default function SubjectAnalytics() {
                       <div>
                         <strong>Turn these into a goal</strong>
                         <p>
-                          A model drafts a goal over your checkpoints — a title, a target, a
-                          horizon. Nothing is saved until you say so.
+                          AI drafts a goal from your checkpoints: a title, a target and a timeline. Nothing's saved until you say so.
                         </p>
                       </div>
                       <button
@@ -2393,8 +2385,7 @@ export default function SubjectAnalytics() {
 
                     {created && (
                       <p className="sb-draft-made" role="status">
-                        Kept. This subject aims at it now, and its stages are in the list
-                        above. Nothing was added to your goals page.
+                        Saved. This subject now works toward it, and its steps are in the list above. Your Goals page didn't change.
                       </p>
                     )}
 
@@ -2419,7 +2410,7 @@ export default function SubjectAnalytics() {
                         )}
                         <div className="sb-tree-actions">
                           <button type="button" className="ax-btn ax-btn-primary" onClick={() => void keepDraft()}>
-                            Keep this as what I am chasing
+                            Make this what I'm going for
                           </button>
                           <button type="button" className="ax-btn ax-btn-quiet" onClick={() => setDraft(null)}>
                             Discard
@@ -2438,7 +2429,7 @@ export default function SubjectAnalytics() {
               {lattice && treeRead && (
                 <Fold
                   title="Skill tree"
-                  note="Where this sits in the curriculum."
+                  note="Where this fits in the skill tree."
                   lead={treeRead.touched}
                 >
                   {/* The fold is the panel, and what is left inside it is the

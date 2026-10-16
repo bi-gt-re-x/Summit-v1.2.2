@@ -22,16 +22,16 @@ export function LensCard({ lens }: { lens: GoalLens }) {
   return (
     <article className={`ax-lens is-${lens.id}`}>
       <p className="ax-lens-head">
-        <span>Reading this through</span>
+        <span>Focused on</span>
         <strong className="ax-lens-badge">{lens.label}</strong>
       </p>
 
       <p className="ax-lens-read">
-        Because you are working toward{' '}
+        Because you're working toward{' '}
         <Link to="/goals" className="ax-link">
           {lens.goalTitle}
         </Link>
-        , this page leads with what that goal actually turns on.
+        , this page starts with what matters most for it.
       </p>
 
       {/* The working. Without it "Accuracy and control" is a mood. */}
@@ -47,7 +47,7 @@ export function LensCard({ lens }: { lens: GoalLens }) {
           tooltip. A reader who suspects the page is hiding something from them
           stops trusting the parts that are not hidden either. */}
       <p className="ax-lens-foot">
-        This only changes the order of panels, not the numbers.
+        This only changes the order of the panels. Your numbers stay the same.
       </p>
     </article>
   );
@@ -56,9 +56,8 @@ export function LensCard({ lens }: { lens: GoalLens }) {
 export function LensLine({ lens }: { lens: GoalLens }) {
   return (
     <p className="ax-goal-line">
-      Ordered for <strong>{lens.goalTitle}</strong> — leading with{' '}
-      <strong>{lens.label.toLowerCase()}</strong>, because that is what this goal
-      turns on.{' '}
+      Sorted for <strong>{lens.goalTitle}</strong>. It starts with{' '}
+      <strong>{lens.label.toLowerCase()}</strong> because that matters most for this goal.{' '}
       <Link to="/recommendations" className="ax-link">
         What that changes
       </Link>

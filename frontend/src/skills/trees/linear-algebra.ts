@@ -16,7 +16,7 @@ export const LINEAR_ALGEBRA: SubjectTree = {
   parent: 'mathematics',
   nodes: [
     { id: 'la.vectors', name: 'Vectors', icon: 'vectors', tier: 'foundation', core: true, state: open, percent: 15, xp: 1300,
-      desc: 'A quantity with direction as well as size, and equally a list of numbers. Holding both pictures at once — arrow and list — is what makes the rest of the subject readable.' },
+      desc: 'A quantity with direction as well as size, and equally a list of numbers. Holding both pictures at once (arrow and list) is what makes the rest of the subject readable.' },
     { id: 'la.ops', name: 'Vector Arithmetic', icon: 'vector-add', tier: 'foundation', requires: ['la.vectors'], state: lock, percent: 0, xp: 1300,
       desc: 'Adding vectors tip to tail and scaling them longer or shorter. Every later idea is built from exactly these two moves, which is why the subject is called linear.' },
     { id: 'la.dot', name: 'Dot Product', icon: 'dot-product', tier: 'foundation', requires: ['la.ops'], state: lock, percent: 0, xp: 1500,
@@ -40,7 +40,7 @@ export const LINEAR_ALGEBRA: SubjectTree = {
     { id: 'la.rank', name: 'Rank & Null Space', icon: 'rank', tier: 'advanced', requires: ['la.inverse', 'la.det'], state: lock, percent: 0, xp: 2100,
       desc: 'How many dimensions survive a transformation, and everything that gets crushed to zero. Together they account for every input and answer why a solution is unique, infinite or absent.' },
     { id: 'la.project', name: 'Projections', icon: 'projection', tier: 'advanced', requires: ['la.dot', 'la.basis'], state: lock, percent: 0, xp: 2000,
-      desc: 'The closest point in a subspace to a given vector — the shadow it casts. It is the whole idea behind fitting a line to points that do not lie on one.' },
+      desc: 'The closest point in a subspace to a given vector. The shadow it casts. It is the whole idea behind fitting a line to points that do not lie on one.' },
     { id: 'la.ortho', name: 'Orthogonality', icon: 'orthogonal', tier: 'advanced', requires: ['la.project'], state: lock, percent: 0, xp: 2100,
       desc: 'Directions at right angles, and bases made entirely of them. They make coordinates trivial to compute and keep numerical work stable, which is why so much effort goes into constructing them.' },
     { id: 'la.lsq', name: 'Least Squares', icon: 'least-squares', tier: 'advanced', requires: ['la.project', 'la.rank'], state: lock, percent: 0, xp: 2300,

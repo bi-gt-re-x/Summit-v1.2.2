@@ -21,7 +21,7 @@ export const STATISTICS: SubjectTree = {
     { id: 'st.charts', name: 'Reading Charts', icon: 'chart-bars', tier: 'foundation', requires: ['st.data'], state: lock, percent: 0, xp: 1200,
       desc: 'Histograms, box plots and scatter plots, and what each is capable of hiding. A truncated axis and a bin width chosen after the fact are the two edits that change a conclusion without changing a number.' },
     { id: 'st.dist', name: 'Distributions', icon: 'distribution', tier: 'beginner', core: true, requires: ['st.centre', 'st.charts'], state: lock, percent: 0, xp: 1700,
-      desc: 'The shape values take across a population — symmetric, skewed, or with two peaks that mean two populations got mixed. Naming the shape is what tells you which summary is honest.' },
+      desc: 'The shape values take across a population. Symmetric, skewed, or with two peaks that mean two populations got mixed. Naming the shape is what tells you which summary is honest.' },
     { id: 'st.prob', name: 'Probability', icon: 'probability', tier: 'beginner', core: true, requires: ['st.data'], state: lock, percent: 0, xp: 1600,
       desc: 'How likely something is, on a scale from impossible to certain, and the rules for combining likelihoods. Almost every paradox in the subject comes from adding probabilities of events that can happen together.' },
     { id: 'st.cond', name: 'Conditional Probability', icon: 'conditional-prob', tier: 'beginner', requires: ['st.prob'], state: lock, percent: 0, xp: 1800,

@@ -126,8 +126,8 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
   if (all.length < 3) {
     return (
       <EmptyChapter
-        title="Focus & Consistency"
-        message="Not enough days yet to say anything about a habit."
+        title="Focus and consistency"
+        message="Not enough days yet to spot a habit."
       />
     );
   }
@@ -163,7 +163,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       <section className="gr-panel gr-span-2 gr-heat gr-plan" data-window={window}>
         <PanelHead
           title="Consistency"
-          hint={`One square a day across ${shape.days} — darkest is the busiest`}
+          hint={`One square a day across ${shape.days}. Darker means busier.`}
         >
           <Seg
             value={window}
@@ -236,19 +236,19 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
           without it, so the two go together. */}
       {!hides('calendar') && (
       <section className="gr-panel gr-day">
-        <PanelHead title={chosen ? dayName(chosen.date) : 'No day'} icon="calendar" note="tap a square" />
+        <PanelHead title={chosen ? dayName(chosen.date) : 'No day picked'} icon="calendar" note="tap a square" />
         {!chosen ? (
           <p className="gr-empty">Nothing to open yet.</p>
         ) : (
           <>
             <div className="gr-day-figure">
               <strong className={chosen.completion === null ? 'is-none' : ''}>
-                {chosen.completion === null ? '—' : `${Math.round(chosen.completion)}%`}
+                {chosen.completion === null ? '-' : `${Math.round(chosen.completion)}%`}
               </strong>
               <span>
                 {chosen.completion === null
                   ? 'nothing was planned for this day'
-                  : 'of the day’s plan completed'}
+                  : "of the day's plan completed"}
               </span>
             </div>
             <dl className="gr-day-list">
@@ -256,13 +256,13 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
                 <dt>Planned</dt>
                 <dd>
                   {chosen.planned === 0
-                    ? '—'
+                    ? '-'
                     : `${chosen.planned} ${chosen.planned === 1 ? 'task' : 'tasks'}`}
                 </dd>
               </div>
               <div>
                 <dt>Of those, done</dt>
-                <dd>{chosen.planned === 0 ? '—' : chosen.met}</dd>
+                <dd>{chosen.planned === 0 ? '-' : chosen.met}</dd>
               </div>
               <div>
                 <dt>Finished on the day</dt>
@@ -289,13 +289,13 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       {/* --- Week by week, with the line through it ------------------------- */}
       <section className="gr-panel gr-span-2 gr-chart-panel">
         <PanelHead
-          title="Planned against completed"
+          title="Planned vs. done"
           hint="How much of each week's plan you finished"
           note={planned > 0 ? `${WEEKS} weeks` : 'nothing planned yet'}
         />
         {planned === 0 ? (
           <p className="gr-empty">
-            No due dates in these weeks, so there is no plan to measure against.
+            No due dates in these weeks, so there was no plan to check.
           </p>
         ) : (
           <WeeklyPlot weeks={weeks} />
@@ -306,7 +306,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       <section className="gr-panel gr-mix">
         <PanelHead
           title="Focus depth"
-          hint={`Focus days by length, against a ${FOCUS_REFERENCE_MINUTES}-minute day`}
+          hint={`Your focus days by length, vs. a ${FOCUS_REFERENCE_MINUTES}-minute day`}
           note="Last 90 days"
         />
         {mix.focusDays === 0 ? (
@@ -329,7 +329,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
                   <span className="gr-mix-name">{band.label}</span>
                   <span className="gr-mix-share">{band.share}%</span>
                   {band.delta === null ? (
-                    <span className="gr-mix-delta is-quiet">—</span>
+                    <span className="gr-mix-delta is-quiet">-</span>
                   ) : (
                     <span
                       className={`gr-mix-delta${band.delta > 0 ? ' is-up' : band.delta < 0 ? ' is-down' : ''}`}
@@ -341,7 +341,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
               ))}
             </ul>
             <p className="gr-mix-foot">
-              Against the 90 days before, in percentage points of your focus days.
+              Compared with the 90 days before.
             </p>
           </>
         )}
@@ -352,12 +352,12 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       <section className="gr-panel gr-span-2">
         <PanelHead
           title="Habit stability"
-          hint={`Your ${HABIT_ROWS} steadiest subjects, counted since day one`}
+          hint={`Your ${HABIT_ROWS} steadiest subjects since day one`}
           note={habits.length ? `since day one · ${habits[0]!.spanDays} days` : undefined}
         />
         {habits.length === 0 ? (
           <p className="gr-empty">
-            No finished task carries a subject yet.
+            None of your finished tasks have a subject yet.
           </p>
         ) : (
           <ul className="gr-habits">
@@ -403,7 +403,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
         <PanelHead
           title="Consistency over time"
           icon="trend"
-          hint="The same 30-day score at four points"
+          hint="Your 30-day score at four points in time"
         />
         <ul className="gr-trail">
           {trail.map((point) => (
@@ -412,7 +412,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
               <span className="gr-trail-track">
                 <i className="gr-trail-fill" style={{ width: `${point.value ?? 0}%` }} />
               </span>
-              <span className="gr-trail-value">{point.value === null ? '—' : point.value}</span>
+              <span className="gr-trail-value">{point.value === null ? '-' : point.value}</span>
             </li>
           ))}
         </ul>
@@ -421,7 +421,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             ? `${consistencyNow >= (consistencyThen.value ?? 0) ? 'Up' : 'Down'} ${Math.abs(
                 consistencyNow - (consistencyThen.value ?? 0),
               )} points since ${consistencyThen.label.toLowerCase()}.`
-            : 'A second reading appears once the account is a month older.'}
+            : 'A second point shows up in a month.'}
         </p>
       </section>
       )}
@@ -429,17 +429,17 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       {/* --- The calendar, read for recovery rather than for failure -------- */}
       <section className="gr-panel gr-span-2 gr-recov">
         <PanelHead
-          title="Getting back on"
-          hint="Ranked against your own median day"
-          note={`${recovery.totalDays} days on record`}
+          title="Bouncing back"
+          hint="Compared with your usual day"
+          note={`${recovery.totalDays} days logged`}
         />
         <div className="gr-recov-row">
           <div className="gr-recov-figure">
-            <strong>{recovery.rate === null ? '—' : `${recovery.rate}%`}</strong>
+            <strong>{recovery.rate === null ? '-' : `${recovery.rate}%`}</strong>
             <span>Recovery rate</span>
             <p>
               {recovery.rate === null
-                ? 'You have not missed a day yet, so there is nothing to recover from.'
+                ? "You haven't missed a day yet, so there's nothing to recover from."
                 : `You usually return to your routine within ${
                     recovery.typicalDays !== null && recovery.typicalDays <= 1.5
                       ? '1 day'
@@ -467,7 +467,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             <ul className="gr-mix-list">
               {(
                 [
-                  ['perfect', 'Full days — plan kept, XP above your median'],
+                  ['perfect', 'Full days: plan done, XP above usual'],
                   ['strong', 'Solid days'],
                   ['partial', 'Light days'],
                   ['missed', 'Rest days'],
@@ -552,7 +552,7 @@ function WeeklyPlot({ weeks }: { weeks: ReturnType<typeof weeklyPlan> }) {
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             role="img"
-            aria-label="The trend through the weekly completion rates."
+            aria-label="The trend in your weekly completion rate."
           >
             <path d={path} vectorEffect="non-scaling-stroke" />
           </svg>
@@ -561,7 +561,7 @@ function WeeklyPlot({ weeks }: { weeks: ReturnType<typeof weeklyPlan> }) {
         <div className="gr-wk-names">
           {weeks.map((week) => (
             <span key={week.key}>
-              <strong>{week.completion === null ? '—' : `${week.completion}%`}</strong>
+              <strong>{week.completion === null ? '-' : `${week.completion}%`}</strong>
               {week.opensOn}
             </span>
           ))}

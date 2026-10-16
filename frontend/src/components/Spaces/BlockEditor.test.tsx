@@ -439,14 +439,14 @@ describe('the slash menu sections', () => {
     expect(screen.getByRole('option', { name: /Analytics/ })).toHaveAttribute('aria-selected', 'true');
     press(fields()[0]!, 'ArrowRight', 1);
     expect(screen.getByRole('option', { name: /Analytics/ })).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByRole('option', { name: /Weekly rhythm/ })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: /Your week/ })).toBeInTheDocument();
   });
 
   it('shows matches inside a folded section when something is typed', () => {
     page({ text: '' });
     type(fields()[0]!, '/');
     type(fields()[0]!, '/rhythm');
-    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual([expect.stringContaining('Weekly rhythm')]);
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual([expect.stringContaining('Your week')]);
   });
 });
 

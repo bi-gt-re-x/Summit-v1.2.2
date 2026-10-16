@@ -54,8 +54,8 @@ export type XpBandKey = 'exceptional' | 'great' | 'good' | 'low' | 'none';
 /** The bands, richest first — the order the legend prints them in. */
 export const XP_BANDS: { key: XpBandKey; label: string; note: string }[] = [
   { key: 'exceptional', label: 'Exceptional', note: '800+ XP' },
-  { key: 'great', label: 'Great', note: '500–799 XP' },
-  { key: 'good', label: 'Good', note: '200–499 XP' },
+  { key: 'great', label: 'Great', note: '500-799 XP' },
+  { key: 'good', label: 'Good', note: '200-499 XP' },
   { key: 'low', label: 'Low', note: 'under 200 XP' },
   { key: 'none', label: 'Nothing on it', note: '' },
 ];
@@ -392,25 +392,23 @@ export function monthInsight(
 ): MonthInsight {
   if (future) {
     return {
-      headline: 'Nothing has happened here yet.',
-      hint: 'Plan the days you already know about and the rest will follow.',
+      headline: 'Nothing here yet.',
+      hint: 'Plan the days you know about. The rest will come.',
     };
   }
 
   if (current.scheduled === 0) {
     return {
-      headline: 'No tasks landed on this month.',
-      hint: 'Schedule something and this panel will have an answer.',
+      headline: 'No tasks this month.',
+      hint: 'Schedule something to fill this in.',
     };
   }
 
   const dayGap = current.settled - previous.settled;
   if (dayGap > 0) {
     return {
-      headline: `Great consistency! You completed ${dayGap} more ${
-        dayGap === 1 ? 'day' : 'days'
-      } than ${against}.`,
-      hint: 'Try to maintain your momentum into next month.',
+      headline: `Nice and steady! You finished ${dayGap} more ${dayGap === 1 ? 'day' : 'days'} than ${against}.`,
+      hint: 'Keep it rolling into next month.',
     };
   }
 
@@ -418,7 +416,7 @@ export function monthInsight(
   if (xpGap !== null && xpGap > 0) {
     return {
       headline: `You earned ${xpGap}% more XP than ${against}.`,
-      hint: 'Fewer days, heavier ones — worth keeping an eye on.',
+      hint: 'Fewer but bigger days. Keep an eye on that.',
     };
   }
 
@@ -427,7 +425,7 @@ export function monthInsight(
       headline: `You finished ${Math.abs(dayGap)} fewer ${
         Math.abs(dayGap) === 1 ? 'day' : 'days'
       } than ${against}.`,
-      hint: 'Clearing one day at a time is what pulls the number back up.',
+      hint: 'Clear one day at a time to bring it back up.',
     };
   }
 
@@ -435,6 +433,6 @@ export function monthInsight(
     current.scheduled > 0 ? Math.round((current.settled / current.scheduled) * 100) : 0;
   return {
     headline: `You cleared every task on ${rate}% of your scheduled days.`,
-    hint: 'Steady is its own kind of progress — hold the line.',
+    hint: 'Steady is progress too. Keep it up.',
   };
 }

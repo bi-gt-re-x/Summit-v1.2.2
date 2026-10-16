@@ -90,8 +90,7 @@ export function YearOnYear({ model }: { model: AnalyticsModel }) {
     return (
       <Panel title="Year on year" note="How hard the work was, and how well it went">
         <p className="ax-empty">
-          Year-on-year comparisons need two calendar years of data. The periods above work from day
-          one.
+          This needs two calendar years of work. The periods above work right away.
         </p>
       </Panel>
     );
@@ -137,8 +136,8 @@ function arcTone(arc: GrowthArc): Tone {
  */
 function moveNote(shift: number | null): string {
   if (shift === null) return 'not rated at both ends';
-  if (Math.abs(shift) < MOVE) return 'held level';
-  return `${shift > 0 ? '+' : '−'}${Math.abs(shift).toFixed(1)} on the five-point scale`;
+  if (Math.abs(shift) < MOVE) return 'no change';
+  return `${shift > 0 ? '+' : '−'}${Math.abs(shift).toFixed(1)} out of 5`;
 }
 
 /**
@@ -212,9 +211,9 @@ function Move({
         {label} <em>{note}</em>
       </p>
       <p className="ax-gy-figures">
-        <span className="ax-gy-was">{from === null ? '—' : from.toFixed(1)}</span>
+        <span className="ax-gy-was">{from === null ? '-' : from.toFixed(1)}</span>
         <span className="ax-gy-arrow" aria-hidden="true">→</span>
-        <strong className="ax-gy-now">{to === null ? '—' : to.toFixed(1)}</strong>
+        <strong className="ax-gy-now">{to === null ? '-' : to.toFixed(1)}</strong>
         <em className="ax-gy-of">/ 5</em>
       </p>
       <p className="ax-gy-move-note">{moveNote(shift)}</p>
@@ -260,10 +259,9 @@ function RatingLines({ years }: { years: GrowthYear[] }) {
   // says so, because an empty chart box reads as a chart that failed.
   if (rated.length < 2) {
     return (
-      <Panel title="Execution against difficulty" note="Both out of five, as you rated them">
+      <Panel title="How well vs. how hard" note="Your ratings, out of 5">
         <p className="ax-empty">
-          Two years with ratings on them draws this. Rating a task after finishing it is what
-          fills it in.
+          This needs two years of ratings. Rate tasks when you finish them to fill it in.
         </p>
       </Panel>
     );
@@ -271,8 +269,8 @@ function RatingLines({ years }: { years: GrowthYear[] }) {
 
   return (
     <Panel
-      title="Execution against difficulty"
-      note="Both out of five, as you rated them"
+      title="How well vs. how hard"
+      note="Your ratings, out of 5"
       /* The legend goes in the title row rather than under the box. It names
          which line is which, which is the first question anybody asks of a
          two-line chart, and a key below the drawing is answered after the
@@ -294,7 +292,7 @@ function RatingLines({ years }: { years: GrowthYear[] }) {
         id="ax-gy-ratings"
         height={RATING_HEIGHT}
         max={RATING_SCALE}
-        label="Execution and difficulty, your own ratings out of five, by year"
+        label="How well and how hard, your ratings out of 5, by year"
         /* One reading a year, so the x label *is* the year — no date formatting
            and no sampling, unlike every other chart drawn with this. */
         readout={{
@@ -322,9 +320,8 @@ function RatingLines({ years }: { years: GrowthYear[] }) {
           },
         ]}
       />
-      <PanelNote label="Reading this">
-        The solid line is execution (how well it went) and the lighter line is difficulty. Both are
-        your ratings out of 5. Compare each line's shape, not which is higher.
+      <PanelNote label="How to read this">
+        The solid line is how well it went. The light line is how hard it was. Both are your ratings out of 5. Watch how each line moves. Which one is higher doesn't matter.
       </PanelNote>
     </Panel>
   );
@@ -358,25 +355,24 @@ function ThenAndNow({ years }: { years: GrowthYear[] }) {
       key: 'execution',
       series: rated.map((year) => year.execution!),
       label: 'Execution',
-      value: last.execution === null ? '—' : last.execution.toFixed(1),
+      value: last.execution === null ? '-' : last.execution.toFixed(1),
       unit: last.execution === null ? undefined : '/ 5',
       note: shift(first.execution, last.execution),
       tone: 'green',
       glyph: 'sparkle',
-      hint: 'How well the work went, as you rated it after finishing. Averaged over the tasks '
-        + 'carrying both a difficulty and an execution.',
+      hint: 'How well the work went, by your ratings. Averaged over tasks with both ratings.',
     },
     {
       key: 'difficulty',
       series: rated.map((year) => year.difficulty!),
       label: 'Difficulty',
-      value: last.difficulty === null ? '—' : last.difficulty.toFixed(1),
+      value: last.difficulty === null ? '-' : last.difficulty.toFixed(1),
       unit: last.difficulty === null ? undefined : '/ 5',
       note: shift(first.difficulty, last.difficulty),
       tone: 'violet',
       glyph: 'target',
-      hint: 'How hard the work was, as you rated it. The figure that says whether a rising '
-        + 'execution score is improvement or easier work.',
+      hint: 'How hard the work was, by your ratings. It tells you if better scores came from real '
+        + 'progress or easier work.',
     },
     {
       key: 'pace',
@@ -386,8 +382,7 @@ function ThenAndNow({ years }: { years: GrowthYear[] }) {
       note: `${first.tasksPerActiveDay.toFixed(1)} in ${first.label}`,
       tone: 'blue',
       glyph: 'check',
-      hint: 'Per day you actually worked, not per day on the calendar — so a part-year is '
-        + 'comparable with a whole one.',
+      hint: 'Counted per day you worked, so a part year compares fairly with a full one.',
     },
     {
       key: 'hours',
@@ -406,7 +401,7 @@ function ThenAndNow({ years }: { years: GrowthYear[] }) {
 
 /** A dash, not a zero: nothing recorded is not a reading of nothing. */
 const orDash = (value: string | number | null | undefined) =>
-  value === null || value === undefined ? '—' : String(value);
+  value === null || value === undefined ? '-' : String(value);
 
 /**
  * The standing panel's one-line claim.
@@ -419,24 +414,22 @@ const orDash = (value: string | number | null | undefined) =>
 function standingClaim(hero: { percentile: number | null; windows: number }): string | undefined {
   if (hero.percentile === null) return undefined;
   if (hero.percentile >= 100) {
-    return 'The last 30 days are the best 30 you have had.';
+    return 'Your last 30 days are your best yet.';
   }
-  return `Your last 30 days rank above ${hero.percentile}% of the ${fmtNumber(hero.windows)} `
-    + '30-day stretches on your record.';
+  return `Your last 30 days beat ${hero.percentile}% of your other ${fmtNumber(hero.windows)} 30-day stretches.`;
 }
 
 /** Where the last 30 days sit against every other 30 the account has had. */
 function StandingPanel({ hero }: { hero: ReturnType<typeof benchHero> }) {
   return (
     <Panel
-      title="Where this month sits in all of it"
-      note="The last 30 days against every other 30 you have had"
+      title="How this month ranks"
+      note="Your last 30 days against every other 30 you've had"
       claim={standingClaim(hero)}
     >
       {hero.percentile === null ? (
         <p className="ax-empty">
-          A ranking needs more than one 30-day stretch to rank against. This fills in on its
-          own.
+          This needs more than 30 days of work. It fills in on its own.
         </p>
       ) : (
         <ul className="ax-gy-notes">
@@ -484,7 +477,7 @@ function YearTable({ years }: { years: GrowthYear[] }) {
        — so it was a second copy of a column already there, in bigger numbers. */
     <Panel
       title="Year by year"
-      note="Volume from your XP ledger; the two ratings from the tasks that carry both"
+      note="Amounts from your XP. Ratings from tasks you rated both ways."
     >
       <div className="ax-gy-scroll">
         <table className="ax-gy">

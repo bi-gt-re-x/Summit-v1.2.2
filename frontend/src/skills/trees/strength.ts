@@ -19,7 +19,7 @@ export const STRENGTH: SubjectTree = {
     { id: 'sr.brace', name: 'Bracing & Breathing', icon: 'brace', tier: 'foundation', requires: ['sr.bodyweight'], state: lock, percent: 0, xp: 1400,
       desc: 'Creating pressure through the trunk so the spine stays stacked under load. It is the technique that makes heavy lifting safe, and it is taught last far too often.' },
     { id: 'sr.hinge', name: 'The Hinge', icon: 'hinge', tier: 'foundation', requires: ['sr.brace'], state: lock, percent: 0, xp: 1600,
-      desc: 'Pushing the hips back with a neutral spine — the pattern under deadlifts, swings and picking anything up. Confusing it with a squat is the most common and most costly error.' },
+      desc: 'Pushing the hips back with a neutral spine. The pattern under deadlifts, swings and picking anything up. Confusing it with a squat is the most common and most costly error.' },
     { id: 'sr.squat', name: 'Squat', icon: 'squat', tier: 'beginner', core: true, requires: ['sr.brace'], state: lock, percent: 0, xp: 1800,
       desc: 'Sitting between your feet under load, to a depth your hips and ankles allow today. Depth follows mobility rather than willpower, and forcing it is how backs round.' },
     { id: 'sr.deadlift', name: 'Deadlift', icon: 'deadlift', tier: 'beginner', requires: ['sr.hinge'], state: lock, percent: 0, xp: 1900,

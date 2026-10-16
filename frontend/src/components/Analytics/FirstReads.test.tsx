@@ -21,7 +21,7 @@ describe('what your work says so far', () => {
   it('counts down before there is anything to read', async () => {
     sittings.mockResolvedValue({ success: true, sittings: [] });
     renderWithProviders(<FirstReads tasks={[{ status: 'done' } as Task]} goals={[]} />, { route: '/analytics' });
-    expect(await screen.findByText(/Finish 2 more tasks or focus sittings/)).toBeInTheDocument();
+    expect(await screen.findByText(/Finish 2 more tasks or focus sessions/)).toBeInTheDocument();
   });
 
   it('shows the reads, each with what it rests on', async () => {
@@ -29,8 +29,8 @@ describe('what your work says so far', () => {
       id: `s${hour}`, day: '2026-10-12', styleId: 'classic', planned: 25, minutes: 25, pauses: 0, finished: true, at: at(hour),
     })) });
     renderWithProviders(<FirstReads tasks={[]} goals={[]} />, { route: '/analytics' });
-    expect(await screen.findByText('All 3 of your focus sittings ran start to finish without a pause.')).toBeInTheDocument();
-    expect(screen.getAllByText('from 3 sittings').length).toBeGreaterThan(0);
+    expect(await screen.findByText('All 3 of your focus sessions ran start to finish with no pause.')).toBeInTheDocument();
+    expect(screen.getAllByText('from 3 sessions').length).toBeGreaterThan(0);
   });
 
   it('still reads the tasks when the sittings cannot be fetched', async () => {

@@ -135,7 +135,7 @@ export function HeroRow({ cards }: HeroRowProps) {
 
             <div className="gr-hero-figure">
               {card.value === null ? (
-                <strong className="gr-hero-value is-none">—</strong>
+                <strong className="gr-hero-value is-none">-</strong>
               ) : card.text !== undefined ? (
                 <strong className="gr-hero-value">{card.text}</strong>
               ) : (
@@ -154,7 +154,7 @@ export function HeroRow({ cards }: HeroRowProps) {
             <p className="gr-hero-foot">{card.foot}</p>
 
             {card.delta === undefined ? null : card.delta === null ? (
-              <span className="gr-hero-trend is-quiet">no earlier reading</span>
+              <span className="gr-hero-trend is-quiet">nothing earlier</span>
             ) : (
               <span className={`gr-hero-trend${card.delta >= 0 ? ' is-up' : ' is-down'}`}>
                 <span aria-hidden="true">{card.delta >= 0 ? '↑' : '↓'}</span>{' '}

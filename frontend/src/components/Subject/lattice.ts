@@ -147,14 +147,12 @@ export function treeReading(lattice: Lattice): TreeReading {
   const untouched = Math.max(0, lattice.nodes - lattice.practiced);
 
   const touched = lattice.practiced > 0
-    ? `You have practiced ${lattice.practiced} of its ${lattice.nodes} skills`
-      + `${untouched > 0 ? `, and not opened ${untouched}` : ''}.`
-    : `You have not practiced any of ${lattice.title}'s ${lattice.nodes} skills yet.`;
+    ? `You've practiced ${lattice.practiced} of its ${lattice.nodes} skills${untouched > 0 ? `. ${untouched} are still new` : ''}.`
+    : `You haven't practiced any of ${lattice.title}'s ${lattice.nodes} skills yet.`;
 
   const shape = lattice.branches.length > 0
-    ? `${lattice.title} holds ${lattice.nodes} skills, ${lattice.core} of them core, `
-      + `and forks into ${lattice.branches.length} branches.`
-    : `${lattice.title} holds ${lattice.nodes} skills, ${lattice.core} of them core.`;
+    ? `${lattice.title} has ${lattice.nodes} skills (${lattice.core} core) and splits into ${lattice.branches.length} branches.`
+    : `${lattice.title} has ${lattice.nodes} skills (${lattice.core} core).`;
 
   /* The only line here that tells anybody to do anything, and it is careful:
      the tree cannot say what the reader is good at, so the most it can offer
@@ -162,12 +160,11 @@ export function treeReading(lattice: Lattice): TreeReading {
   let next = '';
   if (lattice.branches.length > 0 && untouched > 0) {
     next = lattice.chosen
-      ? `This is the branch you chose, so the unopened skills on it are the `
-        + `nearest thing the curriculum has to a next page.`
-      : `No branch has been chosen for this subject, so this is its root — `
-        + `naming one in the analytics setup narrows what the tree offers.`;
+      ? 'This is your branch, so its new skills are the best place to go next.'
+      : 'No branch picked yet, so this is the whole tree. Pick one in the Analytics setup to '
+        + 'narrow it down.';
   } else if (untouched === 0 && lattice.practiced > 0) {
-    next = 'Every skill on this branch has been opened at least once.';
+    next = "You've opened every skill on this branch.";
   }
 
   return { touched, shape, next };

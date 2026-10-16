@@ -93,7 +93,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
           .map(nameOf)
           .join(', '),
         why: goal.why || goal.description || '',
-        standing: `${Math.round(numbers.progress)}% — ${fmtGoalNumber(numbers.current, numbers)} of ${fmtGoalNumber(numbers.target, numbers)}`,
+        standing: `${Math.round(numbers.progress)}%: ${fmtGoalNumber(numbers.current, numbers)} of ${fmtGoalNumber(numbers.target, numbers)}`,
         deadline: goal.deadline ? formatGoalDate(String(goal.deadline)) : '',
         days_left: health.signals.daysLeft,
         need_weekly: pace.need === null ? '' : `${Math.round(pace.need * 7 * 10) / 10} a week`,
@@ -111,12 +111,12 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
       });
 
       if (!result.success) {
-        setFailed(result.message || 'That did not work.');
+        setFailed(result.message || "That didn't work.");
         return;
       }
       setPlan(result.plan);
     } catch (cause) {
-      setFailed(cause instanceof Error ? cause.message : 'That did not work.');
+      setFailed(cause instanceof Error ? cause.message : "That didn't work.");
     } finally {
       setThinking(false);
     }
@@ -125,7 +125,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
   return (
     <section className="gx-panel gx-read">
       <header className="gx-panel-head">
-        <h3>Summit&rsquo;s read</h3>
+        <h3>Summit&apos;s take</h3>
         {plan && <span className="gx-read-mark">Written by a model</span>}
       </header>
 
@@ -134,10 +134,10 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
           thing somebody can go and do. */}
       {short > 0 ? (
         <p className="gx-read-gate">
-          <strong>Not enough evidence yet.</strong> Finish and link{' '}
+          <strong>Not enough to go on yet.</strong> Finish and link{' '}
           {short === 1 ? 'one more task' : `${short} more tasks`} to this goal and Summit can
           read the pattern in them. Right now there {done.length === 1 ? 'is' : 'are'}{' '}
-          {done.length} — too few to tell a pattern from a coincidence.
+          {done.length} . Too few to call it a pattern.
         </p>
       ) : !plan ? (
         <>
@@ -151,7 +151,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
             disabled={thinking}
             onClick={() => void ask()}
           >
-            {thinking ? 'Reading…' : 'Read this goal'}
+            {thinking ? 'Working…' : 'Read this goal'}
           </button>
         </>
       ) : (
@@ -190,9 +190,7 @@ export function GoalRead({ goal, tasks, nameOf }: GoalReadProps) {
               arrive as confident prose and the reader has to be able to tell
               them apart. */}
           <p className="gx-quiet gx-caveat">
-            Written by a model over the figures on this page. The numbers above it are
-            counted from your own tasks; this paragraph is a reading of them, and the
-            weeks it suggests are a recommendation.
+            Written by AI from the numbers on this page. The numbers come from your tasks. The weeks it suggests are just a plan you can change.
           </p>
         </>
       )}

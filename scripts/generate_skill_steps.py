@@ -90,7 +90,7 @@ from backend.config import settings  # noqa: E402
 settings.load_dotenv()
 
 from backend.database import connection  # noqa: E402
-from backend.tracking import planner, skillsteps  # noqa: E402
+from backend.tracking import planner, plainwords, skillsteps  # noqa: E402
 
 NODES_PATH = os.path.join(ROOT, 'data', 'skill_nodes.json')
 
@@ -1202,6 +1202,10 @@ def store(out, node, model_id, run_id, sets=None, steps=True):
     `steps=False` is the problems-only pass, where the programme is already in
     the table and only the sets under it are new.
     """
+    # Plain punctuation in what gets stored: no dashes or curly quotes. See
+    # backend/tracking/plainwords.py.
+    out.steps = plainwords.plain(out.steps, semicolons=False) if out.steps else out.steps
+    sets = plainwords.plain(sets, semicolons=False) if sets else sets
     stamp = datetime.now().isoformat(timespec='seconds')
     for row in out.audit:
         row['run_id'] = run_id

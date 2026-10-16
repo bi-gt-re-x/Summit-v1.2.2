@@ -73,13 +73,13 @@ export const TONE_LABEL: Record<AnalyticsTone, string> = {
 /** What each level changes, in the words the setup screen and settings use. */
 export const TONE_HINT: Record<AnalyticsTone, string> = {
   gentle:
-    'Near enough counts. A target missed by under 15% reads as met, two changes are put in '
-    + 'front of you at a time, and a comparison names what is working before what is not.',
+    'Close counts. Missing by less than 15% counts as a hit. You see two changes at a time, '
+    + 'and the good news comes first.',
   balanced:
-    'A miss is a miss past 5%. Three changes at a time, and the weak measure is named first.',
+    'Missing by more than 5% counts as a miss. You see three changes at a time, weak spots first.',
   harsh:
-    'No rounding in your favor. Every shortfall is stated as one, every change the record '
-    + 'supports is shown at once, and the sentence leads with what is worst.',
+    'No slack. Every miss is called out, every change shows up at once, and the worst news '
+    + 'comes first.',
 };
 
 export function toneRules(tone: AnalyticsTone | undefined): ToneRules {
@@ -169,12 +169,12 @@ export const DETAIL_LABEL: Record<AnalyticsDetail, string> = {
 
 export const DETAIL_HINT: Record<AnalyticsDetail, string> = {
   essentials:
-    'The four panels that answer the question on their own: the figures, the trajectory, your '
-    + 'baseline, and how often you turn up. Everything else is still one tab away.',
-  standard: 'Those, plus what you said about the work and the two tallies about when you do it.',
+    'Just the four main panels: your numbers, your trend, your targets and how often you '
+    + 'work. Everything else is one tab away.',
+  standard: 'Those, plus your ratings and when you work.',
   everything:
-    'All of the above, and the subject split and findings list pulled onto the Overview so you '
-    + 'do not have to open another tab for them.',
+    "All of that, plus subjects and patterns right on Overview so you don't have to switch "
+    + 'tabs.',
 };
 
 /**
@@ -246,12 +246,10 @@ export const LOG_STYLE_LABEL: Record<LogStyle, string> = {
 
 export const LOG_STYLE_HINT: Record<LogStyle, string> = {
   tasks:
-    'You tick things off. The volume figure beside the three rates is the number of tasks you '
-    + 'finished.',
+    'You check things off. Your main number is tasks finished.',
   sessions:
-    'You log the time. The volume figure is the hours you sat, and the tiles lead with that '
-    + 'rather than with a count of tasks.',
-  both: 'Both figures get a tile of their own.',
+    'You log your time. Your main number is hours worked.',
+  both: 'Both get their own tile.',
 };
 
 /** Whether the tile row prints a task count, focus hours, or both. */

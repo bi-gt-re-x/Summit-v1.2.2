@@ -188,11 +188,11 @@ export function RecordModal({
 
   const submit = () => {
     if (!draft.name.trim()) {
-      setError('Give it a name — "AMC 8", "Longest coding session".');
+      setError('Give it a name, like "AMC 8" or "Longest coding session".');
       return;
     }
     if (!isMilestone && (draft.value === undefined || Number.isNaN(Number(draft.value)))) {
-      setError('A record needs a figure. A milestone does not — switch it above.');
+      setError("A record needs a number. A milestone doesn't, so switch it above.");
       return;
     }
     setError(null);
@@ -241,13 +241,13 @@ export function RecordModal({
                 onClick={() => setDraft((current) => ({ ...current, kind: option }))}
               >
                 {option === 'record' ? 'Record' : 'Milestone'}
-                <em>{option === 'record' ? 'A figure you can beat' : 'A thing you did once'}</em>
+                <em>{option === 'record' ? 'A number you can beat' : 'A thing you did once'}</em>
               </button>
             ))}
           </div>
 
           <label className="rc-field">
-            <span>What is it?</span>
+            <span>What's it?</span>
             <input
               list="rc-known-names"
               value={draft.name}
@@ -263,7 +263,7 @@ export function RecordModal({
             </datalist>
             {joining && !isMilestone && (
               <em className="rc-field-hint">
-                {entry ? 'Part of' : 'Adds to'} your “{joining.name}” — best so far{' '}
+                {entry ? 'Part of' : 'Adds to'} your "{joining.name}" is your best so far{' '}
                 {formatValue(joining.value, joining.unit, joining.target)}
                 {joining.direction === 'lower' ? ', and lower is better' : ''}.
               </em>
@@ -300,7 +300,7 @@ export function RecordModal({
               </label>
 
               <label className="rc-field">
-                <span>Measured in</span>
+                <span>Unit</span>
                 <select
                   value={draft.unit ?? 'points'}
                   onChange={(event) => setDraft({ ...draft, unit: event.target.value })}
@@ -363,7 +363,7 @@ export function RecordModal({
                 onChange={(event) => setDraft({ ...draft, achieved_on: event.target.value })}
               />
               {isMilestone && (
-                <em className="rc-field-hint">Leave it empty for one you are still chasing.</em>
+                <em className="rc-field-hint">Leave it empty for one you're still chasing.</em>
               )}
             </label>
           </div>
@@ -387,7 +387,7 @@ export function RecordModal({
                   is also the one place the direction is visibly doing
                   something at the moment it is chosen, which is what makes a
                   wrong answer to it correctable before it is saved. */}
-              {beats && <span className="rc-modal-beats"> — a new personal best <Icon name="trophy" /></span>}
+              {beats && <span className="rc-modal-beats"> . A new personal best! <Icon name="trophy" /></span>}
             </p>
           )}
 

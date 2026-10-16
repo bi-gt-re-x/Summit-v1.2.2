@@ -35,8 +35,7 @@ function NoSkills({ title }: { title: string }) {
   return (
     <Panel title={title}>
       <p className="ax-empty">
-        Rate a few finished tasks and this fills in. A subject is scored on how the work
-        went, so an unrated record has nothing to read.
+        Rate a few finished tasks to fill this in. Scores come from your ratings.
       </p>
     </Panel>
   );
@@ -65,7 +64,7 @@ export function SkillStandingRow({
       label: 'Strongest subject',
       value: nameOf(best.subject),
       tone: 'violet',
-      note: `${best.score} — ${best.band}`,
+      note: `${best.score}, ${best.band}`,
     },
     {
       key: 'mean',
@@ -79,14 +78,14 @@ export function SkillStandingRow({
       label: 'Climbing',
       value: String(climbing),
       tone: 'green',
-      note: 'better this month than before it',
+      note: 'better this month than last',
     },
     {
       key: 'cold',
       label: 'Gone quiet',
       value: String(cold),
       tone: 'amber',
-      note: 'nothing finished in two weeks',
+      note: 'nothing done in two weeks',
     },
   ];
   return <StatRow stats={stats} />;
@@ -158,7 +157,7 @@ function SkillCard({ row, nameOf }: { row: SkillRow; nameOf: (id: string) => str
             aria-expanded={why}
             onClick={() => setWhy((was) => !was)}
           >
-            {why ? 'Hide the working' : `Why ${row.score}?`}
+            {why ? 'Hide details' : `Why ${row.score}?`}
           </button>
 
           {why && (
@@ -194,11 +193,9 @@ export function SkillScorePanel({
   if (rows.length === 0) return <NoSkills title="Skill level by subject" />;
 
   return (
-    <Panel title="Skill level by subject" note="Scored from your own ratings, not from the lattice">
+    <Panel title="Skill level by subject" note="Based on your ratings">
       <p className="ax-muted ax-skill-lead">
-        Every score is worked out from the tasks you rated — accuracy, difficulty,
-        consistency, recent form, delivery and how recently you were in it. Open a subject
-        for the six parts, and the working behind them.
+        Each score comes from tasks you rated: how well they went, how hard they were, how often you work, recent form, deadlines and how recently you worked. Open a subject to see all six.
       </p>
       <ul className="ax-skill-list">
         {rows.slice(0, limit).map((row) => (
@@ -228,13 +225,13 @@ export function SkillShapePanel({
   rows: SkillRow[];
   nameOf: (id: string) => string;
 }) {
-  if (rows.length === 0) return <NoSkills title="The shape of a skill" />;
+  if (rows.length === 0) return <NoSkills title="What makes up a skill" />;
 
   const row = rows[0]!;
   return (
     <Panel
-      title="The shape of a skill"
-      note={`${nameOf(row.subject)} — your strongest, at ${row.score}`}
+      title="What makes up a skill"
+      note={`${nameOf(row.subject)}: your strongest, at ${row.score}`}
     >
       <div className="ax-skill-shape">
         <Radar
@@ -278,7 +275,7 @@ export function SkillLimitPanel({
   nameOf: (id: string) => string;
   limit?: number;
 }) {
-  if (rows.length === 0) return <NoSkills title="What is holding each subject back" />;
+  if (rows.length === 0) return <NoSkills title="What's holding each subject back" />;
 
   const limits = rows
     .map((row) => {
@@ -293,9 +290,9 @@ export function SkillLimitPanel({
 
   if (limits.length === 0) {
     return (
-      <Panel title="What is holding each subject back">
+      <Panel title="What's holding each subject back">
         <p className="ax-empty">
-          No subject has a part under 65. There is nothing here worth singling out.
+          No subject has a part under 65. Nice work.
         </p>
       </Panel>
     );
@@ -303,8 +300,8 @@ export function SkillLimitPanel({
 
   return (
     <Panel
-      title="What is holding each subject back"
-      note="The weakest of the six parts, per subject"
+      title="What's holding each subject back"
+      note="The weakest part of each subject"
     >
       <ul className="ax-skill-limits">
         {limits.map(({ row, worst }) => (
@@ -314,9 +311,7 @@ export function SkillLimitPanel({
               <span className="ax-skill-limit-score">{row.score}</span>
             </div>
             <p className="ax-skill-limit-text">
-              <strong>{worst.label}</strong> at {Math.round(worst.value)} is the lowest of its
-              six — worth {Math.round(worst.weight * 100)}% of the score, so moving it moves
-              the number.
+              <strong>{worst.label}</strong> at {Math.round(worst.value)} is its weakest part. It makes up {Math.round(worst.weight * 100)}% of the score, so fixing it helps the most.
             </p>
           </li>
         ))}

@@ -196,7 +196,7 @@ function ago(iso: string): string {
 /** "Jul 18, 2024, 10:32 AM" — the rail's full stamp, where there is room for one. */
 function stamp(iso: string): string {
   const at = new Date(iso.includes('T') ? iso : `${iso.replace(' ', 'T')}Z`);
-  if (Number.isNaN(at.getTime())) return '—';
+  if (Number.isNaN(at.getTime())) return '-';
   return at.toLocaleString(undefined, {
     day: 'numeric',
     month: 'short',
@@ -306,7 +306,7 @@ const TOOLS: Tool[][] = [
     { id: 'quote', label: <Icon name="quote" />, hint: 'Quote', block: 'blockquote' },
     { id: 'plain', label: <Icon name="scroll" />, hint: 'Plain line', block: 'p' },
     { id: 'code', label: '</>', hint: 'Code', code: true },
-    { id: 'rule', label: '—', hint: 'Divider', rule: true },
+    { id: 'rule', label: '-', hint: 'Divider', rule: true },
   ],
 ];
 
@@ -372,7 +372,7 @@ const TEMPLATES: Array<{ id: string; label: string; hint: string; title: string;
   {
     id: 'log',
     label: 'Daily log',
-    hint: 'What happened, what is next',
+    hint: "What happened, what's next",
     title: '',
     body: '## What I did\n\n- \n\n## What worked\n\n- \n\n## Tomorrow\n\n- [ ] ',
   },
@@ -791,7 +791,7 @@ export default function Notes() {
       }
       return result.note;
     } catch {
-      setMessage('Could not reach the server. Your note is still here.');
+      setMessage("Couldn't reach the server. Your note is still here.");
       return null;
     }
   }, []);
@@ -958,9 +958,9 @@ export default function Notes() {
      starts when there is something to animate — see hooks/usePageEntrance. */
   const entering = usePageEntrance(!loading);
 
-  if (loading) return <Loading label="Reading your notes" />;
+  if (loading) return <Loading label="Loading your notes" />;
   if (rows === null) {
-    return <ErrorState message={error ?? 'Could not read your notes.'} onRetry={load} />;
+    return <ErrorState message={error ?? "Couldn't read your notes."} onRetry={load} />;
   }
 
   const state = busy || saving
@@ -1130,7 +1130,7 @@ export default function Notes() {
                   {rows.length === 0
                     ? 'Nothing written yet. The panel beside this one is a blank note.'
                     : query.trim()
-                      ? `No note matches “${query.trim()}”.`
+                      ? `No note matches "${query.trim()}".`
                       : 'No notes here yet. The one beside this list will be the first.'}
                 </p>
               ) : (
@@ -1621,7 +1621,7 @@ export default function Notes() {
                   <p className="nt-meta-value">
                     {draft.id
                       ? ago(rows.find((note) => note.id === draft.id)?.updated_at ?? '')
-                      : '—'}
+                      : '-'}
                   </p>
                 </section>
               </aside>

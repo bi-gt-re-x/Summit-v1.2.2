@@ -106,7 +106,7 @@ def book_sessions(body: BookSessions, username: str = Depends(current_username))
     tasks, goals = _record(username)
     goal = next((row for row in goals if str(row.get('id')) == str(body.goal_id or '')), None)
     if not goal or goal.get('status') != 'active':
-        return fail('That goal is not active any more.')
+        return fail("That goal isn't active any more.")
 
     now = datetime.now()
     read = record.read_goal(goal, tasks, now)
@@ -141,7 +141,7 @@ def book_sessions(body: BookSessions, username: str = Depends(current_username))
         # cram, not a week.
         cursor = (start + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     if not booked:
-        return fail('There is no free {}-minute slot in the next two weeks.'.format(minutes))
+        return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
     return ok(booked=booked, title=title, minutes=minutes)
 
 

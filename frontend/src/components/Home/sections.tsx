@@ -66,8 +66,8 @@ function greeting(name: string | null): string {
  * Change one of these and change the rest with it.
  */
 const HERO_XP = [
-  { name: 'Weeks 1–6', values: [40, 65, 30, 75, 55, 90, 60] },
-  { name: 'Weeks 7–12', values: [95, 140, 110, 175, 130, 210, 165] },
+  { name: 'Weeks 1-6', values: [40, 65, 30, 75, 55, 90, 60] },
+  { name: 'Weeks 7-12', values: [95, 140, 110, 175, 130, 210, 165] },
 ] as const;
 
 /**
@@ -648,7 +648,7 @@ export function TechStack() {
     <section className="lp-section">
       <SectionHead
         title="Under the hood"
-        blurb="React up front, Python behind it, and all your data in one SQLite file. Copy it to a USB stick and take it with you."
+        blurb="React up front, Python in back, and all your data in one SQLite file. Copy it to a USB stick and take it with you."
       />
       <div className="lp-tech" id="techGrid">
         <svg className="tech-wires" id="techWires" aria-hidden="true" />

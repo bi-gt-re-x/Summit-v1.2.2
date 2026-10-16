@@ -41,7 +41,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from backend.api.guard import current_username
-from backend.api.reply import fail, ok
+from backend.api.reply import fail, ok as _ok
+from backend.tracking.plainwords import plain
 from backend.database import connection as db
 from backend.api.tasks import CreateTask, _create as create_task
 from backend.api import subjects as user_subjects
@@ -54,6 +55,13 @@ from backend.tracking import background as about_you
 from backend.api import background as background_api
 from backend.tracking.auth import load_user
 from backend.config.shared import RULES
+
+
+def ok(**fields):
+    """Every reply from here is app or model text: dashes and curly quotes
+    stored before the cleanup (backend/tracking/plainwords.py) never reach a
+    page."""
+    return _ok(**plain(fields))
 
 router = APIRouter()
 
@@ -520,7 +528,7 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
 
     subject = _text(body.subject)
     if not subject:
-        return fail('There is no subject to read.')
+        return fail("There's no subject to read.")
 
     execution_now = next(
         (int(entry.value) for entry in body.dimensions
@@ -863,7 +871,7 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
         db.calendar_document(username), now)
     slot = session_plan.next_slot(minutes, busy, now)
     if not slot:
-        return fail('There is no free {}-minute slot in the next two weeks.'.format(minutes))
+        return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
     start, end = slot
 
     # A session planned across every subject names its subject in `focus`
@@ -883,7 +891,7 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     ), username)
     task_id = made.get('task_id') if isinstance(made, dict) else None
     if not task_id:
-        return fail('Could not add that session. Try again.')
+        return fail("Couldn't add that session. Try again.")
 
     # What to actually do, from the step as it was written, onto the task.
     step = next((one for one in _saved_steps(username, row.get('subject') or '')
@@ -931,7 +939,7 @@ def take_recommendation(body: TakeRecommendation,
 
     row_id = _text(body.id)
     if not row_id:
-        return fail('There is no recommendation to record.')
+        return fail("There's no recommendation to record.")
 
     found = db.find_row('subject_recommendations', row_id, user_id=username)
     if not found:
@@ -1002,7 +1010,7 @@ def list_next_sessions(subject_id: str = '', username: str = Depends(current_use
     names = _subject_names(username)
     subject_id = _text(subject_id, 64)
     if subject_id and subject_id not in names:
-        return fail('That subject is not one of yours.')
+        return fail("That subject isn't one of yours.")
     subject = names[subject_id] if subject_id else next_sessions.OVERALL
     tasks = db.columns_for('tasks', username, ('status', 'title', 'subject', 'completed_at'))
     return ok(subject=subject, subject_id=subject_id,
@@ -1028,7 +1036,7 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
     names = _subject_names(username)
     subject_id = _text(body.subject_id, 64)
     if subject_id and subject_id not in names:
-        return fail('That subject is not one of yours.')
+        return fail("That subject isn't one of yours.")
     subject = names[subject_id] if subject_id else next_sessions.OVERALL
     chosen = set() if subject_id else {_text(one, 64) for one in body.subjects[:64]} & set(names)
     if body.subjects and not subject_id and not chosen:
@@ -1039,7 +1047,7 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
         tasks = [task for task in tasks if task.get('subject') in chosen]
     state = next_sessions.state_for(tasks, subject_id or None, subject, names)
     if not state['finished']:
-        return fail('There is no finished work {} in the last {} days to plan from yet.'.format(
+        return fail("There's no finished work {} in the last {} days to plan from yet.".format(
             'in ' + subject if subject_id else
             'in the subjects chosen' if chosen else 'anywhere', next_sessions.WINDOW_DAYS))
 

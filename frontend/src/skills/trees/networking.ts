@@ -33,7 +33,7 @@ export const NETWORKING: SubjectTree = {
     { id: 'net.nat', name: 'NAT & Private Networks', icon: 'nat', tier: 'intermediate', requires: ['net.ports'], state: lock, percent: 0, xp: 1800,
       desc: 'Many machines behind one public address, with a table translating the traffic back. It is why your laptop can reach the world but the world cannot start a connection to your laptop.' },
     { id: 'net.http', name: 'HTTP', icon: 'http', tier: 'intermediate', core: true, requires: ['net.ports'], state: lock, percent: 0, xp: 1800,
-      desc: 'Request, status, headers, body — the application protocol most of the web is made of. Knowing that it is stateless explains cookies, tokens and half the design of every web framework.' },
+      desc: 'Request, status, headers, body. The application protocol most of the web is made of. Knowing that it is stateless explains cookies, tokens and half the design of every web framework.' },
     { id: 'net.tls', name: 'TLS', icon: 'tls', tier: 'intermediate', requires: ['net.http'], state: lock, percent: 0, xp: 2000,
       desc: 'Encryption and identity for a connection, negotiated at the start of it. Certificates answer who is on the other end, and expired ones cause more outages than attacks do.' },
     { id: 'net.proxy', name: 'Proxies & Gateways', icon: 'proxy', tier: 'intermediate', requires: ['net.http'], state: lock, percent: 0, xp: 1800,

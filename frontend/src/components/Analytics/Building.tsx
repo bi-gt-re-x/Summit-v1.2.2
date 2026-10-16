@@ -177,7 +177,7 @@ export function Building({
       <section className="ax-building ax-building-problem">
         <div className="ax-building-body">
           <p className="ax-building-eyebrow">{title}</p>
-          <h2>{headline ?? 'Summit could not read your record for this.'}</h2>
+          <h2>{headline ?? "Summit couldn't load this."}</h2>
           <p className="ax-building-lead">{promise}</p>
           <Asks lead={asksLead} asks={asks} />
           {action && <div className="ax-building-action">{action}</div>}
@@ -193,7 +193,7 @@ export function Building({
         <div className="ax-building-body">
           <h2>Nothing to report.</h2>
           <p className="ax-building-lead">
-            {emptyMessage ?? 'Your record is long enough. Nothing in it stands out.'}
+            {emptyMessage ?? 'You have enough history. Nothing jumps out yet.'}
           </p>
           {action && <div className="ax-building-action">{action}</div>}
         </div>
@@ -216,7 +216,7 @@ export function Building({
             The number used to be the headline, which answered "how long" to
             somebody who had not yet been told "why". It is still here, under
             the meter, where a countdown belongs. */}
-        <h2>Summit needs more of your history to answer this.</h2>
+        <h2>Summit needs a few more days of work to answer this.</h2>
         <p className="ax-building-lead">{promise}</p>
 
         {/* Before the meter, not after it. This is the reason to wait, and a
@@ -266,8 +266,8 @@ export function Building({
               ? `${credit} of these ${credit === 1 ? 'day comes' : 'days come'} from what you told us at sign-up.`
               : 'What you told us at sign-up gives you a head start.'}{' '}
             {credit < headStart
-              ? `Until ${headStart} have counted, each day you record counts twice.`
-              : 'That head start is fully used now.'}
+              ? `Until ${headStart} are in, each day you log counts twice.`
+              : "You've used up your head start."}
           </p>
         )}
         {/* What "with work on them" means, spelled out. The count above is the

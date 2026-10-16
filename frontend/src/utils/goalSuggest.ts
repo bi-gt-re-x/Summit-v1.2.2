@@ -80,7 +80,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
         title: busiest ? `Set a goal on ${busiest.label}` : 'Set your first goal',
         because: busiest
           ? `Most of your work is in ${busiest.label}, but it has no goal.`
-          : 'You have no goals yet, so there is nothing to measure against.',
+          : "You don't have any goals yet.",
       },
     ];
   }
@@ -119,9 +119,9 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
     out.push({
       id: 'outcome',
       kind: 'outcome',
-      title: 'Set one goal that is not a counter',
+      title: "Set one goal that isn't a counter",
       because:
-        'Your goals only count up, so they can’t show when you fall behind. Add one with checkpoints or a target.',
+        "Your goals only count up, so they can't show when you fall behind. Add one with checkpoints or a target.",
     });
   }
 
@@ -152,8 +152,8 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
       title: `Put a date on "${moving[0].title}"`,
       because:
         moving.length === 1
-          ? 'It has no due date, so there is no way to tell if it is on track.'
-          : `${moving.length} of your goals have no due date, so there is no way to tell if they are on track.`,
+          ? "It has no due date, so there's no way to tell if it's on track."
+          : `${moving.length} of your goals have no due date, so there's no way to tell if they're on track.`,
     });
   }
 
@@ -215,7 +215,7 @@ export function goalHeadline(input: {
 
   if (active === 0) {
     return completed > 0
-      ? `No live goals. ${completed} finished — nothing is aimed anywhere right now.`
+      ? `No active goals. ${completed} finished. Time to set a new one?`
       : 'No goals yet, so nothing on this page has a target to be read against.';
   }
 
@@ -241,7 +241,7 @@ export function goalHeadline(input: {
      A majority of unaimed work outranks naming a subject, because it says the
      rest of the tab is describing a minority of what the reader does. */
   if (aimedShare !== null && aimedShare < 0.5) {
-    return `${head}, ${state}, but most of your work is not aimed at any of them.`;
+    return `${head}, ${state}, but most of your work isn't aimed at any of them.`;
   }
   if (focusSubject) {
     return `${head}, ${state}, with most of the work going to ${focusSubject}.`;

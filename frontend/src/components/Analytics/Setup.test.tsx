@@ -151,7 +151,7 @@ describe('the analytics question phase', () => {
     // Forty hours on one day is a forty-hour sitting, which the server would
     // refuse. It is clamped, and the screen says so rather than saving
     // something the reader was never shown.
-    expect(screen.getByText(/that is what is stored/i)).toBeInTheDocument();
+    expect(screen.getByText(/so we'll use that/i)).toBeInTheDocument();
 
     await toTheEnd(user);
     await user.click(screen.getByRole('button', { name: /open my analytics/i }));
@@ -391,7 +391,7 @@ describe('the aims step', () => {
     await user.click(screen.getByRole('button', { name: 'Next' }));
 
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();
-    expect(screen.getByText(/cannot be read as an answer/i)).toBeInTheDocument();
+    expect(screen.getByText(/doesn't look like an answer/i)).toBeInTheDocument();
     // Still on the step, so the field is still there to be fixed.
     expect(screen.getByRole('textbox', { name: /what are you chasing/i })).toBeInTheDocument();
   });
@@ -419,9 +419,9 @@ describe('the aims step', () => {
     await user.click(screen.getByRole('button', { name: 'Next' }));
 
     // A warning, not a refusal: it names what would be lost and then lets go.
-    expect(screen.getByText(/will be cut off/i)).toBeInTheDocument();
-    expect(screen.getByText(/the last 2 will not be saved/i)).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: /carry on anyway/i }));
+    expect(screen.getByText(/will get cut off/i)).toBeInTheDocument();
+    expect(screen.getByText(/the last 2 won't be saved/i)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /keep going anyway/i }));
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
 
     // And it is not asked a second time at the save. The check runs again
@@ -443,7 +443,7 @@ describe('the aims step', () => {
     const field = screen.getByRole('textbox', { name: /checkpoints/i });
     await user.type(field, Array.from({ length: 14 }, (_, at) => `Stage ${at + 1}`).join('\n'));
     await user.click(screen.getByRole('button', { name: 'Next' }));
-    await user.click(screen.getByRole('button', { name: /carry on anyway/i }));
+    await user.click(screen.getByRole('button', { name: /keep going anyway/i }));
 
     // Back to the step, and two more stages on the end. The waiver was for the
     // fourteen; sixteen is a different answer and loses two more.
@@ -452,7 +452,7 @@ describe('the aims step', () => {
     await user.click(screen.getByRole('button', { name: 'Next' }));
 
     expect(screen.getByRole('alertdialog')).toBeInTheDocument();
-    expect(screen.getByText(/the last 4 will not be saved/i)).toBeInTheDocument();
+    expect(screen.getByText(/the last 4 won't be saved/i)).toBeInTheDocument();
   });
 
   /* The path the check exists for. The rail above the steps is clickable, so

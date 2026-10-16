@@ -418,7 +418,7 @@ export function Toolbar({
                 rather than left to be noticed. See `groupTasks`. */}
             {group === 'due' && query.sort !== 'due' && (
               <p className="tk-menu-note">
-                Date headings need a date order. Sorting by {sort?.noun} flattens the list —
+                Date headings need a date order. Sorting by {sort?.noun} flattens the list:
                 <button type="button" onClick={() => set({ sort: 'due' })}>
                   sort by due date
                 </button>

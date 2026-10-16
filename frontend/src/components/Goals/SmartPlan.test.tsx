@@ -107,7 +107,7 @@ describe('a goal with a plan that has gaps', () => {
     const redraft = screen.getByRole('button', { name: /redraft checkpoints/i });
     // The warning is on the control, where a reader deciding whether to press
     // it is actually looking.
-    expect(redraft).toHaveAttribute('title', expect.stringMatching(/asked first/i));
+    expect(redraft).toHaveAttribute('title', expect.stringMatching(/We'll ask first/i));
   });
 
   it('says one rather than two when only one rung is empty', () => {

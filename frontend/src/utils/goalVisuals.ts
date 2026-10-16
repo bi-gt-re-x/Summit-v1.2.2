@@ -73,7 +73,7 @@ export const VISUALS: Record<VisualId, VisualMeta> = {
   },
   scale: {
     title: 'Distance to target',
-    caption: 'Where the figure stands, and what is left to cover.',
+    caption: "Where you are, and what's left.",
   },
   difficulty: {
     title: 'Difficulty against execution',
@@ -261,27 +261,23 @@ const WHY: Record<VisualId, (context: VisualContext) => string> = {
   },
 
   scale: (ctx) =>
-    `You set a target of ${ctx.goal.target_number} ${ctx.goal.unit || 'units'}, and the distance `
-    + 'to a figure you chose comes before anything this page could infer.',
+    `You set a target of ${ctx.goal.target_number} ${ctx.goal.unit || 'units'}, so how close you are comes first.`,
 
   difficulty: (ctx) => {
     const marks = rated(ctx.done);
     const levels = new Set(marks.map((task) => task.difficulty)).size;
-    return `${marks.length} finished tasks carry both ratings, across ${levels} difficulty `
-      + 'levels — enough to see where the work stops going well.';
+    return `${marks.length} finished tasks have both ratings, across ${levels} difficulty levels. Enough to see where things start going wrong.`;
   },
 
   skills: (ctx) => {
     const filed = ctx.done.filter((task) => Boolean(task.subject));
     const subjects = new Set(filed.map((task) => task.subject)).size;
-    return `${filed.length} finished tasks are filed across ${subjects} subjects, so where the `
-      + 'effort went is a real split rather than one subject with a rounding error.';
+    return `${filed.length} finished tasks across ${subjects} subjects, so you can see where your effort went.`;
   },
 
   heatmap: (ctx) => {
     const days = new Set(dated(ctx.done).map((task) => task.completed_at!.slice(0, 10))).size;
-    return `Work landed on ${days} separate days. For this kind of goal the question is `
-      + 'whether you sat down, not how hard it was.';
+    return `You worked on ${days} different days. For this kind of goal, showing up is what counts.`;
   },
 
   volume: (ctx) =>
@@ -289,8 +285,7 @@ const WHY: Record<VisualId, (context: VisualContext) => string> = {
     + 'week the work actually happens.',
 
   roadmap: (ctx) =>
-    `${(ctx.goal.milestones ?? []).length} checkpoints are set and there is not yet enough `
-    + 'finished work to chart. The plan is the most honest thing to show.',
+    `${(ctx.goal.milestones ?? []).length} checkpoints are set, but there's not enough finished work to chart yet. So here's the plan.`,
 
   step: () => '',
   basic: () => '',
@@ -358,7 +353,7 @@ export function difficultyBars(context: VisualContext): Bar[] {
   return [1, 2, 3, 4, 5].map((level) => {
     const at = marks.filter((task) => Number(task.difficulty) === level);
     if (at.length === 0) {
-      return { label: RATING[level]!, percent: 0, value: '—', empty: true };
+      return { label: RATING[level]!, percent: 0, value: '-', empty: true };
     }
     const mean = at.reduce((sum, task) => sum + Number(task.execution), 0) / at.length;
     return {

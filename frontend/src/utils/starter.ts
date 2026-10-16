@@ -73,7 +73,7 @@ export const FEATURES: Feature[] = [
     to: '/tasks',
     paths: ['/tasks'],
     what: 'The full task manager: every task you have, with filters, grouping, sorting and ratings.',
-    why: 'The dashboard already shows what is due today. This is the whole list, with a lot of controls, and is most useful once there are more tasks than one screen holds.',
+    why: "The dashboard already shows what's due today. This is the whole list with lots of controls. It's most useful once you have more tasks than fit on one screen.",
   },
   {
     id: 'goals',
@@ -81,7 +81,7 @@ export const FEATURES: Feature[] = [
     to: '/goals',
     paths: ['/goals', '/trends'],
     what: 'Long-term goals with milestones and a roadmap, linked to the tasks that move them.',
-    why: 'A goal is a plan with checkpoints and dates. It works best once you know your weekly rhythm from the dashboard and the timer.',
+    why: 'A goal is a plan with checkpoints and dates. It works best once you know how your weeks usually go.',
   },
   {
     id: 'skill-tree',
@@ -105,7 +105,7 @@ export const FEATURES: Feature[] = [
     to: '/achievements',
     paths: ['/achievements', '/records'],
     what: 'Your personal bests and the badge wall.',
-    why: 'There is not much on it in the first few days. It fills up as you work.',
+    why: "There's not much on it in the first few days. It fills up as you work.",
   },
   {
     id: 'spaces',

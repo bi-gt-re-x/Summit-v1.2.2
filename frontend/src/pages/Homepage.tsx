@@ -280,7 +280,7 @@ export default function Homepage() {
           <section className="lp-section" id="analytics">
             <SectionHead
               title="Stats that tell you what to do next"
-              blurb="Five stats make up your Growth Score, and Summit turns it into a short list of what to work on next week. Click any number to see the math behind it."
+              blurb="Five stats make up your Growth Score, and Summit turns it into a short list of what to work on next week. Click any number to see how it works."
             />
             <Analytics />
           </section>

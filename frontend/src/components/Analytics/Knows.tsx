@@ -75,8 +75,8 @@ export function Knows({ facts }: { facts: Knowledge[] }) {
   if (facts.length === 0) return null;
 
   return (
-    <section className="ax-knows" aria-label="What Summit makes of your record">
-      <p className="ax-knows-head">Your coach's read</p>
+    <section className="ax-knows" aria-label="Patterns in your work, each with a next step">
+      <p className="ax-knows-head">What we notice</p>
       <dl>
         {facts.map((fact) => (
           <div key={fact.key}>

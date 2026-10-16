@@ -65,7 +65,7 @@ export const SCIENCE: SubjectTree = {
     { id: 'sc.earth', name: 'Earth & Space', icon: 'planet', tier: 'intermediate', requires: ['sc.scale'], navTo: 'earth-space', state: lock,
       desc: 'A subject of its own: rocks, weather, oceans and everything past the atmosphere.' },
     { id: 'sc.olympiad', name: 'Science Olympiad', icon: 'trophy', tier: 'expert', requires: ['sc.evidence', 'sc.stats'], navTo: 'olympiad-science', state: lock,
-      desc: 'A subject of its own: F=ma, USNCO and USABO — selection exams and what separates them.' },
+      desc: 'A subject of its own: F=ma, USNCO and USABO. Selection exams and what separates them.' },
     { id: 'sc.labx', name: 'Lab Work', icon: 'lab', tier: 'beginner', requires: ['sc.lab'], navTo: 'lab-work', state: lock,
       desc: 'Its own tree: lab safety, careful readings, error and writing lab reports teachers love to grade.' },
     { id: 'sc.fair', name: 'Science Fair', icon: 'experiment', tier: 'intermediate', requires: ['sc.question'], navTo: 'science-fair', state: lock,

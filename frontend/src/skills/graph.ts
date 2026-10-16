@@ -257,7 +257,7 @@ export function buildGraph(input: readonly SkillNode[]): SkillLibraryGraph {
         problems.push({
           kind: 'unknown-prerequisite',
           node: node.id,
-          detail: `requires "${id}", which is not in the library`,
+          detail: `requires "${id}", which isn't in the library`,
         });
         continue;
       }

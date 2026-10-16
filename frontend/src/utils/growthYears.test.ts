@@ -178,18 +178,18 @@ describe('growthArc', () => {
     const arc = growthArc(realish());
     expect(arc.kind).toBe('better');
     expect(arc.executionGain).toBeGreaterThan(0.5);
-    expect(arc.sentence).toMatch(/with difficulty steady/);
+    expect(arc.sentence).toMatch(/Difficulty stayed at/);
     // Both figures are named, whichever leads.
     expect(arc.sentence).toMatch(/2\.8 to 3\.6|2\.8 to 3\.5/);
     expect(arc.headline).toBe('You got better at the work');
   });
 
   it('says so when a rising score came with easier work', () => {
-    // The case the page does not get to omit. Execution up, difficulty down.
+    // The case the page does not get to omit. Execution up: down.
     const days = [...year(2024, { tasks: 1 }), ...year(2025, { tasks: 1 })];
     const tasks = [...rated(2024, 40, 4.2, 2.6), ...rated(2025, 40, 3.1, 3.6)];
     const arc = growthArc(growthYears(days, tasks));
-    expect(arc.sentence).toMatch(/Some of that rise is easier work/);
+    expect(arc.sentence).toMatch(/Some of that is easier work/);
     expect(arc.headline).toBe('Some of the rise is easier work');
   });
 

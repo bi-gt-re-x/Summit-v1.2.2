@@ -43,6 +43,7 @@ from typing import Any, Dict, List
 
 from backend.tracking import planner
 from backend.tracking.subject_brief import BriefUnavailable, _object
+from backend.tracking.plainwords import STYLE, plain
 
 #: Opus, for the reason subject_brief uses it: this reads a table of the
 #: reader's figures and has to size a target against them without restating
@@ -66,8 +67,8 @@ SYSTEM = """\
 You draft one goal for a subject in a study-planning app, from checkpoints the \
 reader has already written against that subject.
 
-The checkpoints are the stages. You are writing the goal that sits over them: \
-what it is called, what its target is counted in, how much of that is a real \
+The checkpoints are the stages. You're writing the goal that sits over them: \
+what it's called, what its target is counted in, how much of that is a real \
 target, and how long it runs.
 
 WHAT YOU DECIDE, AND WHAT YOU MUST NOT
@@ -75,11 +76,11 @@ WHAT YOU DECIDE, AND WHAT YOU MUST NOT
 Decide the things that need knowing about the subject: a title, a unit, a \
 number, a horizon, and an order for the checkpoints.
 
-Do not restate the reader's own figures as findings. The brief gives you what \
+Don't restate the reader's own figures as findings. The brief gives you what \
 they have been doing so you can size the target against it — a target below \
-what somebody is already managing is not a goal, and one at ten times their \
-rate is a wish. Use the figures to choose the number. Do not write sentences \
-about how they are doing; the page this came from already says that, and \
+what somebody is already managing isn't a goal, and one at ten times their \
+rate is a wish. Use the figures to choose the number. Don't write sentences \
+about how they're doing; the page this came from already says that, and \
 better, because it counted it.
 
 SIZE IT ON DIFFICULTY AND EXECUTION, NOT ONLY ON VOLUME
@@ -89,9 +90,9 @@ hard that work was and how well it went: the four rates, the difficulty bands \
 with an execution figure for each, and what they said when a session went \
 badly. Use all of it.
 
-Volume alone sets how *many*. The bands set how *hard*, and that is usually \
+Volume alone sets how *many*. The bands set how *hard*, and that's usually \
 the more useful half. Somebody clearing trivial work at 90 and hard work at \
-39 does not need more tasks — a goal counting tasks at a level they are \
+39 doesn't need more tasks — a goal counting tasks at a level they are \
 already comfortable with can be met without them getting any better, which is \
 the one way a goal here can be actively misleading. Pitch the target at the \
 band where execution starts to fall, or one above it.
@@ -100,7 +101,7 @@ Say which in `why`, in the reader's terms rather than by quoting the number: \
 "the harder problems are where this stalls" rather than "execution is 39 at \
 Hard". The figures are on the page already.
 
-Do not invent figures. If the brief does not give you a rate, pick a target \
+Don't invent figures. If the brief doesn't give you a rate, pick a target \
 from the subject and the checkpoints rather than from an imagined one.
 
 THE FIELDS
@@ -114,7 +115,7 @@ past all of them. No leading verb like "Complete" or "Achieve".
 "hours", "pieces". One word where one will do.
 
 `target`: a whole number of that unit. Reachable in the horizon you set, at a \
-rate somewhat above what the brief shows they are managing.
+rate somewhat above what the brief shows they're managing.
 
 `weeks`: how long it runs, a whole number. Long enough that the target is not \
 trivial, short enough to still feel like this term rather than someday.
@@ -132,6 +133,7 @@ sentences. Ordinary words. No em-dash asides, no "X, not Y" flourishes, and \
 no sentence that exists to land a point rather than say a thing. Never open \
 with "Your record shows" or close by summarizing what you just said.
 """
+SYSTEM += STYLE
 
 SCHEMA = {
     'type': 'object',
@@ -217,7 +219,7 @@ def brief_from(findings: Dict[str, Any]) -> str:
         for at, title in enumerate(checkpoints[:MILESTONES], 1):
             lines.append('  {}. {}'.format(at, title))
     else:
-        lines.append('The reader has not written any checkpoints for this subject yet.')
+        lines.append("The reader hasn't written any checkpoints for this subject yet.")
 
     return '\n'.join(lines)
 
@@ -226,7 +228,7 @@ def _clean(found: Dict[str, Any]) -> Dict[str, Any]:
     """The draft, narrowed and bounded to what /api/add_goal will accept."""
     title = str(found.get('title') or '').strip()[:120]
     if not title:
-        raise BriefUnavailable('The model did not name a goal. Try again.')
+        raise BriefUnavailable("The model didn't name a goal. Try again.")
 
     try:
         target = int(found.get('target'))
@@ -263,7 +265,7 @@ def draft(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
             'Drafting a goal needs an Anthropic key. Put one in ANTHROPIC_API_KEY '
             'in .env and restart the server.')
     if not (findings.get('subject') or '').strip():
-        raise BriefUnavailable('There is no subject to draft a goal for.')
+        raise BriefUnavailable("There's no subject to draft a goal for.")
 
     try:
         text = planner.from_provider(
@@ -277,4 +279,4 @@ def draft(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
     except planner.PlannerUnavailable as exc:
         raise BriefUnavailable(str(exc)) from exc
 
-    return _clean(_object(text))
+    return _clean(plain(_object(text)))

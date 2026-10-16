@@ -95,6 +95,6 @@ describe('completing the picked rows', () => {
     for (const title of ['A', 'B', 'C']) await pick(user, title);
     await user.click(within(screen.getByRole('status')).getByRole('button', { name: 'Complete' }));
 
-    expect(await screen.findByText('2 tasks did not save. Try again.')).toBeInTheDocument();
+    expect(await screen.findByText("2 tasks didn't save. Try again.")).toBeInTheDocument();
   });
 });

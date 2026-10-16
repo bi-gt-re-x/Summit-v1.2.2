@@ -70,7 +70,7 @@ export function Trajectory({
   return (
     <Panel
       title="Productivity, consistency and quality over time"
-      note="This period against the last, day for day"
+      note="This period vs. the last one, day by day"
       aside={
         <label className="ax-select-wrap">
           <span className="ax-sr">Chart grain</span>
@@ -143,12 +143,12 @@ export function Trajectory({
       <div className="ax-legend">
         <span className="ax-legend-item">
           <i className="ax-legend-line" style={{ background: toneVar('violet') }} />
-          This Period ({spanLabel})
+          This period ({spanLabel})
         </span>
         {before.length > 1 && (
           <span className="ax-legend-item">
             <i className="ax-legend-line ax-legend-muted" />
-            Previous Period ({previousSpanLabel})
+            Previous period ({previousSpanLabel})
           </span>
         )}
       </div>

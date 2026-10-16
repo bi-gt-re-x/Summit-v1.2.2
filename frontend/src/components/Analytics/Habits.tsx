@@ -81,7 +81,7 @@ export function HabitTiles({
     {
       key: 'anchor',
       label: 'Anchor',
-      value: summary.anchor?.name ?? '—',
+      value: summary.anchor?.name ?? '-',
       note: summary.anchor ? `${summary.anchor.consistency}% of weeks` : 'none steady yet',
       tone: 'amber',
     },
@@ -141,7 +141,7 @@ export function HabitCard({
           {habit.streak > 0 ? `${habit.streak}-${unit} streak` : 'no run going'}
         </span>
         {habit.trend === null ? (
-          <span className="ax-delta ax-delta-none">too short to trend</span>
+          <span className="ax-delta ax-delta-none">too new to tell</span>
         ) : (
           <span
             className={`ax-delta ax-delta-${habit.trend > 4 ? 'up' : habit.trend < -4 ? 'down' : 'flat'}`}
@@ -245,7 +245,7 @@ export function HabitCards({
   if (habits.length === 0) {
     return (
       <p className="ax-empty">
-        Nothing here repeats often enough to call a habit yet.
+        Nothing repeats often enough to be a habit yet.
       </p>
     );
   }
@@ -290,11 +290,11 @@ export function PatternsPanel({
   return (
     <Panel
       title="Patterns in what you do"
-      note="What recurs, and how often — why it matters is under “Why it happens”"
+      note='What you repeat and how often. Why it matters is under "Why it happens".'
     >
       {patterns.length === 0 ? (
         <p className="ax-empty">
-          Nothing repeats often enough to call a pattern yet.
+          Nothing repeats often enough to be a pattern yet.
         </p>
       ) : (
         <ul className="ax-patterns">
@@ -340,13 +340,13 @@ export function ConsistencyPanel({ habits }: { habits: Habit[] }) {
 
   return (
     <Panel
-      title="Which habits are actually stable"
-      note="By reliability, not by earnings"
+      title="Your steadiest habits"
+      note="Sorted by how often you keep them"
       claim={
         habits.length === 0 ? undefined : (
           <>
             <strong>{solid}</strong> of your <strong>{habits.length}</strong> habits{' '}
-            {solid === 1 ? 'is' : 'are'} holding reliably; the rest come and go.
+            {solid === 1 ? 'is' : 'are'} steady. The rest come and go.
           </>
         )
       }
@@ -412,21 +412,21 @@ export function TimelinePanel({
 
   return (
     <Panel
-      title="Your behavioral history"
-      note="Where each started, where it is"
+      title="How your habits changed"
+      note="Where each one started and where it is now"
       claim={
         withPhases.length === 0 ? undefined : (
           <>
-            Of the <strong>{withPhases.length}</strong> habits with enough history to split,{' '}
-            <strong>{rising}</strong> {rising === 1 ? 'is' : 'are'} stronger now than when{' '}
-            {rising === 1 ? 'it' : 'they'} started.
+            <strong>{rising}</strong> of your <strong>{withPhases.length}</strong> older habits{' '}
+            {rising === 1 ? 'is' : 'are'} stronger now than when {rising === 1 ? 'it' : 'they'}{' '}
+            started.
           </>
         )
       }
     >
       {withPhases.length === 0 ? (
         <p className="ax-empty">
-          Too short a range to split into phases.
+          Not enough time here to compare. Try a longer window.
         </p>
       ) : (
         <ul className="ax-phases">
@@ -508,7 +508,7 @@ export function habitLead(summary: HabitSummary, span: string): string {
   }
   return parts.length
     ? `${parts.join(', ')}.`
-    : 'Nothing here repeats often enough to call a habit yet.';
+    : 'Nothing repeats often enough to be a habit yet.';
 }
 
 /** What the routine looks like underneath the sentence at the top of the tab. */
@@ -535,8 +535,8 @@ export function HabitOpening({
   const slip =
     summary.slipping && summary.slipping.trend !== null ? (
       <p className="ax-prose" key="slip">
-        <strong>{summary.slipping.name}</strong> is moving the wrong way — down{' '}
-        <strong>{Math.abs(summary.slipping.trend)}%</strong> against its own earlier rate.
+        <strong>{summary.slipping.name}</strong> is slipping. It's down{' '}
+        <strong>{Math.abs(summary.slipping.trend)}%</strong> from where it was.
       </p>
     ) : null;
 
@@ -545,7 +545,7 @@ export function HabitOpening({
   const hold =
     leadWithStrength && slip && summary.anchor ? (
       <p className="ax-prose" key="hold">
-        <strong>{summary.anchor.name}</strong> is holding at{' '}
+        <strong>{summary.anchor.name}</strong> is steady. You do it in{' '}
         <strong>{summary.anchor.consistency}%</strong> of weeks.
       </p>
     ) : null;

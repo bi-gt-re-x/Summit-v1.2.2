@@ -70,9 +70,9 @@ export const MILESTONES: Milestone[] = [
     /* Also `NEED_DAYS.recommendations`. One entry, because two lines both
        saying "at 14" is the page describing its own internals. */
     need: STAGE_FLOOR.developing,
-    title: 'Performance and recommendations',
-    why: 'Two weeks is enough to judge performance and give advice.',
-    reward: 'Get a grade, your ranking and recommendations.',
+    title: 'Grades and tips',
+    why: 'Two weeks is enough for a grade and real tips.',
+    reward: 'Get a grade, a ranking and tips.',
   },
   {
     need: NEED_DAYS.habits,
@@ -83,8 +83,8 @@ export const MILESTONES: Milestone[] = [
   {
     need: NEED_DAYS.insights,
     title: 'Insights',
-    why: 'Four weeks gives two periods to compare.',
-    reward: 'Find out what affects your results and why.',
+    why: 'Four weeks gives you two periods to compare.',
+    reward: 'See what helps your results and why.',
   },
   {
     need: STAGE_FLOOR.full,
@@ -92,8 +92,8 @@ export const MILESTONES: Milestone[] = [
     /* Honest about being the thin one. Nothing opens at 30 — see `stageShows`
        in utils/dataMaturity, where `full` is every flag already on. Saying so
        is better than inventing a feature to justify the number. */
-    why: 'A month of data makes long-term figures reliable.',
-    reward: 'Everything is unlocked, without the low-data warnings.',
+    why: 'A month of work makes long-term numbers solid.',
+    reward: 'Everything unlocked. No more low-data warnings.',
   },
 ];
 

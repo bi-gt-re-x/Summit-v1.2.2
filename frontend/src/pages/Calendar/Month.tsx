@@ -234,7 +234,7 @@ export default function Month() {
   const previousName =
     compared >= previousLength || compared === 0
       ? previousMonthName
-      : `${previousMonthName} 1${compared === 1 ? '' : `–${compared}`}`;
+      : `${previousMonthName} 1${compared === 1 ? '' : `-${compared}`}`;
 
   const insight = useMemo(() => {
     const first = new Date(year, month, 1);

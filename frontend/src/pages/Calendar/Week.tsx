@@ -115,7 +115,7 @@ function clockLabel(hhmm: string): string {
 function weekTitle(opens: Date): string {
   const closes = dates.addDays(opens, 6);
   const long = (date: Date) => dates.formatDate(date, { month: 'long', day: 'numeric' });
-  return `${long(opens)} – ${long(closes)}, ${closes.getFullYear()}`;
+  return `${long(opens)} to ${long(closes)}, ${closes.getFullYear()}`;
 }
 
 export default function Week() {
@@ -889,7 +889,7 @@ export default function Week() {
             weekday: 'long',
             month: 'short',
             day: 'numeric',
-          })} · ${clockLabel(slot.startTime)} – ${clockLabel(slot.endTime)}`}
+          })} · ${clockLabel(slot.startTime)} to ${clockLabel(slot.endTime)}`}
           onChoose={(kind) => openDragged(kind === 'event' ? 'add-event' : 'add-task')}
           onCancel={() => setSlot(null)}
         />

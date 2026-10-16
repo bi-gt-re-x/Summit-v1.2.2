@@ -140,7 +140,7 @@ describe('objectiveFrom', () => {
       [], null, TODAY,
     );
 
-    expect(band.focus).toBe('Turn what you can already do into work that lands.');
+    expect(band.focus).toBe('Turn what you know into work you get right.');
   });
 
   it('says nothing rather than something generic when there is no evidence', () => {
@@ -187,7 +187,7 @@ describe('objectiveFrom', () => {
     );
 
     expect(band.objective).toBe('Qualify for AIME');
-    expect(band.focus).toBe('Turn what you can already do into work that lands.');
+    expect(band.focus).toBe('Turn what you know into work you get right.');
     expect(band.kind).toBe('competition');
   });
 
@@ -198,7 +198,7 @@ describe('objectiveFrom', () => {
     );
 
     const marks = Object.fromEntries(band.marks.map((mark) => [mark.label, mark]));
-    expect(marks['Work pointed here']?.value).toBe('4 of 46');
+    expect(marks['Tasks linked here']?.value).toBe('4 of 46');
     expect(marks['At this rate']?.value).toBe('9 days late');
     expect(marks['At this rate']?.tone).toBe('bad');
     expect(marks.Left?.value).toBe('49 days');
@@ -236,7 +236,7 @@ describe('bottleneckFrom', () => {
       }),
     );
 
-    expect(neck?.name).toBe('Turning capability into work that lands');
+    expect(neck?.name).toBe('Knowing it vs. getting it right');
     // The half a reader cannot get anywhere else: the thing to stop doing.
     expect(neck?.ruled_out).toContain('Harder material');
   });
@@ -251,7 +251,7 @@ describe('bottleneckFrom', () => {
       }),
     );
 
-    expect(neck?.name).toBe('Turning capability into work that lands');
+    expect(neck?.name).toBe('Knowing it vs. getting it right');
     expect(neck?.ruled_out).toBe('');
     expect(neck?.confidence).toBeLessThan(0.6);
   });
@@ -262,7 +262,7 @@ describe('bottleneckFrom', () => {
     expect(neck?.name).toBe('Work at Hard');
     expect(neck?.reading).toContain('Practice at Fair until it feels easy');
     expect(neck?.ruled_out).toBe('Everything below Hard.');
-    expect(neck?.evidence).toContain('a 24-point step between them');
+    expect(neck?.evidence).toContain('a 24-point drop between them');
   });
 
   it('is less sure of a cliff with less behind it', () => {

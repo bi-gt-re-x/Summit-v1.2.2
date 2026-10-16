@@ -108,7 +108,7 @@ function FocusTimer({ username }: { username: string | null }) {
         {/* No reset button, and that is deliberate: the number is the account's
             record of today, not this panel's scratch value, and a control that
             appeared to zero it would either lie or destroy real data. */}
-        {Math.round(share * 100)}% of today&rsquo;s {session.goalHours}h goal
+        {Math.round(share * 100)}% of today&apos;s {session.goalHours}h goal
       </p>
     </section>
   );
@@ -145,7 +145,7 @@ function Upcoming({
         <ul className="tk-next">
           {tasks.map((task) => (
             <li key={task.id} className={`is-${task.priority}`}>
-              <span className="tk-next-at">{timeLabel(task.due_date) ?? '—'}</span>
+              <span className="tk-next-at">{timeLabel(task.due_date) ?? '-'}</span>
               <span className="tk-next-body">
                 <strong>{task.title}</strong>
                 <span>{subjectName(task.subject) ?? 'No subject'}</span>

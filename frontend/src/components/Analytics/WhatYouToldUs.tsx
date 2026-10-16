@@ -14,8 +14,8 @@ import type { Background, Fact } from '@/services/background';
 import { MOST_HEAD_START } from '@/utils/background';
 
 const GROUPS: Array<{ kind: Fact['kind']; title: string }> = [
-  { kind: 'achievement', title: 'What you have done' },
-  { kind: 'stat', title: 'Your figures' },
+  { kind: 'achievement', title: "What you've done" },
+  { kind: 'stat', title: 'Your numbers' },
   { kind: 'activity', title: 'What you do' },
   { kind: 'aim', title: 'What you want to improve' },
   { kind: 'about', title: 'About you' },
@@ -41,8 +41,7 @@ export function WhatYouToldUs({
     return (
       <section className="ax-panel ax-told is-empty">
         <p className="ax-told-ask">
-          <strong>Tell Summit about yourself</strong> and Analytics opens up to {MOST_HEAD_START} days
-          sooner, with study plans pitched at where you actually are.{' '}
+          <strong>Tell Summit about yourself</strong> and Analytics opens up to {MOST_HEAD_START} days sooner, with study plans that fit where you're at.{' '}
           <Link to="/settings/about" className="ax-link">
             Answer four questions
           </Link>
@@ -55,9 +54,9 @@ export function WhatYouToldUs({
   const note =
     headStart > 0
       ? credit > 0
-        ? `From your answers at sign-up. They count for ${credit} of the days Analytics waits for, up to ${headStart} as you keep recording.`
-        : `From your answers at sign-up. They count for up to ${headStart} days toward Analytics as you record.`
-      : 'From your answers at sign-up. Add more detail to open Analytics sooner.';
+        ? `From your sign-up answers. They cover ${credit} of the days Analytics needs, up to ${headStart} as you keep logging.`
+        : `From your sign-up answers. They count for up to ${headStart} days toward Analytics as you log.`
+      : 'From your sign-up answers. Add more detail to open Analytics sooner.';
 
   return (
     <Panel

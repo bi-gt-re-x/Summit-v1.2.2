@@ -334,7 +334,7 @@ def brief_lines(goal, tasks, now, name_of=lambda key: key):
             read['days_left'], read['per_week']))
     current, target = goal.get('current_value'), goal.get('target_number')
     if _int(target):
-        lines.append('Where they are now: {} of {}{}.'.format(
+        lines.append("Where they are now: {} of {}{}.".format(
             current or 0, target, ' {}'.format(goal['unit']) if goal.get('unit') else ''))
     lines.append('Worked on this on {} of the last 14 days.'.format(read['fortnight_days']))
     for subject, age in read['cold']:

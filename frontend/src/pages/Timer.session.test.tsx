@@ -1,5 +1,5 @@
 /**
- * The three things the page claims about a sitting after it ends.
+ * The three things the page claims about a session after it ends.
  *
  * Three of them are automatic, and that is exactly why they need pinning: the
  * reader is not asked to confirm any of it, so a wrong claim here is one
@@ -158,7 +158,7 @@ describe('what the sitting fed', () => {
     logged([sitting()]);
     show([]);
     await screen.findByText(/25 min, no pauses\./i);
-    // A zero here would read as a judgement on a sitting that may have been
+    // A zero here would read as a judgement on a session that may have been
     // spent reading.
     expect(screen.queryByText(/finished while it ran/i)).not.toBeInTheDocument();
   });

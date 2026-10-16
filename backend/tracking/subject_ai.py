@@ -69,6 +69,7 @@ from typing import Any, Dict, List
 from backend.config.shared import RULES
 from backend.tracking import figures, planner
 from backend.tracking.subject_brief import BriefUnavailable, _object
+from backend.tracking.plainwords import STYLE, plain
 
 #: Opus, for the reason subject_brief gives at length: this holds a
 #: "quote these and only these" instruction across four nested structured
@@ -539,6 +540,7 @@ sentences. Ordinary words. No em-dash asides, no "X, not Y" flourishes, and \
 no sentence that exists to land a point rather than say a thing. Never open \
 with "Your record shows" or close by summarizing what you just said.
 """
+SYSTEM += STYLE
 
 SCHEMA = {
     'type': 'object',
@@ -1520,6 +1522,7 @@ they are comfortable — the next chapter will teach you more.
   Good: You rate these sessions 4 or 5 out of 5.
 
 Plain words, short sentences, no encouragement."""
+STEPS_SYSTEM += STYLE
 
 #: Added to STEPS_SYSTEM when the brief spans every subject (the dashboard's
 #: and the Recommendations tab's "All subjects"; backend/tracking/next_sessions).
@@ -1583,7 +1586,7 @@ def plan(state: Dict[str, Any], model_id: str = '',
         raise BriefUnavailable(str(exc)) from exc
 
     allowed = figures.allowed_from(brief)
-    steps = _steps(_object(text), lambda *texts: figures.all_clean(texts, allowed),
+    steps = _steps(plain(_object(text)), lambda *texts: figures.all_clean(texts, allowed),
                    _owned_keys(state))
     if not steps:
         raise BriefUnavailable('The model sent back no sessions. Try again.')
@@ -1817,4 +1820,4 @@ def read(state: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
         # already written for a reader rather than for a log.
         raise BriefUnavailable(str(exc)) from exc
 
-    return _clean(_object(text), brief, _owned_keys(state))
+    return _clean(plain(_object(text)), brief, _owned_keys(state))

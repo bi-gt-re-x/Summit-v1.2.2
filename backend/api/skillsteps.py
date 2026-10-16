@@ -35,6 +35,7 @@ from backend.api.reply import fail, ok
 from backend.config.settings import DATA_DIR
 from backend.database import connection
 from backend.tracking import skillsteps
+from backend.tracking.plainwords import plain
 
 router = APIRouter(tags=['skillsteps'])
 
@@ -81,7 +82,8 @@ def read_steps(nodes: str = Query('', description='Comma-separated node ids')):
     if len(ids) > MAX_NODES:
         return fail('Too many nodes: {} asked for, {} is the limit'.format(len(ids), MAX_NODES))
 
-    programmes = skillsteps.programmes_for(ids)
+    # Dashes and curly quotes from older generated content never reach a page.
+    programmes = plain(skillsteps.programmes_for(ids), semicolons=False)
     return ok(
         steps=programmes,
         missing=[one for one in ids if one not in programmes],

@@ -2,7 +2,7 @@
  * The Subjects tab, with what the complexity cut took off it put back.
  *
  * The cut left this tab as XP by subject and skill levels. The reader asked for
- * the rest back: the Skills & Subjects chapter, how far into each tree, what
+ * the rest back: the Skills and subjects chapter, how far into each tree, what
  * each subject opens, and the scored list at the foot. These check that each is
  * drawn when there is something for it to say, and that the tab still says
  * nothing it cannot back up when there is not.
@@ -48,7 +48,7 @@ describe('the Subjects tab', () => {
 
   it('keeps XP by subject, which the Overview no longer draws', () => {
     draw(<SubjectsTab model={fakeModel({ tasks: MATHS, breakdown: WORKED })} />);
-    expect(screen.getByRole('heading', { name: /Subject Growth/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /XP by subject/ })).toBeInTheDocument();
   });
 
   it('does not score each subject a second time from star ratings', () => {

@@ -33,7 +33,7 @@ export const PHILOSOPHY: SubjectTree = {
     { id: 'phi.free', name: 'Free Will', icon: 'choice', tier: 'intermediate', requires: ['phi.mind'], state: lock, percent: 0, xp: 1900,
       desc: 'Whether choices could have been otherwise, and whether it matters for responsibility. Most of the interesting work argues that determinism and responsibility are compatible, which is less obvious than either extreme.' },
     { id: 'phi.ethics', name: 'Ethics', icon: 'ethics', tier: 'intermediate', core: true, requires: ['phi.epist'], state: lock, percent: 0, xp: 2000,
-      desc: 'What makes an action right — consequences, duties, or the character it expresses. The three main answers each get some cases obviously right and one case famously wrong.' },
+      desc: 'What makes an action right. Consequences, duties, or the character it expresses. The three main answers each get some cases obviously right and one case famously wrong.' },
     { id: 'phi.applied', name: 'Applied Ethics', icon: 'dilemma', tier: 'advanced', requires: ['phi.ethics'], state: lock, percent: 0, xp: 2000,
       desc: 'Medicine, animals, war, technology and the environment, argued case by case. It is where the theories earn their keep or turn out to be unusable.' },
     { id: 'phi.political', name: 'Political Philosophy', icon: 'social-contract', tier: 'advanced', requires: ['phi.ethics'], state: lock, percent: 0, xp: 2100,

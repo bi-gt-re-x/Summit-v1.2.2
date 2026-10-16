@@ -696,7 +696,7 @@ export default function Day() {
             weekday: 'long',
             month: 'short',
             day: 'numeric',
-          })} · ${hmLabel(slot.startTime)} – ${hmLabel(slot.endTime)}`}
+          })} · ${hmLabel(slot.startTime)} to ${hmLabel(slot.endTime)}`}
           onChoose={(kind) => openDragged(kind === 'event' ? 'add-event' : 'add-task')}
           onCancel={() => setSlot(null)}
         />

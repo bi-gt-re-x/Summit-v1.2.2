@@ -3,7 +3,7 @@
     {
       "id": "m.arith",
       "name": "Arithmetic",
-      "desc": "The four operations, done reliably and with a sense of roughly what the answer should be. That estimate is the actual skill — it is what catches a mistake before it travels.",
+      "desc": "The four operations, done reliably and with a sense of roughly what the answer should be. That estimate is the actual skill. It is what catches a mistake before it travels.",
       "tier": "foundation",
       "core": true,
       "xp": 1200,
@@ -183,7 +183,7 @@
     {
       "id": "m.quadratics",
       "name": "Quadratics",
-      "desc": "Equations with a squared term, and the parabola they draw. Three routes to a solution — factoring, completing the square, the formula — and knowing which is quickest matters.",
+      "desc": "Equations with a squared term, and the parabola they draw. Three routes to a solution (factoring, completing the square, the formula) and knowing which is quickest matters.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -386,7 +386,7 @@
     {
       "id": "k.continuity",
       "name": "Continuity",
-      "desc": "A function with no jumps, holes or gaps — one you could draw without lifting the pen. The theorems that follow all quietly require it, which is why the exceptions matter.",
+      "desc": "A function with no jumps, holes or gaps. One you could draw without lifting the pen. The theorems that follow all quietly require it, which is why the exceptions matter.",
       "tier": "advanced",
       "core": false,
       "xp": 1800,
@@ -424,7 +424,7 @@
     {
       "id": "k.rules",
       "name": "Differentiation Rules",
-      "desc": "Product, quotient and chain — the shortcuts that make derivatives fast once you have done a few from first principles. The chain rule is the one that keeps being the culprit.",
+      "desc": "Product, quotient and chain. The shortcuts that make derivatives fast once you have done a few from first principles. The chain rule is the one that keeps being the culprit.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -481,7 +481,7 @@
     {
       "id": "k.related",
       "name": "Related Rates",
-      "desc": "How fast one quantity changes given how fast another does, when the two are linked. Write the relationship first and differentiate with respect to time second — the reverse never works.",
+      "desc": "How fast one quantity changes given how fast another does, when the two are linked. Write the relationship first and differentiate with respect to time second. The reverse never works.",
       "tier": "expert",
       "core": false,
       "xp": 2200,
@@ -538,7 +538,7 @@
     {
       "id": "k.techniques",
       "name": "Integration Techniques",
-      "desc": "Substitution, parts and partial fractions — the toolkit for integrals that do not yield directly. Recognizing which to reach for is pattern matching that only practice builds.",
+      "desc": "Substitution, parts and partial fractions. The toolkit for integrals that do not yield directly. Recognizing which to reach for is pattern matching that only practice builds.",
       "tier": "expert",
       "core": false,
       "xp": 2600,
@@ -1185,7 +1185,7 @@
     {
       "id": "st.dist",
       "name": "Distributions",
-      "desc": "The shape values take across a population — symmetric, skewed, or with two peaks that mean two populations got mixed. Naming the shape is what tells you which summary is honest.",
+      "desc": "The shape values take across a population. Symmetric, skewed, or with two peaks that mean two populations got mixed. Naming the shape is what tells you which summary is honest.",
       "tier": "beginner",
       "core": true,
       "xp": 1700,
@@ -1514,7 +1514,7 @@
     {
       "id": "la.vectors",
       "name": "Vectors",
-      "desc": "A quantity with direction as well as size, and equally a list of numbers. Holding both pictures at once — arrow and list — is what makes the rest of the subject readable.",
+      "desc": "A quantity with direction as well as size, and equally a list of numbers. Holding both pictures at once (arrow and list) is what makes the rest of the subject readable.",
       "tier": "foundation",
       "core": true,
       "xp": 1300,
@@ -1743,7 +1743,7 @@
     {
       "id": "la.project",
       "name": "Projections",
-      "desc": "The closest point in a subspace to a given vector — the shadow it casts. It is the whole idea behind fitting a line to points that do not lie on one.",
+      "desc": "The closest point in a subspace to a given vector. The shadow it casts. It is the whole idea behind fitting a line to points that do not lie on one.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -1918,7 +1918,7 @@
     {
       "id": "di.implication",
       "name": "Implication",
-      "desc": "If this, then that — and the fact that it is only false when the promise is broken. Its contrapositive is equivalent and its converse is not, which is the confusion behind an enormous number of wrong arguments.",
+      "desc": "If this, then that. And the fact that it is only false when the promise is broken. Its contrapositive is equivalent and its converse is not, which is the confusion behind an enormous number of wrong arguments.",
       "tier": "foundation",
       "core": false,
       "xp": 1400,
@@ -2052,7 +2052,7 @@
     {
       "id": "di.pigeon",
       "name": "Pigeonhole Principle",
-      "desc": "More items than boxes means some box holds two. Trivially obvious and startlingly powerful — it proves that any lossless compressor must make some inputs larger.",
+      "desc": "More items than boxes means some box holds two. Trivially obvious and startlingly powerful. It proves that any lossless compressor must make some inputs larger.",
       "tier": "intermediate",
       "core": false,
       "xp": 1600,
@@ -2283,7 +2283,7 @@
     {
       "id": "cm.arith",
       "name": "Mental Arithmetic",
-      "desc": "Fast, accurate calculation without reaching for anything — squares to thirty, common factorizations, fraction sense. It buys back the minutes that the last five problems on a paper actually need.",
+      "desc": "Fast, accurate calculation without reaching for anything. Squares to thirty, common factorizations, fraction sense. It buys back the minutes that the last five problems on a paper actually need.",
       "tier": "foundation",
       "core": true,
       "xp": 1200,
@@ -2529,7 +2529,7 @@
     {
       "id": "cm.ineq",
       "name": "Inequalities",
-      "desc": "AM-GM, Cauchy-Schwarz, and the discipline of tracking when equality holds. The equality case is not a footnote — it is usually what tells you whether the bound you proved is the one being asked for.",
+      "desc": "AM-GM, Cauchy-Schwarz, and the discipline of tracking when equality holds. The equality case is not a footnote. It is usually what tells you whether the bound you proved is the one being asked for.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -2607,7 +2607,7 @@
     {
       "id": "cm.aime",
       "name": "AIME Strategy",
-      "desc": "Three hours, fifteen problems, integer answers and no partial credit — a completely different game from the AMC. Verification matters more than speed here, because an answer you cannot check is worth nothing.",
+      "desc": "Three hours, fifteen problems, integer answers and no partial credit. A completely different game from the AMC. Verification matters more than speed here, because an answer you cannot check is worth nothing.",
       "tier": "advanced",
       "core": true,
       "xp": 2400,
@@ -5368,7 +5368,7 @@
     {
       "id": "ch.reactions",
       "name": "Reaction Types",
-      "desc": "The handful of patterns most reactions fall into — combination, decomposition, displacement, combustion. Recognizing the pattern lets you predict products you have never been taught.",
+      "desc": "The handful of patterns most reactions fall into. Combination, decomposition, displacement, combustion. Recognizing the pattern lets you predict products you have never been taught.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -5406,7 +5406,7 @@
     {
       "id": "ch.rates",
       "name": "Reaction Rates",
-      "desc": "How fast, and the four things that change it: concentration, temperature, surface area and a catalyst. All four work through the same mechanism — how often particles collide hard enough.",
+      "desc": "How fast, and the four things that change it: concentration, temperature, surface area and a catalyst. All four work through the same mechanism. How often particles collide hard enough.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -5982,7 +5982,7 @@
     {
       "id": "bi.molecules",
       "name": "Biological Molecules",
-      "desc": "Carbohydrates, lipids, proteins and nucleic acids — four families doing nearly everything. Structure predicts function throughout, which is why a change to one amino acid can break an entire organism.",
+      "desc": "Carbohydrates, lipids, proteins and nucleic acids. Four families doing nearly everything. Structure predicts function throughout, which is why a change to one amino acid can break an entire organism.",
       "tier": "beginner",
       "core": false,
       "xp": 1600,
@@ -8767,7 +8767,7 @@
     {
       "id": "es.observe",
       "name": "Observation & Instruments",
-      "desc": "Telescopes, satellites, cores and seismographs — evidence gathered where an experiment is impossible. Every one of these subjects advances by finding a new thing to measure rather than a new thing to try.",
+      "desc": "Telescopes, satellites, cores and seismographs. Evidence gathered where an experiment is impossible. Every one of these subjects advances by finding a new thing to measure rather than a new thing to try.",
       "tier": "expert",
       "core": false,
       "xp": 2400,
@@ -9545,7 +9545,7 @@
     {
       "id": "os.cell",
       "name": "Cell Biology",
-      "desc": "Membranes, organelles and the reactions that pay for everything a cell does. Olympiad biology assumes this the way olympiad physics assumes algebra — as vocabulary rather than as content.",
+      "desc": "Membranes, organelles and the reactions that pay for everything a cell does. Olympiad biology assumes this the way olympiad physics assumes algebra. As vocabulary rather than as content.",
       "tier": "beginner",
       "core": true,
       "xp": 1500,
@@ -9564,7 +9564,7 @@
     {
       "id": "os.kinematics",
       "name": "Kinematics & Dynamics",
-      "desc": "Position, velocity and acceleration as one another’s derivatives, and Newton’s laws applied to a diagram you drew correctly. Choosing the axes well is worth more than any algebraic technique here.",
+      "desc": "Position, velocity and acceleration as one another's derivatives, and Newton's laws applied to a diagram you drew correctly. Choosing the axes well is worth more than any algebraic technique here.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -9718,7 +9718,7 @@
     {
       "id": "os.ecology",
       "name": "Ecology & Evolution",
-      "desc": "Populations changing over time, under selection and under each other. The quantitative half — Hardy-Weinberg, growth models — is what the olympiad rounds actually test.",
+      "desc": "Populations changing over time, under selection and under each other. The quantitative half (Hardy-Weinberg, growth models) is what the olympiad rounds actually test.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -16351,7 +16351,7 @@
     {
       "id": "lit.theory",
       "name": "Critical Approaches",
-      "desc": "Deliberate lenses — historical, psychological, political, formal — each making some features visible and others invisible. The point is choosing one knowingly rather than having one by default.",
+      "desc": "Deliberate lenses (historical, psychological, political, formal) each making some features visible and others invisible. The point is choosing one knowingly rather than having one by default.",
       "tier": "advanced",
       "core": false,
       "xp": 2200,
@@ -16961,7 +16961,7 @@
     {
       "id": "fl.cases",
       "name": "Cases & Agreement",
-      "desc": "How a language marks who did what to whom — endings, particles, or strict word order. Whichever system it uses, it is doing a job your first language does some other way.",
+      "desc": "How a language marks who did what to whom. Endings, particles, or strict word order. Whichever system it uses, it is doing a job your first language does some other way.",
       "tier": "intermediate",
       "core": false,
       "xp": 2000,
@@ -18681,7 +18681,7 @@
     {
       "id": "hi.political",
       "name": "Political History",
-      "desc": "States, rulers, laws and wars — the traditional spine of the subject. Best read as one thread among several rather than the frame everything else fits into.",
+      "desc": "States, rulers, laws and wars. The traditional spine of the subject. Best read as one thread among several rather than the frame everything else fits into.",
       "tier": "beginner",
       "core": false,
       "xp": 1700,
@@ -18796,7 +18796,7 @@
     {
       "id": "hi.tech",
       "name": "Technology & Change",
-      "desc": "Printing, steam, rail, antibiotics and the internet — inventions that reorganized what was possible. Adoption is usually slower and stranger than the invention story suggests.",
+      "desc": "Printing, steam, rail, antibiotics and the internet. Inventions that reorganized what was possible. Adoption is usually slower and stranger than the invention story suggests.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -19121,7 +19121,7 @@
     {
       "id": "phi.ethics",
       "name": "Ethics",
-      "desc": "What makes an action right — consequences, duties, or the character it expresses. The three main answers each get some cases obviously right and one case famously wrong.",
+      "desc": "What makes an action right. Consequences, duties, or the character it expresses. The three main answers each get some cases obviously right and one case famously wrong.",
       "tier": "intermediate",
       "core": true,
       "xp": 2000,
@@ -19353,7 +19353,7 @@
     {
       "id": "psy.measure",
       "name": "Measuring the Mind",
-      "desc": "Turning something internal into a number: reaction times, scales, physiological signals. Validity is the whole question — whether the thing you measured is the thing you meant.",
+      "desc": "Turning something internal into a number: reaction times, scales, physiological signals. Validity is the whole question. Whether the thing you measured is the thing you meant.",
       "tier": "foundation",
       "core": false,
       "xp": 1500,
@@ -19869,7 +19869,7 @@
     {
       "id": "db.refute",
       "name": "Refutation",
-      "desc": "Naming the argument, saying why it fails, and saying what follows — rather than reading a card at it and moving on. The third part is the one that gets skipped and the one a judge writes down.",
+      "desc": "Naming the argument, saying why it fails, and saying what follows. Rather than reading a card at it and moving on. The third part is the one that gets skipped and the one a judge writes down.",
       "tier": "intermediate",
       "core": true,
       "xp": 1800,
@@ -19909,7 +19909,7 @@
     {
       "id": "db.fallacy",
       "name": "Spotting Fallacies",
-      "desc": "Recognizing the move rather than merely disliking the conclusion — correlation offered as cause, a burden quietly shifted, a term redefined mid-round. Naming it is worth less than showing what it lets the opponent skip.",
+      "desc": "Recognizing the move rather than merely disliking the conclusion. Correlation offered as cause, a burden quietly shifted, a term redefined mid-round. Naming it is worth less than showing what it lets the opponent skip.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -19928,7 +19928,7 @@
     {
       "id": "db.weigh",
       "name": "Weighing Impacts",
-      "desc": "Explaining why your impact decides the round even if theirs is also true — on magnitude, probability or timeframe. This is the hinge of the whole tree: below it you win arguments, above it you win rounds.",
+      "desc": "Explaining why your impact decides the round even if theirs is also true. On magnitude, probability or timeframe. This is the hinge of the whole tree: below it you win arguments, above it you win rounds.",
       "tier": "advanced",
       "core": true,
       "xp": 2200,
@@ -21402,7 +21402,7 @@
     {
       "id": "c.types",
       "name": "Types",
-      "desc": "What kind of thing a value is — a number, a piece of text, a true-or-false. The type decides what the operators actually do, which is why adding two numbers and adding two strings look identical and mean completely different things.",
+      "desc": "What kind of thing a value is. A number, a piece of text, a true-or-false. The type decides what the operators actually do, which is why adding two numbers and adding two strings look identical and mean completely different things.",
       "tier": "foundation",
       "core": true,
       "xp": 2100,
@@ -21474,7 +21474,7 @@
     {
       "id": "c.loops",
       "name": "Loops",
-      "desc": "Doing the same work repeatedly — over a range, over a collection, or until something becomes true. The two questions that matter are what changes each time round and what makes it stop.",
+      "desc": "Doing the same work repeatedly. Over a range, over a collection, or until something becomes true. The two questions that matter are what changes each time round and what makes it stop.",
       "tier": "beginner",
       "core": false,
       "xp": 2000,
@@ -21547,7 +21547,7 @@
     {
       "id": "c.style",
       "name": "Readable Code",
-      "desc": "Naming, shape and structure chosen so the next reader — usually you, months later — understands it without running it. Not decoration: unreadable code is where most bugs hide.",
+      "desc": "Naming, shape and structure chosen so the next reader (usually you, months later) understands it without running it. Not decoration: unreadable code is where most bugs hide.",
       "tier": "beginner",
       "core": false,
       "xp": 1300,
@@ -21585,7 +21585,7 @@
     {
       "id": "c.err",
       "name": "Error Handling",
-      "desc": "Deciding in advance what should happen when something fails — a missing file, bad input, a network that vanished. The hard judgment is which errors to handle where, and which should be allowed to stop the program loudly.",
+      "desc": "Deciding in advance what should happen when something fails. A missing file, bad input, a network that vanished. The hard judgment is which errors to handle where, and which should be allowed to stop the program loudly.",
       "tier": "intermediate",
       "core": false,
       "xp": 1600,
@@ -21622,7 +21622,7 @@
     {
       "id": "c.oop",
       "name": "Objects & Classes",
-      "desc": "Bundling data together with the operations that belong to it, so a thing knows how to look after itself. Powerful and easy to overuse — plenty of code is clearer as plain functions over plain data.",
+      "desc": "Bundling data together with the operations that belong to it, so a thing knows how to look after itself. Powerful and easy to overuse. Plenty of code is clearer as plain functions over plain data.",
       "tier": "intermediate",
       "core": false,
       "xp": 2300,
@@ -21694,7 +21694,7 @@
     {
       "id": "c.test",
       "name": "Testing",
-      "desc": "Code that checks your code, so a change that breaks something old tells you immediately. The value is not proving correctness — it is the freedom to change things without fear.",
+      "desc": "Code that checks your code, so a change that breaks something old tells you immediately. The value is not proving correctness. It is the freedom to change things without fear.",
       "tier": "intermediate",
       "core": false,
       "xp": 2000,
@@ -21732,7 +21732,7 @@
     {
       "id": "c.async",
       "name": "Asynchronous Code",
-      "desc": "Work that starts now and finishes later — a download, a timer, a database call — without freezing everything else. The mental shift is that the order lines appear in stops being the order they run in.",
+      "desc": "Work that starts now and finishes later (a download, a timer, a database call) without freezing everything else. The mental shift is that the order lines appear in stops being the order they run in.",
       "tier": "advanced",
       "core": false,
       "xp": 2500,
@@ -21881,7 +21881,7 @@
     {
       "id": "w.forms",
       "name": "Forms & Validation",
-      "desc": "Collecting input and telling someone clearly when it is wrong. Validate in the browser for speed and on the server for safety — the browser copy is a courtesy, never the guarantee.",
+      "desc": "Collecting input and telling someone clearly when it is wrong. Validate in the browser for speed and on the server for safety. The browser copy is a courtesy, never the guarantee.",
       "tier": "beginner",
       "core": false,
       "xp": 1500,
@@ -21996,7 +21996,7 @@
     {
       "id": "w.props",
       "name": "Props & Composition",
-      "desc": "Passing data down and composing small components into bigger ones. Getting the boundaries right — who owns which piece of state — is most of what makes a component tree pleasant or painful.",
+      "desc": "Passing data down and composing small components into bigger ones. Getting the boundaries right (who owns which piece of state) is most of what makes a component tree pleasant or painful.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -22053,7 +22053,7 @@
     {
       "id": "w.effects",
       "name": "Effects & Lifecycles",
-      "desc": "Running work when something appears, changes or goes away — and cleaning up after it. Almost every stubborn interface bug is an effect that ran too often or never got torn down.",
+      "desc": "Running work when something appears, changes or goes away. And cleaning up after it. Almost every stubborn interface bug is an effect that ran too often or never got torn down.",
       "tier": "advanced",
       "core": false,
       "xp": 2100,
@@ -22169,7 +22169,7 @@
     {
       "id": "w.security",
       "name": "Web Security",
-      "desc": "The handful of attacks every web app faces — injected scripts, forged requests, leaked tokens — and the specific habits that prevent each. Assume every byte from the browser is hostile until proven otherwise.",
+      "desc": "The handful of attacks every web app faces (injected scripts, forged requests, leaked tokens) and the specific habits that prevent each. Assume every byte from the browser is hostile until proven otherwise.",
       "tier": "expert",
       "core": false,
       "xp": 2600,
@@ -22644,7 +22644,7 @@
     {
       "id": "a.hash",
       "name": "Hash Maps",
-      "desc": "Storing and finding values by key in roughly constant time. The trade is memory for speed, and the assumption underneath is that your keys hash evenly — which is why collisions are worth understanding.",
+      "desc": "Storing and finding values by key in roughly constant time. The trade is memory for speed, and the assumption underneath is that your keys hash evenly. Which is why collisions are worth understanding.",
       "tier": "intermediate",
       "core": true,
       "xp": 2100,
@@ -22702,7 +22702,7 @@
     {
       "id": "a.recursion",
       "name": "Recursion",
-      "desc": "A function defined in terms of a smaller version of the same problem. Write the base case first and trust the recursive call — trying to trace every level in your head is what makes it feel hard.",
+      "desc": "A function defined in terms of a smaller version of the same problem. Write the base case first and trust the recursive call. Trying to trace every level in your head is what makes it feel hard.",
       "tier": "intermediate",
       "core": true,
       "xp": 2300,
@@ -22740,7 +22740,7 @@
     {
       "id": "a.searching",
       "name": "Binary Search",
-      "desc": "Halving the search space each step on ordered data. The real power is searching over an answer rather than an array — the version most people meet years after the basic one.",
+      "desc": "Halving the search space each step on ordered data. The real power is searching over an answer rather than an array. The version most people meet years after the basic one.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -22816,7 +22816,7 @@
     {
       "id": "a.bst",
       "name": "Binary Search Trees",
-      "desc": "A tree that keeps its values ordered, so search, insert and delete are logarithmic — as long as it stays balanced. What happens when it does not is the whole reason self-balancing trees exist.",
+      "desc": "A tree that keeps its values ordered, so search, insert and delete are logarithmic. As long as it stays balanced. What happens when it does not is the whole reason self-balancing trees exist.",
       "tier": "advanced",
       "core": false,
       "xp": 2200,
@@ -22875,7 +22875,7 @@
     {
       "id": "a.backtracking",
       "name": "Backtracking",
-      "desc": "Building a solution one choice at a time and undoing a choice when it leads nowhere. Systematic brute force — and the skill is pruning branches early enough to make it finish.",
+      "desc": "Building a solution one choice at a time and undoing a choice when it leads nowhere. Systematic brute force. And the skill is pruning branches early enough to make it finish.",
       "tier": "advanced",
       "core": false,
       "xp": 2400,
@@ -22933,7 +22933,7 @@
     {
       "id": "g.repr",
       "name": "Representations",
-      "desc": "Storing a graph as adjacency lists or a matrix, and knowing which the problem wants. Lists for sparse graphs, a matrix when you need instant edge lookup — the choice sets the cost of everything after it.",
+      "desc": "Storing a graph as adjacency lists or a matrix, and knowing which the problem wants. Lists for sparse graphs, a matrix when you need instant edge lookup. The choice sets the cost of everything after it.",
       "tier": "intermediate",
       "core": true,
       "xp": 1600,
@@ -23011,7 +23011,7 @@
     {
       "id": "g.cycles",
       "name": "Cycle Detection",
-      "desc": "Deciding whether a graph contains a loop — which differs between directed and undirected graphs. In a dependency graph a cycle is the thing that makes an ordering impossible.",
+      "desc": "Deciding whether a graph contains a loop. Which differs between directed and undirected graphs. In a dependency graph a cycle is the thing that makes an ordering impossible.",
       "tier": "advanced",
       "core": false,
       "xp": 2000,
@@ -23093,7 +23093,7 @@
     {
       "id": "g.mst",
       "name": "Minimum Spanning Tree",
-      "desc": "Connecting every node for the least total edge weight. Kruskal sorts edges and uses union-find; Prim grows outward from one node — same answer, different shape of problem to suit.",
+      "desc": "Connecting every node for the least total edge weight. Kruskal sorts edges and uses union-find; Prim grows outward from one node. Same answer, different shape of problem to suit.",
       "tier": "advanced",
       "core": false,
       "xp": 2300,
@@ -23524,7 +23524,7 @@
     {
       "id": "s.sockets",
       "name": "Sockets",
-      "desc": "The actual programming interface behind every network call — open, write, read, close. Speaking HTTP by hand over one is the fastest way to stop treating the web as magic.",
+      "desc": "The actual programming interface behind every network call. Open, write, read, close. Speaking HTTP by hand over one is the fastest way to stop treating the web as magic.",
       "tier": "advanced",
       "core": false,
       "xp": 2200,
@@ -23543,7 +23543,7 @@
     {
       "id": "s.server",
       "name": "Servers",
-      "desc": "A program that waits for requests and answers many of them at once. How it handles that concurrency — threads, processes or an event loop — shapes everything about how it scales.",
+      "desc": "A program that waits for requests and answers many of them at once. How it handles that concurrency (threads, processes or an event loop) shapes everything about how it scales.",
       "tier": "advanced",
       "core": false,
       "xp": 2400,
@@ -23601,7 +23601,7 @@
     {
       "id": "s.caching",
       "name": "Caching",
-      "desc": "Keeping a copy of an expensive answer close by. Easy to add and hard to retire — deciding when a cached copy stops being true is the entire difficulty.",
+      "desc": "Keeping a copy of an expensive answer close by. Easy to add and hard to retire. Deciding when a cached copy stops being true is the entire difficulty.",
       "tier": "advanced",
       "core": false,
       "xp": 2300,
@@ -23915,7 +23915,7 @@
     {
       "id": "net.http",
       "name": "HTTP",
-      "desc": "Request, status, headers, body — the application protocol most of the web is made of. Knowing that it is stateless explains cookies, tokens and half the design of every web framework.",
+      "desc": "Request, status, headers, body. The application protocol most of the web is made of. Knowing that it is stateless explains cookies, tokens and half the design of every web framework.",
       "tier": "intermediate",
       "core": true,
       "xp": 1800,
@@ -24159,7 +24159,7 @@
     {
       "id": "ds.tables",
       "name": "Tabular Thinking",
-      "desc": "Working on whole columns at once instead of looping over rows. Filter, group, aggregate, join — four operations that cover most analysis, and thinking in them is what makes a dataset of ten million rows no harder than one of ten.",
+      "desc": "Working on whole columns at once instead of looping over rows. Filter, group, aggregate, join. Four operations that cover most analysis, and thinking in them is what makes a dataset of ten million rows no harder than one of ten.",
       "tier": "foundation",
       "core": false,
       "xp": 1300,
@@ -24178,7 +24178,7 @@
     {
       "id": "ds.clean",
       "name": "Cleaning Data",
-      "desc": "Missing values, duplicates, three spellings of one category, a date column stored as text. This is where most of the time goes, and skipping it does not save the time — it moves it to after you have published the wrong number.",
+      "desc": "Missing values, duplicates, three spellings of one category, a date column stored as text. This is where most of the time goes, and skipping it does not save the time. It moves it to after you have published the wrong number.",
       "tier": "foundation",
       "core": true,
       "xp": 1600,
@@ -24255,7 +24255,7 @@
     {
       "id": "ds.desc",
       "name": "Descriptive Statistics",
-      "desc": "Mean, median, spread and quantiles — a handful of numbers standing in for thousands. The median and the mean disagreeing is information, not a rounding problem, and the reason to always report the spread.",
+      "desc": "Mean, median, spread and quantiles. A handful of numbers standing in for thousands. The median and the mean disagreeing is information, not a rounding problem, and the reason to always report the spread.",
       "tier": "beginner",
       "core": false,
       "xp": 1500,
@@ -24412,7 +24412,7 @@
     {
       "id": "ds.features",
       "name": "Feature Engineering",
-      "desc": "Turning raw columns into things that carry signal — ratios, differences, dates split into their parts. A good feature usually beats a better algorithm, and a leaked one beats everything until it meets reality.",
+      "desc": "Turning raw columns into things that carry signal. Ratios, differences, dates split into their parts. A good feature usually beats a better algorithm, and a leaked one beats everything until it meets reality.",
       "tier": "advanced",
       "core": false,
       "xp": 2200,
@@ -24490,7 +24490,7 @@
     {
       "id": "ds.story",
       "name": "Communicating Results",
-      "desc": "Saying what you found, how sure you are, and what should happen next — to people who will not read the notebook. An analysis nobody acts on has the same value as one never run.",
+      "desc": "Saying what you found, how sure you are, and what should happen next. To people who will not read the notebook. An analysis nobody acts on has the same value as one never run.",
       "tier": "expert",
       "core": false,
       "xp": 2500,
@@ -24647,7 +24647,7 @@
     {
       "id": "ml.crossval",
       "name": "Cross-Validation",
-      "desc": "Rotating which slice is held out, so the score is not an accident of one split. Anything computed from the data — scaling, imputation, feature choice — has to happen inside each fold, or the leak comes back.",
+      "desc": "Rotating which slice is held out, so the score is not an accident of one split. Anything computed from the data (scaling, imputation, feature choice) has to happen inside each fold, or the leak comes back.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -24728,7 +24728,7 @@
     {
       "id": "ml.cluster",
       "name": "Clustering",
-      "desc": "Grouping points that resemble each other when nobody has said what the groups are. The catch is that there is no score to appeal to — you have to argue the grouping means something.",
+      "desc": "Grouping points that resemble each other when nobody has said what the groups are. The catch is that there is no score to appeal to. You have to argue the grouping means something.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -24808,7 +24808,7 @@
     {
       "id": "ml.backprop",
       "name": "Backpropagation",
-      "desc": "The chain rule applied backwards through the network to find the share of the error belonging to each weight. Worth deriving once by hand — after that the frameworks stop being magic and the failures start being readable.",
+      "desc": "The chain rule applied backwards through the network to find the share of the error belonging to each weight. Worth deriving once by hand. After that the frameworks stop being magic and the failures start being readable.",
       "tier": "advanced",
       "core": false,
       "xp": 2400,
@@ -24848,7 +24848,7 @@
     {
       "id": "ml.seq",
       "name": "Sequence Models",
-      "desc": "Models for data where order carries the meaning — text, audio, anything over time. The problem they all solve is how far back to remember, and how much of the past to weigh.",
+      "desc": "Models for data where order carries the meaning. Text, audio, anything over time. The problem they all solve is how far back to remember, and how much of the past to weigh.",
       "tier": "expert",
       "core": false,
       "xp": 2500,
@@ -24930,7 +24930,7 @@
     {
       "id": "ml.fair",
       "name": "Fairness & Interpretability",
-      "desc": "Being able to say why a model decided what it decided, and checking it does not decide differently for groups it should not. Removing the sensitive column does not remove the effect — the rest of the data usually reconstructs it.",
+      "desc": "Being able to say why a model decided what it decided, and checking it does not decide differently for groups it should not. Removing the sensitive column does not remove the effect. The rest of the data usually reconstructs it.",
       "tier": "mastery",
       "core": false,
       "xp": 3000,
@@ -25483,7 +25483,7 @@
     {
       "id": "db.constraint",
       "name": "Constraints",
-      "desc": "Rules the database refuses to break — not null, unique, foreign key, check. Application code that enforces the same rules will eventually have a path that forgets; the database never does.",
+      "desc": "Rules the database refuses to break. Not null, unique, foreign key, check. Application code that enforces the same rules will eventually have a path that forgets; the database never does.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -25675,7 +25675,7 @@
     {
       "id": "cy.model",
       "name": "Threat Modeling",
-      "desc": "Asking who would attack this, what they want, and where the soft edge is — before writing defences. Security spending without a threat model reliably buys the wrong thing, thoroughly.",
+      "desc": "Asking who would attack this, what they want, and where the soft edge is. Before writing defenses. Security spending without a threat model reliably buys the wrong thing, thoroughly.",
       "tier": "foundation",
       "core": true,
       "xp": 1500,
@@ -25807,7 +25807,7 @@
     {
       "id": "cy.injection",
       "name": "Injection",
-      "desc": "Data that gets read as instructions — a query, a shell command, a template. The fix is structural rather than a filter: keep the code and the data in separate arguments so no amount of quoting can move the boundary.",
+      "desc": "Data that gets read as instructions. A query, a shell command, a template. The fix is structural rather than a filter: keep the code and the data in separate arguments so no amount of quoting can move the boundary.",
       "tier": "intermediate",
       "core": false,
       "xp": 2000,
@@ -25882,7 +25882,7 @@
     },
     {
       "id": "cy.net",
-      "name": "Network Defences",
+      "name": "Network Defenses",
       "desc": "Firewalls, segmentation and the principle that a machine should only be reachable from where it needs to be. Segmentation is what turns one compromised laptop into one compromised laptop instead of an estate.",
       "tier": "intermediate",
       "core": false,
@@ -25934,7 +25934,7 @@
       "group": "Computing",
       "requires": [
         "Social Engineering",
-        "Network Defences"
+        "Network Defenses"
       ],
       "recommends": []
     },
@@ -25980,7 +25980,7 @@
     {
       "id": "cy.law",
       "name": "Authorization to Test",
-      "desc": "Written permission, an agreed scope and a defined window — the difference between security work and a crime. Everything below this node assumes a system you have been asked in writing to attack.",
+      "desc": "Written permission, an agreed scope and a defined window. The difference between security work and a crime. Everything below this node assumes a system you have been asked in writing to attack.",
       "tier": "advanced",
       "core": true,
       "xp": 2000,
@@ -26176,7 +26176,7 @@
     {
       "id": "cp.bsearch",
       "name": "Binary Search",
-      "desc": "Halving the space each step, and — more usefully — binary searching on the answer itself when the check is monotonic. The second use solves problems that look nothing like searching.",
+      "desc": "Halving the space each step, and (more usefully) binary searching on the answer itself when the check is monotonic. The second use solves problems that look nothing like searching.",
       "tier": "beginner",
       "core": true,
       "xp": 1600,
@@ -26217,7 +26217,7 @@
     {
       "id": "cp.greedy",
       "name": "Greedy",
-      "desc": "Taking the locally best option and being able to argue it is globally optimal. The argument is the skill — an unproven greedy that passes the samples is the most common way to fail a whole problem.",
+      "desc": "Taking the locally best option and being able to argue it is globally optimal. The argument is the skill. An unproven greedy that passes the samples is the most common way to fail a whole problem.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -26277,7 +26277,7 @@
     {
       "id": "cp.silver",
       "name": "Silver",
-      "desc": "The division where recognizing the shape becomes the whole game — a Silver problem is usually a graph, a sort, a prefix sum or a binary search in disguise. The plateau here is diagnostic, not technical.",
+      "desc": "The division where recognizing the shape becomes the whole game. A Silver problem is usually a graph, a sort, a prefix sum or a binary search in disguise. The plateau here is diagnostic, not technical.",
       "tier": "intermediate",
       "core": true,
       "xp": 2000,
@@ -26423,7 +26423,7 @@
     {
       "id": "cp.flow",
       "name": "Flows & Matching",
-      "desc": "Maximum flow, minimum cut and bipartite matching — and the fact that a startling range of problems reduce to them. Spotting the reduction is far harder than running the algorithm.",
+      "desc": "Maximum flow, minimum cut and bipartite matching. And the fact that a startling range of problems reduce to them. Spotting the reduction is far harder than running the algorithm.",
       "tier": "expert",
       "core": false,
       "xp": 2800,
@@ -26463,7 +26463,7 @@
     {
       "id": "cp.debug",
       "name": "Debugging Under Time",
-      "desc": "Finding the wrong answer on test 14 with no test 14 in front of you — stress testing against a brute force, and checking overflow and bounds before anything cleverer. It is the skill that converts near-misses into points.",
+      "desc": "Finding the wrong answer on test 14 with no test 14 in front of you. Stress testing against a brute force, and checking overflow and bounds before anything cleverer. It is the skill that converts near-misses into points.",
       "tier": "expert",
       "core": true,
       "xp": 2500,
@@ -26657,7 +26657,7 @@
     {
       "id": "ro.sensors",
       "name": "Sensors",
-      "desc": "Encoders, gyros and limit switches — the robot finding out where it actually is rather than where it was told to go. Every one of them is noisy, and treating a reading as truth is how mechanisms get destroyed.",
+      "desc": "Encoders, gyros and limit switches. The robot finding out where it actually is rather than where it was told to go. Every one of them is noisy, and treating a reading as truth is how mechanisms get destroyed.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -26695,7 +26695,7 @@
     {
       "id": "ro.docs",
       "name": "Engineering Notebook",
-      "desc": "Recording what was tried, what it measured and why the decision went the way it did — as you go, not the week before judging. It is separately awarded, and it is the only thing that survives a graduating team.",
+      "desc": "Recording what was tried, what it measured and why the decision went the way it did. As you go, not the week before judging. It is separately awarded, and it is the only thing that survives a graduating team.",
       "tier": "intermediate",
       "core": false,
       "xp": 1600,
@@ -26754,7 +26754,7 @@
     {
       "id": "ro.vision",
       "name": "Computer Vision",
-      "desc": "Finding a target in a camera frame and turning that into a heading, under venue lighting nobody warned you about. Latency is the constraint that surprises teams — a perfect pose estimate arriving late is a wrong one.",
+      "desc": "Finding a target in a camera frame and turning that into a heading, under venue lighting nobody warned you about. Latency is the constraint that surprises teams. A perfect pose estimate arriving late is a wrong one.",
       "tier": "advanced",
       "core": false,
       "xp": 2300,
@@ -26831,7 +26831,7 @@
     {
       "id": "ro.comp",
       "name": "Competition Season",
-      "desc": "Six weeks to a bag date and then an event that tests all of it at once. The robot that wins is rarely the most capable one on the field — it is the one that played every match it was scheduled for.",
+      "desc": "Six weeks to a bag date and then an event that tests all of it at once. The robot that wins is rarely the most capable one on the field. It is the one that played every match it was scheduled for.",
       "tier": "mastery",
       "core": false,
       "xp": 3200,
@@ -29151,7 +29151,7 @@
     {
       "id": "ec.gdp",
       "name": "Measuring an Economy",
-      "desc": "Output, income and expenditure as three routes to one total. What the headline figure excludes — unpaid work, depletion, distribution — is as informative as what it counts.",
+      "desc": "Output, income and expenditure as three routes to one total. What the headline figure excludes (unpaid work, depletion, distribution) is as informative as what it counts.",
       "tier": "intermediate",
       "core": false,
       "xp": 1800,
@@ -32194,7 +32194,7 @@
     {
       "id": "ca.direction",
       "name": "Deciding What You Want",
-      "desc": "Working out what you actually want from work — the conditions, not the title. It is the question this whole tree is in service of and the one most easily deferred indefinitely.",
+      "desc": "Working out what you actually want from work. The conditions, not the title. It is the question this whole tree is in service of and the one most easily deferred indefinitely.",
       "tier": "mastery",
       "core": false,
       "xp": 2800,
@@ -33237,7 +33237,7 @@
     {
       "id": "ar.shape",
       "name": "Shape & Proportion",
-      "desc": "Getting the big relationships right before any detail. Measuring by comparison — this is twice that — fixes more work than any amount of careful rendering.",
+      "desc": "Getting the big relationships right before any detail. Measuring by comparison (this is twice that) fixes more work than any amount of careful rendering.",
       "tier": "foundation",
       "core": false,
       "xp": 1400,
@@ -33872,7 +33872,7 @@
     {
       "id": "dr.masters",
       "name": "Master Studies",
-      "desc": "Copying good work to find out how a decision was made. Analytical copying — asking why an edge is soft there — teaches what admiring never will.",
+      "desc": "Copying good work to find out how a decision was made. Analytical copying (asking why an edge is soft there) teaches what admiring never will.",
       "tier": "expert",
       "core": false,
       "xp": 2400,
@@ -36606,7 +36606,7 @@
     {
       "id": "mu.harmony",
       "name": "Harmony",
-      "desc": "How independent lines combine, and the conventions that make some combinations sound intentional. Voice leading — moving each part as little as possible — explains most of the rules.",
+      "desc": "How independent lines combine, and the conventions that make some combinations sound intentional. Voice leading (moving each part as little as possible) explains most of the rules.",
       "tier": "advanced",
       "core": false,
       "xp": 2400,
@@ -36661,7 +36661,7 @@
     {
       "id": "mu.composition",
       "name": "Composition",
-      "desc": "Writing music that goes somewhere. Craft rather than inspiration — a good idea developed properly beats four good ideas laid end to end.",
+      "desc": "Writing music that goes somewhere. Craft rather than inspiration. A good idea developed properly beats four good ideas laid end to end.",
       "tier": "expert",
       "core": false,
       "xp": 2700,
@@ -38035,7 +38035,7 @@
     {
       "id": "pr.sampling",
       "name": "Sampling",
-      "desc": "Taking recorded audio and playing it as an instrument — chopped, stretched, reversed. The technical part is easy; clearing what you sample from a record is the part that ends projects.",
+      "desc": "Taking recorded audio and playing it as an instrument. Chopped, stretched, reversed. The technical part is easy; clearing what you sample from a record is the part that ends projects.",
       "tier": "intermediate",
       "core": false,
       "xp": 1900,
@@ -38377,7 +38377,7 @@
     {
       "id": "pf.memory",
       "name": "Memorization",
-      "desc": "Four memories, not one — muscular, aural, visual and structural — because adrenaline takes the muscular one first. A performer who can only start from the top has one memory and no way back in.",
+      "desc": "Four memories, not one (muscular, aural, visual and structural) because adrenaline takes the muscular one first. A performer who can only start from the top has one memory and no way back in.",
       "tier": "intermediate",
       "core": true,
       "xp": 1800,
@@ -38436,7 +38436,7 @@
     {
       "id": "pf.rep",
       "name": "Building Repertoire",
-      "desc": "A set of pieces at performance standard, kept there, covering the periods a syllabus asks for. Learning a program from scratch for each competition is why players plateau — nothing ever gets past merely secure.",
+      "desc": "A set of pieces at performance standard, kept there, covering the periods a syllabus asks for. Learning a program from scratch for each competition is why players plateau. Nothing ever gets past merely secure.",
       "tier": "intermediate",
       "core": true,
       "xp": 1900,
@@ -38456,7 +38456,7 @@
     {
       "id": "pf.record",
       "name": "Recording Yourself",
-      "desc": "Hearing what an audience hears, which is impossible while playing. It is uncomfortable, it takes ten minutes, and it is the single highest-yield thing on this tree — every branch above depends on it.",
+      "desc": "Hearing what an audience hears, which is impossible while playing. It is uncomfortable, it takes ten minutes, and it is the single highest-yield thing on this tree. Every branch above depends on it.",
       "tier": "intermediate",
       "core": true,
       "xp": 1700,
@@ -38494,7 +38494,7 @@
     {
       "id": "pf.nerves",
       "name": "Performance Nerves",
-      "desc": "Rehearsing the conditions, not just the piece — playing it cold, first thing, to one person, without a warm-up. Adrenaline cannot be removed, so the training is making the performance survivable while it is present.",
+      "desc": "Rehearsing the conditions, not just the piece. Playing it cold, first thing, to one person, without a warm-up. Adrenaline cannot be removed, so the training is making the performance survivable while it is present.",
       "tier": "advanced",
       "core": true,
       "xp": 2200,
@@ -38553,7 +38553,7 @@
     {
       "id": "pf.interp",
       "name": "Interpretation",
-      "desc": "Having a defensible reason for every choice — tempo, rubato, voicing — grounded in the period and the score rather than in habit. At this level a panel is choosing between players who all have the notes.",
+      "desc": "Having a defensible reason for every choice (tempo, rubato, voicing) grounded in the period and the score rather than in habit. At this level a panel is choosing between players who all have the notes.",
       "tier": "expert",
       "core": false,
       "xp": 2600,
@@ -40007,7 +40007,7 @@
     {
       "id": "ft.progress",
       "name": "Progressive Overload",
-      "desc": "Asking slightly more of the body over time — more weight, more reps, more distance, better form. Without it, training maintains, which is a legitimate goal but a different one.",
+      "desc": "Asking slightly more of the body over time. More weight, more reps, more distance, better form. Without it, training maintains, which is a legitimate goal but a different one.",
       "tier": "beginner",
       "core": true,
       "xp": 1800,
@@ -40243,7 +40243,7 @@
     {
       "id": "sr.hinge",
       "name": "The Hinge",
-      "desc": "Pushing the hips back with a neutral spine — the pattern under deadlifts, swings and picking anything up. Confusing it with a squat is the most common and most costly error.",
+      "desc": "Pushing the hips back with a neutral spine. The pattern under deadlifts, swings and picking anything up. Confusing it with a squat is the most common and most costly error.",
       "tier": "foundation",
       "core": false,
       "xp": 1600,
@@ -43201,7 +43201,7 @@
     {
       "id": "lf.repair",
       "name": "Repairs & Maintenance",
-      "desc": "Basic fixes, and knowing which jobs need somebody qualified — anything gas, structural or on a consumer unit does. Small maintenance done on time is the cheapest money in a home.",
+      "desc": "Basic fixes, and knowing which jobs need somebody qualified. Anything gas, structural or on a consumer unit does. Small maintenance done on time is the cheapest money in a home.",
       "tier": "intermediate",
       "core": false,
       "xp": 1700,
@@ -43747,7 +43747,7 @@
     {
       "id": "tr.why",
       "name": "Deciding the Trip",
-      "desc": "What this trip is for — rest, seeing people, or seeing places — because those three want different plans. Trips that disappoint are usually ones asked to be all three at once.",
+      "desc": "What this trip is for (rest, seeing people, or seeing places) because those three want different plans. Trips that disappoint are usually ones asked to be all three at once.",
       "tier": "foundation",
       "core": true,
       "xp": 1300,

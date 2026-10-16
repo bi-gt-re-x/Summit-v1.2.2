@@ -112,7 +112,7 @@ describe('the effect', () => {
     // 5 against 3 is a 67% lift, over 10 tasks each side.
     expect(effect?.measure).toBe('how the work goes');
     expect(Math.round(effect?.lift ?? 0)).toBe(67);
-    expect(effect?.basis).toContain('10 rated tasks here against 10 elsewhere');
+    expect(effect?.basis).toContain('10 rated tasks here vs. 10 others');
   });
 
   it('stays quiet when the two sides are the same', () => {

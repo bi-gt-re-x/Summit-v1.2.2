@@ -650,7 +650,7 @@ def update_settings(request: Request, body: UpdateSettings,
             continue
         checked = FIELDS[key][1](value)
         if checked is None:
-            return fail('That is not a valid value for {}.'.format(key), status=400)
+            return fail("That's not a valid value for {}.".format(key), status=400)
         db.set_user_setting(user['username'], key, checked)
 
     if changes:
@@ -1007,7 +1007,7 @@ RESETS = {
     'tasks': (_reset_tasks, 'Every task removed.'),
     'progress': (_reset_progress, 'Level, XP and streak reset.'),
     'content': (_reset_content, 'Everything you had made has been removed.'),
-    'account': (_reset_account, 'The account and everything in it is gone.'),
+    'account': (_reset_account, 'Your account and everything in it is gone.'),
 }
 
 #: The scopes that will not run on a click alone. The request has to carry the
@@ -1032,7 +1032,7 @@ def reset_data(request: Request, body: ResetRequest,
 
     scope = (body.scope or '').strip()
     if scope not in RESETS:
-        return fail('There is nothing called {}.'.format(scope or 'that'), status=400)
+        return fail("There's nothing called {}.".format(scope or 'that'), status=400)
 
     if scope in TYPED:
         typed = (body.confirm or '').strip()

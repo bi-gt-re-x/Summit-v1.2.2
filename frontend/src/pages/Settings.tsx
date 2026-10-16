@@ -99,7 +99,7 @@ const CLOCK_EXAMPLE: Record<Prefs['clock_format'], string> = {
 };
 const CLOCK_HINT: Record<Prefs['clock_format'], string> = {
   '12h': 'Morning and afternoon, with AM and PM.',
-  '24h': 'Hours counted 00 to 23, so there is no AM or PM to read.',
+  '24h': "Hours go from 00 to 23. No AM or PM.",
 };
 
 /** The pages an account may open on, and what each one is for. */
@@ -127,7 +127,7 @@ function goalOptions(current: number): number[] {
 
 /** What each of the three levels actually does, said in full under the seg. */
 const RATING_DEPTHS: Record<Prefs['rating_depth'], string> = {
-  none: 'No questions after a task. Analytics estimates quality from XP per task instead.',
+  none: 'No questions after a task. Analytics uses XP per task for quality instead.',
   ratings: 'Rate difficulty and how well it went after each task. Analytics uses these for '
     + 'quality.',
   reasons: 'Both ratings, plus what made the difference. This lets Analytics explain why a '
@@ -172,49 +172,44 @@ const NOTIFY_CHANNELS: {
     pref: 'notify_tasks',
     label: 'Overdue and due tasks',
     hint:
-      'Work that is past its date, work due today, and work due tomorrow — one of each a day, '
-      + 'kept current as you finish things.',
+      'Overdue work, work due today and work due tomorrow. One of each a day, updated as you '
+      + 'go.',
   },
   {
     key: 'calendar',
     pref: 'notify_calendar',
     label: 'Calendar',
     hint:
-      'What is on today’s calendar and what time the first block starts, plus the one that is '
-      + 'about to begin within the hour.',
+      "What's on today's calendar, when it starts, and anything starting within the hour.",
   },
   {
     key: 'analytics',
     pref: 'notify_analytics',
     label: 'Analytics',
     hint:
-      'Once a week: what you finished, how it compares to the week before, and the hours you '
-      + 'focused. Also a gap of four days or more with nothing on it, and the day you beat your '
-      + 'own best.',
+      'A weekly recap of what you finished and how it compares. Plus a heads-up after 4 quiet '
+      + 'days, and a cheer when you beat your best day.',
   },
   {
     key: 'goals',
     pref: 'notify_goals',
     label: 'Goals',
     hint:
-      'A goal whose date has passed, one due inside a week, and one whose arithmetic is '
-      + 'finished but which is still open.',
+      'Goals that are overdue, due within a week, or done but still open.',
   },
   {
     key: 'streak',
     pref: 'notify_streak',
     label: 'Streak',
     hint:
-      'A live streak with nothing on the board yet today — the one thing here that is lost by '
-      + 'doing nothing — and the days it passes worth marking.',
+      "A heads-up when your streak has nothing on it today, plus streak milestones.",
   },
   {
     key: 'progress',
     pref: 'notify_progress',
     label: 'Levels, badges and records',
     hint:
-      'A level reached, a badge earned, a record set. Never the backlog: an account that has '
-      + 'been here a year is not told about its first sixty levels.',
+      'New levels, badges and records. Only new ones, never old ones you already passed.',
   },
 ];
 
@@ -339,20 +334,20 @@ const ASKS: Ask[] = [
   {
     scope: 'preferences',
     label: 'Reset every preference',
-    hint: 'Puts this whole page back to how it arrived.',
+    hint: 'Puts this page back to its defaults.',
     title: 'Reset every preference?',
     action: 'Reset preferences',
-    loses: 'Every choice on this page goes back to its default — theme, accent, the pages the app opens on, the tasks view, the focus goal.',
-    keeps: 'Your work is untouched: tasks, goals, notes, records and progress all stay exactly as they are. So does your profile picture.',
+    loses: 'Every setting on this page goes back to its default: theme, color, start pages, task view and focus goal.',
+    keeps: "Your work stays put. Tasks, goals, notes, records, progress and your profile picture don't change.",
   },
   {
     scope: 'completed',
     label: 'Clear finished tasks',
-    hint: 'Removes the tasks already ticked off. The XP they earned stays.',
+    hint: 'Removes tasks you already finished. You keep the XP.',
     title: 'Clear finished tasks?',
     action: 'Clear them',
     loses: 'Every task marked done, and its place on the calendar.',
-    keeps: 'The XP, the level and the streak they earned you — those are banked and are not undone by tidying the list. Open tasks stay.',
+    keeps: "The XP, level and streak they earned you. Those stay. So do open tasks.",
   },
   {
     scope: 'tasks',
@@ -360,18 +355,18 @@ const ASKS: Ask[] = [
     hint: 'The whole list, open and finished alike.',
     title: 'Delete every task?',
     action: 'Delete all tasks',
-    loses: 'Every task this account has, whether it is open or done, and every calendar block made from one.',
-    keeps: 'Goals, notes, records, and your level and XP. Analytics will still know what you did; it will no longer be able to name it.',
+    loses: "Every task you have, open or done, and every calendar block made from one.",
+    keeps: "Goals, notes, records, level and XP. Analytics still counts your work but can't name the tasks.",
     typed: true,
   },
   {
     scope: 'progress',
     label: 'Reset level and XP',
-    hint: 'Back to level 1 with nothing behind it. The work itself stays.',
+    hint: 'Back to level 1. Your work stays.',
     title: 'Reset your progress?',
     action: 'Reset progress',
-    loses: 'Your level, XP, streaks, the XP ledger behind them, the analytics readings taken from it, and any achievements earned.',
-    keeps: 'Every task, goal, note and record. The work is still there — this only forgets what it added up to.',
+    loses: 'Your level, XP, streaks, XP history, analytics scores and badges.',
+    keeps: 'Every task, goal, note and record. Your work stays. Only the totals reset.',
     typed: true,
   },
   {
@@ -381,17 +376,17 @@ const ASKS: Ask[] = [
     title: 'Erase everything you have made?',
     action: 'Erase it all',
     loses: 'Tasks, goals, notes, records, calendar entries, focus history, subjects and your whole progression.',
-    keeps: 'The account itself — you stay signed in, and every preference on this page survives. It is the app on its first day, with your settings.',
+    keeps: "Your account itself. You stay signed in and keep your settings. It's like day one, with your preferences.",
     typed: true,
   },
   {
     scope: 'account',
     label: 'Delete this account',
-    hint: 'The account and everything in it, permanently. You will be signed out.',
+    hint: "Your account and everything in it, for good. You'll be signed out.",
     title: 'Delete this account?',
     action: 'Delete my account',
-    loses: 'Everything above, the preferences, and the account itself. Your username is released and nothing is recoverable.',
-    keeps: 'Nothing. Export your data first if any of it matters — the two buttons for that are one section up.',
+    loses: 'Everything above, your settings and the account itself. Your username frees up and nothing can come back.',
+    keeps: 'Nothing. Export your data first if any of it matters. The export buttons are one section up.',
     typed: true,
   },
 ];
@@ -732,7 +727,7 @@ export default function Settings() {
           {
             id: 'username',
             label: 'Username',
-            hint: 'Fixed. Everything you have made is filed under it.',
+            hint: "Can't be changed. Everything you've made is saved under it.",
             control: <span className="st-fixed">{sheet.username}</span>,
           },
           {
@@ -851,7 +846,7 @@ export default function Settings() {
           {
             id: 'ambient',
             label: 'Animated background',
-            hint: 'The grid, the drifting particles and the slow gradient behind every page.',
+            hint: 'The grid, the floating dots and the slow color shift behind every page.',
             control: (
               <Toggle
                 on={prefs.show_ambient}
@@ -864,7 +859,7 @@ export default function Settings() {
           {
             id: 'rail',
             label: 'Collapsed navigation',
-            hint: 'Keeps the rail down the left as a strip of icons. The button on it does the same thing.',
+            hint: 'Shrinks the left sidebar to icons. The button on it does the same thing.',
             control: (
               <Toggle
                 on={prefs.nav_collapsed}
@@ -884,7 +879,7 @@ export default function Settings() {
           {
             id: 'home',
             label: 'Open on',
-            hint: 'Where signing in lands, and where the app opens from a bare link. Reloading a page you are already on keeps you on it.',
+            hint: "Where you land after signing in. Reloading a page keeps you on it.",
             control: (
               <select
                 className="st-input"
@@ -915,7 +910,7 @@ export default function Settings() {
         items: [
           {
             id: 'about-you',
-            label: 'Who you are and where you want to go',
+            label: "Who you're and where you want to go",
             hint: 'Analytics, your study plans and your recommendations read this. More detail means better answers, and Analytics opens sooner.',
             control: <AboutYouSettings />,
             wide: true,
@@ -1085,7 +1080,7 @@ export default function Settings() {
           {
             id: 'goal',
             label: 'Daily XP goal',
-            hint: `The XP you are aiming at each day. Today's total is shown against it on the dashboard. ${GOAL_MIN}–${GOAL_MAX}.`,
+            hint: `Your daily XP target. The dashboard shows today's total against it. ${GOAL_MIN} to ${GOAL_MAX}.`,
             control: (
               <input
                 className="st-input is-num"
@@ -1109,7 +1104,7 @@ export default function Settings() {
           {
             id: 'stats',
             label: 'Show the statistics row',
-            hint: 'The four figures across the top of the dashboard.',
+            hint: 'The four numbers across the top of the dashboard.',
             control: (
               <Toggle
                 on={prefs.show_stats}
@@ -1122,7 +1117,7 @@ export default function Settings() {
           {
             id: 'insights',
             label: 'Show the insights panel',
-            hint: 'The readings under your task list.',
+            hint: 'The cards under your task list.',
             control: (
               <Toggle
                 on={prefs.show_insights}
@@ -1168,7 +1163,7 @@ export default function Settings() {
           {
             id: 'priority',
             label: 'Default priority',
-            hint: 'Where Quick Add opens, and what a new task is filed as until its XP says otherwise.',
+            hint: 'The starting priority for new tasks, until you change their XP.',
             control: (
               <Seg
                 value={prefs.default_priority}
@@ -1185,7 +1180,7 @@ export default function Settings() {
           {
             id: 'xp',
             label: 'Default XP',
-            hint: 'What a new task is worth before you change it — Quick Add, the composer and both dialogs.',
+            hint: 'What a new task is worth before you change it. Applies everywhere you add tasks.',
             control: (
               <input
                 className="st-input is-num"
@@ -1210,8 +1205,8 @@ export default function Settings() {
             id: 'rating',
             label: 'Ask how it went',
             hint:
-              'What the prompt after a finished task asks — and, because it is the only thing on '
-              + 'Analytics the app cannot measure for itself, how much Quality there has to go on.',
+              "What the pop-up asks after you finish a task. More answers mean better quality scores in "
+              + "Analytics.",
             control: (
               <Seg
                 value={prefs.rating_depth}
@@ -1234,7 +1229,7 @@ export default function Settings() {
           {
             id: 'task-status',
             label: 'Tasks page opens on',
-            hint: 'Which tasks are on the page when you arrive. The controls there still change it for a visit.',
+            hint: 'Which tasks show when you open the page. You can still change it there.',
             control: (
               <Seg
                 value={prefs.task_status}
@@ -1251,7 +1246,7 @@ export default function Settings() {
           {
             id: 'task-horizon',
             label: 'How far ahead it reaches',
-            hint: 'A week keeps the list to what you can act on. Everything is the whole backlog.',
+            hint: 'A week shows what you can act on now. Everything shows your whole list.',
             control: (
               <Seg
                 value={prefs.task_horizon}
@@ -1291,7 +1286,7 @@ export default function Settings() {
           {
             id: 'task-group',
             label: 'Default headings',
-            hint: 'What the list is cut into. No headings is one flat list.',
+            hint: 'How the list is grouped. No headings means one flat list.',
             control: (
               <select
                 className="st-input"
@@ -1355,7 +1350,7 @@ export default function Settings() {
           {
             id: 'week-start',
             label: 'Weeks start on',
-            hint: 'The calendar grid, the month, and the week your dashboard counts.',
+            hint: 'The calendar grid, the month and the week your dashboard counts.',
             control: (
               <Seg
                 value={prefs.week_starts_on}
@@ -1371,7 +1366,7 @@ export default function Settings() {
           {
             id: 'clock',
             label: 'Clock',
-            hint: 'Every time in the app — the calendar grid, due times, blocks and the dashboard.',
+            hint: 'Every time in the app: the calendar, due times, blocks and the dashboard.',
             control: (
               <Seg
                 value={prefs.clock_format}
@@ -1400,7 +1395,7 @@ export default function Settings() {
           {
             id: 'records-sort',
             label: 'History opens ordered by',
-            hint: 'The list under your personal bests. The toolbar there still changes it for a visit.',
+            hint: 'The list under your personal bests. You can still change it there.',
             control: (
               <Seg
                 value={prefs.records_sort}
@@ -1416,8 +1411,8 @@ export default function Settings() {
           },
           {
             id: 'records-sort-what',
-            label: 'What “improvement” orders by',
-            hint: 'How far a record has come rather than how large it is — a score that went 18 to 25 above one logged once at 400.',
+            label: 'What "improvement" orders by',
+            hint: 'Most improved first. A score that went from 18 to 25 ranks above one that was always 400.',
             control: <span className="st-fixed">Distance traveled</span>,
           },
         ],
@@ -1430,7 +1425,7 @@ export default function Settings() {
           {
             id: 'focus-goal',
             label: 'Daily focus goal',
-            hint: 'What the focus ring fills against. A day you have given its own goal keeps it.',
+            hint: 'Your daily focus target. A day with its own goal keeps that one.',
             control: (
               <select
                 className="st-input"
@@ -1454,7 +1449,7 @@ export default function Settings() {
           {
             id: 'focus-dim',
             label: 'Clear the page while focusing',
-            hint: "Start Focus on the dashboard opens the timer's focus screen. Off, the timer just runs in the Focus panel.",
+            hint: "Start Focus on the dashboard opens the full timer screen. Off, it just runs in the Focus panel.",
             control: (
               <Toggle
                 on={prefs.focus_dim}
@@ -1468,11 +1463,9 @@ export default function Settings() {
             id: 'catchup',
             label: 'Ask about untracked days',
             hint:
-              'Once a day, on the first load of the dashboard: the days since you were last '
-              + 'here that have no focus time on them, and two boxes to say how long you '
-              + 'worked. What you enter counts exactly as tracked time does — consistency, '
-              + 'the focus score, the growth chart, every "days you worked" figure. Days you '
-              + 'did track are never asked about, and a day you leave blank is left alone.',
+              'Once a day, the dashboard asks about days you missed logging focus time. What you enter '
+              + "counts just like timed work. Days you tracked aren't asked about, and blank days stay "
+              + 'blank.',
             control: (
               <Toggle
                 on={prefs.catchup_prompt}
@@ -1495,10 +1488,7 @@ export default function Settings() {
             id: 'vacation',
             label: 'Vacation mode',
             hint:
-              `Pause your streak while you are away, for up to ${sheet.vacation_max_days ?? 30} days. `
-              + 'Days on vacation do not break it or use up your grace day, and they do not add '
-              + 'to it either — the first task back counts as the next day. Anything you do '
-              + 'finish while away still counts.',
+              `Pause your streak while you're away, for up to ${sheet.vacation_max_days ?? 30} days. Vacation days won't break it or use your grace day. They don't add to it either. Anything you finish while away still counts.`,
             control: (
               <VacationMode
                 vacation={sheet.streak_vacation ?? null}
@@ -1520,17 +1510,15 @@ export default function Settings() {
            turning it back on starts from what is true then rather than
            replaying two weeks of backlog. */
         note:
-          "Nothing here is sent on a schedule. The app checks your own record when you open it "
-          + "and tells you what's true. A quiet week means a quiet bell, and a notification you "
-          + 'delete stays gone until something new happens.',
+          "Nothing gets sent on a timer. The app checks your work when you open it. A quiet week "
+          + "means a quiet bell, and anything you delete stays gone.",
         items: [
           {
             id: 'notify-master',
             label: 'Notifications',
             hint:
-              'The master switch. Off stops everything below it: nothing new is written, '
-              + 'nothing pops up, and the bell reads empty. Anything already in it is kept and '
-              + 'comes back the moment you turn this on again.',
+              'The main switch. Off stops everything below: no new alerts and no pop-ups. Old ones are '
+              + 'saved and come back when you turn it on.',
             control: (
               <Toggle
                 on={prefs.notifications_enabled}
@@ -1549,9 +1537,8 @@ export default function Settings() {
             id: 'notify-popups',
             label: 'Show them on screen',
             hint:
-              'A new notification slides in at the corner of the page for a few seconds. Off '
-              + 'takes away the interruption and leaves the bell doing its job — everything '
-              + 'still arrives, you just go and look at it.',
+              'New alerts pop up in the corner for a few seconds. Off means no pop-ups. Everything '
+              + 'still lands in the bell.',
             control: (
               <Toggle
                 on={prefs.notify_popups}
@@ -1594,8 +1581,8 @@ export default function Settings() {
            turned into a decision, and the header of
            components/Analytics/Setup for why the questions exist at all. */
         note:
-          'These are the answers you gave when you first opened Analytics. Every one of them '
-          + 'changes what that page draws or how it says it — none of them changes a figure.',
+          'Your answers from when you first opened Analytics. They change what the page shows and '
+          + 'how it talks. Your numbers stay the same.',
         items: [
           {
             id: 'window',
@@ -1626,8 +1613,8 @@ export default function Settings() {
             id: 'analytics-home',
             label: 'Analytics opens on',
             hint:
-              'Which of the tabs you land on. Recommendations is the one that ends in a '
-              + 'button; Overview is the long view.',
+              'Which tab you land on. Recommendations tells you what to do. Overview shows the big '
+              + 'picture.',
             control: (
               <select
                 className="st-input"
@@ -1672,9 +1659,8 @@ export default function Settings() {
             id: 'analytics-tone',
             label: 'How blunt Analytics is',
             hint:
-              'It never changes a figure — the score is the mean of the same five measures at '
-              + 'every setting. It changes where a shortfall starts being called one, and how '
-              + 'many problems are put in front of you at once.',
+              'Your numbers stay the same. This changes how strict the page is and how many problems it '
+              + 'shows at once.',
             control: (
               <Seg
                 value={prefs.analytics_tone}
@@ -1715,8 +1701,7 @@ export default function Settings() {
             id: 'analytics-setup',
             label: 'Answer the setup questions again',
             hint:
-              'The same seven questions, opened on the answers you already gave. Nothing is '
-              + 'cleared by going back to them.',
+              'The same seven questions, with your answers filled in. Nothing gets cleared.',
             /* A link rather than a switch, because there is no preference to
                write: the questions are a screen on the analytics page and this
                is the way to it. The page reads `?setup` and opens on the
@@ -1743,9 +1728,8 @@ export default function Settings() {
                were all things this app would delete and could not give back.
                The endpoint sends every one of them now, so the word in the
                label is true and the hint says what it means. */
-            hint: 'Every table this account owns — tasks, the calendar, goals and their '
-              + 'checkpoints, notes, records, subjects, badges and the XP ledger — as one '
-              + 'JSON file.',
+            hint: 'All your data in one JSON file: tasks, calendar, goals, notes, records, subjects, badges '
+              + 'and XP history.',
             control: (
               <a
                 className="st-btn"
@@ -1759,7 +1743,7 @@ export default function Settings() {
           {
             id: 'export-csv',
             label: 'Export a table',
-            hint: 'One table at a time, as CSV — a spreadsheet cannot hold five shapes at once.',
+            hint: "One table at a time, as a CSV you can open in a spreadsheet.",
             control: (
               <div className="st-links">
                 {['tasks', 'goals', 'records'].map((table) => (
@@ -1785,9 +1769,8 @@ export default function Settings() {
             id: 'storage',
             label: 'Where your data lives',
             hint:
-              'In the database on the server running Summit — not in this browser. ' +
-              'It is not sold, and it is not shared with anyone; the Privacy Policy ' +
-              'says what is kept and what leaves.',
+              "It's stored on the server running Summit. It's never sold or shared. The Privacy Policy "
+        + "has the details.",
             control: <span className="st-fixed">This server</span>,
           },
         ],
@@ -1800,13 +1783,13 @@ export default function Settings() {
           {
             id: 'version',
             label: 'Version',
-            hint: 'The build you are running.',
+            hint: "The build you're running.",
             control: <span className="st-fixed">Summit 1.2.0</span>,
           },
           {
             id: 'level',
             label: 'Level and XP',
-            hint: 'Counted from everything you have finished.',
+            hint: "Based on everything you've finished.",
             control: (
               <span className="st-fixed">
                 Level {sheet.level} · {sheet.xp.toLocaleString()} XP
@@ -1835,9 +1818,8 @@ export default function Settings() {
         label: 'Reset and delete',
         group: 'Danger zone',
         note:
-          'Each of these asks first and says what it takes. None of them can be '
-          + 'undone, and there is no backup — take an export from Data first if '
-          + 'any of it matters.',
+          "Each one asks first and tells you what it removes. None can be undone and there's no "
+          + 'backup, so export your data first.',
         items: ASKS.map((entry) => ({
           id: entry.scope,
           label: entry.label,
@@ -1911,7 +1893,7 @@ export default function Settings() {
      starts when there is something to animate — see hooks/usePageEntrance. */
   const entering = usePageEntrance(!loading);
 
-  if (loading) return <Loading label="Reading your settings" />;
+  if (loading) return <Loading label="Loading your settings" />;
   if (error && !sheet) return <ErrorState message={error} onRetry={reload} />;
   if (!sheet) return <ErrorState message="No settings to show." onRetry={reload} />;
 
@@ -1970,7 +1952,7 @@ export default function Settings() {
 
           <div className="st-content">
             {term && shown.length === 0 && (
-              <p className="st-empty">Nothing here matches “{query.trim()}”.</p>
+              <p className="st-empty">Nothing here matches "{query.trim()}".</p>
             )}
 
             {shown.map((entry) => {

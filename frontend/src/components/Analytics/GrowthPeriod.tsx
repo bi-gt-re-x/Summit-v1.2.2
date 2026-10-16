@@ -70,19 +70,19 @@ export const METRIC_META: Record<
     label: 'Consistency',
     tone: 'green',
     glyph: 'check',
-    asks: 'the share of days you showed up at all',
+    asks: 'how many days you worked',
   },
   efficiency: {
     label: 'Efficiency',
     tone: 'violet',
     glyph: 'clock',
-    asks: 'the share of tasks finished by their deadline',
+    asks: 'how many tasks you finished on time',
   },
   focus: {
     label: 'Focus',
     tone: 'pink',
     glyph: 'sparkle',
-    asks: 'tracked focus time against your focus goal',
+    asks: 'your focus time against your goal',
   },
 };
 
@@ -107,7 +107,7 @@ export const HELD = 3;
 
 /** A signed percentage, or a dash where there was nothing to move from. */
 export function pct(value: number | null | undefined): string {
-  if (value === null || value === undefined) return '—';
+  if (value === null || value === undefined) return '-';
   const rounded = Math.round(value * 10) / 10;
   return `${rounded > 0 ? '+' : rounded < 0 ? '−' : ''}${Math.abs(rounded).toFixed(1)}%`;
 }
@@ -134,7 +134,7 @@ export function growthLabel(
   to: number,
 ): string {
   if (change !== null && change !== undefined) return pct(change);
-  if (from === null || from === undefined) return '—';
+  if (from === null || from === undefined) return '-';
   const moved = Math.round(to - from);
   return `${moved > 0 ? '+' : moved < 0 ? '−' : ''}${Math.abs(moved)} pts`;
 }
@@ -155,7 +155,7 @@ export function direction(from: number, to: number): 'up' | 'down' | 'held' {
  * moved because they worked more or because the goal moved.
  */
 export function measuredAs(metric: PeriodMetric, side: PeriodSide | null): string {
-  if (!side) return '—';
+  if (!side) return '-';
   const figures = (side.figures?.[metric] ?? {}) as Record<string, number | string | boolean>;
   switch (metric) {
     case 'productivity':
@@ -166,7 +166,7 @@ export function measuredAs(metric: PeriodMetric, side: PeriodSide | null): strin
       return figures.basis === 'ratings'
         ? `${Number(figures.avg_quality).toFixed(1)} of ${figures.max_quality}, `
           + `over ${fmtNumber(Number(figures.rated_tasks) || 0)} rated`
-        : 'no ratings yet — scored on task XP';
+        : 'no ratings yet, so this uses task XP';
     case 'consistency':
       return `${fmtNumber(Number(figures.active_days) || 0)} of `
         + `${fmtNumber(Number(figures.total_days) || 0)} days worked`;
@@ -178,7 +178,7 @@ export function measuredAs(metric: PeriodMetric, side: PeriodSide | null): strin
       return `${(Number(figures.focused_minutes) / 60 || 0).toFixed(1)} hrs of a `
         + `${(Number(figures.goal_minutes) / 60 || 0).toFixed(1)} hr goal`;
     default:
-      return '—';
+      return '-';
   }
 }
 
@@ -278,7 +278,7 @@ export function PeriodCards({
             </strong>
             <span className="ax-gp-card-note">
               {card.previous === null
-                ? 'nothing before it to compare against'
+                ? 'nothing earlier to compare with'
                 : `against the ${card.days} days before · ${card.previous} → ${card.overall}`}
             </span>
             <Spark values={card.spark} way={way} />
@@ -496,8 +496,7 @@ export function MetricStrip({ data }: { data: GrowthPeriods }) {
             </>
           ) : (
             <>
-              Graded <strong>{now.grade}</strong> at a growth score of {(now.overall / 10).toFixed(1)} out of 10. This period
-              reaches back to your first day, so there is nothing before it.
+              Graded <strong>{now.grade}</strong> at a growth score of {(now.overall / 10).toFixed(1)} out of 10. This period starts on your first day, so there's nothing to compare with.
             </>
           )}
         </p>
@@ -628,7 +627,7 @@ function partsOf(metric: PeriodMetric, now: PeriodSide, then: PeriodSide): Part[
         // actually divides by — so a full bar here is a full mark there.
         { label: 'XP a working day', from: wasXp, to: isXp, max: Math.max(goal, wasXp, isXp), show: asIs },
         { label: 'XP earned in total', from: wasTotal, to: isTotal, max: headroom(wasTotal, isTotal), show: asIs },
-        { label: 'Days that earned any', from: wasDays, to: isDays, max: headroom(wasDays, isDays), show: asIs },
+        { label: 'Days with any XP', from: wasDays, to: isDays, max: headroom(wasDays, isDays), show: asIs },
         { label: 'Tasks finished', from: wasTasks, to: isTasks, max: headroom(wasTasks, isTasks), show: asIs },
       ];
     }
@@ -640,7 +639,7 @@ function partsOf(metric: PeriodMetric, now: PeriodSide, then: PeriodSide): Part[
       return [
         { label: 'Difficulty you took on', from: wasD, to: isD, max: 5, show: asRating },
         { label: 'How well it went', from: wasE, to: isE, max: 5, show: asRating },
-        { label: 'The two multiplied', from: wasQ, to: isQ, max: 25, show: asRating },
+        { label: 'Both multiplied', from: wasQ, to: isQ, max: 25, show: asRating },
         { label: 'Tasks you rated', from: wasN, to: isN, max: headroom(wasN, isN), show: asIs },
       ];
     }
@@ -650,7 +649,7 @@ function partsOf(metric: PeriodMetric, now: PeriodSide, then: PeriodSide): Part[
       const [wasRate, isRate] = pair('rate');
       return [
         { label: 'Days worked', from: wasDays, to: isDays, max: Math.max(isAll, wasAll, isDays, 1), show: asIs },
-        { label: 'Share of the window', from: wasRate, to: isRate, max: 100, show: asPct },
+        { label: 'Share of days', from: wasRate, to: isRate, max: 100, show: asPct },
       ];
     }
     case 'efficiency': {
@@ -659,8 +658,8 @@ function partsOf(metric: PeriodMetric, now: PeriodSide, then: PeriodSide): Part[
       const [wasSeen, isSeen] = pair('deadline_tracked');
       return [
         { label: 'Finished by the deadline', from: wasPct, to: isPct, max: 100, show: asPct },
-        { label: 'Tasks that made it', from: wasMet, to: isMet, max: headroom(wasMet, isMet), show: asIs },
-        { label: 'Tasks that had one', from: wasSeen, to: isSeen, max: headroom(wasSeen, isSeen), show: asIs },
+        { label: 'Tasks on time', from: wasMet, to: isMet, max: headroom(wasMet, isMet), show: asIs },
+        { label: 'Tasks with a deadline', from: wasSeen, to: isSeen, max: headroom(wasSeen, isSeen), show: asIs },
       ];
     }
     case 'focus': {
@@ -676,7 +675,7 @@ function partsOf(metric: PeriodMetric, now: PeriodSide, then: PeriodSide): Part[
           show: (value) => `${value.toFixed(1)} hrs`,
         },
         { label: 'Share of your focus goal', from: wasG, to: isG, max: 100, show: asPct },
-        { label: 'Days you tracked it', from: wasN, to: isN, max: headroom(wasN, isN), show: asIs },
+        { label: 'Days tracked', from: wasN, to: isN, max: headroom(wasN, isN), show: asIs },
       ];
     }
     default:
@@ -742,7 +741,7 @@ export function MoverPanel({
   return (
     <Panel
       title={heading}
-      note={kind === 'best' ? 'Where you gained the most ground' : 'Where you lost ground'}
+      note={kind === 'best' ? 'Your biggest gain' : 'Your biggest drop'}
     >
       <div className={`ax-gp-mover ax-tone-${meta.tone}`}>
         <span
@@ -767,12 +766,12 @@ export function MoverPanel({
             : `${kind === 'best' ? 'Up' : 'Down'} from ${shown.from} to ${shown.to} out of 100`
           : kind === 'worst'
             ? quiet
-              ? 'No big drops. Your lowest measure is this one'
-              : `No big drops. Your lowest measure is ${shown.to} out of 100`
+              ? 'No big drops. This is your lowest score'
+              : `No big drops. Your lowest score is ${shown.to} out of 100`
             : quiet
-              ? 'No big gains. Your strongest measure is this one'
-              : `No big gains. Your strongest measure is ${shown.to} out of 100`}
-        {' '}— {meta.asks}.
+              ? 'No big gains. This is your best score'
+              : `No big gains. Your best score is ${shown.to} out of 100`}
+        . That&apos;s {meta.asks}.
       </p>
 
       {/* The quantities the score was computed from, so the claim can be
@@ -809,11 +808,10 @@ export function MoverPanel({
         <span>
           <strong>What this is:</strong> {meta.asks}.{' '}
           {fell
-            ? `It is the measure that ${kind === 'best' ? 'gained' : 'lost'} the most ground `
-              + 'this period, ranked on points moved rather than on percentage — a score '
-              + 'climbing from 4 to 12 is a bigger percentage and a much smaller change.'
-            : 'Nothing moved far enough this period to name a mover, so this is ranked on '
-              + 'the score itself instead. It is not a claim that anything got worse.'}
+            ? `It's the score that ${kind === 'best' ? 'rose' : 'fell'} the most this period, `
+              + 'in points. Going from 4 to 12 is a big percent but a small change, so points are fairer.'
+            : 'Nothing moved much this period, so this just shows the score. '
+              + "It doesn't mean anything got worse."}
         </span>
       </p>
     </Panel>
@@ -827,7 +825,7 @@ export function MoverPanel({
 function span(from: string, to: string): string {
   const at = (iso: string) =>
     new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  return `${at(from)} – ${at(to)}`;
+  return `${at(from)} to ${at(to)}`;
 }
 
 /**
@@ -847,7 +845,7 @@ export function ThenNow({ data }: { data: GrowthPeriods }) {
       <p className="ax-gp-when">
         <span className="is-then">
           <b>{then ? 'Before' : 'No earlier period'}</b>
-          <em>{then && then.start && then.end ? span(then.start, then.end) : '—'}</em>
+          <em>{then && then.start && then.end ? span(then.start, then.end) : '-'}</em>
         </span>
         <span className="is-now">
           <b>Now</b>
@@ -1023,8 +1021,7 @@ export function MilestoneFeed({ entries, format }: {
   if (entries.length === 0) {
     return (
       <p className="ax-empty">
-        Nothing crossed a grade boundary in this period. A longer one usually has something
-        in it.
+        No grade changes this period. Try a longer one.
       </p>
     );
   }

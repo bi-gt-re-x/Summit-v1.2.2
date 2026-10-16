@@ -90,7 +90,7 @@ function shortDate(value?: string): string {
 /** "May 2024" — where the year is the point rather than the day. */
 function monthYear(value?: string): string {
   const at = time(value);
-  if (!at) return '—';
+  if (!at) return '-';
   return new Date(at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
@@ -840,7 +840,7 @@ export function ActiveGoalCard({
                         }
                         title={
                           step.task_id
-                            ? `Linked to "${linked?.title ?? 'a task'}" — click to unlink`
+                            ? `Linked to "${linked?.title ?? 'a task'}". Click to unlink.`
                             : 'Link an existing task to this step'
                         }
                         onClick={() => {
@@ -865,9 +865,9 @@ export function ActiveGoalCard({
 
               {focus.steps.length > shown.steps.length && (
                 <p className="ag-steps-rest ag-quiet">
-                  {focus.steps.length - shown.steps.length} more —{' '}
+                  {focus.steps.length - shown.steps.length} more.{' '}
                   <button type="button" className="ag-link-btn" onClick={() => onOpen(goal)}>
-                    open the details
+                    Open the details
                   </button>
                 </p>
               )}
@@ -1009,7 +1009,7 @@ export function ActiveGoalCard({
                     </ul>
                   ) : (
                     <p className="ag-quiet ag-found-none">
-                      No matching open tasks. Steps don’t need a linked task.
+                      No matching open tasks. Steps don't need a linked task.
                     </p>
                   )}
                 </div>
@@ -1062,7 +1062,7 @@ export function ActiveGoalCard({
             </>
           ) : (
             <p className="ag-empty">
-              Every checkpoint is behind you. What is left is the goal itself.
+              Every checkpoint is behind you. What's left is the goal itself.
             </p>
           )}
 
@@ -1089,17 +1089,17 @@ export function ActiveGoalCard({
             <dl className="ag-facts">
               <div>
                 <dt>Start date</dt>
-                <dd>{formatGoalDate(started) || '—'}</dd>
+                <dd>{formatGoalDate(started) || '-'}</dd>
               </div>
               <div>
                 <dt>Target date</dt>
-                <dd className={overdue ? 'is-late' : undefined}>{formatGoalDate(goal.deadline) || '—'}</dd>
+                <dd className={overdue ? 'is-late' : undefined}>{formatGoalDate(goal.deadline) || '-'}</dd>
               </div>
               <div>
                 <dt>Time invested</dt>
                 {/* Off the clock finished tasks recorded, never estimated. A goal
                     whose work was never timed says so rather than guessing. */}
-                <dd>{invested > 0 ? hoursMinutes(invested) : '—'}</dd>
+                <dd>{invested > 0 ? hoursMinutes(invested) : '-'}</dd>
               </div>
               <div>
                 <dt>Category</dt>

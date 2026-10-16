@@ -190,7 +190,7 @@ export function GoalDetail(props: GoalDetailProps) {
 
           {numbers.measure === 'number' && (
             <div className="gx-value-row">
-              <label htmlFor="gx-value">Update the figure</label>
+              <label htmlFor="gx-value">Update the number</label>
               <input
                 id="gx-value"
                 type="number"
@@ -216,7 +216,7 @@ export function GoalDetail(props: GoalDetailProps) {
           <dl className="gx-facts">
             <div>
               <dt>Started</dt>
-              <dd>{formatGoalDate(goal.start_date || goal.created_at) || '—'}</dd>
+              <dd>{formatGoalDate(goal.start_date || goal.created_at) || '-'}</dd>
             </div>
             <div>
               <dt>Target date</dt>
@@ -226,7 +226,7 @@ export function GoalDetail(props: GoalDetailProps) {
               <dt>Days left</dt>
               <dd>
                 {health.signals.daysLeft === null
-                  ? '—'
+                  ? '-'
                   : health.signals.daysLeft < 0
                     ? `${Math.abs(health.signals.daysLeft)} over`
                     : health.signals.daysLeft}
@@ -361,8 +361,7 @@ export function GoalDetail(props: GoalDetailProps) {
           {rows.length === 0 && (
             <p className="gx-ms-empty">
               <span>
-                No checkpoints yet. Five is usually the whole plan — draft them
-                and edit what does not fit.
+                No checkpoints yet. Five is usually enough. Draft them, then edit what doesn't fit.
               </span>
               <AskModel
                 label="Suggest checkpoints"
@@ -385,7 +384,7 @@ export function GoalDetail(props: GoalDetailProps) {
           >
             <input
               value={draft}
-              placeholder="Add a checkpoint — a state this goal reaches, not a task"
+              placeholder="Add a checkpoint, like a stage this goal reaches"
               onChange={(event) => setDraft(event.target.value)}
             />
             <button type="submit" className="gx-btn" disabled={busy || !draft.trim()}>
@@ -411,7 +410,7 @@ export function GoalDetail(props: GoalDetailProps) {
         {/* ---- Why it is moving at this rate ------------------------------ */}
         <section className="gx-panel">
           <header className="gx-panel-head">
-            <h3>Why it is going at this rate</h3>
+            <h3>Why it's going at this rate</h3>
           </header>
 
           <div className="gx-readings">
@@ -449,7 +448,7 @@ export function GoalDetail(props: GoalDetailProps) {
             <div>
               <span className="gx-quiet">At this rate</span>
               <strong>
-                {pace.lands ? formatGoalDate(pace.lands) : '—'}
+                {pace.lands ? formatGoalDate(pace.lands) : '-'}
               </strong>
               <span className="gx-quiet">
                 {pace.drift === null
@@ -468,7 +467,7 @@ export function GoalDetail(props: GoalDetailProps) {
               <strong>Current bottleneck: {stuck.milestone.title}</strong>
               {stuck.waitingDays !== null
                 ? ` It has been the next checkpoint for ${stuck.waitingDays} days`
-                : ' It is the next checkpoint'}
+                : " It's the next checkpoint"}
               {stuck.tasks > 0
                 ? `, with ${stuck.done} of its ${stuck.tasks} tasks done.`
                 : ', and nothing is linked to it.'}
@@ -485,8 +484,7 @@ export function GoalDetail(props: GoalDetailProps) {
           )}
 
           <p className="gx-quiet gx-caveat">
-            Counted from the {linked.length} task{linked.length === 1 ? '' : 's'} linked to this
-            goal, not estimated.
+            Counted from the {linked.length} task{linked.length === 1 ? '' : 's'} linked to this goal.
           </p>
         </section>
 

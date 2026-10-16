@@ -206,6 +206,30 @@ html[data-theme="dark"] .ax-page {
 }
 .ax-note > * { margin-top: 0; }
 
+/* Short tips: "Label: one plain sentence." The format every explainer on
+   these pages uses, so they read the same everywhere. */
+.ax-tips {
+    margin: 0;
+    padding-left: 1.1em;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+.ax-tips li { padding-left: 2px; }
+.ax-tips li::marker { color: var(--ax-faint); }
+.ax-tips b { color: var(--ax-text); font-weight: 650; }
+.ax-tips-head {
+    margin: var(--space-3) 0 var(--space-1);
+    text-align: left;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ax-faint);
+}
+.ax-tips-head:first-child { margin-top: 0; }
+
 /* The change against the period before. Three states and one of them is
    "there is no earlier period", which has to look different from a flat 0%. */
 .ax-delta {

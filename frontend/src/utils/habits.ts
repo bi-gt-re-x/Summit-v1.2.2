@@ -76,10 +76,10 @@ export const STRENGTH_TONE: Record<HabitStrength, string> = {
 };
 
 export const STRENGTH_NOTE: Record<HabitStrength, string> = {
-  strong: 'Turns up in most weeks and is not fading. These are the ones holding your totals up.',
-  developing: 'Appearing regularly but not yet every week — the habit exists, the routine does not.',
-  inconsistent: 'Real gaps between appearances. It happens when it happens rather than on a schedule.',
-  declining: 'Running well below its own earlier rate. Still alive, but on the way out unless something changes.',
+  strong: "Shows up most weeks and isn't fading. These keep your totals up.",
+  developing: "Shows up often, but not every week yet. It's not a routine yet.",
+  inconsistent: 'Big gaps between times. It happens when it happens.',
+  declining: "Way down from before. It's still there, but it'll fade unless something changes.",
 };
 
 export interface Habit {
@@ -655,7 +655,7 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
     out.push({
       id: `when-${habit.id}`,
       text: `${habit.name} happens in ${best[0]}`,
-      support: `${best[1]} of ${mine.length} sessions — ${share}%`,
+      support: `${best[1]} of ${mine.length} sessions (${share}%)`,
       frequency: wordFor(share),
       tone: 'blue',
     });
@@ -679,9 +679,7 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
         out.push({
           id: 'weekend-light',
           text: 'you do much less on weekends',
-          support: `${Math.round(weekendRate * 10) / 10} finished on an average weekend day against ${
-            Math.round(weekdayRate * 10) / 10
-          } on a weekday`,
+          support: `${Math.round(weekendRate * 10) / 10} done on a weekend day vs. ${Math.round(weekdayRate * 10) / 10} on a weekday`,
           frequency: 'Usually',
           tone: 'amber',
         });
@@ -689,9 +687,7 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
         out.push({
           id: 'weekend-heavy',
           text: 'you do more on weekends',
-          support: `${Math.round(weekendRate * 10) / 10} finished on an average weekend day against ${
-            Math.round(weekdayRate * 10) / 10
-          } on a weekday`,
+          support: `${Math.round(weekendRate * 10) / 10} done on a weekend day vs. ${Math.round(weekdayRate * 10) / 10} on a weekday`,
           frequency: 'Usually',
           tone: 'amber',
         });
@@ -708,10 +704,8 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
     if (Math.abs(gap) >= 1.5) {
       out.push({
         id: 'hard-timing',
-        text: `high-priority work lands ${Math.abs(Math.round(gap))}h ${
-          gap > 0 ? 'earlier' : 'later'
-        } in the day than everything else`,
-        support: `${hard.length} high-priority tasks against ${rest.length} others`,
+        text: `you do high-priority work ${Math.abs(Math.round(gap))}h ${gap > 0 ? 'earlier' : 'later'} in the day than the rest`,
+        support: `${hard.length} high-priority tasks vs. ${rest.length} others`,
         frequency: 'Frequently',
         tone: 'violet',
       });

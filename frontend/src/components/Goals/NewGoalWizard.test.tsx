@@ -45,7 +45,7 @@ describe('the subject on a new goal', () => {
     const user = userEvent.setup();
     show();
 
-    await user.type(screen.getByLabelText(/the outcome, not the activity/i), 'Get 24 on the AMC 8');
+    await user.type(screen.getByLabelText(/the result you want/i), 'Get 24 on the AMC 8');
     expect(next()).toBeDisabled();
   });
 
@@ -53,7 +53,7 @@ describe('the subject on a new goal', () => {
     const user = userEvent.setup();
     show();
 
-    await user.type(screen.getByLabelText(/the outcome, not the activity/i), 'Get 24 on the AMC 8');
+    await user.type(screen.getByLabelText(/the result you want/i), 'Get 24 on the AMC 8');
     await user.click(screen.getByRole('button', { name: /choose a subject/i }));
     await user.click(screen.getByRole('button', { name: 'Algebra' }));
 
@@ -85,7 +85,7 @@ describe('the subject on a new goal', () => {
     const user = userEvent.setup();
     const onSave = show();
 
-    await user.type(screen.getByLabelText(/the outcome, not the activity/i), 'Violin ARCT');
+    await user.type(screen.getByLabelText(/the result you want/i), 'Violin ARCT');
     await user.click(screen.getByRole('button', { name: /choose a subject/i }));
     await user.click(screen.getByRole('button', { name: 'Violin' }));
 
@@ -116,7 +116,7 @@ describe('the model on the checkpoints step', () => {
         onSuggest={onSuggest}
       />,
     );
-    await user.type(screen.getByLabelText(/the outcome, not the activity/i), 'Violin ARCT');
+    await user.type(screen.getByLabelText(/the result you want/i), 'Violin ARCT');
     await user.click(screen.getByRole('button', { name: /choose a subject/i }));
     await user.click(screen.getByRole('button', { name: 'Violin' }));
     await user.click(next());
@@ -157,7 +157,7 @@ describe('the chart step', () => {
     const user = userEvent.setup();
     const onSave = show();
 
-    await user.type(screen.getByLabelText(/the outcome, not the activity/i), 'Violin ARCT');
+    await user.type(screen.getByLabelText(/the result you want/i), 'Violin ARCT');
     await user.click(screen.getByRole('button', { name: /choose a subject/i }));
     await user.click(screen.getByRole('button', { name: 'Violin' }));
     for (let step = 0; step < 5; step += 1) await user.click(next());

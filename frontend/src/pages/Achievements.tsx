@@ -475,7 +475,7 @@ function Entry({
               )}
             </>
           ) : (
-            <em>—</em>
+            <em>-</em>
           )}
         </span>
 
@@ -515,7 +515,7 @@ function Evolution({ best }: { best: Best }) {
   if (points.length < 2) {
     return (
       <p className="rc-empty">
-        One entry so far. Log “{best.name}” again when you beat it and the line appears here.
+        One entry so far. Log "{best.name}" again when you beat it and the line appears here.
       </p>
     );
   }
@@ -638,14 +638,14 @@ function ChaseRow({ row }: { row: RecordChase }) {
 
       <p className="rc-chase-foot">
         {row.held ? (
-          <strong>Holding it — {row.window} is your best yet.</strong>
+          <strong>Holding it: {row.window} is your best yet.</strong>
         ) : (
           <>
             <strong>
               {remaining}
               {row.unit ? ` ${row.unit}` : ''} to go
-            </strong>{' '}
-            — {row.window} stands at{' '}
+            </strong>
+            . {row.window} is at{' '}
             {row.decimals > 0 ? row.current.toFixed(row.decimals) : row.current.toLocaleString()}
             {row.unit ? ` ${row.unit}` : ''}.
           </>
@@ -798,7 +798,7 @@ export default function Achievements() {
       try {
         const result = await action();
         if (!result.success) {
-          setError(result.message ?? 'That did not work.');
+          setError(result.message ?? "That didn't work.");
           return false;
         }
         setError(null);
@@ -843,7 +843,7 @@ export default function Achievements() {
   );
 
   if (series.loading || account.loading || logged.loading) {
-    return <Loading label="Reading your record" />;
+    return <Loading label="Loading your records" />;
   }
   if (series.error && !rows.length) {
     return <ErrorState message={series.error} onRetry={series.reload} />;
@@ -872,7 +872,7 @@ export default function Achievements() {
             <h1 className="rc-title">Achievements</h1>
             {lead ? (
               <>
-                <p className="rc-sub is-thesis">Look how far you’ve come.</p>
+                <p className="rc-sub is-thesis">Look how far you've come.</p>
                 <p className="rc-lead">
                   <span className="rc-lead-span">
                     <span className="rc-lead-from">{formatValue(lead.first, lead.unit)}</span>
@@ -1002,10 +1002,10 @@ export default function Achievements() {
 
         {bests.length === 0 ? (
           <p className="rc-empty">
-            Nothing logged yet. “Add record” takes a name, a figure and a date.
+            Nothing logged yet. "Add record" just needs a name, a number and a date.
           </p>
         ) : shownBests.length === 0 ? (
-          <p className="rc-empty">No records under “{category}” yet.</p>
+          <p className="rc-empty">No records under "{category}" yet.</p>
         ) : (
           <>
             <ul className="rc-bests">
@@ -1217,12 +1217,11 @@ export default function Achievements() {
             <>
               <p className="rc-define">
                 A record is <strong>I did better</strong>. A milestone is{' '}
-                <strong>I reached something</strong> — no figure to beat, just
-                the fact that it happened.
+                <strong>I reached something</strong> . No number to beat. It just happened.
               </p>
               {milestones.length === 0 ? (
                 <p className="rc-empty">
-                  “First 25/25”, “Reached RCM 9”, “1,000 tasks done”.
+                  "First 25/25", "Reached RCM 9", "1,000 tasks done".
                 </p>
               ) : (
             <ul className="rc-miles">
@@ -1272,7 +1271,7 @@ export default function Achievements() {
           What Summit noticed
         </h2>
         <p className="rc-note">
-          Worked out from your activity, not entered by hand.
+          Filled in from your activity automatically.
         </p>
 
         {all.length < NEED_DAYS ? (

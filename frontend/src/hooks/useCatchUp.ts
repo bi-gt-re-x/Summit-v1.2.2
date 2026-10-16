@@ -158,7 +158,7 @@ export function useCatchUp(username: string | null): UseCatchUp {
         .then((results) => {
           const failed = results.filter((result) => !result.success).length;
           if (failed === results.length) {
-            setFailure('Could not save that. Try again.');
+            setFailure("Couldn't save that. Try again.");
             return;
           }
           setDays(null);
@@ -166,7 +166,7 @@ export function useCatchUp(username: string | null): UseCatchUp {
         })
         .catch((cause: unknown) => {
           console.error('Dashboard: logging catch-up hours failed', cause);
-          setFailure('Could not save that. Try again.');
+          setFailure("Couldn't save that. Try again.");
         })
         .finally(() => setSaving(false));
     },

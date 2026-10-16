@@ -362,7 +362,7 @@ export function subjectInsights(
       key: 'rhythm',
       tone: slower ? 'down' : 'up',
       head: slower ? 'Coming back less often' : 'Coming back more often',
-      detail: `Lately it's ${every(lately)}. Over your whole record it's ${every(usual)}. ${breaksLine}`,
+      detail: `Lately it's ${every(lately)}. Usually it's ${every(usual)}. ${breaksLine}`,
       figures: [
         ...lastFigure,
         { label: 'Worked on it', value: `${recent.days} of 30 days` },
@@ -857,10 +857,7 @@ export function subjectInsights(
         : place === 1
           ? 'Your biggest subject'
           : `Your ${ordinal(place)} biggest subject`,
-    detail: `${share(card.xp, total)}% of all the XP you've filed under a subject, out of ${plural(
-      cards.length,
-      'subject',
-    )}.${neighbor}`,
+    detail: `${share(card.xp, total)}% of your subject XP, out of ${plural(cards.length, 'subject')}.${neighbor}`,
     figures: [
       { label: 'XP here', value: Math.round(card.xp).toLocaleString() },
       { label: 'Share', value: `${share(card.xp, total)}%` },

@@ -224,9 +224,9 @@ def signup(request: Request, body: Signup):
               username=user['username'],
               profile_complete=auth.profile_complete(user),
               message=(
-        'Account created — confirm {} when you get a moment.'.format(email)
+        'Account created! Confirm {} when you get a sec.'.format(email)
         if reply['sent'] or reply['dev_link']
-        else 'Your account is made, but the confirmation e-mail could not be '
+        else "Your account is made, but the confirmation e-mail couldn't be "
              'sent. Try "Send it again" in a moment.'))
 
 
@@ -264,7 +264,7 @@ def resend(request: Request, body: Resend):
     if not user:
         user = auth.find_user(users, email=str(body.email or '').strip())
     if not user:
-        return fail('Start again — we lost track of that sign-up.')
+        return fail('Please start again. We lost track of that sign-up.')
     if auth.is_verified(user):
         return ok(already=True, message='That e-mail is already confirmed.')
 
@@ -276,9 +276,9 @@ def resend(request: Request, body: Resend):
     # so it says that rather than claiming a mail went out.
     return ok(**reply, message=(
         'Sent again to {}.'.format(user.get('email')) if reply['sent']
-        else 'E-mail is not set up on this server, so nothing was sent. Use the link below.'
+        else "E-mail isn't set up on this server, so nothing was sent. Use the link below."
         if reply['dev_link']
-        else 'That still did not send. Try again in a few minutes.'))
+        else "That still didn't send. Try again in a few minutes."))
 
 
 @router.get('/verify/{token}')
@@ -386,7 +386,7 @@ def complete_profile(request: Request, body: CompleteProfile):
     db.save_user(user)
 
     payload = auth.sign_in(request, user)
-    return _with_theme(ok(user=payload, message='You are all set.'), user['theme'])
+    return _with_theme(ok(user=payload, message="You're all set."), user['theme'])
 
 
 # --------------------------------------------------------------------------

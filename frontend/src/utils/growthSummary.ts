@@ -42,10 +42,10 @@ export interface RangeOption {
 }
 
 export const RANGES: RangeOption[] = [
-  { key: '7', label: 'Last 7 Days', days: 7 },
-  { key: '30', label: 'Last 30 Days', days: 30 },
-  { key: '90', label: 'Last 90 Days', days: 90 },
-  { key: 'all', label: 'All Time', days: null },
+  { key: '7', label: 'Last 7 days', days: 7 },
+  { key: '30', label: 'Last 30 days', days: 30 },
+  { key: '90', label: 'Last 90 days', days: 90 },
+  { key: 'all', label: 'All time', days: null },
 ];
 
 export interface RangeSlice {
@@ -79,7 +79,7 @@ export function sliceRange(all: GrowthDay[], range: RangeKey): RangeSlice {
 export function rangeLabel(days: GrowthDay[]): string {
   const first = days[0]?.date;
   const last = days[days.length - 1]?.date;
-  if (!first || !last) return '—';
+  if (!first || !last) return '-';
 
   const at = (iso: string) => new Date(`${iso}T00:00:00`);
   const short = (iso: string) =>
@@ -87,7 +87,7 @@ export function rangeLabel(days: GrowthDay[]): string {
   const year = at(last).getFullYear();
   return first === last
     ? `${short(first)}, ${year}`
-    : `${short(first)} – ${short(last)}, ${year}`;
+    : `${short(first)} to ${short(last)}, ${year}`;
 }
 
 // --------------------------------------------------------------------------
@@ -488,10 +488,10 @@ export function chartStats(slice: RangeSlice): ChartStat[] {
   const weekXp = total(week, (day) => day.xp_earned);
 
   return [
-    { key: 'total', label: 'Total XP Earned', value: Math.round(xp), unit: 'XP', delta: null, note: null },
+    { key: 'total', label: 'Total XP earned', value: Math.round(xp), unit: 'XP', delta: null, note: null },
     {
       key: 'average',
-      label: 'Daily Average',
+      label: 'Daily average',
       value: Math.round(perDay),
       unit: 'XP',
       delta: change(perDay, perDayWas),
@@ -499,7 +499,7 @@ export function chartStats(slice: RangeSlice): ChartStat[] {
     },
     {
       key: 'best',
-      label: 'Best Day',
+      label: 'Best day',
       value: Math.round(Number(peak?.xp_earned) || 0),
       unit: 'XP',
       delta: null,
@@ -512,7 +512,7 @@ export function chartStats(slice: RangeSlice): ChartStat[] {
     },
     {
       key: 'streak',
-      label: 'Longest Streak',
+      label: 'Longest streak',
       value: longestStreak(current),
       unit: 'Days',
       delta: null,
@@ -520,7 +520,7 @@ export function chartStats(slice: RangeSlice): ChartStat[] {
     },
     {
       key: 'week',
-      label: 'XP This Week',
+      label: 'XP this week',
       value: Math.round(weekXp),
       unit: 'XP',
       delta: change(weekXp, total(weekBefore, (day) => day.xp_earned)),
@@ -626,7 +626,7 @@ export interface LongTermWindow {
 export const LONG_TERM_WINDOWS: LongTermWindow[] = [
   { key: '6m', label: '6M', days: 183 },
   { key: '1y', label: '1Y', days: 365 },
-  { key: 'all', label: 'All Time', days: null },
+  { key: 'all', label: 'All time', days: null },
 ];
 
 export interface LongTermLine {
@@ -759,13 +759,13 @@ export function longTermProgress(
     ticks,
     lines: [
       line('xp', 'Total XP', (bucket) => bucket.xp, compact),
-      line('tasks', 'Tasks Completed', (bucket) => bucket.tasks, (value) =>
+      line('tasks', 'Tasks done', (bucket) => bucket.tasks, (value) =>
         Math.round(value).toLocaleString(),
       ),
-      line('focus', 'Focus Hours', (bucket) => bucket.focusHours, (value) =>
+      line('focus', 'Focus hours', (bucket) => bucket.focusHours, (value) =>
         value.toFixed(1),
       ),
-      line('active', 'Active Days', (bucket) => bucket.activeDays, (value) =>
+      line('active', 'Active days', (bucket) => bucket.activeDays, (value) =>
         String(Math.round(value)),
       ),
     ],
@@ -862,7 +862,7 @@ export function milestones(all: GrowthDay[], currentStreak = 0): Milestone[] {
   return [
     {
       kind: 'xp',
-      name: `Reach ${xpTarget.toLocaleString()} Total XP`,
+      name: `Reach ${xpTarget.toLocaleString()} total XP`,
       sub: `${Math.round(lifetimeXp).toLocaleString()} / ${xpTarget.toLocaleString()} XP`,
       target: xpTarget,
       progress: lifetimeXp,
@@ -871,8 +871,8 @@ export function milestones(all: GrowthDay[], currentStreak = 0): Milestone[] {
     },
     {
       kind: 'focus',
-      name: `${focusTarget} Focus Hours`,
-      sub: `${lifetimeFocus.toFixed(1)} / ${focusTarget} Hours`,
+      name: `${focusTarget} focus hours`,
+      sub: `${lifetimeFocus.toFixed(1)} / ${focusTarget} hours`,
       target: focusTarget,
       progress: lifetimeFocus,
       reward: focusReward,
@@ -883,8 +883,8 @@ export function milestones(all: GrowthDay[], currentStreak = 0): Milestone[] {
     },
     {
       kind: 'streak',
-      name: `${streakTarget} Day Streak`,
-      sub: `${currentStreak} / ${streakTarget} Days`,
+      name: `${streakTarget}-day streak`,
+      sub: `${currentStreak} / ${streakTarget} days`,
       target: streakTarget,
       progress: currentStreak,
       reward: streakReward,
@@ -937,13 +937,13 @@ export function milestoneHistory(all: GrowthDay[]): ReachedMilestone[] {
   walk(
     XP_TIERS,
     (day) => day.cumulative_xp,
-    (target) => `Reached ${target.toLocaleString()} Total XP`,
+    (target) => `Reached ${target.toLocaleString()} total XP`,
     'xp',
   );
   walk(
     FOCUS_TIERS,
     (day) => day.cumulative_focus_minutes / 60,
-    (target) => `${target} Hours Focused`,
+    (target) => `${target} hours focused`,
     'focus',
   );
 
@@ -1050,8 +1050,8 @@ export function growthInsights(slice: RangeSlice): Insight[] {
         headline: `You're most productive on ${listOf(names)}.`,
         hint:
           names.length === 1
-            ? 'Worth protecting that day from everything else.'
-            : 'Keep up the great work!',
+            ? 'Guard that day.'
+            : 'Nice work. Keep it up.',
       });
     }
   }
@@ -1100,8 +1100,8 @@ export function growthInsights(slice: RangeSlice): Insight[] {
     const up = swing > 0;
     out.push({
       tone: up ? 'good' : 'watch',
-      headline: `Your average XP per day has ${up ? 'increased' : 'fallen'} by ${Math.abs(swing)}%`,
-      hint: `compared to the previous ${previous.length} days.`,
+      headline: `Your daily XP is ${up ? 'up' : 'down'} ${Math.abs(swing)}%`,
+      hint: `vs. the ${previous.length} days before.`,
     });
   }
 
@@ -1121,7 +1121,7 @@ export function growthInsights(slice: RangeSlice): Insight[] {
         : {
             tone: 'note',
             headline: `You worked on ${active} of ${current.length} days.`,
-            hint: 'Working more often helps more than one big day.',
+            hint: 'Working more often beats one big day.',
           },
     );
   }
@@ -1167,7 +1167,7 @@ export function growthInsights(slice: RangeSlice): Insight[] {
       hint:
         longest >= 7
           ? 'Keep it going.'
-          : 'Try to work on back-to-back days.',
+          : 'Try working on back-to-back days.',
     });
   }
 
@@ -1222,7 +1222,7 @@ function quietRows(days: GrowthDay[], active: number, have: number): Insight[] {
       ? {
           tone: 'note',
           headline: 'No data yet.',
-          hint: 'This fills in from the day you signed up.',
+          hint: 'This fills in as you go.',
         }
       : active === 0
       ? {
@@ -1248,8 +1248,8 @@ function quietRows(days: GrowthDay[], active: number, have: number): Insight[] {
         },
     {
       tone: 'note',
-      headline: 'Nothing stands out.',
-      hint: 'Findings appear here when something changes.',
+      headline: 'Nothing new.',
+      hint: 'This updates when something changes.',
     },
   ];
 

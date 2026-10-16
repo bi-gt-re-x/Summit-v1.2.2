@@ -55,7 +55,7 @@ describe('consistency', () => {
 
 describe('subjects', () => {
   it('states the leader as a share of the whole', () => {
-    expect(textOf('subjects')).toBe('Mathematics is 50% of your recorded work.');
+    expect(textOf('subjects')).toBe('Mathematics is 50% of your work.');
   });
 
   it('picks the leader by count, not by the order the rows arrive in', () => {
@@ -69,7 +69,7 @@ describe('subjects', () => {
           { name: 'History', count: 7 },
         ],
       }),
-    ).toBe('Mathematics is 80% of your recorded work.');
+    ).toBe('Mathematics is 80% of your work.');
   });
 
   it('will not call the remainder bucket a subject', () => {
@@ -82,7 +82,7 @@ describe('subjects', () => {
         ],
       }),
       // 30 of 100, because the remainder still counts toward the total.
-    ).toBe('Mathematics is 30% of your recorded work.');
+    ).toBe('Mathematics is 30% of your work.');
   });
 
   it('will not call one subject a hundred per cent of the work', () => {
@@ -105,7 +105,7 @@ describe('subjects', () => {
 describe('current focus', () => {
   it('appears when lately differs from all time', () => {
     expect(textOf('focus', { recentTop: 'Computer Science' })).toBe(
-      'Lately you have been working on Computer Science most.',
+      "Lately you've worked on Computer Science the most.",
     );
   });
 
@@ -120,7 +120,7 @@ describe('current focus', () => {
 
 describe('record', () => {
   it('says how long the account has been going, and not how much was worked', () => {
-    expect(textOf('record')).toBe('You have been using Summit for 90 days.');
+    expect(textOf('record')).toBe("You've used Summit for 90 days.");
   });
 
   it('leads, because it is the length of the record the rest are rates of', () => {
@@ -185,8 +185,8 @@ describe('the advice turns on the figure', () => {
   it('stops asking an unbroken record to be more consistent', () => {
     const held = adviceOf('record', { activeDays: 90, spanDays: 90 });
     const patchy = adviceOf('record', { activeDays: 30, spanDays: 90 });
-    expect(held).toMatch(/not your problem/i);
-    expect(patchy).toMatch(/patchy/);
+    expect(held).toMatch(/You show up plenty/i);
+    expect(patchy).toMatch(/hit and miss/);
   });
 
   it('reads a dominant subject and a scattered week differently', () => {
@@ -206,7 +206,7 @@ describe('the advice turns on the figure', () => {
       ],
     });
     expect(dominant).toMatch(/Over half/);
-    expect(scattered).toMatch(/Nothing owns your time/);
+    expect(scattered).toMatch(/Your time is spread out/);
   });
 
   it('does not call a deliberate pair of interests unfocused', () => {

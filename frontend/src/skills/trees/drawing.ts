@@ -51,7 +51,7 @@ export const DRAWING: SubjectTree = {
     { id: 'dr.compose', name: 'Composing a Picture', icon: 'composition', tier: 'expert', requires: ['dr.plein', 'dr.portrait'], state: lock, percent: 0, xp: 2400,
       desc: 'Deciding what the picture is of and removing everything competing with it. Thumbnail several arrangements before committing hours to the first idea.' },
     { id: 'dr.masters', name: 'Master Studies', icon: 'master-study', tier: 'expert', requires: ['dr.ink', 'dr.digital'], state: lock, percent: 0, xp: 2400,
-      desc: 'Copying good work to find out how a decision was made. Analytical copying — asking why an edge is soft there — teaches what admiring never will.' },
+      desc: 'Copying good work to find out how a decision was made. Analytical copying (asking why an edge is soft there) teaches what admiring never will.' },
     { id: 'dr.series', name: 'Finished Work', icon: 'portfolio', tier: 'mastery', requires: ['dr.compose', 'dr.masters'], state: lock, percent: 0, xp: 2900,
       desc: 'Taking pieces all the way to done, repeatedly, rather than accumulating strong studies. Finishing is a separate skill and the one that turns practice into a body of work.' },
   ],

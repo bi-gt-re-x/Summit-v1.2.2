@@ -192,10 +192,10 @@ def _message(metric_scores):
     best = max(metric_scores, key=metric_scores.get)
     worst = min(metric_scores, key=metric_scores.get)
     if metric_scores[worst] >= 85:
-        return "Excellent across the board — keep it up."
+        return "Great across the board. Keep it up."
     if best == worst:
         return phrases[best][0].capitalize() + "."
-    return "{} — {}.".format(phrases[best][0].capitalize(), phrases[worst][1])
+    return "{}. {}.".format(phrases[best][0].capitalize(), phrases[worst][1].capitalize())
 
 
 def _trend(current, previous):

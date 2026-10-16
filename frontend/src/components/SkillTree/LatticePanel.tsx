@@ -1134,14 +1134,12 @@ export function LatticePanel({
         ? `Mastered on ${node.on}.`
         : 'Mastered.'
       : blockers.length > 0
-        ? `${blockers.length} ${blockers.length === 1 ? 'prerequisite' : 'prerequisites'} away — ${
-            blockers.length === 1 ? 'one thing' : 'those'
-          } to finish before this opens.`
+        ? `${blockers.length} ${blockers.length === 1 ? 'prerequisite' : 'prerequisites'} away. Finish ${blockers.length === 1 ? 'it' : 'them'} to open this.`
         : steps
           ? `Step ${at + 1} of ${programme.steps.length} of your own program.`
           : node.status === 'progress'
             ? `${Math.round(node.percent)}% of the way through.`
-            : 'Open now — nothing is in the way of starting it.';
+            : 'Open now. Nothing in the way.';
 
   /*
    * Why the reader is being shown this, in the panel's own words.
@@ -1435,7 +1433,7 @@ export function LatticePanel({
               </ul>
             </>
           ) : (
-            <p className="stx-lp-why">A foundation of this subject — nothing comes before it.</p>
+            <p className="stx-lp-why">A starting point. Nothing comes before it.</p>
           )}
         </section>
 

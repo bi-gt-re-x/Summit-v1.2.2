@@ -317,7 +317,7 @@ function RecordsView({ view, data }: { view: string; data: RecordsData }) {
                 <td><strong>{num(row.best)}</strong> {row.unit}</td>
                 <td>{num(row.first)}</td>
                 <td>{num(row.latest)}</td>
-                <td>{sinceFirst(row) || '–'}</td>
+                <td>{sinceFirst(row) || '-'}</td>
                 <td>{row.entries}</td>
               </tr>
             ))}
@@ -598,7 +598,7 @@ function SkillsView({ view, data }: { view: string; data: SkillsData }) {
     <Stats>
       <Stat value={`${data.done}/${data.total}`} label="skills done" />
       <Stat value={String(data.doing)} label="in progress" />
-      <Stat value={data.accuracy === null ? '–' : `${data.accuracy}%`} label="accuracy" />
+      <Stat value={data.accuracy === null ? '-' : `${data.accuracy}%`} label="accuracy" />
     </Stats>
   );
   if (view === 'list') {
@@ -631,7 +631,7 @@ function SkillsView({ view, data }: { view: string; data: SkillsData }) {
           rows={practiced.slice(0, 10).map((node) => ({
             label: node.name,
             value: node.accuracy ?? 0,
-            display: node.accuracy === null ? '–' : `${node.accuracy}%`,
+            display: node.accuracy === null ? '-' : `${node.accuracy}%`,
             color: (node.accuracy ?? 0) >= 85 ? colorVar(1) : (node.accuracy ?? 0) >= 70 ? colorVar(0) : colorVar(3),
           }))}
         />
@@ -753,8 +753,8 @@ function RhythmView({ view, metric, data }: { view: string; metric?: Metric; dat
   const top = (Object.keys(parts) as Array<keyof typeof parts>).sort((a, b) => parts[b] - parts[a])[0]!;
   const head = (
     <Stats>
-      <Stat value={data.peak_day !== null ? WEEKDAYS[data.peak_day] ?? '–' : '–'} label="best day" />
-      <Stat value={data.peak_hour !== null ? hourLabel(data.peak_hour) : '–'} label="best hour" />
+      <Stat value={data.peak_day !== null ? WEEKDAYS[data.peak_day] ?? '-' : '-'} label="best day" />
+      <Stat value={data.peak_hour !== null ? hourLabel(data.peak_hour) : '-'} label="best hour" />
       <Stat value={`${data.weekend_share}%`} label="on weekends" />
     </Stats>
   );
@@ -800,7 +800,7 @@ function SubjectsView({ view, metric, data }: { view: string; metric?: Metric; d
   const head = (
     <Stats>
       <Stat value={String(data.subjects)} label={data.subjects === 1 ? 'subject' : 'subjects'} />
-      <Stat value={data.balance === null ? '–' : `${data.balance}/100`} label="balance" hint="100 is perfectly even, 0 is one subject only" />
+      <Stat value={data.balance === null ? '-' : `${data.balance}/100`} label="balance" hint="100 is perfectly even, 0 is one subject only" />
       <Stat value={`${Math.round(data.top_share)}%`} label="in the top one" />
     </Stats>
   );

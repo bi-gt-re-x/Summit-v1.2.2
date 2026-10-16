@@ -650,9 +650,9 @@ function WeekDots({
             className={`dash-week-day${mark ? ` is-${mark}` : ''}${isToday ? ' is-today' : ''}`}
             title={
               mark === 'forgiven'
-                ? 'Missed — your grace day kept the streak'
+                ? 'Missed, but your grace day saved the streak'
                 : mark === 'vacation'
-                  ? 'On vacation — the streak was paused'
+                  ? 'On vacation. Streak paused.'
                   : undefined
             }
           >
@@ -737,7 +737,7 @@ export function StreakGuard({ stats }: { stats: UserStats }) {
     tone = 'vacation';
     short = vacation.active ? `Paused to ${shortDay(vacation.end)}` : `Away ${shortDay(vacation.start)}`;
     full = vacation.active
-      ? `On vacation until ${longDay(vacation.end)}. Days away do not count against the streak.`
+      ? `On vacation until ${longDay(vacation.end)}. Days away don't count against the streak.`
       : `Vacation from ${longDay(vacation.start)} to ${longDay(vacation.end)}.`;
   } else if (!grace || streak <= 0) {
     return null;

@@ -298,35 +298,29 @@ export function growthArc(years: GrowthYear[]): GrowthArc {
   if (rose && !harder && !easier) {
     kind = 'better';
     headline = 'You got better at the work';
-    sentence = `From ${span} your execution went ${exec} out of 5, with difficulty steady at ` +
-    `${to.difficulty!.toFixed(1)}.`;
+    sentence = `From ${span}, how well it went moved ${exec} out of 5. Difficulty stayed at ${to.difficulty!.toFixed(1)}.`;
   } else if (rose && harder) {
     kind = 'both';
-    headline = 'Harder work, executed better';
-    sentence = `From ${span} your execution went ${exec} out of 5 and the difficulty you took on `
-      + `went ${diff}. Harder work, executed better.`;
+    headline = 'Harder work, done better';
+    sentence = `From ${span}, how well it went moved ${exec} out of 5 and difficulty went ${diff}. Harder work, done better.`;
   } else if (rose && easier) {
     // Said plainly. This is the one case where a rising execution score is not
     // evidence of improvement, and the page does not get to omit it.
     kind = 'harder';
     headline = 'Some of the rise is easier work';
-    sentence = `From ${span} your execution went ${exec} out of 5, but the difficulty of what you `
-      + `took on went ${diff}. Some of that rise is easier work.`;
+    sentence = `From ${span}, how well it went moved ${exec} out of 5, but difficulty went ${diff}. Some of that is easier work.`;
   } else if (harder && !fell) {
     kind = 'harder';
     headline = 'Harder work, held steady';
-    sentence = `From ${span} the difficulty you took on went ${diff} and your execution held at `
-      + `${to.execution!.toFixed(1)} out of 5. Harder work, held steady.`;
+    sentence = `From ${span}, difficulty went ${diff} and how well it went stayed at ${to.execution!.toFixed(1)} out of 5. Harder work, held steady.`;
   } else if (fell) {
     kind = 'slipped';
-    headline = 'Execution slipped';
-    sentence = `From ${span} your execution went ${exec} out of 5, against difficulty going `
-      + `${diff}.`;
+    headline = 'Your ratings slipped';
+    sentence = `From ${span}, how well it went moved ${exec} out of 5 while difficulty went ${diff}.`;
   } else {
     kind = 'flat';
     headline = 'Steady on both';
-    sentence = `From ${span} your execution held around ${to.execution!.toFixed(1)} out of 5 and `
-      + `the difficulty you took on around ${to.difficulty!.toFixed(1)}. Steady on both.`;
+    sentence = `From ${span}, how well it went stayed near ${to.execution!.toFixed(1)} out of 5 and difficulty near ${to.difficulty!.toFixed(1)}. Steady on both.`;
   }
 
   return { from, to, executionGain, difficultyShift, kind, sentence, headline };

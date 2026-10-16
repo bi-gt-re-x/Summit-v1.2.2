@@ -43,7 +43,7 @@ export const LITERATURE: SubjectTree = {
     { id: 'lit.compare', name: 'Comparative Reading', icon: 'compare', tier: 'advanced', requires: ['lit.close'], state: lock, percent: 0, xp: 2100,
       desc: 'Two texts side by side, chosen so the comparison produces something neither would alone. The pairing is the argument, and a lazy pairing cannot be rescued by good analysis.' },
     { id: 'lit.theory', name: 'Critical Approaches', icon: 'lens', tier: 'advanced', requires: ['lit.tradition'], state: lock, percent: 0, xp: 2200,
-      desc: 'Deliberate lenses — historical, psychological, political, formal — each making some features visible and others invisible. The point is choosing one knowingly rather than having one by default.' },
+      desc: 'Deliberate lenses (historical, psychological, political, formal) each making some features visible and others invisible. The point is choosing one knowingly rather than having one by default.' },
     { id: 'lit.essay', name: 'The Literary Essay', icon: 'essay', tier: 'advanced', core: true, requires: ['lit.compare'], state: lock, percent: 0, xp: 2200,
       desc: 'A claim about a text, defended with quotation and analysis rather than plot summary. The commonest failure is retelling the book to a reader who has read it.' },
     { id: 'lit.translate', name: 'Literature in Translation', icon: 'translate', tier: 'expert', requires: ['lit.theory'], state: lock, percent: 0, xp: 2300,

@@ -173,7 +173,7 @@ describe('three next sessions', () => {
       success: true, subject: 'All subjects', subject_id: '', steps: [], subjects: [], available: false,
     });
     show();
-    expect(await screen.findByText(/needs a model key/)).toBeInTheDocument();
+    expect(await screen.findByText(/need an AI key/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Suggest/ })).not.toBeInTheDocument();
   });
 });

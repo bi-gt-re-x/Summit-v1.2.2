@@ -28,8 +28,8 @@ const OUTCOME: Record<Review['outcome'], { label: string; tone: string }> = {
   worsened: { label: 'Went the other way', tone: 'bad' },
   held: { label: 'Held', tone: 'flat' },
   early: { label: 'Too new', tone: 'wait' },
-  thin: { label: 'Cannot compare', tone: 'wait' },
-  unmeasured: { label: 'No measure', tone: 'wait' },
+  thin: { label: "Can't compare", tone: 'wait' },
+  unmeasured: { label: 'No score', tone: 'wait' },
 };
 
 /** Rounds a figure the way the panel prints it. */
@@ -102,8 +102,8 @@ export function FollowupPanel({ reviews, summary, onDrop, dropping }: FollowupPa
                       checkable against the reader's own memory of the month,
                       which is the only external check this page can offer. */}
                   <p className="ax-followup-window">
-                    {shortDate(row.beforeFrom ?? '')}–{shortDate(row.beforeTo ?? '')} against{' '}
-                    {shortDate(row.afterFrom ?? '')}–{shortDate(row.afterTo ?? '')}
+                    {shortDate(row.beforeFrom ?? '')} to {shortDate(row.beforeTo ?? '')} vs.{' '}
+                    {shortDate(row.afterFrom ?? '')} to {shortDate(row.afterTo ?? '')}
                   </p>
                 </>
               )}
@@ -127,7 +127,7 @@ export function FollowupPanel({ reviews, summary, onDrop, dropping }: FollowupPa
           would become wallpaper. It is the most important sentence in the panel
           and it is the one a reader will stop seeing if it appears six times. */}
       <p className="ax-followup-caveat">
-        A simple before-and-after. Other things may have changed too.
+        A simple before and after. Other things may have changed too.
       </p>
     </Panel>
   );

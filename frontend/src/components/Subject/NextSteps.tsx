@@ -115,7 +115,7 @@ export function sessionWhen(task: PlannedSession): string {
   });
   const time = (date: Date) =>
     date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
-  return `${day}, ${time(start)}–${time(end)}`;
+  return `${day}, ${time(start)}-${time(end)}`;
 }
 
 export interface NextStepsProps {
@@ -205,8 +205,8 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
                                 className="sx-link-rank is-free"
                                 title={
                                   link.signup === 'none'
-                                    ? 'Free, and you can use it without an account'
-                                    : 'Free, with a quick account by email or Google'
+                                    ? 'Free. No account needed.'
+                                    : 'Free with a quick email or Google sign-up'
                                 }
                               >
                                 {link.signup === 'none' ? 'Free, no signup' : 'Free account'}
@@ -249,11 +249,10 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
 
                   <div className="sx-step-actions">
                     {done ? (
-                      <span className="sx-step-done">Recorded. It counts toward what works</span>
+                      <span className="sx-step-done">Saved. It helps us learn what works for you.</span>
                     ) : planned ? (
                       <span className="sx-step-done">
-                        Planned for {sessionWhen(planned)} · {planned.xp} XP. Complete or
-                        delete that task to plan another from this.
+                        Planned for {sessionWhen(planned)} · {planned.xp} XP. Finish or delete that task to plan another.
                       </span>
                     ) : (
                       <>

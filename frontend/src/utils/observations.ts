@@ -81,9 +81,9 @@ export type Confidence = 'low' | 'moderate' | 'high';
  * may tend to…", which is the register that makes a reader stop reading.
  */
 export const CONFIDENCE_LABEL: Record<Confidence, string> = {
-  low: 'Early observation',
-  moderate: 'Pattern emerging',
-  high: 'Established pattern',
+  low: 'Early hint',
+  moderate: 'Pattern forming',
+  high: 'Clear pattern',
 };
 
 /**
@@ -188,9 +188,9 @@ function executionGap(tasks: Observable[]): Observation | null {
     key: 'execution-gap',
     text:
       gap > 0
-        ? 'You tend to rate these as harder than your execution ratings suggest.'
-        : 'These are going less smoothly than the difficulty you give them suggests.',
-    support: `from ${plural(n, 'rated task')}, difficulty ${difficulty.toFixed(1)} against execution ${execution.toFixed(1)}`,
+        ? 'These feel harder than they go.'
+        : "These go worse than you'd expect for how hard they are.",
+    support: `from ${plural(n, 'rated task')}: ${difficulty.toFixed(1)} for how hard, ${execution.toFixed(1)} for how well`,
     confidence: confidenceFor(n, strength),
     n,
     strength,
@@ -264,7 +264,7 @@ function deadlines(tasks: Observable[]): Observation | null {
     text:
       rate >= 0.8
         ? 'When you put a deadline on work here, you meet it.'
-        : 'Deadlines on this work slip more often than they hold.',
+        : 'Deadlines here slip more often than not.',
     support: `${met} of ${n} met`,
     confidence: confidenceFor(n, strength),
     n,
@@ -303,7 +303,7 @@ function difficultyMix(tasks: Observable[]): Observation | null {
   const strength = Math.min(1, (share - 0.2) / 0.8);
   return {
     key: 'difficulty-mix',
-    text: `Nearly everything you take on here sits at ${word}.`,
+    text: `Almost everything you do here is ${word}.`,
     support: `${top.count} of ${plural(n, 'rated task')}`,
     confidence: confidenceFor(n, strength),
     n,

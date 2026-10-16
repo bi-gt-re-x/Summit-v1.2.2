@@ -78,7 +78,7 @@ import type { Task } from '@/types';
  * easter egg in styles/dashboard.css, and this page is not part of it.
  */
 const PLACEHOLDER = {
-  quote: 'It is not that we have a short time to live, but that we waste a lot of it.',
+  quote: "It's not that we have a short time to live, but that we waste a lot of it.",
   author: 'Seneca',
 };
 

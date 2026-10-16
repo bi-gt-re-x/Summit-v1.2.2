@@ -176,7 +176,7 @@ export const PLACES: Place[] = [
     name: 'Subjects',
     where: 'Analytics',
     to: '/subjects',
-    keywords: 'per subject levels breakdown what you are getting good at',
+    keywords: "per subject levels breakdown what you're getting good at",
   },
   {
     id: 'analytics-growth',

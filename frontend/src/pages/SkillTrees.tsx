@@ -1098,7 +1098,7 @@ export default function SkillTrees() {
                   <button
                     type="button"
                     className="stx-zoom-view"
-                    title="Fit the branch you are in"
+                    title="Fit the branch you're in"
                     onClick={() => frameOn(branchIds(position))}
                   >
                     Branch
@@ -1158,8 +1158,7 @@ export default function SkillTrees() {
                 <Ico icon="target" className="stx-ico stx-lp-blank-ico" />
                 <strong>Pick a skill</strong>
                 <span>
-                  Every tile on the lattice opens here — what it is, how far along you are, and what
-                  it leads to. The diamonds open a subject of their own.
+                  Click any tile to see what it is, how far along you are and what it leads to. Diamonds open a new subject.
                 </span>
               </>
             }

@@ -63,7 +63,7 @@ export function GoalsFinished() {
     <div id="goals-finished" ref={anchor} className="ax-section">
       <Panel
         title="Goals finished"
-        note="Goals you confirmed done, with what each one took"
+        note="Goals you finished and how long each took"
         aside={<Link className="ax-link" to="/goals">Your goals</Link>}
       >
         <dl className="ax-gf-stats">

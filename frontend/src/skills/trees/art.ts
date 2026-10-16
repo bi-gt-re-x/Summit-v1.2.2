@@ -18,7 +18,7 @@ export const ART: SubjectTree = {
     { id: 'ar.see', name: 'Observation', icon: 'observe', tier: 'foundation', core: true, state: done, percent: 100, xp: 1300,
       desc: 'Drawing what is there rather than what you know is there. The symbol your hand wants to produce for an eye is the single largest obstacle, and defeating it is most of learning to draw.' },
     { id: 'ar.shape', name: 'Shape & Proportion', icon: 'shapes', tier: 'foundation', requires: ['ar.see'], state: prog, percent: 60, xp: 1400,
-      desc: 'Getting the big relationships right before any detail. Measuring by comparison — this is twice that — fixes more work than any amount of careful rendering.' },
+      desc: 'Getting the big relationships right before any detail. Measuring by comparison (this is twice that) fixes more work than any amount of careful rendering.' },
     { id: 'ar.line', name: 'Line', icon: 'line-quality', tier: 'foundation', requires: ['ar.shape'], state: prog, percent: 45, xp: 1300,
       desc: 'Confident marks that vary in weight and say something. A line drawn quickly from the shoulder reads better than one assembled from hesitant strokes, even when it is less accurate.' },
     { id: 'ar.value', name: 'Value & Light', icon: 'value-scale', tier: 'beginner', core: true, requires: ['ar.shape'], state: open, percent: 25, xp: 1600,

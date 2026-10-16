@@ -37,7 +37,7 @@ import type { Diagnosis, EvidenceDirection, Insight } from '@/services/analytics
 const WAY: Record<EvidenceDirection, { word: string; icon: IconName }> = {
   hurts: { word: 'needs focus', icon: 'target' },
   helps: { word: 'working', icon: 'trend' },
-  watch: { word: 'worth watching', icon: 'lightbulb' },
+  watch: { word: 'keep an eye on it', icon: 'lightbulb' },
 };
 
 /** One row of the list, whichever of the two shapes it came from. */

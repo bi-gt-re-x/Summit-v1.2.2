@@ -26,7 +26,7 @@ const AMC8: GoalLimiter = {
   share: 60,
   count: 3,
   total: 5,
-  because: '3 of the 5 tasks you rated as going badly on this goal are filed under Geometry.',
+  because: '3 of the 5 tasks that went badly on this goal are in Geometry.',
   treeHref: '/skill-trees?subject=geometry&node=m.geometry',
   subjectHref: '/analytics/subject/geometry',
 };

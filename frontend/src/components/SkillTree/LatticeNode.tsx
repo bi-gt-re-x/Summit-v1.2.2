@@ -162,7 +162,7 @@ export function LatticeNode({
       onFocus={onPeek ? (event) => onPeek(node, event.currentTarget.getBoundingClientRect()) : undefined}
       onBlur={onPeekEnd}
     >
-      {here && <span className="stx-tile-here">You are here</span>}
+      {here && <span className="stx-tile-here">You're here</span>}
       {optional && selected && !nav && (
         <span className="stx-tile-optional" aria-hidden="true">
           Optional

@@ -281,7 +281,7 @@ export function goalActions(
       because:
         daysSinceWork === null
           ? 'No task linked to this goal has ever been finished.'
-          : `Nothing finished in ${sinceWhen(daysSinceWork)}, though ${reading.linked} task${reading.linked === 1 ? ' is' : 's are'} linked.`,
+          : `Nothing done in ${sinceWhen(daysSinceWork)}, even with ${reading.linked} linked task${reading.linked === 1 ? '' : 's'}.`,
       title: 'Put one of its tasks on this week',
       effect: 'Opens the calendar on the next free block.',
       tone: 'urgent',
@@ -315,7 +315,7 @@ export function goalActions(
     const unit = numbers.label || 'units';
     out.push({
       id: 'pace',
-      because: `You are at ${round(pace.have)} ${unit} a day; the date needs ${round(pace.need)}.`,
+      because: `You're at ${round(pace.have)} ${unit} a day. Your date needs ${round(pace.need)}.`,
       title: `Raise the pace to ${round(pace.need)} ${unit} a day`,
       effect: null,
       tone: daysLeft !== null && daysLeft < 30 ? 'urgent' : 'nudge',
@@ -327,9 +327,9 @@ export function goalActions(
   if (pace.drift !== null && pace.drift > 7) {
     out.push({
       id: 'drift',
-      because: `At this rate it lands about ${pace.drift} days late.`,
+      because: `At this rate you'll finish about ${pace.drift} days late.`,
       title: 'Move the target date, or cut the target',
-      effect: 'Changes the goal. You confirm which, and by how much.',
+      effect: 'This changes the goal. You pick how.',
       tone: 'nudge',
     });
   }
@@ -338,7 +338,7 @@ export function goalActions(
   if (stuck && stuck.waitingDays !== null && stuck.waitingDays >= 21) {
     out.push({
       id: 'bottleneck',
-      because: `"${stuck.milestone.title}" has been the next checkpoint for ${stuck.waitingDays} days${stuck.tasks ? ` and ${stuck.done} of its ${stuck.tasks} tasks are done` : ' and has no tasks against it'}.`,
+      because: `You've been on "${stuck.milestone.title}" for ${stuck.waitingDays} days${stuck.tasks ? `. ${stuck.done} of its ${stuck.tasks} tasks are done` : ', and it has no tasks yet'}.`,
       title: 'Break this checkpoint into smaller ones',
       effect: 'Adds checkpoints. You write them.',
       tone: 'nudge',
@@ -349,7 +349,7 @@ export function goalActions(
     out.push({
       id: 'keep',
       because: `${reading.now} task${reading.now === 1 ? '' : 's'} finished toward this in the last two weeks, across ${reading.activeDays} day${reading.activeDays === 1 ? '' : 's'}.`,
-      title: 'Nothing to change — keep going',
+      title: 'Nothing to change. Keep going',
       effect: null,
       tone: 'good',
     });
@@ -460,7 +460,7 @@ export function goalNotes(
       tone: 'watch',
       goalId: quiet.goal.id,
       headline: `Nothing on ${quiet.goal.title} for ${quiet.health.signals.daysSinceWork} days`,
-      hint: 'Not behind yet. This is where goals go quiet for good.',
+      hint: "You're not behind yet, but this is how goals stall. Do one thing for it today.",
     });
   }
 

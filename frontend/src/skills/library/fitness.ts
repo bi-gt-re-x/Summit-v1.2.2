@@ -16,7 +16,7 @@ export const fitness = [
   node({
     id: 'fitness.movement-basics',
     name: 'Movement Basics',
-    description: 'Hinging, squatting, pushing and pulling — the four shapes everything else is a version of.',
+    description: 'Hinging, squatting, pushing and pulling. The four shapes everything else is a version of.',
     difficulty: 'foundation',
     xpReward: 50,
     tags: ['fitness', 'foundations'],
@@ -97,7 +97,7 @@ export const fitness = [
   node({
     id: 'fitness.nutrition',
     name: 'Nutrition Basics',
-    description: 'Protein, energy balance and consistency — the parts that actually decide the outcome.',
+    description: 'Protein, energy balance and consistency. The parts that actually decide the outcome.',
     difficulty: 'beginner',
     xpReward: 75,
     subcategory: 'Recovery',

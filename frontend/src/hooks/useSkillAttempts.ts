@@ -55,10 +55,10 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
           setLevels(result.levels ?? {});
           setError(null);
         } else {
-          setError(result.message ?? 'Could not load your practice.');
+          setError(result.message ?? "Couldn't load your practice.");
         }
       })
-      .catch(() => live && setError('Could not reach the server.'))
+      .catch(() => live && setError("Couldn't reach the server."))
       .finally(() => live && setLoading(false));
     return () => {
       live = false;
@@ -69,7 +69,7 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
     try {
       const result = await skillAttempts.add(attempt);
       if (!result.success) {
-        setError(result.message ?? 'That was not saved.');
+        setError(result.message ?? "That wasn't saved.");
         return null;
       }
       setError(null);
@@ -77,7 +77,7 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
       setLevels((was) => ({ ...was, ...result.levels }));
       return result.attempt;
     } catch {
-      setError('Could not reach the server.');
+      setError("Couldn't reach the server.");
       return null;
     }
   }, []);
@@ -86,7 +86,7 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
     try {
       const result = await skillAttempts.remove(id);
       if (!result.success) {
-        setError(result.message ?? 'That was not removed.');
+        setError(result.message ?? "That wasn't removed.");
         return false;
       }
       setError(null);
@@ -98,7 +98,7 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
       });
       return true;
     } catch {
-      setError('Could not reach the server.');
+      setError("Couldn't reach the server.");
       return false;
     }
   }, []);

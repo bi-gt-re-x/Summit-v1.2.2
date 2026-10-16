@@ -267,7 +267,7 @@ function BadgeTile({ badge }: { badge: Badge }) {
             hidden tiles at +1,000 and one at +5,000 tells a reader exactly
             which of the five is the monster. */}
         {secret ? (
-          <span className="ac-xp" title="Withheld until it is earned">??? XP</span>
+          <span className="ac-xp" title="Withheld until it's earned">??? XP</span>
         ) : (
           <span
             className={`ac-xp${badge.earned ? ' is-earned' : ''}`}
@@ -378,11 +378,9 @@ function TreeWall({ badges }: { badges: Badge[] }) {
       </header>
 
       <p className="ac-trees-note">
-        Counted on your own XP in the subjects that open each lattice, against what
-        that lattice is worth — never on a tree&rsquo;s own drawing, which is the same on
-        every account. Six ladders: how many you have touched, how far into the best
-        one, how many passed half, how many you covered outright, how many fields they
-        sit in, and the whole lot added up.
+        Based on your XP in each tree&apos;s subjects. Six ladders: trees you&apos;ve started,
+        your deepest tree, trees past halfway, trees you&apos;ve finished, fields covered,
+        and all of it added up.
       </p>
 
       {/* One row per ladder, and the row is the next rung on it. A reader
@@ -594,7 +592,7 @@ export function BadgeWall() {
      starts when there is something to animate — see hooks/usePageEntrance. */
   const entering = usePageEntrance(!loading);
 
-  if (loading) return <Loading label="Reading your record" />;
+  if (loading) return <Loading label="Loading your badges" />;
   if (error && !badges.length) return <ErrorState message={error} onRetry={reload} />;
 
   const earned = data?.earned ?? 0;
@@ -778,8 +776,7 @@ export function BadgeWall() {
                 <rect x="5" y="11" width="14" height="9" rx="2.5" />
                 <path d="M8.5 11V8a3.5 3.5 0 017 0v3" />
               </svg>
-              {hiddenLeft} hidden {hiddenLeft === 1 ? 'achievement is' : 'achievements are'} still out
-              there. Nobody is told what they are.
+              {hiddenLeft} hidden {hiddenLeft === 1 ? 'achievement is' : 'achievements are'} still out there. They're a secret.
             </p>
           )}
         </section>

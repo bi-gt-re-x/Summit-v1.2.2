@@ -178,7 +178,7 @@ export function DaySidebar({
             <div className="day-next-main">
               <div className="day-next-name">{shape.next.title}</div>
               <div className="day-next-sub">
-                {hourLabel(shape.next.start)} – {hourLabel(shape.next.end)}
+                {hourLabel(shape.next.start)} to {hourLabel(shape.next.end)}
                 {shape.next.running && isToday ? ' · on now' : ''}
               </div>
             </div>
@@ -197,7 +197,7 @@ export function DaySidebar({
           <div className="day-panel-head">
             <h3 className="wk-panel-title">How the day is booked</h3>
             <span className="day-band-span">
-              {hourLabel(shape.from)} – {hourLabel(shape.to)}
+              {hourLabel(shape.from)} to {hourLabel(shape.to)}
             </span>
           </div>
           <div className="day-band" role="img" aria-label={`${spanLabel(shape.booked)} booked between ${hourLabel(shape.from)} and ${hourLabel(shape.to)}`}>
@@ -216,7 +216,7 @@ export function DaySidebar({
                 {hourLabel(shape.gapAt)}.
               </>
             ) : (
-              <>Back to back — nothing clear between the two ends.</>
+              <>Back to back. No gaps today.</>
             )}
           </p>
         </section>
@@ -291,7 +291,7 @@ export function DaySidebar({
           </div>
           <div className="wk-stat">
             <div className="wk-stat-label">Booked</div>
-            <div className="wk-stat-num">{shape.booked > 0 ? spanLabel(shape.booked) : '—'}</div>
+            <div className="wk-stat-num">{shape.booked > 0 ? spanLabel(shape.booked) : '-'}</div>
             <div className="wk-stat-sub">of the day</div>
           </div>
         </div>
@@ -306,7 +306,7 @@ export function DaySidebar({
         </div>
         <ul className="day-tasks-left">
           {pending.length === 0 ? (
-            <li className="day-tasks-empty">Nothing left — you’re all caught up.</li>
+            <li className="day-tasks-empty">Nothing left. You're all caught up.</li>
           ) : (
             pending.slice(0, 5).map((block) => {
               const priority = String(block.priority || '').toLowerCase();
@@ -314,7 +314,7 @@ export function DaySidebar({
                 priority === 'high' ? 'high' : priority === 'medium' ? 'med' : 'low';
               const label = priority
                 ? priority.charAt(0).toUpperCase() + priority.slice(1)
-                : '—';
+                : '-';
 
               const busy = completingId === block.id;
 
@@ -336,7 +336,7 @@ export function DaySidebar({
                     className="day-task-ring"
                     role="checkbox"
                     aria-checked={false}
-                    aria-label={`Mark “${block.title}” complete`}
+                    aria-label={`Mark "${block.title}" complete`}
                     title="Mark complete"
                     disabled={busy}
                     onClick={() => onComplete(block.id)}

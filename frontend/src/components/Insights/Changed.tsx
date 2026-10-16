@@ -49,26 +49,19 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
       className="ax-changed"
       footer={
         <PanelNote label="Where these come from">
-          <p>
-            Each card is a measured difference, never a summary of the graphs below it. A gain
-            compares the last {days} days with the {days} before them; a problem is a tension
-            between two readings of the same stretch; a pattern splits your own finished tasks in
-            two and compares them.
-          </p>
-          <p>
-            Cards are drawn one kind at a time rather than strongest first, so a good month cannot
-            fill the section with good news and hide the one finding worth acting on.
-          </p>
-          <p>
-            Nothing here tells you what to do about it. That is the Recommendations tab.
-          </p>
+          <ul className="ax-tips">
+            <li><b>Gains:</b> Your last {days} days vs. the {days} before.</li>
+            <li><b>Problems:</b> Two numbers from the same days that don't line up.</li>
+            <li><b>Patterns:</b> Your tasks split into two groups and compared.</li>
+            <li><b>Mixed on purpose:</b> Good news can't crowd out the one thing to fix.</li>
+            <li><b>What to do:</b> That's on the Recommendations tab.</li>
+          </ul>
         </PanelNote>
       }
     >
       {changes.length === 0 ? (
         <p className="ax-empty">
-          Nothing has moved far enough to call a change yet. This fills in as the record gets
-          long enough to compare two stretches of it.
+          Nothing has changed much yet. This fills in once you have enough days to compare.
         </p>
       ) : (
         <ul className="ax-changes">

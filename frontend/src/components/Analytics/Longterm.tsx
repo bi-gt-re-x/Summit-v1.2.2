@@ -37,9 +37,9 @@ export function InsightsPanel({ insights, limit }: { insights: Insight[]; limit?
   const shown = limit ? insights.slice(0, limit) : insights;
 
   return (
-    <Panel title="Key Growth Insights">
+    <Panel title="What's changing">
       {shown.length === 0 ? (
-        <p className="ax-empty">Not enough history in this window to find a pattern yet.</p>
+        <p className="ax-empty">Not enough work in this window to spot a pattern yet.</p>
       ) : (
         <ul className="ax-insights">
           {shown.map((insight) => (

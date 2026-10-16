@@ -68,7 +68,7 @@ const RULE = '─'.repeat(66);
 function delta(value: number | null): string {
   if (value === null) return '';
   const sign = value >= 0 ? '+' : '−';
-  return ` (${sign}${Math.abs(Math.round(value))}% on the period before)`;
+  return `(${sign}${Math.abs(Math.round(value))}% vs. the period before)`;
 }
 
 /** Wraps prose at a readable measure so the file looks composed in any editor. */
@@ -142,10 +142,10 @@ function scoreSection(input: ReportInput): string {
   const { score } = input;
   if (score.value === null || score.grade === null) {
     return [
-      heading('Growth Score'),
+      heading('Growth score'),
       '',
       wrap(
-        'Not enough of a record to score yet. The score is the average of five measures and each one needs a few days behind it before it means anything.',
+        'Not enough work to score yet. The score averages five parts, and each needs a few days of work.',
       ),
     ].join('\n');
   }
@@ -159,7 +159,7 @@ function scoreSection(input: ReportInput): string {
     .join('\n');
 
   return [
-    heading('Growth Score'),
+    heading('Growth score'),
     '',
     `                    ${(score.value / 10).toFixed(1)} / 10        Grade ${score.grade}`,
     '',
@@ -167,12 +167,12 @@ function scoreSection(input: ReportInput): string {
     '',
     wrap(howItIsCalculated(score)),
     '',
-    '  The five measures it is the average of:',
+    "The five parts it's made of:",
     '',
     parts,
     '',
     wrap(
-      'Each measure is scored out of 100 from your own record, and the score is their plain average — no weighting, so a point anywhere is worth the same as a point anywhere else. The score is that average out of 10, and the grades run in whole points (9.0 an A, 8.0 a B, and so on), with A+ for 9.6 to 9.9 and S reserved for a perfect 10 — which needs all five at full marks, not four strong ones carrying a weak fifth.',
+      'Each part is scored out of 100. Your score is their average, out of 10. 9.0 is an A, 8.0 is a B, and so on. 9.6 to 9.9 is an A+. A perfect 10 is an S, and that needs all five parts maxed out.',
     ),
   ].join('\n');
 }
@@ -183,36 +183,36 @@ function overviewSection(input: ReportInput): string {
   const lines = [
     heading('Overview'),
     '',
-    wrap(`The window: ${span}.`),
+    wrap(`Time window: ${span}.`),
     '',
     `  Total XP            ${f.xp.value.toLocaleString()}${delta(f.xp.delta)}`,
     `  Tasks finished      ${f.tasks.value.toLocaleString()}${delta(f.tasks.delta)}`,
     `  XP per day          ${f.xpPerDay.value.toLocaleString()}${delta(f.xpPerDay.delta)}`,
     `  Focus time          ${f.focusHours.value.toLocaleString()} hours${delta(f.focusHours.delta)}`,
-    `  Days worked         ${f.consistency.value}% of the window${delta(f.consistency.delta)}`,
+    `Days worked ${f.consistency.value}% of days${delta(f.consistency.delta)}`,
     `  Current streak      ${streak} ${streak === 1 ? 'day' : 'days'}`,
-    `  Banked XP           ${bankedXp.toLocaleString()} all time`,
+    `All-time XP ${bankedXp.toLocaleString()}`,
     '',
   ];
 
   if (f.ratedTasks > 0) {
     lines.push(
       wrap(
-        `You rated ${f.ratedTasks} of the ${f.finishedTasks} tasks you finished, averaging ${f.quality.value} out of 25 on difficulty times execution.`,
+        `You rated ${f.ratedTasks} of ${f.finishedTasks} finished tasks. Your average is ${f.quality.value} out of 25 (how hard times how well).`,
       ),
       '',
     );
   } else if (f.finishedTasks > 0) {
     lines.push(
       wrap(
-        `None of the ${f.finishedTasks} tasks you finished in this window were rated, so quality here is scored from XP per task rather than from what you said about the work.`,
+        `You didn't rate any of your ${f.finishedTasks} finished tasks here, so quality uses XP per task instead.`,
       ),
       '',
     );
   }
 
   if (insights.length > 0) {
-    lines.push('  What stands out:', '');
+    lines.push('Highlights:', '');
     insights.slice(0, 5).forEach((row) => {
       lines.push(bullet(`${row.headline}${/[.!?]$/.test(row.headline) ? '' : '.'} ${row.hint}`), '');
     });
@@ -228,7 +228,7 @@ function subjectSection(input: ReportInput): string {
   if (subjectRows.length === 0) {
     lines.push(
       wrap(
-        'No task in this window named a subject, so there is nothing to break down. Tagging tasks with a subject is what turns the totals above into a picture of what you are actually getting good at.',
+        "No tasks here have a subject, so there's nothing to split up. Add subjects to your tasks to see what you're getting better at.",
       ),
     );
     return lines.join('\n');
@@ -236,7 +236,7 @@ function subjectSection(input: ReportInput): string {
 
   const total = subjectRows.reduce((sum, row) => sum + row.xp, 0) || 1;
 
-  lines.push('  Where the effort went:', '');
+  lines.push('Where your work went:', '');
   subjectRows.slice(0, TOP_SUBJECTS).forEach((row) => {
     const share = Math.round((row.xp / total) * 100);
     const name = (row.name ?? row.label).padEnd(18);
@@ -251,7 +251,7 @@ function subjectSection(input: ReportInput): string {
      which is exactly the finding neither a share nor a count can produce. */
   const rated = subjectQuality.filter((row) => row.execution !== null);
   if (rated.length > 0) {
-    lines.push('  How each one is actually going, by your own ratings:', '');
+    lines.push('How each one is going, by your ratings:', '');
     [...rated]
       .sort((a, b) => (b.execution ?? 0) - (a.execution ?? 0))
       .forEach((row) => {
@@ -259,11 +259,11 @@ function subjectSection(input: ReportInput): string {
           row.movement === null || Math.abs(row.movement) < 0.2
             ? 'holding steady'
             : row.movement > 0
-              ? `up ${row.movement.toFixed(1)} across the window`
-              : `down ${Math.abs(row.movement).toFixed(1)} across the window`;
+              ? `up ${row.movement.toFixed(1)}`
+              : `down ${Math.abs(row.movement).toFixed(1)}`;
         lines.push(
           bullet(
-            `${row.name}: ${row.execution!.toFixed(1)} out of 5 for how it went, over ${row.rated} rated ${row.rated === 1 ? 'task' : 'tasks'} — ${move}.`,
+            `${row.name}: ${row.execution!.toFixed(1)} out of 5 for how it went, over ${row.rated} rated ${row.rated === 1 ? 'task' : 'tasks'}. ${move.charAt(0).toUpperCase()}${move.slice(1)}.`,
           ),
           '',
         );
@@ -274,11 +274,11 @@ function subjectSection(input: ReportInput): string {
     (row) => row.lifetimeDone >= 5 && row.sinceDays !== null && row.sinceDays >= 21,
   );
   if (dropped.length > 0) {
-    lines.push('  Gone quiet:', '');
+    lines.push('Gone quiet:', '');
     dropped.forEach((row) => {
       lines.push(
         bullet(
-          `${row.name} has not been touched in ${row.sinceDays} days, after ${row.lifetimeDone} finished tasks on the record.`,
+          `No ${row.name} in ${row.sinceDays} days, after ${row.lifetimeDone} finished tasks.`,
         ),
         '',
       );
@@ -295,7 +295,7 @@ function insightSection(input: ReportInput): string {
   if (patterns.length === 0) {
     lines.push(
       wrap(
-        `Nothing over the last ${patternDays} days clears the bar. A pattern here needs at least six tasks on both sides of a comparison and a gap of 10% or more — which is deliberately strict, because a loose search over enough comparisons will always find something, and a finding drawn from noise is worse than no finding at all.`,
+        `No patterns in the last ${patternDays} days. A pattern needs 6+ tasks on each side and a 10% gap. The bar is high so luck can't fake one.`,
       ),
     );
     return lines.join('\n');
@@ -303,14 +303,14 @@ function insightSection(input: ReportInput): string {
 
   lines.push(
     wrap(
-      `Differences between two groups of your own tasks over the last ${patternDays} days. Each of these is an association, not a cause — worth testing, not worth believing outright.`,
+      `Differences between two groups of your tasks over the last ${patternDays} days. These go together, but that doesn't prove a cause. Test them before you trust them.`,
     ),
     '',
   );
 
   patterns.slice(0, TOP_PATTERNS).forEach((row) => {
     lines.push(bullet(row.text));
-    lines.push(wrap(`Evidence: ${row.basis} Confidence: ${row.strength}.`, 78, '  '));
+    lines.push(wrap(`Based on: ${row.basis} How sure: ${row.strength}.`, 78, '  '));
     if (row.soWhat) lines.push(wrap(`Worth trying: ${row.soWhat}`, 78, '  '));
     lines.push('');
   });
@@ -324,13 +324,13 @@ function recommendationSection(input: ReportInput): string {
 
   lines.push(
     wrap(
-      `Drawn from the last ${adviceDays} days rather than from the whole record: what to change this week has to come from the weeks either side of it.`,
+      `From your last ${adviceDays} days, since this week's changes should come from recent work.`,
     ),
     '',
   );
 
   if (diagnoses.length > 0) {
-    lines.push('  What the last two weeks say:', '');
+    lines.push('Your last two weeks:', '');
     diagnoses.slice(0, 3).forEach((row) => {
       lines.push(bullet(row.headline));
       lines.push(wrap(row.detail, 78, '  '));
@@ -342,19 +342,19 @@ function recommendationSection(input: ReportInput): string {
   }
 
   if (advice.length > 0) {
-    lines.push('  What to change, most valuable first:', '');
+    lines.push('What to change, best first:', '');
     advice.slice(0, TOP_ADVICE).forEach((row, at) => {
       const worth = row.impact > 0 ? ` Worth about ${row.impact.toLocaleString()} XP a year.` : '';
-      lines.push(bullet(`${row.title} — ${row.category}.`, `${at + 1}.`));
+      lines.push(bullet(`${row.title} (${row.category}).`, `${at + 1}.`));
       lines.push(wrap(row.because, 78, '   '));
       lines.push(wrap(`Do: ${row.action}${worth}`, 78, '   '));
-      lines.push(wrap(`Evidence: ${row.evidence}`, 78, '   '));
+      lines.push(wrap(`Based on: ${row.evidence}`, 78, '   '));
       lines.push('');
     });
   } else {
     lines.push(
       wrap(
-        'No rule fired. No long gaps, no dead weekend, no subject far enough off its own average to name — which is a finding rather than a gap in the report.',
+        'Nothing to change. No long gaps, no dead weekends and no subject falling behind. Nice.',
       ),
       '',
     );
@@ -363,7 +363,7 @@ function recommendationSection(input: ReportInput): string {
   if (plan.length > 0) {
     lines.push(`  If you have ${planBudget} minutes today:`, '');
     plan.forEach((action) => {
-      lines.push(bullet(`${action.title} — ${action.minutes} min. ${action.because}`));
+      lines.push(bullet(`${action.title} (${action.minutes} min). ${action.because}`));
     });
     lines.push('');
   }
@@ -386,7 +386,7 @@ export function buildReport(input: ReportInput): string {
 
   const header = [
     RULE,
-    'SUMMIT — ANALYTICS REPORT',
+    'SUMMIT ANALYTICS REPORT',
     RULE,
     '',
     `  For       ${input.username}`,
@@ -415,7 +415,7 @@ export function buildReport(input: ReportInput): string {
     '',
     RULE,
     wrap(
-      'Every figure here is counted from your own record. Nothing is estimated, projected or compared against anybody else.',
+      'Every number here comes from your own work. Nothing is guessed or compared with anyone else.',
     ),
     RULE,
     '',

@@ -91,7 +91,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <p>
           {root
             ? 'Something went wrong before the app finished loading. Reloading usually clears it.'
-            : 'The rest of the app is fine — this one screen failed to draw.'}
+            : 'The rest of the app is fine. Just this screen broke.'}
         </p>
 
         {/* The message, not the stack. It is occasionally the useful thing

@@ -60,7 +60,7 @@ describe('before the first rung', () => {
   it('holds back the reasoned list of everything else', () => {
     draw(1);
     // The track is still drawn; the thresholds under it are not.
-    expect(screen.getByText('Your analytics are developing')).toBeInTheDocument();
+    expect(screen.getByText('Your analytics are filling in')).toBeInTheDocument();
     expect(screen.queryByText(FIRST.why)).not.toBeInTheDocument();
   });
 });

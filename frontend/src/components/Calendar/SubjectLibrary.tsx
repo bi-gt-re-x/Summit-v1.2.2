@@ -84,7 +84,7 @@ function FamilyPicker({
             type="button"
             className={`sl-swatch${family === current ? ' is-current' : ''}`}
             style={{ ['--sw' as string]: swatchColor(family) }}
-            aria-label={`${family} — ${FAMILY_MEANING[family]}`}
+            aria-label={`${family}: ${FAMILY_MEANING[family]}`}
             aria-pressed={family === current}
             title={`${family} · ${FAMILY_MEANING[family]}`}
             onClick={() => onPick(family)}
@@ -236,7 +236,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
         ? `${subject.used} task${subject.used === 1 ? '' : 's'} filed under it will keep the work but lose the subject.`
         : undefined;
       const sure = await confirm({
-        title: `Delete “${subject.name}”?`,
+        title: `Delete "${subject.name}"?`,
         body: used,
         confirmLabel: 'Delete',
         danger: true,
@@ -325,7 +325,7 @@ export function SubjectLibrary({ subjects, username, onClose }: SubjectLibraryPr
           onChange={(event) => setQuery(event.target.value)}
         />
         {rest.length === 0 ? (
-          <p className="sl-empty">Nothing matches “{query.trim()}”.</p>
+          <p className="sl-empty">Nothing matches "{query.trim()}".</p>
         ) : (
           <ul className="sl-list">{rest.map((subject) => row(subject, false))}</ul>
         )}

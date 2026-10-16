@@ -263,7 +263,7 @@ export function generateTree(
   const notes: string[] = [];
   const targets = goal.targets.filter((id) => graph.nodes.has(id));
   if (targets.length === 0) {
-    notes.push('None of this goal’s targets are in the library.');
+    notes.push("None of this goal's targets are in the library.");
     return {
       id: `tree.${goal.id}`,
       name: goal.name,
@@ -283,7 +283,7 @@ export function generateTree(
   // ---- 2. which of them cannot be skipped -------------------------------
   const required = requiredClosure(graph, targets);
   notes.push(
-    `${core.size} nodes lead to the goal’s ${targets.length} target(s); ${required.size} of them cannot be skipped.`,
+    `${core.size} nodes lead to the goal's ${targets.length} target(s); ${required.size} of them can't be skipped.`,
   );
 
   for (const id of goal.optional ?? []) {
@@ -311,7 +311,7 @@ export function generateTree(
       added += 1;
     }
   }
-  if (added > 0) notes.push(`${added} optional branches drawn from the goal’s tags.`);
+  if (added > 0) notes.push(`${added} optional branches drawn from the goal's tags.`);
   if (inTree.size >= maxNodes) notes.push(`Capped at ${maxNodes} nodes.`);
 
   // ---- what the reader already has --------------------------------------

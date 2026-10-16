@@ -60,10 +60,10 @@ export function StageReached({ stage, activeDays, onDone }: StageReachedProps) {
   return (
     <div className="ax-reached" role="dialog" aria-modal="true" aria-labelledby="ax-reached-title">
       <div className="ax-reached-card">
-        <p className="ax-reached-eyebrow">A new stage of your analytics</p>
+        <p className="ax-reached-eyebrow">Your analytics just leveled up</p>
         <h2 id="ax-reached-title">{STAGE_LABEL[stage]}</h2>
         <p className="ax-reached-lead">
-          {activeDays} days of your work are on record, and that is enough for{' '}
+          {activeDays} days of work logged. That's enough for{' '}
           <strong>{STAGE_BRINGS[stage].toLowerCase()}</strong>.
         </p>
 

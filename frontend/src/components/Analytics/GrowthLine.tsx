@@ -250,7 +250,7 @@ export function GrowthLine({
   if (count < 2 || series.length === 0) {
     return (
       <p className="ax-empty">
-        A line needs more than one reading. This fills in as the period gets longer.
+        A line needs at least two points. This fills in as the period gets longer.
       </p>
     );
   }
@@ -293,7 +293,7 @@ export function GrowthLine({
             role="img"
             aria-label={
               `${series.map((line) => line.label).join(', ')} from ${labels[0]} to ` +
-              `${labels[count - 1]}. The figures are listed under "Then and now" below.`
+              `${labels[count - 1]}. The numbers are under "Then and now" below.`
             }
           >
             <defs>

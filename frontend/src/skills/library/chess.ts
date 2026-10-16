@@ -37,7 +37,7 @@ export const chess = [
   node({
     id: 'chess.tactics',
     name: 'Tactical Motifs',
-    description: 'Forks, pins, skewers, discovered attacks — the patterns most games are actually decided by.',
+    description: 'Forks, pins, skewers, discovered attacks. The patterns most games are actually decided by.',
     difficulty: 'beginner',
     xpReward: 100,
     prerequisites: after('chess.rules'),
@@ -61,7 +61,7 @@ export const chess = [
   node({
     id: 'chess.opening-principles',
     name: 'Opening Principles',
-    description: 'Center, development, king safety — enough to reach a playable middlegame without memorizing anything.',
+    description: 'Center, development, king safety. Enough to reach a playable middlegame without memorizing anything.',
     difficulty: 'beginner',
     xpReward: 75,
     prerequisites: after('chess.rules'),
@@ -97,7 +97,7 @@ export const chess = [
   node({
     id: 'chess.king-pawn-endgames',
     name: 'King and Pawn Endgames',
-    description: 'Opposition, key squares and the square of the pawn — the endgames everything else reduces to.',
+    description: 'Opposition, key squares and the square of the pawn. The endgames everything else reduces to.',
     difficulty: 'intermediate',
     xpReward: 125,
     prerequisites: after('chess.checkmate-patterns'),

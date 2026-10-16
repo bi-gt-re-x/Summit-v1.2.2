@@ -105,7 +105,7 @@ export const music = [
   node({
     id: 'violin.scales',
     name: 'Scales and Arpeggios',
-    description: 'Three octaves, evenly, slowly, every day — the least glamorous node in the library.',
+    description: 'Three octaves, evenly, slowly, every day. The least glamorous node in the library.',
     difficulty: 'beginner',
     xpReward: 90,
     prerequisites: all('violin.first-position', 'music.key-signatures'),

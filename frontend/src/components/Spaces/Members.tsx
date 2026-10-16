@@ -58,11 +58,11 @@ export function Members({ spaceId, invites: initial }: MembersProps) {
     const result = await invite(spaceId, address).catch(() => null);
     setBusy(false);
     if (!result) {
-      setError('Could not reach the server. Try again.');
+      setError("Couldn't reach the server. Try again.");
       return;
     }
     if (!result.success) {
-      setError(result.message ?? 'Could not add that invite.');
+      setError(result.message ?? "Couldn't add that invite.");
       return;
     }
     setInvites(result.space.invites ?? []);

@@ -309,7 +309,7 @@ function WeekFocusCard({
 
   return (
     <section className="wk-panel">
-      <h3 className="wk-panel-title"><Icon name="timer" /> Weekly Focus Time</h3>
+      <h3 className="wk-panel-title"><Icon name="timer" /> Weekly focus time</h3>
       <p className="wk-focustime">
         {fmtHM(focus.focused)} <span className="wk-focustime-of">/ {fmtHM(focus.planned)}</span>
       </p>
@@ -644,7 +644,7 @@ export function WeekSidebar({
           this column has to offer and so belongs at the end of it, after every
           panel that is about the week itself. */}
       <button type="button" className="wk-fullcal" onClick={onViewMonth}>
-        View Full Calendar<span aria-hidden="true"> →</span>
+        View full calendar<span aria-hidden="true"> →</span>
       </button>
     </aside>
   );

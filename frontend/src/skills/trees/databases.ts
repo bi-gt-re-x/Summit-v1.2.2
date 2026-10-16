@@ -35,7 +35,7 @@ export const DATABASES: SubjectTree = {
     { id: 'db.plan', name: 'Query Plans', icon: 'query-plan', tier: 'intermediate', requires: ['db.index', 'db.aggregate'], state: lock, percent: 0, xp: 2100,
       desc: 'What the engine decided to actually do with your query. Reading a plan turns "it is slow" into "it is scanning four million rows because this index does not cover the filter", which is a fixable statement.' },
     { id: 'db.constraint', name: 'Constraints', icon: 'constraint', tier: 'intermediate', requires: ['db.normal'], state: lock, percent: 0, xp: 1700,
-      desc: 'Rules the database refuses to break — not null, unique, foreign key, check. Application code that enforces the same rules will eventually have a path that forgets; the database never does.' },
+      desc: 'Rules the database refuses to break. Not null, unique, foreign key, check. Application code that enforces the same rules will eventually have a path that forgets; the database never does.' },
     { id: 'db.tx', name: 'Transactions', icon: 'transaction', tier: 'intermediate', core: true, requires: ['db.constraint'], state: lock, percent: 0, xp: 2200,
       desc: 'A group of changes that all happen or none do. The classic case is moving money between two rows, and the reason to care is that every system eventually crashes exactly between them.' },
     { id: 'db.isolation', name: 'Isolation Levels', icon: 'isolation', tier: 'advanced', requires: ['db.tx'], state: lock, percent: 0, xp: 2300,

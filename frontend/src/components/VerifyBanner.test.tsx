@@ -154,6 +154,6 @@ describe('sending it again', () => {
     fireEvent.click(screen.getByRole('button', { name: /send it again/i }));
 
     await waitFor(() =>
-      expect(screen.getByText(/could not reach the server/i)).toBeInTheDocument());
+      expect(screen.getByText(/couldn't reach the server/i)).toBeInTheDocument());
   });
 });

@@ -167,7 +167,7 @@ describe('the page opens on what the subject is for', () => {
       },
     });
 
-    const band = within(section('What this subject is for'));
+    const band = within(section('Your goal for this subject'));
     expect(band.getByRole('heading', { name: 'Get to AIME' })).toBeInTheDocument();
     expect(band.getByText('Algebra')).toBeInTheDocument();
   });
@@ -175,7 +175,7 @@ describe('the page opens on what the subject is for', () => {
   it('says nobody has set one rather than leaving the question unanswered', async () => {
     await show();
 
-    const band = within(section('What this subject is for'));
+    const band = within(section('Your goal for this subject'));
     expect(band.getByRole('heading', { name: /no goal set/i })).toBeInTheDocument();
   });
 
@@ -196,7 +196,7 @@ describe('the page opens on what the subject is for', () => {
       ],
     });
 
-    const picker = within(screen.getByLabelText('Aim this subject at a goal'));
+    const picker = within(screen.getByLabelText('Link a goal'));
     await userEvent.click(picker.getByRole('button', { name: /Choose a goal/ }));
 
     expect(picker.getByText('Reach AIME')).toBeInTheDocument();
@@ -208,7 +208,7 @@ describe('the page opens on what the subject is for', () => {
       prefs: { analytics_ambitions: { algebra: { aim: 'Get to AIME' } } },
     });
 
-    const band = within(section('What this subject is for'));
+    const band = within(section('Your goal for this subject'));
     expect(band.queryByText('Competition')).not.toBeInTheDocument();
   });
 });
@@ -222,7 +222,7 @@ describe('what the record says', () => {
        first task. */
     await show();
 
-    const said = panel('What the record says');
+    const said = panel('What your work shows');
     expect(said.getByRole('heading', { name: 'How much you work on this' }))
       .toBeInTheDocument();
     // It follows the page's range picker; it has none of its own.
@@ -245,7 +245,7 @@ describe('what the record says', () => {
     // The eight tasks of `ceilingRecord` sit on eight separate days; the two
     // history tasks land on days already in that run, so a page counting
     // them would still say eight days and ten tasks.
-    expect(panel('What the record says').getByRole('img').getAttribute('aria-label'))
+    expect(panel('What your work shows').getByRole('img').getAttribute('aria-label'))
       .toMatch(/^8 of /);
   });
 });
@@ -258,7 +258,7 @@ describe('the order of the page', () => {
       .map((node) => node.getAttribute('aria-label'));
     const at = (label: string) => order.indexOf(label);
 
-    expect(at('Where this subject stands')).toBeLessThan(at('What this subject is for'));
+    expect(at('How this subject is going')).toBeLessThan(at('Your goal for this subject'));
   });
 
   it('opens the three counts under the verdict, before anything is interpreted', async () => {
@@ -295,7 +295,7 @@ describe('the evidence is a tab', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Evidence' }));
 
     expect(screen.getByRole('button', { name: /Where you stand/ })).toBeInTheDocument();
-    expect(screen.queryByLabelText('Where this subject stands')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('How this subject is going')).not.toBeInTheDocument();
   });
 
   it('states each fold\'s answer on its shut row', async () => {

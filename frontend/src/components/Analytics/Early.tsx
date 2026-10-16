@@ -31,7 +31,7 @@ import type { Task } from '@/types';
 /** The qualification, worn by every panel on this file. */
 export function EarlyMark({ of }: { of: string }) {
   return (
-    <span className="ax-early" title={`Read from ${of}. It will sharpen as you record more.`}>
+    <span className="ax-early" title={`Based on ${of}. It gets better as you log more.`}>
       Early · {of}
     </span>
   );
@@ -58,8 +58,7 @@ export function WhenPanel({ parts, days }: WhenPanelProps) {
     <Panel title="When you worked" aside={<EarlyMark of={`${days} days`} />}>
       {total === 0 ? (
         <p className="ax-empty ax-empty-sm">
-          No finished task carries a time of day yet. Tasks completed inside Summit record one;
-          older ones do not.
+          None of your finished tasks have a time yet. Tasks you finish in Summit get one.
         </p>
       ) : (
         <>
@@ -68,7 +67,7 @@ export function WhenPanel({ parts, days }: WhenPanelProps) {
               // "the morning" reads as a sentence fragment under a bar.
               label: part.label.replace(/^the /, ''),
               value: part.count,
-              text: part.count === 0 ? '—' : String(part.count),
+              text: part.count === 0 ? '-' : String(part.count),
             }))}
             tone="blue"
             label="Finished tasks by part of the day"
@@ -117,7 +116,7 @@ export function FinishPanel({ tasks, days }: FinishPanelProps) {
   if (rows.length === 0) {
     return (
       <Panel title="What you finish" aside={<EarlyMark of={`${days} days`} />}>
-        <p className="ax-empty ax-empty-sm">Nothing on the books yet.</p>
+        <p className="ax-empty ax-empty-sm">Nothing here yet.</p>
       </Panel>
     );
   }
@@ -141,7 +140,7 @@ export function FinishPanel({ tasks, days }: FinishPanelProps) {
         })}
       </ul>
       <p className="ax-muted ax-early-foot">
-        All your tasks, not just this period. With only a few tasks, one task moves this a lot.
+        This uses all your tasks. With only a few, one task moves it a lot.
       </p>
     </Panel>
   );

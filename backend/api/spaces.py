@@ -353,7 +353,7 @@ def _save(username: str, kind: str, space_id: int, body: SaveSpace):
     """Rename a space, write in it, or both. A blank name goes back to the
     default rather than leaving a row with no label in the rail."""
     if not 1 <= space_id <= COUNT:
-        return fail('There is no space {}.'.format(space_id))
+        return fail("There's no space {}.".format(space_id))
     spaces = _spaces(username, kind)
     space = spaces[space_id - 1]
     if body.name is not None:
@@ -396,10 +396,10 @@ def save_team_space(space_id: int, body: SaveSpace,
 def invite(space_id: int, body: Invite, username: str = Depends(current_username)):
     """Add a pending invite. Placeholder: nothing is sent. See the module note."""
     if not 1 <= space_id <= COUNT:
-        return fail('There is no space {}.'.format(space_id))
+        return fail("There's no space {}.".format(space_id))
     email = body.email.strip().lower()[:200]
     if not EMAIL.match(email):
-        return fail('That does not look like an e-mail address.')
+        return fail("That doesn't look like an e-mail address.")
     spaces = _spaces(username, 'team')
     space = spaces[space_id - 1]
     if any(item['email'] == email for item in space['invites']):
@@ -414,7 +414,7 @@ def invite(space_id: int, body: Invite, username: str = Depends(current_username
 @router.post('/api/team-spaces/{space_id}/uninvite')
 def uninvite(space_id: int, body: Invite, username: str = Depends(current_username)):
     if not 1 <= space_id <= COUNT:
-        return fail('There is no space {}.'.format(space_id))
+        return fail("There's no space {}.".format(space_id))
     email = body.email.strip().lower()
     spaces = _spaces(username, 'team')
     space = spaces[space_id - 1]
@@ -520,7 +520,7 @@ def read_live(source: str = '', goal: str = '', tree: str = '', weeks: int = 0,
               username: str = Depends(current_username)):
     """What one live block shows right now. Read only, like every GET."""
     if source not in live.SOURCES:
-        return fail('There is no live source called {}.'.format(source or 'that'))
+        return fail("There's no live source called {}.".format(source or 'that'))
     config = live.clean_config({'source': source, 'goal': goal, 'tree': tree, 'weeks': weeks,
                                 'category': category, 'limit': limit, 'days': days, 'subject': subject,
                                 'view': view, 'metric': metric, 'status': status, 'name': name})

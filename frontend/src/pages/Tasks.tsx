@@ -349,7 +349,7 @@ export default function Tasks() {
         if (!ok) reload();
         return ok;
       } catch (cause) {
-        setFailure(cause instanceof Error ? cause.message : 'That did not work.');
+        setFailure(cause instanceof Error ? cause.message : "That didn't work.");
         reload();
         return false;
       } finally {
@@ -432,7 +432,7 @@ export default function Tasks() {
       }
       if (result.failed.length > 0) {
         setFailure(
-          `${result.failed.length} ${result.failed.length === 1 ? 'task' : 'tasks'} did not save. Try again.`,
+          `${result.failed.length} ${result.failed.length === 1 ? 'task' : 'tasks'} didn't save. Try again.`,
         );
       }
       const stamps = new Map(result.completed.map((row) => [String(row.task_id), row.completed_at]));
@@ -589,7 +589,7 @@ export default function Tasks() {
       if (
         ask
         && prefs.confirm_delete
-        && !(await confirm({ title: `Delete “${task.title}”?`, confirmLabel: 'Delete', danger: true }))
+        && !(await confirm({ title: `Delete "${task.title}"?`, confirmLabel: 'Delete', danger: true }))
       ) {
         return;
       }
@@ -664,7 +664,7 @@ export default function Tasks() {
             ],
           }));
         } catch (cause) {
-          setFailure(cause instanceof Error ? cause.message : 'Could not add that task.');
+          setFailure(cause instanceof Error ? cause.message : "Couldn't add that task.");
           reload();
         } finally {
           setSaving(false);
@@ -949,7 +949,7 @@ export default function Tasks() {
      starts when there is something to animate — see hooks/usePageEntrance. */
   const entering = usePageEntrance(!loading);
 
-  if (loading) return <Loading label="Reading your tasks" />;
+  if (loading) return <Loading label="Loading your tasks" />;
   if (!data) {
     return <ErrorState message={error ?? 'No tasks yet.'} onRetry={username ? reload : undefined} />;
   }
@@ -972,7 +972,7 @@ export default function Tasks() {
                 </span>
                 Tasks
               </h1>
-              <p className="tk-quiet">What is on your plate.</p>
+              <p className="tk-quiet">What's on your plate.</p>
             </div>
             <div className="tk-head-tools">
               <button
@@ -1086,7 +1086,7 @@ export default function Tasks() {
                   && !(await confirm({
                     title:
                       chosen.length === 1
-                        ? `Delete “${chosen[0]?.title}”?`
+                        ? `Delete "${chosen[0]?.title}"?`
                         : `Delete ${chosen.length} tasks?`,
                     confirmLabel: 'Delete',
                     danger: true,

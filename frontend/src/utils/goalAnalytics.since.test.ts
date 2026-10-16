@@ -1,7 +1,7 @@
 /**
  * How long a goal has been quiet, in a unit somebody can hold.
  *
- * The line under a stalled goal used to read "Nothing finished in 1116 days".
+ * The line under a stalled goal used to read "Nothing done in 1116 days".
  * That is accurate and it is not information: nobody converts four digits into
  * "about three years" while scanning a page, so it reads as "a big number" and
  * is skipped, which is the same as not having been told. The number is the

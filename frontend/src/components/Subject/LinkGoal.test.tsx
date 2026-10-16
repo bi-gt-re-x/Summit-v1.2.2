@@ -71,7 +71,7 @@ describe('LinkGoal', () => {
       linked: [{ id: 'g9', title: 'Reach AIME' }, { id: 'g8', title: 'USACO Gold' }],
     });
 
-    expect(screen.getByText(`Aimed at ${MAX_GOALS} of ${MAX_GOALS} goals`))
+    expect(screen.getByText(`Linked to ${MAX_GOALS} of ${MAX_GOALS} goals`))
       .toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Add another/ })).not.toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: 'Remove' })).toHaveLength(2);
@@ -81,7 +81,7 @@ describe('LinkGoal', () => {
   it('offers the second one while there is room for it', () => {
     show({ linked: [{ id: 'g9', title: 'Reach AIME' }] });
 
-    expect(screen.getByText(`Aimed at 1 of ${MAX_GOALS} goals`)).toBeInTheDocument();
+    expect(screen.getByText(`Linked to 1 of ${MAX_GOALS} goals`)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Add another/ })).toBeInTheDocument();
   });
 
@@ -98,7 +98,7 @@ describe('LinkGoal', () => {
   it('sends the reader to the goals page when they have no outcome goals', () => {
     show({ options: [] });
 
-    expect(screen.getByText(/no outcome goals yet/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /goals page/ })).toBeInTheDocument();
+    expect(screen.getByText(/don't have a goal with a finish line yet/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Goals page/ })).toBeInTheDocument();
   });
 });

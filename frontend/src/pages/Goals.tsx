@@ -256,7 +256,7 @@ export default function Goals() {
       try {
         const result = await action();
         if (!result.success) {
-          setError(result.message ?? 'That did not work.');
+          setError(result.message ?? "That didn't work.");
           return false;
         }
         await load(true);
@@ -286,9 +286,9 @@ export default function Goals() {
       try {
         const result = await action();
         saved = result.success;
-        if (!result.success) setError(result.message ?? 'That did not save.');
+        if (!result.success) setError(result.message ?? "That didn't save.");
       } catch {
-        setError('That did not save. Check your connection.');
+        setError("That didn't save. Check your connection.");
       } finally {
         pendingWrites.current -= 1;
       }
@@ -334,7 +334,7 @@ export default function Goals() {
       const result = await taskService.completeTask(task.id);
       setBusy(false);
       if (!result.success) {
-        setError(result.message ?? 'That task could not be completed.');
+        setError(result.message ?? "That task couldn't be completed.");
         return;
       }
       // The rail's level and the bell did not hear about completions made
@@ -364,7 +364,7 @@ export default function Goals() {
         milestone_id: milestoneId ?? null,
       });
       if (!result.success) {
-        setError(result.message ?? 'That task could not be linked.');
+        setError(result.message ?? "That task couldn't be linked.");
         return;
       }
       await Promise.all([load(true), account.reload()]);
@@ -394,7 +394,7 @@ export default function Goals() {
       if (!username) return;
       const created = await goalService.addGoal(draft);
       if (!created.success) {
-        setError(created.message ?? 'That did not work.');
+        setError(created.message ?? "That didn't work.");
         return;
       }
       setWizardOpen(false);
@@ -434,7 +434,7 @@ export default function Goals() {
     return result.success
       ? { goal: { title: result.title, why: result.why, category: result.category,
                   deadline: result.deadline, milestones: result.milestones ?? [] } }
-      : { problem: result.message ?? 'That could not be drafted.' };
+      : { problem: result.message ?? "That couldn't be drafted." };
   }, []);
 
   /**
@@ -517,7 +517,7 @@ export default function Goals() {
       if (!username) return;
       const created = await goalService.addMilestone(goal.id, { title });
       if (!created.success) {
-        setError(created.message ?? 'That did not work.');
+        setError(created.message ?? "That didn't work.");
         return;
       }
       await load(true);
@@ -608,13 +608,13 @@ export default function Goals() {
         const result = await goalService.verifyGoal(goal.id, true);
         if (!result.success) {
           setCelebrating(null);
-          setError(result.message ?? 'That goal could not be confirmed.');
+          setError(result.message ?? "That goal couldn't be confirmed.");
         } else if (result.record) {
           setCelebrating((now) => (now && now.goal.id === goal.id ? { ...now, record: result.record ?? null } : now));
         }
       } catch {
         setCelebrating(null);
-        setError('That goal could not be confirmed. Check your connection.');
+        setError("That goal couldn't be confirmed. Check your connection.");
       } finally {
         pendingWrites.current -= 1;
       }
@@ -706,7 +706,7 @@ export default function Goals() {
       try {
         const drafted = await goalService.suggestSteps({ milestoneId: milestone.id });
         if (!drafted.success) {
-          setError(drafted.message ?? 'Those steps could not be drafted.');
+          setError(drafted.message ?? "Those steps couldn't be drafted.");
           return;
         }
         if (!drafted.steps?.length) {
@@ -717,7 +717,7 @@ export default function Goals() {
           steps: fromTitles(drafted.steps),
         });
         if (!saved.success) {
-          setError(saved.message ?? 'Those steps could not be saved.');
+          setError(saved.message ?? "Those steps couldn't be saved.");
           return;
         }
         setError(null);
@@ -888,7 +888,7 @@ export default function Goals() {
 
   const open = list.find((goal) => goal.id === openId) ?? null;
 
-  if (loading) return <Loading label="Reading your goals" />;
+  if (loading) return <Loading label="Loading your goals" />;
   if (error && !list.length) return <ErrorState message={error} onRetry={() => void load()} />;
 
   return (
@@ -1000,8 +1000,7 @@ export default function Goals() {
 
             {shown.length === 0 ? (
               <p className="gx-empty">
-                No outcome goals yet. Something you either reached or did not — reach USACO
-                Gold, ship Summit v2, read 24 books.
+                No goals with a finish line yet. Think: reach USACO Gold, ship Summit v2 or read 24 books.
                 <button type="button" className="gx-link" onClick={() => setWizardOpen(true)}>
                   Set your first
                 </button>
@@ -1061,7 +1060,7 @@ export default function Goals() {
                 title={`Also carrying · ${outcomes.length - LIST_GOALS} ${
                   outcomes.length - LIST_GOALS === 1 ? 'goal' : 'goals'
                 }`}
-                hint="Still counted, not drawn as cards"
+                hint="Still tracked, just not shown as cards"
               >
                 {/* Rows, not cards, and that is the whole point of the band:
                     these are the goals that did not make the ladder, and a
@@ -1193,7 +1192,7 @@ export default function Goals() {
             </Band>
 
             <Band
-              title="Your trajectory"
+              title="Your trend"
               hint="How far each one has to go"
             >
               <Trajectory goals={outcomes} onOpen={(goal) => setOpenId(goal.id)} />
@@ -1338,10 +1337,7 @@ export default function Goals() {
         open={pendingDraft !== null}
         title="Redraft this goal's checkpoints?"
         body={
-          `The model writes five new ones over the ${(pendingDraft?.milestones ?? []).length} `
-          + 'already here. A rung keeps its place, so anything already reached stays '
-          + 'reached and any task pointed at one keeps its link — it is the wording '
-          + 'that changes. Checklists you have written are left alone.'
+          `AI writes five new ones over the ${(pendingDraft?.milestones ?? []).length} you have. Only the wording changes. Anything you reached stays reached, links stay put and your checklists stay the same.`
         }
         confirmLabel="Redraft"
         busy={busy}

@@ -54,7 +54,7 @@ def test_on_track_when_keeping_pace_and_worked():
 def test_behind_when_trailing_the_calendar_by_more_than_ten_points():
     found = health(goal(current_value=20), worked(3))
     assert found['state'] == 'behind'
-    assert found['reason'].startswith('30 points behind where the calendar says it should be')
+    assert found['reason'].startswith('30 points behind schedule')
 
 
 def test_not_behind_for_trailing_by_less_than_that():
@@ -64,7 +64,7 @@ def test_not_behind_for_trailing_by_less_than_that():
 def test_behind_once_its_date_has_passed():
     found = health(goal(deadline=day(-2)), worked(3))
     assert found['state'] == 'behind'
-    assert found['reason'] == 'Its date passed 2 days ago and it is 50% done.'
+    assert found['reason'] == "Its date passed 2 days ago and it's 50% done."
 
 
 def test_behind_when_linked_work_has_gone_quiet_for_two_weeks():

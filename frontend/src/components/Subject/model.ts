@@ -622,8 +622,8 @@ function leversFor(goal: SubjectGoal, period: string): Lever[] {
       id: 'terms',
       title: `Give it ${missing}`,
       fact: goal.target > 0
-        ? `${per(goal.current)} of ${per(goal.target)} ${goal.unit}, but with no due date there is no pace to track.`
-        : 'Without a target, the progress bar is only an estimate.',
+        ? `${per(goal.current)} of ${per(goal.target)} ${goal.unit}. Add a due date to track your pace.`
+        : 'Without a target, the progress bar is just a guess.',
       weight: 'blocking',
     });
   }
@@ -633,16 +633,14 @@ function leversFor(goal: SubjectGoal, period: string): Lever[] {
     out.push({
       id: 'unaimed',
       title: 'Link your tasks to this goal',
-      fact: `None of the ${goal.ofFinished} ${goal.ofFinished === 1 ? 'task' : 'tasks'} you `
-        + `finished here in ${period} were linked to this goal.`,
+      fact: `None of the ${goal.ofFinished} ${goal.ofFinished === 1 ? 'task' : 'tasks'} you finished here in ${period} were linked to it.`,
       weight: 'blocking',
     });
   } else if (goal.ofFinished >= 4 && goal.aimed / goal.ofFinished < 0.25) {
     out.push({
       id: 'thin-aim',
       title: 'Link more tasks to this goal',
-      fact: `Only ${goal.aimed} of ${goal.ofFinished} tasks here in ${period} `
-        + `(${Math.round((goal.aimed / goal.ofFinished) * 100)}%) were linked to it.`,
+      fact: `Only ${goal.aimed} of ${goal.ofFinished} tasks here in ${period} were linked to it.`,
       weight: 'raise',
     });
   }
@@ -672,7 +670,7 @@ function leversFor(goal: SubjectGoal, period: string): Lever[] {
     out.push({
       id: 'rate',
       title: `Speed up about ${goal.factor >= 10 ? '10×' : `${goal.factor.toFixed(1)}×`}`,
-      fact: `Needs ${per(goal.need * 7)} ${goal.unit} a week to finish on time; you're doing `
+      fact: `You need ${per(goal.need * 7)} ${goal.unit} a week to finish on time. You're doing `
         + `${per(goal.have * 7)}`
         + (goal.lands ? `. At this rate it finishes ${goal.lands}.` : '.'),
       weight: 'raise',
@@ -688,8 +686,7 @@ function leversFor(goal: SubjectGoal, period: string): Lever[] {
       title: each >= 1
         ? `One stage every ${each} ${each === 1 ? 'day' : 'days'} from here`
         : 'More stages left than days left',
-      fact: `${stagesLeft} of ${goal.stagesTotal} checkpoints left, `
-        + `with ${goal.daysLeft} days to go.`,
+      fact: `${stagesLeft} of ${goal.stagesTotal} checkpoints left, with ${goal.daysLeft} days to go.`,
       weight: each >= 1 ? 'raise' : 'blocking',
     });
   }
@@ -917,28 +914,28 @@ export function subjectModel(
     rate(
       'quality',
       'Quality',
-      'Difficulty × execution on rated tasks, out of 25.',
+      'How hard times how well, on rated tasks, out of 25.',
       qualityRate(done),
       qualityRate(before),
     ),
     rate(
       'consistency',
       'Consistency',
-      'Share of days you did work in this subject.',
+      'How many days you worked on this subject.',
       consistencyRate(done, span.days || new Set(mine.map((t) => dayOf(t.completed_at))).size),
       span.previousFrom ? consistencyRate(before, span.days) : null,
     ),
     rate(
       'timeliness',
       'Timeliness',
-      'Share of dated tasks finished on time.',
+      'How many dated tasks you finished on time.',
       timelinessRate(done),
       timelinessRate(before),
     ),
     rate(
       'follow-through',
       'Follow-through',
-      'Share of all tasks in this subject that are finished.',
+      'How many tasks in this subject are done.',
       followThroughRate(mine.filter((task) => task.status === 'done').length, open),
       null,
     ),
@@ -950,9 +947,7 @@ export function subjectModel(
     : null;
 
   const howScored = measured.length
-    ? `${measured.map((entry) => `${entry.label} ${Math.round(entry.now)}`).join(', ')} — `
-      + `the mean of ${measured.length === 1 ? 'that one' : `those ${measured.length}`}, `
-      + `${score} out of 100.`
+    ? `${measured.map((entry) => `${entry.label} ${Math.round(entry.now)}`).join(', ')}. Average: ${score} out of 100.`
     : '';
 
   // ---- Change against the window before -----------------------------------
@@ -978,19 +973,19 @@ export function subjectModel(
       key: 'volume',
       label: 'Volume',
       change: finishedChange,
-      note: `${done.length} finished against ${before.length} the window before.`,
+      note: `${done.length} finished vs. ${before.length} the window before.`,
     },
     {
       key: 'time',
       label: 'Time on it',
       change: change(seconds(done), seconds(before)),
-      note: 'Logged time on the tasks you finished.',
+      note: 'Time logged on tasks you finished.',
     },
     {
       key: 'turning-up',
-      label: 'Turning up',
+      label: 'Showing up',
       change: change(activeDays(done), activeDays(before)),
-      note: `${activeDays(done)} days with work in them against ${activeDays(before)}.`,
+      note: `${activeDays(done)} days worked vs. ${activeDays(before)}.`,
     },
     {
       key: 'pace',
@@ -1003,7 +998,7 @@ export function subjectModel(
         const was = meanPace(before);
         return was > 0 && now > 0 ? Math.round(((was - now) / was) * 100) : null;
       })(),
-      note: 'Mean time a finished task took, against the window before.',
+      note: 'Average time per task vs. the window before.',
     },
   ];
 
@@ -1072,12 +1067,12 @@ export function subjectModel(
     }
     if (weakest && strongest && weakest.level !== strongest.level
         && strongest.holding! - weakest.holding! >= 15) {
-      return `${strongest.label} work is solid. ${weakest.label} work is what is holding you back.`;
+      return `${strongest.label} work is solid. ${weakest.label} work is holding you back.`;
     }
-    if (lowest && lowest.now < 60) return `${lowest.label} is the weak measure here.`;
-    if (finishedChange !== null && finishedChange > 15) return 'Speeding up, and holding quality.';
-    if (finishedChange !== null && finishedChange < -15) return 'Slowing down against last period.';
-    return 'Steady. Nothing here needs fixing.';
+    if (lowest && lowest.now < 60) return `${lowest.label} is your weak spot here.`;
+    if (finishedChange !== null && finishedChange > 15) return 'Speeding up and keeping quality high.';
+    if (finishedChange !== null && finishedChange < -15) return 'Slower than last period.';
+    return 'Steady. Nothing to fix.';
   })();
 
   /* The one sentence the page is for, and it is only written when the record
@@ -1085,9 +1080,7 @@ export function subjectModel(
      line that teaches a reader to skip the box it lives in. */
   const insight =
     weakest && strongest && weakest.level !== strongest.level && strongest.holding! - weakest.holding! >= 15
-      ? `Your ${strongest.label.toLowerCase()} work scores `
-        + `${Math.round(strongest.holding!)}%, but ${weakest.label.toLowerCase()} work scores `
-        + `${Math.round(weakest.holding!)}%. Improving that raises the whole subject.`
+      ? `Your ${strongest.label.toLowerCase()} work scores ${Math.round(strongest.holding!)}%. Your ${weakest.label.toLowerCase()} work scores ${Math.round(weakest.holding!)}%. Fix that and the whole subject goes up.`
       : null;
 
   return {

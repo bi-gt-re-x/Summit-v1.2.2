@@ -82,8 +82,8 @@ export type ChangeKind = 'gain' | 'problem' | 'pattern';
 /** The heading each kind of card wears. */
 export const CHANGE_TITLE: Record<ChangeKind, string> = {
   gain: 'Getting stronger',
-  problem: 'Emerging problem',
-  pattern: 'Hidden pattern',
+  problem: 'New problem',
+  pattern: 'Pattern',
 };
 
 export interface Change {
@@ -167,9 +167,7 @@ function difficultyRising(days: GrowthDay[], window: number): Change | null {
     kind: 'gain',
     family: 'difficulty',
     text:
-      `The work you take on has got harder — average difficulty ${one(hardWas)} to ` +
-      `${one(hardNow)} over ${window} days — and how well it goes has held at ` +
-      `${Math.round((wellNow / 5) * 100)}% of the maximum.`,
+      `Your work got harder (${one(hardWas)} to ${one(hardNow)} over ${window} days), and how well it goes held steady at ${Math.round((wellNow / 5) * 100)}%.`,
     move: `${one(hardWas)} → ${one(hardNow)}`,
     basis: `${ratedNow.toLocaleString()} rated tasks in the last ${window} days.`,
     weight: 40 + lift,
@@ -208,8 +206,7 @@ function hardTasksFailing(finished: Task[]): Change | null {
     kind: 'problem',
     family: 'difficulty-bands',
     text:
-      `Your hardest tasks go badly ${Math.round(points)} points more often than your ` +
-      `middling ones — ${Math.round(hardRate)}% against ${Math.round(midRate)}% rated 2 or below.`,
+      `Your hardest tasks go badly more often: ${Math.round(hardRate)}% rated 2 or lower, vs. ${Math.round(midRate)}% for medium ones.`,
     move: `${Math.round(midRate)}% → ${Math.round(hardRate)}%`,
     basis: `${hard.length} tasks rated 4 or 5 for difficulty, ${middling.length} rated 3.`,
     strength: smaller >= 20 && points >= 15 ? 'strong' : smaller >= 12 ? 'likely' : 'weak',
@@ -278,10 +275,8 @@ function qualityMoved(days: GrowthDay[], window: number): Change | null {
     kind: up ? 'gain' : 'problem',
     family: 'quality',
     text: up
-      ? `The work is going better — you rate your own execution ${one(wellWas)} out of 5 ` +
-        `before, ${one(wellNow)} now.`
-      : `The work is going worse — you rate your own execution ${one(wellWas)} out of 5 ` +
-        `before, ${one(wellNow)} now.`,
+      ? `Your work is going better. You rate it ${one(wellNow)} out of 5 now, up from ${one(wellWas)}.`
+      : `Your work is going worse. You rate it ${one(wellNow)} out of 5 now, down from ${one(wellWas)}.`,
     move: `${one(wellWas)} → ${one(wellNow)}`,
     basis: `${ratedNow.toLocaleString()} rated tasks in the last ${window} days, ${ratedWas.toLocaleString()} before.`,
     weight: 45 + Math.abs(move),
@@ -323,10 +318,8 @@ function efficiencyMoved(days: GrowthDay[], window: number): Change | null {
     kind: up ? 'gain' : 'problem',
     family: 'efficiency',
     text: up
-      ? `An hour of focus is worth more than it was — ${round(nowRate.rate)} XP an hour ` +
-        `against ${round(wasRate.rate)} over the ${window} days before.`
-      : `An hour of focus is worth less than it was — ${round(nowRate.rate)} XP an hour ` +
-        `against ${round(wasRate.rate)} over the ${window} days before.`,
+      ? `Your focus hours are paying off more: ${round(nowRate.rate)} XP an hour, up from ${round(wasRate.rate)}.`
+      : `Your focus hours are paying off less: ${round(nowRate.rate)} XP an hour, down from ${round(wasRate.rate)}.`,
     move: `${round(wasRate.rate)} → ${round(nowRate.rate)} XP/h`,
     basis: `${Math.round(nowRate.hours)} focus hours in the last ${window} days, ${Math.round(wasRate.hours)} before.`,
     weight: 35 + Math.abs(move),
@@ -373,12 +366,10 @@ function subjectMoved(rows: SubjectMove[]): Change[] {
       kind: up ? 'gain' : 'problem',
       family: up ? 'subject-risen' : 'subject-fallen',
       text: up
-        ? `${row.name} is taking more of your work — ${Math.round(row.shareWas)}% of the XP ` +
-          `you earned before, ${Math.round(row.shareNow)}% now.`
-        : `${row.name} is taking less of your work — ${Math.round(row.shareWas)}% of the XP ` +
-          `you earned before, ${Math.round(row.shareNow)}% now.`,
+        ? `${row.name} is taking more of your time. It's ${Math.round(row.shareNow)}% of your XP now, up from ${Math.round(row.shareWas)}%.`
+        : `${row.name} is taking less of your time. It's ${Math.round(row.shareNow)}% of your XP now, down from ${Math.round(row.shareWas)}%.`,
       move: `${Math.round(row.shareWas)}% → ${Math.round(row.shareNow)}%`,
-      basis: `${Math.round(row.now).toLocaleString()} XP in this window against ${Math.round(row.before).toLocaleString()} before.`,
+      basis: `${Math.round(row.now).toLocaleString()} XP here vs. ${Math.round(row.before).toLocaleString()} before.`,
       weight: 25 + Math.abs(row.points),
     };
   };
@@ -425,7 +416,7 @@ function overdueBacklog(open: Task[], todayIso: string): Change | null {
       `${late.length} ${late.length === 1 ? 'task is' : 'tasks are'} past the date you set for ` +
       `${late.length === 1 ? 'it' : 'them'}` +
       (days > 0 ? `, the oldest by ${days} ${days === 1 ? 'day' : 'days'}.` : '.'),
-    basis: `Counted from unfinished tasks carrying a due date.`,
+    basis: `From open tasks with a due date.`,
     weight: 32 + Math.min(20, late.length),
   };
 }

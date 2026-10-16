@@ -404,31 +404,31 @@ export function skillBalance(card: SkillCard, peers: SkillCard[]): BalanceAxis[]
       key: 'knowledge',
       label: 'Knowledge',
       value: pct(card.xp, best((row) => row.xp)),
-      note: 'Lifetime XP, against your biggest subject.',
+      note: 'All-time XP vs. your biggest subject.',
     },
     {
       key: 'practice',
       label: 'Practice',
       value: pct(card.tasks, best((row) => row.tasks)),
-      note: 'Finished tasks, against your most-worked subject.',
+      note: 'Finished tasks vs. your most-worked subject.',
     },
     {
       key: 'consistency',
       label: 'Consistency',
       value: pct(card.activeDays, 30),
-      note: 'Days in the last 30 with a finished task in it.',
+      note: 'Days in the last 30 with a finished task.',
     },
     {
       key: 'difficulty',
       label: 'Difficulty',
       value: pct(card.perTask, best((row) => row.perTask)),
-      note: 'XP a task — how heavy the work in it tends to be.',
+      note: 'XP per task, or how big your tasks are.',
     },
     {
       key: 'mastery',
       label: 'Mastery',
       value: pct(card.level.exact, best((row) => row.level.exact)),
-      note: 'Level reached, against your highest.',
+      note: 'Level vs. your highest.',
     },
   ];
 }
@@ -458,9 +458,7 @@ export function movers(cards: SkillCard[]): { rising: Mover[]; waiting: Mover[] 
       key: card.key,
       label: card.label,
       pct: card.growth30 ?? 0,
-      note: `${Math.round(card.xp30).toLocaleString()} XP in 30 days, against ${Math.round(
-        card.xp30Before,
-      ).toLocaleString()} before`,
+      note: `${Math.round(card.xp30).toLocaleString()} XP in 30 days vs. ${Math.round(card.xp30Before).toLocaleString()} before`,
     }));
 
   // Subjects with no earlier window cannot be ranked by change, but a subject

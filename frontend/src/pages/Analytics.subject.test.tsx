@@ -107,7 +107,7 @@ async function choose(select: HTMLSelectElement, id: string): Promise<number> {
 }
 
 describe('changing the subject', () => {
-  it('offers every subject the account has used, and All Subjects', async () => {
+  it('offers every subject the account has used, and All subjects', async () => {
     const select = await open();
     const options = [...select.options].map((option) => option.value);
     expect(options[0]).toBe('');

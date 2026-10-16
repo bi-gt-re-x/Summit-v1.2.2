@@ -176,7 +176,7 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       soWhat:
         evening.lift > 0
           ? 'Try moving one important task earlier in the day.'
-          : 'Check what you do in the mornings. It may be the tasks, not the time.',
+          : 'Check what you do in the mornings. The tasks may matter more than the time.',
       weight: evening.smaller + Math.abs(evening.lift),
     });
   }
@@ -216,7 +216,7 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
     found.push({
       id: 'exec-weekend',
       kind: 'context',
-      text: `Your execution is ${pct(weekend.lift)} ${upDown(weekend.lift)} on weekends than weekdays.`,
+      text: `Your work goes ${pct(weekend.lift)} ${upDown(weekend.lift)} on weekends than weekdays.`,
       basis: `${weekend.withCount} tasks at the weekend, ${weekend.withoutCount} in the week.`,
       lift: weekend.lift,
       strength: strengthFor(weekend.smaller, weekend.lift),
@@ -269,13 +269,13 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
           id: 'long-days',
           kind: 'context',
           text: `On days with over ${Math.round(median)} minutes of focus, you finish ${pct(lift)} ${lift >= 0 ? 'more' : 'fewer'} tasks.`,
-          basis: `${long.length} longer days against ${short.length} shorter ones.`,
+          basis: `${long.length} longer days vs. ${short.length} shorter ones.`,
           lift,
           strength: strengthFor(Math.min(long.length, short.length), lift),
           soWhat:
             lift > 0
               ? `Longer focus days work well for you. Aim for ${Math.round(median)}+ minutes.`
-              : 'Longer focus days are not helping. More time is not the answer here.',
+              : "Longer focus days aren't helping. More time won't fix this.",
           weight: Math.min(long.length, short.length) + Math.abs(lift),
         });
       }
@@ -310,7 +310,7 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       id: `subject-exec-${subject}`,
       kind: 'subject',
       text: `You rate ${nameOf(subject)} ${pct(lift)} ${lift >= 0 ? 'higher' : 'lower'} than your other subjects.`,
-      basis: `${mine.length} rated ${nameOf(subject)} tasks against ${rest.length} elsewhere.`,
+      basis: `${mine.length} rated ${nameOf(subject)} tasks vs. ${rest.length} others.`,
       lift,
       strength: strengthFor(smaller, lift),
       soWhat:

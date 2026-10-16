@@ -71,7 +71,7 @@ beforeEach(() => {
   completeTask.mockClear();
 });
 
-describe('starting a sitting', () => {
+describe('starting a session', () => {
   it('takes the rest of the page away', async () => {
     show();
     expect(await screen.findByText(/pick your focus/i)).toBeInTheDocument();
@@ -178,7 +178,7 @@ describe('the two ways back', () => {
 
     expect(await screen.findByText(/pick your focus/i)).toBeInTheDocument();
     // Escape is the same act as the button, not a way to hide a running clock:
-    // a sitting that kept counting behind the full page would be recording
+    // a session that kept counting behind the full page would be recording
     // minutes nobody was sitting for.
     expect(await screen.findByRole('button', { name: /^start focus$/i })).toBeInTheDocument();
   });

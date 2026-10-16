@@ -47,7 +47,7 @@ const STATUS_WORDS: Record<Status, string> = {
   idle: '',
   saving: 'Saving…',
   saved: 'Saved',
-  failed: 'Could not save. It will try again as you type.',
+  failed: "Couldn't save. It will try again as you type.",
 };
 
 export interface SpaceProps {
@@ -176,12 +176,12 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
           <BlockEditor
             blocks={doc.blocks}
             disabled={!loaded}
-            label={`What is in ${name || defaultName(id)}`}
+            label={`What's in ${name || defaultName(id)}`}
             onChange={(blocks) => write({ ...doc, blocks })}
           />
         </div>
         <p className="sp-foot">
-          {words} {words === 1 ? 'word' : 'words'} · Type “/” for blocks · Drag ⋮⋮ to move
+          {words} {words === 1 ? 'word' : 'words'} · Type "/" for blocks · Drag ⋮⋮ to move
         </p>
 
         {kind === 'team' && loaded && space && (

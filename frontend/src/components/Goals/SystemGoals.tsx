@@ -266,7 +266,7 @@ function SystemMetric({
           <dl className="ag-facts">
             <div>
               <dt>Set on</dt>
-              <dd>{formatGoalDate(goal.start_date || goal.created_at) || '—'}</dd>
+              <dd>{formatGoalDate(goal.start_date || goal.created_at) || '-'}</dd>
             </div>
             <div>
               <dt>Target</dt>

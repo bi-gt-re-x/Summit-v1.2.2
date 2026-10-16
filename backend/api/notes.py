@@ -203,7 +203,7 @@ def save_note(note: SaveNote, username: str = Depends(current_username)):
     if note.id:
         row = db.find_row('notes', note.id, user_id=username)
         if not row:
-            return fail('That note does not exist.')
+            return fail("That note doesn't exist.")
         row.update(fields)
         # A cleared anchor is NULL in the table and so absent from a read row;
         # the reply says the same thing a fresh read would.
@@ -234,5 +234,5 @@ def delete_note(request: DeleteNote, username: str = Depends(current_username)):
         return fail('Sign in to delete a note.')
 
     if not db.delete_row('notes', request.id, user_id=username):
-        return fail('That note does not exist.')
+        return fail("That note doesn't exist.")
     return ok(id=request.id)

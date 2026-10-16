@@ -53,7 +53,7 @@ describe('what it says', () => {
   it('names the stage and what the record behind it is', () => {
     draw('weekly', 8);
     expect(screen.getByText(STAGE_LABEL.weekly)).toBeInTheDocument();
-    expect(screen.getByText(/8 days of your work are on record/)).toBeInTheDocument();
+    expect(screen.getByText(/8 days of work logged/)).toBeInTheDocument();
   });
 
   it('promises the same thing the countdown promised', () => {

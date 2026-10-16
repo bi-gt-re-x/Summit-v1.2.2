@@ -30,7 +30,7 @@ const analytics: Step[] = [
     target: ['.ax-setup'],
     skipIfMissing: true,
     title: 'A few questions first',
-    body: "Tell it how much you plan to work and which subjects to follow. It uses your answers as the bar it measures you against. I'll wait.",
+    body: "Tell it how much you plan to work and which subjects to follow. It sets your targets from that. I'll wait.",
   },
   {
     id: 'ax-head',
@@ -88,7 +88,7 @@ const analytics: Step[] = [
     kind: 'next',
     target: ['[data-tour="ax-tab-insights"]'],
     title: 'Insights',
-    body: 'The habits in your record: when you work best and what your better days have in common.',
+    body: 'Your habits: when you work best and what your good days have in common.',
   },
   {
     id: 'ax-to-subjects',
@@ -141,7 +141,7 @@ const tasks: Step[] = [
     target: ['.tk-stats'],
     skipIfMissing: true,
     title: 'Your numbers',
-    body: 'Five quick figures over the last two weeks, each with a small trend line.',
+    body: 'Five quick numbers from the last two weeks, each with a small trend line.',
   },
   {
     id: 'tk-new',
@@ -232,7 +232,7 @@ const goals: Step[] = [
     until: wizard(2),
     skipIfMissing: true,
     title: 'Why it matters',
-    body: 'One honest line about why you want this. On a hard day it\'s the reason you\'ll see on the card.',
+    body: "One line on why you want this. On a hard day, it's what you'll see on the card.",
     hint: 'Press Next in the form when you\'re ready.',
   },
   {
@@ -357,7 +357,7 @@ const skillTree: Step[] = [
     id: 'stx-done',
     kind: 'next',
     title: "That's the Skill Tree",
-    body: 'Pick one skill near the bottom and try a few problems. That is the best way in.',
+    body: "Pick one skill near the bottom and try a few problems. That's the best way in.",
     next: 'Finish',
   },
 ];
@@ -384,7 +384,7 @@ const notes: Step[] = [
     target: ['.nt-search-wrap', '.nt-search'],
     skipIfMissing: true,
     title: 'Find anything',
-    body: 'Search every note by title or what is in it.',
+    body: "Search every note by title or what's in it.",
   },
   {
     id: 'nt-list',

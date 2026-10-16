@@ -177,7 +177,7 @@ export function RecentActivity({ entries }: { entries: Activity[] }) {
                 <path d="m8.5 12 2.5 2.5 4.5-5" />
               </svg>
               <span className="dash-activity-name">
-                Completed <strong>&ldquo;{entry.title}&rdquo;</strong>
+                Completed <strong>&quot;{entry.title}&quot;</strong>
               </span>
               <span className="dash-activity-xp">+{format.number(entry.xp)} XP</span>
               <span className="dash-activity-at">

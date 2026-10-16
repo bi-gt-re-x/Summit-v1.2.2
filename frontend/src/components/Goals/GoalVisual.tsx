@@ -45,7 +45,7 @@ const time = (value?: string) => goalDate(value)?.getTime() ?? 0;
 /** "May 2024" — the checkpoint column, where the year is the point. */
 function monthYear(value?: string): string {
   const at = time(value);
-  if (!at) return '—';
+  if (!at) return '-';
   return new Date(at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
@@ -103,12 +103,12 @@ function Heat({ context }: { context: VisualContext }) {
                   <i
                     key={cell.day}
                     className={`is-l${cell.level}`}
-                    title={`${formatGoalDate(cell.day)} — ${cell.count} finished`}
+                    title={`${formatGoalDate(cell.day)}: ${cell.count} finished`}
                   />
                 ))}
               </div>
               <span className="ag-heat-range">
-                {dayMonth(part[0]!.day)} – {dayMonth(part[part.length - 1]!.day)}
+                {dayMonth(part[0]!.day)} to {dayMonth(part[part.length - 1]!.day)}
               </span>
             </div>
           );
@@ -314,7 +314,7 @@ function clockPercent(goal: Goal): number | null {
 /** The figure between nothing and the target, on one line. */
 function Scale({ goal }: { goal: Goal }) {
   const n = goalNumbers(goal);
-  if (n.target <= 0) return <p className="ag-empty">No target set yet, so there is nothing to measure against.</p>;
+  if (n.target <= 0) return <p className="ag-empty">No target set yet, so there's nothing to track.</p>;
   const done = pct(n.progress);
   const short = (value: number) => Math.round(value * 10) / 10;
 
@@ -348,7 +348,7 @@ function Scale({ goal }: { goal: Goal }) {
             className="ag-scale-clock"
             style={{ left: `${elapsed}%` }}
             aria-hidden="true"
-            title={`Today — ${elapsed}% of the way to the target date`}
+            title={`Today: ${elapsed}% of the way to your date`}
           />
         )}
         <b style={{ left: `${done}%` }}>{short(n.current).toLocaleString()}</b>
@@ -486,7 +486,7 @@ export function GoalVisual({ goal, context, pick, nameOf, onOpen, onChart }: Goa
       {/* A chosen chart can land on a goal with nothing behind it yet. Said
           plainly, rather than drawing an empty frame. */}
       {timed && line.length <= 1 && (
-        <p className="ag-empty">No checkpoints reached yet, so there is no line to draw.</p>
+        <p className="ag-empty">No checkpoints reached yet, so there's no line to draw.</p>
       )}
       {(pick.id === 'scale' || pick.id === 'basic') && <Scale goal={goal} />}
       {pick.id === 'difficulty' && <Bars rows={difficultyBars(context)} />}

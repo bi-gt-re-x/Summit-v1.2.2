@@ -203,11 +203,11 @@ def goal_health(goal, tasks, today=None, cache=None):
         return result('not-started', 'Nothing recorded against this yet.')
 
     if days_left is not None and days_left < 0:
-        return result('behind', 'Its date passed {} ago and it is {}% done.'.format(
+        return result('behind', 'Its date passed {} ago and it\'s {}% done.'.format(
             _plural(-days_left, 'day'), pct))
 
     if ahead is not None and ahead < -BEHIND_BY:
-        return result('behind', '{} points behind where the calendar says it should be, '
+        return result('behind', '{} points behind schedule, '
                                 'with {} left.'.format(js_round(-ahead * 100),
                                                        _plural(days_left, 'day')))
 
@@ -215,7 +215,7 @@ def goal_health(goal, tasks, today=None, cache=None):
         return result('behind', 'Nothing done toward this in {} days.'.format(days_since_work))
 
     if ahead is not None and ahead > 0.08:
-        return result('on-track', '{}% done with {}% of the time left — ahead of pace.'.format(
+        return result('on-track', '{}% done with {}% of the time left. You\'re ahead.'.format(
             pct, js_round((1 - (expected or 0)) * 100)))
     if recent_tasks > 0:
         return result('on-track', '{}% done, and worked on {} in the last two weeks.'.format(

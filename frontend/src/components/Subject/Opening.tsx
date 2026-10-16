@@ -44,7 +44,7 @@ export function ObjectiveBand({
   const kindWord = KIND_WORDS[objective.kind];
 
   return (
-    <section className="so-band" aria-label="What this subject is for">
+    <section className="so-band" aria-label="Your goal for this subject">
       <p className="so-band-subject">{subject}</p>
 
       {objective.objective ? (

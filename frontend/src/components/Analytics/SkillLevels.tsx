@@ -133,20 +133,17 @@ export function SkillLevelsPanel({ practice, periodText, limit = 6 }: SkillLevel
     });
   }, [levels, titles]);
 
-  if (loading) return <p className="ax-empty">Reading your marked problems…</p>;
+  if (loading) return <p className="ax-empty">Loading your problems…</p>;
   if (error && !attempts.length) return <p className="ax-empty">{error}</p>;
 
   if (!rows.length) {
     return (
       <div className="ax-lv-empty">
         <p>
-          No skill-tree problems marked in {periodText}. Levels here come from
-          problems you mark right or wrong — not from time spent.
+          No skill-tree problems marked in {periodText}. Levels come from problems you mark right or wrong. Time spent doesn't count.
         </p>
         <p>
-          Open a skill in the <Link to="/skill-trees">Skill Tree</Link>, pick a step, try its
-          problems, and press <b>Got it</b> or <b>Missed it</b> after each answer. Work done
-          elsewhere can be logged there too.
+          Open a skill in the <Link to="/skill-trees">Skill Tree</Link>, pick a step, try its problems and press <b>Got it</b> or <b>Missed it</b> after each one. You can log work done elsewhere there too.
         </p>
       </div>
     );
@@ -182,9 +179,7 @@ export function SkillLevelsPanel({ practice, periodText, limit = 6 }: SkillLevel
       )}
 
       <p className="ax-panel-note ax-panel-note-foot">
-        Level 1 is started; 2, 3 and 4 mean Easy, Medium and Hard problems right at least 70%
-        of the time over five or more; 5 is Hard problems right 85% of the time over ten or
-        more, on two different days. Accuracy is over your last 20 problems.
+        Level 1: You started. Levels 2 to 4: 70%+ right on 5+ Easy, Medium or Hard problems. Level 5: 85%+ right on 10+ Hard problems, on two different days. Based on your last 20 problems.
       </p>
     </>
   );
@@ -226,7 +221,7 @@ function SkillRow({ row }: { row: Row }) {
           <dt>Accuracy</dt>
           <dd>
             {then.accuracy !== null && then.accuracy !== now.accuracy ? `${then.accuracy}% → ` : ''}
-            {now.accuracy === null ? '—' : `${now.accuracy}%`}
+            {now.accuracy === null ? '-' : `${now.accuracy}%`}
             <small>last 20 problems</small>
           </dd>
         </div>

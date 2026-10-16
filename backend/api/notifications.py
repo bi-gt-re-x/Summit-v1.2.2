@@ -48,10 +48,18 @@ from pydantic import BaseModel
 
 from backend.api import achievements
 from backend.api.guard import current_user
-from backend.api.reply import fail, ok
+from backend.api.reply import fail, ok as _ok
+from backend.tracking.plainwords import plain
 from backend.api.settings import FIELDS
 from backend.database import connection as db
 from backend.tracking import notify
+
+
+def ok(**fields):
+    """Every reply from here is app or model text: dashes and curly quotes
+    stored before the cleanup (backend/tracking/plainwords.py) never reach a
+    page."""
+    return _ok(**plain(fields))
 
 router = APIRouter(tags=['notifications'])
 

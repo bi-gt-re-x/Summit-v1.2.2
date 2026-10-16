@@ -79,7 +79,7 @@ export function Tiles({
       delta: figures.xpPerDay.delta,
       series: sparks.xp,
       tone: 'violet',
-      hint: 'XP per day of the window, not per day worked. Time off pulls it down.',
+      hint: 'XP per day in this window. Days off pull it down.',
     },
     {
       key: 'consistency',
@@ -90,7 +90,7 @@ export function Tiles({
       series: sparks.consistency,
       tone: 'amber',
       hint:
-        'Share of days you did any work.',
+        'How many days you did any work.',
     },
     {
       key: 'quality',
@@ -100,27 +100,27 @@ export function Tiles({
       // Rating is optional and a zero here would be the page inventing a bad
       // review out of a skipped dialog. See utils/ratings.
       label: 'Quality',
-      value: figures.ratedTasks === 0 ? '—' : figures.quality.value.toFixed(1),
+      value: figures.ratedTasks === 0 ? '-' : figures.quality.value.toFixed(1),
       unit: figures.ratedTasks === 0 ? undefined : '/ 25',
       delta: figures.ratedTasks === 0 ? null : figures.quality.delta,
       series: figures.ratedTasks === 0 ? [] : sparks.quality,
       tone: 'pink',
       hint:
         figures.ratedTasks === 0
-          ? 'Difficulty × execution, from the star rows after a task. Optional.'
-          : `Difficulty × execution out of 25, over the ${figures.ratedTasks} of ${figures.finishedTasks} tasks you rated.`,
+          ? 'How hard times how well, from your task ratings. Optional.'
+          : `How hard times how well, out of 25. From the ${figures.ratedTasks} of ${figures.finishedTasks} tasks you rated.`,
     },
     ...(showsTaskVolume(logStyle)
       ? [
           {
             key: 'tasks',
             glyph: 'check' as const,
-            label: 'Tasks Completed',
+            label: 'Tasks done',
             value: figures.tasks.value.toLocaleString(),
             delta: figures.tasks.delta,
             series: sparks.tasks,
             tone: 'green' as const,
-            hint: 'Tasks finished, counted on the day you finished them.',
+            hint: 'Tasks you finished, on the day you finished them.',
           },
         ]
       : []),
@@ -129,13 +129,13 @@ export function Tiles({
           {
             key: 'focus',
             glyph: 'clock' as const,
-            label: 'Focus Time',
+            label: 'Focus time',
             value: figures.focusHours.value.toFixed(1),
             unit: 'h',
             delta: figures.focusHours.delta,
             series: sparks.focusHours,
             tone: 'blue' as const,
-            hint: 'The hours logged in the window — the other volume behind the three rates.',
+            hint: 'Hours you logged in this window.',
           },
         ]
       : []),
@@ -148,10 +148,8 @@ export function Tiles({
         /* Under the row rather than on each tile: it is one fact about all of
            them, and a copy on each would be louder than the figures. */
         <p className="ax-tiles-scope">
-          These count <strong>every subject</strong> — XP and focus minutes are
-          recorded per day, not per subject, so the filter on{' '}
-          <strong>{scopedOut}</strong> cannot narrow them. The quality, subject and
-          goal panels below it can, and do.
+          These count <strong>every subject</strong> . XP and focus time are saved per day, so the subject filter on{' '}
+          <strong>{scopedOut}</strong> doesn't change them. The panels below do follow it.
         </p>
       )}
     </>

@@ -12,7 +12,7 @@ import { open, lock } from './types';
 export const MINDFULNESS: SubjectTree = {
   id: 'mindfulness',
   title: 'Mind & Recovery',
-  blurb: 'Attention, sleep and stress — the parts of training nobody logs.',
+  blurb: 'Attention, sleep and stress. The parts of training nobody logs.',
   parent: 'fitness',
   nodes: [
     { id: 'mi.breath', name: 'Breathing', icon: 'breath', tier: 'foundation', core: true, state: open, percent: 25, xp: 1300,

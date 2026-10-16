@@ -70,7 +70,7 @@ describe('the first load', () => {
     renderWithProviders(
       <Profiler
         id="analytics"
-        onRender={() => commits.push(!screen.queryByText(/Reading your history/))}
+        onRender={() => commits.push(!screen.queryByText(/Loading your analytics/))}
       >
         <Analytics />
       </Profiler>,
@@ -81,13 +81,13 @@ describe('the first load', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(190);
     });
-    expect(screen.getByText(/Reading your history/)).toBeInTheDocument();
+    expect(screen.getByText(/Loading your analytics/)).toBeInTheDocument();
     expect(commits.some(Boolean)).toBe(false);
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(400);
     });
-    expect(screen.queryByText(/Reading your history/)).toBeNull();
+    expect(screen.queryByText(/Loading your analytics/)).toBeNull();
     // Content arrived in one commit, not assembled over several.
     expect(commits.indexOf(true)).toBeGreaterThan(-1);
     expect(commits.filter(Boolean).length).toBeLessThanOrEqual(2);

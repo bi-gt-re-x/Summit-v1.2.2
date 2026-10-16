@@ -112,7 +112,7 @@ describe('subjectInsights', () => {
     const rhythm = subjectInsights(shiftedCards[0]!, shiftedCards, shifted, TODAY).find((entry) => entry.key === 'rhythm')!;
     expect(rhythm.head).toBe('Coming back less often');
     expect(rhythm.detail).toBe(
-      "Lately it's every 7 days. Over your whole record it's every day. Your last 4 breaks here were 7, 7, 7 and 7 days.",
+      "Lately it's every 7 days. Usually it's every day. Your last 4 breaks here were 7, 7, 7 and 7 days.",
     );
   });
 

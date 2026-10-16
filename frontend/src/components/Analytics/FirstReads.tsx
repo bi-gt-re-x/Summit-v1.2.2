@@ -36,8 +36,8 @@ export function FirstReads({ tasks, goals }: { tasks: Task[]; goals: Goal[] }) {
 
   return (
     <Panel
-      title="What your work says so far"
-      note="Read straight off what you've done. Each one shows what it's based on."
+      title="What we see so far"
+      note="Based on what you've done. Each one shows where it comes from."
       className="ax-reads-panel"
     >
       {reads.length ? (
@@ -53,9 +53,9 @@ export function FirstReads({ tasks, goals }: { tasks: Task[]; goals: Goal[] }) {
       ) : (
         <p className="ax-reads-empty">
           {toGo > 0
-            ? `Finish ${toGo} more ${toGo === 1 ? 'task or focus sitting' : 'tasks or focus sittings'} and your first reads show up here.`
-            : 'Keep going. A read shows up once one kind of activity has enough behind it.'}{' '}
-          <Link className="ax-link" to="/timer">Start a sitting</Link>
+            ? `Finish ${toGo} more ${toGo === 1 ? 'task or focus session' : 'tasks or focus sessions'} and your first results show up here.`
+            : "Keep going. Results show up once there's enough of one kind of work."}{' '}
+          <Link className="ax-link" to="/timer">Start a session</Link>
         </p>
       )}
     </Panel>

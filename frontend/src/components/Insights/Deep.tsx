@@ -39,7 +39,7 @@ function StrengthChip({ strength }: { strength: Finding['strength'] }) {
     <span
       className="ax-evidence"
       style={{ color: toneVar(hue), borderColor: toneVar(hue) }}
-      title="How reliable this finding is"
+      title="How sure this is"
     >
       {STRENGTH_TEXT[strength]}
     </span>
@@ -104,14 +104,14 @@ export function WhyPanel({
 }) {
   return (
     <Panel
-      title="Why the last stretch went the way it did"
-      note="What accounts for the change"
+      title="Why your last stretch went the way it did"
+      note="What caused the change"
     >
       {!notice.ready ? (
         <Waiting notice={notice} />
       ) : findings.length === 0 ? (
         <p className="ax-empty">
-          Nothing moved far enough to have a cause worth naming.
+          Nothing changed enough to explain.
         </p>
       ) : (
         <ul className="ax-findings">
@@ -137,13 +137,13 @@ export function HowPanel({
   return (
     <Panel
       title="How you tend to work"
-      note="Associations, not mechanisms"
+      note="These go together. That doesn't mean one causes the other."
     >
       {!notice.ready ? (
         <Waiting notice={notice} />
       ) : findings.length === 0 ? (
         <p className="ax-empty">
-          Not enough spread yet to separate conditions that produce different results.
+          Not enough variety yet to compare.
         </p>
       ) : (
         <ul className="ax-findings">
@@ -180,7 +180,7 @@ export function RelationshipsPanel({
   return (
     <Panel
       title="What moves with what"
-      note="Correlation, not cause"
+      note="Linked doesn't mean caused"
     >
       {!notice.ready || !active ? (
         <Waiting
@@ -189,7 +189,7 @@ export function RelationshipsPanel({
               ? {
                   ready: false,
                   message:
-                    'Not enough paired days yet — these need both focus time and finished tasks.',
+                    'Not enough days yet. These need days with both focus time and finished tasks.',
                 }
               : notice
           }
@@ -222,13 +222,13 @@ export function RelationshipsPanel({
               <div className="ax-figures ax-figures-tight">
                 <div className="ax-figure">
                   <span className="ax-muted">Correlation</span>
-                  <strong>{active.r === 0 ? '—' : active.r.toFixed(2)}</strong>
-                  <span className="ax-muted ax-small">Pearson’s r</span>
+                  <strong>{active.r === 0 ? '-' : active.r.toFixed(2)}</strong>
+                  <span className="ax-muted ax-small">Pearson's r</span>
                 </div>
                 <div className="ax-figure">
                   <span className="ax-muted">Observations</span>
                   <strong>{active.n}</strong>
-                  <span className="ax-muted ax-small">pairs behind it</span>
+                  <span className="ax-muted ax-small">days compared</span>
                 </div>
               </div>
               <StrengthChip strength={active.strength} />

@@ -297,7 +297,7 @@ function Recommend({ at, sittings, current, onUse }: {
       <p className="pom-rec is-waiting">
         <span className="pom-rec-icon" aria-hidden="true"><Icon name="sparkles" /></span>
         {togo > 0
-          ? `Recommended lengths start after ${MIN_INTERVALS} recorded sittings — ${togo} to go.`
+          ? `Suggested lengths show up after ${MIN_INTERVALS} sessions. ${togo} to go.`
           : 'Run a couple of different lengths and this will recommend one.'}
       </p>
     );
@@ -317,7 +317,7 @@ function Recommend({ at, sittings, current, onUse }: {
         </b>
         <i>
           {at.low === at.high
-            ? `Your ${at.minutes}-minute sittings run cleanest, over ${at.sample} recorded.`
+            ? `Your ${at.minutes}-minute sessions go best, out of ${at.sample} logged.`
             : `You work best between ${at.low} and ${at.high} minutes, over ${at.sample} recorded.`}
         </i>
       </span>
@@ -382,7 +382,7 @@ function TaskPicker({ tasks, picked, onPick, today }: {
       <header className="pom-panel-head">
         <div className="pom-panel-title">
           <h2 id="pom-picker-head"><Icon name="clipboard" /> What Are You Working On?</h2>
-          <p>Pick a task and each sitting gets logged against it</p>
+          <p>Pick a task and each session gets logged to it</p>
         </div>
         <Link className="pom-link" to="/tasks">All tasks</Link>
       </header>
@@ -434,7 +434,7 @@ function TodaySittings({ rows }: { rows: TaskTime[] }) {
     <section className="pom-panel pom-today" aria-labelledby="pom-today-head">
       <header className="pom-panel-head">
         <div className="pom-panel-title">
-          <h2 id="pom-today-head"><Icon name="timer" /> Today&apos;s Sittings</h2>
+          <h2 id="pom-today-head"><Icon name="timer" /> Today&apos;s sessions</h2>
           <p>
             {sittings
               ? `${fmtHM(minutes * 60)} across ${sittings} sitting${sittings === 1 ? '' : 's'}`
@@ -455,7 +455,7 @@ function TodaySittings({ rows }: { rows: TaskTime[] }) {
           ))}
         </ul>
       ) : (
-        <p className="pom-empty">No sittings yet today. Pick a task and press Start Focus.</p>
+        <p className="pom-empty">No sessions yet today. Pick a task and press Start Focus.</p>
       )}
     </section>
   );
@@ -555,12 +555,12 @@ function Outcome({ sitting, fed, onHide, onJot }: {
   const said = verdict(sitting);
 
   return (
-    <section className="pom-outcome" aria-label="Your last sitting">
+    <section className="pom-outcome" aria-label="Your last session">
       <span className="pom-outcome-head">
         <b>{sitting.minutes} min {about ? 'on' : 'sitting'}</b>
         {about && <i>{about}</i>}
       </span>
-      <dl className="pom-outcome-bars" aria-label="How that sitting went">
+      <dl className="pom-outcome-bars" aria-label="How that session went">
         {scored !== null && (
           <div className="pom-outcome-bar">
             <dt>Execution <b>{scored}%</b></dt>
@@ -622,7 +622,7 @@ function Outcome({ sitting, fed, onHide, onJot }: {
           }}
         >
           <label className="pom-jot-label" htmlFor="pom-jot-text">
-            Jot a note about this sitting
+            Jot a note about this session
           </label>
           <div className="pom-jot-row">
             <textarea id="pom-jot-text" className="pom-jot-text" rows={1} maxLength={2000}
@@ -816,7 +816,7 @@ export default function Timer() {
     const task = row.taskId ? tasks.find((entry) => entry.id === row.taskId) : undefined;
     try {
       const result = await noteService.save({
-        title: row.taskTitle ?? 'Focus sitting',
+        title: row.taskTitle ?? 'Focus session',
         body: text,
         note_date: row.day,
         task_id: task ? task.id : '',
@@ -1031,7 +1031,7 @@ export default function Timer() {
                 <span className="pom-side-icon pom-tone-violet" aria-hidden="true"><Icon name="clipboard" /></span>
                 <span className="pom-side-label">Working On</span>
                 <strong className="pom-side-task">{picked ? picked.title : 'No task'}</strong>
-                <em>{picked ? 'logged on each sitting' : 'pick one below'}</em>
+                <em>{picked ? 'logged on each session' : 'pick one below'}</em>
               </div>
               <div className="pom-side-card">
                 <span className="pom-side-icon pom-tone-amber" aria-hidden="true"><Icon name="flame" /></span>
@@ -1058,8 +1058,8 @@ export default function Timer() {
           <section className="pom-panel pom-method">
             <header className="pom-panel-head">
               <div className="pom-panel-title">
-                <h2><Icon name="target" /> Pick Your Focus</h2>
-                <p>How hard you are going, and how long one sitting runs</p>
+                <h2><Icon name="target" /> Pick your focus</h2>
+                <p>How hard you're going and how long each session runs</p>
               </div>
             </header>
 

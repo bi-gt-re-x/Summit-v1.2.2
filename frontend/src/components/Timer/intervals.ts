@@ -298,7 +298,7 @@ export function verdict(interval: Interval): string {
     if (interval.met === undefined) return '';
     return interval.met
       ? 'You did what you set out to do.'
-      : 'Not this time — the sitting still counted.';
+      : 'Not this time. The session still counted.';
   }
   if (pct >= 100) return 'You did more than you set out to.';
   if (pct >= 70) return 'Most of the way to what you set out to do.';
@@ -625,8 +625,8 @@ export function nextMove(intervals: Interval[]): Move | null {
     const shorter = STYLES.filter((style) => style.focus < sameLength).pop();
     return {
       move: shorter
-        ? `Try ${shorter.name} — ${shorter.focus} min — for the next one.`
-        : 'Try a shorter sitting for the next one.',
+        ? `Try ${shorter.name} (${shorter.focus} min) for the next one.`
+        : 'Try a shorter session next time.',
       because: `Your last ${RUN} at ${sameLength} min were all cut short.`,
     };
   }
@@ -651,7 +651,7 @@ export function nextMove(intervals: Interval[]): Move | null {
     const usual = mean(older);
     if (now >= usual + 2 && now >= 2) {
       return {
-        move: 'Worth a break, or a shorter sitting, before the next one.',
+        move: 'Take a break or try a shorter session next.',
         because: `The last ${RUN} averaged ${now.toFixed(1)} pauses against your usual ${usual.toFixed(1)}.`,
       };
     }
@@ -663,7 +663,7 @@ export function nextMove(intervals: Interval[]): Move | null {
     const longer = STYLES.find((style) => style.focus > sameLength);
     if (longer) {
       return {
-        move: `You could go longer — ${longer.name} runs ${longer.focus} min.`,
+        move: `You could go longer. ${longer.name} runs ${longer.focus} min.`,
         because: `Your last ${RUN} at ${sameLength} min all ran clean through, unbroken.`,
       };
     }

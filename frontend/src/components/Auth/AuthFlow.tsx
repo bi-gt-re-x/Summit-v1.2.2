@@ -52,7 +52,7 @@ const COPY: Record<AuthStep, [string, string]> = {
   create: ['Create account', 'Just a name, an e-mail and a password.'],
   inbox: ['Check your inbox', 'One click and the account is yours.'],
   profile: ['Finish your profile', 'Three quick picks, then one last step.'],
-  about: ['About you', 'Last step. Tell us where you are and where you want to go.'],
+  about: ['About you', "Last step. Tell us where you're and where you want to go."],
 };
 
 const GOALS = [
@@ -212,7 +212,7 @@ export function AuthFlow({
     try {
       const result = await authService.login(id, pw);
       if (!result.success) {
-        say(result.message || 'That did not work.');
+        say(result.message || "That didn't work.");
         return;
       }
       /* An unconfirmed address is no longer a refused sign-in, so there is
@@ -227,7 +227,7 @@ export function AuthFlow({
       }
       await finish();
     } catch {
-      say('Could not reach the server.');
+      say("Couldn't reach the server.");
     }
   }
 
@@ -246,7 +246,7 @@ export function AuthFlow({
     try {
       const result = await authService.signup(name, email, password);
       if (!result.success) {
-        say(result.message || 'That did not work.');
+        say(result.message || "That didn't work.");
         return;
       }
       setPendingEmail(result.email || email);
@@ -261,7 +261,7 @@ export function AuthFlow({
          confirming. */
       await toProfile();
     } catch {
-      say('Could not reach the server.');
+      say("Couldn't reach the server.");
     }
   }
 
@@ -273,7 +273,7 @@ export function AuthFlow({
       setMailFailed(Boolean(result.success && result.mail_failed));
       say(result.message || '', result.success && !result.mail_failed ? 'info' : 'error');
     } catch {
-      say('Could not reach the server.');
+      say("Couldn't reach the server.");
     }
   }
 
@@ -289,7 +289,7 @@ export function AuthFlow({
         daily_goal: chosenGoal,
       });
       if (!result.success) {
-        say(result.message || 'That did not work.');
+        say(result.message || "That didn't work.");
         return;
       }
       // The palette, and `theme_mode` pinned to the base so the device's own
@@ -302,7 +302,7 @@ export function AuthFlow({
          prompts, so it comes before the app rather than after it. */
       go('about');
     } catch {
-      say('Could not reach the server.');
+      say("Couldn't reach the server.");
     }
   }
 
@@ -449,7 +449,7 @@ export function AuthFlow({
               onChange={(event) => setConsented(event.target.checked)}
             />
             <span>
-              I am 13 or older, and I agree to the{' '}
+              I'm 13 or older, and I agree to the{' '}
               <a href="/terms-of-service" target="_blank" rel="noreferrer">
                 Terms of Service
               </a>{' '}
@@ -479,8 +479,7 @@ export function AuthFlow({
           {mailFailed ? (
             <>
               Your account is made, but the confirmation e-mail to{' '}
-              <strong id="inboxEmail">{pendingEmail || 'your e-mail'}</strong> could not
-              be sent. Nothing is coming yet — try again in a moment.
+              <strong id="inboxEmail">{pendingEmail || 'your e-mail'}</strong> couldn't be sent. Try again in a moment.
             </>
           ) : (
             <>
@@ -494,7 +493,7 @@ export function AuthFlow({
             popup shows it directly — the flow stays walkable end to end on a
             laptop. It leaves the app, because verifying is a server route. */}
         <div className="auth-devlink" hidden={!devLink}>
-          <p>No mail server is configured yet, so here is that link:</p>
+          <p>No mail server is set up yet, so here's the link:</p>
           <a id="devLink" href={devLink ?? '#'} className="auth-primary">
             Verify Email
           </a>

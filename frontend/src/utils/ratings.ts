@@ -285,13 +285,13 @@ export function qualityBands(rated: RatedTask[]): QualityBand[] {
     ),
     band(
       'Easy, done well',
-      'Difficulty below 3, execution 3+. Real work, but it is not stretching you.',
+      "Difficulty below 3, execution 3+. Real work, but it's not stretching you.",
       'blue',
       count((task) => task.difficulty < 3 && task.execution >= 3),
     ),
     band(
       'Easy, went badly',
-      'Difficulty below 3, execution below 3. Usually an off day, not the task.',
+      'Easy and it still went badly. Usually just an off day.',
       'pink',
       count((task) => task.difficulty < 3 && task.execution < 3),
     ),
@@ -363,7 +363,7 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
     out.push({
       tone: share >= 60 ? 'good' : 'watch',
       headline: `${share}% of your hardest tasks went well.`,
-      hint: `${hardWell} of ${hard.length} hard tasks (4–5 difficulty) rated 3+ for execution.`,
+      hint: `${hardWell} of ${hard.length} hard tasks (4-5 difficulty) rated 3+ for execution.`,
     });
   }
 

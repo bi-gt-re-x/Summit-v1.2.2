@@ -365,9 +365,9 @@ export function OverviewTab({
              the page — the offer belongs beside the totals it would give a
              meaning to, not in front of them. */
           <section className="ax-baseline-offer">
-            <strong>No target behind these numbers.</strong>
+            <strong>No targets set yet.</strong>
             <button type="button" className="ax-btn ax-btn-primary" onClick={onEditBaseline}>
-              Set a baseline
+              Set targets
             </button>
           </section>
         )}
@@ -405,7 +405,7 @@ export function OverviewTab({
         {judgement && detail.quality && (
           <PanelGroup
             title="Quality"
-            note="What your ratings said, and where those tasks landed"
+            note="How your rated tasks went"
           >
             <div className="ax-grid ax-grid-halves-even">
               <QualityPanel
@@ -426,7 +426,7 @@ export function OverviewTab({
             that sat beside this are personal bests on Achievements. */}
         <PanelGroup
           title="Consistency"
-          note="Which days you showed up"
+          note="Which days you worked"
         >
           <ConsistencyPanel rows={heatRows} />
         </PanelGroup>

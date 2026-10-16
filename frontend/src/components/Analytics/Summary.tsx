@@ -102,9 +102,9 @@ function toNextGrade(value: number): { points: number; grade: string } | null {
  */
 function tenths(band: string): string {
   return band
-    .split('–')
+    .split('-')
     .map((end) => (Number(end) / 10).toFixed(1))
-    .join('–');
+    .join('-');
 }
 
 /** Five is the cap. See the note at the top for why, and `goals` for how. */
@@ -134,7 +134,7 @@ export function Summary({
     return (
       <section className="ax-panel ax-summary is-empty">
         <p className="ax-empty">
-          No score yet. It needs a few days of activity first.
+          No score yet. It needs a few days of work first.
         </p>
       </section>
     );
@@ -148,12 +148,12 @@ export function Summary({
       text:
         movement.direction === 'held' ? (
           <>
-            It has held at <strong>{(movement.now / 10).toFixed(1)}</strong> for <strong>{movement.days}</strong>{' '}
+            It's been at <strong>{(movement.now / 10).toFixed(1)}</strong> for <strong>{movement.days}</strong>{' '}
             days.
           </>
         ) : (
           <>
-            That is <strong>{movement.direction}</strong> from {movement.previous === null ? '' : (movement.previous / 10).toFixed(1)}
+            That's <strong>{movement.direction}</strong> from {movement.previous === null ? '' : (movement.previous / 10).toFixed(1)}
             {/* A comma, because the two figures are otherwise adjacent — "up
                 from 61 12 days ago" reads as one number twice. */}
             {movement.days === 1 ? ' yesterday' : <>, {movement.days} days ago</>}.
@@ -223,8 +223,8 @@ export function Summary({
           <strong>
             {(value / 10).toFixed(1)}
             <em>/10</em>
-          </strong>{' '}
-          — {GRADE_MEANING[grade].toLowerCase()}.
+          </strong>
+          . That&apos;s {GRADE_MEANING[grade].toLowerCase()}.
           {next && (
             <>
               {' '}
@@ -243,7 +243,7 @@ export function Summary({
           each — "2h 10m of a 6h goal" — is on hover rather than printed, which
           keeps the card one row of five rather than a second table. */}
       {score.parts.length > 0 && (
-        <ul className="ax-summary-parts" aria-label="The five measures">
+        <ul className="ax-summary-parts" aria-label="Your five scores">
           {score.parts.map((part) => {
             const letter = gradeFor(part.score);
             return (
@@ -287,7 +287,7 @@ export function Summary({
       {basis && <p className="ax-summary-basis">{basis}</p>}
 
       <details className="ax-summary-how">
-        <summary>How this is worked out</summary>
+        <summary>How this works</summary>
         <p>{howItIsCalculated(score)}</p>
       </details>
     </section>

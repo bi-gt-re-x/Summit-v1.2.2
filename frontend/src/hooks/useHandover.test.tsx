@@ -3,7 +3,7 @@
  *
  * Three claims, and the third is the one that would otherwise be found by a
  * reader rather than by a test: a swap reversed before it lands leaves no
- * trace. Somebody who pauses a sitting and starts again inside the fade is
+ * trace. Somebody who pauses a session and starts again inside the fade is
  * doing exactly that, and the wrong implementation — a queue, or state set on
  * the way out — puts them through an unmount and a fresh entrance for a screen
  * that never actually left.

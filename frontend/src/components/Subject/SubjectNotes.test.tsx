@@ -32,7 +32,7 @@ describe('notes on the subject page', () => {
   it('says so when there are none, and a failed read is just none', async () => {
     list.mockRejectedValue(new Error('offline'));
     renderWithProviders(<SubjectNotes subjectId="maths" name="Mathematics" />, { route: '/' });
-    expect(await screen.findByText(/nothing tagged with this subject yet/i)).toBeInTheDocument();
+    expect(await screen.findByText(/no notes for this subject yet/i)).toBeInTheDocument();
   });
 });
 

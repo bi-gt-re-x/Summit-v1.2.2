@@ -54,7 +54,7 @@ export function SubjectNotes({ subjectId, name }: { subjectId: string; name: str
       title="Notes"
       note={`What you've written about ${name}.`}
       figures={[{ label: notes.length === 1 ? 'note' : 'notes', value: String(notes.length) }]}
-      lead={newest ? <>Latest: <b>{noteLabel(newest)}</b>.</> : 'Nothing tagged with this subject yet.'}
+      lead={newest ? <>Latest: <b>{noteLabel(newest)}</b>.</> : 'No notes for this subject yet.'}
     >
       {notes.length > 0 && (
         <ul className="sb-notes">

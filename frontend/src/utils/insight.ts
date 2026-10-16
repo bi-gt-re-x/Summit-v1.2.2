@@ -37,9 +37,9 @@ const num = (value: unknown) => Number(value) || 0;
 export type Strength = 'strong' | 'likely' | 'weak';
 
 export const STRENGTH_TEXT: Record<Strength, string> = {
-  strong: 'Strong evidence',
+  strong: 'Pretty sure',
   likely: 'Likely',
-  weak: 'Weak evidence',
+  weak: 'Just a hint',
 };
 
 export const STRENGTH_HUE: Record<Strength, string> = {
@@ -231,11 +231,7 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
     out.push({
       id: 'why-variance',
       headline: steadier ? 'Your days are more consistent' : 'Your days are less consistent',
-      detail: `The variation in your daily XP ${
-        steadier ? 'fell' : 'rose'
-      } from ${spreadWas.toFixed(2)} to ${spreadNow.toFixed(2)}. ${
-        steadier ? 'You have a steadier routine.' : 'You are working in bursts.'
-      }`,
+      detail: `Your daily XP is ${steadier ? 'more even' : 'more up and down'} than before. ${steadier ? 'You have a steadier routine.' : "You're working in bursts."}`,
       strength: 'likely',
       tone: steadier ? 'green' : 'amber',
     });
@@ -285,7 +281,7 @@ export function howFindings(
     );
     out.push({
       id: 'how-session',
-      headline: `You work best in ${bandLow}–${bandHigh} minute sessions`,
+      headline: `You work best in ${bandLow} to ${bandHigh} minute sessions`,
       detail: `Over ${focusDays.length} days, your ${
         longRate >= shortRate ? 'longest' : 'shortest'
       } sessions earned ${pct(
@@ -364,7 +360,7 @@ export function howFindings(
   if (rhythm.gapCount > 0 && rhythm.span >= 60) {
     out.push({
       id: 'how-gaps',
-      headline: 'Breaks are costing you momentum',
+      headline: 'Breaks are slowing you down',
       detail: `You had ${rhythm.gapCount} breaks of 3+ days in ${rhythm.span.toLocaleString()} days. The first day back is usually slower.`,
       strength: rhythm.gapCount >= 4 ? 'likely' : 'weak',
       tone: 'pink',
@@ -515,7 +511,7 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
       strength,
       reading:
         strength === 'weak'
-          ? `No clear link yet (${n} days of data).`
+          ? `No clear link yet (${n} days so far).`
           : r >= 0
             ? positive
             : negative,
@@ -531,18 +527,18 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
 
   add(
     'rel-focus-xp',
-    'Focus time → XP earned',
+    'Focus time and XP',
     active
       .filter((day) => num(day.focus_minutes) > 0)
       .map((day) => [num(day.focus_minutes), num(day.xp_earned)] as [number, number]),
     'More focus time means more XP.',
-    'More focus time does not mean more XP. Some focus time is not turning into finished tasks.',
+    "More focus time isn't bringing more XP. Some of it isn't turning into finished tasks.",
     'green',
   );
 
   add(
     'rel-tasks-xp',
-    'Tasks finished → XP earned',
+    'Tasks finished and XP',
     active.map((day) => [num(day.tasks_completed), num(day.xp_earned)] as [number, number]),
     'Your XP rises with the number of tasks you finish.',
     'A few large tasks make up most of your XP.',
@@ -551,7 +547,7 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
 
   add(
     'rel-session-quality',
-    'Session length → XP per task',
+    'Session length and task size',
     active
       .filter((day) => num(day.focus_minutes) > 0 && num(day.avg_task_xp) > 0)
       .map((day) => [num(day.focus_minutes), num(day.avg_task_xp)] as [number, number]),
@@ -571,7 +567,7 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     const bottom = Math.min(...values);
     out.push({
       id: 'rel-weekday',
-      pair: 'Day of week → output',
+      pair: 'Day of the week',
       r: 0,
       // The days behind the seven averages, not the seven. Reporting 7 put
       // "Observations: 7" beside a Strong evidence chip, which reads as the
@@ -607,10 +603,10 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
   });
   add(
     'rel-planning',
-    'Tasks scheduled → tasks finished',
+    'Tasks planned and tasks done',
     [...byWeek.values()].map((entry) => [entry.dated, entry.done] as [number, number]),
     'Weeks with more scheduled tasks are weeks you finish more.',
-    'Scheduling more tasks does not mean you finish more.',
+    "Scheduling more tasks doesn't mean you finish more.",
     'pink',
   );
 

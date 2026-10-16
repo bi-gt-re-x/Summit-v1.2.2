@@ -298,7 +298,7 @@ export function clock(seconds: number): string {
 export type Sitting = 'short' | 'medium' | 'long';
 
 export const SITTINGS: { id: Sitting; label: string; hint: string }[] = [
-  { id: 'short', label: 'Not long', hint: '10–20 minutes.' },
+  { id: 'short', label: 'Not long', hint: '10-20 minutes.' },
   { id: 'medium', label: 'Half an hour', hint: 'Enough to finish something.' },
   { id: 'long', label: 'A long stretch', hint: 'I lose an hour without noticing.' },
 ];
@@ -353,7 +353,7 @@ export interface Level {
 }
 
 export const LEVELS: Level[] = [
-  { id: 1, name: 'Level 1 · Easy', target: 2, hint: 'A short sitting to get going.' },
+  { id: 1, name: 'Level 1 · Easy', target: 2, hint: 'A short session to get going.' },
   { id: 2, name: 'Level 2 · Steady', target: 4, hint: 'A normal working evening.' },
   { id: 3, name: 'Level 3 · Focused', target: 6, hint: 'A full afternoon of it.' },
   { id: 4, name: 'Level 4 · Hard', target: 8, hint: 'Longer focus. Bigger rewards.' },

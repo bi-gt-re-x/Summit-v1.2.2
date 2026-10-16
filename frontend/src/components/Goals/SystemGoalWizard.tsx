@@ -72,7 +72,7 @@ const COUNTERS: Counter[] = [
   },
 ];
 
-const STEPS = ['What should Summit count?', 'What is the target?'] as const;
+const STEPS = ['What should Summit count?', "What's the target?"] as const;
 
 /** "5,000" for the title; the field keeps what was typed. */
 function figure(value: string): string {
@@ -176,7 +176,7 @@ export function SystemGoalWizard({ open, busy, counters, onClose, onSave }: Syst
           {step === 0 && (
             <>
               <p className="gx-hint">
-                You set the target. Summit keeps the count, so there is nothing to tick off and
+                You set the target. Summit keeps the count, so there's nothing to tick off and
                 nothing to update by hand.
               </p>
               <ul className="gx-syspick" aria-label="What to count">
@@ -240,7 +240,7 @@ export function SystemGoalWizard({ open, busy, counters, onClose, onSave }: Syst
                 value={deadline}
                 onChange={(event) => setDeadline(event.target.value)}
               />
-              <p className="gx-hint">Optional. With a date, the page can say whether you are on pace.</p>
+              <p className="gx-hint">Optional. With a date, the page can say whether you're on pace.</p>
             </>
           )}
         </div>

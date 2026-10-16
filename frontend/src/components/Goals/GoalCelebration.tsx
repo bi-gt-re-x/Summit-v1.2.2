@@ -87,7 +87,7 @@ export function GoalCelebration({ celebration, onClose }: {
         <p className={`gc-saved${record ? ' is-in' : ''}`}>
           {record ? (
             <>Saved to your <Link to="/analytics#goals-finished" onClick={onClose}>Analytics</Link>.</>
-          ) : 'Saving it to your record…'}
+          ) : 'Saving…'}
         </p>
 
         <button ref={done} type="button" className="gc-done" onClick={onClose}>

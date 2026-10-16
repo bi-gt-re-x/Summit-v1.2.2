@@ -60,7 +60,7 @@ export function DailyQuote() {
   return (
     <div className={`quote-container${containerClass}`}>
       <p id="dailyQuote" ref={quoteRef}>
-        {clue ?? `“${line.quote}” - ${line.author}`}
+        {clue ?? `"${line.quote}" - ${line.author}`}
       </p>
     </div>
   );

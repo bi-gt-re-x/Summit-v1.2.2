@@ -286,7 +286,7 @@ export function OverviewStrip({
 
       <article className="gx-stat tone-green">
         <header>
-          <span className="gx-stat-label">Goals On Track</span>
+          <span className="gx-stat-label">Goals on track</span>
           <span className="gx-stat-ico">
             <Icon path={STAT_ICONS.check} />
           </span>
@@ -527,7 +527,7 @@ export function SystemVerdict({ goals }: { goals: Goal[] }) {
   if (view.active === 0) {
     return (
       <p className="gx-verdict-none">
-        No active goals, so there is nothing to read yet.
+        No active goals, so there's nothing to read yet.
       </p>
     );
   }

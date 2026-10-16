@@ -125,9 +125,7 @@ export function DayComplete({ tasks, hidden, busy, canReview, onConfirm }: DayCo
               {count === 1 ? 'Complete this task?' : `Complete all ${count} tasks?`}
             </h3>
             <p className="tk-day-blurb">
-              All of these marked done — with the XP, the streak and any goals
-              they count toward. Reopening a task afterwards does not give the
-              XP back.
+              Marks all of these done, with XP, streak and goal progress. Reopening a task later doesn't take the XP back.
             </p>
 
             <ul className="tk-day-list">
@@ -143,7 +141,7 @@ export function DayComplete({ tasks, hidden, busy, canReview, onConfirm }: DayCo
               <p className="tk-day-warn">
                 {hidden === 1
                   ? '1 of these is not shown in the list.'
-                  : `${hidden} of these are not shown in the list.`}
+                  : `${hidden} of these aren't shown in the list.`}
               </p>
             )}
 
@@ -158,7 +156,7 @@ export function DayComplete({ tasks, hidden, busy, canReview, onConfirm }: DayCo
                   Rate them afterwards
                   <small>
                     {count === 1
-                      ? 'One quick prompt once it is done.'
+                      ? "One quick prompt once it's done."
                       : `One prompt each, ${count} in a row. Every one can be skipped.`}
                   </small>
                 </span>

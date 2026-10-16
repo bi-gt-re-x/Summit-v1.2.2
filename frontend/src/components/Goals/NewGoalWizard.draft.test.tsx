@@ -83,7 +83,7 @@ describe('what a draft fills in', () => {
 
     expect(props.onDraft).toHaveBeenCalledWith('get good at usaco');
     await waitFor(() =>
-      expect(screen.getByLabelText(/the outcome, not the activity/i)).toHaveValue(
+      expect(screen.getByLabelText(/the result you want/i)).toHaveValue(
         'Reach USACO Gold',
       ),
     );
@@ -94,7 +94,7 @@ describe('what a draft fills in', () => {
     await userEvent.type(ideaBox(), 'usaco');
     await userEvent.click(draftBtn());
     await waitFor(() =>
-      expect(screen.getByLabelText(/the outcome/i)).toHaveValue('Reach USACO Gold'),
+      expect(screen.getByLabelText(/the result you want/i)).toHaveValue('Reach USACO Gold'),
     );
 
     // The subject is still unanswered, so the step is still blocked — which is
@@ -113,7 +113,7 @@ describe('what it deliberately leaves alone', () => {
     await userEvent.type(ideaBox(), 'usaco');
     await userEvent.click(draftBtn());
     await waitFor(() =>
-      expect(screen.getByLabelText(/the outcome/i)).toHaveValue('Reach USACO Gold'),
+      expect(screen.getByLabelText(/the result you want/i)).toHaveValue('Reach USACO Gold'),
     );
 
     expect(screen.getByRole('button', { name: /next/i })).toBeDisabled();
@@ -129,7 +129,7 @@ describe('when the model cannot', () => {
     await userEvent.click(draftBtn());
 
     expect(await screen.findByRole('alert')).toHaveTextContent('No key configured.');
-    expect(screen.getByLabelText(/the outcome/i)).toHaveValue('');
+    expect(screen.getByLabelText(/the result you want/i)).toHaveValue('');
   });
 });
 
@@ -146,7 +146,7 @@ describe('when the model cannot', () => {
 describe('which field opens focused', () => {
   it('is the title, when the wizard was opened to fill one in', () => {
     show();
-    expect(screen.getByLabelText(/the outcome, not the activity/i)).toHaveFocus();
+    expect(screen.getByLabelText(/the result you want/i)).toHaveFocus();
   });
 
   it('is the sentence box, when it was opened to draft', () => {

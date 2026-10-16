@@ -300,7 +300,7 @@ export function GridBlock({
   // The one-row layout has no floor to put the range on, so it goes beside the
   // name — the same string, in the only place there is.
   const headText = block.compact ? rangeLabel(block.startDT, endDT) : '';
-  const title = `${block.title}${block.cont ? ' — continued' : ''}`;
+  const title = `${block.title}${block.cont ? '(continued)' : ''}`;
 
   return (
     <div

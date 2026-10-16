@@ -23,7 +23,7 @@ const insight = (over: Partial<Insight> = {}): Insight => ({
   observation: 'Mastery is ahead of execution',
   direction: 'watch',
   evidence: 'Mastery 62; execution 61',
-  implication: 'Focus on execution rather than harder material',
+  implication: 'Focus on doing it well rather than harder material',
   ...over,
 });
 
@@ -58,7 +58,7 @@ describe('the two shapes become one list', () => {
        differently, and if only one line fits it is that one. */
     render(<Reading diagnosis={[]} insights={[insight()]} />);
 
-    expect(screen.getByText('Focus on execution rather than harder material'))
+    expect(screen.getByText('Focus on doing it well rather than harder material'))
       .toBeInTheDocument();
     expect(screen.queryByText('Mastery 62; execution 61')).not.toBeInTheDocument();
   });
@@ -87,7 +87,7 @@ describe('which way each row cuts', () => {
 
     expect(screen.getByText('needs focus')).toBeInTheDocument();
     expect(screen.getByText('working')).toBeInTheDocument();
-    expect(screen.getByText('worth watching')).toBeInTheDocument();
+    expect(screen.getByText('keep an eye on it')).toBeInTheDocument();
   });
 
   it('does not color good news as a problem', () => {

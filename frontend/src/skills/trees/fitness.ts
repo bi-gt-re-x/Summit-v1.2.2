@@ -26,7 +26,7 @@ export const FITNESS: SubjectTree = {
     { id: 'ft.effort', name: 'Effort & Intensity', icon: 'effort', tier: 'beginner', requires: ['ft.form'], state: open, percent: 25, xp: 1500,
       desc: 'Knowing how hard a set or an interval actually was, in repeats left or in how hard it was to breathe. Most people train the middle too hard and the top not hard enough.' },
     { id: 'ft.progress', name: 'Progressive Overload', icon: 'overload', tier: 'beginner', core: true, requires: ['ft.effort'], state: lock, percent: 0, xp: 1800,
-      desc: 'Asking slightly more of the body over time — more weight, more reps, more distance, better form. Without it, training maintains, which is a legitimate goal but a different one.' },
+      desc: 'Asking slightly more of the body over time. More weight, more reps, more distance, better form. Without it, training maintains, which is a legitimate goal but a different one.' },
     { id: 'ft.programme', name: 'Programming', icon: 'training-plan', tier: 'beginner', requires: ['ft.progress'], state: lock, percent: 0, xp: 1800,
       desc: 'Deciding in advance what each session is for across a week and a block. A plan written down is what stops every session becoming whatever you felt like on the day.' },
     { id: 'ft.rest', name: 'Rest & Recovery', icon: 'recovery', tier: 'beginner', core: true, requires: ['ft.progress'], state: lock, percent: 0, xp: 1700,

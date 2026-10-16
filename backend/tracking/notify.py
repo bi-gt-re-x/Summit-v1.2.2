@@ -160,7 +160,7 @@ def _task_candidates(facts, day):
             'title': '{} past its date'.format(_count(facts['late'], 'task'))
                      if facts['late'] == 1
                      else '{} past their dates'.format(_count(facts['late'], 'task')),
-            'body': 'Including “{}”. Give it a new date or finish it.'.format(
+            'body': 'Including "{}". Give it a new date or finish it.'.format(
                 facts['late_title'] or 'one of them'),
             'link': '/tasks',
         })
@@ -172,7 +172,7 @@ def _task_candidates(facts, day):
             'tone': 'warn',
             'for_day': day,
             'title': '{} due today'.format(_count(facts['due_today'], 'task')),
-            'body': 'Starting with “{}”.'.format(facts['due_today_title'] or ''),
+            'body': 'Starting with "{}".'.format(facts['due_today_title'] or ''),
             'link': '/tasks',
         })
 
@@ -183,7 +183,7 @@ def _task_candidates(facts, day):
             'tone': 'info',
             'for_day': day,
             'title': '{} due tomorrow'.format(_count(facts['due_tomorrow'], 'task')),
-            'body': 'Including “{}”. Today is when there is still room for it.'.format(
+            'body': 'Including "{}". Today is when there\'s still room for it.'.format(
                 facts['due_tomorrow_title'] or ''),
             'link': '/tasks',
         })
@@ -219,8 +219,8 @@ def _calendar_candidates(username, day, now_minutes):
         'channel': 'calendar',
         'tone': 'info',
         'for_day': day,
-        'title': '{} on today’s calendar'.format(_count(len(blocks), 'block')),
-        'body': 'First up: “{}” at {}.'.format(
+        'title': "{} on today's calendar".format(_count(len(blocks), 'block')),
+        'body': 'First up: "{}" at {}.'.format(
             timed[0][1].get('task') or 'an event', _clock(timed[0][0]))
             if timed else 'None of them have a time on them yet.',
         'link': '/calendar/day',
@@ -236,7 +236,7 @@ def _calendar_candidates(username, day, now_minutes):
                     'channel': 'calendar',
                     'tone': 'warn',
                     'for_day': day,
-                    'title': '“{}” starts at {}'.format(
+                    'title': '"{}" starts at {}'.format(
                         block.get('task') or 'An event', _clock(start)),
                     'body': 'In {}.'.format(
                         _count(max(1, start - now_minutes), 'minute')),
@@ -272,7 +272,7 @@ def _analytics_candidates(facts, day):
             'channel': 'analytics',
             'tone': 'info',
             'title': 'Your last seven days',
-            'body': '{} finished, {} — {:,} XP and {} focused.'.format(
+            'body': '{} finished, {}. {:,} XP and {} focused.'.format(
                 _count(facts['done_this_week'], 'task'),
                 _change(facts['done_this_week'], facts['done_last_week']),
                 int(facts['xp_this_week']),
@@ -302,8 +302,8 @@ def _analytics_candidates(facts, day):
             'channel': 'analytics',
             'tone': 'good',
             'for_day': day,
-            'title': 'Best day you have had',
-            'body': '{:,} XP today, past the {:,} that stood before it.'.format(
+            'title': 'Your best day ever',
+            'body': '{:,} XP today. Your old best was {:,}.'.format(
                 int(facts['xp_today']), int(facts['xp_best_day'])),
             'link': '/analytics',
         })
@@ -323,9 +323,8 @@ def _goal_candidates(facts, day):
                 'fingerprint': 'goal-done:{}'.format(goal['id']),
                 'channel': 'goals',
                 'tone': 'good',
-                'title': '“{}” is finished'.format(title),
-                'body': 'Every part of it is done. It is still open — close it '
-                        'when you want it off the ladder.',
+                'title': '"{}" is finished'.format(title),
+                'body': "Every part of it is done. Close it when you're ready.",
                 'link': '/goals',
             })
             continue
@@ -340,10 +339,9 @@ def _goal_candidates(facts, day):
                 'channel': 'goals',
                 'tone': 'urgent',
                 'for_day': day,
-                'title': '“{}” is past its date'.format(title),
-                'body': '{} ago, and it stands at {}%. Move the date or cut '
-                        'the target — a goal nobody moves is one nobody '
-                        'reads.'.format(_count(-left, 'day'), progress),
+                'title': '"{}" is past its date'.format(title),
+                'body': '{} ago, and it\'s at {}%. Move the date or lower '
+                        'the target so it stays real.'.format(_count(-left, 'day'), progress),
                 'link': '/goals',
             })
         elif left <= GOAL_SOON_DAYS:
@@ -351,9 +349,9 @@ def _goal_candidates(facts, day):
                 'fingerprint': 'goal-due:{}:{}'.format(goal['id'], deadline.isoformat()),
                 'channel': 'goals',
                 'tone': 'warn',
-                'title': '“{}” is due in {}'.format(title, _count(left, 'day'))
-                         if left else '“{}” is due today'.format(title),
-                'body': 'It stands at {}%.'.format(progress),
+                'title': '"{}" is due in {}'.format(title, _count(left, 'day'))
+                         if left else '"{}" is due today'.format(title),
+                'body': "It's at {}%.".format(progress),
                 'link': '/goals',
             })
     return out
@@ -398,9 +396,9 @@ def _streak_candidates(user, facts, day):
                 'channel': 'streak',
                 'tone': 'info',
                 'for_day': day,
-                'title': 'Welcome back — your {}-day streak is live again'.format(streak),
-                'body': 'Your vacation ended yesterday. Anything finished today '
-                        'carries the run on. {}'.format(keeps),
+                'title': 'Welcome back! Your {}-day streak is back on'.format(streak),
+                'body': 'Your vacation ended yesterday. Finish anything today '
+                        'to keep it going. {}'.format(keeps),
                 'link': '/dashboard',
             })
         else:
@@ -428,7 +426,7 @@ def _streak_candidates(user, facts, day):
             'channel': 'streak',
             'tone': 'good',
             'title': 'Your grace day saved your {}-day streak'.format(streak),
-            'body': 'You missed {:%A}, and the run carried on.{} Your next grace '
+            'body': 'You missed {:%A}, and your streak kept going.{} Your next grace '
                     'day is ready from {}.'.format(
                         grace,
                         ' Finish something today to keep it going.' if still_to_do else '',
@@ -443,8 +441,8 @@ def _streak_candidates(user, facts, day):
             # The day the grace day is earned. Saying so here, rather than in a
             # notification of its own, is what makes it read as the reward for
             # the week rather than as one more thing in the bell.
-            best += (' You have also earned a grace day: from now on, a single '
-                     'missed day will not end the run.')
+            best += (" You've also earned a grace day. Miss one day and your "
+                     "streak won't end.")
         out.append({
             'fingerprint': 'streak-milestone:{}'.format(streak),
             'channel': 'streak',

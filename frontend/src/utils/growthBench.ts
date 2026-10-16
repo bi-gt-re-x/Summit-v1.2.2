@@ -184,7 +184,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
       key,
       label,
       current: unit(nowValue),
-      previous: before.length ? unit(beforeValue) : '—',
+      previous: before.length ? unit(beforeValue) : '-',
       best: unit(best.value),
       bestOn: best.endsOn,
       percent: best.value > 0 ? Math.min(100, Math.round((nowValue / best.value) * 100)) : 0,
@@ -219,7 +219,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
     {
       key: 'output',
       label: 'Output',
-      note: 'What the last 30 days produced, against your best 30.',
+      note: 'Your last 30 days vs. your best 30.',
       rows: [
         row('xp', 'XP earned', xp, asXp),
         row('tasks', 'Tasks completed', done, asCount),
@@ -228,13 +228,13 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
     {
       key: 'discipline',
       label: 'Discipline',
-      note: 'Whether the work keeps landing, against the best run you have had.',
+      note: "How steady you've been vs. your best run.",
       rows: [
         {
           key: 'active',
           label: 'Days worked',
           current: `${activeDays(now)} of ${now.length}`,
-          previous: before.length ? `${activeDays(before)} of ${before.length}` : '—',
+          previous: before.length ? `${activeDays(before)} of ${before.length}` : '-',
           best: `${bestStreak} in a row`,
           bestOn: null,
           percent: now.length ? Math.round((activeDays(now) / now.length) * 100) : 0,
@@ -249,7 +249,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
           key: 'streak',
           label: 'Current streak',
           current: `${streak} days`,
-          previous: '—',
+          previous: '-',
           best: `${bestStreak} days`,
           bestOn: null,
           percent: bestStreak > 0 ? Math.min(100, Math.round((streak / bestStreak) * 100)) : 0,
@@ -260,13 +260,13 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
     {
       key: 'focus',
       label: 'Focus',
-      note: 'Tracked focus time, against your deepest 30 days.',
+      note: 'Your focus time vs. your best 30 days.',
       rows: [row('focus', 'Hours focused', focus, asHours)],
     },
     {
       key: 'quality',
       label: 'Quality',
-      note: 'How heavy the work was, and whether it beat its own deadlines.',
+      note: 'How big your tasks were, and if you beat your deadlines.',
       rows: [
         {
           key: 'pertask',
@@ -275,7 +275,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
           previous:
             before.length && sumOver(before, done) > 0
               ? asXp(sumOver(before, xp) / sumOver(before, done))
-              : '—',
+              : '-',
           best: asXp(
             Math.max(0, ...all.map((day) => (done(day) > 0 ? xp(day) / done(day) : 0))),
           ),
@@ -300,7 +300,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
             key: 'ontime',
             label: 'Beat the deadline',
             current: timed.length ? `${pct}%` : 'no timed tasks',
-            previous: '—',
+            previous: '-',
             note: timed.length ? `${met} of ${timed.length} timed` : 'nothing timed yet',
             // Every timed task on time. The one row on the page whose bar is
             // against a perfect score rather than against a personal best,

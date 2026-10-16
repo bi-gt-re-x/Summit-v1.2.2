@@ -34,7 +34,7 @@ describe('what each card says', () => {
     expect(screen.queryByText('Completed')).not.toBeInTheDocument();
   });
 
-  it('carries the change against the window before', () => {
+  it('carries the change vs. the window before', () => {
     show({ total: 50, totalBefore: 40 });
     expect(card('Total tasks').getByText('+25%')).toBeInTheDocument();
   });
@@ -49,13 +49,13 @@ describe('what each card says', () => {
 
 describe('what it does when there is nothing to say', () => {
   it('draws no chip when there is no window before to compare against', () => {
-    /* All Time has none by definition, and a new account has nothing in the
+    /* All time has none by definition, and a new account has nothing in the
        one there is. "+0%" is a chip that only ever means "ignore me", and a
        reader who learns to ignore one learns to ignore the rest. */
     show({ totalBefore: 0 });
 
     expect(card('Total tasks').queryByText(/%$/)).not.toBeInTheDocument();
-    expect(card('Total tasks').getByText('filed here in this window'))
+    expect(card('Total tasks').getByText('in this window'))
       .toBeInTheDocument();
   });
 
@@ -67,7 +67,7 @@ describe('what it does when there is nothing to say', () => {
     show({ focus: '' });
 
     expect(card('Focus area').getByText('Not yet')).toBeInTheDocument();
-    expect(card('Focus area').getByText('the record cannot name one yet'))
+    expect(card('Focus area').getByText('not enough work to tell yet'))
       .toBeInTheDocument();
   });
 });
@@ -75,7 +75,7 @@ describe('what it does when there is nothing to say', () => {
 describe('the words around the figures', () => {
   it('speaks of one day rather than 1 days', () => {
     show({ streak: 1 });
-    expect(card('Current streak').getByText('day running here')).toBeInTheDocument();
+    expect(card('Current streak').getByText('day in a row')).toBeInTheDocument();
   });
 
   it('sizes the focus card for a phrase rather than a figure', () => {

@@ -140,7 +140,7 @@ export function Trajectory({
               </ol>
             ) : (
               <p className="gx-traj-none">
-                No measure and no checkpoints yet, so there is nothing to plot.
+                No target or checkpoints yet, so there's nothing to chart.
               </p>
             )}
           </li>

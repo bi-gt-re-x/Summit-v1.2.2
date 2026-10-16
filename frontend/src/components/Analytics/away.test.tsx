@@ -60,13 +60,13 @@ describe('the notice', () => {
 
   it('speaks once the gap is long enough to explain the zeros', () => {
     draw(20, 47);
-    expect(screen.getByText(/You have been away for/)).toBeInTheDocument();
+    expect(screen.getByText(/You've been away for/)).toBeInTheDocument();
     expect(screen.getByText('47 days')).toBeInTheDocument();
   });
 
   it('says the record is intact rather than that anything was lost', () => {
     draw(20, 47);
-    expect(screen.getByText(/nothing has been reset/i)).toBeInTheDocument();
+    expect(screen.getByText(/nothing's been reset/i)).toBeInTheDocument();
     /* The count of days worked is the consistency tile's figure, printed
        once on the page — not again here. */
     expect(screen.queryByText('20 days')).not.toBeInTheDocument();

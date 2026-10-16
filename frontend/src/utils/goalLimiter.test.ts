@@ -105,7 +105,7 @@ describe('what is holding a goal up', () => {
 
     // The working, in words a reader can check against their own task list.
     expect(row!.because).toBe(
-      '3 of the 5 tasks you rated as going badly on this goal are filed under Geometry.',
+      '3 of the 5 tasks that went badly on this goal are in Geometry.',
     );
   });
 
@@ -121,7 +121,7 @@ describe('what is holding a goal up', () => {
 
     expect(row!.basis).toBe('open');
     expect(row!.share).toBe(75);
-    expect(row!.because).toContain('3 of the 4 tasks still open against this goal');
+    expect(row!.because).toContain('3 of the 4 tasks still open for this goal');
   });
 
   it('ignores work that went well, because that is not a shortfall', () => {

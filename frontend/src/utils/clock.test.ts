@@ -113,21 +113,21 @@ describe('rangeText', () => {
   it('writes the meridiem once when both ends share it', () => {
     // A block is a seventh of the grid wide and "7:40 AM – 8:40 AM" is four
     // characters more than the column can show.
-    expect(rangeText(at(7, 40), at(8, 40))).toBe('7:40 – 8:40 AM');
+    expect(rangeText(at(7, 40), at(8, 40))).toBe('7:40-8:40 AM');
   });
 
   it('writes it twice when they do not', () => {
-    expect(rangeText(at(11, 30), at(13, 0))).toBe('11:30 AM – 1 PM');
+    expect(rangeText(at(11, 30), at(13, 0))).toBe('11:30 AM-1 PM');
   });
 
   it('drops ":00" on the hour', () => {
-    expect(rangeText(at(9, 0), at(10, 30))).toBe('9 – 10:30 AM');
+    expect(rangeText(at(9, 0), at(10, 30))).toBe('9-10:30 AM');
   });
 
   it('has nothing to abbreviate at 24-hour, so it abbreviates nothing', () => {
     setClockFormat('24h');
-    expect(rangeText(at(7, 40), at(8, 40))).toBe('07:40 – 08:40');
-    expect(rangeText(at(9, 0), at(10, 30))).toBe('09:00 – 10:30');
+    expect(rangeText(at(7, 40), at(8, 40))).toBe('07:40-08:40');
+    expect(rangeText(at(9, 0), at(10, 30))).toBe('09:00-10:30');
   });
 });
 

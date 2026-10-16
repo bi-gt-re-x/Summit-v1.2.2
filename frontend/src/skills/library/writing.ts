@@ -94,7 +94,7 @@ export const writing = [
   node({
     id: 'writing.narrative',
     name: 'Narrative',
-    description: 'Scene, sequence and consequence — the machinery under a story.',
+    description: 'Scene, sequence and consequence. The machinery under a story.',
     difficulty: 'advanced',
     xpReward: 160,
     prerequisites: all('writing.paragraphs', 'writing.clarity'),

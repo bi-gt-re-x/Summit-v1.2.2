@@ -381,10 +381,10 @@ export function AnalyticsSetup({
     const list: Step[] = [
       {
         key: 'log',
-        title: 'How do you record what you do?',
+        title: 'How do you track your work?',
         lead:
-          'Everything on this page is counted off one of two things: the tasks you tick off, or '
-          + 'the time you log. Which one leads the figures should be the one you actually keep.',
+          'Pick the one you actually use: tasks you check off, or time you log. Your numbers start '
+          + 'from it.',
         body: (
           <Choices
             label="How you record work"
@@ -400,11 +400,10 @@ export function AnalyticsSetup({
       },
       {
         key: 'days',
-        title: 'How many days a week do you mean to work?',
+        title: 'How many days a week do you plan to work?',
         lead:
-          'Not how many you managed last week — how many a normal week has in it. Four days is '
-          + 'excellent against a three-day aim and a miss against a six-day one, and until you '
-          + 'say which, no total on this page can be good or bad.',
+          'Think of a normal week. Four days is great if you aim for three and short if you aim for '
+          + 'six.',
         body: (
           <>
             <div className="ax-setup-days" role="group" aria-label="Days a week">
@@ -421,20 +420,18 @@ export function AnalyticsSetup({
               ))}
             </div>
             <p className="ax-setup-sum">
-              <strong>{weeklyHours}h</strong> a week at your current answers, about{' '}
-              {sittingLabel(minutes)} a sitting
+              <strong>{weeklyHours}h</strong> a week. That comes to about{' '}
+              {sittingLabel(minutes)} a session
             </p>
           </>
         ),
       },
       {
         key: 'hours',
-        title: 'How many hours a week does that come to?',
+        title: 'How many hours a week is that?',
         lead:
-          'Roughly, and typed rather than picked: a week is the unit people actually know their '
-          + 'own answer in, and no list of four is going to hold yours. The sitting underneath '
-          + 'is this figure spread over the days you just gave — it is what the page measures '
-          + 'your sittings against, and you never have to work it out.',
+          'A rough guess is fine. Summit splits it across your days to set how long a session '
+          + 'should be.',
         body: (
           <>
             <div className="ax-setup-hours">
@@ -458,7 +455,7 @@ export function AnalyticsSetup({
               <span className="ax-setup-hours-unit">hours a week</span>
             </div>
             <p className="ax-setup-sum" id="ax-setup-hours-note">
-              <strong>{sittingLabel(minutes)}</strong> a sitting, across {days}{' '}
+              <strong>{sittingLabel(minutes)}</strong> a session, across {days}{' '}
               {days === 1 ? 'day' : 'days'}
               {/* Said out loud rather than silently applied. A week that will
                   not fit the days at a sitting the server accepts is stored
@@ -466,8 +463,8 @@ export function AnalyticsSetup({
                   against that figure is owed the sentence. */}
               {clamped && (
                 <em>
-                  {' '}— a sitting is held between {SESSION_MIN} minutes and{' '}
-                  {sittingLabel(SESSION_MAX)}, so that is what is stored.
+                  . Sessions run from {SESSION_MIN} minutes to{' '}
+                  {sittingLabel(SESSION_MAX)}, so we'll use that.
                 </em>
               )}
             </p>
@@ -495,11 +492,9 @@ export function AnalyticsSetup({
          out of four rather than out of a hundred. */
       list.push({
         key: 'followed',
-        title: 'Which subjects do you most want to work on?',
+        title: 'Which subjects matter most to you?',
         lead:
-          `Up to ${SUBJECTS_MAX}. Each one you pick gets its own page under Analytics in the `
-          + 'sidebar, so you can look at that subject on its own instead of reading it out of a '
-          + 'total. Pick none and Analytics stays the single page it is now.',
+          `Pick up to ${SUBJECTS_MAX}. Each one gets its own page under Analytics. Pick none and Analytics stays one page.`,
         body: (
           <>
             <div className="ax-setup-picks" role="group" aria-label="Subjects to follow">
@@ -532,7 +527,7 @@ export function AnalyticsSetup({
             </div>
             <p className="ax-setup-sum">
               {followed.length === 0 ? (
-                <>None picked — Analytics stays one page</>
+                <>None picked. Analytics stays one page.</>
               ) : (
                 <>
                   <strong>
@@ -540,7 +535,7 @@ export function AnalyticsSetup({
                   </strong>{' '}
                   picked
                   {followed.length >= SUBJECTS_MAX && (
-                    <em> — that is the most. Unpick one to swap it.</em>
+                    <em>. That's the max. Unpick one to swap it.</em>
                   )}
                 </>
               )}
@@ -566,13 +561,10 @@ export function AnalyticsSetup({
       if (forks.length > 0) {
         list.push({
           key: 'depth',
-          title: 'Do you want to go deeper into any of them?',
+          title: 'Want to zoom in on any of them?',
           lead:
-            'Each subject you picked opens a skill tree. Some of them fork — the foundations fit '
-            + 'on one lattice, and then the subject branches into parts big enough to be subjects '
-            + 'of their own. Naming a branch points that subject\'s page and its tree straight at '
-            + 'it. Leave any of them on the whole subject if you are not sure; it is one click to '
-            + 'change later.',
+            "Some subjects split into branches. Pick a branch to point that subject's page and skill "
+            + 'tree right at it. Not sure? Leave it on the whole subject. You can change it later.',
           body: (
             <div className="ax-setup-depths">
               {forks.map(({ subject, root, branches }) => (
@@ -616,14 +608,11 @@ export function AnalyticsSetup({
       if (followed.length > 0) {
         list.push({
           key: 'aims',
-          title: 'What are you chasing in each of these?',
+          title: 'What are you going for in each one?',
           lead:
-            'Long-term, in your own words — "get to Mathcounts Nationals", "read a paper '
-            + 'without the glossary". This is not a goal and it never becomes one: no number, '
-            + 'no date, nothing to tick off, and it does not appear on your goals page. It is '
-            + 'what tells your analytics what the work is for, so what it suggests next is '
-            + 'aimed at where you are going rather than at whichever measure happens to be '
-            + 'lowest. Every field here is optional.',
+            'Your big aim, in plain words. Like "make Mathcounts Nationals" or "read a paper without '
+            + 'the glossary". It isn\'t a goal, so there\'s no date or checklist. It just points your '
+            + 'tips at what you want. All of this is optional.',
           body: (
             <div className="ax-setup-aims">
               {followed.map((id) => {
@@ -641,7 +630,7 @@ export function AnalyticsSetup({
                         className="ax-setup-select"
                         value={held.aim}
                         maxLength={240}
-                        placeholder="Where you want this to get to"
+                        placeholder="Where you want to get to"
                         onChange={(event) => write({ aim: event.target.value })}
                       />
                     </label>
@@ -651,7 +640,7 @@ export function AnalyticsSetup({
                         className="ax-setup-select"
                         value={held.level}
                         maxLength={240}
-                        placeholder="The level you are at today"
+                        placeholder="The level you're at today"
                         onChange={(event) => write({ level: event.target.value })}
                       />
                     </label>
@@ -677,12 +666,10 @@ export function AnalyticsSetup({
 
       list.push({
         key: 'subject',
-        title: 'Is most of this for one subject?',
+        title: 'Is most of your time for one subject?',
         lead:
-          'Optional, and easy to change. It is what lets the page tell "you worked four days" '
-          + 'apart from "you worked four days on the thing you said mattered". Different from '
-          + 'the last question: that one chose which subjects get a page, this one is what the '
-          + 'hours you just gave are aimed at.',
+          'Optional and easy to change. It lets Summit tell "you worked four days" from "you worked '
+          + 'four days on what matters most".',
         body: (
           <select
             className="ax-setup-select"
@@ -706,9 +693,8 @@ export function AnalyticsSetup({
         key: 'tone',
         title: 'How blunt should this page be?',
         lead:
-          'This never changes a figure — the score is the mean of the same five measures at '
-          + 'every setting. It changes how much of a miss is called a miss, and how many '
-          + 'problems are put in front of you at once.',
+          'Your numbers stay the same. This just changes how strict the page is and how many '
+          + 'problems it shows at once.',
         body: (
           <Choices
             label="How blunt the page is"
@@ -724,10 +710,10 @@ export function AnalyticsSetup({
       },
       {
         key: 'detail',
-        title: 'How much of it do you want on screen?',
+        title: 'How much do you want on screen?',
         lead:
-          'Nothing is deleted by choosing less — every panel dropped here exists in full on the '
-          + 'tab it belongs to. This is about what the Overview opens with.',
+          'Nothing gets deleted. Anything you hide here is still on its own tab. This only sets '
+          + 'what Overview shows first.',
         body: (
           <Choices
             label="How much detail"
@@ -743,10 +729,10 @@ export function AnalyticsSetup({
       },
       {
         key: 'home',
-        title: 'Which of these should open first?',
+        title: 'Which tab should open first?',
         lead:
-          'Seven tabs, and which one you want first says what you come here for. Recommendations '
-          + 'is the only one that ends in a button; Overview is the long view.',
+          'Pick the one you check most. Recommendations tells you what to do. Overview shows the '
+          + 'big picture.',
         body: (
           <div className="ax-setup-tabs" role="group" aria-label="Which tab opens first">
             {VIEWS.map((view) => (
@@ -896,7 +882,7 @@ export function AnalyticsSetup({
 
         {failed && (
           <p className="ax-setup-failed" role="alert">
-            Did not save. Try again.
+            That didn't save. Try again.
           </p>
         )}
 
@@ -964,17 +950,15 @@ export function AnalyticsSetup({
             >
               <h3 id="ax-setup-alert-title">
                 {anyHard(problems)
-                  ? 'That cannot be read as an answer'
-                  : 'Some of that will be cut off'}
+                  ? "That doesn't look like an answer"
+                  : 'Some of that will get cut off'}
               </h3>
               <p className="ax-setup-alert-lead">
                 {anyHard(problems)
-                  ? 'These fields are quoted to the model that writes your subject '
-                    + 'read-out, and it reasons towards whatever they say. Fix them '
-                    + 'or clear them — blank is a real answer.'
-                  : 'Nothing here is wrong, but the stores behind these fields are '
-                    + 'bounded and they bound by truncating. This is what would be '
-                    + 'lost if you saved as it stands.'}
+                  ? 'Summit uses these to write your subject tips, so they need to make sense. Fix them or '
+                    + 'clear them. Blank is fine.'
+                  : "Nothing's wrong, but these fields have a length limit. This is what would get cut if you "
+                    + 'save now.'}
               </p>
               <ul className="ax-setup-alert-list">
                 {problems.map((problem, at) => (
@@ -1019,7 +1003,7 @@ export function AnalyticsSetup({
                       else setAt(Math.min(index + 1, total - 1));
                     }}
                   >
-                    {pending === 'save' ? 'Save it anyway' : 'Carry on anyway'}
+                    {pending === 'save' ? 'Save it anyway' : 'Keep going anyway'}
                   </button>
                 )}
               </div>
@@ -1029,7 +1013,7 @@ export function AnalyticsSetup({
 
         {editing && setOn && (
           <p className="ax-setup-set-on">
-            Baseline set on{' '}
+            Targets set on{' '}
             {new Date(`${setOn}T00:00:00`).toLocaleDateString('en-US', {
               month: 'long',
               day: 'numeric',

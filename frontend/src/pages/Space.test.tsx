@@ -66,7 +66,7 @@ async function nameField() {
 
 /** The first block's text field. */
 const firstBlock = () =>
-  within(screen.getByRole('group', { name: /What is in/ })).getAllByRole('textbox')[0]!;
+  within(screen.getByRole('group', { name: /What's in/ })).getAllByRole('textbox')[0]!;
 
 /** What a save of the page carried as its blocks' words. */
 const savedText = (call: unknown[]) =>
@@ -141,7 +141,7 @@ describe('a space', () => {
     STORED[2] = { id: 3, name: 'Space 3', body: '# Plan\n- [x] read\n- write' };
     open(3);
     await nameField();
-    const fields = within(screen.getByRole('group', { name: /What is in/ })).getAllByRole('textbox');
+    const fields = within(screen.getByRole('group', { name: /What's in/ })).getAllByRole('textbox');
     expect(fields.map(textOf)).toEqual(['Plan', 'read', 'write']);
     expect(screen.getByRole('textbox', { name: 'Heading 1' })).toHaveTextContent('Plan');
     expect(screen.getByRole('checkbox', { name: 'Done: read' })).toBeChecked();

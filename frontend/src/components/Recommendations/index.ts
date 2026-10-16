@@ -7,6 +7,5 @@
  * the same quantities a second time. These components only render what those
  * three decided.
  */
-export { AdviceCard, CategoryFilter, OutlookPanel } from './Panels';
 export { FollowupPanel } from './Followup';
 export type { FollowupPanelProps } from './Followup';

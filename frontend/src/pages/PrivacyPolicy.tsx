@@ -52,160 +52,156 @@ export default function PrivacyPolicy() {
       <p className="effective-date">Effective date: September 6, 2026</p>
 
       <p>
-        Summit (&quot;we&quot;, &quot;us&quot;, or &quot;the app&quot;) is a study and
-        productivity tracker. This policy explains what the app collects, where it is
-        kept, who else can see it, and what you can do about it. The short version: it is
-        held on the server that runs Summit, it is not sold or shared for advertising, and
-        you can export or delete all of it from Settings at any time.
+        Summit (&quot;we&quot; or &quot;the app&quot;) is a study and productivity tracker. Here&apos;s
+        what it collects, where it lives and what you can do about it.
+      </p>
+      <p>
+        <strong>The short version:</strong> your data lives on the server that runs Summit. It&apos;s
+        never sold or used for ads. You can export or delete all of it from Settings anytime.
       </p>
 
-      <h2>1. Information We Collect</h2>
-      <p>Things you give us when you make an account:</p>
+      <h2>1. What we collect</h2>
+      <p>When you make an account:</p>
       <ul>
         <li>
-          <strong>Your e-mail address</strong> — used to confirm the account, to sign you
-          in, and to send account e-mail. Nothing else is sent to it.
+          <strong>Email:</strong> Used to confirm your account, sign you in and send account
+          emails. That&apos;s it.
         </li>
         <li>
-          <strong>Your name and username</strong> — the name greets you; the username is
-          what everything you make is filed under.
+          <strong>Name and username:</strong> Your name says hi. Your username is where your stuff
+          is saved.
         </li>
         <li>
-          <strong>Your password</strong> — stored only as a pbkdf2 hash. It cannot be read
-          back, by us or by anyone with the database.
+          <strong>Password:</strong> Saved only as a scrambled hash. Nobody can read it. Even we can&apos;t.
         </li>
         <li>
-          <strong>If you sign in with Google</strong> — we receive your e-mail address and
-          name from Google to identify the account. We never receive your Google password.
+          <strong>Google sign-in:</strong> Google sends us your email and name. We never see your
+          Google password.
         </li>
       </ul>
-      <p>Things the app records as you use it:</p>
+      <p>As you use the app:</p>
       <ul>
         <li>
-          <strong>Tasks and goals</strong> — titles, descriptions, priorities, subjects,
-          due dates, checkpoints, and the ratings you give a task when you finish it.
+          <strong>Tasks and goals:</strong> Titles, notes, subjects, due dates, checkpoints, your
+          ratings and the scores you log.
         </li>
         <li>
-          <strong>Calendar entries</strong> — events and scheduled tasks you place on the
-          calendar.
+          <strong>Calendar:</strong> Events and tasks you put on it.
         </li>
         <li>
-          <strong>Notes and records</strong> — anything you write on those pages.
+          <strong>Notes and records:</strong> Anything you write there.
         </li>
         <li>
-          <strong>Activity metrics</strong> — focus session durations, tasks completed, XP
-          events, and streaks. These are what the analytics pages are computed from.
+          <strong>Activity:</strong> Focus time, finished tasks, XP and streaks. Analytics is built
+          from these.
         </li>
         <li>
-          <strong>Preferences</strong> — theme, daily goal, start page, and the answers
-          you give the analytics setup.
+          <strong>Settings:</strong> Your theme, goals, start page and setup answers.
         </li>
       </ul>
       <p>
-        We do not collect payment information, precise location, contacts, or advertising
-        identifiers. Summit has no ads, no third-party analytics and no tracking pixels.
+        We don&apos;t collect payment info, your location, contacts or ad IDs. No ads, no
+        third-party tracking and no tracking pixels.
       </p>
 
-      <h2>2. Where Your Data Is Kept</h2>
-      <p>
-        On the server running Summit, in a single database, sent to and from your browser
-        over the network. It is <strong>not</strong> stored only on your device, and it is
-        readable by whoever administers that server — which is the ordinary situation for
-        a hosted application, and worth stating plainly rather than leaving you to assume
-        otherwise.
-      </p>
-      <p>
-        Your browser also keeps two cookies: a signed session cookie that says you are
-        signed in, and a cookie remembering your chosen theme. The session cookie is the
-        whole of your authorization, which is why it is marked Secure and HttpOnly and
-        cannot be read by scripts on the page.
-      </p>
+      <h2>2. Where your data lives</h2>
+      <ul>
+        <li>
+          <strong>On the server:</strong> Everything is in one database on the server that runs
+          Summit. Whoever runs that server can see it. That&apos;s normal for a web app, and we&apos;d
+          rather just tell you.
+        </li>
+        <li>
+          <strong>Two cookies:</strong> One keeps you signed in. One remembers your theme. The
+          sign-in cookie is locked down (Secure and HttpOnly), so page scripts can&apos;t read it.
+        </li>
+      </ul>
 
-      <h2>3. How We Use Your Information</h2>
+      <h2>3. How we use it</h2>
       <p>Only to run the app for you:</p>
       <ul>
-        <li>Displaying your tasks, goals, notes and calendar.</li>
-        <li>Calculating streaks, XP, levels, growth ratings and recommendations.</li>
-        <li>Sending account e-mail — verification, and nothing marketing.</li>
-        <li>Remembering your preferences between sessions.</li>
+        <li>Showing your tasks, goals, notes and calendar.</li>
+        <li>Working out your streaks, XP, levels, scores and tips.</li>
+        <li>Sending account emails. No marketing.</li>
+        <li>Remembering your settings.</li>
       </ul>
-      <p>We do not profile you for advertising, and we do not sell or rent anything.</p>
+      <p>We don&apos;t profile you for ads, and we don&apos;t sell or rent anything.</p>
 
-      <h2>4. Third Parties</h2>
-      <p>There are two, and both only in specific circumstances:</p>
+      <h2>4. Other companies</h2>
       <ul>
         <li>
-          <strong>An AI provider, when you ask for a draft.</strong> The buttons that
-          suggest checkpoints for a goal, steps for a checkpoint, or a goal for a subject
-          send a short brief to an external model — the title, description and reason you
-          wrote, the checkpoints you have already written, and summary counts such as how
-          many tasks you finished and how many hours you logged. Depending on how this
-          install is configured that provider is Anthropic or Hugging Face. Nothing is
-          sent unless you press one of those buttons or create a checkpoint, and your
-          e-mail address, password and notes are never included.
+          <strong>AI, only when you ask:</strong> Buttons that draft checkpoints, steps, goals,
+          study sessions or subject tips send a short summary to an AI provider. That&apos;s
+          Anthropic, Groq or Hugging Face, depending on how this copy is set up. The summary can
+          include your goal text, checkpoint names, and recent task titles, ratings and counts.
+          Your email, password and notes are never sent.
         </li>
         <li>
-          <strong>Google, if you use &quot;Continue with Google&quot;.</strong> Standard
-          OAuth: you sign in at Google, and Google tells us your e-mail and name.
+          <strong>Google, if you pick it:</strong> &quot;Continue with Google&quot; works the
+          usual way. Google tells us your email and name.
+        </li>
+        <li>
+          <strong>Fonts:</strong> Your browser loads fonts from Google Fonts.
         </li>
       </ul>
+      <p>That&apos;s everything. None of it is for ads.</p>
+
+      <h2>5. No comparing you with others</h2>
       <p>
-        Fonts are loaded from Google Fonts, which means your browser makes a request to
-        Google&apos;s servers for them. Beyond that, nothing about you is shared with
-        anyone, and none of the above is advertising.
+        Summit never ranks you against other people. Every number you see comes from your own
+        work.
       </p>
 
-      <h2>5. Comparison With Other Users</h2>
-      <p>
-        Summit does not rank you against other accounts. Every figure you are shown is
-        worked out from your own record, and nobody else&apos;s record is read to produce
-        it.
-      </p>
-
-      <h2>6. Data Retention and Deletion</h2>
-      <p>
-        Your data is kept until you remove it. Individual tasks, goals, notes and calendar
-        entries can be deleted as you go. Settings → Reset and delete will clear your
-        finished tasks, your whole task list, your level and XP, or everything you have
-        made — and &quot;Delete this account&quot; removes the account and everything in
-        it permanently. None of those can be undone and there is no backup, so Settings →
-        Data &amp; export will give you the whole account as JSON, or a table at a time as
-        CSV, first.
-      </p>
+      <h2>6. Keeping and deleting data</h2>
+      <ul>
+        <li>
+          <strong>Kept until you delete it:</strong> Remove tasks, goals, notes and events
+          anytime.
+        </li>
+        <li>
+          <strong>Bigger resets:</strong> Settings → Reset and delete can clear finished tasks,
+          all tasks, your level and XP, or everything.
+        </li>
+        <li>
+          <strong>Delete your account:</strong> Removes it and everything in it for good. There&apos;s
+          no backup.
+        </li>
+        <li>
+          <strong>Export first:</strong> Settings → Data &amp; export gives you everything as JSON,
+          or one table at a time as CSV.
+        </li>
+      </ul>
 
       <h2>7. Security</h2>
+      <ul>
+        <li><strong>Passwords:</strong> Stored as scrambled hashes, never as plain text.</li>
+        <li><strong>Sessions:</strong> Signed cookies that can&apos;t be faked or read by page scripts.</li>
+        <li><strong>Sign-in limits:</strong> Too many tries in a row get slowed down.</li>
+        <li>
+          <strong>Your part:</strong> Use a password you don&apos;t use anywhere else. No system is
+          perfect.
+        </li>
+      </ul>
+
+      <h2>8. Kids under 13</h2>
       <p>
-        Passwords are stored as pbkdf2 hashes and never in readable form. Sessions are
-        signed cookies that cannot be forged or read by page scripts. Sign-in attempts are
-        rate limited. Your data is only as safe as the server it is on, so it should be
-        served over HTTPS and kept up to date — and no system is perfect: please use a
-        password you do not use anywhere else.
+        Summit is made for students, but it&apos;s not for kids under 13. If you&apos;re under 13,
+        please don&apos;t sign up. If a child under 13 made an account, email us (section 10) and
+        we&apos;ll delete it. Parents and guardians can also ask to see, fix or delete their
+        child&apos;s data.
       </p>
 
-      <h2>8. Children&apos;s Privacy</h2>
+      <h2>9. Changes</h2>
       <p>
-        Summit is built for students, and much of its audience is at school. It is not
-        directed at children under 13, and accounts should not be created for them. If you
-        are under 13, please do not sign up; if you believe a child under 13 has created an
-        account, contact us using the details in section 10 and we will delete it and its
-        data. Depending on where you are, a parent or guardian may have the right to see,
-        correct or delete what is held about their child — the same contact reaches us for
-        that.
-      </p>
-
-      <h2>9. Changes to This Policy</h2>
-      <p>
-        If this policy changes, the updated version will be posted on this page with a new
-        effective date. Where a change materially affects what is collected or who it is
-        shared with, we will say so in the app rather than relying on you to re-read this
-        page.
+        If this policy changes, we&apos;ll post the new version here with a new date. If a change
+        affects what we collect or who sees it, we&apos;ll tell you in the app too.
       </p>
 
       <h2>10. Contact</h2>
       <p>
-        Questions about this policy, or a request to see or delete what is held about you,
-        go to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. A parent or guardian
-        asking about their child&apos;s account can use the same address.
+        Questions, or want to see or delete your data? Email{' '}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Parents and guardians can use the
+        same address.
       </p>
     </div>
   );

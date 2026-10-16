@@ -9,7 +9,7 @@
  * simply has its last line cut through the middle, which reads as a rendering
  * glitch rather than as a layout decision that has stopped being true.
  *
- * That is what had happened. The one-strip ceiling was twenty minutes and the
+ * That is what had happened. The one-strip ceiling was twenty minutes to the
  * two-line layout needs thirty, so every block between them — a twenty-five
  * minute meditation, a quarter-past to quarter-to — was drawn with a name and
  * a floor for its time and six pixels less than the pair required.

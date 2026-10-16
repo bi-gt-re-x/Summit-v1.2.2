@@ -103,7 +103,7 @@ def delete_event(event_id, username):
     if not event:
         return {"success": False, "message": "Event not found"}
     if event.get('is_default', False):
-        return {"success": False, "message": "Cannot delete default events"}
+        return {"success": False, "message": "Can't delete default events"}
     db.delete_row('calendar_events', event_id, user_id=username)
     return {"success": True, "message": "Calendar event deleted"}
 

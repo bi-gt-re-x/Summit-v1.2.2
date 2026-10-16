@@ -49,7 +49,7 @@ function draw() {
     <MemoryRouter>
       <SkillLevelsPanel
         practice={{ attempts: [], levels, loading: false, error: null }}
-        periodText="your whole record"
+        periodText="all your work"
       />
     </MemoryRouter>,
   );
@@ -75,13 +75,13 @@ describe('skills by level', () => {
   it('leaves out a step with nothing answered on it', async () => {
     levels = { 'm.quadratics#3': step(0, 0) };
     draw();
-    expect(await screen.findByText(/No skill-tree problems marked in your whole record/))
+    expect(await screen.findByText(/No skill-tree problems marked in all your work/))
       .toBeInTheDocument();
   });
 
   it('tells a reader with nothing marked how to start', async () => {
     draw();
     expect(await screen.findByRole('link', { name: 'Skill Tree' })).toHaveAttribute('href', '/skill-trees');
-    expect(screen.getByText(/not from time spent/)).toBeInTheDocument();
+    expect(screen.getByText(/Time spent doesn't count/)).toBeInTheDocument();
   });
 });

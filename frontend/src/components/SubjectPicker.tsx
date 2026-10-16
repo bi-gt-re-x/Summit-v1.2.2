@@ -199,7 +199,7 @@ export function SubjectPicker({
           />
 
           {shown.length === 0 ? (
-            <p className="sp-empty">No subject matches “{query.trim()}”.</p>
+            <p className="sp-empty">No subject matches "{query.trim()}".</p>
           ) : (
             <div className="sp-rail" ref={rail}>
               {shown.map((subject) => (

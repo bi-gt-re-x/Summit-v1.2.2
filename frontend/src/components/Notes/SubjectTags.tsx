@@ -180,7 +180,7 @@ export function SubjectTags({ ids, catalogue, disabled, onChange }: SubjectTagsP
           />
           {choices.length === 0 ? (
             <p className="nt-picker-none">
-              {query.trim() ? `Nothing matches “${query.trim()}”.` : 'Every subject is already on.'}
+              {query.trim() ? `Nothing matches "${query.trim()}".` : 'Every subject is already on.'}
             </p>
           ) : (
             <ul className="nt-picker-list">

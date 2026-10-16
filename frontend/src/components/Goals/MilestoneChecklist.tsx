@@ -191,7 +191,7 @@ export function MilestoneChecklist({ steps, busy, onChange, taskDue }: Milestone
               aria-label={steps.length <= MIN_STEPS ? 'Clear this step' : 'Remove this step'}
               title={
                 steps.length <= MIN_STEPS
-                  ? `Clears it — every checkpoint keeps at least ${MIN_STEPS} steps`
+                  ? `Clears it. Every checkpoint keeps at least ${MIN_STEPS} steps.`
                   : 'Remove this step'
               }
               onClick={() => onChange(removeStep(steps, index))}

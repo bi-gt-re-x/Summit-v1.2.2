@@ -71,9 +71,9 @@ describe('what it does not repeat', () => {
 
   it('draws no list of key findings, no calendar and no subject split', () => {
     draw(<InsightsTab model={model()} subjects={subjects} />);
-    expect(screen.queryByText('Key Growth Insights')).not.toBeInTheDocument();
+    expect(screen.queryByText("What's changing")).not.toBeInTheDocument();
     expect(screen.queryByText('Habit calendar')).not.toBeInTheDocument();
-    expect(screen.queryByText('Subject Growth (XP Earned)')).not.toBeInTheDocument();
+    expect(screen.queryByText('XP by subject')).not.toBeInTheDocument();
   });
 
   it('never says what to do', () => {
@@ -105,15 +105,15 @@ describe('what changed', () => {
       />,
     );
     expect(screen.getByText('Getting stronger')).toBeInTheDocument();
-    expect(screen.getByText('Emerging problem')).toBeInTheDocument();
-    expect(screen.getByText('Hidden pattern')).toBeInTheDocument();
+    expect(screen.getByText('New problem')).toBeInTheDocument();
+    expect(screen.getByText('Pattern')).toBeInTheDocument();
     // The chip only where the source graded itself.
     expect(screen.getByText('Likely')).toBeInTheDocument();
   });
 
   it('says so plainly when nothing has moved', () => {
     draw(<InsightsTab model={model({ changes: [] })} subjects={subjects} />);
-    expect(screen.getByText(/Nothing has moved far enough/)).toBeInTheDocument();
+    expect(screen.getByText(/Nothing has changed much yet/)).toBeInTheDocument();
   });
 
   it('sits above the three evidence groups', () => {

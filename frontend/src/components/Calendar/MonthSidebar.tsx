@@ -83,14 +83,14 @@ export function MonthSidebar({
           label: 'Best day',
           value: best
             ? dates.formatDate(dates.fromIsoDate(best.iso), { month: 'short', day: 'numeric' })
-            : '—',
+            : '-',
           sub: best ? `${best.earned.toLocaleString()} XP` : 'nothing yet',
         }}
       />
 
       <section className="mv-card">
         <div className="mv-card-head">
-          <h3 className="mv-card-title">Top Performing Days</h3>
+          <h3 className="mv-card-title">Best days</h3>
           <button type="button" className="mv-card-link" onClick={onViewAll}>
             View all
           </button>

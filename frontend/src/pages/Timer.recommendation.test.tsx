@@ -77,7 +77,7 @@ beforeEach(() => {
 describe('the recommendation', () => {
   it('says what it is waiting for on an account with no sittings', async () => {
     show();
-    expect(await screen.findByText(/recommended lengths start after/i)).toBeInTheDocument();
+    expect(await screen.findByText(/suggested lengths show up after/i)).toBeInTheDocument();
     // Named rather than "keep going": the count is the thing that moves it.
     expect(screen.getByText(/6 to go/i)).toBeInTheDocument();
   });
@@ -100,7 +100,7 @@ describe('the recommendation', () => {
     show();
 
     expect(await screen.findByText(/recommended focus · 50 min/i)).toBeInTheDocument();
-    expect(screen.getByText(/over 8 recorded/i)).toBeInTheDocument();
+    expect(screen.getByText(/out of 8 logged/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /use deep work/i })).toBeInTheDocument();
   });
 

@@ -129,7 +129,7 @@ describe('picking a task', () => {
   });
 });
 
-describe('what a sitting on a task leaves behind', () => {
+describe('what a session on a task leaves behind', () => {
   it('stamps the task on the row and shows where the time went', async () => {
     // A focus phase that ran out a moment ago, with a task picked: the page
     // catches up on mount and writes the row, exactly as if the clock had
@@ -142,13 +142,13 @@ describe('what a sitting on a task leaves behind', () => {
     }));
     show();
 
-    const sittings = await screen.findByRole('region', { name: /today's sittings/i });
+    const sittings = await screen.findByRole('region', { name: /today's sessions/i });
     await waitFor(() => expect(sittings).toHaveTextContent(/Revise integrals1 sitting25m/));
 
     const stored = JSON.parse(localStorage.getItem('pomodoro:intervals:myles') ?? '[]') as Interval[];
     expect(stored.at(-1)).toMatchObject({ taskId: 't-int', taskTitle: 'Revise integrals' });
     // And the strip at the top says it in a sentence.
-    expect(screen.getByRole('region', { name: /your last sitting/i })).toHaveTextContent(/25 min on\s*Revise integrals/);
+    expect(screen.getByRole('region', { name: /your last session/i })).toHaveTextContent(/25 min on\s*Revise integrals/);
   });
 
   it("groups today's sittings by task, most time first, untagged last", async () => {
@@ -161,7 +161,7 @@ describe('what a sitting on a task leaves behind', () => {
     ]));
     show();
 
-    const sittings = await screen.findByRole('region', { name: /today's sittings/i });
+    const sittings = await screen.findByRole('region', { name: /today's sessions/i });
     const items = within(sittings).getAllByRole('listitem').map((li) => li.textContent);
     expect(items).toEqual([
       'Draft the essay2 sittings1h 5m',
@@ -173,7 +173,7 @@ describe('what a sitting on a task leaves behind', () => {
 
   it('says so when there are none yet today', async () => {
     show();
-    expect(await screen.findByText(/no sittings yet today/i)).toBeInTheDocument();
+    expect(await screen.findByText(/no sessions yet today/i)).toBeInTheDocument();
   });
 });
 
@@ -214,7 +214,7 @@ describe('a note about the sitting', () => {
       row({ id: 's-1', at: Date.now() - 60_000, taskId: 't-int', taskTitle: 'Revise integrals' }),
     ]));
     show();
-    const strip = await screen.findByRole('region', { name: /your last sitting/i });
+    const strip = await screen.findByRole('region', { name: /your last session/i });
     await userEvent.type(within(strip).getByLabelText(/jot a note/i), 'Substitution clicked once I drew it');
     await userEvent.click(within(strip).getByRole('button', { name: /save note/i }));
 
@@ -233,7 +233,7 @@ describe('a note about the sitting', () => {
     saveNote.mockResolvedValueOnce({ success: false, message: 'nope' } as never);
     localStorage.setItem('pomodoro:intervals:myles', JSON.stringify([row({ id: 's-1', at: Date.now() - 60_000 })]));
     show();
-    const strip = await screen.findByRole('region', { name: /your last sitting/i });
+    const strip = await screen.findByRole('region', { name: /your last session/i });
     await userEvent.type(within(strip).getByLabelText(/jot a note/i), 'A thought');
     await userEvent.click(within(strip).getByRole('button', { name: /save note/i }));
     expect(await within(strip).findByRole('alert')).toHaveTextContent(/didn't save/i);

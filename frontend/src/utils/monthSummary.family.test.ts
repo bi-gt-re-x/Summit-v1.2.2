@@ -44,7 +44,7 @@ describe('the family a day takes', () => {
   });
 
   it('is the family most of the day went on, not the one with most entries', () => {
-    // Three small science tasks against one large maths one. Counting rows
+    // Three small science tasks vs. one large maths one. Counting rows
     // would call this a science day; the day was mostly maths.
     const [day] = monthDays(2026, 8, [
       dated(1, 900, { subject: 'algebra' }),

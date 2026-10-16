@@ -221,8 +221,8 @@ describe('the period row', () => {
     draw(<GrowthTab model={fakeModel()} />);
     const row = await screen.findByRole('navigation', { name: /Growth by period/i });
     const all = within(row).getByRole('button', { name: /Since you started/ });
-    expect(all.textContent).toContain('—');
-    expect(all.textContent).toContain('nothing before it');
+    expect(all.textContent).toContain('-');
+    expect(all.textContent).toContain('nothing earlier to compare with');
   });
 });
 
@@ -319,7 +319,7 @@ describe('the movers', () => {
     draw(<GrowthTab model={fakeModel()} />);
     const worst = (await screen.findByRole('heading', { name: /Needs attention/ }))
       .closest('.ax-panel') as HTMLElement;
-    expect(worst.textContent).toMatch(/not a claim that anything got worse/i);
+    expect(worst.textContent).toMatch(/doesn't mean anything got worse/i);
   });
 
   it('gives every measure more than one quantity to be checked against', async () => {
@@ -357,7 +357,7 @@ describe('then and now', () => {
       consistency: null, efficiency: null, focus: null,
     } }));
     draw(<GrowthTab model={fakeModel()} />);
-    expect(await screen.findByText(/no ratings yet — scored on task XP/)).toBeInTheDocument();
+    expect(await screen.findByText(/no ratings yet, so this uses task XP/)).toBeInTheDocument();
   });
 });
 
@@ -367,7 +367,7 @@ describe('what changed', () => {
     draw(<GrowthTab model={fakeModel()} />);
     // Assembled from the figures, so it cannot drift from them. The metric
     // rows print the same quantity, so this looks only at the prose block.
-    const list = (await screen.findByRole('heading', { name: /^What changed underneath$/ }))
+    const list = (await screen.findByRole('heading', { name: /^What changed behind the scores$/ }))
       .closest('.ax-panel')!
       .querySelector('.ax-gp-changes');
     expect(list).not.toBeNull();
@@ -381,7 +381,7 @@ describe('what changed', () => {
       consistency: null, efficiency: null, focus: null,
     } }));
     draw(<GrowthTab model={fakeModel()} />);
-    expect(await screen.findByText(/nothing before it to have changed from/i))
+    expect(await screen.findByText(/starts on your first day, so there's nothing/i))
       .toBeInTheDocument();
   });
 });
@@ -455,8 +455,8 @@ describe('the panels brought back from before the cuts', () => {
   it.each([
     'Skill Growth',
     'Skills by level',
-    'Time, and what it bought',
-    'When the work actually happens',
+    'Time vs. progress',
+    'When you get work done',
     'Every day of the last year',
   ])('draws %s', async (title) => {
     serve();

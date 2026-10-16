@@ -444,6 +444,6 @@ describe('formatting', () => {
 
   it('reads a bare day as a local one rather than a day early', () => {
     expect(formatOn('2026-09-12')).toContain('12');
-    expect(formatOn('')).toBe('—');
+    expect(formatOn('')).toBe('-');
   });
 });

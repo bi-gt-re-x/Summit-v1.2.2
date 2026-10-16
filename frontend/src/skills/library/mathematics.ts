@@ -206,7 +206,7 @@ export const mathematics = [
   node({
     id: 'math.proof',
     name: 'Writing Proofs',
-    description: 'Induction, contradiction, contraposition — and an argument somebody else can check.',
+    description: 'Induction, contradiction, contraposition. And an argument somebody else can check.',
     difficulty: 'expert',
     xpReward: 180,
     // Either route into proof is fine, and demanding both would be a rule about

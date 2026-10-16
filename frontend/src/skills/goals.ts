@@ -50,7 +50,7 @@ export const GOALS: SkillGoal[] = [
     id: 'learn-python',
     name: 'Learn to program',
     blurb:
-      'From variables to classes: the fundamentals every other path here is built on. Language-agnostic, because the ideas are.',
+      'From variables to classes: the basics every other path builds on. Works for any language.',
     category: 'Programming',
     targets: [
       'programming.classes',
@@ -87,7 +87,7 @@ export const GOALS: SkillGoal[] = [
     id: 'machine-learning',
     name: 'Learn machine learning',
     blurb:
-      'The honest route: the math and the data handling before the models, and the models before the architectures.',
+      'The real route: math and data first, then models, then architectures.',
     category: 'AI / Machine Learning',
     targets: ['ml.transformers', 'ml.evaluation'],
     optional: ['ml.visualisation', 'ml.clustering'],
@@ -97,7 +97,7 @@ export const GOALS: SkillGoal[] = [
     id: 'data-science',
     name: 'Work with data',
     blurb:
-      'Cleaning, describing and showing data, and being able to say what it does not support.',
+      "Cleaning, describing and showing data, and being able to say what it doesn't support.",
     category: 'AI / Machine Learning',
     targets: ['ml.feature-engineering', 'ml.visualisation', 'ml.evaluation'],
     tags: ['data', 'statistics', 'visualisation'],
@@ -106,7 +106,7 @@ export const GOALS: SkillGoal[] = [
     id: 'backend-development',
     name: 'Learn backend development',
     blurb:
-      'An API, a database behind it, authentication that is not a liability, and the thing actually deployed.',
+      "An API, a database, safe sign-in and the whole thing live.",
     category: 'Programming',
     targets: ['programming.deployment', 'programming.auth'],
     optional: ['programming.async', 'programming.testing'],
@@ -126,7 +126,7 @@ export const GOALS: SkillGoal[] = [
     id: 'chess-improvement',
     name: 'Get better at chess',
     blurb:
-      'Tactics and calculation first, because that is what decides games, then the structure and endgames that decide the rest.',
+      "Tactics and calculation first, because that's what decides games, then the structure and endgames that decide the rest.",
     category: 'Chess',
     targets: ['chess.tournament-play'],
     tags: ['chess', 'tactics', 'endgame', 'strategy'],
@@ -144,7 +144,7 @@ export const GOALS: SkillGoal[] = [
   {
     id: 'essay-writing',
     name: 'Write better essays',
-    blurb: 'Sentences, then structure, then argument — and the editing pass that is where the work is.',
+    blurb: 'Sentences, then structure, then argument. Then the editing, which is where the real work is.',
     category: 'Writing',
     targets: ['writing.essay'],
     optional: ['writing.technical'],

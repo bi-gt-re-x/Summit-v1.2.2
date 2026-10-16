@@ -55,7 +55,7 @@ export const EARTH_SPACE: SubjectTree = {
     { id: 'es.cosmo', name: 'Cosmology', icon: 'cosmos', tier: 'expert', requires: ['es.galaxies', 'es.gravity'], state: lock, percent: 0, xp: 2600,
       desc: 'The universe as one object with a history: expanding, cooling, and leaving a faint glow behind. Distant galaxies receding faster the further away they are is the observation the whole picture rests on.' },
     { id: 'es.observe', name: 'Observation & Instruments', icon: 'telescope', tier: 'expert', requires: ['es.light', 'es.resources'], state: lock, percent: 0, xp: 2400,
-      desc: 'Telescopes, satellites, cores and seismographs — evidence gathered where an experiment is impossible. Every one of these subjects advances by finding a new thing to measure rather than a new thing to try.' },
+      desc: 'Telescopes, satellites, cores and seismographs. Evidence gathered where an experiment is impossible. Every one of these subjects advances by finding a new thing to measure rather than a new thing to try.' },
     { id: 'es.system', name: 'Earth as a System', icon: 'earth-system', tier: 'mastery', requires: ['es.climate', 'es.observe'], state: lock, percent: 0, xp: 3000,
       desc: 'Rock, air, water and life as four coupled parts that have shaped each other for billions of years. Oxygen in the atmosphere is biological in origin, which is the clearest case of the coupling running both ways.' },
     { id: 'es.geology', name: 'Geology', icon: 'volcano', tier: 'beginner', requires: ['es.rocks'], navTo: 'geology', state: lock,

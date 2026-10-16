@@ -410,9 +410,9 @@ export function focusMix(all: GrowthDay[], days = 90): FocusMix {
 
   const bands: FocusBand[] = (
     [
-      ['deep', `Deep — ${DEEP_MINUTES}m or more`],
-      ['steady', `Steady — ${STEADY_MINUTES}–${DEEP_MINUTES}m`],
-      ['light', `Light — under ${STEADY_MINUTES}m`],
+      ['deep', `Deep: ${DEEP_MINUTES}m or more`],
+      ['steady', `Steady: ${STEADY_MINUTES} to ${DEEP_MINUTES}m`],
+      ['light', `Light: under ${STEADY_MINUTES}m`],
     ] as const
   ).map(([key, label]) => {
     const share = shareOf(now.counts[key], now.total);
@@ -799,12 +799,12 @@ export function scoreCards(all: GrowthDay[], tasks: Task[], days = 30): ScoreCar
 
   return [
     build('consistency', 'Consistency', 'flame', '', consistencyScore, (value) =>
-      value === null ? 'no days yet' : `${active} of ${now.length} days had work on them`,
+      value === null ? 'no days yet' : `You worked ${active} of ${now.length} days`,
     ),
     build('focus', 'Focus', 'clock', '', focusScore, (value) =>
       value === null
         ? 'no days yet'
-        : `${Math.round(minutes / Math.max(1, now.length))} min a day against a ${FOCUS_REFERENCE_MINUTES}-min day`,
+        : `${Math.round(minutes / Math.max(1, now.length))} min a day vs. a ${FOCUS_REFERENCE_MINUTES}-min day`,
     ),
     build(
       'follow',
@@ -815,7 +815,7 @@ export function scoreCards(all: GrowthDay[], tasks: Task[], days = 30): ScoreCar
       (value) => (value === null ? 'nothing was planned for these days' : `${met} of ${planned} planned tasks done`),
     ),
     build('stability', 'Stability', 'target', '', stabilityScore, (value) =>
-      value === null ? 'needs two full weeks' : 'how alike your weeks are',
+      value === null ? 'needs two full weeks' : 'how similar your weeks are',
     ),
   ];
 }
