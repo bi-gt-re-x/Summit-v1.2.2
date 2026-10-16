@@ -12,31 +12,23 @@
  * three results waiting, and hiding those behind the same gate would lose the
  * one thing this tab promised to come back and tell you.
  */
-import { Link } from 'react-router-dom';
 import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
-import { AdviceCard, CategoryFilter, FollowupPanel, OutlookPanel } from '@/components/Recommendations';
+import { FollowupPanel } from '@/components/Recommendations';
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
-import { Panel } from '../charts';
 import { XpPulse } from '../XpPulse';
 import { LensCard } from '../Lens';
 import { Knows, useKnows } from '../Knows';
-import { Building } from '../Building';
-import { NEED_DAYS } from '../useAnalyticsModel';
-import { whyFor } from '../milestones';
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 
 export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & { data: AnalyticsData }) {
   const {
-    adoptedIds, advice, all, category, historyDays, liveGoals, lens, maturity, observed, plan, projection, recent, reviewSummary,
-    reviews, setBudget, setCategory, setNudge, shown, slice, shownDiagnoses, toneRules, waitFor,
+    all, lens, plan, recent, reviewSummary, reviews, setBudget, setNudge, slice, shownDiagnoses,
     /* The three inputs this tab was not reading. `rhythm` carries the reader's
        typical sitting, drawn from their logged focus time; `reasons` is what
        they type after a task; `detail` is how much supporting evidence they
-       asked to be shown. None of the three changes which recommendations exist
-       or how they are ranked — see the note on `headlines` below, which is the
-       same rule. */
+       asked to be shown. None of the three changes what the plan suggests. */
     detail, reasons, rhythm,
   } = model;
 
@@ -51,25 +43,12 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
     ? { phrase: reasons.struggle[0].phrase, count: reasons.struggle[0].count }
     : null;
 
-  /*
-   * How many problems this tab puts in front of the reader at once.
-   *
-   * Both numbers come from the harshness setting rather than from a constant
-   * here — two cards and two tensions on gentle, five and eight on blunt. What
-   * does *not* change is which recommendations exist or how they are ranked:
-   * every rule the record supports still fires, and the list under the cards
-   * is the same list. This is how much of it leads the tab.
-   *
-   * `shownDiagnoses` is capped in the model rather than here, because the
-   * export writes the uncapped set and both have to come off one decision.
-   * See utils/analyticsPrefs.
-   */
-  const headlines = toneRules?.headlines ?? 3;
+  /* `shownDiagnoses` is capped in the model by the harshness setting, because
+     the export writes the uncapped set and both have to come off one
+     decision. See utils/analyticsPrefs. */
   const diagnoses = shownDiagnoses ?? [];
   const { dropAdopted, dropping, refresh } = data;
   const knows = useKnows(model);
-
-  const ready = waitFor('recommendations') === 0 && advice.length > 0;
 
   return (
     <>
@@ -112,55 +91,11 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         )}
       </section>
 
-      {/* The ranked changes. The opening line's chevron lands here. */}
-      {ready ? (
-        <section className="ax-section" id="ax-changes">
-          <Panel
-            title="Changes Worth Making"
-            note="Ranked by how much XP each would add over a year. Open one for why, what to do, and the numbers."
-            className="ax-changes"
-            aside={<CategoryFilter items={advice} chosen={category} onChoose={setCategory} />}
-          >
-            {shown.length > 0 && (
-              <div className="ax-grid ax-grid-three">
-                {shown.slice(0, headlines).map((item, index) => (
-                  <AdviceCard
-                    key={item.id}
-                    item={item}
-                    rank={index + 1}
-                    adopted={adoptedIds.has(item.id)}
-                  />
-                ))}
-              </div>
-            )}
-          </Panel>
-        </section>
-      ) : (
-        <Building
-          credit={model.maturity.credit ?? 0}
-          headStart={model.headStart}
-          title="Recommendations"
-          remaining={waitFor('recommendations')}
-          need={NEED_DAYS.recommendations}
-          have={historyDays}
-          promise={whyFor(NEED_DAYS.recommendations)}
-          observation={observed[0] ?? null}
-          spanDays={maturity.spanDays}
-          asksLead="Summit will work out what to change, and what it is worth:"
-          asks={[
-            'Which single change would buy you the most?',
-            'What is that worth, in your own figures?',
-            'How hard would it actually be?',
-            'Did the last change you made work?',
-          ]}
-          emptyMessage="No long gaps, no dead weekend, no late shift worth moving. Nothing to fix."
-          action={
-            <Link to="/analytics" className="ax-btn">
-              See totals
-            </Link>
-          }
-        />
-      )}
+      {/* The "Changes Worth Making" cards were here: each change ranked by the
+          XP it would add over a year. Cut, because a yearly XP figure is not
+          something a student is trying to learn, and the cards contradicted
+          other tabs ("0% rated" against 88% on Overview). The plan above says
+          what to do next. */}
 
       <section className="ax-section">
         {/* What happened to changes already adopted is evidence, not diagnosis,
@@ -174,11 +109,8 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         />
       </section>
 
-      {ready && (
-        <section className="ax-section">
-          <OutlookPanel outlook={projection} advice={advice} goals={liveGoals} />
-        </section>
-      )}
+      {/* "Five years, both ways", the XP projection, was here. Cut: a
+          five-year XP forecast changes nothing about this week. */}
 
       {/* Three exact sessions to plan, for every subject or one picked, where
           the cards above are changes to habits. Drawn whether or not there is

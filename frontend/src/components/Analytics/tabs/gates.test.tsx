@@ -21,8 +21,6 @@ import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { RecommendationsTab } from './RecommendationsTab';
 import { SubjectsTab } from './SubjectsTab';
-import { NEED_DAYS } from '../useAnalyticsModel';
-import { whyFor } from '../milestones';
 /* The model these are driven from — see ./fixtures, which gates.test.tsx used
    to hold and ./groups.test.tsx now needs too. */
 import { draw, fakeData, fakeModel } from './fixtures';
@@ -30,21 +28,16 @@ import { reviewAdopted, summarise } from '@/utils/followup';
 import { days } from '@/test/factories';
 
 describe('Recommendations', () => {
-  it('is still building one day short', () => {
-    draw(<RecommendationsTab model={fakeModel({ historyDays: NEED_DAYS.recommendations - 1 })} data={fakeData()} />);
-    expect(screen.getByText(whyFor(NEED_DAYS.recommendations))).toBeInTheDocument();
+  it('no longer ranks changes by a year of XP, or projects five years out', () => {
+    draw(<RecommendationsTab model={fakeModel({ historyDays: 400 })} data={fakeData()} />);
+    expect(screen.queryByRole('heading', { name: /Changes Worth Making/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Five years/i })).not.toBeInTheDocument();
   });
 
-  it('is still building with enough record and nothing to say', () => {
-    draw(<RecommendationsTab model={fakeModel({ historyDays: 400, advice: [] })} data={fakeData()} />);
-    expect(screen.getByText(/Nothing to fix/i)).toBeInTheDocument();
-  });
-
-  it('shows the plan even while the tab is still building — it is gated on nothing', () => {
+  it('shows the plan on an account a day old — it is gated on nothing', () => {
     // An account three days old still has overdue work and a deadline, and
     // those are the days when being told what to do is worth most.
     draw(<RecommendationsTab model={fakeModel({ historyDays: 1 })} data={fakeData()} />);
-    expect(screen.getByText(whyFor(NEED_DAYS.recommendations))).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /next/i })).toBeInTheDocument();
   });
 
@@ -69,7 +62,6 @@ describe('Recommendations', () => {
         data={fakeData()}
       />,
     );
-    expect(screen.getByText(whyFor(NEED_DAYS.recommendations))).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /What happened after/i })).toBeInTheDocument();
   });
 });

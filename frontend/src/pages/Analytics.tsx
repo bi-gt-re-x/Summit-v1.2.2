@@ -137,7 +137,6 @@ import { saveSubjectMilestones } from '@/services/analytics';
 import { PATTERN_DAYS, RECENT_DAYS } from '@/utils/recent';
 import { buildReport, reportFilename } from '@/utils/report';
 import { buildSeriesCsv, seriesFilename } from '@/utils/seriesCsv';
-import { reduced } from '@/utils/homePlay';
 import '@/styles/analytics.css';
 /**
  * The chapters' own stylesheet, which came with them.
@@ -571,16 +570,9 @@ export default function Analytics() {
         }
         return null;
       case 'recommendations':
-        return advice.length > 0 ? (
-          <TabOpening
-            onMore={() =>
-              document.getElementById('ax-changes')?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
-            }
-          >
-            {advice.length} {advice.length === 1 ? 'change is' : 'changes are'} worth making here.
-            The first is <strong>{advice[0]!.title.toLowerCase()}</strong>.
-          </TabOpening>
-        ) : null;
+        /* This used to count the "Changes Worth Making" cards. They are gone,
+           and the plan under it is its own opening. */
+        return null;
       case 'subjects':
         return breakdown.rows.length > 0 ? (
           <TabOpening>

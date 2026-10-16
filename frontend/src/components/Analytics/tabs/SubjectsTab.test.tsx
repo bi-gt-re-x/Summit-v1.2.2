@@ -51,10 +51,12 @@ describe('the Subjects tab', () => {
     expect(screen.getByRole('heading', { name: /Subject Growth/ })).toBeInTheDocument();
   });
 
-  it('closes on the scored list once there are rated subjects to score', () => {
+  it('does not score each subject a second time from star ratings', () => {
+    // That second "Skill Level" read on a different scale from the subject
+    // levels (Math 88.84 there, 75 here). One level per subject.
     const rated = MATHS.map((row) => ({ ...row, difficulty: 3, execution: 4 }));
     draw(<SubjectsTab model={fakeModel({ tasks: rated, breakdown: WORKED, skills: skillScores(rated), nameOf })} />);
-    expect(screen.getByRole('heading', { name: /Skill Level/ })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Skill Level/ })).not.toBeInTheDocument();
   });
 
   it('draws none of the tree panels for an account with no finished work', () => {

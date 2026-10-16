@@ -47,7 +47,6 @@ import { YearOnYear } from '../GrowthYears';
 import {
   METRIC_META,
   METRIC_ORDER,
-  MetricStrip,
   MilestoneFeed,
   MoverPanel,
   PeriodCards,
@@ -358,14 +357,10 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
             </Panel>
           </section>
 
-          {/* The five graded measures, still here and no longer the opening.
-              They are what the timeline below is drawn from and they answer a
-              real question — *how is the record doing* — but it is not the
-              question the tab's name asks, and leading with them was what made
-              Growth read as a second Overview. */}
-          <section className="ax-section">
-            <MetricStrip data={data} />
-          </section>
+          {/* The five graded measures and an overall grade were here: a second
+              report card that came out different from Overview's (8.7 against
+              8.1, and B against S for the same measure). Overview keeps the
+              one grade; the timeline below still reads the same periods. */}
 
           {/* The shape of the strongest subject. It sits under the strip for
               the same reason it always did: the strip says how the account is

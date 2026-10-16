@@ -226,48 +226,16 @@ describe('the period row', () => {
   });
 });
 
-describe('the metric strip', () => {
-  it('states overall growth in the biggest type, with the grade move under it', async () => {
-    serve();
-    draw(<GrowthTab model={fakeModel()} />);
-    // Scoped to the strip: the 30-day period card states the same figure,
-    // which is the point of the row and not a duplicate to be deduplicated.
-    await screen.findByRole('heading', { name: /Growth timeline/ });
-    const overall = document.querySelector('.ax-gp-overall') as HTMLElement;
-    expect(within(overall).getByText('+7.4%').className).toContain('ax-gp-big');
-    expect(overall.textContent).toContain('You moved from');
-  });
-
-  it('puts the five terms of the mean beside the mean', async () => {
-    /* The overall figure is the mean of the five and nothing else. A layout
-       that gave it a block of its own and buried the parts further down would
-       ask the reader to take the headline on trust. */
-    serve();
-    draw(<GrowthTab model={fakeModel()} />);
-    const cards = await screen.findAllByText(
-      /^(Productivity|Quality|Consistency|Efficiency|Focus)$/);
-    const inStrip = cards.filter((node) => node.closest('.ax-gp-metric-card'));
-    expect(inStrip).toHaveLength(5);
-  });
-
-  it('shows each metric as a grade transition as well as a percentage', async () => {
+describe('one report card, not two', () => {
+  it('leaves the grades to Overview', async () => {
+    /* The Growth tab used to print its own overall grade and five letter
+       grades, and they came out different from Overview's for the same
+       account. The timeline still reads the same periods. */
     serve();
     draw(<GrowthTab model={fakeModel()} />);
     await screen.findByRole('heading', { name: /Growth timeline/ });
-    const strip = document.querySelector('.ax-gp-strip') as HTMLElement;
-    expect(strip.querySelectorAll('.ax-gp-metric-card-grade')).toHaveLength(5);
-  });
-
-  it('says so plainly when there is nothing to compare to', async () => {
-    serve(payload({ previous: null, change: {
-      overall: null, productivity: null, quality: null,
-      consistency: null, efficiency: null, focus: null,
-    } }));
-    draw(<GrowthTab model={fakeModel()} />);
-
-    await screen.findByRole('heading', { name: /Growth timeline/ });
-    const overall = document.querySelector('.ax-gp-overall') as HTMLElement;
-    expect(overall.textContent).toMatch(/reaches back to your first day/i);
+    expect(document.querySelector('.ax-gp-strip')).toBeNull();
+    expect(document.querySelector('.ax-gp-metric-card')).toBeNull();
   });
 });
 

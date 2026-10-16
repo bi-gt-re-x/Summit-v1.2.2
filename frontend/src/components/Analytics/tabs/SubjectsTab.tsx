@@ -15,8 +15,6 @@ import { loadProgress } from '@/utils/skillProgress';
 import { treeStanding } from '@/skills/standing';
 import { OTHER_KEY } from '@/utils/subjectXp';
 import { LimiterLine } from '../Limiter';
-import { SkillScorePanel } from '../SkillView';
-import { PanelGroup } from '../charts';
 import { SubjectPanel } from '../Breakdown';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { SubjectIndex } from '@/hooks/useSubjects';
@@ -38,7 +36,7 @@ export function SubjectsTab({
   subjects = NO_SUBJECTS,
   username = null,
 }: { model: AnalyticsModel; subjects?: SubjectIndex; username?: string | null }) {
-  const { all, goalLimits, namedSubjects, tasks, breakdown, previousBySubject, skills, nameOf } = model;
+  const { all, goalLimits, namedSubjects, tasks, breakdown, previousBySubject } = model;
 
   /**
    * The limiters whose subject is one this window actually shows.
@@ -277,16 +275,10 @@ export function SubjectsTab({
           what is inside it in its own heading, so a reader who wants the
           arithmetic opens it, and one who wants the chapters above scrolls
           past two lines instead of past a wall. */}
-      {skills.length > 0 && (
-        <section className="ax-section">
-          <PanelGroup
-            title="Skill Level"
-            note="Every subject scored from your own ratings, with the working behind each."
-          >
-            <SkillScorePanel rows={skills} nameOf={nameOf} />
-          </PanelGroup>
-        </section>
-      )}
+      {/* "Skill Level" was here: every subject scored a second time from the
+          reader's own star ratings, on a different scale from the subject
+          levels above (Math read 88.84 there and 75 here). One level per
+          subject; the cards above keep it. */}
     </>
   );
 }
