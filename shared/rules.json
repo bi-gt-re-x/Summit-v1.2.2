@@ -23,6 +23,19 @@
     "since": "2026-10-15"
   },
 
+  "password": {
+    "_about": "What a new password needs, checked on sign-up by backend/tracking/auth.py password_problem and listed live on the sign-up form (frontend/src/components/Auth/passwordRules.ts). Each rule is a regex the password must match, and its label is the line the form shows. Existing passwords aren't re-checked at log-in.",
+    "min_length": 8,
+    "max_length": 128,
+    "rules": [
+      { "key": "length", "label": "At least 8 characters", "pattern": "^[\\s\\S]{8,}$" },
+      { "key": "upper", "label": "An uppercase letter", "pattern": "[A-Z]" },
+      { "key": "lower", "label": "A lowercase letter", "pattern": "[a-z]" },
+      { "key": "number", "label": "A number", "pattern": "[0-9]" },
+      { "key": "symbol", "label": "A symbol (like ! or #)", "pattern": "[^A-Za-z0-9\\s]" }
+    ]
+  },
+
   "session_timing": {
     "_about": "When a recommended session is booked (Plan my next session, Plan all). Slots are scored on the reader's own record: how well work at that hour goes, how often they work then, how much of that weekday they usually work, how full the day already is, and how soon it is. Two sessions for the same subject never share a day, and are best gap_days apart by difficulty (1-5). backend/tracking/session_timing.py applies it.",
     "lookback_days": 120,

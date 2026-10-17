@@ -22,6 +22,7 @@ vi.mock('@/services', async (importOriginal) => {
       ...actual.auth,
       providers: vi.fn(async () => ({ success: true, google: false })),
       signup: vi.fn(),
+      checkEmail: vi.fn(async () => ({ success: true, valid: true, available: true })),
       verifyStatus: vi.fn(async () => ({ success: true, verified: false, signed_in: true })),
     },
   };
@@ -82,9 +83,58 @@ describe('the login page', () => {
     fireEvent.change(form.querySelector('[name=name]')!, { target: { value: 'New Reader' } });
     fireEvent.change(form.querySelector('[name=email]')!, { target: { value: 'new@example.test' } });
     fireEvent.change(document.getElementById('createPassword')!, { target: { value: 'A-long-password-1' } });
+    fireEvent.change(document.getElementById('createConfirm')!, { target: { value: 'A-long-password-1' } });
     fireEvent.click(form.querySelector('[name=consent]')!);
     fireEvent.click(form.querySelector('button[type=submit]')!);
     await waitFor(() => expect(authService.signup).toHaveBeenCalled());
     await waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+
+  it('ticks off each password rule as it is met', () => {
+    open('/login?auth=create', { status: 'signed-out', profileComplete: false });
+    const met = () => [...document.querySelectorAll('#pwRules li.is-met')].map((li) => li.textContent);
+    fireEvent.change(document.getElementById('createPassword')!, { target: { value: 'abc' } });
+    expect(met()).toHaveLength(1);
+    expect(met()[0]).toContain('A lowercase letter');
+    fireEvent.change(document.getElementById('createPassword')!, { target: { value: 'Abcdefg1!' } });
+    expect(met()).toHaveLength(5);
+  });
+
+  it('shows both passwords together, and says whether they match', () => {
+    open('/login?auth=create', { status: 'signed-out', profileComplete: false });
+    const pw = document.getElementById('createPassword') as HTMLInputElement;
+    const again = document.getElementById('createConfirm') as HTMLInputElement;
+    expect(pw.type).toBe('password');
+    fireEvent.click(screen.getByRole('button', { name: 'Show' }));
+    expect(pw.type).toBe('text');
+    expect(again.type).toBe('text');
+    fireEvent.change(pw, { target: { value: 'Abcdefg1!' } });
+    fireEvent.change(again, { target: { value: 'Abcdefg1' } });
+    expect(screen.getByText("Passwords don't match yet.")).toBeInTheDocument();
+    fireEvent.change(again, { target: { value: 'Abcdefg1!' } });
+    expect(screen.getByText('Passwords match.')).toBeInTheDocument();
+  });
+
+  it("won't sign up with passwords that don't match", async () => {
+    open('/login?auth=create', { status: 'signed-out', profileComplete: false });
+    const form = document.querySelector('[data-step="create"] form')!;
+    fireEvent.change(form.querySelector('[name=name]')!, { target: { value: 'New Reader' } });
+    fireEvent.change(form.querySelector('[name=email]')!, { target: { value: 'new@example.test' } });
+    fireEvent.change(document.getElementById('createPassword')!, { target: { value: 'A-long-password-1' } });
+    fireEvent.change(document.getElementById('createConfirm')!, { target: { value: 'A-long-password-2' } });
+    fireEvent.click(form.querySelector('[name=consent]')!);
+    fireEvent.click(form.querySelector('button[type=submit]')!);
+    expect(await screen.findByText("The two passwords don't match.")).toBeInTheDocument();
+    expect(authService.signup).not.toHaveBeenCalled();
+  });
+
+  it('says an email is taken as soon as the field is left', async () => {
+    vi.mocked(authService.checkEmail).mockResolvedValueOnce({ success: true, valid: true, available: false });
+    open('/login?auth=create', { status: 'signed-out', profileComplete: false });
+    const email = document.querySelector('[data-step="create"] [name=email]')!;
+    fireEvent.change(email, { target: { value: 'taken@example.test' } });
+    fireEvent.blur(email);
+    expect(await screen.findByText(/already has a Summit account/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Log in instead' })).toBeInTheDocument();
   });
 });

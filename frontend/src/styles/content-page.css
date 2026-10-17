@@ -91,6 +91,52 @@ body:has(.content-container) {
     font-style: italic;
 }
 
+/* --- The Terms and the Privacy Policy (components/LegalDocument) ------ */
+.legal-doc h3 {
+    margin: 1.4em 0 0.4em;
+    font-size: 1em;
+}
+
+/* The short version: a tinted panel, so it reads as a summary of what
+   follows rather than as its first section. */
+.legal-summary {
+    margin: 1.4em 0;
+    padding: 1em 1.2em;
+    border-radius: var(--radius-md);
+    background: #f6f1e7;
+    border: 1px solid #e6dcc6;
+}
+.legal-summary h2,
+.legal-toc h2 {
+    margin: 0 0 0.5em;
+    font-size: 1em;
+}
+.legal-summary ul { margin-bottom: 0.6em; }
+.legal-summary-note {
+    margin: 0;
+    font-size: 0.88em;
+    color: #777;
+}
+
+.legal-toc { margin: 1.6em 0 0.4em; }
+.legal-toc ol {
+    margin: 0;
+    padding-left: 1.6em;
+    columns: 2;
+    column-gap: 2em;
+    font-size: 0.95em;
+}
+.legal-toc li { break-inside: avoid; }
+.legal-toc li + li { margin-top: 0.25em; }
+
+/* Room above a section that's jumped to, so its heading isn't against the
+   top edge of the window. */
+.legal-section { scroll-margin-top: var(--space-6); }
+
+@media (max-width: 560px) {
+    .legal-toc ol { columns: 1; }
+}
+
 /* --- Dark ------------------------------------------------------------- */
 /* The card stayed white-on-white in the dark theme, because these pages were
    written before there was one and never revisited. It is a panel in the same
@@ -111,6 +157,15 @@ html[data-theme="dark"] .content-container a {
 }
 
 html[data-theme="dark"] .effective-date {
+    color: #9aa4b2;
+}
+
+html[data-theme="dark"] .legal-summary {
+    background: #1f2630;
+    border-color: #30363d;
+}
+
+html[data-theme="dark"] .legal-summary-note {
     color: #9aa4b2;
 }
 

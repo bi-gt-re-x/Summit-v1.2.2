@@ -10,7 +10,7 @@
  *              ┌──────────── choose ────────────┐
  *           Log In                       Create Account
  *              │                    name / e-mail / password
- *              │                       (password strength)
+ *              │              (password rules, show and confirm)
  *              │                                │
  *              │                     verification e-mail sent
  *              │                        "check your inbox"
@@ -43,6 +43,7 @@ import { AboutYou } from '@/components/AboutYou';
 import { ThemePicker } from '@/components/Settings/ThemePicker';
 import { settings as settingsService } from '@/services';
 import type { ThemeSkin } from '@/services/settings';
+import { passwordOk, passwordRules } from './passwordRules';
 
 export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile' | 'about';
 
@@ -116,6 +117,13 @@ export function AuthFlow({
   const [chosenSkin, setChosenSkin] = useState<ThemeSkin>('');
   const [chosenGoal, setChosenGoal] = useState(100);
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  /* One switch for both password fields, so what you see in one is what
+     you're matching in the other. */
+  const [showPassword, setShowPassword] = useState(false);
+  /* The email is checked when the field is left: an address that already has
+     an account is sent to log in before the rest of the form is filled. */
+  const [emailTaken, setEmailTaken] = useState(false);
 
   const card = useRef<HTMLDivElement>(null);
 
@@ -242,10 +250,23 @@ export function AuthFlow({
       say('Check the box to confirm your age and agree to the terms.');
       return;
     }
+    if (emailTaken) {
+      say('That email already has a Summit account. Log in instead.');
+      return;
+    }
+    if (!passwordOk(password)) {
+      say("Your password doesn't meet every rule under it yet.");
+      return;
+    }
+    if (password !== confirm) {
+      say("The two passwords don't match.");
+      return;
+    }
     say('Creating your account…', 'info');
     try {
       const result = await authService.signup(name, email, password);
       if (!result.success) {
+        if (result.field === 'email' && /already/i.test(result.message || '')) setEmailTaken(true);
         say(result.message || "That didn't work.");
         return;
       }
@@ -307,6 +328,20 @@ export function AuthFlow({
   }
 
   const strength = strengthOf(password);
+  const rules = passwordRules(password);
+
+  async function checkEmail(email: string) {
+    if (!email.trim()) {
+      setEmailTaken(false);
+      return;
+    }
+    try {
+      const result = await authService.checkEmail(email.trim());
+      setEmailTaken(Boolean(result.success && result.valid && !result.available));
+    } catch {
+      setEmailTaken(false);
+    }
+  }
   const googleUrl = authService.googleSignInUrl(next);
 
   /** "or" and the Google button, on the two panels that offer it. */
@@ -403,16 +438,40 @@ export function AuthFlow({
             name="email"
             autoComplete="email"
             required
+            aria-invalid={emailTaken || undefined}
+            aria-describedby={emailTaken ? 'createEmailTaken' : undefined}
+            onChange={() => emailTaken && setEmailTaken(false)}
+            onBlur={(event) => void checkEmail(event.target.value)}
           />
-          <label className="auth-label" htmlFor="createPassword">
-            Password
-          </label>
+          {emailTaken && (
+            <p className="auth-field-note is-bad" id="createEmailTaken" role="alert">
+              That email already has a Summit account.{' '}
+              <button type="button" className="auth-inline-link" onClick={() => go('login')}>
+                Log in instead
+              </button>
+            </p>
+          )}
+          <div className="auth-label-row">
+            <label className="auth-label" htmlFor="createPassword">
+              Password
+            </label>
+            <button
+              type="button"
+              className="auth-reveal"
+              aria-pressed={showPassword}
+              aria-controls="createPassword createConfirm"
+              onClick={() => setShowPassword((was) => !was)}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
           <input
             className="auth-input"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             id="createPassword"
             autoComplete="new-password"
             required
+            aria-describedby="pwRules"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
@@ -428,6 +487,37 @@ export function AuthFlow({
               {strength.label}
             </div>
           </div>
+          <ul className="auth-rules" id="pwRules" aria-label="Your password needs">
+            {rules.map((rule) => (
+              <li key={rule.key} className={rule.met ? 'is-met' : ''}>
+                <span className="auth-rule-mark" aria-hidden="true">
+                  {rule.met ? <Icon name="check" /> : null}
+                </span>
+                {rule.label}
+                <span className="sr-only">{rule.met ? ' (done)' : ' (not yet)'}</span>
+              </li>
+            ))}
+          </ul>
+          <label className="auth-label" htmlFor="createConfirm">
+            Confirm password
+          </label>
+          <input
+            className="auth-input"
+            type={showPassword ? 'text' : 'password'}
+            id="createConfirm"
+            autoComplete="new-password"
+            required
+            aria-describedby="pwMatch"
+            value={confirm}
+            onChange={(event) => setConfirm(event.target.value)}
+          />
+          <p
+            id="pwMatch"
+            className={`auth-field-note${confirm ? (confirm === password ? ' is-good' : ' is-bad') : ''}`}
+            aria-live="polite"
+          >
+            {!confirm ? 'Type it again to make sure.' : confirm === password ? 'Passwords match.' : "Passwords don't match yet."}
+          </p>
           {/* One box for both, because they are one decision: whether to
               open an account here on the stated terms. Two boxes to tick is
               two boxes to tick without reading.

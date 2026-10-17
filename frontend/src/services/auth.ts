@@ -143,6 +143,16 @@ export function signup(
   return post<SignupResult>('/api/auth/signup', { name, email, password });
 }
 
+/**
+ * Whether an address can still sign up: `valid` is false for something that
+ * isn't an address yet, `available` false when an account already has it (or
+ * another spelling of the same inbox). A POST so the address stays out of the
+ * URL. See `email_check` in backend/routes/auth.py.
+ */
+export function checkEmail(email: string): Promise<ApiResult<{ valid: boolean; available: boolean }>> {
+  return post<{ valid: boolean; available: boolean }>('/api/auth/email_check', { email });
+}
+
 export function resendVerification(
   email?: string,
 ): Promise<ApiResult<SignupResult & { already?: boolean }>> {

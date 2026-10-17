@@ -51,12 +51,14 @@ import urllib.parse
 import urllib.request
 from datetime import date, datetime
 from email.message import EmailMessage
+from html import escape
 
 # werkzeug only for its password hashing. Accounts already in the database hold
 # pbkdf2 hashes werkzeug wrote, so verifying them needs the same code — nothing
 # else here depends on it, and no web framework comes with it.
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from backend.config.shared import RULES
 from backend.database import connection as db
 from backend.tracking.avatar import avatar_for, avatar_path
 
@@ -71,14 +73,44 @@ USERNAME_RE = re.compile(r'^[A-Za-z0-9._-]{3,24}$')
 # --------------------------------------------------------------------------
 # Finding accounts
 # --------------------------------------------------------------------------
+#: Mail hosts that ignore dots in the name part: j.o.e@gmail.com is joe@gmail.com.
+DOTLESS_DOMAINS = {'gmail.com': 'gmail.com', 'googlemail.com': 'gmail.com'}
+
+
+def inbox_key(email):
+    """The inbox an address really reaches, for telling whether two addresses
+    are the same person's: lowercased, with any "+tag" dropped, and for Gmail
+    with the dots dropped too. "J.Overdam+summit@Gmail.com" and
+    "joverdam@gmail.com" are one inbox, so they can't be two accounts.
+
+    Only for comparing. The address is stored as it was typed.
+    """
+    text = str(email or '').strip().lower()
+    if '@' not in text:
+        return text
+    name, _, domain = text.rpartition('@')
+    name = name.split('+', 1)[0]
+    if domain in DOTLESS_DOMAINS:
+        name, domain = name.replace('.', ''), DOTLESS_DOMAINS[domain]
+    return '{}@{}'.format(name, domain)
+
+
 def find_user(users, username=None, email=None):
-    """The account matching a username or an e-mail (both case-insensitive)."""
+    """The account matching a username (case-insensitive) or an e-mail (by the
+    inbox it reaches, `inbox_key`)."""
+    wanted = inbox_key(email) if email else ''
     for u in users:
         if username and str(u.get('username', '')).lower() == str(username).lower():
             return u
-        if email and u.get('email') and str(u.get('email', '')).lower() == str(email).lower():
+        if wanted and u.get('email') and inbox_key(u.get('email')) == wanted:
             return u
     return None
+
+
+def email_in_use(email):
+    """Whether any account already has this address, or another spelling of
+    the same inbox."""
+    return bool(email) and find_user(db.users(), email=email) is not None
 
 
 def load_user(username):
@@ -159,13 +191,28 @@ def hash_password(password):
     return generate_password_hash(password, method=HASH_METHOD)
 
 
+#: What a new password needs — shared/rules.json `password`, which the sign-up
+#: form lists live from the same entries.
+PASSWORD = RULES['password']
+PASSWORD_RULES = [(rule['label'], re.compile(rule['pattern'])) for rule in PASSWORD['rules']]
+
+
+def password_missing(password):
+    """The labels of the rules a password doesn't meet yet, in order."""
+    text = str(password or '')
+    return [label for label, pattern in PASSWORD_RULES if not pattern.search(text)]
+
+
 def password_problem(password):
-    """None when the password is acceptable, else why it isn't."""
-    if not password or len(password) < 8:
-        return 'Password must be at least 8 characters.'
-    if password.isdigit() or password.isalpha():
-        return 'Mix letters with numbers or symbols.'
-    return None
+    """None when a new password is acceptable, else why it isn't."""
+    if len(str(password or '')) > PASSWORD['max_length']:
+        return 'Use {} characters or fewer.'.format(PASSWORD['max_length'])
+    missing = password_missing(password)
+    if not missing:
+        return None
+    words = [label[0].lower() + label[1:] for label in missing]
+    listed = words[0] if len(words) == 1 else '{} and {}'.format(', '.join(words[:-1]), words[-1])
+    return 'Your password still needs {}.'.format(listed)
 
 
 def is_verified(user):
@@ -279,8 +326,9 @@ def base_url(request=None):
     return 'http://127.0.0.1:5050'
 
 
-def _send_mail(to_address, subject, body):
-    """Send over SMTP. Returns True when it actually went out."""
+def _send_mail(to_address, subject, body, html=None):
+    """Send over SMTP, with an HTML version when given. Returns True when it
+    actually went out."""
     if not mail_configured():
         return False
     host = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
@@ -294,6 +342,8 @@ def _send_mail(to_address, subject, body):
     msg['From'] = sender
     msg['To'] = to_address
     msg.set_content(body)
+    if html:
+        msg.add_alternative(html, subtype='html')
 
     context = ssl.create_default_context()
     if port == 465:
@@ -315,20 +365,49 @@ def send_verification(user, request=None):
     back so the popup can show it — the flow stays walkable with no mail set up.
     """
     link = '{}/verify/{}'.format(base_url(request), user['verify_token'])
+    name = user.get('name') or user.get('username') or 'there'
     body = (
         "Hi {},\n\n"
-        "Confirm your e-mail to finish setting up your Summit account:\n\n"
+        "Thanks for signing up for Summit. Confirm your email to finish setting "
+        "up your account:\n\n"
         "{}\n\n"
-        "If you didn't create this account you can ignore this message.\n"
-    ).format(user.get('name') or user.get('username'), link)
+        "If you didn't make a Summit account, you can ignore this email. Nobody "
+        "can use the account until the address is confirmed.\n\n"
+        "Summit\n"
+    ).format(name, link)
     try:
-        sent = _send_mail(user['email'], 'Verify your Summit account', body)
+        sent = _send_mail(user['email'], 'Confirm your email for Summit', body,
+                          verification_html(name, link))
     except Exception as exc:                  # noqa: BLE001 - report, don't crash signup
         print('[auth] verification e-mail failed: {}'.format(exc))
         sent = False
     if not sent:
         print('[auth] DEV MODE - verification link for {}: {}'.format(user['email'], link))
     return sent, link
+
+
+def verification_html(name, link):
+    """The confirmation email's HTML half: one button, the link spelled out
+    under it for mail apps that drop buttons. Inline styles only, since most
+    mail apps strip <style>."""
+
+    name, link = escape(str(name)), escape(link, quote=True)
+    return (
+        '<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;'
+        'max-width:480px;margin:0 auto;padding:24px;color:#1f2933;line-height:1.5">'
+        '<h1 style="font-size:20px;margin:0 0 16px">Confirm your email</h1>'
+        '<p style="margin:0 0 16px">Hi {name}, thanks for signing up for Summit. '
+        'Tap the button to confirm this is your email and finish setting up.</p>'
+        '<p style="margin:0 0 24px"><a href="{link}" style="display:inline-block;'
+        'background:#2f6fde;color:#ffffff;text-decoration:none;font-weight:600;'
+        'padding:12px 20px;border-radius:8px">Confirm my email</a></p>'
+        '<p style="margin:0 0 8px;font-size:13px;color:#52606d">Button not working? '
+        'Paste this into your browser:</p>'
+        '<p style="margin:0 0 24px;font-size:13px;word-break:break-all">'
+        '<a href="{link}" style="color:#2f6fde">{link}</a></p>'
+        '<p style="margin:0;font-size:13px;color:#52606d">Didn\'t make a Summit '
+        'account? You can ignore this email.</p></div>'
+    ).format(name=name, link=link)
 
 
 def new_verify_token(user):

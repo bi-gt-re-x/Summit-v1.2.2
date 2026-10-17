@@ -47,6 +47,10 @@ class Resend(BaseModel):
     email: Optional[str] = None
 
 
+class EmailCheck(BaseModel):
+    email: Optional[str] = None
+
+
 class CompleteProfile(BaseModel):
     username: Optional[str] = None
     theme: Optional[str] = None
@@ -150,6 +154,9 @@ def legacy_signup(body: LegacySignup):
     """
     if not body.username or not body.password:
         return fail('Username and password are required.')
+    problem = auth.password_problem(body.password)
+    if problem:
+        return fail(problem)
 
     users = db.users()
     if auth.find_user(users, username=body.username):
@@ -178,6 +185,22 @@ def providers():
     return ok(google=auth.google_configured(), mail=auth.mail_configured())
 
 
+@router.post('/api/auth/email_check')
+def email_check(body: EmailCheck):
+    """Whether an address can still sign up, for the form to say so as soon
+    as the field is left rather than after the whole form is filled in.
+
+    A POST so the address stays out of URLs and server logs, and rate-limited
+    (backend/middleware/limit.py) so it can't be used to test a list of
+    addresses. Sign-up itself says the same thing, so this tells nobody
+    anything they couldn't already learn.
+    """
+    email = str(body.email or '').strip()
+    if not auth.EMAIL_RE.match(email):
+        return ok(valid=False, available=False)
+    return ok(valid=True, available=not auth.email_in_use(email))
+
+
 @router.post('/api/auth/signup')
 def signup(request: Request, body: Signup):
     name = str(body.name or '').strip()
@@ -187,14 +210,17 @@ def signup(request: Request, body: Signup):
     if not name:
         return fail('Enter your name.', field='name')
     if not auth.EMAIL_RE.match(email):
-        return fail('Enter a valid e-mail address.', field='email')
+        return fail('Enter a valid email address.', field='email')
+    # Before the password, so someone who already has an account is sent to
+    # log in rather than asked to fix a password they won't need.
+    # `email_in_use` matches the inbox, not the spelling: a "+tag" or Gmail's
+    # dots don't make a second account (auth.inbox_key).
+    if auth.email_in_use(email):
+        return fail('That email already has a Summit account. Log in instead.',
+                    field='email')
     problem = auth.password_problem(password)
     if problem:
         return fail(problem, field='password')
-
-    if auth.find_user(db.users(), email=email):
-        return fail('An account already uses that e-mail. Log in instead.',
-                    field='email')
 
     user = auth.create_account(name, email, password)
     # **Signed in here, before the address is confirmed.** The account used to
@@ -226,7 +252,7 @@ def signup(request: Request, body: Signup):
               message=(
         'Account created! Confirm {} when you get a sec.'.format(email)
         if reply['sent'] or reply['dev_link']
-        else "Your account is made, but the confirmation e-mail couldn't be "
+        else "Your account is made, but the confirmation email couldn't be "
              'sent. Try "Send it again" in a moment.'))
 
 
@@ -266,7 +292,7 @@ def resend(request: Request, body: Resend):
     if not user:
         return fail('Please start again. We lost track of that sign-up.')
     if auth.is_verified(user):
-        return ok(already=True, message='That e-mail is already confirmed.')
+        return ok(already=True, message='That email is already confirmed.')
 
     auth.new_verify_token(user)
     db.save_user(user)
@@ -276,7 +302,7 @@ def resend(request: Request, body: Resend):
     # so it says that rather than claiming a mail went out.
     return ok(**reply, message=(
         'Sent again to {}.'.format(user.get('email')) if reply['sent']
-        else "E-mail isn't set up on this server, so nothing was sent. Use the link below."
+        else "Email isn't set up on this server, so nothing was sent. Use the link below."
         if reply['dev_link']
         else "That still didn't send. Try again in a few minutes."))
 

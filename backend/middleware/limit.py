@@ -145,9 +145,15 @@ LIMITS = {
     '/api/signup': Policy(
         limit=5, seconds=3600,
         message='Too many accounts created from here. Try again later.'),
+    # Every call counts, found or not: it answers "is this address taken", so
+    # the cost is in asking, not in being wrong. Plenty for a person retyping
+    # an address; far too few to check a list.
+    '/api/auth/email_check': Policy(
+        limit=30, seconds=600, charge=CALLS,
+        message='Too many checks for now. Wait a few minutes and try again.'),
     '/api/auth/resend': Policy(
         limit=5, seconds=3600,
-        message='Too many e-mails requested. Check your inbox, then try again.',
+        message='Too many emails requested. Check your inbox, then try again.',
         by_identity='email'),
     # --- the three that spend money -------------------------------------
     #

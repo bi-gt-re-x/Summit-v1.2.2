@@ -26,6 +26,7 @@ PUBLIC = {
     '/api/logout',                   # must work from a dead session
     '/api/signup',                   # the older sign-up
     '/api/auth/signup',
+    '/api/auth/email_check',         # the sign-up form, before there's an account
     '/api/auth/resend',              # keyed on `pending_user` in the session
     '/api/auth/providers',           # whether the Google button can work
     '/api/auth/verify_status',       # answers "nobody" rather than refusing

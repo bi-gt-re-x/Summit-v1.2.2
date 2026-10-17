@@ -273,6 +273,69 @@ body:has(.auth-page) .app-main {
 .auth-strength-bar span.lvl-5 { background: #2e9e6b; }
 .auth-strength-label { margin-top: var(--space-1); font-size: var(--text-xs); color: var(--color-ink-muted); }
 
+/* The password label with its Show / Hide switch on the same line. */
+.auth-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.auth-reveal {
+    margin-top: var(--space-2);
+    padding: 2px var(--space-2);
+    background: none;
+    border: none;
+    border-radius: var(--radius-sm, 6px);
+    font-family: inherit;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-accent);
+    cursor: pointer;
+}
+.auth-reveal:hover { text-decoration: underline; }
+.auth-reveal:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* What a new password needs, ticked off as it's typed. */
+.auth-rules {
+    list-style: none;
+    margin: var(--space-1) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+    font-size: var(--text-sm);
+    color: var(--color-ink-muted);
+}
+.auth-rules li { display: flex; align-items: center; gap: var(--space-2); }
+.auth-rules li.is-met { color: var(--color-ink); }
+.auth-rule-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-line);
+    color: #fff;
+}
+.auth-rule-mark svg { width: 10px; height: 10px; }
+.auth-rules li.is-met .auth-rule-mark { background: #2e9e6b; border-color: #2e9e6b; }
+.auth-rules .sr-only {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* One line under a field: the match check, an email that's taken. */
+.auth-field-note { margin: 2px 0 0; font-size: var(--text-sm); color: var(--color-ink-muted); }
+.auth-field-note.is-good { color: #2e9e6b; }
+.auth-field-note.is-bad { color: #d94f4f; }
+.auth-inline-link {
+    padding: 0;
+    background: none;
+    border: none;
+    font: inherit;
+    font-weight: var(--weight-semibold);
+    color: var(--color-accent);
+    cursor: pointer;
+    text-decoration: underline;
+}
+.auth-input[aria-invalid="true"] { border-color: #d94f4f; }
+
 /* Age and terms, ticked before an account can be made.
    Laid out as a row so the box sits beside the sentence rather than above it,
    and `align-items: flex-start` so a wrapped sentence keeps the box on its
