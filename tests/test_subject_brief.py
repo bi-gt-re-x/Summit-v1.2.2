@@ -245,3 +245,17 @@ def test_the_endpoint_needs_a_subject_to_write_about(client):
     response = client.post('/api/subject_brief', json={'subject': '   '})
     assert response.status_code == 200
     assert response.json()['success'] is False
+
+
+def test_what_the_log_taught_goes_into_the_write_up_brief():
+    brief = subject_brief.brief_from({'subject': 'Mathematics',
+                                      'about': ['Preference: Writes proofs by hand']})
+    assert 'Preference: Writes proofs by hand' in brief
+    assert subject_brief.planner.ABOUT_HEADING in brief
+
+
+def test_and_into_a_subject_goal_draft():
+    from backend.tracking import subject_goal
+    brief = subject_goal.brief_from({'subject': 'Mathematics', 'milestones': [],
+                                     'about': ['Long-term goal: Putnam top 500']})
+    assert 'Long-term goal: Putnam top 500' in brief

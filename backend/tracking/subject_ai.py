@@ -1462,7 +1462,7 @@ STEPS_RECENT = 15
 
 #: Room for the reasoning and three steps, and under Groq's ceiling with the
 #: prompt included. Three steps with timed plans come to about 1,200.
-STEPS_MAX_TOKENS = 3000
+STEPS_MAX_TOKENS = 2800
 
 STEPS_SYSTEM = """\
 You plan the next three study sessions for one subject, for a study-tracking \
@@ -1500,6 +1500,12 @@ itself — fewer problems, more time each, then the pace again;
   - the slowest groups say where time goes;
   - the examples say which ranges and papers are done, so name the NEXT \
 range rather than one they have finished.
+<about_the_reader> is what they told Summit at sign-up and in their Log. \
+Use it on every pick: favor work toward the goals they named, fit what they \
+said works for them (time of day, length, method) and plan around the \
+patterns they described. When it's why you chose a session, the reason can \
+say so: "You said you want AIME 10+ next year." A line marked passing is \
+how they felt then, not a fact.
 <difficulty_analysis> says where execution falls off; the level to work is \
 normally at or just below that point.
 

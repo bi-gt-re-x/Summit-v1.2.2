@@ -631,6 +631,8 @@ def write_subject_brief(body: SubjectBrief, username: str = Depends(current_user
         'bands': _rows(body.bands, BRIEF_BANDS),
         'struggles': _rows(body.struggles, BRIEF_REASONS),
         'goals': _rows(body.goals, BRIEF_GOALS),
+        # From the Log page, on the server: never sent by the client.
+        'about': journal.brief_lines(username),
     }
 
     try:
@@ -798,6 +800,8 @@ def suggest_subject_goal(body: SubjectGoalDraft, username: str = Depends(current
                            for entry in (body.milestones or [])[:12] if str(entry).strip()],
             'aim': (body.aim or '').strip()[:BRIEF_TEXT],
             'level': (body.level or '').strip()[:BRIEF_TEXT],
+            # From the Log page, on the server: never sent by the client.
+            'about': journal.brief_lines(username),
             # Same bound and same reason as the checkpoints above. Five rates,
             # five difficulty bands and twelve reasons are the whole of what
             # the page can hold, so anything past that is a client saying

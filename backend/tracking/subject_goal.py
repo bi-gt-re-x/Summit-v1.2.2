@@ -221,6 +221,14 @@ def brief_from(findings: Dict[str, Any]) -> str:
     else:
         lines.append("The reader hasn't written any checkpoints for this subject yet.")
 
+    # What they've told Summit in the Log page (backend/tracking/journal.py
+    # `brief_lines`), so the write-up fits the person as well as the figures.
+    about = [str(line) for line in (findings.get('about') or []) if str(line).strip()]
+    if about:
+        lines.append('')
+        lines.append(planner.ABOUT_HEADING)
+        lines.extend('- {}'.format(line) for line in about)
+
     return '\n'.join(lines)
 
 

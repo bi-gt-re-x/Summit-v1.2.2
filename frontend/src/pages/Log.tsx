@@ -421,9 +421,6 @@ export default function Log() {
               see it. Summit reads it to make your plans and suggestions fit you better.
             </p>
           </div>
-          <button type="button" className="lg-btn" onClick={newEntry}>
-            <Plus aria-hidden="true" /> New entry
-          </button>
         </header>
 
         <section className="lg-editor" aria-label="Entry">
@@ -535,6 +532,15 @@ export default function Log() {
       </div>
 
       <div className="lg-side">
+        <div className="lg-side-head">
+          <h2>
+            Your entries
+            {entries.length > 0 && <span className="lg-count">{entries.length}</span>}
+          </h2>
+          <button type="button" className="lg-btn" onClick={newEntry}>
+            <Plus aria-hidden="true" /> New entry
+          </button>
+        </div>
         <div className="lg-find">
           <label className="lg-search">
             <Search aria-hidden="true" />

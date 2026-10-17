@@ -67,8 +67,10 @@ READ_CHARS = 6000
 #: New insights one entry may add.
 ADDS_MAX = 6
 
-#: Lines handed to other prompts. Goals and patterns first.
-BRIEF_MAX = 12
+#: Lines handed to other prompts, and how many of them each kind gets before
+#: the rest share what's left. Goals and patterns first.
+BRIEF_MAX = 24
+BRIEF_SHARE = {'goal': 8, 'pattern': 7, 'preference': 7, 'feeling': 2}
 
 
 # ---------------------------------------------------------------------------
@@ -171,8 +173,19 @@ def lines_from(rows: Iterable[dict], today: Optional[str] = None,
     using = [row for row in rows if live(row, today) and row.get('text')]
     using.sort(key=lambda row: (ORDER.get(row.get('kind'), 9),
                                 [-ord(c) for c in (row.get('updated_at') or '')]))
+    # Every kind gets room, newest first within each, so a long list of goals
+    # can't push out how they like to work. What a kind leaves unused goes to
+    # the rest in order.
+    picked, spare = [], []
+    for kind in ORDER:
+        rows_of = [row for row in using if row.get('kind') == kind]
+        share = BRIEF_SHARE.get(kind, 0) * limit // BRIEF_MAX
+        picked += rows_of[:share]
+        spare += rows_of[share:]
+    picked += spare[:max(0, limit - len(picked))]
+    picked.sort(key=lambda row: ORDER.get(row.get('kind'), 9))
     out = []
-    for row in using[:limit]:
+    for row in picked[:limit]:
         if row.get('kind') == 'feeling':
             out.append('Felt lately (passing, may have changed): {}'.format(row['text']))
         else:

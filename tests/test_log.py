@@ -318,3 +318,19 @@ def test_insights_reach_the_next_session_brief(client):
 def test_insights_reach_the_goal_route_brief():
     text = goal_plan.brief_from({'goal': 'AIME 4', 'about': ['Long-term goal: Wants AIME 4']})
     assert 'Long-term goal: Wants AIME 4' in text
+
+
+def test_every_kind_gets_room_in_the_prompt_lines():
+    # Thirty goals mustn't push out how the person likes to work.
+    rows = [{'kind': 'goal', 'text': 'Goal {}'.format(n), 'status': 'active',
+             'updated_at': '2026-10-{:02d}'.format(n % 28 + 1)} for n in range(30)]
+    rows += [{'kind': 'preference', 'text': 'Mornings work best', 'status': 'active',
+              'updated_at': '2026-10-01'}]
+    lines = journal.lines_from(rows, today='2026-10-16')
+    assert len(lines) == journal.BRIEF_MAX
+    assert 'Preference: Mornings work best' in lines
+
+
+def test_the_heading_tells_a_model_to_lean_on_the_log():
+    from backend.tracking import planner
+    assert 'Use it a lot' in planner.ABOUT_HEADING

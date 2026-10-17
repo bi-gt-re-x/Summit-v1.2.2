@@ -473,8 +473,11 @@ def _ask(goal: str, instruction: str = '') -> str:
 
 #: Over the Log lines (backend/tracking/journal.py) in any brief. Here rather
 #: than there because that module calls this one.
-ABOUT_HEADING = ("From their private log (use it to pitch the advice; don't quote it "
-                 "back or mention the log):")
+ABOUT_HEADING = ("What they told Summit in their Log, in their own words. Use it a lot: "
+                 "let it decide what you suggest, how big and when, and fit their goals, "
+                 "habits and preferences. When a line is the reason for a suggestion, you "
+                 "can say so plainly (\"you said mornings work best\"). A line marked "
+                 "passing is how they felt then, not a fact:")
 
 
 def _brief(title: str, why: str = '', description: str = '',
