@@ -8,7 +8,7 @@
 import { DeleteConfirm } from './Prompts';
 import { EventModal } from './EventModal';
 import { TaskModal } from './TaskModal';
-import type { UseBlockActions } from '@/hooks/useBlockActions';
+import { patternOf, type UseBlockActions } from '@/hooks/useBlockActions';
 
 export interface BlockDialogsProps {
   actions: UseBlockActions;
@@ -87,6 +87,9 @@ export function BlockDialogs({
             subject: dialog.task.subject ?? null,
           }}
           recurring={allowTaskRecurrence && actions.taskOccurrences(dialog.task).length > 1}
+          pattern={patternOf(
+            actions.taskOccurrences(dialog.task).map((task) => String(task.created_at || '').slice(0, 10)),
+          )}
           allowRecurrence={allowTaskRecurrence}
           onSave={saveTask}
           onClose={close}

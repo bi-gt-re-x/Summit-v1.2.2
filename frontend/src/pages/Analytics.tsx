@@ -104,7 +104,7 @@
  * for and when it opens — see `Building` — and a new account is offered the one
  * thing it can actually do here, which is answer the questions above.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { STAGES, type Stage } from '@/utils/dataMaturity';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ErrorState, Loading, PageHero } from '@/components';
@@ -256,6 +256,18 @@ export default function Analytics() {
     habits, summary, maturity, streak, analytical, hasReportCard, figures, insights, breakdown, banked, recentSubjects,
     discovered, diagnoses, advice, plan, recorded, goalSet,
   } = model;
+
+  /* Every subject in the catalog, for the pickers that should reach any of
+     them: the subject filter lists the ones with work first and these under
+     them, and setup offers all of them with a search. */
+  const allSubjects = useMemo(
+    () =>
+      [...subjects.values()].map((entry) => ({
+        id: entry.id, label: entry.name, custom: entry.custom, used: entry.used,
+      })),
+    [subjects],
+  );
+  const otherSubjects = useMemo(() => allSubjects.filter((entry) => !(entry.used > 0)), [allSubjects]);
   // ---- The shell ----------------------------------------------------------
 
   /**
@@ -660,6 +672,7 @@ export default function Analytics() {
               subject={subject}
               onSubject={setSubject}
               subjects={subjectOptions}
+              others={otherSubjects}
               compareLabel={option.compare}
             />
           )}
@@ -670,7 +683,7 @@ export default function Analytics() {
             in the hero now and hidden from there. */}
         {showSetup ? (
           <AnalyticsSetup
-            subjects={subjectOptions}
+            subjects={allSubjects}
             current={aim}
             setOn={aim?.set_on ?? ''}
             prefs={prefs}

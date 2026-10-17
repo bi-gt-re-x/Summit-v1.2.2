@@ -109,9 +109,9 @@ def _seed(username='tester'):
 
 
 def _stub(monkeypatch, record=None):
-    def plan(state, model_id='', overall=False):
+    def plan(state, model_id='', overall=False, starter=False):
         if record is not None:
-            record.update(state=state, overall=overall)
+            record.update(state=state, overall=overall, starter=starter)
         return [dict(step) for step in STEPS]
 
     monkeypatch.setattr(subject_ai, 'configured', lambda: True)
@@ -204,6 +204,15 @@ def test_nothing_to_plan_from_says_so(client, monkeypatch):
     _stub(monkeypatch)
     body = client.post('/api/next_sessions', json={}).json()
     assert body['success'] is False and 'no finished work' in body['message']
+
+
+def test_a_subject_with_no_work_yet_gets_first_sessions(client, monkeypatch):
+    _seed()
+    seen = {}
+    _stub(monkeypatch, seen)
+    body = client.post('/api/next_sessions', json={'subject_id': 'chemistry'}).json()
+    assert body['success'] is True, body
+    assert seen['starter'] is True and seen['state']['finished'] == 0
 
 
 def test_a_subject_that_is_not_yours_is_refused(client):

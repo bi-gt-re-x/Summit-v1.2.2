@@ -64,6 +64,35 @@ export const CATEGORIES: Array<{
   { id: 'other', label: 'Other', tone: 'grey', path: 'M12 3l2.6 5.6 6.4.8-4.7 4.3 1.3 6.3L12 17l-5.6 3 1.3-6.3L3 9.4l6.4-.8L12 3z' },
 ];
 
+const MATH_WORDS = /math|algebra|geometry|trig|calculus|statistic|equation|arithmetic|number theory/i;
+const MUSIC_WORDS = /music|piano|guitar|violin|cello|drum|band|choir|sing|orchestra|instrument/i;
+const AI_IDS = new Set(['machine_learning', 'data_science', 'artificial_intelligence', 'ai']);
+
+/**
+ * The tile a goal wears, from the subject it's for.
+ *
+ * The wizard used to ask for this as a row of nine fixed chips (Math, Coding,
+ * AI / ML, Fitness…) next to the subject picker, which offers every subject
+ * in the catalog. The subject is the real answer, so the color and the icon
+ * now follow from it: its group, and a few names that have a tile of their
+ * own. A custom subject, or one this can't place, is `other`.
+ */
+export function categoryForSubject(
+  subject: { id: string; name: string; group?: string; custom?: boolean } | null | undefined,
+): GoalCategory {
+  if (!subject || subject.custom) return 'other';
+  const { id, name, group = '' } = subject;
+  if (AI_IDS.has(id)) return 'ai';
+  if (group === 'Computing') return 'coding';
+  if (group === 'Math and science') return MATH_WORDS.test(name) ? 'math' : 'school';
+  if (group === 'Creative') return MUSIC_WORDS.test(name) ? 'music' : 'projects';
+  if (group === 'Health and fitness') return 'fitness';
+  if (group === 'Language and humanities' || group === 'Studying') return 'school';
+  if (group === 'Business and money' || group === 'Work') return 'projects';
+  if (group === 'Life and home') return 'personal';
+  return 'other';
+}
+
 export function categoryOf(goal: Goal) {
   return CATEGORIES.find((entry) => entry.id === goal.category) ?? CATEGORIES[CATEGORIES.length - 1]!;
 }

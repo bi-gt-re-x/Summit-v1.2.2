@@ -129,7 +129,8 @@ export interface AnalyticsSetupProps {
    * it is; the filtering is this screen's job because this screen is the only
    * one whose answers need a subject to have a lattice behind it.
    */
-  subjects: Array<{ id: string; label: string; custom?: boolean }>;
+  /** The whole catalog. Those with work (`used`) show first; search finds the rest. */
+  subjects: Array<{ id: string; label: string; custom?: boolean; used?: number }>;
   /** What the account already said, when this is an edit rather than a first run. */
   current?: BaselineValues | null;
   /** The day the current baseline was set, ISO. Empty on a first run. */
@@ -277,6 +278,16 @@ export function AnalyticsSetup({
     () => latticeSubjects(subjects.map((s) => ({ ...s, custom: Boolean(s.custom) }))),
     [subjects],
   );
+
+  /* What the follow list is narrowed to. Empty shows the subjects with work
+     and the ones picked; typing searches every subject. */
+  const [find, setFind] = useState('');
+  const shownPicks = useMemo(() => {
+    const wanted = find.trim().toLowerCase();
+    if (wanted) return pickable.filter((subject) => subject.label.toLowerCase().includes(wanted));
+    const worked = pickable.filter((subject) => subject.used);
+    return worked.length ? worked : pickable.slice(0, 16);
+  }, [find, pickable]);
 
   const [followed, setFollowed] = useState<string[]>(() => {
     const known = new Set(pickable.map((subject) => subject.id));
@@ -497,8 +508,22 @@ export function AnalyticsSetup({
           `Pick up to ${SUBJECTS_MAX}. Each one gets its own page under Analytics. Pick none and Analytics stays one page.`,
         body: (
           <>
+            <input
+              type="search"
+              className="ax-setup-find"
+              placeholder={`Search all ${pickable.length} subjects`}
+              aria-label="Search subjects"
+              value={find}
+              onChange={(event) => setFind(event.target.value)}
+            />
             <div className="ax-setup-picks" role="group" aria-label="Subjects to follow">
-              {pickable.map((subject) => {
+              {[
+                ...followed
+                  .map((id) => pickable.find((subject) => subject.id === id))
+                  .filter((subject): subject is (typeof pickable)[number] => Boolean(subject))
+                  .filter((subject) => !shownPicks.includes(subject)),
+                ...shownPicks,
+              ].map((subject) => {
                 const on = followed.includes(subject.id);
                 /* Disabled rather than hidden at the cap, and only the ones
                    that are off. A row that vanishes when a fourth is picked

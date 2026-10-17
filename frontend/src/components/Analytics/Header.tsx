@@ -390,6 +390,9 @@ export interface ControlsProps {
   subject: string;
   onSubject: (id: string) => void;
   subjects: Array<{ id: string; label: string }>;
+  /** Every other subject in the catalog, under the ones with work, so the
+   *  filter can reach any subject rather than only the ones already used. */
+  others?: Array<{ id: string; label: string }>;
   compareLabel: string;
 }
 
@@ -399,6 +402,7 @@ export function Controls({
   subject,
   onSubject,
   subjects,
+  others = [],
   compareLabel,
 }: ControlsProps) {
   return (
@@ -421,11 +425,30 @@ export function Controls({
         <span className="ax-sr">Subject</span>
         <select className="ax-select" value={subject} onChange={(event) => onSubject(event.target.value)}>
           <option value="">All subjects</option>
-          {subjects.map((entry) => (
-            <option key={entry.id} value={entry.id}>
-              {entry.label}
-            </option>
-          ))}
+          {others.length > 0 && subjects.length > 0 ? (
+            <optgroup label="Your subjects">
+              {subjects.map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.label}
+                </option>
+              ))}
+            </optgroup>
+          ) : (
+            subjects.map((entry) => (
+              <option key={entry.id} value={entry.id}>
+                {entry.label}
+              </option>
+            ))
+          )}
+          {others.length > 0 && (
+            <optgroup label="Every other subject">
+              {others.map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.label}
+                </option>
+              ))}
+            </optgroup>
+          )}
         </select>
       </label>
 

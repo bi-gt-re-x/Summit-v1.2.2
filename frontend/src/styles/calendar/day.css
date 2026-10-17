@@ -39,8 +39,8 @@
     display: grid;
     grid-template-columns: var(--wk-gutter) minmax(0, 1fr);
     align-items: center;
-    border-top: 1px solid #eef0f2;
-    border-bottom: 1px solid #eef0f2;
+    border-top: 1px solid var(--cal-grid-day);
+    border-bottom: 1px solid var(--cal-grid-day);
     padding: var(--space-2) 0;
     flex: none;   /* stays put while the grid below scrolls */
 }

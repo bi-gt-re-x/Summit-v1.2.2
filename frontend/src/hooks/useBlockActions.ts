@@ -30,7 +30,7 @@ import { tasks as taskService } from '@/services';
 import { xpToPriority, type TaskDraft } from '@/components/Calendar/TaskModal';
 import type { EventDraft, Scope, UseCalendarStore } from './useCalendarStore';
 import type { TaskPatch } from './useCalendarTasks';
-import { monthKey, type CalendarSection } from '@/utils/calendarStore';
+import { monthKey, type CalendarSection, type RecurrenceType } from '@/utils/calendarStore';
 import { columnStamp, isoStamp } from '@/utils/calendarGrid';
 import { dates } from '@/utils';
 import type { ApiResult, Task } from '@/types';
@@ -147,6 +147,26 @@ function taskDates(baseIso: string, draft: TaskDraft): string[] {
 }
 
 /**
+ * The repeat a set of occurrences follows, read back off their dates, so the
+ * edit dialog opens on the pattern the series already has.
+ *
+ * Nothing stores the pattern itself: a repeat is written as its copies. So it
+ * is read from where they land. A weekly repeat hits a few weekdays on every
+ * date of the month; a monthly one hits a few dates on every weekday. Whichever
+ * set is smaller is the pattern. One date, or none, is no repeat.
+ */
+export function patternOf(isos: string[]): { type: RecurrenceType; days: number[] } {
+  const unique = [...new Set(isos)];
+  if (unique.length < 2) return { type: 'none', days: [] };
+  const all = unique.map((iso) => dates.fromIsoDate(iso));
+  const weekdays = [...new Set(all.map((day) => day.getDay()))].sort((a, b) => a - b);
+  const monthDays = [...new Set(all.map((day) => day.getDate()))].sort((a, b) => a - b);
+  return monthDays.length < weekdays.length
+    ? { type: 'monthly', days: monthDays }
+    : { type: 'weekly', days: weekdays };
+}
+
+/**
  * Run promise-returning steps one after another, stopping at the first that
  * comes back a failure.
  *
@@ -243,11 +263,18 @@ export function useBlockActions(
       const steps: Array<() => Promise<ApiResult<unknown>>> = [];
 
       // An edit replaces: the old rows go, and the new ones are written from
-      // the pattern — which is what lets a weekly repeat become a monthly one.
+      // the pattern — which is what lets a weekly repeat become a monthly one,
+      // and a task that didn't repeat start to. Only this day's and later
+      // ones: the new set is written from this day on, so an earlier copy
+      // deleted here would never come back (and may be one already done).
       const replacing =
         dialog.type === 'edit-task'
           ? scope === 'all'
-            ? taskOccurrences(dialog.task)
+            ? taskOccurrences(dialog.task).filter(
+                (task) =>
+                  String(task.id) === String(dialog.task.id)
+                  || String(task.created_at || '').slice(0, 10) >= dialog.iso,
+              )
             : [dialog.task]
           : [];
       const dropped = new Set(replacing.map((task) => String(task.id)));

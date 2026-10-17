@@ -500,9 +500,11 @@ body:has(.calendar-container) *::-webkit-scrollbar {
    light, dark and all four skins alike. Hardcoded greys were three shades off
    white (and three off near-black in dark), which is why the grid read as
    empty space. Days are the structure and the strongest; hours are a ruler
-   behind them; the bottom edge closes the day. */
+   behind them; the bottom edge closes the day. Raised on 2026-10-17 (from
+   17 / 12 / 28) because the grid still read as faint, and the hour rules went
+   solid: a dashed 1px line is half ink, which is why it nearly vanished. */
 :root {
-    --cal-grid-day: color-mix(in srgb, var(--color-ink) 17%, transparent);
-    --cal-grid-hour: color-mix(in srgb, var(--color-ink) 12%, transparent);
-    --cal-grid-edge: color-mix(in srgb, var(--color-ink) 28%, transparent);
+    --cal-grid-day: color-mix(in srgb, var(--color-ink) 28%, transparent);
+    --cal-grid-hour: color-mix(in srgb, var(--color-ink) 22%, transparent);
+    --cal-grid-edge: color-mix(in srgb, var(--color-ink) 42%, transparent);
 }

@@ -1092,7 +1092,10 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
     if chosen:
         tasks = [task for task in tasks if task.get('subject') in chosen]
     state = next_sessions.state_for(tasks, subject_id or None, subject, names)
-    if not state['finished']:
+    # A subject with no work yet gets first sessions (subject_ai.STARTER_NOTE):
+    # the picker offers every subject, not only ones with a record.
+    starter = bool(subject_id) and not state['finished']
+    if not state['finished'] and not starter:
         return fail("There's no finished work {} in the last {} days to plan from yet.".format(
             'in ' + subject if subject_id else
             'in the subjects chosen' if chosen else 'anywhere', next_sessions.WINDOW_DAYS))
@@ -1123,7 +1126,7 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
                                               free_resources.BRIEF_COUNT_OVERALL, names)
 
     try:
-        steps = subject_ai.plan(state, overall=not subject_id)
+        steps = subject_ai.plan(state, overall=not subject_id, starter=starter)
     except subject_ai.BriefUnavailable as exc:
         return fail(str(exc))
     if not subject_id:

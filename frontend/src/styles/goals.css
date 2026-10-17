@@ -1907,8 +1907,18 @@ button.gx-state-attn.is-on {
     background: color-mix(in srgb, var(--gx-violet) var(--gx-wash-soft), transparent);
 }
 .gx-idea > label { margin-top: 0; }
+.gx-idea-head {
+    margin: 0 0 var(--space-2);
+    font-weight: var(--weight-semibold);
+    color: var(--gx-violet);
+}
+.gx-idea > label + textarea { margin-bottom: var(--space-2); }
+.gx-idea .gx-idea-head + label { margin-top: 0; }
+/* The starting-point box on the checkpoints step, under that step's heading. */
+.gx-sub-label { font-weight: 500; }
 .gx-idea-row {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: var(--space-2);
     flex-wrap: wrap;

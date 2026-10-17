@@ -198,6 +198,8 @@ export function suggestMilestones(
     category?: string;
     /** For a goal not yet written; an existing one's is read from its row. */
     deadline?: string;
+    /** Where the reader says they're starting from. Never saved. */
+    starting?: string;
   },
 ): Promise<ApiResult<{ milestones: string[] }>> {
   return post<{ milestones: string[] }>('/api/suggest_milestones', {
@@ -207,6 +209,7 @@ export function suggestMilestones(
     description: goal.description,
     category: goal.category,
     deadline: goal.deadline,
+    starting: goal.starting,
   });
 }
 
@@ -232,8 +235,8 @@ export interface DraftedGoal {
  * Needs a provider that will hold a fixed shape, which is not all of them —
  * the failure message says so and names the ones that do.
  */
-export function draftGoal(idea: string): Promise<ApiResult<DraftedGoal>> {
-  return post<DraftedGoal>('/api/draft_goal', { idea });
+export function draftGoal(idea: string, starting = ''): Promise<ApiResult<DraftedGoal>> {
+  return post<DraftedGoal>('/api/draft_goal', { idea, starting });
 }
 
 /**

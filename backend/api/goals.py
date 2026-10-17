@@ -208,6 +208,8 @@ class SuggestMilestones(BaseModel):
     category: str = ''
     # For a goal not yet written. An existing goal's is read from its row.
     deadline: str = ''
+    #: Where the reader says they are now, in their own words. Never saved.
+    starting: str = ''
 
 
 class DraftGoal(BaseModel):
@@ -219,6 +221,8 @@ class DraftGoal(BaseModel):
     for them to edit.
     """
     idea: str = ''
+    #: Where they're starting from, in their own words. Never saved.
+    starting: str = ''
 
 
 class SuggestSteps(BaseModel):
@@ -1353,7 +1357,7 @@ def suggest_milestones(body: SuggestMilestones, username: str = Depends(current_
         titles = planner.suggest_milestones(
             title, why=why, description=description, category=category,
             unit=unit, target=target, deadline=deadline, record=lines,
-            about=journal.brief_lines(username))
+            about=journal.brief_lines(username), starting=(body.starting or '').strip()[:1000])
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
     return ok(milestones=titles)
@@ -1378,11 +1382,13 @@ def draft_goal(body: DraftGoal, username: str = Depends(current_username)):
     idea = (body.idea or '').strip()
     if not idea:
         return fail("Say what you're trying to do and this will draft the rest.")
-    if len(idea) > 500:
-        return fail("That's too long. One sentence is plenty.")
+    starting = (body.starting or '').strip()
+    if len(idea) > 1000 or len(starting) > 1000:
+        return fail("That's too long. A few sentences in each box is plenty.")
 
     try:
-        drafted = planner.draft_goal(idea, about=journal.brief_lines(username))
+        drafted = planner.draft_goal(idea, about=journal.brief_lines(username),
+                                     starting=starting)
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
 

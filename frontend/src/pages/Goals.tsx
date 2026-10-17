@@ -429,8 +429,8 @@ export default function Goals() {
    * The wizard's "Draft it all", from one sentence and before any field is
    * filled. Creates nothing — the answer lands in the wizard's own boxes.
    */
-  const draftWholeGoal = useCallback(async (idea: string) => {
-    const result = await goalService.draftGoal(idea);
+  const draftWholeGoal = useCallback(async (idea: string, starting: string) => {
+    const result = await goalService.draftGoal(idea, starting);
     return result.success
       ? { goal: { title: result.title, why: result.why, category: result.category,
                   deadline: result.deadline, milestones: result.milestones ?? [] } }

@@ -155,7 +155,7 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
 .wk-allday-row {
     display: grid; grid-template-columns: var(--wk-gutter) minmax(0, 1fr);
     align-items: center;
-    border-top: 1px solid #eef0f2; border-bottom: 1px solid #eef0f2;
+    border-top: 1px solid var(--cal-grid-day); border-bottom: 1px solid var(--cal-grid-day);
 }
 .wk-allday-label { font-size: var(--text-sm); color: #9ca3af; padding: var(--space-2) 0; }
 .wk-allday-cells { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-2); padding: var(--space-2) 0; }
@@ -242,7 +242,7 @@ html[data-theme="dark"] body:has(.calendar-container) .wk-sidebar::-webkit-scrol
 .wk-daycol.today { background: rgba(59, 130, 246, .045); }
 html[data-theme="dark"] .wk-daycol.today { background: rgba(127, 156, 255, .06); }
 
-.wk-hourline { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--cal-grid-hour); }
+.wk-hourline { position: absolute; left: 0; right: 0; border-top: 1px solid var(--cal-grid-hour); }
 /* The floor of the window, under the last hour.
  *
  * The grid used to simply stop: the 5 AM row had a line above it and nothing

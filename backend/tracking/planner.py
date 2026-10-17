@@ -286,6 +286,8 @@ a term.
 - If you are told what they have already done, start from there. Do not \
 return a checkpoint their record shows they have passed, and aim the first \
 one at where their misses are.
+- If you are given their starting point, the first checkpoint is the next \
+real step above it, never something it says they can already do.
 """
 SYSTEM += STYLE
 
@@ -483,7 +485,7 @@ ABOUT_HEADING = ("What they told Summit in their Log, in their own words. Use it
 def _brief(title: str, why: str = '', description: str = '',
            category: str = '', unit: str = '', target: str = '',
            deadline: str = '', record: Sequence[str] = (),
-           about: Sequence[str] = ()) -> str:
+           about: Sequence[str] = (), starting: str = '') -> str:
     """What the account has told us about the goal, as lines the model reads.
 
     Only the fields that were filled in. An empty "Why: " line is a line the
@@ -506,6 +508,10 @@ def _brief(title: str, why: str = '', description: str = '',
         lines.append('Target: {}{}'.format(target, ' {}'.format(unit) if unit else ''))
     if str(deadline or '').strip():
         lines.append('Deadline: {}'.format(str(deadline).strip()[:10]))
+    # Where they say they are now, in their own words, from the wizard. The
+    # record below is what Summit counted; this is what it can't count yet.
+    if str(starting or '').strip():
+        lines.append('Starting point: {}'.format(str(starting).strip()))
     # What they have actually done, from backend/tracking/record.py
     # `brief_lines`. Without it the brief was the goal's own words and nothing
     # else, so a student at 442 and one at 1,900 were sent the same plan.
@@ -1006,7 +1012,7 @@ def from_provider(brief: str, system: str = None, schema: dict = None,
 # ---------------------------------------------------------------------------
 def suggest_milestones(title, why='', description='', category='',
                        unit='', target='', deadline='', record=(),
-                       about=()) -> List[str]:
+                       about=(), starting='') -> List[str]:
     """Five checkpoint titles for this goal, in order.
 
     Raises `PlannerUnavailable` for anything the page should say out loud: no
@@ -1021,7 +1027,8 @@ def suggest_milestones(title, why='', description='', category='',
     if not using:
         raise PlannerUnavailable(NO_KEY)
 
-    brief = _brief(title, why, description, category, unit, target, deadline, record, about)
+    brief = _brief(title, why, description, category, unit, target, deadline, record, about,
+                   starting)
     if using == 'groq':
         text = _from_groq(brief, schema=SCHEMA)
     elif using == 'grok':
@@ -1200,6 +1207,11 @@ Be honest rather than encouraging; the checkpoints are spread across it.
 projects, personal, other.
 - If the sentence is vague, commit to the most common concrete reading of it \
 rather than returning something equally vague.
+- They may say how they want it drafted (the pace, how ambitious, what to \
+focus on or leave out). Follow it.
+- If they say where they're starting from, the first checkpoint is the next \
+real step above that point, never something they can already do, and \
+"months" covers the distance from there, not from zero.
 """
 SYSTEM_GOAL += STYLE
 
@@ -1219,7 +1231,7 @@ def _months(value) -> int:
     return max(MONTHS_MIN, min(MONTHS_MAX, months))
 
 
-def draft_goal(idea: str, about: Sequence[str] = ()) -> dict:
+def draft_goal(idea: str, about: Sequence[str] = (), starting: str = '') -> dict:
     """A whole goal from one sentence: title, why, category, months, five.
 
     Raises `PlannerUnavailable` for everything the wizard should say out loud,
@@ -1246,7 +1258,10 @@ def draft_goal(idea: str, about: Sequence[str] = ()) -> dict:
             'with what is set.')
 
     text = from_provider(
-        'What they said: {}'.format(idea) + (
+        'What they said: {}'.format(idea)
+        + ('\nWhere they are starting from: {}'.format(starting.strip())
+           if str(starting or '').strip() else '')
+        + (
             '\n\n{}\n{}'.format(ABOUT_HEADING, '\n'.join('- {}'.format(line) for line in about))
             if about else ''),
         system=SYSTEM_GOAL,

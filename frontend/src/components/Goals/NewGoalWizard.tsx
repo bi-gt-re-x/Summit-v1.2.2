@@ -49,7 +49,7 @@
  * outcome, no subject and no checkpoints; see SystemGoalWizard.
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { CATEGORIES } from './Outcome';
+import { categoryForSubject } from './Outcome';
 import { AskModel } from './AskModel';
 import { SubjectPicker } from '@/components/SubjectPicker';
 import type { Subject } from '@/services/subjects';
@@ -173,6 +173,8 @@ export interface MilestoneDraftRequest {
   description: string;
   category: GoalCategory;
   deadline: string;
+  /** Where the reader says they're starting from, in their own words. */
+  starting: string;
 }
 
 /** The model's checkpoints, or the reason there are none — worded to show. */
@@ -200,7 +202,7 @@ export interface NewGoalWizardProps {
    * Draft the whole goal from one sentence. Absent, and the first step offers
    * no box — the wizard is then exactly the form it has always been.
    */
-  onDraft?: (idea: string) => Promise<WholeGoalDraft>;
+  onDraft?: (idea: string, starting: string) => Promise<WholeGoalDraft>;
   /**
    * Opened from "Draft a goal" rather than from "+ New Goal", so the cursor
    * starts in the sentence box instead of in the title field.
@@ -232,7 +234,9 @@ export function NewGoalWizard({
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<GoalCategory>('other');
+  /* What the model guessed the goal is about, used only until a subject is
+     picked. After that the subject decides (`categoryForSubject`). */
+  const [draftedCategory, setDraftedCategory] = useState<GoalCategory>('other');
   const [subjectId, setSubjectId] = useState<string | null>(startSubject ?? null);
   const [why, setWhy] = useState('');
   const [deadline, setDeadline] = useState(defaultDeadline);
@@ -247,8 +251,10 @@ export function NewGoalWizard({
   const [draft, setDraft] = useState('');
   const [suggesting, setSuggesting] = useState(false);
   const [suggestProblem, setSuggestProblem] = useState<string | null>(null);
-  /** The sentence the whole-goal draft is written from. Never saved. */
+  /** How the reader wants the goal drafted. Never saved. */
   const [idea, setIdea] = useState('');
+  /** Where they say they're starting from, for both AI drafts. Never saved. */
+  const [starting, setStarting] = useState('');
   const [drafting, setDrafting] = useState(false);
   /* Which request is current. A model call takes seconds, and closing the
      wizard in the middle of one must not let its answer land in the next
@@ -262,7 +268,7 @@ export function NewGoalWizard({
     setStep(0);
     setTitle('');
     setDescription('');
-    setCategory('other');
+    setDraftedCategory('other');
     setSubjectId(null);
     setWhy('');
     setDeadline(defaultDeadline());
@@ -275,8 +281,15 @@ export function NewGoalWizard({
     setMilestones([]);
     setDraft('');
     setIdea('');
+    setStarting('');
     setDrafting(false);
   }, []);
+
+  const subject = useMemo(
+    () => subjects.find((entry) => entry.id === subjectId) ?? null,
+    [subjectId, subjects],
+  );
+  const category: GoalCategory = subject ? categoryForSubject(subject) : draftedCategory;
 
   const close = useCallback(() => {
     reset();
@@ -323,7 +336,7 @@ export function NewGoalWizard({
     setDrafting(true);
     setSuggestProblem(null);
     try {
-      const result = await onDraft(idea.trim());
+      const result = await onDraft(idea.trim(), starting.trim());
       if (mine !== asking.current) return;
       if (!result.goal) {
         setSuggestProblem(result.problem ?? "That couldn't be drafted. Try again.");
@@ -332,7 +345,7 @@ export function NewGoalWizard({
       const goal = result.goal;
       setTitle(goal.title);
       if (goal.why) setWhy(goal.why);
-      if (goal.category) setCategory(goal.category);
+      if (goal.category) setDraftedCategory(goal.category);
       if (goal.deadline) setDeadline(goal.deadline);
       if (goal.milestones.length) setMilestones(goal.milestones);
       // Checkpoints mean this is an outcome goal, whatever the measure was
@@ -341,7 +354,7 @@ export function NewGoalWizard({
     } finally {
       if (mine === asking.current) setDrafting(false);
     }
-  }, [idea, onDraft]);
+  }, [idea, onDraft, starting]);
 
   /** Five checkpoints from the model, into the editable list. Replaces it. */
   const suggest = useCallback(async () => {
@@ -356,6 +369,7 @@ export function NewGoalWizard({
         description: description.trim(),
         category,
         deadline,
+        starting: starting.trim(),
       });
       if (mine !== asking.current) return;
       if (result.milestones?.length) setMilestones(result.milestones);
@@ -363,7 +377,7 @@ export function NewGoalWizard({
     } finally {
       if (mine === asking.current) setSuggesting(false);
     }
-  }, [category, deadline, description, onSuggest, title, why]);
+  }, [category, deadline, description, onSuggest, starting, title, why]);
 
   const save = useCallback(() => {
     onSave({
@@ -447,31 +461,42 @@ export function NewGoalWizard({
                   stays blocked until they do. */}
               {onDraft && (
                 <div className="gx-idea">
-                  <label htmlFor="gx-idea">Not sure how to phrase it?</label>
+                  <p className="gx-idea-head">Draft it with AI</p>
+                  {/* Two boxes, because they are two different things to
+                      know: what the goal should look like, and how far along
+                      the reader already is. The second is what keeps the first
+                      checkpoint from being something they can already do.
+                      Textareas, so Enter makes a new line instead of reaching
+                      the wizard's own submit. */}
+                  <label htmlFor="gx-idea">How do you want the goal drafted?</label>
+                  <textarea
+                    id="gx-idea"
+                    rows={3}
+                    value={idea}
+                    autoFocus={focusIdea}
+                    maxLength={1000}
+                    placeholder="Get to USACO Gold by next fall. Push hard, about 6 hours a week, and lean on past contest problems."
+                    disabled={drafting}
+                    onChange={(event) => setIdea(event.target.value)}
+                  />
+                  <label htmlFor="gx-starting">Where are you starting from?</label>
+                  <textarea
+                    id="gx-starting"
+                    rows={2}
+                    value={starting}
+                    maxLength={1000}
+                    placeholder="I passed Bronze last month and can solve about half of the Silver problems I try."
+                    disabled={drafting}
+                    onChange={(event) => setStarting(event.target.value)}
+                  />
                   <div className="gx-idea-row">
-                    <input
-                      id="gx-idea"
-                      value={idea}
-                      autoFocus={focusIdea}
-                      maxLength={200}
-                      placeholder="get good at competition math this year"
-                      disabled={drafting}
-                      onChange={(event) => setIdea(event.target.value)}
-                      onKeyDown={(event) => {
-                        // The wizard's footer has its own submit, and Enter in
-                        // a bare input inside a dialog would reach it.
-                        if (event.key !== 'Enter') return;
-                        event.preventDefault();
-                        void draftWhole();
-                      }}
-                    />
                     <AskModel
                       label="Draft it all"
                       busy={drafting}
                       disabled={!idea.trim()}
                       onAsk={() => void draftWhole()}
                       primary
-                      title="Fills in a title, reason, field, date and five checkpoints. You can edit all of it."
+                      title="Fills in a title, reason, date and five checkpoints. You can edit all of it."
                     />
                   </div>
                   {/* The two model calls share `suggestProblem`, and only
@@ -483,7 +508,7 @@ export function NewGoalWizard({
                     </p>
                   )}
                   <p className="gx-hint">
-                    Describe your goal and we'll fill in the rest. You can edit everything.
+                    Say what you're after and how you want it, and where you are now. We'll fill in the rest, and you can edit everything.
                   </p>
                 </div>
               )}
@@ -508,25 +533,10 @@ export function NewGoalWizard({
                 onChange={(event) => setDescription(event.target.value)}
               />
 
-              <label>What's it about?</label>
-              <div className="gx-chips">
-                {CATEGORIES.map((entry) => (
-                  <button
-                    key={entry.id}
-                    type="button"
-                    className={`gx-chip tone-${entry.tone}${entry.id === category ? ' is-on' : ''}`}
-                    onClick={() => setCategory(entry.id)}
-                  >
-                    {entry.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* The category above is a colour and an icon. This is the link
-                  to the record — see the note at the top of this file — and
-                  the two sit together because to a reader they are the same
-                  question asked twice, and separating them across steps would
-                  make the second one look like a duplicate to skip. */}
+              {/* No fixed list of fields here any more (Math, Coding,
+                  AI / ML…). The goal's color and icon come from the subject
+                  picked below, which offers every subject in the catalog. See
+                  `categoryForSubject` in ./Outcome. */}
               <label>Which subject is the work for?</label>
               <div className="gx-subject">
                 <SubjectPicker
@@ -656,6 +666,22 @@ export function NewGoalWizard({
             <>
               <label>Your checkpoints, in the order you'll hit them</label>
               {onSuggest && (
+                <>
+                  <label htmlFor="gx-starting-ms" className="gx-sub-label">
+                    Where are you starting from? <span className="gx-quiet">(helps the AI)</span>
+                  </label>
+                  <textarea
+                    id="gx-starting-ms"
+                    rows={2}
+                    value={starting}
+                    maxLength={1000}
+                    placeholder="I passed Bronze last month and can solve about half of the Silver problems I try."
+                    disabled={suggesting}
+                    onChange={(event) => setStarting(event.target.value)}
+                  />
+                </>
+              )}
+              {onSuggest && (
                 <div className="gx-ms-suggest">
                   <button
                     type="button"
@@ -672,7 +698,7 @@ export function NewGoalWizard({
                   <span className="gx-quiet">
                     {milestones.length
                       ? 'Replaces the list below.'
-                      : 'Five, from your title, your reason and your date.'}{' '}
+                      : 'Five, from your title, your reason, your date and where you are now.'}{' '}
                     Edit or remove any of them after.
                   </span>
                 </div>

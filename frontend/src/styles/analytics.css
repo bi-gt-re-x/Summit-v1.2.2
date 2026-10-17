@@ -1645,6 +1645,21 @@ html[data-theme="dark"] .ax-page {
    and nothing else: there is no consequence line to weigh, the reader is
    scanning a list they already know for the handful they care about, and a
    hundred subjects at the tab row's height would be a screen of scrolling. */
+/* Search over every subject, above the picks. */
+.ax-setup-find {
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    margin-bottom: var(--space-2);
+    padding: 0 var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--ax-line);
+    background: var(--ax-card);
+    color: var(--ax-text);
+    font-family: inherit;
+    font-size: var(--text-md);
+}
+
 .ax-setup-picks {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));

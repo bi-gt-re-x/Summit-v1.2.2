@@ -134,3 +134,29 @@ class TestWhenItCannot:
         with pytest.raises(planner.PlannerUnavailable) as raised:
             planner.draft_goal('x')
         assert str(raised.value) == planner.NO_KEY
+
+
+class TestTheStartingPoint:
+    def test_the_draft_is_told_where_they_start_and_how_to_draft(self, monkeypatch):
+        sent = {}
+
+        def capture(brief, **kwargs):
+            sent['brief'] = brief
+            return json.dumps(WHOLE)
+
+        monkeypatch.setattr(planner, 'from_provider', capture)
+        planner.draft_goal('USACO Gold, aggressive pace', starting='I can do most Bronze problems')
+        assert 'USACO Gold, aggressive pace' in sent['brief']
+        assert 'Where they are starting from: I can do most Bronze problems' in sent['brief']
+
+    def test_no_starting_point_adds_no_line(self, monkeypatch):
+        sent = {}
+        monkeypatch.setattr(planner, 'from_provider',
+                            lambda brief, **kwargs: sent.setdefault('brief', brief) and json.dumps(WHOLE))
+        planner.draft_goal('USACO Gold')
+        assert 'starting' not in sent['brief'].lower()
+
+    def test_checkpoints_hear_it_too(self):
+        brief = planner._brief('Reach USACO Gold', starting='Silver in December')
+        assert 'Starting point: Silver in December' in brief
+        assert 'Starting point' not in planner._brief('Reach USACO Gold')

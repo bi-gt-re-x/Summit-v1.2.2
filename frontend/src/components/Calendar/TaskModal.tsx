@@ -58,6 +58,9 @@ export interface TaskModalProps {
   username?: string | null;
   /** True when this task repeats — the edit dialog then asks about scope. */
   recurring?: boolean;
+  /** The repeat the series follows now (`patternOf`), so editing "this one
+   *  and the rest" starts from it instead of from no repeat at all. */
+  pattern?: { type: RecurrenceType; days: number[] };
   defaults?: { startTime: string; endTime: string; name?: string };
   /** The Day view acts on one task only, so it never offers a repeat. */
   allowRecurrence?: boolean;
@@ -70,6 +73,7 @@ export function TaskModal({
   initial,
   username,
   recurring,
+  pattern,
   defaults,
   allowRecurrence = true,
   onSave,
@@ -86,8 +90,8 @@ export function TaskModal({
   const [startTime, setStartTime] = useState(initial?.startTime ?? defaults?.startTime ?? '');
   const [endTime, setEndTime] = useState(initial?.endTime ?? defaults?.endTime ?? '');
   const [xp, setXp] = useState(initial?.xp ?? MIN_TASK_XP);
-  const [recurrence, setRecurrence] = useState<RecurrenceType>('none');
-  const [days, setDays] = useState<number[]>([]);
+  const [recurrence, setRecurrence] = useState<RecurrenceType>(pattern?.type ?? 'none');
+  const [days, setDays] = useState<number[]>(pattern?.days ?? []);
   const [scope, setScope] = useState<Scope>('one');
   const [showErrors, setShowErrors] = useState(false);
 
@@ -99,8 +103,13 @@ export function TaskModal({
     return () => document.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  /* The repeat is offered when adding, when editing a task that doesn't
+     repeat yet (so it can start to), and when editing a whole series (so its
+     pattern can change). Not for a single occurrence of a series: that edit
+     is about one day. */
+  const showRepeat = allowRecurrence && (!editing || !recurring || scope === 'all');
   const missingName = !name.trim();
-  const missingDays = recurrence !== 'none' && days.length === 0;
+  const missingDays = showRepeat && recurrence !== 'none' && days.length === 0;
 
   const setClampedXp = (value: number) =>
     setXp(Math.max(MIN_TASK_XP, Math.min(MAX_TASK_XP, Math.round(value) || MIN_TASK_XP)));
@@ -118,10 +127,12 @@ export function TaskModal({
         xp,
         subject,
         goalId,
-        recurrence: allowRecurrence ? recurrence : 'none',
-        recurrenceDays: allowRecurrence ? days : [],
+        recurrence: showRepeat ? recurrence : 'none',
+        recurrenceDays: showRepeat ? days : [],
       },
-      scope,
+      // A one-off task given a repeat becomes a series written from this day,
+      // which is what the "all" path does: it replaces the task with the set.
+      editing && !recurring && showRepeat && recurrence !== 'none' ? 'all' : scope,
     );
   };
 
@@ -233,13 +244,13 @@ export function TaskModal({
                     checked={scope === 'all'}
                     onChange={() => setScope('all')}
                   />{' '}
-                  All occurrences
+                  This one and the rest
                 </label>
               </div>
             </div>
           )}
 
-          {!editing && allowRecurrence && (
+          {showRepeat && (
             <RecurrencePicker
               name="taskRecurrenceType"
               type={recurrence}

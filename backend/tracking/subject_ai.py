@@ -1663,10 +1663,24 @@ def steps_brief_from(state: Dict[str, Any]) -> str:
     return '\n\n'.join(part if part.startswith('<') else '<' + part for part in kept)
 
 
+#: Added to STEPS_SYSTEM for a subject with no finished work yet, which every
+#: subject picker now offers (the whole catalog, not only subjects with work).
+STARTER_NOTE = """
+
+THE READER HASN'T STARTED THIS SUBJECT YET
+There is no finished work in it, so <work_groups> and <recent_work> are \
+empty and there are no figures about it to quote. Plan three first sessions \
+that build on each other: a short, approachable start, then a step up. Pick \
+real, free material from <free_resources> or a well-known free source, and \
+use <about_the_reader> and <goals> for the level and the aim. Each `reason` \
+says why it's a good first step, without quoting any numbers."""
+
+
 def plan(state: Dict[str, Any], model_id: str = '',
-         overall: bool = False) -> List[Dict[str, Any]]:
+         overall: bool = False, starter: bool = False) -> List[Dict[str, Any]]:
     """Three recommendations for this subject, and nothing else — or, with
-    `overall`, three across every subject in the brief (OVERALL_NOTE).
+    `overall`, three across every subject in the brief (OVERALL_NOTE), or with
+    `starter`, three first sessions for a subject with no work yet.
 
     Raises `BriefUnavailable` for everything the page should say out loud, as
     `read` does.
@@ -1680,7 +1694,8 @@ def plan(state: Dict[str, Any], model_id: str = '',
     try:
         text = planner.from_provider(
             brief,
-            system=STEPS_SYSTEM + (OVERALL_NOTE if overall else ''),
+            system=STEPS_SYSTEM + (OVERALL_NOTE if overall else '')
+            + (STARTER_NOTE if starter else ''),
             schema=STEPS_SCHEMA,
             instruction=('Plan the next three sessions across these subjects '
                          'from the sections below.' if overall else

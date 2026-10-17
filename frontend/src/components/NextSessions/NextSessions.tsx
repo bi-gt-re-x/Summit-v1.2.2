@@ -37,6 +37,7 @@ import {
 } from '@/services/analytics';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { withPlannedTask } from '@/utils/plannedTask';
+import { useSubjects } from '@/hooks/useSubjects';
 import '@/styles/subject-state.css';
 import '@/styles/next-sessions.css';
 
@@ -74,6 +75,13 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   const shared = useContext(UserDataContext);
   const [subjectId, setSubjectId] = useState('');
   const [subjects, setSubjects] = useState<SessionSubject[]>([]);
+  /* Every subject in the catalog, so the picker can plan first sessions for
+     one with no work yet (the server writes starter sessions for those). */
+  const catalog = useSubjects(username);
+  const others = useMemo(() => {
+    const listed = new Set(subjects.map((one) => one.id));
+    return catalog.filter((one) => !listed.has(one.id));
+  }, [catalog, subjects]);
   const [leftOut, setLeftOut] = useState<Set<string>>(() => readLeftOut(username));
   const [steps, setSteps] = useState<SuggestedSession[]>([]);
   const [available, setAvailable] = useState<boolean | null>(null);
@@ -115,7 +123,11 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
     [steps],
   );
   const open = steps.filter((step) => step.state === 'open');
-  const subjectName = subjectId ? subjects.find((one) => one.id === subjectId)?.name ?? 'this subject' : '';
+  const subjectName = subjectId
+    ? subjects.find((one) => one.id === subjectId)?.name
+      ?? catalog.find((one) => one.id === subjectId)?.name
+      ?? 'this subject'
+    : '';
   /** Across every subject, the ones the pills have on. */
   const included = subjects.filter((one) => !leftOut.has(one.id));
   const narrowed = !subjectId && included.length < subjects.length;
@@ -223,11 +235,24 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
             disabled={working}
           >
             <option value="">All subjects</option>
-            {subjects.map((one) => (
-              <option key={one.id} value={one.id}>
-                {one.name}
-              </option>
-            ))}
+            {subjects.length > 0 && (
+              <optgroup label="Subjects you've worked on">
+                {subjects.map((one) => (
+                  <option key={one.id} value={one.id}>
+                    {one.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            {others.length > 0 && (
+              <optgroup label={subjects.length ? 'Start something new' : 'Every subject'}>
+                {others.map((one) => (
+                  <option key={one.id} value={one.id}>
+                    {one.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </select>
         </label>
       </header>

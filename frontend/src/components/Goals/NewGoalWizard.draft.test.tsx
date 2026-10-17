@@ -48,7 +48,8 @@ function show(over: Partial<NewGoalWizardProps> = {}) {
   return props;
 }
 
-const ideaBox = () => screen.getByLabelText(/not sure how to phrase it/i);
+const ideaBox = () => screen.getByLabelText(/how do you want the goal drafted/i);
+const startBox = () => screen.getByLabelText(/where are you starting from/i);
 const draftBtn = () => screen.getByRole('button', { name: /draft it all/i });
 
 /** The picker is a disclosure and a list of names, not a <select>. */
@@ -81,7 +82,7 @@ describe('what a draft fills in', () => {
     await userEvent.type(ideaBox(), 'get good at usaco');
     await userEvent.click(draftBtn());
 
-    expect(props.onDraft).toHaveBeenCalledWith('get good at usaco');
+    expect(props.onDraft).toHaveBeenCalledWith('get good at usaco', '');
     await waitFor(() =>
       expect(screen.getByLabelText(/the result you want/i)).toHaveValue(
         'Reach USACO Gold',
@@ -104,6 +105,25 @@ describe('what a draft fills in', () => {
     expect(screen.getByLabelText(/why this one/i)).toHaveValue(
       'It is what the summer programs ask for.',
     );
+  });
+});
+
+describe('the starting point', () => {
+  it('goes to the draft with how it should be drafted', async () => {
+    const props = show();
+    await userEvent.type(ideaBox(), 'usaco gold, push hard');
+    await userEvent.type(startBox(), 'passed Bronze');
+    await userEvent.click(draftBtn());
+    expect(props.onDraft).toHaveBeenCalledWith('usaco gold, push hard', 'passed Bronze');
+  });
+
+  it('has a box for each, and Enter in the first makes a new line', async () => {
+    const props = show();
+    expect(ideaBox().tagName).toBe('TEXTAREA');
+    expect(startBox().tagName).toBe('TEXTAREA');
+    await userEvent.type(ideaBox(), 'one{enter}two');
+    expect(ideaBox()).toHaveValue('one\ntwo');
+    expect(props.onDraft).not.toHaveBeenCalled();
   });
 });
 
@@ -158,6 +178,6 @@ describe('which field opens focused', () => {
     const props = show({ focusIdea: true });
     await userEvent.type(ideaBox(), 'usaco gold');
     await userEvent.click(draftBtn());
-    expect(props.onDraft).toHaveBeenCalledWith('usaco gold');
+    expect(props.onDraft).toHaveBeenCalledWith('usaco gold', '');
   });
 });
