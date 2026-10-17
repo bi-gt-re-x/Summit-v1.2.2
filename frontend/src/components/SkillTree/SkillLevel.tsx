@@ -70,19 +70,21 @@ export interface LevelCardProps {
   levels: StepLevels;
   /** Today, for tests. */
   now?: Date;
+  /** Just the level and the mastery bar. The stats wait for "Show details". */
+  brief?: boolean;
 }
 
 /** How far back "before" is. The server reads it at the same distance —
     COMPARE_DAYS in backend/tracking/skill_level.py. */
 const compareDays = 30;
 
-export function LevelCard({ levels, now }: LevelCardProps) {
+export function LevelCard({ levels, now, brief = false }: LevelCardProps) {
   const today = useMemo(() => now ?? new Date(), [now]);
   const { before: then, now: read } = levels;
   const moved = read.level - then.level;
 
   return (
-    <section className="slv-card" aria-label="Your level on this skill">
+    <section className={`slv-card${brief ? ' is-brief' : ''}`} aria-label="Your level on this skill">
       <header className="slv-head">
         <div>
           <p className="slv-eyebrow">Your level</p>
@@ -93,7 +95,7 @@ export function LevelCard({ levels, now }: LevelCardProps) {
           </p>
           <LevelPips level={read.level} />
         </div>
-        <div className="slv-was">
+        {!brief && <div className="slv-was">
           {read.level === 0 && then.level === 0 ? (
             <span>Nothing marked yet</span>
           ) : moved === 0 ? (
@@ -103,10 +105,10 @@ export function LevelCard({ levels, now }: LevelCardProps) {
               {moved > 0 ? '↑' : '↓'} from Level {then.level} {compareDays} days ago
             </span>
           )}
-        </div>
+        </div>}
       </header>
 
-      <p className="slv-means">{LEVEL_MEANS[read.level]}</p>
+      {!brief && <p className="slv-means">{LEVEL_MEANS[read.level]}</p>}
 
       <div className="slv-mastery">
         <p className="slv-line">
@@ -116,9 +118,10 @@ export function LevelCard({ levels, now }: LevelCardProps) {
         <span className="slv-bar" aria-hidden="true">
           <span style={{ width: `${read.mastery}%` }} />
         </span>
-        <p className="slv-hint">Your level from 1 to 5, plus progress toward the next one.</p>
       </div>
 
+      {brief ? null : (
+      <>
       <dl className="slv-facts">
         <div>
           <dt>Problems attempted</dt>
@@ -175,6 +178,8 @@ export function LevelCard({ levels, now }: LevelCardProps) {
       <p className="slv-next">
         <b>Next:</b> {nextStepText(read)}
       </p>
+      </>
+      )}
     </section>
   );
 }
@@ -231,8 +236,11 @@ export function LevelChain({
   steps,
   levels,
   onOpen,
+  brief = false,
 }: {
   nodeId: string;
+  /** Titles and level chips only, without the summary or accuracy. */
+  brief?: boolean;
   steps: ChainStep[];
   /** Every step's readings, from the server. */
   levels: Levels;
@@ -247,9 +255,7 @@ export function LevelChain({
   return (
     <div className="slv-chain-wrap">
       <p className="slv-chain-sum">
-        {started === 0
-          ? "No step practiced yet. Open one, try its problems and mark each right or wrong. Your level comes from that."
-          : `${started} of ${steps.length} steps practiced. Levels come from the problems you mark right or wrong.`}
+        {started === 0 ? 'No steps practiced yet.' : `${started} of ${steps.length} steps practiced.`}
       </p>
       <ol className="slv-chain">
         {reads.map(({ step, read }) => (
@@ -263,7 +269,7 @@ export function LevelChain({
               <span className="slv-chain-title">{step.title}</span>
               <span className="slv-chain-meta">
                 <LevelChip read={read} />
-                {read.attempted > 0 && (
+                {!brief && read.attempted > 0 && (
                   <span className="slv-chain-acc">
                     {read.accuracy}% · {read.hardest ? TIER_NAME[read.hardest] : 'none right'}
                   </span>

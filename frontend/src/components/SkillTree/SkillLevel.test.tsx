@@ -142,18 +142,18 @@ async function openFactoring(user: ReturnType<typeof userEvent.setup>) {
 describe('the chain of steps', () => {
   it('lists every step with its level, in order', () => {
     draw();
-    expect(screen.getByText('Your level, step by step')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Mastery' })).toBeInTheDocument();
     const steps = document.querySelectorAll('.slv-chain-step');
     expect([...steps].map((li) => li.querySelector('.slv-chain-title')?.textContent)).toEqual([
       'Recognize a Quadratic', 'Expand Binomials', 'Factor Simple Quadratics',
     ]);
-    expect(screen.getByText(/No step practiced yet/)).toBeInTheDocument();
+    expect(screen.getByText(/No steps practiced yet/)).toBeInTheDocument();
   });
 
   it('is not drawn without evidence to read', () => {
     const graph: SkillGraph = { id: 'mathematics', name: 'Mathematics', nodes: [picked] };
     render(<LatticePanel graph={graph} node={picked} onSelect={vi.fn()} written={PROGRAMME} />);
-    expect(screen.queryByText('Your level, step by step')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Mastery' })).not.toBeInTheDocument();
   });
 });
 
@@ -243,7 +243,7 @@ describe('logging work from elsewhere', () => {
   it('falls back to the skill as a whole where nothing is written', async () => {
     const user = userEvent.setup();
     const { onAttempt } = draw(null);
-    expect(screen.getByText(/no practice problems yet/)).toBeInTheDocument();
+    expect(screen.getByText(/No practice problems here yet/)).toBeInTheDocument();
     await user.type(screen.getByLabelText('Problems attempted'), '5');
     await user.type(screen.getByLabelText('Problems right'), '5');
     await user.click(screen.getByRole('button', { name: 'Log' }));

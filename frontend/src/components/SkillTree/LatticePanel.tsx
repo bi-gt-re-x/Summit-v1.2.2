@@ -912,6 +912,12 @@ function Programme({
 }
 
 export interface LatticePanelProps {
+  /**
+   * Open each node short: progress, mastery and the steps, with the rest
+   * behind "Show details". The skill tree page asks for this; left off, the
+   * panel shows everything, which is what the component tests read.
+   */
+  brief?: boolean;
   graph: SkillGraph;
   node: GraphNode | null;
   onSelect: (node: GraphNode | null) => void;
@@ -976,6 +982,7 @@ export function LatticePanel({
   onResetName,
   onExpand,
   evidence,
+  brief = false,
 }: LatticePanelProps) {
   // The step list opens over the whole panel rather than beside it, so this is
   // panel-wide state rather than the section's. Reset on every change of node:
@@ -994,11 +1001,16 @@ export function LatticePanel({
   const [workingOn, setWorkingOn] = useState<PracticeStep | null>(null);
   const [naming, setNaming] = useState(false);
   const [nameDraft, setNameDraft] = useState('');
+  /* The panel opens short: where you stand, your mastery and the steps. The
+     rest (problem stats, logging, what to learn, traps, what's next) waits
+     behind "Show details", so a click on a tile isn't a wall of text. */
+  const [detailed, setDetailed] = useState(!brief);
   useEffect(() => {
     setAllSteps(false);
     setWorkingOn(null);
     setNaming(false);
-  }, [node?.id]);
+    setDetailed(!brief);
+  }, [node?.id, brief]);
 
   // Kept in an effect rather than called from the two setters, so the page
   // hears about the reset above as well as about a click. A panel that closed
@@ -1246,7 +1258,7 @@ export function LatticePanel({
   }
 
   return (
-    <aside className={`stx-lp tier-${node.difficulty}`}>
+    <aside className={`stx-lp tier-${node.difficulty}${detailed ? ' is-detailed' : ' is-brief'}`}>
       <header className="stx-lp-head">
         <span className={`stx-lp-avatar is-${node.status}`}>
           <Ico icon={node.icon} className="stx-ico stx-lp-avatar-ico" />
@@ -1324,7 +1336,7 @@ export function LatticePanel({
             is asking where *they* are on it, and because everything under
             "Next move" only means anything once that is on the table. */}
         <section className="stx-lp-truth is-mine">
-          <h3 className="stx-lp-truth-name">Your progress</h3>
+          <h3 className="stx-lp-truth-name">Progress</h3>
 
           {/* The state in a sentence rather than in a percentage. "72%" is
               four states' worth of arithmetic flattened into one number: it
@@ -1345,7 +1357,7 @@ export function LatticePanel({
               </b>
             </p>
             <ProgressIndicator percent={node.percent} shape="bar" />
-            {node.need > 0 && (
+            {detailed && node.need > 0 && (
               <p className="stx-lp-line stx-lp-xp">
                 <span>XP earned</span>
                 <b>
@@ -1362,9 +1374,10 @@ export function LatticePanel({
             per step — so it gets its own heading, and says so. */}
         {evidence && (
           <section className="stx-lp-truth is-mine is-measured">
-            <h3 className="stx-lp-truth-name">Your level, step by step</h3>
+            <h3 className="stx-lp-truth-name">Mastery</h3>
             {written && written.length > 0 ? (
               <LevelChain
+                brief={!detailed}
                 nodeId={node.id}
                 steps={written.map((step) => ({ ordinal: step.ordinal, title: step.title }))}
                 levels={evidence.levels}
@@ -1378,10 +1391,10 @@ export function LatticePanel({
                  split it into and no problems to mark. Work done elsewhere
                  can still be logged against the skill as a whole. */
               <>
-                <LevelCard levels={levelsOf(evidence.levels, node.id, 0)} />
-                <LogPractice
+                <LevelCard levels={levelsOf(evidence.levels, node.id, 0)} brief={!detailed} />
+                {detailed && <LogPractice
                   busy={false}
-                  label="This skill has no practice problems yet. Log problems you did somewhere else and your level comes from those."
+                  label="No practice problems here yet. Log ones you did elsewhere."
                   onLog={async (weight, attempted, correct) =>
                     Boolean(
                       await evidence.onAttempt({
@@ -1390,7 +1403,7 @@ export function LatticePanel({
                       }),
                     )
                   }
-                />
+                />}
               </>
             )}
           </section>
@@ -1401,6 +1414,7 @@ export function LatticePanel({
             heading is doing real work: everything under it is authored and
             nothing under it is about the reader, which is the distinction the
             whole page is arranged around and had never been said out loud. */}
+        {detailed && (
         <section className="stx-lp-truth is-authored">
           <h3 className="stx-lp-truth-name">What to learn</h3>
 
@@ -1436,6 +1450,7 @@ export function LatticePanel({
             <p className="stx-lp-why">A starting point. Nothing comes before it.</p>
           )}
         </section>
+        )}
 
         {/* ---- 4. Your next move ----
             The centre of the panel and the only part that says what to do with
@@ -1443,7 +1458,7 @@ export function LatticePanel({
             navigates. All four pieces are one call into skills/improve, which
             is what stops the steps and the proof asking for different things. */}
         <section className="stx-lp-truth is-move">
-          <h3 className="stx-lp-truth-name">Your next move</h3>
+          <h3 className="stx-lp-truth-name">Steps</h3>
 
           <p className={`stx-lp-headline is-${node.status}`}>{plan.headline}</p>
           {useWritten ? (
@@ -1453,9 +1468,9 @@ export function LatticePanel({
                is no longer the only way to read what a step actually asks. */
             <WrittenProgramme
               steps={written!.slice(at, at + 3)}
-              at={0}
+              at={detailed ? 0 : -1}
               levels={stepLevels}
-              onWork={(step) => setWorkingOn(step)}
+              onWork={detailed ? (step) => setWorkingOn(step) : undefined}
             />
           ) : (
             /* `start` rather than a re-numbered list: step seven has to read as
@@ -1470,17 +1485,19 @@ export function LatticePanel({
                   <button type="button" className="stx-lp-window-text" onClick={openSteps}>
                     {step}
                   </button>
-                  <button
-                    type="button"
-                    className="stx-ws-work is-derived"
-                    onClick={() =>
-                      setWorkingOn(asPractice(step, at + index + 1, node, plan))
-                    }
-                  >
-                    <Icon name="target" />
-                    Problems for {labelFor(step)}
-                    <span aria-hidden="true">→</span>
-                  </button>
+                  {detailed && (
+                    <button
+                      type="button"
+                      className="stx-ws-work is-derived"
+                      onClick={() =>
+                        setWorkingOn(asPractice(step, at + index + 1, node, plan))
+                      }
+                    >
+                      <Icon name="target" />
+                      Problems for {labelFor(step)}
+                      <span aria-hidden="true">→</span>
+                    </button>
+                  )}
                 </li>
               ))}
             </ol>
@@ -1493,21 +1510,25 @@ export function LatticePanel({
               I know I am done" is the question a set of steps raises and the
               one a percentage answers worst — it deserves the weight the
               other two do not. */}
-          <p className="stx-lp-proof">
-            <b>Done when</b>
-            {plan.proof}
-          </p>
+          {detailed && (
+            <>
+              <p className="stx-lp-proof">
+                <b>Done when</b>
+                {plan.proof}
+              </p>
 
-          <dl className="stx-lp-notes">
-            <div className="stx-lp-note is-pitfall">
-              <dt>Common trap</dt>
-              <dd>{plan.pitfall}</dd>
-            </div>
-            <div className="stx-lp-note is-effort">
-              <dt>Time</dt>
-              <dd>{plan.effort}</dd>
-            </div>
-          </dl>
+              <dl className="stx-lp-notes">
+                <div className="stx-lp-note is-pitfall">
+                  <dt>Common trap</dt>
+                  <dd>{plan.pitfall}</dd>
+                </div>
+                <div className="stx-lp-note is-effort">
+                  <dt>Time</dt>
+                  <dd>{plan.effort}</dd>
+                </div>
+              </dl>
+            </>
+          )}
         </section>
 
         {/* ---- 5. What comes next ----
@@ -1516,13 +1537,22 @@ export function LatticePanel({
             heading — and the prerequisites have their own section above now.
             What is left is the pair a reader actually chooses between: what
             this opens, and what is merely worth a look. */}
-        {(opens.length > 0 || suggested.length > 0) && (
+        {detailed && (opens.length > 0 || suggested.length > 0) && (
           <section className="stx-lp-truth is-next">
             <h3 className="stx-lp-truth-name">What comes next</h3>
             <Rows title={`Finishing this opens ${opens.length === 1 ? 'a skill' : `${opens.length} skills`}`} nodes={opens} onSelect={onSelect} />
             <Rows title="Worth exploring" nodes={suggested} onSelect={onSelect} showPercent />
           </section>
         )}
+
+        <button
+          type="button"
+          className="stx-lp-detail"
+          aria-expanded={detailed}
+          onClick={() => setDetailed((was) => !was)}
+        >
+          {detailed ? 'Show less' : 'Show details'}
+        </button>
       </div>
 
       {/* The one control, and it says what pressing it does here rather than

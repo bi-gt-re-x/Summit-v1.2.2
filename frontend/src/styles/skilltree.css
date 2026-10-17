@@ -4649,3 +4649,42 @@ html[data-theme="dark"] .stx-region {
     .stx-page--lattice .stx-lp-line { font-size: var(--text-md); }
     .stx-page--lattice .stx-lp-row-name { white-space: normal; }
 }
+
+/* ---- the short panel, and the button that opens the rest ----
+   A tile click shows progress, mastery and the steps, with room around each.
+   Everything else (problem stats, logging, what to learn, traps, what comes
+   next) is behind "Show details". */
+.stx-lp.is-brief .stx-lp-body { gap: var(--space-6); }
+.stx-lp.is-brief .stx-lp-truth { gap: var(--space-3); }
+.stx-lp.is-brief .stx-lp-position { font-size: var(--text-md); line-height: 1.6; }
+.stx-lp.is-brief .stx-lp-headline { line-height: 1.6; }
+.stx-lp.is-brief .stx-ws { gap: var(--space-3); }
+.slv-card.is-brief { gap: var(--space-4); padding: var(--space-5); }
+.slv-card.is-brief .slv-mastery { gap: var(--space-2); }
+.slv-chain-sum { line-height: 1.6; }
+
+.stx-lp-detail {
+    display: block;
+    width: 100%;
+    align-self: stretch;
+    padding: var(--space-3) var(--space-4);
+    border: 1px dashed var(--lat-line);
+    border-radius: var(--lat-radius);
+    background: none;
+    color: var(--lat-violet);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+    break-inside: avoid;
+    column-span: all;
+}
+.stx-lp-detail:hover { border-style: solid; background: var(--lat-violet-soft); }
+/* In the wide layout the body's children are cards; the button isn't one. */
+@media (min-width: 1081px) {
+    .stx-page--lattice .stx-lp:not(.is-steps) .stx-lp-body > .stx-lp-detail {
+        padding: var(--space-3) var(--space-4);
+        background: none;
+        border: 1px dashed var(--lat-line);
+    }
+}

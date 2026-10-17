@@ -1165,6 +1165,7 @@ export default function SkillTrees() {
           />
 
           <LatticePanel
+            brief
             graph={graph}
             node={selected}
             onSelect={select}

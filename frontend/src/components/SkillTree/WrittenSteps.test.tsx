@@ -218,7 +218,7 @@ describe('when nothing has been written for a node', () => {
   it('falls back to the derived advice rather than drawing an empty list', () => {
     draw(null);
     // The derived ladder always produces something, so the panel is never bare.
-    expect(screen.getByText('Your next move')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Steps' })).toBeInTheDocument();
     expect(screen.queryByText('Try:')).not.toBeInTheDocument();
   });
 
@@ -301,9 +301,9 @@ describe('the problems screen', () => {
   it('clears everything else away', async () => {
     draw(PROGRAMME);
     // The other steps and the rest of the panel are on screen beforehand.
-    expect(screen.getByText('Your progress')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument();
     await userEvent.click(workLink('Expand Binomials'));
-    expect(screen.queryByText('Your progress')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Progress' })).not.toBeInTheDocument();
     expect(screen.queryByText('The curriculum')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Recognise a Quadratic/ })).not.toBeInTheDocument();
   });
@@ -334,7 +334,7 @@ describe('the problems screen', () => {
     draw(PROGRAMME);
     await userEvent.click(workLink('Expand Binomials'));
     await userEvent.click(screen.getByRole('button', { name: /Back to steps/ }));
-    expect(screen.getByText('Your progress')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument();
   });
 
   it('offers a way out of the takeover without climbing back', async () => {
@@ -357,7 +357,7 @@ describe('the problems screen', () => {
     await userEvent.click(row('Expand Binomials'));
     expect(row('Expand Binomials')).toHaveAttribute('aria-expanded', 'true');
     // Still on the programme, not on the problems screen.
-    expect(screen.getByText('Your progress')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument();
   });
 });
 
@@ -387,7 +387,7 @@ describe('a node with nothing written for it', () => {
     draw(null);
     const [first] = screen.getAllByRole('button', { name: /Problems for/ });
     await userEvent.click(first!);
-    expect(screen.queryByText('Your progress')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Progress' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Back to steps/ })).toBeInTheDocument();
   });
 
