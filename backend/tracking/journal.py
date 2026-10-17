@@ -223,6 +223,9 @@ didn't write.
 A bad day is a feeling, not a pattern. Never turn one entry's mood into a \
 lasting fact about them.
 
+If the entry changes its mind partway through ("I wanted X, but I've dropped \
+it"), keep only where it ends up. Never keep a plan they say they gave up.
+
 You also get the insights already kept, each with an id. Use them:
 - "update": an existing insight this entry changes or sharpens (for example \
 a feeling that has now come up again becomes a pattern). Give its id and the \
@@ -563,6 +566,29 @@ def cancel(username: str, entry_id: str) -> None:
         old = _timers.pop((username, entry_id), None)
     if old:
         old.cancel()
+
+
+def recover(username: str) -> int:
+    """Queue this account's entries still marked 'waiting' that no timer in
+    this process is holding. The timers are memory, so a restart (or the dev
+    server reloading) drops them and leaves the entry saying it's about to be
+    read forever. Called from POST paths, never a GET. Returns how many were
+    queued again."""
+    with _timers_guard:
+        held = {entry_id for (user, entry_id) in _timers if user == username}
+    now_at = datetime.now()
+    found = 0
+    for row in db.rows_for('log_entries', username):
+        if row.get('learn_state') != 'waiting' or row['id'] in held:
+            continue
+        try:
+            age = (now_at - datetime.fromisoformat(row.get('updated_at') or '')).total_seconds()
+        except ValueError:
+            age = QUIET_SECONDS
+        # Staggered, so a backlog doesn't hit the model all at once.
+        schedule(username, row['id'], max(1.0 + 3 * found, QUIET_SECONDS - age))
+        found += 1
+    return found
 
 
 def run_waiting() -> None:

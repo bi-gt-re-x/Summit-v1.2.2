@@ -37,6 +37,7 @@ const service = vi.hoisted(() => ({
   save: vi.fn(),
   remove: vi.fn(),
   forget: vi.fn(),
+  resume: vi.fn(),
 }));
 
 vi.mock('@/services', async (original) => {
@@ -60,6 +61,7 @@ beforeEach(() => {
     }));
   service.remove.mockResolvedValue({ success: true, id: 'e2', removed: 1 });
   service.forget.mockResolvedValue({ success: true, id: 'i1' });
+  service.resume.mockResolvedValue({ success: true, resumed: 0 });
 });
 
 afterEach(() => {
@@ -173,6 +175,23 @@ describe('the log page', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
     expect(service.remove).not.toHaveBeenCalled();
+  });
+});
+
+describe('reads a restart dropped', () => {
+  it('asks the server to queue them again when an entry is still waiting', async () => {
+    service.list.mockResolvedValue({
+      success: true, insights: [], learning: true,
+      entries: [{ ...ENTRIES[0], learn_state: 'waiting' }, ENTRIES[1]],
+    });
+    renderWithProviders(<Log />);
+    await waitFor(() => expect(service.resume).toHaveBeenCalledTimes(1));
+  });
+
+  it("doesn't when nothing is waiting", async () => {
+    renderWithProviders(<Log />);
+    await screen.findByRole('list', { name: 'Your entries' });
+    expect(service.resume).not.toHaveBeenCalled();
   });
 });
 

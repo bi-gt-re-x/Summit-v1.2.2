@@ -55,6 +55,11 @@ export function save(draft: EntryDraft): Promise<ApiResult<{ entry: Entry }>> {
   return post<{ entry: Entry }>('/api/log/save', { ...draft });
 }
 
+/** Queue again any entry a server restart left waiting to be read. */
+export function resume(): Promise<ApiResult<{ resumed: number }>> {
+  return post<{ resumed: number }>('/api/log/resume');
+}
+
 export function remove(id: string): Promise<ApiResult<{ id: string; removed: number }>> {
   return post<{ id: string; removed: number }>('/api/log/delete', { id });
 }

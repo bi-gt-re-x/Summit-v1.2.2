@@ -98,7 +98,16 @@ def save_entry(body: SaveEntry, username: str = Depends(current_username)):
     if changed or (body.final and row.get('learn_state') != 'done'):
         journal.schedule(username, row['id'],
                          FINAL_DELAY if body.final else journal.QUIET_SECONDS)
+    # And any other entry a restart left waiting.
+    journal.recover(username)
     return ok(entry=row)
+
+
+@router.post('/api/log/resume')
+def resume_reading(username: str = Depends(current_username)):
+    """Queue again any entry left 'waiting' by a restart. The page calls this
+    when it loads and sees one, since a GET never starts work."""
+    return ok(resumed=journal.recover(username))
 
 
 @router.post('/api/log/delete')

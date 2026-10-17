@@ -109,8 +109,15 @@ export default function Log() {
       setEntries(result.entries);
       setInsights(result.insights);
       setLearning(result.learning);
-      setWaiting(result.entries.filter((entry) => entry.learn_state === 'waiting').map((entry) => entry.id));
+      const stuck = result.entries.filter((entry) => entry.learn_state === 'waiting').map((entry) => entry.id);
+      setWaiting(stuck);
       setLoadError(null);
+      // A reading a server restart dropped is queued again, then watched for.
+      if (stuck.length > 0 && result.learning) {
+        void logService.resume().then((resumed) => {
+          if (resumed.success && resumed.resumed > 0) setWatch((beat) => beat + 1);
+        }).catch(() => {});
+      }
       return result.entries;
     } catch {
       setLoadError("Couldn't reach the server.");

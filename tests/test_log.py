@@ -184,6 +184,27 @@ def test_a_later_entry_can_revise_confirm_and_retire(client, monkeypatch):
     assert found[ids['Wants to make the violin ensemble']]['status'] == 'retired'
 
 
+def test_a_read_dropped_by_a_restart_is_queued_again(client, monkeypatch):
+    _model(monkeypatch, {'add': [{'kind': 'goal', 'topic': 'goals', 'text': 'Wants USACO Silver'}]})
+    entry = _save(client, body='USACO Silver by June')
+    journal.cancel_all()  # what a restart does to the timers
+    assert client.post('/api/log/resume').json()['resumed'] == 1
+    # Already queued: asking again doesn't queue it twice.
+    assert client.post('/api/log/resume').json()['resumed'] == 0
+    journal.run_waiting()
+    assert db.find_row('log_entries', entry['id'], user_id='tester')['learn_state'] == 'done'
+    assert [row['text'] for row in _insights(client)] == ['Wants USACO Silver']
+
+
+def test_saving_one_entry_picks_up_another_left_waiting(client, monkeypatch):
+    _model(monkeypatch, {})
+    first = _save(client, body='one')
+    journal.cancel_all()
+    _save(client, title='Two', body='two')
+    journal.run_waiting()
+    assert db.find_row('log_entries', first['id'], user_id='tester')['learn_state'] == 'done'
+
+
 def test_ids_the_model_made_up_are_ignored():
     ops = journal.parse(json.dumps({'add': [], 'update': [{'id': 'nope', 'kind': 'goal',
                                                           'topic': 'goals', 'text': 'x'}],
