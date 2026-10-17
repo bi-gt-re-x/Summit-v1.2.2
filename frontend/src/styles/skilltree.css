@@ -4595,3 +4595,57 @@ html[data-theme="dark"] .stx-region {
 .slv-log-btn:disabled { opacity: .6; }
 .slv-log-problem { margin: 0; font-size: var(--text-xs); color: var(--lat-amber); }
 .slv-log-done { margin: 0; font-size: var(--text-xs); color: var(--lat-green); }
+
+/* ---------------------------------------------------------------------------
+   The detail panel sits under the map, full width.
+
+   It used to be a 340px column beside the canvas, the same height as it, with
+   its middle scrolling. Most of a node never showed without scrolling a box
+   inside a page that also scrolls. Under the map it can be as tall as the node
+   needs, and its sections sit side by side as cards so the whole node reads at
+   once. Wider screens get more columns; a phone still gets the bottom sheet
+   from the 1080px rule above.
+   --------------------------------------------------------------------------- */
+@media (min-width: 1081px) {
+    .stx-page--lattice .stx-layout,
+    .stx-page--lattice .stx-layout.is-wide {
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 0;
+        row-gap: var(--space-5);
+    }
+    .stx-page--lattice .stx-layout.is-wide .stx-canvas { pointer-events: auto; }
+
+    .stx-page--lattice .stx-lp {
+        position: static;
+        height: auto;
+        overflow: visible;
+        padding: var(--space-6);
+        gap: var(--space-5);
+    }
+    .stx-page--lattice .stx-lp-head h2 { font-size: var(--text-2xl, 1.6rem); }
+    .stx-page--lattice .stx-lp-avatar { width: 56px; height: 56px; }
+    .stx-page--lattice .stx-lp-avatar-ico { width: 28px; height: 28px; }
+
+    .stx-page--lattice .stx-lp:not(.is-steps) .stx-lp-body {
+        overflow: visible;
+        margin-right: 0;
+        padding-right: 0;
+        /* Columns rather than a grid, so a short card doesn't leave a hole
+           under it the height of the tall one beside it. */
+        display: block;
+        columns: 3 300px;
+        column-gap: var(--space-4);
+    }
+    .stx-page--lattice .stx-lp:not(.is-steps) .stx-lp-body > * {
+        break-inside: avoid;
+        margin: 0 0 var(--space-4);
+        padding: var(--space-4) var(--space-5);
+        border: 1px solid var(--lat-line-soft);
+        border-radius: var(--lat-radius);
+        background: var(--lat-field);
+    }
+    .stx-page--lattice .stx-lp.is-steps .stx-lp-body { overflow: visible; }
+    .stx-page--lattice .stx-lp-blurb,
+    .stx-page--lattice .stx-lp-line { font-size: var(--text-md); }
+    .stx-page--lattice .stx-lp-row-name { white-space: normal; }
+}

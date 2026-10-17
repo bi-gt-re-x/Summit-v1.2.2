@@ -303,8 +303,11 @@ const TABS: Tab[] = [
     label: 'Log',
     icon: (
       <svg {...stroke}>
-        <path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
-        <path d="M9 9h6M9 13h6M9 17h3" />
+        {/* A bound journal with a ribbon, so it doesn't read as Notes'
+            folded page beside it. */}
+        <path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5Z" />
+        <path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3" />
+        <path d="M14 3v6l-1.75-1.25L10.5 9V3" />
       </svg>
     ),
   },

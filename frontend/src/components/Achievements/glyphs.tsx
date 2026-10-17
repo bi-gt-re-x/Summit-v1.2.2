@@ -764,9 +764,9 @@ const BADGE_GLYPH: Record<string, ReactNode> = {
   'foc-90':       GLYPH.bullseye,       // Locked In
   'rate-50':      GLYPH.pieChart,       // Half the Days
   'rate-75':      GLYPH.calendarCheck,  // Most Days
-  'rate-90':      GLYPH.infinity,       // Nearly Every Day
-  'ontime-75':    GLYPH.alarm,          // Punctual
-  'ontime-90':    GLYPH.shieldCheck,    // Dependable
+  'rate-95':      GLYPH.infinity,       // Nearly Every Day
+  'ontime-80':    GLYPH.alarm,          // Punctual
+  'ontime-95':    GLYPH.shieldCheck,    // Dependable
   'rated-25':     GLYPH.pen,            // Marking Your Work
   'rated-100':    GLYPH.scales,         // Honest Record
   'rated-500':    GLYPH.scroll,         // Nothing Unexamined

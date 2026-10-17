@@ -473,9 +473,11 @@ def _ask(goal: str, instruction: str = '') -> str:
     return (lead + '\n\n' + goal)
 
 
-#: Over the Log lines (backend/tracking/journal.py) in any brief. Here rather
-#: than there because that module calls this one.
-ABOUT_HEADING = ("What they told Summit in their Log, in their own words. Use it a lot: "
+#: Over the About you and Log lines (backend/api/background.py `about_lines`)
+#: in any brief. Here rather than in journal.py because that module calls this
+#: one.
+ABOUT_HEADING = ("What they told Summit about themselves at sign-up and in their Log, "
+                 "in their own words. Use it a lot: "
                  "let it decide what you suggest, how big and when, and fit their goals, "
                  "habits and preferences. When a line is the reason for a suggestion, you "
                  "can say so plainly (\"you said mornings work best\"). A line marked "

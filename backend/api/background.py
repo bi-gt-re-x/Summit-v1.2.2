@@ -14,7 +14,7 @@ from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.config import subjects as subject_catalogue
 from backend.database import connection as db
-from backend.tracking import background
+from backend.tracking import background, journal
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['background'])
@@ -47,6 +47,27 @@ def facts_for(username):
     """The account's facts, in the order they were written."""
     return [{key: row.get(key) for key in ('id',) + FACT_FIELDS}
             for row in db.rows_for('user_facts', username, order='position, rowid')]
+
+
+def about_lines(username, subject=None):
+    """Everything the account has told Summit, as lines a model reads.
+
+    What it said at sign-up comes first, then what its Log has taught since.
+    Every AI brief should read this rather than the Log alone: a new account
+    has written nothing in its Log yet, and its sign-up answers were the only
+    thing Summit knew about it, which no prompt but the subject page's read.
+
+    `subject` is an id or a name. With one, facts about other subjects are
+    left out (backend/tracking/background.py `brief_lines`).
+    """
+    names = subject_names(username)
+    subject_id = None
+    wanted = (subject or '').strip().lower()
+    if wanted:
+        subject_id = next((sid for sid, name in names.items()
+                           if sid.lower() == wanted or str(name).lower() == wanted), None)
+    return (background.brief_lines(facts_for(username), subject_id, names)
+            + journal.brief_lines(username))
 
 
 def head_start(username):

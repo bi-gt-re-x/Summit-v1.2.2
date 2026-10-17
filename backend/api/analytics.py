@@ -44,7 +44,7 @@ from backend.goal_matcher import store as goal_store
 from backend.tracking import analytics as analytics_tracking
 from backend.tracking import subject_brief
 from backend.tracking import goal_plan
-from backend.tracking import journal
+from backend.api import background as background_api
 from backend.tracking import subject_goal
 from backend.tracking.auth import load_user
 
@@ -631,8 +631,8 @@ def write_subject_brief(body: SubjectBrief, username: str = Depends(current_user
         'bands': _rows(body.bands, BRIEF_BANDS),
         'struggles': _rows(body.struggles, BRIEF_REASONS),
         'goals': _rows(body.goals, BRIEF_GOALS),
-        # From the Log page, on the server: never sent by the client.
-        'about': journal.brief_lines(username),
+        # About you and the Log, on the server: never sent by the client.
+        'about': background_api.about_lines(username, body.subject),
     }
 
     try:
@@ -731,8 +731,8 @@ def write_goal_plan(body: GoalPlanBrief, username: str = Depends(current_usernam
         'recent_days': body.recent_days,
         'bands': _rows(body.bands, BRIEF_BANDS),
         'struggles': _rows(body.struggles, BRIEF_REASONS),
-        # From the Log page, on the server: never sent by the client.
-        'about': journal.brief_lines(username),
+        # About you and the Log, on the server: never sent by the client.
+        'about': background_api.about_lines(username, body.subject),
     }
 
     try:
@@ -800,8 +800,8 @@ def suggest_subject_goal(body: SubjectGoalDraft, username: str = Depends(current
                            for entry in (body.milestones or [])[:12] if str(entry).strip()],
             'aim': (body.aim or '').strip()[:BRIEF_TEXT],
             'level': (body.level or '').strip()[:BRIEF_TEXT],
-            # From the Log page, on the server: never sent by the client.
-            'about': journal.brief_lines(username),
+            # About you and the Log, on the server: never sent by the client.
+            'about': background_api.about_lines(username, body.subject),
             # Same bound and same reason as the checkpoints above. Five rates,
             # five difficulty bands and twelve reasons are the whole of what
             # the page can hold, so anything past that is a client saying

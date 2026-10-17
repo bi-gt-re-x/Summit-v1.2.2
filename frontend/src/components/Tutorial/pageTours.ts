@@ -343,7 +343,7 @@ const skillTree: Step[] = [
     kind: 'next',
     target: ['.stx-layout'],
     title: 'The map',
-    body: 'Click any skill to open it. You get practice problems, and solving them levels the skill up.',
+    body: 'Click any skill and it opens just below the map. You get practice problems, and solving them levels the skill up.',
   },
   {
     id: 'stx-legend',

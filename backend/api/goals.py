@@ -54,7 +54,7 @@ from backend.goal_matcher import service as goal_matcher
 from backend.goal_matcher.queue import work as goal_queue
 from backend.goal_matcher import store as goal_store
 from backend.tracking import focus as focus_tracking
-from backend.tracking import journal
+from backend.api import background as background_api
 from backend.tracking import goal_health
 from backend.tracking import planner
 from backend.tracking import record
@@ -1357,7 +1357,7 @@ def suggest_milestones(body: SuggestMilestones, username: str = Depends(current_
         titles = planner.suggest_milestones(
             title, why=why, description=description, category=category,
             unit=unit, target=target, deadline=deadline, record=lines,
-            about=journal.brief_lines(username), starting=(body.starting or '').strip()[:1000])
+            about=background_api.about_lines(username), starting=(body.starting or '').strip()[:1000])
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
     return ok(milestones=titles)
@@ -1387,7 +1387,7 @@ def draft_goal(body: DraftGoal, username: str = Depends(current_username)):
         return fail("That's too long. A few sentences in each box is plenty.")
 
     try:
-        drafted = planner.draft_goal(idea, about=journal.brief_lines(username),
+        drafted = planner.draft_goal(idea, about=background_api.about_lines(username),
                                      starting=starting)
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
@@ -1460,7 +1460,7 @@ def suggest_steps(body: SuggestSteps, username: str = Depends(current_username))
             title, goal=goal_title, why=why, description=description,
             category=category, unit=unit, target=target, deadline=deadline,
             before=before, after=after, record=lines,
-            about=journal.brief_lines(username))
+            about=background_api.about_lines(username))
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
     return ok(steps=titles)

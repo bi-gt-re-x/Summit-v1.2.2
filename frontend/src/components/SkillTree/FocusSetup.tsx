@@ -33,7 +33,7 @@
  * pick out rather than being refused, because a disabled subject that gives no
  * reason reads as a broken button.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { iconUrl as subjectIconUrl, type Subject } from '@/services/subjects';
 import { FOCUS_COUNT } from '@/utils/focusTopics';
 
@@ -46,6 +46,11 @@ export interface FocusSetupProps {
    * screen that opens with its answer filled in is a screen nobody reads.
    */
   suggested: string[];
+  /**
+   * Subjects the reader named at sign-up. These are their own words rather
+   * than a guess, so they start in the slots; the rest stay empty to choose.
+   */
+  told?: string[];
   /** The chosen five, in the order they were picked. */
   onDone: (ids: string[]) => void;
   /**
@@ -56,8 +61,14 @@ export interface FocusSetupProps {
   onSkip?: () => void;
 }
 
-export function FocusSetup({ subjects, suggested, onDone, onSkip }: FocusSetupProps) {
-  const [picked, setPicked] = useState<string[]>([]);
+export function FocusSetup({ subjects, suggested, told = [], onDone, onSkip }: FocusSetupProps) {
+  const [picked, setPicked] = useState<string[]>(() => told.slice(0, FOCUS_COUNT));
+  /* The About you read can land after the first paint. Fill the slots then,
+     but only if the reader hasn't started picking. */
+  const toldKey = told.join(',');
+  useEffect(() => {
+    if (toldKey) setPicked((current) => (current.length ? current : toldKey.split(',').slice(0, FOCUS_COUNT)));
+  }, [toldKey]);
   const [filter, setFilter] = useState('');
 
   const byId = useMemo(() => new Map(subjects.map((subject) => [subject.id, subject])), [subjects]);
@@ -107,6 +118,11 @@ export function FocusSetup({ subjects, suggested, onDone, onSkip }: FocusSetupPr
         <p className="stx-setup-lead">
           They sit at the top of the page so you can jump back to them fast. Swap them anytime. Every other subject is one search away.
         </p>
+        {told.length > 0 && (
+          <p className="stx-setup-lead">
+            We filled in what you told us when you signed up. Change any of them.
+          </p>
+        )}
       </header>
 
       {/* The five slots, filled left to right as they are picked. Drawn as
@@ -164,7 +180,7 @@ export function FocusSetup({ subjects, suggested, onDone, onSkip }: FocusSetupPr
             className="stx-setup-suggest"
             onClick={() => setPicked(suggested.slice(0, FOCUS_COUNT))}
           >
-            Use the five I work on most
+            {told.length ? 'Fill the rest for me' : 'Use the five I work on most'}
           </button>
         )}
         <span className="stx-setup-count" role="status">

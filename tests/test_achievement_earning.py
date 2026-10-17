@@ -17,8 +17,8 @@ that never lets the work run and a guard that never stops it are both bugs, and
 only a test tells them apart.
 
 **The graded metrics come from the analytics engine.** Nine of them are
-thresholds on figures `analytics.ratings` publishes rather than on anything
-recounted here. If that wiring breaks, every badge on it silently reads zero
+thresholds on figures `analytics.score_window` works out, over finished 30-day
+stretches, rather than on anything recounted here. If that wiring breaks, every badge on it silently reads zero
 and simply stays locked — no error, no wrong number on screen, nothing to
 notice. That is exactly the kind of failure worth a test.
 """
@@ -180,24 +180,58 @@ def test_every_graded_metric_has_a_figure(app):
         assert isinstance(figures[metric], int), metric
 
 
-def test_the_graded_figures_are_the_report_cards_own(app):
-    """Read off `analytics.ratings` rather than recounted, which is the whole
-    reason these badges exist in the form they do — a threshold on a published
-    figure, not a second definition of a word the analytics page already
-    defines, scores and grades."""
-    from backend.tracking import analytics as analytics_tracking
+def _new_account(username, days_old):
+    """An account opened `days_old` days ago."""
+    from datetime import date, timedelta
+    make_account(username)
+    user = _user(username)
+    opened = date.today() - timedelta(days=days_old)
+    db.update_row('users', user['id'], {'created_at': opened.isoformat() + 'T00:00:00'})
+    return opened
 
-    make_account('graded')
-    for _ in range(6):
-        _finish('graded', difficulty=4, execution=5)
 
-    card = analytics_tracking.ratings('graded', record=False)
-    figures = achievements._figures('graded', _user('graded'))
+def _work_every_day(username, opened, days):
+    from datetime import timedelta
+    for offset in range(days):
+        stamp = (opened + timedelta(days=offset)).isoformat() + 'T10:00:00'
+        _finish(username, difficulty=4, execution=5, created_at=stamp, completed_at=stamp)
 
-    assert figures['growth_score'] == round(card['overall']['score'])
-    assert figures['quality_score'] == round(card['metrics']['quality']['score'])
-    assert figures['consistency_rate'] == round(card['metrics']['consistency']['rate'])
-    assert figures['rated'] == card['metrics']['quality']['rated_tasks']
+
+def test_a_first_day_earns_no_score_badges(app):
+    """The swarm this rule exists to stop: one finished task on day one read as
+    100% consistency on the live card and handed out seven graded badges."""
+    opened = _new_account('dayone', 0)
+    _work_every_day('dayone', opened, 1)
+
+    _figures, fresh = achievements.check_earned('dayone', _user('dayone'), force=True)
+
+    graded = [b['id'] for b in fresh if b['metric'] in achievements.GRADED_SCORES]
+    assert graded == []
+
+
+def test_a_full_month_earns_the_one_month_rungs_only(app):
+    """Thirty days worked out of thirty is a perfect first stretch. That is
+    Most Days, and it is not Nearly Every Day, which asks for three in a row."""
+    opened = _new_account('month', 31)
+    _work_every_day('month', opened, 30)
+
+    figures, fresh = achievements.check_earned('month', _user('month'), force=True)
+    ids = {b['id'] for b in fresh}
+
+    assert figures['consistency_rate'] == 100
+    assert figures['consistency_rate@3'] == 0
+    assert {'rate-50', 'rate-75'} <= ids
+    assert 'rate-95' not in ids
+    assert 'cons-90' not in ids
+
+
+def test_three_steady_months_earn_the_legendary_rung(app):
+    opened = _new_account('steady', 91)
+    _work_every_day('steady', opened, 90)
+
+    _figures, fresh = achievements.check_earned('steady', _user('steady'), force=True)
+
+    assert 'rate-95' in {b['id'] for b in fresh}
 
 
 def test_every_badge_has_a_figure_to_be_measured_against(app):

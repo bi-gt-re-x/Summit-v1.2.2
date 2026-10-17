@@ -205,6 +205,7 @@ import {
    reader has edited out of their own browser, this one fetches the written
    programme the server holds for everybody. */
 import * as writtenSteps from '@/services/skillSteps';
+import * as backgroundService from '@/services/background';
 import type { Programmes } from '@/services/skillSteps';
 import '@/styles/skilltree.css';
 
@@ -332,6 +333,31 @@ export default function SkillTrees() {
      one, the rail does not list one and the search cannot reach one. See
      `latticeSubjects` in skills/subjectMap for the whole argument. */
   const subjects = useMemo(() => latticeSubjects(catalogue), [catalogue]);
+
+  /* The subjects the account named at sign-up (About you, filed by
+     backend/tracking/background.py). A new account has no usage to order the
+     catalogue by, so without these the first-visit chooser suggested five
+     subjects picked by a tie-break between zeroes, while the reader had
+     already told Summit what they study. */
+  const [toldIds, setToldIds] = useState<string[]>([]);
+  useEffect(() => {
+    let live = true;
+    backgroundService
+      .read()
+      .then((result) => {
+        if (!live || !result.success) return;
+        const ids = (result.facts ?? []).map((fact) => fact.subject).filter((id): id is string => Boolean(id));
+        setToldIds([...new Set(ids)]);
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [username]);
+  const told = useMemo(
+    () => toldIds.filter((id) => subjects.some((subject) => subject.id === id)).slice(0, FOCUS_COUNT),
+    [toldIds, subjects],
+  );
   const [treeId, setTreeId] = useState<string>(DEFAULT_TREE.id);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -949,7 +975,8 @@ export default function SkillTrees() {
             /* What the band would have shown on its own — the account's own
                usage order, which is what `resolveFocus` tops an empty choice
                up from. Offered as a button inside the screen. */
-            suggested={resolveFocus(null, subjects.map((subject) => subject.id))}
+            suggested={resolveFocus(null, [...told, ...subjects.map((subject) => subject.id)])}
+            told={told}
             onDone={chooseFocus}
             onSkip={() => setSkippedSetup(true)}
           />

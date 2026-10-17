@@ -160,13 +160,13 @@ CATALOGUE = (
     ('streak-3',     'Three in a Row',        'Hold a 3-day streak.',                             'streak',      3,     1, 'Consistency'),
     ('streak-7',     'Week Warrior',          'Hold a 7-day streak.',                             'streak',      7,     1, 'Consistency'),
     ('streak-14',    'Two Weeks Strong',      'Hold a 14-day streak.',                            'streak',      14,    2, 'Consistency'),
-    ('streak-30',    'Unstoppable',           'Hold a 30-day streak.',                            'streak',      30,    2, 'Consistency'),
-    ('streak-60',    'Two Months Deep',       'Hold a 60-day streak.',                            'streak',      60,    3, 'Consistency'),
-    ('streak-100',   'Hundred Days',          'Hold a 100-day streak.',                           'streak',      100,   4, 'Consistency'),
+    ('streak-30',    'Unstoppable',           'Hold a 30-day streak.',                            'streak',      30,    3, 'Consistency'),
+    ('streak-60',    'Two Months Deep',       'Hold a 60-day streak.',                            'streak',      60,    4, 'Consistency'),
+    ('streak-100',   'Hundred Days',          'Hold a 100-day streak.',                           'streak',      100,   5, 'Consistency'),
     ('streak-365',   'Year of Fire',          'Hold a 365-day streak.',                           'streak',      365,   5, 'Consistency'),
-    ('days-30',      'Regular',               'Do work on 30 separate days.',                     'active_days', 30,    1, 'Consistency'),
-    ('days-100',     'Hundred Days In',       'Do work on 100 separate days.',                    'active_days', 100,   2, 'Consistency'),
-    ('days-250',     'Devoted',               'Do work on 250 separate days.',                    'active_days', 250,   3, 'Consistency'),
+    ('days-30',      'Regular',               'Do work on 30 separate days.',                     'active_days', 30,    2, 'Consistency'),
+    ('days-100',     'Hundred Days In',       'Do work on 100 separate days.',                    'active_days', 100,   3, 'Consistency'),
+    ('days-250',     'Devoted',               'Do work on 250 separate days.',                    'active_days', 250,   4, 'Consistency'),
     ('days-500',     'Half a Thousand Days',  'Do work on 500 separate days.',                    'active_days', 500,   5, 'Consistency'),
     ('goal-day-5',   'On Target',             'Hit your daily focus goal 5 times.',               'perfect_days', 5,    1, 'Consistency'),
     ('goal-day-25',  'Consistent Aim',        'Hit your daily focus goal 25 times.',              'perfect_days', 25,   2, 'Consistency'),
@@ -303,36 +303,37 @@ CATALOGUE = (
 
     # ---- Analytics: not how much, but how well it scored -----------------
     #
-    # Every threshold here is on a figure `analytics.ratings` publishes — see
-    # the module note. Nothing is recounted, so a badge asking for 80%
-    # consistency is asking for the number printed on the analytics page, and
-    # the reader can open the working behind it.
+    # Every threshold here is scored the way the analytics card scores, by
+    # `analytics.score_window`, but over finished 30-day stretches since the
+    # account opened rather than the live window. See `_graded`: nothing here
+    # can be earned before day thirty, and an Elite or Legendary score has to
+    # be held two or three stretches in a row (BLOCKS_FOR_TIER).
     #
     # The grade ladders stop at 90 rather than at 100. A metric's score is a
     # blend, and the top of several of them is only reachable in a window where
     # nothing went wrong at all; a badge nobody can earn is a badge that makes
     # the wall feel rigged rather than hard. The S grade is the one exception,
     # and it is deliberately the single hardest visible badge on the wall.
-    ('score-40',     'Graded',                'Reach a Growth Score of 40.',                      'growth_score', 40,   1, 'Analytics'),
-    ('score-60',     'Passing Grade',         'Reach a Growth Score of 60.',                      'growth_score', 60,   2, 'Analytics'),
-    ('score-75',     'Solid Record',          'Reach a Growth Score of 75.',                      'growth_score', 75,   3, 'Analytics'),
-    ('score-85',     'Straight B',            'Reach a Growth Score of 85.',                      'growth_score', 85,   4, 'Analytics'),
-    ('score-90',     'Top of the Class',      'Reach a Growth Score of 90.',                      'growth_score', 90,   5, 'Analytics'),
-    ('prod-70',      'Productive',            'Score 70 on productivity.',                        'productivity_score', 70, 2, 'Analytics'),
-    ('prod-90',      'Prolific',              'Score 90 on productivity.',                        'productivity_score', 90, 4, 'Analytics'),
-    ('qual-70',      'Good Work',             'Score 70 on quality.',                             'quality_score', 70,  2, 'Analytics'),
-    ('qual-90',      'Excellent Work',        'Score 90 on quality.',                             'quality_score', 90,  4, 'Analytics'),
-    ('cons-70',      'Reliable',              'Score 70 on consistency.',                         'consistency_score', 70, 2, 'Analytics'),
-    ('cons-90',      'Metronome',             'Score 90 on consistency.',                         'consistency_score', 90, 4, 'Analytics'),
-    ('eff-70',       'Efficient',             'Score 70 on efficiency.',                          'efficiency_score', 70, 2, 'Analytics'),
-    ('eff-90',       'Sharp',                 'Score 90 on efficiency.',                          'efficiency_score', 90, 4, 'Analytics'),
-    ('foc-70',       'Focused',               'Score 70 on focus.',                               'focus_score',  70,   2, 'Analytics'),
-    ('foc-90',       'Locked In',             'Score 90 on focus.',                               'focus_score',  90,   4, 'Analytics'),
-    ('rate-50',      'Half the Days',         'Show up on 50% of your days.',                     'consistency_rate', 50, 1, 'Analytics'),
-    ('rate-75',      'Most Days',             'Show up on 75% of your days.',                     'consistency_rate', 75, 3, 'Analytics'),
-    ('rate-90',      'Nearly Every Day',      'Show up on 90% of your days.',                     'consistency_rate', 90, 5, 'Analytics'),
-    ('ontime-75',    'Punctual',              'Meet 75% of your deadlines.',                      'on_time',      75,   2, 'Analytics'),
-    ('ontime-90',    'Dependable',            'Meet 90% of your deadlines.',                      'on_time',      90,   4, 'Analytics'),
+    ('score-40',     'Graded',                'Reach a Growth Score of 40 over a month.',         'growth_score', 40,   1, 'Analytics'),
+    ('score-60',     'Passing Grade',         'Reach a Growth Score of 60 over a month.',         'growth_score', 60,   2, 'Analytics'),
+    ('score-75',     'Solid Record',          'Reach a Growth Score of 75 over a month.',         'growth_score', 75,   3, 'Analytics'),
+    ('score-85',     'Straight B',            'Keep a Growth Score of 85 two months running.',    'growth_score', 85,   4, 'Analytics'),
+    ('score-90',     'Top of the Class',      'Keep a Growth Score of 90 three months running.',  'growth_score', 90,   5, 'Analytics'),
+    ('prod-70',      'Productive',            'Score 70 on productivity over a month.',           'productivity_score', 70, 2, 'Analytics'),
+    ('prod-90',      'Prolific',              'Keep 90 on productivity two months running.',      'productivity_score', 90, 4, 'Analytics'),
+    ('qual-70',      'Good Work',             'Score 70 on quality over a month.',                'quality_score', 70,  2, 'Analytics'),
+    ('qual-90',      'Excellent Work',        'Keep 90 on quality two months running.',           'quality_score', 90,  4, 'Analytics'),
+    ('cons-70',      'Reliable',              'Score 70 on consistency over a month.',            'consistency_score', 70, 2, 'Analytics'),
+    ('cons-90',      'Metronome',             'Keep 90 on consistency two months running.',       'consistency_score', 90, 4, 'Analytics'),
+    ('eff-70',       'Efficient',             'Score 70 on efficiency over a month.',             'efficiency_score', 70, 2, 'Analytics'),
+    ('eff-90',       'Sharp',                 'Keep 90 on efficiency two months running.',        'efficiency_score', 90, 4, 'Analytics'),
+    ('foc-70',       'Focused',               'Score 70 on focus over a month.',                  'focus_score',  70,   2, 'Analytics'),
+    ('foc-90',       'Locked In',             'Keep 90 on focus two months running.',             'focus_score',  90,   4, 'Analytics'),
+    ('rate-50',      'Half the Days',         'Show up on half your days in a month.',            'consistency_rate', 50, 1, 'Analytics'),
+    ('rate-75',      'Most Days',             'Show up on 75% of your days in a month.',          'consistency_rate', 75, 3, 'Analytics'),
+    ('rate-95',      'Nearly Every Day',      'Show up on 95% of your days three months running.', 'consistency_rate', 95, 5, 'Analytics'),
+    ('ontime-80',    'Punctual',              'Meet 80% of your deadlines in a month.',           'on_time',      80,   3, 'Analytics'),
+    ('ontime-95',    'Dependable',            'Meet 95% of your deadlines three months running.', 'on_time',      95,   5, 'Analytics'),
     ('rated-25',     'Marking Your Work',     'Rate 25 finished tasks.',                          'rated',        25,   1, 'Analytics'),
     ('rated-100',    'Honest Record',         'Rate 100 finished tasks.',                         'rated',        100,  2, 'Analytics'),
     ('rated-500',    'Nothing Unexamined',    'Rate 500 finished tasks.',                         'rated',        500,  4, 'Analytics'),
@@ -375,6 +376,21 @@ GRADED_METRICS = (
     'growth_score', 'productivity_score', 'quality_score', 'consistency_score',
     'efficiency_score', 'focus_score', 'consistency_rate', 'on_time', 'rated',
 )
+
+#: The graded metrics that are scores, judged a stretch at a time. `rated` is
+#: the one count among them.
+GRADED_SCORES = tuple(m for m in GRADED_METRICS if m != 'rated')
+
+#: How many 30-day stretches in a row a score badge has to be held for, by
+#: tier. Up to Serious, one good month does it. Elite asks for two and
+#: Legendary for three, which is what makes them harder than the same number
+#: hit once.
+BLOCKS_FOR_TIER = {1: 1, 2: 1, 3: 1, 4: 2, 5: 3}
+
+#: The least a stretch needs before its score counts: days with XP for
+#: productivity, rated tasks for quality, deadlines for efficiency, focus days
+#: for focus. Fewer than that and a score is luck rather than a level.
+MIN_SAMPLE = 10
 
 #: What each metric is called on the page, so a locked badge can say "412 / 500
 #: tasks" without the client holding a second copy of this list.
@@ -431,9 +447,13 @@ def _rows():
     """
     out = []
     for badge_id, name, description, metric, threshold, tier, category in CATALOGUE:
+        run = BLOCKS_FOR_TIER[tier] if metric in GRADED_SCORES else 1
         out.append({
             'id': badge_id, 'name': name, 'description': description,
             'metric': metric, 'threshold': threshold, 'tier': tier,
+            # The figure it is earned off: the metric itself, or its best run
+            # of `run` stretches in a row. See `_graded`.
+            'measure': metric if run == 1 else '{}@{}'.format(metric, run),
             'category': category, 'xp_reward': TIER_XP[tier],
             'hidden': False, 'title': None,
         })
@@ -441,7 +461,7 @@ def _rows():
         out.append({
             'id': badge_id, 'name': name, 'description': description,
             'metric': metric, 'threshold': threshold, 'tier': 5,
-            'category': 'Special',
+            'measure': metric, 'category': 'Special',
             # Worth more than any visible badge, and the title-bearer worth ten
             # times a Legendary. The score is a weighing of a wall; a wall with
             # Ascended on it is not the same wall.
@@ -605,49 +625,63 @@ def _tree_standing(done):
     )
 
 
-def _graded(username, tasks=None, events=None, focus_history=None):
-    """The nine figures that come off the analytics report card.
+def _block_figures(block):
+    """One finished 30-day stretch as the figures a badge reads.
 
-    Read through `analytics.ratings` rather than recounted here, which is the
-    whole point of them — see "The graded metrics" in the module note.
-
-    `record=False` because reading the card normally files a dated snapshot per
-    metric (backend/tracking/analytics.py), and this is not a reader looking at
-    their report card. Letting the badge check write snapshots would put a row
-    in the history for every notification sweep, which would turn the analytics
-    page's own history chart into a record of how often the bell was polled.
-
-    An account too new to be scored gets zeros. That is the honest answer and
-    not a failure: every badge on these metrics is then simply unearned, which
-    is what an unscored account should see.
+    A score only counts where there was enough in the stretch to score: two
+    deadlines met out of two is "100% on time", and a badge for that would be
+    a badge for having two deadlines. Below MIN_SAMPLE the figure is zero, and
+    the growth score is the mean of the five parts after that floor.
     """
-    # The rows come from `_figures`, which has already read them; see the note
-    # there. `ratings` reads them itself when they are not handed over, so the
-    # other caller of this function is unaffected.
-    card = analytics_tracking.ratings(username, record=False, tasks=tasks,
-                                      events=events, focus_history=focus_history)
-    if not card:
-        return dict.fromkeys(GRADED_METRICS, 0)
-
-    metrics = card.get('metrics') or {}
-
-    def score(name):
-        return int(round(float((metrics.get(name) or {}).get('score') or 0)))
-
-    quality = metrics.get('quality') or {}
-    consistency = metrics.get('consistency') or {}
-    efficiency = metrics.get('efficiency') or {}
+    parts = dict(block['parts'])
+    fig = block['figures']
+    if fig['productivity']['earning_days'] < MIN_SAMPLE:
+        parts['productivity'] = 0
+    if fig['quality']['rated_tasks'] < MIN_SAMPLE:
+        parts['quality'] = 0
+    if fig['efficiency']['deadline_tracked'] < MIN_SAMPLE:
+        parts['efficiency'] = 0
+    if fig['focus']['focus_days'] < MIN_SAMPLE:
+        parts['focus'] = 0
     return {
-        'growth_score': int(round(float((card.get('overall') or {}).get('score') or 0))),
-        'productivity_score': score('productivity'),
-        'quality_score': score('quality'),
-        'consistency_score': score('consistency'),
-        'efficiency_score': score('efficiency'),
-        'focus_score': score('focus'),
-        'consistency_rate': int(round(float(consistency.get('rate') or 0))),
-        'on_time': int(round(float(efficiency.get('on_time_pct') or 0))),
-        'rated': int(quality.get('rated_tasks') or 0),
+        'growth_score': int(round(sum(parts.values()) / len(parts))),
+        'productivity_score': int(parts['productivity']),
+        'quality_score': int(parts['quality']),
+        'consistency_score': int(parts['consistency']),
+        'efficiency_score': int(parts['efficiency']),
+        'focus_score': int(parts['focus']),
+        'consistency_rate': int(fig['consistency']['rate']),
+        'on_time': int(parts['efficiency'] and fig['efficiency']['on_time_pct']),
     }
+
+
+def _graded(user, tasks, events, focus_history):
+    """The graded figures, judged on finished 30-day stretches.
+
+    Each score badge is earned off the account's own record a month at a
+    time (`analytics.block_scores`), never off the live card. The live card
+    scores a new account on however few days it has, so one finished task
+    read as 100% consistency and the wall handed out seven badges at once.
+
+    The figure for a metric is its best single stretch. The `@2` and `@3`
+    figures are the best run of two or three stretches in a row, taking the
+    lowest of each run: what an Elite or Legendary badge asks for is a level
+    held, not touched once. See BLOCKS_FOR_TIER.
+
+    `rated` is the exception: it is a count, not a score, so it is every
+    rated task on the record.
+    """
+    blocks = [_block_figures(block) for block in analytics_tracking.block_scores(
+        user, tasks, events, focus_history)]
+    out = {'rated': sum(1 for task in tasks if task.get('status') == 'done'
+                        and analytics_tracking.rating_of(task) is not None)}
+    for metric in GRADED_SCORES:
+        series = [block[metric] for block in blocks]
+        for run in (1, 2, 3):
+            best = max((min(series[i:i + run]) for i in range(len(series) - run + 1)),
+                       default=0)
+            out[metric if run == 1 else '{}@{}'.format(metric, run)] = best
+    return out
 
 
 #: The task columns every badge is counted off, plus the ones the report card
@@ -795,7 +829,7 @@ def _figures(username, user):
             if row.get('status') == 'completed'
         ),
         'records': len(db.rows_for('records', username)),
-        **_graded(username, tasks=mine, events=events, focus_history=focus_history),
+        **_graded(user, mine, events, focus_history),
     }
 
 
@@ -831,6 +865,11 @@ def _record_earned(username, earned_ids):
 #: it. That is why this is not a new column: the row already has a home.
 SIGNATURE_KEY = 'achievements_seen'
 
+#: Bumped when a badge's rule changes without the catalogue changing size, so
+#: every account is looked at again. 2 is score badges judged on 30-day
+#: stretches.
+RULES_VERSION = 2
+
 
 def _signature(username):
     """What the badges were last worked out against.
@@ -851,8 +890,9 @@ def _signature(username):
     everything added above would stay unearned on every existing account until
     that account happened to finish a task.
     """
-    return '{}|{}|{}'.format(
-        db.badge_signature(username), datetime.now().date().isoformat(), len(ALL))
+    return '{}|{}|{}|{}'.format(
+        db.badge_signature(username), datetime.now().date().isoformat(), len(ALL),
+        RULES_VERSION)
 
 
 def check_earned(username, user, force=False):
@@ -909,9 +949,19 @@ def check_earned(username, user, force=False):
     figures = _figures(username, user)
     earned_ids = [
         badge['id'] for badge in ALL
-        if figures.get(badge['metric'], 0) >= badge['threshold']
+        if figures.get(badge['measure'], 0) >= badge['threshold']
     ]
     before = {row.get('achievement_id') for row in db.rows_for('user_achievements', username)}
+
+    # Score badges are the one kind that can be taken back, and only these.
+    # Their figure is a best finished stretch, which never goes down, so a
+    # score badge on record that the stretches do not support was handed out
+    # by the old live-card rule, usually on an account's first day.
+    unsupported = {badge['id'] for badge in ALL if badge['metric'] in GRADED_SCORES}
+    for badge_id in (unsupported & before) - set(earned_ids):
+        db.delete_row('user_achievements', badge_id, user_id=username, key='achievement_id')
+        before.discard(badge_id)
+
     _record_earned(username, earned_ids)
 
     # Written after the work, not before: a signature stored ahead of a read
@@ -961,7 +1011,7 @@ def _wall(name, user, figures):
 
     badges = []
     for badge in ALL:
-        value = figures.get(badge['metric'], 0)
+        value = figures.get(badge['measure'], 0)
         earned = badge['id'] in dates
         # A locked hidden badge sends nothing that describes it. Its name, its
         # description and its threshold are all withheld, and so is progress:

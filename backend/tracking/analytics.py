@@ -557,6 +557,40 @@ def score_window(rollup, start, end, daily_goal):
     }
 
 
+#: How long a stretch the score badges are judged on.
+#:
+#: The badges used to read the live card, and a one-day-old account is scored
+#: on one day: finish a task and every rate and score reads 100, so the first
+#: afternoon handed out "Show up on 90% of your days" and six more beside it.
+#: Judging whole thirty-day stretches since the account opened means nothing
+#: graded is earned before day thirty, and then at most once a month.
+BLOCK_DAYS = 30
+
+
+def block_scores(user, tasks, events, focus_history, today=None, block_days=BLOCK_DAYS):
+    """Every finished `block_days` stretch since the account opened, scored.
+
+    Oldest first. A stretch is finished when its last day is before today, so
+    the one in progress is never scored: its rate is still moving. Each entry
+    is `score_window`'s own result, so a block is scored exactly the way the
+    card scores its window.
+    """
+    username = user.get('username')
+    today = today or date.today()
+    rollup = _daily_rollup(username, tasks=tasks, events=events,
+                           focus_history=focus_history)
+    daily_goal = user.get('daily_goal') or DEFAULT_DAILY_GOAL
+
+    out = []
+    start = created_date_for(user)
+    while True:
+        end = start + timedelta(days=block_days - 1)
+        if end >= today:
+            return out
+        out.append(score_window(rollup, start, end, daily_goal))
+        start = end + timedelta(days=1)
+
+
 # --------------------------------------------------------------------------
 # The report card
 # --------------------------------------------------------------------------
