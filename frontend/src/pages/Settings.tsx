@@ -732,7 +732,7 @@ export default function Settings() {
           },
           {
             id: 'email',
-            label: 'E-mail',
+            label: 'Email',
             hint: 'Changing this means verifying the new address again.',
             control: <span className="st-fixed">{sheet.email || 'None on file'}</span>,
           },

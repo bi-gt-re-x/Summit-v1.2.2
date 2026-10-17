@@ -394,7 +394,7 @@ export function AuthFlow({
             required
           />
           <label className="auth-label" htmlFor="createEmail">
-            E-mail
+            Email
           </label>
           <input
             className="auth-input"
@@ -479,12 +479,12 @@ export function AuthFlow({
           {mailFailed ? (
             <>
               Your account is ready, but the confirmation email to{' '}
-              <strong id="inboxEmail">{pendingEmail || 'your e-mail'}</strong> couldn't be sent. Try again in a moment.
+              <strong id="inboxEmail">{pendingEmail || 'your email'}</strong> couldn't be sent. Try again in a moment.
             </>
           ) : (
             <>
               We sent a verification link to{' '}
-              <strong id="inboxEmail">{pendingEmail || 'your e-mail'}</strong>. Open it to
+              <strong id="inboxEmail">{pendingEmail || 'your email'}</strong>. Open it to
               confirm your address.
             </>
           )}
