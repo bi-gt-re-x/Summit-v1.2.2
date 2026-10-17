@@ -63,11 +63,12 @@ that *is* stored is the recommendation itself — see backend/api/subject_ai.py
 effectiveness can never be checked, and that check is the last item on the
 list above.
 """
+import json
 import re
 from typing import Any, Dict, List
 
 from backend.config.shared import RULES
-from backend.tracking import figures, planner
+from backend.tracking import figures, free_resources, planner
 from backend.tracking.subject_brief import BriefUnavailable, _object
 from backend.tracking.plainwords import STYLE, plain
 
@@ -1284,7 +1285,7 @@ def _resources(entry: Dict[str, Any], owned: set) -> List[Dict[str, Any]]:
         if not isinstance(item, dict):
             continue
         url = _link(item.get('url'))
-        if not url:
+        if not url or free_resources.competitor(url):
             continue
         key = _link_key(url)
         if key in seen:
@@ -1319,6 +1320,9 @@ READER_WORDS = (
     (re.compile(r'\bavg\.?(?=\s)', re.IGNORECASE), 'average'),
     (re.compile(r'\bexecution ratings?\b', re.IGNORECASE), 'rating'),
     (re.compile(r'\bexecution\b', re.IGNORECASE), 'rating'),
+    # "Algorithms lecture group" is the brief's grouping, not the reader's words.
+    (re.compile(r'\b(lecture|session|task|set|run|review|class|practice)(s?) groups?\b',
+                re.IGNORECASE), r'\1\2'),
     (re.compile(r'≥\s*(\d+(?:\.\d+)?)'), r'\1 or more'),
     (re.compile(r'≤\s*(\d+(?:\.\d+)?)'), r'\1 or less'),
 )
@@ -1344,6 +1348,12 @@ def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dic
         title = str(entry.get('title') or '').strip()
         if not title:
             continue
+        # A session built on another productivity app ("Weekly review with
+        # Todoist") isn't one Summit hands out. See free_resources, point 4.
+        # Its links are judged one by one in `_resources`.
+        words = {key: value for key, value in entry.items() if key != 'resources'}
+        if free_resources.names_competitor(json.dumps(words, ensure_ascii=False)):
+            continue
         kind = str(entry.get('type') or '').strip()
         reason = str(entry.get('reason') or '').strip()
         # A prediction about a figure, so it is held to the record the same way
@@ -1357,6 +1367,14 @@ def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dic
         # is the model's job rather than a claim about the reader.
         if not counted(reason):
             reason = ''
+        plan = _plan(entry.get('plan'))
+        success = [reader_words(str(item).strip())[:STEP_FIELD]
+                   for item in (entry.get('success') or []) if str(item).strip()][:SUCCESS]
+        # The ledger keeps one prediction per step for the outcome loop. A
+        # step written as success criteria lends it the first one the record
+        # can stand behind.
+        if not signal:
+            signal = next((line for line in success if counted(line)), '')
         steps.append({
             'title': title,
             # What to do, how fast and from where. Instructions rather than
@@ -1379,8 +1397,45 @@ def _steps(found: Dict[str, Any], counted, owned: set = frozenset()) -> List[Dic
             'signal': reader_words(signal),
             'drills': [reader_words(str(item).strip()) for item in (entry.get('drills') or [])
                        if str(item).strip()][:4],
+            'equipment': _real_source(str(entry.get('equipment') or '').strip()[:STEP_FIELD]),
+            'plan': plan,
+            'success': success,
         })
     return steps
+
+
+#: The most parts a session plan has, and the most success criteria.
+PLAN_PARTS = 6
+SUCCESS = 4
+
+
+def _plan(value: Any) -> List[Dict[str, Any]]:
+    """A step's timed plan: up to PLAN_PARTS parts, each a short label, its
+    minutes (None when no set time helps) and what to do. A part with nothing
+    to do is dropped, and so is one whose label is all there is."""
+    parts = []
+    for item in (value or []):
+        if len(parts) >= PLAN_PARTS:
+            break
+        if not isinstance(item, dict):
+            continue
+        what = reader_words(str(item.get('what') or '').strip())
+        if not what:
+            continue
+        label = str(item.get('label') or '').strip().rstrip(':')[:40]
+        parts.append({'label': label, 'minutes': _part_minutes(item.get('minutes')),
+                      'what': what[:400]})
+    return parts
+
+
+def _part_minutes(value: Any):
+    """A part's minutes, or None. Shorter than a session can be (a two-minute
+    log), but never longer than one."""
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        return None
+    return min(number, MINUTES[1]) if number > 0 else None
 
 
 # ---------------------------------------------------------------------------
@@ -1406,7 +1461,7 @@ STEPS_SECTIONS = ('subject_profile', 'about_the_reader', 'difficulty_analysis', 
 STEPS_RECENT = 15
 
 #: Room for the reasoning and three steps, and under Groq's ceiling with the
-#: prompt included.
+#: prompt included. Three steps with timed plans come to about 1,200.
 STEPS_MAX_TOKENS = 3000
 
 STEPS_SYSTEM = """\
@@ -1466,6 +1521,16 @@ URL exactly), then any other free site you are sure of. When a task title \
 names a paid book the reader already works from, `problems` can still name \
 it, but the link goes to a free source of the same material.
 
+NO OTHER PRODUCTIVITY APPS
+The reader plans, schedules, times and writes everything in this app, \
+Summit. Never name or link another productivity app: no task managers, \
+calendars, focus timers, note or journal apps, habit or time trackers \
+(Todoist, Notion, Trello, Google Calendar, Pomofocus, Forest, Obsidian, \
+Evernote and the like). A planning, review or journaling session happens in \
+Summit's own Tasks, Calendar, Goals and Log pages, so its `resources` can be \
+empty. Study tools that aren't productivity apps (Anki, Desmos, a past \
+paper, a video) are fine.
+
 <already_showing> is on the reader's screen. Yours go underneath, so do not \
 repeat or rephrase any of them. <previous_recommendations> and \
 <recommendation_outcomes> say what was advised before and whether it was \
@@ -1495,14 +1560,22 @@ helps.
   - `reason`: one sentence, to the reader, on why this session and why now, \
 quoting a figure from the brief. Every number you write about the reader \
 must appear in the brief; do not compute new ones.
-  - `signal`: one sentence, to the reader, on what would show it is working \
-and which way it should move.
-  - `drills`: two to four concrete things to do inside the session, each \
-specific to this material. "Solve each problem", "Check answers", "Review \
-mistakes" and "self-rate after each" are padding — cut them.
+  - `equipment`: what to have ready when it isn't a link, like "Pull-up bar \
+or resistance band, optional dumbbells". "" otherwise.
+  - `plan`: the session, in order, as two to six parts that add up to \
+`duration_minutes`. Each part has a `label` of one or two words ("Warm-up", \
+"Solve", "Review", "Log"), its `minutes` (0 when no set time helps), and \
+`what`: one or two sentences on exactly how to do it with this material. \
+"Attempt all five problems. Write pseudocode and check edge cases before \
+looking at solutions." Not "Solve each problem" or "Review mistakes": say \
+how.
+  - `success`: two or three short criteria a person can check off when the \
+session ends. "Attempt all five problems." "Name what went wrong on each \
+unsolved one." Things they did, not how they feel, and no numbers about \
+the reader that the brief doesn't show.
 
 HOW THE WORDS READ
-The reader sees `reason`, `signal` and `drills` as written, beside the \
+The reader sees `reason`, `plan` and `success` as written, beside the \
 title. Write them the way a coach would say them out loud. The brief's own \
 labels are for you, not for them:
   - Name work by its plain name: "your Math 55 lectures", not "Math # \
@@ -1511,7 +1584,7 @@ and never as a "group".
   - Say what a figure means: "you rate them 3.8 out of 5 on average", not \
 "avg execution 3.8"; "33 done in 90 days", not "count 33".
   - No symbols for words: "4 or higher", not "≥4".
-  - Never use the words "execution", "avg" or "group" in these three \
+  - Never use the words "execution", "avg" or "group" in these \
 fields. Execution is how the reader rated how a task went, out of 5: \
 write "you rate them 3.3 out of 5" or "they go well".
   Bad:  Group "[Mathematics] Math # lecture" has avg execution 3.8 and is \
@@ -1519,7 +1592,7 @@ done often, so move to the next range.
   Good: You've done 33 Math 55 lectures and rate them 3.8 out of 5, so \
 they are comfortable — the next chapter will teach you more.
   Bad:  Average execution on this set rises to ≥4.
-  Good: You rate these sessions 4 or 5 out of 5.
+  Good: Attempt every problem before checking a solution.
 
 Plain words, short sentences, no encouragement."""
 STEPS_SYSTEM += STYLE
@@ -1537,9 +1610,37 @@ one done most — and do not put the brackets in your titles. Set `focus` to \
 the subject's name exactly as the brackets write it, so the app can file the \
 session under that subject."""
 
+def _steps_item() -> Dict[str, Any]:
+    """A step as the steps call asks for it: the reading's step, with a timed
+    `plan` and checkable `success` criteria in place of `drills` and
+    `signal`, and `equipment` for sessions that need kit rather than a link."""
+    item = json.loads(json.dumps(SCHEMA['properties']['next_steps']['items']))
+    props = item['properties']
+    props.pop('signal', None)
+    props.pop('drills', None)
+    props['equipment'] = {'type': 'string'}
+    props['plan'] = {
+        'type': 'array',
+        'items': {
+            'type': 'object',
+            'properties': {
+                'label': {'type': 'string'},
+                'minutes': {'type': 'integer'},
+                'what': {'type': 'string'},
+            },
+            'required': ['label', 'minutes', 'what'],
+            'additionalProperties': False,
+        },
+    }
+    props['success'] = {'type': 'array', 'items': {'type': 'string'}}
+    item['required'] = [key for key in item['required'] if key not in ('signal', 'drills')] \
+        + ['equipment', 'plan', 'success']
+    return item
+
+
 STEPS_SCHEMA = {
     'type': 'object',
-    'properties': {'next_steps': SCHEMA['properties']['next_steps']},
+    'properties': {'next_steps': {'type': 'array', 'items': _steps_item()}},
     'required': ['next_steps'],
     'additionalProperties': False,
 }

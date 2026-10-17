@@ -22,6 +22,11 @@ const step = (n: number, over: Partial<NextStep> = {}): NextStep => ({
   ...over,
 });
 
+/** The "Label: ..." line that starts with `label`. */
+function lineOf(label: string): HTMLElement {
+  return screen.getByText(label).closest('.sx-step-line') as HTMLElement;
+}
+
 function draw(steps: NextStep[]) {
   return render(
     <NextSteps steps={steps} status={new Map()} busy="" onPlan={() => {}} onDidIt={() => {}} />,
@@ -32,8 +37,8 @@ describe('a recommended session', () => {
   it('says what to work, how fast and where to get it', () => {
     draw([step(1)]);
     expect(screen.getByText('Stewart Calculus, Chapter 7, problems 1-8')).toBeInTheDocument();
-    expect(screen.getByText('8 min per problem')).toBeInTheDocument();
-    expect(screen.getByText('James Stewart, Calculus, 8th edition')).toBeInTheDocument();
+    expect(lineOf('Pace:')).toHaveTextContent('Pace: 8 min per problem');
+    expect(lineOf('Where to get it:')).toHaveTextContent('James Stewart, Calculus, 8th edition');
   });
 
   it('does not print the problems twice when the title already says them', () => {
@@ -49,7 +54,7 @@ describe('a recommended session', () => {
   it('still draws a step written before the three fields existed', () => {
     const { container } = draw([step(1, { problems: undefined, pace: undefined, resource: undefined })]);
     expect(container.querySelector('.sx-step-what')).toBeNull();
-    expect(container.querySelector('.sx-step-resource')).toBeNull();
+    expect(container.querySelector('.sx-step-line')).toBeNull();
     expect(screen.getByText(/Stewart Ch. 7/)).toBeInTheDocument();
   });
 });
@@ -125,19 +130,18 @@ describe('where to get it', () => {
     expect(anchors[0]).toHaveAttribute('href', 'https://imslp.org/wiki/BWV_1041');
     expect(anchors[0]).toHaveAttribute('target', '_blank');
     expect(anchors[0]).toHaveAttribute('rel', 'noopener noreferrer');
-    expect(screen.getByText('Best')).toBeInTheDocument();
   });
 
   it('marks the ones the reader already keeps', () => {
     draw([step(1, { resources: links })]);
-    expect(screen.getAllByText('Yours')).toHaveLength(1);
+    expect(screen.getAllByText(/· Yours/)).toHaveLength(1);
   });
 
   it('never draws a link that is not http(s)', () => {
     draw([step(1, { resources: [{ name: 'bad', url: 'javascript:alert(1)' }] })]);
     expect(screen.queryByRole('link')).toBeNull();
     // Falls back to the old named source.
-    expect(screen.getByText('James Stewart, Calculus, 8th edition')).toBeInTheDocument();
+    expect(lineOf('Where to get it:')).toHaveTextContent('James Stewart, Calculus, 8th edition');
   });
 
   it('names a link after its site when it has no name', () => {
@@ -147,10 +151,44 @@ describe('where to get it', () => {
 });
 
 describe('the words around a step', () => {
-  it('labels why it was chosen and how to tell it is working', () => {
+  it('labels why it was chosen and what success looks like', () => {
     draw([step(1, { reason: 'You rate these 3.8 out of 5.', signal: 'You rate them 4 or 5.' })]);
-    expect(screen.getByText('Why this one')).toBeInTheDocument();
-    expect(screen.getByText("How you'll know it's working")).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Why this recommendation' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Success criteria' })).toBeInTheDocument();
+    expect(screen.getByText('You rate them 4 or 5.')).toBeInTheDocument();
+  });
+
+  it('lays out the session plan with each part timed', () => {
+    draw([step(1, {
+      plan: [
+        { label: 'Solve', minutes: 80, what: 'Attempt all five problems.' },
+        { label: 'Review', minutes: null, what: 'Compare with the official solutions.' },
+      ],
+      success: ['Attempt all five problems.', 'Record one fix for next time.'],
+    })]);
+    const plan = screen.getByRole('heading', { name: 'Your session plan' }).nextElementSibling!;
+    expect([...plan.querySelectorAll('li')].map((li) => li.textContent)).toEqual([
+      'Solve (80 min): Attempt all five problems.',
+      'Review: Compare with the official solutions.',
+    ]);
+    expect(screen.getByText('Record one fix for next time.')).toBeInTheDocument();
+  });
+
+  it('turns the drills of an older step into its plan', () => {
+    draw([step(1, { drills: ['Do problems 1-4', 'Redo the misses'] })]);
+    expect(screen.getByRole('heading', { name: 'Your session plan' })).toBeInTheDocument();
+    expect(screen.getByText('Redo the misses')).toBeInTheDocument();
+  });
+
+  it('says what kit to have when there is no link', () => {
+    draw([step(1, { resource: undefined, equipment: 'Pull-up bar or resistance band' })]);
+    expect(lineOf('Equipment:')).toHaveTextContent('Equipment: Pull-up bar or resistance band');
+  });
+
+  it('puts the kind, subject, difficulty and time on the shut row', () => {
+    const { container } = draw([step(1, { difficulty: 4, minutes: 120 })]);
+    expect(container.querySelector('.sx-step-meta')).toHaveTextContent('Targeted practice · Calculus');
+    expect(container.querySelector('.sx-step-facts')).toHaveTextContent('Difficulty: Hard · 4/5Time: 120 min');
   });
 
   it('does not repeat the length as a pace', () => {
@@ -159,7 +197,7 @@ describe('the words around a step', () => {
     expect(paceRepeatsLength('30 minutes total', 45)).toBe(false);
     expect(paceRepeatsLength('5 minutes per problem', 60)).toBe(false);
     draw([step(1, { pace: '30 minutes total', minutes: 30 })]);
-    expect(screen.queryByText('30 minutes total')).not.toBeInTheDocument();
-    expect(screen.getByText('30 min')).toBeInTheDocument();
+    expect(screen.queryByText(/30 minutes total/)).not.toBeInTheDocument();
+    expect(document.querySelector('.sx-step-facts')).toHaveTextContent('Time: 30 min');
   });
 });

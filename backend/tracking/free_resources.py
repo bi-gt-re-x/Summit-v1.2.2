@@ -26,6 +26,13 @@ minute, and that's the whole promise of a session plan. So:
    words best, if any does. Every link that stays says how much signing up it
    needs, so the page can say "Free, no signup".
 
+4. **No other productivity apps.** Summit is the reader's task list,
+   calendar, focus timer, notes and log. A session never sends them to
+   another one (Todoist, Notion, Google Calendar, Pomofocus...), even a free
+   one, and even when it's a link they keep: `competitor` and
+   `names_competitor` catch them, the guard drops the link, and
+   subject_ai drops a step that names one.
+
 The guard reads the catalog from the file, not the table, because it also runs
 on GET requests and those never write (tests/test_get_requests_do_not_write.py).
 """
@@ -61,6 +68,48 @@ EXTRA_FREE_HOSTS = (
     'ncbi.nlm.nih.gov', 'pubmed.ncbi.nlm.nih.gov', 'gutenberg.org',
     'math.libretexts.org', 'libretexts.org', 'oercommons.org', 'ck12.org',
 )
+
+#: Other productivity apps: task lists, calendars, focus timers, notes and
+#: journals, habit trackers, time trackers. Matched on the host and anything
+#: under it.
+COMPETITOR_HOSTS = (
+    'todoist.com', 'notion.so', 'notion.com', 'notion.site', 'trello.com', 'asana.com',
+    'ticktick.com', 'evernote.com', 'clickup.com', 'habitica.com', 'any.do',
+    'rescuetime.com', 'toggl.com', 'clockify.me', 'focusmate.com', 'forestapp.cc',
+    'sunsama.com', 'usemotion.com', 'akiflow.com', 'calendar.google.com',
+    'keep.google.com', 'tasks.google.com', 'todo.microsoft.com', 'onenote.com',
+    'obsidian.md', 'pomofocus.io', 'tomato-timer.com', 'marinaratimer.com',
+    'pomodor.app', 'structured.app', 'tiimo.app', 'reclaim.ai', 'monday.com',
+    'culturedcode.com', 'roamresearch.com', 'logseq.com', 'craft.do', 'coda.io',
+    'notability.com', 'goodnotes.com', 'beeminder.com', 'habitify.me',
+    'flexibits.com', 'calendly.com', 'airtable.com', 'microsoft.com/microsoft-365/microsoft-to-do-list-app',
+)
+
+#: The same apps by name, in a step's own words. Case matters for the names
+#: that are also English words, so "the notion of a limit" isn't caught.
+COMPETITOR_NAMES = re.compile(
+    r'(?i:\b(?:todoist|trello|asana|ticktick|evernote|clickup|habitica|any\.do|rescuetime'
+    r'|toggl|clockify|focusmate|sunsama|akiflow|google calendar|google keep|google tasks'
+    r'|microsoft to ?do|onenote|obsidian|pomofocus|tomato[- ]timer|marinara timer|tiimo'
+    r'|reclaim\.ai|monday\.com|roam research|logseq|notability|goodnotes|beeminder'
+    r'|habitify|fantastical|calendly|airtable|apple reminders)\b)'
+    r'|\bNotion\b|\bForest app\b|\bThings 3\b|\bStructured app\b|\bMotion app\b')
+
+
+def competitor(url: str) -> bool:
+    """Whether a link goes to another productivity app."""
+    host = _host(url)
+    if not host:
+        return False
+    whole = (host + urlparse(url).path).lower()
+    return any(host == app or host.endswith('.' + app) or whole.startswith(app)
+               for app in COMPETITOR_HOSTS)
+
+
+def names_competitor(text: str) -> bool:
+    """Whether text names another productivity app."""
+    return bool(COMPETITOR_NAMES.search(text or ''))
+
 
 #: Public universities and governments publish a lot for free, so .edu and
 #: .gov hosts pass. Their presses don't: a press page is a store.
@@ -240,7 +289,10 @@ def _known() -> tuple:
 
 
 def signup_for(url: str) -> Optional[str]:
-    """How much signing up a link needs, or None when it isn't known free."""
+    """How much signing up a link needs, or None when it isn't known free.
+    Another productivity app is never "known free", whatever the catalog says."""
+    if competitor(url):
+        return None
     by_key, by_host = _known()
     if _key(url) in by_key:
         return by_key[_key(url)]
@@ -273,6 +325,16 @@ def best_for(step: Dict[str, Any], ranked: List[Dict[str, Any]], taken: Iterable
     return scored[0][2]
 
 
+def _words(step: Dict[str, Any]) -> List[str]:
+    """Everything a reader reads on a step, for `names_competitor`."""
+    words = [str(step.get(field) or '') for field in
+             ('title', 'problems', 'pace', 'reason', 'signal', 'equipment', 'resource')]
+    words += [str(item) for item in step.get('drills') or []]
+    words += [str(item) for item in step.get('success') or []]
+    words += [str(part.get('what') or '') for part in step.get('plan') or [] if isinstance(part, dict)]
+    return words
+
+
 def guard(steps: List[Dict[str, Any]], ranked_for: Callable[[Dict[str, Any]], List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
     """Every step with free links only, and at least one where the catalog has
     something for its subject. See the note at the top.
@@ -285,10 +347,17 @@ def guard(steps: List[Dict[str, Any]], ranked_for: Callable[[Dict[str, Any]], Li
     for step in steps:
         if not isinstance(step, dict):
             continue
+        # A saved step built on another productivity app goes, not just its
+        # link: "Weekly review with Todoist" is still about Todoist.
+        if names_competitor(' '.join(_words(step))):
+            continue
         kept = []
         dropped = 0
         for link in step.get('resources') or []:
             if not isinstance(link, dict) or not link.get('url'):
+                continue
+            if competitor(link['url']):
+                dropped += 1
                 continue
             signup = 'none' if link.get('yours') else signup_for(link['url'])
             if signup is None:

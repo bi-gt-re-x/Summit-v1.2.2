@@ -538,6 +538,39 @@ class TestAPrescriptionMayCarryItsOwnNumbers:
         assert cleaned['next_steps'][0]['drills'] == [
             '20 past-paper problems', '3 timed sets of 15']
 
+    def test_a_step_comes_back_with_its_plan_and_success_criteria(self):
+        cleaned = subject_ai._clean(_one(next_steps=[
+            {'title': 'Upper body strength circuit', 'focus': 'Gym',
+             'type': 'targeted_practice', 'difficulty': 3, 'duration_minutes': 40,
+             'reason': '', 'equipment': 'Pull-up bar or resistance band',
+             'plan': [{'label': 'Warm-up', 'minutes': 6, 'what': 'Easy movement and shoulder circles.'},
+                      {'label': 'Push-ups', 'minutes': 0, 'what': 'Three sets, resting a minute.'},
+                      {'label': 'Empty', 'minutes': 5, 'what': ''}],
+             'success': ['Finish every set with clean form.', 'Log the reps.']},
+        ]), BRIEF)
+        step = cleaned['next_steps'][0]
+        assert step['equipment'] == 'Pull-up bar or resistance band'
+        assert step['plan'] == [
+            {'label': 'Warm-up', 'minutes': 6, 'what': 'Easy movement and shoulder circles.'},
+            {'label': 'Push-ups', 'minutes': None, 'what': 'Three sets, resting a minute.'}]
+        assert step['success'] == ['Finish every set with clean form.', 'Log the reps.']
+
+    def test_a_step_built_on_another_productivity_app_is_dropped(self):
+        cleaned = subject_ai._clean(_one(next_steps=[
+            {'title': 'Weekly planning review with Todoist', 'focus': 'Planning',
+             'type': 'review', 'difficulty': 2, 'duration_minutes': 30, 'reason': ''},
+            {'title': 'Plan the week in Summit', 'focus': 'Planning',
+             'type': 'review', 'difficulty': 2, 'duration_minutes': 30, 'reason': '',
+             'resources': [{'name': 'Pomofocus', 'url': 'https://pomofocus.io/'}]},
+        ]), BRIEF)
+        assert [step['title'] for step in cleaned['next_steps']] == ['Plan the week in Summit']
+        assert cleaned['next_steps'][0]['resources'] == []
+
+    def test_the_steps_call_asks_for_a_plan_and_success_criteria(self):
+        item = subject_ai.STEPS_SCHEMA['properties']['next_steps']['items']
+        assert {'plan', 'success', 'equipment'} <= set(item['required'])
+        assert 'drills' not in item['properties']
+
     def test_a_title_with_a_number_in_it_survives(self):
         cleaned = subject_ai._clean(_one(next_steps=[
             {'title': '30 minutes on recursion', 'focus': 'Algorithms',

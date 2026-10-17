@@ -219,3 +219,41 @@ def test_a_plan_saved_before_the_check_is_served_free(client):
     links = saved['reading']['next_steps'][0]['resources']
     assert 'mitpress' not in links[0]['url']
     assert links[0]['signup'] == 'none'
+
+
+# ---------------------------------------------------------------------------
+# No other productivity apps
+# ---------------------------------------------------------------------------
+def test_the_catalog_has_no_other_productivity_app():
+    assert [row['id'] for row in free.catalog() if free.competitor(row['url'])] == []
+    assert [row['id'] for row in free.catalog() if free.names_competitor(row['name'])] == []
+
+
+def test_another_productivity_app_is_never_known_free():
+    assert free.signup_for('https://www.todoist.com/productivity-methods') is None
+    assert free.signup_for('https://calendar.google.com/') is None
+    assert free.signup_for('https://pomofocus.io/') is None
+
+
+def test_names_are_caught_but_ordinary_words_are_not():
+    assert free.names_competitor('Weekly planning review with Todoist')
+    assert free.names_competitor('Set up a Notion page for the week')
+    assert not free.names_competitor('the notion of a limit')
+    assert not free.names_competitor('Upper body strength circuit')
+
+
+def test_the_guard_drops_a_saved_step_built_on_another_app():
+    steps = [
+        {'title': 'Weekly planning review with Todoist', 'focus': 'planning',
+         'resources': [{'name': 'Todoist', 'url': 'https://www.todoist.com/productivity-methods'}]},
+        {'title': 'Plan the week', 'focus': 'planning',
+         'resources': [{'name': 'Mine', 'url': 'https://todoist.com/app', 'yours': True}]},
+    ]
+    out = free.guard(steps, lambda step: [])
+    assert [step['title'] for step in out] == ['Plan the week']
+    assert out[0]['resources'] == []
+
+
+def test_the_plan_prompt_rules_out_other_productivity_apps():
+    assert 'NO OTHER PRODUCTIVITY APPS' in subject_ai.STEPS_SYSTEM
+    assert 'Todoist' in subject_ai.STEPS_SYSTEM

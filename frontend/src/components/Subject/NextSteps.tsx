@@ -2,9 +2,10 @@
  * The model's recommended sessions for one subject, three at a time, up to six.
  *
  * Restored from before 48bcdc4, where it was the second half of "Do this
- * next". Each step is a dropdown: the title, exactly what to work and the
- * chips on the shut row; the pace, where to get the material, the reason, the
- * signal, the drills and the actions inside. A second batch of three goes
+ * next". Each step is a dropdown: the title, its kind and subject, difficulty
+ * and time on the shut row; where to get the material (or the equipment), why
+ * this one, a timed session plan, the success criteria and the actions
+ * inside. A second batch of three goes
  * under the first, so the list grows down to six.
  *
  * A step is an instruction, not a finding. "Easy algorithm drills, timed" is
@@ -48,6 +49,7 @@ import {
   STEP_WORDS,
   type NextStep,
   type PlannedSession,
+  type StepPart,
   type StepResource,
   type StepState,
 } from '@/services/analytics';
@@ -62,8 +64,39 @@ export const BATCH: number = RULES.recommendations.batch;
     same number, from the same file. */
 export const MAX_STEPS: number = RULES.recommendations.max_steps;
 
-/** What the three link slots are called, best first. */
-const RANK_WORDS = ['Best', 'Next best', 'Also'];
+/**
+ * The session in order. A step written before plans existed has its drills,
+ * untimed, so older steps still read as a list of what to do.
+ */
+export function stepPlan(step: NextStep): StepPart[] {
+  if (step.plan?.length) return step.plan.filter((part) => part.what?.trim());
+  return (step.drills ?? []).map((what) => ({ label: '', minutes: null, what }));
+}
+
+/** What to check off at the end. An older step has its one signal. */
+export function stepSuccess(step: NextStep): string[] {
+  if (step.success?.length) return step.success.filter((line) => line.trim());
+  return step.signal ? [step.signal] : [];
+}
+
+/** One link to the material, with what it costs to open. */
+function StepLink({ link }: { link: StepResource }) {
+  const cost = link.yours
+    ? 'Yours'
+    : link.signup === 'quick'
+      ? 'Free account'
+      : link.signup
+        ? 'Free'
+        : '';
+  return (
+    <>
+      <a href={link.url} target="_blank" rel="noopener noreferrer">
+        {link.name || siteOf(link.url)}
+      </a>
+      {cost && <span className="sx-step-cost"> · {cost}</span>}
+    </>
+  );
+}
 
 /** The links worth drawing: http(s) only, whatever a saved reading holds. */
 export function stepLinks(step: NextStep): StepResource[] {
@@ -141,6 +174,8 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
           const planned = state === 'planned' ? status.get(step.id)?.task ?? null : null;
           const done = state === 'done';
           const links = stepLinks(step);
+          const plan = stepPlan(step);
+          const success = stepSuccess(step);
           return (
             <li
               key={step.id || step.title}
@@ -155,8 +190,21 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
                 <summary>
                   <div className="sx-step-head">
                     <strong>{step.title}</strong>
-                    <span className="sx-step-kind">{STEP_WORDS[step.type] ?? step.type}</span>
                   </div>
+                  <p className="sx-step-meta">
+                    {[STEP_WORDS[step.type] ?? step.type, step.focus].filter(Boolean).join(' · ')}
+                    {planned && <span className="sx-chip is-planned">Planned</span>}
+                    {done && <span className="sx-chip">Done</span>}
+                  </p>
+
+                  {/* The model's own two numbers, marked as suggestions. */}
+                  <p className="sx-step-facts">
+                    <span className="is-difficulty" data-level={step.difficulty}>
+                      <b>Difficulty:</b> {DIFFICULTY_WORDS[step.difficulty - 1] ?? `Level ${step.difficulty}`}
+                      {' · '}{step.difficulty}/5
+                    </span>
+                    {step.minutes ? <span><b>Time:</b> {step.minutes} min</span> : null}
+                  </p>
 
                   {/* Exactly what to work, on the shut row: the line that makes
                       this an instruction rather than a category. Left out when
@@ -165,86 +213,73 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
                     && !step.title.toLowerCase().includes(step.problems.toLowerCase()) && (
                     <p className="sx-step-what">{step.problems}</p>
                   )}
-
-                  {/* The model's own two numbers, marked as suggestions. */}
-                  <div className="sx-step-chips">
-                    <span className="sx-chip is-difficulty" data-level={step.difficulty}>
-                      {DIFFICULTY_WORDS[step.difficulty - 1] ?? `Level ${step.difficulty}`}
-                      <i>{step.difficulty}/5</i>
-                    </span>
-                    {step.pace && !paceRepeatsLength(step.pace, step.minutes) && (
-                      <span className="sx-chip is-pace">{step.pace}</span>
-                    )}
-                    {step.minutes ? <span className="sx-chip">{step.minutes} min</span> : null}
-                    {step.focus && <span className="sx-chip is-focus">{step.focus}</span>}
-                    {planned && <span className="sx-chip is-planned">Planned</span>}
-                    {done && <span className="sx-chip">Done</span>}
-                  </div>
                 </summary>
 
                 <div className="sx-step-inside">
-                  {/* Up to three links, best first, the reader's own marked.
-                      A step from before links existed keeps its one named
-                      source as plain text. */}
-                  {links.length > 0 ? (
-                    <div className="sx-step-resource">
-                      <span>Where to get it</span>
+                  {/* Where the material is, best first, the reader's own
+                      marked. A step from before links existed keeps its one
+                      named source as plain text. */}
+                  {links.length === 1 ? (
+                    <p className="sx-step-line">
+                      <b>Where to get it:</b>{' '}
+                      <StepLink link={links[0]!} />
+                    </p>
+                  ) : links.length > 1 ? (
+                    <div className="sx-step-line">
+                      <b>Where to get it:</b>
                       <ol className="sx-step-links">
-                        {links.map((link, n) => (
-                          <li key={link.url}>
-                            <a href={link.url} target="_blank" rel="noopener noreferrer">
-                              {link.name || siteOf(link.url)}
-                            </a>
-                            <small>{siteOf(link.url)}</small>
-                            <i className={`sx-link-rank${n === 0 ? ' is-best' : ''}`}>
-                              {RANK_WORDS[n]}
-                            </i>
-                            {link.yours && <i className="sx-link-rank is-yours">Yours</i>}
-                            {!link.yours && link.signup && (
-                              <i
-                                className="sx-link-rank is-free"
-                                title={
-                                  link.signup === 'none'
-                                    ? 'Free. No account needed.'
-                                    : 'Free with a quick email or Google sign-up'
-                                }
-                              >
-                                {link.signup === 'none' ? 'Free, no signup' : 'Free account'}
-                              </i>
-                            )}
-                          </li>
+                        {links.map((link) => (
+                          <li key={link.url}><StepLink link={link} /></li>
                         ))}
                       </ol>
                     </div>
                   ) : step.resource ? (
-                    <p className="sx-step-resource">
-                      <span>Where to get it</span>
-                      {step.resource}
-                    </p>
+                    <p className="sx-step-line"><b>Where to get it:</b> {step.resource}</p>
                   ) : null}
 
+                  {step.equipment && (
+                    <p className="sx-step-line"><b>Equipment:</b> {step.equipment}</p>
+                  )}
+
+                  {step.pace && !paceRepeatsLength(step.pace, step.minutes) && (
+                    <p className="sx-step-line"><b>Pace:</b> {step.pace}</p>
+                  )}
+
                   {step.reason && (
-                    <p className="sx-step-why">
-                      <span>Why this one</span>
-                      {step.reason}
-                    </p>
+                    <section className="sx-step-section">
+                      <h4>Why this recommendation</h4>
+                      <p>{step.reason}</p>
+                    </section>
                   )}
 
-                  {/* What would say this worked — the line that turns a
-                      recommendation into something a reader can settle. */}
-                  {step.signal && (
-                    <p className="sx-step-signal">
-                      <span>How you'll know it's working</span>
-                      {step.signal}
-                    </p>
+                  {plan.length > 0 && (
+                    <section className="sx-step-section">
+                      <h4>Your session plan</h4>
+                      <ol className="sx-step-plan">
+                        {plan.map((part, n) => (
+                          <li key={`${n}-${part.label}`}>
+                            {part.label && (
+                              <b>
+                                {part.label}
+                                {part.minutes ? ` (${part.minutes} min)` : ''}:
+                              </b>
+                            )}{' '}
+                            {part.what}
+                          </li>
+                        ))}
+                      </ol>
+                    </section>
                   )}
 
-                  {step.drills.length > 0 && (
-                    <ul className="sx-step-drills" aria-label="In the session">
-                      {step.drills.map((drill) => (
-                        <li key={drill}>{drill}</li>
-                      ))}
-                    </ul>
+                  {success.length > 0 && (
+                    <section className="sx-step-section">
+                      <h4>Success criteria</h4>
+                      <ul className="sx-step-success">
+                        {success.map((line) => (
+                          <li key={line}>{line}</li>
+                        ))}
+                      </ul>
+                    </section>
                   )}
 
                   <div className="sx-step-actions">

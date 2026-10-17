@@ -2064,35 +2064,6 @@
    "ordinal": 1
   },
   {
-   "id": "note_taking:obsidian",
-   "subject": "note_taking",
-   "name": "Obsidian",
-   "url": "https://obsidian.md/",
-   "kind": "tool",
-   "signup": "none",
-   "good_for": "Free notes app, no account needed",
-   "keywords": [
-    "linking",
-    "notes"
-   ],
-   "ordinal": 2
-  },
-  {
-   "id": "note_taking:google-docs",
-   "subject": "note_taking",
-   "name": "Google Docs",
-   "url": "https://docs.new",
-   "kind": "tool",
-   "signup": "quick",
-   "good_for": "Write and share drafts; any Google account works",
-   "keywords": [
-    "draft",
-    "notes",
-    "write"
-   ],
-   "ordinal": 3
-  },
-  {
    "id": "lectures:mit-opencourseware",
    "subject": "lectures",
    "name": "MIT OpenCourseWare",
@@ -5810,88 +5781,6 @@
    "ordinal": 3
   },
   {
-   "id": "planning:todoist-productivity-methods",
-   "subject": "planning",
-   "name": "Todoist productivity methods",
-   "url": "https://www.todoist.com/productivity-methods",
-   "kind": "reference",
-   "signup": "none",
-   "good_for": "Short guides to planning methods like the weekly review",
-   "keywords": [
-    "evening review",
-    "set the week",
-    "sunday reset",
-    "targets",
-    "week review",
-    "weekly review"
-   ],
-   "ordinal": 1
-  },
-  {
-   "id": "planning:google-calendar",
-   "subject": "planning",
-   "name": "Google Calendar",
-   "url": "https://calendar.google.com/",
-   "kind": "tool",
-   "signup": "quick",
-   "good_for": "Block time for the week; any Google account works",
-   "keywords": [
-    "calendar",
-    "schedule",
-    "timetable",
-    "week"
-   ],
-   "ordinal": 2
-  },
-  {
-   "id": "planning:pomofocus",
-   "subject": "planning",
-   "name": "Pomofocus",
-   "url": "https://pomofocus.io/",
-   "kind": "tool",
-   "signup": "none",
-   "good_for": "A simple Pomodoro timer in the browser",
-   "keywords": [
-    "applications block",
-    "block",
-    "focus"
-   ],
-   "ordinal": 3
-  },
-  {
-   "id": "work:pomofocus",
-   "subject": "work",
-   "name": "Pomofocus",
-   "url": "https://pomofocus.io/",
-   "kind": "tool",
-   "signup": "none",
-   "good_for": "A simple Pomodoro timer in the browser",
-   "keywords": [
-    "block",
-    "focus",
-    "session",
-    "timer"
-   ],
-   "ordinal": 1
-  },
-  {
-   "id": "work:todoist-productivity-methods",
-   "subject": "work",
-   "name": "Todoist productivity methods",
-   "url": "https://www.todoist.com/productivity-methods",
-   "kind": "reference",
-   "signup": "none",
-   "good_for": "Short guides to planning methods like the weekly review",
-   "keywords": [
-    "plan",
-    "reset",
-    "review",
-    "targets",
-    "weekly review"
-   ],
-   "ordinal": 2
-  },
-  {
    "id": "work:atlassian-team-playbook",
    "subject": "work",
    "name": "Atlassian Team Playbook",
@@ -5905,7 +5794,7 @@
     "retro",
     "team"
    ],
-   "ordinal": 3
+   "ordinal": 1
   },
   {
    "id": "meetings:atlassian-team-playbook",
@@ -5983,22 +5872,6 @@
    "ordinal": 1
   },
   {
-   "id": "calls:google-calendar",
-   "subject": "calls",
-   "name": "Google Calendar",
-   "url": "https://calendar.google.com/",
-   "kind": "tool",
-   "signup": "quick",
-   "good_for": "Block time for the week; any Google account works",
-   "keywords": [
-    "calendar",
-    "schedule",
-    "timetable",
-    "week"
-   ],
-   "ordinal": 2
-  },
-  {
    "id": "admin:google-sheets",
    "subject": "admin",
    "name": "Google Sheets",
@@ -6013,39 +5886,6 @@
     "upkeep"
    ],
    "ordinal": 1
-  },
-  {
-   "id": "admin:google-calendar",
-   "subject": "admin",
-   "name": "Google Calendar",
-   "url": "https://calendar.google.com/",
-   "kind": "tool",
-   "signup": "quick",
-   "good_for": "Block time for the week; any Google account works",
-   "keywords": [
-    "calendar",
-    "schedule",
-    "timetable",
-    "week"
-   ],
-   "ordinal": 2
-  },
-  {
-   "id": "admin:todoist-productivity-methods",
-   "subject": "admin",
-   "name": "Todoist productivity methods",
-   "url": "https://www.todoist.com/productivity-methods",
-   "kind": "reference",
-   "signup": "none",
-   "good_for": "Short guides to planning methods like the weekly review",
-   "keywords": [
-    "plan",
-    "reset",
-    "review",
-    "targets",
-    "weekly review"
-   ],
-   "ordinal": 3
   },
   {
    "id": "reports:purdue-owl",
@@ -7308,22 +7148,6 @@
    "ordinal": 2
   },
   {
-   "id": "chores:todoist-templates",
-   "subject": "chores",
-   "name": "Todoist templates",
-   "url": "https://www.todoist.com/templates",
-   "kind": "tool",
-   "signup": "none",
-   "good_for": "Free checklists for routines and packing",
-   "keywords": [
-    "checklist",
-    "chores",
-    "pack",
-    "routine"
-   ],
-   "ordinal": 1
-  },
-  {
    "id": "laundry:american-cleaning-institute-laundry-tips",
    "subject": "laundry",
    "name": "American Cleaning Institute laundry tips",
@@ -7409,22 +7233,6 @@
    "ordinal": 2
   },
   {
-   "id": "errands:google-calendar",
-   "subject": "errands",
-   "name": "Google Calendar",
-   "url": "https://calendar.google.com/",
-   "kind": "tool",
-   "signup": "quick",
-   "good_for": "Block time for the week; any Google account works",
-   "keywords": [
-    "calendar",
-    "schedule",
-    "timetable",
-    "week"
-   ],
-   "ordinal": 1
-  },
-  {
    "id": "errands:google-maps",
    "subject": "errands",
    "name": "Google Maps",
@@ -7436,7 +7244,7 @@
     "route",
     "stops"
    ],
-   "ordinal": 2
+   "ordinal": 1
   },
   {
    "id": "driving:driving-tests-org",
@@ -7666,36 +7474,6 @@
    "ordinal": 1
   },
   {
-   "id": "journaling:obsidian-daily-notes",
-   "subject": "journaling",
-   "name": "Obsidian daily notes",
-   "url": "https://obsidian.md/",
-   "kind": "tool",
-   "signup": "none",
-   "good_for": "Free notes app with daily notes, no account",
-   "keywords": [
-    "daily",
-    "journalling",
-    "log the day"
-   ],
-   "ordinal": 2
-  },
-  {
-   "id": "journaling:google-docs",
-   "subject": "journaling",
-   "name": "Google Docs",
-   "url": "https://docs.new",
-   "kind": "tool",
-   "signup": "quick",
-   "good_for": "Write and share drafts; any Google account works",
-   "keywords": [
-    "draft",
-    "notes",
-    "write"
-   ],
-   "ordinal": 3
-  },
-  {
    "id": "chess:lichess-puzzles",
    "subject": "chess",
    "name": "Lichess puzzles",
@@ -7736,6 +7514,44 @@
     "study"
    ],
    "ordinal": 3
+  },
+  {
+   "id": "planning:wikipedia-time-management",
+   "subject": "planning",
+   "name": "Time management (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/Time_management",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "Planning methods like prioritizing, time blocking and the Eisenhower matrix",
+   "keywords": [
+    "plan",
+    "planning",
+    "review",
+    "weekly review",
+    "evening review",
+    "priorities",
+    "schedule",
+    "set the week"
+   ],
+   "ordinal": 1
+  },
+  {
+   "id": "chores:wikipedia-housekeeping",
+   "subject": "chores",
+   "name": "Housekeeping (Wikipedia)",
+   "url": "https://en.wikipedia.org/wiki/Housekeeping",
+   "kind": "reference",
+   "signup": "none",
+   "good_for": "What regular housekeeping covers, for building a chore list",
+   "keywords": [
+    "chores",
+    "cleaning",
+    "laundry",
+    "tidy",
+    "housework",
+    "checklist"
+   ],
+   "ordinal": 1
   }
  ]
 }

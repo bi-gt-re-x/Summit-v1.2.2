@@ -520,7 +520,21 @@ export interface NextStep {
    * step advised before the field existed.
    */
   signal: string;
+  /** The in-session checklist steps carried before `plan`. */
   drills: string[];
+  /** Kit to have ready when it isn't a link: "Pull-up bar, optional dumbbells". */
+  equipment?: string;
+  /** The session in order, each part timed when a set time helps. Absent on older steps. */
+  plan?: StepPart[];
+  /** Two or three things to check off when the session ends. Absent on older steps. */
+  success?: string[];
+}
+
+/** One part of a session plan: "Solve (80 min): Attempt all five problems." */
+export interface StepPart {
+  label: string;
+  minutes: number | null;
+  what: string;
 }
 
 /** An observation is not an insight until it says what to do differently. */

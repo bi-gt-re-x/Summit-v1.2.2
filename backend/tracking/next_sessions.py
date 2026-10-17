@@ -247,4 +247,9 @@ def unbracket(step: dict) -> dict:
              for key, value in step.items()}
     if isinstance(step.get('drills'), list):
         clean['drills'] = [plain(str(drill)) for drill in step['drills']]
+    if isinstance(step.get('success'), list):
+        clean['success'] = [plain(str(line)) for line in step['success']]
+    if isinstance(step.get('plan'), list):
+        clean['plan'] = [{**part, 'what': plain(str(part.get('what') or ''))}
+                         for part in step['plan'] if isinstance(part, dict)]
     return clean
