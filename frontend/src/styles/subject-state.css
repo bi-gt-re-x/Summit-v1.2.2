@@ -473,6 +473,12 @@
     color: var(--ax-good);
 }
 
+/* Why the session landed where it did, under "Planned for …". */
+.sx-step-why {
+    display: block; margin-top: 4px;
+    font-weight: 500; color: var(--ax-muted);
+}
+
 .sx-step {
     transition: transform .16s cubic-bezier(.22, 1, .36, 1),
                 box-shadow .16s ease,

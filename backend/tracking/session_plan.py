@@ -18,8 +18,11 @@ harder work, rounded to five and held inside the 10-250 the dialogs allow.
 
 ## When
 
-The first gap long enough for it, from the next quarter hour onward, inside
-waking hours, that no calendar-placed task and no calendar event overlaps.
+The best time for this reader is backend/tracking/session_timing.py, which
+reads their hours, weekdays and the sessions already booked. `next_slot` here
+is its fallback: the first gap long enough for it, from the next quarter hour
+onward, inside waking hours, that no calendar-placed task and no calendar
+event overlaps. `busy_spans` is what both of them steer around.
 Times are local and naive, the way every task's `created_at`/`due_date` is
 stored.
 """

@@ -24,8 +24,11 @@
  *
  * Each step carries two controls:
  *
- *   **Plan my next session** — books the step into the next free calendar
- *   slot as a task filed under this subject, with an estimated length and XP
+ *   **Plan my next session** — books the step as a task filed under this
+ *   subject at the best free time for the reader: the hours their work goes
+ *   best, the days they usually work, how full each day is, and a day or two
+ *   from the other sessions booked for the subject
+ *   (backend/tracking/session_timing.py), with an estimated length and XP
  *   (backend/tracking/session_plan.py). The step is then locked to that task:
  *   completing it marks the step done, deleting it opens the step again.
  *   Finishing it produces a rating, which is the new data the next batch is
@@ -288,6 +291,7 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
                     ) : planned ? (
                       <span className="sx-step-done">
                         Planned for {sessionWhen(planned)} · {planned.xp} XP. Finish or delete that task to plan another.
+                        {planned.why && <span className="sx-step-why">{planned.why}</span>}
                       </span>
                     ) : (
                       <>

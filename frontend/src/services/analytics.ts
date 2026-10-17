@@ -819,6 +819,8 @@ export interface PlannedSession {
   xp: number;
   /** The subject the task was filed under, when it was filed under one. */
   subject?: string;
+  /** Why this time, in a sentence or two. Only on the booking's own reply. */
+  why?: string;
 }
 
 /**
@@ -862,8 +864,9 @@ export function takeRecommendation(
 }
 
 /**
- * Book one recommendation as a task in the next free calendar slot, with an
- * estimated length and XP (backend/tracking/session_plan.py). Refused while
+ * Book one recommendation as a task at the best free time for this reader,
+ * spaced from the sessions already booked for its subject, with an estimated
+ * length and XP (backend/tracking/session_timing.py, session_plan.py). Refused while
  * the step is already planned or done.
  */
 export function planSession(

@@ -50,6 +50,7 @@ from backend.config import subjects as subject_catalogue
 from backend.tracking import free_resources
 from backend.tracking import next_sessions
 from backend.tracking import session_plan
+from backend.tracking import session_timing
 from backend.tracking import subject_ai
 from backend.tracking import background as about_you
 from backend.tracking import journal
@@ -866,20 +867,31 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
 
     minutes = session_plan.estimate_minutes(row.get('minutes'), row.get('difficulty'))
     xp = session_plan.xp_for(minutes, row.get('difficulty'))
-    now = datetime.now()
-    busy = session_plan.busy_spans(
-        db.columns_for('tasks', username, ('show_on_calendar', 'created_at', 'due_date')),
-        db.calendar_document(username), now)
-    slot = session_plan.next_slot(minutes, busy, now)
-    if not slot:
-        return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
-    start, end = slot
 
     # A session planned across every subject names its subject in `focus`
     # (subject_ai.OVERALL_NOTE); file it there when the page had none to send.
     subject_id = _text(body.subject_id, 64)
     if not subject_id and row.get('subject') == next_sessions.OVERALL:
         subject_id = next_sessions.subject_named(row.get('focus'), _subject_names(username)) or ''
+
+    # When: the best opening for this reader (session_timing), spaced from the
+    # sessions already booked for the same subject, else the first free one.
+    now = datetime.now()
+    tasks = db.columns_for('tasks', username, (
+        'id', 'status', 'show_on_calendar', 'created_at', 'due_date', 'completed_at',
+        'completion_seconds', 'execution', 'difficulty', 'subject'))
+    busy = session_plan.busy_spans(tasks, db.calendar_document(username), now)
+    booked = _booked_sessions(username, tasks, now, exclude=row['id'])
+    profile = session_timing.rhythm(tasks, db.rows_for('focus_days', username), now)
+    best = session_timing.best_slot(minutes, row.get('difficulty'), busy, booked,
+                                    _spacing_key(subject_id, row), profile, now)
+    if best:
+        start, end, why = best['start'], best['end'], best['why']
+    else:
+        slot = session_plan.next_slot(minutes, busy, now)
+        if not slot:
+            return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
+        (start, end), why = slot, 'The first free opening on your calendar.'
 
     made = create_task(CreateTask(
         name=row.get('title') or 'Practice session',
@@ -916,7 +928,37 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     return ok(id=row['id'], task={'id': task_id,
                                   'start': start.isoformat(timespec='seconds'),
                                   'end': end.isoformat(timespec='seconds'),
-                                  'xp': xp, 'subject': subject_id}, minutes=minutes)
+                                  'xp': xp, 'subject': subject_id, 'why': why},
+              minutes=minutes)
+
+
+def _spacing_key(subject_id: str, row: dict) -> str:
+    """What two sessions share when they're for the same subject: the catalog
+    id they're filed under, else the subject the recommendation was for."""
+    if subject_id:
+        return subject_id
+    subject = row.get('subject') or ''
+    return '' if subject == next_sessions.OVERALL else subject
+
+
+def _booked_sessions(username: str, tasks: list, now: datetime, exclude: str = '') -> list:
+    """Recommended sessions booked and still ahead, as session_timing reads
+    them: `{start, end, subject}`."""
+    by_id = {task.get('id'): task for task in tasks}
+    out = []
+    for other in db.rows_for('subject_recommendations', username):
+        if other.get('id') == exclude or other.get('taken_at') or not other.get('task_id'):
+            continue
+        task = by_id.get(other['task_id'])
+        if not task or task.get('status') == 'done':
+            continue
+        start = session_plan._parse(task.get('created_at'))
+        end = session_plan._parse(task.get('due_date'))
+        if not start or not end or end <= now:
+            continue
+        out.append({'start': start, 'end': end,
+                    'subject': _spacing_key(task.get('subject') or '', other)})
+    return out
 
 
 class TakeRecommendation(BaseModel):
