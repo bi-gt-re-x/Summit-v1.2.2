@@ -204,6 +204,11 @@ function inline(text: string): string {
     .replace(/~~([^~]+)~~/g, '<s>$1</s>')
     .replace(/==([^=]+)==/g, '<mark class="md-b-yellow">$1</mark>')
     .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>')
+    /* An image, `![what it shows](https://…)`. Before links, which would
+       otherwise take the `[…](…)` and leave the `!` behind. Only an address
+       on the web: an image is fetched by whoever opens the note. */
+    .replace(/!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g, (_whole, alt: string, src: string) =>
+      `<img class="md-img" src="${src}" alt="${alt}" loading="lazy">`)
     .replace(/\[([^\]]+)\]\{([^}\n]*)\}/g, (whole, label: string, raw: string) => {
       const classes = classesFor(raw, TOKENS);
       return classes ? `<span class="${classes}">${label}</span>` : whole;

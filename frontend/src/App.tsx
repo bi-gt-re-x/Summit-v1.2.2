@@ -37,6 +37,7 @@ const Analytics = lazy(() => import('@/pages/Analytics'));
 const SubjectAnalytics = lazy(() => import('@/pages/SubjectAnalytics'));
 const SkillTrees = lazy(() => import('@/pages/SkillTrees'));
 const Notes = lazy(() => import('@/pages/Notes'));
+const Log = lazy(() => import('@/pages/Log'));
 const Space = lazy(() => import('@/pages/Space'));
 const Timer = lazy(() => import('@/pages/Timer'));
 const Achievements = lazy(() => import('@/pages/Achievements'));
@@ -341,6 +342,7 @@ export default function App() {
                   describe. */}
               <Route path="/skill-trees" element={<SkillTrees />} />
               <Route path="/notes" element={<Notes />} />
+              <Route path="/log" element={<Log />} />
               {/* The three Personal spaces in the rail. An id outside 1-3
                   goes to the first. */}
               <Route path="/spaces/:spaceId" element={<Space key="personal" />} />

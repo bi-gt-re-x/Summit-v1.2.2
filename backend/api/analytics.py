@@ -44,6 +44,7 @@ from backend.goal_matcher import store as goal_store
 from backend.tracking import analytics as analytics_tracking
 from backend.tracking import subject_brief
 from backend.tracking import goal_plan
+from backend.tracking import journal
 from backend.tracking import subject_goal
 from backend.tracking.auth import load_user
 
@@ -728,6 +729,8 @@ def write_goal_plan(body: GoalPlanBrief, username: str = Depends(current_usernam
         'recent_days': body.recent_days,
         'bands': _rows(body.bands, BRIEF_BANDS),
         'struggles': _rows(body.struggles, BRIEF_REASONS),
+        # From the Log page, on the server: never sent by the client.
+        'about': journal.brief_lines(username),
     }
 
     try:

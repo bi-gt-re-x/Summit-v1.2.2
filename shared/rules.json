@@ -132,5 +132,29 @@
       { "key": "brief", "label": "Brief", "words": 20, "answered": 1, "head_start": 2 },
       { "key": "none", "label": "Not filled in yet", "words": 0, "answered": 0, "head_start": 0 }
     ]
+  },
+
+  "log": {
+    "_about": "The Log page: a private journal Summit learns from. Each saved entry is read by a model in the background and turned into short insights, each tagged with a kind. A passing feeling fades after `feeling_days` days and never becomes a lasting fact. `quiet_seconds` is how long an entry has to sit unchanged after an autosave before it's read; pressing Save reads it straight away. backend/tracking/journal.py and frontend/src/pages/Log.tsx both read this.",
+    "title_max": 200,
+    "body_max": 20000,
+    "feeling_days": 7,
+    "quiet_seconds": 45,
+    "insights_max": 40,
+    "kinds": [
+      { "key": "goal", "label": "Long-term goal" },
+      { "key": "pattern", "label": "Recurring pattern" },
+      { "key": "preference", "label": "Preference" },
+      { "key": "feeling", "label": "Passing feeling" }
+    ],
+    "topics": [
+      { "key": "goals", "label": "Goals" },
+      { "key": "interests", "label": "Interests" },
+      { "key": "priorities", "label": "Priorities" },
+      { "key": "motivation", "label": "Motivation" },
+      { "key": "challenges", "label": "Challenges" },
+      { "key": "preferences", "label": "Preferences" },
+      { "key": "reflections", "label": "How you work" }
+    ]
   }
 }

@@ -931,7 +931,7 @@ export default function Settings() {
               starter.stage === 'open'
                 ? 'Every tool is unlocked.'
                 : starter.stage === 'starter'
-                  ? `For your first days the sidebar shows Dashboard, Calendar and Timer. The rest appear in ${
+                  ? `For your first days the sidebar shows Dashboard, Calendar, Timer and Log. The rest appear in ${
                       starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`
                     }, or at level ${STARTER_LEVEL}. Locked tools open with a short note first.`
                   : `${prefs.features_open.filter((id) => FEATURES.some((feature) => feature.id === id)).length} of ${

@@ -38,6 +38,7 @@ const NOTES: Array<[string, string]> = [
   ['a bulleted list', '- one\n- two\n- three'],
   ['a numbered list', '1. one\n2. two'],
   ['a lettered list', 'a. one\nb. two'],
+  ['an image from the web', 'before ![a chart](https://example.com/chart.png) after'],
   ['a roman list', 'i. one\nii. two'],
   ['a nested list', '- one\n  - under\n  - also\n- two'],
   ['a checklist', '- [ ] not yet\n- [x] done'],

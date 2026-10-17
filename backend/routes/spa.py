@@ -64,6 +64,8 @@ SPA_ROUTES = (
     '/growth-tree',
     # Free-form notes. The one page whose contents the app does not score.
     '/notes',
+    # The private journal Summit learns from. See backend/api/journal.py.
+    '/log',
     # The three Personal spaces in the rail — a name and a page of text each.
     '/spaces/1',
     '/spaces/2',

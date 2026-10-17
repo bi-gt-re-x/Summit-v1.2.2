@@ -249,6 +249,17 @@ def brief_from(findings: Dict[str, Any]) -> str:
         for entry in levers:
             lines.append('  - {}'.format(entry))
 
+    # What they've written about themselves on the Log page
+    # (backend/tracking/journal.py). Words they wrote, not figures, so the
+    # one rule above isn't loosened by it.
+    about = [str(entry).strip() for entry in (findings.get('about') or [])
+             if str(entry).strip()]
+    if about:
+        lines.append('')
+        lines.append(planner.ABOUT_HEADING)
+        for entry in about:
+            lines.append('  - {}'.format(entry))
+
     lines.append('')
     lines.append('THE RECORD IN THIS SUBJECT')
 

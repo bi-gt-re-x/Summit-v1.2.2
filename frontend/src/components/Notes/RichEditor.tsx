@@ -54,10 +54,12 @@ interface Props {
   /** Every caret move, so the toolbar's labels can follow it. */
   onCaret: () => void;
   innerRef: React.RefObject<HTMLDivElement | null>;
+  /** What a screen reader calls it. "Note" unless the page says otherwise. */
+  label?: string;
 }
 
 export function RichEditor({
-  value, noteKey, readOnly, placeholder, onChange, onCaret, innerRef,
+  value, noteKey, readOnly, placeholder, onChange, onCaret, innerRef, label = 'Note',
 }: Props) {
   const navigate = useNavigate();
   const lastEmitted = useRef<string | null>(null);
@@ -175,7 +177,7 @@ export function RichEditor({
       suppressContentEditableWarning
       role="textbox"
       aria-multiline="true"
-      aria-label="Note"
+      aria-label={label}
       aria-readonly={readOnly}
       data-placeholder={placeholder}
       spellCheck

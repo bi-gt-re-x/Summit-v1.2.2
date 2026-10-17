@@ -52,6 +52,7 @@ from backend.tracking import next_sessions
 from backend.tracking import session_plan
 from backend.tracking import subject_ai
 from backend.tracking import background as about_you
+from backend.tracking import journal
 from backend.api import background as background_api
 from backend.tracking.auth import load_user
 from backend.config.shared import RULES
@@ -971,9 +972,12 @@ TASK_COLUMNS = ('id', 'title', 'description', 'status', 'subject', 'completed_at
 def _background(username: str, subject_id: Optional[str], names: Optional[dict] = None) -> list:
     """What the account said about itself at sign-up, as lines for the brief —
     the facts about this subject first, others about different subjects left
-    out. See backend/tracking/background.py."""
-    return about_you.brief_lines(background_api.facts_for(username), subject_id,
-                                 names if names is not None else _subject_names(username))
+    out (backend/tracking/background.py) — then what its Log has taught."""
+    lines = about_you.brief_lines(background_api.facts_for(username), subject_id,
+                                  names if names is not None else _subject_names(username))
+    # And what they've written on the Log page since (backend/tracking/journal.py),
+    # which keeps the brief current after sign-up. Passing feelings are marked.
+    return lines + journal.brief_lines(username)
 
 
 def _subject_names(username: str) -> dict:

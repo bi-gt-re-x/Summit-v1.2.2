@@ -201,3 +201,16 @@ describe('escapes', () => {
     expect(render('C:\\path')).toContain('C:\\path');
   });
 });
+
+describe('images', () => {
+  it('draws one from a web address', () => {
+    expect(render('![a chart](https://example.com/a.png)')).toContain(
+      '<img class="md-img" src="https://example.com/a.png" alt="a chart" loading="lazy">',
+    );
+  });
+
+  it('leaves anything that is not a web address as text', () => {
+    const html = render('![x](javascript:alert(1))');
+    expect(html).not.toContain('<img');
+  });
+});

@@ -201,6 +201,11 @@ def fresh_db(tmp_path, monkeypatch):
     assert work.wait_idle(timeout=30), 'goal matcher jobs still running after the test'
     work.clear()
 
+    # Log entries waiting to be read (backend/tracking/journal.py) are timers,
+    # not queue jobs. Dropped for the same reason: the database is going.
+    from backend.tracking import journal
+    journal.cancel_all()
+
 
 @pytest.fixture
 def app(fresh_db):

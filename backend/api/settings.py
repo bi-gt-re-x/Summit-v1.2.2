@@ -812,6 +812,9 @@ ACCOUNT_TABLES = (
     # What the account said about itself at sign-up, and the facts kept from
     # it. Its own words, so they go out with an export and go with a reset.
     'user_background', 'user_facts',
+    # The Log page's entries and what was learned from them. Private writing,
+    # so it goes out with an export and goes with a reset.
+    'log_entries', 'log_insights',
     # Every focus sitting, with the task it was for. Hours are in focus_days;
     # this is the account's own record of how they were spent.
     'focus_sittings',

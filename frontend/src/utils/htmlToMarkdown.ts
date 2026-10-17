@@ -155,6 +155,11 @@ function inlineOf(node: Node): string {
   const inner = () => Array.from(element.childNodes).map(inlineOf).join('');
 
   if (tag === 'br') return '\n';
+  // An image goes back as the Markdown `render` drew it from (utils/markdown).
+  if (tag === 'img') {
+    const src = element.getAttribute('src') ?? '';
+    return /^https?:\/\//i.test(src) ? `![${(element.getAttribute('alt') ?? '').replace(/[[\]]/g, '')}](${src})` : '';
+  }
   // Drawn by the renderer, not typed by anybody. The `li` writer puts the
   // checkbox back; here it is furniture and contributes nothing.
   if (tag === 'span' && has(element, 'md-box')) return '';

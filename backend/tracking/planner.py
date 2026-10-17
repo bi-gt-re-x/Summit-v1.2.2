@@ -471,9 +471,16 @@ def _ask(goal: str, instruction: str = '') -> str:
     return (lead + '\n\n' + goal)
 
 
+#: Over the Log lines (backend/tracking/journal.py) in any brief. Here rather
+#: than there because that module calls this one.
+ABOUT_HEADING = ("From their private log (use it to pitch the advice; don't quote it "
+                 "back or mention the log):")
+
+
 def _brief(title: str, why: str = '', description: str = '',
            category: str = '', unit: str = '', target: str = '',
-           deadline: str = '', record: Sequence[str] = ()) -> str:
+           deadline: str = '', record: Sequence[str] = (),
+           about: Sequence[str] = ()) -> str:
     """What the account has told us about the goal, as lines the model reads.
 
     Only the fields that were filled in. An empty "Why: " line is a line the
@@ -503,6 +510,13 @@ def _brief(title: str, why: str = '', description: str = '',
         lines.append('')
         lines.append('Their record so far:')
         lines.extend('- {}'.format(line) for line in record)
+    # What they've told Summit about themselves in the Log page, from
+    # backend/tracking/journal.py `brief_lines`: their goals, habits and
+    # preferences, so a plan fits the person as well as the goal.
+    if about:
+        lines.append('')
+        lines.append(ABOUT_HEADING)
+        lines.extend('- {}'.format(line) for line in about)
     return '\n'.join(lines)
 
 
@@ -988,7 +1002,8 @@ def from_provider(brief: str, system: str = None, schema: dict = None,
 # The one thing this module does
 # ---------------------------------------------------------------------------
 def suggest_milestones(title, why='', description='', category='',
-                       unit='', target='', deadline='', record=()) -> List[str]:
+                       unit='', target='', deadline='', record=(),
+                       about=()) -> List[str]:
     """Five checkpoint titles for this goal, in order.
 
     Raises `PlannerUnavailable` for anything the page should say out loud: no
@@ -1003,7 +1018,7 @@ def suggest_milestones(title, why='', description='', category='',
     if not using:
         raise PlannerUnavailable(NO_KEY)
 
-    brief = _brief(title, why, description, category, unit, target, deadline, record)
+    brief = _brief(title, why, description, category, unit, target, deadline, record, about)
     if using == 'groq':
         text = _from_groq(brief, schema=SCHEMA)
     elif using == 'grok':
@@ -1023,7 +1038,7 @@ def suggest_milestones(title, why='', description='', category='',
 
 def suggest_steps(milestone, goal='', why='', description='', category='',
                   unit='', target='', deadline='', before='', after='',
-                  record=()) -> List[str]:
+                  record=(), about=()) -> List[str]:
     """Five steps for one checkpoint, in the order they would be done.
 
     The goal is passed as well as the checkpoint because a checkpoint title is
@@ -1050,7 +1065,7 @@ def suggest_steps(milestone, goal='', why='', description='', category='',
         raise PlannerUnavailable(NO_KEY)
 
     brief = _brief(goal or milestone, why, description, category, unit, target,
-                   deadline, record)
+                   deadline, record, about)
     if goal.strip():
         brief += '\n\nCheckpoint to break down: {}'.format(milestone.strip())
         if str(before or '').strip():
@@ -1201,7 +1216,7 @@ def _months(value) -> int:
     return max(MONTHS_MIN, min(MONTHS_MAX, months))
 
 
-def draft_goal(idea: str) -> dict:
+def draft_goal(idea: str, about: Sequence[str] = ()) -> dict:
     """A whole goal from one sentence: title, why, category, months, five.
 
     Raises `PlannerUnavailable` for everything the wizard should say out loud,
@@ -1228,7 +1243,9 @@ def draft_goal(idea: str) -> dict:
             'with what is set.')
 
     text = from_provider(
-        'What they said: {}'.format(idea),
+        'What they said: {}'.format(idea) + (
+            '\n\n{}\n{}'.format(ABOUT_HEADING, '\n'.join('- {}'.format(line) for line in about))
+            if about else ''),
         system=SYSTEM_GOAL,
         schema=DRAFT_SCHEMA,
         instruction='Turn this into a goal.',

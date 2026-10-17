@@ -183,6 +183,14 @@ export const STEPS: Step[] = [
 
   // ---- Everything else -----------------------------------------------------
   {
+    id: 'log',
+    kind: 'next',
+    target: tab('log'),
+    skipIfMissing: true,
+    title: 'Log',
+    body: "A private journal. Write about your day or your goals, and Summit uses it to fit your plans to you. Only you can see it.",
+  },
+  {
     id: 'more-tools',
     kind: 'click',
     target: ['[data-tour="rail-more"][aria-expanded="false"]'],

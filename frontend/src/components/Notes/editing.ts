@@ -475,3 +475,30 @@ export function marksAt(root: HTMLElement): Record<Family, string | null> {
   }
   return found;
 }
+
+/**
+ * Put an image from the web where the caret is, or at the end when the caret
+ * isn't in the editor. A selection stays: the image goes after it, because
+ * picking a picture is never a request to delete the words that were
+ * highlighted. Written back out as `![alt](src)` by utils/htmlToMarkdown.
+ */
+export function imageSelection(root: HTMLElement, src: string, alt: string): void {
+  if (!/^https?:\/\//i.test(src)) return;
+  const image = document.createElement('img');
+  image.className = 'md-img';
+  image.setAttribute('src', src);
+  image.setAttribute('alt', alt);
+  const range = rangeIn(root);
+  if (range) {
+    range.collapse(false);
+    range.insertNode(image);
+  } else {
+    root.append(image);
+  }
+  const after = document.createRange();
+  after.setStartAfter(image);
+  after.collapse(true);
+  const selection = window.getSelection();
+  selection?.removeAllRanges();
+  selection?.addRange(after);
+}

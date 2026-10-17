@@ -64,7 +64,7 @@ export function FeatureGate() {
 
         {starter.stage === 'starter' && (
           <p className="gs-when">
-            Your first days start with Dashboard, Calendar and Timer, so it's not overwhelming. The rest shows up in{' '}
+            Your first days start with Dashboard, Calendar, Timer and Log, so it's not overwhelming. The rest shows up in{' '}
             {starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`}, or sooner if you reach level{' '}
             {STARTER_LEVEL}.
           </p>

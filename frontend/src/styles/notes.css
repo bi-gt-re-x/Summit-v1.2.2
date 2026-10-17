@@ -911,6 +911,14 @@ html[data-theme="dark"] .nt-page {
    to see at a glance which words in a paragraph will move you. The glyph says
    which of the three it is without the reader having to read the address. */
 .nt-rich a { color: var(--nt-accent-2); text-decoration: underline; text-underline-offset: 2px; }
+/* An image from `![…](https://…)`, sized to the column. */
+.nt-rich img.md-img {
+    display: block;
+    max-width: 100%;
+    max-height: 420px;
+    margin: var(--space-2) 0;
+    border-radius: var(--radius-md);
+}
 .nt-rich a.md-link.is-task,
 .nt-rich a.md-link.is-goal,
 .nt-rich a.md-link.is-page {

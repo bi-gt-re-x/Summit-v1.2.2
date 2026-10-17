@@ -297,6 +297,18 @@ const TABS: Tab[] = [
     ),
   },
   {
+    // The private journal Summit learns from (pages/Log.tsx). Not gated in
+    // the starter days: it's how a new account tells Summit about itself.
+    to: '/log',
+    label: 'Log',
+    icon: (
+      <svg {...stroke}>
+        <path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+        <path d="M9 9h6M9 13h6M9 17h3" />
+      </svg>
+    ),
+  },
+  {
     // Under Notes, because both are places you go *to* rather than results you
     // come back for — the pages above this point report on work that is
     // already done, and these two are where some of it happens.

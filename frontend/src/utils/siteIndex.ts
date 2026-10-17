@@ -87,7 +87,14 @@ export const PLACES: Place[] = [
     name: 'Notes',
     where: '',
     to: '/notes',
-    keywords: 'writing markdown notebook journal shelf',
+    keywords: 'writing markdown notebook shelf',
+  },
+  {
+    id: 'log',
+    name: 'Log',
+    where: '',
+    to: '/log',
+    keywords: 'journal diary reflect reflection thoughts feelings entries what summit has learned about me personalize',
   },
   {
     id: 'achievements',

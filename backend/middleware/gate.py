@@ -31,6 +31,8 @@ GATED_PATHS = ('/dashboard', '/calendar', '/goals', '/growth', '/analytics',
                '/skill-trees', '/growth-tree',
                # Notes are the account's own writing and nobody else's.
                '/notes',
+               # The Log is private writing, the most personal page there is.
+               '/log',
                # The three Personal spaces and the three Team ones, the same.
                '/spaces/1', '/spaces/2', '/spaces/3',
                '/team/1', '/team/2', '/team/3',

@@ -10,7 +10,7 @@
  */
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
-  alignSelection, clearFamily, codeSelection, linkSelection, marksAt,
+  alignSelection, clearFamily, codeSelection, imageSelection, linkSelection, marksAt,
   spanSelection, toggleBox,
 } from './editing';
 import { toMarkdown } from '@/utils/htmlToMarkdown';
@@ -232,5 +232,21 @@ describe('what the caret is standing in', () => {
     root.innerHTML = '<p>plain</p>';
     caretIn('plain');
     expect(marksAt(root)).toEqual({ ink: null, mark: null, face: null, size: null });
+  });
+});
+
+describe('images', () => {
+  it('goes after the selection and keeps the words', () => {
+    root.innerHTML = '<p>Swim moved</p>';
+    select('Swim');
+    imageSelection(root, 'https://example.com/pool.png', 'Pool');
+    expect(toMarkdown(root)).toBe('Swim![Pool](https://example.com/pool.png) moved');
+  });
+
+  it('refuses an address that is not on the web', () => {
+    root.innerHTML = '<p>text</p>';
+    caretIn('text');
+    imageSelection(root, 'javascript:alert(1)', '');
+    expect(root.querySelector('img')).toBeNull();
   });
 });
