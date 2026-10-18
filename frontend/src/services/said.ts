@@ -5,7 +5,8 @@
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
 
-export type Verdict = 'strong' | 'some' | 'little' | 'none';
+/** `started` and `not_yet` are a new account's: getting going, not falling short. */
+export type Verdict = 'strong' | 'some' | 'little' | 'none' | 'started' | 'not_yet';
 
 export interface Standing {
   subject: string;
@@ -24,6 +25,27 @@ export interface SaidItem extends Standing {
   kind: string;
   text: string;
   source: 'About you' | 'Log';
+}
+
+/** One subject the reader named, with every line that named it. */
+export interface NamedRow extends Standing {
+  kind: 'goal' | 'doing';
+  /** How many lines named it: what the list is ranked on. */
+  mentions: number;
+  lines: Array<{ text: string; source: 'About you' | 'Log' }>;
+  text: string;
+  source: 'About you' | 'Log';
+  /** Resources and contests named for it: "Alcumus", "USACO". */
+  resources: string[];
+  /** An instrument or a sport: practice more than tasks. */
+  practice: boolean;
+}
+
+export interface Suggestion {
+  key: string;
+  title: string;
+  body: string;
+  action: { label: string; to: string } | null;
 }
 
 export interface TimingRead {
@@ -45,6 +67,14 @@ export interface TopicRow {
 export interface SaidVsDid {
   days: number;
   month_tasks: number;
+  total_tasks: number;
+  /** 'new' until the account has a few weeks or a few dozen tasks behind it. */
+  stage: 'new' | 'settled';
+  /** Rows shown before "Show more". */
+  top: number;
+  named: NamedRow[];
+  suggestions: Suggestion[];
+  best_day: string | null;
   aims: SaidItem[];
   activities: SaidItem[];
   timing: TimingRead[];

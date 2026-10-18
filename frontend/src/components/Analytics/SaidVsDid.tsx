@@ -1,21 +1,23 @@
 /**
- * Said vs did: the reader's own words, held up against their record.
+ * Your goals and routines: the subjects the reader named, held up against
+ * the last 30 days of finished tasks.
  *
- * What they told Summit at sign-up (About you) and what the Log has learned
- * from their journal, each checked against the last 30 days of finished
- * tasks: aims against the time they got, things they said they do against
- * whether any of it shows up, and when they say they work best against the
- * hours their tasks actually get done. Under that, the topics inside each
- * subject that task names reveal, and unfiled tasks whose names say where
- * they belong, with a button to file them.
+ * One row per subject, however many lines named it, ranked by how often it
+ * comes up in what they wrote (About you and the Log). The top five show;
+ * the rest fold behind "Show more", so a long About you answer doesn't turn
+ * into a wall of rows. Under the list, a few moves built from those figures
+ * (backend/tracking/said_did.py `suggestions`), then timing, the topics
+ * inside each subject, and unfiled tasks with a button to file them.
  *
- * Every figure is counted (backend/tracking/said_did.py). A line that names
- * no subject is left out rather than matched to the nearest thing.
+ * A new account is getting started, not falling short: until it has a few
+ * weeks or a few dozen tasks behind it, a subject with nothing logged reads
+ * "Not on record yet" in grey rather than "Nothing yet" in red.
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ChevronDown, Lightbulb } from 'lucide-react';
 import * as said from '@/services/said';
-import type { SaidItem, SaidVsDid as Reading, Verdict } from '@/services/said';
+import type { NamedRow, SaidVsDid as Reading, Suggestion, Verdict } from '@/services/said';
 import { Panel } from './charts';
 
 const VERDICT: Record<Verdict, string> = {
@@ -23,6 +25,8 @@ const VERDICT: Record<Verdict, string> = {
   some: 'Getting some time',
   little: 'Barely touched',
   none: 'Nothing yet',
+  started: 'Started',
+  not_yet: 'Not on record yet',
 };
 
 const WINDOW: Record<string, string> = {
@@ -36,30 +40,99 @@ function plural(count: number, word: string) {
   return `${count} ${word}${count === 1 ? '' : 's'}`;
 }
 
-function Row({ item, days, total }: { item: SaidItem; days: number; total: number }) {
+function NamedItem({ row, rank, total, open, onToggle }: {
+  row: NamedRow;
+  rank: number;
+  total: number;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const more = row.lines.length - 1;
   return (
-    <li className={`ax-said-row is-${item.verdict}`}>
-      <p className="ax-said-quote">
-        "{item.text}"<span className="ax-said-src">{item.source}</span>
-      </p>
-      <p className="ax-said-did">
-        <b>{item.name}:</b> {item.tasks} of {plural(total, 'task')} in {days} days ({item.share}%)
-        {item.rank ? `, #${item.rank} of ${item.of} subjects` : ''}.
-        <span className={`ax-said-chip is-${item.verdict}`}>{VERDICT[item.verdict]}</span>
-      </p>
+    <li className={`ax-said-item is-${row.verdict}${open ? ' is-open' : ''}`}>
+      <span className="ax-said-rank" aria-hidden="true">{rank}</span>
+      <div className="ax-said-main">
+        <p className="ax-said-name">
+          <b>{row.name}</b>
+          <span className={`ax-said-kind is-${row.kind}`}>{row.kind === 'goal' ? 'Goal' : 'You do this'}</span>
+          <span className="ax-said-count">
+            {row.mentions === 1 ? 'named once' : `named ${row.mentions} times`}
+          </span>
+        </p>
+        <p className="ax-said-line" title={row.text}>
+          "{row.text}"
+          {more > 0 && (
+            <button type="button" className="ax-said-more" aria-expanded={open} onClick={onToggle}>
+              {open ? 'less' : `+${more} more`}
+            </button>
+          )}
+        </p>
+        {open && (
+          <ul className="ax-said-lines">
+            {row.lines.slice(1).map((line) => (
+              <li key={line.text}>"{line.text}" <small>{line.source}</small></li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div className="ax-said-fig">
+        <span className="ax-said-tasks">
+          {row.tasks === 0 ? (
+            'No tasks yet'
+          ) : (
+            <>
+              <b>{row.tasks}</b> of {total} {total === 1 ? 'task' : 'tasks'}
+              <small> {row.share}%</small>
+            </>
+          )}
+        </span>
+        <span className={`ax-said-chip is-${row.verdict}`}>{VERDICT[row.verdict]}</span>
+      </div>
     </li>
+  );
+}
+
+function Suggestions({ items }: { items: Suggestion[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="ax-said-group ax-said-help">
+      <h3 className="ax-said-title">
+        <Lightbulb aria-hidden="true" /> What would help
+      </h3>
+      <ol className="ax-said-tips">
+        {items.map((item, at) => (
+          <li key={item.key} className="ax-said-tip">
+            <span className="ax-said-tip-num" aria-hidden="true">{at + 1}</span>
+            <div>
+              <strong>{item.title}</strong>
+              <p>{item.body}</p>
+              {item.action && (
+                <Link to={item.action.to} className="ax-link">
+                  {item.action.label} →
+                </Link>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
 
 export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () => void }) {
   const [filing, setFiling] = useState<string | null>(null);
   const [filedNote, setFiledNote] = useState('');
+  const [showAll, setShowAll] = useState(false);
+  const [openRow, setOpenRow] = useState<string | null>(null);
 
   if (!data) return null;
-  const { aims, activities, timing, topics, unfiled, days, month_tasks: total } = data;
-  const nothingSaid = aims.length === 0 && activities.length === 0 && timing.length === 0;
+  const { named, timing, topics, unfiled, days, month_tasks: total, stage, top, suggestions } = data;
+  const nothingSaid = named.length === 0 && timing.length === 0;
   const unfiledGroups = unfiled.groups.filter((group) => group.ids.length > 0);
   if (nothingSaid && topics.length === 0 && unfiledGroups.length === 0) return null;
+
+  const shown = showAll ? named : named.slice(0, top);
+  const hidden = named.length - top;
 
   const file = async (subject: string, ids: string[], name: string) => {
     setFiling(subject);
@@ -85,27 +158,44 @@ export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () =
         </p>
       ) : (
         <>
-          {aims.length > 0 && (
+          {stage === 'new' && (
+            <p className="ax-said-start">
+              <b>You're just getting started.</b> {plural(data.total_tasks, 'task')} on record so far, so
+              this is where you're headed, not a report card. Each subject fills in as you finish tasks filed
+              under it.
+            </p>
+          )}
+
+          {named.length > 0 && (
             <div className="ax-said-group">
-              <h3 className="ax-said-title">What you want vs. where your time went</h3>
-              <ul>
-                {aims.map((item) => (
-                  <Row key={`${item.source}-${item.subject}-${item.text}`} item={item} days={days} total={total} />
+              <h3 className="ax-said-title">What you talk about most</h3>
+              <ol className="ax-said-list">
+                {shown.map((row, at) => (
+                  <NamedItem
+                    key={row.subject}
+                    row={row}
+                    rank={at + 1}
+                    total={total}
+                    open={openRow === row.subject}
+                    onToggle={() => setOpenRow(openRow === row.subject ? null : row.subject)}
+                  />
                 ))}
-              </ul>
+              </ol>
+              {hidden > 0 && (
+                <button
+                  type="button"
+                  className="ax-said-all"
+                  aria-expanded={showAll}
+                  onClick={() => setShowAll(!showAll)}
+                >
+                  <ChevronDown aria-hidden="true" className={showAll ? 'is-up' : ''} />
+                  {showAll ? `Show the top ${top}` : `Show ${hidden} more you named`}
+                </button>
+              )}
             </div>
           )}
 
-          {activities.length > 0 && (
-            <div className="ax-said-group">
-              <h3 className="ax-said-title">What you said you do</h3>
-              <ul>
-                {activities.map((item) => (
-                  <Row key={`${item.source}-${item.subject}-${item.text}`} item={item} days={days} total={total} />
-                ))}
-              </ul>
-            </div>
-          )}
+          <Suggestions items={suggestions} />
 
           {timing.length > 0 && (
             <div className="ax-said-group">
@@ -147,9 +237,7 @@ export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () =
 
       {unfiledGroups.length > 0 && (
         <div className="ax-said-group">
-          <h3 className="ax-said-title">
-            {plural(unfiled.total, 'finished task')} with no subject
-          </h3>
+          <h3 className="ax-said-title">{plural(unfiled.total, 'finished task')} with no subject</h3>
           <ul className="ax-said-topics">
             {unfiledGroups.map((group) => (
               <li key={group.subject}>

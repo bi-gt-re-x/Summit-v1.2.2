@@ -480,6 +480,6 @@ export function SayVsDo({
 /** Whether the group has anything worth opening on. */
 export function sayVsDoHasNews(mood: MoodVsOutput | null, said: SaidReading | null) {
   const moodNews = Boolean(mood?.headline && mood.headline.tone !== 'building');
-  const saidNews = Boolean(said && (said.aims.length > 0 || said.timing.length > 0));
+  const saidNews = Boolean(said && (said.named.length > 0 || said.timing.length > 0));
   return moodNews || saidNews;
 }
