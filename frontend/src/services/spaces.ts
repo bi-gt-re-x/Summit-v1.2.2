@@ -98,3 +98,33 @@ export async function invite(id: number, email: string): Promise<ApiResult<{ spa
 export async function uninvite(id: number, email: string): Promise<ApiResult<{ space: Space }>> {
   return announce('team', await post<{ space: Space }>(`${BASE.team}/${id}/uninvite`, { email }));
 }
+
+/** One turn of a space's AI chat (components/Spaces/SpaceChat). */
+export interface ChatTurn {
+  role: 'user' | 'ai';
+  text: string;
+}
+
+export interface AskResult {
+  space: Space;
+  reply: string;
+  mode: 'replace' | 'append';
+  /** The page before the change, for Undo. */
+  before: SpaceDoc;
+}
+
+/**
+ * Ask the AI to build or change a page (backend/tracking/space_ai.py). The
+ * server saves the result, so the reply's `space` is already the stored page.
+ */
+export async function ask(
+  id: number,
+  prompt: string,
+  doc: SpaceDoc,
+  history: ChatTurn[],
+  kind: SpaceKind = 'personal',
+): Promise<ApiResult<AskResult>> {
+  const result = await post<AskResult>(`${BASE[kind]}/${id}/ai`, { prompt, doc, history });
+  if (result.success) announce(kind, { success: true, space: result.space } as ApiResult<{ space: Space }>);
+  return result;
+}

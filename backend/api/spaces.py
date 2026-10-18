@@ -48,6 +48,8 @@ records do not earn a table — the same choice the analytics baseline made.
     POST /api/team-spaces/<n>            rename / write
     POST /api/team-spaces/<n>/invite     add a pending address
     POST /api/team-spaces/<n>/uninvite   take one back
+    POST /api/spaces/<n>/ai              build or change the page from the chat
+    POST /api/team-spaces/<n>/ai         the same, for a team space
 """
 import re
 from datetime import date, datetime
@@ -56,6 +58,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from backend.api import background as background_api
 from backend.api import goals as goals_api
 from backend.api import records as records_api
 from backend.api import skillsteps as skillsteps_api
@@ -68,6 +71,8 @@ from backend.config import subjects as subjects_catalog
 from backend.goal_matcher import store as goal_store
 from backend.tracking import growth as growth_tracking
 from backend.tracking import live
+from backend.tracking import space_ai
+from backend.tracking.subject_brief import BriefUnavailable
 from backend.tracking import skill_level
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
@@ -142,6 +147,17 @@ class SaveSpace(BaseModel):
 
 class Invite(BaseModel):
     email: str = ''
+
+
+class AskSpace(BaseModel):
+    """One message in a space's AI chat."""
+
+    prompt: str = ''
+    #: The page as the editor holds it right now, which may be ahead of the
+    #: last save. Cleaned like any save before it's used.
+    doc: Optional[dict] = None
+    #: Earlier turns, `{role: 'user' | 'ai', text}`, oldest first.
+    history: Optional[List[dict]] = None
 
 
 def _default_name(kind: str, at: int) -> str:
@@ -368,6 +384,45 @@ def _save(username: str, kind: str, space_id: int, body: SaveSpace):
     return ok(space=space)
 
 
+def _ask(username: str, kind: str, space_id: int, body: AskSpace):
+    """Build or change a page from the chat (backend/tracking/space_ai.py).
+
+    The model's blocks are cleaned by `_clean_doc` like any save and written
+    straight to the space, and the reply carries the saved space so the editor
+    shows it at once. The page before the change comes back too, for Undo.
+    """
+    if not 1 <= space_id <= COUNT:
+        return fail("There's no space {}.".format(space_id))
+    prompt = (body.prompt or '').strip()[:2000]
+    if not prompt:
+        return fail('Say what you want on the page.')
+
+    spaces = _spaces(username, kind)
+    space = spaces[space_id - 1]
+    before = _clean_doc(body.doc) or space.get('doc') or {'icon': '', 'cover': '', 'blocks': []}
+
+    goals = [{'id': str(row.get('id')), 'title': str(row.get('title') or '')[:120]}
+             for row in db.rows_for('goals', username)
+             if row.get('status') != 'completed' and row.get('title')][:20]
+    history = [turn for turn in (body.history or []) if isinstance(turn, dict)]
+    try:
+        made = space_ai.build(prompt, page_text=_doc_text(before), page_name=space['name'],
+                              history=history, goals=goals,
+                              about=background_api.about_lines(username))
+    except BriefUnavailable as exc:
+        return fail(str(exc))
+
+    stamp = datetime.now().strftime('%H%M%S')
+    fresh = [{**block, 'id': 'ai{}-{}'.format(stamp, at)} for at, block in enumerate(made['blocks'])]
+    blocks = (list(before['blocks']) + fresh) if made['mode'] == 'append' else fresh
+    doc = _clean_doc({**before, 'blocks': blocks,
+                      'icon': made['icon'] or before.get('icon') or ''})
+    space['doc'] = doc
+    space['body'] = _doc_text(doc)[:BODY_MAX]
+    _store(username, kind, spaces)
+    return ok(space=space, reply=made['reply'], mode=made['mode'], before=before)
+
+
 # ---- Personal --------------------------------------------------------------
 @router.get('/api/spaces')
 def list_spaces(username: str = Depends(current_username)):
@@ -380,6 +435,11 @@ def save_space(space_id: int, body: SaveSpace,
     return _save(username, 'personal', space_id, body)
 
 
+@router.post('/api/spaces/{space_id}/ai')
+def ask_space(space_id: int, body: AskSpace, username: str = Depends(current_username)):
+    return _ask(username, 'personal', space_id, body)
+
+
 # ---- Team ------------------------------------------------------------------
 @router.get('/api/team-spaces')
 def list_team_spaces(username: str = Depends(current_username)):
@@ -390,6 +450,11 @@ def list_team_spaces(username: str = Depends(current_username)):
 def save_team_space(space_id: int, body: SaveSpace,
                     username: str = Depends(current_username)):
     return _save(username, 'team', space_id, body)
+
+
+@router.post('/api/team-spaces/{space_id}/ai')
+def ask_team_space(space_id: int, body: AskSpace, username: str = Depends(current_username)):
+    return _ask(username, 'team', space_id, body)
 
 
 @router.post('/api/team-spaces/{space_id}/invite')

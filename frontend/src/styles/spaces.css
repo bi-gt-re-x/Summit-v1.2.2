@@ -1522,3 +1522,180 @@ html[data-theme="dark"] .sp-item.is-lifted { box-shadow: 0 0 0 2px var(--pref-ac
     .sp-live-week { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .sp-live-goal-words .sp-live-pill { margin-left: 0; align-self: flex-start; }
+
+/* ---- The AI chat (components/Spaces/SpaceChat) ---------------------------
+   A panel fixed down the right, under the top bar. While it's open the page
+   gives up that width so nothing sits under it; folded, it's a tab on the
+   right edge. On a phone it's a sheet over the page instead. */
+.sp-page { --sp-chat-w: 360px; }
+.sp-page.has-chat .sp-shell { padding-right: calc(var(--sp-chat-w) + var(--space-6)); }
+
+.sp-chat {
+    position: fixed;
+    top: var(--topnav-h, 64px);
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    width: var(--sp-chat-w);
+    box-sizing: border-box;
+    border-left: 1px solid var(--color-line);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-md);
+}
+.sp-chat-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-3);
+    border-bottom: 1px solid var(--color-line-soft);
+}
+.sp-chat-head div { display: flex; flex: 1; flex-direction: column; gap: 2px; min-width: 0; }
+.sp-chat-head strong { font-size: var(--text-md); }
+.sp-chat-head span { font-size: var(--text-xs); color: var(--color-ink-muted); }
+.sp-chat-mark { width: 20px; height: 20px; color: var(--color-accent); flex: none; }
+.sp-chat-fold {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: var(--radius-md, 10px);
+    background: none;
+    color: var(--color-ink-muted);
+    cursor: pointer;
+}
+.sp-chat-fold:hover { background: var(--color-surface-2); color: var(--color-ink); }
+.sp-chat-fold svg { width: 18px; height: 18px; }
+
+.sp-chat-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+.sp-chat-empty { display: flex; flex-direction: column; gap: var(--space-2); }
+.sp-chat-empty p { margin: 0 0 var(--space-1); font-size: var(--text-sm); color: var(--color-ink-muted); }
+.sp-chat-idea {
+    text-align: left;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md, 10px);
+    background: var(--color-surface-2);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+.sp-chat-idea:hover:not(:disabled) { border-color: var(--color-accent); }
+
+.sp-chat-msg { display: flex; flex-direction: column; gap: var(--space-1); max-width: 88%; }
+.sp-chat-msg p {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: 14px;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+.sp-chat-msg.is-user { align-self: flex-end; }
+.sp-chat-msg.is-user p { background: var(--color-accent); color: #fff; border-bottom-right-radius: 4px; }
+.sp-chat-msg.is-ai { align-self: flex-start; }
+.sp-chat-msg.is-ai p { background: var(--color-surface-2); border-bottom-left-radius: 4px; }
+.sp-chat-msg.is-failed p { color: #c2410c; }
+.sp-chat-msg.is-busy p { color: var(--color-ink-muted); font-style: italic; }
+.sp-chat-undo {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border: 0;
+    background: none;
+    color: var(--color-ink-muted);
+    font: inherit;
+    font-size: var(--text-xs);
+    cursor: pointer;
+}
+.sp-chat-undo:hover { color: var(--color-ink); text-decoration: underline; }
+.sp-chat-undo svg { width: 13px; height: 13px; }
+
+.sp-chat-form {
+    position: relative;
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    border-top: 1px solid var(--color-line-soft);
+}
+.sp-chat-form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    resize: none;
+    padding: var(--space-3) 44px var(--space-3) var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-surface-2);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+}
+.sp-chat-form textarea:focus { outline: none; border-color: var(--color-accent); }
+.sp-chat-send {
+    position: absolute;
+    right: calc(var(--space-4) + 8px);
+    bottom: calc(var(--space-4) + 10px);
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: #fff;
+    cursor: pointer;
+}
+.sp-chat-send:disabled { opacity: .4; cursor: default; }
+.sp-chat-send svg { width: 16px; height: 16px; }
+
+.sp-chat-tab {
+    position: fixed;
+    right: 0;
+    top: calc(var(--topnav-h, 64px) + 96px);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-line);
+    border-right: 0;
+    border-radius: 12px 0 0 12px;
+    background: var(--color-surface);
+    color: var(--color-accent);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+}
+.sp-chat-tab svg { width: 16px; height: 16px; }
+.sp-chat-tab:hover { padding-right: var(--space-4); }
+
+.sp-chat-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+    .sp-page.has-chat .sp-shell { padding-right: var(--sp-right); }
+    .sp-chat { width: 100%; top: auto; height: 70vh; border-left: 0; border-top: 1px solid var(--color-line); border-radius: 16px 16px 0 0; }
+}

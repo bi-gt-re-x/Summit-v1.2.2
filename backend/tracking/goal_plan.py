@@ -370,6 +370,7 @@ def plan(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
                 'below.'),
             model_id=model_id or MODEL_DEFAULT,
             max_tokens=MAX_TOKENS,
+            topics=(findings.get('goal') or '', findings.get('subject') or ''),
         )
     except planner.PlannerUnavailable as exc:
         # The client, the workspace header and the refusal check are shared

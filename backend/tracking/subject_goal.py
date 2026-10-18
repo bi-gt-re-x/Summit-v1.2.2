@@ -283,6 +283,7 @@ def draft(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
             instruction='Draft one goal for this subject, from the checkpoints below.',
             model_id=model_id or MODEL_DEFAULT,
             max_tokens=MAX_TOKENS,
+            topics=(findings.get('subject') or '',),
         )
     except planner.PlannerUnavailable as exc:
         raise BriefUnavailable(str(exc)) from exc

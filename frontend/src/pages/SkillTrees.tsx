@@ -180,6 +180,7 @@ import {
   type PlacedEdge,
 } from '@/utils/skillGraph';
 import { FOCUS_COUNT, loadFocus, resolveFocus, saveFocus } from '@/utils/focusTopics';
+import { loadLastTree, saveLastTree } from '@/utils/lastTree';
 import {
   applyProgress,
   loadProgress,
@@ -360,6 +361,18 @@ export default function SkillTrees() {
   );
   const [treeId, setTreeId] = useState<string>(DEFAULT_TREE.id);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  /* Back to the tree the reader left off on. Read before the save below runs
+     for this account, so the default tree never overwrites what was stored. */
+  const [treeRead, setTreeRead] = useState<string | null | undefined>(undefined);
+  useEffect(() => {
+    const last = loadLastTree(username);
+    if (last && subjectTreeById(last)) setTreeId(last);
+    setTreeRead(username);
+  }, [username]);
+  useEffect(() => {
+    if (treeRead === username) saveLastTree(username, treeId);
+  }, [treeId, treeRead, username]);
 
   /* Practice done on top of what the trees seed — see utils/skillProgress for
      why it lives in the browser. Loaded once per account, and written back on

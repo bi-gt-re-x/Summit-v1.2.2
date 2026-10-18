@@ -64,6 +64,7 @@ the plan; the account owns it.
 import json
 import os
 import re
+from backend.tracking import sources
 from backend.tracking.plainwords import STYLE, plain
 from typing import List, Sequence
 
@@ -972,7 +973,7 @@ def able() -> bool:
 
 def from_provider(brief: str, system: str = None, schema: dict = None,
                   instruction: str = '', model_id: str = '',
-                  max_tokens: int = 0) -> str:
+                  max_tokens: int = 0, topics: Sequence[str] = ()) -> str:
     """One schema-constrained answer from whichever provider is configured.
 
     The four modules that ask a model to read a table used to name Anthropic
@@ -984,10 +985,17 @@ def from_provider(brief: str, system: str = None, schema: dict = None,
     `model_id` is Anthropic's alone. Groq's model is `GROQ_MODEL`, because the
     two providers do not share a naming scheme and a caller that knows one
     cannot be asked to know the other.
+
+    `topics` is what the draft is about, most specific first. The first that
+    finds anything is looked up in backend/tracking/sources.py and its
+    reference facts go under the brief, so the model takes facts from them
+    rather than from memory.
     """
     using = provider()
     if not using:
         raise PlannerUnavailable(NO_KEY)
+    if topics:
+        brief = brief + sources.brief_block(*topics)
     if using == 'groq':
         try:
             return _from_groq(brief, system, instruction, schema, max_tokens)
@@ -1030,7 +1038,7 @@ def suggest_milestones(title, why='', description='', category='',
         raise PlannerUnavailable(NO_KEY)
 
     brief = _brief(title, why, description, category, unit, target, deadline, record, about,
-                   starting)
+                   starting) + sources.brief_block(title, category)
     if using == 'groq':
         text = _from_groq(brief, schema=SCHEMA)
     elif using == 'grok':
@@ -1077,7 +1085,7 @@ def suggest_steps(milestone, goal='', why='', description='', category='',
         raise PlannerUnavailable(NO_KEY)
 
     brief = _brief(goal or milestone, why, description, category, unit, target,
-                   deadline, record, about)
+                   deadline, record, about) + sources.brief_block(milestone, goal, category)
     if goal.strip():
         brief += '\n\nCheckpoint to break down: {}'.format(milestone.strip())
         if str(before or '').strip():
@@ -1269,6 +1277,7 @@ def draft_goal(idea: str, about: Sequence[str] = (), starting: str = '') -> dict
         system=SYSTEM_GOAL,
         schema=DRAFT_SCHEMA,
         instruction='Turn this into a goal.',
+        topics=(idea,),
     )
 
     try:

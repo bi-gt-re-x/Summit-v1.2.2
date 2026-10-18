@@ -41,6 +41,8 @@ sys.path.insert(0, ROOT)
 _TMP = tempfile.mkdtemp(prefix='summit-tests-')
 os.environ['SUMMIT_DB'] = os.path.join(_TMP, 'test.db')
 os.environ['SECRET_KEY'] = 'tests-do-not-need-a-real-one'
+# No test looks anything up on Wikipedia (backend/tracking/sources.py).
+os.environ['SUMMIT_NO_SOURCES'] = '1'
 
 # `create_app` refuses to start without these two unless SUMMIT_DEV says the
 # install is a laptop (see `deployment_problems` in backend/config/settings.py).

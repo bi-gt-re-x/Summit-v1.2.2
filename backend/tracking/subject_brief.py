@@ -419,6 +419,7 @@ def write(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
                 'using only the figures below.'),
             model_id=model_id or MODEL_DEFAULT,
             max_tokens=MAX_TOKENS,
+            topics=(findings.get('subject') or '',),
         )
     except planner.PlannerUnavailable as exc:
         # The client, the workspace header and the refusal check are shared

@@ -20,11 +20,15 @@
  * (components/Spaces/canvas). The page saves itself a moment after editing stops,
  * and once more on the way out, so nothing is lost to a navigation. Backend:
  * backend/api/spaces.py.
+ *
+ * Down the right is the AI chat (components/Spaces/SpaceChat): ask it for a
+ * page, or a change to this one, and it builds it. It folds to a tab.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { useDocumentTitle, useSpaces } from '@/hooks';
 import { Members } from '@/components/Spaces/Members';
+import { SpaceChat } from '@/components/Spaces/SpaceChat';
 import { BlockEditor } from '@/components/Spaces/BlockEditor';
 import { Cover, DressTools, PageIcon } from '@/components/Spaces/Dress';
 import { normalise, wordCount, type SpaceDoc } from '@/components/Spaces/blocks';
@@ -110,6 +114,21 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
     timer.current = window.setTimeout(() => void flush(), SAVE_AFTER_MS);
   };
 
+  /* The AI chat's page lands already saved, so any autosave still waiting
+     would only write the older page back over it. Undo goes through `write`
+     like an edit, because the old page does need saving. */
+  const fromChat = (next: SpaceDoc, saveIt: boolean) => {
+    if (saveIt) {
+      write(normalise(next));
+      return;
+    }
+    window.clearTimeout(timer.current);
+    pending.current = null;
+    setDoc(normalise(next));
+    setStatus('saved');
+  };
+  const [chatOpen, setChatOpen] = useState(false);
+
   const rename = async () => {
     const next = name.trim() || defaultName(id);
     setName(next);
@@ -128,7 +147,10 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
   const ground = doc.background ? (isDark(doc.background) ? ' has-bg is-dark-bg' : ' has-bg is-light-bg') : '';
 
   return (
-    <main className={`sp-page${ground}${painted?.className ? ` ${painted.className}` : ''}`} style={painted?.style}>
+    <main
+      className={`sp-page${ground}${painted?.className ? ` ${painted.className}` : ''}${chatOpen ? ' has-chat' : ''}`}
+      style={painted?.style}
+    >
       {/* Edge to edge across the top, when the page wears one. */}
       <Cover doc={doc} disabled={!loaded} onDoc={(change) => write({ ...doc, ...change })} />
 
@@ -188,6 +210,8 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
           <Members spaceId={id} invites={space.invites ?? []} />
         )}
       </div>
+
+      <SpaceChat kind={kind} id={id} doc={doc} disabled={!loaded} onDoc={fromChat} onOpenChange={setChatOpen} />
     </main>
   );
 }

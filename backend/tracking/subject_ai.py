@@ -68,7 +68,7 @@ import re
 from typing import Any, Dict, List
 
 from backend.config.shared import RULES
-from backend.tracking import figures, free_resources, planner
+from backend.tracking import figures, free_resources, planner, sources
 from backend.tracking.subject_brief import BriefUnavailable, _object
 from backend.tracking.plainwords import STYLE, plain
 
@@ -1690,7 +1690,9 @@ def plan(state: Dict[str, Any], model_id: str = '',
     if not str(state.get('subject') or '').strip():
         raise BriefUnavailable('There is no subject to plan for.')
 
-    brief = steps_brief_from(state)
+    # Reference facts about the subject (backend/tracking/sources.py) go in
+    # the brief itself, so the figure check below allows their numbers too.
+    brief = steps_brief_from(state) + sources.brief_block(str(state.get('subject') or ''))
     try:
         text = planner.from_provider(
             brief,
@@ -1924,7 +1926,7 @@ def read(state: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
     if not str(state.get('subject') or '').strip():
         raise BriefUnavailable('There is no subject to read.')
 
-    brief = brief_from(state)
+    brief = brief_from(state) + sources.brief_block(str(state.get('subject') or ''))
     try:
         text = planner.from_provider(
             brief,
