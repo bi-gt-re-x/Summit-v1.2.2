@@ -202,7 +202,7 @@ export default function Analytics() {
   const waiting =
     [
       data.tasks, series, data.ratings, data.goals,
-      baseline, data.adopted, data.gradedLog, data.scoreLog, data.said,
+      baseline, data.adopted, data.gradedLog, data.scoreLog, data.said, data.mood,
     ].some((call) => call.loading)
     || !ready
     || !subjectsReady;
@@ -700,7 +700,7 @@ export default function Analytics() {
         )}
 
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}
-        {view.key === 'insights' && <InsightsTab model={model} subjects={subjects} />}
+        {view.key === 'insights' && <InsightsTab model={model} data={data} subjects={subjects} />}
         {view.key === 'subjects' && (
           <SubjectsTab model={model} subjects={subjects} username={username} />
         )}

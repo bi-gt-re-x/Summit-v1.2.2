@@ -60,3 +60,83 @@ export function read(): Promise<ApiResult<SaidVsDid>> {
 export function fileInferred(subject: string, ids: string[]): Promise<ApiResult<SaidVsDid & { filed: number }>> {
   return post<SaidVsDid & { filed: number }>('/api/analytics/file_inferred', { subject, ids });
 }
+
+// ---------------------------------------------------------------------------
+// Mood vs output: how the days felt (the Log) against what they did.
+// Rules: backend/tracking/mood.py.
+// ---------------------------------------------------------------------------
+export type Confidence = 'early' | 'pattern' | 'solid';
+
+export interface MoodBand {
+  key: 'rough' | 'okay' | 'good';
+  label: string;
+  days: number;
+  tasks_avg: number;
+  focus_avg: number;
+  execution_avg: number | null;
+  /** Percent against the usual day, or null with no days. */
+  vs_usual: number | null;
+  enough: boolean;
+}
+
+export interface FeelingRead {
+  kind: 'tired' | 'stressed' | 'down' | 'good' | 'driven';
+  label: string;
+  days: number;
+  enough: boolean;
+  /** Only when `enough`. */
+  sign?: number;
+  other_days?: number;
+  tasks_avg?: number;
+  other_avg?: number;
+  change?: number | null;
+  next_day_avg?: number;
+  next_change?: number | null;
+  words?: string[];
+  confidence?: Confidence;
+  need?: number;
+}
+
+export interface PerceptionCheck {
+  day: string;
+  side: 'low' | 'high';
+  quote: string;
+  tasks: number;
+  focus_min: number;
+  usual: number;
+  verdict: 'harsher' | 'matches' | 'close' | 'generous' | 'deep';
+}
+
+export interface MoodDay {
+  day: string;
+  mood: number | null;
+  source: 'said' | 'read' | null;
+  tasks: number;
+  focus_min: number;
+}
+
+export interface MoodVsOutput {
+  window_days: number;
+  logged_days: number;
+  mood_days: number;
+  said_days: number;
+  read_days: number;
+  today: { mood: number | null; source: 'said' | 'read' | null } | null;
+  usual: { tasks: number; focus_min: number; days: number };
+  bands: MoodBand[];
+  feelings: FeelingRead[];
+  checks: PerceptionCheck[];
+  harsher: number;
+  energy: Array<{ level: number; label: string; days: number; tasks_avg: number; enough: boolean }>;
+  energy_ready: boolean;
+  recovery: { days: number; lows: number } | null;
+  weekdays: Array<{ day: string; mood: number; days: number }>;
+  series: MoodDay[];
+  min_days: number;
+  small_change: number;
+  headline: { text: string; tone: 'insight' | 'steady' | 'building'; confidence: Confidence } | null;
+}
+
+export function readMood(): Promise<ApiResult<MoodVsOutput>> {
+  return get<MoodVsOutput>('/api/analytics/mood');
+}

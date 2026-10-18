@@ -16,6 +16,9 @@ export interface Entry {
   body: string;
   /** Whether the current text has been read for insights yet. */
   learn_state: 'waiting' | 'done' | 'failed' | 'off';
+  /** The check-in: mood 1-5 and energy 1-3, or null when skipped. */
+  mood?: number | null;
+  energy?: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +44,9 @@ export interface EntryDraft {
   body: string;
   /** The Save button rather than an autosave: read it now. */
   final?: boolean;
+  /** The check-in. 0 clears it; leaving it out leaves it alone. */
+  mood?: number;
+  energy?: number;
 }
 
 export function list(): Promise<ApiResult<{ entries: Entry[]; insights: Insight[]; learning: boolean }>> {

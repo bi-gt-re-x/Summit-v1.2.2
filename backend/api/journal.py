@@ -31,6 +31,19 @@ class SaveEntry(BaseModel):
     body: str = ''
     #: The Save button rather than an autosave: read it now.
     final: bool = False
+    #: How the day felt (1-5) and how much energy there was (1-3), from the
+    #: check-in row. Left out means leave it; 0 means clear it.
+    mood: Optional[int] = None
+    energy: Optional[int] = None
+
+
+def _scale(value, top):
+    """A check-in answer: None to leave it, 0 to clear, else 1..top."""
+    if value is None or isinstance(value, bool):
+        return 'leave'
+    if value == 0:
+        return None
+    return value if 1 <= value <= top else 'leave'
 
 
 class EntryId(BaseModel):
@@ -72,7 +85,12 @@ def save_entry(body: SaveEntry, username: str = Depends(current_username)):
     """Create an entry or replace an existing one's title and text."""
     title = body.title.strip()[:journal.TITLE_MAX]
     text = body.body[:journal.BODY_MAX]
-    if not title and not text.strip():
+    mood = _scale(body.mood, 5)
+    energy = _scale(body.energy, 3)
+    checkin = {key: value for key, value in (('mood', mood), ('energy', energy)) if value != 'leave'}
+    # A check-in alone is an entry: tapping how the day went is worth keeping
+    # on a day with nothing to write.
+    if not title and not text.strip() and not any(checkin.values()):
         return fail('Write something first.')
 
     stamp = journal.now()
@@ -86,11 +104,18 @@ def save_entry(body: SaveEntry, username: str = Depends(current_username)):
                       'learn_state': 'waiting'}
             db.update_row('log_entries', row['id'], fields, user_id=username)
             row.update(fields)
+        # The check-in is the reader's own answer, not writing to learn from,
+        # so changing it alone doesn't send the entry to be read again.
+        moved = {key: value for key, value in checkin.items() if row.get(key) != value}
+        if moved:
+            db.update_row('log_entries', row['id'], {**moved, 'updated_at': stamp}, user_id=username)
+            row.update(moved)
     else:
-        changed = True
+        changed = bool(title or text.strip())
         row = db.insert_row('log_entries', {
             'id': db.new_id('log_entries'), 'user_id': username, 'title': title,
-            'body': text, 'learn_state': 'waiting', 'created_at': stamp, 'updated_at': stamp,
+            'body': text, 'learn_state': 'waiting' if changed else 'done',
+            'created_at': stamp, 'updated_at': stamp, **checkin,
         })
 
     # Read it later, or now on a Save press. An unchanged entry that was

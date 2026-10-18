@@ -26,6 +26,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RichEditor } from '@/components/Notes/RichEditor';
 import { imageSelection, linkSelection, listSelection, markSelection } from '@/components/Notes/editing';
 import { LearnedPanel } from '@/components/Log/LearnedPanel';
+import { CheckIn, moodOf } from '@/components/Log/CheckIn';
 import {
   clearDraft, clock, entryDate, findEntries, onlyFrom, plainText, readDraft, writeDraft,
 } from '@/components/Log/entry';
@@ -50,9 +51,19 @@ interface Draft {
   id: string;
   title: string;
   body: string;
+  /** The check-in (components/Log/CheckIn), or null when skipped. */
+  mood: number | null;
+  energy: number | null;
 }
 
-const BLANK: Draft = { id: '', title: '', body: '' };
+const BLANK: Draft = { id: '', title: '', body: '', mood: null, energy: null };
+
+/** What a save sends for the check-in: 0 clears a skipped one. */
+const checkinOf = (draft: Draft) => ({ mood: draft.mood ?? 0, energy: draft.energy ?? 0 });
+
+/** Whether two drafts would save the same thing. */
+const sameDraft = (a: Draft, b: Draft) =>
+  a.title === b.title && a.body === b.body && a.mood === b.mood && a.energy === b.energy;
 
 type Status = 'empty' | 'unsaved' | 'saving' | 'saved' | 'failed';
 
@@ -63,7 +74,15 @@ interface Adding {
   label: string;
 }
 
-const isBlank = (draft: Draft) => draft.title.trim() === '' && draft.body.trim() === '';
+/** Nothing to save. A check-in alone is something: a day with a mood and no words. */
+const isBlank = (draft: Draft) =>
+  draft.title.trim() === '' && draft.body.trim() === '' && draft.mood === null && draft.energy === null;
+
+/** An entry from the server, as the editor holds it. */
+const fromEntry = (entry: Entry): Draft => ({
+  id: entry.id, title: entry.title, body: entry.body,
+  mood: entry.mood ?? null, energy: entry.energy ?? null,
+});
 
 export default function Log() {
   useDocumentTitle('Log');
@@ -131,16 +150,21 @@ export default function Log() {
     if (!user) return;
     void load().then((rows) => {
       const kept = readDraft(user);
-      if (!kept || (kept.title.trim() === '' && kept.body.trim() === '')) return;
+      if (!kept) return;
+      const keptDraft: Draft = {
+        id: kept.id ?? '', title: kept.title, body: kept.body,
+        mood: kept.mood ?? null, energy: kept.energy ?? null,
+      };
+      if (isBlank(keptDraft)) return;
       const server = kept.id ? rows?.find((entry) => entry.id === kept.id) : undefined;
       if (kept.id && !server) {
         // Deleted somewhere else; keep the words as a new entry.
-        setDraft({ id: '', title: kept.title, body: kept.body });
-      } else if (server && server.title === kept.title && server.body === kept.body) {
+        setDraft({ ...keptDraft, id: '' });
+      } else if (server && sameDraft(keptDraft, fromEntry(server))) {
         clearDraft(user);
         return;
       } else {
-        setDraft({ id: kept.id ?? '', title: kept.title, body: kept.body });
+        setDraft(keptDraft);
       }
       setEditorKey((key) => key + 1);
       setStatus('unsaved');
@@ -158,7 +182,10 @@ export default function Log() {
   const changeDraft = useCallback((next: Partial<Draft>) => {
     setDraft((was) => {
       const merged = { ...was, ...next };
-      writeDraft(latest.current.user, { id: merged.id || undefined, title: merged.title, body: merged.body, at: Date.now() });
+      writeDraft(latest.current.user, {
+        id: merged.id || undefined, title: merged.title, body: merged.body,
+        mood: merged.mood, energy: merged.energy, at: Date.now(),
+      });
       return merged;
     });
     setStatus('unsaved');
@@ -182,6 +209,7 @@ export default function Log() {
     try {
       const result = await logService.save({
         ...(sent.id ? { id: sent.id } : {}), title: sent.title, body: sent.body, final,
+        ...checkinOf(sent),
       });
       if (!result.success) {
         setStatus('failed');
@@ -193,14 +221,16 @@ export default function Log() {
       setSavedAt(Date.now());
       setMessage(null);
       const now = latest.current.draft;
-      const same = now.title === sent.title && now.body === sent.body;
+      const same = sameDraft(now, sent);
       setDraft((was) => ({ ...was, id: entry.id }));
       if (same) {
         setStatus('saved');
         clearDraft(latest.current.user);
       } else {
         // Typed on while it saved: the next autosave sends the rest.
-        writeDraft(latest.current.user, { id: entry.id, title: now.title, body: now.body, at: Date.now() });
+        writeDraft(latest.current.user, {
+          id: entry.id, title: now.title, body: now.body, mood: now.mood, energy: now.energy, at: Date.now(),
+        });
         setStatus('unsaved');
       }
       if (entry.learn_state === 'waiting') {
@@ -228,6 +258,7 @@ export default function Log() {
     if ((was === 'unsaved' || was === 'failed') && !isBlank(leaving)) {
       void logService.save({
         ...(leaving.id ? { id: leaving.id } : {}), title: leaving.title, body: leaving.body,
+        ...checkinOf(leaving),
       }).then((result) => {
         if (result.success) clearDraft(latest.current.user);
       }).catch(() => {});
@@ -248,7 +279,7 @@ export default function Log() {
     clearDraft(latest.current.user);
   }, [save]);
 
-  const openEntry = (entry: Entry) => void switchTo({ id: entry.id, title: entry.title, body: entry.body });
+  const openEntry = (entry: Entry) => void switchTo(fromEntry(entry));
   const newEntry = () => void switchTo(BLANK).then(() => titleRef.current?.focus());
 
   // ---- Deleting ------------------------------------------------------------
@@ -437,6 +468,12 @@ export default function Log() {
             <div role="status" aria-live="polite" className="lg-status-wrap">{statusLine}</div>
           </div>
 
+          <CheckIn
+            mood={draft.mood}
+            energy={draft.energy}
+            onChange={(next) => changeDraft(next)}
+          />
+
           <div className="lg-body">
             <RichEditor
               key={editorKey}
@@ -582,7 +619,17 @@ export default function Log() {
                     onClick={() => openEntry(entry)}
                   >
                     <span className="lg-item-top">
-                      <strong>{entry.title.trim() || 'Untitled'}</strong>
+                      {(() => {
+                        const face = moodOf(entry.mood);
+                        if (!face) return null;
+                        const Icon = face.icon;
+                        return (
+                          <span className={`lg-item-mood is-m${face.value}`} title={face.label}>
+                            <Icon aria-label={face.label} />
+                          </span>
+                        );
+                      })()}
+                      <strong>{entry.title.trim() || (entry.mood && !entry.body.trim() ? 'Check-in' : 'Untitled')}</strong>
                       <time dateTime={entry.created_at}>{entryDate(entry.created_at)}</time>
                     </span>
                     <span className="lg-item-preview">{preview || 'Nothing written yet.'}</span>

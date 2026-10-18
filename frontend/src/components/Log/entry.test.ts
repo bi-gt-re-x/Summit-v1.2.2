@@ -57,10 +57,15 @@ describe('the draft on this device', () => {
 
   it('is kept per account and can be cleared', () => {
     writeDraft('myles', { id: 'e1', title: 'T', body: 'B', at: 5 });
-    expect(readDraft('myles')).toEqual({ id: 'e1', title: 'T', body: 'B', at: 5 });
+    expect(readDraft('myles')).toEqual({ id: 'e1', title: 'T', body: 'B', mood: null, energy: null, at: 5 });
     expect(readDraft('someone-else')).toBeNull();
     clearDraft('myles');
     expect(readDraft('myles')).toBeNull();
+  });
+
+  it('keeps the check-in, and drops one out of range', () => {
+    writeDraft('myles', { title: '', body: '', mood: 4, energy: 9, at: 1 });
+    expect(readDraft('myles')).toMatchObject({ mood: 4, energy: null });
   });
 
   it('ignores something that is not a draft', () => {

@@ -82,12 +82,17 @@ import { unlock } from '@/utils/insight';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { whyFor } from '../milestones';
 import type { AnalyticsModel } from '../useAnalyticsModel';
+import type { AnalyticsData } from '../useAnalyticsData';
+import { SayVsDo, sayVsDoHasNews } from '../SayVsDo';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function InsightsTab({
   model,
+  data,
   subjects,
-}: { model: AnalyticsModel } & { subjects: SubjectIndex }) {
+}: { model: AnalyticsModel; data?: AnalyticsData } & { subjects: SubjectIndex }) {
+  const mood = data?.mood?.data ?? null;
+  const said = data?.said?.data ?? null;
   const {
     all, changes, changeWindow, clock, effects, fromIso, habits, historyDays, how,
     links, maturity, observed, patterns, qualitySummary, rated, ratingDepth, reasonRows, reasons,
@@ -231,6 +236,22 @@ export function InsightsTab({
               todayIso={toIso}
               effects={effects}
             />
+          </PanelGroup>
+        )}
+
+        {/* What you say vs. what you do: the Log and your About you answers,
+            held against the record (components/Analytics/SayVsDo). It needs
+            no gate of its own: every comparison inside carries its day count
+            and waits for its own floor, and a new account gets the invitation
+            to start rather than an empty heading. Opens when it has something
+            to say. */}
+        {data && (
+          <PanelGroup
+            title="What you say vs. what you do"
+            note="Your mood and your words, checked against your record"
+            defaultOpen={sayVsDoHasNews(mood, said)}
+          >
+            <SayVsDo mood={mood} said={said} reloadSaid={() => data.said?.reload()} />
           </PanelGroup>
         )}
 

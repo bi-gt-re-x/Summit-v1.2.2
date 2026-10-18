@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS log_entries (
     -- Whether the current text has been read for insights yet.
     learn_state TEXT NOT NULL DEFAULT 'waiting',
     learned_at  TEXT,
+    -- How the day felt, tapped on the Log page: mood 1-5, energy 1-3. NULL
+    -- is "not said", never a middling day (backend/tracking/mood.py).
+    mood        INTEGER,
+    energy      INTEGER,
     created_at  TEXT NOT NULL,
     updated_at  TEXT NOT NULL,
     CHECK (learn_state IN ('waiting', 'done', 'failed', 'off'))

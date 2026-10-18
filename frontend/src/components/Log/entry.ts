@@ -63,6 +63,8 @@ export interface LocalDraft {
   id?: string;
   title: string;
   body: string;
+  mood?: number | null;
+  energy?: number | null;
   /** When it was last typed in, epoch ms. */
   at: number;
 }
@@ -75,7 +77,12 @@ export function readDraft(username: string): LocalDraft | null {
     if (!raw) return null;
     const found = JSON.parse(raw) as Partial<LocalDraft>;
     if (typeof found.title !== 'string' || typeof found.body !== 'string') return null;
-    return { id: found.id || undefined, title: found.title, body: found.body, at: Number(found.at) || 0 };
+    const scale = (value: unknown, top: number) =>
+      typeof value === 'number' && value >= 1 && value <= top ? value : null;
+    return {
+      id: found.id || undefined, title: found.title, body: found.body,
+      mood: scale(found.mood, 5), energy: scale(found.energy, 3), at: Number(found.at) || 0,
+    };
   } catch {
     return null;
   }

@@ -211,6 +211,13 @@ ADDED_COLUMNS = (
     # went wrong instead of how much there was. See data/sql/tasks.sql.
     ('tasks', 'score_got', 'INTEGER'),
     ('tasks', 'score_of', 'INTEGER'),
+
+    # How the day felt, tapped on the Log page: mood 1-5, energy 1-3. NULL on
+    # every entry written before the check-in existed and on every one where
+    # it was skipped, and backend/tracking/mood.py reads NULL as "not said",
+    # never as a middling day. Ranges are enforced by backend/api/journal.py.
+    ('log_entries', 'mood', 'INTEGER'),
+    ('log_entries', 'energy', 'INTEGER'),
 )
 
 # Indexes on columns that ADDED_COLUMNS supplies. Their own list, applied after
@@ -689,6 +696,8 @@ ADDED_TABLES = ('''
         -- Whether the current text has been read for insights yet.
         learn_state TEXT NOT NULL DEFAULT 'waiting',
         learned_at  TEXT,
+        mood        INTEGER,
+        energy      INTEGER,
         created_at  TEXT NOT NULL,
         updated_at  TEXT NOT NULL,
         CHECK (learn_state IN ('waiting', 'done', 'failed', 'off'))

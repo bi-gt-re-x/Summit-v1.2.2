@@ -14,7 +14,8 @@ from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.config import subjects as subject_catalogue
 from backend.database import connection as db
-from backend.tracking import background, journal, said_did
+from backend.tracking import background, journal, mood, said_did
+from backend.tracking import focus as focus_tracking
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['background'])
@@ -68,7 +69,15 @@ def about_lines(username, subject=None):
                            if sid.lower() == wanted or str(name).lower() == wanted), None)
     return (background.brief_lines(facts_for(username), subject_id, names)
             + journal.brief_lines(username)
-            + said_did.brief_lines(said_for(username, names)))
+            + said_did.brief_lines(said_for(username, names))
+            + mood.brief_lines(mood_for(username)))
+
+
+def mood_for(username):
+    """How the days felt against what they did (tracking/mood.py)."""
+    entries = mood.entry_rows(db.rows_for('log_entries', username))
+    tasks = db.columns_for('tasks', username, ('status', 'completed_at', 'xp_value', 'execution'))
+    return mood.readings(entries, tasks, focus_tracking.history_for(username))
 
 
 def subject_groups() -> dict:

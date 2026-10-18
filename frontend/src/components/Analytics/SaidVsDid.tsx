@@ -73,9 +73,9 @@ export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () =
 
   return (
     <Panel
-      title="Said vs. did"
+      title="Your goals and routines"
       className="ax-said"
-      note={`What you told Summit, checked against your last ${days} days.`}
+      note={`What you named in your Log and About you, checked against your last ${days} days.`}
     >
       {nothingSaid ? (
         <p className="ax-said-empty">

@@ -471,6 +471,18 @@ def said_vs_did(username: str = Depends(current_username)):
     return ok(**background_api.said_for(username))
 
 
+@router.get('/api/analytics/mood')
+def mood_vs_output(username: str = Depends(current_username)):
+    """How the days felt (the Log) against what they did (the record).
+
+    See backend/tracking/mood.py for every comparison and its floor.
+    """
+    _, user = load_user(username)
+    if not user:
+        return fail('Account not found')
+    return ok(**background_api.mood_for(username))
+
+
 @router.post('/api/analytics/file_inferred')
 def file_inferred(body: FileInferred, username: str = Depends(current_username)):
     """File finished tasks that have no subject under the one their names say.

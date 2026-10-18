@@ -24,7 +24,7 @@ import { useApi, useStats } from '@/hooks';
 import * as backgroundService from '@/services/background';
 import type { Background } from '@/services/background';
 import * as saidService from '@/services/said';
-import type { SaidVsDid } from '@/services/said';
+import type { MoodVsOutput, SaidVsDid } from '@/services/said';
 import { taskHistory } from '@/services/taskHistory';
 import { takeOrAsk } from './earlyReads';
 import {
@@ -197,6 +197,16 @@ export function useAnalyticsData() {
   );
   const said = useApi<SaidVsDid>(saidCall, [username]);
 
+  // How the days felt against what they did. backend/tracking/mood.py.
+  const moodCall = useCallback(
+    () =>
+      username
+        ? saidService.readMood()
+        : Promise.resolve({ success: false as const, message: 'Sign in to see this.' }),
+    [username],
+  );
+  const mood = useApi<MoodVsOutput>(moodCall, [username]);
+
   // What to do next, for the minutes the reader picked. Decided on the server
   // (backend/tracking/next_actions.py) — the same list the dashboard's top line
   // reads — and asked again when the budget changes or the plan's own refresh
@@ -324,7 +334,8 @@ export function useAnalyticsData() {
     adopted.reload();
     next.reload();
     said.reload();
-  }, [adopted, goals, next, ratings, said, series, tasks]);
+    mood.reload();
+  }, [adopted, goals, mood, next, ratings, said, series, tasks]);
 
   return {
     stats,
@@ -339,6 +350,7 @@ export function useAnalyticsData() {
     scoreLog,
     background,
     said,
+    mood,
     next,
     budget,
     setBudget,
