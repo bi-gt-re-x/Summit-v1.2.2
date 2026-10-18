@@ -1901,3 +1901,11 @@ html[data-theme="dark"] .gr-heat-cell.is-blank {
     gap: var(--space-4);
     min-width: 0;
 }
+
+/* The figure under each Balance score, and the rules below the list. */
+.gr-balance-name { display: flex; flex-direction: column; gap: 1px; }
+.gr-balance-basis { font-size: var(--text-2xs); color: var(--ink-faint, var(--ink-quiet)); opacity: .8; }
+.gr-balance-how { margin-top: var(--space-3); font-size: var(--text-2xs); color: var(--ink-quiet); }
+.gr-balance-how summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.gr-balance-how ul { margin: var(--space-2) 0 0; padding-left: var(--space-4); display: flex; flex-direction: column; gap: 4px; line-height: 1.5; }
+.gr-balance-how b { color: var(--ink); font-weight: 600; }

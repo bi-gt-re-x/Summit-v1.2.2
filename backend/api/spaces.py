@@ -401,13 +401,10 @@ def _ask(username: str, kind: str, space_id: int, body: AskSpace):
     space = spaces[space_id - 1]
     before = _clean_doc(body.doc) or space.get('doc') or {'icon': '', 'cover': '', 'blocks': []}
 
-    goals = [{'id': str(row.get('id')), 'title': str(row.get('title') or '')[:120]}
-             for row in db.rows_for('goals', username)
-             if row.get('status') != 'completed' and row.get('title')][:20]
     history = [turn for turn in (body.history or []) if isinstance(turn, dict)]
     try:
         made = space_ai.build(prompt, page_text=_doc_text(before), page_name=space['name'],
-                              history=history, goals=goals,
+                              history=history, options=_live_options(username),
                               about=background_api.about_lines(username))
     except BriefUnavailable as exc:
         return fail(str(exc))
@@ -415,8 +412,14 @@ def _ask(username: str, kind: str, space_id: int, body: AskSpace):
     stamp = datetime.now().strftime('%H%M%S')
     fresh = [{**block, 'id': 'ai{}-{}'.format(stamp, at)} for at, block in enumerate(made['blocks'])]
     blocks = (list(before['blocks']) + fresh) if made['mode'] == 'append' else fresh
-    doc = _clean_doc({**before, 'blocks': blocks,
-                      'icon': made['icon'] or before.get('icon') or ''})
+    page = {**before, 'blocks': blocks, 'icon': made['icon'] or before.get('icon') or ''}
+    if made.get('cover'):
+        page['cover'] = made['cover']
+    if made.get('cover_text'):
+        page['coverText'] = made['cover_text']
+    if made.get('background'):
+        page['background'] = {'color': made['background'], 'style': 'solid'}
+    doc = _clean_doc(page)
     space['doc'] = doc
     space['body'] = _doc_text(doc)[:BODY_MAX]
     _store(username, kind, spaces)
@@ -597,12 +600,17 @@ def read_live(source: str = '', goal: str = '', tree: str = '', weeks: int = 0,
 @router.get('/api/spaces/live/options')
 def live_options(username: str = Depends(current_username)):
     """What a live block can be pointed at: goals, trees, subjects, categories."""
+    return ok(**_live_options(username))
+
+
+def _live_options(username: str) -> dict:
+    """The live block picks for this account. Shared with the AI chat."""
     goals = db.rows_for('goals', username)
     goals.sort(key=lambda goal: (goal.get('status') == 'completed', str(goal.get('title') or '').lower()))
     subjects = subjects_api.subjects(username=username)['subjects']
     subjects.sort(key=lambda row: -(row.get('used') or 0))
     records = records_api._mine(username)
-    return ok(
+    return dict(
         goals=[{'id': str(goal.get('id')), 'title': goal.get('title') or '', 'done': goal.get('status') == 'completed'}
                for goal in goals],
         trees=live.trees_of(skillsteps_api.catalogue()),

@@ -24,7 +24,7 @@ def _answer(mode='replace', blocks=None):
              'chart': None, 'live_source': None, 'goal': None},
             {'type': 'live', 'text': '', 'indent': 0, 'checked': False,
              'chart': None, 'live_source': 'goal', 'goal': 'not-a-goal'},
-            {'type': 'sticky', 'text': 'kinds the model may not use become text',
+            {'type': 'sticky', 'text': 'A note', 'fill_color': '#FDE68A', 'width': 4,
              'indent': 9, 'checked': False, 'chart': None, 'live_source': None, 'goal': None},
         ],
     })
@@ -51,7 +51,8 @@ def test_a_page_is_built_and_saved(app, monkeypatch):
     assert reply['success'], reply
     assert reply['reply'] == 'Built it.'
     blocks = reply['space']['doc']['blocks']
-    assert [b['type'] for b in blocks] == ['h1', 'todo', 'live', 'text']
+    assert [b['type'] for b in blocks] == ['h1', 'todo', 'live', 'sticky']
+    assert blocks[3]['fill']['color'] == '#fde68a'
     assert blocks[3].get('indent', 0) <= 2
     # A goal id the account doesn't have falls back to the goals list.
     assert blocks[2]['live']['source'] == 'goals'
@@ -95,7 +96,7 @@ def test_an_unreadable_answer_says_so(app, monkeypatch):
 def test_the_brief_carries_the_page_and_the_chat():
     brief = space_ai.brief_from('add tips', '# SAT plan', 'Space 1',
                                 [{'role': 'user', 'text': 'make an SAT page'}],
-                                [{'id': '4', 'title': 'SAT 1500'}], ['Has done: AP Bio'])
+                                goals=[{'id': '4', 'title': 'SAT 1500'}], about=['Has done: AP Bio'])
     assert '# SAT plan' in brief and 'make an SAT page' in brief
     assert 'id 4: SAT 1500' in brief and 'AP Bio' in brief
 
@@ -128,3 +129,54 @@ def test_references_are_written_as_a_block(monkeypatch):
     assert sources.HEADING in block
     assert 'The SAT is a standardized test.' in block
     assert 'https://en.wikipedia.org/wiki/SAT' in block
+
+
+def _live_block(**fields):
+    base = {'type': 'live', 'text': '', 'indent': 0, 'checked': False, 'color': None,
+            'fill_color': None, 'shape': None, 'width': None, 'chart': None,
+            'live_source': None, 'live_view': None, 'live_metric': None,
+            'live_ref': None, 'live_range': None}
+    base.update(fields)
+    return base
+
+
+def test_live_analytics_blocks_point_at_real_things(app, monkeypatch):
+    """Every analytics source is open to it, with its view, metric and range,
+    and a pick that isn't on the account falls back to the default."""
+    from backend.database import connection as db
+    make_account('tracker')
+    db.insert_row('goals', {'id': db.new_id('goals'), 'user_id': 'tracker', 'title': 'SAT 1500',
+                            'status': 'active'})
+    goal_id = str(db.rows_for('goals', 'tracker')[0]['id'])
+    client = sign_in(app, 'tracker')
+    answer = json.loads(_answer(blocks=[
+        _live_block(live_source='goal', live_ref=goal_id, live_view='ring'),
+        _live_block(live_source='heatmap', live_metric='focus', live_range=52, live_view='strip'),
+        _live_block(live_source='growth', live_ref='not-a-subject', live_range=90),
+        _live_block(live_source='productivity', live_view='nonsense'),
+    ]))
+    answer.update(cover='ocean', cover_text='SAT push', background='#F0F4FF')
+    _stub(monkeypatch, json.dumps(answer))
+
+    doc = client.post('/api/spaces/1/ai', json={'prompt': 'a tracker'}).json()['space']['doc']
+
+    goal, heat, growth, prod = (b['live'] for b in doc['blocks'])
+    assert goal == {**goal, 'source': 'goal', 'goal': goal_id, 'view': 'ring'}
+    assert (heat['metric'], heat['weeks'], heat['view']) == ('focus', 52, 'strip')
+    assert growth['subject'] == '' and growth['days'] == 90
+    assert prod['view'] == 'bars'  # an unknown view is the source's first
+    assert doc['cover'] == 'ocean' and doc['coverText'] == 'SAT push'
+    assert doc['background']['color'] == '#f0f4ff'
+
+
+def test_the_brief_lists_every_live_source_and_the_accounts_picks():
+    brief = space_ai.brief_from('track it', '', 'Space 1', [], options={
+        'goals': [{'id': '9', 'title': 'AIME'}],
+        'subjects': [{'id': 'mathematics', 'name': 'Mathematics', 'used': 3}],
+        'trees': [{'id': 'competition-math', 'title': 'Competition Math'}],
+        'records': ['Mile run'], 'categories': ['Fitness']})
+    for text in ('id 9: AIME', 'id mathematics: Mathematics', 'id competition-math',
+                 'Mile run', 'Fitness'):
+        assert text in brief
+    for source in ('heatmap', 'rhythm', 'skills', 'growth', 'calendar'):
+        assert '  - {}:'.format(source) in space_ai.SYSTEM

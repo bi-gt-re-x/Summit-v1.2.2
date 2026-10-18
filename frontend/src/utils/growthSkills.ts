@@ -99,6 +99,11 @@ export interface SkillCard {
   activeDays: number;
   /** XP a task, which is the closest thing the data has to "how hard". */
   perTask: number;
+  /** Tasks finished in the last 30 days. */
+  tasks30: number;
+  /** Finished tasks given a difficulty rating (1-5), and their mean. */
+  rated: number;
+  difficultyAvg: number | null;
 }
 
 /**
@@ -129,6 +134,9 @@ export function skillCards(
     days: Set<string>;
     recentDays: Set<string>;
     lastOn: string | null;
+    tasks30: number;
+    rated: number;
+    difficultySum: number;
   }
 
   const buckets = new Map<string, Bucket>();
@@ -152,14 +160,23 @@ export function skillCards(
       days: new Set<string>(),
       recentDays: new Set<string>(),
       lastOn: null,
+      tasks30: 0,
+      rated: 0,
+      difficultySum: 0,
     };
 
     const xp = num(task.xp_value);
     bucket.xp += xp;
     bucket.tasks += 1;
     bucket.days.add(day);
+    const difficulty = Number(task.difficulty);
+    if (Number.isFinite(difficulty) && difficulty >= 1 && difficulty <= 5) {
+      bucket.rated += 1;
+      bucket.difficultySum += difficulty;
+    }
     if (day >= from30) {
       bucket.xp30 += xp;
+      bucket.tasks30 += 1;
       bucket.recentDays.add(day);
     } else if (day >= from60) {
       bucket.xp30Before += xp;
@@ -199,6 +216,9 @@ export function skillCards(
           : null,
         activeDays: bucket.recentDays.size,
         perTask: bucket.tasks ? bucket.xp / bucket.tasks : 0,
+        tasks30: bucket.tasks30,
+        rated: bucket.rated,
+        difficultyAvg: bucket.rated ? bucket.difficultySum / bucket.rated : null,
       };
     })
     .sort((a, b) => b.xp - a.xp || a.label.localeCompare(b.label));
@@ -374,61 +394,88 @@ export function masteryTrack(card: SkillCard, ahead = 3): TrackNode[] {
 export interface BalanceAxis {
   key: string;
   label: string;
-  /** 0-100 against the best of the account's own subjects. */
+  /** 0-100 on the axis's own fixed scale (BALANCE_RULES). */
   value: number;
-  /** What the axis is, in a sentence. The panel prints it. */
+  /** The figure the score came from, in words: "10 of 20 tasks". */
+  basis: string;
+  /** How the score is worked out, in a sentence. The panel prints it. */
   note: string;
 }
 
 /**
- * Five readings of one subject, each against the best the account has.
- *
- * The axes are deliberately not five names for volume. Knowledge and Practice
- * are volume — total XP, total tasks — and would move together on any account;
- * the other three are the ones that separate "I have spent a lot of time on
- * this" from "I am actually getting better at it". A subject with high Practice
- * and low Difficulty is being drilled; high Difficulty and low Consistency is
- * being crammed.
- *
- * Everything is relative to the account's own strongest subject on that axis,
- * because there is no external scale and pretending otherwise would be the
- * cohort this page refuses to invent.
+ * What full marks is on each axis. Fixed numbers, the same for every subject
+ * and every account, so a score means the same thing everywhere.
  */
-export function skillBalance(card: SkillCard, peers: SkillCard[]): BalanceAxis[] {
-  const best = (read: (row: SkillCard) => number) => Math.max(1, ...peers.map(read));
+export const BALANCE_RULES = {
+  /** Lifetime finished tasks in the subject. */
+  knowledgeTasks: 100,
+  /** Finished tasks in the last 30 days: five a week. */
+  practiceTasks: 20,
+  /** Days in the last 30 with a finished task. */
+  consistencyDays: 30,
+  /** Hardest rating a task can get. */
+  difficultyTop: 5,
+} as const;
+
+/**
+ * Five readings of one subject, each on a fixed scale.
+ *
+ * These used to be scored against the account's own best subject, so the
+ * biggest subject read 100 on three axes by definition and a small one read
+ * near zero whatever it had done. Now every axis is the subject's own figure
+ * over a fixed target (BALANCE_RULES), capped at 100, and the panel prints
+ * the figure and the rule beside each score:
+ *
+ * - Knowledge: lifetime finished tasks ÷ 100.
+ * - Practice: tasks finished in the last 30 days ÷ 20.
+ * - Consistency: days in the last 30 with a finished task ÷ 30.
+ * - Difficulty: mean difficulty rating (1-5) ÷ 5. 0 until a task is rated.
+ * - Mastery: subject level ÷ 100, the top of the mastery ladder.
+ */
+export function skillBalance(card: SkillCard): BalanceAxis[] {
   const pct = (value: number, top: number) =>
     Math.max(0, Math.min(100, Math.round((value / top) * 100)));
+  const R = BALANCE_RULES;
+  const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
 
   return [
     {
       key: 'knowledge',
       label: 'Knowledge',
-      value: pct(card.xp, best((row) => row.xp)),
-      note: 'All-time XP vs. your biggest subject.',
+      value: pct(card.tasks, R.knowledgeTasks),
+      basis: `${plural(card.tasks, 'task')} of ${R.knowledgeTasks}`,
+      note: `Finished tasks in this subject, all time, out of ${R.knowledgeTasks}.`,
     },
     {
       key: 'practice',
       label: 'Practice',
-      value: pct(card.tasks, best((row) => row.tasks)),
-      note: 'Finished tasks vs. your most-worked subject.',
+      value: pct(card.tasks30, R.practiceTasks),
+      basis: `${card.tasks30} of ${R.practiceTasks} tasks`,
+      note: `Tasks finished in the last 30 days, out of ${R.practiceTasks} (five a week).`,
     },
     {
       key: 'consistency',
       label: 'Consistency',
-      value: pct(card.activeDays, 30),
-      note: 'Days in the last 30 with a finished task.',
+      value: pct(card.activeDays, R.consistencyDays),
+      basis: `${card.activeDays} of ${R.consistencyDays} days`,
+      note: `Days in the last ${R.consistencyDays} with at least one finished task.`,
     },
     {
       key: 'difficulty',
       label: 'Difficulty',
-      value: pct(card.perTask, best((row) => row.perTask)),
-      note: 'XP per task, or how big your tasks are.',
+      value: card.difficultyAvg === null ? 0 : pct(card.difficultyAvg, R.difficultyTop),
+      basis:
+        card.difficultyAvg === null
+          ? 'no ratings yet'
+          : `${card.difficultyAvg.toFixed(1)} of ${R.difficultyTop}, ${plural(card.rated, 'rating')}`,
+      note: `Average difficulty you rated your finished tasks, out of ${R.difficultyTop}.`,
     },
     {
       key: 'mastery',
       label: 'Mastery',
-      value: pct(card.level.exact, best((row) => row.level.exact)),
-      note: 'Level vs. your highest.',
+      value: pct(card.level.exact, MAX_LEVEL),
+      basis: `level ${Math.floor(card.level.exact)} of ${MAX_LEVEL}`,
+      note: `Your level on this subject's mastery track, out of ${MAX_LEVEL}.`,
     },
   ];
 }

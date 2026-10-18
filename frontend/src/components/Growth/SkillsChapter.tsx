@@ -124,8 +124,8 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
     [chosen, tasks, today, window],
   );
   const balance = useMemo(
-    () => (chosen ? skillBalance(chosen, cards) : []),
-    [cards, chosen],
+    () => (chosen ? skillBalance(chosen) : []),
+    [chosen],
   );
   const track = useMemo(() => (chosen ? masteryTrack(chosen) : []), [chosen]);
   const moving = useMemo(() => movers(cards), [cards]);
@@ -400,7 +400,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
       <section className="gr-panel gr-balance">
         <PanelHead
           title="Balance"
-          hint="Five scores, each vs. your best subject"
+          hint="Five scores from 0 to 100, each on a fixed scale"
           note={chosen?.label}
         />
         {balance.length === 0 ? (
@@ -411,11 +411,25 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
             <ul className="gr-balance-list">
               {balance.map((axis) => (
                 <li key={axis.key} title={axis.note}>
-                  <span className="gr-balance-name">{axis.label}</span>
+                  <span className="gr-balance-name">
+                    {axis.label}
+                    <small className="gr-balance-basis">{axis.basis}</small>
+                  </span>
                   <span className="gr-balance-value">{axis.value}</span>
                 </li>
               ))}
             </ul>
+            <details className="gr-balance-how">
+              <summary>How these are worked out</summary>
+              <ul>
+                {balance.map((axis) => (
+                  <li key={axis.key}>
+                    <b>{axis.label}:</b> {axis.note}
+                  </li>
+                ))}
+                <li>Each score is capped at 100.</li>
+              </ul>
+            </details>
           </>
         )}
       </section>
