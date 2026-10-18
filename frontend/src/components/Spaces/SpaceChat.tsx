@@ -1,33 +1,28 @@
 /**
  * The AI chat down the right side of a space: ask it for a page and it builds
- * one, or ask it to change the page that's there.
+ * one, ask it to change what's there, or ask it about the page.
  *
+ * The chat is kept on the server, one per account and per space
+ * (backend/api/spaces.py `_chat_key`), so it's there on another device, it
+ * never shows on someone else's account, and Space 1's chat is not Space 2's.
  * Folds away to a tab on the right edge, and remembers whether it was open.
- * The conversation is kept per space for the browser session, so moving
- * between spaces and back doesn't lose it. Each change the AI makes can be
- * undone from the message that made it.
  *
- * The server does the work and saves the page (POST /api/spaces/<n>/ai,
- * backend/tracking/space_ai.py); this hands it the page as the editor holds
- * it and the chat so far, then shows the saved page.
+ * Each change can be undone from the message that made it, and under each
+ * reply is what the AI checked when it looked at the result: the contrast of
+ * every text block, and anything it fixed (backend/tracking/space_look.py).
  */
 import { useEffect, useRef, useState } from 'react';
-import { PanelRightClose, Sparkles, SendHorizontal, Undo2 } from 'lucide-react';
-import { ask, type ChatTurn, type SpaceKind } from '@/services/spaces';
+import { Eye, PanelRightClose, RotateCcw, SendHorizontal, Sparkles, Undo2 } from 'lucide-react';
+import { ask, chat, clearChat, undoTurn, type ChatTurn, type SpaceKind } from '@/services/spaces';
+import { useAuth } from '@/hooks';
 import type { SpaceDoc } from './blocks';
 
 const OPEN_KEY = 'summit:space-chat-open';
 
-interface Message extends ChatTurn {
-  /** The page before this reply changed it, while it can still be undone. */
-  before?: SpaceDoc;
-  failed?: boolean;
-}
-
 const IDEAS = [
   'A study plan for my next test',
-  'A weekly checklist for my goals',
-  'A page tracking my progress',
+  'A dashboard of my progress this month',
+  'Is this page easy to read?',
 ];
 
 function readOpen(): boolean {
@@ -38,52 +33,56 @@ function readOpen(): boolean {
   }
 }
 
-function chatKey(kind: SpaceKind, id: number) {
-  return `summit:space-chat:${kind}:${id}`;
-}
-
-function readChat(kind: SpaceKind, id: number): Message[] {
-  try {
-    const raw = window.sessionStorage.getItem(chatKey(kind, id));
-    const parsed: unknown = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? (parsed as Message[]) : [];
-  } catch {
-    return [];
-  }
-}
-
 export interface SpaceChatProps {
   kind: SpaceKind;
   id: number;
   /** The page as the editor holds it now. */
   doc: SpaceDoc;
   disabled?: boolean;
-  /** Show this page: the AI's result, or the old one on Undo (which saves it). */
-  onDoc: (doc: SpaceDoc, save: boolean) => void;
+  /** Show this page. The server has already saved it. */
+  onDoc: (doc: SpaceDoc) => void;
   /** Told when the panel opens or folds, so the page can make room. */
   onOpenChange?: (open: boolean) => void;
 }
 
 export function SpaceChat({ kind, id, doc, disabled, onDoc, onOpenChange }: SpaceChatProps) {
+  const { username } = useAuth();
   const [open, setOpen] = useState(readOpen);
-  const [messages, setMessages] = useState<Message[]>(() => readChat(kind, id));
+  const [turns, setTurns] = useState<ChatTurn[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [pending, setPending] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const list = useRef<HTMLOListElement>(null);
 
+  /* This account's chat on this space, read again whenever either changes:
+     a chat left over from the last space or the last account must never
+     be what the next one sees, even for a frame. */
   useEffect(() => {
-    setMessages(readChat(kind, id));
-  }, [kind, id]);
+    let live = true;
+    setTurns([]);
+    setLoaded(false);
+    setError(null);
+    if (!username) return undefined;
+    chat(id, kind)
+      .then((result) => {
+        if (!live) return;
+        if (result.success) setTurns(result.chat);
+        setLoaded(true);
+      })
+      .catch(() => {
+        if (live) setLoaded(true);
+      });
+    return () => {
+      live = false;
+    };
+  }, [id, kind, username]);
 
   useEffect(() => {
-    try {
-      window.sessionStorage.setItem(chatKey(kind, id), JSON.stringify(messages.slice(-30)));
-    } catch {
-      /* A chat that isn't kept is still a chat. */
-    }
     const box = list.current;
     if (box && typeof box.scrollTo === 'function') box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
-  }, [messages, kind, id]);
+  }, [turns, pending, busy]);
 
   useEffect(() => {
     try {
@@ -97,32 +96,41 @@ export function SpaceChat({ kind, id, doc, disabled, onDoc, onOpenChange }: Spac
   const send = async (text: string) => {
     const prompt = text.trim();
     if (!prompt || busy) return;
-    const history: ChatTurn[] = messages
-      .filter((one) => !one.failed)
-      .map(({ role, text: said }) => ({ role, text: said }));
-    setMessages((was) => [...was, { role: 'user', text: prompt }]);
+    setPending(prompt);
     setDraft('');
+    setError(null);
     setBusy(true);
     try {
-      const result = await ask(id, prompt, doc, history, kind);
+      const result = await ask(id, prompt, doc, kind);
       if (result.success) {
-        onDoc(result.space.doc ?? doc, false);
-        setMessages((was) => [...was, { role: 'ai', text: result.reply, before: result.before }]);
+        if (result.mode !== 'reply' && result.space.doc) onDoc(result.space.doc);
+        setTurns(result.chat);
       } else {
-        setMessages((was) => [...was, { role: 'ai', text: result.message || "That didn't work. Try again.", failed: true }]);
+        const kept = (result as { chat?: ChatTurn[] }).chat;
+        if (kept) setTurns(kept);
+        else setError(result.message || "That didn't work. Try again.");
       }
     } catch {
-      setMessages((was) => [...was, { role: 'ai', text: "Couldn't reach the server.", failed: true }]);
+      setError("Couldn't reach the server.");
     } finally {
+      setPending(null);
       setBusy(false);
     }
   };
 
-  const undo = (at: number) => {
-    const message = messages[at];
-    if (!message?.before) return;
-    onDoc(message.before, true);
-    setMessages((was) => was.map((one, index) => (index === at ? { ...one, before: undefined, text: `${one.text} (Undone.)` } : one)));
+  const undo = async (at: number) => {
+    const result = await undoTurn(id, at, kind).catch(() => null);
+    if (result?.success) {
+      if (result.space.doc) onDoc(result.space.doc);
+      setTurns(result.chat);
+    } else {
+      setError(result && !result.success ? result.message : "Couldn't undo that.");
+    }
+  };
+
+  const clear = async () => {
+    const result = await clearChat(id, kind).catch(() => null);
+    if (result?.success) setTurns([]);
   };
 
   if (!open) {
@@ -140,8 +148,14 @@ export function SpaceChat({ kind, id, doc, disabled, onDoc, onOpenChange }: Spac
         <Sparkles aria-hidden="true" className="sp-chat-mark" />
         <div>
           <strong>Build with AI</strong>
-          <span>Ask for a page, or a change to this one.</span>
+          <span>Ask for a page, a change, or about this one.</span>
         </div>
+        {turns.length > 0 && (
+          <button type="button" className="sp-chat-fold" onClick={() => void clear()} title="Start this chat over">
+            <RotateCcw aria-hidden="true" />
+            <span className="sp-chat-sr">Start this chat over</span>
+          </button>
+        )}
         <button type="button" className="sp-chat-fold" onClick={() => setOpen(false)} title="Fold the chat away">
           <PanelRightClose aria-hidden="true" />
           <span className="sp-chat-sr">Fold the chat away</span>
@@ -149,7 +163,7 @@ export function SpaceChat({ kind, id, doc, disabled, onDoc, onOpenChange }: Spac
       </header>
 
       <ol className="sp-chat-list" ref={list}>
-        {messages.length === 0 && (
+        {loaded && turns.length === 0 && !pending && (
           <li className="sp-chat-empty">
             <p>Try one of these, or say what you need.</p>
             {IDEAS.map((idea) => (
@@ -159,20 +173,44 @@ export function SpaceChat({ kind, id, doc, disabled, onDoc, onOpenChange }: Spac
             ))}
           </li>
         )}
-        {messages.map((message, at) => (
-          <li key={at} className={`sp-chat-msg is-${message.role}${message.failed ? ' is-failed' : ''}`}>
-            <p>{message.text}</p>
-            {message.before && (
-              <button type="button" className="sp-chat-undo" onClick={() => undo(at)}>
+        {turns.map((turn, at) => (
+          <li
+            key={`${at}-${turn.at ?? ''}`}
+            className={`sp-chat-msg is-${turn.role}${turn.failed ? ' is-failed' : ''}${turn.undone ? ' is-undone' : ''}`}
+          >
+            <p>{turn.text}</p>
+            {turn.notes && turn.notes.length > 0 && (
+              <div className="sp-chat-notes">
+                <Eye aria-hidden="true" />
+                <ul>
+                  {turn.notes.map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {turn.undo && (
+              <button type="button" className="sp-chat-undo" onClick={() => void undo(at)}>
                 <Undo2 aria-hidden="true" />
                 Undo
               </button>
             )}
+            {turn.undone && <span className="sp-chat-undone">Undone</span>}
           </li>
         ))}
+        {pending && (
+          <li className="sp-chat-msg is-user">
+            <p>{pending}</p>
+          </li>
+        )}
         {busy && (
           <li className="sp-chat-msg is-ai is-busy" role="status">
-            <p>Looking it up and building…</p>
+            <p>Reading your page and building…</p>
+          </li>
+        )}
+        {error && (
+          <li className="sp-chat-msg is-ai is-failed" role="alert">
+            <p>{error}</p>
           </li>
         )}
       </ol>

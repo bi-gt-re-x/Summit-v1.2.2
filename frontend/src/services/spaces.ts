@@ -103,28 +103,65 @@ export async function uninvite(id: number, email: string): Promise<ApiResult<{ s
 export interface ChatTurn {
   role: 'user' | 'ai';
   text: string;
+  /** When it was said, ISO. */
+  at?: string;
+  /** What the AI did: rewrote, added, edited, or only answered. */
+  mode?: 'replace' | 'append' | 'edit' | 'reply';
+  /** What the contrast check found after it built. */
+  notes?: string[];
+  /** Whether this turn's change can still be undone. */
+  undo?: boolean;
+  undone?: boolean;
+  failed?: boolean;
 }
 
 export interface AskResult {
   space: Space;
   reply: string;
-  mode: 'replace' | 'append';
-  /** The page before the change, for Undo. */
-  before: SpaceDoc;
+  mode: 'replace' | 'append' | 'edit' | 'reply';
+  /** The page before the change, or null when nothing changed. */
+  before: SpaceDoc | null;
+  notes: string[];
+  /** The whole chat after this turn. */
+  chat: ChatTurn[];
 }
 
+const CHAT_BASE: Record<SpaceKind, string> = { personal: '/api/spaces', team: '/api/team-spaces' };
+
 /**
- * Ask the AI to build or change a page (backend/tracking/space_ai.py). The
- * server saves the result, so the reply's `space` is already the stored page.
+ * Ask the AI to build, change or answer about a page
+ * (backend/tracking/space_ai.py). The server saves the page and the chat,
+ * which is this account's and this space's alone.
  */
 export async function ask(
   id: number,
   prompt: string,
   doc: SpaceDoc,
-  history: ChatTurn[],
   kind: SpaceKind = 'personal',
 ): Promise<ApiResult<AskResult>> {
-  const result = await post<AskResult>(`${BASE[kind]}/${id}/ai`, { prompt, doc, history });
+  const result = await post<AskResult>(`${CHAT_BASE[kind]}/${id}/ai`, { prompt, doc });
+  if (result.success && result.mode !== 'reply') {
+    announce(kind, { success: true, space: result.space } as ApiResult<{ space: Space }>);
+  }
+  return result;
+}
+
+/** This account's chat on one space. */
+export function chat(id: number, kind: SpaceKind = 'personal'): Promise<ApiResult<{ chat: ChatTurn[] }>> {
+  return get<{ chat: ChatTurn[] }>(`${CHAT_BASE[kind]}/${id}/chat`);
+}
+
+/** Put the page back as it was before one AI turn. */
+export async function undoTurn(
+  id: number,
+  at: number,
+  kind: SpaceKind = 'personal',
+): Promise<ApiResult<{ space: Space; chat: ChatTurn[] }>> {
+  const result = await post<{ space: Space; chat: ChatTurn[] }>(`${CHAT_BASE[kind]}/${id}/chat/undo`, { at });
   if (result.success) announce(kind, { success: true, space: result.space } as ApiResult<{ space: Space }>);
   return result;
+}
+
+export function clearChat(id: number, kind: SpaceKind = 'personal'): Promise<ApiResult<{ chat: ChatTurn[] }>> {
+  return post<{ chat: ChatTurn[] }>(`${CHAT_BASE[kind]}/${id}/chat/clear`);
 }

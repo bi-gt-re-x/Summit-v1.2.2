@@ -114,14 +114,10 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
     timer.current = window.setTimeout(() => void flush(), SAVE_AFTER_MS);
   };
 
-  /* The AI chat's page lands already saved, so any autosave still waiting
-     would only write the older page back over it. Undo goes through `write`
-     like an edit, because the old page does need saving. */
-  const fromChat = (next: SpaceDoc, saveIt: boolean) => {
-    if (saveIt) {
-      write(normalise(next));
-      return;
-    }
+  /* The AI chat's page (a build or an Undo) lands already saved on the
+     server, so any autosave still waiting would only write the older page
+     back over it. */
+  const fromChat = (next: SpaceDoc) => {
     window.clearTimeout(timer.current);
     pending.current = null;
     setDoc(normalise(next));

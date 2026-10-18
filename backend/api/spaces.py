@@ -50,9 +50,13 @@ records do not earn a table — the same choice the analytics baseline made.
     POST /api/team-spaces/<n>/uninvite   take one back
     POST /api/spaces/<n>/ai              build or change the page from the chat
     POST /api/team-spaces/<n>/ai         the same, for a team space
+    GET  /api/spaces/<n>/chat            this account's chat on this space
+    POST /api/spaces/<n>/chat/undo       put the page back from before one AI turn
+    POST /api/spaces/<n>/chat/clear      start the chat over
+    (and the same three under /api/team-spaces/<n>/chat)
 """
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends
@@ -71,7 +75,7 @@ from backend.config import subjects as subjects_catalog
 from backend.goal_matcher import store as goal_store
 from backend.tracking import growth as growth_tracking
 from backend.tracking import live
-from backend.tracking import space_ai
+from backend.tracking import space_ai, space_look
 from backend.tracking.subject_brief import BriefUnavailable
 from backend.tracking import skill_level
 from backend.tracking import xp as xp_tracking
@@ -384,12 +388,142 @@ def _save(username: str, kind: str, space_id: int, body: SaveSpace):
     return ok(space=space)
 
 
-def _ask(username: str, kind: str, space_id: int, body: AskSpace):
-    """Build or change a page from the chat (backend/tracking/space_ai.py).
+# ---- The AI chat --------------------------------------------------------------
+#: Turns kept per space, and how many of the newest AI turns keep the page
+#: from before them for Undo (a page is big; forty of them is not a chat).
+CHAT_KEEP = 40
+UNDO_KEEP = 5
 
-    The model's blocks are cleaned by `_clean_doc` like any save and written
-    straight to the space, and the reply carries the saved space so the editor
-    shows it at once. The page before the change comes back too, for Undo.
+#: Words in a prompt that ask for a part of the record. Each picks the lines
+#: `prompt_context` adds.
+ASKS_WEEK = re.compile(r'\b(week|weekly|schedule|calendar|plan|planner|today|tomorrow|upcoming|deadline|due)\b', re.I)
+ASKS_GOALS = re.compile(r'\b(goal|goals|target|aim|aims|milestone|checkpoint)\b', re.I)
+ASKS_MOOD = re.compile(r'\b(mood|feel|feeling|feelings|energy|stress|stressed|tired|journal|log)\b', re.I)
+ASKS_STATS = re.compile(r'\b(progress|stats|analytics|dashboard|tracker|track|habit|habits|streak|review|reflect)\b', re.I)
+
+
+def _chat_key(kind: str, space_id: int) -> str:
+    """One chat per account and per space: the key lives in that account's
+    own settings rows, and names the kind and the number."""
+    return 'space_chat:{}:{}'.format(kind, space_id)
+
+
+def _chat(username: str, kind: str, space_id: int) -> List[dict]:
+    stored = db.user_setting(username, _chat_key(kind, space_id))
+    return [turn for turn in stored if isinstance(turn, dict)] if isinstance(stored, list) else []
+
+
+def _keep_chat(username: str, kind: str, space_id: int, turns: List[dict]) -> List[dict]:
+    turns = turns[-CHAT_KEEP:]
+    ai_seen = 0
+    for turn in reversed(turns):
+        if turn.get('role') == 'ai' and turn.get('before') is not None:
+            ai_seen += 1
+            if ai_seen > UNDO_KEEP:
+                turn['before'] = None
+    db.set_user_setting(username, _chat_key(kind, space_id), turns)
+    return turns
+
+
+def _public(turns: List[dict]) -> List[dict]:
+    """The chat as the page shows it: Undo is a flag, not a page."""
+    return [{key: value for key, value in turn.items() if key != 'before'}
+            | {'undo': turn.get('before') is not None} for turn in turns]
+
+
+def prompt_context(username: str, prompt: str) -> List[str]:
+    """Lines from the reader's own record, picked for this prompt.
+
+    The subjects the prompt names (read the way said-vs-did reads a line, so
+    "AMC" is Mathematics) get their last month: tasks done and open, goals
+    filed under them, and the free resources the catalogue has for them.
+    Asking about the week, goals, mood or progress adds that part of the
+    record. Always the date, so "this week" means this week.
+    """
+    from backend.tracking import free_resources, said_did
+    today = date.today()
+    lines = ['Today is {}, {}.'.format(today.strftime('%A'), today.isoformat())]
+    names = background_api.subject_names(username)
+    namer = said_did.Namer(names, background_api.subject_groups())
+    subjects, resources = namer.read_all(prompt)
+    tasks = db.columns_for('tasks', username, ('title', 'subject', 'status', 'completed_at', 'due_date'))
+    since = (today - timedelta(days=29)).isoformat()
+    goals = [row for row in db.rows_for('goals', username) if row.get('status') != 'completed']
+
+    for subject in subjects[:3]:
+        name = names.get(subject, subject)
+        mine = [row for row in tasks if row.get('subject') == subject]
+        done = [row for row in mine if row.get('status') == 'done' and str(row.get('completed_at') or '')[:10] >= since]
+        open_ = [row for row in mine if row.get('status') != 'done']
+        lines.append('{}: {} tasks finished in the last 30 days{}.'.format(
+            name, len(done), ' (latest: {})'.format('; '.join(
+                row.get('title') or '' for row in sorted(done, key=lambda r: str(r.get('completed_at')), reverse=True)[:5]))
+            if done else ''))
+        if open_:
+            lines.append('{} open {} tasks: {}.'.format(len(open_), name, '; '.join(
+                '{}{}'.format(row.get('title') or '', ' (due {})'.format(row['due_date']) if row.get('due_date') else '')
+                for row in open_[:6])))
+        filed = [goal for goal in goals if subject in str(goal.get('subject_ids') or '')]
+        for goal in filed[:3]:
+            lines.append('Goal in {}: "{}", {}% done{}.'.format(
+                name, goal.get('title'), int(float(goal.get('progress') or 0)),
+                ', due {}'.format(goal['deadline']) if goal.get('deadline') else ''))
+        free = free_resources.by_subject().get(subject) or []
+        if free:
+            lines.append('Free resources for {} (use these names and links if you list resources): {}.'.format(
+                name, '; '.join('{} ({}): {}'.format(row['name'], row['url'], row.get('good_for') or '') for row in free[:4])))
+    if resources:
+        lines.append('They named: {}.'.format(', '.join(label for label, _ in resources)))
+
+    if ASKS_WEEK.search(prompt):
+        ahead = (today + timedelta(days=14)).isoformat()
+        events = [row for row in db.rows_for('calendar_events', username)
+                  if today.isoformat() <= str(row.get('date') or '') <= ahead]
+        events.sort(key=lambda row: (str(row.get('date')), str(row.get('time_block') or '')))
+        if events:
+            lines.append('On their calendar in the next two weeks: {}.'.format('; '.join(
+                '{} {}{}'.format(row.get('date'), row.get('name'), ' at {}'.format(row['time_block']) if row.get('time_block') else '')
+                for row in events[:10])))
+        due = [row for row in tasks if row.get('status') != 'done' and today.isoformat() <= str(row.get('due_date') or '') <= ahead]
+        if due:
+            lines.append('Tasks due in the next two weeks: {}.'.format('; '.join(
+                '{} (due {})'.format(row.get('title'), row.get('due_date')) for row in sorted(due, key=lambda r: str(r.get('due_date')))[:10])))
+        if not events and not due:
+            lines.append('Nothing on their calendar or due in the next two weeks.')
+
+    if ASKS_GOALS.search(prompt) and goals:
+        lines.append('Their active goals: {}.'.format('; '.join(
+            '"{}" {}%{}'.format(goal.get('title'), int(float(goal.get('progress') or 0)),
+                                ' due {}'.format(goal['deadline']) if goal.get('deadline') else '')
+            for goal in goals[:8])))
+
+    if ASKS_MOOD.search(prompt):
+        found = background_api.mood_for(username)
+        if found.get('headline'):
+            lines.append('Mood vs output: {}'.format(found['headline']['text']))
+
+    if ASKS_STATS.search(prompt):
+        recent = [row for row in tasks if row.get('status') == 'done' and str(row.get('completed_at') or '')[:10] >= since]
+        top = {}
+        for row in recent:
+            if row.get('subject'):
+                top[row['subject']] = top.get(row['subject'], 0) + 1
+        best = sorted(top.items(), key=lambda pair: -pair[1])[:4]
+        lines.append('Last 30 days: {} tasks finished{}.'.format(len(recent), ', mostly {}'.format(', '.join(
+            '{} ({})'.format(names.get(subject, subject), count) for subject, count in best)) if best else ''))
+    return lines
+
+
+def _ask(username: str, kind: str, space_id: int, body: AskSpace):
+    """Build, change or answer about a page from the chat
+    (backend/tracking/space_ai.py).
+
+    The chat is this account's and this space's alone, kept on the server
+    (`_chat_key`), so it follows the reader to another device and never
+    shows on another account or another space. The model's blocks are
+    cleaned by `_clean_doc` like any save; then the page is measured
+    (backend/tracking/space_look.py) and any text the AI wrote that fails
+    contrast is fixed before it's saved, and the reply says what was found.
     """
     if not 1 <= space_id <= COUNT:
         return fail("There's no space {}.".format(space_id))
@@ -400,30 +534,115 @@ def _ask(username: str, kind: str, space_id: int, body: AskSpace):
     spaces = _spaces(username, kind)
     space = spaces[space_id - 1]
     before = _clean_doc(body.doc) or space.get('doc') or {'icon': '', 'cover': '', 'blocks': []}
+    turns = _chat(username, kind, space_id)
+    stamp = datetime.now().isoformat(timespec='seconds')
+    turns.append({'role': 'user', 'text': prompt, 'at': stamp})
 
-    history = [turn for turn in (body.history or []) if isinstance(turn, dict)]
     try:
-        made = space_ai.build(prompt, page_text=_doc_text(before), page_name=space['name'],
-                              history=history, options=_live_options(username),
+        made = space_ai.build(prompt, page_name=space['name'], history=turns[:-1],
+                              options=_live_options(username), doc=before,
+                              context=prompt_context(username, prompt),
                               about=background_api.about_lines(username))
     except BriefUnavailable as exc:
-        return fail(str(exc))
+        turns.append({'role': 'ai', 'text': str(exc), 'at': stamp, 'failed': True})
+        _keep_chat(username, kind, space_id, turns)
+        return fail(str(exc), chat=_public(turns))
 
-    stamp = datetime.now().strftime('%H%M%S')
-    fresh = [{**block, 'id': 'ai{}-{}'.format(stamp, at)} for at, block in enumerate(made['blocks'])]
-    blocks = (list(before['blocks']) + fresh) if made['mode'] == 'append' else fresh
+    code = datetime.now().strftime('%H%M%S%f')[:10]
+    blocks, written = space_ai.apply(list(before['blocks']), made,
+                                     lambda n: 'ai{}-{}'.format(code, n))
     page = {**before, 'blocks': blocks, 'icon': made['icon'] or before.get('icon') or ''}
     if made.get('cover'):
         page['cover'] = made['cover']
     if made.get('cover_text'):
         page['coverText'] = made['cover_text']
+    if made.get('cover_align'):
+        page['coverAlign'] = made['cover_align']
     if made.get('background'):
         page['background'] = {'color': made['background'], 'style': 'solid'}
     doc = _clean_doc(page)
+
+    # Look at what was made: fix the AI's own failing text, report the rest.
+    # The AI's own blocks: what it wrote now, and what it made in earlier
+    # turns (their ids start "ai"). The reader's own blocks are only reported.
+    mine = written | {block.get('id') for block in doc['blocks'] if str(block.get('id') or '').startswith('ai')}
+    fixed = space_look.repair(doc, only_ids=mine) if made['mode'] != 'reply' else []
+    checked = space_look.summary(doc)
+    notes = _look_notes(fixed, checked, written)
+
+    changed = made['mode'] != 'reply'
+    if changed:
+        space['doc'] = doc
+        space['body'] = _doc_text(doc)[:BODY_MAX]
+        _store(username, kind, spaces)
+    turns.append({'role': 'ai', 'text': made['reply'], 'at': stamp, 'mode': made['mode'],
+                  'notes': notes, 'before': before if changed else None})
+    turns = _keep_chat(username, kind, space_id, turns)
+    return ok(space=space, reply=made['reply'], mode=made['mode'], before=before if changed else None,
+              notes=notes, chat=_public(turns))
+
+
+def _look_notes(fixed: List[dict], checked: dict, written: set) -> List[str]:
+    """What the contrast check found, in a line or two for the chat."""
+    notes = []
+    for row in fixed[:4]:
+        if row['how'] == 'tint':
+            notes.append('The title of block {} ("{}") was {}:1, so I deepened the box\'s tint to {} '
+                         'and it reads on both themes now.'.format(row['index'], row['text'][:30],
+                                                                  row['ratio'], row['fixed']))
+        elif row['how'] == 'theme':
+            notes.append('Block {} ("{}") was {}:1, so I dropped its text color and it follows '
+                         'your light or dark theme now.'.format(row['index'], row['text'][:30], row['ratio']))
+        else:
+            notes.append('Block {} ("{}") was {}:1 on {}. I changed its text to {} ({}:1).'.format(
+                row['index'], row['text'][:30], row['ratio'], row['ground'], row['fixed'], row['now']))
+    others = [row for row in checked['failing']]
+    for row in others[:3]:
+        notes.append('Your block {} ("{}") is {}:1 on {}{}, under the {}:1 it needs. Ask me to fix it.'.format(
+            row['index'], row['text'][:30], row['ratio'], row['ground'],
+            ' in the dark theme' if row['theme'] == 'dark' else '', space_look.needed(row['type'])))
+    if not notes and checked['checked']:
+        notes.append('Checked contrast on {} text blocks: all pass, lowest {}:1.'.format(
+            checked['checked'], checked['lowest']['ratio']))
+    return notes
+
+
+def _chat_reply(username: str, kind: str, space_id: int):
+    if not 1 <= space_id <= COUNT:
+        return fail("There's no space {}.".format(space_id))
+    return ok(chat=_public(_chat(username, kind, space_id)))
+
+
+class ChatTurnRef(BaseModel):
+    #: Which turn, by its place in the chat.
+    at: int = -1
+
+
+def _undo(username: str, kind: str, space_id: int, body: ChatTurnRef):
+    """Put the page back as it was before one AI turn, and say so in the chat."""
+    if not 1 <= space_id <= COUNT:
+        return fail("There's no space {}.".format(space_id))
+    turns = _chat(username, kind, space_id)
+    if not 0 <= body.at < len(turns) or turns[body.at].get('before') is None:
+        return fail("That change can't be undone any more.")
+    turn = turns[body.at]
+    spaces = _spaces(username, kind)
+    space = spaces[space_id - 1]
+    doc = _clean_doc(turn['before']) or {'icon': '', 'cover': '', 'blocks': []}
     space['doc'] = doc
     space['body'] = _doc_text(doc)[:BODY_MAX]
     _store(username, kind, spaces)
-    return ok(space=space, reply=made['reply'], mode=made['mode'], before=before)
+    turn['before'] = None
+    turn['undone'] = True
+    turns = _keep_chat(username, kind, space_id, turns)
+    return ok(space=space, chat=_public(turns))
+
+
+def _clear_chat(username: str, kind: str, space_id: int):
+    if not 1 <= space_id <= COUNT:
+        return fail("There's no space {}.".format(space_id))
+    db.set_user_setting(username, _chat_key(kind, space_id), [])
+    return ok(chat=[])
 
 
 # ---- Personal --------------------------------------------------------------
@@ -443,6 +662,21 @@ def ask_space(space_id: int, body: AskSpace, username: str = Depends(current_use
     return _ask(username, 'personal', space_id, body)
 
 
+@router.get('/api/spaces/{space_id}/chat')
+def space_chat(space_id: int, username: str = Depends(current_username)):
+    return _chat_reply(username, 'personal', space_id)
+
+
+@router.post('/api/spaces/{space_id}/chat/undo')
+def space_chat_undo(space_id: int, body: ChatTurnRef, username: str = Depends(current_username)):
+    return _undo(username, 'personal', space_id, body)
+
+
+@router.post('/api/spaces/{space_id}/chat/clear')
+def space_chat_clear(space_id: int, username: str = Depends(current_username)):
+    return _clear_chat(username, 'personal', space_id)
+
+
 # ---- Team ------------------------------------------------------------------
 @router.get('/api/team-spaces')
 def list_team_spaces(username: str = Depends(current_username)):
@@ -458,6 +692,21 @@ def save_team_space(space_id: int, body: SaveSpace,
 @router.post('/api/team-spaces/{space_id}/ai')
 def ask_team_space(space_id: int, body: AskSpace, username: str = Depends(current_username)):
     return _ask(username, 'team', space_id, body)
+
+
+@router.get('/api/team-spaces/{space_id}/chat')
+def team_space_chat(space_id: int, username: str = Depends(current_username)):
+    return _chat_reply(username, 'team', space_id)
+
+
+@router.post('/api/team-spaces/{space_id}/chat/undo')
+def team_space_chat_undo(space_id: int, body: ChatTurnRef, username: str = Depends(current_username)):
+    return _undo(username, 'team', space_id, body)
+
+
+@router.post('/api/team-spaces/{space_id}/chat/clear')
+def team_space_chat_clear(space_id: int, username: str = Depends(current_username)):
+    return _clear_chat(username, 'team', space_id)
 
 
 @router.post('/api/team-spaces/{space_id}/invite')
