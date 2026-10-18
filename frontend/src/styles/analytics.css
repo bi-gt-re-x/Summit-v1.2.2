@@ -8683,3 +8683,79 @@ div.ax-opening > p { flex: 1; min-width: 0; margin: 0; line-height: 1.5; }
 .ax-reads-empty { margin: 0; color: var(--ax-muted); font-size: var(--text-sm); }
 @keyframes ax-read-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .ax-reads li { animation: none; } }
+
+/* ---- Said vs. did (components/Analytics/SaidVsDid) ---------------------- */
+.ax-said-group { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-4); }
+.ax-said-group:first-of-type { margin-top: var(--space-2); }
+.ax-said-title {
+    margin: 0;
+    font-size: var(--text-xs) !important;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ax-muted);
+}
+.ax-said-group ul { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.ax-said-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--ax-line-soft);
+    border-left: 3px solid var(--ax-faint);
+    border-radius: var(--ax-radius, 12px);
+}
+.ax-said-row.is-strong { border-left-color: var(--ax-green); }
+.ax-said-row.is-some { border-left-color: var(--ax-blue); }
+.ax-said-row.is-little { border-left-color: var(--ax-amber); }
+.ax-said-row.is-none { border-left-color: #e5484d; }
+.ax-said-quote { margin: 0; font-size: var(--text-sm); color: var(--ax-text); line-height: 1.5; }
+.ax-said-src {
+    margin-left: var(--space-2);
+    font-size: var(--text-2xs);
+    color: var(--ax-faint);
+}
+.ax-said-did { margin: 0; font-size: var(--text-sm); color: var(--ax-muted); line-height: 1.5; }
+.ax-said-did b { color: var(--ax-text); font-weight: 600; }
+.ax-said-chip {
+    display: inline-block;
+    margin-left: var(--space-2);
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    background: var(--ax-line-soft);
+    color: var(--ax-text);
+}
+.ax-said-chip.is-strong { color: var(--ax-green); }
+.ax-said-chip.is-some { color: var(--ax-blue); }
+.ax-said-chip.is-little { color: var(--ax-amber); }
+.ax-said-chip.is-none { color: #e5484d; }
+.ax-said-basis { font-size: var(--text-2xs); color: var(--ax-faint); }
+.ax-said-topics li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--ax-line-soft);
+    font-size: var(--text-sm);
+    color: var(--ax-muted);
+}
+.ax-said-topics li:last-child { border-bottom: 0; }
+.ax-said-topics b { color: var(--ax-text); font-weight: 600; }
+.ax-said-topics small { color: var(--ax-faint); }
+.ax-said-file {
+    flex: none;
+    padding: 4px 12px;
+    border: 1px solid var(--ax-violet);
+    border-radius: 999px;
+    background: none;
+    color: var(--ax-violet);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    cursor: pointer;
+}
+.ax-said-file:disabled { opacity: .5; cursor: default; }
+.ax-said-empty { margin: 0; font-size: var(--text-sm); color: var(--ax-muted); line-height: 1.55; }

@@ -202,7 +202,7 @@ export default function Analytics() {
   const waiting =
     [
       data.tasks, series, data.ratings, data.goals,
-      baseline, data.adopted, data.gradedLog, data.scoreLog,
+      baseline, data.adopted, data.gradedLog, data.scoreLog, data.said,
     ].some((call) => call.loading)
     || !ready
     || !subjectsReady;

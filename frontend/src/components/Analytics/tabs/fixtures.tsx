@@ -168,6 +168,7 @@ export function fakeData(): AnalyticsData {
     baseline: { data: null, loading: false },
     standing: { data: null, loading: false },
     background: { data: null, loading: false },
+    said: { data: null, loading: false, reload: () => undefined },
     adopt: vi.fn(),
     adopting: null,
     justAdopted: null,

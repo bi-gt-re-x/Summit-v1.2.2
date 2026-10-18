@@ -51,6 +51,7 @@ const EMPTY_PREVIOUS = new Map<string, number>();
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import { WhatYouToldUs } from '../WhatYouToldUs';
+import { SaidVsDid } from '../SaidVsDid';
 import { GoalsFinished } from '../GoalsFinished';
 import { FirstReads } from '../FirstReads';
 import { useMemo } from 'react';
@@ -226,6 +227,9 @@ export function OverviewTab({
             for while the record is short. */}
         <section className="ax-section">
           <WhatYouToldUs background={background} credit={maturity.credit ?? 0} waiting nameOf={nameOf} />
+        </section>
+        <section className="ax-section">
+          <SaidVsDid data={data.said?.data ?? null} reload={() => data.said?.reload()} />
         </section>
 
         {/* The one inference allowed this early, and only once it is earned.
@@ -460,6 +464,11 @@ export function OverviewTab({
           />
         </section>
       )}
+
+      {/* The answers and the Log, checked against the record. */}
+      <section className="ax-section">
+        <SaidVsDid data={data.said?.data ?? null} reload={() => data.said?.reload()} />
+      </section>
 
       <ActiveDayPrinciple />
     </>

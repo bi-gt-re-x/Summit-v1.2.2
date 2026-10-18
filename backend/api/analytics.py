@@ -454,6 +454,42 @@ def drop_advice(body: DropAdvice, username: str = Depends(current_username)):
     return ok(adopted=_adopted(stored))
 
 
+class FileInferred(BaseModel):
+    subject: str = ''
+    ids: List[str] = []
+
+
+@router.get('/api/analytics/said')
+def said_vs_did(username: str = Depends(current_username)):
+    """What the reader said (About you, the Log) against what they did.
+
+    See backend/tracking/said_did.py for every comparison and its rule.
+    """
+    _, user = load_user(username)
+    if not user:
+        return fail('Account not found')
+    return ok(**background_api.said_for(username))
+
+
+@router.post('/api/analytics/file_inferred')
+def file_inferred(body: FileInferred, username: str = Depends(current_username)):
+    """File finished tasks that have no subject under the one their names say.
+
+    Only ever touches this account's tasks that are still unfiled, so a stale
+    page can't move a task the reader has since filed by hand.
+    """
+    names = background_api.subject_names(username)
+    if body.subject not in names:
+        return fail("That subject isn't one of yours.")
+    wanted = {str(one) for one in body.ids[:500]}
+    filed = 0
+    for row in db.columns_for('tasks', username, ('id', 'subject')):
+        if str(row.get('id')) in wanted and not (row.get('subject') or '').strip():
+            if db.update_row('tasks', row['id'], {'subject': body.subject}, user_id=username):
+                filed += 1
+    return ok(filed=filed, **background_api.said_for(username))
+
+
 @router.get('/api/growth_periods')
 def get_growth_periods(username: str = Depends(current_username), period: str = '30d'):
     """The five metrics over one period, the period before it, and a line.

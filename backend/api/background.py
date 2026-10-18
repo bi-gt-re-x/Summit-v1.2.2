@@ -14,7 +14,7 @@ from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.config import subjects as subject_catalogue
 from backend.database import connection as db
-from backend.tracking import background, journal
+from backend.tracking import background, journal, said_did
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['background'])
@@ -67,7 +67,21 @@ def about_lines(username, subject=None):
         subject_id = next((sid for sid, name in names.items()
                            if sid.lower() == wanted or str(name).lower() == wanted), None)
     return (background.brief_lines(facts_for(username), subject_id, names)
-            + journal.brief_lines(username))
+            + journal.brief_lines(username)
+            + said_did.brief_lines(said_for(username, names)))
+
+
+def subject_groups() -> dict:
+    """Each catalogue subject's group, for telling a topic from a subject."""
+    return {entry['id']: entry.get('group') or '' for entry in subject_catalogue.SUBJECTS}
+
+
+def said_for(username, names=None):
+    """What the account said, held against what it did (tracking/said_did.py)."""
+    tasks = db.columns_for('tasks', username, ('id', 'title', 'subject', 'status', 'completed_at'))
+    insights = journal.shown(db.rows_for('log_insights', username))
+    return said_did.readings(tasks, facts_for(username), insights,
+                             names or subject_names(username), subject_groups())
 
 
 def head_start(username):

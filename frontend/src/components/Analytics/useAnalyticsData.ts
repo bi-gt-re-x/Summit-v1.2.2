@@ -23,6 +23,8 @@ import { next as nextService } from '@/services';
 import { useApi, useStats } from '@/hooks';
 import * as backgroundService from '@/services/background';
 import type { Background } from '@/services/background';
+import * as saidService from '@/services/said';
+import type { SaidVsDid } from '@/services/said';
 import { taskHistory } from '@/services/taskHistory';
 import { takeOrAsk } from './earlyReads';
 import {
@@ -184,6 +186,17 @@ export function useAnalyticsData() {
   );
   const background = useApi<Background>(backgroundCall, [username]);
 
+  // What the account said (About you, the Log) against what it did. See
+  // backend/tracking/said_did.py.
+  const saidCall = useCallback(
+    () =>
+      username
+        ? saidService.read()
+        : Promise.resolve({ success: false as const, message: 'Sign in to see this.' }),
+    [username],
+  );
+  const said = useApi<SaidVsDid>(saidCall, [username]);
+
   // What to do next, for the minutes the reader picked. Decided on the server
   // (backend/tracking/next_actions.py) — the same list the dashboard's top line
   // reads — and asked again when the budget changes or the plan's own refresh
@@ -310,7 +323,8 @@ export function useAnalyticsData() {
     goals.reload();
     adopted.reload();
     next.reload();
-  }, [adopted, goals, next, ratings, series, tasks]);
+    said.reload();
+  }, [adopted, goals, next, ratings, said, series, tasks]);
 
   return {
     stats,
@@ -324,6 +338,7 @@ export function useAnalyticsData() {
     gradedLog,
     scoreLog,
     background,
+    said,
     next,
     budget,
     setBudget,
