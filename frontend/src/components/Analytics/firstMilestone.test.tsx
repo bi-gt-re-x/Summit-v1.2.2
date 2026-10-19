@@ -44,9 +44,11 @@ describe('before the first rung', () => {
     expect(screen.getByLabelText(`1 of ${FIRST.need} active days`)).toBeInTheDocument();
   });
 
-  it('does not also run the countdown', () => {
+  it('does not also run a card for the same rung', () => {
     draw(1);
-    expect(screen.queryByText(/more work day/i)).not.toBeInTheDocument();
+    // The locked cards start at the second milestone; the first has its meter.
+    expect(screen.queryByText(FIRST.title)).not.toBeInTheDocument();
+    expect(screen.getByText(MILESTONES[1]!.title)).toBeInTheDocument();
   });
 
   it('still explains what Summit counts as a day', () => {
@@ -69,13 +71,15 @@ describe('once it is reached', () => {
   it('stops celebrating and starts counting', () => {
     draw(FIRST.need);
     expect(screen.queryByText('Your first analytics milestone')).not.toBeInTheDocument();
-    expect(screen.getByText(/more work day/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/more work day/i).length).toBeGreaterThan(0);
   });
 
-  it('brings back the thresholds still ahead', () => {
+  it('shows the thresholds still ahead as locked cards over an example', () => {
     draw(FIRST.need);
     const next = MILESTONES[1]!;
-    expect(screen.getByText(next.why)).toBeInTheDocument();
+    expect(screen.getByText(next.title)).toBeInTheDocument();
+    expect(screen.getByText(next.reward)).toBeInTheDocument();
+    expect(screen.getAllByText('Example').length).toBeGreaterThan(0);
   });
 
   it('renders nothing on its own past the rung', () => {

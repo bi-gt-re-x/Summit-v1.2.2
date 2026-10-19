@@ -58,6 +58,8 @@ import { ActiveDayNote } from './Collecting';
 import { ObservationNote } from './Observation';
 import type { Observation } from '@/utils/observations';
 import type { ReactNode } from 'react';
+import { ExamplePreview } from './Upcoming';
+import type { PreviewKind } from './milestones';
 
 export interface BuildingProps {
   /** The tab's own name, as the reader sees it in the bar. */
@@ -133,6 +135,11 @@ export interface BuildingProps {
   emptyMessage?: string;
   /** A way out of the dead end — usually a link to something to go do. */
   action?: ReactNode;
+  /**
+   * A labeled example of what the tab will look like, under the questions it
+   * will answer. See ./Upcoming for why it is fixed figures, never the reader's.
+   */
+  preview?: PreviewKind;
 }
 
 /**
@@ -170,6 +177,7 @@ export function Building({
   observation,
   emptyMessage,
   action,
+  preview,
 }: BuildingProps) {
   // Something failed. Not a wait, and nothing here counts days.
   if (kind === 'problem') {
@@ -223,6 +231,7 @@ export function Building({
             reader who has already read a progress bar has decided how they
             feel about the tab by the time they reach it. */}
         <Asks lead={asksLead} asks={asks} />
+        {preview && <ExamplePreview kind={preview} />}
 
         {/* What is already true, between what the tab will answer and how far
             off it is. Placed there on purpose: it is the proof that the

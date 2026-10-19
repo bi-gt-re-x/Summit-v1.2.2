@@ -43,6 +43,7 @@ export const GLYPHS = {
     "<path d='M12 2s5 4.5 5 9a5 5 0 0 1-10 0c0-1.6.7-3 1.4-4 .2 1.3.9 2.2 1.8 2.2 1.1 0 1.6-.9 1.4-2.4C11.3 5.2 12 3.4 12 2z'/>",
   ),
   target: stroke("<circle cx='12' cy='12' r='9'/><circle cx='12' cy='12' r='5'/><circle cx='12' cy='12' r='1.4'/>"),
+  lock: stroke("<rect x='5' y='11' width='14' height='10' rx='2'/><path d='M8 11V7a4 4 0 0 1 8 0v4'/>"),
   trend: stroke("<path d='M3 17 9 11l4 4 8-8'/><path d='M16 7h5v5'/>"),
   rocket: stroke(
     "<path d='M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2a2.8 2.8 0 0 0-3-3z'/><path d='M14.5 4.5C17 2 21 3 21 3s1 4-1.5 6.5L14 15l-5-5 5.5-5.5z'/><path d='m9 10-4 1 3.5 3.5L9 10z' opacity='.4'/>",

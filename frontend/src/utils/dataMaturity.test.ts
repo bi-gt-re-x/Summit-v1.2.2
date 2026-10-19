@@ -39,11 +39,11 @@ function series(count: number, worked: number): GrowthDay[] {
 
 describe('counting what is actually there', () => {
   it('counts days with work, not days on the calendar', () => {
-    const found = dataMaturity(series(40, 2));
-    // Forty rows, two of them worked. The gap between these two figures is the
+    const found = dataMaturity(series(40, 1));
+    // Forty rows, one of them worked. The gap between these two figures is the
     // whole reason this module exists, and `spanDays` keeps it visible rather
     // than throwing the calendar away.
-    expect(found.activeDays).toBe(2);
+    expect(found.activeDays).toBe(1);
     expect(found.spanDays).toBe(40);
     expect(found.stage).toBe('new');
   });
@@ -87,7 +87,7 @@ describe('what counts as a day', () => {
 describe('the ladder', () => {
   it('starts everyone at new', () => {
     expect(stageFor(0)).toBe('new');
-    expect(stageFor(2)).toBe('new');
+    expect(stageFor(1)).toBe('new');
   });
 
   it('opens each stage on its own floor, not one day after', () => {
@@ -103,15 +103,15 @@ describe('the ladder', () => {
   });
 
   it('counts the distance to the next stage in active days', () => {
-    const found = dataMaturity(series(30, 5));
+    const found = dataMaturity(series(30, 3));
     expect(found.stage).toBe('early');
     expect(found.next).toBe('weekly');
     expect(found.toNext).toBe(2);
   });
 
   it('measures progress through the current stage rather than the whole ladder', () => {
-    // 5 active days: two thirds of the way from `early` (3) to `weekly` (7).
-    expect(dataMaturity(series(30, 5)).progress).toBeCloseTo(0.5, 5);
+    // 7 active days: two fifths of the way from `weekly` (5) to `developing` (10).
+    expect(dataMaturity(series(30, 7)).progress).toBeCloseTo(0.4, 5);
   });
 
   it('is finished at full', () => {

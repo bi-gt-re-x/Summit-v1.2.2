@@ -307,7 +307,8 @@ export function recommendations(input: AdviceInput): Advice[] {
   const perDay = xpPerActiveDay(days);
   const yearScale = days.length > 0 ? 365 / days.length : 0;
 
-  if (perDay <= 0 || days.length < 14) return [];
+  // Same floor as NEED_DAYS.recommendations, which is what the page counts to.
+  if (perDay <= 0 || days.length < 10) return [];
 
   const load = loadShape(days);
 

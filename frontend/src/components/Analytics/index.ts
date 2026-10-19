@@ -75,6 +75,10 @@ export {
   LearningStrip,
 } from './Collecting';
 export type { LearningItem } from './Collecting';
+
+/* What opens next, as locked cards over a labeled example. See ./Upcoming. */
+export { Upcoming, ExamplePreview, EarlyRead } from './Upcoming';
+export type { UpcomingProps } from './Upcoming';
 export type { CollectingProps } from './Collecting';
 
 /* Day 4-7. Tallies that stand up on a handful of days, and the mark that says

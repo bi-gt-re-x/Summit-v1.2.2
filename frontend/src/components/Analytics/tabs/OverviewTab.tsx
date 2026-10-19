@@ -29,8 +29,9 @@ import {
   AwayNotice,
   Collecting,
   ConsistencyPanel,
-  LearningStrip,
   StageNote,
+  Upcoming,
+  EarlyRead,
   DepthPicker,
   QualityGridPanel,
   QualityPanel,
@@ -40,11 +41,10 @@ import {
 } from '../index';
 import type { Stat } from '../StatRow';
 import { number as fmtNumber } from '@/utils/format';
-import { NEED_DAYS } from '../useAnalyticsModel';
 import { ObservationNote } from '../Observation';
 import { LensLine } from '../Lens';
 import { stageShows } from '@/utils/dataMaturity';
-import type { LearningItem } from '../index';
+import { SOLID_AT } from '../milestones';
 
 /** No earlier period to compare a subject against. Shared, so it is one object. */
 const EMPTY_PREVIOUS = new Map<string, number>();
@@ -75,7 +75,6 @@ export function OverviewTab({
     compareLabel,
     figures,
     subjectLabel,
-    historyDays,
     maturity,
     streak,
     tasks,
@@ -285,12 +284,6 @@ export function OverviewTab({
    */
   const { judgement, note } = stageShows(maturity.stage);
 
-  /* The gated tab, from its own `NEED_DAYS` rather than from a table
-     here — one source for what each needs, so a threshold changed there shows
-     up in this strip without anybody remembering to update it. */
-  const learning: LearningItem[] = [
-    { label: 'Recommendations', have: historyDays, need: NEED_DAYS.recommendations, href: '/recommendations' },
-  ];
 
   return (
     <>
@@ -299,10 +292,10 @@ export function OverviewTab({
       {note && (
         <section className="ax-section">
           <StageNote maturity={maturity} />
-          {/* What the rest of the page is still working on. Named rather than
-              left silent: a reader who does not know Habits exists cannot look
-              forward to it. See the note at the top of LearningStrip. */}
-          <LearningStrip items={learning} />
+          {/* What the rest of the page is still working on, as locked cards
+              with an example of each. Named rather than left silent: a reader
+              who does not know Habits exists cannot look forward to it. */}
+          <Upcoming activeDays={maturity.activeDays} />
         </section>
       )}
 
@@ -311,6 +304,9 @@ export function OverviewTab({
           shared opening slot a few lines up in this file, alongside the two
           things this tab could never say: what to change, and why. */}
       <section id="overview" className="ax-section">
+        {/* The week-on-week deltas open at five work days now, so they say
+            how thin the comparison is until the old seven. */}
+        <EarlyRead days={maturity.activeDays} solidAt={SOLID_AT.trends} />
         <Tiles
           figures={figures}
           sparks={sparks}

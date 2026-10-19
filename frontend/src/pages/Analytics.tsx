@@ -156,6 +156,7 @@ import '@/styles/analytics.css';
  */
 import '@/styles/growth.css';
 import { startAnalyticsReads } from '@/components/Analytics/earlyReads';
+import { SOLID_AT } from '@/components/Analytics/milestones';
 
 /* The page's reads begin the moment this module is evaluated — when the route
    is first opened — rather than after the first commit. See
@@ -537,7 +538,7 @@ export default function Analytics() {
   const opening = ((): React.ReactNode => {
     switch (view.key) {
       case 'overview':
-        /* Nothing until two weeks of recorded work. `Summary` leads with a
+        /* Nothing until ten days of recorded work. `Summary` leads with a
            score out of a hundred and a letter grade, and that is the most
            confident claim the page makes about a person — on day two it is
            arithmetic over an empty record, and on day nine it is a verdict
@@ -545,8 +546,9 @@ export default function Analytics() {
            
            Suppressed for the same stages that hold the quality panels back on
            the tab itself, so the grade does not turn up a week before the
-           readings it is graded on. The tab's own opening below a
-           two weeks is `Collecting` or `StageNote`, which say the true thing
+           readings it is graded on, and wears "Early read" until the old
+           two-week floor (`SOLID_AT`). The tab's own opening below ten
+           days is `Collecting` or `StageNote`, which say the true thing
            instead. See utils/dataMaturity. */
         if (!stageShows(maturity.stage).judgement) return null;
         /* The one tab whose opening is a block rather than a line. Everything
@@ -562,9 +564,11 @@ export default function Analytics() {
                one good week at this length — a fact about the number rather
                than a hedge, so it sits beside it. */
             basis={
-              stageShows(maturity.stage).note
-                ? `Based on ${maturity.activeDays} days of work. It'll get sharper as you log more.`
-                : null
+              maturity.activeDays < SOLID_AT.judgement
+                ? `Early read from ${maturity.activeDays} work days. It firms up around day ${SOLID_AT.judgement}.`
+                : stageShows(maturity.stage).note
+                  ? `Based on ${maturity.activeDays} days of work. It'll get sharper as you log more.`
+                  : null
             }
             goals={
               goalSet.active > 0

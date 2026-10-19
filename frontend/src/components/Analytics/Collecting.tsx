@@ -27,6 +27,7 @@
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { StatRow, type Stat } from './StatRow';
+import { Upcoming } from './Upcoming';
 import { MILESTONES, milestonesAhead, nextMilestone } from './milestones';
 import { ACTIVE_DAY_MEANS } from '@/utils/activeDay';
 import { DORMANT_AFTER, STAGES, STAGE_BRINGS, STAGE_LABEL, type Maturity } from '@/utils/dataMaturity';
@@ -403,14 +404,7 @@ export function FirstMilestone({ maturity }: { maturity: Maturity }) {
 }
 
 export function Collecting({ maturity, stats }: CollectingProps) {
-  const { activeDays, spanDays, progress } = maturity;
-
-  /* What opens next, and what it will do — from ./milestones rather than from
-     a sentence the caller passed down, which is how the countdown here and
-     the ladder below it came to promise different things at the same
-     threshold. */
-  const next = nextMilestone(activeDays);
-  const toNext = next ? next.need - activeDays : null;
+  const { activeDays, spanDays } = maturity;
 
   /** Nothing has opened yet. See `FirstMilestone`. */
   const beforeFirst = activeDays < (MILESTONES[0]?.need ?? 0);
@@ -468,48 +462,22 @@ export function Collecting({ maturity, stats }: CollectingProps) {
         </p>
 
         {/* Before the first rung, one objective said loudly; after it, the
-            running countdown. Never both — they count to the same threshold
-            and two meters for one number is the page arguing with itself. */}
+            locked cards below do the counting. */}
         {beforeFirst && <FirstMilestone maturity={maturity} />}
 
-        {!beforeFirst && next && toNext !== null && (
-          <div className="ax-collect-next">
-            <div
-              className="ax-collect-meter"
-              role="img"
-              aria-label={`${activeDays} days recorded, ${toNext} more until ${next.title.toLowerCase()}`}
-            >
-              <span className="ax-collect-fill" style={{ width: `${Math.round(progress * 100)}%` }} />
-            </div>
-
-            {/* The countdown names what it is counting to, rather than a stage
-                the reader would have to already know. "2 more work days →
-                Weekly trends" is a destination; "2 / 7 days" is a fraction. */}
-            <p className="ax-collect-count">
-              <strong>
-                {toNext} more work {toNext === 1 ? 'day' : 'days'}
-              </strong>
-              <i className="ax-collect-arrow" aria-hidden="true">
-                &#8594;
-              </i>
-              <strong className="ax-collect-goal">{next.title}</strong>
-            </p>
-            {/* And what will actually happen then, to their own record. A
-                category is not a reason to come back; a sentence about what
-                Summit will do with their week is. */}
-            <p className="ax-collect-reward">{next.reward}</p>
-
-            <ActiveDayNote />
-          </div>
-        )}
-
-        {/* Under the countdown, because it is the countdown's missing half:
-            the meter says how far to the next rung, this says how many rungs
-            there are and what each is for. */}
-        <StageLadder maturity={maturity} ahead={!beforeFirst} />
+        {/* The ladder's track only: the thresholds ahead are the locked cards
+            below now, each with a picture of what it opens. */}
+        <StageLadder maturity={maturity} ahead={false} />
       </header>
 
       <StatRow stats={stats} />
+
+      {/* What opens next, as cards, under the counts that are already true.
+          Before the first rung `FirstMilestone` above is the meter for it, so
+          the cards start one later: two meters for one number is the page
+          arguing with itself. */}
+      <Upcoming activeDays={activeDays} skip={beforeFirst ? 1 : 0} />
+      {!beforeFirst && <ActiveDayNote />}
     </section>
   );
 }

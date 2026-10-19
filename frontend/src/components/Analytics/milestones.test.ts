@@ -38,15 +38,15 @@ describe('the table', () => {
 describe('nextMilestone', () => {
   it('is the first threshold above the count', () => {
     expect(nextMilestone(0)?.need).toBe(STAGE_FLOOR.early);
-    expect(nextMilestone(3)?.need).toBe(STAGE_FLOOR.weekly);
-    expect(nextMilestone(6)?.need).toBe(STAGE_FLOOR.weekly);
-    expect(nextMilestone(7)?.need).toBe(STAGE_FLOOR.developing);
+    expect(nextMilestone(2)?.need).toBe(STAGE_FLOOR.weekly);
+    expect(nextMilestone(4)?.need).toBe(STAGE_FLOOR.weekly);
+    expect(nextMilestone(5)?.need).toBe(STAGE_FLOOR.developing);
   });
 
   it('prefers the next thing that opens over the next stage', () => {
-    /* At fifteen the next *stage* is `full` at thirty, but Habits opens at
-       twenty-one — the whole reason the countdown reads this table. */
-    expect(nextMilestone(15)?.need).toBe(NEED_DAYS.habits);
+    /* At eleven the next *stage* is `full` at twenty-one, but Habits opens at
+       fourteen — the whole reason the countdown reads this table. */
+    expect(nextMilestone(11)?.need).toBe(NEED_DAYS.habits);
   });
 
   it('runs out at the top', () => {
@@ -73,7 +73,7 @@ describe('milestonesAhead', () => {
 
 describe('whyFor', () => {
   it('answers for a threshold that exists', () => {
-    expect(whyFor(NEED_DAYS.insights)).toContain('two periods to compare');
+    expect(whyFor(NEED_DAYS.insights)).toContain('two stretches to compare');
   });
 
   it('is empty rather than undefined for one that does not', () => {

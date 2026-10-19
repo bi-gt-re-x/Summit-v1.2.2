@@ -35,26 +35,34 @@
  *
  * ## The whole progression, in one place
  *
- *   0-2 active days    `Collecting`, and the counts that are already true:
+ *   0-1 active days    `Collecting`, and the counts that are already true:
  *                      tasks, focus, XP, streak, completion rate, where the
  *                      work went. No trend, no comparison, no grade.
- *   3-6                the two Early tallies — when you worked, what you
+ *   2-4                the two Early tallies — when you worked, what you
  *                      finish — each wearing the day count it was read from.
- *   7-13               the real tab. Delta tiles, the trajectory line, the
+ *   5-9                the real tab. Delta tiles, the trajectory line, the
  *                      consistency and streak panels, the subject split with
  *                      its per-row change.
- *   14-29              the readings that grade a person: the score, its
+ *   10-20              the readings that grade a person: the score, its
  *                      letter, the percentile, quality. Plus a line saying how
  *                      much record they rest on, and a strip naming the tabs
  *                      still filling.
- *   30+                exactly the above with the staging notice off. There is
+ *   21+                exactly the above with the staging notice off. There is
  *                      no separate mature component to transition into, which
  *                      is the point — see `stageShows`.
  *
  * The gates the tabs already had land inside that ladder on their own, once
- * they count active days: Recommendations at 14, Habits at 21, Insights at 28.
- * None of those numbers were chosen for this feature; they were in the
- * codebase and were being read against the wrong denominator.
+ * they count active days: Recommendations at 10, Habits at 14, Insights at 18.
+ *
+ * ## Why the numbers came down (2026-10-19)
+ *
+ * They were 3, 7, 14 and 30, with the tabs at 14, 21 and 28. That was honest
+ * and it was also a month of a new account looking at a mostly empty page,
+ * which is when people decide whether to stay. So every gate opens sooner and
+ * a reading that opened on thin data says so: `SOLID_AT` in
+ * components/Analytics/milestones holds the old numbers as the point where a
+ * reading stops being an early read. Opening early with a label beats a month
+ * of countdowns.
  */
 import { countActiveDays, isActiveDay } from './activeDay';
 import type { GrowthDay } from '@/types';
@@ -68,23 +76,22 @@ export { isActiveDay };
 /**
  * The five stages, and the active-day count each one starts at.
  *
- * The numbers are the brief — day 3, 7, 14, 30 — read as days of real work
- * rather than days on the calendar, which is the whole point. They are
- * deliberately the same figures a reader would have been told, because the
- * promise "a week of use" is a promise about their effort, not about the
- * Earth's rotation.
+ * Day 2, 5, 10, 21, read as days of real work rather than days on the
+ * calendar, which is the whole point: the promise "a week of use" is a
+ * promise about their effort, not about the Earth's rotation. See the note
+ * above on why they used to be 3, 7, 14 and 30.
  *
- * So `full` at 30 means thirty days that had work on them, however long those
- * thirty took: thirty days on the trot, or thirty across four months. A day
+ * So `full` at 21 means twenty-one days that had work on them, however long
+ * those took: three weeks on the trot, or the same across three months. A day
  * counts on one finished task, one logged focus session, or any XP at all —
  * see utils/activeDay, which is the only place that decides.
  */
 export const STAGE_FLOOR = {
   new: 0,
-  early: 3,
-  weekly: 7,
-  developing: 14,
-  full: 30,
+  early: 2,
+  weekly: 5,
+  developing: 10,
+  full: 21,
 } as const;
 
 export type Stage = keyof typeof STAGE_FLOOR;

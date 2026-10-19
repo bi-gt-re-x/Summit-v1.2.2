@@ -4,7 +4,7 @@
  * ## Why this is one table
  *
  * The numbers were already in two places and the *words* about them were in
- * five. `STAGE_FLOOR` holds 3, 7, 14 and 30; `NEED_DAYS` holds 14, 21 and 28;
+ * five. `STAGE_FLOOR` holds 2, 5, 10 and 21; `NEED_DAYS` holds 10, 14 and 18;
  * and the sentences explaining them were written separately at each call site
  * — a `nextBrings` ternary in the Overview tab, a `promise` string on each of
  * the four `Building` tabs, and a hardcoded list of four rows in the ladder.
@@ -33,7 +33,7 @@
  *
  * ## One entry per number, not one per feature
  *
- * Fourteen is both the `developing` stage and the Recommendations gate, and a
+ * Ten is both the `developing` stage and the Recommendations gate, and a
  * reader who is told twice that something happens at 14 has learned that the
  * page is describing its own internals. The entry names everything that opens
  * there in one line.
@@ -50,52 +50,89 @@ export interface Milestone {
   why: string;
   /** What Summit will actually do once it opens. Concrete, second person. */
   reward: string;
+  /** Which example `Upcoming` draws behind the locked card. */
+  preview: PreviewKind;
+  /** Where it opens, so a locked card can point at it. */
+  href: string;
 }
+
+export type PreviewKind = 'patterns' | 'trends' | 'grade' | 'habits' | 'insights' | 'full';
 
 /** Ascending, and `nextAfter` relies on it. */
 export const MILESTONES: Milestone[] = [
   {
     need: STAGE_FLOOR.early,
     title: 'Your first patterns',
-    why: 'Three days is enough to start seeing how you work.',
+    why: 'Two days is enough to start seeing how you work.',
     reward: 'See when you work and what you finish.',
+    preview: 'patterns',
+    href: '/insights',
   },
   {
     need: STAGE_FLOOR.weekly,
     title: 'Weekly trends',
-    why: 'A full week can be compared with the next.',
+    why: 'Five work days make a week you can compare.',
     reward: 'Compare this week with last week.',
+    preview: 'trends',
+    href: '/analytics',
   },
   {
     /* Also `NEED_DAYS.recommendations`. One entry, because two lines both
-       saying "at 14" is the page describing its own internals. */
+       saying "at 10" is the page describing its own internals. */
     need: STAGE_FLOOR.developing,
     title: 'Grades and tips',
-    why: 'Two weeks is enough for a grade and real tips.',
+    why: 'Ten days is enough for a first grade and real tips.',
     reward: 'Get a grade, a ranking and tips.',
+    preview: 'grade',
+    href: '/recommendations',
   },
   {
     need: NEED_DAYS.habits,
     title: 'Habit patterns',
-    why: 'Three weeks is enough to spot real habits.',
+    why: 'Two weeks of work is enough to spot habits.',
     reward: 'See your habits and when they slip.',
+    preview: 'habits',
+    href: '/insights',
   },
   {
     need: NEED_DAYS.insights,
     title: 'Insights',
-    why: 'Four weeks gives you two periods to compare.',
+    why: 'Eighteen days gives you two stretches to compare.',
     reward: 'See what helps your results and why.',
+    preview: 'insights',
+    href: '/insights',
   },
   {
     need: STAGE_FLOOR.full,
     title: 'Full analytics',
-    /* Honest about being the thin one. Nothing opens at 30 — see `stageShows`
+    /* Honest about being the thin one. Nothing opens at 21 — see `stageShows`
        in utils/dataMaturity, where `full` is every flag already on. Saying so
        is better than inventing a feature to justify the number. */
-    why: 'A month of work makes long-term numbers solid.',
+    why: 'Three weeks of work makes long-term numbers solid.',
     reward: 'Everything unlocked. No more low-data warnings.',
+    preview: 'full',
+    href: '/analytics/growth',
   },
 ];
+
+/**
+ * Where a reading stops being an early read.
+ *
+ * These are the thresholds the gates sat at before they came down (see
+ * utils/dataMaturity.ts). A reading opens at the new number and wears an
+ * "Early read" label until the account reaches the old one, so a grade on day
+ * eleven says it is a first look rather than passing for a settled verdict.
+ */
+export const SOLID_AT = {
+  trends: 7,
+  judgement: 14,
+  habits: 21,
+  insights: 28,
+} as const;
+
+export function isEarlyRead(key: keyof typeof SOLID_AT, activeDays: number): boolean {
+  return activeDays < SOLID_AT[key];
+}
 
 /** The next threshold above `activeDays`, or null once they are all behind. */
 export function nextMilestone(activeDays: number): Milestone | null {

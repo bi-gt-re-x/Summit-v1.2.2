@@ -68,7 +68,7 @@ describe('the ladder is thirty worked days, not thirty dates', () => {
     // thirty on the trot, because nothing they learned about themselves
     // became untrue for having been spread out.
     const sparse = days('2026-01-01', 365).map((day, index) =>
-      index % 12 === 0 && index / 12 < 30 ? { ...day, tasks_completed: 1, xp_earned: 20 } : day,
+      index % 12 === 0 && index / 12 < STAGE_FLOOR.full ? { ...day, tasks_completed: 1, xp_earned: 20 } : day,
     );
     const found = dataMaturity(sparse);
     expect(found.activeDays).toBe(STAGE_FLOOR.full);
@@ -76,8 +76,8 @@ describe('the ladder is thirty worked days, not thirty dates', () => {
   });
 
   it('does not open it on thirty dates with two days of work in them', () => {
-    const found = dataMaturity(focusOnly(30, 2));
-    expect(found.activeDays).toBe(2);
+    const found = dataMaturity(focusOnly(30, 1));
+    expect(found.activeDays).toBe(1);
     expect(found.stage).toBe('new');
   });
 

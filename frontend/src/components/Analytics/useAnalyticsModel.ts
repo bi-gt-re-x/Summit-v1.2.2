@@ -134,7 +134,7 @@ import type { Prefs } from '@/services/settings';
 const RADAR_SUBJECTS = 6;
 
 /** See the note on `waitFor` below for why these are three numbers and not one. */
-export const NEED_DAYS = { habits: 21, insights: 28, recommendations: 14 };
+export const NEED_DAYS = { habits: 14, insights: 18, recommendations: 10 };
 
 /**
  * What the model reads while the page is still waiting — the same empty list
@@ -846,7 +846,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
    * projecting from. Stated here rather than buried in each tab so the three
    * can be read against each other and raised together.
    *
-   * `recommendations` is 14 because that is the floor the rules themselves
+   * `recommendations` is 10 because that is the floor the rules themselves
    * apply — see the guard at the top of `recommendations` in utils/advice. The
    * number lives in both places on purpose: the rule enforces it, and this is
    * what the page counts down to, and a page counting to a different number

@@ -80,7 +80,8 @@ import { PanelGroup } from '../charts';
 import { partsOfDay } from '@/utils/habits';
 import { unlock } from '@/utils/insight';
 import { NEED_DAYS } from '../useAnalyticsModel';
-import { whyFor } from '../milestones';
+import { SOLID_AT, whyFor } from '../milestones';
+import { EarlyRead } from '../Upcoming';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { AnalyticsData } from '../useAnalyticsData';
 import { SayVsDo, sayVsDoHasNews } from '../SayVsDo';
@@ -146,6 +147,7 @@ export function InsightsTab({
             'What changed lately?',
           ]}
           emptyMessage="Nothing repeats often enough to be a habit yet."
+          preview="habits"
           action={
             <Link to="/tasks" className="ax-btn">
               Open Tasks
@@ -204,6 +206,7 @@ export function InsightsTab({
           three cards rather than nine. */}
       {insightsReady && (
         <section className="ax-section">
+          <EarlyRead days={historyDays} solidAt={SOLID_AT.insights} />
           <ChangedPanel changes={changes.slice(0, findings)} window={changeWindow} />
         </section>
       )}
@@ -218,6 +221,7 @@ export function InsightsTab({
             note="How often you keep each one and how it helps"
             defaultOpen
           >
+            <EarlyRead days={historyDays} solidAt={SOLID_AT.habits} />
             <HabitTiles summary={summary} span={spanText} />
             <div className="ax-grid ax-grid-halves-even">
               <HabitOpening

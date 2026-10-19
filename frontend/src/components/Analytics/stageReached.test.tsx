@@ -12,7 +12,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { StageReached } from './StageReached';
 import { MILESTONES } from './milestones';
-import { STAGES, STAGE_LABEL, type Stage } from '@/utils/dataMaturity';
+import { STAGES, STAGE_FLOOR, STAGE_LABEL, type Stage } from '@/utils/dataMaturity';
 
 /** The page's own test, lifted so it can be checked without the page. */
 const climbed = (seen: string, now: Stage) =>
@@ -60,7 +60,7 @@ describe('what it says', () => {
     /* The reward comes from the one table the countdown reads, so arriving
        reads as a promise kept rather than as a fresh announcement. */
     draw('weekly', 8);
-    const weekly = MILESTONES.find((step) => step.need === 7);
+    const weekly = MILESTONES.find((step) => step.need === STAGE_FLOOR.weekly);
     expect(screen.getByText(weekly!.reward)).toBeInTheDocument();
   });
 
