@@ -29,8 +29,9 @@
     display: grid;
     place-items: center;
     padding: var(--space-5);
-    background: rgba(16, 20, 30, .45);
-    backdrop-filter: blur(2px);
+    /* No backdrop blur, for the reason in catch-up.css: it re-blurred the
+       animated dashboard under it on every frame. */
+    background: rgba(16, 20, 30, .5);
     animation: tk-rate-in .14s ease-out;
 }
 

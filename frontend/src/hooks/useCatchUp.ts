@@ -63,12 +63,17 @@ export interface UseCatchUp {
   dismiss: () => void;
 }
 
-export function useCatchUp(username: string | null): UseCatchUp {
+export function useCatchUp(username: string | null, onSaved?: () => void): UseCatchUp {
   const { prefs, ready, update } = useSettings();
   const [days, setDays] = useState<CatchUpDay[] | null>(null);
   const [saving, setSaving] = useState(false);
   const [failure, setFailure] = useState<string | null>(null);
   const asked = useRef<string | null>(null);
+  /* Called once hours land, so the page under the dialog re-reads the figures
+     they feed. Held in a ref so a new function each render does not rebuild
+     `submit`. */
+  const saved = useRef(onSaved);
+  saved.current = onSaved;
 
   /* The account's default goal, for a backfilled day that has no row of its
      own yet. A day that already has one keeps it — see `log_day` in
@@ -163,6 +168,7 @@ export function useCatchUp(username: string | null): UseCatchUp {
           }
           setDays(null);
           stamp();
+          saved.current?.();
         })
         .catch((cause: unknown) => {
           console.error('Dashboard: logging catch-up hours failed', cause);

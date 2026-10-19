@@ -31,7 +31,7 @@ const logDay = vi.mocked(focusService.logDay);
 /** Frozen, because "which days" is entirely a function of what today is. */
 const TODAY = new Date('2026-08-29T10:00:00');
 
-function mount(prefs: Partial<Prefs>, username: string | null = 'myles') {
+function mount(prefs: Partial<Prefs>, username: string | null = 'myles', onSaved?: () => void) {
   const update = vi.fn(async () => null);
   function Providers({ children }: { children: ReactNode }) {
     return (
@@ -40,7 +40,7 @@ function mount(prefs: Partial<Prefs>, username: string | null = 'myles') {
       </SettingsContext.Provider>
     );
   }
-  const view = renderHook(() => useCatchUp(username), { wrapper: Providers });
+  const view = renderHook(() => useCatchUp(username, onSaved), { wrapper: Providers });
   return { ...view, update };
 }
 
@@ -122,6 +122,26 @@ describe('the catch-up prompt', () => {
     expect(logDay).toHaveBeenCalledWith('2026-08-28', 90, 3);
     expect(logDay).toHaveBeenCalledWith('2026-08-27', 45, 3);
     await waitFor(() => expect(result.current.days).toBeNull());
+  });
+
+  it('tells the page to re-read once the hours land', async () => {
+    const onSaved = vi.fn();
+    const { result } = mount({ catchup_seen_on: '2026-08-28' }, 'myles', onSaved);
+    await waitFor(() => expect(result.current.days).not.toBeNull());
+
+    result.current.submit([{ iso: '2026-08-28', minutes: 60 }]);
+    await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1));
+  });
+
+  it('does not re-read the page when nothing was written', async () => {
+    logDay.mockResolvedValue({ success: false, message: 'no' });
+    const onSaved = vi.fn();
+    const { result } = mount({ catchup_seen_on: '2026-08-28' }, 'myles', onSaved);
+    await waitFor(() => expect(result.current.days).not.toBeNull());
+
+    result.current.submit([{ iso: '2026-08-28', minutes: 60 }]);
+    await waitFor(() => expect(result.current.failure).not.toBeNull());
+    expect(onSaved).not.toHaveBeenCalled();
   });
 
   it('keeps the prompt up when nothing could be written', async () => {

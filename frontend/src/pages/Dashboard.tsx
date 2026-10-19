@@ -116,8 +116,9 @@ export default function Dashboard() {
   const { prefs, dailyGoal, displayName } = useSettings();
   /* The days this page was not told about — see hooks/useCatchUp. Usually
      nothing: an account that runs the timer has no unrecorded days, and one
-     that has already been asked today is not asked again. */
-  const catchUp = useCatchUp(username);
+     that has already been asked today is not asked again. Saving re-reads the
+     page, so the streak and week figures take in the hours straight away. */
+  const catchUp = useCatchUp(username, reload);
 
   const [tab, setTab] = useState<TaskTab>('today');
   const [busyId, setBusyId] = useState<string | null>(null);

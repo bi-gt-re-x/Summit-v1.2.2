@@ -26,8 +26,11 @@
     display: grid;
     place-items: center;
     padding: var(--space-5);
-    background: rgba(16, 20, 30, .45);
-    backdrop-filter: blur(2px);
+    /* No backdrop blur. It made the browser re-blur the dashboard under it on
+       every frame its ambient background and Mango animate, which is what made
+       the dialog stutter while typing. A slightly darker scrim does the same
+       job of pushing the page back. */
+    background: rgba(16, 20, 30, .5);
     animation: cu-in .14s ease-out;
 }
 
