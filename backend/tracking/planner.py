@@ -182,6 +182,15 @@ GROQ_MODEL = os.environ.get('GROQ_MODEL') or 'openai/gpt-oss-120b'
 # through here is exactly how the 413 gets hit. See `_from_groq`.
 GROQ_MAX_TOKENS = 4500
 
+#: A job that asks for more gets up to this. The checkpoint steps do: their
+#: brief is short and a richer answer is worth the minute's allowance.
+GROQ_MAX_TOKENS_HIGH = 6000
+
+#: Groq's limits are per model, so when the main model is rate-limited for
+#: the minute or spent for the day, this one still has its own allowance.
+#: Empty turns the fallback off.
+GROQ_FALLBACK_MODEL = os.environ.get('GROQ_FALLBACK_MODEL', 'openai/gpt-oss-20b')
+
 # How much of that budget it is allowed to spend thinking. 'medium', not
 # 'high': the job is reading a table rather than solving it, and at 'high' this
 # model sometimes spends the entire completion on reasoning and emits nothing —
@@ -317,32 +326,61 @@ STEP_COUNT = 5
 # about milestones will otherwise hedge toward states here too.
 SYSTEM_STEPS = """\
 You break one checkpoint of a long-term goal into the actions that reach it, \
-for a study-planning app.
+for a student's study-planning app. The student will do exactly what you \
+write, so every step has to say what to open, how much to do, and how they \
+know it's done.
 
-A step is an ACTION SOMEBODY DOES — a piece of work that can be sat down to \
-and finished. This is the opposite of the checkpoint above it, which is a \
-state being reached:
+A step is an ACTION SOMEBODY DOES, a piece of work they sit down to and \
+finish. The checkpoint above it is a state being reached; you are writing the \
+work underneath it.
 
-  Checkpoint: "Solving Silver DP problems unassisted"
-  Step (right): "Work through the knapsack chapter"
-  Step (wrong): "Confident with knapsack problems"
+EVERY STEP NAMES THREE THINGS
+1. The exact material: a named book and chapter, a contest and year, problem \
+numbers, a site and its section, a named piece, a named topic list. Use the \
+resources in the brief (the ones the student named, and the free ones listed \
+for the subject) before anything else, and use the reference facts for what \
+a contest or exam actually covers.
+2. An amount: a number of problems, minutes, pages, run-throughs, or reps.
+3. Where it fits, the bar for done: a score, an accuracy, a time, "without \
+looking".
 
-The second is a state. States are what checkpoints are; you are writing the \
-work underneath one.
+Good, for "Score 24+ on timed AMC 8 practice":
+  "Do AMC 8 2019 problems 1-25 in 40 minutes, score it"
+  "Redo every miss from 2019 untimed, write the trick for each"
+  "Alcumus: 30 Counting & Probability problems at 80%+"
+  "AoPS Intro to Number Theory ch. 5, all exercises"
+  "Timed AMC 8 2022, aim for 20+, log every miss by topic"
+Good, for "Play the Bach Double first movement at tempo":
+  "Bars 1-24 at 60 bpm, three clean runs in a row"
+Good, for "Solve USACO Silver prefix-sum problems":
+  "USACO Guide Silver Prefix Sums: solve 4 Easy problems"
+
+These show the level of detail, not what to write: don't copy their wording, \
+contests, years or numbers. Pick what fits this checkpoint, this student and \
+the resources in the brief, and spread different resources across the five.
+
+Never write a step like these. They're the reason this prompt exists:
+  "Review core topic notes and example problems"
+  "Practice targeted problems under timed conditions"
+  "Analyze mistakes and refine strategy"
+  "Diagnose weaknesses with a topic quiz"
+  "Take a full mock test under exam conditions"
+If a step could be pasted under any other goal unchanged, rewrite it.
 
 Rules for the set you return:
 - Exactly five, in the order they would be done.
-- Each is a single sitting or a small run of them, not a term's project.
-- Concrete to this checkpoint and its subject. "Practice more" says nothing.
-- Ten words or fewer each, starting with a verb.
-- Together they are enough that finishing all five reaches the checkpoint.
-- If you are told the checkpoints either side of this one, stay between \
-them: nothing the one before already covers, nothing that belongs to the one \
-after.
-- If you are given a date, the five have to fit before it.
-- If you are told what they have already done, build on it: skip what their \
-record shows is done, and point the first step at the work they got wrong or \
-the reason their sessions go badly.
+- Each is one sitting or a short run of them, never a term's project.
+- Start with a verb or the resource name. 18 words or fewer, under 110 \
+characters.
+- Together, finishing all five reaches the checkpoint.
+- If told the checkpoints either side, stay between them: nothing the one \
+before covers, nothing that belongs to the one after.
+- If given a date, the five fit before it.
+- If told what they've already done, build on it: skip what's done, and aim \
+the first step at what they got wrong.
+- Never invent a book, a chapter, a contest year or a website. If you're not \
+sure something exists, name the contest or the free resource from the brief \
+instead.
 """
 SYSTEM_STEPS += STYLE
 
@@ -950,11 +988,28 @@ def _from_groq(brief: str, system: str = None, instruction: str = '',
     right failure: the answer is a page of JSON, not an essay, and a caller
     that wanted a bigger one still gets as much as the tier will give.
     """
-    return _from_openai_chat(
-        GROQ_URL, _groq_token(), GROQ_MODEL, 'Groq',
-        brief, system, instruction, schema,
-        min(max_tokens or GROQ_MAX_TOKENS, GROQ_MAX_TOKENS),
-        GROQ_TEMPERATURE, GROQ_TIMEOUT, GROQ_REASONING)
+    # A budget written for Groq (up to GROQ_MAX_TOKENS_HIGH) is taken as
+    # asked; one written for Anthropic (16,000 and up) is capped as before,
+    # because its brief is the big one and the minute's allowance counts both.
+    asked = max_tokens or GROQ_MAX_TOKENS
+    budget = asked if asked <= GROQ_MAX_TOKENS_HIGH else GROQ_MAX_TOKENS
+    try:
+        return _from_openai_chat(
+            GROQ_URL, _groq_token(), GROQ_MODEL, 'Groq',
+            brief, system, instruction, schema, budget,
+            GROQ_TEMPERATURE, GROQ_TIMEOUT, GROQ_REASONING)
+    except PlannerUnavailable as exc:
+        # Each Groq model has its own allowance, so a busy or spent main
+        # model isn't the end of the request. Anything else (a bad key, a
+        # refused schema) would fail the same way on the fallback.
+        message = str(exc)
+        limited = isinstance(exc, RequestTooLarge) or 'rate-limiting' in message or 'for the day' in message
+        if not limited or not GROQ_FALLBACK_MODEL or GROQ_FALLBACK_MODEL == GROQ_MODEL:
+            raise
+        return _from_openai_chat(
+            GROQ_URL, _groq_token(), GROQ_FALLBACK_MODEL, 'Groq',
+            brief, system, instruction, schema, min(budget, GROQ_MAX_TOKENS),
+            GROQ_TEMPERATURE, GROQ_TIMEOUT, GROQ_REASONING)
 
 
 # ---------------------------------------------------------------------------
@@ -1056,9 +1111,37 @@ def suggest_milestones(title, why='', description='', category='',
     return cleaned[:COUNT]
 
 
+#: Steps with no number and no named thing in them. Two of these in a set
+#: and the set is sent back to be rewritten, once.
+GENERIC_LIMIT = 2
+GENERIC_WORDS = re.compile(
+    r'\b(review|practice|analy[sz]e|study|work on|go over|focus on|improve|refine|strategy|'
+    r'notes|weak(?:ness|nesses)?|areas?|key concepts|core topics|mock test|example problems|'
+    r'diagnose|errors?|mistakes?|full[- ]length|exam conditions|targeted|drills?)\b', re.I)
+STEPS_BUDGET = 5500
+
+
+def too_generic(step: str, known: str = '') -> bool:
+    """A step that names nothing and counts nothing: no figure, no proper
+    noun past its first word, no quoted title, and the usual filler words.
+
+    `known` is the goal and checkpoint titles: repeating the goal's own name
+    ("a Mathcounts topic quiz" under a Mathcounts goal) isn't naming a
+    resource.
+    """
+    text = (step or '').strip()
+    if re.search(r'\d', text) or re.search(r'["“”]', text):
+        return False
+    words = re.findall(r"[A-Za-z][\w&'.-]*", text)
+    seen = {word.lower() for word in re.findall(r"[A-Za-z][\w&'.-]*", known or '')}
+    if any(word[0].isupper() and word.lower() not in seen for word in words[1:]):
+        return False
+    return bool(GENERIC_WORDS.search(text)) or len(words) <= 4
+
+
 def suggest_steps(milestone, goal='', why='', description='', category='',
                   unit='', target='', deadline='', before='', after='',
-                  record=(), about=()) -> List[str]:
+                  record=(), about=(), resources=(), taken=()) -> List[str]:
     """Five steps for one checkpoint, in the order they would be done.
 
     The goal is passed as well as the checkpoint because a checkpoint title is
@@ -1096,18 +1179,48 @@ def suggest_steps(milestone, goal='', why='', description='', category='',
                       '{}'.format(after.strip()))
     else:
         brief = 'Checkpoint to break down: {}'.format(milestone.strip())
-    instruction = 'Break this checkpoint into the five steps that reach it.'
+    if taken:
+        brief += ('\n\nSteps already planned on the other checkpoints of this goal. '
+                  "Don't repeat them or redo the same material; build past them:\n")
+        brief += '\n'.join('- {}'.format(step) for step in taken)
+    if resources:
+        brief += ('\n\nResources to build the steps on (name them; the free ones '
+                  'have links the student can open):\n')
+        brief += '\n'.join('- {}'.format(line) for line in resources)
+    instruction = ('Break this checkpoint into the five steps that reach it. Every '
+                   'step names its material, an amount, and the bar for done.')
 
-    if using == 'groq':
-        text = _from_groq(brief, SYSTEM_STEPS, instruction, STEPS_SCHEMA)
-    elif using == 'grok':
-        text = _from_grok(brief, SYSTEM_STEPS, instruction, STEPS_SCHEMA)
-    elif using == 'huggingface':
-        text = _from_huggingface(brief, SYSTEM_STEPS, instruction)
-    else:
-        text = _from_anthropic(brief, SYSTEM_STEPS, STEPS_SCHEMA, instruction)
+    def ask(text_brief, text_instruction):
+        if using == 'groq':
+            return _from_groq(text_brief, SYSTEM_STEPS, text_instruction, STEPS_SCHEMA, STEPS_BUDGET)
+        if using == 'grok':
+            return _from_grok(text_brief, SYSTEM_STEPS, text_instruction, STEPS_SCHEMA)
+        if using == 'huggingface':
+            return _from_huggingface(text_brief, SYSTEM_STEPS, text_instruction)
+        return _from_anthropic(text_brief, SYSTEM_STEPS, STEPS_SCHEMA, text_instruction)
 
+    text = ask(brief, instruction)
     cleaned = [plain(str(entry)).strip() for entry in _titles(text) if str(entry).strip()]
+
+    # A second pass when the first came back as filler. It costs another call,
+    # which is the point: a checklist of "review your notes" is worth less
+    # than the quota it saved.
+    known = '{} {}'.format(goal, milestone)
+    vague = [step for step in cleaned[:STEP_COUNT] if too_generic(step, known)]
+    if len(vague) >= GENERIC_LIMIT:
+        retry = (brief + '\n\nA first draft came back too vague to act on:\n'
+                 + '\n'.join('- {}'.format(step) for step in cleaned[:STEP_COUNT])
+                 + '\nThese say nothing about what to open or how much to do: '
+                 + '; '.join('"{}"'.format(step) for step in vague)
+                 + '. Rewrite all five so each names its material, an amount and '
+                   'the bar for done.')
+        try:
+            again = [plain(str(entry)).strip() for entry in _titles(ask(retry, instruction)) if str(entry).strip()]
+            if len(again) >= STEP_COUNT and sum(too_generic(step, known) for step in again[:STEP_COUNT]) < len(vague):
+                cleaned = again
+        except PlannerUnavailable:
+            pass  # keep the first draft rather than fail the button
+    cleaned = [step if len(step) <= 110 else step[:110].rsplit(' ', 1)[0].rstrip(',;:') for step in cleaned]
     if len(cleaned) < STEP_COUNT:
         raise PlannerUnavailable(
             'The model returned {} steps instead of {}. Try again.'.format(

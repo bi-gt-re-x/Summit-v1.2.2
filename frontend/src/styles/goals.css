@@ -5290,3 +5290,43 @@ html[data-theme="dark"] .gx-page .ag-note { background: rgba(14, 24, 44, .6); }
 .ag-heat-range { font-size: var(--text-xs); color: var(--gx-muted); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 html[data-theme="dark"] .gx-page .ag-card .ag-heat-grid i:not([class*="is-l"]),
 html[data-theme="dark"] .gx-page .ag-card .ag-heat-grid i.is-l0 { background: color-mix(in srgb, var(--tone) 10%, #18233a); }
+
+/* ---------- The detail drawer, with room to breathe ------------------------
+   The drawer is read top to bottom like a page, so it gets a page's spacing:
+   more air around each section, between checkpoints, and between the steps
+   inside them, and a little more line height on everything that wraps. */
+.gx-drawer {
+    width: min(96vw, 720px);
+    gap: var(--space-6);
+    padding: var(--space-8) var(--space-8) var(--space-12, 48px);
+}
+.gx-drawer-head h2 { margin: var(--space-2) 0 var(--space-3); line-height: 1.3; }
+.gx-drawer .gx-why { padding: var(--space-5) var(--space-6); line-height: 1.7; }
+.gx-drawer .gx-why-label { margin-bottom: var(--space-2); }
+.gx-drawer .gx-panel { gap: var(--space-5); padding: var(--space-6) var(--space-6); }
+.gx-drawer .gx-panel-head { padding-bottom: var(--space-1); }
+.gx-drawer .gx-detail-progress { gap: var(--space-5); }
+.gx-drawer .gx-detail-reason { line-height: 1.65; }
+.gx-drawer .gx-facts { gap: var(--space-4) var(--space-5); padding-top: var(--space-2); }
+.gx-drawer .gx-facts > div { gap: 4px; }
+.gx-drawer .gx-ms { padding: var(--space-4) 0; row-gap: var(--space-2); }
+.gx-drawer .gx-ms-body { gap: 3px; }
+.gx-drawer .gx-ms-title { line-height: 1.4; }
+.gx-drawer .gx-checklist { margin: var(--space-3) 0 var(--space-1); }
+.gx-drawer .gx-checklist-head { margin-bottom: var(--space-1); }
+.gx-drawer .gx-checklist-list { display: grid; gap: 2px; }
+.gx-drawer .gx-cstep { padding: 7px 0; gap: var(--space-3); align-items: start; }
+.gx-drawer .gx-cstep-tick { margin-top: 3px; }
+.gx-drawer .gx-cstep-text { line-height: 1.5; white-space: normal; text-align: left; }
+.gx-drawer .gx-cstep-due { margin-top: 2px; }
+.gx-drawer .gx-ms-suggest { margin: var(--space-3) 0 var(--space-2); }
+.gx-drawer .gx-btn { white-space: nowrap; }
+.gx-drawer .gx-ms-add { margin-top: var(--space-2); }
+.gx-drawer .gx-readings { gap: var(--space-3); }
+.gx-drawer .gx-readings > div { padding: var(--space-4); gap: 4px; }
+.gx-drawer .gx-bottleneck { padding: var(--space-4) var(--space-5); line-height: 1.6; }
+.gx-drawer .gx-actions { gap: var(--space-3); }
+@media (max-width: 640px) {
+    .gx-drawer { padding: var(--space-5) var(--space-4) var(--space-10); gap: var(--space-4); }
+    .gx-drawer .gx-panel { padding: var(--space-4); }
+}

@@ -1428,6 +1428,7 @@ def suggest_steps(body: SuggestSteps, username: str = Depends(current_username))
     goal_title = why = description = category = unit = target = ''
     deadline = before = after = ''
     lines = []
+    taken = []
     if goal_id:
         goal = db.find_row('goals', goal_id, user_id=username)
         if goal:
@@ -1449,21 +1450,66 @@ def suggest_steps(body: SuggestSteps, username: str = Depends(current_username))
                 ladder = _milestones_of(db.rows_for('goal_milestones', username),
                                         goal_id)
                 ids = [str(stone.get('id')) for stone in ladder]
+                # Steps already on the other checkpoints, so this one's
+                # don't repeat them (the model drifts back to the same few
+                # resources otherwise).
+                for stone in ladder:
+                    if str(stone.get('id')) == str(row.get('id')):
+                        continue
+                    for step in _clean_steps(stone.get('steps')):
+                        if step.get('title'):
+                            taken.append(step['title'])
                 if str(row.get('id')) in ids:
                     at = ids.index(str(row.get('id')))
                     before = ladder[at - 1].get('title') or '' if at > 0 else ''
                     after = (ladder[at + 1].get('title') or ''
                              if at + 1 < len(ladder) else '')
 
+    resources = _step_resources(username, goal_id, '{} {} {} {}'.format(
+        goal_title, title, description, why))
     try:
         titles = planner.suggest_steps(
             title, goal=goal_title, why=why, description=description,
             category=category, unit=unit, target=target, deadline=deadline,
             before=before, after=after, record=lines,
-            about=background_api.about_lines(username))
+            about=background_api.about_lines(username), resources=resources, taken=taken[:20])
     except planner.PlannerUnavailable as exc:
         return fail(str(exc))
     return ok(steps=titles)
+
+
+def _step_resources(username, goal_id, text):
+    """What a checkpoint's steps can be built on, as lines for the brief.
+
+    The goal's subjects (filed on it, or read from its words the way
+    said-vs-did reads a line, so "AMC8" is Mathematics), the resources the
+    reader named in About you or the Log for those subjects (Alcumus, AoPS),
+    and the free catalog's resources for them, ranked for this checkpoint.
+    Named resources first: they're what the reader already uses.
+    """
+    from backend.tracking import free_resources, said_did
+    names = background_api.subject_names(username)
+    namer = said_did.Namer(names, background_api.subject_groups())
+    subjects, named = namer.read_all(text)
+    goal = db.find_row('goals', goal_id, user_id=username) if goal_id else None
+    for subject in re.split(r'[,\s]+', str((goal or {}).get('subject_ids') or '')):
+        if subject in names and subject not in subjects:
+            subjects.append(subject)
+    labels = [label for label, _ in named]
+    for fact in background_api.facts_for(username):
+        found, more = namer.read_all(fact.get('text') or '')
+        for label, owner in more:
+            if owner in subjects and label not in labels:
+                labels.append(label)
+    lines = ['They already use: {}'.format(label) for label in labels[:6]]
+    catalog = free_resources.by_subject()
+    for subject in subjects[:2]:
+        rows = free_resources.sort_rows(catalog.get(subject) or [], [text])[:5]
+        for row in rows:
+            lines.append('{} ({}): {}{}'.format(
+                row['name'], row['url'], row.get('good_for') or '',
+                ', no signup' if row.get('signup') == 'none' else ''))
+    return lines
 
 
 @router.post('/api/set_milestones')
