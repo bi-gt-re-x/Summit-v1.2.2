@@ -33,7 +33,7 @@ import os
 import re
 import sqlite3
 import threading
-from datetime import datetime
+from datetime import date, datetime
 
 from backend.config.settings import DB_PATH, SCHEMA_FILES, SQL_DIR, database_url
 
@@ -3316,6 +3316,82 @@ def claim_quest(username, quest_id, xp, stamp):
         return True
     except sqlite3.IntegrityError:
         return False
+    finally:
+        con.close()
+
+
+def daily_quest_facts(username, since, until):
+    """What the account did on each day from `since` to `until`, both ISO.
+
+    The rows today's quest is ticked by, counted per day, so the same numbers
+    answer "is today's done" and "was this done lately" (backend/tracking/quests.py
+    picks a quest the account hasn't done in the days before). Grouped
+    aggregates over a week, for the reason `first_week_facts` gives.
+
+    {iso_day: {'tasks', 'subject_tasks', 'focus_seconds', 'focus_minutes',
+    'practice', 'log', 'planned'}}, with a day missing when nothing happened.
+    `planned` counts tasks made that day and due the next, which is worked out
+    here because it compares two stamps on one row.
+    """
+    days = {}
+
+    def _day(iso):
+        return days.setdefault(iso, {
+            'tasks': 0, 'subject_tasks': 0, 'focus_seconds': 0, 'focus_minutes': 0,
+            'practice': 0, 'log': 0, 'planned': 0,
+        })
+
+    con = connect()
+    try:
+        if _schema(con, 'tasks'):
+            for row in con.execute(
+                    'SELECT substr(completed_at, 1, 10) AS day, COUNT(*) AS n, '
+                    "SUM(CASE WHEN COALESCE(subject, '') != '' THEN 1 ELSE 0 END) AS s "
+                    'FROM tasks WHERE user_id = ? AND status = ? '
+                    'AND substr(completed_at, 1, 10) >= ? AND substr(completed_at, 1, 10) <= ? '
+                    'GROUP BY substr(completed_at, 1, 10)',
+                    (username, 'done', since, until)):
+                _day(row['day'])['tasks'] = int(row['n'] or 0)
+                _day(row['day'])['subject_tasks'] = int(row['s'] or 0)
+            for row in con.execute(
+                    'SELECT substr(created_at, 1, 10) AS made, substr(due_date, 1, 10) AS due '
+                    'FROM tasks WHERE user_id = ? AND due_date IS NOT NULL '
+                    'AND substr(created_at, 1, 10) >= ? AND substr(created_at, 1, 10) <= ?',
+                    (username, since, until)):
+                try:
+                    ahead = (date.fromisoformat(row['due'])
+                             - date.fromisoformat(row['made'])).days
+                except (TypeError, ValueError):
+                    continue
+                if ahead == 1:
+                    _day(row['made'])['planned'] += 1
+        if _schema(con, 'focus_days'):
+            for row in con.execute(
+                    'SELECT date, seconds FROM focus_days '
+                    'WHERE user_id = ? AND date >= ? AND date <= ?',
+                    (username, since, until)):
+                _day(row['date'])['focus_seconds'] = float(row['seconds'] or 0)
+        if _schema(con, 'focus_sittings'):
+            for row in con.execute(
+                    'SELECT day, SUM(minutes) AS m FROM focus_sittings '
+                    'WHERE user_id = ? AND day >= ? AND day <= ? GROUP BY day',
+                    (username, since, until)):
+                _day(row['day'])['focus_minutes'] = int(row['m'] or 0)
+        if _schema(con, 'skill_attempts'):
+            for row in con.execute(
+                    'SELECT substr(at, 1, 10) AS day, SUM(attempted) AS n FROM skill_attempts '
+                    'WHERE user_id = ? AND substr(at, 1, 10) >= ? AND substr(at, 1, 10) <= ? '
+                    'GROUP BY substr(at, 1, 10)',
+                    (username, since, until)):
+                _day(row['day'])['practice'] = int(row['n'] or 0)
+        if _schema(con, 'log_entries'):
+            for row in con.execute(
+                    'SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS n FROM log_entries '
+                    'WHERE user_id = ? AND substr(created_at, 1, 10) >= ? '
+                    'AND substr(created_at, 1, 10) <= ? GROUP BY substr(created_at, 1, 10)',
+                    (username, since, until)):
+                _day(row['day'])['log'] = int(row['n'] or 0)
+        return days
     finally:
         con.close()
 

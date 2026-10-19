@@ -46,6 +46,7 @@ function line(over: Partial<Record<Quest['id'], Partial<Quest>>> = {}, retired =
     quests: ALL.map((id) => quest(id, over[id])),
     retired,
     joined: '2026-10-19',
+    daily: null,
   };
 }
 

@@ -26,13 +26,14 @@
  * card and can level the account up, and both of those live there. This card
  * only says which quest was tapped and shows the result.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui';
 import { growth as growthService, quests as questService } from '@/services';
 import type { Quest, QuestClaim, QuestId, QuestLine } from '@/services/quests';
-import { dataMaturity } from '@/utils/dataMaturity';
-import { format } from '@/utils';
+import { dataMaturity, isActiveDay } from '@/utils/dataMaturity';
+import { dates, format } from '@/utils';
+import type { GrowthDay } from '@/types';
 
 /** Active days past which the line hides. Also SEASONED_XP_DAYS in backend/tracking/quests.py. */
 export const FIRST_WEEK_DAYS = 7;
@@ -54,23 +55,28 @@ export function showFirstWeek({ line, activeDays, touring, finishedHere }: First
 }
 
 /**
- * The quest line for one account, and how young it is.
+ * The quest line for one account, today's quest, and how young it is.
  *
- * `bump` re-reads the quests (not the growth series) when it changes. The
- * page passes its task count, so finishing a first task right here ticks the
- * quest without a reload. Actions on other pages are seen when the reader
- * comes back, because the page mounts again.
+ * `bump` re-reads the quests (and, while today's quest is live, the growth
+ * series) when it changes. The page passes its task count, so finishing a
+ * first task right here ticks the quest without a reload. Actions on other
+ * pages are seen when the reader comes back, because the page mounts again.
+ *
+ * The growth series is kept whole rather than as a count, because today's
+ * quest also says how far off the next Analytics stage is, and that needs the
+ * account's head start (on the daily quest) and whether today counts yet.
  */
 export function useFirstWeek(username: string | null | undefined, bump: unknown) {
   const [line, setLine] = useState<QuestLine | null>(null);
-  const [activeDays, setActiveDays] = useState<number | null>(null);
+  const [growth, setGrowth] = useState<GrowthDay[] | null>(null);
   const [claimedHere, setClaimedHere] = useState(false);
+  const [dailyHere, setDailyHere] = useState(false);
 
   /* A failed read leaves the card hidden: it's a bonus, and the page under it
      has to work without it. */
   const read = useCallback(async () => {
     try {
-      const result = await questService.list();
+      const result = await questService.list(dates.isoDate());
       if (!result.success) return null;
       setLine(result);
       return result;
@@ -79,32 +85,39 @@ export function useFirstWeek(username: string | null | undefined, bump: unknown)
     }
   }, []);
 
+  // All of it (0), because a quiet old account would look young on a window.
+  const readDays = useCallback(async () => {
+    try {
+      const series = await growthService.series(0);
+      if (series.success) setGrowth(series.growth_data);
+    } catch {
+      /* Hidden, same as above. */
+    }
+  }, []);
+
   useEffect(() => {
     if (!username) return;
     let live = true;
     void read().then((found) => {
-      if (!live || !found || found.retired) return;
-      // All of it (0), because a quiet old account would look young on a window.
-      growthService.series(0).then(
-        (series) => {
-          if (live && series.success) setActiveDays(dataMaturity(series.growth_data).activeDays);
-        },
-        () => undefined,
-      );
+      if (!live || !found || (found.retired && !found.daily)) return;
+      void readDays();
     });
     return () => {
       live = false;
     };
-  }, [username, read]);
+  }, [username, read, readDays]);
 
-  // Later changes re-read the quests only. Skips the first run, which the
-  // effect above already covers.
+  // Later changes re-read the quests, and the days only while today's quest
+  // is showing its countdown. Skips the first run, which the effect above
+  // already covers.
   const seen = useRef(bump);
   useEffect(() => {
     if (!username || Object.is(seen.current, bump)) return;
     seen.current = bump;
-    void read();
-  }, [bump, username, read]);
+    void read().then((found) => {
+      if (found?.daily) void readDays();
+    });
+  }, [bump, username, read, readDays]);
 
   /** Mark one claimed in place, as the server just did. */
   const markClaimed = useCallback((id: QuestId) => {
@@ -117,8 +130,39 @@ export function useFirstWeek(username: string | null | undefined, bump: unknown)
     });
   }, []);
 
+  /* Today's quest claimed. Its XP lands on today, which makes today an active
+     day if it wasn't one, so the countdown moves without another read. */
+  const markDailyClaimed = useCallback((xp: number) => {
+    setDailyHere(true);
+    setLine((current) => current?.daily ? {
+      ...current, daily: { ...current.daily, done: true, claimed: true },
+    } : current);
+    const today = dates.isoDate();
+    setGrowth((current) => current?.map((day) =>
+      day.date === today ? { ...day, xp_earned: (Number(day.xp_earned) || 0) + xp } : day,
+    ) ?? current);
+  }, []);
+
+  const headStart = line?.daily?.head_start ?? 0;
+  const maturity = useMemo(
+    () => (growth ? dataMaturity(growth, headStart) : null),
+    [growth, headStart],
+  );
+  const today = growth?.find((day) => day.date === dates.isoDate());
+  const todayActive = Boolean(today && isActiveDay(today));
+
   const finishedHere = claimedHere && Boolean(line?.quests.every((quest) => quest.claimed));
-  return { line, activeDays, finishedHere, markClaimed, reload: read };
+  return {
+    line,
+    activeDays: maturity?.activeDays ?? null,
+    maturity,
+    todayActive,
+    finishedHere,
+    dailyHere,
+    markClaimed,
+    markDailyClaimed,
+    reload: read,
+  };
 }
 
 export interface FirstWeekProps {
@@ -130,7 +174,7 @@ export interface FirstWeekProps {
   onClaim: (id: QuestId) => void;
 }
 
-function Check({ on }: { on: boolean }) {
+export function Check({ on }: { on: boolean }) {
   return (
     <span className={`fw-check${on ? ' is-on' : ''}`} aria-hidden="true">
       {on && (

@@ -1935,3 +1935,25 @@ html[data-theme="dark"] .fw-xp { background: #2a2550; color: #b1a6ff; }
 html[data-theme="dark"] .fw-xp.is-paid { background: #12301f; color: #4ac285; }
 html[data-theme="dark"] .fw-claim { background: #7c6cf0; }
 html[data-theme="dark"] .fw-claim:hover { background: #8b7bf0; }
+
+/* ==========================================================================
+   TODAY'S QUEST
+   ========================================================================== */
+/* One quest a day once the first week's six are done, with the next Analytics
+   stage under it. Same pieces as the first-week card above. See
+   components/Dashboard/TodayQuest.tsx. */
+.tq-card .fw-head { margin-bottom: var(--space-3); }
+/* After the .fw-list breakpoints, so one column wins at every width. */
+.tq-list { grid-template-columns: minmax(0, 1fr); }
+.tq-stage { margin-top: var(--space-3); }
+.tq-track { margin: 0 0 var(--space-2); height: 6px; }
+.tq-countdown {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.45;
+    color: #6C757D;
+}
+.tq-countdown strong { font-weight: 600; color: #2C302E; }
+
+html[data-theme="dark"] .tq-countdown { color: #8b949e; }
+html[data-theme="dark"] .tq-countdown strong { color: #e6edf3; }

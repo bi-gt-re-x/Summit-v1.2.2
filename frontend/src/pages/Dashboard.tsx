@@ -43,9 +43,11 @@ import {
   TaskModal,
   TaskPanel,
   TodayCard,
+  TodayQuest,
   WeeklyOverview,
   XpCard,
   showFirstWeek,
+  showTodayQuest,
   useCrossing,
   useFirstWeek,
 } from '@/components/Dashboard';
@@ -201,26 +203,35 @@ export default function Dashboard() {
    *
    * Six first things, each worth XP once, while the account is new. See
    * components/Dashboard/FirstWeek for when it shows. Re-read when the task
-   * count moves, so a first task finished on this page ticks its quest. */
+   * count moves, so a first task finished on this page ticks its quest.
+   *
+   * After that, one small quest a day until Analytics has its Performance
+   * stage: components/Dashboard/TodayQuest, read by the same hook. */
   const firstWeek = useFirstWeek(username, data?.stats.tasks_completed);
-  const [questBusy, setQuestBusy] = useState<QuestId | null>(null);
+  const [questBusy, setQuestBusy] = useState<QuestId | 'daily' | null>(null);
   const [lastClaim, setLastClaim] = useState<QuestClaim | null>(null);
+  const firstWeekShowing = Boolean(firstWeek.line) && showFirstWeek({ ...firstWeek, touring });
+  const daily = firstWeek.line?.daily ?? null;
+  const dailyShowing = showTodayQuest({ ...firstWeek, touring, firstWeekShowing });
 
   /* The backend decides here too: the claim answers with the new lifetime XP
      and level, and that's what goes on the page. A level crossed gets the same
      celebration a task crossing one does. */
   const claimQuest = useCallback(
-    async (id: QuestId) => {
+    async (id: QuestId | 'daily') => {
       setQuestBusy(id);
       setFailure(null);
       try {
-        const result = await questService.claim(id);
+        const result = id === 'daily'
+          ? await questService.claimDaily(daily?.day ?? dates.isoDate())
+          : await questService.claim(id);
         if (!result.success) {
           setFailure(result.message);
           void firstWeek.reload();
           return;
         }
-        firstWeek.markClaimed(id);
+        if (id === 'daily') firstWeek.markDailyClaimed(result.xp_earned);
+        else firstWeek.markClaimed(id);
         setLastClaim(result);
         mutate((current) => ({
           ...current,
@@ -234,7 +245,7 @@ export default function Dashboard() {
         setQuestBusy(null);
       }
     },
-    [firstWeek, mutate],
+    [daily?.day, firstWeek, mutate],
   );
 
   /* The rest of what the sitting shows, read off what this page already has.
@@ -681,12 +692,24 @@ export default function Dashboard() {
 
       {/* Under the figures it fills in and over the work it points at. Gone
           while the Mango tour runs and once the first week is over. */}
-      {firstWeek.line && showFirstWeek({ ...firstWeek, touring }) && (
+      {firstWeek.line && firstWeekShowing && (
         <FirstWeek
           quests={firstWeek.line.quests}
-          busy={questBusy}
+          busy={questBusy === 'daily' ? null : questBusy}
           lastClaim={lastClaim}
           onClaim={(id) => void claimQuest(id)}
+        />
+      )}
+      {/* Takes the first week's place once that's done, until Analytics has
+          enough days for Performance. */}
+      {daily && dailyShowing && (
+        <TodayQuest
+          quest={daily}
+          maturity={firstWeek.maturity}
+          todayActive={firstWeek.todayActive}
+          busy={questBusy === 'daily'}
+          popped={lastClaim?.quest === daily.id}
+          onClaim={() => void claimQuest('daily')}
         />
       )}
 

@@ -6,6 +6,8 @@ claim pays real XP (ledger and account both), and nothing pays twice.
 """
 from datetime import date, datetime, timedelta
 
+import pytest
+
 from backend.database import connection as db
 from backend.tracking import quests
 
@@ -211,3 +213,195 @@ def test_resetting_progress_lets_the_quests_be_earned_again(client):
     assert reply['success'], reply
     assert not _by_id(client)['task']['claimed']
     assert _claim(client, 'task')['success']
+
+
+# ---------------------------------------------------------------------------
+# Today's quest
+# ---------------------------------------------------------------------------
+def _today():
+    return date.today().isoformat()
+
+
+def _daily(client, day=None):
+    reply = client.get('/api/quests', params={'day': day or _today()}).json()
+    assert reply['success'], reply
+    return reply['daily']
+
+
+def _claim_daily(client, day=None):
+    return client.post('/api/quests/claim', json={'id': 'daily', 'day': day or _today()}).json()
+
+
+def _counts(**done):
+    blank = {'tasks': 0, 'subject_tasks': 0, 'focus_seconds': 0, 'focus_minutes': 0,
+             'practice': 0, 'log': 0, 'planned': 0}
+    return dict(blank, **done)
+
+
+def _do(action, client, username='tester'):
+    """Leave the rows one daily action asks for, today."""
+    now = datetime.now().isoformat()
+    if action in ('tasks2', 'subject'):
+        for name in ('One', 'Two'):
+            task = client.post('/api/tasks', json={
+                'name': name, 'priority': 'low', 'xp_reward': 10,
+                'subject': 'algebra' if action == 'subject' else None}).json()['task_id']
+            assert client.post('/api/complete_task', json={'task_id': task}).json()['success']
+    elif action == 'focus15':
+        db.insert_row('focus_days', {'user_id': username, 'date': _today(), 'seconds': 15 * 60})
+    elif action == 'practice3':
+        db.insert_row('skill_attempts', {
+            'id': 'p-' + username, 'user_id': username, 'node_id': 'algebra-1', 'ordinal': 1,
+            'weight': 'core', 'attempted': 3, 'correct': 2, 'source': 'log', 'at': now})
+    elif action == 'log':
+        assert client.post('/api/log/save', json={'title': 'Today', 'body': 'Ok.'}).json()['success']
+    elif action == 'plan':
+        tomorrow = (date.today() + timedelta(days=1)).isoformat()
+        assert client.post('/api/tasks', json={'name': 'Prep', 'priority': 'low',
+                                               'due_date': tomorrow}).json()['success']
+    else:
+        raise AssertionError(action)
+
+
+def test_each_daily_action_reads_its_own_rows():
+    did = {quest['id']: quest['did'] for quest in quests.DAILY}
+    assert not any(check(_counts()) for check in did.values())
+    assert did['tasks2'](_counts(tasks=2)) and not did['tasks2'](_counts(tasks=1))
+    assert did['focus15'](_counts(focus_minutes=15))
+    assert did['focus15'](_counts(focus_seconds=900)) and not did['focus15'](_counts(focus_seconds=899))
+    assert did['practice3'](_counts(practice=3)) and not did['practice3'](_counts(practice=2))
+    assert did['log'](_counts(log=1))
+    assert did['subject'](_counts(subject_tasks=1)) and not did['subject'](_counts(tasks=5))
+    assert did['plan'](_counts(planned=1))
+
+
+def test_the_pick_is_the_same_all_day_and_moves_between_days():
+    day = date(2026, 10, 20)
+    first = quests.pick_daily('tester', day, {})
+    assert all(quests.pick_daily('tester', day, {}) is first for _ in range(5))
+    picks = {quests.pick_daily('tester', day + timedelta(days=n), {})['id'] for n in range(30)}
+    assert len(picks) > 2
+
+
+def test_the_pick_skips_what_was_done_lately():
+    day = date(2026, 10, 20)
+    yesterday = (day - timedelta(days=1)).isoformat()
+    everything_but_log = _counts(tasks=2, subject_tasks=2, focus_minutes=30, practice=3, planned=1)
+    for name in ('tester', 'someone', 'else', 'again'):
+        assert quests.pick_daily(name, day, {yesterday: everything_but_log})['id'] == 'log'
+    # Too long ago doesn't count, and doing it all lately falls back to the whole pool.
+    old = (day - timedelta(days=quests.LATELY + 1)).isoformat()
+    assert quests.pick_daily('tester', day, {old: everything_but_log}) is quests.pick_daily('tester', day, {})
+    all_of_it = dict(everything_but_log, log=1)
+    assert quests.pick_daily('tester', day, {yesterday: all_of_it}) is quests.pick_daily('tester', day, {})
+
+
+def test_doing_todays_quest_doesnt_change_it(client):
+    _joined_today()
+    before = _daily(client)
+    _do(before['action'], client)
+    after = _daily(client)
+    assert after['action'] == before['action']
+    assert after['done'] is True and after['claimed'] is False
+    assert after['id'] == 'daily:' + _today()
+
+
+def test_todays_quest_ticks_only_on_todays_rows(client):
+    _joined_today()
+    quest = _daily(client)
+    assert quest['done'] is False
+    assert not _claim_daily(client)['success']
+    assert _quest_events() == []
+    _do(quest['action'], client)
+    assert _daily(client)['done'] is True
+    # The same rows don't make tomorrow's quest done.
+    tomorrow = date.today() + timedelta(days=1)
+    later = quests.status('tester', today=tomorrow, day=tomorrow.isoformat())['daily']
+    assert later['done'] is False
+
+
+def test_the_daily_claim_pays_once_a_day(client):
+    _joined_today()
+    quest = _daily(client)
+    _do(quest['action'], client)
+    before = _account()['xp']
+
+    paid = _claim_daily(client)
+    assert paid['success'], paid
+    assert paid['quest'] == 'daily:' + _today()
+    assert paid['xp_earned'] == quests.DAILY_BY_ID[quest['action']]['xp']
+    assert _account()['xp'] == before + paid['xp_earned']
+    events = [row for row in _quest_events() if row['reason'] == 'quest:daily']
+    assert len(events) == 1 and events[0]['date'] == _today()
+    assert (events[0].get('tasks_completed') or 0) == 0
+
+    again = _claim_daily(client)
+    assert not again['success'] and again.get('claimed') is True
+    assert len(_quest_events()) == 1
+    assert _account()['xp'] == before + paid['xp_earned']
+    assert _daily(client)['claimed'] is True
+    assert db.claim_quest('tester', 'daily:' + _today(), 30, datetime.now().isoformat()) is False
+
+
+def test_a_new_day_is_a_new_claim(client):
+    _joined_today()
+    today = date.today()
+    tomorrow = today + timedelta(days=1)
+    stamp = datetime.now().isoformat()
+    assert db.claim_quest('tester', 'daily:' + today.isoformat(), 30, stamp)
+    assert db.claim_quest('tester', 'daily:' + tomorrow.isoformat(), 30, stamp)
+    assert quests.status('tester', today=today, day=tomorrow.isoformat())['daily']['claimed']
+
+
+def test_the_readers_day_is_kept_within_one_day():
+    today = date(2026, 10, 20)
+    assert quests.reader_day('2026-10-21', today) == date(2026, 10, 21)
+    assert quests.reader_day('2026-10-19', today) == date(2026, 10, 19)
+    assert quests.reader_day('2026-10-01', today) == today
+    assert quests.reader_day('nonsense', today) == today
+    assert quests.reader_day(None, today) == today
+
+
+def test_an_old_day_cant_be_claimed(client):
+    # A date from last week is read as today, whose quest isn't done.
+    _joined_today()
+    long_ago = (date.today() - timedelta(days=5)).isoformat()
+    assert not _claim_daily(client, long_ago)['success']
+    assert db.rows_for('quest_claims', 'tester') == []
+
+
+@pytest.mark.parametrize('action', [quest['id'] for quest in quests.DAILY])
+def test_every_daily_action_is_seen_in_the_real_rows(client, action):
+    _joined_today()
+    day = date.today().isoformat()
+    quest = quests.DAILY_BY_ID[action]
+    assert not quests._did(quest, db.daily_quest_facts('tester', day, day).get(day))
+    _do(action, client)
+    assert quests._did(quest, db.daily_quest_facts('tester', day, day).get(day))
+
+
+def test_the_daily_quest_stops_for_a_seasoned_account(client):
+    _joined_today()
+    assert _daily(client) is not None
+    for back in range(quests.DAILY_XP_DAYS):
+        day = (date.today() - timedelta(days=back)).isoformat()
+        db.insert_row('xp_events', {'id': str(db.new_id('xp_events')), 'user_id': 'tester',
+                                    'amount': 10, 'reason': 'task_completion',
+                                    'timestamp': day + 'T09:00:00', 'date': day,
+                                    'tasks_completed': 1})
+    assert _daily(client) is None
+
+
+def test_the_daily_quest_carries_the_head_start(client):
+    _joined_today()
+    assert _daily(client)['head_start'] == 0
+
+
+def test_daily_claims_dont_touch_the_first_week_line(client):
+    _joined_today()
+    quest = _daily(client)
+    _do(quest['action'], client)
+    assert _claim_daily(client)['success']
+    line = _line(client)
+    assert line['retired'] is False
+    assert not any(row['claimed'] for row in line['quests'])

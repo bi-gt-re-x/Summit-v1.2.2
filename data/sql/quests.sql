@@ -1,4 +1,5 @@
--- quest_claims — the first-week quests an account has cashed in.
+-- quest_claims — the quests an account has cashed in: the first-week ones by
+-- their id, and today's quest as 'daily:<iso day>', one per day.
 --
 -- Written by backend/api/quests.py; the quests themselves (what each asks for,
 -- what it pays, how it is checked) are backend/tracking/quests.py. The card is

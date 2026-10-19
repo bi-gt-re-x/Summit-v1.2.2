@@ -1,4 +1,4 @@
-"""First-week quests: six first things, each worth some XP once.
+"""Quests: six first things worth XP once, then one small one a day.
 
 A new account opens Analytics to a page that needs days of data before it
 can say much. These give the first few days something to aim at instead: a
@@ -29,8 +29,23 @@ the browser from `activeDays` (utils/dataMaturity), the count every other
 an account with XP on SEASONED_XP_DAYS days already has at least that many
 active days, so it is retired here and the browser never fetches a growth
 series to find out.
+
+## Today's quest
+
+After the first week's six, days three to ten still have nothing to aim at
+while Analytics fills in. So a young account gets one small quest a day from
+DAILY: a real action, ticked the same way (the rows it left today, per
+`db.daily_quest_facts`) and paid once a day. The claim row is
+`daily:<iso day>` in the same quest_claims table, so the primary key blocks a
+second claim on the same day, and the XP is logged as `quest:daily`.
+
+The pick is a hash of the account and the day, so a reload never changes it,
+drawn from the actions the account hasn't done in the LATELY days before
+today. Only days before today go into that, so doing today's quest can't swap
+it for another one. The card is frontend/src/components/Dashboard/TodayQuest.tsx.
 """
-from datetime import date, datetime
+import hashlib
+from datetime import date, datetime, timedelta
 
 from backend.database import connection as db
 from backend.tracking import xp as xp_tracking
@@ -68,18 +83,118 @@ BY_ID = {quest['id']: quest for quest in QUESTS}
 SEASONED_XP_DAYS = 7
 
 
+#: The daily pool. `did` says whether one day's counts (a value from
+#: `db.daily_quest_facts`) meet it. Copy is user-facing, same rules as above.
+DAILY = (
+    {'id': 'tasks2', 'xp': 30, 'to': '/tasks',
+     'title': 'Finish 2 tasks',
+     'hint': 'Any two. Small ones count.',
+     'did': lambda day: day['tasks'] >= 2},
+    {'id': 'focus15', 'xp': 30, 'to': '/timer',
+     'title': 'Focus for 15 minutes',
+     'hint': 'One timer or a few short ones.',
+     'did': lambda day: day['focus_minutes'] >= 15 or day['focus_seconds'] >= 15 * 60},
+    {'id': 'practice3', 'xp': 30, 'to': '/skill-trees',
+     'title': 'Answer 3 practice problems',
+     'hint': 'Pick any skill and go.',
+     'did': lambda day: day['practice'] >= 3},
+    {'id': 'log', 'xp': 25, 'to': '/log',
+     'title': 'Write a Log entry',
+     'hint': 'A few lines about your day.',
+     'did': lambda day: day['log'] >= 1},
+    {'id': 'subject', 'xp': 25, 'to': '/tasks',
+     'title': 'Finish a task with a subject',
+     'hint': 'Pick a subject when you add it.',
+     'did': lambda day: day['subject_tasks'] >= 1},
+    {'id': 'plan', 'xp': 20, 'to': '/tasks',
+     'title': 'Plan tomorrow',
+     'hint': 'Add a task that\'s due tomorrow.',
+     'did': lambda day: day['planned'] >= 1},
+)
+
+DAILY_BY_ID = {quest['id']: quest for quest in DAILY}
+
+#: Days before today that count as "lately" when picking.
+LATELY = 3
+
+#: Days with XP past which there's no daily quest. The card's own limit is
+#: DAILY_DAYS in components/Dashboard/TodayQuest.tsx, on active days.
+DAILY_XP_DAYS = 10
+
+
+def reader_day(value, today=None):
+    """The reader's own day from a `YYYY-MM-DD`, or the server's.
+
+    Their clock decides when today ends, but only within a day of the server's,
+    so nobody claims a quest for last week by sending its date.
+    """
+    today = today or date.today()
+    try:
+        day = date.fromisoformat(str(value or '').strip()[:10])
+    except ValueError:
+        return today
+    return day if abs((day - today).days) <= 1 else today
+
+
+def _did(quest, counts):
+    return bool(counts) and quest['did'](counts)
+
+
+def pick_daily(username, day, history):
+    """The day's quest: one the account hasn't done lately, chosen by a hash.
+
+    `history` is `db.daily_quest_facts` over at least the LATELY days before
+    `day`. Today's own counts are never read here.
+    """
+    lately = [(day - timedelta(days=back)).isoformat() for back in range(1, LATELY + 1)]
+    fresh = [quest for quest in DAILY
+             if not any(_did(quest, history.get(iso)) for iso in lately)]
+    pool = fresh or list(DAILY)
+    seed = hashlib.sha256('{}:{}'.format(username, day.isoformat()).encode()).digest()
+    return pool[int.from_bytes(seed[:4], 'big') % len(pool)]
+
+
+def _daily_facts(username, day):
+    return db.daily_quest_facts(
+        username, (day - timedelta(days=LATELY)).isoformat(), day.isoformat())
+
+
+def daily_status(username, day, claims, xp_days):
+    """Today's quest as the card draws it, or None once the account is past it."""
+    if xp_days >= DAILY_XP_DAYS:
+        return None
+    history = _daily_facts(username, day)
+    quest = pick_daily(username, day, history)
+    quest_id = 'daily:' + day.isoformat()
+    claimed = claims.get(quest_id)
+    return {
+        'id': quest_id,
+        'day': day.isoformat(),
+        'action': quest['id'],
+        'title': quest['title'],
+        'hint': quest['hint'],
+        'to': quest['to'],
+        'xp': claimed['xp'] if claimed else quest['xp'],
+        'done': bool(claimed) or _did(quest, history.get(day.isoformat())),
+        'claimed': bool(claimed),
+    }
+
+
 def _done(quest, facts, joined, today):
     if quest['fact'] is None:
         return today > joined
     return bool(facts.get(quest['fact']))
 
 
-def status(username, today=None):
-    """The quest line as the card draws it, or None for an unknown account."""
+def status(username, today=None, day=None):
+    """The quest line as the card draws it, or None for an unknown account.
+
+    `day` is the reader's, for today's quest (see `reader_day`)."""
     _, user = load_user(username)
     if not user:
         return None
     today = today or date.today()
+    day = reader_day(day, today)
     joined = created_date_for(user)
     facts = db.first_week_facts(username)
     claims = facts['claims']
@@ -104,6 +219,7 @@ def status(username, today=None):
         'quests': quests,
         'retired': every or facts['xp_days'] >= SEASONED_XP_DAYS,
         'joined': joined.isoformat(),
+        'daily': daily_status(username, day, claims, facts['xp_days']),
     }
 
 
@@ -124,14 +240,31 @@ def claim(username, quest_id, today=None):
     if not _done(quest, facts, created_date_for(user), today):
         return {'success': False, 'message': "That one isn't done yet."}
 
-    amount = quest['xp']
+    return _pay(username, user, quest_id, quest['xp'], 'quest:' + quest_id, today)
+
+
+def claim_daily(username, day=None, today=None):
+    """Pay today's quest once, if the rows say it's done."""
+    _, user = load_user(username)
+    if not user:
+        return {'success': False, 'message': 'User not found'}
+    day = reader_day(day, today)
+    quest_id = 'daily:' + day.isoformat()
+    history = _daily_facts(username, day)
+    quest = pick_daily(username, day, history)
+    if not _did(quest, history.get(day.isoformat())):
+        return {'success': False, 'message': "That one isn't done yet."}
+    return _pay(username, user, quest_id, quest['xp'], 'quest:daily', day)
+
+
+def _pay(username, user, quest_id, amount, reason, day):
+    """Write the claim row, then the XP, the same two writes a task makes."""
     if not db.claim_quest(username, quest_id, amount, datetime.now().isoformat()):
-        # Another request got there between the read above and this write.
+        # Claimed already, maybe by a request racing this one.
         return {'success': False, 'message': 'Already claimed.', 'claimed': True}
 
     was = xp_tracking.level_for_total_xp(user.get('xp'))['level']
-    xp_tracking.log_event(username, amount, 'quest:' + quest_id,
-                          tasks_completed=0, day=today.isoformat())
+    xp_tracking.log_event(username, amount, reason, tasks_completed=0, day=day.isoformat())
     row = db.add_to_row('users', user['id'], {'xp': amount})
     total = (row or {}).get('xp', (user.get('xp') or 0) + amount)
     levels = xp_tracking.level_for_total_xp(total)
