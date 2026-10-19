@@ -818,6 +818,9 @@ ACCOUNT_TABLES = (
     # Every focus sitting, with the task it was for. Hours are in focus_days;
     # this is the account's own record of how they were spent.
     'focus_sittings',
+    # The first-week quests already paid. Each one's XP is in xp_events, so
+    # a reset that clears the ledger clears these too (see `_reset_progress`).
+    'quest_claims',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the
@@ -952,6 +955,8 @@ def _reset_progress(user):
         'xp_events': _drop('xp_events', lambda row: row.get('user_id') != username),
         'snapshots': _drop('metric_snapshots', lambda row: row.get('user_id') != username),
         'achievements': _drop('user_achievements', lambda row: row.get('user_id') != username),
+        # The quests' XP just left with the ledger, so they can be earned again.
+        'quests': _drop('quest_claims', lambda row: row.get('user_id') != username),
     }
 
 

@@ -723,6 +723,16 @@ ADDED_TABLES = ('''
 ''', '''
     CREATE INDEX IF NOT EXISTS log_insights_user_idx
         ON log_insights (user_id, status)
+''', '''
+    -- First-week quests already cashed in. The DDL is data/sql/quests.sql's; see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS quest_claims (
+        user_id     TEXT    NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        quest_id    TEXT    NOT NULL,
+        xp          INTEGER NOT NULL DEFAULT 0,
+        claimed_at  TEXT    NOT NULL,
+        PRIMARY KEY (user_id, quest_id),
+        CHECK (xp >= 0)
+    )
 ''')
 
 
@@ -3229,6 +3239,83 @@ def notification_facts(username, day, tomorrow, week_ago, two_weeks_ago):
                 (username, week_ago))]
 
         return facts
+    finally:
+        con.close()
+
+
+# --------------------------------------------------------------------------
+# First-week quests
+# --------------------------------------------------------------------------
+def first_week_facts(username):
+    """Has this account done each first thing yet, plus what it has claimed.
+
+    One connection and a handful of `EXISTS` / `COUNT(DISTINCT)` queries, for
+    the reason `notification_facts` gives: the dashboard asks this on every
+    load, and reading five whole tables to answer six yes-or-no questions would
+    cost an old account its whole history each time. The rules that turn these
+    into quests are backend/tracking/quests.py.
+
+    `xp_days` is how many distinct days the ledger has XP on. It is a cheap
+    lower bound on active days (utils/activeDay counts XP days and more), which
+    is what lets the server retire the quest line for a seasoned account
+    without the browser fetching its growth series at all.
+    """
+    facts = {
+        'task': False, 'focus': False, 'practice': False,
+        'log': False, 'goal': False,
+        'xp_days': 0, 'claims': {},
+    }
+
+    def _any(con, table, where, params):
+        if not _schema(con, table):
+            return False
+        return con.execute(
+            'SELECT 1 FROM "{}" WHERE user_id = ? AND {} LIMIT 1'.format(table, where),
+            (username,) + params).fetchone() is not None
+
+    con = connect()
+    try:
+        facts['task'] = _any(con, 'tasks', 'status = ?', ('done',))
+        # A focus timer leaves a sitting, and its seconds land in focus_days
+        # too. Either is enough: sittings are sent up in batches, so the day's
+        # total can arrive first.
+        facts['focus'] = (_any(con, 'focus_sittings', 'minutes >= 1', ())
+                          or _any(con, 'focus_days', 'seconds >= 60', ()))
+        facts['practice'] = _any(con, 'skill_attempts', '1 = 1', ())
+        facts['log'] = _any(con, 'log_entries', 'mood IS NOT NULL', ())
+        facts['goal'] = _any(con, 'goals', '1 = 1', ())
+        if _schema(con, 'xp_events'):
+            facts['xp_days'] = con.execute(
+                'SELECT COUNT(DISTINCT date) AS n FROM xp_events '
+                'WHERE user_id = ? AND amount > 0',
+                (username,)).fetchone()['n'] or 0
+        if _schema(con, 'quest_claims'):
+            facts['claims'] = {
+                row['quest_id']: {'xp': row['xp'], 'claimed_at': row['claimed_at']}
+                for row in con.execute(
+                    'SELECT quest_id, xp, claimed_at FROM quest_claims WHERE user_id = ?',
+                    (username,))}
+        return facts
+    finally:
+        con.close()
+
+
+def claim_quest(username, quest_id, xp, stamp):
+    """Write the claim row. True if this call made it, False if it was there.
+
+    The primary key does the deciding, so two requests racing for the same
+    quest get one True between them. The caller pays only on True.
+    """
+    con = connect()
+    try:
+        with con:
+            con.execute(
+                'INSERT INTO quest_claims (user_id, quest_id, xp, claimed_at) '
+                'VALUES (?, ?, ?, ?)',
+                (username, quest_id, int(xp), stamp))
+        return True
+    except sqlite3.IntegrityError:
+        return False
     finally:
         con.close()
 

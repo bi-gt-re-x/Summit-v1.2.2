@@ -32,6 +32,7 @@ import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import {
   CatchUp,
   DailyQuote,
+  FirstWeek,
   FocusCard,
   FocusPanel,
   GoalReached,
@@ -44,7 +45,9 @@ import {
   TodayCard,
   WeeklyOverview,
   XpCard,
+  showFirstWeek,
   useCrossing,
+  useFirstWeek,
 } from '@/components/Dashboard';
 import { RatePrompt } from '@/components/Tasks';
 import {
@@ -77,11 +80,17 @@ import { useTourShowing } from '@/components/Tutorial/Tutorial';
 import type { Counting } from '@/pages/Timer';
 import { currentStone } from '@/utils/goalStage';
 import { reduced } from '@/utils/homePlay';
-import { focus as focusService, goals as goalService, tasks as taskService } from '@/services';
+import {
+  focus as focusService,
+  goals as goalService,
+  quests as questService,
+  tasks as taskService,
+} from '@/services';
 import { weekStartDay } from '@/services/settings';
 import { dates, format } from '@/utils';
 import { isoStamp } from '@/utils/calendarGrid';
 import type { GoalNews, TaskTab } from '@/components/Dashboard';
+import type { QuestClaim, QuestId } from '@/services/quests';
 import type { NewTask } from '@/services/tasks';
 import type { Goal, Task } from '@/types';
 import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
@@ -187,6 +196,46 @@ export default function Dashboard() {
      (it's the same Mango, and two on screen would be one too many). See
      components/Tutorial/MangoPet and Settings, Mango. */
   const touring = useTourShowing();
+
+  /* ---- The first week ------------------------------------------------------
+   *
+   * Six first things, each worth XP once, while the account is new. See
+   * components/Dashboard/FirstWeek for when it shows. Re-read when the task
+   * count moves, so a first task finished on this page ticks its quest. */
+  const firstWeek = useFirstWeek(username, data?.stats.tasks_completed);
+  const [questBusy, setQuestBusy] = useState<QuestId | null>(null);
+  const [lastClaim, setLastClaim] = useState<QuestClaim | null>(null);
+
+  /* The backend decides here too: the claim answers with the new lifetime XP
+     and level, and that's what goes on the page. A level crossed gets the same
+     celebration a task crossing one does. */
+  const claimQuest = useCallback(
+    async (id: QuestId) => {
+      setQuestBusy(id);
+      setFailure(null);
+      try {
+        const result = await questService.claim(id);
+        if (!result.success) {
+          setFailure(result.message);
+          void firstWeek.reload();
+          return;
+        }
+        firstWeek.markClaimed(id);
+        setLastClaim(result);
+        mutate((current) => ({
+          ...current,
+          stats: { ...current.stats, xp: result.total_xp, level: result.new_level },
+        }));
+        announceStatsChanged();
+        if (result.leveled_up) setLevelled(result.new_level);
+      } catch (cause) {
+        setFailure(cause instanceof Error ? cause.message : "Couldn't claim that one.");
+      } finally {
+        setQuestBusy(null);
+      }
+    },
+    [firstWeek, mutate],
+  );
 
   /* The rest of what the sitting shows, read off what this page already has.
      Same order and length as the Timer page's "Up next". */
@@ -629,6 +678,17 @@ export default function Dashboard() {
           re-read behind it. Both are shown here, over the page they failed to
           change, rather than in place of it. */}
       {(failure ?? error) && <ErrorState message={failure ?? error ?? ''} />}
+
+      {/* Under the figures it fills in and over the work it points at. Gone
+          while the Mango tour runs and once the first week is over. */}
+      {firstWeek.line && showFirstWeek({ ...firstWeek, touring }) && (
+        <FirstWeek
+          quests={firstWeek.line.quests}
+          busy={questBusy}
+          lastClaim={lastClaim}
+          onClaim={(id) => void claimQuest(id)}
+        />
+      )}
 
       {/* The focus panel is a preference too, and hiding it widens the task
           list rather than leaving a hole where it was — see `.is-solo` in

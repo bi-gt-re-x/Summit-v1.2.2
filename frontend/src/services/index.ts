@@ -21,6 +21,7 @@ export * as log from './log';
 export * as next from './next';
 export * as notes from './notes';
 export * as notifications from './notifications';
+export * as quests from './quests';
 export * as quote from './quote';
 export * as records from './records';
 export * as settings from './settings';
