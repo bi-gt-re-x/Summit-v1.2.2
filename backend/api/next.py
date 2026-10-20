@@ -89,6 +89,46 @@ class BookSessions(BaseModel):
     goal_id: Optional[str] = None
 
 
+def book_for_goal(username, goal, read, count, now):
+    """Put `count` sessions for a goal on the calendar, one a day.
+
+    Each goes in the first free slot of its day (session_plan.next_slot),
+    named for the goal's next step and linked to the goal and its current
+    checkpoint so the work counts toward it. `read` is record.read_goal's.
+    Returns (booked, title, minutes); `booked` is empty when nothing fit.
+    Shared by the plan's deadline row and the goal forecast
+    (backend/api/forecast.py).
+    """
+    minutes = next_actions.SESSION_MINUTES
+    xp = session_plan.xp_for(minutes, 3)
+    title = read['next_step'] or read['checkpoint'] or '{}: practice'.format(goal.get('title') or 'Goal')
+    busy = session_plan.busy_spans(
+        db.columns_for('tasks', username, ('show_on_calendar', 'created_at', 'due_date')),
+        db.calendar_document(username), now)
+    booked, cursor = [], now
+    for _ in range(count):
+        slot = session_plan.next_slot(minutes, busy, cursor)
+        if not slot:
+            break
+        start, end = slot
+        made = create_task(CreateTask(
+            name=title, priority=session_plan.priority_for(xp), xp_reward=xp,
+            due_date=end.isoformat(timespec='seconds'), created_at=start.isoformat(timespec='seconds'),
+            show_on_calendar=True, subject=(read['subjects'] or [None])[0],
+            goal_id=str(goal.get('id')), milestone_id=read['checkpoint_id'],
+        ), username)
+        task_id = made.get('task_id') if isinstance(made, dict) else None
+        if not task_id:
+            break
+        booked.append({'task_id': task_id, 'start': start.isoformat(timespec='minutes'),
+                       'end': end.isoformat(timespec='minutes')})
+        busy = sorted(busy + [(start, end)])
+        # The next one on a later day: three sittings in one afternoon is a
+        # cram, not a week.
+        cursor = (start + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    return booked, title, minutes
+
+
 @router.post('/api/next_actions/book')
 def book_sessions(body: BookSessions, username: str = Depends(current_username)):
     """Put the sittings a dated goal needs this week on the calendar.
@@ -113,33 +153,7 @@ def book_sessions(body: BookSessions, username: str = Depends(current_username))
     if not read['to_book']:
         return fail('This week already has the sessions this goal needs.')
 
-    minutes = next_actions.SESSION_MINUTES
-    xp = session_plan.xp_for(minutes, 3)
-    title = read['next_step'] or read['checkpoint'] or '{}: practice'.format(goal.get('title') or 'Goal')
-    busy = session_plan.busy_spans(
-        db.columns_for('tasks', username, ('show_on_calendar', 'created_at', 'due_date')),
-        db.calendar_document(username), now)
-    booked, cursor = [], now
-    for _ in range(read['to_book']):
-        slot = session_plan.next_slot(minutes, busy, cursor)
-        if not slot:
-            break
-        start, end = slot
-        made = create_task(CreateTask(
-            name=title, priority=session_plan.priority_for(xp), xp_reward=xp,
-            due_date=end.isoformat(timespec='seconds'), created_at=start.isoformat(timespec='seconds'),
-            show_on_calendar=True, subject=(read['subjects'] or [None])[0],
-            goal_id=str(goal.get('id')), milestone_id=read['checkpoint_id'],
-        ), username)
-        task_id = made.get('task_id') if isinstance(made, dict) else None
-        if not task_id:
-            break
-        booked.append({'task_id': task_id, 'start': start.isoformat(timespec='minutes'),
-                       'end': end.isoformat(timespec='minutes')})
-        busy = sorted(busy + [(start, end)])
-        # The next one on a later day: three sittings in one afternoon is a
-        # cram, not a week.
-        cursor = (start + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    booked, title, minutes = book_for_goal(username, goal, read, read['to_book'], now)
     if not booked:
         return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
     return ok(booked=booked, title=title, minutes=minutes)
