@@ -72,6 +72,17 @@ def _sittings(username):
     return db.columns_for('focus_sittings', username, SITTING_FIELDS)
 
 
+def _practice(username):
+    """The review queue and the skill tree summary, for the plan's rows about
+    what's due to redo and what to practice next. Imported here because both
+    of those modules import this one."""
+    from backend.api.review import read_queue
+    from backend.api.skill_plan import summary
+    attempts = db.rows_for('skill_attempts', username, order='at, rowid')
+    review = read_queue(username, attempts=attempts)
+    return review, summary(username, review=review, attempts=attempts)
+
+
 @router.get('/api/next_actions')
 def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
                      username: str = Depends(current_username)):
@@ -88,10 +99,11 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
     days = series.get('growth_data') or []
 
     lens = next_actions.leading_lens(goals, tasks)
+    review, skills = _practice(username)
     plan = next_actions.build_plan(tasks, goals, days, _name_of(username), budget,
                                    now=datetime.now(), lens=lens,
                                    daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'),
-                                   sittings=_sittings(username))
+                                   sittings=_sittings(username), review=review, skills=skills)
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))
 
 

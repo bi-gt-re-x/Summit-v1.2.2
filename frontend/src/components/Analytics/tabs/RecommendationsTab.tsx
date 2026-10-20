@@ -17,6 +17,8 @@ import { FollowupPanel } from '@/components/Recommendations';
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
 import { GoalForecast } from '../GoalForecast';
+import { ReviewPanel } from '../ReviewPanel';
+import { SkillTreesPanel } from '../SkillTreesPanel';
 import { XpPulse } from '../XpPulse';
 import { LensCard } from '../Lens';
 import { Knows, useKnows } from '../Knows';
@@ -87,6 +89,14 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           onRefresh={refreshPlan}
         />
       </section>
+
+      {/* Right under the plan, because its "Redo" row scrolls here: what you
+          got wrong, back on 1, 3, 7 and 14 days, done in place. Then each
+          skill tree you've practiced, with what to do next in it. Both draw
+          nothing on an account with no misses or practice. See ../ReviewPanel
+          and ../SkillTreesPanel. */}
+      <ReviewPanel onChanged={refreshPlan} />
+      <SkillTreesPanel />
 
       {/* Then the diagnosis: what the two weeks means, before what to change
           about it. A reader who understands why the numbers are moving reads

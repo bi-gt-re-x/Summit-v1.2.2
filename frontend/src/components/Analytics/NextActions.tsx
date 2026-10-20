@@ -62,6 +62,7 @@ const KIND_LABEL: Record<ActionKind, string> = {
   slipping: 'Slipping',
   'goal-quiet': 'Goal',
   xp: 'XP',
+  skill: 'Skill tree',
 };
 
 const KIND_TONE: Record<ActionKind, string> = {
@@ -83,6 +84,7 @@ const KIND_TONE: Record<ActionKind, string> = {
   slipping: 'amber',
   'goal-quiet': 'violet',
   xp: 'blue',
+  skill: 'green',
 };
 
 /**
@@ -97,7 +99,7 @@ function RowAction({ item, onDone }: { item: NextAction; onDone: () => void }) {
 
   const book = item.kind === 'deadline' && item.book && item.goalId ? item.book : null;
   const clear = item.kind === 'triage' && item.clear?.length ? item.clear : null;
-  if (!book && !clear) return null;
+  if (!book && !clear) return item.to ? <GoTo to={item.to} kind={item.kind} /> : null;
 
   const run = async () => {
     if (clear && !window.confirm(`Delete ${clear.length} leftover routines? This can't be undone.`)) return;
@@ -131,6 +133,35 @@ function RowAction({ item, onDone }: { item: NextAction; onDone: () => void }) {
         </button>
       )}
       {note && <span className="ax-plan-act-note">{note}</span>}
+    </div>
+  );
+}
+
+/**
+ * Where a row's work is done. The review list is on this same page, so that
+ * one scrolls rather than navigates; a skill opens on its own tree.
+ */
+function GoTo({ to, kind }: { to: string; kind: NextAction['kind'] }) {
+  const label = kind === 'misses' ? 'Start' : 'Open it';
+  const [path, hash] = to.split('#');
+  if (hash && typeof window !== 'undefined' && window.location.pathname === path) {
+    return (
+      <div className="ax-plan-act">
+        <button
+          type="button"
+          className="ax-plan-act-btn"
+          onClick={() => document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+        >
+          {label}
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="ax-plan-act">
+      <Link to={to} className="ax-plan-act-btn">
+        {label}
+      </Link>
     </div>
   );
 }
@@ -222,7 +253,8 @@ export function NextActions({
           <ul className="ax-tips">
             <li><b>Beat the deadline:</b> Your next goal date gets the sessions it needs this week.</li>
             <li><b>Clear the pile:</b> Old routines you missed get one row, so you can clear them fast.</li>
-            <li><b>Fix your misses:</b> Problems you got wrong lately come back first.</li>
+            <li><b>Redo your misses:</b> Anything you got wrong comes back after 1, 3, 7 and 14 days until it sticks.</li>
+            <li><b>Your skill trees:</b> If a skill keeps going badly you're sent back to what it builds on. If it's going well, you move up.</li>
             <li><b>Change your start:</b> If rough sessions keep going wrong the same way, you get a fix.</li>
           </ul>
           <p className="ax-tips-head">Then</p>
