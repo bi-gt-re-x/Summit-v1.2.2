@@ -14,23 +14,17 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from backend.api.guard import current_username
-from backend.api.next import _name_of, _record, book_for_goal
+from backend.api.next import _name_of, _record, _sittings, book_for_goal
 from backend.api.reply import fail, ok
-from backend.database import connection as db
 from backend.tracking import forecast as forecast_tracking
 from backend.tracking import record
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['forecast'])
 
-#: What the pace reads off a focus timer.
-SITTING_FIELDS = ('id', 'day', 'minutes', 'task_id')
-
-
 def _read(username):
     tasks, goals = _record(username)
-    sittings = db.columns_for('focus_sittings', username, SITTING_FIELDS)
-    return tasks, goals, sittings
+    return tasks, goals, _sittings(username)
 
 
 @router.get('/api/goal_forecast')
@@ -62,8 +56,8 @@ def book_forecast(body: BookForecast, username: str = Depends(current_username))
     found = forecast_tracking.forecast(goal, tasks, sittings, now.date())
     if not found['to_book']:
         return fail('This week already has the sessions this goal needs.')
-    booked, title, minutes = book_for_goal(username, goal, record.read_goal(goal, tasks, now),
-                                           found['to_book'], now)
+    read = record.read_goal(goal, tasks, now, sittings=sittings)
+    booked, title, minutes = book_for_goal(username, goal, read, found['to_book'], now)
     if not booked:
         return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
     return ok(booked=booked, title=title, minutes=minutes)

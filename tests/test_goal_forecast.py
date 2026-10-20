@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 
 from backend.database import connection as db
 from backend.tracking import forecast as fc
+from backend.tracking.next_actions import build_plan
 
 #: A Monday, so "this week" is the whole week.
 TODAY = date(2026, 10, 19)
@@ -46,7 +47,8 @@ def test_on_track():
     assert found['finish'] == (TODAY + timedelta(days=42)).isoformat()
     assert found['line'] == "Due Dec 18. At this pace you finish Nov 30. You're on track."
     assert found['facts'] == '4 of 10 steps done. About 2 sessions a week lately.'
-    assert found['to_book'] == 0
+    # 12 sessions in 60 days is 1.4 a week, so this week owes 2 and has none yet.
+    assert (found['week_target'], found['to_book']) == (2, 2)
 
 
 def test_behind_says_how_many_more_a_week():
@@ -217,8 +219,57 @@ def test_book_puts_the_missing_sessions_on_the_calendar(client):
     assert after['booked_this_week'] == len(reply['booked'])
 
 
-def test_book_refuses_a_goal_on_track(client):
-    _seed_goal(behind=False)
+def test_book_refuses_once_the_week_is_covered(client):
+    _seed_goal()
+    assert client.post('/api/goal_forecast/book', json={'goal_id': 'g-aime'}).json()['success']
     reply = client.post('/api/goal_forecast/book', json={'goal_id': 'g-aime'}).json()
     assert not reply['success']
     assert reply['message'] == 'This week already has the sessions this goal needs.'
+
+
+# ---- The plan's deadline row reads the same count ----------------------------
+NOW = datetime(2026, 10, 19, 9, 0)
+
+
+def deadline_row(goal, tasks, sittings=()):
+    plan = build_plan(tasks, [goal], [], lambda key: 'Math' if key == 'maths' else key, 120,
+                      now=NOW, sittings=sittings)
+    return next(item for item in plan['actions'] + plan['more'] if item['kind'] == 'deadline')
+
+
+def test_the_plan_books_what_the_forecast_says():
+    goal = a_goal(due_in=30)
+    found = fc.forecast(goal, TWO_A_WEEK, [], TODAY)
+    row = deadline_row(goal, TWO_A_WEEK)
+    assert row['book']['count'] == found['to_book'] == 3
+    assert row['title'] == 'Book 3 Math sessions for AIME'
+    assert 'At this pace you finish Nov 30. 1 more session a week gets you there.' in row['because']
+    assert 'This week needs 3. 3 to go.' in row['because']
+    assert 'behind schedule' not in row['because']
+
+
+def test_the_plan_says_when_the_week_is_covered():
+    booked = [{'id': 'b{}'.format(n), 'title': 'Step 5', 'status': 'pending', 'subject': 'maths',
+               'due_date': (TODAY + timedelta(days=n)).isoformat() + 'T17:00:00'} for n in (1, 2, 3)]
+    row = deadline_row(a_goal(due_in=30), TWO_A_WEEK + booked)
+    assert row.get('book') is None
+    assert "You've got this week's 3 done or booked." in row['because']
+
+
+def test_the_plan_counts_focus_timers_like_the_forecast():
+    open_task = [{'id': 'open', 'status': 'pending', 'subject': 'maths', 'title': 'Step 5'}]
+    sittings = [{'id': 'f{}'.format(n), 'day': ago(day)[:10], 'minutes': 30, 'task_id': 'open'}
+                for n, day in enumerate((2, 9, 16, 23))]
+    goal = a_goal(due_in=30)
+    found = fc.forecast(goal, TWO_A_WEEK + open_task, sittings, TODAY)
+    assert found['per_week'] == 3.0
+    row = deadline_row(goal, TWO_A_WEEK + open_task, sittings)
+    assert fc.say_day(date.fromisoformat(found['finish']), TODAY) in row['because']
+
+
+def test_without_a_pace_the_plan_keeps_its_rule_of_thumb():
+    # Too little history for a forecast: the 3/4/5 rule still fills the week.
+    # Four inside 45 days, one more because it's half the time in and 0% done.
+    row = deadline_row(a_goal(due_in=30), sessions([1, 3, 6]))
+    assert row['book']['count'] == 5
+    assert 'At this pace' not in row['because']

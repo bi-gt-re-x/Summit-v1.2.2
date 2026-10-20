@@ -300,7 +300,8 @@ def _action(**fields):
             ('id', 'kind', 'title', 'because', 'minutes', 'weight')}
 
 
-def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, best_streak=None):
+def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, best_streak=None,
+           sittings=()):
     """Every suggestion the record supports, best first, one per task or subject."""
     found = []
     today = now.date()
@@ -318,7 +319,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         return str(task.get('due_date') or '')[:10]
 
     # ---- Looking forward: the date, the list, the misses, the snag --------
-    deadline = record.nearest_deadline(goals, tasks, now)
+    deadline = record.nearest_deadline(goals, tasks, now, sittings)
     if deadline:
         found.append(_deadline_row(deadline, name_of, slot))
 
@@ -717,7 +718,12 @@ def _deadline_row(read, name_of, slot):
     when = 'Today is the day for {}.'.format(title) if left == 0 else \
         '{} to {}.'.format('1 day' if left == 1 else '{} days'.format(left), title)
     parts = [when]
-    if read['behind']:
+    # With a pace, the forecast's own line, so this row and the forecast card
+    # above it say the same thing (backend/tracking/forecast.py).
+    pace = read.get('pace')
+    if pace:
+        parts.append(pace['pace_line'])
+    elif read['behind']:
         parts.append("You're {}% behind schedule.".format(js_round(read['gap'])))
     if read['checkpoint']:
         parts.append('You\'re on "{}"{}.'.format(
@@ -728,7 +734,12 @@ def _deadline_row(read, name_of, slot):
         cold, age = read['cold'][0]
         parts.append('{} has had {}.'.format(
             name_of(cold), 'nothing yet' if age is None else 'nothing in {} days'.format(age)))
-    if read['to_book']:
+    if pace:
+        if read['to_book']:
+            parts.append('This week needs {}. {} to go.'.format(read['per_week'], read['to_book']))
+        elif not pace['out_of_reach']:
+            parts.append("You've got this week's {} done or booked.".format(read['per_week']))
+    elif read['to_book']:
         parts.append(('{} more this week gets you to {} a week, the pace that catches up.'
                       if read['behind'] else '{} more this week holds a pace of {} a week.').format(
             read['to_book'], read['per_week']))
@@ -762,12 +773,12 @@ def _deadline_row(read, name_of, slot):
 
 
 def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=None,
-               daily_goal=None, best_streak=None):
+               daily_goal=None, best_streak=None, sittings=()):
     """The candidates packed into `budget` minutes, and what did not fit."""
     now = now or datetime.now()
     stamp = stamp if stamp is not None else day_stamp(now.date())
     actions, more, left = [], [], budget
-    candidates = gather(tasks, goals, days, name_of, now, stamp, lens, daily_goal, best_streak)
+    candidates = gather(tasks, goals, days, name_of, now, stamp, lens, daily_goal, best_streak, sittings)
     for item in candidates:
         if item['minutes'] <= left:
             actions.append(item)

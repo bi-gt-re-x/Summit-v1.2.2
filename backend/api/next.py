@@ -63,6 +63,15 @@ def _record(username):
     return tasks, goals
 
 
+#: What the goal forecast reads off a focus timer (backend/tracking/forecast.py).
+SITTING_FIELDS = ('id', 'day', 'minutes', 'task_id')
+
+
+def _sittings(username):
+    """Focus timers, which the forecast counts as sessions on a goal."""
+    return db.columns_for('focus_sittings', username, SITTING_FIELDS)
+
+
 @router.get('/api/next_actions')
 def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
                      username: str = Depends(current_username)):
@@ -81,7 +90,8 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
     lens = next_actions.leading_lens(goals, tasks)
     plan = next_actions.build_plan(tasks, goals, days, _name_of(username), budget,
                                    now=datetime.now(), lens=lens,
-                                   daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'))
+                                   daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'),
+                                   sittings=_sittings(username))
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))
 
 
@@ -149,7 +159,7 @@ def book_sessions(body: BookSessions, username: str = Depends(current_username))
         return fail("That goal isn't active any more.")
 
     now = datetime.now()
-    read = record.read_goal(goal, tasks, now)
+    read = record.read_goal(goal, tasks, now, sittings=_sittings(username))
     if not read['to_book']:
         return fail('This week already has the sessions this goal needs.')
 

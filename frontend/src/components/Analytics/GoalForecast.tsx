@@ -89,7 +89,11 @@ function ForecastRow({ row, onBooked }: { row: Forecast; onBooked: () => void })
   );
 }
 
-export function GoalForecast({ onBooked }: { onBooked?: () => void }) {
+/**
+ * `reload` is the page's refresh nudge: when the plan below books sessions for
+ * a goal, this reads the forecast again so the two don't disagree.
+ */
+export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; reload?: number }) {
   const [rows, setRows] = useState<Forecast[] | null>(null);
 
   const load = useCallback(async () => {
@@ -99,7 +103,7 @@ export function GoalForecast({ onBooked }: { onBooked?: () => void }) {
 
   useEffect(() => {
     void load();
-  }, [load]);
+  }, [load, reload]);
 
   /* Nothing until it's read, and nothing for an account with no dated goals.
      An empty card above the plan would just push the plan down. */

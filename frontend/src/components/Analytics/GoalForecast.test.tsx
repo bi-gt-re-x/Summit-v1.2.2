@@ -93,6 +93,14 @@ describe('GoalForecast', () => {
     expect(await screen.findByText(/3 booked this week\./)).toBeInTheDocument();
   });
 
+  it('reads the forecast again when the page nudges it', async () => {
+    serve([row({})]);
+    const { rerender } = render(<GoalForecast reload={0} />);
+    await screen.findByText('AIME');
+    rerender(<GoalForecast reload={1} />);
+    await waitFor(() => expect(goalForecast).toHaveBeenCalledTimes(2));
+  });
+
   it('folds goals past the first three', async () => {
     serve(['a', 'b', 'c', 'd'].map((id) => row({ goal_id: id, title: `Goal ${id}`, to_book: 0 })));
     render(<GoalForecast />);

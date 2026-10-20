@@ -30,7 +30,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
        typical sitting, drawn from their logged focus time; `reasons` is what
        they type after a task; `detail` is how much supporting evidence they
        asked to be shown. None of the three changes what the plan suggests. */
-    detail, reasons, rhythm,
+    detail, reasons, rhythm, nudge,
   } = model;
 
   /**
@@ -61,7 +61,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
       {/* First, the one forward-looking number: will each dated goal finish in
           time at this pace, and what gets it there. Draws nothing without a
           dated goal, section and all. See ../GoalForecast. */}
-      <GoalForecast onBooked={refreshPlan} />
+      <GoalForecast onBooked={refreshPlan} reload={nudge} />
 
       {/* Above the plan, because it is the reason the plan is in this order.
           A reader who meets the ranking first and the explanation second has

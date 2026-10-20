@@ -154,7 +154,8 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
            'deadline': ends.isoformat(), 'days_left': days_left, 'state': 'missing',
            'missing': None, 'line': due, 'facts': None, 'per_week': None, 'need_per_week': None,
            'more_per_week': None, 'finish': None, 'done': None, 'total': None, 'unit': None,
-           'history_days': 0, 'to_book': 0, 'booked_this_week': 0}
+           'history_days': 0, 'to_book': 0, 'booked_this_week': 0,
+           'week_target': None, 'pace_line': None, 'out_of_reach': False}
 
     def missing(key, text):
         out.update(missing=key, line='{} {}'.format(due, text))
@@ -210,7 +211,7 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
 
     target = min(7, math.ceil(need_per_week - 1e-9))
     week_done, booked, booked_days, days_in_week = _this_week(goal, tasks, sessions, today)
-    out['booked_this_week'] = booked
+    out.update(booked_this_week=booked, week_target=target)
 
     if per_week <= 0:
         out['state'] = 'stalled'
@@ -223,18 +224,26 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
         pace = 'At this pace {}.'.format('it takes over {} years'.format(finish_in // 365)
                                          if finish_in > FAR_DAYS else 'you finish {}'.format(say_day(finish, today)))
         if finish <= ends:
-            out.update(state='on_track', line="{} {} You're on track.".format(due, pace))
-            return out
-        more = max(1, math.ceil(need_per_week - per_week - 1e-9))
-        out.update(state='behind', more_per_week=more)
-        fix = '{} more {} a week gets you there.'.format(more, 'session' if more == 1 else 'sessions')
+            out['state'] = 'on_track'
+            fix = "You're on track."
+        else:
+            more = max(1, math.ceil(need_per_week - per_week - 1e-9))
+            out.update(state='behind', more_per_week=more)
+            fix = '{} more {} a week gets you there.'.format(more, 'session' if more == 1 else 'sessions')
     if need_per_week > MOST_PER_WEEK:
         fix = "Even two a day won't get you there. Think about moving the date."
-    out['line'] = '{} {} {}'.format(due, pace, fix)
-    if need_per_week > MOST_PER_WEEK:
-        return out
-    out['to_book'] = max(0, min(target - week_done - booked, days_in_week - booked_days))
+        out['out_of_reach'] = True
+    out['pace_line'] = '{} {}'.format(pace, fix)
+    out['line'] = '{} {}'.format(due, out['pace_line'])
+    if not out['out_of_reach']:
+        # On track too: what this week owes the pace that gets it there.
+        out['to_book'] = max(0, min(target - week_done - booked, days_in_week - booked_days))
     return out
+
+
+#: The states with a pace, which the plan's deadline row reads instead of
+#: its rule of thumb (backend/tracking/record.py `read_goal`).
+PACED = ('on_track', 'behind', 'stalled')
 
 
 def forecasts(goals, tasks, sittings, today, name_of=lambda key: key):
