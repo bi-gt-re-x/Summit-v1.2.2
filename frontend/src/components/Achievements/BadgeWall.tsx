@@ -82,7 +82,7 @@ import type { Badge } from '@/services/achievements';
 import '@/styles/achievements.css';
 
 /** The filter's options. "All" first, then the seven headings, server order. */
-const FILTERS = [
+export const FILTERS = [
   'All badges', 'Productivity', 'Consistency', 'Learning', 'Mastery',
   'Milestones', 'Analytics', 'Special',
 ] as const;
@@ -217,7 +217,7 @@ function RecentCard({ badge }: { badge: Badge }) {
  * colour across the whole card rather than only the hexagon, so "what have I
  * got" is answerable from across the room and before any word is read.
  */
-function BadgeTile({ badge }: { badge: Badge }) {
+export function BadgeTile({ badge }: { badge: Badge }) {
   const secret = badge.hidden && !badge.earned;
   const share = badge.threshold > 0 ? Math.min(1, badge.value / badge.threshold) : 0;
 
@@ -279,6 +279,31 @@ function BadgeTile({ badge }: { badge: Badge }) {
       </div>
     </li>
   );
+}
+
+/**
+ * Some of the badges, for a panel on a space's page
+ * (components/Spaces/PanelBlock): one heading or all of them, the ones
+ * earned (newest first), the ones up next (easiest and closest first, the
+ * wall's own order for its locked half), or both, and at most `limit`.
+ */
+export function pickBadges(
+  badges: Badge[],
+  { category, which, limit }: { category: string; which: 'earned' | 'next' | 'all'; limit: number },
+): Badge[] {
+  const inside = badges.filter((badge) => category === 'all' || badge.category === category);
+  const earned = inside
+    .filter((badge) => badge.earned)
+    .sort((a, b) => (b.earned_at ?? '').localeCompare(a.earned_at ?? '') || b.tier - a.tier);
+  const next = inside
+    .filter((badge) => !badge.earned && !badge.hidden)
+    .sort((a, b) => {
+      if (a.tier !== b.tier) return a.tier - b.tier;
+      const near = (badge: Badge) => (badge.threshold > 0 ? badge.value / badge.threshold : 0);
+      return near(b) - near(a) || a.name.localeCompare(b.name);
+    });
+  const chosen = which === 'earned' ? earned : which === 'next' ? next : [...earned, ...next];
+  return chosen.slice(0, limit);
 }
 
 /**

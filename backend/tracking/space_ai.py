@@ -14,8 +14,8 @@ the end, `edit` makes targeted changes to numbered blocks (update, delete,
 insert after, move after) and leaves the rest exactly as it was, and `reply`
 answers a question without touching the page. Every block kind the editor
 has, columns (halves and thirds), fill styles, note and shape heights, the
-cover and the page background, and every live analytics source with its
-views, metrics and ranges.
+cover and the page background, every live analytics source with its
+views, metrics and ranges, and every panel the app's own pages draw.
 
 ## What it knows
 
@@ -36,7 +36,7 @@ import re
 from typing import Any, Dict, List, Sequence, Tuple
 
 from backend.config.shared import RULES
-from backend.tracking import planner, space_look
+from backend.tracking import panels, planner, space_look
 from backend.tracking.plainwords import STYLE, plain
 from backend.tracking.subject_brief import BriefUnavailable, _object
 
@@ -50,6 +50,7 @@ KINDS = tuple(SPACES['block_types'])
 SHAPES = tuple(SPACES['shapes'])
 COVERS = tuple(SPACES['covers'])
 SOURCES = tuple(LIVE['sources'])
+PANEL_KINDS = panels.KINDS
 FILL_STYLES = tuple(SPACES['fill_styles'])
 COVER_ALIGNS = tuple(SPACES['cover_aligns'])
 TALL = SPACES['tall_rows']
@@ -90,6 +91,15 @@ SHOWS = {
     'rhythm': 'which weekdays or hours they work',
     'subjects': 'the mix of subjects their work went to',
 }
+
+
+def _panel_menu() -> str:
+    """Every panel kind, a section at a time, as brief text."""
+    groups = {}
+    for kind in PANEL_KINDS:
+        groups.setdefault(panels.PANELS['kinds'][kind]['group'], []).append(
+            '{} ({})'.format(kind, panels.NAMES[kind]))
+    return '\n'.join('  - {}: {}'.format(group, ', '.join(kinds)) for group, kinds in groups.items())
 
 
 def _live_menu() -> str:
@@ -164,6 +174,15 @@ LIVE BLOCKS: the reader's own analytics, always up to date
   whenever the reader wants to see, track or keep an eye on their own
   progress, goals, records, schedule, subjects or skills.
 
+PANEL BLOCKS: the app's own panels, from their real data
+- panel: `panel_kind`, one of the kinds below. `text` is an optional
+  caption. It starts on the kind's own settings, and the reader can change
+  them (time range, subject, how many rows, which lines a chart plots) with
+  the block's gear. Use one when the reader asks for something the app
+  already shows: a plan or suggestions, habits, insights, a focus timer,
+  their sessions, badges.
+""" + _panel_menu() + """
+
 THE PAGE
 - `icon`: one emoji, or "" to leave it.
 - `cover`: one of """ + ', '.join(COVERS) + """, or "" to leave it.
@@ -230,7 +249,7 @@ _BLOCK = {
     'additionalProperties': False,
     'required': ['type', 'text', 'indent', 'checked', 'color', 'fill_color', 'fill_style', 'shape',
                  'width', 'rows', 'column', 'chart', 'live_source', 'live_view', 'live_metric',
-                 'live_ref', 'live_range'],
+                 'live_ref', 'live_range', 'panel_kind'],
     'properties': {
         'type': {'type': 'string', 'enum': list(KINDS)},
         'text': {'type': 'string'},
@@ -271,6 +290,7 @@ _BLOCK = {
         'live_metric': _NULL_STR,
         'live_ref': _NULL_STR,
         'live_range': _NULL_INT,
+        'panel_kind': {'anyOf': [{'type': 'null'}, {'type': 'string', 'enum': list(PANEL_KINDS)}]},
     },
 }
 
@@ -448,6 +468,10 @@ def _block(raw: Dict[str, Any], options: Dict[str, Any]) -> Dict[str, Any]:
         }
     if kind == 'live':
         block['live'] = _live(raw, options)
+    if kind == 'panel' and raw.get('panel_kind'):
+        # Cleaned to the kind's own defaults by the API's save, which also
+        # gives a panel that named no kind the first one.
+        block['panel'] = {'kind': raw['panel_kind']}
     return block
 
 
@@ -588,6 +612,10 @@ def apply(before: List[Dict[str, Any]], made: Dict[str, Any], new_id) -> Tuple[L
                         new[key] = old[key]
                 if new.get('type') == 'live' and old.get('live') and not edit['block'].get('live'):
                     new['live'] = old['live']
+                # The same for a panel: its settings stay unless it names another kind.
+                if new.get('type') == 'panel' and old.get('panel') and \
+                        (not new.get('panel') or new['panel'].get('kind') == old['panel'].get('kind')):
+                    new['panel'] = old['panel']
                 new['id'] = ident
                 written.add(ident)
                 out[at] = new

@@ -7,6 +7,7 @@ that what each source answers moves when the account's data does, which is the
 whole point of calling it live. The last part is the revision stamp and the
 `X-Summit-Live` header that let an open page know to ask again.
 """
+import json
 from datetime import date, timedelta
 
 import pytest
@@ -355,6 +356,41 @@ def test_goals_board(client):
     assert data['total'] == 2 and data['done'] == 0
     assert 'per_day' in data['goals'][0]['pace']
     assert _live(client, source='goals', status='done')['goals'] == []
+
+
+def test_records_block_shows_the_records_ticked_in_the_order_asked(client):
+    def save(name, value, on, category):
+        assert client.post('/api/records/save', json={
+            'kind': 'record', 'name': name, 'value': value, 'unit': 'points', 'achieved_on': on,
+            'category': category, 'comparison_direction': 'higher'}).json()['success']
+
+    save('Bench', 100, '2026-01-01', 'Gym')
+    save('Bench', 110, '2026-02-01', 'Gym')
+    save('Squat', 100, '2026-01-02', 'Gym')
+    save('Squat', 150, '2026-03-01', 'Gym')
+    save('Squat', 140, '2026-04-01', 'Gym')
+    save('AMC 10', 90, '2026-05-01', 'Competitive Math')
+
+    names = lambda data: [row['name'] for row in data['bests']]
+    assert names(_live(client, source='records')) == ['AMC 10', 'Squat', 'Bench']
+    # Ticked records show whatever their category, and the category is ignored.
+    picked = _live(client, source='records', category='Gym', pick='["AMC 10","Bench"]')
+    assert names(picked) == ['AMC 10', 'Bench']
+    assert names(_live(client, source='records', sort='improved')) == ['Squat', 'Bench', 'AMC 10']
+    assert names(_live(client, source='records', sort='tries')) == ['Squat', 'Bench', 'AMC 10']
+    assert names(_live(client, source='records', sort='name')) == ['AMC 10', 'Bench', 'Squat']
+    assert names(_live(client, source='records', sort='name', limit=2)) == ['AMC 10', 'Bench']
+
+
+def test_goals_block_shows_the_goals_ticked(client):
+    for title, days in (('First', 3), ('Second', 10), ('Third', 20)):
+        client.post('/api/add_goal', json={'title': title, 'goal_type': 'tasks', 'target_tasks': 4,
+                                           'deadline': (TODAY + timedelta(days=days)).isoformat()})
+    every = _live(client, source='goals')['goals']
+    wanted = [row['id'] for row in every if row['title'] != 'Second']
+    picked = _live(client, source='goals', pick=json.dumps(wanted))
+    assert [row['title'] for row in picked['goals']] == ['First', 'Third']
+    assert picked['total'] == 2
 
 
 def test_record_history_marks_each_best(client):

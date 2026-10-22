@@ -1,0 +1,28 @@
+{
+  "_about": "A panel block's settings as a page may store them. Run by tests/test_shared_cases.py against backend/tracking/panels.py `clean_panel` and by frontend/src/shared.cases.test.ts against `cleanPanel` in frontend/src/components/Spaces/panels.ts. The kinds and their settings are shared/rules.json `spaces.panels`.",
+  "cases": [
+    {"why": "an unknown kind becomes the first", "raw": {"kind": "weather", "window": "7d"}, "clean": {"kind": "summary"}},
+    {"why": "not an object at all", "raw": ["tiles"], "clean": {"kind": "summary"}},
+    {"why": "a new block starts on the kind's defaults", "raw": {"kind": "tiles"}, "clean": {"kind": "tiles", "window": "30d", "show": ["productivity", "consistency", "quality", "tasks", "focus"]}},
+    {"why": "bad choices fall back, unknown settings go", "raw": {"kind": "tiles", "window": "forever", "show": ["focus", "junk", "productivity", "focus"], "colour": "red"}, "clean": {"kind": "tiles", "window": "30d", "show": ["productivity", "focus"]}},
+    {"why": "an empty set is the default, never nothing", "raw": {"kind": "tiles", "show": []}, "clean": {"kind": "tiles", "window": "30d", "show": ["productivity", "consistency", "quality", "tasks", "focus"]}},
+    {"why": "a set must be a list", "raw": {"kind": "tiles", "show": "productivity"}, "clean": {"kind": "tiles", "window": "30d", "show": ["productivity", "consistency", "quality", "tasks", "focus"]}},
+    {"why": "a kind's own default range", "raw": {"kind": "trajectory"}, "clean": {"kind": "trajectory", "window": "90d", "metric": "productivity", "grain": "weekly"}},
+    {"why": "a chart's measure, range and grouping", "raw": {"kind": "trajectory", "window": "1y", "metric": "tasks", "grain": "monthly"}, "clean": {"kind": "trajectory", "window": "1y", "metric": "tasks", "grain": "monthly"}},
+    {"why": "a number setting wants a number", "raw": {"kind": "plan", "budget": "60", "limit": 3}, "clean": {"kind": "plan", "budget": 45, "limit": 3}},
+    {"why": "true is not a number", "raw": {"kind": "plan", "budget": true, "limit": true}, "clean": {"kind": "plan", "budget": 45, "limit": 8}},
+    {"why": "a count past the kind's own limit", "raw": {"kind": "plan", "budget": 90, "limit": 9}, "clean": {"kind": "plan", "budget": 90, "limit": 8}},
+    {"why": "a count with a fraction", "raw": {"kind": "plan", "budget": 45.0, "limit": 2.5}, "clean": {"kind": "plan", "budget": 45, "limit": 8}},
+    {"why": "a subject is trimmed", "raw": {"kind": "quality", "window": "90d", "subject": "  mathematics  "}, "clean": {"kind": "quality", "window": "90d", "subject": "mathematics"}},
+    {"why": "a number for a subject is read as its id", "raw": {"kind": "quality", "subject": 42}, "clean": {"kind": "quality", "window": "30d", "subject": "42"}},
+    {"why": "true is not a subject", "raw": {"kind": "quality", "subject": true}, "clean": {"kind": "quality", "window": "30d", "subject": ""}},
+    {"why": "a subject is cut to length", "raw": {"kind": "quality", "subject": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}, "clean": {"kind": "quality", "window": "30d", "subject": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}},
+    {"why": "the timer chart's own choices", "raw": {"kind": "timer-chart", "days": 30, "metric": "sessions", "style": "area"}, "clean": {"kind": "timer-chart", "days": 30, "metric": "sessions", "style": "area"}},
+    {"why": "a choice from another kind's list doesn't count", "raw": {"kind": "timer-chart", "days": 1, "metric": "focus", "style": "card"}, "clean": {"kind": "timer-chart", "days": 14, "metric": "minutes", "style": "bars"}},
+    {"why": "badges by category, up next", "raw": {"kind": "badges", "category": "Mastery", "which": "next", "limit": 12}, "clean": {"kind": "badges", "category": "Mastery", "which": "next", "limit": 12}},
+    {"why": "badge limits out of range", "raw": {"kind": "badges", "category": "Sports", "which": "locked", "limit": 13}, "clean": {"kind": "badges", "category": "all", "which": "earned", "limit": 6}},
+    {"why": "a set ignores what isn't one of its words", "raw": {"kind": "timer", "show": [1, "method", null]}, "clean": {"kind": "timer", "show": ["method"]}},
+    {"why": "a growth timeline's lines", "raw": {"kind": "growth-line", "period": "365d", "show": ["overall", "quality"]}, "clean": {"kind": "growth-line", "period": "365d", "show": ["quality", "overall"]}},
+    {"why": "a kind with no settings keeps none", "raw": {"kind": "say-do", "window": "7d", "limit": 3}, "clean": {"kind": "say-do"}}
+  ]
+}

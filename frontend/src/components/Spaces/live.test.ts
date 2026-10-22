@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { duplicate, liveBlock, matchKinds, normalise, pickable, slashRows } from './blocks';
-import { agoFrom, amount, cleanLive, defaultLive, hourLabel, liveKey, readKey, signed, whenFrom } from './live';
+import { agoFrom, amount, cleanLive, defaultLive, hourLabel, liveKey, liveQuery, readKey, signed, whenFrom } from './live';
 
 describe('settings', () => {
   it("start from each source's defaults", () => {
@@ -12,16 +12,34 @@ describe('settings', () => {
     expect(defaultLive('productivity')).toEqual({ source: 'productivity', view: 'bars', metric: 'xp', weeks: 8 });
     expect(defaultLive('calendar')).toEqual({ source: 'calendar', view: 'list', days: 7 });
     expect(defaultLive('heatmap')).toEqual({ source: 'heatmap', view: 'grid', metric: 'xp', weeks: 26 });
-    expect(defaultLive('goals')).toEqual({ source: 'goals', view: 'list', status: 'active' });
+    expect(defaultLive('goals')).toEqual({ source: 'goals', view: 'list', status: 'active', pick: [] });
+    expect(defaultLive('records')).toEqual({ source: 'records', view: 'list', category: '', limit: 5, pick: [], sort: 'recent' });
   });
 
   it('are cleaned the way the server cleans them', () => {
     expect(cleanLive({ source: 'growth', subject: 'algebra', days: 90, junk: 1 })).toEqual({ source: 'growth', view: 'area', metric: 'xp', subject: 'algebra', days: 90 });
     expect(cleanLive({ source: 'growth', view: 'pie', metric: 'focus', days: 45 })).toEqual({ source: 'growth', view: 'area', metric: 'xp', subject: '', days: 30 });
     expect(cleanLive({ source: 'growth', view: 'cumulative', metric: 'tasks' })).toMatchObject({ view: 'cumulative', metric: 'tasks' });
-    expect(cleanLive({ source: 'records', limit: 99 })).toEqual({ source: 'records', view: 'list', category: '', limit: 5 });
+    expect(cleanLive({ source: 'records', limit: 99 })).toEqual({ source: 'records', view: 'list', category: '', limit: 5, pick: [], sort: 'recent' });
     expect(cleanLive({ source: 'weather' })).toEqual({ source: 'goal', view: 'card', goal: '' });
     expect(cleanLive({ source: 'rhythm', days: 365, view: 'grid' })).toEqual({ source: 'rhythm', view: 'grid', metric: 'tasks', days: 365 });
+  });
+
+  it('keep the records and goals ticked, each once, from a list or the JSON a query sends', () => {
+    expect(cleanLive({ source: 'records', pick: ['Mile', ' Bench ', 'Mile', '', 7], sort: 'improved' })).toMatchObject({
+      pick: ['Mile', 'Bench', '7'],
+      sort: 'improved',
+    });
+    expect(cleanLive({ source: 'records', pick: '["Mile","Squat"]' })).toMatchObject({ pick: ['Mile', 'Squat'] });
+    expect(cleanLive({ source: 'records', pick: 'Mile', sort: 'loudest' })).toMatchObject({ pick: [], sort: 'recent' });
+    expect(cleanLive({ source: 'goals', pick: Array.from({ length: 20 }, (_, i) => `g${i}`) })).toMatchObject({ pick: expect.any(Array) });
+    expect((cleanLive({ source: 'goals', pick: Array.from({ length: 20 }, (_, i) => `g${i}`) }) as { pick: string[] }).pick).toHaveLength(12);
+  });
+
+  it('send a pick to the server as JSON, and key on it', () => {
+    const a = cleanLive({ source: 'records', pick: ['Mile', 'Bench'] });
+    expect(liveQuery(a)).toMatchObject({ pick: '["Mile","Bench"]', sort: 'recent' });
+    expect(readKey(a)).not.toBe(readKey(cleanLive({ source: 'records', pick: ['Mile'] })));
   });
 
   it('key the same whatever order they were written in', () => {
@@ -38,24 +56,31 @@ describe('settings', () => {
 });
 
 describe('the slash menu', () => {
-  it('folds Analytics and Goals & records into one row each until opened', () => {
+  it('folds each section drawn from your data into one row until opened', () => {
     const rows = slashRows('');
     const heads = rows.filter((row) => row.row === 'head').map((row) => row.row === 'head' && [row.label, row.open]);
     expect(heads).toEqual([
       ['Analytics', false],
+      ['Suggestions', false],
+      ['Insights and habits', false],
+      ['Growth and subjects', false],
+      ['Timer', false],
       ['Goals & records', false],
       ['Basic blocks', true],
       ['Layout', true],
       ['Charts you draw', true],
       ['Shapes', true],
     ]);
-    expect(rows.some((row) => row.row === 'kind' && row.kind.type === 'live')).toBe(false);
+    expect(rows.some((row) => row.row === 'kind' && (row.kind.type === 'live' || row.kind.type === 'panel'))).toBe(false);
   });
 
   it('shows what is in a section once it is opened', () => {
     const rows = slashRows('', new Set(['analytics']));
     const live = rows.filter((row) => row.row === 'kind' && row.kind.type === 'live').map((row) => row.row === 'kind' && row.kind.live);
     expect(live).toEqual(['productivity', 'growth', 'skills', 'heatmap', 'rhythm', 'subjects']);
+    // The Overview's own panels follow the live sources in the same section.
+    const panels = rows.filter((row) => row.row === 'kind' && row.kind.type === 'panel').map((row) => row.row === 'kind' && row.kind.panel);
+    expect(panels.slice(0, 3)).toEqual(['summary', 'tiles', 'basics']);
     // The folded heading itself can be landed on with the arrows.
     expect(pickable(rows).some((row) => row.row === 'head' && row.group === 'analytics')).toBe(true);
     expect(pickable(rows).some((row) => row.row === 'head' && row.group === 'basic')).toBe(false);

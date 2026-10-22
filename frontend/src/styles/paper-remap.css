@@ -1597,7 +1597,8 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 
 /* ---- timer.css (every paper page) ---- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-page {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-page,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sp-pom {
     --pom-card: var(--color-surface);
     --pom-card-2: #FAF9F5;
     --pom-line: var(--color-line);
@@ -1928,6 +1929,21 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-tasks li:last-child {
     border-bottom: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-recent-list li {
+    border-bottom: 1px solid var(--pom-line)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-recent-list li:last-child {
+    border-bottom: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-recent-on {
+    color: var(--pom-muted)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-recent-when {
+    color: var(--pom-faint)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-recent-said {
+    color: var(--pom-muted)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .pom-tasks-tag {
     background: color-mix(in srgb, var(--tone, var(--pom-slate)) 15%, transparent);
@@ -16639,7 +16655,8 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 
 /* ---- achievements.css (every paper page) ---- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ac-page {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ac-page,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sp-ac {
     --ac-card: var(--color-surface);
     --ac-card-2: var(--color-surface-2);
     --ac-line: var(--color-line);

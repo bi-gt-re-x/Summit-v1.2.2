@@ -21,7 +21,9 @@ import {
   LIVE_GROUPS,
   METRICS,
   METRIC_LABEL,
+  RECORD_SORTS,
   RHYTHM_DAYS,
+  SORT_LABEL,
   SOURCE_INFO,
   VIEWS,
   VIEW_LABEL,
@@ -45,6 +47,7 @@ import {
 } from './live';
 import { latestRevisions, watchLive } from './liveWatch';
 import { View } from './LiveViews';
+import { Choice, Ticks, Words } from './Settings';
 import { liveOptions, readLive } from '@/services/live';
 
 /** Read again on the next poll once a reading is this old, whatever the stamps say (a new day, say). */
@@ -258,10 +261,12 @@ function titleOf(config: LiveConfig, data: LiveData | null): string {
     case 'goal':
       return 'goal' in data ? (data as GoalData).goal.title : label;
     case 'goals':
+      if (config.pick.length) return config.pick.length === 1 ? 'One goal' : `${config.pick.length} goals`;
       return config.status === 'done' ? 'Finished goals' : config.status === 'all' ? 'All goals' : 'Open goals';
     case 'record':
       return 'name' in data ? `${(data as RecordData).name} over time` : label;
     case 'records':
+      if (config.pick.length) return config.pick.length === 1 ? config.pick[0]! : `${config.pick.length} personal bests`;
       return config.category ? `${config.category} records` : 'Personal bests';
     case 'skills':
       return 'title' in data ? `${(data as SkillsData).title} skill tree` : label;
@@ -333,7 +338,21 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
         </label>
       )}
       {config.source === 'goals' && (
-        <Words label="Goals" value={config.status} choices={GOAL_STATUS} name={(status) => ({ active: 'Open', all: 'All', done: 'Finished' })[status] ?? status} onPick={(status) => set({ status })} />
+        <>
+          {config.pick.length === 0 && (
+            <Words label="Goals" value={config.status} choices={GOAL_STATUS} name={(status) => ({ active: 'Open', all: 'All', done: 'Finished' })[status] ?? status} onPick={(status) => set({ status })} />
+          )}
+          {options && options.goals.length > 0 && (
+            <Ticks
+              label="Only these"
+              hint={config.pick.length ? 'Showing just the ones ticked.' : 'Tick goals to show just those.'}
+              value={config.pick}
+              choices={options.goals.map((goal) => goal.id)}
+              name={(id) => options.goals.find((goal) => goal.id === id)?.title ?? id}
+              onPick={(pick) => set({ pick })}
+            />
+          )}
+        </>
       )}
       {config.source === 'record' && (
         <label className="sp-live-field">
@@ -363,15 +382,28 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
       {config.source === 'subjects' && <Choice label="Days" value={config.days} choices={WINDOWS} onPick={(days) => set({ days })} />}
       {config.source === 'records' && (
         <>
-          <label className="sp-live-field">
-            Category
-            <select value={config.category} onChange={(event) => set({ category: event.target.value })}>
-              <option value="">All of them</option>
-              {options?.categories.map((name) => (
-                <option key={name} value={name}>{name}</option>
-              ))}
-            </select>
-          </label>
+          {config.pick.length === 0 && (
+            <label className="sp-live-field">
+              Category
+              <select value={config.category} onChange={(event) => set({ category: event.target.value })}>
+                <option value="">All of them</option>
+                {options?.categories.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+            </label>
+          )}
+          {options && options.records.length > 0 && (
+            <Ticks
+              label="Only these records"
+              hint={config.pick.length ? 'Showing just the ones ticked.' : 'Tick records to show just those.'}
+              value={config.pick}
+              choices={options.records}
+              name={(name) => name}
+              onPick={(pick) => set({ pick })}
+            />
+          )}
+          <Words label="Sort" value={config.sort} choices={RECORD_SORTS} name={(sort) => SORT_LABEL[sort] ?? sort} onPick={(sort) => set({ sort })} />
           <label className="sp-live-field">
             Show
             <select value={config.limit} onChange={(event) => set({ limit: Number(event.target.value) })}>
@@ -397,26 +429,6 @@ function LiveSettings({ config, onChange }: { config: LiveConfig; onChange: (nex
           <Choice label="Days" value={config.days} choices={WINDOWS} onPick={(days) => set({ days })} />
         </>
       )}
-    </div>
-  );
-}
-
-function Choice({ label, value, choices, onPick }: { label: string; value: number; choices: readonly number[]; onPick: (n: number) => void }) {
-  return <Words label={label} value={String(value)} choices={choices.map(String)} name={(n) => n} onPick={(n) => onPick(Number(n))} />;
-}
-
-/** A row of buttons, one per choice, the chosen one pressed. */
-function Words({ label, value, choices, name, onPick }: { label: string; value: string; choices: readonly string[]; name: (choice: string) => string; onPick: (choice: string) => void }) {
-  return (
-    <div className="sp-live-field">
-      {label}
-      <div className="sp-chart-kinds" role="radiogroup" aria-label={label}>
-        {choices.map((choice) => (
-          <button key={choice} type="button" role="radio" aria-checked={value === choice} className="sp-chart-kind" onClick={() => onPick(choice)}>
-            {name(choice)}
-          </button>
-        ))}
-      </div>
     </div>
   );
 }

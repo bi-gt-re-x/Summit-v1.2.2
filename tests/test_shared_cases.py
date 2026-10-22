@@ -14,7 +14,7 @@ import pytest
 
 from backend.api import spaces, tasks
 from backend.config.shared import PATH, RULES
-from backend.tracking import analytics, background, next_sessions, overdue, record, session_plan, subject_ai, time_spent
+from backend.tracking import analytics, background, live, next_sessions, overdue, panels, record, session_plan, subject_ai, time_spent
 
 CASES = os.path.join(os.path.dirname(PATH), 'cases')
 
@@ -52,6 +52,16 @@ def test_overdue(case):
 @pytest.mark.parametrize('case', _cases('problem_count'), ids=lambda case: case['title'] or 'empty')
 def test_problem_count(case):
     assert record.problem_count(case['title']) == case['count']
+
+
+@pytest.mark.parametrize('case', _cases('space_panels'), ids=lambda case: case['why'])
+def test_space_panels(case):
+    assert panels.clean_panel(case['raw']) == case['clean']
+
+
+@pytest.mark.parametrize('case', _cases('live_picks'), ids=lambda case: case['why'])
+def test_live_picks(case):
+    assert live.clean_config(case['raw']) == case['clean']
 
 
 def test_every_struggle_reason_has_a_fix():

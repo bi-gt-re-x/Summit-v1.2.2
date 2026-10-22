@@ -39,7 +39,7 @@
  * I changed lately", which is the question people arrive with.
  */
 import { Link } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Panel, PanelGroup, type Tone } from '../charts';
 import { ConsistencyPanel } from '../Breakdown';
 import { GrowthLine, type LineMark, type LineSeries } from '../GrowthLine';
@@ -63,7 +63,7 @@ import { skillTrajectory, timeToProgress } from '@/utils/skillGrowth';
 import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
 import { useSkillAttempts, useStats } from '@/hooks';
-import type { PeriodKey } from '@/services/analytics';
+import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
 import { SkillShapePanel } from '../SkillView';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { PeriodMetric } from '@/services/analytics';
@@ -85,7 +85,7 @@ function shortDate(iso: string): string {
  * away, and pressing one is what a reader does *after* the overall line has
  * raised a question.
  */
-const OPENS_WITH: Array<PeriodMetric | 'overall'> = [
+export const OPENS_WITH: Array<PeriodMetric | 'overall'> = [
   'productivity',
   'consistency',
   'quality',
@@ -121,7 +121,7 @@ const OVERALL_TONE: Tone = 'pink';
  * `all` is null, meaning "from the first finished task", which the trajectory
  * works out for itself.
  */
-const PERIOD_DAYS: Record<PeriodKey, number | null> = {
+export const PERIOD_DAYS: Record<PeriodKey, number | null> = {
   '7d': 7,
   '30d': 30,
   '90d': 90,
@@ -131,7 +131,7 @@ const PERIOD_DAYS: Record<PeriodKey, number | null> = {
 };
 
 /** How the period reads inside a sentence. */
-const PERIOD_TEXT: Record<PeriodKey, string> = {
+export const PERIOD_TEXT: Record<PeriodKey, string> = {
   '7d': 'the last week',
   '30d': 'the last 30 days',
   '90d': 'the last 3 months',
@@ -140,10 +140,15 @@ const PERIOD_TEXT: Record<PeriodKey, string> = {
   all: 'all your work',
 };
 
-export function GrowthTab({ model }: { model: AnalyticsModel }) {
-  const { all: dayRows, clock, detail, heatRows, nameOf, skills, tasks, liveGoals } = model;
-  /* The page's window picker drives the period — see ../useGrowthPeriods. */
-  const { period, setPeriod, periods } = useGrowthPeriods(model.span, model.chooseSpan);
+/**
+ * Every subject's level across a period, and what the time bought.
+ *
+ * The two figures the Growth tab works out in the browser rather than asks
+ * the server for, in one hook so the tab and a panel on a space's page
+ * (components/Spaces/PanelBlock) work them out the same way.
+ */
+export function useSkillGrowth(model: AnalyticsModel, period: PeriodKey) {
+  const { all: dayRows, nameOf, tasks, liveGoals } = model;
   /* The reader's marked skill-tree problems, once for the tab: the subject
      cards read them for the tree tile and "Skills by level" reads them whole.
      `useStats` for the name, for the reason ../useGrowthPeriods gives. */
@@ -193,7 +198,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
 
   /* Everything the subject cards need beyond the score. One object, memoised,
      so a card's own memos only rerun when the period or the record moves. */
-  const subjectContext = useMemo(
+  const context = useMemo(
     () => ({
       tasks,
       goals: liveGoals ?? [],
@@ -210,62 +215,156 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
     () => timeToProgress({ days: dayRows, finished: finishedInPeriod, tracks, windowDays }),
     [dayRows, finishedInPeriod, tracks, windowDays],
   );
+
+  return { tracks, progress, context, practice, periodText };
+}
+
+/** The lines the timeline draws, from the periods and which lines are on. */
+export function growthSeries(data: GrowthPeriods, lines: ReadonlyArray<PeriodMetric | 'overall'>): LineSeries[] {
+  const chosen: LineSeries[] = [];
+  if (lines.includes('overall')) {
+    chosen.push({
+      key: 'overall',
+      label: 'Overall',
+      tone: OVERALL_TONE,
+      color: OVERALL_COLOR,
+      values: data.series.map((point) => point.overall),
+    });
+  }
+  METRIC_ORDER.forEach((metric) => {
+    if (!lines.includes(metric)) return;
+    chosen.push({
+      key: metric,
+      label: METRIC_META[metric].label,
+      tone: METRIC_META[metric].tone,
+      values: data.series.map((point) => point[metric]),
+    });
+  });
+  return chosen;
+}
+
+/**
+ * The growth timeline: the chosen scores as lines, with the days a score hit
+ * a new grade marked on them, and a toggle per line.
+ *
+ * The milestones are placed on the line they were found in. A feed under the
+ * chart and a rule on it are two readings of one list, and deriving both from
+ * `milestones` is what stops them disagreeing about which days matter.
+ *
+ * `onToggle` never empties the chart: an empty chart box reads as a chart
+ * that broke rather than as one the reader emptied, so the last line on stays
+ * on. `aside` is the period control on the tab.
+ */
+export function GrowthTimelinePanel({
+  data,
+  lines,
+  onLines,
+  aside,
+}: {
+  data: GrowthPeriods;
+  lines: ReadonlyArray<PeriodMetric | 'overall'>;
+  onLines: (next: Array<PeriodMetric | 'overall'>) => void;
+  aside?: ReactNode;
+}) {
+  const series = useMemo(() => growthSeries(data, lines), [data, lines]);
+  const marks: LineMark[] = useMemo(
+    () =>
+      milestones(data)
+        .map((entry) => ({
+          at: data.series.findIndex((point) => point.date === entry.date),
+          label: entry.headline,
+          glyph: entry.kind === 'best' ? '★' : '◆',
+        }))
+        .filter((mark) => mark.at >= 0),
+    [data],
+  );
+  const toggle = (key: PeriodMetric | 'overall') =>
+    onLines(
+      lines.includes(key)
+        ? lines.length === 1
+          ? [...lines]
+          : lines.filter((entry) => entry !== key)
+        : [...lines, key],
+    );
+
+  return (
+    <Panel
+      title="Growth timeline"
+      note={
+        `Each point covers the ${data.trend_window} days before it, so the line is smooth instead of jumping day to day`
+      }
+      aside={aside}
+    >
+      <div className="ax-gp-toggles" role="group" aria-label="Metrics on the chart">
+        {([...METRIC_ORDER, 'overall'] as Array<PeriodMetric | 'overall'>).map((key) => {
+          const overall = key === 'overall';
+          const meta = overall ? { label: 'Overall' } : METRIC_META[key];
+          const on = lines.includes(key);
+          return (
+            <button
+              key={key}
+              type="button"
+              className={
+                `ax-gp-toggle ${overall ? 'is-overall' : `ax-tone-${METRIC_META[key].tone}`}`
+                + (on ? ' is-on' : '')
+              }
+              aria-pressed={on}
+              onClick={() => toggle(key)}
+            >
+              <span className="ax-gp-check" aria-hidden="true" />
+              {meta.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <GrowthLine
+        series={series}
+        dates={data.series.map((point) => point.date)}
+        labels={data.series.map((point) => shortDate(point.date))}
+        marks={marks}
+      />
+    </Panel>
+  );
+}
+
+/** What the underlying numbers did, in sentences, beside the scores they moved. */
+export function ScoreChangesPanel({ data }: { data: GrowthPeriods }) {
+  const changes = useMemo(() => whatChanged(data), [data]);
+  return (
+    <Panel
+      title="What changed behind the scores"
+      note="From the same numbers your scores use"
+    >
+      {changes.length === 0 ? (
+        <p className="ax-empty">
+          {data.previous
+            ? 'Nothing moved enough to call it a change.'
+            : "This period starts on your first day, so there's nothing"
+              + ' earlier to compare with.'}
+        </p>
+      ) : (
+        <ul className="ax-gp-changes">
+          {changes.map((line, index) => (
+            <li key={index}>{line}</li>
+          ))}
+        </ul>
+      )}
+    </Panel>
+  );
+}
+
+export function GrowthTab({ model }: { model: AnalyticsModel }) {
+  const { detail, heatRows, nameOf, skills, clock } = model;
+  /* The page's window picker drives the period — see ../useGrowthPeriods. */
+  const { period, setPeriod, periods } = useGrowthPeriods(model.span, model.chooseSpan);
+  const { tracks, progress, context: subjectContext, practice, periodText } = useSkillGrowth(model, period);
   const [lines, setLines] = useState<Array<PeriodMetric | 'overall'>>(OPENS_WITH);
 
   const data = periods.data;
 
-  const toggle = (key: PeriodMetric | 'overall') =>
-    setLines((current) =>
-      current.includes(key)
-        ? // Never down to nothing: an empty chart box reads as a chart that
-          // broke rather than as one the reader emptied.
-          current.length === 1
-          ? current
-          : current.filter((entry) => entry !== key)
-        : [...current, key],
-    );
-
-  const series: LineSeries[] = useMemo(() => {
-    if (!data) return [];
-    const chosen: LineSeries[] = [];
-    if (lines.includes('overall')) {
-      chosen.push({
-        key: 'overall',
-        label: 'Overall',
-        tone: OVERALL_TONE,
-        color: OVERALL_COLOR,
-        values: data.series.map((point) => point.overall),
-      });
-    }
-    METRIC_ORDER.forEach((metric) => {
-      if (!lines.includes(metric)) return;
-      chosen.push({
-        key: metric,
-        label: METRIC_META[metric].label,
-        tone: METRIC_META[metric].tone,
-        values: data.series.map((point) => point[metric]),
-      });
-    });
-    return chosen;
-  }, [data, lines]);
-
   const moved = useMemo(() => (data ? movers(data) : { best: null, worst: null }), [data]);
   const feed = useMemo(() => (data ? milestones(data) : []), [data]);
-
-  /* The same milestones, placed on the line they were found in. A feed under
-     the chart and a rule on it are two readings of one list, and deriving both
-     from `feed` is what stops them disagreeing about which days matter. */
-  const marks: LineMark[] = useMemo(() => {
-    if (!data) return [];
-    return feed
-      .map((entry) => ({
-        at: data.series.findIndex((point) => point.date === entry.date),
-        label: entry.headline,
-        glyph: entry.kind === 'best' ? '★' : '◆',
-      }))
-      .filter((mark) => mark.at >= 0);
-  }, [data, feed]);
-  const changes = useMemo(() => (data ? whatChanged(data) : []), [data]);
 
   if (periods.error && !data) {
     return (
@@ -373,11 +472,10 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               the period is a property of the chart before it is a property of
               anything else on the tab. */}
           <section className="ax-section ax-hero ax-gp-timeline">
-            <Panel
-              title="Growth timeline"
-              note={
-                `Each point covers the ${data.trend_window} days before it, so the line is smooth instead of jumping day to day`
-              }
+            <GrowthTimelinePanel
+              data={data}
+              lines={lines}
+              onLines={setLines}
               aside={
                 <PeriodTabs
                   cards={data.periods}
@@ -386,37 +484,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
                   busy={periods.refreshing}
                 />
               }
-            >
-              <div className="ax-gp-toggles" role="group" aria-label="Metrics on the chart">
-                {([...METRIC_ORDER, 'overall'] as Array<PeriodMetric | 'overall'>).map((key) => {
-                  const overall = key === 'overall';
-                  const meta = overall ? { label: 'Overall' } : METRIC_META[key];
-                  const on = lines.includes(key);
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      className={
-                        `ax-gp-toggle ${overall ? 'is-overall' : `ax-tone-${METRIC_META[key].tone}`}`
-                        + (on ? ' is-on' : '')
-                      }
-                      aria-pressed={on}
-                      onClick={() => toggle(key)}
-                    >
-                      <span className="ax-gp-check" aria-hidden="true" />
-                      {meta.label}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <GrowthLine
-                series={series}
-                dates={data.series.map((point) => point.date)}
-                labels={data.series.map((point) => shortDate(point.date))}
-                marks={marks}
-              />
-            </Panel>
+            />
           </section>
 
           {/*
@@ -463,25 +531,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
           </section>
 
           <section className="ax-section">
-            <Panel
-              title="What changed behind the scores"
-              note="From the same numbers your scores use"
-            >
-              {changes.length === 0 ? (
-                <p className="ax-empty">
-                  {data.previous
-                    ? 'Nothing moved enough to call it a change.'
-                    : "This period starts on your first day, so there's nothing"
-                      + ' earlier to compare with.'}
-                </p>
-              ) : (
-                <ul className="ax-gp-changes">
-                  {changes.map((line, index) => (
-                    <li key={index}>{line}</li>
-                  ))}
-                </ul>
-              )}
-            </Panel>
+            <ScoreChangesPanel data={data} />
           </section>
 
           {/* Every period at once. Not a second copy of the segmented control:
@@ -523,7 +573,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               title="When you get work done"
               note="Your day, by the hours you finish things"
             >
-              <WhenPanel clock={clock} />
+              <CoreHoursPanel clock={clock} />
             </PanelGroup>
 
             <PanelGroup
@@ -568,7 +618,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
  * pass over the hour of every finished task that the model already holds. The
  * panel's note says which days it is describing.
  */
-function WhenPanel({ clock }: { clock: AnalyticsModel['clock'] }) {
+export function CoreHoursPanel({ clock }: { clock: AnalyticsModel['clock'] }) {
   const core = clock.coreWindow;
 
   return (

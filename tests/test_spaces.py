@@ -208,3 +208,37 @@ def test_a_team_page_is_blocks_too_and_keeps_its_invites(client):
     space = client.get('/api/team-spaces').json()['spaces'][0]
     assert space['doc']['blocks'][0]['text'] == 'Reading'
     assert space['invites'] == [{'email': 'ada@example.com', 'status': 'pending'}]
+
+
+# ---- Panel blocks -------------------------------------------------------------
+def test_a_page_keeps_a_panel_block_and_its_settings_only(client):
+    doc = {'blocks': [
+        {'id': 'p', 'type': 'panel', 'text': 'My week', 'panel': {
+            'kind': 'trajectory', 'window': '1y', 'metric': 'tasks', 'grain': 'monthly', 'data': [1, 2]}},
+        {'id': 'q', 'type': 'panel', 'panel': {'kind': 'timer-chart', 'days': 30, 'style': 'area'}},
+        {'id': 'r', 'type': 'panel'},
+    ]}
+    space = client.post('/api/spaces/1', json={'doc': doc}).json()['space']
+    blocks = space['doc']['blocks']
+    assert blocks[0]['panel'] == {'kind': 'trajectory', 'window': '1y', 'metric': 'tasks', 'grain': 'monthly'}
+    assert blocks[1]['panel'] == {'kind': 'timer-chart', 'days': 30, 'metric': 'minutes', 'style': 'area'}
+    assert blocks[2]['panel'] == {'kind': 'summary'}
+    assert space['body'] == '[Panel: Trend chart, My week]\n[Panel: Focus chart]\n[Panel: Score and grade]'
+    # And it comes back the same on the next read.
+    assert client.get('/api/spaces').json()['spaces'][0]['doc']['blocks'] == blocks
+
+
+def test_every_panel_kind_has_a_name_and_its_defaults_are_its_own_choices():
+    from backend.tracking import panels
+    for kind in panels.KINDS:
+        assert panels.NAMES[kind].strip()
+        fresh = panels.clean_panel({'kind': kind})
+        assert panels.clean_panel(fresh) == fresh
+        for name, field in panels.fields_of(kind).items():
+            if field['type'] == 'choice':
+                assert field['default'] in field['of'], (kind, name)
+            if field['type'] == 'set':
+                assert field['default'] and set(field['default']) <= set(field['of']), (kind, name)
+            if field['type'] == 'count':
+                assert field['min'] <= field['default'] <= field['max'], (kind, name)
+

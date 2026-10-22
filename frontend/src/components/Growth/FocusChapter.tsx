@@ -70,7 +70,7 @@ export interface FocusChapterProps {
   all: GrowthDay[];
   tasks: Task[];
   subjects: Map<string, Subject>;
-  /** Panels this host already draws itself — see `FocusPanel`. */
+  /** Panels this host already draws itself, or doesn't want — see `FocusPanel`. */
   omit?: FocusPanel[];
 }
 
@@ -86,9 +86,11 @@ export interface FocusChapterProps {
  *
  * An opt-out rather than a split, because the Growth page still wants all
  * eight and the chapter is one argument there. A host that already answers
- * part of it names the part.
+ * part of it names the part. A panel on a space's page
+ * (components/Spaces/PanelBlock) can turn off any of them, so the reader
+ * picks which parts of the chapter it shows.
  */
-export type FocusPanel = 'calendar' | 'stability' | 'trail';
+export type FocusPanel = 'scores' | 'calendar' | 'planned' | 'depth' | 'stability' | 'trail' | 'recovery';
 
 export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterProps) {
   const hides = (panel: FocusPanel) => omit.includes(panel);
@@ -139,6 +141,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
   return (
     <div className="gr-grid">
       {/* --- Four figures, the whole width ---------------------------------- */}
+      {!hides('scores') && (
       <div className="gr-span-3">
         <HeroRow
           /* No Consistency card: the share of days worked is the Overview's
@@ -157,6 +160,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
           }))}
         />
       </div>
+      )}
 
       {/* --- The calendar, and the day the reader opened -------------------- */}
       {!hides('calendar') && (
@@ -287,6 +291,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       )}
 
       {/* --- Week by week, with the line through it ------------------------- */}
+      {!hides('planned') && (
       <section className="gr-panel gr-span-2 gr-chart-panel">
         <PanelHead
           title="Planned vs. done"
@@ -301,8 +306,10 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
           <WeeklyPlot weeks={weeks} />
         )}
       </section>
+      )}
 
       {/* --- How the focus time was spent ----------------------------------- */}
+      {!hides('depth') && (
       <section className="gr-panel gr-mix">
         <PanelHead
           title="Focus depth"
@@ -346,6 +353,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
           </>
         )}
       </section>
+      )}
 
       {/* --- The recurring work --------------------------------------------- */}
       {!hides('stability') && (
@@ -427,6 +435,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       )}
 
       {/* --- The calendar, read for recovery rather than for failure -------- */}
+      {!hides('recovery') && (
       <section className="gr-panel gr-span-2 gr-recov">
         <PanelHead
           title="Bouncing back"
@@ -483,6 +492,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
           </div>
         </div>
       </section>
+      )}
 
       {/* "What this says" closed the chapter with the recovery rate, the
           on-time share and the streak. The first is the panel above, the

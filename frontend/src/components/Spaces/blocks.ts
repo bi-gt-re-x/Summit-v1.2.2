@@ -19,7 +19,19 @@
 import { escapeInline, plainOf } from './inline';
 import { cleanFill, isHex, type Fill } from './fill';
 import { RULES } from '@/utils/sharedRules';
-import { GROUP_LABEL, LIVE_GROUPS, SOURCE_INFO, cleanLive, defaultLive, type LiveConfig, type LiveGroup, type LiveSource } from './live';
+import { LIVE_GROUPS, SOURCE_INFO, cleanLive, defaultLive, type LiveConfig, type LiveGroup, type LiveSource } from './live';
+import {
+  PANEL_GROUPS,
+  PANEL_GROUP_LABEL,
+  PANEL_INFO,
+  cleanPanel,
+  defaultPanel,
+  kindsIn,
+  panelName,
+  type PanelConfig,
+  type PanelGroup,
+  type PanelKind,
+} from './panels';
 
 export type BlockType =
   | 'text'
@@ -38,7 +50,8 @@ export type BlockType =
   | 'sticky'
   | 'shape'
   | 'live'
-  | 'container';
+  | 'container'
+  | 'panel';
 
 export type ShapeKind = 'rectangle' | 'rounded' | 'circle' | 'triangle' | 'diamond' | 'star' | 'hexagon' | 'arrow';
 
@@ -82,6 +95,8 @@ export interface Block {
   chart?: ChartData;
   /** Live blocks only: where it looks (./live). What it shows is read, never stored. */
   live?: LiveConfig;
+  /** Panel blocks only: which panel and how it is set (./panels). Drawn live, never stored. */
+  panel?: PanelConfig;
   /** The words' colour, `#rrggbb`, on any block with words. Absent is the page's own ink. */
   color?: string;
   /** Sticky notes, shapes and containers: what they are filled with (./fill). */
@@ -126,25 +141,27 @@ export interface BlockKind {
   shape?: ShapeKind;
   /** Live entries in the slash menu: which source it starts on. */
   live?: LiveSource;
+  /** Panel entries in the slash menu: which panel it starts as. */
+  panel?: PanelKind;
   /** Which section of the slash menu it sits in. Basic blocks when absent. */
   group?: SlashGroup;
 }
 
 /** The slash menu's sections, in order. */
-export type SlashGroup = 'basic' | 'layout' | 'charts' | 'shapes' | LiveGroup;
+export type SlashGroup = 'basic' | 'layout' | 'charts' | 'shapes' | LiveGroup | PanelGroup;
 
-export const SLASH_GROUPS: readonly SlashGroup[] = ['analytics', 'goals', 'basic', 'layout', 'charts', 'shapes'];
+export const SLASH_GROUPS: readonly SlashGroup[] = [...PANEL_GROUPS, 'basic', 'layout', 'charts', 'shapes'];
 
 export const SLASH_GROUP_LABEL: Record<SlashGroup, string> = {
   basic: 'Basic blocks',
   layout: 'Layout',
   charts: 'Charts you draw',
   shapes: 'Shapes',
-  ...GROUP_LABEL,
+  ...PANEL_GROUP_LABEL,
 };
 
-/** Sections that fold into one row until opened: the live data ones. */
-export const FOLDED: ReadonlySet<SlashGroup> = new Set(['analytics', 'goals']);
+/** Sections that fold into one row until opened: the ones drawn from your data. */
+export const FOLDED: ReadonlySet<SlashGroup> = new Set(PANEL_GROUPS);
 
 /** Every kind, in the order the slash menu lists them. */
 export const BLOCK_KINDS: BlockKind[] = [
@@ -164,6 +181,7 @@ export const BLOCK_KINDS: BlockKind[] = [
   { type: 'sticky', label: 'Sticky note', hint: 'A note in any color.', keys: ['sticky', 'note', 'postit', 'post-it'], glyph: '🗒' },
   { type: 'shape', label: 'Shape', hint: 'Boxes, circles, stars and more, in any color.', keys: ['shape', 'box', 'rectangle'], glyph: '◆' },
   { type: 'live', label: 'Live data', hint: 'Your goals, skills or stats, kept up to date.', keys: ['live', 'data', 'dashboard', 'widget'], glyph: '◉' },
+  { type: 'panel', label: 'Panel', hint: 'A panel from Analytics, the Timer or Achievements.', keys: ['panel', 'analytics', 'widget'], glyph: '▦' },
   { type: 'container', label: 'Container', hint: 'A box to drag anywhere. Drop blocks in it.', keys: ['container', 'box', 'group', 'section', 'frame', 'panel', 'card'], glyph: '▣', group: 'layout' },
 ];
 
@@ -220,19 +238,46 @@ const LIVE_ENTRIES: BlockKind[] = (Object.keys(LIVE_GROUPS) as LiveGroup[]).flat
   })),
 );
 
-/** What the slash menu offers: every kind of block, one entry per chart, shape and live source. */
+/** One slash-menu entry per panel, so "/habits" finds the habit cards. */
+const PANEL_ENTRIES: BlockKind[] = PANEL_GROUPS.flatMap((group) =>
+  kindsIn(group).map((kind) => ({
+    type: 'panel' as const,
+    panel: kind,
+    label: panelName(kind),
+    hint: PANEL_INFO[kind].hint,
+    keys: ['panel', group, ...PANEL_INFO[kind].keys],
+    glyph: PANEL_INFO[kind].glyph,
+    group,
+  })),
+);
+
+/** What the slash menu offers: every kind of block, one entry per chart, shape, live source and panel. */
 export const SLASH_KINDS: BlockKind[] = [
-  ...BLOCK_KINDS.filter((kind) => kind.type !== 'chart' && kind.type !== 'shape' && kind.type !== 'live').map((kind) => ({ ...kind, group: kind.group ?? 'basic' })),
+  ...BLOCK_KINDS.filter((kind) => !['chart', 'shape', 'live', 'panel'].includes(kind.type)).map((kind) => ({ ...kind, group: kind.group ?? 'basic' })),
   ...CHART_ENTRIES,
   ...SHAPE_ENTRIES,
   ...LIVE_ENTRIES,
+  ...PANEL_ENTRIES,
 ];
 
 /** Kinds that are drawn rather than written: no Turn into, to or from. */
-export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape', 'live', 'container']);
+export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape', 'live', 'container', 'panel']);
 
 /** What "Turn into" offers: the kinds made of words. */
 export const TURN_KINDS: BlockKind[] = BLOCK_KINDS.filter((kind) => !DRAWN.has(kind.type));
+
+/**
+ * Whether a name answers to what was typed: from the start of one of its
+ * words, so "/chart" finds "Bar chart" but "/hr" doesn't find
+ * "Follow-through". With dozens of panels in the menu, a match in the middle
+ * of a word is noise.
+ */
+const named = (label: string, q: string): boolean => {
+  const name = label.toLowerCase();
+  if (name.startsWith(q)) return true;
+  const words = name.split(/[^a-z0-9]+/).filter(Boolean);
+  return words.some((_, at) => words.slice(at).join(' ').startsWith(q));
+};
 
 /** The kinds the slash menu offers for what was typed after the slash. */
 export function matchKinds(query: string): BlockKind[] {
@@ -243,7 +288,7 @@ export function matchKinds(query: string): BlockKind[] {
   const rank = (kind: BlockKind) => (kind.label.toLowerCase().startsWith(q) ? 0 : kind.type.startsWith(q) ? 1 : 2);
   return SLASH_KINDS.filter(
     (kind) =>
-      kind.label.toLowerCase().includes(q) ||
+      named(kind.label, q) ||
       kind.type.startsWith(q) ||
       kind.keys.some((key) => key.startsWith(q)),
   ).sort((a, b) => rank(a) - rank(b));
@@ -329,6 +374,11 @@ export function containerBlock(extra: Partial<Block> = {}): Block {
 /** A new live block, looking at `source` with its default settings. */
 export function liveBlock(source: LiveSource = 'goal', extra: Partial<Block> = {}): Block {
   return block('live', '', { live: defaultLive(source), ...extra });
+}
+
+/** A new panel block, showing `kind` with its default settings. */
+export function panelBlock(kind: PanelKind = 'plan', extra: Partial<Block> = {}): Block {
+  return block('panel', '', { panel: defaultPanel(kind), ...extra });
 }
 
 /** A chart as stored, made safe to draw: a known kind, a sane scale, 1–12 points. */
@@ -508,6 +558,7 @@ export function normalise(doc: Partial<SpaceDoc> | null | undefined, body = ''):
           if (type === 'toggle' && one.collapsed) next.collapsed = true;
           if (type === 'chart') next.chart = cleanChart(one.chart);
           if (type === 'live') next.live = cleanLive(one.live);
+          if (type === 'panel') next.panel = cleanPanel(one.panel);
           if (type === 'container') {
             const fill = cleanFill(one.fill);
             if (fill) next.fill = fill;
@@ -656,7 +707,8 @@ export function duplicate(blocks: Block[], id: string): { blocks: Block[]; copy:
       ...rest,
       id: newId(),
       ...(one.chart ? { chart: structuredCopy(one.chart) } : {}),
-      ...(one.live ? { live: { ...one.live } } : {}),
+      ...(one.live ? { live: cleanLive(one.live) } : {}),
+      ...(one.panel ? { panel: cleanPanel(one.panel) } : {}),
     };
   });
   return {

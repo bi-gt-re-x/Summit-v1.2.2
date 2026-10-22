@@ -17,7 +17,10 @@
  * callouts, dividers, code and charts (bar, line, area, pie, donut, set by
  * dragging), with a "/" menu and typing shortcuts. Every block can be dragged
  * by its handle anywhere on a 12-column grid and snaps to it
- * (components/Spaces/canvas). The page saves itself a moment after editing stops,
+ * (components/Spaces/canvas). Live blocks and panel blocks put the account's
+ * own numbers on the page: a panel is one of Analytics', the Timer's or
+ * Achievements' own panels, and components/Spaces/SpaceData reads what they
+ * need once for the whole page. The page saves itself a moment after editing stops,
  * and once more on the way out, so nothing is lost to a navigation. Backend:
  * backend/api/spaces.py.
  *
@@ -30,6 +33,7 @@ import { useDocumentTitle, useSpaces } from '@/hooks';
 import { Members } from '@/components/Spaces/Members';
 import { SpaceChat } from '@/components/Spaces/SpaceChat';
 import { BlockEditor } from '@/components/Spaces/BlockEditor';
+import { SpaceData } from '@/components/Spaces/SpaceData';
 import { Cover, DressTools, PageIcon } from '@/components/Spaces/Dress';
 import { normalise, wordCount, type SpaceDoc } from '@/components/Spaces/blocks';
 import { fillProps, isDark } from '@/components/Spaces/fill';
@@ -191,12 +195,15 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
 
         {/* No box around the page: the blocks are written straight on it. */}
         <div className="sp-body">
-          <BlockEditor
-            blocks={doc.blocks}
-            disabled={!loaded}
-            label={`What's in ${name || defaultName(id)}`}
-            onChange={(blocks) => write({ ...doc, blocks })}
-          />
+          {/* What the page's panel blocks read, read once for all of them. */}
+          <SpaceData blocks={doc.blocks}>
+            <BlockEditor
+              blocks={doc.blocks}
+              disabled={!loaded}
+              label={`What's in ${name || defaultName(id)}`}
+              onChange={(blocks) => write({ ...doc, blocks })}
+            />
+          </SpaceData>
         </div>
         <p className="sp-foot">
           {words} {words === 1 ? 'word' : 'words'} · Type "/" for blocks · Drag ⋮⋮ to move

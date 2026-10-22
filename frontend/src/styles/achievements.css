@@ -36,7 +36,10 @@
 /* Fills the width beside the rail like every signed-in page — the default
    in styles/layout.css, not a rule of this page's. */
 
-.ac-page {
+/* `.sp-ac` is a badge panel on a space's page (components/Spaces/panelViews):
+   the same tokens, so a badge tile looks the same there. */
+.ac-page,
+.sp-ac {
     --ac-card: var(--color-surface);
     --ac-card-2: var(--color-surface-2);
     --ac-line: var(--color-line);
@@ -69,7 +72,8 @@
     font-family: var(--font-sans);
 }
 
-html[data-theme="dark"] .ac-page {
+html[data-theme="dark"] .ac-page,
+html[data-theme="dark"] .sp-ac {
     --ac-card: var(--color-surface);
     --ac-card-2: var(--color-surface-2);
     --ac-line: var(--color-line);

@@ -44,6 +44,7 @@ The revisions are kept in memory, per process, the same scope and the same
 reasoning as the growth series cache: a restart starts a new `BOOT` and every
 open page sees every revision change once, which costs one refresh each.
 """
+import json
 import threading
 import time
 from datetime import date, datetime, timedelta
@@ -98,6 +99,28 @@ def _word(value, allowed):
     return value if value in allowed else allowed[0]
 
 
+def _pick(value) -> list:
+    """The goals or records the reader ticked: up to `pick_max` short strings,
+    each once. A query string carries the list as JSON, so a string is read as
+    that; anything else that isn't a list picks nothing.
+    """
+    if isinstance(value, str):
+        try:
+            value = json.loads(value) if value.strip().startswith('[') else []
+        except ValueError:
+            value = []
+    if not isinstance(value, list):
+        return []
+    out = []
+    for item in value:
+        ref = _ref(item)
+        if ref and ref not in out:
+            out.append(ref)
+        if len(out) >= LIVE['pick_max']:
+            break
+    return out
+
+
 def clean_config(raw) -> dict:
     """A live block's settings as the page may store them.
 
@@ -114,6 +137,7 @@ def clean_config(raw) -> dict:
         out['goal'] = _ref(raw.get('goal'))
     elif source == 'goals':
         out['status'] = _word(raw.get('status'), LIVE['goal_status'])
+        out['pick'] = _pick(raw.get('pick'))
     elif source == 'record':
         out['name'] = _ref(raw.get('name'))
     elif source == 'heatmap':
@@ -129,6 +153,8 @@ def clean_config(raw) -> dict:
     elif source == 'records':
         out['category'] = _ref(raw.get('category'))
         out['limit'] = max(1, min(LIVE['limit_max'], _choice(raw.get('limit'), range(1, LIVE['limit_max'] + 1), 5)))
+        out['pick'] = _pick(raw.get('pick'))
+        out['sort'] = _word(raw.get('sort'), LIVE['record_sorts'])
     elif source == 'calendar':
         out['days'] = _choice(raw.get('days'), LIVE['ahead'], LIVE['ahead'][0])
     elif source == 'growth':
@@ -473,16 +499,25 @@ def productivity_view(series, weeks, streak, today, metric='xp'):
 # --------------------------------------------------------------------------
 # Records
 # --------------------------------------------------------------------------
-def records_view(rows, category, limit):
+def records_view(rows, category, limit, pick=(), sort='recent'):
     """Personal bests by name, with how far each has come, and the latest entries.
 
     A record's best is its highest value, or its lowest when lower is better
     (`comparison_direction`). How far it has come is best against the first
     entry, in the record's own unit.
+
+    `pick` names the records to show, whatever their category; with none
+    picked, `category` narrows them ('' for all). `sort` orders the bests:
+    `recent` newest best first, `improved` the most gained since the first try
+    (as a share of it, so a mile time and a bench press compare), `tries` the
+    most logged, `name` A to Z.
     """
     rows = [row for row in rows or [] if row.get('kind', 'record') == 'record']
     categories = sorted({row.get('category') or '' for row in rows} - {''}, key=str.lower)
-    if category:
+    if pick:
+        wanted = set(pick)
+        rows = [row for row in rows if ((row.get('name') or '').strip() or 'Untitled') in wanted]
+    elif category:
         rows = [row for row in rows if (row.get('category') or '') == category]
 
     groups = {}
@@ -514,6 +549,12 @@ def records_view(rows, category, limit):
                         for i in range(max(0, len(entries) - 12), len(entries))],
         })
     bests.sort(key=lambda row: str(row['best_on'] or ''), reverse=True)
+    if sort == 'improved':
+        bests.sort(key=lambda row: abs(row['improvement'] / row['first']) if row['first'] else 0, reverse=True)
+    elif sort == 'tries':
+        bests.sort(key=lambda row: row['entries'], reverse=True)
+    elif sort == 'name':
+        bests.sort(key=lambda row: row['name'].lower())
 
     latest = sorted(rows, key=lambda row: (str(row.get('achieved_on') or ''), str(row.get('created_at') or '')),
                     reverse=True)
@@ -754,12 +795,20 @@ def pace(goal, today):
     }
 
 
-def goals_view(goals, status, today):
-    """Every goal (or the open or the finished ones), soonest deadline first."""
+def goals_view(goals, status, today, pick=()):
+    """Every goal (or the open or the finished ones), soonest deadline first.
+
+    `pick` names the goals to show by id, done or not; with none picked,
+    `status` decides.
+    """
     rows = []
+    wanted = set(pick or ())
     for goal in goals or []:
         done = goal.get('status') == 'completed'
-        if status == 'active' and done or status == 'done' and not done:
+        if wanted:
+            if str(goal.get('id')) not in wanted:
+                continue
+        elif status == 'active' and done or status == 'done' and not done:
             continue
         deadline = _day(goal.get('deadline'))
         health = goal.get('health') or {}

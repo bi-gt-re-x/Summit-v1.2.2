@@ -168,10 +168,13 @@ export interface TaskTime {
  *
  * Sittings with no task are one group of their own, always last, so the list
  * reads as "where the time went" and then "the rest".
+ *
+ * `to` stretches it over a run of days, `day` to `to` inclusive (ISO dates
+ * compare as strings): a timer panel on a space's page can show a week.
  */
-export function byTask(log: Interval[], day: string): TaskTime[] {
+export function byTask(log: Interval[], day: string, to: string = day): TaskTime[] {
   const groups = new Map<string | null, TaskTime>();
-  log.filter((row) => row.day === day).forEach((row) => {
+  log.filter((row) => row.day >= day && row.day <= to).forEach((row) => {
     const id = row.taskId ?? null;
     const group = groups.get(id) ?? { id, title: row.taskTitle ?? null, minutes: 0, sittings: 0 };
     group.minutes += row.minutes;

@@ -12,7 +12,7 @@
  * at least one. The celebration links here by `#goals-finished`, so the panel
  * scrolls itself into view when it arrives with that address.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Panel } from './charts';
 import { finishedGoals, type FinishedGoal } from '@/services/goals';
@@ -30,8 +30,10 @@ function plural(count: number, word: string): string {
   return `${count.toLocaleString()} ${word}${count === 1 ? '' : 's'}`;
 }
 
-export function GoalsFinished() {
+/** `empty` is drawn when there are none yet; the Overview draws nothing then. */
+export function GoalsFinished({ empty = null }: { empty?: ReactNode } = {}) {
   const [rows, setRows] = useState<FinishedGoal[]>([]);
+  const [loaded, setLoaded] = useState(false);
   const { hash } = useLocation();
   const anchor = useRef<HTMLDivElement>(null);
 
@@ -40,6 +42,7 @@ export function GoalsFinished() {
     finishedGoals()
       .then((result) => {
         if (live && result.success) setRows(result.goals ?? []);
+        if (live) setLoaded(true);
       })
       .catch(() => {});
     return () => { live = false; };
@@ -51,7 +54,7 @@ export function GoalsFinished() {
     }
   }, [hash, rows.length]);
 
-  if (!rows.length) return null;
+  if (!rows.length) return loaded ? empty : null;
 
   const timed = rows.filter((row) => row.days !== null);
   const typical = timed.length

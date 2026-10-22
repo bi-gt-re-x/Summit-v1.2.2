@@ -60,6 +60,12 @@ export interface TilesProps {
    * the reader the panels it genuinely does narrow.
    */
   scopedOut?: string | null;
+  /**
+   * Which tiles to draw, by key, when somebody chose. A panel on a space's
+   * page (components/Spaces/PanelBlock) lets the reader pick; given, it
+   * replaces what `logStyle` would have decided.
+   */
+  only?: readonly string[];
 }
 
 export function Tiles({
@@ -68,6 +74,7 @@ export function Tiles({
   compareLabel,
   logStyle,
   scopedOut = null,
+  only,
 }: TilesProps) {
   const stats: Stat[] = [
     {
@@ -110,7 +117,7 @@ export function Tiles({
           ? 'How hard times how well, from your task ratings. Optional.'
           : `How hard times how well, out of 25. From the ${figures.ratedTasks} of ${figures.finishedTasks} tasks you rated.`,
     },
-    ...(showsTaskVolume(logStyle)
+    ...((only ? only.includes('tasks') : showsTaskVolume(logStyle))
       ? [
           {
             key: 'tasks',
@@ -124,7 +131,7 @@ export function Tiles({
           },
         ]
       : []),
-    ...(showsSessionVolume(logStyle)
+    ...((only ? only.includes('focus') : showsSessionVolume(logStyle))
       ? [
           {
             key: 'focus',
@@ -141,9 +148,11 @@ export function Tiles({
       : []),
   ];
 
+  const shown = only ? stats.filter((stat) => only.includes(stat.key)) : stats;
+
   return (
     <>
-      <StatRow stats={stats} compare={compareLabel} />
+      <StatRow stats={shown} compare={compareLabel} />
       {scopedOut && (
         /* Under the row rather than on each tile: it is one fact about all of
            them, and a copy on each would be louder than the figures. */

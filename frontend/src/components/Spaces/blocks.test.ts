@@ -18,6 +18,7 @@ import {
   wordCount,
   type Block,
 } from './blocks';
+import { PANEL_KINDS } from './panels';
 
 const b = (id: string, type: Block['type'] = 'text', indent = 0, extra: Partial<Block> = {}): Block => ({
   id,
@@ -57,9 +58,10 @@ describe('typing shortcuts', () => {
 });
 
 describe('the slash menu', () => {
-  it('offers every kind before anything is typed, one entry per chart, shape and live source', () => {
+  it('offers every kind before anything is typed, one entry per chart, shape, live source and panel', () => {
     const all = matchKinds('');
-    expect(all.filter((kind) => !['chart', 'shape', 'live', 'container'].includes(kind.type))).toHaveLength(13);
+    expect(all.filter((kind) => !['chart', 'shape', 'live', 'container', 'panel'].includes(kind.type))).toHaveLength(13);
+    expect(all.filter((kind) => kind.type === 'panel').map((kind) => kind.panel)).toEqual([...PANEL_KINDS]);
     expect(all.filter((kind) => kind.type === 'container')).toHaveLength(1);
     expect(all.filter((kind) => kind.type === 'live').map((kind) => kind.live)).toEqual([
       'productivity', 'growth', 'skills', 'heatmap', 'rhythm', 'subjects',
@@ -77,16 +79,28 @@ describe('the slash menu', () => {
   });
 
   it('puts a name that starts with what was typed first', () => {
-    expect(matchKinds('line').map((kind) => kind.label)).toEqual(['Line chart', 'Divider']);
+    const line = matchKinds('line');
+    expect(line.slice(0, 2).map((kind) => kind.label)).toEqual(['Line chart', 'Divider']);
+    // Then the panels that draw a line: the trend chart and the growth timeline.
+    expect(line.slice(2).map((kind) => kind.panel)).toEqual(['trajectory', 'growth-line']);
   });
 
   it('finds a chart by its kind', () => {
     expect(matchKinds('pie').map((kind) => kind.chart)).toEqual(['pie']);
-    expect(matchKinds('chart')).toHaveLength(5);
+    expect(matchKinds('chart').filter((kind) => kind.type === 'chart')).toHaveLength(5);
+    expect(matchKinds('chart').filter((kind) => kind.type === 'panel').map((kind) => kind.panel)).toEqual(['trajectory', 'growth-line', 'timer-chart']);
+  });
+
+  it('finds a panel by what people call it', () => {
+    expect(matchKinds('pomodoro').map((kind) => kind.panel)).toEqual(['timer']);
+    expect(matchKinds('suggest').map((kind) => kind.panel)).toEqual(expect.arrayContaining(['plan', 'diagnosis', 'sessions', 'coach', 'timer-suggest']));
+    expect(matchKinds('badges').map((kind) => kind.panel)).toEqual(['badges']);
   });
 
   it('filters by name and by the words people type', () => {
-    expect(matchKinds('head').map((kind) => kind.type)).toEqual(['h1', 'h2', 'h3']);
+    expect(matchKinds('heading').map((kind) => kind.type)).toEqual(['h1', 'h2', 'h3']);
+    // "Headline numbers" answers to "head" too, after the headings.
+    expect(matchKinds('head').map((kind) => kind.type)).toEqual(['h1', 'h2', 'h3', 'panel']);
     expect(matchKinds('todo').map((kind) => kind.type)).toEqual(['todo']);
     expect(matchKinds('hr').map((kind) => kind.type)).toEqual(['divider']);
     expect(matchKinds('zzz')).toEqual([]);

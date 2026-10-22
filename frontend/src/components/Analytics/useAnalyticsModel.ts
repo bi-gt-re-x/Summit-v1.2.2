@@ -155,7 +155,18 @@ const NOTHING: never[] = [];
  * memo below runs over nothing in microseconds, and the real pass happens
  * once, when the page is about to draw it.
  */
-export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, hold = false) {
+/**
+ * `pinned` fixes the window and the subject from outside instead of the
+ * page's own pickers: a panel on a space's page (components/Spaces/PanelBlock)
+ * carries its own time range and subject in its settings, and the model reads
+ * those. The setters still work, and do nothing while a value is pinned.
+ */
+export interface Pinned {
+  span?: WindowKey;
+  subject?: string;
+}
+
+export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, hold = false, pinned: Pinned = {}) {
   const { stats, tasks: taskCall, series, ratings, goals, adopted, gradedLog, scoreLog } = data;
 
   /* Opens on the account's chosen period. Not kept in step with it after
@@ -176,7 +187,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
      whole model was worked out for the default window and then again for the
      account's — on a large account, a second of arithmetic thrown away. */
   const [chosen, setChosen] = useState<WindowKey | null>(null);
-  const span: WindowKey = chosen ?? prefs.analytics_window;
+  const span: WindowKey = pinned.span ?? chosen ?? prefs.analytics_window;
   const chooseSpan = useCallback((next: WindowKey) => setChosen(next), []);
 
   /*
@@ -197,7 +208,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   // a year is scatter. See METRICS in components/Analytics/data.
   const [metric, setMetric] = useState<MetricKey>('productivity');
   const [grain, setGrain] = useState<Grain>('weekly');
-  const [subject, setSubject] = useState('');
+  const [picked, setSubject] = useState('');
+  const subject = pinned.subject ?? picked;
   const [category, setCategory] = useState('');
 
   const all = useMemo(

@@ -40,6 +40,7 @@ import {
   Trajectory,
 } from '../index';
 import type { Stat } from '../StatRow';
+import type { Task } from '@/types';
 import { number as fmtNumber } from '@/utils/format';
 import { ObservationNote } from '../Observation';
 import { LensLine } from '../Lens';
@@ -140,65 +141,7 @@ export function OverviewTab({
    * this is not a second dashboard.
    */
   if (maturity.stage === 'new' || maturity.stage === 'early') {
-    const finished = tasks.filter((task) => task.status === 'done').length;
-
-    /* Against every task on the books, not against the ones that went well.
-       Expired tasks count in the denominator — a rate that quietly drops the
-       ones you missed is not a completion rate. */
-    const completion = tasks.length > 0 ? Math.round((finished / tasks.length) * 100) : null;
-
-    const basics: Stat[] = [
-      {
-        key: 'tasks',
-        label: 'Tasks finished',
-        value: fmtNumber(figures.tasks.value),
-        short: `${fmtNumber(figures.tasks.value)} ${figures.tasks.value === 1 ? 'task' : 'tasks'}`,
-        tone: 'green',
-        glyph: 'check',
-      },
-      {
-        key: 'focus',
-        label: 'Focus time',
-        value: figures.focusHours.value.toFixed(1),
-        unit: 'h',
-        short: `${figures.focusHours.value.toFixed(1)}h focused`,
-        tone: 'blue',
-        glyph: 'clock',
-      },
-      {
-        key: 'xp',
-        label: 'XP earned',
-        value: fmtNumber(figures.xp.value),
-        tone: 'violet',
-        glyph: 'sparkle',
-      },
-      {
-        key: 'streak',
-        label: 'Current streak',
-        value: String(streak),
-        unit: streak === 1 ? 'day' : 'days',
-        /* Dropped from the digest at zero rather than printed as "0-day
-           streak", which reads as a rebuke on somebody's first morning. */
-        ...(streak > 0 ? { short: `${streak}-day streak` } : {}),
-        tone: 'amber',
-        glyph: 'flame',
-      },
-      /* Only with tasks to divide by. "0%" over an empty list is not a rate,
-         it is a division nobody did. */
-      ...(completion === null
-        ? []
-        : [
-            {
-              key: 'completion',
-              label: 'Completion rate',
-              value: `${completion}%`,
-              short: `${completion}% completion`,
-              tone: 'pink' as const,
-              glyph: 'target' as const,
-              note: `${finished} of ${tasks.length} finished`,
-            },
-          ]),
-    ];
+    const basics = basicStats(figures, streak, tasks);
 
     return (
       <>
@@ -460,4 +403,73 @@ export function OverviewTab({
       <ActiveDayPrinciple />
     </>
   );
+}
+
+/**
+ * The five counts an account has from its first day: tasks finished, focus
+ * time, XP, the streak and the completion rate. The Overview leads with them
+ * until there are enough days for rates, and a panel on a space's page
+ * (components/Spaces/PanelBlock) shows them whenever it's asked.
+ */
+export function basicStats(figures: AnalyticsModel['figures'], streak: number, tasks: Task[]): Stat[] {
+  const finished = tasks.filter((task) => task.status === 'done').length;
+
+  /* Against every task on the books, not against the ones that went well.
+     Expired tasks count in the denominator — a rate that quietly drops the
+     ones you missed is not a completion rate. */
+  const completion = tasks.length > 0 ? Math.round((finished / tasks.length) * 100) : null;
+
+  const basics: Stat[] = [
+    {
+      key: 'tasks',
+      label: 'Tasks finished',
+      value: fmtNumber(figures.tasks.value),
+      short: `${fmtNumber(figures.tasks.value)} ${figures.tasks.value === 1 ? 'task' : 'tasks'}`,
+      tone: 'green',
+      glyph: 'check',
+    },
+    {
+      key: 'focus',
+      label: 'Focus time',
+      value: figures.focusHours.value.toFixed(1),
+      unit: 'h',
+      short: `${figures.focusHours.value.toFixed(1)}h focused`,
+      tone: 'blue',
+      glyph: 'clock',
+    },
+    {
+      key: 'xp',
+      label: 'XP earned',
+      value: fmtNumber(figures.xp.value),
+      tone: 'violet',
+      glyph: 'sparkle',
+    },
+    {
+      key: 'streak',
+      label: 'Current streak',
+      value: String(streak),
+      unit: streak === 1 ? 'day' : 'days',
+      /* Dropped from the digest at zero rather than printed as "0-day
+         streak", which reads as a rebuke on somebody's first morning. */
+      ...(streak > 0 ? { short: `${streak}-day streak` } : {}),
+      tone: 'amber',
+      glyph: 'flame',
+    },
+    /* Only with tasks to divide by. "0%" over an empty list is not a rate,
+       it is a division nobody did. */
+    ...(completion === null
+      ? []
+      : [
+          {
+            key: 'completion',
+            label: 'Completion rate',
+            value: `${completion}%`,
+            short: `${completion}% completion`,
+            tone: 'pink' as const,
+            glyph: 'target' as const,
+            note: `${finished} of ${tasks.length} finished`,
+          },
+        ]),
+  ];
+  return basics;
 }

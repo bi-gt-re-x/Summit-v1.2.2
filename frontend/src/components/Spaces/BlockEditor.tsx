@@ -23,6 +23,9 @@
  *   - Live blocks (./LiveBlock) come from it too: a goal, a skill tree,
  *     productivity, records, the calendar or a subject's growth, read from
  *     the account and kept up to date while the page is open.
+ *   - So do panels (./PanelBlock): the Analytics page's panels, the Timer's
+ *     clock and sessions, and the badges, each drawn by its own page's
+ *     component with settings of its own.
  *   - Bold and italic inside a block: ⌘/Ctrl+B and ⌘/Ctrl+I, the B and I in
  *     the bar that rises over a selection, or typing "**word**" / "*word*".
  *
@@ -58,6 +61,7 @@ import {
   cleanPlace,
   containerBlock,
   liveBlock,
+  panelBlock,
   pickable,
   slashRows,
   LISTS,
@@ -102,6 +106,7 @@ import {
 } from './canvas';
 import { ChartBlock } from './ChartBlock';
 import { LiveBlock } from './LiveBlock';
+import { PanelBlock } from './PanelBlock';
 import { CONTAINER_TINT, ContainerHead } from './Container';
 import { ShapeBlock, StickyBlock } from './Drawn';
 import { ColorField } from './ColorPicker';
@@ -136,6 +141,7 @@ const PLACEHOLDER: Record<BlockType, string> = {
   code: 'Code',
   chart: '',
   live: '',
+  panel: '',
   container: '',
   sticky: '',
   shape: '',
@@ -481,12 +487,14 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
         ? chartBlock(kind.chart ?? 'bar', indent)
         : type === 'live'
           ? liveBlock(kind.live ?? 'goal', indent)
+          : type === 'panel'
+          ? panelBlock(kind.panel ?? 'plan', indent)
           : type === 'sticky'
           ? stickyBlock(indent)
           : shapeBlock(kind.shape ?? 'rectangle', indent);
       const made = { ...fresh, ...(empty ? { id: host.id, ...cleanPlace(host) } : {}) };
       // A note or a shape is narrower than the page; the line after it is not.
-      const wide = !host.indent && type !== 'chart' && type !== 'live' ? { w: itemOf.get(host.id)?.w ?? COLS } : {};
+      const wide = !host.indent && type !== 'chart' && type !== 'live' && type !== 'panel' ? { w: itemOf.get(host.id)?.w ?? COLS } : {};
       const after = block('text', '', { ...indent, ...wide });
       onChange(
         empty
@@ -731,7 +739,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       }
       // A chart or a live block is not joined into: Backspace steps onto it,
       // and a second Backspace there takes it out.
-      if (above.type === 'chart' || above.type === 'live') {
+      if (above.type === 'chart' || above.type === 'live' || above.type === 'panel') {
         setFocus({ id: above.id, at: 'start' });
         return;
       }
@@ -935,6 +943,17 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
                 }}
                 onChange={(change) => patch(one.id, change)}
                 onAdd={() => addInside(one.id)}
+                onKey={(event) => dividerKey(event, one)}
+              />
+            ) : one.type === 'panel' ? (
+              <PanelBlock
+                one={one}
+                disabled={disabled}
+                register={(node) => {
+                  if (node) nodes.current.set(one.id, node);
+                  else nodes.current.delete(one.id);
+                }}
+                onChange={(change) => patch(one.id, change)}
                 onKey={(event) => dividerKey(event, one)}
               />
             ) : one.type === 'live' ? (
@@ -1299,14 +1318,14 @@ function SlashMenu({
               <span className="sp-pop-glyph" aria-hidden="true">{row.open ? '▾' : '▸'}</span>
               <span className="sp-pop-words">
                 <span className="sp-pop-label">{row.label}</span>
-                <span className="sp-pop-hint">{row.open ? 'Click to fold' : `${row.count} live blocks from your data`}</span>
+                <span className="sp-pop-hint">{row.open ? 'Click to fold' : `${row.count} blocks from your data`}</span>
               </span>
             </div>
           );
         }
         const kind = row.kind;
         return (
-          <div key={`${kind.type}-${kind.chart ?? kind.shape ?? kind.live ?? ''}`} {...hover} className={`sp-pop-item${kind.group && open.includes(kind.group) && !query ? ' is-inner' : ''}`}>
+          <div key={`${kind.type}-${kind.chart ?? kind.shape ?? kind.live ?? kind.panel ?? ''}`} {...hover} className={`sp-pop-item${kind.group && open.includes(kind.group) && !query ? ' is-inner' : ''}`}>
             <span className="sp-pop-glyph" aria-hidden="true">{kind.glyph}</span>
             <span className="sp-pop-words">
               <span className="sp-pop-label">{kind.label}</span>

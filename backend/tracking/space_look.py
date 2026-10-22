@@ -249,6 +249,14 @@ def _describe_live(live: dict) -> str:
     return ' '.join(parts)
 
 
+def _describe_panel(panel: dict) -> str:
+    parts = [panel.get('kind', '')]
+    for key, value in panel.items():
+        if key != 'kind' and value not in (None, '', []):
+            parts.append('{}={}'.format(key, ','.join(map(str, value)) if isinstance(value, list) else value))
+    return ' '.join(parts)
+
+
 def _place(block: dict) -> str:
     if block.get('x') is not None and block.get('w') is not None:
         x, w = block['x'], block['w']
@@ -295,6 +303,8 @@ def snapshot(doc: dict) -> List[str]:
                 '{} {}'.format(p.get('label'), p.get('value')) for p in chart.get('points') or [])[:120]))
         if kind == 'live' and block.get('live'):
             bits.append('live: {}'.format(_describe_live(block['live'])))
+        if kind == 'panel' and block.get('panel'):
+            bits.append('panel: {}'.format(_describe_panel(block['panel'])))
         place = _place(block)
         if place:
             bits.append(place)

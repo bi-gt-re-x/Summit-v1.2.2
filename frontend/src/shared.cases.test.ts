@@ -15,6 +15,10 @@ import nameFamilyCases from '@shared/cases/name_family.json';
 import backgroundCases from '@shared/cases/background_detail.json';
 import overdueCases from '@shared/cases/overdue.json';
 import problemCountCases from '@shared/cases/problem_count.json';
+import spacePanelCases from '@shared/cases/space_panels.json';
+import livePickCases from '@shared/cases/live_picks.json';
+import { cleanPanel } from '@/components/Spaces/panels';
+import { cleanLive } from '@/components/Spaces/live';
 import { problemCount } from '@/utils/problemCount';
 import { daysLate, lateXp } from '@/utils/overdue';
 import { backgroundDetail } from '@/utils/background';
@@ -57,6 +61,18 @@ describe('what finishing late pays, as the server works it out', () => {
 describe('how many problems a title holds, as the server reads it', () => {
   it.each(problemCountCases.cases.map((one) => [one.title || 'empty', one] as const))('%s', (_title, one) => {
     expect(problemCount(one.title)).toBe(one.count);
+  });
+});
+
+describe("a panel block's settings, as the server cleans them", () => {
+  it.each(spacePanelCases.cases.map((one) => [one.why, one] as const))('%s', (_why, one) => {
+    expect(cleanPanel(one.raw)).toEqual(one.clean);
+  });
+});
+
+describe("a live block's picks, as the server cleans them", () => {
+  it.each(livePickCases.cases.map((one) => [one.why, one] as const))('%s', (_why, one) => {
+    expect(cleanLive(one.raw)).toEqual(one.clean);
   });
 });
 

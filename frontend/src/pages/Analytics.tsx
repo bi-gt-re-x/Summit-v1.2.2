@@ -157,6 +157,7 @@ import '@/styles/analytics.css';
 import '@/styles/growth.css';
 import { startAnalyticsReads } from '@/components/Analytics/earlyReads';
 import { SOLID_AT } from '@/components/Analytics/milestones';
+import { SubjectsOpening } from '@/components/Analytics/tabs/SubjectsTab';
 
 /* The page's reads begin the moment this module is evaluated — when the route
    is first opened — rather than after the first commit. See
@@ -590,13 +591,7 @@ export default function Analytics() {
            and the plan under it is its own opening. */
         return null;
       case 'subjects':
-        return breakdown.rows.length > 0 ? (
-          <TabOpening>
-            <strong>{breakdown.rows.length}</strong>{' '}
-            {breakdown.rows.length === 1 ? 'subject has' : 'subjects have'} XP in {spanText}, and{' '}
-            <strong>{breakdown.rows[0]!.label}</strong> is the furthest along.
-          </TabOpening>
-        ) : null;
+        return <SubjectsOpening rows={breakdown.rows} span={spanText} />;
       default:
         return null;
     }

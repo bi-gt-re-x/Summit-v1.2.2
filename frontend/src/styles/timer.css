@@ -14,7 +14,10 @@
 /* Fills the width beside the rail like every signed-in page — the default
    in styles/layout.css, not a rule of this page's. */
 
-.pom-page {
+/* `.sp-pom` is a timer panel on a space's page (components/Spaces/panelViews):
+   the same tokens, so the Timer's panels look the same there. */
+.pom-page,
+.sp-pom {
     --pom-card: var(--color-surface);
     --pom-card-2: #f6f8fc;
     --pom-line: var(--color-line);
@@ -55,7 +58,8 @@
 }
 .pom-page * { box-sizing: border-box; }
 
-html[data-theme="dark"] .pom-page {
+html[data-theme="dark"] .pom-page,
+html[data-theme="dark"] .sp-pom {
     --pom-card: var(--color-surface);
     --pom-card-2: var(--color-surface-2);
     --pom-line: var(--color-line);
@@ -657,6 +661,25 @@ html[data-theme="dark"] .pom-page {
 .pom-today-count { color: var(--pom-faint); font-size: var(--text-xs); white-space: nowrap; }
 .pom-today-time { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .pom-tasks li:last-child { border-bottom: none; }
+
+/* Recent sessions: each one with its replay strip. Drawn by a timer panel on
+   a space's page (components/Timer/panels `RecentSessions`). */
+.pom-recent-list { margin: 0; padding: 0; list-style: none; }
+.pom-recent-list li {
+    display: grid; gap: 6px;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--pom-line);
+}
+.pom-recent-list li:last-child { border-bottom: none; }
+.pom-recent-top { display: flex; align-items: baseline; gap: var(--space-2); min-width: 0; }
+.pom-recent-top b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pom-recent-on {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    color: var(--pom-muted);
+}
+.pom-recent-when { color: var(--pom-faint); font-size: var(--text-xs); white-space: nowrap; }
+.pom-recent-said { color: var(--pom-muted); font-size: var(--text-xs); }
 .pom-tasks-title {
     flex: 1;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;

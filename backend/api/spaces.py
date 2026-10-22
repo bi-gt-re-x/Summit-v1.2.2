@@ -29,6 +29,12 @@ settings, cleaned by `live.clean_config`, and the page asks for what that
 source says *now* every time it draws it. backend/tracking/live.py has the
 rules and the note on how an open page keeps up.
 
+A `panel` block is the same idea in the browser: it names one of the app's
+own panels (the plan, the trend chart, the habit cards, the focus timer, the
+badges) and its settings, cleaned by `panels.clean_panel`
+(backend/tracking/panels.py), and the page draws that panel from the
+account's numbers with the component it comes from.
+
     GET  /api/spaces/live                what one live block shows right now
     GET  /api/spaces/live/options        what a live block can be pointed at
     GET  /api/spaces/live/revisions      a stamp per source; a change means refresh
@@ -74,7 +80,7 @@ from backend.config.shared import RULES
 from backend.config import subjects as subjects_catalog
 from backend.goal_matcher import store as goal_store
 from backend.tracking import growth as growth_tracking
-from backend.tracking import live
+from backend.tracking import live, panels
 from backend.tracking import space_ai, space_look
 from backend.tracking.subject_brief import BriefUnavailable
 from backend.tracking import skill_level
@@ -261,6 +267,8 @@ def _clean_doc(raw) -> Optional[dict]:
             block['chart'] = _clean_chart(item.get('chart'))
         if kind == 'live':
             block['live'] = live.clean_config(item.get('live'))
+        if kind == 'panel':
+            block['panel'] = panels.clean_panel(item.get('panel'))
         if kind == 'container':
             fill = _clean_fill(item.get('fill'))
             if fill:
@@ -326,6 +334,9 @@ def _doc_text(doc: dict) -> str:
         elif kind == 'live':
             name = LIVE_NAMES[block['live']['source']]
             lines.append(pad + '[Live: {}{}]'.format(name, ', ' + text if text else ''))
+        elif kind == 'panel':
+            name = panels.NAMES[block['panel']['kind']]
+            lines.append(pad + '[Panel: {}{}]'.format(name, ', ' + text if text else ''))
         elif kind == 'chart':
             chart = block['chart']
             name = '{} chart'.format(chart['kind'].capitalize())
@@ -781,7 +792,7 @@ def live_data(username, config, today=None):
         goal = live.pick_goal(_goals_now(username), config['goal'], today)
         return live.goal_view(goal, _tasks(username) if goal else [], today)
     if source == 'goals':
-        return live.goals_view(_goals_now(username), config['status'], today)
+        return live.goals_view(_goals_now(username), config['status'], today, config['pick'])
     if source == 'record':
         return live.record_view(records_api._mine(username), config['name'], today)
     if source == 'heatmap':
@@ -807,7 +818,8 @@ def live_data(username, config, today=None):
         series = (growth_tracking.series(username, days) or {}).get('growth_data') or []
         return live.productivity_view(series, config['weeks'], _streak(username), today, config['metric'])
     if source == 'records':
-        return live.records_view(records_api._mine(username), config['category'], config['limit'])
+        return live.records_view(records_api._mine(username), config['category'], config['limit'],
+                                 config['pick'], config['sort'])
     if source == 'calendar':
         return live.calendar_view(db.columns_for('tasks', username, LIVE_TASK_FIELDS),
                                   _goals_now(username), today, config['days'])
@@ -834,13 +846,19 @@ def _subject_name(username, subject):
 def read_live(source: str = '', goal: str = '', tree: str = '', weeks: int = 0,
               category: str = '', limit: int = 0, days: int = 0, subject: str = '',
               view: str = '', metric: str = '', status: str = '', name: str = '',
+              pick: str = '', sort: str = '',
               username: str = Depends(current_username)):
-    """What one live block shows right now. Read only, like every GET."""
+    """What one live block shows right now. Read only, like every GET.
+
+    `pick` is a JSON list (the goals or records ticked), since a query string
+    has no lists of its own.
+    """
     if source not in live.SOURCES:
         return fail("There's no live source called {}.".format(source or 'that'))
     config = live.clean_config({'source': source, 'goal': goal, 'tree': tree, 'weeks': weeks,
                                 'category': category, 'limit': limit, 'days': days, 'subject': subject,
-                                'view': view, 'metric': metric, 'status': status, 'name': name})
+                                'view': view, 'metric': metric, 'status': status, 'name': name,
+                                'pick': pick, 'sort': sort})
     return ok(config=config, data=live_data(username, config),
               revision=live.revisions(username)[source],
               at=datetime.now().isoformat(timespec='seconds'))

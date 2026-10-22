@@ -1,0 +1,12 @@
+{
+  "_about": "A live block's goal and record picks, and the records' sort, as a page may store them. Run by tests/test_shared_cases.py against backend/tracking/live.py `clean_config` and by frontend/src/shared.cases.test.ts against `cleanLive` in frontend/src/components/Spaces/live.ts.",
+  "cases": [
+    {"why": "records start with nothing picked and the newest best first", "raw": {"source": "records"}, "clean": {"source": "records", "view": "list", "category": "", "limit": 5, "pick": [], "sort": "recent"}},
+    {"why": "records keep the ones ticked, each once", "raw": {"source": "records", "pick": ["Mile", " Bench ", "Mile", "", 7], "sort": "improved"}, "clean": {"source": "records", "view": "list", "category": "", "limit": 5, "pick": ["Mile", "Bench", "7"], "sort": "improved"}},
+    {"why": "a query sends the pick as JSON", "raw": {"source": "records", "pick": "[\"Mile\",\"Squat\"]", "sort": "tries"}, "clean": {"source": "records", "view": "list", "category": "", "limit": 5, "pick": ["Mile", "Squat"], "sort": "tries"}},
+    {"why": "a pick that isn't a list picks nothing", "raw": {"source": "records", "pick": "Mile", "sort": "loudest"}, "clean": {"source": "records", "view": "list", "category": "", "limit": 5, "pick": [], "sort": "recent"}},
+    {"why": "broken JSON picks nothing", "raw": {"source": "records", "pick": "[\"Mile\""}, "clean": {"source": "records", "view": "list", "category": "", "limit": 5, "pick": [], "sort": "recent"}},
+    {"why": "goals keep the ones ticked, at most twelve", "raw": {"source": "goals", "status": "done", "pick": ["g0", "g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11", "g12", "g13", "g14", "g15", "g16", "g17", "g18", "g19"]}, "clean": {"source": "goals", "view": "list", "status": "done", "pick": ["g0", "g1", "g2", "g3", "g4", "g5", "g6", "g7", "g8", "g9", "g10", "g11"]}},
+    {"why": "true is not a goal", "raw": {"source": "goals", "pick": [true, "g1"]}, "clean": {"source": "goals", "view": "list", "status": "active", "pick": ["g1"]}}
+  ]
+}

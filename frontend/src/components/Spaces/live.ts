@@ -43,6 +43,8 @@ export const HEAT_WEEKS: readonly number[] = LIVE.heat_weeks;
 export const RHYTHM_DAYS: readonly number[] = LIVE.rhythm_days;
 export const GOAL_STATUS: readonly string[] = LIVE.goal_status;
 export const LIMIT_MAX: number = LIVE.limit_max;
+export const PICK_MAX: number = LIVE.pick_max;
+export const RECORD_SORTS: readonly string[] = LIVE.record_sorts;
 export const POLL_MS: number = LIVE.poll_ms;
 
 /** Settings every source has: how it's drawn, and (for some) what it measures. */
@@ -54,8 +56,8 @@ interface Common {
 export type LiveConfig = Common &
   (
     | { source: 'goal'; goal: string }
-    | { source: 'goals'; status: string }
-    | { source: 'records'; category: string; limit: number }
+    | { source: 'goals'; status: string; pick: string[] }
+    | { source: 'records'; category: string; limit: number; pick: string[]; sort: string }
     | { source: 'record'; name: string }
     | { source: 'calendar'; days: number }
     | { source: 'productivity'; weeks: number }
@@ -116,6 +118,9 @@ export const VIEW_LABEL: Record<string, string> = {
 
 export const METRIC_LABEL: Record<Metric, string> = { xp: 'XP', tasks: 'Tasks', focus: 'Focus' };
 
+/** How the records' sort reads in settings. */
+export const SORT_LABEL: Record<string, string> = { recent: 'Newest best', improved: 'Most improved', tries: 'Most logged', name: 'A to Z' };
+
 /** What a new block of each source starts as. */
 export function defaultLive(source: LiveSource): LiveConfig {
   const view = VIEWS[source]?.[0] ?? 'list';
@@ -125,9 +130,9 @@ export function defaultLive(source: LiveSource): LiveConfig {
     case 'goal':
       return { ...common, source, goal: '' };
     case 'goals':
-      return { ...common, source, status: GOAL_STATUS[0] ?? 'active' };
+      return { ...common, source, status: GOAL_STATUS[0] ?? 'active', pick: [] };
     case 'records':
-      return { ...common, source, category: '', limit: 5 };
+      return { ...common, source, category: '', limit: 5, pick: [], sort: RECORD_SORTS[0] ?? 'recent' };
     case 'record':
       return { ...common, source, name: '' };
     case 'calendar':
@@ -156,6 +161,26 @@ const pick = (value: unknown, allowed: readonly number[], fallback: number): num
 const word = <T extends string>(value: unknown, allowed: readonly T[], fallback: T): T =>
   (allowed as readonly unknown[]).includes(value) ? (value as T) : fallback;
 
+/** The goals or records ticked: short strings, each once, at most PICK_MAX. */
+const pickList = (value: unknown): string[] => {
+  let raw = value;
+  if (typeof raw === 'string') {
+    try {
+      raw = raw.trim().startsWith('[') ? JSON.parse(raw) : [];
+    } catch {
+      raw = [];
+    }
+  }
+  if (!Array.isArray(raw)) return [];
+  const out: string[] = [];
+  for (const item of raw) {
+    const one = ref(item);
+    if (one && !out.includes(one)) out.push(one);
+    if (out.length >= PICK_MAX) break;
+  }
+  return out;
+};
+
 /** Settings as stored, made safe: the server's `clean_config`, on this side. */
 export function cleanLive(raw: unknown): LiveConfig {
   const one = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
@@ -168,10 +193,17 @@ export function cleanLive(raw: unknown): LiveConfig {
     case 'goal':
       return { ...base, ...common, goal: ref(one.goal) };
     case 'goals':
-      return { ...base, ...common, status: word(one.status, GOAL_STATUS, base.status) };
+      return { ...base, ...common, status: word(one.status, GOAL_STATUS, base.status), pick: pickList(one.pick) };
     case 'records': {
       const limit = Math.floor(Number(one.limit));
-      return { ...base, ...common, category: ref(one.category), limit: limit >= 1 && limit <= LIMIT_MAX ? limit : base.limit };
+      return {
+        ...base,
+        ...common,
+        category: ref(one.category),
+        limit: limit >= 1 && limit <= LIMIT_MAX ? limit : base.limit,
+        pick: pickList(one.pick),
+        sort: word(one.sort, RECORD_SORTS, base.sort),
+      };
     }
     case 'record':
       return { ...base, ...common, name: ref(one.name) };
@@ -192,16 +224,20 @@ export function cleanLive(raw: unknown): LiveConfig {
   }
 }
 
-/** The query /api/spaces/live is asked with. */
+/** The query /api/spaces/live is asked with. A list goes as JSON: a query has no lists. */
 export const liveQuery = (config: LiveConfig): Record<string, string | number> =>
-  Object.fromEntries(Object.entries(config).filter(([, value]) => value !== undefined)) as Record<string, string | number>;
+  Object.fromEntries(
+    Object.entries(config)
+      .filter(([, value]) => value !== undefined)
+      .map(([key, value]) => [key, Array.isArray(value) ? JSON.stringify(value) : value]),
+  ) as Record<string, string | number>;
 
 /** One string per distinct setting, for keying a read. */
 export const liveKey = (config: LiveConfig): string =>
   Object.entries(config)
     .filter(([, value]) => value !== undefined)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([key, value]) => `${key}=${value}`)
+    .map(([key, value]) => `${key}=${Array.isArray(value) ? JSON.stringify(value) : value}`)
     .join('&');
 
 /** The settings that change what is read, not how it's drawn. A new style needn't read again. */

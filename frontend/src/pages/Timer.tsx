@@ -91,17 +91,17 @@ import {
   useSubjectIndex, useUserData,
 } from '@/hooks';
 import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
-import { usePomodoro, type PickedTask } from '@/hooks/usePomodoro';
+import { usePomodoro } from '@/hooks/usePomodoro';
 import { goals as goalService, notes as noteService, tasks as taskService } from '@/services';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { reduced } from '@/utils/homePlay';
 import {
-  LEVELS, NEARBY, PHASE_LABEL, RECOMMENDED, SITTINGS, STYLES, clock, styleFor,
+  NEARBY, PHASE_LABEL, RECOMMENDED, SITTINGS, clock, styleFor,
   type Phase, type Sitting,
 } from '@/components/Timer/pomodoro';
 import {
-  MIN_INTERVALS, byTask, execution, focusScore, kindOf, ranFrom, recommend, verdict, wasJustNow,
-  type Interval, type Recommendation, type TaskTime,
+  byTask, execution, focusScore, ranFrom, recommend, verdict, wasJustNow,
+  type Interval,
 } from '@/components/Timer/intervals';
 import { currentStone } from '@/utils/goalStage';
 import { goalIdsOf } from '@/utils/goalLinks';
@@ -110,6 +110,9 @@ import '@/styles/timer.css';
 import { Icon } from '@/components/Icon';
 import { FocusSitting } from '@/components/Timer/FocusSitting';
 import { daySummary } from '@/components/Dashboard/summary';
+import {
+  MethodPicker, Recommend, Replay, TaskPicker, TodaySittings, iso,
+} from '@/components/Timer/panels';
 
 const SETUP_KEY = 'pomodoro:setup';
 
@@ -117,41 +120,8 @@ const SETUP_KEY = 'pomodoro:setup';
     `pomPageOut` in styles/timer.css; see the note where it is used. */
 const SWAP_MS = 200;
 
-/**
- * The tones a row of goals or a column of tags rotates through.
- *
- * The names are the `pom-tone-*` classes in styles/timer.css, which is where
- * each one is bound to a colour — the same vocabulary the ten method cards and
- * the stat tiles already use, so nothing here invents a palette of its own.
- */
-const TONES = ['blue', 'green', 'amber', 'purple', 'teal', 'rose', 'indigo', 'violet'] as const;
 
-/**
- * A stable tone for a subject.
- *
- * Hashed rather than counted, so the second Maths tag on the list is the same
- * blue as the first. A rotation by row index would colour the same subject
- * differently depending on what happened to be above it, which is worse than
- * no colour at all: it looks like it means something and it does not.
- */
-function toneFor(name: string): string {
-  let sum = 0;
-  for (let at = 0; at < name.length; at += 1) {
-    sum = (sum * 31 + name.charCodeAt(at)) >>> 0;
-  }
-  return TONES[sum % TONES.length]!;
-}
 
-/** A due date as the reader thinks of it, rather than as it is stored. */
-function due(date: string | null | undefined, today: Date): string {
-  if (!date) return 'No date';
-  const day = date.slice(0, 10);
-  if (day === iso(today)) return 'Today';
-  if (day === iso(shift(today, 1))) return 'Tomorrow';
-  if (day === iso(shift(today, -1))) return 'Yesterday';
-  const at = new Date(`${day}T00:00:00`);
-  return at.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-}
 
 /**
  * Whether this browser remembers the setup being done.
@@ -174,16 +144,6 @@ function legacySetupDone(user: string): boolean {
   } catch { return false; }
 }
 
-function iso(date: Date): string {
-  const p = (n: number) => (n < 10 ? `0${n}` : String(n));
-  return `${date.getFullYear()}-${p(date.getMonth() + 1)}-${p(date.getDate())}`;
-}
-function shift(from: Date, days: number): Date {
-  const out = new Date(from);
-  out.setDate(out.getDate() + days);
-  out.setHours(0, 0, 0, 0);
-  return out;
-}
 function greeting(hour: number): string {
   if (hour < 12) return 'Good morning';
   if (hour < 18) return 'Good afternoon';
@@ -271,69 +231,6 @@ function Ring({ percent, phase }: { percent: number; phase: Phase }) {
 }
 
 
-/**
- * The recommendation, or the reason there is not one yet.
- *
- * Both states are on purpose. A picker that silently starts suggesting things
- * once enough has been recorded is a page that changes shape for reasons the
- * reader cannot see, so the waiting state says what it is waiting for and how
- * far along it is — and it counts *sittings*, because that is the unit that
- * moves the number and "use the app more" is not an instruction anybody can
- * act on.
- *
- * The verdict names its own sample size for the same reason. "50 min, from 8
- * sittings" is a claim a reader can weigh; "50 min" is one they can only take
- * or leave.
- */
-function Recommend({ at, sittings, current, onUse }: {
-  at: Recommendation | null;
-  sittings: number;
-  current: string;
-  onUse: (styleId: string) => void;
-}) {
-  if (!at) {
-    const togo = Math.max(0, MIN_INTERVALS - sittings);
-    return (
-      <p className="pom-rec is-waiting">
-        <span className="pom-rec-icon" aria-hidden="true"><Icon name="sparkles" /></span>
-        {togo > 0
-          ? `Suggested lengths show up after ${MIN_INTERVALS} sessions. ${togo} to go.`
-          : "Try a couple of different lengths and we'll suggest one."}
-      </p>
-    );
-  }
-
-  const style = styleFor(at.styleId);
-  return (
-    <div className="pom-rec">
-      <span className="pom-rec-icon" aria-hidden="true"><Icon name="sparkles" /></span>
-      <span className="pom-rec-text">
-        <b>
-          Recommended focus · {at.minutes} min
-          {/* Which question this answers. "50 min for deep work" and "50 min"
-              are different claims, and a reader who tags their sittings should
-              be told which one they have been given. */}
-          {at.kind && <> for {kindOf(at.kind)?.label.toLowerCase()}</>}
-        </b>
-        <i>
-          {at.low === at.high
-            ? `Your ${at.minutes}-minute sessions go best, out of ${at.sample} logged.`
-            : `You work best between ${at.low} and ${at.high} minutes, out of ${at.sample} logged.`}
-        </i>
-      </span>
-      {current === at.styleId ? (
-        // Not "{name} in use" — the method grid's header already says exactly
-        // that further down the page, and one page saying one sentence twice
-        // reads as two facts.
-        <span className="pom-rec-on">Already your pick</span>
-      ) : (
-        <button type="button" className="pom-btn" onClick={() => onUse(at.styleId)}>
-          Use {style.name}
-        </button>
-      )}
-    </div>
-  );
-}
 
 
 // --------------------------------------------------------------------------
@@ -358,160 +255,8 @@ export interface Counting {
 // --------------------------------------------------------------------------
 // What the sittings are for
 // --------------------------------------------------------------------------
-/**
- * The open tasks, as things a sitting can be for.
- *
- * Pressing a row picks it and pressing the picked row again clears it, the
- * same toggle the rest of the page's chips use. The picked task is listed
- * first even when it is not among the next few due — it may have come from
- * the tasks page by `?task=`, and a pick that is not on screen is a pick
- * nobody can see or undo.
- *
- * Finishing a task is not offered here. That is a different act with XP
- * behind it, and a row that both picked and ticked would do one when somebody
- * meant the other. The sitting's own list ticks.
- */
-function TaskPicker({ tasks, picked, onPick, today }: {
-  tasks: Task[];
-  picked: string | null;
-  onPick: (task: PickedTask | null) => void;
-  today: Date;
-}) {
-  return (
-    <section className="pom-panel pom-picker" aria-labelledby="pom-picker-head">
-      <header className="pom-panel-head">
-        <div className="pom-panel-title">
-          <h2 id="pom-picker-head"><Icon name="clipboard" /> What are you working on?</h2>
-          <p>Pick a task and each session gets logged to it</p>
-        </div>
-        <Link className="pom-link" to="/tasks">All tasks</Link>
-      </header>
-      {tasks.length ? (
-        <ul className="pom-tasks">
-          {tasks.map((task) => {
-            const on = task.id === picked;
-            return (
-              <li key={task.id}>
-                <button type="button" className={`pom-task-pick${on ? ' is-on' : ''}`}
-                  aria-pressed={on}
-                  onClick={() => onPick(on ? null : { id: task.id, title: task.title })}>
-                  <span className="pom-check" aria-hidden="true" />
-                  <span className="pom-tasks-title">{task.title}</span>
-                  {task.subject && (
-                    <span className={`pom-tasks-tag pom-tone-${toneFor(task.subject)}`}>
-                      {task.subject}
-                    </span>
-                  )}
-                  <span className="pom-tasks-when">{due(task.due_date, today)}</span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p className="pom-empty">
-          Nothing on your plate. <Link className="pom-link" to="/tasks">Add a task</Link> to
-          focus on.
-        </p>
-      )}
-    </section>
-  );
-}
 
-/**
- * Where today's sittings went, by task.
- *
- * Read off the interval log — see the note at the top of the page. Minutes
- * are what the clock actually ran, cut-short
- * sittings included, because a sitting abandoned at minute nineteen was still
- * nineteen minutes on that task.
- */
-function TodaySittings({ rows }: { rows: TaskTime[] }) {
-  const minutes = rows.reduce((sum, row) => sum + row.minutes, 0);
-  const sittings = rows.reduce((sum, row) => sum + row.sittings, 0);
 
-  return (
-    <section className="pom-panel pom-today" aria-labelledby="pom-today-head">
-      <header className="pom-panel-head">
-        <div className="pom-panel-title">
-          <h2 id="pom-today-head"><Icon name="timer" /> Today&apos;s sessions</h2>
-          <p>
-            {sittings
-              ? `${fmtHM(minutes * 60)} across ${sittings} session${sittings === 1 ? '' : 's'}`
-              : 'Where your focus time went today'}
-          </p>
-        </div>
-      </header>
-      {rows.length ? (
-        <ul className="pom-today-list">
-          {rows.map((row) => (
-            <li key={row.id ?? 'none'} className={row.id ? undefined : 'is-none'}>
-              <span className="pom-today-title">{row.title ?? 'No task picked'}</span>
-              <span className="pom-today-count">
-                {row.sittings} session{row.sittings === 1 ? '' : 's'}
-              </span>
-              <strong className="pom-today-time">{fmtHM(row.minutes * 60)}</strong>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="pom-empty">No sessions yet today. Pick a task and press Start focus.</p>
-      )}
-    </section>
-  );
-}
-
-/**
- * The sitting, drawn along its own length, with the pauses where they fell.
- *
- * ## What a count cannot say
- *
- * "Three pauses" describes a sitting interrupted in its first five minutes and
- * a sitting that fell apart in its last ten equally, and those are not the same
- * afternoon: the first is someone settling in, the second is someone who
- * should have stopped. The positions are the only part of this record that can
- * tell them apart, so they are kept — see `breaks` in
- * components/Timer/intervals.ts.
- *
- * ## Why it is this small
- *
- * A strip a couple of hundred pixels wide, with no axis but its own length and
- * no interaction. Everything a bigger chart would add — a scale, a tooltip, a
- * click target per mark — would be inviting the reader to study one
- * twenty-five minute sitting, and there is nothing in one sitting worth that
- * much attention. The pattern across many of them is what the marks panel and
- * the next move are for.
- */
-function Replay({ sitting }: { sitting: Interval }) {
-  const breaks = sitting.breaks ?? [];
-  const span = Math.max(sitting.planned, sitting.minutes, 1);
-
-  return (
-    <div className="pom-replay">
-      <span className="pom-replay-track" aria-hidden="true">
-        <span className="pom-replay-ran" style={{ width: `${Math.min(100, (sitting.minutes / span) * 100)}%` }} />
-        {breaks.map((at, index) => (
-          <span
-            key={`${at}-${index}`}
-            className="pom-replay-mark"
-            style={{ left: `${Math.min(100, (at / span) * 100)}%` }}
-          />
-        ))}
-      </span>
-      <span className="pom-replay-scale" aria-hidden="true">
-        <i>0m</i>
-        <i>{span}m</i>
-      </span>
-      {/* The same thing in words, because the strip above is decoration to a
-          screen reader and this is the only form of it that is not. */}
-      <span className="pom-replay-said">
-        {breaks.length === 0
-          ? `${sitting.minutes} min, no pauses.`
-          : `${sitting.minutes} min, paused at ${breaks.map((at) => `${at}m`).join(', ')}.`}
-      </span>
-    </div>
-  );
-}
 
 
 /**
@@ -1063,30 +808,8 @@ export default function Timer() {
               </div>
             </header>
 
-            <div className="pom-picks">
-              <label className="pom-pick">
-                <span className="pom-pick-glyph" aria-hidden="true"><Icon name="flame" /></span>
-                <span className="pom-pick-top">
-                  <b>{level.name}</b>
-                  <i>{level.hint}</i>
-                </span>
-                <select value={level.id} aria-label="Intensity"
-                  onChange={(e) => pomodoro.setLevel(Number(e.target.value))}>
-                  {LEVELS.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </label>
-              <label className="pom-pick">
-                <span className="pom-pick-glyph" aria-hidden="true"><Icon name="target" /></span>
-                <span className="pom-pick-top">
-                  <b>{style.name}</b>
-                  <i>{style.focus} min work · {style.rest} min break</i>
-                </span>
-                <select value={style.id} aria-label="Timer style"
-                  onChange={(e) => pomodoro.choose(e.target.value)}>
-                  {STYLES.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </label>
-            </div>
+            <MethodPicker levelId={level.id} styleId={style.id}
+              onLevel={pomodoro.setLevel} onStyle={pomodoro.choose} />
 
             <Recommend at={suggestion} sittings={intervals.length}
               current={style.id} onUse={pomodoro.choose} />

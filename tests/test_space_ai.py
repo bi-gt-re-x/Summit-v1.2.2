@@ -169,6 +169,33 @@ def test_live_analytics_blocks_point_at_real_things(app, monkeypatch):
     assert doc['background']['color'] == '#f0f4ff'
 
 
+def test_it_can_place_the_apps_own_panels(app, monkeypatch):
+    """A panel block names its kind and starts on that kind's settings; an
+    edit that doesn't name a new kind keeps the reader's settings."""
+    make_account('panels')
+    client = sign_in(app, 'panels')
+    _stub(monkeypatch, json.dumps(json.loads(_answer(blocks=[
+        _live_block(type='panel', panel_kind='plan', text='Today'),
+        _live_block(type='panel', panel_kind='timer'),
+    ]))))
+    doc = client.post('/api/spaces/1/ai', json={'prompt': 'a plan and a timer'}).json()['space']['doc']
+    plan, timer = doc['blocks'][0], doc['blocks'][1]
+    assert plan['panel'] == {'kind': 'plan', 'budget': 45, 'limit': 8} and plan['text'] == 'Today'
+    assert timer['panel'] == {'kind': 'timer', 'show': ['task']}
+
+    # The reader sets the plan to an hour; an AI edit to its caption keeps that.
+    doc['blocks'][0]['panel']['budget'] = 60
+    client.post('/api/spaces/1', json={'doc': doc})
+    _stub(monkeypatch, json.dumps({'reply': 'Done.', 'mode': 'edit', 'icon': '', 'cover': '', 'cover_text': '',
+                                   'cover_align': '', 'background': '', 'blocks': [], 'edits': [
+                                       {'op': 'update', 'index': 1, 'was': 'Today', 'target': None,
+                                        'block': _live_block(type='panel', text='This hour')}]}))
+    doc = client.post('/api/spaces/1/ai', json={'prompt': 'rename the plan'}).json()['space']['doc']
+    assert doc['blocks'][0]['panel'] == {'kind': 'plan', 'budget': 60, 'limit': 8}
+    assert doc['blocks'][0]['text'] == 'This hour'
+    assert '  - timer: timer (Focus timer)' in space_ai.SYSTEM
+
+
 def test_the_brief_lists_every_live_source_and_the_accounts_picks():
     brief = space_ai.brief_from('track it', '', 'Space 1', [], options={
         'goals': [{'id': '9', 'title': 'AIME'}],
