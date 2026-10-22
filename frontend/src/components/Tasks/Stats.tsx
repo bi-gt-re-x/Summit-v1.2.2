@@ -13,6 +13,7 @@
  * nor bad and a card that decorated it with a red arrow would be inventing an
  * opinion the number does not hold.
  */
+import type { ReactNode } from 'react';
 import { useCountUp } from '@/hooks';
 import type { StatSeries, TaskCounts } from './board';
 import { trendPct } from './board';
@@ -74,6 +75,40 @@ function Value({ value, suffix }: { value: number; suffix?: string }) {
     </strong>
   );
 }
+
+/**
+ * A line drawing per card, for the paper look, which leads each card with one.
+ * The other looks hide it (styles/tasks.css) and keep the card as it was.
+ */
+const ICONS: Record<string, ReactNode> = {
+  open: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.5 12.2l2.4 2.4 4.6-5" />
+    </svg>
+  ),
+  today: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9" />
+    </svg>
+  ),
+  overdue: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </svg>
+  ),
+  rate: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <path d="M5 20v-4M10 20v-8M15 20v-11M20 20V5" />
+    </svg>
+  ),
+  xp: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M12 3.5l2.6 5.6 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6L3.4 9.9l6-.8z" />
+    </svg>
+  ),
+};
 
 export interface StatCardsProps {
   counts: TaskCounts;
@@ -149,6 +184,7 @@ export function StatCards({ counts, series }: StatCardsProps) {
     <div className="tk-stats">
       {cards.map((card) => (
         <article className={`tk-stat is-${card.tone}`} key={card.key}>
+          <span className="tk-stat-ico" aria-hidden="true">{ICONS[card.key]}</span>
           <Value value={card.value} suffix={card.suffix} />
           <span className="tk-stat-label">{card.label}</span>
           <span className="tk-stat-hint">{card.hint}</span>

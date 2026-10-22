@@ -975,6 +975,20 @@ export default function Tasks() {
               <p className="tk-quiet">Everything you need to do.</p>
             </div>
             <div className="tk-head-tools">
+              {/* Today, as the paper look's header shows it. The other looks
+                  hide it (styles/tasks.css). */}
+              <span className="tk-head-date">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+                  <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+                  <path d="M3.5 10h17M8 3v4M16 3v4" />
+                </svg>
+                {new Date().toLocaleDateString(undefined, {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </span>
               <button
                 type="button"
                 className="tk-new"
@@ -1066,135 +1080,140 @@ export default function Tasks() {
               />
             )}
 
-            <Toolbar
-              query={query}
-              onQuery={changeQuery}
-              subjects={used}
-              showing={showing}
-              total={list.length}
-              group={group}
-              onGroup={chooseGroup}
-            />
+            {/* The search, the filters and the list as one piece. A plain
+                box in the other looks (`display: contents`), a card in the
+                paper look. */}
+            <div className="tk-board">
+              <Toolbar
+                query={query}
+                onQuery={changeQuery}
+                subjects={used}
+                showing={showing}
+                total={list.length}
+                group={group}
+                onGroup={chooseGroup}
+              />
 
-            <BulkBar
-              count={chosen.length}
-              busy={saving}
-              onComplete={() => void completePicked()}
-              onDelete={async () => {
-                if (
-                  prefs.confirm_delete
-                  && !(await confirm({
-                    title:
-                      chosen.length === 1
-                        ? `Delete "${chosen[0]?.title}"?`
-                        : `Delete ${chosen.length} tasks?`,
-                    confirmLabel: 'Delete',
-                    danger: true,
-                  }))
-                ) {
-                  return;
-                }
-                void bulk((task) => Promise.resolve(drop(task, false)));
-              }}
-              onClear={() => setPicked(new Set())}
-            />
+              <BulkBar
+                count={chosen.length}
+                busy={saving}
+                onComplete={() => void completePicked()}
+                onDelete={async () => {
+                  if (
+                    prefs.confirm_delete
+                    && !(await confirm({
+                      title:
+                        chosen.length === 1
+                          ? `Delete "${chosen[0]?.title}"?`
+                          : `Delete ${chosen.length} tasks?`,
+                      confirmLabel: 'Delete',
+                      danger: true,
+                    }))
+                  ) {
+                    return;
+                  }
+                  void bulk((task) => Promise.resolve(drop(task, false)));
+                }}
+                onClear={() => setPicked(new Set())}
+              />
 
-            {/* Above the list rather than under it: it is the offer you want
-                before you start working down the day, not after you already
-                have. It sits below the bulk bar so the two actions that change
-                many rows at once are together, and above the first heading so
-                it is never mistaken for belonging to one. */}
-            <DayComplete
-              tasks={dayTasks}
-              hidden={dayHidden}
-              busy={saving}
-              canReview={prefs.rating_depth !== 'none'}
-              onConfirm={(review) => void completeDay(review)}
-            />
+              {/* Above the list rather than under it: it is the offer you want
+                  before you start working down the day, not after you already
+                  have. It sits below the bulk bar so the two actions that change
+                  many rows at once are together, and above the first heading so
+                  it is never mistaken for belonging to one. */}
+              <DayComplete
+                tasks={dayTasks}
+                hidden={dayHidden}
+                busy={saving}
+                canReview={prefs.rating_depth !== 'none'}
+                onConfirm={(review) => void completeDay(review)}
+              />
 
-            {groups.length === 0 ? (
-              <p className="tk-empty">
-                {list.length === 0
-                  ? 'No tasks yet. Use Quick add at the top to make one.'
-                  : 'No tasks match. Clear the filters to see the rest.'}
-              </p>
-            ) : (
-              groups.map((group) => {
-                const closed = shut.has(group.key);
-                const cap = drawn[group.key] ?? PAGE;
-                const rest = group.tasks.length - cap;
-                return (
-                  <section className={`tk-group is-${group.key}`} key={group.key}>
-                    <header className="tk-group-head">
-                      <button
-                        type="button"
-                        className="tk-group-toggle"
-                        aria-expanded={!closed}
-                        onClick={() => toggleGroup(group.key)}
-                      >
-                        <h2>
-                          {group.label}
-                          <span className="tk-group-count">{group.tasks.length}</span>
-                        </h2>
-                        <i className={`tk-group-caret${closed ? ' is-shut' : ''}`} aria-hidden="true">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M6 9l6 6 6-6" />
-                          </svg>
-                        </i>
-                      </button>
-                      <p className="tk-quiet">{group.hint}</p>
-                    </header>
-                    {!closed && (
-                      <ul className="tk-list">
-                        {group.tasks.slice(0, cap).map((task) => (
-                          <TaskRow
-                            key={task.id}
-                            task={task}
-                            marked={task.id === marked}
-                            subject={subjectName(task.subject)}
-                            goals={linkable}
-                            onLink={link}
-                            estimate={plannedSeconds(task)}
-                            notes={noteCounts.get(task.id) ?? 0}
-                            selected={picked.has(task.id)}
-                            starred={starred.has(task.id)}
-                            busy={busyId === task.id || saving}
-                            onSelect={select}
-                            onComplete={(entry) => void complete(entry)}
-                            onReopen={reopen}
-                            onRename={rename}
-                            onDelete={drop}
-                            onStar={(entry) => setStarred(entry.id)}
-                          />
-                        ))}
-                      </ul>
-                    )}
-                    {!closed && rest > 0 && (
-                      <button
-                        type="button"
-                        className="tk-more-rows"
-                        onClick={() => drawMore(group.key, cap)}
-                      >
-                        Show {Math.min(rest, PAGE).toLocaleString()} more
-                        <span> of {rest.toLocaleString()} left in {group.label}</span>
-                      </button>
-                    )}
-                  </section>
-                );
-              })
-            )}
+              {groups.length === 0 ? (
+                <p className="tk-empty">
+                  {list.length === 0
+                    ? 'No tasks yet. Use Quick add at the top to make one.'
+                    : 'No tasks match. Clear the filters to see the rest.'}
+                </p>
+              ) : (
+                groups.map((group) => {
+                  const closed = shut.has(group.key);
+                  const cap = drawn[group.key] ?? PAGE;
+                  const rest = group.tasks.length - cap;
+                  return (
+                    <section className={`tk-group is-${group.key}`} key={group.key}>
+                      <header className="tk-group-head">
+                        <button
+                          type="button"
+                          className="tk-group-toggle"
+                          aria-expanded={!closed}
+                          onClick={() => toggleGroup(group.key)}
+                        >
+                          <h2>
+                            {group.label}
+                            <span className="tk-group-count">{group.tasks.length}</span>
+                          </h2>
+                          <i className={`tk-group-caret${closed ? ' is-shut' : ''}`} aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M6 9l6 6 6-6" />
+                            </svg>
+                          </i>
+                        </button>
+                        <p className="tk-quiet">{group.hint}</p>
+                      </header>
+                      {!closed && (
+                        <ul className="tk-list">
+                          {group.tasks.slice(0, cap).map((task) => (
+                            <TaskRow
+                              key={task.id}
+                              task={task}
+                              marked={task.id === marked}
+                              subject={subjectName(task.subject)}
+                              goals={linkable}
+                              onLink={link}
+                              estimate={plannedSeconds(task)}
+                              notes={noteCounts.get(task.id) ?? 0}
+                              selected={picked.has(task.id)}
+                              starred={starred.has(task.id)}
+                              busy={busyId === task.id || saving}
+                              onSelect={select}
+                              onComplete={(entry) => void complete(entry)}
+                              onReopen={reopen}
+                              onRename={rename}
+                              onDelete={drop}
+                              onStar={(entry) => setStarred(entry.id)}
+                            />
+                          ))}
+                        </ul>
+                      )}
+                      {!closed && rest > 0 && (
+                        <button
+                          type="button"
+                          className="tk-more-rows"
+                          onClick={() => drawMore(group.key, cap)}
+                        >
+                          Show {Math.min(rest, PAGE).toLocaleString()} more
+                          <span> of {rest.toLocaleString()} left in {group.label}</span>
+                        </button>
+                      )}
+                    </section>
+                  );
+                })
+              )}
 
-            {/* The horizon, stated where the list stops rather than only in
-                the menu that set it — a list that quietly ends seven days out
-                is a list a reader assumes is all of it. */}
-            {query.horizon === 'week' && beyond > 0 && (
-              <p className="tk-horizon">
-                {beyond.toLocaleString()} more outside this week.{' '}
-                <button type="button" onClick={() => changeQuery({ ...query, horizon: 'all' })}>
-                  Show everything
-                </button>
-              </p>
-            )}
+              {/* The horizon, stated where the list stops rather than only in
+                  the menu that set it — a list that quietly ends seven days out
+                  is a list a reader assumes is all of it. */}
+              {query.horizon === 'week' && beyond > 0 && (
+                <p className="tk-horizon">
+                  {beyond.toLocaleString()} more outside this week.{' '}
+                  <button type="button" onClick={() => changeQuery({ ...query, horizon: 'all' })}>
+                    Show everything
+                  </button>
+                </p>
+              )}
+            </div>
           </div>
 
           <Sidebar

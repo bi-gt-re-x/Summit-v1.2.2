@@ -808,7 +808,7 @@ export function scoreCards(all: GrowthDay[], tasks: Task[], days = 30): ScoreCar
     ),
     build(
       'follow',
-      'Follow-Through',
+      'Follow-through',
       'check',
       '%',
       (window) => followScore(window, plans),

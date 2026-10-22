@@ -453,7 +453,7 @@ describe('the panels brought back from before the cuts', () => {
      the work happens and the year of days — all removed in the complexity cut
      and restored at the reader's request. */
   it.each([
-    'Skill Growth',
+    'Skill growth',
     'Skills by level',
     'Time vs. progress',
     'When you get work done',
@@ -467,7 +467,7 @@ describe('the panels brought back from before the cuts', () => {
   it('opens on skill growth, ahead of the five graded measures', async () => {
     serve();
     draw(<GrowthTab model={fakeModel()} />);
-    const skill = await screen.findByRole('heading', { name: /^Skill Growth/ });
+    const skill = await screen.findByRole('heading', { name: /^Skill growth/ });
     const timeline = screen.getByRole('heading', { name: /^Growth timeline/ });
     // DOCUMENT_POSITION_FOLLOWING: the timeline comes after.
     expect(skill.compareDocumentPosition(timeline) & 4).toBeTruthy();

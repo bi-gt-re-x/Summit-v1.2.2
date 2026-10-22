@@ -44,7 +44,8 @@ const SIBLINGS: Record<string, string[]> = {
     'calendar/shell.css', 'calendar/palette.css', 'calendar/week.css', 'calendar/day.css', 'calendar/month.css',
     'calendar/dialogs.css', 'calendar/overview.css', 'catch-up.css', 'day-complete.css', 'rate-prompt.css',
     'subject-picker.css', 'subject-state.css', 'next-sessions.css', 'starter.css', 'tutorial.css', 'notifications.css',
-    'search.css', 'nametag.css', 'topbar.css', 'page-state.css', 'refresh-button.css', 'verify-banner.css'],
+    'search.css', 'nametag.css', 'topbar.css', 'page-state.css', 'refresh-button.css', 'verify-banner.css',
+    'tasks.css', 'analytics.css', 'growth.css', 'subject.css', 'subject-objective.css'],
 };
 
 function walk(dir: string, out: string[] = []): string[] {

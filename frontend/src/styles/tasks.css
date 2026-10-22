@@ -125,6 +125,8 @@ html[data-theme='dark'] .tk-page {
 }
 .tk-head-ico svg { width: 19px; height: 19px; }
 .tk-head-tools { display: flex; align-items: center; gap: var(--space-2); }
+/* Today's date, which only the paper look shows (styles/paper.css). */
+.tk-head-date { display: none; }
 
 .tk-new {
     display: inline-flex; align-items: center; gap: var(--space-2);
@@ -171,6 +173,9 @@ html[data-theme='dark'] .tk-page {
     align-items: start;
 }
 .tk-main { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+/* The toolbar and the list. No box of its own here, so its children sit in
+   .tk-main's column as they always did; the paper look makes it a card. */
+.tk-board { display: contents; }
 
 /* ---------- Stat cards ---------------------------------------------------- */
 /* Five across when there is room for five, and however many fit when there is
@@ -193,6 +198,8 @@ html[data-theme='dark'] .tk-page {
     box-shadow: var(--tk-shadow);
     overflow: hidden;
 }
+/* The paper look's line icon (styles/paper.css). Not drawn in the others. */
+.tk-stat-ico { display: none; }
 .tk-stat-value {
     font-size: var(--text-2xl); font-weight: 700; letter-spacing: -.02em; line-height: 1.1;
     font-variant-numeric: tabular-nums;

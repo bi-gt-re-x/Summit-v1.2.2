@@ -316,7 +316,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
               the tab. See utils/skillGrowth. */}
           <section className="ax-section">
             <Panel
-              title="Skill Growth"
+              title="Skill growth"
               note={`How your level in each subject moved over ${periodText}`}
             >
               <SkillGrowthPanel
@@ -472,7 +472,7 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
                   {data.previous
                     ? 'Nothing moved enough to call it a change.'
                     : "This period starts on your first day, so there's nothing"
-                      + 'earlier to compare with.'}
+                      + ' earlier to compare with.'}
                 </p>
               ) : (
                 <ul className="ax-gp-changes">

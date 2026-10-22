@@ -3,8 +3,9 @@
 
    A warm off-white ground, cards a shade lighter, faint warm rules, charcoal
    ink, a sage accent and a serif for titles and figures. It dresses the rail
-   and the top bar on every page, and the Dashboard, the Calendar and Goals
-   with everything they open.
+   and the top bar on every page, and the Dashboard, the Calendar, Goals,
+   Tasks and Analytics (every tab and the subject pages) with everything they
+   open.
 
    scripts/paper_theme.mjs writes the colours of every rule in those sheets
    onto this palette (paper-remap.css). This file is what a colour swap can't
@@ -15,12 +16,13 @@
 
    `html:not([data-skin]):not([data-theme="dark"])` is the default light look,
    so dark mode and the skins keep theirs. The page rules add
-   `:has(.dash, .calendar-container, .gx-page)`, so they only apply while one
-   of the three pages is open, popups in <body> included.
+   `:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page)`, so they
+   only apply while one of those pages is open, popups in <body> included.
+   A rule for one page alone names just its root, as in `:has(.tk-page)`.
    ========================================================================== */
 
-/* ---- Tokens: the three pages and everything they open ------------------- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) {
+/* ---- Tokens: the paper pages and everything they open ------------------- */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) {
     --paper-ground: #F7F6F2;
     --paper-card: #FAF8F4;
     --paper-inset: #F3F1EB;
@@ -77,8 +79,8 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar {
     --paper-serif: 'Newsreader', 'Lora', Georgia, 'Times New Roman', serif;
 }
 
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) body,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .app-main {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) body,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) .app-main {
     background: var(--paper-ground);
     background-image: none;
     color: var(--paper-ink);
@@ -232,41 +234,41 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar-panel {
 }
 
 /* ==========================================================================
-   SHARED: cards, buttons, fields, dialogs on the three pages
+   SHARED: cards, buttons, fields, dialogs on the paper pages
    ========================================================================== */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-card {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) .ui-card {
     border: 1px solid var(--paper-line);
     border-radius: 12px;
     background: var(--paper-card);
     box-shadow: none;
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn { border-radius: 8px; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn-primary { background: var(--paper-sage); color: #FFFFFF; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn-secondary {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) .ui-btn { border-radius: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) .ui-btn-primary { background: var(--paper-sage); color: #FFFFFF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) .ui-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) .ui-btn-secondary {
     border-color: var(--paper-line);
     background: #FCFAF6;
     color: var(--paper-body);
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) input:focus-visible,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) textarea:focus-visible,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) select:focus-visible {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) input:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) textarea:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) select:focus-visible {
     outline-color: var(--paper-sage);
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) ::selection {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) ::selection {
     background: #DDE3D9;
 }
 
 /* Every dialog these pages open, in one shape: paper, a faint rule, soft
    corners, a soft shadow, and a warm veil behind. */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) :is(.modal, .modal-content, .task-modal, .tm-dialog, .tm-sheet, .cu-sheet, .cu-card, .dc-card, .rp-card, .gx-modal, .gx-drawer, .gx-wizard, .lu-card, .gr-card, .event-modal, .cal-dialog, .wk-dialog, .bd-dialog) {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) :is(.modal, .modal-content, .task-modal, .tm-dialog, .tm-sheet, .cu-sheet, .cu-card, .dc-card, .rp-card, .gx-modal, .gx-drawer, .gx-wizard, .lu-card, .gr-card, .event-modal, .cal-dialog, .wk-dialog, .bd-dialog) {
     border-color: var(--paper-line);
     background: var(--paper-card);
     color: var(--paper-ink);
 }
 
 /* ---- Serif: titles and figures ----------------------------------------- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) :is(
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) :is(
     .dash-hello, .dash-stat-name, .dash-panel-title, .dash-big, .dash-ring-pct,
     .dash-xp-level, .dash-figure-value, .dash-insight-title, .fp-time, .fp-dial-text,
     .wk-title, .wk-dayname, .wk-panel-title, .wk-stat-num, .wk-ring-pct,
@@ -544,8 +546,8 @@ html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-note {
 }
 
 /* The task dialogs set the slider and its figure inline, in the old tan. */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) input[type="range"] { accent-color: var(--paper-sage) !important; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) #xpValue { color: var(--paper-sage-deep) !important; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) input[type="range"] { accent-color: var(--paper-sage) !important; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page) #xpValue { color: var(--paper-sage-deep) !important; }
 
 /* Calendar: every view's title and panel headings in the serif. */
 html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .calendar-container :is(h1, h2, .mv-title) {
@@ -558,3 +560,879 @@ html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .calenda
     font-weight: 500;
     color: var(--paper-ink);
 }
+
+/* ==========================================================================
+   TASKS
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-page {
+    --tk-card: var(--paper-card);
+    --tk-card-2: var(--paper-inset);
+    --tk-line: var(--paper-line);
+    --tk-line-soft: var(--paper-line-soft);
+    --tk-text: var(--paper-ink);
+    --tk-muted: var(--paper-muted);
+    --tk-faint: var(--paper-faint);
+    --tk-violet: var(--paper-sage);
+    --tk-green: #7D9A7E;
+    --tk-amber: #B8923F;
+    --tk-red: #B4675D;
+    --tk-blue: #6F8A99;
+    --tk-radius: 12px;
+    --tk-shadow: none;
+    --tk-hover: #F4F2EC;
+}
+
+/* The header stands on the page, like Goals: no card, no range. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-page .peak-hero {
+    padding: 0;
+    min-height: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-page .peak-hero .peak-scene,
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head-ico { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head { align-items: center; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head-title h1 {
+    margin-bottom: 4px;
+    font-family: var(--paper-serif);
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -.005em;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head-title .tk-quiet {
+    font-family: var(--paper-serif);
+    font-size: 16px;
+    color: #5F625E;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+    color: #5F625E;
+    font-size: 13.5px;
+    white-space: nowrap;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head-date svg { width: 17px; height: 17px; color: #6F716C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-new.tk-new {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-new.tk-new:hover { background: var(--paper-sage-deep); filter: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-new-caret { border-left-color: rgba(255, 255, 255, .35); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-more.is-page {
+    width: 36px;
+    height: 36px;
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    color: #6F716C;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-more.is-page:hover { background: var(--paper-inset); }
+
+/* The column on the right is a little narrower than elsewhere, so the five
+   figures fit on one row at laptop widths. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-body { grid-template-columns: minmax(0, 1fr) clamp(272px, 20vw, 330px); }
+@media (max-width: 1240px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-body { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The five figures: one row, a line icon, a serif figure, the note as a pill. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stats { gap: 14px; }
+@media (min-width: 1100px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stat.tk-stat {
+    align-items: flex-start;
+    gap: 3px;
+    padding: 18px 18px 16px;
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stat-ico {
+    display: grid;
+    place-items: center;
+    margin-bottom: 12px;
+    color: #4A4C48;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stat-ico svg { width: 21px; height: 21px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stat.tk-stat .tk-stat-value {
+    font-family: var(--paper-serif);
+    font-size: 30px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stat-label {
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--paper-body);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stat-hint {
+    margin-top: 12px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--paper-sage-soft);
+    color: #5F665F;
+    font-size: 11.5px;
+    line-height: 1.35;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-stat.is-amber, .tk-stat.is-red) .tk-stat-hint {
+    background: #F5E6E1;
+    color: #A65F55;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-stat :is(.tk-spark, .tk-stat-badge) { display: none; }
+
+/* The search, the filters and the list: one card, like the mockup. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-board {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 18px 8px;
+    border: 1px solid var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-toolbar { gap: 12px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-toolbar-top { gap: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-search {
+    height: 38px;
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #F6F5F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-search:focus-within { border-color: #C9CEC5; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-search input { font-size: 13.5px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-search kbd {
+    border-color: #E7E5DF;
+    background: var(--paper-card);
+}
+/* The three menus come apart into separate quiet buttons. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tools {
+    gap: 8px;
+    height: auto;
+    border: 0;
+    background: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-menu + .tk-menu .tk-tool { border-left: 1px solid #ECEAE4; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tool {
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    color: #5A5C57;
+    font-size: 13px;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tool:hover { background: var(--paper-inset); color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tool.is-open,
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tool.is-on { background: #F1F1EA; color: #4E524C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tool-value { color: var(--paper-ink); font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tool-count { background: var(--paper-sage); }
+
+/* Menus: paper, a hairline, soft corners. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-menu-panel {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: 0 2px 6px rgba(42, 44, 42, .06), 0 22px 48px rgba(42, 44, 42, .10);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-menu-item { border-radius: 8px; color: #3D3F3B; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-menu-item:hover { background: #F1EFEA; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-menu-item.is-on { color: #4E5A4F; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-menu-item.is-bad { color: #A65F55; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-menu-head { color: #9A9893; font-weight: 600; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tick { color: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-menu-drop, .tk-menu-note button) { color: var(--paper-sage-deep); }
+
+/* Chips: small pills, sage when picked. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chips { gap: 8px 18px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip-set { gap: 6px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip-label {
+    color: #A3A19C;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: .1em;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip {
+    gap: 5px;
+    padding: 4px 11px;
+    border-color: #ECEAE4;
+    border-radius: 999px;
+    background: transparent;
+    color: #6F716C;
+    font-size: 12px;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip:hover { border-color: #D9D6CF; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip.is-on {
+    border-color: transparent;
+    background: var(--paper-sage);
+    color: #FFFFFF;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip.is-on .tk-chip-ico { color: inherit; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip-ico.is-all { color: #8A8C86; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip-ico.is-high { color: #B4675D; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip-ico.is-medium { color: #B8923F; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-chip-ico.is-low { color: #7D9A7E; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-showing { color: #7F7F7B; font-size: 12.5px; }
+
+/* "Complete all" is a quiet link on the same line as "Showing", as in the
+   mockup. Only when it follows the toolbar directly: with the bulk bar
+   between them it keeps its own line. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-day-all.tk-day-all {
+    align-self: flex-end;
+    width: auto;
+    min-height: 0;
+    padding: 2px 0;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    box-shadow: none;
+    color: #4E524C;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-day-all.tk-day-all:hover:not(:disabled) {
+    background: none;
+    color: var(--paper-ink);
+    text-decoration: underline;
+    transform: none;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-day-all.tk-day-all::after { content: ' \2192'; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-day-all .tk-day-tick { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-toolbar + .tk-day-all.tk-day-all { margin-top: -36px; }
+
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-bulk {
+    border-color: #DDE1D8;
+    border-radius: 10px;
+    background: #F1F2EC;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-bulk-do { border-radius: 8px; background: var(--paper-sage); font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-bulk-do.is-bad { background: #B4675D; }
+
+/* Groups: a hairline above, a serif heading, the count in a soft pill. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-group {
+    gap: 4px;
+    padding-top: 16px;
+    border-top: 1px solid var(--paper-line-soft);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-group-head { flex-direction: row; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-group-toggle h2 {
+    font-family: var(--paper-serif);
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-group-count {
+    min-width: 20px;
+    height: 20px;
+    border: 0;
+    border-radius: 999px;
+    background: #F0EFE9;
+    color: #7A7A76;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-group.is-overdue .tk-group-count { background: #F5E6E1; color: #A65F55; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-group-head .tk-quiet { color: #A09E9A; font-size: 12px; }
+
+/* Rows: flat, split by a hairline, a serif name. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-list { gap: 0; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row.tk-row {
+    gap: 14px;
+    padding: 12px 6px;
+    border: 0;
+    border-bottom: 1px solid var(--paper-line-soft);
+    border-radius: 0;
+    background: transparent;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-list > .tk-row:last-child { border-bottom: 0; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row.tk-row:hover { background: #F4F2EC; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row::before { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row.is-found {
+    border-radius: 8px;
+    box-shadow: 0 0 0 2px #C9CFC4;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-check span {
+    width: 16px;
+    height: 16px;
+    border: 1.4px solid #C9C7C1;
+    border-radius: 4px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-check input:checked + span {
+    border-color: var(--paper-sage);
+    background-color: var(--paper-sage);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row-line { gap: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-title {
+    font-family: var(--paper-serif);
+    font-size: 16.5px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: #383635;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-rename {
+    border-color: #C9CEC5;
+    border-radius: 6px;
+    background: var(--paper-card);
+    font-family: var(--paper-serif);
+    font-size: 16px;
+    font-weight: 400;
+}
+/* Tags: the subject in a grey pill, priority as a dot and a word (the
+   Dashboard's way), and late as a soft red pill. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tag {
+    padding: 2px 8px;
+    border: 0;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tag.is-subject { background: #F1EFEA; color: #868684; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-tag.is-high, .tk-tag.is-medium, .tk-tag.is-low) {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 0;
+    background: none;
+    color: #8E8E8C;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-tag.is-high, .tk-tag.is-medium, .tk-tag.is-low)::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tag.is-high::before { background: #B4675D; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tag.is-medium::before { background: #C49A5A; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tag.is-low::before { background: #8B9689; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-tag.is-overdue { background: #F5E6E1; color: #A65F55; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row-meta { gap: 14px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row-meta span { font-size: 12px; color: #8E8E8C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row-meta span.is-late { color: #B4675D; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-row-meta span.tk-goal-chip { color: #5F7F63; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-notes-chip { color: #7A7A76; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-xp { color: #6F7A6E; font-size: 12.5px; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-xp.is-cut { color: #A65F55; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-star, .tk-more) { color: #A3A19C; border-radius: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-star, .tk-more):hover { background: #EFEEE8; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-star.is-on { color: #B8923F; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-more-rows {
+    margin: 8px 0 6px;
+    border-color: var(--paper-line);
+    border-radius: 8px;
+    color: #5F665F;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-more-rows:hover { background: #F4F2EC; border-color: #D9D6CF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-horizon { padding: 10px 0 8px; color: #8E8E8C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-horizon button { color: #4E524C; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-empty { border-color: var(--paper-line); border-radius: 10px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-failure { border-color: #EBCFC8; border-radius: 10px; background: #F8ECE8; color: #A65F55; }
+
+/* The New task form. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-composer {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-composer-name, .tk-input, .tk-select) {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #F6F5F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) :is(.tk-composer-name, .tk-input, .tk-select):focus { border-color: #C9CEC5; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-field > span { color: #9A9893; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-btn { border-color: #ECEAE4; border-radius: 8px; background: #FCFAF6; color: #54564F; font-size: 13.5px; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-btn.is-primary { border-color: transparent; background: var(--paper-sage); color: #FFFFFF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-btn.is-primary:hover:not(:disabled) { background: var(--paper-sage-deep); filter: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-btn.is-quiet { background: none; }
+
+/* The right-hand column: flat cards, serif titles, line icons with no disc. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side {
+    gap: 14px;
+    padding: 18px 20px;
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side-head { gap: 10px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side-head h2 {
+    font-family: var(--paper-serif);
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side-ico.tk-side-ico {
+    width: 20px;
+    height: 20px;
+    background: none;
+    color: #4A4C48;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side-ico svg { width: 18px; height: 18px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side-all { color: #8C8A86; font-weight: 400; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side-all:hover { color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-side-empty { color: #7A7A76; font-size: 12.5px; }
+
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-dial circle { stroke-width: 3; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-dial-track { stroke: #E7E6DF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-dial-fill { stroke: var(--paper-sage); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-dial-face strong {
+    font-family: var(--paper-serif);
+    font-size: 34px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-dial-face strong.is-long { font-size: 28px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-dial-face span { color: #7A7A76; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-play {
+    width: 38px;
+    height: 38px;
+    background: #6F7A6E;
+    color: #FFFFFF;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-play:hover { background: #5F6A5E; filter: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-reset { border-color: #E7E5DF; color: #7A7A76; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-dial-note { color: #7A7A76; }
+
+/* Coming up: a dot, the name, then the time and subject under it. */
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next { gap: 0; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next li {
+    display: grid;
+    grid-template-columns: 8px minmax(0, 1fr);
+    grid-template-areas: "dot name" ". when";
+    column-gap: 14px;
+    row-gap: 1px;
+    align-items: center;
+    padding: 9px 4px;
+    border-radius: 0;
+    background: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next li + li { border-top: 1px solid var(--paper-line-soft); }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next li::before {
+    position: static;
+    grid-area: dot;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #8B9689;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next li.is-high::before { background: #C4857B; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next li.is-medium::before { background: #C9A46A; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next li.is-low::before { background: #8B9689; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next-body { grid-area: name; flex-direction: row; align-items: baseline; gap: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next-body strong {
+    font-family: var(--paper-serif);
+    font-size: 15px;
+    font-weight: 400;
+    color: #383635;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next-body span { color: #A09E9A; font-size: 11.5px; white-space: nowrap; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-next-at {
+    grid-area: when;
+    width: auto;
+    color: #8E8E8C;
+    font-size: 11.5px;
+    font-weight: 400;
+}
+
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-streak-name { color: #383635; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-streak-days { color: #8E8E8C; }
+
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-box {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    font-size: 13px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-box:focus { border-color: #C9CEC5; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-tool {
+    width: 32px;
+    height: 32px;
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    color: #6F716C;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-tool.is-on { border-color: #C9CEC5; background: #F1F1EA; color: #4E524C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-tool.is-high { color: #B4675D; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-tool.is-low { color: #7D9A7E; }
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-send {
+    width: 34px;
+    height: 32px;
+    border-radius: 8px;
+    background: #6F7A6E;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-quick-send:hover:not(:disabled) { background: #5F6A5E; }
+
+@media (max-width: 640px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head-title h1 { font-size: 38px; }
+    html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-head-date { display: none; }
+    html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-board { padding: 14px 12px 6px; }
+    html:not([data-skin]):not([data-theme="dark"]):has(.tk-page) .tk-toolbar + .tk-day-all.tk-day-all { margin-top: 0; }
+}
+
+/* ==========================================================================
+   ANALYTICS: every tab, and the subject pages (.ax-page .sb-page)
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page {
+    --ax-card: var(--paper-card);
+    --ax-card-2: var(--paper-inset);
+    --ax-line: var(--paper-line);
+    --ax-line-soft: var(--paper-line-soft);
+    --ax-text: var(--paper-ink);
+    --ax-muted: var(--paper-muted);
+    --ax-faint: var(--paper-faint);
+    /* The series keep five different hues, only quieter: sage is XP, slate
+       is focus, teal is tasks, ochre and rose are the two warnings. */
+    --ax-violet: #7F8F7D;
+    --ax-blue: #6F8A99;
+    --ax-green: #5E9488;
+    --ax-amber: #B8923F;
+    --ax-pink: #B47C86;
+    --ax-good: #5F7F63;
+    --ax-bad: #A8645C;
+    --ax-radius: 12px;
+    --ax-shadow: none;
+}
+
+/* The header stands on the page, like Goals and Tasks: no card, no range. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero {
+    gap: 20px;
+    padding: 0;
+    min-height: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero .peak-scene,
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-head-icon { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-head h1 {
+    margin-bottom: 4px;
+    font-family: var(--paper-serif);
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -.005em;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-head p {
+    font-family: var(--paper-serif);
+    font-size: 16px;
+    color: #5F625E;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-head-actions { align-self: center; }
+
+/* The hero dresses its controls as glass in the tab's colour; here they are
+   plain paper controls, so these rules name the hero to outrank it. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero {
+    --peak-a: var(--paper-sage);
+    --peak-b: var(--paper-sage);
+    --peak-c: var(--paper-sage);
+    --peak-surface: var(--paper-card);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero :is(.ax-tabs, .ax-chips, .ax-select, .ax-pill, .ax-btn, .ax-compare) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero .ax-pill {
+    padding: 0 6px;
+    border: 0;
+    background: none;
+    color: #5F625E;
+    font-size: 13.5px;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-pill-icon { width: 16px; height: 16px; background: #6F716C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.peak-hero, .ax-shell) .ax-btn {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    color: #54564F;
+    font-weight: 500;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.peak-hero, .ax-shell) .ax-btn:hover:not(:disabled) { border-color: #DEDBD4; background: var(--paper-inset); color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.peak-hero, .ax-shell) .ax-btn-quiet { background: transparent; color: #6F716C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.peak-hero, .ax-shell) .ax-btn-primary {
+    border-color: transparent;
+    background: var(--paper-sage);
+    color: #FFFFFF;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.peak-hero, .ax-shell) .ax-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); border-color: transparent; color: #FFFFFF; filter: none; }
+
+/* The tabs and the window: the Calendar's switch, sage when picked. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero .ax-tabs {
+    padding: 3px;
+    border: 1px solid #EDEBE6;
+    border-radius: 10px;
+    background: #F6F4F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-tab {
+    border-radius: 8px;
+    color: #6F716C;
+    font-size: 14px;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero .ax-tab:hover:not(.is-on) { color: var(--paper-ink); background: #EFEEE8; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero .ax-tabs-major .ax-tab.is-on {
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    font-weight: 500;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-tab-fill { background: #E4E2DC; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-tab-fill::before { background: var(--paper-sage); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-tab.is-on .ax-tab-fill { background: rgba(255, 255, 255, .35); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-tab.is-on .ax-tab-fill::before { background: #FFFFFF; }
+
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero .ax-chips {
+    border-color: #EDEBE6;
+    border-radius: 9px;
+    background: #F6F4F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-chip {
+    border-radius: 7px;
+    color: #6F716C;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-chip:hover { color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.peak-hero, .ax-shell) .ax-chip.is-on {
+    border-color: transparent;
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-chips-inline { border: 0; background: transparent; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-chips-inline .ax-chip {
+    border-color: #ECEAE4;
+    border-radius: 999px;
+    background: transparent;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.peak-hero, .ax-shell) :is(.ax-select, .ax-compare-value) {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background-color: #FCFAF6;
+    color: #3D3F3B;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-select:focus { outline-color: #C9CEC5; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .peak-hero .ax-compare { padding: 0; background: none; color: #7A7A76; }
+
+/* Cards: paper, a 1px hairline (minimal.css draws the outer ones at 1.5px),
+   soft corners, no shadow. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(
+    .ax-panel, .ax-tile, .ax-group, .ax-section, .ax-lens, .ax-observe, .ax-building-body,
+    .ax-gp-overall, .ax-gp-metric-card, .ax-tabs-major, .gr-hero-card, .gr-panel, .sx-hero,
+    .sb-card, .sb-path, .sb-link, .so-band, .ax-habit
+) {
+    border-width: 1px;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.ax-panel, .ax-tile, .ax-group) {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-group:hover { border-color: #E1DED7; }
+
+/* Titles: a serif heading over each panel, sentence case. The Growth tab
+   wore them as small capitals; here they read like the Dashboard's. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.ax-panel-title, .ax-panel-head) > :is(h2, h3, h4),
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-gp-heading,
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-group-title strong {
+    font-family: var(--paper-serif);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-hero > .ax-panel > .ax-panel-head :is(h2, h3, h4) { font-size: 24px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-panel-note { color: #7F7F7B; }
+
+/* Figures in the serif, at the weight the Dashboard uses. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(
+    .ax-big, .ax-tile-value, .ax-tile-value-sm, .ax-figure strong, .ax-band,
+    .ax-gp-big, .ax-gp-card-value, .ax-gp-metric-scores, .ax-gp-mover-name, .ax-gp-metric-card-value,
+    .ax-gy-headline, .ax-gy-was, .ax-gy-now, .sg-stat-value, .sg-fact dd, .ax-lv-now,
+    .ax-habit-figure strong, .ax-pulse-figure strong, .ax-gf-stats dd, .ax-sv-headline,
+    .ax-skill-score, .ax-summary-grade, .ax-summary-lead strong, .ax-balance-ring strong,
+    .ax-followup-was, .ax-followup-now, .ax-baseline-row-actual, .ax-setup-sum strong,
+    .ax-first-need strong, .ax-collect-digest, .ax-reached-card h2, .ax-building-body h2, .ax-setup-body h2,
+    .gr-tile-value, .gr-hero-value, .gr-skillcard-level strong, .gr-day-figure strong, .gr-recov-figure strong,
+    .sb-card-value, .sx-ring-text strong, .sx-hero-verdict, .sx-metric-value, .grade-card-title
+) {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+/* Tinted cards with a coloured bar on top: one neutral card, a hairline all
+   round, the tone kept on the small label only. Goals did the same. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.sg-stat, .sg-highlight, .sg-tile).sg-tile,
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.sg-stat, .sg-highlight, .sg-tile).sg-stat,
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.sg-stat, .sg-highlight, .sg-tile).sg-highlight {
+    border: 1px solid var(--paper-line);
+    border-radius: 10px;
+    background: #F6F5F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sg-stat dt { font-weight: 600; letter-spacing: .08em; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-summary.ax-summary { border-top-width: 1px; }
+
+/* Names and small figures that sit at the top of a block, in the serif. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.sg-name, .sg-tile-value) {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sg-name { font-size: 17px; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sg-tile-value { font-size: 18px; }
+
+/* The chart's metric switches tick in sage, like every other checkbox. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-gp-toggle.is-on .ax-gp-check {
+    border-color: var(--paper-sage);
+    background-color: var(--paper-sage);
+}
+
+/* The year verdict: flat paper, no lit wash, no coloured bar. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-gy-verdict.ax-gy-verdict {
+    border-color: var(--paper-line);
+    background: #F6F5F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-gy-verdict::before { display: none; }
+
+/* A tip that floats over a chart keeps a soft lift. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.ax-readout, .ax-gp-tip) {
+    border-color: var(--paper-line);
+    border-radius: 10px;
+    background: var(--paper-card);
+    box-shadow: 0 2px 6px rgba(42, 44, 42, .06), 0 14px 32px rgba(42, 44, 42, .08);
+}
+
+/* Item names in lists and cards, in the serif like a task's name. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(
+    .ax-plan-title, .ax-followup-name strong, .sx-step-head strong, .ax-habit-name h3
+) {
+    font-family: var(--paper-serif);
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: #383635;
+}
+/* Panel titles that are not ax- panels: the session planner, the focus
+   panels on Insights, the "Focused on" card. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.ns-title h2, .gr-panel-title, .ax-lens-head) {
+    font-family: var(--paper-serif);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-lens-badge { font-family: var(--font-sans); }
+/* Column labels inside a panel are small labels, not a second title. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-panel .ax-rated-title {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: #8A8984;
+}
+
+/* The focus cards on Insights: paper, no coloured glow in the corner. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.gr-panel, .gr-hero-card) {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-hero-card:hover { box-shadow: 0 1px 2px rgba(42, 44, 42, .04), 0 8px 22px rgba(42, 44, 42, .05); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-hero-card::before { display: none; }
+
+/* Skill cards on the Subjects tab. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-skillcard {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: #F6F5F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-skillcard:hover { border-color: #DEDBD4; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-skillcard.is-picked {
+    border-color: #C9CEC5;
+    background: var(--paper-card);
+    box-shadow: 0 0 0 1px #C9CEC5;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-skillcard-name {
+    font-family: var(--paper-serif);
+    font-size: 15.5px;
+    font-weight: 400;
+    color: #383635;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-skillcard-rank { background: #EEEFE7; color: #6F7A70; font-weight: 600; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .gr-skillcard-fill { background: var(--paper-sage); }
+
+/* Subject names in the XP legend are links, in ink rather than browser blue. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page a.ax-subject-name {
+    color: #3D3F3B;
+    text-decoration-color: #D9D6CF;
+    text-underline-offset: 2px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page a.ax-subject-name:hover { color: var(--paper-ink); text-decoration-color: currentColor; }
+
+/* Small section labels inside a panel stay small: the panel's own heading
+   size was reaching them. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .ax-panel :is(.sb-sub, .ax-rated-title) {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: #8A8984;
+}
+
+/* The subject page: flat paper hero and cards, serif titles. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-hero.sx-hero,
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-card.sb-card,
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .so-band.so-band {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .so-band-goal {
+    font-family: var(--paper-serif);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page :is(.sb-fold-name strong, .sb-fold-figure strong) {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-fold-name strong { font-size: 20px; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-fold-figure strong { font-size: 18px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-card-label { color: #6F716C; }
