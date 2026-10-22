@@ -156,6 +156,12 @@ export interface SkillTreeProps {
    */
   frame?: { ids: readonly string[]; token: number } | null;
   /**
+   * Fill the window, asked for from outside the canvas — the paper look's
+   * header has its own button for it. A token, so pressing it twice works;
+   * leaving is still this canvas's button or Escape.
+   */
+  fill?: number;
+  /**
    * The feed's own view buttons, placed in the canvas's control cluster.
    *
    * A slot rather than a list of framings, because the alternative is this
@@ -187,6 +193,7 @@ export function SkillTree({
   focus,
   reveal,
   frame,
+  fill,
   views,
   onEdge,
 }: SkillTreeProps) {
@@ -417,6 +424,10 @@ export function SkillTree({
     setDragging(false);
     scroller.current?.releasePointerCapture(event.pointerId);
   }, []);
+
+  useEffect(() => {
+    if (fill) setFull(true);
+  }, [fill]);
 
   // Escape leaves the expanded canvas. The button is still there, but a layer
   // covering the window with no keyboard way out is a trap.

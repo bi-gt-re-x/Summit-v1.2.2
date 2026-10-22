@@ -1318,6 +1318,9 @@ export function LatticePanel({
               </button>
             )}
           </p>
+          {/* The paper look's line under the name. Hidden in the other looks,
+              and in the detailed panel, where "What to learn" says it. */}
+          {!detailed && node.blurb && <p className="stx-lp-lede">{node.blurb}</p>}
         </div>
         {/* The figure, in the header where the name is, rather than fifty
             pixels down inside a section about progress. It is the one number a
@@ -1366,6 +1369,27 @@ export function LatticePanel({
               </p>
             )}
           </div>
+
+          {/* Paper look only: what this needs first, as chips under the bar.
+              The detailed panel lists the same skills under "What to learn". */}
+          {!detailed && needs.length > 0 && (
+            <div className="stx-lp-prereqs">
+              <h4 className="stx-lp-prereqs-name">Prerequisites</h4>
+              <ul aria-label="What you need first">
+                {needs.map((need) => (
+                  <li key={need.id}>
+                    <button
+                      type="button"
+                      className={`stx-lp-prereq is-${need.status}`}
+                      onClick={() => onSelect(need)}
+                    >
+                      {need.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
 
         {/* ---- 2b. Your level, measured ----

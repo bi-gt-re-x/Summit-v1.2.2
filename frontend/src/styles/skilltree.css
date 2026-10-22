@@ -953,6 +953,18 @@ html[data-theme="dark"] .stx-page--lattice {
 .stx-crumb [aria-current="page"] { color: var(--lat-text); font-weight: 700; }
 .stx-crumb i { color: var(--lat-faint); font-style: normal; }
 
+/* The paper look's own pieces: the line under the title, the filter and the
+   full-screen button beside it, the bar over the canvas, and the line under a
+   skill's name and the prerequisite chips in its panel. styles/paper.css
+   draws them; every other look leaves them out,
+   and the canvas's wrapper steps aside so the grid still sees the canvas. */
+.stx-lead-tag,
+.stx-lead-tools,
+.stx-board-bar,
+.stx-lp-lede,
+.stx-lp-prereqs { display: none; }
+.stx-board { display: contents; }
+
 /* ---- the band of figures ---- */
 .stx-band {
     display: flex;

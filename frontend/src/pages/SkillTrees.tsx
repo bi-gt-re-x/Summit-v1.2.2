@@ -229,6 +229,13 @@ const PROGRESS_KEYS: [NodeStatus, string][] = [
   ['locked', 'Locked'],
 ];
 
+/** The header's filter in the paper look: the band's lenses, by another name. */
+const SHOW: [Lens | null, string][] = [
+  [null, 'All'],
+  ['progress', 'In progress'],
+  ['complete', 'Completed'],
+];
+
 function skillLevel(tally: GraphTally): string {
   if (tally.total === 0) return 'Unstarted';
   const share = (tally.complete + tally.progress * 0.5) / tally.total;
@@ -696,6 +703,21 @@ export default function SkillTrees() {
     [frameOn, graph, lens, navIds],
   );
 
+  /* All, In progress and Completed in the paper look's header. Each one is a
+     figure in the band pressed from somewhere else, so it dims and frames
+     exactly what that figure would, and All lets go of whichever is on. */
+  const show = useCallback(
+    (next: Lens | null) => {
+      if (next === lens) return;
+      narrow(next ?? lens!);
+    },
+    [lens, narrow],
+  );
+
+  /* The header's full-screen button. A token, like `reveal`, because the
+     canvas owns full screen and this only asks for it. */
+  const [fill, setFill] = useState(0);
+
   /** Select a node and scroll the canvas until it is on screen. */
   const open = useCallback((id: string) => {
     setSelectedId(id);
@@ -1013,7 +1035,10 @@ export default function SkillTrees() {
             were on from the drawing. */}
         <PageHero variant="skill-trees" tone="green">
           <header className="stx-lead">
-            <h1>Skill Trees</h1>
+            <h1>Skill Tree</h1>
+            {/* Paper look only. The other looks center the open tree's name
+                under the title instead; the paper look puts it on the canvas. */}
+            <p className="stx-lead-tag">Build your skills. Unlock your goals.</p>
             {chain.length > 1 && (
               <nav className="stx-crumbs" aria-label="Where this tree sits">
                 {chain.map((crumb, index) => {
@@ -1036,6 +1061,35 @@ export default function SkillTrees() {
             <h2 className="stx-lead-tree">{tree.title}</h2>
             <p className="stx-lead-sub">{tree.blurb}</p>
           </header>
+          {/* Paper look only (styles/paper.css). Both are controls the page
+              already has: the filter is the band's lenses and the button is
+              the canvas's own full screen. */}
+          <div className="stx-lead-tools">
+            <div className="stx-show" role="group" aria-label="Show on the tree">
+              {SHOW.map(([id, label]) => (
+                <button
+                  key={label}
+                  type="button"
+                  className={`stx-show-opt${lens === id ? ' is-on' : ''}`}
+                  aria-pressed={lens === id}
+                  onClick={() => show(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="stx-lead-fill"
+              aria-label="Fill the window"
+              title="Fill the window"
+              onClick={() => setFill(Date.now())}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+              </svg>
+            </button>
+          </div>
         </PageHero>
 
         {/* ---- where this lattice sits ----
@@ -1050,7 +1104,7 @@ export default function SkillTrees() {
         <section className="stx-band" aria-label="Where this tree stands">
           <div className="stx-figure stx-figure--ring">
             <div className="stx-figure-text">
-              <span className="stx-figure-label">Overall Progress</span>
+              <span className="stx-figure-label">Overall progress</span>
               <strong className="stx-figure-value stx-figure-big">
                 {Math.round(totals.percent)}%
               </strong>
@@ -1059,7 +1113,7 @@ export default function SkillTrees() {
           </div>
 
           <Figure
-            label="Skills Unlocked"
+            label="Skills unlocked"
             value={unlocked}
             sub={`/ ${totals.total}`}
             tone="accent"
@@ -1077,7 +1131,7 @@ export default function SkillTrees() {
             onNarrow={narrow}
           />
           <Figure
-            label="In Progress"
+            label="In progress"
             value={totals.progress}
             icon="in-progress"
             tone="prog"
@@ -1096,7 +1150,7 @@ export default function SkillTrees() {
           />
           {/* Not a lens: a level is a reading of the whole tree rather than a
               subset of it, and there is nothing to narrow to. */}
-          <Figure label="Skill Level" value={skillLevel(totals)} icon="gem" tone="level" />
+          <Figure label="Skill level" value={skillLevel(totals)} icon="gem" tone="level" />
         </section>
 
         {/* ---- where the reader is, in one line ----
@@ -1118,64 +1172,104 @@ export default function SkillTrees() {
 
         {/* ---- the lattice and what a node is ---- */}
         <div className={`stx-layout mode-${mode}${wide ? ' is-wide' : ''}`}>
-          <SkillTreeCanvas
-            graph={shown}
-            selectedId={selectedId}
-            onSelect={select}
-            geom={LATTICE_GEOM}
-            fit
-            focus={weights ?? undefined}
-            reveal={reveal}
-            frame={frame}
-            onEdge={(edge, at) => setAsked({ edge, at })}
-            /* The two framings only this page can name. "Fit" and "1:1" sit
-               beside them and belong to the canvas, because the whole tree and
-               full size are facts about a drawing; a branch and a position are
-               facts about a reader. */
-            views={
-              <>
-                {position && position.route.length > 1 && (
-                  <button
-                    type="button"
-                    className="stx-zoom-view"
-                    title="Fit the branch you're in"
-                    onClick={() => frameOn(branchIds(position))}
-                  >
-                    Branch
-                  </button>
-                )}
-                {hereId && (
-                  <button
-                    type="button"
-                    className="stx-zoom-view"
-                    title="Go to where you are"
-                    onClick={() => frameOn([hereId])}
-                  >
-                    Here
-                  </button>
-                )}
-              </>
-            }
-            renderNode={(placed, ctx) => {
-              const to = nav.get(placed.node.id);
-              return (
-                <LatticeNode
-                  placed={placed}
-                  size={LATTICE_GEOM.nodeW}
-                  selected={ctx.selected}
-                  onSelect={ctx.onSelect}
-                  onNavigate={to ? () => goTo(to) : undefined}
-                  emphasis={weights?.get(placed.node.id)}
-                  here={placed.node.id === hereId}
-                  gate={gates.get(placed.node.id)}
-                  optional={optional.has(placed.node.id)}
-                  onTrace={() => trace(placed.node)}
-                  onPeek={(node, rect) => setPeeked({ id: node.id, rect })}
-                  onPeekEnd={() => setPeeked(null)}
-                />
-              );
-            }}
-          />
+          {/* `display: contents` everywhere but the paper look, which makes it
+              one card: the bar over the canvas from the mockup, then the
+              canvas. The bar names the open tree, and its name opens the
+              subject drawer, which is where switching subjects already lives. */}
+          <div className="stx-board">
+            <div className="stx-board-bar">
+              <nav className="stx-board-trail" aria-label="Open tree">
+                {chain.slice(0, -1).map((crumb) => (
+                  <span key={crumb.id} className="stx-board-crumb">
+                    <button type="button" onClick={() => goTo(crumb.id)}>
+                      {crumb.title}
+                    </button>
+                    <i aria-hidden="true">›</i>
+                  </span>
+                ))}
+                <button type="button" className="stx-board-pick" title="Switch subject" onClick={revealDrawer}>
+                  {tree.title}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+              </nav>
+              {/* The key to the mark in each tile's corner. */}
+              <ul className="stx-board-key" aria-label="What the marks mean">
+                <li>
+                  <i className="stx-mark is-progress" aria-hidden="true" />
+                  In progress
+                </li>
+                <li>
+                  <i className="stx-mark is-available" aria-hidden="true" />
+                  Not started
+                </li>
+                <li>
+                  <i className="stx-mark is-complete" aria-hidden="true" />
+                  Completed
+                </li>
+              </ul>
+            </div>
+            <SkillTreeCanvas
+              graph={shown}
+              selectedId={selectedId}
+              onSelect={select}
+              geom={LATTICE_GEOM}
+              fit
+              fill={fill}
+              focus={weights ?? undefined}
+              reveal={reveal}
+              frame={frame}
+              onEdge={(edge, at) => setAsked({ edge, at })}
+              /* The two framings only this page can name. "Fit" and "1:1" sit
+                 beside them and belong to the canvas, because the whole tree and
+                 full size are facts about a drawing; a branch and a position are
+                 facts about a reader. */
+              views={
+                <>
+                  {position && position.route.length > 1 && (
+                    <button
+                      type="button"
+                      className="stx-zoom-view"
+                      title="Fit the branch you're in"
+                      onClick={() => frameOn(branchIds(position))}
+                    >
+                      Branch
+                    </button>
+                  )}
+                  {hereId && (
+                    <button
+                      type="button"
+                      className="stx-zoom-view"
+                      title="Go to where you are"
+                      onClick={() => frameOn([hereId])}
+                    >
+                      Here
+                    </button>
+                  )}
+                </>
+              }
+              renderNode={(placed, ctx) => {
+                const to = nav.get(placed.node.id);
+                return (
+                  <LatticeNode
+                    placed={placed}
+                    size={LATTICE_GEOM.nodeW}
+                    selected={ctx.selected}
+                    onSelect={ctx.onSelect}
+                    onNavigate={to ? () => goTo(to) : undefined}
+                    emphasis={weights?.get(placed.node.id)}
+                    here={placed.node.id === hereId}
+                    gate={gates.get(placed.node.id)}
+                    optional={optional.has(placed.node.id)}
+                    onTrace={() => trace(placed.node)}
+                    onPeek={(node, rect) => setPeeked({ id: node.id, rect })}
+                    onPeekEnd={() => setPeeked(null)}
+                  />
+                );
+              }}
+            />
+          </div>
 
           <LatticePanel
             brief
