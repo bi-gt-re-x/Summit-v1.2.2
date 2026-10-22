@@ -21,7 +21,7 @@ import { fileURLToPath, URL } from 'node:url';
  * still renders from Jinja, listed in backend/routes/spa.py as the half React
  * has not taken over. They have to be here because of how a dev server answers
  * an unknown path — it serves index.html, so React's catch-all route sees a
- * path it does not know and redirects to /home. That is silent: the link works
+ * path it does not know and redirects to /. That is silent: the link works
  * in production, where one server owns both halves, and in development it just
  * quietly goes somewhere else. The footer's Careers and Contact Support did
  * exactly that, and so did /engine at the end of the hidden chain, which is

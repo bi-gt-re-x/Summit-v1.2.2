@@ -107,6 +107,35 @@ export function FrontDoor() {
 }
 
 /**
+ * `/home`: the landing page, unless a signed-in reader typed their way here.
+ *
+ * `/` is where the app opens, but the address bar does not always ask for it.
+ * Once `/home` has been visited, autocomplete fills it in after
+ * `localhost:5090`, and bookmarks and full-page bounces (frontend/secret/
+ * engine.js) land here too. Arriving like that, as the tab's first page, an
+ * account gets the front door's answer instead of a pitch for an app it
+ * already uses.
+ *
+ * Arriving from inside the app, it stays the landing page. The rail's mark
+ * links here, and that is how an account reaches the pentagon in step two of
+ * the hidden chain. React Router keys a tab's first entry `default` and gives
+ * every navigation after it a key of its own, which survives a reload, so the
+ * key is what tells the two apart.
+ *
+ * It waits on the session only when somebody was signed in here last time
+ * (the remembered username). A stranger gets the landing page at once, and an
+ * account doesn't watch it flash past on the way to the dashboard.
+ */
+export function Landing() {
+  const { status, username } = useAuth();
+  const { key } = useLocation();
+  const typed = key === 'default';
+  if (typed && status === 'signed-in') return <Navigate to="/" replace />;
+  if (typed && status === 'loading' && username) return <Loading />;
+  return <Homepage />;
+}
+
+/**
  * The routes that fill the viewport rather than scrolling it.
  *
  * Everything else — the landing page, the written pages, and the stubs that
@@ -287,7 +316,7 @@ export default function App() {
           <Routes>
             {/* Public */}
             <Route path="/" element={<FrontDoor />} />
-            <Route path="/home" element={<Homepage />} />
+            <Route path="/home" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -381,7 +410,10 @@ export default function App() {
               ))}
             </Route>
 
-            <Route path="*" element={<Navigate to="/home" replace />} />
+            {/* Through the front door rather than straight to /home, so a
+                mistyped address puts an account on its start page and only a
+                stranger on the landing page. */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
         </AppBoundary>
