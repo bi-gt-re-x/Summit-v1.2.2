@@ -1,0 +1,202 @@
+/* ==========================================================================
+   dashboard-look.css — every app page in the Dashboard's style.
+
+   The Dashboard is the reference (styles/dashboard-home.css): the greeting
+   sits on the page with no box or mountains behind it, cards are white with a
+   20px radius, a faint rule and a hairline shadow, titles are #2C302E, quiet
+   text is #6C757D, the main button is near-black and whatever is selected is
+   taupe. This sheet carries those values to the other pages.
+
+   Loaded from main.tsx after minimal.css. Every selector starts
+   `body.has-rail .app-main`, signed-in pages only, which also puts it above
+   the pages' own sheets, which load later with their routes.
+   ========================================================================== */
+
+/* ---- The palette ---------------------------------------------------------
+   The accent tokens the pages read, set to the Dashboard's taupe. Each page
+   sheet that derives its own (--tk-violet, --gx-violet, ...) from
+   --color-accent picks this up without being named here. */
+body.has-rail .app-main {
+    --look-ink: #2C302E;
+    --look-muted: #6C757D;
+    --look-faint: #9AA0A6;
+    --look-taupe: #A38A70;
+    --look-button: #24282C;
+    --look-button-hover: #2C302E;
+    --look-radius: 20px;
+    --look-line: color-mix(in srgb, var(--color-line) 70%, transparent);
+    --look-shadow: 0 1px 2px rgba(16, 24, 40, .04);
+
+    --color-accent: var(--look-taupe);
+    --pref-accent: var(--look-taupe);
+    --pref-accent-2: #C2AD97;
+    --ax-violet: var(--look-taupe);
+}
+html[data-theme="dark"] body.has-rail .app-main {
+    --look-ink: #e6edf3;
+    --look-muted: #8b949e;
+    --look-faint: #6e7681;
+    --look-button: #30363d;
+    --look-button-hover: #3a424d;
+    --look-line: var(--color-line);
+    --look-shadow: none;
+}
+
+/* ---- Cards ---------------------------------------------------------------
+   The outer boxes each page is laid out in (the list minimal.css measured),
+   drawn like the Dashboard's: one 1px rule, 20px corners, no wash. */
+body.has-rail .app-main .ui-card,
+body.has-rail .app-main .tk-stat,
+body.has-rail .app-main .tk-side,
+body.has-rail .app-main .ag-card,
+body.has-rail .app-main .gx-cta,
+body.has-rail .app-main .ax-lens,
+body.has-rail .app-main .ax-panel,
+body.has-rail .app-main .ax-section,
+body.has-rail .app-main .ax-building-body,
+body.has-rail .app-main .ax-gp-overall,
+body.has-rail .app-main .ax-gp-metric-card,
+body.has-rail .app-main .ax-group,
+body.has-rail .app-main .ax-observe,
+body.has-rail .app-main .gr-hero-card,
+body.has-rail .app-main .gr-panel,
+body.has-rail .app-main .sx-hero,
+body.has-rail .app-main .sb-card,
+body.has-rail .app-main .sb-path,
+body.has-rail .app-main .sb-link,
+body.has-rail .app-main .so-band,
+body.has-rail .app-main .wk-panel,
+body.has-rail .app-main .mv-card,
+body.has-rail .app-main .mv-summary,
+body.has-rail .app-main .stx-setup,
+body.has-rail .app-main .nt-list-panel,
+body.has-rail .app-main .nt-editor,
+body.has-rail .app-main .pom-hero,
+body.has-rail .app-main .pom-panel,
+body.has-rail .app-main .rc-tile,
+body.has-rail .app-main .rc-card,
+body.has-rail .app-main .ac-band,
+body.has-rail .app-main .ac-recent-card,
+body.has-rail .app-main .ac-ladder,
+body.has-rail .app-main .ac-tile,
+body.has-rail .app-main .ac-foot,
+body.has-rail .app-main .st-card,
+body.has-rail .app-main .lg-editor,
+body.has-rail .app-main .lg-side {
+    border: 1px solid var(--look-line);
+    border-radius: var(--look-radius);
+    box-shadow: var(--look-shadow);
+    background: var(--color-surface);
+}
+
+/* The timer's hero card had a sky and a range of its own. */
+body.has-rail .app-main .pom-hero .peak-scene { display: none; }
+
+/* ---- The page header -----------------------------------------------------
+   No box, no sky, no mountains: the title sits on the page, like the
+   greeting. Same rules as `.dash > .dash-hero`. */
+body.has-rail .app-main .peak-hero {
+    padding: 0;
+    min-height: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+body.has-rail .app-main .peak-hero .peak-scene { display: none; }
+
+/* The title, at the greeting's size and weight. */
+body.has-rail .app-main h1:not(.page-state-title) {
+    margin: 0;
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: normal;
+    color: var(--look-ink);
+    background: none;
+    -webkit-text-fill-color: currentColor;
+}
+
+/* The line under it, in the date's grey. */
+body.has-rail .app-main h1 + p,
+body.has-rail .app-main .tk-quiet,
+body.has-rail .app-main .stx-lead-sub,
+body.has-rail .app-main .rc-sub,
+body.has-rail .app-main .ax-head-purpose,
+body.has-rail .app-main .pom-head-text p {
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--look-muted);
+}
+
+/* The greeting has no icon tile beside it. */
+body.has-rail .app-main .tk-head-ico,
+body.has-rail .app-main .gx-head-ico,
+body.has-rail .app-main .lg-mark,
+body.has-rail .app-main .pom-head-sun,
+body.has-rail .app-main .ax-head-icon { display: none; }
+
+/* Card titles, at the Dashboard's card-title size. */
+body.has-rail .app-main .ui-card h2,
+body.has-rail .app-main .ax-panel h2,
+body.has-rail .app-main .ax-section h2,
+body.has-rail .app-main .gr-panel h2,
+body.has-rail .app-main .pom-panel h2,
+body.has-rail .app-main .tk-side h2 {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--look-ink);
+}
+
+/* ---- The main button -----------------------------------------------------
+   Near-black and flat, like "+ Add task". */
+body.has-rail .app-main .ui-btn-primary,
+body.has-rail .app-main .tk-new,
+body.has-rail .app-main .tk-new-caret,
+body.has-rail .app-main .tk-btn.is-primary,
+body.has-rail .app-main .nt-new,
+body.has-rail .app-main .gx-page .gx-btn.is-primary,
+body.has-rail .app-main .lg-btn.is-primary,
+body.has-rail .app-main .pom-btn.is-primary,
+body.has-rail .app-main .pom-start,
+body.has-rail .app-main .ax-btn-primary,
+body.has-rail .app-main .rc-btn.is-primary,
+body.has-rail .app-main .sx-btn.is-primary,
+body.has-rail .app-main .ns-btn.is-primary {
+    border-color: transparent;
+    background: var(--look-button);
+    color: #FFFFFF;
+    box-shadow: none;
+    filter: none;
+}
+body.has-rail .app-main .ui-btn-primary:hover:not(:disabled),
+body.has-rail .app-main .tk-new:hover,
+body.has-rail .app-main .tk-new-caret:hover,
+body.has-rail .app-main .tk-btn.is-primary:hover,
+body.has-rail .app-main .nt-new:hover,
+body.has-rail .app-main .gx-page .gx-btn.is-primary:hover,
+body.has-rail .app-main .lg-btn.is-primary:hover,
+body.has-rail .app-main .pom-btn.is-primary:hover,
+body.has-rail .app-main .pom-start:hover,
+body.has-rail .app-main .ax-btn-primary:hover:not(:disabled),
+body.has-rail .app-main .rc-btn.is-primary:hover,
+body.has-rail .app-main .sx-btn.is-primary:hover,
+body.has-rail .app-main .ns-btn.is-primary:hover {
+    background: var(--look-button-hover);
+    filter: none;
+}
+
+/* ---- Whatever is selected ------------------------------------------------
+   Taupe with white text, like the Today / Upcoming / Completed switch. */
+body.has-rail .app-main .ax-tabs-major .ax-tab.is-on,
+body.has-rail .app-main .gx-tab.is-on,
+body.has-rail .app-main .tk-chip.is-on,
+body.has-rail .app-main .gx-page .gx-chip.is-on,
+body.has-rail .app-main .ax-chip.is-on,
+body.has-rail .app-main .ax-chips-inline .ax-chip.is-on,
+body.has-rail .app-main .ax-try.is-on {
+    border-color: var(--look-taupe);
+    background: var(--look-taupe);
+    color: #FFFFFF;
+    font-weight: 600;
+}

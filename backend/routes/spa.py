@@ -56,6 +56,23 @@ SPA_ROUTES = (
     '/habits',
     '/insights',
     '/recommendations',
+    '/subjects',
+    '/analytics/growth',
+    # One page per subject. Missing from this list, a reload or a pasted link
+    # to one 404'd on the built app while Vite served it fine.
+    '/analytics/subject/{subject_id}',
+    # Old analytics addresses that src/App.tsx redirects.
+    '/analytics/goals',
+    '/analytics/records',
+    '/tasks',
+    '/settings',
+    '/settings/{section}',
+    '/achievements',
+    '/achievements/growth',
+    '/achievements/badges',
+    '/records',
+    '/records/growth',
+    '/records/badges',
     # A skill tree per subject, built from finished tasks. `/growth-tree` was
     # the placeholder's path and redirects to it in src/App.tsx; it is here so
     # that a hard refresh on the old URL still reaches the router that does the
@@ -67,13 +84,9 @@ SPA_ROUTES = (
     # The private journal Summit learns from. See backend/api/journal.py.
     '/log',
     # The three Personal spaces in the rail — a name and a page of text each.
-    '/spaces/1',
-    '/spaces/2',
-    '/spaces/3',
+    '/spaces/{space_id}',
     # The three Team spaces: the same page, with a member list.
-    '/team/1',
-    '/team/2',
-    '/team/3',
+    '/team/{space_id}',
     # The focus timer with a pomodoro cycle over it. The session it runs is the
     # account's ordinary one — see src/pages/Timer.tsx.
     '/timer',

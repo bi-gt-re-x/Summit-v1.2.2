@@ -41,6 +41,7 @@ import '@/styles/preferences.css';
 import '@/styles/rail.css';
 import '@/styles/summit.css';
 import '@/styles/minimal.css';
+import '@/styles/dashboard-look.css';
 
 const container = document.getElementById('root');
 if (!container) {

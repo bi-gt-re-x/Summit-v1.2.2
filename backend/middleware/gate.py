@@ -46,7 +46,11 @@ GATED_PATHS = ('/dashboard', '/calendar', '/goals', '/growth', '/analytics',
                '/records', '/records/growth', '/records/badges',
                # The calendar's three views are three URLs now, and each of
                # them shows the account's own week as plainly as /calendar did.
-               '/calendar/day', '/calendar/week', '/calendar/month')
+               '/calendar/day', '/calendar/week', '/calendar/month',
+               '/tasks', '/analytics/goals', '/analytics/records')
+
+#: Pages with an id in the path: one per subject, settings section and space.
+GATED_PREFIXES = ('/analytics/subject/', '/settings/', '/spaces/', '/team/')
 
 
 def register(app):
@@ -61,7 +65,7 @@ def _to_login(reason, path):
 
 async def gate_pages(request, call_next):
     path = request.url.path
-    if path in GATED_PATHS:
+    if path in GATED_PATHS or path.startswith(GATED_PREFIXES):
         user = signed_in_user(request)
         if not user:
             return _to_login('login', path)

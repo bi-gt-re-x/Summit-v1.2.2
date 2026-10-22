@@ -32,6 +32,17 @@ from backend.tracking.auth import created_date_for, find_user
 SERIES_WINDOW = 30
 
 
+def _first_day(isos):
+    """The earliest valid ISO day among `isos`, or None."""
+    days = []
+    for iso in isos:
+        try:
+            days.append(date.fromisoformat(str(iso)[:10]))
+        except ValueError:
+            continue
+    return min(days) if days else None
+
+
 def _ratings_by_day(username):
     """Per-day quality, difficulty and execution over the tasks rated that day.
 
@@ -165,6 +176,13 @@ def _build_series(username, user, today):
     totals = xp_tracking.daily_totals(username)
     history = focus_tracking.history_for(username)
     rated = _ratings_by_day(username)
+
+    # Start at the first recorded day when it's earlier than created_at. Alpha's
+    # record starts eleven months before its stored creation date, and walking
+    # from created_at dropped those months and 49K XP from every chart.
+    first = _first_day(list(totals) + list(history))
+    if first and first < created:
+        created = first
 
     rows = []
     cumulative_xp = 0
