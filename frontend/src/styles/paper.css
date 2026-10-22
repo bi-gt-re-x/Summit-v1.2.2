@@ -5,8 +5,8 @@
    ink, a sage accent and a serif for titles and figures. It dresses the rail
    and the top bar on every page, and the Dashboard, the Calendar, Goals,
    Tasks, Analytics (every tab and the subject pages), the Skill Tree, Log,
-   Notes and Achievements with everything they open, and every page's loading
-   screen.
+   Notes, Achievements, Settings and the Timer with everything they open, and
+   every page's loading screen.
 
    scripts/paper_theme.mjs writes the colours of every rule in those sheets
    onto this palette (paper-remap.css). This file is what a colour swap can't
@@ -17,13 +17,13 @@
 
    `html:not([data-skin]):not([data-theme="dark"])` is the default light look,
    so dark mode and the skins keep theirs. The page rules add
-   `:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page)`, so they
+   `:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page)`, so they
    only apply while one of those pages is open, popups in <body> included.
    A rule for one page alone names just its root, as in `:has(.tk-page)`.
    ========================================================================== */
 
 /* ---- Tokens: the paper pages and everything they open ------------------- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) {
     --paper-ground: #F7F6F2;
     --paper-card: #FAF8F4;
     --paper-inset: #F3F1EB;
@@ -80,8 +80,8 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar {
     --paper-serif: 'Newsreader', 'Lora', Georgia, 'Times New Roman', serif;
 }
 
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) body,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .app-main {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .app-main {
     background: var(--paper-ground);
     background-image: none;
     color: var(--paper-ink);
@@ -237,39 +237,39 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar-panel {
 /* ==========================================================================
    SHARED: cards, buttons, fields, dialogs on the paper pages
    ========================================================================== */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-card {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ui-card {
     border: 1px solid var(--paper-line);
     border-radius: 12px;
     background: var(--paper-card);
     box-shadow: none;
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn { border-radius: 8px; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn-primary { background: var(--paper-sage); color: #FFFFFF; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn-secondary {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ui-btn { border-radius: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ui-btn-primary { background: var(--paper-sage); color: #FFFFFF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ui-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ui-btn-secondary {
     border-color: var(--paper-line);
     background: #FCFAF6;
     color: var(--paper-body);
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) input:focus-visible,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) textarea:focus-visible,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) select:focus-visible {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) input:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) textarea:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) select:focus-visible {
     outline-color: var(--paper-sage);
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) ::selection {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) ::selection {
     background: #DDE3D9;
 }
 
 /* Every dialog these pages open, in one shape: paper, a faint rule, soft
    corners, a soft shadow, and a warm veil behind. */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) :is(.modal, .modal-content, .task-modal, .tm-dialog, .tm-sheet, .cu-sheet, .cu-card, .dc-card, .rp-card, .gx-modal, .gx-drawer, .gx-wizard, .lu-card, .gr-card, .event-modal, .cal-dialog, .wk-dialog, .bd-dialog) {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) :is(.modal, .modal-content, .task-modal, .tm-dialog, .tm-sheet, .cu-sheet, .cu-card, .dc-card, .rp-card, .gx-modal, .gx-drawer, .gx-wizard, .lu-card, .gr-card, .event-modal, .cal-dialog, .wk-dialog, .bd-dialog) {
     border-color: var(--paper-line);
     background: var(--paper-card);
     color: var(--paper-ink);
 }
 
 /* ---- Serif: titles and figures ----------------------------------------- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) :is(
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) :is(
     .dash-hello, .dash-stat-name, .dash-panel-title, .dash-big, .dash-ring-pct,
     .dash-xp-level, .dash-figure-value, .dash-insight-title, .fp-time, .fp-dial-text,
     .wk-title, .wk-dayname, .wk-panel-title, .wk-stat-num, .wk-ring-pct,
@@ -547,8 +547,8 @@ html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-note {
 }
 
 /* The task dialogs set the slider and its figure inline, in the old tan. */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) input[type="range"] { accent-color: var(--paper-sage) !important; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) #xpValue { color: var(--paper-sage-deep) !important; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) input[type="range"] { accent-color: var(--paper-sage) !important; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) #xpValue { color: var(--paper-sage-deep) !important; }
 
 /* Calendar: every view's title and panel headings in the serif. */
 html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .calendar-container :is(h1, h2, .mv-title) {
@@ -2314,6 +2314,197 @@ html:not([data-skin]):not([data-theme="dark"]):has(.lg-page) .lg-side-head :is(h
 
 @media (max-width: 640px) {
     html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.nt-head-titles h1, .rc-title, .lg-head h1) { font-size: 36px; }
+}
+
+/* ==========================================================================
+   SETTINGS
+   The page has no rail or top bar, so it is the paper ground edge to edge:
+   the title in the serif, section headings in the serif, small caps over the
+   nav groups, and sage where something is on.
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page {
+    --st-card: var(--paper-card);
+    --st-card-2: var(--paper-inset);
+    --st-line: var(--paper-line);
+    --st-violet: var(--paper-sage);
+    --st-radius: 12px;
+    --st-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-head h1 {
+    margin-bottom: 4px;
+    font-family: var(--paper-serif);
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -.005em;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-head p {
+    font-family: var(--paper-serif);
+    font-size: 16px;
+    color: #5F625E;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-card h2 {
+    font-family: var(--paper-serif);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-nav-group h2 {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    color: #8A8984;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-nav-link {
+    border-radius: 8px;
+    color: #6A6B66;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-nav-link:hover { background: #F0EFEA; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-nav-link.is-on {
+    background: #EEEDE6;
+    color: var(--paper-ink);
+    font-weight: 500;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page :is(.st-search, .st-input) {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page :is(.st-search, .st-input):focus {
+    border-color: #C5CCC2;
+    box-shadow: 0 0 0 3px rgba(139, 150, 137, .16);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-label { font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-btn:not(.is-danger) {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    color: #54564F;
+    font-weight: 500;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-btn:not(.is-danger):hover:not(:disabled) { border-color: #DEDBD4; background: var(--paper-inset); color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-seg { border-color: #EDEBE6; border-radius: 10px; background: #F6F4F0; }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-pick { border-radius: 8px; color: #6F716C; font-weight: 400; }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-pick.is-on { background: var(--paper-sage); color: #FFFFFF; box-shadow: none; font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-toggle.is-on { background: var(--paper-sage); border-color: var(--paper-sage); }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-theme { border-radius: 10px; background: #FCFAF6; }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-page .st-theme-name { font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-exit { background: rgba(247, 246, 242, .85); color: #6F716C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-exit:hover { background: #EFEEE8; color: var(--paper-ink); }
+
+/* The Light card shows what Light looks like now: the paper look. The other
+   five keep their own colours in every look. */
+[data-skin-preview="light"] {
+    --skin-ground: #F7F6F2;
+    --skin-surface: #FAF8F4;
+    --skin-accent: #8B9689;
+    --skin-accent-2: #B8923F;
+}
+
+/* ==========================================================================
+   TIMER
+   Like the Dashboard's focus card: one flat card for the clock with no sky or
+   range, the time in the serif, a sage Start, and flat cards under it.
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page {
+    --pom-card: var(--paper-card);
+    --pom-card-2: var(--paper-inset);
+    --pom-line: var(--paper-line);
+    --pom-focus: var(--paper-sage-deep);
+    --pom-focus-2: var(--paper-sage);
+    --pom-purple: var(--paper-sage-deep);
+    --pom-radius: 12px;
+    --pom-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page:not(.pom-page--sitting) .pom-head-sun { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page:not(.pom-page--sitting) .pom-head h1 {
+    margin-bottom: 4px;
+    font-family: var(--paper-serif);
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page:not(.pom-page--sitting) .pom-head p {
+    font-family: var(--paper-serif);
+    font-size: 16px;
+    color: #5F625E;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-date { color: #6F6F6B; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page:not(.pom-page--sitting) .pom-hero {
+    border-color: var(--paper-line);
+    background-image: none;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page:not(.pom-page--sitting) .pom-hero .peak-scene { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-ring-track { stroke: #E7E6DF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-ring-time {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-ring-phase { font-weight: 500; letter-spacing: .16em; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page :is(.pom-start, .pom-round.is-primary) {
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-start {
+    height: 46px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page :is(.pom-start, .pom-round.is-primary):hover { background: var(--paper-sage-deep); filter: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-round:not(.is-primary) { border-color: #ECEAE4; background: #FCFAF6; color: #6F716C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-round:not(.is-primary):hover { border-color: #DEDBD4; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page :is(.pom-side-card, .pom-panel) {
+    border-color: var(--paper-line);
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-side-card { background: #FCFAF6; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-hero-side .pom-side-icon { background: none; color: #4A4C48; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-panel-head h2 {
+    font-family: var(--paper-serif);
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-panel-head h2 > span { font-size: inherit; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-pick { border-color: #ECEAE4; background: #FCFAF6; }
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page .pom-pick-top b { font-weight: 500; }
+
+/* The full-screen session: the time in the serif, like the clock above. */
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-sit-time {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+/* The graph paper's drifting dots: ink at rest and sage while they run, light
+   versions over the session's dark tint. utils/ambientField.ts reads these
+   two; every other look keeps its slate and blue. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .hm-ambient {
+    --hm-dot: 42 44 42;
+    --hm-dot-hot: 116 142 119;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page--sitting .hm-ambient {
+    --hm-dot: 236 234 228;
+    --hm-dot-hot: 192 207 188;
+}
+
+@media (max-width: 640px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.st-page) .st-head h1 { font-size: 36px; }
+    html:not([data-skin]):not([data-theme="dark"]):has(.pom-page) .pom-page:not(.pom-page--sitting) .pom-head h1 { font-size: 32px; }
 }
 
 /* ==========================================================================

@@ -55,6 +55,13 @@ const EASE = 6;
 
 const between = ([lo, hi]: readonly [number, number]) => lo + Math.random() * (hi - lo);
 
+/** "42 44 42" as three numbers, or null when the value isn't one. */
+function triple(value: string): [number, number, number] | null {
+  const [r, g, b, ...rest] = value.trim().split(/\s+/).map(Number);
+  if (r === undefined || g === undefined || b === undefined || rest.length) return null;
+  return [r, g, b].every((part) => Number.isFinite(part)) ? [r, g, b] : null;
+}
+
 /**
  * One dot, placed at random in a `w` x `h` field.
  *
@@ -152,6 +159,23 @@ export function startParticles(
     for (let i = 0; i < PARTICLES; i++) dots.push(newDot(w, h));
   }
 
+  /* What the stylesheet asks for, if anything. The paper look sets `--hm-dot`
+     and `--hm-dot-hot` on the layer as rgb triples (styles/paper.css), so its
+     dots are ink and sage rather than slate and blue. Read at most once a
+     second: computing styles every frame for a background costs something and
+     shows nothing. */
+  let asked: { base: [number, number, number]; hot: [number, number, number] } | null = null;
+  let askedAt = -Infinity;
+  function fromSheet(now: number) {
+    if (now - askedAt < 1000) return asked;
+    askedAt = now;
+    const style = getComputedStyle(canvas!);
+    const base = triple(style.getPropertyValue('--hm-dot'));
+    const hot = triple(style.getPropertyValue('--hm-dot-hot'));
+    asked = base && hot ? { base, hot } : null;
+    return asked;
+  }
+
   /**
    * The dot colour and the colour a running dot turns, as rgb triples.
    *
@@ -159,7 +183,9 @@ export function startParticles(
    * canvas that is already running and a field that stayed dark-mode white on
    * a white page would be invisible.
    */
-  function palette(): { base: [number, number, number]; hot: [number, number, number] } {
+  function palette(now: number): { base: [number, number, number]; hot: [number, number, number] } {
+    const sheet = fromSheet(now);
+    if (sheet) return sheet;
     // `surge` is the focus sitting and the focus sitting paints over a tint
     // that is dark in both themes — see `.pom-sit-scrim` in styles/timer.css.
     // So the field is read against *that* ground rather than against the
@@ -189,7 +215,7 @@ export function startParticles(
     last = now;
 
     ctx!.clearRect(0, 0, w, h);
-    const { base, hot } = palette();
+    const { base, hot } = palette(now);
     dots.forEach((d) => {
       if (surge) advance(d, dt);
       d.x += d.vx * dt * d.fast;
