@@ -4,8 +4,9 @@
    A warm off-white ground, cards a shade lighter, faint warm rules, charcoal
    ink, a sage accent and a serif for titles and figures. It dresses the rail
    and the top bar on every page, and the Dashboard, the Calendar, Goals,
-   Tasks, Analytics (every tab and the subject pages) and the Skill Tree with
-   everything they open.
+   Tasks, Analytics (every tab and the subject pages), the Skill Tree, Log,
+   Notes and Achievements with everything they open, and every page's loading
+   screen.
 
    scripts/paper_theme.mjs writes the colours of every rule in those sheets
    onto this palette (paper-remap.css). This file is what a colour swap can't
@@ -16,13 +17,13 @@
 
    `html:not([data-skin]):not([data-theme="dark"])` is the default light look,
    so dark mode and the skins keep theirs. The page rules add
-   `:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page)`, so they
+   `:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page)`, so they
    only apply while one of those pages is open, popups in <body> included.
    A rule for one page alone names just its root, as in `:has(.tk-page)`.
    ========================================================================== */
 
 /* ---- Tokens: the paper pages and everything they open ------------------- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) {
     --paper-ground: #F7F6F2;
     --paper-card: #FAF8F4;
     --paper-inset: #F3F1EB;
@@ -79,8 +80,8 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar {
     --paper-serif: 'Newsreader', 'Lora', Georgia, 'Times New Roman', serif;
 }
 
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) body,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) .app-main {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) body,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .app-main {
     background: var(--paper-ground);
     background-image: none;
     color: var(--paper-ink);
@@ -236,39 +237,39 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar-panel {
 /* ==========================================================================
    SHARED: cards, buttons, fields, dialogs on the paper pages
    ========================================================================== */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) .ui-card {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-card {
     border: 1px solid var(--paper-line);
     border-radius: 12px;
     background: var(--paper-card);
     box-shadow: none;
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) .ui-btn { border-radius: 8px; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) .ui-btn-primary { background: var(--paper-sage); color: #FFFFFF; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) .ui-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) .ui-btn-secondary {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn { border-radius: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn-primary { background: var(--paper-sage); color: #FFFFFF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) .ui-btn-secondary {
     border-color: var(--paper-line);
     background: #FCFAF6;
     color: var(--paper-body);
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) input:focus-visible,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) textarea:focus-visible,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) select:focus-visible {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) input:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) textarea:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) select:focus-visible {
     outline-color: var(--paper-sage);
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) ::selection {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) ::selection {
     background: #DDE3D9;
 }
 
 /* Every dialog these pages open, in one shape: paper, a faint rule, soft
    corners, a soft shadow, and a warm veil behind. */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) :is(.modal, .modal-content, .task-modal, .tm-dialog, .tm-sheet, .cu-sheet, .cu-card, .dc-card, .rp-card, .gx-modal, .gx-drawer, .gx-wizard, .lu-card, .gr-card, .event-modal, .cal-dialog, .wk-dialog, .bd-dialog) {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) :is(.modal, .modal-content, .task-modal, .tm-dialog, .tm-sheet, .cu-sheet, .cu-card, .dc-card, .rp-card, .gx-modal, .gx-drawer, .gx-wizard, .lu-card, .gr-card, .event-modal, .cal-dialog, .wk-dialog, .bd-dialog) {
     border-color: var(--paper-line);
     background: var(--paper-card);
     color: var(--paper-ink);
 }
 
 /* ---- Serif: titles and figures ----------------------------------------- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) :is(
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) :is(
     .dash-hello, .dash-stat-name, .dash-panel-title, .dash-big, .dash-ring-pct,
     .dash-xp-level, .dash-figure-value, .dash-insight-title, .fp-time, .fp-dial-text,
     .wk-title, .wk-dayname, .wk-panel-title, .wk-stat-num, .wk-ring-pct,
@@ -546,8 +547,8 @@ html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-note {
 }
 
 /* The task dialogs set the slider and its figure inline, in the old tan. */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) input[type="range"] { accent-color: var(--paper-sage) !important; }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page) #xpValue { color: var(--paper-sage-deep) !important; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) input[type="range"] { accent-color: var(--paper-sage) !important; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page) #xpValue { color: var(--paper-sage-deep) !important; }
 
 /* Calendar: every view's title and panel headings in the serif. */
 html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .calendar-container :is(h1, h2, .mv-title) {
@@ -2134,4 +2135,211 @@ html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice
     /* The scroll box is shorter than the canvas on a phone, and the card
        showed the difference as an empty band under the tree. */
     html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-board .stx-canvas:not(.is-full) { height: auto; }
+}
+
+/* ==========================================================================
+   LOG, NOTES AND ACHIEVEMENTS
+   The same treatment as Tasks and Goals: the header stands on the page with
+   the title in the serif, cards are flat paper, and the action buttons and
+   the picked tab are sage. The nine inks a note can be written in keep their
+   own colours (see KEEP in scripts/paper_theme.mjs).
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-page {
+    --nt-card: var(--paper-card);
+    --nt-card-2: var(--paper-inset);
+    --nt-line: var(--paper-line);
+    --nt-line-soft: var(--paper-line-soft);
+    --nt-accent: var(--paper-sage);
+    --nt-accent-2: var(--paper-sage-deep);
+    --nt-radius: 12px;
+    --nt-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page {
+    --rc-card: var(--paper-card);
+    --rc-card-2: var(--paper-inset);
+    --rc-line: var(--paper-line);
+    --rc-line-soft: var(--paper-line-soft);
+    --rc-accent: var(--paper-sage);
+    --rc-accent-2: var(--paper-sage-deep);
+    --rc-radius: 12px;
+    --rc-shadow: none;
+}
+
+/* ---- The headers: on the page, no card, no range ------------------------- */
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page) :is(.nt-page, .rc-page) .peak-hero {
+    padding: 0;
+    min-height: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page) :is(.nt-page, .rc-page) .peak-hero .peak-scene,
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-hero-art,
+html:not([data-skin]):not([data-theme="dark"]):has(.lg-page) .lg-mark { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.lg-page) .lg-head { grid-template-columns: minmax(0, 1fr); }
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.nt-head-titles h1, .rc-title, .lg-head h1) {
+    margin-bottom: 4px;
+    font-family: var(--paper-serif);
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -.005em;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.nt-head-titles p, .rc-sub, .lg-head p) {
+    font-family: var(--paper-serif);
+    font-size: 16px;
+    color: #5F625E;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-sub.is-thesis { font-size: 18px; font-weight: 400; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-lead-span {
+    font-family: var(--paper-serif);
+    font-size: 30px;
+    font-weight: 400;
+    letter-spacing: 0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-lead-gain { color: var(--paper-sage-deep); font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-head { align-items: center; }
+
+/* ---- Buttons and the search ---------------------------------------------- */
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.rc-btn, .lg-btn:not(.is-quiet, .is-danger, .is-danger-solid)) {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    color: #54564F;
+    font-size: 13.5px;
+    font-weight: 500;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.rc-btn, .lg-btn:not(.is-quiet, .is-danger, .is-danger-solid)):hover:not(:disabled) {
+    border-color: #DEDBD4;
+    background: var(--paper-inset);
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.rc-btn.is-primary, .lg-btn.is-primary.is-primary) {
+    border-color: transparent;
+    background: var(--paper-sage);
+    color: #FFFFFF;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.rc-btn.is-primary, .lg-btn.is-primary.is-primary):hover:not(:disabled) {
+    border-color: transparent;
+    background: var(--paper-sage-deep);
+    color: #FFFFFF;
+    filter: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-new-group { border-radius: 8px; box-shadow: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-new-group:hover { box-shadow: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-page :is(.nt-new, .nt-new-more) {
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-page .nt-new { padding: 9px 14px; border-radius: 8px 0 0 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-page .nt-new-more { border-radius: 0 8px 8px 0; border-left-color: rgba(255, 255, 255, .3); }
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-new-group:hover :is(.nt-new, .nt-new-more:not(:disabled)) { background: var(--paper-sage-deep); filter: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-page .nt-search {
+    padding-top: 9px;
+    padding-bottom: 9px;
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    font-size: 14px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-page .nt-search:focus {
+    border-color: #C5CCC2;
+    box-shadow: 0 0 0 3px rgba(139, 150, 137, .16);
+}
+
+/* ---- Achievements: the tabs, the section labels and the cards ------------ */
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-views {
+    gap: 0;
+    padding: 3px;
+    border-color: #EDEBE6;
+    border-radius: 10px;
+    background: #F6F4F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-view {
+    padding: 6px 16px;
+    border-radius: 8px;
+    color: #6F716C;
+    font-size: 14px;
+    font-weight: 400;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-view:hover:not(.is-on) { background: #EFEEE8; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-view.is-on { background: var(--paper-sage); color: #FFFFFF; box-shadow: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page :is(.rc-section-title, .rc-sub-title) {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    color: #8A8984;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-section-title.is-card {
+    font-family: var(--paper-serif);
+    font-size: 21px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-head-ico {
+    width: auto;
+    height: auto;
+    background: none;
+    color: #4A4C48;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-head-ico svg { width: 19px; height: 19px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-tile-figure,
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-best-value {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page .rc-empty { border-radius: 10px; }
+
+/* ---- Log: flat cards beside each other ----------------------------------- */
+html:not([data-skin]):not([data-theme="dark"]):has(.lg-page) .lg-page :is(.lg-editor, .lg-side) {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.lg-page) .lg-side-head :is(h2, h3) {
+    font-family: var(--paper-serif);
+    font-size: 21px;
+    font-weight: 400;
+    color: var(--paper-ink);
+}
+
+@media (max-width: 640px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.nt-page, .rc-page, .lg-page) :is(.nt-head-titles h1, .rc-title, .lg-head h1) { font-size: 36px; }
+}
+
+/* ==========================================================================
+   LOADING
+   Every page's loading screen, whatever look the page itself wears: the paper
+   ground, a thin ring with one sage arc, and the line under it in the serif.
+   The default light look only, like the rest of this file.
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.page-state-loading) body,
+html:not([data-skin]):not([data-theme="dark"]):has(.page-state-loading) .app-main {
+    background: #F7F6F2;
+    background-image: none;
+}
+html:not([data-skin]):not([data-theme="dark"]) .page-state-loading {
+    gap: 14px;
+    color: #7A7A76;
+    font-family: 'Newsreader', 'Lora', Georgia, 'Times New Roman', serif;
+    font-size: 17px;
+}
+html:not([data-skin]):not([data-theme="dark"]) .page-state-loading .page-spinner {
+    width: 26px;
+    height: 26px;
+    border: 1.5px solid #E6E3DD;
+    border-top-color: #8B9689;
+    animation-duration: 900ms;
+}
+@media (prefers-reduced-motion: reduce) {
+    html:not([data-skin]):not([data-theme="dark"]) .page-state-loading .page-spinner { border-top-color: #E6E3DD; }
 }
