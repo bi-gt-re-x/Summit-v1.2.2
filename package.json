@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "check:trees": "node scripts/check_trees.mjs && node scripts/gen_tree_map.mjs --check && node scripts/export_skill_nodes.mjs --check",
     "check:steps": "node scripts/check_steps.mjs",
-    "check:css": "node scripts/check_css.mjs",
+    "check:css": "node scripts/check_css.mjs && node scripts/paper_theme.mjs --check",
     "check:docs": "node scripts/check_docs.mjs"
   },
   "dependencies": {

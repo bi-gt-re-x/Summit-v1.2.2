@@ -41,7 +41,8 @@ import '@/styles/preferences.css';
 import '@/styles/rail.css';
 import '@/styles/summit.css';
 import '@/styles/minimal.css';
-import '@/styles/dashboard-look.css';
+import '@/styles/paper-remap.css';
+import '@/styles/paper.css';
 
 const container = document.getElementById('root');
 if (!container) {

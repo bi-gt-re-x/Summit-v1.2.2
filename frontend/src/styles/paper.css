@@ -1,0 +1,560 @@
+/* ==========================================================================
+   paper.css — the paper look, the hand-tuned half.
+
+   A warm off-white ground, cards a shade lighter, faint warm rules, charcoal
+   ink, a sage accent and a serif for titles and figures. It dresses the rail
+   and the top bar on every page, and the Dashboard, the Calendar and Goals
+   with everything they open.
+
+   scripts/paper_theme.mjs writes the colours of every rule in those sheets
+   onto this palette (paper-remap.css). This file is what a colour swap can't
+   do: the tokens, the fonts, the shapes, the search bar, and the places where
+   a remapped colour still wasn't the mockup's.
+
+   ## The two prefixes
+
+   `html:not([data-skin]):not([data-theme="dark"])` is the default light look,
+   so dark mode and the skins keep theirs. The page rules add
+   `:has(.dash, .calendar-container, .gx-page)`, so they only apply while one
+   of the three pages is open, popups in <body> included.
+   ========================================================================== */
+
+/* ---- Tokens: the three pages and everything they open ------------------- */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) {
+    --paper-ground: #F7F6F2;
+    --paper-card: #FAF8F4;
+    --paper-inset: #F3F1EB;
+    --paper-hover: #EFEEE8;
+    --paper-line: #EAE8E3;
+    --paper-line-soft: #F0EEE9;
+    --paper-ink: #2A2C2A;
+    --paper-body: #54564F;
+    --paper-muted: #7A7A76;
+    --paper-faint: #A09E9A;
+    --paper-sage: #8B9689;
+    --paper-sage-deep: #748E77;
+    --paper-sage-soft: #EBECE5;
+    --paper-serif: 'Newsreader', 'Lora', Georgia, 'Times New Roman', serif;
+
+    --color-bg: var(--paper-ground);
+    --color-surface: var(--paper-card);
+    --color-surface-2: var(--paper-inset);
+    --color-line: var(--paper-line);
+    --color-line-soft: var(--paper-line-soft);
+    --color-ink: var(--paper-ink);
+    --color-ink-muted: var(--paper-muted);
+    --color-ink-faint: var(--paper-faint);
+    --color-accent: var(--paper-sage);
+    --pref-accent: var(--paper-sage);
+    --pref-accent-2: #A9B2A6;
+    --ax-violet: var(--paper-sage);
+    --ax-blue: #6F8A99;
+    --ax-green: #7D9A7E;
+    --ax-amber: #B8923F;
+    --ax-pink: #B47C86;
+    --ax-good: #5F7F63;
+    --ax-bad: #A8645C;
+    --shadow-sm: 0 1px 2px rgba(42, 44, 42, .03);
+    --shadow-md: 0 1px 2px rgba(42, 44, 42, .04), 0 8px 22px rgba(42, 44, 42, .05);
+    --shadow-lg: 0 2px 6px rgba(42, 44, 42, .06), 0 22px 48px rgba(42, 44, 42, .10);
+    background: var(--paper-ground);
+}
+
+/* The same names for the shell on every other page, so the rail and the bar
+   can say var(--paper-*) wherever they are. */
+html:not([data-skin]):not([data-theme="dark"]) .rail,
+html:not([data-skin]):not([data-theme="dark"]) .rail-sheet,
+html:not([data-skin]):not([data-theme="dark"]) .topbar {
+    --paper-ground: #F7F6F2;
+    --paper-card: #FAF8F4;
+    --paper-inset: #F3F1EB;
+    --paper-hover: #EFEEE8;
+    --paper-line: #EAE8E3;
+    --paper-ink: #2A2C2A;
+    --paper-muted: #7A7A76;
+    --paper-faint: #A09E9A;
+    --paper-sage: #8B9689;
+    --paper-serif: 'Newsreader', 'Lora', Georgia, 'Times New Roman', serif;
+}
+
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) body,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .app-main {
+    background: var(--paper-ground);
+    background-image: none;
+    color: var(--paper-ink);
+}
+
+/* ==========================================================================
+   THE RAIL
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]) .rail,
+html:not([data-skin]):not([data-theme="dark"]) .rail-sheet {
+    background: var(--paper-ground);
+    border-right: 1px solid #ECEAE5;
+}
+html:not([data-skin]):not([data-theme="dark"]) .rail-brand { color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]) .rail-brand-name {
+    font-family: var(--paper-serif);
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: .32em;
+}
+html:not([data-skin]):not([data-theme="dark"]) .rail-brand-mark img { filter: grayscale(1) brightness(.55) sepia(.12); }
+
+html:not([data-skin]):not([data-theme="dark"]) .rail-section-head {
+    color: #8A8984;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .12em;
+}
+html:not([data-skin]):not([data-theme="dark"]) .rail-section-head:hover { color: var(--paper-ink); }
+
+html:not([data-skin]):not([data-theme="dark"]) .rail-link {
+    border-radius: 9px;
+    color: #6A6B66;
+    font-size: 14.5px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]) .rail-link svg {
+    width: 19px;
+    height: 19px;
+    stroke-width: 1.6;
+    color: #5F635E;
+}
+html:not([data-skin]):not([data-theme="dark"]) .rail-link:hover { background: #F0EFEA; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]) .rail-link.active { background: #EEEDE6; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]) .rail-link.active svg { color: #3D3D39; }
+html:not([data-skin]):not([data-theme="dark"]) .rail-link.rail-invite,
+html:not([data-skin]):not([data-theme="dark"]) .rail-link.rail-invite svg { color: #6A6B66; }
+
+html:not([data-skin]):not([data-theme="dark"]) .rail-sub { border-left-color: #E4E2DC; }
+html:not([data-skin]):not([data-theme="dark"]) .rail-sub-link { color: #7A7A76; }
+html:not([data-skin]):not([data-theme="dark"]) .rail-sub-link:hover { background: #F0EFEA; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]) .rail-sub-link.active { background: #EEEDE6; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]) .rail-sub-link.active::before { background: var(--paper-sage); }
+
+html:not([data-skin]):not([data-theme="dark"]) .rail-disclose,
+html:not([data-skin]):not([data-theme="dark"]) .rail-toggle,
+html:not([data-skin]):not([data-theme="dark"]) .rail-rank-more { color: #8A8984; }
+html:not([data-skin]):not([data-theme="dark"]) .rail-disclose:hover,
+html:not([data-skin]):not([data-theme="dark"]) .rail-toggle:hover,
+html:not([data-skin]):not([data-theme="dark"]) .rail-rank-more:hover,
+html:not([data-skin]):not([data-theme="dark"]) .rail-rank-more.is-open { background: #EEEDE6; color: var(--paper-ink); }
+
+html:not([data-skin]):not([data-theme="dark"]) .rail-foot { border-top: 1px solid #ECEAE5; }
+html:not([data-skin]):not([data-theme="dark"]) .rail-rank-title,
+html:not([data-skin]):not([data-theme="dark"]) .rail-rank-num {
+    color: var(--paper-ink);
+    font-size: 14px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]) .rail-xp-row { color: var(--paper-faint); font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]) .rail-xp-bar { background: #ECEAE6; }
+html:not([data-skin]):not([data-theme="dark"]) .rail-xp-bar i { background: var(--paper-sage); }
+html:not([data-skin]):not([data-theme="dark"]) .rail-avatar {
+    border-radius: 50%;
+    background: #E3E3DA;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]) .rail-title-menu {
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: 0 2px 6px rgba(42, 44, 42, .06), 0 22px 48px rgba(42, 44, 42, .10);
+}
+
+/* ==========================================================================
+   THE TOP BAR
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]) .topbar {
+    background: var(--paper-ground);
+    border-bottom-color: transparent;
+}
+/* The search button stretches into the bar on the left, as a field. It is
+   still the same button and opens the same panel. */
+html:not([data-skin]):not([data-theme="dark"]) .topbar-actions { flex: 1 1 auto; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child { margin-right: auto; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    width: min(500px, 38vw);
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 9px;
+    background: #F0EFE9;
+    color: #7A7A76;
+}
+html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn svg { width: 15px; height: 15px; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn::after {
+    content: 'Search...';
+    font-size: 13px;
+    font-weight: 400;
+    color: #A09E9A;
+}
+html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn:hover,
+html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn.is-on { background: #ECEBE4; }
+
+html:not([data-skin]):not([data-theme="dark"]) .topbar-btn { color: #71706C; border-radius: 9px; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-btn:hover { background: #EFEEE8; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-btn.is-on { background: #EEEDE6; color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-btn:focus-visible { outline-color: var(--paper-sage); }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-badge { background: #B4675D; }
+
+/* A hairline between the controls and the account, as in the mockup. */
+html:not([data-skin]):not([data-theme="dark"]) .topbar-account {
+    position: relative;
+    margin-left: 18px;
+    color: #5F625E;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]) .topbar-account::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: #E4E2DC;
+}
+html:not([data-skin]):not([data-theme="dark"]) .topbar-account:hover { background: #EFEEE8; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-account.is-on { background: #EEEDE6; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-avatar { background: #E3E3DA; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-caret { color: #8A8984; }
+
+/* The panels it opens: the account menu, search and notifications. */
+html:not([data-skin]):not([data-theme="dark"]) .topbar-panel {
+    border: 1px solid var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: 0 2px 6px rgba(42, 44, 42, .06), 0 22px 48px rgba(42, 44, 42, .10);
+}
+
+/* ==========================================================================
+   SHARED: cards, buttons, fields, dialogs on the three pages
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-card {
+    border: 1px solid var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn { border-radius: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn-primary { background: var(--paper-sage); color: #FFFFFF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn-primary:hover:not(:disabled) { background: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) .ui-btn-secondary {
+    border-color: var(--paper-line);
+    background: #FCFAF6;
+    color: var(--paper-body);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) input:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) textarea:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) select:focus-visible {
+    outline-color: var(--paper-sage);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) ::selection {
+    background: #DDE3D9;
+}
+
+/* Every dialog these pages open, in one shape: paper, a faint rule, soft
+   corners, a soft shadow, and a warm veil behind. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) :is(.modal, .modal-content, .task-modal, .tm-dialog, .tm-sheet, .cu-sheet, .cu-card, .dc-card, .rp-card, .gx-modal, .gx-drawer, .gx-wizard, .lu-card, .gr-card, .event-modal, .cal-dialog, .wk-dialog, .bd-dialog) {
+    border-color: var(--paper-line);
+    background: var(--paper-card);
+    color: var(--paper-ink);
+}
+
+/* ---- Serif: titles and figures ----------------------------------------- */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) :is(
+    .dash-hello, .dash-stat-name, .dash-panel-title, .dash-big, .dash-ring-pct,
+    .dash-xp-level, .dash-figure-value, .dash-insight-title, .fp-time, .fp-dial-text,
+    .wk-title, .wk-dayname, .wk-panel-title, .wk-stat-num, .wk-ring-pct,
+    .gx-page h1, .gx-page h2, .gx-page h3, .ag-top-text h2, .ag-top-text h3
+) {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    letter-spacing: -.005em;
+    color: var(--paper-ink);
+}
+
+/* ==========================================================================
+   DASHBOARD
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash {
+    --dash-card-radius: 12px;
+    --dash-card-line: var(--paper-line);
+    --dash-card-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-hello {
+    font-size: 42px;
+    line-height: 1.15;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-date { color: #6F6F6B; font-weight: 400; }
+
+/* The four figures: one card colour, no wash, a line icon with no disc. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash .dash-stat {
+    background: var(--paper-card);
+    border-color: var(--paper-line);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash .dash-stat .dash-stat-panel {
+    border-color: transparent;
+    background: var(--paper-inset);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-stat-chip {
+    background: transparent;
+    color: #686F6A;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-stat-name { font-size: 20px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-big { font-size: 38px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) :is(.dash-stat-sub, .dash-stat-heading, .dash-trend, .dash-xp-goal, .dash-xp-count, .dash-week-name) { color: var(--paper-muted); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-bar { background: #ECEAE6; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-bar-fill,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-goal-fill { background: var(--paper-sage); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-ring-track { stroke: #E7E6DF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-ring-fill { stroke: var(--paper-sage); }
+
+/* The task list: a quiet switch, a sage button, rows split by a hairline. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-panel-title { font-size: 22px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-tabs {
+    background: #F5F3EF;
+    border: 1px solid #EFEDE8;
+    border-radius: 9px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-tab { color: #8C8C88; font-size: 13.5px; font-weight: 400; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-tab:hover { color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-tab.is-active {
+    background: var(--paper-sage-soft);
+    color: #51554D;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-add {
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-add:hover { background: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-task { border-color: var(--paper-line-soft); }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-task-name {
+    font-family: var(--paper-serif);
+    font-size: 16px;
+    font-weight: 400;
+    color: #383635;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) :is(.dash-task-meta, .dash-task-subject-name, .dash-task-when) { color: #8E8E8C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-task-tag {
+    background: #F1EFEA;
+    border-color: transparent;
+    color: #868684;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-task-check { border-color: #C9C7C1; border-radius: 4px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-panel-link { color: #8C8A86; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-panel-link:hover { color: var(--paper-ink); }
+
+/* The focus card. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .fp-dial-track { stroke: #E7E6DF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .fp-dial-run { stroke: #DDDED9; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) :is(.fp-primary, .fp-btn.is-primary) {
+    border-color: transparent;
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) :is(.fp-primary, .fp-btn.is-primary):hover { background: var(--paper-sage-deep); }
+
+/* ==========================================================================
+   CALENDAR
+   ========================================================================== */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) :is(.calendar-card, .wk-panel, .wk-main, .wk-sidebar > *) {
+    border-color: var(--paper-line);
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-title { font-size: 34px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-dayname { font-size: 17px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-daydate { color: #7F7F7D; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) :is(.wk-timelabel, .wk-allday-label) { color: #898A87; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) :is(.wk-hourline, .wk-daycol) { border-color: #EAE9E5; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-dayhead.wk-today,
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-today .wk-dayname { color: var(--paper-ink); }
+
+/* Week / Day / Month, and the other switches: sage when picked. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .view-toggle {
+    border: 1px solid #EDEBE6;
+    border-radius: 9px;
+    background: #F6F4F2;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .view-toggle-btn { color: #6F716C; font-weight: 400; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .view-toggle-btn.active,
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .view-toggle-btn[aria-selected="true"] {
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) :is(.wk-nav button, .wk-arrow, .wk-icon-btn) { color: #6F716C; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-focus-chip {
+    border: 1px solid #ECEAE5;
+    border-radius: 6px;
+    background: #F8F7F3;
+    color: #6C6C6C;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-event { box-shadow: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-nowline { background: #B4675D; }
+
+/* ==========================================================================
+   GOALS
+   ========================================================================== */
+/* The header stands on the page, like the mockup: no card, no range. */
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .peak-hero {
+    padding: 0;
+    min-height: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .peak-hero .peak-scene { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-head-ico { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-head h1 { font-size: 46px; line-height: 1.1; }
+
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .gx-btn {
+    border-color: #ECEAE4;
+    border-radius: 8px;
+    background: #FCFAF6;
+    color: #54564F;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .gx-btn:hover { background: #F3F1EB; }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .gx-btn.is-primary {
+    border-color: transparent;
+    background: #E9EAE2;
+    color: #4E524C;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .gx-btn.is-primary:hover { background: #E1E3D9; }
+
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-tab { color: #5A5952; font-weight: 400; }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-tab.is-on {
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    box-shadow: none;
+}
+
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .ag-card {
+    border: 1px solid var(--paper-line);
+    border-radius: 12px;
+    background: var(--paper-card);
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .ag-panel {
+    border-color: var(--paper-line-soft);
+    background: transparent;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) :is(.ag-badge, .ag-tags > *) {
+    border-color: transparent;
+    background: #EEEFE7;
+    color: #6F7A70;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .ag-ring-track { stroke: #EEEBE5; }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .ag-ring-arc { stroke: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) :is(.ag-details, .ag-more, .ag-add-btn, .ag-link-btn) {
+    border-color: #ECEAE4;
+    background: #FCFAF6;
+    color: #54564F;
+}
+
+/* ==========================================================================
+   SECOND PASS: the parts the first pass left off the mockup
+   ========================================================================== */
+
+/* Dashboard: rows split by a hairline instead of boxed, like the mockup. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-task.dash-task {
+    border: 0;
+    border-bottom: 1px solid var(--paper-line-soft);
+    border-radius: 0;
+    background: transparent;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-task.dash-task:hover { background: #F4F2EC; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-task-scroll { scrollbar-color: #DAD7D0 transparent; }
+
+/* The streak's disc goes with the others; the flame keeps its colour. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash-stat-chip.dash-stat-chip.flame-chip {
+    background: transparent;
+    box-shadow: none;
+}
+
+/* Every heading on the Dashboard is a serif title. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .dash :is(h1, h2, h3) {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash) .focus-panel h2 { font-size: 22px; }
+
+/* Calendar: today is a soft pill, not a dark slab. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-daydate.today {
+    background: #ECEDE8;
+    color: var(--paper-ink);
+    font-weight: 500;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-today.is-today {
+    background: var(--paper-sage);
+    color: #FFFFFF;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-today.is-today:hover { background: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .wk-nowlabel { background: #B4675D; }
+
+/* Goals: one neutral tone on every card, the mockup's flat body. */
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page :is(.ag-card, .ag-card [class*="tone-"]) { --tone: #8B9689; }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .ag-card.ag-card::before { display: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-card {
+    --ag-panel: transparent;
+    --ag-panel-line: var(--paper-line-soft);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-body > .ag-panel.ag-panel,
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-panel.ag-panel {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-body > .ag-panel.ag-panel:first-child { border-right: 1px solid var(--paper-line-soft); }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-top > .gx-tile.gx-tile {
+    border-radius: 50%;
+    background: #E7E8DE;
+    color: #5F665F;
+    box-shadow: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page :is(.ag-next, .ag-focus).ag-next,
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-next.ag-next,
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-focus.ag-focus {
+    border: 1px solid #ECEAE4;
+    border-left-width: 1px;
+    background: #F6F5F0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-next > span {
+    background: #EBECE5;
+    color: #6F7A6E;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-note {
+    border-color: #EEEDE6;
+    background: #F3F1EB;
+}
+
+/* The task dialogs set the slider and its figure inline, in the old tan. */
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) input[type="range"] { accent-color: var(--paper-sage) !important; }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page) #xpValue { color: var(--paper-sage-deep) !important; }
+
+/* Calendar: every view's title and panel headings in the serif. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .calendar-container :is(h1, h2, .mv-title) {
+    font-family: var(--paper-serif);
+    font-weight: 400;
+    color: var(--paper-ink);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .calendar-container :is(h3, .wk-panel-title, .sl-title) {
+    font-family: var(--paper-serif);
+    font-weight: 500;
+    color: var(--paper-ink);
+}

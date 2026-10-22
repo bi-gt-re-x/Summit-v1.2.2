@@ -38,6 +38,13 @@ const SIBLINGS: Record<string, string[]> = {
   'home-motion.css': ['homepage.css', 'home-minimal.css', 'ambient.css'],
   // Only on the subject page, beside subject.css.
   'subject-objective.css': ['subject.css'],
+  // Generated copies of these sheets' colour rules (scripts/paper_theme.mjs),
+  // which only match where the originals are loaded.
+  'paper-remap.css': ['goals.css', 'dashboard.css', 'dashboard-home.css', 'timer.css', 'focus-session.css',
+    'calendar/shell.css', 'calendar/palette.css', 'calendar/week.css', 'calendar/day.css', 'calendar/month.css',
+    'calendar/dialogs.css', 'calendar/overview.css', 'catch-up.css', 'day-complete.css', 'rate-prompt.css',
+    'subject-picker.css', 'subject-state.css', 'next-sessions.css', 'starter.css', 'tutorial.css', 'notifications.css',
+    'search.css', 'nametag.css', 'topbar.css', 'page-state.css', 'refresh-button.css', 'verify-banner.css'],
 };
 
 function walk(dir: string, out: string[] = []): string[] {
