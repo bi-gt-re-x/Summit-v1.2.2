@@ -5,7 +5,8 @@
  * and each demonstration that moves in a file of its own, named after the
  * home-*.js it was ported from. The hooks are the same split for
  * the motion that belongs to no single section — the opening, the reveals, the
- * charts, and the last of it.
+ * charts, the loops, and the last of it. Tour.tsx is the product tour: the
+ * sections that say what each part of the app does.
  */
 export { Analytics } from './Analytics';
 export { CalendarDemo } from './CalendarDemo';
@@ -19,9 +20,8 @@ export { Trend } from './Trend';
 export { useCharts } from './useCharts';
 export { useFinalMotion } from './useFinalMotion';
 export { useIntro } from './useIntro';
-export { useCountUps, useReveals } from './useReveals';
+export { useCountUps, useLoops, useReveals } from './useReveals';
 export {
-  FeatureStrip,
   FinalCta,
   Footer,
   Hero,
@@ -31,3 +31,15 @@ export {
   TaskStats,
   TechStack,
 } from './sections';
+export {
+  Facts,
+  Faq,
+  FeatureGrid,
+  GoalsTour,
+  HowItWorks,
+  MoreTour,
+  Numbers,
+  SkillsTour,
+  SpacesTour,
+  TimerTour,
+} from './Tour';

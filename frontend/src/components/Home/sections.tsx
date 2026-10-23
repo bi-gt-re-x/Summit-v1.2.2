@@ -2,16 +2,17 @@
  * The landing page's written sections — the parts of frontend/html/homepage.html
  * that are prose and shape rather than demonstration.
  *
- * Every class name here is the one styles/homepage.css already dresses, so
- * none of this needed new CSS. The demos that move live in their own files
- * beside this one; what is left is the hero, the feature strip, the section
- * headings, the philosophy and pricing blocks, the tech grid and the footer.
+ * The demos that move live in their own files beside this one, and the
+ * product tour (how it works, the feature grid, the timer, goals, skill trees,
+ * Spaces and the questions) is Tour.tsx. What is left here is the hero, the
+ * section headings, the task details, the rules, pricing, the tech grid, the
+ * closing call and the footer.
  *
  * The one thing that is not a straight transcription: links that pointed at
  * pages through Jinja's `url_for` are router <Link>s, so following one inside
  * the app does not reload it.
  */
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Range } from '@/components/Range';
 import { RidgeChart } from './RidgeChart';
 import { Trend } from './Trend';
@@ -126,19 +127,21 @@ export function Hero({
                 width={18}
                 height={18}
               />
-              The study planner that keeps score
+              Made for school and college
             </span>
             <span className="lp-eyebrow hm-rise">
-              100% free · No credit card · Your data stays yours
+              Free · No credit card · Export your data anytime
             </span>
           </>
         )}
 
         <h1 className="lp-hero-title">
-          A to-do list <em>that keeps score.</em>
+          A study planner <em>that keeps score.</em>
         </h1>
         <p className="lp-hero-sub hm-rise">
-          Tasks, a calendar and a focus timer in one app. Every task you finish earns XP, keeps your streak alive and moves your growth score. Log it once and you're done.
+          Summit puts your tasks, calendar and focus timer in one app. Every task you
+          finish earns XP and keeps your streak going. Analytics shows you which subjects
+          are getting better.
         </p>
         {/* Every call to action on this page is a pitch to a visitor who has no
             account yet. Someone already signed in has nothing left to be sold,
@@ -168,9 +171,9 @@ export function Hero({
                 className="lp-btn lp-btn-primary"
                 onClick={onGetStarted}
               >
-                Get started free <span className="lp-chevd">▾</span>
+                Get started free <span className="lp-arrow">→</span>
               </button>
-              <a href="#see-it" className="lp-btn lp-btn-ghost">
+              <a href="#how" className="lp-btn lp-btn-ghost">
                 See how it works <span className="lp-arrow lp-arrow-down">↓</span>
               </a>
             </>
@@ -220,112 +223,19 @@ export function Hero({
             Overall <strong>83</strong>
           </div>
         </div>
-        {/* A 📅 floated here at 45% opacity, over nothing, meaning nothing. It
-            was the last of the decoration the hero had instead of a picture,
-            and the range behind the card is the picture. */}
-      </div>
-    </section>
-  );
-}
-
-/**
- * The three cards under the hero.
- *
- * `bits` is the part that was missing. Each card had a title, a sentence and a
- * link, and the sentence was doing two jobs badly — saying what the thing is
- * *and* listing what it can do, which is how a paragraph ends up as "organize
- * your schedule with an intuitive task manager" and tells a reader nothing they
- * could not have guessed from the title. The sentence now makes one claim and
- * the row of chips under it carries the specifics, which is also the only part
- * of a feature card anybody actually scans.
- */
-const FEATURES = [
-  {
-    ico: 'lp-ico-teal',
-    glyph: 'clipboard' as const,
-    title: 'All your tasks in one place',
-    body: 'Sort, filter and search them, then knock out a dozen at once.',
-    bits: ['Priorities', 'Due dates', 'Bulk actions'],
-    to: '/dashboard',
-    label: 'Go to Dashboard',
-  },
-  {
-    ico: 'lp-ico-green',
-    glyph: 'sprout' as const,
-    title: 'See how you\'re really doing',
-    body: "Five stats make one growth score. Tap any of them to see how it's worked out.",
-    bits: ['Streaks', 'Growth score', 'Records'],
-    to: '/growth',
-    label: 'Go to Growth',
-  },
-  {
-    ico: 'lp-ico-gold',
-    glyph: 'target' as const,
-    title: 'Goals that fill themselves in',
-    body: 'Set a target in XP, tasks or streak days. It fills up as you work, so there\'s nothing extra to track.',
-    bits: ['XP', 'Milestones', 'Auto-advance'],
-    to: '/goals',
-    label: 'Go to Goals',
-  },
-];
-
-export function FeatureStrip() {
-  const navigate = useNavigate();
-
-  return (
-    <section className="lp-strip" id="features">
-      {FEATURES.map((f) => (
-        // The whole card is the target, not just the link in it. The link is
-        // still a real link — keyboard, middle-click and "open in new tab" all
-        // work — so the card only handles a click that missed it.
-        <article
-          className="lp-card lp-feature lp-clickable"
-          key={f.title}
-          onClick={(event) => {
-            if ((event.target as HTMLElement).closest('a')) return;
-            navigate(f.to);
-          }}
-        >
-          <span className={`lp-feat-ico ${f.ico}`}><Icon name={f.glyph} /></span>
-          <h3>{f.title}</h3>
-          <p>{f.body}</p>
-          <ul className="lp-feat-bits">
-            {f.bits.map((bit) => (
-              <li key={bit}>{bit}</li>
-            ))}
-          </ul>
-          <Link to={f.to} className="lp-link">
-            {f.label} <span className="lp-arrow">→</span>
-          </Link>
-        </article>
-      ))}
-      {/* This card is where the hidden chain starts on this page —
-          secret/quote-egg.js counts ten clicks on the `.lp-quote` card itself,
-          so everything inside it is a child and the clicks still bubble. That
-          is the only reason the card has to stay; what is *in* it changed.
-
-          It used to be a testimonial: five stars, a quote about how Summit
-          changed somebody's studying, and "Sarah J. · Student · six month
-          streak" under an initial in a circle. Sarah does not exist. That was
-          harmless while this ran on one laptop and nobody but its author ever
-          loaded the page, and it stops being harmless the moment the page is
-          on a domain — an invented five-star review from an invented student
-          is not a placeholder any more, it is a fake endorsement, and the
-          people it would work on are the ones deciding whether to trust a
-          study tool with their year.
-
-          So the card says something true instead: why the thing was built,
-          which needs no reviewer to vouch for it. */}
-      <article className="lp-card lp-quote">
-        <p className="lp-quote-kicker">Why I made this</p>
-        <p>
-          Every planner I tried could show me my to-do list. None of them could tell
-          me if my week actually went well.
-        </p>
-        <div className="lp-quote-foot">
-          <span className="lp-quote-by">So I built one that could.</span>
+        {/* Two small notes that pop in and out around the cards, the way the
+            app's own toasts do when a task is finished. They sit clear of the
+            rating card and take no clicks, because the pentagon in it is a
+            door (secret/pentagon-egg.js) and has to stay reachable. */}
+        <div className="lp-hero-pops lp-loop">
+          <span className="lp-pop lp-pop-a">
+            <Icon name="check" /> Physics problem set <b>+80 XP</b>
+          </span>
+          <span className="lp-pop lp-pop-b">
+            <Icon name="flame" /> 13-day streak
+          </span>
         </div>
-      </article>
+      </div>
     </section>
   );
 }
@@ -384,31 +294,20 @@ export function TaskStats() {
           </span>
         </div>
       </div>
-      {/* Three things a task actually has, rather than three things a task
-          manager is generally said to have.
-
-          The middle one used to be "Sub-tasks — break big tasks into smaller
-          checkable steps", and a `Task` has never had any. Steps belong to a
-          milestone under a goal, and types/models.ts is explicit that a step
-          has no XP, no due date, no timer and no priority and "never reaches
-          the tasks page". So this was not soft copy, it was a feature the page
-          was inventing, in the one section devoted to the thing it was
-          inventing it about. Subjects are what actually sits in that slot: a
-          real field on a task, and the one the analytics breakdown is built
-          from.
-
-          "Reminders" went the same way for a smaller reason — nothing here
-          reminds anybody of anything. There are due dates, and there is a
-          timer, and what the timer does when it runs out is worth a sentence
-          of its own. */}
+      {/* What a task actually has, each checked against the app: the XP
+          range and its six named bands (RULES.task_xp, utils/priority.ts),
+          subjects, the late cut (RULES.overdue, utils/overdue.ts), repeats
+          (components/Calendar/RecurrencePicker, twelve months ahead) and the
+          row's "Focus on this" (components/Tasks). Sub-tasks and reminders
+          were here once, and a task has neither. */}
       <ul className="lp-list">
         <li>
           <span className="lp-list-ico"><Icon name="star" /></span>
           <div>
-            <h4>Priority</h4>
+            <h4>XP from 10 to 250</h4>
             <p>
-              Low, medium or high. The important stuff stays at the top until it's
-              done.
+              Slide it up for harder work. Summit names the level for you, from Easy to
+              Very Challenging.
             </p>
           </div>
         </li>
@@ -423,12 +322,32 @@ export function TaskStats() {
           </div>
         </li>
         <li>
+          <span className="lp-list-ico"><Icon name="clock" /></span>
+          <div>
+            <h4>Late work costs XP</h4>
+            <p>
+              Finish after the due date and you lose 25% of the XP for each day late. It
+              never drops below 25%, so late work still counts.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span className="lp-list-ico"><Icon name="calendar" /></span>
+          <div>
+            <h4>Repeats</h4>
+            <p>
+              Set a task to repeat on certain days of the week or month. Summit fills in
+              the next 12 months for you.
+            </p>
+          </div>
+        </li>
+        <li>
           <span className="lp-list-ico"><Icon name="timer" /></span>
           <div>
-            <h4>Due dates and timers</h4>
+            <h4>Focus on this</h4>
             <p>
-              Add a date and the task shows up on your calendar. Start a timer to focus.
-              If time runs out, the task gets marked expired.
+              Every task's menu has a Focus on this button. It opens the timer with that
+              task picked.
             </p>
           </div>
         </li>
@@ -441,8 +360,8 @@ const PHILOSOPHY = [
   {
     ico: 'lp-ico-teal',
     path: <path d="M3 12h4l3 8 4-16 3 8h4" />,
-    title: 'Show up every day',
-    body: 'Your streak goes up every day you show up. After a week, you get one free miss a month.',
+    title: 'Small wins count',
+    body: "Finish one task and the day counts toward your streak. You don't need a perfect day.",
   },
   {
     ico: 'lp-ico-green',
@@ -452,8 +371,8 @@ const PHILOSOPHY = [
         <path d="M16 7h5v5" />
       </>
     ),
-    title: 'Progress you can see',
-    body: 'Everything you finish turns into a number, and you can always see where it came from.',
+    title: 'Numbers you can check',
+    body: "Your stats come from what you actually did. Click one to see how it's worked out.",
   },
   {
     ico: 'lp-ico-gold',
@@ -464,14 +383,14 @@ const PHILOSOPHY = [
         <path d="M12 13v4M9 20h6" />
       </>
     ),
-    title: 'Make it fun',
-    body: 'XP, levels and a title to show off. A little reward for the hard part.',
+    title: 'XP for real work',
+    body: 'XP comes from finished tasks, badges and quests. Running a timer on its own earns nothing.',
   },
   {
     ico: 'lp-ico-purple',
     path: <path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" />,
-    title: 'Keep it simple',
-    body: 'Just the tools that help you get stuff done. No clutter.',
+    title: 'One copy of everything',
+    body: 'The task on your calendar is the same task on your list. Change it once and it changes everywhere.',
   },
 ];
 
@@ -479,8 +398,8 @@ export function Philosophy() {
   return (
     <section className="lp-section">
       <SectionHead
-        title="What Summit is about"
-        blurb="Four ideas the whole app is built around. They're also why some features you might expect aren't here."
+        title="The rules behind Summit"
+        blurb="A few choices that shape how the whole app works."
       />
       {/* Line icons rather than emoji, so each one can draw itself in. */}
       <div className="lp-philo" id="philoGrid">
@@ -508,15 +427,18 @@ export function Philosophy() {
 }
 
 /**
- * The four squares under "Theme Selector". Two are real themes and two are not
- * built, which is what the toast is for — the original said so rather than
- * hiding them, and the swatches are part of the pitch.
+ * The six themes in Settings (components/Settings/ThemePicker). Light and
+ * Dark switch right here, because the landing page is the one place a visitor
+ * can pick a theme before they have an account. The four skins need one, so
+ * those say where to find them.
  */
 const SWATCHES: { css: string; title: string; theme: Theme | null }[] = [
   { css: 'lp-sw-light', title: 'Light', theme: 'light' },
   { css: 'lp-sw-dark', title: 'Dark', theme: 'dark' },
-  { css: 'lp-sw-mid', title: 'Slate', theme: null },
-  { css: 'lp-sw-ink', title: 'Ink', theme: null },
+  { css: 'lp-sw-midnight', title: 'Midnight', theme: null },
+  { css: 'lp-sw-sunset', title: 'Sunset', theme: null },
+  { css: 'lp-sw-meadow', title: 'Meadow', theme: null },
+  { css: 'lp-sw-orchid', title: 'Orchid', theme: null },
 ];
 
 export function Pricing({
@@ -542,7 +464,7 @@ export function Pricing({
       void el.offsetWidth;
       el.classList.add('lp-swatch-pop');
     } else {
-      onToast(`${swatch.title} theme is coming soon`);
+      onToast(`${swatch.title} is in Settings once you sign up`);
     }
   };
 
@@ -555,7 +477,7 @@ export function Pricing({
           shorter version of it. */}
       <SectionHead
         title="It's free. Really."
-        blurb="One plan with everything in it. No paid tier and no locked features."
+        blurb="One plan with everything in it. There's no paid tier."
       />
       <div className="lp-split">
         <div className="lp-card lp-themes">
@@ -566,6 +488,7 @@ export function Pricing({
                 key={swatch.title}
                 className={`lp-swatch ${swatch.css}`}
                 title={swatch.title}
+                aria-label={`${swatch.title} theme`}
                 role="button"
                 tabIndex={0}
                 onClick={(event) => pick(event, i)}
@@ -579,16 +502,18 @@ export function Pricing({
             ))}
           </div>
           <p className="lp-muted-p">
-            Light or dark. Whatever you choose follows you to every page and sticks to your account.
+            Try Light or Dark right here. Midnight, Sunset, Meadow and Orchid are in
+            Settings once you sign up. Your pick follows you to every page.
           </p>
         </div>
         <div className="lp-card lp-price">
-          <span className="lp-price-tag">Free forever</span>
+          <span className="lp-price-tag">Free</span>
           <ul className="lp-price-list">
-            <li>✓ Unlimited tasks &amp; goals</li>
-            <li>✓ Growth ratings &amp; analytics</li>
-            <li>✓ Streaks, XP &amp; levels</li>
-            <li>✓ Calendar scheduling</li>
+            <li>✓ Tasks, calendar and focus timer</li>
+            <li>✓ Goals with checkpoints</li>
+            <li>✓ Analytics and your growth score</li>
+            <li>✓ Skill trees, badges and personal bests</li>
+            <li>✓ Notes, the Log and Spaces</li>
           </ul>
           {/* The same correction as the closing block's: a signed-out reader
               clicking the price card's button wants an account, not the log-in
@@ -645,8 +570,8 @@ export function TechStack() {
   return (
     <section className="lp-section">
       <SectionHead
-        title="Under the hood"
-        blurb="React up front, Python in back, and your data in a database on the server. You can export all of it from Settings anytime."
+        title="What it's built with"
+        blurb="React in the browser and Python on the server. Your data lives in a Postgres database, and you can download all of it from Settings."
       />
       <div className="lp-tech" id="techGrid">
         <svg className="tech-wires" id="techWires" aria-hidden="true" />
@@ -675,15 +600,15 @@ export function TechStack() {
  * What the closing block promises, under the button.
  *
  * Three, because four reads as a list and two as an afterthought — and each one
- * has to agree with something the page has already said. "Free forever" is the
- * price tag in `Pricing` above, and the SQLite line is the same file the tech
- * grid names. A closing block that invents a fourth claim nobody can check is
+ * has to agree with something the page has already said. "Free" is the price
+ * tag in `Pricing` above, and the export is the one the questions describe
+ * (Settings > Data & export). A closing block that invents a fourth claim nobody can check is
  * the part of a landing page readers have learned to skip.
  */
 const REASSURANCE = [
-  'Free forever, everything included',
+  'Free, with everything included',
   'No credit card needed',
-  'Your data stays on your own server',
+  'Export your data anytime',
 ];
 
 export function FinalCta({
@@ -709,7 +634,7 @@ export function FinalCta({
           later and next to the button, argues a point nobody is still
           disputing and takes the last line of the page away from the one
           thing it is for. */}
-      <p>Finish one task and watch the numbers move.</p>
+      <p>Add a task and finish it. That's day one.</p>
       {/* It was a <Link> to /dashboard for both readers, and for a stranger
           that is the worst button on the page: the dashboard is gated, so
           "Get Started Today" walked them into a bounce and dropped them back
@@ -744,11 +669,11 @@ export function Footer() {
     <footer className="footer">
       <div className="footer-content">
         <nav className="footer-links">
-          <Link to="/about-us">About Us</Link>
+          <Link to="/about-us">About us</Link>
           {/* Still Jinja pages, so these leave the app on purpose. */}
-          <a href="/contact-support">Contact Support</a>
-          <Link to="/privacy-policy">Privacy Policy</Link>
-          <Link to="/terms-of-service">Terms of Service</Link>
+          <a href="/contact-support">Contact support</a>
+          <Link to="/privacy-policy">Privacy policy</Link>
+          <Link to="/terms-of-service">Terms of service</Link>
           <a href="/careers">Careers</a>
         </nav>
         {/* Was "© 2032 Study Dashboard Inc." — a year six ahead of this one,

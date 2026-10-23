@@ -36,6 +36,7 @@ const SIBLINGS: Record<string, string[]> = {
   'homepage.css': ['ambient.css'],
   'home-minimal.css': ['homepage.css'],
   'home-motion.css': ['homepage.css', 'home-minimal.css', 'ambient.css'],
+  'home-tour.css': ['homepage.css', 'home-minimal.css', 'ambient.css'],
   // Only on the subject page, beside subject.css.
   'subject-objective.css': ['subject.css'],
   // Generated copies of these sheets' colour rules (scripts/paper_theme.mjs),

@@ -734,37 +734,14 @@ html[data-theme="dark"] .lp-cal-body.is-target { background: rgba(124, 131, 255,
 }
 
 /* ============================================================
-   Feature cards
+   Arrows
    ============================================================ */
-/* `--hm-lift` is the curve the whole page rises on — the same one styles/homepage.css
-   gives the plain cards and the buttons. It was four properties on one 320ms
-   `--hm-ease` here, which is a decelerate meant for entrances: on a hover it
-   made the card arrive and stop dead while its shadow was still spreading. The
-   shadow now outlasts the travel slightly, which is what reads as weight. */
-.lp-feature {
-    --hm-lift: cubic-bezier(.22, .84, .34, 1);
-    transition: transform 300ms var(--hm-lift), box-shadow 380ms var(--hm-lift),
-                background 300ms var(--hm-ease), border-color 260ms var(--hm-ease);
-}
-/* The icon leads the card by a hair and settles after it — a rotation on the
-   same duration as the lift reads as one rigid object tilting. */
-.lp-feature .lp-feat-ico { transition: transform 460ms cubic-bezier(.2, .9, .3, 1.08); }
 .lp-arrow {
     display: inline-block;
     transition: transform 300ms cubic-bezier(.22, .84, .34, 1);
 }
-.lp-feature:hover {
-    transform: translate3d(0, -10px, 0);
-    box-shadow: var(--shadow-lg);
-    background: var(--lp-surface);
-    border-color: var(--lp-accent);
-}
-.lp-feature:hover .lp-feat-ico { transform: rotate(-8deg) scale(1.08); }
-.lp-feature:hover .lp-arrow { transform: translate3d(6px, 0, 0); }
-/* The link's arrow moves on the link's own hover too, not only the card's, so
-   a reader who goes straight for the link still gets the answer. */
+/* A link's arrow nudges forward when the link is hovered. */
 .lp-link:hover .lp-arrow { transform: translate3d(6px, 0, 0); }
-html[data-theme="dark"] .lp-feature:hover { box-shadow: var(--shadow-lg); }
 
 /* ============================================================
    Philosophy — the icons draw themselves
@@ -1123,7 +1100,7 @@ html[data-theme="dark"] .lp-final::before {
     .tech-armed .tech-node { transform: none; opacity: 0.85; }
     .tr-armed .lp-trend .tr-arrow { opacity: 1; transform: none; }
     .lp-final::before { transition: none; }
-    .lp-feature, .lp-feature .lp-feat-ico, .lp-arrow, .ph-ico path, .lp-phi,
+    .lp-arrow, .ph-ico path, .lp-phi,
     .lp-techitem, .tech-bit, .tech-wire, .lp-trend .tr-arrow, .lp-btn-lg,
     .lp-feat-bits li { transition: none; }
     html.theme-shift, html.theme-shift * { transition: none !important; }

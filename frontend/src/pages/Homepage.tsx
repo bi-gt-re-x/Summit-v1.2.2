@@ -13,9 +13,10 @@
  *     pages/Login.tsx); the buttons here link to it, and an old
  *     /home?auth=… link — a bookmark, an e-mail sent before the move — is
  *     forwarded there with its query intact.
- *   * the four page-wide motions, as hooks over the rendered tree: the opening,
- *     the scroll reveals, the count-ups, the charts drawing themselves, and the
- *     closing flourishes. Each measures something that only exists once the
+ *   * the page-wide motions, as hooks over the rendered tree: the opening,
+ *     the scroll reveals, the count-ups, the small looping drawings (played
+ *     only while on screen), the charts drawing themselves, and the closing
+ *     flourishes. Each measures something that only exists once the
  *     page is laid out, which is why they are hooks over a ref and not markup.
  *   * the toast, which belongs to no section.
  *
@@ -38,22 +39,32 @@ import {
   Analytics,
   CalendarDemo,
   DashboardDemo,
-  FeatureStrip,
+  Facts,
+  Faq,
+  FeatureGrid,
   FinalCta,
   Footer,
+  GoalsTour,
   Hero,
+  HowItWorks,
+  MoreTour,
+  Numbers,
   Performance,
   Philosophy,
   Pricing,
   SectionHead,
+  SkillsTour,
+  SpacesTour,
   StreakLevel,
   TaskDemo,
   TaskStats,
   TechStack,
+  TimerTour,
   useCharts,
   useCountUps,
   useFinalMotion,
   useIntro,
+  useLoops,
   useReveals,
 } from '@/components/Home';
 import { useAuth, useDocumentTitle, useTheme } from '@/hooks';
@@ -62,12 +73,14 @@ import type { Theme } from '@/types';
 import '@/styles/homepage.css';
 import '@/styles/home-motion.css';
 import '@/styles/home-minimal.css';
+import '@/styles/home-tour.css';
 
 /** The header's links: a section of this page each, in the order they come. */
 const SECTIONS = [
-  ['see-it', 'Product'],
   ['features', 'Features'],
+  ['how', 'How it works'],
   ['analytics', 'Analytics'],
+  ['faq', 'Questions'],
   ['pricing', 'Pricing'],
 ] as const;
 
@@ -111,6 +124,7 @@ export default function Homepage() {
   useIntro(page);
   useReveals(page);
   useCountUps(page);
+  useLoops(page);
   useCharts(page);
   useFinalMotion(page);
 
@@ -211,35 +225,31 @@ export default function Homepage() {
             onGetStarted={() => toLogin('create')}
           />
 
-          {/* Not a screenshot: a working mock the reader watches fill in.
+          <Numbers />
 
-              **This sits directly under the hero, and that is the point.** It
-              used to come third, below the feature strip — roughly a thousand
-              pixels down on a phone, which is a scroll a stranger has to
-              choose to make before the page has given them a reason to. The
-              one thing on this page that sells the app is ticking a box and
-              watching a number move, so it goes where the reader already is.
-              The strip that was here explains the same three ideas in prose;
-              prose is what you read after you are interested, so it follows.
-
-              `see-it` is also where the hero's second button lands. A
-              signed-out reader has nothing they are allowed to open, so the
-              honest offer to "see it working" is this — and it costs them
-              nothing to reach. */}
+          {/* A drawing of the dashboard that fills itself in as it scrolls
+              into view. It sits right under the hero because watching the
+              numbers fill in is the quickest way to show what the app is, so
+              it goes where the reader already is. The
+              copy describes the real page's top row (the tour's "Your day in
+              four numbers", components/Tutorial/steps.ts). */}
           <section className="lp-section lp-section-demo" id="see-it">
             <SectionHead
-              title="Try it right here"
-              blurb="Check off a task and watch your XP climb. This is the real dashboard, right on the page."
+              title="Your dashboard"
+              blurb="It's home base. The top shows tasks done, XP earned, time focused and your streak. They fill up as you work."
             />
             <DashboardDemo />
           </section>
 
-          <FeatureStrip />
+          <HowItWorks />
+          <FeatureGrid />
 
-          <section className="lp-section">
+          {/* The deep dives, in the order the feature grid lists them, so
+              each card's "Read more" lands further down in the same order. */}
+          <section className="lp-section" id="tasks">
             <SectionHead
-              title="Check it off, get the XP"
-              blurb="Priorities, subjects and due dates all live on one list. Finish something and the XP goes straight to your bar."
+              title="Tasks and XP"
+              blurb="Set what a task is worth when you add it. Finish it and the XP goes straight to your bar."
             />
             {/* The workflow, played out: a task gets checked off, the list
                 closes over it, and the XP it earned lands on the bar. */}
@@ -247,45 +257,117 @@ export default function Homepage() {
             <TaskStats />
           </section>
 
+          {/* Day, week and month are the calendar's three views; events are
+              components/Calendar/EventModal, and blocking out time is the
+              tour's own step on this page. */}
+          <section className="lp-section" id="calendar">
+            <SectionHead
+              title="Your calendar"
+              blurb="Drop a task on a day to schedule it. Move it and your list updates too. It's the same task, so there's nothing to keep in sync."
+            />
+            <CalendarDemo />
+            <Facts
+              items={[
+                {
+                  icon: 'calendar',
+                  title: 'Day, week and month',
+                  body: 'See one day hour by hour, or zoom out to the whole month.',
+                },
+                {
+                  icon: 'clock',
+                  title: 'Block out time',
+                  body: "Drag down on an empty spot to block out time. Drag a block's edge to make it longer.",
+                },
+                {
+                  icon: 'pin',
+                  title: 'Events too',
+                  body: "Add things that aren't tasks, like a class or a game. They sit on the same calendar.",
+                },
+              ]}
+            />
+          </section>
+
+          <TimerTour />
+          <GoalsTour />
+
+          {/* The grace day and vacation mode are backend/tracking/xp.py
+              (GRACE_EARNED_AT, GRACE_REFRESH_DAYS, VACATION_MAX_DAYS), and the
+              level cost is utils/format's N × 100 with no cap. */}
+          <section className="lp-section" id="streak">
+            <SectionHead
+              title="Streaks and levels"
+              blurb="Finish at least one task a day and your streak goes up. Every bit of XP you earn counts toward your next level."
+            />
+            <StreakLevel />
+            <Facts
+              items={[
+                {
+                  icon: 'shield',
+                  title: 'Grace day',
+                  body: 'Hit a 7-day streak and you earn one. It covers one missed day, and a new one comes every 30 days.',
+                },
+                {
+                  icon: 'sun',
+                  title: 'Vacation mode',
+                  body: 'Going away? Pause your streak for up to 30 days from Settings.',
+                },
+                {
+                  icon: 'trend',
+                  title: 'No level cap',
+                  body: 'Level 1 takes 100 XP and level 2 takes 200. It keeps going from there.',
+                },
+              ]}
+            />
+          </section>
+
           <section className="lp-section">
             <SectionHead
-              title="Know where your time goes"
+              title="Where your time goes"
               blurb="Hours, completion rate and efficiency by day or by week. Only the days you actually worked count, so a day off won't drag your numbers down."
             />
             <Performance />
           </section>
 
-          <section className="lp-section">
-            <SectionHead
-              title="Drag it onto your calendar"
-              blurb="Drop a task on a day to schedule it. Move it and your list updates too. Same task, so there's nothing to keep in sync."
-            />
-            <CalendarDemo />
-          </section>
-
-          <section className="lp-section">
-            <SectionHead
-              title="Keep the streak alive"
-              blurb="Every task you finish earns XP toward your next level. Your streak goes up each day you finish at least one thing. After a week, you get one free miss a month, so one bad day won't wipe it out. Two in a row will."
-            />
-            <StreakLevel />
-          </section>
-
-          {/* The end of the feature tour, and the only section about the app
-              thinking rather than about the reader working. It comes last of
-              the seven because it is the one that needs the other six to have
-              happened: a score made of productivity, consistency and focus
-              means nothing to someone who has not yet been shown the tasks,
-              the streak and the calendar those are measured from. */}
+          {/* The tab lines are each tab's own job (components/Analytics/Header
+              and utils/siteIndex): advice with a book button, patterns and
+              mood against output, one page per subject, the long view. */}
           <section className="lp-section" id="analytics">
             <SectionHead
-              title="Stats that tell you what to do next"
-              blurb="Five stats make up your growth score, and Summit turns it into a short list of what to work on next week. Click any number to see how it works."
+              title="Analytics"
+              blurb="Five stats make up your growth score: productivity, consistency, quality, efficiency and focus. Each one gets a grade from F up to S. Click any number to see how it works."
             />
             <Analytics />
+            <Facts
+              items={[
+                {
+                  icon: 'lightbulb',
+                  title: 'Recommendations',
+                  body: 'A ranked list of what to change next. Book the study sessions it suggests onto your calendar.',
+                },
+                {
+                  icon: 'search',
+                  title: 'Insights',
+                  body: "When you work best and what's slipping. It also lines up your mood with what you got done.",
+                },
+                {
+                  icon: 'folder',
+                  title: 'Subjects',
+                  body: 'How each subject is going. Every subject gets a page of its own.',
+                },
+                {
+                  icon: 'trend',
+                  title: 'Growth',
+                  body: "How far you've come over months and years.",
+                },
+              ]}
+            />
           </section>
 
+          <SkillsTour />
+          <MoreTour />
+          <SpacesTour />
           <Philosophy />
+          <Faq />
           <Pricing
             signedIn={signedIn}
             onGetStarted={() => toLogin('create')}

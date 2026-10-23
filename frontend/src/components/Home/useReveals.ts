@@ -26,7 +26,12 @@ import { reduced } from '@/utils/homePlay';
 type Direction = 'left' | 'right' | 'up';
 
 /** The grids whose children alternate in from the sides. */
-const GRIDS = '.lp-strip, .lp-split, .lp-perf, .lp-ax, .lp-streak-grid, .lp-philo, .lp-tech';
+const GRIDS = '.lp-split, .lp-perf, .lp-ax, .lp-streak-grid, .lp-philo, .lp-tech, .lp-duo';
+
+/** The grids whose children rise in one after another, left to right. A grid
+    of a dozen cards sliding in from both sides at once is a lot of movement
+    for one screen, so these come up in a wave instead. */
+const RISING = '.lp-numbers, .lp-steps, .lp-grid, .lp-facts, .lp-trio, .lp-faq';
 
 export function useReveals(root: RefObject<HTMLElement | null>): void {
   useEffect(() => {
@@ -54,6 +59,10 @@ export function useReveals(root: RefObject<HTMLElement | null>): void {
         mark(el, i % 2 ? 'right' : 'left', (i % 4) * 80);
       });
     });
+    host.querySelectorAll(RISING).forEach((grid) => {
+      Array.from(grid.children).forEach((el, i) => mark(el, 'up', (i % 4) * 70));
+    });
+    host.querySelectorAll('.lp-mango-card, .lp-space, .lp-ticker').forEach((el) => mark(el, 'up'));
 
     mark(host.querySelector('.lp-final'), 'up');
 
@@ -81,7 +90,7 @@ export function useReveals(root: RefObject<HTMLElement | null>): void {
 }
 
 /** The statistics that count up: totals, metrics, and the hero's overall score. */
-const COUNTED = '.lp-stat-v b, .lp-metric-num, .lp-prev-overall strong';
+const COUNTED = '.lp-stat-v b, .lp-metric-num, .lp-prev-overall strong, .lp-num-v';
 
 export function useCountUps(root: RefObject<HTMLElement | null>): void {
   useEffect(() => {
@@ -145,4 +154,34 @@ function animate(el: HTMLElement, frames: number[]): void {
     if (p < 1) frames.push(requestAnimationFrame(step));
   }
   frames.push(requestAnimationFrame(step));
+}
+
+/**
+ * The small looping drawings: each `.lp-loop` gets `is-playing` while it is on
+ * screen and loses it when it leaves. styles/home-tour.css only animates a
+ * loop that is playing, so a drawing off screen costs nothing, and with
+ * reduced motion none of them ever play and each one rests in its finished
+ * state.
+ */
+export function useLoops(root: RefObject<HTMLElement | null>): void {
+  useEffect(() => {
+    const host = root.current;
+    if (!host || reduced || !('IntersectionObserver' in window)) return;
+
+    const loops = Array.from(host.querySelectorAll<HTMLElement>('.lp-loop'));
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          entry.target.classList.toggle('is-playing', entry.isIntersecting);
+        });
+      },
+      { threshold: 0.25 },
+    );
+    loops.forEach((el) => io.observe(el));
+
+    return () => {
+      io.disconnect();
+      loops.forEach((el) => el.classList.remove('is-playing'));
+    };
+  }, [root]);
 }

@@ -532,7 +532,6 @@ html[data-theme="dark"] .home-main {
 .lp-btn-ghost:hover { background: var(--lp-surface-2); }
 .lp-btn-full { width: 100%; justify-content: center; }
 .lp-btn-lg { padding: var(--space-4) var(--space-8); font-size: var(--text-lg); }
-.lp-chevd { font-size: .8em; }
 
 /* Hero */
 /* `position: relative` and `isolation: isolate` are what let the range stand
@@ -591,8 +590,9 @@ html[data-theme="dark"] .home-main {
 .lp-hero-glyph { position: absolute; right: 8%; top: 0; font-size: var(--text-3xl); opacity: .45; }
 
 /* Sections */
-/* The scroll margin is for the hero's "See it working", which is a link to
-   `#see-it` further down: without it the browser puts the section's first
+/* The scroll margin is for the links that jump down the page (the hero's
+   "See how it works", the header, each feature card's "Read more"): without
+   it the browser puts the section's first
    pixel against the top of the window, and a heading touching the edge of the
    screen reads as a page that has been cut off rather than one that has
    arrived. */
@@ -608,19 +608,6 @@ html[data-theme="dark"] .home-main {
 .lp-head h2 { color: var(--lp-heading); font-size: clamp(1.6rem, 2.5vw, 2.15rem); font-weight: 700; margin: 0 0 var(--space-2); letter-spacing: -.02em; line-height: 1.2; }
 .lp-head p { color: var(--lp-muted); font-size: var(--text-lg); line-height: 1.65; margin: 0; }
 
-/* Feature strip */
-.lp-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--lp-step-2); margin-top: var(--lp-step-4); }
-/* A column, so the link can be pushed to the floor of the card.
-   The four cards hold three, four and five lines of body copy, and with the
-   link sitting wherever the paragraph above it happened to end, the row of
-   four calls to action came out on four different lines — which reads as four
-   cards that were laid out separately. The paragraphs still start together at
-   the top; only the links are pinned to the bottom. */
-.lp-feature { display: flex; flex-direction: column; }
-.lp-feature h3 { color: var(--lp-heading); font-size: var(--text-lg); margin: var(--space-4) 0 var(--space-2); line-height: 1.25; }
-.lp-feature p { color: var(--lp-muted); font-size: var(--text-md); line-height: 1.55; margin: 0 0 var(--space-3); }
-.lp-feature .lp-feat-bits { margin-bottom: var(--lp-step-2); }
-.lp-feature .lp-link { margin-top: auto; }
 .lp-feat-ico { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: var(--radius-md); font-size: var(--text-2xl); }
 .lp-ico-teal { background: rgba(20, 184, 166, .15); color: #0f8f84; }
 .lp-ico-green { background: rgba(34, 197, 94, .15); color: #178a45; }
@@ -691,8 +678,6 @@ html[data-theme="dark"] .lp-ico-purple { color: #a78bfa; }
 .lp-swatch { width: 44px; height: 44px; border-radius: var(--radius-md); border: 1px solid var(--lp-border); }
 .lp-sw-light { background: #f4f6f8; }
 .lp-sw-dark { background: #0d1117; }
-.lp-sw-mid { background: #334155; }
-.lp-sw-ink { background: #1e1b4b; }
 .lp-muted-p { color: var(--lp-muted); font-size: var(--text-md); line-height: 1.5; margin: 0; }
 .lp-price-tag { display: inline-block; background: var(--lp-accent); color: #fff; font-weight: 700; padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); font-size: var(--text-md); }
 .lp-price-list { list-style: none; margin: var(--space-4) 0 var(--space-4); padding: 0; display: flex; flex-direction: column; gap: var(--space-2); color: var(--lp-text); font-size: var(--text-md); }
@@ -747,7 +732,7 @@ html[data-theme="dark"] .lp-ico-purple { color: #a78bfa; }
     .lp-hero { grid-template-columns: 1fr; }
     .lp-hero-art { min-height: 300px; margin-top: var(--space-2); }
     .lp-hero-title { max-width: 20ch; }
-    .lp-strip, .lp-philo, .lp-tech { grid-template-columns: 1fr 1fr; }
+    .lp-philo, .lp-tech { grid-template-columns: 1fr 1fr; }
     .lp-split, .lp-streak-grid { grid-template-columns: 1fr; }
     /* The range gives up height rather than being dropped: on a narrow screen
        the hero is the only part of the page with any air in it, and a hero
@@ -755,7 +740,7 @@ html[data-theme="dark"] .lp-ico-purple { color: #a78bfa; }
     .lp-hero .peak-range { height: 52%; }
 }
 @media (max-width: 560px) {
-    .lp-strip, .lp-philo, .lp-tech { grid-template-columns: 1fr; }
+    .lp-philo, .lp-tech { grid-template-columns: 1fr; }
     /* Two overlapping cards need a column each on a phone, and there is not
        one — so they stop overlapping and stack. */
     .lp-hero-art { min-height: 0; display: flex; flex-direction: column; gap: var(--lp-step-2); }
@@ -783,12 +768,11 @@ html[data-theme="dark"] .lp-ico-purple { color: #a78bfa; }
                 box-shadow 360ms cubic-bezier(.22, .84, .34, 1),
                 border-color 260ms var(--hm-ease);
 }
-.lp-feature:hover, .lp-phi:hover, .lp-techitem:hover, .lp-metric:hover {
+.lp-phi:hover, .lp-techitem:hover, .lp-metric:hover {
     transform: translate3d(0, -4px, 0);
     border-color: color-mix(in srgb, var(--lp-accent) 45%, var(--lp-border));
     box-shadow: var(--shadow-lg);
 }
-html[data-theme="dark"] .lp-feature:hover,
 html[data-theme="dark"] .lp-phi:hover,
 html[data-theme="dark"] .lp-techitem:hover,
 html[data-theme="dark"] .lp-metric:hover {
@@ -899,10 +883,6 @@ html[data-theme="dark"] .lp-trend.up { color: #4ade80; }
     border-radius: var(--radius-full);
     padding: var(--space-1) var(--space-2);
     transition: color .2s var(--hm-ease), border-color .2s var(--hm-ease);
-}
-.lp-feature:hover .lp-feat-bits li {
-    color: var(--lp-heading);
-    border-color: color-mix(in srgb, var(--lp-accent) 35%, var(--lp-border));
 }
 
 /* ---- The quote card ----

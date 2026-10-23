@@ -88,7 +88,6 @@ html[data-theme="dark"] .home-main .lp-hero-title em { color: #9AA4B2; }
     border-color: var(--lp-border);
     box-shadow: var(--lp-shadow);
 }
-.home-main .lp-feature:hover,
 .home-main .lp-phi:hover,
 .home-main .lp-techitem:hover,
 .home-main .lp-metric:hover {
