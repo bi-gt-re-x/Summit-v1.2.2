@@ -1475,8 +1475,17 @@ html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice
     --lat-radius: 14px;
     background: var(--paper-ground);
 }
-/* Advanced would be sage otherwise, the same as the accent. */
-html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .tier-advanced { --tone: #8A84A0; --tone-soft: #ECEAF1; }
+/* The six difficulty colors. Each tile's border and fill, the dot beside its
+   tier, and the key in the bar over the canvas all read `--tone`. Clearer
+   than the shared --lat-* hues (which also mean finished, in progress and so
+   on), so a tree reads by difficulty at a glance. Advanced is violet rather
+   than sage, which is the accent. */
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .tier-foundation { --tone: #3E9C8C; --tone-soft: #E2F1EE; }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .tier-beginner { --tone: #5B9D5F; --tone-soft: #E6F2E5; }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .tier-intermediate { --tone: #4A84B5; --tone-soft: #E3EDF7; }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .tier-advanced { --tone: #7F6CC0; --tone-soft: #EDE9F8; }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .tier-expert { --tone: #C3872A; --tone-soft: #F9EEDA; }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .tier-mastery { --tone: #C25876; --tone-soft: #F8E4EA; }
 
 /* ---- The header: the title on the page, the filter and full screen beside it */
 html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page .peak-hero {
@@ -1817,6 +1826,56 @@ html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice
     border-radius: 50%;
     background: var(--tone);
 }
+/* ---- Difficulty on the tile itself ----------------------------------------
+   Every tile wears its difficulty: a border in the tier's color and a wash
+   of it toward the bottom, with the icon drawn in a deeper shade. Locked
+   tiles keep the dashed border, in a paler shade of the same color, so an
+   unstarted tree still shows how hard each part is. In Progress mode
+   skilltree.css points `--tone` at the tile's state, and all of this follows. */
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile:not(.is-nav) .stx-tile-face {
+    border: 2px solid color-mix(in srgb, var(--tone) 85%, #FFFFFF);
+    background: linear-gradient(180deg, #FFFFFF 10%, var(--tone-soft) 100%);
+    color: color-mix(in srgb, var(--tone) 85%, #2A2C2A);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile.is-locked:not(.is-nav) .stx-tile-face {
+    border: 2px dashed color-mix(in srgb, var(--tone) 62%, #FFFFFF);
+    background: color-mix(in srgb, var(--tone-soft) 70%, #FFFFFF);
+    color: color-mix(in srgb, var(--tone) 68%, #A9A7A2);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile.is-complete:not(.is-nav) .stx-tile-face {
+    border-color: var(--tone);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--tone-soft) 55%, #FFFFFF) 0%, var(--tone-soft) 100%);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile:not(.is-nav):hover .stx-tile-face {
+    border-color: var(--tone);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--tone) 16%, transparent), var(--lat-shadow-lift);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile.is-here:not(.is-nav) .stx-tile-face {
+    border-color: var(--tone);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--tone) 20%, transparent), 0 0 0 10px color-mix(in srgb, var(--tone) 8%, transparent), var(--lat-shadow-lift);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile:not(.is-nav):focus-visible .stx-tile-face,
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile.is-selected:not(.is-nav) .stx-tile-face {
+    border: 2px solid var(--tone);
+    background: var(--tone-soft);
+    color: color-mix(in srgb, var(--tone) 70%, #1F211F);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--tone) 22%, transparent), var(--lat-shadow-lift);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-layout:not(.mode-progress) .stx-tile:not(.is-locked) .stx-tile-tier {
+    color: color-mix(in srgb, var(--tone) 75%, #4A4C48);
+}
+
+/* The key to those colors, beside the key to the corner marks. */
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-board-keys { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-board-tiers { gap: 6px 14px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-board-tiers .stx-legend-dot {
+    width: 12px;
+    height: 12px;
+    box-sizing: border-box;
+    border: 1.5px solid var(--tone);
+    background: var(--tone-soft);
+}
+
 html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-tile :is(.stx-tile-pct, .stx-tile-gate) {
     padding: 0;
     border: 0;
@@ -2518,6 +2577,12 @@ html:not([data-skin]):not([data-theme="dark"]):has(.page-state-loading) .app-mai
     background: #F7F6F2;
     background-image: none;
 }
+/* The graph paper sits behind the whole window, and the main area only paints
+   over it as far down as its own content goes. A loading page is short, so
+   the grid showed below the spinner in a band across the bottom of the
+   screen. While a page loads the screen is plain paper, top to bottom, and
+   the grid comes back with the page. */
+html:not([data-skin]):not([data-theme="dark"]):has(.page-state-loading) .hm-ambient { visibility: hidden; }
 html:not([data-skin]):not([data-theme="dark"]) .page-state-loading {
     gap: 14px;
     color: #7A7A76;

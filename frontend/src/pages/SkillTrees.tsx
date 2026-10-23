@@ -1194,21 +1194,44 @@ export default function SkillTrees() {
                   </svg>
                 </button>
               </nav>
-              {/* The key to the mark in each tile's corner. */}
-              <ul className="stx-board-key" aria-label="What the marks mean">
-                <li>
-                  <i className="stx-mark is-progress" aria-hidden="true" />
-                  In progress
-                </li>
-                <li>
-                  <i className="stx-mark is-available" aria-hidden="true" />
-                  Not started
-                </li>
-                <li>
-                  <i className="stx-mark is-complete" aria-hidden="true" />
-                  Completed
-                </li>
-              </ul>
+              <div className="stx-board-keys">
+                {/* The key to each tile's border color: difficulty in Map and
+                    Path, where you stand in Progress, the same switch the
+                    legend under the panel makes. */}
+                <ul
+                  className="stx-board-key stx-board-tiers"
+                  aria-label={mode === 'progress' ? 'What the colors mean' : 'Difficulty colors'}
+                >
+                  {mode === 'progress'
+                    ? PROGRESS_KEYS.map(([state, label]) => (
+                        <li key={state}>
+                          <i className={`stx-legend-dot state-${state}`} aria-hidden="true" />
+                          {label}
+                        </li>
+                      ))
+                    : DIFFICULTIES.map((tier) => (
+                        <li key={tier}>
+                          <i className={`stx-legend-dot tier-${tier}`} aria-hidden="true" />
+                          {DIFFICULTY_LABEL[tier]}
+                        </li>
+                      ))}
+                </ul>
+                {/* The key to the mark in each tile's corner. */}
+                <ul className="stx-board-key" aria-label="What the marks mean">
+                  <li>
+                    <i className="stx-mark is-progress" aria-hidden="true" />
+                    In progress
+                  </li>
+                  <li>
+                    <i className="stx-mark is-available" aria-hidden="true" />
+                    Not started
+                  </li>
+                  <li>
+                    <i className="stx-mark is-complete" aria-hidden="true" />
+                    Completed
+                  </li>
+                </ul>
+              </div>
             </div>
             <SkillTreeCanvas
               graph={shown}
