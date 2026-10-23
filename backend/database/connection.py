@@ -733,6 +733,18 @@ ADDED_TABLES = ('''
         PRIMARY KEY (user_id, quest_id),
         CHECK (xp >= 0)
     )
+''', '''
+    -- Marks on the review queue. The DDL is data/sql/review.sql's; see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS review_marks (
+        id       TEXT PRIMARY KEY,
+        user_id  TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        item     TEXT NOT NULL,
+        result   TEXT NOT NULL,
+        at       TEXT NOT NULL,
+        CHECK (result IN ('right', 'missed'))
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS review_marks_user_idx ON review_marks (user_id, item)
 ''')
 
 

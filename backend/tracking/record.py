@@ -212,7 +212,7 @@ def sessions_per_week(days_left, behind):
     return min(6, want + (1 if behind else 0))
 
 
-def nearest_deadline(goals, tasks, now):
+def nearest_deadline(goals, tasks, now, sittings=()):
     """The live goal with the nearest date inside DEADLINE_DAYS, read, or None.
 
     The fields are everything the plan's first line and the planner's brief
@@ -235,11 +235,18 @@ def nearest_deadline(goals, tasks, now):
         return None
     dated.sort(key=lambda row: row[:3])
     left, _, _, goal = dated[0]
-    return read_goal(goal, tasks, now, left)
+    return read_goal(goal, tasks, now, left, sittings)
 
 
-def read_goal(goal, tasks, now, left=None):
-    """One goal's standing, in the figures `nearest_deadline` describes."""
+def read_goal(goal, tasks, now, left=None, sittings=()):
+    """One goal's standing, in the figures `nearest_deadline` describes.
+
+    How many sessions a week it needs, and so how many to book, come from the
+    goal forecast (backend/tracking/forecast.py) whenever that has a pace, so
+    the plan's row and the forecast card above it ask for the same number.
+    `sittings` are the account's focus timers, which the forecast counts as
+    sessions. With too little to go on, `sessions_per_week`'s rule of thumb.
+    """
     today = now.date()
     if left is None:
         ends = _day(goal.get('deadline'))
@@ -301,6 +308,16 @@ def read_goal(goal, tasks, now, left=None):
     # The days left in this week, today included, cap what can still be booked.
     days_in_week = 7 - today.weekday()
     to_book = max(0, min(target - len(week) - len(booked - week), days_in_week - len(booked)))
+
+    # Imported here for the same reason as PLACEHOLDERS: forecast imports this.
+    from backend.tracking import forecast
+    pace = None
+    if goal.get('measure') in forecast.MEASURES and ends and ends >= today:
+        found = forecast.forecast(goal, tasks, sittings or (), today)
+        if found['state'] in forecast.PACED:
+            pace = found
+            target, to_book = found['week_target'], found['to_book']
+            behind = found['state'] != 'on_track'
     return {
         'goal': goal, 'days_left': left, 'subjects': subjects,
         'checkpoint': stone.get('title') if stone else None,
@@ -310,7 +327,7 @@ def read_goal(goal, tasks, now, left=None):
         'next_step_task': open_step.get('task_id') if open_step else None,
         'fortnight_days': len(fortnight), 'week_days': len(week), 'booked_days': len(booked),
         'per_week': target, 'to_book': to_book, 'behind': behind, 'gap': gap, 'cold': cold,
-        'open_task': linked,
+        'open_task': linked, 'pace': pace,
     }
 
 

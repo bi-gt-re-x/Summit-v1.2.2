@@ -16,6 +16,9 @@ import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { FollowupPanel } from '@/components/Recommendations';
 import { DiagnosisCards, DiagnosisEmpty } from '../Diagnosis';
 import { NextActions } from '../NextActions';
+import { GoalForecast } from '../GoalForecast';
+import { ReviewPanel } from '../ReviewPanel';
+import { SkillTreesPanel } from '../SkillTreesPanel';
 import { XpPulse } from '../XpPulse';
 import { LensCard } from '../Lens';
 import { Knows, useKnows } from '../Knows';
@@ -29,7 +32,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
        typical sitting, drawn from their logged focus time; `reasons` is what
        they type after a task; `detail` is how much supporting evidence they
        asked to be shown. None of the three changes what the plan suggests. */
-    detail, reasons, rhythm,
+    detail, reasons, rhythm, nudge,
   } = model;
 
   /**
@@ -50,8 +53,18 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
   const { dropAdopted, dropping, refresh } = data;
   const knows = useKnows(model);
 
+  const refreshPlan = () => {
+    refresh();
+    setNudge((at) => at + 1);
+  };
+
   return (
     <>
+      {/* First, the one forward-looking number: will each dated goal finish in
+          time at this pace, and what gets it there. Draws nothing without a
+          dated goal, section and all. See ../GoalForecast. */}
+      <GoalForecast onBooked={refreshPlan} reload={nudge} />
+
       {/* Above the plan, because it is the reason the plan is in this order.
           A reader who meets the ranking first and the explanation second has
           already decided the ranking is arbitrary. The XP card beside it is
@@ -73,12 +86,17 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           /* Both halves: `refresh` re-reads the account so a task finished
              elsewhere leaves the plan, and the nudge re-asks the clock so
              what counts as overdue is worked out again. */
-          onRefresh={() => {
-            refresh();
-            setNudge((at) => at + 1);
-          }}
+          onRefresh={refreshPlan}
         />
       </section>
+
+      {/* Right under the plan, because its "Redo" row scrolls here: what you
+          got wrong, back on 1, 3, 7 and 14 days, done in place. Then each
+          skill tree you've practiced, with what to do next in it. Both draw
+          nothing on an account with no misses or practice. See ../ReviewPanel
+          and ../SkillTreesPanel. */}
+      <ReviewPanel onChanged={refreshPlan} />
+      <SkillTreesPanel />
 
       {/* Then the diagnosis: what the two weeks means, before what to change
           about it. A reader who understands why the numbers are moving reads

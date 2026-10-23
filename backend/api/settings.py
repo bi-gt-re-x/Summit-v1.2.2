@@ -821,6 +821,9 @@ ACCOUNT_TABLES = (
     # The first-week quests already paid. Each one's XP is in xp_events, so
     # a reset that clears the ledger clears these too (see `_reset_progress`).
     'quest_claims',
+    # Reviews marked on the review queue. The account's own record of what it
+    # went back over.
+    'review_marks',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the
