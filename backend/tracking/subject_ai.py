@@ -1676,11 +1676,34 @@ use <about_the_reader> and <goals> for the level and the aim. Each `reason` \
 says why it's a good first step, without quoting any numbers."""
 
 
+#: Added to STEPS_SYSTEM for the "What to review" panel
+#: (backend/tracking/review_sessions.py). Same sessions, pointed backwards.
+REVIEW_NOTE = """
+
+THESE ARE REVIEW SESSIONS
+The reader wants to go back over work they've already done so it sticks, not \
+start new material. <review_due> lists what's worth going back to: work \
+finished about 1, 3, 7, 14 or 30 days ago (the points where a review does the \
+most good), work that went badly, and hard work done once and never revisited. \
+Only study material: never a workout, a run, a social plan, a chore or a \
+routine. Each of the three sessions reviews specific past work named there, by its \
+plain name, and the three cover different work. Prefer what went badly, then \
+what's on its spacing day. Every plan starts by recalling or redoing it from \
+memory, without notes or solutions, and only then checks against the source: \
+re-solve the missed problems cold, rewrite the proof, play the passage from \
+memory, explain the idea out loud. Write out which problems or parts to redo. \
+`type` is review, timed_set or mixed_practice. Keep each session to 15-45 \
+minutes. The `reason` says when it was done and how it went, using the \
+figures in <review_due>, and why going back now helps."""
+
+
 def plan(state: Dict[str, Any], model_id: str = '',
-         overall: bool = False, starter: bool = False) -> List[Dict[str, Any]]:
+         overall: bool = False, starter: bool = False,
+         review: str = '') -> List[Dict[str, Any]]:
     """Three recommendations for this subject, and nothing else — or, with
     `overall`, three across every subject in the brief (OVERALL_NOTE), or with
-    `starter`, three first sessions for a subject with no work yet.
+    `starter`, three first sessions for a subject with no work yet, or with
+    `review` (a <review_due> block), three review sessions (REVIEW_NOTE).
 
     Raises `BriefUnavailable` for everything the page should say out loud, as
     `read` does.
@@ -1692,17 +1715,19 @@ def plan(state: Dict[str, Any], model_id: str = '',
 
     # Reference facts about the subject (backend/tracking/sources.py) go in
     # the brief itself, so the figure check below allows their numbers too.
-    brief = steps_brief_from(state) + sources.brief_block(str(state.get('subject') or ''))
+    brief = (steps_brief_from(state) + sources.brief_block(str(state.get('subject') or ''))
+             + (review or ''))
+    what = 'review sessions' if review else 'sessions'
     try:
         text = planner.from_provider(
             brief,
             system=STEPS_SYSTEM + (OVERALL_NOTE if overall else '')
-            + (STARTER_NOTE if starter else ''),
+            + (STARTER_NOTE if starter else '') + (REVIEW_NOTE if review else ''),
             schema=STEPS_SCHEMA,
-            instruction=('Plan the next three sessions across these subjects '
-                         'from the sections below.' if overall else
-                         'Plan the next three sessions for this subject from '
-                         'the sections below.'),
+            instruction=('Plan the next three {} across these subjects '
+                         'from the sections below.'.format(what) if overall else
+                         'Plan the next three {} for this subject from '
+                         'the sections below.'.format(what)),
             model_id=model_id or MODEL_DEFAULT,
             max_tokens=STEPS_MAX_TOKENS,
         )

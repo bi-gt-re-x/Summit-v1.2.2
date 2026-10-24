@@ -1065,3 +1065,22 @@ export function nextSessions(
 export function suggestNextSessions(subjectId = '', subjects?: string[]): Promise<ApiResult<NextSessions>> {
   return post<NextSessions>('/api/next_sessions', subjects ? { subject_id: subjectId, subjects } : { subject_id: subjectId });
 }
+
+/**
+ * What to review: the review sessions on screen for a subject (or every
+ * subject, with no id), the subjects to pick from, and how much is due. The
+ * steps are planned and marked done through the same endpoints as Next
+ * sessions (backend/tracking/review_sessions.py).
+ */
+export function reviewSessions(
+  subjectId = '',
+): Promise<ApiResult<NextSessions & { subjects: SessionSubject[]; available: boolean; due: number }>> {
+  return get<NextSessions & { subjects: SessionSubject[]; available: boolean; due: number }>(
+    `/api/review_sessions${subjectId ? `?subject_id=${encodeURIComponent(subjectId)}` : ''}`,
+  );
+}
+
+/** Three new review sessions in place of the ones on screen. Costs a model call. */
+export function suggestReviewSessions(subjectId = ''): Promise<ApiResult<NextSessions>> {
+  return post<NextSessions>('/api/review_sessions', { subject_id: subjectId });
+}

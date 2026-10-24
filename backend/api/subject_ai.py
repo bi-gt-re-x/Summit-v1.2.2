@@ -49,6 +49,7 @@ from backend.api import subjects as user_subjects
 from backend.config import subjects as subject_catalogue
 from backend.tracking import free_resources
 from backend.tracking import next_sessions
+from backend.tracking import review_sessions
 from backend.tracking import session_plan
 from backend.tracking import session_timing
 from backend.tracking import subject_ai
@@ -871,7 +872,7 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     # A session planned across every subject names its subject in `focus`
     # (subject_ai.OVERALL_NOTE); file it there when the page had none to send.
     subject_id = _text(body.subject_id, 64)
-    if not subject_id and row.get('subject') == next_sessions.OVERALL:
+    if not subject_id and row.get('subject') in ACROSS:
         subject_id = next_sessions.subject_named(row.get('focus'), _subject_names(username)) or ''
 
     # When: the best opening for this reader (session_timing), spaced from the
@@ -913,7 +914,7 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     if step:
         step = _guarded(username, [step],
                         _catalog_id(username, subject_id, row.get('focus')
-                                    if row.get('subject') == next_sessions.OVERALL
+                                    if row.get('subject') in ACROSS
                                     else row.get('subject') or ''))[0]
     link = next(iter(step.get('resources') or []), None)
     where = '{}: {}'.format(_text(link.get('name'), 120), link['url']) if link else ''
@@ -938,7 +939,7 @@ def _spacing_key(subject_id: str, row: dict) -> str:
     if subject_id:
         return subject_id
     subject = row.get('subject') or ''
-    return '' if subject == next_sessions.OVERALL else subject
+    return '' if subject in ACROSS else subject
 
 
 def _booked_sessions(username: str, tasks: list, now: datetime, exclude: str = '') -> list:
@@ -1010,6 +1011,10 @@ TASK_COLUMNS = ('id', 'title', 'description', 'status', 'subject', 'completed_at
                 'completion_seconds', 'difficulty', 'execution', 'reason',
                 'created_at', 'due_date', 'show_on_calendar')
 
+#: The ledger keys that span every subject: Next sessions' and What to review's.
+#: A step under either names its subject in `focus`.
+ACROSS = (next_sessions.OVERALL, review_sessions.REVIEW)
+
 
 def _background(username: str, subject_id: Optional[str], names: Optional[dict] = None) -> list:
     """What the account said about itself at sign-up, as lines for the brief —
@@ -1034,7 +1039,7 @@ def _subject_names(username: str) -> dict:
 def _steps_with_state(username: str, subject: str) -> list:
     """The steps on screen for a subject, each with where it stands."""
     steps = _saved_steps(username, subject)
-    if subject == next_sessions.OVERALL:
+    if subject in ACROSS:
         steps = [next_sessions.unbracket(step) for step in steps]
         steps = _guarded(username, steps)
     else:
@@ -1139,4 +1144,106 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
     _keep_reading(username, subject, {**_saved_reading(username, subject), 'next_steps': kept},
                   now, state['span'])
     return ok(subject=subject, subject_id=subject_id,
+              steps=[{**step, 'state': 'open', 'task': None} for step in kept])
+
+
+# --------------------------------------------------------------------------
+# What to review: three review sessions, above Next sessions
+# --------------------------------------------------------------------------
+# The same machinery as Next sessions, pointed at work already done
+# (backend/tracking/review_sessions.py). Filed under their own ledger keys so
+# the two panels never show each other's sessions, while planning and "I did
+# this" are the shared endpoints above.
+REVIEW_COLUMNS = TASK_COLUMNS + ('score_got', 'score_of')
+
+
+def _review_key(subject_id: str, names: dict) -> str:
+    return review_sessions.review_key(names[subject_id]) if subject_id else review_sessions.REVIEW
+
+
+@router.get('/api/review_sessions')
+def list_review_sessions(subject_id: str = '', username: str = Depends(current_username)):
+    """The review sessions on screen for a subject (or every subject), the
+    subjects to pick from, how much is due for review, and whether a model is
+    there to suggest more."""
+    _, user = load_user(username)
+    if not user:
+        return fail('User not found')
+    names = _subject_names(username)
+    subject_id = _text(subject_id, 64)
+    if subject_id and subject_id not in names:
+        return fail("That subject isn't one of yours.")
+    tasks = db.columns_for('tasks', username, REVIEW_COLUMNS)
+    found = review_sessions.due(tasks, subject_id or None)
+    key = _review_key(subject_id, names)
+    return ok(subject=key, subject_id=subject_id,
+              steps=_steps_with_state(username, key),
+              subjects=[entry for entry in next_sessions.subjects_in(tasks, names, most=24)
+                        if review_sessions.reviewable(entry['id'])][:12],
+              due=review_sessions.count(found),
+              available=subject_ai.configured())
+
+
+@router.post('/api/review_sessions')
+def suggest_review_sessions(body: NextSessionsBody, username: str = Depends(current_username)):
+    """Three new review sessions for a subject, or across every subject,
+    replacing the ones on screen. Costs a model call."""
+    _, user = load_user(username)
+    if not user:
+        return fail('User not found')
+    names = _subject_names(username)
+    subject_id = _text(body.subject_id, 64)
+    if subject_id and subject_id not in names:
+        return fail("That subject isn't one of yours.")
+    subject = names[subject_id] if subject_id else next_sessions.OVERALL
+    key = _review_key(subject_id, names)
+
+    tasks = db.columns_for('tasks', username, REVIEW_COLUMNS)
+    found = review_sessions.due(tasks, subject_id or None, None if subject_id else names)
+    if not review_sessions.count(found):
+        return fail("Nothing's due for review {}yet. Finish some work and it'll show up here.".format(
+            'in {} '.format(subject) if subject_id else ''))
+
+    studied = [task for task in tasks if review_sessions.reviewable(task.get('subject'))]
+    state = next_sessions.state_for(studied, subject_id or None, subject, names)
+    history = _history(username, key)
+    _sync(username, history)
+    state.update({
+        'previous': [
+            {'title': row.get('title'), 'type': row.get('kind'),
+             'difficulty': row.get('difficulty'), 'minutes': row.get('minutes'),
+             'on': (row.get('given_at') or '')[:10]}
+            for row in history[:6]
+        ],
+        'outcomes': _outcomes(history, None),
+        # Next sessions' three are on the same screen, just below.
+        'showing': [step.get('title') for step in _saved_steps(username, subject) if step.get('title')],
+        'owned_resources': _owned(username, subject_id, subject) if subject_id else [],
+        'background': _background(username, subject_id or None, names),
+    })
+    if subject_id:
+        catalog_id = _catalog_id(username, subject_id, subject, names)
+        state['free_resources'] = (_free_brief(username, [catalog_id], free_resources.BRIEF_COUNT)
+                                   if catalog_id else [])
+    else:
+        busiest = [entry['id'] for entry in next_sessions.subjects_in(tasks, names, most=6)
+                   if entry['id'] in free_resources.by_subject()]
+        state['free_resources'] = _free_brief(username, busiest,
+                                              free_resources.BRIEF_COUNT_OVERALL, names)
+
+    try:
+        steps = subject_ai.plan(state, overall=not subject_id,
+                                review=review_sessions.brief_block(found))
+    except subject_ai.BriefUnavailable as exc:
+        return fail(str(exc))
+    if not subject_id:
+        steps = [next_sessions.unbracket(step) for step in steps]
+    steps = _guarded(username, steps, _catalog_id(username, subject_id, subject, names)
+                     if subject_id else '', names)
+
+    now = datetime.now().isoformat(timespec='seconds')
+    kept = _record(username, key, steps[:subject_ai.NEXT_STEPS], now)
+    _keep_reading(username, key, {**_saved_reading(username, key), 'next_steps': kept},
+                  now, state['span'])
+    return ok(subject=key, subject_id=subject_id,
               steps=[{**step, 'state': 'open', 'task': None} for step in kept])

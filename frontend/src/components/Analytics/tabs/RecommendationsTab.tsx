@@ -9,6 +9,7 @@
  * Overview, under the productivity chart.
  */
 import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
+import { WhatToReviewPanel } from '@/components/NextSessions/WhatToReview';
 import { SlumpAlert } from '../WeekTrend';
 import { NextActions } from '../NextActions';
 import { XpPulse } from '../XpPulse';
@@ -77,6 +78,12 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           the cards above are changes to habits. Drawn whether or not there is
           advice yet — it is read from finished work, not from the weeks of
           history the cards wait for. See components/NextSessions. */}
+      {/* What to review, right above: the same kind of sessions, pointed at
+          work already done so it sticks. See components/NextSessions/WhatToReview. */}
+      <section className="ax-section">
+        <WhatToReviewPanel />
+      </section>
+
       <section className="ax-section">
         <NextSessionsPanel where="analytics" />
       </section>
