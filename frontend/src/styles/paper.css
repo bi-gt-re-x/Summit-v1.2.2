@@ -173,31 +173,21 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar {
     background: var(--paper-ground);
     border-bottom-color: transparent;
 }
-/* The search button stretches into the bar on the left, as a field. It is
-   still the same button and opens the same panel. */
-html:not([data-skin]):not([data-theme="dark"]) .topbar-actions { flex: 1 1 auto; }
-html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child { margin-right: auto; }
-html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
-    width: min(500px, 38vw);
-    height: 34px;
-    padding: 0 14px;
+/* The search field, flat and warm like the mockup's. */
+html:not([data-skin]):not([data-theme="dark"]) .topbar-search-input {
+    border: 1px solid transparent;
     border-radius: 9px;
     background: #F0EFE9;
-    color: #7A7A76;
-}
-html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn svg { width: 15px; height: 15px; }
-html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn::after {
-    content: 'Search...';
+    color: var(--paper-ink);
     font-size: 13px;
-    font-weight: 400;
-    color: #A09E9A;
 }
-html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn:hover,
-html:not([data-skin]):not([data-theme="dark"]) .topbar-actions > .topbar-slot:first-child > .topbar-btn.is-on { background: #ECEBE4; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-search-input::placeholder { color: #A09E9A; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-search-input:hover { background: #ECEBE4; }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-search-input:focus {
+    border-color: var(--paper-line);
+    background: var(--paper-card);
+}
+html:not([data-skin]):not([data-theme="dark"]) .topbar-search-icon { color: #7A7A76; }
 
 html:not([data-skin]):not([data-theme="dark"]) .topbar-btn { color: #71706C; border-radius: 9px; }
 html:not([data-skin]):not([data-theme="dark"]) .topbar-btn:hover { background: #EFEEE8; color: var(--paper-ink); }

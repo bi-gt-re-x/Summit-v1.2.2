@@ -13,11 +13,10 @@
  * offender — a red 3 that is always 3 trains people to ignore every badge you
  * will ever show them. So:
  *
- *   **Search** looks in two places: the account's own tasks, and the
- *   containers this app is made of — every page, tab and settings section
- *   (utils/siteIndex). It takes you to the closest match as you type and the
- *   arrows walk the rest, so nobody has to know which screen a control is on
- *   to reach it. The panel is components/Search/Panel.tsx.
+ *   **Search** is a field in the bar. It looks in two places: the account's
+ *   own tasks, and the containers this app is made of — every page, tab and
+ *   settings section (utils/siteIndex). Matches drop down under the field and
+ *   nothing moves until one is chosen. See components/Search/Panel.tsx.
  *   **Notifications** are read from the record — late work, today's calendar,
  *   a goal's date coming up, how the week went, a streak that will break
  *   tonight. Nothing is generated on a schedule, so an account in good order
@@ -44,7 +43,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { NotificationPanel } from './Notifications';
 import { NametagText, TitleSelect } from './Nametag';
-import { SearchPanel } from './Search';
+import { SearchField } from './Search';
+import type { SearchFieldHandle } from './Search';
 import { OPEN_SEARCH } from '@/utils/searchBus';
 import { useAuth, useNotifications, useSettings, useStats } from '@/hooks';
 import { earnedTitle } from '@/utils/easterEgg';
@@ -113,16 +113,16 @@ export function Topbar() {
 
   const [open, setOpen] = useState<'search' | 'alerts' | 'account' | null>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<SearchFieldHandle>(null);
 
-  /* The rail's search box and ⌘K (Ctrl+K off a Mac) open the same panel as
-     the magnifier here. The rail is a sibling rather than a child, so it asks
-     by event — see OPEN_SEARCH in components/Rail. */
+  /* ⌘K (Ctrl+K off a Mac) and OPEN_SEARCH from elsewhere put the caret in
+     the search field, which opens it. */
   useEffect(() => {
-    const openSearch = () => setOpen('search');
+    const openSearch = () => searchRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
-        setOpen((was) => (was === 'search' ? null : 'search'));
+        searchRef.current?.focus();
       }
     };
     window.addEventListener(OPEN_SEARCH, openSearch);
@@ -208,30 +208,13 @@ export function Topbar() {
     <header className="topbar" ref={barRef}>
       <div className="topbar-actions">
         {/* ---- Search ---- */}
-        <div className="topbar-slot">
-          <button
-            type="button"
-            className={`topbar-btn${open === 'search' ? ' is-on' : ''}`}
-            aria-label="Search tasks and pages"
-            aria-expanded={open === 'search'}
-            onClick={() => toggle('search')}
-          >
-            <svg {...stroke}>
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3.5-3.5" />
-            </svg>
-          </button>
-
-          {/* Mounted only while open, and that is load-bearing rather than
-              tidy: the panel navigates as the reader types, so a copy kept
-              alive behind a `display: none` would be a copy still steering the
-              router. Its query resets with it, which is also the right
-              behaviour — a search is a question, not a setting. */}
-          {open === 'search' && (
-            <div className="topbar-panel topbar-search">
-              <SearchPanel onClose={() => setOpen(null)} />
-            </div>
-          )}
+        <div className="topbar-slot topbar-search-slot">
+          <SearchField
+            ref={searchRef}
+            open={open === 'search'}
+            onOpen={() => setOpen('search')}
+            onClose={() => setOpen((was) => (was === 'search' ? null : was))}
+          />
         </div>
 
         {/* ---- Notifications ---- */}

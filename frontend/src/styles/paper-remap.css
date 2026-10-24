@@ -256,6 +256,9 @@ html:not([data-skin]):not([data-theme="dark"]) .topbar {
     background: var(--color-surface);
     border-bottom: 1px solid #ECEBE7
 }
+html:not([data-skin]):not([data-theme="dark"]) .topbar-search-icon {
+    color: #989895
+}
 html:not([data-skin]):not([data-theme="dark"]) .topbar-btn {
     border: none;
     background: none;

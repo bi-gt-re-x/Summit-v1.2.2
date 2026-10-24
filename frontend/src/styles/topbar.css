@@ -28,9 +28,26 @@
 }
 
 .topbar-actions {
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
     gap: var(--space-2);
+}
+
+/* The search field sits at the left of the bar and everything else at the
+   right. Its drop-down hangs off the field (`position: absolute`), so typing
+   never moves the page. */
+.topbar-search-slot { margin-right: auto; }
+.topbar-search-field { position: relative; width: min(500px, 38vw); }
+.topbar-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    transform: translateY(-50%);
+    color: #9297A3;
+    pointer-events: none;
 }
 
 /* Each control and the panel it opens. `position: relative` here is what the
@@ -165,7 +182,8 @@ html[data-theme="dark"] .topbar-title-pick select { border-color: #30363D; backg
     padding: var(--space-3);
 }
 
-.topbar-search { width: min(360px, 78vw); }
+/* As wide as the field it drops from, and never narrower than a readable row. */
+.topbar-search { left: 0; right: auto; top: calc(100% + 6px); width: max(100%, 320px); }
 .topbar-alerts { width: min(340px, 82vw); }
 /* Wider than the 216px it was: the avatar picker moved in from the rail, and
    fifty pictures in a 216px scroller is a peephole. */
@@ -173,8 +191,9 @@ html[data-theme="dark"] .topbar-title-pick select { border-color: #30363D; backg
 
 .topbar-search-input {
     width: 100%;
+    height: 34px;
     box-sizing: border-box;
-    padding: var(--space-2) var(--space-3);
+    padding: 0 var(--space-3) 0 34px;
     border: 1px solid #EAEAEA;
     border-radius: var(--radius-md);
     background: #F8F9FB;

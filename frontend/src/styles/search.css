@@ -1,4 +1,4 @@
-/* The top bar's search — see src/components/Search/Panel.tsx.
+/* The top bar's search drop-down — see src/components/Search/Panel.tsx.
  *
  * `sf-` throughout. The panel sits inside `.topbar-panel`, which styles/topbar.css
  * owns and dresses: the box, the shadow and the placement are that sheet's,
@@ -14,7 +14,8 @@
 .sf-panel {
     display: flex;
     flex-direction: column;
-    max-height: min(72vh, 560px);
+    max-height: min(64vh, 480px);
+    padding: var(--space-2);
 }
 
 .sf-input {

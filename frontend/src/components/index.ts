@@ -29,8 +29,8 @@ export { Rail, STATS_CHANGED } from './Rail';
 export { NotificationPanel, Toasts } from './Notifications';
 /* The search panel, for the same reason: it belongs to the top bar rather
    than to a page. Its index of the app's containers is utils/siteIndex. */
-export { SearchPanel } from './Search';
-export type { Hit, SearchPanelProps } from './Search';
+export { SearchField } from './Search';
+export type { Hit, SearchFieldHandle, SearchFieldProps } from './Search';
 export { Topbar } from './Topbar';
 /* The confirm-your-e-mail strip. Beside the top bar in this list because it is
    chrome for the same reason the bar is: it belongs to the shell, not to any
