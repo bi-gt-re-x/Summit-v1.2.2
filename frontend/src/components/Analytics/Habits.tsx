@@ -16,6 +16,7 @@
 import { Panel, Sparkline, asTone, toneVar } from './charts';
 import { StatRow, type Stat } from './StatRow';
 import {
+  RECENT_DAYS,
   STRENGTH_LABEL,
   STRENGTH_NOTE,
   STRENGTH_TONE,
@@ -75,14 +76,21 @@ export function HabitTiles({
       key: 'strong',
       label: 'Holding',
       value: String(summary.strong),
-      note: summary.strong ? 'in most weeks' : 'none yet',
+      note: summary.strong ? 'real work on half your days' : 'none yet',
       tone: 'green',
+    },
+    {
+      key: 'slipping',
+      label: 'Slipping',
+      value: String(summary.declining),
+      note: summary.declining ? 'fading or gone quiet' : 'none',
+      tone: 'pink',
     },
     {
       key: 'anchor',
       label: 'Anchor',
       value: summary.anchor?.name ?? '-',
-      note: summary.anchor ? `${summary.anchor.consistency}% of weeks` : 'none steady yet',
+      note: summary.anchor ? `${summary.anchor.score}% effort score` : 'none steady yet',
       tone: 'amber',
     },
   ];
@@ -126,48 +134,60 @@ export function HabitCard({
         <span className={`ax-habit-badge ax-tone-${tone}`}>{STRENGTH_LABEL[habit.strength]}</span>
       </header>
 
+      {/* The effort score: every day since it started, each counted by how
+          much XP it earned and how hard the work was. A skipped day is 0.
+          See `dayWeight` in utils/habits. */}
       <div className="ax-habit-figure">
-        <strong>{habit.consistency}%</strong>
-        <span className="ax-muted ax-small">of weeks in this range</span>
+        <strong>{habit.score}%</strong>
+        <span className="ax-muted ax-small">effort score, every day since it started</span>
       </div>
 
       <div className="ax-habit-track" aria-hidden="true">
-        <i style={{ width: `${habit.consistency}%`, background: toneVar(tone) }} />
+        <i style={{ width: `${Math.max(2, habit.score)}%`, background: toneVar(tone) }} />
       </div>
+
+      <p className={`ax-habit-verdict is-${verdictTone(habit)}`}>{habitVerdict(habit)}</p>
 
       <div className="ax-habit-row">
         <span className="ax-habit-streak" title={`Longest run: ${habit.bestStreak} ${unit}s`}>
           <i className="ax-flame" aria-hidden="true" />
           {habit.streak > 0 ? `${habit.streak}-${unit} streak` : 'no run going'}
         </span>
-        {habit.trend === null ? (
-          <span className="ax-delta ax-delta-none">too new to tell</span>
-        ) : (
-          <span
-            className={`ax-delta ax-delta-${habit.trend > 4 ? 'up' : habit.trend < -4 ? 'down' : 'flat'}`}
-          >
-            {habit.trend > 4 ? '↑' : habit.trend < -4 ? '↓' : '→'} {Math.abs(habit.trend)}% vs earlier
-          </span>
-        )}
+        <span
+          className={`ax-delta ax-delta-${
+            habit.recentScore > habit.score + 4 ? 'up' : habit.recentScore < habit.score - 4 ? 'down' : 'flat'
+          }`}
+        >
+          Last 4 weeks: {habit.recentScore}%
+        </span>
       </div>
 
       <Sparkline values={habit.weekly} tone={asTone(tone)} />
 
       <dl className="ax-habit-facts">
         <div>
-          <dt>Frequency</dt>
-          <dd>{habit.frequency}× / week</dd>
+          <dt>Days shown up</dt>
+          <dd>
+            {habit.daysOn.toLocaleString('en-US')} of {habit.spanDays.toLocaleString('en-US')} ({habit.dayRate}%)
+          </dd>
+        </div>
+        <div>
+          <dt>Last 4 weeks</dt>
+          <dd>
+            {habit.recentDays} of {RECENT_DAYS} days
+          </dd>
+        </div>
+        <div>
+          <dt>XP on a day</dt>
+          <dd>{habit.xpPerDay.toLocaleString('en-US')} XP</dd>
+        </div>
+        <div>
+          <dt>Difficulty</dt>
+          <dd>{habit.difficulty === null ? 'Not rated' : `${habit.difficulty} of 5`}</dd>
         </div>
         <div>
           <dt>Finished</dt>
-          <dd>{habit.completionRate}%</dd>
-        </div>
-        <div>
-          <dt>Best run</dt>
-          <dd>
-            {habit.bestStreak} {unit}
-            {habit.bestStreak === 1 ? '' : 's'}
-          </dd>
+          <dd>{habit.completionRate}% of what you planned</dd>
         </div>
         <div>
           <dt>Last done</dt>
@@ -230,6 +250,35 @@ export function HabitCard({
       )}
     </article>
   );
+}
+
+/**
+ * One blunt sentence on where the habit stands, from the effort score, the
+ * last four weeks and the gap since it last showed up. No cushioning: a habit
+ * nobody has touched in nine days is called that.
+ */
+export function habitVerdict(habit: Habit): string {
+  const { daysSince, score, recentScore, dayRate } = habit;
+  if (daysSince !== null && daysSince >= 14) return `Gone quiet. Nothing in ${daysSince} days.`;
+  if (daysSince !== null && daysSince >= 7) {
+    return `Skipped for ${daysSince} days straight. Your usual is ${dayRate}% of days.`;
+  }
+  if (score >= 10 && recentScore < score * 0.5) {
+    return `Fading. ${recentScore}% the last 4 weeks, against ${score}% overall.`;
+  }
+  if (recentScore >= 10 && recentScore > score * 1.25) {
+    return `Picking up. ${recentScore}% the last 4 weeks, up from ${score}% overall.`;
+  }
+  const light = score < dayRate * 0.5 ? ' Most of those days were light or easy.' : '';
+  if (score < 25) return `Not a habit yet. Real work on few of your days.${light}`;
+  return `Holding at about ${recentScore}% lately.${light}`;
+}
+
+function verdictTone(habit: Habit): 'bad' | 'good' | 'flat' {
+  const verdict = habitVerdict(habit);
+  if (/^(Gone quiet|Skipped|Fading|Not a habit)/.test(verdict)) return 'bad';
+  if (/^Picking up/.test(verdict)) return 'good';
+  return 'flat';
 }
 
 export function HabitCards({
@@ -365,7 +414,7 @@ export function ConsistencyPanel({ habits }: { habits: Habit[] }) {
                 {list.map((habit) => (
                   <li key={habit.id}>
                     <span>{habit.name}</span>
-                    <span className="ax-muted">{habit.consistency}%</span>
+                    <span className="ax-muted">{habit.score}%</span>
                   </li>
                 ))}
               </ul>
@@ -503,7 +552,7 @@ export function habitLead(summary: HabitSummary, span: string): string {
   }
   if (summary.anchor) {
     parts.push(
-      `and ${summary.anchor.name} is your most consistent (${summary.anchor.consistency}% of weeks)`,
+      `and ${summary.anchor.name} is your strongest (${summary.anchor.score}% effort score)`,
     );
   }
   return parts.length
@@ -545,8 +594,8 @@ export function HabitOpening({
   const hold =
     leadWithStrength && slip && summary.anchor ? (
       <p className="ax-prose" key="hold">
-        <strong>{summary.anchor.name}</strong> is steady. You do it in{' '}
-        <strong>{summary.anchor.consistency}%</strong> of weeks.
+        <strong>{summary.anchor.name}</strong> is your strongest, with an effort score of{' '}
+        <strong>{summary.anchor.score}%</strong>.
       </p>
     ) : null;
 

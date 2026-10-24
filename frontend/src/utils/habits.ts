@@ -76,9 +76,9 @@ export const STRENGTH_TONE: Record<HabitStrength, string> = {
 };
 
 export const STRENGTH_NOTE: Record<HabitStrength, string> = {
-  strong: "Shows up most weeks and isn't fading. These keep your totals up.",
-  developing: "Shows up often, but not every week. Not a routine yet.",
-  inconsistent: 'Long gaps in between. No regular pattern yet.',
+  strong: "Real work on half your days or more, and not fading. These carry your totals.",
+  developing: 'Real work on a quarter to half of your days. Not a routine yet.',
+  inconsistent: "Under a quarter of your days, or mostly light work. Not a habit yet.",
   declining: "Way down from before. It's still there, but it'll fade unless something changes.",
 };
 
@@ -120,6 +120,51 @@ export interface Habit {
   phases: number[];
   total: number;
   xp: number;
+  /**
+   * The blunt read. `consistency` above counts a week as kept if the habit
+   * showed up once in it, which is why nearly every card used to say 99% or
+   * 100%. These count days, and weigh each one by what was done on it.
+   */
+  /** Distinct days it showed up, since it first appeared in the range. */
+  daysOn: number;
+  /** Days from its first appearance (or the range start) to the range end. */
+  spanDays: number;
+  /** `daysOn` out of `spanDays`, 0-100. */
+  dayRate: number;
+  /**
+   * Effort score, 0-100: every day since it started, each scored 0 to 1 by
+   * how much XP it earned against this habit's own good day and how hard the
+   * work was filed. A skipped day is 0, a light easy day a fraction, a full
+   * hard day 1. See `dayWeight`.
+   */
+  score: number;
+  /** The same score over the last `RECENT_DAYS` days, and the days shown up in them. */
+  recentScore: number;
+  recentDays: number;
+  /** Whole days since it last showed up, or null if never. */
+  daysSince: number | null;
+  /** Mean difficulty filed on it, 1-5, or null when nothing was rated. */
+  difficulty: number | null;
+  /** Mean XP on a day it showed up. */
+  xpPerDay: number;
+}
+
+/** The window the "lately" figures on a habit card cover. */
+export const RECENT_DAYS = 28;
+
+/**
+ * How much one day counts toward a habit's effort score, 0 to 1.
+ *
+ * XP against `good`, the habit's own strong day (the 75th percentile of its
+ * days), so a day has to be better than usual to count in full; then scaled by
+ * difficulty, where 4 of 5 is neutral, easy work counts for less and brutal
+ * work a little more. Capped at 1, so one huge day can't cover for a week off.
+ */
+export function dayWeight(xp: number, good: number, difficulty: number | null): number {
+  if (xp <= 0) return 0;
+  const amount = Math.min(1, xp / Math.max(1, good));
+  const hard = difficulty === null ? 0.8 : 0.5 + 0.125 * difficulty;
+  return Math.min(1, amount * hard);
 }
 
 /**
@@ -177,10 +222,17 @@ interface Bucket {
   /** Everything filed under it in the range, done or not — the completion rate. */
   filed: number;
   finished: number;
+  /** XP finished on each day it showed up. */
+  dayXp: Map<string, number>;
+  /** Difficulty filed on each day, summed with a count, for the day's mean. */
+  dayHard: Map<string, { sum: number; count: number }>;
 }
 
 function emptyBucket(name: string, source: Habit['source'], key: string): Bucket {
-  return { name, source, key, days: [], seen: new Set(), total: 0, xp: 0, filed: 0, finished: 0 };
+  return {
+    name, source, key, days: [], seen: new Set(), total: 0, xp: 0, filed: 0, finished: 0,
+    dayXp: new Map(), dayHard: new Map(),
+  };
 }
 
 /** The longest run of consecutive keys in an ascending list, by a step function. */
@@ -289,6 +341,12 @@ export function buildHabits(
       bucket.finished += 1;
       bucket.total += 1;
       bucket.xp += num(task.xp_value);
+      bucket.dayXp.set(doneDay, (bucket.dayXp.get(doneDay) ?? 0) + num(task.xp_value));
+      const hard = Number(task.difficulty);
+      if (Number.isFinite(hard) && hard >= 1 && hard <= 5) {
+        const was = bucket.dayHard.get(doneDay) ?? { sum: 0, count: 0 };
+        bucket.dayHard.set(doneDay, { sum: was.sum + hard, count: was.count + 1 });
+      }
       if (!bucket.seen.has(doneDay)) {
         bucket.seen.add(doneDay);
         bucket.days.push(doneDay);
@@ -371,12 +429,41 @@ export function buildHabits(
       phases.push(mean(weekly.slice(at, at + size)));
     }
 
+    // ---- The blunt read: days, weighed by effort ----
+    const dayXps = days.map((day) => bucket.dayXp.get(day) ?? 0).sort((a, b) => a - b);
+    const good = dayXps.length ? dayXps[Math.min(dayXps.length - 1, Math.floor(dayXps.length * 0.75))]! : 1;
+    const hardOn = (day: string) => {
+      const entry = bucket.dayHard.get(day);
+      return entry && entry.count ? entry.sum / entry.count : null;
+    };
+    const weightOn = (day: string) => dayWeight(bucket.dayXp.get(day) ?? 0, good, hardOn(day));
+    const start = days[0] && days[0] > fromIso ? days[0] : fromIso;
+    const spanDays = daysBetween(start, toIso);
+    const score = Math.round((days.reduce((sum, day) => sum + weightOn(day), 0) / spanDays) * 100);
+    const recentFrom = shiftDay(toIso, -(RECENT_DAYS - 1));
+    const recentList = days.filter((day) => day >= recentFrom);
+    const recentScore = Math.round(
+      (recentList.reduce((sum, day) => sum + weightOn(day), 0) / RECENT_DAYS) * 100,
+    );
+    const last = days[days.length - 1];
+    const daysSince = last ? daysBetween(last, toIso) - 1 : null;
+    const rated = [...bucket.dayHard.values()];
+    const hardCount = rated.reduce((sum, entry) => sum + entry.count, 0);
+    const difficulty = hardCount
+      ? Math.round((rated.reduce((sum, entry) => sum + entry.sum, 0) / hardCount) * 10) / 10
+      : null;
+
+    // Strength is read off the effort score, not off weeks kept, and a habit
+    // that has fallen to half its usual lately, or gone quiet for two weeks,
+    // is declining whatever its history says.
     const strength: HabitStrength =
-      trend !== null && trend <= -30
+      (trend !== null && trend <= -30) ||
+      (score >= 10 && recentScore < score * 0.5) ||
+      (daysSince !== null && daysSince >= 14)
         ? 'declining'
-        : consistency >= 70
+        : score >= 50
           ? 'strong'
-          : consistency >= 40
+          : score >= 25
             ? 'developing'
             : 'inconsistent';
 
@@ -400,11 +487,20 @@ export function buildHabits(
       phases,
       total: bucket.total,
       xp: Math.round(bucket.xp),
+      daysOn: days.length,
+      spanDays,
+      dayRate: Math.round((days.length / spanDays) * 100),
+      score,
+      recentScore,
+      recentDays: recentList.length,
+      daysSince,
+      difficulty,
+      xpPerDay: days.length ? Math.round(bucket.xp / days.length) : 0,
     };
   });
 
   return habits
-    .sort((a, b) => b.consistency - a.consistency || b.total - a.total)
+    .sort((a, b) => b.score - a.score || b.total - a.total)
     .slice(0, limit);
 }
 
@@ -857,10 +953,12 @@ export interface HabitSummary {
   strong: number;
   /** Share of the range's days with at least one completion, 0-100. */
   activeRate: number;
-  /** The steadiest habit, by consistency. */
+  /** The habit with the highest effort score. */
   anchor: Habit | null;
   /** The one falling fastest, if any is. */
   slipping: Habit | null;
+  /** How many are fading or have gone quiet. */
+  declining: number;
 }
 
 export function habitSummary(habits: Habit[], days: GrowthDay[]): HabitSummary {
@@ -875,5 +973,6 @@ export function habitSummary(habits: Habit[], days: GrowthDay[]): HabitSummary {
     activeRate: days.length ? Math.round((worked / days.length) * 100) : 0,
     anchor: habits[0] ?? null,
     slipping: declining[0] ?? null,
+    declining: habits.filter((habit) => habit.strength === 'declining').length,
   };
 }

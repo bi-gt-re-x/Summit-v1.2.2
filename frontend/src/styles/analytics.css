@@ -7751,6 +7751,16 @@ html[data-theme="dark"] .ax-page:has(.ax-view-growth) {
     letter-spacing: -.025em;
     line-height: 1;
 }
+/* The blunt line under the effort score. */
+.ax-habit-verdict {
+    margin: 0;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--ax-muted);
+}
+.ax-habit-verdict.is-bad { color: var(--ax-bad); }
+.ax-habit-verdict.is-good { color: var(--ax-good); }
 .ax-habit-row {
     display: flex;
     align-items: center;
