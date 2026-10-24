@@ -96,6 +96,8 @@ import { SubjectNotes } from '@/components/Subject/SubjectNotes';
 import { SubjectHeat } from '@/components/Subject/Heat';
 import { SubjectCards } from '@/components/Subject/Cards';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
+import { GoalInsights } from '@/components/Subject/GoalInsights';
+import { goalRead } from '@/components/Subject/goalRead';
 import {
   dimensionAxes,
   effortPoints,
@@ -1096,6 +1098,10 @@ export default function SubjectAnalytics() {
   /* The goal the fold's shut row reads from. First rather than best: `goalsFor`
      in components/Subject/model already orders them by what is most pressing. */
   const leadGoal = model.goals[0] ?? null;
+  const toward = useMemo(
+    () => goalRead({ subject: subject?.name ?? 'this subject', model, state, total: windowTotal }),
+    [model, state, subject?.name, windowTotal],
+  );
 
   useDocumentTitle(subject ? subject.name : 'Subject');
 
@@ -1364,6 +1370,14 @@ export default function SubjectAnalytics() {
               onLink={(goalId) => void setLinked(goalId, true)}
               onUnlink={(goalId) => void setLinked(goalId, false)}
             />
+
+            {/* ---- TOWARD THE GOAL ------------------------------------ */}
+            {/* The page's premise: everything here is read against the goal.
+                Counted insights, each saying what it means for the goal, and
+                the moves toward it (the goal's levers first). No model call,
+                so it's here before anyone presses a button. See
+                components/Subject/goalRead. */}
+            <GoalInsights read={toward} subject={subject.name} />
 
             {/* No "What matters now", and no bottleneck panel.
 

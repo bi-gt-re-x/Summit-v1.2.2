@@ -633,7 +633,7 @@ function leversFor(goal: SubjectGoal, period: string): Lever[] {
     out.push({
       id: 'unaimed',
       title: 'Link your tasks to this goal',
-      fact: `None of the ${goal.ofFinished} ${goal.ofFinished === 1 ? 'task' : 'tasks'} you finished here in ${period} were linked to it.`,
+      fact: `None of the ${goal.ofFinished.toLocaleString('en-US')} ${goal.ofFinished === 1 ? 'task' : 'tasks'} you finished here in ${period} were linked to it.`,
       weight: 'blocking',
     });
   } else if (goal.ofFinished >= 4 && goal.aimed / goal.ofFinished < 0.25) {

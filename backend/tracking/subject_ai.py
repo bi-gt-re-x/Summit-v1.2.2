@@ -1506,6 +1506,10 @@ said works for them (time of day, length, method) and plan around the \
 patterns they described. When it's why you chose a session, the reason can \
 say so: "You said you want AIME 10+ next year." A line marked passing is \
 how they felt then, not a fact.
+<goals> is what this subject is for. When it names a goal, that goal is the \
+point of every session: at least two of the three must move it forward \
+directly, the "the app says" lines under it are the gaps to close first, and \
+each `reason` says how the session gets the reader closer to that goal.
 <difficulty_analysis> says where execution falls off; the level to work is \
 normally at or just below that point.
 
