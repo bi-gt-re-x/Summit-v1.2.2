@@ -159,6 +159,103 @@ function ActionRow({ item, onDone }: { item: NextAction; onDone: () => void }) {
   );
 }
 
+/**
+ * One line of the plan: a single action, or every overdue (or due-today) task
+ * gathered into one container. Four "Finish X, due 7 days ago" cards in a row
+ * read as four different problems when they're one: a late list.
+ */
+type Row =
+  | { type: 'one'; item: NextAction }
+  | { type: 'group'; kind: 'overdue' | 'due'; items: NextAction[] };
+
+const GROUPED = new Set<ActionKind>(['overdue', 'due']);
+
+/**
+ * Gather the overdue and due-today rows across the plan and the fold. Each
+ * group sits where its first row was, so the plan's order still holds.
+ */
+export function groupRows(actions: NextAction[], more: NextAction[]): { top: Row[]; rest: Row[] } {
+  const members = new Map<ActionKind, NextAction[]>();
+  [...actions, ...more].forEach((item) => {
+    if (!GROUPED.has(item.kind)) return;
+    members.set(item.kind, [...(members.get(item.kind) ?? []), item]);
+  });
+
+  const placed = new Set<ActionKind>();
+  const build = (list: NextAction[]): Row[] =>
+    list.flatMap<Row>((item) => {
+      if (!GROUPED.has(item.kind)) return [{ type: 'one', item }];
+      const group = members.get(item.kind) ?? [item];
+      if (group.length < 2) return [{ type: 'one', item }];
+      if (placed.has(item.kind)) return [];
+      placed.add(item.kind);
+      return [{ type: 'group', kind: item.kind as 'overdue' | 'due', items: group }];
+    });
+
+  const top = build(actions);
+  const rest = build(more);
+  return { top, rest };
+}
+
+/** "Finish "Ice bath"" back to "Ice bath", for a row inside a group. */
+const bareTitle = (title: string) => title.replace(/^Finish\s+["“](.*)["”]$/, '$1');
+
+/** The first sentence of a reason: "Due 7 days ago." */
+const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0] ?? text;
+
+function GroupRow({ kind, items }: { kind: 'overdue' | 'due'; items: NextAction[] }) {
+  const total = items.reduce((sum, item) => sum + item.minutes, 0);
+  const title =
+    kind === 'overdue' ? `Finish ${items.length} overdue tasks` : `Finish ${items.length} tasks due today`;
+  const why =
+    kind === 'overdue'
+      ? `The oldest was ${firstSentence(items[0]!.because).replace(/^Due /, 'due ').replace(/\.$/, '')}. Start there.`
+      : "They're all due by tonight.";
+
+  return (
+    <li className="ax-plan-row ax-plan-group">
+      <span className={`ax-plan-tag is-${KIND_TONE[kind]}`}>{KIND_LABEL[kind]}</span>
+      <div className="ax-plan-body">
+        <p className="ax-plan-title">{title}</p>
+        <p className="ax-plan-why">{why}</p>
+        <ul className="ax-plan-sub">
+          {items.map((item) => (
+            <li key={item.id} className="ax-plan-sub-row">
+              {item.taskId ? (
+                <Link to={`/tasks?task=${encodeURIComponent(item.taskId)}`} className="ax-plan-link">
+                  {bareTitle(item.title)}
+                </Link>
+              ) : (
+                <span>{bareTitle(item.title)}</span>
+              )}
+              {kind === 'overdue' && (
+                <span className="ax-plan-sub-when">{firstSentence(item.because).replace(/\.$/, '')}</span>
+              )}
+              <span className="ax-plan-sub-mins">{item.minutes}m</span>
+            </li>
+          ))}
+        </ul>
+        {kind === 'overdue' && (
+          <Link to="/tasks" className="ax-plan-sub-all">
+            See every late task
+          </Link>
+        )}
+      </div>
+      <span className="ax-plan-mins">{total}m</span>
+    </li>
+  );
+}
+
+function PlanRow({ row, onDone }: { row: Row; onDone: () => void }) {
+  return row.type === 'one' ? (
+    <ActionRow item={row.item} onDone={onDone} />
+  ) : (
+    <GroupRow kind={row.kind} items={row.items} />
+  );
+}
+
+const rowKey = (row: Row) => (row.type === 'one' ? row.item.id : `group-${row.kind}`);
+
 export interface NextActionsProps {
   plan: Plan;
   onBudget: (minutes: number) => void;
@@ -182,6 +279,9 @@ export function NextActions({
   typicalSession,
 }: NextActionsProps) {
   const { actions, more, spare, budget, planned } = plan;
+  const { top, rest } = groupRows(actions, more);
+  const restCount = rest.reduce((sum, row) => sum + (row.type === 'one' ? 1 : row.items.length), 0);
+  const restMinutes = rest.flatMap((row) => (row.type === 'one' ? [row.item.minutes] : row.items.map((item) => item.minutes)));
   /* Under thirty seconds is not a sitting, it is a rounding artefact of a
      timer left running — so it is not offered as one. */
   const usual = typeof typicalSession === 'number' && typicalSession >= 1
@@ -248,8 +348,8 @@ export function NextActions({
       ) : (
         <>
           <ul className="ax-plan-list">
-            {actions.map((item) => (
-              <ActionRow key={item.id} item={item} onDone={onRefresh} />
+            {top.map((row) => (
+              <PlanRow key={rowKey(row)} row={row} onDone={onRefresh} />
             ))}
           </ul>
           {/* One line under the rule rather than three stacked ones. The spare
@@ -275,7 +375,7 @@ export function NextActions({
               Re-read
             </button>
           </div>
-          {more.length > 0 && (
+          {rest.length > 0 && (
             <details className="ax-plan-more">
               {/* What they actually need, not the budget they did not fit.
                   "5 more, too long for 45 minutes" was wrong twice over: the
@@ -285,12 +385,11 @@ export function NextActions({
                   The shortest one's length is the number that answers the
                   question the fold is hiding. */}
               <summary>
-                {more.length} more · the shortest needs{' '}
-                {Math.min(...more.map((item) => item.minutes))} min
+                {restCount} more · the shortest needs {Math.min(...restMinutes)} min
               </summary>
               <ul className="ax-plan-list">
-                {more.map((item) => (
-                  <ActionRow key={item.id} item={item} onDone={onRefresh} />
+                {rest.map((row) => (
+                  <PlanRow key={rowKey(row)} row={row} onDone={onRefresh} />
                 ))}
               </ul>
             </details>

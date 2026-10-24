@@ -20,10 +20,12 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { RecommendationsTab } from './RecommendationsTab';
+import { OverviewTab } from './OverviewTab';
 import { SubjectsTab } from './SubjectsTab';
+import type { AnalyticsModel } from '../useAnalyticsModel';
 /* The model these are driven from — see ./fixtures, which gates.test.tsx used
    to hold and ./groups.test.tsx now needs too. */
-import { draw, fakeData, fakeModel } from './fixtures';
+import { draw, fakeData, fakeModel, matureOverview } from './fixtures';
 import { reviewAdopted, summarise } from '@/utils/followup';
 import { days } from '@/test/factories';
 
@@ -41,11 +43,7 @@ describe('Recommendations', () => {
     expect(screen.getByRole('heading', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('shows the follow-up even while the tab is still building — a different question', () => {
-    // An account that adopted a change and then went quiet has nothing to
-    // recommend and a result waiting. Hiding it behind the same gate would lose
-    // the one thing this tab promised to come back and tell you.
-    //
+  it('leaves the follow-up to Overview, under the productivity chart', () => {
     // Built through the real `reviewAdopted`, so the fixture is an adoption
     // this account actually made rather than a hand-shaped Review.
     const reviews = reviewAdopted({
@@ -56,13 +54,22 @@ describe('Recommendations', () => {
     });
     expect(reviews).toHaveLength(1); // the fixture is doing its job
 
+    const model = { reviews, reviewSummary: summarise(reviews) };
+    const { unmount } = draw(
+      <RecommendationsTab model={fakeModel({ historyDays: 400, ...model })} data={fakeData()} />,
+    );
+    expect(screen.queryByRole('heading', { name: /What happened after/i })).not.toBeInTheDocument();
+    unmount();
+
     draw(
-      <RecommendationsTab
-        model={fakeModel({ historyDays: 1, reviews, reviewSummary: summarise(reviews) })}
+      <OverviewTab
+        model={{ ...matureOverview(), ...model } as AnalyticsModel}
         data={fakeData()}
+        onEditBaseline={() => undefined}
       />,
     );
     expect(screen.getByRole('heading', { name: /What happened after/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /What changed/i })).toBeInTheDocument();
   });
 });
 

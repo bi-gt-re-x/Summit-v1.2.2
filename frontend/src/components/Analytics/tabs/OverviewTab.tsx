@@ -54,6 +54,9 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 import { WhatYouToldUs } from '../WhatYouToldUs';
 import { GoalsFinished } from '../GoalsFinished';
 import { FirstReads } from '../FirstReads';
+import { SlumpAlert, WhatChangedPanel } from '../WeekTrend';
+import { FollowupPanel } from '@/components/Recommendations';
+import { rangeLabel } from '@/utils/weekTrend';
 import { useMemo } from 'react';
 
 export function OverviewTab({
@@ -101,8 +104,17 @@ export function OverviewTab({
     detail,
     logStyle,
     tone,
+    weeks,
+    thisWeek,
+    slump,
+    moves,
+    recent,
+    shownDiagnoses,
+    reviews,
+    reviewSummary,
+    reasons,
   } = model;
-  const { baseline } = data;
+  const { baseline, dropAdopted, dropping } = data;
   const aim = baseline.data?.baseline ?? null;
   const goalList = useMemo(() => data.goals.data?.goals ?? [], [data.goals.data]);
 
@@ -226,11 +238,25 @@ export function OverviewTab({
    * holding the panel it came from.
    */
   const { judgement, note } = stageShows(maturity.stage);
-
+  const enoughRecord = recent.previous.length === recent.current.length && recent.current.length >= 14;
+  const nowRange = recent.current.length
+    ? rangeLabel(recent.current[0]!.date, recent.current[recent.current.length - 1]!.date)
+    : '';
+  const wasRange = recent.previous.length
+    ? rangeLabel(recent.previous[0]!.date, recent.previous[recent.previous.length - 1]!.date)
+    : '';
 
   return (
     <>
       <AwayNotice maturity={maturity} />
+
+      {/* First thing on the tab when the reader is in a slump: what to do
+          about it matters more than any chart below. */}
+      {slump && slump.steps.length > 0 && (
+        <section className="ax-section">
+          <SlumpAlert slump={slump} />
+        </section>
+      )}
 
       {note && (
         <section className="ax-section">
@@ -273,6 +299,37 @@ export function OverviewTab({
           previousSpanLabel={previousSpanText}
         />
       </section>
+
+      {/* Right under the chart: whether this week is up or down, what moved
+          over the last two weeks, and whether the changes the reader made
+          helped. */}
+      <section id="changed" className="ax-section">
+        <WhatChangedPanel
+          move={thisWeek}
+          blocks={weeks}
+          moves={moves}
+          diagnoses={shownDiagnoses ?? []}
+          enoughRecord={enoughRecord}
+          nowRange={nowRange}
+          wasRange={wasRange}
+          reported={
+            reasons.struggle[0]
+              ? { phrase: reasons.struggle[0].phrase, count: reasons.struggle[0].count }
+              : null
+          }
+        />
+      </section>
+
+      {reviews.length > 0 && (
+        <section className="ax-section">
+          <FollowupPanel
+            reviews={reviews.slice(0, detail.rows)}
+            summary={reviewSummary}
+            onDrop={dropAdopted}
+            dropping={dropping}
+          />
+        </section>
+      )}
 
       {/* The quick reads off sittings, tasks and goals, beside the totals.
           Past the first week they sit under the trend panels rather than

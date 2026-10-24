@@ -100,9 +100,10 @@ export function fakeModel(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     breakdown: { rows: [], total: 0 }, previousBySubject: new Map(),
     aimedShare: null,
     // Recommendations
-    advice: [], shown: [], projection: {}, plan: { actions: [], budget: 60 },
+    advice: [], shown: [], projection: {}, plan: { actions: [], more: [], budget: 60 },
     diagnoses: [], recent: { current: [], previous: [] }, weekLeft: 3,
     reviews: [], reviewSummary: {}, adoptedIds: new Set(), goalAdvice: [],
+    weeks: [], thisWeek: null, slump: null, moves: [],
     category: '', setCategory: vi.fn(), setBudget: vi.fn(), setNudge: vi.fn(),
     // Goals. From the real constructors over an empty set, for the reason
     // `EMPTY` gives: a hand-written object falls out of step with the type the

@@ -500,6 +500,12 @@ export interface Review {
   afterTo?: string;
   /** Days still to wait, when `early`. */
   daysLeft?: number;
+  /**
+   * For an `early` row: which way the measure is heading so far, from the
+   * days since the change against the same number of days before it. A first
+   * look, not a verdict, and labeled that way.
+   */
+  sofar?: 'better' | 'worse' | 'same';
   /** The sentence, already hedged to the strength of what is behind it. */
   note: string;
 }
@@ -590,12 +596,39 @@ export function reviewAdopted(input: ReviewInput): Review[] {
       const since = daysBetween(item.on, lastIso);
       if (since < SETTLE) {
         const daysLeft = SETTLE - since;
+        const wait = `Full read in ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}.`;
+        const early = interim(item.on, since, measure, days, tasks, firstIso);
+        if (!early) {
+          return { ...base, outcome: 'early', label: measure.label, daysLeft, note: wait };
+        }
+        const size =
+          measure.unit === '%'
+            ? `${tidy(Math.abs(early.delta))} points`
+            : `${tidy(Math.abs(early.delta))}${measure.unit}`;
+        const way = early.delta > 0 ? 'up' : 'down';
+        const so =
+          early.sofar === 'better'
+            ? `So far ${measure.label.toLowerCase()} is ${way} ${size}, the right way.`
+            : early.sofar === 'worse'
+              ? `So far ${measure.label.toLowerCase()} is ${way} ${size}, the wrong way.`
+              : `So far ${measure.label.toLowerCase()} hasn't moved much.`;
         return {
           ...base,
           outcome: 'early',
           label: measure.label,
+          unit: measure.unit,
+          before: early.before,
+          after: early.after,
+          delta: early.delta,
+          pct: early.before !== 0 ? (early.delta / Math.abs(early.before)) * 100 : null,
+          span: early.span,
+          beforeFrom: early.beforeFrom,
+          beforeTo: shift(item.on, -1),
+          afterFrom: item.on,
+          afterTo: lastIso,
           daysLeft,
-          note: `Check back in ${daysLeft} ${daysLeft === 1 ? 'day' : 'days'}.`,
+          sofar: early.sofar,
+          note: `${so} ${wait}`,
         };
       }
 
@@ -668,6 +701,37 @@ export function reviewAdopted(input: ReviewInput): Review[] {
     });
 }
 
+/** Fewest days since the change before a first look is worth showing. */
+const FIRST_LOOK = 3;
+
+/**
+ * The days since a change against the same number of days before it, for a
+ * change still inside its two weeks. Series measures only: the graded ones
+ * are snapshots and have nothing to say until a new one is filed.
+ */
+function interim(
+  on: string,
+  since: number,
+  measure: Measure,
+  days: GrowthDay[],
+  tasks: Task[],
+  firstIso: string,
+): { before: number; after: number; delta: number; span: number; beforeFrom: string; sofar: 'better' | 'worse' | 'same' } | null {
+  if (measure.kind !== 'series' || !measure.of) return null;
+  const span = since + 1;
+  if (span < FIRST_LOOK) return null;
+  const beforeFrom = shift(on, -span);
+  if (beforeFrom < firstIso) return null;
+  const end = shift(on, span);
+  const before = measure.of(between(days, beforeFrom, on), finishedBetween(tasks, beforeFrom, on));
+  const after = measure.of(between(days, on, end), finishedBetween(tasks, on, end));
+  if (before === null || after === null) return null;
+  const delta = after - before;
+  const rightWay = measure.better === 'higher' ? delta > 0 : delta < 0;
+  const sofar = !realMove(before, after, measure.noise) ? 'same' : rightWay ? 'better' : 'worse';
+  return { before, after, delta, span, beforeFrom, sofar };
+}
+
 /** The three outcomes that have two numbers behind them. */
 function verdict(
   base: { id: string; title: string; on: string },
@@ -707,7 +771,7 @@ function verdict(
     outcome === 'held'
       ? `${measure.label} hasn't changed much.`
       : outcome === 'improved'
-        ? `${measure.label} went ${direction} ${size}. It worked.`
+        ? `${measure.label} went ${direction} ${size}. That's a real improvement.`
         : `${measure.label} went ${direction} ${size}, the wrong way.`;
 
   return { ...base, outcome, label: measure.label, unit: measure.unit, before, after, delta, pct, note, ...window };
@@ -749,8 +813,11 @@ export function summarise(reviews: Review[]): ReviewSummary {
   if (reviews.length === 0) {
     headline = 'Nothing adopted yet.';
   } else if (judged === 0) {
+    const heading = reviews.filter((row) => row.sofar === 'better').length;
     headline = waiting > 0
-      ? `${waiting} change${waiting === 1 ? '' : 's'} too new to judge.`
+      ? `${waiting} change${waiting === 1 ? '' : 's'} still settling${
+          heading > 0 ? `, ${heading} heading the right way so far` : ''
+        }.`
       : 'Nothing here to check yet.';
   } else {
     headline = `${improved} of ${judged} worked.`;

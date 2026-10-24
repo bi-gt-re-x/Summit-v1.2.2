@@ -13,7 +13,7 @@
  *     tile on the Overview and nowhere else, so the two tabs that talk about
  *     sittings and days worked stated neither a total nor a scale.
  *   * **what gets typed after a task** — the reasons, which reached Insights
- *     and stopped there, while the Recommendations tab printed a sentence about
+ *     and stopped there, while "What changed" printed a sentence about
  *     rounding errors on two weeks the reader had annotated nine times.
  *
  * The line is the one utils/analyticsPrefs draws for tone, and it holds for
@@ -24,43 +24,35 @@
  */
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { RecommendationsTab } from './RecommendationsTab';
-import { draw, fakeData, fakeModel } from './fixtures';
+import { WhatChangedPanel } from '../WeekTrend';
+import { draw } from './fixtures';
 import { DETAIL_RULES, detailRows } from '@/utils/analyticsPrefs';
 
-describe('Recommendations reads what you type after a task', () => {
-  const reasons = {
-    struggle: [
-      { key: 'distracted', label: 'Distracted', phrase: 'distracted', side: 'struggle', count: 9, share: 60 },
-      { key: 'tired', label: 'Tired', phrase: 'tired', side: 'struggle', count: 3, share: 20 },
-    ],
-    wentWell: [],
-    answered: 12,
-    struggled: 12,
-    succeeded: 0,
-  } as never;
+describe('What changed reads what you type after a task', () => {
+  const panel = (reported: { phrase: string; count: number } | null) => (
+    <WhatChangedPanel
+      move={null}
+      blocks={[]}
+      moves={[]}
+      diagnoses={[]}
+      enoughRecord
+      nowRange="Oct 11 to Oct 24"
+      wasRange="Sep 27 to Oct 10"
+      reported={reported}
+    />
+  );
 
   it('names the reported obstacle when the arithmetic found nothing', () => {
-    draw(
-      <RecommendationsTab
-        model={fakeModel({ historyDays: 400, waitFor: () => 0, shownDiagnoses: [], reasons })}
-        data={fakeData()}
-      />,
-    );
+    draw(panel({ phrase: 'distracted', count: 9 }));
     expect(screen.getByText(/You reported/)).toBeInTheDocument();
     expect(screen.getByText('distracted')).toBeInTheDocument();
     expect(screen.getByText(/after 9 tasks in the last two weeks/)).toBeInTheDocument();
   });
 
   it('says nothing extra when the reader answers that question about nothing', () => {
-    // rating_depth 'none', or simply nobody answering. An empty diagnosis is
+    // rating_depth 'none', or simply nobody answering. An empty read is
     // still a real finding; it just has no annotation to add to it.
-    draw(
-      <RecommendationsTab
-        model={fakeModel({ historyDays: 400, waitFor: () => 0, shownDiagnoses: [] })}
-        data={fakeData()}
-      />,
-    );
+    draw(panel(null));
     expect(screen.queryByText(/You reported/)).not.toBeInTheDocument();
   });
 });

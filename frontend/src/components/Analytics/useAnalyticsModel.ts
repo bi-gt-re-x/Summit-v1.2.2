@@ -124,6 +124,7 @@ import { analyticalScore } from '@/utils/analyticalScore';
 import { discoverPatterns } from '@/utils/patterns';
 import { NO_PLAN } from '@/services/next';
 import { reviewAdopted, summarise } from '@/utils/followup';
+import { findSlump, trackChanges, weekBlocks, weekMove } from '@/utils/weekTrend';
 import type { AnalyticsData } from './useAnalyticsData';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 import { observations } from '@/utils/observations';
@@ -842,6 +843,20 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   );
   const reviewSummary = useMemo(() => summarise(reviews), [reviews]);
 
+  // ---- Weeks up and down, slumps, and what moved -------------------------
+  /* Off the whole series, like the follow-up above: "this week" is the last
+     seven days whatever window the picker is on. See utils/weekTrend. */
+  const weeks = useMemo(() => weekBlocks(all, 8), [all]);
+  const thisWeek = useMemo(() => weekMove(weeks), [weeks]);
+  const slump = useMemo(
+    () => findSlump({ blocks: weeks, all, tasks, nameOf }),
+    [all, nameOf, tasks, weeks],
+  );
+  const moves = useMemo(
+    () => trackChanges({ current: recent.current, previous: recent.previous, tasks, nameOf }),
+    [nameOf, recent, tasks],
+  );
+
   /** The ids already being tracked, so a card knows whether it is one of them. */
   const adoptedIds = useMemo(
     () => new Set((adopted.data?.adopted ?? []).map((row) => row.id)),
@@ -1044,6 +1059,12 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     reviews,
     reviewSummary,
     adoptedIds,
+
+    // Weeks
+    weeks,
+    thisWeek,
+    slump,
+    moves,
   };
 }
 

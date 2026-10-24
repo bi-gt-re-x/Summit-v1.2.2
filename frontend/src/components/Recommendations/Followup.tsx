@@ -24,7 +24,7 @@ import {
 
 /** What each outcome is called in the chip, and which tone carries it. */
 const OUTCOME: Record<Review['outcome'], { label: string; tone: string }> = {
-  improved: { label: 'Moved', tone: 'good' },
+  improved: { label: 'Improved', tone: 'good' },
   worsened: { label: 'Went the other way', tone: 'bad' },
   held: { label: 'Held', tone: 'flat' },
   early: { label: 'Too new', tone: 'wait' },
@@ -57,9 +57,20 @@ export function FollowupPanel({ reviews, summary, onDrop, dropping }: FollowupPa
     >
       <ul className="ax-followup">
         {reviews.map((row) => {
-          const state = OUTCOME[row.outcome];
+          /* A change still inside its two weeks gets a first look when there
+             are a few days to read: the chip says which way it's heading and
+             the figures below are the days so far. */
+          const state =
+            row.outcome === 'early' && row.sofar === 'better'
+              ? { label: 'Heading the right way', tone: 'good' }
+              : row.outcome === 'early' && row.sofar === 'worse'
+                ? { label: 'Not moving yet', tone: 'wait' }
+                : OUTCOME[row.outcome];
           const measured =
-            row.outcome === 'improved' || row.outcome === 'worsened' || row.outcome === 'held';
+            row.outcome === 'improved' ||
+            row.outcome === 'worsened' ||
+            row.outcome === 'held' ||
+            (row.outcome === 'early' && row.sofar !== undefined);
 
           return (
             <li key={row.id} className={`ax-followup-row is-${state.tone}`}>
@@ -90,7 +101,7 @@ export function FollowupPanel({ reviews, summary, onDrop, dropping }: FollowupPa
                         things side by side, and the one a reader would take
                         from it is the wrong one — the move there is 23 points,
                         which the sentence below already says. */}
-                    {row.unit !== '%' && row.pct !== null && row.pct !== undefined && (
+                    {row.outcome !== 'early' && row.unit !== '%' && row.pct !== null && row.pct !== undefined && (
                       <span className="ax-followup-pct">
                         {row.pct > 0 ? '+' : ''}
                         {Math.round(row.pct)}%
@@ -116,7 +127,7 @@ export function FollowupPanel({ reviews, summary, onDrop, dropping }: FollowupPa
                 disabled={dropping === row.id}
                 onClick={() => onDrop(row.id)}
               >
-                {dropping === row.id ? 'Removing…' : 'Stop tracking this'}
+                {dropping === row.id ? 'Removing...' : 'Stop tracking this'}
               </button>
             </li>
           );
