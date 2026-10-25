@@ -3899,3 +3899,23 @@ def save_topic_library(username, rows, fingerprint, stamp):
         return len(rows)
     finally:
         con.close()
+
+
+#: What backend/tracking/growth_reads.py reads from a finished task.
+GROWTH_READ_COLUMNS = ('title', 'description', 'subject', 'execution', 'difficulty', 'completed_at',
+                       'created_at', 'completion_seconds', 'show_on_calendar', 'reason')
+
+
+def growth_read_tasks(username, since):
+    """The account's tasks finished on or after `since` (ISO day), with when
+    they started, how long they took and how they went."""
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return []
+        return [dict(zip(GROWTH_READ_COLUMNS, row)) for row in con.execute(
+            'SELECT {} FROM tasks WHERE user_id = ? AND status = ? AND completed_at >= ?'.format(
+                ', '.join('"{}"'.format(name) for name in GROWTH_READ_COLUMNS)),
+            (username, 'done', since))]
+    finally:
+        con.close()

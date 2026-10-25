@@ -105,3 +105,31 @@ export function topicLibrary(subject: string): Promise<ApiResult<TopicLibrary>> 
 export function buildTopics(subject: string): Promise<ApiResult<TopicLibrary>> {
   return post<TopicLibrary>('/api/topics', {}, { subject });
 }
+
+// --------------------------------------------------------------------------
+// Growth, specifically
+// --------------------------------------------------------------------------
+export interface GrowthReadItem {
+  id: string;
+  kind: string;
+  tone: 'good' | 'bad' | 'flat';
+  title: string;
+  detail: string;
+  weight: number;
+}
+
+export interface GrowthReads {
+  from: string;
+  to: string;
+  days: number;
+  sessions: number;
+  groups: { id: 'improved' | 'when' | 'watch'; title: string; items: GrowthReadItem[] }[];
+}
+
+/**
+ * What improved, when you work best and what to watch, over the last `days`
+ * days, from the record itself. Backend: backend/tracking/growth_reads.py.
+ */
+export function growthReads(days: number): Promise<ApiResult<GrowthReads>> {
+  return get<GrowthReads>('/api/growth_reads', { days });
+}

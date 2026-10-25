@@ -65,6 +65,7 @@ import { useGrowthPeriods } from '../useGrowthPeriods';
 import { useSkillAttempts, useStats } from '@/hooks';
 import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
 import { SkillShapePanel } from '../SkillView';
+import { GrowthReadsPanel } from '../GrowthReads';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { PeriodMetric } from '@/services/analytics';
 
@@ -402,6 +403,14 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
           <p className="ax-empty">Loading your scores…</p>
         </section>
       )}
+
+      {/* First: the things only this record can say. Not "Chemistry went
+          Competent → Strong" but which topic improved, when each subject goes
+          best and what keeps going wrong. Its own request, so it doesn't wait
+          on the grades below. See ../GrowthReads. */}
+      <section className="ax-section">
+        <GrowthReadsPanel span={model.span} />
+      </section>
 
       {data && (
         <>

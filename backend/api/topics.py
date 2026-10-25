@@ -5,14 +5,19 @@ out of date (tests/test_get_requests_do_not_write.py: it never writes). The
 POST rebuilds it from the tasks and goals and answers with the same shape, so
 the page shows whichever it has and asks for a rebuild when `stale` is true.
 The filing, the scoring and the plans are all in backend/tracking/topics.py.
+
+`/api/growth_reads` is the Growth tab's specific findings (what improved, when
+you work best, what to watch), read off the same filing; the rules are in
+backend/tracking/growth_reads.py.
 """
-from datetime import datetime
+from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Depends
 
 from backend.api.guard import current_username
 from backend.api.reply import ok
 from backend.database import connection as db
+from backend.tracking import growth_reads
 from backend.tracking import topics as topic_tracking
 
 router = APIRouter(tags=['topics'])
@@ -39,3 +44,14 @@ def build_topics(subject: str = '', username: str = Depends(current_username)):
     stamp = datetime.now().isoformat(timespec='seconds')
     db.save_topic_library(username, rows, topic_tracking.fingerprint(db.topic_facts(username)), stamp)
     return ok(**topic_tracking.payload(rows, goals, subject=subject.strip()))
+
+
+@router.get('/api/growth_reads')
+def read_growth(days: int = 90, username: str = Depends(current_username)):
+    """Findings over the last `days` days (30 to 730). Reads the tasks from
+    twice that far back, because "improved" compares a stretch with the one
+    before it and a new topic is one not seen before the window."""
+    days = max(30, min(730, int(days or 90)))
+    today = date.today()
+    since = (today - timedelta(days=2 * days)).isoformat()
+    return ok(**growth_reads.reads(db.growth_read_tasks(username, since), today, days))
