@@ -55,6 +55,7 @@ import { WhatYouToldUs } from '../WhatYouToldUs';
 import { GoalsFinished } from '../GoalsFinished';
 import { FirstReads } from '../FirstReads';
 import { SlumpAlert, WhatChangedPanel } from '../WeekTrend';
+import { PeriodSummary } from '../PeriodSummary';
 import { FollowupPanel } from '@/components/Recommendations';
 import { rangeLabel } from '@/utils/weekTrend';
 import { useMemo } from 'react';
@@ -70,6 +71,7 @@ export function OverviewTab({
   onEditBaseline: () => void;
 }) {
   const {
+    all,
     background,
     nameOf,
     waitFor,
@@ -162,6 +164,11 @@ export function OverviewTab({
             shown the zeros. */}
         <AwayNotice maturity={maturity} />
 
+        {/* The last week (or month, or year) in a few bullets, first. */}
+        <section id="summary" className="ax-section">
+          <PeriodSummary all={all} tasks={tasks} nameOf={nameOf} />
+        </section>
+
         <section id="overview" className="ax-section">
           <Collecting maturity={maturity} stats={basics} />
         </section>
@@ -250,8 +257,15 @@ export function OverviewTab({
     <>
       <AwayNotice maturity={maturity} />
 
-      {/* First thing on the tab when the reader is in a slump: what to do
-          about it matters more than any chart below. */}
+      {/* The top of the tab: the last week (or month, or year) in a few short
+          bullets, so "how did it go" is answered before any chart. See
+          components/Analytics/PeriodSummary. */}
+      <section id="summary" className="ax-section">
+        <PeriodSummary all={all} tasks={tasks} nameOf={nameOf} />
+      </section>
+
+      {/* Next when the reader is in a slump: what to do about it matters more
+          than any chart below. */}
       {slump && slump.steps.length > 0 && (
         <section className="ax-section">
           <SlumpAlert slump={slump} />

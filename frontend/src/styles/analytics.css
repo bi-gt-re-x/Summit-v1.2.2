@@ -9498,3 +9498,29 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
     .ax-slump-go { grid-column: 2; justify-self: start; }
     .ax-week-strip { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ==========================================================================
+   Weekly summary: the top of Overview. components/Analytics/PeriodSummary.tsx
+   ========================================================================== */
+.ax-period-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4) var(--space-6);
+}
+.ax-period-group .ax-tips-head { margin-top: 0; }
+.ax-period-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ax-muted);
+}
+.ax-period-list li { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 6px; }
+.ax-period-list b { color: var(--ax-text); font-weight: 650; }
+.ax-period-mark { font-weight: 700; color: var(--ax-faint); text-align: center; }
+.ax-period-list li.is-up .ax-period-mark { color: var(--ax-good); }
+.ax-period-list li.is-down .ax-period-mark { color: var(--ax-bad); }
