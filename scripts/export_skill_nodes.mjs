@@ -90,6 +90,10 @@ for (const tree of SUBJECT_TREES) {
       // already done, and "k.limits" tells it nothing.
       requires: (node.requires ?? []).map((id) => NAMES.get(id) ?? id),
       recommends: (node.recommends ?? []).map((id) => NAMES.get(id) ?? id),
+      // The same gates as ids, for the server's reading of what a reader has
+      // opened (backend/tracking/skill_progress.py). Names repeat across trees
+      // ("Binary Search" is on two), so a name cannot be turned back into an id.
+      requireIds: [...(node.requires ?? [])],
     });
   }
 }

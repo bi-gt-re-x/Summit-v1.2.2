@@ -29,6 +29,9 @@ export interface UseSkillAttempts {
   add: (attempt: NewAttempt) => Promise<Attempt | null>;
   /** Take one back; resolves to whether it went. */
   remove: (id: string) => Promise<boolean>;
+  /** Read the list again, after something other than this hook wrote to it:
+      a skill check marks each answer on the server. */
+  reload: () => Promise<void>;
 }
 
 export function useSkillAttempts(username: string | null): UseSkillAttempts {
@@ -82,6 +85,19 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
     }
   }, []);
 
+  const reload = useCallback(async () => {
+    if (!username) return;
+    try {
+      const result = await skillAttempts.list();
+      if (result.success) {
+        setAttempts(result.attempts);
+        setLevels(result.levels ?? {});
+      }
+    } catch {
+      /* What is on screen stays, which is better than a blank list. */
+    }
+  }, [username]);
+
   const remove = useCallback(async (id: string) => {
     try {
       const result = await skillAttempts.remove(id);
@@ -103,5 +119,5 @@ export function useSkillAttempts(username: string | null): UseSkillAttempts {
     }
   }, []);
 
-  return { attempts, levels, loading, error, add, remove };
+  return { attempts, levels, loading, error, add, remove, reload };
 }

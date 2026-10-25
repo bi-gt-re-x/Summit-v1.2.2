@@ -62,7 +62,7 @@ import { SkillLevelsPanel } from '../SkillLevels';
 import { skillTrajectory, timeToProgress } from '@/utils/skillGrowth';
 import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
-import { useSkillAttempts, useStats } from '@/hooks';
+import { useSkillAttempts, useSkillReading, useStats } from '@/hooks';
 import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
 import { SkillShapePanel } from '../SkillView';
 import { GrowthReadsPanel } from '../GrowthReads';
@@ -155,6 +155,7 @@ export function useSkillGrowth(model: AnalyticsModel, period: PeriodKey) {
      `useStats` for the name, for the reason ../useGrowthPeriods gives. */
   const { username } = useStats();
   const practice = useSkillAttempts(username);
+  const { reading: skillReading } = useSkillReading(username);
 
   /* `Record<PeriodKey, …>` is total, so the lookup cannot miss — the
      assertions are for TypeScript's index signature rather than for a case
@@ -208,8 +209,9 @@ export function useSkillGrowth(model: AnalyticsModel, period: PeriodKey) {
       periodText,
       levels: practice.levels,
       username,
+      reading: skillReading,
     }),
-    [tasks, liveGoals, windowDays, toIso, periodText, practice.levels, username],
+    [tasks, liveGoals, windowDays, toIso, periodText, practice.levels, username, skillReading],
   );
 
   const progress = useMemo(

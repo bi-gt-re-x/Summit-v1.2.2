@@ -94,7 +94,14 @@ CREATE TABLE IF NOT EXISTS tasks (
     -- that is not the reader grading themselves, which is why the plan reads
     -- it for what went wrong (backend/tracking/record.py `misses`).
     score_got           INTEGER,
-    score_of            INTEGER
+    score_of            INTEGER,
+
+    -- Which skill-tree node this task counts toward, when somebody said so
+    -- rather than leaving it to the name: a task booked from the skill tree
+    -- carries its node, and "Not this skill" on the tree stores '-' (counts
+    -- toward none). Null files the task by its name, subject and description
+    -- through the topic library. Read by backend/tracking/skill_progress.py.
+    skill_node          TEXT
 );
 
 CREATE INDEX IF NOT EXISTS tasks_user_status_idx ON tasks (user_id, status);

@@ -809,6 +809,9 @@ ACCOUNT_TABLES = (
     # What the account got right and wrong on each skill. The only per-skill
     # evidence there is, so it goes out with an export and goes with a reset.
     'skill_attempts',
+    # The skill checks taken, passed or not. A pass is what masters a node,
+    # so they go with the attempts.
+    'skill_checks',
     # What the account said about itself at sign-up, and the facts kept from
     # it. Its own words, so they go out with an export and go with a reset.
     'user_background', 'user_facts',

@@ -2176,6 +2176,14 @@ html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice
     font-size: 19px;
     line-height: 1;
 }
+/* The second button beside it: the same shape, outlined. */
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-cta.is-second {
+    background: transparent;
+    color: var(--paper-sage-deep);
+    box-shadow: inset 0 0 0 1.5px var(--paper-sage);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-cta.is-second:hover:not(:disabled) { background: var(--paper-sage-soft); }
+html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-ctas { align-items: flex-start; }
 html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-detail {
     border-color: #E6E3DD;
     color: #6F716C;
@@ -2223,7 +2231,7 @@ html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice
     html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-truth.is-mine { grid-area: mine; }
     html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-truth.is-measured { grid-area: measured; padding-bottom: 24px; padding-right: 0; }
     html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-truth.is-move { grid-area: move; padding-right: 0; }
-    html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-cta { grid-area: cta; justify-self: start; align-self: start; margin-top: 24px; }
+    html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-ctas { grid-area: cta; justify-self: start; align-self: start; margin-top: 24px; padding-right: 32px; }
     html:not([data-skin]):not([data-theme="dark"]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-body > .stx-lp-detail {
         grid-area: more;
         justify-self: start;

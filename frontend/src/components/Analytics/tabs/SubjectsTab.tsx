@@ -11,7 +11,8 @@ import { Link } from 'react-router-dom';
 import { useMemo, type ReactNode } from 'react';
 import { SkillsChapter } from '@/components/Growth';
 import { latticeFor } from '@/components/Subject/lattice';
-import { loadProgress } from '@/utils/skillProgress';
+import { practicedFrom } from '@/utils/skillProgress';
+import { useSkillReading } from '@/hooks/useSkillReading';
 import { treeStanding } from '@/skills/standing';
 import { OTHER_KEY, type SubjectXpRow } from '@/utils/subjectXp';
 import type { GoalLimiter } from '@/utils/goalLimiter';
@@ -264,9 +265,10 @@ export function SubjectOpensPanel({
   limit,
   empty = null,
 }: { rows: SubjectXpRow[]; subjects?: SubjectIndex; username?: string | null; limit?: number; empty?: ReactNode }) {
+  const { reading } = useSkillReading(username);
   const lattices = useMemo(
     () => {
-      const progress = loadProgress(username);
+      const progress = practicedFrom(reading);
       return rows
         // "Other" is a bucket, not a subject, and has no lattice to open.
         .filter((row) => row.key !== OTHER_KEY && row.xp > 0)
@@ -277,7 +279,7 @@ export function SubjectOpensPanel({
         .filter((entry): entry is typeof entry & { lattice: NonNullable<typeof entry.lattice> } =>
           entry.lattice !== null);
     },
-    [rows, subjects, username],
+    [rows, subjects, reading],
   );
   if (lattices.length === 0) return <>{empty}</>;
   const shown = limit ? lattices.slice(0, limit) : lattices;

@@ -141,8 +141,13 @@ import {
   useLatticeKeys,
   usePageEntrance,
   useSkillAttempts,
+  useSkillReading,
   useSubjects,
 } from '@/hooks';
+import { readingOf } from '@/hooks/useSkillReading';
+import { SkillCheck } from '@/components/SkillTree/SkillCheck';
+import type { BookingState } from '@/components/SkillTree/LatticePanel';
+import * as skillProgress from '@/services/skillProgress';
 import { iconForName } from '@/skills/iconMatch';
 import {
   branchIds,
@@ -181,13 +186,7 @@ import {
 } from '@/utils/skillGraph';
 import { FOCUS_COUNT, loadFocus, resolveFocus, saveFocus } from '@/utils/focusTopics';
 import { loadLastTree, saveLastTree } from '@/utils/lastTree';
-import {
-  applyProgress,
-  loadProgress,
-  practiceGain,
-  saveProgress,
-  type SkillProgress,
-} from '@/utils/skillProgress';
+import { applyReading, workFor } from '@/utils/skillProgress';
 import {
   applyNames,
   cleanName,
@@ -381,18 +380,18 @@ export default function SkillTrees() {
     if (treeRead === username) saveLastTree(username, treeId);
   }, [treeId, treeRead, username]);
 
-  /* Practice done on top of what the trees seed — see utils/skillProgress for
-     why it lives in the browser. Loaded once per account, and written back on
-     every change rather than on unmount, so a click survives a closed tab. */
-  const [progress, setProgress] = useState<SkillProgress>({});
-  useEffect(() => {
-    setProgress(loadProgress(username));
-  }, [username]);
+  /* Where the account stands on every node, read from its own work: finished
+     tasks filed under a skill, days of sittings on one, passed skill checks.
+     One request for the whole account, refetched whenever tasks change, and
+     replaced by the reading every booking, move and check answers with. See
+     backend/tracking/skill_progress.py for the rules. */
+  const skill = useSkillReading(username);
+  const reading = skill.reading;
+  const checkable = useMemo(() => new Set(reading?.checkable ?? []), [reading]);
 
-  /* The programmes this account has rewritten. Same store, same reasoning —
-     see utils/skillSteps. A node in here is counted in steps rather than XP,
-     which is why it has to reach `applyProgress` rather than stopping at the
-     panel: the tile, the ring and the band across the top all read the graph. */
+  /* The programmes this account has rewritten, in the browser (utils/
+     skillSteps). The panel's step list, and nothing more: how far along a
+     node is comes from the reading above. */
   const [plans, setPlans] = useState<StepPlans>({});
   useEffect(() => {
     setPlans(loadSteps(username));
@@ -438,13 +437,14 @@ export default function SkillTrees() {
   const tree = subjectTreeById(treeId) ?? DEFAULT_TREE;
 
   const designed = useMemo(() => graphFromSubjectTree(tree), [tree]);
-  // What is actually drawn: the designed tree with the account's practice added
-  // and every status re-derived from the result. Everything downstream — the
-  // canvas, the panel, the figures — reads this one graph, so a click cannot
-  // move the tiles and leave the band behind.
+  const doors = useMemo(() => new Set(navTargets(tree).keys()), [tree]);
+  // What is actually drawn: the designed tree with the account's reading laid
+  // over it. Everything downstream — the canvas, the panel, the figures —
+  // reads this one graph, so nothing can move the tiles and leave the band
+  // behind.
   const graph = useMemo(
-    () => applyNames(applyProgress(designed, progress, plans), names),
-    [designed, progress, plans, names],
+    () => applyNames(applyReading(designed, reading, doors), names),
+    [designed, reading, doors, names],
   );
   /* The written programmes for this tree, fetched once when it opens.
      A whole tree rather than the selected node, because a reader clicks tiles
@@ -483,6 +483,17 @@ export default function SkillTrees() {
      use, because four things below now need it. */
   const navIds = useMemo(() => new Set(nav.keys()), [nav]);
   const totals = useMemo(() => tallyGraph(graph, navIds), [graph, navIds]);
+
+  /* Finished tasks that named this tree but no skill on it ("Calculus
+     problem set"), which the reading counts so the page can say why they are
+     not on a tile and what name would put the next ones there. The example is
+     a skill on this tree the reader can actually start. */
+  const unfiled = reading?.unfiled[tree.id] ?? null;
+  const exampleTitle = useMemo(() => {
+    const skills = graph.nodes.filter((node) => !navIds.has(node.id));
+    const pick = skills.find((node) => node.status === 'available' || node.status === 'progress') ?? skills[0];
+    return `${pick?.name ?? tree.title} practice`;
+  }, [graph, navIds, tree.title]);
   const chain = useMemo(() => parentChain(tree.id), [tree.id]);
   // The three ways out of this tree, so walking the hierarchy never depends on
   // finding the right diamond on the canvas.
@@ -784,8 +795,8 @@ export default function SkillTrees() {
       const source = subjectTreeById(target.tree);
       if (!source) continue;
 
-      const built = applyProgress(graphFromSubjectTree(source), progress, plans);
       const doors = new Set(navTargets(source).keys());
+      const built = applyReading(graphFromSubjectTree(source), reading, doors);
       const tally = tallyGraph(built, doors);
       const [chance] = opportunities(built, doors);
 
@@ -798,7 +809,7 @@ export default function SkillTrees() {
       });
     }
     return rows;
-  }, [drawerOpen, focus, plans, progress, subjects]);
+  }, [drawerOpen, focus, reading, subjects]);
 
   /* Picking something in the drawer folds it away and goes back up. The
      drawer is at the bottom of the page and the thing it changes is at the
@@ -894,15 +905,6 @@ export default function SkillTrees() {
             totals.available ? `${totals.available} open, ` : ''
           }${totals.locked} locked. Each tile fills as you go.`;
 
-  /* The "+250 XP" that appears for a moment after a click. Held with its node
-     id so switching selection mid-flash cannot show one node's gain on
-     another, and the timer is cleared on unmount and on every new click. */
-  const [flash, setFlash] = useState<{ id: string; gain: number } | null>(null);
-  const flashTimer = useRef<number | null>(null);
-  useEffect(() => () => {
-    if (flashTimer.current) window.clearTimeout(flashTimer.current);
-  }, []);
-
   const writePlans = useCallback(
     (id: string, plan: StepPlan | null) => {
       setPlans((current) => {
@@ -944,34 +946,58 @@ export default function SkillTrees() {
   );
 
   /*
-   * Practicing means one of two things, and which one depends on whether this
-   * account has written the node's programme.
+   * Work, not clicks.
    *
-   * An untouched node is counted in XP, so a session adds XP. A node whose
-   * steps the reader has written is counted in steps — utils/skillSteps has the
-   * argument — so a session ticks the next one off instead. Adding XP to it
-   * would be adding to a figure that is no longer read, which is the same as
-   * the button doing nothing.
+   * A tile moves when real work lands on it, so the panel's main button makes
+   * the work: "Plan a session" puts a task for the step the reader is on in
+   * the first free half hour on their calendar, filed under the node, and
+   * finishing it is what fills the bar. The skill check is the other way in:
+   * pass it and the node is mastered, sessions or not.
+   *
+   * `booking` is per node, so the line under the buttons describes the node
+   * it was booked for and not whichever one is selected now.
    */
-  const startPractice = useCallback(
-    (node: GraphNode) => {
-      const plan = plans[node.id];
-      if (plan) {
-        if (plan.at >= plan.steps.length) return;
-        writePlans(node.id, { ...plan, at: plan.at + 1 });
-        return;
+  const [booking, setBooking] = useState<(BookingState & { id: string }) | null>(null);
+  const bookSession = useCallback(
+    async (node: GraphNode) => {
+      setBooking({ id: node.id, busy: true });
+      try {
+        const reply = await skillProgress.book(node.id);
+        if (!reply.success) {
+          setBooking({ id: node.id, busy: false, error: reply.message ?? "Couldn't plan that session." });
+          return;
+        }
+        skill.replace(readingOf(reply));
+        setBooking({ id: node.id, busy: false, task: reply.task });
+      } catch {
+        setBooking({ id: node.id, busy: false, error: "Couldn't reach the server." });
       }
-      const gain = practiceGain(node);
-      setProgress((current) => {
-        const next = { ...current, [node.id]: (current[node.id] ?? 0) + gain };
-        saveProgress(username, next);
-        return next;
-      });
-      setFlash({ id: node.id, gain });
-      if (flashTimer.current) window.clearTimeout(flashTimer.current);
-      flashTimer.current = window.setTimeout(() => setFlash(null), 1600);
     },
-    [username, plans, writePlans],
+    [skill],
+  );
+
+  /* "Not this skill": a task the topic library filed under the wrong node
+     comes off it, with every task that shares its name (a routine repeats
+     its name), and they count toward nothing until moved somewhere. */
+  const moveOff = useCallback(
+    async (taskId: string) => {
+      try {
+        const reply = await skillProgress.fileTask(taskId, '-', true);
+        if (reply.success) skill.replace(readingOf(reply));
+      } catch {
+        /* The list stays as it was, which is the truth if the move failed. */
+      }
+    },
+    [skill],
+  );
+
+  /* The node whose skill check is open, which takes the whole window. */
+  const [checking, setChecking] = useState<GraphNode | null>(null);
+  const openCheck = useCallback(
+    (node: GraphNode) => {
+      if (checkable.has(node.id) && node.status !== 'locked' && node.status !== 'complete') setChecking(node);
+    },
+    [checkable],
   );
 
   /* ---- the four page verbs, on the keyboard ----------------------------
@@ -984,8 +1010,11 @@ export default function SkillTrees() {
     onClear: () => (asked ? setAsked(null) : select(null)),
     onHere: () => hereId && frameOn([hereId]),
     onFit: () => frameOn(graph.nodes.map((node) => node.id)),
-    onPractice: selected ? () => startPractice(selected) : undefined,
+    onPractice: selected && checkable.has(selected.id) ? () => openCheck(selected) : undefined,
     onSearch: revealDrawer,
+    // The skill check owns the keyboard while it is up: Escape closes it,
+    // and must not also clear the selection behind it.
+    enabled: !checking,
   });
 
   const entering = usePageEntrance(true);
@@ -1299,8 +1328,13 @@ export default function SkillTrees() {
             graph={graph}
             node={selected}
             onSelect={select}
-            onPractice={startPractice}
-            gain={selected ? practiceGain(selected) : 0}
+            work={selected ? workFor(reading, selected.id) : null}
+            checkable={Boolean(selected && checkable.has(selected.id))}
+            goals={reading?.goals}
+            onBook={username ? bookSession : undefined}
+            booking={booking && selected && booking.id === selected.id ? booking : null}
+            onCheck={username ? openCheck : undefined}
+            onMoveOff={username ? moveOff : undefined}
             steps={selected ? plans[selected.id] ?? null : null}
             written={selected ? written[selected.id] ?? null : null}
             onSteps={selected ? (plan) => writePlans(selected.id, plan) : undefined}
@@ -1310,13 +1344,19 @@ export default function SkillTrees() {
             onResetName={selected ? () => rename(selected.id, null) : undefined}
             onExpand={onExpand}
             evidence={evidence}
-            flash={flash && selected && flash.id === selected.id ? flash.gain : null}
             placeholder={
               <>
                 <Ico icon="target" className="stx-ico stx-lp-blank-ico" />
                 <strong>Pick a skill</strong>
                 <span>
                   Click any tile to see what it is, how far along you are and what it leads to. Diamonds open a new subject.
+                </span>
+                <span className="stx-lp-unfiled">
+                  {unfiled
+                    ? `${unfiled.count} finished ${unfiled.count === 1 ? 'task' : 'tasks'} named ${tree.title} but no skill on it, so ${unfiled.count === 1 ? "it isn't" : "they aren't"} on a tile. Name the skill in the title, like "${exampleTitle}", and the next ones will count.`
+                    : 'Tiles fill from your finished tasks. A task counts when its name says the skill, like "' +
+                      exampleTitle +
+                      '".'}
                 </span>
               </>
             }
@@ -1368,7 +1408,7 @@ export default function SkillTrees() {
             <kbd>↑</kbd>
             <kbd>↓</kbd>
             <kbd>←</kbd>
-            <kbd>→</kbd> move · <kbd>Enter</kbd> open · <kbd>P</kbd> practice · <kbd>F</kbd> frame
+            <kbd>→</kbd> move · <kbd>Enter</kbd> open · <kbd>P</kbd> skill check · <kbd>F</kbd> frame
             where you are · <kbd>R</kbd> fit · <kbd>/</kbd> search · <kbd>Esc</kbd> clear
           </p>
         </footer>
@@ -1461,6 +1501,19 @@ export default function SkillTrees() {
             read={peek}
             rect={peeked.rect}
             nav={nav.has(peeked.id)}
+          />
+        )}
+
+        {checking && (
+          <SkillCheck
+            nodeId={checking.id}
+            nodeName={checking.name}
+            onClose={() => setChecking(null)}
+            onProgress={(next) => {
+              skill.replace(next);
+              // Every answer was a marked problem, so the step levels moved.
+              void practice.reload();
+            }}
           />
         )}
       </div>

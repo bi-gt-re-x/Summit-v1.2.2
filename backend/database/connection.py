@@ -48,6 +48,8 @@ JSON_COLUMNS = {
     ('library_items', 'tags'),
     ('calendar_documents', 'data'),
     ('skill_steps', 'checks'),
+    ('skill_checks', 'questions'),
+    ('skill_checks', 'answers'),
     ('skill_problems', 'checks'),
     ('users', 'streak_vacations'),
 }
@@ -218,6 +220,13 @@ ADDED_COLUMNS = (
     # never as a middling day. Ranges are enforced by backend/api/journal.py.
     ('log_entries', 'mood', 'INTEGER'),
     ('log_entries', 'energy', 'INTEGER'),
+
+    # Which skill-tree node a task counts toward, when that was said rather
+    # than read off its name: a task booked from the tree carries its node,
+    # and "Not this skill" on the tree's panel stores '-'. Existing rows get
+    # NULL, which files the task by its name as before. See data/sql/tasks.sql
+    # and backend/tracking/skill_progress.py.
+    ('tasks', 'skill_node', 'TEXT'),
 )
 
 # Indexes on columns that ADDED_COLUMNS supplies. Their own list, applied after
@@ -759,6 +768,28 @@ ADDED_TABLES = ('''
         fingerprint  TEXT NOT NULL,
         built_at     TEXT NOT NULL
     )
+''', '''
+    -- The skill checks that master a skill-tree node. The DDL is
+    -- data/sql/skillchecks.sql's; see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS skill_checks (
+        id           TEXT    PRIMARY KEY,
+        user_id      TEXT    NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        node_id      TEXT    NOT NULL,
+        questions    TEXT    NOT NULL DEFAULT '[]',
+        answers      TEXT    NOT NULL DEFAULT '[]',
+        asked        INTEGER NOT NULL,
+        need         INTEGER NOT NULL,
+        correct      INTEGER NOT NULL DEFAULT 0,
+        passed       BOOLEAN,
+        started_at   TEXT    NOT NULL,
+        finished_at  TEXT,
+        CHECK (asked BETWEEN 1 AND 10),
+        CHECK (need BETWEEN 1 AND asked),
+        CHECK (correct >= 0 AND correct <= asked)
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS skill_checks_user_idx
+        ON skill_checks (user_id, node_id)
 ''')
 
 
@@ -3739,6 +3770,20 @@ def save_step_problems(node_id, ordinal, rows):
                     'INSERT INTO skill_problems ({}) VALUES ({})'.format(columns, marks),
                     [values.get(n) for n in SKILL_PROBLEM_COLUMNS])
         return len(rows)
+    finally:
+        con.close()
+
+
+def checkable_nodes(minimum):
+    """The node ids with at least `minimum` written problems: the nodes that
+    have a skill check (backend/tracking/skill_check.py)."""
+    con = connect()
+    try:
+        if not _schema(con, 'skill_problems'):
+            return set()
+        return {row[0] for row in con.execute(
+            'SELECT node_id FROM skill_problems GROUP BY node_id HAVING COUNT(*) >= ?',
+            (int(minimum),))}
     finally:
         con.close()
 

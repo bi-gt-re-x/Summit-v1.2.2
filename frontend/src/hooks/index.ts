@@ -32,6 +32,7 @@ export { subjectOf, useSubjectIndex, useSubjects, useSubjectsReady } from './use
 export { useMediaQuery } from './useMediaQuery';
 export { useSettings } from './useSettings';
 export { useSkillAttempts } from './useSkillAttempts';
+export { useSkillReading } from './useSkillReading';
 export type { UseSkillAttempts } from './useSkillAttempts';
 export { useTheme } from './useTheme';
 export { useStats } from './useStats';

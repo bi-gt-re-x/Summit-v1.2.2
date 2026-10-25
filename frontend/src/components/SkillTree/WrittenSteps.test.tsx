@@ -111,7 +111,6 @@ function draw(steps: WrittenStep[] | null, onExpand = vi.fn()) {
       graph={graph}
       node={picked}
       onSelect={vi.fn()}
-      gain={250}
       written={steps}
       onExpand={onExpand}
     />,

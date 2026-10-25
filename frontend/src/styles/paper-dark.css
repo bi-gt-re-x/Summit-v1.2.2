@@ -16389,6 +16389,65 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
     background: var(--lat-grey-soft);
     color: var(--lat-faint)
 }
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-cta.is-second {
+    background: transparent;
+    color: var(--lat-violet);
+    box-shadow: inset 0 0 0 1.5px var(--lat-violet)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-cta.is-second:hover:not(:disabled) {
+    background: var(--lat-violet-soft);
+    filter: none
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-booked {
+    color: var(--lat-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-booked a {
+    color: var(--lat-violet)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-booked.is-error {
+    color: var(--lat-amber)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work {
+    border-top: 1px solid var(--lat-line-soft)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-name {
+    color: var(--lat-faint)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-goal {
+    background: var(--lat-green-soft);
+    color: var(--lat-green);
+    text-decoration: none
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-goal:hover {
+    text-decoration: underline
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-title {
+    color: var(--lat-text)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-meta {
+    color: var(--lat-faint)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-off {
+    border: 1px solid var(--lat-line);
+    background: transparent;
+    color: var(--lat-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-off:hover {
+    color: var(--lat-amber);
+    border-color: var(--lat-amber)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-none,
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-more,
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-planned,
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-check {
+    color: var(--lat-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-work-planned a {
+    color: var(--lat-violet)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-unfiled {
+    color: var(--lat-muted)
+}
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-legend {
     border: 1px solid var(--lat-line);
     background: var(--lat-panel);
@@ -21826,6 +21885,13 @@ html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-
     font-size: 19px;
     line-height: 1;
 }
+html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-cta.is-second {
+    background: transparent;
+    color: var(--paper-sage-deep);
+    box-shadow: inset 0 0 0 1.5px var(--paper-sage);
+}
+html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-cta.is-second:hover:not(:disabled) { background: var(--paper-sage-soft); }
+html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-ctas { align-items: flex-start; }
 html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp .stx-lp-detail {
     border-color: #3A3A37;
     color: #ABAAA6;
@@ -21869,7 +21935,7 @@ html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-
     html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-truth.is-mine { grid-area: mine; }
     html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-truth.is-measured { grid-area: measured; padding-bottom: 24px; padding-right: 0; }
     html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-truth.is-move { grid-area: move; padding-right: 0; }
-    html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-cta { grid-area: cta; justify-self: start; align-self: start; margin-top: 24px; }
+    html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-ctas { grid-area: cta; justify-self: start; align-self: start; margin-top: 24px; padding-right: 32px; }
     html[data-theme="dark"]:not([data-skin]):has(.stx-page) .stx-page--lattice .stx-lp.is-brief .stx-lp-body > .stx-lp-detail {
         grid-area: more;
         justify-self: start;

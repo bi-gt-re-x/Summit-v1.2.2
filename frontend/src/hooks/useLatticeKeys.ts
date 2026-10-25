@@ -52,7 +52,7 @@ export interface LatticeKeys {
   onHere: () => void;
   /** R: fit the whole tree. */
   onFit: () => void;
-  /** P: practice the selected skill. Absent while nothing is selected. */
+  /** P: take the selected skill's check. Absent while there is none to take. */
   onPractice?: () => void;
   /** `/`: open the drawer and put the caret in the search field. */
   onSearch?: () => void;

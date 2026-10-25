@@ -13,8 +13,10 @@
  */
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { LatticePanel } from './LatticePanel';
 import type { GraphNode, NodeStatus, SkillGraph } from '@/utils/skillGraph';
+import type { NodeWork } from '@/services/skillProgress';
 
 function node(id: string, status: NodeStatus, over: Partial<GraphNode> = {}): GraphNode {
   return {
@@ -56,7 +58,7 @@ function draw(id: string, over: Record<string, Partial<GraphNode>> = {}) {
   const built = graph(over);
   const picked = built.nodes.find((one) => one.id === id)!;
   const onSelect = vi.fn();
-  render(<LatticePanel graph={built} node={picked} onSelect={onSelect} gain={250} />);
+  render(<LatticePanel graph={built} node={picked} onSelect={onSelect} />);
   return { onSelect };
 }
 
@@ -130,5 +132,138 @@ describe('the short panel', () => {
     expect(screen.getAllByText(/Problems for/).length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole('button', { name: 'Show less' }));
     expect(screen.queryByRole('heading', { name: 'What to learn' })).not.toBeInTheDocument();
+  });
+});
+
+describe('work, not clicks', () => {
+  // The panel's buttons used to add XP for a click. They make work now: a
+  // session on the calendar, or the skill check. And the bar says which
+  // tasks filled it.
+  function work(over: Partial<NodeWork> = {}): NodeWork {
+    return {
+      sessions: 2,
+      target: 4,
+      percent: 50,
+      ready: false,
+      on: '',
+      last: '2026-10-21',
+      planned: 0,
+      goal_ids: [],
+      check: null,
+      work: [
+        { kind: 'task', id: 't1', title: 'Algebra drills', day: '2026-10-21', sessions: 1, count: 1, done: true, how: 'named' },
+        { kind: 'task', id: 't2', title: 'Algebra review', day: '2026-10-19', sessions: 1, count: 1, done: true, how: 'named' },
+      ],
+      tasks: 2,
+      ...over,
+    };
+  }
+
+  function drawWork(
+    id: string,
+    props: Partial<React.ComponentProps<typeof LatticePanel>> = {},
+    over: Record<string, Partial<GraphNode>> = {},
+  ) {
+    const built = graph(over);
+    const picked = built.nodes.find((one) => one.id === id)!;
+    const handlers = { onBook: vi.fn(), onCheck: vi.fn(), onMoveOff: vi.fn() };
+    render(
+      <MemoryRouter>
+        <LatticePanel graph={built} node={picked} onSelect={vi.fn()} {...handlers} {...props} />
+      </MemoryRouter>,
+    );
+    return handlers;
+  }
+
+  it('says how many sessions are done and lists the work that counted', () => {
+    drawWork('algebra', { work: work() }, { algebra: { status: 'progress', percent: 50 } });
+    expect(screen.getByText(/2 of 4 sessions done. 2 more and it's mastered./)).toBeInTheDocument();
+    const list = screen.getByLabelText('Work that counted');
+    expect(within(list).getByText('Algebra drills')).toBeInTheDocument();
+    expect(within(list).getByText('Algebra review')).toBeInTheDocument();
+  });
+
+  it('shows a repeated name once, with how many', () => {
+    drawWork(
+      'algebra',
+      {
+        work: work({
+          work: [{ kind: 'task', id: 't9', title: 'Orchestra rehearsal', day: '2026-10-21', sessions: 40, count: 40, done: true, how: 'named' }],
+          tasks: 43,
+        }),
+      },
+      { algebra: { status: 'progress' } },
+    );
+    expect(screen.getByText('Orchestra rehearsal')).toBeInTheDocument();
+    expect(screen.getByText(/40 tasks/)).toBeInTheDocument();
+    expect(screen.getByText('Plus 3 earlier tasks.')).toBeInTheDocument();
+  });
+
+  it('takes a task off the skill', () => {
+    const { onMoveOff } = drawWork('algebra', { work: work() }, { algebra: { status: 'progress' } });
+    fireEvent.click(screen.getAllByRole('button', { name: 'Not this skill' })[0]!);
+    expect(onMoveOff).toHaveBeenCalledWith('t1');
+  });
+
+  it('leads with planning a session on an open node with no check', () => {
+    const { onBook } = drawWork('algebra');
+    expect(screen.queryByRole('button', { name: /skill check/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Plan a session' }));
+    expect(onBook).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('button', { name: /Practice/ })).toBeNull();
+  });
+
+  it('offers the check beside the session as the way to test out', () => {
+    drawWork('algebra', { checkable: true });
+    const buttons = screen.getAllByRole('button', { name: /Plan a session|Take the skill check/ });
+    expect(buttons.map((button) => button.textContent)).toEqual(['Plan a session', 'Take the skill check']);
+    expect(buttons[1]).toHaveClass('is-second');
+  });
+
+  it('leads with the check once the sessions are in', () => {
+    const { onCheck } = drawWork(
+      'algebra',
+      { checkable: true, work: work({ sessions: 4, percent: 100, ready: true }) },
+      { algebra: { status: 'progress', percent: 100 } },
+    );
+    expect(screen.getByText(/Pass the skill check to master it/)).toBeInTheDocument();
+    const buttons = screen.getAllByRole('button', { name: /Plan a session|Take the skill check/ });
+    expect(buttons.map((button) => button.textContent)).toEqual(['Take the skill check', 'Plan a session']);
+    fireEvent.click(buttons[0]!);
+    expect(onCheck).toHaveBeenCalledTimes(1);
+  });
+
+  it('sends a locked node to what is in the way rather than to a check', () => {
+    drawWork('linear', { checkable: true });
+    expect(screen.getByRole('button', { name: 'Start with algebra' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /skill check|Plan a session/ })).toBeNull();
+  });
+
+  it('says what was booked and links to the timer', () => {
+    drawWork('algebra', {
+      booking: { busy: false, task: { id: 'b1', title: 'algebra: Step 1', start: '2026-10-25T16:30', end: '2026-10-25T17:00', xp: 15 } },
+    });
+    expect(screen.getByText('algebra: Step 1')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Start it on the timer' })).toHaveAttribute('href', '/timer?task=b1');
+  });
+
+  it('names the goals the skill feeds', () => {
+    drawWork('algebra', { work: work({ goal_ids: ['g1'] }), goals: { g1: 'Pass the AMC 10' } });
+    expect(screen.getByRole('link', { name: 'For your goal: Pass the AMC 10' })).toHaveAttribute('href', '/goals?goal=g1');
+  });
+
+  it('says how to get started when nothing has counted yet', () => {
+    drawWork('algebra');
+    expect(screen.getByText(/Nothing counted yet. Finish a task with algebra in its name/)).toBeInTheDocument();
+  });
+
+  it('says when it was mastered and that the check was passed', () => {
+    drawWork(
+      'fractions',
+      { work: work({ on: '2026-10-20', check: { tries: 1, best: 5, asked: 5, passed_on: '2026-10-20', last_on: '2026-10-20' } }) },
+      { fractions: { on: '2026-10-20' } },
+    );
+    expect(screen.getByText(/Mastered on .*20.*You passed the skill check./)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Mastered/ })).toBeDisabled();
   });
 });

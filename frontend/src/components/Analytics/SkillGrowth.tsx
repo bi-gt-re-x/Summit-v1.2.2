@@ -40,8 +40,8 @@ import { SKILL_BANDS } from '@/utils/skillScore';
 import { Link } from 'react-router-dom';
 import { SUBJECT_TARGETS } from '@/skills/subjectMap';
 import { graphFromSubjectTree, subjectTreeById } from '@/skills/subjectTrees';
-import { applyProgress, loadProgress } from '@/utils/skillProgress';
-import { loadSteps as loadPlans } from '@/utils/skillSteps';
+import { applyReading } from '@/utils/skillProgress';
+import type { SkillReading } from '@/services/skillProgress';
 import { tallyGraph, type GraphNode } from '@/utils/skillGraph';
 import type { Levels } from '@/utils/skillLevel';
 import {
@@ -85,6 +85,9 @@ export interface SubjectContext {
       tree tile's measured half. */
   levels: Levels;
   username: string | null;
+  /** Where the account stands on every node, from its own work
+      (hooks/useSkillReading). Absent reads as no work yet. */
+  reading?: SkillReading | null;
 }
 
 /** Where the reader is on a subject's skill tree, and what they measured on it. */
@@ -116,11 +119,7 @@ function treeReading(subject: string, context: SubjectContext): TreeReading | nu
   const tree = subjectTreeById(target.tree);
   if (!tree) return null;
 
-  const graph = applyProgress(
-    graphFromSubjectTree(tree),
-    loadProgress(context.username),
-    loadPlans(context.username),
-  );
+  const graph = applyReading(graphFromSubjectTree(tree), context.reading ?? null);
   const tally = tallyGraph(graph);
   const ids = new Set(graph.nodes.map((node) => node.id));
   /* Steps of this tree with anything answered on them, and the best level

@@ -41,6 +41,8 @@ API_MODULES = (
     'notifications',
     'skillsteps',
     'skillattempts',
+    'skillprogress',
+    'skillchecks',
     'next',
     'background',
     'quests',

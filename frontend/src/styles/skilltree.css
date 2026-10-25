@@ -1485,6 +1485,95 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
 .stx-lp-cta:hover:not(:disabled) { filter: brightness(1.08); }
 .stx-lp-cta:disabled { background: var(--lat-grey-soft); color: var(--lat-faint); cursor: not-allowed; }
 .stx-lp-cta-ico { width: 16px; height: 16px; }
+/* Plan a session and Take the skill check, one leading and one beside it. */
+.stx-lp-ctas { display: flex; flex-direction: column; gap: var(--space-2); }
+.stx-lp-cta.is-second {
+    background: transparent;
+    color: var(--lat-violet);
+    box-shadow: inset 0 0 0 1.5px var(--lat-violet);
+}
+.stx-lp-cta.is-second:hover:not(:disabled) { background: var(--lat-violet-soft); filter: none; }
+.stx-lp-booked {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-muted);
+}
+.stx-lp-booked a { color: var(--lat-violet); font-weight: 600; }
+.stx-lp-booked.is-error { color: var(--lat-amber); }
+
+/* ---- the work that counted, under the bar ---- */
+.stx-lp-work {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--lat-line-soft);
+}
+.stx-lp-work-name {
+    margin: 0;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--lat-faint);
+}
+.stx-lp-goals { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: 0; }
+.stx-lp-goal {
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    background: var(--lat-green-soft);
+    color: var(--lat-green);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    text-decoration: none;
+}
+.stx-lp-goal:hover { text-decoration: underline; }
+.stx-lp-worklist { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.stx-lp-worklist li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-2);
+    font-size: var(--text-xs);
+}
+.stx-lp-work-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--lat-text); }
+.stx-lp-work-meta { grid-column: 1; color: var(--lat-faint); font-size: var(--text-2xs); }
+.stx-lp-work-off {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    padding: 2px 8px;
+    border: 1px solid var(--lat-line);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--lat-muted);
+    font: inherit;
+    font-size: var(--text-2xs);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .12s ease;
+}
+.stx-lp-worklist li:hover .stx-lp-work-off,
+.stx-lp-work-off:focus-visible { opacity: 1; }
+@media (hover: none) { .stx-lp-work-off { opacity: 1; } }
+.stx-lp-work-off:hover { color: var(--lat-amber); border-color: var(--lat-amber); }
+.stx-lp-work-none, .stx-lp-work-more, .stx-lp-work-planned, .stx-lp-work-check {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-muted);
+}
+.stx-lp-work-planned a { color: var(--lat-violet); font-weight: 600; }
+
+/* The reading under "Pick a skill": tasks that named this tree but no skill. */
+.stx-lp-unfiled {
+    margin-top: var(--space-3);
+    max-width: 36ch;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--lat-muted);
+}
 
 /* ---- legend ---- */
 .stx-legend {

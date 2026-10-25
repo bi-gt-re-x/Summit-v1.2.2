@@ -121,8 +121,41 @@ import { ProgressIndicator } from './ProgressIndicator';
 import { LevelCard, LevelChain, LevelChip, LogPractice, ProblemMark } from './SkillLevel';
 import { lastAt, stepLevels as levelsOf, type Attempt, type Levels, type SkillLevel, type Tier } from '@/utils/skillLevel';
 import type { NewAttempt } from '@/services/skillAttempts';
+import type { Booked, NodeWork } from '@/services/skillProgress';
+import { Link } from 'react-router-dom';
 
 const number = (value: number) => Math.round(value).toLocaleString();
+
+/** "Oct 20" from an ISO day. Built from parts: a bare YYYY-MM-DD parses as UTC. */
+function shortDay(iso: string): string {
+  const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+  if (!y || !m || !d) return '';
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+/** "Today 4:30 PM", "Tomorrow 9:00 AM", "Oct 22, 9:00 AM": when a booked
+ *  session starts. */
+function whenOf(iso: string): string {
+  const at = new Date(iso);
+  if (Number.isNaN(at.getTime())) return '';
+  const time = at.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  const today = new Date();
+  const days = Math.round(
+    (new Date(at.getFullYear(), at.getMonth(), at.getDate()).getTime() -
+      new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime()) /
+      86400000,
+  );
+  if (days === 0) return `today at ${time}`;
+  if (days === 1) return `tomorrow at ${time}`;
+  return `${at.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} at ${time}`;
+}
+
+/** What booking a session is doing, for the line under the buttons. */
+export interface BookingState {
+  busy: boolean;
+  task?: Booked | null;
+  error?: string | null;
+}
 
 /**
  * What the panel needs to measure a skill rather than describe it: the
@@ -923,12 +956,25 @@ export interface LatticePanelProps {
   onSelect: (node: GraphNode | null) => void;
   /** Shown when nothing is picked yet. */
   placeholder?: React.ReactNode;
-  /** Put a session's work into this node. Absent makes the button inert. */
-  onPractice?: (node: GraphNode) => void;
-  /** What one session on the selected node is worth, for the button's label. */
-  gain?: number;
-  /** Just-added XP, shown for a moment so a click is visibly a change. */
-  flash?: number | null;
+  /**
+   * What the account's own work says about this node: sessions, the tasks
+   * that counted, the check. From the server (hooks/useSkillReading). Absent
+   * or null is a node with no work on it yet.
+   */
+  work?: NodeWork | null;
+  /** Whether this node has a skill check (enough written problems). */
+  checkable?: boolean;
+  /** Goal id → title, for the goals this node feeds. */
+  goals?: Record<string, string>;
+  /** Put a session for this node on the calendar. Absent hides the button. */
+  onBook?: (node: GraphNode) => void;
+  /** What the last booking did, for the line under the buttons. */
+  booking?: BookingState | null;
+  /** Open the skill check. Absent hides it. */
+  onCheck?: (node: GraphNode) => void;
+  /** Take a task off this node ("Not this skill"), with every task that
+   *  shares its name. Absent hides it. */
+  onMoveOff?: (taskId: string) => void;
   /** The reader's own programme for this node, where they have written one. */
   steps?: StepPlan | null;
   /**
@@ -970,9 +1016,13 @@ export function LatticePanel({
   node,
   onSelect,
   placeholder,
-  onPractice,
-  gain = 0,
-  flash = null,
+  work = null,
+  checkable = false,
+  goals = {},
+  onBook,
+  booking = null,
+  onCheck,
+  onMoveOff,
   steps = null,
   written = null,
   onSteps,
@@ -1079,11 +1129,15 @@ export function LatticePanel({
    * The ladder is the floor: a node nobody has generated for still answers.
    */
   const useWritten = !steps && written !== null && written.length > 0;
+  /* Where the reader is in it: one step per session of real work, the same
+     rule the server books the next session by (`step_for` in
+     backend/tracking/skill_progress.py). Before any work, the derived plan's
+     own starting point. */
   const programme: StepPlan = steps ?? {
     steps: useWritten ? written!.map((step) => step.title) : plan.steps,
     at: plan.at,
   };
-  const at = Math.min(programme.at, Math.max(0, programme.steps.length - 1));
+  const at = Math.min(work ? work.sessions : programme.at, Math.max(0, programme.steps.length - 1));
 
   // Three at a time: the one the reader is on and the two after it. A panel
   // that prints all twenty is a wall nobody reads, and one that prints the
@@ -1100,32 +1154,40 @@ export function LatticePanel({
    * a practice session are different verbs and should not share a handler.
    */
   const blocker = node.status === 'locked' ? nearestBlocker(graph, node) : null;
-  /* Sessions left on a node counted in XP: how many more times this button has
-     to be pressed, which is the question "Practice" never answered. Zero XP to
-     go is a node that is already complete, so the floor is one. */
-  const sessions = gain > 0 ? Math.max(1, Math.ceil((node.need - node.have) / gain)) : 0;
-  const stepsLeft = programme.steps.length - at;
-
-  const cta: { word: string; go?: () => void } =
-    node.status === 'complete'
-      ? { word: 'Mastered' }
-      : blocker
-        ? { word: `Start with ${blocker.name}`, go: () => onSelect(blocker) }
-        : node.status === 'locked'
-          ? { word: 'Locked' }
-          : steps
-            ? {
-                word:
-                  stepsLeft === 1
-                    ? 'Finish this skill · last step'
-                    : `Continue · step ${at + 1} of ${programme.steps.length}`,
-              }
-            : {
-                word:
-                  sessions === 1
-                    ? `Finish this skill · +${number(gain)} XP`
-                    : `Practice · +${number(gain)} XP`,
-              };
+  const sessions = work?.sessions ?? 0;
+  const target = work?.target ?? node.need;
+  const left = Math.max(0, target - sessions);
+  const ready = Boolean(work?.ready);
+  /* Whether the check can be taken now: the node has one, it is not done, and
+     it is open. Taking it before the sessions are in is how somebody tests out
+     of a skill they already have. */
+  const canCheck = checkable && Boolean(onCheck) && node.status !== 'complete' && node.status !== 'locked';
+  const canBook = Boolean(onBook) && node.status !== 'complete' && node.status !== 'locked';
+  const goalIds = (work?.goal_ids ?? []).filter((id) => goals[id]);
+  const earlier = work ? work.tasks - work.work.reduce((sum, item) => sum + (item.count ?? 1), 0) : 0;
+  const checkLeads = ready && canCheck;
+  const bookButton = canBook && (
+    <button
+      type="button"
+      className={`stx-lp-cta${checkLeads ? ' is-second' : ''}`}
+      disabled={Boolean(booking?.busy)}
+      title="Adds a 30 minute task for your next step to your calendar"
+      onClick={() => onBook?.(node)}
+    >
+      <Ico icon="practice" className="stx-ico stx-lp-cta-ico" />
+      {booking?.busy ? 'Adding it to your tasks' : 'Plan a session'}
+    </button>
+  );
+  const checkButton = canCheck && (
+    <button
+      type="button"
+      className={`stx-lp-cta${checkLeads ? '' : ' is-second'}`}
+      onClick={() => onCheck?.(node)}
+    >
+      <Ico icon="target" className="stx-ico stx-lp-cta-ico" />
+      Take the skill check
+    </button>
+  );
   /*
    * Where the reader stands, in a sentence.
    *
@@ -1142,16 +1204,20 @@ export function LatticePanel({
    */
   const position =
     node.status === 'complete'
-      ? node.on
-        ? `Mastered on ${node.on}.`
-        : 'Mastered.'
-      : blockers.length > 0
+      ? `Mastered${node.on ? ` on ${shortDay(node.on)}` : ''}.${work?.check?.passed_on ? ' You passed the skill check.' : ''}`
+      : node.status === 'locked' && blockers.length > 0
         ? `${blockers.length} ${blockers.length === 1 ? 'prerequisite' : 'prerequisites'} away. Finish ${blockers.length === 1 ? 'it' : 'them'} to open this.`
-        : steps
-          ? `Step ${at + 1} of ${programme.steps.length} of your plan.`
+        : ready
+          ? "You've put in the sessions. Pass the skill check to master it."
           : node.status === 'progress'
-            ? `${Math.round(node.percent)}% of the way through.`
-            : 'Open now. Nothing in the way.';
+            ? `${sessions} of ${target} sessions done.${
+                checkable
+                  ? ' Keep going, or take the skill check when it feels easy.'
+                  : ` ${left} more and it's mastered.`
+              }`
+            : checkable
+              ? 'Open now. Nothing in the way. Plan a session, or take the skill check if you already know it.'
+              : 'Open now. Nothing in the way. Finish a task on it to get started.';
 
   /*
    * Why the reader is being shown this, in the panel's own words.
@@ -1350,21 +1416,14 @@ export function LatticePanel({
           <div className={`stx-lp-progress is-${node.status}`}>
             <p className="stx-lp-line">
               <span>Progress</span>
-              <b>
-                {Math.round(node.percent)}%
-                {flash != null && (
-                  <span className="stx-lp-flash" role="status">
-                    +{number(flash)} XP
-                  </span>
-                )}
-              </b>
+              <b>{Math.round(node.percent)}%</b>
             </p>
             <ProgressIndicator percent={node.percent} shape="bar" />
-            {detailed && node.need > 0 && (
+            {node.status !== 'complete' && node.status !== 'locked' && (
               <p className="stx-lp-line stx-lp-xp">
-                <span>XP earned</span>
+                <span>Sessions</span>
                 <b>
-                  {number(node.have)} / {number(node.need)} XP
+                  {number(Math.min(sessions, target))} / {number(target)}
                 </b>
               </p>
             )}
@@ -1390,6 +1449,79 @@ export function LatticePanel({
               </ul>
             </div>
           )}
+
+          {/* The work that moved the bar, by name. The number is never a
+              mystery this way, and a task filed under the wrong skill can be
+              taken off it. Inside Progress rather than a section of its own:
+              it is the reason for the figure above it. */}
+          <div className="stx-lp-work">
+            <h4 className="stx-lp-work-name">Your work</h4>
+            {goalIds.length > 0 && (
+              <p className="stx-lp-goals">
+                {goalIds.slice(0, 2).map((id) => (
+                  <Link key={id} className="stx-lp-goal" to={`/goals?goal=${encodeURIComponent(id)}`}>
+                    For your goal: {goals[id]}
+                  </Link>
+                ))}
+              </p>
+            )}
+            {work && work.work.length > 0 ? (
+              <ul className="stx-lp-worklist" aria-label="Work that counted">
+                {work.work.map((item) => (
+                  <li key={`${item.kind}-${item.id}`}>
+                    <span className="stx-lp-work-title">{item.title}</span>
+                    <span className="stx-lp-work-meta">
+                      {[
+                        item.day ? shortDay(item.day) : '',
+                        item.count > 1 ? `${number(item.count)} tasks` : '',
+                        item.count === 1 && item.sessions > 1 ? `${item.sessions} sessions` : '',
+                        item.done ? '' : 'in progress',
+                      ]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </span>
+                    {onMoveOff && item.kind === 'task' && (
+                      <button
+                        type="button"
+                        className="stx-lp-work-off"
+                        title={
+                          item.count > 1
+                            ? `These ${item.count} tasks aren't about this skill. Take them off.`
+                            : "This task isn't about this skill. Take it off."
+                        }
+                        onClick={() => onMoveOff(item.id)}
+                      >
+                        Not this skill
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="stx-lp-work-none">
+                Nothing counted yet. Finish a task with {node.name} in its name, or plan a session, and it
+                shows up here.
+              </p>
+            )}
+            {earlier > 0 && (
+              <p className="stx-lp-work-more">
+                Plus {number(earlier)} earlier {earlier === 1 ? 'task' : 'tasks'}.
+              </p>
+            )}
+            {work && work.planned > 0 && (
+              <p className="stx-lp-work-planned">
+                <Link to="/tasks">
+                  {work.planned === 1 ? '1 session planned' : `${work.planned} sessions planned`}
+                </Link>
+              </p>
+            )}
+            {work?.check && !work.check.passed_on && (
+              <p className="stx-lp-work-check">
+                Best skill check: {work.check.best} of {work.check.asked}, {work.check.tries}{' '}
+                {work.check.tries === 1 ? 'try' : 'tries'}.
+              </p>
+            )}
+          </div>
         </section>
 
         {/* ---- 2b. Your level, measured ----
@@ -1592,25 +1724,47 @@ export function LatticePanel({
           `left` is sessions rather than steps on a node counted in XP: both
           are "how many more times do I press this", which is the question the
           word "Practice" was leaving unanswered. */}
-      {cta.go ? (
-        <button type="button" className="stx-lp-cta is-go" onClick={cta.go}>
-          <Ico icon="branch" className="stx-ico stx-lp-cta-ico" />
-          {cta.word}
-        </button>
-      ) : (
-        <button
-          type="button"
-          className="stx-lp-cta"
-          disabled={!onPractice || node.status === 'complete'}
-          onClick={() => onPractice?.(node)}
-        >
-          <Ico
-            icon={node.status === 'complete' ? 'mastered' : 'practice'}
-            className="stx-ico stx-lp-cta-ico"
-          />
-          {cta.word}
-        </button>
-      )}
+      <div className="stx-lp-ctas">
+        {node.status === 'complete' ? (
+          <button type="button" className="stx-lp-cta" disabled>
+            <Ico icon="mastered" className="stx-ico stx-lp-cta-ico" />
+            Mastered
+          </button>
+        ) : blocker ? (
+          <button type="button" className="stx-lp-cta is-go" onClick={() => onSelect(blocker)}>
+            <Ico icon="branch" className="stx-ico stx-lp-cta-ico" />
+            Start with {blocker.name}
+          </button>
+        ) : node.status === 'locked' ? (
+          <button type="button" className="stx-lp-cta" disabled>
+            Locked
+          </button>
+        ) : (
+          /* Work first. The check leads only once the sessions are in, and
+             otherwise sits beside the booking as the way to test out. */
+          checkLeads ? (
+            <>
+              {checkButton}
+              {bookButton}
+            </>
+          ) : (
+            <>
+              {bookButton}
+              {checkButton}
+            </>
+          )
+        )}
+        {booking && (booking.task || booking.error) && node.status !== 'complete' && (
+          <p className={`stx-lp-booked${booking.error ? ' is-error' : ''}`} role="status">
+            {booking.error ?? (
+              <>
+                Added <b>{booking.task!.title}</b> for {whenOf(booking.task!.start)}.{' '}
+                <Link to={`/timer?task=${encodeURIComponent(booking.task!.id)}`}>Start it on the timer</Link>
+              </>
+            )}
+          </p>
+        )}
+      </div>
     </aside>
   );
 }

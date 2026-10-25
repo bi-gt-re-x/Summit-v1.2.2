@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "about": "What backend/tracking/topics.py reads a task's name against. Every skill-tree node (data/skill_nodes.json) is already a topic under its tree; this file adds what a node name alone can't catch: finer topics under a node (recursive counting under Counting), more ways people write a topic (dp, bfs, u-sub), the extra subsubjects a tree doesn't cover (real analysis), which trees count as part of each subject, and the contests, exams, courses and sites a task or goal can name, each with the topics it tests in the order it tests them most.",
+  "about": "What backend/tracking/topics.py reads a task's name against. Every skill-tree node (data/skill_nodes.json) is already a topic under its tree; this file adds what a node name alone can't catch: finer topics under a node (recursive counting under Counting), more ways people write a topic (dp, bfs, u-sub), the extra subsubjects a tree doesn't cover (real analysis), which trees count as part of each subject, and the contests, exams, courses and sites a task or goal can name, each with the topics it tests in the order it tests them most. A topic that is not a node of its own can name the node its tasks count toward with `node` (an id, or tree to id), which is how finished tasks move a tile on the skill tree (backend/tracking/skill_progress.py).",
   "families": {
     "mathematics": [
       "mathematics",
@@ -495,6 +495,7 @@
     {
       "tree": "competition-math",
       "label": "Number theory",
+      "node": "cm.numtheory",
       "aliases": [
         "number theory",
         "nt",
@@ -694,6 +695,7 @@
     {
       "tree": "competition-math",
       "label": "Geometry",
+      "node": "cm.geo",
       "aliases": [
         "geometry",
         "geo",
@@ -829,6 +831,9 @@
         "competitive-programming"
       ],
       "label": "Graphs",
+      "node": {
+        "competitive-programming": "cp.dfs"
+      },
       "aliases": [
         "graph",
         "graphs",

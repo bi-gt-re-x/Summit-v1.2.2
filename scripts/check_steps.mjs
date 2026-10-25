@@ -11,8 +11,9 @@
  *                         list and to where the reader stands in it.
  *   utils/milestoneSteps  the same job for a goal checkpoint's checklist, whose
  *                         extra rule is a floor: three rows, always.
- *   utils/skillProgress   how that becomes a percentage, an XP figure and a
- *                         status on the graph the whole page reads.
+ *   utils/skillProgress   how the server's reading of real work becomes a
+ *                         percentage, a session count and a status on the
+ *                         graph the whole page reads.
  *   skills/iconMatch      which drawing a renamed node gets, and — the half
  *                         that matters — when it gets none and keeps its own.
  *   utils/skillNames      applying a reader's names over the graph.
@@ -78,22 +79,22 @@ is('all done → 100%', S.planPercent({ steps: ['a', 'b'], at: 2 }), 100);
 is('empty list → 0%, not NaN', S.planPercent({ steps: [], at: 3 }), 0);
 is('cap on adding', S.addStep({ steps: Array(S.STEPS_MAX).fill('x'), at: 0 }, 'y').steps.length, S.STEPS_MAX);
 
-// the graph agrees with the panel
+// the graph shows the server's reading, and only that
 const g = st.graphFromSubjectTree(st.subjectTreeById('coding'));
-const node = g.nodes.find((n) => n.id === 'c.loops');
-const withPlan = P.applyProgress(g, {}, { 'c.loops': { steps: ['a','b','c','d'], at: 1 } }).nodes.find((n) => n.id === 'c.loops');
-is('graph percent follows the plan', withPlan.percent, 25);
-is('graph XP back-filled from it', withPlan.have, Math.round(node.need * 0.25));
-is('graph status follows too', withPlan.status, 'progress');
-const done = P.applyProgress(g, {}, { 'c.loops': { steps: ['a','b'], at: 2 } }).nodes.find((n) => n.id === 'c.loops');
-is('all steps done completes the node', done.status, 'complete');
-const untouched = P.applyProgress(g, {}, {}).nodes.find((n) => n.id === 'c.loops');
-is('a node with no plan is unaffected', untouched.percent, P.applyProgress(g, {}).nodes.find((n) => n.id === 'c.loops').percent);
-
-// a seeded-complete node that the reader has given unfinished steps to
+const reading = {
+  status: { 'c.loops': 'progress' },
+  nodes: { 'c.loops': { sessions: 1, target: 4, percent: 25, ready: false, on: '', last: '', planned: 0,
+    goal_ids: [], check: null, work: [], tasks: 1 } },
+  unfiled: {}, goals: {}, checkable: [], targets: {},
+};
+const read = P.applyReading(g, reading).nodes.find((n) => n.id === 'c.loops');
+is('graph percent follows the reading', read.percent, 25);
+is('graph counts sessions, not XP', [read.have, read.need, read.unit], [1, 4, 'sessions']);
+is('graph status follows too', read.status, 'progress');
 const seeded = g.nodes.find((n) => n.status === 'complete');
-const reopened = P.applyProgress(g, {}, { [seeded.id]: { steps: ['a','b','c'], at: 1 } }).nodes.find((n) => n.id === seeded.id);
-is(`a written programme can reopen ${seeded.id}`, reopened.status, 'progress');
+is(`an illustrated finish (${seeded.id}) is not a finish`, P.applyReading(g, reading).nodes.find((n) => n.id === seeded.id).status, 'locked');
+is('before the reading, nothing is finished',
+  P.applyReading(g, null).nodes.some((n) => n.status === 'complete'), false);
 
 // ---- naming, and the drawing that follows from it ----
 is('an exact title matches', M.iconForName('Binary Search'), 'binary-search');

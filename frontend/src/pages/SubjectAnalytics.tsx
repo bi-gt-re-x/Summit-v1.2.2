@@ -115,7 +115,8 @@ import { bottleneckFrom, objectiveFrom } from '@/components/Subject/objective';
 import { Reading } from '@/components/Subject/Reading';
 import { performance } from '@/components/Subject/performance';
 import { latticeFor, treeReading } from '@/components/Subject/lattice';
-import { loadProgress } from '@/utils/skillProgress';
+import { practicedFrom } from '@/utils/skillProgress';
+import { useSkillReading } from '@/hooks/useSkillReading';
 import { useApi, useAuth, useDocumentTitle, useSettings, useSubjectIndex } from '@/hooks';
 import { taskHistory } from '@/services/taskHistory';
 import { UserDataContext } from '@/context/contexts';
@@ -486,11 +487,11 @@ export default function SubjectAnalytics() {
   /**
    * The lattice this subject opens on, and what the reader has practiced of it.
    *
-   * Read from the practice store rather than fetched — it is local to the
-   * browser (utils/skillProgress), so this costs no request. Recomputed when
-   * the subject or the chosen branch changes and not otherwise: the store only
-   * moves on the skill tree page, which is a navigation away from here.
+   * "Practiced" is read from the account's own work: the skill tree's
+   * reading (hooks/useSkillReading), shared with the tree page so the two
+   * count the same nodes.
    */
+  const { reading: skillReading } = useSkillReading(username);
   const lattice = useMemo(
     () =>
       subject
@@ -498,10 +499,10 @@ export default function SubjectAnalytics() {
             subjectId,
             subject.group,
             prefs.analytics_subject_depth[subjectId],
-            loadProgress(username),
+            practicedFrom(skillReading),
           )
         : null,
-    [prefs.analytics_subject_depth, subject, subjectId, username],
+    [prefs.analytics_subject_depth, subject, subjectId, skillReading],
   );
 
   /**
