@@ -1,7 +1,7 @@
 /**
  * Writes the paper look's colour layer.
  *
- *     node scripts/paper_theme.mjs           # rewrite frontend/src/styles/paper-remap.css
+ *     node scripts/paper_theme.mjs           # rewrite paper-remap.css and paper-dark.css
  *     node scripts/paper_theme.mjs --check   # fail if it's out of date
  *
  * The paper look (warm off-white ground, sage accent, charcoal ink) covers the
@@ -23,9 +23,12 @@
  *
  * Every colour property of every rule is copied, literal or not, so states
  * keep their order: a hover written as var(--color-accent) still beats the
- * base rule it sat above. Dark mode and the skins never match the prefix and
- * keep their own colours. Shapes, fonts and the hand-tuned parts live in
+ * base rule it sat above. The skins never match the prefix and keep their own
+ * colours. Shapes, fonts and the hand-tuned parts live in
  * frontend/src/styles/paper.css.
+ *
+ * It also writes paper-dark.css, the same look for dark mode (see "The dark
+ * paper look" below).
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -267,14 +270,184 @@ const body = [
 
 const css = header + body + '\n';
 
+// --------------------------------------------------------------------------
+// The dark paper look
+// --------------------------------------------------------------------------
+// Dark mode gets the same look: every rule of paper-remap.css and paper.css
+// written again behind the dark prefix, shapes and fonts as they are, each
+// colour moved onto a warm charcoal palette. Ground #1B1B18, cards a shade
+// lighter, faint warm rules, off-white ink and the same sage a little lighter.
+// What a colour swap still gets wrong is fixed by hand in paper-dark-hand.css.
+const DARK = 'html[data-theme="dark"]:not([data-skin])';
+const DARK_OUT = join(STYLES, 'paper-dark.css');
+
+// Light grey level -> dark grey level. The light page's ground sits at 246;
+// anything paler (cards, white) comes up a little from the dark ground, and
+// anything darker (insets, rules, then text) comes up further, so ink ends
+// near white.
+const LEVELS = [
+  [0, 245], [43, 233], [85, 196], [122, 160], [158, 122], [200, 84],
+  [225, 60], [232, 50], [238, 41], [241, 36], [246, 27], [248, 31], [255, 36],
+];
+
+function level(y) {
+  for (let i = 1; i < LEVELS.length; i++) {
+    const [x0, v0] = LEVELS[i - 1];
+    const [x1, v1] = LEVELS[i];
+    if (y <= x1) return v0 + ((y - x0) / (x1 - x0)) * (v1 - v0);
+  }
+  return LEVELS[LEVELS.length - 1][1];
+}
+
+/** One light paper colour onto the dark one. */
+function night(c, prop) {
+  const [r, g, b] = c;
+  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+  const y = 0.299 * r + 0.587 * g + 0.114 * b;
+  const [h, s, l] = hsl(c);
+
+  // Sage is barely saturated, so only true greys count as grey here.
+  if (chroma < 12) {
+    // A shadow stays a shadow: dark, and a little stronger on a dark ground.
+    if (kind(prop) === 'shadow' && y < 128) return [[0, 0, 0], 2.2];
+    const v = level(y);
+    const tint = v < 128 ? [1, 1, -2] : [1, 0, -4];
+    return [tint.map((t) => clamp(Math.round(v + t), 0, 255)), 1];
+  }
+  // Pale washes become dark ones in the same hue.
+  if (l > 0.76) return [rgb([h, Math.min(s, 0.2), 0.15 + (1 - l) * 0.45]), 1];
+  // Deep coloured text comes up to a light one.
+  if (l < 0.45) return [rgb([h, s, clamp(1.02 - l, 0.6, 0.84)]), 1];
+  // Accents stay, a touch lighter so they hold on charcoal.
+  return [rgb([h, Math.min(s * 1.05, 0.4), clamp(l + 0.07, 0.5, 0.8)]), 1];
+}
+
+function nightValue(value, prop) {
+  return value.replace(COLOR, (token) => {
+    const parsed = parse(token);
+    if (!parsed) return token;
+    const [c, boost] = night(parsed[0], prop);
+    return format(c, Math.min(parsed[1] * boost, boost > 1 ? 0.6 : 1));
+  });
+}
+
+// The sheets' own dark rules set things the light look never mentions (a
+// heatmap's empty cell, a muted text variable), so those would still show the
+// old navy and violet through the paper. They're copied too, first, recoloured
+// warm, so the paper rules after them win wherever both set the same thing.
+const DUSK = [[0, 22], [16, 27], [26, 32], [46, 50], [120, 122], [155, 160], [236, 233], [255, 245]];
+
+function dusk(c, prop) {
+  const [r, g, b] = c;
+  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+  const y = 0.299 * r + 0.587 * g + 0.114 * b;
+  const [h, s, l] = hsl(c);
+  if (kind(prop) === 'shadow' && y < 60) return [0, 0, 0];
+
+  const cool = h >= 190 && h <= 300;
+  if (chroma < 20 || (cool && (l < 0.3 || (l > 0.55 && s < 0.35)))) {
+    let v = DUSK[DUSK.length - 1][1];
+    for (let i = 1; i < DUSK.length; i++) {
+      const [x0, v0] = DUSK[i - 1];
+      const [x1, v1] = DUSK[i];
+      if (y <= x1) { v = v0 + ((y - x0) / (x1 - x0)) * (v1 - v0); break; }
+    }
+    const tint = v < 128 ? [1, 1, -2] : [1, 0, -4];
+    return tint.map((t) => clamp(Math.round(v + t), 0, 255));
+  }
+  // The old violet accent is the paper's sage.
+  if (h >= 232 && h <= 300) return rgb([112, 0.08, clamp(l, 0.45, 0.68)]);
+  if (l < 0.3) return rgb([h, Math.min(s * 0.4, 0.25), l]);
+  return rgb([h, Math.min(s * 0.42, 0.34), clamp(l, 0.45, 0.78)]);
+}
+
+function convertDark(file, prefix) {
+  const source = postcss.parse(readFileSync(join(STYLES, file), 'utf8'));
+  const out = postcss.root();
+  source.walkRules((rule) => {
+    if (inKeyframes(rule)) return;
+    const selector = postcss.list
+      .comma(rule.selector)
+      .map((one) => one.trim())
+      .filter((one) => /^html\[data-theme="dark"\]/.test(one) && !/data-skin|data-accent/.test(one))
+      .map((one) => one.replace(/^html\[data-theme="dark"\]/, ''))
+      .filter((one) => !/data-theme/.test(one))
+      .map((one) => (one.startsWith(' ') || !one ? prefix + one : `${prefix}${one}`))
+      .join(',\n');
+    if (!selector) return;
+    const decls = [];
+    rule.each((node) => {
+      if (node.type !== 'decl' || !COLOR_PROPS.test(node.prop) || KEEP.test(node.prop)) return;
+      if (node.prop.startsWith('--') && !COLOR.test(node.value) && !/var\(/.test(node.value)) return;
+      COLOR.lastIndex = 0;
+      const value = node.value.replace(COLOR, (token) => {
+        const parsed = parse(token);
+        return parsed ? format(dusk(parsed[0], node.prop), parsed[1]) : token;
+      });
+      decls.push(postcss.decl({ prop: node.prop, value, important: node.important }));
+    });
+    if (!decls.length) return;
+    const copy = postcss.rule({ selector });
+    decls.forEach((d) => copy.append(d));
+    let target = copy;
+    for (let p = rule.parent; p && p.type === 'atrule'; p = p.parent) {
+      const wrap = postcss.atRule({ name: p.name, params: p.params });
+      wrap.append(target);
+      target = wrap;
+    }
+    out.append(target);
+  });
+  return out.toString();
+}
+
+const DARK_ON_PAGE = DARK + ON_PAGE.slice(LIGHT.length);
+
+function darken(text) {
+  const source = postcss.parse(text);
+  source.walkAtRules(/keyframes|font-face/, (at) => at.remove());
+  source.walkComments((c) => c.remove());
+  source.walkRules((rule) => {
+    const kept = postcss.list
+      .comma(rule.selector)
+      .map((one) => one.trim())
+      .filter((one) => one.startsWith(LIGHT))
+      .map((one) => DARK + one.slice(LIGHT.length));
+    if (!kept.length) return rule.remove();
+    rule.selector = kept.join(',\n');
+    rule.walkDecls((d) => { d.value = nightValue(d.value, d.prop); });
+  });
+  source.walkAtRules((at) => { if (!at.nodes?.length) at.remove(); });
+  return source.toString().replace(/\n{3,}/g, '\n\n');
+}
+
+const darkHeader = `/* GENERATED by scripts/paper_theme.mjs. Don't edit by hand: change
+   paper.css, a source sheet or the script, then run \`node scripts/paper_theme.mjs\`.
+   The paper look for dark mode: paper-remap.css and paper.css again behind
+   \`${DARK}\`, every colour on the dark palette.
+   Hand fixes for dark mode go in paper-dark-hand.css. */
+`;
+
+const darkCss = (remap) => darkHeader
+  + SHELL.map((file) => `\n/* ---- ${file}'s own dark rules, recoloured ---- */\n${convertDark(file, DARK)}`).join('\n')
+  + PAGES.map((file) => `\n/* ---- ${file}'s own dark rules, recoloured ---- */\n${convertDark(file, DARK_ON_PAGE)}`).join('\n')
+  + `\n\n/* ---- paper-remap.css ---- */\n${darken(remap)}`
+  + `\n\n/* ---- paper.css ---- */\n${darken(readFileSync(join(STYLES, 'paper.css'), 'utf8'))}\n`;
+
 if (process.argv.includes('--check')) {
   const current = readFileSync(OUT, 'utf8');
   if (current !== css) {
     console.error('paper-remap.css is out of date. Run: node scripts/paper_theme.mjs');
     process.exit(1);
   }
-  console.log('paper-remap.css is up to date.');
+  if (readFileSync(DARK_OUT, 'utf8') !== darkCss(css)) {
+    console.error('paper-dark.css is out of date. Run: node scripts/paper_theme.mjs');
+    process.exit(1);
+  }
+  console.log('paper-remap.css and paper-dark.css are up to date.');
 } else {
   writeFileSync(OUT, css);
   console.log(`Wrote ${OUT.slice(root.length + 1)} (${css.split('\n').length} lines).`);
+  const dark = darkCss(css);
+  writeFileSync(DARK_OUT, dark);
+  console.log(`Wrote ${DARK_OUT.slice(root.length + 1)} (${dark.split('\n').length} lines).`);
 }

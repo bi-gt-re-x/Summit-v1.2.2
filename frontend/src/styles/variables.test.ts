@@ -40,8 +40,17 @@ const SIBLINGS: Record<string, string[]> = {
   // Only on the subject page, beside subject.css.
   'subject-objective.css': ['subject.css'],
   // Generated copies of these sheets' colour rules (scripts/paper_theme.mjs),
-  // which only match where the originals are loaded.
+  // which only match where the originals are loaded. paper-dark.css is the
+  // same rules again for dark mode.
   'paper-remap.css': ['goals.css', 'dashboard.css', 'dashboard-home.css', 'timer.css', 'focus-session.css',
+    'calendar/shell.css', 'calendar/palette.css', 'calendar/week.css', 'calendar/day.css', 'calendar/month.css',
+    'calendar/dialogs.css', 'calendar/overview.css', 'catch-up.css', 'day-complete.css', 'rate-prompt.css',
+    'subject-picker.css', 'subject-state.css', 'next-sessions.css', 'starter.css', 'tutorial.css', 'notifications.css',
+    'search.css', 'nametag.css', 'topbar.css', 'page-state.css', 'refresh-button.css', 'verify-banner.css',
+    'tasks.css', 'analytics.css', 'growth.css', 'subject.css', 'subject-objective.css', 'skilltree.css',
+    'notes.css', 'log.css', 'records.css', 'achievements.css', 'settings.css', 'themePicker.css',
+    'about-you.css', 'ambient.css'],
+  'paper-dark.css': ['goals.css', 'dashboard.css', 'dashboard-home.css', 'timer.css', 'focus-session.css',
     'calendar/shell.css', 'calendar/palette.css', 'calendar/week.css', 'calendar/day.css', 'calendar/month.css',
     'calendar/dialogs.css', 'calendar/overview.css', 'catch-up.css', 'day-complete.css', 'rate-prompt.css',
     'subject-picker.css', 'subject-state.css', 'next-sessions.css', 'starter.css', 'tutorial.css', 'notifications.css',

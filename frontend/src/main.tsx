@@ -43,6 +43,8 @@ import '@/styles/summit.css';
 import '@/styles/minimal.css';
 import '@/styles/paper-remap.css';
 import '@/styles/paper.css';
+import '@/styles/paper-dark.css';
+import '@/styles/paper-dark-hand.css';
 
 const container = document.getElementById('root');
 if (!container) {

@@ -1,0 +1,23 @@
+/* ==========================================================================
+   paper-dark-hand.css — the dark paper look, the hand-tuned half.
+
+   scripts/paper_theme.mjs writes paper-dark.css: the whole light paper look
+   (paper-remap.css and paper.css) again for dark mode, every colour moved onto
+   a warm charcoal palette. This file is what that swap can't do: values that
+   aren't colours (filters, rgb triples), and the places where the old dark
+   theme's own rules still show through because the light rule had nothing to
+   override them with.
+
+   Same prefix as paper-dark.css: `html[data-theme="dark"]:not([data-skin])`,
+   plus the pages' `:has()` list where a rule is only for the paper pages.
+   ========================================================================== */
+
+/* The mountain mark: light on the dark rail, like the name beside it. */
+html[data-theme="dark"]:not([data-skin]) .rail-brand-mark img { filter: grayscale(1) brightness(1.6) sepia(.12); }
+
+/* The graph paper's drifting dots: pale ink at rest and sage while they run.
+   utils/ambientField.ts reads these as rgb triples. */
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .hm-ambient {
+    --hm-dot: 234 233 229;
+    --hm-dot-hot: 157 167 156;
+}
