@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { goalRead } from './goalRead';
 import type { SubjectGoal, SubjectModel } from './model';
 import type { SubjectState } from './state';
+import type { GoalTopicPlan } from '@/services/topics';
 
 function goal(over: Partial<SubjectGoal> = {}): SubjectGoal {
   return {
@@ -68,5 +69,42 @@ describe('goalRead on easy work going worse than hard work', () => {
     const read = goalRead({ subject: 'Mathematics', model: model(), state: careless, total: { now: 1, before: 0 } });
     expect(read.insights.find((item) => item.id === 'threshold')!.title).toBe('Easy work goes worse than Hard work');
     expect(read.moves.find((move) => move.id === 'threshold')!.title).toBe('Slow down on Easy work');
+  });
+});
+
+describe('goalRead with the topic library', () => {
+  const topics: GoalTopicPlan = {
+    goal_id: 'g1', title: 'Qualify for AIME', contexts: ['AIME'], position: [], covered: 3, unnamed: 0,
+    moves: [
+      {
+        id: 'weak-competition-math:recursive-counting', weight: 'now',
+        title: 'Do 10 AMC 10 recursive counting problems, then 3 AIME ones',
+        why: 'Your recursive counting work rates 2.0 out of 5, against 3.5 across Mathematics.',
+        topic: 'competition-math:recursive-counting', context: 'amc10',
+        resource: { name: 'AoPS Wiki contest problems', url: 'https://artofproblemsolving.com/wiki/' },
+      },
+      {
+        id: 'start-competition-math:polynomials', weight: 'next', title: 'Try 5 AIME polynomials problems',
+        why: 'AIME tests polynomials, and none of your tasks name it yet.', topic: 'competition-math:polynomials',
+        context: 'aime', resource: null,
+      },
+    ],
+    insights: [{ id: 'topic-weak', tone: 'bad', title: 'Weakest topic: Recursive counting', figure: '2.0 out of 5.', means: 'Gains the most per hour.' }],
+  };
+
+  it('leads with the moves that name real work, and drops the general advice', () => {
+    const read = goalRead({ subject: 'Mathematics', model: model(), state, total: { now: 20, before: 0 }, topics });
+    expect(read.moves[0]!.title).toBe('Do 10 AMC 10 recursive counting problems, then 3 AIME ones');
+    expect(read.moves[0]!.resource?.name).toBe('AoPS Wiki contest problems');
+    // The goal's own blocking lever stays, right after.
+    expect(read.moves[1]!.title).toBe('Get back to this goal');
+    expect(read.moves.map((move) => move.id)).not.toContain('threshold');
+    expect(read.insights[0]!.title).toBe('Weakest topic: Recursive counting');
+  });
+
+  it('reads as before until the library has loaded', () => {
+    const read = goalRead({ subject: 'Mathematics', model: model(), state, total: { now: 20, before: 0 }, topics: null });
+    expect(read.moves.map((move) => move.id)).toContain('threshold');
+    expect(read.moves.some((move) => move.topical)).toBe(false);
   });
 });

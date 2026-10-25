@@ -733,6 +733,32 @@ ADDED_TABLES = ('''
         PRIMARY KEY (user_id, quest_id),
         CHECK (xp >= 0)
     )
+''', '''
+    -- Finished tasks filed by topic, and when each account's library was last
+    -- built. The DDL is data/sql/topics.sql's; see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS topic_library (
+        user_id     TEXT    NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        subject     TEXT    NOT NULL,
+        subsubject  TEXT    NOT NULL DEFAULT '',
+        topic       TEXT    NOT NULL DEFAULT '',
+        status      TEXT    NOT NULL DEFAULT 'unknown',
+        tasks       INTEGER NOT NULL DEFAULT 0,
+        rated       INTEGER NOT NULL DEFAULT 0,
+        execution   REAL,
+        gap         REAL,
+        goal_ids    TEXT    NOT NULL DEFAULT '[]',
+        data        TEXT    NOT NULL DEFAULT '{}',
+        built_at    TEXT    NOT NULL,
+        PRIMARY KEY (user_id, subject, subsubject, topic),
+        CHECK (status IN ('weak', 'steady', 'strong', 'untested', 'unknown')),
+        CHECK (tasks >= 0)
+    )
+''', '''
+    CREATE TABLE IF NOT EXISTS topic_builds (
+        user_id      TEXT NOT NULL PRIMARY KEY REFERENCES users (username) ON DELETE CASCADE,
+        fingerprint  TEXT NOT NULL,
+        built_at     TEXT NOT NULL
+    )
 ''')
 
 
@@ -3767,5 +3793,109 @@ def subject_work_by_tree(subject_tree):
             ((tree, entry['xp'], len(entry['accounts']), entry['tasks'])
              for tree, entry in totals.items()),
             key=lambda row: (-row[1], row[0]))
+    finally:
+        con.close()
+
+
+# --------------------------------------------------------------------------
+# Topics
+# --------------------------------------------------------------------------
+#: What backend/tracking/topics.py reads from a finished task.
+TOPIC_TASK_COLUMNS = ('id', 'title', 'description', 'subject', 'execution', 'difficulty',
+                      'score_got', 'score_of', 'met_deadline', 'reason', 'completed_at', 'goal_id')
+
+
+def topic_inputs(username, with_tasks=True):
+    """Everything a topic library is built from: the account's finished tasks
+    (none when `with_tasks` is False, for a read that only needs the goals),
+    its active goals, and the goal matcher's task ids per goal."""
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return [], [], {}
+        tasks = [dict(zip(TOPIC_TASK_COLUMNS, row)) for row in con.execute(
+            'SELECT {} FROM tasks WHERE user_id = ? AND status = ?'.format(
+                ', '.join('"{}"'.format(name) for name in TOPIC_TASK_COLUMNS)),
+            (username, 'done'))] if with_tasks else []
+        goals = [dict(zip(('id', 'title', 'description', 'why', 'unit', 'measure', 'subject_ids', 'deadline'), row))
+                 for row in con.execute(
+                     'SELECT id, title, description, why, unit, measure, subject_ids, deadline '
+                     'FROM goals WHERE user_id = ? AND status = ?', (username, 'active'))]
+        matches = {}
+        if _schema(con, 'task_goal_matches'):
+            for goal_id, task_id in con.execute(
+                    'SELECT goal_id, task_id FROM task_goal_matches WHERE user_id = ? AND score >= ?',
+                    (username, 0.5)):
+                matches.setdefault(goal_id, []).append(task_id)
+        return tasks, goals, matches
+    finally:
+        con.close()
+
+
+def topic_facts(username):
+    """A few aggregates that change whenever anything a library is built from
+    does: finished tasks (how many, latest, how many rated, their names'
+    length, their subjects), active goals and goal matches. Cheap, so a read
+    can tell a stored library is out of date without rebuilding it."""
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return {}
+        row = con.execute(
+            'SELECT COUNT(*), MAX(completed_at), COUNT(execution), SUM(LENGTH(title)), '
+            'COUNT(DISTINCT subject), SUM(COALESCE(execution, 0)), COUNT(score_of) '
+            'FROM tasks WHERE user_id = ? AND status = ?', (username, 'done')).fetchone()
+        goals = sorted('{}|{}|{}'.format(*goal) for goal in con.execute(
+            'SELECT id, title, subject_ids FROM goals WHERE user_id = ? AND status = ?',
+            (username, 'active')))
+        matched = 0
+        if _schema(con, 'task_goal_matches'):
+            matched = con.execute('SELECT COUNT(*) FROM task_goal_matches WHERE user_id = ?',
+                                  (username,)).fetchone()[0]
+        return {'tasks': [str(value) for value in row], 'goals': goals, 'matched': matched}
+    finally:
+        con.close()
+
+
+def topic_library_for(username):
+    """The stored library, as built, and the build's fingerprint ('' when it
+    has never been built)."""
+    con = connect()
+    try:
+        if not _schema(con, 'topic_library'):
+            return [], ''
+        rows = []
+        for data, goal_ids in con.execute(
+                'SELECT data, goal_ids FROM topic_library WHERE user_id = ?', (username,)):
+            try:
+                row = json.loads(data or '{}')
+                row['goal_ids'] = json.loads(goal_ids or '[]')
+            except ValueError:
+                continue
+            rows.append(row)
+        build = con.execute('SELECT fingerprint FROM topic_builds WHERE user_id = ?',
+                            (username,)).fetchone()
+        return rows, (build[0] if build else '')
+    finally:
+        con.close()
+
+
+def save_topic_library(username, rows, fingerprint, stamp):
+    """Replace one account's library and record what it was built from."""
+    con = connect()
+    try:
+        with con:
+            con.execute('DELETE FROM topic_library WHERE user_id = ?', (username,))
+            con.executemany(
+                'INSERT INTO topic_library (user_id, subject, subsubject, topic, status, tasks, '
+                'rated, execution, gap, goal_ids, data, built_at) '
+                'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [(username, row['subject'], row['subsubject'], row['topic'], row['status'],
+                  int(row['tasks']), int(row['rated']), row['execution'], row['gap'],
+                  json.dumps(row['goal_ids']), json.dumps(row), stamp) for row in rows])
+            con.execute('DELETE FROM topic_builds WHERE user_id = ?', (username,))
+            con.execute('INSERT INTO topic_builds (user_id, fingerprint, built_at) VALUES (?, ?, ?)',
+                        (username, fingerprint, stamp))
+        return len(rows)
     finally:
         con.close()

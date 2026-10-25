@@ -821,6 +821,9 @@ ACCOUNT_TABLES = (
     # The first-week quests already paid. Each one's XP is in xp_events, so
     # a reset that clears the ledger clears these too (see `_reset_progress`).
     'quest_claims',
+    # The account's tasks filed by topic, and when that was last built. All
+    # derived from tasks and goals removed here (data/sql/topics.sql).
+    'topic_library', 'topic_builds',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the

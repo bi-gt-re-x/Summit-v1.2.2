@@ -44,6 +44,7 @@ API_MODULES = (
     'next',
     'background',
     'quests',
+    'topics',
 )
 
 SHARED_MODULES = (

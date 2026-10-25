@@ -19,8 +19,12 @@
  *
  * ## Where the numbers come from, and where they do not
  *
- * Two calls, and no more: `/api/analytics/tasks` — the same sixteen columns
- * the analytics page reads — and the goals. Nothing is fetched per panel and
+ * Two calls for the figures: `/api/analytics/tasks` — the same sixteen columns
+ * the analytics page reads — and the goals. A third, `/api/topics`, brings the
+ * topic library (every task filed below its subject by its name, and each
+ * goal's plan from it), which the goal panel and the Topics panel read; it's
+ * built on the server because it reads every task the account has, not just
+ * this window's. Nothing else is fetched per panel and
  * nothing is fetched per subject: the filter is a comparison on
  * `task.subject`, so opening four of these pages costs what opening one does.
  * The arithmetic is in ./components/Subject/model, a pure function of the
@@ -97,6 +101,8 @@ import { SubjectHeat } from '@/components/Subject/Heat';
 import { SubjectCards } from '@/components/Subject/Cards';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
 import { GoalInsights } from '@/components/Subject/GoalInsights';
+import { TopicLibrary } from '@/components/Subject/TopicLibrary';
+import { buildTopics, topicLibrary, type TopicLibrary as TopicLibraryData } from '@/services/topics';
 import { goalRead } from '@/components/Subject/goalRead';
 import {
   dimensionAxes,
@@ -333,6 +339,37 @@ export default function SubjectAnalytics() {
     [username],
   );
   const goals = useApi(goalCall, [username]);
+
+  /* The topic library: read what's stored, and rebuild it when it's out of
+     date (new tasks, a goal linked or renamed). The read never writes, so the
+     rebuild is its own POST. Asked again whenever the goals change, because a
+     goal's links decide which topics feed it. */
+  const [topics, setTopics] = useState<TopicLibraryData | null>(null);
+  const [topicsBusy, setTopicsBusy] = useState(false);
+  const goalKey = (goals.data?.goals ?? [])
+    .map((goal) => `${goal.id}:${goal.title}:${goal.subject_ids ?? ''}`)
+    .join('|');
+  const goalsSettled = !goals.loading;
+  useEffect(() => {
+    // After the goals arrive, so the read isn't made once without them and
+    // again with them.
+    if (!username || !subjectId || !goalsSettled) return;
+    let live = true;
+    void topicLibrary(subjectId).then((read) => {
+      if (!live || !read.success) return;
+      setTopics(read);
+      if (read.built && !read.stale) return;
+      setTopicsBusy(true);
+      void buildTopics(subjectId).then((built) => {
+        if (!live) return;
+        setTopicsBusy(false);
+        if (built.success) setTopics(built);
+      });
+    });
+    return () => {
+      live = false;
+    };
+  }, [subjectId, username, goalKey, goalsSettled]);
 
   const today = todayIso();
 
@@ -1099,8 +1136,15 @@ export default function SubjectAnalytics() {
      in components/Subject/model already orders them by what is most pressing. */
   const leadGoal = model.goals[0] ?? null;
   const toward = useMemo(
-    () => goalRead({ subject: subject?.name ?? 'this subject', model, state, total: windowTotal }),
-    [model, state, subject?.name, windowTotal],
+    () =>
+      goalRead({
+        subject: subject?.name ?? 'this subject',
+        model,
+        state,
+        total: windowTotal,
+        topics: leadGoal ? topics?.goals[leadGoal.id] ?? null : null,
+      }),
+    [leadGoal, model, state, subject?.name, topics, windowTotal],
   );
 
   useDocumentTitle(subject ? subject.name : 'Subject');
@@ -1378,6 +1422,18 @@ export default function SubjectAnalytics() {
                 so it's here before anyone presses a button. See
                 components/Subject/goalRead. */}
             <GoalInsights read={toward} subject={subject.name} />
+
+            {/* ---- TOPICS ---------------------------------------------- */}
+            {/* The topic library's slice for this subject: every area and
+                topic the task names say, rated against the subject, with the
+                goals each feeds. See components/Subject/TopicLibrary. */}
+            {topics && (
+              <TopicLibrary
+                library={topics}
+                busy={topicsBusy}
+                goalTitles={Object.fromEntries((goals.data?.goals ?? []).map((goal) => [goal.id, goal.title]))}
+              />
+            )}
 
             {/* No "What matters now", and no bottleneck panel.
 

@@ -1,0 +1,2159 @@
+{
+  "version": 1,
+  "about": "What backend/tracking/topics.py reads a task's name against. Every skill-tree node (data/skill_nodes.json) is already a topic under its tree; this file adds what a node name alone can't catch: finer topics under a node (recursive counting under Counting), more ways people write a topic (dp, bfs, u-sub), the extra subsubjects a tree doesn't cover (real analysis), which trees count as part of each subject, and the contests, exams, courses and sites a task or goal can name, each with the topics it tests in the order it tests them most.",
+  "families": {
+    "mathematics": [
+      "mathematics",
+      "algebra",
+      "geometry",
+      "trigonometry",
+      "precalculus",
+      "calculus",
+      "statistics",
+      "linear-algebra",
+      "discrete",
+      "differential-equations",
+      "competition-math",
+      "real-analysis",
+      "abstract-algebra"
+    ],
+    "algebra": [
+      "algebra",
+      "mathematics",
+      "competition-math"
+    ],
+    "geometry": [
+      "geometry",
+      "mathematics",
+      "competition-math"
+    ],
+    "calculus": [
+      "calculus",
+      "mathematics",
+      "real-analysis"
+    ],
+    "statistics": [
+      "statistics",
+      "mathematics"
+    ],
+    "computer_science": [
+      "algorithms",
+      "competitive-programming",
+      "coding",
+      "systems",
+      "python",
+      "java",
+      "web",
+      "databases",
+      "networking",
+      "cybersecurity",
+      "app-dev",
+      "game-dev",
+      "data-science",
+      "machine-learning",
+      "ai-tools",
+      "discrete"
+    ],
+    "coding": [
+      "coding",
+      "algorithms",
+      "competitive-programming",
+      "python",
+      "java",
+      "web",
+      "app-dev",
+      "game-dev"
+    ],
+    "machine_learning": [
+      "machine-learning",
+      "data-science",
+      "statistics",
+      "linear-algebra",
+      "python",
+      "ai-tools"
+    ],
+    "data_science": [
+      "data-science",
+      "machine-learning",
+      "statistics",
+      "python",
+      "databases"
+    ],
+    "physics": [
+      "physics",
+      "olympiad-science",
+      "calculus"
+    ],
+    "chemistry": [
+      "chemistry",
+      "organic-chemistry",
+      "biochemistry",
+      "olympiad-science"
+    ],
+    "biology": [
+      "biology",
+      "genetics",
+      "anatomy",
+      "microbiology",
+      "biochemistry",
+      "olympiad-science"
+    ],
+    "music": [
+      "music",
+      "music-theory",
+      "violin",
+      "piano",
+      "guitar",
+      "voice",
+      "drums",
+      "band",
+      "performance",
+      "production"
+    ],
+    "test_prep": [
+      "test-prep",
+      "mathematics",
+      "writing"
+    ],
+    "research": [
+      "writing",
+      "data-science",
+      "statistics",
+      "study"
+    ],
+    "lectures": [
+      "study",
+      "note-taking",
+      "school"
+    ]
+  },
+  "subsubjects": {
+    "algorithms": {
+      "aliases": [
+        "algorithms",
+        "algorithm",
+        "data structures",
+        "dsa",
+        "clrs",
+        "algo"
+      ]
+    },
+    "competitive-programming": {
+      "aliases": [
+        "competitive programming",
+        "comp prog",
+        "cp",
+        "contest programming"
+      ]
+    },
+    "coding": {
+      "aliases": [
+        "coding",
+        "programming",
+        "intro cs",
+        "cs50",
+        "side project",
+        "build"
+      ]
+    },
+    "calculus": {
+      "aliases": [
+        "calculus",
+        "calc"
+      ]
+    },
+    "linear-algebra": {
+      "aliases": [
+        "linear algebra",
+        "lin alg",
+        "strang"
+      ]
+    },
+    "discrete": {
+      "aliases": [
+        "discrete math",
+        "discrete mathematics",
+        "discrete"
+      ]
+    },
+    "statistics": {
+      "aliases": [
+        "statistics",
+        "stats"
+      ]
+    },
+    "competition-math": {
+      "aliases": [
+        "competition math",
+        "contest math",
+        "olympiad",
+        "math olympiad",
+        "olympiad math",
+        "mock contest"
+      ]
+    },
+    "mathematics": {
+      "aliases": [
+        "pure math",
+        "math 55"
+      ]
+    },
+    "real-analysis": {
+      "label": "Real Analysis",
+      "aliases": [
+        "real analysis",
+        "analysis",
+        "baby rudin",
+        "rudin"
+      ]
+    },
+    "abstract-algebra": {
+      "label": "Abstract Algebra",
+      "aliases": [
+        "abstract algebra",
+        "group theory",
+        "ring theory",
+        "dummit"
+      ]
+    },
+    "machine-learning": {
+      "aliases": [
+        "machine learning",
+        "ml",
+        "deep learning"
+      ]
+    }
+  },
+  "skip_nodes": [
+    "competitive-programming:bronze",
+    "competitive-programming:silver",
+    "competitive-programming:gold",
+    "competitive-programming:platinum",
+    "competition-math:the-olympiad-round"
+  ],
+  "units": {
+    "_about": "How a move counts work in a tree when no contest says. Everything else is 8 problems.",
+    "coding": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "systems": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "web": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "app-dev": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "game-dev": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "python": {
+      "count": 5,
+      "unit": "exercises"
+    },
+    "java": {
+      "count": 5,
+      "unit": "exercises"
+    },
+    "machine-learning": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "data-science": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "real-analysis": {
+      "count": 4,
+      "unit": "proofs"
+    },
+    "violin": {
+      "count": 20,
+      "unit": "minutes"
+    },
+    "piano": {
+      "count": 20,
+      "unit": "minutes"
+    },
+    "guitar": {
+      "count": 20,
+      "unit": "minutes"
+    },
+    "voice": {
+      "count": 20,
+      "unit": "minutes"
+    },
+    "drums": {
+      "count": 20,
+      "unit": "minutes"
+    },
+    "music": {
+      "count": 20,
+      "unit": "minutes"
+    },
+    "music-theory": {
+      "count": 10,
+      "unit": "exercises"
+    },
+    "writing": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "essays": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "foreign-language": {
+      "count": 20,
+      "unit": "minutes"
+    },
+    "chess": {
+      "count": 10,
+      "unit": "puzzles"
+    },
+    "strength": {
+      "count": 2,
+      "unit": "sessions"
+    },
+    "endurance": {
+      "count": 2,
+      "unit": "sessions"
+    }
+  },
+  "topics": [
+    {
+      "tree": "competition-math",
+      "label": "Counting",
+      "aliases": [
+        "counting",
+        "combinatorics",
+        "combo",
+        "counting and probability",
+        "c&p"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Casework",
+      "under": "Counting",
+      "aliases": [
+        "casework",
+        "case work",
+        "cases"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Complementary counting",
+      "under": "Counting",
+      "aliases": [
+        "complementary counting",
+        "complement counting",
+        "complementary"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Recursive counting",
+      "under": "Counting",
+      "aliases": [
+        "recursive counting",
+        "recursion counting",
+        "counting recursion",
+        "recursive",
+        "recurrence counting",
+        "state counting"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Stars and bars",
+      "under": "Counting",
+      "aliases": [
+        "stars and bars",
+        "stars bars",
+        "balls and urns",
+        "balls in boxes"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Inclusion-exclusion",
+      "under": "Counting",
+      "aliases": [
+        "inclusion exclusion",
+        "pie",
+        "principle of inclusion exclusion"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Bijections",
+      "under": "Counting",
+      "aliases": [
+        "bijection",
+        "bijective counting"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Binomial coefficients",
+      "under": "Counting",
+      "aliases": [
+        "binomial",
+        "binomial coefficient",
+        "pascal",
+        "pascals triangle",
+        "binomial theorem"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Probability",
+      "aliases": [
+        "probability",
+        "prob"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Expected value",
+      "under": "Probability",
+      "aliases": [
+        "expected value",
+        "expectation",
+        "linearity of expectation",
+        "ev"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Geometric probability",
+      "under": "Probability",
+      "aliases": [
+        "geometric probability",
+        "geo prob"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Modular Arithmetic",
+      "aliases": [
+        "modular arithmetic",
+        "mod",
+        "modulo",
+        "modular",
+        "congruence",
+        "congruences",
+        "remainders"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Divisibility and primes",
+      "under": "Modular Arithmetic",
+      "aliases": [
+        "divisibility",
+        "divisor",
+        "divisors",
+        "prime",
+        "primes",
+        "prime factorization",
+        "gcd",
+        "lcm",
+        "factors"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Number bases",
+      "under": "Modular Arithmetic",
+      "aliases": [
+        "number bases",
+        "bases",
+        "base 2",
+        "binary numbers",
+        "base conversion"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Digits",
+      "under": "Modular Arithmetic",
+      "aliases": [
+        "digit",
+        "digits",
+        "digit sums"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Number theory",
+      "aliases": [
+        "number theory",
+        "nt",
+        "elementary number theory"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Diophantine Equations",
+      "aliases": [
+        "diophantine",
+        "diophantine equations",
+        "integer solutions",
+        "pell"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Algebraic Manipulation",
+      "aliases": [
+        "algebraic manipulation",
+        "algebra",
+        "manipulation",
+        "systems of equations",
+        "simplifying"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Polynomials",
+      "aliases": [
+        "polynomials",
+        "polynomial",
+        "vieta",
+        "vietas",
+        "roots",
+        "remainder theorem"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Logarithms and exponents",
+      "under": "Algebraic Manipulation",
+      "aliases": [
+        "logarithm",
+        "logarithms",
+        "logs",
+        "log",
+        "exponents"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Complex numbers",
+      "under": "Polynomials",
+      "aliases": [
+        "complex numbers",
+        "complex",
+        "roots of unity",
+        "de moivre"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Sequences & Series",
+      "aliases": [
+        "sequences",
+        "series",
+        "arithmetic sequence",
+        "geometric sequence",
+        "sequences and series",
+        "sums"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Recursion & Telescoping",
+      "aliases": [
+        "telescoping",
+        "recursion",
+        "recurrence",
+        "recurrences",
+        "recurrence relations"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Inequalities",
+      "aliases": [
+        "inequalities",
+        "inequality",
+        "am gm",
+        "amgm",
+        "cauchy schwarz",
+        "cauchy"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Functional Equations",
+      "aliases": [
+        "functional equations",
+        "functional equation",
+        "fe"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Angle Chasing",
+      "aliases": [
+        "angle chasing",
+        "angle chase",
+        "angles"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Similar triangles",
+      "under": "Angle Chasing",
+      "aliases": [
+        "similar triangles",
+        "similarity",
+        "similar"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Areas and lengths",
+      "under": "Angle Chasing",
+      "aliases": [
+        "area",
+        "areas",
+        "lengths",
+        "heron",
+        "shoelace",
+        "pythagorean"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Circles",
+      "under": "Power of a Point",
+      "aliases": [
+        "circle",
+        "circles",
+        "inscribed",
+        "cyclic quadrilateral",
+        "cyclic quadrilaterals"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Power of a Point",
+      "aliases": [
+        "power of a point",
+        "power of point",
+        "pop",
+        "radical axis"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Coordinate bashing",
+      "under": "Angle Chasing",
+      "aliases": [
+        "coordinate geometry",
+        "coord bash",
+        "coordinate bash",
+        "coordinates",
+        "analytic geometry"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "3D geometry",
+      "under": "Angle Chasing",
+      "aliases": [
+        "3d geometry",
+        "solid geometry",
+        "3d",
+        "volume",
+        "volumes",
+        "polyhedra"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Trigonometry in Geometry",
+      "aliases": [
+        "trig",
+        "trigonometry",
+        "law of sines",
+        "law of cosines",
+        "trig bash"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Geometry",
+      "aliases": [
+        "geometry",
+        "geo",
+        "euclidean geometry"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Pigeonhole & Extremal",
+      "aliases": [
+        "pigeonhole",
+        "extremal",
+        "extremal principle"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Invariants & Monovariants",
+      "aliases": [
+        "invariants",
+        "invariant",
+        "monovariant",
+        "monovariants",
+        "coloring"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Generating Functions",
+      "aliases": [
+        "generating functions",
+        "generating function",
+        "gf"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Contest Timing",
+      "aliases": [
+        "timing",
+        "timed",
+        "pacing",
+        "speed"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Mental Arithmetic",
+      "aliases": [
+        "mental math",
+        "mental arithmetic",
+        "arithmetic"
+      ]
+    },
+    {
+      "tree": "competition-math",
+      "label": "Olympiad Proof Writing",
+      "aliases": [
+        "proof writing",
+        "olympiad proofs",
+        "writing proofs"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Dynamic Programming",
+      "aliases": [
+        "dynamic programming",
+        "dp",
+        "memoization",
+        "memo",
+        "tabulation"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Knapsack DP",
+      "under": "Dynamic Programming",
+      "aliases": [
+        "knapsack",
+        "knapsack dp",
+        "subset sum",
+        "coin change"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Bitmask DP",
+      "under": "Dynamic Programming",
+      "aliases": [
+        "bitmask dp",
+        "bitmask",
+        "dp on subsets",
+        "bitmasks"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "DP on trees",
+      "under": "Dynamic Programming",
+      "aliases": [
+        "tree dp",
+        "dp on trees"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Interval DP",
+      "under": "Dynamic Programming",
+      "aliases": [
+        "interval dp",
+        "range dp"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Graphs",
+      "aliases": [
+        "graph",
+        "graphs",
+        "graph theory",
+        "graph algorithms"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "DFS & BFS",
+      "aliases": [
+        "bfs",
+        "dfs",
+        "breadth first",
+        "depth first",
+        "flood fill",
+        "graph traversal"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Weighted Shortest Paths",
+      "aliases": [
+        "shortest path",
+        "shortest paths",
+        "dijkstra",
+        "bellman ford",
+        "floyd warshall"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Minimum spanning trees",
+      "under": "Graphs",
+      "aliases": [
+        "mst",
+        "minimum spanning tree",
+        "kruskal",
+        "prim"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Topological sort",
+      "under": "Graphs",
+      "aliases": [
+        "topological sort",
+        "toposort",
+        "topo sort",
+        "dag"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Union-Find",
+      "aliases": [
+        "union find",
+        "dsu",
+        "disjoint set",
+        "disjoint sets"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Binary Search",
+      "aliases": [
+        "binary search",
+        "binary search on answer",
+        "bisect"
+      ]
+    },
+    {
+      "trees": [
+        "algorithms",
+        "competitive-programming"
+      ],
+      "label": "Greedy",
+      "aliases": [
+        "greedy",
+        "greedy algorithms",
+        "exchange argument"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Prefix Sums",
+      "aliases": [
+        "prefix sum",
+        "prefix sums",
+        "difference array",
+        "cumulative sum"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Sorting & Two Pointers",
+      "aliases": [
+        "two pointers",
+        "two pointer",
+        "sorting"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Complete Search",
+      "aliases": [
+        "complete search",
+        "brute force",
+        "bruteforce"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Segment Trees",
+      "aliases": [
+        "segment tree",
+        "segment trees",
+        "fenwick",
+        "bit tree",
+        "binary indexed tree",
+        "range queries",
+        "lazy propagation"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Trees & Rerooting",
+      "aliases": [
+        "rerooting",
+        "lca",
+        "binary lifting",
+        "euler tour",
+        "tree queries"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Contest Number Theory",
+      "aliases": [
+        "sieve",
+        "modular inverse",
+        "mod inverse",
+        "number theory",
+        "math problems"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "String Algorithms",
+      "aliases": [
+        "kmp",
+        "string hashing",
+        "z function",
+        "suffix array",
+        "string algorithms"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Flows & Matching",
+      "aliases": [
+        "max flow",
+        "flow",
+        "flows",
+        "bipartite matching",
+        "matching"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Constructive problems",
+      "under": "Greedy",
+      "aliases": [
+        "constructive",
+        "constructive algorithms",
+        "construction"
+      ]
+    },
+    {
+      "tree": "competitive-programming",
+      "label": "Debugging Under Time",
+      "aliases": [
+        "upsolve",
+        "upsolving",
+        "debugging"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Data structures",
+      "under": "Hash Maps",
+      "aliases": [
+        "data structures",
+        "data structure"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Arrays",
+      "aliases": [
+        "array",
+        "arrays",
+        "array problems"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Strings",
+      "aliases": [
+        "string",
+        "strings",
+        "string problems"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Hash Maps",
+      "aliases": [
+        "hash map",
+        "hashmap",
+        "hash maps",
+        "hashing",
+        "hash table",
+        "dictionary problems"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Sliding Window",
+      "aliases": [
+        "sliding window"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Two Pointers",
+      "aliases": [
+        "two pointers",
+        "two pointer"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Trees",
+      "aliases": [
+        "tree",
+        "trees",
+        "binary tree",
+        "binary trees",
+        "tree traversal"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Heaps & Priority Queues",
+      "aliases": [
+        "heap",
+        "heaps",
+        "priority queue",
+        "priority queues"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Backtracking",
+      "aliases": [
+        "backtracking",
+        "permutations problems",
+        "n queens"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Recursion",
+      "aliases": [
+        "recursion",
+        "recursive functions"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Linked Lists",
+      "aliases": [
+        "linked list",
+        "linked lists"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Stacks & Queues",
+      "aliases": [
+        "stack",
+        "stacks",
+        "queue",
+        "queues",
+        "monotonic stack"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Tries",
+      "aliases": [
+        "trie",
+        "tries",
+        "prefix tree"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Bit Manipulation",
+      "aliases": [
+        "bit manipulation",
+        "bitwise",
+        "bits"
+      ]
+    },
+    {
+      "tree": "algorithms",
+      "label": "Big-O Notation",
+      "aliases": [
+        "big o",
+        "complexity",
+        "runtime analysis",
+        "asymptotics",
+        "master theorem",
+        "divide and conquer"
+      ]
+    },
+    {
+      "tree": "coding",
+      "label": "Refactoring",
+      "aliases": [
+        "refactor",
+        "refactoring",
+        "clean up",
+        "cleanup"
+      ]
+    },
+    {
+      "tree": "coding",
+      "label": "Program Design",
+      "aliases": [
+        "side project",
+        "project",
+        "build",
+        "architecture",
+        "parser",
+        "compiler",
+        "interpreter"
+      ]
+    },
+    {
+      "tree": "coding",
+      "label": "Testing",
+      "aliases": [
+        "unit tests",
+        "tests",
+        "testing",
+        "pytest"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Integrals",
+      "aliases": [
+        "integral",
+        "integrals",
+        "integration",
+        "antiderivative",
+        "antiderivatives",
+        "definite integral"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Integration Techniques",
+      "aliases": [
+        "integration techniques",
+        "techniques of integration"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "U-substitution",
+      "under": "Integration Techniques",
+      "aliases": [
+        "u sub",
+        "u substitution",
+        "substitution"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Integration by parts",
+      "under": "Integration Techniques",
+      "aliases": [
+        "integration by parts",
+        "by parts",
+        "ibp"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Partial fractions",
+      "under": "Integration Techniques",
+      "aliases": [
+        "partial fractions",
+        "partial fraction"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Trig substitution",
+      "under": "Integration Techniques",
+      "aliases": [
+        "trig substitution",
+        "trig sub",
+        "trigonometric substitution"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Derivatives",
+      "aliases": [
+        "derivative",
+        "derivatives",
+        "differentiation"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Series",
+      "aliases": [
+        "series",
+        "convergence tests",
+        "convergence",
+        "power series"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Limits",
+      "aliases": [
+        "limit",
+        "limits",
+        "epsilon delta"
+      ]
+    },
+    {
+      "tree": "calculus",
+      "label": "Multivariable calculus",
+      "under": "Integrals",
+      "aliases": [
+        "multivariable",
+        "multivariable calculus",
+        "multivariable calc",
+        "partial derivatives",
+        "double integrals",
+        "triple integrals",
+        "vector calculus"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Systems of Equations",
+      "aliases": [
+        "row reduction",
+        "gaussian elimination",
+        "rref",
+        "linear systems"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Eigenvectors & Eigenvalues",
+      "aliases": [
+        "eigen",
+        "eigenvalue",
+        "eigenvalues",
+        "eigenvector",
+        "eigenvectors",
+        "characteristic polynomial"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Singular Value Decomposition",
+      "aliases": [
+        "svd",
+        "singular value decomposition"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Diagonalisation",
+      "aliases": [
+        "diagonalization",
+        "diagonalisation",
+        "diagonalize"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Determinant",
+      "aliases": [
+        "determinant",
+        "determinants",
+        "det"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Rank & Null Space",
+      "aliases": [
+        "rank",
+        "null space",
+        "nullspace",
+        "kernel",
+        "column space"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Linear Transformations",
+      "aliases": [
+        "linear transformation",
+        "linear transformations",
+        "linear maps",
+        "linear map"
+      ]
+    },
+    {
+      "tree": "linear-algebra",
+      "label": "Orthogonality",
+      "aliases": [
+        "orthogonal",
+        "orthogonality",
+        "gram schmidt",
+        "qr"
+      ]
+    },
+    {
+      "tree": "real-analysis",
+      "label": "Sequences and limits",
+      "aliases": [
+        "sequences and limits",
+        "cauchy sequences",
+        "convergence of sequences"
+      ]
+    },
+    {
+      "tree": "real-analysis",
+      "label": "Continuity",
+      "aliases": [
+        "continuity",
+        "uniform continuity"
+      ]
+    },
+    {
+      "tree": "real-analysis",
+      "label": "Riemann integration",
+      "aliases": [
+        "riemann",
+        "riemann integral",
+        "riemann integration"
+      ]
+    },
+    {
+      "tree": "real-analysis",
+      "label": "Metric spaces",
+      "aliases": [
+        "metric space",
+        "metric spaces",
+        "topology",
+        "compactness",
+        "compact"
+      ]
+    },
+    {
+      "tree": "real-analysis",
+      "label": "Analysis proofs",
+      "aliases": [
+        "analysis proof",
+        "analysis proofs",
+        "proof grinding"
+      ]
+    },
+    {
+      "tree": "mathematics",
+      "label": "Proof",
+      "aliases": [
+        "proof",
+        "proofs",
+        "proof practice",
+        "proof writing",
+        "induction"
+      ]
+    },
+    {
+      "tree": "mathematics",
+      "label": "Counting & Combinatorics",
+      "aliases": [
+        "combinatorics",
+        "counting",
+        "combinatorics practice"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Scales & Arpeggios",
+      "aliases": [
+        "scales",
+        "scale",
+        "arpeggios",
+        "arpeggio",
+        "carl flesch",
+        "galamian"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Etudes",
+      "under": "Solo Pieces",
+      "aliases": [
+        "etude",
+        "etudes",
+        "kreutzer",
+        "sevcik",
+        "rode",
+        "wohlfahrt"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Solo Pieces",
+      "aliases": [
+        "concerto",
+        "sonata",
+        "repertoire",
+        "piece",
+        "pieces",
+        "partita",
+        "bach"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Orchestra Playing",
+      "aliases": [
+        "orchestra",
+        "excerpt",
+        "excerpts",
+        "sectional"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Shifting",
+      "aliases": [
+        "shifting",
+        "shifts",
+        "position work"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Vibrato",
+      "aliases": [
+        "vibrato"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Double Stops",
+      "aliases": [
+        "double stops",
+        "double stop",
+        "thirds",
+        "octaves",
+        "sixths"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Bow Strokes",
+      "aliases": [
+        "bowing",
+        "bow strokes",
+        "spiccato",
+        "martele",
+        "detache",
+        "sautille"
+      ]
+    },
+    {
+      "tree": "violin",
+      "label": "Sight reading",
+      "under": "Reading Music",
+      "aliases": [
+        "sight reading",
+        "sightreading"
+      ]
+    }
+  ],
+  "contexts": [
+    {
+      "id": "amc8",
+      "label": "AMC 8",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bamc ?8\\b"
+      ],
+      "count": 10,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:mental-arithmetic",
+        "competition-math:counting",
+        "competition-math:probability",
+        "competition-math:areas-and-lengths",
+        "competition-math:divisibility-and-primes",
+        "competition-math:algebraic-manipulation",
+        "competition-math:angle-chasing",
+        "competition-math:contest-timing"
+      ]
+    },
+    {
+      "id": "amc10",
+      "label": "AMC 10",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bamc ?10\\b",
+        "\\bamc ?10[ab]\\b"
+      ],
+      "count": 10,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:counting",
+        "competition-math:casework",
+        "competition-math:complementary-counting",
+        "competition-math:recursive-counting",
+        "competition-math:probability",
+        "competition-math:algebraic-manipulation",
+        "competition-math:modular-arithmetic",
+        "competition-math:divisibility-and-primes",
+        "competition-math:similar-triangles",
+        "competition-math:areas-and-lengths",
+        "competition-math:circles",
+        "competition-math:sequences-series",
+        "competition-math:number-bases",
+        "competition-math:contest-timing"
+      ],
+      "also": [
+        "mathematics:counting-combinatorics",
+        "mathematics:probability",
+        "discrete:number-theory"
+      ]
+    },
+    {
+      "id": "amc12",
+      "label": "AMC 12",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bamc ?12\\b",
+        "\\bamc ?12[ab]\\b"
+      ],
+      "count": 10,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:counting",
+        "competition-math:recursive-counting",
+        "competition-math:probability",
+        "competition-math:polynomials",
+        "competition-math:logarithms-and-exponents",
+        "competition-math:complex-numbers",
+        "competition-math:modular-arithmetic",
+        "competition-math:trigonometry-in-geometry",
+        "competition-math:circles",
+        "competition-math:sequences-series",
+        "competition-math:contest-timing"
+      ],
+      "also": [
+        "mathematics:counting-combinatorics",
+        "mathematics:probability",
+        "discrete:number-theory"
+      ]
+    },
+    {
+      "id": "amc",
+      "label": "AMC",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bamc\\b"
+      ],
+      "count": 10,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:counting",
+        "competition-math:probability",
+        "competition-math:algebraic-manipulation",
+        "competition-math:modular-arithmetic",
+        "competition-math:geometry",
+        "competition-math:contest-timing"
+      ]
+    },
+    {
+      "id": "aime",
+      "label": "AIME",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\baime\\b"
+      ],
+      "count": 5,
+      "unit": "problems",
+      "warmup": "amc12",
+      "syllabus": [
+        "competition-math:counting",
+        "competition-math:recursive-counting",
+        "competition-math:casework",
+        "competition-math:complementary-counting",
+        "competition-math:probability",
+        "competition-math:expected-value",
+        "competition-math:modular-arithmetic",
+        "competition-math:divisibility-and-primes",
+        "competition-math:polynomials",
+        "competition-math:complex-numbers",
+        "competition-math:logarithms-and-exponents",
+        "competition-math:sequences-series",
+        "competition-math:similar-triangles",
+        "competition-math:power-of-a-point",
+        "competition-math:trigonometry-in-geometry",
+        "competition-math:3d-geometry",
+        "competition-math:diophantine-equations",
+        "competition-math:aime-strategy"
+      ],
+      "also": [
+        "mathematics:counting-combinatorics",
+        "mathematics:probability",
+        "discrete:number-theory",
+        "discrete:counting",
+        "discrete:modular-arithmetic"
+      ]
+    },
+    {
+      "id": "usamo",
+      "label": "USAMO",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\busa?j?mo\\b",
+        "\\bjmo\\b"
+      ],
+      "count": 2,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:olympiad-proof-writing",
+        "competition-math:inequalities",
+        "competition-math:functional-equations",
+        "competition-math:invariants-monovariants",
+        "competition-math:pigeonhole-extremal",
+        "competition-math:number-theory",
+        "competition-math:geometry"
+      ]
+    },
+    {
+      "id": "olympiad",
+      "label": "Olympiad",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bolympiad\\b",
+        "\\bimo\\b"
+      ],
+      "count": 3,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:olympiad-proof-writing",
+        "competition-math:inequalities",
+        "competition-math:functional-equations",
+        "competition-math:invariants-monovariants",
+        "competition-math:number-theory",
+        "competition-math:geometry",
+        "competition-math:counting"
+      ]
+    },
+    {
+      "id": "putnam",
+      "label": "Putnam",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bputnam\\b"
+      ],
+      "count": 3,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:olympiad-proof-writing",
+        "competition-math:inequalities",
+        "competition-math:polynomials",
+        "competition-math:sequences-series",
+        "competition-math:counting",
+        "competition-math:number-theory",
+        "real-analysis:sequences-and-limits",
+        "linear-algebra:determinant"
+      ]
+    },
+    {
+      "id": "mathcounts",
+      "label": "MATHCOUNTS",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bmathcounts\\b"
+      ],
+      "count": 15,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:mental-arithmetic",
+        "competition-math:counting",
+        "competition-math:probability",
+        "competition-math:areas-and-lengths",
+        "competition-math:contest-timing"
+      ]
+    },
+    {
+      "id": "hmmt",
+      "label": "HMMT",
+      "kind": "contest",
+      "tree": "competition-math",
+      "patterns": [
+        "\\bhmmt\\b",
+        "\\barml\\b",
+        "\\bpumac\\b"
+      ],
+      "count": 5,
+      "unit": "problems",
+      "syllabus": [
+        "competition-math:counting",
+        "competition-math:geometry",
+        "competition-math:algebraic-manipulation",
+        "competition-math:number-theory"
+      ]
+    },
+    {
+      "id": "usaco-bronze",
+      "label": "USACO Bronze",
+      "kind": "contest",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\busaco bronze\\b",
+        "\\bbronze (division|div|problems?|training|contest|set)\\b"
+      ],
+      "count": 3,
+      "unit": "problems",
+      "syllabus": [
+        "competitive-programming:complete-search",
+        "competitive-programming:sorting-two-pointers",
+        "competitive-programming:reading-the-constraints",
+        "competitive-programming:fast-input-output"
+      ]
+    },
+    {
+      "id": "usaco-silver",
+      "label": "USACO Silver",
+      "kind": "contest",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\busaco silver\\b",
+        "\\bsilver (division|div|problems?|training|contest|set)\\b"
+      ],
+      "count": 3,
+      "unit": "problems",
+      "warmup": "usaco-bronze",
+      "syllabus": [
+        "competitive-programming:prefix-sums",
+        "competitive-programming:binary-search",
+        "competitive-programming:greedy",
+        "competitive-programming:dfs-bfs",
+        "competitive-programming:sorting-two-pointers",
+        "competitive-programming:union-find"
+      ]
+    },
+    {
+      "id": "usaco-gold",
+      "label": "USACO Gold",
+      "kind": "contest",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\busaco gold\\b",
+        "\\bgold (division|div|problems?|training|contest|set)\\b"
+      ],
+      "count": 3,
+      "unit": "problems",
+      "warmup": "usaco-silver",
+      "syllabus": [
+        "competitive-programming:dynamic-programming",
+        "competitive-programming:knapsack-dp",
+        "competitive-programming:bitmask-dp",
+        "competitive-programming:weighted-shortest-paths",
+        "competitive-programming:union-find",
+        "competitive-programming:minimum-spanning-trees",
+        "competitive-programming:topological-sort",
+        "competitive-programming:trees-rerooting",
+        "competitive-programming:segment-trees",
+        "competitive-programming:contest-number-theory",
+        "competitive-programming:prefix-sums"
+      ],
+      "also": [
+        "algorithms:dynamic-programming",
+        "algorithms:graphs"
+      ]
+    },
+    {
+      "id": "usaco-platinum",
+      "label": "USACO Platinum",
+      "kind": "contest",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\busaco plat(inum)?\\b",
+        "\\bplatinum (division|div|problems?|training|contest|set)\\b"
+      ],
+      "count": 2,
+      "unit": "problems",
+      "warmup": "usaco-gold",
+      "syllabus": [
+        "competitive-programming:segment-trees",
+        "competitive-programming:trees-rerooting",
+        "competitive-programming:string-algorithms",
+        "competitive-programming:flows-matching",
+        "competitive-programming:dp-on-trees",
+        "competitive-programming:bitmask-dp"
+      ]
+    },
+    {
+      "id": "usaco",
+      "label": "USACO",
+      "kind": "contest",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\busaco\\b"
+      ],
+      "count": 3,
+      "unit": "problems",
+      "syllabus": [
+        "competitive-programming:complete-search",
+        "competitive-programming:prefix-sums",
+        "competitive-programming:binary-search",
+        "competitive-programming:dfs-bfs",
+        "competitive-programming:dynamic-programming"
+      ]
+    },
+    {
+      "id": "codeforces",
+      "label": "Codeforces",
+      "kind": "site",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\bcodeforces\\b",
+        "\\bcf\\b",
+        "\\bdiv ?[1-4]\\b"
+      ],
+      "count": 4,
+      "unit": "problems",
+      "syllabus": [
+        "competitive-programming:greedy",
+        "competitive-programming:constructive-problems",
+        "competitive-programming:dynamic-programming",
+        "competitive-programming:binary-search",
+        "competitive-programming:contest-number-theory",
+        "competitive-programming:dfs-bfs",
+        "competitive-programming:segment-trees",
+        "competitive-programming:debugging-under-time"
+      ],
+      "also": [
+        "algorithms:dynamic-programming",
+        "algorithms:graphs",
+        "algorithms:greedy"
+      ]
+    },
+    {
+      "id": "atcoder",
+      "label": "AtCoder",
+      "kind": "site",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\batcoder\\b",
+        "\\babc ?\\d{3}\\b"
+      ],
+      "count": 4,
+      "unit": "problems",
+      "syllabus": [
+        "competitive-programming:dynamic-programming",
+        "competitive-programming:greedy",
+        "competitive-programming:complete-search",
+        "competitive-programming:contest-number-theory"
+      ]
+    },
+    {
+      "id": "icpc",
+      "label": "ICPC",
+      "kind": "contest",
+      "tree": "competitive-programming",
+      "patterns": [
+        "\\bicpc\\b"
+      ],
+      "count": 3,
+      "unit": "problems",
+      "syllabus": [
+        "competitive-programming:dynamic-programming",
+        "competitive-programming:weighted-shortest-paths",
+        "competitive-programming:string-algorithms",
+        "competitive-programming:segment-trees",
+        "competitive-programming:flows-matching"
+      ]
+    },
+    {
+      "id": "leetcode",
+      "label": "LeetCode",
+      "kind": "site",
+      "tree": "algorithms",
+      "patterns": [
+        "\\bleetcode\\b",
+        "\\blc\\b",
+        "\\bneetcode\\b"
+      ],
+      "count": 5,
+      "unit": "problems",
+      "syllabus": [
+        "algorithms:arrays",
+        "algorithms:hash-maps",
+        "algorithms:two-pointers",
+        "algorithms:sliding-window",
+        "algorithms:binary-search",
+        "algorithms:trees",
+        "algorithms:graphs",
+        "algorithms:dynamic-programming",
+        "algorithms:heaps-priority-queues",
+        "algorithms:backtracking",
+        "algorithms:stacks-queues",
+        "algorithms:linked-lists"
+      ]
+    },
+    {
+      "id": "interview",
+      "label": "Interview",
+      "kind": "exam",
+      "tree": "algorithms",
+      "patterns": [
+        "\\binterviews?\\b",
+        "\\bmock interview\\b",
+        "\\bsystem design\\b"
+      ],
+      "count": 4,
+      "unit": "problems",
+      "syllabus": [
+        "algorithms:arrays",
+        "algorithms:hash-maps",
+        "algorithms:trees",
+        "algorithms:graphs",
+        "algorithms:dynamic-programming",
+        "algorithms:big-o-notation",
+        "systems:scaling",
+        "systems:caching",
+        "systems:databases"
+      ]
+    },
+    {
+      "id": "clrs",
+      "label": "CLRS",
+      "kind": "book",
+      "tree": "algorithms",
+      "patterns": [
+        "\\bclrs\\b",
+        "\\bcormen\\b"
+      ],
+      "count": 5,
+      "unit": "exercises",
+      "syllabus": [
+        "algorithms:big-o-notation",
+        "algorithms:sorting",
+        "algorithms:heaps-priority-queues",
+        "algorithms:dynamic-programming",
+        "algorithms:greedy",
+        "algorithms:graphs"
+      ]
+    },
+    {
+      "id": "ap-calc",
+      "label": "AP Calculus",
+      "kind": "exam",
+      "tree": "calculus",
+      "patterns": [
+        "\\bap calc(ulus)?( ab| bc)?\\b",
+        "\\bcalc (ab|bc)\\b"
+      ],
+      "count": 8,
+      "unit": "problems",
+      "syllabus": [
+        "calculus:limits",
+        "calculus:derivatives",
+        "calculus:related-rates",
+        "calculus:optimization",
+        "calculus:integrals",
+        "calculus:the-fundamental-theorem",
+        "calculus:areas-volumes",
+        "calculus:series",
+        "calculus:taylor-series",
+        "calculus:differential-equations"
+      ]
+    },
+    {
+      "id": "math55",
+      "label": "Math 55",
+      "kind": "course",
+      "tree": "mathematics",
+      "patterns": [
+        "\\bmath ?55\\b"
+      ],
+      "count": 5,
+      "unit": "problems",
+      "syllabus": [
+        "linear-algebra:linear-transformations",
+        "linear-algebra:eigenvectors-eigenvalues",
+        "real-analysis:metric-spaces",
+        "real-analysis:continuity",
+        "mathematics:proof"
+      ]
+    },
+    {
+      "id": "sat",
+      "label": "SAT",
+      "kind": "exam",
+      "tree": "test-prep",
+      "patterns": [
+        "\\bp?sat (practice|test|exam|prep|math|reading|writing|vocab|section|questions?)\\b",
+        "\\bpsat\\b",
+        "\\bsat \\d{3,4}\\b"
+      ],
+      "count": 15,
+      "unit": "questions",
+      "syllabus": [
+        "test-prep:core-test-math",
+        "test-prep:harder-math-topics",
+        "test-prep:reading-section",
+        "test-prep:grammar-rules",
+        "test-prep:words-in-context",
+        "test-prep:pacing"
+      ]
+    },
+    {
+      "id": "act",
+      "label": "ACT",
+      "kind": "exam",
+      "tree": "test-prep",
+      "patterns": [
+        "\\bact (practice|test|exam|prep|math|english|reading|science|section|questions?)\\b",
+        "\\bact \\d{2}\\b"
+      ],
+      "count": 15,
+      "unit": "questions",
+      "syllabus": [
+        "test-prep:core-test-math",
+        "test-prep:reading-section",
+        "test-prep:grammar-rules",
+        "test-prep:pacing"
+      ]
+    },
+    {
+      "id": "fma",
+      "label": "F=ma",
+      "kind": "contest",
+      "tree": "olympiad-science",
+      "patterns": [
+        "\\bf ?= ?ma\\b",
+        "\\bfma\\b",
+        "\\busapho\\b"
+      ],
+      "count": 5,
+      "unit": "problems",
+      "syllabus": [
+        "olympiad-science:kinematics-dynamics",
+        "olympiad-science:energy-momentum",
+        "olympiad-science:free-body-diagrams",
+        "olympiad-science:units-estimation"
+      ]
+    },
+    {
+      "id": "arct",
+      "label": "ARCT",
+      "kind": "exam",
+      "tree": "violin",
+      "patterns": [
+        "\\barct\\b",
+        "\\brcm\\b",
+        "\\babrsm\\b",
+        "\\bgrade ?\\d+ exam\\b"
+      ],
+      "count": 20,
+      "unit": "minutes",
+      "syllabus": [
+        "violin:scales-arpeggios",
+        "violin:etudes",
+        "violin:solo-pieces",
+        "violin:double-stops",
+        "violin:shifting",
+        "violin:vibrato",
+        "violin:bow-strokes",
+        "violin:sight-reading"
+      ]
+    }
+  ]
+}

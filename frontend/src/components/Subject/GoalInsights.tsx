@@ -41,6 +41,11 @@ export function GoalInsights({ read, subject }: { read: GoalRead; subject: strin
                     <span className="sgo-move-tag">{WEIGHT[move.weight]}</span>
                     <strong>{move.title}</strong>
                     <p>{move.why}</p>
+                    {move.resource && (
+                      <a className="sgo-move-res" href={move.resource.url} target="_blank" rel="noreferrer">
+                        {move.resource.name} ↗
+                      </a>
+                    )}
                   </div>
                   {move.to && (
                     <Link to={move.to} className="sgo-move-go">

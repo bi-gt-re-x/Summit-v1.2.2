@@ -14,6 +14,7 @@
  * With no goal set, the same insights are said against "this subject", and the
  * first move is to set one.
  */
+import type { GoalTopicPlan } from '@/services/topics';
 import type { Driver, SubjectGoal, SubjectModel } from './model';
 import type { SubjectState } from './state';
 
@@ -41,6 +42,10 @@ export interface GoalMove {
   /** Where in the app to do it, when somewhere fits. */
   to?: string;
   link?: string;
+  /** A free place to do it, for moves that name a topic. */
+  resource?: { name: string; url: string } | null;
+  /** True for moves that come from the topic library rather than the counts. */
+  topical?: boolean;
 }
 
 export interface GoalRead {
@@ -56,6 +61,12 @@ export interface GoalReadInput {
   state: SubjectState;
   /** Finished in this window and the one before, for the volume line. */
   total: { now: number; before: number | null };
+  /**
+   * The lead goal's plan from the topic library (services/topics): which
+   * topics it needs, which are weak, and moves that name real work. Absent
+   * until the library has loaded, and then the panel reads as before.
+   */
+  topics?: GoalTopicPlan | null;
 }
 
 const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
@@ -152,7 +163,7 @@ function reasonInsight(top: Driver, aim: string): GoalInsight {
 /**
  * Insights and moves for the subject, against its first (most pressing) goal.
  */
-export function goalRead({ subject, model, state, total }: GoalReadInput): GoalRead {
+export function goalRead({ subject, model, state, total, topics }: GoalReadInput): GoalRead {
   const goal = model.goals[0] ?? null;
   const aim = goal ? `"${goal.title}"` : subject;
   const insights: GoalInsight[] = [];
@@ -265,6 +276,24 @@ export function goalRead({ subject, model, state, total }: GoalReadInput): GoalR
   }
 
   // ---- What to do next -------------------------------------------------------
+  // The topic library's moves name real work ("Do 10 AMC 10 recursive
+  // counting problems"), so they go first. With two or more of them, the
+  // general advice below (slow down, a level harder, plan around a reason)
+  // is left out: it's what those moves already say, only vaguer.
+  const topical = goal && topics ? topics.moves : [];
+  topical.forEach((move) => {
+    moves.push({
+      id: `topic-${move.id}`,
+      title: move.title,
+      why: move.why,
+      weight: move.weight,
+      to: '/calendar',
+      link: 'Plan it',
+      resource: move.resource,
+      topical: true,
+    });
+  });
+  const general = topical.length < 2;
   if (!goal) {
     moves.push({
       id: 'set-goal',
@@ -286,14 +315,14 @@ export function goalRead({ subject, model, state, total }: GoalReadInput): GoalR
       });
     });
   }
-  if (curve.threshold && careless) {
+  if (general && curve.threshold && careless) {
     moves.push({
       id: 'threshold',
       title: `Slow down on ${curve.threshold.label} work`,
       why: `It goes worse than your harder work. Check each one before you call it done.`,
       weight: 'next',
     });
-  } else if (curve.threshold) {
+  } else if (general && curve.threshold) {
     moves.push({
       id: 'threshold',
       title: `Do 2 ${curve.threshold.label} sessions this week, slower`,
@@ -302,7 +331,7 @@ export function goalRead({ subject, model, state, total }: GoalReadInput): GoalR
       to: '/calendar',
       link: 'Plan it',
     });
-  } else if (curve.any && curve.best && curve.best.level < 5) {
+  } else if (general && curve.any && curve.best && curve.best.level < 5) {
     moves.push({
       id: 'step-up',
       title: 'Try one session a level harder',
@@ -312,7 +341,7 @@ export function goalRead({ subject, model, state, total }: GoalReadInput): GoalR
       link: 'Plan it',
     });
   }
-  if (top && top.count >= 3) {
+  if (general && top && top.count >= 3) {
     moves.push({
       id: 'reason',
       title: `Plan around "${top.label.toLowerCase()}"`,
@@ -321,12 +350,19 @@ export function goalRead({ subject, model, state, total }: GoalReadInput): GoalR
     });
   }
 
+  // The topic insights lead: they say which part of the goal is weak, which
+  // the counts above can't.
+  const fromTopics: GoalInsight[] = goal && topics ? topics.insights : [];
+
   const order = { bad: 0, flat: 1, good: 2 } as const;
   const weightOrder = { now: 0, next: 1, keep: 2 } as const;
   return {
     goal: goal?.title ?? '',
-    insights: insights.sort((a, b) => order[a.tone] - order[b.tone]),
-    moves: moves.sort((a, b) => weightOrder[a.weight] - weightOrder[b.weight]).slice(0, 5),
+    insights: [...fromTopics, ...insights.sort((a, b) => order[a.tone] - order[b.tone])],
+    // Stable sort: within a weight, the topic moves stay ahead of the levers.
+    moves: moves
+      .sort((a, b) => weightOrder[a.weight] - weightOrder[b.weight] || Number(Boolean(b.topical)) - Number(Boolean(a.topical)))
+      .slice(0, 5),
   };
 }
 
