@@ -1429,6 +1429,86 @@ html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-fold-n
 html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-fold-figure strong { font-size: 18px; }
 html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-card-label { color: #6F716C; }
 
+/* Linked goals: a hairline row with a sage dot, not a thick bar down the
+   side. Remove is quiet but readable, and the link under them is sage. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-link-on { gap: 8px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-link-on li {
+    border: 1px solid var(--paper-line);
+    border-radius: 10px;
+    padding: 12px 16px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-link-on li > span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-link-on li > span:first-child::before {
+    content: '';
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--paper-sage-deep);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-link-drop { color: var(--paper-muted); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-link-drop:hover:not(:disabled) { color: var(--ax-bad); border-color: var(--paper-line); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-link .ax-link { color: var(--paper-sage-deep); font-weight: 600; }
+
+/* Recommendations: the invite sits right under the title, then the steps
+   straight on the panel. No rule above them and no second box with a
+   coloured edge around them; the note says AI wrote them. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-panel > .ax-panel-head + .sb-draft {
+    margin-top: 0;
+    padding-top: 4px;
+    border-top: 0;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-ai-invite {
+    border: 1px solid var(--paper-line);
+    background: var(--paper-inset);
+    padding: 16px 18px;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-ai-invite .ax-btn.ax-btn {
+    border-color: transparent;
+    background: var(--paper-sage);
+    color: #FFFFFF;
+    font-weight: 600;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-ai-invite .ax-btn.ax-btn:hover:not(:disabled) { background: var(--paper-sage-deep); color: #FFFFFF; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sb-draft-body.sb-draft-body {
+    margin-top: 20px;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-batch-note { margin: 0 0 12px; color: var(--paper-muted); }
+
+/* Each step: a hairline card with no wash, a solid number disc, and the
+   facts that matter (Done, the difficulty) clear enough to read at a glance. */
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step-list { gap: 14px; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step.sx-step {
+    gap: 16px;
+    padding: 20px 22px;
+    border-color: var(--paper-line);
+    border-radius: 12px;
+    background-color: var(--paper-card);
+    background-image: none;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step.sx-step:hover { border-color: #DCD9D2; box-shadow: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step-rank.sx-step-rank {
+    background: var(--paper-sage);
+    box-shadow: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step.is-taken .sx-step-rank { background: var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step-meta .sx-chip:not(.is-planned) {
+    border-color: transparent;
+    background: var(--paper-sage-soft);
+    color: #5F7F63;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step-facts .is-difficulty { font-weight: 600; }
+html:not([data-skin]):not([data-theme="dark"]):has(.ax-page) .ax-page .sx-step-facts > span:not(.is-difficulty) { color: var(--paper-body); }
+
 /* ==========================================================================
    SKILL TREE
    The mockup on the lattice: the title standing on the page with the filter
