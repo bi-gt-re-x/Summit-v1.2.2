@@ -16,12 +16,12 @@ work: a task named for the step the reader is on, filed under the node, in the
 first free slot on the calendar. It carries its node in `tasks.skill_node`, so
 finishing it moves this tile however the title was edited in between.
 """
-from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from backend.api import booking
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.api.tasks import CreateTask, _create as create_task
@@ -97,21 +97,20 @@ def book(body: Book, username: str = Depends(current_username)):
 
     level = TIER_LEVEL.get(node['tier'], 3)
     xp = session_plan.xp_for(SESSION_MINUTES, level)
-    clock = datetime.now()
-    busy = session_plan.busy_spans(
-        db.columns_for('tasks', username, ('show_on_calendar', 'created_at', 'due_date')),
-        db.calendar_document(username), clock)
-    slot = session_plan.next_slot(SESSION_MINUTES, busy, clock)
+    subject = skill_progress.tree_subjects().get(node['tree'])
+    # Where the reader's record says this kind of work goes best, a day or
+    # two from the last session for the same subject (backend/api/booking.py).
+    slot = booking.Planner(username).place(SESSION_MINUTES, level, subject or 'skill:' + node['id'])
     if not slot:
         return fail('Your calendar has no free half hour in the next two weeks.')
-    start, end = slot
+    start, end = slot['start'], slot['end']
 
     goal_ids = figure.get('goal_ids') or []
     made = create_task(CreateTask(
         name=title, priority=session_plan.priority_for(xp), xp_reward=xp,
         timer_duration=SESSION_MINUTES,
         due_date=end.isoformat(timespec='seconds'), created_at=start.isoformat(timespec='seconds'),
-        show_on_calendar=True, subject=skill_progress.tree_subjects().get(node['tree']),
+        show_on_calendar=True, subject=subject,
         goal_id=goal_ids[0] if goal_ids else None,
     ), username)
     task_id = made.get('task_id') if isinstance(made, dict) else None
@@ -120,7 +119,7 @@ def book(body: Book, username: str = Depends(current_username)):
     db.update_row('tasks', task_id, {'skill_node': node['id'], 'description': description[:1000]},
                   user_id=username)
     return ok(task={'id': task_id, 'title': title, 'start': start.isoformat(timespec='minutes'),
-                    'end': end.isoformat(timespec='minutes'), 'xp': xp},
+                    'end': end.isoformat(timespec='minutes'), 'xp': xp, 'why': slot['why']},
               **reading(username))
 
 

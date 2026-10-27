@@ -44,6 +44,16 @@ import {
    copy of this called `hm`; this is the shared one. */
 import { minutes as hm } from '@/utils/format';
 
+/** "Tue 4 PM", "Sat 9:30 AM": when a booked session starts. */
+function shortWhen(iso: string): string {
+  const at = new Date(iso);
+  if (Number.isNaN(at.getTime())) return '';
+  const day = at.toLocaleDateString(undefined, { weekday: 'short' });
+  const time = at.toLocaleTimeString(undefined, { hour: 'numeric', minute: at.getMinutes() ? '2-digit' : undefined });
+  return `${day} ${time}`;
+}
+
+
 /** The word beside each row, and the colour it carries. */
 const KIND_LABEL: Record<ActionKind, string> = {
   deadline: 'Deadline',
@@ -112,7 +122,11 @@ function RowAction({ item, onDone }: { item: NextAction; onDone: () => void }) {
     setState('done');
     if (book && 'booked' in result) {
       const count = result.booked.length;
-      setNote(`Booked ${count} ${count === 1 ? 'session' : 'sessions'}. They're on your calendar.`);
+      const when = result.booked.map((one) => shortWhen(one.start)).filter(Boolean).join(', ');
+      const why = result.booked[0]?.why;
+      setNote(
+        `Booked ${count} ${count === 1 ? 'session' : 'sessions'}${when ? `: ${when}` : ''}.${why ? ` ${why}` : ''}`,
+      );
     } else if ('cleared' in result) {
       setNote(`Cleared ${result.cleared.length}.`);
     }

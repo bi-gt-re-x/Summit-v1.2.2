@@ -49,6 +49,7 @@ from statistics import median
 from typing import Dict, List, Optional, Tuple
 
 from backend.config.shared import RULES
+from backend.tracking import session_plan
 from backend.tracking import time_spent
 
 TIMING = RULES['session_timing']
@@ -217,11 +218,13 @@ def _hour_label(hour: int) -> str:
 
 def best_slot(minutes: int, difficulty, busy: List[Tuple[datetime, datetime]],
               booked: List[dict], subject: str, profile: dict,
-              now: datetime) -> Optional[dict]:
+              now: datetime, before: Optional[datetime] = None) -> Optional[dict]:
     """The best (start, end) for this session, with why, or None.
 
-    `booked` is the recommended sessions already on the calendar, each
+    `booked` is the planned sessions already on the calendar, each
     `{start, end, subject}`; `subject` is this one's, in the same terms.
+    `before` is a deadline the session has to end by (a goal's), when there
+    is one: a perfect Thursday after the exam is no use to it.
     """
     level = _level(difficulty) or 3
     length = timedelta(minutes=minutes)
@@ -259,6 +262,8 @@ def best_slot(minutes: int, difficulty, busy: List[Tuple[datetime, datetime]],
         gaps = [abs((date - other).days) for other in mine]
         spacing = sum(max(0, ideal_gap - gap) for gap in gaps)
         close_at = day + timedelta(hours=close_hour)
+        if before is not None:
+            close_at = min(close_at, before)
         start = max(day + timedelta(hours=open_hour), cursor)
         already = loads[date]
         load = max(0.0, already + minutes - usual) / usual if usual else 0.0
@@ -286,6 +291,31 @@ def best_slot(minutes: int, difficulty, busy: List[Tuple[datetime, datetime]],
         return None
     best['why'] = _why(best, hard, mean, profile)
     return best
+
+
+FIRST_FREE = 'The first free opening on your calendar.'
+
+
+def place(minutes: int, difficulty, subject: str, busy: List[Tuple[datetime, datetime]],
+          booked: List[dict], profile: dict, now: datetime,
+          before: Optional[datetime] = None) -> Optional[dict]:
+    """Where one planned session goes: `{start, end, why}`, or None.
+
+    `best_slot` first. When the spacing rules leave no day (every day in reach
+    already holds this subject, or two sessions), the first free slot instead,
+    still inside `before`, so a planner never answers "no room" while the
+    calendar has room. Every planner books through here, so a skill-tree
+    session, a goal's sessions and a subject page's next session all read the
+    same record and space around each other.
+    """
+    best = best_slot(minutes, difficulty, busy, booked, subject, profile, now, before)
+    if best:
+        return {'start': best['start'], 'end': best['end'], 'why': best['why']}
+    taken = list(busy) + [(one['start'], one['end']) for one in booked]
+    slot = session_plan.next_slot(minutes, taken, now)
+    if not slot or (before is not None and slot[1] > before):
+        return None
+    return {'start': slot[0], 'end': slot[1], 'why': FIRST_FREE}
 
 
 def _why(slot: dict, hard: bool, mean: float, profile: dict) -> str:

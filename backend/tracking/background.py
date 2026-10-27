@@ -23,6 +23,7 @@ The filing is rules, not a model: it runs on every save, has to be free, and a
 line put in the wrong pile is still the reader's own words in their own order.
 """
 import re
+from functools import lru_cache
 from datetime import datetime
 from typing import Dict, Iterable, List, Optional
 
@@ -180,8 +181,17 @@ ALIASES = {
 }
 
 
+@lru_cache(maxsize=4096)
+def _word(word: str):
+    """One word as a whole-word pattern, compiled once. Analytics asks
+    about every task name an account has, and building the pattern on each
+    call was seven million compiles for an account with twenty thousand
+    tasks (6.8 s of /api/analytics/said)."""
+    return re.compile(r'(?<![a-z0-9]){}(?![a-z0-9])'.format(re.escape(word)))
+
+
 def _says(lowered: str, word: str) -> bool:
-    return bool(re.search(r'(?<![a-z0-9]){}(?![a-z0-9])'.format(re.escape(word)), lowered))
+    return bool(_word(word).search(lowered))
 
 
 def subject_in(text: str, names: Dict[str, str]) -> Optional[str]:

@@ -1759,6 +1759,7 @@ export function LatticePanel({
             {booking.error ?? (
               <>
                 Added <b>{booking.task!.title}</b> for {whenOf(booking.task!.start)}.{' '}
+                {booking.task!.why && <span className="stx-lp-booked-why">{booking.task!.why} </span>}
                 <Link to={`/timer?task=${encodeURIComponent(booking.task!.id)}`}>Start it on the timer</Link>
               </>
             )}

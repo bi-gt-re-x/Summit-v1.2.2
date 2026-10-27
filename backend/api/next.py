@@ -4,12 +4,13 @@ The dashboard shows its top item and the analytics page's Recommendations tab
 shows the plan in full, both from here, so the two cannot disagree. The rules
 are backend/tracking/next_actions.py.
 """
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from backend.api import booking
 from backend.api.goals import _measure_of, _milestones_of
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
@@ -96,9 +97,10 @@ def book_sessions(body: BookSessions, username: str = Depends(current_username))
     The deadline row says "book 3 sessions"; this is the button. How many, how
     long and what each is called are worked out again here from the record
     (backend/tracking/record.py), not taken from the request, so a stale page
-    cannot book a week that is already done. One a day, each in the first free
-    slot of its day (session_plan.next_slot), linked to the goal and its
-    current checkpoint so the work counts toward it.
+    cannot book a week that is already done. Each goes where the reader's own
+    record says work goes best (backend/api/booking.py), on separate days,
+    before the goal's deadline, linked to the goal and its current checkpoint
+    so the work counts toward it.
     """
     _, user = load_user((username or '').strip())
     if not user:
@@ -116,30 +118,29 @@ def book_sessions(body: BookSessions, username: str = Depends(current_username))
     minutes = next_actions.SESSION_MINUTES
     xp = session_plan.xp_for(minutes, 3)
     title = read['next_step'] or read['checkpoint'] or '{}: practice'.format(goal.get('title') or 'Goal')
-    busy = session_plan.busy_spans(
-        db.columns_for('tasks', username, ('show_on_calendar', 'created_at', 'due_date')),
-        db.calendar_document(username), now)
-    booked, cursor = [], now
+    subject = (read['subjects'] or [None])[0]
+    planner = booking.Planner(username, now)
+    deadline = booking.ends_by(goal.get('deadline'))
+    booked = []
     for _ in range(read['to_book']):
-        slot = session_plan.next_slot(minutes, busy, cursor)
+        # Spaced by the goal's subject, or by the goal itself when it has
+        # none, so the week's sittings land on separate days (three in one
+        # afternoon is a cram, not a week).
+        slot = planner.place(minutes, 3, subject or 'goal:{}'.format(goal.get('id')), deadline)
         if not slot:
             break
-        start, end = slot
+        start, end = slot['start'], slot['end']
         made = create_task(CreateTask(
             name=title, priority=session_plan.priority_for(xp), xp_reward=xp,
             due_date=end.isoformat(timespec='seconds'), created_at=start.isoformat(timespec='seconds'),
-            show_on_calendar=True, subject=(read['subjects'] or [None])[0],
+            show_on_calendar=True, subject=subject,
             goal_id=str(goal.get('id')), milestone_id=read['checkpoint_id'],
         ), username)
         task_id = made.get('task_id') if isinstance(made, dict) else None
         if not task_id:
             break
         booked.append({'task_id': task_id, 'start': start.isoformat(timespec='minutes'),
-                       'end': end.isoformat(timespec='minutes')})
-        busy = sorted(busy + [(start, end)])
-        # The next one on a later day: three sittings in one afternoon is a
-        # cram, not a week.
-        cursor = (start + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+                       'end': end.isoformat(timespec='minutes'), 'why': slot['why']})
     if not booked:
         return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
     return ok(booked=booked, title=title, minutes=minutes)

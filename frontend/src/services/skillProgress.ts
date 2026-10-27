@@ -79,6 +79,8 @@ export interface Booked {
   start: string;
   end: string;
   xp: number;
+  /** Why this time, in a sentence (backend/tracking/session_timing.py). */
+  why?: string;
 }
 
 export function book(nodeId: string): Promise<ApiResult<SkillReading & { task: Booked }>> {

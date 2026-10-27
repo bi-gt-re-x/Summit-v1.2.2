@@ -80,6 +80,7 @@ hardest thing in the app by an order of magnitude.
 A hidden badge's progress is not sent while it is locked. Sending "412 / 10000"
 would be naming it in everything but the string.
 """
+import sqlite3
 from datetime import datetime
 
 from fastapi import APIRouter, Depends
@@ -526,7 +527,13 @@ def _sync_catalogue():
         fresh = _row_for(badge)
         row = held.get(badge['id'])
         if row is None:
-            db.insert_row('achievements', fresh)
+            # Two requests at once (the bell and the page both sweep on load)
+            # each find the badge missing and each insert it. The second one
+            # losing that race is the badge being there, which is the point.
+            try:
+                db.insert_row('achievements', fresh)
+            except sqlite3.IntegrityError:
+                pass
             continue
         # A stored BOOLEAN reads back as True where `_row_for` states 1, and
         # `True == 1` in Python, so the plain comparison is the right one here
@@ -848,8 +855,12 @@ def _record_earned(username, earned_ids):
     for badge_id in earned_ids:
         if badge_id in mine:
             continue
-        db.insert_row('user_achievements', {
-            'user_id': username, 'achievement_id': badge_id, 'earned_at': now})
+        try:
+            db.insert_row('user_achievements', {
+                'user_id': username, 'achievement_id': badge_id, 'earned_at': now})
+        except sqlite3.IntegrityError:
+            # Recorded a moment ago by a request running beside this one.
+            pass
         mine[badge_id] = now
     return mine
 

@@ -132,10 +132,17 @@ class Namer:
         self.groups = groups
         self.specific = {sid: name for sid, name in names.items()
                          if groups.get(sid) not in GENERIC_GROUPS}
+        # Task names repeat (a routine is the same name a hundred times), and
+        # a namer lives for one request, so its answers can be kept.
+        self._named: Dict[str, Optional[str]] = {}
+        self._topics: Dict[tuple, Optional[str]] = {}
 
     def subject(self, text: str) -> Optional[str]:
         """The subject a task name is about, specific subjects first."""
-        return background.subject_in(text, self.specific) or background.subject_in(text, self.names)
+        if text not in self._named:
+            self._named[text] = (background.subject_in(text, self.specific)
+                                 or background.subject_in(text, self.names))
+        return self._named[text]
 
     def said(self, text: str) -> Optional[str]:
         """The subject a sentence the reader wrote is about, skipping the
@@ -188,12 +195,14 @@ class Namer:
 
     def topic(self, text: str, filed: str) -> Optional[str]:
         """A finer subject in the same group as `filed`, named in `text`."""
+        key = (text, filed)
+        if key in self._topics:
+            return self._topics[key]
         group = self.groups.get(filed)
-        if not group:
-            return None
         same = {sid: name for sid, name in self.names.items()
-                if sid != filed and self.groups.get(sid) == group}
-        return background.subject_in(text, same) if same else None
+                if sid != filed and self.groups.get(sid) == group} if group else {}
+        self._topics[key] = background.subject_in(text, same) if same else None
+        return self._topics[key]
 
 
 def subjects_of(task: dict, namer: Namer) -> set:

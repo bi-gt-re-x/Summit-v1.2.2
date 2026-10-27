@@ -82,14 +82,16 @@ export function nextActions(budget: number = DEFAULT_BUDGET): Promise<ApiResult<
 }
 
 export interface Booked {
-  booked: { task_id: string; start: string; end: string }[];
+  /** `why` says why that time, in a sentence (backend/tracking/session_timing.py). */
+  booked: { task_id: string; start: string; end: string; why?: string }[];
   title: string;
   minutes: number;
 }
 
 /**
- * Book the sittings a dated goal needs this week, one a day. The server works
- * the count out again from the record rather than trusting the page's.
+ * Book the sittings a dated goal needs this week, on separate days, at the
+ * hours the reader's record says work goes best. The server works the count
+ * out again from the record rather than trusting the page's.
  */
 export function bookSessions(goalId: string): Promise<ApiResult<Booked>> {
   return post<Booked>('/api/next_actions/book', { goal_id: goalId });

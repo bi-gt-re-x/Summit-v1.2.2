@@ -45,13 +45,13 @@ from backend.api.reply import fail, ok as _ok
 from backend.tracking.plainwords import plain
 from backend.database import connection as db
 from backend.api.tasks import CreateTask, _create as create_task
+from backend.api import booking
 from backend.api import subjects as user_subjects
 from backend.config import subjects as subject_catalogue
 from backend.tracking import free_resources
 from backend.tracking import next_sessions
 from backend.tracking import review_sessions
 from backend.tracking import session_plan
-from backend.tracking import session_timing
 from backend.tracking import subject_ai
 from backend.tracking import background as about_you
 from backend.tracking import journal
@@ -875,24 +875,13 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     if not subject_id and row.get('subject') in ACROSS:
         subject_id = next_sessions.subject_named(row.get('focus'), _subject_names(username)) or ''
 
-    # When: the best opening for this reader (session_timing), spaced from the
-    # sessions already booked for the same subject, else the first free one.
-    now = datetime.now()
-    tasks = db.columns_for('tasks', username, (
-        'id', 'status', 'show_on_calendar', 'created_at', 'due_date', 'completed_at',
-        'completion_seconds', 'execution', 'difficulty', 'subject'))
-    busy = session_plan.busy_spans(tasks, db.calendar_document(username), now)
-    booked = _booked_sessions(username, tasks, now, exclude=row['id'])
-    profile = session_timing.rhythm(tasks, db.rows_for('focus_days', username), now)
-    best = session_timing.best_slot(minutes, row.get('difficulty'), busy, booked,
-                                    _spacing_key(subject_id, row), profile, now)
-    if best:
-        start, end, why = best['start'], best['end'], best['why']
-    else:
-        slot = session_plan.next_slot(minutes, busy, now)
-        if not slot:
-            return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
-        (start, end), why = slot, 'The first free opening on your calendar.'
+    # When: the best opening for this reader, spaced from every session a
+    # planner has booked for the same subject (backend/api/booking.py).
+    slot = booking.Planner(username, exclude_recommendation=row['id']).place(
+        minutes, row.get('difficulty'), _spacing_key(subject_id, row))
+    if not slot:
+        return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
+    start, end, why = slot['start'], slot['end'], slot['why']
 
     made = create_task(CreateTask(
         name=row.get('title') or 'Practice session',
@@ -940,26 +929,6 @@ def _spacing_key(subject_id: str, row: dict) -> str:
         return subject_id
     subject = row.get('subject') or ''
     return '' if subject in ACROSS else subject
-
-
-def _booked_sessions(username: str, tasks: list, now: datetime, exclude: str = '') -> list:
-    """Recommended sessions booked and still ahead, as session_timing reads
-    them: `{start, end, subject}`."""
-    by_id = {task.get('id'): task for task in tasks}
-    out = []
-    for other in db.rows_for('subject_recommendations', username):
-        if other.get('id') == exclude or other.get('taken_at') or not other.get('task_id'):
-            continue
-        task = by_id.get(other['task_id'])
-        if not task or task.get('status') == 'done':
-            continue
-        start = session_plan._parse(task.get('created_at'))
-        end = session_plan._parse(task.get('due_date'))
-        if not start or not end or end <= now:
-            continue
-        out.append({'start': start, 'end': end,
-                    'subject': _spacing_key(task.get('subject') or '', other)})
-    return out
 
 
 class TakeRecommendation(BaseModel):

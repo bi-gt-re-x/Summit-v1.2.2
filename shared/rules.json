@@ -37,7 +37,7 @@
   },
 
   "session_timing": {
-    "_about": "When a recommended session is booked (Plan my next session, Plan all). Slots are scored on the reader's own record: how well work at that hour goes, how often they work then, how much of that weekday they usually work, how full the day already is, and how soon it is. Two sessions for the same subject never share a day, and are best gap_days apart by difficulty (1-5). backend/tracking/session_timing.py applies it.",
+    "_about": "When any planner books a session: a subject page (Plan my next session, Plan all), a dated goal (Book N sessions) or the skill tree (Plan a session), all through backend/api/booking.py. Sessions from every planner space around each other, and a goal's end by its deadline. Slots are scored on the reader's own record: how well work at that hour goes, how often they work then, how much of that weekday they usually work, how full the day already is, and how soon it is. Two sessions for the same subject never share a day, and are best gap_days apart by difficulty (1-5). backend/tracking/session_timing.py applies it.",
     "lookback_days": 120,
     "gap_days": { "1": 1, "2": 1, "3": 1, "4": 2, "5": 2 },
     "most_per_day": 2,
