@@ -30,7 +30,10 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import * as skillProgress from '@/services/skillProgress';
 import type { CheckQuestion, SkillCheck as Check, SkillReading } from '@/services/skillProgress';
+import type { Figure } from '@/services/skillSteps';
 import { readingOf } from '@/hooks/useSkillReading';
+import { Calculator } from './Calculator';
+import { ProblemFigure } from './ProblemFigure';
 import '@/styles/skillcheck.css';
 
 /** What the problems' three grades are called on screen. */
@@ -44,8 +47,8 @@ type Phase =
   | { kind: 'loading' }
   | { kind: 'failed'; message: string }
   | { kind: 'asking' }
-  | { kind: 'revealed'; answer: string }
-  | { kind: 'graded'; right: boolean; how: string; answer: string }
+  | { kind: 'revealed'; answer: string; figure?: Figure }
+  | { kind: 'graded'; right: boolean; how: string; answer: string; figure?: Figure }
   | { kind: 'done' };
 
 interface Final {
@@ -71,6 +74,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
   const [index, setIndex] = useState(0);
   const [given, setGiven] = useState('');
   const [hint, setHint] = useState(false);
+  const [calculator, setCalculator] = useState(false);
   const [busy, setBusy] = useState(false);
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
   const [final, setFinal] = useState<Final | null>(null);
@@ -149,7 +153,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
         }
         setCheck(reply.check);
         if (reply.reveal) {
-          setPhase({ kind: 'revealed', answer: reply.reveal.answer });
+          setPhase({ kind: 'revealed', answer: reply.reveal.answer, figure: reply.reveal.figure });
           return;
         }
         if (reply.result) {
@@ -158,6 +162,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
             right: reply.result.right,
             how: reply.result.how,
             answer: reply.result.answer,
+            figure: reply.result.figure,
           });
         }
         if (reply.progress) {
@@ -183,6 +188,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
     setIndex(firstOpen(check));
     setGiven('');
     setHint(false);
+    setCalculator(false);
     setPhase({ kind: 'asking' });
   }, [check, final]);
 
@@ -225,19 +231,32 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
           <span className={`skc-level is-${question.weight}`}>{LEVEL[question.weight]}</span>
         </p>
         <p className="skc-prompt">{question.prompt}</p>
+        {question.figure && <ProblemFigure figure={question.figure} />}
 
-        {question.hint &&
-          (hint ? (
-            <p className="skc-hint">
-              <b>Hint</b> {question.hint}
-            </p>
-          ) : (
-            !locked && (
+        {question.hint && hint && (
+          <p className="skc-hint">
+            <b>Hint</b> {question.hint}
+          </p>
+        )}
+        {!locked && ((question.hint && !hint) || question.tools?.includes('calculator')) && (
+          <p className="skc-aids">
+            {question.hint && !hint && (
               <button type="button" className="skc-link" onClick={() => setHint(true)}>
                 Get a hint
               </button>
-            )
-          ))}
+            )}
+            {question.tools?.includes('calculator') && (
+              <button
+                type="button"
+                className="skc-link"
+                aria-expanded={calculator}
+                onClick={() => setCalculator((was) => !was)}
+              >
+                {calculator ? 'Hide calculator' : 'Use a calculator'}
+              </button>
+            )}
+          </p>
+        )}
 
         <label className="skc-label" htmlFor={`${titleId}-answer`}>
           Your answer
@@ -269,6 +288,15 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
                 event.preventDefault();
                 void send({ given });
               }
+            }}
+          />
+        )}
+        {calculator && !locked && question.tools?.includes('calculator') && (
+          <Calculator
+            onClose={() => setCalculator(false)}
+            onUse={(value) => {
+              setGiven(value);
+              field.current?.focus();
             }}
           />
         )}
@@ -305,6 +333,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
         <div className="skc-verdict">
           <strong>Here's the worked answer</strong>
           <p className="skc-answer">{phase.answer}</p>
+          {phase.figure && <ProblemFigure figure={phase.figure} answer />}
           <span>Did yours match?</span>
         </div>
         <div className="skc-actions">
@@ -337,6 +366,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
               {phase.answer}
             </p>
           )}
+          {phase.figure && (!phase.right || phase.how !== 'self') && <ProblemFigure figure={phase.figure} answer />}
         </div>
         <button type="button" ref={next} className="skc-btn is-primary" onClick={goOn}>
           {last ? 'See results' : 'Next question'}
@@ -444,6 +474,7 @@ function Results({
             </span>
             <div>
               <p className="skc-review-prompt">{question.prompt}</p>
+              {question.figure && <ProblemFigure figure={question.figure} />}
               {question.result && (
                 <p className="skc-review-answer">
                   {question.result.given && question.result.how !== 'skipped' ? (
@@ -454,6 +485,7 @@ function Results({
                   Answer: {question.result.answer}
                 </p>
               )}
+              {question.result?.figure && <ProblemFigure figure={question.result.figure} answer />}
             </div>
           </li>
         ))}

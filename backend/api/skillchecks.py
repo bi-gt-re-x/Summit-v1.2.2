@@ -73,6 +73,24 @@ def _answers(row):
     return answers + [None] * (asked - len(answers))
 
 
+def _aids(problem):
+    """What goes out with the question: its figure and its tools. The answer's
+    figure is the answer, so it waits (`_worked`)."""
+    aids = problem.get('aids') or {}
+    out = {}
+    if aids.get('figure'):
+        out['figure'] = aids['figure']
+    if aids.get('tools'):
+        out['tools'] = list(aids['tools'])
+    return out
+
+
+def _worked(problem):
+    """The answer's figure, for a reply that already carries the answer."""
+    figure = (problem.get('aids') or {}).get('answer_figure')
+    return {'figure': figure} if figure else {}
+
+
 def _public(row, problems):
     """The check as the quiz screen draws it. An unanswered question has no
     answer in it."""
@@ -88,12 +106,14 @@ def _public(row, problems):
             'prompt': problem.get('prompt', ''),
             'hint': problem.get('hint', ''),
             'auto': skill_check.gradable(problem.get('answer', '')),
+            **_aids(problem),
             'result': None,
         }
         mark = answers[index]
         if mark:
             entry['result'] = {'given': mark.get('given', ''), 'right': bool(mark.get('right')),
-                               'how': mark.get('how', ''), 'answer': problem.get('answer', '')}
+                               'how': mark.get('how', ''), 'answer': problem.get('answer', ''),
+                               **_worked(problem)}
         questions.append(entry)
     node = skill_progress.catalog().get(row['node_id']) or {}
     finished = row.get('passed') is not None
@@ -227,7 +247,8 @@ def answer(body: Answer, username: str = Depends(current_username)):
             # A sentence answer: show it, and let the reader say whether
             # theirs matched. Nothing is recorded until they do.
             return ok(check=_public(row, problems),
-                      reveal={'index': body.index, 'answer': problem['answer'], 'given': given})
+                      reveal={'index': body.index, 'answer': problem['answer'], 'given': given,
+                              **_worked(problem)})
 
     attempt, reason = clean_attempt({
         'node_id': row['node_id'], 'ordinal': question['ordinal'], 'slot': question['slot'],
@@ -251,7 +272,8 @@ def answer(body: Answer, username: str = Depends(current_username)):
     row = {**row, **changes}
 
     reply = {'check': _public(row, problems),
-             'result': {'index': body.index, 'right': right, 'how': how, 'answer': problem['answer']}}
+             'result': {'index': body.index, 'right': right, 'how': how, 'answer': problem['answer'],
+                        **_worked(problem)}}
     if finished:
         after = reading(username)
         reply['progress'] = after

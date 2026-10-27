@@ -49,6 +49,7 @@ turns what `programmes_for` returns into JSON and decides nothing.
 """
 import re
 
+from backend.config.shared import RULES
 from backend.database import connection
 
 # ---------------------------------------------------------------------------
@@ -487,6 +488,7 @@ def programmes_for(node_ids):
                 'prompt': problem['prompt'],
                 'answer': problem['answer'],
                 'hint': problem['hint'],
+                **({'aids': problem['aids']} if problem.get('aids') else {}),
             })
         out[node_id] = [{
             'ordinal': row['ordinal'],
@@ -619,9 +621,13 @@ def problem_failures(problem, step, others=()):
             problem.get('weight'), '/'.join(WEIGHTS)))
 
     prompt = str(problem['prompt']).strip()
+    aids = problem.get('aids') or {}
+    bad.extend(aid_failures(aids))
     # The same rule the steps live by: a question has to name what it is about.
-    # "Try a harder one" is not a problem.
+    # "Try a harder one" is not a problem. A figure under it names what it is
+    # about by drawing it.
     if not (SPECIFIC_CHARS.search(prompt) or NOTATION.search(prompt)
+            or (isinstance(aids, dict) and aids.get('figure'))
             or '"' in prompt or "'" in prompt
             or re.search(r'\b[A-Z][a-z]{2,}', prompt[1:])):
         bad.append('concrete:names no number, notation or proper noun')
@@ -660,6 +666,172 @@ def problem_failures(problem, step, others=()):
                 str(other.get('prompt', ''))[:60]))
             break
 
+    return bad
+
+
+# ---------------------------------------------------------------------------
+# Aids: a figure, a figure for the answer, tools
+# ---------------------------------------------------------------------------
+_AIDS = RULES['problem_aids']
+
+#: The tools a problem may offer, the figure kinds and plot marks a page can
+#: draw, and the words a plotted curve may use. All from shared/rules.json,
+#: which the calculator and the figure read too.
+TOOLS = tuple(_AIDS['tools'])
+FIGURE_KINDS = tuple(_AIDS['figure_kinds'])
+PLOT_MARKS = tuple(_AIDS['plot_marks'])
+FN_WORDS = frozenset(_AIDS['calc_words'])
+
+#: What a figure may hold before it stops being a figure and becomes a page.
+FIGURE_LIMITS = {'items': 40, 'rows': 12, 'columns': 8, 'nodes': 16, 'edges': 30,
+                 'bars': 12, 'text': 80}
+
+
+def _num(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and value == value
+
+
+def _xy(value):
+    return isinstance(value, (list, tuple)) and len(value) == 2 and all(_num(v) for v in value)
+
+
+def _short(value):
+    return isinstance(value, (str, int, float)) and len(str(value)) <= FIGURE_LIMITS['text']
+
+
+def figure_failures(figure, where='figure'):
+    """Every way a figure spec is malformed. Empty is drawable.
+
+    The page draws whatever comes through here, so this is the line between a
+    figure and a broken box under a question: every number a number, every
+    list inside its limit, every label short enough to sit on a diagram.
+    """
+    if not isinstance(figure, dict):
+        return ['aids:{} is not an object'.format(where)]
+    kind = figure.get('kind')
+    if kind not in FIGURE_KINDS:
+        return ['aids:{} kind {!r} is not one of {}'.format(where, kind, '/'.join(FIGURE_KINDS))]
+    bad = []
+
+    def say(text):
+        bad.append('aids:{} {}: {}'.format(where, kind, text))
+
+    if 'caption' in figure and not _short(figure['caption']):
+        say('caption is too long')
+    if kind == 'plot':
+        for axis in ('x', 'y'):
+            span = figure.get(axis)
+            if not _xy(span) or span[0] >= span[1]:
+                say('{} wants [low, high]'.format(axis))
+        step = figure.get('step')
+        if step is not None and not ((_num(step) and step > 0)
+                                     or (_xy(step) and min(step) > 0)):
+            say('step wants a positive number or [x, y]')
+        items = figure.get('items')
+        if not isinstance(items, list) or not items or len(items) > FIGURE_LIMITS['items']:
+            say('items wants 1-{} marks'.format(FIGURE_LIMITS['items']))
+            items = []
+        for at, item in enumerate(items, start=1):
+            marks = [name for name in PLOT_MARKS if name in (item if isinstance(item, dict) else {})]
+            if len(marks) != 1:
+                say('item {} names {} marks, wants one of {}'.format(at, len(marks), '/'.join(PLOT_MARKS)))
+                continue
+            mark, value = marks[0], item[marks[0]]
+            if mark in ('line', 'arrow'):
+                ok = isinstance(value, list) and len(value) == 2 and all(_xy(v) for v in value)
+            elif mark == 'path':
+                ok = isinstance(value, list) and 2 <= len(value) <= 200 and all(_xy(v) for v in value)
+            elif mark == 'circle':
+                ok = isinstance(value, list) and len(value) == 3 and all(_num(v) for v in value) and value[2] > 0
+            elif mark in ('point', 'text'):
+                ok = _xy(value) and (mark != 'text' or _short(item.get('label', '')) and item.get('label'))
+            elif mark == 'angle':
+                ok = isinstance(value, list) and len(value) == 3 and all(_xy(v) for v in value)
+            else:
+                ok = (isinstance(value, str) and 0 < len(value) <= 80
+                      and set(re.findall(r'[a-z]+', value.lower())) <= FN_WORDS
+                      and re.fullmatch(r'[\w\s.+\-*/^()]+', value) is not None)
+            if not ok:
+                say('item {} has a malformed {}'.format(at, mark))
+            if 'label' in item and not _short(item['label']):
+                say('item {} label is too long'.format(at))
+    elif kind == 'bars':
+        labels, values = figure.get('labels'), figure.get('values')
+        if (not isinstance(labels, list) or not isinstance(values, list) or not values
+                or len(labels) != len(values) or len(values) > FIGURE_LIMITS['bars']):
+            say('labels and values want the same 1-{} entries'.format(FIGURE_LIMITS['bars']))
+        else:
+            if not all(_num(v) for v in values):
+                say('values are not all numbers')
+            if not all(_short(v) for v in labels):
+                say('a label is too long')
+    elif kind == 'table':
+        rows, head = figure.get('rows'), figure.get('head')
+        if not isinstance(rows, list) or not rows or len(rows) > FIGURE_LIMITS['rows']:
+            say('rows wants 1-{} rows'.format(FIGURE_LIMITS['rows']))
+        else:
+            widths = {len(row) if isinstance(row, list) else -1 for row in rows}
+            if head is not None:
+                widths.add(len(head) if isinstance(head, list) else -1)
+            if len(widths) != 1 or min(widths) < 1 or max(widths) > FIGURE_LIMITS['columns']:
+                say('every row wants the same 1-{} cells'.format(FIGURE_LIMITS['columns']))
+            elif not all(_short(cell) for row in rows + [head or []] for cell in row):
+                say('a cell is too long')
+    elif kind == 'graph':
+        nodes, edges = figure.get('nodes'), figure.get('edges')
+        if not isinstance(nodes, list) or not nodes or len(nodes) > FIGURE_LIMITS['nodes']:
+            say('nodes wants 1-{} nodes'.format(FIGURE_LIMITS['nodes']))
+            nodes = []
+        ids = set()
+        for node in nodes:
+            if (not isinstance(node, dict) or not _short(node.get('id', ''))
+                    or not node.get('id') or not _xy(node.get('at'))
+                    or not all(0 <= v <= 100 for v in node['at'])):
+                say('a node wants an id and at: [0-100, 0-100]')
+                break
+            ids.add(str(node['id']))
+        if not isinstance(edges, list) or len(edges) > FIGURE_LIMITS['edges']:
+            say('edges wants 0-{} edges'.format(FIGURE_LIMITS['edges']))
+            edges = []
+        for edge in edges:
+            if (not isinstance(edge, dict) or str(edge.get('from')) not in ids
+                    or str(edge.get('to')) not in ids
+                    or ('label' in edge and not _short(edge['label']))):
+                say('an edge names a node that is not there')
+                break
+    elif kind == 'numberline':
+        low, high = figure.get('from'), figure.get('to')
+        if not (_num(low) and _num(high) and low < high):
+            say('from and to want two numbers, low first')
+        elif not _num(figure.get('step')) or figure['step'] <= 0 or (high - low) / figure['step'] > 40:
+            say('step wants a positive number giving at most 40 ticks')
+        for point in figure.get('points') or []:
+            if not isinstance(point, dict) or not _num(point.get('at')):
+                say('a point wants at: number')
+                break
+        for span in figure.get('ranges') or []:
+            if not isinstance(span, dict) or not (_num(span.get('from')) or _num(span.get('to'))):
+                say('a range wants from and/or to')
+                break
+    return bad
+
+
+def aid_failures(aids):
+    """Every way a problem's `aids` is malformed. Empty (or no aids) passes."""
+    if not aids:
+        return []
+    if not isinstance(aids, dict):
+        return ['aids:not an object']
+    bad = []
+    unknown = set(aids) - {'figure', 'answer_figure', 'tools'}
+    if unknown:
+        bad.append('aids:unknown field(s) {}'.format(', '.join(sorted(unknown))))
+    for where in ('figure', 'answer_figure'):
+        if where in aids:
+            bad.extend(figure_failures(aids[where], where))
+    tools = aids.get('tools', [])
+    if not isinstance(tools, list) or not set(tools) <= set(TOOLS):
+        bad.append('aids:tools {!r} are not all in {}'.format(tools, '/'.join(TOOLS)))
     return bad
 
 

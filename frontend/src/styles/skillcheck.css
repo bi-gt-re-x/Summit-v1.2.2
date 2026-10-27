@@ -221,6 +221,9 @@
 }
 .skc-link:hover:not(:disabled) { text-decoration: underline; }
 .skc-card > .skc-link { display: block; margin: -8px 0 var(--space-3); }
+/* The hint and calculator links, side by side under the question. */
+.skc-aids { display: flex; flex-wrap: wrap; gap: var(--space-4); margin: -8px 0 var(--space-3); }
+.skc-card .pcalc { margin-bottom: var(--space-3); }
 .skc-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); }
 
 /* ---- the bar along the bottom ---- */
@@ -238,7 +241,15 @@
     border-top: 1px solid var(--color-line);
     background: var(--color-surface);
     animation: skc-bar .16s ease-out;
+    /* An answer with a drawing can be taller than a phone is short. */
+    max-height: 62vh;
+    overflow-y: auto;
 }
+.skc-verdict .pfig { max-width: 440px; }
+.skc-verdict .pfig-svg { max-height: 220px; }
+/* Room under the question for a bar that carries an answer figure. */
+.skc:has(.skc-bar .pfig) .skc-main { padding-bottom: 62vh; }
+.skc-review .pfig { max-width: 360px; margin: var(--space-2) 0; }
 @keyframes skc-bar {
     from { transform: translateY(12px); opacity: .4; }
     to { transform: none; opacity: 1; }

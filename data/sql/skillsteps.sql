@@ -235,6 +235,14 @@ CREATE TABLE IF NOT EXISTS skill_problems (
     -- One line of help, shown only if the reader asks. May be empty: a warm-up
     -- that needs a hint is not a warm-up.
     hint         TEXT    NOT NULL DEFAULT '',
+    -- What the problem comes with besides words, as JSON: `figure` drawn
+    -- under the question, `answer_figure` drawn with the worked answer, and
+    -- `tools` the reader may open (only 'calculator' so far). NULL or {} for
+    -- a problem that is words alone, which is most of them. The figure is a
+    -- small spec rather than SVG, so it follows the theme and can't carry
+    -- markup; backend/tracking/skillsteps.py checks its shape and
+    -- frontend/src/components/SkillTree/ProblemFigure.tsx draws it.
+    aids         TEXT,
 
     tree_id      TEXT    NOT NULL,
     model        TEXT    NOT NULL,

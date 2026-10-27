@@ -266,5 +266,13 @@
       { "key": "preferences", "label": "Preferences" },
       { "key": "reflections", "label": "How you work" }
     ]
+  },
+
+  "problem_aids": {
+    "_about": "What a skill-tree problem can come with besides words. backend/tracking/skillsteps.py checks a problem's aids against these lists, and frontend/src/components/SkillTree/ProblemFigure.tsx and Calculator.tsx draw them. calc_words are the only words the calculator reads and the only ones a plotted fn may use, so a figure can never carry code.",
+    "tools": ["calculator"],
+    "figure_kinds": ["plot", "bars", "table", "graph", "numberline"],
+    "plot_marks": ["line", "arrow", "path", "circle", "point", "text", "angle", "fn"],
+    "calc_words": ["x", "ans", "pi", "e", "sqrt", "abs", "sin", "cos", "tan", "asin", "acos", "atan", "ln", "log", "exp", "floor", "ceil"]
   }
 }

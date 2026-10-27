@@ -110,6 +110,8 @@ import {
   type StepPlan,
 } from '@/utils/skillSteps';
 import type { Problem as ProblemRow, WrittenStep } from '@/services/skillSteps';
+import { Calculator } from './Calculator';
+import { ProblemFigure } from './ProblemFigure';
 import {
   WEIGHT_BLURB,
   WEIGHT_LABEL,
@@ -291,22 +293,39 @@ function asPractice(
 function Problem({ problem, mark }: { problem: ProblemRow; mark?: React.ReactNode }) {
   const [showHint, setShowHint] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [showCalc, setShowCalc] = useState(false);
+  const aids = problem.aids ?? {};
+  const calculator = aids.tools?.includes('calculator');
 
   // A new question is a new attempt: both reveals close.
   useEffect(() => {
     setShowHint(false);
     setShowAnswer(false);
+    setShowCalc(false);
   }, [problem.prompt]);
 
   return (
     <div className="stx-problem">
       <p className="stx-problem-prompt">{problem.prompt}</p>
+      {aids.figure && <ProblemFigure figure={aids.figure} />}
       {showHint && problem.hint && <p className="stx-problem-hint">{problem.hint}</p>}
       {showAnswer && <p className="stx-problem-answer">{problem.answer}</p>}
+      {showAnswer && aids.answer_figure && <ProblemFigure figure={aids.answer_figure} answer />}
+      {showCalc && <Calculator onClose={() => setShowCalc(false)} />}
       <p className="stx-problem-acts">
         {problem.hint && !showHint && !showAnswer && (
           <button type="button" className="stx-problem-act" onClick={() => setShowHint(true)}>
             Hint
+          </button>
+        )}
+        {calculator && (
+          <button
+            type="button"
+            className="stx-problem-act"
+            aria-expanded={showCalc}
+            onClick={() => setShowCalc((was) => !was)}
+          >
+            {showCalc ? 'Hide calculator' : 'Calculator'}
           </button>
         )}
         <button

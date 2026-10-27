@@ -14,6 +14,7 @@ The node ids are the real catalogue's (data/skill_nodes.json), because the
 rules read it: Arithmetic (m.arith) is a root of the Mathematics tree, and
 Order of Operations (m.order) and Fractions (m.fractions) both need it.
 """
+import json
 import random
 
 from backend.database import connection as db
@@ -644,3 +645,54 @@ def test_a_running_check_with_answers_is_never_dropped(client):
                                    'answers': [{'given': '', 'right': False, 'how': 'skipped'}] + [None] * 4})
     client.post('/api/skill-checks/start', json={'node_id': 'm.arith'})
     assert db.find_row('skill_checks', later, user_id='tester')
+
+
+# ---------------------------------------------------------------------------
+# Aids: a figure, an answer figure, a calculator
+# ---------------------------------------------------------------------------
+FIGURE = {'kind': 'plot', 'x': [0, 4], 'y': [0, 3], 'items': [{'path': [[0, 0], [4, 0], [0, 3]], 'closed': True}]}
+WORKED = {'kind': 'table', 'rows': [[3, 4, 5]]}
+
+
+def test_a_well_formed_figure_passes_and_a_broken_one_says_why():
+    assert skillsteps.aid_failures({'figure': FIGURE, 'answer_figure': WORKED, 'tools': ['calculator']}) == []
+    assert skillsteps.aid_failures({}) == []
+    assert skillsteps.aid_failures({'tools': ['abacus']})
+    assert skillsteps.aid_failures({'figure': {'kind': 'photo'}})
+    assert skillsteps.aid_failures({'figure': {**FIGURE, 'x': [4, 0]}})
+    # A curve may only use the calculator's own words, so it can't carry code.
+    assert skillsteps.aid_failures({'figure': {**FIGURE, 'items': [{'fn': 'alert(1)'}]}})
+    assert skillsteps.aid_failures({'figure': {**FIGURE, 'items': [{'fn': 'sin(x) + x^2'}]}}) == []
+    assert skillsteps.aid_failures({'figure': {'kind': 'graph', 'nodes': [{'id': 'A', 'at': [10, 10]}],
+                                               'edges': [{'from': 'A', 'to': 'B'}]}})
+
+
+def test_a_figure_makes_a_question_concrete():
+    problem = {'slot': 1, 'weight': 'warmup', 'prompt': 'Which side is the hypotenuse here?', 'answer': 'The long one.'}
+    assert any(f.startswith('concrete') for f in skillsteps.problem_failures(problem, {}))
+    assert skillsteps.problem_failures({**problem, 'aids': {'figure': FIGURE}}, {}) == []
+
+
+def test_every_aid_in_the_library_is_drawable():
+    import json
+    with open('data/skill_steps_seed.json', encoding='utf-8') as handle:
+        programmes = json.load(handle)['programmes']
+    aids = [p['aids'] for prog in programmes.values() for step in prog['steps']
+            for p in step.get('problems', []) if p.get('aids')]
+    assert len(aids) > 200
+    assert [failure for one in aids for failure in skillsteps.aid_failures(one)] == []
+
+
+def test_the_answer_figure_waits_for_the_answer(client):
+    _seed_check()
+    for n in range(1, 6):
+        rows = db.skill_problems_for(['m.arith'])['m.arith']
+        db.save_step_problems('m.arith', n, [
+            {**row, 'aids': {'figure': FIGURE, 'answer_figure': WORKED, 'tools': ['calculator']}}
+            for row in rows if row['ordinal'] == n])
+    check = client.post('/api/skill-checks/start', json={'node_id': 'm.arith'}).json()['check']
+    question = check['questions'][0]
+    assert question['figure'] == FIGURE and question['tools'] == ['calculator']
+    assert 'answer_figure' not in json.dumps(check) and 'figure' not in (question['result'] or {})
+    final = _answer_all(client, check, right=True)
+    assert all(q['result']['figure'] == WORKED for q in final['check']['questions'])

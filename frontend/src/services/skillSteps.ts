@@ -42,7 +42,82 @@ export interface Problem {
   prompt: string;
   answer: string;
   hint: string;
+  /** A figure, an answer figure, tools. Absent on a problem that is words alone. */
+  aids?: ProblemAids;
 }
+
+/**
+ * What a problem comes with besides words. The figure is drawn under the
+ * question, the answer figure beside the worked answer, and the tools are
+ * offered while it's being worked. Checked by backend/tracking/skillsteps.py
+ * and drawn by components/SkillTree/ProblemFigure and Calculator.
+ */
+export interface ProblemAids {
+  figure?: Figure;
+  answer_figure?: Figure;
+  tools?: ProblemTool[];
+}
+
+export type ProblemTool = 'calculator';
+
+// The figure spec. Each kind is described in components/SkillTree/ProblemFigure.
+type Pt = [number, number];
+export type FigureTone = 'ink' | 'accent' | 'muted' | 'good' | 'bad';
+export type FigurePlace = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | 'c';
+
+interface MarkBase {
+  label?: string | number;
+  /** Where the label sits, as a compass point from the mark. */
+  at?: FigurePlace;
+  tone?: FigureTone;
+  dash?: boolean;
+}
+
+export type FigureMark = MarkBase &
+  (
+    | { line: [Pt, Pt] }
+    | { arrow: [Pt, Pt] }
+    | { path: Pt[]; closed?: boolean; fill?: boolean }
+    | { circle: [number, number, number]; fill?: boolean }
+    | { point: Pt; open?: boolean }
+    | { text: Pt }
+    | { angle: [Pt, Pt, Pt]; right?: boolean }
+    | { fn: string; from?: number; to?: number }
+  );
+
+export type Figure = { caption?: string } & (
+  | {
+      kind: 'plot';
+      x: [number, number];
+      y: [number, number];
+      grid?: boolean;
+      axes?: boolean;
+      equal?: boolean;
+      /** Tick spacing, one for both axes or [x, y]; worked out from the range when absent. */
+      step?: number | [number, number];
+      xlabel?: string;
+      ylabel?: string;
+      items: FigureMark[];
+    }
+  | { kind: 'bars'; labels: (string | number)[]; values: number[]; unit?: string; highlight?: number[] }
+  | { kind: 'table'; head?: (string | number)[]; rows: (string | number)[][]; highlight?: [number, number][] }
+  | {
+      kind: 'graph';
+      nodes: { id: string | number; at: Pt; label?: string; tone?: FigureTone }[];
+      edges: { from: string | number; to: string | number; label?: string | number; dir?: boolean; tone?: FigureTone }[];
+    }
+  | {
+      kind: 'numberline';
+      from: number;
+      to: number;
+      step: number;
+      /** Which ticks get a number: every one by default, or every nth. */
+      every?: number;
+      points?: { at: number; label?: string; open?: boolean; tone?: FigureTone }[];
+      ranges?: { from?: number; to?: number; tone?: FigureTone }[];
+    }
+);
+
 
 /** One step, as the panel draws it. Mirrors backend/tracking/skillsteps.py. */
 export interface WrittenStep {

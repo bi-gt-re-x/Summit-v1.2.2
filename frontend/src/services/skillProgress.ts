@@ -13,6 +13,7 @@
  */
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
+import type { Figure, ProblemTool } from './skillSteps';
 
 /** Work that counted toward a node, newest first, one row per name: a
  *  routine that repeats its name is one row with a count. `id` and `day` are
@@ -109,6 +110,8 @@ export interface CheckResult {
   right: boolean;
   how: 'auto' | 'self' | 'skipped' | string;
   answer: string;
+  /** The worked drawing that goes with the answer, when there is one. */
+  figure?: Figure;
 }
 
 export interface CheckQuestion {
@@ -122,6 +125,10 @@ export interface CheckQuestion {
   /** Graded on the number typed. Otherwise the reader compares with the
    *  worked answer and says whether theirs matched. */
   auto: boolean;
+  /** Drawn under the question. */
+  figure?: Figure;
+  /** What the reader may open while working it. */
+  tools?: ProblemTool[];
   result: CheckResult | null;
 }
 
@@ -146,8 +153,8 @@ export function startCheck(
 export interface AnswerReply {
   check: SkillCheck;
   /** A sentence answer, shown before anything is recorded. */
-  reveal?: { index: number; answer: string; given: string };
-  result?: { index: number; right: boolean; how: string; answer: string };
+  reveal?: { index: number; answer: string; given: string; figure?: Figure };
+  result?: { index: number; right: boolean; how: string; answer: string; figure?: Figure };
   /** On the last answer: the new reading, and what a pass opened. */
   progress?: SkillReading;
   opened?: { id: string; name: string }[];

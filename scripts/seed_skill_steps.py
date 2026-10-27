@@ -119,6 +119,7 @@ def _problems_of(raw_step, ordinal):
             'prompt': str(problem.get('prompt', '')).strip(),
             'answer': str(problem.get('answer', '')).strip(),
             'hint': str(problem.get('hint', '') or '').strip(),
+            **({'aids': problem['aids']} if problem.get('aids') else {}),
         })
     return out
 
@@ -153,7 +154,8 @@ def export():
                 **({'problems': [
                     {'slot': one['slot'], 'weight': one['weight'],
                      'prompt': one['prompt'], 'answer': one['answer'],
-                     **({'hint': one['hint']} if one['hint'] else {})}
+                     **({'hint': one['hint']} if one['hint'] else {}),
+                     **({'aids': one['aids']} if one.get('aids') else {})}
                     for one in sets.get(row['ordinal'], [])]}
                    if sets.get(row['ordinal']) else {}),
             } for row in rows],

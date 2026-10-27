@@ -3,7 +3,8 @@
 What the browser and the server must agree on, kept once.
 
 - `rules.json` — values: the XP range and bands, grade bands, the time-spent
-  caps, the task reasons, the recommendation and space-page limits. The server
+  caps, the task reasons, the recommendation and space-page limits, and what a
+  skill problem's figure, calculator and plotted curves may use. The server
   reads it through `backend/config/shared.py` (`RULES`); the browser imports
   `@shared/rules.json`. Change a value here, never in code.
 - `cases/` — logic both sides implement (there is no way to share code between

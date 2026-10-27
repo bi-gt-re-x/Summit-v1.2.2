@@ -1,0 +1,220 @@
+/*
+ * A problem's aids: its figure (components/SkillTree/ProblemFigure.tsx) and
+ * its calculator (components/SkillTree/Calculator.tsx).
+ *
+ * Both are drawn inside the skill check, which is portalled to <body>, and
+ * inside the tree's problem list, so they use the app-wide tokens only. The
+ * figure's strokes are `currentColor` and token colors, never literals, so a
+ * drawing follows light, dark and every skin with no second sheet.
+ */
+
+/* ---- figure ---- */
+.pfig {
+    --pfig-accent: var(--color-accent, #5b5bd6);
+    --pfig-good: var(--ax-good, #2f8a57);
+    --pfig-bad: var(--ax-bad, #c2513d);
+    margin: var(--space-3) 0 var(--space-4);
+    padding: var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    text-align: center;
+}
+.pfig.is-answer {
+    margin: var(--space-2) 0;
+    background: var(--color-bg);
+}
+.pfig-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* A square plot at full width would be taller than the question; the
+       viewBox keeps its shape and centers it in the shorter box. */
+    max-height: 300px;
+    margin: 0 auto;
+    overflow: visible;
+    font-family: var(--font-sans);
+}
+.pfig-caption {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-ink-muted);
+}
+
+.pfig-grid line { stroke: var(--color-line-soft, var(--color-line)); stroke-width: 1; }
+.pfig-axes line,
+.pfig-axes-line { stroke: var(--color-ink-muted); stroke-width: 1.25; }
+.pfig-tick { font-size: 12px; fill: var(--color-ink-faint); }
+.pfig-axis-name { font-size: 12px; font-style: italic; fill: var(--color-ink-muted); }
+.pfig-label { font-size: 14px; font-weight: 600; fill: currentColor; paint-order: stroke; stroke: var(--color-surface); stroke-width: 3px; stroke-linejoin: round; }
+.pfig.is-answer .pfig-label { stroke: var(--color-bg); }
+
+.pfig-stroke { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pfig-thin { stroke-width: 1.5; }
+.pfig-bold { stroke-width: 3.5; }
+.pfig-curve { stroke-width: 2.25; }
+.pfig-dash { stroke-dasharray: 6 5; }
+.pfig-fill { fill: currentColor; fill-opacity: .12; }
+.pfig-head { fill: currentColor; stroke: none; }
+.pfig-dot { fill: currentColor; stroke: currentColor; stroke-width: 2; }
+.pfig-dot.is-open { fill: var(--color-surface); }
+.pfig-range { stroke: currentColor; stroke-width: 5; stroke-linecap: round; opacity: .55; }
+
+.pfig-ink { color: var(--color-ink); }
+.pfig-accent { color: var(--pfig-accent); }
+.pfig-muted { color: var(--color-ink-faint); }
+.pfig-good { color: var(--pfig-good); }
+.pfig-bad { color: var(--pfig-bad); }
+
+.pfig-bar { fill: var(--color-ink-faint); fill-opacity: .55; }
+.pfig-bar.is-marked { fill: var(--pfig-accent); fill-opacity: .9; }
+
+.pfig-node { fill: var(--color-surface); stroke: var(--color-ink); stroke-width: 2; }
+.pfig-node.is-accent { fill: var(--pfig-accent); stroke: var(--pfig-accent); }
+.pfig-node.is-good { fill: var(--pfig-good); stroke: var(--pfig-good); }
+.pfig-node.is-muted { stroke: var(--color-ink-faint); }
+.pfig-node-name { font-size: 13px; font-weight: 600; fill: var(--color-ink); }
+.pfig-node.is-accent + .pfig-node-name,
+.pfig-node.is-good + .pfig-node-name { fill: var(--color-surface); }
+.pfig-chip { fill: var(--color-surface); stroke: var(--color-line); }
+
+.pfig-table-wrap { overflow-x: auto; }
+.pfig-table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+}
+.pfig-table th,
+.pfig-table td {
+    padding: 6px 12px;
+    border: 1px solid var(--color-line);
+    text-align: center;
+}
+.pfig-table th { background: var(--color-surface-2); font-weight: 600; }
+.pfig-table td.is-marked {
+    background: color-mix(in srgb, var(--pfig-accent) 16%, transparent);
+    font-weight: 700;
+}
+
+/* ---- calculator ---- */
+.pcalc {
+    width: 100%;
+    max-width: 340px;
+    margin: var(--space-3) 0 0;
+    padding: var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    text-align: left;
+}
+.pcalc-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+.pcalc-title { font-size: var(--text-sm); font-weight: 600; margin-right: auto; }
+.pcalc-mode {
+    display: inline-flex;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+.pcalc-mode button {
+    padding: 3px 10px;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink-muted);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: .04em;
+    cursor: pointer;
+}
+.pcalc-mode button.is-on { background: var(--color-ink); color: var(--color-surface); }
+.pcalc-close {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-ink-muted);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+.pcalc-close:hover { background: var(--color-surface-2); color: var(--color-ink); }
+.pcalc-tape {
+    margin: 0 0 var(--space-1);
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-ink-faint);
+    text-align: right;
+}
+.pcalc-tape b { color: var(--color-ink-muted); font-weight: 600; }
+.pcalc-line {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    text-align: right;
+}
+.pcalc-line:focus { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+.pcalc-result {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    min-height: 32px;
+    padding: 2px 2px var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+.pcalc-result.is-error { font-family: var(--font-sans); font-size: var(--text-sm); font-weight: 500; color: var(--ax-bad, #c2513d); }
+.pcalc-quiet { font-family: var(--font-sans); font-size: var(--text-xs); font-weight: 400; color: var(--color-ink-faint); }
+.pcalc-use {
+    padding: 3px 12px;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-accent);
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    cursor: pointer;
+}
+.pcalc-use:hover { background: var(--color-accent); color: var(--color-surface); }
+.pcalc-keys {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+}
+.pcalc-key {
+    min-height: 36px;
+    padding: 0 2px;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+}
+.pcalc-key:hover { background: var(--color-surface-2); }
+.pcalc-key:active { transform: translateY(1px); }
+.pcalc-key.is-fn { font-size: var(--text-xs); color: var(--color-ink-muted); background: var(--color-surface-2); }
+.pcalc-key.is-op { color: var(--color-accent); }
+.pcalc-key.is-eq { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-surface); }
+.pcalc-key.is-wide { grid-column: span 2; }

@@ -227,6 +227,11 @@ ADDED_COLUMNS = (
     # NULL, which files the task by its name as before. See data/sql/tasks.sql
     # and backend/tracking/skill_progress.py.
     ('tasks', 'skill_node', 'TEXT'),
+
+    # A skill problem's figure, answer figure and tools, as JSON. Existing rows
+    # get NULL, which reads as a problem that is words alone, which is what
+    # every one of them was. See data/sql/skillsteps.sql.
+    ('skill_problems', 'aids', 'TEXT'),
 )
 
 # Indexes on columns that ADDED_COLUMNS supplies. Their own list, applied after
@@ -536,6 +541,7 @@ ADDED_TABLES = ('''
         prompt       TEXT    NOT NULL,
         answer       TEXT    NOT NULL,
         hint         TEXT    NOT NULL DEFAULT '',
+        aids         TEXT,
         tree_id      TEXT    NOT NULL,
         model        TEXT    NOT NULL,
         generated_at TEXT    NOT NULL,
@@ -3489,6 +3495,13 @@ def _step_row(record):
         # JSON_COLUMNS fallback above: degrade the metadata, not the content.
         decoded = []
     row['checks'] = decoded if isinstance(decoded, list) else []
+    # Only problems have `aids`; a step row passes through untouched.
+    if 'aids' in row:
+        try:
+            aids = json.loads(row['aids']) if row['aids'] else {}
+        except (TypeError, ValueError):
+            aids = {}
+        row['aids'] = aids if isinstance(aids, dict) else {}
     return row
 
 
@@ -3710,6 +3723,7 @@ def step_audit_summary(run_id=None):
 SKILL_PROBLEM_COLUMNS = (
     'node_id', 'ordinal', 'slot', 'weight', 'prompt', 'answer', 'hint',
     'tree_id', 'model', 'generated_at', 'verified_at', 'verifier', 'checks',
+    'aids',
 )
 
 
@@ -3764,6 +3778,9 @@ def save_step_problems(node_id, ordinal, rows):
                 checks = values.get('checks') or []
                 if not isinstance(checks, str):
                     values['checks'] = json.dumps(list(checks))
+                aids = values.get('aids')
+                values['aids'] = (aids if isinstance(aids, str)
+                                  else json.dumps(aids, ensure_ascii=False) if aids else None)
                 columns = ', '.join('"{}"'.format(n) for n in SKILL_PROBLEM_COLUMNS)
                 marks = ', '.join('?' for _ in SKILL_PROBLEM_COLUMNS)
                 con.execute(
