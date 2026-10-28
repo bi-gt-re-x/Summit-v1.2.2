@@ -4404,6 +4404,8 @@ html[data-theme="dark"] .ax-page .peak-hero,
 }
 .ax-plan-act-btn:hover:not(:disabled) { background: color-mix(in srgb, var(--ax-violet) 20%, transparent); }
 .ax-plan-act-btn:disabled { opacity: .6; cursor: progress; }
+/* The same button as a link, for rows whose work is done somewhere else. */
+a.ax-plan-act-btn { display: inline-block; text-decoration: none; }
 .ax-plan-act-note { font-size: var(--text-xs); color: var(--ax-muted); }
 
 .ax-plan-mins {

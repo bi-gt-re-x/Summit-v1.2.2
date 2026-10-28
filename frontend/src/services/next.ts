@@ -30,7 +30,9 @@ export type ActionKind =
   | 'streak'
   | 'slipping'
   | 'goal-quiet'
-  | 'xp';
+  | 'xp'
+  /** The strongest suggestion from a skill tree. See backend/tracking/skill_plan.py. */
+  | 'skill';
 
 export interface NextAction {
   id: string;
@@ -51,6 +53,9 @@ export interface NextAction {
   daysLeft?: number;
   /** A triage row's leftover routines: what "Clear them" deletes. */
   clear?: string[];
+  /** Where the row's work is done: the review list ('/recommendations#review')
+   *  or a skill on its tree ('/skill-trees?node=…'). */
+  to?: string;
 }
 
 export interface Plan {

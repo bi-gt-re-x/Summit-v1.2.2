@@ -47,6 +47,9 @@ API_MODULES = (
     'background',
     'quests',
     'topics',
+    'forecast',
+    'review',
+    'skill_plan',
 )
 
 SHARED_MODULES = (

@@ -827,6 +827,9 @@ ACCOUNT_TABLES = (
     # The account's tasks filed by topic, and when that was last built. All
     # derived from tasks and goals removed here (data/sql/topics.sql).
     'topic_library', 'topic_builds',
+    # Reviews marked on the review queue. The account's own record of what it
+    # went back over.
+    'review_marks',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the

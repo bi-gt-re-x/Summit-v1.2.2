@@ -133,6 +133,7 @@ import {
   TreeFamily,
   type FocusStanding,
   TilePeek,
+  TreePlan,
   type TreeMode,
 } from '@/components/SkillTree';
 import {
@@ -165,6 +166,7 @@ import {
 import { latticeSubjects, treeForSubject } from '@/skills/subjectMap';
 import {
   DEFAULT_TREE,
+  SUBJECT_TREES,
   childrenOf,
   graphFromSubjectTree,
   iconUrl,
@@ -649,6 +651,28 @@ export default function SkillTrees() {
        may have long since navigated away from. */
     setParams({}, { replace: true });
   }, [linkedSubject, openSubject, setParams, subjects]);
+
+  /* `?node=<id>`: a skill named from elsewhere (the plan's skill row, the
+     review list), opened on its own tree with the canvas brought to it. Same
+     rules as `?subject=` above: once per id, then the address goes back to
+     the plain page. */
+  const linkedNode = params.get('node');
+  const followedNode = useRef<string | null>(null);
+  useEffect(() => {
+    /* Not until this account's own last tree and first-visit answer have been
+       read, or restoring those would undo the link a moment later. */
+    if (!linkedNode || !username || treeRead !== username || !focusRead) return;
+    if (followedNode.current === linkedNode) return;
+    followedNode.current = linkedNode;
+    const home = SUBJECT_TREES.find((entry) => entry.nodes.some((node) => node.id === linkedNode));
+    if (home) {
+      openTree(home.id, linkedNode);
+      /* They came for this skill, so the first-visit question waits for
+         next time, the same as "Decide later". */
+      setSkippedSetup(true);
+    }
+    setParams({}, { replace: true });
+  }, [linkedNode, openTree, setParams, username, treeRead, focusRead]);
 
   /** Back to the question, from the band. Clears the stored answer so the
    *  screen's own gate — "has this account ever chosen" — is true again. */
@@ -1193,6 +1217,17 @@ export default function SkillTrees() {
             onClear={selectedId || lens ? () => select(null) : undefined}
           />
         )}
+
+        {/* ---- what to do next here ----
+            The open tree's next session, read from your answers. One line
+            until it's opened, so the canvas stays above the fold. See
+            components/SkillTree/TreePlan. */}
+        <TreePlan
+          tree={tree.id}
+          username={username}
+          version={practice.attempts.length}
+          onPick={(nodeId) => openTree(tree.id, nodeId)}
+        />
 
         {/* ---- how to read the tree ----
             Directly above the canvas, because it decides what the canvas is

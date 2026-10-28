@@ -64,6 +64,26 @@ def _record(username):
     return tasks, goals
 
 
+#: What the goal forecast reads off a focus timer (backend/tracking/forecast.py).
+SITTING_FIELDS = ('id', 'day', 'minutes', 'task_id')
+
+
+def _sittings(username):
+    """Focus timers, which the forecast counts as sessions on a goal."""
+    return db.columns_for('focus_sittings', username, SITTING_FIELDS)
+
+
+def _practice(username):
+    """The review queue and the skill tree summary, for the plan's rows about
+    what's due to redo and what to practice next. Imported here because both
+    of those modules import this one."""
+    from backend.api.review import read_queue
+    from backend.api.skill_plan import summary
+    attempts = db.rows_for('skill_attempts', username, order='at, rowid')
+    review = read_queue(username, attempts=attempts)
+    return review, summary(username, review=review, attempts=attempts)
+
+
 @router.get('/api/next_actions')
 def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
                      username: str = Depends(current_username)):
@@ -80,14 +100,56 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
     days = series.get('growth_data') or []
 
     lens = next_actions.leading_lens(goals, tasks)
+    review, skills = _practice(username)
     plan = next_actions.build_plan(tasks, goals, days, _name_of(username), budget,
                                    now=datetime.now(), lens=lens,
-                                   daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'))
+                                   daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'),
+                                   sittings=_sittings(username), review=review, skills=skills)
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))
 
 
 class BookSessions(BaseModel):
     goal_id: Optional[str] = None
+
+
+def book_for_goal(username, goal, read, count, now):
+    """Put `count` sessions for a goal on the calendar.
+
+    Each goes where the reader's own record says work goes best
+    (backend/api/booking.py), on separate days, before the goal's deadline,
+    named for the goal's next step and linked to the goal and its current
+    checkpoint so the work counts toward it. `read` is record.read_goal's.
+    Returns (booked, title, minutes); `booked` is empty when nothing fit.
+    Shared by the plan's deadline row and the goal forecast
+    (backend/api/forecast.py).
+    """
+    minutes = next_actions.SESSION_MINUTES
+    xp = session_plan.xp_for(minutes, 3)
+    title = read['next_step'] or read['checkpoint'] or '{}: practice'.format(goal.get('title') or 'Goal')
+    subject = (read['subjects'] or [None])[0]
+    planner = booking.Planner(username, now)
+    deadline = booking.ends_by(goal.get('deadline'))
+    booked = []
+    for _ in range(count):
+        # Spaced by the goal's subject, or by the goal itself when it has
+        # none, so the week's sittings land on separate days (three in one
+        # afternoon is a cram, not a week).
+        slot = planner.place(minutes, 3, subject or 'goal:{}'.format(goal.get('id')), deadline)
+        if not slot:
+            break
+        start, end = slot['start'], slot['end']
+        made = create_task(CreateTask(
+            name=title, priority=session_plan.priority_for(xp), xp_reward=xp,
+            due_date=end.isoformat(timespec='seconds'), created_at=start.isoformat(timespec='seconds'),
+            show_on_calendar=True, subject=subject,
+            goal_id=str(goal.get('id')), milestone_id=read['checkpoint_id'],
+        ), username)
+        task_id = made.get('task_id') if isinstance(made, dict) else None
+        if not task_id:
+            break
+        booked.append({'task_id': task_id, 'start': start.isoformat(timespec='minutes'),
+                       'end': end.isoformat(timespec='minutes'), 'why': slot['why']})
+    return booked, title, minutes
 
 
 @router.post('/api/next_actions/book')
@@ -111,36 +173,11 @@ def book_sessions(body: BookSessions, username: str = Depends(current_username))
         return fail("That goal isn't active any more.")
 
     now = datetime.now()
-    read = record.read_goal(goal, tasks, now)
+    read = record.read_goal(goal, tasks, now, sittings=_sittings(username))
     if not read['to_book']:
         return fail('This week already has the sessions this goal needs.')
 
-    minutes = next_actions.SESSION_MINUTES
-    xp = session_plan.xp_for(minutes, 3)
-    title = read['next_step'] or read['checkpoint'] or '{}: practice'.format(goal.get('title') or 'Goal')
-    subject = (read['subjects'] or [None])[0]
-    planner = booking.Planner(username, now)
-    deadline = booking.ends_by(goal.get('deadline'))
-    booked = []
-    for _ in range(read['to_book']):
-        # Spaced by the goal's subject, or by the goal itself when it has
-        # none, so the week's sittings land on separate days (three in one
-        # afternoon is a cram, not a week).
-        slot = planner.place(minutes, 3, subject or 'goal:{}'.format(goal.get('id')), deadline)
-        if not slot:
-            break
-        start, end = slot['start'], slot['end']
-        made = create_task(CreateTask(
-            name=title, priority=session_plan.priority_for(xp), xp_reward=xp,
-            due_date=end.isoformat(timespec='seconds'), created_at=start.isoformat(timespec='seconds'),
-            show_on_calendar=True, subject=subject,
-            goal_id=str(goal.get('id')), milestone_id=read['checkpoint_id'],
-        ), username)
-        task_id = made.get('task_id') if isinstance(made, dict) else None
-        if not task_id:
-            break
-        booked.append({'task_id': task_id, 'start': start.isoformat(timespec='minutes'),
-                       'end': end.isoformat(timespec='minutes'), 'why': slot['why']})
+    booked, title, minutes = book_for_goal(username, goal, read, read['to_book'], now)
     if not booked:
         return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
     return ok(booked=booked, title=title, minutes=minutes)

@@ -12,6 +12,9 @@ import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { WhatToReviewPanel } from '@/components/NextSessions/WhatToReview';
 import { SlumpAlert } from '../WeekTrend';
 import { NextActions } from '../NextActions';
+import { GoalForecast } from '../GoalForecast';
+import { ReviewPanel } from '../ReviewPanel';
+import { SkillTreesPanel } from '../SkillTreesPanel';
 import { XpPulse } from '../XpPulse';
 import { LensCard } from '../Lens';
 import { Knows, useKnows } from '../Knows';
@@ -23,11 +26,16 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
     all, lens, plan, setBudget, setNudge, slice, slump,
     /* `rhythm` carries the reader's typical sitting, drawn from their logged
        focus time. It changes nothing about what the plan suggests. */
-    rhythm,
+    rhythm, nudge,
   } = model;
 
   const { refresh } = data;
   const knows = useKnows(model);
+
+  const refreshPlan = () => {
+    refresh();
+    setNudge((at) => at + 1);
+  };
 
   return (
     <>
@@ -38,6 +46,11 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           <SlumpAlert slump={slump} />
         </section>
       )}
+
+      {/* First, the one forward-looking number: will each dated goal finish in
+          time at this pace, and what gets it there. Draws nothing without a
+          dated goal, section and all. See ../GoalForecast. */}
+      <GoalForecast onBooked={refreshPlan} reload={nudge} />
 
       {/* Above the plan, because it is the reason the plan is in this order.
           A reader who meets the ranking first and the explanation second has
@@ -60,16 +73,21 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           /* Both halves: `refresh` re-reads the account so a task finished
              elsewhere leaves the plan, and the nudge re-asks the clock so
              what counts as overdue is worked out again. */
-          onRefresh={() => {
-            refresh();
-            setNudge((at) => at + 1);
-          }}
+          onRefresh={refreshPlan}
         />
       </section>
 
       {/* "What changed" (the diagnosis) and "What happened after" (the
           follow-up on adopted changes) are on Overview now, under the
           productivity chart, beside the week-by-week read they belong with. */}
+
+      {/* Right under the plan, because its "Redo" row scrolls here: what you
+          got wrong, back on 1, 3, 7 and 14 days, done in place. Then each
+          skill tree you've practiced, with what to do next in it. Both draw
+          nothing on an account with no misses or practice. See ../ReviewPanel
+          and ../SkillTreesPanel. */}
+      <ReviewPanel onChanged={refreshPlan} />
+      <SkillTreesPanel />
 
       {/* "Five years, both ways", the XP projection, was here. Cut: a
           five-year XP forecast changes nothing about this week. */}

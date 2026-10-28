@@ -88,7 +88,7 @@ SCHEMA_FILES = [
     'users', 'tasks', 'goals', 'growth', 'focus', 'events', 'analytics',
     'achievements', 'history', 'library', 'notes', 'settings', 'subjects',
     'records', 'notifications', 'skillsteps', 'skillattempts', 'background',
-    'log', 'quests', 'skillchecks',
+    'log', 'quests', 'skillchecks', 'review',
 ]
 
 # --- Behaviour -----------------------------------------------------------

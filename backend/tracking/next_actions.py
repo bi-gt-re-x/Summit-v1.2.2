@@ -45,6 +45,7 @@ right. The lens is returned with the plan so the page can say what it is
 reading through.
 """
 import time
+from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 
@@ -300,7 +301,8 @@ def _action(**fields):
             ('id', 'kind', 'title', 'because', 'minutes', 'weight')}
 
 
-def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, best_streak=None):
+def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, best_streak=None,
+           sittings=(), review=None, skills=()):
     """Every suggestion the record supports, best first, one per task or subject."""
     found = []
     today = now.date()
@@ -318,7 +320,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         return str(task.get('due_date') or '')[:10]
 
     # ---- Looking forward: the date, the list, the misses, the snag --------
-    deadline = record.nearest_deadline(goals, tasks, now)
+    deadline = record.nearest_deadline(goals, tasks, now, sittings)
     if deadline:
         found.append(_deadline_row(deadline, name_of, slot))
 
@@ -348,7 +350,15 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
                 if keep else ''),
             minutes=5, clear=[task.get('id') for task in left_over[:500]], weight=1040))
 
-    for subject, row in sorted(record.misses(tasks, today).items(), key=lambda item: item[1]['share']):
+    # The misses. With the review queue (backend/tracking/review.py), one row
+    # for whatever is due to redo today; without it, the older accuracy row.
+    if review is not None:
+        if review.get('due'):
+            found.append(_review_row(review, name_of, record.stuck(tasks, today)))
+        misses_by_subject = {}
+    else:
+        misses_by_subject = record.misses(tasks, today)
+    for subject, row in sorted(misses_by_subject.items(), key=lambda item: item[1]['share']):
         if row['share'] >= record.SCORE_BAR or subject in worked_today:
             continue
         snag = record.stuck(tasks, today, subject)
@@ -365,6 +375,19 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             minutes=PRACTICE_MINUTES, subject=subject,
             weight=760 + (record.SCORE_BAR - row['share']) * 200))
         break
+
+    # The skill tree: the strongest suggestion from your answers lately, in
+    # the tree you've practiced most recently (backend/tracking/skill_plan.py).
+    tree = next((one for one in skills if one.get('top') and one['top']['kind'] in SKILL_KINDS
+                 and one['idle'] <= SKILL_DAYS), None)
+    if tree:
+        top = tree['top']
+        found.append(_action(
+            id='skill-{}'.format(tree['tree']), kind='skill',
+            title='{}: {}'.format(tree['title'], top['title'][0].lower() + top['title'][1:]),
+            because=top['because'], minutes=top['minutes'],
+            to='/skill-trees?node={}'.format(top['node_id']) if top.get('node_id') else '/skill-trees',
+            weight=SKILL_WEIGHT.get(top['kind'], 700)))
 
     snag = record.stuck(tasks, today)
     if snag:
@@ -702,6 +725,51 @@ def _and(parts):
     return '{} and {}'.format(', '.join(parts[:-1]), parts[-1])
 
 
+def _review_row(review, name_of, snag=None):
+    """What's due to redo today, as one row. `review` is review.queue's."""
+    due = review['due']
+    count = review['due_count']
+    kinds = {item['kind'] for item in due}
+    if kinds == {'problem'}:
+        title = 'Redo {} problem{} you missed'.format(count, '' if count == 1 else 's')
+    elif count == 1 and kinds == {'set'}:
+        title = 'Redo the {} you missed in "{}"'.format(due[0]['missed'], due[0]['title'])
+    else:
+        title = 'Redo {} thing{} you missed'.format(count, '' if count == 1 else 's')
+    places = Counter(item['where'] for item in due if item.get('where'))
+    parts = []
+    if places:
+        top, many = places.most_common(1)[0]
+        parts.append('All from {}.'.format(top) if many == count else
+                     'Most are from {}.'.format(top) if many * 2 > count else
+                     'From {}.'.format(_and([place for place, _ in places.most_common(3)])))
+    if due[0]['late'] >= 2:
+        parts.append('The oldest has waited {} days.'.format(due[0]['late']))
+    if review['minutes'] > REVIEW_ROW_MINUTES:
+        # The row is a first pass, so it fits beside the rest of the plan.
+        parts.append('All of them take about {} min. Start with the oldest.'.format(review['minutes']))
+    parts.append('Each one comes back after 1, 3, 7 and 14 days until you get it right.')
+    if snag:
+        parts.append('When it goes badly you pick "{}", so: {}.'.format(snag['label'], snag['fix'].lower()))
+    subject = next((item['subject'] for item in due if item.get('subject')), None)
+    return _action(
+        id='review-due', kind='misses', title=title, because=' '.join(parts),
+        minutes=max(5, min(REVIEW_ROW_MINUTES, review['minutes'])), subject=subject,
+        to='/recommendations#review',
+        weight=760 + min(due[0]['late'], 7) * 10)
+
+
+#: The most a "Redo" row asks for: a first pass at the oldest, not all of them.
+REVIEW_ROW_MINUTES = 15
+
+#: The skill tree suggestions the plan carries, and how much each weighs.
+#: Going badly outranks going well; both sit under the misses (760).
+SKILL_KINDS = ('step-back', 'ease-off', 'harder', 'continue')
+SKILL_WEIGHT = {'step-back': 750, 'ease-off': 745, 'harder': 650, 'continue': 620}
+#: A tree practiced longer ago than this has no row.
+SKILL_DAYS = 14
+
+
 #: How long one sitting toward a dated goal is booked for.
 SESSION_MINUTES = 45
 #: Inside this many days, a dated goal leads the plan whatever the lens.
@@ -717,7 +785,12 @@ def _deadline_row(read, name_of, slot):
     when = 'Today is the day for {}.'.format(title) if left == 0 else \
         '{} to {}.'.format('1 day' if left == 1 else '{} days'.format(left), title)
     parts = [when]
-    if read['behind']:
+    # With a pace, the forecast's own line, so this row and the forecast card
+    # above it say the same thing (backend/tracking/forecast.py).
+    pace = read.get('pace')
+    if pace:
+        parts.append(pace['pace_line'])
+    elif read['behind']:
         parts.append("You're {}% behind schedule.".format(js_round(read['gap'])))
     if read['checkpoint']:
         parts.append('You\'re on "{}"{}.'.format(
@@ -728,7 +801,12 @@ def _deadline_row(read, name_of, slot):
         cold, age = read['cold'][0]
         parts.append('{} has had {}.'.format(
             name_of(cold), 'nothing yet' if age is None else 'nothing in {} days'.format(age)))
-    if read['to_book']:
+    if pace:
+        if read['to_book']:
+            parts.append('This week needs {}. {} to go.'.format(read['per_week'], read['to_book']))
+        elif not pace['out_of_reach']:
+            parts.append("You've got this week's {} done or booked.".format(read['per_week']))
+    elif read['to_book']:
         parts.append(('{} more this week gets you to {} a week, the pace that catches up.'
                       if read['behind'] else '{} more this week holds a pace of {} a week.').format(
             read['to_book'], read['per_week']))
@@ -762,12 +840,13 @@ def _deadline_row(read, name_of, slot):
 
 
 def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=None,
-               daily_goal=None, best_streak=None):
+               daily_goal=None, best_streak=None, sittings=(), review=None, skills=()):
     """The candidates packed into `budget` minutes, and what did not fit."""
     now = now or datetime.now()
     stamp = stamp if stamp is not None else day_stamp(now.date())
     actions, more, left = [], [], budget
-    candidates = gather(tasks, goals, days, name_of, now, stamp, lens, daily_goal, best_streak)
+    candidates = gather(tasks, goals, days, name_of, now, stamp, lens, daily_goal, best_streak, sittings,
+                        review, skills)
     for item in candidates:
         if item['minutes'] <= left:
             actions.append(item)
