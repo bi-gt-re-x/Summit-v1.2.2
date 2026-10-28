@@ -88,5 +88,20 @@ export default defineConfig({
      * to debug, and do not deploy that one.
      */
     sourcemap: process.env.SUMMIT_SOURCEMAPS === '1',
+
+    /*
+     * React and the router in a chunk of their own. They are most of the
+     * first download and change only when the dependencies do, so after a
+     * deploy a returning visitor re-fetches the app's own code and keeps
+     * these from the cache.
+     */
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) return 'vendor';
+          return undefined;
+        },
+      },
+    },
   },
 });

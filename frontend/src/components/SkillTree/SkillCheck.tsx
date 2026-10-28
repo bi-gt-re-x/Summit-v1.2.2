@@ -33,6 +33,7 @@ import type { CheckQuestion, SkillCheck as Check, SkillReading } from '@/service
 import type { Figure } from '@/services/skillSteps';
 import { readingOf } from '@/hooks/useSkillReading';
 import { Calculator } from './Calculator';
+import { markCheckShown } from './checkShown';
 import { ProblemFigure } from './ProblemFigure';
 import '@/styles/skillcheck.css';
 
@@ -113,6 +114,9 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
     startedFor.current = nodeId;
     void begin();
   }, [begin, nodeId]);
+
+  // The guided tour waits while the check is up.
+  useEffect(() => markCheckShown(), []);
 
   // The page behind stays put while the check is up.
   useEffect(() => {

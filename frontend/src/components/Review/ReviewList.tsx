@@ -20,6 +20,9 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { skillAttempts } from '@/services';
 import { after, markReview, type ReviewItem, type ReviewProblem } from '@/services/review';
+import type { ProblemAids } from '@/services/skillSteps';
+import { Calculator } from '@/components/SkillTree/Calculator';
+import { ProblemFigure } from '@/components/SkillTree/ProblemFigure';
 import '@/styles/review.css';
 
 type Outcome = { right: boolean; days: number | null };
@@ -43,22 +46,32 @@ function Question({
   busy,
   done,
 }: {
-  problem: { prompt: string; answer: string; hint: string };
+  problem: { prompt: string; answer: string; hint: string; aids?: ProblemAids };
   onMark: (right: boolean) => void;
   busy: boolean;
   done: boolean | null;
 }) {
   const [hint, setHint] = useState(false);
   const [answer, setAnswer] = useState(false);
+  const [calc, setCalc] = useState(false);
+  const aids = problem.aids ?? {};
   return (
     <div className="rq-q">
       <p className="rq-q-prompt">{problem.prompt}</p>
+      {aids.figure && <ProblemFigure figure={aids.figure} />}
       {hint && problem.hint && <p className="rq-q-hint">{problem.hint}</p>}
       {answer && <p className="rq-q-answer">{problem.answer}</p>}
+      {answer && aids.answer_figure && <ProblemFigure figure={aids.answer_figure} answer />}
+      {calc && !answer && <Calculator onClose={() => setCalc(false)} />}
       <div className="rq-q-acts">
         {problem.hint && !hint && !answer && (
           <button type="button" className="rq-link" onClick={() => setHint(true)}>
             Hint
+          </button>
+        )}
+        {aids.tools?.includes('calculator') && !answer && (
+          <button type="button" className="rq-link" aria-expanded={calc} onClick={() => setCalc((was) => !was)}>
+            {calc ? 'Hide calculator' : 'Calculator'}
           </button>
         )}
         {!answer && (
@@ -199,7 +212,7 @@ function Row({
           {item.kind === 'problem' &&
             (item.prompt && item.answer ? (
               <Question
-                problem={{ prompt: item.prompt, answer: item.answer, hint: item.hint }}
+                problem={{ prompt: item.prompt, answer: item.answer, hint: item.hint, aids: item.aids }}
                 busy={busy}
                 done={null}
                 onMark={(right) => void answerProblem(right)}

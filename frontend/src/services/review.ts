@@ -8,6 +8,7 @@
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
 import type { Tier } from './skillAttempts';
+import type { ProblemAids } from './skillSteps';
 
 export type ReviewKind = 'problem' | 'step' | 'set';
 
@@ -17,6 +18,8 @@ export interface ReviewProblem {
   prompt: string;
   answer: string;
   hint: string;
+  /** Its figure, answer figure and tools, when it has any. */
+  aids?: ProblemAids;
 }
 
 export interface ReviewItem {
@@ -48,6 +51,8 @@ export interface ReviewItem {
   prompt: string | null;
   answer: string | null;
   hint: string;
+  /** A problem's figure, answer figure and tools. Empty for steps and sets. */
+  aids?: ProblemAids;
   /** A step's own problems, to review it by answering some. */
   problems: ReviewProblem[];
   subject: string | null;

@@ -657,6 +657,10 @@ export default function SkillTrees() {
      rules as `?subject=` above: once per id, then the address goes back to
      the plain page. */
   const linkedNode = params.get('node');
+  /* `&check=1` as well: the plan's "Take the skill check" row. The check
+     opens once the tree and the reading have both arrived (below). */
+  const linkedCheck = params.get('check') === '1';
+  const pendingCheck = useRef<string | null>(null);
   const followedNode = useRef<string | null>(null);
   useEffect(() => {
     /* Not until this account's own last tree and first-visit answer have been
@@ -664,6 +668,7 @@ export default function SkillTrees() {
     if (!linkedNode || !username || treeRead !== username || !focusRead) return;
     if (followedNode.current === linkedNode) return;
     followedNode.current = linkedNode;
+    if (linkedCheck) pendingCheck.current = linkedNode;
     const home = SUBJECT_TREES.find((entry) => entry.nodes.some((node) => node.id === linkedNode));
     if (home) {
       openTree(home.id, linkedNode);
@@ -672,7 +677,7 @@ export default function SkillTrees() {
       setSkippedSetup(true);
     }
     setParams({}, { replace: true });
-  }, [linkedNode, openTree, setParams, username, treeRead, focusRead]);
+  }, [linkedNode, linkedCheck, openTree, setParams, username, treeRead, focusRead]);
 
   /** Back to the question, from the band. Clears the stored answer so the
    *  screen's own gate — "has this account ever chosen" — is true again. */
@@ -1023,6 +1028,17 @@ export default function SkillTrees() {
     },
     [checkable],
   );
+
+  /* The check a link asked for, once its node is on the canvas and the
+     reading says it has a check. Asked once: closing it doesn't reopen it. */
+  useEffect(() => {
+    const wanted = pendingCheck.current;
+    if (!wanted || !checkable.has(wanted)) return;
+    const node = graph.nodes.find((one) => one.id === wanted);
+    if (!node) return;
+    pendingCheck.current = null;
+    openCheck(node);
+  }, [checkable, graph.nodes, openCheck]);
 
   /* ---- the four page verbs, on the keyboard ----------------------------
      Every one of them is a control that is already on the page — see

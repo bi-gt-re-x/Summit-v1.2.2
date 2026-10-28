@@ -696,3 +696,29 @@ def test_the_answer_figure_waits_for_the_answer(client):
     assert 'answer_figure' not in json.dumps(check) and 'figure' not in (question['result'] or {})
     final = _answer_all(client, check, right=True)
     assert all(q['result']['figure'] == WORKED for q in final['check']['questions'])
+
+
+def test_a_miss_in_a_skill_check_comes_back_on_the_review_queue(client):
+    """A wrong answer in a check is a problem attempt like any other, so the
+    review queue brings it back the next day."""
+    from datetime import date, timedelta
+    from backend.api.review import read_queue
+    _seed_check()
+    check = client.post('/api/skill-checks/start', json={'node_id': 'm.arith'}).json()['check']
+    _answer_all(client, check, right=False)
+    queue = read_queue('tester', today=date.today() + timedelta(days=1))
+    due = {(item.get('node_id'), item.get('ordinal')) for item in queue['due']}
+    assert {('m.arith', q['ordinal']) for q in check['questions']} <= due
+
+
+def test_the_plan_offers_a_check_once_its_sessions_are_done(client):
+    _seed_check()
+    for n, day in enumerate(('2026-10-01', '2026-10-02', '2026-10-03'), start=1):
+        made = client.post('/api/tasks', json={'name': 'Arithmetic drill {}'.format(n)}).json()
+        db.update_row('tasks', made['task_id'], {'status': 'done', 'skill_node': 'm.arith',
+                                                 'completed_at': '{}T10:00:00'.format(day)}, user_id='tester')
+    assert client.get('/api/skill-progress').json()['nodes']['m.arith']['ready'] is True
+    plan = client.get('/api/next_actions?budget=120').json()['plan']
+    rows = plan['actions'] + plan.get('more', [])
+    row = next(one for one in rows if one['kind'] == 'check')
+    assert row['to'] == '/skill-trees?node=m.arith&check=1'

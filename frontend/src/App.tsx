@@ -6,9 +6,11 @@
  * frontends swap over a page at a time: nothing outside this file has to
  * change when a page moves from Jinja to React, and no link anywhere breaks.
  *
- * Pages are lazy so a route nobody visits costs nothing. `Dashboard` is the
- * exception — it is where a signed-in visitor lands, and a spinner on the
- * first paint of the landing page is exactly the wrong first impression.
+ * Pages are lazy so a route nobody visits costs nothing. `Dashboard` is lazy
+ * too, but it starts loading the moment this file runs for anyone who has
+ * signed in on this browser before, so it comes down while "Checking your
+ * account" is up rather than after it. A stranger on the landing page never
+ * downloads it.
  */
 import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
@@ -20,15 +22,20 @@ import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { useAuth, usePinnedViewport, useSettings } from '@/hooks';
 import { useChainAccount } from '@/hooks/useChainAccount';
 import { useVoid } from '@/hooks/useVoid';
-import Dashboard from '@/pages/Dashboard';
 // Not lazy, unlike every other page here: the routes below are generated from
 // `UNBUILT_PATHS`, so the module has to be loaded to build the routing table at
 // all. Splitting it would put the same few hundred bytes of strings in a second
 // chunk that is always already fetched.
 import Unbuilt, { PATHS as UNBUILT_PATHS } from '@/pages/Unbuilt';
+import { storedUsername } from '@/services/auth';
 import type { Prefs } from '@/services/settings';
 import { rememberExit } from '@/utils/settingsExit';
 
+const loadDashboard = () => import('@/pages/Dashboard');
+/* Fetched now, in parallel with the account check, for a browser that has
+   been signed in here before. Everyone else loads it only if they get there. */
+if (storedUsername()) void loadDashboard();
+const Dashboard = lazy(loadDashboard);
 const Homepage = lazy(() => import('@/pages/Homepage'));
 const Login = lazy(() => import('@/pages/Login'));
 const Goals = lazy(() => import('@/pages/Goals'));

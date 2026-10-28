@@ -39,6 +39,7 @@ import { useSettings } from '@/hooks/useSettings';
 import { useStarter } from '@/hooks/useStarter';
 import { reduced } from '@/utils/homePlay';
 import { useSittingShown } from '@/components/Timer/FocusSitting';
+import { useCheckShown } from '@/components/SkillTree/checkShown';
 import { Mango } from './Mango';
 import { STEPS, type Step, type TourContext } from './steps';
 import { PAGE_TOURS } from './pageTours';
@@ -165,7 +166,8 @@ export function Tutorial() {
   }
 
   const sitting = useSittingShown();
-  const showing = tour !== null && atFor === tourId && !sitting && at < steps.length;
+  const checking = useCheckShown();
+  const showing = tour !== null && atFor === tourId && !sitting && !checking && at < steps.length;
   const step = steps[Math.min(at, steps.length - 1)]!;
 
   useEffect(() => {

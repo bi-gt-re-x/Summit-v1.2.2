@@ -481,3 +481,23 @@ def test_placeholder_steps_are_not_work():
     top = plan([], [contest(milestones=[padded])], budget=120)['top']
     assert top['book']['title'] == 'Silver DP unassisted'
     assert 'You\'re on "Silver DP unassisted".' in top['because']
+
+
+def _rows(result):
+    return result['actions'] + result['more']
+
+
+def test_a_ready_skill_check_gets_a_row_that_opens_it():
+    ready = [{'node_id': 'tg.angles', 'name': 'Angles & Degrees', 'sessions': 3, 'last': '2026-09-21'},
+             {'node_id': 'tg.right', 'name': 'Right Triangles', 'sessions': 3, 'last': '2026-09-01'}]
+    result = build_plan([], [], series([]), lambda key: key, 60, now=NOW, checks=ready)
+    row = next(one for one in _rows(result) if one['kind'] == 'check')
+    # The skill worked on most recently, straight into its check.
+    assert row['title'] == 'Take the Angles & Degrees skill check'
+    assert row['to'] == '/skill-trees?node=tg.angles&check=1'
+    assert '3 sessions' in row['because']
+
+
+def test_no_ready_check_means_no_check_row():
+    result = build_plan([], [], series([]), lambda key: key, 60, now=NOW)
+    assert not any(one['kind'] == 'check' for one in _rows(result))

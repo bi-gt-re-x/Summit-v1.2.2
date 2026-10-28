@@ -227,7 +227,8 @@ def queue(attempts, tasks, marks, today, library=None, nodes=None, name_of=lambd
             node_id=node_id, ordinal=ordinal, slot=slot, weight=weight,
             level=_WEIGHT_WORD.get(weight, 'Medium'),
             prompt=(problem or {}).get('prompt'), answer=(problem or {}).get('answer'),
-            hint=(problem or {}).get('hint') or '', minutes=PROBLEM_MINUTES))
+            hint=(problem or {}).get('hint') or '', aids=(problem or {}).get('aids') or {},
+            minutes=PROBLEM_MINUTES))
 
     for (node_id, ordinal), history in step_histories(attempts, marks).items():
         read = schedule(history, today)
@@ -302,7 +303,7 @@ def _item(read, today, **fields):
         'due': read['due'].isoformat() if read['due'] else None,
         'cleared_on': read['cleared_on'].isoformat() if read['cleared_on'] else None,
         'late': max(0, late),
-        'prompt': None, 'answer': None, 'hint': '', 'problems': [],
+        'prompt': None, 'answer': None, 'hint': '', 'aids': {}, 'problems': [],
         'node_id': None, 'ordinal': None, 'slot': None, 'weight': None, 'level': None,
         'tree': None, 'tree_title': None, 'subject': None, 'task_id': None,
         'got': None, 'of': None, 'missed': None,

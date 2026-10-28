@@ -73,6 +73,7 @@ const KIND_LABEL: Record<ActionKind, string> = {
   'goal-quiet': 'Goal',
   xp: 'XP',
   skill: 'Skill tree',
+  check: 'Skill check',
 };
 
 const KIND_TONE: Record<ActionKind, string> = {
@@ -95,6 +96,7 @@ const KIND_TONE: Record<ActionKind, string> = {
   'goal-quiet': 'violet',
   xp: 'blue',
   skill: 'green',
+  check: 'green',
 };
 
 /**
@@ -156,7 +158,7 @@ function RowAction({ item, onDone }: { item: NextAction; onDone: () => void }) {
  * one scrolls rather than navigates; a skill opens on its own tree.
  */
 function GoTo({ to, kind }: { to: string; kind: NextAction['kind'] }) {
-  const label = kind === 'misses' ? 'Start' : 'Open it';
+  const label = kind === 'misses' ? 'Start' : kind === 'check' ? 'Start the check' : 'Open it';
   const [path, hash] = to.split('#');
   if (hash && typeof window !== 'undefined' && window.location.pathname === path) {
     return (

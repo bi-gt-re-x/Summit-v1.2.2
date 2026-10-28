@@ -84,6 +84,19 @@ def _practice(username):
     return review, summary(username, review=review, attempts=attempts)
 
 
+def _ready_checks(username):
+    """Skills whose sessions are done but whose check isn't passed, the most
+    recently worked first. Read from the same reading the tree draws."""
+    from backend.api.skillprogress import reading
+    from backend.tracking import skill_progress
+    nodes = skill_progress.catalog()
+    found = reading(username)['nodes']
+    ready = [{'node_id': node_id, 'name': nodes[node_id]['name'], 'sessions': figure['sessions'],
+              'last': figure.get('last') or ''}
+             for node_id, figure in found.items() if figure.get('ready') and node_id in nodes]
+    return sorted(ready, key=lambda one: one['last'], reverse=True)
+
+
 @router.get('/api/next_actions')
 def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
                      username: str = Depends(current_username)):
@@ -104,7 +117,8 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
     plan = next_actions.build_plan(tasks, goals, days, _name_of(username), budget,
                                    now=datetime.now(), lens=lens,
                                    daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'),
-                                   sittings=_sittings(username), review=review, skills=skills)
+                                   sittings=_sittings(username), review=review, skills=skills,
+                                   checks=_ready_checks(username))
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))
 
 

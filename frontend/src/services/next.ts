@@ -32,7 +32,9 @@ export type ActionKind =
   | 'goal-quiet'
   | 'xp'
   /** The strongest suggestion from a skill tree. See backend/tracking/skill_plan.py. */
-  | 'skill';
+  | 'skill'
+  /** A skill whose sessions are done and whose check is waiting. Opens the check. */
+  | 'check';
 
 export interface NextAction {
   id: string;

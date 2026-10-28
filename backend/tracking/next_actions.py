@@ -302,7 +302,7 @@ def _action(**fields):
 
 
 def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, best_streak=None,
-           sittings=(), review=None, skills=()):
+           sittings=(), review=None, skills=(), checks=()):
     """Every suggestion the record supports, best first, one per task or subject."""
     found = []
     today = now.date()
@@ -388,6 +388,20 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             because=top['because'], minutes=top['minutes'],
             to='/skill-trees?node={}'.format(top['node_id']) if top.get('node_id') else '/skill-trees',
             weight=SKILL_WEIGHT.get(top['kind'], 700)))
+
+    # A skill whose sessions are done and whose check isn't passed yet. The
+    # check is the one place the app learns what the reader can actually do
+    # (every answer is a skill attempt), so it's worth a row as soon as it's
+    # open. `checks` is newest work first (backend/api/next.py).
+    ready = next(iter(checks), None)
+    if ready:
+        found.append(_action(
+            id='check-{}'.format(ready['node_id']), kind='check',
+            title='Take the {} skill check'.format(ready['name']),
+            because=("You've put in {} session{} on it. Get 3 of 4 or 4 of 5 right and "
+                     'it\'s mastered.').format(ready['sessions'], '' if ready['sessions'] == 1 else 's'),
+            minutes=CHECK_MINUTES, to='/skill-trees?node={}&check=1'.format(ready['node_id']),
+            weight=CHECK_WEIGHT))
 
     snag = record.stuck(tasks, today)
     if snag:
@@ -766,6 +780,10 @@ REVIEW_ROW_MINUTES = 15
 #: Going badly outranks going well; both sit under the misses (760).
 SKILL_KINDS = ('step-back', 'ease-off', 'harder', 'continue')
 SKILL_WEIGHT = {'step-back': 750, 'ease-off': 745, 'harder': 650, 'continue': 620}
+#: A skill check that's ready: just above the skill tree's own suggestions.
+CHECK_WEIGHT = 755
+#: About how long a 3 to 5 question check takes.
+CHECK_MINUTES = 10
 #: A tree practiced longer ago than this has no row.
 SKILL_DAYS = 14
 
@@ -840,13 +858,13 @@ def _deadline_row(read, name_of, slot):
 
 
 def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=None,
-               daily_goal=None, best_streak=None, sittings=(), review=None, skills=()):
+               daily_goal=None, best_streak=None, sittings=(), review=None, skills=(), checks=()):
     """The candidates packed into `budget` minutes, and what did not fit."""
     now = now or datetime.now()
     stamp = stamp if stamp is not None else day_stamp(now.date())
     actions, more, left = [], [], budget
     candidates = gather(tasks, goals, days, name_of, now, stamp, lens, daily_goal, best_streak, sittings,
-                        review, skills)
+                        review, skills, checks)
     for item in candidates:
         if item['minutes'] <= left:
             actions.append(item)
