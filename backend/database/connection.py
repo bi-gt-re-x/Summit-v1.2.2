@@ -195,6 +195,13 @@ ADDED_COLUMNS = (
     # cannot attach one to a table with rows in it, and the endpoint in
     # backend/api/records.py narrows the value to the two words anyway.
     ('records', 'comparison_direction', 'TEXT'),
+    # A milestone's target date, the records it is linked to (JSON list of
+    # names) and which of those its progress counts from. NULL on every row
+    # that predates them, which every reader takes as none — no date, no
+    # links, progress typed by hand. See data/sql/records.sql.
+    ('records', 'due_on', 'TEXT'),
+    ('records', 'links', 'TEXT'),
+    ('records', 'progress_from', 'TEXT'),
 
     # What the goal matcher concluded about a task, and which version did.
     # Existing rows get NULL: never looked at, which the matcher treats as due

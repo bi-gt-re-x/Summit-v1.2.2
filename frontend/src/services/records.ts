@@ -48,6 +48,22 @@ export interface RecordRow {
   note: string;
   /** ISO day. Empty on a milestone not reached yet. */
   achieved_on: string;
+  /**
+   * A milestone's target date, ISO, or empty for none. Null on rows written
+   * before the column existed. Always empty on a record.
+   */
+  due_on?: string | null;
+  /**
+   * The records a milestone is linked to, by name, as a JSON array. Null or
+   * '' on rows that predate it and on every record. Read through `linksOf`
+   * in utils/records, never parsed at a call site.
+   */
+  links?: string | null;
+  /**
+   * The linked record whose best counts as a milestone's progress, by name,
+   * or empty when the progress is typed in by hand (or not tracked at all).
+   */
+  progress_from?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -64,6 +80,10 @@ export interface RecordDraft {
   comparison_direction?: Direction;
   note?: string;
   achieved_on?: string;
+  due_on?: string;
+  /** Record names. Sent as a list; stored as JSON. */
+  links?: string[];
+  progress_from?: string;
 }
 
 export function list(): Promise<ApiResult<{ records: RecordRow[] }>> {

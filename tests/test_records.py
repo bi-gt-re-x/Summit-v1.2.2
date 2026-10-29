@@ -246,3 +246,51 @@ def test_delete_removes_the_row(client):
     row = _save(client, name='Gone')
     assert client.post('/api/records/delete', json={'id': row['id']}).json()['success']
     assert db.find_row('records', row['id']) is None
+
+
+# ---------------------------------------------------------------------------
+# Milestones with something to count
+# ---------------------------------------------------------------------------
+def test_a_milestone_with_a_target_keeps_its_progress(client):
+    """"12 of 20 problems" is the milestone's whole point once it has a goal."""
+    row = _save(client, kind='milestone', name='20 USACO Bronze', value=12,
+                target=20, unit='problems', achieved_on='')
+    stored = db.find_row('records', row['id'], user_id='tester')
+    assert (stored['value'], stored['target'], stored['unit']) == (12, 20, 'problems')
+    assert stored['comparison_direction'] == 'higher'
+
+
+def test_a_milestone_keeps_its_target_date_and_a_record_does_not(client):
+    stone = _save(client, kind='milestone', name='Qualify for AIME',
+                  due_on='2027-02-01', achieved_on='')
+    record = _save(client, name='AMC 10', due_on='2027-02-01')
+    assert stone['due_on'] == '2027-02-01'
+    assert record['due_on'] == ''
+    assert _save(client, kind='milestone', name='Junk date', due_on='soon')['due_on'] == ''
+
+
+def test_links_are_trimmed_deduped_and_capped(client):
+    import json
+    names = [' AMC 10 ', 'amc 10', '', 'AMC 12'] + ['R{}'.format(i) for i in range(20)]
+    row = _save(client, kind='milestone', name='Qualify for AIME', links=names)
+    stored = json.loads(row['links'])
+    assert stored[:2] == ['AMC 10', 'AMC 12']
+    assert len(stored) == 8
+    # A record has nothing to link.
+    assert json.loads(_save(client, name='AMC 10', links=['AMC 12'])['links']) == []
+
+
+def test_progress_only_counts_from_a_linked_record(client):
+    linked = _save(client, kind='milestone', name='Codeforces 1000', target=1000,
+                   unit='rating', links=['Codeforces rating'],
+                   progress_from='Codeforces rating')
+    assert linked['progress_from'] == 'Codeforces rating'
+
+    stray = _save(client, kind='milestone', name='Codeforces 1200', target=1200,
+                  links=[], progress_from='Codeforces rating')
+    assert stray['progress_from'] == ''
+
+    # No target, nothing to count toward, so no source either.
+    untargeted = _save(client, kind='milestone', name='Chair', links=['Violin'],
+                       progress_from='Violin')
+    assert untargeted['progress_from'] == ''

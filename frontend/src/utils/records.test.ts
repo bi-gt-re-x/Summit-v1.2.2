@@ -15,7 +15,17 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  attempts,
+  breakthroughs,
   byDay,
+  changeText,
+  daysUntil,
+  durationText,
+  insightOf,
+  linksOf,
+  milestoneProgress,
+  progressText,
+  signedText,
   directionOf,
   filterRows,
   formatOn,
@@ -433,6 +443,12 @@ describe('formatting', () => {
     expect(formatValue(45, 'minutes')).toBe('45m');
   });
 
+  it('keeps the seconds on a time under an hour', () => {
+    expect(formatValue(7.75, 'minutes')).toBe('7m 45s');
+    expect(formatValue(0.5, 'minutes')).toBe('30s');
+    expect(formatValue(60.5, 'minutes')).toBe('1h 1m');
+  });
+
   it('prints a capped score as the fraction it is', () => {
     expect(formatValue(25, 'points', 25)).toBe('25 / 25');
   });
@@ -445,5 +461,196 @@ describe('formatting', () => {
   it('reads a bare day as a local one rather than a day early', () => {
     expect(formatOn('2026-09-12')).toContain('12');
     expect(formatOn('')).toBe('-');
+  });
+});
+
+/** Monthly entries from Jan 1, for the gates that need calendar time. */
+function monthly(values: number[], over: Partial<RecordRow> = {}): RecordRow[] {
+  return values.map((value, i) =>
+    row({ name: 'Rating', value, achieved_on: `2026-${String(i + 1).padStart(2, '0')}-01`, ...over }),
+  );
+}
+
+describe('insightOf', () => {
+  it('reads a steady climb as a new level, with time and rate', () => {
+    const [best] = personalBests(amc, TODAY);
+    const read = insightOf(best!);
+    expect(read.standing).toBe('new-best');
+    expect(read.daysToBest).toBe(194);
+    expect(durationText(read.daysToBest!)).toBe('6 months');
+    expect(read.ratePerMonth).toBeCloseTo(7 / (194 / 30.44), 5);
+    expect(read.vsPrevious).toBe(2);
+    expect(read.previousBest).toBe(23);
+    expect(read.trend).toEqual({ word: 'improving', early: false, basis: 5 });
+    // Five entries is not enough to compare two halves.
+    expect(read.pace).toBeNull();
+    expect(read.breakthroughs).toEqual([]);
+  });
+
+  it('reads a falling mile time as improving, not declining', () => {
+    const [best] = personalBests(mile, TODAY);
+    const read = insightOf(best!);
+    expect(read.standing).toBe('new-best');
+    expect(read.vsPrevious).toBe(1);
+    expect(read.trend?.word).toBe('improving');
+    expect(read.trend?.early).toBe(true);
+    expect(read.ratePerMonth).toBeGreaterThan(0);
+  });
+
+  it('says nothing about trend or rate off two entries', () => {
+    const [best] = personalBests(amc.slice(0, 2), TODAY);
+    const read = insightOf(best!);
+    expect(read.trend).toBeNull();
+    expect(read.ratePerMonth).toBeNull();
+    expect(read.pace).toBeNull();
+  });
+
+  it('calls a single entry a starting point with nothing measured', () => {
+    const [best] = personalBests([row({ value: 18 })], TODAY);
+    const read = insightOf(best!);
+    expect(read.standing).toBe('start');
+    expect(read.daysToBest).toBeNull();
+    expect(read.vsPrevious).toBeNull();
+  });
+
+  it('says a perfect score when the ceiling is reached', () => {
+    const rows = [row({ value: 20, target: 25, achieved_on: '2026-01-01' }),
+                  row({ value: 25, target: 25, achieved_on: '2026-03-01' })];
+    expect(insightOf(personalBests(rows, TODAY)[0]!).standing).toBe('perfect');
+  });
+
+  it('owns up when the latest fell short', () => {
+    const rows = [row({ value: 18, achieved_on: '2026-01-01' }),
+                  row({ value: 25, achieved_on: '2026-02-01' }),
+                  row({ value: 22, achieved_on: '2026-03-01' })];
+    const read = insightOf(personalBests(rows, TODAY)[0]!);
+    expect(read.standing).toBe('below');
+    expect(read.vsPrevious).toBe(-3);
+    expect(read.vsPreviousBest).toBe(-3);
+  });
+
+  it('sees gains speeding up, and slowing down', () => {
+    const fast = insightOf(personalBests(monthly([10, 11, 12, 13, 20, 30]), TODAY)[0]!);
+    expect(fast.pace).toBe('accelerating');
+    const slow = insightOf(personalBests(monthly([10, 20, 28, 30, 30.5, 31]), TODAY)[0]!);
+    expect(slow.pace).toBe('slowing');
+  });
+
+  it('does not call a maxed-out score slowing', () => {
+    const rows = monthly([15, 20, 25, 25, 25, 25], { target: 25 });
+    expect(insightOf(personalBests(rows, TODAY)[0]!).pace).toBeNull();
+  });
+
+  it('calls a flat run steady', () => {
+    const rows = monthly([20, 24, 25, 24, 25, 24]);
+    expect(insightOf(personalBests(rows, TODAY)[0]!).trend?.word).toBe('steady');
+  });
+});
+
+describe('breakthroughs', () => {
+  it('finds the one big jump among small ones', () => {
+    const rows = [row({ value: 18, achieved_on: '2026-01-01' }),
+                  row({ value: 19, achieved_on: '2026-02-01' }),
+                  row({ value: 25, achieved_on: '2026-03-01' })];
+    const [best] = personalBests(rows, TODAY);
+    const found = breakthroughs(best!);
+    expect(found).toHaveLength(1);
+    expect(found[0]!.jump).toBe(6);
+    expect(found[0]!.id).toBe(rows[2]!.id);
+  });
+
+  it('does not crown a steady climb', () => {
+    expect(breakthroughs(personalBests(amc, TODAY)[0]!)).toEqual([]);
+  });
+
+  it('does not crown a lone tiny best', () => {
+    const rows = [row({ value: 20, achieved_on: '2026-01-01' }),
+                  row({ value: 21, achieved_on: '2026-02-01' }),
+                  row({ value: 20, achieved_on: '2026-03-01' })];
+    expect(breakthroughs(personalBests(rows, TODAY)[0]!)).toEqual([]);
+  });
+
+  it('finds one in a time coming down', () => {
+    const rows = [8.5, 8.4, 7.5, 7.45].map((value, i) =>
+      row({ name: 'Mile', unit: 'minutes', comparison_direction: 'lower', value,
+            achieved_on: `2026-0${i + 1}-01` }));
+    const found = breakthroughs(personalBests(rows, TODAY)[0]!);
+    expect(found.map((one) => one.id)).toEqual([rows[2]!.id]);
+  });
+});
+
+describe('attempts', () => {
+  it('counts change from the start toward better, both ways', () => {
+    const rows = attempts(personalBests(mile, TODAY)[0]!);
+    expect(rows.map((one) => one.change)).toEqual([0, 1, 2]);
+    expect(rows.map((one) => one.vsBest)).toEqual([null, 1, 1]);
+    expect(rows.map((one) => one.n)).toEqual([1, 2, 3]);
+  });
+});
+
+describe('signedText', () => {
+  it('signs toward better the way the direction reads', () => {
+    expect(signedText(2, 'points', 'higher')).toBe('+2');
+    expect(signedText(-3, 'points', 'higher')).toBe('−3');
+    expect(signedText(1 / 3, 'minutes', 'lower')).toBe('−20s');
+    expect(signedText(-0.5, 'minutes', 'lower')).toBe('+30s');
+    expect(signedText(0, 'points', 'higher')).toBe('0');
+  });
+});
+
+describe('changeText', () => {
+  it('says faster and slower for times, signs for the rest', () => {
+    expect(changeText(1 / 3, 'minutes', 'lower')).toBe('20s faster');
+    expect(changeText(-0.2, 'minutes', 'lower')).toBe('12s slower');
+    expect(changeText(2, 'points', 'higher')).toBe('+2');
+  });
+});
+
+describe('durationText', () => {
+  it('picks the unit a person would', () => {
+    expect(durationText(0)).toBe('the same day');
+    expect(durationText(10)).toBe('10 days');
+    expect(durationText(21)).toBe('3 weeks');
+    expect(durationText(400)).toBe('1 year 1 month');
+  });
+});
+
+describe('milestone progress', () => {
+  const milestone = (over: Partial<RecordRow>) =>
+    row({ kind: 'milestone', name: 'Goal', value: 0, target: 0, unit: '', achieved_on: '', ...over });
+
+  it('has none without a target', () => {
+    expect(milestoneProgress(milestone({}), [])).toBeNull();
+  });
+
+  it('counts a typed figure up from zero', () => {
+    const got = milestoneProgress(milestone({ value: 12, target: 20, unit: 'problems' }), []);
+    expect(got?.percent).toBe(60);
+    expect(got?.met).toBe(false);
+    expect(progressText(got!)).toBe('12 of 20 problems');
+  });
+
+  it('reads a linked record in its own direction', () => {
+    const bests = personalBests(mile, TODAY);
+    const sub7 = milestoneProgress(milestone({ target: 6.5, progress_from: 'Mile' }), bests);
+    expect(sub7?.met).toBe(true);
+    expect(sub7?.percent).toBe(100);
+    const sub5 = milestoneProgress(milestone({ target: 5, progress_from: 'mile' }), bests);
+    expect(sub5?.current).toBe(6);
+    expect(sub5?.percent).toBeCloseTo(66.67, 1);
+    expect(sub5?.from?.name).toBe('Mile');
+    expect(progressText(sub5!)).toBe('6m now, aiming for 5m');
+  });
+
+  it('reads links without trusting the column', () => {
+    expect(linksOf({ links: '["AMC 8", ""]' })).toEqual(['AMC 8']);
+    expect(linksOf({ links: 'not json' })).toEqual([]);
+    expect(linksOf({ links: null })).toEqual([]);
+  });
+
+  it('counts days to a target date', () => {
+    expect(daysUntil('2026-09-30', TODAY)).toBe(10);
+    expect(daysUntil('2026-09-18', TODAY)).toBe(-2);
+    expect(daysUntil('', TODAY)).toBeNull();
   });
 });

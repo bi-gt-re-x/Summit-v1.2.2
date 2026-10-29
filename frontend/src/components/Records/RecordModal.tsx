@@ -27,6 +27,15 @@
  * and the day, with the best you are trying to top drawn above them and how
  * far the typed figure is from it drawn below.
  *
+ * ## Milestones that count toward something
+ *
+ * A milestone is still "I reached something", but some of those have a number
+ * in them: 20 USACO Bronze problems, a 1000 Codeforces rating. So a milestone
+ * can say where it stands (reached, or still working on it with a target
+ * date), link to the records it is about, and count toward a goal number.
+ * The count is typed by hand or read off one of the linked records' best, in
+ * that record's own direction — see `milestoneProgress` in utils/records.
+ *
  * ## Why the value is a plain number with a unit beside it
  *
  * Rather than a text field taking "4h 18m". Storing what somebody typed makes
@@ -45,7 +54,16 @@
  * halves of a chart pointing opposite ways.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { formatOn, formatValue, isBetter, personalBests, type Best } from '@/utils/records';
+import {
+  formatOn,
+  formatValue,
+  isBetter,
+  linksOf,
+  milestoneProgress,
+  personalBests,
+  progressText,
+  type Best,
+} from '@/utils/records';
 import type { Direction, RecordDraft, RecordKind, RecordRow } from '@/services/records';
 import { Icon } from '@/components/Icon';
 
@@ -84,6 +102,25 @@ function byCategory(bests: Best[]): Array<[string, Best[]]> {
     .map(([name, list]) => [name, [...list].sort((a, b) => a.name.localeCompare(b.name))]);
 }
 
+/** A stored row as the dialog edits it. Also what "Mark it done" saves from. */
+export function draftOf(entry: RecordRow): RecordDraft {
+  return {
+    id: entry.id,
+    kind: entry.kind,
+    name: entry.name,
+    category: entry.category,
+    value: entry.value,
+    target: entry.target,
+    unit: entry.unit,
+    comparison_direction: entry.comparison_direction === 'lower' ? 'lower' : 'higher',
+    note: entry.note,
+    achieved_on: entry.achieved_on,
+    due_on: entry.due_on ?? '',
+    links: linksOf(entry),
+    progress_from: entry.progress_from ?? '',
+  };
+}
+
 export interface RecordModalProps {
   open: boolean;
   /** The row being edited, or undefined to create. */
@@ -112,6 +149,8 @@ export function RecordModal({
   const [error, setError] = useState<string | null>(null);
   /** The name came from the "Which record?" picker rather than being typed. */
   const [picked, setPicked] = useState(false);
+  /** A milestone with a goal number. Opens on for one that already has one. */
+  const [counting, setCounting] = useState(false);
   const resultRef = useRef<HTMLInputElement>(null);
 
   /* Reset every time it opens. A dialog that remembers the last thing typed
@@ -120,21 +159,10 @@ export function RecordModal({
     if (!open) return;
     setError(null);
     setPicked(false);
+    setCounting(Boolean(entry && entry.kind === 'milestone' && entry.target > 0));
     setDraft(
       entry
-        ? {
-            id: entry.id,
-            kind: entry.kind,
-            name: entry.name,
-            category: entry.category,
-            value: entry.value,
-            target: entry.target,
-            unit: entry.unit,
-            comparison_direction:
-              entry.comparison_direction === 'lower' ? 'lower' : 'higher',
-            note: entry.note,
-            achieved_on: entry.achieved_on,
-          }
+        ? draftOf(entry)
         : {
             kind,
             name: '',
@@ -145,6 +173,9 @@ export function RecordModal({
             comparison_direction: 'higher',
             note: '',
             achieved_on: todayIso(),
+            due_on: '',
+            links: [],
+            progress_from: '',
           },
     );
   }, [entry, kind, open]);
@@ -195,7 +226,10 @@ export function RecordModal({
 
   /** Picking a name you already use carries its category and unit across. */
   const takeName = (name: string) => {
-    const held = knownRecords.find((best) => best.name.trim() === name.trim());
+    // A milestone that shares a record's name is not an entry of it.
+    const held = isMilestone
+      ? undefined
+      : knownRecords.find((best) => best.name.trim() === name.trim());
     setDraft((current) => ({
       ...current,
       name,
@@ -247,15 +281,68 @@ export function RecordModal({
       setError("A record needs a number. A milestone doesn't, so switch it above.");
       return;
     }
+    if (isMilestone && counting && !(Number(draft.target) > 0)) {
+      setError('Give it a goal number, or turn off "Count toward a number".');
+      return;
+    }
     setError(null);
+    const fromRecord = isMilestone && counting && Boolean(draft.progress_from);
     onSave({
       ...draft,
       name: draft.name.trim(),
-      value: isMilestone ? 0 : Number(draft.value),
-      target: isMilestone ? 0 : Number(draft.target) || 0,
+      value: isMilestone
+        ? counting && !fromRecord ? Number(draft.value) || 0 : 0
+        : Number(draft.value),
+      target: isMilestone && !counting ? 0 : Number(draft.target) || 0,
+      unit: isMilestone && !counting ? '' : draft.unit,
       comparison_direction: isMilestone ? 'higher' : (draft.comparison_direction ?? 'higher'),
+      links: isMilestone ? draft.links ?? [] : [],
+      progress_from: fromRecord ? draft.progress_from : '',
+      due_on: isMilestone ? draft.due_on ?? '' : '',
     });
   };
+
+  /** The milestone's links, as the records they name. Stale names drop out. */
+  const links = draft.links ?? [];
+  const isLinked = (name: string) => links.some((one) => one.toLowerCase() === name.toLowerCase());
+  const linkedBests = knownRecords.filter((best) => isLinked(best.name));
+  const source = linkedBests.find(
+    (best) => best.name.toLowerCase() === (draft.progress_from ?? '').toLowerCase(),
+  );
+
+  const toggleLink = (name: string) =>
+    setDraft((current) => {
+      const now = current.links ?? [];
+      const on = now.some((one) => one.toLowerCase() === name.toLowerCase());
+      const next = on ? now.filter((one) => one.toLowerCase() !== name.toLowerCase()) : [...now, name];
+      const dropsSource = on && (current.progress_from ?? '').toLowerCase() === name.toLowerCase();
+      return { ...current, links: next, progress_from: dropsSource ? '' : current.progress_from };
+    });
+
+  /** Counting from a record takes its unit, so the goal reads in it. */
+  const takeSource = (name: string) => {
+    const held = linkedBests.find((best) => best.name === name);
+    setDraft((current) => ({
+      ...current,
+      progress_from: held ? held.name : '',
+      unit: held ? held.unit : current.unit,
+    }));
+  };
+
+  /** What the milestone would show, worked out the way the page will. */
+  const progress =
+    isMilestone && counting && Number(draft.target) > 0
+      ? milestoneProgress(
+          {
+            kind: 'milestone',
+            value: Number(draft.value) || 0,
+            target: Number(draft.target),
+            unit: draft.unit ?? '',
+            progress_from: source ? source.name : '',
+          } as RecordRow,
+          knownRecords,
+        )
+      : null;
 
   /** The record this entry is joining, if it is joining one. */
   const joining = knownRecords.find((best) => best.name.trim() === draft.name.trim());
@@ -285,7 +372,16 @@ export function RecordModal({
 
   /* The day, on the result's row once a picked record has emptied the
      category's, so the form doesn't end on a half-filled line. */
-  const dateField = (
+  const dateField = isMilestone && !draft.achieved_on ? (
+    <label className="rc-field">
+      <span>Target date <i className="rc-opt">optional</i></span>
+      <input
+        type="date"
+        value={draft.due_on ?? ''}
+        onChange={(event) => setDraft({ ...draft, due_on: event.target.value })}
+      />
+    </label>
+  ) : (
     <label className="rc-field">
       <span>{isMilestone ? 'Reached on' : 'Set on'}</span>
       <input
@@ -293,9 +389,6 @@ export function RecordModal({
         value={draft.achieved_on ?? ''}
         onChange={(event) => setDraft({ ...draft, achieved_on: event.target.value })}
       />
-      {isMilestone && (
-        <em className="rc-field-hint">Leave it empty for one you're still chasing.</em>
-      )}
     </label>
   );
 
@@ -440,6 +533,39 @@ export function RecordModal({
             </div>
           )}
 
+          {/* Reached or not, asked outright. It used to be "leave the date
+              empty", which nobody reads until after they have saved one. */}
+          {isMilestone && (
+            <div className="rc-field" role="group" aria-label="Where it stands">
+              <span>Where it stands</span>
+              <div className="rc-dir">
+                {([
+                  ['done', 'Reached it', 'It happened'],
+                  ['open', 'Still working on it', 'Track it, with a target date'],
+                ] as const).map(([value, label, hint]) => {
+                  const on = value === 'done' ? Boolean(draft.achieved_on) : !draft.achieved_on;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      className={on ? 'is-on' : ''}
+                      aria-pressed={on}
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          achieved_on: value === 'done' ? draft.achieved_on || todayIso() : '',
+                        })
+                      }
+                    >
+                      {label}
+                      <em>{hint}</em>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {!isMilestone && !fixed && (
             <div className="rc-field" role="group" aria-label="Which way is better">
               <span>Better is</span>
@@ -485,6 +611,115 @@ export function RecordModal({
           </div>
           )}
 
+          {isMilestone && knownRecords.length > 0 && (
+            <div className="rc-field" role="group" aria-label="Linked records">
+              <span>Linked records <i className="rc-opt">optional</i></span>
+              <div className="rc-chipset">
+                {knownRecords.map((best) => (
+                  <button
+                    key={best.name}
+                    type="button"
+                    className={`rc-pick-chip${isLinked(best.name) ? ' is-on' : ''}`}
+                    aria-pressed={isLinked(best.name)}
+                    onClick={() => toggleLink(best.name)}
+                  >
+                    {best.name}
+                  </button>
+                ))}
+              </div>
+              <em className="rc-field-hint">
+                The records this is about. They show on the milestone, and one can fill in its progress.
+              </em>
+            </div>
+          )}
+
+          {isMilestone && (
+            <button
+              type="button"
+              className={`rc-switch${counting ? ' is-on' : ''}`}
+              role="switch"
+              aria-checked={counting}
+              aria-label="Count toward a number"
+              onClick={() => setCounting((on) => !on)}
+            >
+              <span className="rc-switch-track" aria-hidden="true"><i /></span>
+              <span className="rc-switch-text">
+                <strong>Count toward a number</strong>
+                <em>Like 20 problems solved, or a 1000 rating</em>
+              </span>
+            </button>
+          )}
+
+          {isMilestone && counting && (
+            <div className="rc-count">
+              {linkedBests.length > 0 && (
+                <label className="rc-field">
+                  <span>Progress comes from</span>
+                  <select
+                    value={source ? source.name : ''}
+                    onChange={(event) => takeSource(event.target.value)}
+                  >
+                    <option value="">I'll update it myself</option>
+                    {linkedBests.map((best) => (
+                      <option key={best.name} value={best.name}>
+                        Your {best.name} best ({formatValue(best.value, best.unit, best.target)})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+              <div className="rc-field-row">
+                {!source && (
+                  <label className="rc-field">
+                    <span>So far</span>
+                    <input
+                      type="number"
+                      step="any"
+                      value={draft.value ?? ''}
+                      placeholder="12"
+                      onChange={(event) =>
+                        setDraft({
+                          ...draft,
+                          value: event.target.value === '' ? undefined : Number(event.target.value),
+                        })
+                      }
+                    />
+                  </label>
+                )}
+                <label className="rc-field">
+                  <span>Goal</span>
+                  <input
+                    type="number"
+                    step="any"
+                    value={draft.target || ''}
+                    placeholder={source ? String(source.value) : '20'}
+                    onChange={(event) => setDraft({ ...draft, target: Number(event.target.value) || 0 })}
+                  />
+                </label>
+                {!source && (
+                  <label className="rc-field">
+                    <span>Unit</span>
+                    <select
+                      value={draft.unit ?? 'points'}
+                      onChange={(event) => setDraft({ ...draft, unit: event.target.value })}
+                    >
+                      {UNITS.map((unit) => (
+                        <option key={unit.id} value={unit.id}>
+                          {unit.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+              </div>
+              {source && (
+                <em className="rc-field-hint">
+                  Same unit as your {source.name} record{source.direction === 'lower' ? '. Lower is better' : ''}.
+                </em>
+              )}
+            </div>
+          )}
+
           <label className="rc-field">
             <span>Note</span>
             <textarea
@@ -516,6 +751,19 @@ export function RecordModal({
                     : `. ${formatValue(-gap, joining!.unit)} short of your best.`}
                 </span>
               )}
+            </p>
+          )}
+
+          {progress && (
+            <p className={`rc-modal-preview${progress.met ? ' is-record' : ''}`}>
+              {progress.met ? (
+                <strong>Target reached.</strong>
+              ) : (
+                <>
+                  <strong>{progressText(progress)}</strong>. {Math.round(progress.percent)}% of the way.
+                </>
+              )}
+              {progress.from && ` Counted from your ${progress.from.name} best.`}
             </p>
           )}
 

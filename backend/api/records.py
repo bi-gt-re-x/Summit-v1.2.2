@@ -22,8 +22,9 @@ goal's progress is recomputed server-side because two clients could disagree
 about it and the disagreement would be written back. Nothing here is written
 back — the best is read, never stored — so there is nothing to keep honest.
 """
+import json
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -41,6 +42,11 @@ NAME_MAX = 120
 NOTE_MAX = 500
 
 KINDS = ('record', 'milestone')
+
+#: How many records one milestone can be linked to. Enough for "Qualified for
+#: AIME" to point at AMC 10 and AMC 12 and a mock or two; a list long enough to
+#: need scrolling in the dialog is not a link, it is a category.
+LINKS_MAX = 8
 
 #: Which end of a record's range is the good end. A score wants 'higher', a
 #: mile time wants 'lower'. Stored rather than guessed from the unit, because
@@ -100,6 +106,10 @@ class SaveRecord(BaseModel):
     comparison_direction: str = 'higher'
     note: str = ''
     achieved_on: str = ''
+    #: Milestones only — see `_clean`.
+    due_on: str = ''
+    links: List[str] = []
+    progress_from: str = ''
 
 
 class DeleteRecord(BaseModel):
@@ -125,18 +135,47 @@ def _mine(username):
     return rows
 
 
+def _links(names):
+    """Record names a milestone points at: trimmed, capped, no repeats.
+
+    Stored as JSON text so the column is one TEXT on both databases. Names
+    rather than ids because a record *is* its name — every entry of "AMC 8" is
+    the same record — and an id would point at one entry of it.
+    """
+    out, seen = [], set()
+    for raw in names or []:
+        name = str(raw or '').strip()[:NAME_MAX]
+        key = name.lower()
+        if name and key not in seen:
+            seen.add(key)
+            out.append(name)
+        if len(out) >= LINKS_MAX:
+            break
+    return json.dumps(out)
+
+
 def _clean(entry: SaveRecord):
     """The writable fields, trimmed, capped and typed. Nothing else is stored."""
     kind = entry.kind if entry.kind in KINDS else 'record'
+    milestone = kind == 'milestone'
+    # A milestone carries a figure only when it has a target to count toward
+    # ("Solve 20 USACO Bronze problems": 12 of 20). Without one the figure is
+    # zeroed rather than trusted, so a client that sends one cannot produce a
+    # milestone that draws a number with nothing to measure it against.
+    target = _number(entry.target)
+    counted = not milestone or target > 0
+    links = _links(entry.links) if milestone else '[]'
+    progress_from = entry.progress_from.strip()[:NAME_MAX] if milestone and counted else ''
+    # Progress can only come from a record the milestone is linked to.
+    if progress_from and progress_from.lower() not in {n.lower() for n in json.loads(links)}:
+        progress_from = ''
     return {
         'kind': kind,
         'name': entry.name.strip()[:NAME_MAX],
         'category': entry.category.strip()[:NAME_MAX],
-        # A milestone carries no figure. Zeroed rather than trusted, so a
-        # client that sends one cannot produce a milestone that draws a number.
-        'value': 0 if kind == 'milestone' else _number(entry.value),
-        'target': 0 if kind == 'milestone' else _number(entry.target),
-        'unit': '' if kind == 'milestone' else entry.unit.strip()[:24],
+        'value': _number(entry.value) if counted else 0,
+        'target': target if counted else 0,
+        'unit': entry.unit.strip()[:24] if counted else '',
         # A milestone has nothing to compare, so it is stored 'higher' rather
         # than left to whatever a client sent: the column is one of two words
         # everywhere, and a row that reads 'lower' but carries no figure is a
@@ -148,6 +187,11 @@ def _clean(entry: SaveRecord):
         ),
         'note': entry.note.strip()[:NOTE_MAX],
         'achieved_on': _date(entry.achieved_on),
+        # When it is meant to happen by. A record is set when it is set, so
+        # only a milestone has one.
+        'due_on': _date(entry.due_on) if milestone else '',
+        'links': links,
+        'progress_from': progress_from,
     }
 
 

@@ -52,8 +52,9 @@
 -- ## Milestones share the table
 --
 -- `kind` separates them. A milestone is a thing that either happened or has
--- not — "first AIME problem solved" — so it carries no figure and its date is
--- empty until it does. They live here rather than in their own table because
+-- not — "first AIME problem solved" — and its date is empty until it does.
+-- It carries no figure unless it has a target to count toward ("20 USACO
+-- Bronze problems", "Codeforces 1000"), which it can read off a linked record. They live here rather than in their own table because
 -- they are the same record with the number left out: same owner, same
 -- category, same date, same page, same three endpoints.
 --
@@ -106,6 +107,16 @@ CREATE TABLE IF NOT EXISTS records (
     -- ISO date. Empty on a milestone not reached yet, which is what draws it
     -- as an open circle rather than a tick.
     achieved_on  TEXT NOT NULL DEFAULT '',
+
+    -- Milestones only, and all three optional. When it is meant to happen by
+    -- (ISO, '' for no date); the records it is linked to, a JSON list of
+    -- names ("Qualified for AIME" → ["AMC 10", "AMC 12"]); and which one of
+    -- those its progress counts from, '' when the figure is typed by hand.
+    -- A milestone with a `target` above zero keeps `value` and `unit` as its
+    -- progress — "12 of 20 problems" — and one without has neither.
+    due_on        TEXT NOT NULL DEFAULT '',
+    links         TEXT NOT NULL DEFAULT '[]',
+    progress_from TEXT NOT NULL DEFAULT '',
 
     created_at   TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at   TEXT NOT NULL DEFAULT (datetime('now'))

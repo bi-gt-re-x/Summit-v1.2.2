@@ -96,10 +96,10 @@
  * is about the high scores themselves. All three read the same history and ask
  * different things of it.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ErrorState, Loading, PageHero } from '@/components';
 import { Glyph } from '@/components/Growth/GrowthPanels';
-import { RecordModal } from '@/components/Records/RecordModal';
+import { RecordModal, draftOf } from '@/components/Records/RecordModal';
 import { BadgeWall } from '@/components/Achievements/BadgeWall';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -115,21 +115,32 @@ import type { GrowthSeries } from '@/services/growth';
 import type { RecordDraft, RecordKind, RecordRow } from '@/services/records';
 import { longDate } from '@/utils/growthChapters';
 import {
+  NEED,
+  STANDING_TITLE,
+  attempts,
+  breakthroughs,
   byDay,
   categories as categoriesOf,
+  daysUntil,
+  durationText,
   filterRows,
   formatOn,
   formatValue,
   gainText,
   headline,
-  isBetter,
+  insightOf,
+  linksOf,
   milestoneGroups,
+  milestoneProgress,
   moments,
   personalBests,
+  progressText,
+  changeText,
   stepText,
   stories,
   tally,
   trail,
+  type Attempt,
   type Best,
   type MilestoneGroup,
   type Moment,
@@ -201,13 +212,12 @@ function GroupRow({
   entry,
   open,
   onToggle,
-  onPick,
+  ...row
 }: {
   entry: MilestoneGroup;
   open: boolean;
   onToggle: () => void;
-  onPick: (row: RecordRow) => void;
-}) {
+} & Omit<MileRowProps, 'row'>) {
   const total = entry.children.length;
   const done = entry.reached === total;
 
@@ -223,16 +233,8 @@ function GroupRow({
 
       {open && (
         <ul className="rc-key-kids">
-          {entry.children.map((row) => (
-            <li key={row.id} className={row.achieved_on ? 'is-done' : ''}>
-              <button type="button" onClick={() => onPick(row)}>
-                <span className="rc-mile-tick" aria-hidden="true">
-                  {row.achieved_on ? '✓' : ''}
-                </span>
-                <span className="rc-mile-name">{row.name}</span>
-                <span className="rc-mile-when">{formatOn(row.achieved_on)}</span>
-              </button>
-            </li>
+          {entry.children.map((child) => (
+            <MileRow key={child.id} {...row} row={child} />
           ))}
         </ul>
       )}
@@ -241,18 +243,104 @@ function GroupRow({
 }
 
 /**
- * The evolution of one record at card size.
+ * When an open milestone is due, the way a person would say it. Past the
+ * date it says how late, because "Mar 1" on its own reads as a plan.
+ */
+function dueText(days: number | null, iso: string): string {
+  if (days === null) return 'Not yet';
+  if (days < 0) return `${-days} ${days === -1 ? 'day' : 'days'} overdue`;
+  if (days === 0) return 'Due today';
+  if (days === 1) return 'Due tomorrow';
+  if (days <= 60) return `Due in ${days} days`;
+  return `Due ${formatOn(iso)}`;
+}
+
+interface MileRowProps {
+  row: RecordRow;
+  bests: Best[];
+  onPick: (row: RecordRow) => void;
+  /** Save it as reached today. */
+  onDone: (row: RecordRow) => void;
+  /** Open a linked record on the chart. */
+  onLink: (name: string) => void;
+  busy: boolean;
+}
+
+/**
+ * One milestone: reached ones are a filled tick and a date; open ones are a
+ * dashed ring with what is left, when it is due, and how far along it is.
  *
- * No axis, no labels, no numbers — the trail underneath carries those. This
- * draws the *shape*, which is the one thing a column of figures does not give
- * you at a glance.
+ * The progress bar only draws for a milestone with a goal number. Most
+ * milestones are "it happened or it didn't" and a bar under those would be a
+ * measurement of nothing. Linked records show as chips that open that record
+ * on the chart above, which is the whole use of linking them.
+ */
+function MileRow({ row, bests, onPick, onDone, onLink, busy }: MileRowProps) {
+  const done = Boolean(row.achieved_on);
+  const progress = milestoneProgress(row, bests);
+  const days = done ? null : daysUntil(row.due_on);
+  const links = linksOf(row)
+    .map((name) => bests.find((best) => best.name.trim().toLowerCase() === name.trim().toLowerCase()))
+    .filter((best): best is Best => Boolean(best));
+  const late = days !== null && days < 0;
+
+  return (
+    <li className={`rc-mile${done ? ' is-done' : ' is-open'}${late && !progress?.met ? ' is-late' : ''}${
+      progress?.met && !done ? ' is-met' : ''}`}>
+      <button type="button" onClick={() => onPick(row)}>
+        <span className="rc-mile-tick" aria-hidden="true">{done ? '✓' : ''}</span>
+        <span className="rc-mile-name">{row.name}</span>
+        <span className="rc-mile-when">
+          {done
+            ? formatOn(row.achieved_on)
+            : progress?.met ? 'Target reached' : dueText(days, row.due_on ?? '')}
+        </span>
+      </button>
+
+      {((progress && !done) || links.length > 0) && (
+        <div className="rc-mile-more">
+          {progress && !done && (
+            <div className="rc-mile-progress">
+              <span className="rc-mile-bar" role="progressbar" aria-valuenow={Math.round(progress.percent)}
+                    aria-valuemin={0} aria-valuemax={100} aria-label={`${row.name}: ${progressText(progress)}`}>
+                <i style={{ width: `${progress.percent}%` }} />
+              </span>
+              <span className="rc-mile-count">
+                {progressText(progress)}
+                {progress.from && <em> · from your {progress.from.name} best</em>}
+              </span>
+            </div>
+          )}
+          {(links.length > 0 || (progress?.met && !done)) && (
+            <div className="rc-mile-links">
+              {links.map((best) => (
+                <button key={best.name} type="button" className="rc-mile-link"
+                        title={`Show ${best.name} on the chart`} onClick={() => onLink(best.name)}>
+                  <Icon name="trend" /> {best.name}
+                </button>
+              ))}
+              {progress?.met && !done && (
+                <button type="button" className="rc-mile-mark" disabled={busy} onClick={() => onDone(row)}>
+                  Mark it done
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+    </li>
+  );
+}
+
+/**
+ * The evolution of one record at card size: its raw results, oldest first.
  *
- * It plots how good each entry was rather than how large, so a record measured
- * downward still climbs. That is a real decision and not a cosmetic one: a
- * mile time improving from 6:10 to 5:40 draws as a falling line on a raw axis,
- * and a falling line on a card headed "personal best" reads as decline to
- * everyone who does not stop to check the units. The full chart lower down
- * plots the raw values, because it has an axis to say what they are.
+ * It used to plot goodness, so a mile time coming down drew as a climbing
+ * line. That made every card look the same way up and it also drew something
+ * the numbers beside it did not say. Now it draws the results as they are and
+ * says so under the line, with "lower is better" on a record measured down,
+ * so a falling line on a mile reads as the good news it is. The chart further
+ * down has an Improvement view for anyone who wants "better is up".
  */
 function Spark({ best }: { best: Best }) {
   const values = best.history.filter((row) => row.achieved_on).map((row) => row.value);
@@ -265,17 +353,22 @@ function Spark({ best }: { best: Best }) {
   const H = 30;
 
   const points = values.map((value, i) => {
-    const good = best.direction === 'lower' ? (high - value) / span : (value - low) / span;
-    return [3 + (i * (W - 6)) / (values.length - 1), H - 4 - good * (H - 8)] as const;
+    const up = (value - low) / span;
+    return [3 + (i * (W - 6)) / (values.length - 1), H - 4 - up * (H - 8)] as const;
   });
   const path = points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x},${y}`).join(' ');
   const [lastX, lastY] = points[points.length - 1]!;
 
   return (
-    <svg className="rc-spark" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
-      <path className="rc-spark-line" d={path} />
-      <circle className="rc-spark-dot" cx={lastX} cy={lastY} r="3" />
-    </svg>
+    <span className="rc-spark-wrap">
+      <svg className="rc-spark" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
+        <path className="rc-spark-line" d={path} />
+        <circle className="rc-spark-dot" cx={lastX} cy={lastY} r="3" />
+      </svg>
+      <span className="rc-spark-cap">
+        Your results{best.direction === 'lower' ? ' · lower is better' : ''}
+      </span>
+    </span>
   );
 }
 
@@ -354,6 +447,18 @@ function splitValue(value: number, unit: string, target = 0): [string, string] {
   return [whole, ''];
 }
 
+/**
+ * How far a record has come, in words for a time ("48s faster") and as the
+ * signed figure for everything else ("+7"). See `changeText`.
+ */
+const gainWords = (best: Best) =>
+  best.direction === 'lower' && best.unit === 'minutes'
+    ? changeText(best.gain, best.unit, best.direction)
+    : gainText(best);
+
+/** First entry to the best, in days, or null while the first is the best. */
+const daysToBest = (best: Best) => insightOf(best).daysToBest;
+
 function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
   const dated = best.history.filter((row) => row.achieved_on).length;
   const steps = trail(best);
@@ -386,7 +491,10 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
         {best.fresh ? (
           <span className="rc-best-new">New record <Icon name="flame" /></span>
         ) : best.gain > 0 ? (
-          <span className="rc-best-gain">↑ {gainText(best)} since first</span>
+          <span className="rc-best-gain">
+            ↑ {gainWords(best)} since first
+            {daysToBest(best) !== null && `, in ${durationText(daysToBest(best)!)}`}
+          </span>
         ) : (
           <span className="rc-best-gain is-quiet">
             {best.entries > 1 ? 'No change yet' : 'First entry'}
@@ -423,10 +531,13 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
 function Entry({
   row,
   moment,
+  big,
   onOpen,
 }: {
   row: RecordRow;
   moment?: Moment;
+  /** One of the record's breakthroughs — see `breakthroughs` in utils/records. */
+  big?: boolean;
   onOpen: () => void;
 }) {
   const step = moment ? stepText(moment) : '';
@@ -444,7 +555,7 @@ function Entry({
           <span className="rc-rec-name">{row.name}</span>
           {moment?.broke ? (
             <span className="rc-rec-note is-record">
-              New record{step && ` · ${step}`}
+              {big ? 'Breakthrough' : 'New record'}{step && ` · ${step}`}
             </span>
           ) : moment?.first ? (
             <span className="rc-rec-note">
@@ -452,7 +563,10 @@ function Entry({
             </span>
           ) : (
             <span className="rc-rec-note">
-              {row.kind === 'milestone' ? 'Milestone' : 'Personal best'}
+              {/* Not "Personal best": this branch is every entry that beat
+                  nothing, and calling a slower mile a personal best is the
+                  one thing this list must not do. */}
+              {row.kind === 'milestone' ? 'Milestone' : moment ? 'No new best this time' : 'Logged'}
             </span>
           )}
         </span>
@@ -490,101 +604,382 @@ function Entry({
   );
 }
 
+/** What a record's figure is called, for the chart's caption and axis. */
+const UNIT_NOUN: Record<string, string> = {
+  points: 'score',
+  minutes: 'time',
+  days: 'days',
+  problems: 'problems',
+  lines: 'lines',
+  level: 'level',
+  rating: 'rating',
+};
+
+/** The two things the chart can draw. */
+type ChartMode = 'results' | 'improvement';
+
 /**
- * The evolution of one record, as a line.
- *
- * Drawn rather than charted with a library: it is one series of at most a
- * dozen points and the whole thing is forty lines of SVG. The y-axis is padded
- * off the range rather than starting at zero — a score that went 18 to 25 on a
- * 0-30 axis is a flat line, and the flatness would be a lie about a 39%
- * improvement.
- *
- * Raw values, unlike the sparkline on the cards, which plots goodness so the
- * line always climbs. This one has an axis to say what the numbers are, so
- * inverting it would be inventing a scale nobody asked for — but an axis is
- * only read by somebody already looking, so a record measured downward says so
- * above the chart rather than leaving a descending line to be read as decline.
- *
- * The ringed point is the **best**, not the last one. Those are the same point
- * most of the time and the difference is exactly the case worth drawing: a
- * record with a bad day at the end had its record earlier, and ringing the
- * final dot would point at the wrong entry on the one chart where it matters.
+ * A tick or point label. Results print the way the record does (7m 45s, 25);
+ * improvement prints signed toward better, with the first entry as "Start".
  */
-function Evolution({ best }: { best: Best }) {
-  const points = best.history.filter((row) => row.achieved_on);
-  if (points.length < 2) {
+function chartLabel(best: Best, mode: ChartMode, value: number): string {
+  if (mode === 'improvement') {
+    // Signed as improvement, not as the raw difference: this view's whole
+    // promise is that up and plus are better, a mile included.
+    if (Math.abs(value) < 1e-9) return 'Start';
+    return `${value > 0 ? '+' : '−'}${formatValue(Math.abs(value), best.unit === 'minutes' ? 'minutes' : '')}`;
+  }
+  if (best.unit === 'minutes') return formatValue(value, 'minutes');
+  return (Math.round(value * 10) / 10).toLocaleString();
+}
+
+/**
+ * The evolution of one record, as a line, in one of two views.
+ *
+ * **Results** plots the raw figures, faithfully: a mile time coming down is a
+ * falling line, and the caption above says lower is better so nobody reads it
+ * as decline. **Improvement** plots how far each result is from the first,
+ * signed toward better, so up is always good news whichever way the record is
+ * measured. They are two charts with two captions rather than one chart that
+ * quietly flips, because a picture that silently inverts the numbers beside
+ * it is the thing this replaced.
+ *
+ * The y-axis is padded off the range rather than starting at zero — a score
+ * that went 18 to 25 on a 0-30 axis is a flat line, and the flatness would be
+ * a lie about a 39% improvement. The improvement view always includes zero,
+ * drawn dashed, which is where the record started.
+ *
+ * The gold point is the **best**, not the last one, and ringed points are
+ * breakthroughs. With more than a dozen entries only the first, best and
+ * latest carry their figure, so the labels do not pile into each other.
+ */
+function Evolution({ best, mode }: { best: Best; mode: ChartMode }) {
+  /* Drawn at the width it is shown at, so its text is real pixels. A fixed
+     viewBox scaled to a phone shrank the labels to three pixels high. */
+  const box = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(960);
+  const steps = attempts(best);
+  // Re-observed when the chart appears or goes, since that swaps the element.
+  const drawn = steps.length >= 2;
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const watch = new ResizeObserver(([seen]) => {
+      if (seen) setWidth(Math.round(seen.contentRect.width));
+    });
+    watch.observe(el);
+    return () => watch.disconnect();
+  }, [drawn]);
+
+  if (steps.length < 2) {
     return (
       <p className="rc-empty">
-        One entry so far. Log "{best.name}" again when you beat it to see a line here.
+        One entry so far. Log "{best.name}" again when you try it next to see a line here.
       </p>
     );
   }
 
-  const values = points.map((row) => row.value);
-  const peak = points.reduce(
-    (top, row) => (isBetter(row.value, top.value, best.direction) ? row : top),
-    points[0]!,
-  );
-  const low = Math.min(...values);
-  const high = Math.max(...values);
+  const ys = steps.map((step) => (mode === 'results' ? step.row.value : step.change));
+  const peak = steps.reduce((top, step) => (step.change > top.change ? step : top), steps[0]!);
+  let low = Math.min(...ys);
+  let high = Math.max(...ys);
+  if (mode === 'improvement') {
+    low = Math.min(low, 0);
+    high = Math.max(high, 0);
+  }
   const pad = (high - low || Math.abs(high) || 1) * 0.2;
-  const floor = low - pad;
-  const ceil = high + pad;
+  let floor = low - pad;
+  let ceil = high + pad;
+  if (mode === 'results') {
+    // The padding stays inside what a result can be: no "26.4" over a score
+    // out of 25, and no negative tick under results that are all positive.
+    if (best.target > 0 && best.direction === 'higher') ceil = Math.min(ceil, best.target);
+    if (low >= 0) floor = Math.max(floor, 0);
+    if (ceil <= high) ceil = high + (high - floor || 1) * 0.08;
+  }
 
-  const W = 640;
-  const H = 190;
-  const L = 44;
+  // Short whatever the width: the chart spans the card, and a line as tall as
+  // it is wide stands taller than the figures it explains.
+  const W = Math.max(280, width);
+  const H = W < 520 ? 200 : 230;
+  const L = 58;
   const B = 26;
+  const T = 18;
 
-  const x = (i: number) => L + (i * (W - L - 14)) / Math.max(1, points.length - 1);
-  const y = (v: number) => H - B - ((v - floor) / (ceil - floor || 1)) * (H - B - 14);
+  const x = (i: number) => L + (i * (W - L - 18)) / Math.max(1, steps.length - 1);
+  const y = (v: number) => H - B - ((v - floor) / (ceil - floor || 1)) * (H - B - T);
 
-  const path = points.map((row, i) => `${i === 0 ? 'M' : 'L'}${x(i)},${y(row.value)}`).join(' ');
-  const area = `${path} L${x(points.length - 1)},${H - B} L${x(0)},${H - B} Z`;
+  const path = ys.map((v, i) => `${i === 0 ? 'M' : 'L'}${x(i)},${y(v)}`).join(' ');
+  const base = mode === 'improvement' ? y(0) : H - B;
+  const area = `${path} L${x(steps.length - 1)},${base} L${x(0)},${base} Z`;
+  // Every point carries its figure only while there is room for them.
+  const crowded = steps.length > Math.max(4, Math.floor((W - L) / 64));
 
   return (
-    <div className="rc-ev">
+    <div className="rc-ev" ref={box}>
       <svg viewBox={`0 0 ${W} ${H}`} className="rc-ev-svg" role="img"
            aria-label={
-             `${best.name} over time, from ${values[0]} to ${values[values.length - 1]}` +
-             `, best ${peak.value}, where ${best.direction} is better`
+             mode === 'results'
+               ? `${best.name}, every result from ${chartLabel(best, 'results', ys[0]!)} to ` +
+                 `${chartLabel(best, 'results', ys[ys.length - 1]!)}, where ${best.direction} is better`
+               : `${best.name}, improvement on your first result, best ${chartLabel(best, 'improvement', peak.change)}`
            }>
         <defs>
           <linearGradient id="rc-ev-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="currentColor" stopOpacity=".26" />
+            <stop offset="0%" stopColor="currentColor" stopOpacity=".22" />
             <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
           </linearGradient>
         </defs>
 
         {[0, 0.5, 1].map((step) => {
           const value = floor + (ceil - floor) * (1 - step);
+          const at = T + step * (H - B - T);
           return (
             <g key={step}>
-              <line className="rc-ev-grid" x1={L} y1={14 + step * (H - B - 14)} x2={W - 8}
-                    y2={14 + step * (H - B - 14)} />
-              <text className="rc-ev-axis" x={L - 8} y={18 + step * (H - B - 14)} textAnchor="end">
-                {Math.round(value)}
+              <line className="rc-ev-grid" x1={L} y1={at} x2={W - 8} y2={at} />
+              <text className="rc-ev-axis" x={L - 8} y={at + 4} textAnchor="end">
+                {chartLabel(best, mode, value)}
               </text>
             </g>
           );
         })}
 
+        {mode === 'improvement' && (
+          <line className="rc-ev-zero" x1={L} y1={y(0)} x2={W - 8} y2={y(0)} />
+        )}
+
         <path className="rc-ev-area" d={area} fill="url(#rc-ev-fill)" />
         <path className="rc-ev-line" d={path} />
 
-        {points.map((row, i) => (
-          <g key={row.id}>
-            <circle className={`rc-ev-dot${row.id === peak.id ? ' is-best' : ''}`}
-                    cx={x(i)} cy={y(row.value)} r={row.id === peak.id ? 6 : 4} />
-            <text className="rc-ev-point" x={x(i)} y={y(row.value) - 12} textAnchor="middle">
-              {Math.round(row.value * 10) / 10}
-            </text>
-            <text className="rc-ev-when" x={x(i)} y={H - 8} textAnchor="middle">
-              {row.achieved_on.slice(5).replace('-', '/')}
-            </text>
-          </g>
-        ))}
+        {steps.map((step, i) => {
+          const isBest = step.row.id === peak.row.id;
+          const labelled = !crowded || i === 0 || i === steps.length - 1 || isBest;
+          return (
+            <g key={step.row.id}>
+              {step.breakthrough && (
+                <circle className="rc-ev-break" cx={x(i)} cy={y(ys[i]!)} r={11} />
+              )}
+              <circle className={`rc-ev-dot${isBest ? ' is-best' : ''}`}
+                      cx={x(i)} cy={y(ys[i]!)} r={isBest ? 6 : 4} />
+              {labelled && (
+                <text className="rc-ev-point" x={x(i)} y={y(ys[i]!) - (step.breakthrough ? 16 : 12)}
+                      textAnchor="middle">
+                  {chartLabel(best, mode, ys[i]!)}
+                </text>
+              )}
+              {labelled && (
+                <text className="rc-ev-when" x={x(i)} y={H - 6} textAnchor="middle">
+                  {step.row.achieved_on.slice(5).replace('-', '/')}
+                </text>
+              )}
+            </g>
+          );
+        })}
       </svg>
+
+      <p className="rc-ev-legend">
+        <span><i className="is-dot" /> One result</span>
+        <span><i className="is-best" /> Personal best</span>
+        {steps.some((step) => step.breakthrough) && <span><i className="is-break" /> Breakthrough</span>}
+        {mode === 'improvement' && <span><i className="is-zero" /> Your first result</span>}
+      </p>
+    </div>
+  );
+}
+
+/** What changed against the best before it, in words a person would use. */
+function againstBest(best: Best, step: Attempt): string {
+  if (step.vsBest === null) return 'Starting point';
+  if (step.vsBest > 0) return `New best, ${changeText(step.vsBest, best.unit, best.direction)}`;
+  if (step.vsBest === 0) return 'Tied your best';
+  return `${formatValue(-step.vsBest, best.unit)} short`;
+}
+
+/** How many rows the attempts table shows before "Show all". */
+const ATTEMPTS_SHOWN = 6;
+
+/**
+ * Every attempt as a row: the numbers the chart draws, for anyone who would
+ * rather read them. The raw result and the change from the start sit side by
+ * side, which is the plainest way to show a time going down while the
+ * improvement goes up. Long histories keep the first row (where it started)
+ * and the newest ones.
+ */
+function AttemptsTable({ best }: { best: Best }) {
+  const [all, setAll] = useState(false);
+  const steps = attempts(best);
+  if (steps.length < 2) return null;
+
+  const hidden = all ? 0 : Math.max(0, steps.length - ATTEMPTS_SHOWN);
+  const shown = hidden ? [steps[0]!, ...steps.slice(steps.length - (ATTEMPTS_SHOWN - 1))] : steps;
+  const noun = UNIT_NOUN[best.unit] ?? 'result';
+
+  return (
+    <div className="rc-at">
+      <table className="rc-at-table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date</th>
+            <th scope="col">{noun === 'result' ? 'Result' : noun[0]!.toUpperCase() + noun.slice(1)}</th>
+            <th scope="col">Change from start</th>
+            <th scope="col">Against your best</th>
+          </tr>
+        </thead>
+        <tbody>
+          {shown.map((step, i) => (
+            <Fragment key={step.row.id}>
+            {/* Where the middle of a long history is folded away. */}
+            {hidden > 0 && i === 1 && (
+              <tr className="rc-at-gap">
+                <td colSpan={5}>{hidden} earlier {hidden === 1 ? 'attempt' : 'attempts'}</td>
+              </tr>
+            )}
+            <tr className={`${step.breakthrough ? 'is-break' : ''}${
+              step.vsBest !== null && step.vsBest > 0 ? ' is-best' : ''}`}>
+              <td>{step.n}</td>
+              <td>{formatOn(step.row.achieved_on)}</td>
+              <td className="is-num">{formatValue(step.row.value, best.unit, best.target)}</td>
+              <td data-label="From start"
+                  className={`is-num${step.change > 0 ? ' is-up' : step.change < 0 ? ' is-down' : ''}`}>
+                {step.n === 1 ? '-' : changeText(step.change, best.unit, best.direction)}
+              </td>
+              <td>
+                {againstBest(best, step)}
+                {step.breakthrough && <em className="rc-at-tag">Breakthrough</em>}
+              </td>
+            </tr>
+            </Fragment>
+          ))}
+        </tbody>
+      </table>
+      {steps.length > ATTEMPTS_SHOWN && (
+        <button type="button" className="rc-link rc-more" onClick={() => setAll((on) => !on)}>
+          {all ? 'Show fewer' : `Show all ${steps.length} attempts`}
+        </button>
+      )}
+    </div>
+  );
+}
+
+const TREND_WORD = { improving: 'Improving', steady: 'Holding steady', slipping: 'Slipping' } as const;
+const PACE_WORD = {
+  accelerating: ['Speeding up', 'Your bests are coming faster than before'],
+  slowing: ['Slowing down', 'Your bests are coming slower than before'],
+  consistent: ['Steady pace', 'About as fast as before'],
+} as const;
+
+/**
+ * The record, read closely: where it started, how long the best took, how
+ * fast it is moving and whether that is changing.
+ *
+ * Every figure here has a gate (`NEED` in utils/records), and the ones below
+ * it are left out rather than drawn with a guess. What is missing is said in
+ * one line at the foot, so "no trend yet" reads as "log it twice more" rather
+ * than as the app having nothing to say.
+ */
+function InsightPanel({ best }: { best: Best }) {
+  const read = insightOf(best);
+  const unit = best.unit;
+  const signed = (amount: number) => changeText(amount, unit, best.direction);
+  const first = best.history.find((row) => row.achieved_on) ?? best.history[0]!;
+
+  type Cell = { key: string; label: string; value: string; sub?: string; tone?: 'up' | 'down' };
+  const cells: Cell[] = [
+    { key: 'best', label: 'Personal best', value: formatValue(best.value, unit, best.target),
+      sub: `Set ${formatOn(best.on)}` },
+  ];
+
+  if (read.dated > 1) {
+    cells.push({ key: 'start', label: 'Started at', value: formatValue(best.first, unit, best.target),
+                 sub: formatOn(first.achieved_on) });
+    cells.push(best.gain > 0
+      ? { key: 'gain', label: 'Improvement', value: signed(best.gain), tone: 'up',
+          sub: best.percent > 0 ? `${Math.round(best.percent * 10) / 10}% better than your start` : undefined }
+      : { key: 'gain', label: 'Improvement', value: 'None yet', sub: 'Your first try is still your best' });
+  }
+  if (read.daysToBest !== null) {
+    cells.push({ key: 'time', label: 'Time to achieve', value: durationText(read.daysToBest),
+                 sub: 'From your first entry to your best' });
+  }
+  if (read.ratePerMonth !== null) {
+    const rate = unit === 'minutes' ? read.ratePerMonth : Math.round(read.ratePerMonth * 10) / 10;
+    if (rate > 0) {
+      cells.push({ key: 'rate', label: 'Improvement rate', value: `${signed(rate)} a month`, tone: 'up',
+                   sub: 'Average, from first entry to best' });
+    }
+  }
+  if (read.vsPrevious !== null && read.previousBest !== null) {
+    const vsLast = read.vsPrevious === 0
+      ? 'Same as last time'
+      : best.direction === 'lower' && unit === 'minutes'
+        ? `${signed(read.vsPrevious)} than last time`
+        : `${signed(read.vsPrevious)} on last time`;
+    const vsBest = read.vsPreviousBest! > 0
+      ? 'a new best'
+      : read.vsPreviousBest === 0
+        ? 'ties your best'
+        : `${formatValue(-read.vsPreviousBest!, unit)} short of your best`;
+    cells.push({ key: 'latest', label: 'Latest result', value: formatValue(read.latest.value, unit, best.target),
+                 sub: `${vsLast}, ${vsBest}`,
+                 tone: read.vsPrevious > 0 ? 'up' : read.vsPrevious < 0 ? 'down' : undefined });
+  }
+  if (read.trend) {
+    cells.push({ key: 'trend', label: 'Recent trend', value: TREND_WORD[read.trend.word],
+                 sub: read.trend.early ? `Early read, from ${read.dated} entries` : `Across your last ${read.trend.basis} results`,
+                 tone: read.trend.word === 'improving' ? 'up' : read.trend.word === 'slipping' ? 'down' : undefined });
+  }
+  if (read.pace) {
+    const [word, sub] = PACE_WORD[read.pace];
+    cells.push({ key: 'pace', label: 'Pace', value: word, sub,
+                 tone: read.pace === 'accelerating' ? 'up' : read.pace === 'slowing' ? 'down' : undefined });
+  }
+
+  /* What is not shown yet, and what it would take. One line, the nearest gate. */
+  let waiting: string | null = null;
+  if (read.dated < NEED.trend) {
+    const more = NEED.trend - read.dated;
+    waiting = `${more === 1 ? 'One more entry' : `${more} more entries`} and this shows your trend and how fast you're improving.`;
+  } else if (read.ratePerMonth === null && best.gain > 0 && read.spanDays < NEED.rateDays) {
+    waiting = 'Your rate of improvement shows once your entries cover four weeks.';
+  } else if (!read.pace && !(best.direction === 'higher' && best.target > 0 && best.value >= best.target)) {
+    if (read.dated < NEED.pace || read.spanDays < NEED.paceDays) {
+      waiting = `Whether you're speeding up or slowing down shows after ${NEED.pace} entries across two months.`;
+    }
+  }
+
+  const share = (jump: number) => (best.gain > 0 ? jump / best.gain : 0);
+
+  return (
+    <div className={`rc-in is-${read.standing}`}>
+      <header className="rc-in-head">
+        <h3 className="rc-in-name">{best.name}</h3>
+        <span className="rc-in-tag">{STANDING_TITLE[read.standing]}</span>
+        {best.direction === 'lower' && <span className="rc-ev-dir">Lower is better</span>}
+      </header>
+
+      <dl className="rc-in-figs">
+        {cells.map((cell) => (
+          <div key={cell.key} className={cell.tone ? `is-${cell.tone}` : undefined}>
+            <dt>{cell.label}</dt>
+            <dd>{cell.value}</dd>
+            {cell.sub && <dd className="rc-in-sub">{cell.sub}</dd>}
+          </div>
+        ))}
+      </dl>
+
+      {read.breakthroughs.map((one) => (
+        <p className="rc-in-break" key={one.id}>
+          <Icon name="zap" />
+          <span>
+            <strong>Breakthrough on {formatOn(one.on)}.</strong>{' '}
+            {best.direction === 'lower' ? `You cut ${formatValue(one.jump, unit)}` : `You jumped ${signed(one.jump)}`} in one go,{' '}
+            {share(one.jump) >= 0.5 ? 'more than half of your whole climb' : `${Math.round(share(one.jump) * 100)}% of your whole climb`}.
+          </span>
+        </p>
+      ))}
+
+      {waiting && <p className="rc-in-wait">{waiting}</p>}
     </div>
   );
 }
@@ -722,6 +1117,9 @@ export default function Achievements() {
      having failed. */
   const [allBests, setAllBests] = useState(false);
   const [pick, setPick] = useState<string | null>(null);
+  /* Raw results or improvement — see `Evolution`. Results first: it is the
+     numbers as you logged them. */
+  const [chartMode, setChartMode] = useState<ChartMode>('results');
   const [query, setQuery] = useState('');
   /* The order the history opens in is the account's, the same way the four
      task_* preferences work: this is where the visit starts, and the toolbar
@@ -756,6 +1154,12 @@ export default function Achievements() {
      up per row that survives the toolbar. See `moments` in utils/records. */
   const meant = useMemo(() => moments(bests), [bests]);
   const milestones = useMemo(() => rows.filter((row) => row.kind === 'milestone'), [rows]);
+  const reachedCount = milestones.filter((row) => row.achieved_on).length;
+  /** Every breakthrough entry on the account, for the history's tags. */
+  const bigIds = useMemo(
+    () => new Set(bests.flatMap((best) => breakthroughs(best).map((one) => one.id))),
+    [bests],
+  );
   const { groups: mileGroups, loose: looseMiles } = useMemo(() => milestoneGroups(rows), [rows]);
 
   /** The record the evolution chart is drawing. Defaults to the richest one. */
@@ -820,6 +1224,24 @@ export default function Achievements() {
     [username, write],
   );
 
+  /** "Mark it done" on a milestone whose target has been reached: dated today. */
+  const markDone = useCallback(
+    (row: RecordRow) => {
+      const now = new Date();
+      const today = `${now.getFullYear()}-${`${now.getMonth() + 1}`.padStart(2, '0')}-${`${now.getDate()}`.padStart(2, '0')}`;
+      void write(() => recordService.save({ ...draftOf(row), achieved_on: today }));
+    },
+    [write],
+  );
+
+  /** A linked record's chip: put that record on the chart and go to it. */
+  const showRecord = useCallback((name: string) => {
+    setPick(name);
+    requestAnimationFrame(() =>
+      document.getElementById('rc-timeline')?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
+    );
+  }, []);
+
   const deleteRecord = useCallback(
     async (entry: RecordRow) => {
       if (!username) return;
@@ -882,7 +1304,7 @@ export default function Achievements() {
                   <span className="rc-lead-tail">
                     on <strong>{lead.name}</strong>
                     <span className="rc-lead-dot" aria-hidden="true">·</span>
-                    <span className="rc-lead-gain">{gainText(lead)}</span> since your first
+                    <span className="rc-lead-gain">{gainWords(lead)}</span> since your first
                     attempt
                   </span>
                 </p>
@@ -1038,19 +1460,13 @@ export default function Achievements() {
           cards give the figure and the shape, and this gives the whole series
           with an axis to read it against. */}
       {bests.length > 0 && evolving && (
-        <section className="rc-section rc-card">
+        <section className="rc-section rc-card" id="rc-timeline">
           <div className="rc-section-head">
             <h2 className="rc-section-title is-card">
               <span className="rc-head-ico" aria-hidden="true"><Icon name="trend" /></span>
               Records timeline
             </h2>
             <div className="rc-ev-pick">
-              {/* A descending line is the good news on a record measured in
-                  time, and nothing on the chart said so. Said here, beside the
-                  name of the record it is true of. */}
-              {evolving.direction === 'lower' && (
-                <span className="rc-ev-dir">Lower is better</span>
-              )}
               <select className="rc-select" value={evolving.name}
                       aria-label="Which record to plot"
                       onChange={(event) => setPick(event.target.value)}>
@@ -1101,34 +1517,31 @@ export default function Achievements() {
           )}
 
           <div className="rc-ev-wrap">
-            <dl className="rc-ev-figs">
-              <div>
-                <dt>First record</dt>
-                <dd>{formatValue(evolving.first, evolving.unit)}</dd>
-              </div>
-              <div>
-                {/* "Latest best" — it is the best, and the best is not always
-                    the latest. The word that was wrong is the one the whole
-                    page turns on. */}
-                <dt>Personal best</dt>
-                <dd>{formatValue(evolving.value, evolving.unit)}</dd>
-              </div>
-              <div>
-                <dt>Improvement</dt>
-                <dd className={evolving.gain > 0 ? 'is-up' : undefined}>
-                  {evolving.gain > 0
-                    ? gainText(evolving)
-                    : formatValue(evolving.value - evolving.first, evolving.unit)}
-                </dd>
-              </div>
-              {evolving.gain > 0 && evolving.percent > 0 && (
-                <div>
-                  <dt>Since the start</dt>
-                  <dd className="is-up">↑ {Math.round(evolving.percent * 10) / 10}%</dd>
+            <InsightPanel best={evolving} />
+
+            {evolving.history.filter((row) => row.achieved_on).length > 1 && (
+              <div className="rc-ev-bar">
+                {/* Said above the chart, every time, because which way is
+                    good is the one thing an axis cannot tell you. */}
+                <p className="rc-ev-cap">
+                  {chartMode === 'results'
+                    ? evolving.direction === 'lower'
+                      ? 'Your results as logged. Lower is better, so a falling line is good news.'
+                      : 'Your results as logged. Higher is better.'
+                    : 'How far each result is from your first. Up is better, whichever way the record is measured.'}
+                </p>
+                <div className="rc-seg" role="group" aria-label="What the chart shows">
+                  {(['results', 'improvement'] as const).map((mode) => (
+                    <button key={mode} type="button" className={chartMode === mode ? 'is-on' : ''}
+                            aria-pressed={chartMode === mode} onClick={() => setChartMode(mode)}>
+                      {mode === 'results' ? 'Results' : 'Improvement'}
+                    </button>
+                  ))}
                 </div>
-              )}
-            </dl>
-            <Evolution best={evolving} />
+              </div>
+            )}
+            <Evolution best={evolving} mode={chartMode} />
+            <AttemptsTable key={evolving.name} best={evolving} />
           </div>
         </section>
       )}
@@ -1178,7 +1591,7 @@ export default function Achievements() {
                 keeps one definition of "how much history is showing". */}
             <ol className="rc-recs">
               {history.slice(0, days).flatMap((day) => day.rows).map((row) => (
-                <Entry key={row.id} row={row} moment={meant.get(row.id)}
+                <Entry key={row.id} row={row} moment={meant.get(row.id)} big={bigIds.has(row.id)}
                        onOpen={() => open(row.kind, row)} />
               ))}
             </ol>
@@ -1208,6 +1621,11 @@ export default function Achievements() {
                 Milestones
               </h2>
               {milestones.length > 0 && <span className="rc-fold-n">{milestones.length}</span>}
+              {milestones.length > 0 && (
+                <span className="rc-fold-sub">
+                  {reachedCount} reached · {milestones.length - reachedCount} in progress
+                </span>
+              )}
             </button>
             <button type="button" className="rc-link" onClick={() => open('milestone')}>
               + Add
@@ -1216,8 +1634,9 @@ export default function Achievements() {
           {milesShut ? null : (
             <>
               <p className="rc-define">
-                A record is <strong>I did better</strong>. A milestone is{' '}
-                <strong>I reached something</strong> . No number to beat. It just happened.
+                A record is <strong>I did better</strong>: a number you keep beating. A milestone is{' '}
+                <strong>I reached something</strong>. It can still count toward a goal number, like
+                20 problems solved, and link to the records it's about.
               </p>
               {milestones.length === 0 ? (
                 <p className="rc-empty">
@@ -1231,19 +1650,16 @@ export default function Achievements() {
                   entry={group}
                   open={Boolean(openKeys[group.key])}
                   onToggle={() => toggleKey(group.key)}
+                  bests={bests}
+                  busy={busy}
                   onPick={(row) => open('milestone', row)}
+                  onDone={markDone}
+                  onLink={showRecord}
                 />
               ))}
               {looseMiles.map((row) => (
-                <li key={row.id} className={row.achieved_on ? 'is-done' : ''}>
-                  <button type="button" onClick={() => open('milestone', row)}>
-                    <span className="rc-mile-tick" aria-hidden="true">
-                      {row.achieved_on ? '✓' : ''}
-                    </span>
-                    <span className="rc-mile-name">{row.name}</span>
-                    <span className="rc-mile-when">{formatOn(row.achieved_on)}</span>
-                  </button>
-                </li>
+                <MileRow key={row.id} row={row} bests={bests} busy={busy}
+                         onPick={(one) => open('milestone', one)} onDone={markDone} onLink={showRecord} />
               ))}
             </ul>
               )}
