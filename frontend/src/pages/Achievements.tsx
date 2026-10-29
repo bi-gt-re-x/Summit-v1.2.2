@@ -365,7 +365,7 @@ function BestCard({ best, onOpen }: { best: Best; onOpen: () => void }) {
           <span className="rc-best-ico" aria-hidden="true">
             <Icon name={catIcon(best.category)} />
           </span>
-          <span className="rc-best-cat">{best.category || 'Uncategorised'}</span>
+          <span className="rc-best-cat">{best.category || 'Uncategorized'}</span>
         </span>
         <span className="rc-best-name">{best.name}</span>
         <span className="rc-best-value">{formatValue(best.value, best.unit, best.target)}</span>

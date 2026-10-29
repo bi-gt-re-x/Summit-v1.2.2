@@ -21,6 +21,8 @@
     --rc-card: var(--color-surface);
     --rc-card-2: var(--color-surface-2);
     --rc-raised: var(--color-surface);
+    /* The ground a dialog's fields sit on, a step lighter than the card. */
+    --rc-field: var(--color-surface);
     --rc-line: var(--color-line);
     --rc-line-soft: var(--color-line-soft);
 
@@ -58,6 +60,7 @@ html[data-theme="dark"] .rc-page {
     --rc-card: var(--color-surface);
     --rc-card-2: var(--color-surface-2);
     --rc-raised: #212a3e;
+    --rc-field: var(--color-surface-2);
     --rc-line: var(--color-line);
     --rc-line-soft: var(--color-line-soft);
 
@@ -1002,7 +1005,11 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 /* In the toolbar, where three controls share a line inside half the page. */
 .rc-select.is-small { padding: var(--space-2) var(--space-2); font-size: var(--text-sm); }
 
-/* ---------- The dialog ----------------------------------------------------- */
+/* ---------- The dialog -----------------------------------------------------
+   Fields sit on their own lighter ground (--rc-field) with a border drawn from
+   the ink, so they read as places to type on the raised card rather than grey
+   wells sunk into it. The two either/or choices carry a radio mark, which is
+   what tells the picked one apart at a glance; the tint alone didn't. */
 .rc-modal-back {
     position: fixed;
     inset: 0;
@@ -1010,14 +1017,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     display: grid;
     place-items: center;
     padding: var(--space-5);
-    background: rgba(8, 11, 18, .58);
+    background: rgba(8, 11, 18, .5);
     backdrop-filter: blur(3px);
 }
 .rc-modal {
-    width: min(620px, 100%);
+    --rc-field-line: color-mix(in srgb, var(--rc-text) 14%, transparent);
+    width: min(640px, 100%);
     max-height: 90vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     border: 1px solid var(--rc-line);
     border-radius: var(--radius-lg);
     background: var(--rc-raised);
@@ -1029,14 +1038,15 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-5) var(--space-6) var(--space-4);
     border-bottom: 1px solid var(--rc-line-soft);
 }
 .rc-modal-head h2 { margin: 0; font-size: var(--text-lg); font-weight: 700; }
 .rc-modal-x {
     display: grid;
     place-items: center;
-    width: 30px; height: 30px;
+    width: 32px; height: 32px;
+    margin-right: calc(var(--space-2) * -1);
     padding: 0;
     border: 0;
     border-radius: var(--radius-md);
@@ -1047,92 +1057,135 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 .rc-modal-x:hover { background: var(--rc-card-2); color: var(--rc-text); }
 .rc-modal-x svg { width: 16px; height: 16px; }
 
-.rc-modal-body { padding: var(--space-4) var(--space-5); overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-4); }
-
-.rc-kind { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-.rc-kind button {
+.rc-modal-body {
+    padding: var(--space-5) var(--space-6) var(--space-6);
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: var(--space-3) var(--space-3);
-    border: 1px solid var(--rc-line);
+    gap: var(--space-5);
+}
+
+/* Record or milestone, and higher or lower: the same control twice. */
+.rc-kind, .rc-dir { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.rc-kind button, .rc-dir button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: var(--space-3) calc(var(--space-4) + 22px) var(--space-3) var(--space-4);
+    border: 1px solid var(--rc-field-line);
     border-radius: var(--radius-md);
-    background: var(--rc-card-2);
-    color: var(--rc-text);
+    background: var(--rc-field);
+    color: var(--rc-muted);
     font: inherit;
     font-size: var(--text-sm);
     font-weight: 600;
     text-align: left;
     cursor: pointer;
-    transition: border-color .14s ease, background .14s ease;
+    transition: border-color .14s ease, background .14s ease, color .14s ease;
 }
-.rc-kind button em { font-style: normal; font-size: var(--text-2xs); font-weight: 400; color: var(--rc-faint); }
-.rc-kind button.is-on {
+.rc-kind button em, .rc-dir button em {
+    font-style: normal;
+    font-size: var(--text-2xs);
+    font-weight: 400;
+    color: var(--rc-faint);
+}
+.rc-kind button::after, .rc-dir button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: var(--space-4);
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    border: 1.5px solid var(--rc-field-line);
+    border-radius: 50%;
+    background: var(--rc-field);
+    box-sizing: border-box;
+    transition: border-color .14s ease, background .14s ease, box-shadow .14s ease;
+}
+.rc-kind button:hover:not(.is-on), .rc-dir button:hover:not(.is-on) {
+    border-color: color-mix(in srgb, var(--rc-accent-2) 55%, transparent);
+    color: var(--rc-text);
+}
+.rc-kind button.is-on, .rc-dir button.is-on {
     border-color: var(--rc-accent-2);
-    background: color-mix(in srgb, var(--rc-accent-2) 12%, transparent);
+    background: color-mix(in srgb, var(--rc-accent-2) 9%, var(--rc-field));
+    color: var(--rc-text);
+}
+.rc-kind button.is-on em, .rc-dir button.is-on em { color: var(--rc-muted); }
+.rc-kind button.is-on::after, .rc-dir button.is-on::after {
+    border-color: var(--rc-accent-2);
+    background: var(--rc-accent-2);
+    box-shadow: inset 0 0 0 2.5px var(--rc-field);
 }
 
 .rc-field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
 .rc-field > span {
     font-size: var(--text-xs);
     font-weight: 600;
+    letter-spacing: .01em;
     color: var(--rc-muted);
 }
 .rc-field input, .rc-field select, .rc-field textarea {
+    box-sizing: border-box;
     width: 100%;
+    min-height: 40px;
     padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--rc-line);
+    border: 1px solid var(--rc-field-line);
     border-radius: var(--radius-md);
-    background: var(--rc-card-2);
+    background: var(--rc-field);
     color: var(--rc-text);
     font: inherit;
     font-size: var(--text-sm);
     outline: none;
-    transition: border-color .14s ease;
+    transition: border-color .14s ease, box-shadow .14s ease;
 }
+.rc-field input::placeholder, .rc-field textarea::placeholder { color: var(--rc-faint); }
 .rc-field textarea { resize: vertical; line-height: 1.55; }
-.rc-field input:focus, .rc-field select:focus, .rc-field textarea:focus { border-color: var(--rc-accent-2); }
+.rc-field input:hover, .rc-field select:hover, .rc-field textarea:hover {
+    border-color: color-mix(in srgb, var(--rc-text) 24%, transparent);
+}
+.rc-field input:focus, .rc-field select:focus, .rc-field textarea:focus {
+    border-color: var(--rc-accent-2);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--rc-accent-2) 18%, transparent);
+}
 .rc-field-hint { font-style: normal; font-size: var(--text-2xs); line-height: 1.5; color: var(--rc-faint); }
-.rc-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-3); }
+.rc-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4); }
 
-/* Which way is better. Two buttons rather than a select: there are exactly two
-   answers, both need a line of explanation to be picked correctly, and a
-   select shows neither until it is opened. Shaped like .rc-kind above because
-   it is the same kind of question — a fact about the entry that changes what
-   the rest of the form means. */
-.rc-dir { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-.rc-dir button {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--rc-line);
+/* The record a new entry is trying to top. Its own panel, because it is the
+   number the one you're about to type is measured against. */
+.rc-beat {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    column-gap: var(--space-4);
+    row-gap: 2px;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid color-mix(in srgb, var(--rc-accent-2) 30%, transparent);
     border-radius: var(--radius-md);
-    background: var(--rc-card);
-    color: var(--rc-muted);
-    font: inherit;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
+    background: color-mix(in srgb, var(--rc-accent-2) 7%, var(--rc-raised));
 }
-.rc-dir button em { font-style: normal; font-size: var(--text-2xs); font-weight: 400; color: var(--rc-faint); }
-.rc-dir button:hover { border-color: var(--rc-accent-2); }
-.rc-dir button.is-on {
-    border-color: var(--rc-accent);
-    background: color-mix(in srgb, var(--rc-accent) 10%, transparent);
-    color: var(--rc-text);
+.rc-beat-label {
+    grid-column: 1 / -1;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--rc-accent-2);
 }
+.rc-beat-value { font-size: var(--text-xl); font-weight: 700; color: var(--rc-text); }
+.rc-beat-meta { min-width: 0; font-size: var(--text-xs); line-height: 1.5; color: var(--rc-muted); }
 
 .rc-modal-preview {
     margin: 0;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     background: var(--rc-card-2);
     font-size: var(--text-sm);
     color: var(--rc-muted);
 }
-.rc-modal-preview strong { color: var(--rc-accent-2); font-size: var(--text-md); }
+.rc-modal-preview strong { color: var(--rc-text); font-size: var(--text-md); }
 /* What you are about to save beats the record. Gold, because it is the same
    event the timeline draws in gold, and said here so it is not a surprise
    discovered on the page afterwards — see RecordModal.tsx. */
@@ -1141,14 +1194,16 @@ html[data-theme="dark"] .peak-hero .rc-hero-art {
 }
 .rc-modal-preview.is-record strong { color: var(--rc-gold); }
 .rc-modal-beats { font-weight: 700; color: var(--rc-gold); }
+.rc-modal-gap { color: var(--rc-muted); }
 .rc-modal-error { margin: 0; font-size: var(--text-sm); color: var(--rc-bad); }
 
 .rc-modal-foot {
     display: flex;
     justify-content: flex-end;
-    gap: var(--space-2);
-    padding: var(--space-4) var(--space-5);
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
     border-top: 1px solid var(--rc-line-soft);
+    background: var(--rc-card-2);
 }
 
 /* ==========================================================================

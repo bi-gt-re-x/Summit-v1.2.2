@@ -16393,6 +16393,7 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
     --rc-card: var(--color-surface);
     --rc-card-2: var(--color-surface-2);
     --rc-raised: var(--color-surface);
+    --rc-field: var(--color-surface);
     --rc-line: var(--color-line);
     --rc-line-soft: var(--color-line-soft);
     --rc-text: var(--color-ink);
@@ -16828,9 +16829,10 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
     border-color: var(--rc-accent-2)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-back {
-    background: rgba(42, 44, 42, 0.58)
+    background: rgba(42, 44, 42, 0.5)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal {
+    --rc-field-line: color-mix(in srgb, var(--rc-text) 14%, transparent);
     border: 1px solid var(--rc-line);
     background: var(--rc-raised);
     box-shadow: var(--shadow-lg);
@@ -16848,17 +16850,41 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
     background: var(--rc-card-2);
     color: var(--rc-text)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button {
-    border: 1px solid var(--rc-line);
-    background: var(--rc-card-2);
-    color: var(--rc-text)
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button {
+    border: 1px solid var(--rc-field-line);
+    background: var(--rc-field);
+    color: var(--rc-muted)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button em {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button em,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button em {
     color: var(--rc-faint)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button.is-on {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button::after,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button::after {
+    border: 1.5px solid var(--rc-field-line);
+    background: var(--rc-field)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button:hover:not(.is-on),
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button:hover:not(.is-on) {
+    border-color: color-mix(in srgb, var(--rc-accent-2) 55%, transparent);
+    color: var(--rc-text)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button.is-on,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button.is-on {
     border-color: var(--rc-accent-2);
-    background: color-mix(in srgb, var(--rc-accent-2) 12%, transparent)
+    background: color-mix(in srgb, var(--rc-accent-2) 9%, var(--rc-field));
+    color: var(--rc-text)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button.is-on em,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button.is-on em {
+    color: var(--rc-muted)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-kind button.is-on::after,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button.is-on::after {
+    border-color: var(--rc-accent-2);
+    background: var(--rc-accent-2);
+    box-shadow: inset 0 0 0 2.5px var(--rc-field)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field > span {
     color: var(--rc-muted)
@@ -16866,41 +16892,48 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field input,
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field select,
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field textarea {
-    border: 1px solid var(--rc-line);
-    background: var(--rc-card-2);
+    border: 1px solid var(--rc-field-line);
+    background: var(--rc-field);
     color: var(--rc-text);
     outline: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field input::placeholder,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field textarea::placeholder {
+    color: var(--rc-faint)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field input:hover,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field select:hover,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field textarea:hover {
+    border-color: color-mix(in srgb, var(--rc-text) 24%, transparent)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field input:focus,
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field select:focus,
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field textarea:focus {
-    border-color: var(--rc-accent-2)
+    border-color: var(--rc-accent-2);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--rc-accent-2) 18%, transparent)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-field-hint {
     color: var(--rc-faint)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button {
-    border: 1px solid var(--rc-line);
-    background: var(--rc-card);
-    color: var(--rc-muted)
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-beat {
+    border: 1px solid color-mix(in srgb, var(--rc-accent-2) 30%, transparent);
+    background: color-mix(in srgb, var(--rc-accent-2) 7%, var(--rc-raised))
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button em {
-    color: var(--rc-faint)
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-beat-label {
+    color: var(--rc-accent-2)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button:hover {
-    border-color: var(--rc-accent-2)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-dir button.is-on {
-    border-color: var(--rc-accent);
-    background: color-mix(in srgb, var(--rc-accent) 10%, transparent);
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-beat-value {
     color: var(--rc-text)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-beat-meta {
+    color: var(--rc-muted)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-preview {
     background: var(--rc-card-2);
     color: var(--rc-muted)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-preview strong {
-    color: var(--rc-accent-2)
+    color: var(--rc-text)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-preview.is-record {
     background: color-mix(in srgb, var(--rc-gold) 12%, var(--rc-card-2))
@@ -16911,11 +16944,15 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-beats {
     color: var(--rc-gold)
 }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-gap {
+    color: var(--rc-muted)
+}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-error {
     color: var(--rc-bad)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-modal-foot {
-    border-top: 1px solid var(--rc-line-soft)
+    border-top: 1px solid var(--rc-line-soft);
+    background: var(--rc-card-2)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .rc-derived {
     border-top: 1px solid var(--rc-line)

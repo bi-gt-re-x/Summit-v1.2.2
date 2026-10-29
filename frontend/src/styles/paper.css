@@ -2295,6 +2295,7 @@ html:not([data-skin]):not([data-theme="dark"]):has(.nt-page) .nt-page {
 html:not([data-skin]):not([data-theme="dark"]):has(.rc-page) .rc-page {
     --rc-card: var(--paper-card);
     --rc-card-2: var(--paper-inset);
+    --rc-field: #FFFFFF;
     --rc-line: var(--paper-line);
     --rc-line-soft: var(--paper-line-soft);
     --rc-accent: var(--paper-sage);

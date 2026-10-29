@@ -16,6 +16,17 @@
  * from the last entry too — the fields that have to agree for the series to
  * mean anything.
  *
+ * ## Picking the record to beat
+ *
+ * A datalist only offers a name once you start typing it, so the record you
+ * meant to top was a guess at the spelling. A new record therefore opens on a
+ * "Which record?" picker of everything you already hold, each with its best
+ * beside it. Choosing one fills the name, category, unit, "out of" and
+ * direction from that record and hides those fields, since an entry that
+ * disagreed with them would be a second chart. What is left is the result
+ * and the day, with the best you are trying to top drawn above them and how
+ * far the typed figure is from it drawn below.
+ *
  * ## Why the value is a plain number with a unit beside it
  *
  * Rather than a text field taking "4h 18m". Storing what somebody typed makes
@@ -33,8 +44,8 @@
  * two entries of one record that disagree about which way is better are two
  * halves of a chart pointing opposite ways.
  */
-import { useEffect, useMemo, useState } from 'react';
-import { formatValue, isBetter, personalBests } from '@/utils/records';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { formatOn, formatValue, isBetter, personalBests, type Best } from '@/utils/records';
 import type { Direction, RecordDraft, RecordKind, RecordRow } from '@/services/records';
 import { Icon } from '@/components/Icon';
 
@@ -60,6 +71,18 @@ const todayIso = () => {
   const now = new Date();
   return `${now.getFullYear()}-${`${now.getMonth() + 1}`.padStart(2, '0')}-${`${now.getDate()}`.padStart(2, '0')}`;
 };
+
+/** Bests filed under their categories, both in alphabetical order. */
+function byCategory(bests: Best[]): Array<[string, Best[]]> {
+  const groups = new Map<string, Best[]>();
+  for (const best of bests) {
+    const key = best.category.trim() || 'Uncategorized';
+    groups.set(key, [...(groups.get(key) ?? []), best]);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, list]) => [name, [...list].sort((a, b) => a.name.localeCompare(b.name))]);
+}
 
 export interface RecordModalProps {
   open: boolean;
@@ -87,12 +110,16 @@ export function RecordModal({
 }: RecordModalProps) {
   const [draft, setDraft] = useState<RecordDraft>({ kind, name: '' });
   const [error, setError] = useState<string | null>(null);
+  /** The name came from the "Which record?" picker rather than being typed. */
+  const [picked, setPicked] = useState(false);
+  const resultRef = useRef<HTMLInputElement>(null);
 
   /* Reset every time it opens. A dialog that remembers the last thing typed
      into it is a dialog that saves the wrong record eventually. */
   useEffect(() => {
     if (!open) return;
     setError(null);
+    setPicked(false);
     setDraft(
       entry
         ? {
@@ -186,6 +213,31 @@ export function RecordModal({
     }));
   };
 
+  /**
+   * Choosing from the picker. Unlike `takeName`, the record's own fields win
+   * over anything already typed: picking "AMC 8" is a statement that this
+   * entry belongs to it, units and all. The empty choice goes back to a blank
+   * new record.
+   */
+  const pickRecord = (name: string) => {
+    const held = knownRecords.find((best) => best.name === name);
+    setPicked(Boolean(held));
+    // Straight to the one figure left to type.
+    if (held) requestAnimationFrame(() => resultRef.current?.focus());
+    setDraft((current) =>
+      held
+        ? {
+            ...current,
+            name: held.name,
+            category: held.category,
+            unit: held.unit,
+            target: held.target,
+            comparison_direction: held.direction,
+          }
+        : { ...current, name: '', category: '', unit: 'points', target: 0, comparison_direction: 'higher' },
+    );
+  };
+
   const submit = () => {
     if (!draft.name.trim()) {
       setError('Give it a name, like "AMC 8" or "Longest coding session".');
@@ -217,6 +269,36 @@ export function RecordModal({
     !Number.isNaN(typed) &&
     isBetter(typed, joining.value, joining.direction);
 
+  /** How far the typed figure is from the best, signed so positive is better. */
+  const gap =
+    joining && draft.value !== undefined && !Number.isNaN(typed)
+      ? joining.direction === 'lower' ? joining.value - typed : typed - joining.value
+      : null;
+
+  /** The picker's options, filed under the categories they were logged in. */
+  const pickable = byCategory(knownRecords);
+
+  /** The picker is for a new entry; an edit already knows its record. */
+  const showPicker = !entry && !isMilestone && knownRecords.length > 0;
+  /** A picked record supplies these, so they stop being questions. */
+  const fixed = picked && Boolean(joining);
+
+  /* The day, on the result's row once a picked record has emptied the
+     category's, so the form doesn't end on a half-filled line. */
+  const dateField = (
+    <label className="rc-field">
+      <span>{isMilestone ? 'Reached on' : 'Set on'}</span>
+      <input
+        type="date"
+        value={draft.achieved_on ?? ''}
+        onChange={(event) => setDraft({ ...draft, achieved_on: event.target.value })}
+      />
+      {isMilestone && (
+        <em className="rc-field-hint">Leave it empty for one you're still chasing.</em>
+      )}
+    </label>
+  );
+
   return (
     <div className="rc-modal-back" role="dialog" aria-modal="true" aria-label="Log a record">
       <div className="rc-modal" onClick={(event) => event.stopPropagation()}>
@@ -238,7 +320,10 @@ export function RecordModal({
                 type="button"
                 className={draft.kind === option ? 'is-on' : ''}
                 aria-pressed={draft.kind === option}
-                onClick={() => setDraft((current) => ({ ...current, kind: option }))}
+                onClick={() => {
+                  setPicked(false);
+                  setDraft((current) => ({ ...current, kind: option }));
+                }}
               >
                 {option === 'record' ? 'Record' : 'Milestone'}
                 <em>{option === 'record' ? 'A number you can beat' : 'Something you did once'}</em>
@@ -246,39 +331,75 @@ export function RecordModal({
             ))}
           </div>
 
-          <label className="rc-field">
-            <span>Name</span>
-            <input
-              list="rc-known-names"
-              value={draft.name}
-              maxLength={120}
-              autoFocus
-              placeholder={isMilestone ? 'First AIME problem solved' : 'AMC 8'}
-              onChange={(event) => takeName(event.target.value)}
-            />
-            <datalist id="rc-known-names">
-              {names.map((name) => (
-                <option key={name} value={name} />
-              ))}
-            </datalist>
-            {joining && !isMilestone && (
-              <em className="rc-field-hint">
-                {entry ? 'Part of' : 'Adds to'} your "{joining.name}" is your best so far{' '}
+          {showPicker && (
+            <label className="rc-field">
+              <span>Which record?</span>
+              <select
+                value={fixed ? joining!.name : ''}
+                onChange={(event) => pickRecord(event.target.value)}
+              >
+                <option value="">Start a new record</option>
+                {pickable.map(([category, list]) => (
+                  <optgroup key={category} label={category}>
+                    {list.map((best) => (
+                      <option key={best.name} value={best.name}>
+                        {best.name} · best {formatValue(best.value, best.unit, best.target)}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </label>
+          )}
+
+          {/* What you're trying to top, stated before you type the figure
+              that tops it. Shown for a typed name that matches, too. */}
+          {joining && !isMilestone && (
+            <div className="rc-beat">
+              <span className="rc-beat-label">{entry ? 'Best in this record' : 'To beat'}</span>
+              <strong className="rc-beat-value">
                 {formatValue(joining.value, joining.unit, joining.target)}
-                {joining.direction === 'lower' ? ', and lower is better' : ''}.
-              </em>
-            )}
-          </label>
+              </strong>
+              <span className="rc-beat-meta">
+                {joining.name}
+                {joining.category ? ` · ${joining.category}` : ''}
+                {' · '}set {formatOn(joining.on)}
+                {' · '}
+                {joining.entries} {joining.entries === 1 ? 'entry' : 'entries'}
+                {joining.direction === 'lower' ? ' · lower is better' : ''}
+              </span>
+            </div>
+          )}
+
+          {!fixed && (
+            <label className="rc-field">
+              <span>Name</span>
+              <input
+                list="rc-known-names"
+                value={draft.name}
+                maxLength={120}
+                autoFocus={!showPicker}
+                placeholder={isMilestone ? 'First AIME problem solved' : 'AMC 8'}
+                onChange={(event) => takeName(event.target.value)}
+              />
+              <datalist id="rc-known-names">
+                {names.map((name) => (
+                  <option key={name} value={name} />
+                ))}
+              </datalist>
+            </label>
+          )}
 
           {!isMilestone && (
             <div className="rc-field-row">
               <label className="rc-field">
                 <span>Result</span>
                 <input
+                  ref={resultRef}
                   type="number"
                   step="any"
                   value={draft.value ?? ''}
-                  placeholder="25"
+                  placeholder={joining ? String(joining.value) : '25'}
                   onChange={(event) =>
                     setDraft({
                       ...draft,
@@ -288,6 +409,8 @@ export function RecordModal({
                 />
               </label>
 
+              {fixed ? dateField : (
+              <>
               <label className="rc-field">
                 <span>Out of</span>
                 <input
@@ -312,10 +435,12 @@ export function RecordModal({
                   ))}
                 </select>
               </label>
+              </>
+              )}
             </div>
           )}
 
-          {!isMilestone && (
+          {!isMilestone && !fixed && (
             <div className="rc-field" role="group" aria-label="Which way is better">
               <span>Better is</span>
               <div className="rc-dir">
@@ -338,6 +463,7 @@ export function RecordModal({
             </div>
           )}
 
+          {!fixed && (
           <div className="rc-field-row">
             <label className="rc-field">
               <span>Category</span>
@@ -355,18 +481,9 @@ export function RecordModal({
               </datalist>
             </label>
 
-            <label className="rc-field">
-              <span>{isMilestone ? 'Reached on' : 'Set on'}</span>
-              <input
-                type="date"
-                value={draft.achieved_on ?? ''}
-                onChange={(event) => setDraft({ ...draft, achieved_on: event.target.value })}
-              />
-              {isMilestone && (
-                <em className="rc-field-hint">Leave it empty for one you're still chasing.</em>
-              )}
-            </label>
+            {dateField}
           </div>
+          )}
 
           <label className="rc-field">
             <span>Note</span>
@@ -387,7 +504,18 @@ export function RecordModal({
                   is also the one place the direction is visibly doing
                   something at the moment it is chosen, which is what makes a
                   wrong answer to it correctable before it is saved. */}
-              {beats && <span className="rc-modal-beats"> . A new personal best! <Icon name="trophy" /></span>}
+              {beats && gap !== null && (
+                <span className="rc-modal-beats">
+                  . A new personal best by {formatValue(gap, joining!.unit)}. <Icon name="trophy" />
+                </span>
+              )}
+              {!beats && gap !== null && !entry && (
+                <span className="rc-modal-gap">
+                  {gap === 0
+                    ? '. Ties your best.'
+                    : `. ${formatValue(-gap, joining!.unit)} short of your best.`}
+                </span>
+              )}
             </p>
           )}
 
