@@ -322,7 +322,7 @@ export function subjectInsights(
     const asLong = [...gaps].reverse().find((gap) => gap.size >= since);
     const breakLine = asLong
       ? `The last break this long ended on ${when(asLong.to)}.`
-      : `It's your longest break here yet.`;
+      : 'Longest break here so far.';
 
     if (since >= COOLING_DAYS) {
       add(90, {
@@ -375,7 +375,7 @@ export function subjectInsights(
       key: 'rhythm',
       tone: 'note',
       head: lately === 1 ? 'Back almost every day' : `Back ${every(lately)} or so`,
-      detail: `You worked on it ${plural(recent.days, 'day')} of the last 30. The last time was ${agoText(
+      detail: `You worked on it ${plural(recent.days, 'day')} of the last 30. You last did it ${agoText(
         since ?? 0,
       )}.`,
       figures: [

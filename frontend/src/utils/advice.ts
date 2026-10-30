@@ -195,11 +195,11 @@ export interface AdviceInput {
  */
 const REASON_ACTIONS: Record<string, { action: string; effort: number }> = {
   distracted: {
-    action: 'Put your phone in another room and start the next hard task before opening anything else.',
+    action: 'Phone in another room, then start the next hard task first.',
     effort: 2,
   },
   unclear: {
-    action: 'Add the first step of each task as its own task, so you always know where to start.',
+    action: 'Split off the first step of each task so starting is easy.',
     effort: 1,
   },
   underestimated: {
@@ -418,7 +418,7 @@ export function recommendations(input: AdviceInput): Advice[] {
       kind: 'balance',
       category: 'Productivity',
       title: `${balance.leader} is ${balance.concentration}% of your week`,
-      because: "That's more than all your other subjects combined.",
+      because: 'That beats all your other subjects put together.',
       action: "If that's intended, keep going. If not, add one weekly session for another subject.",
       evidence: `${balance.leader} is ${balance.concentration}% of your XP across ${balance.carrying} subjects.`,
       impact: 0,
@@ -587,7 +587,7 @@ export function recommendations(input: AdviceInput): Advice[] {
       category: 'Burnout',
       title: 'Your work is bunched into a few days',
       because: `${load.topDays} days account for ${load.topShare}% of your XP in this period.`,
-      action: 'On your busiest days, move the last hour of work to the next quiet day.',
+      action: 'Busy day? Push the last hour to a quieter one.',
       evidence: `${load.topDays} of your work days hold ${load.topShare}% of your XP here.`,
       impact: 0,
       workings: "This one doesn't change your XP.",
@@ -859,7 +859,7 @@ function fallbacks(
         category: 'Consistency',
         title: 'Raise your minimum',
         because: `Your quietest days average ${Math.round(quietAvg).toLocaleString()} XP, compared with a typical ${Math.round(median).toLocaleString()}.`,
-        action: 'Set a minimum amount of work for any day you study, and stick to it.',
+        action: 'Decide on a small minimum for study days and hit it every time.',
         evidence: `Your ${quiet.length} slowest days average ${Math.round(quietAvg).toLocaleString()} XP. A normal day is ${Math.round(median).toLocaleString()}.`,
         impact: Math.round((median - quietAvg) * quiet.length * yearScale),
         workings: `${quiet.length} slow days brought up to normal, over a year.`,
@@ -885,8 +885,8 @@ function fallbacks(
         ? `Your tasks are hard (${quality.difficulty.toFixed(1)}/5) and aren't going well (${quality.execution.toFixed(1)}/5).`
         : `Your tasks go well (${quality.execution.toFixed(1)}/5) but aren't very hard (${quality.difficulty.toFixed(1)}/5).`,
       action: behind
-        ? 'Finish one task properly before starting the next.'
-        : 'Add one harder task each week.',
+        ? 'Get one task fully done before you start another.'
+        : 'Add one harder task a week.',
       evidence: `${quality.rated} rated tasks: ${quality.difficulty.toFixed(1)}/5 for how hard, ${quality.execution.toFixed(1)}/5 for how well.`,
       impact: 0,
       workings: "This one doesn't change your XP.",

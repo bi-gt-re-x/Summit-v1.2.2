@@ -184,7 +184,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
          by the run. */
       advice:
         held >= HELD_RATIO
-          ? "You show up plenty. Now spend a day on something hard enough that it might not go well."
+          ? 'You show up plenty. Push yourself with something tough next.'
           : 'Your days are hit and miss. Pick the day you skip most and make sure you work that day.',
     });
   }
@@ -200,7 +200,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       text: `You average ${perDay.toFixed(1)} tasks on the days you work.`,
       advice:
         perDay >= HEAVY_LOAD
-          ? "That's a lot every time you sit down, so the hard stuff gets left. Cut your next list to three and do the hardest first."
+          ? "That's a lot every time you sit down, so the hard stuff gets left. Three tasks max next time, hardest first."
           : perDay < LIGHT_LOAD
             ? "A short list is fine if it's the right one. Add one task you're not sure you can finish."
             : "That's a list you can finish, so keep the size. Just make sure the right tasks make it on.",

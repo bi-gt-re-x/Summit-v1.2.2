@@ -23,7 +23,7 @@ export function GoalInsights({ read, subject }: { read: GoalRead; subject: strin
       </div>
       <p className="ax-panel-note">
         {goal
-          ? 'What your work in this subject says about your goal, and what to do about it. Based on your tasks.'
+          ? "How this subject's work helps your goal, plus next steps. Based on your tasks."
           : 'No goal is set for this subject yet, so these look at the subject as a whole.'}
       </p>
 

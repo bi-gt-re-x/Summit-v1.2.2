@@ -250,7 +250,7 @@ export function GrowthLine({
   if (count < 2 || series.length === 0) {
     return (
       <p className="ax-empty">
-        A line needs at least two points. This fills in as the period gets longer.
+        One point so far. A line needs two. This fills in as the period gets longer.
       </p>
     );
   }

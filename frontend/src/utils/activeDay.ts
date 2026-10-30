@@ -56,7 +56,7 @@ import type { GrowthDay } from '@/types';
 
 /** The three things, as the reader is told them. Kept beside the predicate so
  *  the sentence on screen and the rule behind it cannot drift apart. */
-export const ACTIVE_DAY_MEANS = 'finish a task, log a focus session, or earn any XP';
+export const ACTIVE_DAY_MEANS = 'finish a task, log focus time or earn XP';
 
 /**
  * Whether anything at all was recorded on this day.

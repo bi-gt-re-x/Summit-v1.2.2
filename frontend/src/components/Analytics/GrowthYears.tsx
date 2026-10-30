@@ -88,7 +88,7 @@ export function YearOnYear({ model }: { model: AnalyticsModel }) {
 
   if (worked.length < NEED_YEARS) {
     return (
-      <Panel title="Year on year" note="How hard the work was, and how well it went">
+      <Panel title="Year on year" note="Hard or easy, and how it went">
         <p className="ax-empty">
           This needs two calendar years of work. The periods above work right away.
         </p>

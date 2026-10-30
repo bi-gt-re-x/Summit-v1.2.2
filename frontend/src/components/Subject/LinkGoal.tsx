@@ -87,7 +87,7 @@ export function LinkGoal({
       <section className="sb-link" aria-label="Link a goal">
         <div className="sb-link-say">
           <strong>Link a goal</strong>
-          <p>You don't have a goal with a finish line yet. Counter goals like XP or streaks don't work here.</p>
+          <p>None of your goals has a target yet. Counter goals like XP or streaks don't work here.</p>
         </div>
         <Link className="ax-link" to="/goals">Make one on the Goals page →</Link>
       </section>

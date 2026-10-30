@@ -67,7 +67,7 @@ describe('what it does when there is nothing to say', () => {
     show({ focus: '' });
 
     expect(card('Focus area').getByText('Not yet')).toBeInTheDocument();
-    expect(card('Focus area').getByText('not enough work to tell yet'))
+    expect(card('Focus area').getByText('too early to say'))
       .toBeInTheDocument();
   });
 });

@@ -344,7 +344,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
           hint={
             thin
               ? 'Not enough work here to draw a line yet.'
-              : 'Level over time. Each mark is a new level.'
+              : 'Level over time. Marks show each new level.'
           }
         >
           <Seg

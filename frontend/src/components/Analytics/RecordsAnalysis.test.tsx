@@ -101,6 +101,6 @@ describe('records on Growth', () => {
 
   it('shows what the work bought, per point', () => {
     renderWithProviders(<RecordsGrowthSection read={read(analysis())} />, { route: '/analytics/growth' });
-    expect(screen.getAllByText(/14h over 12 tasks · about 2h per point/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/14h on 12 tasks · about 2h per point/).length).toBeGreaterThan(0);
   });
 });

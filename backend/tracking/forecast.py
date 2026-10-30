@@ -164,7 +164,7 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
     counted = units(goal)
     if counted is None:
         if goal.get('measure') == 'number':
-            return missing('no_steps', "Give it a target number and we can tell when you'd finish.")
+            return missing('no_steps', 'No target number yet, so no finish date.')
         return missing('no_steps', "Add some steps to it and we can tell when you'd finish.")
     done, total, unit = counted
     out.update(done=round(done, 1), total=round(total, 1), unit=unit)
@@ -184,7 +184,7 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
     if not subjects and not linked:
         return missing('no_subject', 'Link a subject to it and we can track your pace.')
     if not sessions:
-        return missing('too_new', 'No sessions on {} yet. Give it two weeks and we can tell your pace.'.format(
+        return missing('too_new', 'No sessions on {} yet. Two weeks in, we\'ll know your pace.'.format(
             subject_name))
     history = (today - sessions[0]).days + 1
     out['history_days'] = history

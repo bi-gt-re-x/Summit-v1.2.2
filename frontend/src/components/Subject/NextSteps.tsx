@@ -287,7 +287,7 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
 
                   <div className="sx-step-actions">
                     {done ? (
-                      <span className="sx-step-done">Saved. It helps us learn what works for you.</span>
+                      <span className="sx-step-done">Saved. We use it to learn what works for you.</span>
                     ) : planned ? (
                       <span className="sx-step-done">
                         Planned for {sessionWhen(planned)} · {planned.xp} XP. Finish or delete that task to plan another.

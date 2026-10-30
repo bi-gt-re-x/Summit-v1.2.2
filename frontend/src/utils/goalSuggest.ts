@@ -80,7 +80,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
         title: busiest ? `Set a goal on ${busiest.label}` : 'Set your first goal',
         because: busiest
           ? `Most of your work is in ${busiest.label}, but it has no goal.`
-          : "You don't have any goals yet.",
+          : 'Nothing here yet. Add a goal.',
       },
     ];
   }
@@ -152,7 +152,7 @@ export function suggestGoals(input: SuggestInput): GoalSuggestion[] {
       title: `Put a date on "${moving[0].title}"`,
       because:
         moving.length === 1
-          ? "It has no due date, so there's no way to tell if it's on track."
+          ? 'Add a due date and we can tell if it\'s on track.'
           : `${moving.length} of your goals have no due date, so there's no way to tell if they're on track.`,
     });
   }

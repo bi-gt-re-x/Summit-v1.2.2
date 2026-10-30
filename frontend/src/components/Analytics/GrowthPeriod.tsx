@@ -496,7 +496,7 @@ export function MetricStrip({ data }: { data: GrowthPeriods }) {
             </>
           ) : (
             <>
-              Graded <strong>{now.grade}</strong> at a growth score of {(now.overall / 10).toFixed(1)} out of 10. This period starts on your first day, so there's nothing to compare with.
+              Graded <strong>{now.grade}</strong> at a growth score of {(now.overall / 10).toFixed(1)} out of 10. Nothing to compare yet. You started during this period.
             </>
           )}
         </p>
@@ -767,11 +767,11 @@ export function MoverPanel({
           : kind === 'worst'
             ? quiet
               ? 'No big drops. This is your lowest score'
-              : `No big drops. Your lowest score is ${shown.to} out of 100`
+              : `No big drops. Your lowest so far is ${shown.to} of 100`
             : quiet
               ? 'No big gains. This is your best score'
-              : `No big gains. Your best score is ${shown.to} out of 100`}
-        . That&apos;s {meta.asks}.
+              : `No big gains. Your best so far is ${shown.to} of 100`}
+        . It tracks {meta.asks}.
       </p>
 
       {/* The quantities the score was computed from, so the claim can be
@@ -811,7 +811,7 @@ export function MoverPanel({
             ? `It's the score that ${kind === 'best' ? 'rose' : 'fell'} the most this period, `
               + 'in points. Going from 4 to 12 is a big percent but a small change, so points are fairer.'
             : 'Nothing moved much this period, so this just shows the score. '
-              + "It doesn't mean anything got worse."}
+              + 'Nothing got worse.'}
         </span>
       </p>
     </Panel>
@@ -1021,7 +1021,7 @@ export function MilestoneFeed({ entries, format }: {
   if (entries.length === 0) {
     return (
       <p className="ax-empty">
-        No grade changes this period. Try a longer one.
+        Same grade all period. Try a longer stretch.
       </p>
     );
   }

@@ -90,7 +90,7 @@ export function PeriodSummary({
       }
     >
       {summary.empty ? (
-        <p className="ax-empty">Nothing done in this stretch yet. Finish a task and it starts filling in.</p>
+        <p className="ax-empty">Nothing done in this stretch yet. Finish a task and this fills in.</p>
       ) : (
         <div className="ax-period-groups">
           {summary.groups.map((group) => (

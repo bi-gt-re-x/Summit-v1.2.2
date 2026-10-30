@@ -344,8 +344,7 @@ export function ScoreChangesPanel({ data }: { data: GrowthPeriods }) {
         <p className="ax-empty">
           {data.previous
             ? 'Nothing moved enough to call it a change.'
-            : "This period starts on your first day, so there's nothing"
-              + ' earlier to compare with.'}
+            : 'Nothing to compare yet. You started during this period.'}
         </p>
       ) : (
         <ul className="ax-gp-changes">
@@ -386,7 +385,7 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
         asksLead="When it loads, Growth shows you:"
         asks={[
           'Which period was your best?',
-          'Which score moved the most, and why?',
+          'What score moved the most?',
           'What changed behind the score?',
           'How does this month rank?',
         ]}
@@ -590,13 +589,13 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
                 is seven squares. */}
             <PanelGroup
               title="When you get work done"
-              note="Your day, by the hours you finish things"
+              note="The hours you get things done"
             >
               <CoreHoursPanel clock={clock} />
             </PanelGroup>
 
             <PanelGroup
-              title="Every day of the last year"
+              title="Your whole year, day by day"
               note="One square for each day"
             >
               <ConsistencyPanel rows={heatRows} />

@@ -392,7 +392,7 @@ export function AnalyticsSetup({
     const list: Step[] = [
       {
         key: 'log',
-        title: 'How do you track your work?',
+        title: 'Tasks, time or both?',
         lead:
           'Pick the one you actually use: tasks you check off, or time you log. Your numbers start '
           + 'from it.',
@@ -411,7 +411,7 @@ export function AnalyticsSetup({
       },
       {
         key: 'days',
-        title: 'How many days a week do you plan to work?',
+        title: 'Days you plan to work each week?',
         lead:
           'Think of a normal week. Four days is great if you aim for three and short if you aim for '
           + 'six.',
@@ -439,7 +439,7 @@ export function AnalyticsSetup({
       },
       {
         key: 'hours',
-        title: 'How many hours a week is that?',
+        title: 'Roughly how many hours a week?',
         lead:
           'A rough guess is fine. Summit splits it across your days to set how long a session '
           + 'should be.',
@@ -503,7 +503,7 @@ export function AnalyticsSetup({
          out of four rather than out of a hundred. */
       list.push({
         key: 'followed',
-        title: 'Which subjects matter most to you?',
+        title: 'Pick the subjects you care about most.',
         lead:
           `Pick up to ${SUBJECTS_MAX}. Each one gets its own page under Analytics. Pick none and Analytics stays one page.`,
         body: (
@@ -586,7 +586,7 @@ export function AnalyticsSetup({
       if (forks.length > 0) {
         list.push({
           key: 'depth',
-          title: 'Want to zoom in on any of them?',
+          title: 'Zoom in on any of them?',
           lead:
             "Some subjects split into branches. Pick a branch to point that subject's page and skill "
             + 'tree right at it. Not sure? Leave it on the whole subject. You can change it later.',
@@ -633,10 +633,10 @@ export function AnalyticsSetup({
       if (followed.length > 0) {
         list.push({
           key: 'aims',
-          title: 'What are you going for in each one?',
+          title: 'Your big aim for each?',
           lead:
             'Your big aim, in plain words. Like "make Mathcounts Nationals" or "read a paper without '
-            + 'the glossary". It isn\'t a goal, so there\'s no date or checklist. It just points your '
+            + 'the glossary". Unlike a goal, it has no date or checklist. It just points your '
             + 'tips at what you want. All of this is optional.',
           body: (
             <div className="ax-setup-aims">
@@ -716,7 +716,7 @@ export function AnalyticsSetup({
     list.push(
       {
         key: 'tone',
-        title: 'How blunt should this page be?',
+        title: 'How blunt do you want this page?',
         lead:
           'Your numbers stay the same. This just changes how strict the page is and how many '
           + 'problems it shows at once.',
@@ -735,7 +735,7 @@ export function AnalyticsSetup({
       },
       {
         key: 'detail',
-        title: 'How much do you want on screen?',
+        title: 'Show a little or a lot?',
         lead:
           'Nothing gets deleted. Anything you hide here stays on its own tab. This only sets '
           + 'what Overview shows first.',
@@ -982,7 +982,7 @@ export function AnalyticsSetup({
                 {anyHard(problems)
                   ? 'Summit uses these to write your subject tips, so they need to make sense. Fix them or '
                     + 'clear them. Blank is fine.'
-                  : "Nothing's wrong, but these fields have a length limit. This is what would get cut if you "
+                  : "All good, but these fields have a length limit. This is what would get cut if you "
                     + 'save now.'}
               </p>
               <ul className="ax-setup-alert-list">

@@ -292,7 +292,7 @@ export function SkillLimitPanel({
     return (
       <Panel title="What's holding each subject back">
         <p className="ax-empty">
-          No subject has a part under 65. Nice work.
+          All your subject parts are 65 or more. Nice work.
         </p>
       </Panel>
     );

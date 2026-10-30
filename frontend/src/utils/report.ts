@@ -145,7 +145,7 @@ function scoreSection(input: ReportInput): string {
       heading('Growth score'),
       '',
       wrap(
-        'Not enough work to score yet. The score averages five parts, and each needs a few days of work.',
+        'Not enough work to score yet. Five parts make up the score, and each needs a few days.',
       ),
     ].join('\n');
   }
@@ -172,7 +172,7 @@ function scoreSection(input: ReportInput): string {
     parts,
     '',
     wrap(
-      'Each part is scored out of 100. Your score is their average, out of 10. 9.0 is an A, 8.0 is a B, and so on. 9.6 to 9.9 is an A+. A perfect 10 is an S, and that needs all five parts maxed out.',
+      'Parts are scored 0 to 100. Average them for your score out of 10. 9.0 is an A, 8.0 a B. 9.6 and up is an A+. A perfect 10 is an S, and that needs all five parts maxed out.',
     ),
   ].join('\n');
 }
@@ -415,7 +415,7 @@ export function buildReport(input: ReportInput): string {
     '',
     RULE,
     wrap(
-      'Every number here comes from your own work. Nothing is guessed or compared with anyone else.',
+      'These numbers come straight from your work. Nothing is guessed or compared with anyone else.',
     ),
     RULE,
     '',

@@ -763,9 +763,9 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
 
         # 3. Stalled, with work going in.
         if stalled:
-            detail = 'Your best is {} from {}. The {} entr{} since haven\'t beaten it.'.format(
+            detail = 'You set your best of {} on {}. The {} {} since haven\'t beaten it.'.format(
                 fmt(r['best'], r['unit'], r['target']), _short(r['best_on']),
-                r['after_best'], 'y' if r['after_best'] == 1 else 'ies')
+                r['after_best'], 'try' if r['after_best'] == 1 else 'tries')
             if work['basis'] and work['since_seconds'] >= 3600:
                 detail += ' You\'ve put {} into {} since then, so maybe try a different kind of session.'.format(
                     hours(work['since_seconds']), _area(r))
@@ -784,13 +784,13 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
             progress = goal['progress']
             if progress:
                 if progress['met']:
-                    detail = 'Your best is {}, so you\'ve already hit {}. Go check it off.'.format(
+                    detail = 'Your best of {} already gets you to {}. Go check it off.'.format(
                         fmt(r['best'], r['unit'], r['target']), fmt(progress['target'], r['unit']))
                 else:
-                    detail = 'Your best is {}. That\'s {}% of the way to {}.{}'.format(
-                        fmt(r['best'], r['unit'], r['target']), round(progress['percent']),
+                    detail = '{}% of the way to {}.{}'.format(
+                        round(progress['percent']),
                         fmt(progress['target'], r['unit']),
-                        ' {} days left.'.format(goal['days_left']) if goal['days_left'] is not None
+                        ' {} days to go.'.format(goal['days_left']) if goal['days_left'] is not None
                         and goal['days_left'] >= 0 else '')
                 weight = 1.4 + progress['percent'] / 100
             else:

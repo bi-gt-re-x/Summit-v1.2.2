@@ -194,9 +194,9 @@ const UNMEASURED: Record<string, string> = {
   rebalance:
     'No score for this one. It just asks if your week looks the way you want.',
   'stretch-harder':
-    'No score for this one, since difficulty is your own rating.',
+    'This one has no score since you set the difficulty.',
   'difficulty-is-the-half':
-    'No score for this one, since difficulty is your own rating.',
+    'This one has no score since you set the difficulty.',
 };
 
 /** The bottom quarter of working days, averaged. What `raise-the-floor` is about. */

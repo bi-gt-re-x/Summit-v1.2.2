@@ -311,7 +311,7 @@ def _item(read, today, **fields):
     item.update(fields)
     # One plain line under the title: when it was missed and which try this is.
     if state == 'cleared':
-        item['line'] = 'Cleared. You got it right four times in a row.'
+        item['line'] = 'Cleared. Right four times running.'
     elif state == 'due':
         item['line'] = 'Missed {}. {}.'.format(_when(read['missed_on'], today), _try_word(read['rung']).capitalize())
     else:
@@ -340,5 +340,5 @@ def clean_mark(body):
         return None, "That isn't something on your review list."
     result = body.get('result')
     if result not in RESULTS:
-        return None, 'Say whether you got them right.'
+        return None, 'Mark whether you got them right.'
     return {'item': item, 'result': result}, None

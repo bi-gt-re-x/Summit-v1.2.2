@@ -79,7 +79,7 @@ export const STRENGTH_NOTE: Record<HabitStrength, string> = {
   strong: "Real work on half your days or more, and not fading. These carry your totals.",
   developing: 'Real work on a quarter to half of your days. Not a routine yet.',
   inconsistent: "Under a quarter of your days, or mostly light work. Not a habit yet.",
-  declining: "Way down from before. It's still there, but it'll fade unless something changes.",
+  declining: "Way down from before. You still have it. Change nothing and it'll fade.",
 };
 
 export interface Habit {

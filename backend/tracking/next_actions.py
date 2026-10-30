@@ -128,7 +128,7 @@ LENSES = {
         'priorities': ['productivity', 'efficiency', 'tasks', 'xp', 'consistency', 'quality', 'focus'],
         'watch': [
             'Your XP a day, and if it\'s going up',
-            'How many tasks you finish vs. how many pile up',
+            'Tasks you finish vs. tasks that pile up',
             'Old tasks slowing you down',
         ],
         'weights': {'overdue': 1.4, 'stale': 1.3, 'goal': 1.2, 'review': 0.8},
@@ -589,7 +589,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             title='Redo your {} latest low-rated tasks'.format(takeable),
             because=('{} tasks went badly (rated 1 or 2) in the last two weeks. Start with the newest {}.'
                      .format(len(poor), takeable) if len(poor) > takeable else
-                     '{} tasks went badly (rated 1 or 2) in the last two weeks. You haven\'t gone back to them yet.'
+                     '{} tasks went badly (rated 1 or 2) in the last two weeks. Nothing\'s been redone yet.'
                      .format(len(poor))),
             minutes=min(30, max(MIN_SLOT, takeable * 6)), subject=subject,
             weight=560 + min(len(poor), 12) * 6))

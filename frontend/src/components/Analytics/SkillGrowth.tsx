@@ -640,7 +640,7 @@ function Headline({ summary, since, periodText, long }: {
         value={overall ? `${signed(overall.pct)}%` : 'New'}
       >
         {!overall ? (
-          <>Your subjects are still getting their first level. Keep rating finished tasks to fill this in.</>
+          <>No levels yet for your subjects. Keep rating finished tasks to fill this in.</>
         ) : overall.sameStart ? (
           <>
             Your average level went from <strong>{overall.avgThen}</strong> to{' '}
@@ -688,7 +688,7 @@ function Headline({ summary, since, periodText, long }: {
       ) : (
         <Stat label="Closest to mastery" tone="violet" value={closest.track.name}>
           At <strong>{closest.track.now}</strong>, so <strong>{closest.toGo}</strong>{' '}
-          {closest.toGo === 1 ? 'point' : 'points'} from Mastery at 90. It's your highest level right now.
+          {closest.toGo === 1 ? 'point' : 'points'} from Mastery at 90. Nothing's higher right now.
         </Stat>
       )}
 
@@ -757,7 +757,7 @@ function Headline({ summary, since, periodText, long }: {
 function BandKey() {
   return (
     <p className="sg-key">
-      <strong>What a level is:</strong> A score out of 100 for each subject. It's based on how hard your rated tasks were and how well they went. Time spent doesn't count.{' '}
+      <strong>What a level is:</strong> Every subject gets a score from 0 to 100. It looks at how hard your rated tasks were and how they went. Time spent doesn't count.{' '}
       {SKILL_BANDS.map((row, i) => (
         <span key={row.band} className="sg-key-band">
           {row.band} {row.from}{i === SKILL_BANDS.length - 1 ? '+' : `-${row.to - 1}`}
@@ -854,7 +854,7 @@ function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
     <div className="sg-chart">
       <h3 className="sg-chart-title">Growth over time</h3>
       <p className="sg-chart-note">
-        Your top 4 growing subjects, plus your average. Levels rise when hard work goes well. They slip when you leave a subject alone.
+        Your top 4 growing subjects, plus your average. Hard work that goes well pushes your level up. They slip when you leave a subject alone.
         {marks.length > 0 && ' ▲ marks the first time a subject reached a new band.'}
       </p>
       <ul className="sg-legend">
@@ -1084,17 +1084,17 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
     <>
       {/* The whole panel in one line, where there is a line to state. */}
       <p className="sg-lead">
-        <strong>{one(hours)}h</strong> of focus in {periodText}
+        You logged <strong>{one(hours)}h</strong> of focus in {periodText}
         {pointsGained > 0 ? (
           <>
-            {' '}→ <strong>+{pointsGained}</strong> points of level across{' '}
+            . That's <strong>+{pointsGained}</strong> points of level across{' '}
             {subjectsUp} {subjectsUp === 1 ? 'subject' : 'subjects'}.
           </>
         ) : (
           /* No rise is a real answer and gets stated as one. A panel that goes
              quiet when the number is zero is a panel that only reports good
              news. */
-          <>, and no subject's level rose in it.</>
+          <>. No level went up yet.</>
         )}
       </p>
 

@@ -137,7 +137,7 @@ export function HowPanel({
   return (
     <Panel
       title="How you tend to work"
-      note="These go together. That doesn't mean one causes the other."
+      note="These go together. Linked doesn't mean one causes the other."
     >
       {!notice.ready ? (
         <Waiting notice={notice} />

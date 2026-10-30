@@ -276,7 +276,7 @@ export function Building({
               : 'What you told us at sign-up gives you a head start.'}{' '}
             {credit < headStart
               ? `Until ${headStart} are in, each day you log counts twice.`
-              : "You've used up your head start."}
+              : 'No head start left.'}
           </p>
         )}
         {/* What "with work on them" means, spelled out. The count above is the

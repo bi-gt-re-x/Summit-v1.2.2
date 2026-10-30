@@ -231,6 +231,15 @@ export function RecordsBreakdownPanel({ read }: { read: RecordsRead }) {
 // ---------------------------------------------------------------------------
 // Growth
 // ---------------------------------------------------------------------------
+/** The period panel's note, said the way a person would for each window. */
+function periodNote(days: number): string {
+  if (days <= 7) return 'New bests this week vs. last week';
+  if (days <= 30) return 'New bests this month vs. last month';
+  if (days >= 730) return 'New bests in the last two years vs. the two before';
+  if (days >= 365) return 'New bests this year vs. the year before';
+  return `New bests in the last ${days} days vs. the ${days} before`;
+}
+
 /** Records whose best moved, or were logged, in the window, against the one before. */
 function PeriodPanel({ data }: { data: RecordAnalysis }) {
   const window = windowText(data.days);
@@ -241,7 +250,7 @@ function PeriodPanel({ data }: { data: RecordAnalysis }) {
   return (
     <Panel
       title="Records this period"
-      note={`Bests set in ${window} vs. the ${data.days} days before`}
+      note={periodNote(data.days)}
     >
       {rows.length === 0 ? (
         <p className="ax-empty">Nothing logged in {window}. Log a result on Achievements to see it here.</p>
@@ -296,8 +305,8 @@ function WorkPanel({ data }: { data: RecordAnalysis }) {
     >
       {rows.length === 0 ? (
         <p className="ax-empty">
-          None of your records match your tasks yet. Use the same name in both, like "AMC 10" or
-          "Mile run", and they'll link up.
+          None of your records match your tasks yet. Same name in both, like "AMC 10" or
+          "Mile run", and they link up.
         </p>
       ) : (
         <ul className="ax-rx-rows">
@@ -310,11 +319,11 @@ function WorkPanel({ data }: { data: RecordAnalysis }) {
                 </span>
               </div>
               <p className="ax-rx-row-foot">
-                {hoursText(record.work.climb_seconds)} over {record.work.climb_tasks}{' '}
+                {hoursText(record.work.climb_seconds)} on {record.work.climb_tasks}{' '}
                 {record.work.climb_tasks === 1 ? 'task' : 'tasks'}
                 {record.work.seconds_per_unit !== null && PER[record.unit] &&
                   ` · about ${hoursText(record.work.seconds_per_unit)} per ${PER[record.unit]}`}
-                {record.work.since_seconds > 0 && ` · ${hoursText(record.work.since_seconds)} since the best`}
+                {record.work.since_seconds > 0 && ` · ${hoursText(record.work.since_seconds)} since your best`}
               </p>
               <p className="ax-rx-basis">
                 Matched to {readAs(record) || 'its category'}, using {BASIS[record.work.basis as keyof typeof BASIS]}
@@ -342,7 +351,7 @@ function GoalsPanel({ data }: { data: RecordAnalysis }) {
     >
       {tied.length === 0 ? (
         <p className="ax-empty">
-          No record matches a goal yet. Name the contest in a goal, like "Reach Codeforces 1300", and
+          No record matches a goal yet. Try a goal like "Reach Codeforces 1300" and
           we'll track your best toward it.
         </p>
       ) : (

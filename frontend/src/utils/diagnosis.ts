@@ -592,7 +592,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         ? `Cap ${nameOf(absorbed.id)} sessions at 45 min and give the time back to ${nameOf(best.id)}.`
         : absorbed
           ? `Before each ${nameOf(absorbed.id)} session, write down the one task you'll finish in it.`
-          : 'In your next session, note what you did in the first 20 minutes.',
+          : 'Note what you do in the first 20 minutes of your next session.',
       watch: 'XP per hour of focus',
       weight: 82,
     });
@@ -641,7 +641,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
       ],
       action: missed
         ? `Put a 15-minute ${subject ? `${nameOf(subject)} ` : ''}task on ${missed.name}, so a break can't run past one day.`
-        : 'Schedule a 15-minute task for the day after your next session.',
+        : 'Plan 15 minutes for the day after your next session.',
       watch: 'Longest gap under 3 days',
       weight: 90,
     });
@@ -672,7 +672,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
       ],
       action: dropped
         ? `Change one thing: put one ${nameOf(dropped)} task back in this week, and keep the rest the same.`
-        : "Change one thing, like difficulty or a subject you've been avoiding, and keep the rest the same.",
+        : 'Tweak one thing, like the difficulty. Leave the rest alone.',
       watch: 'The one thing you changed',
       weight: 40,
     });

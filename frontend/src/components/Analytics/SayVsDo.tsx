@@ -233,12 +233,12 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
             </li>
             <li>Rough is below the middle, okay is the middle, good is above it.</li>
             <li>
-              Each day is matched with what you finished that day. Your usual day is the middle of your
+              We match each day with what you got done that day. Your usual day is the middle of your
               active days in the last {usual.days} days: {plural(usual.tasks, 'task')}.
             </li>
             <li>
               A comparison needs {mood.min_days} days on each side, and a gap under {mood.small_change}%
-              counts as about the same. Today isn't counted until it's over.
+              counts as about the same. Today gets added once it's done.
             </li>
             <li>Early read is under 6 days, a pattern is 6 to 11, solid is 12 or more.</li>
           </ul>

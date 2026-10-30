@@ -57,7 +57,7 @@ describe('what makes a day count', () => {
     // The sentence on screen comes from here, so it cannot describe a
     // different rule than the one above it.
     expect(ACTIVE_DAY_MEANS).toMatch(/task/);
-    expect(ACTIVE_DAY_MEANS).toMatch(/focus session/);
+    expect(ACTIVE_DAY_MEANS).toMatch(/focus time/);
     expect(ACTIVE_DAY_MEANS).toMatch(/XP/);
   });
 });

@@ -116,7 +116,7 @@ export function SubjectCards({ total, totalBefore, streak, focus }: SubjectCards
       chip: null,
       note: focus
         ? 'what holds you back most'
-        : "not enough work to tell yet",
+        : 'too early to say',
     },
   ];
 

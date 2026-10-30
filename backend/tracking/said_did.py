@@ -465,7 +465,7 @@ def suggestions(found: dict, month: Counter) -> List[dict]:
             how = 'You mentioned {}. A task like {} in {} makes those sessions count here.'.format(
                 _and(picked[:3]), example, top['name'])
         else:
-            how = 'A task like "{}: 45 minutes" in {} is enough to get it on the board.'.format(
+            how = 'Something like "{}: 45 minutes" in {} gets it on the board.'.format(
                 top['name'], top['name'])
         if found.get('best_day'):
             on_day = ' on {}, the day you get the most done'.format(found['best_day'])
@@ -539,7 +539,7 @@ def suggestions(found: dict, month: Counter) -> List[dict]:
             'key': 'file',
             'title': 'File {} {} under {}'.format(len(biggest['ids']), 'task' if len(biggest['ids']) == 1 else 'tasks',
                                                   biggest['name']),
-            'body': ('Their names say {}, but they have no subject, so they don\'t count here. '
+            'body': ('These look like {} but have no subject, so they don\'t count yet. '
                      'Use "File them" below.').format(biggest['name']),
             'action': None,
         })
@@ -547,7 +547,7 @@ def suggestions(found: dict, month: Counter) -> List[dict]:
         out.append({
             'key': 'file',
             'title': 'Give {} finished tasks a subject'.format(found['unfiled']['total']),
-            'body': ('They don\'t count toward anything you named until they have one. Open Tasks, '
+            'body': ('Give them a subject so they count. Open Tasks, '
                      'pick a subject on each, and they show up here.'),
             'action': {'label': 'Open Tasks', 'to': '/tasks'},
         })

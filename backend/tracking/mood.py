@@ -484,7 +484,7 @@ def headline(found: dict, by_band: Dict[str, dict]) -> Optional[dict]:
                             _num(rough['tasks_avg']), _num(good['tasks_avg']))
             return {'text': text, 'tone': 'insight', 'confidence': sure}
         return {'text': 'Rough days and good days look about the same: '
-                        '{} tasks vs. {}. How you feel isn\'t stopping you.'.format(
+                        '{} tasks vs. {}. Bad days don\'t seem to slow you down.'.format(
                             _num(rough['tasks_avg']), _num(good['tasks_avg'])),
                 'tone': 'steady', 'confidence': sure}
 

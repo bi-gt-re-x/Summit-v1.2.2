@@ -134,7 +134,7 @@ export function Summary({
     return (
       <section className="ax-panel ax-summary is-empty">
         <p className="ax-empty">
-          No score yet. It needs a few days of work first.
+          No score yet. It shows up after a few days of work.
         </p>
       </section>
     );

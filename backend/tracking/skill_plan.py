@@ -182,8 +182,8 @@ def suggestions(nodes, attempts, library, today, now=None, due=()):
         out.append({
             'kind': 'review', 'node_id': due[0].get('node_id'), 'ordinal': None, 'weight': None,
             'title': 'Redo {} {}{} you missed'.format(len(due), what, '' if len(due) == 1 else 's'),
-            'because': 'From {}. They come back until you get them right.'.format(_and(where[:3]))
-            if where else 'They come back until you get them right.',
+            'because': 'From {}. Get them right and they stop coming back.'.format(_and(where[:3]))
+            if where else 'Get them right and they stop coming back.',
             'minutes': max(5, minutes), 'count': len(due)})
 
     # ---- Going badly: the base, or the difficulty --------------------------

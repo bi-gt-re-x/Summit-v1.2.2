@@ -316,7 +316,7 @@ export function bottleneckFrom(
           : `based on ${state.ratedCount} rated tasks`,
       ],
       reading:
-        "You're taking on more than you're finishing well. Repeat what you've learned before "
+        "You're starting more than you finish well. Repeat what you've learned before "
         + "adding more.",
       ruled_out: enough && families.notConceptual >= 60
         ? "Harder material. Most of what goes wrong isn't about the content."

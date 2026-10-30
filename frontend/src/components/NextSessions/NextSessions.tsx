@@ -223,8 +223,8 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         <div className="ns-title">
           <h2>{heading}</h2>
           <p>
-            Three study sessions based on your work in {scope}. Each one tells you what to do, how
-            hard and for how long. Add one to your calendar, or all three.
+            Three study sessions picked from your recent work in {scope}. Each one tells you what to
+            do, how hard and for how long. Add one to your calendar or add all three.
           </p>
         </div>
         <label className="ns-pick">

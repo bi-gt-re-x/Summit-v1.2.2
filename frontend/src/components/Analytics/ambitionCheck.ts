@@ -236,7 +236,7 @@ function checkCheckpoints(subject: string, raw: string): AmbitionProblem[] {
       `${wordless.length === 1 ? 'One line has' : `${wordless.length} lines have`} `
         + `no words in ${wordless.length === 1 ? 'it' : 'them'} `
         + `(${wordless.slice(0, 3).map((line) => `"${line}"`).join(', ')}).`
-        + "A checkpoint is a stage you can tell you've reached. Delete these"
+        + "Checkpoints are stages you can tell you've hit. Delete these"
         + 'lines or write what they mean.',
     );
   }

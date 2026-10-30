@@ -31,7 +31,7 @@ export const MOST_HEAD_START = Math.max(...RULE.levels.map((level) => level.head
 export const QUESTIONS: Record<QuestionKey, { label: string; hint: string; placeholder: string }> = {
   describe: {
     label: 'Describe yourself',
-    hint: 'Who you are, your grade or job, and what a normal week looks like.',
+    hint: 'Tell us about you: grade or job and a normal week.',
     placeholder: "I'm a high school junior. I have school until 3, then about two hours free most days.",
   },
   doing: {
@@ -45,7 +45,7 @@ export const QUESTIONS: Record<QuestionKey, { label: string; hint: string; place
     placeholder: 'Qualified for AIME last year with a score of 7. Grade 8 violin. Built a Discord bot.',
   },
   improve: {
-    label: 'How do you want to improve?',
+    label: 'What needs work?',
     hint: 'What you want to get better at, and by when if you know.',
     placeholder: 'Get to USACO Gold by March and score 10+ on AIME next year.',
   },

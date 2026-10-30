@@ -220,7 +220,7 @@ function Row({
             ) : (
               <div className="rq-plain">
                 <p>
-                  Open it in the skill tree, do it again, then say how it went.
+                  Do it again in the skill tree and say how it went.
                   {treeLink && (
                     <>
                       {' '}

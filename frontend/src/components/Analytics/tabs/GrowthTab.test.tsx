@@ -319,7 +319,7 @@ describe('the movers', () => {
     draw(<GrowthTab model={fakeModel()} />);
     const worst = (await screen.findByRole('heading', { name: /Needs attention/ }))
       .closest('.ax-panel') as HTMLElement;
-    expect(worst.textContent).toMatch(/doesn't mean anything got worse/i);
+    expect(worst.textContent).toMatch(/nothing got worse/i);
   });
 
   it('gives every measure more than one quantity to be checked against', async () => {
@@ -381,7 +381,7 @@ describe('what changed', () => {
       consistency: null, efficiency: null, focus: null,
     } }));
     draw(<GrowthTab model={fakeModel()} />);
-    expect(await screen.findByText(/starts on your first day, so there's nothing/i))
+    expect(await screen.findByText(/you started during this period/i))
       .toBeInTheDocument();
   });
 });
@@ -457,7 +457,7 @@ describe('the panels brought back from before the cuts', () => {
     'Skills by level',
     'Time vs. progress',
     'When you get work done',
-    'Every day of the last year',
+    'Your whole year, day by day',
   ])('draws %s', async (title) => {
     serve();
     draw(<GrowthTab model={fakeModel()} />);

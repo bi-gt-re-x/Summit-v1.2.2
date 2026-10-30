@@ -370,7 +370,7 @@ export function NextActions({
             <li><b>Beat the deadline:</b> Your next goal date gets the sessions it needs this week.</li>
             <li><b>Clear the pile:</b> Old routines you missed get one row, so you can clear them fast.</li>
             <li><b>Redo your misses:</b> Anything you got wrong comes back after 1, 3, 7 and 14 days until it sticks.</li>
-            <li><b>Your skill trees:</b> If a skill keeps going badly you're sent back to what it builds on. If it's going well, you move up.</li>
+            <li><b>Your skill trees:</b> If a skill keeps going badly you're sent back to what it builds on. Doing well? You move up.</li>
             <li><b>Change your start:</b> If rough sessions keep going wrong the same way, you get a fix.</li>
           </ul>
           <p className="ax-tips-head">Then</p>

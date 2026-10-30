@@ -714,7 +714,7 @@ export function subjectState(
       label: 'Mastery',
       value: masteryOf(done),
       known: ratedTasks.length > 0,
-      meaning: 'How hard your work is, from 1 to 5.',
+      meaning: 'Difficulty, from 1 to 5.',
       evidence: ratedTasks.length
         ? [
             `${ratedTasks.length} rated ${ratedTasks.length === 1 ? 'task' : 'tasks'}`,
@@ -758,7 +758,7 @@ export function subjectState(
       label: 'Efficiency',
       value: time.efficiency,
       known: time.known,
-      meaning: 'Your time vs. your usual for that difficulty, and whether it went well.',
+      meaning: 'Time taken vs. your usual, and how it went.',
       evidence: time.known
         ? [
             time.typical === null ? '' : `usually ${time.typical} min a task`,

@@ -43,7 +43,7 @@ export function SlumpAlert({ slump }: { slump: Slump }) {
       <header className="ax-slump-head">
         <span className="ax-slump-flag">Important</span>
         <h2 id="ax-slump-title" className="ax-slump-title">
-          You're in a slump. Here's how to get out of it.
+          You're in a slump. Try these to get back on track.
         </h2>
         <p className="ax-slump-lead">
           {lead} Slumps happen to everyone. The fix is to make starting easy, so do these in

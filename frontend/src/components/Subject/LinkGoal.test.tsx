@@ -98,7 +98,7 @@ describe('LinkGoal', () => {
   it('sends the reader to the goals page when they have no outcome goals', () => {
     show({ options: [] });
 
-    expect(screen.getByText(/don't have a goal with a finish line yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/none of your goals has a target yet/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Goals page/ })).toBeInTheDocument();
   });
 });

@@ -450,7 +450,7 @@ export function Collecting({ maturity, stats }: CollectingProps) {
         <p className="ax-collect-lead">
           {activeDays === 0 ? (
             <>
-              Finish a task or start a focus session to get going.
+              Finish a task or start a focus session and this fills in.
             </>
           ) : (
             <>

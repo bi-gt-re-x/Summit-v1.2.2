@@ -677,7 +677,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
             'id': 'weak-{}'.format(row['topic']),
             'weight': 'now' if at == 0 else 'next',
             'title': title_text,
-            'why': 'Your {} work rates {} out of 5, vs. {} across {}. It\'s the weakest part of {} you\'ve worked on ({} tasks).'.format(
+            'why': 'Your {} work rates {} out of 5, vs. {} across {}. Of everything in {}, this is your weakest ({} tasks).'.format(
                 lower(row['label']), _figure(row['execution']), _figure(row['base']),
                 row['subject_label'], aim, row['tasks']),
             'topic': row['topic'],
@@ -750,7 +750,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
             'title': 'Weakest area: {}'.format(row['subsubject_label']),
             'figure': '{} out of 5 over {} tasks, vs. {} across {}.'.format(
                 _figure(row['execution']), row['tasks'], _figure(row['base']), row['subject_label']),
-            'means': 'Name the topic on those tasks and Summit can say which part of it.',
+            'means': 'Put the topic in those task names so Summit can tell which part.',
         })
     if strong:
         row = strong[0]
@@ -769,7 +769,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
             'figure': ('Not yet: {}, and {} more.'.format(shown, len(untouched) - 4) if len(untouched) > 4
                        else 'Not yet: {}.'.format(shown)) if untouched else 'Every topic it tests has work behind it.',
             'means': '{} still has topics you haven\'t tried. Give one a go.'.format(aim)
-            if untouched else 'Now it\'s about raising the weak ones.',
+            if untouched else 'Now work on the weak ones.',
         })
 
     return {

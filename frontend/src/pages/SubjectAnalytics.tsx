@@ -1207,8 +1207,8 @@ export default function SubjectAnalytics() {
               <h1>{subject ? subject.name : 'Subject'}</h1>
               <p className="ax-muted ax-head-purpose">
                 {subject
-                  ? "How it's going and what to do next."
-                  : 'This page is about one subject at a time.'}
+                  ? 'Where it stands and what to do next.'
+                  : 'One subject at a time here.'}
               </p>
             </div>
             <div className="ax-head-actions">
@@ -1530,7 +1530,7 @@ export default function SubjectAnalytics() {
                 </div>
               ) : (
                 <p className="ax-panel-note">
-                  These tips are written by AI, and no AI key is set up. Add one to .env and restart the server.
+                  No AI key yet, so no AI tips. Add one to .env and restart the server.
                 </p>
               )}
             </section>
@@ -1558,7 +1558,7 @@ export default function SubjectAnalytics() {
                 deciding what to act on. */}
             <Panel
               title="What your work shows"
-              note="From your tasks. The notes under the calendar are written by AI."
+              note="From your tasks. AI writes the notes under the calendar."
             >
               <SubjectHeat mine={mine} today={today} subject={subject.name} window={HEAT_WINDOW[span]} />
 
@@ -1570,7 +1570,7 @@ export default function SubjectAnalytics() {
                 <div className="sx-ask">
                   <div>
                     <strong>Get an AI summary</strong>
-                    <p>AI reads the numbers above. It doesn't add any of its own.</p>
+                    <p>AI works from the numbers above. It won't make any up.</p>
                   </div>
                   <button
                     type="button"
@@ -1736,7 +1736,7 @@ export default function SubjectAnalytics() {
                 || model.bands.some((entry) => entry.done > 0)) && (
                 <Fold
                   title="Difficulty"
-                  note="How each difficulty goes, and how much work is there."
+                  note="Each difficulty, how it goes and how much you do."
                   figures={[
                     {
                       label: 'Falls off at',
@@ -1961,7 +1961,7 @@ export default function SubjectAnalytics() {
                 >
                   <Panel
                     title="What your time got you"
-                    note="Compared with your usual pace. You don't have to guess how long things take."
+                    note="Compared with your usual pace. No guessing how long things take."
                   >
                     <ul className="sb-rows">
                       <li className="sb-row">
@@ -2018,7 +2018,7 @@ export default function SubjectAnalytics() {
                           One dot per timed, rated task.{' '}
                           {cloud.fit
                             ? 'The line shows the trend.'
-                            : 'No line. The link is too weak to show one.'}
+                            : 'No line. Too weak a link to draw one.'}
                         </figcaption>
                       </figure>
                     </div>
@@ -2171,7 +2171,7 @@ export default function SubjectAnalytics() {
                 >
                   <Panel
                     title="Your goals for this subject"
-                    note="How close you've got to each one."
+                    note="Your progress on each one."
                   >
                     <ul className="sb-goals">
                       {model.goals.map((goal) => (
@@ -2263,7 +2263,7 @@ export default function SubjectAnalytics() {
                                 <div>
                                   <strong>Plan the steps to get there</strong>
                                   <p>
-                                    AI maps out the steps between now and your date, using only the numbers above.
+                                    AI plans the steps to your date from the numbers above.
                                   </p>
                                 </div>
                                 <button
@@ -2456,7 +2456,7 @@ export default function SubjectAnalytics() {
 
                     {created && (
                       <p className="sb-draft-made" role="status">
-                        Saved. This subject now works toward it, and its steps are in the list above. Your Goals page didn't change.
+                        Saved. Its steps are in the list above. Your Goals page didn't change.
                       </p>
                     )}
 

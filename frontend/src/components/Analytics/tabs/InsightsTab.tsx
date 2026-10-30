@@ -141,9 +141,9 @@ export function InsightsTab({
           asksLead="Once you've got more days in, Insights shows you:"
           asks={[
             'Which routines stuck?',
-            'When do you do your best work?',
+            'When do you work best?',
             'Which habits are slipping?',
-            'Which hard tasks go well, and which go badly?',
+            'Which hard tasks go well?',
             'What changed lately?',
           ]}
           emptyMessage="Nothing repeats often enough to be a habit yet."
@@ -171,7 +171,7 @@ export function InsightsTab({
         <section className="ax-section">
           <PanelGroup
             title="What's already true"
-            note="Just the basics for now. The rest needs more days of work."
+            note="Just the basics for now. More shows up after a few more days."
             defaultOpen
           >
             {/* The raw counts stop at the habits gate, because past it the
@@ -251,8 +251,8 @@ export function InsightsTab({
             to say. */}
         {data && (
           <PanelGroup
-            title="What you say vs. what you do"
-            note="Your mood and what you write, next to what you actually did"
+            title="Say vs. do"
+            note="Your mood and notes next to what got done"
             defaultOpen={sayVsDoHasNews(mood, said)}
           >
             <SayVsDo mood={mood} said={said} reloadSaid={() => data.said?.reload()} />

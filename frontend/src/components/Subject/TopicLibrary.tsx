@@ -89,7 +89,7 @@ export function TopicLibrary({
         Based on your task names. {named.toLocaleString('en-US')} of {library.total.toLocaleString('en-US')} tasks
         here name a topic, and {library.filed.toLocaleString('en-US')} at least name the area or contest.
         {base !== null && ` Each topic is compared with your ${base.toFixed(1)} average here.`}
-        {named < library.total && ` Name the topic in a task, like "${example}", and it lands in the right place.`}
+        {named < library.total && ` A name like "${example}" gets sorted for you.`}
       </p>
 
       <div className="stl-areas">

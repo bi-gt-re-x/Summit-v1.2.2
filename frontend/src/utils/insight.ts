@@ -540,7 +540,7 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     'rel-tasks-xp',
     'Tasks finished and XP',
     active.map((day) => [num(day.tasks_completed), num(day.xp_earned)] as [number, number]),
-    'Your XP rises with the number of tasks you finish.',
+    'More tasks done means more XP.',
     'A few large tasks make up most of your XP.',
     'violet',
   );

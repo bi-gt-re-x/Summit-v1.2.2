@@ -174,7 +174,7 @@ export function QualityPanel({
     return (
       <QualityEmpty
         title="Quality of finished work"
-        shows="How hard your work has been, and how well it went."
+        shows="Hard or easy, and how it went."
         depth={depth}
         aside={aside}
       />
@@ -481,7 +481,7 @@ export function ReasonsPanel({ reasons, findings, depth, span }: ReasonsPanelPro
             <strong>No reasons yet in this window.</strong> This shows what made tasks hard or easy.
           </p>
           <p className="ax-muted">
-            You'll see the question after you rate a task. Skip it anytime. It's the only part of
+            It pops up after you rate a task. Skip it anytime. It's the only part of
             this page that tells you <em>why</em> things went the way they did.
           </p>
           <Link to="/tasks" className="ax-btn">

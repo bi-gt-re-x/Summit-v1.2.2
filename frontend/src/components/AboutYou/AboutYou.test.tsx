@@ -17,7 +17,7 @@ describe('About you', () => {
 
   it('asks the four questions', () => {
     render(<AboutYou submitLabel="Save" onDone={() => {}} />);
-    ['Describe yourself', 'What do you do?', 'What have you already done?', 'How do you want to improve?']
+    ['Describe yourself', 'What do you do?', 'What have you already done?', 'What needs work?']
       .forEach((label) => expect(screen.getByLabelText(label)).toBeInTheDocument());
   });
 
@@ -26,7 +26,7 @@ describe('About you', () => {
     expect(screen.getByText(/No head start yet/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Describe yourself'), { target: { value: many(25) } });
     expect(screen.getByText(/opens up to 2 days sooner/)).toBeInTheDocument();
-    ['What do you do?', 'What have you already done?', 'How do you want to improve?'].forEach((label) =>
+    ['What do you do?', 'What have you already done?', 'What needs work?'].forEach((label) =>
       fireEvent.change(screen.getByLabelText(label), { target: { value: many(45) } }),
     );
     expect(screen.getByText(/opens up to 7 days sooner/)).toBeInTheDocument();

@@ -339,7 +339,7 @@ export function PatternsPanel({
   return (
     <Panel
       title="Patterns in what you do"
-      note='What you repeat and how often. Why it matters is under "Why it happens".'
+      note='What you repeat and how often. See "Why it happens" for why it matters.'
     >
       {patterns.length === 0 ? (
         <p className="ax-empty">

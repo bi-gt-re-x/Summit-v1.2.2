@@ -219,7 +219,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
     {
       key: 'output',
       label: 'Output',
-      note: 'Your last 30 days vs. your best 30.',
+      note: 'Last 30 days vs. your best stretch',
       rows: [
         row('xp', 'XP earned', xp, asXp),
         row('tasks', 'Tasks completed', done, asCount),
@@ -228,7 +228,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
     {
       key: 'discipline',
       label: 'Discipline',
-      note: "How steady you've been vs. your best run.",
+      note: 'How steady you are now vs. your best streak.',
       rows: [
         {
           key: 'active',
@@ -266,7 +266,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
     {
       key: 'quality',
       label: 'Quality',
-      note: 'How big your tasks were, and if you beat your deadlines.',
+      note: 'Task size and whether you beat your deadlines.',
       rows: [
         {
           key: 'pertask',

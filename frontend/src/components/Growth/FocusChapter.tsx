@@ -429,7 +429,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             ? `${consistencyNow >= (consistencyThen.value ?? 0) ? 'Up' : 'Down'} ${Math.abs(
                 consistencyNow - (consistencyThen.value ?? 0),
               )} points since ${consistencyThen.label.toLowerCase()}.`
-            : 'A second point shows up in a month.'}
+            : 'Another point shows up next month.'}
         </p>
       </section>
       )}
@@ -448,7 +448,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             <span>Recovery rate</span>
             <p>
               {recovery.rate === null
-                ? "You haven't missed a day yet, so there's nothing to recover from."
+                ? 'No missed days yet. Nice.'
                 : `You usually return to your routine within ${
                     recovery.typicalDays !== null && recovery.typicalDays <= 1.5
                       ? '1 day'

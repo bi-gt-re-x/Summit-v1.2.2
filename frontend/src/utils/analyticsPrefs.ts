@@ -248,7 +248,7 @@ export const LOG_STYLE_HINT: Record<LogStyle, string> = {
   tasks:
     'You check things off. Your main number is tasks finished.',
   sessions:
-    'You log your time. Your main number is hours worked.',
+    "You log your time. You'll mostly see hours worked.",
   both: 'Both get their own tile.',
 };
 
